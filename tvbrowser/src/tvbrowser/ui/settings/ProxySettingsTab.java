@@ -74,14 +74,24 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     String msgProxy = mLocalizer.msg("httpProxy", "HTTP Proxy");
     String msgUseProxy = mLocalizer.msg("useHttpProxy", "Use proxy for HTTP");
     mHttpProxySettingsPanel = new ProxySettingsPanel(msgProxy, msgUseProxy);
-    mHttpProxySettingsPanel.setSettings(Settings.getHttpProxySettings());
+    mHttpProxySettingsPanel.setUseProxy(Settings.propHttpProxyUseProxy.getBoolean());
+    mHttpProxySettingsPanel.setHost(Settings.propHttpProxyHost.getString());
+    mHttpProxySettingsPanel.setPort(Settings.propHttpProxyPort.getString());
+    mHttpProxySettingsPanel.setAuthentifyAtProxy(Settings.propHttpProxyAuthentifyAtProxy.getBoolean());
+    mHttpProxySettingsPanel.setUser(Settings.propHttpProxyUser.getString());
+    mHttpProxySettingsPanel.setPassword(Settings.propHttpProxyPassword.getString());
     main.add(mHttpProxySettingsPanel);
     
     // FTP proxy
     msgProxy = mLocalizer.msg("ftpProxy", "FTP Proxy");
     msgUseProxy = mLocalizer.msg("useFtpProxy", "Use proxy for FTP");
     mFtpProxySettingsPanel = new ProxySettingsPanel(msgProxy, msgUseProxy);
-    mFtpProxySettingsPanel.setSettings(Settings.getFtpProxySettings());
+    mFtpProxySettingsPanel.setUseProxy(Settings.propFtpProxyUseProxy.getBoolean());
+    mFtpProxySettingsPanel.setHost(Settings.propFtpProxyHost.getString());
+    mFtpProxySettingsPanel.setPort(Settings.propFtpProxyPort.getString());
+    mFtpProxySettingsPanel.setAuthentifyAtProxy(Settings.propFtpProxyAuthentifyAtProxy.getBoolean());
+    mFtpProxySettingsPanel.setUser(Settings.propFtpProxyUser.getString());
+    mFtpProxySettingsPanel.setPassword(Settings.propFtpProxyPassword.getString());
     main.add(mFtpProxySettingsPanel);
     
     return mSettingsPn;
@@ -93,10 +103,19 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    Settings.ProxySettings httpSettings = mHttpProxySettingsPanel.getSettings();
-    Settings.ProxySettings ftpSettings = mFtpProxySettingsPanel.getSettings();
+    mHttpProxySettingsPanel.setUseProxy(mHttpProxySettingsPanel.getUseProxy());
+    mHttpProxySettingsPanel.setHost(mHttpProxySettingsPanel.getHost());
+    mHttpProxySettingsPanel.setPort(mHttpProxySettingsPanel.getPort());
+    mHttpProxySettingsPanel.setAuthentifyAtProxy(mHttpProxySettingsPanel.getAuthentifyAtProxy());
+    mHttpProxySettingsPanel.setUser(mHttpProxySettingsPanel.getUser());
+    mHttpProxySettingsPanel.setPassword(mHttpProxySettingsPanel.getPassword());
     
-    Settings.setProxySettings(httpSettings, ftpSettings);
+    mFtpProxySettingsPanel.setUseProxy(mFtpProxySettingsPanel.getUseProxy());
+    mFtpProxySettingsPanel.setHost(mFtpProxySettingsPanel.getHost());
+    mFtpProxySettingsPanel.setPort(mFtpProxySettingsPanel.getPort());
+    mFtpProxySettingsPanel.setAuthentifyAtProxy(mFtpProxySettingsPanel.getAuthentifyAtProxy());
+    mFtpProxySettingsPanel.setUser(mFtpProxySettingsPanel.getUser());
+    mFtpProxySettingsPanel.setPassword(mFtpProxySettingsPanel.getPassword());
   }
 
   
@@ -195,33 +214,67 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
       mPasswordLb.setEnabled(useProxy && authentify);
       mPasswordPF.setEnabled(useProxy && authentify);
     }
-    
-    
-    
-    public void setSettings(Settings.ProxySettings proxySettings) {
-      mUseProxyChB.setSelected(proxySettings.mUseProxy);
-      mHostTF.setText(proxySettings.mHost);
-      mPortTF.setText(proxySettings.mPort);
-      mAuthentifyAtProxyChB.setSelected(proxySettings.mAuthentifyAtProxy);
-      mUserTF.setText(proxySettings.mUser);
-      mPasswordPF.setText(proxySettings.mPassword);
-      
+
+
+    public void setUseProxy(boolean value) {
+      mUseProxyChB.setSelected(value);
       updateEnabled();
     }
-    
-    
-    
-    public Settings.ProxySettings getSettings() {
-      Settings.ProxySettings proxySettings = new Settings.ProxySettings();
-      
-      proxySettings.mUseProxy = mUseProxyChB.isSelected();
-      proxySettings.mHost = mHostTF.getText();
-      proxySettings.mPort = mPortTF.getText();
-      proxySettings.mAuthentifyAtProxy = mAuthentifyAtProxyChB.isSelected();
-      proxySettings.mUser = mUserTF.getText();
-      proxySettings.mPassword = new String(mPasswordPF.getPassword());
-      
-      return proxySettings;
+
+
+    public boolean getUseProxy() {
+      return mUseProxyChB.isSelected();
+    }
+
+
+    public void setHost(String value) {
+      mHostTF.setText(value);
+    }
+
+
+    public String getHost() {
+      return mHostTF.getText();
+    }
+
+
+    public void setPort(String value) {
+      mPortTF.setText(value);
+    }
+
+
+    public String getPort() {
+      return mPortTF.getText();
+    }
+
+
+    public void setAuthentifyAtProxy(boolean value) {
+      mAuthentifyAtProxyChB.setSelected(value);
+      updateEnabled();
+    }
+
+
+    public boolean getAuthentifyAtProxy() {
+      return mAuthentifyAtProxyChB.isSelected();
+    }
+
+
+    public void setUser(String value) {
+      mUserTF.setText(value);
+    }
+
+
+    public String getUser() {
+      return mUserTF.getText();
+    }
+
+
+    public void setPassword(String value) {
+      mPasswordPF.setText(value);
+    }
+
+
+    public String getPassword() {
+      return mPasswordPF.getText();
     }
     
   }

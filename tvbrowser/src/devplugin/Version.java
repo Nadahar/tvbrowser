@@ -97,4 +97,14 @@ public final class Version implements Comparable {
   	} 	
   }
   
+  
+  public boolean equals(Object obj) {
+    if (obj instanceof Version) {
+      Version ver = (Version) obj;
+      return (major == ver.major) && (minor == ver.minor) && (stable == ver.stable);
+    } else {
+      return false;
+    }
+  }
+  
 }

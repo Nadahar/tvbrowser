@@ -23,12 +23,13 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.*;
 
 import tvbrowser.core.Settings;
 
@@ -41,7 +42,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
   private JCheckBox mUseDefaultFontsCB; 
   
   private FontChooserPanel mTitleFontPanel, mInfoFontPanel,
-    mChannelNameFontPanel, mDataServiceCachPanel, mTimeFontPanel;
+    mChannelNameFontPanel, mTimeFontPanel;
  
   public FontsSettingsTab() {
    
@@ -59,7 +60,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     checkBoxPanel.setBorder(BorderFactory.createEmptyBorder(0,0,3,0));
     
     mUseDefaultFontsCB=new JCheckBox(mLocalizer.msg("UseDefaultFonts", "Use default fonts"));
-    mUseDefaultFontsCB.setSelected(Settings.getUseDefaultFonts());
+    mUseDefaultFontsCB.setSelected(Settings.propUseDefaultFonts.getBoolean());
     
     checkBoxPanel.add(mUseDefaultFontsCB);
     
@@ -67,10 +68,10 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     
     final FontChooser fontPanel=new FontChooser();
     
-    mTitleFontPanel=new FontChooserPanel(mLocalizer.msg("ProgramTitle", "Program title"),Settings.getProgramTitleFont());
-    mInfoFontPanel=new FontChooserPanel(mLocalizer.msg("ProgramInfo", "Program information"),Settings.getProgramInfoFont());
-    mChannelNameFontPanel=new FontChooserPanel(mLocalizer.msg("ChannelNames", "Channel names"),Settings.getChannelNameFont());
-    mTimeFontPanel=new FontChooserPanel(mLocalizer.msg("Time", "Time"),Settings.getProgramTimeFont());
+    mTitleFontPanel=new FontChooserPanel(mLocalizer.msg("ProgramTitle", "Program title"),Settings.propProgramTitleFont.getFont());
+    mInfoFontPanel=new FontChooserPanel(mLocalizer.msg("ProgramInfo", "Program information"),Settings.propProgramInfoFont.getFont());
+    mChannelNameFontPanel=new FontChooserPanel(mLocalizer.msg("ChannelNames", "Channel names"),Settings.propChannelNameFont.getFont());
+    mTimeFontPanel=new FontChooserPanel(mLocalizer.msg("Time", "Time"),Settings.propProgramTimeFont.getFont());
     
     fontPanel.add(mTitleFontPanel);
     fontPanel.add(mInfoFontPanel);
@@ -124,11 +125,11 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
      * Called by the host-application, if the user wants to save the settings.
      */
     public void saveSettings() {
-      Settings.setProgramTitleFont(mTitleFontPanel.getChoosenFont());
-      Settings.setProgramInfoFont(mInfoFontPanel.getChoosenFont());  
-      Settings.setChannelNameFont(mChannelNameFontPanel.getChoosenFont());
-      Settings.setProgramTimeFont(mTimeFontPanel.getChoosenFont());
-      Settings.setUseDefaultFonts(mUseDefaultFontsCB.isSelected());
+      Settings.propProgramTitleFont.setFont(mTitleFontPanel.getChoosenFont());
+      Settings.propProgramInfoFont.setFont(mInfoFontPanel.getChoosenFont());  
+      Settings.propChannelNameFont.setFont(mChannelNameFontPanel.getChoosenFont());
+      Settings.propProgramTimeFont.setFont(mTimeFontPanel.getChoosenFont());
+      Settings.propUseDefaultFonts.setBoolean(mUseDefaultFontsCB.isSelected());
     }
 
   

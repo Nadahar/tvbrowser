@@ -75,21 +75,17 @@ public class PluginManager {
    */
   
   public void storeSettings() {
-    Plugin[] p = PluginLoader.getInstance().getActivePlugins();
-    String[] classNames = new String[p.length];
+    Plugin[] pluginArr = PluginLoader.getInstance().getActivePlugins();
+    String[] classNameArr = pluginArrToClassNameArr(pluginArr);
     
-    for (int i=0;i<p.length;i++) {      
-      classNames[i] = p[i].getClass().getName();
-    }
-    Settings.setInstalledPlugins(classNames);
-    
+    Settings.propInstalledPlugins.setStringArray(classNameArr);
   }
   
   /**
    * Loads all plugins from the plugins directory.
    * @throws TvBrowserException
    */
-  public  void loadAllPlugins() throws TvBrowserException {    
+  private void loadAllPlugins() throws TvBrowserException {    
       File file=new File(PLUGIN_DIRECTORY);
       if (!file.exists()) {
         return;
@@ -107,24 +103,73 @@ public class PluginManager {
     
     }
 
+
   /**
    * Activates an array of plugins
    * 
    * @param classNames An array of classnames
    */
- public void activatePlugins(String[] classNames) {
-   PluginLoader loader = PluginLoader.getInstance();
-   for (int i=0;i<classNames.length;i++) {
-     Plugin p=loader.getInactivePluginByClassName(classNames[i]);
-     if (p!=null) {
-       loader.activatePlugin(p);
-     } 
-   }
+  public void activatePlugins(String[] classNames) {
+    PluginLoader loader = PluginLoader.getInstance();
+    for (int i = 0; i < classNames.length; i++) {
+      Plugin p = loader.getInactivePluginByClassName(classNames[i]);
+      if (p != null) {
+        loader.activatePlugin(p);
+      }
+    }
+  }
+
+
+  private Plugin[] classNameArrToPluginArr(String[] classNameArr) {
+    ArrayList list = new ArrayList();
+    for (int i = 0; i < classNameArr.length; i++) {
+      Plugin plugin = PluginLoader.getInstance().getPluginByClassName(classNameArr[i]);
+      if (plugin != null) {
+        list.add(plugin);
+      }
+    }
     
- }
+    Plugin[] asArr = new Plugin[list.size()];
+    list.toArray(asArr);
+    return asArr;
+  }
+
+
+  private String[] pluginArrToClassNameArr(Plugin[] pluginArr) {
+    String[] classNameArr = new String[pluginArr.length];
+    for (int i = 0; i < pluginArr.length; i++) {
+      classNameArr[i] = pluginArr[i].getClass().getName();
+    }
+    
+    return classNameArr;
+  }
+
+
+  public void installPlugin(Plugin plugin) {
+    if (plugin == null) {
+      throw new NullPointerException("plugin is null");
+    }
+  
+    String[] installedList = Settings.propInstalledPlugins.getStringArray();
+
+    if (installedList == null) {
+      // Install all plugin by default
+      Plugin[] pluginArr = PluginLoader.getInstance().getAllPlugins();
+      installedList = pluginArrToClassNameArr(pluginArr);
+    }
+    
+    // Add the plugin
+    String[] newInstalledList = new String[installedList.length + 1];
+    System.arraycopy(installedList, 0, newInstalledList, 0, installedList.length);
+    String className = plugin.getClass().getName();
+    newInstalledList[newInstalledList.length - 1] = className;
+    
+    // Save the property
+    Settings.propInstalledPlugins.setStringArray(newInstalledList);
+  }
   
  
-  public static void installPendingPlugins() {
+  public void installPendingPlugins() {
     
     File file=new File(PLUGIN_DIRECTORY);
     if (!file.exists()) {
@@ -146,7 +191,8 @@ public class PluginManager {
       String pluginName=fNewFile.getName().substring(0,fNewFile.getName().length()-4);
       pluginName=pluginName.toLowerCase()+"."+pluginName;
     
-      Settings.addInstalledPlugin(pluginName);
+      Plugin plugin = PluginLoader.getInstance().getPluginByClassName(pluginName);
+      installPlugin(plugin);
     }
     
   }
@@ -180,16 +226,25 @@ public class PluginManager {
   
   
   /**
-   * Create the context menu by reading the settings.
    * This method should be called on start-up.
    */
-  
-  public void initContextMenu() {    
+  public void init() throws TvBrowserException {
+    loadAllPlugins();
+
+    String[] installedPlugins = Settings.propInstalledPlugins.getStringArray();
+    if (installedPlugins == null) {
+      // Install all plugins by default
+      Plugin[] allPluginArr = PluginLoader.getInstance().getAllPlugins();
+      installedPlugins = pluginArrToClassNameArr(allPluginArr);
+    }
+    activatePlugins(installedPlugins);
     
+    // init the context menu    
     updateContextMenuPlugins();
-    
-    Plugin p=PluginLoader.getInstance().getActivePluginByClassName(Settings.getDefaultContextMenuPlugin());
-    setDefaultContextMenuPlugin(p);    
+
+    String className = Settings.propDefaultContextMenuPlugin.getString();    
+    Plugin plugin = PluginLoader.getInstance().getActivePluginByClassName(className);
+    setDefaultContextMenuPlugin(plugin);    
   }
     
   /**
@@ -202,7 +257,7 @@ public class PluginManager {
   private void updateContextMenuPlugins() {
     
     ArrayList list = new ArrayList();
-    String[] contextMenuPluginsStrArr = Settings.getContextMenuItemPlugins();
+    String[] contextMenuPluginsStrArr = Settings.propContextMenuItemPlugins.getStringArray();
     
     
     /* Add active plugins given by the settings */

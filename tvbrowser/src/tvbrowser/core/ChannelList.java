@@ -38,6 +38,18 @@ public class ChannelList {
   private static ArrayList mAvailableChannels = new ArrayList();
 
   private static ArrayList mSubscribedChannels = new ArrayList();
+  
+  public static void initSubscribedChannels() {
+    Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray(true);
+    
+    for (int i = 0; i < channelArr.length; i++) {
+      if (channelArr[i] != null) {
+        subscribeChannel(channelArr[i]);
+      }
+    }
+    loadDayLightSavingTimeCorrections();
+  }
+
 
   public static void loadDayLightSavingTimeCorrections() {
     File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
@@ -138,15 +150,8 @@ public class ChannelList {
    * Subscribes a channel
    * @param id the channel's ID
    */
-  public static void subscribeChannel(TvDataService dataService, String id) {
-	  Channel ch = getChannel(dataService, id);
-    
-    if (ch!=null) {
-		  mSubscribedChannels.add(ch);
-	  }
-    
-    
-    	
+  public static void subscribeChannel(Channel channel) {
+    mSubscribedChannels.add(channel);
   }
 
 
@@ -157,13 +162,13 @@ public class ChannelList {
    * 'unsubscribed'
    */
   public static void setSubscribeChannels(Channel[] channelArr) {
-	mSubscribedChannels = new ArrayList(channelArr.length);
-	for (int i = 0; i < channelArr.length; i++) {
-    if (channelArr[i] == null) {
-      throw new NullPointerException("channel #" + i + " is null!");
+    mSubscribedChannels = new ArrayList(channelArr.length);
+    for (int i = 0; i < channelArr.length; i++) {
+      if (channelArr[i] == null) {
+        throw new NullPointerException("channel #" + i + " is null!");
+      }
+      mSubscribedChannels.add(channelArr[i]);
     }
-    mSubscribedChannels.add(channelArr[i]);
-	  }
   }
 
 

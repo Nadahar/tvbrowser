@@ -26,19 +26,26 @@
 
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
-import devplugin.Channel;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
-import tvbrowser.core.*;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
+import devplugin.Channel;
 
 /**
  * TV-Browser
@@ -46,9 +53,6 @@ import util.ui.progress.ProgressWindow;
  * @author Martin Oberhauser
  */
 public class ChannelsSettingsTab implements devplugin.SettingsTab {
-
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ChannelsSettingsTab.class.getName());
   
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ChannelsSettingsTab.class);
@@ -128,8 +132,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       configChannelBtn.setEnabled(sel.length>0);
       rightList.addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
-          int []sel=rightList.getSelectedIndices();
-          configChannelBtn.setEnabled(sel.length>0);
+          int[] locSel=rightList.getSelectedIndices();
+          configChannelBtn.setEnabled(locSel.length>0);
         }
       });
       
@@ -140,12 +144,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         
           win.run(new Progress(){
             public void run() {
-              int channelCount=0;
               tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
               for (int i=0;i<services.length;i++) {
                 if (services[i].supportsDynamicChannelList()) {
                   try {
-                    devplugin.Channel channelList[]=services[i].checkForAvailableChannels(win);
+                    services[i].checkForAvailableChannels(win);
                   }catch (TvBrowserException exc) {
                     ErrorHandler.handle(exc);
                   }
@@ -222,8 +225,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     for (int i = 0; i < subscribedChannelArr.length; i++) {
       mChannelListPanel.addElementRight(subscribedChannelArr[i]);
     }
-    
-    int size=mChannelListPanel.getRightList().getModel().getSize();
   }
 
   private Comparator createChannelComparator() {
@@ -249,7 +250,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     }
     
     ChannelList.setSubscribeChannels(channelArr);
-    Settings.setSubscribedChannels(channelArr);
+    Settings.propSubscribedChannels.setChannelArray(channelArr);
   }
 
 

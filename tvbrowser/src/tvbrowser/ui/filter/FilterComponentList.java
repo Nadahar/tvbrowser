@@ -31,6 +31,7 @@ import java.io.*;
 import java.util.*;
 
 
+import tvbrowser.core.Settings;
 import tvbrowser.ui.filter.filters.*;
 
 
@@ -42,7 +43,8 @@ public class FilterComponentList {
     
     mComponents=new HashSet();
     
-    File filterCompFile=new File(tvbrowser.core.Settings.getFilterDirectory(),"filter.comp");
+    String filterDir = Settings.propFilterDirectory.getString();
+    File filterCompFile=new File(filterDir, "filter.comp");
     ObjectInputStream in=null;
     if (filterCompFile.exists() && filterCompFile.isFile()) {
       try {
@@ -62,7 +64,8 @@ public class FilterComponentList {
   }
   
   public static void store() {
-    File filterCompFile=new File(tvbrowser.core.Settings.getFilterDirectory(),"filter.comp");
+    String filterDir = Settings.propFilterDirectory.getString();
+    File filterCompFile=new File(filterDir, "filter.comp");
     
     try {
       ObjectOutputStream out=new ObjectOutputStream(new FileOutputStream(filterCompFile));

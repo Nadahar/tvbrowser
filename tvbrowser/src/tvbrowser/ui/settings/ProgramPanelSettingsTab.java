@@ -133,7 +133,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
 
   private IconPlugin[] getSelectedIconPlugins(IconPlugin[] allArr) {
-    String[] selPluginArr = Settings.getProgramTableIconPlugins();
+    String[] selPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
     ArrayList list = new ArrayList();
     
     for (int i = 0; i < selPluginArr.length; i++) {
@@ -174,7 +174,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
 
   private ProgramFieldType[] getSelectedTypes() {
-    return Settings.getProgramInfoFields();
+    return Settings.propProgramInfoFields.getProgramFieldTypeArray();
   }
   
   
@@ -190,7 +190,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       classNameArr[i] = plugin.getPlugin().getClass().getName();
       System.out.println("Setting '" + classNameArr[i] + "'");
     }
-    Settings.setProgramTableIconPlugins(classNameArr);
+    Settings.propProgramTableIconPlugins.setStringArray(classNameArr);
     
     // info text
     Object[] infoFieldArr = mInfoTextOCh.getOrder();
@@ -198,7 +198,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     for (int i = 0; i < typeArr.length; i++) {
       typeArr[i] = (ProgramFieldType) infoFieldArr[i];
     }
-    Settings.setProgramInfoFields(typeArr);
+    Settings.propProgramInfoFields.setProgramFieldTypeArray(typeArr);
   }
   
   

@@ -26,18 +26,18 @@
 
 package tvbrowser.ui.configassistant;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 
 class SubscribeChannelCardPanel extends AbstractCardPanel {
 
   private ChannelsSettingsTab mChannelsSettingsTab;
   private JPanel mContent;
-  private CardPanel mPrev, mNext;
   
   private static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(SubscribeChannelCardPanel.class); 
@@ -61,8 +61,6 @@ class SubscribeChannelCardPanel extends AbstractCardPanel {
               JOptionPane.INFORMATION_MESSAGE); 
       return false;
     }
-    
-    MainFrame.getInstance().onSubscribedChannelsChanged();
     
     return true;
   }

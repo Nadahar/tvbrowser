@@ -23,19 +23,19 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import tvbrowser.core.*;
+import javax.swing.*;
+
+import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.UpdateDlg;
 import util.ui.FileCheckBox;
-
 
 /**
  * TV-Browser
@@ -60,9 +60,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JPanel mSettingsPn;
   
   private JComboBox mAutoDownloadCB;
-  private JButton mChangeDataDirBt;
-  private JButton mDeleteTVDataBt;
-  private JTextField mTvDataTF;
   private JCheckBox mAutoDownloadCb;
   private JComboBox mAutoDownloadPeriodCB;
   private JRadioButton mDonotAskBeforeDownloadRB;
@@ -78,22 +75,17 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    String msg;
-    JPanel p1;
-
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
-    
        
     JPanel onStartupPn=new JPanel();
     onStartupPn.setLayout(new BoxLayout(onStartupPn,BoxLayout.Y_AXIS));   
     onStartupPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("autoDownload", "Download automatically")));
     
     JPanel autoDownloadPn=new JPanel(new GridLayout(0,2,0,7));
-    
     
     onStartupPn.add(autoDownloadPn);
     
@@ -103,24 +95,23 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     autoDownloadPn.add(mAutoDownloadCb);
   
     mAutoDownloadCB=new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
-    if (Settings.getAutomaticDownload()==Settings.DAILY) {
+    String dlType = Settings.propAutoDownloadType.getString();
+    if (dlType.equals("daily")) {
       mAutoDownloadCB.setSelectedIndex(0);
     }
-    else if (Settings.getAutomaticDownload()==Settings.EVERY3DAYS) {
+    else if (dlType.equals("every3days")) {
       mAutoDownloadCB.setSelectedIndex(1);
     }
-    else if (Settings.getAutomaticDownload()==Settings.WEEKLY) {
+    else if (dlType.equals("WEEKLY")) {
       mAutoDownloadCB.setSelectedIndex(2);
     }
           
-    mAutoDownloadCb.setSelected(Settings.getAutomaticDownload()!=Settings.NEVER);      
+    mAutoDownloadCb.setSelected(! dlType.equals("never"));      
     
-   
     autoDownloadPn.add(mAutoDownloadCB);
     
     JPanel askBeforeDLPanel=new JPanel();
     askBeforeDLPanel.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
-    
 
     askBeforeDLPanel.setLayout(new BoxLayout(askBeforeDLPanel,BoxLayout.Y_AXIS));
         
@@ -131,10 +122,9 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     buttonGroup.add(mAskBeforeDownloadRB);
     buttonGroup.add(mDonotAskBeforeDownloadRB);
     
-    if (Settings.getAskForAutoDownload()) {
+    if (Settings.propAskForAutoDownload.getBoolean()) {
       mAskBeforeDownloadRB.setSelected(true);
-    }
-    else {
+    } else {
       mDonotAskBeforeDownloadRB.setSelected(true);
     }
     
@@ -149,8 +139,8 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     mAutoDownloadPeriodCB=new JComboBox(UpdateDlg.PERIOD_MSG_ARR);
     pn3.add(mAutoDownloadPeriodCB,BorderLayout.WEST);
     
-    int autoDLPeriod=Settings.getAutoDownloadPeriod();
-    if (autoDLPeriod==UpdateDlg.GETALL) {
+    int autoDLPeriod = Settings.propAutoDownloadPeriod.getInt();
+    if (autoDLPeriod == UpdateDlg.GETALL) {
       mAutoDownloadPeriodCB.setSelectedIndex(mAutoDownloadPeriodCB.getItemCount()-1);
     }
     else {
@@ -176,9 +166,8 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     mWebbrowserFCB = new FileCheckBox(mLocalizer.msg("userDefinedWebbrowser","user defined webbrowser"),null,0);
     mWebbrowserFCB.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("browser","Webbrowser")));
     
-    mWebbrowserFCB.setSelected(Settings.getUserDefinedWebbrowser()!=null);
-    
-    String browserExecutable = Settings.getUserDefinedWebbrowser();
+    String browserExecutable = Settings.propUserDefinedWebbrowser.getString();
+    mWebbrowserFCB.setSelected(browserExecutable != null);
     if (browserExecutable !=null) {
       mWebbrowserFCB.setFile(new File(browserExecutable));
     }
@@ -206,35 +195,35 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     int inx = mAutoDownloadCB.getSelectedIndex();
     
     if (!mAutoDownloadCb.isEnabled()) {
-      Settings.setAutomaticDownload(Settings.NEVER);
+      Settings.propAutoDownloadType.setString("never");
     }
     else if (inx == 0) {
-      Settings.setAutomaticDownload(Settings.DAILY);
+      Settings.propAutoDownloadType.setString("daily");
     }
     else if (inx == 1) {
-      Settings.setAutomaticDownload(Settings.EVERY3DAYS);
+      Settings.propAutoDownloadType.setString("every3days");
     }
     else if (inx == 2) {
-      Settings.setAutomaticDownload(Settings.WEEKLY);
+      Settings.propAutoDownloadType.setString("WEEKLY");
     }
     
-    Settings.setAskForAutoDownload(mAskBeforeDownloadRB.isSelected());
+    Settings.propAskForAutoDownload.setBoolean(mAskBeforeDownloadRB.isSelected());
     
     inx=mAutoDownloadPeriodCB.getSelectedIndex();
     if (inx==mAutoDownloadPeriodCB.getItemCount()-1) {
-      Settings.setDownloadPeriod(UpdateDlg.GETALL);
+      Settings.propDownloadPeriod.setInt(UpdateDlg.GETALL);
     }
     else {
-      Settings.setDownloadPeriod(inx);
+      Settings.propDownloadPeriod.setInt(inx);
     }
     
+    String webbrowser;
     if (mWebbrowserFCB.isSelected()) {
-      Settings.setUserDefinedWebbrowser(mWebbrowserFCB.getFile().getAbsolutePath());
+      webbrowser = mWebbrowserFCB.getFile().getAbsolutePath();
+    } else {
+      webbrowser = null;
     }
-    else {
-      Settings.setUserDefinedWebbrowser(null);
-    }
-             
+    Settings.propUserDefinedWebbrowser.setString(webbrowser);
   }
   
   

@@ -51,16 +51,16 @@ public class TimeOfDayBackPainter extends AbstractCellBasedBackPainter {
    * Is called when the table's layout has changed.
    */
   public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model) {
-    mEarlyTime     = Settings.getEarlyTime();
-    mMiddayTime    = Settings.getMiddayTime();
-    mAfternoonTime = Settings.getAfternoonTime();
-    mEveningTime   = Settings.getEveningTime();
+    mEarlyTime     = Settings.propEarlyTime.getInt();
+    mMiddayTime    = Settings.propMiddayTime.getInt();
+    mAfternoonTime = Settings.propAfternoonTime.getInt();
+    mEveningTime   = Settings.propEveningTime.getInt();
 
-    mBackgroundImageEdge      = ImageUtilities.createImage(Settings.getTimeOfDayBackgroundEdge());
-    mBackgroundImageEarly     = ImageUtilities.createImage(Settings.getTimeOfDayBackgroundEarly());
-    mBackgroundImageMidday    = ImageUtilities.createImage(Settings.getTimeOfDayBackgroundMidday());
-    mBackgroundImageAfternoon = ImageUtilities.createImage(Settings.getTimeOfDayBackgroundAfternoon());
-    mBackgroundImageEvening   = ImageUtilities.createImage(Settings.getTimeOfDayBackgroundEvening());
+    mBackgroundImageEdge      = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEdge.getString());
+    mBackgroundImageEarly     = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEarly.getString());
+    mBackgroundImageMidday    = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundMidday.getString());
+    mBackgroundImageAfternoon = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundAfternoon.getString());
+    mBackgroundImageEvening   = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEvening.getString());
   }
 
 

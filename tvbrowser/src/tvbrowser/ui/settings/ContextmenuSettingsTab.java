@@ -99,7 +99,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
            if(e.getClickCount() == 2) {
              int inx = mList.getList().locationToIndex(e.getPoint());
              if (inx>=0) {
-               Object item = mList.getList().getModel().getElementAt(inx);;
                mList.getList().ensureIndexIsVisible(inx);
                mDefaultPlugin=(Plugin)mList.getList().getSelectedValue();
                mList.updateUI();
@@ -227,13 +226,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
       pluginNames[i]=((Plugin)o[i]).getClass().getName();
     }
     
-    
-      
-    Settings.setContextMenuItemPlugins(pluginNames);   
+    Settings.propContextMenuItemPlugins.setStringArray(pluginNames);   
     
     PluginManager.getInstance().setContextMenuPlugins(p);
-    
-    
     
     if (!mList.contains(mDefaultPlugin)) {
       mDefaultPlugin=null;

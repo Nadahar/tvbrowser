@@ -27,6 +27,9 @@
 package tvbrowser.ui.programtable;
 
 import javax.swing.*;
+
+import tvbrowser.core.Settings;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -94,17 +97,27 @@ public class ChannelPanel extends JPanel {
 class ChannelLabel extends JLabel {
    
     private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
-    private static Font channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
+    private static Font channelNameFont;
   
     public static void fontChaned() {
-      channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
+      boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();
+      if (useDefaults) {
+        channelNameFont = Settings.propChannelNameFont.getDefault();
+      } else {
+        channelNameFont = Settings.propChannelNameFont.getFont();
+      }
     }
   
     public ChannelLabel(final Channel ch) {
       super(ch.getName());
+
+      if (channelNameFont == null) {
+        fontChaned();
+      }
+
       setFont(channelNameFont);
       setOpaque(false);
-      setHorizontalAlignment(JLabel.CENTER);
+      setHorizontalAlignment(SwingConstants.CENTER);
             
       setCursor(linkCursor);
       addMouseListener(new MouseAdapter(){
@@ -119,8 +132,7 @@ class ChannelLabel extends JLabel {
         public void mouseExited(MouseEvent e) {
           e.getComponent().setForeground(Color.black);
         }        
-      }
-    );
+      });
     } 
   }
 

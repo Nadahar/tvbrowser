@@ -67,15 +67,12 @@ public class ButtonsSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     String msg;
-    JPanel p1, p2;
     
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.NORTH);
-
-
 
     // buttons panel
     JPanel toolBarPanel=new JPanel();
@@ -96,9 +93,9 @@ public class ButtonsSettingsTab implements SettingsTab {
     panel3.add(updateCheck);
     panel3.add(settingsCheck);
 
-    mTimeCheck.setSelected(Settings.isTimeBtnVisible());
-    updateCheck.setSelected(Settings.isUpdateBtnVisible());
-    settingsCheck.setSelected(Settings.isPreferencesBtnVisible());
+    mTimeCheck.setSelected(Settings.propShowTimeButtons.getBoolean());
+    updateCheck.setSelected(Settings.propShowUpdateButton.getBoolean());
+    settingsCheck.setSelected(Settings.propShowPreferencesButton.getBoolean());
     
     visibleBtnsPanel.add(panel3,BorderLayout.NORTH);
 
@@ -115,11 +112,11 @@ public class ButtonsSettingsTab implements SettingsTab {
     labelBtnsGroup.add(picOnlyRadio);
     labelBtnsGroup.add(textAndPicRadio);
 
-    if (Settings.getButtonSettings()==Settings.TEXT_ONLY) {
+    if (Settings.propToolbarButtonStyle.getString().equals("text")) {
       textOnlyRadio.setSelected(true);
-    }else if (Settings.getButtonSettings()==Settings.ICON_ONLY) {
+    } else if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
       picOnlyRadio.setSelected(true);
-    }else {
+    } else {
       textAndPicRadio.setSelected(true);
     }
 
@@ -137,10 +134,10 @@ public class ButtonsSettingsTab implements SettingsTab {
     timeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
     
     
-    mEarlyTimePn = new TimePanel(Settings.getEarlyTime());    
-    mMiddayTimePn=new TimePanel(Settings.getMiddayTime());
-    mAfternoonTimePn=new TimePanel(Settings.getAfternoonTime());
-    mEveningTimePn=new TimePanel(Settings.getEveningTime());
+    mEarlyTimePn     = new TimePanel(Settings.propEarlyTime.getInt());    
+    mMiddayTimePn    = new TimePanel(Settings.propMiddayTime.getInt());
+    mAfternoonTimePn = new TimePanel(Settings.propAfternoonTime.getInt());
+    mEveningTimePn   = new TimePanel(Settings.propEveningTime.getInt());
     
     mEarlyLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.early","Early")+":");
     timeButtonsPn.add(mEarlyLb);
@@ -191,36 +188,22 @@ public class ButtonsSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    /*
-    LookAndFeelObj obj=(LookAndFeelObj)lfComboBox.getSelectedItem();
-    try {
-      UIManager.setLookAndFeel(obj.getLFClassName());
-      Settings.setLookAndFeel(obj.getLFClassName());
-    }
-    catch (Exception exc) {
-      String msg = mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
-      ErrorHandler.handle(msg, exc);
-    }
-*/
-    
-
-    Settings.setTimeBtnVisible(mTimeCheck.isSelected());
-    Settings.setUpdateBtnVisible(updateCheck.isSelected());
-    Settings.setPreferencesBtnVisible(settingsCheck.isSelected());
+    Settings.propShowTimeButtons.setBoolean(mTimeCheck.isSelected());
+    Settings.propShowUpdateButton.setBoolean(updateCheck.isSelected());
+    Settings.propShowPreferencesButton.setBoolean(settingsCheck.isSelected());
     
     if (textOnlyRadio.isSelected()) {
-      Settings.setButtonSettings(Settings.TEXT_ONLY);
+      Settings.propToolbarButtonStyle.setString("text");
     } else if (picOnlyRadio.isSelected()) {
-      Settings.setButtonSettings(Settings.ICON_ONLY);
+      Settings.propToolbarButtonStyle.setString("icon");
     } else {
-      Settings.setButtonSettings(Settings.TEXT_AND_ICON);
+      Settings.propToolbarButtonStyle.setString("text&icon");
     }
     
-    Settings.setEarlyTime(mEarlyTimePn.getTime());
-    Settings.setMorningTime(mAfternoonTimePn.getTime());
-    Settings.setMiddayTime(mMiddayTimePn.getTime());
-    Settings.setEveningTime(mEveningTimePn.getTime());
-       
+    Settings.propEarlyTime.setInt(mEarlyTimePn.getTime());
+    Settings.propMiddayTime.setInt(mMiddayTimePn.getTime());
+    Settings.propAfternoonTime.setInt(mAfternoonTimePn.getTime());
+    Settings.propEveningTime.setInt(mEveningTimePn.getTime());
   }
 
   
@@ -256,7 +239,6 @@ class TimePanel extends JPanel {
    
     mTimeSp = new JSpinner(new SpinnerDateModel());
     mTimeSp.setEditor(new JSpinner.DateEditor(mTimeSp, timePattern));
-    mTimeSp.setBorder(null);
    
     add(mTimeSp,BorderLayout.WEST);
     setTime(minutes);

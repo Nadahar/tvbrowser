@@ -23,14 +23,13 @@
  *   $Author$
  * $Revision$
  */
- 
- 
 package tvbrowser.ui.filter;
 
 import java.io.*;
 import java.util.*;
 
 import util.exc.*;
+import tvbrowser.core.Settings;
 import tvbrowser.ui.filter.filters.*;
 
 class Token {
@@ -74,7 +73,7 @@ public class UserFilter extends AbstractFilter {
   private static char[] ruleLine;
   private static Token curToken;
     
-  private Node root, curNode;
+  private Node root;
   
   
   public UserFilter(String name) {
@@ -112,7 +111,8 @@ public class UserFilter extends AbstractFilter {
   public void store() {
     ObjectOutputStream out=null;
     try {
-      out=new ObjectOutputStream(new FileOutputStream(new File(tvbrowser.core.Settings.getFilterDirectory(),mName+".filter")));
+      String filterDir = Settings.propFilterDirectory.getString();
+      out=new ObjectOutputStream(new FileOutputStream(new File(filterDir, mName+".filter")));
       out.writeInt(1);  // version
       out.writeObject(mName);
       out.writeObject(mRule);
@@ -169,7 +169,6 @@ public class UserFilter extends AbstractFilter {
         
           ruleLine=rule.toCharArray();
           curInx=0;
-          Token curToken=null;
           ArrayList list=new ArrayList();
           do {
               curToken=readNextToken();    
@@ -473,16 +472,16 @@ public class UserFilter extends AbstractFilter {
   }
 
   class NotNode extends Node {
-      private Node n;
+      private Node node;
       public NotNode() {
       }
     
       public void addNode(Node n) {
-          this.n=n;
+          node=n;
       }
     
       public boolean accept(devplugin.Program prog) {
-          return !n.accept(prog);        
+          return !node.accept(prog);        
       }
     
       public void dump() {
@@ -505,7 +504,6 @@ public class UserFilter extends AbstractFilter {
       }
     
       public boolean containsRuleComponent(String compName) {
-        boolean result=mRule.getName().equalsIgnoreCase(compName);
         return (mRule.getName().equalsIgnoreCase(compName)); 
       }
     

@@ -23,20 +23,16 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.settings;
+
+import java.awt.BorderLayout;
 
 import javax.swing.*;
 
 import tvbrowser.core.PluginLoader;
-
-
-import java.awt.*;
-
-import devplugin.SettingsTab;
+import tvbrowser.core.Settings;
 import devplugin.Plugin;
-
-
+import devplugin.SettingsTab;
 
 public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListener {
  
@@ -83,7 +79,9 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
      
     if (mPlugin.getButtonText()!=null) {
       mAddToToolbarCb=new JCheckBox("Plugin in Werkzeugleiste anzeigen");
-      mAddToToolbarCb.setSelected(tvbrowser.core.Settings.getPluginButtonVisible(mPlugin));
+      String pluginClassName = mPlugin.getClass().getName();
+      boolean hidden = Settings.propHiddenPluginButtons.containsItem(pluginClassName);
+      mAddToToolbarCb.setSelected(! hidden);
       JPanel panel=new JPanel(new BorderLayout());
       panel.add(mAddToToolbarCb,BorderLayout.WEST);
       contentPanel.add(panel); 
@@ -109,10 +107,17 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
       if (mSettingsTab!=null) {
         mSettingsTab.saveSettings();
       }
-      if (mPluginIsInstalled && mPlugin.getButtonText()!=null && mAddToToolbarCb!=null) {
-        tvbrowser.core.Settings.setPluginButtonVisible(mPlugin,mAddToToolbarCb.isSelected());
-      }  
       
+      if (mPluginIsInstalled && mPlugin.getButtonText()!=null && mAddToToolbarCb!=null) {
+        boolean hidden = ! mAddToToolbarCb.isSelected();
+        String className = mPlugin.getClass().getName();
+        if (hidden) {
+          Settings.propHiddenPluginButtons.removeItem(className);
+        }
+        else if (! Settings.propHiddenPluginButtons.containsItem(className)) {
+          Settings.propHiddenPluginButtons.addItem(className);
+        }
+      }  
     }
 
   

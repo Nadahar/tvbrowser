@@ -60,8 +60,8 @@ public class PictureButton extends JButton implements FocusListener {
     setText(title);
     
     setOpaque(false);
-    setVerticalTextPosition(AbstractButton.BOTTOM);
-    setHorizontalTextPosition(AbstractButton.CENTER);
+    setVerticalTextPosition(SwingConstants.BOTTOM);
+    setHorizontalTextPosition(SwingConstants.CENTER);
     setFont(TEXT_FONT);
     setMargin(NULL_INSETS);
     setFocusPainted(false);
@@ -84,7 +84,7 @@ public class PictureButton extends JButton implements FocusListener {
   }
   
   public void setText(String text) {
-    if (Settings.getButtonSettings() == Settings.ICON_ONLY) {
+    if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
       super.setText(null);
       super.setToolTipText(text);
     } else {
@@ -96,7 +96,7 @@ public class PictureButton extends JButton implements FocusListener {
   
   
   public void setIcon(Icon icon) {
-    if (Settings.getButtonSettings() == Settings.TEXT_ONLY) {
+    if (Settings.propToolbarButtonStyle.getString().equals("text")) {
       super.setIcon(null);
     } else {
       super.setIcon(icon);

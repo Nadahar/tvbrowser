@@ -23,22 +23,20 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.settings;
 
-import devplugin.SettingsTab;
-
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
 
+import javax.swing.*;
 
 import tvbrowser.core.Settings;
-
+import devplugin.SettingsTab;
 
 public class DirectoriesSettingsTab implements SettingsTab {
   
@@ -57,8 +55,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
      * Creates the settings panel for this tab.
      */
   public JPanel createSettingsPanel() {
-    
-    
+    String msg;
     
     JPanel mainPanel=new JPanel(new BorderLayout());
     mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -69,15 +66,17 @@ public class DirectoriesSettingsTab implements SettingsTab {
     checkBoxPanel.setBorder(BorderFactory.createEmptyBorder(0,0,3,0));
     
     mUseDefaultFolderCB=new JCheckBox(mLocalizer.msg("defaultfolders", "Use default folders"));
-    mUseDefaultFolderCB.setSelected(Settings.getUseDefaultDirectories());
+    mUseDefaultFolderCB.setSelected(Settings.propUseDefaultDirectories.getBoolean());
     
     checkBoxPanel.add(mUseDefaultFolderCB);
     
     content.add(checkBoxPanel);
     
     final DirectoryChooser directoriesPanel=new DirectoryChooser();
-    
-    mTVDataFolderPanel=new DirectoryChooserPanel(mLocalizer.msg("tvdatadir", "tv data folder"),Settings.getTVDataDirectory());
+
+    msg = mLocalizer.msg("tvdatadir", "tv data folder");
+    String tvDataDir = Settings.propTVDataDirectory.getString();    
+    mTVDataFolderPanel=new DirectoryChooserPanel(msg, tvDataDir);
     directoriesPanel.add(mTVDataFolderPanel);
     directoriesPanel.setEnabled(!mUseDefaultFolderCB.isSelected());
 
@@ -101,14 +100,13 @@ public class DirectoriesSettingsTab implements SettingsTab {
      */
   public void saveSettings() {
     if (mUseDefaultFolderCB.isSelected()) {
-      Settings.setTVDataDirectory(Settings.TVDATA_DIR);
-      //Settings.setDataServiceCacheDirectory(Settings.DATASERVICECACHE_DIR);
+      String defaultDir = Settings.propTVDataDirectory.getDefault();
+      Settings.propTVDataDirectory.setString(defaultDir);
     }
     else {  
-      Settings.setTVDataDirectory(mTVDataFolderPanel.getText());
-      //Settings.setDataServiceCacheDirectory(mDataServiceCachPanel.getText());
+      Settings.propTVDataDirectory.setString(mTVDataFolderPanel.getText());
     }
-    Settings.setUseDefaultDirectories(mUseDefaultFolderCB.isSelected());
+    Settings.propUseDefaultDirectories.setBoolean(mUseDefaultFolderCB.isSelected());
   }
 
   

@@ -471,7 +471,7 @@ public class BrowserLauncher {
 	}
   
   public static void openURL(String url) {
-    String browserExecutable = tvbrowser.core.Settings.getUserDefinedWebbrowser();
+    String browserExecutable = tvbrowser.core.Settings.propUserDefinedWebbrowser.getString();
     
     try {
     

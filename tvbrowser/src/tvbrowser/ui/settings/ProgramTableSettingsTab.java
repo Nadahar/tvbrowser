@@ -117,7 +117,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       mLocalizer.msg("timeSynchronous", "Time synchronous")
     };
     mProgramArrangementCB = new JComboBox(arrangementArr);
-    if (Settings.getTableLayout() == Settings.TABLE_LAYOUT_COMPACT) {
+    if (Settings.propTableLayout.getString().equals("compact")) {
       mProgramArrangementCB.setSelectedIndex(0);
     } else {
       mProgramArrangementCB.setSelectedIndex(1);
@@ -143,17 +143,17 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       mLocalizer.msg("style.timeOfDay", "Time of day"),
     };
     mBackgroundStyleCB = new JComboBox(msgArr);
-    String style = Settings.getTableBackgroundStyle();
+    String style = Settings.propTableBackgroundStyle.getString();
     if (style.equals("white")) {
       mBackgroundStyleCB.setSelectedIndex(0);
     }
-    if (style.equals("oneimage")) {
+    if (style.equals("oneImage")) {
       mBackgroundStyleCB.setSelectedIndex(1);
     }
-    if (style.equals("timeblock")) {
+    if (style.equals("timeBlock")) {
       mBackgroundStyleCB.setSelectedIndex(2);
     }
-    if (style.equals("timeofday")) {
+    if (style.equals("timeOfDay")) {
       mBackgroundStyleCB.setSelectedIndex(3);
     }
     mBackgroundStyleCB.addActionListener(new ActionListener() {
@@ -171,7 +171,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     msg = mLocalizer.msg("oneImage.image", "Image");
     mOneImagePanel.add(new JLabel(msg));
-    mOneImageBackgroundTF = new JTextField(Settings.getOneImageBackground(), 15);
+    mOneImageBackgroundTF = new JTextField(Settings.propOneImageBackground.getString(), 15);
     mOneImagePanel.add(mOneImageBackgroundTF);
     mOneImagePanel.add(createBrowseButton(mOneImageBackgroundTF));
     
@@ -183,7 +183,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     msg = mLocalizer.msg("timeBlock.blockSize", "Block size");
     p1.add(new JLabel(msg));
     mTimeBlockSizeSp = new JSpinner();
-    mTimeBlockSizeSp.setValue(new Integer(Settings.getTimeBlockSize()));
+    mTimeBlockSizeSp.setValue(new Integer(Settings.propTimeBlockSize.getInt()));
     p1.add(mTimeBlockSizeSp);
     msg = mLocalizer.msg("timeBlock.hours", "hours");
     p1.add(new JLabel(msg));
@@ -193,18 +193,18 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     msg = mLocalizer.msg("timeBlock.background1", "Image 1");
     p1.add(new JLabel(msg));
-    mTimeBlockBackground1TF = new JTextField(Settings.getTimeBlockBackground1(), 15);
+    mTimeBlockBackground1TF = new JTextField(Settings.propTimeBlockBackground1.getString(), 15);
     p1.add(mTimeBlockBackground1TF);
     p1.add(createBrowseButton(mTimeBlockBackground1TF));
     
     msg = mLocalizer.msg("timeBlock.background2", "Image 2");
     p1.add(new JLabel(msg));
-    mTimeBlockBackground2TF = new JTextField(Settings.getTimeBlockBackground2(), 15);
+    mTimeBlockBackground2TF = new JTextField(Settings.propTimeBlockBackground2.getString(), 15);
     p1.add(mTimeBlockBackground2TF);
     p1.add(createBrowseButton(mTimeBlockBackground2TF));
     
     msg = mLocalizer.msg("timeBlock.showWest", "Show left border");
-    mTimeBlockShowWestChB = new JCheckBox(msg, Settings.getTimeBlockShowWest());
+    mTimeBlockShowWestChB = new JCheckBox(msg, Settings.propTimeBlockShowWest.getBoolean());
     mTimeBlockShowWestChB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleTimeBlockShowWest();
@@ -218,7 +218,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     msg = mLocalizer.msg("timeBlock.west1", "Border image 1");
     mTimeBlockWestImage1Lb = new JLabel(msg);
     p1.add(mTimeBlockWestImage1Lb);
-    mTimeBlockWestImage1TF = new JTextField(Settings.getTimeBlockWestImage1(), 15);
+    mTimeBlockWestImage1TF = new JTextField(Settings.propTimeBlockWestImage1.getString(), 15);
     p1.add(mTimeBlockWestImage1TF);
     mTimeBlockWestImage1Bt = createBrowseButton(mTimeBlockWestImage1TF);
     p1.add(mTimeBlockWestImage1Bt);
@@ -226,7 +226,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     msg = mLocalizer.msg("timeBlock.west2", "Border image 2");
     mTimeBlockWestImage2Lb = new JLabel(msg);
     p1.add(mTimeBlockWestImage2Lb);
-    mTimeBlockWestImage2TF = new JTextField(Settings.getTimeBlockWestImage2(), 15);
+    mTimeBlockWestImage2TF = new JTextField(Settings.propTimeBlockWestImage2.getString(), 15);
     p1.add(mTimeBlockWestImage2TF);
     mTimeBlockWestImage2Bt = createBrowseButton(mTimeBlockWestImage2TF);
     p1.add(mTimeBlockWestImage2Bt);
@@ -235,27 +235,27 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mTimeOfDayPanel = new JPanel(new TabLayout(3));
 
     mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.edge", "Edge")));
-    mTimeOfDayEdgeTF = new JTextField(Settings.getTimeOfDayBackgroundEdge(), 15);
+    mTimeOfDayEdgeTF = new JTextField(Settings.propTimeOfDayBackgroundEdge.getString(), 15);
     mTimeOfDayPanel.add(mTimeOfDayEdgeTF);
     mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEdgeTF));
 
     mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.early", "Early")));
-    mTimeOfDayEarlyTF = new JTextField(Settings.getTimeOfDayBackgroundEarly(), 15);
+    mTimeOfDayEarlyTF = new JTextField(Settings.propTimeOfDayBackgroundEarly.getString(), 15);
     mTimeOfDayPanel.add(mTimeOfDayEarlyTF);
     mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEarlyTF));
 
     mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.midday", "Midday")));
-    mTimeOfDayMiddayTF = new JTextField(Settings.getTimeOfDayBackgroundMidday(), 15);
+    mTimeOfDayMiddayTF = new JTextField(Settings.propTimeOfDayBackgroundMidday.getString(), 15);
     mTimeOfDayPanel.add(mTimeOfDayMiddayTF);
     mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayMiddayTF));
 
     mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.afternoon", "Afternoon")));
-    mTimeOfDayAfternoonTF = new JTextField(Settings.getTimeOfDayBackgroundAfternoon(), 15);
+    mTimeOfDayAfternoonTF = new JTextField(Settings.propTimeOfDayBackgroundAfternoon.getString(), 15);
     mTimeOfDayPanel.add(mTimeOfDayAfternoonTF);
     mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayAfternoonTF));
 
     mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.evening", "Evening")));
-    mTimeOfDayEveningTF = new JTextField(Settings.getTimeOfDayBackgroundEvening(), 15);
+    mTimeOfDayEveningTF = new JTextField(Settings.propTimeOfDayBackgroundEvening.getString(), 15);
     mTimeOfDayPanel.add(mTimeOfDayEveningTF);
     mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEveningTF));
     
@@ -263,7 +263,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     JPanel colWidthPn=new JPanel(new BorderLayout());
     
     colWidthPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columnwidth","column width")));
-    mColWidthSl=new JSlider(SwingConstants.HORIZONTAL,0,300,Settings.getColumnWidth());
+    mColWidthSl=new JSlider(SwingConstants.HORIZONTAL, 0, 300, Settings.propColumnWidth.getInt());
     colWidthPn.add(mColWidthSl,BorderLayout.WEST);
     mColWidthSl.setPreferredSize(new Dimension(300,15));
     
@@ -302,12 +302,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     int minutes;
     Calendar cal = Calendar.getInstance();
-    minutes=Settings.getProgramTableStartOfDay();    
+    minutes = Settings.propProgramTableStartOfDay.getInt();    
     cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
     cal.set(Calendar.MINUTE, minutes % 60);
     mStartOfDayTimeSp.setValue(cal.getTime());
     
-    minutes=Settings.getProgramTableEndOfDay();    
+    minutes = Settings.propProgramTableEndOfDay.getInt();    
     cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
     cal.set(Calendar.MINUTE, minutes % 60);
     mEndOfDayTimeSp.setValue(cal.getTime());
@@ -326,8 +326,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     switch (mBackgroundStyleCB.getSelectedIndex()) {
       case 0:  newPn = null; break;            // white
       case 1:  newPn = mOneImagePanel; break;  // oneimage
-      case 2:  newPn = mTimeBlockPanel; break; // timeblock
-      default: newPn = mTimeOfDayPanel; break; // timeofday
+      case 3: newPn = mTimeOfDayPanel; break; // timeofday
+      default:  newPn = mTimeBlockPanel; break; // timeblock
     }
     
     mBackgoundPanel.removeAll();
@@ -379,48 +379,48 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    */
   public void saveSettings() {
     if (mProgramArrangementCB.getSelectedIndex() == 0) {
-      Settings.setTableLayout(Settings.TABLE_LAYOUT_COMPACT);
+      Settings.propTableLayout.setString("compact");
     } else {
-      Settings.setTableLayout(Settings.TABLE_LAYOUT_TIME_SYNCHRONOUS);
+      Settings.propTableLayout.setString("timeSynchronous");
     }
     
     String backgroundStyle;
     switch (mBackgroundStyleCB.getSelectedIndex()) {
       case 0:  backgroundStyle = "white"; break;
-      case 1:  backgroundStyle = "oneimage"; break;
-      case 2:  backgroundStyle = "timeblock"; break;
-      default: backgroundStyle = "timeofday"; break;
+      case 1:  backgroundStyle = "oneImage"; break;
+      case 2:  backgroundStyle = "timeBlock"; break;
+      default: backgroundStyle = "timeOfDay"; break;
     }
-    Settings.setTableBackgroundStyle(backgroundStyle);
+    Settings.propTableBackgroundStyle.setString(backgroundStyle);
     
-    Settings.setOneImageBackground(mOneImageBackgroundTF.getText());
+    Settings.propOneImageBackground.setString(mOneImageBackgroundTF.getText());
     
     Integer blockSize = (Integer) mTimeBlockSizeSp.getValue();
-    Settings.setTimeBlockSize(blockSize.intValue());
-    Settings.setTimeBlockBackground1(mTimeBlockBackground1TF.getText());
-    Settings.setTimeBlockBackground2(mTimeBlockBackground2TF.getText());
-    Settings.setTimeBlockShowWest(mTimeBlockShowWestChB.isSelected());
-    Settings.setTimeBlockWestImage1(mTimeBlockWestImage1TF.getText());
-    Settings.setTimeBlockWestImage2(mTimeBlockWestImage2TF.getText());
+    Settings.propTimeBlockSize.setInt(blockSize.intValue());
+    Settings.propTimeBlockBackground1.setString(mTimeBlockBackground1TF.getText());
+    Settings.propTimeBlockBackground2.setString(mTimeBlockBackground2TF.getText());
+    Settings.propTimeBlockShowWest.setBoolean(mTimeBlockShowWestChB.isSelected());
+    Settings.propTimeBlockWestImage1.setString(mTimeBlockWestImage1TF.getText());
+    Settings.propTimeBlockWestImage2.setString(mTimeBlockWestImage2TF.getText());
 
-    Settings.setTimeOfDayBackgroundEdge(mTimeOfDayEdgeTF.getText());
-    Settings.setTimeOfDayBackgroundEarly(mTimeOfDayEarlyTF.getText());
-    Settings.setTimeOfDayBackgroundMidday(mTimeOfDayMiddayTF.getText());
-    Settings.setTimeOfDayBackgroundAfternoon(mTimeOfDayAfternoonTF.getText());
-    Settings.setTimeOfDayBackgroundEvening(mTimeOfDayEveningTF.getText());
+    Settings.propTimeOfDayBackgroundEdge.setString(mTimeOfDayEdgeTF.getText());
+    Settings.propTimeOfDayBackgroundEarly.setString(mTimeOfDayEarlyTF.getText());
+    Settings.propTimeOfDayBackgroundMidday.setString(mTimeOfDayMiddayTF.getText());
+    Settings.propTimeOfDayBackgroundAfternoon.setString(mTimeOfDayAfternoonTF.getText());
+    Settings.propTimeOfDayBackgroundEvening.setString(mTimeOfDayEveningTF.getText());
     
-    Settings.setColumnWidth(mColWidthSl.getValue());
+    Settings.propColumnWidth.setInt(mColWidthSl.getValue());
     
     Calendar cal=Calendar.getInstance();
     Date startTime = (Date) mStartOfDayTimeSp.getValue();
     cal.setTime(startTime);
     int minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-    Settings.setProgramTableStartOfDay(minutes);
+    Settings.propProgramTableStartOfDay.setInt(minutes);
     
     Date endTime = (Date) mEndOfDayTimeSp.getValue();
     cal.setTime(endTime);
     minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-    Settings.setProgramTableEndOfDay(minutes);
+    Settings.propProgramTableEndOfDay.setInt(minutes);
     
     
   }
