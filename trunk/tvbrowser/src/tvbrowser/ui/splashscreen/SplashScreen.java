@@ -32,6 +32,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 
 import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
@@ -98,9 +99,15 @@ public class SplashScreen extends JWindow implements Splash {
   
 
   
-  public void setMessage(String msg) {
-    mMessage = msg;
-    repaint();
+  public void setMessage(final String msg) {
+    SwingUtilities.invokeLater(new Runnable() {
+
+      public void run() {
+        mMessage = msg;
+        repaint();
+      }
+      
+    });
   }
 
 	
