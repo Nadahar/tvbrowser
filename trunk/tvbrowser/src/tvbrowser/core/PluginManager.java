@@ -63,7 +63,7 @@ public class PluginManager {
   private Plugin[] mContextMenuPluginList;
   private Plugin mContextMenuDefaultPlugin;
   
-
+ 
   private PluginManager() {
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramAdded(ChannelDayProgram prog) {
@@ -235,10 +235,16 @@ public class PluginManager {
 		  	fNewFile.delete();
 		  }
 		  fileList[i].renameTo(fNewFile);
-      pendingPlugins.add(fNewFile.getName());
-	  }
+      String pluginName=fNewFile.getName().substring(0,fNewFile.getName().length()-4);
+      pluginName=pluginName.toLowerCase()+"."+pluginName;
+	    
+      Settings.addInstalledPlugin(pluginName);
+      
+    }
        
+     
   }
+
 
   /**
    * Kind of destructor: call plugins to store their data and settings

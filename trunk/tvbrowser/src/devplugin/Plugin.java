@@ -77,6 +77,10 @@ abstract public class Plugin {
   private Icon mMarkIcon;
   
   
+  /**
+   * @deprecated Use methode getParentFrame() instead.
+   */
+  protected java.awt.Frame parent;
   
   /**
    * Called by the host-application to provide access to the plugin manager.
@@ -113,6 +117,8 @@ abstract public class Plugin {
    */
   final public void setParent(java.awt.Frame parent) {
     this.mParentFrame = parent;
+    
+    this.parent=parent;
   }
   
   

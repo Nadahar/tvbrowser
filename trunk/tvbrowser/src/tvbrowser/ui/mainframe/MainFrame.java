@@ -33,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.swing.*;
 
@@ -800,9 +801,15 @@ public void askForDataUpdate() {
 
 
 public void showHelpDialog() {
-  String helproot = mLocalizer.msg("helproot", "help/default/index.html");
+  
+  Locale locale=Locale.getDefault();
+  String language=locale.getLanguage();
+      
   try {
-    java.io.File indexFile = new java.io.File(helproot);
+    java.io.File indexFile = new java.io.File("help/"+language+"/index.html");
+    if (!indexFile.exists()) {
+      indexFile = new java.io.File("help/default/index.html");
+    }    
     util.ui.BrowserLauncher.openURL("file://"+indexFile.getAbsolutePath());
   }catch(java.io.IOException e) {
     e.printStackTrace();

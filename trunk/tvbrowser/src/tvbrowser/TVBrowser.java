@@ -189,6 +189,7 @@ public class TVBrowser {
     // Maybe there are plugins to install (.jar.inst files)
     PluginManager.installPendingPlugins();
     
+    
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);
