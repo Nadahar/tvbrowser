@@ -153,6 +153,8 @@ public class CapturePlugin extends devplugin.Plugin {
         
         Window comp = UiUtilities.getLastModalChildOf(getParentFrame()); 
 
+        System.out.println(comp.getClass().toString());
+        
         if (mConfig.getDevices().size() <= 0) {
             JOptionPane.showMessageDialog(comp, mLocalizer.msg("CreateDevice","Please create Device first!"));
             
@@ -173,7 +175,7 @@ public class CapturePlugin extends devplugin.Plugin {
         int x = comp.getWidth() / 2;
         int y = comp.getHeight() / 2;
 
-        select.show(comp, x, y);
+        select.show(comp.getFocusOwner(), x, y);
     }
 
     /*
