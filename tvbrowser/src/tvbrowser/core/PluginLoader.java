@@ -413,6 +413,10 @@ public class PluginLoader {
           return channelDayProgram.getPrograms();
         }
 
+        /**
+         * @deprecated Use {@link #search(String, boolean, ProgramFieldType[], Date, int, Channel[], boolean)}
+         *             instead.
+         */
         public Program[] search(String regex, boolean inTitle, boolean inText,
           boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
           int nrDays)
@@ -420,6 +424,15 @@ public class PluginLoader {
         {
           return TvDataSearcher.getInstance().search(regex, inTitle, inText,
             caseSensitive, channels, startDate, nrDays);
+        }
+
+        public Program[] search(String regex, boolean caseSensitive,
+          ProgramFieldType[] fieldArr, devplugin.Date startDate, int nrDays,
+          Channel[] channels, boolean sortByStartTime)
+          throws TvBrowserException
+        {
+          return TvDataSearcher.getInstance().search(regex, caseSensitive,
+            fieldArr, startDate, nrDays, channels, sortByStartTime);
         }
 
         public Plugin[] getInstalledPlugins() {

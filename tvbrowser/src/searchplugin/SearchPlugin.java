@@ -23,15 +23,14 @@
  *   $Author$
  * $Revision$
  */
-
 package searchplugin;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-
 import devplugin.*;
 
 /**
@@ -41,53 +40,71 @@ import devplugin.*;
  */
 public class SearchPlugin extends Plugin {
 
-  /** The localizer for this class. */  
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
+  /** The localizer for this class. */
+  private static final util.ui.Localizer mLocalizer =
+    util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
 
-private static SearchPlugin mInstance;
+  private static SearchPlugin mInstance;
 
- static ArrayList searchHistory=new ArrayList();
- static final int MAXHISTORYLENGTH=10;
-  
+  private static SearchFormSettings[] mSearchHistory;
+
+
   /**
    * Creates a new instance of SearchPlugin.
    */
   public SearchPlugin() {
-  	mInstance=this;
+    mInstance = this;
   }
 
   public void readData(ObjectInputStream in)
-	  throws /*IOException, */ClassNotFoundException
-	{
-	  try {
-	  	int version = in.readInt();
-	  	int cntHistItems=in.readInt();
-	  	//searchHistory.new HistoryItem[cntHistItems];
-	  	
-	  	for (int i=0;i<cntHistItems;i++) {
-	  		//searchHistory[i]=new HistoryItem(in);
-	  		searchHistory.add(new SearchSettings(in));
-	  	}
-	  	
-	  }catch (IOException e) {
-	  	
-	  }
+    throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+    
+    int historySize = in.readInt();
+    mSearchHistory = new SearchFormSettings[historySize];
+    for (int i = 0; i < historySize; i++) {
+      SearchFormSettings settings;
 
-	}
-	
-	public void writeData(ObjectOutputStream out) throws IOException {
-		out.writeInt(1); // version
+      if (version > 1) {
+        settings = new SearchFormSettings(in);
+      } else {
+        // version 1
+        String searchText = (String) in.readObject();
+        in.readBoolean(); // searchInTitle
+        boolean searchInInfoText = in.readBoolean();
+        boolean caseSensitive = in.readBoolean();
+        int option = in.readInt();
+        
+        settings = new SearchFormSettings(searchText);
+        if (searchInInfoText) {
+          settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
+        } else {
+          settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+        }
+        settings.setCaseSensitive(caseSensitive);
+        switch (option) {
+          case 0: settings.setMatch(SearchFormSettings.MATCH_EXACTLY); break;
+          case 1: settings.setMatch(SearchFormSettings.MATCH_KEYWORD); break;
+          case 2: settings.setMatch(SearchFormSettings.MATCH_REGULAR_EXPRESSION); break;
+        }
+      }
+      
+      mSearchHistory[i] = settings;
+    }
+  }
 
-		out.writeInt(searchHistory.size());
-		Iterator iterator=searchHistory.iterator();
-		while (iterator.hasNext()) {
-			((SearchSettings)iterator.next()).writeData(out);			
-		}		
-	  }
-  
-  
-  
+
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(2); // version
+
+    out.writeInt(mSearchHistory.length);
+    for (int i = 0; i < mSearchHistory.length; i++) {
+      mSearchHistory[i].writeData(out);
+    }
+  }
+
+
   /**
    * This method is invoked by the host-application if the user has choosen your
    * plugin from the menu.
@@ -96,8 +113,6 @@ private static SearchPlugin mInstance;
     SearchDialog dlg = new SearchDialog(getParentFrame());
     UiUtilities.centerAndShow(dlg);
   }
-
-
 
   /**
    * This method is invoked by the host-application if the user has choosen your
@@ -109,44 +124,52 @@ private static SearchPlugin mInstance;
     UiUtilities.centerAndShow(dlg);
   }
 
-
-
   /**
    * Returns the name of the file, containing your plugin icon (in the jar-File).
-   */ 
+   */
   public String getMarkIconName() {
     return "searchplugin/Find16.gif";
   }
-
-
 
   /**
    * This method is called by the host-application to show the plugin in the
    * context menu.
    */
   public String getContextMenuItemText() {
-    return mLocalizer.msg( "searchRepetion", "Search repetition" );
+    return mLocalizer.msg("searchRepetion", "Search repetition");
   }
 
-  
   public String getButtonIconName() {
     return "searchplugin/Find16.gif";
   }
-  
+
   public String getButtonText() {
-  	return mLocalizer.msg( "searchPrograms", "Search programs" );
+    return mLocalizer.msg("searchPrograms", "Search programs");
   }
-  
+
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg( "searchPrograms" ,"Search programs" );
-    String desc = mLocalizer.msg( "description" ,"Allows searching programs containing a certain text." );
-    String author = "Til Schneider, www.murfman.de" ;
+    String name = mLocalizer.msg("searchPrograms", "Search programs");
+    String desc =
+      mLocalizer.msg(
+        "description",
+        "Allows searching programs containing a certain text.");
+    String author = "Til Schneider, www.murfman.de";
 
     return new PluginInfo(name, desc, author, new Version(1, 4));
   }
-  
-  public static SearchPlugin getInstance() {
-	return mInstance;
-  } 
 
-} 
+  public static SearchPlugin getInstance() {
+    return mInstance;
+  }
+  
+  
+  public static SearchFormSettings[] getSearchHistory() {
+    return mSearchHistory;
+  }
+
+
+  public static void setSearchHistory(SearchFormSettings[] history) {
+    mSearchHistory = history;
+  }
+
+}
