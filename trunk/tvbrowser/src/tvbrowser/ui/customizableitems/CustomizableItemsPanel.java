@@ -47,7 +47,8 @@ public class CustomizableItemsPanel extends JPanel {
 
   private final DefaultListModel mLeftListModel, mRightListModel;
   private final JList mLeftList, mRightList;
-  
+  private JLabel mRightLabel, mLeftLabel;
+
   private JButton mRightBt, mLeftBt, mUpBt, mDownBt;
   private ArrayList mListeners;
   
@@ -95,14 +96,14 @@ public class CustomizableItemsPanel extends JPanel {
     }
     );
 
-    JLabel leftLabel=new JLabel(leftText);
-    JLabel rightLabel=new JLabel(rightText);
+    mLeftLabel=new JLabel(leftText);
+    mRightLabel=new JLabel(rightText);
 
-    leftLabel.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
-    rightLabel.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
+    mLeftLabel.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
+    mRightLabel.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
 
-    leftPanel.add(leftLabel,BorderLayout.NORTH);
-    rightPanel.add(rightLabel,BorderLayout.NORTH);
+    leftPanel.add(mLeftLabel,BorderLayout.NORTH);
+    rightPanel.add(mRightLabel,BorderLayout.NORTH);
 
     leftPanel.add(new JScrollPane(mLeftList),BorderLayout.CENTER);
     rightPanel.add(new JScrollPane(mRightList),BorderLayout.CENTER);
@@ -188,7 +189,20 @@ public class CustomizableItemsPanel extends JPanel {
     
     updateEnabled();
   }
-  
+
+
+  public void setEnabled(boolean enabled) {
+    super.setEnabled(enabled);
+    mLeftList.setEnabled(enabled);
+    mRightList.setEnabled(enabled);
+    mRightBt.setEnabled(enabled);
+    mLeftBt.setEnabled(enabled);
+    mUpBt.setEnabled(enabled);
+    mDownBt.setEnabled(enabled);
+    mRightLabel.setEnabled(enabled);
+    mLeftLabel.setEnabled(enabled);
+  }
+
   public void clearLeft() {
     mLeftListModel.clear();
   }

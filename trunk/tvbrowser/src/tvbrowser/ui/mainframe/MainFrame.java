@@ -242,12 +242,11 @@ private Node mDateChannelNode;
 
     mToolBarModel = DefaultToolBarModel.getInstance();
     mToolBar = new ToolBar(mToolBarModel);
-    mToolBar.loadSettings();
     String location = mToolBar.getToolbarLocation();
-    if (location!=null) {
+    if (Settings.propIsTooolbarVisible.getBoolean()) {
       contentPane.add(mToolBar, location);
-      System.out.println("show toolbar at "+location);
     }
+
     contentPane.invalidate();
     contentPane.updateUI();
 
@@ -692,14 +691,8 @@ public void showHelpDialog() {
 
 
   public void setShowToolbar(boolean visible) {
-    if (visible) {
-      Settings.propToolbarLocation.setString("north");
-    }
-    else {
-      Settings.propToolbarLocation.setString("hidden");
-    }
+    Settings.propIsTooolbarVisible.setBoolean(visible);
     updateToolbar();
-    jcontentPane.validate();
   }
   
   private void updateViews() {
@@ -762,8 +755,6 @@ public void showHelpDialog() {
   }
 
   public void setShowPluginOverview(boolean visible) {
-    System.out.println("show plugin overview: "+visible);
-
     if (visible) {
       mPluginsNode.setLeaf(new PluginView());
     }
