@@ -499,7 +499,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
    * Gets the list of the channels that are available by this data service.
    */
   public Channel[] getAvailableChannels() {
-    System.out.println("call: getAvailableChannels()");
     
     ArrayList channelList=new ArrayList();
     Iterator it=mChannelGroupSet.iterator();
@@ -511,11 +510,19 @@ public class TvBrowserDataService extends AbstractTvDataService {
       }       
     }
     
+    /* If we could not find any channel we check, if there is a channel file
+     * from a previous tvbrowser version. If the file exists, we ask the user
+     * to load the new channel files from the internet.
+     */
     
     if (channelList.size()==0) {
+      
+      File file = new File(mDataDir, ChannelList.FILE_NAME);
+      if (file.exists()) {
+      
          Object[] options = {"Jetzt herunterladen (empfohlen)",
                     "Sp\u00E4ter neu einrichten"};
-      int n = JOptionPane.showOptionDialog(null,
+        int n = JOptionPane.showOptionDialog(null,
            "Es befindet sich keine aktuelle Senderliste auf dem System.\n" +
            "Senderlisten werden ben\u00F6tigt, um TV-Browser mitzuteilen,\nwelche Sender zur Verf\u00FCgung stehen.\n\n" +
            "Soll nun eine aktuelle Senderliste heruntergeladen werden? (erfordert eine Internetverbinung)",
@@ -526,26 +533,27 @@ public class TvBrowserDataService extends AbstractTvDataService {
            options,
            options[0]);
       
-      if (n==0) {
-        final ProgressWindow win=new ProgressWindow(null);
-        mChannelsTempArr=null;
-        win.run(new Progress(){
-          public void run() {
-            try {
-              mChannelsTempArr = checkForAvailableChannels(win);
-            }catch (TvBrowserException exc) {
-              ErrorHandler.handle(exc);
+        if (n==0) {
+          final ProgressWindow win=new ProgressWindow(null);
+          mChannelsTempArr=null;
+          win.run(new Progress(){
+            public void run() {
+              try {
+                mChannelsTempArr = checkForAvailableChannels(win);
+              }catch (TvBrowserException exc) {
+                ErrorHandler.handle(exc);
+              }
             }
+          });
+          if (mChannelsTempArr==null) {
+            return new Channel[0]; 
           }
-        });
-        if (mChannelsTempArr==null) {
-          return new Channel[0]; 
-        }
-        Channel[] result=new Channel[mChannelsTempArr.length];
-        System.arraycopy(mChannelsTempArr,0,result,0,result.length);
+          Channel[] result=new Channel[mChannelsTempArr.length];
+          System.arraycopy(mChannelsTempArr,0,result,0,result.length);
     
-        return result;
-      }  
+          return result;
+        }  
+      }
     }
     
     
