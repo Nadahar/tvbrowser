@@ -39,6 +39,7 @@ import util.io.IOUtilities;
 
 import devplugin.Channel;
 import devplugin.Program;
+import devplugin.Plugin;
 
 /**
  * One program. Consists of the Channel, the time, the title and some extra
@@ -56,18 +57,22 @@ public class MutableProgram implements Program {
    * (long) description.
    */
   private static final int MAX_SHORT_INFO_LENGTH = 100;
+  
+  /** A plugin array that can be shared by all the programs that are not marked
+   * by any plugin. */
+  private static final Plugin[] EMPTY_PLUGIN_ARR = new Plugin[0];
 
   /** Contains all listeners that listen for events from this program. */
-  transient EventListenerList mListenerList;
+  private EventListenerList mListenerList;
 
   /** Containes all Plugins that mark this program. */
-  transient HashSet mMarkedBySet;
+  private Plugin[] mMarkedByPluginArr;
 
   /** Contains whether this program is currently on air. */
-  transient boolean mOnAir;
+  private boolean mOnAir;
 
   /** The cached ID of this program. */
-  transient private String mId;
+  private String mId;
 
   /** The program's title. */
   private String mTitle;
@@ -128,6 +133,8 @@ public class MutableProgram implements Program {
     mMinutes = minutes;
 
     mTitle = ""; // The title is not-null.
+    
+    mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
 
     init();
   }
@@ -188,7 +195,7 @@ public class MutableProgram implements Program {
    */
   private void init() {
     mListenerList = new EventListenerList();
-    mMarkedBySet = new HashSet();
+    mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
     mOnAir = false;
   }
 
@@ -285,25 +292,57 @@ public class MutableProgram implements Program {
 
 
   public final void mark(devplugin.Plugin plugin) {
-    mMarkedBySet.add(plugin);
-    fireStateChanged();
+    boolean alreadyMarked = getMarkedByPluginIndex(plugin) != -1;
+    if (! alreadyMarked) {
+      // Append the new plugin
+      int oldCount = mMarkedByPluginArr.length;
+      Plugin[] newArr = new Plugin[oldCount + 1];
+      System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, oldCount);
+      newArr[oldCount] = plugin;
+      mMarkedByPluginArr = newArr;
+      
+      fireStateChanged();
+    }
   }
 
 
 
   public final void unmark(devplugin.Plugin plugin) {
-    mMarkedBySet.remove(plugin);
-    fireStateChanged();
+    int idx = getMarkedByPluginIndex(plugin);
+    if (idx != -1) {
+      if (mMarkedByPluginArr.length == 1) {
+        // This was the only plugin
+        mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
+      } else {
+        int oldCount = mMarkedByPluginArr.length;
+        Plugin[] newArr = new Plugin[oldCount - 1];
+        System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, idx);
+        System.arraycopy(mMarkedByPluginArr, idx + 1, newArr, idx, oldCount - idx - 1);
+        mMarkedByPluginArr = newArr;
+      }
+      
+      fireStateChanged();
+    }
+  }
+
+  
+  
+  private int getMarkedByPluginIndex(Plugin plugin) {
+    for (int i = 0; i < mMarkedByPluginArr.length; i++) {
+      if (mMarkedByPluginArr[i] == plugin) {
+        return i;
+      }
+    }
+    
+    return -1;
   }
 
 
-
   /**
-   * Gets an iterator for all {@link devplugin.Program}s that have marked
-   * this program.
+   * Gets all {@link devplugin.Plugin}s that have marked this program.
    */
-  public Iterator getMarkedByIterator() {
-    return mMarkedBySet.iterator();
+  public Plugin[] getMarkedByPlugins() {
+    return mMarkedByPluginArr;
   }
 
 
@@ -324,7 +363,7 @@ public class MutableProgram implements Program {
 
     // This program is (or was) today -> We've got to check the time
     int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
-    int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength();
+    int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength() - 1;
 
     return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
   }

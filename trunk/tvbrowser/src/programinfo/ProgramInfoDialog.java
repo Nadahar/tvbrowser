@@ -123,13 +123,12 @@ public class ProgramInfoDialog extends JDialog {
     bodyPn.add(createTextArea(program.getActors()));
     
     // plugins
-    Iterator pluginIter = program.getMarkedByIterator();
-    if (pluginIter.hasNext()) {
+    Plugin[] markedByPluginArr = program.getMarkedByPlugins();
+    if (markedByPluginArr.length != 0) {
       JPanel pluginPn = new JPanel(new FlowLayout(FlowLayout.LEADING));
       bodyPn.add(pluginPn);
-      while (pluginIter.hasNext()) {
-        Plugin plugin = (Plugin) pluginIter.next();
-        pluginPn.add(new JLabel(plugin.getMarkIcon()));
+      for (int i = 0; i < markedByPluginArr.length; i++) {
+        pluginPn.add(new JLabel(markedByPluginArr[i].getMarkIcon()));
       }
     }
     

@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
+import util.ui.ImageUtilities;
 
 /**
  * A SkinPanel is a JPanel with the capability to have a background image
@@ -80,7 +81,7 @@ public class SkinPanel extends JPanel {
 	   mode=newMode;
 	   File f=new File(imgFile);
 	   if (f.exists() && f.isFile()) {
-		 image=new ImageIcon(imgFile).getImage();
+		 image = ImageUtilities.createImage(imgFile);
 		 setSkin(image);
 	   }else {
 		 image=null;
@@ -103,8 +104,6 @@ public class SkinPanel extends JPanel {
    }
 
    public void paintComponent(Graphics g) {
-	 super.paintComponent(g);
-
 	 if (image==null || mode==NONE) {
 	   return;
 	 }
@@ -119,7 +118,7 @@ public class SkinPanel extends JPanel {
 
 		 int stepX=0;
 		 int stepY=0;
-
+         
 		 if (mode==WALLPAPER) {
 			 stepX=wImg;
 			 stepY=hImg;

@@ -59,7 +59,10 @@ public class ImageUtilities {
       mLog.warning("File does not exist: '" + fileName + "'");
       return null;
     }
-    return Toolkit.getDefaultToolkit().createImage(fileName);
+    Image img = Toolkit.getDefaultToolkit().createImage(fileName);
+    waitForImageData(img, null);
+    
+    return img;
   }
   
 

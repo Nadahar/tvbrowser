@@ -35,6 +35,7 @@ import tvbrowser.core.*;
 import tvbrowser.ui.SkinPanel;
 
 import util.exc.*;
+import util.ui.*;
 
 /**
  * TV-Browser
@@ -50,6 +51,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
   private JTextField skinTextField;
   private JCheckBox skinCheckBox;
 
+  private JComboBox mTableProgramArrangementCB;
   private JRadioButton blankRadio, wallpaperRadio, columnsRadio;
 
   private JLabel skinTableBGLabel;
@@ -75,6 +77,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
 
   public AppearanceSettingsTab()  {
     String msg;
+    JPanel p1, p2;
 
     setLayout(new BorderLayout());
     JPanel content=new JPanel();
@@ -130,45 +133,73 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
           skinTextField.setText(f.getAbsolutePath());
         }
       }
-    }
-    );
+    });
 
-    JPanel tablePanel=new JPanel();
-    JPanel panel1=new JPanel(new BorderLayout());
-    JPanel panel2=new JPanel();
-    panel2.setLayout(new BoxLayout(panel2,BoxLayout.Y_AXIS));
-    tablePanel.setLayout(new BoxLayout(tablePanel,BoxLayout.Y_AXIS));
-    msg = mLocalizer.msg("tableBackground", "Table background");
+    // The program table panel
+    JPanel tablePanel = new JPanel(new TabLayout(1));
+    msg = mLocalizer.msg("programTable", "Program table");
     tablePanel.setBorder(BorderFactory.createTitledBorder(msg));
-    ButtonGroup tablePanelBtnGroup = new ButtonGroup();
-    blankRadio = new JRadioButton(mLocalizer.msg("blank", "Blank"));
-    wallpaperRadio = new JRadioButton(mLocalizer.msg("wallpaper", "Wallpaper"));
-    columnsRadio = new JRadioButton(mLocalizer.msg("columns", "Columns"));
-    tablePanelBtnGroup.add(blankRadio);
-    tablePanelBtnGroup.add(wallpaperRadio);
-    tablePanelBtnGroup.add(columnsRadio);
-
-    int mode=Settings.getTableBGMode();
-    if (mode==SkinPanel.NONE) {
-      blankRadio.setSelected(true);
-    }else if (mode==SkinPanel.WALLPAPER) {
-      wallpaperRadio.setSelected(true);
-    }else if (mode==SkinPanel.COLUMNS) {
-      columnsRadio.setSelected(true);
+    
+    // program table arrangement
+    p1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
+    tablePanel.add(p1);
+    
+    p1.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")));
+    String[] arrangementArr = {
+      mLocalizer.msg("compact", "Compact"),
+      mLocalizer.msg("timeSynchronous", "Time synchronous")
+    };
+    mTableProgramArrangementCB = new JComboBox(arrangementArr);
+    if (Settings.getTableLayout() == Settings.TABLE_LAYOUT_COMPACT) {
+      mTableProgramArrangementCB.setSelectedIndex(0);
+    } else {
+      mTableProgramArrangementCB.setSelectedIndex(1);
     }
+    p1.add(mTableProgramArrangementCB);
+    
+    // program table background panel
+    p1 = new JPanel(new TabLayout(1));
+    msg = mLocalizer.msg("tableBackground", "Table background");
+    p1.setBorder(BorderFactory.createTitledBorder(msg));
+    tablePanel.add(p1);
+    
+    // program table background style
+    p2 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
+    p1.add(p2);
+    
+    p2.add(new JLabel(mLocalizer.msg("alignment", "Alignment")));
 
+    ButtonGroup tablePanelBtnGroup = new ButtonGroup();
+
+    blankRadio = new JRadioButton(mLocalizer.msg("blank", "Blank"));
+    blankRadio.setSelected(Settings.getTableBGMode() == SkinPanel.NONE);
     blankRadio.addActionListener(this);
+    tablePanelBtnGroup.add(blankRadio);
+    p2.add(blankRadio);
+
+    wallpaperRadio = new JRadioButton(mLocalizer.msg("wallpaper", "Wallpaper"));
+    wallpaperRadio.setSelected(Settings.getTableBGMode() == SkinPanel.WALLPAPER);
     wallpaperRadio.addActionListener(this);
+    tablePanelBtnGroup.add(wallpaperRadio);
+    p2.add(wallpaperRadio);
+
+    columnsRadio = new JRadioButton(mLocalizer.msg("columns", "Columns"));
+    columnsRadio.setSelected(Settings.getTableBGMode() == SkinPanel.COLUMNS);
     columnsRadio.addActionListener(this);
+    tablePanelBtnGroup.add(columnsRadio);
+    p2.add(columnsRadio);
 
-    JPanel tableBGPanel=new JPanel(new BorderLayout(10,0));
-    skinTableBGLabel=new JLabel(mLocalizer.msg("skin", "Background"));
-    skinTableBGTextField=new JTextField(Settings.getTableSkin());
-    skinTableBGBtn=new JButton(mLocalizer.msg("change", "Change"));
-    tableBGPanel.add(skinTableBGLabel,BorderLayout.WEST);
-    tableBGPanel.add(skinTableBGTextField,BorderLayout.CENTER);
-    tableBGPanel.add(skinTableBGBtn,BorderLayout.EAST);
+    // program table background image
+    p2 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
+    p1.add(p2);
 
+    skinTableBGLabel = new JLabel(mLocalizer.msg("skin", "Background"));
+    p2.add(skinTableBGLabel);
+    
+    skinTableBGTextField = new JTextField(Settings.getTableSkin(), 25);
+    p2.add(skinTableBGTextField);
+
+    skinTableBGBtn = new JButton(mLocalizer.msg("change", "Change"));
     skinTableBGBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         JFileChooser fileChooser=new JFileChooser();
@@ -178,19 +209,10 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
           skinTableBGTextField.setText(selection.getAbsolutePath());
         }
       }
-    }
-    );
+    });
+    p2.add(skinTableBGBtn);
 
-    panel2.add(blankRadio);
-    panel2.add(Box.createRigidArea(new Dimension(0,5)));
-    panel2.add(wallpaperRadio);
-    panel2.add(Box.createRigidArea(new Dimension(0,5)));
-    panel2.add(columnsRadio);
-    panel2.add(Box.createRigidArea(new Dimension(0,5)));
-    panel1.add(panel2,BorderLayout.WEST);
-    tablePanel.add(panel1);
-    tablePanel.add(tableBGPanel);
-
+    // buttons panel
     JPanel buttonPanel=new JPanel(new GridLayout(1,0));
     msg = mLocalizer.msg("buttons", "Buttons");
     buttonPanel.setBorder(BorderFactory.createTitledBorder(msg));
@@ -306,6 +328,12 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     Settings.setUseApplicationSkin(this.skinCheckBox.isSelected());
     Settings.setApplicationSkin(skinTextField.getText());
 
+    if (mTableProgramArrangementCB.getSelectedIndex() == 0) {
+      Settings.setTableLayout(Settings.TABLE_LAYOUT_COMPACT);
+    } else {
+      Settings.setTableLayout(Settings.TABLE_LAYOUT_TIME_SYNCHRONOUS);
+    }
+    
     Settings.setTableSkin(this.skinTableBGTextField.getText());
     if (wallpaperRadio.isSelected()) {
       Settings.setTableBGMode(SkinPanel.WALLPAPER);

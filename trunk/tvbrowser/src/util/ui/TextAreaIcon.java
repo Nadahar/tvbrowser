@@ -30,148 +30,155 @@ import java.util.ArrayList;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 
 import javax.swing.Icon;
+import javax.swing.JLabel;
 
 /**
- * An icon that displays multiline text.
+ * An icon that displays multiline mText.
  *
  * @author Martin Oberhauser
  */
 public class TextAreaIcon implements Icon {
 
-  class Substring {
-    
-    private int begin;
-    private int end;
-    private char[] text;
-    
-    /** The cached String representation of this substring. */
-    private String mAsString;
-    
-
-    public Substring(char[] text, int begin, int end) {
-      init(text,begin,end);
-    }
-
-    public Substring() {
-    }
-
-    public void init(char[] text, int begin, int end) {
-      this.begin=begin;
-      this.end=end;
-      this.text=text;
-    }
-
-    public String toString() {
-      if (mAsString == null) {
-        mAsString = new String(text, begin, end - begin + 1);
-      }
-      return mAsString;
-    }
-  }
-
-  private int width=0;
-  private int fontSize=0;
-  private char[] text;
-  private Object[] lines;
-  private Font font;
+  /** The helper label. */  
+  private static final JLabel HELPER_LABEL = new JLabel();
+  
+  private int mWidth;
+  private String mText;
+  private ArrayList mTextLineList;
+  private Font mFont;
+  private FontMetrics mFontMetrics;
+  private int mMaxLineCount = -1;
 
 
 
   /**
-   * Creates a TextAreaIcon with the specified text, font and width.
+   * Creates a TextAreaIcon with the specified mText, mFont and mWidth.
    */
-  public TextAreaIcon(char[] text, Font font, int width) {
-
-    this.width=width;
-    this.text=text;
-    this.font=font;
-    fontSize=font.getSize();
-    ArrayList linesList=new ArrayList();
-
-    int inx=0;
-    Substring curSubstring;
-    do {
-      curSubstring=new Substring();
-      inx=getNextSubstring(text,inx,curSubstring);
-      if (inx==-1) {
-        break;
-      }else{
-        linesList.add(curSubstring);
-      }
-
-    }while(true);
-    lines=linesList.toArray();
-
+  public TextAreaIcon(String text, Font font, int width) {
+    mWidth = width;
+    mFont = font;
+    mFontMetrics = HELPER_LABEL.getFontMetrics(font);
+    
+    mTextLineList = new ArrayList();
+    setText(text);
+  }
+  
+  
+  
+  public void setMaximumLineCount(int maxLineCount) {
+    mMaxLineCount = maxLineCount;
   }
 
 
 
-  private int getNextDelimiterPos(char[] text, int inx) {
+  public void setText(String text) {
+    mText = text;
 
-    if (inx>=text.length) {
-      return -1;
+    // Es gibt zwei Dinge in der Java API, die daran Schuld, dass dieses Icon
+    // nicht signifikant beschleunigt werden kann:
+    //
+    // 1. Man kann mit der FontMetrics-Klasse keine Teile eines String messen,
+    //    sondern nur Teile eines char[]
+    // 2. Man kann mit der Graphics-Klasse keine Teile eines Strings malen
+    //    und man kann zwar Teile eines char[] malen aber die Implementierung
+    //    von Graphics.drawChars(char data[], int offset, int length, int x, int y)
+    //    sieht folgendermassen aus :-(( :
+    //    drawString(new String(data, offset, length), x, y);
+    //
+    // Das heiﬂt man kann nur malen, ohne Objekte zu erzeugen, indem man den
+    // Text vorher in Zeilen aufteilt. Und dabei muss man leider tempor‰r ein
+    // char[] aus dem Text erzeugen, damit man Teile des Textes vermessen kann.
+    
+    mTextLineList.clear();
+    
+    if (text != null) {
+      int inx = 0;
+      char[] textData = text.toCharArray();
+      while (inx < text.length()) {
+        int start = getNextLineStart(textData, inx);
+        inx = getNextLineEnd(textData, start, mWidth, mFontMetrics);
+        String line = text.substring(start, inx);
+
+        if ((mMaxLineCount != -1) && (mTextLineList.size() + 1 >= mMaxLineCount)) {
+          if (inx < text.length()) {
+            line += "...";
+          }
+          mTextLineList.add(line);
+          break;
+        }
+        mTextLineList.add(line);
+      }
+      
+      if (mMaxLineCount != -1 && mTextLineList.size() > mMaxLineCount) {
+        System.out.println("mMaxLineCount: " + mMaxLineCount
+          + ", mTextLineList.size(): " + mTextLineList.size());
+      }
     }
+  }
 
-    while (inx<text.length && text[inx]!=' ' && text[inx]!='-' && text[inx]!='\n') {
+
+
+  private static int getNextDelimiterPos(char[] text, int inx) {
+    while (inx < text.length) {
+      if ((text[inx] == ' ') || (text[inx] == '\n')) {
+        return inx;
+      }
+      else if (text[inx] == '-') {
+        return inx + 1;
+      }
+      
       inx++;
     }
 
-    if (inx<text.length && text[inx]=='-') return inx;
-
-    return inx-1;
+    // The end of text has been reached
+    return text.length;
   }
 
   
   
-  private int getNextSubstring(char[] text, int inx, Substring substring) {
-
-    if (inx>=text.length-1) {
-      return -1;
-    }
-
-    while (inx<text.length && text[inx]==' ') {   // ignore blanks
+  private static int getNextLineStart(char[] text, int inx) {
+    // ignore blanks
+    while ((inx < text.length) && (text[inx] == ' ')) {
       inx++;
     }
+    
+    return inx;
+  }
+  
+  
 
-    int start=inx;
-    int inxOld=-1;
-    do {
-      if (inxOld==inx) {
-        throw new RuntimeException("inxOld==inx=="+inx);
-      }
-      inxOld=inx;
-      inx=getNextDelimiterPos(text,inx+1);
-      if (inx==-1) {
-        substring.init(text,start,inxOld-1);
-        return inxOld;
+  private static int getNextLineEnd(char[] text, int inx, int maxWidth,
+    FontMetrics fontMetrics)
+  {
+    int start = inx;
+    int width = 0;
+    int widthIdx = start; // The index up to which the width is already calculated
+    while (inx < text.length) {
+      int inxOld = inx;
+      inx = getNextDelimiterPos(text, inx + 1);
+
+      if ((inx < text.length) && (text[inx] == '\n')) {
+        // force line break
+        return inx;
       }
 
-      if (inx+1<text.length && text[inx+1]=='\n') {  // force line break
-        substring.init(text,start,inx);
-        return inx+2;
-      }
-
-      int w = UiUtilities.getCharsWidth(font, text, start, inx - start);
-      if (w>width) {
-        if (start==inxOld) {
-          substring.init(text,start,inx);
-          return inx+1;
-        }else{
-          substring.init(text,start,inxOld-1);
+      width += fontMetrics.charsWidth(text, widthIdx, inx - widthIdx);
+      widthIdx = inx;
+      if (width > maxWidth) {
+        if (start == inxOld) {
+          return inx;
+        } else {
           return inxOld;
         }
       }
-      inx++;
-
-    }while(true);
-
-
+    }
+    
+    // The end of the text has been reached
+    return text.length;
   }
   
   
@@ -184,18 +191,18 @@ public class TextAreaIcon implements Icon {
    * @return an int specifying the fixed height of the icon.
    */
   public int getIconHeight() {
-    return fontSize * lines.length;
+    return mFont.getSize() * mTextLineList.size();
   }  
   
   
   
   /**
-   * Returns the icon's width.
+   * Returns the icon's mWidth.
    *
-   * @return an int specifying the fixed width of the icon.
+   * @return an int specifying the fixed mWidth of the icon.
    */
   public int getIconWidth() {
-    return width;
+    return mWidth;
   }
   
   
@@ -205,12 +212,15 @@ public class TextAreaIcon implements Icon {
    * may use the Component argument to get properties useful for
    * painting, e.g. the foreground or background color.
    */
-  public void paintIcon(Component c, Graphics g, int x, int y) {
-    g.setFont(font);
+  public void paintIcon(Component comp, Graphics grp, int x, int y) {
+    grp.setFont(mFont);
+    
+    int fontSize = mFont.getSize();
 
-    for (int i = 0; i < lines.length; i++) {
-      String line = ((Substring)lines[i]).toString();
-      g.drawString(line, x, y + (i + 1) * fontSize);
+    for (int i = 0; i < mTextLineList.size(); i++) {
+      y += fontSize;
+      String line = (String) mTextLineList.get(i);
+      grp.drawString(line, x, y);
     }
   }
   

@@ -47,16 +47,19 @@ import tvbrowser.core.*;
  */
 public class ProgramPanel extends JComponent implements ChangeListener {
   
+  private static final boolean USE_FULL_HEIGHT = true;
+  private static final boolean PAINT_EXPIRED_PROGRAMS_PALE = true;
+  
   private static final Color COLOR_ON_AIR_DARK  = new Color(128, 128, 255, 80);
   private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
   private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
 
-  /** The bold font. */
-  private static final Font bold;
-  /** The italic font */  
-  private static final Font italic;
+  /** The title font. */
+  private static final Font TITLE_FONT = Settings.getProgramTitleFont();
+  /** The normal font */  
+  private static final Font NORMAL_FONT = Settings.getProgramInfoFont();
   /** The width of the left part (the time). */  
-  private static final int WIDTH_LEFT = 40;;
+  private static final int WIDTH_LEFT = 40;
   /** The width of the left part (the title and short info). */  
   private static final int WIDTH_RIGHT = Settings.getColumnWidth() - WIDTH_LEFT;
   /** The total width. */  
@@ -73,14 +76,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /** The program. */  
   private devplugin.Program mProgram;
 
-  static {
-    // Font f=new JTextArea().getFont();
-    // bold=new Font(f.getName(),Font.BOLD,f.getSize());
-    // italic=new Font(f.getName(),Font.PLAIN,f.getSize()-2);
-    bold=Settings.getProgramTitleFont();
-    italic=Settings.getProgramInfoFont();   
-  }
-
   
   
   /**
@@ -89,6 +84,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param prog The program to show in this panel.
    */  
   public ProgramPanel() {
+    mTitleIcon = new TextAreaIcon(null, TITLE_FONT, WIDTH_RIGHT - 5);
+    mDescriptionIcon = new TextAreaIcon(null, NORMAL_FONT, WIDTH_RIGHT - 5);
+    mDescriptionIcon.setMaximumLineCount(3);
   }
   
 
@@ -99,7 +97,20 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param prog The program to show in this panel.
    */  
   public ProgramPanel(devplugin.Program prog) {
+    this();
+    
     setProgram(prog);
+  }
+
+  
+  
+  /**
+   * Sets the program this panel shows.
+   *
+   * @param program The program to show in this panel.
+   */  
+  public void setProgram(devplugin.Program program) {
+    setProgram(program, -1);
   }
   
   
@@ -109,16 +120,25 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    *
    * @param program The program to show in this panel.
    */  
-  public void setProgram(devplugin.Program program) {
+  public void setProgram(devplugin.Program program, int maxHeight) {
     devplugin.Program oldProgram = mProgram;
 
     mProgram = program;
 
-    char[] title = program.getTitle().toCharArray();
-    mTitleIcon = new TextAreaIcon(title, bold, WIDTH_RIGHT - 10);
-    char[] shortInfo = program.getShortInfo().toCharArray();
-    mDescriptionIcon = new TextAreaIcon(shortInfo, italic, WIDTH_RIGHT - 5);
     mProgramTimeAsString = program.getTimeString();
+    
+    mTitleIcon.setText(program.getTitle());
+    
+    int maxDescLines = 3;
+    if (maxHeight != -1) {
+      maxDescLines = (maxHeight - mTitleIcon.getIconHeight() - 10) / NORMAL_FONT.getSize();
+    }
+    mDescriptionIcon.setMaximumLineCount(maxDescLines);
+    if (program.getShortInfo().endsWith("...")) {
+      mDescriptionIcon.setText(program.getDescription());
+    } else {
+      mDescriptionIcon.setText(program.getShortInfo());
+    }
 
     mHeight = mTitleIcon.getIconHeight() + 10 + mDescriptionIcon.getIconHeight();
     setPreferredSize(new Dimension(WIDTH, mHeight));
@@ -139,46 +159,53 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param grp The graphics context to paint to.
    */  
   public void paintComponent(Graphics grp) {
+    int width = getWidth();
+    int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
+    
     // Draw the background if this program is on air
     if (mProgram.isOnAir()) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
-      int length = mProgram.getLength();
+      int progLength = mProgram.getLength();
       int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
       int elapsedMinutes = minutesAfterMidnight - startTime;
-      int progressX = elapsedMinutes * WIDTH / length;
+      int progressY = 0;
+      if (progLength > 0) {
+        progressY = elapsedMinutes * height / progLength;
+      }
 
       grp.setColor(COLOR_ON_AIR_DARK);
-      grp.fillRect(1, 1, progressX - 1, mHeight - 2);
+      grp.fillRect(1, 1, width - 2, progressY - 1);
       grp.setColor(COLOR_ON_AIR_LIGHT);
-      grp.fillRect(progressX, 1, WIDTH - progressX - 1, mHeight - 2);
-      grp.draw3DRect(0, 0, WIDTH - 1, mHeight - 1, true);
+      grp.fillRect(1, progressY, width - 2, height - progressY - 1);
+      grp.draw3DRect(0, 0, width - 1, height - 1, true);
     }
 
     // If there are plugins that have marked the program -> paint the background
-    Iterator pluginIter = mProgram.getMarkedByIterator();
-    if (pluginIter.hasNext()) {
+    Plugin[] markedByPluginArr = mProgram.getMarkedByPlugins();
+    if (markedByPluginArr.length != 0) {
       grp.setColor(COLOR_MARKED);
-      grp.fill3DRect(0, 0, WIDTH, mHeight, true);
+      grp.fill3DRect(0, 0, width, height, true);
     }
 
     // Draw all the text
-  	grp.setFont(bold);
-    grp.setColor(Color.black);
-    grp.drawString(mProgramTimeAsString, 1, bold.getSize());
+  	grp.setFont(TITLE_FONT);
+    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
+      grp.setColor(Color.gray);
+    } else {
+      grp.setColor(Color.black);
+    }
+    grp.drawString(mProgramTimeAsString, 1, TITLE_FONT.getSize());
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
     mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
 
     // paint the icons of the plugins that have marked the program
-    if (pluginIter.hasNext()) {
-      int x = WIDTH - 1;
-      int y = mHeight - 1;
-      while (pluginIter.hasNext()) {
-        Plugin plugin = (Plugin) pluginIter.next();
-        Icon icon = plugin.getMarkIcon();
-        if (icon != null) {
-          x -= icon.getIconWidth();
-          icon.paintIcon(this, grp, x, y - icon.getIconHeight());
-        }
+    int x = width - 1;
+    int y = height - 1;
+    for (int i = 0; i < markedByPluginArr.length; i++) {
+      Icon icon = markedByPluginArr[i].getMarkIcon();
+      if (icon != null) {
+        x -= icon.getIconWidth();
+        icon.paintIcon(this, grp, x, y - icon.getIconHeight());
       }
     }
   }

@@ -63,12 +63,12 @@ public interface ChannelDayProgram {
   public int getProgramCount();
 
   /**
-   * Returns an array containing all programms. Each element is a
-   * devplugin.Program object.
+   * Returns the program at the specified index.
    *
-   * @return The programs of this list. Ordered by time.
+   * @param index The index of the wanted program.
+   * @return The program at the specified index.
    */
-  // public Object[] getProgramList();
+  public Program getProgramAt(int index);
 
   /**
    * Returns an iterator containing all programms. Each iterator item is a
