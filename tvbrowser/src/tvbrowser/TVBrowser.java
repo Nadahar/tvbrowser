@@ -369,7 +369,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
-    mProgramTableModel = new DefaultProgramTableModel(ChannelList.getSubscribedChannels());
+    mProgramTableModel = new DefaultProgramTableModel(ChannelList.getSubscribedChannels(),Settings.getProgramTableStartOfDay(),Settings.getProgramTableEndOfDay());
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
 
@@ -863,13 +863,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
     
     if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
-      createChannelList();
-      
+      createChannelList();      
       DataService.getInstance().subscribedChannelsChanged();
-
       mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
-      //devplugin.Date showingDate = finderPanel.getSelectedDate();
-      //changeDate(showingDate);
+    }
+    
+    if (Settings.settingHasChanged(new String[]{"programtable.endofday","programtable.startofday"})) {
+      mProgramTableModel.setTimeRange(Settings.getProgramTableStartOfDay(),Settings.getProgramTableEndOfDay());
     }
   }
   

@@ -55,9 +55,11 @@ import devplugin.Program;
  */
 public class DefaultProgramTableModel implements ProgramTableModel, ChangeListener {
   
-  private static final int TOMORROW_LATEST_TIME = 5 * 60; // Until 5:00 am
-  private static final int TODAY_EARLIEST_TIME = 5 * 60; // Until 5:00 am
+ // private static final int TOMORROW_LATEST_TIME = 5 * 60; // Until 5:00 am
+ // private static final int TODAY_EARLIEST_TIME = 5 * 60; // Until 5:00 am
 
+  private int mTomorrowLatestTime; //=tvbrowser.core.Settings.getProgramTableEndOfDay();
+  private int mTodayEarliestTime; //=tvbrowser.core.Settings.getProgramTableStartOfDay();
 
   private ArrayList mListenerList;
   
@@ -65,10 +67,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private DayProgram mMainDay, mNextDay;
   
   private ArrayList[] mProgramColumn;
-  
-  //private devplugin.Date mDate;
-  /** Holds the number of programs for a column. */
-  //private int[] mMainDayProgramCount, mNextDayProgramCount;
   
   private int mLastTimerMinutesAfterMidnight;
   private Timer mTimer;
@@ -80,9 +78,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   /**
    * Creates a new instance of DefaultProgramTableModel.
    */
-  public DefaultProgramTableModel(Channel[] shownChannelArr) {
+  public DefaultProgramTableModel(Channel[] shownChannelArr, int todayEarliestTime, int tomorrowLatestTime) {
     mListenerList = new ArrayList();
-    
+    mTodayEarliestTime=todayEarliestTime;
+    mTomorrowLatestTime=tomorrowLatestTime;
     
 	setShownChannels(shownChannelArr);
     
@@ -93,6 +92,13 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     });
   }
 
+  public void setTimeRange(int todayEarliestTime, int tomorrowLatestTime) {
+    mTodayEarliestTime=todayEarliestTime;
+    mTomorrowLatestTime=tomorrowLatestTime;
+    fireTableDataChanged();
+  }
+  
+  
   
   
   public void setShownChannels(Channel[] shownChannelArr) {
@@ -159,12 +165,12 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     ChannelDayProgram cdp;
     if (mainDay!=null) {
       cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);     
-      addChannelDayProgram(i,cdp,TODAY_EARLIEST_TIME,24*60);
+      addChannelDayProgram(i,cdp,mTodayEarliestTime,24*60);
     }
     
     if (nextDay!=null) { 
       cdp=nextDay.getChannelDayProgram(mShownChannelArr[i]);
-      addChannelDayProgram(i,cdp,0,TOMORROW_LATEST_TIME);
+      addChannelDayProgram(i,cdp,0,mTomorrowLatestTime);
     }
    }
     

@@ -33,6 +33,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import util.ui.TabLayout;
+import java.util.Calendar;
+import java.util.Date;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.SkinPanel;
@@ -57,6 +59,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JLabel mBackgroundLb;
   private JButton mBackgroundBt;
   private JTextField mBackgroundTF;
+  
+  private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
+  
 
   
   
@@ -173,7 +178,49 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     p2.add(mBackgroundBt);
     
     
-   
+    // day range
+    
+    JPanel pn=new JPanel(new GridLayout(2,2,0,3));
+    pn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("range","Range"))); 
+  
+    pn.add(new JLabel(mLocalizer.msg("startOfDay","Start of day")));    
+    JPanel panel1=new JPanel(new BorderLayout(7,0));
+    
+    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
+    
+    mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
+    mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, timePattern));
+    mStartOfDayTimeSp.setBorder(null);
+    
+    
+    panel1.add(mStartOfDayTimeSp,BorderLayout.WEST);
+    panel1.add(new JLabel("("+mLocalizer.msg("today","today")+")"));
+    pn.add(panel1);
+    
+    pn.add(new JLabel(mLocalizer.msg("endOfDay","End of day")));
+    panel1=new JPanel(new BorderLayout(7,0));
+    
+    mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
+    mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, timePattern));
+    mEndOfDayTimeSp.setBorder(null);
+    
+    panel1.add(mEndOfDayTimeSp,BorderLayout.WEST);
+    panel1.add(new JLabel("("+mLocalizer.msg("nextDay","next day")+")"));
+    pn.add(panel1);
+    
+    int minutes;
+    Calendar cal = Calendar.getInstance();
+    minutes=Settings.getProgramTableStartOfDay();    
+    cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
+    cal.set(Calendar.MINUTE, minutes % 60);
+    mStartOfDayTimeSp.setValue(cal.getTime());
+    
+    minutes=Settings.getProgramTableEndOfDay();    
+    cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
+    cal.set(Calendar.MINUTE, minutes % 60);
+    mEndOfDayTimeSp.setValue(cal.getTime());
+    
+    main.add(pn);
 
     return mSettingsPn;
   }
@@ -198,6 +245,20 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     } else {
       Settings.setTableBGMode(SkinPanel.NONE);
     }
+    
+    
+    Calendar cal=Calendar.getInstance();
+    Date startTime = (Date) mStartOfDayTimeSp.getValue();
+    cal.setTime(startTime);
+    int minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+    Settings.setProgramTableStartOfDay(minutes);
+    
+    Date endTime = (Date) mEndOfDayTimeSp.getValue();
+    cal.setTime(endTime);
+    minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+    Settings.setProgramTableEndOfDay(minutes);
+    
+    
   }
 
   
