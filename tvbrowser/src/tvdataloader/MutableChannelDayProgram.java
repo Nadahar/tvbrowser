@@ -174,4 +174,25 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
     return mProgramList.iterator();
   }
   
+  
+  
+  /**
+   * Returns whether this channel day program is complete.
+   * <p>
+   * Return true if the last program ends afer midnight. Future implementations
+   * may check for gaps too.
+   */
+  public boolean isComplete() {
+    int size = mProgramList.size();
+    if (size == 0) {
+      return false;
+    } else {
+      Program lastProgram = (Program) mProgramList.get(size - 1);
+      int endTime = lastProgram.getHours() * 60 + lastProgram.getMinutes()
+        + lastProgram.getLength();
+      
+      return endTime >= (24 * 60);
+    }
+  }
+  
 }

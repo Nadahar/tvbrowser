@@ -42,20 +42,17 @@ public class XmlTvHandler extends DefaultHandler {
    */  
   private static final int MAX_SHORT_INFO_LENGTH = 100;
 
-  /** The date to look for. */  
-  private devplugin.Date mDate;
+  /** The program dipatcher used to store the programs. */  
+  private ProgramDispatcher mProgramDispatcher;
   
-  /** The channel to look for. */  
-  private Channel mChannel;
+  /** The list of channels to search for. */
+  private Channel[] mSubscribedChannelArr;
 
   /** The StringBuffer that collects the text of a tag. */  
   private StringBuffer mCurrTextBuffer = new StringBuffer();
   
   /** The currently parsed program. */  
   private MutableProgram mCurrProgram;
-  
-  /** The program list where to store the programs found. */  
-  private MutableChannelDayProgram mChannelDayProgram;
   
   /**
    * The XML locator. It can be used to ask for the location of the parser
@@ -66,15 +63,9 @@ public class XmlTvHandler extends DefaultHandler {
   /** The set where the found channel names are stored. */  
   private HashSet mChannelSet = new HashSet();
   
-  /**
-   * The maximum start time in the XML file. In minutes after midnight
-   * (hours * 60 + minutes).
-   * <p>
-   * Used to determine whether the file contains the program of the whole day.
-   */
-  private int mMaxStartTime;
+  private GregorianCalendar mCalendar;
 
-  
+
 
   /**
    * Creates a new instance of XmlTvHandler.
@@ -82,19 +73,32 @@ public class XmlTvHandler extends DefaultHandler {
    * @param date The date to look for.
    * @param channel The channel to look for.
    */  
-  public XmlTvHandler(devplugin.Date date, Channel channel) {
-    mDate = date;
-    mChannel = channel;
+  public XmlTvHandler(ProgramDispatcher programDispatcher,
+    Channel[] subscribedChannelArr)
+  {
+    mProgramDispatcher = programDispatcher;
+    mSubscribedChannelArr = subscribedChannelArr;
+    
+    mCalendar = new GregorianCalendar();
   }
 
 
 
   /**
-   * Gets the list of the found programs.
+   * Called by the XML-SAX-parser when he starts parsing the file.
+   */
+  public void startDocument() throws SAXException {
+    // no op
+  }
+
+  
+  
+  /**
+   * Receive notification of the end of the document.
    *
-   * @return the list of the found programs.
-   */  
-  public AbstractChannelDayProgram getChannelDayProgram() {
+   * @see org.xml.sax.ContentHandler#endDocument
+   */
+  public void endDocument() throws SAXException {
     /* // dump all channels found
     System.out.print("Channels found: ");
     Iterator iter = mChannelSet.iterator();
@@ -103,34 +107,6 @@ public class XmlTvHandler extends DefaultHandler {
     }
     System.out.println();
     */
-    
-    System.out.println("Found " + mChannelDayProgram.getProgramCount()
-      + " programs for " + mChannel.getName() + " on " + mDate);
-    
-    return mChannelDayProgram;
-  }
-  
-  
-  
-  /**
-   * Gets the maximum start time in the XML file. In minutes after midnight
-   * (hours * 60 + minutes).
-   * <p>
-   * Used to determine whether the file contains the program of the whole day.
-   *
-   * @return maximum start time in the XML file.
-   */
-  public int getMaxStartTime() {
-    return mMaxStartTime;
-  }
-
-  
-  
-  /**
-   * Called by the XML-SAX-parser when he starts parsing the file.
-   */
-  public void startDocument() throws SAXException {
-    mMaxStartTime = -1;
   }
   
 
@@ -175,44 +151,34 @@ public class XmlTvHandler extends DefaultHandler {
           return;
         }
         
+        // Get the numbers from the start String
+        int year = Integer.parseInt(start.substring(0, 4));
+        int month = Integer.parseInt(start.substring(4, 6));
+        int day = Integer.parseInt(start.substring(6, 8));
         int hours = Integer.parseInt(start.substring(8, 10));
         int minutes = Integer.parseInt(start.substring(10, 12));
+
+        // Get the date
+        mCalendar.set(Calendar.YEAR, year);
+        mCalendar.set(Calendar.MONTH, month - 1);
+        mCalendar.set(Calendar.DAY_OF_MONTH, day);
+        java.util.Date utilDate = mCalendar.getTime();
+        long daysSince1970 = utilDate.getTime() / (24 * 60 * 60 * 1000);
+        // System.out.println("daysSince1970: " + daysSince1970 + ", year: " + year
+        //   + ", month: " + month + ", day: " + day + ", utilDate: " + utilDate);
+        devplugin.Date date = new devplugin.Date((int) daysSince1970);
         
-        // update mMaxStartTime
+        // Get the time
         int time = hours * 60 + minutes;
-        mMaxStartTime = Math.max(mMaxStartTime, time);
         
-        // Add this channel name to the set of known channels.
-        mChannelSet.add(channelName);
-
-        // BEGIN: No caching
-        if (channelName.equalsIgnoreCase(mChannel.getName())) {
-          mCurrProgram = new MutableProgram(mChannel, mDate, hours, minutes);
-        } else {
-          mCurrProgram = null;
-        }
-        // END: No caching
-
-        /*
         // extract the channel
         Channel channel = getChannelForName(channelName);
-        mCurrProgram.setChannel(channel);
-
-        // get the ChannelDayProgram for this channel from the hash
-        Object channelKey = getKeyForChannel(channel);
-        MutableChannelDayProgram channelDayProgram
-          = (MutableChannelDayProgram) mTargetHash.get(channelKey);
-
-        if (channelDayProgram == null) {
-          // There is no ChannelDayProgram in the cache
-          // -> create one and put it in the cache
-          channelDayProgram = new MutableChannelDayProgram(mDate, channel);
-          mTargetHash.put(channelKey, channelDayProgram);
+        
+        if (channel == null) {
+          mCurrProgram = null;
+        } else {
+          mCurrProgram = new MutableProgram(channel, date, hours, minutes);
         }
-
-        // Add the current program to the ChannelDayProgram
-        mChannelDayProgram.addProgram(mCurrProgram);
-        */
       }
     }
     catch (RuntimeException exc) {
@@ -271,14 +237,10 @@ public class XmlTvHandler extends DefaultHandler {
       mCurrProgram.setLength(lengthInMinutes);
     }
     else if (currElement.equals("programme")) {
-      if (mChannelDayProgram == null) {
-        mChannelDayProgram = new MutableChannelDayProgram(mDate, mChannel);
-      }
-
-      // Add the current program to the ChannelDayProgram
-      mChannelDayProgram.addProgram(mCurrProgram);
-      
       // System.out.println("Program found: " + mCurrProgram);
+      
+      mProgramDispatcher.dispatch(mCurrProgram);
+      mCurrProgram = null;
     }
   }
 
@@ -369,6 +331,22 @@ public class XmlTvHandler extends DefaultHandler {
       
       return description.substring(0, cutIdx + 1) + "...";
     }
+  }
+  
+  
+  
+  protected Channel getChannelForName(String channelName) {
+    // Add this channel name to the set of channels known by this XML file.
+    mChannelSet.add(channelName);
+
+    for (int i = 0; i < mSubscribedChannelArr.length; i++) {
+      Channel channel = mSubscribedChannelArr[i];
+      if (channel.getName().equalsIgnoreCase(channelName)) {
+        return channel;
+      }
+    }
+    
+    return null;
   }
   
 }
