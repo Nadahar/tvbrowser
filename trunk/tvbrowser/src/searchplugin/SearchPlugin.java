@@ -76,7 +76,7 @@ public class SearchPlugin extends Plugin {
     String desc = mLocalizer.msg( "description" ,"Allows searching programs containing a certain text." );
     String author = "Til Schneider, www.murfman.de" ;
 
-    return new PluginInfo(name, desc, author, new Version(1, 0));
+    return new PluginInfo(name, desc, author, new Version(1, 2));
   }
 
 } 

@@ -30,7 +30,6 @@ import java.io.*;
 import java.net.*;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 import tvdataservice.TvDataService;
 import util.exc.*;
@@ -81,16 +80,18 @@ public class TvDataServiceManager {
       }
     });
 
-    for (int i=0;i<fList.length;i++) {
-      String className=fList[i];
-      if (className.length()>4) {
-        className = className.substring(0,className.length()-4);
-        TvDataService cur = loadDataService(className);
-        if (cur != null) {
-          mTvDataServiceHash.put(cur.getClass().getName(), cur);
-        }
-      }
-    }
+	if (fList!=null) {
+    	for (int i=0;i<fList.length;i++) {
+      		String className=fList[i];
+      		if (className.length()>4) {
+        		className = className.substring(0,className.length()-4);
+        		TvDataService cur = loadDataService(className);
+        		if (cur != null) {
+       		   		mTvDataServiceHash.put(cur.getClass().getName(), cur);
+        		}
+      		}
+    	}
+	}
   }
 
 
