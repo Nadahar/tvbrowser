@@ -77,7 +77,7 @@ public class ProgramInfo extends devplugin.Plugin {
       createIcon("Info_Mono.gif"),           // INFO_AUDIO_MONO
       createIcon("Info_Stereo.gif"),         // INFO_AUDIO_STEREO
       createIcon("Info_DolbySurround.gif"),  // INFO_AUDIO_DOLBY_SURROUND
-      createIcon("Info_DolbySurround.gif"),  // INFO_AUDIO_DOLBY_DIGITAL_5_1
+      createIcon("Info_DolbyDigital51.gif"),  // INFO_AUDIO_DOLBY_DIGITAL_5_1
       createIcon("Info_TwoChannelTone.gif"), // INFO_AUDIO_TWO_CHANNEL_TONE
       createIcon("Info_SubtitleForAurallyHandicapped.gif"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
       null,                                  // INFO_LIVE
