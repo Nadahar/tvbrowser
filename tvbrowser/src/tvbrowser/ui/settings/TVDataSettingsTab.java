@@ -208,7 +208,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       
     int inx = mAutoDownloadCB.getSelectedIndex();
     
-    if (!mAutoDownloadCb.isEnabled()) {
+    if (!mAutoDownloadCb.isSelected()) {
       Settings.propAutoDownloadType.setString("never");
     }
     else if (inx == 0) {
@@ -225,10 +225,10 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     
     inx=mAutoDownloadPeriodCB.getSelectedIndex();
     if (inx==mAutoDownloadPeriodCB.getItemCount()-1) {
-      Settings.propDownloadPeriod.setInt(UpdateDlg.GETALL);
+      Settings.propAutoDownloadPeriod.setInt(UpdateDlg.GETALL);
     }
     else {
-      Settings.propDownloadPeriod.setInt(inx);
+      Settings.propAutoDownloadPeriod.setInt(inx);
     }
     
     String webbrowser;
