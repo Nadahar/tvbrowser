@@ -6,10 +6,11 @@ current:
 - new devplugin.Date class
 - new settings dialog
 - new settings:
-      * choose directories for tvdataservice caches
-      * choose fonts
-      * choose time space for day programms
-      * choose time for time buttons
+      * -directories for tvdataservice caches
+      * -fonts
+      * -time space for day programms
+      * -time for time buttons
+      * -column width
 - use folder %HOME/.tvbrowser for personal settings
 
 
