@@ -206,6 +206,11 @@ public class ToolBar extends JToolBar {
       }
       else {
         icon = (Icon)action.getValue(Action.SMALL_ICON);
+
+        if ((icon != null) && ((icon.getIconHeight() < 16) || (icon.getIconWidth() < 16))) {
+          icon = UiUtilities.scaleIcon(icon, 16, 16);
+        }
+      
       }
       return icon;
     }
