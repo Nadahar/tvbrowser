@@ -19,8 +19,12 @@
 
 package tvraterplugin;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Properties;
 
 import util.ui.Localizer;
@@ -37,11 +41,14 @@ import devplugin.Version;
  */
 public class TVRaterPlugin extends devplugin.Plugin {
 	private Properties _settings;
-	private Point _location = null;
+	private Point _locationRaterDialog = null;
+
+	private Point _locationOverviewDialog = null;
+	private Dimension _dimensionOverviewDialog = null;
 
 	private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterPlugin.class);
 
-	public static TVRaterDB tvraterDB = new TVRaterDB();
+	private Database tvraterDB = new Database();
 
 	public String getContextMenuItemText() {
 		return mLocalizer.msg("contextMenuText", "View rating");
@@ -54,52 +61,98 @@ public class TVRaterPlugin extends devplugin.Plugin {
 		return new PluginInfo(name, desc, author, new Version(0, 1));
 	}
 
-
-	public void execute(Program program) {
-		TVRateDialog dlg = new TVRateDialog(parent, program);
+	/**
+	 * This method is invoked by the host-application if the user has choosen your
+	 * plugin from the menu.
+	 */
+	public void execute() {
+		DialogOverview dlg = new DialogOverview(parent, tvraterDB);
 		dlg.pack();
 		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-
+			public void componentResized(ComponentEvent e) {
+				_dimensionOverviewDialog = e.getComponent().getSize();
+			}
+			
 			public void componentMoved(ComponentEvent e) {
-				e.getComponent().getLocation(_location);
+				e.getComponent().getLocation(_locationOverviewDialog);
 			}
 		});
 
-		if (_location != null) {
-			dlg.setLocation(_location);
+		if ((_locationOverviewDialog != null) && (_dimensionOverviewDialog != null)) {
+			dlg.setLocation(_locationOverviewDialog);
+			dlg.setSize(_dimensionOverviewDialog);
+			dlg.show();
+		} else {
+			dlg.setSize(300, 250);
+			UiUtilities.centerAndShow(dlg);
+			_locationOverviewDialog = dlg.getLocation();
+			_dimensionOverviewDialog = dlg.getSize();
+		}
+		
+	}
+
+	public void execute(Program program) {
+		DialogRating dlg = new DialogRating(parent, program, tvraterDB);
+		dlg.pack();
+		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
+			public void componentMoved(ComponentEvent e) {
+				e.getComponent().getLocation(_locationRaterDialog);
+			}
+		});
+
+		if (_locationRaterDialog != null) {
+			dlg.setLocation(_locationRaterDialog);
 			dlg.show();
 		} else {
 			UiUtilities.centerAndShow(dlg);
-			_location = dlg.getLocation();
+			_locationRaterDialog = dlg.getLocation();
 		}
 	}
 
 	public Properties storeSettings() {
-	  return _settings;
+		return _settings;
 	}
-  
+
 	public void loadSettings(Properties settings) {
-	  if (settings == null ) {
-		settings = new Properties();
-	  }
-    
-	  this._settings = settings;
+		if (settings == null) {
+			settings = new Properties();
+		}
+
+		this._settings = settings;
 	}
 
 	public SettingsTab getSettingsTab() {
-    return new TVRaterSettingsTab(_settings);
+		return new TVRaterSettingsTab(_settings);
 	}
-	
+
 	public String getMarkIconName() {
 		return "tvraterplugin/tvrater.gif";
 	}
 
 	public String getButtonText() {
-		return null;
+		return "TVRater";
 	}
 
 	public String getButtonIconName() {
-		return null;
+		return "tvraterplugin/tvrater.gif";
+	}
+
+	/**
+	 * Called by the host-application during start-up. 
+	 *
+	 * @see #writeData(ObjectOutputStream)
+	 */
+	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		tvraterDB.readData(in);
+	}
+
+	/**
+	 * Counterpart to loadData. Called when the application shuts down.
+	 *
+	 * @see #readData(ObjectInputStream)
+	 */
+	public void writeData(ObjectOutputStream out) throws IOException {
+		tvraterDB.writeData(out);
 	}
 
 }
