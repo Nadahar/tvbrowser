@@ -55,6 +55,7 @@ import javax.swing.SwingUtilities;
 
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.View;
+import net.infonode.docking.SplitWindow;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
@@ -301,14 +302,22 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mTimeChooser = new TimeChooserPanel(this);
     
     View programTableView = new View("Programm-Tabelle", null, skinPanel);
-    
+    View timeView = new View("Zeit", null, mTimeChooser);
+    View dateView = new View("Datum", null, new DateChooserPanel(this, FinderPanel.getInstance()));
+    View channelView = new View("Sender", null, new ChannelChooserPanel(this));
     
     viewMap.addView(0, programTableView);
-    viewMap.addView(1, new View("Zeit", null, mTimeChooser));
-    viewMap.addView(2, new View("Datum", null, new DateChooserPanel(this, FinderPanel.getInstance())));
-    viewMap.addView(3, new View("Sender", null, new ChannelChooserPanel(this)));
+    viewMap.addView(1, timeView);
+    viewMap.addView(2, dateView);
+    viewMap.addView(3, channelView);
 
+   
     RootWindow rootWindow = DockingUtil.createRootWindow(viewMap, true);
+    
+    rootWindow.setWindow(new SplitWindow(true,
+            1,
+            programTableView,
+            new SplitWindow(false,0,timeView,new SplitWindow(false,0.25f,dateView,channelView))));
     
     rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(true);
     
