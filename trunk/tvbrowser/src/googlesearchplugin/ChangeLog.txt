@@ -1,4 +1,9 @@
 Changelog GoogleSearchPlugin
 
+1.01:
+- Added " around Search-String
+- Use URLEncode to change special Chars
+
+
 1.0:
 - initial version

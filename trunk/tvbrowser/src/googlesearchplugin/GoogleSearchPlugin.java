@@ -27,6 +27,8 @@
 package googlesearchplugin;
 
 
+import java.net.URLEncoder;
+
 import util.ui.BrowserLauncher;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -50,7 +52,7 @@ public class GoogleSearchPlugin extends devplugin.Plugin {
 			String name = mLocalizer.msg( "pluginName" ,"Google Search" );
 			String desc = mLocalizer.msg( "description" ,"Searches at Google for a Movie" );
 			String author = "Bodo Tasche" ;
-			return new PluginInfo(name, desc, author, new Version(1, 0));
+			return new PluginInfo(name, desc, author, new Version(1, 1));
   		} 
   		
   		public String getButtonText() {
@@ -58,9 +60,12 @@ public class GoogleSearchPlugin extends devplugin.Plugin {
   		}
   		
   		public void execute(Program program) {
-  			String search = program.getTitle();
-  			search = search.trim().replace(' ', '+');  			
-  			BrowserLauncher.openURL("http://www.google.com/search?q=" + search);
+  		    try {
+  	  			String search = URLEncoder.encode(program.getTitle(), "UTF-8");
+  	  			BrowserLauncher.openURL("http://www.google.com/search?q=%22" + search+"%22");
+  		    } catch (Exception e) {
+  		        e.printStackTrace();
+  		    }
 			
   		}
   		
