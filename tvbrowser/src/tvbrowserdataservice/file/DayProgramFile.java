@@ -139,6 +139,16 @@ public class DayProgramFile extends AbstractFile {
 
 
 
+  /**
+   * Updates the day program file with an update file.
+   * 
+   * @param updateFile The update to use to patch this day program file.
+   * @throws FileFormatException If the update file does not have a higher
+   *         version as this file or if the update says that a field should be
+   *         deleted that does not exist.
+   * 
+   * @see #merge(DayProgramFile)
+   */
   public void update(DayProgramFile updateFile) throws FileFormatException {
     // Check the version
     if (updateFile.getVersion() <= getVersion()) {
@@ -147,7 +157,7 @@ public class DayProgramFile extends AbstractFile {
     }
     
     // Go through all frames in the update file
-    merge(updateFile, false);
+    merge(updateFile, true);
     
     // Upgrade to the new version
     setVersion(updateFile.getVersion());
@@ -155,12 +165,33 @@ public class DayProgramFile extends AbstractFile {
 
 
 
+  /**
+   * Merges the day program file with a day program file of another level.
+   * 
+   * @param otherProg The day program file to merge with this file.
+   * @throws FileFormatException If merging failed.
+   * 
+   * @see #update(DayProgramFile)
+   */
   public void merge(DayProgramFile otherProg) throws FileFormatException {
     merge(otherProg, false);
   }
   
   
   
+  /**
+   * Merges two day program files.
+   * 
+   * @param otherProg The day program file to merge with this one.
+   * @param allowDeleting Specifies whether deleting program fields should be
+   *        allowed. Deleting should be allowed, if the other file is an update
+   *        for this file. It should be forbidden, if the other file is a file
+   *        of another level. (When merging two files of different levels, no
+   *        program fields should be deleted.)
+   * @throws FileFormatException If the update file does not have a higher
+   *         version as this file or if the update says that a field should be
+   *         deleted that does not exist.
+   */
   private void merge(DayProgramFile otherProg, boolean allowDeleting)
     throws FileFormatException
   {
