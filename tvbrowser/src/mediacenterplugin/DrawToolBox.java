@@ -46,6 +46,8 @@ public class DrawToolBox {
    * @param textFont Font to use
    */
   public static void drawFontWithShadow(Graphics2D g2d, String string, int x, int y, int offset,  Font textFont) {
+    y += textFont.getSize();
+    
     g2d.setColor(Color.BLACK);
     g2d.setFont(textFont);
     g2d.drawString(string, x+offset, y+offset);

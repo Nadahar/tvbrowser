@@ -57,6 +57,10 @@ public class KeyMediaAdapter extends KeyAdapter {
       mMediaPanel.lastDay();
     } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
       mMediaPanel.close();
+    } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+      mMediaPanel.lastLineInDescription();
+    } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+      mMediaPanel.nextLineInDescription();
     }
  }
 
