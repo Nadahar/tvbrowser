@@ -49,7 +49,6 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -191,6 +190,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         ok.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                stopEditing();
                 updateColorPanel();
                 mReturnValue = JOptionPane.OK_OPTION;
                 hide();
@@ -320,6 +320,14 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
     }
 
     /**
+     * Quick Work-Around. Give Focus to Slider, all Spinner loose Focus and
+     * try to store their values
+     */
+    private void stopEditing() {
+        mRedSl.grabFocus();
+    }
+    
+    /**
      * Sets the Color in this Dialog
      * 
      * @param color Color
@@ -333,12 +341,14 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         }
     }
 
+    
     /**
      * Returns the current selected Color
      * 
      * @return current selected Color
      */
     public Color getColor() {
+        stopEditing();
         updateColorPanel();
         return mCurrentColor;
     }
