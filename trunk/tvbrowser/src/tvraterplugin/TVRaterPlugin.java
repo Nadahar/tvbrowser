@@ -39,8 +39,10 @@ import devplugin.Version;
 /**
  * This Plugin gives the User the possibility to rate a Movie
  * 
- * TODO: Get Personal Ratings from Server 
- * TODO: Rate Episodes not, the whole Series 
+ * TODO: Genre-Rating
+ * TODO: Get Personal Ratings from Server
+ * TODO: Send Original-Titles to Server 
+ * TODO: Rate Episodes not the whole Series 
  * 
  * @author Bodo Tasche
  */

@@ -3,6 +3,8 @@
  */
 package tvraterplugin;
 
+import java.awt.image.BufferedImage;
+
 import javax.swing.ImageIcon;
 
 import util.ui.Localizer;
@@ -30,13 +32,13 @@ public class RatingIconTextFactory {
      * Returns the Icon for a specific Rating
      */
     public static ImageIcon getImageIconForRating(int rating) {
-        if ((rating < 0) || (rating > _icons.length)) { return new ImageIcon(); }
+        if ((rating < 0) || (rating > _icons.length)) { return new ImageIcon( new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)); }
 
         return _icons[rating];
     }
 
     public static String getStringForRating(Object type, int rateing) {
-        String ratingText;
+        String ratingText = "-";
 
         String prefix = "";
         
