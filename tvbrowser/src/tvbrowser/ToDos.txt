@@ -11,7 +11,7 @@ TODOs:
     evtl. Option "News automatisch holen"
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 - (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
-- Default-Icon fur Sender, die kein Icon haben
+- (B) Default-Icon fur Sender, die kein Icon haben
 - Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea)
 - kuerzere Texte fuer die Symbolbuttons
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
