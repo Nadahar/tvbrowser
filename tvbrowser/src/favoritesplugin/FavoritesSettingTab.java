@@ -40,12 +40,13 @@ import devplugin.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class FavoritesSettingTab extends SettingsTab {
+public class FavoritesSettingTab implements SettingsTab {
 
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
   
+  private JPanel mSettingsPn;
   private Plugin[] mChoosablePluginArr;
   private JCheckBox[] mChoosablePluginChBArr;
 
@@ -55,14 +56,21 @@ public class FavoritesSettingTab extends SettingsTab {
    * Creates a new instance of FavoritesSettingTab.
    */
   public FavoritesSettingTab() {
-    super();
-    
-    setLayout(new FlowLayout(FlowLayout.LEADING));
-    
+  }
+
+  
+  
+  /**
+   * Creates the settings panel for this tab.
+   */
+  public JPanel createSettingsPanel() {    
     String msg;
+
+    mSettingsPn = new JPanel(new BorderLayout());
+    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
     JPanel main = new JPanel(new TabLayout(1));
-    add(main);
+    mSettingsPn.add(main, BorderLayout.NORTH);
     
     // get the client plugins
     Plugin[] clientPluginArr
@@ -108,14 +116,16 @@ public class FavoritesSettingTab extends SettingsTab {
       }
       mChoosablePluginChBArr[i].setSelected(isClient);
     }
+    
+    return mSettingsPn;
   }
-  
+
   
   
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  public void ok() {
+  public void saveSettings() {
     // Find out the plugins that should be client
     ArrayList clientPluginList = new ArrayList();
     for (int i = 0; i < mChoosablePluginChBArr.length; i++) {
@@ -130,13 +140,23 @@ public class FavoritesSettingTab extends SettingsTab {
     
     FavoritesPlugin.getInstance().setClientPlugins(clientPluginArr);
   }
-  
 
+  
   
   /**
    * Returns the name of the tab-sheet.
    */
-  public String getName() {
+  public Icon getIcon() {
+    String iconName = "favoritesplugin/ThumbUp16.gif";
+    return ImageUtilities.createImageIconFromJar(iconName, getClass());
+  }
+  
+  
+  
+  /**
+   * Returns the title of the tab-sheet.
+   */
+  public String getTitle() {
     return mLocalizer.msg("name", "Favorite programs");
   }
   

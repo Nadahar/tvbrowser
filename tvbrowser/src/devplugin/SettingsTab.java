@@ -24,26 +24,37 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package devplugin;
 
 import javax.swing.*;
 
-public abstract class SettingsTab extends JPanel {
+/**
+ *
+ * @author Martin Oberhauser
+ */
+public interface SettingsTab {
+  
+  /**
+   * Creates the settings panel for this tab.
+   */
+  public JPanel createSettingsPanel();
 
+  
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  abstract public void ok();
+  public void saveSettings();
 
+  
   /**
    * Returns the name of the tab-sheet.
    */
-  abstract public String getName();
+  public Icon getIcon();
+  
+  
+  /**
+   * Returns the title of the tab-sheet.
+   */
+  public String getTitle();
 
 }

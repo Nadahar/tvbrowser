@@ -55,7 +55,7 @@ public class FileCheckBox extends JComponent {
     this.title=title;
     this.file=file;
 
-    this.setLayout(new BorderLayout(15,0));
+    this.setLayout(new BorderLayout(5,0));
 
     checkbox=new JCheckBox(title);
     if (file!=null) {

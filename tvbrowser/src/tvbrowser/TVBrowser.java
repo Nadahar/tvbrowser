@@ -41,7 +41,7 @@ import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.UpdateDlg;
-import tvbrowser.ui.settings.SettingsDlg;
+import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import tvbrowser.ui.update.*;
 import tvbrowser.ui.aboutbox.AboutBox;
@@ -811,9 +811,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
    * Shows the settings dialog.
    */
   private void showSettingsDialog() {
-    SettingsDlg dlg = new SettingsDlg(this);
-    dlg.pack();
-    UiUtilities.centerAndShow(dlg);
+    SettingsDialog dlg = new SettingsDialog(this);
+    dlg.centerAndShow();
+    
     if (Settings.settingHasChanged(new String[]{"lookandfeel"})) {
       updateLookAndFeel();
     }

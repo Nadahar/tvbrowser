@@ -26,7 +26,7 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
@@ -39,7 +39,7 @@ import tvbrowser.core.Settings;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class ProxySettingsTab extends devplugin.SettingsTab {
+public class ProxySettingsTab implements devplugin.SettingsTab {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
@@ -48,16 +48,27 @@ public class ProxySettingsTab extends devplugin.SettingsTab {
   private ProxySettingsPanel mHttpProxySettingsPanel,
     mFtpProxySettingsPanel;
   
+  private JPanel mSettingsPn;
+
   
   
   /**
    * Creates a new instance of ProxySettingsTab.
    */
   public ProxySettingsTab() {
-    setLayout(new FlowLayout(FlowLayout.LEADING));
+  }
+
+  
+  
+  /**
+   * Creates the settings panel for this tab.
+   */
+  public JPanel createSettingsPanel() {
+    mSettingsPn = new JPanel(new BorderLayout());
+    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
     JPanel main = new JPanel(new TabLayout(1));
-    add(main);
+    mSettingsPn.add(main, BorderLayout.NORTH);
     
     // HTTP proxy
     String msgProxy = mLocalizer.msg("httpProxy", "HTTP Proxy");
@@ -72,29 +83,39 @@ public class ProxySettingsTab extends devplugin.SettingsTab {
     mFtpProxySettingsPanel = new ProxySettingsPanel(msgProxy, msgUseProxy);
     mFtpProxySettingsPanel.setSettings(Settings.getFtpProxySettings());
     main.add(mFtpProxySettingsPanel);
+    
+    return mSettingsPn;
   }
 
-  
+
   
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  public void ok() {
+  public void saveSettings() {
     Settings.ProxySettings httpSettings = mHttpProxySettingsPanel.getSettings();
     Settings.ProxySettings ftpSettings = mFtpProxySettingsPanel.getSettings();
     
     Settings.setProxySettings(httpSettings, ftpSettings);
   }
-  
-  
 
+  
+  
   /**
    * Returns the name of the tab-sheet.
    */
-  public String getName() {
-    return mLocalizer.msg("name", "Proxy");
+  public Icon getIcon() {
+    return new ImageIcon("imgs/Server16.gif");
   }
   
+  
+  
+  /**
+   * Returns the title of the tab-sheet.
+   */
+  public String getTitle() {
+    return mLocalizer.msg("name", "Proxy");
+  }
   
   // inner class ProxySettingsPanel
   
