@@ -623,6 +623,19 @@
     <antcall target="-zipPackageSrc">
       <param name="package" value="newsplugin"/>
     </antcall>
+  	
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="calendarexportplugin"/>
+    </antcall>  	
+  	
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="clipboardplugin"/>
+    </antcall> 
+
+  	<antcall target="-zipPackageSrc">
+      <param name="package" value="captureplugin"/>
+    </antcall>   	
+  	
   </target>
 
 
