@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -36,7 +35,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xalan.serialize.SerializerToXML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -61,7 +59,7 @@ public class Updater implements Progress {
     private static final Localizer _mLocalizer = Localizer.getLocalizerFor(Updater.class);
 
     /** Location of Update-Skript */
-    //private static String LOCATION = "http://localhost/private/wannawork3/tvaddicted/updater.php";
+    //private static String LOCATION = "http://localhost/~bodum/wannawork3/tvaddicted/updater.php";
     private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
 
     /** The Plugin */
@@ -282,12 +280,6 @@ public class Updater implements Progress {
     private void writeData(OutputStream output) throws ParserConfigurationException, IOException {
         Hashtable table = createUpdateList();
 
-        Properties props = new Properties();
-        props.put("encoding", "UTF-8");
-
-        SerializerToXML serializer = new SerializerToXML();
-        serializer.init(output, props);
-
         Document document;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -355,7 +347,8 @@ public class Updater implements Progress {
 
         }
 
-        serializer.serialize(document);
+        XMLWriter writer = new XMLWriter();
+        writer.writeDocumentToOutputStream(document, output, "UTF-8");
     }
 
     /**
@@ -397,6 +390,17 @@ public class Updater implements Progress {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
 
+//            System.out.println(new BufferedInputStream(uc.getInputStream()).);
+            
+      /*      DataInputStream dis = new DataInputStream (uc.getInputStream());
+            String line;
+            try {
+                do {
+              line = dis.readLine();
+              System.out.println(line);
+                }while (line != null);
+            }
+            catch (IOException e) { line = "0";}*/
             document = builder.parse(new GZIPInputStream(uc.getInputStream()));
         } catch (Exception e) {
             throw e;
