@@ -182,8 +182,6 @@ public class SearchFormSettings {
         regex = ".*" + regex + ".*";
       }
       
-      System.out.println("regex: '" + regex + "'");
-      
       return regex;
     } else {
       return mSearchText;
