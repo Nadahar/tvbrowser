@@ -29,7 +29,8 @@ public class RatingIconTextFactory {
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/2.gif")),
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/3.gif")),
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/4.gif")),
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/5.gif"))};
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/5.gif")),
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/-1.gif"))};
 
     /** The Genres */
     static Properties _genre = null;
@@ -58,7 +59,14 @@ public class RatingIconTextFactory {
      * @return Icon for Rating
      */
     public static ImageIcon getImageIconForRating(int rating) {
-        if ((rating < 0) || (rating > _icons.length)) { return new ImageIcon( new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)); }
+        
+        if (rating == -1) {
+            return _icons[_icons.length - 1];
+        }
+        
+        if ((rating < 0) || (rating > _icons.length)) { 
+            return new ImageIcon( new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)); 
+        }
 
         return _icons[rating];
     }
