@@ -44,6 +44,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
+import util.ui.UiUtilities;
 import devplugin.Plugin;
 
 public class ToolBar extends JToolBar {
@@ -197,6 +198,11 @@ public class ToolBar extends JToolBar {
       Icon icon;
       if (mIconSize == ICON_BIG) {
         icon = (Icon)action.getValue(Plugin.BIG_ICON);
+        
+        if ((icon.getIconHeight() < 24) || (icon.getIconWidth() < 24)) {
+          icon = UiUtilities.scaleIcon(icon, 24, 24);
+        }
+        
       }
       else {
         icon = (Icon)action.getValue(Action.SMALL_ICON);

@@ -26,11 +26,32 @@
 
 package util.ui;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
 
 /**
@@ -352,4 +373,41 @@ public class UiUtilities {
     list.ensureIndexIsVisible(list.getMinSelectionIndex());
   }  
   
+  /**
+   * Scales Icons to s specific size
+   * 
+   * @param icon Icon that should be scaled
+   * @param x new X-Value
+   * @param y new Y-Value
+   * @return Scaled Icon
+   */
+  public static Icon scaleIcon(Icon icon, int x, int y) {
+    
+    try {
+      // Create Image with Icon
+      BufferedImage iconimage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = iconimage.createGraphics();
+      icon.paintIcon(null, g2, 0, 0);
+      g2.dispose();
+      
+      // Scale Image
+      Image image = new ImageIcon(iconimage.getScaledInstance(x, y, Image.SCALE_SMOOTH)).getImage();
+      
+      BufferedImage im = new BufferedImage(x, y, BufferedImage.TYPE_INT_ARGB);
+
+      g2 = im.createGraphics();
+      g2.drawImage(image, null, null);
+      g2.dispose();
+
+      im.flush();
+      
+      // Return new Icon
+      return new ImageIcon(image);
+
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    
+    return icon;
+  }
 }
