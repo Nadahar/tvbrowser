@@ -28,55 +28,101 @@ package mediacenterplugin;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
+
+import util.ui.TextAreaIcon;
 
 /**
  * @author bodum
  */
 public class MediaPanel {
 
-  int mCount = 0;
+  private int mCount = 0;
 
-  MediaCenterFrame mParent;
+  private MediaCenterFrame mParent;
 
-  BufferStrategy mStrategy;
+  private BufferStrategy mStrategy;
 
-  boolean stopLoop = false;
+  private boolean mStopLoop = false;
 
-  boolean repaint = false;
+  private boolean mRepaint = false;
   
-  public MediaPanel(MediaCenterFrame parent, BufferStrategy strategy) {
+  private int mWidth, mHeight;
+  
+  private Image background;
+  
+  public MediaPanel(MediaCenterFrame parent, int width, int height, BufferStrategy strategy) {
     mParent = parent;
     mStrategy = strategy;
+    
+    mWidth = width;
+    mHeight = height;
+    
+    background = createBackgroundImage();
   }
 
-  public void startLoop() {
-    Color bgknd = new Color(30, 30, 150);
-    Color box = bgknd.brighter();
-    Font textFont = new Font("SansSerif", Font.BOLD, 20);
+  private Image createBackgroundImage() {
+    Image image;
+    
+    try {
+      URL url = this.getClass().getClassLoader().getResource("mediacenterplugin/images/default_blue.jpg");
 
-    while (!stopLoop) {
+      Image sourceImage = ImageIO.read(url);
+
+      GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+      image = gc.createCompatibleImage(mWidth,mHeight,Transparency.OPAQUE);
+
+      Graphics2D g2d = (Graphics2D) image.getGraphics();
+      
+      g2d.drawImage(sourceImage.getScaledInstance(mWidth, mHeight, Image.SCALE_SMOOTH),0,0,mWidth, mHeight, null);
+
+      g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      
+      g2d.setColor(new Color(180, 180, 180, 100));
+      g2d.fillRoundRect(50, 10, mWidth-100, 100, 10, 10);
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
+    }
+
+    return image;
+  }
+  
+  public void startLoop() {
+    Color box = new Color(180, 180, 180, 100);
+    Font textFont = new Font("SansSerif", Font.BOLD, 14);
+
+    while (!mStopLoop) {
       Graphics2D g2d = (Graphics2D) mStrategy.getDrawGraphics();
       g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-      g2d.setColor(bgknd);
+      g2d.drawImage(background, 0,0, null);
 
-      g2d.fillRect(0, 0, mParent.getWidth(), mParent.getHeight());
+      DrawToolBox.drawFontWithShadow(g2d, "Hello2 : " + mCount, 100, 40, 1, textFont);
 
-      g2d.setColor(box);
-      g2d.fillRoundRect(50, 10, mParent.getWidth()-100, 100, 10, 10);
-
-      DrawToolBox.drawFontWithShadow(g2d, "Hello2 : " + mCount, 100, 40, 2, textFont);
-
+      TextAreaIcon icon = new TextAreaIcon(textFont, 200);     
+      icon.setText("This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing ");
+      icon.setMaximumLineCount(3);
+      icon.paintIcon(mParent, g2d, 40, 200);
+      
       // finally, we've completed drawing so clear up the graphics
       // and flip the buffer over
       g2d.dispose();
       mStrategy.show();
-      repaint = false;
+      mRepaint = false;
 
       try {
-        while (!repaint && !stopLoop) {
+        while (!mRepaint && !mStopLoop) {
           Thread.sleep(10);
         }
       } catch (Exception e) {
@@ -88,7 +134,7 @@ public class MediaPanel {
 
 
   public void doPaint() {
-    repaint = true;
+    mRepaint = true;
   }
   
   public void nextDay() {
@@ -102,7 +148,7 @@ public class MediaPanel {
   }
 
   public void close() {
-    stopLoop = true;
+    mStopLoop = true;
   }
 
 }

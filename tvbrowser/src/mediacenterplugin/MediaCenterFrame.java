@@ -87,7 +87,7 @@ public class MediaCenterFrame extends Canvas {
     createBufferStrategy(2);
     BufferStrategy buffer = getBufferStrategy();
 
-    mMediaPanel = new MediaPanel(this, buffer);
+    mMediaPanel = new MediaPanel(this, x, y, buffer);
 
     KeyMediaAdapter keyAdapter = new KeyMediaAdapter(mMediaPanel);
 
