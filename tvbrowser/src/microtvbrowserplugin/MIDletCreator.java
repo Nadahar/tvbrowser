@@ -21,6 +21,7 @@ public class MIDletCreator implements Progress{
 	
 	static Localizer mLocalizer = Localizer.getLocalizerFor(MIDletCreator.class);
 	
+		
 	private static final int block_size = 250;
 	private ProgressWindow progress;
 	private MicroTvBrowserPlugin mtbp;
@@ -335,7 +336,7 @@ public class MIDletCreator implements Progress{
 								
 								//CH_to_export[j]+": Entry without title ? ("+D.getDayOfMonth()+"."+(D.getMonth()+1)+" "+toSave.getHours()+":"+toSave.getMinutes()+")\n"
 								//"{0}: Entry without title ? ({1}.{2} {3}:{4})"
-								Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth()+1)),Integer.toString(toSave.getHours()),Integer.toString(toSave.getMinutes())};
+								Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth())),Integer.toString(toSave.getHours()),Integer.toString(toSave.getMinutes())};
 								exportLog.append(mLocalizer.msg("0: Entry without title ? (1.2 3:4)","{0}: Entry without title ? ({1}.{2} {3}:{4})",O));
 								exportLog.append("\n");
 								title = "";
@@ -395,8 +396,8 @@ public class MIDletCreator implements Progress{
 					} else {
 						//"Can't export "+CH_to_export[j]+" on "+D.getDayOfMonth()+":"+(D.getMonth()+1)+" : No valid data found\n"
 						//"Can't export {0} on {1}:{2} : No valid data found"
-						Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth()+1))};
-						exportLog.append(mLocalizer.msg("Can't export 0 on 1:2 : No valid data found","Can't export {0} on {1}:{2} : No valid data found",O));
+						Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth()))};
+						exportLog.append(mLocalizer.msg("Can't export 0 on 1.2 : No valid data found","Can't export {0} on {1}.{2} : No valid data found",O));
 						exportLog.append("\n");						
 					}
 					
