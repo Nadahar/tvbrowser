@@ -106,7 +106,7 @@ public class ReminderSettingsTab implements SettingsTab {
       "*.wav, *.aif, *.rmf, *.au, *.mid");
     soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
 
-    mReminderWindowChB.setSelected(mSettings.getProperty("usemsgbox","true").equals("true"));
+    mReminderWindowChB.setSelected(mSettings.getProperty("usemsgbox","false").equals("true"));
     mSoundFileChB.setSelected(mSettings.getProperty("usesound","false").equals("true"));
     mExecFileChB.setSelected(mSettings.getProperty("useexec","false").equals("true"));
 

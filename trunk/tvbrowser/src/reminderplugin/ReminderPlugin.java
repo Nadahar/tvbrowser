@@ -159,7 +159,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     if (settings == null ) {
       settings = new Properties();
     }
-    
+    if (settings.getProperty("usemsgbox")==null) {
+      settings.setProperty("usemsgbox","true");
+    }
     mSettings = settings;
     
   }
@@ -265,11 +267,14 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    * @see #handleTvDataAdded(ChannelDayProgram)
    */
   public void handleTvDataDeleted(ChannelDayProgram oldProg) {
+    
+    /*
+    
     // Remove the deleted programs from the reminder list
     for (int i = 0; i < oldProg.getProgramCount(); i++) {
       Program prog = oldProg.getProgramAt(i);
       mReminderList.remove(prog);
-    }
+    }*/
   }
 
 } 

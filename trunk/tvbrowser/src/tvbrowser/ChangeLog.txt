@@ -1,5 +1,9 @@
 Changelog TVBrowser
 
+
+1.0 RC 02
+- bugfix: set property "showmsgbox" to true, if it's not initialized
+
 0.9.8:
 - made webbrowser choosable
 - command line options added:
