@@ -67,6 +67,10 @@ public class Database {
 	 * @return the overall Rating
 	 */
 	public Rating getOverallRating(String title) {
+		if (title == null) {
+			return null;
+		}
+		
 		if (_overalrating.get(title.toLowerCase()) != null) {
 			return (Rating) _overalrating.get(title.toLowerCase());
 		}
@@ -98,6 +102,11 @@ public class Database {
 	 * @return the personal Rating
 	 */
 	public Rating getPersonalRating(Program program) {
+		if ((program == null) || (program.getTitle() == null) ) { 
+			return null;
+		}
+
+		
 		Rating rating = getPersonalRating(program.getTitle());
 		if (rating != null) {
 			_personalrating.remove(program.getTitle());
@@ -115,6 +124,10 @@ public class Database {
 	 * @return the personal Rating
 	 */
 	public Rating getPersonalRating(String title) {
+		if (title == null) {
+			return null;
+		}
+		
 		Rating rating = (Rating) _personalrating.get(title);
 		if (rating != null) {
 			_personalrating.remove(title);

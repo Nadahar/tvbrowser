@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.58
+- Again nullpointer fixed
+
 0.57
 - Database could create a Nullpointer, fixed
 
