@@ -77,8 +77,19 @@ public class ProgramFrameDispatcher {
     System.out.println((time/60)+":"+(time%60)+": "+titleField.getTextData());
   }
   
+  
+  /**
+   * Gets an iterator over all {@link DayProgramFile}s of the dispatcher.
+   * 
+   * @return An iterator over all DayProgramFiles.
+   */
+  public Iterator getDayProgramFiles() {
+    return mDayPrograms.values().iterator();
+  }
+  
+  
   public void store(String directory) throws FileFormatException, IOException {
-    Iterator it=mDayPrograms.values().iterator();
+    Iterator it = getDayProgramFiles();
     while (it.hasNext()) {
       DayProgramFile f=(DayProgramFile)it.next();
       int cnt=f.getProgramFrameCount();
