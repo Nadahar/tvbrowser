@@ -78,7 +78,7 @@ public class FavoritesPlugin extends Plugin {
   public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
-    int version = in.readInt();
+    in.readInt(); // version
 
     // get the favorites
     int size = in.readInt();
@@ -198,8 +198,7 @@ public class FavoritesPlugin extends Plugin {
    * plugin from the context menu.
    */
   public void execute(Program program) {
-    Favorite favorite = new Favorite();
-    favorite.setTerm(program.getTitle());
+    Favorite favorite = new Favorite(program.getTitle());
 
     EditFavoriteDialog dlg = new EditFavoriteDialog(getParentFrame(), favorite);
     dlg.centerAndShow();

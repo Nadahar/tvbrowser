@@ -145,7 +145,7 @@ public class SearchForm extends JPanel {
       this.add(p1);
 
       msg = mLocalizer.msg("searchTerm", "Search term");
-      p1.add(new JLabel(msg), BorderLayout.WEST);
+      p1.add(new JLabel(msg + "  "), BorderLayout.WEST);
       
       if (mPatternCB != null) {
         p1.add(mPatternCB, BorderLayout.CENTER);
@@ -157,7 +157,7 @@ public class SearchForm extends JPanel {
     // Search in
     bg = new ButtonGroup();
     
-    p1 = new JPanel(new TabLayout(1));
+    p1 = new JPanel(new TabLayout(1, 2, 0));
     msg = mLocalizer.msg("searchIn", "Search in");
     p1.setBorder(BorderFactory.createTitledBorder(msg));
     this.add(p1);
@@ -200,7 +200,7 @@ public class SearchForm extends JPanel {
     p2.add(mChangeSearchFieldsBt, BorderLayout.EAST);
     
     // options
-    p1 = new JPanel(new TabLayout(1));
+    p1 = new JPanel(new TabLayout(1, 2, 0));
     msg = mLocalizer.msg("options", "Options");
     p1.setBorder(BorderFactory.createTitledBorder(msg));
     this.add(p1);

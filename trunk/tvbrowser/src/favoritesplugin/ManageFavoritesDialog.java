@@ -46,8 +46,6 @@ public class ManageFavoritesDialog extends JDialog {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ManageFavoritesDialog.class);
 
-  private Channel[] mSubsribedChannelArr;
-  
   private DefaultListModel mFavoritesListModel, mProgramListModel;
   private JList mFavoritesList, mProgramList;
   private JSplitPane mSplitPane;
@@ -62,8 +60,6 @@ public class ManageFavoritesDialog extends JDialog {
    */
   public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr, int splitPanePosition) {
     super(parent, true);
-    
-    mSubsribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
     
     String msg;
     Icon icon;
@@ -314,7 +310,7 @@ public class ManageFavoritesDialog extends JDialog {
     {
       if (value instanceof Favorite) {
         Favorite fav = (Favorite)value;
-        String info = fav.getTerm();
+        String info = fav.getSearchFormSettings().getSearchText();
         if (fav.getUseCertainChannel() || fav.getUseCertainTimeOfDay()) {
           info += " (";
           if (fav.getUseCertainChannel()) {

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 
 
 import util.exc.TvBrowserException;
+import util.ui.SearchFormSettings;
 
 import devplugin.*;
 
@@ -40,13 +41,11 @@ import devplugin.*;
  */
 public class Favorite {
   
-  public static final int MODE_MATCH_EXACTLY = 1;
-  public static final int MODE_TERM_IS_KEYWORD = 2;
-  public static final int MODE_TERM_IS_REGEX = 3;
+  private SearchFormSettings mSearchFormSettings;
   
-  private String mTerm;
-  private boolean mSearchInTitle, mSearchInText;
-  private int mSearchMode;
+  // private String mTerm;
+  // private boolean mSearchInTitle, mSearchInText;
+  // private int mSearchMode;
   private boolean mUseCertainChannel;
   private Channel mCertainChannel;
   private boolean mUseCertainTimeOfDay;
@@ -60,10 +59,8 @@ public class Favorite {
    * Creates a new instance of Favorite.
    */
   public Favorite() {
-    mTerm = "";
-    mSearchInTitle = true;
-    mSearchInText = false;
-    mSearchMode = MODE_MATCH_EXACTLY;
+    mSearchFormSettings = new SearchFormSettings("");
+    
     mUseCertainChannel = false;
     mCertainChannel = null;
     mUseCertainTimeOfDay = false;
@@ -73,6 +70,15 @@ public class Favorite {
     mProgramArr = new Program[0];
   }
 
+
+  /**
+   * Creates a new instance of Favorite.
+   */
+  public Favorite(String searchText) {
+    this();
+    
+    mSearchFormSettings.setSearchText(searchText);
+  }
   
   
   /**
@@ -83,10 +89,28 @@ public class Favorite {
   {
     int version = in.readInt();
     
-    mTerm = (String) in.readObject();
-    mSearchInTitle = in.readBoolean();
-    mSearchInText = in.readBoolean();
-    mSearchMode = in.readInt();
+    if (version <= 2) {
+      String term = (String) in.readObject();
+      in.readBoolean(); // searchInTitle
+      boolean searchInText = in.readBoolean();
+      int searchMode = in.readInt();
+  
+      mSearchFormSettings = new SearchFormSettings(term);
+      if (searchInText) {
+        mSearchFormSettings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
+      } else {
+        mSearchFormSettings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+      }
+      
+      switch (searchMode) {
+        case 1: mSearchFormSettings.setMatch(SearchFormSettings.MATCH_EXACTLY); break;
+        case 2: mSearchFormSettings.setMatch(SearchFormSettings.MATCH_KEYWORD); break;
+        case 3: mSearchFormSettings.setMatch(SearchFormSettings.MATCH_REGULAR_EXPRESSION); break;
+      }
+    } else {
+      mSearchFormSettings = new SearchFormSettings(in);
+    }
+
     mUseCertainChannel = in.readBoolean();
 
     String certainChannelServiceClassName = (String) in.readObject();
@@ -124,12 +148,10 @@ public class Favorite {
    * Serializes this Object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
+    out.writeInt(3); // version
     
-    out.writeObject(mTerm);
-    out.writeBoolean(mSearchInTitle);
-    out.writeBoolean(mSearchInText);
-    out.writeInt(mSearchMode);
+    mSearchFormSettings.writeData(out);
+    
     out.writeBoolean(mUseCertainChannel);
 
     String certainChannelServiceClassName = null;
@@ -154,46 +176,14 @@ public class Favorite {
     }
   }
 
-  
-  
-  public String getTerm() {
-    return mTerm;
+
+  public SearchFormSettings getSearchFormSettings() {
+    return mSearchFormSettings;
   }
 
-  public void setTerm(String term) {
-    mTerm = term;
+  public void setSearchFormSettings(SearchFormSettings settings) {
+    mSearchFormSettings = settings;
   }
-
-  
-  
-  public boolean getSearchInTitle() {
-    return mSearchInTitle;
-  }
-  
-  public void setSearchInTitle(boolean searchInTitle) {
-    mSearchInTitle = searchInTitle;
-  }
-
-  
-  
-  public boolean getSearchInText() {
-    return mSearchInText;
-  }
-  
-  public void setSearchInText(boolean searchInText) {
-    mSearchInText = searchInText;
-  }
-
-  
-  
-  public int getSearchMode() {
-    return mSearchMode;
-  }
-  
-  public void setSearchMode(int searchMode) {
-    mSearchMode = searchMode;
-  }
-
   
   
   public boolean getUseCertainChannel() {
@@ -263,15 +253,11 @@ public class Favorite {
     unmarkPrograms();
     
     // Search for matching programs
-    String regex;
-    switch (mSearchMode) {
-      case MODE_MATCH_EXACTLY:   regex = "\\Q" + mTerm + "\\E"; break;
-      case MODE_TERM_IS_KEYWORD: regex = ".*\\Q" + mTerm + "\\E.*"; break;
-      default:                   regex = mTerm; break;
-    }
-    boolean inTitle = mSearchInTitle;
-    boolean inText = mSearchInText;
-    boolean caseSensitive = false;
+    String regex = mSearchFormSettings.getSearchTextAsRegex();
+    boolean caseSensitive = mSearchFormSettings.getCaseSensitive();
+    ProgramFieldType[] fieldArr = mSearchFormSettings.getFieldTypes();
+    devplugin.Date startDate = new devplugin.Date();
+    int nrDays = 1000;
     Channel[] channels;
     if (mUseCertainChannel) {
       if (mCertainChannel == null) {
@@ -282,11 +268,9 @@ public class Favorite {
     } else {
       channels = Plugin.getPluginManager().getSubscribedChannels();
     }
-    devplugin.Date startDate = new devplugin.Date();
-    int nrDays = 1000;
     
-    Program[] matchingProgArr = Plugin.getPluginManager().search(regex, inTitle,
-      inText, caseSensitive, channels, startDate, nrDays);
+    Program[] matchingProgArr = Plugin.getPluginManager().search(regex,
+      caseSensitive, fieldArr, startDate, nrDays, channels, true);
     
     // Check whether the program is within the specified time of day
     if (mUseCertainTimeOfDay) {
