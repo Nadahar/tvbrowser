@@ -13,12 +13,13 @@ current:
 - Use more icons for menu items and buttons
 - shortcuts for menu items added
 - keyboard navigable
+- specifiying a proxy supported
 
 0.9.3:
 - bugfixes
 
 0.9.2:
--  bugfixes
+- bugfixes
 
 0.9.1:
 - tv data available
