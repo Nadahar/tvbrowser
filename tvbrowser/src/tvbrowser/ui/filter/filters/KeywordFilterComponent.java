@@ -55,8 +55,8 @@ class SearchSetting {
      try {
          int version=in.readInt();
          keyword=(String)in.readObject();
-         area=in.readInt();
-         caseSensitive=in.readBoolean();
+         area=((Integer)in.readObject()).intValue();
+         caseSensitive=((Boolean)in.readObject()).booleanValue();
      }catch (IOException e) {
          util.exc.ErrorHandler.handle("Could not read filter component from file", e);
      }catch (ClassNotFoundException e) {
@@ -65,11 +65,11 @@ class SearchSetting {
  }
  
  public void store(ObjectOutputStream out) {
-     try {
-         out.writeInt(1);
+     try {       
+         out.writeInt(100);
          out.writeObject(keyword);
-         out.writeInt(area);
-         out.writeBoolean(caseSensitive);         
+         out.writeObject(new Integer(area));
+         out.writeObject(new Boolean(caseSensitive));        
      }catch (IOException e) {
          util.exc.ErrorHandler.handle("Could not write filter rule to file", e);
      }

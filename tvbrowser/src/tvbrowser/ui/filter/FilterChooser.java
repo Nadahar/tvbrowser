@@ -49,17 +49,17 @@ public class FilterChooser extends JPanel {
     mBox=new JComboBox();
     mModel=model;
     updateList();
-    model.setProgramFilter((Filter)mBox.getSelectedItem());
+    model.setProgramFilter((AbstractFilter)mBox.getSelectedItem());
     mBox.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Object o=mBox.getSelectedItem();
-        if (o instanceof Filter) {
-          model.setProgramFilter((Filter)o);   
+        if (o instanceof AbstractFilter) {
+          model.setProgramFilter((AbstractFilter)o);   
         }else if (o instanceof String){
           SelectFilterDlg dlg=new SelectFilterDlg(parent);
           util.ui.UiUtilities.centerAndShow(dlg);
           updateList();
-          Filter f=(Filter)mBox.getItemAt(0);
+          AbstractFilter f=(AbstractFilter)mBox.getItemAt(0);
           mBox.setSelectedIndex(0);
           model.setProgramFilter(f);  
         }
@@ -73,11 +73,18 @@ public class FilterChooser extends JPanel {
   private void updateList() {
         
     mBox.removeAllItems();
-    Filter[] f=FilterList.getFilterList();
+    
+    Object[] o=FilterListModel.getInstance().toArray();
+    for (int i=0;i<o.length;i++) {
+      mBox.addItem((AbstractFilter)o[i]);
+    }
+    
+    /*
+    AbstractFilter[] f=FilterList.getFilterList();
     for (int i=0;i<f.length;i++) {
       mBox.addItem(f[i]);
     }
-        
+        */
     mBox.addItem(mLocalizer.msg("EditFilters","edit filters..."));
     }
 }

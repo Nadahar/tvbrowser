@@ -31,6 +31,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
+
 import tvbrowser.ui.filter.*;
 
 
@@ -43,7 +44,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
   private JList mFilterList;
   private JFrame mParent;
   private JButton mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn, mUpBtn, mDownBtn;
-  private DefaultListModel mFilterListModel;  
+ // private DefaultListModel mFilterListModel;  
+  private FilterListModel mFilterListModel; 
     
 	public SelectFilterDlg(JFrame parent) {
 	
@@ -54,12 +56,17 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
 		contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 		setTitle(mLocalizer.msg("title","Edit Filters"));
 
-    mFilterListModel=new DefaultListModel();
+    //mFilterListModel=new DefaultListModel();
+    //File dir=new File(Settings.getUserDirectoryName()+"/filters");
+    //if (!dir.exists()) {
+    //  dir.mkdirs();
+    //}
+    mFilterListModel=FilterListModel.getInstance();
     mFilterList=new JList(mFilterListModel);
-    Filter[] fList=FilterList.getFilterList();
+  /*  AbstractFilter[] fList=FilterList.getFilterList();
     for (int i=0;i<fList.length;i++) {
         mFilterListModel.addElement(fList[i]);
-    }
+    }*/
     mFilterList.setVisibleRowCount(5);
     
     mFilterList.addListSelectionListener(new ListSelectionListener() {
@@ -118,7 +125,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
 		
         
     updateBtns();
-		setSize(280,280);
+		setSize(280,350);
 		
 		
 	}
@@ -126,8 +133,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
   public void updateBtns() {
       
       Object item=mFilterList.getSelectedValue();
-      mEditBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter));
-      mRemoveBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter));  
+      mEditBtn.setEnabled(item!=null && !(item instanceof DefaultFilter));
+      mRemoveBtn.setEnabled(item!=null && !(item instanceof DefaultFilter));  
 
       int inx=mFilterList.getSelectedIndex();
       mUpBtn.setEnabled(inx>0);
@@ -137,20 +144,20 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==mNewBtn) {
             EditFilterDlg dlg=new EditFilterDlg(mParent, null);
-            Filter filter=dlg.getFilter();
+            UserFilter filter=dlg.getUserFilter();
             if (filter!=null) {
-                mFilterListModel.addElement(filter);              
+                mFilterListModel.addElement(filter);
+              //  FilterList.add(filter);              
             }
         }
         else if (e.getSource()==mEditBtn) {
-            Filter filter=(Filter)mFilterList.getSelectedValue();
-            EditFilterDlg dlg=new EditFilterDlg(mParent, filter);
+            AbstractFilter filter=(AbstractFilter)mFilterList.getSelectedValue();
+            if (filter instanceof UserFilter) {
+              EditFilterDlg dlg=new EditFilterDlg(mParent, (UserFilter)filter);
+            }
         }
-        else if (e.getSource()==mRemoveBtn) {
-            Object o=mFilterList.getSelectedValue();
-            int i=mFilterList.getSelectedIndex();
-            mFilterListModel.remove(i);
-            FilterList.remove((Filter)o);
+        else if (e.getSource()==mRemoveBtn) {           
+            mFilterListModel.remove(mFilterList.getSelectedValue());
             updateBtns();  
         }
         else if (e.getSource()==mUpBtn) {
@@ -168,21 +175,18 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
             mFilterList.setSelectedIndex(fromInx+1);
         }
         else if (e.getSource()==mOkBtn) {
+          /*
             Object o[]=mFilterListModel.toArray();
             FilterList.clear();
             for (int i=0;i<o.length;i++) {
-              FilterList.add((Filter)o[i]);  
+              FilterList.add((AbstractFilter)o[i]);  
             }
          
-          /*
-            Enumeration enum=mFilterListModel.elements();
-            while (enum.hasMoreElements()) {
-                Filter filter=(Filter)enum.nextElement();
-                FilterList.add(filter);
-            }
-            */
+          
             FilterList.store();   
-            FilterComponentList.store();         
+            FilterComponentList.store();   
+            */
+            mFilterListModel.store();      
             hide();
         }
         else if (e.getSource()==mCancelBtn) {

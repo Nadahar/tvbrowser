@@ -190,6 +190,8 @@ public class Settings {
   public static final String TVDATA_DIR="tvdata";
   public static final String DATASERVICECACHE_DIR=".";
   
+  public static final String FILTERS_DIR="filters";
+  
   private static final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
   private static final Font PROGRAMINFOFONT=new Font("Dialog",Font.PLAIN,10);
   private static final Font CHANNELNAMEFONT=new Font("Dialog",Font.BOLD,12);
@@ -273,8 +275,6 @@ public class Settings {
   public static String getDataServiceCacheDirectory() {
     String res=settings.getProperty("directory.dataservicecache");
     if (res==null) {
-      //java.io.File f=new File(DATASERVICECACHE_DIR);
-      //res=f.getAbsolutePath();
       return DATASERVICECACHE_DIR;      
     }
     return res;
@@ -283,6 +283,18 @@ public class Settings {
   public static void setDataServiceCacheDirectory(String dir) {
     settings.setProperty("directory.dataservicecache",dir);
   }
+  
+  public static String getFilterDirectory() {
+    String res=settings.getProperty("directory.filters");
+    if (res==null) {
+      return getUserDirectoryName()+File.separator+FILTERS_DIR;      
+    }
+    return res;
+  }
+  
+  public static void setFilterDirectory(String dir) {
+      settings.setProperty("directory.filters",dir);
+    }
 
   /**
    * Store all settings. This method is called on quitting the application.

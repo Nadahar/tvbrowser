@@ -27,26 +27,29 @@
 package tvbrowser.ui.filter;
 
 
-public class ShowAllFilter extends DefaultFilter {
-    
-  private static final util.ui.Localizer mLocalizer
-         = util.ui.Localizer.getLocalizerFor(ShowAllFilter.class);
-  
-    
+import devplugin.Plugin;
+
+public class PluginFilter extends DefaultFilter {
     
  
     
   public boolean accept(devplugin.Program prog) {
-    return true;
+    Plugin[] p=prog.getMarkedByPlugins();
+    return (p!=null && p.length>0);
+    
   }
   
   
   
   public String getName() {
-    return mLocalizer.msg("ShowAll","Show all");
+    return "Plugin";
   }
 
   
- 
+  public boolean containsRuleComponent(String comp) {
+    return false;
+  }
+
+  
     
 }

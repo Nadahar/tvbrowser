@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 import util.ui.UiUtilities;
 import tvbrowser.ui.filter.filters.*;
@@ -48,11 +49,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   private JList mRuleListBox;
   private JTextField mFilterNameTF, mFilterRuleTF;
   private DefaultListModel mRuleListModel;
-  private Filter mFilter=null;
+  private UserFilter mFilter=null;
   private JLabel mFilterRuleErrorLb, mColLb;
   private String mFilterName=null;
     
-	public EditFilterDlg(JFrame parent, Filter filter) {
+	public EditFilterDlg(JFrame parent, UserFilter filter) {
 	
 		super(parent,true);
 		mParent=parent;
@@ -191,7 +192,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       
       boolean validRule=true;
       try {
-        Filter.testTokenTree(mFilterRuleTF.getText());
+        UserFilter.testTokenTree(mFilterRuleTF.getText());
         mFilterRuleErrorLb.setText("");
       }catch(ParserException e) {
         mFilterRuleErrorLb.setText(e.getMessage()); 
@@ -244,12 +245,13 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           updateBtns();
       }else if (o==mRemoveBtn) {
         boolean allowRemove=true;
-        Filter[] filter=FilterList.getFilterList();
+        Iterator it=FilterListModel.getInstance().getUserFilterIterator();
         FilterComponent fc=(FilterComponent)mRuleListBox.getSelectedValue();
-        for (int i=0;i<filter.length && allowRemove;i++) {
-          if (filter[i]!=mFilter && filter[i].containsRuleComponent(fc.getName())) {
+        while (it.hasNext() && allowRemove) {
+          UserFilter curFilter=(UserFilter)it.next();         
+          if (curFilter.containsRuleComponent(fc.getName())) {
             allowRemove=false;
-            JOptionPane.showMessageDialog(this,"This filter component is used by filter '"+filter[i].getName()+"\nRemove the filter first.");
+            JOptionPane.showMessageDialog(this,"This filter component is used by filter '"+curFilter.getName()+"\nRemove the filter first.");
           }
         }
         if (allowRemove) {
@@ -259,12 +261,12 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         }
       }else if (o==mOkBtn) {
           String filterName=mFilterNameTF.getText();
-          if (!filterName.equalsIgnoreCase(mFilterName) && FilterList.containsFilter(filterName)) {
+          if (!filterName.equalsIgnoreCase(mFilterName) && FilterListModel.getInstance().containsFilter(filterName)) {
             JOptionPane.showMessageDialog(this,"Filter '"+filterName+"' already exists.");
           }
           else {
             if (mFilter==null) {
-              mFilter=new Filter(mFilterNameTF.getText());
+              mFilter=new UserFilter(mFilterNameTF.getText());
             }
             else {
               mFilter.setName(mFilterNameTF.getText());
@@ -290,7 +292,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       
   }
   
-  public Filter getFilter() {
+  public UserFilter getUserFilter() {
       return mFilter;
   }
   
