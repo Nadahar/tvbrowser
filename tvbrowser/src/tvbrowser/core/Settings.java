@@ -584,4 +584,37 @@ public class Settings {
   public static final SplitViewProperty propViewDateChannel
   = new SplitViewProperty(mProp,"view.date_channel", true, true, 100);
 
+  
+  public static final BooleanProperty propSplashShow 
+  = new BooleanProperty(mProp, "splash.show", true);
+  /**
+   * The Splash-Image
+   */
+  public static final StringProperty propSplashImage
+  = new StringProperty(mProp,"splash.file", "imgs/splash.jpg");
+  
+  /**
+   * The X-Position of the Text in the Splash
+   */
+  public static final IntProperty propSplashTextPosX
+  = new IntProperty(mProp, "splash.textPosX", 140);
+  
+  /**
+   * The Y-Position of the Text in the Splash
+   */
+  public static final IntProperty propSplashTextPosY
+  = new IntProperty(mProp, "splash.textPosY", 220);
+  
+  /**
+   * Background-Color
+   */
+  public static final ColorProperty propSplashBackgroundColor
+  = new ColorProperty(mProp, "splash.BackgroundColor", new Color(63, 114, 133));
+  
+  /**
+   * Foreground-Color
+   */
+  public static final ColorProperty propSplashForegroundColor
+  = new ColorProperty(mProp, "splash.ForegroundColor", Color.WHITE);
+  
 }

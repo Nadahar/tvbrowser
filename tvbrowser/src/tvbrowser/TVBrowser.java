@@ -251,9 +251,13 @@ public class TVBrowser {
     
     final Splash splash;
     
-    if (showSplashScreen) {
-      splash = new SplashScreen("imgs/splash.jpg", 140, 220,
-         new Color(63, 114, 133), Color.WHITE);      
+    if (showSplashScreen && Settings.propSplashShow.getBoolean()) {
+      splash = new SplashScreen(
+          Settings.propSplashImage.getString(),
+          Settings.propSplashTextPosX.getInt(),
+          Settings.propSplashTextPosY.getInt(),
+          Settings.propSplashBackgroundColor.getColor(),
+          Settings.propSplashForegroundColor.getColor());      
     }
     else {
       splash = new DummySplash(); 
