@@ -34,16 +34,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
-import util.ui.OrderChooser;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.SettingsTab;
-import devplugin.ActionMenu;
 
 /**
  * TV-Browser
@@ -253,7 +258,7 @@ class TimePanel extends JPanel {
     mTimeSp = new JSpinner(new SpinnerDateModel());
     mTimeSp.setEditor(new JSpinner.DateEditor(mTimeSp, timePattern));
    
-    add(mTimeSp,BorderLayout.WEST);
+    add(mTimeSp,BorderLayout.EAST);
     setTime(minutes);
   }
   
@@ -300,7 +305,8 @@ class TimePanel extends JPanel {
           }
         });
       }
-      JButton newBtn = UiUtilities.createToolBarButton(mLocalizer.msg("new","New"),new ImageIcon("imgs/New16.gif"));
+      JButton newBtn = new JButton(new ImageIcon("imgs/New16.gif"));
+      newBtn.setToolTipText(mLocalizer.msg("new","New"));
       JPanel southPn = new JPanel(new BorderLayout());
       southPn.add(newBtn, BorderLayout.WEST);
       
@@ -350,10 +356,15 @@ class TimePanel extends JPanel {
     private TimePanel mTimePn;  
     
     public Row(int time) {
-      setLayout(new BorderLayout());        
-      mRemoveBtn = UiUtilities.createToolBarButton(mLocalizer.msg("delete","Delete"),new ImageIcon("imgs/Delete16.gif"));
-      add(mTimePn = new TimePanel(time), BorderLayout.CENTER);
-      add(mRemoveBtn, BorderLayout.EAST);
+      setLayout(new BorderLayout());
+      mRemoveBtn = new JButton(new ImageIcon("imgs/Delete16.gif"));
+      mRemoveBtn.setToolTipText(mLocalizer.msg("delete","Delete"));
+      JPanel row = new JPanel(new TabLayout(2));
+      
+      row.add(mTimePn = new TimePanel(time));
+      row.add(mRemoveBtn);
+      
+      add(row, BorderLayout.WEST);
       
     }
     
