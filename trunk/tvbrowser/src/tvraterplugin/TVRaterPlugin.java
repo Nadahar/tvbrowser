@@ -79,7 +79,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                         "description",
                         "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 58));
+        return new PluginInfo(name, desc, author, new Version(0, 59));
     }
 
     /**
