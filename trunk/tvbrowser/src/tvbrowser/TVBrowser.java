@@ -75,7 +75,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-    mImportTvDataMI, mExportTvDataMI, aboutMenuItem;
+    mImportTvDataMI, mExportTvDataMI, aboutMenuItem, helpMenuItem;
   private SkinPanel skinPanel;
   private ButtonPanel buttonPanel;
   private static String curLookAndFeel;
@@ -278,11 +278,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     icon = new ImageIcon("imgs/Help16.gif");
     msg = mLocalizer.msg("menuitem.help", "Help...");    
-    JMenuItem helpMenuItem = new JMenuItem(msg, icon);
+    helpMenuItem = new JMenuItem(msg, icon);
 	helpMenuItem.setMnemonic(KeyEvent.VK_H);
 	helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
  
-    helpMenuItem.setEnabled(false);
+    helpMenuItem.addActionListener(this);
     helpMenu.add(helpMenuItem);
     
     helpMenu.addSeparator();
@@ -500,6 +500,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     else if (src==aboutMenuItem) {
       showAboutBox();
     }
+    else if (src==helpMenuItem) {
+      showHelpDialog();
+    }
   }
 
 
@@ -664,13 +667,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   }
 
 
-/*
-  public void updateProgramTableSkin() {
-    programTablePanel.updateBackground();
-  }
-
-  */
-
   private void importTvData() {
     JFileChooser chooser = new JFileChooser();
 
@@ -831,6 +827,12 @@ private static void askForDataUpdate() {
 	if (result==JOptionPane.YES_OPTION) {
 		mainFrame.updateTvData();
 	}	
+}
+
+
+public void showHelpDialog() {
+	String msg = mLocalizer.msg("helproot", "help/default/index.html");
+	util.ui.HelpDialog.showHelpPage(mainFrame,msg+"index.html",null);
 }
 
 

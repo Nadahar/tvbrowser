@@ -28,7 +28,6 @@ package util.ui;
 
 import java.io.*;
 import java.util.*;
-import java.net.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -133,6 +132,10 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
     mEditorPane.setContentType("text/html");
     mEditorPane.addHyperlinkListener(this);
     mEditorPane.setEditable(false);
+    
+    
+    
+    
     main.add(mScrollPane = new JScrollPane(mEditorPane));
 
     // buttons

@@ -189,17 +189,28 @@ public class IOUtilities {
   {
     if (fileName == null) throw new IllegalArgumentException("fileName == null");
     if (fileName.length() == 0) throw new IllegalArgumentException("fileName is empty");
-    if (srcClass == null) srcClass = IOUtilities.class;
+//	if (srcClass == null) srcClass = IOUtilities.class;
 
     // Der Dateiname muss mit einem '/' anfangen, sonst wird er nicht gefunden.
-    if ((fileName.charAt(0) != '/') && (fileName.charAt(0) != '\\')) {
-      fileName = "/" + fileName;
+    
+    InputStream in;
+    
+    if (srcClass==null) {
+    	in=new java.io.FileInputStream(fileName);
     }
-
-    InputStream in = srcClass.getResourceAsStream(fileName);
-    if (in == null) {
-      throw new IOException("Resource not found: '" + fileName + "'");
+    else {
+		if ((fileName.charAt(0) != '/') && (fileName.charAt(0) != '\\')) {
+			fileName = "/" + fileName;
+		}
+    
+		in = srcClass.getResourceAsStream(fileName);
+		
+    	
     }
+	if (in == null) {
+		throw new IOException("Resource not found: '" + fileName + "'");
+	}
+    
 
     byte[] buffer = new byte[10240];
     byte[] data = new byte[0];
