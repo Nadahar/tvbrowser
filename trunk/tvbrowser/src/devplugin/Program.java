@@ -93,8 +93,27 @@ public interface Program {
   public String getTitle();
   public String getShortInfo();
   public String getDescription();
-  public int getMinutes();
+
+  /**
+   * Gets the the start time of the program in minutes after midnight.
+   *
+   * @return the start time.
+   */
+  public int getStartTime();
+
+  /**
+   * Gets the hour-component of the start time of the program.
+   *
+   * @return the hour-component of the start time.
+   */
   public int getHours();
+
+  /**
+   * Gets the minute-component of the start time of the program.
+   *
+   * @return the minute-component of the start time.
+   */
+  public int getMinutes();
   
   /**
    * Gets the length of this program in minutes.

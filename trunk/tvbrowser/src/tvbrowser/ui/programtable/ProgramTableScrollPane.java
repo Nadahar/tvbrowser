@@ -30,12 +30,17 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+
+import tvbrowser.ui.programtable.background.BackgroundPainter;
 
 
 import devplugin.Channel;
@@ -67,8 +72,17 @@ public class ProgramTableScrollPane extends JScrollPane
     
     
     mProgramTable = new ProgramTable(model);
+    mProgramTable.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("backgroundpainter")) {
+          BackgroundPainter painter = (BackgroundPainter) evt.getNewValue();
+          handleBackgroundPainterChanged(painter);
+        }
+      }
+    });
     model.addProgramTableModelListener(this);
     
+    handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
     setViewportView(mProgramTable);
 
     setWheelScrollingEnabled(true);
@@ -153,6 +167,11 @@ public class ProgramTableScrollPane extends JScrollPane
     }
 
     getViewport().setViewPosition(scrollPos);
+  }
+
+
+  private void handleBackgroundPainterChanged(BackgroundPainter painter) {
+    setRowHeaderView(painter.getTableWest());
   }
   
 

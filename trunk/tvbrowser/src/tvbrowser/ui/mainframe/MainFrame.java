@@ -687,11 +687,17 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       mProgramTableScrollPane.getProgramTable().setProgramTableLayout(null);
     }
     if (Settings.settingHasChanged( new String[] {
+      "tablebackground.style", "timeblock",
+      "tablebackground.oneImage.image",
+      "tablebackground.timeBlock.size",
+      "tablebackground.timeBlock.image1", "tablebackground.timeBlock.image2",
+      "tablebackground.timeBlock.west1", "tablebackground.timeBlock.west2",
+      "tablebackground.timeBlock.showWest",
+      "tablebackground.timeofday.edge", "tablebackground.timeofday.early",
+      "tablebackground.timeofday.midday", "tablebackground.timeofday.afternoon",
+      "tablebackground.timeofday.evening",
       "timebutton.early", "timebutton.midday", "timebutton.afternoon",
-      "timebutton.evening",
-      "tablebackground.edge", "tablebackground.early",
-      "tablebackground.midday", "tablebackground.afternoon",
-      "tablebackground.evening" } ))
+      "timebutton.evening" } ))
     {
       mProgramTableScrollPane.getProgramTable().updateBackground();
     }

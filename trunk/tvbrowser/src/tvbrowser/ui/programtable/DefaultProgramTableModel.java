@@ -150,6 +150,12 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     updateTableContent(monitor);
   }
   
+  
+  public Date getDate() {
+    return mMainDay;
+  }
+  
+  
   private void updateTableContent() {
     updateTableContent(null);
   }
