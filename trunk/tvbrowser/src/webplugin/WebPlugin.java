@@ -55,9 +55,10 @@ public class WebPlugin extends Plugin {
     .getLocalizerFor(WebPlugin.class);    
     
     /** Default-Addresses */
-    final static WebAddress WEB_GOOGLE = new WebAddress("Google", "http://www.google.com/search?q=%22{0}%22", "webplugin/google.gif", "UTF-8", false, true);
-    final static WebAddress WEB_IMDB   = new WebAddress("ImdB", "http://akas.imdb.com/Tsearch?title={0}", "webplugin/imdb.gif", "UTF-8", false, true);
-    final static WebAddress WEB_OFDB   = new WebAddress("OfdB", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={0}", null, "ISO-8859-1", false, false);
+    final static WebAddress WEB_GOOGLE      = new WebAddress("Google", "http://www.google.com/search?q=%22{0}%22", "webplugin/google.gif", "UTF-8", false, true);
+    final static WebAddress WEB_IMDB        = new WebAddress("ImdB", "http://akas.imdb.com/Tsearch?title={0}", "webplugin/imdb.gif", "UTF-8", false, true);
+    final static WebAddress WEB_ALTAVISTA   = new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%20{0}%20", "webplugin/altavista.gif", "UTF-8", false, false);
+    final static WebAddress WEB_OFDB        = new WebAddress("OfdB", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={0}", null, "ISO-8859-1", false, false);
     
     /** The WebAddresses */ 
     private Vector mAddresses;
@@ -92,6 +93,7 @@ public class WebPlugin extends Plugin {
         defaults.add(WEB_GOOGLE);
         defaults.add(WEB_IMDB);
         defaults.add(WEB_OFDB);
+        defaults.add(WEB_ALTAVISTA);
         
         for (int i = 0; i < size;i++) {
             WebAddress newone = new WebAddress(in);
@@ -158,6 +160,7 @@ public class WebPlugin extends Plugin {
         mAddresses.add(WEB_GOOGLE);
         mAddresses.add(WEB_IMDB);
         mAddresses.add(WEB_OFDB);
+        mAddresses.add(WEB_ALTAVISTA);
         mAddresses.add(test);
     }
     
@@ -183,7 +186,7 @@ public class WebPlugin extends Plugin {
                         openUrl(program, adr);
                     }
                 };
-                action.putValue(Action.NAME, mLocalizer.msg("SearchOn", "Search on ") + adr.getName());
+                action.putValue(Action.NAME, mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName());
                 action.putValue(Action.SMALL_ICON, adr.getIcon());
                 
                 actionList.add(action);
