@@ -54,6 +54,15 @@ public class ProgramFrameDispatcher {
   }
   
   
+  /**
+   * Gets the channel this dispatcher is responsible for.
+   * 
+   * @return The channel.
+   */
+  public Channel getChannel() {
+    return mChannel;
+  }
+  
   
   public void dispatchProgramFrame(ProgramFrame frame, devplugin.Date date)  {
     if (frame == null) {
