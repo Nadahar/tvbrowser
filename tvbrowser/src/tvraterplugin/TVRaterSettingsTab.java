@@ -29,6 +29,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -39,6 +40,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import util.io.IOUtilities;
@@ -90,7 +92,8 @@ public class TVRaterSettingsTab implements SettingsTab {
 		c.weightx = 0;
 		c.insets = new Insets(5, 0, 0, 5);
 		c.gridwidth = GridBagConstraints.RELATIVE;
-		user.add(new JLabel(mLocalizer.msg("name", "Name") + ":"), c);
+		JLabel name = new JLabel(mLocalizer.msg("name", "Name") + ":");
+		user.add(name, c);
 
 		c.weightx = 1.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -164,7 +167,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 
 		_updateTime = new JComboBox(updateStrings);
 
-		_updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "0")));
+		_updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "4")));
 
 		JPanel updatePanel = new JPanel(new BorderLayout(5, 0));
 		updatePanel.add(new JLabel(mLocalizer.msg("transmit", "Transmit data")), BorderLayout.WEST);
@@ -175,7 +178,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 		
 		panel.add(main, BorderLayout.CENTER);
 
-        JLabel urlLabel = new JLabel("<html><u>http://tvaddicted.wannawork.de</u></html>");
+        JLabel urlLabel = new JLabel("<html><u>http://tvaddicted.wannawork.de</u></html>", JLabel.CENTER);
         urlLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         urlLabel.setForeground(Color.BLUE);
         urlLabel.addMouseListener(new MouseAdapter() {
@@ -183,10 +186,23 @@ public class TVRaterSettingsTab implements SettingsTab {
                 BrowserLauncher.openURL("http://tvaddicted.wannawork.de");
             }
         });
+    	urlLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         
-        JPanel urlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         
-        urlPanel.add(urlLabel);
+        JPanel urlPanel = new JPanel(new BorderLayout());
+        
+        if (!Locale.getDefault().equals(Locale.GERMANY)) {
+        	JTextArea help = new JTextArea("Hi!\nThis plugin is not 100% translated.\nIf you want to help, please contact me via the HP.\nThanks!");
+        	help.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        	help.setEditable(false);
+        	help.setForeground(name.getForeground());
+        	help.setBackground(name.getBackground());
+        	urlPanel.add(help, BorderLayout.CENTER);
+            urlPanel.add(urlLabel, BorderLayout.SOUTH);
+        } else {
+            urlPanel.add(urlLabel, BorderLayout.CENTER);
+        }
+        
         
         panel.add(urlPanel, BorderLayout.SOUTH);
 
