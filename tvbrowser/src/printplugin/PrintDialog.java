@@ -28,6 +28,8 @@ public class PrintDialog extends JDialog implements Printable
    private JComboBox mFromDate;
    private JComboBox mUntilDate;
    private JPanel mMain;
+   private static PrintDialog mInstance;
+
 
    Channel[] mChannels;
    int mChannelsPerPage, mChannelWidth, mChannelPageIndex, mPageIndex;
@@ -36,6 +38,8 @@ public class PrintDialog extends JDialog implements Printable
    public PrintDialog(Frame parent, PrintPlugin printPlugin)
    {
       super(parent,true);
+
+      mInstance = this;
 
       JPanel tmpPanel, subtmpPanel;
 
@@ -175,30 +179,15 @@ public class PrintDialog extends JDialog implements Printable
 
    private void startPrintThread()
    {
-      try
+      Thread printThread = new Thread()
       {
-// Funktioniert nicht... hmm
-//         displayPrintMsg();
-//         UiUtilities.centerAndShow(this);
-
-
-         Thread thread;
-         Runnable printThread = new PrintThread(this);
-         thread = new Thread (printThread);
-         thread.start();
-
-         while (thread.isAlive())
+         public void run()
          {
-            Thread.currentThread().yield();
-            mMain.updateUI();
-            repaint();
-//          parent.repaint();
-            thread.join(100);
+            PrintDialog.getInstance().displayPrintMsg();
+            PrintDialog.getInstance().print();
          }
-      }
-      catch (InterruptedException e)
-      {
-      }
+      };
+      printThread.start();
    }
 
    private void displayPrintMsg()
@@ -211,6 +200,10 @@ public class PrintDialog extends JDialog implements Printable
 
    }
 
+   public static PrintDialog getInstance()
+   {
+      return mInstance;
+   }
 
    public void print()
    {
