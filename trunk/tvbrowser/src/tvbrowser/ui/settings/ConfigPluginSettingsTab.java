@@ -42,6 +42,7 @@ public class ConfigPluginSettingsTab implements SettingsTab {
  
   private Plugin mPlugin;
   private SettingsTab mSettingsTab;
+  private JCheckBox mAddToToolbarCb;
   
   public ConfigPluginSettingsTab(devplugin.Plugin plugin) {
     mPlugin=plugin;
@@ -50,15 +51,49 @@ public class ConfigPluginSettingsTab implements SettingsTab {
  
   public JPanel createSettingsPanel() {
     
+    /*
     if (mSettingsTab!=null) {
       return mSettingsTab.createSettingsPanel();
+    }
+    */
+    
+    JPanel contentPanel=new JPanel();
+    contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
+    contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
+    
+    PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo());
+    pluginInfoPanel.setDefaultBorder();
+    contentPanel.add(pluginInfoPanel);
+    
+    if (mPlugin.getButtonText()!=null) {
+      mAddToToolbarCb=new JCheckBox("Plugin in Werkzeugleiste anzeigen");
+      mAddToToolbarCb.setSelected(tvbrowser.core.Settings.getPluginButtonVisible(mPlugin));
+      JPanel panel=new JPanel(new BorderLayout());
+      panel.add(mAddToToolbarCb,BorderLayout.WEST);
+      contentPanel.add(panel); 
+    }
+    
+    
+    if (mSettingsTab!=null) {
+      contentPanel.add(mSettingsTab.createSettingsPanel());
+    }
+        
+    
+    JPanel content=new JPanel(new BorderLayout());
+    content.add(contentPanel,BorderLayout.NORTH);
+    return content;
+    
+    
+    /*
+    else if (mPlugin.getButtonText()!=null) {
+      return create
     }
     else {
       JPanel mainPanel=new JPanel(new BorderLayout());
       mainPanel.add(new JLabel(mLocalizer.msg("notsupported","This plugin does not support any settings")));  
       return mainPanel;
     }
-    
+    */
   }
 
   
@@ -69,6 +104,10 @@ public class ConfigPluginSettingsTab implements SettingsTab {
       if (mSettingsTab!=null) {
         mSettingsTab.saveSettings();
       }
+      if (mPlugin.getButtonText()!=null) {
+        tvbrowser.core.Settings.setPluginButtonVisible(mPlugin,mAddToToolbarCb.isSelected());
+      }  
+      
     }
 
   

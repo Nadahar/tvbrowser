@@ -35,12 +35,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel {
     TvDataLevel[] levelArr=DayProgramFile.LEVEL_ARR;
     
     String[] levelIds=settings.getProperty("level","").split(":::");
-    
-    for (int i=0;i<levelIds.length;i++) {
-      System.out.println(levelIds[i]);
-    }
-    
-    
+        
     mLevelCheckboxes=new JCheckBox[levelArr.length];
     for (int i=0;i<levelArr.length;i++) {
       mLevelCheckboxes[i]=new JCheckBox(levelArr[i].getDescription());

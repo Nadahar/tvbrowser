@@ -168,6 +168,9 @@ public class PrintProgram
 
    private void splitStringtoList(ArrayList arrayList, String str, Font font)
    {
+      if (str==null) {
+        str="";
+      }
       StringTokenizer strtoken = new StringTokenizer(str);
       String line;
       FontMetrics metrics = mg.getFontMetrics(font);

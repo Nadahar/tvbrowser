@@ -180,22 +180,13 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     result.setOpaque(false);
    
     
-    String[] hiddenPlugins=Settings.getHiddenButtonPlugins();
+    //String[] hiddenPlugins=Settings.getHiddenButtonPlugins();
     Plugin[] installedPlugins=PluginManager.getInstalledPlugins();
     
     for (int i=0;i<installedPlugins.length;i++) {
       final Plugin plugin=installedPlugins[i];
       if (plugin.getButtonText()!=null) {
-        boolean allowAdding=true;
-        for (int j=0;j<hiddenPlugins.length;j++) {
-          Plugin p=PluginManager.getPlugin(hiddenPlugins[j]);
-          if (p!=null && PluginManager.isInstalled(p) && p.equals(plugin)) {
-            allowAdding=false;
-            break;
-          }
-        }
-        
-        if (allowAdding) {
+        if (Settings.getPluginButtonVisible(plugin)) {
           Icon icon = plugin.getButtonIcon();
           JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
           result.add(btn);
@@ -206,6 +197,26 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
           });
         }
       }
+        //boolean allowAdding=true;
+        //for (int j=0;j<hiddenPlugins.length;j++) {
+        //  Plugin p=PluginManager.getPlugin(hiddenPlugins[j]);
+        //  if (p!=null && PluginManager.isInstalled(p) && p.equals(plugin)) {
+        //    allowAdding=false;
+        //    break;
+        //  }
+        //}
+        /*
+        if (allowAdding) {
+          Icon icon = plugin.getButtonIcon();
+          JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
+          result.add(btn);
+          btn.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent event) {
+              plugin.execute();
+            }
+          });
+        }*/
+     // }
     }
     
     return result;

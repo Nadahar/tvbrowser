@@ -603,14 +603,24 @@ public class Settings {
 
 
 
-  public static String[] getHiddenButtonPlugins() {
+  //public static String[] getHiddenButtonPlugins() {
 
-	 return settings.getStringList("hiddenbuttonplugins");
-   }
+	// return settings.getStringList("hiddenbuttonplugins");
+  // }
 
-   public static void setHiddenButtonPlugins(String[] plugins) {
-   	 settings.setStringList("hiddenbuttonplugins",plugins);
+  // public static void setHiddenButtonPlugins(String[] plugins) {
+  // 	 settings.setStringList("hiddenbuttonplugins",plugins);
+  // }
+   
+   public static void setPluginButtonVisible(devplugin.Plugin plugin, boolean visible) {
+     settings.setProperty("pluginbuttonvisible."+plugin.getClass().getName(),""+visible);
    }
+   
+   public static boolean getPluginButtonVisible(devplugin.Plugin plugin) {
+     String res=settings.getProperty("pluginbuttonvisible."+plugin.getClass().getName(),"true");
+     return !("false".equals(res));
+   }
+   
 
    public static String getDefaultContextMenuPlugin() {
      return settings.getProperty("contextmenudefaultplugin","programinfo.ProgramInfo");

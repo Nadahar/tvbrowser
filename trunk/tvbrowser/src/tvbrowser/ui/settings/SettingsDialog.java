@@ -190,54 +190,6 @@ public class SettingsDialog {
     node.add(new SettingNode(new DirectoriesSettingsTab()));
     node.add(new SettingNode(new TVDataSettingsTab()));
      
-     
-     /*       
-    // General section
-    
-    node = new SettingNode(new TVBrowserSettingsTab());
-    root.add(node);    
-    node.add(new SettingNode(new ChannelsSettingsTab()));
-    node.add(new SettingNode(new SkinLFSettingsTab()));
-    
-    
-    // ProgramTable section
-    
-    node=new SettingNode(new ProgramTableSettingsTab());
-    root.add(node);
-    node.add(new SettingNode(new FontsSettingsTab()));
-        
-    
-    
-    // TV-Data section
-    node = new SettingNode(new TVDataSettingsTab());
-    root.add(node);
-
-    node.add(new SettingNode(new ProxySettingsTab()));
-    node.add(new SettingNode(new DirectoriesSettingsTab()));
-    
-    
-    
-    SettingNode dataServiceNode;
-    dataServiceNode=new SettingNode(new DataServiceSettingsTab());
-    node.add(dataServiceNode);
-    
-    tvdataservice.TvDataService[] services=tvbrowser.core.TvDataServiceManager.getInstance().getDataServices();
-    for (int i=0;i<services.length;i++) {
-      dataServiceNode.add(new SettingNode(new ConfigDataServiceSettingsTab(services[i])));
-    }
-    
-    
-    // Plugins section
-    node = new SettingNode(new PluginSettingsTab());
-    root.add(node);
-    
-    Plugin[] pluginArr = PluginManager.getInstalledPlugins();
-    for (int i = 0; i < pluginArr.length; i++) {
-      //SettingsTab tab = pluginArr[i].getSettingsTab();
-      node.add(new SettingNode(new ConfigPluginSettingsTab(pluginArr[i])));
-    
-    }
-    */
     return root;
   }
 
