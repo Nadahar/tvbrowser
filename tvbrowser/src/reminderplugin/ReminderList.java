@@ -193,7 +193,7 @@ public class ReminderList implements ActionListener {
  
         //System.out.println("current time: "+time);
  
-        devplugin.Date today=devplugin.Date.getCurrentDate();
+        devplugin.Date today=new devplugin.Date();
     
         //System.out.println("current date: "+today.getValue());
 
