@@ -36,61 +36,71 @@ import util.ui.UiUtilities;
 import tvdataservice.TvDataService;
 import tvdataservice.SettingsPanel;
 
-public class DataServiceConfigDlg implements ActionListener {
+public class DeleteTVDataDlg implements ActionListener {
 	
   private JDialog mDialog;
 	private TvDataService dataService;
-	private JButton cancelBtn, okBtn;
+	private JButton deleteBtn, closeBtn;
 	private SettingsPanel configPanel;
+	private JSpinner mDaySp;
 	
   
   
-	public DataServiceConfigDlg(Component parent, TvDataService dataService) {
-    mDialog = UiUtilities.createDialog(parent, true);
-   	mDialog.setTitle("Configure " + dataService.getName());
+	public DeleteTVDataDlg(Component parent) {
+	mDialog = UiUtilities.createDialog(parent, true);
+	mDialog.setTitle("Delete tv data manually");
     
-		JPanel contentPane = (JPanel) mDialog.getContentPane();
+	JPanel contentPane = (JPanel) mDialog.getContentPane();
+	
+	
+	JPanel content=new JPanel();
+	content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
+	
+	
+	JPanel panel1=new JPanel();
+	
+	panel1.add(new JLabel("delete tv data older than"));
+	mDaySp=new JSpinner(new SpinnerNumberModel(5,1,9999,1));
+	panel1.add(mDaySp);
+	panel1.add(new JLabel("days"));
+	content.add(panel1);
+	
 		
-		contentPane.setLayout(new BorderLayout());
+	contentPane.setLayout(new BorderLayout());
 		
-		this.dataService = dataService;
-		
-    configPanel = dataService.getSettingsPanel();
-    if (configPanel != null) {
-      contentPane.add(configPanel,BorderLayout.NORTH);
-    } else {
-      contentPane.add(new JLabel("no config pane available"),BorderLayout.CENTER);
-    }
 		
 		JPanel pushButtonPanel=new JPanel();
 
-		if (configPanel!=null) {
-			okBtn=new JButton("OK");
-			okBtn.addActionListener(this);
-			pushButtonPanel.add(okBtn);
-			mDialog.getRootPane().setDefaultButton(okBtn);
-		}
-		cancelBtn=new JButton("Cancel");
-		cancelBtn.addActionListener(this);
-		pushButtonPanel.add(cancelBtn);
+		closeBtn=new JButton("Close");
+		closeBtn.addActionListener(this);
+		pushButtonPanel.add(closeBtn);
+		mDialog.getRootPane().setDefaultButton(closeBtn);
+		
+		deleteBtn=new JButton("Delete now!");
+		deleteBtn.addActionListener(this);
+		pushButtonPanel.add(deleteBtn);
+		contentPane.add(content,BorderLayout.NORTH);
 		
 		contentPane.add(pushButtonPanel,BorderLayout.SOUTH);
     
-    mDialog.pack();
+	mDialog.pack();
 	}
   
   
   
   public void centerAndShow() {
-    UiUtilities.centerAndShow(mDialog);
+	UiUtilities.centerAndShow(mDialog);
   }
   
 	
   
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource()==okBtn) {
-			configPanel.ok();
-		}else if (e.getSource()==cancelBtn) {
+		if (e.getSource()==deleteBtn) {
+			Integer i=(Integer)mDaySp.getValue();
+			tvbrowser.core.DataService.deleteExpiredFiles(i.intValue());
+			mDialog.dispose();
+			
+		}else if (e.getSource()==closeBtn) {
 			mDialog.dispose();
 		}
 		
