@@ -572,7 +572,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
 
-    newTvDataAvailable();
+    //newTvDataAvailable();
   }
 
 
@@ -636,10 +636,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
 
-  private void changeDate(devplugin.Date date) {
-    devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
-    DayProgram today = DataService.getInstance().getDayProgram(date, true);
-    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate, true);
+  private void changeDate(devplugin.Date date) {    	
+	devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
+    DataService.getInstance().getProgressBar().setMaximum(100);
+    DayProgram today = DataService.getInstance().getDayProgram(date, true, 0, 49);
+    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate, true, 50, 99);
     mProgramTableModel.setDayPrograms(today, tomorrow);
 
     if (finderPanel != null) {
@@ -649,6 +650,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       // If this is today -> scroll to now
       scrollToNow();
     }
+	DataService.getInstance().getProgressBar().setValue(0);
+	
   }
 
 
@@ -657,7 +660,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
    * Implementation of Interface DateListener
    */
   public void dateChanged(final devplugin.Date date) {
-    if (DataService.getInstance().isOnlineMode()) {
+  	if (DataService.getInstance().isOnlineMode()) {
       downloadingThread = new Thread() {
         public void run() {
           onDownloadStart();
@@ -772,6 +775,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 				onDownloadStart();
 				DataService.getInstance().startDownload(daysToDownload);
 				onDownloadDone();
+				newTvDataAvailable();
+  	
 			}
 		};
 		downloadingThread.start();
@@ -786,6 +791,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private void updateTvData() {
     if (DataService.getInstance().isDownloading()) {
       onDownloadDone();
+      newTvDataAvailable();
     } else {
       UpdateDlg dlg = new UpdateDlg(this, true);
       dlg.pack();
