@@ -12,6 +12,8 @@ import util.exc.*;
 import java.util.*;
 import java.util.zip.*;
 import java.net.*;
+import java.awt.Frame;
+import javax.swing.JOptionPane;
 import java.io.*;
 
 /**
@@ -25,12 +27,18 @@ public class Swedb implements tvdataservice.TvDataService{
   private Channel[] channel = new Channel[0];
   private ChannelContainer[] internalChannel = new ChannelContainer[0];
   
+  private boolean firstContact = true;
+  
   /** Creates a new instance of Swedb */
   public Swedb() {
   }
   
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
     try {
+      if (firstContact){
+        JOptionPane.showMessageDialog(new Frame(),"Please support the soucre and register at http://tv.swedb.se/","Copyright notice",JOptionPane.INFORMATION_MESSAGE);
+        firstContact = false;
+      }
       URL url = new URL("http://tv.swedb.se/xmltv/channels.xml.gz");
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setIfModifiedSince(lastChannelUpdate);
@@ -73,7 +81,7 @@ public class Swedb implements tvdataservice.TvDataService{
   /** Gets information about this TvDataService
    */
   public PluginInfo getInfo() {
-    return new PluginInfo("swedb Importer", "imports data from swedb", "Gilson Laurent", new devplugin.Version(0,1,false),"Please support the soucre and register at http://tv.swedb.se/");
+    return new PluginInfo("swedb Importer", "imports data from swedb", "Gilson Laurent", new devplugin.Version(0,2,false));
   }
   
   
@@ -92,6 +100,7 @@ public class Swedb implements tvdataservice.TvDataService{
     try {
       lastChannelUpdate = Long.parseLong(settings.getProperty("CHANNEL_TIME"));
       System.out.println ("last channel update: "+lastChannelUpdate);
+      firstContact = new Boolean (settings.getProperty("FIRST_CONTACT","true")).booleanValue();
       int channels = Integer.parseInt(settings.getProperty("NUMBER_OF_CHANNELS"));
       internalChannel = new ChannelContainer[channels];
       for (int i=0;i<channels;i++){
@@ -99,13 +108,14 @@ public class Swedb implements tvdataservice.TvDataService{
         settings.getProperty("CHANNELID"+i),
         settings.getProperty("CHANNELNAME"+i),
         settings.getProperty("CHANNELURL"+i),
-        Long.parseLong(settings.getProperty("CHANNELTIME"+i)));
+        settings.getProperty("CHANNELTIME"+i));
       }
       convert();
     } catch (Exception E){
       lastChannelUpdate = 0;
       channel = new Channel[0];
       internalChannel = new ChannelContainer[0];
+      firstContact = true;
     }
   }
   
@@ -120,11 +130,12 @@ public class Swedb implements tvdataservice.TvDataService{
     Properties settings = new Properties();
     settings.setProperty("CHANNEL_TIME", Long.toString(lastChannelUpdate));
     settings.setProperty("NUMBER_OF_CHANNELS", Integer.toString(internalChannel.length));
+    settings.setProperty("FIRST_CONTACT", Boolean.toString(firstContact));
     for (int i=0;i<internalChannel.length;i++){
       settings.setProperty("CHANNELID"+i, internalChannel[i].getId());
       settings.setProperty("CHANNELNAME"+i, internalChannel[i].getName());
       settings.setProperty("CHANNELURL"+i, internalChannel[i].getBaseUrl());
-      settings.setProperty("CHANNELTIME"+i, Long.toString (internalChannel[i].getLastUpdate()));      
+      settings.setProperty("CHANNELTIME"+i, internalChannel[i].getLastUpdateString());
     }
     return settings;
   }
@@ -145,9 +156,7 @@ public class Swedb implements tvdataservice.TvDataService{
     monitor.setMaximum(channelArr.length*dateCount);
     devplugin.Date start = new devplugin.Date(startDate);
     long[] updateTime = new long[internalChannel.length];
-    for (int i=0;i<internalChannel.length;i++){
-      updateTime[i] = internalChannel[i].getLastUpdate();
-    }
+    
     for (int time =0;time<dateCount;time++){
       devplugin.Date day = start.addDays(time);
       for (int i =0;i<channelArr.length;i++){
@@ -171,12 +180,11 @@ public class Swedb implements tvdataservice.TvDataService{
               System.out.println("getting: "+internalChannel[j].getBaseUrl()+internalChannel[j].getId()+"_"+datum+".xml.gz");
               URL url = new URL(internalChannel[j].getBaseUrl()+internalChannel[j].getId()+"_"+datum+".xml.gz");
               HttpURLConnection con = (HttpURLConnection) url.openConnection();
-              con.setIfModifiedSince(internalChannel[j].getLastUpdate());
+              con.setIfModifiedSince(internalChannel[j].getLastUpdate(day));
+              System.out.println("lastupdate was: "+internalChannel[j].getLastUpdate(day)+" returncode: "+con.getResponseCode());
               if (con.getResponseCode() == 200){
                 updateManager.updateDayProgram(DayParser.parse(new GZIPInputStream(con.getInputStream()),channelArr[i],day));
-                updateTime[j] = Math.max (con.getLastModified(),updateTime[j]);
-              } else {
-                System.out.println("returncode: "+con.getResponseCode());
+                internalChannel[j].setLastUpdate(day,con.getLastModified());
               }
             } catch (Exception E){
               E.printStackTrace();
@@ -184,9 +192,6 @@ public class Swedb implements tvdataservice.TvDataService{
           }
         }
       }
-    }
-    for (int i=0;i<internalChannel.length;i++){
-      internalChannel[i].setLastUpdate(updateTime[i]);
     }
   }
   

@@ -89,7 +89,7 @@ public class ChannelParser extends org.xml.sax.helpers.DefaultHandler{
       case (STATUS_CONSTRUCTION):{
         if ("channel".equals(qName)){
           if ((id.length()!=0) && (name.length()!=0) && (url.length()!=0)){
-            ChannelContainer cc = new ChannelContainer(id,name,url,0);
+            ChannelContainer cc = new ChannelContainer(id,name,url,"");
             saveIn.add(cc);
           }
           state = this.STATUS_WAITING;
