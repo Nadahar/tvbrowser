@@ -21,7 +21,6 @@ TODOs:
 - Statusbar kann nicht ausgeblendet werden
 - Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
 - (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
-- (B) Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
 - (M) Tooltips fuer Buttons fehlen
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
 - fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
@@ -57,3 +56,4 @@ Bugs:
 
 Erledigt:
 - (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
+- (B) Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
