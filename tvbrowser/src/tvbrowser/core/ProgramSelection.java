@@ -32,9 +32,7 @@
 
 package tvbrowser.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 
 class DateSelection implements java.io.Serializable {

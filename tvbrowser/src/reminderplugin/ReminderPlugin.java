@@ -37,13 +37,10 @@ import devplugin.*;
 import javax.swing.*;
 import java.io.*;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.applet.*;
 import java.net.URL;
 
-import java.util.jar.JarEntry;
 
 public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 

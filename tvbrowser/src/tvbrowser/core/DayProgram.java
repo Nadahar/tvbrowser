@@ -26,16 +26,10 @@
 
 package tvbrowser.core;
 
-import java.util.List;
-import java.util.Vector;
+
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Enumeration;
-import java.util.Calendar;
-import java.util.ArrayList;
-import java.awt.event.*;
-import devplugin.Date;
+
 
 /**
  * The DayProgram class holds the whole tv program data of one specified day.

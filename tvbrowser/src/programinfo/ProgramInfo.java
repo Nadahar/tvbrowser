@@ -34,7 +34,7 @@
 package programinfo;
 
 import devplugin.*;
-import java.util.Properties;
+
 
 public class ProgramInfo extends devplugin.Plugin {
 
