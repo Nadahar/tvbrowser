@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@ package programinfo;
 
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import javax.swing.Icon;
 
@@ -53,7 +54,9 @@ public class ProgramInfo extends devplugin.Plugin {
   private int[]    mInfoBitArr;
   private Icon[]   mInfoIconArr;
   private String[] mInfoMsgArr;
+  private Properties mSettings;
 
+  private static devplugin.Plugin mInstance;
 
   public ProgramInfo() {
     mInfoBitArr = new int[] {
@@ -69,6 +72,8 @@ public class ProgramInfo extends devplugin.Plugin {
       Program.INFO_LIVE,
       Program.INFO_ORIGINAL_WITH_SUBTITLE,
     };
+    
+    mInstance = this;
     
     mInfoIconArr = new Icon[] {
       createIcon("Info_BlackAndWhite.gif"),  // INFO_VISION_BLACK_AND_WHITE
@@ -109,13 +114,16 @@ public class ProgramInfo extends devplugin.Plugin {
     return mLocalizer.msg("contextMenuText", "Program information");
   }
 
+  public static devplugin.Plugin getInstance() {
+    return mInstance;
+  }
 
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("pluginName", "Program information");
     String desc =
       mLocalizer.msg("description", "Show information about a program");
     String author = "Martin Oberhauser";
-    return new PluginInfo(name, desc, author, new Version(1, 6));
+    return new PluginInfo(name, desc, author, new Version(1, 7));
   }
 
 
@@ -124,8 +132,29 @@ public class ProgramInfo extends devplugin.Plugin {
   }
 
 
+  public devplugin.SettingsTab getSettingsTab() {
+      return new ProgramInfoSettingsTab(mSettings);
+  }
+
+  public Properties storeSettings() {
+    return mSettings;
+  }
+  
+  
+  
+  public void loadSettings(Properties settings) {
+    if (settings == null ) {
+      settings = new Properties();
+    }    
+    mSettings = settings;    
+  }
+  
+
   public void execute(Program program) {
-    ProgramInfoDialog dlg = new ProgramInfoDialog(getParentFrame(), program, mInfoBitArr,
+    
+    String styleSheet = mSettings.getProperty("stylesheet_v1","");
+    
+    ProgramInfoDialog dlg = new ProgramInfoDialog(getParentFrame(), styleSheet, program, mInfoBitArr,
                                                   mInfoIconArr, mInfoMsgArr);
     dlg.pack();
     dlg.addComponentListener(new java.awt.event.ComponentAdapter() {

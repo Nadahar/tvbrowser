@@ -37,14 +37,12 @@ import devplugin.Plugin;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
 
-import tvdataservice.MutableProgram;
 import util.ui.ImageUtilities;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
-import java.util.TimeZone;
 
 
 public class PrintDialog extends JDialog {
@@ -478,45 +476,8 @@ public class PrintDialog extends JDialog {
   
   private Icon createDemoProgramPanel() {
     
-    /*Folge: Der Postflieger
-Genre: Familie
-VPS: 13:20
-Showview: 528-311 
-Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haustür aus sehnsuchtsvoll hinterhersieht. Der Flieger antwortet ihrem Winken regelmäßig mit einem Wippen der Tragflächen. Doch genau einen Abend vor Olivias Geburtstag muss der Pilot in Walton's Mountain notlanden. Er ist froh, bei den Waltons Hilfe zu finden, und Olivia erfährt einiges über sein Leben ...  Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr. gilt als eine der besten Familienserien, die es je im Fernsehen gab. Der größte Wunsch des ältesten Sohns von John und Olivia Walton ist es, Schriftsteller zu werden. Großeltern, Eltern und Geschwister stehen natürlich im Mittelpunkt von John-Boys Storys. Und bei so einer großen Familie findet John-Boy immer wieder neue - lustige, interessante oder auch traurige - Themen ...
-Herkunft: USA
-Produktionsjahr: 1972
-Originaltitel: The Waltons
-Originalfolge: Air Mail Man
-Schauspieler: Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Großmutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton), Will Geer (Großvater Sam Walton), Eric Scott (Ben Walton)*/
-    
-    MutableProgram prog = new MutableProgram(
-               new Channel(null, "Channel 1", TimeZone.getDefault(), "de", ""),
-               Date.getCurrentDate(),
-               14,
-               45);
-    prog.setTitle("Die Waltons");
-    prog.setShortInfo("Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr.");
-    prog.setDescription("Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haustür aus sehnsuchtsvoll hinterhersieht.");
-    prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE,"123-456");
-    prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE,"Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Großmutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton)");
-    prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE,6);
-    //prog.setTextField(ProgramFieldType.DIRECTOR_TYPE,"");
-    prog.setTextField(ProgramFieldType.EPISODE_TYPE,"Der Postflieger");
-    prog.setTextField(ProgramFieldType.GENRE_TYPE,"Familie");
-    prog.setTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE,"Air Mail Man");
-    prog.setTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE,"The Waltons");
-    prog.setTextField(ProgramFieldType.ORIGIN_TYPE,"USA");
-    prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE,1972);
-    prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE,"Wh von gestern, 8:00");
-    //prog.setTextField(ProgramFieldType.SCRIPT_TYPE,"");
-    prog.setTextField(ProgramFieldType.URL_TYPE,"http://www.thewaltons.com");
-    prog.setTimeField(ProgramFieldType.VPS_TYPE,14*60+45);
-    prog.setInfo(devplugin.Program.INFO_AUDIO_TWO_CHANNEL_TONE | devplugin.Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
-    
-    
-    
-    
-    
+    devplugin.Program prog = Plugin.getPluginManager().getExampleProgram();
+        
     ProgramIcon ico = new ProgramIcon(prog, mProgramIconSettings, 200);
     ico.setMaximumHeight(1000);
     return ico;

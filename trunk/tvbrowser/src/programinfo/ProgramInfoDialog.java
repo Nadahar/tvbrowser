@@ -55,11 +55,15 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ProgramInfoDialog.class.getName());
 
+  private String mStyleSheet;
+  private JEditorPane mInfoEP;
 
-  public ProgramInfoDialog(Frame parent, Program program,
+  public ProgramInfoDialog(Frame parent, String styleSheet, final Program program,
    int[] infoBitArr, Icon[] infoIconArr, String[] infoMsgArr)
   {
     super(parent, true);
+   
+    mStyleSheet=styleSheet;
 
     setTitle(mLocalizer.msg("title", "Program information"));
     
@@ -68,13 +72,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     main.setBorder(UiUtilities.DIALOG_BORDER);
     setContentPane(main);
     
-    JEditorPane infoEP = new JEditorPane();
-    infoEP.setEditorKit(new ExtendedHTMLEditorKit());
-    ExtendedHTMLDocument doc = (ExtendedHTMLDocument) infoEP.getDocument();
+    mInfoEP = new JEditorPane();
+    mInfoEP.setEditorKit(new ExtendedHTMLEditorKit());
+    ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoEP.getDocument();
     String text = createInfoText(program, doc, infoBitArr, infoIconArr, infoMsgArr);
-    infoEP.setText(text);
-    infoEP.setEditable(false);
-    infoEP.addHyperlinkListener(new HyperlinkListener() {
+    mInfoEP.setText(text);
+    mInfoEP.setEditable(false);
+    mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent evt) {
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           String url = evt.getURL().toString();          
@@ -83,7 +87,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       }
     });
     
-    final JScrollPane scrollPane = new JScrollPane(infoEP);
+    mInfoEP.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+        handleMouseClicked(e, program);
+      }
+    });
+    
+    final JScrollPane scrollPane = new JScrollPane(mInfoEP);
     main.add(scrollPane, BorderLayout.CENTER);
     
     // buttons
@@ -109,6 +119,25 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   }
   
   
+  private void handleMouseClicked(MouseEvent evt, Program program) {
+    if (SwingUtilities.isRightMouseButton(evt)) {
+      if (program != null) {
+        JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, ProgramInfo.getInstance());
+        menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
+      }
+    }
+    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+      if (program != null) {
+        // This is a left double click
+        // -> Execute the program using the user defined default plugin
+        Plugin plugin = Plugin.getPluginManager().getDefaultContextMenuPlugin();
+        if (plugin!=null && plugin!=ProgramInfo.getInstance()) {
+          plugin.execute(program);  
+        }
+      }
+    }
+  }
+  
   private String createInfoText(Program prog, ExtendedHTMLDocument doc,
     int[] infoBitArr, Icon[] infoIconArr, String[] infoMsgArr)
   {
@@ -116,24 +145,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     
     StringBuffer buffer = new StringBuffer();
     
+    System.out.println(mStyleSheet);
+    
     buffer.append("<html><head>" +
       "<style type=\"text/css\" media=\"screen\">" +
-      "<!--" +
-      // "body" +
-      // "{ background-image:url(back.jpg); padding:10px; }" +
-      "#title" +
-      "{ font-size:15px; font-family:Dialog; text-align:center; font-weight:bold; }" +
-      "#maininfo" +
-      "{ font-size:9px; font-family:Dialog; text-align:right; font-weight:bold; }" +
-      "#time" +
-      "{ font-size:9px; font-family:Dialog; text-align:center; }" +
-      "#info" +
-      "{ font-size:9px; font-family:Dialog; }" +
-      "#text" +
-      "{ font-size:11px; font-family:Dialog; }" +
-      "#small" +
-      "{ font-size:9px; font-family:Dialog; }" +
-      "-->" +
+      "<!--" + mStyleSheet + "-->" +
       "</style>" +
       "</head>" +
       "<body>");
