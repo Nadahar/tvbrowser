@@ -393,15 +393,15 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
               mDate = extractDate(start);
     
               mFrame = new ProgramFrame();
-              mFrame.addProgramField(ProgramField.create(ProgramFieldType.START_TIME_TYPE,
+              addField(ProgramField.create(ProgramFieldType.START_TIME_TYPE,
                   extractTime(start)));
-              mFrame.addProgramField(ProgramField.create(ProgramFieldType.SHOWVIEW_NR_TYPE,
+              addField(ProgramField.create(ProgramFieldType.SHOWVIEW_NR_TYPE,
                   attributes.getValue("showview")));
               
               String vps = attributes.getValue("vps-start");
               if (vps != null) {
                 int time = extractTime(vps);
-                mFrame.addProgramField(ProgramField.create(ProgramFieldType.VPS_TYPE, time));
+                addField(ProgramField.create(ProgramFieldType.VPS_TYPE, time));
               }
               
               String stop = attributes.getValue("stop");
@@ -420,7 +420,7 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
       else if (qName.equals("previously-shown")) {
         try {
           Date prevDate = extractDate(attributes.getValue("start"));
-          mFrame.addProgramField(ProgramField.create(ProgramFieldType.REPETITION_OF_TYPE, prevDate.toString()));
+          addField(ProgramField.create(ProgramFieldType.REPETITION_OF_TYPE, prevDate.toString()));
         }
         catch (IOException exc) {
           logException(exc);
@@ -429,7 +429,7 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
       else if (qName.equals("next-time-shown")) {
         try {
           Date nextDate = extractDate(attributes.getValue("start"));
-          mFrame.addProgramField(ProgramField.create(ProgramFieldType.REPETITION_ON_TYPE, nextDate.toString()));
+          addField(ProgramField.create(ProgramFieldType.REPETITION_ON_TYPE, nextDate.toString()));
         }
         catch (IOException exc) {
           logException(exc);
@@ -450,20 +450,20 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
 
         if (qName.equals("title")) {
           if ((mLang == null) || mLang.equals(mChannelCountry)) {
-            mFrame.addProgramField(ProgramField.create(ProgramFieldType.TITLE_TYPE, text));
+            addField(ProgramField.create(ProgramFieldType.TITLE_TYPE, text));
           } else {
-            mFrame.addProgramField(ProgramField.create(ProgramFieldType.ORIGINAL_TITLE_TYPE, text));
+            addField(ProgramField.create(ProgramFieldType.ORIGINAL_TITLE_TYPE, text));
           }
         }
         else if (qName.equals("sub-title")) {
           if ((mLang == null) || mLang.equals(mChannelCountry)) {
-            mFrame.addProgramField(ProgramField.create(ProgramFieldType.EPISODE_TYPE, text));
+            addField(ProgramField.create(ProgramFieldType.EPISODE_TYPE, text));
           } else {
-            mFrame.addProgramField(ProgramField.create(ProgramFieldType.ORIGINAL_EPISODE_TYPE, text));
+            addField(ProgramField.create(ProgramFieldType.ORIGINAL_EPISODE_TYPE, text));
           }
         }
         else if (qName.equals("desc")) {
-          mFrame.addProgramField(ProgramField.create(ProgramFieldType.DESCRIPTION_TYPE, text));
+          addField(ProgramField.create(ProgramFieldType.DESCRIPTION_TYPE, text));
         }
         else if (qName.equals("date")) {
           if (text.length() < 4) {
@@ -471,26 +471,26 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
                        + text + "'");
           } else {
             int year = Integer.parseInt(text.substring(0, 4));
-            mFrame.addProgramField(ProgramField.create(ProgramFieldType.PRODUCTION_YEAR_TYPE, year));
+            addField(ProgramField.create(ProgramFieldType.PRODUCTION_YEAR_TYPE, year));
           }
         }
         else if (qName.equals("rating")) {
           try {
             int ageLimit = Integer.parseInt(text);
-            mFrame.addProgramField(ProgramField.create(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit));
+            addField(ProgramField.create(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit));
           }
           catch (NumberFormatException exc) {
             logMessage("WARNING: rating is no number: '" + text + "' and will be ignored.");
           } 
         }
         else if (qName.equals("url")) {
-          mFrame.addProgramField(ProgramField.create(ProgramFieldType.URL_TYPE, text));
+          addField(ProgramField.create(ProgramFieldType.URL_TYPE, text));
         }
         else if (qName.equals("category")) {
-          mFrame.addProgramField(ProgramField.create(ProgramFieldType.GENRE_TYPE, text));
+          addField(ProgramField.create(ProgramFieldType.GENRE_TYPE, text));
         }
         else if (qName.equals("country")) {
-          mFrame.addProgramField(ProgramField.create(ProgramFieldType.ORIGIN_TYPE, text));
+          addField(ProgramField.create(ProgramFieldType.ORIGIN_TYPE, text));
         }
         else if (qName.equals("subtitles")) {
           if ((mLang == null) || mLang.equals(mChannelCountry)) {
@@ -505,7 +505,7 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
         else if (qName.equals("length")) {
           try {
             int length = Integer.parseInt(text);
-            mFrame.addProgramField(ProgramField.create(ProgramFieldType.NET_PLAYING_TIME_TYPE, length));
+            addField(ProgramField.create(ProgramFieldType.NET_PLAYING_TIME_TYPE, length));
           }
           catch (NumberFormatException exc) {
             logMessage("WARNING: length is no number: '" + text + "' and will be ignored.");
@@ -644,10 +644,17 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
       info |= bit;
       
       // Set the changed info bits
-      mFrame.addProgramField(ProgramField.create(ProgramFieldType.INFO_TYPE, info));
+      addField(ProgramField.create(ProgramFieldType.INFO_TYPE, info));
     }
 
     
+    /**
+     * Adds a text to a field that builds a comma separated value (e.g. the
+     * actor list).
+     * 
+     * @param type The type of the field to add the text to.
+     * @param text The text to add.
+     */
     private void addToList(ProgramFieldType type, String text) {
       // Try to prefix the old value
       ProgramField field = mFrame.removeProgramFieldOfType(type);
@@ -656,7 +663,35 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
       }
       
       // Set the text
-      mFrame.addProgramField(ProgramField.create(type, text));
+      addField(ProgramField.create(type, text));
+    }
+    
+    
+    /**
+     * Adds a field to the current frame.
+     * <p>
+     * If there is already a field of this type in the frame, a warning is
+     * generated (and not an error which will happen when adding two times a
+     * field of the same type).
+     * 
+     * @param field The field to add.
+     */
+    private void addField(ProgramField field) {
+      if (field == null) {
+        return;
+      }
+      
+      ProgramField existingField = mFrame.getProgramFieldOfType(field.getType());
+      if (existingField == null) {
+        // There is no such field -> Add the new one
+        mFrame.addProgramField(field);
+      } else {
+        // We already have this kind of field -> log a warning
+        logMessage("WARNING: There is already a field of the type '"
+            + field.getType().getName() + "': existing value: "
+            + existingField.getDataAsString() + ", ignored value: "
+            + field.getDataAsString());
+      }
     }
     
     
