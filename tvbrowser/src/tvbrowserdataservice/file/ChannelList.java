@@ -25,20 +25,26 @@
  */
 package tvbrowserdataservice.file;
 
+import java.awt.Image;
 import java.io.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
+import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
+import util.ui.ImageUtilities;
 
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -106,6 +112,10 @@ public class ChannelList {
     
     String line;
     int lineCount = 1;
+    
+    File dataDir = TvBrowserDataService.getInstance().getWorkingDirectory();
+    IconLoader iconLoader = new IconLoader(mGroup.getId(), dataDir);
+    
     while ((line = reader.readLine()) != null) {
       line = line.trim();
       if (line.length() > 0) {
@@ -131,13 +141,19 @@ public class ChannelList {
         
         Channel channel = new Channel(dataService, name, id,
           TimeZone.getTimeZone(timezone), country,copyright,webpage, mGroup);
-        
-        addChannel(channel, iconUrl);
+        if (iconUrl != null) {
+          Icon icon = iconLoader.getIcon(id, iconUrl);
+          if (icon != null) {
+            channel.setIcon(icon);
+          }        
+        }
+        addChannel(channel);
       }
       lineCount++;
     }
     
     gIn.close();
+    iconLoader.close();
   }
 
   
@@ -211,6 +227,66 @@ public class ChannelList {
     }
   }
 
+
+  
+  class IconLoader {
+    private File mDir;
+    private File mIconDir;
+    private File mIconIndexFile;
+    private String mGroup;
+    private Properties mProperties;
+    
+    public IconLoader(String group, File dir) throws IOException {
+      mDir = dir;
+      mGroup = group;
+      mIconDir = new File(dir+"/icons_"+mGroup);
+      if (!mIconDir.exists()) {
+          mIconDir.mkdirs();
+      }
+      mIconIndexFile = new File(mIconDir,"index.txt");
+      mProperties = new Properties();
+      if (mIconIndexFile.exists()) {
+        mProperties.load(new FileInputStream(mIconIndexFile)); 
+      }      
+    }
+    
+    public Icon getIcon(String channelId, String url) throws IOException {
+      String key = new StringBuffer("icons_").append(mGroup)
+                                             .append("_")
+                                             .append(channelId)
+                                             .toString();
+      String prevUrl = (String)mProperties.get(key);
+      Icon icon = null;
+      File iconFile = new File(mIconDir,channelId);
+      if (url.equals(prevUrl)) {
+        //the url hasn't changed; we should have the icon locally 
+        icon = getIconFromFile(iconFile);
+      }
+      if (icon == null) {
+        //download the icon
+        util.io.IOUtilities.download(new URL(url), iconFile);
+        icon = getIconFromFile(iconFile);  
+      }
+      if (icon != null) {
+        mProperties.setProperty(key, url);
+      }
+      
+      return icon;
+    }
+    
+    private Icon getIconFromFile(File file) {
+      Image img = ImageUtilities.createImage(file.getAbsolutePath());
+      if (img != null) {
+        return new ImageIcon(img);
+      }
+      return null;
+    }
+    
+    private void close() throws IOException {
+        mProperties.store(new FileOutputStream(mIconIndexFile), null);
+    }
+  }
+    
   
   class ChannelItem {
     private Channel mChannel;
@@ -219,7 +295,7 @@ public class ChannelList {
     public ChannelItem(Channel ch, String iconUrl) {
       mChannel = ch;
       mIconUrl = iconUrl;
-      mChannel.setIcon(getIcon());
+      //mChannel.setIcon(getIcon());
     }
     
     public Channel getChannel() {
@@ -230,9 +306,9 @@ public class ChannelList {
       return mIconUrl;
     }
     
-    public Icon getIcon() {
+  /*  public Icon getIcon() {
       // TODO: implement me!
       return null;
-    }
+    }*/
   }
 }

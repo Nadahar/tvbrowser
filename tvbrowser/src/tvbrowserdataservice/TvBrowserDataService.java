@@ -25,15 +25,12 @@
  */
 package tvbrowserdataservice;
 
+
 import java.io.File;
-
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import java.util.Properties;
-
 import javax.swing.JOptionPane;
 
 
@@ -49,7 +46,6 @@ import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
-
 
 import util.tvdataservice.AbstractTvDataService;
 import util.ui.progress.Progress;
@@ -97,7 +93,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
   };
   
   
-  //private ChannelGroup[] mChannelGroupArr;
   private HashSet mChannelGroupSet;
 
   private Properties mSettings;
@@ -133,10 +128,21 @@ public class TvBrowserDataService extends AbstractTvDataService {
     Iterator it=mChannelGroupSet.iterator();
     while (it.hasNext()) {
       ((ChannelGroup)it.next()).setWorkingDirectory(dataDir);
-    }
-    
+    }    
+  }
+  
+  public File getWorkingDirectory() {
+    return mDataDir;
   }
 
+  private void readIcons() {
+    File iconsDir = new File(mDataDir+"/icons");
+    if (!iconsDir.exists()) {
+      iconsDir.mkdirs();
+    }  
+      
+  }
+  
   public ChannelGroup[] getChannelGroups() {
     ChannelGroup[] result=new ChannelGroup[mChannelGroupSet.size()];
     mChannelGroupSet.toArray(result);
@@ -583,7 +589,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     return true;
   }
 
-
+ 
   
   /**
    * Gets information about this TvDataService
