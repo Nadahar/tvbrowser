@@ -45,6 +45,9 @@ public class Rating implements Serializable {
 	/** Entitlement-Rating */
 	public static final String ENTITLEMENT = "entitlement";
 
+	/** The Genre */
+	public static final String GENRE = "genre";	
+	
 	/** How many Users have rated this Entry */
 	public static final String COUNT = "count";	
 	
