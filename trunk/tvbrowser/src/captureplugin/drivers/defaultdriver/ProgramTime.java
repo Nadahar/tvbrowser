@@ -1,0 +1,214 @@
+/*
+ * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+package captureplugin.drivers.defaultdriver;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Calendar;
+import java.util.Date;
+
+import devplugin.Plugin;
+import devplugin.Program;
+
+
+/**
+ * A combination of Start/End-Time and the Program
+ */
+public class ProgramTime implements Cloneable {
+    /** Start-Time*/
+    private Calendar mStart;
+    /** End-Time */
+    private Calendar mEnd;
+    /** Program to record */
+    private Program mProgram;
+    
+    /**
+     * Create ProgramTime
+     */
+    public ProgramTime() {
+        mStart = Calendar.getInstance();
+        mEnd = Calendar.getInstance();
+    }
+    
+    /**
+     * Create ProgramTime
+     * @param prg Program
+     */
+    public ProgramTime(Program prg) {
+        mProgram = prg;
+
+        Calendar c = (Calendar) prg.getDate().getCalendar().clone();
+
+        c.set(Calendar.HOUR_OF_DAY, prg.getHours());
+        c.set(Calendar.MINUTE, prg.getMinutes());
+        c.set(Calendar.SECOND, 0);
+        
+        mStart = c;
+        
+        c = (Calendar) prg.getDate().getCalendar().clone();
+
+        c.set(Calendar.HOUR_OF_DAY, prg.getHours());
+        c.set(Calendar.MINUTE, prg.getMinutes());
+        c.add(Calendar.MINUTE, prg.getLength());
+        c.set(Calendar.SECOND, 0);
+        
+        mEnd = c;
+    }
+    
+    /**
+     * Create ProgramTime
+     * @param prg Program
+     * @param start Start-Time
+     * @param end End-Time
+     */
+    public ProgramTime(Program prg, Date start, Date end) {
+        mProgram = prg;
+        mStart = Calendar.getInstance();
+        mStart.setTime((Date)start.clone());
+        mEnd = Calendar.getInstance();
+        mEnd.setTime((Date)end.clone());
+    }
+    
+    /**
+     * Create ProgramTime
+     * @param time copy from this ProgramTime
+     */
+    public ProgramTime(ProgramTime time) {
+        mProgram = time.getProgram();
+        mStart = Calendar.getInstance();
+        mStart.setTime((Date)time.getStart().clone());
+        mEnd = Calendar.getInstance();
+        mEnd.setTime((Date)time.getEnd().clone());
+    }
+
+    /**
+     * Sets the Program
+     * @param prg Program
+     */
+    public void setProgram(Program prg) {
+        mProgram = prg;
+    }
+    
+    /**
+     * Returns the Program
+     * @return Program
+     */
+    public Program getProgram() {
+        return mProgram;
+    }
+    
+    /**
+     * Set the Start-Time
+     * @param start
+     */
+    public void setStart(Date start) {
+        mStart = Calendar.getInstance();
+        mStart.setTime(start);
+    }
+
+    /**
+     * Returns the Start-Time
+     * @return
+     */
+    public Date getStart() {
+        return mStart.getTime();
+    }
+    
+    /**
+     * Sets the End-Time
+     * @param end
+     */
+    public void setEnd(Date end) {
+        mEnd = Calendar.getInstance();
+        mEnd.setTime(end);
+    }
+    
+    /**
+     * Returns the End-Time
+     * @return
+     */
+    public Date getEnd() {
+        return mEnd.getTime();
+    }
+    
+    /**
+     * Add Minutes to the Start-Time
+     * @param min Minutes to add
+     */
+    public void addMinutesToStart(int min) {
+        mStart.add(Calendar.MINUTE, min);
+    }
+
+    /**
+     * Add Minutes to End-Time
+     * @param min Minutes to add
+     */
+    public void addMinutesToEnd(int min) {
+        mEnd.add(Calendar.MINUTE, min);
+    }
+
+    /**
+     * Clone
+     */
+    public Object clone() {
+        return new ProgramTime(this);
+    }
+
+    /**
+     * Save Data into Stream
+     * @param out
+     * @throws IOException
+     */
+    public void writeData(ObjectOutputStream out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(mStart.getTime());
+        out.writeObject(mEnd.getTime());
+        out.writeObject(mProgram.getID());
+        mProgram.getDate().writeData(out);
+    }
+    
+    /**
+     * Read Data from Stream
+     * @param in
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    
+        int version = in.readInt();
+        
+        setStart((Date) in.readObject());
+        setEnd((Date) in.readObject());
+        
+        String id = (String) in.readObject();
+        devplugin.Date date = new devplugin.Date(in);
+        
+        Program aktP = Plugin.getPluginManager().getProgram(date, id);
+        if (aktP != null) {
+            setProgram(aktP);
+        }
+    }
+}

@@ -1,0 +1,95 @@
+/*
+ * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+package captureplugin.tabs;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+
+import util.ui.ProgramPanel;
+import devplugin.Program;
+
+/**
+ * CellRenderer for Program in Table
+ */
+public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
+
+    /** Container of Program-Panel */
+    private JPanel mMainPanel;
+
+    /** Header for Program-Panel */
+    private JLabel mHeaderLb;
+
+    /** ProgramPanel */
+    private ProgramPanel mProgramPanel;
+
+    /**
+     * Creates the Renderer
+     */
+    public ProgramTableCellRenderer() {
+        mMainPanel = new JPanel(new BorderLayout());
+        mMainPanel.setOpaque(true);
+
+        mHeaderLb = new JLabel();
+        mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
+
+        mProgramPanel = new ProgramPanel();
+        mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable,
+     *      java.lang.Object, boolean, boolean, int, int)
+     */
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        
+        if (value instanceof Program) {
+            Program program = (Program) value;
+
+            mProgramPanel.setProgram(program);
+            mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
+
+            mMainPanel.setBackground(label.getBackground());
+            mMainPanel.setForeground(label.getForeground());
+            mMainPanel.setEnabled(label.isEnabled());
+            mMainPanel.setBorder(label.getBorder());
+
+            if (table.getRowHeight(row) != mMainPanel.getPreferredSize().height)
+                table.setRowHeight(row, mMainPanel.getPreferredSize().height);
+            
+            return mMainPanel;
+        }
+
+        return label;
+    }
+
+}
