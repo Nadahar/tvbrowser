@@ -46,6 +46,7 @@ import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import captureplugin.CapturePlugin;
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.utils.ProgramTimeComparator;
@@ -129,7 +130,7 @@ public class ProgramListPanel extends JPanel {
                     
                     Program p = (Program) mProgramTableModel.getValueAt(row, 1);
                     
-                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p);
+                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p, CapturePlugin.getInstance());
                     menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
                 } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
                     int row = mProgramTable.rowAtPoint(e.getPoint());
