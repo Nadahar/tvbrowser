@@ -63,8 +63,8 @@ public class Updater implements Progress {
 	/** Localizer */
 	private static final Localizer _mLocalizer = Localizer.getLocalizerFor(Updater.class);
 	/** Location of Update-Skript */
-//	private static String LOCATION = "http://localhost/updater.php";
-	private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
+	private static String LOCATION = "http://localhost/wannawork3/tvaddicted/updater.php";
+//	private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
 	/** The Plugin */
 	private TVRaterPlugin _tvraterPlugin;
 

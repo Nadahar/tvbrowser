@@ -269,6 +269,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     }
 
+    /**
+     * Updates the Database
+     */
     private void updateDB() {
         final TVRaterPlugin tvrater = this;
 

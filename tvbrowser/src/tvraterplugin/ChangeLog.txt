@@ -2,3 +2,6 @@ Changelog TVRaterPlugin
 
 0.01:
 - initial version
+
+0.1:
+- GUI nearly ready
