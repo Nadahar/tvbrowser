@@ -56,7 +56,7 @@ public class Database {
 	 * @return the overall Rating
 	 */
 	public Rating getOverallRating(Program program) {
-		return getOverallRating(program.getTitle());
+		return getOverallRating(program.getTitle().toLowerCase());
 	}
 
 	/**
@@ -65,8 +65,8 @@ public class Database {
 	 * @return the overall Rating
 	 */
 	public Rating getOverallRating(String title) {
-		if (_overalrating.get(title) != null) {
-			return (Rating)_overalrating.get(title);
+		if (_overalrating.get(title.toLowerCase()) != null) {
+			return (Rating)_overalrating.get(title.toLowerCase());
 		}
 		return null;
 	}
@@ -76,7 +76,7 @@ public class Database {
 	 * @param rating
 	 */
 	public void setOverallRating(Rating rating) {
-		_overalrating.put(rating.getTitle(), rating);
+		_overalrating.put(rating.getTitle().toLowerCase(), rating);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public class Database {
 	 * @return the personal Rating
 	 */
 	public Rating getPersonalRating(Program program) {
-		return getPersonalRating(program.getTitle());
+		return getPersonalRating(program.getTitle().toLowerCase());
 	}
 
 	/**
@@ -102,8 +102,8 @@ public class Database {
 	 * @return the personal Rating
 	 */
 	public Rating getPersonalRating(String title) {
-		if (_personalrating.get(title) != null) {
-			return (Rating)_personalrating.get(title);
+		if (_personalrating.get(title.toLowerCase()) != null) {
+			return (Rating)_personalrating.get(title.toLowerCase());
 		}
 
 		return null;
@@ -115,8 +115,8 @@ public class Database {
 	 * @param rating save this Rating 
 	 */
 	public void setPersonalRating(Rating rating) {
-		if (_personalrating.get(rating.getTitle()) == null) {
-			_personalrating.put(rating.getTitle(), rating);
+		if (_personalrating.get(rating.getTitle().toLowerCase()) == null) {
+			_personalrating.put(rating.getTitle().toLowerCase(), rating);
 		} 
 		
 		if (!_changedpersonal.contains(rating)) {
