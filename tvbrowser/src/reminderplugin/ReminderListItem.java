@@ -38,7 +38,7 @@ import devplugin.*;
  *
  * @author Martin Oberhauser
  */
-public class ReminderListItem implements Serializable, Comparable {
+public class ReminderListItem implements Comparable {
 
   private int mReminderMinutes;
   private Program mProgram;
@@ -53,35 +53,30 @@ public class ReminderListItem implements Serializable, Comparable {
   
   
   /**
-   * Serializes this item.
+   * Creates a new instance from a stream
    */
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-    out.writeInt(mReminderMinutes);
-    out.writeObject(mProgram.getDate());
-    out.writeObject(mProgram.getID());
-  }
-
-  
-  
-  /**
-   * Deserializes this item.
-   */
-  private void readObject(ObjectInputStream in)
-    throws IOException, ClassCastException
+  public ReminderListItem(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
     mReminderMinutes = in.readInt();
     
-    try {
-      devplugin.Date programDate = (devplugin.Date) in.readObject();
-      String programId = (String) in.readObject();
+    devplugin.Date programDate = new devplugin.Date(in);
+    String programId = (String) in.readObject();
 
-      mProgram = Plugin.getPluginManager().getProgram(programDate, programId);
-    }
-    catch (ClassNotFoundException exc) {
-      throw new IOException("Class not found: " + exc.getMessage());
-    }
+    mProgram = Plugin.getPluginManager().getProgram(programDate, programId);
+  }
+  
+  
+  
+  /**
+   * Serialized this object.
+   */
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+    out.writeInt(mReminderMinutes);
+    mProgram.getDate().writeData(out);
+    out.writeObject(mProgram.getID());
   }
   
   

@@ -33,7 +33,7 @@ import java.io.File;
 
 import util.ui.*;
 
-import tvdataloader.TVDataServiceInterface;
+import tvdataservice.TvDataService;
 import tvbrowser.core.*;
 
 /**
@@ -42,11 +42,11 @@ import tvbrowser.core.*;
  * @author Martin Oberhauser
  */
 public class DataServiceSettingsTab extends devplugin.SettingsTab implements ActionListener {
-  
+
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DataServiceSettingsTab.class);
- 
+
   private static final String[] DELETE_MSG_ARR = new String[] {
     mLocalizer.msg("delete.2", "After 2 days"),
     mLocalizer.msg("delete.3", "After 3 days"),
@@ -61,35 +61,35 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     mLocalizer.msg("autoDownload.30", "Every 30 minutes"),
     mLocalizer.msg("autoDownload.60", "Every 60 minutes")
   };
-  
+
   private String[] MODE_MSG_ARR = new String[] {
     mLocalizer.msg("onlineMode", "Online mode"),
     mLocalizer.msg("offlineMode", "Offline mode")
   };
-  
-  
+
+
   private JComboBox mServiceCB;
   private JButton mConfigBt;
   private JButton mChangeDataDirBt;
   private JTextField mTvDataTF;
-  
-  
-  
+
+
+
   public DataServiceSettingsTab() {
     setLayout(new FlowLayout(FlowLayout.LEADING));
-    
+
     String msg;
     JPanel p1;
-    
+
     JPanel main = new JPanel(new TabLayout(1));
     add(main);
-    
+
     // tv data
     JPanel tvDataPn = new JPanel(new TabLayout(2, true));
     msg = mLocalizer.msg("tvData", "TV data");
     tvDataPn.setBorder(BorderFactory.createTitledBorder(msg));
     main.add(tvDataPn);
-    
+
     msg = mLocalizer.msg("deleteTvData", "Detele TV data");
     tvDataPn.add(new JLabel(msg));
     tvDataPn.add(new JComboBox(DELETE_MSG_ARR));
@@ -104,7 +104,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     mChangeDataDirBt = new JButton("...");
     mChangeDataDirBt.addActionListener(this);
     p1.add(mChangeDataDirBt);
-    
+
     // browser mode
     JPanel browseModePn = new JPanel(new TabLayout(2, true));
     msg = mLocalizer.msg("tvData", "TV data");
@@ -118,19 +118,19 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     msg = mLocalizer.msg("startIn", "Start in");
     browseModePn.add(new JLabel(msg));
     browseModePn.add(new JComboBox(MODE_MSG_ARR));
-    
-    // TV data loader
-    JPanel dataLoaderPn = new JPanel(new TabLayout(2, true));
-    msg = mLocalizer.msg("tvDataLoader", "TV data loader");
-    dataLoaderPn.setBorder(BorderFactory.createTitledBorder(msg));
-    main.add(dataLoaderPn);
-    
-    msg = mLocalizer.msg("configureTvDataLoaders", "Configure tv data loaders");
-    dataLoaderPn.add(new JLabel(msg));
+
+    // TV data service
+    JPanel dataServicePn = new JPanel(new TabLayout(2, true));
+    msg = mLocalizer.msg("tvDataService", "TV data service");
+    dataServicePn.setBorder(BorderFactory.createTitledBorder(msg));
+    main.add(dataServicePn);
+
+    msg = mLocalizer.msg("configureTvDataServices", "Configure tv data services");
+    dataServicePn.add(new JLabel(msg));
     p1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
-    dataLoaderPn.add(p1);
-    mServiceCB = new JComboBox(DataLoaderManager.getInstance().getDataLoaders());
-    mServiceCB.setRenderer(new DataLoaderRenderer());
+    dataServicePn.add(p1);
+    mServiceCB = new JComboBox(TvDataServiceManager.getInstance().getDataServices());
+    mServiceCB.setRenderer(new DataServiceRenderer());
     mServiceCB.addActionListener(this);
     p1.add(mServiceCB);
     p1.add(new JLabel(" "));
@@ -138,27 +138,27 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     mConfigBt.addActionListener(this);
     p1.add(mConfigBt);
   }
-  
-  
-  
+
+
+
   public void ok() {
     System.out.println("OK");
     Settings.setTVDataDirectory(mTvDataTF.getText());
   }
-  
-  
-  
+
+
+
   public String getName() {
     return mLocalizer.msg("tvData", "TV data");
   }
-  
-  
-  
+
+
+
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
     if (source == mServiceCB) {
-      TVDataServiceInterface curSelectedService=(TVDataServiceInterface)mServiceCB.getSelectedItem();
-     
+      TvDataService curSelectedService=(TvDataService)mServiceCB.getSelectedItem();
+
       boolean enabled = (curSelectedService != null)
         && curSelectedService.hasSettingsPanel();
       mConfigBt.setEnabled(enabled);
@@ -175,32 +175,32 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
       }
     }
     else if (source == mConfigBt) {
-		TVDataServiceInterface item=(TVDataServiceInterface)mServiceCB.getSelectedItem();
-      if (item!=null && item.hasSettingsPanel()) {
-      	DataServiceConfigDlg dlg = new DataServiceConfigDlg(this, item.getName());
+		TvDataService item = (TvDataService)mServiceCB.getSelectedItem();
+      if (item != null && item.hasSettingsPanel()) {
+      	DataServiceConfigDlg dlg = new DataServiceConfigDlg(this, item);
       	dlg.centerAndShow();
       }
     }
   }
-  
-  
-  // inner class DataLoaderRenderer
-  
-  
-  class DataLoaderRenderer extends DefaultListCellRenderer {
-    
+
+
+  // inner class DataServiceRenderer
+
+
+  class DataServiceRenderer extends DefaultListCellRenderer {
+
     public Component getListCellRendererComponent(JList list, Object value,
       int index, boolean isSelected, boolean cellHasFocus)
     {
-      if (value instanceof TVDataServiceInterface) {
-        TVDataServiceInterface dataLoader = (TVDataServiceInterface) value;
-        value = dataLoader.getName();
+      if (value instanceof TvDataService) {
+        TvDataService dataService = (TvDataService) value;
+        value = dataService.getName();
       }
-      
+
       return super.getListCellRendererComponent(list, value, index, isSelected,
         cellHasFocus);
     }
-  
+
   }
-  
+
 }

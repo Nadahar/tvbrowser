@@ -33,41 +33,35 @@ import java.awt.event.*;
 
 import util.ui.UiUtilities;
 
-import tvdataloader.TVDataServiceInterface;
-import tvdataloader.SettingsPanel;
-import tvbrowser.core.DataLoaderManager;
+import tvdataservice.TvDataService;
+import tvdataservice.SettingsPanel;
+import tvbrowser.core.TvDataServiceManager;
 
 public class DataServiceConfigDlg implements ActionListener {
 	
   private JDialog mDialog;
-	private TVDataServiceInterface dataLoader;
+	private TvDataService dataService;
 	private JButton cancelBtn, okBtn;
 	private SettingsPanel configPanel;
 	
   
   
-	public DataServiceConfigDlg(Component parent, String dataloaderName) {
+	public DataServiceConfigDlg(Component parent, TvDataService dataService) {
     mDialog = UiUtilities.createDialog(parent, true);
-    
-   	mDialog.setTitle("Configure "+dataloaderName);
+   	mDialog.setTitle("Configure " + dataService.getName());
     
 		JPanel contentPane = (JPanel) mDialog.getContentPane();
 		
 		contentPane.setLayout(new BorderLayout());
 		
-		dataLoader=DataLoaderManager.getInstance().getDataLoader(dataloaderName);
+		this.dataService = dataService;
 		
-		if (dataLoader!=null) {
-			configPanel=dataLoader.getSettingsPanel();
-			if (configPanel!=null) {
-				contentPane.add(configPanel,BorderLayout.NORTH);
-			}else{
-				contentPane.add(new JLabel("no config pane available"),BorderLayout.CENTER);
-			}
-		}else{
-			contentPane.add(new JLabel("Error: dataloader '"+dataloaderName+"' not found"),BorderLayout.CENTER);
-		}
-		
+    configPanel = dataService.getSettingsPanel();
+    if (configPanel != null) {
+      contentPane.add(configPanel,BorderLayout.NORTH);
+    } else {
+      contentPane.add(new JLabel("no config pane available"),BorderLayout.CENTER);
+    }
 		
 		JPanel pushButtonPanel=new JPanel();
 

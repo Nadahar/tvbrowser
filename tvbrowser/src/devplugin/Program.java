@@ -88,6 +88,11 @@ public interface Program {
   public void unmark(Plugin plugin);
 
   /**
+   * Sets whether this program is marked as "on air".
+   */
+  public void markAsOnAir(boolean onAir);
+  
+  /**
    * Gets whether this program is marked as "on air".
    */
   public boolean isOnAir();
@@ -101,6 +106,6 @@ public interface Program {
   /**
    * Gets whether this program is expired.
    */
-  public boolean isExpired();
+  public boolean isExpired();  
   
 }

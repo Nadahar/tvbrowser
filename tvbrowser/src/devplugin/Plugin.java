@@ -101,9 +101,9 @@ abstract public class Plugin {
    * <p>
    * Implement this method to load any objects from the file system.
    *
-   * @see #storeData(ObjectOutputStream)
+   * @see #writeData(ObjectOutputStream)
    */
-  public void loadData(ObjectInputStream in)
+  public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
   }
@@ -115,9 +115,9 @@ abstract public class Plugin {
    * <p>
    * Implement this method to store any objects to the file system.
    *
-   * @see #loadData(ObjectInputStream)
+   * @see #readData(ObjectInputStream)
    */
-  public void storeData(ObjectOutputStream out) throws IOException {
+  public void writeData(ObjectOutputStream out) throws IOException {
   }
   
   

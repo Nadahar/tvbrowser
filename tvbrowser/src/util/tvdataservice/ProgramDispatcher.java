@@ -29,7 +29,7 @@ package util.tvdataservice;
 import java.util.HashMap;
 
 import devplugin.*;
-import tvdataloader.*;
+import tvdataservice.*;
 
 /**
  * You can pass Program objects to this dispatcher and it will put it in the
@@ -46,25 +46,25 @@ public class ProgramDispatcher {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ProgramDispatcher.class.getName());
 
-  
-  
+
+
   /**
    * Contains for a Date (key) a hash containing for a Channel (key)
    * an MutableChannelDayProgram (value).
    */
   private HashMap mDayProgramHash;
-  
 
-  
+
+
   /**
    * Creates a new instance of ProgramDispatcher.
    */
   public ProgramDispatcher() {
     mDayProgramHash = new HashMap();
   }
-  
-  
-  
+
+
+
   /**
    * Dispatches the specified program to the right ChannelDayProgram.
    * <p>
@@ -75,15 +75,15 @@ public class ProgramDispatcher {
   public void dispatch(Program program) {
     Date date = program.getDate();
     Channel channel = program.getChannel();
-    
+
     MutableChannelDayProgram channelDayProg
       = getChannelDayProgram(program.getDate(), program.getChannel(), true);
-    
+
     channelDayProg.addProgram(program);
   }
 
-  
-  
+
+
   /**
    * Gets the ChannelDayProgram of the specified date and channel.
    *
@@ -101,12 +101,12 @@ public class ProgramDispatcher {
         + " programs for " + channel.getName() + " on " + date);
     }
     */
-    
+
     return channelDayProgram;
   }
-  
-  
-  
+
+
+
   /**
    * Gets the ChannelDayProgram of the specified date and channel.
    *
@@ -131,7 +131,7 @@ public class ProgramDispatcher {
         return null;
       }
     }
-    
+
     // get the MutableChannelDayProgram
     MutableChannelDayProgram channelDayProg
       = (MutableChannelDayProgram) channelDayProgramHash.get(channel);
@@ -143,8 +143,8 @@ public class ProgramDispatcher {
         return null;
       }
     }
-    
+
     return channelDayProg;
   }
-  
+
 }

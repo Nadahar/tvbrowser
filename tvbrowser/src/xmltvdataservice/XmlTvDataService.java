@@ -40,7 +40,7 @@ import util.io.IOUtilities;
 import util.tvdataservice.*;
 
 import devplugin.*;
-import tvdataloader.*;
+import tvdataservice.*;
 
 /**
  * A data service that reads TV-Data in the XMLTV-Format.
@@ -64,28 +64,28 @@ public class XmlTvDataService extends AbstractTvDataService {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(XmlTvDataService.class);
 
-  /** The folder where to put the XML data. */  
+  /** The folder where to put the XML data. */
   private static final String XMLTV_FOLDER = "xmldata";
 
-  
-  
+
+
   /**
    * Creates a new instance of XmlTvDataService.
    */
   public XmlTvDataService() {
   }
 
-  
-  
+
+
   /**
    * Gets the localized name of this TV data service.
    */
   public String getName() {
     return mLocalizer.msg("name", "XML TV data service");
   }
-  
-  
-  
+
+
+
   /**
    * Gets the default list of the channels that are available by this data
    * service.
@@ -142,22 +142,22 @@ public class XmlTvDataService extends AbstractTvDataService {
       new Channel(this, "TRT", 606)
     };
   }
-  
-  
-  
+
+
+
   /**
    * Called by the host-application before starting to download.
    */
   public void connect() throws TvBrowserException {
     super.connect();
-    
+
     // ensure the xmltv.dtd is present
     File xmlTvDtdFile = new File(XMLTV_FOLDER + java.io.File.separator + "xmltv.dtd");
-    
+
     if (! xmlTvDtdFile.exists()) {
       // create the xmldata directory
       xmlTvDtdFile.getParentFile().mkdirs();
-      
+
       // save the xmltv.dtd
       InputStream stream = null;
       try {
@@ -179,8 +179,8 @@ public class XmlTvDataService extends AbstractTvDataService {
     }
   }
 
-  
-  
+
+
   /**
    * Downloads the file containing the data for the specified dat and channel.
    *
@@ -200,9 +200,9 @@ public class XmlTvDataService extends AbstractTvDataService {
       throw new TvBrowserException(getClass(), "error.2",
         "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
     }
-  }   
-  
-  
+  }
+
+
 
   /**
    * Gets the name of the directory where to download the data service specific
@@ -212,8 +212,8 @@ public class XmlTvDataService extends AbstractTvDataService {
     return XMLTV_FOLDER;
   }
 
-  
-  
+
+
   /**
    * Gets the name of the file that contains the data of the specified date.
    */
@@ -221,7 +221,7 @@ public class XmlTvDataService extends AbstractTvDataService {
     devplugin.Channel channel)
   {
     java.util.Calendar cal = date.getCalendar();
-    
+
     int month = cal.get(java.util.Calendar.MONTH) + 1;
     int day   = cal.get(java.util.Calendar.DAY_OF_MONTH);
 
@@ -229,13 +229,13 @@ public class XmlTvDataService extends AbstractTvDataService {
     // so we've got to get the date from the current date
     java.util.Calendar now = new java.util.GregorianCalendar();
     int year = now.get(java.util.Calendar.YEAR);
-    
+
     int nowMonth = now.get(java.util.Calendar.MONTH);
     if ((nowMonth > 11) && (month <= 2)) {
       // They want the given date of the following year
       year++;
     }
-    
+
     // e.g. "tv_20030418.xml"
     StringBuffer fileNameBuf = new StringBuffer();
     fileNameBuf.append("tv_");
@@ -243,12 +243,12 @@ public class XmlTvDataService extends AbstractTvDataService {
     IOUtilities.append(fileNameBuf, month, 2);
     IOUtilities.append(fileNameBuf, day, 2);
     fileNameBuf.append(".xml.gz");
-    
+
     return fileNameBuf.toString();
   }
 
-  
-  
+
+
   /**
    * Parses the specified file.
    *
@@ -289,5 +289,5 @@ public class XmlTvDataService extends AbstractTvDataService {
       } catch (IOException exc) {}
     }
   }
-   
+
 }

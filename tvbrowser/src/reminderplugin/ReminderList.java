@@ -36,16 +36,45 @@ import devplugin.Program;
  *
  * @author Martin Oberhauser
  */
-public class ReminderList implements Serializable, ActionListener {
+public class ReminderList implements ActionListener {
 
   private ArrayList list;
-  transient private ReminderTimerListener listener=null;
-  transient private javax.swing.Timer timer;
+  private ReminderTimerListener listener=null;
+  private javax.swing.Timer timer;
 
 
   public ReminderList() {
-    list=new ArrayList();
+    list = new ArrayList();
   }
+
+  
+  
+  public ReminderList(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+    
+    int size = in.readInt();
+    list = new ArrayList(size);
+    for (int i = 0; i < size; i++) {
+      ReminderListItem item = new ReminderListItem(in);
+      list.add(item);
+    }
+  }
+  
+  
+  
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+    
+    out.writeInt(list.size());
+    for (int i = 0; i < list.size(); i++) {
+      ReminderListItem item = (ReminderListItem) list.get(i);
+      item.writeData(out);
+    }
+  }
+  
+  
   
   /**
    * Searches the list for an item with the specified program.

@@ -26,7 +26,7 @@ import java.io.*;
 import util.exc.TvBrowserException;
 
 import devplugin.Channel;
-import tvdataloader.TVDataServiceInterface;
+import tvdataservice.TvDataService;
 
 /**
  * ChannelList contains a list of all available mAvailableChannels in the system.
@@ -36,14 +36,14 @@ import tvdataloader.TVDataServiceInterface;
  * @author Martin Oberhauser
  */
 public class ChannelList {
-  
+
   private static ArrayList mAvailableChannels = new ArrayList();
-  
+
   private static ArrayList mSubscribedChannels = new ArrayList();
-  
-   
-  
-  public static void addDataLoaderChannels(TVDataServiceInterface dataService) {
+
+
+
+  public static void addDataServiceChannels(TvDataService dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
 
     for (int i = 0; i < channelArr.length; i++) {
@@ -51,20 +51,20 @@ public class ChannelList {
     }
   }
 
-  
-  
+
+
   /**
    * Subscribes a channel
    * @param id the channel's ID
    */
-  public static void subscribeChannel(TVDataServiceInterface dataService, int id) {
+  public static void subscribeChannel(TvDataService dataService, int id) {
 	Channel ch = getChannel(dataService, id);
 	mSubscribedChannels.add(ch);
   }
-  
-  
-  
-  
+
+
+
+
   /**
    * Marks the specified mAvailableChannels as 'subscribed'. All other mAvailableChannels become
    * 'unsubscribed'
@@ -77,17 +77,17 @@ public class ChannelList {
       if (channelArr[i] == null) {
         throw new NullPointerException("channel #" + i + " is null!");
       }
-      
+
       mSubscribedChannels.add(channelArr[i]);
 	}
   }
 
-  
+
   /**
    * Returns a new Channel object with the specified ID or null, if the
    * given ID does not exist.
    */
-  public static Channel getChannel(TVDataServiceInterface dataService, int id) {
+  public static Channel getChannel(TvDataService dataService, int id) {
 	Iterator iter = mAvailableChannels.iterator();
 	while (iter.hasNext()) {
 	  Channel channel = (Channel) iter.next();
@@ -97,11 +97,11 @@ public class ChannelList {
 	}
 	return null;
   }
-  
-  
-  
+
+
+
   public static int getPos(int id) {
-	for (int i=0;i<mSubscribedChannels.size();i++) {    
+	for (int i=0;i<mSubscribedChannels.size();i++) {
 	  Channel ch=(Channel)mSubscribedChannels.get(i);
 	  int curId=ch.getId();
 	  if (curId==id) {
@@ -110,24 +110,24 @@ public class ChannelList {
 	}
 	return -1;
   }
-  
-  
-  
+
+
+
   /**
    * Returns an Enumeration of all available Channel objects.
    */
   public static Iterator getChannels() {
 	return mAvailableChannels.iterator();
   }
-  
-  
-  
+
+
+
   /**
    * Returns true, if the specified channel is currently subscribed.
    */
   public static boolean isSubscribedChannel(Channel channel) {
 	if (channel==null) return false;
-	for (int i=0;i<mSubscribedChannels.size();i++) {    
+	for (int i=0;i<mSubscribedChannels.size();i++) {
 	  Channel ch=(Channel)mSubscribedChannels.get(i);
 	  if (ch!=null && ch.getId()==channel.getId() && ch.getDataService().equals(channel.getDataService())) {
 		return true;
@@ -135,18 +135,18 @@ public class ChannelList {
 	}
 	return false;
   }
-  
-  
-  
+
+
+
   /**
    * Returns the number of subscribed mAvailableChannels.
    */
-  public static int getNumberOfSubscribedChannels() {  
+  public static int getNumberOfSubscribedChannels() {
 	return mSubscribedChannels.size();
   }
-  
-  
-  
+
+
+
   /**
    * Returns all subscribed mAvailableChannels.
    */
@@ -157,6 +157,6 @@ public class ChannelList {
 	}
 	return result;
   }
-  
+
 
 }

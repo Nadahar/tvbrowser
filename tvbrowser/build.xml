@@ -190,7 +190,7 @@
          manifest="${txt.dir}/manifest.mf">
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
-      <fileset dir="${classes.dir}" includes="tvdataloader/**"/>
+      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
     </jar>
 
@@ -199,9 +199,9 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
     </jar>
-    <jar jarfile="${runtime.dir}/interfaces/tvdataloader.jar"
+    <jar jarfile="${runtime.dir}/interfaces/tvdataservice.jar"
          compress="false">
-      <fileset dir="${classes.dir}" includes="tvdataloader/**"/>
+      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
     </jar>
 
     <mkdir dir="${runtime.dir}/plugins"/>
@@ -222,12 +222,12 @@
       <fileset dir="${classes.dir}" includes="favoritesplugin/**"/>
     </jar>
 
-    <mkdir dir="${runtime.dir}/tvdataloader"/>
-    <jar jarfile="${runtime.dir}/tvdataloader/XmlTvDataService.jar"
+    <mkdir dir="${runtime.dir}/tvdataservice"/>
+    <jar jarfile="${runtime.dir}/tvdataservice/XmlTvDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>
     </jar>
-    <jar jarfile="${runtime.dir}/tvdataloader/PremiereDataService.jar"
+    <jar jarfile="${runtime.dir}/tvdataservice/PremiereDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="premieredataservice/**"/>
     </jar>
@@ -298,7 +298,7 @@
         <include name="imgs/**/*.gif"/>
         <include name="imgs/**/*.jpg"/>
         <include name="devplugin/**/*.java"/>
-        <include name="tvdataloader/**/*.java"/>
+        <include name="tvdataservice/**/*.java"/>
         <include name="util/**/*.java"/>
       </zipfileset>
       <zipfileset prefix="tvbrowser_v${version}/src"

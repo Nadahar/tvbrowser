@@ -72,7 +72,7 @@ public class FavoritesPlugin extends Plugin {
   
   
   
-  public void loadData(ObjectInputStream in)
+  public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
@@ -81,8 +81,7 @@ public class FavoritesPlugin extends Plugin {
     int size = in.readInt();
     Favorite[] newFavoriteArr = new Favorite[size];
     for (int i = 0; i < size; i++) {
-      newFavoriteArr[i] = new Favorite();
-      newFavoriteArr[i].readData(version, in);
+      newFavoriteArr[i] = new Favorite(in);
     }
     mFavoriteArr = newFavoriteArr;
     
@@ -123,7 +122,7 @@ public class FavoritesPlugin extends Plugin {
 
 
 
-  public void storeData(ObjectOutputStream out) throws IOException {
+  public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
 
     out.writeInt(mFavoriteArr.length);

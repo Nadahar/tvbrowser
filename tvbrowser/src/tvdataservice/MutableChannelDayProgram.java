@@ -24,12 +24,14 @@
  * $Revision$
  */
 
-package tvdataloader;
+package tvdataservice;
 
 import java.util.*;
+import java.io.*;
 
-import devplugin.*;
-import tvdataloader.*;
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Program;
 
 /**
  * A list of the programs of one channel and one day.
@@ -39,22 +41,24 @@ import tvdataloader.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class MutableChannelDayProgram extends AbstractChannelDayProgram {
+public class MutableChannelDayProgram implements ChannelDayProgram {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(MutableChannelDayProgram.class.getName());
-  
-  /** The date of this program list. */  
+
+  private Program programOnAir;
+
+  /** The date of this program list. */
   private devplugin.Date mDate;
-  
-  /** The channel of this program list. */  
+
+  /** The channel of this program list. */
   private Channel mChannel;
-  
-  /** The program list itself. */  
+
+  /** The program list itself. */
   private ArrayList mProgramList;
-  
-  
-  
+
+
+
   /**
    * Creates a new instance of MutableChannelDayProgram.
    *
@@ -66,12 +70,50 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
   {
     mDate = date;
     mChannel = channel;
-    
+
     mProgramList = new ArrayList();
   }
   
   
   
+  public MutableChannelDayProgram(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+
+    mDate = new devplugin.Date(in);
+    mChannel = Channel.readData(in, false);
+    
+    int size = in.readInt();
+    System.out.println("mDate: " + mDate + ", mChannel: " + mChannel
+      + ", size: " + size);
+    mProgramList = new ArrayList(size);
+    for (int i = 0; i < size; i++) {
+      MutableProgram prog = new MutableProgram(in);
+      mProgramList.add(prog);
+    }
+  }
+
+  
+  
+  /**
+   * Writes this instance to a stream.
+   */
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+    
+    mDate.writeData(out);
+    mChannel.writeData(out);
+    
+    out.writeInt(mProgramList.size());
+    for (int i = 0; i < mProgramList.size(); i++) {
+      MutableProgram prog = (MutableProgram) mProgramList.get(i);
+      prog.writeData(out);
+    }
+  }
+
+
+
   /**
    * Returns the channel of this day program.
    *
@@ -80,9 +122,9 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
   public devplugin.Channel getChannel() {
     return mChannel;
   }
-  
-  
-  
+
+
+
   /**
    * Returns the date of this day program.
    *
@@ -91,9 +133,9 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
   public devplugin.Date getDate() {
     return mDate;
   }
-  
-  
-  
+
+
+
   /**
    * Returns the program object having the specified ID.
    *
@@ -108,13 +150,13 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
         return prog;
       }
     }
-    
+
     // nothing found
     return null;
   }
-  
-  
-  
+
+
+
   /**
    * Gets the number of programs in this list.
    *
@@ -123,9 +165,9 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
   public int getProgramCount() {
     return mProgramList.size();
   }
-  
-  
-  
+
+
+
   /**
    * Returns an array containing all programms. Each element is a
    * devplugin.Program object.
@@ -137,9 +179,9 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
     mProgramList.toArray(programArr);
     return programArr;
   }
-  
-  
-  
+
+
+
   /**
    * Adds a program.
    *
@@ -159,12 +201,12 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
         break;
       }
     }
-    
+
     mProgramList.add(addIdx, program);
   }
-  
-  
-  
+
+
+
   /**
    * Returns an iterator containing all programms. Each iterator item is a
    * devplugin.Program object.
@@ -180,12 +222,12 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
     }
     mLog.info("<<< Dump finished");
     */
-    
+
     return mProgramList.iterator();
   }
-  
-  
-  
+
+
+
   /**
    * Returns whether this channel day program is complete.
    * <p>
@@ -200,9 +242,45 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
       Program lastProgram = (Program) mProgramList.get(size - 1);
       int endTime = lastProgram.getHours() * 60 + lastProgram.getMinutes()
         + lastProgram.getLength();
-      
+
       return endTime >= (23 * 60);
     }
   }
-  
+
+
+
+  /**
+   * Marks the program that is currently on air.
+   */
+  public final void markProgramOnAir() {
+    if (!new devplugin.Date().equals(getDate())) {
+      return;
+    }
+    Iterator it = getPrograms();
+    Program p;
+    int diff = Integer.MAX_VALUE;
+    int nDiff;
+    Calendar cal = new GregorianCalendar();
+    cal.setTime(new Date(System.currentTimeMillis()));
+
+    int time = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+    Program newOnAir = null;
+    while (it.hasNext()) {
+      p = (Program)it.next();
+      nDiff=time-(p.getHours()*60+p.getMinutes());
+      if (nDiff>=0 && nDiff<diff) {
+        diff=nDiff;
+        newOnAir=p;
+      }
+    }
+
+    if (programOnAir!=null) {
+      programOnAir.markAsOnAir(false);
+    }
+    programOnAir=newOnAir;
+    if (programOnAir!=null) {
+      programOnAir.markAsOnAir(true);
+    }
+  }
+
 }

@@ -44,7 +44,7 @@ public interface PluginManager {
    * Returns null, if the specified program could not be found.
    */
   public devplugin.Program getProgram(devplugin.Date date, String progID);
-  
+
   /**
    * Returns a JComponent containing information about the given program.
    */
@@ -54,7 +54,7 @@ public interface PluginManager {
    * Gets the subscribed channels.
    */
   public Channel[] getSubscribedChannels();
-  
+
   /**
    * Gets an iterator through all programs of the specified channel at the
    * specified date.
@@ -81,14 +81,14 @@ public interface PluginManager {
     boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
     int nrDays)
     throws TvBrowserException;
-    
+
   /**
    * Returns a list of all installed Plugins
    * @return
-   */  
+   */
   public Plugin[] getInstalledPlugins();
-  
-  
-  public tvdataloader.TVDataServiceInterface getDataService(String dataServiceClassName);
-  
+
+
+  public tvdataservice.TvDataService getDataService(String dataServiceClassName);
+
 }

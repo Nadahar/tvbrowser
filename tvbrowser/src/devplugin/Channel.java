@@ -28,85 +28,106 @@ package devplugin;
 
 import java.io.*;
 
-import tvdataloader.TVDataServiceInterface;
+import tvdataservice.TvDataService;
 
-public class Channel implements Serializable {
+public class Channel {
 
-  private TVDataServiceInterface mDataService;
+  private TvDataService mDataService;
   private String mName;
   private int mId;
-    
 
-  
-  public Channel(TVDataServiceInterface dataService, String name, int id) {
+
+
+  public Channel(TvDataService dataService, String name, int id) {
     mDataService = dataService;
     mName = name;
     mId = id;
   }
 
-
-  
-  /**
-   * Serializes this item.
-   */
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-    
-    out.writeObject(mDataService.getClass().getName());
-    out.writeObject(mName);
-    out.writeInt(mId);
-  }
-
   
   
-  /**
-   * Deserializes this item.
-   */
-  private void readObject(ObjectInputStream in)
+  public static Channel readData(ObjectInputStream in, boolean allowNull)
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
     
     String dataServiceClassName = (String) in.readObject();
+    int channelId = in.readInt();
     
-    mDataService = Plugin.getPluginManager().getDataService(dataServiceClassName);    
-    mName = (String) in.readObject();
-    mId = in.readInt();
+    Channel channel = getChannel(dataServiceClassName, channelId);
+    if ((channel == null) && (! allowNull)) {
+      throw new IOException("Channel with id " + channelId + " of data service "
+        + dataServiceClassName + " not found!");
+    }
+    
+    return channel;
+  }
+  
+
+
+  /**
+   * Serialized this object.
+   */
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+
+    out.writeObject(mDataService.getClass().getName());
+    out.writeInt(mId);
   }
 
+  
+  
+  public static Channel getChannel(String dataServiceClassName, int channelId) {
+    if (dataServiceClassName == null) {
+      // Fast return
+      return null;
+    }
     
+    Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
+    for (int i = 0; i < channelArr.length; i++) {
+      if (dataServiceClassName.equals(channelArr[i].getDataService().getClass().getName())
+        && (channelArr[i].getId() == channelId))
+      {
+        return channelArr[i];
+      }      
+    }
     
-  public TVDataServiceInterface getDataService() {
+    return null;
+  }
+  
+
+
+  public TvDataService getDataService() {
     return mDataService;
   }
 
-  
-  
+
+
   public String toString() {
     return mName + " (" + mDataService.getName() + ")";
   }
 
-  
-  
+
+
   public String getName() {
     return mName;
   }
 
-  
-  
+
+
   public int getId() {
     return mId;
   }
 
-  
-  
+
+
   public boolean equals(Object obj) {
     if (obj instanceof Channel) {
       Channel cmp = (Channel) obj;
       return (mDataService == cmp.mDataService) && (mId == cmp.mId);
     }
-    
+
     return false;
   }
-  
+
 }

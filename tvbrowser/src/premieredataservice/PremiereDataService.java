@@ -38,12 +38,12 @@ import util.io.IOUtilities;
 import util.tvdataservice.*;
 
 import devplugin.*;
-import tvdataloader.*;
+import tvdataservice.*;
 
 /**
  * A data service for the german pay TV channels from Premiere.
  * <p>
- * Premiere offers its program for the next month 
+ * Premiere offers its program for the next month
  * <a href="http://www.premiere.de/content/Programm_Film_Movieguide.jsp">here</a>
  * in a text format.
  * <p>
@@ -57,32 +57,32 @@ import tvdataloader.*;
  */
 public class PremiereDataService extends AbstractTvDataService {
 
-  /** The localizer for this class. */  
+  /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PremiereDataService.class);
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(PremiereDataService.class.getName());
 
-  
-  
+
+
   /**
    * Creates a new instance of PremiereDataService.
    */
   public PremiereDataService() {
   }
 
-  
-  
+
+
   /**
    * Gets the localized name of this TV data service.
    */
   public String getName() {
     return mLocalizer.msg("name", "Premiere data service");
   }
-  
-  
-  
+
+
+
   /**
    * Gets the default list of the channels that are available by this data
    * service.
@@ -113,8 +113,8 @@ public class PremiereDataService extends AbstractTvDataService {
     };
   }
 
-  
-  
+
+
   /**
    * Gets the name of the directory where to download the data service specific
    * files.
@@ -123,8 +123,8 @@ public class PremiereDataService extends AbstractTvDataService {
     return "premieredata";
   }
 
-  
-  
+
+
   /**
    * Gets the name of the file that contains the data of the specified date.
    */
@@ -134,7 +134,7 @@ public class PremiereDataService extends AbstractTvDataService {
     Calendar cal = date.getCalendar();
     int month = cal.get(Calendar.MONTH) + 1;
     int year = cal.get(Calendar.YEAR) % 100;
-    
+
     // Check whether the channel is a channel of the erotic guide
     // TODO: a smarter implementation that detects the channels dynamically
     boolean isEroticGuide = false;
@@ -149,7 +149,7 @@ public class PremiereDataService extends AbstractTvDataService {
     } else {
       fileNamePrefix = "mguide_d_s_";
     }
-    
+
     return fileNamePrefix
       + ((month < 10) ? ("0" + month) : ("" + month))
       + "_"
@@ -157,8 +157,8 @@ public class PremiereDataService extends AbstractTvDataService {
       + ".txt";
   }
 
-  
-  
+
+
   /**
    * Downloads the file containing the data for the specified dat and channel.
    *
@@ -180,8 +180,8 @@ public class PremiereDataService extends AbstractTvDataService {
     }
   }
 
-  
-  
+
+
   /**
    * Parses the specified file.
    *
@@ -193,14 +193,14 @@ public class PremiereDataService extends AbstractTvDataService {
     throws TvBrowserException
   {
     HashSet knownChannelNameSet = new HashSet();
-    
+
     FileReader fileReader = null;
     BufferedReader reader = null;
     int lineNr = -1;
     try {
       fileReader = new FileReader(file);
       reader = new BufferedReader(fileReader);
-      
+
       Pattern[] regexPatternArr = new Pattern[] {
         // Example: "STUDIO UNIVERSAL: 01.05./06:00"
         Pattern.compile("(.*): (\\d*)\\.(\\d*)\\./(\\d*):(\\d*)"),
@@ -217,7 +217,7 @@ public class PremiereDataService extends AbstractTvDataService {
         // Example: "Obwohl ihr Mann Roger (Yves Montand) immer wieder fremdgeht ..."
         Pattern.compile("(.*)")
       };
-      
+
       Calendar cal = Calendar.getInstance();
 
       // Parse the file line by line
@@ -230,7 +230,7 @@ public class PremiereDataService extends AbstractTvDataService {
       while ((line = reader.readLine()) != null) {
         // mLog.info("checking line " + lineNr + ", progLine: " + progLine
         //   + ": '" + line + "'");
-        
+
         if (line.length() == 0) {
           // The current program is finished
           if (currProgram != null) {
@@ -242,7 +242,7 @@ public class PremiereDataService extends AbstractTvDataService {
             currProgram.setDescription(descriptionBuffer.toString());
 
             programDispatcher.dispatch(currProgram);
-            
+
             currProgram = null;
           }
 
@@ -258,11 +258,11 @@ public class PremiereDataService extends AbstractTvDataService {
           } else {
             // This is either the first line of a new program
             // or some other line of a program that interest us
-        
-            // Get the right regex matcher        
+
+            // Get the right regex matcher
             Matcher matcher = regexPatternArr[progLine].matcher(line);
             matcher.find();
-            
+
             if (progLine == 0) {
               currProgram = extractProgram(matcher, knownChannelNameSet, cal);
               if (currProgram != null) {
@@ -272,25 +272,25 @@ public class PremiereDataService extends AbstractTvDataService {
             } else {
               computeLine(matcher, progLine, currProgram, descriptionBuffer,
                 additionalInfoBuffer);
-              
+
             }
           } // else block of if ((progLine != 0) && (currProgram == null))
         } // else block of if (line.length() == 0)
-        
+
         if (progLine < regexPatternArr.length - 1) {
           // The next line may be another description line
           progLine++;
         }
         lineNr++;
       }
-      
+
       // Copy the known channels into an array
       String[] knownChannelNameArr = new String[knownChannelNameSet.size()];
       knownChannelNameSet.toArray(knownChannelNameArr);
-      
+
       // Sort the array
       Arrays.sort(knownChannelNameArr);
-      
+
       // Print out the array
       String asString = "";
       for (int i = 0; i < knownChannelNameArr.length; i++) {
@@ -316,8 +316,8 @@ public class PremiereDataService extends AbstractTvDataService {
     }
   }
 
-    
-    
+
+
   private MutableProgram extractProgram(Matcher matcher,
     HashSet knownChannelNameSet, Calendar cal) {
     // regex: "([^:]*): (\\d*)\\.(\\d*)\\./(\\d*):(\\d*)"
@@ -345,9 +345,9 @@ public class PremiereDataService extends AbstractTvDataService {
 
     return new MutableProgram(channel, date, hours, minutes);
   }
-    
-  
-  
+
+
+
   private Channel getChannelForName(String channelName) {
     Channel[] channelArr = getAvailableChannels();
     for (int i = 0; i < channelArr.length; i++) {
@@ -355,11 +355,11 @@ public class PremiereDataService extends AbstractTvDataService {
         return channelArr[i];
       }
     }
-    
+
     return null;
   }
 
-  
+
 
   private void computeLine(Matcher matcher, int progLine,
     MutableProgram currProgram, StringBuffer descriptionBuffer,
@@ -443,5 +443,5 @@ public class PremiereDataService extends AbstractTvDataService {
       } break;
     } // switch(progLine)
   }
-  
+
 }
