@@ -214,8 +214,9 @@ public class ReminderList implements ActionListener {
         remindTime = 1440 - (remindTime % 1440);
         remindDate = remindDate.addDays(-days);
       }
-      
-      if (today.compareTo(remindDate) >= 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime) {
+
+			int diff = today.compareTo(remindDate);
+			if (diff > 0 || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime)) {
         mListener.timeEvent(item);
       }
     }
