@@ -89,10 +89,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     // setup logging
     try {
+      // Get the default Logger
+      Logger mainLogger = Logger.getLogger("");
+      
+      // Add a file handler
       new File("log").mkdir();
       Handler fileHandler = new FileHandler("log/tvbrowser.log", 50000, 2, true);
       fileHandler.setLevel(Level.WARNING);
-      Logger.getLogger("").addHandler(fileHandler);
+      mainLogger.addHandler(fileHandler);
     }
     catch (IOException exc) {
       msg = mLocalizer.msg("error.4", "Can't create log file.");
@@ -106,8 +110,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     msg=mLocalizer.msg("splash.dataService","Loading tv data loader...");
     DataLoaderManager.initDataLoaders();
     createChannelList();
-
-   
 
     Settings.loadSettings();
     mLog.info("Loading Look&Feel...");
@@ -139,7 +141,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     ErrorHandler.setFrame(frame);
 
 	splash.hide();
-
+    
+    // maximize the frame
+    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {

@@ -119,7 +119,7 @@ public class XmlTvDataService extends MultipleChannelTvDataService {
   protected void downloadFileFor(devplugin.Date date, Channel channel,
     File targetFile) throws TvBrowserException
   {
-    String fileName = getFileNameFor(date);
+    String fileName = getFileNameFor(date, channel);
     String url = "http://www.szing.at/xmltv/" + fileName;
     try {
       IOUtilities.download(new URL(url), targetFile);
@@ -145,7 +145,9 @@ public class XmlTvDataService extends MultipleChannelTvDataService {
   /**
    * Gets the name of the file that contains the data of the specified date.
    */
-  protected String getFileNameFor(devplugin.Date date) {
+  protected String getFileNameFor(devplugin.Date date,
+    devplugin.Channel channel)
+  {
     java.util.Calendar cal = date.getCalendar();
     
     int month = cal.get(java.util.Calendar.MONTH) + 1;

@@ -24,125 +24,110 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package programinfo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import util.ui.*;
+
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ProgramInfoDialog extends JDialog {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramInfoDialog.class);
   
+  private static final Font LABEL_FONT = new JLabel().getFont();
+  private static final Font TITLE_FONT
+    = new Font(LABEL_FONT.getName(), Font.BOLD, LABEL_FONT.getSize() + 4);
+  private static final Font INFO_FONT
+    = new Font(LABEL_FONT.getName(), Font.ITALIC, LABEL_FONT.getSize() - 2);
+
   
   
   public ProgramInfoDialog(Frame parent, devplugin.Program program) {
     super(parent);
     
+    String msg;
+    JTextArea ta;
+    JLabel lb;
+    
     setTitle(mLocalizer.msg("title", "Program information"));
     
-    JPanel mainPane=(JPanel)getContentPane();
-    mainPane.setPreferredSize(new Dimension(450,250));
-    JPanel contentPane=new JPanel(new BorderLayout());
-    contentPane.setLayout(new BorderLayout());
-    contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    JPanel main = new JPanel(new BorderLayout());
+    main.setPreferredSize(new Dimension(450, 250));
+    setContentPane(main);
+    
+    JPanel infoPn = new JPanel(new BorderLayout(10, 10));
+    infoPn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    final JScrollPane scrollPane = new JScrollPane(infoPn);
+    main.add(scrollPane, BorderLayout.CENTER);
 
-    JLabel titleLabel=new JLabel(program.getChannel().getName()+": "+program.getTitle());
-    JPanel infoPanel=new JPanel(new GridLayout(2,1));
+    // the header (title and time)
+    JPanel headerPn = new JPanel(new BorderLayout(10, 10));
+    infoPn.add(headerPn, BorderLayout.NORTH);
+    
+    // add the channel and title
+    msg = program.getChannel().getName() + ": " + program.getTitle();
+    ta = createTextArea(msg);
+    ta.setFont(TITLE_FONT);
+    headerPn.add(ta, BorderLayout.CENTER);
+    
+    // Add date, time and length
+    JPanel timePn = new JPanel(new TabLayout(1));
+    headerPn.add(timePn, BorderLayout.EAST);
+    timePn.add(new JLabel(program.getDateString()));
+    timePn.add(new JLabel(program.getTimeString()));
+    msg = mLocalizer.msg("min", "{0} min", new Integer(program.getLength()));
+    timePn.add(new JLabel(msg));
+    
+    // add all the other information
+    JPanel bodyPn = new JPanel(new TabLayout(1));
+    infoPn.add(bodyPn, BorderLayout.CENTER);
 
-    Font font=titleLabel.getFont();
+    // info flags
+    msg = programInfoToString(program.getInfo());
+    lb = new JLabel(msg);
+    lb.setFont(INFO_FONT);
+    bodyPn.add(lb);
 
-    titleLabel.setFont(new Font(font.getName(),Font.BOLD,font.getSize()+4));
+    // description
+    String desc = program.getDescription();
+    bodyPn.add(createTextArea(desc));
 
-    infoPanel.add(new JLabel(program.getDateString()));
-    infoPanel.add(new JLabel(program.getTimeString()));
-
-    JPanel panel1=new JPanel(new BorderLayout(20,0));
-    panel1.add(titleLabel,BorderLayout.WEST);
-    panel1.add(infoPanel,BorderLayout.EAST);
-
-    String labelText="";
-    int info=program.getInfo();
-    if (info==0) {
-      labelText="";
+    // Create the shortInfoArea only if the short info differs from the description
+    String shortInfo = program.getShortInfo();
+    int shortInfoLength = shortInfo.length();
+    if (shortInfo.endsWith("...")) {
+      shortInfoLength -= 3;
     }
-    else {
-      // TODO: This is TVgenial specific!!
-      if ((info&0x1) == 0x1) labelText += "? (" + info + ")  ";
-      if ((info&0x2) == 0x2) labelText += mLocalizer.msg("16to9", "16:9") + "  ";
-      if ((info&0x4) == 0x4) labelText += mLocalizer.msg("dolby", "Dolby") + "  ";
-      if ((info&0x8) == 0x8) labelText += "oo  ";
-      if ((info&0x10) == 0x10) labelText += mLocalizer.msg("stereo", "Stereo") + "  ";
-      if ((info&0x20) == 0x20) labelText += mLocalizer.msg("subtitle", "Subtitle") + "  ";
-      if ((info&0x40) == 0x40) labelText += mLocalizer.msg("live", "Live") + "live  ";
-      if ((info&0x80) == 0x80) labelText += mLocalizer.msg("blackAndWhite", "b/w") + "  ";
+    String shortInfoSub = shortInfo.substring(0, shortInfoLength);
+    String descSub = desc.substring(0, shortInfoLength);
+    if (! shortInfoSub.equals(descSub)) {
+      bodyPn.add(createTextArea(shortInfo));
     }
 
-    JLabel infoLabel=new JLabel();
-    font=infoLabel.getFont();
+    // actors
+    bodyPn.add(createTextArea(program.getActors()));
+    
+    // buttons
+    JPanel buttonPn = new JPanel(new BorderLayout());
+    buttonPn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    main.add(buttonPn, BorderLayout.SOUTH);
 
-    infoLabel.setFont(new Font(font.getName(),Font.ITALIC,font.getSize()-2));
-
-
-    JTextArea descArea=new JTextArea();
-    descArea.setEditable(false);
-    descArea.setOpaque(false);
-    descArea.setLineWrap(true);
-    descArea.setWrapStyleWord(true);
-    descArea.setText(program.getDescription());
-    //   descArea.setColumns(20);
-
-    JTextArea shortInfoArea=new JTextArea();
-    shortInfoArea.setEditable(false);
-    shortInfoArea.setOpaque(false);
-    shortInfoArea.setLineWrap(true);
-    shortInfoArea.setWrapStyleWord(true);
-    shortInfoArea.setText(program.getShortInfo());
-
-    JTextArea actorsArea=new JTextArea();
-    actorsArea.setEditable(false);
-    actorsArea.setOpaque(false);
-    actorsArea.setLineWrap(true);
-    actorsArea.setWrapStyleWord(true);
-    actorsArea.setText(program.getActors());
-
-    contentPane.add(panel1,BorderLayout.NORTH);
-    JPanel panel2=new JPanel(new BorderLayout(0,10));
-    contentPane.add(panel2,BorderLayout.CENTER);
-    panel2.add(infoLabel,BorderLayout.NORTH);
-
-    JPanel panel3=new JPanel(new BorderLayout(0,10));
-    panel2.add(panel3,BorderLayout.CENTER);
-    panel3.add(shortInfoArea,BorderLayout.NORTH);
-    JPanel panel4=new JPanel(new BorderLayout(0,10));
-    panel3.add(panel4,BorderLayout.CENTER);
-    panel4.add(descArea,BorderLayout.NORTH);
-    JPanel panel5=new JPanel(new BorderLayout(0,10));
-    panel4.add(panel5,BorderLayout.CENTER);
-    panel5.add(actorsArea,BorderLayout.NORTH);
-
-    JPanel btnPanel=new JPanel(new BorderLayout());
-
-    JButton closeBtn=new JButton(mLocalizer.msg("close", "Close"));
+    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
+      public void actionPerformed(ActionEvent evt) {
+        dispose();
       }
     }
     );
-    btnPanel.add(closeBtn,BorderLayout.EAST);
-    btnPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
-    mainPane.add(btnPanel,BorderLayout.SOUTH);
-    final JScrollPane scrollPane = new JScrollPane(contentPane);
-    mainPane.add(scrollPane, BorderLayout.CENTER);
+    buttonPn.add(closeBtn, BorderLayout.EAST);
     
     // Scroll to the beginning
     Runnable runnable = new Runnable() {
@@ -152,5 +137,34 @@ public class ProgramInfoDialog extends JDialog {
     };
     SwingUtilities.invokeLater(runnable);
   }
+  
+  
+  
+  private JTextArea createTextArea(String text) {
+    JTextArea ta = new JTextArea(text);
+    ta.setEditable(false);
+    ta.setOpaque(false);
+    ta.setLineWrap(true);
+    ta.setWrapStyleWord(true);
+    return ta;
+  }
 
+  
+  
+  private String programInfoToString(int info) {
+    StringBuffer buf = new StringBuffer();
+
+    // TODO: This is TVgenial specific!!
+    if ((info&0x1) == 0x1) buf.append("? (" + info + ")  ");
+    if ((info&0x2) == 0x2) buf.append(mLocalizer.msg("16to9", "16:9") + "  ");
+    if ((info&0x4) == 0x4) buf.append(mLocalizer.msg("dolby", "Dolby") + "  ");
+    if ((info&0x8) == 0x8) buf.append("oo  ");
+    if ((info&0x10) == 0x10) buf.append(mLocalizer.msg("stereo", "Stereo") + "  ");
+    if ((info&0x20) == 0x20) buf.append(mLocalizer.msg("subtitle", "Subtitle") + "  ");
+    if ((info&0x40) == 0x40) buf.append(mLocalizer.msg("live", "Live") + "live  ");
+    if ((info&0x80) == 0x80) buf.append(mLocalizer.msg("blackAndWhite", "b/w") + "  ");
+    
+    return buf.toString();
+  }
+  
 }

@@ -140,6 +140,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param grp The graphics context to paint to.
    */  
   public void paintComponent(Graphics grp) {
+    // Draw the background if this program is on air
     if (mProgram.isOnAir()) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int length = mProgram.getLength();
@@ -154,12 +155,22 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       grp.draw3DRect(0, 0, WIDTH - 1, mHeight - 1, true);
     }
 
-    // paint the icons of the plugins that have marked the mProgram
+    // If there are plugins that have marked the program -> paint the background
     Iterator pluginIter = mProgram.getMarkedByIterator();
     if (pluginIter.hasNext()) {
       grp.setColor(COLOR_MARKED);
       grp.fill3DRect(0, 0, WIDTH, mHeight, true);
+    }
 
+    // Draw all the text
+  	grp.setFont(bold);
+    grp.setColor(Color.black);
+    grp.drawString(mProgramTimeAsString, 1, bold.getSize());
+    mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
+    mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
+
+    // paint the icons of the plugins that have marked the program
+    if (pluginIter.hasNext()) {
       int x = WIDTH - 1;
       int y = mHeight - 1;
       while (pluginIter.hasNext()) {
@@ -171,12 +182,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
         }
       }
     }
-
-  	grp.setFont(bold);
-    grp.setColor(Color.black);
-    grp.drawString(mProgramTimeAsString, 1, bold.getSize());
-    mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
-    mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
   }
 
   
