@@ -135,6 +135,9 @@ public class Tag {
   }
     
   public String getName() {
+    if (isText()) {
+      return convertString(mName);
+    }
     return mName;  
   }
   
@@ -248,5 +251,29 @@ public class Tag {
     }
     return "tag: ["+mName+"] "+(mIsOpenTag?"(open)":"(close)");
   }
+  
+  
+  private void replace(StringBuffer buf, String s, char c) {
+         int inx;
+         inx=buf.indexOf(s);
+         while (inx>=0) {
+           buf.replace(inx,inx+s.length(),""+c);
+           inx=buf.indexOf(s);
+         }    
+       }
+  
+   
+  
+  private String convertString(String s) {
+    
+    StringBuffer buf=new StringBuffer(s);
+    
+    replace(buf,"&nbsp;",' ');
+    replace(buf,"&amp;",'&');
+     
+    return buf.toString();
+  }
+  
+  
   
 }
