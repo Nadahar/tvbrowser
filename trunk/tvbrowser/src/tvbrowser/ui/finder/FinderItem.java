@@ -100,7 +100,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
     mLabel.setEnabled(b);
   }
   
-  public void startProgress(final DateListener listener) {
+  public void startProgress(final DateListener listener, final Runnable callback) {
     
     if (listener==null) {
       return;
@@ -111,7 +111,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
     final ProgressMonitor monitor=this;
     Thread thread=new Thread(){
       public void run() {
-        listener.dateChanged(mDate, monitor);
+        listener.dateChanged(mDate, monitor, callback);
         stopProgress();
       }
     };

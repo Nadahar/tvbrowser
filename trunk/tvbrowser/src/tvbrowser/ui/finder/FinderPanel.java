@@ -156,9 +156,21 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     return null;
   }
   
-  public void markDate(final Date d) {
+  public void markDate(Date d) {
+    markDate(d, null);
+  }
+  
+  /**
+   * This is a non blocking method
+   * @param d
+   * @param callback
+   */
+  public void markDate(final Date d, Runnable callback) {
     
     if (d.equals(mCurChoosenDate)) {
+      if (callback!=null) {
+        callback.run();
+      }
       return;
     }    
     
@@ -169,7 +181,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
         if (item.isEnabled()) {
           mCurChoosenDate=d;       
           mRenderer.setSelectedItem(item);
-          item.startProgress(mDateChangedListener);
+          item.startProgress(mDateChangedListener, callback);
           return;
         }          
       } 
