@@ -27,108 +27,227 @@
 package tvbrowser.ui.pluginview;
 
 
-
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-
-import devplugin.TreeLeaf;
-import devplugin.TreeNode;
+import javax.swing.tree.MutableTreeNode;
+import tvbrowser.core.plugin.PluginProxy;
 
 
 public class PluginTreeModel extends DefaultTreeModel {
 
- 
-  private TreeNodeImpl mRoot;
-  private static PluginTreeModel mInstance;
+  private static PluginTreeModel sInstance; 
     
   private PluginTreeModel() {
-    super(null);
-    mRoot = createRootNode("plugins", "Plugins");
-    setRoot(mRoot);
+    super(new DefaultMutableTreeNode("Plugins"));        
   }
- 
+  
+  
+  public void addPluginTree(PluginProxy plugin) {
+    MutableTreeNode pluginRoot = plugin.getRootNode();
+    MutableTreeNode root = (MutableTreeNode)this.getRoot();
+    root.insert(pluginRoot, 0);
+  }
+    
   public static PluginTreeModel getInstance() {
-    if (mInstance == null) {
-      mInstance = new PluginTreeModel();
+    if (sInstance == null) {
+      sInstance = new PluginTreeModel();
     }
-    return mInstance;
+    return sInstance;
   }
- 
-  public TreeNodeImpl getPluginNode() {
-    return mRoot;
+    
+    
+}
+
+
+/*
+public class PluginTreeModel implements TreeModel, ProgramContainerListener {
+
+  private PluginRootNode[] mPluginRootNodes;
+  private String mRoot; 
+  private ArrayList mTreeModelListeners;
+    
+  public PluginTreeModel(PluginProxy[] plugins) {
+    mTreeModelListeners = new ArrayList();
+    ArrayList pluginRootNodes = new ArrayList();
+    //mPluginRootNodes = new PluginRootNode[plugins.length];
+    for (int i=0; i<plugins.length; i++) {
+      if (plugins[i].canUseProgramTree()) {  
+        PluginRootNode n = new PluginRootNode(plugins[i], PluginRootNode.VIEW_TYPE_DEFINED_BY_PLUGIN);
+        pluginRootNodes.add(n);
+        ProgramContainer container = Plugin.getPluginManager().getProgramContainer(plugins[i].getId());
+        container.addContainerListener(this);
+      }
+    }
+    mPluginRootNodes = new PluginRootNode[pluginRootNodes.size()];
+    pluginRootNodes.toArray(mPluginRootNodes);
+    mRoot = "Plugins";
   }
-  
-  
+    
   public Object getRoot() {
-    return mRoot;
+   return mRoot;
   }
+
   
-  private TreeNodeImpl createRootNode(String key, String title) {
-    TreeNodeImpl n = new TreeNodeImpl(key, title);
-    n.setModel(this);
-    setRoot(n);
-    return n;
-  }
-  
-  public TreeNodeImpl createNode(String key, String title) {
-    TreeNodeImpl n = new TreeNodeImpl(key, title);
-    n.setModel(this);
-    n.setParent(mRoot);
-    insert(n, mRoot);
-    return n;
-  }
-  
-  public void addNode(TreeNode node, TreeNode parent) {
-    insert(node, parent);
-  }
-  
-  public void addItem(TreeLeaf item, TreeNode parent) {
-    insert(item, parent);  
-  }
-  
-  public void removeNode(TreeNode node) {
-    removeNodeFromParent(node);  
-  }
-  
-  public void removeItem(TreeLeaf item) {
-    removeNodeFromParent(item);    
-  }
-  
- 
-  
-  private void insert(TreeItem item, TreeNode parent) {
-    this.insertNodeInto(item, parent, findInsertPosition(item, parent));
-  }
-  
-  private int findInsertPosition(TreeItem item, TreeNode parent) {      
- 
-    if (parent.getChildCount()==0) {
-      return 0;
+  public int getChildCount(Object node) {
+    if (node == mRoot) {
+      return mPluginRootNodes.length;
     }
+    else {
+      PluginRootNode n = (PluginRootNode)node;
+      return n.getChildCount();
+    }
+    
+  }
+
+  
+  public boolean isLeaf(Object node) {
+    if (node == mRoot) {
+      return false;
+    }
+    else if (node instanceof PluginRootNode) {
+      return false;
+    }
+    return true;
+  }
+
+  
+  
+   
+  public void addTreeModelListener(TreeModelListener listener) {
+    mTreeModelListeners.add(listener);   
+  }
+
+  public void removeTreeModelListener(TreeModelListener listener) {
+    mTreeModelListeners.remove(listener);       
+  }
+
+   
+  public Object getChild(Object node, int index) {
+    if (node == mRoot) {
+      return mPluginRootNodes[index];
+    }
+    else if (node instanceof TreeNode) {
+      TreeNode n = (TreeNode)node;
+      return n.getChildAt(index);
+    }
+    return null;
+  }
+
+   
+  public int getIndexOfChild(Object arg0, Object arg1) {
+    return 0;
+  }
+
+   
+  public void valueForPathChanged(TreePath arg0, Object arg1) {
+        
+  }
+  
+
+
+  public void programAdded(ProgramItem item) {
       
-    int comp = 0;
-    int lowBnd = 0;
-    int upBnd = parent.getChildCount() - 1;
-    int i;
-    boolean found = false;
-    for(;;) {
-      if (upBnd == lowBnd) {
-          
-        if (upBnd == parent.getChildCount() - 1) {
-          return upBnd+1;
-        }
-        return upBnd;
-      }        
-      i = (upBnd + lowBnd) / 2;
-      javax.swing.tree.TreeNode n = parent.getChildAt(i);
-      comp = item.compareTo(n);
-      if (comp < 0) {
-        upBnd = i;          
-      }else {
-        lowBnd = i+1;
+  }
+
+ 
+  public void programRemoved(ProgramItem item) {
+      
+  }
+
+  
+  public void containerAdded(ProgramContainer parent, ProgramContainer container) {
+      
+  }
+
+ 
+  public void containerRemoved(ProgramContainer container) {
+      
+  }
+
+  
+
+  
+  class PluginRootNode implements devplugin.TreeNode{
+    
+    public static final int VIEW_TYPE_DEFINED_BY_PLUGIN = 1;
+    public static final int VIEW_TYPE_SORTED_BY_TITLE = 2;
+    public static final int VIEW_TYPE_SORTED_BY_NAME = 3;
+    public static final int VIEW_TYPE_NO_SUBFOLDERS = 4;
+    
+    private PluginProxy mPlugin;
+    private int mViewType;
+    private TreeNode[] mNodes;
+     
+    public PluginRootNode(PluginProxy plugin, int type) {
+      mPlugin = plugin;
+      
+      ProgramContainer container = Plugin.getPluginManager().getProgramContainer(plugin.getId());
+      //ProgramItem[] items = container.getPrograms();
+      
+      
+      mViewType = type;
+      
+      if (type == VIEW_TYPE_DEFINED_BY_PLUGIN) {
+        mNodes = createPluginDefinedStructure(container);
+      }
+      else if (type == VIEW_TYPE_NO_SUBFOLDERS) {
+     //   mNodes = createNoSubfolderStructure(container);
+      }
+      else if (type == VIEW_TYPE_SORTED_BY_TITLE) {
+     //   mNodes = createSortedByTitleStructure(container);
+      }
+      else if (type == VIEW_TYPE_SORTED_BY_NAME) {
+     //   mNodes = createSortedByNameStructure(container);
       }
     }
     
+    public String toString() {
+      return mPlugin.getInfo().getName();
+    }
+    
+    public int getViewType() {
+      return mViewType;  
+    }
+    
+    public Object getChildAt(int index) {
+      //if (mViewType == VIEW_TYPE_DEFINED_BY_PLUGIN)
+      //return null;
+      return mNodes[index];
+    }
+    
+    public int getChildCount() {
+      return mNodes.length;
+    }
+
+  
+    public boolean isChild() {
+      return false;
+    }
+    
+    
+    private TreeNode[] createPluginDefinedStructure(ProgramContainer container) {
+      ProgramItem[] progs = container.getPrograms();
+      TreeNode[] result = new TreeNode[progs.length];
+      for (int i=0; i<progs.length; i++) {
+        result[i] = new Node(progs[i].getProgram().getTitle());
+      }        
+      return result;
+    }
+    
+    private TreeNode[] createSortedByTitleNode(Program[] progs) {
+      return new TreeNode[0];   
+    }
+    
+    private TreeNode[] createSortedByTimeNode(Program[] progs) {
+      return new TreeNode[0];   
+    }
     
   }
+
+
+
+
+
     
 }
+*/

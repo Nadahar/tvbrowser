@@ -227,7 +227,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
      Arrays.sort(plugins, new Comparator() {
          public int compare(Object o1, Object o2) {
-             System.out.println(o1.toString());
              return o1.toString().compareTo(o2.toString());
          }
      });

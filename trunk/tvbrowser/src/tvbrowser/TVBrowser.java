@@ -51,7 +51,6 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
-import tvbrowser.core.plugin.PluginProgramsManager;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvdataAssistantDlg;
@@ -401,7 +400,7 @@ public class TVBrowser {
   
   
   public static synchronized void flushSettings() {    
-    PluginProgramsManager.getInstance().storeTrees();
+    //PluginProgramsManager.getInstance().storeTrees();
       
     mLog.info("Channel Settings (day light saving time corrections/icons)");
     ChannelList.storeAllSettings();  

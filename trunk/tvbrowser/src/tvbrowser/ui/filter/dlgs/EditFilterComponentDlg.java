@@ -165,7 +165,6 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     private void setFilterComponent(FilterComponent comp) {
       for (int i=1;  // index 0 does not contain a FilterComponent object
            i<mRuleCb.getItemCount(); i++) {
-        System.out.println(mRuleCb.getItemAt(i));
         FilterComponent c = (FilterComponent)mRuleCb.getItemAt(i);
         if (c.toString().equals(comp.toString())) {
           DefaultComboBoxModel model=(DefaultComboBoxModel)mRuleCb.getModel();

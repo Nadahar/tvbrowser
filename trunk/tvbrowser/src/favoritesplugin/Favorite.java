@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,9 +44,6 @@ public class Favorite {
   
   private SearchFormSettings mSearchFormSettings;
   
-  // private String mTerm;
-  // private boolean mSearchInTitle, mSearchInText;
-  // private int mSearchMode;
   private boolean mUseCertainChannel;
   private Channel mCertainChannel;
   private boolean mUseCertainTimeOfDay;
@@ -340,6 +337,14 @@ public class Favorite {
     
     // mark these programs
     FavoritesPlugin.getInstance().mark(mProgramArr);
+  }
+  
+  public void setTitle(String title) {
+      
+  }
+  
+  public String getTitle() {
+    return mSearchFormSettings.getSearchText(); 
   }
   
 }

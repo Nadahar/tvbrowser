@@ -27,20 +27,18 @@
 package reminderplugin;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.awt.event.*;
 
 import util.io.IOUtilities;
 
 import devplugin.Plugin;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.Date;
-import devplugin.TreeNode;
-import devplugin.TreeLeaf;
+import devplugin.ProgramItem;
+
 
 /**
  * TV-Browser
@@ -51,25 +49,48 @@ public class ReminderList implements ActionListener {
 
   private ReminderTimerListener mListener=null;
   private javax.swing.Timer mTimer;
-  private TreeNode mRootNode;
+  private PluginTreeNode mRoot;
+  
+ // private ArrayList mPrograms;
+ // private ProgramContainer mContainer;
 
-
-  public ReminderList(TreeNode node) {
-    mRootNode = node;
-    
-    TreeLeaf[] leafs = node.getLeafs();
-    for (int i=0; i<leafs.length; i++) {
-      leafs[i].getProgram().mark(ReminderPlugin.getInstance());
+ /* public ReminderList(ReminderListItem[] progs) {
+    mPrograms = new ArrayList();
+    for (int i=0; i<progs.length; i++) {
+      mPrograms.add(progs[i]);
+      progs[i].getProgram().mark(ReminderPlugin.getInstance());
+    }
+  }*/
+  
+  /*public ReminderList(ProgramItem[] progs) {
+    mPrograms = new ArrayList();
+    for (int i=0; i<progs.length; i++) {
+      mPrograms.add(new ReminderListItem(progs[i]));
+    }
+  }*/
+  
+  
+  public ReminderList(PluginTreeNode root) {
+    mRoot = root;
+    ProgramItem[] items = root.getPrograms();
+    for (int i=0; i<items.length; i++) {
+      items[i].getProgram().mark(ReminderPlugin.getInstance());
     }
   }
-
+  
+  /*
+  public ReminderList(ProgramContainer container) {
+    mContainer = container;
+    ProgramItem[] items = mContainer.getPrograms();
+    for (int i=0; i<items.length; i++) {
+      items[i].getProgram().mark(ReminderPlugin.getInstance());
+    }
+  }
+  */
   
   public void read(ObjectInputStream in)
-    throws IOException, ClassNotFoundException
-  {
-    TreeNode tree = Plugin.getPluginManager().getTree(ReminderPlugin.getInstance().getId());        
-    
-      
+    throws IOException, ClassNotFoundException {
+     
     int version = in.readInt();
     if (version == 1) {      
       int size = in.readInt();    
@@ -82,18 +103,16 @@ public class ReminderList implements ActionListener {
         
         // Only add items that were able to load their program
         if (program != null) {
-          TreeLeaf leaf = tree.add(program);
-          leaf.setProperty("reminderminutes",""+reminderMinutes);
+         // TreeLeaf leaf = tree.add(program);
+         // leaf.setProperty("reminderminutes",""+reminderMinutes);
           add(program, reminderMinutes);
         }
       }
     }
-  }
-  
-  
+  }  
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
+    out.writeInt(2); // version   
   }
   
   
@@ -103,12 +122,12 @@ public class ReminderList implements ActionListener {
    * <p>
    * If there is no such item, null is returned.
    */
-  public ReminderListItem getItemWithProgram(Program program) {
-    return getItemWithProgram(mRootNode, program);
-  }
-  
+  //public ReminderListItem getItemWithProgram(Program program) {
+  //  return getItemWithProgram(/*mRootNode, */program);
+  //}
+  /*
   private ReminderListItem getItemWithProgram(TreeNode node, Program program) {
-    TreeLeaf[] leafs = node.getLeafs();
+  /*  TreeLeaf[] leafs = node.getLeafs();
     for (int i=0; i<leafs.length; i++) {
       TreeLeaf leaf = leafs[i];
       if (leaf.getProgram().equals(program)) {
@@ -125,8 +144,8 @@ public class ReminderList implements ActionListener {
     }
     return null; 
   }
-
-  
+*/
+  /*
   public void add(TreeNode node, Program program, int minutes) {
     if (!program.isExpired()) {
       ReminderListItem item = this.getItemWithProgram(program);
@@ -138,16 +157,19 @@ public class ReminderList implements ActionListener {
       }
       item.setMinutes(minutes);
     }      
-  }
+  }*/
+  
+  
   public void add(Program program, int minutes) {
-    add(mRootNode, program, minutes);  
+    ReminderListItem item = new ReminderListItem(program, minutes);
+    program.mark(ReminderPlugin.getInstance());
+    //mContainer.addProgram(item.getProgramItem());
+    mRoot.addProgram(item.getProgramItem());
   }
   
  
-  public void remove(Program program) {
-    remove(mRootNode, program);
-  }
   
+  /*
   private void remove(TreeNode node, Program program) {
     TreeLeaf[] leafs = node.getLeafs();
     for (int i=0; i<leafs.length; i++) {
@@ -161,7 +183,7 @@ public class ReminderList implements ActionListener {
     for (int i=0; i<nodes.length; i++) {
       remove(nodes[i], program);
     }
-  }
+  }*/
  
   
   public void setReminderTimerListener(ReminderTimerListener listener) {
@@ -175,26 +197,49 @@ public class ReminderList implements ActionListener {
   
   
   public void removeExpiredItems() {
-    removeExpiredItems(mRootNode);
-  }
-  
-  private void removeExpiredItems(TreeNode node) {
-    TreeLeaf[] leafs = node.getLeafs();
-    for (int i=0; i<leafs.length; i++) {
-      if (leafs[i].getProgram().isExpired()) {
-        mRootNode.remove(leafs[i]);
+    ProgramItem[] items = mRoot.getPrograms();
+    for (int i=0; i<items.length; i++) {
+      if (items[i].getProgram().isExpired()) {
+        mRoot.removeProgram(items[i]);
       }
     }
-    TreeNode[] nodes = node.getNodes();
-    for (int i=0; i<nodes.length; i++) {
-      removeExpiredItems(nodes[i]);
-    }
+    //removeExpiredItems(mRootNode);
   }
-
-  public boolean contains(Program program) {
-    return contains(mRootNode, program);
+ 
+  
+  public void remove(ProgramItem item) {
+    mRoot.removeProgram(item);
+    item.getProgram().unmark(ReminderPlugin.getInstance());
   }
   
+  public boolean contains(Program program) {
+    ProgramItem[] items = mRoot.getPrograms();
+    for (int i=0; i<items.length; i++) {
+      if (program.equals(items[i].getProgram())) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+ 
+ 
+  
+  public void remove(Program program) {
+       
+    //ProgramItem[] items = mContainer.getPrograms();
+    ProgramItem[] items = mRoot.getPrograms();
+    for (int i=0; i<items.length; i++) {
+      if (program.equals(items[i].getProgram())) {
+        //mContainer.removeProgram(items[i]);
+        //items[i].getProgram().unmark(ReminderPlugin.getInstance());
+        remove(items[i]);
+      }
+    }
+    
+  }
+  
+  /*
   private boolean contains(TreeNode node, Program program) {
     TreeLeaf[] leafs = node.getLeafs();
     for (int i=0; i<leafs.length; i++) {
@@ -213,17 +258,34 @@ public class ReminderList implements ActionListener {
     
     return false;  
   }
-  
+  */
   
   public ReminderListItem[] getReminderItems() {
-    Collection col = getReminderItems(mRootNode);
+   /* Collection col = getReminderItems(mRootNode);
     ReminderListItem[] result = new ReminderListItem[col.size()];
     col.toArray(result);
     
     Arrays.sort(result);
-    return result;
+    return result;*/
+    
+ //   return new ReminderListItem[0];
+      
+  //  ReminderListItem[] result = new ReminderListItem[mPrograms.size()];
+  //  mPrograms.toArray(result);
+  //  return result;
+      
+      
+    // ProgramItem[] items = mContainer.getPrograms();
+     ProgramItem[] items = mRoot.getPrograms();
+     ReminderListItem[] result = new ReminderListItem[items.length];
+     for (int i=0; i<items.length; i++) {
+       //result[i] = (ReminderListItem)items[i];
+       result[i] = new ReminderListItem(items[i]);
+     }
+     return result;
   }
   
+  /*
   private Collection getReminderItems(TreeNode node) {
       TreeLeaf[] leafs = node.getLeafs();
       //ReminderListItem[] result = new ReminderListItem[leafs.length];
@@ -241,7 +303,7 @@ public class ReminderList implements ActionListener {
       
       return result; 
   }
-      
+    */  
       
   // implements ActionListener
   

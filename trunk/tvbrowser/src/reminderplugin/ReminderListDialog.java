@@ -154,7 +154,7 @@ public class ReminderListDialog extends JDialog {
   }  
   
   private void removeReminderListItem(ReminderListItem item, JPanel panel) {
-    reminderList.remove(item.getProgram());    
+    reminderList.remove(item.getProgramItem());    
     mListPanel.remove(panel);
     mScrollPane.updateUI();
   }

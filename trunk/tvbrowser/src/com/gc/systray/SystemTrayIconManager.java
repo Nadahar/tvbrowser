@@ -114,7 +114,6 @@ public class SystemTrayIconManager {
      * Internal use - will be called from the native code
      */
     private void fireClicked(int buttonType, int x, int y) {
-        //System.out.println("" + buttonType + ", " + x + ", " + y);
         for (int i = 0; i < listeners.size(); i++) {
             SystemTrayIconListener listener =
                 (SystemTrayIconListener)listeners.get(i);

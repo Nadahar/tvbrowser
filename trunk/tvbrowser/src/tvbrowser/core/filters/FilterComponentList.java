@@ -99,7 +99,6 @@ public class FilterComponentList {
   
   
   public void store() {
-    System.out.println("storing components...");
     File filterCompFile=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"filter.comp");
     try {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filterCompFile));
@@ -126,7 +125,6 @@ public class FilterComponentList {
     out.writeObject(comp.getName());
     out.writeObject(comp.getDescription());
     comp.write(out);
-    System.out.println("component "+comp.getName()+" written");
   }
   
   private FilterComponent readComponent(ObjectInputStream in) throws IOException, ClassNotFoundException {

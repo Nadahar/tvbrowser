@@ -9,6 +9,7 @@ import java.io.File;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.tree.MutableTreeNode;
 
 import bsh.Interpreter;
 
@@ -270,5 +271,14 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     public boolean doCanUseProgramTree() {
         return false;
     }
+    
+  
+
+   
+    public MutableTreeNode getRootNode() {
+      return null;
+    }
+    
+    
 
 }

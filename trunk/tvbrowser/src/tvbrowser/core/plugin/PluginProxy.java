@@ -26,10 +26,12 @@
 package tvbrowser.core.plugin;
 
 import javax.swing.Action;
+import javax.swing.tree.MutableTreeNode;
 
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
 import devplugin.SettingsTab;
+
 
 /**
  * Encapsulates a plugin and manages the access to it.
@@ -123,4 +125,11 @@ public interface PluginProxy extends PluginAccess {
    */
   public boolean canUseProgramTree();
   
+  //public TreeNode getPluginTreeRoot();
+  
+ // public TreeNode[] getTreeNodes();
+ // public Program[] getStoredPrograms();
+  
+ // public ProgramContainer getProgramContainer();
+  public MutableTreeNode getRootNode();
 }

@@ -104,7 +104,6 @@ public class DefaultToolBarModel implements ToolBarModel {
   }
   
   public void addSeparator() {
-    System.out.println("separator added");
     ToolBarItem it = new Separator();
     mAvailableItems.add(it);
     mVisibleItems.add(it);

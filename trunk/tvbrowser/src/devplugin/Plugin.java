@@ -28,6 +28,9 @@ package devplugin;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,6 +42,8 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+
+import tvbrowser.core.Settings;
 import util.exc.TvBrowserException;
 import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
@@ -77,6 +82,8 @@ abstract public class Plugin {
   
   /** The jar file of this plugin. May be used to load ressources. */  
   private JarFile mJarFile;
+  
+  private PluginTreeNode mRootNode;
   
   /**
    * The plugin manager. It's the plugin's connection to TV-Browser.
@@ -702,4 +709,42 @@ abstract public class Plugin {
     return false;
   }
   
+  /*public TreeNode[] getTreeNodes() {
+    return null;
+  }*/
+  
+ /* public ProgramContainer getProgramContainer() {
+    return Plugin.getPluginManager().getProgramContainer(getId());
+  }*/
+   public PluginTreeNode getRootNode() {
+     if (mRootNode == null) {
+       mRootNode = new PluginTreeNode(getInfo().getName());  
+       ObjectInputStream in;
+       try {
+        in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
+        mRootNode.load(in);
+        in.close();
+       } catch (FileNotFoundException e) {
+         
+       } catch (IOException e) {
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }    
+     }
+       
+     return mRootNode;
+   }
+   
+   public void storeRootNode() {
+     ObjectOutputStream out;
+     try {
+       out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
+       mRootNode.store(out);
+       out.close();
+     } catch (IOException e) {
+        e.printStackTrace();
+     }    
+   }
+    
 }
