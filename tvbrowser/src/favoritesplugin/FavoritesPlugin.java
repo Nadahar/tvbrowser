@@ -175,7 +175,7 @@ public class FavoritesPlugin extends Plugin {
    * plugin from the menu.
    */
   public void execute() {
-    int splitPanePosition=getIntegerSetting(mSettings,"splitpanePosition",400);
+    int splitPanePosition=getIntegerSetting(mSettings,"splitpanePosition",200);
     int width=getIntegerSetting(mSettings,"width",500);
     int height=getIntegerSetting(mSettings,"height",300);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(parent, mFavoriteArr,splitPanePosition);

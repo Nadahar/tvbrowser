@@ -116,37 +116,11 @@ public class DataService implements devplugin.PluginManager {
 
 
   /**
-   * Sets whether we are in online mode.
-   *
-   * @param newMode whether we are in online mode.
-   */
-  /*
-  public void setOnlineMode(boolean newMode) {
-    if ((newMode == onlineMode)) {
-      return;
-    }
-
-    onlineMode = newMode;
-
-    if (newMode) {
-      TvDataServiceManager.getInstance().connect();
-    } else {
-      TvDataServiceManager.getInstance().disconnect();
-    }
-  }
-
-*/
-
-  /**
    * Gets whether we are in online mode.
    *
    * @return whether we are in online mode.
    */
-  /*
-  public boolean isOnlineMode() {
-    return onlineMode;
-  }
-*/
+  
 	public void stopDownload() {
 		mIsDownloading=false;
 	}
@@ -182,8 +156,6 @@ public class DataService implements devplugin.PluginManager {
     else {
     	progressBar.setMaximum(20*subscribedChannels.length);
     }
-    //devplugin.Date date=new Date();
-    //date.addDays(-1); // get yesterday too
     devplugin.Date date=new Date();
     date=date.addDays(-1);
     TvBrowserException downloadException = null;
@@ -371,12 +343,7 @@ public class DataService implements devplugin.PluginManager {
     Channel[] channels=ChannelList.getSubscribedChannels();
 
     boolean useProgressBar=false;
-    /*
-    if (allowDownload && isOnlineMode() && !dataAvailable(date)) {
-      useProgressBar=true;
-      //progressBar.setMaximum(channels.length);
-    }
-    */
+   
 
     // Get the day program for the specified date from the cache
     DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
@@ -405,15 +372,7 @@ public class DataService implements devplugin.PluginManager {
 		ChannelDayProgram prog=loadChannelDayProgramFromDisk(file);
 		if (prog!=null) dayProgram.addChannelDayProgram(prog);
       }
-    /*  else if (allowDownload && isOnlineMode()) {
-        // We don't have it on disk, but we are online -> download it
-        ChannelDayProgram prog = downloadDayProgram(date, channels[i]);
-
-        if (prog != null) {
-          dayProgram.addChannelDayProgram(prog);
-          someDataWasDownloaded = true;
-        }
-      }*/
+   
     }
 
     // If the day program is not empty -> return it and put it in the cache
@@ -441,7 +400,6 @@ public class DataService implements devplugin.PluginManager {
    * @return if the data is available.
    */
   public static boolean dataAvailable(devplugin.Date date) {
-    //final String dateStr = "" + date.getDaysSince1970();
     
     final String dateStr=date.getDateString();
 
@@ -468,8 +426,7 @@ public class DataService implements devplugin.PluginManager {
     }
     devplugin.Date d1=new devplugin.Date();
     final devplugin.Date d=d1.addDays(-lifespan);
-    //final Date curDate=new Date();
-	
+    
 		File fList[]=new File(Settings.getTVDataDirectory()).listFiles(
 			new java.io.FilenameFilter() {
 				public boolean accept(File dir, String name) {				
@@ -810,7 +767,7 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
     devplugin.Channel channel)
     throws TvBrowserException
   {
-    mLog.info("Downloading the TV data for " + channel.getName() + " on " + date);
+    //mLog.info("Downloading the TV data for " + channel.getName() + " on " + date);
     ChannelDayProgram prog;
 
     // download the program
