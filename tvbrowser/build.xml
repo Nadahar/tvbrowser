@@ -322,6 +322,7 @@
         <include name="**/*.java"/>
         <include name="**/*.properties"/>
         <include name="**/*.txt"/>
+        <include name="**/*.dtd"/>
         <include name="**/*.gif"/>
         <include name="**/*.jpg"/>
         <include name="**/*.html"/>
