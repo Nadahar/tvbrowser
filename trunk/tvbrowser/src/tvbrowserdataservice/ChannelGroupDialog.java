@@ -103,6 +103,10 @@ public class ChannelGroupDialog extends JDialog {
         panel.add(new JLabel(mLocalizer.msg("provider", "Provider")+":"));
         panel.add(new JLabel(mGroup.getProviderName()));
 
+        panel.add(new JLabel(mLocalizer.msg("url", "Url")+":"));
+        
+        panel.add(new JLabel(mGroup.getMirrorArr()[0] + "/" + mGroup.getId()));
+        
         panel.add(new JLabel(mLocalizer.msg("webpage","WebPage") + ":"));
         if (mGroup.getProviderWebPage() == null) {
             panel.add(new JLabel(mLocalizer.msg("nowebpage", "Not availabe")));
