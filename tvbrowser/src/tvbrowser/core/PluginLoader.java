@@ -37,6 +37,7 @@ import util.exc.TvBrowserException;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
 
 import javax.swing.JPopupMenu;
 
@@ -79,8 +80,6 @@ public class PluginLoader {
     });
 
     Plugin.setPluginManager(createDevpluginPluginManager());
-    
-    
   }
   
   public void addPluginStateListener(PluginStateListener listener) {
@@ -98,7 +97,12 @@ public class PluginLoader {
     Iterator pluginIter = mActivePlugins.iterator();
     while (pluginIter.hasNext()) {
       Plugin plugin = (Plugin) pluginIter.next();
-      plugin.handleTvDataAdded(newProg);
+      try {
+        plugin.handleTvDataAdded(newProg);
+      } catch(Throwable thr) {
+        mLog.log(Level.WARNING, "Fireing event 'TV data added' to " +
+            "plugin '" + plugin + "' failed", thr);
+      }
     }
   }
 
@@ -113,7 +117,12 @@ public class PluginLoader {
     Iterator pluginIter = mActivePlugins.iterator();
     while (pluginIter.hasNext()) {
       Plugin plugin = (Plugin) pluginIter.next();
-      plugin.handleTvDataDeleted(newProg);
+      try {
+        plugin.handleTvDataDeleted(newProg);
+      } catch(Throwable thr) {
+        mLog.log(Level.WARNING, "Fireing event 'TV data deleted' to " +
+            "plugin '" + plugin + "' failed", thr);
+      }
     }
   }
 
@@ -130,8 +139,9 @@ public class PluginLoader {
       Plugin plugin = (Plugin) pluginIter.next();
       try {
         plugin.handleTvDataChanged();
-      }catch(Throwable t) {
-        mLog.warning("Exception in Plugin "+plugin+": "+t);
+      } catch(Throwable thr) {
+        mLog.log(Level.WARNING, "Fireing event 'TV data changed' to " +
+            "plugin '" + plugin + "' failed", thr);
       }
     }
   }
@@ -160,7 +170,8 @@ public class PluginLoader {
     
     ClassLoader classLoader;
     try {
-      classLoader = URLClassLoader.newInstance(new URL[] { pluginFile.toURL()},ClassLoader.getSystemClassLoader());
+      URL[] urls = new URL[] { pluginFile.toURL() };
+      classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
     } catch (MalformedURLException exc) {
       return null;
     }
@@ -182,9 +193,9 @@ public class PluginLoader {
       firePluginLoaded(plugin);
       mLog.info("Plugin " + name + " loaded (inactive)");
     }
-    catch (Exception exc) {
+    catch (Throwable thr) {
       throw new TvBrowserException(getClass(), "error.1",
-              "Could not load plugin {0}", pluginFile.getAbsolutePath(),exc);
+              "Could not load plugin {0}", pluginFile.getAbsolutePath(), thr);
     }
     
     return plugin;
@@ -207,12 +218,10 @@ public class PluginLoader {
    * @param plugin
    */
   public void activatePlugin(Plugin plugin) {
-      
     String userDirectoryName = Settings.getUserDirectoryName();
     File f;
     
-    /* load plugin data */
-        
+    // load plugin data        
     f = new File(userDirectoryName, plugin.getClass().getName() + ".dat");
     if (f.exists()) {
       ObjectInputStream in = null;
@@ -220,10 +229,10 @@ public class PluginLoader {
         in = new ObjectInputStream(new FileInputStream(f));
         plugin.readData(in);
       }
-      catch (Exception exc) {
+      catch (Throwable thr) {
         String msg = mLocalizer.msg("error.1", "Loading data for plugin {0} failed!\n({1})",
-                plugin.getInfo().getName(), f.getAbsolutePath(), exc);
-        ErrorHandler.handle(msg, exc);
+                plugin.getInfo().getName(), f.getAbsolutePath());
+        ErrorHandler.handle(msg, thr);
       }
       finally {
         if (in != null) {
@@ -232,23 +241,22 @@ public class PluginLoader {
       }
     }
     
-    /* load plugin settings */
-           
+    // load plugin settings
     f=new File(userDirectoryName,plugin.getClass().getName()+".prop");
-    if (f.exists()) {
-      try {
+    try {
+      if (f.exists()) {
         Properties p=new Properties();
         FileInputStream in=new FileInputStream(f);
         p.load(in);
         in.close();
         plugin.loadSettings(p);
-      } catch (IOException exc) {
-        String msg = mLocalizer.msg("error.3", "Loading settings for plugin {0} failed!\n({1})",
-        plugin.getButtonText(), f.getAbsolutePath(), exc);
-        ErrorHandler.handle(msg, exc);
+      } else {
+        plugin.loadSettings(new Properties());
       }
-    }else{
-      plugin.loadSettings(new Properties());
+    } catch (Throwable thr) {
+      String msg = mLocalizer.msg("error.3", "Loading settings for plugin {0} failed!\n({1})",
+            plugin.getButtonText(), f.getAbsolutePath());
+      ErrorHandler.handle(msg, thr);
     }
     
     mInactivePlugins.remove(plugin);
@@ -266,20 +274,19 @@ public class PluginLoader {
    * @param plugin
    */
   public void deactivatePlugin(Plugin plugin) {
-    
     String userDirectoryName = Settings.getUserDirectoryName();
         
-    /* save the plugin data */
+    // save the plugin data
     File f = new File(userDirectoryName, plugin.getClass().getName() + ".dat");
     ObjectOutputStream out = null;
     try {
       out = new ObjectOutputStream(new FileOutputStream(f));
       plugin.writeData(out);
     }
-    catch(IOException exc) {
+    catch(Throwable thr) {
       String msg = mLocalizer.msg("error.3", "Saving data for plugin {0} failed!\n({1})",
-        plugin.getInfo().getName(), f.getAbsolutePath(), exc);
-      ErrorHandler.handle(msg, exc);
+        plugin.getInfo().getName(), f.getAbsolutePath());
+      ErrorHandler.handle(msg, thr);
     }
     finally {
       if (out != null) {
@@ -287,32 +294,30 @@ public class PluginLoader {
       }
     }
 
-    /* save the plugin settings */
-
-    Properties prop=plugin.storeSettings();
-    if (prop!=null) {
-      String dir=Settings.getUserDirectoryName();
-      f=new File(dir);
-      if (!f.exists()) {
-        f.mkdir();
+    // save the plugin settings
+    try {
+      Properties prop=plugin.storeSettings();
+      if (prop!=null) {
+        String dir=Settings.getUserDirectoryName();
+        f=new File(dir);
+        if (!f.exists()) {
+          f.mkdir();
+        }
+        f=new File(dir,plugin.getClass().getName()+".prop");
+          FileOutputStream fOut=new FileOutputStream(f);
+          prop.store(fOut,"settings");
+          fOut.close();
       }
-      f=new File(dir,plugin.getClass().getName()+".prop");
-      try {
-        FileOutputStream fOut=new FileOutputStream(f);
-        prop.store(fOut,"settings");
-        fOut.close();
-      } catch (IOException exc) {
-        String msg = mLocalizer.msg("error.4", "Saving settings for plugin {0} failed!\n({1})",
-          plugin.getButtonText(), f.getAbsolutePath(), exc);
-        ErrorHandler.handle(msg, exc);
-      }
+    } catch (Throwable thr) {
+      String msg = mLocalizer.msg("error.4", "Saving settings for plugin {0} failed!\n({1})",
+        plugin.getButtonText(), f.getAbsolutePath());
+      ErrorHandler.handle(msg, thr);
     }
     
     mActivePlugins.remove(plugin);
     mInactivePlugins.add(plugin);
     firePluginDeactivated(plugin);  
     mLog.info("Plugin "+plugin.getClass().getName()+" deactivated");
-    
   }
     
   public void shutdownAllPlugins() {
@@ -513,7 +518,11 @@ public class PluginLoader {
   private void firePluginLoaded(Plugin p) {
     synchronized(mPluginStateListeners) {
       for (int i=0;i<mPluginStateListeners.size();i++) {
-        ((PluginStateListener)mPluginStateListeners.get(i)).pluginLoaded(p);
+        try {
+          ((PluginStateListener)mPluginStateListeners.get(i)).pluginLoaded(p);
+        } catch(Throwable thr) {
+          mLog.log(Level.WARNING, "Fireing event 'plugin loaded' failed", thr);
+        }
       }
     }
   }
@@ -521,7 +530,11 @@ public class PluginLoader {
   private void firePluginUnloaded(Plugin p) {
     synchronized(mPluginStateListeners) {
       for (int i=0;i<mPluginStateListeners.size();i++) {
-        ((PluginStateListener)mPluginStateListeners.get(i)).pluginUnloaded(p);
+        try {
+          ((PluginStateListener)mPluginStateListeners.get(i)).pluginUnloaded(p);
+        } catch(Throwable thr) {
+          mLog.log(Level.WARNING, "Fireing event 'plugin unloaded' failed", thr);
+        }
       }
     }
   }
@@ -529,7 +542,11 @@ public class PluginLoader {
   private void firePluginActivated(Plugin p) {
     synchronized(mPluginStateListeners) {
       for (int i=0;i<mPluginStateListeners.size();i++) {
-        ((PluginStateListener)mPluginStateListeners.get(i)).pluginActivated(p);
+        try {
+          ((PluginStateListener)mPluginStateListeners.get(i)).pluginActivated(p);
+        } catch(Throwable thr) {
+          mLog.log(Level.WARNING, "Fireing event 'plugin activated' failed", thr);
+        }
       }
     }
   }
@@ -537,7 +554,11 @@ public class PluginLoader {
   private void firePluginDeactivated(Plugin p) {
     synchronized(mPluginStateListeners) {
       for (int i=0;i<mPluginStateListeners.size();i++) {
-        ((PluginStateListener)mPluginStateListeners.get(i)).pluginDeactivated(p);
+        try {
+          ((PluginStateListener)mPluginStateListeners.get(i)).pluginDeactivated(p);
+        } catch(Throwable thr) {
+          mLog.log(Level.WARNING, "Fireing event 'plugin deactivated' failed", thr);
+        }
       }
     }    
   }

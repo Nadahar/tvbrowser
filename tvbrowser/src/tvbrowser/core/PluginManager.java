@@ -28,6 +28,7 @@ package tvbrowser.core;
 import java.awt.Font;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 
 import javax.swing.JPopupMenu;
 
@@ -38,6 +39,9 @@ import devplugin.*;
 
 public class PluginManager {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(PluginManager.class.getName());
+  
   private static PluginManager mInstance;
   private Plugin mDefaultContextMenuPlugin;
   private Plugin[] mContextMenuPlugins;
@@ -192,9 +196,12 @@ public class PluginManager {
       pluginName=pluginName.toLowerCase()+"."+pluginName;
   
       Plugin plugin = PluginLoader.getInstance().getPluginByClassName(pluginName);
-      installPlugin(plugin);
+      if (plugin == null) {
+        mLog.warning("Installing plugin failed. Plugin not found: " + pluginName);
+      } else {
+        installPlugin(plugin);
+      }
     }
-  
   }
 
   public static Plugin[] createPluginArr(Collection col) {
@@ -254,35 +261,46 @@ public class PluginManager {
     mContextMenuPlugins = plugins;  
   }
 
+  
   private void updateContextMenuPlugins() {
-  
     ArrayList list = new ArrayList();
-    String[] contextMenuPluginsStrArr = Settings.propContextMenuItemPlugins.getStringArray();
-	
-  
-    /* Add active plugins given by the settings */
-    if (contextMenuPluginsStrArr!=null) {
-		  for (int i=0;i<contextMenuPluginsStrArr.length;i++) {
-        Plugin p = PluginLoader.getInstance().getActivePluginByClassName(contextMenuPluginsStrArr[i]);
-        if (p!=null) {
+    String[] contextMenuPluginsStrArr
+      = Settings.propContextMenuItemPlugins.getStringArray();
+
+    // Add active plugins given by the settings
+    if (contextMenuPluginsStrArr != null) {
+      for (int i = 0; i < contextMenuPluginsStrArr.length; i++) {
+        String className = contextMenuPluginsStrArr[i];
+        Plugin p = PluginLoader.getInstance().getActivePluginByClassName(className);
+        if (p != null) {
           list.add(p);
         }
       }
-		}
-    
-    /* Add the other (active) plugins */
+    }
+
+    // Add the other (active) plugins
     Plugin[] activePlugins = PluginLoader.getInstance().getActivePlugins();
-    for (int i=0;i<activePlugins.length;i++) {
-      Plugin p = activePlugins[i];
-      if (p.getContextMenuItemText()!= null && !list.contains(p)) {
-        list.add(p);
+    for (int i = 0; i < activePlugins.length; i++) {
+      Plugin plugin = activePlugins[i];
+
+      String contextMenuText = null;
+      try {
+        contextMenuText = plugin.getContextMenuItemText();
       }
-    }    
-    
-    /* create the array*/
-    mContextMenuPlugins=createPluginArr(list);
-  
+      catch (Throwable thr) {
+        mLog.log(Level.WARNING, "Getting context menu text from plugin '"
+            + plugin + "' failed", thr);
+      }
+
+      if (contextMenuText != null && !list.contains(plugin)) {
+        list.add(plugin);
+      }
+    }
+
+    // create the array
+    mContextMenuPlugins = createPluginArr(list);
   }
+
 
   public Plugin[] getContextMenuPlugins() {
   
@@ -301,7 +319,17 @@ public class PluginManager {
     Plugin[] installedPlugins=getInstalledPlugins();
     for (int i=0;i<installedPlugins.length;i++) {
       Plugin plugin=installedPlugins[i];
-      if (plugin.getButtonText()!=null) {
+
+      String buttonText = null;
+      try {
+        buttonText = plugin.getButtonText();
+      }
+      catch (Throwable thr) {
+        mLog.log(Level.WARNING, "Getting button text from plugin '"
+            + plugin + "' failed", thr);
+      }
+      
+      if (buttonText != null) {
         pluginList.add(plugin);
       }
     }
@@ -323,9 +351,17 @@ public class PluginManager {
     for (int i = 0; i < pluginArr.length; i++) {
       final devplugin.Plugin plugin = pluginArr[i];
       if (!plugin.equals(caller)) {
-        String text = plugin.getContextMenuItemText();
-        if (text != null) {
-          javax.swing.JMenuItem item = new javax.swing.JMenuItem(text);
+        String contextMenuText = null;
+        try {
+          contextMenuText = plugin.getContextMenuItemText();
+        }
+        catch (Throwable thr) {
+          mLog.log(Level.WARNING, "Getting context menu text from plugin '"
+              + plugin + "' failed", thr);
+        }
+        
+        if (contextMenuText != null) {
+          javax.swing.JMenuItem item = new javax.swing.JMenuItem(contextMenuText);
           if (plugin == defaultPlugin) {
             item.setFont(CONTEXT_MENU_BOLDFONT);
           } else {
