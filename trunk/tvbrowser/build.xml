@@ -87,6 +87,7 @@
     <echo message="  run           Runs the project."/>
     <echo message="  installer     Creates a Windows installer for the project."/>
     <echo message="  public        Creates all the stuff that can be downloaded."/>
+    <echo message="  test          Does the JUnit tests."/>
     <echo message="  all           Creates all (Same as public)."/>
   </target>
 
@@ -288,7 +289,7 @@
    | This target depends on clean-runtime to be sure that the runtime
    | directory contains no stuff we don't want to be destributed.
    +-->
-  <target name="public" depends="clean-runtime, runtime, doc, installer">
+  <target name="public" depends="clean-runtime, test, runtime, doc, installer">
     <mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/tvbrowser_v${version}_bin.zip">
@@ -408,6 +409,27 @@
    | Creates all.
    +-->
   <target name="all" depends="public">
+  </target>
+
+
+
+  <!--
+   | Does the JUnit tests.
+   +-->
+  <target name="test" depends="make">
+    <junit haltonfailure="yes">
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+      
+      <formatter type="plain" usefile="false"/>
+      
+      <batchtest>
+        <fileset dir="${src.dir}">
+          <include name="test/**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
   </target>
 
 </project>
