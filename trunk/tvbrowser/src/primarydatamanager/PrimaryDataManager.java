@@ -399,7 +399,7 @@ public class PrimaryDataManager {
           }
           
           // Add the short description to the frame
-          shortDescField = new ProgramField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, shortDesc);
+          shortDescField = ProgramField.create(ProgramFieldType.SHORT_DESCRIPTION_TYPE, shortDesc);
           frame.addProgramField(shortDescField);
         }
       }

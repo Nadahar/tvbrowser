@@ -28,6 +28,7 @@ package primarydatamanager.primarydataservice;
 import tvbrowserdataservice.file.*;
 import devplugin.*;
 
+import java.util.*;
 import java.io.*;
 
 public class ProgramFrameDispatcher {
@@ -36,15 +37,47 @@ public class ProgramFrameDispatcher {
   private DayProgramFile mCurFile=null;
   private String mCurFilename;
   private int mCurID=0;
+  private Channel mChannel;
   
+  private HashMap mDayPrograms;
   
-  
+  /**
+     * @deprecated
+     */  
   public ProgramFrameDispatcher(String directory) {
     mDirectory=directory;    
-    Channel c;
   }
   
-  public void dispatch(ProgramFrame frame, Date date, Channel channel) throws IOException, FileFormatException {
+  public ProgramFrameDispatcher(Channel channel) {
+    mChannel=channel;
+    mDayPrograms=new HashMap();
+  }
+  
+  public void dispatchProgramFrame(ProgramFrame frame, devplugin.Date date)  {
+    
+    DayProgramFile file=(DayProgramFile)mDayPrograms.get(date);
+    if (file==null) {
+      file=new DayProgramFile(date,mChannel);
+      mDayPrograms.put(date,file);
+    }
+    file.addProgramFrame(frame);    
+    
+  }
+  
+  public void store(String directory) throws FileFormatException, IOException {
+    Iterator it=mDayPrograms.values().iterator();
+    while (it.hasNext()) {
+      DayProgramFile f=(DayProgramFile)it.next();
+      f.writeToFile(new File(directory,f.getProgramFileName()));      
+    }
+  }
+  
+  
+  /**
+     * @deprecated
+     */  
+  
+  public void dispatch(ProgramFrame frame, devplugin.Date date, Channel channel) throws IOException, FileFormatException {
     String country=channel.getCountry();
     String ch=channel.getId();
     
@@ -74,6 +107,9 @@ public class ProgramFrameDispatcher {
     
   }
   
+  /**
+     * @deprecated
+     */  
   public void flush() throws IOException, FileFormatException {
     mCurFile.writeToFile(new File(mDirectory,mCurFilename));    
   }

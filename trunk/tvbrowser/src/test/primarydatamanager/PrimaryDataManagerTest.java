@@ -94,7 +94,7 @@ public class PrimaryDataManagerTest extends TestCase {
     prepProg3.setVersion(1);
     prepProg3.addProgramFrame(createProgramFrame(1, 10, 20, "Vorher"));
     ProgramFrame frame = createProgramFrame(2, 21, 50, "Lange Sendung");
-    frame.addProgramField(new ProgramField(ProgramFieldType.DESCRIPTION_TYPE, "Bla bla"));
+    frame.addProgramField(ProgramField.create(ProgramFieldType.DESCRIPTION_TYPE, "Bla bla"));
     prepProg3.addProgramFrame(frame);
     prepProg3.addProgramFrame(createProgramFrame(3, 51, 60, "Danach"));
     prepProg3.writeToFile(new File(prepDir, "2010-01-03_de_test_base_full.gz"));

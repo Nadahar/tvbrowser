@@ -93,11 +93,29 @@ public class ProgramFieldType {
   public static final ProgramFieldType ORIGIN_TYPE
     = new ProgramFieldType(17, "origin", TEXT_FORMAT, true);
 
-  public static final ProgramFieldType NET_PLAYING_TIME
+  public static final ProgramFieldType NET_PLAYING_TIME_TYPE
     = new ProgramFieldType(18, "net playing time", INT_FORMAT, true);
 
-  public static final ProgramFieldType FSK_TYPE
-    = new ProgramFieldType(19, "fsk", TEXT_FORMAT, true);
+ // public static final ProgramFieldType FSK_TYPE
+ //   = new ProgramFieldType(19, "fsk", TEXT_FORMAT, true);
+
+  public static final ProgramFieldType VPS_TYPE
+      = new ProgramFieldType(19, "vps", INT_FORMAT, true);
+
+  public static final ProgramFieldType SCRIPT_TYPE
+      = new ProgramFieldType(20, "script", TEXT_FORMAT, true);
+
+  public static final ProgramFieldType REPETITION_OF_TYPE
+    = new ProgramFieldType(21,"repition of",TEXT_FORMAT,true);
+    
+  public static final ProgramFieldType MUSIC_TYPE
+    = new ProgramFieldType(22,"music",TEXT_FORMAT,true);
+    
+  public static final ProgramFieldType MODERATION_TYPE
+    = new ProgramFieldType(23,"moderation", TEXT_FORMAT,true);
+    
+  public static final ProgramFieldType PRODUCTION_YEAR_TYPE
+    = new ProgramFieldType(24,"production year", INT_FORMAT, true);
 
   private int mTypeId;
 

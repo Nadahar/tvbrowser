@@ -37,6 +37,9 @@ import devplugin.Date;
  */
 public class DayProgramFile {
   
+  private transient devplugin.Channel mChannel;
+  private transient devplugin.Date mDate;
+  
   public static final String[] LEVEL_ARR = {
     "base", "more16-00", "more00-16" // , "image16-00", "image00-16"
   };
@@ -54,10 +57,23 @@ public class DayProgramFile {
     mProgramFrameList = new ArrayList();
   }
   
-  
+  public DayProgramFile(devplugin.Date date, devplugin.Channel channel) {
+    this();
+    mDate=date;
+    mChannel=channel;
+  }
   /**
    * @return
    */
+  
+  public devplugin.Date getDate() {
+    return mDate;
+  }
+  
+  public devplugin.Channel getChannel() {
+    return mChannel;
+  }
+  
   public int getVersion() {
     return mVersion;
   }
@@ -354,6 +370,16 @@ public class DayProgramFile {
     }
   }
 
+
+  public String getProgramFileName() {
+    if (mChannel==null || mDate==null) return null;
+    return getProgramFileName(mDate,mChannel);    
+  }
+
+
+  public static String getProgramFileName(Date date, devplugin.Channel channel) {
+    return getProgramFileName(date,channel.getCountry(),channel.getId());
+  }
 
 
   public static String getProgramFileName(Date date, String country,
