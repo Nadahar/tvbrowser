@@ -72,8 +72,12 @@ public class ProgramField implements Cloneable {
   
   public ProgramField(ProgramFieldType type, int value) {
     setType(type);
-    setIntData(value);
-   // System.out.println(value);
+    
+    if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+      setTimeData(value);
+    } else {
+      setIntData(value);
+    }
   }
 
 

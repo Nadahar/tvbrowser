@@ -163,6 +163,9 @@ public class PrimaryDataManager {
     
     String dir = mRawDir.getAbsolutePath();
     for (int i = 0; i < mDataServiceArr.length; i++) {
+      System.out.println("Executing data service "
+        + mDataServiceArr[i].getClass().getName() + "...");
+      
       boolean thereWereErrors = mDataServiceArr[i].execute(dir, System.err);
       if (thereWereErrors) {
         throw new PreparationException("Getting raw data from primary data "
