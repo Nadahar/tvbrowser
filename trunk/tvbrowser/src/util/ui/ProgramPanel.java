@@ -88,11 +88,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * It's the height the panel has with a maximum of 3 information rows.
    */  
   private int mPreferredHeight = 0;
-  /**
-   * The date and title as String. Is null when date and title should not be
-   * shown.
-   */  
-  private String mDateAndChannelAsString;
   /** The start time as String. */  
   private String mProgramTimeAsString;
   /** The icon used to render the title. */  
@@ -107,15 +102,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /**
    * Creates a new instance of ProgramPanel.
-   *
-   * @param showDateAndChannel Should date and title be shown?
    */  
-  public ProgramPanel(boolean showDateAndChannel) {
-    if (showDateAndChannel) {
-      // The empty String indicated that date and title should be shown
-      mDateAndChannelAsString = "";
-    }
-    
+  public ProgramPanel() {
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);    
@@ -126,21 +114,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * Creates a new instance of ProgramPanel.
    *
    * @param prog The program to show in this panel.
-   * @param showDateAndChannel Should date and title be shown?
-   */  
-  public ProgramPanel(Program prog, boolean showDateAndChannel) {
-    this(showDateAndChannel);
-    setProgram(prog);
-  }
-
-
-  /**
-   * Creates a new instance of ProgramPanel.
-   *
-   * @param prog The program to show in this panel.
    */  
   public ProgramPanel(Program prog) {
-    this(prog, true);
+    this();
+    setProgram(prog);
   }
 
 
@@ -217,9 +194,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
-      
-      mDateAndChannelAsString = program.getDateString() + " - " + 
-      
       // Get the start time
       mProgramTimeAsString = program.getTimeString();
 
