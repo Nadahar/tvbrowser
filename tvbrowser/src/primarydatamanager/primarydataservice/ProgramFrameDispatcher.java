@@ -60,14 +60,30 @@ public class ProgramFrameDispatcher {
       file=new DayProgramFile(date,mChannel);
       mDayPrograms.put(date,file);
     }
-    file.addProgramFrame(frame);    
+    file.addProgramFrame(frame);   
+    //dumpFrame(frame);    
     
+  }
+  
+  private void dumpFrame(ProgramFrame progFrame) {
+    ProgramField timeField=progFrame.getProgramFieldOfType(ProgramFieldType.START_TIME_TYPE);
+    ProgramField titleField=progFrame.getProgramFieldOfType(ProgramFieldType.TITLE_TYPE);
+    int time=timeField.getTimeData();
+    System.out.println((time/60)+":"+(time%60)+": "+titleField.getTextData());
   }
   
   public void store(String directory) throws FileFormatException, IOException {
     Iterator it=mDayPrograms.values().iterator();
     while (it.hasNext()) {
       DayProgramFile f=(DayProgramFile)it.next();
+      int cnt=f.getProgramFrameCount();
+      for (int i=0;i<cnt;i++) {
+        ProgramFrame frame=f.getProgramFrameAt(i);
+        frame.setId(i);
+        //dumpFrame(frame);
+      }
+      
+      
       f.writeToFile(new File(directory,f.getProgramFileName()));      
     }
   }
