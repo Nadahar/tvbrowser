@@ -33,6 +33,9 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -44,6 +47,7 @@ import util.exc.TvBrowserException;
 import util.ui.ProgramList;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
+import util.ui.SendToPluginDialog;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
@@ -188,8 +192,20 @@ public class SearchDialog extends JDialog {
     final ProgramList list = new ProgramList(programArr);
     main.add(new JScrollPane(list), BorderLayout.CENTER);
     
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    JPanel buttonPn = new JPanel(new BorderLayout());
+    buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     main.add(buttonPn, BorderLayout.SOUTH);
+    
+    Icon icon = new ImageIcon("imgs/SendToPlugin.png");
+    JButton sendBt = new JButton(icon);
+    sendBt.setToolTipText(mLocalizer.msg("send", "end Programs to another Plugin"));
+    sendBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+          SendToPluginDialog send = new SendToPluginDialog(SearchDialog.this, programArr);
+          send.show();
+      }
+    });
+    buttonPn.add(sendBt, BorderLayout.WEST);
     
     JButton closeBt = new JButton(mLocalizer.msg("close", "Close"));
     closeBt.addActionListener(new ActionListener() {
@@ -197,10 +213,11 @@ public class SearchDialog extends JDialog {
         dlg.dispose();
       }
     });
-    dlg.getRootPane().setDefaultButton(closeBt);
-    buttonPn.add(closeBt);
+    buttonPn.add(closeBt, BorderLayout.EAST);
     
-   	dlg.setSize(400, 400);
+    dlg.getRootPane().setDefaultButton(closeBt);
+    
+    dlg.setSize(400, 400);
 	UiUtilities.centerAndShow(dlg);
     
   }
