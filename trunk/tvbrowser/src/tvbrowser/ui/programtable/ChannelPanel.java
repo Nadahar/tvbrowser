@@ -28,10 +28,10 @@ package tvbrowser.ui.programtable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+
 
 import devplugin.Channel;
-import tvbrowser.core.*;
+
 
 /**
  * TV-Browser

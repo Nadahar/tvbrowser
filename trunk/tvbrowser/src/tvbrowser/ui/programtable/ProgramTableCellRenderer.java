@@ -27,7 +27,7 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.Component;
-import java.awt.Graphics;
+
 
 import devplugin.Program;
 
