@@ -106,7 +106,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
             dlg.setSize(_dimensionOverviewDialog);
             dlg.show();
         } else {
-            dlg.setSize(300, 250);
+            dlg.setSize(350, 250);
             UiUtilities.centerAndShow(dlg);
             _locationOverviewDialog = dlg.getLocation();
             _dimensionOverviewDialog = dlg.getSize();
