@@ -84,7 +84,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     }
     
     if ("true" .equals(settings.getProperty( "usemsgbox" ))) {
-      new ReminderFrame(reminderList, item);
+      new ReminderFrame(reminderList, item, getAutoCloseReminderTime());
     } else {
       reminderList.remove(item);
     }
@@ -106,7 +106,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     String desc = mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion." );
     String author = "Martin Oberhauser (darras@users.sourceforge.net)" ;
     return new PluginInfo(name, desc, author, new Version(1, 2));
-    
   }
   
   
@@ -156,6 +155,23 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     
     this.settings = settings;
   }
+  
+  
+  
+  /**
+   * Gets the time (in seconds) after which the reminder frame closes
+   * automatically.
+   */
+  private int getAutoCloseReminderTime() {
+    int autoCloseReminderTime = 0;
+    try {
+      String asString = settings.getProperty("autoCloseReminderTime", "0");
+      autoCloseReminderTime = Integer.parseInt(asString);
+    } catch (Exception exc) {}
+    return autoCloseReminderTime;
+  }
+  
+  
   
   public String getContextMenuItemText() {
     return mLocalizer.msg( "contextMenuText" ,"Remind me" );
@@ -224,6 +240,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public String getMarkIconName() { return "reminderplugin/TipOfTheDay16.gif" ; }
   public String getButtonIconName() { return "reminderplugin/TipOfTheDay16.gif" ; }
 
+  
   public boolean supportMultipleProgramExecution() {
     return true;
   }

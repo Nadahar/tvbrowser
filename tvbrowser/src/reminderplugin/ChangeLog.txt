@@ -1,5 +1,8 @@
 Changelog ReminderPlugin
 
+1.0.3
+- Reminder closes automatically after x seconds (optional)
+
 1.0.2
 - no Serializable Classes any more
 

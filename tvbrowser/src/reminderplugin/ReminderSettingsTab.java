@@ -44,31 +44,21 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderSettingsTab.class);
+
+  private Properties settings;
   
   private JCheckBox reminderwindowCheckBox;
   private FileCheckBox soundFileCheckBox;
   private FileCheckBox execFileCheckBox;
-  private Properties settings;
+  private JSpinner mAutoCloseReminderTimeSp;
 
-  public String getName() {
-    return mLocalizer.msg("tabName", "Reminder");
-  }
-
-  public void ok() {
-
-    settings.setProperty("soundfile",soundFileCheckBox.getTextField().getText());
-    settings.setProperty("execfile",execFileCheckBox.getTextField().getText());
-
-    settings.setProperty("usemsgbox",new Boolean(reminderwindowCheckBox.isSelected()).toString());
-    settings.setProperty("usesound",new Boolean(soundFileCheckBox.isSelected()).toString());
-    settings.setProperty("useexec",new Boolean(execFileCheckBox.isSelected()).toString());
-  }
-
-
+  
+  
   public ReminderSettingsTab(Properties settings) {
     super();
     
     String msg;
+    JPanel p1;
 
     setLayout(new BorderLayout());
     this.settings=settings;
@@ -114,9 +104,45 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     reminderPanel.add(soundFileCheckBox);
     reminderPanel.add(execFileCheckBox);
 
-
+    // Auto close time of the reminder frame
+    p1 = new JPanel(new FlowLayout(FlowLayout.LEADING));
+    reminderPanel.add(p1);
+    
+    p1.add(new JLabel(mLocalizer.msg("autoCloseReminderTime",
+      "Automatically close reminder after (in seconds, 0 = off)")));
+    int autoCloseReminderTime = 0;
+    try {
+      String asString = settings.getProperty("autoCloseReminderTime", "0");
+      autoCloseReminderTime = Integer.parseInt(asString);
+    } catch (Exception exc) {}
+    mAutoCloseReminderTimeSp = new JSpinner();
+    mAutoCloseReminderTimeSp.setBorder(null);
+    mAutoCloseReminderTimeSp.setValue(new Integer(10000));
+    mAutoCloseReminderTimeSp.setPreferredSize(mAutoCloseReminderTimeSp.getPreferredSize());
+    mAutoCloseReminderTimeSp.setValue(new Integer(autoCloseReminderTime));
+    p1.add(mAutoCloseReminderTimeSp);
+    
     add(reminderPanel,BorderLayout.NORTH);
     updateUI();
   }
 
+
+
+  public String getName() {
+    return mLocalizer.msg("tabName", "Reminder");
+  }
+
+
+
+  public void ok() {
+    settings.setProperty("soundfile",soundFileCheckBox.getTextField().getText());
+    settings.setProperty("execfile",execFileCheckBox.getTextField().getText());
+
+    settings.setProperty("usemsgbox",new Boolean(reminderwindowCheckBox.isSelected()).toString());
+    settings.setProperty("usesound",new Boolean(soundFileCheckBox.isSelected()).toString());
+    settings.setProperty("useexec",new Boolean(execFileCheckBox.isSelected()).toString());
+    
+    settings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
+  }
+  
 }

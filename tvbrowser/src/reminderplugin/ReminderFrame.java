@@ -24,12 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package reminderplugin;
 
 import devplugin.*;
@@ -41,6 +35,11 @@ import util.ui.UiUtilities;
 import util.ui.ProgramPanel;
 import util.io.IOUtilities;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ReminderFrame extends JFrame {
 
   private static final util.ui.Localizer mLocalizer
@@ -60,14 +59,26 @@ public class ReminderFrame extends JFrame {
   };
 
   public static final int[] REMIND_VALUE_ARR = {-1, 0, 1, 2, 3, 5, 10, 15, 30, 60};
+
+  private ReminderList mReminderList;
+  private Program mProgram;
+
+  private JComboBox mReminderCB;
+  private JButton mCloseBt;
+  private String mCloseBtText;
+  
+  private Timer mAutoCloseTimer;
+  private int mRemainingSecs;
   
   
   
-  public ReminderFrame(final ReminderList list, ReminderListItem item) {
+  public ReminderFrame(ReminderList list, ReminderListItem item, int autoCloseSecs) {
     super(mLocalizer.msg("title", "Erinnerung"));
     
+    mReminderList = list;
+    
     list.remove(item);
-    final Program prog=item.getProgram();
+    mProgram = item.getProgram();
     JPanel jcontentPane=(JPanel)getContentPane();
     jcontentPane.setLayout(new BorderLayout(0,10));
     jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -75,7 +86,7 @@ public class ReminderFrame extends JFrame {
 
     // text label
     String msg;
-    int progMinutesAfterMidnight = prog.getHours() * 60 + prog.getMinutes();
+    int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
     if (IOUtilities.getMinutesAfterMidnight() <= progMinutesAfterMidnight) {
       msg = mLocalizer.msg("soonStarts", "Soon starts");
     } else {
@@ -83,43 +94,82 @@ public class ReminderFrame extends JFrame {
     }
     progPanel.add(new JLabel(msg), BorderLayout.NORTH);
     
-    JLabel channelLabel=new JLabel(prog.getChannel().getName());
+    JLabel channelLabel=new JLabel(mProgram.getChannel().getName());
     progPanel.add(channelLabel,BorderLayout.EAST);
     
-    progPanel.add(new ProgramPanel(prog), BorderLayout.CENTER);
+    progPanel.add(new ProgramPanel(mProgram), BorderLayout.CENTER);
     
-    JPanel btnPanel=new JPanel(new BorderLayout(10,0));
-    JButton closeBtn=new JButton(mLocalizer.msg("close", "Close"));
-    getRootPane().setDefaultButton(closeBtn);
+    JPanel btnPanel = new JPanel(new BorderLayout(10,0));
+    mCloseBtText = mLocalizer.msg("close", "Close");
+    mCloseBt = new JButton(mCloseBtText);
+    getRootPane().setDefaultButton(mCloseBt);
     
-    final JComboBox comboBox=new JComboBox();
+    mReminderCB = new JComboBox();
     int i=0;
     while(i<REMIND_VALUE_ARR.length && REMIND_VALUE_ARR[i]<item.getReminderMinutes()) {
-      comboBox.addItem(REMIND_MSG_ARR[i]);
+      mReminderCB.addItem(REMIND_MSG_ARR[i]);
       i++;
     }
     
-    btnPanel.add(comboBox,BorderLayout.WEST);
-    btnPanel.add(closeBtn,BorderLayout.EAST);
+    btnPanel.add(mReminderCB, BorderLayout.WEST);
+    btnPanel.add(mCloseBt, BorderLayout.EAST);
     
     jcontentPane.add(progPanel,BorderLayout.NORTH);
     jcontentPane.add(btnPanel,BorderLayout.SOUTH);
     
-    closeBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event){
-        int inx = comboBox.getSelectedIndex();
-        int minutes = REMIND_VALUE_ARR[inx];
-        if (minutes != -1) {
-          list.add(prog, minutes);
-        }
-
-        dispose();
+    mCloseBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        close();
       }
+    });
+    
+    mRemainingSecs = autoCloseSecs;
+    if (mRemainingSecs > 0) {
+      updateCloseBtText();
+      mAutoCloseTimer = new Timer(1000, new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          handleTimerEvent();
+        }
+      });
+      mAutoCloseTimer.start();
     }
-    );
     
     this.pack();
     UiUtilities.centerAndShow(this);
+  }
+
+  
+  
+  private void handleTimerEvent() {
+    mRemainingSecs--;
+    
+    if (mRemainingSecs == 0) {
+      close();
+    } else {
+      updateCloseBtText();
+    }
+  }
+
+  
+  
+  private void updateCloseBtText() {
+    mCloseBt.setText(mCloseBtText + " (" + mRemainingSecs + ")");
+  }
+  
+  
+  
+  private void close() {
+    int inx = mReminderCB.getSelectedIndex();
+    int minutes = REMIND_VALUE_ARR[inx];
+    if (minutes != -1) {
+      mReminderList.add(mProgram, minutes);
+    }
+    
+    if (mAutoCloseTimer != null) {
+      mAutoCloseTimer.stop();
+    }
+
+    dispose();
   }
 
 }
