@@ -123,6 +123,8 @@ public class UiUtilities {
   /**
    * Gets the best dialog parent for a new JDialog. The best parent is the last
    * visible modal dialog in the component tree.
+   * <p>
+   * If there is no visible modal dialog the root frame will be returned.
    *
    * @param parent One component of the component tree.
    * @return the best dialog parent for a new JDialog.
@@ -136,6 +138,8 @@ public class UiUtilities {
   
   /**
    * Gets the last visible modal child dialog of the specified window.
+   * <p>
+   * If there is no visible modal child the window itself will be returned.
    *
    * @param parent The window to get the child from.
    * @return the last visible modal child dialog of the specified window.

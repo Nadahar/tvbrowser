@@ -75,7 +75,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     }
     
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
-      new ReminderFrame(mReminderList, item, getAutoCloseReminderTime());
+      new ReminderFrame(getParentFrame(), mReminderList, item,
+                        getAutoCloseReminderTime());
     } else {
       mReminderList.remove(item);
     }
