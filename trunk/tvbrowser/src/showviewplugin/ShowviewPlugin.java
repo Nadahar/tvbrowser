@@ -65,14 +65,15 @@ public class ShowviewPlugin extends Plugin {
 
 
   /**
-   * Tries to calculate the showview number for each program where it is missing. 
-   * <p>
-   * This method is automatically called, when the TV data has changed.
+   * This method is automatically called, when TV data was added.
    * (E.g. after an update).
+   * <p>
+   * The TV data may be modified by the plugin!
    * 
    * @param newProg The new ChannelDayProgram.
+   * @see #handleTvDataDeleted(ChannelDayProgram)
    */
-  public void handleTvDataChanged(MutableChannelDayProgram newProg) {
+  public void handleTvDataAdded(ChannelDayProgram newProg) {  
     Iterator iterator = newProg.getPrograms();
     while (iterator.hasNext()) {
       MutableProgram prog = (MutableProgram) iterator.next();
