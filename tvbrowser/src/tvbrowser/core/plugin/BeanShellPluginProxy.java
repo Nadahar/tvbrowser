@@ -9,12 +9,15 @@ import java.io.File;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.tree.MutableTreeNode;
-
-import bsh.Interpreter;
 
 import util.exc.TvBrowserException;
-import devplugin.*;
+import bsh.Interpreter;
+import devplugin.ActionMenu;
+import devplugin.ChannelDayProgram;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.SettingsTab;
 import devplugin.beanshell.BeanShellScriptIf;
 
 
@@ -41,6 +44,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         try {
             mScript = (BeanShellScriptIf) new Interpreter().source(bshFile.getAbsolutePath());
         } catch (Exception e) {
+            e.printStackTrace();
             mScript = null;
         }
     }
@@ -167,6 +171,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
      * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetButtonAction()
      */
     protected ActionMenu doGetButtonAction() {
+        
         if (mScript == null) { return null; }
 
         try {
@@ -174,6 +179,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
             setActionMenuDefaultValues(menu);
             return menu;
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
@@ -214,7 +220,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
             try {
                 return mScript.getProgramTableIcons(program);
             } catch (Exception e) {
-                //e.printStackTrace();
+                e.printStackTrace();
             }
         }
         return null;
@@ -269,14 +275,9 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     public boolean doCanUseProgramTree() {
         return false;
     }
-    
-  
-
-   
+       
     public PluginTreeNode getRootNode() {
       return null;
     }
     
-    
-
-}
+ }
