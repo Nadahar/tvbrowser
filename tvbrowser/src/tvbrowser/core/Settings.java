@@ -368,6 +368,9 @@ public class Settings {
   public static final BooleanProperty propIsTooolbarVisible
     = new BooleanProperty(mProp, "isToolbarVisible", true);
 
+  public static final BooleanProperty propIsStatusbarVisible
+  = new BooleanProperty(mProp, "isStatusbarVisible", true);
+
   public static final BooleanProperty propIsSkinLFEnabled
     = new BooleanProperty(mProp, "skinLF.enabled", false);
 
