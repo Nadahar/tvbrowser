@@ -98,8 +98,8 @@ public class TVBrowser {
   public static util.ui.Localizer mLocalizer;
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(1,0,false,"1.0 RC05");
-  public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
+  public static final devplugin.Version VERSION=new devplugin.Version(1,0,true,"1.0");
+  public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
   
   private static boolean mUseSystemTray;
   
@@ -168,23 +168,26 @@ public class TVBrowser {
     }
     
     // setup logging
-    try {
-      // Get the default Logger
-      Logger mainLogger = Logger.getLogger("");
+    
+	  // Get the default Logger
+		Logger mainLogger = Logger.getLogger("");
 
-      // Use a even simpler Formatter for console logging
-      mainLogger.getHandlers()[0].setFormatter(createFormatter());
-      
-      // Add a file handler
-      new File("log").mkdir();
-      Handler fileHandler = new FileHandler("log/tvbrowser.log", 50000, 2, true);
-      fileHandler.setLevel(Level.WARNING);
-      mainLogger.addHandler(fileHandler);
-    }
-    catch (IOException exc) {
-      msg = mLocalizer.msg("error.4", "Can't create log file.");
-      ErrorHandler.handle(msg, exc);
-    }
+		// Use a even simpler Formatter for console logging
+		mainLogger.getHandlers()[0].setFormatter(createFormatter());
+
+		if (!VERSION.isStable()) { 
+		  try {  
+        // Add a file handler
+        new File("log").mkdir();
+        Handler fileHandler = new FileHandler("log/tvbrowser.log", 50000, 2, true);
+        fileHandler.setLevel(Level.WARNING);
+        mainLogger.addHandler(fileHandler);
+      }
+      catch (IOException exc) {
+        msg = mLocalizer.msg("error.4", "Can't create log file.");
+        ErrorHandler.handle(msg, exc);
+      }
+		}
     
     // Capture unhandled exceptions
     System.setErr(new PrintStream(new MonitoringErrorStream()));
