@@ -439,18 +439,6 @@ public static void deleteExpiredTVData() {
 
 
   /**
-   * Creates a JComponent that shows the specified program.
-   *
-   * @param prog The program to get the component for.
-   * @return a JComponent that shows the specified program.
-   */
-  public javax.swing.JComponent createProgramPanel(devplugin.Program prog) {
-    return new tvbrowser.ui.programtable.ProgramPanel(prog);
-  }
-
-
-
-  /**
    * Gets the progress bar used to show the download progress.
    *
    * @return the progress bar used to show the download progress.

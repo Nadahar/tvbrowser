@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import util.ui.UiUtilities;
+import util.ui.ProgramListCellRenderer;
 
 import devplugin.*;
 
@@ -48,9 +49,10 @@ public class ManageFavoritesDialog extends JDialog {
 
   private Channel[] mSubsribedChannelArr;
   
-  private DefaultListModel mFavoritesListModel;
-  private JList mFavoritesList;
-  private JButton mNewBt, mEditBt, mDeleteBt, mOkBt, mCancelBt;
+  private DefaultListModel mFavoritesListModel, mProgramListModel;
+  private JList mFavoritesList, mProgramList;
+  private JSplitPane mSplitPane;
+  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mOkBt, mCancelBt;
   
   private boolean mOkWasPressed = false;
   
@@ -61,8 +63,11 @@ public class ManageFavoritesDialog extends JDialog {
    */
   public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr) {
     super(parent, true);
-
+    
     mSubsribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
+    
+    String msg;
+    Icon icon;
 
     setTitle(mLocalizer.msg("title", "Manage favorite programs"));
     
@@ -96,6 +101,29 @@ public class ManageFavoritesDialog extends JDialog {
       }
     });
     toolbarPn.add(mDeleteBt);
+
+    msg = mLocalizer.msg("up", "Move the selected rows up");
+    icon = new ImageIcon("imgs/Up24.gif");
+    mUpBt = UiUtilities.createToolBarButton(msg, icon);
+    mUpBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        moveSelectedFavorite(-1);
+      }
+    });
+    toolbarPn.add(mUpBt);
+    
+    msg = mLocalizer.msg("down", "Move the selected rows down");
+    icon = new ImageIcon("imgs/Down24.gif");
+    mDownBt = UiUtilities.createToolBarButton(msg, icon);
+    mDownBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        moveSelectedFavorite(1);
+      }
+    });
+    toolbarPn.add(mDownBt);
+
+    mSplitPane = new JSplitPane();
+    main.add(mSplitPane, BorderLayout.CENTER);
     
     mFavoritesListModel = new DefaultListModel();
     mFavoritesListModel.ensureCapacity(favoriteArr.length);
@@ -108,10 +136,19 @@ public class ManageFavoritesDialog extends JDialog {
     selModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     selModel.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent evt) {
-        updateEnabled();
+        favoriteSelectionChanged();
       }
     });
-    main.add(new JScrollPane(mFavoritesList), BorderLayout.CENTER);
+    JScrollPane scrollPane = new JScrollPane(mFavoritesList);
+    scrollPane.setBorder(null);
+    mSplitPane.setLeftComponent(scrollPane);
+
+    mProgramListModel = new DefaultListModel();
+    mProgramList = new JList(mProgramListModel);
+    mProgramList.setCellRenderer(new ProgramListCellRenderer());
+    scrollPane = new JScrollPane(mProgramList);
+    scrollPane.setBorder(null);
+    mSplitPane.setRightComponent(scrollPane);
     
     JPanel buttonPn = new JPanel();
     main.add(buttonPn, BorderLayout.SOUTH);
@@ -134,20 +171,38 @@ public class ManageFavoritesDialog extends JDialog {
     });
     buttonPn.add(mCancelBt);
     
-    updateEnabled();
+    favoriteSelectionChanged();
     pack();
   }
   
   
   
-  protected void updateEnabled() {
-    boolean enabled = (mFavoritesList.getSelectedIndex() != -1);
-    mEditBt.setEnabled(enabled);
-    mDeleteBt.setEnabled(enabled);
+  protected void favoriteSelectionChanged() {
+    int selection = mFavoritesList.getSelectedIndex();
+    int size = mFavoritesListModel.getSize();
+    
+    mEditBt.setEnabled(selection != -1);
+    mDeleteBt.setEnabled(selection != -1);
+    
+    mUpBt.setEnabled(selection > 0);
+    mDownBt.setEnabled((selection != -1) && (selection < (size - 1)));
+    
+    if (selection == -1) {
+      mProgramListModel.clear();
+    } else {
+      Favorite fav = (Favorite) mFavoritesListModel.get(selection);
+      Program[] programArr = fav.getPrograms();
+      
+      mProgramListModel.clear();
+      mProgramListModel.ensureCapacity(programArr.length);
+      for (int i = 0; i < programArr.length; i++) {
+        mProgramListModel.addElement(programArr[i]);
+      }
+    }
   }
 
   
-  
+
   protected void newFavorite() {
     Favorite fav = new Favorite();
     
@@ -172,6 +227,7 @@ public class ManageFavoritesDialog extends JDialog {
 
       if (dlg.getOkWasPressed()) {
         mFavoritesList.repaint();
+        favoriteSelectionChanged();
       }
     }
   }
@@ -188,6 +244,21 @@ public class ManageFavoritesDialog extends JDialog {
     }
   }
 
+  
+  
+  protected void moveSelectedFavorite(int rowCount) {
+    int selection = mFavoritesList.getSelectedIndex();
+    if (selection != -1) {
+      int targetPos = selection + rowCount;
+      if ((targetPos >= 0) && (targetPos < mFavoritesListModel.size())) {
+        Favorite fav = (Favorite) mFavoritesListModel.remove(selection);
+        mFavoritesListModel.add(targetPos, fav);
+        mFavoritesList.setSelectedIndex(targetPos);
+        mFavoritesList.ensureIndexIsVisible(targetPos);
+      }
+    }
+  }
+  
   
 
   public boolean getOkWasPressed() {

@@ -33,6 +33,7 @@ import java.util.*;
 import javax.swing.event.*;
 
 import util.exc.TvBrowserException;
+import util.ui.ProgramPanel;
 
 import tvbrowser.core.*;
 import tvbrowser.ui.SkinPanel;
@@ -89,7 +90,7 @@ class ProgramDayTime extends JPanel {
     if (col<0) {
       return; // cannot add program (channel is not subscribed)
     }
-    ProgramPanel panel=ProgramPanelFactory.createProgramPanel(prog);
+    ProgramPanel panel = new ProgramPanel(prog);
     cols[col].add(panel);
   }
 

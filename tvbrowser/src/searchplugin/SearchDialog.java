@@ -36,8 +36,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 import util.exc.*;
-import util.ui.TabLayout;
-import util.ui.UiUtilities;
+import util.ui.*;
 
 import devplugin.*;
 
@@ -51,8 +50,6 @@ public class SearchDialog extends JDialog {
   /** The localizer of this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchDialog.class);
-  
-  private static final Color SECOND_ROW_COLOR = new Color(250, 250, 220);
   
   /** The messages for the time combo box. */  
   private static final String[] TIME_STRING_ARR = new String[] {
@@ -237,18 +234,8 @@ public class SearchDialog extends JDialog {
     main.setBorder(UiUtilities.DIALOG_BORDER);
     dlg.setContentPane(main);
     
-    JComponent[] programPanelArr = new JComponent[programArr.length];
-    for (int i = 0; i < programArr.length; i++) {
-      JPanel p1 = new JPanel(new BorderLayout());
-      JComponent progPn = Plugin.getPluginManager().createProgramPanel(programArr[i]);
-      p1.add(progPn, BorderLayout.CENTER);
-      String msg = programArr[i].getDate() + " - " + programArr[i].getChannel().getName();
-      p1.add(new JLabel(msg), BorderLayout.NORTH);
-      
-      programPanelArr[i] = p1;
-    }
-    JList list = new JList(programPanelArr);
-    list.setCellRenderer(new ComponentCellRenderer());
+    JList list = new JList(programArr);
+    list.setCellRenderer(new ProgramListCellRenderer());
     main.add(new JScrollPane(list), BorderLayout.CENTER);
     
     JPanel buttonPn = new JPanel();
@@ -265,60 +252,6 @@ public class SearchDialog extends JDialog {
     
     dlg.setSize(400, 400);
     UiUtilities.centerAndShow(dlg);
-  }
-  
-  
-  // inner class ComponentCellRenderer
-  
-  
-  /**
-   * A list cell renderer that renders JComponents.
-   */  
-  class ComponentCellRenderer extends DefaultListCellRenderer {
-    
-    /**
-     * Return a component that has been configured to display the specified
-     * value. That component's <code>paint</code> method is then called to
-     * "render" the cell.  If it is necessary to compute the dimensions
-     * of a list because the list cells do not have a fixed size, this method
-     * is called to generate a component on which <code>getPreferredSize</code>
-     * can be invoked.
-     *
-     * @param list The JList we're painting.
-     * @param value The value returned by list.getModel().getElementAt(index).
-     * @param index The cells index.
-     * @param isSelected True if the specified cell was selected.
-     * @param cellHasFocus True if the specified cell has the focus.
-     * @return A component whose paint() method will render the specified value.
-     *
-     * @see JList
-     * @see ListSelectionModel
-     * @see ListModel
-     */
-    public Component getListCellRendererComponent(JList list, Object value,
-      int index, boolean isSelected, boolean cellHasFocus)
-    {
-      JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
-        index, isSelected, cellHasFocus);
-      
-      if (value instanceof JComponent) {
-        JComponent comp = (JComponent) value;
-        comp.setBackground(label.getBackground());
-        comp.setForeground(label.getForeground());
-        comp.setEnabled(label.isEnabled());
-        comp.setBorder(label.getBorder());
-        comp.setOpaque(true);
-        
-        if ((index % 2 == 1) && (! isSelected)) {
-          comp.setBackground(SECOND_ROW_COLOR);
-        }
-        
-        return comp;
-      }
-      
-      return label;
-    }
-    
   }
   
 }
