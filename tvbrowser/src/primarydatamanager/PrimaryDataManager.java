@@ -26,8 +26,12 @@
 package primarydatamanager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
+import primarydatamanager.mirrorupdater.MirrorUpdater;
 import primarydatamanager.primarydataservice.PrimaryDataService;
 
 import tvbrowserdataservice.file.*;
@@ -41,9 +45,7 @@ import devplugin.Date;
  */
 public class PrimaryDataManager {
   
-  private static final String[] LEVEL_ARR = {
-    "base", "image16-00", "image00-16", "desc16-00", "desc00-16"
-  };
+  private static final String[] LEVEL_ARR = MirrorUpdater.LEVEL_ARR;
   
   private File mRawDir;
   private File mPreparedDir;
@@ -52,10 +54,16 @@ public class PrimaryDataManager {
   
   private PrimaryDataService[] mDataServiceArr;
   
+  private ArrayList mChannelList;
+  
+  private Date mDeadlineDay;
+  
   
   
   public PrimaryDataManager() {
     setBaseDir(".");
+
+    mDeadlineDay = new Date().addDays(-2);
   }
   
   
@@ -76,6 +84,8 @@ public class PrimaryDataManager {
 
 
   public void updateRawDataDir() throws PreparationException {
+    mChannelList = new ArrayList();
+    
     // Delete the old work directory
     try {
       IOUtilities.deleteDirectory(mWorkDir);
@@ -109,6 +119,9 @@ public class PrimaryDataManager {
     
     // Process the new raw data
     processRawDataDir();
+    
+    // Save the channel list
+    saveChannelList();
     
     // Delete the old backup
     try {
@@ -170,8 +183,8 @@ public class PrimaryDataManager {
       String fileName = fileArr[i].getName();
       
       // Extract the information from the file name
-      // Pattern: <yyyy>-<mm>-<dd>_<country>_<channel>_raw_full.gz
-      if (fileName.endsWith("_raw_full.gz")) {
+      // Pattern: <yyyy>-<mm>-<dd>_<country>_<channel>_raw_full.prog.gz
+      if (fileName.endsWith("_raw_full.prog.gz")) {
         System.out.println("Processing raw file " + fileArr[i].getAbsolutePath());
         
         // Extract the information from the file name
@@ -194,24 +207,27 @@ public class PrimaryDataManager {
             + fileName, exc);
         }
         
-        // Load the file
-        DayProgramFile rawFile;
-        try {
-          rawFile = new DayProgramFile();
-          rawFile.readFromFile(fileArr[i]);
-        }
-        catch (Exception exc) {
-          throw new PreparationException("Loading raw file failed: "
-            + fileName, exc);
-        }
-        
-        // Process the file
-        try {
-          processRawFile(rawFile, date, country, channel);
-        }
-        catch (PreparationException exc) {
-          throw new PreparationException("Processing raw file failed: "
-            + fileArr[i].getAbsolutePath(), exc);
+        // Ensure that the file is not outdated
+        if (date.compareTo(mDeadlineDay) >= 0) {
+          // Load the file
+          DayProgramFile rawFile;
+          try {
+            rawFile = new DayProgramFile();
+            rawFile.readFromFile(fileArr[i]);
+          }
+          catch (Exception exc) {
+            throw new PreparationException("Loading raw file failed: "
+              + fileName, exc);
+          }
+          
+          // Process the file
+          try {
+            processRawFile(rawFile, date, country, channel);
+          }
+          catch (PreparationException exc) {
+            throw new PreparationException("Processing raw file failed: "
+              + fileArr[i].getAbsolutePath(), exc);
+          }
         }
       }
     }
@@ -223,6 +239,9 @@ public class PrimaryDataManager {
     String country, String channel)
     throws PreparationException
   {
+    // Register the channel
+    registerChannel(country, channel);
+    
     // Remove all empty fields from the day program
     removeEmptyFields(rawProg);
     
@@ -301,6 +320,25 @@ public class PrimaryDataManager {
         }
       }
     }
+  }
+
+
+
+  private void registerChannel(String country, String channelName) {
+    // Check if we already have this channel
+    for (int i = 0; i < mChannelList.size(); i++) {
+      Channel channel = (Channel) mChannelList.get(i);
+
+      if (channel.getCountry().equals(country)
+        && channel.getChannelName().equals(channelName))
+      {
+        // We have this channel -> return
+        return;
+      }
+    }
+    
+    // We don't have this channel -> Add it
+    mChannelList.add(new Channel(country, channelName));
   }
 
 
@@ -780,6 +818,72 @@ public class PrimaryDataManager {
       throw new PreparationException("Class " + className + " does not implement "
         + PrimaryDataService.class.getName());
     }
+  }
+
+
+
+  private void saveChannelList() throws PreparationException {
+    File file = new File(mWorkDir, "channellist");
+    FileOutputStream stream = null;
+    try {
+      stream = new FileOutputStream(file);
+      PrintWriter writer = new PrintWriter(stream);
+      
+      for (int i = 0; i < mChannelList.size(); i++) {
+        Channel channel = (Channel) mChannelList.get(i);
+        
+        writer.println(channel.getCountry() + " " + channel.getChannelName());
+      }
+      
+      writer.close();
+    }
+    catch (IOException exc) {
+      throw new PreparationException("Writing channel list file failed: "
+        + file.getAbsolutePath(), exc);
+    }
+    finally {
+      if (stream != null) {
+        try { stream.close(); } catch (IOException exc) {}
+      }
+    }
+    
+  }
+
+
+  // inner class Channel
+
+
+  private class Channel {
+    
+    private String mCountry;
+    private String mChannelName;
+
+    
+    /**
+     * @param country
+     * @param channelName
+     */
+    public Channel(String country, String channelName) {
+      mCountry = country;
+      mChannelName = channelName;
+    }
+
+    
+    /**
+     * @return
+     */
+    public String getChannelName() {
+      return mChannelName;
+    }
+
+
+    /**
+     * @return
+     */
+    public String getCountry() {
+      return mCountry;
+    }
+
   }
 
 }

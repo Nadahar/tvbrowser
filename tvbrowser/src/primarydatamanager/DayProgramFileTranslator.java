@@ -30,6 +30,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import devplugin.Program;
+
 import tvbrowserdataservice.file.*;
 
 /**
@@ -64,7 +66,7 @@ public class DayProgramFileTranslator {
 
     // Go through all files and translate
     for (int i = 0; i < fileArr.length; i++) {
-      if (fileArr[i].getName().endsWith(".gz")) {
+      if (fileArr[i].getName().endsWith(".prog.gz")) {
         translateDayProgram(fileArr[i]);
       }
       if (fileArr[i].isDirectory()) {
@@ -82,7 +84,8 @@ public class DayProgramFileTranslator {
     prog.readFromFile(file);
 
     String progFileName = file.getAbsolutePath();
-    String transFileName = progFileName.substring(0, progFileName.length() - 3)
+    // -8 for .prog.gz
+    String transFileName = progFileName.substring(0, progFileName.length() - 8)
       + ".prog.txt";
 
     FileOutputStream stream = null;
@@ -93,30 +96,37 @@ public class DayProgramFileTranslator {
       writer.println("Version: " + prog.getVersion());
       for (int frameIdx = 0; frameIdx < prog.getProgramFrameCount(); frameIdx++) {
         ProgramFrame frame = prog.getProgramFrameAt(frameIdx);
+        writer.println();
         writer.println("Program ID: " + frame.getId());
         for (int fieldIdx = 0; fieldIdx < frame.getProgramFieldCount(); fieldIdx++) {
           ProgramField field = frame.getProgramFieldAt(fieldIdx);
           ProgramFieldType type = field.getType();
           writer.print("  " + type.getName() + ": ");
-          if (field.getBinaryData() == null) {
-            writer.println("(delete)");
+          
+          if (type == ProgramFieldType.INFO_TYPE) {
+            int info = field.getIntData();
+            writer.println(programInfoToString(info));
           } else {
-            switch (type.getFormat()) {
-              case ProgramFieldType.TEXT_FORMAT:
-                writer.println(field.getTextData());
-                break;
-              case ProgramFieldType.INT_FORMAT:
-                writer.println(field.getIntData());
-                break;
-              case ProgramFieldType.TIME_FORMAT:
-                int time = field.getTimeData();
-                int hours = time / 60;
-                int minutes = time % 60;
-                writer.println(hours + ":" + ((minutes < 10) ? "0" : "") + minutes);
-                break;
-              default:
-                writer.println("(binary data)");
-                break;
+            if (field.getBinaryData() == null) {
+              writer.println("(delete)");
+            } else {
+              switch (type.getFormat()) {
+                case ProgramFieldType.TEXT_FORMAT:
+                  writer.println(field.getTextData());
+                  break;
+                case ProgramFieldType.INT_FORMAT:
+                  writer.println(field.getIntData());
+                  break;
+                case ProgramFieldType.TIME_FORMAT:
+                  int time = field.getTimeData();
+                  int hours = time / 60;
+                  int minutes = time % 60;
+                  writer.println(hours + ":" + ((minutes < 10) ? "0" : "") + minutes);
+                  break;
+                default:
+                  writer.println("(binary data)");
+                  break;
+              }
             }
           }
         }
@@ -131,6 +141,55 @@ public class DayProgramFileTranslator {
     }    
   }
   
+  
+  
+  private static String programInfoToString(int info) {
+    StringBuffer buf = new StringBuffer();
+
+    if (bitSet(info, Program.INFO_VISION_BLACK_AND_WHITE)) {
+      buf.append("Black and white  ");
+    }
+    if (bitSet(info, Program.INFO_VISION_4_TO_3)) {
+      buf.append("4:3  ");
+    }
+    if (bitSet(info, Program.INFO_VISION_16_TO_9)) {
+      buf.append("16:9  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_MONO)) {
+      buf.append("Mono  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_STEREO)) {
+      buf.append("Stereo  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_DOLBY_SURROUND)) {
+      buf.append("Dolby surround  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_DOLBY_DIGITAL_5_1)) {
+      buf.append("Dolby digital 5.1  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_TWO_CHANNEL_TONE)) {
+      buf.append("Two channel tone  ");
+    }
+    if (bitSet(info, Program.INFO_SUBTITLE)) {
+      buf.append("Subtitle  ");
+    }
+    if (bitSet(info, Program.INFO_LIVE)) {
+      buf.append("Live  ");
+    }
+    
+    return buf.toString();
+  }
+  
+
+
+  /**
+   * Returns whether a bit (or combination of bits) is set in the specified
+   * number.
+   */
+  private static boolean bitSet(int num, int pattern) {
+    return (num & pattern) == pattern;
+  }
+
   
   
   public static void main(String[] args) {
