@@ -379,6 +379,42 @@ public class Settings {
   }
 
 
+  public static int getEarlyTime() {
+    String time=settings.getProperty("timebutton.early","240");
+    return Integer.parseInt(time);
+  }
+  
+  public static void setEarlyTime(int minutes) {
+    settings.setProperty("timebutton.early",""+minutes);
+  }
+
+  public static int getMorningTime() {
+      String time=settings.getProperty("timebutton.morning","600");
+      return Integer.parseInt(time);
+    }
+  
+    public static void setMorningTime(int minutes) {
+      settings.setProperty("timebutton.morning",""+minutes);
+    }
+    
+  public static int getMiddayTime() {
+      String time=settings.getProperty("timebutton.midday","720");
+      return Integer.parseInt(time);
+    }
+  
+    public static void setMiddayTime(int minutes) {
+      settings.setProperty("timebutton.midday",""+minutes);
+    }
+    
+  public static int getEveningTime() {
+      String time=settings.getProperty("timebutton.evening","1260");
+      return Integer.parseInt(time);
+    }
+  
+    public static void setEveningTime(int minutes) {
+      settings.setProperty("timebutton.evening",""+minutes);
+    }
+
 
   public static int getTableLayout() {
     String layout = settings.getProperty("table.layout", "timeSynchronous");

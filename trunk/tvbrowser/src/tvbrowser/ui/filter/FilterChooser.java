@@ -41,7 +41,6 @@ public class FilterChooser extends JPanel {
     
     
   private final JComboBox mBox;
-  //private Filter mShowAllFilter;  
   private ProgramTableModel mModel;  
     
   public FilterChooser(final JFrame parent, final ProgramTableModel model) {

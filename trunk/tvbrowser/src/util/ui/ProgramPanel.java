@@ -53,6 +53,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static final Color COLOR_ON_AIR_DARK  = new Color(128, 128, 255, 80);
   private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
   private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
+  
 
   /** The title font. */
   private static Font TITLE_FONT = Settings.getProgramTitleFont();
@@ -63,9 +64,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /** The width of the left part (the time). */  
   private static final int WIDTH_LEFT = 40;
   /** The width of the left part (the title and short info). */  
-  private static final int WIDTH_RIGHT = Settings.getColumnWidth() - WIDTH_LEFT;
+  private static int WIDTH_RIGHT = Settings.getColumnWidth() - WIDTH_LEFT;
   /** The total width. */  
-  private static final int WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+  private static int WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
   
   /** The height. */  
   private int mHeight = 0;
@@ -89,6 +90,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mTitleIcon = new TextAreaIcon(null, TITLE_FONT, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, NORMAL_FONT, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
+    
+    
   }
   
 
@@ -110,6 +113,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     NORMAL_FONT = Settings.getProgramInfoFont();  
   }
   
+  public static void updateColumnWidth() {
+    WIDTH_RIGHT = Settings.getColumnWidth() - WIDTH_LEFT;
+    WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+  }
+  
   /**
    * Sets the program this panel shows.
    *
@@ -117,6 +125,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */  
   public void setProgram(devplugin.Program program) {
     setProgram(program, -1);
+    
   }
   
   
@@ -128,7 +137,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */  
   public void setProgram(devplugin.Program program, int maxHeight) {
     devplugin.Program oldProgram = mProgram;
-
     mProgram = program;
 
     mProgramTimeAsString = program.getTimeString();

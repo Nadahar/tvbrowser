@@ -31,9 +31,11 @@ import java.io.File;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Calendar;
+import java.util.Date;
 
 import tvbrowser.core.Settings;
-
+import tvbrowser.TVBrowser;
 import util.exc.*;
 import util.ui.*;
 
@@ -57,6 +59,8 @@ public class TVBrowserSettingsTab implements SettingsTab {
 
   private JCheckBox mTimeCheck, updateCheck, settingsCheck;
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
+  private TimePanel mEarlyTimePn, mMorningTimePn, mMiddayTimePn, mEveningTimePn;
+  private JLabel mEarlyLb, mMorningLb, mMiddayLb, mEveningLb;
 
   class LookAndFeelObj {
     private UIManager.LookAndFeelInfo info;
@@ -154,10 +158,12 @@ public class TVBrowserSettingsTab implements SettingsTab {
     });
 
     // buttons panel
+    JPanel toolBarPanel=new JPanel();
+    toolBarPanel.setLayout(new BoxLayout(toolBarPanel,BoxLayout.Y_AXIS));
     JPanel buttonPanel=new JPanel(new GridLayout(1,0));
-    main.add(buttonPanel);
+    main.add(toolBarPanel);
     msg = mLocalizer.msg("buttons", "Buttons");
-    buttonPanel.setBorder(BorderFactory.createTitledBorder(msg));
+    toolBarPanel.setBorder(BorderFactory.createTitledBorder(msg));
 
     JPanel visibleBtnsPanel=new JPanel(new BorderLayout());
     JPanel panel3=new JPanel(new BorderLayout());
@@ -207,9 +213,61 @@ public class TVBrowserSettingsTab implements SettingsTab {
     buttonPanel.add(visibleBtnsPanel);
     buttonPanel.add(labelBtnsPanel);
 
+    // time buttons
+
+    JPanel timeButtonsPn=new JPanel(new GridLayout(2,4));
+    timeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
+    
+    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
+    
+    mEarlyTimePn = new TimePanel(Settings.getEarlyTime());
+    mMorningTimePn=new TimePanel(Settings.getMorningTime());
+    mMiddayTimePn=new TimePanel(Settings.getMiddayTime());
+    mEveningTimePn=new TimePanel(Settings.getEveningTime());
+    
+    mEarlyLb=new JLabel(TVBrowser.mLocalizer.msg("button.early","Early")+":");
+    timeButtonsPn.add(mEarlyLb);
+    timeButtonsPn.add(mEarlyTimePn);
+    
+    mMorningLb=new JLabel(TVBrowser.mLocalizer.msg("button.morning","Morning")+":");
+    timeButtonsPn.add(mMorningLb);
+    timeButtonsPn.add(mMorningTimePn);  
+    
+    mMiddayLb=new JLabel(TVBrowser.mLocalizer.msg("button.midday","Midday")+":");
+    timeButtonsPn.add(mMiddayLb);
+    timeButtonsPn.add(mMiddayTimePn);
+    
+    mEveningLb=new JLabel(TVBrowser.mLocalizer.msg("button.evening","Evening")+":");
+    timeButtonsPn.add(mEveningLb);
+    timeButtonsPn.add(mEveningTimePn);
+
+    toolBarPanel.add(buttonPanel);
+
+    toolBarPanel.add(timeButtonsPn);
+
+
+    mTimeCheck.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        enableTimeButtons(mTimeCheck.isSelected());
+      }
+    });
+    
+    enableTimeButtons(mTimeCheck.isSelected());
+    
     return mSettingsPn;
   }
 
+  private void enableTimeButtons(boolean val) {
+    boolean b=mTimeCheck.isSelected();
+    mEarlyTimePn.setEnabled(b);
+    mMorningTimePn.setEnabled(b);
+    mMiddayTimePn.setEnabled(b);
+    mEveningTimePn.setEnabled(b);
+    mEarlyLb.setEnabled(b);
+    mMorningLb.setEnabled(b);
+    mMiddayLb.setEnabled(b);
+    mEveningLb.setEnabled(b);
+  }
   
   
   /**
@@ -240,6 +298,12 @@ public class TVBrowserSettingsTab implements SettingsTab {
     } else {
       Settings.setButtonSettings(Settings.TEXT_AND_ICON);
     }
+    
+    Settings.setEarlyTime(mEarlyTimePn.getTime());
+    Settings.setMorningTime(mMorningTimePn.getTime());
+    Settings.setMiddayTime(mMiddayTimePn.getTime());
+    Settings.setEveningTime(mEveningTimePn.getTime());
+       
   }
 
   
@@ -262,5 +326,48 @@ public class TVBrowserSettingsTab implements SettingsTab {
   public String getTitle() {
     return mLocalizer.msg("tvBrowser", "TV-Browser");
   }
+
+
+class TimePanel extends JPanel {
+  
+  
+  private JSpinner mTimeSp;
+  public TimePanel(int minutes) {
+    setLayout(new BorderLayout());
+    
+//  String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
+    String timePattern="hh:mm a";
+    
+    
+    mTimeSp = new JSpinner(new SpinnerDateModel());
+    mTimeSp.setEditor(new JSpinner.DateEditor(mTimeSp, timePattern));
+    mTimeSp.setBorder(null);
+   
+    add(mTimeSp,BorderLayout.WEST);
+    setTime(minutes);
+  }
+  
+  public void setTime(int minutes) {
+    Calendar cal=Calendar.getInstance();
+    cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
+    cal.set(Calendar.MINUTE, minutes % 60);
+    mTimeSp.setValue(cal.getTime());   
+  }
+  
+  public int getTime() {
+    
+    Date time= (Date) mTimeSp.getValue();
+    Calendar cal=Calendar.getInstance();
+    cal.setTime(time);
+    return cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+  }
+  
+  public void setEnabled(boolean val) {
+    mTimeSp.setEnabled(val);
+  }
+}
   
 }
+
+
+
