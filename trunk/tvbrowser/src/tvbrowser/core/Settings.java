@@ -90,7 +90,7 @@ public class Settings {
     }finally{
       String value=settings.getProperty("subscribed","1,2,3,4,5");
       int pos=0;
-      int last=0, cur=0, cnt=0;
+      int last=0, cur=0/*, cnt=0*/;
       int channel;
       Channel ch;
       String a;
@@ -99,10 +99,12 @@ public class Settings {
         if (cur==-1) { cur=value.length(); }
         a=value.substring(last,cur);
         channel=Integer.parseInt(a);
-        ch=ChannelList.getChannel(channel);
+     /*   ch=ChannelList.getChannel(channel);
         if (ch!=null) {
           ch.setPos(cnt++);
         }
+        */
+        ChannelList.subscribeChannel(channel);
         cur++;
         last=cur;
       }
