@@ -46,6 +46,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.DataService;
 import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
@@ -282,6 +283,8 @@ public class TVBrowser {
     if (Settings.isWindowMaximized()) {
       mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
+    
+    devplugin.Channel[] chlist=ChannelList.getSubscribedChannels();
     
     if (Settings.getShowAssistant()) {
       mainFrame.runSetupAssistant();  

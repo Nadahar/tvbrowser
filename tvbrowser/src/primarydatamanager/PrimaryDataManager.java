@@ -832,7 +832,7 @@ public class PrimaryDataManager {
     Class clazz;
     
     if (className.startsWith(".")) {
-      className="primarydatamanager.primarydataservice"+className;
+      className="primarydatamanager.primarydataservice.secret"+className;
     }
     
     try {
