@@ -222,4 +222,38 @@ public class FilterList {
         
     }
   }
+
+  /**
+   * Returns the Filter named "name"
+   * @param name Name of Filter to return
+   * @return Filter with Name "name" or null if not found
+   */
+  public ProgramFilter getFilterByName(String name) {
+     if (name == null) {
+         return null;
+     }
+     
+     for (int i = 0; i < mFilterArr.length; i++) {
+         if (mFilterArr[i].getName().equals(name)) {
+             return mFilterArr[i];
+         }
+     }
+      
+     return null;
+  }
+
+  /**
+   * Returns the Default-Filter ("ShowAll")
+   * @return the Default-Filter
+   */
+  public ProgramFilter getDefaultFilter() {
+
+      for (int i = 0; i < mFilterArr.length; i++) {
+          if (mFilterArr[i].getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
+              return mFilterArr[i];
+          }
+      }
+      
+      return new ShowAllFilter();
+  }
 }
