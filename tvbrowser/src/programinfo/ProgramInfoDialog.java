@@ -116,9 +116,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   private String createInfoText(Program prog, ExtendedHTMLDocument doc,
     int[] infoBitArr, Icon[] infoIconArr, String[] infoMsgArr)
   {
-    String msg;
-    String value;
-    
     StringBuffer buffer = new StringBuffer();
     
     buffer.append("<html><head>" +
@@ -150,7 +147,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     openPara(buffer, "time");
     int length = prog.getLength();
     if (length > 0) {
-      msg = mLocalizer.msg("minutes", "{0} min", new Integer(length));
+      String msg = mLocalizer.msg("minutes", "{0} min", new Integer(length));
       buffer.append(msg + " (");
       
       int hours = prog.getHours();
@@ -203,31 +200,12 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     buffer.append("<br>\n");
     int offset = buffer.length();
 
-    msg = mLocalizer.msg("episode", "Episode");
-    value = prog.getTextField(ProgramFieldType.EPISODE_TYPE);
-    newPara(buffer, "info", msg, value);
-
-    msg = mLocalizer.msg("genre", "Genre");
-    value = prog.getTextField(ProgramFieldType.GENRE_TYPE);
-    newPara(buffer, "info", msg, value);
-
-    msg = mLocalizer.msg("repetitionOf", "Repetition of");
-    value = prog.getTextField(ProgramFieldType.REPETITION_OF_TYPE);
-    newPara(buffer, "info", msg, value);
-    
-    int ageLimit = prog.getIntField(ProgramFieldType.AGE_LIMIT_TYPE);
-    if (ageLimit != -1) {
-      msg = mLocalizer.msg("ageLimit", "age limit");
-      newPara(buffer, "info", msg, Integer.toString(ageLimit));
-    }
-
-    msg = mLocalizer.msg("vps", "VPS");
-    value = prog.getTimeFieldAsString(ProgramFieldType.VPS_TYPE);
-    newPara(buffer, "info", msg, value);
-
-    msg = mLocalizer.msg("showview", "Showview");
-    value = prog.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE);
-    newPara(buffer, "info", msg, value);
+    newPara(buffer, "info", prog, ProgramFieldType.EPISODE_TYPE);
+    newPara(buffer, "info", prog, ProgramFieldType.GENRE_TYPE);
+    newPara(buffer, "info", prog, ProgramFieldType.REPETITION_OF_TYPE);
+    newPara(buffer, "info", prog, ProgramFieldType.AGE_LIMIT_TYPE);
+    newPara(buffer, "info", prog, ProgramFieldType.VPS_TYPE);
+    newPara(buffer, "info", prog, ProgramFieldType.SHOWVIEW_NR_TYPE);
 
     Plugin[] pluginArr = prog.getMarkedByPlugins();
     if ((pluginArr != null) && (pluginArr.length != 0)) {
@@ -237,6 +215,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       for (int i = 0; i < pluginArr.length; i++) {
         Icon icon = pluginArr[i].getMarkIcon();
         JLabel iconLabel = new JLabel(icon);
+        iconLabel.setToolTipText(pluginArr[i].getInfo().getName());
         buffer.append(doc.createCompTag(iconLabel));
       }
       closePara(buffer);
@@ -279,47 +258,16 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       offset = buffer.length();
     }
 
-    msg = mLocalizer.msg("origin", "Origin");
-    value = prog.getTextField(ProgramFieldType.ORIGIN_TYPE);
-    newPara(buffer, "small", msg, value);
-
-    int productionYear = prog.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
-    if (productionYear != -1) {
-      msg = mLocalizer.msg("productionYear", "Production year");
-      newPara(buffer, "small", msg, Integer.toString(productionYear));
-    }
-
-    msg = mLocalizer.msg("website", "Website");
-    value = prog.getTextField(ProgramFieldType.URL_TYPE);
-    newPara(buffer, "small", msg, value, true);
-
-    msg = mLocalizer.msg("originalTitle", "Original title");
-    value = prog.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
-    newPara(buffer, "small", msg, value);
-
-    msg = mLocalizer.msg("originalEpisode", "Original episode");
-    value = prog.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE);
-    newPara(buffer, "small", msg, value);
-
-    msg = mLocalizer.msg("moderation", "Moderation");
-    value = prog.getTextField(ProgramFieldType.MODERATION_TYPE);
-    newPara(buffer, "small", msg, value);
-
-    msg = mLocalizer.msg("director", "Director");
-    value = prog.getTextField(ProgramFieldType.DIRECTOR_TYPE);
-    newPara(buffer, "small", msg, value);
-
-    msg = mLocalizer.msg("actors", "Actors");
-    value = prog.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
-    newPara(buffer, "small", msg, value);
-
-    msg = mLocalizer.msg("script", "Script");
-    value = prog.getTextField(ProgramFieldType.SCRIPT_TYPE);
-    newPara(buffer, "small", msg, value);
-
-    msg = mLocalizer.msg("music", "Music");
-    value = prog.getTextField(ProgramFieldType.MUSIC_TYPE);
-    newPara(buffer, "small", msg, value);
+    newPara(buffer, "small", prog, ProgramFieldType.ORIGIN_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.PRODUCTION_YEAR_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.URL_TYPE, true);
+    newPara(buffer, "small", prog, ProgramFieldType.ORIGINAL_TITLE_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.ORIGINAL_EPISODE_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.MODERATION_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.DIRECTOR_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.ACTOR_LIST_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.SCRIPT_TYPE);
+    newPara(buffer, "small", prog, ProgramFieldType.MUSIC_TYPE);
  
     buffer.append("</body></html>");
 
@@ -337,8 +285,35 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   }
 
 
+  private void newPara(StringBuffer buffer, String style, Program prog,
+    ProgramFieldType fieldType)
+  {
+    newPara(buffer, style, prog, fieldType, false);
+  }
+
+
+  private void newPara(StringBuffer buffer, String style, Program prog,
+    ProgramFieldType fieldType, boolean createLinks)
+  {
+    String label = fieldType.getLocalizedName();
+
+    String text = null;
+    if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+      text = prog.getTextField(fieldType);
+    }
+    else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+      text = prog.getTimeFieldAsString(fieldType);
+    }
+    else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+      text = prog.getIntFieldAsString(fieldType);
+    }
+    
+    newPara(buffer, style, label, text, createLinks);
+  }
+
+
   private void newPara(StringBuffer buffer, String style, String text) {
-    newPara(buffer, style, null, text);
+    newPara(buffer, style, null, text, false);
   }
 
 
@@ -346,13 +321,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     boolean createLinks)
   {
     newPara(buffer, style, null, text, createLinks);
-  }
-
-
-  private void newPara(StringBuffer buffer, String style, String label,
-    String text)
-  {
-    newPara(buffer, style, label, text, false);
   }
 
 

@@ -66,7 +66,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	 * plugin from the menu.
 	 */
 	public void execute() {
-		DialogOverview dlg = new DialogOverview(parent, tvraterDB);
+		DialogOverview dlg = new DialogOverview(getParentFrame(), tvraterDB);
 		dlg.pack();
 		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
@@ -92,7 +92,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	}
 
 	public void execute(Program program) {
-		DialogRating dlg = new DialogRating(parent, program, tvraterDB);
+		DialogRating dlg = new DialogRating(getParentFrame(), program, tvraterDB);
 		dlg.pack();
 		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentMoved(ComponentEvent e) {

@@ -26,7 +26,10 @@
 package util.ui;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -36,6 +39,7 @@ import util.io.IOUtilities;
 
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 import tvbrowser.core.*;
 
@@ -43,8 +47,12 @@ import tvbrowser.core.*;
  * A ProgramPanel is a JComponent representing a single program.
  *
  * @author Martin Oberhauser
+ * @author Til Schneider, www.murfman.de
  */
-public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implements ChangeListener {
+public class ProgramPanel extends JComponent implements ChangeListener {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(TextAreaIcon.class.getName());
   
   private static final boolean USE_FULL_HEIGHT = true;
   private static final boolean PAINT_EXPIRED_PROGRAMS_PALE = true;
@@ -57,11 +65,12 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
     = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
 
   /** The title font. */
-  private static Font TITLE_FONT = Settings.getProgramTitleFont();
+  private static Font mTitleFont = Settings.getProgramTitleFont();
   /** The time font. */
-  private static Font TIME_FONT = Settings.getProgramTimeFont();
+  private static Font mTimeFont = Settings.getProgramTimeFont();
   /** The normal font */ 
-  private static Font NORMAL_FONT = Settings.getProgramInfoFont();
+  private static Font mNormalFont = Settings.getProgramInfoFont();
+
   /** The width of the left part (the time). */  
   private static final int WIDTH_LEFT = 40;
   /** The width of the left part (the title and short info). */  
@@ -83,8 +92,8 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
   private TextAreaIcon mDescriptionIcon;
   /** The start time as String. */  
   private String mProgramTimeAsString;
-  /** The list of the icons to show on the left side. */
-  private ArrayList mIconList;
+  /** The icons to show on the left side under the start time. */
+  private Icon[] mIconArr;
   /** The program. */  
   private Program mProgram;
 
@@ -96,11 +105,9 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
    * @param prog The program to show in this panel.
    */  
   public ProgramPanel() {
-    mTitleIcon = new TextAreaIcon(null, TITLE_FONT, WIDTH_RIGHT - 5);
-    mDescriptionIcon = new TextAreaIcon(null, NORMAL_FONT, WIDTH_RIGHT - 5);
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);    
-
-    mIconList = new ArrayList();
   }
   
 
@@ -116,12 +123,19 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
   }
 
 
+  /**
+   * (Re)Loads the font settings.
+   */
   public static void updateFonts() {
-    TITLE_FONT = Settings.getProgramTitleFont();
-    TIME_FONT = Settings.getProgramTimeFont();
-    NORMAL_FONT = Settings.getProgramInfoFont();  
+    mTitleFont = Settings.getProgramTitleFont();
+    mTimeFont = Settings.getProgramTimeFont();
+    mNormalFont = Settings.getProgramInfoFont();  
   }
   
+
+  /**
+   * (Re)Loads the column width settings.
+   */
   public static void updateColumnWidth() {
     WIDTH_RIGHT = Settings.getColumnWidth() - WIDTH_LEFT;
     WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
@@ -183,17 +197,7 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
       // Get the icons from the plugins
-      mIconList.clear();
-      Plugin[] pluginArr = PluginManager.getInstance().getInstalledPlugins();
-      for (int i = 0; i < pluginArr.length; i++) {
-        Icon[] iconArr = pluginArr[i].getProgramTableIcons(program);
-        if (iconArr != null) {
-          for (int j = 0; j < iconArr.length; j++) {
-            mIconList.add(iconArr[j]);
-          }
-        }
-      }
-      mIconList.trimToSize();
+      mIconArr = getPluginIcons(program);
       
       // Get the start time
       mProgramTimeAsString = program.getTimeString();
@@ -206,17 +210,19 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
     int titleHeight = mTitleIcon.getIconHeight();
     int maxDescLines = 3;
     if (maxHeight != -1) {
-      maxDescLines = (maxHeight - titleHeight - 10) / NORMAL_FONT.getSize();
+      maxDescLines = (maxHeight - titleHeight - 10) / mNormalFont.getSize();
     }
     
     if (programChanged || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       // (Re)set the description text
       mDescriptionIcon.setMaximumLineCount(maxDescLines);
-      String shortInfo = program.getShortInfo();
-      if ((shortInfo == null) || shortInfo.endsWith("...")) {
-        mDescriptionIcon.setText(program.getDescription());
-      } else {
-        mDescriptionIcon.setText(shortInfo);
+      ProgramFieldType[] infoFieldArr = Settings.getProgramInfoFields();
+      Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
+      try {
+        mDescriptionIcon.setText(infoReader);
+      }
+      catch (IOException exc) {
+        mLog.log(Level.WARNING, "Reading program info failed for " + program, exc);
       }
 
       // Calculate the height
@@ -224,7 +230,7 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
       setPreferredSize(new Dimension(WIDTH, mHeight));
 
       // Calculate the preferred height
-      mPreferredHeight = titleHeight + (3 * NORMAL_FONT.getSize()) + 10;
+      mPreferredHeight = titleHeight + (3 * mNormalFont.getSize()) + 10;
       if (mHeight < mPreferredHeight) {
         mPreferredHeight = mHeight;
       }
@@ -239,7 +245,39 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
   }
 
 
-  
+  /**
+   * Gets the plugin icons for a program.
+   * 
+   * @param program The program to get the icons for.
+   * @return The icons for the program.
+   */
+  private Icon[] getPluginIcons(Program program) {
+    ArrayList list = new ArrayList();
+    
+    String[] iconPluginArr = Settings.getProgramTableIconPlugins();
+    Plugin[] pluginArr = PluginManager.getInstance().getInstalledPlugins();
+    for (int i = 0; i < iconPluginArr.length; i++) {
+      // Find the plugin with this class name and add its icons
+      for (int j = 0; j < pluginArr.length; j++) {
+        String className = pluginArr[j].getClass().getName();
+        if (iconPluginArr[i].equals(className)) {
+          // This is the right plugin -> Add its icons
+          Icon[] iconArr = pluginArr[j].getProgramTableIcons(program);
+          if (iconArr != null) {
+            for (int k = 0; k < iconArr.length; k++) {
+              list.add(iconArr[k]);
+            }
+          }
+        }
+      }
+    }
+    
+    Icon[] asArr = new Icon[list.size()];
+    list.toArray(asArr);
+    return asArr;
+  }
+
+
   /**
    * Paints the component.
    *
@@ -290,8 +328,8 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
     } else {
       grp.setColor(Color.black);
     }
-    grp.setFont(ProgramPanel.TIME_FONT);
-    grp.drawString(mProgramTimeAsString, 1, TIME_FONT.getSize());
+    grp.setFont(ProgramPanel.mTimeFont);
+    grp.drawString(mProgramTimeAsString, 1, mTimeFont.getSize());
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
     mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
 
@@ -313,14 +351,15 @@ public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implemen
     }
     
     // Paint the icons on the left side
-    x = 2;
-    y = TIME_FONT.getSize() + 3;
-    for (int i = 0; i < mIconList.size(); i++) {
-      Icon icon = (Icon) mIconList.get(i);
-      int iconHeight = icon.getIconHeight();
-      if ((y + iconHeight) < mHeight) {
-        icon.paintIcon(this, grp, x, y);
-        y += iconHeight + 2;
+    if (mIconArr != null) {
+      x = 2;
+      y = mTimeFont.getSize() + 3;
+      for (int i = 0; i < mIconArr.length; i++) {
+        int iconHeight = mIconArr[i].getIconHeight();
+        if ((y + iconHeight) < mHeight) {
+          mIconArr[i].paintIcon(this, grp, x, y);
+          y += iconHeight + 2;
+        }
       }
     }
 
