@@ -36,18 +36,48 @@ import java.util.Calendar;
 
 public class Date implements java.io.Serializable, Comparable {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(Date.class);
+  
+  private static final String[] DAY_MSG_ARR = {
+    mLocalizer.msg("day.0", "So"),
+    mLocalizer.msg("day.1", "Mo"),
+    mLocalizer.msg("day.2", "Tu"),
+    mLocalizer.msg("day.3", "We"),
+    mLocalizer.msg("day.4", "Th"),
+    mLocalizer.msg("day.5", "Fr"),
+    mLocalizer.msg("day.6", "Sa")
+  };
+
+  private static final String[] MONTH_MSG_ARR = {
+    mLocalizer.msg("month.1", "Jan"),
+    mLocalizer.msg("month.2", "Feb"),
+    mLocalizer.msg("month.3", "Mar"),
+    mLocalizer.msg("month.4", "Apr"),
+    mLocalizer.msg("month.5", "May"),
+    mLocalizer.msg("month.6", "Jun"),
+    mLocalizer.msg("month.7", "Jul"),
+    mLocalizer.msg("month.8", "Aug"),
+    mLocalizer.msg("month.9", "Sep"),
+    mLocalizer.msg("month.10", "Oct"),
+    mLocalizer.msg("month.11", "Nov"),
+    mLocalizer.msg("month.12", "Dec")
+  };
+  
+  
+  
   private int date;  // days since 70-01-01
 
   /**
    * Constructs a new Date object, initialized with the current date.
    */
   public Date() {
-      long dateL=System.currentTimeMillis();
-      date=(int)(dateL/1000/60/60/24);
+    long dateL=System.currentTimeMillis();
+    date=(int)(dateL/1000/60/60/24);
   }
 
   public Date(int daysSince1970) {
-      date=daysSince1970;
+    date=daysSince1970;
   }
   
   
@@ -71,39 +101,40 @@ public class Date implements java.io.Serializable, Comparable {
 
 
   public java.util.Calendar getCalendar() {
-      java.util.Calendar result=new java.util.GregorianCalendar();
+    java.util.Calendar result=new java.util.GregorianCalendar();
 
-      long l=(long)date*24*60*60*1000;
+    long l=(long)date*24*60*60*1000;
 
-      java.util.Date d=new java.util.Date(l);
-      result.setTime(d);
+    java.util.Date d=new java.util.Date(l);
+    result.setTime(d);
 
-      return result;
+    return result;
   }
 
+  
+  
   public String toString() {
+    java.util.Calendar cal = getCalendar();
+    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
+    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+    int month = cal.get(Calendar.MONTH);
 
-      String days[]={"So","Mo","Tu","We","Th","Fr","Sa"};
-      String months[]={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-
-      long l=((long)date)*24*60*60*1000;
-      java.util.Date d=new java.util.Date(l);
-      java.util.Calendar c=new java.util.GregorianCalendar();
-      c.setTime(d);
-      return days[c.get(Calendar.DAY_OF_WEEK)-1]+" "+c.get(Calendar.DAY_OF_MONTH)+". "+months[c.get(Calendar.MONTH)];
-
+    return mLocalizer.msg("datePattern", "{0}, {1} {2}", DAY_MSG_ARR[dayOfWeek],
+      MONTH_MSG_ARR[month], Integer.toString(dayOfMonth));
   }
 
+  
+  
   public long getDaysSince1900() {
-      return date+25569;
+    return date+25569;
   }
 
   public int getDaysSince1970() {
-      return date;
+    return date;
   }
 
   public void addDays(int days) {
-      date+=days;
+    date+=days;
   }
 
   public int compareTo(Object obj) {

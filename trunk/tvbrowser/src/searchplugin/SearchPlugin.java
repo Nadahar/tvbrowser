@@ -31,6 +31,8 @@ import java.util.Iterator;
 
 import java.util.regex.*;
 
+import util.exc.TvBrowserException;
+
 import devplugin.*;
 
 /**
@@ -85,7 +87,7 @@ public class SearchPlugin extends Plugin {
   public static Program[] search(String regex, boolean inTitle, boolean inText,
     boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
     int nrDays)
-    throws PatternSyntaxException
+    throws TvBrowserException
   {
     int flags = 0;
     if (! caseSensitive) {

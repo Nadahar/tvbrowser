@@ -35,6 +35,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
+import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 
 import tvdataloader.*;
@@ -87,7 +88,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
   /**
    * Called by the host-application before starting to download.
    */
-  public void connect() throws IOException {
+  public void connect() throws TvBrowserException {
     mProgramDispatcher = new ProgramDispatcher();
     
     mSubscribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
@@ -108,6 +109,10 @@ public class XmlTvDataService implements TVDataServiceInterface {
 
         IOUtilities.saveStream(stream, xmlTvDtdFile);
       }
+      catch (IOException exc) {
+        throw new TvBrowserException(getClass(), "error.1",
+          "Error when preparing the XML TV data service directory!", exc);
+      }
       finally {
         try {
           if (stream != null) stream.close();
@@ -125,7 +130,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
    * After the download is done, this method is called. Use this method for
    * clean-up.
    */
-  public void disconnect() throws java.io.IOException {
+  public void disconnect() throws TvBrowserException {
     mProgramDispatcher = null;
     mSubscribedChannelArr = null;
     mAlreadyDownloadedFiles = null;
@@ -158,7 +163,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
    * @return the whole program of the channel on the specified date.
    */
   public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
-    Channel channel) throws IOException
+    Channel channel) throws TvBrowserException
   {
     MutableChannelDayProgram channelDayProgram
       = mProgramDispatcher.getChannelDayProgram(date, channel);
@@ -194,7 +199,9 @@ public class XmlTvDataService implements TVDataServiceInterface {
    * @param channel The channel to get the programs for. When the channel list
    *        is available, this parameter will get obsolete.
    */
-  private void loadXmlFileFor(devplugin.Date date, Channel channel) {
+  private void loadXmlFileFor(devplugin.Date date, Channel channel)
+    throws TvBrowserException
+  {
     // Get the name of the XML file to load
     String xmlTvFileName = getXmlFileName(date);
     String gzFileName = getXmlFileName(date) + ".gz";
@@ -218,11 +225,9 @@ public class XmlTvDataService implements TVDataServiceInterface {
         IOUtilities.download(new URL(gzUrl), gzFile);
       }
       catch (Exception exc) {
-        System.out.println("Error downloading '" + gzUrl + "' to '"
-          + gzFile.getAbsolutePath() + "': " + exc);
-        exc.printStackTrace();
-
         gzFile.delete();
+        throw new TvBrowserException(getClass(), "error.2",
+          "Error downloading '{0}' to '{1}'!", gzUrl, gzFile.getAbsolutePath(), exc);
       }
     }
       
@@ -253,10 +258,10 @@ public class XmlTvDataService implements TVDataServiceInterface {
         saxParser.parse(gzipIn, handler, systemId);
       }
       catch (Throwable thr) {
-        System.err.println("Error reading '" + gzFile.getAbsolutePath() + "': " + thr);
-        thr.printStackTrace();
-
         fileIsCorrupt = true;
+        
+        throw new TvBrowserException(getClass(), "error.3",
+          "XML TV file is corrupt!\n({0})", gzFile.getAbsolutePath(), thr);
       }
       finally {
         try {
@@ -265,12 +270,12 @@ public class XmlTvDataService implements TVDataServiceInterface {
         try {
           if (gzipIn != null) gzipIn.close();
         } catch (IOException exc) {}
-      }
 
-      // If the file was parsed or currupt:
-      // Delete the file, we don't need it any more
-      if (DELETE_PARSED_FILES || fileIsCorrupt) {
-        gzFile.delete();
+        // If the file was parsed or currupt:
+        // Delete the file, we don't need it any more
+        if (DELETE_PARSED_FILES || fileIsCorrupt) {
+          gzFile.delete();
+        }
       }
     }
   }

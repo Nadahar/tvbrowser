@@ -38,6 +38,8 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.event.*;
 
+import util.exc.TvBrowserException;
+
 import tvbrowser.core.*;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.ContextMenu;
@@ -175,7 +177,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   /**
    * Changes the dayprogram to prog and repaints the program table.
    */
-  public void setDayProgram(DayProgram prog) throws java.io.IOException {
+  public void setDayProgram(DayProgram prog) throws TvBrowserException {
 
     if (timer.isRunning()) {
       timer.stop();

@@ -172,6 +172,7 @@
       <fileset dir="${src.dir}" includes="**/*.gif"/>
       <fileset dir="${src.dir}" includes="**/*.jpg"/>
       <fileset dir="${src.dir}" includes="**/*.dtd"/>
+      <fileset dir="${src.dir}" includes="**/*.properties"/>
     </copy>
   </target>
 

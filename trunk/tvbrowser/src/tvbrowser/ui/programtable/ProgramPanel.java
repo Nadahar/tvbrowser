@@ -46,10 +46,11 @@ import javax.swing.text.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import util.ui.TextAreaIcon;
+
 import devplugin.Plugin;
 
 import tvbrowser.core.*;
-import tvbrowser.ui.TextArea;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
@@ -61,8 +62,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static final int WIDTH_RIGHT=Settings.getColumnWidth()-WIDTH_LEFT;
   private static final int WIDTH=WIDTH_LEFT+WIDTH_RIGHT;
   private int height=0;
-  private TextArea titleArea;
-  private TextArea descArea;
+  private TextAreaIcon mTitleIcon;
+  private TextAreaIcon mDescriptionIcon;
   private String timeStr;
   private devplugin.Program program;
 
@@ -81,10 +82,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     
     program.addChangeListener(this);
     
-    titleArea=new TextArea(prog.getTitle().toCharArray(),bold,WIDTH_RIGHT-10);
-    descArea=new TextArea(prog.getShortInfo().toCharArray(),italic,WIDTH_RIGHT);
+    mTitleIcon = new TextAreaIcon(prog.getTitle().toCharArray(),bold,WIDTH_RIGHT-10);
+    mDescriptionIcon = new TextAreaIcon(prog.getShortInfo().toCharArray(),italic,WIDTH_RIGHT - 5);
 
-    height=titleArea.getHeight()+10+descArea.getHeight();
+    height = mTitleIcon.getIconHeight() + 10 + mDescriptionIcon.getIconHeight();
     timeStr=prog.getTimeString();
     this.setPreferredSize(new Dimension(WIDTH,height));
   }
@@ -102,8 +103,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     g.setFont(bold);
     g.setColor(Color.black);
     g.drawString(timeStr,0,bold.getSize());
-    titleArea.paint(g,WIDTH_LEFT,0);
-    descArea.paint(g,WIDTH_LEFT,titleArea.getHeight());
+    mTitleIcon.paintIcon(this, g, WIDTH_LEFT, 0);
+    mDescriptionIcon.paintIcon(this, g, WIDTH_LEFT, mTitleIcon.getIconHeight());
 
     if (program.isOnAir()) {
       g.setColor(new Color(128,128,255,40));

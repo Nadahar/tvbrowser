@@ -35,6 +35,8 @@ package reminderplugin;
 
 import java.io.*;
 
+import util.exc.*;
+
 import devplugin.*;
 
 public class ReminderListItem implements Serializable, Comparable {
@@ -81,7 +83,7 @@ public class ReminderListItem implements Serializable, Comparable {
       program = Plugin.getPluginManager().getProgram(programDate, programId);
     }
     catch (ClassNotFoundException exc) {
-      exc.printStackTrace();
+      throw new IOException("Class not found: " + exc.getMessage());
     }
   }
   

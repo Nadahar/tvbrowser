@@ -38,6 +38,7 @@ import java.net.URL;
 
 import javax.swing.JProgressBar;
 
+import util.exc.*;
 import util.io.IOUtilities;
 
 import devplugin.Date;
@@ -50,6 +51,9 @@ import tvdataloader.*;
  */
 public class DataService implements devplugin.PluginManager {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(DataService.class);
+  
   private static DataService mSingleton;
   
   private ProgramSelection programSelection=null;
@@ -95,14 +99,10 @@ public class DataService implements devplugin.PluginManager {
 
       Class c=dataloaderClassLoader.loadClass(className.toLowerCase()+"."+className);
       tvdataloader=(tvdataloader.TVDataServiceInterface)c.newInstance();
-    } catch(java.net.MalformedURLException e) {
-      e.printStackTrace();
-    } catch(ClassNotFoundException e) {
-      e.printStackTrace();
-    } catch(IllegalAccessException e) {
-      e.printStackTrace();
-    } catch(InstantiationException e) {
-      e.printStackTrace();
+    } catch (Exception exc) {
+      String msg = mLocalizer.msg("error.5", "Loading tv data service failed!\n({0})",
+        f.getAbsolutePath(), exc);
+      ErrorHandler.handle(msg, exc);
     }
   }
   
@@ -134,14 +134,14 @@ public class DataService implements devplugin.PluginManager {
     if (newMode) {
       try {
         tvdataloader.connect();
-      } catch(IOException exc) {
-        exc.printStackTrace();
+      } catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
       }
     } else {
       try {
         tvdataloader.disconnect();
-      } catch(IOException exc) {
-        exc.printStackTrace();
+      } catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
       }
     }
   }
@@ -164,9 +164,8 @@ public class DataService implements devplugin.PluginManager {
     try {
       tvdataloader.connect();
     }
-    catch (IOException exc) {
-      System.err.println("Connecting to server failed: " + exc);
-      exc.printStackTrace();
+    catch (TvBrowserException exc) {
+      ErrorHandler.handle(exc);
       return;
     }
     finally {
@@ -179,7 +178,12 @@ public class DataService implements devplugin.PluginManager {
     progressBar.setMaximum((daysToDownload + 2) * subscribedChannels.length);
     devplugin.Date date=new Date();
     date.addDays(-1); // get yesterday too
+    TvBrowserException downloadException = null;
     for (int i = 0; i < daysToDownload + 2; i++) {
+      if (downloadException != null) {
+        break;
+      }
+      
       for (int j = 0; (j < subscribedChannels.length) && isDownloading; j++) {
         progressBar.setValue(i * subscribedChannels.length + j + 1);
         
@@ -190,13 +194,11 @@ public class DataService implements devplugin.PluginManager {
         }
         
         try {
-          prog = tvdataloader.downloadDayProgram(date,channel);
+          prog = tvdataloader.downloadDayProgram(date, channel);
         }
-        catch (IOException exc) {
-          System.err.println("Downloading day program for " + channel.getName()
-            + " on " + date + " failed: " + exc);
-          exc.printStackTrace();
-          continue;
+        catch (TvBrowserException exc) {
+          downloadException = exc;
+          break;
         }
 
         if (prog == null) {
@@ -204,21 +206,28 @@ public class DataService implements devplugin.PluginManager {
         }
 
         try {
-          out=new ObjectOutputStream(new FileOutputStream(file));
+          out = new ObjectOutputStream(new FileOutputStream(file));
           out.writeObject(prog);
           out.close();
-        }catch(IOException e) {
-          e.printStackTrace();
+        } catch (IOException exc) {
+          String msg = mLocalizer.msg("error.6", "Saving tv data failed!\n({0})",
+            file.getAbsolutePath());
+          ErrorHandler.handle(msg, exc);
         }
       }
       date.addDays(1);
     }
+    
     try {
       tvdataloader.disconnect();
     }
-    catch (IOException exc) {
-      System.err.println("Disonnecting from server failed: " + exc);
-      exc.printStackTrace();
+    catch (TvBrowserException exc) {
+      ErrorHandler.handle(exc);
+    }
+    
+    if (downloadException != null) {
+      String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
+      ErrorHandler.handle(msg, downloadException);
     }
   }
 
@@ -251,8 +260,8 @@ public class DataService implements devplugin.PluginManager {
           mDayProgramHash.put(date, dayProgram);
         }
       }
-      catch (IOException exc) {
-        exc.printStackTrace();
+      catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
       }
     }
     
@@ -264,7 +273,9 @@ public class DataService implements devplugin.PluginManager {
   /**
    * Loads the day program for the specified date.
    */
-  protected DayProgram loadDayProgram(devplugin.Date date) throws IOException {
+  protected DayProgram loadDayProgram(devplugin.Date date)
+    throws TvBrowserException
+  {
     if (tvdataloader == null) {
       return null;
     }
@@ -284,25 +295,46 @@ public class DataService implements devplugin.PluginManager {
       }
       File file=new File(Settings.DATA_DIR,""+channels[i].getId()+"_"+date.getDaysSince1970());
       if (file.exists()) {
-        ObjectInputStream in=new ObjectInputStream(new FileInputStream(file));
+        ObjectInputStream in = null;
         try {
-          tvdataloader.AbstractChannelDayProgram prog=tvdataloader.readChannelDayProgram(in);
+          in = new ObjectInputStream(new FileInputStream(file));
+          tvdataloader.AbstractChannelDayProgram prog
+            = tvdataloader.readChannelDayProgram(in);
 
-          if (prog!=null) {
+          if (prog != null) {
             result.addChannelDayProgram(prog);
           }
-        }catch (ClassNotFoundException e) {
-          e.printStackTrace();
         }
-        in.close();
+        catch (Exception exc) {
+          throw new TvBrowserException(getClass(), "error.1",
+            "Error when reading program of {0} on {1}!\n({2})",
+            channels[i].getName(), date, file.getAbsolutePath(), exc);
+        }
+        finally {
+          if (in != null) {
+            try { in.close(); } catch (IOException exc) {}
+          }
+        }
       }else if (isOnlineMode()&&isDownloading) {
         tvdataloader.AbstractChannelDayProgram prog=tvdataloader.downloadDayProgram(date, channels[i]);
 
-        if (prog!=null) {
-          ObjectOutputStream out=new ObjectOutputStream(new FileOutputStream(file));
-          out.writeObject(prog);
-          out.close();
-          result.addChannelDayProgram(prog);
+        if (prog != null) {
+          ObjectOutputStream out = null;
+          try {
+            out = new ObjectOutputStream(new FileOutputStream(file));
+            out.writeObject(prog);
+            result.addChannelDayProgram(prog);
+          }
+          catch (IOException exc) {
+            throw new TvBrowserException(getClass(), "error.2",
+              "Error when saving program of {0} on {1}!\n({2})",
+              channels[i].getName(), date, file.getAbsolutePath(), exc);
+          }
+          finally {
+            if (out != null) {
+              try { out.close(); } catch (IOException exc) {}
+            }
+          }
         }
       }
     }
@@ -454,7 +486,7 @@ public class DataService implements devplugin.PluginManager {
    *
    * @param targetFile The file to export the tv data to.
    */
-  public void importTvData(File srcFile) throws IOException {
+  public void importTvData(File srcFile) throws TvBrowserException {
     ZipFile zipFile = null;
     InputStream in = null;
     
@@ -473,6 +505,10 @@ public class DataService implements devplugin.PluginManager {
           }
         }
       }
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(getClass(), "error.3",
+        "Importing tv data failed!\n({0})", srcFile.getAbsolutePath(), exc);
     }
     finally {
       if (zipFile != null) {
@@ -493,7 +529,7 @@ public class DataService implements devplugin.PluginManager {
    *
    * @param targetFile The file to export the tv data to.
    */
-  public void exportTvData(File targetFile) throws IOException {
+  public void exportTvData(File targetFile) throws TvBrowserException {
     File tvdataDir = new File(Settings.DATA_DIR);
     File[] children = tvdataDir.listFiles();
     
@@ -521,6 +557,10 @@ public class DataService implements devplugin.PluginManager {
         IOUtilities.pipeStreams(in, zipOut);
         in.close();
       }
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(getClass(), "error.4",
+        "Exporting tv data failed!\n({0})", targetFile.getAbsolutePath(), exc);
     }
     finally {
       if (zipOut != null) {

@@ -32,6 +32,8 @@
 
 package tvdataloader;
 
+import util.exc.TvBrowserException;
+
 /**
  * To write your own tv-data-loader implement this interface.
  */
@@ -40,22 +42,24 @@ public interface TVDataServiceInterface {
   /**
    * Called by the host-application before starting to download.
    */
-  public void connect() throws java.io.IOException;
+  public void connect() throws TvBrowserException;
 
   /**
    * Returns the whole program of the channel on the specified date.
    */
-  public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date, devplugin.Channel channel) throws java.io.IOException;
+  public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
+    devplugin.Channel channel) throws TvBrowserException;
 
   /**
    * After the download is done, this method is called. Use this method for clean-up.
    */
-  public void disconnect() throws java.io.IOException;
+  public void disconnect() throws TvBrowserException;
 
   /**
    * Called by the host-application to read the day-program of a channel from the file system.
    * Enter code like "return (AbstractChannelDayProgram)in.readObject();" here.
    */
-  public AbstractChannelDayProgram readChannelDayProgram(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException;
+  public AbstractChannelDayProgram readChannelDayProgram(java.io.ObjectInputStream in)
+    throws java.io.IOException, ClassNotFoundException;
 
 }

@@ -24,30 +24,35 @@
  * $Revision$
  */
 
+package util.ui;
 
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
+import java.util.ArrayList;
 
-
-package tvbrowser.ui;
-
-
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.util.ArrayList;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.Icon;
 
-public class TextArea  {
+/**
+ * An icon that displays multiline text.
+ *
+ * @author Martin Oberhauser
+ */
+public class TextAreaIcon implements Icon {
 
   class Substring {
+    
     private int begin;
     private int end;
     private char[] text;
+    
+    /** The cached String representation of this substring. */
+    private String mAsString;
+    
 
     public Substring(char[] text, int begin, int end) {
       init(text,begin,end);
@@ -63,7 +68,10 @@ public class TextArea  {
     }
 
     public String toString() {
-      return new String(text,begin,end-begin+1);
+      if (mAsString == null) {
+        mAsString = new String(text, begin, end - begin + 1);
+      }
+      return mAsString;
     }
   }
 
@@ -73,12 +81,12 @@ public class TextArea  {
   private Object[] lines;
   private Font font;
 
-  private static FontRenderContext frc=new FontRenderContext(new AffineTransform(),false,false);
+
 
   /**
-   * Creates a TextArea with the specified text, font and width.
+   * Creates a TextAreaIcon with the specified text, font and width.
    */
-  public TextArea(char[] text, Font font, int width) {
+  public TextAreaIcon(char[] text, Font font, int width) {
 
     this.width=width;
     this.text=text;
@@ -102,15 +110,7 @@ public class TextArea  {
 
   }
 
-  private int getWidth(char[] text, int start, int end) {
-    Rectangle2D rect;
-    try {
-      rect=font.getStringBounds(text,start,end,frc);
-    }catch(IndexOutOfBoundsException e) {
-      throw new IndexOutOfBoundsException("start: "+start+", end: "+end);
-    }
-    return (int)rect.getWidth();
-  }
+
 
   private int getNextDelimiterPos(char[] text, int inx) {
 
@@ -127,6 +127,8 @@ public class TextArea  {
     return inx-1;
   }
 
+  
+  
   private int getNextSubstring(char[] text, int inx, Substring substring) {
 
     if (inx>=text.length-1) {
@@ -155,7 +157,7 @@ public class TextArea  {
         return inx+2;
       }
 
-      int w=getWidth(text,start,inx);
+      int w = UiUtilities.getCharsWidth(font, text, start, inx - start);
       if (w>width) {
         if (start==inxOld) {
           substring.init(text,start,inx);
@@ -171,25 +173,45 @@ public class TextArea  {
 
 
   }
-
+  
+  
+  // implements Icon
+  
+  
   /**
-   * Returns the height of the TextArea. You can't changed the height.
+   * Returns the icon's height.
+   *
+   * @return an int specifying the fixed height of the icon.
    */
-  public int getHeight() {
-    return fontSize*lines.length;
+  public int getIconHeight() {
+    return fontSize * lines.length;
+  }  
+  
+  
+  
+  /**
+   * Returns the icon's width.
+   *
+   * @return an int specifying the fixed width of the icon.
+   */
+  public int getIconWidth() {
+    return width;
   }
-
+  
+  
+  
   /**
-   * Paints the TextArea at the specified position.
+   * Draw the icon at the specified location.  Icon implementations
+   * may use the Component argument to get properties useful for
+   * painting, e.g. the foreground or background color.
    */
-  public void paint(Graphics g, int x, int y) {
-
+  public void paintIcon(Component c, Graphics g, int x, int y) {
     g.setFont(font);
 
-    for (int i=0;i<lines.length;i++) {
-      String line=((Substring)lines[i]).toString();
-      g.drawString(line,x,y+(i+1)*fontSize);
+    for (int i = 0; i < lines.length; i++) {
+      String line = ((Substring)lines[i]).toString();
+      g.drawString(line, x, y + (i + 1) * fontSize);
     }
   }
-
+  
 }

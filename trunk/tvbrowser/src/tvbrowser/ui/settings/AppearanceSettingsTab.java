@@ -34,6 +34,8 @@ import java.io.*;
 
 import tvbrowser.core.*;
 
+import util.exc.*;
+
 /**
  * TV-Browser
  *
@@ -41,6 +43,9 @@ import tvbrowser.core.*;
  */
 public class AppearanceSettingsTab extends devplugin.SettingsTab implements ActionListener {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(AppearanceSettingsTab.class);
+  
   private JComboBox lfComboBox;
   private JTextField skinTextField;
   private JCheckBox skinCheckBox;
@@ -289,10 +294,10 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     try {
       UIManager.setLookAndFeel(obj.getLFClassName());
       Settings.setLookAndFeel(obj.getLFClassName());
-    } catch (InstantiationException e) { e.printStackTrace();
-    } catch (ClassNotFoundException e) { e.printStackTrace();
-    } catch (UnsupportedLookAndFeelException e) { e.printStackTrace();
-    } catch (IllegalAccessException e) { e.printStackTrace();
+    }
+    catch (Exception exc) {
+      String msg = mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
+      ErrorHandler.handle(msg, exc);
     }
 
     Settings.setUseApplicationSkin(this.skinCheckBox.isSelected());

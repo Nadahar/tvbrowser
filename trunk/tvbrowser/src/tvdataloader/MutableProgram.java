@@ -28,6 +28,8 @@ package tvdataloader;
 
 import java.io.*;
 
+import util.exc.TvBrowserException;
+
 import devplugin.*;
 import tvdataloader.*;
 
@@ -111,7 +113,7 @@ public class MutableProgram extends AbstractProgram {
    *
    * @param in The stream to read the program from.
    */
-  public void readProgram(InputStream in) throws IOException {
+  public void readProgram(InputStream in) throws TvBrowserException {
   }
   
   

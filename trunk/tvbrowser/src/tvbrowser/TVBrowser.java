@@ -33,6 +33,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+import java.util.logging.*;
+
 import tvbrowser.core.*;
 import tvbrowser.ui.programtable.ProgramTablePanel;
 import tvbrowser.ui.finder.FinderPanel;
@@ -42,6 +44,7 @@ import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.settings.SettingsDlg;
 import tvbrowser.ui.splashscreen.SplashScreen;
 
+import util.exc.*;
 import util.ui.*;
 
 /**
@@ -50,6 +53,9 @@ import util.ui.*;
  */
 public class TVBrowser extends JFrame implements ActionListener, DateListener, MainApplication {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
+  
   private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
   
   private JButton mNowBt, mEarlyBt, mMorningBt, mMiddayBt, mEveningBt,
@@ -70,6 +76,18 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
    * Entry point of the application
    */
   public static void main(String[] args) {
+    // setup logging
+    try {
+      new File("log").mkdir();
+      Handler fileHandler = new FileHandler("log/tvbrowser.log", 50000, 2, true);
+      fileHandler.setLevel(Level.WARNING);
+      Logger.getLogger("").addHandler(fileHandler);
+    }
+    catch (IOException exc) {
+      String msg = mLocalizer.msg("error.4", "Can't create log file.");
+      ErrorHandler.handle(msg, exc);
+    }
+    
     System.out.println("please wait...");
     
     SplashScreen splash=new SplashScreen("imgs/splash.jpg",400,300);
@@ -78,7 +96,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
     try {
       ChannelList.readChannelList();
-    }catch (IOException e) {
+    } catch (TvBrowserException exc) {
       System.out.println("no channel file found. using default channel settings");
       ChannelList.createDefaultChannelList();
     }
@@ -91,10 +109,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     try {
       curLookAndFeel=Settings.getLookAndFeel();
       UIManager.setLookAndFeel(curLookAndFeel);
-    } catch (InstantiationException e) { e.printStackTrace();
-    } catch (ClassNotFoundException e) { e.printStackTrace();
-    } catch (UnsupportedLookAndFeelException e) { e.printStackTrace();
-    } catch (IllegalAccessException e) { e.printStackTrace();
+    }
+    catch (Exception exc) {
+      String msg = mLocalizer.msg("error.1", "Unable to set look and feel.");
+      ErrorHandler.handle(msg, exc);
     }
     System.out.println("done");
     
@@ -111,20 +129,22 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
     System.out.print("loading selections..."); System.out.flush();
 	splash.setMessage("loading selections...");
+    String dir=Settings.getUserDirectoryName();
+    File selectionsFile = new File(dir, "selections");
     try {
-      String dir=Settings.getUserDirectoryName();
-      File f=new File(dir,"selections");
-      ObjectInputStream in=new ObjectInputStream(new FileInputStream(new File(dir,"selections")));
+      ObjectInputStream in=new ObjectInputStream(new FileInputStream(selectionsFile));
       ProgramSelection selection=(ProgramSelection)in.readObject();
       in.close();
       DataService.getInstance().setSelection(selection);
       System.out.println("done");
-    }catch(FileNotFoundException e) {
+    }
+    catch(FileNotFoundException e) {
       System.out.println("no selections found");
-    }catch(IOException e) {
-      e.printStackTrace();
-    }catch(ClassNotFoundException e) {
-      e.printStackTrace();
+    }
+    catch(Exception exc) {
+      String msg = mLocalizer.msg("error.2", "Error when loading selections file.\n({0})",
+        selectionsFile.getAbsolutePath(), exc);
+      ErrorHandler.handle(msg, exc);
     }
 
 	splash.setMessage("starting up...");
@@ -133,6 +153,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     frame.pack();
     frame.setSize(700,500);
     frame.setVisible(true);
+    ErrorHandler.setFrame(frame);
 
 	splash.hide();
 
@@ -285,16 +306,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     ProgramSelection selection=DataService.getInstance().getSelection();
     if (selection==null) {
       System.out.println("nothing to do.");
-    }else{
-
+    } else {
+      String dir = Settings.getUserDirectoryName();
+      File selectionsFile = new File(dir, "selections");
       try {
-        String dir=Settings.getUserDirectoryName();
-        File f=new File(dir,"selections");
-        ObjectOutputStream out=new ObjectOutputStream(new FileOutputStream(new File(dir,"selections")));
+        ObjectOutputStream out=new ObjectOutputStream(new FileOutputStream(selectionsFile));
         out.writeObject(selection);
         out.close();
-      }catch(IOException e) {
-        e.printStackTrace();
+      } catch(IOException exc) {
+        String msg = mLocalizer.msg("error.3", "Error when saving selections file.\n({0})",
+          selectionsFile.getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
 
@@ -405,8 +427,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       devplugin.Date showingDate = finderPanel.getSelectedDate();
       DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
       programTablePanel.setDayProgram(dayProgram);
-    }catch(IOException e) {
-      JOptionPane.showMessageDialog(this,e.getMessage());
+    } catch(TvBrowserException exc) {
+      ErrorHandler.handle(exc);
     }
     if (finderPanel!=null) finderPanel.update();
     
@@ -484,8 +506,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       DayProgram prog = DataService.getInstance().getDayProgram(date);
       programTablePanel.setDayProgram(prog);
       if (finderPanel!=null) finderPanel.update();
-    } catch (IOException e) {
-      JOptionPane.showMessageDialog(this,e.getMessage());
+    } catch (TvBrowserException exc) {
+      ErrorHandler.handle(exc);
     }
   }
 
@@ -520,10 +542,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
         UIManager.setLookAndFeel(curLookAndFeel);
         SwingUtilities.updateComponentTreeUI(this);
         validate();
-      } catch (InstantiationException e) { e.printStackTrace();
-      } catch (ClassNotFoundException e) { e.printStackTrace();
-      } catch (UnsupportedLookAndFeelException e) { e.printStackTrace();
-      } catch (IllegalAccessException e) { e.printStackTrace();
+      }
+      catch (Exception exc) {
+        String msg = mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
 
@@ -567,9 +589,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       try {
         DataService.getInstance().importTvData(targetFile);
       }
-      catch (IOException exc) {
-        System.err.println("Importing tv data failed: " + exc);
-        exc.printStackTrace();
+      catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
       }
     }
   }
@@ -592,9 +613,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       try {
         DataService.getInstance().exportTvData(targetFile);
       }
-      catch (IOException exc) {
-        System.err.println("Exporting tv data failed: " + exc);
-        exc.printStackTrace();
+      catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
       }
     }
   }

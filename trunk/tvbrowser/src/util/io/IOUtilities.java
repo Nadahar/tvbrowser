@@ -245,6 +245,14 @@ public class IOUtilities {
 
   
   
+  public static String replace(String original, String pattern, String str) {
+    StringBuffer buffer = new StringBuffer(original);
+    replace(buffer, pattern, str);
+    return buffer.toString();
+  }
+  
+
+  
   /**
    * Replaces in <code>buffer</code> the <code>pattern</code> by <code>str</code>.
    *
