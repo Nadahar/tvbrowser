@@ -26,12 +26,14 @@
 
 package devplugin;
 
+import java.io.*;
 import java.util.Properties;
-import javax.swing.Timer;
 import java.util.jar.*;
-import javax.swing.Icon;
-import java.io.InputStream;
+
 import java.awt.event.*;
+import javax.swing.Timer;
+import javax.swing.Icon;
+
 import util.exc.*;
 
 abstract public class Plugin {
@@ -94,25 +96,27 @@ abstract public class Plugin {
 
   
   /**
-   * Called by the host-application during start-up. Implement this method to load any objects
-   * from the file system.
+   * Called by the host-application during start-up. 
+   * <p>
+   * Implement this method to load any objects from the file system.
+   *
+   * @see #storeData(ObjectOutputStream)
    */
-  public void loadData(java.io.ObjectInputStream in) {
+  public void loadData(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+  {
   }
 
   
   
   /**
-   * Gegenstueck zu loadData. Beim Beenden der Applikation wird storeData
-   * aufgerufen. Das zurÙckgegebene Objekt wird von der Applikation gespeichert
-   * und beim n?chsten Programmstart mit loadData wieder an das Plug-In
-   * Ùbergeben.
+   * Counterpart to loadData. Called when the application shuts down.
+   * <p>
+   * Implement this method to store any objects to the file system.
    *
-   * Called by the host-application during shut-down. Implement this method to store any objects
-   * to the file system.
+   * @see #loadData(ObjectInputStream)
    */
-  public Object storeData() {
-    return null;
+  public void storeData(ObjectOutputStream out) throws IOException {
   }
   
   
@@ -176,7 +180,6 @@ abstract public class Plugin {
   
   /**
    * Returns a new SettingsTab object, which is added to the settings-window.
-   *
    */
   public SettingsTab getSettingsTab() {
     return null;

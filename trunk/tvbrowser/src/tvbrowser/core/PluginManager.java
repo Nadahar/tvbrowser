@@ -51,51 +51,67 @@ public class PluginManager {
   private static HashMap plugins;
   private static HashMap installedPlugins;
 
+  
+  
   /**
-   * Calls loadData() for a Plugin
+   * Loads the data of the specified Plugin from the disk.
    */
   private static void loadPluginData(Plugin plugin) {
-    Class c=plugin.getClass();
-    String dir=Settings.getUserDirectoryName();
-    File f=new File(dir,c.getName()+".dat");
+    String dir = Settings.getUserDirectoryName();
+    File f = new File(dir, plugin.getClass().getName() + ".dat");
     if (f.exists()) {
+      ObjectInputStream in = null;
       try {
-        ObjectInputStream in=new ObjectInputStream(new FileInputStream(f));
+        in = new ObjectInputStream(new FileInputStream(f));
         plugin.loadData(in);
-        in.close();
-      } catch (IOException exc) {
+      }
+      catch (Exception exc) {
         String msg = mLocalizer.msg("error.1", "Loading data for plugin {0} failed!\n({1})",
-          plugin.getButtonText(), f.getAbsolutePath(), exc);
+          plugin.getInfo().getName(), f.getAbsolutePath(), exc);
         ErrorHandler.handle(msg, exc);
+      }
+      finally {
+        if (in != null) {
+          try { in.close(); } catch (IOException exc) {}
+        }
       }
     }
   }
 
+  
+  
   /**
-   * Calls storeData for a Plugin 
+   * Saves the data of the specified Plugin to disk.
    */
   private static void storePluginData(Plugin plugin) {
-    Object data=plugin.storeData();
-    if (data!=null) {
-      String dir=Settings.getUserDirectoryName();
-      File f=new File(dir);
-      if (!f.exists()) {
-        f.mkdir();
-      }
-      f=new File(dir,plugin.getClass().getName()+".dat");
-      try {
-        ObjectOutputStream out=new ObjectOutputStream(new FileOutputStream(f));
-        out.writeObject(data);
-        out.close();
-      } catch(IOException exc) {
-        String msg = mLocalizer.msg("error.2", "Saving data for plugin {0} failed!\n({1})",
-          plugin.getButtonText(), f.getAbsolutePath(), exc);
-        ErrorHandler.handle(msg, exc);
+    // ensure the settings directory is present
+    String dir = Settings.getUserDirectoryName();
+    File f = new File(dir);
+    if (! f.exists()) {
+      f.mkdir();
+    }
+    
+    // save the plugin data
+    f = new File(dir, plugin.getClass().getName() + ".dat");
+    ObjectOutputStream out = null;
+    try {
+      out = new ObjectOutputStream(new FileOutputStream(f));
+      plugin.storeData(out);
+    }
+    catch(IOException exc) {
+      String msg = mLocalizer.msg("error.2", "Saving data for plugin {0} failed!\n({1})",
+        plugin.getInfo().getName(), f.getAbsolutePath(), exc);
+      ErrorHandler.handle(msg, exc);
+    }
+    finally {
+      if (out != null) {
+        try { out.close(); } catch (IOException exc) {}
       }
     }
-
   }
 
+  
+  
   private static void loadPluginSettings(Plugin plugin) {
     Class c=plugin.getClass();
     String dir=Settings.getUserDirectoryName();

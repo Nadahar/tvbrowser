@@ -46,6 +46,23 @@ public class ReminderList implements Serializable, ActionListener {
   public ReminderList() {
     list=new ArrayList();
   }
+  
+  /**
+   * Searches the list for an item with the specified program.
+   * <p>
+   * If there is no such item, null is returned.
+   */
+  public ReminderListItem getItemWithProgram(Program program) {
+    Iterator iter = list.iterator();
+    while (iter.hasNext()) {
+      ReminderListItem item = (ReminderListItem) iter.next();
+      if (item.getProgram().equals(program)) {
+        return item;
+      }
+    }
+    
+    return null;
+  }
 
   public void add(ReminderListItem item) {
     list.add(item);
