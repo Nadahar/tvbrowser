@@ -70,11 +70,15 @@ public interface TvDataService {
    * Gets the list of the channels that are available by this data service.
    */
   public Channel[] getAvailableChannels();
+  public Channel[] checkForAvailableChannels() throws TvBrowserException;
+  public boolean supportsDynamicChannelList();
   
   /**
    * Gets information about this TvDataService
    */
   public PluginInfo getInfo();
+  
+  
   
   // public int getTimeZone
 

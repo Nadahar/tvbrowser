@@ -67,7 +67,6 @@ import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.PluginUpdate;
 import tvbrowser.ui.licensebox.LicenseBox;
-import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
@@ -622,12 +621,14 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
   
   public static void createChannelList() {
+    /*
         TvDataService[] dataServiceArr
           = TvDataServiceManager.getInstance().getDataServices();
 
         for (int i=0;i<dataServiceArr.length;i++) {
           ChannelList.addDataServiceChannels(dataServiceArr[i]);
-        }
+        }*/
+    ChannelList.create();
       }
   
   /**

@@ -72,7 +72,7 @@ public class LicenseBox extends JDialog implements ActionListener {
       btnPanel.add(mDisagreeBt);
       btnPanel.add(mAgreeBt);
       
-      mRemainingSecs=10;    
+      mRemainingSecs=5;    
       mTimer = new Timer(1000, new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           mRemainingSecs--;

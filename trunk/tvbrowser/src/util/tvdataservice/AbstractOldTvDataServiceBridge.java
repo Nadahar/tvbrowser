@@ -133,6 +133,14 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
   protected abstract Channel[] getDefaultAvailableChannels();
 
 
+  public Channel[] checkForAvailableChannels() throws TvBrowserException {
+    return null;
+  }
+  
+  public boolean supportsDynamicChannelList() {
+    return false;
+  }
+
 
   /**
    * Gets the name of the directory where to download the data service specific
