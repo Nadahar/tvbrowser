@@ -177,7 +177,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mainFrame.scrollToNow();
-        DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());
+        DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());        
       }
     });
   }
