@@ -39,6 +39,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   /** Holds the number of programs for a column. */
   private int[] mMainDayProgramCount, mNextDayProgramCount;
   
+  private int mLastTimerMinutesAfterMidnight;
   private Timer mTimer;
 
 
@@ -251,6 +252,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
   private void handleTimerEvent() {
+    // Avoid a repaint 6 times a minute (Once a minute is enough)
+    int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    if (minutesAfterMidnight == mLastTimerMinutesAfterMidnight) {
+      return;
+    }
+    
+    mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
+    
     int todayDaysSince1970 = IOUtilities.getDaysSince1970();
     if (mMainDay.getDate().getDaysSince1970() == todayDaysSince1970) {
       mMainDay.markProgramsOnAir();
@@ -277,7 +286,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         break;
       }
     }
-    
+
     fireTableCellUpdated(col, row);
   }
 

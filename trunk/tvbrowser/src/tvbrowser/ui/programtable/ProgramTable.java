@@ -197,7 +197,7 @@ public class ProgramTable extends SkinPanel
     grp.setColor(new Color((int)(Math.random() * 256), (int)(Math.random() * 256),
       (int)(Math.random() * 256)));
     grp.drawRect(clipBounds.x, clipBounds.y, clipBounds.width - 1, clipBounds.height - 1);
-    */
+    /**/
   }
   
   
@@ -418,11 +418,11 @@ public class ProgramTable extends SkinPanel
 
     int y = mLayout.getColumnStart(col);
     for (int r = 0; r < mModel.getRowCount(col); r++) {
+      int height = mLayout.getCellHeight(col, r);
       if (r == row) {
-        int height = mLayout.getCellHeight(col, row);
         return new Rectangle(x, y, width, height);
       }
-      y += mLayout.getCellHeight(col, row);
+      y += height;
     }
     
     // Invalid cell
@@ -443,7 +443,7 @@ public class ProgramTable extends SkinPanel
 
   public void tableCellUpdated(int col, int row) {
     Rectangle cellRect = getCellRect(col, row);
-
+    
     if (cellRect != null) {
       repaint(cellRect);
     }
