@@ -31,7 +31,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -39,7 +38,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -68,10 +66,10 @@ import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.PluginUpdate;
+import tvbrowser.ui.licensebox.LicenseBox;
 import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.ui.ExtensionFileFilter;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 
@@ -97,7 +95,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-    mImportTvDataMI, mExportTvDataMI, aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem;
+   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, licenseMenuItem;
   private SkinPanel skinPanel;
   private HorizontalToolBar mDefaultToolBar;
   private VerticalToolBar mDateTimeToolBar;
@@ -161,24 +159,15 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     tvDataMenu.add(updateMenuItem);
 
     tvDataMenu.addSeparator();
-
-    icon = new ImageIcon("imgs/Import16.gif");
-    msg = mLocalizer.msg("menuitem.import", "Import...");
-    mImportTvDataMI = new JMenuItem(msg, icon);
-  mImportTvDataMI.setMnemonic(KeyEvent.VK_I);
-    mImportTvDataMI.addActionListener(this);
-    tvDataMenu.add(mImportTvDataMI);
-
-    icon = new ImageIcon("imgs/Export16.gif");
-    msg = mLocalizer.msg("menuitem.export", "Export...");
-    mExportTvDataMI = new JMenuItem(msg, icon);
-  mExportTvDataMI.setMnemonic(KeyEvent.VK_E);
-    mExportTvDataMI.addActionListener(this);
-    tvDataMenu.add(mExportTvDataMI);
+    
+    msg = mLocalizer.msg("menuitem.license","Terms of Use");
+    licenseMenuItem=new JMenuItem(msg);
+    licenseMenuItem.addActionListener(this);
+    tvDataMenu.add(licenseMenuItem);
     
     // Plugins menu
     mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-  mPluginsMenu.setMnemonic(KeyEvent.VK_P);
+    mPluginsMenu.setMnemonic(KeyEvent.VK_P);
     menuBar.add(mPluginsMenu);
     
   
@@ -252,8 +241,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     new MenuHelpTextAdapter(settingsMenuItem, mLocalizer.msg("menuinfo.settings",""), lb); 
     new MenuHelpTextAdapter(quitMenuItem, mLocalizer.msg("menuinfo.quit",""), lb);
     new MenuHelpTextAdapter(updateMenuItem, mLocalizer.msg("menuinfo.update",""), lb);
-    new MenuHelpTextAdapter(mImportTvDataMI, mLocalizer.msg("menuinfo.import",""), lb);
-    new MenuHelpTextAdapter(mExportTvDataMI, mLocalizer.msg("menuinfo.export",""), lb);
     new MenuHelpTextAdapter(mPluginDownloadMenuItem, mLocalizer.msg("menuinfo.findplugins",""), lb); 
     new MenuHelpTextAdapter(helpMenuItem, mLocalizer.msg("menuinfo.help",""), lb); 
     new MenuHelpTextAdapter(aboutMenuItem, mLocalizer.msg("menuinfo.about",""), lb); 
@@ -265,13 +252,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     skinPanel.add(mStatusBar,BorderLayout.SOUTH);
 
     jcontentPane.add(skinPanel,BorderLayout.CENTER);
-/*
-    addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        quit();
-      }
-    });    
-    )*/
+
   }
 
   public JLabel getStatusBarLabel() {
@@ -371,14 +352,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     if (src == quitMenuItem) {
       quit(); 
     }
-    else if (src == mImportTvDataMI) {
-      importTvData();
-    }
-    else if (src == mExportTvDataMI) {
-      exportTvData();
-    }
     else if (src == updateMenuItem) {
       updateTvData();
+    }
+    else if (src == licenseMenuItem) {
+      LicenseBox box=new LicenseBox(this, false);
+      util.ui.UiUtilities.centerAndShow(box);
     }
     else if (src == settingsMenuItem) {
       showSettingsDialog();
@@ -486,23 +465,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
 
-//  public void updateLookAndFeel() {
-    /*
-    if (curLookAndFeel == null || !curLookAndFeel.equals(Settings.getLookAndFeel())) {
-      try {
-        curLookAndFeel = Settings.getLookAndFeel();
-        UIManager.setLookAndFeel(curLookAndFeel);
-        SwingUtilities.updateComponentTreeUI(this);
-        validate();
-      }
-      catch (Exception exc) {
-        String msg = mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
-        ErrorHandler.handle(msg, exc);
-      }
-    }*/
-
-  //}
-
 
 
   public void updateApplicationSkin() {
@@ -518,62 +480,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
 
-  private void importTvData() {
-    JFileChooser chooser = new JFileChooser();
-
-    String msg;
-
-    File defaultFile = new File("tvdata" + EXPORTED_TV_DATA_EXTENSION);
-    
-    chooser.setSelectedFile(defaultFile);
-    msg = mLocalizer.msg("importDlgTitle", "Import TV data");
-    chooser.setDialogTitle(msg);
-    msg = mLocalizer.msg("tvDataFilter", "TV data ({0})",
-      "*" + EXPORTED_TV_DATA_EXTENSION);
-    chooser.addChoosableFileFilter(new ExtensionFileFilter(EXPORTED_TV_DATA_EXTENSION, msg));
-
-    chooser.showOpenDialog(this);
-
-    File targetFile = chooser.getSelectedFile();
-    if ((targetFile != null) && (targetFile.exists())) {
-      try {
-        DataService.getInstance().importTvData(targetFile);
-
-        newTvDataAvailable();
-      }
-      catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
-    }
-  }
-
-
-
-  private void exportTvData() {
-    JFileChooser chooser = new JFileChooser();
-
-    String msg;
-
-    File defaultFile = new File("tvdata" + EXPORTED_TV_DATA_EXTENSION);
-    chooser.setSelectedFile(defaultFile);
-    msg = mLocalizer.msg("exportDlgTitle", "Export TV data");
-    chooser.setDialogTitle(msg);
-    msg = mLocalizer.msg("tvDataFilter", "TV data ({0})",
-      "*" + EXPORTED_TV_DATA_EXTENSION);
-    chooser.addChoosableFileFilter(new ExtensionFileFilter(EXPORTED_TV_DATA_EXTENSION, msg));
-
-    chooser.showSaveDialog(this);
-
-    File targetFile = chooser.getSelectedFile();
-    if (targetFile != null) {
-      try {
-        DataService.getInstance().exportTvData(targetFile);
-      }
-      catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
-    }
-  }
 
   public void runUpdateThread(final int daysToDownload) {
     
