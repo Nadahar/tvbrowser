@@ -29,6 +29,7 @@ import java.io.File;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import java.util.Properties;
@@ -71,14 +72,24 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private ProgressMonitor mProgressMonitor;
 
 
-  private static final String[] DEFAULT_CHANNEL_GROUPS = new String[] {
-    "http://tvbrowser.dyndns.tv/digital",
-    "http://tvbrowser.dyndns.tv/austria",
-    "http://tvbrowser.dyndns.tv/main",
-    "http://tvbrowser.dyndns.tv/local",
-    "http://tvbrowser.dyndns.tv/others", 
-    "http://tvbrowser.dyndns.tv/radio",
+  private static final String[][] DEFAULT_CHANNEL_GROUP_MIRRORS = new String[][] {
+    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
+    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
+    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
+    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
+    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
+ //   new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},   
   };
+  
+  private static final String[] DEFAULT_CHANNEL_GROUP_NAMES = new String[] {
+    "digital",
+    "austria",
+    "main",
+    "local",
+    "others",
+ //   "radio"  
+  };
+  
   
   private ChannelGroup[] mChannelGroupArr;
 
@@ -93,6 +104,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   private int mDirectlyLoadedBytes;  
   
+  private static TvBrowserDataService mInstance;
   
   public Version getAPIVersion() {
     return new Version(1,0); 
@@ -100,19 +112,44 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   public TvBrowserDataService() {
     mSettings = new Properties();
-    
-    mChannelGroupArr=new ChannelGroup[DEFAULT_CHANNEL_GROUPS.length];
-    for (int i=0;i<DEFAULT_CHANNEL_GROUPS.length;i++) {
-      mChannelGroupArr[i]=new ChannelGroup(this, DEFAULT_CHANNEL_GROUPS[i]);
+    mInstance=this;
+    /*
+    if (DEFAULT_CHANNEL_GROUP_MIRRORS.length!=DEFAULT_CHANNEL_GROUP_NAMES.length) {
+      throw new RuntimeException("invalid group names or group mirrors");
     }
     
+    mChannelGroupArr=new ChannelGroup[DEFAULT_CHANNEL_GROUP_NAMES.length];
+    for (int i=0;i<DEFAULT_CHANNEL_GROUP_NAMES.length;i++) {
+      mChannelGroupArr[i]=new ChannelGroup(this, DEFAULT_CHANNEL_GROUP_NAMES[i], DEFAULT_CHANNEL_GROUP_MIRRORS[i]);
+    }
+    */
+  }
+  
+  
+  public static TvBrowserDataService getInstance() {
+    if (mInstance==null) {
+      throw new RuntimeException("no instance of TvBrowserDataService class available");
+    }
+    return mInstance;
   }
 
   public void setWorkingDirectory(File dataDir) {
     mDataDir=dataDir;
-    for (int i=0;i<DEFAULT_CHANNEL_GROUPS.length;i++) {
-      mChannelGroupArr[i].setWorkingDirectory(dataDir);
+    //for (int i=0;i<DEFAULT_CHANNEL_GROUP_NAMES.length;i++) {
+    if (mChannelGroupArr!=null) {
+      for (int i=0;i<mChannelGroupArr.length;i++) {
+        mChannelGroupArr[i].setWorkingDirectory(dataDir);
+      }
     } 
+  }
+
+  public ChannelGroup[] getChannelGroups() {
+    
+    return mChannelGroupArr; 
+  }
+  
+  public void setChannelGroups(ChannelGroup[] groups) {
+    mChannelGroupArr=groups;
   }
 
 
@@ -334,9 +371,80 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     return null;
   }
+  
+  public void addGroup(ChannelGroup group) {
+    
+    HashSet newChannelGroups=new HashSet();
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      newChannelGroups.add(mChannelGroupArr[i]);
+    }  
+    newChannelGroups.add(group);
+    mChannelGroupArr=new ChannelGroup[newChannelGroups.size()];
+    newChannelGroups.toArray(mChannelGroupArr);    
+  }
+  
+  public void removeGroup(ChannelGroup group) {
+    
+     HashSet newChannelGroups=new HashSet();
+     for (int i=0;i<mChannelGroupArr.length;i++) {
+       if (!group.equals(mChannelGroupArr[i])) {
+         newChannelGroups.add(mChannelGroupArr[i]);
+       }else {
+         System.out.println("group "+group+" removed"); 
+       }
+     }  
+     mChannelGroupArr=new ChannelGroup[newChannelGroups.size()];
+     newChannelGroups.toArray(mChannelGroupArr);  
+     
+     
+     for (int i=0;i<mChannelGroupArr.length;i++) {
+       System.out.println("group: "+mChannelGroupArr[i]); 
+     }  
+    
+  }
+  
+  public ChannelGroup[] getDefaultGroups() {
+    if (DEFAULT_CHANNEL_GROUP_MIRRORS.length!=DEFAULT_CHANNEL_GROUP_NAMES.length) {
+      throw new RuntimeException("invalid group names or group mirrors");
+    }
+    
+    ChannelGroup[] result=new ChannelGroup[DEFAULT_CHANNEL_GROUP_NAMES.length];
+    for (int i=0;i<DEFAULT_CHANNEL_GROUP_NAMES.length;i++) {
+      result[i]=new ChannelGroup(this, DEFAULT_CHANNEL_GROUP_NAMES[i], DEFAULT_CHANNEL_GROUP_MIRRORS[i]);
+    }
+    return result;
+    
+  }
+  
+/*
+  public void addChannelGroupByURL(String url, ProgressMonitor monitor) throws TvBrowserException {
+    
+    // create the new channel group 
+    int pos=url.lastIndexOf('/');
+    String groupId=url.substring(pos+1,url.length());
+    
+    String groupUrl=url.substring(0,pos);
+    
+    System.out.println(groupId);
+    System.out.println(groupUrl);
+    
+    ChannelGroup group=new ChannelGroup(this, groupId, new String[]{groupUrl});
+    
+    // read the channellist for the new group 
+    group.checkForAvailableChannels(monitor);
+    
+    // add the group to the group list
+    HashSet newChannelGroups=new HashSet();
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      newChannelGroups.add(mChannelGroupArr[i]);
+    }  
+		newChannelGroups.add(group);
+    mChannelGroupArr=new ChannelGroup[newChannelGroups.size()];
+    newChannelGroups.toArray(mChannelGroupArr);
+    
+  }
 
-
-
+*/
   /**
    * Called by the host-application during start-up. Implements this method to
    * load your dataservices settings from the file system.
@@ -344,6 +452,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   public void loadSettings(Properties settings) {
     mSettings = settings;
     
+    /* Load data level settings */
     String tvDataLevel=settings.getProperty("level");
     if (tvDataLevel==null) {
       settings.setProperty("level","base:::more16-00");
@@ -367,7 +476,34 @@ public class TvBrowserDataService extends AbstractTvDataService {
     mSubscribedLevelArr=new TvDataLevel[levelList.size()];
     for (int i=0;i<levelList.size();i++) {
       mSubscribedLevelArr[i]=(TvDataLevel)levelList.get(i);
-    } 
+    }
+    
+    
+    /* load channel groups settings */
+    
+    String groupNames=settings.getProperty("groupname");
+    String[] groupNamesArr;
+    if (groupNames==null) {
+      groupNamesArr=DEFAULT_CHANNEL_GROUP_NAMES;
+    }else{
+      groupNamesArr=groupNames.split(":");
+    }
+    
+    mChannelGroupArr=new ChannelGroup[groupNamesArr.length];
+    for (int i=0;i<groupNamesArr.length;i++) {
+      String[] groupUrlArr;
+      if (groupNames==null) {
+        groupUrlArr=DEFAULT_CHANNEL_GROUP_MIRRORS[i];
+      }
+      else {
+        String groupUrls=settings.getProperty("group_"+groupNamesArr[i],"");
+        groupUrlArr=groupUrls.split(";");
+      }
+      mChannelGroupArr[i]=new ChannelGroup(this, groupNamesArr[i],groupUrlArr);
+      mChannelGroupArr[i].setWorkingDirectory(mDataDir);
+    }
+    
+     
   }
 
 
@@ -415,7 +551,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     for (int i=0;i<mChannelGroupArr.length;i++) {
       
       monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking group {0} - ({1} of {2})",mChannelGroupArr[i].getName(),""+i,""+mChannelGroupArr.length));
-      Channel[] ch=mChannelGroupArr[i].checkForAvailableChannels();
+      Channel[] ch=mChannelGroupArr[i].checkForAvailableChannels(null);
       for (int j=0;j<ch.length;j++) {
         channelList.add(ch[j]);  
       }    

@@ -24,6 +24,9 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
      public String getId() {
        return id;
      }
+     public String getDescription() {
+       return "";
+     }
     };    
   }
   

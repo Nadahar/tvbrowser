@@ -150,7 +150,7 @@ public class TvDataUpdater {
       ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(channelArr.length);
       try {
         dataService.updateTvData(updateManager, channelArr, startDate,
-          daysToDownload, monitor);
+        daysToDownload, monitor);
       }
       catch (Throwable thr) {
         mLog.log(Level.WARNING, "Updating the TV data for TV data service "
