@@ -37,6 +37,7 @@ import java.awt.event.KeyEvent;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -49,8 +50,9 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import util.ui.ImageUtilities;
 import util.ui.Localizer;
-
+import util.ui.UiUtilities;
 import captureplugin.drivers.defaultdriver.configpanels.ParamDescriptionPanel;
 
 /**
@@ -63,14 +65,14 @@ public class AdditionalParams extends JDialog {
     
     /** List of ParamEntries */
     private JList mList;
+    /** ListModell */
+    private DefaultListModel mListModel;
     /** Current Name */
     private JTextField mName;
     /** Current Params */
     private JTextArea mParam;
     /** Current ParamEnty */
     private ParamEntry selectedEntry;
-    /** All ParamEntries */
-    private Vector mEntries;
     /** Config */
     private DeviceConfig mConfig;
     /** currently deleting */
@@ -84,10 +86,26 @@ public class AdditionalParams extends JDialog {
     public AdditionalParams(JDialog parent, DeviceConfig config) {
         super(parent, true);
         mConfig = config;
-        mEntries = new Vector(config.getParamList());
+        
+        fillModel(config);
         createGUI();
     }
 
+    private void fillModel(DeviceConfig config) {
+
+      Vector vec = new Vector(config.getParamList());
+      mListModel = new DefaultListModel();
+      
+      for (int i=0;i<vec.size();i++) {
+        mListModel.addElement(vec.get(i));
+      }
+      
+      if (vec.size() == 0) {
+        mListModel.addElement(new ParamEntry());
+      }
+      
+    }
+    
     /**
      *  Create GUI
      */
@@ -144,11 +162,7 @@ public class AdditionalParams extends JDialog {
 
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
-        if (mEntries.size() == 0) {
-            mEntries.add(new ParamEntry());
-        }
-        
-        mList = new JList(mEntries);
+        mList = new JList(mListModel);
 
         mList.addListSelectionListener(new ListSelectionListener() {
 
@@ -160,9 +174,11 @@ public class AdditionalParams extends JDialog {
 
         panel.add(new JScrollPane(mList), BorderLayout.CENTER);
 
-        JPanel buttons = new JPanel(new FlowLayout());
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JButton add = new JButton(mLocalizer.msg("Add","Add"));
+        JButton add = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/New16.gif",this.getClass()));
+        
+        add.setToolTipText(mLocalizer.msg("Add","Add"));
 
         add.addActionListener(new ActionListener() {
 
@@ -174,7 +190,8 @@ public class AdditionalParams extends JDialog {
 
         buttons.add(add);
 
-        JButton remove = new JButton(mLocalizer.msg("Remove","Remove"));
+        JButton remove = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Delete16.gif",this.getClass()));
+        remove.setToolTipText(mLocalizer.msg("Remove","Remove"));
 
         remove.addActionListener(new ActionListener() {
 
@@ -186,11 +203,43 @@ public class AdditionalParams extends JDialog {
 
         buttons.add(remove);
 
+        JButton up = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Up16.gif",this.getClass()));
+        up.setToolTipText(mLocalizer.msg("Remove","Remove"));
+        buttons.add(up);
+
+        up.addActionListener(new ActionListener() {
+
+          public void actionPerformed(ActionEvent e) {
+            upPressed();
+          }
+          
+        });
+        
+        JButton down = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Down16.gif",this.getClass()));
+        down.setToolTipText(mLocalizer.msg("Remove","Remove"));
+        buttons.add(down);
+
+        down.addActionListener(new ActionListener() {
+
+          public void actionPerformed(ActionEvent e) {
+            downPressed();
+          }
+          
+        });
+        
         panel.add(buttons, BorderLayout.SOUTH);
 
         return panel;
     }
 
+    private void upPressed() {
+      UiUtilities.moveSelectedItems(mList, -1);
+    }
+    
+    private void downPressed() {
+      UiUtilities.moveSelectedItems(mList, 1);
+    }
+    
     /**
      * Create Details-Panel
      * @return Details-Panel
@@ -246,8 +295,8 @@ public class AdditionalParams extends JDialog {
         
         Vector l = new Vector();
         
-        for (int i = 0; i < mEntries.size(); i++) {
-            ParamEntry e = (ParamEntry) mEntries.get(i);
+        for (int i = 0; i < mListModel.size(); i++) {
+            ParamEntry e = (ParamEntry) mListModel.get(i);
             
             if ((e.getName().trim().length() > 0) || (e.getParam().trim().length() > 0)) {
                 if (e.getName().trim().length() == 0) {
@@ -278,12 +327,11 @@ public class AdditionalParams extends JDialog {
 
             int num = mList.getSelectedIndex();
 
-            mEntries.remove(mList.getSelectedValue());
-            mList.setListData(mEntries);
+            mListModel.removeElement(mList.getSelectedValue());
 
-            if (num+1 > mEntries.size()) {
-                mList.setSelectedIndex(mEntries.size()-1);
-            } else if (mEntries.size() > 0) {
+            if (num+1 > mListModel.size()) {
+                mList.setSelectedIndex(mListModel.size()-1);
+            } else if (mListModel.size() > 0) {
                 mList.setSelectedIndex(num);
             }
         }
@@ -295,8 +343,7 @@ public class AdditionalParams extends JDialog {
      */
     protected void addPressed() {
         ParamEntry n = new ParamEntry();
-        mEntries.add(n);
-        mList.setListData(mEntries);
+        mListModel.addElement(n);
         mList.setSelectedValue(n, true);
     }
 
