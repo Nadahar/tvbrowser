@@ -134,7 +134,8 @@ public class ProgramFieldType {
       }     
     }
     
-    return new ProgramFieldType(typeId, "unknown", UNKOWN_FORMAT, false);
+    return new ProgramFieldType(typeId, "unknown (" + typeId + ")",
+                                UNKOWN_FORMAT, false);
   }
   
   

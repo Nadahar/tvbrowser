@@ -130,11 +130,11 @@ public class PrimaryDataManagerTest extends TestCase {
         // TODO: A day program that has an old update with a higher frame version
         //       that needs a second update
         
-        return true;
+        return false;
       }
       catch (Exception exc) {
         exc.printStackTrace(err);
-        return false;
+        return true;
       }
     }
     

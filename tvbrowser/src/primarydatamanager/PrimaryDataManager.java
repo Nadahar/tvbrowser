@@ -119,10 +119,12 @@ public class PrimaryDataManager {
     }
     
     // Let the prepared dir become the new backup
-    if (! mPreparedDir.renameTo(mBackupDir)) {
-      throw new PreparationException("Renaming file '"
-        + mPreparedDir.getAbsolutePath() + "' to '"
-        + mBackupDir.getAbsolutePath() + "' failed");
+    if (mPreparedDir.exists()) {
+      if (! mPreparedDir.renameTo(mBackupDir)) {
+        throw new PreparationException("Renaming file '"
+          + mPreparedDir.getAbsolutePath() + "' to '"
+          + mBackupDir.getAbsolutePath() + "' failed");
+      }
     }
 
     // Let the work dir become the new prepared dir
@@ -142,8 +144,10 @@ public class PrimaryDataManager {
       throw new PreparationException("No primary data services specified");
     }
     
+    String dir = mRawDir.getAbsolutePath();
     for (int i = 0; i < mDataServiceArr.length; i++) {
-      if (! mDataServiceArr[i].execute(mRawDir.getAbsolutePath(), System.err)) {
+      boolean thereWereErrors = mDataServiceArr[i].execute(dir, System.err);
+      if (thereWereErrors) {
         throw new PreparationException("Getting raw data from primary data "
           + " service " + mDataServiceArr[i].getClass().getName() + " failed");
       }
@@ -168,6 +172,8 @@ public class PrimaryDataManager {
       // Extract the information from the file name
       // Pattern: <yyyy>-<mm>-<dd>_<country>_<channel>_raw_full.gz
       if (fileName.endsWith("_raw_full.gz")) {
+        System.out.println("Processing raw file " + fileArr[i].getAbsolutePath());
+        
         // Extract the information from the file name
         Date date;
         String country, channel;
@@ -200,7 +206,13 @@ public class PrimaryDataManager {
         }
         
         // Process the file
-        processRawFile(rawFile, date, country, channel);
+        try {
+          processRawFile(rawFile, date, country, channel);
+        }
+        catch (PreparationException exc) {
+          throw new PreparationException("Processing raw file failed: "
+            + fileArr[i].getAbsolutePath(), exc);
+        }
       }
     }
   }
@@ -211,6 +223,9 @@ public class PrimaryDataManager {
     String country, String channel)
     throws PreparationException
   {
+    // Remove all empty fields from the day program
+    removeEmptyFields(rawProg);
+    
     // Get the file names of the level-complete-files
     String[] levelFileNameArr = new String[LEVEL_ARR.length];
     for (int i = 0; i < levelFileNameArr.length; i++) {
@@ -283,6 +298,23 @@ public class PrimaryDataManager {
           // Something changed -> Create an update
           createUpdate(levelProgArr[i], newLevelProgArr[i], date, country,
                        channel, LEVEL_ARR[i]);
+        }
+      }
+    }
+  }
+
+
+
+  private void removeEmptyFields(DayProgramFile prog) {
+    for (int frameIdx = 0; frameIdx < prog.getProgramFrameCount(); frameIdx++) {
+      ProgramFrame frame = prog.getProgramFrameAt(frameIdx);
+      
+      for (int fieldIdx = frame.getProgramFieldCount() - 1; fieldIdx >= 0; fieldIdx--) {
+        ProgramField field = frame.getProgramFieldAt(fieldIdx);
+        byte[] data = field.getBinaryData();
+        
+        if ((data == null) || (data.length == 0)) {
+          frame.removeProgramFieldAt(fieldIdx);
         }
       }
     }
