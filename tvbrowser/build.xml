@@ -486,7 +486,7 @@
    | This target depends on clean-runtime to be sure that the runtime
    | directory contains no stuff we don't want to be destributed.
    +-->
-  <target name="public-tvdatakit" depends="clean, clean-runtime, test, runtime-tvdatakit">
+  <target name="public-tvdatakit" depends="clean, clean-runtime, runtime-tvdatakit">
     
     <!-- Pack the TvDataStarterKit zip -->
     <mkdir dir="${public.dir}"/>
