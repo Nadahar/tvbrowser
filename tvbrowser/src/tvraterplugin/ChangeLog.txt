@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.60
+- I hate Nullpointers ;). One in the Updater fixed
+
 0.59
 - Show personal Ratings in overview
 
