@@ -48,7 +48,8 @@ public class ChannelPanel extends JPanel {
   
   private int mColumnWidth;
   private JLabel[] mLabelArr;
-  
+  /** Height of Panel, if an Icon is > 15, it get adjusted to it's needs */
+  private int mColumnHeight = 15;  
   
   public ChannelPanel(int columnWidth, Channel[] channelArr) {
     setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -70,7 +71,12 @@ public class ChannelPanel extends JPanel {
     for (int i = 0; i < mLabelArr.length; i++) {
       mLabelArr[i]=new ChannelLabel(channelArr[i]);  
       add(mLabelArr[i]);
-    }
+   
+      if ((mLabelArr[i] != null) && (mLabelArr[i].getIcon() != null) && 
+              (mLabelArr[i].getIcon().getIconHeight() > mColumnHeight)) {
+          mColumnHeight = mLabelArr[i].getIcon().getIconHeight();
+      }
+   }
     
     setColumnWidth(mColumnWidth);
     updateUI();
@@ -82,7 +88,7 @@ public class ChannelPanel extends JPanel {
     mColumnWidth = columnWidth;
     
     for (int i = 0; i < mLabelArr.length; i++) {
-      mLabelArr[i].setPreferredSize(new Dimension(mColumnWidth, 15));
+      mLabelArr[i].setPreferredSize(new Dimension(mColumnWidth, mColumnHeight));
     }
   }  
 
@@ -102,6 +108,12 @@ public class ChannelPanel extends JPanel {
     }
     
     public ChannelLabel(final Channel ch) {
+      // Set Icon if it's available
+      if (ch.getIcon() != null) {
+          setIcon(ch.getIcon());
+      }        
+        
+        
       // Set the channel name as text
       String channelName = ch.getName();
       if (channelName == null) {
