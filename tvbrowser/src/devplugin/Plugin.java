@@ -37,6 +37,7 @@ import java.util.jar.JarFile;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import util.exc.TvBrowserException;
 import util.ui.FixedSizeIcon;
@@ -184,6 +185,18 @@ abstract public class Plugin {
    */
   final protected Frame getParentFrame() {
     return mParentFrame;
+  }
+  
+  
+  /**
+   * Helper method that loads an ImageIcon from the plugin jar file and returns
+   * it.
+   * 
+   * @param fileName The name of the icon file.
+   * @return The icon.
+   */
+  final protected ImageIcon createImageIcon(String fileName) {
+    return ImageUtilities.createImageIconFromJar(fileName, getClass());
   }
 
 
