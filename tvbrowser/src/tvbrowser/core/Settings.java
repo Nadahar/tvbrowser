@@ -42,16 +42,11 @@ class TVBrowserProperties extends java.util.Properties {
 		}
 		
 		public Object setProperty(String key, String value) {
-			System.out.print("setting "+key);
 			String oldVal=getProperty(key);
 			if (oldVal!=null && !oldVal.equals(value)) {
 					unconfirmedSettingItems.add(key);
-					System.out.println(" --> (1) changed from '"+oldVal+" ' to '"+value+"'");
 			}else if (oldVal==null && value!=null) {
 				unconfirmedSettingItems.add(key);
-				System.out.println(" --> (2) changed from '"+oldVal+" ' to '"+value+"'");
-			}else {
-				System.out.println(" --> (3) no changes '"+oldVal+" ' is '"+value+"'");
 			}
 			
 			return super.setProperty(key,value);

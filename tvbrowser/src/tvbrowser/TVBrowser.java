@@ -100,13 +100,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     SplashScreen splash = new SplashScreen("imgs/splash.jpg",400,300);
     splash.show();
+    
+    createChannelList();
 
-    try {
-      ChannelList.readChannelList();
-    } catch (TvBrowserException exc) {
-      mLog.warning("No channel file found. using default channel settings.");
-      ChannelList.createDefaultChannelList();
-    }
+   
 
     Settings.loadSettings();
     mLog.info("Loading Look&Feel...");
@@ -350,7 +347,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   }
 
   
-  
+  private static void createChannelList() {
+	try {
+		 ChannelList.readChannelList();
+	   } catch (TvBrowserException exc) {
+		 mLog.warning("No channel file found. using default channel settings.");
+		 ChannelList.createDefaultChannelList();
+	   }
+  }
 		
   private void updatePluginMenu(JMenu theMenu) {
 	theMenu.removeAll();
@@ -785,6 +789,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     	buttonPanel.update();   	
     }
     
+    if (Settings.settingHasChanged(new String[]{"subscribed"})) {
+    	createChannelList();
+    	programTablePanel.subscribedChannelsChanged();
+		devplugin.Date showingDate = finderPanel.getSelectedDate();
+		DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate, false);
+		try {
+			programTablePanel.setDayProgram(dayProgram);
+		} catch(TvBrowserException exc) {
+	  		ErrorHandler.handle(exc);
+		}    	
+    }
 	
   }
   /**

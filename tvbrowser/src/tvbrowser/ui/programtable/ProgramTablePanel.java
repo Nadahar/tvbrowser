@@ -176,6 +176,10 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   public void setPluginContextMenu(ContextMenu menu) {
 	 contextMenu=menu;
    }
+   
+   public void subscribedChannelsChanged() {
+	channelPanel=new ChannelPanel();
+   }
 
   /**
    * Changes the dayprogram to prog and repaints the program table.
