@@ -340,7 +340,12 @@ public class PremiereDataService extends AbstractTvDataService {
     int month = Integer.parseInt(monthStr);
     cal.set(Calendar.DAY_OF_MONTH, day);
     cal.set(Calendar.MONTH, month - 1);
-    int daysSince1970 = (int)(cal.getTimeInMillis() / 1000L / 60L / 60L / 24L);
+	
+	int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
+	int daylight = cal.get(Calendar.DST_OFFSET);
+    int daysSince1970 = (int)((cal.getTimeInMillis()+zoneOffset+daylight) / 1000L / 60L / 60L / 24L);
+    
+    
     
     // Only get the next few days (to avoid out of memory)
     int minDaysSince1970 = startDate.getDaysSince1970();
