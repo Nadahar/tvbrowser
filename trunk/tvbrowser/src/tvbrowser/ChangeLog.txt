@@ -9,6 +9,7 @@ current:
 - show timezone in about box
 - make fonts chooseable (in settings file)
 - remember window size
+- remember window location
 
 0.9.3:
 - bugfixes
