@@ -62,6 +62,8 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     String msg;
     
     setLayout(new BorderLayout());
+	setBorder(BorderFactory.createEmptyBorder(20,30,20,30));
+	
     String leftText = mLocalizer.msg("availableChannels", "Available channels");
     String rightText = mLocalizer.msg("subscribedChannels", "Subscribed channels");
     panel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
