@@ -506,8 +506,8 @@ public class TVBrowser {
   
   
   public static synchronized void flushSettings() {    
-    mLog.info("Storing channel day light saving time corrections");
-    ChannelList.storeDayLightSavingTimeCorrections();  
+    mLog.info("Channel Settings (day light saving time corrections/icons)");
+    ChannelList.storeAllSettings();  
     
     mLog.info("Storing window size and location");
     boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
