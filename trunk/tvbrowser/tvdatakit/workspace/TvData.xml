@@ -27,14 +27,16 @@ all these tags are not required you don't have to use them.
    |   channel:   (required) The channel ID. This value corresponds to the 'id'
    |              attribute in the TvChannels.xml
    |   start:     (required) The start date and time
+   |   stop:      The stop date and time (if missing TV-Browser will calculate it)
    |   vps-start: The VPS start time
    |   showview:  The showview number
    +-->
   <programme channel="test24"
              start="200407101030"
+             stop="200407101100"
              vps-start="200407101045"
              showview="563 123">
-  
+
     <!--
      | (required) The "title" or "original title", according to the 'lang'.
      | (Only the "title" is required, the "original title" is optional)
@@ -51,28 +53,28 @@ all these tags are not required you don't have to use them.
      +-->
     <sub-title lang="de">Der Teufelsprung</sub-title>
     <sub-title lang="orig">Bart the Daredevil</sub-title>
-    
+
     <!-- The description. -->
     <desc>
       Nach einer Stuntshow möchte Bart gerne Stuntman werden und übt wie
       verrückt.
     </desc>
-    
+
     <!-- The production year -->
     <date>1990</date>
-    
+
     <!-- The age limit -->
     <rating>6</rating>
-    
+
     <!-- The film URL -->
     <url>www.thesimpsons.com</url>
-    
+
     <!-- The genre -->
     <category>Zeichentrick</category>
-    
+
     <!-- The origin -->
     <country>USA</country>
-    
+
     <!--
      | "subtitles for aurally handicapped" or "original with subtitle".
      |
@@ -83,41 +85,41 @@ all these tags are not required you don't have to use them.
      +-->
     <subtitles lang="de"/>   <!-- "subtitles for aurally handicapped" -->
     <subtitles lang="orig"/> <!-- "original with subtitle" -->
-    
+
     <!-- (TV-Browser only) Specifies whether the program is live -->
     <live>yes</live> <!-- Program.INFO_LIVE -->
-  
+
     <!-- Specifies that this program is a repition -->
     <previously-shown start="200407081030"/>
-    
+
     <!-- (TV-Browser only) Specifies that this program will be repeated -->
     <next-time-shown start="200407121030"/>
 
     <!-- The net playing time -->
     <length units="minutes">25</length>
-    
+
     <credits>
       <!-- The actor list. More actors can be specified by multiple tags -->
       <actor>Bart (Sandra Schwittau)</actor>
       <actor>Lisa (Sabine Bohlmann)</actor>
-      
+
       <!-- The director -->
       <director>Matt Groening</director>
-      
+
       <!-- The script writer -->
       <writer>Matt Groening</writer>
-      
+
       <!-- The moderation -->
       <presenter>Lutz Mackensy</presenter>
-      
+
       <!-- (TV-Browser only) The music -->
       <music>Peter Palaber</music>
     </credits>
-    
+
     <video>
       <!-- black and white? -->
       <colour>no</colour>
-      
+
       <!--
        | The video format.
        |
@@ -127,7 +129,7 @@ all these tags are not required you don't have to use them.
        +-->
       <aspect>4:3</aspect>
     </video>
-    
+
     <audio>
       <!--
        | The audio format
@@ -141,16 +143,16 @@ all these tags are not required you don't have to use them.
        +-->
       <stereo>stereo</stereo>
     </audio>
-  
+
   </programme>
 
-  
+
   <!-- A minium program. -->
   <programme channel="test24" start="200407101100">
     <title>Nachrichten</title>
   </programme>
 
-  
+
   <!-- Some other programs -->
   <programme channel="test24" start="200407101115">
     <title>Rambo</title>
@@ -166,5 +168,5 @@ all these tags are not required you don't have to use them.
     <title>Bla bla</title>
     <desc>News from all over the world</desc>
   </programme>
-      
+
 </tv>
