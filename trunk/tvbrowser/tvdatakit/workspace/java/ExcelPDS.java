@@ -371,7 +371,7 @@ public class ExcelPDS extends AbstractPrimaryDataService {
       cal.setTime(date);
 
       int hour = cal.get(Calendar.HOUR_OF_DAY);
-      int min = cal.get(Calendar.MINUTE) + 1;
+      int min = cal.get(Calendar.MINUTE);
 
       return (hour * 60) + min;
     }
