@@ -238,7 +238,7 @@ public class Channel {
   }
 
   public void setIcon(Icon icon) {
-    // TODO: implement me!
+    mIcon = icon;
   }
 
 
