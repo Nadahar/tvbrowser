@@ -90,15 +90,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
 
 
-  public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "Reminder");
-    String desc = mLocalizer.msg("description", "Eine einfache Implementierung einer Erinnerungsfunktion.");
-    String author = "Martin Oberhauser";
-    
-    return new PluginInfo(name, desc, author, new Version(1, 0));
-
-  }
-
+ 
 
 
   public void loadData(ObjectInputStream in) {
@@ -142,34 +134,36 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     this.settings=settings;
   }
 
-  public String getContextMenuItemText() {
-    return mLocalizer.msg("contextMenuText", "Remind me");
-  }
-
-  public String getButtonText() {
-    return mLocalizer.msg("buttonText", "Reminder list");
-  }
+ 
 
   public devplugin.SettingsTab getSettingsTab() {
     return new ReminderSettingsTab(settings);
   }
 
-  public void execute(devplugin.Program program) {
+  public void execute(devplugin.Program[] programs) {
+  	
+  	if (programs==null) {
+  		throw new IllegalArgumentException("programs is null");
+  	}
+  	if (programs.length==1) {
 util.io.Profiler.getDefault().show("3.1");
-    ReminderDialog dlg = new ReminderDialog(parent,program);
+	    ReminderDialog dlg = new ReminderDialog(parent,programs[0]);
 util.io.Profiler.getDefault().show("3.2");
-    UiUtilities.centerAndShow(dlg);
+    	UiUtilities.centerAndShow(dlg);
 util.io.Profiler.getDefault().show("3.3");
-    if (dlg.getOkPressed()) {
-      program.mark(this);
-      if (reminderList==null) {
-        reminderList=new ReminderList();
-      }
-      reminderList.add(new ReminderListItem(program, dlg.getReminderMinutes()));
-    }else {
-
-    }
-    dlg.dispose();
+    	if (dlg.getOkPressed()) {
+      		programs[0].mark(this);
+      		if (reminderList==null) {
+        		reminderList=new ReminderList();
+      		}
+      		reminderList.add(new ReminderListItem(programs[0], dlg.getReminderMinutes()));
+    	}
+    	dlg.dispose();
+  	}
+  	else {
+  		
+  		
+  	}
   }
 
   public void execute() {
@@ -179,14 +173,7 @@ util.io.Profiler.getDefault().show("3.3");
     dlg.dispose();
   }
 
-  public String getMarkIconName() {
-    return "reminderplugin/TipOfTheDay16.gif";
-  }
-  
-  public String getButtonIconName() {
-  	return "reminderplugin/TipOfTheDay16.gif";
-  }
-
+ 
 }
 
 

@@ -39,7 +39,6 @@ import tvbrowser.ui.customizableitems.*;
 import tvbrowser.core.*;
 
 import devplugin.Plugin;
-import devplugin.PluginInfo;
 
 /**
  * TV-Browser
@@ -199,23 +198,12 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     add(content,BorderLayout.NORTH);
     
     
-    
-/*
- 
-    JPanel panel1=new JPanel(new BorderLayout());
-    msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
-    pluginInfoPanel.setBorder(BorderFactory.createTitledBorder(msg));
- 
-    panel1.add(pluginInfoPanel,BorderLayout.NORTH);
- 
-    add(panel1,BorderLayout.CENTER);
- */
   }
   
   
   
   private void showPluginInfo(Plugin plugin) {
-    pluginInfoPanel.setPluginInfo(plugin.getInfo());
+    pluginInfoPanel.setPluginInfo(plugin.getName(), plugin.getAuthor(),plugin.getDescription(),plugin.getVersion());
   }
   
   
@@ -265,7 +253,7 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     
     
     public String toString() {
-      return mPlugin.getInfo().getName();
+      return mPlugin.getName();
     }
     
   } // inner class PluginItem
@@ -331,11 +319,11 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     
     
     
-    public void setPluginInfo(PluginInfo info) {
-      nameLabel.setText(info.getName());
-      versionLabel.setText(info.getVersion().toString());
-      authorLabel.setText(info.getAuthor());
-      descriptionArea.setText(info.getDescription());
+    public void setPluginInfo(String name, String author, String description, String version) {
+      nameLabel.setText(name);
+      versionLabel.setText(version);
+      authorLabel.setText(author);
+      descriptionArea.setText(description);
     }
     
   } // inner class PluginInfoPanel

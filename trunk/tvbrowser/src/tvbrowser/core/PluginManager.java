@@ -51,7 +51,7 @@ public class PluginManager {
   private static HashMap installedPlugins;
 
   /**
-   * Calls loadData() for each Plugin after loading the plugins data
+   * Calls loadData() for a Plugin
    */
   private static void loadPluginData(Plugin plugin) {
     Class c=plugin.getClass();
@@ -71,7 +71,7 @@ public class PluginManager {
   }
 
   /**
-   * Calls storeData for each Plugin and stores the plugins data
+   * Calls storeData for a Plugin 
    */
   private static void storePluginData(Plugin plugin) {
     Object data=plugin.storeData();
@@ -140,6 +140,7 @@ public class PluginManager {
 
 
 	private static void initPlugin(Plugin p) {
+		p.init();
 		loadPluginData(p);
 		loadPluginSettings(p);		
 	}
@@ -152,23 +153,25 @@ public class PluginManager {
   /**
    * Kind of constructor
    */
+  
   public static void initInstalledPlugins() {
-    Object[] p=getInstalledPlugins();
+    //Object[] p=getInstalledPlugins();
+    Plugin[] p=getInstalledPlugins();
     for (int i=0;i<p.length;i++) {
     	initPlugin((Plugin)p[i]);
-     // loadPluginData((Plugin)p[i]);
-     // loadPluginSettings((Plugin)p[i]);
+     
     }
   }
 
   /**
    * Kind of destructor: call plugins to store their data and settings
    */
+  
   public static void finalizeInstalledPlugins() {
-    Object[] p=getInstalledPlugins();
+    Plugin[] p=getInstalledPlugins();
     for (int i=0;i<p.length;i++) {
-     // storePluginData((Plugin)p[i]);
-     // storePluginSettings((Plugin)p[i]);
+      storePluginData(p[i]);
+      storePluginSettings(p[i]);
     }
   }
 
@@ -176,14 +179,22 @@ public class PluginManager {
    * Returns an Array of devplugin.Plugin objects containing all available plugins
    */
 
-  public static Object[] getAvailablePlugins() {
+  public static Plugin[] getAvailablePlugins() {
     if (plugins==null) {
       loadAvailablePlugins();
     }
 
-    return plugins.values().toArray();
-
+    Object[] obj=plugins.values().toArray();
+    Plugin[] result=new Plugin[obj.length];
+    for (int i=0;i<obj.length;i++) {
+    	result[i]=(Plugin)obj[i];
+    }
+	return result;
   }
+  
+
+
+
 
 
   private static void loadAvailablePlugins() {
@@ -204,7 +215,7 @@ public class PluginManager {
                                    }
     }
     );
-
+    
     java.net.URL[] urlList=new java.net.URL[fileList.length];
     for (int i=0;i<urlList.length;i++) {
       try {
@@ -231,7 +242,7 @@ public class PluginManager {
         String name=p.getClass().getName();
         plugins.put(p.getClass().getName(),p);
 
-        devplugin.PluginInfo info=p.getInfo();
+        //devplugin.PluginInfo info=p.getInfo();
         mLog.info("Plugin " + name + " available");
       }
       catch (Exception exc) {
@@ -247,7 +258,31 @@ public class PluginManager {
   /**
    * Returns the installed plugins as an array of Plugin-Objects
    */
-  public static Object[] getInstalledPlugins() {
+  
+  
+  public static Plugin[] getInstalledPlugins() {
+  	
+  	if (installedPlugins==null) {
+  		installedPlugins=new HashMap();
+  		loadAvailablePlugins();
+  		String[] instPI=Settings.getInstalledPlugins();
+  		for (int i=0;i<instPI.length;i++) {
+			Plugin p=(Plugin)plugins.get(instPI[i]);
+			if (p==null) continue;
+			installedPlugins.put(p.getClass().getName(),p);		
+  		}
+  	}
+  	
+	Object[] objs=installedPlugins.values().toArray();
+	Plugin[] result=new Plugin[objs.length];
+	for (int i=0;i<objs.length;i++) {
+		result[i]=(Plugin)objs[i];
+	}
+	return result;
+  }
+  
+  
+ /* public static Object[] getInstalledPlugins() {
     if (installedPlugins!=null) {
       return installedPlugins.values().toArray();
     }
@@ -264,7 +299,7 @@ public class PluginManager {
 
     return installedPlugins.values().toArray();
   }
-
+*/
   /**
    * Returns a devplugin.Plugin object with the specified name, or null if
    * the plugin does not exist.
@@ -276,6 +311,7 @@ public class PluginManager {
   /**
    * Returns true, if the plugin with the specified name is currently installed.
    */
+  
   public static boolean isInstalled(String plugin) {
     return installedPlugins.get(plugin) != null;
   }
@@ -283,6 +319,7 @@ public class PluginManager {
   /**
    * Installs the plugin with the specified name.
    */
+  
   public static void installPlugin(String plugin) {
 
     Object obj=installedPlugins.get(plugin);
@@ -305,6 +342,7 @@ public class PluginManager {
   /**
    * Uninstalls the plugin with the specified name
    */
+  
   public static void uninstallPlugin(String plugin) {
     installedPlugins.remove(plugin);
   }
