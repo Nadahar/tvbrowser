@@ -53,7 +53,7 @@ public class ImdbSearchPlugin extends devplugin.Plugin {
 			String name = mLocalizer.msg( "pluginName" ,"IDMB Search" );
 			String desc = mLocalizer.msg( "description" ,"Searches at IMDB for a Movie" );
 			String author = "Bodo Tasche" ;
-			return new PluginInfo(name, desc, author, new Version(1, 02));
+			return new PluginInfo(name, desc, author, new Version(1, 03));
   		} 
   		
   		public String getButtonText() {
@@ -70,7 +70,7 @@ public class ImdbSearchPlugin extends devplugin.Plugin {
 
   			try {
   	  			search = URLEncoder.encode(search, "UTF-8");
-  	  			BrowserLauncher.openURL("http://www.imdb.com/Tsearch?title=" + search);
+  	  			BrowserLauncher.openURL("http://akas.imdb.com/Tsearch?title=" + search);
   			} catch (Exception e) {
   			    e.printStackTrace();
   			}
