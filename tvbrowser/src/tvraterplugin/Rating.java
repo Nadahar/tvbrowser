@@ -52,6 +52,13 @@ public class Rating implements Serializable {
 
 	/**
 	 * Creates a empty Rating
+	 */
+	public Rating() {
+		_values = new HashMap();
+	}
+
+	/**
+	 * Creates a empty Rating
 	 * 
 	 * @param title Title of the Program this rating is about
 	 */
