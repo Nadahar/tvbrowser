@@ -122,13 +122,7 @@ public interface PluginProxy extends PluginAccess {
    * @since 1.1
    */
   public boolean canUseProgramTree();
-  
-  //public TreeNode getPluginTreeRoot();
-  
- // public TreeNode[] getTreeNodes();
- // public Program[] getStoredPrograms();
-  
- // public ProgramContainer getProgramContainer();
+
   public PluginTreeNode getRootNode();
   
 }
