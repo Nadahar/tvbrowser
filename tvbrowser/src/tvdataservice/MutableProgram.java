@@ -27,14 +27,13 @@
 package tvdataservice;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Iterator;
+
 
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import util.exc.TvBrowserException;
+
 import util.io.IOUtilities;
 
 import devplugin.Channel;

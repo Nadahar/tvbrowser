@@ -28,7 +28,7 @@ package favoritesplugin;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
+
 
 import util.exc.TvBrowserException;
 
