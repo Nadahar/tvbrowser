@@ -220,6 +220,9 @@ public class Updater implements Progress {
 			} else if (nodename.equals("erotic")) {
 				int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
 				rating.setValue(Rating.EROTIC, value);
+			} else if (nodename.equals("count")) {
+				int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+				rating.setValue(Rating.COUNT, value);
 			}
 
 			child = child.getNextSibling();

@@ -39,8 +39,8 @@ import devplugin.Version;
 /**
  * This Plugin gives the User the possibility to rate a Movie
  * 
- * TODO: Save Count of Ratings from Server
  * TODO: Get Personal Ratings from Server 
+ * TODO: Rate Episodes not, the hole Series 
  * 
  * @author Bodo Tasche
  */
