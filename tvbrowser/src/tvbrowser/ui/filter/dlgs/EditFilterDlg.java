@@ -302,7 +302,8 @@ public class EditFilterDlg
 				&& mFilterList.containsFilter(filterName)) {
 				JOptionPane.showMessageDialog(
 					this,
-					"Filter '" + filterName + "' already exists.");
+					mLocalizer.msg("alreadyExists", "Filter '{0}' already exists.", filterName)
+					);
 			} else {
 				if (mFilter == null) {
 					mFilter = new UserFilter(mFilterNameTF.getText());
