@@ -68,7 +68,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
   };
 
 
-  private JComboBox mServiceCB, mTVDataLifespanCB;
+  private JComboBox mServiceCB, mTVDataLifespanCB, mBrowseModeCB;
   private JButton mConfigBt;
   private JButton mChangeDataDirBt;
   private JTextField mTvDataTF;
@@ -122,7 +122,15 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 
     msg = mLocalizer.msg("startIn", "Start in");
     browseModePn.add(new JLabel(msg));
-    browseModePn.add(new JComboBox(MODE_MSG_ARR));
+	mBrowseModeCB=new JComboBox(MODE_MSG_ARR);
+    browseModePn.add(mBrowseModeCB);
+    
+    if (Settings.getStartupInOnlineMode()) {
+    	mBrowseModeCB.setSelectedIndex(0);
+    }else{
+    	mBrowseModeCB.setSelectedIndex(1);
+    }
+    
 
     // TV data service
     JPanel dataServicePn = new JPanel(new TabLayout(2, true));
@@ -142,6 +150,8 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     mConfigBt = new JButton(mLocalizer.msg("configure", "Configure..."));
     mConfigBt.addActionListener(this);
     p1.add(mConfigBt);
+    
+	updateConfigButton();
   }
 
 
@@ -150,6 +160,8 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     Settings.setTVDataDirectory(mTvDataTF.getText());
     
 	Settings.setTVDataLifespan(getDaysFromTVDataLifespanCB());
+	
+	Settings.setStartupInOnlineMode(mBrowseModeCB.getSelectedIndex()==0);
     
   }
 
@@ -159,16 +171,18 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     return mLocalizer.msg("tvData", "TV data");
   }
 
+	public void updateConfigButton() {
+		TvDataService curSelectedService=(TvDataService)mServiceCB.getSelectedItem();
+		boolean enabled = (curSelectedService != null)
+			&& curSelectedService.hasSettingsPanel();
+		mConfigBt.setEnabled(enabled);
+	}
 
 
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
     if (source == mServiceCB) {
-      TvDataService curSelectedService=(TvDataService)mServiceCB.getSelectedItem();
-
-      boolean enabled = (curSelectedService != null)
-        && curSelectedService.hasSettingsPanel();
-      mConfigBt.setEnabled(enabled);
+    	updateConfigButton();
     }
     else if (source == mChangeDataDirBt) {
       JFileChooser fc =new JFileChooser();
@@ -183,10 +197,8 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     }
     else if (source == mConfigBt) {
 		TvDataService item = (TvDataService)mServiceCB.getSelectedItem();
-      if (item != null && item.hasSettingsPanel()) {
       	DataServiceConfigDlg dlg = new DataServiceConfigDlg(this, item);
       	dlg.centerAndShow();
-      }
     }
   }
 

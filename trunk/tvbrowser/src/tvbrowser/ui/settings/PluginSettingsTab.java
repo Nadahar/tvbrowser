@@ -33,7 +33,6 @@ import java.awt.event.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import tvbrowser.ui.customizableitems.*;
 import tvbrowser.core.*;
@@ -112,7 +111,8 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     content.add(pluginInfoPanel);
         
     JPanel panel1=new JPanel(new BorderLayout());
-    addPicBtnCheckBox=new JCheckBox("Add plugin to Toolbar");
+	String checkBoxText = mLocalizer.msg("toolbarPlugin", "Add plugin to Toolbar");
+    addPicBtnCheckBox=new JCheckBox(checkBoxText);
     panel1.add(addPicBtnCheckBox,BorderLayout.WEST);
     content.add(panel1);
     
