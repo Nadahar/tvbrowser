@@ -242,6 +242,9 @@ public class MirrorUpdater {
             data = mDataSource.loadFile(updateFileName);
             mDataTarget.writeFile(updateFileName, data);
           }
+        } else {
+          mLog.fine("File already up to date (version " + versionOnMirror + "): "
+            + completeFileName);
         }
       }
       
