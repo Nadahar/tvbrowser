@@ -39,7 +39,6 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.filters.PluginFilter;
-import tvbrowser.ui.filter.*;
 
 
 public class SelectFilterDlg extends JDialog implements ActionListener {
