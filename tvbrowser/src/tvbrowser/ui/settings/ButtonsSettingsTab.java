@@ -56,9 +56,9 @@ public class ButtonsSettingsTab implements SettingsTab {
   
   private JPanel mSettingsPn;
  
-  private JCheckBox updateCheck, settingsCheck;
-  private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
-  private OrderChooser mButtonList;
+//  private JCheckBox updateCheck, settingsCheck;
+//  private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
+//  private OrderChooser mButtonList;
  
   private TimesListPanel mTimeButtonsPn;
 
@@ -84,7 +84,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     
     
     /* visible buttons */
-    JPanel toolbarbuttonsPanel = new JPanel(new BorderLayout());
+ /*   JPanel toolbarbuttonsPanel = new JPanel(new BorderLayout());
     toolbarbuttonsPanel.setBorder(BorderFactory.createTitledBorder("Toolbar buttons"));
     
     ButtonItem[] availableButtons = getAvailableButtons();
@@ -92,11 +92,11 @@ public class ButtonsSettingsTab implements SettingsTab {
     mButtonList = new OrderChooser(toolbarButtons, availableButtons);
     toolbarbuttonsPanel.add(mButtonList,BorderLayout.WEST);
  
-
+*/
 
 
   /* 'text and images' buttons */
-
+/*
     JPanel labelBtnsPanel=new JPanel(new BorderLayout());
     JPanel panel4=new JPanel(new BorderLayout());
     msg = mLocalizer.msg("label", "Label");
@@ -122,22 +122,23 @@ public class ButtonsSettingsTab implements SettingsTab {
     panel4.add(picOnlyRadio);
     panel4.add(textAndPicRadio);
     labelBtnsPanel.add(panel4,BorderLayout.NORTH);
-
+*/
     mTimeButtonsPn = new TimesListPanel(Settings.propTimeButtons.getIntArray());  //createTimeButtonsPanel();
     mTimeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
     
     
  
-    JPanel buttonsPn = new JPanel(new GridLayout(1,2));
-    buttonsPn.add(toolbarbuttonsPanel);
-    buttonsPn.add(labelBtnsPanel);
-    toolBarPanel.add(buttonsPn);
+ //   JPanel buttonsPn = new JPanel(new GridLayout(1,2));
+//    buttonsPn.add(toolbarbuttonsPanel);
+//    buttonsPn.add(labelBtnsPanel);
+ //   toolBarPanel.add(buttonsPn);
     
     toolBarPanel.add(mTimeButtonsPn);
     
     return mSettingsPn;
   }
   
+  /*
   private ButtonItem[] getSelectedToolbarButtons(ButtonItem[] availableItems) {
     
     
@@ -162,8 +163,8 @@ public class ButtonsSettingsTab implements SettingsTab {
     list.toArray(result);
     return result;
   }
-
-
+*/
+/*
   private ButtonItem[] getAvailableButtons() {
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     
@@ -182,14 +183,14 @@ public class ButtonsSettingsTab implements SettingsTab {
     buttonList.toArray(buttonArr);
     return buttonArr;
   }
-
+*/
 
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
    // Settings.propShowTimeButtons.setBoolean(mTimeCheck.isSelected());
-    
+  /*  
     Object[] oItems = mButtonList.getOrder();
     String[] items = new String[oItems.length];
     for (int i=0; i<oItems.length; i++) {
@@ -204,7 +205,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     } else {
       Settings.propToolbarButtonStyle.setString("text&icon");
     }
-    
+    */
     int[] x = mTimeButtonsPn.getTimes();
     Settings.propTimeButtons.setIntArray(mTimeButtonsPn.getTimes());
     for (int i=0; i<x.length; i++) {
