@@ -54,28 +54,13 @@ public class ContextMenu {
 
   private void update() {
     mMenu.removeAll();
-    mMenu.add(createLockMenuItem());
-    mMenu.add(createViewMenu());
     mMenu.add(createButtonSizeMenuItem());
+    mMenu.add(createViewMenu());
+    mMenu.addSeparator();
     mMenu.add(createSetupItem());
   }
 
-  private JMenuItem createLockMenuItem() {
-    final JMenuItem item = new JMenuItem();
-    if (mToolBar.isFloatable()) {
-      item.setText(mLocalizer.msg("lock","lock toolbar"));
-    }
-    else {
-      item.setText(mLocalizer.msg("unlock","unlock toolbar"));
-    }
-    item.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        mToolBar.setFloatable(!mToolBar.isFloatable());
-      }
-    });
-    return item;
-  }
-
+ 
   private JMenu createViewMenu() {
     JMenu menu = new JMenu(mLocalizer.msg("view","view"));
     JRadioButtonMenuItem allMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("text.and.icon","text and icon"));
