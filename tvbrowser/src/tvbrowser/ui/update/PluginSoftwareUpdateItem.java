@@ -29,6 +29,8 @@ package tvbrowser.ui.update;
 
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
 
 import java.net.*;
 import java.io.*;
@@ -38,8 +40,10 @@ import javax.swing.JOptionPane;
 public class PluginSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
 	
   
+  private boolean mSuccess;
+  
     private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(AbstractSoftwareUpdateItem.class);
+    = util.ui.Localizer.getLocalizerFor(PluginSoftwareUpdateItem.class);
   
   
 	public PluginSoftwareUpdateItem(String name) {
@@ -48,23 +52,31 @@ public class PluginSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
 	
 	public boolean download() throws TvBrowserException {
     
-    //util.ui.ProgressWindow win=new util.ui.ProgressWindow(null);
-    //win.show();
-    boolean success=false;
-    File toFile=new File("plugins",mName+".jar.inst");
-    try {
-      IOUtilities.download(new URL(mUrl),toFile);
-      //win.hide();
+    final File toFile=new File("plugins",mName+".jar.inst");
+    
+    mSuccess=true;
+    ProgressWindow progWin=new util.ui.progress.ProgressWindow(null,mLocalizer.msg("downloading","downloading update item..."));
+    progWin.run(new Progress(){
+      public void run() {
+        
+        try {
+				  IOUtilities.download(new URL(mUrl),toFile);
+		    } catch (MalformedURLException e) {
+					mSuccess=false;
+			  } catch (IOException e) {
+          mSuccess=false;
+        }
+      }
+    });
+      
+    if (mSuccess) {
       JOptionPane.showMessageDialog(null,mLocalizer.msg("restartprogram","please restart tvbrowser before..."));
-      success=true;
-    }catch (Exception exc) {
-      //win.hide();
-      throw new TvBrowserException(AbstractSoftwareUpdateItem.class, "error.1",
-              "Download failed", mUrl,toFile.getAbsolutePath(),exc);
     }
-    
-    
-		return success;
+    else {
+      JOptionPane.showMessageDialog(null,mLocalizer.msg("error.1","donwload failed",mUrl,toFile.getAbsolutePath()));
+    }
+  
+    return mSuccess;
 	}
 	
 	

@@ -27,6 +27,12 @@
 package tvbrowser.ui.configassistant;
 
 import javax.swing.*;
+
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
+
+
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -70,14 +76,29 @@ public class TvdataImportDlg extends JDialog {
     mOkBt=new JButton(mLocalizer.msg("ok","OK"));
     mOkBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        try {
-          importDirectory(mDirectoryTF.getText(),toDirName);
-          mResult=OK;
+      //  try {
+          
+          ProgressWindow progWin=new util.ui.progress.ProgressWindow((Component)null,mLocalizer.msg("importing","importing - please wait..."));
+          progWin.run(new Progress(){
+            public void run() {
+              mResult=OK;
+              try {
+                importDirectory(mDirectoryTF.getText(),toDirName);
+            
+              }catch(Exception e) {
+                JOptionPane.showMessageDialog(null,e.getMessage());
+                mResult=ERROR;
+              }
+            }
+          });
+          
+          
+          
           hide();
-        }catch(Exception e) {
-          JOptionPane.showMessageDialog(null,e.getMessage());
-          mResult=ERROR;
-        }
+       // }catch(Exception e) {
+          
+       //   mResult=ERROR;
+       // }
       }
     });
         
@@ -150,7 +171,11 @@ public class TvdataImportDlg extends JDialog {
     File[] files=fromDir.listFiles();
     for (int i=0;i<files.length;i++) {
       if (files[i].isDirectory()) {
-        copyDirectory(files[i],new File(toDir,files[i].getName()));
+        File toFile=new File(toDir,files[i].getName());
+        if (!toFile.mkdirs()) {
+          throw new IOException("Could not create directory "+toFile.getAbsolutePath());
+        }
+        copyDirectory(files[i],toFile);
       }
       else {
         util.io.IOUtilities.copy(files[i],new File(toDir,files[i].getName()));

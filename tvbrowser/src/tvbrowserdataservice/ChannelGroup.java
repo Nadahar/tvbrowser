@@ -41,7 +41,7 @@ import tvbrowserdataservice.file.*;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 
-public class ChannelGroup {
+public class ChannelGroup implements devplugin.ChannelGroup {
   
   private String mID;
   private String mMirrorUrl;
@@ -89,7 +89,7 @@ public class ChannelGroup {
   }
   
   
-  private String getGroupName() {
+  public String getName() {
     if (mGroupName!=null) {
       return mGroupName;
     }
@@ -387,7 +387,7 @@ public class ChannelGroup {
        File channelFile = new File(mDataDir, mID+"_"+ChannelList.FILE_NAME);
        if (channelFile.exists()) {
          try {
-           final String groupName=getGroupName();
+           final String groupName=getName();
            devplugin.ChannelGroup group=new devplugin.ChannelGroup(){
              public String getName() {
                return groupName;
@@ -416,6 +416,12 @@ public class ChannelGroup {
      }
     
      return mAvailableChannelArr;
-   }  
+   }
+
+	
+	
+	public String getId() {
+		return mID;
+	}  
   
 }

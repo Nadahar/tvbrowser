@@ -64,7 +64,7 @@ public class TVBrowser {
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(0,97,false,"0.9.7.2");
+  public static final devplugin.Version VERSION=new devplugin.Version(0,97,false,"0.9.7.3");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
   
   private static MainFrame mainFrame;
@@ -118,18 +118,18 @@ public class TVBrowser {
       
       /* if we have got no tvdata and no assistant will be loaded there must exist an older
        * tv-browser. so ask the user for importing existing tv data. 
-       * prevVersion must be null because older tv-browser versions do not have this field
-       * in the config file. */
-      if (!Settings.getShowAssistant() && prevVersion==null) {       
-        
-        boolean showTvdataAssistant=true;
-        while (showTvdataAssistant) {
-          showTvdataAssistant=false;          
-          TvdataAssistantDlg dlg=new TvdataAssistantDlg();
-          UiUtilities.centerAndShow(dlg);
-          int result=dlg.getSelection();
-          if (result==TvdataAssistantDlg.IMPORT_DATA) {
-            if (prevVersion==null) {
+       */
+      if (!Settings.getShowAssistant()) {
+      
+        /* update from 0.9.7, 0.9.7.1 to 0.9.7.2 */
+        if (prevVersion==null) {    
+          boolean showTvdataAssistant=true;
+          while (showTvdataAssistant) {
+            showTvdataAssistant=false;          
+            TvdataAssistantDlg dlg=new TvdataAssistantDlg();
+            UiUtilities.centerAndShow(dlg);
+            int result=dlg.getSelection();
+            if (result==TvdataAssistantDlg.IMPORT_DATA) {
               TvdataImportDlg importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata.step1","step 1: .."),"tvdata",Settings.getTVDataDirectory());
               UiUtilities.centerAndShow(importDlg);
               if (importDlg.getResult()==TvdataImportDlg.OK) {
@@ -137,13 +137,24 @@ public class TVBrowser {
                 UiUtilities.centerAndShow(importDlg);
               }
               showTvdataAssistant=importDlg.getResult()!=TvdataImportDlg.OK;
+                          
+            }else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
+              Settings.setShowAssistant(true);
             }
-          }else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
-            Settings.setShowAssistant(true);
           }
-        }        
-
+        }
+        else { /* update from 0.9.7.2 to 0.9.7.3 and higher */
+          TvdataAssistantDlg dlg=new TvdataAssistantDlg();
+          UiUtilities.centerAndShow(dlg);
+          int result=dlg.getSelection();
+          if (result==TvdataAssistantDlg.IMPORT_DATA) {
+            TvdataImportDlg importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata","import tv data"),"tvdata",Settings.getTVDataDirectory());
+            UiUtilities.centerAndShow(importDlg);
+            Settings.setShowAssistant(importDlg.getResult()!=TvdataImportDlg.OK);  
+          }          
+        }
       }
+        
       mLog.info("Creating tv data directory...");
       
       if (!f.mkdirs()) {

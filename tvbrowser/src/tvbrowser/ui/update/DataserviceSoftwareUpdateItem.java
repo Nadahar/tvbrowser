@@ -38,7 +38,7 @@ import util.io.IOUtilities;
 public class DataserviceSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
 	
   private static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(AbstractSoftwareUpdateItem.class);
+      = util.ui.Localizer.getLocalizerFor(DataserviceSoftwareUpdateItem.class);
   
   
 	public DataserviceSoftwareUpdateItem(String name) {

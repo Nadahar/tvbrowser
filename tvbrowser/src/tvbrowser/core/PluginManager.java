@@ -62,7 +62,7 @@ public class PluginManager {
   private ArrayList mInstalledPluginList;
   private Plugin[] mContextMenuPluginList;
   private Plugin mContextMenuDefaultPlugin;
-
+  
 
   private PluginManager() {
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
@@ -215,24 +215,29 @@ public class PluginManager {
 
 
   public static void installPendingPlugins() {
-	File file=new File("plugins");
-	if (!file.exists()) {
-		return;
-	}
-	File[] fileList=file.listFiles(new FileFilter() {
+    
+    ArrayList pendingPlugins=new ArrayList();
+    
+	  File file=new File("plugins");
+	  if (!file.exists()) {
+		  return;
+	  }
+	  File[] fileList=file.listFiles(new FileFilter() {
 		  public boolean accept(File f) {
 			return f.getName().endsWith(".jar.inst");
 		  }
 		});
 		
-	for (int i=0;i<fileList.length;i++) {
-		String fName=fileList[i].getAbsolutePath();
-		File fNewFile=new File(fName.substring(0,fName.length()-5));
-		if (fNewFile.exists()) {
-			fNewFile.delete();
-		}
-		fileList[i].renameTo(fNewFile);
-	}
+	  for (int i=0;i<fileList.length;i++) {
+		  String fName=fileList[i].getAbsolutePath();
+		  File fNewFile=new File(fName.substring(0,fName.length()-5));
+	  	if (fNewFile.exists()) {
+		  	fNewFile.delete();
+		  }
+		  fileList[i].renameTo(fNewFile);
+      pendingPlugins.add(fNewFile.getName());
+	  }
+       
   }
 
   /**
