@@ -58,10 +58,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   private ArrayList mListenerList;
   
-  private Channel[] mShownChannelArr;
+  private Channel[] mChannelArr, mShownChannelArr;
   private Date mMainDay, mNextDay;
   
-  private ArrayList[] mProgramColumn;
+  private ArrayList[] mProgramColumn, mShownProgramColumn;
   
   private int mLastTimerMinutesAfterMidnight;
   private Timer mTimer;
@@ -73,7 +73,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   /**
    * Creates a new instance of DefaultProgramTableModel.
    */
-  public DefaultProgramTableModel(Channel[] shownChannelArr,
+  public DefaultProgramTableModel(Channel[] channelArr,
     int todayEarliestTime, int tomorrowLatestTime)
   {
     mListenerList = new ArrayList();
@@ -83,7 +83,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     mMainDay = new Date();
     mNextDay = mMainDay.addDays(1);
     
-	setShownChannels(shownChannelArr);
+	  setChannels(channelArr);
     
     mTimer = new Timer(10000, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -102,17 +102,17 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   
-  public void setShownChannels(Channel[] shownChannelArr) {
-    if (shownChannelArr == null) {
+  public void setChannels(Channel[] channelArr) {
+    if (channelArr == null) {
       throw new NullPointerException("shownChannelArr is null!");
     }
     
-    mShownChannelArr = shownChannelArr;
+    mChannelArr = channelArr;
     
-	mProgramColumn=new ArrayList[mShownChannelArr.length];
-	for (int i=0;i<mProgramColumn.length;i++) {
-		mProgramColumn[i]=new ArrayList();
-	}
+	  mProgramColumn=new ArrayList[mChannelArr.length];
+	  for (int i=0;i<mProgramColumn.length;i++) {
+		  mProgramColumn[i]=new ArrayList();
+	  }
     
     updateTableContent();
   }
@@ -162,27 +162,25 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   private void updateTableContent(ProgressMonitor monitor) {
     
-    
-    
     deregisterFromPrograms(mProgramColumn);
     
     TvDataBase db = TvDataBase.getInstance();
     
     if (monitor!=null) {    
-      monitor.setMaximum(mShownChannelArr.length-1);
+      monitor.setMaximum(mChannelArr.length-1);
       monitor.setValue(0);
     }
     
-    for (int i = 0; i < mShownChannelArr.length; i++) {
+    for (int i = 0; i < mChannelArr.length; i++) {
       
       mProgramColumn[i].clear();
-      ChannelDayProgram cdp = db.getDayProgram(mMainDay, mShownChannelArr[i]);
+      ChannelDayProgram cdp = db.getDayProgram(mMainDay, mChannelArr[i]);
       if (cdp != null) {
         addChannelDayProgram(i, cdp, mTodayEarliestTime, cdp.getDate(),
                              24 * 60, cdp.getDate());
       }
 
-      cdp = db.getDayProgram(mNextDay, mShownChannelArr[i]);
+      cdp = db.getDayProgram(mNextDay, mChannelArr[i]);
       if (cdp != null) {
         addChannelDayProgram(i, cdp, 0, cdp.getDate(), mTomorrowLatestTime,
                              cdp.getDate());
@@ -190,10 +188,27 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       
       if (monitor!=null) {
         monitor.setValue(i);
-      } 
-      
+      }       
       
     }
+    
+    if (!(mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter)) {
+    
+      ArrayList newShownColumns = new ArrayList();
+      ArrayList newShownChannels = new ArrayList();
+      for (int i=0; i<mProgramColumn.length; i++) {
+        //System.out.println("# of progs in col "+i+": "+mProgramColumn[i].size());
+        if (mProgramColumn[i].size()>0) {
+          newShownColumns.add(mProgramColumn[i]);
+          newShownChannels.add(mChannelArr[i]);
+        }
+      }
+      mShownProgramColumn = new ArrayList[newShownColumns.size()];
+      mShownChannelArr = new Channel[newShownChannels.size()];
+    
+      newShownColumns.toArray(mShownProgramColumn);
+      newShownChannels.toArray(mShownChannelArr);
+    } 
     
     SwingUtilities.invokeLater(new Runnable() {
               public void run() {
@@ -243,7 +258,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   public int getRowCount(int col) {
     //return mMainDayProgramCount[col] + mNextDayProgramCount[col];
     
-    return mProgramColumn[col].size();
+    return mShownProgramColumn[col].size();
     
   }
 
@@ -251,9 +266,13 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   public ProgramPanel getProgramPanel(int col, int row) {
       
-      ArrayList list=mProgramColumn[col];
-      if (list.size()<=row) return null;
-      return (ProgramPanel)list.get(row);
+    //  ArrayList list=mProgramColumn[col];
+    //  if (list.size()<=row) return null;
+    //  return (ProgramPanel)list.get(row);
+      
+    ArrayList list=mShownProgramColumn[col];
+    if (list.size()<=row) return null;
+    return (ProgramPanel)list.get(row);
  
   }
 
@@ -305,8 +324,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   protected int getColumnOfChannel(Channel channel) {
-    for (int col = 0; col < mShownChannelArr.length; col++) {
-      if (channel.equals(mShownChannelArr[col])) {
+    for (int col = 0; col < mChannelArr.length; col++) {
+      if (channel.equals(mChannelArr[col])) {
         return col;
       }
     }
@@ -344,8 +363,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   private synchronized void updateProgramsOnAir() {
     TvDataBase db = TvDataBase.getInstance();
-    for (int i = 0; i < mShownChannelArr.length; i++) {
-      Channel channel = mShownChannelArr[i];
+    for (int i = 0; i < mChannelArr.length; i++) {
+      Channel channel = mChannelArr[i];
 
       ChannelDayProgram dayProg = db.getDayProgram(mMainDay, channel);
       if (dayProg != null) {

@@ -30,13 +30,16 @@ package tvbrowser.ui.filter.dlgs;
 
 import javax.swing.*;
 import javax.swing.event.*;
+
+import devplugin.ProgramFilter;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
 import util.ui.UiUtilities;
-import tvbrowser.ui.filter.filters.*;
-import tvbrowser.ui.filter.*;
+import tvbrowser.core.filters.*;
+
 
 
 public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener {
@@ -48,14 +51,16 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   private JFrame mParent;
   private JList mRuleListBox;
   private JTextField mFilterNameTF, mFilterRuleTF;
-  private DefaultListModel mRuleListModel;
+  private DefaultListModel mComponentListModel;
   private UserFilter mFilter=null;
   private JLabel mFilterRuleErrorLb, mColLb;
   private String mFilterName=null;
+  private FilterList mFilterList;
     
-	public EditFilterDlg(JFrame parent, UserFilter filter) {
+	public EditFilterDlg(JFrame parent, FilterList filterList, UserFilter filter) {
 	
 		super(parent,true);
+    mFilterList = filterList;
 		mParent=parent;
     mFilter=filter;
     
@@ -70,8 +75,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     if (filter==null) {
         setTitle(mLocalizer.msg("titleNew", "Create filter"));
     }else{
-        setTitle(mLocalizer.msg("titleEdit", "Edit filter {0}", filter.getName()));
-        mFilterName=filter.getName();
+        setTitle(mLocalizer.msg("titleEdit", "Edit filter {0}", filter.toString()));
+        mFilterName=filter.toString();
     }
     
     JPanel northPanel=new JPanel();
@@ -128,10 +133,10 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     btnPanel.add(panel1,BorderLayout.NORTH);
     
-    mRuleListModel=new DefaultListModel();
+    mComponentListModel=new DefaultListModel();
     
     
-    mRuleListBox=new JList(mRuleListModel);
+    mRuleListBox=new JList(mComponentListModel);
     mRuleListBox.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         updateBtns();    
@@ -166,14 +171,20 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       
    
     if (mFilter!=null) {
-        mFilterNameTF.setText(mFilter.getName());
+        mFilterNameTF.setText(mFilter.toString());
         mFilterRuleTF.setText(mFilter.getRule());
     }    
+    
+    FilterComponent[] fc = FilterComponentList.getInstance().getAvailableFilterComponents();
+    for (int i=0; i<fc.length; i++) {
+      mComponentListModel.addElement(fc[i]);
+    }
+    /*
         java.util.Iterator it=FilterComponentList.iterator();
         while (it.hasNext()) {
-          mRuleListModel.addElement(it.next());
+          mComponentListModel.addElement(new FilterComponentItem((FilterComponent)it.next()));
         }
-       
+    */   
         
    
     updateBtns();
@@ -204,7 +215,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       mOkBtn.setEnabled(
         !("".equals(mFilterNameTF.getText()))
         &&!("".equals(mFilterRuleTF.getText()))
-        && mRuleListModel.getSize()>0
+        && mComponentListModel.getSize()>0
         && validRule
       );
       
@@ -217,15 +228,19 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       
       Object o=e.getSource();
       if (o==mNewBtn) {
-        EditFilterComponentDlg dlg=new EditFilterComponentDlg(mParent,null);
+        EditFilterComponentDlg dlg=new EditFilterComponentDlg(mParent);
         FilterComponent rule=dlg.getFilterComponent();
         if (rule!=null) {
-            mRuleListModel.addElement(rule);
-            FilterComponentList.add(rule);
+          //FilterComponentItem item = new FilterComponentItem(rule);
+          //item.setName(dlg.getName());
+          //item.setDescription(dlg.getDescription());
+          mComponentListModel.addElement(rule);
+            tvbrowser.core.filters.FilterComponentList.getInstance().add(rule);
             String text=mFilterRuleTF.getText();
             if (text.length()>0) {
                 text+=" or ";
             }
+            //text+=dlg.getName();
             text+=rule.getName();
             mFilterRuleTF.setText(text);
             
@@ -235,33 +250,37 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }else if (o==mEditBtn) {
           int inx=mRuleListBox.getSelectedIndex();
           FilterComponent rule=(FilterComponent)mRuleListBox.getSelectedValue();
-          EditFilterComponentDlg dlg=new EditFilterComponentDlg(mParent,rule);
+          FilterComponentList.getInstance().remove(rule.getName());
+          EditFilterComponentDlg dlg=new EditFilterComponentDlg(mParent, rule);
           rule=dlg.getFilterComponent();
           if (rule!=null) {
-              mRuleListModel.setElementAt(rule,inx);
+            FilterComponentList.getInstance().add(rule);
+            mRuleListBox.repaint();
           }
               
       }else if (o==mRuleListBox) {
           updateBtns();
       }else if (o==mRemoveBtn) {
         boolean allowRemove=true;
-        Iterator it=FilterListModel.getInstance().getUserFilterIterator();
+        UserFilter[] userFilterArr = mFilterList.getUserFilterArr();
         FilterComponent fc=(FilterComponent)mRuleListBox.getSelectedValue();
-        while (it.hasNext() && allowRemove) {
-          UserFilter curFilter=(UserFilter)it.next();         
-          if (curFilter.containsRuleComponent(fc.getName())) {
-            allowRemove=false;
-            JOptionPane.showMessageDialog(this,"This filter component is used by filter '"+curFilter.getName()+"\nRemove the filter first.");
+        
+        for (int i=0;i<userFilterArr.length && allowRemove; i++) {
+          if (userFilterArr[i].containsRuleComponent(fc.getName())) {
+            allowRemove = false;
+            JOptionPane.showMessageDialog(this,"This filter component is used by filter '"+userFilterArr[i].toString()+"\nRemove the filter first.");  
           }
         }
         if (allowRemove) {
-          FilterComponentList.remove(fc);
-          mRuleListModel.remove(mRuleListBox.getSelectedIndex());
+          FilterComponentList.getInstance().remove(fc.getName());
+          mComponentListModel.remove(mRuleListBox.getSelectedIndex());
           updateBtns();
         }
+        
+          
       }else if (o==mOkBtn) {
           String filterName=mFilterNameTF.getText();
-          if (!filterName.equalsIgnoreCase(mFilterName) && FilterListModel.getInstance().containsFilter(filterName)) {
+          if (!filterName.equalsIgnoreCase(mFilterName) && mFilterList.containsFilter(filterName)) {
             JOptionPane.showMessageDialog(this,"Filter '"+filterName+"' already exists.");
           }
           else {
@@ -271,14 +290,18 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
             else {
               mFilter.setName(mFilterNameTF.getText());
             }
-          
-            java.util.Enumeration enum=mRuleListModel.elements();
+            
+            
+          /*
+            java.util.Enumeration enum=mComponentListModel.elements();
             while (enum.hasMoreElements()) {
-              FilterComponentList.add((FilterComponent)enum.nextElement());
+              FilterComponentList.add(((FilterComponentItem)enum.nextElement()).getComponent());
             }
-         
+         */
             try {
               mFilter.setRule(mFilterRuleTF.getText());
+              System.out.println("store!");
+              FilterComponentList.getInstance().store();
               hide();
             }catch(ParserException exc) {              
               JOptionPane.showMessageDialog(this,mLocalizer.msg("invalidRule", "Invalid rule: ") +exc.getMessage());
@@ -315,7 +338,56 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         mColLb.setText("pos: "+mFilterRuleTF.getCaretPosition());
       
       }
-	
+      
+      /*
+  class FilterComponentItem {
+      
+        private FilterComponent mComponent;
+        private String mName, mDescription;
+      
+        public FilterComponentItem(FilterComponent component) {
+          mComponent = component;      
+        }
+        
+        public FilterComponent getComponent() {
+          return mComponent;
+        }
+        
+        public void setName(String name) {
+          mName = name;
+        }
+        public void setDescription(String desc) {
+          mDescription = desc;
+        }
+        public String getName() {
+          return mName;
+        }
+        public String getDescription() {
+          return mDescription;
+        }
+      }      
+      */
+  public class FilterRuleListCellRenderer extends DefaultListCellRenderer {
+    
+   //   private static final util.ui.Localizer mLocalizer
+   //     = util.ui.Localizer.getLocalizerFor(FilterRuleListCellRenderer.class);
+  
+      public Component getListCellRendererComponent(JList list, Object value,
+         int index, boolean isSelected, boolean cellHasFocus)
+       {
+         JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+           index, isSelected, cellHasFocus);
+
+          if (value instanceof FilterComponent) {
+            FilterComponent comp=(FilterComponent)value;
+            //  label.setText(mLocalizer.msg("componentString", "Name: <{0}> Description: {1}", rule.getName(), rule.getDescription()));
+            label.setText("Name: <"+comp.getName()+"> Description: "+comp.getDescription());
+         }
+       
+         return label;
+       }
+  }
+
 }
 
 

@@ -129,6 +129,14 @@ public class OrderChooser extends JPanel {
   }
 
 
+  public JButton getUpButton() {
+    return mUpBt;
+  }
+  
+  public JButton getDownButton() {
+    return mDownBt;
+  }
+
   private boolean contains(Object[] array, Object obj) {
     for (int i = 0; i < array.length; i++) {
       if (array[i] == obj) {

@@ -29,5 +29,6 @@ package devplugin;
 public interface ProgramFilter {
 	
 	public boolean accept(devplugin.Program prog);
+  public String toString();
 	
 }

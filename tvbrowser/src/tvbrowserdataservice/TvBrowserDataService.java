@@ -295,7 +295,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
           throws TvBrowserException
   {
   // NOTE: summary is null when getting failed
-      
   String completeFileName = DayProgramFile.getProgramFileName(date,
             country, channelName, level);
   File completeFile = new File(mDataDir, completeFileName);
@@ -312,6 +311,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
       localVersion = DayProgramFile.readVersionFromFile(completeFile);
     }
     catch (Exception exc) {
+      // TODO: dont' throw an exception; try to download the file again
       throw new TvBrowserException(getClass(), "error.5",
                 "Reading version of TV data file failed: {0}",
                 completeFile.getAbsolutePath(), exc);
@@ -338,8 +338,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
         int mirrorVersion = summary.getDayProgramVersion(date, country,
                 channelName, levelIdx);
         needsUpdate = (mirrorVersion != -1);
+        
       }
-       
       if (needsUpdate) {
         // We need an receive -> Add a download job          
         mDownloadManager.addDownloadJob(mirror.getUrl(),completeFileName, receiveDH);

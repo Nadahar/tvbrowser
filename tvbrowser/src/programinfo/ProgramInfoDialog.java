@@ -145,8 +145,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     
     StringBuffer buffer = new StringBuffer();
     
-    System.out.println(mStyleSheet);
-    
     buffer.append("<html><head>" +
       "<style type=\"text/css\" media=\"screen\">" +
       "<!--" + mStyleSheet + "-->" +

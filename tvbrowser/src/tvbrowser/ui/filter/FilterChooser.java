@@ -27,11 +27,16 @@
 package tvbrowser.ui.filter;
 
 import javax.swing.*;
+
+import devplugin.ProgramFilter;
+
 import java.awt.event.*;
 import java.awt.BorderLayout;
 
-import tvbrowser.ui.programtable.*;
+//import tvbrowser.ui.programtable.*;
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
+import tvbrowser.ui.programtable.ProgramTableModel;
 
 public class FilterChooser extends JPanel {
 
@@ -42,24 +47,32 @@ public class FilterChooser extends JPanel {
     
   private final JComboBox mBox;
   private ProgramTableModel mModel;  
+  private FilterList mFilterList;
     
   public FilterChooser(final JFrame parent, final ProgramTableModel model) {
      
     super(new BorderLayout());
+    
+    mFilterList = new FilterList();
+    mFilterList.create();
+    
+    
     mBox=new JComboBox();
     mModel=model;
     updateList();
-    model.setProgramFilter((AbstractFilter)mBox.getSelectedItem());
+    
+    model.setProgramFilter((ProgramFilter)mBox.getSelectedItem());
     mBox.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Object o=mBox.getSelectedItem();
-        if (o instanceof AbstractFilter) {
-          model.setProgramFilter((AbstractFilter)o);   
+        if (o instanceof ProgramFilter) {
+          model.setProgramFilter((ProgramFilter)o);   
         }else if (o instanceof String){
-          SelectFilterDlg dlg=new SelectFilterDlg(parent);
+          SelectFilterDlg dlg=new SelectFilterDlg(parent, mFilterList);
           util.ui.UiUtilities.centerAndShow(dlg);
+          //mFilterList = dlg.getFilterList();
           updateList();
-          AbstractFilter f=(AbstractFilter)mBox.getItemAt(0);
+          ProgramFilter f=(ProgramFilter)mBox.getItemAt(0);
           mBox.setSelectedIndex(0);
           model.setProgramFilter(f);  
         }
@@ -74,9 +87,10 @@ public class FilterChooser extends JPanel {
         
     mBox.removeAllItems();
     
-    Object[] o=FilterListModel.getInstance().toArray();
-    for (int i=0;i<o.length;i++) {
-      mBox.addItem((AbstractFilter)o[i]);
+    //Object[] o=FilterListModel.getInstance().toArray();
+    ProgramFilter[] f = mFilterList.getFilterArr();
+    for (int i=0;i<f.length;i++) {
+      mBox.addItem(f[i]);
     }
     
     /*

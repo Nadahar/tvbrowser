@@ -197,7 +197,7 @@ public class Settings {
       ChannelList.create();
       
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
-      model.setShownChannels(ChannelList.getSubscribedChannels());
+      model.setChannels(ChannelList.getSubscribedChannels());
       
       mainFrame.getHorizontalToolBar().updateChannelChooser();  
     }

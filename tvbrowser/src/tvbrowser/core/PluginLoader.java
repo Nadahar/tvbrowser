@@ -29,7 +29,7 @@ package tvbrowser.core;
 
 
 import devplugin.*;
-import tvbrowser.ui.filter.FilterListModel;
+import tvbrowser.core.filters.FilterList;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
@@ -431,12 +431,9 @@ public class PluginLoader {
         }
 
 				public ProgramFilter[] getAvailableFilters() {
-          Object[] o = FilterListModel.getInstance().toArray();
-					ProgramFilter[] result = new ProgramFilter[o.length];
-					for (int i=0;i<result.length;i++) {
-            result[i] = (ProgramFilter) o[i];
-					}
-					return result;
+          FilterList filterList = new FilterList();
+          filterList.create();
+          return filterList.getFilterArr();
 				}
 
 				public Program getExampleProgram() {

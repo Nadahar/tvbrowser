@@ -43,7 +43,6 @@ import tvbrowser.core.*;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.FilterChooser;
-import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -358,9 +357,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mLog.info("Finishing plugins");
     PluginLoader.getInstance().shutdownAllPlugins();
     
-    mLog.info("Storing filter components");
-    FilterComponentList.store();
-
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
     
@@ -694,7 +690,69 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     SettingsDialog dlg = new SettingsDialog(this);
     dlg.centerAndShow();
     
+//<<<<<<< MainFrame.java
+//    if (Settings.settingHasChanged(new String[]{"font.programtitle","font.programinfo","font.programtime","font.channelname","usedefaultfonts"})) {
+//      util.ui.ProgramPanel.updateFonts();
+//      tvbrowser.ui.programtable.ChannelPanel.fontChanged();
+//      mProgramTableScrollPane.getProgramTable().fontChanged();
+//      mProgramTableScrollPane.tableDataChanged();
+//      mProgramTableScrollPane.getProgramTable().tableDataChanged();
+//    }
+//    if (Settings.settingHasChanged(new String[]{"lookandfeel","skinLF.themepack","skinLF.enabled"})) {
+//      TVBrowser.updateLookAndFeel();
+//    }
+//    if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
+//      updateApplicationSkin();
+//    }
+//    if (Settings.settingHasChanged(new String[]{"table.layout"})) {
+//      mProgramTableScrollPane.getProgramTable().setProgramTableLayout(null);
+//    }
+//   if (Settings.settingHasChanged( new String[] {
+//      "timebutton.early", "timebutton.midday", "timebutton.afternoon",
+//      "timebutton.evening",
+//      "tablebackground.edge", "tablebackground.early",
+//      "tablebackground.midday", "tablebackground.afternoon",
+//      "tablebackground.evening" } ))
+//    {
+//      mProgramTableScrollPane.getProgramTable().updateBackground();
+//    }
+//    
+//    if (Settings.settingHasChanged(new String[]{"updatebutton","preferencesbutton",
+//    "buttontype" /*,"plugins"*/})) {
+//      mDefaultToolBar.updateButtons();
+//    }
+//    
+//    if (Settings.settingHasChanged(new String[]{"timebutton"})) {
+//      mDateTimeToolBar.updateButtons();
+//    }
+//    if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
+//      onSubscribedChannelsChanged();
+//    }
+//    
+//    if (Settings.settingHasChanged(new String[]{"programtable.endofday","programtable.startofday"})) {
+//      mProgramTableModel.setTimeRange(Settings.getProgramTableStartOfDay(),Settings.getProgramTableEndOfDay());
+//    }
+//    
+//    if (Settings.settingHasChanged(new String[]{"columnwidth"})) {
+//      util.ui.ProgramPanel.updateColumnWidth();
+//      mProgramTableScrollPane.setColumnWidth(Settings.getColumnWidth());
+//      mProgramTableScrollPane.updateChannelPanel();
+//      mProgramTableScrollPane.getProgramTable().updateLayout();
+//    }
+//
+//    if (Settings.settingHasChanged(new String[]{"programpanel.iconPlugins","programpanel.infoFields"})) {
+//      // Force a recreation of the table content
+//      mProgramTableModel.setDate(finderPanel.getSelectedDate(),null);
+//    }
+//  }
+//  
+//  public void onSubscribedChannelsChanged() {
+//    ChannelList.create();    
+//    mProgramTableModel.setChannels(ChannelList.getSubscribedChannels());
+//    mDefaultToolBar.updateChannelChooser();  
+//=======
     Settings.handleChangedSettings();
+////>>>>>>> 1.30
   }
   
     

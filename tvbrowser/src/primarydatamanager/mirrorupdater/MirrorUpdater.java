@@ -44,6 +44,7 @@ import primarydatamanager.mirrorupdater.data.DataTarget;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
+import tvbrowserdataservice.file.SummaryFile;
 import util.io.VerySimpleFormatter;
 import devplugin.Channel;
 import devplugin.Date;
@@ -332,6 +333,14 @@ public class MirrorUpdater {
     
     // Copy the summary.gz
     //copyGroupFile(mDataTarget,mDataSource,SummaryFile.SUMMARY_FILE_NAME);
+    if (mChannelGroupArr!=null) {
+      for (int i=0;i<mChannelGroupArr.length;i++) {
+        String group=mChannelGroupArr[i];
+        data = mDataSource.loadFile(group+"_"+SummaryFile.SUMMARY_FILE_NAME);
+        mDataTarget.writeFile(group+"_"+SummaryFile.SUMMARY_FILE_NAME, data);
+      }
+    }
+    
     
     // Copy the group files
     if (mChannelGroupArr!=null) {

@@ -34,7 +34,6 @@ import javax.swing.*;
 import tvbrowser.core.*;
 import tvbrowser.ui.configassistant.TvdataAssistantDlg;
 import tvbrowser.ui.configassistant.TvdataImportDlg;
-import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
@@ -236,9 +235,6 @@ public class TVBrowser {
       ErrorHandler.handle(exc);      
     }
 
-    mLog.info("Loading filters...");
-    FilterComponentList.init();
-  
     msg = mLocalizer.msg("splash.tvData", "Checking TV data base...");
     splash.setMessage(msg);
 

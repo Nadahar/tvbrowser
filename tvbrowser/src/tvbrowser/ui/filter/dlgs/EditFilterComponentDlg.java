@@ -32,9 +32,14 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import tvbrowser.core.filters.*;
+import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
+import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
+import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 
-import tvbrowser.ui.filter.filters.*;
-import tvbrowser.ui.filter.*;
+
 import util.ui.*;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener {
@@ -42,16 +47,19 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(EditFilterComponentDlg.class);
   
-    private FilterComponent mComp;
-    private JComboBox mRuleList;
+    private tvbrowser.core.filters.FilterComponent mSelectedFilterComponent;
+    private JComboBox mRuleCb;
     private JPanel mCenterPanel, mRulePanel=null, mContentPane;
-    private JButton mOkBtn, mCancelBtn;
+    private JButton mOkBtn, mCancelBtn, mUpdateBtn;
     private JTextField mDescTF, mNameTF;
-    private String mCompName=null;
+   
+    
+    public EditFilterComponentDlg(JFrame parent) {
+      this(parent, null);
+    }
     
     public EditFilterComponentDlg(JFrame parent, FilterComponent comp) {
         super(parent,true);
-        mComp=comp;
         
         mContentPane=(JPanel)getContentPane();
         mContentPane.setLayout(new BorderLayout(7,7));
@@ -80,13 +88,15 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         descPanel.add(mDescTF,BorderLayout.EAST);
         typePanel.add(new JLabel(mLocalizer.msg("componentType", "Type:")),BorderLayout.WEST);
         
-        mRuleList=new JComboBox();
-        mRuleList.addActionListener(this);
-        mRuleList.addItem(mLocalizer.msg("hint", "must choose one"));
-        mRuleList.addItem(new KeywordFilterComponent(mLocalizer.msg("keywordName", "no name"),mLocalizer.msg("keywordDescription", "no desc")));
-        mRuleList.addItem(new PluginFilterComponent(mLocalizer.msg("pluginName", "no name"), mLocalizer.msg("pluginDescription", "no desc")));
-           
-        typePanel.add(mRuleList,BorderLayout.EAST);
+      mRuleCb=new JComboBox();
+      mRuleCb.addActionListener(this);
+      mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
+      mRuleCb.addItem(new KeywordFilterComponent());
+      mRuleCb.addItem(new PluginFilterComponent());
+      mRuleCb.addItem(new ChannelFilterComponent());   
+      mRuleCb.addItem(new TimeFilterComponent());
+                   
+        typePanel.add(mRuleCb,BorderLayout.EAST);
         
         northPanel.add(namePanel);
         northPanel.add(descPanel);
@@ -95,9 +105,10 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         
         JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
-        mOkBtn=new JButton(mLocalizer.msg("okButton", "OK"));
-        mOkBtn.addActionListener(this);
-        buttonPn.add(mOkBtn);
+          mOkBtn=new JButton(mLocalizer.msg("okButton", "OK"));
+          mOkBtn.addActionListener(this);
+          buttonPn.add(mOkBtn);
+       
         getRootPane().setDefaultButton(mOkBtn);
 
         mCancelBtn=new JButton(mLocalizer.msg("cancelButton", "Cancel"));
@@ -114,7 +125,12 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         mContentPane.add(northPanel,BorderLayout.NORTH);
         mContentPane.add(buttonPn,BorderLayout.SOUTH);
         mContentPane.add(panel,BorderLayout.CENTER);
-           
+         
+        if (comp!=null) {
+          this.setFilterComponent(comp); 
+        }
+         
+         /*  
         if (mComp!=null) {
             mCompName=mComp.getName();
             mNameTF.setText(mComp.getName());
@@ -135,7 +151,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
             }
             
             mRuleList.setSelectedItem(mComp);       
-        }
+        }*/
            
         updateOkBtn();
                     
@@ -143,14 +159,63 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         UiUtilities.centerAndShow(this);
         
     }
+    /*
+    public void setName(String name) {
+      mNameTF.setText(name);
+    }
+    
+    public void setDescription(String desc) {
+      mDescTF.setText(desc);
+    }
+    
+    public String getName() {
+      return mNameTF.getText();
+    }
+    
+    public String getDescription() {
+      return mDescTF.getText();
+    }
+    */
+    
+    /*
+    public void setFilterComponent(String name) {
+      for (int i=0; i<mRuleCb.getItemCount(); i++) {
+        FilterComponent c = (FilterComponent)mRuleCb.getItemAt(i);
+        if (c.toString().equals(name)) {
+          mRuleCb.setSelectedIndex(i);
+          return;
+        }       
+      }
+    }
+    */
+    
+    private void setFilterComponent(FilterComponent comp) {
+      System.out.println("set filter component to "+comp.toString());
+      for (int i=1;  // index 0 does not contain a FilterComponent object
+           i<mRuleCb.getItemCount(); i++) {
+        System.out.println(mRuleCb.getItemAt(i));
+        FilterComponent c = (FilterComponent)mRuleCb.getItemAt(i);
+        System.out.println("compare: "+c+"<-->"+comp);
+        if (c.toString().equals(comp.toString())) {
+          DefaultComboBoxModel model=(DefaultComboBoxModel)mRuleCb.getModel();
+          model.removeElementAt(i);
+          model.insertElementAt(comp,i);
+          mRuleCb.setSelectedIndex(i);
+          mNameTF.setText(comp.getName());
+          mDescTF.setText(comp.getDescription());
+          break;
+        }
+      }
+      
+    }
     
     public void actionPerformed(ActionEvent e) {
         Object o=e.getSource();
-        if (o==mRuleList) {
+        if (o==mRuleCb) {
             if (mRulePanel!=null) {
                 mCenterPanel.remove(mRulePanel);
             }
-            Object item=mRuleList.getSelectedItem();
+            Object item=mRuleCb.getSelectedItem();
             if (item instanceof FilterComponent) {                
                 FilterComponent fItem=(FilterComponent)item;
                 mRulePanel=fItem.getPanel();
@@ -161,36 +226,42 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
             updateOkBtn();
             
         }
-        
         else if (o==mOkBtn) {
           
           String compName=mNameTF.getText();
-          if (!compName.equalsIgnoreCase(mCompName) && FilterComponentList.componentExists(compName)) {
+          
+          
+          
+          if (FilterComponentList.getInstance().exists(compName)) {           
+          
             JOptionPane.showMessageDialog(this,"Component '"+compName+"' already exists");
           }
           else {
-            mComp=(FilterComponent)mRuleList.getSelectedItem();
-            mComp.setName(mNameTF.getText());
-            mComp.setDescription(mDescTF.getText());
-            mComp.ok();
+            
+            FilterComponent c =(FilterComponent)mRuleCb.getSelectedItem();
+            c.ok();
+            mSelectedFilterComponent = c;
+            mSelectedFilterComponent.setName(compName);
+            mSelectedFilterComponent.setDescription(mDescTF.getText());
             hide();
           }
         }  
         else if (o==mCancelBtn) {
+          mSelectedFilterComponent = null;
             hide();
         }
         
     }
     
     public FilterComponent getFilterComponent() {
-        return mComp;
+      return mSelectedFilterComponent;
     }
     
     private void updateOkBtn() {
         if (mOkBtn!=null)
         mOkBtn.setEnabled(
             !("".equals(mNameTF.getText()))
-            && mRuleList.getSelectedItem() instanceof FilterComponent
+            && mRuleCb.getSelectedItem() instanceof FilterComponent
         );
     }
     
@@ -205,5 +276,28 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     public void removeUpdate(DocumentEvent e) {
         updateOkBtn();
     }
+    
+    /*
+    class FilterComponentItem {
+      
+      private FilterComponent mComponent;
+      private String mName, mDescription;
+      
+      public FilterComponentItem(FilterComponent component) {
+        mComponent = component;      
+      }
+      public void setName(String name) {
+        mName = name;
+      }
+      public void setDescription(String desc) {
+        mDescription = desc;
+      }
+      public String getName() {
+        return mName;
+      }
+      public String getDescription() {
+        return mDescription;
+      }
+    }*/
     
 }
