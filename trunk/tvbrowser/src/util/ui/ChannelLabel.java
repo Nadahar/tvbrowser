@@ -46,7 +46,7 @@ public class ChannelLabel extends JLabel {
      * Creates the ChannelLabel
      */
     public ChannelLabel() {
-        setFont(getFont().deriveFont(Font.BOLD));
+        
     }
 
     /**
