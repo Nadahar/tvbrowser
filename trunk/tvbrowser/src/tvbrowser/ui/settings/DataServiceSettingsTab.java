@@ -90,13 +90,13 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     tvDataPn.setBorder(BorderFactory.createTitledBorder(msg));
     main.add(tvDataPn);
 
-    msg = mLocalizer.msg("deleteTvData", "Detele TV data");
+    msg = mLocalizer.msg("deleteTvData", "Delete TV data");
     tvDataPn.add(new JLabel(msg));
 	mTVDataLifespanCB=new JComboBox(DELETE_MSG_ARR);
-	int sel=Settings.getTVDataLifespan();
-	if (sel<DELETE_MSG_ARR.length) {
-		mTVDataLifespanCB.setSelectedIndex(sel);
-	}
+	
+	makeSelectionInTVDataLifespanCB(Settings.getTVDataLifespan());
+	
+	
     tvDataPn.add(mTVDataLifespanCB);
 
     msg = mLocalizer.msg("tvDataFolder", "TV data folder");
@@ -149,9 +149,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
   public void ok() {
     Settings.setTVDataDirectory(mTvDataTF.getText());
     
-	Settings.setTVDataLifespan(mTVDataLifespanCB.getSelectedIndex());
-	
-    
+	Settings.setTVDataLifespan(getDaysFromTVDataLifespanCB());
     
   }
 
@@ -192,6 +190,42 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
     }
   }
 
+  private void makeSelectionInTVDataLifespanCB(int days) {
+  	 	
+  	if  (days==3) {
+  		mTVDataLifespanCB.setSelectedIndex(1);
+  	}  	
+  	if (days==7) {
+  		mTVDataLifespanCB.setSelectedIndex(2);
+  	}
+  	
+  	if (days==14) {
+		mTVDataLifespanCB.setSelectedIndex(3);
+  	}
+  	if (days<0) {
+  		mTVDataLifespanCB.setSelectedIndex(4);
+  	}
+  	else {
+		mTVDataLifespanCB.setSelectedIndex(4);
+  	}
+  }
+
+	private int getDaysFromTVDataLifespanCB() {
+		int inx=mTVDataLifespanCB.getSelectedIndex();
+		if (inx==0) {
+			return 2;
+		}
+		else if (inx==1) {
+			return 3;
+		}
+		else if (inx==2) {
+			return 7;
+		}
+		else if (inx==3) {
+			return 14;
+		}
+		return -1;
+	}
 
   // inner class DataServiceRenderer
 

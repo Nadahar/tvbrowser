@@ -1,5 +1,8 @@
 Changelog TVBrowser
 
+current:
+- delete expired tv data
+
 0.9.3:
 - bugfixes
 

@@ -66,7 +66,17 @@ public class FinderPanel extends JPanel implements FinderListener {
 
     devplugin.Date curDate=new Date();
     int cur=curDate.getDaysSince1970();
-    for (int i=cur-4;i<cur+28;i++) {
+    
+    int lifespan=Settings.getTVDataLifespan();
+    int from;
+    if (lifespan<0) {
+    	from=cur-4;
+    }
+    else {
+    	from=cur-lifespan;
+    }
+    
+    for (int i=from;i<cur+28;i++) {
         Date d=new Date(i);
         item=new FinderItem(this, d);
         labelList.add(item);

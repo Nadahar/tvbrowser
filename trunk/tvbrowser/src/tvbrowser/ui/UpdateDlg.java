@@ -66,6 +66,8 @@ public class UpdateDlg extends JDialog implements ActionListener {
     
     String msg;
     
+    result=CANCEL;
+    
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -100,10 +102,8 @@ public class UpdateDlg extends JDialog implements ActionListener {
     
     try {
     	comboBox.setSelectedIndex(tvbrowser.core.Settings.getDownloadPeriod());
-    	System.out.println("selecting: "+tvbrowser.core.Settings.getDownloadPeriod());
-    }catch(IllegalArgumentException e) {
+     }catch(IllegalArgumentException e) {
     	comboBox.setSelectedIndex(0);
-    	System.out.println("huch!");
     }
     panel2.add(checkBox,BorderLayout.WEST);
 
@@ -115,10 +115,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
   public int getResult() { return result; }
 
-  /*public boolean rememberSettings() {
-    return true;
-  }
-*/
+  
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
     if (source==cancelBtn) {
