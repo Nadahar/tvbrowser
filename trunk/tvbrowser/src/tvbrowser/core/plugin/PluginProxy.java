@@ -26,7 +26,6 @@
 package tvbrowser.core.plugin;
 
 import javax.swing.Action;
-import javax.swing.Icon;
 
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
@@ -65,14 +64,6 @@ public interface PluginProxy extends PluginAccess {
    *         if the plugin does not provide this feature.
    */
   public Action getButtonAction();
-
-  /**
-   * Gets the icon to use for marking programs in the program table. Should be
-   * 16x16.
-   * 
-   * @return the icon to use for marking programs in the program table.
-   */
-  public Icon getMarkIcon();
 
   /**
    * This method is automatically called, when the TV data update is finished.

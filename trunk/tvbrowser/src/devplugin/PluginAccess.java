@@ -105,4 +105,12 @@ public interface PluginAccess {
    */
   public Icon[] getProgramTableIcons(Program program);
 
+  /**
+   * Gets the icon to use for marking programs in the program table. Should be
+   * 16x16.
+   * 
+   * @return the icon to use for marking programs in the program table.
+   */
+  public Icon getMarkIcon();
+
 }

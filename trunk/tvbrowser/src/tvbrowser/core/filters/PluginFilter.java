@@ -28,6 +28,7 @@ package tvbrowser.core.filters;
 
 
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.ProgramFilter;
 
 public class PluginFilter implements ProgramFilter {
@@ -38,7 +39,7 @@ public class PluginFilter implements ProgramFilter {
  
     
   public boolean accept(devplugin.Program prog) {
-    Plugin[] p=prog.getMarkedByPlugins();
+    PluginAccess[] p = prog.getMarkedByPlugins();
     return (p!=null && p.length>0);
     
   }

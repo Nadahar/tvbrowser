@@ -121,6 +121,14 @@ public interface PluginManager {
   public PluginAccess[] getActivatedPlugins();
   
   /**
+   * Gets the ID of the given Java plugin.
+   * 
+   * @param javaPlugin The Java plugin to get the ID for.
+   * @return The ID of the given Java plugin.
+   */
+  public String getJavaPluginId(Plugin javaPlugin);
+  
+  /**
    * Gets the activated plugin with the given ID.
    * 
    * @param pluginId The ID of the wanted plugin.

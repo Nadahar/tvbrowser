@@ -217,7 +217,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     newPara(buffer, "info", prog, ProgramFieldType.VPS_TYPE);
     newPara(buffer, "info", prog, ProgramFieldType.SHOWVIEW_NR_TYPE);
 
-    Plugin[] pluginArr = prog.getMarkedByPlugins();
+    PluginAccess[] pluginArr = prog.getMarkedByPlugins();
     if ((pluginArr != null) && (pluginArr.length != 0)) {
       openPara(buffer, "info");
       // Workaround: Without the &nbsp; the component are not put in one line.

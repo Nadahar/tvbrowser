@@ -38,6 +38,7 @@ import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.Program;
 
 public class PluginFilterComponent implements FilterComponent {
@@ -85,7 +86,7 @@ public class PluginFilterComponent implements FilterComponent {
     
   public boolean accept(Program program) {
          
-    Plugin[] markedBy=program.getMarkedByPlugins();
+    PluginAccess[] markedBy = program.getMarkedByPlugins();
     for (int i=0;i<markedBy.length;i++) {
       if (markedBy[i]==mPlugin) {
         return true;
