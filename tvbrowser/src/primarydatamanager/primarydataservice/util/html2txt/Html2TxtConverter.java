@@ -38,31 +38,75 @@ public class Html2TxtConverter extends FilterReader {
   public static final int A=1 << 1;
   public static final int IMG=1 << 2;
   public static final int I=1 << 3;
+  
+  private String mEncoding;
     
   
-	public Html2TxtConverter(int mode, Reader in) throws IOException {
-		super(in);	
+  public Html2TxtConverter(int mode, Reader in, String encoding) throws IOException {
+    super(in);  
     int ch=in.read();
     
     StringWriter out=new StringWriter();
-    convert(mode, in,out);
+    convert(mode, in,out,encoding);
     StringBuffer sb=out.getBuffer();
     mBuf=new StringReader(sb.toString());
+    
+  }
+  
+	public Html2TxtConverter(int mode, Reader in) throws IOException {
+		this(mode, in, null);
 	}
+  
 
 
   public int read(char[] cbuf, int off, int len) throws IOException {
-     return mBuf.read(cbuf,off,len);    
-   }
+    
+    int in=read();
+    if (in==-1) {
+      return -1;
+    }
+    cbuf[off]=(char)in;
+    for (int i=1;i<len;i++) {
+      in=read();
+      cbuf[off+i]=(char)in;
+      if (in==-1) {
+        return i;
+      }      
+    }
+    return len;
+  }
    
   public int read() throws IOException {
-    return mBuf.read();
+    int result=mBuf.read();
+    if (result==160) {
+      result=' ';
+    }
+    return result;
   }
 
- 
+  private String encode(String s) {
+    if (s==null) {
+      return null;
+    }
+    
+    String result=s;
+    try {
+			result=new String(s.toString().getBytes(),mEncoding);
+		} catch (UnsupportedEncodingException e) {
+			// ignore
+		}
+    return result;
+  }
 
-	public static void convert(int mode, Reader in, Writer out) throws IOException {
+  public static void convert(int mode, Reader in, Writer out) throws IOException {
+    convert(mode, in, out, null);
+  }
+
+	public static void convert(int mode, Reader in, Writer out, String encoding) throws IOException {
     TagReader reader=new TagReader(in);
+    if (encoding!=null) {
+      reader.setEncoding(encoding);
+    }
     PrintWriter writer=new PrintWriter(out);
     Tag tag=reader.next();
     while (tag!=null) {
@@ -106,8 +150,5 @@ public class Html2TxtConverter extends FilterReader {
       tag=reader.next();
     }
   }
-  
-  
-  
 }  
   

@@ -55,7 +55,7 @@ public class PrimaryDataManager {
   private File mPreparedDir;
   private File mWorkDir;
   private File mBackupDir;
-  private File mPDSLogDir;
+//  private File mPDSLogDir;
   
   private Channel[] mChannelArr;
   private String[] mGroupArr;
@@ -78,7 +78,7 @@ public class PrimaryDataManager {
     mPreparedDir = new File(baseDir, "prepared");
     mWorkDir     = new File(baseDir, "temp");
     mBackupDir   = new File(baseDir, "backup");
-    mPDSLogDir   = new File(baseDir, "pdslog");
+//    mPDSLogDir   = new File(baseDir, "pdslog");
     
     mRawDataProcessor = new RawDataProcessor();
   }
@@ -120,7 +120,7 @@ public class PrimaryDataManager {
     mRawDataProcessor.forceCompleteUpdateFor(channel);
   }
 
-
+/*
   public void copyGroupnameFiles() {
    
     for (int i=0;i<mGroupArr.length;i++) {      
@@ -133,25 +133,27 @@ public class PrimaryDataManager {
       }     
     }    
   }
-
+*/
 
   public void createGroupnameFiles() throws PreparationException {
-    
+   
     /* A groupname file contains the name of the group in
      * an internationalized form */
     for (int i=0;i<mGroupArr.length;i++) {      
       File fromFile=new File(mPreparedDir,mGroupArr[i]+".txt");
-      File toFile=new File(mWorkDir,mGroupArr[i]);
+      File toFileTxt=new File(mWorkDir,mGroupArr[i]+".txt");
+      File toFile=new File(mWorkDir,mGroupArr[i]+"_info");
       try {
 				util.io.IOUtilities.copy(fromFile,toFile);
+        util.io.IOUtilities.copy(fromFile,toFileTxt);
 			} catch (IOException exc) {
 				throw new PreparationException("Could not copy file from "+fromFile.getAbsolutePath()+" to "+toFile.getAbsolutePath(),exc);
 			}     
     }    
   }
-
-
-  public void updateRawDataDir(boolean doUpdateOnly, boolean nodata) throws PreparationException {
+  
+ 
+  public void updateRawDataDir(/*boolean doUpdateOnly, boolean nodata*/) throws PreparationException {
     // Delete the old work directory
     try {
       IOUtilities.deleteDirectory(mWorkDir);
@@ -165,7 +167,7 @@ public class PrimaryDataManager {
       throw new PreparationException("Could not create work directory: "
         + mWorkDir.getAbsolutePath());
     }
-    
+    /*
     // Create the pds log directory
     if (! mPDSLogDir.exists()) {
       if (! mPDSLogDir.mkdir()) {
@@ -181,7 +183,7 @@ public class PrimaryDataManager {
           + mRawDir.getAbsolutePath());
       }
     }
-
+*/
     // Create a new raw directory if it does not exist
     if (! mRawDir.exists()) {
       if (! mRawDir.mkdir()) {
@@ -192,11 +194,13 @@ public class PrimaryDataManager {
 
     // Update the mirror lists
     updateMirrorLists();
-    
+  
+  /*  
     if (!nodata) {
       // Get the new raw data
       loadNewRawData();
     }
+   */
     
     // Process the new raw data
     mRawDataProcessor.processRawDataDir(mRawDir, mPreparedDir, mWorkDir);
@@ -204,17 +208,17 @@ public class PrimaryDataManager {
     // Create a summary files
     createSummaryFiles();
     
-    if (doUpdateOnly) {
-      copyGroupnameFiles();
-      copyChannelLists();      
-    }
-    else {
+ //   if (doUpdateOnly) {
+ //     copyGroupnameFiles();
+ //     copyChannelLists();      
+ //   }
+ //   else {
       // Create the group files
       createGroupnameFiles();
     
       // Create the channel list
       createChannelLists();
-    }
+ //   }
 /*
     if (doUpdateOnly) {
       // keep the old channel list file    
@@ -284,7 +288,7 @@ public class PrimaryDataManager {
     }
   }
 
-
+/*
   private void loadNewRawData() throws PreparationException {
     if (mDataServiceArr == null) {
       throw new PreparationException("No primary data services specified");
@@ -371,9 +375,9 @@ public class PrimaryDataManager {
     mWaitingThread.interrupt();
   }
  
+ */
  
- 
-  private static PrimaryDataService createPrimaryDataService(String className)
+  public static PrimaryDataService createPrimaryDataService(String className)
     throws PreparationException
   {
     Class clazz;
@@ -407,16 +411,19 @@ public class PrimaryDataManager {
     }
   }
 
+/*
   private void copyChannelLists() {
     
-    /* copy the channel list for the old system */
+    // copy the channel list for the old system 
     copyChannelList(null);
     
-    /* copy the channel list of each group */
+    // copy the channel list of each group 
     for (int i=0;i<mGroupArr.length;i++) {
       copyChannelList(mGroupArr[i]);
     }    
   }
+  */
+  
   
   private void copyChannelList(String groupName)  {
     
@@ -687,31 +694,31 @@ public class PrimaryDataManager {
     
     // Start the update    
     if (args.length == 0) {
-      System.out.println("USAGE: PrimaryDataManager [-update] [-nodata] [-forceCompleteUpdate [channel{;channel}]] pds ...");
-      System.out.println("\nEXAMPLES:");
+      System.out.println("USAGE: PrimaryDataManager [-forceCompleteUpdate [channel{;channel}]] pds ...");
+   /*   System.out.println("\nEXAMPLES:");
       System.out.println("Update tv data from ArdPDS and ZdfPDS:");
       System.out.println("PrimaryDataManager -update .ArdPDS .ZdfPDS");
       System.out.println("\nUpdate tv data from ArdPDS and ZdfPDS; force a complete update of channel zdf and ndr");
       System.out.println("PrimaryDataManager -update -forceCompleteUpdate zdf:ndr .ArdPDS .ZdfPDS");
       System.out.println("\nUpdate all channels; write new channel list file");
       System.out.println("PrimaryDataManager .ArdPDS .ZdfPDS .RtlPDS .Pro7PDS\n");
-      
+     */ 
       System.exit(1);
     } else {
       try {
         PrimaryDataManager manager = new PrimaryDataManager(new File("."));
 
         ArrayList pdsList = new ArrayList();
-        boolean update=false;
-        boolean nodata=false;
+     //   boolean update=false;
+     //   boolean nodata=false;
         for (int i = 0; i < args.length; i++) {
-          if (args[i].equalsIgnoreCase("-update")) {
-            update=true;  
-          }
-          else if (args[i].equalsIgnoreCase("-nodata")) {
-            nodata=true;
-          }
-          else if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
+      //    if (args[i].equalsIgnoreCase("-update")) {
+      //      update=true;            
+      //    }
+      //    else if (args[i].equalsIgnoreCase("-nodata")) {
+      //      nodata=true;
+      //    }
+         /* else*/ if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
             if ((i + 1) >= args.length) {
               System.out.println("You have to specify a colon separated " +
                 "list of channels after -forceCompleteUpdate");
@@ -737,7 +744,7 @@ public class PrimaryDataManager {
         pdsList.toArray(pdsArr);        
         manager.setDataServiceArr(pdsArr);
         
-        manager.updateRawDataDir(update, nodata);
+        manager.updateRawDataDir();
         
         // Exit with error code 2 if some day programs were put into quarantine
         if (manager.mRawDataProcessor.getQuarantineCount() != 0) {

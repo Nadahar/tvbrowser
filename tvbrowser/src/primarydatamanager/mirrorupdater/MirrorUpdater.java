@@ -337,7 +337,7 @@ public class MirrorUpdater {
     // Copy the group files
     if (mChannelGroupArr!=null) {
       for (int i=0;i<mChannelGroupArr.length;i++) {
-        data = mDataSource.loadFile(mChannelGroupArr[i]);
+        data = mDataSource.loadFile(mChannelGroupArr[i]+"_info");
         mDataTarget.writeFile(mChannelGroupArr[i], data);
       }
     }
