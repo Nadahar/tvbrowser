@@ -176,7 +176,7 @@ public class Settings {
   private static final String USER_DIR = ".tvbrowser";
   
   public static final String TVDATA_DIR="tvdata";
-  public static final String DATASERVICECACHE_DIR=".";
+  //public static final String DATASERVICECACHE_DIR=TVDATA_DIR+"/.";
   
   public static final String FILTERS_DIR="filters";
   
@@ -225,6 +225,23 @@ public class Settings {
   }
   
   
+  public static void setTVBrowserVersion(devplugin.Version version) {
+    int v=version.getMajor()*100+version.getMinor();
+    settings.setProperty("version",""+v);
+    
+  }
+  
+  public static devplugin.Version getTVBrowserVersion() {
+    String v=settings.getProperty("version");
+    if (v!=null) {
+      int val=Integer.parseInt(v);
+      int major=val/100;
+      int minor=val%100;
+      return new devplugin.Version(major,minor);  
+    }
+    return null;
+  }
+  
   public static void setUseDefaultFonts(boolean val) {
     settings.setProperty("usedefaultfonts",val?"yes":"no");
   }
@@ -249,9 +266,7 @@ public class Settings {
 	public static String getTVDataDirectory() {
 		String res=settings.getProperty("directory.tvdata");
 		if (res==null) {
-			//java.io.File f=new File(TVDATA_DIR);
-			//res=f.getAbsolutePath();
-      return TVDATA_DIR;
+			return TVDATA_DIR;
 		}
 		return res;
 	}
@@ -260,18 +275,21 @@ public class Settings {
 		settings.setProperty("directory.tvdata",dir);
 	}
   
+  /*
   public static String getDataServiceCacheDirectory() {
     String res=settings.getProperty("directory.dataservicecache");
     if (res==null) {
+      System.out.println("must return "+DATASERVICECACHE_DIR);
       return DATASERVICECACHE_DIR;      
     }
+    System.out.println("ok: "+res);
     return res;
   }
   
   public static void setDataServiceCacheDirectory(String dir) {
     settings.setProperty("directory.dataservicecache",dir);
   }
-  
+  */
   public static String getFilterDirectory() {
     String res=settings.getProperty("directory.filters");
     if (res==null) {
@@ -324,12 +342,12 @@ public class Settings {
       mLog.info("No user settings found. using default user settings");
     }
 
-    initSubscribedChannels();
+    //initSubscribedChannels();
 
     updateProxySettings(getHttpProxySettings(), getFtpProxySettings());
   }
 
-
+  
 
   public static void setSubscribedChannels(Channel[] channels) {
   	String[] entries = new String[channels.length];
@@ -344,7 +362,7 @@ public class Settings {
 
 
 
-  private static void initSubscribedChannels() {
+  public static void initSubscribedChannels() {
     String[] entries = settings.getStringList("subscribedchannels");
     if (settings.getProperty("subscribedchannels") == null) {
       System.out.println("no subscribed channels");

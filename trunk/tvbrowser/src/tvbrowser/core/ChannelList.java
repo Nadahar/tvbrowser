@@ -140,9 +140,13 @@ public class ChannelList {
    */
   public static void subscribeChannel(TvDataService dataService, String id) {
 	  Channel ch = getChannel(dataService, id);
+    
     if (ch!=null) {
 		  mSubscribedChannels.add(ch);
-	  }	
+	  }
+    
+    
+    	
   }
 
 

@@ -95,17 +95,19 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   public TvBrowserDataService() {
     mSettings = new Properties();
-    
+    /*
     mDataDir = new File("tvbrowsertvdata");
     
     //  Ensure that the data directory is present
     if (! mDataDir.exists()) {
       mDataDir.mkdir();
-    }
+    }*/
   }
 
 
-  
+  public void setWorkingDirectory(File dataDir) {
+    mDataDir=dataDir; 
+  }
 
 
   /**
