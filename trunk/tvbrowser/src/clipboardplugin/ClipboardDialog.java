@@ -122,6 +122,7 @@ public class ClipboardDialog extends JDialog {
         c.gridwidth = GridBagConstraints.REMAINDER;
 
         JButton upButton = new JButton(new ImageIcon("imgs/up16.gif"));
+        upButton.setToolTipText(mLocalizer.msg("up", "Moves the selected program up"));
         upButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
@@ -131,6 +132,7 @@ public class ClipboardDialog extends JDialog {
         buttonRight.add(upButton, c);
 
         JButton downButton = new JButton(new ImageIcon("imgs/down16.gif"));
+        downButton.setToolTipText(mLocalizer.msg("down", "Moves the selected program down"));
         downButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
@@ -142,6 +144,7 @@ public class ClipboardDialog extends JDialog {
         c.weighty = 1.0;
 
         JButton deleteButton = new JButton(ImageUtilities.createImageIconFromJar("clipboardplugin/Delete16.gif", getClass()));
+        deleteButton.setToolTipText(mLocalizer.msg("delete", "Deletes the selected program"));
 
         deleteButton.addActionListener(new ActionListener() {
 
@@ -156,6 +159,7 @@ public class ClipboardDialog extends JDialog {
 
         JButton sendButton = new JButton();
 
+        sendButton.setToolTipText(mLocalizer.msg("send", "Send Program to another Plugin"));
         sendButton.setIcon(new ImageIcon("imgs/SendToPlugin.png"));
         sendButton.addActionListener(new ActionListener() {
 
