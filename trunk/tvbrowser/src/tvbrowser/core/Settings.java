@@ -184,7 +184,8 @@ public class Settings {
   public static final int NEVER=0, ONSTARTUP=1;
   
   private static final String SETTINGS_FILE="settings.prop";
-  private static final String USER_DIR="tvbrowser";
+  private static final String OLD_USER_DIR = "tvbrowser";
+  private static final String USER_DIR = ".tvbrowser";
   
   public static final String TVDATA_DIR="tvdata";
   public static final String DATASERVICECACHE_DIR=".";
@@ -209,18 +210,27 @@ public class Settings {
 
 
   /**
-   * Returns the user directory. (e.g.: ~/tvbrowser/)
+   * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
-    String dir=System.getProperty("user.home","");
-    String fileSeparator=System.getProperty("file.separator");
-
-    if (!"".equals(dir)) {
-      dir=dir+fileSeparator+USER_DIR;
-    }else{
-      dir=USER_DIR;
+    String dir = System.getProperty("user.home", "");
+    String oldDir = dir;
+    
+    if (dir.length() != 0) {
+      dir += File.separator + USER_DIR;
+      oldDir += File.separator + OLD_USER_DIR;
+    } else {
+      dir = USER_DIR;
+      oldDir = OLD_USER_DIR;
     }
 
+    // The user directory used to be "tvbrowser". Now it is ".tvbrowser"
+    // (hidden on UNIX systems). -> Rename the old directory if it still exists.
+    File oldUserDir = new File(oldDir);
+    if (oldUserDir.exists()) {
+      oldUserDir.renameTo(new File(dir));
+    }
+    
     return dir;
   }
   
