@@ -132,22 +132,6 @@ public class HTMLFilterReader extends FilterReader {
   }
   
   
-  
-  private String getNormalizedString(StringBuffer buf) {
-    
-    int inx;
-    do {
-      inx=buf.indexOf("&nbsp;");
-      if (inx>=0) {
-        buf.replace(inx,inx+6," ");
-      }
-      
-      
-            
-    }while (inx>=0);
-    
-    return buf.toString();
-  }
  
   
   private boolean fillBuffer() throws IOException {
@@ -241,8 +225,9 @@ public class HTMLFilterReader extends FilterReader {
  //  }
  
     
-    //mBuf=mBufStr.toString().getBytes();
-    mBuf=getNormalizedString(mBufStr).getBytes();
+    mBuf=mBufStr.toString().getBytes();
+    //mBuf=getNormalizedString(mBufStr).getBytes();
+    
     mBufPos=0;
  
     return ch==-1;

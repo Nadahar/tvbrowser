@@ -103,10 +103,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private StatusBar mStatusBar;
 
   private JMenu mPluginsMenu;
+  
+  private static MainFrame mSingleton;
 
   
  
-  public MainFrame() {
+  private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
 
     String msg;
@@ -289,6 +291,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     return mStatusBar.getLabel();
   }
 
+  public static MainFrame getInstance() {
+    if (mSingleton==null) {
+      mSingleton=new MainFrame();
+    }
+    return mSingleton;
+  }
 
   private void addLicenseMenuItems(JMenu licenseMenu) {
     
@@ -626,10 +634,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       mDateTimeToolBar.updateButtons();
     }
     if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
-      createChannelList();      
-      DataService.getInstance().subscribedChannelsChanged();
-      mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
-      mDefaultToolBar.updateChannelChooser();
+      onSubscribedChannelsChanged();
     }
     
     if (Settings.settingHasChanged(new String[]{"programtable.endofday","programtable.startofday"})) {
@@ -644,17 +649,14 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     }
   }
   
-  public static void createChannelList() {
-    /*
-        TvDataService[] dataServiceArr
-          = TvDataServiceManager.getInstance().getDataServices();
-
-        for (int i=0;i<dataServiceArr.length;i++) {
-          ChannelList.addDataServiceChannels(dataServiceArr[i]);
-        }*/
-    ChannelList.create();
-      }
+  public void onSubscribedChannelsChanged() {
+    ChannelList.create();    
+    DataService.getInstance().subscribedChannelsChanged();
+    mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
+    mDefaultToolBar.updateChannelChooser();    
+  }
   
+    
   /**
    * Shows the about box
    */

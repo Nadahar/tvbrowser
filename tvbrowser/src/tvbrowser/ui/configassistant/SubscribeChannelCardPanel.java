@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 
 class SubscribeChannelCardPanel extends AbstractCardPanel {
@@ -60,6 +61,9 @@ class SubscribeChannelCardPanel extends AbstractCardPanel {
               JOptionPane.INFORMATION_MESSAGE); 
       return false;
     }
+    
+    MainFrame.getInstance().onSubscribedChannelsChanged();
+    
     return true;
   }
   

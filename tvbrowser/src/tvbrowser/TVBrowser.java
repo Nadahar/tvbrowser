@@ -128,7 +128,7 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.dataService", "Loading tv data service...");
     splash.setMessage(msg);
     TvDataServiceManager.getInstance().initDataServices();
-    MainFrame.createChannelList();
+    tvbrowser.core.ChannelList.create();
     
     Settings.loadSettings();
     
@@ -170,7 +170,7 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
     
-    mainFrame=new MainFrame();
+    mainFrame=MainFrame.getInstance();
     
     // Set the program icon
     Image iconImage = ImageUtilities.createImage("imgs/TVBrowser16.gif");
@@ -288,11 +288,15 @@ public class TVBrowser {
                 dlg.hide();
                 dlg.dispose();
                 dlg=null;
+          if (! DataService.dataAvailable(new devplugin.Date())) {
+            mainFrame.askForDataUpdate();
+          }
         }
       };
      
       configThread.start();
       util.ui.UiUtilities.centerAndShow(progDlg);
+      
 
     }
     else { 
