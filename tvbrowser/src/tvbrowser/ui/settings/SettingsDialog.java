@@ -183,7 +183,12 @@ public class SettingsDialog {
     
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
     
-    Arrays.sort(pluginArr, new Comparator() {
+    PluginProxy[] copy = new PluginProxy[pluginArr.length];
+    for (int i = 0; i < pluginArr.length;i++) {
+        copy[i] = pluginArr[i];
+    }
+    
+    Arrays.sort(copy, new Comparator() {
 
         public int compare(Object o1, Object o2) {
             return o1.toString().compareTo(o2.toString());
@@ -191,8 +196,8 @@ public class SettingsDialog {
         
     });
     
-    for (int i = 0; i < pluginArr.length; i++) {
-      ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
+    for (int i = 0; i < copy.length; i++) {
+      ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(copy[i]);
       node.add(new SettingNode(tab));
       pluginSettingsTab.addSettingsChangeListener(tab);
     }
