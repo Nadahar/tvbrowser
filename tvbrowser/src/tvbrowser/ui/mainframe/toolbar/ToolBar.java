@@ -199,7 +199,7 @@ public class ToolBar extends JToolBar {
       if (mIconSize == ICON_BIG) {
         icon = (Icon)action.getValue(Plugin.BIG_ICON);
         
-        if ((icon.getIconHeight() < 24) || (icon.getIconWidth() < 24)) {
+        if ((icon != null) && ((icon.getIconHeight() < 24) || (icon.getIconWidth() < 24))) {
           icon = UiUtilities.scaleIcon(icon, 24, 24);
         }
         
