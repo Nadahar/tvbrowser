@@ -169,20 +169,6 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
 
 
   /**
-   * Returns an array containing all programms. Each element is a
-   * devplugin.Program object.
-   *
-   * @return The programs of this list. Ordered by time.
-   */
-  public Object[] getProgramList() {
-    Program[] programArr = new Program[mProgramList.size()];
-    mProgramList.toArray(programArr);
-    return programArr;
-  }
-
-
-
-  /**
    * Adds a program.
    *
    * @param program The program to add. This program will automatically be put

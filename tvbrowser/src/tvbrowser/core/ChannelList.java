@@ -99,16 +99,14 @@ public class ChannelList {
   }
 
 
-
-  public static int getPos(int id) {
-	for (int i=0;i<mSubscribedChannels.size();i++) {
-	  Channel ch=(Channel)mSubscribedChannels.get(i);
-	  int curId=ch.getId();
-	  if (curId==id) {
-		return i;
-	  }
-	}
-	return -1;
+  public static int getPos(Channel channel) {
+    for (int i = 0; i < mSubscribedChannels.size(); i++) {
+      Channel ch = (Channel) mSubscribedChannels.get(i);
+      if (ch.equals(channel)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
 

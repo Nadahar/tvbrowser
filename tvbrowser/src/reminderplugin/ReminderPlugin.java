@@ -57,6 +57,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    */
   public ReminderPlugin() {
     mInstance = this;
+
+    reminderList = new ReminderList();
+    reminderList.setReminderTimerListener(this);
   }
   
   
@@ -111,8 +114,12 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
+
+    // Remove from the old list
+    reminderList.setReminderTimerListener(null);
     
     reminderList = new ReminderList(in);
+    reminderList.setReminderTimerListener(this);
     if (reminderList != null) {
       reminderList.removeExpiredItems();
       reminderList.setReminderTimerListener(this);
@@ -131,9 +138,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
 
-    if (reminderList!=null) {
-    	reminderList.writeData(out);
-    } 
+  	reminderList.writeData(out);
   }
   
   
@@ -211,11 +216,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   private void addToReminderList(Program program, int minutes) {
-    if (reminderList == null ) {
-      reminderList = new ReminderList();
-      reminderList.setReminderTimerListener(this);
-    }
-    
     reminderList.add(program, minutes);
   }
   

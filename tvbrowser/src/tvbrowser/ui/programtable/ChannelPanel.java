@@ -63,7 +63,7 @@ public class ChannelPanel extends JPanel {
     while (iter.hasNext()) {
       Channel ch = (Channel) iter.next();
       if (ChannelList.isSubscribedChannel(ch)) {
-        int pos=ChannelList.getPos(ch.getId());
+        int pos=ChannelList.getPos(ch);
         labels[pos]=new JLabel(ch.getName());
         labels[pos].setOpaque(false);
         labels[pos].setHorizontalAlignment(JLabel.CENTER);

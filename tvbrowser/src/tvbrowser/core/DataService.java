@@ -35,6 +35,7 @@ import java.util.Iterator;
 
 import java.util.zip.*;
 import java.util.regex.*;
+import java.util.logging.Level;
 
 import javax.swing.JProgressBar;
 
@@ -192,10 +193,20 @@ public class DataService implements devplugin.PluginManager {
               dayProgram.addChannelDayProgram(prog);
             }
           }
-          catch (TvBrowserException exc) {
+          catch (Throwable thr) {
+            TvBrowserException tvExc;
+            if (thr instanceof TvBrowserException) {
+              tvExc = (TvBrowserException) thr;
+            } else {
+              tvExc = new TvBrowserException(getClass(), "error.5",
+                "Download of dayprogram failed!", thr);
+            }
+            
+            // Remeber only the first exception, log it if there are more exception
             if (downloadException == null) {
-              // Remeber only the first exception
-              downloadException = exc;
+              downloadException = tvExc;
+            } else {
+              mLog.log(Level.WARNING, "Download of dayprogram failed!", tvExc);
             }
           }
         }

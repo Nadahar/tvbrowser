@@ -29,6 +29,7 @@ package tvbrowser.core;
 import java.util.Iterator;
 import java.util.HashMap;
 
+import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 
 /**
@@ -75,7 +76,7 @@ public class DayProgram {
     }
 
     // Get the key
-    Object key = new Integer(prog.getChannel().getId());
+    Object key = getKeyFor(prog.getChannel());
 
     // Check whether we already have this ChannelDayProgram
     if (mDayProgramHash.get(key) != null) {
@@ -97,7 +98,7 @@ public class DayProgram {
    * @return the program for the specified channel.
    */
   public ChannelDayProgram getChannelDayProgram(devplugin.Channel channel) {
-    Object key = new Integer(channel.getId());
+    Object key = getKeyFor(channel);
     return (ChannelDayProgram) mDayProgramHash.get(key);
   }
 
@@ -168,6 +169,15 @@ public class DayProgram {
    */
   public boolean isEmpty() {
     return mDayProgramHash.isEmpty();
+  }
+  
+  
+  
+  /**
+   * Creates a unique key for the specified channel.
+   */
+  private Object getKeyFor(Channel channel) {
+    return channel.getDataService().getClass().getName() + "_" + channel.getId();
   }
 
 }
