@@ -29,7 +29,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.TreeMap;
 
 
@@ -129,7 +128,6 @@ public class DeviceConfig {
      */
     public void setParamList(Collection paramList) {
        mParamEntries = new ArrayList(paramList);
-       Collections.sort(mParamEntries, new ParamEntryComperator());
     }
 
     /**
