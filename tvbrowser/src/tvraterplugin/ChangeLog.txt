@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.68
+- RatingComboBox Nullpointer removed
+
 0.67:
 - Made Database synchronized
 
