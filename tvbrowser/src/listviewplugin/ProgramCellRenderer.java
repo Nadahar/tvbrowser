@@ -115,8 +115,8 @@ public class ProgramCellRenderer extends DefaultListCellRenderer {
       Program program = (Program) value;
       
       mProgramPanel.setProgram(program);
-// TODO: Hier wieder aktivieren, wenn Icons vorhanden!!
-//      mChannelName.setIcon(program.getChannel().getIcon());
+
+      mChannelName.setIcon(program.getChannel().getIcon());
       mChannelName.setText(program.getChannel().getName()+":");
 
       String time = program.getTimeFieldAsString(ProgramFieldType.END_TIME_TYPE);
