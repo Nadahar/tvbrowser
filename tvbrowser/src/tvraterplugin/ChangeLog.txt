@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.64
+- Stupid error: Update button was not enabled after Update
+
 0.63
 - Dialog is Updated correctly
 
