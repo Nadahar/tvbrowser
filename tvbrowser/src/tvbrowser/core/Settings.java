@@ -342,14 +342,11 @@ public class Settings {
     = new BooleanProperty(mProp, "showTimeButtons", true);
     */
   
-  /**
-   * @deprecated
-   */
+// @deprecated
 //  public static final BooleanProperty propShowUpdateButton
 //    = new BooleanProperty(mProp, "showUpdateButton", true);
-/**
- * @deprecated
- */
+
+// @deprecated
 //  public static final BooleanProperty propShowPreferencesButton
 //    = new BooleanProperty(mProp, "showPreferencesButton", true);
 
