@@ -41,7 +41,6 @@ import primarydatamanager.mirrorupdater.config.Configuration;
 import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
 import primarydatamanager.mirrorupdater.data.DataSource;
 import primarydatamanager.mirrorupdater.data.DataTarget;
-import tvbrowserdataservice.file.*;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;

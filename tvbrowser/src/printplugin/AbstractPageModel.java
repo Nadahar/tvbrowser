@@ -27,7 +27,7 @@
 package printplugin;
 
 import java.util.*;
-import devplugin.*;
+
 
 public abstract class AbstractPageModel implements PageModel {
   
@@ -41,14 +41,6 @@ public abstract class AbstractPageModel implements PageModel {
      mColumns.add(col);
    }
   
-   /*
-   public void addChannelDayProgram(Channel channel, Program[] programArr) {
-     ColumnModel col = new DefaultColumnModel(channel.getName(), programArr);
-     mColumns.add(col);
-   }
-   */
-
-
    public int getColumnCount() {
      return mColumns.size();
    }

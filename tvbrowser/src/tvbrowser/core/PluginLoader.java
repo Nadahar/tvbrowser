@@ -30,6 +30,7 @@ package tvbrowser.core;
 
 import devplugin.*;
 import tvbrowser.ui.filter.FilterListModel;
+import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -436,6 +437,40 @@ public class PluginLoader {
             result[i] = (ProgramFilter) o[i];
 					}
 					return result;
+				}
+
+				public Program getExampleProgram() {
+          MutableProgram prog = new MutableProgram(
+            new Channel(null, "Channel 1", TimeZone.getDefault(), "de", ""),
+                         devplugin.Date.getCurrentDate(),
+                         14,
+                         45);
+            prog.setTitle("Die Waltons");
+            prog.setShortInfo("Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr.");
+            prog.setDescription("Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haustür aus sehnsuchtsvoll hinterhersieht.");
+            prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE,"123-456");
+            prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE,"Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Großmutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton)");
+            prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE,6);
+            //prog.setTextField(ProgramFieldType.DIRECTOR_TYPE,"");
+            prog.setTextField(ProgramFieldType.EPISODE_TYPE,"Der Postflieger");
+            prog.setTextField(ProgramFieldType.GENRE_TYPE,"Familie");
+            prog.setTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE,"Air Mail Man");
+            prog.setTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE,"The Waltons");
+            prog.setTextField(ProgramFieldType.ORIGIN_TYPE,"USA");
+            prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE,1972);
+            prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE,"Wh von gestern, 8:00");
+            //prog.setTextField(ProgramFieldType.SCRIPT_TYPE,"");
+            prog.setIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE,45);
+            prog.setTimeField(ProgramFieldType.END_TIME_TYPE,15*60+45);
+            prog.setTextField(ProgramFieldType.URL_TYPE,"http://www.thewaltons.com");
+            prog.setTimeField(ProgramFieldType.VPS_TYPE,14*60+45);
+            prog.setInfo(devplugin.Program.INFO_AUDIO_TWO_CHANNEL_TONE | devplugin.Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
+        
+					return prog;
+				}
+
+				public Plugin getDefaultContextMenuPlugin() {
+					return PluginManager.getInstance().getDefaultContextMenuPlugin();
 				}
 				
       };

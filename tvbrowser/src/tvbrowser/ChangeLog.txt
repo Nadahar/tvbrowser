@@ -2,7 +2,9 @@ Changelog TVBrowser
 
 0.9.7.4:
 - made webbrowser choosable
-
+- command line options added:
+      -minimized
+      -nosplash
 
 0.9.7.3:
 - added downnload status info

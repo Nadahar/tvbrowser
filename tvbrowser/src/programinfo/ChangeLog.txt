@@ -1,5 +1,8 @@
 Changelog PrograminfoPlugin
 
+1.0.7:
+- stylesheet for program information window editable
+
 1.0.6:
 - Shows the movie format using icons
 

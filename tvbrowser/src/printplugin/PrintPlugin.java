@@ -31,13 +31,10 @@ package printplugin;
 
 import printplugin.dlgs.PrintDialog;
 
-import util.ui.UiUtilities;
 
 import java.awt.print.*;
-import java.util.Iterator;
 import java.util.Properties;
 import javax.print.*;
-import javax.swing.*;
 import devplugin.*;
 
 /**

@@ -93,6 +93,23 @@ public interface PluginManager {
    */
   public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller);
 
+  /**
+   * Returns an array of all available filters.
+   * @since 0.9.7.4
+   */
   public ProgramFilter[] getAvailableFilters();
 	
+  
+  /**
+   * Returns an example program. You can use it for preview stuff.
+   * @since 0.9.7.4
+   */
+  public Program getExampleProgram();
+  
+  
+  /**
+   * @since 0.9.7.4
+   */
+  public Plugin getDefaultContextMenuPlugin();
+  
 }
