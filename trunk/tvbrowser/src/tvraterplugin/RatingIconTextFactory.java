@@ -4,13 +4,16 @@
 package tvraterplugin;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.ImageIcon;
 
 import util.ui.Localizer;
 
 /**
- * The Icon that is displayed in the ProgramTable
+ * The Icon and Text that is displayed in the ProgramTable
+ * and various other Dialogs
  * 
  * @author bodo
  */
@@ -28,8 +31,31 @@ public class RatingIconTextFactory {
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/4.gif")),
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/5.gif"))};
 
+    /** The Genres */
+    static Properties _genre = null;
+    
     /**
-     * Returns the Icon for a specific Rating
+     * Returns the Genre-Property
+     * @return Genre-Property
+     */
+    public static Properties getGenres() {
+        if (_genre == null) {
+            try {
+                _genre = new Properties();
+                _genre.load(RatingIconTextFactory.class.getResourceAsStream("genre_de.properties"));
+                System.out.println(_genre.size() + " Genres");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return _genre;
+    }
+    
+    /**
+     * Returns an Icon for a Rating
+     * @param rating Rating (0-5)
+     * @return Icon for Rating
      */
     public static ImageIcon getImageIconForRating(int rating) {
         if ((rating < 0) || (rating > _icons.length)) { return new ImageIcon( new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)); }
@@ -37,6 +63,12 @@ public class RatingIconTextFactory {
         return _icons[rating];
     }
 
+    /**
+     * Returns the String for a specific Rating
+     * @param type Type (Rating.OVERALL ...)
+     * @param rateing the actual Rating (0-5)
+     * @return String for the Rating
+     */
     public static String getStringForRating(Object type, int rateing) {
         String ratingText = "-";
 
