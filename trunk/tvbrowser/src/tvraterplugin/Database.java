@@ -122,6 +122,13 @@ public class Database {
 	}
 
 	/**
+	 * Empties the ChangedPersonal List
+	 */
+	public void emptyChangedPersonal() {
+		_changedpersonal = new ArrayList();
+	}
+
+	/**
 	 * Called by the host-application during start-up. 
 	 * Loads the data.
 	 *
@@ -144,4 +151,5 @@ public class Database {
 		out.writeObject(_overalrating);
 		out.writeObject(_changedpersonal);
 	}
+
 }

@@ -68,7 +68,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	 * plugin from the menu.
 	 */
 	public void execute() {
-		DialogOverview dlg = new DialogOverview(getParentFrame(), _tvraterDB);
+		DialogOverview dlg = new DialogOverview(getParentFrame(), this);
 		dlg.pack();
 		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
@@ -132,7 +132,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	}
 
 	public String getButtonText() {
-		return "TVRater";
+		return mLocalizer.msg("pluginName", "TV Rater");
 	}
 
 	public String getButtonIconName() {
@@ -188,6 +188,22 @@ public class TVRaterPlugin extends devplugin.Plugin {
 		}
 		
 		return null;
+	}
+
+	/**
+	 * Returns the Database for the Ratings
+	 * @return Rating-Database
+	 */
+	public Database getDatabase() {
+		return _tvraterDB;
+	}
+	
+	/**
+	 * Returns the Settings for this Plugin
+	 * @return Settings
+	 */
+	public Properties getSettings() {
+		return _settings;
 	}
 
 	/**

@@ -28,9 +28,11 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import devplugin.Channel;
@@ -43,13 +45,12 @@ import devplugin.Program;
  * @author bodo tasche
  */
 public class Updater {
-
 	private static String LOCATION = "http://localhost/test/test.php"; 
 
-	private Database _tvdatabase;
+	private TVRaterPlugin _tvraterPlugin;
 
-	public Updater(Frame parent, Database tvdatabase) {
-		_tvdatabase = tvdatabase;
+	public Updater(Frame parent, TVRaterPlugin tvraterPlugin) {
+		_tvraterPlugin = tvraterPlugin;
 	}
 
 	public void doUpdate() throws Exception {
@@ -78,26 +79,65 @@ public class Updater {
 
 	private void writeData(PrintWriter writer) {
 		Hashtable table = createUpdateList();
-
+		
 		writer.println("<tvrater>");
 		writer.println("<user>");
 		writer.println("<name>");
+		writer.println(_tvraterPlugin.getSettings().getProperty("name"));
 		writer.println("</name>");
 		writer.println("<password>");
+		// TODO : Verschlüsselung des Passwortes
+		writer.println(_tvraterPlugin.getSettings().getProperty("password"));
 		writer.println("</password>");
 		writer.println("</user>");
-
+		
 		writer.println("<setratings>");
+		
+		ArrayList list = _tvraterPlugin.getDatabase().getChangedPersonal();
+		
+		for (int i=0; i < list.size(); i++) {
+			Rating rating = (Rating)list.get(i);
+			writer.println("<rating>");
+			writer.println("<title>");
+			writer.println(rating.getTitle());
+			writer.println("</title>");
+
+			writer.println("<overall>");
+			writer.println(rating.getIntValue(Rating.OVERALL));
+			writer.println("</overall>");
+			writer.println("<action>");
+			writer.println(rating.getIntValue(Rating.ACTION));
+			writer.println("</action>");
+			writer.println("<entitlement>");
+			writer.println(rating.getIntValue(Rating.ENTITLEMENT));
+			writer.println("</entitlement>");
+			writer.println("<fun>");
+			writer.println(rating.getIntValue(Rating.FUN));
+			writer.println("</fun>");
+			writer.println("<tension>");
+			writer.println(rating.getIntValue(Rating.TENSION));
+			writer.println("</tension>");
+			writer.println("<erotic>");
+			writer.println(rating.getIntValue(Rating.EROTIC));
+			writer.println("</erotic>");
+			
+			writer.println("</rating>");
+		}
+		
+		//_tvraterPlugin.getDatabase().emptyChangedPersonal();
+		
 		writer.println("</setratings>");
 		
 		writer.println("<getratings>");
 		
 		Enumeration enum = table.elements();
-		
+		System.out.println("Size: " + table.size());
 		while (enum.hasMoreElements()) {
 			writer.println("<program>");
+			writer.println("<title>");
 			Program prog = (Program) enum.nextElement();
 			writer.println(prog.getTitle());
+			writer.println("</title>");
 			writer.println("</program>");
 		}
 		
@@ -110,7 +150,7 @@ public class Updater {
 		StringBuffer buffer = new StringBuffer();
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+			reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(uc.getInputStream())));
 			String line = null;
 			int letter = 0;
 			while ((letter = reader.read()) != -1)
@@ -141,7 +181,6 @@ public class Updater {
 				while ((it != null) && (it.hasNext())) {
 					Program program = (Program) it.next();
 					if (program.getLength() >= 75) {
-
 						if (!table.containsKey(program.getTitle())) {
 							table.put(program.getTitle(), program);
 						}
@@ -154,5 +193,4 @@ public class Updater {
 
 		return table;
 	}
-
 }

@@ -50,8 +50,8 @@ public class DialogOverview extends JDialog {
 	/** Localizer */
 	private static final Localizer _mLocalizer = Localizer.getLocalizerFor(DialogOverview.class);
 
-	/** The Database to use */
-	private Database _tvraterDB;
+	/** The TVRaterPlugin with the Database */
+	private TVRaterPlugin _tvraterPlugin;
 	/** The tabbed Pane */
 	private JTabbedPane _tabbed;
 	/** List of personal Ratings */
@@ -64,11 +64,11 @@ public class DialogOverview extends JDialog {
 	 * @param parent Parent-Frame
 	 * @param tvraterDB Database to use
 	 */
-	public DialogOverview(Frame parent, Database tvraterDB) {
+	public DialogOverview(Frame parent, TVRaterPlugin tvraterPlugin) {
 		super(parent, true);
 		setTitle(_mLocalizer.msg("title", "Rating-Overview"));
 
-		_tvraterDB = tvraterDB;
+		_tvraterPlugin = tvraterPlugin;
 
 		createGUI();
 	}
@@ -83,7 +83,7 @@ public class DialogOverview extends JDialog {
 
 		RatingComparator comperator = new RatingComparator();
 
-		Vector overallVector = new Vector(_tvraterDB.getOverallRating());
+		Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
 		Collections.sort(overallVector, comperator);
 
 		_tabbed = new JTabbedPane();
@@ -100,7 +100,7 @@ public class DialogOverview extends JDialog {
 
 		_tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(_overall));
 
-		Vector personalVector = new Vector(_tvraterDB.getPersonalRating());
+		Vector personalVector = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
 		Collections.sort(personalVector, comperator);
 
 		_personal = new JList(personalVector);
@@ -163,10 +163,10 @@ public class DialogOverview extends JDialog {
 	 */
 	protected void view() {
 		if ((_tabbed.getSelectedIndex() == 0) && (_overall.getSelectedValue() != null)) {
-			DialogRating dlg = new DialogRating((Frame)this.getParent(), ((Rating)_overall.getSelectedValue()).getTitle(), _tvraterDB);
+			DialogRating dlg = new DialogRating((Frame)this.getParent(), ((Rating)_overall.getSelectedValue()).getTitle(), _tvraterPlugin.getDatabase());
 			UiUtilities.centerAndShow(dlg);
 		} else if ((_tabbed.getSelectedIndex() == 1) && (_personal.getSelectedValue() != null)) {
-			DialogRating dlg = new DialogRating((Frame)this.getParent(), ((Rating)_personal.getSelectedValue()).getTitle(), _tvraterDB);
+			DialogRating dlg = new DialogRating((Frame)this.getParent(), ((Rating)_personal.getSelectedValue()).getTitle(), _tvraterPlugin.getDatabase());
 			UiUtilities.centerAndShow(dlg);
 		}
 	}
@@ -175,7 +175,7 @@ public class DialogOverview extends JDialog {
 	 * Updates the Database from the Server
 	 */
 	protected void update() {
-		Updater up = new Updater((Frame) this.getParent(), _tvraterDB);
+		Updater up = new Updater((Frame) this.getParent(), _tvraterPlugin);
 		try {
 			up.doUpdate();
 		} catch (Exception e) {
