@@ -23,23 +23,21 @@
  *   $Author$
  * $Revision$
  */
-
 package util.exc;
 
-import java.util.logging.Level;
-
-import java.io.StringWriter;
-import java.io.PrintWriter;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.logging.Level;
 
 import javax.swing.*;
 
 import util.io.IOUtilities;
-
+import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
-import util.ui.TextAreaIcon;
 
 /**
  * This error handler should be used to show exceptions (like IOExceptions)
@@ -54,6 +52,10 @@ public class ErrorHandler {
   /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ErrorHandler.class.getName());
+
+  /** The localizer of this class. */  
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ErrorHandler.class);
 
   /** The icon to use for error messages. */  
   private static final Icon ERROR_ICON = UIManager.getIcon("OptionPane.errorIcon");
@@ -94,11 +96,11 @@ public class ErrorHandler {
   public static void handle(String msg, Throwable thr) {
     mLog.log(Level.SEVERE, msg, thr);
     
-    new ErrorDialog(mParent, msg, thr).centerAndShow();
+    new ErrorWindow(mParent, msg, thr).centerAndShow();
   }
   
   
-  // inner class ErrorDialog
+  // inner class ErrorWindow
   
   
   /**
@@ -106,16 +108,22 @@ public class ErrorHandler {
    * <p>
    * This implementation shows the stacktrace and the nested exceptions as well.
    */  
-  static class ErrorDialog {
+  private static class ErrorWindow {
     
-    /** The dialog. */    
+    /** The dialog. Is null, when there is no parent frame. */
     private JDialog mDialog;
+
+    /** The frame. Is null, when there is a parent frame. */
+    private JFrame mFrame;
     
     /** The main panel. */
     private JPanel mMainPn;
     
     /** The panel containing the message, the icon and the buttons. */
     private JPanel mMessagePn;
+    
+    /** The text area containing the error message. */
+    private JTextArea mErrorMessageTA;
     
     /** The panel containing the details (the stacktrace). */    
     private JPanel mDetailPn;
@@ -142,61 +150,101 @@ public class ErrorHandler {
      * @param msg The localized error message.
      * @param thr The throwable whichs details are shown by the dialog.
      */    
-    public ErrorDialog(Component parent, String msg, Throwable thr) {
+    public ErrorWindow(Component parent, String errorMsg, Throwable thr) {
+      String msg;
+      
       mThrowable = thr;
       
-      mDialog = UiUtilities.createDialog(mParent, true);
-      mDialog.setTitle("Fehler");
+      Frame root = JOptionPane.getFrameForComponent(parent);
+      boolean useFrame = (root == null) || (! root.isVisible());
+      if (useFrame) {
+        mFrame = new JFrame();
+        Image iconImage = ImageUtilities.createImage("imgs/TVBrowser16.gif");
+        mFrame.setIconImage(iconImage);
+      } else {
+        mDialog = UiUtilities.createDialog(mParent, true);
+      }
+      
+      msg = mLocalizer.msg("title", "Error");
+      if (mDialog != null) {
+        mDialog.setTitle(msg);
+      } else {
+        mFrame.setTitle(msg);
+      }
       
       mMainPn = new JPanel(new BorderLayout());
       mMainPn.setBorder(UiUtilities.DIALOG_BORDER);
-      mDialog.setContentPane(mMainPn);
+      if (mDialog != null) {
+        mDialog.setContentPane(mMainPn);
+      } else {
+        mFrame.setContentPane(mMainPn);
+      }
       
       // message panel
       mMessagePn = new JPanel(new BorderLayout(10, 10));
-      mMainPn.add(mMessagePn, BorderLayout.CENTER);
+      mMainPn.add(mMessagePn, BorderLayout.NORTH);
 
       JLabel errorLb = new JLabel(ERROR_ICON);
       mMessagePn.add(errorLb, BorderLayout.WEST);
-      int width = UiUtilities.getStringWidth(errorLb.getFont(), msg);
-      width = Math.min(width, 400);
-      Icon messageIcon = new TextAreaIcon(msg, errorLb.getFont(), width);
-      mMessagePn.add(new JLabel(messageIcon));
+      
+      mErrorMessageTA = UiUtilities.createHelpTextArea(errorMsg);
+      mMessagePn.add(mErrorMessageTA);
       
       // The buttons
       JPanel buttonPn = new JPanel();
       mMessagePn.add(buttonPn, BorderLayout.SOUTH);
       
-      mOkBt = new JButton("OK");
+      msg = mLocalizer.msg("ok", "OK");
+      mOkBt = new JButton(msg);
       mOkBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
-          mDialog.dispose();
+          getWindow().dispose();
         }
       });
       buttonPn.add(mOkBt);
-      mDialog.getRootPane().setDefaultButton(mOkBt);
+      if (mDialog != null) {
+        mDialog.getRootPane().setDefaultButton(mOkBt);
+      } else {
+        mFrame.getRootPane().setDefaultButton(mOkBt);
+      }
       
-      mDetailBt = new JButton("Details");
+      msg = mLocalizer.msg("details", "Details");
+      mDetailBt = new JButton(msg);
       mDetailBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           setDetailsVisible(! mDetailsVisible);
         }
       });
       buttonPn.add(mDetailBt);
+      
+      // Workaround: To give the dialog a minimum width we change the preferred
+      //             size of the button panel. Otherwise the message text area
+      //             will be very narrow and heigh for long messages
+      Dimension size = buttonPn.getPreferredSize();
+      size.width = 350;
+      buttonPn.setPreferredSize(size);
 
       mDetailsVisible = true;
       setDetailsVisible(false);
       
-      mDialog.pack();
+      getWindow().pack();
     }
 
+
+    private Window getWindow() {
+      if (mDialog != null) {
+        return mDialog;
+      } else {
+        return mFrame;
+      }
+    }
 
     
     /**
      * Centers and shows the error dialog.
      */    
     public void centerAndShow() {
-      UiUtilities.centerAndShow(mDialog);
+      UiUtilities.centerAndShow(getWindow());
     }
     
     
@@ -208,6 +256,8 @@ public class ErrorHandler {
      * @return the details panel.
      */    
     private JPanel createDetailPanel() {
+      String msg;
+      
       JPanel detailPn = new JPanel(new BorderLayout(0, 10));
 
       detailPn.add(new JSeparator(), BorderLayout.NORTH);
@@ -230,9 +280,38 @@ public class ErrorHandler {
         }
       }
       
+      msg = mLocalizer.msg("copyToClipboard", "Copy to clipboard");
+      JButton copyToClipBoardBt = new JButton(msg);
+      copyToClipBoardBt.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          copyDetailsToClipBoard();
+        }
+      });
+      detailPn.add(copyToClipBoardBt, BorderLayout.SOUTH);
+      
       return detailPn;
     }
 
+
+    private void copyDetailsToClipBoard() {
+      StringBuffer buffer = new StringBuffer(mErrorMessageTA.getText());
+      
+      buffer.append("\n\n----- Start of stacktrace -----\n");
+      Throwable thr = mThrowable;
+      while (thr != null) {
+        if (thr != mThrowable) {
+          buffer.append("\n\nCaused by:\n");
+        }
+        
+        buffer.append(getStackTrace(thr));
+        
+        thr = thr.getCause();
+      }
+      buffer.append("----- End of stacktrace -----\n");
+      
+      StringSelection content = new StringSelection(buffer.toString());
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(content, null);
+    }
     
     
     /**
@@ -242,22 +321,7 @@ public class ErrorHandler {
      * @return a detail panel for the specified throwable.
      */    
     private JComponent createDetailComponent(Throwable thr) {
-      String detailText = "";
-      try {
-        StringWriter writer = new StringWriter();
-        PrintWriter printer = new PrintWriter(writer);
-        
-        thr.printStackTrace(printer);
-        
-        printer.close();
-        writer.close();
-        
-        IOUtilities.replace(writer.getBuffer(), "\t", "  ");
-
-        detailText = writer.toString();
-      }
-      catch (Exception exc) {}
-      
+      String detailText = getStackTrace(thr);
       JTextArea textArea = new JTextArea(detailText);
       JScrollPane scrollPane = new JScrollPane(textArea);
       scrollPane.setPreferredSize(new Dimension(200, 200));
@@ -265,6 +329,33 @@ public class ErrorHandler {
       return scrollPane;
     }
     
+
+    /**
+     * Gets the stacktrace of a Throwable
+     * 
+     * @param thr The Throwable to get the stacktrace for
+     * @return The stacktrace of the Throwable
+     */
+    private String getStackTrace(Throwable thr) {
+      try {
+        StringWriter writer = new StringWriter();
+        PrintWriter printer = new PrintWriter(writer);
+          
+        thr.printStackTrace(printer);
+          
+        printer.close();
+        writer.close();
+
+        IOUtilities.replace(writer.getBuffer(), "\t", "  ");
+        IOUtilities.replace(writer.getBuffer(), "\r\n", "\n");
+  
+        return writer.toString();
+      }
+      catch (Exception exc) {
+        // This won't happen since we are writing to a StringWriter
+        return "";
+      }
+    }
     
     
     /**
@@ -279,7 +370,7 @@ public class ErrorHandler {
         if (mDetailsVisible) {
           if (mDetailPn == null) {
             mDetailPn = createDetailPanel();
-            mMainPn.add(mDetailPn, BorderLayout.SOUTH);
+            mMainPn.add(mDetailPn, BorderLayout.CENTER);
           }
           mDetailPn.setVisible(true);
           
@@ -292,10 +383,10 @@ public class ErrorHandler {
           mDetailBt.setIcon(new ImageIcon("imgs/down16.gif"));
         }
 
-        mDialog.pack();
+        getWindow().pack();
       }
     }
     
-  }
+  } // inner class ErrorWindow
   
 }

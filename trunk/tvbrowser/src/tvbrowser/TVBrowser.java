@@ -39,6 +39,7 @@ import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
+import util.exc.MonitoringErrorStream;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 import util.ui.NotBoldMetalTheme;
@@ -106,6 +107,9 @@ public class TVBrowser {
       msg = mLocalizer.msg("error.4", "Can't create log file.");
       ErrorHandler.handle(msg, exc);
     }
+    
+    // Capture unhandled exceptions
+    System.setErr(new PrintStream(new MonitoringErrorStream()));
     
     // Read the command line parameters
     boolean startMinimized = false;

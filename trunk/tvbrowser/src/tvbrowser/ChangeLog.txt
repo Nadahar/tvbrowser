@@ -20,6 +20,12 @@ Changelog TVBrowser
     - time of day
 - Better settings management
 - Searching allowes now to search in all program fields (except for binaries)
+- Improved Error handling:
+    - Nicer error dialog that has a button for copying all nessesary information
+      to the clipboard
+    - Unhandled exceptions (such as NullPointerException) are detected now
+    - When the TV-Browser window is not yet up, the error is shown in a frame,
+      not in a dialog.
 
 0.9.7.3:
 - added downnload status info
