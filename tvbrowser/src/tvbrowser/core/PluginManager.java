@@ -53,6 +53,8 @@ public class PluginManager {
   private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
   private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
   
+  private boolean mContextMenuIsValid;
+  
   /** The singleton. */
   private static PluginManager mSingleton;
   
@@ -328,9 +330,10 @@ public class PluginManager {
   }
   
   public Plugin[] getContextMenuPlugins() {
-    boolean contextMenuPluginsChanged= Settings.settingHasChanged(new String[]{"contextmenuitemplugins"});
-    if (mContextMenuPluginList==null || contextMenuPluginsChanged) {
-    
+    if (mContextMenuPluginList == null || ! mContextMenuIsValid) {
+      mContextMenuIsValid=true;
+      
+      // Add all plugins which are installed by the settings (if valid)
       String plugins[]=Settings.getContextMenuItemPlugins();
       ArrayList list=new ArrayList();
       for (int i=0;i<plugins.length;i++) {
@@ -340,6 +343,7 @@ public class PluginManager {
         }      
       }
       
+      // Newer plugins may not be displayed in the settings. So check the rest of the plugins
       Plugin[] unconfiguredPlugins=getInstalledPlugins();
       for (int i=0;i<unconfiguredPlugins.length;i++) {
         Plugin p=unconfiguredPlugins[i];
@@ -359,8 +363,8 @@ public class PluginManager {
    */
   public Plugin[] getInstalledPlugins() {
     boolean installedPluginsChanged = Settings.settingHasChanged(new String[]{"plugins"});
-  	if ((mInstalledPluginList == null) || installedPluginsChanged) {
-  		mInstalledPluginList = new ArrayList();
+    if ((mInstalledPluginList == null) || installedPluginsChanged) {  	
+      mInstalledPluginList = new ArrayList();
   		loadAvailablePlugins();
   		String[] instPI = Settings.getInstalledPlugins();
   		for (int i = 0; i < instPI.length; i++) {
@@ -379,6 +383,7 @@ public class PluginManager {
   
   public void setInstalledPlugins(Plugin[] pluginArr) {
     // Create the new list and init those plugins who are new
+    
     ArrayList newInstalledPluginList = new ArrayList(pluginArr.length);
     String[] pluginClassNameArr = new String[pluginArr.length];
     for (int i = 0; i < pluginArr.length; i++) {
@@ -403,6 +408,9 @@ public class PluginManager {
     
     // Finally update the Settings
     Settings.setInstalledPlugins(pluginClassNameArr);
+    
+    // We must create a new context menu
+    mContextMenuIsValid=false;
   }
   
   
