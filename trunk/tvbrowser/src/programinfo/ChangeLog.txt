@@ -1,7 +1,7 @@
 Changelog PrograminfoPlugin
 
 
-current (1.0.3)
+current (1.0.3): requires TVBrowser 0.93
 - Program-Info-Dialog shows by which plugins the program is marked.
 
 1.0.2

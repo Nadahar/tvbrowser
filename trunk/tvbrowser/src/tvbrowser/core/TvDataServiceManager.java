@@ -51,6 +51,22 @@ public class TvDataServiceManager {
   private TvDataServiceManager() {
   }
 
+  public static void installPendingDataServices() {
+	File file=new File("tvdataservice");
+	if (!file.exists()) {
+		return;
+	}
+	File[] fileList=file.listFiles(new FileFilter() {
+		  public boolean accept(File f) {
+			return f.getName().endsWith(".jar.inst");
+		  }
+		});
+		
+	for (int i=0;i<fileList.length;i++) {
+		String fName=fileList[i].getAbsolutePath();
+		fileList[i].renameTo(new File(fName.substring(0,fName.length()-5)));
+	}
+  } 
 
 
   public static TvDataServiceManager getInstance() {

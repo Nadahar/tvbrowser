@@ -1,6 +1,6 @@
 Changelog XmlTvDataLoader
 
-1.0.2
+1.0.2: requires TVBrowser 0.93
 - no Serializable Classes any more
 
 1.0.1

@@ -185,6 +185,22 @@ public class PluginManager {
   }
 
 
+  public static void installPendingPlugins() {
+	File file=new File("plugins");
+	if (!file.exists()) {
+		return;
+	}
+	File[] fileList=file.listFiles(new FileFilter() {
+		  public boolean accept(File f) {
+			return f.getName().endsWith(".jar.inst");
+		  }
+		});
+		
+	for (int i=0;i<fileList.length;i++) {
+		String fName=fileList[i].getAbsolutePath();
+		fileList[i].renameTo(new File(fName.substring(0,fName.length()-5)));
+	}
+  }
 
   /**
    * Kind of destructor: call plugins to store their data and settings
@@ -327,6 +343,10 @@ public class PluginManager {
   }
   
   
+  
+  public static Plugin getPluginByName(String name) {
+  	return getPlugin(name.toLowerCase()+"."+name);
+  }
   
   /**
    * Returns a devplugin.Plugin object with the specified name, or null if
