@@ -196,8 +196,11 @@ public class DayProgramFileTranslator {
     if (bitSet(info, Program.INFO_AUDIO_TWO_CHANNEL_TONE)) {
       buf.append("Two channel tone  ");
     }
-    if (bitSet(info, Program.INFO_SUBTITLE)) {
-      buf.append("Subtitle  ");
+    if (bitSet(info, Program.INFO_ORIGINAL_WITH_SUBTITLE)) {
+      buf.append("Original with subtitle  ");
+    }
+    if (bitSet(info, Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED)) {
+      buf.append("Subtitle for aurally handicapped  ");
     }
     if (bitSet(info, Program.INFO_LIVE)) {
       buf.append("Live  ");
