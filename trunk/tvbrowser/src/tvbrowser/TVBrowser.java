@@ -39,6 +39,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -94,8 +95,7 @@ public class TVBrowser {
     = java.util.logging.Logger.getLogger(TVBrowser.class.getName());
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
+  public static util.ui.Localizer mLocalizer;
 
   private static String curLookAndFeel;
   public static final devplugin.Version VERSION=new devplugin.Version(1,0,false,"1.0 RC05");
@@ -130,7 +130,35 @@ public class TVBrowser {
   public static void main(String[] args) {
     
     showUsage();
-    
+
+    // Read the command line parameters
+    boolean startMinimized = false;
+    boolean showSplashScreen = true;
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].equalsIgnoreCase("-minimized")) {
+        startMinimized = true;
+      } else if (args[i].equalsIgnoreCase("-nosplash")) {
+        showSplashScreen = false;
+      } else if (args[i].startsWith("-D")) {
+          if (args[i].indexOf("=") > 0) {
+              String key = args[i].substring(2, args[i].indexOf("="));
+              String value = args[i].substring(args[i].indexOf("=")+1);
+              System.out.println(key + "---" + value);
+              
+              if (key.equals("user.language")) {
+                  Locale.setDefault(new Locale(value));
+              } else {
+                  System.setProperty(key, value);
+              }
+          } else {
+              mLog.warning("Wrong Syntax in parameter: '" + args[i] + "'");
+          }
+      } else {
+        mLog.warning("Unknown command line parameter: '" + args[i] + "'");
+      }
+    }
+
+    mLocalizer = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
     String msg;
     
     // Check whether the TV-Browser was started in the right directory
@@ -163,18 +191,6 @@ public class TVBrowser {
     // Capture unhandled exceptions
     System.setErr(new PrintStream(new MonitoringErrorStream()));
     
-    // Read the command line parameters
-    boolean startMinimized = false;
-    boolean showSplashScreen = true;
-    for (int i = 0; i < args.length; i++) {
-      if (args[i].equalsIgnoreCase("-minimized")) {
-        startMinimized = true;
-      } else if (args[i].equalsIgnoreCase("-nosplash")) {
-        showSplashScreen = false;
-      } else {
-        mLog.warning("Unknown command line parameter: '" + args[i] + "'");
-      }
-    }
     
     // Load the settings
     Settings.loadSettings();
