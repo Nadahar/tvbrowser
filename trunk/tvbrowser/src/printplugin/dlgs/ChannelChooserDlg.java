@@ -42,10 +42,14 @@ public class ChannelChooserDlg extends JDialog {
   private Channel[] mChannelArr;
   private OrderChooser mChannelChooser;
   
+  private static final util.ui.Localizer mLocalizer
+     = util.ui.Localizer.getLocalizerFor(ChannelChooserDlg.class);
+
+  
   public ChannelChooserDlg(Frame parent, Channel[] channelArr) {
     
     super(parent,true);
-    setTitle("Sender auswaehlen");
+    setTitle(mLocalizer.msg("chooseChannels","choose channels"));
     
     if (channelArr == null) {
       mChannelArr = new Channel[]{};
@@ -61,8 +65,8 @@ public class ChannelChooserDlg extends JDialog {
     JPanel southPn = new JPanel(new BorderLayout());
     JPanel btnPn = new JPanel();
     
-    JButton okBt = new JButton("OK");
-    JButton cancelBt = new JButton("Abbrechen");
+    JButton okBt = new JButton(mLocalizer.msg("ok","OK"));
+    JButton cancelBt = new JButton(mLocalizer.msg("cancel","Cancel"));
     
     btnPn.add(okBt);
     btnPn.add(cancelBt);
@@ -70,7 +74,7 @@ public class ChannelChooserDlg extends JDialog {
     
     JPanel centerPn = new JPanel(new BorderLayout());
     centerPn.add(mChannelChooser = new OrderChooser(mChannelArr, Plugin.getPluginManager().getSubscribedChannels()), BorderLayout.NORTH);
-    JLabel lb = new JLabel("<html>Waehlen Sie jene Sender aus, deren Programm ausgedruckt werden soll.</html>");
+    JLabel lb = new JLabel("<html>" + mLocalizer.msg("infotext.1","Waehlen Sie jene Sender aus, deren Programm ausgedruckt werden soll.")+"</html>");
  
     centerPn.add(lb,BorderLayout.SOUTH);
     
