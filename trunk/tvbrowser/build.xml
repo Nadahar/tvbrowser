@@ -305,6 +305,34 @@
                   includes="LICENSE.txt"/>
     </zip>
 
+    <zip destfile="${public.dir}/tvbrowser_v${version}_cvs.zip">
+      <zipfileset prefix="tvbrowser_v${version}"
+                  dir=".">
+        <include name="Overview.txt"/>
+        <include name="build.*"/>
+      </zipfileset>
+      <zipfileset prefix="tvbrowser_v${version}/${installer.dir}"
+                  dir="${installer.dir}"
+                  includes="*"/>
+      <zipfileset prefix="tvbrowser_v${version}/${lib.dir}"
+                  dir="${lib.dir}"
+                  includes="*"/>
+      <zipfileset prefix="tvbrowser_v${version}/${src.dir}"
+                  dir="${src.dir}">
+        <include name="**/*.java"/>
+        <include name="**/*.properties"/>
+        <include name="**/*.txt"/>
+        <include name="**/*.gif"/>
+        <include name="**/*.jpg"/>
+        <include name="**/*.html"/>
+      </zipfileset>
+      <zipfileset prefix="tvbrowser_v${version}/${txt.dir}"
+                  dir="${txt.dir}">
+        <include name="*"/>
+        <include name="package-lists/jdk/package-list"/>
+      </zipfileset>
+    </zip>
+    
     <antcall target="-zipPackageSrc">
       <param name="package" value="xmltvdataservice"/>
     </antcall>
