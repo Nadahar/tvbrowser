@@ -74,7 +74,7 @@ public class DataService implements devplugin.PluginManager {
   private static DataService mSingleton;
 
   /** <CODE>true</CODE> if we are in online mode. */
-  private boolean onlineMode=false;
+  //private boolean onlineMode=false;
 
   /** The progress bar to use for showing the update process. */
   private JProgressBar progressBar;
@@ -120,6 +120,7 @@ public class DataService implements devplugin.PluginManager {
    *
    * @param newMode whether we are in online mode.
    */
+  /*
   public void setOnlineMode(boolean newMode) {
     if ((newMode == onlineMode)) {
       return;
@@ -134,17 +135,18 @@ public class DataService implements devplugin.PluginManager {
     }
   }
 
-
+*/
 
   /**
    * Gets whether we are in online mode.
    *
    * @return whether we are in online mode.
    */
+  /*
   public boolean isOnlineMode() {
     return onlineMode;
   }
-
+*/
 	public void stopDownload() {
 		mIsDownloading=false;
 	}
@@ -161,19 +163,20 @@ public class DataService implements devplugin.PluginManager {
       tvdataDir.mkdir();
     }
 
+
     // connect
-    if (!onlineMode) {
+   // if (!onlineMode) {
     	progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
     	progressBar.setStringPainted(true);
     	TvDataServiceManager.getInstance().connect();
-    }
+   // }
     
     // download the missing data day by day and channel by channel
     progressBar.setStringPainted(false);
     mIsDownloading = true;
 
     Channel[] subscribedChannels=ChannelList.getSubscribedChannels();
-    if (daysToDownload!=tvbrowser.ui.UpdateDlg.GETALL) {
+    if (daysToDownload!=tvbrowser.ui.mainframe.UpdateDlg.GETALL) {
     	progressBar.setMaximum((daysToDownload + 2) * subscribedChannels.length);
     }
     else {
@@ -274,9 +277,9 @@ public class DataService implements devplugin.PluginManager {
 
     mIsDownloading = false;
 
-	if (!onlineMode) {
+	//if (!onlineMode) {
     	TvDataServiceManager.getInstance().disconnect();
-	}
+	//}
 
     if (downloadException != null) {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
@@ -368,10 +371,12 @@ public class DataService implements devplugin.PluginManager {
     Channel[] channels=ChannelList.getSubscribedChannels();
 
     boolean useProgressBar=false;
+    /*
     if (allowDownload && isOnlineMode() && !dataAvailable(date)) {
       useProgressBar=true;
       //progressBar.setMaximum(channels.length);
     }
+    */
 
     // Get the day program for the specified date from the cache
     DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
@@ -400,7 +405,7 @@ public class DataService implements devplugin.PluginManager {
 		ChannelDayProgram prog=loadChannelDayProgramFromDisk(file);
 		if (prog!=null) dayProgram.addChannelDayProgram(prog);
       }
-      else if (allowDownload && isOnlineMode()) {
+    /*  else if (allowDownload && isOnlineMode()) {
         // We don't have it on disk, but we are online -> download it
         ChannelDayProgram prog = downloadDayProgram(date, channels[i]);
 
@@ -408,7 +413,7 @@ public class DataService implements devplugin.PluginManager {
           dayProgram.addChannelDayProgram(prog);
           someDataWasDownloaded = true;
         }
-      }
+      }*/
     }
 
     // If the day program is not empty -> return it and put it in the cache

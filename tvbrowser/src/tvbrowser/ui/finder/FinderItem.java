@@ -119,7 +119,7 @@ public class FinderItem extends JLabel implements MouseListener {
    */
   public void mouseClicked(MouseEvent e) {
 
-    if (this.isEnabled() || DataService.getInstance().isOnlineMode()) {
+    if (this.isEnabled() /*|| DataService.getInstance().isOnlineMode()*/) {
       if (listener!=null) {
         listener.finderItemStatusChanged(this);
       }

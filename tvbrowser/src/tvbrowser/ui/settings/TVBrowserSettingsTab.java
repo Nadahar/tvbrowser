@@ -35,7 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import tvbrowser.core.Settings;
-import tvbrowser.TVBrowser;
+import tvbrowser.ui.mainframe.VerticalToolBar;
 import util.exc.*;
 import util.ui.*;
 
@@ -59,8 +59,8 @@ public class TVBrowserSettingsTab implements SettingsTab {
 
   private JCheckBox mTimeCheck, updateCheck, settingsCheck;
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
-  private TimePanel mEarlyTimePn, mMorningTimePn, mMiddayTimePn, mEveningTimePn;
-  private JLabel mEarlyLb, mMorningLb, mMiddayLb, mEveningLb;
+  private TimePanel mEarlyTimePn, mMiddayTimePn, mAfternoonTimePn, mEveningTimePn;
+  private JLabel mEarlyLb, mAfternoonLb, mMiddayLb, mEveningLb;
 
   class LookAndFeelObj {
     private UIManager.LookAndFeelInfo info;
@@ -149,6 +149,8 @@ public class TVBrowserSettingsTab implements SettingsTab {
     skinChooseBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         JFileChooser fileChooser=new JFileChooser();
+        String[] extArr = { ".jpg", ".jpeg", ".gif", ".png"};
+        fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
         fileChooser.showOpenDialog(mSettingsPn);
         File f=fileChooser.getSelectedFile();
         if (f!=null) {
@@ -218,26 +220,25 @@ public class TVBrowserSettingsTab implements SettingsTab {
     JPanel timeButtonsPn=new JPanel(new GridLayout(2,4));
     timeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
     
-    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
     
-    mEarlyTimePn = new TimePanel(Settings.getEarlyTime());
-    mMorningTimePn=new TimePanel(Settings.getMorningTime());
+    mEarlyTimePn = new TimePanel(Settings.getEarlyTime());    
     mMiddayTimePn=new TimePanel(Settings.getMiddayTime());
+    mAfternoonTimePn=new TimePanel(Settings.getAfternoonTime());
     mEveningTimePn=new TimePanel(Settings.getEveningTime());
     
-    mEarlyLb=new JLabel(TVBrowser.mLocalizer.msg("button.early","Early")+":");
+    mEarlyLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.early","Early")+":");
     timeButtonsPn.add(mEarlyLb);
-    timeButtonsPn.add(mEarlyTimePn);
+    timeButtonsPn.add(mEarlyTimePn); 
     
-    mMorningLb=new JLabel(TVBrowser.mLocalizer.msg("button.morning","Morning")+":");
-    timeButtonsPn.add(mMorningLb);
-    timeButtonsPn.add(mMorningTimePn);  
-    
-    mMiddayLb=new JLabel(TVBrowser.mLocalizer.msg("button.midday","Midday")+":");
+    mMiddayLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.midday","Midday")+":");
     timeButtonsPn.add(mMiddayLb);
     timeButtonsPn.add(mMiddayTimePn);
     
-    mEveningLb=new JLabel(TVBrowser.mLocalizer.msg("button.evening","Evening")+":");
+    mAfternoonLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.afternoon","Afternoon")+":");
+    timeButtonsPn.add(mAfternoonLb);
+    timeButtonsPn.add(mAfternoonTimePn); 
+    
+    mEveningLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.evening","Evening")+":");
     timeButtonsPn.add(mEveningLb);
     timeButtonsPn.add(mEveningTimePn);
 
@@ -260,11 +261,11 @@ public class TVBrowserSettingsTab implements SettingsTab {
   private void enableTimeButtons(boolean val) {
     boolean b=mTimeCheck.isSelected();
     mEarlyTimePn.setEnabled(b);
-    mMorningTimePn.setEnabled(b);
+    mAfternoonTimePn.setEnabled(b);
     mMiddayTimePn.setEnabled(b);
     mEveningTimePn.setEnabled(b);
     mEarlyLb.setEnabled(b);
-    mMorningLb.setEnabled(b);
+    mAfternoonLb.setEnabled(b);
     mMiddayLb.setEnabled(b);
     mEveningLb.setEnabled(b);
   }
@@ -300,7 +301,7 @@ public class TVBrowserSettingsTab implements SettingsTab {
     }
     
     Settings.setEarlyTime(mEarlyTimePn.getTime());
-    Settings.setMorningTime(mMorningTimePn.getTime());
+    Settings.setMorningTime(mAfternoonTimePn.getTime());
     Settings.setMiddayTime(mMiddayTimePn.getTime());
     Settings.setEveningTime(mEveningTimePn.getTime());
        
@@ -335,10 +336,8 @@ class TimePanel extends JPanel {
   public TimePanel(int minutes) {
     setLayout(new BorderLayout());
     
-//  String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
-    String timePattern="hh:mm a";
-    
-    
+    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
+   
     mTimeSp = new JSpinner(new SpinnerDateModel());
     mTimeSp.setEditor(new JSpinner.DateEditor(mTimeSp, timePattern));
     mTimeSp.setBorder(null);

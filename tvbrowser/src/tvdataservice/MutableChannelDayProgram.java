@@ -256,8 +256,10 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       // This is the program for today -> Get the program that is currently on air
       Iterator iter = getPrograms();
       while (iter.hasNext()) {
+        
         Program prog = (Program) iter.next();
         
+        /*
         int startTime = prog.getHours() * 60 + prog.getMinutes();
         int endTime = startTime + prog.getLength();
         
@@ -265,6 +267,12 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
           newProgramOnAir = prog;
           break;
         }
+        */
+        int startTime = prog.getHours() * 60 + prog.getMinutes();
+        if (startTime>time) {
+          break;
+        }
+        newProgramOnAir=prog;    
       }
     } else {
       // Check whether this program was for yesterday
@@ -277,6 +285,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
         // This program was for yesterday -> Check whether the last program is
         // still on air. This is the case, when it starts before midnight and
         // reaches into the next day.
+        
         
         int programCount = getProgramCount();
         if (programCount > 0) {
@@ -293,8 +302,18 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
             newProgramOnAir = lastProgram;
           }
         }
+        
       }
     }
+    
+    // check program length:
+    if (newProgramOnAir!=null) {
+      int endTime=newProgramOnAir.getHours()*60 + newProgramOnAir.getMinutes() + newProgramOnAir.getLength();
+      if (endTime<time) {
+        newProgramOnAir=null;
+      }
+    }
+    
     
     // Update the "on air" state of the programs
     if (mProgramOnAir != newProgramOnAir) {

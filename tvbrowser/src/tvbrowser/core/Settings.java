@@ -399,22 +399,26 @@ public class Settings {
     settings.setProperty("timebutton.early",""+minutes);
   }
 
-  public static int getMorningTime() {
-      String time=settings.getProperty("timebutton.morning","600");
-      return Integer.parseInt(time);
-    }
   
-    public static void setMorningTime(int minutes) {
-      settings.setProperty("timebutton.morning",""+minutes);
-    }
+  
     
-  public static int getMiddayTime() {
+    
+    public static int getMiddayTime() {
       String time=settings.getProperty("timebutton.midday","720");
       return Integer.parseInt(time);
     }
   
     public static void setMiddayTime(int minutes) {
       settings.setProperty("timebutton.midday",""+minutes);
+    }
+    
+    public static int getAfternoonTime() {
+      String time=settings.getProperty("timebutton.afternoon","10080");
+      return Integer.parseInt(time);
+    }
+    
+    public static void setMorningTime(int minutes) {
+      settings.setProperty("timebutton.afternoon",""+minutes);
     }
     
   public static int getEveningTime() {

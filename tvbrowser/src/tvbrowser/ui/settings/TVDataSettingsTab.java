@@ -58,15 +58,9 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
     mLocalizer.msg("autoDownload.startUp", "When TV-Browser starts up"),
   };
   
-  private String[] MODE_MSG_ARR = new String[] {
-    mLocalizer.msg("onlineMode", "Online mode"),
-    mLocalizer.msg("offlineMode", "Offline mode")
-  };
-  
   private JPanel mSettingsPn;
   
-  private JComboBox /*mServiceCB, */mTVDataLifespanCB, mBrowseModeCB, mAutoDownloadCB;
-  //private JButton mConfigBt;
+  private JComboBox mTVDataLifespanCB, mAutoDownloadCB;
   private JButton mChangeDataDirBt;
   private JButton mDeleteTVDataBt;
   private JTextField mTvDataTF;
@@ -76,38 +70,11 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
   public TVDataSettingsTab() {
   }
   
-  
-  /*
-  public void updateConfigButton() {
-    TvDataService curSelectedService=(TvDataService)mServiceCB.getSelectedItem();
-    boolean enabled = (curSelectedService != null)
-    && curSelectedService.hasSettingsPanel();
-    mConfigBt.setEnabled(enabled);
-  }
-  
-  */
+ 
   
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
-  /*  if (source == mServiceCB) {
-      updateConfigButton();
-    }*/
-  /*  else if (source == mChangeDataDirBt) {
-      JFileChooser fc =new JFileChooser();
-      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      fc.setApproveButtonText(mLocalizer.msg("ok", "OK"));
-      fc.setCurrentDirectory(new File(mTvDataTF.getText()));
-      int retVal=fc.showOpenDialog(mSettingsPn);
-      if (retVal==JFileChooser.APPROVE_OPTION) {
-        File f=fc.getSelectedFile();
-        mTvDataTF.setText(f.getAbsolutePath());
-      }
-    }*/
-   /* else if (source == mConfigBt) {
-      TvDataService item = (TvDataService)mServiceCB.getSelectedItem();
-      DataServiceConfigDlg dlg = new DataServiceConfigDlg(mSettingsPn, item);
-      dlg.centerAndShow();
-    }*/
+  
     if (source==mDeleteTVDataBt) {
       DeleteTVDataDlg dlg = new DeleteTVDataDlg(mSettingsPn);
       dlg.centerAndShow();
@@ -165,11 +132,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
 
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    
-    //JPanel main = new JPanel(new TabLayout(1));
-    //mSettingsPn.add(main, BorderLayout.NORTH);
-    
-    // tv data
+       
     
     JPanel tvDataPn=new JPanel(new GridLayout(0,2,0,7));
     
@@ -205,83 +168,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
     }
     tvDataPn.add(mAutoDownloadCB);
     
-    msg = mLocalizer.msg("startIn", "Start in");
-    tvDataPn.add(new JLabel(msg));
-    
-    mBrowseModeCB=new JComboBox(MODE_MSG_ARR);
-    tvDataPn.add(mBrowseModeCB);
-    
-    if (Settings.getStartupInOnlineMode()) {
-      mBrowseModeCB.setSelectedIndex(0);
-    }else{
-      mBrowseModeCB.setSelectedIndex(1);
-    }
-    
-    
-    /*
-    JPanel tvDataPn = new JPanel(new TabLayout(2, true));
-    main.add(tvDataPn);
-    
-    
-    
-    msg = mLocalizer.msg("deleteTvData", "Delete TV data");
-    tvDataPn.add(new JLabel(msg));
-    
-    JPanel panel1=new JPanel(new FlowLayout());
-    
-    mTVDataLifespanCB=new JComboBox(DELETE_MSG_ARR);
-    
-    makeSelectionInTVDataLifespanCB(Settings.getTVDataLifespan());
-    
-    panel1.add(mTVDataLifespanCB);
-    mDeleteTVDataBt=new JButton("delete...");
-    mDeleteTVDataBt.addActionListener(this);
-    panel1.add(mDeleteTVDataBt);
-    
-    tvDataPn.add(panel1);
-    
-   
-    msg = mLocalizer.msg("autoDownload", "Download automatically");
-    tvDataPn.add(new JLabel(msg));
-  
-    mAutoDownloadCB=new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
-    if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
-      mAutoDownloadCB.setSelectedIndex(1);
-    }
-    tvDataPn.add(mAutoDownloadCB);
-    
-    msg = mLocalizer.msg("startIn", "Start in");
-    tvDataPn.add(new JLabel(msg));
-    
-    mBrowseModeCB=new JComboBox(MODE_MSG_ARR);
-    tvDataPn.add(mBrowseModeCB);
-    
-    if (Settings.getStartupInOnlineMode()) {
-      mBrowseModeCB.setSelectedIndex(0);
-    }else{
-      mBrowseModeCB.setSelectedIndex(1);
-    }
-    
-    */
-    
-    
-    // TV data service
-   /* JPanel dataServicePn = new JPanel(new FlowLayout(FlowLayout.LEADING));
-    msg = mLocalizer.msg("configureTvDataServices", "Configure tv data services");
-    dataServicePn.setBorder(BorderFactory.createTitledBorder(msg));
-    mSettingsPn.add(dataServicePn,BorderLayout.SOUTH);
-    
-    mServiceCB = new JComboBox(TvDataServiceManager.getInstance().getDataServices());
-    mServiceCB.setRenderer(new DataServiceRenderer());
-    mServiceCB.addActionListener(this);
-    dataServicePn.add(mServiceCB);
-    dataServicePn.add(new JLabel(" "));
-    mConfigBt = new JButton(mLocalizer.msg("configure", "Configure..."));
-    mConfigBt.addActionListener(this);
-    dataServicePn.add(mConfigBt);
-    
-    updateConfigButton();
-    */
     return mSettingsPn;
   }
   
@@ -291,11 +177,8 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
- //   Settings.setTVDataDirectory(mTvDataTF.getText());
-    
+     
     Settings.setTVDataLifespan(getDaysFromTVDataLifespanCB());
-    
-    Settings.setStartupInOnlineMode(mBrowseModeCB.getSelectedIndex()==0);
     
     int inx = mAutoDownloadCB.getSelectedIndex();
     if (inx == 0) {

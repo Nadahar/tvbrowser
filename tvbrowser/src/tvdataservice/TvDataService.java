@@ -80,5 +80,8 @@ public interface TvDataService {
    * 
    */
   public devplugin.PluginInfo getInfo();
+  
+  
+ // public int getTimeZone
 
 }
