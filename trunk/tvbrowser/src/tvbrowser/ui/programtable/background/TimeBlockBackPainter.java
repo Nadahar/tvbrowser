@@ -114,9 +114,9 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       }
 
       // Get the y positions of this time block
-      minY = mBlockArr[i].mStartY;
+      minY = blockArr[i].mStartY;
       if ((i + 1) < blockArr.length) {
-        maxY = mBlockArr[i + 1].mStartY;
+        maxY = blockArr[i + 1].mStartY;
       } else {
         maxY = tableHeight;
       }
@@ -274,17 +274,17 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
           }
 
           // Get the y positions of this time block
-          int minY = mBlockArr[i].mStartY;
+          int minY = blockArr[i].mStartY;
           int maxY;
           if ((i + 1) < blockArr.length) {
-            maxY = mBlockArr[i + 1].mStartY;
+            maxY = blockArr[i + 1].mStartY;
           } else {
             maxY = height;
           }
       
           // Paint the block
           fillImage(grp, 0, minY, width, (maxY - minY), backImg, clipBounds);
-          String msg = Integer.toString(mBlockArr[i].mStartTime / 60 % 24);
+          String msg = Integer.toString(blockArr[i].mStartTime / 60 % 24);
           int msgWidth = mFontMetrics.stringWidth(msg);
           int x = width - msgWidth - 2;
           grp.drawString(msg, x, minY + TABLE_WEST_FONT.getSize());
