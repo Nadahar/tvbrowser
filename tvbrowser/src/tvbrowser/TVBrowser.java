@@ -36,7 +36,8 @@ import java.io.*;
 import java.util.logging.*;
 
 import tvbrowser.core.*;
-import tvbrowser.ui.programtable.ProgramTablePanel;
+import tvbrowser.ui.programtable.ProgramTableScrollPane;
+import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.UpdateDlg;
@@ -69,8 +70,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   private JButton mNowBt, mEarlyBt, mMorningBt, mMiddayBt, mEveningBt,
     updateBtn, settingsBtn;
-  private ProgramTablePanel programTablePanel;
-  //private JPanel buttonPanel;
+
+  private ProgramTableScrollPane mProgramTableScrollPane;
+  private DefaultProgramTableModel mProgramTableModel;
+
   private Thread downloadingThread;
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
@@ -84,7 +87,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   
   private static TVBrowser mainFrame;
 
-  private JMenu pluginsMenu;
+  private JMenu mPluginsMenu;
 
   
   
@@ -261,19 +264,19 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     tvDataMenu.add(mExportTvDataMI);
     
     // Plugins menu
-    pluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-	pluginsMenu.setMnemonic(KeyEvent.VK_P);
-    menuBar.add(pluginsMenu);
+    mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+	mPluginsMenu.setMnemonic(KeyEvent.VK_P);
+    menuBar.add(mPluginsMenu);
     
-    updatePluginMenu(pluginsMenu);
+    updatePluginsMenu();
 
-    pluginsMenu.addSeparator();
+    mPluginsMenu.addSeparator();
     
     icon = new ImageIcon("imgs/Search16.gif");
     msg = mLocalizer.msg("menuitem.findPluginsInWeb", "Find plugins in the web...");
     JMenuItem pluginDownloadMenuItem = new JMenuItem(msg, icon);
     pluginDownloadMenuItem.setEnabled(false);
-    pluginsMenu.add(pluginDownloadMenuItem);
+    mPluginsMenu.add(pluginDownloadMenuItem);
     
     // Help menu
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
@@ -328,10 +331,16 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     buttonPanel.update();
     northPanel.add(buttonPanel,BorderLayout.WEST);
 
-    programTablePanel = new ProgramTablePanel(this);
-    programTablePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    finderPanel = new FinderPanel(this);
+    JPanel centerPanel = new JPanel(new BorderLayout());
+    centerPanel.setOpaque(false);
+    centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    
+    mProgramTableModel = new DefaultProgramTableModel(ChannelList.getSubscribedChannels());
+    mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
+    centerPanel.add(mProgramTableScrollPane);
 
+    finderPanel = new FinderPanel(this);
+    
     String[] items = {
       mLocalizer.msg("offlineMode", "Offline mode"),
       mLocalizer.msg("onlineMode", "Online mode")
@@ -368,8 +377,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     skinPanel.add(northPanel,BorderLayout.NORTH);
     skinPanel.add(eastPanel,BorderLayout.EAST);
-    skinPanel.add(programTablePanel,BorderLayout.CENTER);
-    programTablePanel.setOpaque(false);
+    skinPanel.add(centerPanel, BorderLayout.CENTER);
 
     jcontentPane.add(skinPanel,BorderLayout.CENTER);
 
@@ -414,18 +422,27 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   	}
   }
 
+  
+  
+  private void updatePluginsMenu() {
+    mPluginsMenu.removeAll();
 
-
-  private void updatePluginMenu(JMenu theMenu) {
-    theMenu.removeAll();
-
-    devplugin.Plugin[] pluginArr = PluginManager.getInstalledPlugins();
+    Object[] plugins = PluginManager.getInstalledPlugins();
     JMenuItem item;
-    for (int i = 0; i < pluginArr.length; i++) {
-      final devplugin.Plugin plugin = pluginArr[i];
+    HashMap map = new HashMap();
+    for (int i = 0;i<plugins.length;i++) {
+      final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
       plugin.setParent(this);
       String btnTxt = plugin.getButtonText();
       if (btnTxt != null) {
+        int k = 1;
+        String txt = btnTxt;
+        while (map.get(txt) != null) {
+          txt = btnTxt+"("+k+")";
+          k++;
+        }
+        map.put(txt,btnTxt);
+
         item = new JMenuItem(btnTxt);
         item.setIcon(plugin.getButtonIcon());
         item.addActionListener(new ActionListener() {
@@ -434,11 +451,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
             plugin.execute();
           }
         });
-        theMenu.add(item);
+        mPluginsMenu.add(item);
       }
     }
   }
-
+  
 
 
   private void scrollToNow() {
@@ -446,7 +463,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
-    programTablePanel.scrollTo(hour);
+    mProgramTableScrollPane.scrollToTime(hour * 60);
   }
 
 
@@ -458,16 +475,16 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       scrollToNow();
     }
     else if (src == mEarlyBt) {
-      programTablePanel.scrollTo(4);
+      mProgramTableScrollPane.scrollToTime(4 * 60); // 0 .. 8
     }
     else if (src == mMorningBt) {
-      programTablePanel.scrollTo(8);
+      mProgramTableScrollPane.scrollToTime(10 * 60); // 8 .. 12
     }
     else if (src == mMiddayBt) {
-      programTablePanel.scrollTo(12);
+      mProgramTableScrollPane.scrollToTime(15 * 60); // 12 .. 18
     }
     else if (src == mEveningBt) {
-      programTablePanel.scrollTo(18);
+      mProgramTableScrollPane.scrollToTime(21 * 60); // 18 .. 24
     }
     else if (src == quitMenuItem) {
       quit(); 
@@ -520,16 +537,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
    * Called when new TV data was downloaded or when TV data was imported.
    */
   private void newTvDataAvailable() {
-    try {
-      devplugin.Date showingDate = finderPanel.getSelectedDate();
-      DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
-      programTablePanel.setDayProgram(dayProgram);
-    } catch(TvBrowserException exc) {
-      ErrorHandler.handle(exc);
-    }
-    if (finderPanel != null) {
-      finderPanel.update();
-    }
+    changeDate(finderPanel.getSelectedDate());
   }
 
 
@@ -583,19 +591,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private void changeDate(devplugin.Date date) {
-    try {
-      DayProgram prog = DataService.getInstance().getDayProgram(date);
-      programTablePanel.setDayProgram(prog);
-      if (finderPanel != null) {
-        finderPanel.update();
-      }
-      if (date.equals(new devplugin.Date())) {
-        // If this is today -> scroll to now
-        scrollToNow();
-      }
+    devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
+    DayProgram today = DataService.getInstance().getDayProgram(date);
+    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate);
+    mProgramTableModel.setDayPrograms(today, tomorrow);
+
+    if (finderPanel != null) {
+      finderPanel.update();
     }
-    catch (TvBrowserException exc) {
-      ErrorHandler.handle(exc);
+    if (date.equals(new devplugin.Date())) {
+      // If this is today -> scroll to now
+      scrollToNow();
     }
   }
 
@@ -757,12 +763,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
       updateApplicationSkin();
     }
+    if (Settings.settingHasChanged(new String[]{"table.layout"})) {
+      mProgramTableScrollPane.getProgramTable().setProgramTableLayout(null);
+    }
     if (Settings.settingHasChanged(new String[]{"tablebgmode","tablebackground"})) {
-      programTablePanel.updateBackground();
+      mProgramTableScrollPane.getProgramTable().updateBackground();
     }
     if (Settings.settingHasChanged(new String[]{"plugins"})) {
-      programTablePanel.setPluginContextMenu(DataService.getInstance().createPluginContextMenu(this));
-      updatePluginMenu(pluginsMenu);
+      updatePluginsMenu();
     }
     if (Settings.settingHasChanged(new String[]{"timebutton","updatebutton","preferencesbutton",
     "buttontype","buttonplugins"})) {
@@ -771,15 +779,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
       createChannelList();
-      programTablePanel.subscribedChannelsChanged();
+      
       DataService.getInstance().subscribedChannelsChanged();
+
+      mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
       devplugin.Date showingDate = finderPanel.getSelectedDate();
-      DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
-      try {
-        programTablePanel.setDayProgram(dayProgram);
-      } catch(TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
+      changeDate(showingDate);
     }
   }
   

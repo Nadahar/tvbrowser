@@ -43,45 +43,52 @@ public class ChannelPanel extends JPanel {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ChannelPanel.class);
   
-  private JScrollPane scrollPane=null;
+  private int mColumnWidth;
+  private JLabel[] mLabelArr;
   
-  private JLabel [] labels;
   
-  
-  public ChannelPanel() {
-    int n=ChannelList.getNumberOfSubscribedChannels();
-   setLayout(new GridLayout(1,0,0,0));
-    
-  
+  public ChannelPanel(int columnWidth, Channel[] channelArr) {
+    setLayout(new GridLayout(1,0,0,0));
     setOpaque(true);
-    setBackground(new java.awt.Color(208,199,241));
+    setBackground(new java.awt.Color(208, 199, 241));
     
-    labels=new JLabel[n];
-    Iterator iter = ChannelList.getChannels();
-    int colWidth=Settings.getColumnWidth();
+    setShownChannels(channelArr);
+    setColumnWidth(columnWidth);
+  }
+
+  
+  
+  public void setShownChannels(Channel[] channelArr) {
+    removeAll();
     
-    while (iter.hasNext()) {
-      Channel ch = (Channel) iter.next();
-      if (ChannelList.isSubscribedChannel(ch)) {
-        int pos=ChannelList.getPos(ch);
-        labels[pos]=new JLabel(ch.getName());
-        labels[pos].setOpaque(false);
-        labels[pos].setHorizontalAlignment(JLabel.CENTER);
-        labels[pos].setPreferredSize(new Dimension(colWidth,15));
+    mLabelArr = new JLabel[channelArr.length];
+    
+    for (int i = 0; i < mLabelArr.length; i++) {
+      String channelName = null;
+      if (channelArr[i] != null) {
+        channelName = channelArr[i].getName();
+      }
+      if (channelName == null) {
+        channelName = mLocalizer.msg("unknown", "Unknown");
       }
       
+      mLabelArr[i] = new JLabel(channelName);
+      mLabelArr[i].setOpaque(false);
+      mLabelArr[i].setHorizontalAlignment(JLabel.CENTER);
+      add(mLabelArr[i]);
     }
-    for (int i=0;i<n;i++) {
-      if (labels[i]==null) {
-        labels[i] = new JLabel(mLocalizer.msg("unknown", "Unknown"));
-      }
-      add(labels[i]);
+    
+    setColumnWidth(mColumnWidth);
+  }
+
+  
+  
+  public void setColumnWidth(int columnWidth) {
+    mColumnWidth = columnWidth;
+    
+    for (int i = 0; i < mLabelArr.length; i++) {
+      mLabelArr[i].setPreferredSize(new Dimension(mColumnWidth, 15));
     }
   }
   
-  
-  public void scroll(int x) {
-    scrollPane.getViewport().setViewPosition(new Point(x,0));
-  }
-   
 }

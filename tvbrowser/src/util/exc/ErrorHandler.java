@@ -160,7 +160,7 @@ public class ErrorHandler {
       mMessagePn.add(errorLb, BorderLayout.WEST);
       int width = UiUtilities.getStringWidth(errorLb.getFont(), msg);
       width = Math.min(width, 400);
-      Icon messageIcon = new TextAreaIcon(msg.toCharArray(), errorLb.getFont(), width);
+      Icon messageIcon = new TextAreaIcon(msg, errorLb.getFont(), width);
       mMessagePn.add(new JLabel(messageIcon));
       
       // The buttons

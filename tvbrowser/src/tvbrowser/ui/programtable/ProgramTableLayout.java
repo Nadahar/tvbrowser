@@ -24,20 +24,18 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.programtable;
 
-
-public interface ScrollableTablePanel {
-    public void scrollTo(int hour);
-    public void scrollTo(devplugin.Channel ch);
-    public void up(int step);
-    public void down(int step);
-    public void left(int step);
-    public void right(int step);
+/**
+ *
+ * @author Til Schneider, www.murfman.de
+ */
+public interface ProgramTableLayout {
+  
+  public void updateLayout(ProgramTableModel model, ProgramTableCellRenderer renderer);
+  
+  public int getColumnStart(int col);
+  
+  public int getCellHeight(int col, int row);
+  
 }

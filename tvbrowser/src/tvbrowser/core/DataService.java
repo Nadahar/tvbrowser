@@ -518,24 +518,6 @@ public static void deleteExpiredFiles(int lifespan) {
 
 
   /**
-   * Creates a context menu containg all subscribed plugins that support context
-   * menues.
-   *
-   * @return a plugin context menu.
-   * @param parent The parent for the context menu.
-   */
-  public tvbrowser.ui.ContextMenu createPluginContextMenu(java.awt.Frame parent) {
-	tvbrowser.ui.ContextMenu menu=new tvbrowser.ui.ContextMenu(parent);
-	Object[] plugins=PluginManager.getInstalledPlugins();
-		for (int i=0;i<plugins.length;i++) {
-		  menu.addPlugin((devplugin.Plugin)plugins[i]);
-		}
-	return menu;
-  }
-
-
-
-  /**
    * Imports previously exported tv data.
    * <p>
    * In fact the files that are not already present in the tvdata directory

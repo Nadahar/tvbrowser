@@ -111,10 +111,9 @@ public interface Program {
   public boolean isOnAir();
 
   /**
-   * Gets an iterator for all {@link devplugin.Program}s that have marked
-   * this program.
+   * Gets all {@link devplugin.Plugin}s that have marked this program.
    */
-  public Iterator getMarkedByIterator();
+  public Plugin[] getMarkedByPlugins();
 
   /**
    * Gets whether this program is expired.

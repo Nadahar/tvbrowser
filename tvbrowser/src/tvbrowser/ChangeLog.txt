@@ -1,6 +1,11 @@
 Changelog TVBrowser
 
 current:
+- New program table
+- Show also the next morning
+- Compact and Time synchronous program table layout
+
+0.9.4:
 - Better readable text in Splash Screen
 - Error message when TV-Browser starts in wrong directory
 - Install all plugins by default

@@ -164,6 +164,18 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     return mProgramList.size();
   }
 
+  
+  
+  /**
+   * Returns the program at the specified index.
+   *
+   * @param index The index of the wanted program.
+   * @return The program at the specified index.
+   */
+  public Program getProgramAt(int index) {
+    return (Program) mProgramList.get(index);
+  }
+  
 
 
   /**

@@ -174,6 +174,9 @@ public class Settings {
 
   private static final long PROXY_PASSWORD_SEED = 6528587292713416704L;
 
+  public static final int TABLE_LAYOUT_COMPACT = 1;
+  public static final int TABLE_LAYOUT_TIME_SYNCHRONOUS = 2;
+
   private static TVBrowserProperties settings=null;
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
   public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
@@ -320,8 +323,30 @@ public class Settings {
     }
   }
 
-  
-  
+
+
+  public static int getTableLayout() {
+    String layout = settings.getProperty("table.layout", "timeSynchronous");
+    
+    if (layout.equals("compact")) {
+      return TABLE_LAYOUT_COMPACT;
+    } else {
+      return TABLE_LAYOUT_TIME_SYNCHRONOUS;
+    }
+  }
+
+
+
+  public static void setTableLayout(int layout) {
+    if (layout == TABLE_LAYOUT_COMPACT) {
+      settings.setProperty("table.layout", "compact");
+    } else {
+      settings.setProperty("table.layout", "timeSynchronous");
+    }
+  }
+
+
+
   /**
    * Returns the background mode of the TV table.
    * Possible values are COLUMN, WALLPAPER and NONE
