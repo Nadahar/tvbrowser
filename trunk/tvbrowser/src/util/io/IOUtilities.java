@@ -380,8 +380,13 @@ public class IOUtilities {
       // System.currentTimeMillis() deliveres the GMT, so we have to add the
       // time zone offset.
       int zoneOffset = CALENDAR.get(Calendar.ZONE_OFFSET);
-      long millis = System.currentTimeMillis() + zoneOffset;
+      int daylight = CALENDAR.get(Calendar.DST_OFFSET);
+      long millis = System.currentTimeMillis() + zoneOffset + daylight;
       return (int) (millis / 1000L / 60L / 60L / 24L);
+      
+      
+      
+	 //return (int)(System.currentTimeMillis()/86400000L); 
     }
   }
 
