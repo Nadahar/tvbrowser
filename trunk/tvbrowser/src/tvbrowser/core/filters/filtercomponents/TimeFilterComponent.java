@@ -116,11 +116,24 @@ public class TimeFilterComponent implements FilterComponent {
     return result;
   }	
   
-  
-	public boolean accept(Program program) {    
+  public boolean accept(Program program) {    
     int h = program.getHours();
+    
+    // From-To spans over 2 Days
+    if (mToTime%24 < mFromTime) {
+        if (h >= mFromTime) {
+            return true;
+        }
+        
+        if (h < mToTime%24) {
+            return true;
+        }
+        
+    }
+    
+    // Normal-Mode
     return (h<mToTime%24 && h>=mFromTime);     
-	}
+  }
   
   
   class TimeListCellRenderer extends DefaultListCellRenderer {
