@@ -148,7 +148,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
   }
   
   public void updateButtons() {    
-    JButton[] toolbarButtons = this.getToolbarButtons();
+    JButton[] toolbarButtons = getToolbarButtons();
     mToolbar.setButtons(toolbarButtons, getToolbarStyle());    
     mToolbar.updateToolbar();
   }
@@ -168,13 +168,13 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
   private JButton createUpdateBtn() {
     
     String msg = tvbrowser.TVBrowser.mLocalizer.msg("button.update", "Update");
-    JButton btn = new PictureButton(msg, new ImageIcon("imgs/Refresh24.gif"),MainFrame.mLocalizer.msg("menuinfo.update",""),mParent.getStatusBarLabel());
-    btn.addActionListener(new ActionListener(){
+    mUpdateBtn = new PictureButton(msg, new ImageIcon("imgs/Refresh24.gif"),MainFrame.mLocalizer.msg("menuinfo.update",""),mParent.getStatusBarLabel());
+    mUpdateBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				mParent.updateTvData();			
 			}
     });
-    return btn;
+    return mUpdateBtn;
   }
   private JButton createSettingsBtn() {
       String msg = tvbrowser.TVBrowser.mLocalizer.msg("button.settings", "Settings");

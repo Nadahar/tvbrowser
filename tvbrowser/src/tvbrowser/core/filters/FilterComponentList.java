@@ -49,6 +49,10 @@ public class FilterComponentList {
   
   private static HashMap mComponentMap;
   
+  private static java.util.logging.Logger mLog
+      = java.util.logging.Logger.getLogger(FilterComponentList.class.getName());
+
+  
   private FilterComponentList() {
     mComponentMap = new HashMap();
     ObjectInputStream in=null;
@@ -64,7 +68,12 @@ public class FilterComponentList {
         int version=in.readInt();
         int compCnt=in.readInt();
         for (int i=0; i<compCnt; i++) {
-          FilterComponent comp = readComponent(in);
+          FilterComponent comp=null;
+          try {
+            comp = readComponent(in);
+          }catch(IOException e) {
+            mLog.warning("error reading filter component: "+e);
+          }
           if (comp != null) {
             mComponentMap.put(comp.getName().toUpperCase(), comp);                     
           }
@@ -144,7 +153,9 @@ public class FilterComponentList {
         filterComponent = new ProgramLengthFilterComponent(name, description);
   }
     else {
-      throw new IOException("error reading filter component: "+className+" unknown");      
+      //throw new IOException("error reading filter component: "+className+" unknown");
+      mLog.warning("error reading filter component: "+className+" unknown");
+      return null;      
     }
    
     if (filterComponent!=null) {
