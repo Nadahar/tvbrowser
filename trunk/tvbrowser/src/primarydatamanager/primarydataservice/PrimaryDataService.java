@@ -26,17 +26,30 @@
 
 package primarydatamanager.primarydataservice;
 
+import java.io.PrintStream;
+
 import devplugin.Channel;
 
 /**
+ * Gets the raw TV data for one or more TV channels.
+ * 
  * @author Martin Oberhauser
  */
 public interface PrimaryDataService {
 
-  public boolean execute(String dir, java.io.PrintStream err);
+  /**
+   * Gets the raw TV data and writes it to a directory
+   * 
+   * @param dir The directory to write the raw TV data to. 
+   * @param err The stream to print error messages to.
+   * @return Whether there were errors.
+   */
+  public boolean execute(String dir, PrintStream err);
 
   /**
    * Gets the list of the channels that are available by this data service.
+   * 
+   * @return The list of available channels
    */
   public Channel[] getAvailableChannels();
 
