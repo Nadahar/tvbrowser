@@ -302,7 +302,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   int levelIdx = DayProgramFile.getLevelIndexForId(level);
     
   // Check whether we already have data for this day
-  if (dataBase.isDayProgramAvailable(date, channel)) {
+  if (dataBase.isDayProgramAvailable(date, channel) && completeFile.exists()) {
     // We have data -> Check whether the mirror has an update
               
     // Get the version of the file
