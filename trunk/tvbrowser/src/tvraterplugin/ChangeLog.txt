@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.65:
+- New Genre: Romanze
+
 0.64
 - Stupid error: Update button was not enabled after Update
 

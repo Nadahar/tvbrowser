@@ -41,7 +41,6 @@ import devplugin.Version;
  * 
  * TODO: Get Personal Ratings from Server
  * TODO: Send Original-Titles to Server 
- * TODO: Rate Episodes not the whole Series 
  * 
  * @author Bodo Tasche
  */
@@ -155,7 +154,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
 
     public String getMarkIconName() {
-        return "tvraterplugin/tvrater.gif";
+        return "tvraterplugin/imgs/3.gif";
     }
 
     public String getButtonText() {
@@ -163,7 +162,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
 
     public String getButtonIconName() {
-        return "tvraterplugin/tvrater.gif";
+        return "tvraterplugin/imgs/3.gif";
     }
 
     /**
