@@ -79,7 +79,7 @@ public class DayProgramUpdateDH implements DownloadHandler {
       completeProg.readFromFile(completeFile);
       
       // Update the complete file
-      completeProg.update(updateProg);
+      completeProg.updateCompleteFile(updateProg);
 
       // Save the complete program
       completeProg.writeToFile(completeFile);
