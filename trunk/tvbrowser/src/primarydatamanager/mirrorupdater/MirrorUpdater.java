@@ -132,7 +132,7 @@ public class MirrorUpdater {
       int year = Integer.parseInt(fileName.substring(0, 4));
       int month = Integer.parseInt(fileName.substring(5, 7));
       int day = Integer.parseInt(fileName.substring(8, 10));
-      Date date = new Date();
+      Date date = new Date(year, month, day);
       
       return date.compareTo(mDeadlineDay) >= 0;
     }
