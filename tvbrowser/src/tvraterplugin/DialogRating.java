@@ -354,6 +354,9 @@ public class DialogRating extends JDialog {
             }
         }
         
+        if (_genre.getSelectedItem() == null) {
+            return false;
+        }
         
         return true;
     }

@@ -21,29 +21,31 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer {
 
     public GenreComboBox(int curRating) {
         TreeSet tree = new TreeSet(RatingIconTextFactory.getGenres().keySet());
-        
+
         DefaultComboBoxModel model = new DefaultComboBoxModel(tree.toArray());
 	    setModel(model);
 
-		if (curRating <= -1) {
-			curRating = 999;
-		}
-		
-		String curStr = Integer.toString(curRating);
-		
-		while (curStr.length() < 3) {
-			curStr = "0" + curStr;
-		}
-
-   	    int ind = model.getIndexOf(curStr);
-   	    
-   	    if (ind == -1) {
-	   	    ind = model.getIndexOf("999");
-   	    }
-   	    
-        setSelectedIndex(ind);
-        
     	setRenderer(this);
+        
+		if (curRating <= -1) {
+			setSelectedItem(null);
+		} else {
+			String curStr = Integer.toString(curRating);
+			
+			while (curStr.length() < 3) {
+				curStr = "0" + curStr;
+			}
+
+	   	    int ind = model.getIndexOf(curStr);
+	   	    
+	   	    if (ind == -1) {
+		   	    ind = model.getIndexOf("999");
+	   	    }
+	   	    
+	        setSelectedIndex(ind);
+		}
+		
+        
     }
     
     
