@@ -571,12 +571,16 @@ private Node mDateChannelNode;
    * Shows the settings dialog.
    */
   public void showSettingsDialog() {
-    SettingsDialog dlg = new SettingsDialog(this);
+    showSettingsDialog("#channels");
+  }
+
+  public void showSettingsDialog(String visibleTabId) {
+    SettingsDialog dlg = new SettingsDialog(this, visibleTabId);
     dlg.centerAndShow();
     Settings.handleChangedSettings();
   }
-  
-    
+
+
   /**
    * Shows the about box
    */
@@ -771,11 +775,6 @@ public void showHelpDialog() {
     else {
       mPluginsNode.setLeaf(null);
     }
-   // Settings.propShowPluginView.setBoolean(visible);
-   // if (mToolBar != null) {
-   //   mToolBar.setPluginViewToolbarButtonSelected(visible);
-   // }
- /*      */
     updateViews();
   }
   

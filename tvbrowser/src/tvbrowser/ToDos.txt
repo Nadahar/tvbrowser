@@ -36,6 +36,7 @@ java.lang.NullPointerException
 - (B) Umlaute im Einrichtungsassistent
 - "irgendwie" hervorheben, dass gerade ein Filter ausgewaehlt ist (und deshalb nicht alle Sendungen sichtbar sind).
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
+- Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
 
 
 Entfernte ToDos:

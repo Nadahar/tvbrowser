@@ -28,6 +28,7 @@ package tvbrowser.ui.mainframe.toolbar;
 
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
+import tvbrowser.ui.mainframe.MainFrame;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -138,6 +139,11 @@ public class ContextMenu {
 
   private JMenuItem createSetupItem() {
     JMenuItem item = new JMenuItem("Configure...");
+    item.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().showSettingsDialog("#toolbar");
+      }
+    });
     return item;
   }
 

@@ -30,11 +30,17 @@ package tvbrowser.ui.pluginview.contextmenu;
 
 import devplugin.Plugin;
 import devplugin.ActionMenu;
+import devplugin.SettingsTab;
 
 import javax.swing.tree.TreePath;
 import javax.swing.*;
 
 import util.ui.menu.MenuUtil;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import tvbrowser.ui.mainframe.MainFrame;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -42,6 +48,10 @@ import util.ui.menu.MenuUtil;
  * Time: 22:07:57
  */
 public class PluginContextMenu extends AbstractContextMenu {
+
+  /** The localizer for this class. */
+     private static final util.ui.Localizer mLocalizer
+       = util.ui.Localizer.getLocalizerFor(PluginContextMenu.class);
 
 
   private ActionMenu[] mActionMenus;
@@ -74,11 +84,23 @@ public class PluginContextMenu extends AbstractContextMenu {
     }
 
     if (mActionMenus.length>0) {
-      menu.addSeparator();
       for (int i=0; i<mActionMenus.length; i++) {
         JMenuItem menuItem = MenuUtil.createMenuItem(mActionMenus[i]);
         menu.add(menuItem);
       }
+    }
+
+
+    SettingsTab settingsTab = mPlugin.getSettingsTab();
+    if (settingsTab != null) {
+      menu.addSeparator();
+      JMenuItem menuItem = MenuUtil.createMenuItem(mLocalizer.msg("settings","settings"));
+      menu.add(menuItem);
+      menuItem.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          MainFrame.getInstance().showSettingsDialog(mPlugin.getId());
+        }
+      });
     }
 
     return menu;
