@@ -88,7 +88,7 @@ public class ContextMenu extends JPopupMenu implements ActionListener {
         if (obj instanceof JMenuItem) {
             String itemText=((JMenuItem)obj).getText();
             devplugin.Plugin plugin=(devplugin.Plugin)plugins.get(itemText);
-            plugin.execute(new devplugin.Program[]{program});
+            plugin.execute(program);
         }
     }
 }

@@ -154,20 +154,22 @@ public class FavoritesPlugin extends Plugin {
 
   
   
-  public void execute(devplugin.Program[] programArr) {
-    if (programArr.length == 1) {
-      Favorite favorite = new Favorite();
-      favorite.setTerm(programArr[0].getTitle());
-      
-      EditFavoriteDialog dlg = new EditFavoriteDialog(parent, favorite);
-      dlg.centerAndShow();
-      
-      if (dlg.getOkWasPressed()) {
-        Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
-        System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
-        newFavoritesArr[mFavoriteArr.length] = favorite;
-        mFavoriteArr = newFavoritesArr;
-      }
+  /**
+   * This method is invoked by the host-application if the user has choosen your
+   * plugin from the context menu.
+   */
+  public void execute(Program program) {
+    Favorite favorite = new Favorite();
+    favorite.setTerm(program.getTitle());
+
+    EditFavoriteDialog dlg = new EditFavoriteDialog(parent, favorite);
+    dlg.centerAndShow();
+
+    if (dlg.getOkWasPressed()) {
+      Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
+      System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
+      newFavoritesArr[mFavoriteArr.length] = favorite;
+      mFavoriteArr = newFavoritesArr;
     }
   }
   

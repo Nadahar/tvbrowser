@@ -198,8 +198,6 @@ public class Settings {
       TVDataServiceInterface dataLoader
         = DataLoaderManager.getInstance().getDataLoader(dataLoaderClassName);
       
-      System.out.println("##" + dataLoaderClassName + ": " + dataLoader);
-      
       if (dataLoader != null) { 
         ChannelList.subscribeChannel(dataLoader, Integer.parseInt(id));  		
       }

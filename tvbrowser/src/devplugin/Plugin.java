@@ -190,17 +190,25 @@ abstract public class Plugin {
   
   
   
-  /**
-   * This method is invoked by the host-application if the user has choosen your
-   * plugin from the context menu.
-   */
-  public void execute(Program[] program) {
+  public boolean supportMultipleProgramExecution() {
+    return false;
   }
   
   
   
-  public boolean supportMultipleProgramExecution() {
-    return false;
+  /**
+   * This method is invoked for multiple program execution.
+   */
+  public void execute(Program[] programArr) {
+  }
+
+  
+  
+  /**
+   * This method is invoked by the host-application if the user has choosen your
+   * plugin from the context menu.
+   */
+  public void execute(Program program) {
   }
   
   

@@ -44,8 +44,6 @@ public class ChannelList {
    
   
   public static void addDataLoaderChannels(TVDataServiceInterface dataService) {
-    System.out.println("initializing channels");
-    // if (true) throw new NullPointerException("dfdsf");
     Channel[] channelArr = dataService.getAvailableChannels();
 
     for (int i = 0; i < channelArr.length; i++) {
@@ -60,8 +58,6 @@ public class ChannelList {
    * @param id the channel's ID
    */
   public static void subscribeChannel(TVDataServiceInterface dataService, int id) {
-    System.out.println("subscribing " + dataService + ", " + id);
-    
 	Channel ch = getChannel(dataService, id);
 	mSubscribedChannels.add(ch);
   }
@@ -76,8 +72,6 @@ public class ChannelList {
    * @param mAvailableChannels the subscribed mAvailableChannels (array of String)
    */
   public static void setSubscribeChannels(Channel[] channelArr) {
-    System.out.println("Setting subscribed channels");
-    
 	mSubscribedChannels = new ArrayList(channelArr.length);
 	for (int i = 0; i < channelArr.length; i++) {
       if (channelArr[i] == null) {
