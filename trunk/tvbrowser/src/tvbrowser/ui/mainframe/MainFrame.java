@@ -439,7 +439,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   public static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
     pluginsMenu.removeAll();
     
-    Arrays.sort(plugins, new Comparator() {
+    PluginProxy[] copy = new PluginProxy[plugins.length];
+    
+    for (int i = 0; i < plugins.length;i++) {
+        copy[i] = plugins[i];
+    }
+    
+    Arrays.sort(copy, new Comparator() {
 
         public int compare(Object o1, Object o2) {
             return o1.toString().compareTo(o2.toString());
@@ -447,8 +453,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
     });
     
-    for (int i = 0; i < plugins.length; i++) {
-      Action action = plugins[i].getButtonAction();
+    for (int i = 0; i < copy.length; i++) {
+      Action action = copy[i].getButtonAction();
       if (action != null) {
         pluginsMenu.add(new JMenuItem(action));
       }
