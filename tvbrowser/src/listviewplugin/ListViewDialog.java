@@ -51,7 +51,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTable;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -82,9 +81,9 @@ public class ListViewDialog extends JDialog {
             .getLocalizerFor(ListViewDialog.class);
 
     /** The Table */
-    private JTable mProgramTable;
+    private ListTable mProgramTable;
 
-    /** THe Table-Model */
+    /** The Table-Model */
     private ListTableModel mModel;
     
     /** Runs at ... */
@@ -421,7 +420,7 @@ public class ListViewDialog extends JDialog {
         content.add(topPanel, BorderLayout.NORTH);
 
         // Rest of the GUI
-        mProgramTable = new JTable(mModel);
+        mProgramTable = new ListTable(mModel);
         mProgramTable.getTableHeader().setReorderingAllowed(false);
         mProgramTable.getTableHeader().setResizingAllowed(false);
 
