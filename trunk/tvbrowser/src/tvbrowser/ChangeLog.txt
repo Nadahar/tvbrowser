@@ -18,6 +18,8 @@ Changelog TVBrowser
 - Filtersorting is saved now
 - Last used Filter is loaded at start
 - Filter for Time now can save minutes, not only hours
+- ChannelGroups are fetched from the Server
+
 
 1.0.1
  - bugfix: removed "import searchplugin..."
