@@ -35,6 +35,12 @@ import tvdataservice.TvDataService;
 
 public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
  
+  private static final util.ui.Localizer mLocalizer
+     = util.ui.Localizer.getLocalizerFor(ConfigDataServiceSettingsTab.class);
+  
+
+ 
+ 
   private TvDataService mDataService;
   private SettingsPanel mSettingsPanel;
  
@@ -45,14 +51,19 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
  
   public JPanel createSettingsPanel() {
     
-    if (mSettingsPanel!=null) {
-      return mSettingsPanel;
-    } else {
-      JPanel mainPanel=new JPanel(new BorderLayout());
-      mainPanel.add(new JLabel("No settings available for this tv data service"),BorderLayout.CENTER);
-      return mainPanel;
-    }
+    JPanel mainPn=new JPanel(new BorderLayout());
+    mainPn.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
+    PluginInfoPanel infoPn=new PluginInfoPanel();
+    infoPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("about","About this DataService:")));
+    infoPn.setPluginInfo(mDataService.getInfo());
+    mainPn.add(infoPn,BorderLayout.NORTH);
     
+    if (mSettingsPanel!=null) {
+      mainPn.add(mSettingsPanel,BorderLayout.CENTER);
+    } else {
+      mainPn.add(new JLabel(mLocalizer.msg("notsupported","No settings available for this tv data service")),BorderLayout.CENTER);
+    }
+    return mainPn;
   }
 
   
@@ -78,7 +89,7 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
      * Returns the title of the tab-sheet.
      */
     public String getTitle() {
-      return mDataService.getName();
+      return mDataService.getInfo().getName();
     }
   
 }
