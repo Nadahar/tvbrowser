@@ -90,14 +90,14 @@ public class AboutBox extends JDialog {
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,11,11));
     
     JPanel btnPanel=new JPanel(new BorderLayout());
-    JButton closeBtn=new JButton(mLocalizer.msg("close", "Close"));
+    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     final JDialog parentFrame=this;
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         parentFrame.hide();
       }
-    }
-    );
+    });
+    getRootPane().setDefaultButton(closeBtn);
     btnPanel.add(closeBtn,BorderLayout.EAST);
     btnPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
     contentPane.add(btnPanel,BorderLayout.SOUTH);
@@ -128,8 +128,6 @@ public class AboutBox extends JDialog {
     
     content.add(copyrightArea,BorderLayout.SOUTH);
     contentPane.add(content,BorderLayout.CENTER);
-    
-    
     
     JPanel infoPanel=new JPanel();
     infoPanel.setLayout(new BoxLayout(infoPanel,BoxLayout.Y_AXIS));

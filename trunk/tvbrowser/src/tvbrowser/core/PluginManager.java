@@ -272,7 +272,7 @@ public class PluginManager {
    * Returns true, if the plugin with the specified name is currently installed.
    */
   public static boolean isInstalled(String plugin) {
-    return installedPlugins.get(plugin)!=null;
+    return installedPlugins.get(plugin) != null;
   }
 
   /**

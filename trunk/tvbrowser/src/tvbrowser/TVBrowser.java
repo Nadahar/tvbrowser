@@ -702,7 +702,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
    *
    */
   private void showAboutBox() {
-	System.out.println("about");
   	AboutBox box=new AboutBox(this);
   	box.pack();
   	UiUtilities.centerAndShow(box);
