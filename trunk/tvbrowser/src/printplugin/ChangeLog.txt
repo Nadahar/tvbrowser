@@ -16,5 +16,9 @@ Version 0.2
 
 Version 0.3
 
-1.) Bugfixes
+1.) Bugfixes,
 2.) Erweiterung um die Möglichkeit auch Filter auszudrucken.
+
+Version 0.4
+
+1.) Bugfixes.

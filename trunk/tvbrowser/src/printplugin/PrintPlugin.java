@@ -83,7 +83,7 @@ public class PrintPlugin extends devplugin.Plugin
        String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
        String author = "Robert Inzinger";
 
-       return new PluginInfo(name, desc, author, new Version(0, 3));
+       return new PluginInfo(name, desc, author, new Version(0, 4));
    }
 
 // public void execute(Program program)
