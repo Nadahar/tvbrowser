@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -137,14 +137,22 @@ public class PluginManager {
     }
   }
 
+
+
+	private static void initPlugin(Plugin p) {
+		loadPluginData(p);
+		loadPluginSettings(p);		
+	}
+
   /**
    * Kind of constructor
    */
   public static void initInstalledPlugins() {
     Object[] p=getInstalledPlugins();
     for (int i=0;i<p.length;i++) {
-      loadPluginData((Plugin)p[i]);
-      loadPluginSettings((Plugin)p[i]);
+    	initPlugin((Plugin)p[i]);
+     // loadPluginData((Plugin)p[i]);
+     // loadPluginSettings((Plugin)p[i]);
     }
   }
 
@@ -284,6 +292,9 @@ public class PluginManager {
     }
 
     installedPlugins.put(plugin,obj);
+    
+    initPlugin((Plugin)obj);
+    
   }
 
   /**
