@@ -57,6 +57,7 @@ public class WebPlugin extends Plugin {
     /** Default-Addresses */
     final static WebAddress WEB_OFDB        = new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={0}", "webplugin/ofdb.gif", "ISO-8859-1", false, true);
     final static WebAddress WEB_IMDB        = new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={0}", "webplugin/imdb.gif", "UTF-8", false, true);
+    final static WebAddress WEB_ZELLULOID   = new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={0}", "webplugin/zelluloid.png", "ISO-8859-1", false, false);
     final static WebAddress WEB_GOOGLE      = new WebAddress("Google", "http://www.google.com/search?q=%22{0}%22", "webplugin/google.gif", "UTF-8", false, true);
     final static WebAddress WEB_ALTAVISTA   = new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{0}%22", "webplugin/altavista.gif", "UTF-8", false, false);
     
@@ -93,6 +94,7 @@ public class WebPlugin extends Plugin {
         defaults.add(WEB_GOOGLE);
         defaults.add(WEB_IMDB);
         defaults.add(WEB_OFDB);
+        defaults.add(WEB_ZELLULOID);
         defaults.add(WEB_ALTAVISTA);
         
         for (int i = 0; i < size;i++) {
@@ -163,6 +165,7 @@ public class WebPlugin extends Plugin {
         
        mAddresses.add(WEB_OFDB);
        mAddresses.add(WEB_IMDB);
+       mAddresses.add(WEB_ZELLULOID);
        mAddresses.add(WEB_GOOGLE);
        mAddresses.add(WEB_ALTAVISTA);
        mAddresses.add(test);
