@@ -28,55 +28,57 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
 import tvbrowser.core.Settings;
+import util.ui.GridFlowLayout;
 
 
-public class TimeChooserPanel extends JPanel implements ActionListener {
+public class TimeChooserPanel extends JPanel {
     
     /** The localizer for this class. */
-      public static final util.ui.Localizer mLocalizer
+    public static final util.ui.Localizer mLocalizer
         = util.ui.Localizer.getLocalizerFor(TimeChooserPanel.class);
 
     
     private MainFrame mParent;
-    private JButton mNowBt, mEarlyBt, mMiddayBt, mAfternoonBt, mEveningBt;
     private JPanel mTimeBtnPanel;
+    
+    private JPanel mGridPn;
     
     public TimeChooserPanel(MainFrame parent) {
       setOpaque(false);
       mParent=parent;
       setLayout(new BorderLayout(0,7));
       setBorder(BorderFactory.createEmptyBorder(5,3,5,3));
-      mTimeBtnPanel=createTimeBtnPanel();
-      add(mTimeBtnPanel,BorderLayout.NORTH);
-    }
-    
-    public void updateButtons() {
-      remove(mTimeBtnPanel);
-      mTimeBtnPanel=createTimeBtnPanel();
-      add(mTimeBtnPanel,BorderLayout.NORTH);
-      updateUI();
-    }
-    
-    private JPanel createTimeBtnPanel() {
-      JPanel result = new JPanel(new BorderLayout());
-      JPanel gridPn = new JPanel(new GridLayout(0, 2, 2, 2));
-      result.add(gridPn,BorderLayout.CENTER);
+      
+      mGridPn = new JPanel(new GridFlowLayout(5,5,GridFlowLayout.TOP, GridFlowLayout.CENTER));
+      add(mGridPn,BorderLayout.CENTER);
+      
+      
+      createContent();
       
       String msg;
       msg = mLocalizer.msg("button.now", "Now");
-      mNowBt=new JButton(msg);
-      mNowBt.addActionListener(this);
-      
-      result.add(mNowBt, BorderLayout.SOUTH);
+      JButton nowBt=new JButton(msg);
+      nowBt.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent arg0) {
+            mParent.scrollToNow();    
+        }});      
+      add(nowBt, BorderLayout.SOUTH);
+ 
+    }
+    
+    public void updateButtons() {
+      createContent();
+    }
+    
+    private void createContent() {
+      mGridPn.removeAll();
       
       int[] times = Settings.propTimeButtons.getIntArray();
       
@@ -86,7 +88,7 @@ public class TimeChooserPanel extends JPanel implements ActionListener {
         int m = time%60;
         String title = h+":"+(m<10?"0":"")+m;
         JButton btn = new JButton(title);
-        gridPn.add(btn);
+        mGridPn.add(btn);
         btn.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent arg0) {
             mParent.scrollToTime(time);
@@ -96,50 +98,11 @@ public class TimeChooserPanel extends JPanel implements ActionListener {
         
      
 
-     // if (tvbrowser.core.Settings.propShowTimeButtons.getBoolean()) {
-  /*      msg = mLocalizer.msg("button.early", "Early");
-        mEarlyBt=new JButton("9:00");
-        mEarlyBt.addActionListener(this);
-        gridPn.add(mEarlyBt);
-     
-        msg = mLocalizer.msg("button.midday", "Midday");
-        mMiddayBt=new JButton("12:00");
-        mMiddayBt.addActionListener(this);
-        gridPn.add(mMiddayBt);
-        
-        msg = mLocalizer.msg("button.afternoon", "Afternoon");
-        mAfternoonBt=new JButton("14:00");
-        mAfternoonBt.addActionListener(this);
-        gridPn.add(mAfternoonBt);
       
-        msg = mLocalizer.msg("button.evening", "Evening");
-        mEveningBt=new JButton("20:00");
-        mEveningBt.addActionListener(this);
-        gridPn.add(mEveningBt);
-      //}*/
-      
-      return result;
     }
     
-    public void actionPerformed(ActionEvent e) {
-      Object o=e.getSource();
-      if (o==mNowBt) {
-        mParent.scrollToNow();    
-      }
-   /*   else if (o==mEarlyBt) {
-        mParent.onEarlyBtn();
-      }
-      else if (o==mMiddayBt) {
-        mParent.onMiddayBtn();
-      }
-      else if (o==mAfternoonBt) {
-            mParent.onAfternoonBtn();
-          }
-      else if (o==mEveningBt) {
-        mParent.onEveningBtn();
-      }*/
-    
-    }
+   
+
     
     
   }
