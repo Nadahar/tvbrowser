@@ -114,6 +114,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     createChannelList();
 
     Settings.loadSettings();
+    
     mLog.info("Loading Look&Feel...");
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
     splash.setMessage(msg);
@@ -167,8 +168,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
 	
-   pluginsMenu=new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-   updatePluginMenu(pluginsMenu);
+    pluginsMenu=new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+    updatePluginMenu(pluginsMenu);
 
     settingsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."));
     JMenuItem quitMenuItem = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
@@ -329,6 +330,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   	}
   }
 		
+  
+  
   private void updatePluginMenu(JMenu theMenu) {
 	theMenu.removeAll();
 

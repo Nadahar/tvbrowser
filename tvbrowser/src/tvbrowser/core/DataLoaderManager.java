@@ -84,10 +84,10 @@ public class DataLoaderManager {
     for (int i=0;i<fList.length;i++) {
       String className=fList[i];
       if (className.length()>4) {
-        className=className.substring(0,className.length()-4);
-        TVDataServiceInterface cur=loadDataLoader(className);
-        if (cur!=null) {
-          mTvDataLoaderHash.put(className,cur);
+        className = className.substring(0,className.length()-4);
+        TVDataServiceInterface cur = loadDataLoader(className);
+        if (cur != null) {
+          mTvDataLoaderHash.put(cur.getClass().getName(), cur);
         }
       }
     }

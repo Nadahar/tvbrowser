@@ -79,12 +79,13 @@ public class FavoritesPlugin extends Plugin {
 
     // get the favorites
     int size = in.readInt();
-    mFavoriteArr = new Favorite[size];
+    Favorite[] newFavoriteArr = new Favorite[size];
     for (int i = 0; i < size; i++) {
-      mFavoriteArr[i] = new Favorite();
-      mFavoriteArr[i].readData(version, in);
+      newFavoriteArr[i] = new Favorite();
+      newFavoriteArr[i].readData(version, in);
     }
-
+    mFavoriteArr = newFavoriteArr;
+    
     // mark all the favorites
     for (int i = 0; i < mFavoriteArr.length; i++) {
       Program[] programArr = mFavoriteArr[i].getPrograms();
