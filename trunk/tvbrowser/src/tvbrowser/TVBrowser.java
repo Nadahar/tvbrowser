@@ -25,7 +25,6 @@
  */
 package tvbrowser;
 
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Image;
 import java.io.File;
