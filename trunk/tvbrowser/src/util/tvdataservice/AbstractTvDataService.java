@@ -19,10 +19,10 @@ import tvdataloader.*;
  *
  * @author  Til
  */
-public abstract class MultipleChannelTvDataService implements TVDataServiceInterface {
+public abstract class AbstractTvDataService implements TVDataServiceInterface {
 
   private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(MultipleChannelTvDataService.class.getName());
+    = java.util.logging.Logger.getLogger(AbstractTvDataService.class.getName());
   
   /** Specifies whether file that have been parsed should be deleted. */
   private static final boolean DELETE_PARSED_FILES = false;
@@ -42,9 +42,9 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
   
   
   /**
-   * Creates a new instance of MultipleChannelTvDataService.
+   * Creates a new instance of AbstractTvDataService.
    */
-  public MultipleChannelTvDataService() {
+  public AbstractTvDataService() {
   }
 
   
@@ -110,7 +110,10 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
    * Called by the host-application before starting to download.
    */
   public void connect() throws TvBrowserException {
-    System.out.println("connect" + this);
+    if (mProgramDispatcher != null) {
+      throw new IllegalArgumentException("We are already connected!");
+    }
+    
     mProgramDispatcher = new ProgramDispatcher();
     mAlreadyDownloadedFiles = new HashSet();
   }
@@ -122,7 +125,10 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
    * clean-up.
    */
   public void disconnect() throws TvBrowserException {
-    System.out.println("disconnect");
+    if (mProgramDispatcher == null) {
+      throw new IllegalArgumentException("We are already disconnected!");
+    }
+
     mProgramDispatcher = null;
     mAlreadyDownloadedFiles = null;
   }
@@ -135,7 +141,10 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
   public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
     devplugin.Channel channel) throws TvBrowserException
   {
-    System.out.println("mProgramDispatcher: " + mProgramDispatcher + ", this: " + this);
+    if (mProgramDispatcher == null) {
+      throw new IllegalArgumentException("We are not connected!");
+    }
+    
     MutableChannelDayProgram channelDayProgram
       = mProgramDispatcher.getChannelDayProgram(date, channel);
     

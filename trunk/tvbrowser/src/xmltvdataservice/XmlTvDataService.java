@@ -58,7 +58,7 @@ import tvdataloader.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class XmlTvDataService extends MultipleChannelTvDataService {
+public class XmlTvDataService extends AbstractTvDataService {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
