@@ -153,7 +153,7 @@ public class DefaultKonfigurator extends JDialog {
         
         panel.add(buttonPanel, BorderLayout.SOUTH);
         
-        setSize(500, 400);
+        setSize(600, 550);
     }
 
     /**
