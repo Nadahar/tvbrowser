@@ -108,7 +108,7 @@ public class SettingsDialog {
     
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setPreferredSize(new Dimension(410, 300));
-    mSplitPane.setRightComponent(mSettingsPn);
+    mSplitPane.setRightComponent(new JScrollPane(mSettingsPn));
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
