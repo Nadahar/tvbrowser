@@ -27,6 +27,7 @@
 package util.ui.view;
 
 import java.awt.Component;
+
 import javax.swing.JSplitPane;
 
 import util.settings.Property;
@@ -47,7 +48,9 @@ public class SplitView extends AbstractView {
       mComponent = components[0];
     }
     else if (components.length == 2) {
-      JSplitPane splitPane = new JSplitPane();      
+      JSplitPane splitPane = new JSplitPane();
+      splitPane.setContinuousLayout(true);
+      splitPane.setOneTouchExpandable(true);
       splitPane.setLeftComponent(components[0]);
       splitPane.setRightComponent(components[1]);
       mComponent = splitPane;
