@@ -251,7 +251,8 @@ public class DataService implements devplugin.PluginManager {
    * @param allowDownload false, if no dataservice call is required
    * @return the day program for the specified date.
    */
-  public DayProgram getDayProgram(devplugin.Date date, boolean allowDownload) {
+  public DayProgram getDayProgram(devplugin.Date date, boolean allowDownload, int progressStart, int progressEnd) {
+  	
   	// if date is null throw a NullPointerException
     if (date == null) {
       throw new NullPointerException("date is null!");
@@ -267,9 +268,10 @@ public class DataService implements devplugin.PluginManager {
     if (dayProgram == null) {
       try {
         // The program is not in the cache -> try to load it
-		//System.out.println("downloading prog for "+date.toString());
-        
-        dayProgram = loadDayProgram(date);
+		if (progressStart<0 || progressEnd<0 || progressStart>progressEnd) {
+        	throw new IllegalArgumentException("invalid range for progress bar");
+        }
+        dayProgram = loadDayProgram(date, progressStart, progressEnd);
         // mLog.info("Loading program for " + date + " (" + date.hashCode() + ") "
         //   + ((dayProgram == null) ? "failed" : "suceed"));
       }
@@ -277,7 +279,8 @@ public class DataService implements devplugin.PluginManager {
         ErrorHandler.handle(exc);
       }
     }
-
+	progressBar.setValue(progressEnd);
+		
     return dayProgram;
   }
 
@@ -292,16 +295,16 @@ public class DataService implements devplugin.PluginManager {
    * @throws TvBrowserException If the download failed.
    * @return The DayProgram for the specified day.
    */
-  protected DayProgram loadDayProgram(devplugin.Date date)
+  protected DayProgram loadDayProgram(devplugin.Date date, int progressStart, int progressEnd)
     throws TvBrowserException
   {
- 
+  	
     Channel[] channels=ChannelList.getSubscribedChannels();
 
     boolean useProgressBar=false;
     if (isOnlineMode() && !dataAvailable(date)) {
       useProgressBar=true;
-      progressBar.setMaximum(channels.length);
+      //progressBar.setMaximum(channels.length);
     }
 
     // Get the day program for the specified date from the cache
@@ -316,7 +319,7 @@ public class DataService implements devplugin.PluginManager {
       // Update the progress bar
       TvDataService dataService = channels[i].getDataService();
       if (useProgressBar) {
-        progressBar.setValue(i+1);
+        progressBar.setValue((progressEnd-progressStart)/channels.length*(i+1)+progressStart);
       }
 
       // Check whether this channel day program is already present
@@ -444,7 +447,7 @@ public static void deleteExpiredFiles(int lifespan) {
   public devplugin.Program getProgram(devplugin.Date date, String progID) {
   	
   	
-    DayProgram dayProgram = getDayProgram(date, false);
+    DayProgram dayProgram = getDayProgram(date, false, -1, -1);
 
     if (dayProgram == null) {
       return null;
@@ -496,7 +499,7 @@ public static void deleteExpiredFiles(int lifespan) {
     while (dayProgramIter.hasNext()) {
       DayProgram dayProgram = (DayProgram) dayProgramIter.next();
       try {
-        loadDayProgram(dayProgram.getDate());
+        loadDayProgram(dayProgram.getDate(),-1,-1);
       }
       catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
@@ -517,7 +520,7 @@ public static void deleteExpiredFiles(int lifespan) {
    * @return the programs of the specified channel and date.
    */
   public Iterator getChannelDayProgram(devplugin.Date date, devplugin.Channel channel) {
-    DayProgram dayProgram = getDayProgram(date, false);
+    DayProgram dayProgram = getDayProgram(date, false, -1, -1);
     if (dayProgram == null) {
       return null;
     }
