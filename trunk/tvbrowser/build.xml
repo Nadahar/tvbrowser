@@ -61,6 +61,8 @@
   <property name="jsmooth.dir" value="jsmooth"/>
   <property name="public.dir" value="public"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
+  <property name="statcvs.dir" value="statcvs"/>
+  <property name="statcvs.output.dir" value="${statcvs.dir}/html"/>
 
   <path id="sourcepath">
     <pathelement location="${src.dir}"/>
@@ -99,6 +101,7 @@
     <echo message="  installer     Creates a Windows installer for the project."/>
     <echo message="  public        Creates all the stuff that can be downloaded."/>
     <echo message="  test          Does the JUnit tests."/>
+    <echo message="  statcvs       Generates the CVS statistics."/>
     <echo message="  all           Creates all (Same as public)."/>
   </target>
 
@@ -541,6 +544,30 @@
         </fileset>
       </batchtest>
     </junit>
+  </target>
+  
+  
+  
+  <!--
+   | Generates the CVS statistics.
+   +-->
+  <taskdef name="statcvs"
+           classname="net.sf.statcvs.ant.StatCvsTask"
+           classpath="${statcvs.dir}/statcvs.jar"/>
+
+  <target name="statcvs">
+    <echo message="Creating the CVS log file..."/>
+    <cvs command="log"
+         cvsRoot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/tvbrowser"
+         output="${statcvs.dir}/cvslog.txt"/>
+    
+    <echo message="Generating the CVS statistics to ${statcvs.output.dir}..."/>
+    <delete dir="${statcvs.output.dir}"/>
+    <mkdir dir="${statcvs.output.dir}"/>
+    <statcvs projectName="TV-Browser"
+             projectDirectory="."
+             cvsLogFile="${statcvs.dir}/cvslog.txt"
+             outputDirectory="${statcvs.output.dir}"/>
   </target>
 
 </project>
