@@ -288,7 +288,19 @@ public class ChannelList {
 
               Channel ch=ChannelList.getChannel(dataService,id);
               if (ch!=null) {
-                ch.setIconFileName(val);
+                  
+                String[] settings = val.split(";");
+                
+                if (settings.length == 2) {
+                    if (settings[0].equals("true")) {
+                        ch.useUserIcon(true);
+                    } else {
+                        ch.useUserIcon(false);
+                    }
+                    
+                    ch.setIconFileName(settings[1]);
+                }
+                
               }
               
             }
@@ -322,7 +334,7 @@ public class ChannelList {
           for (int i=0;i<channels.length;i++) {
             String filename = channels[i].getIconFileName();
             if ((filename != null) && (filename.trim().length() > 0)){
-              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+filename.trim());  
+              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + channels[i].isUsingUserIcon() +";"+filename.trim());  
             }
           }
       }catch(IOException e) {
