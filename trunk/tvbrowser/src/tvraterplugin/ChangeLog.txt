@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.56
+- Bug in Case-Sensivity removed
+
 0.55
 - Case-Sensivity removed
 - Nullpointer removed
