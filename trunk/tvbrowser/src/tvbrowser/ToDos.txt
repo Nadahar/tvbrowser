@@ -1,0 +1,24 @@
+TODOs:
+
+- Senderlisten direkt vom Server holen
+- Je Senderliste Infos zum "Privider" darstellen (Name, Website, E-Mail)
+- Gestern und Morgen reinladen für Sender in einer anderen Zeitzone
+- Logos zu allen Sendern
+- Anpassbarkeit der GUI (wo welches Element ist)
+- Ordner in den Lieblingssendungen
+- Übernehmen-Knopf in Einstellungen
+- News-Plugin:
+    Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
+    evtl. Option "News automatisch holen"
+- Übernehmen-Knopf in Einstellungen
+- Button in Toolbar für die Menüoption Ansicht--> Plugin-Übersicht
+- Einstellungen für die Toolbar im Einstellungen-Dialog
+
+
+
+Bugs:
+- Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste verändert wird.
+- Exception bei Drag&-Drop in der Toolbar: java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
+
+
+
