@@ -631,9 +631,12 @@
 
   <!--
    | Does the JUnit tests.
+   |
+   | If this target does not work, copy the file "junit.jar" from the directory "lib"
+   | in your ANT_HOME/lib directory. (ANT_HOME/lib is on my machine "/usr/share/ant/lib")
    +-->
   <target name="test" depends="make">
-    <junit haltonfailure="yes">
+    <junit haltonfailure="yes" fork="yes">
       <classpath>
         <path refid="classpath"/>
       </classpath>

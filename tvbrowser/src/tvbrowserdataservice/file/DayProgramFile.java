@@ -140,27 +140,39 @@ public class DayProgramFile extends AbstractFile {
 
 
   /**
-   * Updates the day program file with an update file.
+   * Updates this complete file with an update file.
    * 
    * @param updateFile The update to use to patch this day program file.
    * @throws FileFormatException If the update file does not have a higher
-   *         version as this file or if the update says that a field should be
-   *         deleted that does not exist.
+   *         version as this file.
    * 
+   * @see #updateUpdateFile(DayProgramFile)
    * @see #merge(DayProgramFile)
    */
-  public void update(DayProgramFile updateFile) throws FileFormatException {
-    // Check the version
-    if (updateFile.getVersion() <= getVersion()) {
-      throw new FileFormatException("Update file must have a higher version ("
-        + updateFile.getVersion() + " <= " + getVersion() + ")");
-    }
-    
+  public void updateCompleteFile(DayProgramFile updateFile)
+    throws FileFormatException
+  {
     // Go through all frames in the update file
-    merge(updateFile, true);
-    
-    // Upgrade to the new version
-    setVersion(updateFile.getVersion());
+    merge(updateFile, false, true);
+  }
+
+
+
+  /**
+   * Updates this update file with an update file.
+   * 
+   * @param updateFile The update to use to patch this day program file.
+   * @throws FileFormatException If the update file does not have a higher
+   *         version as this file.
+   * 
+   * @see #updateCompleteFile(DayProgramFile)
+   * @see #merge(DayProgramFile)
+   */
+  public void updateUpdateFile(DayProgramFile updateFile)
+    throws FileFormatException
+  {
+    // Go through all frames in the update file
+    merge(updateFile, true, true);
   }
 
 
@@ -171,10 +183,11 @@ public class DayProgramFile extends AbstractFile {
    * @param otherProg The day program file to merge with this file.
    * @throws FileFormatException If merging failed.
    * 
-   * @see #update(DayProgramFile)
+   * @see #updateCompleteFile(DayProgramFile)
+   * @see #updateUpdateFile(DayProgramFile)
    */
   public void merge(DayProgramFile otherProg) throws FileFormatException {
-    merge(otherProg, false);
+    merge(otherProg, false, false);
   }
   
   
@@ -182,35 +195,62 @@ public class DayProgramFile extends AbstractFile {
   /**
    * Merges two day program files.
    * 
-   * @param otherProg The day program file to merge with this one.
-   * @param allowDeleting Specifies whether deleting program fields should be
-   *        allowed. Deleting should be allowed, if the other file is an update
-   *        for this file. It should be forbidden, if the other file is a file
-   *        of another level. (When merging two files of different levels, no
-   *        program fields should be deleted.)
-   * @throws FileFormatException If the update file does not have a higher
-   *         version as this file or if the update says that a field should be
-   *         deleted that does not exist.
+   * @param otherFile The day program file to merge with this one.
+   * @param thisIsUpdateFile Specifies whether this is an update file.
+   *        When an update file is updated for each empty frame in the other
+   *        file a empty frame in this frame is created.
+   *        When a complete file is updated for each empty frame in the other
+   *        file the frame in this file is deleted.
+   * @param otherIsUpdateFile Specifies whether the other file is an update
+   *        file.
+   *        If this file is updated, an empty frame in the other file causes a
+   *        deletion of the frame (or the creation of an empty frame).
+   *        If this file is merged with another complete file, an empty frame in
+   *        the other file is ignored.  
+   * @throws FileFormatException If the version of the update file is not higher
+   *         than the version of this file
    */
-  private void merge(DayProgramFile otherProg, boolean allowDeleting)
+  private void merge(DayProgramFile otherFile, boolean thisIsUpdateFile,
+    boolean otherIsUpdateFile)
     throws FileFormatException
   {
+    // Check the version
+    if (otherIsUpdateFile && (otherFile.getVersion() <= getVersion())) {
+      throw new FileFormatException("Update file must have a higher version ("
+        + otherFile.getVersion() + " <= " + getVersion() + ")");
+    }
+    
     // Go through all frames in the merge the day programs
-    for (int frameNr = 0; frameNr < otherProg.getProgramFrameCount(); frameNr++) {
-      ProgramFrame frame = otherProg.getProgramFrameAt(frameNr);
+    for (int frameNr = 0; frameNr < otherFile.getProgramFrameCount(); frameNr++) {
+      ProgramFrame frame = otherFile.getProgramFrameAt(frameNr);
       
-      // Check whether this frame should be deleted
-      // This is the case when the frame has no fields
+      // Check whether this frame is obsolete
+      // This is the case when the frame is empty (= has no fields)
       if (frame.getProgramFieldCount() == 0) {
-        // Delete the frame if allowed
-        if (allowDeleting) {
+        // Check whether this is an complete or an update file
+        if (thisIsUpdateFile) {
+          // The new update file sais that this frame is obsolete
+          // -> Add an empty frame to this update file, too
+          
+          // Remove an existing frame first
           int index = getProgramFrameIndexForId(frame.getId());
-          if (index == -1) {
-            throw new FileFormatException("The other file says that the program"
-              + " frame with the ID " + frame.getId() + " should be deleted, but "
-              + " there is no such frame in this file.");
+          if (index != -1) {
+            removeProgramFrameAt(index);
           }
-          removeProgramFrameAt(index);
+          
+          // Add the empty frame (to mark the frame as obsolete)
+          addProgramFrame(new ProgramFrame(frame.getId()));
+        } else {
+          if (otherIsUpdateFile) {
+            int index = getProgramFrameIndexForId(frame.getId());
+            if (index != -1) {
+              // The update sais, that this frame is obsolete -> delete it
+              removeProgramFrameAt(index);
+            }
+          } else {
+            // The other file is a complete file too (maybe from another level)
+            // -> Ignore empty frames
+          }
         }
       } else {
         // Insert or update the frame
@@ -247,6 +287,11 @@ public class DayProgramFile extends AbstractFile {
           }
         }
       }
+    }
+
+    if (otherIsUpdateFile) {
+      // Upgrade to the new version
+      setVersion(otherFile.getVersion());
     }
   }
   

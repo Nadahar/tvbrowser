@@ -706,7 +706,7 @@ public class RawDataProcessor {
       
       // Update the update file
       try {
-        updateFile.update(newUpdateFile);
+        updateFile.updateUpdateFile(newUpdateFile);
       }
       catch (FileFormatException exc) {
         throw new PreparationException("Updating the update file for version "
