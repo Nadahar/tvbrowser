@@ -38,45 +38,42 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class CustomizableItemsPanel extends JPanel {
+  
+  private static final Insets ZERO_INSETS = new Insets(0, 0, 0, 0);
 
-
-  private final DefaultListModel leftListModel, rightListModel;
-  private final JList leftList, rightList;
+  private final DefaultListModel mLeftListModel, mRightListModel;
+  private final JList mLeftList, mRightList;
+  
+  private JButton mRightBt, mLeftBt, mUpBt, mDownBt;
+  
+  
 
   public CustomizableItemsPanel(String leftText, String rightText) {
-
-    setLayout(new GridLayout(1,2));
+    super(new GridLayout(1,2));
 
     JPanel leftPanel=new JPanel(new BorderLayout());
     JPanel rightPanel=new JPanel(new BorderLayout());
 
-    leftListModel=new DefaultListModel();
-    rightListModel=new DefaultListModel();
-
-    leftList=new JList(leftListModel);
-    rightList=new JList(rightListModel);
-
-    leftList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent event) {
-        if (leftList.getSelectedIndex()>=0) {
-          rightList.clearSelection();
-        }
+    mLeftListModel = new DefaultListModel();
+    mLeftList = new JList(mLeftListModel);
+    mLeftList.setVisibleRowCount(10);
+    mLeftList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    mLeftList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent evt) {
+        updateEnabled();
       }
-    }
-    );
+    });
 
-    rightList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent event) {
-        if (rightList.getSelectedIndex()>=0) {
-          leftList.clearSelection();
-        }
+    mRightListModel = new DefaultListModel();
+    mRightList = new JList(mRightListModel);
+    mRightList.setVisibleRowCount(10);
+    mRightList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    mRightList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent evt) {
+        updateEnabled();
       }
-    }
-    );
-
-    leftList.setVisibleRowCount(10);
-    rightList.setVisibleRowCount(10);
-
+    });
+    
     JLabel leftLabel=new JLabel(leftText);
     JLabel rightLabel=new JLabel(rightText);
 
@@ -86,8 +83,8 @@ public class CustomizableItemsPanel extends JPanel {
     leftPanel.add(leftLabel,BorderLayout.NORTH);
     rightPanel.add(rightLabel,BorderLayout.NORTH);
 
-    leftPanel.add(new JScrollPane(leftList),BorderLayout.CENTER);
-    rightPanel.add(new JScrollPane(rightList),BorderLayout.CENTER);
+    leftPanel.add(new JScrollPane(mLeftList),BorderLayout.CENTER);
+    rightPanel.add(new JScrollPane(mRightList),BorderLayout.CENTER);
 
     JPanel leftButtons=new JPanel(new GridLayout(2,1));
     JPanel rightButtons=new JPanel(new GridLayout(2,1));
@@ -97,15 +94,26 @@ public class CustomizableItemsPanel extends JPanel {
     JPanel panel4=new JPanel(new BorderLayout());
     JPanel panel5=new JPanel(new BorderLayout());
 
-    JButton btnRight=new JButton("-->");
-    JButton btnLeft=new JButton("<--");
-    JButton btnUp=new JButton("up");
-    JButton btnDown=new JButton("down");
+    mRightBt = new JButton(new ImageIcon("imgs/Forward24.gif"));
+    mRightBt.setToolTipText("Markierte Zeilen in rechte Liste verschieben");
+    mRightBt.setMargin(ZERO_INSETS);
 
-    panel2.add(btnRight,BorderLayout.SOUTH);
-    panel3.add(btnLeft,BorderLayout.NORTH);
-    panel4.add(btnUp,BorderLayout.SOUTH);
-    panel5.add(btnDown,BorderLayout.NORTH);
+    mLeftBt = new JButton(new ImageIcon("imgs/Back24.gif"));
+    mLeftBt.setToolTipText("Markierte Zeilen in linke Liste verschieben");
+    mLeftBt.setMargin(ZERO_INSETS);
+
+    mUpBt = new JButton(new ImageIcon("imgs/Up24.gif"));
+    mUpBt.setToolTipText("Markierte Zeilen nach oben verschieben");
+    mUpBt.setMargin(ZERO_INSETS);
+
+    mDownBt = new JButton(new ImageIcon("imgs/Down24.gif"));
+    mDownBt.setToolTipText("Markierte Zeilen nach oben verschieben");
+    mDownBt.setMargin(ZERO_INSETS);
+
+    panel2.add(mRightBt,BorderLayout.SOUTH);
+    panel3.add(mLeftBt,BorderLayout.NORTH);
+    panel4.add(mUpBt,BorderLayout.SOUTH);
+    panel5.add(mDownBt,BorderLayout.NORTH);
 
     leftButtons.add(panel2);
     leftButtons.add(panel3);
@@ -123,105 +131,59 @@ public class CustomizableItemsPanel extends JPanel {
     add(rightPanel);
 
 
-    btnRight.addActionListener(new ActionListener() {
+    mRightBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        int inx=leftList.getSelectedIndex();
-        if (inx<0) {
-          return;
-        }
-
-        String ch=(String)leftListModel.remove(inx);
-        int inPos=rightListModel.size();
-        rightListModel.add(inPos,ch);
-        rightList.setSelectedIndex(inPos);
-        if (inx<leftListModel.size()) {
-          leftList.setSelectedIndex(inx);
-        }else {
-          leftList.setSelectedIndex(inx-1);
-        }
-        leftList.ensureIndexIsVisible(inx);
+        moveSelectedItems(mLeftList, mRightList);
       }
     });
 
-    btnLeft.addActionListener(new ActionListener() {
+    mLeftBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        int inx=rightList.getSelectedIndex();
-        if (inx<0) {
-          return;
-        }
-
-        String ch=(String)rightListModel.remove(inx);
-        leftListModel.add(0,ch);
-        leftList.ensureIndexIsVisible(0);
-        leftList.setSelectedIndex(0);
-        if (inx<rightListModel.size()) {
-          rightList.setSelectedIndex(inx);
-        }else {
-          rightList.setSelectedIndex(inx-1);
-        }
-        rightList.ensureIndexIsVisible(inx);
+        moveSelectedItems(mRightList, mLeftList);
       }
     });
 
-    btnUp.addActionListener(new ActionListener() {
+    mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        int inx=rightList.getSelectedIndex();
-        if (inx<1) {
-          return;
-        }
-
-        String ch=(String)rightListModel.remove(inx--);
-        rightListModel.add(inx,ch);
-        rightList.setSelectedIndex(inx);
-        rightList.ensureIndexIsVisible(inx);
-
-
+        moveSelectedItems(mRightList, -1);
       }
     });
 
-    btnDown.addActionListener(new ActionListener() {
+    mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        int inx=rightList.getSelectedIndex();
-        if (inx<0 || inx==rightListModel.size()-1) {
-          return;
-        }
-
-        String ch=(String)rightListModel.remove(inx++);
-        rightListModel.add(inx,ch);
-        rightList.setSelectedIndex(inx);
-        rightList.ensureIndexIsVisible(inx);
+        moveSelectedItems(mRightList, 1);
       }
     });
-
-
+    
+    updateEnabled();
   }
 
   public void addElementLeft(String item) {
-    leftListModel.addElement(item);
+    mLeftListModel.addElement(item);
   }
 
   public void addElementRight(String item) {
-    rightListModel.addElement(item);
+    mRightListModel.addElement(item);
   }
 
   public Object[] getElementsLeft() {
-    return leftListModel.toArray();
+    return mLeftListModel.toArray();
   }
 
   public Object[] getElementsRight() {
-    return rightListModel.toArray();
+    return mRightListModel.toArray();
   }
 
   public String getLeftSelection() {
-    return (String)leftList.getSelectedValue();
+    return (String)mLeftList.getSelectedValue();
   }
 
   public String getRightSelection() {
-    return (String)rightList.getSelectedValue();
+    return (String)mRightList.getSelectedValue();
   }
 
   public void addListSelectionListenerLeft(final CustomizableItemsListener listener) {
-    leftList.addListSelectionListener(new ListSelectionListener() {
+    mLeftList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         listener.leftListSelectionChanged(e);
       }
@@ -230,7 +192,7 @@ public class CustomizableItemsPanel extends JPanel {
   }
 
   public void addListSelectionListenerRight(final CustomizableItemsListener listener) {
-    rightList.addListSelectionListener(new ListSelectionListener() {
+    mRightList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         listener.rightListSelectionChanged(e);
       }
@@ -241,4 +203,92 @@ public class CustomizableItemsPanel extends JPanel {
   public static CustomizableItemsPanel createCustomizableItemsPanel(String leftText, String rightText) {
     return new CustomizableItemsPanel(leftText, rightText);
   }
+  
+  
+
+  private void moveSelectedItems(JList fromList, JList toList) {
+    DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
+    DefaultListModel toModel = (DefaultListModel) toList.getModel();
+    
+    // get the selection
+    int[] selection = fromList.getSelectedIndices();
+    if (selection.length == 0) {
+      return;
+    }
+    
+    // get the target insertion position
+    int targetPos = toList.getMaxSelectionIndex();
+    if (targetPos == -1) {
+      targetPos = toModel.getSize();
+    } else {
+      targetPos++;
+    }
+    
+    // move the elements
+    for (int i = selection.length - 1; i >= 0; i--) {
+      Object value = fromModel.remove(selection[i]);
+      toModel.add(targetPos, value);
+    }
+    
+    // change selection of the fromList
+    if (fromModel.getSize() > 0) {
+      int newSelection = selection[0];
+      if (newSelection >= fromModel.getSize()) {
+        newSelection = fromModel.getSize() - 1;
+      }
+      fromList.setSelectedIndex(newSelection);
+    }
+
+    // change selection of the toList
+    toList.setSelectionInterval(targetPos, targetPos + selection.length - 1);
+    
+    // ensure the selection is visible
+    toList.ensureIndexIsVisible(toList.getMaxSelectionIndex());
+    toList.ensureIndexIsVisible(toList.getMinSelectionIndex());
+  }
+
+  
+  
+  private void moveSelectedItems(JList list, int nrRows) {
+    DefaultListModel model = (DefaultListModel) list.getModel();
+    
+    // get the selection
+    int[] selection = list.getSelectedIndices();
+    if (selection.length == 0) {
+      return;
+    }
+    
+    // Remove the selected items
+    Object[] items = new Object[selection.length];
+    for (int i = selection.length - 1; i >= 0; i--) {
+      items[i] = model.remove(selection[i]);
+    }
+    
+    // insert the elements at the target position
+    int targetPos = selection[0] + nrRows;
+    targetPos = Math.max(targetPos, 0);
+    targetPos = Math.min(targetPos, model.getSize());
+    for (int i = 0; i < items.length; i++) {
+      model.add(targetPos + i, items[i]);
+    }
+    
+    // change selection of the toList
+    list.setSelectionInterval(targetPos, targetPos + selection.length - 1);
+    
+    // ensure the selection is visible
+    list.ensureIndexIsVisible(list.getMaxSelectionIndex());
+    list.ensureIndexIsVisible(list.getMinSelectionIndex());
+  }
+  
+  
+  
+  private void updateEnabled() {
+    mRightBt.setEnabled(mLeftList.getSelectedIndex() != -1);
+    mLeftBt.setEnabled(mRightList.getSelectedIndex() != -1);
+    
+    mUpBt.setEnabled(mRightList.getMinSelectionIndex() > 0);
+    int maxIdx = mRightList.getMaxSelectionIndex();
+    mDownBt.setEnabled((maxIdx != -1) && (maxIdx < mRightListModel.getSize() - 1));
+  }
+  
 }
