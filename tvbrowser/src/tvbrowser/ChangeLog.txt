@@ -7,6 +7,7 @@ current:
 - new settings:
       * choose directories for tvdataservice chaches
       * choose fonts
+- New settings dialog
 
 0.9.5.1:
 - bugfix in XmlTvDataService
