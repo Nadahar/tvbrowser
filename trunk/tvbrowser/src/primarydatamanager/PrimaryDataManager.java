@@ -217,7 +217,7 @@ public class PrimaryDataManager {
         destDir.mkdirs();
         try {
           System.out.println("translat");
-          DayProgramFileTranslator.translateAllDayPrograms(txtDir,destDir);
+          DayProgramFileTranslator.translateAllDayPrograms(txtDir);
         } catch (IOException e) {
           e.printStackTrace();
         } catch (FileFormatException e) {

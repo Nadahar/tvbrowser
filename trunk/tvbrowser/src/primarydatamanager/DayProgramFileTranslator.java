@@ -42,7 +42,7 @@ import tvbrowserdataservice.file.*;
  */
 public class DayProgramFileTranslator {
   
-  public static void translateAllDayPrograms(File srcDir, File destDir)
+  public static void translateAllDayPrograms(File srcDir)
     throws IOException, FileFormatException
   {
     if (! srcDir.exists()) {
@@ -53,14 +53,17 @@ public class DayProgramFileTranslator {
       throw new IOException("File is not a directory: " + srcDir.getAbsolutePath());
     }
     
-    if (! destDir.isDirectory()) {
-          throw new IOException("File is not a directory: " + destDir.getAbsolutePath());
-        }
     
-    System.out.println("translate source: "+srcDir.getAbsolutePath()+" to "+destDir.getAbsolutePath());
+    File destDir=new File(srcDir,"txt");
+    if (!destDir.exists()) {
+      if (!destDir.mkdirs()) {
+        return;
+      }
+    }
+    
     
     // Delete the old translations
-    File[] fileArr = srcDir.listFiles();
+    File[] fileArr = destDir.listFiles();
     for (int i = 0; i < fileArr.length; i++) {
       if (fileArr[i].getName().endsWith(".prog.txt")) {
         // This is an old translation -> delete it
@@ -70,17 +73,17 @@ public class DayProgramFileTranslator {
         } 
       }
     }
-
+ 
     // Go through all files and translate
+    fileArr = srcDir.listFiles();
     for (int i = 0; i < fileArr.length; i++) {
       if (fileArr[i].getName().endsWith(".prog.gz")) {
         translateDayProgram(fileArr[i],destDir);
       }
-      if (fileArr[i].isDirectory()) {
-        File dest=new File(srcDir,"txt");
-        dest.mkdirs();
-        translateAllDayPrograms(fileArr[i],dest);
-      }
+      // do not touch subfolders (since we store the results in a subfolder)
+      //if (fileArr[i].isDirectory()) {
+      //    translateAllDayPrograms(fileArr[i]);
+      //}
     }
   }
 
@@ -223,9 +226,7 @@ public class DayProgramFileTranslator {
         for (int i = 0; i < args.length; i++) {
           File file = new File(args[i]);
           if (file.isDirectory()) {
-            File dest=new File(file,"txt");
-            dest.mkdirs();
-            translateAllDayPrograms(file,dest);
+            translateAllDayPrograms(file);
           } else {
             translateDayProgram(file,new File("."));
           }
