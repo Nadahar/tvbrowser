@@ -231,7 +231,9 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
   private JButton createPluginButton(PluginProxy plugin) {
     if ((plugin != null) && plugin.isActivated()) {
       final Action action = plugin.getButtonAction();
-
+      if (action == null) {
+        return null;
+			}
       String text = (String) action.getValue(Action.NAME);
       String desc = (String) action.getValue(Action.SHORT_DESCRIPTION);
       Icon icon = (Icon) action.getValue(Plugin.BIG_ICON);
