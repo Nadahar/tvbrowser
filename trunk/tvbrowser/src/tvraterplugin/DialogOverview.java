@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
 
@@ -69,6 +70,11 @@ public class DialogOverview extends JDialog {
 
     /** List of overall Ratings */
     private JList _overall;
+    
+    /** Data for personal Rating */
+    private Vector _personalData;
+    /** Data for overall Rating */
+    private Vector _overallData;
 
     /** Der Update-Button */
     private JButton _update;
@@ -97,12 +103,12 @@ public class DialogOverview extends JDialog {
 
         RatingComparator comperator = new RatingComparator();
 
-        Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
-        Collections.sort(overallVector, comperator);
+        _overallData = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
+        Collections.sort(_overallData, comperator);
 
         _tabbed = new JTabbedPane();
 
-        _overall = new JList(overallVector);
+        _overall = new JList(_overallData);
         _overall.setCellRenderer(new RatingCellRenderer());
         _overall.addMouseListener(new MouseAdapter() {
 
@@ -118,10 +124,10 @@ public class DialogOverview extends JDialog {
 
         _tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(_overall));
 
-        Vector personalVector = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
-        Collections.sort(personalVector, comperator);
+        _personalData = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
+        Collections.sort(_personalData, comperator);
 
-        _personal = new JList(personalVector);
+        _personal = new JList(_personalData);
         _personal.setCellRenderer(new RatingCellRenderer());
         _personal.addMouseListener(new MouseAdapter() {
 
@@ -246,11 +252,29 @@ public class DialogOverview extends JDialog {
                     ((Rating) _overall.getSelectedValue()).getTitle());
 
             UiUtilities.centerAndShow(dlg);
+            
+            updateLists();
         } else if ((_tabbed.getSelectedIndex() == 1) && (_personal.getSelectedValue() != null)) {
             DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(), _tvraterPlugin,
                     ((Rating) _personal.getSelectedValue()).getTitle());
             UiUtilities.centerAndShow(dlg);
+            updateLists();
         }
+    }
+
+    /**
+     * Updates the Rating-Lists
+     */
+    private void updateLists() {
+        RatingComparator comperator = new RatingComparator();
+
+        _personalData.removeAllElements();
+        _personalData.addAll((Collection) _tvraterPlugin.getDatabase().getPersonalRating());
+        Collections.sort(_personalData, comperator);
+
+        _overallData.removeAllElements();
+        _overallData.addAll((Collection) _tvraterPlugin.getDatabase().getOverallRating());
+        Collections.sort(_overallData, comperator);
     }
 
     /**

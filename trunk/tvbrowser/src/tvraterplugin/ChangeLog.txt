@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.63
+- Dialog is Updated correctly
+
 0.62
 - Added Popup in Overview
 
