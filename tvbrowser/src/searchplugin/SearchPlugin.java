@@ -39,23 +39,22 @@ import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.SettingsTab;
 import devplugin.Version;
 
 /**
  * Provides a dialog for searching programs.
- *
+ * 
  * @author Til Schneider, www.murfman.de
  */
 public class SearchPlugin extends Plugin {
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer =
-    util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
 
   private static SearchPlugin mInstance;
 
   private static SearchFormSettings[] mSearchHistory;
-
 
   /**
    * Creates a new instance of SearchPlugin.
@@ -64,11 +63,9 @@ public class SearchPlugin extends Plugin {
     mInstance = this;
   }
 
-  public void readData(ObjectInputStream in)
-    throws IOException, ClassNotFoundException
-  {
+  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
-    
+
     int historySize = in.readInt();
     mSearchHistory = new SearchFormSettings[historySize];
     for (int i = 0; i < historySize; i++) {
@@ -83,7 +80,7 @@ public class SearchPlugin extends Plugin {
         boolean searchInInfoText = in.readBoolean();
         boolean caseSensitive = in.readBoolean();
         int option = in.readInt();
-        
+
         settings = new SearchFormSettings(searchText);
         if (searchInInfoText) {
           settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
@@ -92,20 +89,25 @@ public class SearchPlugin extends Plugin {
         }
         settings.setCaseSensitive(caseSensitive);
         switch (option) {
-          case 0: settings.setMatch(SearchFormSettings.MATCH_EXACTLY); break;
-          case 1: settings.setMatch(SearchFormSettings.MATCH_KEYWORD); break;
-          case 2: settings.setMatch(SearchFormSettings.MATCH_REGULAR_EXPRESSION); break;
+        case 0:
+          settings.setMatch(SearchFormSettings.MATCH_EXACTLY);
+          break;
+        case 1:
+          settings.setMatch(SearchFormSettings.MATCH_KEYWORD);
+          break;
+        case 2:
+          settings.setMatch(SearchFormSettings.MATCH_REGULAR_EXPRESSION);
+          break;
         }
       }
-      
+
       mSearchHistory[i] = settings;
     }
   }
 
-
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
-    
+
     if (mSearchHistory == null) {
       out.writeInt(0); // length
     } else {
@@ -116,11 +118,9 @@ public class SearchPlugin extends Plugin {
     }
   }
 
-
-
   public ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
-    action.setActionListener(new ActionListener(){
+    action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
         UiUtilities.centerAndShow(dlg);
@@ -129,7 +129,7 @@ public class SearchPlugin extends Plugin {
 
     action.setBigIcon(createImageIcon("searchplugin/Find24.gif"));
     action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
-    action.setShortDescription(mLocalizer.msg("description","Allows searching programs containing a certain text."));
+    action.setShortDescription(mLocalizer.msg("description", "Allows searching programs containing a certain text."));
     action.setText(mLocalizer.msg("searchPrograms", "Search programs"));
 
     return new ActionMenu(action);
@@ -137,51 +137,49 @@ public class SearchPlugin extends Plugin {
 
   public ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
-     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
-     action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
-     action.setActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-          SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
-          dlg.setPatternText(program.getTitle());
-          UiUtilities.centerAndShow(dlg);
-        }
-      });
-      return new ActionMenu(action);
+    action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
+    action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
+    action.setActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
+        dlg.setPatternText(program.getTitle());
+        UiUtilities.centerAndShow(dlg);
+      }
+    });
+    return new ActionMenu(action);
   }
-
-
-
-
-
-
 
   public String getMarkIconName() {
     return "searchplugin/Find16.gif";
   }
-  
+
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("searchPrograms", "Search programs");
-    String desc =
-      mLocalizer.msg(
-        "description",
-        "Allows searching programs containing a certain text.");
+    String desc = mLocalizer.msg("description", "Allows searching programs containing a certain text.");
     String author = "Til Schneider, www.murfman.de";
 
-    return new PluginInfo(name, desc, author, new Version(1, 5));
+    return new PluginInfo(name, desc, author, new Version(1, 6));
   }
 
   public static SearchPlugin getInstance() {
     return mInstance;
   }
-  
-  
+
   public static SearchFormSettings[] getSearchHistory() {
     return mSearchHistory;
   }
 
-
   public static void setSearchHistory(SearchFormSettings[] history) {
     mSearchHistory = history;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see devplugin.Plugin#getSettingsTab()
+   */
+  public SettingsTab getSettingsTab() {
+    return new SearchSettingsTab();
   }
 
 }
