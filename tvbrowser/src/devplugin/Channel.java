@@ -300,8 +300,14 @@ public class Channel {
    * @param filename Filename for Icon
    */
   public void setIconFileName(String filename) {
-      mIconFileName = filename;
-      mIcon = null;
+      if ((filename == null) && (mIcon == null)) {
+          mIconFileName = filename;
+          mIcon = null;
+      } else if (filename != null){
+          mIconFileName = filename;
+          mIcon = null;
+      }
+      
   }
   
   public boolean equals(Object obj) {
