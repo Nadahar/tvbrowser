@@ -416,10 +416,23 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
 
 
+  /**
+   * Called when a program has changed.
+   * 
+   * @param evt The change event.
+   */
   public void stateChanged(ChangeEvent evt) {
-    // A program has changed
-    Program program = (Program) evt.getSource();
+    // A program has changed -> fire the event
+    final Program program = (Program) evt.getSource();
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        fireProgramHasChanged(program);
+      }
+    });
+  }
 
+
+  protected void fireProgramHasChanged(Program program) {
     // Get the column of this program
     int col = getColumnOfChannel(program.getChannel());
     if (col == -1) {
