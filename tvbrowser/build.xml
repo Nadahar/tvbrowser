@@ -450,7 +450,15 @@
     <mkdir dir="${public.dir}"/>
     <exec executable="${installer.dir}/makensis.exe"
           failonerror="true">
-      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${tvbrowser-win.runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
+      <arg value="/NOCD"/>
+      <arg value="/DVERSION=${version}"/>
+      <arg value="/DVERSION_FILE=${version.file}"/>
+      <arg value="/DPROG_NAME=${programname}"/>
+      <arg value="/DPROG_NAME_FILE=${programname.file}"/>
+      <arg value="/DRUNTIME_DIR=${tvbrowser-win.runtime.dir}"/>
+      <arg value="/DINSTALLER_DIR=${installer.dir}"/>
+      <arg value="/DPUBLIC_DIR=${public.dir}"/>
+      <arg value="${installer.dir}\tvbrowser.nsi"/>
     </exec>
   </target>
 

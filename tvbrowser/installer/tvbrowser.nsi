@@ -22,66 +22,136 @@
 # Author: Til Schneider, www.murfman.de
 
 
-
 # The following Variables are set from the build script:
 #   VERSION, VERSION_FILE, PROG_NAME, PROG_NAME_FILE,
 #   RUNTIME_DIR, INSTALLER_DIR and PUBLIC_DIR
 
-; !define EXAMPLE "Example"
+
+#--------------------------------
+# Include Modern UI
+!include "MUI.nsh"
 
 
+#--------------------------------
+# Configuration
 
-# Deutsche Sprache einstellen
-LoadLanguageFile "${INSTALLER_DIR}\German.nlf"
-
-# Der Programmname
+# program name
 Name "${PROG_NAME} ${VERSION}"
-
-# XP-Style UI
-XPStyle on
-
-# Die Lizenzbedingungen
-LicenseText "Lizenzbedingungen für ${PROG_NAME} ${VERSION}."
-LicenseData "${RUNTIME_DIR}\LICENSE.txt"
 
 # The file to write
 OutFile "${PUBLIC_DIR}\${PROG_NAME_FILE}_${VERSION_FILE}.exe"
 
-# The installation type
-InstType "Normal (mit allen Plugins)"
-InstType "Minimal (ohne Plugins)"
-
-# Show all details
-ShowInstDetails show
-ShowUninstDetails show
-
 # The default installation directory
 InstallDir "$PROGRAMFILES\${PROG_NAME}"
 
-# The text to prompt the user to choose the components
-ComponentText "${PROG_NAME} ${VERSION} wird nun auf Ihrem Computer installiert. Bitte wählen Sie, welche Komponenten installiert werden sollen."
-# The text to prompt the user to enter a directory
-DirText "Wählen Sie ein Verzeichnis."
+# Get installation folder from registry if available
+InstallDirRegKey HKCU "Software\${PROG_NAME}" "Install directory"
+
+# Use LZMA compression
+SetCompressor lzma
+
+# The icons of the installer and uninstaller
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-install.ico" 
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-uninstall.ico"
+
+!define MUI_WELCOMEPAGE_TITLE_3LINES
+!define MUI_FINISHPAGE_TITLE_3LINES
+!define MUI_UNWELCOMEPAGE_TITLE_3LINES
+!define MUI_UNFINISHPAGE_TITLE_3LINES
+
+# Set the default start menu folder
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER ${PROG_NAME}
+
+# Remember the selected start menu folder in registry
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${PROG_NAME}" 
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+
+# Use no descriptions in the components page
+!define MUI_COMPONENTSPAGE_NODESC
 
 
+#--------------------------------
+#Variables
 
-# Checks whether Java is installed with the right version.
-# If Java is not installed or if the version is too low,
-# the user is asked whether download and install Java.
-#
-Function CheckForJava
-  # TODO
+Var MUI_TEMP
+Var STARTMENU_FOLDER
+Var INI_VALUE
 
+
+#--------------------------------
+#Interface Settings
+
+!define MUI_ABORTWARNING
+
+
+#--------------------------------
+#Pages
+
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "${RUNTIME_DIR}\LICENSE.txt"
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_CONFIRM
+UninstPage custom un.UninstallTvDataPage
+UninstPage custom un.UninstallSettingsPage
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
+
+
+#--------------------------------
+# Custom pages (InstallOptions)
+ReserveFile "${NSISDIR}\UninstallTvData.ini"
+ReserveFile "${NSISDIR}\UninstallSettings.ini"
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+
+
+#--------------------------------
+# Installer Functions
+
+Function un.onInit
+  # Extract InstallOptions INI files
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallTvData.ini"   "UninstallTvData.ini"
+  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallSettings.ini" "UninstallSettings.ini"
+FunctionEnd
+
+Function un.UninstallTvDataPage
+  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
+    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
+FunctionEnd
+
+Function un.UninstallSettingsPage
+  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
+    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
+  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 FunctionEnd
 
 
+#--------------------------------
+#Languages
+ 
+!insertmacro MUI_LANGUAGE "German"
 
-# The stuff to install
+
+#--------------------------------
+# The installation types
+
+InstType "Normal (mit allen Plugins)"
+InstType "Minimal (ohne Plugins)"
+
+
+#--------------------------------
+#Installer Sections
+
 Section "${PROG_NAME} (erforderlich)"
   # make the section requiered
   SectionIn 1 2 RO
-
-  Call CheckForJava
 
   # Set output path to the installation directory.
   SetOutPath "$INSTDIR"
@@ -89,13 +159,13 @@ Section "${PROG_NAME} (erforderlich)"
   File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\website.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
+  File "${RUNTIME_DIR}\..\..\win\DesktopIndicator.dll"
   
-
   WriteUninstaller "Uninstall.exe"
 
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
-	
+  File "${RUNTIME_DIR}\..\..\win\taskicon.ico"
 
   SetOutPath "$INSTDIR\help\de"
   File "${RUNTIME_DIR}\help\de\*.*"
@@ -105,19 +175,16 @@ Section "${PROG_NAME} (erforderlich)"
 
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
-
-  SetOutPath "$INSTDIR"
-  File "${RUNTIME_DIR}\..\..\win\DesktopIndicator.dll"
   
-  SetOutPath "$INSTDIR\imgs"
-  File "${RUNTIME_DIR}\..\..\win\taskicon.ico"
-  
-#  CreateDirectory "$INSTDIR\tvdata"
+  # CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
-  
 
+  # Store installation folder in registry
+  WriteRegStr HKCU "Software\${PROG_NAME}" "Install directory" $INSTDIR
 
   # Register uninstaller at Windows (Add/Remove programs)
+  !define UPDATE_INFO_URL "http://tvbrowser.sourceforge.net"
+  !define REGISTER_ICON "$INSTDIR\tvbrowser.exe,0"
   WriteRegExpandStr \
     HKLM \
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
@@ -133,11 +200,11 @@ Section "${PROG_NAME} (erforderlich)"
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
     "DisplayName" \
     "${PROG_NAME} ${VERSION}"
-  ; WriteRegStr \
-  ;   HKLM \
-  ;   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
-  ;   "DisplayIcon" \
-  ;   "$INSTDIR\SomeIcon.exe,0"
+  WriteRegStr \
+    HKLM \
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+    "DisplayIcon" \
+    ${REGISTER_ICON}
   WriteRegStr \
     HKLM \
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
@@ -147,40 +214,39 @@ Section "${PROG_NAME} (erforderlich)"
     HKLM \
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
     "URLUpdateInfo" \
-    "http://tvbrowser.sourceforge.net"
+    ${UPDATE_INFO_URL}
+
+  # Create start menu entry if wanted by the user
+  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+
+    # Set the directory where the shortcuts should be executed in
+    SetOutPath "$INSTDIR"
+
+    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+  
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\${PROG_NAME}.lnk" \
+      "$INSTDIR\tvbrowser.exe"
+  
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Lizenz.lnk" \
+      "$INSTDIR\LICENSE.txt"
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Website.lnk" \
+      ${UPDATE_INFO_URL}
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\${PROG_NAME} deinstallieren.lnk" \
+      "$INSTDIR\Uninstall.exe" \
+      "" \
+      "$INSTDIR\Uninstall.exe" \
+      0
+  
+  !insertmacro MUI_STARTMENU_WRITE_END
 
 SectionEnd # end the section
 
-
-SubSection "Verknüpfungen"
-
-Section "Verknüpfungen im Start-Menü"
-  SectionIn 1 2
-
-  # Set the directory where the shortcuts should be executed in
-  SetOutPath "$INSTDIR"
-
-  CreateDirectory "$SMPROGRAMS\${PROG_NAME}"
-
-  CreateShortCut \
-    "$SMPROGRAMS\${PROG_NAME}\${PROG_NAME}.lnk" \
-    "$INSTDIR\tvbrowser.exe"
-
-  CreateShortCut \
-    "$SMPROGRAMS\${PROG_NAME}\Lizenz.lnk" \
-    "$INSTDIR\LICENSE.txt"
-
-	CreateShortCut \
-    "$SMPROGRAMS\${PROG_NAME}\Website.lnk" \
-    "http://tvbrowser.sourceforge.net"
-
-  CreateShortCut \
-    "$SMPROGRAMS\${PROG_NAME}\${PROG_NAME} deinstallieren.lnk" \
-    "$INSTDIR\Uninstall.exe" \
-    "" \
-    "$INSTDIR\Uninstall.exe" \
-    0
-SectionEnd
 
 Section "Verknüpfung auf dem Desktop"
   SectionIn 1 2
@@ -193,118 +259,125 @@ Section "Verknüpfung auf dem Desktop"
     "$INSTDIR\tvbrowser.exe"
 SectionEnd
 
-SubSectionEnd
-
 
 SubSection "Daten-Services"
 
-Section "TV-Browser-Datenservice"
-  SectionIn 1 2
-
-  SetOutPath "$INSTDIR\tvdataservice"
-  File "${RUNTIME_DIR}\tvdataservice\TvBrowserDataService.jar"
-SectionEnd
-
-#
-#Section "Premiere-Datenservice"
-#  SectionIn 1 2
-#
-#  SetOutPath "$INSTDIR\tvdataservice"
-#  File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
-#SectionEnd
-#
-#Section "WDR-Datenservice"
-#  SectionIn 1 2
-#
-#  SetOutPath "$INSTDIR\tvdataservice"
-#  File "${RUNTIME_DIR}\tvdataservice\WdrDataService.jar"
-#SectionEnd
-#
+  Section "TV-Browser-Datenservice"
+    SectionIn 1 2
+  
+    SetOutPath "$INSTDIR\tvdataservice"
+    File "${RUNTIME_DIR}\tvdataservice\TvBrowserDataService.jar"
+  SectionEnd
+  
+  #Section "Premiere-Datenservice"
+  #  SectionIn 1 2
+  #
+  #  SetOutPath "$INSTDIR\tvdataservice"
+  #  File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
+  #SectionEnd
+  
+  #Section "WDR-Datenservice"
+  #  SectionIn 1 2
+  #
+  #  SetOutPath "$INSTDIR\tvdataservice"
+  #  File "${RUNTIME_DIR}\tvdataservice\WdrDataService.jar"
+  #SectionEnd
 
 SubSectionEnd
 
 
 SubSection "Plugins"
 
-Section "Sendungsinfo-Betrachter"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\ProgramInfo.jar"
-SectionEnd
-
-Section "Erinnerer"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\ReminderPlugin.jar"
-SectionEnd
-
-Section "Sendungen suchen"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
-SectionEnd
-
-Section "Lieblingssendungen verwalten"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\FavoritesPlugin.jar"
-SectionEnd
-
-Section "Showviewnummern berechnen"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
-SectionEnd
-
-Section "Drucken"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
-
-SectionEnd
-
-
-Section "IMDB-Suche"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\ImdbSearchPlugin.jar"
-
-SectionEnd
-
-Section "Google-Suche"
-  SectionIn 1
-
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\GoogleSearchPlugin.jar"
-
-SectionEnd
+  Section "Sendungsinfo-Betrachter"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\ProgramInfo.jar"
+  SectionEnd
+  
+  Section "Erinnerer"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\ReminderPlugin.jar"
+  SectionEnd
+  
+  Section "Sendungen suchen"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
+  SectionEnd
+  
+  Section "Lieblingssendungen verwalten"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\FavoritesPlugin.jar"
+  SectionEnd
+  
+  Section "Showviewnummern berechnen"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
+  SectionEnd
+  
+  Section "Drucken"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
+  SectionEnd
+  
+  Section "IMDB-Suche"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\ImdbSearchPlugin.jar"
+  SectionEnd
+  
+  Section "Google-Suche"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\GoogleSearchPlugin.jar"
+  SectionEnd
 
 SubSectionEnd
 
 
-# uninstall stuff
-
-UninstallText "${PROG_NAME} ${VERSION} wird nun von Ihrem Computer entfernt."
-
 # special uninstall section.
 Section "Uninstall"
-  # remove directories used.
-  RMDir /r "$SMPROGRAMS\${PROG_NAME}"
-  RMDir /r "$INSTDIR"
+  # Read whether "Remove TV data" was seleted in the "UninstallTvData.ini"
+  !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallTvData.ini" "Field 2" "State"
+  
+  # Remove TV data if "Remove TV data" was seleted in the "UninstallTvData.ini"
+  StrCmp $INI_VALUE "1" "" +2
+    RMDir /r "$INSTDIR\tvdata"
+
+  # Read whether "Remove settings" was seleted in the "UninstallSettings.ini"
+  !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallSettings.ini" "Field 2" "State"
+  
+  # Remove settings if "Remove settings" was seleted in the "UninstallSettings.ini"
+  StrCmp $INI_VALUE "1" "" +2
+    RMDir /r "$PROFILE\.tvbrowser"
+
+  # remove program directories used.
+  RMDir /r "$INSTDIR\help"
+  RMDir /r "$INSTDIR\imgs"
+  RMDir /r "$INSTDIR\plugins"
+  RMDir /r "$INSTDIR\themepacks"
+  RMDir /r "$INSTDIR\tvdataservice"
+  Delete "$INSTDIR\*.*"
+  RMDir "$INSTDIR"
+
+  # Remove start menu shortcuts
+  !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
+  RMDir /r "$SMPROGRAMS\$MUI_TEMP"
 
   # remove desktop shortcut
   Delete "$DESKTOP\${PROG_NAME}.lnk"
-
-  # TODO: Ask whether to uninstall the settings
-  # No way to do this, because there is no variable for the
-  # directory "c:\Documents and Settings\<user>"
 
   # Unregister uninstaller at Windows (Add/Remove programs)
   DeleteRegKey \
