@@ -111,6 +111,7 @@
     <echo message="  public-tvdatakit  Packs the TV data starter kit."/>
     <echo message="  test              Does the JUnit tests."/>
     <echo message="  statcvs           Generates the CVS statistics."/>
+    <echo message="  exe               Creates a Windows Executable with the help of JSmooth (http://jsmooth.sf.net)"/> 
     <echo message="  all               Creates all (Same as public)."/>
   </target>
 
