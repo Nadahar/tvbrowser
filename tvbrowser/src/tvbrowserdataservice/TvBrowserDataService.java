@@ -59,9 +59,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(TvBrowserDataService.class.getName());
   
-  private static final int MAX_META_DATA_AGE = 7;
+  private static final int MAX_META_DATA_AGE = 2;
   private static final int MAX_UP_TO_DATE_CHECKS = 10;
-  private static final int MAX_LAST_UPDATE_DAYS = 3;
+  private static final int MAX_LAST_UPDATE_DAYS = 5;
 
   private static final Mirror[] DEFAULT_MIRROR_LIST = new Mirror[] {
     new Mirror("http://www.murfman.de/tvdata"),
