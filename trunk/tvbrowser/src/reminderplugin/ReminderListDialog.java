@@ -25,16 +25,27 @@
  */
 package reminderplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import util.ui.ImageUtilities;
 import util.ui.ProgramPanel;
+import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
-
 import devplugin.Program;
 
 /**
@@ -89,6 +100,7 @@ public class ReminderListDialog extends JDialog {
     contentpane.add(mScrollPane, BorderLayout.CENTER);
     
     JPanel btnPanel=new JPanel(new BorderLayout());
+    
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     getRootPane().setDefaultButton(closeBtn);
     
@@ -97,10 +109,41 @@ public class ReminderListDialog extends JDialog {
         hide();
       }
     });
+
     
     btnPanel.add(closeBtn,BorderLayout.EAST);
+
+    JButton sendBtn = new JButton(new ImageIcon("imgs/SendToPlugin.png"));
+
+    sendBtn.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
+    sendBtn.addActionListener(new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+           showSendDialog();            
+        }
+        
+    });
+
+    btnPanel.add(sendBtn, BorderLayout.WEST);   
+    
     contentpane.add(btnPanel,BorderLayout.SOUTH);
   }
+  
+  private void showSendDialog() {
+      Program[] programArr = new Program[reminderList.size()];
+
+      int i = 0;
+      Iterator it = reminderList.getReminderItems();      
+      while (it.hasNext()) {
+          ReminderListItem item = (ReminderListItem)it.next();
+          programArr[i] = item.getProgram();
+          i++;
+      }
+      
+      SendToPluginDialog send = new SendToPluginDialog(this, programArr);
+
+      send.show();
+  }  
   
   private void removeReminderListItem(ReminderListItem item, JPanel panel) {
     reminderList.remove(item);    
