@@ -336,12 +336,12 @@ public class Updater implements Progress {
         Element getratings = document.createElement("getratings");
         data.appendChild(getratings);
 
-        Enumeration enum = table.elements();
-        while (enum.hasMoreElements()) {
+        Enumeration en = table.elements();
+        while (en.hasMoreElements()) {
             Element program = document.createElement("program");
             getratings.appendChild(program);
 
-            Program prog = (Program) enum.nextElement();
+            Program prog = (Program) en.nextElement();
 
             program.appendChild(createNodeWithTextValue(document, "title", prog.getTitle()));
 
