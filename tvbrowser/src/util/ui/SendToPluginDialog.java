@@ -169,16 +169,16 @@ public class SendToPluginDialog extends JDialog {
     protected void send() {
 
         int result = JOptionPane.YES_OPTION; 
+        PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
             
         if (mPrograms.length > 5) {
             result = JOptionPane.showConfirmDialog(this, 
-                    mLocalizer.msg("AskBeforeSend", "Are you really sure to sent {0} Programs\nto the selected Plugin?", new Integer(mPrograms.length)),
+                    mLocalizer.msg("AskBeforeSend", "Are you really sure to sent {0} Programs\nto \"{1}\"?", new Integer(mPrograms.length), plug.toString()),
                     mLocalizer.msg("Attention", "Attention"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         }
         
         if (result == JOptionPane.YES_OPTION) {
-            PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
             plug.receivePrograms(mPrograms);
         }
     }
