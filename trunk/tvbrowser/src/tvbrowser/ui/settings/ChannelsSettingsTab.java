@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ package tvbrowser.ui.settings;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.awt.event.*;
+
 
 import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
 import tvbrowser.core.*;
@@ -92,13 +92,13 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
       ch=(Channel)enum.nextElement();
       mLog.fine("channel "+ch.getName());
       //if (ch.isSubscribed()) {
-      if (ChannelList.isSubscribedChannel(ch.getId())) {
+      if (ChannelList.isSubscribedChannel(ch)) {
       	mLog.fine("is subscribed");
       //  subscribedChannels[ch.getPos()]=ch;
      	int pos=ChannelList.getPos(ch.getId());
       	subscribedChannels[pos]=ch;
       }else{
-        panel.addElementLeft(ch.getName());
+        panel.addElementLeft(ch);
         mLog.fine("is NOT subscribed");
       }
     }
@@ -107,7 +107,7 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     mLog.fine("subscribedChannel.length: "+subscribedChannels.length);
 
     for (int i=0;i<subscribedChannels.length;i++) {
-      panel.addElementRight(subscribedChannels[i].getName());
+      panel.addElementRight(subscribedChannels[i]);
     }
 
     mLog.fine("DONE!");
@@ -121,10 +121,11 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     ChannelList.setSubscribeChannels(list);
     Channel ch;
     for (int i=0;i<list.length;i++) {
-      ch=ChannelList.getChannel((String)list[i]);
-      if (ch==null) {
+      //ch=ChannelList.getChannel((String)list[i]);
+      ch=(Channel)list[i];
+     /* if (ch==null) {
         continue;
-      }
+      }*/
 
       channels.append(ch.getId());
       if (i<list.length-1) {
@@ -132,7 +133,7 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
       }
     }
 
-    Settings.setSubscribedChannels(channels.toString());
+    Settings.setSubscribedChannels(list);
   }
   
 }

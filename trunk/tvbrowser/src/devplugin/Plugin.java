@@ -30,9 +30,12 @@ import java.io.*;
 import java.util.Properties;
 import java.util.jar.*;
 
-import java.awt.event.*;
+
 import javax.swing.Timer;
 import javax.swing.Icon;
+import java.io.InputStream;
+
+
 
 import util.exc.*;
 

@@ -150,10 +150,24 @@ public class Settings {
       settings.load(new FileInputStream(new File(getUserDirectoryName(),SETTINGS_FILE)));
     }catch (IOException e) {
       mLog.info("No user settings found. using default user settings");
-    }finally{
+    }finally {    	
+		String[] entries=getStringListProperty("subscribedchannels");
+		devplugin.Channel[] result=new devplugin.Channel[entries.length];
+		for (int i=0;i<entries.length;i++) {
+			String entry=entries[i];
+			int pos=entry.indexOf(':');
+			String loaderName=entry.substring(0,pos);
+			String id=entry.substring(pos+1);
+			ChannelList.subscribeChannel(loaderName,Integer.parseInt(id));  		
+		}
+    	
+    }
+  }
+    
+    /*finally{
       String value=settings.getProperty("subscribed","1,2,3,4,5");
       int pos=0;
-      int last=0, cur=0/*, cnt=0*/;
+      int last=0, cur=0;
       int channel;
       Channel ch;
       String a;
@@ -162,25 +176,36 @@ public class Settings {
         if (cur==-1) { cur=value.length(); }
         a=value.substring(last,cur);
         channel=Integer.parseInt(a);
-     /*   ch=ChannelList.getChannel(channel);
-        if (ch!=null) {
-          ch.setPos(cnt++);
-        }
-        */
         ChannelList.subscribeChannel(channel);
         cur++;
         last=cur;
       }
-    }
-  }
+    }*/
+ // }
 
 
 
   /**
    * Sets the subscribed channels. (e.g.: "1,5,3,8,12,7")
    */
-  public static void setSubscribedChannels(String channels) {
+  /*public static void setSubscribedChannels(String channels) {
     settings.setProperty("subscribed",channels);
+  }*/
+  
+  public static void setSubscribedChannels(Object[] channels) {
+  	String[] entries=new String[channels.length];
+  	for (int i=0;i<entries.length;i++) {
+  		Channel ch=(Channel)channels[i];
+  		entries[i]=ch.getDataServiceName()+":"+ch.getId();
+  	}
+	setStringListProperty("subscribedchannels", entries);
+  }
+  
+  public static devplugin.Channel[] getSubscribedChannels() {
+  	
+  	
+  	
+  	return null;
   }
 
   /**
@@ -393,25 +418,6 @@ public class Settings {
    * Returns all installed plugins as an array of Strings
    */
   public static String[] getInstalledPlugins() {
-/*
-    String s=settings.getProperty("plugins");
-    if (s==null) return new String[0];
-
-    ArrayList result=new ArrayList();
-    int cur=0, last=0;
-    String a;
-    while (cur<s.length()) {
-      cur=s.indexOf(',',last);
-      if (cur==-1) {
-        cur=s.length();
-      }
-      result.add(s.substring(last,cur).trim());
-      cur++;
-      last=cur;
-    }
-
-    return result.toArray();
-    */
     return getStringListProperty("plugins");
   }
 

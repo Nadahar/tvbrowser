@@ -61,7 +61,7 @@ public class ChannelPanel extends JPanel {
     
     while (enum.hasMoreElements()) {
       Channel ch=(Channel)enum.nextElement();
-      if (ChannelList.isSubscribedChannel(ch.getId())) {
+      if (ChannelList.isSubscribedChannel(ch)) {
         int pos=ChannelList.getPos(ch.getId());
         labels[pos]=new JLabel(ch.getName());
         labels[pos].setOpaque(false);
