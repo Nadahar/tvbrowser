@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -345,5 +345,21 @@ public class XmlTvDataService implements TVDataServiceInterface {
     // ToDo
     return null;
   }
+   
+   
+  public void loadSettings(java.util.Properties settings) {
+  	// TODO: implement this method
+  }
+  
+   public java.util.Properties storeSettings() {
+   	// TODO: implement this method
+   	return null;
+   }
+  
+   public javax.swing.JPanel getSettingsPanel() {
+   	// TODO: implement this method
+   	return null;
+   }
+    
    
 }

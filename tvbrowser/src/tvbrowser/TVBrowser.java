@@ -46,6 +46,7 @@ import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.ButtonPanel;
 import tvbrowser.ui.PictureButton;
 
+
 import util.exc.*;
 import util.ui.*;
 
@@ -101,6 +102,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     SplashScreen splash = new SplashScreen("imgs/splash.jpg",400,300);
     splash.show();
     
+    mLog.info("Loading tv data loader...");
+    msg=mLocalizer.msg("splash.dataService","Loading tv data loader...");
+    DataLoaderManager.initDataLoaders();
     createChannelList();
 
    
@@ -119,9 +123,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       ErrorHandler.handle(msg, exc);
     }
     
-    mLog.info("Loading data service...");
-    msg = mLocalizer.msg("splash.dataService", "Loading data service...");
-	splash.setMessage(msg);
     devplugin.Plugin.setPluginManager(DataService.getInstance());
 
     mLog.info("Loading plugins...");
@@ -302,6 +303,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private void quit() {
     mLog.info("Storing plugin data");
     PluginManager.finalizeInstalledPlugins();
+    
+    mLog.info("Storing dataloader settings");
+    DataLoaderManager.finalizeDataLoaders();
 
     mLog.info("Quitting");
     System.exit(0);
@@ -310,12 +314,16 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private static void createChannelList() {
-	try {
-		 ChannelList.readChannelList();
-	   } catch (TvBrowserException exc) {
-		 mLog.warning("No channel file found. using default channel settings.");
-		 ChannelList.createDefaultChannelList();
-	   }
+  	DataLoaderManager.initDataLoaders();
+  	String[] dataLoaderNames=DataLoaderManager.getDataLoaderNames();
+  	for (int i=0;i<dataLoaderNames.length;i++) {
+  		try {
+			ChannelList.readChannelList(dataLoaderNames[i]);
+		} catch (TvBrowserException exc) {
+			mLog.warning("No channel file found. using default channel settings.");
+			ChannelList.createDefaultChannelList(dataLoaderNames[i]);
+		}
+  	}
   }
 		
   private void updatePluginMenu(JMenu theMenu) {
@@ -473,99 +481,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	settingsBtn.addActionListener(this);
 	return settingsBtn;
   }
-  /*
-  private JButton createPluginBtn(final devplugin.Plugin plugin) {
-	Icon ico=plugin.getButtonIcon();
-	JButton btn=new PictureButton(plugin.getButtonText(),ico);
-
-		btn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent event) {
-				plugin.execute();	
-			}
-		});
-  	return btn;	
-  }
   
-  */
-  
-  	
-  /*  String msg;
-    
-    JPanel result = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-    result.setOpaque(false);
-
-    if (Settings.isTimeBtnVisible()) {
-      // mNowBt, mEarlyBt, mDayBt, mEveningBt
-      msg = mLocalizer.msg("botton.now", "Now");
-      mNowBt = new PictureButton(msg, new ImageIcon("imgs/TimeNow24.gif"));
-      mNowBt.addActionListener(this);
-      result.add(mNowBt);
-      
-      msg = mLocalizer.msg("botton.early", "Early");
-      mEarlyBt = new PictureButton(msg, new ImageIcon("imgs/TimeEarly24.gif"));
-      mEarlyBt.addActionListener(this);
-      result.add(mEarlyBt);
-      
-      msg = mLocalizer.msg("botton.morning", "Morning");
-      mMorningBt = new PictureButton(msg, new ImageIcon("imgs/TimeMorning24.gif"));
-      mMorningBt.addActionListener(this);
-      result.add(mMorningBt);
-
-      msg = mLocalizer.msg("botton.midday", "Midday");
-      mMiddayBt = new PictureButton(msg, new ImageIcon("imgs/TimeMidday24.gif"));
-      mMiddayBt.addActionListener(this);
-      result.add(mMiddayBt);
-      
-      msg = mLocalizer.msg("botton.evening", "Evening");
-      mEveningBt = new PictureButton(msg, new ImageIcon("imgs/TimeEvening24.gif"));
-      mEveningBt.addActionListener(this);
-      result.add(mEveningBt);
-      
-      result.add(new JSeparator(JSeparator.VERTICAL));
-    }
-    
-    
-
-    if (Settings.isUpdateBtnVisible()) {
-      msg = mLocalizer.msg("button.update", "Update");
-      updateBtn = new PictureButton(msg, new ImageIcon("imgs/Import24.gif"));
-      result.add(updateBtn);
-      updateBtn.addActionListener(this);
-    }
-
-   
-    if (Settings.isPreferencesBtnVisible()) {
-      msg = mLocalizer.msg("button.settings", "Settings");
-      settingsBtn = new PictureButton(msg, new ImageIcon("imgs/Preferences24.gif"));
-      result.add(settingsBtn);
-      settingsBtn.addActionListener(this);
-    }
-
-
-
-
-	String[] buttonPlugins=Settings.getButtonPlugins();
-	
-	for (int i=0;i<buttonPlugins.length;i++) {
-	   
-		if (PluginManager.isInstalled(buttonPlugins[i])) {
-			final devplugin.Plugin p=PluginManager.getPlugin(buttonPlugins[i]);
-			Icon ico=p.getButtonIcon();
-			JButton btn=new PictureButton(p.getButtonText(),ico);
-			result.add(btn);
-			btn.addActionListener(new ActionListener(){
-				public void actionPerformed(ActionEvent event) {
-					p.execute();	
-				}
-			});
-	   }
-	   
-   }
-
-
-   return result;*/
- // }
-
 
   
   private void changeDate(devplugin.Date date) {
@@ -755,7 +671,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     	buttonPanel.update();   	
     }
     
-    if (Settings.settingHasChanged(new String[]{"subscribed"})) {
+    if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
     	createChannelList();
     	programTablePanel.subscribedChannelsChanged();
 		DataService.getInstance().subscribedChannelsChanged();

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ package tvbrowser.ui.settings;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+
 
 import util.exc.*;
 
@@ -65,6 +65,10 @@ public class SettingsDlg extends JDialog implements ActionListener {
     tabPane.addTab(tab.getName(),tab);
 
     tab=new AppearanceSettingsTab();
+    tab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    tabPane.addTab(tab.getName(),tab);
+    
+    tab=new DataServiceSettingsTab();
     tab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
     tabPane.addTab(tab.getName(),tab);
 

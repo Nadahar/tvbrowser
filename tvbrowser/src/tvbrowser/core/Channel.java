@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,33 +30,22 @@ public class Channel implements java.io.Serializable, devplugin.Channel {
 
     private String name;
     private int id;
-  //  private int pos;
- //   public static final int NOT_SUBSCRIBED=-1;
-
-    public Channel(String name, int id) {
+    private String dataService;
+    
+    public Channel(String name, int id, String dataService) {
         this.name=name;
         this.id=id;
-     //   pos=NOT_SUBSCRIBED;
-
+        this.dataService=dataService;
     }
 
-  /*  public void unsubscribe() {
-        pos=NOT_SUBSCRIBED;
-    }
-*/
+	public String getDataServiceName() {
+		return dataService;
+	}
+
     public String toString() {
-       // return name+" ("+id+") pos: "+pos;
-       return name;
+       return name+" ("+dataService+")";
     }
 
-  /*  public void setPos(int pos) {
-        this.pos=pos;
-    }*/
-
-   /* public int getPos() {
-        return pos;
-    }
-*/
     public String getName() {
         return name;
     }
@@ -69,8 +58,4 @@ public class Channel implements java.io.Serializable, devplugin.Channel {
         if (ch==null) return false;
         return (ch.getId()==id);
     }
-
-  /*  public boolean isSubscribed() {
-        return pos!=NOT_SUBSCRIBED;
-    }*/
 }

@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.zip.*;
 import java.util.regex.*;
 
-import java.net.URL;
+
 
 import javax.swing.JProgressBar;
 
@@ -67,10 +67,7 @@ public class DataService implements devplugin.PluginManager {
   
   /** <CODE>true</CODE> if we are in online mode. */  
   private boolean onlineMode=false;
-  
-  /** The TV data service to use for getting new TV data. */  
-  private TVDataServiceInterface tvdataloader=null;
-  
+   
   /** The progress bar to use for showing the update process. */  
   private JProgressBar progressBar;
   
@@ -91,43 +88,10 @@ public class DataService implements devplugin.PluginManager {
     progressBar = new JProgressBar();
     progressBar.setStringPainted(false);
     
-    loadTvDataLoader();
+    //loadTvDataLoader();
   }
 
 
-  
-  /**
-   * Loads the TV data loader.
-   */  
-  private void loadTvDataLoader() {   
-    // Get the tv data loader jar file
-    String[] fList=new File("tvdataloader").list();  
-    String className="";
-    if (fList!=null && fList.length==1) {
-      className=fList[0];
-      if (className.length()>4) {
-        className=className.substring(0,className.length()-4);
-      }
-    }
-
-    String fName=className+".jar";
-    File f=new File("tvdataloader",fName);  
-
-    // create the tv data loader
-    try {
-      URL[] urls={ f.toURL() };
-      ClassLoader dataloaderClassLoader=new java.net.URLClassLoader(urls,ClassLoader.getSystemClassLoader());
-
-      Class c=dataloaderClassLoader.loadClass(className.toLowerCase()+"."+className);
-      tvdataloader=(tvdataloader.TVDataServiceInterface)c.newInstance();
-    } catch (Exception exc) {
-      String msg = mLocalizer.msg("error.5", "Loading tv data service failed!\n({0})",
-        f.getAbsolutePath(), exc);
-      ErrorHandler.handle(msg, exc);
-    }
-  }
-  
-  
   
   /**
    * Gets the DataService singleton.
@@ -149,24 +113,16 @@ public class DataService implements devplugin.PluginManager {
    * @param newMode whether we are in online mode.
    */
   public void setOnlineMode(boolean newMode) {
-    if ((newMode == onlineMode) || (tvdataloader == null)) {
+    if ((newMode == onlineMode)/* || (tvdataloader == null)*/) {
       return;
     }
     
     onlineMode = newMode;
     
     if (newMode) {
-      try {
-        tvdataloader.connect();
-      } catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
+        DataLoaderManager.connect();
     } else {
-      try {
-        tvdataloader.disconnect();
-      } catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
+        DataLoaderManager.disconnect();
     }
   }
   
@@ -190,10 +146,10 @@ public class DataService implements devplugin.PluginManager {
    *        program for.
    */  
   public void startDownload(int daysToDownload) {
-    if (tvdataloader == null) {
+   /* if (tvdataloader == null) {
       return;
     }
-    
+    */
     File tvdataDir=new File(Settings.DATA_DIR);
     if (!tvdataDir.exists()) {
       tvdataDir.mkdir();
@@ -201,16 +157,11 @@ public class DataService implements devplugin.PluginManager {
     
     progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
     progressBar.setStringPainted(true);
-    try {
-      tvdataloader.connect();
-    }
-    catch (TvBrowserException exc) {
-      ErrorHandler.handle(exc);
-      return;
-    }
-    finally {
+    
+      DataLoaderManager.connect();
+   
       progressBar.setStringPainted(false);
-    }
+    
 
     mIsDownloading = true;
     
@@ -230,7 +181,7 @@ public class DataService implements devplugin.PluginManager {
         progressBar.setValue(i * subscribedChannels.length + j + 1);
         
         devplugin.Channel channel=subscribedChannels[j];
-        File file=new File(Settings.DATA_DIR,""+channel.getId()+"_"+date.getDaysSince1970());
+        File file=new File(Settings.DATA_DIR,""+channel.getId()+"_"+date.getDaysSince1970()+"."+channel.getDataServiceName());
         if (file.exists()) {
           continue;
         }
@@ -262,12 +213,9 @@ public class DataService implements devplugin.PluginManager {
 
     mIsDownloading = false;
     
-    try {
-      tvdataloader.disconnect();
-    }
-    catch (TvBrowserException exc) {
-      ErrorHandler.handle(exc);
-    }
+    
+      DataLoaderManager.disconnect();
+   
     
     if (downloadException != null) {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
@@ -324,10 +272,13 @@ public class DataService implements devplugin.PluginManager {
   protected DayProgram loadDayProgram(devplugin.Date date)
     throws TvBrowserException
   {
+  	
+  
+ /* 	
     if (tvdataloader == null) {
       return null;
     }
-
+*/
     Channel[] channels=ChannelList.getSubscribedChannels();
     
     boolean useProgressBar=false;
@@ -346,6 +297,8 @@ public class DataService implements devplugin.PluginManager {
     boolean someDataWasDownloaded = false;
     for (int i = 0; i < channels.length; i++) {
       // Update the progress bar
+      String dataloaderName=channels[i].getDataServiceName();
+      TVDataServiceInterface dataLoader=DataLoaderManager.getDataLoader(dataloaderName);
       if (useProgressBar) {
         progressBar.setValue(i+1);
       }
@@ -356,7 +309,7 @@ public class DataService implements devplugin.PluginManager {
       }
 
       // Check whether we have it on disk
-      String fileName = "" + channels[i].getId() + "_" + date.getDaysSince1970();
+      String fileName = "" + channels[i].getId() + "_" + dataloaderName+"."+date.getDaysSince1970();
       File file = new File(Settings.DATA_DIR, fileName);
       if (file.exists()) {
         // We have it on disk -> load it
@@ -364,7 +317,7 @@ public class DataService implements devplugin.PluginManager {
         try {
           in = new ObjectInputStream(new FileInputStream(file));
           tvdataloader.AbstractChannelDayProgram prog
-            = tvdataloader.readChannelDayProgram(in);
+            = dataLoader.readChannelDayProgram(in);
 
           if (prog != null) {
             dayProgram.addChannelDayProgram(prog);
@@ -754,11 +707,13 @@ public class DataService implements devplugin.PluginManager {
     AbstractChannelDayProgram prog;
 
     // download the program
+    TVDataServiceInterface tvdataloader=DataLoaderManager.getDataLoader(channel.getDataServiceName());
+    if (tvdataloader==null) return null;
     prog = tvdataloader.downloadDayProgram(date, channel);
 
     // save the program to disk
     if (prog != null) {
-      String fileName = "" + channel.getId() + "_" + date.getDaysSince1970();
+      String fileName = "" + channel.getId() + "_" + channel.getDataServiceName() + "." + date.getDaysSince1970();
       File file = new File(Settings.DATA_DIR, fileName);
       
       ObjectOutputStream out = null;

@@ -61,5 +61,22 @@ public interface TVDataServiceInterface {
    */
   public AbstractChannelDayProgram readChannelDayProgram(java.io.ObjectInputStream in)
     throws java.io.IOException, ClassNotFoundException;
+    
+    
+	/**
+	 * Called by the host-application during start-up. Implements this method to
+	 * load your dataservices settings from the file system.
+	 */
+  public void loadSettings(java.util.Properties settings);
+  
+  
+  	/**
+	 * Called by the host-application during shut-down. Implements this method to
+	 * store your dataservices settings to the file system.
+	 */
+  public java.util.Properties storeSettings();
+  
+  public javax.swing.JPanel getSettingsPanel();
+   
 
 }

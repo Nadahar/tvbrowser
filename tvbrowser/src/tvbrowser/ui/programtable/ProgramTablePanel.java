@@ -84,7 +84,7 @@ class ProgramDayTime extends JPanel {
     int col=ChannelList.getPos(p.getChannel().getId());
     
     if (col<0) {
-      throw new RuntimeException("cannot add program from channel "+p.getChannel());
+      return; // cannot add program (channel is not subscribed)
     }
     ProgramPanel panel=ProgramPanelFactory.createProgramPanel(p);
     cols[col].add(panel);
@@ -154,6 +154,8 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   private DayProgram dayProgram;
 
   private javax.swing.Timer timer;
+  
+  private JViewport headerPanel;
 
   /**
    * Constructs a new ProgramTablePanel with the specified parent frame.
@@ -178,7 +180,11 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
    }
    
    public void subscribedChannelsChanged() {
+   	if (channelPanel!=null && headerPanel!=null) {
+   		headerPanel.remove(channelPanel);
+   	}
 	channelPanel=new ChannelPanel();
+	
    }
 
   /**
@@ -211,18 +217,16 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
     scrollPane.getVerticalScrollBar().setUnitIncrement(30);
     
-    JViewport headerPanel=new JViewport();
+    /*JViewport*/ headerPanel=new JViewport();
    
     headerPanel.add(channelPanel); 
     scrollPane.setColumnHeader(headerPanel);
 
 	scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER,channelChooser);
 
-
     for (int i=0;i<part.length;i++) {
       part[i]=new ProgramDayTime(ChannelList.getNumberOfSubscribedChannels());
     }
-
  
     ProgramPanelFactory.reset();
 
@@ -237,28 +241,20 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
       while (iterator.hasNext()) {
         curDayProgram=(tvdataloader.AbstractChannelDayProgram)iterator.next();
 
-        progs=curDayProgram.getPrograms();
-        
-        
-        
+        progs=curDayProgram.getPrograms();        
         
         while (progs.hasNext()) {
           curProgram=(tvdataloader.AbstractProgram)progs.next();
           h=curProgram.getHours();
-          int inx=h/((24/part.length));
-          
-          devplugin.Channel channel=curProgram.getChannel();
-         
+          int inx=h/((24/part.length));          
           part[inx].addProgram(curProgram);
         }
       }
     }
 
-
-
     centerPanel.setLayout(new BoxLayout(centerPanel,BoxLayout.Y_AXIS));
     for (int i=0;i<part.length;i++) {
-      centerPanel.add(part[i]);
+		centerPanel.add(part[i]);
     }
 
 
