@@ -25,10 +25,13 @@
  */
 package tvbrowser.ui.programtable;
 
+import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -45,7 +48,7 @@ import devplugin.Channel;
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramTableScrollPane extends JScrollPane
-  implements ProgramTableModelListener, FocusListener
+  implements ProgramTableModelListener, FocusListener, MouseWheelListener
 {
   
   private ProgramTable mProgramTable;
@@ -80,7 +83,9 @@ public class ProgramTableScrollPane extends JScrollPane
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
     setViewportView(mProgramTable);
 
-    setWheelScrollingEnabled(true);
+    setWheelScrollingEnabled(false);
+    addMouseWheelListener(this);
+    
     getHorizontalScrollBar().setUnitIncrement(30);
     getVerticalScrollBar().setUnitIncrement(30);
     
@@ -205,6 +210,25 @@ public class ProgramTableScrollPane extends JScrollPane
 	public void focusLost(FocusEvent arg0) {
     setBorderPainted(false);
 	}
+
+
+
+    /* (non-Javadoc)
+     * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
+     */
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        
+        
+        if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+            if ((e.getModifiersEx() & MouseWheelEvent.SHIFT_DOWN_MASK) != 0) {
+                int amount = e.getUnitsToScroll() * getHorizontalScrollBar().getUnitIncrement();
+                getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
+            } else {
+                int amount = e.getUnitsToScroll() * getVerticalScrollBar().getUnitIncrement();
+                getVerticalScrollBar().setValue(getVerticalScrollBar().getValue() + amount);
+            }
+        }
+    }
 
 
 
