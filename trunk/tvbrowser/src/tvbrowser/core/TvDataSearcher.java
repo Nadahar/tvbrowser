@@ -132,20 +132,22 @@ public class TvDataSearcher {
     for (int day = 0; day <= nrDays; day++) {
       for (int channelIdx = 0; channelIdx < channels.length; channelIdx++) {
         Channel channel = channels[channelIdx];
-        ChannelDayProgram dayProg = TvDataBase.getInstance().getDayProgram(startDate, channel);
-        if (dayProg != null) {
-          // This day has data -> Remember it
-          lastDayWithData = day;
-          
-          // Search this day program
-          for (int i = 0; i < dayProg.getProgramCount(); i++) {
-            Program prog = (Program) dayProg.getProgramAt(i);
-            boolean matches = matches(pattern, prog, fieldArr);
+        if (channel != null) {
+            ChannelDayProgram dayProg = TvDataBase.getInstance().getDayProgram(startDate, channel);
+            if (dayProg != null) {
+              // This day has data -> Remember it
+              lastDayWithData = day;
+              
+              // Search this day program
+              for (int i = 0; i < dayProg.getProgramCount(); i++) {
+                Program prog = (Program) dayProg.getProgramAt(i);
+                boolean matches = matches(pattern, prog, fieldArr);
 
-            if (matches) {
-              hitList.add(prog);
+                if (matches) {
+                  hitList.add(prog);
+                }
+              }
             }
-          }
         }
       }
       
