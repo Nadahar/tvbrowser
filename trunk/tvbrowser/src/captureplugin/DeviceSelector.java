@@ -65,14 +65,14 @@ public class DeviceSelector extends JDialog {
     private DeviceIf[] mDevices;
     /** Program */
     private Program[] mProgram;
-    
+    /** The Program-List */
     private ProgramList mProgramList;
     
     /** Return-Value */
     private int mReturn = JOptionPane.CANCEL_OPTION;
-    
+    /** The Device-Selector */
     private JComboBox mDeviceSelector;
-    
+    /** The Funciton-Selector */
     private JComboBox mFunction;
     
     /**
@@ -202,7 +202,7 @@ public class DeviceSelector extends JDialog {
     
     
     /**
-     * 
+     * Fills the ProgramList of the Dialog
      */
     protected void fillProgramList() {
         DefaultListModel model = new DefaultListModel();
@@ -236,7 +236,7 @@ public class DeviceSelector extends JDialog {
     }
 
     /**
-     * 
+     * Fills the Function-List 
      */
     protected void fillFunctionList() {
         
@@ -269,9 +269,11 @@ public class DeviceSelector extends JDialog {
     }
 
     /**
-     * @param prgListPanel
-     * @param string
-     * @return
+     * Creates the Panel with the Name
+     * 
+     * @param c add Component to the Panel
+     * @param string name to add
+     * @return new JPanel
      */
     private JPanel createNamedPanel(Component c, String string) {
         JPanel panel = new JPanel(new BorderLayout());
@@ -281,6 +283,9 @@ public class DeviceSelector extends JDialog {
         return panel;
     }
 
+    /**
+     * OK was pressed
+     */
     private void okPressed() {
         
         DeviceIf device = (DeviceIf) mDeviceSelector.getSelectedItem();
