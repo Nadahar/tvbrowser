@@ -79,6 +79,7 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgramFilter;
+import devplugin.ProgressMonitor;
 
 import java.lang.reflect.Constructor;
 
@@ -479,8 +480,14 @@ private Node mDateChannelNode;
   }
 
 
-  private void changeDate(Date date, devplugin.ProgressMonitor monitor, Runnable callback) {
-    mProgramTableModel.setDate(date, monitor, callback);
+  private void changeDate(final Date date, final ProgressMonitor monitor,
+    final Runnable callback)
+  {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mProgramTableModel.setDate(date, monitor, callback);
+      }
+    });
   }
 
 

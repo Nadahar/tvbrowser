@@ -250,7 +250,7 @@ public class TVBrowser {
       
     }
     
-    Splash splash;
+    final Splash splash;
     
     if (showSplashScreen) {
       splash = new SplashScreen("imgs/splash.jpg", 140, 220,
@@ -305,7 +305,36 @@ public class TVBrowser {
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
+   
+    // Init the UI
+    final boolean fStartMinimized = startMinimized;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        initUi(splash, fStartMinimized);
+      }
+    });
+
+    // Every 5 minutes we store all the settings so they are stored in case of
+    // an unexpected failure
+    Thread saveThread = new Thread() {
+      public void run() {
+        mSaveThreadShouldStop = false;
+        while (! mSaveThreadShouldStop) {
+          try {
+            Thread.sleep(5 * 60 * 1000);
+          }
+          catch (Exception exc) {}
+          
+          flushSettings();
+        }
+      }
+    };
+    saveThread.setPriority(Thread.MIN_PRIORITY);
+    saveThread.start();
+  }
     
+    
+  private static void initUi(Splash splash, boolean startMinimized) {
     mainFrame=MainFrame.getInstance();
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
     
@@ -326,7 +355,6 @@ public class TVBrowser {
         }
       });  
     }
-    
     
     // Set the right size
     mLog.info("Setting frame size and location");
@@ -360,38 +388,15 @@ public class TVBrowser {
       mainFrame.runSetupAssistant();  
     }
     else {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          handleAutomaticDownload();
-       
-          boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-          if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
-            mainFrame.askForDataUpdate();
-          } else {
-            mainFrame.scrollToNow();
-          }
-        }
-      });
-    }
-    
-    
-    // Every 5 minutes we store all the settings so they are stored in case of
-    // an unexpected failure
-    Thread saveThread = new Thread() {
-      public void run() {
-        mSaveThreadShouldStop = false;
-        while (! mSaveThreadShouldStop) {
-          try {
-            Thread.sleep(5 * 60 * 1000);
-          }
-          catch (Exception exc) {}
-          
-          flushSettings();
-        }
+      handleAutomaticDownload();
+   
+      boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+      if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
+        mainFrame.askForDataUpdate();
+      } else {
+        mainFrame.scrollToNow();
       }
-    };
-    saveThread.setPriority(Thread.MIN_PRIORITY);
-    saveThread.start();
+    }
   }
   
   
