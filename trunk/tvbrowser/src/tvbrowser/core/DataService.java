@@ -54,18 +54,27 @@ import tvdataloader.*;
  */
 public class DataService implements devplugin.PluginManager {
 
+  /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(DataService.class.getName());
   
+  /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DataService.class);
   
+  /** The singleton. */  
   private static DataService mSingleton;
   
-  private ProgramSelection programSelection=null;
+  /** <CODE>true</CODE> if we are in online mode. */  
   private boolean onlineMode=false;
+  
+  /** The TV data service to use for getting new TV data. */  
   private TVDataServiceInterface tvdataloader=null;
+  
+  /** The progress bar to use for showing the update process. */  
   private JProgressBar progressBar;
+  
+  /** <CODE>True</CODE> if we are currently downloading TV data. */  
   private boolean isDownloading=false;
   
   /** Holds for a Date (key) a DayProgram (value). Used as cache. */
@@ -73,6 +82,9 @@ public class DataService implements devplugin.PluginManager {
 
   
   
+  /**
+   * Creates a new instance of DataService.
+   */  
   private DataService() {
     mDayProgramHash = new HashMap();
     
@@ -83,10 +95,10 @@ public class DataService implements devplugin.PluginManager {
   }
 
 
-  public void deleteDayProgramCache() {
-  	mDayProgramHash.clear();
-  }
-
+  
+  /**
+   * Loads the TV data loader.
+   */  
   private void loadTvDataLoader() {   
     // Get the tv data loader jar file
     String[] fList=new File("tvdataloader").list();  
@@ -119,6 +131,8 @@ public class DataService implements devplugin.PluginManager {
   
   /**
    * Gets the DataService singleton.
+   *
+   * @return the DataService singleton.
    */
   public static DataService getInstance() {
     if (mSingleton == null) {
@@ -130,8 +144,9 @@ public class DataService implements devplugin.PluginManager {
   
 
   /**
-   * 
-   * @param newMode
+   * Sets whether we are in online mode.
+   *
+   * @param newMode whether we are in online mode.
    */
   public void setOnlineMode(boolean newMode) {
     if ((newMode == onlineMode) || (tvdataloader == null)) {
@@ -157,12 +172,23 @@ public class DataService implements devplugin.PluginManager {
   
  
 
+  /**
+   * Gets whether we are in online mode.
+   *
+   * @return whether we are in online mode.
+   */  
   public boolean isOnlineMode() {
     return onlineMode;
   }
 
   
 
+  /**
+   * Starts the download of new TV data
+   *
+   * @param daysToDownload The number of days until today to download the
+   *        program for.
+   */  
   public void startDownload(int daysToDownload) {
     if (tvdataloader == null) {
       return;
@@ -194,10 +220,6 @@ public class DataService implements devplugin.PluginManager {
     date.addDays(-1); // get yesterday too
     TvBrowserException downloadException = null;
     for (int i = 0; i < daysToDownload + 2; i++) {
-      if (downloadException != null) {
-        break;
-      }
-      
       for (int j = 0; (j < subscribedChannels.length) && isDownloading; j++) {
         progressBar.setValue(i * subscribedChannels.length + j + 1);
         
@@ -211,8 +233,11 @@ public class DataService implements devplugin.PluginManager {
           prog = tvdataloader.downloadDayProgram(date, channel);
         }
         catch (TvBrowserException exc) {
-          downloadException = exc;
-          break;
+          if (downloadException == null) {
+            // Remeber only the first exception
+            downloadException = exc;
+          }
+          continue;
         }
 
         if (prog == null) {
@@ -248,10 +273,10 @@ public class DataService implements devplugin.PluginManager {
 
  
   /**
-   * Returns the day program for the specified date.
-   * 
+   * Gets the day program for the specified date.
+   *
    * @param date The date to get the day program for.
-   * @throws NullPointerException if date is null.
+   * @return the day program for the specified date.
    */
   public DayProgram getDayProgram(devplugin.Date date) {
     // if date is null throw a NullPointerException
@@ -270,11 +295,6 @@ public class DataService implements devplugin.PluginManager {
         mLog.info("Loading program for " + date + " (" + date.hashCode() + ")");
         dayProgram = loadDayProgram(date);
         mLog.info("Loading program " + ((dayProgram == null) ? "failed" : "suceed"));
-
-        // put it in the cache
-        if (dayProgram != null) {
-          mDayProgramHash.put(date, dayProgram);
-        }
       }
       catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
@@ -287,7 +307,13 @@ public class DataService implements devplugin.PluginManager {
 
   
   /**
-   * Loads the day program for the specified date.
+   * Loads the day program for the specified date. If the program could not be
+   * found on the disk, it will be downloaded if we are in online mode or if
+   * there is currently an update running.
+   *
+   * @param date The date to download the program for.
+   * @throws TvBrowserException If the download failed.
+   * @return The DayProgram for the specified day.
    */
   protected DayProgram loadDayProgram(devplugin.Date date)
     throws TvBrowserException
@@ -304,13 +330,29 @@ public class DataService implements devplugin.PluginManager {
       progressBar.setMaximum(channels.length);
     }
     
-    DayProgram result = new DayProgram();    
-    for (int i=0;i<channels.length;i++) {
+    // Get the day program for the specified date from the cache
+    DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
+    if (dayProgram == null) {
+      dayProgram = new DayProgram(date);
+    }
+    
+    // Load or download all missing channel day programs
+    for (int i = 0; i < channels.length; i++) {
+      // Update the progress bar
       if (useProgressBar) {
         progressBar.setValue(i+1);
       }
-      File file=new File(Settings.DATA_DIR,""+channels[i].getId()+"_"+date.getDaysSince1970());
+
+      // Check whether this channel day program is already present
+      if (dayProgram.getChannelDayProgram(channels[i]) != null) {
+        continue;
+      }
+
+      // Check whether we have it on disk
+      String fileName = "" + channels[i].getId() + "_" + date.getDaysSince1970();
+      File file = new File(Settings.DATA_DIR, fileName);
       if (file.exists()) {
+        // We have it on disk -> load it
         ObjectInputStream in = null;
         try {
           in = new ObjectInputStream(new FileInputStream(file));
@@ -318,7 +360,7 @@ public class DataService implements devplugin.PluginManager {
             = tvdataloader.readChannelDayProgram(in);
 
           if (prog != null) {
-            result.addChannelDayProgram(prog);
+            dayProgram.addChannelDayProgram(prog);
           }
         }
         catch (Exception exc) {
@@ -331,15 +373,19 @@ public class DataService implements devplugin.PluginManager {
             try { in.close(); } catch (IOException exc) {}
           }
         }
-      }else if (isOnlineMode()&&isDownloading) {
-        tvdataloader.AbstractChannelDayProgram prog=tvdataloader.downloadDayProgram(date, channels[i]);
-
+      }
+      else if (isOnlineMode() && isDownloading) {
+        // We don't have it on disk, but we are online -> download it
+        tvdataloader.AbstractChannelDayProgram prog =
+          tvdataloader.downloadDayProgram(date, channels[i]);
+        
         if (prog != null) {
+          // Write the channel day program to disk
           ObjectOutputStream out = null;
           try {
             out = new ObjectOutputStream(new FileOutputStream(file));
             out.writeObject(prog);
-            result.addChannelDayProgram(prog);
+            dayProgram.addChannelDayProgram(prog);
           }
           catch (IOException exc) {
             throw new TvBrowserException(getClass(), "error.2",
@@ -355,19 +401,23 @@ public class DataService implements devplugin.PluginManager {
       }
     }
 
-    if (! result.iterator().hasNext()) {
+    // If the day program is not empty -> return it and put it in the cache
+    if (! dayProgram.iterator().hasNext()) {
       // day program is empty -> return null
       return null;
     } else {
-      return result;
+      mDayProgramHash.put(date, dayProgram);
+      return dayProgram;
     }
   }
 
 
 
   /**
-   * returns true, if tv data are available for the given date.
-   * @param date
+   * Returns true, if tv data is available on disk for the given date.
+   *
+   * @param date The date to check.
+   * @return if the data is available.
    */
   public static boolean dataAvailable(devplugin.Date date) {
     final String dateStr = "" + date.getDaysSince1970();
@@ -389,7 +439,11 @@ public class DataService implements devplugin.PluginManager {
   /**
    * Gets a program.
    * <p>
-   * Returns null, if the specified program could not be found.
+   * Returns <CODE>null</CODE>, if the specified program could not be found.
+   *
+   * @param date The date to get the data for.
+   * @param progID The ID of the program to get the data for.
+   * @return The program for the specified channel and date.
    */
   public devplugin.Program getProgram(devplugin.Date date, String progID) {
     DayProgram dayProgram = getDayProgram(date);
@@ -403,27 +457,12 @@ public class DataService implements devplugin.PluginManager {
 
 
 
-  public void setSelection(ProgramSelection selection) {
-    programSelection=selection;
-  }
-
-
-
-  public ProgramSelection getSelection() {
-    return programSelection;
-  }
-
-
-
-  public void markProgram(devplugin.Program prog, devplugin.Plugin plugin) {
-    if (programSelection==null) {
-      programSelection=new ProgramSelection();
-    }
-    programSelection.addProgram(prog,plugin);
-  }
-
-
-
+  /**
+   * Creates a JComponent that shows the specified program.
+   *
+   * @param prog The program to get the component for.
+   * @return a JComponent that shows the specified program.
+   */  
   public javax.swing.JComponent createProgramPanel(devplugin.Program prog) {
     return new tvbrowser.ui.programtable.ProgramPanel(prog);
   }
@@ -432,6 +471,8 @@ public class DataService implements devplugin.PluginManager {
   
   /**
    * Gets the progress bar used to show the download progress.
+   *
+   * @return the progress bar used to show the download progress.
    */
   public JProgressBar getProgressBar() {
     return progressBar;
@@ -441,6 +482,8 @@ public class DataService implements devplugin.PluginManager {
   
   /**
    * Gets whether the data service is currently downloading data.
+   *
+   * @return <CODE>true</CODE>, if the data service is currently downloading data.
    */
   public boolean isDownloading() {
     return isDownloading;
@@ -450,6 +493,11 @@ public class DataService implements devplugin.PluginManager {
   
   /**
    * Sets whether the data service is currently downloading data.
+   *
+   * TODO: the data service should not have to told whether it is
+   *       downloading. (It should know it by itself).
+   *
+   * @param isDownloading whether the data service is currently downloading data.
    */
   public void setIsDownloading(boolean isDownloading) {
     // TODO: the data service should not have to told whether it is
@@ -461,9 +509,29 @@ public class DataService implements devplugin.PluginManager {
   
   /**
    * Gets the subscribed channels.
+   *
+   * @return the subscribed channels.
    */
   public devplugin.Channel[] getSubscribedChannels() {
     return ChannelList.getSubscribedChannels();
+  }
+  
+  
+  
+  /**
+   * Called, when the ChannelList has changed.
+   */
+  public void subscribedChannelsChanged() {
+    Iterator dayProgramIter = mDayProgramHash.values().iterator();
+    while (dayProgramIter.hasNext()) {
+      DayProgram dayProgram = (DayProgram) dayProgramIter.next();
+      try {
+        loadDayProgram(dayProgram.getDate());
+      }
+      catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
+      }
+    }
   }
   
   
@@ -473,27 +541,35 @@ public class DataService implements devplugin.PluginManager {
    * specified date.
    * <p>
    * If the requested data is not available, null is returned.
+   *
+   * @param date The date to get the programs for.
+   * @param channel The channel to get the programs for.
+   * @return the programs of the specified channel and date.
    */
   public Iterator getChannelDayProgram(devplugin.Date date, devplugin.Channel channel) {
     DayProgram dayProgram = getDayProgram(date);
     if (dayProgram == null) {
       return null;
     }
-    
-    Iterator dayProgramIter = dayProgram.iterator();
-    while (dayProgramIter.hasNext()) {
-      AbstractChannelDayProgram channelDayProgram
-        = (AbstractChannelDayProgram) dayProgramIter.next();
-      if (channelDayProgram.getChannel().equals(channel)) {
-        return channelDayProgram.getPrograms();
-      }
+
+    AbstractChannelDayProgram channelDayProgram
+      = dayProgram.getChannelDayProgram(channel);
+    if (channelDayProgram == null) {
+      return null;
     }
     
-    return null;
+    return channelDayProgram.getPrograms();
   }
 
   
   
+  /**
+   * Creates a context menu containg all subscribed plugins that support context
+   * menues.
+   *
+   * @return a plugin context menu.
+   * @param parent The parent for the context menu.
+   */  
   public tvbrowser.ui.ContextMenu createPluginContextMenu(java.awt.Frame parent) {
 	tvbrowser.ui.ContextMenu menu=new tvbrowser.ui.ContextMenu(parent);
 	Object[] plugins=PluginManager.getInstalledPlugins();
@@ -511,7 +587,8 @@ public class DataService implements devplugin.PluginManager {
    * In fact the files that are not already present in the tvdata directory
    * are extracted from the zip file.
    *
-   * @param targetFile The file to export the tv data to.
+   * @param srcFile The file to import the tv data from.
+   * @throws TvBrowserException If the import failed.
    */
   public void importTvData(File srcFile) throws TvBrowserException {
     ZipFile zipFile = null;
@@ -555,6 +632,7 @@ public class DataService implements devplugin.PluginManager {
    * In fact the tvdata directory is packed into a zip file.
    *
    * @param targetFile The file to export the tv data to.
+   * @throws TvBrowserException If the export failed.
    */
   public void exportTvData(File targetFile) throws TvBrowserException {
     File tvdataDir = new File(Settings.DATA_DIR);
@@ -615,6 +693,8 @@ public class DataService implements devplugin.PluginManager {
    * @param startDate The date to start the search.
    * @param nrDays The number of days to include after the start date. If
    *        negative the days before the start date are used.
+   * @throws TvBrowserException If there is a syntax error in the regular expression.
+   * @return The matching programs.
    */
   public devplugin.Program[] search(String regex, boolean inTitle, boolean inText,
     boolean caseSensitive, devplugin.Channel[] channels,
@@ -626,7 +706,14 @@ public class DataService implements devplugin.PluginManager {
       flags &= Pattern.CASE_INSENSITIVE;
     }
 
-    Pattern pattern = Pattern.compile(regex, flags);
+    Pattern pattern;
+    try {
+      pattern = Pattern.compile(regex, flags);
+    }
+    catch (PatternSyntaxException exc) {
+      throw new TvBrowserException(getClass(), "error.8",
+        "Syntax error in the regualar expression of the search pattern!", exc);
+    }
     
     if (nrDays < 0) {
       startDate.addDays(nrDays);
@@ -676,6 +763,5 @@ public class DataService implements devplugin.PluginManager {
     
     return hitArr;
   }
-  
 
 }

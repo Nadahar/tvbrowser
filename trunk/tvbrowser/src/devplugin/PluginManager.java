@@ -74,6 +74,8 @@ public interface PluginManager {
    * @param startDate The date to start the search.
    * @param nrDays The number of days to include after the start date. If
    *        negative the days before the start date are used.
+   * @throws TvBrowserException If there is a syntax error in the regular expression.
+   * @return The matching programs.
    */
   public Program[] search(String regex, boolean inTitle, boolean inText,
     boolean caseSensitive, Channel[] channels, devplugin.Date startDate,

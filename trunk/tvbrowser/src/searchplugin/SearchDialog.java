@@ -37,21 +37,22 @@ import javax.swing.border.Border;
 
 import util.exc.*;
 import util.ui.TabLayout;
+import util.ui.UiUtilities;
 
 import devplugin.*;
 
 /**
+ * A dialog for searching programs.
  *
- * @author  Til Schneider, www.murfman.de
+ * @author Til Schneider, www.murfman.de
  */
 public class SearchDialog extends JDialog {
 
+  /** The localizer of this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchDialog.class);
   
-  private static final Border DIALOG_BORDER
-    = BorderFactory.createEmptyBorder(5, 5, 0, 5);
-  
+  /** The messages for the time combo box. */  
   private static final String[] TIME_STRING_ARR = new String[] {
     mLocalizer.msg("search.14", "Nächste 14 Tagen"),
     mLocalizer.msg("search.1000", "Alle Daten"),
@@ -62,6 +63,7 @@ public class SearchDialog extends JDialog {
     mLocalizer.msg("search.-7", "Letzte Woche")
   };
 
+  /** The values for the time combo box. */  
   private static final int[] TIME_VALUE_ARR = new int[] {
     14, 1000, 0, 1, 7, 21, -7
   };
@@ -77,6 +79,8 @@ public class SearchDialog extends JDialog {
 
   /**
    * Creates a new instance of SearchDialog.
+   *
+   * @param parent The dialog's parent.
    */
   public SearchDialog(Frame parent) {
     super(parent);
@@ -88,7 +92,7 @@ public class SearchDialog extends JDialog {
     setTitle(msg);
     
     JPanel main = new JPanel(new TabLayout(1));
-    main.setBorder(DIALOG_BORDER);
+    main.setBorder(UiUtilities.DIALOG_BORDER);
     setContentPane(main);
     
     // pattern
@@ -175,6 +179,9 @@ public class SearchDialog extends JDialog {
 
   
   
+  /**
+   * Starts the search.
+   */  
   private void search() {
     String regex;
     if (mMatchExactlyRB.isSelected()) {
@@ -215,11 +222,17 @@ public class SearchDialog extends JDialog {
   
   
   
+  /**
+   * Shows a dialog containing the hits of the search.
+   *
+   * @param programArr The hits.
+   * @param title The dialog's title.
+   */  
   private void showHitsDialog(Program[] programArr, String title) {
     final JDialog dlg = new JDialog(this, title, true);
     
     JPanel main = new JPanel(new BorderLayout());
-    main.setBorder(DIALOG_BORDER);
+    main.setBorder(UiUtilities.DIALOG_BORDER);
     dlg.setContentPane(main);
     
     JComponent[] programPanelArr = new JComponent[programArr.length];
@@ -249,6 +262,9 @@ public class SearchDialog extends JDialog {
   // inner class ComponentCellRenderer
   
   
+  /**
+   * A list cell renderer that renders JComponents.
+   */  
   class ComponentCellRenderer extends DefaultListCellRenderer {
     
     /**
