@@ -52,7 +52,6 @@ import java.awt.Graphics;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
-import javax.swing.plaf.UIResource;
 
 import com.l2fprod.gui.plaf.skin.DefaultButton;
 
@@ -62,7 +61,7 @@ import com.l2fprod.gui.plaf.skin.DefaultButton;
  * @author    fred
  * @created   27 avril 2002
  */
-public class GtkListCellRenderer extends DefaultListCellRenderer implements UIResource {
+public class GtkListCellRenderer extends DefaultListCellRenderer implements javax.swing.plaf.UIResource {
 
   boolean isSelected;
   boolean cellHasFocus;

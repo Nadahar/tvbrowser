@@ -51,7 +51,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 
 import javax.swing.JTable;
-import javax.swing.plaf.UIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
@@ -63,7 +62,7 @@ import com.l2fprod.gui.plaf.skin.DefaultButton;
  * @author    fred
  * @created   27 avril 2002
  */
-public class GtkTableHeaderRenderer extends DefaultTableCellRenderer implements UIResource {
+public class GtkTableHeaderRenderer extends DefaultTableCellRenderer implements javax.swing.plaf.UIResource; {
 
   boolean isSelected;
   boolean hasFocus;

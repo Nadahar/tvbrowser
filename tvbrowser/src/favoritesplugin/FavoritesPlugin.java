@@ -185,11 +185,7 @@ public class FavoritesPlugin extends Plugin {
     if (dlg.getOkWasPressed()) {
       mFavoriteArr = dlg.getFavorites();
     }
-    System.out.print("splitPanePosition changed from "+splitPanePosition+" to ");
     splitPanePosition=dlg.getSplitpanePosition();
-    System.out.println(splitPanePosition);
-    System.out.println("width changed from "+width+" to "+dlg.getWidth());
-    System.out.println("height changed from "+height+" to "+dlg.getHeight());
     mSettings.setProperty("splitpanePosition",""+splitPanePosition);
     mSettings.setProperty("width",""+dlg.getWidth());
     mSettings.setProperty("height",""+dlg.getHeight());
