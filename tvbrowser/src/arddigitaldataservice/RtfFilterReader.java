@@ -86,57 +86,70 @@ public class RtfFilterReader extends FilterReader {
 
 
 
-	public int read() throws IOException {
+  public int read() throws IOException {
 
-		int ch=getNext();
+    int ch = getNext();
 
-		while (ch=='\\' && ch!=-1) {
+    while (ch == '\\' && ch != -1) {
 
-      StringBuffer buf=new StringBuffer();
+      StringBuffer buf = new StringBuffer();
 
-			ch=getNext();
+      ch = getNext();
 
-			if (ch=='\'') {
-				buf.append((char)getNext());
-				buf.append((char)getNext());
-				String specChar=buf.toString();
-        
-				if (specChar.equals("c4")) {					
-					return '\u00c4';
-				}else if (specChar.equals("d6")) {         
+      if (ch == '\'') {
+        buf.append((char) getNext());
+        buf.append((char) getNext());
+        String specChar = buf.toString();
+
+        if (specChar.equals("c4")) {
+          return '\u00c4';
+        } else if (specChar.equals("d6")) {
           return '\u00d6';
-        }else if (specChar.equals("dc")) {         
+        } else if (specChar.equals("dc")) {
           return '\u00dc';
-        }else if (specChar.equals("e4")) {         
+        } else if (specChar.equals("e4")) {
           return '\u00e4';
-        }else if (specChar.equals("f6")) {         
+        } else if (specChar.equals("f6")) {
           return '\u00f6';
-        }else if (specChar.equals("fc")) {         
+        } else if (specChar.equals("fc")) {
           return '\u00fc';
-        }else if (specChar.equals("df")) {         
+        } else if (specChar.equals("df")) {
           return '\u00df';
-        }        
-        
-			}
-			else {
-				do {
-					buf.append((char)ch);
-					ch=getNext();
-				}while (ch!=-1 && ch!=' ');
+        }
 
-				String specChar=buf.toString();
-				if (specChar.equals("tab")) {
-					return '\t';
-				}
-				if (specChar.equals("par")) {
-					return '\n';
-				}
-			}	
-			
-			ch=getNext();
-		}
-		return ch;
-}
+      } else {
+        do {
+          buf.append((char) ch);
+          ch = getNext();
+        } while (ch != -1 && ch != ' ');
+
+        String specChar = buf.toString();
+        
+        int translated = translateSpecChar(specChar);
+        if (translated != 0) {
+          return translated;
+        }
+      }
+
+      ch = getNext();
+    }
+    return ch;
+  }
+
+
+  protected char translateSpecChar(String specChar) {
+    if (specChar.equals("tab")) {
+      return '\t';
+    }
+    if (specChar.equals("par")) {
+      return '\n';
+    }
+    if (specChar.equals("line")) {
+      return '\n';
+    }
+    
+    return 0;
+  }
 
 	
   private int getNext() throws IOException {
@@ -145,6 +158,12 @@ public class RtfFilterReader extends FilterReader {
 		do {
       do {
         ch=in.read();
+        
+        // Ignore newlines and carage returns
+        while ((ch == '\n') || (ch == '\r')) {
+          ch = in.read();
+        }
+        
         if (ch=='{') {
 				  depth++;
         }

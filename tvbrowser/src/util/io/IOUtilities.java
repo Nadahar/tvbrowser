@@ -199,6 +199,26 @@ public class IOUtilities {
       to.write(buffer, 0, len);
     }
   }
+
+
+
+  /**
+   * Pipes all data from the specified Reader to the specified Writer,
+   * until the Reader has no more data.
+   * <p>
+   * Note: The Reader and the Writer are not closed! You have to do that for
+   *       yourself!
+   *
+   * @param reader The Reader to read the data from.
+   * @param writer The Writer to write the data to.
+   */
+  public static void pipe(Reader reader, Writer writer) throws IOException {
+    int len;
+    char[] buffer = new char[10240];
+    while ((len = (reader.read(buffer))) != -1) {
+      writer.write(buffer, 0, len);
+    }
+  }
   
   
   
