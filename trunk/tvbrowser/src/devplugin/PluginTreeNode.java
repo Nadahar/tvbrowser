@@ -37,53 +37,45 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import tvbrowser.ui.pluginview.PluginTreeModel;
+import tvbrowser.ui.pluginview.Node;
 
 
 
 public class PluginTreeNode {
 
-  private static int TYPE_NODE = 1;
-  private static int TYPE_PROGRAM = 2;
-
-  public static int VIEW_TYPE_DEFAULT = 0;
-  public static int VIEW_TYPE_SORT_BY_DATE = 1;
-  public static int VIEW_TYPE_SUMMARIZE = 2;
-
   private int mNodeType;
-  private int mViewType;
   private ArrayList mChildNodes;
   private Object mObject;
 
-
-  private DefaultMutableTreeNode mDefaultNode;
-
+private Node mDefaultNode;
 
   private PluginTreeNode(int type, Object o) {
     mChildNodes = new ArrayList();
     mNodeType = type;
-    mViewType = VIEW_TYPE_DEFAULT;
     mObject = o;
-    mDefaultNode = new Node(mObject);
+    mDefaultNode = new Node(type, mObject);
+    ;
   }
 
   public PluginTreeNode(String title) {
-    this(TYPE_NODE, title);
+    this(Node.SORTING_NODE, title);
   }
 
   public PluginTreeNode(Plugin plugin) {
-    this(TYPE_NODE, plugin);
+    this(Node.PLUGIN_ROOT, plugin);
   }
 
   public PluginTreeNode(ProgramItem item) {
-    this(TYPE_PROGRAM, item);
+    this(Node.PROGRAM, item);
     mDefaultNode.setAllowsChildren(false);
+
   }
 
-  public MutableTreeNode getMutableTreeNode() {
+  public Node getMutableTreeNode() {
     return mDefaultNode;
   }
 
-
+ /*
   public void setViewType(int type) {
     if (mViewType != type) {
       mViewType = type;
@@ -94,7 +86,7 @@ public class PluginTreeNode {
         switchToSummarizedView();
       }
     }
-  }
+  }  */
 
   private void switchToDefaultView() {
 
@@ -108,11 +100,11 @@ public class PluginTreeNode {
     Iterator it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = (PluginTreeNode)it.next();
-      if (n.mNodeType == TYPE_NODE) {
+      if (!n.isLeaf()) {
         n.switchToSortByDateView();
         mDefaultNode.add(n.getMutableTreeNode());
       }
-      else if (n.mNodeType == TYPE_PROGRAM) {
+      else {
         ProgramItem progItem = (ProgramItem)n.getUserObject();
         Date date = progItem.getProgram().getDate();
         ArrayList list = (ArrayList)dateMap.get(date);
@@ -142,13 +134,15 @@ public class PluginTreeNode {
       else {
         dateStr = dates[i].toString();
       }
-      DefaultMutableTreeNode node = new DefaultMutableTreeNode(dateStr);
+      //DefaultMutableTreeNode node = new DefaultMutableTreeNode(dateStr);
+      Node node = new Node(Node.STRUCTURE_NODE, dateStr);
       mDefaultNode.add(node);
       List list = (List)dateMap.get(dates[i]);
       Iterator iterator = list.iterator();
       while (iterator.hasNext()) {
         ProgramItem progItem = (ProgramItem)iterator.next();
-        node.add(new DefaultMutableTreeNode(progItem));
+        node.add(new Node(progItem));
+        //node.add(new DefaultMutableTreeNode(progItem));
       }
     }
   }
@@ -203,7 +197,8 @@ public class PluginTreeNode {
     Iterator it = root.mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode node = (PluginTreeNode)it.next();
-      if (node.mNodeType == TYPE_NODE) {
+      //if (node.mNodeType == TYPE_NODE) {
+      if (!node.isLeaf()) {
         if (recursive) {
           PluginTreeNode n = findProgramTreeNode(node, prog, recursive);
           if (n!=null) {
@@ -211,7 +206,7 @@ public class PluginTreeNode {
           }
         }
       }
-      else if (node.mNodeType == TYPE_PROGRAM) {
+      else { //if (node.mNodeType == TYPE_PROGRAM) {
         ProgramItem item = (ProgramItem)node.getUserObject();
         if (item.getProgram().equals(prog)) {
           return node;
@@ -248,7 +243,8 @@ public class PluginTreeNode {
     Iterator it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = (PluginTreeNode)it.next();
-      if (n.mNodeType == TYPE_PROGRAM) {
+      //if (n.mNodeType == TYPE_PROGRAM) {
+      if (n.isLeaf()) {
         list.add(n.getUserObject());
       }
     }
@@ -263,7 +259,8 @@ public class PluginTreeNode {
     Iterator it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = (PluginTreeNode)it.next();
-      if (n.mNodeType == TYPE_PROGRAM) {
+      //if (n.mNodeType == TYPE_PROGRAM) {
+      if (n.isLeaf()) {
         ProgramItem item = (ProgramItem)n.getUserObject();
         list.add(item.getProgram());
       }
@@ -283,7 +280,8 @@ public class PluginTreeNode {
       //PluginTreeNode n = (PluginTreeNode)getChildAt(i);
       PluginTreeNode n = (PluginTreeNode)mChildNodes.get(i);
       out.writeInt(n.mNodeType);
-      if (n.mNodeType == TYPE_NODE) {
+      //if (n.mNodeType == TYPE_NODE) {
+      if (!n.isLeaf()) {
         String title = (String)n.getUserObject();
         out.writeObject(title);
       }
@@ -300,12 +298,7 @@ public class PluginTreeNode {
     for (int i=0; i<cnt; i++) {
       int type = in.readInt();
       PluginTreeNode n = null;
-      if (type == TYPE_NODE) {
-        String title = (String)in.readObject();
-        n = new PluginTreeNode(title);
-        add(n);
-      }
-      else if (type == TYPE_PROGRAM) {
+      if (type == Node.PROGRAM) {
         ProgramItem item = new ProgramItem();
         item.read(in);
         n = new PluginTreeNode(item);
@@ -314,9 +307,10 @@ public class PluginTreeNode {
         }
       }
       else {
-        throw new IOException("invalid type: "+type);
+        String title = (String)in.readObject();
+        n = new PluginTreeNode(title);
+        add(n);
       }
-
       n.load(in);
 
     }
@@ -335,7 +329,11 @@ public class PluginTreeNode {
     return mChildNodes.isEmpty();
   }
 
+  public boolean isLeaf() {
+    return (mDefaultNode.getType() == Node.PROGRAM);
+  }
 
+   /*
   class Node extends DefaultMutableTreeNode {
 
     public Node(Object o) {
@@ -346,6 +344,6 @@ public class PluginTreeNode {
       return !getAllowsChildren();
     }
 
-  }
+  }  */
 
 }

@@ -35,7 +35,6 @@ import javax.swing.tree.TreePath;
 import tvbrowser.core.plugin.PluginProxy;
 import devplugin.PluginTreeNode;
 import devplugin.Plugin;
-import devplugin.PluginAccess;
 
 
 public class PluginTreeModel extends DefaultTreeModel {
@@ -45,19 +44,18 @@ public class PluginTreeModel extends DefaultTreeModel {
   
 
   private PluginTreeModel() {
-    super(new DefaultMutableTreeNode("Plugins"));        
+    super(new Node(Node.ROOT, "Plugins"));
   }
   
   
   public void addPluginTree(PluginProxy plugin) {
     PluginTreeNode pluginRoot = plugin.getRootNode();
     MutableTreeNode root = (MutableTreeNode)this.getRoot();
-
     root.insert(pluginRoot.getMutableTreeNode(), 0);
   }
 
   public static Plugin getPlugin(TreePath path) {
-    if (path.getPathCount()>0) {
+    if (path.getPathCount()>1) {
       Object o = path.getPathComponent(1);
       DefaultMutableTreeNode node = (DefaultMutableTreeNode)o;
       o = node.getUserObject();
