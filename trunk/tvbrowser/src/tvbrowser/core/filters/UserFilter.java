@@ -208,11 +208,11 @@ public class UserFilter implements devplugin.ProgramFilter {
     }else {
       readString();
       result.value=new String(ruleLine,i,curInx-i);
-      if ("or".equalsIgnoreCase(result.value)) {
+      if ("or".equalsIgnoreCase(result.value) || mLocalizer.msg("or", "or").equalsIgnoreCase(result.value)) {
         result.type=Token.OR;
-      }else if ("and".equalsIgnoreCase(result.value)) {
+      }else if ("und".equalsIgnoreCase(result.value)  || mLocalizer.msg("and", "and").equalsIgnoreCase(result.value)) {
         result.type=Token.AND;
-      }else if ("not".equalsIgnoreCase(result.value)) {
+      }else if ("not".equalsIgnoreCase(result.value) || mLocalizer.msg("not", "not").equalsIgnoreCase(result.value)) {
         result.type=Token.NOT;
       }else {
         result.type=Token.ITEM;
@@ -250,7 +250,7 @@ public class UserFilter implements devplugin.ProgramFilter {
           String msg="";
           for (int i=0;i<type.length;i++) {
             if (type[i]==Token.AND) {
-              msg+="'AND'";
+              msg+="'"+mLocalizer.msg("and", "and")+"'";
             }else if (type[i]==Token.ITEM) {
               msg+=mLocalizer.msg("componentName","component name");
             }else if (type[i]==Token.LEFT_BRACKET) {
@@ -258,9 +258,9 @@ public class UserFilter implements devplugin.ProgramFilter {
             }else if (type[i]==Token.RIGHT_BRACKET) {
               msg+="')'";
             }else if (type[i]==Token.NOT) {
-              msg+="'NOT'";
+              msg+="'"+mLocalizer.msg("not", "not")+"'";
             }else if (type[i]==Token.OR) {
-              msg+="'OR'";
+              msg+="'"+mLocalizer.msg("or", "or")+"'";
             }
             if (i<type.length-1) {
               msg+=", ";
