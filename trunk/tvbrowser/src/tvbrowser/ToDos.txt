@@ -14,16 +14,15 @@ TODOs:
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 - (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
 - Default-Icon fur Sender, die kein Icon haben
-- Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
 - Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea)
 - kuerzere Texte fuer die Symbolbuttons
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden
 - Statusbar kann nicht ausgeblendet werden
-- Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
+- (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
 - Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
-- Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
-- Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
+- (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
+- (B) Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
 - (M) Tooltips fuer Buttons fehlen
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
 - fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
@@ -46,7 +45,8 @@ java.lang.NullPointerException
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 
 
-
+Entfernte ToDos:
+- Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
 
 
 Bugs:
