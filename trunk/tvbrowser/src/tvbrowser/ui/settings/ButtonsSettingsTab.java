@@ -307,7 +307,17 @@ class TimePanel extends JPanel {
       add(southPn, BorderLayout.SOUTH);
       newBtn.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent event) {
-          mRows.add(new Row(0));
+            
+          final Row row = new Row(0);
+          mRows.add(row);
+          
+          row.getRemoveButton().addActionListener(new ActionListener(){
+              public void actionPerformed(ActionEvent arg) {
+                mRows.remove(row);
+                updateContent();
+              }
+            });
+
           updateContent();            
         }        
       });
