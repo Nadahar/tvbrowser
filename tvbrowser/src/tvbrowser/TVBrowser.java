@@ -161,6 +161,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     splash.setMessage(msg);
     
     mainFrame=new TVBrowser();
+    
+    // Set the right size
     mainFrame.setSize(Settings.getWindowSize());
     Point location = Settings.getWindowLocation();
     if (location == null) {
@@ -174,7 +176,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     splash.hide();
     
     // maximize the frame
-    //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    if (Settings.isWindowMaximized()) {
+      mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    }
     
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
@@ -191,8 +195,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       	}
 			
         DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());
-        
-                
       }
     });
   }
@@ -398,8 +400,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     TvDataServiceManager.getInstance().finalizeDataServices();
     
     mLog.info("Storing window size and location");
-    Settings.setWindowSize(mainFrame.getSize());
-    Settings.setWindowLocation(mainFrame.getLocation());
+    boolean maximized = mainFrame.getExtendedState() == JFrame.MAXIMIZED_BOTH;
+    Settings.setWindowIsMaximized(maximized);
+    if (! maximized) {
+      // Save the window size and location only when not maximized
+      Settings.setWindowSize(mainFrame.getSize());
+      Settings.setWindowLocation(mainFrame.getLocation());
+    }
     
     try {
     	Settings.storeSettings();
