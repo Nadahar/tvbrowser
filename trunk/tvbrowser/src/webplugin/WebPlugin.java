@@ -123,6 +123,10 @@ public class WebPlugin extends Plugin {
      */
     public void writeData(ObjectOutputStream out) throws IOException {
         out.writeInt(1);
+        if (mAddresses == null) {
+            createDefaultSettings();
+        }
+        
         out.writeInt(mAddresses.size());
         
         for (int i = 0; i < mAddresses.size(); i++) {
