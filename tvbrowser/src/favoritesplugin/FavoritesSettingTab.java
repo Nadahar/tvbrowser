@@ -67,7 +67,7 @@ public class FavoritesSettingTab implements SettingsTab {
     String msg;
 
     mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    mSettingsPn.setBorder(BorderFactory.createTitledBorder(""));
     
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.NORTH);

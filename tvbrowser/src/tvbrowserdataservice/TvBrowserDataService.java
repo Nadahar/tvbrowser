@@ -101,9 +101,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
     if (! mDataDir.exists()) {
       mDataDir.mkdir();
     }
-    
-    // TODO: Make the subscribed levels configurable
-   // mSubsribedLevelArr = DayProgramFile.LEVEL_ARR;
   }
 
 
@@ -133,6 +130,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     // Get a random Mirror that is up to date
     Mirror mirror = chooseUpToDateMirror(mirrorArr);
     mLog.fine("Using mirror " + mirror.getUrl());
+    System.out.println("mirror: "+mirror.getUrl());
     
     // Update the mirrorlist (for the next time)
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
@@ -455,7 +453,12 @@ public class TvBrowserDataService extends AbstractTvDataService {
   public void loadSettings(Properties settings) {
     mSettings = settings;
     
-    String[] levelIds=settings.getProperty("level","").split(":::");
+    String tvDataLevel=settings.getProperty("level");
+    if (tvDataLevel==null) {
+      settings.setProperty("level","base:::more16-00");
+    }
+    
+    String[] levelIds=settings.getProperty("level").split(":::");
     ArrayList levelList=new ArrayList();
     for (int i=0;i<DayProgramFile.LEVEL_ARR.length;i++) {
       if (DayProgramFile.LEVEL_ARR[i].isRequired()) {

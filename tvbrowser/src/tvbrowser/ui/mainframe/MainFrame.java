@@ -657,7 +657,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     }
     
     if (Settings.settingHasChanged(new String[]{"updatebutton","preferencesbutton",
-    "buttontype","hiddenbuttonplugins","plugins"})) {
+    "buttontype","plugins"})) {
       mDefaultToolBar.updateButtons();
     }
     

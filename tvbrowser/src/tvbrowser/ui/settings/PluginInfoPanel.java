@@ -42,6 +42,11 @@ import java.awt.*;
    private JLabel authorLabel;
    private JTextArea descriptionArea;
     
+   public PluginInfoPanel(devplugin.PluginInfo info) {
+      this();
+      setPluginInfo(info);
+   }
+    
    public PluginInfoPanel() {
      setLayout(new BorderLayout(10,0));
       
@@ -95,7 +100,10 @@ import java.awt.*;
      add(rightPanel,BorderLayout.CENTER);
    }
     
-    
+   public void setDefaultBorder() {
+     setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("about","About this DataService:")));
+       
+   }
     
    public void setPluginInfo(devplugin.PluginInfo info) {
      nameLabel.setText(info.getName());

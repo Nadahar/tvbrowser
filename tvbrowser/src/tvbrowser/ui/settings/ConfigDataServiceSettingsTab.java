@@ -54,14 +54,14 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
     JPanel mainPn=new JPanel(new BorderLayout());
     mainPn.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
     PluginInfoPanel infoPn=new PluginInfoPanel();
-    infoPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("about","About this DataService:")));
+    infoPn.setDefaultBorder();
     infoPn.setPluginInfo(mDataService.getInfo());
     mainPn.add(infoPn,BorderLayout.NORTH);
     
     if (mSettingsPanel!=null) {
       mainPn.add(mSettingsPanel,BorderLayout.CENTER);
-    } else {
-      mainPn.add(new JLabel(mLocalizer.msg("notsupported","No settings available for this tv data service")),BorderLayout.CENTER);
+    //} else {
+    //  mainPn.add(new JLabel(mLocalizer.msg("notsupported","No settings available for this tv data service")),BorderLayout.CENTER);
     }
     return mainPn;
   }

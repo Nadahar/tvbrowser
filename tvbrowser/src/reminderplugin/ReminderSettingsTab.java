@@ -70,7 +70,6 @@ public class ReminderSettingsTab implements SettingsTab {
     JPanel p1;
 
     mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.NORTH);
