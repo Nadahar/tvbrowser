@@ -89,7 +89,6 @@ public class DialogOverview extends JDialog {
      */
     private void createGUI() {
         JPanel panel = (JPanel) getContentPane();
-
         panel.setLayout(new BorderLayout());
 
         RatingComparator comperator = new RatingComparator();
