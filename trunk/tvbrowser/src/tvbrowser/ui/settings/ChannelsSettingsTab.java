@@ -39,7 +39,7 @@ import tvbrowser.core.*;
  *
  * @author Martin Oberhauser
  */
-public class ChannelsSettingsTab extends devplugin.SettingsTab {
+public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ChannelsSettingsTab.class.getName());
@@ -47,20 +47,25 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ChannelsSettingsTab.class);
   
+  private JPanel mSettingsPn;
+  
   private CustomizableItemsPanel panel;
-  public String getName() {
-    return mLocalizer.msg("channels", "Channels");
-  }
 
   
   
   public ChannelsSettingsTab() {
-    super();
-    
+  }
+ 
+  
+  
+  /**
+   * Creates the settings panel for this tab.
+   */
+  public JPanel createSettingsPanel() {
     String msg;
     
-    setLayout(new BorderLayout());
-	setBorder(BorderFactory.createEmptyBorder(20,30,20,30));
+    mSettingsPn = new JPanel(new BorderLayout());
+    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 	
     String leftText = mLocalizer.msg("availableChannels", "Available channels");
     String rightText = mLocalizer.msg("subscribedChannels", "Subscribed channels");
@@ -80,8 +85,8 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     textArea.setBorder(BorderFactory.createEmptyBorder(10,5,5,0));
 
 
-    add(panel,BorderLayout.CENTER);
-    add(textArea,BorderLayout.SOUTH);
+    mSettingsPn.add(panel,BorderLayout.CENTER);
+    mSettingsPn.add(textArea,BorderLayout.SOUTH);
 
     Channel ch;
     Iterator iter = ChannelList.getChannels();
@@ -109,13 +114,16 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     for (int i=0;i<subscribedChannels.length;i++) {
       panel.addElementRight(subscribedChannels[i]);
     }
-
-    mLog.fine("DONE!");
+    
+    return mSettingsPn;
   }
 
   
   
-  public void ok() {
+  /**
+   * Called by the host-application, if the user wants to save the settings.
+   */
+  public void saveSettings() {
     Object[] list = panel.getElementsRight();
     
     // Convert the list into a Channel[] and fill channels
@@ -127,5 +135,23 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     ChannelList.setSubscribeChannels(channelArr);
     Settings.setSubscribedChannels(channelArr);
   }
+
+
   
+  /**
+   * Returns the name of the tab-sheet.
+   */
+  public Icon getIcon() {
+    return null;
+  }
+  
+  
+  
+  /**
+   * Returns the title of the tab-sheet.
+   */
+  public String getTitle() {
+    return mLocalizer.msg("channels", "Channels");
+  }
+
 }

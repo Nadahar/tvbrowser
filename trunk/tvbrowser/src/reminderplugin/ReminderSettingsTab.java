@@ -40,12 +40,14 @@ import util.ui.*;
  *
  * @author Martin Oberhauser
  */
-public class ReminderSettingsTab extends devplugin.SettingsTab {
+public class ReminderSettingsTab implements SettingsTab {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderSettingsTab.class);
 
   private Properties settings;
+  
+  private JPanel mSettingsPn;
   
   private JCheckBox reminderwindowCheckBox;
   private FileCheckBox soundFileCheckBox;
@@ -55,26 +57,34 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
   
   
   public ReminderSettingsTab(Properties settings) {
-    super();
-    
+    this.settings = settings;
+  }
+
+  
+  
+   /**
+   * Creates the settings panel for this tab.
+   */
+  public JPanel createSettingsPanel() {
     String msg;
     JPanel p1;
 
-    setLayout(new BorderLayout());
-    this.settings=settings;
+    mSettingsPn = new JPanel(new BorderLayout());
+    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    
+    JPanel main = new JPanel(new TabLayout(1));
+    mSettingsPn.add(main, BorderLayout.NORTH);
 
-    JPanel reminderPanel=new JPanel();
+    JPanel reminderPn = new JPanel(new TabLayout(1));
+    main.add(reminderPn);
 
     msg = mLocalizer.msg("remindBy", "Remind me by");
-    reminderPanel.setBorder(BorderFactory.createTitledBorder(msg));
-
-    reminderPanel.setLayout(new BoxLayout(reminderPanel,BoxLayout.Y_AXIS));
-    JPanel panel1=new JPanel(new BorderLayout());
+    reminderPn.setBorder(BorderFactory.createTitledBorder(msg));
+    
     msg = mLocalizer.msg("reminderWindow", "Reminder window");
     reminderwindowCheckBox = new JCheckBox(msg);
-    panel1.add(reminderwindowCheckBox,BorderLayout.WEST);
-    reminderPanel.add(panel1);
-
+    reminderPn.add(reminderwindowCheckBox);
+    
     String soundFName=settings.getProperty("soundfile","/");
     String execFName=settings.getProperty("execfile","/");
 
@@ -82,9 +92,9 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     File execFile=new File(execFName);
 
     msg = mLocalizer.msg("playlingSound", "Play sound");
-    soundFileCheckBox = new FileCheckBox(msg, soundFile, 200);
+    soundFileCheckBox = new FileCheckBox(msg, soundFile, 0);
     msg = mLocalizer.msg("executeProgram", "Execute program");
-    execFileCheckBox = new FileCheckBox(msg, execFile, 200);
+    execFileCheckBox = new FileCheckBox(msg, execFile, 0);
 
     JFileChooser soundChooser=new JFileChooser("sound/");
     JFileChooser execChooser=new JFileChooser("/");
@@ -101,15 +111,15 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     soundFileCheckBox.setFileChooser(soundChooser);
     execFileCheckBox.setFileChooser(execChooser);
 
-    reminderPanel.add(soundFileCheckBox);
-    reminderPanel.add(execFileCheckBox);
+    reminderPn.add(soundFileCheckBox);
+    reminderPn.add(execFileCheckBox);
 
     // Auto close time of the reminder frame
     p1 = new JPanel(new FlowLayout(FlowLayout.LEADING));
-    reminderPanel.add(p1);
+    msg = mLocalizer.msg("autoCloseReminder", "Automatically close reminder after");
+    p1.setBorder(BorderFactory.createTitledBorder(msg));
+    main.add(p1);
     
-    p1.add(new JLabel(mLocalizer.msg("autoCloseReminderTime",
-      "Automatically close reminder after (in seconds, 0 = off)")));
     int autoCloseReminderTime = 0;
     try {
       String asString = settings.getProperty("autoCloseReminderTime", "0");
@@ -121,20 +131,18 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     mAutoCloseReminderTimeSp.setPreferredSize(mAutoCloseReminderTimeSp.getPreferredSize());
     mAutoCloseReminderTimeSp.setValue(new Integer(autoCloseReminderTime));
     p1.add(mAutoCloseReminderTimeSp);
+
+    p1.add(new JLabel(mLocalizer.msg("seconds", "seconds (0 = off)")));
     
-    add(reminderPanel,BorderLayout.NORTH);
-    updateUI();
+    return mSettingsPn;
   }
 
-
-
-  public String getName() {
-    return mLocalizer.msg("tabName", "Reminder");
-  }
-
-
-
-  public void ok() {
+  
+  
+  /**
+   * Called by the host-application, if the user wants to save the settings.
+   */
+  public void saveSettings() {
     settings.setProperty("soundfile",soundFileCheckBox.getTextField().getText());
     settings.setProperty("execfile",execFileCheckBox.getTextField().getText());
 
@@ -144,5 +152,24 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     
     settings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
   }
+
   
+  
+  /**
+   * Returns the name of the tab-sheet.
+   */
+  public Icon getIcon() {
+    String iconName = "reminderplugin/TipOfTheDay16.gif";
+    return ImageUtilities.createImageIconFromJar(iconName, getClass());
+  }
+  
+  
+  
+  /**
+   * Returns the title of the tab-sheet.
+   */
+  public String getTitle() {
+    return mLocalizer.msg("tabName", "Reminder");
+  }
+
 }

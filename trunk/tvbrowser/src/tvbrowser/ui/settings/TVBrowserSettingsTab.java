@@ -26,37 +26,34 @@
 
 package tvbrowser.ui.settings;
 
+import java.io.File;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 
-import tvbrowser.core.*;
-import tvbrowser.ui.SkinPanel;
+import tvbrowser.core.Settings;
 
 import util.exc.*;
 import util.ui.*;
+
+import devplugin.SettingsTab;
 
 /**
  * TV-Browser
  *
  * @author Martin Oberhauser
  */
-public class AppearanceSettingsTab extends devplugin.SettingsTab implements ActionListener {
+public class TVBrowserSettingsTab implements SettingsTab {
 
   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(AppearanceSettingsTab.class);
+    = util.ui.Localizer.getLocalizerFor(TVBrowserSettingsTab.class);
+  
+  private JPanel mSettingsPn;
   
   private JComboBox lfComboBox;
   private JTextField skinTextField;
   private JCheckBox skinCheckBox;
-
-  private JComboBox mTableProgramArrangementCB;
-  private JRadioButton blankRadio, wallpaperRadio, columnsRadio;
-
-  private JLabel skinTableBGLabel;
-  private JButton skinTableBGBtn;
-  private JTextField skinTableBGTextField;
 
   private JCheckBox mTimeCheck, updateCheck, settingsCheck;
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
@@ -75,18 +72,42 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
   }
 
 
-  public AppearanceSettingsTab()  {
+  public TVBrowserSettingsTab()  {
+  }
+
+  
+
+  private LookAndFeelObj[] getLookAndFeelObjs() {
+    UIManager.LookAndFeelInfo[] info=UIManager.getInstalledLookAndFeels();
+    LookAndFeelObj[] result=new LookAndFeelObj[info.length];
+    for (int i=0;i<info.length;i++) {
+      result[i]=new LookAndFeelObj(info[i]);
+    }
+
+    return result;
+  }
+  
+  
+ 
+  /**
+   * Creates the settings panel for this tab.
+   */
+  public JPanel createSettingsPanel() {
     String msg;
     JPanel p1, p2;
+    
+    mSettingsPn = new JPanel(new BorderLayout());
+    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    
+    JPanel main = new JPanel(new TabLayout(1));
+    mSettingsPn.add(main, BorderLayout.NORTH);
 
-    setLayout(new BorderLayout());
-    JPanel content=new JPanel();
-    content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
-    content.setBorder(BorderFactory.createEmptyBorder(20,30,20,30));
-
-    JPanel lfPanel=new JPanel(new BorderLayout(10,0));
+    // Look and feel
+    JPanel lfPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+    main.add(lfPanel);
+    
     msg = mLocalizer.msg("lookAndFeel", "Aussehen");
-    JLabel lfLabel = new JLabel(msg);
+    lfPanel.add(new JLabel(msg));
 
     LookAndFeelObj[] obj=getLookAndFeelObjs();
     lfComboBox=new JComboBox(obj);
@@ -96,13 +117,12 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
         lfComboBox.setSelectedItem(obj[i]);
       }
     }
+    lfPanel.add(lfComboBox);
 
-    lfPanel.add(lfLabel,BorderLayout.WEST);
-    lfPanel.add(lfComboBox,BorderLayout.CENTER);
-    lfLabel.setPreferredSize(new Dimension(200,(int)lfLabel.getPreferredSize().getHeight()));
-
-    JPanel skinPanel=new JPanel(new BorderLayout(10,0));
-    msg = mLocalizer.msg("skin", "Background");
+    // Background
+    JPanel skinPanel = new JPanel(new BorderLayout(5, 0));
+    main.add(skinPanel);
+    msg = mLocalizer.msg("background", "Background");
     skinCheckBox = new JCheckBox(msg);
     skinTextField = new JTextField(Settings.getApplicationSkin());
     msg = mLocalizer.msg("change", "Change");
@@ -110,7 +130,6 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     skinPanel.add(skinCheckBox,BorderLayout.WEST);
     skinPanel.add(skinTextField,BorderLayout.CENTER);
     skinPanel.add(skinChooseBtn,BorderLayout.EAST);
-    skinCheckBox.setPreferredSize(new Dimension(200,(int)skinCheckBox.getPreferredSize().getHeight()));
     skinCheckBox.setSelected(Settings.useApplicationSkin());
     skinChooseBtn.setEnabled(Settings.useApplicationSkin());
     skinTextField.setEnabled(Settings.useApplicationSkin());
@@ -123,11 +142,10 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     }
     );
 
-    final Component parent=this;
     skinChooseBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         JFileChooser fileChooser=new JFileChooser();
-        fileChooser.showOpenDialog(parent);
+        fileChooser.showOpenDialog(mSettingsPn);
         File f=fileChooser.getSelectedFile();
         if (f!=null) {
           skinTextField.setText(f.getAbsolutePath());
@@ -135,85 +153,9 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
       }
     });
 
-    // The program table panel
-    JPanel tablePanel = new JPanel(new TabLayout(1));
-    msg = mLocalizer.msg("programTable", "Program table");
-    tablePanel.setBorder(BorderFactory.createTitledBorder(msg));
-    
-    // program table arrangement
-    p1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
-    tablePanel.add(p1);
-    
-    p1.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")));
-    String[] arrangementArr = {
-      mLocalizer.msg("compact", "Compact"),
-      mLocalizer.msg("timeSynchronous", "Time synchronous")
-    };
-    mTableProgramArrangementCB = new JComboBox(arrangementArr);
-    if (Settings.getTableLayout() == Settings.TABLE_LAYOUT_COMPACT) {
-      mTableProgramArrangementCB.setSelectedIndex(0);
-    } else {
-      mTableProgramArrangementCB.setSelectedIndex(1);
-    }
-    p1.add(mTableProgramArrangementCB);
-    
-    // program table background panel
-    p1 = new JPanel(new TabLayout(1));
-    msg = mLocalizer.msg("tableBackground", "Table background");
-    p1.setBorder(BorderFactory.createTitledBorder(msg));
-    tablePanel.add(p1);
-    
-    // program table background style
-    p2 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
-    p1.add(p2);
-    
-    p2.add(new JLabel(mLocalizer.msg("alignment", "Alignment")));
-
-    ButtonGroup tablePanelBtnGroup = new ButtonGroup();
-
-    blankRadio = new JRadioButton(mLocalizer.msg("blank", "Blank"));
-    blankRadio.setSelected(Settings.getTableBGMode() == SkinPanel.NONE);
-    blankRadio.addActionListener(this);
-    tablePanelBtnGroup.add(blankRadio);
-    p2.add(blankRadio);
-
-    wallpaperRadio = new JRadioButton(mLocalizer.msg("wallpaper", "Wallpaper"));
-    wallpaperRadio.setSelected(Settings.getTableBGMode() == SkinPanel.WALLPAPER);
-    wallpaperRadio.addActionListener(this);
-    tablePanelBtnGroup.add(wallpaperRadio);
-    p2.add(wallpaperRadio);
-
-    columnsRadio = new JRadioButton(mLocalizer.msg("columns", "Columns"));
-    columnsRadio.setSelected(Settings.getTableBGMode() == SkinPanel.COLUMNS);
-    columnsRadio.addActionListener(this);
-    tablePanelBtnGroup.add(columnsRadio);
-    p2.add(columnsRadio);
-
-    // program table background image
-    p2 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
-    p1.add(p2);
-
-    skinTableBGLabel = new JLabel(mLocalizer.msg("skin", "Background"));
-    p2.add(skinTableBGLabel);
-    
-    skinTableBGTextField = new JTextField(Settings.getTableSkin(), 25);
-    p2.add(skinTableBGTextField);
-
-    skinTableBGBtn = new JButton(mLocalizer.msg("change", "Change"));
-    skinTableBGBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        JFileChooser fileChooser=new JFileChooser();
-        fileChooser.showOpenDialog(parent);
-        File selection = fileChooser.getSelectedFile();
-        if (selection != null) {
-          skinTableBGTextField.setText(selection.getAbsolutePath());
-        }
-      }
-    });
-    p2.add(skinTableBGBtn);
-
     // buttons panel
     JPanel buttonPanel=new JPanel(new GridLayout(1,0));
+    main.add(buttonPanel);
     msg = mLocalizer.msg("buttons", "Buttons");
     buttonPanel.setBorder(BorderFactory.createTitledBorder(msg));
 
@@ -229,7 +171,6 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     panel3.add(mTimeCheck);
     panel3.add(updateCheck);
     panel3.add(settingsCheck);
-    
 
     mTimeCheck.setSelected(Settings.isTimeBtnVisible());
     updateCheck.setSelected(Settings.isUpdateBtnVisible());
@@ -266,55 +207,15 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     buttonPanel.add(visibleBtnsPanel);
     buttonPanel.add(labelBtnsPanel);
 
-    content.add(lfPanel);
-    content.add(Box.createRigidArea(new Dimension(0,10)));
-    content.add(skinPanel);
-    content.add(Box.createRigidArea(new Dimension(0,10)));
-    content.add(tablePanel);
-    content.add(Box.createRigidArea(new Dimension(0,10)));
-    content.add(buttonPanel);
-
-    add(content,BorderLayout.NORTH);
-
+    return mSettingsPn;
   }
 
-
-  private LookAndFeelObj[] getLookAndFeelObjs() {
-
-    UIManager.LookAndFeelInfo[] info=UIManager.getInstalledLookAndFeels();
-    LookAndFeelObj[] result=new LookAndFeelObj[info.length];
-    for (int i=0;i<info.length;i++) {
-      result[i]=new LookAndFeelObj(info[i]);
-    }
-
-    return result;
-  }
-
-  public void actionPerformed(ActionEvent event) {
-
-    Object source=event.getSource();
-    if (source==blankRadio) {
-      if (blankRadio.isSelected()) {
-        skinTableBGLabel.setEnabled(false);
-        skinTableBGBtn.setEnabled(false);
-        skinTableBGTextField.setEnabled(false);
-      }
-    }else if (source==wallpaperRadio || source==columnsRadio) {
-      if (wallpaperRadio.isSelected() || columnsRadio.isSelected()) {
-        skinTableBGLabel.setEnabled(true);
-        skinTableBGBtn.setEnabled(true);
-        skinTableBGTextField.setEnabled(true);
-      }
-    }
-
-
-  }
-
-  public String getName() {
-    return mLocalizer.msg("appearance", "Appearance");
-  }
-
-  public void ok() {
+  
+  
+  /**
+   * Called by the host-application, if the user wants to save the settings.
+   */
+  public void saveSettings() {
     LookAndFeelObj obj=(LookAndFeelObj)lfComboBox.getSelectedItem();
     try {
       UIManager.setLookAndFeel(obj.getLFClassName());
@@ -328,33 +229,35 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     Settings.setUseApplicationSkin(this.skinCheckBox.isSelected());
     Settings.setApplicationSkin(skinTextField.getText());
 
-    if (mTableProgramArrangementCB.getSelectedIndex() == 0) {
-      Settings.setTableLayout(Settings.TABLE_LAYOUT_COMPACT);
-    } else {
-      Settings.setTableLayout(Settings.TABLE_LAYOUT_TIME_SYNCHRONOUS);
-    }
-    
-    Settings.setTableSkin(this.skinTableBGTextField.getText());
-    if (wallpaperRadio.isSelected()) {
-      Settings.setTableBGMode(SkinPanel.WALLPAPER);
-    }else if (columnsRadio.isSelected()) {
-      Settings.setTableBGMode(SkinPanel.COLUMNS);
-    }else {
-      Settings.setTableBGMode(SkinPanel.NONE);
-    }
-
     Settings.setTimeBtnVisible(mTimeCheck.isSelected());
     Settings.setUpdateBtnVisible(updateCheck.isSelected());
     Settings.setPreferencesBtnVisible(settingsCheck.isSelected());
     
-
     if (textOnlyRadio.isSelected()) {
       Settings.setButtonSettings(Settings.TEXT_ONLY);
-    }else if (picOnlyRadio.isSelected()) {
+    } else if (picOnlyRadio.isSelected()) {
       Settings.setButtonSettings(Settings.ICON_ONLY);
-    }else {
+    } else {
       Settings.setButtonSettings(Settings.TEXT_AND_ICON);
     }
-
   }
+
+  
+  
+  /**
+   * Returns the name of the tab-sheet.
+   */
+  public Icon getIcon() {
+    return null;
+  }
+  
+  
+  
+  /**
+   * Returns the title of the tab-sheet.
+   */
+  public String getTitle() {
+    return mLocalizer.msg("tvBrowser", "TV-Browser");
+  }
+  
 }
