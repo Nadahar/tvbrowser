@@ -251,7 +251,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     centerPanel.add(mProgramTableScrollPane);
 
     FinderPanel.getInstance().setDateListener(this);
-    dateChanged(new devplugin.Date(), null);
+    dateChanged(new devplugin.Date(), null, null);
     
     mHorizontalToolBar=new HorizontalToolBar(this,new FilterChooser(this,mProgramTableModel));
     mVerticalToolBar=new VerticalToolBar(this, FinderPanel.getInstance());
@@ -527,11 +527,15 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   public void onNowBtn() {
     // Change to the shown day program to today if nessesary
     devplugin.Date today = new devplugin.Date();
-    if (! today.equals(FinderPanel.getInstance().getSelectedDate())) {
-      FinderPanel.getInstance().markDate(today);
-    }
+  //  if (! today.equals(FinderPanel.getInstance().getSelectedDate())) {
+      FinderPanel.getInstance().markDate(today, new Runnable(){
 
-    scrollToNow();
+				public void run() {
+					scrollToNow();					
+				}});
+ //   }
+
+  //  scrollToNow();
   }
 
 
@@ -570,17 +574,17 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    * Called when new TV data was downloaded or when TV data was imported.
    */
   private void newTvDataAvailable() {
-    changeDate(FinderPanel.getInstance().getSelectedDate(), null);
+    changeDate(FinderPanel.getInstance().getSelectedDate(), null, null);
   }
 
 
-  private void changeDate(Date date, devplugin.ProgressMonitor monitor) {      
-    mProgramTableModel.setDate(date, monitor);
+  private void changeDate(Date date, devplugin.ProgressMonitor monitor, Runnable callback) {      
+    mProgramTableModel.setDate(date, monitor, callback);
     
-    if (date.equals(new devplugin.Date())) {
+    //if (date.equals(new devplugin.Date())) {
       // If this is today -> scroll to now
-      scrollToNow();
-    }
+    //  scrollToNow();
+    //}
   }
 
 
@@ -588,8 +592,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   /**
    * Implementation of Interface DateListener
    */
-  public void dateChanged(final devplugin.Date date, devplugin.ProgressMonitor monitor) { 
-      changeDate(date, monitor);
+  public void dateChanged(final devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback) { 
+      changeDate(date, monitor, callback);
   }
 
 

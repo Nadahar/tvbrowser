@@ -34,5 +34,11 @@ package tvbrowser.core;
 
 public interface DateListener {
 
-    void dateChanged(devplugin.Date date, devplugin.ProgressMonitor monitor);
+  /**
+   * 
+   * @param date
+   * @param monitor
+   * @param callback
+   */
+    void dateChanged(devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback);
 }

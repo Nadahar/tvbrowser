@@ -142,11 +142,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
  
 
-  public void setDate(Date date, ProgressMonitor monitor) {
+  public void setDate(Date date, ProgressMonitor monitor, Runnable callback) {
     mMainDay = date;
     mNextDay = date.addDays(1);
     
-    updateTableContent(monitor);
+    updateTableContent(monitor, callback);
   }
   
   
@@ -156,10 +156,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   private void updateTableContent() {
-    updateTableContent(null);
+    updateTableContent(null, null);
   }
   
-  private void updateTableContent(ProgressMonitor monitor) {
+  private void updateTableContent(ProgressMonitor monitor, final Runnable callback) {
     
     deregisterFromPrograms(mProgramColumn);
     
@@ -222,7 +222,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     
                     fireTableDataChanged();
                 
-                
+                    if (callback != null) {
+                      callback.run();
+                    }
                 
               }
         

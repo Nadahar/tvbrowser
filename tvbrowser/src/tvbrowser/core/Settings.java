@@ -230,7 +230,7 @@ public class Settings {
     if (mProp.hasChanged(propArr)) {
       // Force a recreation of the table content
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
-      model.setDate(FinderPanel.getInstance().getSelectedDate(), null);
+      model.setDate(FinderPanel.getInstance().getSelectedDate(), null, null);
     }
     
     
