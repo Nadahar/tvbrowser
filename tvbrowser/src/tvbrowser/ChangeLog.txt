@@ -14,8 +14,10 @@ Changelog TVBrowser
            must be changed to access other plugins using their proxies.
 - Added new Filter:SubtitleFilter
 - Added new FilterComponent: PluginIcon
+- Added new Filtercomponent: BeanShellFilter, now you can write little Scripts that Filter certain Programs
 - Filtersorting is saved now
 - Last used Filter is loaded at start
+
 
 1.0.1
  - bugfix: removed "import searchplugin..."
