@@ -48,7 +48,7 @@ public class ChannelPanel extends JPanel {
   
   
   public ChannelPanel(int columnWidth, Channel[] channelArr) {
-    setLayout(new GridLayout(1,0,0,0));
+    setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     setOpaque(true);
     setBackground(new java.awt.Color(208, 199, 241));
     
