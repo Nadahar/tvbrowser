@@ -80,7 +80,8 @@ public class KeywordFilterComponent implements FilterComponent {
     mSearchFormSettings.writeData(out);
   }
 
-
+  
+  
   private void setSearchFormSettings(SearchFormSettings settings) {
     mSearchFormSettings = settings;
     
@@ -98,11 +99,11 @@ public class KeywordFilterComponent implements FilterComponent {
 
   public void ok() {
     mSearchFormSettings = mSearchForm.getSearchFormSettings();
+    this.setSearchFormSettings(mSearchFormSettings);
   }
 
   public boolean accept(Program program) {
-    return TvDataSearcher.getInstance().matches(mPattern, program,
-      mSearchFieldArr);
+  	return TvDataSearcher.getInstance().matches(mPattern, program, mSearchFieldArr);
   }
 
   public JPanel getPanel() {
