@@ -140,7 +140,7 @@ public class Settings {
     
     propArr = new Property[] {
       propProgramTitleFont, propProgramInfoFont, propProgramTimeFont,
-      propChannelNameFont, propUseDefaultFonts
+      propChannelNameFont, propUseDefaultFonts, propEnableAntialiasing
     };
     
     if (mProp.hasChanged(propArr)) {
@@ -247,6 +247,9 @@ public class Settings {
   public static final BooleanProperty propUseDefaultFonts
     = new BooleanProperty(mProp, "usedefaultfonts", true);
 
+  public static final BooleanProperty propEnableAntialiasing
+  = new BooleanProperty(mProp, "enableantialiasing", false);
+  
   public static final BooleanProperty propUseDefaultDirectories
     = new BooleanProperty(mProp, "usedefaultdirectories", true);
   
@@ -509,7 +512,6 @@ public class Settings {
 
   public static final IntProperty propProgramTableEndOfDay
     = new IntProperty(mProp, "programtable.endofday", 5 * 60);
-
   public static final BooleanProperty propHttpProxyUseProxy
     = new BooleanProperty(mProp, "proxy.http.useProxy", false);
 

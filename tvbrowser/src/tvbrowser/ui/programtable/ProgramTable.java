@@ -25,6 +25,7 @@
  */
 package tvbrowser.ui.programtable;
 
+import java.awt.*;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -189,6 +190,14 @@ public class ProgramTable extends JPanel
 
 
   public void paintComponent(Graphics grp) {
+    if (Settings.propEnableAntialiasing.getBoolean()) {
+      final Graphics2D g2d = (Graphics2D) grp;
+      if (null != g2d) {
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      }
+    }
+    
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
@@ -202,6 +211,7 @@ public class ProgramTable extends JPanel
     }
     
     // Paint the background
+    super.paintComponent(grp);
     int tableHeight = Math.max(mHeight, clipBounds.y + clipBounds.height);
     mBackgroundPainter.paintBackground(grp, mColumnWidth, tableHeight,
       minCol, maxCol, clipBounds, mLayout, mModel);
