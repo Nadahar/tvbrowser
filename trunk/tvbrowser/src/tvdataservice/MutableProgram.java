@@ -151,7 +151,6 @@ public class MutableProgram implements Program {
     TimeZone localTimeZone=TimeZone.getDefault();
     
     int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
- 
     timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();
  
     mNormalizedHours=localHours+timeZoneOffset;
@@ -166,9 +165,7 @@ public class MutableProgram implements Program {
       mNormalizedDate=mNormalizedDate.addDays(-1);
     }
     
-   // System.out.println("channel local: "+mLocalHours+" "+mLocalDate);
-   // System.out.println("normalized: "+mNormalizedHours+" "+mNormalizedDate);
-   // System.out.println();
+    
   }
   
   public MutableProgram(ObjectInputStream in)

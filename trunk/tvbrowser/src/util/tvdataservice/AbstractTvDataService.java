@@ -185,7 +185,7 @@ public abstract class AbstractTvDataService implements TvDataService {
     // Check whether the file is already present
     File localFile = new File(dataDirectory + fileName);
     if (! localFile.exists()) {
-      mLog.info("" + localFile.getAbsolutePath() + " does not exist!");
+    //  mLog.info("" + localFile.getAbsolutePath() + " does not exist!");
 
       // The file is not present -> try to download it
       if (! mAlreadyDownloadedFiles.contains(fileName)) {
