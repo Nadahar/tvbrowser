@@ -30,6 +30,8 @@ public class RatingComboBox extends JComboBox implements ListCellRenderer {
         
         if ((_rating != null) && (_rating.getIntValue(type) >= 0)) {
             setSelectedIndex(_rating.getIntValue(type));
+        } else {
+            setSelectedItem(null);
         }
 		setRenderer(this);
     }

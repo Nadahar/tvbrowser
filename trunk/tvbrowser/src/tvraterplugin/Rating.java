@@ -117,10 +117,7 @@ public class Rating implements Serializable {
 	    
 		if (_values.get(key) == null) {
 		    
-		    if ((key == GENRE) || (key == ID) || (key == COUNT)) {
-				return -1;
-		    }
-			return 2;
+			return -1;
 		}
 
 		Object value = _values.get(key);

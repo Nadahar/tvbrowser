@@ -35,8 +35,6 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer {
 			curStr = "0" + curStr;
 		}
 
-		System.out.println(curRating);
-		         
    	    int ind = model.getIndexOf(curStr);
    	    
    	    if (ind == -1) {

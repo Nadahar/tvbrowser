@@ -252,12 +252,10 @@ public class DialogRating extends JDialog {
 
         if ((_overallrating == null) || ( _overallrating.getIntValue(Rating.ID) < 0)) {
             detailsButtons.setEnabled(false);
-            System.out.println("wow");
         }
         
         if ((_personalrating != null) && ( _personalrating.getIntValue(Rating.ID) > 0)) {
             detailsButtons.setEnabled(true);
-            System.out.println("wow3");
         }
         
         leftbuttonPanel.add(detailsButtons);
@@ -303,6 +301,12 @@ public class DialogRating extends JDialog {
      */
     private void rateWasPressed() {
 
+        if (!checkAllRatings()) {
+            JOptionPane.showMessageDialog(this,                    
+                    _mLocalizer.msg("allRatings", "Please set all Ratings"));
+            return;
+        }
+        
         int[] values = new int[6];
 
         for (int i = 0; i < 6; i++) {
@@ -337,6 +341,21 @@ public class DialogRating extends JDialog {
             updateThread.start();
         }
 
+    }
+
+    /**
+     * Checks if all ratings are checked 
+     * @return true if all ratings are checked
+     */
+    private boolean checkAllRatings() {
+        for (int i = 0; i < _ratings.length; i++) {
+            if (_ratings[i].getSelectedItem() == null) {
+                return false;
+            }
+        }
+        
+        
+        return true;
     }
 
     /**
@@ -441,6 +460,7 @@ public class DialogRating extends JDialog {
     private Component createRatingBox(Rating rating, Object type) {
         if ((type != null)) {
             int value = rating.getIntValue(type);
+            
             return new JLabel(RatingIconTextFactory.getStringForRating(type, value), (Icon) RatingIconTextFactory
                     .getImageIconForRating(value), JLabel.LEFT);
         } else {
