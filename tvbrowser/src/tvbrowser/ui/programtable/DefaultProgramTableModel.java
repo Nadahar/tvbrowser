@@ -36,6 +36,7 @@ import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.TvDataBase;
 import util.io.IOUtilities;
+import util.ui.ProgramPanel;
 
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -48,11 +49,8 @@ import devplugin.Date;
  */
 public class DefaultProgramTableModel implements ProgramTableModel, ChangeListener {
   
- // private static final int TOMORROW_LATEST_TIME = 5 * 60; // Until 5:00 am
- // private static final int TODAY_EARLIEST_TIME = 5 * 60; // Until 5:00 am
-
-  private int mTomorrowLatestTime; //=tvbrowser.core.Settings.getProgramTableEndOfDay();
-  private int mTodayEarliestTime; //=tvbrowser.core.Settings.getProgramTableStartOfDay();
+  private int mTomorrowLatestTime;
+  private int mTodayEarliestTime;
 
   private ArrayList mListenerList;
   
@@ -131,7 +129,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         int time=prog.getHours()*60+prog.getMinutes();
         if (time>=startMinutes && time<=endMinutes && prog.getDate().compareTo(startDate)>=0 && prog.getDate().compareTo(endDate)<=0) {
           if (mProgramFilter==null || mProgramFilter.accept(prog)) {
-            mProgramColumn[col].add(prog);
+            ProgramPanel panel = new ProgramPanel(prog);
+            mProgramColumn[col].add(panel);
           }
         }
       }
@@ -205,11 +204,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
 
-  public Program getProgram(int col, int row) {
+  public ProgramPanel getProgramPanel(int col, int row) {
       
       ArrayList list=mProgramColumn[col];
       if (list.size()<=row) return null;
-      return (Program)list.get(row);
+      return (ProgramPanel)list.get(row);
      // if (mProgramColumn[col].size()<=row) return null;
      // return (Program)mProgramColumn[col].get(row);
       
@@ -267,11 +266,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 */
 
   private void deregisterFromPrograms(ArrayList[] columns) {
-      
     for (int i=0;i<columns.length;i++) {
       Iterator it=columns[i].iterator();
       while (it.hasNext()) {
-        Program prog=(Program)it.next();
+        ProgramPanel panel = (ProgramPanel) it.next();
+        Program prog = panel.getProgram();
         prog.removeChangeListener(this);
       }
     }          
@@ -291,19 +290,16 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
 */
 
+
   private void registerAtPrograms(ArrayList[] columns) {
-  
     for (int i=0;i<columns.length;i++) {
       Iterator it=columns[i].iterator();
       while (it.hasNext()) {
-        Program prog=(Program)it.next();
+        ProgramPanel panel = (ProgramPanel) it.next();
+        Program prog = panel.getProgram();
         prog.addChangeListener(this);
       }
-    }          
-     
-         
-     
-        
+    }
   }
   
   
@@ -364,6 +360,17 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         
     // Update the programs on air
     updateProgramsOnAir();
+    
+    // Force a repaint of all programs on air
+    // (so the progress background will be updated)
+    for (int col = 0; col < getColumnCount(); col++) {
+      for (int row = 0; row < getRowCount(col); row++) {
+        ProgramPanel panel = getProgramPanel(col, row);
+        if (panel.getProgram().isOnAir()) {
+          fireTableCellUpdated(col, row);
+        }
+      }
+    }
   }
   
   
@@ -388,7 +395,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   public void stateChanged(ChangeEvent evt) {
     // A program has changed
     Program program = (Program) evt.getSource();
-    
+
     // Get the column of this program
     int col = getColumnOfChannel(program.getChannel());
     if (col == -1) {
@@ -397,15 +404,13 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
     
     // Get the row of this program
-    int row = 0;
-    for (; row < getRowCount(col); row++) {
-      Program prg = getProgram(col, row);
-      if (program == prg) {
-        break;
+    for (int row = 0; row < getRowCount(col); row++) {
+      ProgramPanel panel = getProgramPanel(col, row);
+      if (program == panel.getProgram()) {
+        fireTableCellUpdated(col, row);
+        return;
       }
     }
-
-    fireTableCellUpdated(col, row);
   }
 
 }

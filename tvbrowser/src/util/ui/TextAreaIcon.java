@@ -37,7 +37,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 
 /**
- * An icon that displays multiline mText.
+ * An icon that displays multiline text.
  *
  * @author Martin Oberhauser
  */
@@ -47,7 +47,6 @@ public class TextAreaIcon implements Icon {
   private static final JLabel HELPER_LABEL = new JLabel();
   
   private int mWidth;
-  private String mText;
   private ArrayList mTextLineList;
   private Font mFont;
   private FontMetrics mFontMetrics;
@@ -56,7 +55,7 @@ public class TextAreaIcon implements Icon {
 
 
   /**
-   * Creates a TextAreaIcon with the specified mText, mFont and mWidth.
+   * Creates a TextAreaIcon with the specified text, font and width.
    */
   public TextAreaIcon(String text, Font font, int width) {
     mWidth = width;
@@ -72,12 +71,16 @@ public class TextAreaIcon implements Icon {
   public void setMaximumLineCount(int maxLineCount) {
     mMaxLineCount = maxLineCount;
   }
+  
+  
+  
+  public int getMaximumLineCount() {
+    return mMaxLineCount;
+  }
 
 
 
   public void setText(String text) {
-    mText = text;
-
     // Es gibt zwei Dinge in der Java API, die daran Schuld, dass dieses Icon
     // nicht signifikant beschleunigt werden kann:
     //

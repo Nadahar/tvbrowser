@@ -26,8 +26,8 @@
 
 package tvbrowser.ui.programtable;
 
+import util.ui.ProgramPanel;
 import devplugin.Channel;
-import devplugin.Program;
 
 /**
  *
@@ -45,5 +45,6 @@ public interface ProgramTableModel {
   
   public void setProgramFilter(ProgramFilter filter);
   
-  public Program getProgram(int col, int row);
+  public ProgramPanel getProgramPanel(int col, int row);
+
 }

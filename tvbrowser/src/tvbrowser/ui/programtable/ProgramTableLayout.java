@@ -23,7 +23,6 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.programtable;
 
 /**
@@ -32,10 +31,8 @@ package tvbrowser.ui.programtable;
  */
 public interface ProgramTableLayout {
   
-  public void updateLayout(ProgramTableModel model, ProgramTableCellRenderer renderer);
+  public void updateLayout(ProgramTableModel model);
   
   public int getColumnStart(int col);
-  
-  public int getCellHeight(int col, int row);
   
 }

@@ -26,15 +26,14 @@
 
 package tvbrowser.ui.programtable;
 
-import java.awt.Component;
-import java.awt.Dimension;
+import util.ui.ProgramPanel;
 
 import devplugin.Program;
 
 /**
- * Does a currProgram panel layout that is time synchronous.
+ * Does a program panel layout that is time synchronous.
  * <p>
- * It is guaranteed that a currProgram that starts later than another one has
+ * It is guaranteed that a program that starts later than another one has
  * no smaller y value.
  *
  * @author Til Schneider, www.murfman.de
@@ -49,84 +48,83 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
 
   
   
-  public void updateLayout(ProgramTableModel model, ProgramTableCellRenderer renderer) {
-    // Init the cell heights
-    int[][] cellHeightArr = createRawCellHeights(model);
-
+  public void updateLayout(ProgramTableModel model) {
     // Init the column starts
     int[] columnStartArr = new int[model.getColumnCount()];
-    
+
     // Holds the row index of the next currProgram to layout for each column
     int[] rowIdxArr = new int[model.getColumnCount()];
-    
+
     // Holds the y-position of the end of the last currProgram
     int[] colYArr = new int[model.getColumnCount()];
 
     int minY = 0;
-    Program program;
+    Program minProgram;
+    ProgramPanel minPanel;
     do {
-      // Find out the currProgram with the currProgram with the lowest start time
-      program = null;
+      // Find out the program with the lowest start time
+      minProgram = null;
+      minPanel = null;
       int programCol = 0;
-     // int minStartTime = Integer.MAX_VALUE;
-      long minStartTime=Long.MAX_VALUE;
+      long minStartTime = Long.MAX_VALUE;
       for (int col = 0; col < model.getColumnCount(); col++) {
-        Program currProgram = model.getProgram(col, rowIdxArr[col]);
-        if (currProgram != null) {
-      //    int startTime = currProgram.getDate().getDaysSince1970() * 24 * 60
-      //      + currProgram.getHours() * 60 + currProgram.getMinutes();
-        
-        //long startTime=devplugin.Date.getCurrentDate().getValue()*10000 + currProgram.getHours()*60+currProgram.getMinutes();
-        
-        long startTime=currProgram.getDate().getValue()*10000+currProgram.getHours()*60+currProgram.getMinutes();
-        //System.out.print(startTime+", ");
-          if (startTime < minStartTime) {
-            minStartTime = startTime;
-            program = currProgram;
-            programCol = col;
+        ProgramPanel panel = model.getProgramPanel(col, rowIdxArr[col]);
+        if (panel != null) {
+          Program program = panel.getProgram();
+          if (program != null) {
+            long startTime = program.getDate().getValue() * 10000
+                + program.getHours() * 60 + program.getMinutes();
+            // System.out.print(startTime+", ");
+  
+            if (startTime < minStartTime) {
+              minStartTime = startTime;
+              minProgram = program;
+              minPanel = panel;
+              programCol = col;
+            }
           }
         }
       }
-    
+
       // Layout the program
-      if (program != null) {
-        
+      if (minProgram != null) {
         //System.out.println("\n"+program.getChannel().getName()+": TITLE: "+program.getTitle()+", DATE: "+program.getDate()+", TIME: "+program.getHours()+":"+program.getMinutes()+" --> "+minStartTime);
-            
-        
-        
+
         int programRow = rowIdxArr[programCol];
 
-        // Get the y position for the currProgram
+        // Get the y position for the program
         int y = Math.max(minY, colYArr[programCol]);
 
-        // Ensure that the start of the currProgram is at the specified y
+        // Ensure that the start of the program is at the specified y
         if (programRow == 0) {
-          // This is the first currProgram of this column -> Set columnStartArr
+          // This is the first program of this column -> Set columnStartArr
           columnStartArr[programCol] = y;
         } else {
-          // Adjust the last currProgram of this column to reach the y position
-          cellHeightArr[programCol][programRow - 1] += y - colYArr[programCol];
+          // Adjust the last program of this column to reach the y position
+          ProgramPanel lastPanel = model.getProgramPanel(programCol, programRow - 1);
+          int height = lastPanel.getPreferredHeight();
+          height += y - colYArr[programCol];
+          lastPanel.setHeight(height);
         }
 
-        // Set the height for the currProgram
-        Component rendererComp
-          = renderer.getCellRenderer(programCol, programRow, -1, -1, program);
-        Dimension preferredSize = rendererComp.getPreferredSize();
-        cellHeightArr[programCol][programRow] = preferredSize.height;
+        // Get the height for the program
+        int preferredHeight = minPanel.getPreferredHeight();
+
+        // Set the height for the program if it is the last of the row
+        if (programRow + 1 == model.getRowCount(programCol)) {
+          // It is the last row
+          minPanel.setHeight(preferredHeight);
+        }
 
         // Prepare the next iteration
         minY = y;
-        colYArr[programCol] = y + preferredSize.height;
+        colYArr[programCol] = y + preferredHeight;
         rowIdxArr[programCol]++;
       }
-    } while (program != null);
-    
+    } while (minProgram != null);
+
     // Set the column starts
     setColumnStarts(columnStartArr);
-
-    // Set the heights
-    setCellHeights(cellHeightArr);
   }
   
 }
