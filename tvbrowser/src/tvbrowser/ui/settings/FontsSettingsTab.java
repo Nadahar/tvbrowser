@@ -65,8 +65,8 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     mEnableAntialiasingCB=new JCheckBox(mLocalizer.msg("EnableAntialiasing", "Enable antialiasing"));
     mEnableAntialiasingCB.setSelected(Settings.propEnableAntialiasing.getBoolean());
     
-    checkBoxPanel.add(mUseDefaultFontsCB);
-    checkBoxPanel.add(mEnableAntialiasingCB, BorderLayout.SOUTH);
+    checkBoxPanel.add(mEnableAntialiasingCB, BorderLayout.NORTH);
+    checkBoxPanel.add(mUseDefaultFontsCB, BorderLayout.CENTER);
     
     content.add(checkBoxPanel);
     
