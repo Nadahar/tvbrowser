@@ -63,6 +63,7 @@ public class SettingsDialog {
   private JSplitPane mSplitPane;
   private JTree mSelectionTree;
   private JPanel mSettingsPn;
+  private JScrollPane mSettingsPane;
   private JButton mOkBt, mCancelBt;
   
   
@@ -109,8 +110,9 @@ public class SettingsDialog {
     }
     
     mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setPreferredSize(new Dimension(410, 300));
-    mSplitPane.setRightComponent(new JScrollPane(mSettingsPn));
+    mSettingsPane = new JScrollPane(mSettingsPn);
+    mSettingsPane.setPreferredSize(new Dimension(410, 300));
+    mSplitPane.setRightComponent(mSettingsPane);
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
@@ -241,6 +243,14 @@ public class SettingsDialog {
 
       JPanel pn = node.getSettingsPanel();
       if (pn != null) {
+        // Make the panel as wide as the scrollpane viewport
+        Dimension viewportSize = mSettingsPane.getViewport().getSize();
+        Dimension pnSize = pn.getPreferredSize();
+        if (pnSize.width > viewportSize.width) {
+          pnSize.width = viewportSize.width;
+          pn.setPreferredSize(pnSize);
+        }
+        
         mSettingsPn.add(pn);
       }
     }
