@@ -59,6 +59,7 @@ public class Settings implements SettingsTab, ActionListener{
     items = CustomizableItemsPanel.createCustomizableItemsPanel(
     mLocalizer.msg("available","available")
     ,mLocalizer.msg("included","included"));
+    
     items.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channels","channels")));
     items.clearLeft();
     items.clearRight();

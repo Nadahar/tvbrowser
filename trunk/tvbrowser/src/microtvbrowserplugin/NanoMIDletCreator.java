@@ -21,7 +21,6 @@
 package microtvbrowserplugin;
 
 import devplugin.Program;
-import devplugin.Date;
 import devplugin.Channel;
 import java.util.Vector;
 import java.util.Date;
@@ -33,11 +32,15 @@ import javax.swing.JOptionPane;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import util.ui.Localizer;
 
 
 
 
 public class NanoMIDletCreator implements util.ui.progress.Progress{
+  
+  static Localizer mLocalizer = Localizer.getLocalizerFor(MIDletCreator.class);
+  
   
   private util.ui.progress.ProgressWindow progress;
   private MicroTvBrowserPlugin mtbp;
@@ -91,7 +94,7 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
   
   public void run(){
     try {
-      progress.setMessage("collecting channels");
+      progress.setMessage(mLocalizer.msg("collecting channels","collecting channels"));
       devplugin.PluginManager PM = mtbp.getPluginManager();
       Channel[] CH = PM.getSubscribedChannels();
       Vector Export = new Vector();
@@ -111,35 +114,17 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
       
       Channel[] CH_to_export = (Channel[]) Export.toArray(new Channel[Export.size()]);
       
-      progress.setMessage("creating jar and config");
+      progress.setMessage(mLocalizer.msg("creating jar and config","creating jar and config"));
       //zuerst die MANIFEST-Datei:
       java.util.jar.JarFile JA = mtbp.getJarFilePublic();
       
       JarEntry JAE = JA.getJarEntry("microtvbrowserplugin/data_nano/MIDletMANI.MF");
       InputStream In = JA.getInputStream(JAE);
-      System.out.println("MIDledMANI.MF "+(JAE!=null));
-      
-      java.io.BufferedReader BUR = new java.io.BufferedReader(new java.io.InputStreamReader(In));
-      try {
-        String st = BUR.readLine();
-        while (st != null){
-          System.out.println(st);
-          st = BUR.readLine();
-        }
-      } catch (Exception E){
-      }
-      System.out.println("MIDletMANI END");
-      
-      JAE = JA.getJarEntry("microtvbrowserplugin/data_nano/MIDletMANI.MF");
-      In = JA.getInputStream(JAE);
       
       java.util.jar.Manifest MA = new java.util.jar.Manifest(In);
-      System.out.println("MANIFEST");
-      MA.write(System.out);
-      System.out.println("MANIFEST END");
       
-      File MircoTvBrowser = new File(dir, "NanoTvBrowser.jar");
-      JarOutputStream jar = new JarOutputStream(new java.io.FileOutputStream(MircoTvBrowser),MA);
+      File MicroTvBrowser = new File(dir, "NanoTvBrowser.jar");
+      JarOutputStream jar = new JarOutputStream(new java.io.FileOutputStream(MicroTvBrowser ),MA);
       
       //die .class-Dateien:
       copyFile(jar,"tv.class");
@@ -151,16 +136,17 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
       jar.putNextEntry(new JarEntry("conf"));
       DataOutputStream basic = new DataOutputStream(jar);
       
-      basic.writeUTF("Error");
-      basic.writeUTF("Data too old");
-      basic.writeUTF("show");
-      basic.writeUTF("no data found");
-      basic.writeUTF("exit");
-      basic.writeUTF("back");
-      basic.writeUTF("channels");
-      basic.writeUTF("dates");
-      basic.writeUTF("please wait");
-      basic.writeUTF("working...");
+      basic.writeUTF(mLocalizer.msg("Error","Error"));
+      basic.writeUTF(mLocalizer.msg("Data too old","Data too old"));
+      basic.writeUTF(mLocalizer.msg("show","show"));
+      basic.writeUTF(mLocalizer.msg("no data found","no data found"));
+      basic.writeUTF(mLocalizer.msg("exit","exit"));
+      basic.writeUTF(mLocalizer.msg("back","back"));
+      basic.writeUTF(mLocalizer.msg("channels","channels"));
+      basic.writeUTF(mLocalizer.msg("dates","dates"));
+      basic.writeUTF(mLocalizer.msg("please wait","please wait"));
+      basic.writeUTF(mLocalizer.msg("working...","working..."));
+      
       
       Date now = new Date();
       Date now2 = new Date(now.getYear(),now.getMonth(),now.getDate(),0,1);
@@ -173,13 +159,13 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
       }
       basic.flush();
       
-      Date today = new Date();
-      progress.setMessage("converting basic data");
+      devplugin.Date today = new devplugin.Date();
+      progress.setMessage(mLocalizer.msg("converting basic data","converting basic data"));
       GLOBALSIZE = 0;
       
       for (int j =0;j<CH_to_export.length;j++){
         for (int i=0;i<data_length;i++){
-          Date D = new Date(today);
+          devplugin.Date D = new devplugin.Date(today);
           D = D.addDays(i);
           java.util.Iterator it = PM.getChannelDayProgram(D,CH_to_export[j]);
           
@@ -204,8 +190,33 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
               DataOutputStream prog_out = new DataOutputStream(temp_out);
               String title = toSave.getTitle();
               if (title == null){
-                USER_LOG.append(CH_to_export[j]+": Entry without title ?\n");
-                title = "unknow";
+                
+                Object[] O = new Object[5];
+                O[0] = CH_to_export[j];
+                if (D.getDayOfMonth()<10){
+                  O[1] = "0"+Integer.toString(D.getDayOfMonth());
+                } else {
+                  O[1] = Integer.toString(D.getDayOfMonth());
+                }
+                if (D.getMonth()<10){
+                  O[2] = "0"+Integer.toString((D.getMonth()));
+                } else {
+                  O[2] = Integer.toString((D.getMonth()));
+                }
+                if (toSave.getHours()<10){
+                  O[3] = "0"+Integer.toString(toSave.getHours());
+                } else {
+                  O[3] = Integer.toString(toSave.getHours());
+                }
+                if (toSave.getMinutes()<10){
+                  O[4] = "0"+Integer.toString(toSave.getMinutes());
+                } else {
+                  O[4] = Integer.toString(toSave.getMinutes());
+                }
+                
+                USER_LOG.append(mLocalizer.msg("0: Entry without title ? (1.2 3:4)","{0}: Entry without title ? ({1}.{2} {3}:{4})",O));
+                USER_LOG.append("\n");
+                title = " ";
               }
               
               prog_out.write(toSave.getHours());
@@ -216,7 +227,9 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
               to_use.add(temp_out.toByteArray());
             }
           } else {
-            USER_LOG.append("Can't export "+CH_to_export[j]+" on "+D.getDayOfMonth()+":"+(D.getMonth()+1)+" : No valid data found\n");
+            Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth()))};
+            USER_LOG.append(mLocalizer.msg("Can't export 0 on 1.2 : No valid data found","Can't export {0} on {1}.{2} : No valid data found",O));
+            USER_LOG.append("\n");
           }
           
           jar.putNextEntry(new JarEntry(j+"."+i));
@@ -249,7 +262,7 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
       java.io.BufferedWriter BUF = new java.io.BufferedWriter(new java.io.FileWriter(JAD));
       BUF.write(
       "MIDlet-1: NanoTvBrowser, MicroTvBrowser.png, tv\n"
-      +"MIDlet-Jar-Size: "+MircoTvBrowser.length()+"\n"
+      +"MIDlet-Jar-Size: "+MicroTvBrowser.length()+"\n"
       +"MIDlet-Jar-URL: NanoTvBrowser.jar\n"
       +"MIDlet-Name: NanoTvBrowser\n"
       +"MIDlet-Vendor: Unknown\n"
@@ -259,16 +272,15 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
       );
       BUF.flush();
       BUF.close();
-      progress.setMessage("done");
+      progress.setMessage(mLocalizer.msg("done","done"));
       try {
         String user_log = USER_LOG.toString();
         if (user_log.length()!=0){
-          JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),"Nano MIDlet created, but with problems:\n"+user_log,"done", JOptionPane.WARNING_MESSAGE);
+          JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),mLocalizer.msg("MIDlet created, but with problems","MIDlet created, but with problems")+":\n"+user_log,mLocalizer.msg("done","done"), JOptionPane.WARNING_MESSAGE);
         } else {
-          JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),"Nano MIDlet created.\n Please install now \n"+JAD.toString()+"\n on your mobile device.","done", JOptionPane.INFORMATION_MESSAGE);
+          JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),mLocalizer.msg("MIDlet created.","MIDlet created.")+"\n"+mLocalizer.msg("Please install now","Please install now")+"\n"+JAD.toString()+"\n"+mLocalizer.msg("on your mobile device.","on your mobile device."),mLocalizer.msg("done","done"), JOptionPane.INFORMATION_MESSAGE);
         }
       } catch (Exception E1){
-        System.out.println("caught getParentFrame-Bug");
         E1.printStackTrace(System.out);
       }
       
@@ -277,7 +289,7 @@ public class NanoMIDletCreator implements util.ui.progress.Progress{
       E.printStackTrace(new java.io.PrintWriter(BOUT));
       //LOG.append (BOUT.toString());
       E.printStackTrace();
-      JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),"MIDlet NOT created because: \n"+BOUT.toString(),"ERROR", JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),mLocalizer.msg("MIDlet NOT created because:","MIDlet NOT created because:")+" \n"+BOUT.toString(),mLocalizer.msg("ERROR","ERROR"), JOptionPane.ERROR_MESSAGE);
     }
   }
   

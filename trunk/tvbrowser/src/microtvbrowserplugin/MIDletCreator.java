@@ -124,8 +124,8 @@ public class MIDletCreator implements Progress{
 			
 			Manifest MA = new Manifest(In);
 			
-			File MircoTvBrowser = new File(dir, "MicroTvBrowser.jar");
-			JarOutputStream jar = new JarOutputStream(new FileOutputStream(MircoTvBrowser),MA);
+			File MicroTvBrowser = new File(dir, "MicroTvBrowser.jar");
+			JarOutputStream jar = new JarOutputStream(new FileOutputStream(MicroTvBrowser),MA);
 			
 			//die .class-Dateien:
 			copyFile(jar,"tv.class");
@@ -255,7 +255,7 @@ public class MIDletCreator implements Progress{
 							Program toSave = (Program) it.next();
 							String title = toSave.getTitle();
 							if (title == null){
-								title = "";
+								title = " ";
 							}
 							if (title.length() > 100){
 								title = title.substring(0,100);
@@ -385,7 +385,7 @@ public class MIDletCreator implements Progress{
 								
 								exportLog.append(mLocalizer.msg("0: Entry without title ? (1.2 3:4)","{0}: Entry without title ? ({1}.{2} {3}:{4})",O));
 								exportLog.append("\n");
-								title = "";
+								title = " ";
 							}
 							if (title.length() > 100){
 								title = title.substring(0,100);
@@ -606,7 +606,7 @@ public class MIDletCreator implements Progress{
 			BufferedWriter BUF = new BufferedWriter(new FileWriter(JAD));
 			BUF.write(
 			"MIDlet-1: MicroTvBrowser, MicroTvBrowser.png, tv\n"
-			+"MIDlet-Jar-Size: "+MircoTvBrowser.length()+"\n"
+			+"MIDlet-Jar-Size: "+MicroTvBrowser.length()+"\n"
 			+"MIDlet-Jar-URL: MicroTvBrowser.jar\n"
 			+"MIDlet-Name: MicroTvBrowser\n"
 			+"MIDlet-Vendor: Unknown\n"
