@@ -25,13 +25,8 @@
  */
 package primarydatamanager.mirrorupdater;
 
-import java.io.*;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -44,7 +39,6 @@ import primarydatamanager.mirrorupdater.data.DataTarget;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
-import util.io.IOUtilities;
 
 /**
  * 
@@ -103,9 +97,6 @@ public class MirrorUpdater {
       
       // Update the meta files
       updateMetaFiles(channelArr);
-      
-      // Check for a mirror list
-      updateMirrorList();
     }
     finally {
       // Close data source and data target
@@ -262,12 +253,21 @@ public class MirrorUpdater {
 
 
   private void updateMetaFiles(Channel[] channelArr) throws UpdateException {
-    byte[] data = mPrimaryServerUrl.getBytes();
+    byte[] data;
+    
+    // Create the primaryserver file
+    data = mPrimaryServerUrl.getBytes();
     mDataTarget.writeFile("primaryserver", data);
 
+    // Copy the mirrorlist.gz
+    data = mDataSource.loadFile(Mirror.MIRROR_LIST_FILE_NAME);
+    mDataTarget.writeFile(Mirror.MIRROR_LIST_FILE_NAME, data);
+
+    // Create the weight file
     data = Integer.toString(mMirrorWeight).getBytes();
     mDataTarget.writeFile("weight", data);
     
+    // Create the lastupdate file
     Calendar cal = Calendar.getInstance();
     int year = cal.get(Calendar.YEAR);
     int month = cal.get(Calendar.MONTH) + 1;
@@ -284,6 +284,7 @@ public class MirrorUpdater {
     data = lastUpdate.getBytes();
     mDataTarget.writeFile("lastupdate", data);
     
+    // Create the index.html
     String html = createIndexHtml(channelArr);
     mDataTarget.writeFile("index.html", html.getBytes());
   }
@@ -321,101 +322,6 @@ public class MirrorUpdater {
     buffer.append("</body></html>");
     
     return buffer.toString();
-  }
-
-
-
-  private void updateMirrorList() throws UpdateException {
-    // Check whether there is a mirrorlist.txt
-    if (! mDataSource.fileExists("mirrorlist.txt")) {
-      // Nothing to do
-      return;
-    }
-     
-    // Load the mirrorlist.txt
-    ArrayList mirrorList = new ArrayList();
-    try {
-      byte[] data = mDataSource.loadFile("mirrorlist.txt");
-      ByteArrayInputStream stream = new ByteArrayInputStream(data);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-      
-      String line;
-      while ((line = reader.readLine()) != null) {
-        line = line.trim();
-        if (line.length() != 0) {
-          mirrorList.add(new Mirror(line, 100));
-        }
-      }
-    }
-    catch (Exception exc) {
-      throw new UpdateException("Loading mirror list failed", exc);
-    }
-    
-    // Now update the weights. Use the old mirror list if a mirror is not
-    // available
-    Mirror[] oldMirrorArr = null;
-    for (int listIdx = 0; listIdx < mirrorList.size(); listIdx++) {
-      Mirror mirror = (Mirror) mirrorList.get(listIdx);
-      
-      int weight = getMirrorWeight(mirror);
-      if (weight >= 0) {
-        mirror.setWeight(weight);
-      } else {
-        // We didn't get the weight -> Try to get the old weight
-        if (oldMirrorArr == null) {
-          oldMirrorArr = loadOldMirrorList();
-        }
-        
-        for (int i = 0; i < oldMirrorArr.length; i++) {
-          if (oldMirrorArr[i].getUrl().equals(mirror.getUrl())) {
-            // This is the same mirror -> use the old weight
-            mirror.setWeight(oldMirrorArr[i].getWeight());
-          }
-        }
-      }
-    }
-    
-    // Save the mirrorlist
-    try {
-      ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      Mirror[] mirrorArr = new Mirror[mirrorList.size()];
-      mirrorList.toArray(mirrorArr);
-      
-      Mirror.writeMirrorListToStream(stream, mirrorArr);
-      byte[] data = stream.toByteArray();
-      
-      mDataTarget.writeFile(Mirror.MIRROR_LIST_FILE_NAME, data);
-    }
-    catch (Exception exc) {
-      throw new UpdateException("Saving mirror list failed", exc);
-    }
-  }
-    
-    
-  private Mirror[] loadOldMirrorList() throws UpdateException {
-    try {
-      byte[] data = mDataTarget.loadFile(Mirror.MIRROR_LIST_FILE_NAME);
-      ByteArrayInputStream stream = new ByteArrayInputStream(data);
-      return Mirror.readMirrorListFromStream(stream);
-    }
-    catch (Exception exc) {
-      throw new UpdateException("Loading mirror list failed", exc);
-    }
-  }
-
-
-  private int getMirrorWeight(Mirror mirror) {
-    try {
-      String url = mirror.getUrl() + "/weight";
-      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(url));
-      String asString = new String(data);
-      return Integer.parseInt(asString);
-    }
-    catch (Exception exc) {
-      System.out.println("Getting mirror weight of " + mirror.getUrl()
-        + " failed");
-      return -1;
-    }
   }
 
 

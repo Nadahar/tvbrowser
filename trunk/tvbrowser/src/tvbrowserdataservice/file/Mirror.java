@@ -45,6 +45,8 @@ import util.io.IOUtilities;
 public class Mirror {
   
   public static final String MIRROR_LIST_FILE_NAME = "mirrorlist.gz";
+  
+  public static final int DEFAULT_WEIGHT = 100;
 
   private String mUrl;
   private int mWeight;
@@ -60,7 +62,11 @@ public class Mirror {
     mUrl = IOUtilities.replace(url, " ", "%20");
     mWeight = weight;
   }
-  
+
+
+  public Mirror(String url) {
+    this(url, DEFAULT_WEIGHT);
+  }
   
 
   /**

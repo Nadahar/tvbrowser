@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.NumberFormat;
 
 import primarydatamanager.mirrorupdater.UpdateException;
 import util.io.IOUtilities;
@@ -41,6 +42,9 @@ import util.io.IOUtilities;
 public class FileDataSource implements DataSource {
   
   private File mDir;
+
+  private int mBytesRead;
+  private int mFilesChecked;
   
   
 
@@ -54,6 +58,8 @@ public class FileDataSource implements DataSource {
 
 
   public boolean fileExists(String fileName) throws UpdateException {
+    mFilesChecked++;
+
     File file = new File(mDir, fileName);
     
     return file.exists();
@@ -68,12 +74,14 @@ public class FileDataSource implements DataSource {
     try {
       in = new FileInputStream(file);
       ByteArrayOutputStream out = new ByteArrayOutputStream((int) file.length());
-      
       IOUtilities.pipeStreams(in, out);
-      
       out.close();
+
+      byte[] data = out.toByteArray();
+
+      mBytesRead += data.length;
       
-      return out.toByteArray();
+      return data;
     }
     catch (IOException exc) {
       throw new UpdateException("Loading file failed: " + fileName, exc);
@@ -87,6 +95,9 @@ public class FileDataSource implements DataSource {
 
 
   public void close() throws UpdateException {
+    System.out.println("In total there were "
+      + NumberFormat.getInstance().format(mFilesChecked) + " files checked and "
+      + NumberFormat.getInstance().format(mBytesRead) + " bytes read.");
   }
 
 }
