@@ -101,6 +101,17 @@ public class Date implements Comparable {
     
   }
   
+  public static Date createDDMMYYYY(String date, String separator) {
+      if (date==null) return null;
+      String []s=date.split(separator);
+      if (s.length!=3) return null;
+      int day=Integer.parseInt(s[0]);
+      int month=Integer.parseInt(s[1]);
+      int year=Integer.parseInt(s[2]);
+      return new Date(year,month,day);
+    
+    }
+  
   public static Date createYYMMDD(String date, String separator) {
     return createYYYYMMDD("20"+date,separator);
   }
