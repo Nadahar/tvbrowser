@@ -202,6 +202,13 @@ Section "Reminder-Plugin"
   File "${RUNTIME_DIR}\plugins\ReminderPlugin.jar"
 SectionEnd
 
+Section "Search-Plugin"
+  SectionIn 1
+
+  SetOutPath "$INSTDIR\plugins"
+  File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
+SectionEnd
+
 SubSectionEnd
 
 
