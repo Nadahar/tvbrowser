@@ -99,7 +99,9 @@ public class Toolbar extends JComponent implements ComponentListener, ActionList
       mButtonWidth=40;
       for (int i=0; i<mButtons.length; i++) {
         mButtons[i].setPreferredSize(new Dimension(mButtonWidth,0));
+        String text = mButtons[i].getText();
         mButtons[i].setText(null);
+        mButtons[i].setToolTipText(text);
       }
     }
     
