@@ -26,10 +26,12 @@
 
 package devplugin;
 
+import javax.swing.tree.MutableTreeNode;
+
 import devplugin.Program;
 
 
-public interface TreeLeaf {
+public interface TreeLeaf extends MutableTreeNode {
   public Program getProgram();
   public void setProperty(String key, String value);
   public String getProperty(String key);

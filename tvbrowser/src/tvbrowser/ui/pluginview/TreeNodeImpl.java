@@ -119,8 +119,10 @@ public class TreeNodeImpl extends DefaultMutableTreeNode implements TreeNode {
     mLeafs.add(item);
     mModel.addItem(item, this);
   }
-  public void add(Program program) {
-    add(new TreeLeafImpl(program));
+  public TreeLeaf add(Program program) {
+    TreeLeafImpl leaf = new TreeLeafImpl(program);
+    add(leaf);
+    return leaf;
   }
   
   public void remove(TreeNode node) {

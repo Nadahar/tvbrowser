@@ -41,12 +41,12 @@ public class PluginView extends JPanel {
   public PluginView() {
     super(new BorderLayout());
     PluginTreeModel model = PluginTreeModel.getInstance();
-    TreeNodeImpl root = model.createRootNode("plugins", "Plugins");
+ //   TreeNodeImpl root = model.createRootNode("plugins", "Plugins");
     
     PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
     for (int i=0; i<plugins.length; i++) {
       TreeNode n = Plugin.getPluginManager().getTree(plugins[i].getId());
-      root.add(n);
+      model.getPluginNode().add(n);
     }         
     
     

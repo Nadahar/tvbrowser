@@ -42,6 +42,8 @@ public class PluginTreeModel extends DefaultTreeModel {
     
   private PluginTreeModel() {
     super(null);
+    mRoot = createRootNode("plugins", "Plugins");
+    setRoot(mRoot);
   }
  
   public static PluginTreeModel getInstance() {
@@ -51,16 +53,20 @@ public class PluginTreeModel extends DefaultTreeModel {
     return mInstance;
   }
  
-  public void setRoot(TreeNodeImpl n) {
+  public TreeNodeImpl getPluginNode() {
+    return mRoot;
+  }
+  
+ /* public void setRoot(TreeNodeImpl n) {
     mRoot = (TreeNodeImpl)n;
     super.setRoot(n);
-  }
+  }*/
   
   public Object getRoot() {
     return mRoot;
   }
   
-  public TreeNodeImpl createRootNode(String key, String title) {
+  private TreeNodeImpl createRootNode(String key, String title) {
     TreeNodeImpl n = new TreeNodeImpl(key, title);
     n.setModel(this);
     setRoot(n);
@@ -80,7 +86,7 @@ public class PluginTreeModel extends DefaultTreeModel {
   }
   
   public void addItem(TreeLeaf item, TreeNode parent) {
-    insertNodeInto(new DefaultMutableTreeNode(item), parent, 0);  
+    insertNodeInto(item, parent, 0);  
   }
   
   public void removeNode(TreeNode node) {
@@ -88,7 +94,7 @@ public class PluginTreeModel extends DefaultTreeModel {
   }
   
   public void removeItem(TreeLeaf item) {
-    removeNodeFromParent(new DefaultMutableTreeNode(item));    
+    removeNodeFromParent(item);    
   }
     
 }
