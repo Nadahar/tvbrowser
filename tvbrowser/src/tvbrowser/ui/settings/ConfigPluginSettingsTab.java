@@ -28,6 +28,7 @@ package tvbrowser.ui.settings;
 
 import javax.swing.*;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
 
 import java.awt.*;
@@ -52,7 +53,7 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
   
   public ConfigPluginSettingsTab(devplugin.Plugin plugin) {
     mPlugin=plugin;
-    mPluginIsInstalled=PluginManager.getInstance().isInstalled(mPlugin);
+    mPluginIsInstalled=PluginLoader.getInstance().isActivePlugin(mPlugin);
   }
   
   

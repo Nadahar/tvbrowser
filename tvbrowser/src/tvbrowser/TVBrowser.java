@@ -41,6 +41,7 @@ import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 
@@ -204,8 +205,14 @@ public class TVBrowser {
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);
-    PluginManager.getInstance().loadPlugins();
-    
+    try {
+      PluginManager manager = PluginManager.getInstance();
+      manager.loadAllPlugins();
+      manager.activatePlugins(Settings.getInstalledPlugins());
+      manager.initContextMenu();      
+    }catch(TvBrowserException exc){
+      ErrorHandler.handle(exc);      
+    }
     mLog.info("Deleting expired tv data...");
     TvDataBase.getInstance().deleteExpiredFiles(1);
     

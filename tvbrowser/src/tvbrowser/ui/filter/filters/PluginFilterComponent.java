@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -38,7 +39,9 @@ public class PluginFilterComponent extends FilterComponent {
     
   private static final util.ui.Localizer mLocalizer
          = util.ui.Localizer.getLocalizerFor(PluginFilterComponent.class);
- 
+  private static java.util.logging.Logger mLog
+     = java.util.logging.Logger.getLogger(PluginFilterComponent.class.getName());
+
     
     private JComboBox mBox;
     private devplugin.Plugin mPlugin;
@@ -48,26 +51,31 @@ public class PluginFilterComponent extends FilterComponent {
     }
     
     public PluginFilterComponent(ObjectInputStream in) {
-        try {
+      String pluginClassName=null;
+      try {
             int version=in.readInt();
             mName=(String)in.readObject();
             mDescription=(String)in.readObject();
-            String pluginClassName=(String)in.readObject();
-            mPlugin=PluginManager.getInstance().getPlugin(pluginClassName);
+            pluginClassName=(String)in.readObject();
+            mPlugin = PluginLoader.getInstance().getActivePluginByClassName(pluginClassName);
             
-        }catch (IOException e) {
-            util.exc.ErrorHandler.handle("Could not read filter rule from file", e);
-        }catch (ClassNotFoundException e) {
-            util.exc.ErrorHandler.handle("Could not read filter rule from file", e);
-        }
+      }catch (Exception e) {
+        mLog.severe("Could not load filter component 'PluginFilterComponent' (name:"+mName+"; description: "+mDescription+"; plugin:"+pluginClassName+")");
+      }
+
     }
     
     public void store(ObjectOutputStream out) {
         try {
             out.writeInt(1);
             out.writeObject(mName);
-            out.writeObject(mDescription); 
-            out.writeObject(mPlugin.getClass().getName());       
+            out.writeObject(mDescription);
+            if (mPlugin==null) {
+              out.writeObject("[invalid]"); 
+            }
+            else {
+              out.writeObject(mPlugin.getClass().getName());
+            }       
         }catch (IOException e) {
             util.exc.ErrorHandler.handle("Could not write keyword filter to file", e); 
         }

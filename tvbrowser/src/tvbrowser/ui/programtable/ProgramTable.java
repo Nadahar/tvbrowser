@@ -87,11 +87,7 @@ public class ProgramTable extends JPanel
         handleMouseClicked(evt);
       }
     });
-    addKeyListener(new KeyAdapter() {
-      public void heyPressed(KeyEvent evt) {
-        handleKeyPressed(evt);
-      }
-    });
+    
   }
 
   
@@ -366,7 +362,7 @@ public class ProgramTable extends JPanel
       if (program != null) {
         // This is a left double click
         // -> Execute the program using the user defined default plugin
-        Plugin plugin = PluginManager.getInstance().getContextMenuDefaultPlugin();
+        Plugin plugin = PluginManager.getInstance().getDefaultContextMenuPlugin();
         if (plugin!=null) {
           plugin.execute(program);  
         }
@@ -384,29 +380,6 @@ public class ProgramTable extends JPanel
     }
   }
 
-  
-  
-  public void handleKeyPressed(KeyEvent evt) {
-    int scrollDistance = evt.isShiftDown() ? 50 : 10;
-    
-    System.out.println("evt.getKeyCode(): " + evt.getKeyCode() + " up: "
-      + ((evt.getKeyCode() & KeyEvent.VK_UP) == KeyEvent.VK_UP));
-    
-    if (evt.getKeyCode() == KeyEvent.VK_UP) {
-      scrollBy(0, -scrollDistance);
-    }
-    else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
-      // scrollBy(0, scrollDistance);
-    }
-    else if (evt.getKeyCode() == KeyEvent.VK_LEFT) {
-      scrollBy(-scrollDistance, 0);
-    }
-    else if (evt.getKeyCode() == KeyEvent.VK_RIGHT) {
-      scrollBy(scrollDistance, 0);
-    }
-  }
-
-  
   
   public int getTimeY(int minutesAfterMidnight) {
     // Get the total time y

@@ -33,12 +33,14 @@ import javax.swing.*;
 
 import devplugin.Plugin;
 import devplugin.SettingsTab;
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
+import tvbrowser.core.PluginStateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.customizableitems.SortableItemList;
 
  
-public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener, SettingsChangeListener {
+public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener {
 
 
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
@@ -108,17 +110,35 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
        });
     mList.setCellRenderer(new ContextMenuCellRenderer());
         mList.getList().setOpaque(false);
-    fillListbox(PluginManager.getInstance().getContextMenuPlugins());
+    fillListbox();
     
+    PluginLoader.getInstance().addPluginStateListener(new PluginStateListener(){
+
+          public void pluginActivated(Plugin p) {
+            fillListbox();        
+          }
+
+          public void pluginDeactivated(Plugin p) {
+            fillListbox();
+        
+          }
+
+          public void pluginLoaded(Plugin p) {                
+          }
+
+          public void pluginUnloaded(Plugin p) {      
+          }
     
+        });
     
     
   }
 
 	public JPanel createSettingsPanel() {
     
-    String defaultPluginClassName = Settings.getDefaultContextMenuPlugin();
-    mDefaultPlugin=PluginManager.getInstance().getPlugin(defaultPluginClassName);
+    //String defaultPluginClassName = Settings.getDefaultContextMenuPlugin();
+    mDefaultPlugin = PluginManager.getInstance().getDefaultContextMenuPlugin();
+    //mDefaultPlugin=PluginManager.getInstance().getPlugin(defaultPluginClassName);
     
     JPanel contentPanel=new JPanel(new BorderLayout(0,15));
     contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
@@ -165,14 +185,19 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     mList.setCellRenderer(new ContextMenuCellRenderer());
     mList.getList().setOpaque(false);
   */
+  
+    
+  
 		return contentPanel;
 	}
   
-  private void fillListbox(Plugin[] pluginList) {
+  private void fillListbox() {
     if (mList==null) {
       return;
     }
     mList.removeAllElements();
+    
+    Plugin[] pluginList = PluginManager.getInstance().getContextMenuPlugins();
     
     for (int i=0;i<pluginList.length;i++) {
       if (pluginList[i].getContextMenuItemText()!=null) {
@@ -196,10 +221,22 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 		
     Object o[]=mList.getItems();
     
+    Plugin p[]=new Plugin[o.length];
+    for (int i=0;i<p.length;i++) {
+      p[i]=(Plugin)o[i];
+    }
+    
+    PluginManager.getInstance().setContextMenuPlugins(p);
+    
+    
+    
     if (!mList.contains(mDefaultPlugin)) {
       mDefaultPlugin=null;
     }
     
+    PluginManager.getInstance().setDefaultContextMenuPlugin(mDefaultPlugin);
+    
+    /*
     if (mDefaultPlugin!=null) {      
         Settings.setDefaultContextMenuPlugin(mDefaultPlugin.getClass().getName());         
     }else{
@@ -212,7 +249,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     for (int i=0;i<o.length;i++) {
       plugins[i]=((Plugin)o[i]).getClass().getName();
     }
-    Settings.setContextMenuItemPlugins(plugins);    
+    Settings.setContextMenuItemPlugins(plugins);   
+    */ 
 	}
 
 	
@@ -225,7 +263,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 		return mLocalizer.msg("title","context menu");
 	}
 
-	
+	/*
 	public void settingsChanged(SettingsTab tab, Object obj) {
     Object[] currentPlugins=mList.getItems();
     Plugin[] installedPlugins=(Plugin[])obj;
@@ -254,7 +292,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     
    	
 	}
-  
+  */
   
 }
  

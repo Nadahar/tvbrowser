@@ -46,7 +46,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
+import tvbrowser.core.PluginStateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.filter.FilterChooser;
@@ -107,6 +109,24 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     
     add(mBtnPanel,BorderLayout.WEST);
     add(comboboxPanel,BorderLayout.EAST);
+    
+    PluginLoader.getInstance().addPluginStateListener(new PluginStateListener(){
+
+			public void pluginActivated(Plugin p) {				
+			  updateButtons();	
+			}
+
+			public void pluginDeactivated(Plugin p) {
+        updateButtons();				
+			}
+
+			public void pluginLoaded(Plugin p) {
+			}
+
+			public void pluginUnloaded(Plugin p) {
+			}
+    });
+    
   }
   
   public void updateButtons() {

@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
@@ -59,11 +60,26 @@ public class TvDataBase {
   private HashMap mTvDataHash;
   
   private ArrayList mListenerList;
+  
+  /** Contains date objects for each date for which we have a tv listing */
+  private HashSet mAvailableDateSet;
 
 
   private TvDataBase() {
     mTvDataHash = new HashMap();
     mListenerList = new ArrayList();
+    mAvailableDateSet = new HashSet();
+    updateAvailableDateSet();
+    
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener(){
+
+			public void tvDataUpdateStarted() {
+			}
+
+			public void tvDataUpdateFinished() {
+				updateAvailableDateSet();
+			}
+    });
   }
 
 
@@ -342,17 +358,42 @@ public class TvDataBase {
    * @return if the data is available.
    */
   public boolean dataAvailable(Date date) {
-    final String dateStr = date.getDateString();
+    
+    return mAvailableDateSet.contains(date);
+  }
+  
+  private void updateAvailableDateSet() {    
     
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
-        return name.endsWith(dateStr);
+        if (name.length()<8) return false;
+        String dateStr = name.substring(name.length()-8);
+        try {
+          int year = Integer.parseInt(dateStr.substring(0,4));
+          int month = Integer.parseInt(dateStr.substring(4,6));
+          int day = Integer.parseInt(dateStr.substring(6,8));
+        }catch(NumberFormatException e) {
+          return false;
+        }        
+        return true;
       }
     }; 
 
     String fList[] = new File(Settings.getTVDataDirectory()).list(filter);
+    for (int i=0;i<fList.length;i++) {
+      if (fList[i].length()>8) {
+        String dateStr = fList[i].substring(fList[i].length()-8);
+        try {
+          int year = Integer.parseInt(dateStr.substring(0,4));
+          int month = Integer.parseInt(dateStr.substring(4,6));
+          int day = Integer.parseInt(dateStr.substring(6,8));
+          mAvailableDateSet.add(new devplugin.Date(year,month,day));
+        }catch(NumberFormatException e) {                 
+        }
+      }      
+    }
 
-    return (fList != null) && (fList.length > 0);
+   
   }
   
   

@@ -138,7 +138,6 @@ public class UserFilter extends AbstractFilter {
       if (curToken!=null) {
         Node rule=rule();
         if (curToken!=null) {
-          System.out.println("PARSEREXCEPTION");
           //throw new ParserException(curToken.pos,mLocalizer.msg("EOLExpected","end of rule expected")); 
         }
         root=rule;

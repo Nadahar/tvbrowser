@@ -59,7 +59,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
             Plugin plugin=(Plugin)value;
             JPopupMenu menu=new JPopupMenu();
             
-            label.setEnabled(mActivatedPlugins.contains(plugin));
+            label.setEnabled(PluginLoader.getInstance().isActivePlugin(plugin));
+            //label.setEnabled(mActivatedPlugins.contains(plugin));
             label.setText(plugin.getInfo().getName());
            
             label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
@@ -94,7 +95,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   private DefaultListModel mListModel;
   private Collection mChangeListener;
   private PluginInfoPanel mPluginInfoPanel;
-  private Collection mActivatedPlugins;
+  //private Collection mActivatedPlugins;
   
   public PluginSettingsTab() {
     mChangeListener=new HashSet();
@@ -136,13 +137,14 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       }
     });
     
-    mActivatedPlugins=new HashSet();
-    Plugin pluginList[]=PluginManager.getInstance().getAvailablePlugins();
+    //mActivatedPlugins=new HashSet();
+    //Plugin pluginList[]=PluginManager.getInstance().getAvailablePlugins();
+    Plugin pluginList[] = PluginLoader.getInstance().getAllPlugins();
     for (int i=0;i<pluginList.length;i++) {
       mListModel.addElement(pluginList[i]);
-      if (PluginManager.getInstance().isInstalled(pluginList[i])) {
-        mActivatedPlugins.add(pluginList[i]);
-      }
+ //     if (PluginLoader.getInstance().isActivePlugin(pluginList[i])) {
+ //       mActivatedPlugins.add(pluginList[i]);
+ //     }
     }
     
     pluginListPanel.add(new JScrollPane(mList),BorderLayout.CENTER);
@@ -178,7 +180,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   private void updateBtns() {
     Plugin plugin=(Plugin)mList.getSelectedValue();
     mStartStopBtn.setEnabled(plugin!=null);
-    if (mActivatedPlugins.contains(plugin)) {
+    
+    if (PluginLoader.getInstance().isActivePlugin(plugin)) {
+   
+    
+   // if (mActivatedPlugins.contains(plugin)) {
       mStartStopBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
       mStartStopBtn.setText(mLocalizer.msg("deactivate",""));
     }else{
@@ -190,20 +196,28 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   
   private void onStartStopBtnClicked(Plugin plugin) {
     if (plugin!=null) {
-      if (mActivatedPlugins.contains(plugin)) {
-        mActivatedPlugins.remove(plugin);
-      }else{
-        mActivatedPlugins.add(plugin);
+      PluginLoader loader = PluginLoader.getInstance();
+      if (loader.isActivePlugin(plugin)) {
+        loader.deactivatePlugin(plugin);
       }
+      else {
+        loader.activatePlugin(plugin);
+      }
+      
+    //  if (mActivatedPlugins.contains(plugin)) {
+    //    mActivatedPlugins.remove(plugin);
+    //  }else{
+    //    mActivatedPlugins.add(plugin);
+    //  }
       mList.updateUI();
       updateBtns();          
-      Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
-      mActivatedPlugins.toArray(installedPluginList);
-      Iterator it=mChangeListener.iterator();
-      while (it.hasNext()) {
-        SettingsChangeListener listener=(SettingsChangeListener)it.next();
-        listener.settingsChanged(this,installedPluginList);
-      }
+   //   Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
+   //   mActivatedPlugins.toArray(installedPluginList);
+   //   Iterator it=mChangeListener.iterator();
+   //   while (it.hasNext()) {
+   //     SettingsChangeListener listener=(SettingsChangeListener)it.next();
+   //     listener.settingsChanged(this,installedPluginList);
+   //   }
     }    
   }
   
@@ -213,9 +227,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   }
 	
 	public void saveSettings() {
-    Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
-    mActivatedPlugins.toArray(installedPluginList);
-    PluginManager.getInstance().setInstalledPlugins(installedPluginList);    
+  //  Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
+  //  mActivatedPlugins.toArray(installedPluginList);
+  //  PluginManager.getInstance().setInstalledPlugins(installedPluginList);    
 	}
 
 	
