@@ -30,6 +30,9 @@ import devplugin.Program;
 /**
  * Creates a Dialog with a List of Programs
  * 
+ * TODO: Whats running in 15 min, at 22 o'clock
+ * TODO: refresh View
+ * 
  * @author bodo
  */
 public class ListViewDialog extends JDialog {
@@ -93,17 +96,11 @@ public class ListViewDialog extends JDialog {
                     menu.show(_programJList, e.getX() - 15, e.getY() - 15);
                 } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
                     int inx = _programJList.locationToIndex(e.getPoint());
-                    final Program p = (Program) _programJList.getModel().getElementAt(inx);
+                    Program p = (Program) _programJList.getModel().getElementAt(inx);
 
-                    final Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
+                    Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
                     if (plugin != null) {
-                        Runnable runLater = new Runnable() {
-
-                            public void run() {
-                                plugin.execute(p);
-                            }
-                        };
-                        new Thread(runLater).start();
+                        plugin.execute(p);
                     }
                 }
             }
