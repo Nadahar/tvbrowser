@@ -30,14 +30,12 @@ import java.io.*;
 import java.util.Properties;
 import java.util.jar.*;
 
-
 import javax.swing.Timer;
 import javax.swing.Icon;
 import java.io.InputStream;
 
-
-
 import util.exc.*;
+import util.ui.ImageUtilities;
 
 abstract public class Plugin {
   private static java.util.logging.Logger mLog
@@ -222,39 +220,9 @@ abstract public class Plugin {
   
   
   
-  /**
-   * Returns an Icon representing your plugin. You don't have to implement this
-   * method. Implement the getMarkIcon method.
-   *
-   */
-  final private Icon createIcon(String iconName) {
-    Icon result= null ;
-    if (iconName== null ) {
-      return null ;
-    }
-    
-    JarEntry entry=jarFile.getJarEntry(iconName);
-    if (entry== null ) {
-      System.out.println( "could not find icon '" +iconName+ "'" ); return null ;
-    }
-    try {
-      InputStream in=jarFile.getInputStream(entry); byte [] b= new byte [( int )entry.getSize()];
-      in.read(b);
-      in.close();
-      result= new javax.swing.ImageIcon(b);
-    } catch (java.io.IOException exc) {
-      String msg = mLocalizer.msg( "error.1" ,"Unable to load plugin icon from Jar.\n({0})" ,
-      jarFile.getName(), exc);
-      ErrorHandler.handle(msg, exc);
-    } return result;
-  }
-  
-  
-  
-  
   public final Icon getMarkIcon() {
     if (markIcon== null ) {
-      markIcon=createIcon(getMarkIconName());
+      markIcon = ImageUtilities.createImageIconFromJar(getMarkIconName(), getClass());
     }
     return markIcon;
   }
@@ -262,8 +230,8 @@ abstract public class Plugin {
   
   
   public final Icon getButtonIcon() {
-    if (buttonIcon== null ) {
-      buttonIcon=createIcon(getButtonIconName());
+    if (buttonIcon == null ) {
+      buttonIcon = ImageUtilities.createImageIconFromJar(getButtonIconName(), getClass());
     }
     return buttonIcon;
   }

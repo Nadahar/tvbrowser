@@ -174,6 +174,52 @@ public class IOUtilities {
   
   
   /**
+   * Lädt eine Datei aus einem Jar-File und gibt sie zurück.
+   * <P>
+   * Ist keine Datei mit diesem Namen im Jar-File, so wird versucht, sie vom
+   * Dateisystem zu laden.
+   *
+   * @param fileName Der Name der Datei. (Ist case-sensitive!).
+   * @param srcClass Eine Klasse, aus deren Jar-File das Image geladen werden soll.
+   *
+   * @throws IOException Wenn ein Fehler beim Laden der Datei auftrat.
+   */
+  public static byte[] loadFileFromJar(String fileName, Class srcClass)
+    throws IOException
+  {
+    if (fileName == null) throw new IllegalArgumentException("fileName == null");
+    if (fileName.length() == 0) throw new IllegalArgumentException("fileName is empty");
+    if (srcClass == null) srcClass = IOUtilities.class;
+
+    // Der Dateiname muss mit einem '/' anfangen, sonst wird er nicht gefunden.
+    if ((fileName.charAt(0) != '/') && (fileName.charAt(0) != '\\')) {
+      fileName = "/" + fileName;
+    }
+
+    InputStream in = srcClass.getResourceAsStream(fileName);
+    if (in == null) {
+      throw new IOException("Resource not found: '" + fileName + "'");
+    }
+
+    byte[] buffer = new byte[10240];
+    byte[] data = new byte[0];
+    int len;
+    while ((len = in.read(buffer)) != -1) {
+      // data Array vergrößern
+      byte[] oldData = data;
+      data = new byte[oldData.length + len];
+      System.arraycopy(oldData, 0, data, 0, oldData.length);
+
+      // Gerade gelesene Daten anhängen
+      System.arraycopy(buffer, 0, data, oldData.length, len);
+    }
+
+    return data;
+  }
+  
+  
+  
+  /**
    * Unzips a file from a ZIP-Archive (.zip, .jar).
    * <p>
    * Currently not used.
