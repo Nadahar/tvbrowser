@@ -42,7 +42,7 @@ import tvbrowser.ui.SkinPanel;
 class TVBrowserProperties extends java.util.Properties {
   
   private HashSet unconfirmedSettingItems=new HashSet();
-
+  
   public TVBrowserProperties() {
     super();
   }
@@ -178,7 +178,8 @@ public class Settings {
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
   public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
 
-
+  public static final int NEVER=0, ONSTARTUP=1;
+  
   private static final String SETTINGS_FILE="settings.prop";
   private static final String USER_DIR="tvbrowser";
 
@@ -538,19 +539,18 @@ public class Settings {
   	}
   }
 
-	public static int getAutomaticDownloadPeriod() {
-		String period=settings.getProperty("autodownloadperiod");
-		int result;
-		try {
-			result=Integer.parseInt(period);
-		} catch (NumberFormatException e) {
-			result=0;
+	public static int getAutomaticDownload() {
+		String autoDL=settings.getProperty("autodownload");
+		if ("startup".equals(autoDL)) {
+			return ONSTARTUP;
 		}
-		return result;  
+		else {
+			return NEVER;
+		}
 	}
 	
-	public static void setAutomaticDownloadPeriod(int period) {
-		settings.setProperty("autodownloadperiod",""+period);
+	public static void setAutomaticDownload(String autoDL) {
+		settings.setProperty("autodownload",autoDL);
 	}
 	
 	public static java.awt.Font getProgramTitleFont() {

@@ -1,7 +1,6 @@
 Changelog TVBrowser
 
 current:
-- delete expired tv data
 - Better readable text in Splash Screen
 - Error message when TV-Browser starts in wrong directory
 - Install all plugins by default
@@ -16,6 +15,7 @@ current:
 - specifiying a proxy supported
 - dialog on startup, when no tvdata were found
 - helpsystem added
+- settings: tv data tab implemented
 
 
 0.9.3:

@@ -58,8 +58,6 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
   private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
     mLocalizer.msg("autoDownload.never", "Never"),
     mLocalizer.msg("autoDownload.startUp", "When TV-Browser starts up"),
-    mLocalizer.msg("autoDownload.30", "Every 30 minutes"),
-    mLocalizer.msg("autoDownload.60", "Every 60 minutes")
   };
 
   private String[] MODE_MSG_ARR = new String[] {
@@ -68,7 +66,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
   };
 
 
-  private JComboBox mServiceCB, mTVDataLifespanCB, mBrowseModeCB;
+  private JComboBox mServiceCB, mTVDataLifespanCB, mBrowseModeCB, mAutoDownloadCB;
   private JButton mConfigBt;
   private JButton mChangeDataDirBt;
   private JButton mDeleteTVDataBt;
@@ -129,7 +127,11 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 
     msg = mLocalizer.msg("autoDownload", "Download automatically");
     browseModePn.add(new JLabel(msg));
-    browseModePn.add(new JComboBox(AUTO_DOWNLOAD_MSG_ARR));
+    mAutoDownloadCB=new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
+    if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
+    	mAutoDownloadCB.setSelectedIndex(1);
+    }
+    browseModePn.add(mAutoDownloadCB);
 
     msg = mLocalizer.msg("startIn", "Start in");
     browseModePn.add(new JLabel(msg));
@@ -173,7 +175,14 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 	Settings.setTVDataLifespan(getDaysFromTVDataLifespanCB());
 	
 	Settings.setStartupInOnlineMode(mBrowseModeCB.getSelectedIndex()==0);
-    
+   
+	int inx=mAutoDownloadCB.getSelectedIndex();
+	if (inx==0) {
+		Settings.setAutomaticDownload("never"); 
+	}else{
+		Settings.setAutomaticDownload("startup");
+	}
+   
   }
 
 
