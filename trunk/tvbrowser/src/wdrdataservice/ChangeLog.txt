@@ -1,10 +1,10 @@
 Changelog WdrDataService
 
 current:
--
+2.0: requires TVBrowser 0.96
 
 
-1.1: required TVBrowser 0.9.5
+1.1: required TVBrowser 0.95
 
 1.0: requires TVBrowser 0.93
 - initial version

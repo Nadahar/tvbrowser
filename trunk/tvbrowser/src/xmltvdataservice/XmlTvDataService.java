@@ -68,7 +68,12 @@ public class XmlTvDataService extends AbstractTvDataService {
   private static java.util.logging.Logger mLog
       = java.util.logging.Logger.getLogger(XmlTvDataService.class.getName());
 
-
+  private static final devplugin.PluginInfo INFO=new devplugin.PluginInfo(
+          "XMLTV",
+          "35 deutschsprachige Sender",
+          "Martin Oberhauser",
+          new Version(2,0)
+          );
 
   /**
    * Creates a new instance of XmlTvDataService.
@@ -76,10 +81,10 @@ public class XmlTvDataService extends AbstractTvDataService {
   public XmlTvDataService() {
   }
 
-  public devplugin.Version getVersion() {
-	  return new devplugin.Version(1,5);
+  public devplugin.PluginInfo getInfo() {
+    return INFO;
   }
-
+ 
   /**
    * Gets the localized name of this TV data service.
    */
@@ -323,19 +328,13 @@ public class XmlTvDataService extends AbstractTvDataService {
     }
     
     tvdataservice.MutableChannelDayProgram prog=programDispatcher.getChannelDayProgram(date,channel);
-    if (prog==null) {
-        System.out.println("prog is null");
-    }
-    else {
-      System.out.println("ok, prog is NOT null");
-    }
     // if we don't have the whole program, we delete the file. so we can
     // download it again later.
     if (prog!=null && !prog.isComplete()) {
     	file.delete();
-        System.out.println("must delete file");	
     }
     
   }
-
+  
+  
 }

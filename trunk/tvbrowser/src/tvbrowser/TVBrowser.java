@@ -126,6 +126,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       ErrorHandler.handle(msg, exc);
     }
     
+    
+      
+    
+    
+    
     SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
       new Color(63, 114, 133), Color.WHITE);
     UiUtilities.centerAndShow(splash);

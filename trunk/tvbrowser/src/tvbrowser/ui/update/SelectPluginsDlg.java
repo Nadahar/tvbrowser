@@ -270,7 +270,7 @@ class UpdateItemPanel extends JPanel implements ActionListener {
 		else if (item.getType()==UpdateItem.DATASERVICE) {
 			tvdataservice.TvDataService service=tvbrowser.core.TvDataServiceManager.getInstance().getDataService(item.getName());
 			if (service!=null) {
-				version=service.getVersion().toString();	
+				version=service.getInfo().getVersion().toString();	
 			}
 		}
 		
