@@ -59,7 +59,7 @@ public class ButtonPanel extends JPanel {
 	String[] buttonPluginArr = Settings.getButtonPlugins();
 		for (int i = 0; i < buttonPluginArr.length; i++) {
 		  final devplugin.Plugin plugin = PluginManager.getPlugin(buttonPluginArr[i]);
-		  if ((plugin != null) && PluginManager.isInstalled(plugin)) {
+		  if ((plugin != null) && PluginManager.isInstalled(plugin) && plugin.getButtonText()!=null) {
 			Icon icon = plugin.getButtonIcon();
 			JButton btn = new PictureButton(plugin.getButtonText(), icon);
 			//add(btn);

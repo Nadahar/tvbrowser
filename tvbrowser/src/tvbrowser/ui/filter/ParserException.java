@@ -48,7 +48,10 @@ public class ParserException extends Exception {
     }
     
     public String getMessage() {
+      if (mPos==-1) {
         return mMsg;
+      }
+      return "column "+mPos+": "+mMsg;
     }
     
     

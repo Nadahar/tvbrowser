@@ -38,7 +38,7 @@ import tvbrowser.ui.filter.filters.*;
 import tvbrowser.ui.filter.*;
 
 
-public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener {
+public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener {
 	
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(EditFilterDlg.class);
@@ -49,12 +49,15 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   private JTextField mFilterNameTF, mFilterRuleTF;
   private DefaultListModel mRuleListModel;
   private Filter mFilter=null;
+  private JLabel mFilterRuleErrorLb, mColLb;
+  private String mFilterName=null;
     
 	public EditFilterDlg(JFrame parent, Filter filter) {
 	
 		super(parent,true);
 		mParent=parent;
     mFilter=filter;
+    
        
         
     JPanel contentPane=(JPanel)getContentPane();
@@ -67,6 +70,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         setTitle(mLocalizer.msg("titleNew", "Create filter"));
     }else{
         setTitle(mLocalizer.msg("titleEdit", "Edit filter {0}", filter.getName()));
+        mFilterName=filter.getName();
     }
     
     JPanel northPanel=new JPanel();
@@ -84,6 +88,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     mFilterRuleTF=new JTextField();
     mFilterRuleTF.getDocument().addDocumentListener(this);
+    mFilterRuleTF.addCaretListener(this);
     panel=new JPanel(new BorderLayout(7,7));
     panel1=new JPanel(new BorderLayout());
     panel.add(new JLabel(mLocalizer.msg("ruleString", "Filter rule:")),BorderLayout.WEST);
@@ -94,10 +99,13 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     panel.add(panel1,BorderLayout.CENTER);
     northPanel.add(panel);
     northPanel.add(mFilterRuleTF);
-    
-   // JLabel exampleLb=new JLabel("example: component1 or (component2 and not component3)");
-    //exampleLb.setBorder(BorderFactory.createEmptyBorder(0,30,0,0));
-    //northPanel.add(exampleLb);
+    mFilterRuleErrorLb=new JLabel();
+    mFilterRuleErrorLb.setForeground(Color.red);
+    panel=new JPanel(new BorderLayout(7,7));
+    panel.add(mFilterRuleErrorLb,BorderLayout.WEST);
+    mColLb=new JLabel("0");
+    panel.add(mColLb,BorderLayout.EAST);
+    northPanel.add(panel);
     
     
     JPanel filterComponentsPanel=new JPanel(new BorderLayout(7,7));
@@ -154,85 +162,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     contentPane.add(filterComponentsPanel,BorderLayout.CENTER);
     contentPane.add(buttonPanel,BorderLayout.SOUTH);
     
-    /*
-    JPanel northPanel=new JPanel(new BorderLayout());
-    JPanel filterNamePanel=new JPanel();
-    filterNamePanel.setLayout(new BoxLayout(filterNamePanel,BoxLayout.X_AXIS));
-    
-    filterNamePanel.add(new JLabel("Filter name:"));
-    mFilterNameTF=new JTextField(30);
-    mFilterNameTF.getDocument().addDocumentListener(this);
-    filterNamePanel.add(mFilterNameTF);
-    northPanel.add(filterNamePanel,BorderLayout.WEST);
-    
-    JPanel southPanel=new JPanel();
-    southPanel.setLayout(new BoxLayout(southPanel,BoxLayout.Y_AXIS));
-    
-    JPanel rulePanel=new JPanel(new BorderLayout());    
-    rulePanel.add(new JLabel("Filter rule:"),BorderLayout.WEST);
-    mFilterRuleTF=new JTextField();
-    mFilterRuleTF.getDocument().addDocumentListener(this);
-    rulePanel.add(mFilterRuleTF,BorderLayout.CENTER);
-    rulePanel.add(new JLabel("example: rule1 or (rule2 and not rule3)"),BorderLayout.EAST);
-    
-    southPanel.add(rulePanel);
-    
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-
-    mOkBtn=new JButton("OK");
-    buttonPn.add(mOkBtn);
-    mOkBtn.addActionListener(this);
-    getRootPane().setDefaultButton(mOkBtn);
-
-    mCancelBtn=new JButton("Cancel");
-    mCancelBtn.addActionListener(this);
-    buttonPn.add(mCancelBtn);
-        
-    southPanel.add(buttonPn);    
-        
-        
-    JPanel centerPanel =new JPanel(new BorderLayout());
-    
-    JPanel btnPanel=new JPanel(new BorderLayout());
-    JPanel panel1=new JPanel(new GridLayout(0,1));
-    
-    mNewBtn=new JButton("new");
-    mEditBtn=new JButton("edit");
-    mRemoveBtn=new JButton("remove");
-    
-    mNewBtn.addActionListener(this);
-    mEditBtn.addActionListener(this);
-    mRemoveBtn.addActionListener(this);
-    
-    panel1.add(mNewBtn);
-    panel1.add(mEditBtn);    
-    panel1.add(mRemoveBtn);
-    
-    btnPanel.add(panel1,BorderLayout.NORTH);
-    
-    centerPanel.add(btnPanel,BorderLayout.EAST);
-    
-    mRuleListModel=new DefaultListModel();
-    
-    
-    mRuleListBox=new JList(mRuleListModel);
-    mRuleListBox.addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-            updateBtns();    
-        }
-    });
-    
-    mRuleListBox.setCellRenderer(new FilterRuleListCellRenderer());
-    
-    centerPanel.add(mRuleListBox,BorderLayout.CENTER);    
-        
-        
-    contentPane.add(northPanel,BorderLayout.NORTH);
-    contentPane.add(southPanel,BorderLayout.SOUTH);
-    contentPane.add(centerPanel,BorderLayout.CENTER);
-   
-   */
-   
+      
    
     if (mFilter!=null) {
         mFilterNameTF.setText(mFilter.getName());
@@ -257,17 +187,14 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }
       Object item=mRuleListBox.getSelectedValue();
       mEditBtn.setEnabled(item!=null);
-      mRemoveBtn.setEnabled(item!=null);
+      mRemoveBtn.setEnabled(item!=null);      
       
       boolean validRule=true;
       try {
         Filter.testTokenTree(mFilterRuleTF.getText());
-        mFilterRuleTF.setBackground(Color.white);
-        //          System.out.println("ok");
-        //          mOkBtn.setEnabled(true);
-           // mFilterRuleTF.updateUI();
+        mFilterRuleErrorLb.setText("");
       }catch(ParserException e) {
-        mFilterRuleTF.setBackground(Color.red); 
+        mFilterRuleErrorLb.setText(e.getMessage()); 
         validRule=false;
       }
       
@@ -331,26 +258,30 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           updateBtns();
         }
       }else if (o==mOkBtn) {
-          if (mFilter==null) {
-              mFilter=new Filter(mFilterNameTF.getText());
+          String filterName=mFilterNameTF.getText();
+          if (!filterName.equalsIgnoreCase(mFilterName) && FilterList.containsFilter(filterName)) {
+            JOptionPane.showMessageDialog(this,"Filter '"+filterName+"' already exists.");
           }
           else {
+            if (mFilter==null) {
+              mFilter=new Filter(mFilterNameTF.getText());
+            }
+            else {
               mFilter.setName(mFilterNameTF.getText());
-          }
+            }
           
-          java.util.Enumeration enum=mRuleListModel.elements();
-          while (enum.hasMoreElements()) {
-              //mFilter.addRule((FilterComponent)enum.nextElement());
+            java.util.Enumeration enum=mRuleListModel.elements();
+            while (enum.hasMoreElements()) {
               FilterComponentList.add((FilterComponent)enum.nextElement());
-          }
+            }
          
-          try {
-            mFilter.setRule(mFilterRuleTF.getText());
-            hide();
-          }catch(ParserException exc) {              
-            JOptionPane.showMessageDialog(this,mLocalizer.msg("invalidRule", "Invalid rule: ") +exc.getMessage());
+            try {
+              mFilter.setRule(mFilterRuleTF.getText());
+              hide();
+            }catch(ParserException exc) {              
+              JOptionPane.showMessageDialog(this,mLocalizer.msg("invalidRule", "Invalid rule: ") +exc.getMessage());
+            }
           }
-          
           
       }else if (o==mCancelBtn) {
           hide();
@@ -374,6 +305,13 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
       public void removeUpdate(DocumentEvent e) {
           updateBtns();
+      }
+      
+      
+      public void caretUpdate (javax.swing.event.CaretEvent e) {
+        
+        mColLb.setText("pos: "+mFilterRuleTF.getCaretPosition());
+      
       }
 	
 }
