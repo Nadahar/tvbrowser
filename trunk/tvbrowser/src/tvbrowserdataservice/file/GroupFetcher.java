@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import tvbrowserdataservice.ChannelGroup;
 import tvbrowserdataservice.TvBrowserDataService;
@@ -50,7 +51,7 @@ public class GroupFetcher {
      * Loads the Default-Groups
      * @return ArrayList with Default-Groups
      */
-    public ArrayList getChannelGroups() {
+    public ArrayList getChannelGroups(Properties settings) {
         
         ArrayList groups = new ArrayList();
         
@@ -60,7 +61,17 @@ public class GroupFetcher {
             while ((str = reader.readLine()) != null) {
                 if (str.length() > 0) {
                     String[] ex = str.split(";");
-                    ChannelGroup group = new ChannelGroup(TvBrowserDataService.getInstance(), ex[0], new String[] {ex[1]});
+                    System.out.println(str + "---" + ex.length);
+                    
+                    ChannelGroup group = new ChannelGroup(TvBrowserDataService.getInstance(), ex[0], new String[] {ex[1]}, settings);
+
+                    if (ex.length > 2)
+                        group.setProviderName(ex[2]);
+                    if (ex.length > 3) 
+                        group.setProviderId(ex[3]);
+                    if (ex.length > 4) 
+                        group.setProviderWebPage(ex[4]);
+
                     groups.add(group);
                 }
             }

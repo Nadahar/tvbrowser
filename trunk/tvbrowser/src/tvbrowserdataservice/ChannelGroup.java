@@ -69,6 +69,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     private HashSet mChannels;
 
+    /**
+     * Settings for storing changes in ProviderName/Id
+     */
+    private Properties mSettings;
+    
     private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelGroup.class.getName());
 
     /** The localizer for this class. */
@@ -80,12 +85,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     private static final int MAX_LAST_UPDATE_DAYS = 5;
 
-    public ChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls) {
+    public ChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls, Properties settings) {
         mID = id;
         mDataService = dataservice;
         mMirrorUrlArr = mirrorUrls;
         mChannels = new HashSet();
         mDataDir = dataservice.getDataDir();
+        mSettings = settings;
     }
 
     public String[] getMirrorArr() {
@@ -464,4 +470,52 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     }
 
+    /**
+     * Set the Provider-Name
+     * @param provider
+     */
+    public void setProviderName(String provider) {
+        mSettings.setProperty(mID + "_provider", provider);
+    }
+
+    /**
+     * Get the Name of the Provider
+     * @return name of the Provider
+     */
+    public String getProviderName() {
+        return mSettings.getProperty(mID + "_provider");
+    }
+    
+    /**
+     * Set the Id of the Provider in the TvBrowser-Database
+     * @param id Id of the provider
+     */
+    public void setProviderId(String id) {
+        mSettings.setProperty(mID + "_providerId", id);
+    }
+    
+    /**
+     * Get the Id of the Provider in the TvBrowser-Database
+     * @return Id of the Provider in the TvBrowser-Database
+     */
+    public String getProviderId() {
+        return mSettings.getProperty(mID + "_providerId");
+    }
+    
+    /**
+     * Set the WebPage of the Provider
+     * @param url WebPage of the Provider
+     */
+    public void setProviderWebPage(String url) {
+        mSettings.setProperty(mID + "_providerweb", url);
+    }
+    
+    /**
+     * Get the WebPage of the Provider
+     * @return WebPage of the Provider 
+     */
+    public String getProviderWebPage() {
+        return mSettings.getProperty(mID + "_providerweb");
+    }
+    
 }

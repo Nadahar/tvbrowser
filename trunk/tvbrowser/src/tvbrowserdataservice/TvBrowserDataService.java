@@ -375,7 +375,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
         
         ChannelGroup[] result = new ChannelGroup[DEFAULT_CHANNEL_GROUP_NAMES.length];
         for (int i = 0; i < DEFAULT_CHANNEL_GROUP_NAMES.length; i++) {
-            result[i] = new ChannelGroup(this, DEFAULT_CHANNEL_GROUP_NAMES[i], DEFAULT_CHANNEL_GROUP_MIRRORS[i]);
+            result[i] = new ChannelGroup(this, DEFAULT_CHANNEL_GROUP_NAMES[i], DEFAULT_CHANNEL_GROUP_MIRRORS[i], mSettings);
         }
         return result;
 
@@ -424,14 +424,14 @@ public class TvBrowserDataService extends AbstractTvDataService {
             groupNamesArr = DEFAULT_CHANNEL_GROUP_NAMES;
             for (int i = 0; i < groupNamesArr.length; i++) {
                 String[] groupUrlArr = DEFAULT_CHANNEL_GROUP_MIRRORS[i];
-                mChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr));
+                mChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr, mSettings));
             }
         } else {
             groupNamesArr = groupNames.split(":");
             for (int i = 0; i < groupNamesArr.length; i++) {
                 String groupUrls = settings.getProperty("group_" + groupNamesArr[i], "");
                 String[] groupUrlArr = groupUrls.split(";");
-                mChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr));
+                mChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr, mSettings));
             }
 
         }
@@ -556,7 +556,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     private void checkForNewGroups() {
         GroupFetcher fetcher = new GroupFetcher();
         
-        ArrayList groups = fetcher.getChannelGroups();
+        ArrayList groups = fetcher.getChannelGroups(mSettings);
         
         if (groups != null) {
             
@@ -641,7 +641,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
         for (int i = 0; i < groupNamesArr.length; i++) {
             String groupUrls = mSettings.getProperty("group_" + groupNamesArr[i], "");
             String[] groupUrlArr = groupUrls.split(";");
-            mDefaultChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr));
+            mDefaultChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr, mSettings));
         }
     }
     
