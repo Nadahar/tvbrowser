@@ -1,0 +1,321 @@
+/*
+* TV-Browser
+* Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+
+ /**
+  * TV-Browser
+  * @author Martin Oberhauser
+  */
+
+package tvbrowser.core;
+
+import java.util.*;
+import java.io.*;
+import javax.swing.*;
+import java.awt.Color;
+
+
+/**
+ * The Settings class provides access to the settings of the whole application
+ * (except the plugins).
+ */
+
+public class Settings {
+
+  private static Properties settings=null;
+  public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
+  public static final int NONE=0, WALLPAPER=1, COLUMNS=2;
+  public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
+
+
+  private static final String SETTINGS_FILE="settings.prop";
+  private static final String USER_DIR="tvbrowser";
+  public static String DATA_DIR="tvdata";
+
+
+
+  /**
+   * Returns the user directory. (e.g.: ~/tvbrowser/)
+   */
+  public static String getUserDirectoryName() {
+    String dir=System.getProperty("user.home","");
+    String fileSeparator=System.getProperty("file.separator");
+
+    if (!"".equals(dir)) {
+      dir=dir+fileSeparator+USER_DIR;
+    }else{
+      dir=USER_DIR;
+    }
+
+    return dir;
+  }
+
+  /**
+   * Store all settings. This method is called on quitting the application.
+   */
+  public static void storeSettings() throws IOException {
+    File f=new File(getUserDirectoryName());
+    if (!f.exists()) {
+      f.mkdirs();
+    }
+    settings.store(new FileOutputStream(new File(getUserDirectoryName(),SETTINGS_FILE)),"settings");
+  }
+
+  /**
+   * Reads the settings from settings file. If there is no settings file, default
+   * settings are used.
+   */
+  public static void loadSettings() {
+    settings=new Properties();
+    try {
+      settings.load(new FileInputStream(new File(getUserDirectoryName(),SETTINGS_FILE)));
+    }catch (IOException e) {
+      Logger.message("Settings.loadSettings","no user settings found. using default user settings");
+    }finally{
+      String value=settings.getProperty("subscribed","1,2,3,4,5");
+      int pos=0;
+      int last=0, cur=0, cnt=0;
+      int channel;
+      Channel ch;
+      String a;
+      while (cur<value.length()) {
+        cur=value.indexOf(',',last);
+        if (cur==-1) { cur=value.length(); }
+        a=value.substring(last,cur);
+        channel=Integer.parseInt(a);
+        ch=ChannelList.getChannel(channel);
+        if (ch!=null) {
+          ch.setPos(cnt++);
+        }
+        cur++;
+        last=cur;
+      }
+    }
+  }
+
+
+
+  /**
+   * Sets the subscribed channels. (e.g.: "1,5,3,8,12,7")
+   */
+  public static void setSubscribedChannels(String channels) {
+    settings.setProperty("subscribed",channels);
+  }
+
+  /**
+   * Returns the background mode of the TV table.
+   * Possible values are COLUMN, WALLPAPER and NONE
+   */
+  public static int getTableBGMode() {
+    String mode=settings.getProperty("tablebgmode","cols");
+
+    if ("cols".equals(mode)) {
+      return COLUMNS;
+    }else if ("wallpaper".equals(mode)) {
+      return WALLPAPER;
+    }
+    return NONE;
+  }
+
+  public static void setTableBGMode(int mode) {
+    if (mode==COLUMNS) {
+      settings.setProperty("tablebgmode","cols");
+    }else if (mode==WALLPAPER) {
+      settings.setProperty("tablebgmode","wallpaper");
+    }else {
+      settings.setProperty("tablebgmode","none");
+    }
+  }
+
+  /**
+   * Returns the background picture of the TV table.
+   */
+  public static String getTableSkin() {
+    return settings.getProperty("tablebackground","imgs/columns.jpg");
+  }
+
+  public static void setTableSkin(String value) {
+    settings.setProperty("tablebackground",value);
+  }
+
+  public static boolean isTimeBtnVisible() {
+    return "visible".equals(settings.getProperty("timebutton","visible"));
+  }
+  
+  public static boolean isPrevNextBtnVisible() {
+    return "visible".equals(settings.getProperty("prevnextbutton","visible"));
+  }
+
+  public static void setPrevNextBtnVisible(boolean value) {
+    settings.setProperty("prevnextbutton",value?"visible":"hidden");
+  }
+
+  public static boolean isSearchBtnVisible() {
+    return "visible".equals(settings.getProperty("searchbutton","visible"));
+  }
+
+  public static void setSearchBtnVisible(boolean value) {
+    settings.setProperty("searchbutton",value?"visible":"hidden");
+  }
+
+  public static boolean isUpdateBtnVisible() {
+    return "visible".equals(settings.getProperty("updatebutton","visible"));
+  }
+
+  public static void setUpdateBtnVisible(boolean value) {
+    settings.setProperty("updatebutton",value?"visible":"hidden");
+  }
+
+  public static boolean isPreferencesBtnVisible() {
+    return "visible".equals(settings.getProperty("updatebutton","hidden"));
+  }
+
+  public static void setPreferencesBtnVisible(boolean value) {
+    settings.setProperty("preferencesbutton",value?"visible":"hidden");
+  }
+
+  public static int getButtonSettings() {
+    String val=settings.getProperty("buttontype","text&icon");
+    if ("text&icon".equals(val)) {
+      return TEXT_AND_ICON;
+    }else if ("text".equals(val)) {
+      return TEXT_ONLY;
+    }
+    return ICON_ONLY;
+  }
+
+  public static void setButtonSettings(int type) {
+    if (type==TEXT_AND_ICON) {
+      settings.setProperty("buttontype","text&icon");
+    }else if (type==TEXT_ONLY) {
+      settings.setProperty("buttontype","text");
+    }else {
+      settings.setProperty("buttontype","icon");
+    }
+  }
+
+  public static String getApplicationSkin() {
+    return settings.getProperty("applicationskin","imgs/background.jpg");
+  }
+
+  public static void setApplicationSkin(String value) {
+    settings.setProperty("applicationskin",value);
+  }
+
+  public static boolean useApplicationSkin() {
+    String b=settings.getProperty("useapplicationskin","yes");
+    return ("yes".equals(b));
+  }
+
+  public static void setUseApplicationSkin(boolean value) {
+    if (value) {
+      settings.setProperty("useapplicationskin","yes");
+    }else{
+      settings.setProperty("useapplicationskin","no");
+    }
+  }
+
+  public static void setLookAndFeel(String lf) {
+
+    settings.setProperty("lookandfeel",lf);
+  }
+
+  public static String getLookAndFeel() {
+    String result=settings.getProperty("lookandfeel");
+
+    if (result==null) {
+      result=UIManager.getCrossPlatformLookAndFeelClassName();
+    }
+    return result;
+  }
+
+
+  public static void setColumnWidth(int width) {
+    settings.setProperty("columnwidth",""+width);
+  }
+
+  public static int getColumnWidth() {
+    String s=settings.getProperty("columnwidth","200");
+    int res=0;
+    try {
+      res=Integer.parseInt(s);
+    }catch(NumberFormatException e) {
+      return 200;
+    }
+    return res;
+  }
+
+
+  private static Object[] getListProperty(String key, String defaultValue) {
+    String s=settings.getProperty(key,defaultValue);
+    ArrayList result=new ArrayList();
+    int pos=0;
+    int last=0, cur=0, cnt=0;
+    int value;
+    Channel ch;
+    String a;
+    while (cur<s.length()) {
+      cur=s.indexOf(',',last);
+      if (cur==-1) { cur=s.length(); }
+      a=s.substring(last,cur);
+      value=Integer.parseInt(a.trim());
+      result.add(new Integer(value));
+      cur++;
+      last=cur;
+    }
+    return result.toArray();
+  }
+
+  /**
+   * Returns all installed plugins as an array of Strings
+   */
+  public static Object[] getInstalledPlugins() {
+
+    String s=settings.getProperty("plugins");
+    if (s==null) return new String[0];
+
+    ArrayList result=new ArrayList();
+    int cur=0, last=0;
+    String a;
+    while (cur<s.length()) {
+      cur=s.indexOf(',',last);
+      if (cur==-1) {
+        cur=s.length();
+      }
+      result.add(s.substring(last,cur).trim());
+      cur++;
+      last=cur;
+    }
+
+    return result.toArray();
+  }
+
+  public static void setInstalledPlugins(Object[] plugins) {
+    if (plugins==null || plugins.length==0) return;
+
+    String line="";
+
+    for (int i=0;i<plugins.length-1;i++) {
+      line+=plugins[i]+",";
+    }
+    line+=plugins[plugins.length-1];
+
+    settings.setProperty("plugins",line);
+  }
+}
