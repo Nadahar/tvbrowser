@@ -107,6 +107,13 @@ public class TVBrowser {
   /** State of the Window (max/normal) */
   private static int mState;
   
+  /**
+   * Specifies whether the save thread should stop. The save thread saves every
+   * 5 minutes the settings.
+   */
+  private static boolean mSaveThreadShouldStop;
+
+
   private static void showUsage() {
     
     System.out.println("command line options:");
@@ -466,19 +473,27 @@ public class TVBrowser {
     }
     
     
-    /* Every 5 minutes we store all the settings in case of an unexpected failure */
-    new javax.swing.Timer(1000*60*5, new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        flushSettings();
+    // Every 5 minutes we store all the settings so they are stored in case of
+    // an unexpected failure
+    Thread saveThread = new Thread() {
+      public void run() {
+        mSaveThreadShouldStop = false;
+        while (! mSaveThreadShouldStop) {
+          try {
+            Thread.sleep(5 * 60 * 1000);
+          }
+          catch (Exception exc) {}
+          
+          flushSettings();
+        }
       }
-    }).start();
-    
-    
+    };
+    saveThread.setPriority(Thread.MIN_PRIORITY);
+    saveThread.start();
   }
   
   
-  public static synchronized void flushSettings() {    
-    
+  public static synchronized void flushSettings() {
     final PluginLoader pl = PluginLoader.getInstance();
     devplugin.Plugin[] p = PluginLoader.getInstance().getActivePlugins();
     for (int i=0; i<p.length; i++) {
@@ -652,6 +667,17 @@ public class TVBrowser {
     };
   }
 
+  
+  /**
+   * Called when TV-Browser shuts down.
+   * <p>
+   * Stops the save thread and saves the settings.
+   */
+  public static void shutdown() {
+    mSaveThreadShouldStop = true;
+    flushSettings();
+  }
+  
 
   public static void updateProxySettings() {
     String httpHost = "", httpPort = "", httpUser = "", httpPassword = "";
