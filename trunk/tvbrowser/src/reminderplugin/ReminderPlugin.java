@@ -115,7 +115,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     String name = mLocalizer.msg( "pluginName" ,"Reminder" );
     String desc = mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion." );
     String author = "Martin Oberhauser (darras@users.sourceforge.net)" ;
-    return new PluginInfo(name, desc, author, new Version(1, 5));
+    return new PluginInfo(name, desc, author, new Version(1, 6));
   }
   
   
