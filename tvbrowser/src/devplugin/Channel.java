@@ -235,7 +235,7 @@ public class Channel {
   public boolean equals(Object obj) {
     if (obj instanceof Channel) {
       Channel cmp = (Channel) obj;
-      return (mDataService == cmp.mDataService) && (mId == cmp.mId);
+      return (mDataService.equals(cmp.mDataService)) && (mId.equals(cmp.mId));
     }
 
     return false;

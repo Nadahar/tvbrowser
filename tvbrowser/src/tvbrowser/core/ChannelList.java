@@ -211,7 +211,7 @@ public class ChannelList {
 	if (channel==null) return false;
 	for (int i=0;i<mSubscribedChannels.size();i++) {
 	  Channel ch=(Channel)mSubscribedChannels.get(i);
-	  if (ch!=null && ch.getId()==channel.getId() && ch.getDataService().equals(channel.getDataService())) {
+	  if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataService().equals(channel.getDataService())) {
 		return true;
 	  }
 	}
