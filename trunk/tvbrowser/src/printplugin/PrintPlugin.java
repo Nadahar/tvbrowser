@@ -75,7 +75,7 @@ public class PrintPlugin extends devplugin.Plugin
          if (programIter == null)
          {
             JOptionPane.showMessageDialog(null,
-                                          mLocalizer.msg("nodata" ,"Nox printer"),
+                                          mLocalizer.msg("nodata" ,"No data"),
                                           mLocalizer.msg("printProgram" ,"Print program"),
                                           JOptionPane.ERROR_MESSAGE);
             start = false;
@@ -84,7 +84,7 @@ public class PrintPlugin extends devplugin.Plugin
       else
       {
             JOptionPane.showMessageDialog(null,
-                                          mLocalizer.msg("nodata" ,"Nox printer"),
+                                          mLocalizer.msg("nochannel" ,"No Channels"),
                                           mLocalizer.msg("printProgram" ,"Print program"),
                                           JOptionPane.ERROR_MESSAGE);
             start = false;

@@ -12,4 +12,4 @@ Version 0.2
 4.) Querdruck (Landscape) eingebaut.
 5.) Anpassungen an TV-Browser 0.9.6
 6.) Diverse Fehlerabfragen eingebaut.
-   
+7.) Fehlertexte erweitert.   
