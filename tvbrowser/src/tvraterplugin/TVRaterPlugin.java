@@ -19,11 +19,11 @@
 
 package tvraterplugin;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.util.Properties;
 
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -38,9 +38,10 @@ import devplugin.Version;
 public class TVRaterPlugin extends devplugin.Plugin {
 	private Properties _settings;
 	private Point _location = null;
-	private Dimension _size = null;
 
-	private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVRaterPlugin.class);
+	private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterPlugin.class);
+
+	public static TVRaterDB tvraterDB = new TVRaterDB();
 
 	public String getContextMenuItemText() {
 		return mLocalizer.msg("contextMenuText", "View rating");
@@ -62,22 +63,13 @@ public class TVRaterPlugin extends devplugin.Plugin {
 			public void componentMoved(ComponentEvent e) {
 				e.getComponent().getLocation(_location);
 			}
-
-			public void componentResized(ComponentEvent e) {
-				e.getComponent().getSize(_size);
-			}
-
 		});
 
-		if (_size != null) {
-			dlg.setSize(_size);
-		}
 		if (_location != null) {
 			dlg.setLocation(_location);
 			dlg.show();
 		} else {
 			UiUtilities.centerAndShow(dlg);
-			_size = dlg.getSize();
 			_location = dlg.getLocation();
 		}
 	}
