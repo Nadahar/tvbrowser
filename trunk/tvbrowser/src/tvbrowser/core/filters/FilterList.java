@@ -41,6 +41,10 @@ public class FilterList {
   private final String FILTER_INDEX="filter.index";
   public static final String FILTER_DIRECTORY=Settings.getUserDirectoryName()+"/filters";
 
+
+  private static java.util.logging.Logger mLog
+      = java.util.logging.Logger.getLogger(FilterList.class.getName());
+
   public FilterList() {
     
            
@@ -76,7 +80,15 @@ public class FilterList {
     
     if (fileList!=null) {
       for (int i=0;i<fileList.length;i++) {
-        filterList.add(new UserFilter(fileList[i]));
+        UserFilter filter=null;
+        try {
+          filter = new UserFilter(fileList[i]);
+        }catch(ParserException e) {
+          mLog.warning("error parsing filter from file "+fileList[i]+"; exception: "+e);
+        }
+        if (filter!=null) {
+          filterList.add(filter);
+        }
       }
     }
     

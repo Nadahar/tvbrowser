@@ -83,7 +83,7 @@ public class UserFilter implements devplugin.ProgramFilter {
     mName=name;
   }
 
-  public UserFilter(File file) {
+  public UserFilter(File file) throws ParserException {
          mFile=file;
          ObjectInputStream in=null;
          try {
@@ -103,11 +103,11 @@ public class UserFilter implements devplugin.ProgramFilter {
            in.close();
          }catch(IOException e) {}
         
-         try {
+       //  try {
              createTokenTree();            
-         }catch (ParserException e) {
-             ErrorHandler.handle("Error parsing filter rule",e);
-         }
+       //  }catch (ParserException e) {
+       //      ErrorHandler.handle("Error parsing filter rule",e);
+       //  }
         
      }
     
