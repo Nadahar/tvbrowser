@@ -237,7 +237,11 @@
 			<fileset dir="${txt.dir}" includes="website.url"/>
     </copy>
 
-    <mkdir dir="${runtime.dir}/tvdata"/>
+ 
+		<mkdir dir="${runtime.dir}/help"/>
+		<copy todir="${runtime.dir}/help">
+			<fileset dir="${src.dir}/help"/>
+		</copy>
   </target>
 
 
