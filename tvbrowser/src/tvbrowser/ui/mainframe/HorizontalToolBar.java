@@ -28,6 +28,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -36,10 +37,13 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
 import tvbrowser.core.PluginManager;
@@ -76,6 +80,26 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     JPanel comboboxPanel=new JPanel(new GridLayout(0,1));
     mChannelChooserModel=new DefaultComboBoxModel();
     mChannelChooser=new JComboBox(mChannelChooserModel);
+    mChannelChooser.setMaximumRowCount(25);
+    mChannelChooser.setRenderer(new DefaultListCellRenderer() {
+          public Component getListCellRendererComponent(JList list, Object value,
+            int index, boolean isSelected, boolean cellHasFocus) {
+            
+              JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+                                                 index, isSelected, cellHasFocus);
+
+              if (value instanceof Channel) {
+                label.setText(((Channel)value).getName());
+              }
+              else {
+                label.setText(value.toString());
+              }
+
+              return label;
+              }
+
+    
+        });
     updateChannelChooser();
     mChannelChooser.addActionListener(this);
     comboboxPanel.add(mChannelChooser);
