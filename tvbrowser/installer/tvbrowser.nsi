@@ -94,6 +94,14 @@ Section "${PROG_NAME} (erforderlich)"
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
+	
+
+	SetOutPath "$INSTDIR\help\de"
+	File "${RUNTIME_DIR}\help\de\*.*"
+
+	SetOutPath "$INSTDIR\help\default"
+	File "${RUNTIME_DIR}\help\default\*.*"
+
   
   CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
