@@ -26,15 +26,14 @@
 
 package searchplugin;
 
-import java.awt.Color;
-import java.awt.Component;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.FlowLayout;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+
 
 import util.exc.*;
 import util.ui.*;
@@ -83,7 +82,7 @@ public class SearchDialog extends JDialog {
    * @param parent The dialog's parent.
    */
   public SearchDialog(Frame parent) {
-    super(parent);
+    super(parent,true);
     
     String msg;
     JPanel p1;

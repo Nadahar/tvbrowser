@@ -86,4 +86,6 @@ public interface PluginManager {
 
   public tvdataservice.TvDataService getDataService(String dataServiceClassName);
 
+  public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller);
+
 }

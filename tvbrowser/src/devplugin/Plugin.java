@@ -32,7 +32,6 @@ import java.util.jar.*;
 
 import javax.swing.Timer;
 import javax.swing.Icon;
-import java.io.InputStream;
 
 import util.exc.*;
 import util.ui.ImageUtilities;

@@ -766,4 +766,34 @@ public static void deleteExpiredFiles(int lifespan) {
     return TvDataServiceManager.getInstance().getDataService(className);
   }
 
+
+  /**
+   * Creates a context menu containg all subscribed plugins that support context
+   * menues.
+   *
+   * @return a plugin context menu.
+   */
+  public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller) {
+	javax.swing.JPopupMenu menu = new javax.swing.JPopupMenu();
+	devplugin.Plugin[] pluginArr = PluginManager.getInstalledPlugins();
+	for (int i = 0; i < pluginArr.length; i++) {
+	  final devplugin.Plugin plugin = pluginArr[i];
+	  if (!plugin.equals(caller)) {
+		String text = plugin.getContextMenuItemText();
+		if (text != null) {
+		  javax.swing.JMenuItem item = new javax.swing.JMenuItem(text);
+		  item.setIcon(plugin.getMarkIcon());
+		  item.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent event) {
+			  plugin.execute(program);
+			}
+		  });
+		  menu.add(item);
+		}
+	  }
+	}
+	return menu;
+  }
+
+
 }
