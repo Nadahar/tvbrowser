@@ -95,7 +95,7 @@ public class VersionProperty extends Property {
   }
     
     
-  void clearCache() {
+  protected void clearCache() {
     mCachedValue = null;
   }
 

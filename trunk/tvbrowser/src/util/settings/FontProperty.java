@@ -100,7 +100,7 @@ public class FontProperty extends Property {
   }
     
     
-  void clearCache() {
+  protected void clearCache() {
     mCachedValue = null;
   }
 

@@ -95,7 +95,7 @@ public class StringProperty extends Property {
   }
   
   
-  void clearCache() {
+  protected void clearCache() {
     mCachedValue = null;
   }
 

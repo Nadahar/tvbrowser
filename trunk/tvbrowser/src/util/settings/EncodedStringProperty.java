@@ -85,7 +85,7 @@ public class EncodedStringProperty extends Property {
   }
   
   
-  void clearCache() {
+  protected void clearCache() {
     mCachedValue = null;
   }
 

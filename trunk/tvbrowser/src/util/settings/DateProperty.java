@@ -98,7 +98,7 @@ public class DateProperty extends Property {
   }
   
   
-  void clearCache() {
+  protected void clearCache() {
     mCachedValue = null;
   }
 

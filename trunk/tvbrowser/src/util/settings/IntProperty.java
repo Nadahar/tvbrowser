@@ -85,7 +85,7 @@ public class IntProperty extends Property {
   }
   
   
-  void clearCache() {
+  protected void clearCache() {
     mIsCacheFilled = false;
   }
 

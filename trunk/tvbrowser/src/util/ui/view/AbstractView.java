@@ -28,18 +28,18 @@ package util.ui.view;
 
 public abstract class AbstractView implements View {
   
-  private ViewProperties mProperties;  
+  private ViewProperty mProperty;  
   
-  public void setProperties(ViewProperties prop) {
-    mProperties = prop;
-    if (mProperties !=null) {
-      onPropertiesChanged(mProperties);
+  public void setProperty(ViewProperty prop) {
+    mProperty = prop;
+    if (mProperty !=null) {
+      onPropertiesChanged(mProperty);
     }
   }
   
-  public ViewProperties getProperties() {
-    return mProperties;
+  public ViewProperty getProperty() {
+    return mProperty;
   }
   
-  protected abstract void onPropertiesChanged(ViewProperties prop);
+  protected abstract void onPropertiesChanged(ViewProperty prop);
 }

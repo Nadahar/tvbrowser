@@ -37,7 +37,7 @@ public class Node {
   private Component mContent;
   private ArrayList mNodes;  
   private String mName;
-  private ViewProperties mProperties;
+  private ViewProperty mProperty;
   private View mView;
   private boolean mIsValid;
   
@@ -80,23 +80,23 @@ public class Node {
       for (int i=0; i<comps.length; i++) {
         comps[i] = nodes[i].getComponent();
       }
-      View view = new SplitView();
+      mView = new SplitView();
       
-      view.setComponents(comps);
-      ViewProperties prop = getProperties();
-      view.setProperties(prop);
-      mContent = view.getContent();
+      mView.setComponents(comps);
+      ViewProperty prop = getProperty();
+      mView.setProperty(prop);
+      mContent = mView.getContent();
     }    
     mIsValid = true;
     return mContent;
   }
   
-  public void setProperties(ViewProperties prop) {
-    mProperties = prop;
+  public void setProperty(ViewProperty prop) {
+    mProperty = prop;
   }
   
-  public ViewProperties getProperties() {
-    return mProperties;
+  public ViewProperty getProperty() {
+    return mProperty;
   }
   
   public void setLeaf(Component comp) {
@@ -129,6 +129,26 @@ public class Node {
     nodesList.toArray(result);
     return result;
       
+  }
+  
+  public void storeProperties() {
+    if (mView != null) {
+      mView.storeProperties();
+    }
+    Node[] nodes = getNodes();
+    for (int i=0; i<nodes.length; i++) {
+      nodes[i].storeProperties();
+    }
+  }
+  
+  public void update() {
+      if (mView != null) {
+          mView.update();
+        }
+        Node[] nodes = getNodes();
+        for (int i=0; i<nodes.length; i++) {
+          nodes[i].update();
+        } 
   }
   
   public boolean hasComponent() {
