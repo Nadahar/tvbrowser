@@ -287,7 +287,7 @@ public class TvDataBase {
       
       boolean somethingChanged = calculateMissingLengths(progFile.getDayProgram());
       if (somethingChanged) {
-        progFile.saveDayProgram();
+        // progFile.saveDayProgram();
       }
       
       return progFile;
