@@ -170,6 +170,72 @@ public class IOUtilities {
       to.write(buffer, 0, len);
     }
   }
+  
+  
+  
+  /**
+   * Copies a file.
+   * 
+   * @param src The file to read from
+   * @param target The file to write to
+   * @throws IOException If copying failed
+   */
+  public static void copy(File src, File target) throws IOException {
+    FileInputStream in = null;
+    FileOutputStream out = null;
+    try {
+      in = new FileInputStream(src);
+      out = new FileOutputStream(target);
+      
+      pipeStreams(in, out);
+      
+      in.close();
+      out.close();
+    }
+    finally {
+      if (in != null) {
+        try { in.close(); } catch (IOException exc) {}
+      }
+      if (out != null) {
+        try { out.close(); } catch (IOException exc) {}
+      }
+    }
+  }
+  
+  
+  
+  /**
+   * Deletes a directory with all its files and subdirectories.
+   * 
+   * @param dir The directory to delete.
+   */
+  public static void deleteDirectory(File dir) throws IOException {
+    if (! dir.exists()) {
+      // Nothing to do
+      return;
+    }
+    
+    if (! dir.isDirectory()) {
+      throw new IOException("File is not a directory: " + dir.getAbsolutePath());
+    }
+    
+    // Delete all the files and subdirectories
+    File[] fileArr = dir.listFiles();
+    for (int i = 0; i < fileArr.length; i++) {
+      if (fileArr[i].isDirectory()) {
+        deleteDirectory(fileArr[i]);
+      } else {
+        if (! fileArr[i].delete()) {
+          throw new IOException("Can't delete file: " + fileArr[i].getAbsolutePath());
+        }
+      }
+    }
+    
+    // Delete the directory
+    if (! dir.delete()) {
+      throw new IOException("Can't delete directory: " + dir.getAbsolutePath());
+    }
+  }
 
   
   

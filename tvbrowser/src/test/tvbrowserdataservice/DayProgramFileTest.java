@@ -26,6 +26,7 @@
 package test.tvbrowserdataservice;
 
 import java.io.File;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -105,7 +106,7 @@ public class DayProgramFileTest extends TestCase {
 
 
 
-  public void testSaveAndLoad() {
+  public void testSaveAndLoad() throws IOException, FileFormatException {
     File file = null;
     try {
       file = File.createTempFile("tvbrowser", ".test.gz");
@@ -117,9 +118,6 @@ public class DayProgramFileTest extends TestCase {
       
       DayProgramFile readProgFile = new DayProgramFile();
       readProgFile.readFromFile(file);
-    }
-    catch (Exception exc) {
-      fail(exc.toString());
     }
     finally {
       if (file != null) {
@@ -147,8 +145,8 @@ public class DayProgramFileTest extends TestCase {
 
 
 
-  private ProgramFrame createProgramFrame(int id, int startTime, int endTime,
-    String title)
+  public static ProgramFrame createProgramFrame(int id, int startTime,
+    int endTime, String title)
   {
     ProgramFrame frame = new ProgramFrame(id);
     
@@ -162,10 +160,7 @@ public class DayProgramFileTest extends TestCase {
     field.setTimeData(endTime);
     frame.addProgramField(field);
 
-    field = new ProgramField();
-    field.setType(ProgramFieldType.TITLE_TYPE);
-    field.setTextData(title);
-    frame.addProgramField(field);
+    frame.addProgramField(new ProgramField(ProgramFieldType.TITLE_TYPE, title));
     
     return frame;
   }

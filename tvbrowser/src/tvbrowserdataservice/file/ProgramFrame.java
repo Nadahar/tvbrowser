@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * 
  * @author Til Schneider, www.murfman.de
  */
-public class ProgramFrame {
+public class ProgramFrame implements Cloneable {
 
   private int mId;
 
@@ -57,6 +57,18 @@ public class ProgramFrame {
 
   
   
+  public Object clone() {
+    try {
+      return super.clone();
+    }
+    catch (CloneNotSupportedException exc) {
+      // This will never happen, since this class implements Cloneable
+      return null;
+    }
+  }
+
+
+
   /**
    * @return
    */
@@ -93,6 +105,19 @@ public class ProgramFrame {
 
 
 
+  public boolean removeProgramFieldOfType(ProgramFieldType type) {
+    int index = getProgramFieldIndexForTypeId(type.getTypeId());
+    
+    if (index == -1) {
+      return false;
+    } else {
+      removeProgramFieldAt(index);
+      return true;
+    }
+  }
+
+
+
   public void removeAllProgramFields() {
     mProgramFieldList.clear();
   }
@@ -114,6 +139,18 @@ public class ProgramFrame {
     
     // Nothing found
     return -1;
+  }
+
+
+
+  public ProgramField getProgramFieldOfType(ProgramFieldType type) {
+    int index = getProgramFieldIndexForTypeId(type.getTypeId());
+    
+    if (index == -1) {
+      return null;
+    } else {
+      return getProgramFieldAt(index);
+    }
   }
 
 
@@ -170,6 +207,35 @@ public class ProgramFrame {
     for (int i = 0; i < getProgramFieldCount(); i++) {
       ProgramField field = getProgramFieldAt(i);
       field.writeToStream(stream);
+    }
+  }
+
+
+
+  public boolean equals(Object obj) {
+    if (obj instanceof ProgramFrame) {
+      ProgramFrame frame = (ProgramFrame) obj;
+      
+      if (getProgramFieldCount() != frame.getProgramFieldCount()) {
+        return false;
+      }
+      
+      for (int i = 0; i < getProgramFieldCount(); i++) {
+        ProgramField field = getProgramFieldAt(i);
+        
+        int index = frame.getProgramFieldIndexForTypeId(field.getTypeId());
+        if (index == -1) {
+          return false;
+        } else {
+          if (! field.equals(frame.getProgramFieldAt(index))) {
+            return false;
+          }
+        }
+      }
+      
+      return true;
+    } else {
+      return false;
     }
   }
 
