@@ -27,29 +27,33 @@
 package tvbrowser.ui.mainframe;
 
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
-
-import devplugin.Plugin;
+import javax.swing.JButton;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-
-import util.ui.toolbar.*;
+import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
+import util.ui.toolbar.DefaultToolBarModel;
+import util.ui.toolbar.ToolBarActionListener;
+import util.ui.toolbar.ToolBarButton;
+import util.ui.toolbar.ToolBarEvent;
+import util.ui.toolbar.ToolBarItem;
+import devplugin.Plugin;
 
 
 
 public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActionListener {
 
     
-  private ToolBarButton mUpdateBtn, mSettingsBtn;
+  private ToolBarButton mUpdateBtn, mSettingsBtn, mFilterBtn;
   private ToolBarItem mSeparator;
   private MainFrame mMainFrame;
   private DefaultToolBarModel mModel;
@@ -125,6 +129,10 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
     buttons.add(mSettingsBtn = new ToolBarButton("#settings",TVBrowser.mLocalizer.msg("button.settings", "Settings"),MainFrame.mLocalizer.msg("menuinfo.settings",""), new ImageIcon("imgs/Preferences24.gif")));    
     mUpdateBtn.setActionListener(this);
     mSettingsBtn.setActionListener(this);
+
+    buttons.add(mFilterBtn = new ToolBarButton("#filter",TVBrowser.mLocalizer.msg("button.filter", "Filter"),MainFrame.mLocalizer.msg("menuinfo.filter",""), new ImageIcon("imgs/Preferences24.gif")));    
+    mFilterBtn.setActionListener(this);
+
     
     buttons.add(mSeparator = new util.ui.toolbar.Separator());
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
@@ -184,6 +192,9 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
     }
     else if (item == mSettingsBtn) {
       mMainFrame.showSettingsDialog();
+    } 
+    else if (item == mFilterBtn) {
+        showFilterPopup(item);
     }
     else {
       String id =item.getId();
@@ -193,5 +204,30 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
       action.actionPerformed(event.getActionEvent());
     }
   }
-    
+  
+  private void showFilterPopup(ToolBarItem item) {
+      JButton btn = getButton((ToolBarButton)item);
+      SelectFilterPopup popup = new SelectFilterPopup(mMainFrame);
+      
+      Point p = new Point(0, 0);
+      
+   /*  
+      TODO: get Location of Toolbar
+      
+      String locationStr = Settings.propToolbarLocation.getString();
+      System.out.println(locationStr);
+      if ("east".equals(locationStr)) {
+        p.x = -1 * btn.getWidth();
+      }else if ("south".equals(locationStr)) {
+        p.y = -1 * popup.getHeight(); 
+      }else if ("west".equals(locationStr)) {
+        p.x = btn.getWidth();
+      }else {
+        p.y = btn.getHeight();
+      }      
+     */ 
+      p.y = btn.getHeight()+1;
+
+      popup.show(btn, p.x,p.y);
+  }
 }

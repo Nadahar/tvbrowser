@@ -50,6 +50,7 @@ import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvdataservice.TvDataService;
 import devplugin.ProgramFilter;
@@ -65,7 +66,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   private MainFrame mMainFrame;
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mTimeBtnsMI, mDatelistMI,
-                    mChannellistMI, mPluginOverviewMI, mCreateFilterMI, mRestoreMI, mUpdateMI,
+                    mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
                     mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI,
                     mConfigAssistantMI, mAboutMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu;  
@@ -206,17 +207,17 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
    }
    
    public void updateFiltersMenu() {
-     mFiltersMenu.removeAll();
-     JMenuItem[] filterMenuItems = createFilterMenuItems();
-     for (int i=0; i<filterMenuItems.length; i++) {
-       mFiltersMenu.add(filterMenuItems[i]);
-     }
-           
-     mCreateFilterMI = new JMenuItem(mLocalizer.msg("menuitem.createFilter","Create filter..."));
-     mCreateFilterMI.addActionListener(this);  
+       mFiltersMenu.removeAll();
+       FilterButtons filterButtons = new FilterButtons(mMainFrame);
+       JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
+       for (int i=0; i<filterMenuItems.length; i++) {
+         if (filterMenuItems[i] != null) {
+             mFiltersMenu.add(filterMenuItems[i]);
+         } else {
+             mFiltersMenu.addSeparator();
+         }
+       }
        
-     mFiltersMenu.addSeparator();
-     mFiltersMenu.add(mCreateFilterMI);
    }
    
    protected abstract void setPluginMenuItems(JMenuItem[] items);
@@ -297,9 +298,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      }
      else if (source == mAboutMI) {
        mMainFrame.showAboutBox();
-     }
-     else if (source == mCreateFilterMI) {
-       mMainFrame.showFilterDialog();
      }
    }
    
