@@ -129,7 +129,7 @@ public class TvDataUpdater {
     daysToDownload ++;
     
     // Ensure that the tvdata directory exists
-    File tvdataDir = new File(Settings.getTVDataDirectory());
+    File tvdataDir = new File(Settings.propTVDataDirectory.getString());
     if (! tvdataDir.exists()) {
       tvdataDir.mkdir();
     }

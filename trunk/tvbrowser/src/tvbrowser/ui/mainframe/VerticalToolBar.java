@@ -77,7 +77,7 @@ public class VerticalToolBar extends JPanel implements ActionListener {
     mNowBt.addActionListener(this);
     result.add(mNowBt); 
 
-    if (tvbrowser.core.Settings.isTimeBtnVisible()) {
+    if (tvbrowser.core.Settings.propShowTimeButtons.getBoolean()) {
       msg = mLocalizer.msg("button.early", "Early");
       mEarlyBt=new JButton(msg);
       mEarlyBt.addActionListener(this);

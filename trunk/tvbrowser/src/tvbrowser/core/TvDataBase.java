@@ -114,7 +114,7 @@ public class TvDataBase {
     // Inventory prüfen
     boolean somethingChanged = false;
     
-    File tvDataDir = new File(Settings.getTVDataDirectory());
+    File tvDataDir = new File(Settings.propTVDataDirectory.getString());
     File[] tvDataArr = tvDataDir.listFiles();
     if (tvDataArr == null) {
       return;
@@ -397,7 +397,8 @@ public class TvDataBase {
       }
     };
 
-    File fList[] = new File(Settings.getTVDataDirectory()).listFiles(filter);
+    String tvDataDir = Settings.propTVDataDirectory.getString();
+    File fList[] = new File(tvDataDir).listFiles(filter);
     if (fList != null) {
       for (int i = 0; i < fList.length; i++) {
         fList[i].delete();
@@ -492,7 +493,8 @@ public class TvDataBase {
   private File getDayProgramFile(Date date, Channel channel) {
     String fileName = getDayProgramKey(date, channel);
       
-    return new File(Settings.getTVDataDirectory(), fileName);
+    String tvDataDir = Settings.propTVDataDirectory.getString();
+    return new File(tvDataDir, fileName);
   }
 
 
@@ -554,7 +556,8 @@ public class TvDataBase {
       }
     }; 
 
-    String fList[] = new File(Settings.getTVDataDirectory()).list(filter);
+    String tvDataDir = Settings.propTVDataDirectory.getString();
+    String fList[] = new File(tvDataDir).list(filter);
     for (int i=0;i<fList.length;i++) {
       if (fList[i].length()>8) {
         String dateStr = fList[i].substring(fList[i].length()-8);

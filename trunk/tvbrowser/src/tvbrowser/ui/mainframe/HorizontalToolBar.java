@@ -147,12 +147,12 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     defaultBtnPanel.setBorder(BorderFactory.createEmptyBorder(0,5,0,20));
     defaultBtnPanel.setOpaque(false);
     int width=0;
-    if (Settings.isUpdateBtnVisible()) {
+    if (Settings.propShowUpdateButton.getBoolean()) {
       mUpdateBtn=createUpdateBtn();
       defaultBtnPanel.add(mUpdateBtn);
       width+=100;
     }
-    if (Settings.isPreferencesBtnVisible()) {
+    if (Settings.propShowPreferencesButton.getBoolean()) {
       mSettingsBtn=createSettingsBtn();    
       defaultBtnPanel.add(mSettingsBtn);
       width+=100;
@@ -199,14 +199,13 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     JPanel result=new JPanel(new GridLayout(1,0,10,0));
     result.setOpaque(false);
    
-    
-    //String[] hiddenPlugins=Settings.getHiddenButtonPlugins();
     Plugin[] installedPlugins=PluginManager.getInstance().getInstalledPlugins();
     
     for (int i=0;i<installedPlugins.length;i++) {
       final Plugin plugin=installedPlugins[i];
       if (plugin.getButtonText()!=null) {
-        if (Settings.getPluginButtonVisible(plugin)) {
+        String pluginClassName = plugin.getClass().getName();
+        if (Settings.propHiddenPluginButtons.containsItem(pluginClassName)) {
           Icon icon = plugin.getButtonIcon();
           JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
           result.add(btn);
@@ -239,15 +238,6 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
      // }
     }
     
-    return result;
-  }
-  
-  private JPanel createComboBoxPanel() {
-    JPanel result=new JPanel(new GridLayout(0,1));
-    JComboBox mChannelCB=new JComboBox(new String[]{"ARD","ZDF","Sat.1","RTL"});
-    JComboBox mFilterCB=new JComboBox(new String[]{"show all","any plugin"});
-    result.add(mChannelCB);
-    result.add(mFilterCB);
     return result;
   }
   

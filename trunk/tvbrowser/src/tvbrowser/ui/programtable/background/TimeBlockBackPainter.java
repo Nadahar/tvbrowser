@@ -64,14 +64,13 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
    * Is called when the table's layout has changed.
    */
   public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model) {
-    mBackgroundImage1 = ImageUtilities.createImage(Settings.getTimeBlockBackground1());
-    mBackgroundImage2 = ImageUtilities.createImage(Settings.getTimeBlockBackground2());
+    mBackgroundImage1 = ImageUtilities.createImage(Settings.propTimeBlockBackground1.getString());
+    mBackgroundImage2 = ImageUtilities.createImage(Settings.propTimeBlockBackground2.getString());
 
-    mTableWestImage1 = ImageUtilities.createImage(Settings.getTimeBlockWestImage1());
-    mTableWestImage2 = ImageUtilities.createImage(Settings.getTimeBlockWestImage2());
+    mTableWestImage1 = ImageUtilities.createImage(Settings.propTimeBlockWestImage1.getString());
+    mTableWestImage2 = ImageUtilities.createImage(Settings.propTimeBlockWestImage2.getString());
     
-    boolean showTableWest = Settings.getTimeBlockShowWest();
-    if (showTableWest) {
+    if (Settings.propTimeBlockShowWest.getBoolean()) {
       if (mTableWest == null) {
         mTableWest = new TimeBlockTableWest();
       }
@@ -79,7 +78,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       mTableWest = null;
     }
     
-    mBlockSize = Settings.getTimeBlockSize();
+    mBlockSize = Settings.propTimeBlockSize.getInt();
     
     mBlockArr = createBlockArray(layout, model);
   }

@@ -48,7 +48,7 @@ public class OneImageBackPainter extends AbstractBackPainter {
    * Is called when the table's layout has changed.
    */
   public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model) {
-    mBackgroundImage = ImageUtilities.createImage(Settings.getOneImageBackground());
+    mBackgroundImage = ImageUtilities.createImage(Settings.propOneImageBackground.getString());
   }
 
 

@@ -160,7 +160,7 @@ public class TvDataServiceManager {
       // version must be at least 1.0
       if ((new devplugin.Version(1,0).compareTo(v)<0)) throw new AbstractMethodError();
       
-      String root=Settings.getTVDataDirectory();
+      String root=Settings.propTVDataDirectory.getString();
       File rootDir=new File(root);
       if (!rootDir.exists()) {
         rootDir.mkdirs();

@@ -64,7 +64,7 @@ public class ProgramTable extends JPanel
   public ProgramTable(ProgramTableModel model) {
     setProgramTableLayout(null);
 
-    setColumnWidth(Settings.getColumnWidth());
+    setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
     setCursor(new Cursor(Cursor.HAND_CURSOR));
     updateBackground();
@@ -112,7 +112,7 @@ public class ProgramTable extends JPanel
   public void setProgramTableLayout(ProgramTableLayout layout) {
     if (layout == null) {
       // Use the default layout
-      if (Settings.getTableLayout() == Settings.TABLE_LAYOUT_COMPACT) {
+      if (Settings.propTableLayout.getString().equals("compact")) {
         layout = new CompactLayout();
       } else {
         layout = new TimeSynchronousLayout();
@@ -142,16 +142,16 @@ public class ProgramTable extends JPanel
   public void updateBackground() {
     BackgroundPainter oldPainter = mBackgroundPainter;
     
-    String background = Settings.getTableBackgroundStyle();
-    if (background.equals("timeblock")) {
-      mBackgroundPainter = new TimeBlockBackPainter();
-    } else if (background.equals("timeofday")) {
+    String background = Settings.propTableBackgroundStyle.getString();
+    if (background.equals("timeOfDay")) {
       mBackgroundPainter = new TimeOfDayBackPainter();
     } else if (background.equals("white")) {
       mBackgroundPainter = new WhiteBackPainter();
-    } else { // oneimage
+    } else if (background.equals("oneImage")) {
       mBackgroundPainter = new OneImageBackPainter();
-    }
+    } else { // timeBlock
+      mBackgroundPainter = new TimeBlockBackPainter();
+    } 
     mBackgroundPainter.layoutChanged(mLayout, mModel);
     
     firePropertyChange("backgroundpainter", oldPainter, mBackgroundPainter);

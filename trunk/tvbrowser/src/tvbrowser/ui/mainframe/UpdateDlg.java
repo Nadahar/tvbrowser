@@ -101,7 +101,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
     JPanel panel2=new JPanel(new BorderLayout());
     
     try {
-      int inx=Settings.getDownloadPeriod();
+      int inx = Settings.propDownloadPeriod.getInt();
       if (inx==GETALL) {
         inx=comboBox.getItemCount()-1;
       }
@@ -132,7 +132,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
       	result=GETALL;
       }
       if (checkBox.isSelected()) {
-        Settings.setDownloadPeriod(result);
+        Settings.propDownloadPeriod.setInt(result);
       }
 
       setVisible(false);

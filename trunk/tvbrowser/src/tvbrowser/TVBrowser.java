@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
 import java.io.*;
+import java.util.Iterator;
 import java.util.logging.*;
 
 import javax.swing.*;
@@ -124,20 +125,23 @@ public class TVBrowser {
     
     // Load the settings
     Settings.loadSettings();
-    
+
+    // Set the proxy settings
+    updateProxySettings();
+
     // Set the String to use for indicating the user agent in http requests
     System.setProperty("http.agent", MAINWINDOW_TITLE); 
     
     // Check whether TV-Browser is started the first time
-    File f=new File(Settings.getTVDataDirectory());
+    File f=new File(Settings.propTVDataDirectory.getString());
     if (!f.exists()) {        
       
-      devplugin.Version prevVersion=Settings.getTVBrowserVersion();  
+      devplugin.Version prevVersion = Settings.propTVBrowserVersion.getVersion();  
       
       /* if we have got no tvdata and no assistant will be loaded there must exist an older
        * tv-browser. so ask the user for importing existing tv data. 
        */
-      if (!Settings.getShowAssistant()) {
+      if (! Settings.propShowAssistant.getBoolean()) {
       
         /* update from 0.9.7, 0.9.7.1 to 0.9.7.2 */
         if (prevVersion==null) {    
@@ -148,16 +152,21 @@ public class TVBrowser {
             UiUtilities.centerAndShow(dlg);
             int result=dlg.getSelection();
             if (result==TvdataAssistantDlg.IMPORT_DATA) {
-              TvdataImportDlg importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata.step1","step 1: .."),"tvdata",Settings.getTVDataDirectory());
+              msg = mLocalizer.msg("importtvdata.step1","step 1: ..");
+              String toDir = Settings.propTVDataDirectory.getString();
+              TvdataImportDlg importDlg = new TvdataImportDlg(msg, "tvdata", toDir);
               UiUtilities.centerAndShow(importDlg);
               if (importDlg.getResult()==TvdataImportDlg.OK) {
-                importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata.step1","step 2: .."), "tvbrowsertvdata",Settings.getTVDataDirectory()+"/tvbrowserdataservice.TvBrowserDataService");
+                msg = mLocalizer.msg("importtvdata.step1","step 2: ..");
+                toDir = Settings.propTVDataDirectory.getString()
+                        + "/tvbrowserdataservice.TvBrowserDataService";
+                importDlg = new TvdataImportDlg(msg, "tvbrowsertvdata", toDir);
                 UiUtilities.centerAndShow(importDlg);
               }
               showTvdataAssistant=importDlg.getResult()!=TvdataImportDlg.OK;
                           
-            }else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
-              Settings.setShowAssistant(true);
+            } else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
+              Settings.propShowAssistant.setBoolean(true);
             }
           }
         }
@@ -166,10 +175,12 @@ public class TVBrowser {
           UiUtilities.centerAndShow(dlg);
           int result=dlg.getSelection();
           if (result==TvdataAssistantDlg.IMPORT_DATA) {
-            TvdataImportDlg importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata","import tv data"),"tvdata",Settings.getTVDataDirectory());
+            msg = mLocalizer.msg("importtvdata","import tv data");
+            String toDir = Settings.propTVDataDirectory.getString();
+            TvdataImportDlg importDlg=new TvdataImportDlg(msg, "tvdata", toDir);
             UiUtilities.centerAndShow(importDlg);  
           }
-          Settings.setShowAssistant(result==TvdataAssistantDlg.RUN_ASSISTANT);         
+          Settings.propShowAssistant.setBoolean(result == TvdataAssistantDlg.RUN_ASSISTANT);         
         }
       }
         
@@ -192,18 +203,18 @@ public class TVBrowser {
     }    
     
     splash.showSplash();
-    Settings.setTVBrowserVersion(VERSION);  
+    Settings.propTVBrowserVersion.setVersion(VERSION);  
     
-	  /*Maybe there are tvdataservices to install (.jar.inst files)*/
-	  TvDataServiceManager.installPendingDataServices();
+    /*Maybe there are tvdataservices to install (.jar.inst files)*/
+    TvDataServiceManager.installPendingDataServices();
     
     mLog.info("Loading tv data service...");
     msg = mLocalizer.msg("splash.dataService", "Loading tv data service...");
     splash.setMessage(msg);
     TvDataServiceManager.getInstance().initDataServices();
-    tvbrowser.core.ChannelList.create();
-        
-    Settings.initSubscribedChannels();
+    ChannelList.create();
+
+    ChannelList.initSubscribedChannels();
     
     mLog.info("Loading Look&Feel...");
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
@@ -216,18 +227,14 @@ public class TVBrowser {
     updateLookAndFeel();
     
     // Maybe there are plugins to install (.jar.inst files)
-    PluginManager.installPendingPlugins();
-    
+    PluginManager.getInstance().installPendingPlugins();
     
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);
     try {
-      PluginManager manager = PluginManager.getInstance();
-      manager.loadAllPlugins();
-      manager.activatePlugins(Settings.getInstalledPlugins());
-      manager.initContextMenu();      
-    }catch(TvBrowserException exc){
+      PluginManager.getInstance().init();      
+    } catch(TvBrowserException exc) {
       ErrorHandler.handle(exc);      
     }
 
@@ -344,13 +351,17 @@ public class TVBrowser {
     
     
     // Set the right size
-    mLog.info("Setting frame size and location");    
-    mainFrame.setSize(Settings.getWindowSize());
-    Point location = Settings.getWindowLocation();
-    if (location == null) {
+    mLog.info("Setting frame size and location");
+    int windowWidth = Settings.propWindowWidth.getInt();
+    int windowHeight = Settings.propWindowHeight.getInt();
+    mainFrame.setSize(windowWidth, windowHeight);
+    
+    int windowX = Settings.propWindowX.getInt();
+    int windowY = Settings.propWindowY.getInt();
+    if (windowX == -1) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
-      mainFrame.setLocation(location);
+      mainFrame.setLocation(windowX, windowY);
       mainFrame.show();
     }
     ErrorHandler.setFrame(mainFrame);
@@ -358,7 +369,7 @@ public class TVBrowser {
     splash.hideSplash();
     
     // maximize the frame if wanted
-    if (Settings.isWindowMaximized()) {
+    if (Settings.propIsWindowMaximized.getBoolean()) {
       mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
 
@@ -367,16 +378,14 @@ public class TVBrowser {
       mainFrame.setExtendedState(Frame.ICONIFIED);
     }
     
-    if (Settings.getShowAssistant()) {
+    if (Settings.propShowAssistant.getBoolean()) {
       mLog.info("Running setup assistant");    
       mainFrame.runSetupAssistant();  
     }
     else {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          if (ChannelList.getNumberOfSubscribedChannels()>0 && Settings.getAutomaticDownload()!=Settings.NEVER) {
-            handleAutomaticDownload();
-          }              
+          handleAutomaticDownload();
        
           boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
           if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
@@ -391,8 +400,16 @@ public class TVBrowser {
 
 
   private static void handleAutomaticDownload() {
+    String autoDLType = Settings.propAutoDownloadType.getString();
+
+    if ((ChannelList.getNumberOfSubscribedChannels() == 0)
+      || autoDLType.equals("never"))
+    {
+      // Nothing to do
+      return;
+    }              
     
-    devplugin.Date lastDownloadDate=Settings.getLastDownloadDate();
+    devplugin.Date lastDownloadDate=Settings.propLastDownloadDate.getDate();
     if (lastDownloadDate==null) {
       lastDownloadDate=devplugin.Date.getCurrentDate().addDays(-100);
     }
@@ -400,60 +417,60 @@ public class TVBrowser {
     
     //int daysSinceLastDownload=today.getNumberOfDaysSince(lastDownload);
     Date nextDownloadDate=null;
-    int autoDL=Settings.getAutomaticDownload();
     
-    
-    if (autoDL==Settings.DAILY) {
+    if (autoDLType.equals("daily")) {
       nextDownloadDate=lastDownloadDate.addDays(1);
     }
-    else if (autoDL==Settings.EVERY3DAYS) {
+    else if (autoDLType.equals("every3days")) {
       nextDownloadDate=lastDownloadDate.addDays(3);
     }
-    else if (autoDL==Settings.WEEKLY) {
+    else if (autoDLType.equals("WEEKLY")) {
       nextDownloadDate=lastDownloadDate.addDays(7);
     }
-          
-    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
-      mainFrame.runUpdateThread(Settings.getAutoDownloadPeriod());
+    else { // "daily"
+      nextDownloadDate=lastDownloadDate;
     }
-    
-    
-    
+
+    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
+      mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt());
+    }
   }
 
 
   public static void updateLookAndFeel() {
- 
-  if (Settings.isSkinLFEnabled()) {
-    String themepack=Settings.getSkinLFThemepack();
-    try {
-      SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
-      SkinLookAndFeel.enable();
-    }catch(Exception exc) {
-       ErrorHandler.handle("Could not load themepack.\nSkinLF is disabled now",exc);
-       Settings.setSkinLFEnabled(false);
-    }
-  }
-  else {
-    if (curLookAndFeel == null || !curLookAndFeel.equals(Settings.getLookAndFeel())) {
+    if (Settings.propIsSkinLFEnabled.getBoolean()) {
+      String themepack = Settings.propSkinLFThemepack.getString();
       try {
-        curLookAndFeel = Settings.getLookAndFeel();
-        UIManager.setLookAndFeel(curLookAndFeel);
-      }catch (Exception exc) {
-        String msg = mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
-        ErrorHandler.handle(msg, exc);
+        SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
+        SkinLookAndFeel.enable();
+      } catch (Exception exc) {
+        ErrorHandler.handle(
+          "Could not load themepack.\nSkinLF is disabled now",
+          exc);
+        Settings.propIsSkinLFEnabled.setBoolean(false);
+      }
+    } else {
+      if (curLookAndFeel == null
+        || !curLookAndFeel.equals(Settings.propLookAndFeel.getString()))
+      {
+        try {
+          curLookAndFeel = Settings.propLookAndFeel.getString();
+          UIManager.setLookAndFeel(curLookAndFeel);
+        } catch (Exception exc) {
+          String msg =
+            mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
+          ErrorHandler.handle(msg, exc);
+        }
       }
     }
+
+    if (mainFrame != null) {
+      SwingUtilities.updateComponentTreeUI(mainFrame);
+      mainFrame.validate();
+    }
   }
   
-  if (mainFrame!=null) {
-    SwingUtilities.updateComponentTreeUI(mainFrame);
-    mainFrame.validate();
-  }
   
-  }
-
-
   /**
    * Creates a very simple Formatter for log formatting
    * 
@@ -482,6 +499,41 @@ public class TVBrowser {
         return sb.toString();
       }
     };
+  }
+
+
+  private static void updateProxySettings() {
+    String httpHost = "", httpPort = "", httpUser = "", httpPassword = "";
+    String ftpHost = "",  ftpPort = "",  ftpUser = "",  ftpPassword = "";
+    
+    if (Settings.propHttpProxyUseProxy.getBoolean()) {
+      httpHost = Settings.propHttpProxyHost.getString();
+      httpPort = Settings.propHttpProxyPort.getString();
+      
+      if (Settings.propHttpProxyAuthentifyAtProxy.getBoolean()) {
+        httpUser     = Settings.propHttpProxyUser.getString();
+        httpPassword = Settings.propHttpProxyPassword.getString();
+      }
+    }
+    
+    if (Settings.propFtpProxyUseProxy.getBoolean()) {
+      ftpHost = Settings.propFtpProxyHost.getString();
+      ftpPort = Settings.propFtpProxyPort.getString();
+      
+      if (Settings.propFtpProxyAuthentifyAtProxy.getBoolean()) {
+        ftpUser     = Settings.propFtpProxyUser.getString();
+        ftpPassword = Settings.propFtpProxyPassword.getString();
+      }
+    }
+
+    System.setProperty("http.proxyHost",     httpHost);
+    System.setProperty("http.proxyPort",     httpPort);
+    System.setProperty("http.proxyUser",     httpUser);
+    System.setProperty("http.proxyPassword", httpPassword);
+    System.setProperty("ftp.proxyHost",      ftpHost);
+    System.setProperty("ftp.proxyPort",      ftpPort);
+    System.setProperty("ftp.proxyUser",      ftpUser);
+    System.setProperty("ftp.proxyPassword",  ftpPassword);
   }
 
 }

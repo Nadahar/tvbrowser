@@ -67,16 +67,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
 
   /** The title font. */
-  private static Font mTitleFont = Settings.getProgramTitleFont();
+  private static Font mTitleFont;
   /** The time font. */
-  private static Font mTimeFont = Settings.getProgramTimeFont();
+  private static Font mTimeFont;
   /** The normal font */ 
-  private static Font mNormalFont = Settings.getProgramInfoFont();
+  private static Font mNormalFont;
 
   /** The width of the left part (the time). */  
   private static final int WIDTH_LEFT = 40;
   /** The width of the left part (the title and short info). */  
-  private static int WIDTH_RIGHT = Settings.getColumnWidth() - WIDTH_LEFT;
+  private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
   /** The total width. */  
   private static int WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
   
@@ -104,9 +104,13 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * Creates a new instance of ProgramPanel.
    */  
   public ProgramPanel() {
+    if (mTitleFont == null) {
+      updateFonts();
+    }
+
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
-    mDescriptionIcon.setMaximumLineCount(3);    
+    mDescriptionIcon.setMaximumLineCount(3);
   }
   
   
@@ -125,9 +129,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * (Re)Loads the font settings.
    */
   public static void updateFonts() {
-    mTitleFont = Settings.getProgramTitleFont();
-    mTimeFont = Settings.getProgramTimeFont();
-    mNormalFont = Settings.getProgramInfoFont();  
+    boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();
+    if (useDefaults) {
+      mTitleFont = Settings.propProgramTitleFont.getDefault();
+      mTimeFont = Settings.propProgramTimeFont.getDefault();
+      mNormalFont = Settings.propProgramInfoFont.getDefault();
+    } else {
+      mTitleFont = Settings.propProgramTitleFont.getFont();
+      mTimeFont = Settings.propProgramTimeFont.getFont();
+      mNormalFont = Settings.propProgramInfoFont.getFont();
+    }
   }
   
 
@@ -135,7 +146,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * (Re)Loads the column width settings.
    */
   public static void updateColumnWidth() {
-    WIDTH_RIGHT = Settings.getColumnWidth() - WIDTH_LEFT;
+    WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
     WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
   }
 
@@ -214,7 +225,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     if (programChanged || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       // (Re)set the description text
       mDescriptionIcon.setMaximumLineCount(maxDescLines);
-      ProgramFieldType[] infoFieldArr = Settings.getProgramInfoFields();
+      ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields.getProgramFieldTypeArray();
       Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
       try {
         mDescriptionIcon.setText(infoReader);
@@ -252,7 +263,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private Icon[] getPluginIcons(Program program) {
     ArrayList list = new ArrayList();
     
-    String[] iconPluginArr = Settings.getProgramTableIconPlugins();
+    String[] iconPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
     Plugin[] pluginArr = PluginManager.getInstance().getInstalledPlugins();
     for (int i = 0; i < iconPluginArr.length; i++) {
       // Find the plugin with this class name and add its icons

@@ -122,7 +122,6 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
   
   private boolean isDynamicChannelListSupported() {
     tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
-    boolean result;
     for (int i=0;i<services.length;i++) {
       if (services[i].supportsDynamicChannelList()) return true;       
     }
@@ -155,7 +154,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     }
     else if (o==mCancelBt) {
       if (mCurCardPanel==mFinishedPanel) {
-        tvbrowser.core.Settings.setShowAssistant(false);
+        tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
         hide();
       }
       else {
@@ -171,11 +170,11 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
         possibleValues, possibleValues[2]);       
         
         if (selectedValue==possibleValues[0]) {
-         tvbrowser.core.Settings.setShowAssistant(true); 
+         tvbrowser.core.Settings.propShowAssistant.setBoolean(true); 
          hide();
         }
         else if (selectedValue==possibleValues[1]) {
-          tvbrowser.core.Settings.setShowAssistant(false);
+          tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
           hide();
         }
       }

@@ -23,18 +23,17 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.settings;
 
-import tvbrowser.core.Settings;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.*;
 
-
+import tvbrowser.core.Settings;
 import devplugin.SettingsTab;
 
 public class LookAndFeelSettingsTab implements SettingsTab {
@@ -89,15 +88,15 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     northPanel.add(skinPanel);
     msg = mLocalizer.msg("background", "Background");
     mSkinCheckBox = new JCheckBox(msg);
-    mSkinTextField = new JTextField(Settings.getApplicationSkin());
+    mSkinTextField = new JTextField(Settings.propApplicationSkin.getString());
     msg = mLocalizer.msg("change", "Change");
     final JButton skinChooseBtn = new JButton(msg);
     skinPanel.add(mSkinCheckBox,BorderLayout.WEST);
     skinPanel.add(mSkinTextField,BorderLayout.CENTER);
     skinPanel.add(skinChooseBtn,BorderLayout.EAST);
-    mSkinCheckBox.setSelected(Settings.useApplicationSkin());
-    skinChooseBtn.setEnabled(Settings.useApplicationSkin());
-    mSkinTextField.setEnabled(Settings.useApplicationSkin());
+    mSkinCheckBox.setSelected(Settings.propUseApplicationSkin.getBoolean());
+    skinChooseBtn.setEnabled(Settings.propUseApplicationSkin.getBoolean());
+    mSkinTextField.setEnabled(Settings.propUseApplicationSkin.getBoolean());
 
     mSkinCheckBox.addActionListener(new ActionListener() {
        public void actionPerformed(ActionEvent event) {
@@ -131,7 +130,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
      LookAndFeelObj[] obj=getLookAndFeelObjs();
      mLfComboBox=new JComboBox(obj);
-     String lf=Settings.getLookAndFeel();
+     String lf = Settings.propLookAndFeel.getString();
      for (int i=0;i<obj.length;i++) {
        if (obj[i].getLFClassName().equals(lf)) {
          mLfComboBox.setSelectedItem(obj[i]);
@@ -177,7 +176,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     themepackPanel.setBorder(BorderFactory.createTitledBorder("Themepack"));
     
     final JButton chooseBtn=new JButton(mLocalizer.msg("change","change"));
-    mThemepackTf.setText(Settings.getSkinLFThemepack());
+    mThemepackTf.setText(Settings.propSkinLFThemepack.getString());
     themepackPanel.add(mThemepackTf,BorderLayout.CENTER);
     themepackPanel.add(chooseBtn,BorderLayout.EAST);   
     
@@ -186,7 +185,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     northPanel.add(themepackPanel);
     mSettingsPn.add(northPanel,BorderLayout.NORTH);
     
-    boolean enabled=Settings.isSkinLFEnabled();
+    boolean enabled = Settings.propIsSkinLFEnabled.getBoolean();
     mUseSkinLFCb.setSelected(enabled);
     chooseBtn.setEnabled(enabled);
     mThemepackTf.setEnabled(enabled); 
@@ -195,11 +194,11 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     mUseSkinLFCb.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        boolean enabled= mUseSkinLFCb.isSelected();
-        chooseBtn.setEnabled(enabled);
-        mThemepackTf.setEnabled(enabled); 
-        mLookAndFeelLb.setEnabled(!enabled);
-        mLfComboBox.setEnabled(!enabled);
+        boolean btnEnabled= mUseSkinLFCb.isSelected();
+        chooseBtn.setEnabled(btnEnabled);
+        mThemepackTf.setEnabled(btnEnabled); 
+        mLookAndFeelLb.setEnabled(! btnEnabled);
+        mLfComboBox.setEnabled(! btnEnabled);
       }
     });
     
@@ -223,13 +222,13 @@ public class LookAndFeelSettingsTab implements SettingsTab {
  
   public void saveSettings() {
     LookAndFeelObj obj=(LookAndFeelObj)mLfComboBox.getSelectedItem();
-    Settings.setLookAndFeel(obj.getLFClassName());
+    Settings.propLookAndFeel.setString(obj.getLFClassName());
  
-    Settings.setUseApplicationSkin(mSkinCheckBox.isSelected());
-    Settings.setApplicationSkin(mSkinTextField.getText());
+    Settings.propUseApplicationSkin.setBoolean(mSkinCheckBox.isSelected());
+    Settings.propApplicationSkin.setString(mSkinTextField.getText());
     
-    Settings.setSkinLFEnabled(mUseSkinLFCb.isSelected());
-    Settings.setSkinLFThemepack(mThemepackTf.getText());    
+    Settings.propIsSkinLFEnabled.setBoolean(mUseSkinLFCb.isSelected());
+    Settings.propSkinLFThemepack.setString(mThemepackTf.getText());    
   }
 
  

@@ -24,7 +24,6 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
@@ -50,7 +49,9 @@ import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
-import tvbrowser.ui.update.*;
+import tvbrowser.ui.update.SoftwareUpdateDlg;
+import tvbrowser.ui.update.SoftwareUpdateItem;
+import tvbrowser.ui.update.SoftwareUpdater;
 import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -82,13 +83,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private DefaultProgramTableModel mProgramTableModel;
   private Thread downloadingThread;
   private JPanel jcontentPane;
-  private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
    aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, donorMenuItem,
    faqMenuItem, forumMenuItem, websiteMenuItem, configAssistantMenuItem;
   private SkinPanel skinPanel;
-  private HorizontalToolBar mDefaultToolBar;
-  private VerticalToolBar mDateTimeToolBar;
+  private HorizontalToolBar mHorizontalToolBar;
+  private VerticalToolBar mVerticalToolBar;
   private StatusBar mStatusBar;
 
   private JMenu mPluginsMenu;
@@ -231,29 +231,31 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     jcontentPane.setLayout(new BorderLayout());
 
     int mode;
-    if (Settings.useApplicationSkin()) {
+    if (Settings.propUseApplicationSkin.getBoolean()) {
       mode = SkinPanel.WALLPAPER;
     } else {
       mode = SkinPanel.NONE;
     }
 
-    skinPanel = new SkinPanel(Settings.getApplicationSkin(),mode);
+    skinPanel = new SkinPanel(Settings.propApplicationSkin.getString(),mode);
     skinPanel.setLayout(new BorderLayout());
 
     JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
-    mProgramTableModel = new DefaultProgramTableModel(ChannelList.getSubscribedChannels(),Settings.getProgramTableStartOfDay(),Settings.getProgramTableEndOfDay());
+    Channel[] channelArr = ChannelList.getSubscribedChannels();
+    int startOfDay = Settings.propProgramTableStartOfDay.getInt();
+    int endOfDay = Settings.propProgramTableEndOfDay.getInt();
+    mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay, endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
 
-    finderPanel=FinderPanel.getInstance();
-    finderPanel.setDateListener(this);
+    FinderPanel.getInstance().setDateListener(this);
     dateChanged(new devplugin.Date(), null);
     
-    mDefaultToolBar=new HorizontalToolBar(this,new FilterChooser(this,mProgramTableModel));
-    mDateTimeToolBar=new VerticalToolBar(this,finderPanel);
+    mHorizontalToolBar=new HorizontalToolBar(this,new FilterChooser(this,mProgramTableModel));
+    mVerticalToolBar=new VerticalToolBar(this, FinderPanel.getInstance());
     
       
     
@@ -270,8 +272,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     new MenuHelpTextAdapter(websiteMenuItem,mLocalizer.msg("website.tvbrowser",""),lb); 
     new MenuHelpTextAdapter(configAssistantMenuItem,mLocalizer.msg("menuinfo.configAssistant",""),lb);
 
-    skinPanel.add(mDefaultToolBar,BorderLayout.NORTH);
-    skinPanel.add(mDateTimeToolBar,BorderLayout.EAST);
+    skinPanel.add(mHorizontalToolBar,BorderLayout.NORTH);
+    skinPanel.add(mVerticalToolBar,BorderLayout.EAST);
     skinPanel.add(centerPanel, BorderLayout.CENTER);
     skinPanel.add(mStatusBar,BorderLayout.SOUTH);
 
@@ -302,6 +304,27 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   public JLabel getStatusBarLabel() {
     return mStatusBar.getLabel();
   }
+  
+  
+  public ProgramTableScrollPane getProgramTableScrollPane() {
+    return mProgramTableScrollPane;
+  }
+  
+  
+  public HorizontalToolBar getHorizontalToolBar() {
+    return mHorizontalToolBar;
+  }
+  
+  
+  public VerticalToolBar getVerticalToolBar() {
+    return mVerticalToolBar;
+  }
+  
+  
+  public DefaultProgramTableModel getProgramTableModel() {
+    return mProgramTableModel;
+  }
+  
 
   public static MainFrame getInstance() {
     if (mSingleton==null) {
@@ -346,11 +369,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     
     mLog.info("Storing window size and location");
     boolean maximized = getExtendedState() == Frame.MAXIMIZED_BOTH;
-    Settings.setWindowIsMaximized(maximized);
+    Settings.propIsWindowMaximized.setBoolean(maximized);
     if (! maximized) {
       // Save the window size and location only when not maximized
-      Settings.setWindowSize(getSize());
-      Settings.setWindowLocation(getLocation());
+      Settings.propWindowWidth.setInt(getWidth());
+      Settings.propWindowHeight.setInt(getHeight());
+      Settings.propWindowX.setInt(getX());
+      Settings.propWindowY.setInt(getY());
     }
     
     mLog.info("Storing settings");
@@ -507,26 +532,26 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
   public void onEarlyBtn() {
-    mProgramTableScrollPane.scrollToTime(Settings.getEarlyTime());
+    mProgramTableScrollPane.scrollToTime(Settings.propEarlyTime.getInt());
   }
   
   public void onMiddayBtn() {
-    mProgramTableScrollPane.scrollToTime(Settings.getMiddayTime());
+    mProgramTableScrollPane.scrollToTime(Settings.propMiddayTime.getInt());
   }
   
   public void onAfternoonBtn() {
-     mProgramTableScrollPane.scrollToTime(Settings.getAfternoonTime());
+     mProgramTableScrollPane.scrollToTime(Settings.propAfternoonTime.getInt());
    }
   
   public void onEveningBtn() {
-    mProgramTableScrollPane.scrollToTime(Settings.getEveningTime());
+    mProgramTableScrollPane.scrollToTime(Settings.propEveningTime.getInt());
   }
   
   public void onNowBtn() {
     // Change to the shown day program to today if nessesary
     devplugin.Date today = new devplugin.Date();
-    if (! today.equals(finderPanel.getSelectedDate())) {
-      finderPanel.markDate(today);
+    if (! today.equals(FinderPanel.getInstance().getSelectedDate())) {
+      FinderPanel.getInstance().markDate(today);
     }
 
     scrollToNow();
@@ -534,7 +559,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
   private void onDownloadStart() {
-    JButton updateBtn=mDefaultToolBar.getUpdateBtn();
+    JButton updateBtn=mHorizontalToolBar.getUpdateBtn();
     updateBtn.setText(TVBrowser.mLocalizer.msg("button.stop", "Stop"));
     updateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop update..."));
@@ -546,14 +571,14 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     TvDataUpdater.getInstance().stopDownload();
     mStatusBar.getProgressBar().setValue(0);
     
-    JButton updateBtn=mDefaultToolBar.getUpdateBtn();
+    JButton updateBtn=mHorizontalToolBar.getUpdateBtn();
     updateBtn.setText(TVBrowser.mLocalizer.msg("button.update", "Update"));
     updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
 
     FinderPanel.getInstance().updateUI();
 
-    Settings.setLastDownloadDate(Date.getCurrentDate());
+    Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
 
   }
 
@@ -568,7 +593,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    * Called when new TV data was downloaded or when TV data was imported.
    */
   private void newTvDataAvailable() {
-    changeDate(finderPanel.getSelectedDate(), null);
+    changeDate(FinderPanel.getInstance().getSelectedDate(), null);
   }
 
 
@@ -608,14 +633,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   public void updateApplicationSkin() {
     int mode;
-    if (Settings.useApplicationSkin()) {
+    if (Settings.propUseApplicationSkin.getBoolean()) {
       mode = SkinPanel.WALLPAPER;
-    }else {
+    } else {
       mode = SkinPanel.NONE;
     }
 
-    skinPanel.update(Settings.getApplicationSkin(),mode);
-
+    skinPanel.update(Settings.propApplicationSkin.getString(),mode);
   }
 
 
@@ -670,71 +694,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     SettingsDialog dlg = new SettingsDialog(this);
     dlg.centerAndShow();
     
-    if (Settings.settingHasChanged(new String[]{"font.programtitle","font.programinfo","font.programtime","font.channelname","usedefaultfonts"})) {
-      util.ui.ProgramPanel.updateFonts();
-      tvbrowser.ui.programtable.ChannelPanel.fontChanged();
-      mProgramTableScrollPane.getProgramTable().fontChanged();
-      mProgramTableScrollPane.tableDataChanged();
-      mProgramTableScrollPane.getProgramTable().tableDataChanged();
-    }
-    if (Settings.settingHasChanged(new String[]{"lookandfeel","skinLF.themepack","skinLF.enabled"})) {
-      TVBrowser.updateLookAndFeel();
-    }
-    if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
-      updateApplicationSkin();
-    }
-    if (Settings.settingHasChanged(new String[]{"table.layout"})) {
-      mProgramTableScrollPane.getProgramTable().setProgramTableLayout(null);
-    }
-    if (Settings.settingHasChanged( new String[] {
-      "tablebackground.style", "timeblock",
-      "tablebackground.oneImage.image",
-      "tablebackground.timeBlock.size",
-      "tablebackground.timeBlock.image1", "tablebackground.timeBlock.image2",
-      "tablebackground.timeBlock.west1", "tablebackground.timeBlock.west2",
-      "tablebackground.timeBlock.showWest",
-      "tablebackground.timeofday.edge", "tablebackground.timeofday.early",
-      "tablebackground.timeofday.midday", "tablebackground.timeofday.afternoon",
-      "tablebackground.timeofday.evening",
-      "timebutton.early", "timebutton.midday", "timebutton.afternoon",
-      "timebutton.evening" } ))
-    {
-      mProgramTableScrollPane.getProgramTable().updateBackground();
-    }
-    
-    if (Settings.settingHasChanged(new String[]{"updatebutton","preferencesbutton",
-    "buttontype" /*,"plugins"*/})) {
-      mDefaultToolBar.updateButtons();
-    }
-    
-    if (Settings.settingHasChanged(new String[]{"timebutton"})) {
-      mDateTimeToolBar.updateButtons();
-    }
-    if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
-      onSubscribedChannelsChanged();
-    }
-    
-    if (Settings.settingHasChanged(new String[]{"programtable.endofday","programtable.startofday"})) {
-      mProgramTableModel.setTimeRange(Settings.getProgramTableStartOfDay(),Settings.getProgramTableEndOfDay());
-    }
-    
-    if (Settings.settingHasChanged(new String[]{"columnwidth"})) {
-      util.ui.ProgramPanel.updateColumnWidth();
-      mProgramTableScrollPane.setColumnWidth(Settings.getColumnWidth());
-      mProgramTableScrollPane.updateChannelPanel();
-      mProgramTableScrollPane.getProgramTable().updateLayout();
-    }
-
-    if (Settings.settingHasChanged(new String[]{"programpanel.iconPlugins","programpanel.infoFields"})) {
-      // Force a recreation of the table content
-      mProgramTableModel.setDate(finderPanel.getSelectedDate(),null);
-    }
-  }
-  
-  public void onSubscribedChannelsChanged() {
-    ChannelList.create();    
-    mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
-    mDefaultToolBar.updateChannelChooser();  
+    Settings.handleChangedSettings();
   }
   
     
