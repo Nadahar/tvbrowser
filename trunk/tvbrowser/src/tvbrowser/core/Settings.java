@@ -438,6 +438,12 @@ public class Settings {
                                 "tvraterplugin.TVRaterPlugin",
                               });
 
+  public static final BooleanProperty propMouseOver
+    = new BooleanProperty(mProp, "programpanel.MouseOver", false);
+  
+  public static final BooleanProperty propTitelAlwaysVisible
+    = new BooleanProperty(mProp, "programpanel.TitelAlwaysVisible", false);  
+  
   public static final BooleanProperty propIsWindowMaximized
     = new BooleanProperty(mProp, "window.isMaximized", false);
 

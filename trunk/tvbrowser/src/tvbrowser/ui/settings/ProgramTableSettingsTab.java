@@ -77,6 +77,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
   
   
+  private JCheckBox mMouseOver;
+  
+  private JCheckBox mTitelAlwaysVisible;
+  
   /**
    * Creates a new instance of ProgramTableSettingsTab.
    */
@@ -324,11 +328,19 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mTimeOfDayPanel.add(mTimeOfDayEveningTF);
     mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEveningTF));
     
-   
-
     handleBackgroundStyle();
     handleTimeBlockShowWest();
 
+    mMouseOver = new JCheckBox(mLocalizer.msg("MouseOver","Mouse-Over-Effect"));
+    mMouseOver.setSelected(Settings.propMouseOver.getBoolean());
+    
+    main.add(mMouseOver);
+
+    mTitelAlwaysVisible = new JCheckBox(mLocalizer.msg("TitleAlwaysVisible","Progam-Title always Visible"));
+    mTitelAlwaysVisible.setSelected(Settings.propTitelAlwaysVisible.getBoolean());
+    
+    main.add(mTitelAlwaysVisible);
+    
     return mSettingsPn;
   }
 
@@ -435,7 +447,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     Settings.propProgramTableEndOfDay.setInt(minutes);
     
-    
+    Settings.propMouseOver.setBoolean(mMouseOver.isSelected());
+    Settings.propTitelAlwaysVisible.setBoolean(mTitelAlwaysVisible.isSelected());
   }
 
   
