@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
 import util.ui.ProgramList;
+import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -155,7 +156,7 @@ public class ClipboardDialog extends JDialog {
 
         JButton sendButton = new JButton();
 
-        sendButton.setIcon(ImageUtilities.createImageIconFromJar("clipboardplugin/send.png", getClass()));
+        sendButton.setIcon(new ImageIcon("imgs/SendToPlugin.png"));
         sendButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -272,7 +273,7 @@ public class ClipboardDialog extends JDialog {
             prgList[i] = (Program) mClipList.get(i);
         }
 
-        SendDialog send = new SendDialog(this, prgList);
+        SendToPluginDialog send = new SendToPluginDialog(this, prgList);
 
         send.show();
     }
