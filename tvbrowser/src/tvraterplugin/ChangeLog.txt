@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.69
+- Changed to new Plugin-Interface
+
 0.68
 - RatingComboBox Nullpointer removed
 

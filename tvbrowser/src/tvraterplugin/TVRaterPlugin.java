@@ -21,6 +21,7 @@ package tvraterplugin;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -28,8 +29,14 @@ import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.Properties;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
+import listviewplugin.ListViewPlugin;
+
+import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
@@ -70,10 +77,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
         _tvRaterInstance = this;
     }
     
-    public String getContextMenuItemText() {
-        return mLocalizer.msg("contextMenuText", "View rating");
-    }
-
     public PluginInfo getInfo() {
         String name = mLocalizer.msg("pluginName", "TV Rater");
         String desc = mLocalizer
@@ -81,14 +84,32 @@ public class TVRaterPlugin extends devplugin.Plugin {
                         "description",
                         "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 68));
+        return new PluginInfo(name, desc, author, new Version(0, 69));
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see devplugin.Plugin#getButtonAction()
+     */
+    public Action getButtonAction() {
+        AbstractAction action = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent evt) {
+                showDialog();
+            }
+        };
+        action.putValue(Action.NAME, mLocalizer.msg("pluginName", "TV Rater"));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", ListViewPlugin.class)));
+        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", ListViewPlugin.class)));
+        
+        return action;
+    }    
+    
     /**
      * This method is invoked by the host-application if the user has choosen
      * your plugin from the menu.
      */
-    public void execute() {
+    public void showDialog() {
         DialogOverview dlg = new DialogOverview(getParentFrame(), this);
         dlg.pack();
         dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -116,7 +137,25 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     }
 
-    public void execute(Program program) {
+    /*
+     *  (non-Javadoc)
+     * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
+     */
+    public Action[] getContextMenuActions(final Program program) {
+        AbstractAction action = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent evt) {
+                showRatingDialog(program);
+            }
+        };
+        action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "View rating"));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", ListViewPlugin.class)));
+        
+        return new Action[] {action};
+    }
+    
+    
+    public void showRatingDialog(Program program) {
         DialogRating dlg = new DialogRating(getParentFrame(), this, program);
         dlg.pack();
         dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -157,14 +196,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
 
     public String getMarkIconName() {
-        return "tvraterplugin/imgs/3.gif";
-    }
-
-    public String getButtonText() {
-        return mLocalizer.msg("pluginName", "TV Rater");
-    }
-
-    public String getButtonIconName() {
         return "tvraterplugin/imgs/3.gif";
     }
 
@@ -269,15 +300,16 @@ public class TVRaterPlugin extends devplugin.Plugin {
         return getParentFrame();
     }
 
-    /**
-     * Calls Update-Thread when the TvData has Changed
+    /*
+     *  (non-Javadoc)
+     * @see devplugin.Plugin#handleTvDataUpdateFinished()
      */
-    public void handleTvDataChanged() {
+    public void handleTvDataUpdateFinished() {
         if (Integer.parseInt(_settings.getProperty("updateIntervall", "3")) < 3) {
             updateDB();
         }
-
     }
+
 
     /**
      * Updates the Database
