@@ -79,6 +79,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
 
   public void timeEvent(ReminderListItem item) {
+    if (item.getProgramItem().getProgram().isExpired()){
+      return;
+    }
     if ("true" .equals(mSettings.getProperty( "usesound" ))) {
       playSound(mSettings.getProperty( "soundfile" ));
     }
