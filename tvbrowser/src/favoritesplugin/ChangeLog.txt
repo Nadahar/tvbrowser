@@ -1,5 +1,8 @@
 Changelog FavoritesPlugin
 
+1.0.7:
+- Added Send to other Plugins
+
 1.0.6:
 - Added import of favorites from TVgenial
 - Added sort button
