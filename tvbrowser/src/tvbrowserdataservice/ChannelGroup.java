@@ -162,6 +162,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     }
 
+
+  public String getProvider() {
+    return null;
+  }
+
     public String toString() {
         return getName();
     }
@@ -422,22 +427,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
             File channelFile = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
             if (channelFile.exists()) {
                 try {
-                    final String groupName = getName();
-                    devplugin.ChannelGroup group = new devplugin.ChannelGroup() {
-
-                        public String getName() {
-                            return groupName;
-                        }
-
-                        public String getId() {
-                            return mID;
-                        }
-
-                        public String getDescription() {
-                            return mDescription;
-                        }
-                    };
-
+                    devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(mID, getName(), mDescription, getProviderName());
                     ChannelList channelList = new ChannelList(group);
                     channelList.readFromFile(channelFile, mDataService);
                     mAvailableChannelArr = channelList.createChannelArray();
