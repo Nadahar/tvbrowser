@@ -118,7 +118,8 @@ public class DeviceSelector extends JDialog {
         panel.setLayout(new GridBagLayout());
         
         mProgramList= new ProgramList(new DefaultListModel());
-       
+        mProgramList.addMouseListeners(CapturePlugin.getInstance());
+        
         GridBagConstraints c = new GridBagConstraints();
         GridBagConstraints d = new GridBagConstraints();
         
