@@ -103,7 +103,7 @@ public class MainFrame extends JFrame implements DateListener {
   private DefaultProgramTableModel mProgramTableModel;
   private Thread downloadingThread;
   private JPanel jcontentPane;
-  private SkinPanel skinPanel;
+  private JPanel skinPanel;
   private DefaultToolBarModel mToolBarModel;
   private ToolBar mToolBar;
   private StatusBar mStatusBar;
@@ -150,14 +150,7 @@ private Node mDateChannelNode;
     jcontentPane = (JPanel)getContentPane();
     jcontentPane.setLayout(new BorderLayout());
 
-    int mode;
-    if (Settings.propUseApplicationSkin.getBoolean()) {
-      mode = SkinPanel.WALLPAPER;
-    } else {
-      mode = SkinPanel.NONE;
-    }
-
-    skinPanel = new SkinPanel(Settings.propApplicationSkin.getString(),mode);
+    skinPanel = new JPanel();
     skinPanel.setLayout(new BorderLayout());
 
     JPanel centerPanel = new JPanel(new BorderLayout());
@@ -523,19 +516,6 @@ private Node mDateChannelNode;
   }
 
 
-
-
-
-  public void updateApplicationSkin() {
-    int mode;
-    if (Settings.propUseApplicationSkin.getBoolean()) {
-      mode = SkinPanel.WALLPAPER;
-    } else {
-      mode = SkinPanel.NONE;
-    }
-
-    skinPanel.update(Settings.propApplicationSkin.getString(),mode);
-  }
 
 
 

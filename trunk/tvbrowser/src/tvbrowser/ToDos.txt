@@ -38,7 +38,6 @@ java.lang.NullPointerException
 - Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
 - Umlaute im Einrichtungsassistent
 - "irgendwie" hervorheben, dass gerade ein Filter ausgewaehlt ist (und deshalb nicht alle Sendungen sichtbar sind).
-- Einstellungen --> Aussehen --> Look&Feel --> Hintergrund: hat praktisch keine Bedeutung
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 
 
@@ -57,3 +56,4 @@ Erledigt:
 - (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
 - (B) Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
 - (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
+- (B) Einstellungen --> Aussehen --> Look&Feel --> Hintergrund: hat praktisch keine Bedeutung

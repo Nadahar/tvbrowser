@@ -164,13 +164,6 @@ public class Settings {
       TVBrowser.updateLookAndFeel();
     }
     
-    propArr = new Property[] {
-      propApplicationSkin, propUseApplicationSkin
-    };
-    if (mProp.hasChanged(propArr)) {
-      mainFrame.updateApplicationSkin();
-    }
-    
     if (mProp.hasChanged(propTableLayout)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().setProgramTableLayout(null);
@@ -363,12 +356,6 @@ public class Settings {
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "text&icon",
                          new String[] { "text&icon", "text", "icon" });
-
-  public static final StringProperty propApplicationSkin
-    = new StringProperty(mProp, "applicationskin", "imgs/background.jpg");
-
-  public static final BooleanProperty propUseApplicationSkin
-    = new BooleanProperty(mProp, "useapplicationskin", true);
 
   public static final BooleanProperty propIsSkinLFEnabled
     = new BooleanProperty(mProp, "skinLF.enabled", false);
