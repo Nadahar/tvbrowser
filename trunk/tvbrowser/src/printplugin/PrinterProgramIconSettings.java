@@ -1,11 +1,32 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
 package printplugin;
 
 import java.awt.*;
-
-import java.util.*;
-import javax.swing.Icon;
-
-import tvbrowser.core.Settings;
 
 import devplugin.*;
 
@@ -20,16 +41,29 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
   private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
   private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
 
-  private static ProgramIconSettings mInstance;
+  private ProgramFieldType[] mProgramInfoFields;
+  private boolean mShowPluginMark;
   
-  private PrinterProgramIconSettings() {    
+  private PrinterProgramIconSettings() {
+    mProgramInfoFields = new ProgramFieldType[]{
+      ProgramFieldType.SHORT_DESCRIPTION_TYPE,
+      ProgramFieldType.ACTOR_LIST_TYPE,
+      ProgramFieldType.DESCRIPTION_TYPE
+    };
+    
+    mShowPluginMark=false;
   }
   
-  public static ProgramIconSettings getInstance() {
-    if (mInstance == null) {
-      mInstance = new PrinterProgramIconSettings();
-    }
-    return mInstance;
+  public static ProgramIconSettings create(ProgramFieldType[] programInfoFields, boolean showPluginMark) {
+    PrinterProgramIconSettings settings = new PrinterProgramIconSettings();
+    settings.mProgramInfoFields = programInfoFields;
+    settings.mShowPluginMark = showPluginMark;
+    return settings;
+    
+  }
+  
+  public static ProgramIconSettings create() {
+    return new PrinterProgramIconSettings();
   }
 	
 	public Font getTitleFont() {
@@ -48,23 +82,24 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
 
 	
 	public int getTimeFieldWidth() {
-		return 40;
+		return 35;
 	}
 
 	
 
 	
 	public ProgramFieldType[] getProgramInfoFields() {
-		return new ProgramFieldType[]{
-        ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-        ProgramFieldType.DESCRIPTION_TYPE
-    };
+    return mProgramInfoFields;
 	}
 
+  public String[] getProgramTableIconPlugins() {
+    return new String[]{"programinfo.ProgramInfo"};
+  }
+
 	
-	public Icon[] getPluginIcons(Program program) {
+	//public Icon[] getPluginIcons(Program program) {
     
-    return new Icon[]{};
+   // return new Icon[]{};
     
     /*
     ArrayList list = new ArrayList();
@@ -90,7 +125,7 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
     Icon[] asArr = new Icon[list.size()];
     list.toArray(asArr);
     return asArr;*/
-	}
+//	}
 
 	
 	public Color getColorOnAir_dark() {
@@ -117,8 +152,8 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
 	}
 
 	
-	public boolean getPaintMarkedPrograms() {
-		return false;
+	public boolean getPaintPluginMarks() {
+		return mShowPluginMark;
 	}
   
 }

@@ -77,7 +77,7 @@ public class PrintPlugin extends devplugin.Plugin
        String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
        String author = "Robert Inzinger";
 
-       return new PluginInfo(name, desc, author, new Version(0, 4));
+       return new PluginInfo(name, desc, author, new Version(0, 5));
    }
 
 
@@ -94,7 +94,7 @@ public class PrintPlugin extends devplugin.Plugin
     Printer printer = dlg.getPrinter();
     
     if (printer!=null) {
-      printJob.setPrintable(printer);    
+      printJob.setPrintable(printer, dlg.getPageFormat());    
       try {
         printJob.print();
       } catch (PrinterException e) {

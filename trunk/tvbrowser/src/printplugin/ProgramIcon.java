@@ -1,3 +1,29 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
 package printplugin;
 
 import java.awt.*;
@@ -40,8 +66,11 @@ public class ProgramIcon implements Icon {
   private Icon[] mIconArr;
   /** The program. */  
   private Program mProgram;
+  
+  private static final ProgramIconSettings DEFAULT_PROGRAM_ICON_SETTINGS = PrinterProgramIconSettings.create();
 
 
+ 
   public ProgramIcon(Program prog) {
     this(prog, null, 100);
   }
@@ -49,7 +78,7 @@ public class ProgramIcon implements Icon {
   public ProgramIcon(Program prog, ProgramIconSettings settings, int width) {
     
     if (settings == null) {
-      mSettings = PrinterProgramIconSettings.getInstance();
+      mSettings = DEFAULT_PROGRAM_ICON_SETTINGS;
     }
     else {
       mSettings = settings;
@@ -63,6 +92,42 @@ public class ProgramIcon implements Icon {
     setProgram(prog, -1);
   }
   
+  public void setMaximumHeight(int height) {
+    setProgram(mProgram, height);
+    
+    //System.out.println(height+" <--> "+mHeight);
+    //if (mHeight > height) {
+    //  System.out.println("ALARM!");
+    //}
+  }
+  
+  private Icon[] getPluginIcons(Program program) {
+    
+    ArrayList list = new ArrayList();
+    
+    String[] iconPluginArr = mSettings.getProgramTableIconPlugins();
+    
+    Plugin[] pluginArr = Plugin.getPluginManager().getInstalledPlugins();
+    for (int i = 0; i < iconPluginArr.length; i++) {
+      // Find the plugin with this class name and add its icons
+      for (int j = 0; j < pluginArr.length; j++) {
+        String className = pluginArr[j].getClass().getName();
+        if (iconPluginArr[i].equals(className)) {
+          // This is the right plugin -> Add its icons
+          Icon[] iconArr = pluginArr[j].getProgramTableIcons(program);
+          if (iconArr != null) {
+            for (int k = 0; k < iconArr.length; k++) {
+              list.add(iconArr[k]);
+            }
+          }
+        }
+      }
+    }
+    
+    Icon[] asArr = new Icon[list.size()];
+    list.toArray(asArr);
+    return asArr;
+  }
   
   private void setProgram(devplugin.Program program, int maxHeight) {
     Program oldProgram = mProgram;
@@ -74,7 +139,7 @@ public class ProgramIcon implements Icon {
       mProgramTimeAsString = program.getTimeString();
 
       // Get the icons from the plugins
-      mIconArr = mSettings.getPluginIcons(program);
+      mIconArr = getPluginIcons(program);
 
       // Set the new title
       mTitleIcon.setText(program.getTitle());
@@ -82,9 +147,9 @@ public class ProgramIcon implements Icon {
     
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
-    int maxDescLines = 3;
+    int maxDescLines = 0; //3;
     if (maxHeight != -1) {
-      maxDescLines = (maxHeight - titleHeight - 10) / mSettings.getTextFont().getSize();
+      maxDescLines = (maxHeight - titleHeight /*- 10*/) / mSettings.getTextFont().getSize();
     }
     
     if (programChanged || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
@@ -138,7 +203,7 @@ public class ProgramIcon implements Icon {
     int height = mHeight;
     Graphics2D grp = (Graphics2D) g;
     
-    grp.draw3DRect(0, 0, width - 1, height - 1, true);
+   // grp.draw3DRect(0, 0, width - 1, height - 1, true);
 
     // Draw the background if this program is on air
     if (mSettings.getPaintProgramOnAir() && mProgram.isOnAir()) {
@@ -169,7 +234,7 @@ public class ProgramIcon implements Icon {
 
         // If there are plugins that have marked the program -> paint the background
         Plugin[] markedByPluginArr = mProgram.getMarkedByPlugins();
-        if (mSettings.getPaintMarkedPrograms() && markedByPluginArr.length != 0) {
+        if (mSettings.getPaintPluginMarks() && markedByPluginArr.length != 0) {
           grp.setColor(mSettings.getColorMarked());
           grp.fill3DRect(0, 0, width, height, true);
         }
@@ -196,7 +261,7 @@ public class ProgramIcon implements Icon {
         int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight() + 18;
         y = Math.min(y, height - 1);
         
-        if (mSettings.getPaintMarkedPrograms()) {
+        if (mSettings.getPaintPluginMarks()) {
           for (int i = 0; i < markedByPluginArr.length; i++) {
             Icon icon = markedByPluginArr[i].getMarkIcon();
             if (icon != null) {

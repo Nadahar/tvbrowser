@@ -1,3 +1,29 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
 package printplugin;
 
 import javax.swing.*;
@@ -6,14 +32,15 @@ import javax.swing.event.*;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
-import devplugin.ProgressMonitor;
 
 import tvdataservice.MutableProgram;
 import util.ui.ImageUtilities;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
 import java.util.TimeZone;
 
@@ -21,20 +48,27 @@ import java.util.TimeZone;
 public class PrintDialog extends JDialog {
   
   private JRadioButton mFromRb, mAllRb, mAllChannelsRb, mSelectedChannelsRb;
-  private JComboBox mDateCb, mDayStartCb, mDayEndCb, mFilterCb, mSizeCb;
-  private JSpinner mDayCountSpinner;
-  private JCheckBox mUseFilterCB;
-  private JButton mChangeSelectedChannelsBt;
+  private JComboBox mDateCb, mDayStartCb, mDayEndCb, mFilterCb, mSizeCb, mSortingCb;
+  private JSpinner mDayCountSpinner, mNumberOfColumnsSp;
+  private JCheckBox mUseFilterCB, mShowPluginMarkCB;
+  private JButton mChangeSelectedChannelsBt, mProgramPanelConfigBt;
   
   private PrinterJob mPrinterJob;
   
   private Printer mPrinter;
+  private PageFormat mPageFormat;
   
-  private JLabel mForLabel, mDaysLabel;
+  private Channel[] mChannels=new Channel[0];
+  private JLabel mForLabel, mDaysLabel, mProgramIconLabel;
+  private ProgramIconSettings mProgramIconSettings;
+  private Frame mParent;
   
   public PrintDialog(final Frame parent, PrinterJob printerJob) {
     super(parent, true);
+    mParent = parent;
+    setTitle("Drucken");
     mPrinterJob = printerJob;
+    mPageFormat = printerJob.defaultPage();
     
     JPanel content = (JPanel)getContentPane();
     
@@ -96,7 +130,7 @@ public class PrintDialog extends JDialog {
           JOptionPane.showMessageDialog(parent,"Es sind keine Seiten zu drucken.");
         }
         else {
-          PreviewDlg dlg = new PreviewDlg(parent, mPrinter, mPrinterJob.defaultPage(), mPrinter.getNumberOfPages());  
+          PreviewDlg dlg = new PreviewDlg(parent, mPrinter, mPageFormat/*mPrinterJob.defaultPage()*/, mPrinter.getNumberOfPages());  
           util.ui.UiUtilities.centerAndShow(dlg);
         }
       }
@@ -106,7 +140,8 @@ public class PrintDialog extends JDialog {
       public void actionPerformed(ActionEvent event) {
         Thread thread = new Thread(){
           public void run(){
-            mPrinterJob.pageDialog(mPrinterJob.defaultPage());
+            
+            mPageFormat = mPrinterJob.pageDialog(mPageFormat/*mPrinterJob.defaultPage()*/);
           }
         };
         thread.start();       
@@ -131,6 +166,16 @@ public class PrintDialog extends JDialog {
         hide();  
       }
     });
+        
+    addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent e) {
+             mPrinter = null;
+             hide();
+            }      
+    });
+    
+    mProgramIconSettings = PrinterProgramIconSettings.create();
+    
         
     pack();
   }
@@ -190,43 +235,43 @@ public class PrintDialog extends JDialog {
     
     JPanel channelSelectionPn = new JPanel(new BorderLayout());    
     channelSelectionPn.add(mSelectedChannelsRb=new JRadioButton("Ausgewaehlte: 10 von 23 Sender ausgewaehlt"),BorderLayout.WEST);
-    channelSelectionPn.add(mChangeSelectedChannelsBt=new JButton("aendern"),BorderLayout.EAST);
+    channelSelectionPn.add(mChangeSelectedChannelsBt=new JButton("aendern.."),BorderLayout.EAST);
     
     channelPn.add(allChannelsPn);
     channelPn.add(channelSelectionPn);
     
-    JPanel filterPn = new JPanel();
-    filterPn.setLayout(new BoxLayout(filterPn,BoxLayout.X_AXIS));
+    JPanel filterPn = new JPanel(new GridLayout(1,2));
     filterPn.setBorder(BorderFactory.createTitledBorder("Filter"));
     filterPn.add(mUseFilterCB=new JCheckBox("Filter verwenden:"));
     filterPn.add(mFilterCb=new JComboBox(Plugin.getPluginManager().getAvailableFilters()));
     
-    JPanel layoutPn = new JPanel(new GridLayout(3,2));
+    JPanel layoutPn = new JPanel(new GridLayout(2,2));
     layoutPn.setBorder(BorderFactory.createTitledBorder("Layout:"));;
     
     layoutPn.add(new JLabel("Spalten pro Seite:"));
-    layoutPn.add(new JSpinner(new SpinnerNumberModel(5,1,20,1)));
+    layoutPn.add(mNumberOfColumnsSp = new JSpinner(new SpinnerNumberModel(5,1,20,1)));
     
     layoutPn.add(new JLabel("Sortiert nach"));
-    layoutPn.add(new JComboBox(new String[]{"Sender","Beginnzeit"}));
-    
-    layoutPn.add(new JLabel("Groesse:"));
-    layoutPn.add(mSizeCb = new JComboBox(createIntegerArray(20,150,10)));
-    mSizeCb.setRenderer(new PercentListCellRenderer());
-    
+    layoutPn.add(mSortingCb = new JComboBox(new String[]{"Sender","Beginnzeit"}));
+       
     JPanel programSettingsPn = new JPanel(new BorderLayout());
     programSettingsPn.setBorder(BorderFactory.createTitledBorder("Programmelement"));
     
+    programSettingsPn.add(mShowPluginMarkCB = new JCheckBox("Plugin-Markierung anzeigen"),BorderLayout.SOUTH);
+    
     Icon ico = createDemoProgramPanel();
     System.out.println(ico.getIconWidth()+" / "+ico.getIconHeight());
-    JLabel icoLabel = new JLabel(ico);
+    mProgramIconLabel = new JLabel(ico);
     
+    JPanel pn6 = new JPanel(new BorderLayout());
+    pn6.add(mProgramIconLabel,BorderLayout.NORTH);
     
     
     JPanel pn5 = new JPanel(new BorderLayout());
-    pn5.add(new JButton("anpassen"),BorderLayout.NORTH);
-    
-    programSettingsPn.add(icoLabel,BorderLayout.WEST);
+    pn5.add(mProgramPanelConfigBt = new JButton("anpassen.."),BorderLayout.NORTH);
+    JScrollPane scrollPane = new JScrollPane(pn6);
+    scrollPane.setPreferredSize(new Dimension(250,100));
+    programSettingsPn.add(scrollPane,BorderLayout.WEST);
     programSettingsPn.add(pn5,BorderLayout.EAST);
     
     content.add(datePn);
@@ -243,32 +288,80 @@ public class PrintDialog extends JDialog {
     mFromRb.setSelected(true);
     mFromRb.addChangeListener(new ChangeListener(){
       public void stateChanged(ChangeEvent arg0) {
-        boolean b = mFromRb.isSelected();
-        mDayCountSpinner.setEnabled(b);
-        mDaysLabel.setEnabled(b);
-        mForLabel.setEnabled(b);
-        mDateCb.setEnabled(b);
+        updateDatePanel();
        }});
        
+    mChangeSelectedChannelsBt.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event){      
+        ChannelChooserDlg dlg = new ChannelChooserDlg(mParent, mChannels);
+        util.ui.UiUtilities.centerAndShow(dlg);
+        mChannels = dlg.getChannels(mChannels);
+        updateSelectedChannelsPanel();
+      }
+    });   
+       
+    mProgramPanelConfigBt.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event){
+        ProgramFieldType[] fieldTypes = new ProgramFieldType[]{}; 
+        ProgramItemConfigDlg dlg = new ProgramItemConfigDlg(mParent,fieldTypes);
+        util.ui.UiUtilities.centerAndShow(dlg);
+        //mProgramIconSettings = PrinterProgramIconSettings.create();
+        
+        if (dlg.getResult()==ProgramItemConfigDlg.OK) {
+          ProgramFieldType[] fields = dlg.getProgramItemFieldTypes(); 
+          mProgramIconSettings = PrinterProgramIconSettings.create(fields, mShowPluginMarkCB.isSelected());
+          mProgramIconLabel.setIcon(createDemoProgramPanel());
+        }
+        
+        
+      }
+    });
        
     group = new ButtonGroup();
     group.add(mAllChannelsRb);
     group.add(mSelectedChannelsRb);
     mAllChannelsRb.setSelected(true);
+    
     mSelectedChannelsRb.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent arg0) {
-        mChangeSelectedChannelsBt.setEnabled(mSelectedChannelsRb.isSelected());
+        updateChannelPanel();
       }
     });
     
     mUseFilterCB.addChangeListener(new ChangeListener(){
       public void stateChanged(ChangeEvent arg0) {
-        mFilterCb.setEnabled(mUseFilterCB.isSelected());
+        updateFilterPanel();
       }
     });
     
+    
+    updateFilterPanel();
+    updateDatePanel();
+    updateChannelPanel();
+    updateSelectedChannelsPanel();
     return resultPn;
   
+  }
+  
+  
+  private void updateFilterPanel() {
+    mFilterCb.setEnabled(mUseFilterCB.isSelected());
+  }
+  
+  private void updateDatePanel() {
+    boolean b = mFromRb.isSelected();
+    mDayCountSpinner.setEnabled(b);
+    mDaysLabel.setEnabled(b);
+    mForLabel.setEnabled(b);
+    mDateCb.setEnabled(b);
+  }
+  
+  private void updateChannelPanel() {
+    mChangeSelectedChannelsBt.setEnabled(mSelectedChannelsRb.isSelected());
+  }
+  
+  private void updateSelectedChannelsPanel() {
+    mSelectedChannelsRb.setText("Ausgewaehlte: "+mChannels.length+" Sender ausgewaehlt");
   }
   
   private Date[] createDateObjects(int days) {
@@ -307,8 +400,12 @@ public class PrintDialog extends JDialog {
       return ((Integer)mDayCountSpinner.getValue()).intValue(); 
     }
     else {
-      return -1;
+      return 100;
     }
+  }
+  
+  private int getNumberOfColumns() {
+    return ((Integer)mNumberOfColumnsSp.getValue()).intValue();
   }
   
   private int getDayStartHour() {
@@ -319,8 +416,18 @@ public class PrintDialog extends JDialog {
     return ((Integer)mDayEndCb.getSelectedItem()).intValue();
   }
   
-  private Channel[] getChannels() {    
-    return Plugin.getPluginManager().getSubscribedChannels();
+  private Channel[] getChannels() {
+    if (mAllChannelsRb.isSelected()) {
+      return Plugin.getPluginManager().getSubscribedChannels();    
+    }
+    else {
+      return mChannels;
+    }
+  }
+  
+  private ProgramIconSettings getProgramIconSettings() {
+    System.out.println("# of fields: "+mProgramIconSettings.getProgramInfoFields().length);
+    return mProgramIconSettings;
   }
   
   private ProgramFilter getProgramFilter() {
@@ -333,33 +440,84 @@ public class PrintDialog extends JDialog {
   
   private Printer createPrinter() {
    
-   
-   return PrinterFactory.createDefaultPrinter(
+   if (mSortingCb.getSelectedIndex() == 0) {
+     
+     return PrinterFactory.createDefaultPrinter(
                      null,
-                     new DefaultPageRenderer(mPrinterJob.defaultPage(),0.4),
+                     new ChannelPageRenderer(mPageFormat,getNumberOfColumns(),getDayStartHour(), getDayEndHour(), getProgramIconSettings()),
                      getStartDate(),
                      getNumberOfDays(),
                      getDayStartHour(),
                      getDayEndHour(),
                      getChannels(),
                      getProgramFilter());
+   }
+   else {
+    
+     return PrinterFactory.createTimeSortedPrinter(
+                      null,
+                      new TimePageRenderer(mPageFormat,getNumberOfColumns(), getProgramIconSettings()),
+                      getStartDate(),
+                      getNumberOfDays(),
+                      getDayStartHour(),
+                      getDayEndHour(),
+                      getChannels(),
+                      getProgramFilter()); 
+   }
   }
    
   public Printer getPrinter() {
     return mPrinter; 
   }
   
+  public PageFormat getPageFormat() {
+    return mPageFormat;
+  }
+  
   private Icon createDemoProgramPanel() {
+    
+    /*Folge: Der Postflieger
+Genre: Familie
+VPS: 13:20
+Showview: 528-311 
+Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haustür aus sehnsuchtsvoll hinterhersieht. Der Flieger antwortet ihrem Winken regelmäßig mit einem Wippen der Tragflächen. Doch genau einen Abend vor Olivias Geburtstag muss der Pilot in Walton's Mountain notlanden. Er ist froh, bei den Waltons Hilfe zu finden, und Olivia erfährt einiges über sein Leben ...  Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr. gilt als eine der besten Familienserien, die es je im Fernsehen gab. Der größte Wunsch des ältesten Sohns von John und Olivia Walton ist es, Schriftsteller zu werden. Großeltern, Eltern und Geschwister stehen natürlich im Mittelpunkt von John-Boys Storys. Und bei so einer großen Familie findet John-Boy immer wieder neue - lustige, interessante oder auch traurige - Themen ...
+Herkunft: USA
+Produktionsjahr: 1972
+Originaltitel: The Waltons
+Originalfolge: Air Mail Man
+Schauspieler: Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Großmutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton), Will Geer (Großvater Sam Walton), Eric Scott (Ben Walton)*/
+    
     MutableProgram prog = new MutableProgram(
                new Channel(null, "Channel 1", TimeZone.getDefault(), "de", ""),
                Date.getCurrentDate(),
                14,
                45);
-    prog.setTitle("TV-Browser");
-    prog.setShortInfo("TV-Browser is a free EPG");
-    prog.setDescription("TV-Browser is a java-based TV guide which is easily extensible using plugins. It is designed to look like a paper based tv guide.");
+    prog.setTitle("Die Waltons");
+    prog.setShortInfo("Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr.");
+    prog.setDescription("Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haustür aus sehnsuchtsvoll hinterhersieht.");
+    prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE,"123-456");
+    prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE,"Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Großmutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton)");
+    prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE,6);
+    //prog.setTextField(ProgramFieldType.DIRECTOR_TYPE,"");
+    prog.setTextField(ProgramFieldType.EPISODE_TYPE,"Der Postflieger");
+    prog.setTextField(ProgramFieldType.GENRE_TYPE,"Familie");
+    prog.setTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE,"Air Mail Man");
+    prog.setTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE,"The Waltons");
+    prog.setTextField(ProgramFieldType.ORIGIN_TYPE,"USA");
+    prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE,1972);
+    prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE,"Wh von gestern, 8:00");
+    //prog.setTextField(ProgramFieldType.SCRIPT_TYPE,"");
+    prog.setTextField(ProgramFieldType.URL_TYPE,"http://www.thewaltons.com");
+    prog.setTimeField(ProgramFieldType.VPS_TYPE,14*60+45);
+    prog.setInfo(devplugin.Program.INFO_AUDIO_TWO_CHANNEL_TONE | devplugin.Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
     
-    return new ProgramIcon(prog, null, 200);
+    
+    
+    
+    
+    ProgramIcon ico = new ProgramIcon(prog, mProgramIconSettings, 200);
+    ico.setMaximumHeight(1000);
+    return ico;
     
   }
   
