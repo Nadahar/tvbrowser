@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package devplugin;
+package util.ui;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,8 +38,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import devplugin.Plugin;
+import devplugin.Program;
+
 import searchplugin.SearchPlugin;
-import util.ui.ProgramListCellRenderer;
 
 
 /**

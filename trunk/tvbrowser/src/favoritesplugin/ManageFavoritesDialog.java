@@ -59,10 +59,10 @@ import javax.swing.event.ListSelectionListener;
 import util.exc.ErrorHandler;
 import util.ui.ExtensionFileFilter;
 import util.ui.ImageUtilities;
+import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Program;
-import devplugin.ProgramList;
 
 /**
  * A dialog for managing the favorite programs.

@@ -25,7 +25,13 @@
  */
 package util.ui;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -33,17 +39,19 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.core.PluginManager;
+import tvbrowser.core.Settings;
 import util.io.IOUtilities;
-
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-
-import tvbrowser.core.*;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
@@ -99,6 +107,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /** The program. */  
   private Program mProgram;
 
+  /** Color of the Text */
+  private Color mTextColor = Color.BLACK;
+  
   /**
    * Creates a new instance of ProgramPanel.
    */  
@@ -345,7 +356,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
       grp.setColor(Color.gray);
     } else {
-      grp.setColor(Color.black);
+      grp.setColor(mTextColor);
     }
     grp.setFont(ProgramPanel.mTimeFont);
     grp.drawString(mProgramTimeAsString, 1, mTimeFont.getSize());
@@ -469,4 +480,20 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
   }
 
+  /**
+   * Sets the Color of the Text
+   * @param col Color of the Text
+   */
+  public void setTextColor(Color col) {
+      mTextColor = col;
+  }
+  
+  /**
+   * Returns the Color of the Text
+   * @return Color of the Text
+   */
+  public Color getTextColor() {
+      return mTextColor;
+  }
+  
 }

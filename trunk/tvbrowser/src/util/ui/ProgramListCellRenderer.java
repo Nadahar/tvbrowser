@@ -89,8 +89,9 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       Program program = (Program) value;
       
       mProgramPanel.setProgram(program);
+      mProgramPanel.setTextColor(label.getForeground());
       mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
-      
+      mHeaderLb.setForeground(label.getForeground());
       mMainPanel.setBackground(label.getBackground());
       mMainPanel.setForeground(label.getForeground());
       mMainPanel.setEnabled(label.isEnabled());
