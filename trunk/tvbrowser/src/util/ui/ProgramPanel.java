@@ -142,14 +142,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     
   }
   
-  
-  public void fontChanged() {
-    mTitleIcon.setFont(mTitleFont);
-    mDescriptionIcon.setFont(mNormalFont);
-    setProgram(mProgram);
-    
+  public void forceRepaint() {
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
+    mDescriptionIcon.setMaximumLineCount(3);
+    Program p = mProgram;
+    mProgram = null;  
+    setProgram(p);  
   }
-
+  
   /**
    * (Re)Loads the column width settings.
    */

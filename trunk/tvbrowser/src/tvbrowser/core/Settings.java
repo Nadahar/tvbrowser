@@ -140,14 +140,19 @@ public class Settings {
       propProgramTitleFont, propProgramInfoFont, propProgramTimeFont,
       propChannelNameFont, propUseDefaultFonts
     };
+    
     if (mProp.hasChanged(propArr)) {
       util.ui.ProgramPanel.updateFonts();
-      tvbrowser.ui.programtable.ChannelPanel.fontChanged();
-      
+      tvbrowser.ui.programtable.ChannelPanel.fontChanged();      
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
-      scrollPane.getProgramTable().fontChanged();
-      scrollPane.tableDataChanged();
-      scrollPane.getProgramTable().tableDataChanged();
+      scrollPane.forceRepaintAll();      
+    }
+    
+    if (mProp.hasChanged(propColumnWidth)) {
+      util.ui.ProgramPanel.updateColumnWidth();
+      ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
+      scrollPane.setColumnWidth(propColumnWidth.getInt());
+      scrollPane.forceRepaintAll();
     }
     
     propArr = new Property[] {
@@ -213,13 +218,7 @@ public class Settings {
       model.setTimeRange(startOfDay, endOfDay);
     }
       
-    if (mProp.hasChanged(propColumnWidth)) {
-      util.ui.ProgramPanel.updateColumnWidth();
-      ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
-      scrollPane.setColumnWidth(propColumnWidth.getInt());
-      scrollPane.updateChannelPanel();
-      scrollPane.getProgramTable().updateLayout();
-    }
+    
     
     propArr = new Property[] {
       propProgramTableIconPlugins, propProgramInfoFields

@@ -61,13 +61,6 @@ public class TextAreaIcon implements Icon {
     setText(text);
   }
   
-  public void setFont(Font font) {
-    mFont = font;
-    if (mTextLineArr!=null) System.out.print("changed from "+mTextLineArr.length);
-    setText(mText);
-    if (mTextLineArr!=null) System.out.println(" to "+mTextLineArr.length);
-    
-  }
   
   public void setMaximumLineCount(int maxLineCount) {
     mMaxLineCount = maxLineCount;
