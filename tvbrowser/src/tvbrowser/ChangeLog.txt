@@ -14,6 +14,9 @@ current:
 - shortcuts for menu items added
 - keyboard navigable
 - specifiying a proxy supported
+- dialog on startup, when no tvdata were found
+- helpsystem added
+
 
 0.9.3:
 - bugfixes
