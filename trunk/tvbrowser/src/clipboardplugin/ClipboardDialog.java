@@ -10,8 +10,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Vector;
 
@@ -20,9 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
 import util.ui.ProgramList;
@@ -91,7 +87,9 @@ public class ClipboardDialog extends JDialog {
     content.setBorder(UiUtilities.DIALOG_BORDER);
 
     mProgramJList = new ProgramList(mClipList);
-
+    mProgramJList.addMouseListeners(mPlugin);
+    
+    
     JScrollPane scroll = new JScrollPane(mProgramJList);
 
     content.add(scroll, BorderLayout.CENTER);
@@ -264,7 +262,7 @@ public class ClipboardDialog extends JDialog {
       prgList[i] = (Program) mClipList.get(i);
     }
 
-    SendToPluginDialog send = new SendToPluginDialog(this, prgList);
+    SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, prgList);
 
     send.show();
   }
