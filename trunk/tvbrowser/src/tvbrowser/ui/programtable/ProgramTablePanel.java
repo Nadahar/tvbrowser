@@ -173,7 +173,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
    		
 
     timer=new javax.swing.Timer(10000,this);
-    channelChooser=new ChannelChooser(this);
+    channelChooser=new ChannelChooser(parent,this);
     channelPanel=new ChannelPanel();
   }
   
