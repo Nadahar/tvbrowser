@@ -66,7 +66,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
-                    mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI,
+                    mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu;  
   private JLabel mLabel;
@@ -149,6 +149,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
     mForumMI=new JMenuItem("Forum",urlImg); 
     mForumMI.addActionListener(this);
+    
+    mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlImg); 
+    mHandbookMI.addActionListener(this);
     
     mWebsiteMI=new JMenuItem("Website",urlImg);
     mWebsiteMI.addActionListener(this);
@@ -312,6 +315,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      }
      else if (source == mWebsiteMI) {
        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.tvbrowser",""));
+     } 
+     else if (source == mHandbookMI) {
+         util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.handbook",""));
      }
      else if (source == mConfigAssistantMI) {
          mMainFrame.runSetupAssistant();
@@ -331,6 +337,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
      new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
      new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.forum",""),mLabel); 
+     new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
      new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
      new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
    }
