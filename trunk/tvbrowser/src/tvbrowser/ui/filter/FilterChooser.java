@@ -28,59 +28,63 @@ package tvbrowser.ui.filter;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.BorderLayout;
 
 import tvbrowser.ui.programtable.*;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 
-public class FilterChooser extends JComboBox {
+public class FilterChooser extends JPanel {
+
+  private static final util.ui.Localizer mLocalizer
+         = util.ui.Localizer.getLocalizerFor(FilterChooser.class);
+     
     
     
-    public FilterChooser(final JFrame parent, final ProgramTableModel model) {
-        super();
-        
-        updateList();
-        
-        this.addActionListener(new ActionListener(){
-           public void actionPerformed(ActionEvent e) {
-               Object o=getSelectedItem();
-               if (o instanceof Filter) {
-                    model.setProgramFilter((Filter)o);   
-                  
-                  
-               }else if (o instanceof String){
-                   SelectFilterDlg dlg=new SelectFilterDlg(parent);
-                   util.ui.UiUtilities.centerAndShow(dlg);
-                   updateList();
-                   
-               }
-           }            
-        });        
-        
+  private final JComboBox mBox;
+    
+  public FilterChooser(final JFrame parent, final ProgramTableModel model) {
+     
+    super(new BorderLayout());
+    mBox=new JComboBox();
+    updateList();
+    mBox.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        Object o=mBox.getSelectedItem();
+        if (o instanceof Filter) {
+           model.setProgramFilter((Filter)o);   
+        }else if (o instanceof String){
+          SelectFilterDlg dlg=new SelectFilterDlg(parent);
+          util.ui.UiUtilities.centerAndShow(dlg);
+          updateList();
+        }
+      }            
+    });        
+    add(mBox,BorderLayout.CENTER);    
     }
     
     
-    private void updateList() {
+  private void updateList() {
         
-        this.removeAllItems();
-        addItem(new ShowAllFilter());  // default filter
-        Filter[] f=FilterList.getFilterList();
-        for (int i=0;i<f.length;i++) {
-            addItem(f[i]);
-        }
+    mBox.removeAllItems();
+    mBox.addItem(new ShowAllFilter(mLocalizer.msg("ShowAll","Show all")));  // default filter
+    Filter[] f=FilterList.getFilterList();
+    for (int i=0;i<f.length;i++) {
+      mBox.addItem(f[i]);
+    }
         
-        this.addItem("edit filters...");
+    mBox.addItem(mLocalizer.msg("EditFilters","edit filters..."));
     }
 }
 
 
 class ShowAllFilter extends Filter {
     
-    public ShowAllFilter() {
-        super("Show all");
-    }
+  public ShowAllFilter(String title) {
+    super(title);
+  }
     
-    public boolean accept(devplugin.Program prog) {
-        return true;
-    }
+  public boolean accept(devplugin.Program prog) {
+    return true;
+  }
     
 }

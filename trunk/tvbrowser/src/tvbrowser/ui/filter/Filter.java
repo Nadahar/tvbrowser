@@ -551,9 +551,7 @@ class ItemNode extends Node {
     }
     
     public boolean containsRuleComponent(String compName) {
-      System.out.print(mRule.getName()+"<-->"+compName+": ");
       boolean result=mRule.getName().equalsIgnoreCase(compName);
-      System.out.println(result);
       return (mRule.getName().equalsIgnoreCase(compName)); 
     }
     
