@@ -98,8 +98,8 @@ public class Mirror {
       if (line.length() > 0) {
         // This is not an empty line -> read it
         
-        StringTokenizer tokenizer = new StringTokenizer(line);
-        if (tokenizer.countTokens() != 2) {
+        StringTokenizer tokenizer = new StringTokenizer(line, ";");
+        if (tokenizer.countTokens() < 2) {
           throw new FileFormatException("Syntax error in mirror file line "
             + lineCount + ": '" + line + "'");
         }
@@ -156,7 +156,7 @@ public class Mirror {
 
     PrintWriter writer = new PrintWriter(gOut);
     for (int i = 0; i < mirrorArr.length; i++) {
-      writer.println(mirrorArr[i].getUrl() + " " + mirrorArr[i].getWeight());
+      writer.println(mirrorArr[i].getUrl() + ";" + mirrorArr[i].getWeight());
     }
     writer.close();
     
