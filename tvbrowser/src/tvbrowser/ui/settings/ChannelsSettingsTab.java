@@ -193,6 +193,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
           }
           ChannelConfigDlg dlg=new ChannelConfigDlg(mSettingsPn,mLocalizer.msg("configSelectedChannels","Configure selected channels"),channelList);
           dlg.centerAndShow();
+          mChannelListPanel.updateUI();
         }      
       });
     }

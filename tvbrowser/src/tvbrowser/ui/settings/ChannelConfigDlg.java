@@ -27,14 +27,30 @@
 
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
-import devplugin.Channel;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import util.ui.UiUtilities;
+import devplugin.Channel;
 
 
 public class ChannelConfigDlg implements ActionListener {
@@ -51,6 +67,11 @@ public class ChannelConfigDlg implements ActionListener {
   private JTextField mIconFileName;
   /** Button to Change FileName */
   private JButton mChangeIcon;
+  /** use User-Icon */
+  private JCheckBox mUseUserIcon;
+  /** Text in front of Icon-Location */
+  private JLabel mIconLabel;
+
   
   public ChannelConfigDlg(Component parent, String title, Channel[] channelList) {
     mDialog = UiUtilities.createDialog(parent, true);
@@ -64,7 +85,7 @@ public class ChannelConfigDlg implements ActionListener {
     JPanel panel1=new JPanel();
     panel1.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("DLSTTitle","Day light saving time correction")));
     
-    panel1.setLayout(new BoxLayout(panel1,BoxLayout.Y_AXIS));
+    panel1.setLayout(new GridBagLayout());
     
     JPanel pn=new JPanel(new BorderLayout());
     JLabel lb=new JLabel(mLocalizer.msg("correction","Correction"));
@@ -86,10 +107,16 @@ public class ChannelConfigDlg implements ActionListener {
     txt.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
     
     pn.add(mCorrectionCB,BorderLayout.EAST);
-    panel1.add(pn);
-    panel1.add(txt);
-
+    
     GridBagConstraints c = new GridBagConstraints();
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    c.weightx = 1.0;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    
+    panel1.add(pn, c);
+    panel1.add(txt, c);
+
+    c = new GridBagConstraints();
     c.gridwidth = GridBagConstraints.REMAINDER;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -98,9 +125,9 @@ public class ChannelConfigDlg implements ActionListener {
     
     
     // Configuration for Icons 
-    JPanel iconConfig = new JPanel();
-    iconConfig.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channelIcon","Channel Icon")));
-    iconConfig.setLayout(new BorderLayout(5, 2));
+    JPanel iconPanel = new JPanel();
+    iconPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channelIcon","Channel Icon")));
+    iconPanel.setLayout(new BorderLayout(5, 2));
     mIconFileName = new JTextField();
     mChangeIcon = new JButton(mLocalizer.msg("change","Change"));
     mChangeIcon.addActionListener(new ActionListener() {
@@ -118,23 +145,34 @@ public class ChannelConfigDlg implements ActionListener {
     
     });
     
+    mUseUserIcon = new JCheckBox(mLocalizer.msg("useIcon","Use own channel-icon"));
     
-    JLabel iconLabel = new JLabel(mLocalizer.msg("icon","Icon"));
-    iconConfig.add(iconLabel, BorderLayout.WEST);
-    iconConfig.add(mIconFileName, BorderLayout.CENTER);
-    iconConfig.add(mChangeIcon, BorderLayout.EAST);
+    mUseUserIcon.addChangeListener(new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+            mIconLabel.setEnabled(mUseUserIcon.isSelected());
+            mIconFileName.setEnabled(mUseUserIcon.isSelected());
+            mChangeIcon.setEnabled(mUseUserIcon.isSelected());
+        }
+    });
     
-    if (channelList.length != 1) {
-        iconLabel.setEnabled(false);
-        iconConfig.setEnabled(false);
-        mIconFileName.setEditable(false);
-        mChangeIcon.setEnabled(false);
-    } else {
+    mIconLabel = new JLabel(mLocalizer.msg("icon","Icon"));
+    iconPanel.add(mUseUserIcon, BorderLayout.NORTH);
+    iconPanel.add(mIconLabel, BorderLayout.WEST);
+    iconPanel.add(mIconFileName, BorderLayout.CENTER);
+    iconPanel.add(mChangeIcon, BorderLayout.EAST);
+    
+    if (channelList.length == 1) {
+        mUseUserIcon.setSelected(channelList[0].isUsingUserIcon());
+        
+        mIconLabel.setEnabled(mUseUserIcon.isSelected());
+        mIconFileName.setEnabled(mUseUserIcon.isSelected());
+        mChangeIcon.setEnabled(mUseUserIcon.isSelected());
+        
         mIconFileName.setText(channelList[0].getIconFileName());
+        content.add(iconPanel, c);
     }
     
     
-    content.add(iconConfig, c);
     // Configuration for Icons
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
@@ -154,10 +192,12 @@ public class ChannelConfigDlg implements ActionListener {
     mChannelList=channelList;
     mDialog.getContentPane().add(main);
     mDialog.pack();
+    mDialog.pack(); // This hack is needed because of re-calculation for JTextArea
     
-    if (mDialog.getWidth() < 300) {
+   if (mDialog.getWidth() < 300) {
         mDialog.setSize(300, mDialog.getHeight());
     }
+  
   }
   
   public void centerAndShow() {
@@ -173,6 +213,7 @@ public class ChannelConfigDlg implements ActionListener {
       }
       
       if (mChannelList.length == 1) {
+          mChannelList[0].useUserIcon(mUseUserIcon.isSelected());
           mChannelList[0].setIconFileName(mIconFileName.getText());
       }
       mDialog.hide();
