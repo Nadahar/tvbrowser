@@ -185,7 +185,7 @@ public class TvDataUpdater {
 
     // Show the exception if there was one
     if (downloadException != null) {
-      String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
+      String msg = mLocalizer.msg("error.1", "Couldn't download the whole program!");
       ErrorHandler.handle(msg, downloadException);
     }
     
