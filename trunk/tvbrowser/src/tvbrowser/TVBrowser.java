@@ -176,12 +176,19 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        mainFrame.scrollToNow();
-        DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());        
+      	
+      	if (!DataService.dataAvailable(new devplugin.Date())) {
+      		askForDataUpdate();
+      	}else{
+      		mainFrame.scrollToNow();
+      	}
+			
+        DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());
+        
+                
       }
     });
   }
-
 
 
   public TVBrowser() {
@@ -800,5 +807,31 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   	UiUtilities.centerAndShow(box);
   	box.dispose();
   }
+
+
+private static void askForDataUpdate() {
+	
+	String msg1 = mLocalizer.msg("askforupdatedlg.1","update now");
+	String msg2 = mLocalizer.msg("askforupdatedlg.2","later");
+	String msg3 = mLocalizer.msg("askforupdatedlg.3","No tv data for todays program available.");
+	String msg4 = mLocalizer.msg("askforupdatedlg.4","Do you want to update now?");
+	String msg5 = mLocalizer.msg("askforupdatedlg.5","Update tv data");
+	
+	
+	
+	Object[] options = {msg1,msg2};
+	int result = JOptionPane.showOptionDialog(mainFrame,					
+		msg3+"\n\n"+
+		msg4,
+		msg5,
+		JOptionPane.YES_NO_OPTION,
+		JOptionPane.QUESTION_MESSAGE,
+		null,options,options[0]);
+		
+	if (result==JOptionPane.YES_OPTION) {
+		mainFrame.updateTvData();
+	}	
+}
+
 
 }
