@@ -36,8 +36,11 @@ public class ListViewDialog extends JDialog {
 
     /**
      * Creates the Dialog
-     * @param frame Frame for modal
-     * @param plugin Plugin for reference
+     * 
+     * @param frame
+     *            Frame for modal
+     * @param plugin
+     *            Plugin for reference
      */
     public ListViewDialog(Frame frame, Plugin plugin) {
         super(frame, true);
@@ -48,7 +51,7 @@ public class ListViewDialog extends JDialog {
     }
 
     /**
-     *  Genereates the List of Programs
+     * Genereates the List of Programs
      */
     private void generateList() {
         _programList = new Vector();
@@ -70,28 +73,47 @@ public class ListViewDialog extends JDialog {
     }
 
     /**
-     *  Creates the GUI
+     * Creates the GUI
      */
-    private void createGUI() {
+private void createGUI() {
         JPanel content = (JPanel) this.getContentPane();
         content.setLayout(new BorderLayout());
-        content.add(new JLabel(mLocalizer.msg("nowRunning", "Now Running:")), BorderLayout.NORTH);
+        content.add(new JLabel(mLocalizer.msg("nowRunning", "Now Running:")),
+                BorderLayout.NORTH);
 
         _programJList = new JList(_programList);
-        
+
         _programJList.setCellRenderer(new ListViewProgramCellRenderer());
-                
+
         _programJList.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     int inx = _programJList.locationToIndex(e.getPoint());
-                    Program p = (Program) _programJList.getModel().getElementAt(inx);
+                    Program p = (Program) _programJList.getModel()
+                            .getElementAt(inx);
                     _programJList.setSelectedIndex(inx);
                     JPopupMenu menu = devplugin.Plugin.getPluginManager()
                             .createPluginContextMenu(p,
                                     ListViewPlugin.getInstance());
                     menu.show(_programJList, e.getX() - 15, e.getY() - 15);
+                } else if (SwingUtilities.isLeftMouseButton(e)
+                        && (e.getClickCount() == 2)) {
+                    int inx = _programJList.locationToIndex(e.getPoint());
+                    final Program p = (Program) _programJList.getModel()
+                            .getElementAt(inx);
+
+                    final Plugin plugin = devplugin.Plugin.getPluginManager()
+                            .getDefaultContextMenuPlugin();
+                    if (plugin != null) {
+                        Runnable runLater = new Runnable() {
+
+                            public void run() {
+                                plugin.execute(p);
+                            }
+                        };
+                        SwingUtilities.invokeLater(runLater);
+                    }
                 }
             }
         });
@@ -102,20 +124,21 @@ public class ListViewDialog extends JDialog {
 
         JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         content.add(buttonPn, BorderLayout.SOUTH);
-        
+
         JButton okButton = new JButton(mLocalizer.msg("ok", "OK"));
         okButton.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-            dispose();
-          }
+
+            public void actionPerformed(ActionEvent evt) {
+                dispose();
+            }
         });
         buttonPn.add(okButton);
     }
-    
-    /** The localizer used by this class. */  
-    private static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(ListViewDialog.class );
-    
+    /** The localizer used by this class. */
+    private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+            .getLocalizerFor(ListViewDialog.class);
+
     private JList _programJList;
+
     private Vector _programList;
 }
