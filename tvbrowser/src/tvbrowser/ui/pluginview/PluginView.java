@@ -98,7 +98,6 @@ public class PluginView extends JPanel implements MouseListener {
 
 
   private void showContextMenu(TreePath[] paths, int x, int y) {
-    assert paths != null && paths.length > 0;
 
     DefaultMutableTreeNode node =(DefaultMutableTreeNode)paths[0].getLastPathComponent();
     Object userObject = node.getUserObject();

@@ -72,7 +72,7 @@ public class ReminderList implements ActionListener {
   
   public ReminderList(PluginTreeNode root) {
     mRoot = root;
-    ProgramItem[] items = root.getPrograms();
+    ProgramItem[] items = root.getProgramItems();
     for (int i=0; i<items.length; i++) {
       Program prog = items[i].getProgram();
       if (prog == null) {
@@ -210,7 +210,7 @@ public class ReminderList implements ActionListener {
   
   
   public void removeExpiredItems() {
-    ProgramItem[] items = mRoot.getPrograms();
+    ProgramItem[] items = mRoot.getProgramItems();
     for (int i=0; i<items.length; i++) {
       if (items[i].getProgram().isExpired()) {
         mRoot.removeProgram(items[i]);
@@ -228,7 +228,7 @@ public class ReminderList implements ActionListener {
   }
   
   public boolean contains(Program program) {
-    ProgramItem[] items = mRoot.getPrograms();
+    ProgramItem[] items = mRoot.getProgramItems();
     for (int i=0; i<items.length; i++) {
       if (program.equals(items[i].getProgram())) {
         return true;
@@ -243,7 +243,7 @@ public class ReminderList implements ActionListener {
   public void remove(Program program) {
        
     //ProgramItem[] items = mContainer.getPrograms();
-    ProgramItem[] items = mRoot.getPrograms();
+    ProgramItem[] items = mRoot.getProgramItems();
     for (int i=0; i<items.length; i++) {
       if (program.equals(items[i].getProgram())) {
         //mContainer.removeProgram(items[i]);
@@ -292,7 +292,7 @@ public class ReminderList implements ActionListener {
       
       
     // ProgramItem[] items = mContainer.getPrograms();
-     ProgramItem[] items = mRoot.getPrograms();
+     ProgramItem[] items = mRoot.getProgramItems();
      ReminderListItem[] result = new ReminderListItem[items.length];
      for (int i=0; i<items.length; i++) {
        //result[i] = (ReminderListItem)items[i];
