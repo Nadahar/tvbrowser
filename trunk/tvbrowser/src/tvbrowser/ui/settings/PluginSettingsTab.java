@@ -242,10 +242,6 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   }
 
 	public void saveSettings() {
-  //  Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
-  //  mActivatedPlugins.toArray(installedPluginList);
-  //  PluginManager.getInstance().setInstalledPlugins(installedPluginList);
-  
     
 	}
 

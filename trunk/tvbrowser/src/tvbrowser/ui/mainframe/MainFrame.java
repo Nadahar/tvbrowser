@@ -23,14 +23,12 @@
  *   $Author$
  * $Revision$
  */
+
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -39,21 +37,15 @@ import java.util.logging.Level;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import net.infonode.docking.RootWindow;
@@ -69,14 +61,13 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.aboutbox.AboutBox;
+import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
-import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
@@ -92,13 +83,15 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgramFilter;
 
+import java.lang.reflect.Constructor;
+
 
 /**
  * TV-Browser
  *
  * @author Martin Oberhauser
  */
-public class MainFrame extends JFrame implements ActionListener, DateListener {
+public class MainFrame extends JFrame implements /*ActionListener, */DateListener {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(tvbrowser.TVBrowser.class.getName());
@@ -114,10 +107,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private DefaultProgramTableModel mProgramTableModel;
   private Thread downloadingThread;
   private JPanel jcontentPane;
-  private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, donorMenuItem,
-   faqMenuItem, forumMenuItem, websiteMenuItem, configAssistantMenuItem, mCreateFilterItem;
-  private JCheckBoxMenuItem mToolbarMenuItem;
   private SkinPanel skinPanel;
   private tvbrowser.ui.mainframe.MainToolBar mToolBar;
   private StatusBar mStatusBar;
@@ -128,180 +117,36 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   private TimeChooserPanel mTimeChooser;
   private ChannelChooserPanel mChannelChooser;
+  private MenuBar mMenuBar;
   
  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
-
+		
     String msg;
     Icon icon;
 
-    JMenuBar menuBar = new JMenuBar();
-    
-    
     mStatusBar = new StatusBar();
- 
-    // TV-Browser menu
-    JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
-    mainMenu.setMnemonic(KeyEvent.VK_B);
-    menuBar.add(mainMenu);
     
-    icon = new ImageIcon("imgs/Preferences16.gif");
-    msg = mLocalizer.msg("menuitem.settings", "Settings...");
-    settingsMenuItem = new JMenuItem(msg, icon);
-    settingsMenuItem.setMnemonic(KeyEvent.VK_S);
-  settingsMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-        KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-    settingsMenuItem.addActionListener(this);
-    mainMenu.add(settingsMenuItem);
-    
-    mainMenu.addSeparator();
-
-    msg = mLocalizer.msg("menuitem.exit", "Exit...");
-    quitMenuItem = new JMenuItem(msg);
-  quitMenuItem.setMnemonic(KeyEvent.VK_E);
-    quitMenuItem.addActionListener(this);
-    
-  quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(
-      KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
-    
-    mainMenu.add(quitMenuItem);
-    
-    
-    // View Menu
-    JMenu viewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
-    menuBar.add(viewMenu);
-    
-    mToolbarMenuItem = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewToolbar","Toolbar"));
-    viewMenu.add(mToolbarMenuItem);
-    mToolbarMenuItem.addActionListener(this);
-    
-    mToolbarMenuItem.setSelected(!"hidden".equals(Settings.propToolbarLocation.getString()));
-    
-    JMenuItem timeBtnsMenuItem = new JCheckBoxMenuItem("TODO: Zeitknoepfe");
-    viewMenu.add(timeBtnsMenuItem);
-    
-    JMenuItem dateMenuItem = new JCheckBoxMenuItem("TODO: Datumsleiste");
-    viewMenu.add(dateMenuItem);
-    
-    JMenuItem channelsMenuItem = new JCheckBoxMenuItem("TODO: Sender");
-    viewMenu.add(channelsMenuItem);
-    
-    viewMenu.addSeparator();
-    
-    JMenu filtersMenu = new JMenu("TODO: Filter");
-    viewMenu.add(filtersMenu);
-    JMenuItem[] filterMenuItems = createFilterMenuItems();
-    for (int i=0; i<filterMenuItems.length; i++) {
-      filtersMenu.add(filterMenuItems[i]);
+		if (System.getProperty("mrj.version") != null) {
+			/* create the menu bar for MacOS X */
+	    try {
+        Class impl = Class.forName("tvbrowser.ui.mainframe.macosx.MacOSXMenuBar");
+			  Class mainFrameClass = this.getClass();
+			  Class jlabelClass = Class.forName("javax.swing.JLabel");
+			  Constructor cons = impl.getConstructor(new Class[]{mainFrameClass, jlabelClass});
+			  mMenuBar = (MenuBar)cons.newInstance(new Object[]{this, mStatusBar.getLabel()});
+			}catch(Exception e) {
+        mLog.warning("Could not instantiate MacOSXMenuBar\n"+e.toString());
+				mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
+				mLog.info("Using default menu bar");
+			}
+			
+    }else {
+	    mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
     }
-    filtersMenu.addSeparator();
-    mCreateFilterItem = new JMenuItem("TODO: Filter erstellen..");
-    filtersMenu.add(mCreateFilterItem);
-    mCreateFilterItem.addActionListener(this);
     
-    JMenu pluginsMenu = new JMenu("TODO: Plugins");
-    viewMenu.add(pluginsMenu);
-    pluginsMenu.add(new JMenuItem("Plugin #1"));
-    pluginsMenu.add(new JMenuItem("Plugin #2"));
-    pluginsMenu.add(new JMenuItem("Plugin #3"));
-    
-    viewMenu.addSeparator();
-    viewMenu.add(new JMenuItem("Wiederherstellen"));
-    
-    
-    // TV data menu
-    JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
-    tvDataMenu.setMnemonic(KeyEvent.VK_D);
-    menuBar.add(tvDataMenu);
-
-    icon = new ImageIcon("imgs/Refresh16.gif");
-    msg = mLocalizer.msg("menuitem.update", "Update...");
-    updateMenuItem = new JMenuItem(msg, icon);
-    updateMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
- 
-    updateMenuItem.setMnemonic(KeyEvent.VK_U);
-    updateMenuItem.addActionListener(this);
-    tvDataMenu.add(updateMenuItem);
-
-    tvDataMenu.addSeparator();
-    
-    msg = mLocalizer.msg("menuitem.license","Terms of Use");
-    //JMenu licenseMenuItem=new JMenu(msg,new ImageIcon("imgs/About16.gif"));
-    JMenu licenseMenu=new JMenu(msg);
-    //licenseMenuItem.addActionListener(this);
-    tvDataMenu.add(licenseMenu);
-    
-    addLicenseMenuItems(licenseMenu);
-    
-    //licenseMenu.add(new JMenu("TV-Browser"));
-    
-    // Plugins menu
-    mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-    mPluginsMenu.setMnemonic(KeyEvent.VK_P);
-    menuBar.add(mPluginsMenu);
-    
-  
-    icon = new ImageIcon("imgs/Search16.gif");
-    msg = mLocalizer.msg("menuitem.findPluginsOnWeb", "Find plugins on the web...");
-    mPluginDownloadMenuItem = new JMenuItem(msg, icon);
-    mPluginDownloadMenuItem.addActionListener(this);
-  
-    updatePluginsMenu();
-    
-    // Help menu
-    JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
-    helpMenu.setMnemonic(KeyEvent.VK_H);
-    menuBar.add(helpMenu);
-
-    icon = new ImageIcon("imgs/Help16.gif");
-    msg = mLocalizer.msg("menuitem.help", "Help...");    
-    helpMenuItem = new JMenuItem(msg, icon);
-    helpMenuItem.setMnemonic(KeyEvent.VK_H);
-    helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
- 
-    helpMenuItem.addActionListener(this);
-    helpMenu.add(helpMenuItem);
-    
-    helpMenu.addSeparator();
-    
-    icon = new ImageIcon("imgs/WebComponent16.gif");
-    msg=mLocalizer.msg("menuitem.donors","Donors");
-    donorMenuItem=new JMenuItem(msg,icon);
-    donorMenuItem.addActionListener(this);
-    helpMenu.add(donorMenuItem);
-    
-    faqMenuItem=new JMenuItem("FAQ",icon);
-    faqMenuItem.addActionListener(this);
-    helpMenu.add(faqMenuItem);
-    
-    forumMenuItem=new JMenuItem("Forum",icon);
-    forumMenuItem.addActionListener(this);
-    helpMenu.add(forumMenuItem);
-    
-    websiteMenuItem=new JMenuItem("Website",icon);
-    websiteMenuItem.addActionListener(this);
-    helpMenu.add(websiteMenuItem);
-    
-    helpMenu.addSeparator();
-    
-    configAssistantMenuItem=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),new ImageIcon("imgs/Preferences16.gif"));
-    configAssistantMenuItem.addActionListener(this);
-    helpMenu.add(configAssistantMenuItem);
-    
-    helpMenu.addSeparator();
-    
-    icon = new ImageIcon("imgs/About16.gif");
-    msg = mLocalizer.msg("menuitem.about", "About...");
-    aboutMenuItem = new JMenuItem(msg, icon);
-    aboutMenuItem.setMnemonic(KeyEvent.VK_B);
-    aboutMenuItem.addActionListener(this);
-    helpMenu.add(aboutMenuItem);
-    
-   
-    
-    
-   // create content
+    // create content
     jcontentPane = (JPanel)getContentPane();
     jcontentPane.setLayout(new BorderLayout());
 
@@ -328,24 +173,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
     FinderPanel.getInstance().setDateListener(this);
     dateChanged(new devplugin.Date(), null, null);
-    
-  //  mHorizontalToolBar=new HorizontalToolBar(this,new FilterChooser(this,mProgramTableModel));
-  //  mToolBar = new MainToolBar(this, new util.ui.toolbar.DefaultToolBarModel());
-  //  mToolBar.setStatusLabel(mStatusBar.getLabel());
-    
+        
     JLabel lb=mStatusBar.getLabel();
-    new MenuHelpTextAdapter(settingsMenuItem, mLocalizer.msg("menuinfo.settings",""), lb); 
-    new MenuHelpTextAdapter(quitMenuItem, mLocalizer.msg("menuinfo.quit",""), lb);
-    new MenuHelpTextAdapter(updateMenuItem, mLocalizer.msg("menuinfo.update",""), lb);
-    new MenuHelpTextAdapter(mPluginDownloadMenuItem, mLocalizer.msg("menuinfo.findplugins",""), lb); 
-    new MenuHelpTextAdapter(helpMenuItem, mLocalizer.msg("menuinfo.help",""), lb); 
-    new MenuHelpTextAdapter(aboutMenuItem, mLocalizer.msg("menuinfo.about",""), lb);
-    new MenuHelpTextAdapter(donorMenuItem,mLocalizer.msg("website.donors",""),lb); 
-    new MenuHelpTextAdapter(faqMenuItem,mLocalizer.msg("website.faq",""),lb); 
-    new MenuHelpTextAdapter(forumMenuItem,mLocalizer.msg("website.forum",""),lb); 
-    new MenuHelpTextAdapter(websiteMenuItem,mLocalizer.msg("website.tvbrowser",""),lb); 
-    new MenuHelpTextAdapter(configAssistantMenuItem,mLocalizer.msg("menuinfo.configAssistant",""),lb);
-
     skinPanel.add(centerPanel, BorderLayout.CENTER);
     
     ViewMap viewMap = new ViewMap();
@@ -384,9 +213,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
     rootWindow.getRootWindowProperties().getWindowAreaProperties().setBackgroundColor(new Color(110, 130, 180));
         
-    //jcontentPane.add(mHorizontalToolBar,BorderLayout.NORTH);
     updateToolBar();
-    //jcontentPane.add(mToolBar,BorderLayout.NORTH);
     
     jcontentPane.add(rootWindow,BorderLayout.CENTER);
     jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
@@ -401,7 +228,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       }
     });
 
-    setJMenuBar(menuBar);    
+    setJMenuBar(mMenuBar);    
   }
 
   public JLabel getStatusBarLabel() {
@@ -455,29 +282,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   public static MainFrame getInstance() {
     if (mSingleton==null) {
-      mLog.info("Initializing main frame...");
       mSingleton=new MainFrame();
     }
     return mSingleton;
   }
-
-  private void addLicenseMenuItems(JMenu licenseMenu) {
-    
-    TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
-    for (int i=0;i<services.length;i++) {
-      final String license=services[i].getInfo().getLicense();
-      if (license!=null) {
-        JMenuItem item=new JMenuItem(services[i].getInfo().getName(),new ImageIcon("imgs/About16.gif"));
-        item.addActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            LicenseBox box=new LicenseBox(mSingleton, license, false);
-            util.ui.UiUtilities.centerAndShow(box);
-          }        
-        });
-        licenseMenu.add(item);
-      }
-    }
-    
+  
+  public void setProgramFilter(ProgramFilter filter) {
+    mProgramTableModel.setProgramFilter(filter);
   }
 
   public void quit() {
@@ -503,18 +314,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   
   public void updatePluginsMenu() {
-    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    updatePluginsMenu(mPluginsMenu, plugins);
-    
-    // Create the MenuHelpTextAdapter
-    for (int i = 0; i < mPluginsMenu.getItemCount(); i++) {
-      JMenuItem item = mPluginsMenu.getItem(i);
-      new MenuHelpTextAdapter(item, plugins[i].getInfo().getDescription(),
-                              mStatusBar.getLabel()); 
-    }
-    
-    mPluginsMenu.addSeparator();
-    mPluginsMenu.add(mPluginDownloadMenuItem);
+    mMenuBar.updatePluginsMenu();
   }
   
 
@@ -606,56 +406,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mToolBar.storeSettings();
   }
 
-  public void actionPerformed(ActionEvent event) {
-    Object src = event.getSource();
-    if (src == quitMenuItem) {
-      quit(); 
-    }
-    else if (src == updateMenuItem) {
-      updateTvData();
-    }
-    else if (src == settingsMenuItem) {
-      showSettingsDialog();
-    }
-    else if (src == mToolbarMenuItem) {
-      System.out.println("is selected: "+mToolbarMenuItem.isSelected());
-      if (mToolbarMenuItem.isSelected()) {
-        Settings.propToolbarLocation.setString("north");
-      }
-      else {
-        Settings.propToolbarLocation.setString("hidden");  
-      }
-      updateToolBar();
-    }    
-    else if (src==donorMenuItem) {
-      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.donors",""));
-    }
-    else if (src==faqMenuItem) {
-      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.faq",""));
-    }
-    else if (src==forumMenuItem) {
-      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.forum",""));      
-    }
-    else if (src==websiteMenuItem) {
-      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.tvbrowser",""));
-    }
-    else if (src==configAssistantMenuItem) {
-      runSetupAssistant();
-    }    
-    else if (src==aboutMenuItem) {
-      showAboutBox();
-    }
-    else if (src==helpMenuItem) {
-      showHelpDialog();
-    }
-    else if (src==mPluginDownloadMenuItem) {
-      showUpdatePluginsDlg();
-    }
-    else if (src==mCreateFilterItem) {
-      // TODO
-    }
-  }
-  
   public void scrollToTime(int time) {
     mProgramTableScrollPane.scrollToTime(time);
   }
@@ -664,7 +414,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   private void onDownloadStart() {
     mToolBar.showStopButton();
-    updateMenuItem.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop update..."));
+    mMenuBar.showStopMenuItem();
   }
 
 
@@ -674,8 +424,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mStatusBar.getProgressBar().setValue(0);
     
     mToolBar.showUpdateButton();
-
-    updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
+    mMenuBar.showUpdateMenuItem();
 
     FinderPanel.getInstance().updateUI();
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
@@ -697,13 +446,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
 
-  private void changeDate(Date date, devplugin.ProgressMonitor monitor, Runnable callback) {      
+  private void changeDate(Date date, devplugin.ProgressMonitor monitor, Runnable callback) {
     mProgramTableModel.setDate(date, monitor, callback);
-    
-    //if (date.equals(new devplugin.Date())) {
-      // If this is today -> scroll to now
-    //  scrollToNow();
-    //}
   }
 
 
@@ -793,7 +537,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   /**
    * Shows the about box
    */
-  private void showAboutBox() {
+  public void showAboutBox() {
     AboutBox box=new AboutBox(this);
     box.setSize(500,520);
     UiUtilities.centerAndShow(box);
@@ -801,7 +545,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
 
-  private void showUpdatePluginsDlg() {
+  public void showUpdatePluginsDlg() {
     Object[] options = {mLocalizer.msg("checknow","Check now"),
         mLocalizer.msg("cancel","Cancel")};
     String msg=mLocalizer.msg("question.1","do you want to check for new plugins");     
@@ -871,6 +615,11 @@ public void askForDataUpdate() {
   } 
 }
 
+public void showFilterDialog() {
+  SelectFilterDlg dlg=new SelectFilterDlg(this);
+  util.ui.UiUtilities.centerAndShow(dlg);
+  mMenuBar.updateFiltersMenu();
+}
 
 public void showHelpDialog() {
   
@@ -886,7 +635,7 @@ public void showHelpDialog() {
   
   
 }
-
+/*
 private JMenuItem[] createFilterMenuItems() {
   ButtonGroup group = new ButtonGroup();
   FilterList filterList = new FilterList();
@@ -905,18 +654,26 @@ private JMenuItem[] createFilterMenuItems() {
         }});
   }
   
-  
-  
   return result;
 }
-
-/**
- * Updates the TimeChooser-Buttons
- */
-public void updateButtons() {
+*/
+  /**
+   * Updates the TimeChooser-Buttons
+   */
+  public void updateButtons() {
     mTimeChooser.updateButtons();
-}
+  }
 
 
+  public void setShowToolbar(boolean visible) {
+    if (visible) {
+      Settings.propToolbarLocation.setString("north");
+    }
+    else {
+      Settings.propToolbarLocation.setString("hidden");
+    }
+    updateToolBar();
+  
+  }
 
 }

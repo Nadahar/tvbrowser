@@ -45,21 +45,32 @@ public class FilterList {
   private static java.util.logging.Logger mLog
       = java.util.logging.Logger.getLogger(FilterList.class.getName());
 
-  public FilterList() {
-    
-           
+  private FilterList() {
+    create();      
   }
-  
-  
- 
   
   public void create() {
     mFilterDirectory=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY);
     if (!mFilterDirectory.exists()) {
       mFilterDirectory.mkdirs();
     } 
-    mFilterArr = createFilterList();
+    mFilterArr = createFilterList();     
   }
+  
+  public static FilterList getInstance() {
+    if (mInstance == null) {
+      mInstance = new FilterList();
+    }
+    return mInstance;
+  }
+  
+ // public void create() {
+ /*   mFilterDirectory=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY);
+    if (!mFilterDirectory.exists()) {
+      mFilterDirectory.mkdirs();
+    } 
+    mFilterArr = createFilterList();*/
+  //}
   
   private ProgramFilter[] createFilterList() {
     ArrayList filterList = new ArrayList();

@@ -54,11 +54,11 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
  // private FilterListModel mFilterListModel; 
   private FilterList mFilterList;
     
-	public SelectFilterDlg(JFrame parent, FilterList filterList) {
+	public SelectFilterDlg(JFrame parent) {
 	
 		super(parent,true);
     
-    mFilterList=filterList;
+    mFilterList=FilterList.getInstance();
 		mParent=parent;
 		JPanel contentPane=(JPanel)getContentPane();
 		contentPane.setLayout(new BorderLayout(7,13));
@@ -233,7 +233,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
         }
         else if (e.getSource()==mCancelBtn) {
           mFilterList.create();
-         hide();
+          hide();
         }
       
   }

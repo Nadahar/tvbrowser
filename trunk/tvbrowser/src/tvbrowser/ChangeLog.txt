@@ -1,7 +1,8 @@
 Changelog TVBrowser
 
 1.1
-- New toolbar added
+- Menu bar for MacOS X added
+- New toolbar added (drag&drop)
 - Added Channel-Logos
 - Added new Filter to select if the Program is running, was running or will be running
 - Extended plugin system and introduced PluginProxies.

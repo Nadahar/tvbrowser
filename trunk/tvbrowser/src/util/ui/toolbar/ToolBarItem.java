@@ -46,7 +46,6 @@ public abstract class ToolBarItem {
   
   public void action(final ActionEvent event) {
     final ToolBarItem source = this;
-    System.out.println("listener: "+mListener);
     if (mListener!=null) {
       mListener.actionPerformed(new ToolBarEvent(){
         public ToolBarItem getItem() {
