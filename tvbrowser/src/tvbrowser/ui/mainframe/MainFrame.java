@@ -662,7 +662,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    */
   private void showAboutBox() {
     AboutBox box=new AboutBox(this);
-    box.setSize(450,550);
+    box.setSize(500,520);
     UiUtilities.centerAndShow(box);
     box.dispose();
   }
