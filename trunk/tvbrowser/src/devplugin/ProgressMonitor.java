@@ -35,5 +35,7 @@ public interface ProgressMonitor {
   public void setMaximum(int maximum);
 
   public void setValue(int value);
+  
+  public void setMessage(String msg);
 
 }
