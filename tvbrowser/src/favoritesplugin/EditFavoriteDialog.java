@@ -43,7 +43,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
-import tvbrowser.core.filters.FilterList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
@@ -156,7 +155,7 @@ public class EditFavoriteDialog {
           updateEnabled();
         }
       });
-    mCertainFilterCB = new JComboBox(FilterList.getInstance().getFilterArr());
+    mCertainFilterCB = new JComboBox(Plugin.getPluginManager().getAvailableFilters());
     p1.add(mCertainFilterChB);
     p1.add(mCertainFilterCB);
     
