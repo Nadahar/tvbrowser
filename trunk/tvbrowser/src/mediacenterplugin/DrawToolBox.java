@@ -37,7 +37,7 @@ import java.awt.Graphics2D;
 public class DrawToolBox {
 
   /**
-   * Draws a white Text with a Shadows 
+   * Draws a white Text with a Shadow
    * @param g2d Graphics-Object to use
    * @param string Text to draw
    * @param x X-Offset
