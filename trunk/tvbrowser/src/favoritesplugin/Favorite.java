@@ -30,6 +30,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 
+import tvbrowser.core.filters.FilterList;
 import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
 
@@ -51,6 +52,9 @@ public class Favorite {
   private boolean mUseCertainTimeOfDay;
   private int mCertainFromTime, mCertainToTime;
   
+  private boolean mUseFilter;
+  private ProgramFilter mFilter;
+  
   private Program[] mProgramArr;
   
   
@@ -68,6 +72,9 @@ public class Favorite {
     mCertainToTime = 23 * 60 + 59; // 23:59
     
     mProgramArr = new Program[0];
+    
+    mUseFilter = false;
+    mFilter = null;
   }
 
 
@@ -138,8 +145,16 @@ public class Favorite {
         programList.add(program);
       }
     }
+    
     mProgramArr = new Program[programList.size()];
     programList.toArray(mProgramArr);
+    
+    if (version >=4) {
+        mUseFilter = in.readBoolean();
+        mFilter = FilterList.getInstance().getFilterByName((String)in.readObject());
+    } else {
+        mUseFilter = false;
+    }
   }
   
   
@@ -148,7 +163,7 @@ public class Favorite {
    * Serializes this Object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
+    out.writeInt(4); // version
     
     mSearchFormSettings.writeData(out);
     
@@ -173,6 +188,14 @@ public class Favorite {
     for (int i = 0; i < mProgramArr.length; i++) {
       mProgramArr[i].getDate().writeData(out);
       out.writeObject(mProgramArr[i].getID());
+    }
+    
+    if (mFilter != null) {
+        out.writeBoolean(mUseFilter);
+        out.writeObject(mFilter.getName());
+    } else {
+        out.writeBoolean(false);
+        out.writeObject("NULL");
     }
   }
 
@@ -234,7 +257,22 @@ public class Favorite {
     mCertainToTime = certainToTime;
   }
 
+
+  public boolean getUseFilter() {
+      return mUseFilter;
+  }
   
+  public void setUseFilter(boolean usefilter) {
+      mUseFilter = usefilter;
+  }
+  
+  public ProgramFilter getFilter() {
+      return mFilter;
+  }
+  
+  public void setFilter(ProgramFilter filter) {
+      mFilter = filter;
+  }
   
   public Program[] getPrograms() {
     return mProgramArr;
@@ -286,6 +324,18 @@ public class Favorite {
       passedList.toArray(mProgramArr);
     } else {
       mProgramArr = matchingProgArr;
+    }
+    
+    if (mUseFilter && (mFilter != null)) {
+        ArrayList passedList = new ArrayList();
+        for (int i = 0; i < mProgramArr.length; i++) {
+            if (mFilter.accept(mProgramArr[i])) {
+                passedList.add(mProgramArr[i]);
+            }
+        }
+        
+        mProgramArr = new Program[passedList.size()];
+        passedList.toArray(mProgramArr);
     }
     
     // mark these programs
