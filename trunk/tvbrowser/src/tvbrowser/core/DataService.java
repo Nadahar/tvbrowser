@@ -693,6 +693,23 @@ public static void deleteExpiredFiles(int lifespan) {
   }
 
 
+public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean inText) {
+    
+    //Program prog = (Program) programIter.next();
+    boolean matches = false;
+
+    if (inTitle) {
+        Matcher matcher = pattern.matcher(prog.getTitle());
+        matches = matcher.matches();
+    }
+    
+    if ((! matches) && inText) {
+        Matcher matcher = pattern.matcher(prog.getDescription());
+        matches = matcher.matches();
+    }
+    
+    return matches;
+}
 
   /**
    * Searches the data for programs which match a regular expression.

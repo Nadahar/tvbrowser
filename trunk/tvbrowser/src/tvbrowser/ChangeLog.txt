@@ -1,7 +1,8 @@
 Changelog TVBrowser
 
 current:
-- 
+- bugfix in SkinPanel
+- new feature: filter
 
 0.9.5.1:
 - bugfix in XmlTvDataService

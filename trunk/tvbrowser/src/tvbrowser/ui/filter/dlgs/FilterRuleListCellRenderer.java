@@ -23,11 +23,28 @@
  *   $Author$
  * $Revision$
  */
- 
-package tvbrowser.ui.programtable;
 
-public interface ProgramFilter {
-	
-	public boolean accept(devplugin.Program prog);
-	
+package tvbrowser.ui.filter.dlgs;
+
+
+import java.awt.*;
+import javax.swing.*;
+
+import tvbrowser.ui.filter.filters.*;
+
+public class FilterRuleListCellRenderer extends DefaultListCellRenderer {
+    
+    public Component getListCellRendererComponent(JList list, Object value,
+       int index, boolean isSelected, boolean cellHasFocus)
+     {
+       JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+         index, isSelected, cellHasFocus);
+
+        if (value instanceof FilterRule) {
+        FilterRule rule=(FilterRule)value;
+            label.setText("rule: <"+rule.getName()+"> Description: "+rule.getDescription());
+       }
+       
+       return label;
+     }
 }

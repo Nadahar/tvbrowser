@@ -74,7 +74,7 @@ public class XmlTvDataService extends AbstractTvDataService {
   }
 
   public devplugin.Version getVersion() {
-	  return new devplugin.Version(1,4);
+	  return new devplugin.Version(1,5);
   }
 
   /**
@@ -191,16 +191,25 @@ public class XmlTvDataService extends AbstractTvDataService {
   protected void downloadFileFor(devplugin.Date date, Channel channel,
     File targetFile) throws TvBrowserException
   {
+      
+    System.out.println("call: downloadFileFor(): Date: "+date+", channel: "+channel.getName()+", File: "+targetFile.getAbsolutePath());  
+      
     String fileName = getFileNameFor(date, channel);
     String url = "http://www.szing.at/xmltv/" + fileName;
+    System.out.println("try to download from url: "+url);
     try {
       IOUtilities.download(new URL(url), targetFile);
+      System.out.println("download OK");
     }
     catch (Exception exc) {
     	// ignore error
       //throw new TvBrowserException(getClass(), "error.2",
       //  "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
+      System.out.println("could not download file "+url);
+      System.out.println("Exception:");
+      exc.printStackTrace();
     }
+    
   }
 
 
@@ -221,6 +230,9 @@ public class XmlTvDataService extends AbstractTvDataService {
   protected String getFileNameFor(devplugin.Date date,
     devplugin.Channel channel)
   {
+      
+    System.out.println("call: getFileNameFor(): date: "+date+", channel: "+channel.getName());  
+      
     java.util.Calendar cal = date.getCalendar();
 
     int month = cal.get(java.util.Calendar.MONTH) + 1;
@@ -229,7 +241,6 @@ public class XmlTvDataService extends AbstractTvDataService {
     // The year is not saved in a devplugin.Date
     // so we've got to get the date from the current date
     
-   // java.util.Calendar now = new java.util.GregorianCalendar();
    java.util.Calendar now=java.util.Calendar.getInstance();
    now.setTimeInMillis(System.currentTimeMillis());
     int year = now.get(java.util.Calendar.YEAR);
@@ -250,6 +261,9 @@ public class XmlTvDataService extends AbstractTvDataService {
     IOUtilities.append(fileNameBuf, month, 2);
     IOUtilities.append(fileNameBuf, day, 2);
     fileNameBuf.append(".xml.gz");
+
+
+    System.out.println("result: "+fileNameBuf.toString());
 
     return fileNameBuf.toString();
   }
@@ -287,8 +301,10 @@ public class XmlTvDataService extends AbstractTvDataService {
       saxParser.parse(gzipIn, handler, systemId);
     }
     catch (Throwable thr) {
+        System.out.println("XML TV file is corrupt!");
       throw new TvBrowserException(getClass(), "error.3",
         "XML TV file is corrupt!\n({0})", file.getAbsolutePath(), thr);
+        
     }
     finally {
       try {
@@ -300,11 +316,14 @@ public class XmlTvDataService extends AbstractTvDataService {
     }
     
     tvdataservice.MutableChannelDayProgram prog=programDispatcher.getChannelDayProgram(date,channel);
-    
+    if (prog==null) {
+        System.out.println("prog is null");
+    }
     // if we don't have the whole program, we delete the file. so we can
     // download it again later.
-    if (!prog.isComplete()) {
-    	file.delete();	
+    if (prog!=null && !prog.isComplete()) {
+    	file.delete();
+        System.out.println("must delete file");	
     }
     
   }

@@ -23,11 +23,33 @@
  *   $Author$
  * $Revision$
  */
- 
-package tvbrowser.ui.programtable;
 
-public interface ProgramFilter {
-	
-	public boolean accept(devplugin.Program prog);
-	
+package tvbrowser.ui.filter;
+
+public class ParserException extends Exception {
+ 
+    private int mPos;
+    private String mMsg;
+ 
+    public ParserException(int pos, String msg) {
+        super(msg);   
+        mPos=pos;
+        mMsg=msg; 
+    }
+    
+    public ParserException(String msg) {
+        super(msg);
+        mMsg=msg;
+        mPos=-1;  
+    }
+    
+    public int getPos() {
+        return mPos;
+    }
+    
+    public String getMessage() {
+        return mMsg;
+    }
+    
+    
 }
