@@ -222,6 +222,12 @@ public class SearchForm extends JPanel {
     bg.add(mMatchRegexRB);
     p1.add(mMatchRegexRB);
     
+    LinkButton b = new LinkButton(
+            "("+mLocalizer.msg("regExHelp","Help for regular expressions")+")",
+            mLocalizer.msg("regExUrl","http://wiki.tvbrowser.org/index.php/Regul%C3%A4re_Ausdr%C3%BCcke"));
+    b.setHorizontalAlignment(LinkButton.CENTER);
+    p1.add(b);
+    
     msg = mLocalizer.msg("caseSensitive", "Case sensitive");
     mCaseSensitiveChB = new JCheckBox(msg);
     p1.add(mCaseSensitiveChB);
