@@ -340,7 +340,7 @@ public class TVBrowser {
         public void actionPerformed(java.awt.event.ActionEvent e) {
           mainFrame.show();          
           mainFrame.toFront();
-          mainFrame.setExtendedState(java.awt.Frame.NORMAL);                          
+          mainFrame.setExtendedState(mState);                          
         }
       }); 
     
