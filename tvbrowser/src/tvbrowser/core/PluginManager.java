@@ -23,19 +23,19 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.core;
 
-import devplugin.Plugin;
-
+import java.awt.Font;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 
-import util.exc.*;
+import javax.swing.JPopupMenu;
+
+import tvdataservice.TvDataService;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import devplugin.*;
+import devplugin.Date;
 
 /**
  * The PluginManager is a Class for communicating with installed mAvailablePluginHash.
@@ -49,13 +49,49 @@ public class PluginManager {
   
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginManager.class);
+
+  private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
+  private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
   
-  private static HashMap mAvailablePluginHash;
-  private static ArrayList mInstalledPluginList;
-  private static Plugin[] mContextMenuPluginList;
-  private static Plugin mContextMenuDefaultPlugin;
+  /** The singleton. */
+  private static PluginManager mSingleton;
+  
+  private HashMap mAvailablePluginHash;
+  private ArrayList mInstalledPluginList;
+  private Plugin[] mContextMenuPluginList;
+  private Plugin mContextMenuDefaultPlugin;
+
+
+  private PluginManager() {
+    TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
+      public void dayProgramAdded(ChannelDayProgram prog) {
+        fireTvDataChanged(prog);
+      }
+
+      public void dayProgramDeleted(ChannelDayProgram prog) {}
+    });
+
+    Plugin.setPluginManager(createDevpluginPluginManager());
+  }
   
   
+  public static PluginManager getInstance() {
+    if (mSingleton == null) {
+      mSingleton = new PluginManager();
+    }
+    
+    return mSingleton;
+  }
+  
+  
+  public void loadPlugins() {
+    Plugin[] p=getInstalledPlugins();
+    for (int i=0;i<p.length;i++) {
+      initPlugin((Plugin)p[i]);
+    }
+  }
+
+
   /**
    * Loads the data of the specified Plugin from the disk.
    */
@@ -172,18 +208,6 @@ public class PluginManager {
     storePluginData(p);
     storePluginSettings(p);
   }
-  
-  
-  
-  /**
-   * Kind of constructor
-   */
-  public static void initInstalledPlugins() {
-    Plugin[] p=getInstalledPlugins();
-    for (int i=0;i<p.length;i++) {
-      initPlugin((Plugin)p[i]);
-    }
-  }
 
 
   public static void installPendingPlugins() {
@@ -210,7 +234,7 @@ public class PluginManager {
   /**
    * Kind of destructor: call plugins to store their data and settings
    */
-  public static void finalizeInstalledPlugins() {
+  public void finalizeInstalledPlugins() {
     Plugin[] p=getInstalledPlugins();
     for (int i=0;i<p.length;i++) {
       storePluginData(p[i]);
@@ -224,7 +248,7 @@ public class PluginManager {
    * Returns an Array of devplugin.Plugin objects containing all available
    * plugins
    */
-  public static Plugin[] getAvailablePlugins() {
+  public Plugin[] getAvailablePlugins() {
     if (mAvailablePluginHash == null) {
       loadAvailablePlugins();
     }
@@ -237,7 +261,7 @@ public class PluginManager {
   
 
 
-  private static void loadAvailablePlugins() {
+  private void loadAvailablePlugins() {
     if (mAvailablePluginHash != null) {
       return;
     }
@@ -290,7 +314,7 @@ public class PluginManager {
     }
   }
   
-  public static Plugin getContextMenuDefaultPlugin() {
+  public Plugin getContextMenuDefaultPlugin() {
     boolean contextMenuDefaultPluginsChanged= Settings.settingHasChanged(new String[]{"contextmenudefaultplugin"});
     if (mContextMenuDefaultPlugin==null || contextMenuDefaultPluginsChanged) {
       mContextMenuDefaultPlugin=getPlugin(Settings.getDefaultContextMenuPlugin());
@@ -301,7 +325,7 @@ public class PluginManager {
     return null;
   }
   
-  public static Plugin[] getContextMenuPlugins() {
+  public Plugin[] getContextMenuPlugins() {
     boolean contextMenuPluginsChanged= Settings.settingHasChanged(new String[]{"contextmenuitemplugins"});
     if (mContextMenuPluginList==null || contextMenuPluginsChanged) {
     
@@ -322,7 +346,7 @@ public class PluginManager {
   /**
    * Returns the installed mAvailablePluginHash as an array of Plugin-Objects
    */
-  public static Plugin[] getInstalledPlugins() {
+  public Plugin[] getInstalledPlugins() {
     boolean installedPluginsChanged = Settings.settingHasChanged(new String[]{"plugins"});
   	if ((mInstalledPluginList == null) || installedPluginsChanged) {
   		mInstalledPluginList = new ArrayList();
@@ -342,7 +366,7 @@ public class PluginManager {
   }
 
   
-  public static void setInstalledPlugins(Plugin[] pluginArr) {
+  public void setInstalledPlugins(Plugin[] pluginArr) {
     // Create the new list and init those plugins who are new
     ArrayList newInstalledPluginList = new ArrayList(pluginArr.length);
     String[] pluginClassNameArr = new String[pluginArr.length];
@@ -372,7 +396,7 @@ public class PluginManager {
   
   
   
-  public static Plugin getPluginByName(String name) {
+  public Plugin getPluginByName(String name) {
   	return getPlugin(name.toLowerCase()+"."+name);
   }
   
@@ -380,7 +404,7 @@ public class PluginManager {
    * Returns a devplugin.Plugin object with the specified name, or null if
    * the plugin does not exist.
    */
-  public static Plugin getPlugin(String pluginClassName) {
+  public Plugin getPlugin(String pluginClassName) {
     return (Plugin) mAvailablePluginHash.get(pluginClassName);
   }
 
@@ -389,26 +413,121 @@ public class PluginManager {
   /**
    * Returns true, if the plugin with the specified name is currently installed.
    */
-  public static boolean isInstalled(Plugin plugin) {
+  public boolean isInstalled(Plugin plugin) {
     return mInstalledPluginList.contains(plugin);
   }
 
   
   
   /**
-   * Should be called every time the TV data has changed.
-   * <p>
    * Calls for every subscribed plugin the handleTvDataChanged() method,
    * so the mAvailablePluginHash can react on the new data.
    *
    * @see Plugin#handleTvDataChanged()
    */
-  public static void fireTvDataChanged() {
+  private void fireTvDataChanged(ChannelDayProgram newProg) {
     Iterator pluginIter = mInstalledPluginList.iterator();
     while (pluginIter.hasNext()) {
       Plugin plugin = (Plugin) pluginIter.next();
       plugin.handleTvDataChanged();
+      plugin.handleTvDataChanged(newProg);
     }
+  }
+
+
+  
+  private static devplugin.PluginManager createDevpluginPluginManager() {
+    return new devplugin.PluginManager() {
+      public devplugin.Program getProgram(Date date, String progID) {
+        return doGetProgram(date, progID);
+      }
+
+      public Channel[] getSubscribedChannels() {
+        return ChannelList.getSubscribedChannels();
+      }
+
+      public Iterator getChannelDayProgram(Date date, Channel channel) {
+        return TvDataBase.getInstance().getDayProgram(date, channel).getPrograms();
+      }
+
+      public Program[] search(String regex, boolean inTitle, boolean inText,
+        boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
+        int nrDays)
+        throws TvBrowserException
+      {
+        return TvDataSearcher.getInstance().search(regex, inTitle, inText,
+          caseSensitive, channels, startDate, nrDays);
+      }
+
+      public Plugin[] getInstalledPlugins() {
+        return PluginManager.getInstance().getInstalledPlugins();
+      }
+
+      public TvDataService getDataService(String className) {
+        return TvDataServiceManager.getInstance().getDataService(className);
+      }
+
+      public JPopupMenu createPluginContextMenu(Program program, Plugin caller) {
+        return PluginManager.createPluginContextMenu(program, caller);
+      }
+    };
+  }
+
+
+  private static Program doGetProgram(Date date, String progID) {
+    TvDataBase db = TvDataBase.getInstance();
+    
+    Iterator channelIter = ChannelList.getChannels();
+    while (channelIter.hasNext()) {
+      Channel channel = (Channel) channelIter.next();
+  
+      ChannelDayProgram dayProg = db.getDayProgram(date, channel);
+      if (dayProg != null) {
+        Program prog = dayProg.getProgram(progID);
+        if (prog != null) {
+          return prog;
+        }
+      }
+    }
+    
+    return null;
+  }
+
+
+  /**
+   * Creates a context menu containg all subscribed plugins that support context
+   * menues.
+   *
+   * @return a plugin context menu.
+   */
+  public static JPopupMenu createPluginContextMenu(final Program program,
+    Plugin caller)
+  {
+    JPopupMenu menu = new JPopupMenu();
+    Plugin defaultPlugin = getInstance().getContextMenuDefaultPlugin();
+    Plugin[] pluginArr = getInstance().getContextMenuPlugins();
+    for (int i = 0; i < pluginArr.length; i++) {
+      final devplugin.Plugin plugin = pluginArr[i];
+      if (!plugin.equals(caller)) {
+        String text = plugin.getContextMenuItemText();
+        if (text != null) {
+          javax.swing.JMenuItem item = new javax.swing.JMenuItem(text);
+          if (plugin == defaultPlugin) {
+            item.setFont(CONTEXT_MENU_BOLDFONT);
+          } else {
+            item.setFont(CONTEXT_MENU_PLAINFONT);
+          }
+          item.setIcon(plugin.getMarkIcon());
+          item.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent event) {
+              plugin.execute(program);
+            }
+          });
+          menu.add(item);
+        }
+      }
+    }
+    return menu;
   }
 
 }

@@ -46,8 +46,8 @@ public interface TvDataService {
    * 
    * @throws TvBrowserException
    */  
-  public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
-    Date startDate, int dateCount, ProgressMonitor monitor)
+  public void updateTvData(TvDataUpdateManager updateManager,
+    Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException;
 
   /**

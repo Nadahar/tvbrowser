@@ -53,7 +53,7 @@ public class PluginFilterComponent extends FilterComponent {
             mName=(String)in.readObject();
             mDescription=(String)in.readObject();
             String pluginClassName=(String)in.readObject();
-            mPlugin=PluginManager.getPlugin(pluginClassName);
+            mPlugin=PluginManager.getInstance().getPlugin(pluginClassName);
             
         }catch (IOException e) {
             util.exc.ErrorHandler.handle("Could not read filter rule from file", e);
@@ -96,7 +96,7 @@ public class PluginFilterComponent extends FilterComponent {
             ta.setEditable(false);
             ta.setFocusable(false);
             mPanel.add(ta,BorderLayout.NORTH);       
-            devplugin.Plugin[] plugins=PluginManager.getInstalledPlugins();
+            Plugin[] plugins=PluginManager.getInstance().getInstalledPlugins();
             mBox=new JComboBox(plugins);
             mPanel.add(mBox,BorderLayout.CENTER);
             

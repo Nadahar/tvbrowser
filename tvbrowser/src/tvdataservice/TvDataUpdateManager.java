@@ -33,7 +33,7 @@ import devplugin.Date;
  * 
  * @author Til Schneider, www.murfman.de
  */
-public interface TvDataBase {
+public interface TvDataUpdateManager {
 
   /**
    * Updates the given day program.
@@ -42,6 +42,13 @@ public interface TvDataBase {
    */
   public void updateDayProgram(MutableChannelDayProgram program);
   
+  /**
+   * Gets whether a certain day program is available.
+   * 
+   * @param date The date of the day program to check.
+   * @param channel The channel of the day program to check.
+   * @return Whether the day program is available.
+   */
   public boolean isDayProgramAvailable(Date date, Channel channel);
 
   /**

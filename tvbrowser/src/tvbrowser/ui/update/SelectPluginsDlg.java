@@ -29,6 +29,8 @@ package tvbrowser.ui.update;
 
 import javax.swing.*;
 
+import devplugin.Plugin;
+
 
 
 import tvbrowser.core.PluginManager;
@@ -262,7 +264,7 @@ class UpdateItemPanel extends JPanel implements ActionListener {
 		
 		String version=null;
 		if (item.getType()==UpdateItem.PLUGIN) {
-			devplugin.Plugin plugin=PluginManager.getPluginByName(item.getName());
+			Plugin plugin=PluginManager.getInstance().getPluginByName(item.getName());
 			if (plugin!=null) {
 				version=plugin.getInfo().getVersion().toString();
 			}

@@ -34,6 +34,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.PluginManager;
 import tvbrowser.ui.SkinPanel;
 
+import devplugin.Plugin;
 import devplugin.Program;
 
 
@@ -341,7 +342,7 @@ public class ProgramTable extends JPanel
    * @return a plugin context menu.
    */
   private JPopupMenu createPluginContextMenu(final Program program) {  
-  	return tvbrowser.core.DataService.getInstance().createPluginContextMenu(program, null); 
+  	return PluginManager.createPluginContextMenu(program, null); 
   }
 
   
@@ -366,7 +367,7 @@ public class ProgramTable extends JPanel
       if (program != null) {
         // This is a left double click
         // -> Execute the program using the user defined default plugin
-        devplugin.Plugin plugin=PluginManager.getContextMenuDefaultPlugin();
+        Plugin plugin = PluginManager.getInstance().getContextMenuDefaultPlugin();
         if (plugin!=null) {
           plugin.execute(program);  
         }

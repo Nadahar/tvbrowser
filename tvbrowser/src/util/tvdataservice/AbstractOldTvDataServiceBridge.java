@@ -82,7 +82,7 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
    * 
    * @throws TvBrowserException
    */  
-  public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
+  public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
     devplugin.Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {
