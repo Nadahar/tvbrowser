@@ -30,7 +30,7 @@
   * @author Martin Oberhauser
   */
 
-package devplugin;
+package util.ui;
 
 import javax.swing.*;
 import java.io.File;
