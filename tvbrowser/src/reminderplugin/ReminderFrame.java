@@ -46,6 +46,10 @@ public class ReminderFrame {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
 
+  /**
+   * The UI texts for the choosable options how long before a program start the
+   * reminder should appear.
+   */
   public static final String[] REMIND_MSG_ARR = {
     mLocalizer.msg("remind.-1", "Don't remind me"),
     mLocalizer.msg("remind.0", "Remind me when the program begins"),
@@ -56,10 +60,20 @@ public class ReminderFrame {
     mLocalizer.msg("remind.10", "Remind me 10 minutes before"),
     mLocalizer.msg("remind.15", "Remind me 15 minutes before"),
     mLocalizer.msg("remind.30", "Remind me 30 minutes before"),
-    mLocalizer.msg("remind.60", "Remind me one hour before")
+    mLocalizer.msg("remind.60", "Remind me one hour before"),
+    mLocalizer.msg("remind.90", "Remind me 1.5 hours before"),
+    mLocalizer.msg("remind.120", "Remind me 2 hours before"),
+    mLocalizer.msg("remind.240", "Remind me 4 hours before"),
+    mLocalizer.msg("remind.480", "Remind me 8 hours before"),
+    mLocalizer.msg("remind.1440", "Remind me one day before"),
   };
 
-  public static final int[] REMIND_VALUE_ARR = {-1, 0, 1, 2, 3, 5, 10, 15, 30, 60};
+  /**
+   * The values for the choosable options how long before a program start the
+   * reminder should appear.
+   */
+  public static final int[] REMIND_VALUE_ARR
+    = { -1, 0, 1, 2, 3, 5, 10, 15, 30, 60, 90, 120, 240, 480, 1440 };
   
   /**
    * The frame that shows this reminder. The reminder is shown in a frame if
@@ -85,9 +99,17 @@ public class ReminderFrame {
   
   private Timer mAutoCloseTimer;
   private int mRemainingSecs;
-  
-  
-  
+
+
+  /**
+   * Creates a new instance of ReminderFrame.
+   * 
+   * @param comp A component in the parent window.
+   * @param list The list of all reminders.
+   * @param item The reminder to show.
+   * @param autoCloseSecs The number seconds to wait before auto-closing the
+   *                      window. -1 disables auto-closing.
+   */
   public ReminderFrame(Component comp, ReminderList list,
     ReminderListItem item, int autoCloseSecs)
   {

@@ -1,5 +1,9 @@
 Changelog ReminderPlugin
 
+1.0.6
+- Added more options how long before a program start the reminder should appear:
+  1.5 hours, 2 hours, 4 hours, 8 hours, one day
+
 1.0.5
 - Bugfix: There was a NullPointerException if the program of a reminder item
   was not existing any more when loading the reminder list.
