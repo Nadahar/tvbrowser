@@ -25,6 +25,9 @@ java.lang.NullPointerException
 - Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
 - Titel immer sichtbar-Option im ProgramPanel benutzen
 - Übersetzungen für die Farben im ProgramPanel-Settings-Dialog
+- (B) TimeOfDayBackPainter auf neues System anpassen
+- (M) Nachsehen, ob das auftrennen des Settings-System überall gemacht wurde. Es sind einige Warnungen im Code, das deprecated Settings benutzt werden!
+
 
 Bugs (Achtung: es existieren weitere Bugs auf SF!!) :
 - Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
