@@ -47,6 +47,7 @@ import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
 import devplugin.ActionMenu;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -70,6 +71,9 @@ public class CapturePlugin extends devplugin.Plugin {
     /** The Singelton */
     private static CapturePlugin mInstance = null;
 
+    /** Root-Node for the Program-Tree */
+    private PluginTreeNode mRootNode = new PluginTreeNode(this);
+    
     /**
      * Creates the Plugin
      */
@@ -299,6 +303,8 @@ public class CapturePlugin extends devplugin.Plugin {
         }
 
         mMarkedPrograms = list;
+        
+        updateTreeNode();
     }
 
     /**
@@ -385,4 +391,45 @@ public class CapturePlugin extends devplugin.Plugin {
         return mConfig;
     }
 
+    /**
+     * Update the TreeNode
+     */
+    private void updateTreeNode() {
+      mRootNode.removeAllChildren();
+
+      Iterator devIt = mConfig.getDevices().iterator();
+
+      while (devIt.hasNext()) {
+          DeviceIf device = (DeviceIf) devIt.next();
+
+          PluginTreeNode node = new PluginTreeNode(device.getName());
+          
+          Program[] programs = device.getProgramList();
+
+          for (int i = 0; i < programs.length; i++) {
+            node.addProgram(programs[i]);
+          }
+          
+          mRootNode.add(node);
+      }
+      
+      mRootNode.update();
+    }
+    
+    /**
+     * Get the Root-Node. 
+     * The CapturePlugin handles all Programs for itself. Some 
+     * Devices can remove Programs externaly
+     */
+    public PluginTreeNode getRootNode() {
+      return mRootNode;
+    }
+
+    /* (non-Javadoc)
+     * @see devplugin.Plugin#canUseProgramTree()
+     */
+    public boolean canUseProgramTree() {
+      return true;
+    }
+    
 }
