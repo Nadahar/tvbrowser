@@ -32,6 +32,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import devplugin.*;
 import devplugin.Date;
@@ -247,7 +248,7 @@ public class MutableProgram implements Program {
    * @param javaPlugin The plugin to mark the program for.
    */
   public final void mark(Plugin javaPlugin) {
-    PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(javaPlugin.getId());
+    PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(javaPlugin.getId());
     mark(plugin);
   }
 
@@ -260,7 +261,7 @@ public class MutableProgram implements Program {
    * @param javaPlugin The plugin to remove the mark for.
    */
   public final void unmark(Plugin javaPlugin) {
-    PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(javaPlugin.getId());
+    PluginAccess plugin = PluginProxyManager.getInstance().getPluginForId(javaPlugin.getId());
     unmark(plugin);
   }
   
