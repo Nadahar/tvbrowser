@@ -26,25 +26,43 @@
 
 package favoritesplugin;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import util.exc.ErrorHandler;
-import util.ui.*;
-
-import devplugin.*;
+import util.ui.ExtensionFileFilter;
+import util.ui.ImageUtilities;
+import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Program;
+import devplugin.ProgramList;
 
 /**
  * A dialog for managing the favorite programs.
@@ -58,7 +76,8 @@ public class ManageFavoritesDialog extends JDialog {
     = util.ui.Localizer.getLocalizerFor(ManageFavoritesDialog.class);
 
   private DefaultListModel mFavoritesListModel, mProgramListModel;
-  private JList mFavoritesList, mProgramList;
+  private JList mFavoritesList;
+  private ProgramList mProgramList;
   private JSplitPane mSplitPane;
   private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt;
   private JButton mOkBt, mCancelBt;
@@ -178,8 +197,7 @@ public class ManageFavoritesDialog extends JDialog {
     mSplitPane.setLeftComponent(scrollPane);
 
     mProgramListModel = new DefaultListModel();
-    mProgramList = new JList(mProgramListModel);
-    mProgramList.setCellRenderer(new ProgramListCellRenderer());
+    mProgramList = new ProgramList(mProgramListModel);
     scrollPane = new JScrollPane(mProgramList);
     scrollPane.setBorder(null);
     mSplitPane.setRightComponent(scrollPane);
@@ -204,28 +222,6 @@ public class ManageFavoritesDialog extends JDialog {
       }
     });
     
-    mProgramList.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-          int inx = mProgramList.locationToIndex(e.getPoint());
-          Program p = (Program) mProgramListModel.getElementAt(inx);
-          JPopupMenu menu = Plugin.getPluginManager()
-              .createPluginContextMenu(p, FavoritesPlugin.getInstance());
-          menu.show(mProgramList, e.getX() - 15, e.getY() - 15);
-        } else if (SwingUtilities.isLeftMouseButton(e)
-            && (e.getClickCount() == 2)) {
-          int inx = mProgramList.locationToIndex(e.getPoint());
-          Program p = (Program) mProgramListModel.getElementAt(inx);
-
-          Plugin plugin = Plugin.getPluginManager()
-              .getDefaultContextMenuPlugin();
-          if (plugin != null) {
-            plugin.execute(p);
-          }
-        }
-      }
-    });
-
     buttonPn.add(mCancelBt);
     
     favoriteSelectionChanged();

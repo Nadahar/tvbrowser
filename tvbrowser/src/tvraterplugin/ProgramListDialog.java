@@ -12,25 +12,20 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
-import util.ui.ProgramListCellRenderer;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ProgramList;
 
 /**
  * Shows a List when a specific rated program will air
@@ -104,31 +99,13 @@ public class ProgramListDialog extends JDialog {
         JPanel content = (JPanel) this.getContentPane();
         content.setLayout(new BorderLayout());
 
-        _programJList = new JList(_programList);
-
-        _programJList.setCellRenderer(new ProgramListCellRenderer());
-
-        _programJList.addMouseListener(new MouseAdapter() {
-
-            public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    int inx = _programJList.locationToIndex(e.getPoint());
-                    Program p = (Program) _programJList.getModel().getElementAt(inx);
-                    _programJList.setSelectedIndex(inx);
-                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p,
-                            TVRaterPlugin.getInstance());
-                    menu.show(_programJList, e.getX() - 15, e.getY() - 15);
-                } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-                    int inx = _programJList.locationToIndex(e.getPoint());
-                    Program p = (Program) _programJList.getModel().getElementAt(inx);
-
-                    Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
-                    if (plugin != null) {
-                        plugin.execute(p);
-                    }
-                }
-            }
-        });
+        Program[] prg = new Program[_programList.size()];
+        
+        for (int i = 0; i < _programList.size(); i++) {
+            prg[i] = (Program)_programList.get(i);
+        }
+        
+        _programJList = new ProgramList(prg);
 
         JScrollPane scroll = new JScrollPane(_programJList);
 
@@ -154,7 +131,7 @@ public class ProgramListDialog extends JDialog {
     
     private String _title;
 
-    private JList _programJList;
+    private ProgramList _programJList;
 
     private Vector _programList;
 
