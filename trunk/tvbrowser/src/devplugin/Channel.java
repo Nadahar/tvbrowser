@@ -342,9 +342,13 @@ public class Channel {
       Channel cmp = (Channel) obj;
       
       if ((cmp.mDataService == null) || (mDataService == null)) {
+        
+          if ((cmp.mDataService == mDataService) && (mId.equals(cmp.mId))) {
+            return true;
+          }
+        
           return false;
       }
-      
       return (mDataService.equals(cmp.mDataService)) && (mId.equals(cmp.mId));
     }
 
