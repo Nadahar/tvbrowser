@@ -4,7 +4,6 @@
 package listviewplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -27,7 +26,6 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
-import favoritesplugin.FavoritesPlugin;
 
 /**
  * Creates a Dialog with a List of Programs
@@ -92,7 +90,7 @@ public class ListViewDialog extends JDialog {
                     _programJList.setSelectedIndex(inx);
                     JPopupMenu menu = devplugin.Plugin.getPluginManager()
                             .createPluginContextMenu(p,
-                                    FavoritesPlugin.getInstance());
+                                    ListViewPlugin.getInstance());
                     menu.show(_programJList, e.getX() - 15, e.getY() - 15);
                 }
             }
