@@ -126,18 +126,10 @@ public class SortableItemList extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object o=event.getSource();
     if (o==mUpBt) {
-      int inx=mList.getSelectedIndex();
-      Object selectedItem=mListModel.getElementAt(inx);
-      mListModel.removeElementAt(inx);
-      mListModel.add(inx-1,selectedItem);
-      mList.setSelectedIndex(inx-1);
+      UiUtilities.moveSelectedItems(mList, -1);
     }
     else if (o==mDownBt) {
-      int inx=mList.getSelectedIndex();
-      Object selectedItem=mListModel.getElementAt(inx);
-      mListModel.removeElementAt(inx);
-      mListModel.add(inx+1,selectedItem);
-      mList.setSelectedIndex(inx+1);
+      UiUtilities.moveSelectedItems(mList, 1);
     }
     
     

@@ -159,7 +159,7 @@ public class CustomizableItemsPanel extends JPanel {
 
     mRightBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        Object[] items = moveSelectedItems(mLeftList, mRightList);
+        Object[] items = UiUtilities.moveSelectedItems(mLeftList, mRightList);
         if (items != null) {
           fireItemTransferredToRightList(items);
         }
@@ -168,7 +168,7 @@ public class CustomizableItemsPanel extends JPanel {
 
     mLeftBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        Object[] items = moveSelectedItems(mRightList, mLeftList);
+        Object[] items = UiUtilities.moveSelectedItems(mRightList, mLeftList);
         if (items != null) {
           fireItemTransferredToLeftList(items);
         }
@@ -177,13 +177,13 @@ public class CustomizableItemsPanel extends JPanel {
 
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        moveSelectedItems(mRightList, -1);
+        UiUtilities.moveSelectedItems(mRightList, -1);
       }
     });
 
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        moveSelectedItems(mRightList, 1);
+        UiUtilities.moveSelectedItems(mRightList, 1);
       }
     });
     
@@ -365,97 +365,6 @@ public class CustomizableItemsPanel extends JPanel {
   public static CustomizableItemsPanel createCustomizableItemsPanel(String leftText, String rightText) {
     return new CustomizableItemsPanel(leftText, rightText);
   }
-  
-  
-
-  private Object[] moveSelectedItems(JList fromList, JList toList) {
-    DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
-    DefaultListModel toModel = (DefaultListModel) toList.getModel();
-    
-    // get the selection
-    int[] selection = fromList.getSelectedIndices();
-
-
-
-    if (selection.length == 0) {
-      return null;
-    }
-
-    Object[] objects = new Object[selection.length];
-    for (int i=0; i<selection.length; i++) {
-      objects[i] = fromModel.getElementAt(selection[i]);
-    }
-
-    // get the target insertion position
-    int targetPos = toList.getMaxSelectionIndex();
-    if (targetPos == -1) {
-      targetPos = toModel.getSize();
-    } else {
-      targetPos++;
-    }
-    
-    // move the elements
-    for (int i = selection.length - 1; i >= 0; i--) {
-      Object value = fromModel.remove(selection[i]);
-      toModel.add(targetPos, value);
-    }
-    
-    // change selection of the fromList
-    if (fromModel.getSize() > 0) {
-      int newSelection = selection[0];
-      if (newSelection >= fromModel.getSize()) {
-        newSelection = fromModel.getSize() - 1;
-      }
-      fromList.setSelectedIndex(newSelection);
-    }
-
-    // change selection of the toList
-    toList.setSelectionInterval(targetPos, targetPos + selection.length - 1);
-    
-    // ensure the selection is visible
-    toList.ensureIndexIsVisible(toList.getMaxSelectionIndex());
-    toList.ensureIndexIsVisible(toList.getMinSelectionIndex());
-
-
-    return objects;
-  }
-
-
-
-
-  
-  private void moveSelectedItems(JList list, int nrRows) {
-    DefaultListModel model = (DefaultListModel) list.getModel();
-    
-    // get the selection
-    int[] selection = list.getSelectedIndices();
-    if (selection.length == 0) {
-      return;
-    }
-    
-    // Remove the selected items
-    Object[] items = new Object[selection.length];
-    for (int i = selection.length - 1; i >= 0; i--) {
-      items[i] = model.remove(selection[i]);
-    }
-    
-    // insert the elements at the target position
-    int targetPos = selection[0] + nrRows;
-    targetPos = Math.max(targetPos, 0);
-    targetPos = Math.min(targetPos, model.getSize());
-    for (int i = 0; i < items.length; i++) {
-      model.add(targetPos + i, items[i]);
-    }
-    
-    // change selection of the toList
-    list.setSelectionInterval(targetPos, targetPos + selection.length - 1);
-    
-    // ensure the selection is visible
-    list.ensureIndexIsVisible(list.getMaxSelectionIndex());
-    list.ensureIndexIsVisible(list.getMinSelectionIndex());
-  }
-  
-  
   
   private void updateEnabled() {
     mRightBt.setEnabled(mLeftList.getSelectedIndex() != -1);
