@@ -248,7 +248,8 @@ public class TVBrowser {
       SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
       SkinLookAndFeel.enable();
     }catch(Exception exc) {
-       ErrorHandler.handle("Could not load themepack",exc);
+       ErrorHandler.handle("Could not load themepack.\nSkinLF is disabled now",exc);
+       Settings.setSkinLFEnabled(false);
     }
   }
   else {

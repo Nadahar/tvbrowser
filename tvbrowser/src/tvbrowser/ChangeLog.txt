@@ -2,16 +2,17 @@ Changelog TVBrowser
 
 TODO:
 	- Zeitzonen fuer Sender
-	- Umstrukturierungen im Settings-Dialog
+
 
 current (0.9.6.1):
 - bugfixes:
 	- don't scroll to invalid time/channel positions
 	- remember download period "get all"
 	- mark "programs on air" with invalid length
-	- changed format of the time buttons to 24h format (in german version only) 
+	- changed format of the time buttons to 24h format 
 - new layout in main frame
-- statusbar added
+- show plugin buttons by default
+- new layout in settings dialog
 
 
 0.9.6:

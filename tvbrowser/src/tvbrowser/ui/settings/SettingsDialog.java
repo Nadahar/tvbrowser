@@ -45,7 +45,7 @@ import tvbrowser.core.PluginManager;
  */
 public class SettingsDialog {
   
-  private static final util.ui.Localizer mLocalizer
+  public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SettingsDialog.class);
 
   private JDialog mDialog;
@@ -144,6 +144,48 @@ public class SettingsDialog {
     msg = mLocalizer.msg("settings", "Settings");
     SettingNode root = new SettingNode(icon, msg);
     
+    
+    // Channels
+    node = new SettingNode(new ChannelsSettingsTab());
+    root.add(node);
+    
+    // Appearance
+    
+    node = new SettingNode(new AppearanceSettingsTab());
+    root.add(node);
+    
+    node.add(new SettingNode(new ButtonsSettingsTab()));
+    node.add(new SettingNode(new LookAndFeelSettingsTab()));
+    node.add(new SettingNode(new FontsSettingsTab()));
+    node.add(new SettingNode(new ProgramTableSettingsTab()));
+    
+    // Plugins
+    node = new SettingNode(new PluginSettingsTab());
+    root.add(node);
+    
+    Plugin[] pluginArr = PluginManager.getInstalledPlugins();
+    for (int i = 0; i < pluginArr.length; i++) {
+      node.add(new SettingNode(new ConfigPluginSettingsTab(pluginArr[i])));
+    }
+    
+    // TVDataServices
+    node = new SettingNode(new DataServiceSettingsTab());
+    root.add(node);
+    tvdataservice.TvDataService[] services=tvbrowser.core.TvDataServiceManager.getInstance().getDataServices();
+    for (int i=0;i<services.length;i++) {
+      node.add(new SettingNode(new ConfigDataServiceSettingsTab(services[i])));
+    }
+    
+    // Advanced
+    node = new SettingNode(new AdvancedSettingsTab());
+    root.add(node);
+    
+    node.add(new SettingNode(new ProxySettingsTab()));
+    node.add(new SettingNode(new DirectoriesSettingsTab()));
+    node.add(new SettingNode(new TVDataSettingsTab()));
+     
+     
+     /*       
     // General section
     
     node = new SettingNode(new TVBrowserSettingsTab());
@@ -187,15 +229,9 @@ public class SettingsDialog {
     for (int i = 0; i < pluginArr.length; i++) {
       //SettingsTab tab = pluginArr[i].getSettingsTab();
       node.add(new SettingNode(new ConfigPluginSettingsTab(pluginArr[i])));
-      
-     /* if (tab==null) {
-        node.add(new SettingNode())
-      }
-      else {
-        node.add(new SettingNode(tab));
-      }*/
-    }
     
+    }
+    */
     return root;
   }
 
@@ -278,9 +314,7 @@ public class SettingsDialog {
     
     public JPanel getSettingsPanel() {
       if (! isLoaded()) {
-        if (mSettingsTab == null) {
-          // TODO
-        } else {
+        if (mSettingsTab!=null) {
           mSettingsPn = mSettingsTab.createSettingsPanel();
         }
       }

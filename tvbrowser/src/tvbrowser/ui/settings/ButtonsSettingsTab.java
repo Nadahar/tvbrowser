@@ -26,8 +26,6 @@
 
 package tvbrowser.ui.settings;
 
-import java.io.File;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -36,7 +34,6 @@ import java.util.Date;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.VerticalToolBar;
-import util.exc.*;
 import util.ui.*;
 
 import devplugin.SettingsTab;
@@ -46,52 +43,24 @@ import devplugin.SettingsTab;
  *
  * @author Martin Oberhauser
  */
-public class TVBrowserSettingsTab implements SettingsTab {
+public class ButtonsSettingsTab implements SettingsTab {
 
   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(TVBrowserSettingsTab.class);
+    = util.ui.Localizer.getLocalizerFor(ButtonsSettingsTab.class);
   
   private JPanel mSettingsPn;
-  
-  private JComboBox lfComboBox;
-  private JTextField skinTextField;
-  private JCheckBox skinCheckBox;
-
+ 
   private JCheckBox mTimeCheck, updateCheck, settingsCheck;
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
   private TimePanel mEarlyTimePn, mMiddayTimePn, mAfternoonTimePn, mEveningTimePn;
   private JLabel mEarlyLb, mAfternoonLb, mMiddayLb, mEveningLb;
 
-  class LookAndFeelObj {
-    private UIManager.LookAndFeelInfo info;
-    public LookAndFeelObj(UIManager.LookAndFeelInfo info) {
-      this.info=info;
-    }
-    public String toString() {
-      return info.getName();
-    }
-    public String getLFClassName() {
-      return info.getClassName();
-    }
+ 
+
+
+  public ButtonsSettingsTab()  {
   }
 
-
-  public TVBrowserSettingsTab()  {
-  }
-
-  
-
-  private LookAndFeelObj[] getLookAndFeelObjs() {
-    UIManager.LookAndFeelInfo[] info=UIManager.getInstalledLookAndFeels();
-    LookAndFeelObj[] result=new LookAndFeelObj[info.length];
-    for (int i=0;i<info.length;i++) {
-      result[i]=new LookAndFeelObj(info[i]);
-    }
-
-    return result;
-  }
-  
-  
  
   /**
    * Creates the settings panel for this tab.
@@ -106,67 +75,14 @@ public class TVBrowserSettingsTab implements SettingsTab {
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.NORTH);
 
-    // Look and feel
-    JPanel lfPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-    main.add(lfPanel);
-    
-    msg = mLocalizer.msg("lookAndFeel", "Aussehen");
-    lfPanel.add(new JLabel(msg));
 
-    LookAndFeelObj[] obj=getLookAndFeelObjs();
-    lfComboBox=new JComboBox(obj);
-    String lf=Settings.getLookAndFeel();
-    for (int i=0;i<obj.length;i++) {
-      if (obj[i].getLFClassName().equals(lf)) {
-        lfComboBox.setSelectedItem(obj[i]);
-      }
-    }
-    lfPanel.add(lfComboBox);
-
-    // Background
-    JPanel skinPanel = new JPanel(new BorderLayout(5, 0));
-    main.add(skinPanel);
-    msg = mLocalizer.msg("background", "Background");
-    skinCheckBox = new JCheckBox(msg);
-    skinTextField = new JTextField(Settings.getApplicationSkin());
-    msg = mLocalizer.msg("change", "Change");
-    final JButton skinChooseBtn = new JButton(msg);
-    skinPanel.add(skinCheckBox,BorderLayout.WEST);
-    skinPanel.add(skinTextField,BorderLayout.CENTER);
-    skinPanel.add(skinChooseBtn,BorderLayout.EAST);
-    skinCheckBox.setSelected(Settings.useApplicationSkin());
-    skinChooseBtn.setEnabled(Settings.useApplicationSkin());
-    skinTextField.setEnabled(Settings.useApplicationSkin());
-
-    skinCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        skinChooseBtn.setEnabled(skinCheckBox.isSelected());
-        skinTextField.setEnabled(skinCheckBox.isSelected());
-      }
-    }
-    );
-
-    skinChooseBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        JFileChooser fileChooser=new JFileChooser();
-        String[] extArr = { ".jpg", ".jpeg", ".gif", ".png"};
-        fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
-        fileChooser.showOpenDialog(mSettingsPn);
-        File f=fileChooser.getSelectedFile();
-        if (f!=null) {
-          skinTextField.setText(f.getAbsolutePath());
-        }
-      }
-    });
 
     // buttons panel
     JPanel toolBarPanel=new JPanel();
     toolBarPanel.setLayout(new BoxLayout(toolBarPanel,BoxLayout.Y_AXIS));
     JPanel buttonPanel=new JPanel(new GridLayout(1,0));
     main.add(toolBarPanel);
-    msg = mLocalizer.msg("buttons", "Buttons");
-    toolBarPanel.setBorder(BorderFactory.createTitledBorder(msg));
-
+ 
     JPanel visibleBtnsPanel=new JPanel(new BorderLayout());
     JPanel panel3=new JPanel(new BorderLayout());
     msg = mLocalizer.msg("showButtons", "Show buttons");
@@ -275,6 +191,7 @@ public class TVBrowserSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
+    /*
     LookAndFeelObj obj=(LookAndFeelObj)lfComboBox.getSelectedItem();
     try {
       UIManager.setLookAndFeel(obj.getLFClassName());
@@ -284,9 +201,8 @@ public class TVBrowserSettingsTab implements SettingsTab {
       String msg = mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
       ErrorHandler.handle(msg, exc);
     }
-
-    Settings.setUseApplicationSkin(this.skinCheckBox.isSelected());
-    Settings.setApplicationSkin(skinTextField.getText());
+*/
+    
 
     Settings.setTimeBtnVisible(mTimeCheck.isSelected());
     Settings.setUpdateBtnVisible(updateCheck.isSelected());
@@ -314,8 +230,8 @@ public class TVBrowserSettingsTab implements SettingsTab {
    */
   public Icon getIcon() {
     
-    return new ImageIcon("imgs/TVBrowser16.png");
-    
+  //  return new ImageIcon("imgs/TVBrowser16.png");
+    return null;
     
   }
   
@@ -325,7 +241,7 @@ public class TVBrowserSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("tvBrowser", "TV-Browser");
+    return mLocalizer.msg("buttons", "Buttons");
   }
 
 

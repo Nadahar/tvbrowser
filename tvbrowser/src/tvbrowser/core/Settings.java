@@ -564,7 +564,7 @@ public class Settings {
   }
   
   public static String getSkinLFThemepack() {
-    return settings.getProperty("skinLF.themepack");
+    return settings.getProperty("skinLF.themepack","themepacks/themepack.zip");
   }
   
   public static void setSkinLFThemepack(String val) {
@@ -603,13 +603,13 @@ public class Settings {
 
 
 
-  public static String[] getButtonPlugins() {
+  public static String[] getHiddenButtonPlugins() {
 
-	 return settings.getStringList("buttonplugins");
+	 return settings.getStringList("hiddenbuttonplugins");
    }
 
-   public static void setButtonPlugins(String[] plugins) {
-   	 settings.setStringList("buttonplugins",plugins);
+   public static void setHiddenButtonPlugins(String[] plugins) {
+   	 settings.setStringList("hiddenbuttonplugins",plugins);
    }
 
 
