@@ -32,6 +32,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -178,6 +180,15 @@ public class SettingsDialog {
     root.add(node);
     
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
+    
+    Arrays.sort(pluginArr, new Comparator() {
+
+        public int compare(Object o1, Object o2) {
+            return o1.toString().compareTo(o2.toString());
+        }
+        
+    });
+    
     for (int i = 0; i < pluginArr.length; i++) {
       ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
       node.add(new SettingNode(tab));
