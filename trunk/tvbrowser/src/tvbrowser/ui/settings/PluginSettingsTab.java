@@ -35,14 +35,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -71,7 +67,6 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
             JPopupMenu menu=new JPopupMenu();
             
             label.setEnabled(plugin.isActivated());
-            //label.setEnabled(mActivatedPlugins.contains(plugin));
             label.setText(plugin.getInfo().getName());
            
             label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
@@ -104,12 +99,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   private JList mList;
   private JButton mStartStopBtn;
   private DefaultListModel mListModel;
-  private Collection mChangeListener;
   private PluginInfoPanel mPluginInfoPanel;
-  //private Collection mActivatedPlugins;
-  
-  public PluginSettingsTab() {
-    mChangeListener=new HashSet();
+  private SettingsDialog mSettingsDialog;
+
+  public PluginSettingsTab(SettingsDialog settingsDialog) {
+    mSettingsDialog = settingsDialog;
   }
 
 	public JPanel createSettingsPanel() {
@@ -223,18 +217,15 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       }
       
       mList.updateUI();
-      updateBtns();          
-    }    
+      updateBtns();
+      mSettingsDialog.invalidateTree();
+    }
     
     // Update the settings
     String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
     Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);    
   }
   
-
-  public void addSettingsChangeListener(SettingsChangeListener listener) {
-    mChangeListener.add(listener);
-  }
 
 	public void saveSettings() {
     

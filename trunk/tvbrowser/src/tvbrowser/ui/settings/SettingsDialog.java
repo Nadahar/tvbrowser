@@ -34,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Enumeration;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -65,6 +66,7 @@ public class SettingsDialog {
   private JTree mSelectionTree;
   private JPanel mSettingsPn;
   private JScrollPane mSettingsPane;
+  private TreeNode mRootNode;
 
   private JButton mOkBt, mCancelBt, mApplyBt;
 
@@ -84,8 +86,8 @@ public class SettingsDialog {
     mSplitPane = new JSplitPane();
     main.add(mSplitPane, BorderLayout.CENTER);
 
-    TreeNode root = createSelectionTree();
-    mSelectionTree = new JTree(root);
+    mRootNode = createSelectionTree();
+    mSelectionTree = new JTree(mRootNode);
     mSelectionTree.setRootVisible(true);
     mSelectionTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     mSelectionTree.setCellRenderer(new SettingNodeCellRenderer());
@@ -101,7 +103,7 @@ public class SettingsDialog {
     mSplitPane.setLeftComponent(scrollPane);
 
     // Make the viewport as big as the tree when all nodes are expanded
-    int categoryCount = root.getChildCount();
+    int categoryCount = mRootNode.getChildCount();
     for (int i = categoryCount; i >= 1; i--) {
       mSelectionTree.expandRow(i);
     }
@@ -113,12 +115,9 @@ public class SettingsDialog {
 
     mSettingsPn = new JPanel(new BorderLayout());
 
-    // TODO: do we need a JScrollPane here?
     mSettingsPane = new JScrollPane(mSettingsPn);
     mSettingsPane.setPreferredSize(new Dimension(410, 300));
     mSplitPane.setRightComponent(mSettingsPane);
- //   mSplitPane.setRightComponent(mSettingsPn);
- //  mSettingsPn.setPreferredSize(new Dimension(410, 300));
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
@@ -127,6 +126,7 @@ public class SettingsDialog {
     mOkBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         saveSettings();
+        invalidateTree();
         mDialog.dispose();
       }
     });
@@ -145,6 +145,7 @@ public class SettingsDialog {
     mApplyBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         saveSettings();
+        invalidateTree();
         Settings.handleChangedSettings();
       }
     });
@@ -156,7 +157,7 @@ public class SettingsDialog {
 
     }
     else {
-      SettingNode n = findSettingNode((SettingNode)root, selectedTabId);
+      SettingNode n = findSettingNode((SettingNode)mRootNode, selectedTabId);
       if (n!=null) {
         showSettingsPanelForNode(n);
         TreePath selectedPath = new TreePath(n.getPath());
@@ -166,6 +167,10 @@ public class SettingsDialog {
         showSettingsPanelForSelectedNode();
       }
     }
+  }
+
+  void invalidateTree() {
+    ((SettingNode)mRootNode).invalidate();
   }
 
 
@@ -223,8 +228,7 @@ public class SettingsDialog {
     
 
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
-    PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();
-    //pluginSettingsTab.addSettingsChangeListener(contextmenuSettingsTab);
+    PluginSettingsTab pluginSettingsTab=new PluginSettingsTab(this);
 
     // Appearance
     node = new SettingNode(
@@ -256,7 +260,6 @@ public class SettingsDialog {
     for (int i = 0; i < pluginArr.length; i++) {
       ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
       node.add(new SettingNode(tab, pluginArr[i].getId()));
-      pluginSettingsTab.addSettingsChangeListener(tab);
     }
 
     // TVDataServices
@@ -325,31 +328,6 @@ public class SettingsDialog {
 
 
 
-
- /* private void showSettingsPanelForSelectedNode() {
-    mSettingsPn.removeAll();
-
-    TreePath selection = mSelectionTree.getSelectionPath();
-    if (selection != null) {
-      SettingNode node = (SettingNode) selection.getLastPathComponent();
-
-      JPanel pn = node.getSettingsPanel();
-      if (pn != null) {
-        // Make the panel as wide as the scrollpane viewport
-        Dimension viewportSize = mSettingsPane.getViewport().getSize();
-        Dimension pnSize = pn.getPreferredSize();
-        if (pnSize.width > viewportSize.width) {
-          pnSize.width = viewportSize.width;
-          pn.setPreferredSize(pnSize);
-        }
-
-        mSettingsPn.add(pn);
-      }
-    }
-
-    mSettingsPn.revalidate();
-    mSettingsPn.repaint();
-  } */
 
 
   private class DefaultSettingsTab implements devplugin.SettingsTab {
@@ -435,6 +413,18 @@ public class SettingsDialog {
     }
 
 
+    public void invalidate() {
+      if (mSettingsTab instanceof ConfigPluginSettingsTab) {
+          ((ConfigPluginSettingsTab)mSettingsTab).invalidate();
+      }
+
+      mSettingsPn = null;
+      Enumeration e = children();
+      while (e.hasMoreElements()) {
+        SettingNode node = (SettingNode)e.nextElement();
+        node.invalidate();
+        }
+    }
 
     public void saveSettings() {
       if (isLoaded()) {

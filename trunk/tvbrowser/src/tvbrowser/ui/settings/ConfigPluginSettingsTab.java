@@ -37,7 +37,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import devplugin.SettingsTab;
 import devplugin.ActionMenu;
 
-public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListener {
+public class ConfigPluginSettingsTab implements SettingsTab {
  
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ConfigPluginSettingsTab.class);
@@ -55,7 +55,7 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
   private boolean mPluginWasActivatedLastTime;
 
   private JPanel mPluginPanel;
-  
+
   public ConfigPluginSettingsTab(PluginProxy plugin) {
     mPlugin = plugin;
   }
@@ -74,6 +74,10 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
     return mContentPanel;
   }
 
+  public void invalidate() {
+    mPluginPanel = null;  // force to reload the content
+  }
+
 
   public void updatePluginPanel() {
     // Check whether we've got something to do
@@ -83,13 +87,11 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
       // Nothing to do
       return;
     }
-    
     if (mPluginPanel == null) {
       mPluginPanel = new JPanel(new BorderLayout());
     } else {
       mPluginPanel.removeAll();
     }
-    
     if (mPlugin.isActivated()) {
       mSettingsTab = mPlugin.getSettingsTab();
       if (mSettingsTab != null) {
@@ -147,13 +149,6 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
    */
   public String getTitle() {
     return mPlugin.getInfo().getName();
-  }
-
-
-  public void settingsChanged(SettingsTab tab, Object activatedPlugins) {
-    if (mContentPanel != null) {
-      updatePluginPanel();
-    }
   }
   
 }
