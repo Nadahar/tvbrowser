@@ -1,4 +1,4 @@
 Changelog WdrDataService
 
-0.9:
+0.9: requires TVBrowser 0.93
 - initial version

@@ -43,9 +43,11 @@ import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.UpdateDlg;
 import tvbrowser.ui.settings.SettingsDlg;
 import tvbrowser.ui.splashscreen.SplashScreen;
+import tvbrowser.ui.update.*;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.ButtonPanel;
 import tvbrowser.ui.PictureButton;
+
 
 import util.exc.*;
 import util.ui.*;
@@ -78,12 +80,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-    mImportTvDataMI, mExportTvDataMI, aboutMenuItem, helpMenuItem;
+    mImportTvDataMI, mExportTvDataMI, aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem;
   private SkinPanel skinPanel;
   private ButtonPanel buttonPanel;
   private static String curLookAndFeel;
-  public static final String VERSION="0.9.5";
-  public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION;
+  //public static final String VERSION="0.9.5";
+  public static final devplugin.Version VERSION=new devplugin.Version(0,95);
+  public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
   
   private static TVBrowser mainFrame;
 
@@ -125,6 +128,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       new Color(63, 114, 133), Color.WHITE);
     UiUtilities.centerAndShow(splash);
     
+	/*Maybe there are tvdataservices to install (.jar.inst files)*/
+	TvDataServiceManager.installPendingDataServices();
+    
     mLog.info("Loading tv data service...");
     msg = mLocalizer.msg("splash.dataService", "Loading tv data service...");
     splash.setMessage(msg);
@@ -147,6 +153,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
     
     devplugin.Plugin.setPluginManager(DataService.getInstance());
+    
+    /*Maybe there are plugins to install (.jar.inst files)*/
+	PluginManager.installPendingPlugins();
     
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
@@ -277,9 +286,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     icon = new ImageIcon("imgs/Search16.gif");
     msg = mLocalizer.msg("menuitem.findPluginsInWeb", "Find plugins in the web...");
-    JMenuItem pluginDownloadMenuItem = new JMenuItem(msg, icon);
-    pluginDownloadMenuItem.setEnabled(false);
-    mPluginsMenu.add(pluginDownloadMenuItem);
+    mPluginDownloadMenuItem = new JMenuItem(msg, icon);
+    mPluginDownloadMenuItem.addActionListener(this);
+    mPluginsMenu.add(mPluginDownloadMenuItem);
     
     // Help menu
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
@@ -519,6 +528,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
     else if (src==helpMenuItem) {
       showHelpDialog();
+    }
+    else if (src==mPluginDownloadMenuItem) {
+    	showUpdatePluginsDlg();
     }
   }
 
@@ -813,6 +825,59 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   }
 
 
+private void showUpdatePluginsDlg() {
+	
+	PluginUpdate.updatePlugins(mainFrame);
+	
+	/*
+	Object[] options = {"check now","cancel"};
+	int n = JOptionPane.showOptionDialog(mainFrame,
+	"TV-Browser checks for new and updated versions of plug-ins avaiailable "+
+	" on the internet.\nDo you want to check for new plugins?",
+		"Update plugins",
+		JOptionPane.YES_NO_OPTION,
+		JOptionPane.QUESTION_MESSAGE,
+		null,
+		options,
+		options[0]); 
+		
+	if (n==JOptionPane.YES_OPTION) {
+			final util.ui.ProgressWindow win=new util.ui.ProgressWindow(this);
+			win.show();
+			win.setText("searching for new plugins...");
+			UpdateItem[] list=null;
+			try {
+				list=PluginUpdate.getPluginList();
+			}catch (TvBrowserException exc) {
+				util.exc.ErrorHandler.handle(exc);
+			}finally{	
+				win.dispose();
+			}
+			if (list.length==0) {
+				JOptionPane.showMessageDialog(mainFrame,"Sorry, no new plugins available.");
+			}else {
+				SelectPluginsDlg selDlg=new SelectPluginsDlg(mainFrame,list);
+				UiUtilities.centerAndShow(selDlg);				
+				selDlg.dispose();
+				if (selDlg.getResult()==SelectPluginsDlg.OK) {
+					DownloadPluginsDlg dlDlg=new DownloadPluginsDlg(mainFrame,list);
+					
+					dlDlg.dispose();		
+				}						
+			}
+		
+		
+			
+		
+	}
+	//javax.swing.JDialog dlg=new tvbrowser.ui.update.UpdatePluginsDlg(this);
+	//dlg.pack();
+	//UiUtilities.centerAndShow(dlg);
+	//dlg.dispose();
+	 * */
+	
+}
+
 private static void askForDataUpdate() {
 	
 	String msg1 = mLocalizer.msg("askforupdatedlg.1","update now");
@@ -842,6 +907,7 @@ public void showHelpDialog() {
 	String msg = mLocalizer.msg("helproot", "help/default/index.html");
 	util.ui.HelpDialog.showHelpPage(mainFrame,msg+"index.html",null);
 }
+
 
 
 }

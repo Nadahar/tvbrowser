@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,19 +32,72 @@
 
 package devplugin;
 
-public final class Version {
+public final class Version implements Comparable {
 
   private int major, minor;
+  private boolean stable;
+  private String name;
 
   public Version(int major, int minor) {
     this.major=major;
     this.minor=minor;
+    name=null;
+    stable=true;
+  }
+  
+  public Version(int major, int minor, boolean stable) {
+  	this(major,minor);
+  	this.stable=stable;
+  }
+  
+  public Version(int major, int minor, boolean stable, String name) {
+  	this(major, minor, stable);
+  	this.name=name;
   }
 
   public String toString() {
-    return major+(minor<10?".0":".")+minor;
+  	if (name==null) {
+      return major+(minor<10?".0":".")+minor+(stable?"":"beta");
+  	}
+  	return name;
   }
+
+  public void setStable(boolean val) {
+  	stable=val;
+  }
+  
+  public boolean isStable() {
+  	return stable;
+  }
+  
 
   public int getMajor() { return major; }
   public int getMinor() { return minor; }
+  
+  public int compareTo(Object obj) throws ClassCastException {
+  	Version v=(Version)obj;
+  	
+  	if (major>v.major) {
+  		return 1;
+  	}else if (major<v.major) {
+  		return -1;  		
+  	}else {  // major is equals
+  		if (minor>v.minor) {
+  			return 1;
+  		} else if (minor<v.minor) {
+  			return -1;
+  		}else {  // minor is equals
+  			if (stable && !v.stable) {
+  				return 1;
+  			}
+  			else if (!stable && v.stable){
+  				return -1;				
+  			}
+  			else {
+  				return 0;
+  			}
+  		}   		
+  	} 	
+  }
+  
 }

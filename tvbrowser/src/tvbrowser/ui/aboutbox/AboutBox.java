@@ -142,7 +142,7 @@ public class AboutBox extends JDialog {
     
     JPanel panel1=new JPanel(new BorderLayout());
     infoPanel.add(new InfoEntry(mLocalizer.msg("version", "Version"),
-      TVBrowser.VERSION));
+      TVBrowser.VERSION.toString()));
     infoPanel.add(new InfoEntry(mLocalizer.msg("platform", "Platform"),
       System.getProperty("os.name") + " " + System.getProperty("os.version")));
     infoPanel.add(new InfoEntry(mLocalizer.msg("system", "System"),
