@@ -31,8 +31,12 @@ public class RatingIconTextFactory {
 	/**
 	 *	Returns the Icon for a specific Rating
      */
-	public static ImageIcon getImageIconForRating(int rateing) {
-		return _icons[rateing];
+	public static ImageIcon getImageIconForRating(int rating) {
+	    if ((rating < 0) || (rating > _icons.length)) {
+	        return new ImageIcon();
+	    }
+	            
+	    return _icons[rating];
 	}
 
 	
