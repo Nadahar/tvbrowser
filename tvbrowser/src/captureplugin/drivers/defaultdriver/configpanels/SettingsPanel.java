@@ -66,6 +66,8 @@ public class SettingsPanel extends JPanel {
     private JPasswordField mUserPwd = new JPasswordField();
     
     
+    private JSpinner mMaxTimeout;
+    
     private JSpinner mMaxSimult;
     
     
@@ -191,6 +193,23 @@ public class SettingsPanel extends JPanel {
         panel.add(new JLabel(mLocalizer.msg("MaxSimult","Maximum simultaneous recordings")+ ":") , lc);
         
         panel.add(mMaxSimult,c);
+        
+        
+        model = new SpinnerNumberModel(new Integer(mData.getTimeOut()), new Integer(-1), new Integer(999), new Integer(1));
+
+        
+        mMaxTimeout = new JSpinner(model);
+        mMaxTimeout.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                mData.setTimeOut(((Integer)mMaxTimeout.getValue()).intValue());
+            }
+            
+        });
+        
+        panel.add(new JLabel(mLocalizer.msg("Timeout","Wait sec. until Timeout (-1 = disabled)")+ ":") , lc);
+        
+        panel.add(mMaxTimeout,c);
+        
         
         return panel;
     }
