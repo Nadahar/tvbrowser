@@ -38,7 +38,6 @@ import tvdataservice.*;
  * After passing all programs to the dippatcher you can request the
  * AbstractChannelDayPrograms.
  *
- * @see AbstractChannelDayProgram
  * @author  Til Schneider, www.murfman.de
  */
 public class ProgramDispatcher {

@@ -69,17 +69,13 @@ public class Mirror {
   }
   
 
-  /**
-   * @return
-   */
+ 
   public String getUrl() {
     return mUrl;
   }
 
 
-  /**
-   * @return
-   */
+ 
   public int getWeight() {
     return mWeight;
   }

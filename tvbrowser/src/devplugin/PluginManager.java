@@ -31,8 +31,8 @@ import java.util.Iterator;
 import util.exc.TvBrowserException;
 
 /**
- * The PluginManager provides some usefull methods for a plugin.
- * Currently, two methods are implemented. More methods may follow.
+ * The PluginManager provides some usefull methods for a plugin. 
+ * More methods may follow in future versions.
  *
  * @author Martin Oberhauser
  */
@@ -79,13 +79,18 @@ public interface PluginManager {
 
   /**
    * Returns a list of all installed Plugins
-   * @return
    */
   public Plugin[] getInstalledPlugins();
 
 
+  /**
+   * Returns a TvDataService by class name
+   */
   public tvdataservice.TvDataService getDataService(String dataServiceClassName);
 
+  /**
+   * Creates a contextmenu containing items for the other plugins.
+   */
   public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller);
 
 }

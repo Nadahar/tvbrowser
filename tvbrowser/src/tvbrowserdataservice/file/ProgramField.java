@@ -131,18 +131,14 @@ public class ProgramField implements Cloneable {
 
 
 
-  /**
-   * @return
-   */
+ 
   public int getTypeId() {
     return mTypeId;
   }
 
 
 
-  /**
-   * @param type
-   */
+ 
   public ProgramFieldType getType() {
     if (mType == null) {
       mType = ProgramFieldType.getTypeForId(mTypeId);
@@ -173,9 +169,7 @@ public class ProgramField implements Cloneable {
 
 
 
-  /**
-   * @return
-   */
+  
   public byte[] getBinaryData() {
     return mData;
   }

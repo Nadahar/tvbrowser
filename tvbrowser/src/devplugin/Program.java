@@ -61,7 +61,7 @@ public interface Program {
   public static final int INFO_ORIGINAL_WITH_SUBTITLE  = 1 << 11;
   
   /**
-   * @deprecated Since 0.9.8. Use {@link #INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED}
+   * @deprecated Use {@link #INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED}
    *             or {@link #INFO_ORIGINAL_WITH_SUBTITLE} instead.
    */
   public static final int INFO_SUBTITLE = INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;

@@ -388,7 +388,7 @@ abstract public class Plugin {
    * 
    * @deprecated Since 0.9.7.1 Use
    *             {@link #handleTvDataAdded(ChannelDayProgram)} and
-   *             {@link #handleTvDataRemoved(ChannelDayProgram)} instead.
+   *             {@link #handleTvDataDeleted(ChannelDayProgram)} instead.
    */
   public void handleTvDataChanged() {
   }
