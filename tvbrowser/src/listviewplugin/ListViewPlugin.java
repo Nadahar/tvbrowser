@@ -26,6 +26,13 @@ public class ListViewPlugin extends Plugin {
             .getLocalizerFor(ListViewPlugin.class);
 
     /**
+     * Creates the Plugin
+     */
+    public ListViewPlugin() {
+        _listViewInstance = this;
+    }
+    
+    /**
      * Returns Informations about this Plugin
      */
     public PluginInfo getInfo() {
@@ -95,6 +102,17 @@ public class ListViewPlugin extends Plugin {
         return "listviewplugin/listview16.gif";
     }
 
+    /**
+     * Returns an Instance of this Plugin
+     * @return Instance of this Plugin
+     */
+    public static ListViewPlugin getInstance() {
+        return _listViewInstance;
+    }
+    
+    /** Instance of this Plugin */
+    private static ListViewPlugin _listViewInstance;
+    
     /** Needed for Position */
     private Point _locationListDialog = null;
     /** Needed for Position */
