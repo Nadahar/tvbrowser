@@ -38,6 +38,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import util.ui.UiUtilities;
+import util.io.IOUtilities;
 
 public class ReminderFrame extends JFrame {
 
@@ -69,16 +70,26 @@ public class ReminderFrame extends JFrame {
     JPanel jcontentPane=(JPanel)getContentPane();
     jcontentPane.setLayout(new BorderLayout(0,10));
     jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-    JPanel progPanel=new JPanel(new BorderLayout());
+    JPanel progPanel=new JPanel(new BorderLayout(5, 10));
+
+    // text label
+    String msg;
+    int progMinutesAfterMidnight = prog.getHours() * 60 + prog.getMinutes();
+    if (IOUtilities.getMinutesAfterMidnight() <= progMinutesAfterMidnight) {
+      msg = mLocalizer.msg("soonStarts", "Soon starts");
+    } else {
+      msg = mLocalizer.msg("alreadyRunning", "Already running");
+    }
+    progPanel.add(new JLabel(msg), BorderLayout.NORTH);
     
     JLabel channelLabel=new JLabel(prog.getChannel().getName());
-    
     progPanel.add(channelLabel,BorderLayout.EAST);
     
     progPanel.add(Plugin.getPluginManager().createProgramPanel(prog),BorderLayout.CENTER);
     
     JPanel btnPanel=new JPanel(new BorderLayout(10,0));
     JButton closeBtn=new JButton(mLocalizer.msg("close", "Close"));
+    getRootPane().setDefaultButton(closeBtn);
     
     final JComboBox comboBox=new JComboBox();
     int i=0;

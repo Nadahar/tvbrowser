@@ -256,7 +256,8 @@ public class XmlTvDataService extends AbstractTvDataService {
    * @param programDispatcher The ProgramDispatcher where to store the found
    *        programs.
    */
-  protected void parseFile(File file, ProgramDispatcher programDispatcher)
+  protected void parseFile(File file, devplugin.Date date,
+    Channel channel, ProgramDispatcher programDispatcher)
     throws TvBrowserException
   {
     XmlTvHandler handler

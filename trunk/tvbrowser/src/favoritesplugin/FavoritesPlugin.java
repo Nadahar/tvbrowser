@@ -239,7 +239,6 @@ public class FavoritesPlugin extends Plugin {
    * Updates all favorites.
    */
   public void handleTvDataChanged() {
-    System.out.println("Updating favorites");
     // Update all favorites
     for (int i = 0; i < mFavoriteArr.length; i++) {
       try {

@@ -85,8 +85,6 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     mChannel = Channel.readData(in, false);
     
     int size = in.readInt();
-    System.out.println("mDate: " + mDate + ", mChannel: " + mChannel
-      + ", size: " + size);
     mProgramList = new ArrayList(size);
     for (int i = 0; i < size; i++) {
       MutableProgram prog = new MutableProgram(in);
@@ -183,6 +181,10 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     for (addIdx = mProgramList.size(); addIdx > 0; addIdx--) {
       Program cmp = (Program) mProgramList.get(addIdx - 1);
       int cmpTime = cmp.getHours() * 60 + cmp.getMinutes();
+      if (cmpTime == time) {
+        // We already have this program
+        return;
+      }
       if (cmpTime < time) {
         break;
       }
