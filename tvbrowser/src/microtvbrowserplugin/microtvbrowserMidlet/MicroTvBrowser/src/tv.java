@@ -461,7 +461,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         if (command == CMD_VAR_1){
           STATUS = STATUS_SEARCH_FAVO_2;
           actuel_day = list.getSelectedIndex()+this.data_min_day;
-          calendar.setTime(new Date(data_create_time + ((actuel_day+1)*24l*60l*60l*1000l)));
+          calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
           synchronized (this.prog_data_store){
             lastSearchData = searchFlag(actuel_day,0x08);
             createProgList(favorite+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),this.dayNavi,null,lastSearchData);
@@ -477,7 +477,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           } else {
             actuel_day++;
           }
-          calendar.setTime(new Date(data_create_time + ((actuel_day+1)*24l*60l*60l*1000l)));
+          calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
           synchronized (this.prog_data_store){
             lastSearchData = searchFlag(actuel_day,0x08);
             createProgList(favorite+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),this.dayNavi,null,lastSearchData);
@@ -491,7 +491,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         if (command == CMD_VAR_1){
           STATUS = STATUS_SEARCH_REMINDER_2;
           actuel_day = list.getSelectedIndex()+this.data_min_day;
-          calendar.setTime(new Date(data_create_time + ((actuel_day+1)*24l*60l*60l*1000l)));
+          calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
           synchronized (this.prog_data_store){
             lastSearchData = searchFlag(actuel_day,0x10);
             createProgList(reminder+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),this.dayNavi,null,lastSearchData);
@@ -507,7 +507,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           } else {
             actuel_day++;
           }
-          calendar.setTime(new Date(data_create_time + ((actuel_day+1)*24l*60l*60l*1000l)));
+          calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
           synchronized (this.prog_data_store){
             lastSearchData = searchFlag(actuel_day,0x10);
             createProgList(reminder+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),this.dayNavi,null,lastSearchData);
@@ -876,7 +876,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   
   protected void startApp(){
     if (executer==null){
-      form = new Form("MircoTvBrowser");
+      form = new Form("MicroTvBrowser");
       form.append("loading...\n");
       gauge = new Gauge("init:\n",false,11,0);
       form.append(gauge);
@@ -885,8 +885,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       executer.start();
     } else {
       gauge = null;
-      form = new Form("MircoTvBrowser");
-      form.append("version 0.14\n");
+      form = new Form("MicroTvBrowser");
+      form.append("Version 0.14\n");
       form.append("www.tvBrowser.org\n");
       form.append("pumpkin@gmx.de\n");
       
@@ -910,7 +910,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   protected void createDateList(String title){
     list = new List(title,List.IMPLICIT);
     for (int i=data_min_day;i<data_days;i++){
-      calendar.setTime(new Date(data_create_time + ((i+1)*24l*60l*60l*1000l)));
+      calendar.setTime(new Date(data_create_time + ((i)*24l*60l*60l*1000l)));
       list.append(calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),null);
     }
     list.addCommand(CMD_BACK);
@@ -943,7 +943,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       this.getRawData((actuel_channel << 16) | (actuel_day << 8));
       int[] temp = getProgIDforBlock(actuel_block);
       
-      calendar.setTime(new Date(data_create_time + ((actuel_day+1)*24l*60l*60l*1000l)));
+      calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
       
       this.createProgList(
       channel_names[actuel_channel]+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1)
@@ -1185,7 +1185,6 @@ System.out.println ("3");
       byte2 = 256 + byte2;
     }
     int titleID = ((byte1 << 8) | (byte2));
-    System.out.println ("title to fetch: "+titleID);
     return s + " "+new String(title_data_store.getRecord(titleID),"ISO8859_1");
   }
   
@@ -1272,7 +1271,19 @@ System.out.println ("3");
     CMD_NOW = new Command(now,Command.ITEM,0);
     CMD_LIST = new Command(prog_list,Command.ITEM,0);
     
-    data_create_time = DIN.readLong();
+    int createDay = DIN.readByte();
+    int createMonth = DIN.readByte();
+    int createYear = DIN.readShort();
+    calendar.set(calendar.HOUR_OF_DAY,0);
+    calendar.set(calendar.MINUTE,1);
+    calendar.set(calendar.YEAR,createYear);
+    calendar.set(calendar.MONTH,createMonth);
+    calendar.set(calendar.DAY_OF_MONTH,createDay);
+    
+    
+    //data_create_time = DIN.readLong();
+    
+    data_create_time = calendar.getTime().getTime();
     
     data_id_time = DIN.readLong();
     
@@ -1280,11 +1291,15 @@ System.out.println ("3");
     
     Calendar C = Calendar.getInstance();
     C.setTime(new Date(System.currentTimeMillis()));
+    C.set(C.HOUR_OF_DAY,0);
+    C.set(C.MINUTE,1);
+    
+    long thisDay = C.getTime().getTime();
     
     long max_delta_time = (1+data_days)*24l*60l*60l*1000l;
-    long delta = System.currentTimeMillis() - data_create_time;
+    long delta = thisDay - data_create_time;
     data_min_day = (int)((delta) / (24l*60l*60l*1000l));
-    data_min_day = Math.max(0,data_min_day);
+    data_min_day = Math.max(0,data_min_day-1);
     
     gauge.setValue(10);
     if (data_min_day >= data_days){
