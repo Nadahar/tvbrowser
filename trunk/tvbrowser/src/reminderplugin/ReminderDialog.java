@@ -122,14 +122,6 @@ public class ReminderDialog extends JDialog {
     JPanel btnPn=new JPanel(new FlowLayout(FlowLayout.TRAILING));
     btnPn.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
     
-    JButton cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
-    cancelBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        hide();
-      }
-    });
-    btnPn.add(cancelBtn);
-    
     JButton okBtn=new JButton(mLocalizer.msg("ok", "OK"));
     okBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -142,9 +134,14 @@ public class ReminderDialog extends JDialog {
     });
     btnPn.add(okBtn);
     getRootPane().setDefaultButton(okBtn);
-
     
-    
+    JButton cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
+    cancelBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        hide();
+      }
+    });
+    btnPn.add(cancelBtn);
     
     contentPane.add(northPn,BorderLayout.NORTH);
     contentPane.add(btnPn,BorderLayout.SOUTH);
