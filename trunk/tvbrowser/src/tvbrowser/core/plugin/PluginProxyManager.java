@@ -491,6 +491,9 @@ public class PluginProxyManager {
     // Log this event
     mLog.info("Activating plugin " + item.getPlugin().getId());
     
+    // Tell the plugin that we activate it now
+    item.getPlugin().onActivation();
+    
     // Get the user directory
     String userDirectoryName = Settings.getUserDirectoryName();
     File userDirectory = new File(userDirectoryName);
@@ -547,6 +550,9 @@ public class PluginProxyManager {
     
     // Save the plugin settings
     item.getPlugin().saveSettings(userDirectory);
+    
+    // Tell the plugin that we deactivate it now
+    item.getPlugin().onDeactivation();
     
     // Set the plugin active
     item.setState(LOADED_STATE);

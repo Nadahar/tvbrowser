@@ -113,5 +113,6 @@ public interface PluginAccess {
    */
   public Icon getMarkIcon();
   
+  public boolean canUseProgramTree();
   
 }

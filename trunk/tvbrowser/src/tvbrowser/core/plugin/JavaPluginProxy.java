@@ -403,5 +403,18 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected void doHandleTvDataDeleted(ChannelDayProgram oldProg) {
     mPlugin.handleTvDataDeleted(oldProg);
   }
+
+
+  public void onActivation() {
+    mPlugin.onActivation();
+  }
+
+  public void onDeactivation() {
+    mPlugin.onDeactivation();
+  }
+
+  public boolean canUseProgramTree() {
+    return mPlugin.canUseProgramTree();
+  }
   
 }
