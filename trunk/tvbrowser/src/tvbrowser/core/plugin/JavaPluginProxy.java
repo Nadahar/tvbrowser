@@ -240,7 +240,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     
     // save the plugin settings in a temp file
     FileOutputStream fOut = null;
-    File tmpPropFile = new File(userDirectory, getId() + ".prop");
+    File tmpPropFile = new File(userDirectory, getId() + ".prop.temp");
     try {
       Properties prop = mPlugin.storeSettings();
       if (prop != null) {
