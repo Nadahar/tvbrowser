@@ -2,6 +2,9 @@
  * TV-Browser
  * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
+ * PrintPlugin
+ * Copyright (C) 08-2003 Robert Inzinger (yxterwd@users.sourceforge.net)
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -42,7 +45,7 @@ import devplugin.*;
 /**
  * Provides a dialog for printing programs.
  *
- * @author Robert Inzinger, www.murfman.de
+ * @author Robert Inzinger
  */
 
 public class PrintPlugin extends devplugin.Plugin
@@ -66,7 +69,7 @@ public class PrintPlugin extends devplugin.Plugin
    }
    public String getMarkIconName()
    {
-      return "printplugin/Print24.gif";
+      return "printplugin/Print16.gif";
    }
 
    public String getButtonText()
