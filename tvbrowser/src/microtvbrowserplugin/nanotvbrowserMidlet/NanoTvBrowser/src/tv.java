@@ -78,9 +78,12 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   private Calendar calendar;
   
   protected void destroyApp(boolean param) throws javax.microedition.midlet.MIDletStateChangeException {
-    command_exec.stop = true;
-    command_exec.execute(null,null);
-    command_exec = null;
+    try {
+      command_exec.stop = true;
+      command_exec.execute(null,null);
+      command_exec = null;
+    } catch (Exception E){
+    }
     notifyDestroyed();
   }
   
@@ -97,12 +100,12 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   protected void startApp(){
     Form F = new Form("NanoTvBrowser");
     F.append("NanoTvBrowser\n");
-    if ((command_exec==null) || (!command_exec.isAlive())){
+    if (command_exec==null){
       F.append("loading...\n");
       command_exec = new exec(this);
       command_exec.start();
     } else {
-      F.append("v. 0.81\n");
+      F.append("Version 0.83\n");
       F.append("www.tvbrowser.org\n");
       F.append("pumpkin@gmx.de\n");
       F.addCommand(CMD_GO_PROG_LIST);
@@ -133,6 +136,13 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   }
   
   public boolean setActuel(){
+    try {
+      if (data_in!=null){
+        data_in.close();
+      }
+    } catch (Exception E){
+      return false;
+    }
     try {
       data_in = new DataInputStream(this.getClass().getResourceAsStream(channel_to_show+"."+this.day_to_show));
       for (int i =0;i<progs_in_block.length;i++){
@@ -196,7 +206,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     //		System.out.println("block_to_show: "+block_to_show);
     //		System.out.println("day_to_show: "+day_to_show);
     if ((block_to_show <= 6) || (block_to_show > 6) && (day_to_show+1 > data_days)){
-      System.out.println  (block_to_show);
+      //System.out.println  (block_to_show);
       int temp = block_to_show + 1;
       if (temp > 5){
         temp = 0;
@@ -236,7 +246,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         }
       }
       if (command == CMD_EXIT){
-        notifyDestroyed();
+        destroyApp(true);
       }
       if (STATUS == this.STATUS_DATE_LIST){
         if (command == this.CMD_BACK){
@@ -256,11 +266,13 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     } catch (Exception E){
       E.printStackTrace();
     }
-    Displayable display = Display.getDisplay(this).getCurrent();
-    Form F = new Form(wait);
-    F.append(working);
-    Display.getDisplay(this).setCurrent(F);
-    command_exec.execute(command,display);
+    if (command_exec!=null){
+      Displayable display = Display.getDisplay(this).getCurrent();
+      Form F = new Form(wait);
+      F.append(working);
+      Display.getDisplay(this).setCurrent(F);
+      command_exec.execute(command,display);
+    }
   }
   
   public void skipBlock() throws Exception {
@@ -340,7 +352,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       }
     } catch (Exception E){
     }
-    notifyDestroyed();
     return true;
   }
   

@@ -411,8 +411,13 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         }
       }
     }catch (Exception E){
-      E.printStackTrace();
-      destroyApp(true);
+      Form F = new Form("Error");
+      F.append("post this message 1:1 in forum\n");
+      F.append("commandpart 1");
+      F.append(E.toString());
+      F.append("STATUS: "+STATUS);
+      Display.getDisplay(this).setCurrent(F);
+      return;
     }
     Form f = new Form(this.wait);
     f.append(this.working);
@@ -606,7 +611,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           STATUS = STATUS_NOW_LIST;
           long nowTime = System.currentTimeMillis();
           long delta = nowTime - data_create_time;
-          actuel_day = (int)((delta) / (24l*60l*60l*1000l));
+          actuel_day = (int)((delta) / (24*60*60*1000));
           calendar.setTime(new Date(nowTime));
           lastSearchData = this.searchTime(actuel_day,calendar.get(calendar.HOUR_OF_DAY),calendar.get(calendar.MINUTE));
           String title = now+" ";
@@ -661,9 +666,18 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         }
       }
     } catch (Exception E){
-      E.printStackTrace();
+      Form F = new Form("Error");
+      F.append("post this message 1:1 in forum\n");
+      F.append(E.toString());
+      F.append("STATUS: "+STATUS);
+      Display.getDisplay(this).setCurrent(F);
+      return;
     }
-    destroyApp(true);
+    Form F = new Form("Error");
+    F.append("post this message 1:1 in forum\n");
+    F.append("ran out of code to execute");
+    F.append("STATUS: "+STATUS);
+    Display.getDisplay(this).setCurrent(F);
   }
   
   protected int[] searchFlag(int day, int flag) throws Exception {
@@ -671,20 +685,22 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     int counter = 0;
     for (int i =0;i<this.channel_names.length;i++){
       int ID = (i << 16) | (day << 8);
-      getRawData(ID);
-      int toSearch = 0;
-      for (int j=0;j<6;j++){
-        toSearch += raw_data_cache[j];
-      }
-      for (int j=0;j<toSearch;j++){
-        int base = 6+(6*j);
-        if ((raw_data_cache[base+3] & flag)!=0){
-          toReturn[counter] = ID | j;
-          counter++;
-          if (toReturn.length == counter){
-            int[] temp = new int[toReturn.length+5];
-            System.arraycopy(toReturn,0,temp,0,toReturn.length);
-            toReturn = temp;
+      
+      if (getRawData(ID)){
+        int toSearch = 0;
+        for (int j=0;j<6;j++){
+          toSearch += raw_data_cache[j];
+        }
+        for (int j=0;j<toSearch;j++){
+          int base = 6+(6*j);
+          if ((raw_data_cache[base+3] & flag)!=0){
+            toReturn[counter] = ID | j;
+            counter++;
+            if (toReturn.length == counter){
+              int[] temp = new int[toReturn.length+5];
+              System.arraycopy(toReturn,0,temp,0,toReturn.length);
+              toReturn = temp;
+            }
           }
         }
       }
@@ -699,45 +715,59 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   
   protected int[] searchTime(int day, int hour, int min) throws Exception {
     int[] toReturn = new int[channel_names.length];
+    try {
     int time = (hour*60) + min;
     int counter = 0;
     for (int i =0;i<channel_names.length;i++){
       int ID = (i << 16) | (day << 8);
-      getRawData(ID);
-      int toSearch = 0;
-      
-      int base = 6;
-      int time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
-      if (time2 > time){
-        //Es ist der letzte des Vortags.
-        if (day > data_min_day){
-          ID = (i << 16) | ((day-1) << 8);
-          getRawData(ID);
+      if (getRawData(ID)){
+        int toSearch = 0;
+        
+        int base = 6;
+        //System.out.println ("time2 "+raw_data_cache.length);
+        int time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
+        if (time2 > time){
+          //Es ist der letzte des Vortags.
+          if (day > data_min_day){
+            ID = (i << 16) | ((day-1) << 8);
+            if (!getRawData(ID)){
+              toReturn[i] = -1;
+              continue;
+            }
+            toSearch = 0;
+            //System.out.println ("tosearch 2");
+            for (int j=0;j<6;j++){
+              toSearch += raw_data_cache[j];
+            }
+            toReturn[i] = ID | (toSearch-1);
+          } else {
+            toReturn[i] = -1;
+          }
+        } else {
+          //Es ist einer aus diesem Tag.
+          //System.out.println ("tosearch");
           toSearch = 0;
           for (int j=0;j<6;j++){
             toSearch += raw_data_cache[j];
           }
-          toReturn[i] = ID | (toSearch-1);
-        } else {
-          toReturn[i] = ID | -1;
+          int last = 0;
+          for (int j =1;j<toSearch;j++){
+            base = 6 + (6*j);
+            //System.out.println ("tosearch 12");
+            time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
+            if (time2 > time){
+              break;
+            }
+            last = j;
+          }
+          toReturn[i] = ID | last;
         }
       } else {
-        //Es ist einer aus diesem Tag.
-        toSearch = 0;
-        for (int j=0;j<6;j++){
-          toSearch += raw_data_cache[j];
-        }
-        int last = 0;
-        for (int j =1;j<toSearch;j++){
-          base = 6 + (6*j);
-          time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
-          if (time2 > time){
-            break;
-          }
-          last = j;
-        }
-        toReturn[i] = ID | last;
+        toReturn[i] = -1;
       }
+    }
+    } catch (Exception E){
+      E.printStackTrace();
     }
     return toReturn;
   }
@@ -754,44 +784,45 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     
     for (int i =0;i<this.channel_names.length;i++){
       int ID = (i << 16) | (day << 8);
-      getRawData(ID);
-      int toSearch = 0;
-      for (int j=0;j<6;j++){
-        toSearch += raw_data_cache[j];
-      }
-      for (int j=0;j<toSearch;j++){
-        int base = 6+(6*j);
-        
-        int byte1 = raw_data_cache[base+4];
-        int byte2 = raw_data_cache[base+5];
-        if (byte1<0){
-          byte1 = 256 + byte1;
+      if (getRawData(ID)){
+        int toSearch = 0;
+        for (int j=0;j<6;j++){
+          toSearch += raw_data_cache[j];
         }
-        if (byte2<0){
-          byte2 = 256 + byte2;
-        }
-        int titleID = ((byte1 << 8) | (byte2));
-        
-        int lengthOfTitle = title_data_store.getRecord(titleID,titlebuffer,0);
-        
-        boolean found = false;
-        for (int ii = 0;(ii<(lengthOfTitle-searchFor.length)) && (!found);ii++){
-          found = true;
-          for (int jj= 0;jj<searchFor.length;jj++){
-            int diff = searchFor[jj] - titlebuffer[jj+ii];
-            if (!((diff == 0) || (diff == -32)|| (diff == 32))){
-              found = false;
-              break;
+        for (int j=0;j<toSearch;j++){
+          int base = 6+(6*j);
+          
+          int byte1 = raw_data_cache[base+4];
+          int byte2 = raw_data_cache[base+5];
+          if (byte1<0){
+            byte1 = 256 + byte1;
+          }
+          if (byte2<0){
+            byte2 = 256 + byte2;
+          }
+          int titleID = ((byte1 << 8) | (byte2));
+          
+          int lengthOfTitle = title_data_store.getRecord(titleID,titlebuffer,0);
+          
+          boolean found = false;
+          for (int ii = 0;(ii<(lengthOfTitle-searchFor.length)) && (!found);ii++){
+            found = true;
+            for (int jj= 0;jj<searchFor.length;jj++){
+              int diff = searchFor[jj] - titlebuffer[jj+ii];
+              if (!((diff == 0) || (diff == -32)|| (diff == 32))){
+                found = false;
+                break;
+              }
             }
           }
-        }
-        if (found){
-          toReturn[counter] = ID | j;
-          counter++;
-          if (toReturn.length == counter){
-            int[] temp = new int[toReturn.length+5];
-            System.arraycopy(toReturn,0,temp,0,toReturn.length);
-            toReturn = temp;
+          if (found){
+            toReturn[counter] = ID | j;
+            counter++;
+            if (toReturn.length == counter){
+              int[] temp = new int[toReturn.length+5];
+              System.arraycopy(toReturn,0,temp,0,toReturn.length);
+              toReturn = temp;
+            }
           }
         }
       }
@@ -888,7 +919,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     } else {
       gauge = null;
       form = new Form("MicroTvBrowser");
-      form.append("Version 0.81\n");
+      form.append("Version 0.83\n");
       form.append("www.tvBrowser.org\n");
       form.append("pumpkin@gmx.de\n");
       
@@ -942,16 +973,23 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         actuel_block = 0;
       }
       actuel_channel = actuel_channel % channel_names.length;
-      this.getRawData((actuel_channel << 16) | (actuel_day << 8));
-      int[] temp = getProgIDforBlock(actuel_block);
-      
-      calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
-      
-      this.createProgList(
-      channel_names[actuel_channel]+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1)
-      ,this.blockNavi
-      ,new Command(channel_names[(actuel_channel+1)%channel_names.length],Command.ITEM,0)
-      ,temp);
+      if (this.getRawData((actuel_channel << 16) | (actuel_day << 8))){
+        int[] temp = getProgIDforBlock(actuel_block);
+        
+        calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
+        
+        this.createProgList(
+        channel_names[actuel_channel]+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1)
+        ,this.blockNavi
+        ,new Command(channel_names[(actuel_channel+1)%channel_names.length],Command.ITEM,0)
+        ,temp);
+      } else {
+        form = new Form("Error");
+        form.append("missing data");
+        form.addCommand(CMD_BACK);
+        form.setCommandListener(this);
+        Display.getDisplay(this).setCurrent(form);
+      }
     }
   }
   
@@ -964,107 +1002,105 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     int day = (ID & 0xFF00) >> 8;
     
     int base = 6 + (6*prog);
-    getRawData(ID);
-    
-    form = new Form(detail);
-    form.append(new StringItem(channel, this.channel_names[chan]));
-    System.out.println("1");
-    
-    int	hour = raw_data_cache[base];
-    int min = raw_data_cache[base+1];
-    String s = null;
-    if (hour < 10){
-      s = "0"+hour+":";
-    } else {
-      s = hour+":";
-    }
-    if (min < 10){
-      s += "0"+min;
-    } else {
-      s += min;
-    }
-    form.append(new StringItem(time,s));
-    System.out.println("2");
-    int byte1 = raw_data_cache[base+4];
-    int byte2 = raw_data_cache[base+5];
-    if (byte1<0){
-      byte1 = 256 + byte1;
-    }
-    if (byte2<0){
-      byte2 = 256 + byte2;
-    }
-    int titleID = ((byte1 << 8) | (byte2));
-    
-    form.append(
-    new StringItem(
-    title,
-    new String(title_data_store.getRecord(titleID),"ISO8859_1")));
-    System.out.println("3");
-    int rating = (raw_data_cache[base+3] & 0xE0) >> 5;
-    if (rating != 6){
-      System.out.println("4");
-      form.append(Bewertungs_Icons[rating]);
-      System.out.println("5");
-    }
-    //favo ?
-    if ((raw_data_cache[base+3] & 0x08)!=0){
-      System.out.println("6");
-      form.append(Favorite_Icon);
-      System.out.println("7");
-    }
-    //reminder ?
-    if ((raw_data_cache[base+3] & 0x10)!=0){
-      System.out.println("8");
-      form.append(Reminder_Icon);
-      System.out.println("9");
-    }
-    
-    int info = raw_data_cache[base+2] | ((raw_data_cache[base+3] & 0x07) << 8);
-    for (int i=0;i<Info_Icons.length;i++){
-      if (((info & (0x01 << i)) !=0) && (Info_Icons[i]!=null)){
-        form.append(Info_Icons[i]);
-      }
-    }
-    
-    form.setCommandListener(this);
-    form.addCommand(CMD_BACK);
-    if (toAdd != null){
-      form.addCommand(toAdd);
-      CMD_VAR_1 = toAdd;
-    }
-    
-    int length = 0;
-    for (int i =0;i<6;i++){
-      length += this.raw_data_cache[i];
-    }
-    
-    int pos = 0;
-    try {
-      DataInputStream Din = new DataInputStream(this.getClass().getResourceAsStream(chan+"."+day));
+    if (getRawData(ID)){
       
-      for (int i=0;i<prog;i++){
-        pos += Din.readUnsignedShort();
+      form = new Form(detail);
+      form.append(new StringItem(channel, this.channel_names[chan]));
+      
+      int	hour = raw_data_cache[base];
+      int min = raw_data_cache[base+1];
+      String s = null;
+      if (hour < 10){
+        s = "0"+hour+":";
+      } else {
+        s = hour+":";
       }
-      for (int i = prog;i<length;i++){
-        Din.readUnsignedShort();
+      if (min < 10){
+        s += "0"+min;
+      } else {
+        s += min;
+      }
+      form.append(new StringItem(time,s));
+      int byte1 = raw_data_cache[base+4];
+      int byte2 = raw_data_cache[base+5];
+      if (byte1<0){
+        byte1 = 256 + byte1;
+      }
+      if (byte2<0){
+        byte2 = 256 + byte2;
+      }
+      int titleID = ((byte1 << 8) | (byte2));
+      
+      form.append(
+      new StringItem(
+      title,
+      new String(title_data_store.getRecord(titleID),"ISO8859_1")));
+      int rating = (raw_data_cache[base+3] & 0xE0) >> 5;
+      if (rating != 6){
+        form.append(Bewertungs_Icons[rating]);
+      }
+      //favo ?
+      if ((raw_data_cache[base+3] & 0x08)!=0){
+        form.append(Favorite_Icon);
+      }
+      //reminder ?
+      if ((raw_data_cache[base+3] & 0x10)!=0){
+        form.append(Reminder_Icon);
       }
       
-      while (pos != 0){
-        pos -= Din.skip(pos);
-      }
-      
-      for (int i = 0;i<extended_data.length;i++){
-        String data = Din.readUTF();
-        if (data.length()!=0){
-          System.out.println("2");
-          form.append(new StringItem(extended_data[i],data));
-          System.out.println("3");
+      int info = raw_data_cache[base+2] | ((raw_data_cache[base+3] & 0x07) << 8);
+      for (int i=0;i<Info_Icons.length;i++){
+        if (((info & (0x01 << i)) !=0) && (Info_Icons[i]!=null)){
+          form.append(Info_Icons[i]);
         }
       }
-      Din.close();
-    } catch (Exception E){
+      
+      form.setCommandListener(this);
+      form.addCommand(CMD_BACK);
+      if (toAdd != null){
+        form.addCommand(toAdd);
+        CMD_VAR_1 = toAdd;
+      }
+      
+      int length = 0;
+      for (int i =0;i<6;i++){
+        length += this.raw_data_cache[i];
+      }
+      
+      int pos = 0;
+      try {
+        DataInputStream Din = new DataInputStream(this.getClass().getResourceAsStream(chan+"."+day));
+        
+        for (int i=0;i<prog;i++){
+          pos += Din.readUnsignedShort();
+        }
+        for (int i = prog;i<length;i++){
+          Din.readUnsignedShort();
+        }
+        
+        while (pos != 0){
+          pos -= Din.skip(pos);
+        }
+        
+        for (int i = 0;i<extended_data.length;i++){
+          String data = Din.readUTF();
+          if (data.length()!=0){
+            //System.out.println("2");
+            form.append(new StringItem(extended_data[i],data));
+            //System.out.println("3");
+          }
+        }
+        Din.close();
+      } catch (Exception E){
+      }
+      Display.getDisplay(this).setCurrent(form);
+    } else {
+      form = new Form("Error");
+      form.append("missing data");
+      form.addCommand(CMD_BACK);
+      form.setCommandListener(this);
+      Display.getDisplay(this).setCurrent(form);
     }
-    Display.getDisplay(this).setCurrent(form);
   }
   
   
@@ -1124,7 +1160,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       counter++;
     } else {
       for (int i =0;i<progID.length;i++){
-        if (((byte)(progID[i] & 0xFF)) == -1){
+        //System.out.println ("createProgr: "+progID[i]);
+        if (progID[i] == -1){
           progListMapping[counter] = -3;
           list.append(this.no_data,null);
         } else {
@@ -1191,15 +1228,23 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   }
   
   
-  protected void getRawData(int ID) throws Exception{
-    int channel = (ID & 0xFF0000) >> 16;
-    int day = (ID & 0xFF00) >> 8;
-    if ((raw_data_cache==null) || (raw_data_cache_day!=day) || (raw_data_cache_channel!=channel)){
-      int RMSID = (day*channel_names.length) + channel + 1;
-      raw_data_cache = prog_data_store.getRecord(RMSID);
-      this.raw_data_cache_channel = channel;
-      this.raw_data_cache_day = day;
+  protected boolean getRawData(int ID){
+    try {
+      int channel = (ID & 0xFF0000) >> 16;
+      int day = (ID & 0xFF00) >> 8;
+      if ((raw_data_cache==null) || (raw_data_cache_day!=day) || (raw_data_cache_channel!=channel)){
+        int RMSID = (day*channel_names.length) + channel + 1;
+        raw_data_cache = prog_data_store.getRecord(RMSID);
+        this.raw_data_cache_channel = channel;
+        this.raw_data_cache_day = day;
+        if (raw_data_cache.length < 7){ //enthält kein vollständiges Programm
+          return false;
+        }
+      }
+    } catch (Exception E){
+      return false;
     }
+    return true;
   }
   
   
@@ -1300,7 +1345,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     
     long delta = thisDay - data_create_time;
     data_min_day = (int)((delta) / (24l*60l*60l*1000l));
-
+    
     today = data_min_day;
     
     data_min_day = Math.max(0,data_min_day-1);

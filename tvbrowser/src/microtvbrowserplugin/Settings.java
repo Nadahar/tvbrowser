@@ -105,6 +105,7 @@ public class Settings implements SettingsTab, ActionListener{
     showChannelNameInNowList = new JCheckBox(mLocalizer.msg("include channelname in lists","include channelname in lists"));
     showChannelNameInNowList.setSelected(belongs.isChannelNameInNowList());
     
+    actionPerformed (null);
     
     debug.add(showIconsInProgList);
     debug.add(showChannelNameInNowList);
