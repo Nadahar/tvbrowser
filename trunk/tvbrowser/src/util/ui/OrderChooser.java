@@ -56,12 +56,12 @@ public class OrderChooser extends JPanel {
   /**
    * Konstruiert einen OrderChooser.
    * <P>
-   * Die Reihenfolge wird aus currOrder übernommen. Dann wird das Array
+   * Die Reihenfolge wird aus currOrder ï¿½bernommen. Dann wird das Array
    * allItems durchgegangen und jedes Objekt, das nicht in der Reihenfolge
    * vorkommt, wird aufgenommen.
    *
    * @param currOrder Die aktuelle Reihenfolge
-   * @param allItems Alle möglichen Objekte (die Objekte der aktuellen Reihenfolge
+   * @param allItems Alle mï¿½glichen Objekte (die Objekte der aktuellen Reihenfolge
    *        eingeschlossen)
    */
   public OrderChooser(Object[] currOrder, Object[] allItems) {
@@ -85,7 +85,7 @@ public class OrderChooser extends JPanel {
     mList = new JList(mListModel);
     mList.setCellRenderer(new SelectableItemRenderer());
 
-    // MouseListener hinzufügen, der das Selektieren/Deselektieren übernimmt
+    // MouseListener hinzufï¿½gen, der das Selektieren/Deselektieren ï¿½bernimmt
     mList.addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent evt) {
         if (evt.getX() < mSelectionWidth) {
@@ -196,7 +196,7 @@ public class OrderChooser extends JPanel {
       mListModel.removeElementAt(selection[i]);
     }
 
-    // Zeilen wieder einfügen
+    // Zeilen wieder einfï¿½gen
     for (int i = 0; i < selectedRows.length; i++) {
       mListModel.insertElementAt(selectedRows[i], insertPos + i);
     }
@@ -250,10 +250,11 @@ public class OrderChooser extends JPanel {
       setText(selectableItem.mItem.toString());
 
       if (isSelected) {
+        setOpaque(true);
         setBackground(list.getSelectionBackground());
         setForeground(list.getSelectionForeground());
       } else {
-        setBackground(list.getBackground());
+        setOpaque(false);
         setForeground(list.getForeground());
       }
       setEnabled(list.isEnabled());
