@@ -501,7 +501,7 @@ public class ListViewDialog extends JDialog {
         
         if (SwingUtilities.isRightMouseButton(e)) {
             JPopupMenu menu = devplugin.Plugin.getPluginManager()
-                    .createPluginContextMenu(prg);
+                    .createPluginContextMenu(prg, mPlugin);
             menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
         } else if (SwingUtilities.isLeftMouseButton(e)
                 && (e.getClickCount() == 2)) {
