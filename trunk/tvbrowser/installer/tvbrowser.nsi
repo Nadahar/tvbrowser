@@ -308,6 +308,13 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
   SectionEnd
   
+  Section "Drucken"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
+  SectionEnd
+  
   Section "Lieblingssendungen verwalten"
     SectionIn 1
   
@@ -322,11 +329,11 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
   SectionEnd
   
-  Section "Drucken"
+  Section "Google-Suche"
     SectionIn 1
   
     SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
+    File "${RUNTIME_DIR}\plugins\GoogleSearchPlugin.jar"
   SectionEnd
   
   Section "IMDB-Suche"
@@ -336,11 +343,18 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\ImdbSearchPlugin.jar"
   SectionEnd
   
-  Section "Google-Suche"
+  Section "TV-Bewertungen"
     SectionIn 1
   
     SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\GoogleSearchPlugin.jar"
+    File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
+  SectionEnd
+  
+  Section "Was läuft gerade"
+    SectionIn 1
+  
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\ListViewPlugin.jar"
   SectionEnd
 
 SubSectionEnd
