@@ -22,6 +22,9 @@ import devplugin.Program;
 
 /**
  * Filtert nach bestimmten Programm-Informationen (zum Beispiel Untertitel)
+ * 
+ * FIXME: Grafiken müssen noch eingecheckt werden
+ * 
  * @author bodo
  */
 public class ProgramInfoFilterComponent implements FilterComponent {
