@@ -40,4 +40,11 @@ public interface PrimaryDataService {
    */
   public Channel[] getAvailableChannels();
 
+  /**
+   * Gets the number of bytes read (= downloaded) by this data service.
+   * 
+   * @return The number of bytes read.
+   */
+  public int getReadBytesCount();
+
 }

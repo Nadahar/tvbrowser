@@ -27,6 +27,7 @@ package primarydatamanager;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 
 import primarydatamanager.primarydataservice.PrimaryDataService;
 
@@ -42,6 +43,8 @@ import devplugin.Date;
  */
 public class PrimaryDataManager {
   
+  private static int MAX_SHORT_DESCRIPTION_LENGTH = 150;
+  
   private File mRawDir;
   private File mPreparedDir;
   private File mWorkDir;
@@ -50,6 +53,8 @@ public class PrimaryDataManager {
   private PrimaryDataService[] mDataServiceArr;
   
   private Date mDeadlineDay;
+  
+  private int mReadBytesCount;
   
   
   
@@ -140,6 +145,11 @@ public class PrimaryDataManager {
         + mWorkDir.getAbsolutePath() + "' to '"
         + mPreparedDir.getAbsolutePath() + "' failed");
     }
+    
+    // Print out the statistics
+    System.out.println("In total there were "
+      + NumberFormat.getInstance().format(mReadBytesCount)
+      + " bytes read by the data services");
   }
 
 
@@ -158,6 +168,13 @@ public class PrimaryDataManager {
         throw new PreparationException("Getting raw data from primary data "
           + " service " + mDataServiceArr[i].getClass().getName() + " failed");
       }
+      
+      // Update the number of bytes read
+      int readBytes = mDataServiceArr[i].getReadBytesCount();
+      mReadBytesCount += readBytes;
+      System.out.println("There were "
+        + NumberFormat.getInstance().format(readBytes)
+        + " bytes read by " + mDataServiceArr[i].getClass().getName());
     }
   }
 
@@ -233,8 +250,8 @@ public class PrimaryDataManager {
     String country, String channel)
     throws PreparationException
   {
-    // Remove all empty fields from the day program
-    removeEmptyFields(rawProg);
+    // Prepare the raw file (check mandatory fields, remove empty fields, ...)
+    prepareDayProgram(rawProg, date, country, channel);
     
     // Get the file names of the level-complete-files
     String[] levelFileNameArr = new String[DayProgramFile.LEVEL_ARR.length];
@@ -318,16 +335,56 @@ public class PrimaryDataManager {
 
 
 
-  private void removeEmptyFields(DayProgramFile prog) {
+  // Prepare the raw file (check mandatory fields, remove empty fields, ...)
+  private void prepareDayProgram(DayProgramFile prog, Date date,
+    String country, String channel)
+    throws PreparationException
+  {
+    // Go through the program frames and pepare them
     for (int frameIdx = 0; frameIdx < prog.getProgramFrameCount(); frameIdx++) {
       ProgramFrame frame = prog.getProgramFrameAt(frameIdx);
       
+      // Remove all empty fields from the day program
       for (int fieldIdx = frame.getProgramFieldCount() - 1; fieldIdx >= 0; fieldIdx--) {
         ProgramField field = frame.getProgramFieldAt(fieldIdx);
         byte[] data = field.getBinaryData();
         
         if ((data == null) || (data.length == 0)) {
           frame.removeProgramFieldAt(fieldIdx);
+        }
+      }
+      
+      // Check the mandatory fields (start time and title)
+      ProgramField startTimeField = frame.getProgramFieldOfType(ProgramFieldType.START_TIME_TYPE);
+      if (startTimeField == null) {
+        throw new PreparationException("Program frame has no start time. "
+          + "ID: " + frame.getId() + ", Day program: " + date + ", " + country + ", " + channel);
+      }
+      ProgramField titleField = frame.getProgramFieldOfType(ProgramFieldType.TITLE_TYPE);
+      if (titleField == null) {
+        throw new PreparationException("Program frame has no title. "
+          + "ID: " + frame.getId() + ", Day program: " + date + ", " + country + ", " + channel);
+      }
+      
+      // Try to create a short description
+      ProgramField shortDescField = frame.getProgramFieldOfType(ProgramFieldType.SHORT_DESCRIPTION_TYPE);
+      if (shortDescField == null) {
+        ProgramField descField = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+        if (descField != null) {
+          // Generate a short description from the description
+          String shortDesc = descField.getTextData();
+          if (shortDesc.length() > MAX_SHORT_DESCRIPTION_LENGTH) {
+            int lastSpacePos = shortDesc.lastIndexOf(' ', MAX_SHORT_DESCRIPTION_LENGTH);
+            if (lastSpacePos == -1) {
+              shortDesc = shortDesc.substring(0, MAX_SHORT_DESCRIPTION_LENGTH);
+            } else {
+              shortDesc = shortDesc.substring(0, lastSpacePos);
+            }
+          }
+          
+          // Add the short description to the frame
+          shortDescField = new ProgramField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, shortDesc);
+          frame.addProgramField(shortDescField);
         }
       }
     }

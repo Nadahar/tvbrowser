@@ -85,4 +85,8 @@ public class FileDataSource implements DataSource {
     }
   }
 
+
+  public void close() throws UpdateException {
+  }
+
 }

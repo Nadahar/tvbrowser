@@ -80,16 +80,19 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
    * @throws TvBrowserException
    */  
   public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
-    devplugin.Date startDate, int dateCount)
+    devplugin.Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {
     connect();
 
+    monitor.setMaximum(dateCount * channelArr.length);
     try {
       devplugin.Date date = startDate;
       for (int day = 0; day < dateCount; day++) {
         boolean anyDataFound = false;
         for (int i = 0; i < channelArr.length; i++) {
+          monitor.setValue(day * channelArr.length + i);
+          
           if (dataBase.isDayProgramAvailable(date, channelArr[i])) {
             anyDataFound = true;
           } else {
@@ -99,10 +102,16 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
               anyDataFound = true;
             }
           }
+          
+          // Check whether the download should be canceled
+          if (dataBase.cancelDownload()) {
+            break;
+          }
         }
         
-        // If we can't find any data on one day (for all channels), we stop
-        if (! anyDataFound) {
+        // If we can't find any data on one day (for all channels) or the
+        // download should be canceled, we stop
+        if (dataBase.cancelDownload() || (! anyDataFound)) {
           break;
         }
         

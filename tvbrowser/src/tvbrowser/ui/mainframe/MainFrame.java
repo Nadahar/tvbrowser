@@ -31,8 +31,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -460,11 +458,10 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
   private void changeDate(devplugin.Date date) {      
-    devplugin.Date nextDate=new devplugin.Date(date);
-    nextDate=nextDate.addDays(1);
+    devplugin.Date nextDate = date.addDays(1);
     DataService.getInstance().getProgressBar().setMaximum(100);
-    DayProgram today = DataService.getInstance().getDayProgram(date, true, 0, 49);
-    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate, true, 50, 99);
+    DayProgram today = DataService.getInstance().getDayProgram(date, 0, 49);
+    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate, 50, 99);
     mProgramTableModel.setDayPrograms(today, tomorrow);
 
     if (finderPanel != null) {
@@ -588,7 +585,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         DataService.getInstance().startDownload(daysToDownload);
         onDownloadDone();
         newTvDataAvailable();
-    
       }
     };
     downloadingThread.start();
@@ -602,14 +598,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    */
   public void updateTvData() {
     if (DataService.getInstance().isDownloading()) {
-      onDownloadDone();
-      newTvDataAvailable();
+      DataService.getInstance().stopDownload();
     } else {
       UpdateDlg dlg = new UpdateDlg(this, true);
       dlg.pack();
       UiUtilities.centerAndShow(dlg);
       runUpdateThread(dlg.getResult());
-   
     }
   }
 

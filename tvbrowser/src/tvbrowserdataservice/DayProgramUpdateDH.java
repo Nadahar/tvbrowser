@@ -39,12 +39,14 @@ import util.io.DownloadHandler;
  */
 public class DayProgramUpdateDH implements DownloadHandler {
   
-  private File mDataDir;
+  private TvBrowserDataService mDataService;
   private TvDataBaseUpdater mUpdater;
   
     
-  public DayProgramUpdateDH(File dataDir, TvDataBaseUpdater updater) {
-    mDataDir = dataDir;
+  public DayProgramUpdateDH(TvBrowserDataService dataService,
+    TvDataBaseUpdater updater)
+  {
+    mDataService = dataService;
     mUpdater = updater;
   }
   
@@ -61,7 +63,7 @@ public class DayProgramUpdateDH implements DownloadHandler {
     String completeFileName = fileName.substring(0, updatePos)
       + "_full.prog.gz";
     
-    File completeFile = new File(mDataDir, completeFileName);
+    File completeFile = new File(mDataService.getDataDir(), completeFileName);
     try {
       // Read the update from the stream
       DayProgramFile updateProg = new DayProgramFile();
@@ -84,11 +86,15 @@ public class DayProgramUpdateDH implements DownloadHandler {
         "Updating dayprogram file failed: {0}", completeFile.getAbsolutePath(),
         exc);
     }
+
+    mDataService.checkCancelDownload();
   }
   
   
   public void handleFileNotFound(String fileName) throws TvBrowserException {
-    // There is no update for this day -> Do nothing
+    // There is no update for this day
+
+    mDataService.checkCancelDownload();
   }
 
 }

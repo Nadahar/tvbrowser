@@ -33,6 +33,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Level;
 
+import devplugin.*;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.PluginInfo;
@@ -77,6 +78,11 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   private ArrayList mChangedProgramFileList;
   
+  private DownloadManager mDownloadManager;
+  private TvDataBase mTvDataBase;
+  private ProgressMonitor mProgressMonitor;
+  private int mTotalDownloadJobCount;
+  
   
   
   public TvBrowserDataService() {
@@ -96,9 +102,12 @@ public class TvBrowserDataService extends AbstractTvDataService {
    * @throws TvBrowserException
    */  
   public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
-    Date startDate, int dateCount)
+    Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {
+    mTvDataBase = dataBase;
+    mProgressMonitor = monitor;
+    
     mDirectlyLoadedBytes = 0;
     mChangedProgramFileList = new ArrayList();
     
@@ -119,19 +128,19 @@ public class TvBrowserDataService extends AbstractTvDataService {
     updateChannelList(mirror);
     
     // Create a download manager and add all the jobs
-    DownloadManager manager = new DownloadManager(mirror.getUrl());
+    mDownloadManager = new DownloadManager(mirror.getUrl());
     TvDataBaseUpdater updater = new TvDataBaseUpdater(this, dataBase);
     
     // Add a receive or a update job for each channel and day
-    DayProgramReceiveDH receiveDH = new DayProgramReceiveDH(mDataDir, updater);
-    DayProgramUpdateDH updateDH   = new DayProgramUpdateDH(mDataDir, updater);
+    DayProgramReceiveDH receiveDH = new DayProgramReceiveDH(this, updater);
+    DayProgramUpdateDH updateDH   = new DayProgramUpdateDH(this, updater);
     Date date = startDate;
     for (int day = 0; day < dateCount; day++) {
       for (int levelIdx = 0; levelIdx < mSubsribedLevelArr.length; levelIdx++) {
         String level = mSubsribedLevelArr[levelIdx];
         
         for (int i = 0; i < channelArr.length; i++) {
-          addDownloadJob(dataBase, manager, date, level, channelArr[i].getId(),
+          addDownloadJob(dataBase, date, level, channelArr[i].getId(),
                          channelArr[i].getCountry(), receiveDH, updateDH);
         }
       }
@@ -139,13 +148,22 @@ public class TvBrowserDataService extends AbstractTvDataService {
       date = date.addDays(1);
     }
     
+    // Initialize the ProgressMonitor
+    mTotalDownloadJobCount = mDownloadManager.getDownloadJobCount();
+    mProgressMonitor.setMaximum(mTotalDownloadJobCount);
+    
     // Let the download begin
     try {
-      manager.runDownload();
+      mDownloadManager.runDownload();
     }
     finally {
       // Update the programs for which the update suceed in every case
       updater.updateTvDataBase();
+
+      // Clean up ressources
+      mDownloadManager = null;
+      mTvDataBase = null;
+      mProgressMonitor = null;
     }
   }
 
@@ -308,8 +326,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 
 
-  private void addDownloadJob(TvDataBase dataBase, DownloadManager manager,
-    Date date, String level, String channelName, String country,
+  private void addDownloadJob(TvDataBase dataBase, Date date, String level,
+    String channelName, String country,
     DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH)
     throws TvBrowserException
   {
@@ -335,13 +353,24 @@ public class TvBrowserDataService extends AbstractTvDataService {
       String updateFileName = DayProgramFile.getProgramFileName(date,
         country, channelName, level, version);
               
-      manager.addDownloadJob(updateFileName, updateDH);
+      mDownloadManager.addDownloadJob(updateFileName, updateDH);
     } else {
       // We have no data -> add a receive job
-      manager.addDownloadJob(completeFileName, receiveDH);
+      mDownloadManager.addDownloadJob(completeFileName, receiveDH);
     }
   }
-  
+
+
+
+  void checkCancelDownload() {
+    if (mTvDataBase.cancelDownload()) {
+      mDownloadManager.removeAllDownloadJobs();
+    }
+
+    // Update the ProgressMonitor
+    int jobCount = mDownloadManager.getDownloadJobCount();
+    mProgressMonitor.setValue(mTotalDownloadJobCount - jobCount);
+  }  
   
   
   File getDataDir() {

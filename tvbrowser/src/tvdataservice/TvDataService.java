@@ -31,6 +31,7 @@ import java.util.Properties;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
 import util.exc.TvBrowserException;
 
 /**
@@ -46,7 +47,7 @@ public interface TvDataService {
    * @throws TvBrowserException
    */  
   public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
-    Date startDate, int dateCount)
+    Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException;
 
   /**

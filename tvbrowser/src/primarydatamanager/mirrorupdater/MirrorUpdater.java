@@ -52,6 +52,8 @@ import util.io.IOUtilities;
  * @author Til Schneider, www.murfman.de
  */
 public class MirrorUpdater {
+  
+  private static final int MAX_DAYS_WITHOUT_DATA = 4;
 
   private DataSource mDataSource;
   private DataTarget mDataTarget;
@@ -106,7 +108,8 @@ public class MirrorUpdater {
       updateMirrorList();
     }
     finally {
-      // Close the data target
+      // Close data source and data target
+      mDataSource.close(); 
       mDataTarget.close();
     }
   }
@@ -168,7 +171,7 @@ public class MirrorUpdater {
     Date date = mDeadlineDay;
     int daysWithNoData = 0;
     
-    while (daysWithNoData < 7) {
+    while (daysWithNoData < MAX_DAYS_WITHOUT_DATA) {
       String completeFileName = DayProgramFile.getProgramFileName(date,
         channel.getCountry(), channel.getId(), level);
         

@@ -50,7 +50,21 @@ public class DownloadManager {
       mJobList.add(new DownloadJob(fileName, handler));
     }
   }
-  
+
+
+
+  public void removeAllDownloadJobs() {
+    synchronized(mJobList) {
+      mJobList.clear();
+    }
+  }  
+
+
+  public int getDownloadJobCount() {
+    synchronized(mJobList) {
+      return mJobList.size();
+    }
+  }
   
   
   public void runDownload() {

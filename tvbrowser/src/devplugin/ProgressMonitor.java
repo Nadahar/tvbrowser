@@ -23,32 +23,17 @@
  *   $Author$
  * $Revision$
  */
-package tvdataservice;
-
-import devplugin.Channel;
-import devplugin.Date;
+package devplugin;
 
 /**
  * 
  * 
  * @author Til Schneider, www.murfman.de
  */
-public interface TvDataBase {
+public interface ProgressMonitor {
 
-  /**
-   * Updates the given day program.
-   * 
-   * @param program The day program to update.
-   */
-  public void updateDayProgram(MutableChannelDayProgram program);
-  
-  public boolean isDayProgramAvailable(Date date, Channel channel);
+  public void setMaximum(int maximum);
 
-  /**
-   * Returns wether the download should be canceled.
-   * 
-   * @return Wether the download should be canceled.
-   */  
-  public boolean cancelDownload();
+  public void setValue(int value);
 
 }
