@@ -218,8 +218,30 @@ public class CaptureExecute {
         String output = "";
         int time = 0;
         InputStreamReader is = new InputStreamReader(p.getInputStream());
-        // wait until the process has exited, max 5s
-        while (time < 5000) {
+        // wait until the process has exited, max MaxTimouts
+        
+        if (mData.getTimeOut() > 0 ){
+            while (time < mData.getTimeOut() * 1000) {
+                Thread.sleep(100);
+                time += 100;
+                try {
+                    p.exitValue();
+                    break;
+                } catch (IllegalThreadStateException e) {
+                }
+            }
+        } else {
+            while (true) {
+                Thread.sleep(100);
+                try {
+                    p.exitValue();
+                    break;
+                } catch (IllegalThreadStateException e) {
+                }
+            }
+        }
+        
+        while (time < mData.getTimeOut() * 1000) {
             Thread.sleep(100);
             time += 100;
             try {

@@ -86,6 +86,9 @@ public class DeviceConfig {
     /** Only Programs in the Future */
     private boolean mOnlyFuture = true;
     
+    /** MaximTime to Timeout */
+    private int mMaxTimeout = 5;
+    
     private ArrayList mParamEntries = new ArrayList();
     
     /**
@@ -117,6 +120,7 @@ public class DeviceConfig {
         setDialogOnlyOnError(data.getDialogOnlyOnError());
         setOnlyFuturePrograms(data.getOnlyFuturePrograms());
         setParamList(data.getParamList());
+        setTimeOut(data.getTimeOut());
     }
 
 
@@ -380,12 +384,28 @@ public class DeviceConfig {
     }
     
     /**
+     * Set the sec to timeout
+     * @param sec Secs
+     */
+    public void setTimeOut(int sec) {
+        mMaxTimeout = sec;
+    }
+    
+    /**
+     * Get the Timeout in secs
+     * @return Timeout in secs
+     */
+    public int getTimeOut() {
+        return mMaxTimeout;
+    }
+    
+    /**
      * Write the Config into a Stream
      * @param stream
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(2);
+        stream.writeInt(3);
         
         stream.writeObject(getName());
         
@@ -414,6 +434,9 @@ public class DeviceConfig {
         for (int i = 0; i < mParamEntries.size(); i++) {
             ((ParamEntry)mParamEntries.get(i)).writeData(stream);
         }
+        
+        stream.writeInt(mMaxTimeout);
+
     }
 
     /**
@@ -461,6 +484,10 @@ public class DeviceConfig {
             mParamEntries.add(entry);
         }
         
+        
+        if (version > 2) {
+            mMaxTimeout = stream.readInt();
+        }
     }
 
 }
