@@ -135,8 +135,11 @@ public class DialogOverview extends JDialog {
 
         GridBagConstraints c4 = new GridBagConstraints();
         c4.gridwidth = GridBagConstraints.REMAINDER;
+        c4.fill = GridBagConstraints.HORIZONTAL;
+        c4.weightx = 1;
+        c4.anchor = GridBagConstraints.CENTER;
         
-        JLabel urlLabel = new JLabel("<html><u>http://tvaddicted.wannawork.de</u></html>");
+        JLabel urlLabel = new JLabel("<html><u>http://tvaddicted.wannawork.de</u></html>",JLabel.CENTER);
         urlLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         urlLabel.setForeground(Color.BLUE);
         urlLabel.addMouseListener(new MouseAdapter() {
