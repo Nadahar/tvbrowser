@@ -28,6 +28,7 @@ package tvbrowser;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -40,6 +41,9 @@ import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
+
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DataService;
@@ -52,7 +56,9 @@ import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
 import util.ui.UiUtilities;
 
+
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+import com.gc.systray.*;
 
 /**
  * TV-Browser
@@ -68,19 +74,6 @@ public class TVBrowser {
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
 
- // private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
-
- // private ProgramTableScrollPane mProgramTableScrollPane;
- // private DefaultProgramTableModel mProgramTableModel;
- // private Thread downloadingThread;
- // private JPanel jcontentPane;
- // private FinderPanel finderPanel;
-//  private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-//    mImportTvDataMI, mExportTvDataMI, aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem;
-//  private SkinPanel skinPanel;
-//  private HorizontalToolBar mDefaultToolBar;
-//  private VerticalToolBar mDateTimeToolBar;
-//  private StatusBar mStatusBar;
   private static String curLookAndFeel;
   public static final devplugin.Version VERSION=new devplugin.Version(0,96,false,"0.9.6.1");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
@@ -153,27 +146,6 @@ public class TVBrowser {
     splash.setMessage(msg);
     
     updateLookAndFeel();
-    /*
-    if (Settings.isSkinLFEnabled()) {
-      String themepack=Settings.getSkinLFThemepack();
-      try {
-        SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
-        SkinLookAndFeel.enable();
-      }catch(Exception exc) {
-        ErrorHandler.handle("Could not load themepack",exc);
-      }
-    }
-    else {
-      try {
-        curLookAndFeel = Settings.getLookAndFeel();
-        UIManager.setLookAndFeel(curLookAndFeel);
-      }
-      catch (Exception exc) {
-        msg = mLocalizer.msg("error.1", "Unable to set look and feel.");
-        ErrorHandler.handle(msg, exc);
-      }
-    }
-    */
     
     
     devplugin.Plugin.setPluginManager(DataService.getInstance());
@@ -198,8 +170,89 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
     
-
     mainFrame=new MainFrame();
+
+    File iconTrayLib=new File("DesktopIndicator.dll");
+    boolean useWindowsIconTray=false;
+
+    if (iconTrayLib.exists()) {
+      useWindowsIconTray=SystemTrayIconManager.initializeSystemDependent();
+      if (!useWindowsIconTray) {
+        mLog.info("could not load library "+iconTrayLib.getAbsolutePath());
+      }
+    }
+    
+// --->> Windows only
+    if (useWindowsIconTray) {
+      mLog.info("platform independent mode is OFF");
+          
+      int quick = SystemTrayIconManager.loadImage("taskicon.ico");
+      if (quick == -1) {
+        mLog.info("could load system tray icon");
+      }
+      final SystemTrayIconManager mgr = new SystemTrayIconManager(quick, "Test tooltip");
+      mgr.setVisible(true);
+      JPopupMenu trayMenu = new JPopupMenu();
+      final JMenuItem openMenuItem = new JMenuItem("Open");
+      JMenuItem quitMenuItem = new JMenuItem("Quit");
+      trayMenu.add(openMenuItem);
+      trayMenu.add(quitMenuItem);  
+    
+      openMenuItem.setEnabled(false);
+    
+      openMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          mainFrame.show();
+          openMenuItem.setEnabled(false);  
+          mainFrame.toFront();
+        }
+      }); 
+    
+      quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          mgr.setVisible(false);
+          mainFrame.quit();  
+        }
+      });      
+
+      mgr.addSystemTrayIconListener(new SystemTrayIconListener() {
+        public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
+        }
+        public void mouseClickedRightButton(Point pos, SystemTrayIconManager ssource) {
+        }
+        public void mouseLeftDoubleClicked(Point pos, SystemTrayIconManager source) {
+          if (!mainFrame.isVisible()) {
+            mainFrame.show();
+          }
+          mainFrame.toFront();
+        }
+        public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
+        } 
+      });
+
+      mgr.setRightClickView(trayMenu);
+    
+      mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+        public void windowClosing(java.awt.event.WindowEvent e) {
+          mgr.setVisible(false);
+          mainFrame.quit();
+        }
+        public void windowIconified(java.awt.event.WindowEvent e) {
+          mainFrame.hide();
+          openMenuItem.setEnabled(true);  
+        }
+      });
+    }
+    else {
+      mLog.info("platform independent mode is ON");    
+      
+      mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+        public void windowClosing(java.awt.event.WindowEvent e) {
+          mainFrame.quit();
+        }
+      });  
+    }
+    
     
     // Set the right size
     mainFrame.setSize(Settings.getWindowSize());
