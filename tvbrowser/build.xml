@@ -245,6 +245,16 @@
       <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
     </jar>
 
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/GoogleSearchPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="googlesearchplugin/**"/>
+    </jar>
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/ImdbSearchPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="imdbsearchplugin/**"/>
+    </jar>
+
+
 	<!-- Pack the TV data service jars -->    
     <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
     <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/TvBrowserDataService.jar"
