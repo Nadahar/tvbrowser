@@ -88,7 +88,7 @@ public class ErrorHandler {
   /**
    * Handles a Throwable (Shows and loggs it).
    *
-   * @param msg The localized error message to schow to the user.
+   * @param msg The localized error message to show to the user.
    * @param thr The exception to handle.
    */  
   public static void handle(String msg, Throwable thr) {
