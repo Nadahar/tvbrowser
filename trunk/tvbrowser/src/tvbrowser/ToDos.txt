@@ -1,24 +1,57 @@
 TODOs:
 
-- Senderlisten direkt vom Server holen (Bodo, fast fertig)
-- Je Senderliste Infos zum "Privider" darstWellen (Name, Website, E-Mail) (Bodo, fast fertig)
-- Gestern und Morgen reinladen f�r Sender in einer anderen Zeitzone
-- Logos zu allen Sendern
-- Anpassbarkeit der GUI (wo welches Element ist)
-- Ordner in den Lieblingssendungen
-- �bernehmen-Knopf in Einstellungen
+
+- (B) Senderlisten direkt vom Server holen (Bodo, fast fertig)
+- (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail) (Bodo, fast fertig)
+- Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
+- (M) Logos zu allen Sendern
+- Anpassbarkeit der GUI (wo welches Element ist) - nicht so wichtig
+- (M) Ordner in den Lieblingssendungen
+- Uebernehmen-Knopf in Einstellungen
 - News-Plugin:
     Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
     evtl. Option "News automatisch holen"
-- Button in Toolbar f�r die Men�option Ansicht--> Plugin-�bersicht
-- Einstellungen f�r die Toolbar im Einstellungen-Dialog
+- (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
+- (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
+- Default-Icon fur Sender, die kein Icon haben
+- Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
+- Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea)
+- kuerzere Texte fuer die Symbolbuttons
+- (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
+- Groessen der Views aendern sich nach Aus- und Wiedereinblenden
+- Statusbar kann nicht ausgeblendet werden
+- Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
+- Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
+- Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
+- Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
+- (M) Tooltips fuer Buttons fehlen
+- (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
+- fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
+- (M) F2 (plugin-view ein-ausblenden) funktioniert nicht, wenn die plugin-view den focus hat
+- Erinnerer: Sendungen an ein anderes Plugin weitergeben sollte nicht fuer Erinnerer selbst gehen
+- Settings - Kontextmenue zeigt den Eintrag des Erinnerers nicht an
+- SCHWERWIEGEND: Das Programm konnte nicht fuer den gesamten Zeitraum heruntergeladen werden!
+java.lang.NullPointerException
+	at tvbrowserdataservice.TvBrowserDataService.updateTvData(TvBrowserDataService.java:246)
+	at tvbrowser.core.TvDataUpdater.downloadTvData(TvDataUpdater.java:165)
+	at tvbrowser.ui.mainframe.MainFrame$6.run(MainFrame.java:556)
+  Meldung passst nicht zum Problem
+- Hilfe - Einrichtungsassistent geht nicht
+- Button Lieblingssendungen ist zu klein
+- Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
+- Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
+- Umlaute im Einrichtungsassistent
+- "irgendwie" hervorheben, dass gerade ein Filter ausgewaehlt ist (und deshalb nicht alle Sendungen sichtbar sind).
+- Einstellungen --> Aussehen --> Look&Feel --> Hintergrund: hat praktisch keine Bedeutung
+- (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
+
+
 
 
 
 Bugs:
-- Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste ver�ndert wird.
+- Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
 - Exception bei Drag&-Drop in der Toolbar: java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
 - Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert, 
-  das führt zu einer Nullpointer beim speichern der abon. Sender.
-
+  das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
 
