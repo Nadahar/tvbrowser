@@ -202,7 +202,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
 	
   public Action[] getContextMenuActions(final Program program) {
-    final Plugin plugin = this;  
     if (mReminderList.contains(program)) {
         ContextMenuAction action = new ContextMenuAction();
         action.setText(mLocalizer.msg( "contextMenuText.DontRemindMe" ,"Don't remind me"));  
@@ -242,6 +241,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    */
   
   public void receivePrograms(Program[] programArr) {
+    mReminderList.add(programArr, 10);
+
   /*  String nodeName = createNodeName();
     TreeNode node = mTreeRoot.createNode(nodeName,nodeName);
     int minutes = 3;

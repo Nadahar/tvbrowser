@@ -75,11 +75,7 @@ import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.ProgramFilter;
-import devplugin.ProgressMonitor;
+import devplugin.*;
 
 import java.lang.reflect.Constructor;
 
@@ -372,11 +368,25 @@ private Node mDateChannelNode;
 
 
 
+
+  public void scrollToProgram(Program program) {
+    scrollTo(program.getDate(), program.getHours());
+    mProgramTableScrollPane.scrollToChannel(program.getChannel());
+  }
+
+  public void scrollToTime(int time) {
+    mProgramTableScrollPane.scrollToTime(time);
+  }
+
   public void scrollToNow() {
-    // Get the current time
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
-    
+    devplugin.Date day = new devplugin.Date();
+    scrollTo(day, hour);
+  }
+
+  private void scrollTo(Date day, int hour) {
+
     // Choose the day.
     // NOTE: If its early in the morning before the setted "day start" we should
     //       stay at the last day - otherwise the user won't see the current
@@ -387,7 +397,7 @@ private Node mDateChannelNode;
     //       Directly after the day end is also not a good choice, because a
     //       minute before the old day program will not contain the coming programs.
     //       So I think the best choice will be the middle, in this case 3:00.
-    devplugin.Date day = new devplugin.Date();
+
     int dayStart = Settings.propProgramTableStartOfDay.getInt();
     int dayEnd = Settings.propProgramTableEndOfDay.getInt();
     int splitHour = (dayEnd - dayStart) / 60;
@@ -440,9 +450,7 @@ private Node mDateChannelNode;
     Settings.propLastUsedFilter.setString(getProgramFilter().getName());
   }
 
-  public void scrollToTime(int time) {
-    mProgramTableScrollPane.scrollToTime(time);
-  }
+
 
 
 

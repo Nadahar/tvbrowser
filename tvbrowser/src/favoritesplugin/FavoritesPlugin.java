@@ -129,8 +129,8 @@ public class FavoritesPlugin extends Plugin {
       for (int j=0; j<progs.length; j++) {
         curNode.addProgram(progs[j]);
       }
-      
     }
+    node.update();
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {

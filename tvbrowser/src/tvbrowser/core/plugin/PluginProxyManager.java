@@ -846,36 +846,30 @@ public class PluginProxyManager {
   public PluginProxy getDefaultContextMenuPlugin() {
     return mDefaultContextMenuPlugin;
   }
-  
-  
-  /**
-   * Creates a context menu for the given program containing all plugins.
-   * 
-   * @param program The program to create the context menu for
-   * @return a context menu for the given program.
-   */
-  public static JPopupMenu createPluginContextMenu(Program program) {
-    JPopupMenu menu = new JPopupMenu();
+
+
+  public static JMenuItem[] createPluginContextMenuItems(Program program, boolean markDefaultPlugin) {
+    ArrayList items = new ArrayList();
     PluginProxy defaultPlugin = getInstance().getDefaultContextMenuPlugin();
     PluginProxy[] pluginArr = getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       PluginProxy plugin = pluginArr[i];
-      
+
       Action[] actionArr = plugin.getContextMenuActions(program);
       if (actionArr != null) {
         for (int j = 0; j < actionArr.length; j++) {
           Action action = actionArr[j];
-          
+
           try {
             JMenuItem item = createPluginContextMenuItem(program, action);
-            
-            if (plugin == defaultPlugin) {
+
+            if (plugin == defaultPlugin && markDefaultPlugin) {
               item.setFont(CONTEXT_MENU_BOLDFONT);
             } else {
               item.setFont(CONTEXT_MENU_PLAINFONT);
             }
 
-            menu.add(item);
+            items.add(item);
           }
           catch (Throwable thr) {
             mLog.log(Level.WARNING, "Adding context menu item from plugin '"
@@ -885,6 +879,24 @@ public class PluginProxyManager {
       }
     }
 
+    JMenuItem[] result = new JMenuItem[items.size()];
+    items.toArray(result);
+    return result;
+
+  }
+
+  /**
+   * Creates a context menu for the given program containing all plugins.
+   * 
+   * @param program The program to create the context menu for
+   * @return a context menu for the given program.
+   */
+  public static JPopupMenu createPluginContextMenu(Program program) {
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem[] items = createPluginContextMenuItems(program, true);
+    for (int i=0; i<items.length; i++) {
+      menu.add(items[i]);
+    }
     return menu;
   }
 

@@ -43,11 +43,7 @@ import javax.swing.Icon;
 import javax.swing.tree.MutableTreeNode;
 
 import util.exc.TvBrowserException;
-import devplugin.ChannelDayProgram;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
+import devplugin.*;
 
 
 
@@ -445,7 +441,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return mPlugin.getProgramContainer();
   }*/
   
-  public MutableTreeNode getRootNode() {
+  public PluginTreeNode getRootNode() {
     return mPlugin.getRootNode();
   }
   
