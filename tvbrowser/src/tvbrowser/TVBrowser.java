@@ -126,7 +126,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     UiUtilities.centerAndShow(splash);
     
     mLog.info("Loading tv data service...");
-    msg=mLocalizer.msg("splash.dataService","Loading tv data service...");
+    msg = mLocalizer.msg("splash.dataService", "Loading tv data service...");
+    splash.setMessage(msg);
     TvDataServiceManager.getInstance().initDataServices();
     createChannelList();
     
@@ -182,22 +183,22 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-      	
-		if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
-			mainFrame.runUpdateThread(Settings.getDownloadPeriod());
-		}
-      	
-      	if (!DataService.dataAvailable(new devplugin.Date())) {
-      		askForDataUpdate();
-      	}else{
-      		mainFrame.scrollToNow();
-      	}
-			
+      public void run() {      	
+        if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
+          mainFrame.runUpdateThread(Settings.getDownloadPeriod());
+        }
+        
+        if (! DataService.dataAvailable(new devplugin.Date())) {
+          askForDataUpdate();
+        } else {
+          mainFrame.scrollToNow();
+        }
+        
         DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());
       }
     });
   }
+
 
 
   public TVBrowser() {
@@ -462,12 +463,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       }
     }
   }
-  
+
 
 
   private void scrollToNow() {
-    // TODO: change to the shown day program to today if nessesary
-
+    // Scroll to now
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     mProgramTableScrollPane.scrollToTime(hour * 60);
@@ -479,6 +479,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     Object src = event.getSource();
 
     if (src == mNowBt) {
+      // Change to the shown day program to today if nessesary
+      devplugin.Date today = new devplugin.Date();
+      if (! today.equals(finderPanel.getSelectedDate())) {
+        finderPanel.markDate(today);
+      }
+
       scrollToNow();
     }
     else if (src == mEarlyBt) {
@@ -616,7 +622,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   /**
    * Implementation of Interface DateListener
-   *
    */
   public void dateChanged(final devplugin.Date date) {
     if (DataService.getInstance().isOnlineMode()) {
