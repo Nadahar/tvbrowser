@@ -26,11 +26,16 @@
 
 package programinfo;
 
+import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
+
+import javax.swing.Icon;
+
+import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
-
-import devplugin.*;
-
-import java.awt.event.*;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.Version;
 
 /**
  * TV-Browser
@@ -38,62 +43,169 @@ import java.awt.event.*;
  * @author Martin Oberhauser
  */
 public class ProgramInfo extends devplugin.Plugin {
-	
-		private java.awt.Point location=null;
-		private java.awt.Dimension size=null;
-	
-		private static final util.ui.Localizer mLocalizer
-			= util.ui.Localizer.getLocalizerFor(ProgramInfo. class );
-		
-		public String getContextMenuItemText() {
-			return mLocalizer.msg( "contextMenuText" ,"Program information" );
-  		}
-  		
-  		public PluginInfo getInfo() {
-			String name = mLocalizer.msg( "pluginName" ,"Program information" );
-			String desc = mLocalizer.msg( "description" ,"Show information about a program" );
-			String author = "Martin Oberhauser" ;
-			return new PluginInfo(name, desc, author, new Version(1, 5));
-  		} 
-  		
-  		public String getButtonText() {
-  			return null ;
-  		}
-  		
-  		public void execute(Program program) {
-            ProgramInfoDialog dlg = new ProgramInfoDialog(parent, program);
-            dlg.pack();
-            dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-            	
-				public void componentMoved(ComponentEvent e) {
-					e.getComponent().getLocation(location);
-				}
-				
-				public void componentResized(ComponentEvent e) {
-					e.getComponent().getSize(size);
-				}
-            	
-            });
-            
-            if (size!=null) {
-            	dlg.setSize(size);
-            }
-            if (location!=null) {
-            	dlg.setLocation(location);
-            	dlg.show();
-            }else{
-            	UiUtilities.centerAndShow(dlg);
-            	size=dlg.getSize();
-            	location=dlg.getLocation();
-            }
-  		}
-  		
-  		public String getMarkIconName() {
-  			return "programinfo/Information16.gif";
-  		}
-  		
-  		public String getButtonIconName() {
-  			return null ;
- 		 }
+
+  private static final util.ui.Localizer mLocalizer =
+    util.ui.Localizer.getLocalizerFor(ProgramInfo.class);
+
+  private java.awt.Point location = null;
+  private java.awt.Dimension size = null;
+
+  private int[]    mInfoBitArr;
+  private Icon[]   mInfoIconArr;
+  private String[] mInfoMsgArr;
+
+
+  public ProgramInfo() {
+    mInfoBitArr = new int[] {
+      Program.INFO_VISION_BLACK_AND_WHITE,
+      Program.INFO_VISION_4_TO_3,
+      Program.INFO_VISION_16_TO_9,
+      Program.INFO_AUDIO_MONO,
+      Program.INFO_AUDIO_STEREO,
+      Program.INFO_AUDIO_DOLBY_SURROUND,
+      Program.INFO_AUDIO_DOLBY_DIGITAL_5_1,
+      Program.INFO_AUDIO_TWO_CHANNEL_TONE,
+      Program.INFO_SUBTITLE,
+      Program.INFO_LIVE
+    };
+    
+    mInfoIconArr = new Icon[] {
+      createIcon("Info_BlackAndWhite.gif"),  // INFO_VISION_BLACK_AND_WHITE
+      null,                                  // INFO_VISION_4_TO_3
+      createIcon("Info_16to9.gif"),          // INFO_VISION_16_TO_9
+      createIcon("Info_Mono.gif"),           // INFO_AUDIO_MONO
+      createIcon("Info_Stereo.gif"),         // INFO_AUDIO_STEREO
+      createIcon("Info_DolbySurround.gif"),  // INFO_AUDIO_DOLBY_SURROUND
+      createIcon("Info_DolbySurround.gif"),  // INFO_AUDIO_DOLBY_DIGITAL_5_1
+      createIcon("Info_TwoChannelTone.gif"), // INFO_AUDIO_TWO_CHANNEL_TONE
+      createIcon("Info_Subtitle.gif"),       // INFO_SUBTITLE
+      null                                   // INFO_LIVE
+    };
+
+    mInfoMsgArr = new String[] {
+      mLocalizer.msg("blackAndWhite", "Black and white"),     // INFO_VISION_BLACK_AND_WHITE
+      mLocalizer.msg("4to3", "4:3"),                          // INFO_VISION_4_TO_3
+      mLocalizer.msg("16to9", "16:9"),                        // INFO_VISION_16_TO_9
+      mLocalizer.msg("mono", "Mono"),                         // INFO_AUDIO_MONO
+      mLocalizer.msg("stereo", "Stereo"),                     // INFO_AUDIO_STEREO
+      mLocalizer.msg("dolbySurround", "Dolby surround"),      // INFO_AUDIO_DOLBY_SURROUND
+      mLocalizer.msg("dolbyDigital5.1", "Dolby digital 5.1"), // INFO_AUDIO_DOLBY_DIGITAL_5_1
+      mLocalizer.msg("twoChannelTone", "Two channel tone"),   // INFO_AUDIO_TWO_CHANNEL_TONE
+      mLocalizer.msg("subtitle", "Subtitle"),                 // INFO_SUBTITLE
+      mLocalizer.msg("live", "Live")                          // INFO_LIVE
+    };
+  }
   
-} 
+  
+  private Icon createIcon(String fileName) {
+    return ImageUtilities.createImageIconFromJar("programinfo/" + fileName, getClass());
+  }
+
+
+  public String getContextMenuItemText() {
+    return mLocalizer.msg("contextMenuText", "Program information");
+  }
+
+
+  public PluginInfo getInfo() {
+    String name = mLocalizer.msg("pluginName", "Program information");
+    String desc =
+      mLocalizer.msg("description", "Show information about a program");
+    String author = "Martin Oberhauser";
+    return new PluginInfo(name, desc, author, new Version(1, 5));
+  }
+
+
+  public String getButtonText() {
+    return null;
+  }
+
+
+  public void execute(Program program) {
+    ProgramInfoDialog dlg = new ProgramInfoDialog(parent, program, mInfoBitArr,
+                                                  mInfoIconArr, mInfoMsgArr);
+    dlg.pack();
+    dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
+      public void componentMoved(ComponentEvent e) {
+        e.getComponent().getLocation(location);
+      }
+
+      public void componentResized(ComponentEvent e) {
+        e.getComponent().getSize(size);
+      }
+    });
+
+    if (size != null) {
+      dlg.setSize(size);
+    }
+    if (location != null) {
+      dlg.setLocation(location);
+      dlg.show();
+    } else {
+      UiUtilities.centerAndShow(dlg);
+      size = dlg.getSize();
+      location = dlg.getLocation();
+    }
+  }
+
+
+  public String getMarkIconName() {
+    return "programinfo/Information16.gif";
+  }
+
+
+  public String getButtonIconName() {
+    return null;
+  }
+
+
+  /**
+   * Gets the icons this Plugin provides for the given program. These icons will
+   * be shown in the program table.
+   * <p>
+   * If the plugin does not provide such icons <code>null</code> will be returned.
+   * 
+   * @param program The programs to get the icons for.
+   * @return The icons for the given program or <code>null</code>.
+   */
+  public Icon[] getProgramTableIcons(Program program) {
+    int info = program.getInfo();
+    if ((info == -1) || (info == 0)) {
+      return null;
+    }
+
+    // Put the icons for this program into a list    
+    ArrayList iconList = null;
+    for (int i = 0; i < mInfoBitArr.length; i++) {
+      if (bitSet(info, mInfoBitArr[i]) && (mInfoIconArr[i] != null)) {
+        // Create the list if it doesn't already exist
+        if (iconList == null) {
+          iconList = new ArrayList();
+        }
+        
+        // Add the icon to the list
+        iconList.add(mInfoIconArr[i]);
+      }
+    }
+
+    // Convert the list into an array and return it    
+    if (iconList == null) {
+      return null;
+    } else {
+      Icon[] iconArr = new Icon[iconList.size()];
+      iconList.toArray(iconArr);
+      
+      return iconArr;
+    }
+  }
+
+
+  /**
+   * Returns whether a bit (or combination of bits) is set in the specified
+   * number.
+   */
+  static boolean bitSet(int num, int pattern) {
+    return (num & pattern) == pattern;
+  }
+
+}

@@ -241,13 +241,26 @@ abstract public class Plugin {
   }
   
   
-  
   /**
    * Returns the name of the file, containing your plugin icon (in the jar-File).
    */
   abstract public String getMarkIconName();
   
   abstract public String getButtonIconName();
+
+
+  /**
+   * Gets the icons this Plugin provides for the given program. These icons will
+   * be shown in the program table.
+   * <p>
+   * If the plugin does not provide such icons <code>null</code> will be returned.
+   * 
+   * @param program The programs to get the icons for.
+   * @return The icons for the given program or <code>null</code>.
+   */
+  public Icon[] getProgramTableIcons(Program program) {
+    return null;
+  }
   
   
   /**

@@ -18,9 +18,6 @@ public abstract class AbstractProgramTableLayout implements ProgramTableLayout {
   /** Holds the y position of the first program of a column. */
   private int[] mColumnStartArr;
   
-  /** Holds the heights of the cells. The dimensions are: column and then row. */
-  private int[][] mCellHeightArr;
-  
   
   
   /**
@@ -43,47 +40,6 @@ public abstract class AbstractProgramTableLayout implements ProgramTableLayout {
     else {
       return mColumnStartArr[col];
     }
-  }
-  
-  
-  
-  public int getCellHeight(int col, int row) {
-    if (mCellHeightArr == null) {
-      mLog.warning("Cell height are not yet initialized!");
-      return 0;
-    }
-    else if (mCellHeightArr[col] == null) {
-      mLog.warning("Cell height are not yet initialized for column " + col + "!");
-      return 0;
-    }
-    else if ((col < 0) || (col >= mCellHeightArr.length)) {
-      mLog.warning("Column out of bounds " + col + "! Bounds: [0.." + (mCellHeightArr.length - 1) + "]");
-      return 0;
-    }
-    else if ((row < 0) || (row >= mCellHeightArr[col].length)) {
-     // mLog.warning("Row out of bounds " + row + "! Bounds: [0.." + (mCellHeightArr[col].length - 1) + "]");
-      return 0;
-    }
-    else {
-      return mCellHeightArr[col][row];
-    }
-  }
-  
-  
-  
-  protected int[][] createRawCellHeights(ProgramTableModel model) {
-    int[][] cellHeightArr = new int[model.getColumnCount()][];
-    for (int col = 0; col < model.getColumnCount(); col++) {
-      cellHeightArr[col] = new int[model.getRowCount(col)];
-    }
-    
-    return cellHeightArr;
-  }
-  
-  
-  
-  protected void setCellHeights(int[][] cellHeightArr) {
-    mCellHeightArr = cellHeightArr;
   }
 
   

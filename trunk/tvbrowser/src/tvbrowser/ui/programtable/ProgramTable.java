@@ -33,10 +33,11 @@ import javax.swing.*;
 import tvbrowser.core.Settings;
 import tvbrowser.core.PluginManager;
 import tvbrowser.ui.SkinPanel;
+import util.ui.ProgramPanel;
 
+import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
-
 
 /**
  *
@@ -51,7 +52,6 @@ public class ProgramTable extends JPanel
   
   private ProgramTableLayout mLayout;
   private ProgramTableModel mModel;
-  private ProgramTableCellRenderer mRenderer;
   
   private Point mDraggingPoint;
   
@@ -62,8 +62,6 @@ public class ProgramTable extends JPanel
    * Creates a new instance of ProgramTable.
    */
   public ProgramTable(ProgramTableModel model) {
-    mRenderer = new DefaultProgramTableCellRenderer();
-    
     setProgramTableLayout(null);
 
     setColumnWidth(Settings.getColumnWidth());
@@ -137,9 +135,6 @@ public class ProgramTable extends JPanel
   
   public void setColumnWidth(int columnWidth) {
     mColumnWidth = columnWidth;
-    //!!!!setColDiff(mColumnWidth);
-    mRenderer = new DefaultProgramTableCellRenderer();
-    
   }
   
   
@@ -165,13 +160,11 @@ public class ProgramTable extends JPanel
   public void paintComponent(Graphics grp) {
     super.paintComponent(grp);
     
-    
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
     
     if (mBackgroundMode==SkinPanel.WALLPAPER && mBackgroundImage!=null) {
-     
       int xMin=clipBounds.x/mBackgroundImage.getWidth(this);
       int yMin=clipBounds.y/mBackgroundImage.getHeight(this);
       if (xMin<0) xMin=0;
@@ -188,7 +181,6 @@ public class ProgramTable extends JPanel
           grp.drawImage(mBackgroundImage,i*mBackgroundImage.getWidth(this),j*mBackgroundImage.getHeight(this),this);
         }
       }
-    
     }
     
     int minCol = clipBounds.x / mColumnWidth;
@@ -198,11 +190,8 @@ public class ProgramTable extends JPanel
       maxCol = mModel.getColumnCount() - 1;
     }
     
-    
- 
     int x = minCol * mColumnWidth;
     for (int col = minCol; col <= maxCol; col++) {
-      
       // paint background (columns)
       if (mBackgroundMode==SkinPanel.COLUMNS && mBackgroundImage!=null) {
         int imgH=mBackgroundImage.getHeight(this);
@@ -212,28 +201,29 @@ public class ProgramTable extends JPanel
       }
       
       int y = mLayout.getColumnStart(col);
-       
       
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         // Get the program
-        Program program = mModel.getProgram(col, row);
+        ProgramPanel panel = mModel.getProgramPanel(col, row);
         
         // Render the program
-        int cellHeight = mLayout.getCellHeight(col, row);
-        if ((program != null) && ((y + cellHeight) > clipBounds.y)
-          && (y < (clipBounds.y + clipBounds.height)))
-        {
-          grp.translate(x, y);
-          Component renderer = mRenderer.getCellRenderer(col, row, mColumnWidth, 
-            cellHeight, program);
-          renderer.setSize(mColumnWidth, cellHeight);
-          renderer.paint(grp);
-          // grp.drawRect(0, 0, mColumnWidth, cellHeight);
-          grp.translate(-x, -y);
+        if (panel != null) {
+          // Check whether the cell is within the clipping area
+          int cellHeight = panel.getHeight();
+          if (((y + cellHeight) > clipBounds.y)
+            && (y < (clipBounds.y + clipBounds.height)))
+          {
+            // Paint the cell
+            grp.translate(x, y);
+            panel.setSize(mColumnWidth, cellHeight);
+            panel.paint(grp);
+            // grp.drawRect(0, 0, mColumnWidth, cellHeight);
+            grp.translate(-x, -y);
+          }
+
+          // Move to the next row in this column
+          y += cellHeight;
         }
-        
-        // Move to the next row in this column
-        y += cellHeight;
       }
       
       // paint the timeY
@@ -243,17 +233,17 @@ public class ProgramTable extends JPanel
       // Move to the next column
       x += mColumnWidth;
     }
-    
-    for (int i=0;i<mModel.getColumnCount();i++) {
-      Program p=mModel.getProgram(i,0);
-      if (p!=null) {
-        grp.drawString(p.getChannel().getCopyrightNotice(),i*mColumnWidth+3,getHeight()-5);
-      }
+
+    // Paint the copyright notices
+    Channel[] channelArr = mModel.getShownChannels();
+    for (int i = 0; i < channelArr.length; i++) {
+      String msg = channelArr[i].getCopyrightNotice();
+      grp.drawString(msg, i * mColumnWidth + 3, getHeight() - 5);
     }
     
-
     /*
     // Paint the clipBounds
+    System.out.println("Painting rect: " + clipBounds);
     grp.setColor(new Color((int)(Math.random() * 256), (int)(Math.random() * 256),
       (int)(Math.random() * 256)));
     grp.drawRect(clipBounds.x, clipBounds.y, clipBounds.width - 1, clipBounds.height - 1);
@@ -280,35 +270,43 @@ public class ProgramTable extends JPanel
       return null;
     }
     for (int row = 0; row < mModel.getRowCount(col); row++) {
-      currY += mLayout.getCellHeight(col, row);
+      ProgramPanel panel = mModel.getProgramPanel(col, row);
+      currY += panel.getHeight();
       if (y < currY) {
-        return mModel.getProgram(col, row);
+        return panel.getProgram();
       }
     }
     
     return null;
   }
 
+
   public void fontChanged() {
-    mRenderer = new DefaultProgramTableCellRenderer();
-    repaint();
+    updateLayout();
   }
 
+
   public void updateLayout() {
-    mLayout.updateLayout(mModel, mRenderer);
+    mLayout.updateLayout(mModel);
     
     // Set the height equal to the highest column
-    mHeight = 0; //0;
+    mHeight = 0;
     for (int col = 0; col < mModel.getColumnCount(); col++) {
-      int colHeight = mLayout.getColumnStart(col)+20;
+      int colHeight = mLayout.getColumnStart(col);
       for (int row = 0; row < mModel.getRowCount(col); row++) {
-        colHeight += mLayout.getCellHeight(col, row);
+        ProgramPanel panel = mModel.getProgramPanel(col, row);
+        colHeight += panel.getHeight();
       }
       
       if (colHeight > mHeight) {
         mHeight = colHeight;
       }
     }
+
+    // Add 20 for the copyright notice
+    mHeight += 20;
+
+    repaint();
   }
 
 
@@ -438,7 +436,8 @@ public class ProgramTable extends JPanel
     // Walk to the program that starts before the specified time
     int lastCellHeight = 0;
     for (int row = 0; row < mModel.getRowCount(col); row++) {
-      Program program = mModel.getProgram(col, row);
+      ProgramPanel panel = mModel.getProgramPanel(col, row);
+      Program program = panel.getProgram();
       int startTime = program.getHours() * 60 + program.getMinutes();
       if (startTime > minutesAfterMidnight) {
         // It was the last program
@@ -448,7 +447,8 @@ public class ProgramTable extends JPanel
         timeY += lastCellHeight;
       }
       
-      lastCellHeight = mLayout.getCellHeight(col, row);
+      // Remember the cell height
+      lastCellHeight = panel.getHeight();
     }
     
     return -1;
@@ -456,14 +456,15 @@ public class ProgramTable extends JPanel
   
   
   
-  private Rectangle getCellRect(int col, int row) {
-    int x = col * mColumnWidth;
+  private Rectangle getCellRect(int cellCol, int cellRow) {
+    int x = cellCol * mColumnWidth;
     int width = mColumnWidth;
 
-    int y = mLayout.getColumnStart(col);
-    for (int r = 0; r < mModel.getRowCount(col); r++) {
-      int height = mLayout.getCellHeight(col, r);
-      if (r == row) {
+    int y = mLayout.getColumnStart(cellCol);
+    for (int row = 0; row < mModel.getRowCount(cellCol); row++) {
+      ProgramPanel panel = mModel.getProgramPanel(cellCol, row);
+      int height = panel.getHeight();
+      if (row == cellRow) {
         return new Rectangle(x, y, width, height);
       }
       y += height;

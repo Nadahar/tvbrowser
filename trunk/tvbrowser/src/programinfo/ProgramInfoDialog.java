@@ -23,9 +23,7 @@
  *   $Author$
  * $Revision$
  */
-
 package programinfo;
-
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -57,7 +55,9 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     = java.util.logging.Logger.getLogger(ProgramInfoDialog.class.getName());
 
 
-  public ProgramInfoDialog(Frame parent, Program program) {
+  public ProgramInfoDialog(Frame parent, Program program,
+   int[] infoBitArr, Icon[] infoIconArr, String[] infoMsgArr)
+  {
     super(parent, true);
 
     setTitle(mLocalizer.msg("title", "Program information"));
@@ -70,7 +70,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     JEditorPane infoEP = new JEditorPane();
     infoEP.setEditorKit(new ExtendedHTMLEditorKit());
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) infoEP.getDocument();
-    String text = createInfoText(program, doc);
+    String text = createInfoText(program, doc, infoBitArr, infoIconArr, infoMsgArr);
     infoEP.setText(text);
     infoEP.setEditable(false);
     infoEP.addHyperlinkListener(new HyperlinkListener() {
@@ -113,7 +113,9 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   }
   
   
-  private String createInfoText(Program prog, ExtendedHTMLDocument doc) {
+  private String createInfoText(Program prog, ExtendedHTMLDocument doc,
+    int[] infoBitArr, Icon[] infoIconArr, String[] infoMsgArr)
+  {
     String msg;
     String value;
     
@@ -176,11 +178,30 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
     buffer.append("</td></tr></table>");
 
+    int info = prog.getInfo();
+    if ((info != -1) && (info != 0)) {
+      openPara(buffer, "info");
+      // Workaround: Without the &nbsp; the component are not put in one line.
+      buffer.append("&nbsp;");
+      
+      for (int i = 0; i < infoBitArr.length; i++) {
+        if (ProgramInfo.bitSet(info, infoBitArr[i])) {
+          if (infoIconArr[i] != null) {
+            JLabel iconLabel = new JLabel(infoIconArr[i]);
+            iconLabel.setToolTipText(infoMsgArr[i]);
+            buffer.append(doc.createCompTag(iconLabel));
+          } else {
+            buffer.append(infoMsgArr[i]);
+          } 
+          buffer.append("&nbsp;");
+        }
+      }
+      
+      closePara(buffer);
+    }
+
     buffer.append("<br>\n");
     int offset = buffer.length();
-
-    String info = programInfoToString(prog.getInfo());
-    newPara(buffer, "info", info);
 
     msg = mLocalizer.msg("episode", "Episode");
     value = prog.getTextField(ProgramFieldType.EPISODE_TYPE);
@@ -353,58 +374,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     }
     buffer.append(text);
     closePara(buffer);
-  }
-  
-  
-  private String programInfoToString(int info) {
-    if ((info == -1) || (info == 0)) {
-      return null;
-    }
-    
-    StringBuffer buf = new StringBuffer();
-
-    if (bitSet(info, Program.INFO_VISION_BLACK_AND_WHITE)) {
-      buf.append(mLocalizer.msg("blackAndWhite", "Black and white") + "  ");
-    }
-    if (bitSet(info, Program.INFO_VISION_4_TO_3)) {
-      buf.append(mLocalizer.msg("4to3", "4:3") + "  ");
-    }
-    if (bitSet(info, Program.INFO_VISION_16_TO_9)) {
-      buf.append(mLocalizer.msg("16to9", "16:9") + "  ");
-    }
-    if (bitSet(info, Program.INFO_AUDIO_MONO)) {
-      buf.append(mLocalizer.msg("mono", "Mono") + "  ");
-    }
-    if (bitSet(info, Program.INFO_AUDIO_STEREO)) {
-      buf.append(mLocalizer.msg("stereo", "Stereo") + "  ");
-    }
-    if (bitSet(info, Program.INFO_AUDIO_DOLBY_SURROUND)) {
-      buf.append(mLocalizer.msg("dolbySurround", "Dolby surround") + "  ");
-    }
-    if (bitSet(info, Program.INFO_AUDIO_DOLBY_DIGITAL_5_1)) {
-      buf.append(mLocalizer.msg("dolbyDigital5.1", "Dolby digital 5.1") + "  ");
-    }
-    if (bitSet(info, Program.INFO_AUDIO_TWO_CHANNEL_TONE)) {
-      buf.append(mLocalizer.msg("twoChannelTone", "Two channel tone") + "  ");
-    }
-    if (bitSet(info, Program.INFO_SUBTITLE)) {
-      buf.append(mLocalizer.msg("subtitle", "Subtitle") + "  ");
-    }
-    if (bitSet(info, Program.INFO_LIVE)) {
-      buf.append(mLocalizer.msg("live", "Live") + "  ");
-    }
-    
-    return buf.toString();
-  }
-  
-  
-  
-  /**
-   * Returns whether a bit (or combination of bits) is set in the specified
-   * number.
-   */
-  private boolean bitSet(int num, int pattern) {
-    return (num & pattern) == pattern;
   }
 
 }
