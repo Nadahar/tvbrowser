@@ -26,19 +26,18 @@
 
 package tvdataservice;
 
-import java.io.*;
-import java.util.TimeZone;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.*;
 
-import javax.swing.event.EventListenerList;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
 
 import util.io.IOUtilities;
-
-import devplugin.Channel;
-import devplugin.Program;
-import devplugin.Plugin;
+import devplugin.*;
+import devplugin.Date;
 
 /**
  * One program. Consists of the Channel, the time, the title and some extra
@@ -74,44 +73,20 @@ public class MutableProgram implements Program {
   /** The cached ID of this program. */
   private String mId;
 
-  /** The program's title. */
-  private String mTitle;
-
-  /** The program's short info. Shown on the program table. May be null. */
-  private String mShortInfo;
-
-  /** The program's description. May be null. */
-  private String mDescription;
-
-  /** The program's actors. May be null. */
-  private String mActors;
-
-  /** The URL, where the user can find information about this program. May be null. */
-  private String mURL;
-
-  /** The minute-component of the start time of the program. */
-  private int mMinutes;
-
-  /** The hour-component of the start time of the program. */
-  private int mNormalizedHours;
-  
-  private int mLocalHours;
-  private devplugin.Date mLocalDate;
-
-  /** The length of this program in minutes. */
-  private int mLength = -1;
-
-  /** The additional information of the program. May be null. */
-  private int mInfo;
-
   /** The channel object of this program. */
   private Channel mChannel;
 
-  /** The date of this program. */
-  private devplugin.Date mNormalizedDate;
+  /** The date of the program in the channel's time zone. */
+  private Date mLocalDate;
 
-  /** The picture of this program (may be null). */
-  private byte[] mPicture;
+  /** The normalized date of this program. (in the client's time zone) */
+  private Date mNormalizedDate;
+
+  /** The normalized start time of the program. (in the client's time zone) */
+  private int mNormalizedStartTime;
+  
+  /** Contains for a {@link ProgramFieldType} (key) the field value. */
+  private HashMap mFieldHash;
 
   
 
@@ -129,68 +104,98 @@ public class MutableProgram implements Program {
   public MutableProgram(Channel channel, devplugin.Date localDate,
     int localHours, int localMinutes)
   {
-    
-    
+    init();
+
     // These attributes are not mutable, because they build the ID.
     mChannel = channel;
     mLocalDate = localDate;
-    mLocalHours = localHours;
-    mMinutes = localMinutes;
     
-    normalizeTimeZone(mLocalDate,mLocalHours);
+    int localStartTime = localHours * 60 + localMinutes;
+    setTimeField(ProgramFieldType.START_TIME_TYPE, localStartTime);
     
-    mTitle = ""; // The title is not-null.
+    normalizeTimeZone(mLocalDate, localStartTime);
+    
+    // The title is not-null.
+    setTextField(ProgramFieldType.TITLE_TYPE, "");
     
     mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
-
-    init();
   }
 
-  private void normalizeTimeZone(devplugin.Date localDate, int localHours) {
+
+  private void normalizeTimeZone(Date localDate, int localStartTime) {
     TimeZone channelTimeZone=mChannel.getTimeZone();
     TimeZone localTimeZone=TimeZone.getDefault();
     
     int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
     timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();
  
-    mNormalizedHours=localHours+timeZoneOffset;
+    mNormalizedStartTime = localStartTime + timeZoneOffset * 60;
     mNormalizedDate=localDate;
     
-    if (mNormalizedHours>23) {
-      mNormalizedHours-=24;
-      mNormalizedDate=mNormalizedDate.addDays(1);
+    if (mNormalizedStartTime >= (24 * 60)) {
+      mNormalizedStartTime -= (24 * 60);
+      mNormalizedDate = mNormalizedDate.addDays(1);
     }
-    if (mNormalizedHours<0) {
-      mNormalizedHours+=24;
-      mNormalizedDate=mNormalizedDate.addDays(-1);
+    else if (mNormalizedStartTime < 0) {
+      mNormalizedStartTime += (24 * 60);
+      mNormalizedDate = mNormalizedDate.addDays(-1);
     }
-    
-    
   }
+
   
   public MutableProgram(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
-    int version = in.readInt();
-
-    mTitle = (String) in.readObject();
-    mShortInfo = (String) in.readObject();
-    mDescription = (String) in.readObject();
-    mActors = (String) in.readObject();
-    mURL = (String) in.readObject();
-    mMinutes = in.readInt();
-    mLocalHours = in.readInt();
-    mLength = in.readInt();
-    mInfo = in.readInt();
-
-    mChannel = Channel.readData(in, false);
-    mLocalDate = new devplugin.Date(in);
-    
-    mPicture = (byte[]) in.readObject();
-    
-    normalizeTimeZone(mLocalDate,mLocalHours);
-    
     init();
+
+    int version = in.readInt();
+    
+    if (version == 1) {
+      setTitle((String) in.readObject());
+      setShortInfo((String) in.readObject());
+      setDescription((String) in.readObject());
+      setTextField(ProgramFieldType.ACTOR_LIST_TYPE, (String) in.readObject());
+      setTextField(ProgramFieldType.URL_TYPE, (String) in.readObject());
+      
+      int minutes = in.readInt();
+      int localHours = in.readInt();
+      int localStartTime = localHours * 60 + minutes;
+      setTimeField(ProgramFieldType.START_TIME_TYPE, localStartTime);
+      
+      setLength(in.readInt());
+      setInfo(in.readInt());
+
+      mChannel = Channel.readData(in, false);
+      mLocalDate = new devplugin.Date(in);
+      
+      setBinaryField(ProgramFieldType.IMAGE_TYPE, (byte[]) in.readObject());
+    } else {
+      mChannel = Channel.readData(in, false);
+      mLocalDate = new devplugin.Date(in);
+      
+      synchronized (mFieldHash) {
+        mFieldHash.clear();
+        int fieldCount = in.readInt();
+        for (int i = 0; i < fieldCount; i++) {
+          int typeId = in.readInt();
+          ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
+          if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+            setBinaryField(type, (byte[]) in.readObject());
+          }
+          else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+            setTextField(type, (String) in.readObject());
+          }
+          else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
+            setIntField(type, in.readInt());
+          }
+          else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+            setTimeField(type, in.readInt());
+          }
+        }
+      }
+    }
+    
+    normalizeTimeZone(mLocalDate, getLocalStartTime());
   }
 
   
@@ -199,22 +204,34 @@ public class MutableProgram implements Program {
    * Serialized this object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // file version
     
-    out.writeObject(mTitle);
-    out.writeObject(mShortInfo);
-    out.writeObject(mDescription);
-    out.writeObject(mActors);
-    out.writeObject(mURL);
-    out.writeInt(mMinutes);
-    out.writeInt(mLocalHours);
-    out.writeInt(mLength);
-    out.writeInt(mInfo);
-
     mChannel.writeData(out);
     mLocalDate.writeData(out);
     
-    out.writeObject(mPicture);
+    synchronized (mFieldHash) {
+      Set keySet = mFieldHash.keySet();
+      int fieldCount = keySet.size();
+      out.writeInt(fieldCount);
+      Iterator iter = keySet.iterator();
+      for (int i = 0; i < fieldCount; i++) {
+        ProgramFieldType type = (ProgramFieldType) iter.next();
+        out.writeInt(type.getTypeId());
+        
+        if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+          out.writeObject(getBinaryField(type));
+        }
+        else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+          out.writeObject(getTextField(type));
+        }
+        else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
+          out.writeInt(getIntField(type));
+        }
+        else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+          out.writeInt(getTimeField(type));
+        }
+      }
+    }
   }
 
 
@@ -223,6 +240,7 @@ public class MutableProgram implements Program {
    * Initializes the program.
    */
   private void init() {
+    mFieldHash = new HashMap();
     mListenerList = new EventListenerList();
     mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
     mOnAir = false;
@@ -402,7 +420,146 @@ public class MutableProgram implements Program {
     }
     return mId;
   }
+  
+  
+  // FieldHash
+  public byte[] getBinaryField(ProgramFieldType type) {
+    return (byte[]) getField(type, ProgramFieldType.BINARY_FORMAT);
+  }
+  
+  
+  public String getTextField(ProgramFieldType type) {
+    return (String) getField(type, ProgramFieldType.TEXT_FORMAT);
+  }
+  
+  
+  public int getIntField(ProgramFieldType type) {
+    Integer value = (Integer) getField(type, ProgramFieldType.INT_FORMAT);
+    if (value == null) {
+      return -1;
+    } else {
+      return value.intValue();
+    }
+  }
+  
+  
+  public int getTimeField(ProgramFieldType type) {
+    Integer value = (Integer) getField(type, ProgramFieldType.TIME_FORMAT);
+    if (value == null) {
+      return -1;
+    } else {
+      return value.intValue();
+    }
+  }
 
+
+  /**
+   * Gets the value of a time field as String of the pattern "h:mm".
+   * 
+   * @param type The type of the wanted field. Must have a time format.
+   * @return The value of the field as String or <code>null</code>, if there is
+   *         no value for this field. 
+   */
+  public String getTimeFieldAsString(ProgramFieldType type) {
+    int value = getTimeField(type);
+    if (value == -1) {
+      return null;
+    } else {
+      int hours = value / 60;
+      int minutes = value % 60;
+      return hours + ":" + ((minutes < 10) ? "0" : "") + minutes;
+    }
+  }
+
+
+  private Object getField(ProgramFieldType type, int fieldFormat) {
+    if (type.getFormat() != fieldFormat) {
+      throw new IllegalArgumentException("The field " + type.getName()
+        + " can't be read as " + ProgramFieldType.getFormatName(fieldFormat)
+        + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
+    }
+    
+    synchronized (mFieldHash) {
+      return mFieldHash.get(type);
+    }
+  }
+  
+  
+  public void setBinaryField(ProgramFieldType type, byte[] value) {
+    setField(type, ProgramFieldType.BINARY_FORMAT, value);
+  }
+  
+  
+  public void setTextField(ProgramFieldType type, String value) {
+    // Special field treating
+    if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
+      value = validateShortInfo(value);
+    }
+    
+    setField(type, ProgramFieldType.TEXT_FORMAT, value);
+  }
+  
+  
+  public void setIntField(ProgramFieldType type, int value) {
+    Integer obj = null;
+    if (value != -1) {
+      obj = new Integer(value);
+    }
+    setField(type, ProgramFieldType.INT_FORMAT, obj);
+  }
+  
+  
+  public void setTimeField(ProgramFieldType type, int value) {
+    if ((value < 0) || (value >= (24 * 60))) {
+      mLog.warning("The time value for field " + type.getName()
+        + " must be between in [0..1439], but it was set to " + value);
+    }
+    
+    Integer obj = null;
+    if (value != -1) {
+      obj = new Integer(value);
+    }
+    setField(type, ProgramFieldType.TIME_FORMAT, obj);
+  }
+  
+  
+  private void setField(ProgramFieldType type, int fieldFormat, Object value) {
+    if (type.getFormat() != fieldFormat) {
+      throw new IllegalArgumentException("The field " + type.getName()
+        + " can't be written as " + ProgramFieldType.getFormatName(fieldFormat)
+        + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
+    }
+    
+    synchronized (mFieldHash) {
+      if (value == null) {
+        mFieldHash.remove(type);
+      } else {
+        mFieldHash.put(type, value);
+      }
+    }
+
+    fireStateChanged();
+  }
+  
+  
+  private String validateShortInfo(String shortInfo) {
+    if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH)) {
+      // Get the end of the last fitting sentense
+      int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
+      int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
+  
+      int cutIdx = Math.max(lastDot, lastMidDot);
+  
+      // But show at least half the maximum length
+      if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
+        cutIdx = shortInfo.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
+      }
+  
+      shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
+    }
+    
+    return shortInfo;
+  }
 
 
   /**
@@ -411,8 +568,7 @@ public class MutableProgram implements Program {
    * @param title the new title of this program.
    */
   public void setTitle(String title) {
-    mTitle = title;
-    fireStateChanged();
+    setTextField(ProgramFieldType.TITLE_TYPE, title);
   }
 
   /**
@@ -421,7 +577,7 @@ public class MutableProgram implements Program {
    * @return the title of this program.
    */
   public String getTitle() {
-    return mTitle;
+    return getTextField(ProgramFieldType.TITLE_TYPE);
   }
 
 
@@ -435,23 +591,7 @@ public class MutableProgram implements Program {
    * @param shortInfo The new short info.
    */
   public void setShortInfo(String shortInfo) {
-    if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH)) {
-      // Get the end of the last fitting sentense
-      int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
-      int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
-
-      int cutIdx = Math.max(lastDot, lastMidDot);
-
-      // But show at least half the maximum length
-      if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
-        cutIdx = shortInfo.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
-      }
-
-      shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
-    }
-
-    mShortInfo = shortInfo;
-    fireStateChanged();
+    setTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, shortInfo);
   }
 
   /**
@@ -460,7 +600,7 @@ public class MutableProgram implements Program {
    * @return The short info.
    */
   public String getShortInfo() {
-    return mShortInfo;
+    return getTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE);
   }
 
 
@@ -471,8 +611,7 @@ public class MutableProgram implements Program {
    * @param description The description.
    */
   public void setDescription(String description) {
-    mDescription = description;
-    fireStateChanged();
+    setTextField(ProgramFieldType.DESCRIPTION_TYPE, description);
   }
 
   /**
@@ -481,51 +620,7 @@ public class MutableProgram implements Program {
    * @return The description.
    */
   public String getDescription() {
-    return mDescription;
-  }
-
-
-
-  /**
-   * Sets the names of some actors. May be null.
-   *
-   * @param actors The new names of the actors.
-   */
-  public void setActors(String actors) {
-    mActors = actors;
-    fireStateChanged();
-  }
-
-  /**
-   * Returns the names of some actors. May be null.
-   *
-   * @return The names of the actors.
-   */
-  public String getActors() {
-    return mActors;
-  }
-
-
-
-  /**
-   * Sets an URL, where the user can find information about this program.
-   * May be null.
-   *
-   * @param url The new URL.
-   */
-  public void setURL(String url) {
-    mURL = url;
-    fireStateChanged();
-  }
-
-  /**
-   * Returns an URL, where the user can find information about this program.
-   * May be null.
-   *
-   * @return The URL.
-   */
-  public String getURL() {
-    return mURL;
+    return getTextField(ProgramFieldType.DESCRIPTION_TYPE);
   }
 
 
@@ -536,7 +631,7 @@ public class MutableProgram implements Program {
    * @return the minute-component of the start time.
    */
   public int getMinutes() {
-    return mMinutes;
+    return mNormalizedStartTime % 60;
   }
 
 
@@ -547,11 +642,11 @@ public class MutableProgram implements Program {
    * @return the hour-component of the start time.
    */
   public int getHours() {
-    return mNormalizedHours;
+    return mNormalizedStartTime / 60;
   }
   
-  public int getLocalHours() {
-    return mLocalHours;
+  public int getLocalStartTime() {
+    return getTimeField(ProgramFieldType.START_TIME_TYPE);
   }
 
 
@@ -561,8 +656,13 @@ public class MutableProgram implements Program {
    * @param length the new length.
    */
   public void setLength(int length) {
-    mLength = length;
-    fireStateChanged();
+    int startTime = getTimeField(ProgramFieldType.START_TIME_TYPE);
+    int endTime = startTime + length;
+    if (endTime >= (24 * 60)) {
+      endTime -= (24 * 60);
+    }
+    
+    setTimeField(ProgramFieldType.END_TIME_TYPE, endTime);
   }
 
   /**
@@ -571,7 +671,17 @@ public class MutableProgram implements Program {
    * @return the length.
    */
   public int getLength() {
-    return mLength;
+    int endTime = getTimeField(ProgramFieldType.END_TIME_TYPE);
+    if (endTime == -1) {
+      return -1;
+    }
+
+    int startTime = getTimeField(ProgramFieldType.START_TIME_TYPE);
+    if (endTime < startTime) {
+      endTime += (24 * 60);
+    }
+
+    return endTime - startTime;
   }
 
 
@@ -582,8 +692,7 @@ public class MutableProgram implements Program {
    * @param info The new additional information.
    */
   public void setInfo(int info) {
-    mInfo = info;
-    fireStateChanged();
+    setIntField(ProgramFieldType.INFO_TYPE, info);
   }
 
   /**
@@ -592,7 +701,7 @@ public class MutableProgram implements Program {
    * @return the new additional information.
    */
   public int getInfo() {
-    return mInfo;
+    return getIntField(ProgramFieldType.INFO_TYPE);
   }
 
 
@@ -623,34 +732,13 @@ public class MutableProgram implements Program {
 
 
   /**
-   * Sets picture date to this program (may be null).
-   *
-   * @param picture The new picture.
-   */
-  public void setPicture(byte[] picture) {
-    mPicture = picture;
-    fireStateChanged();
-  }
-
-  /**
-   * Returns picture date to this program (may be null).
-   *
-   * @return The picture.
-   */
-  public byte[] getPicture() {
-    return mPicture;
-  }
-
-
-
-  /**
    * Gets a String representation of this program for debugging.
    *
    * @return A String representation for debugging.
    */
   public String toString() {
-    return "On " + mChannel.getName() + " at " + mNormalizedHours + ":" + mMinutes
-      + ", " + mNormalizedDate + ": '" + mTitle + "'";
+    return "On " + mChannel.getName() + " at " + getHours() + ":" + getMinutes()
+      + ", " + getDateString() + ": '" + getTitle() + "'";
   }
   
 }

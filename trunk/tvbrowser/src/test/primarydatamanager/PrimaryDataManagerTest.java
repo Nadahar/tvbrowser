@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.TimeZone;
 
+import devplugin.*;
 import devplugin.Channel;
 
 import junit.framework.TestCase;

@@ -465,7 +465,7 @@ public class PremiereDataService extends AbstractOldTvDataServiceBridge {
         // regex: "Darsteller: (.*)"
         String actors = getString(matcher.group(1));
 
-        currProgram.setActors(actors);
+        currProgram.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, actors);
       } break;
 
       case 6: {

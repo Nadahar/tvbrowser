@@ -76,8 +76,6 @@ public interface Program {
   public String getTitle();
   public String getShortInfo();
   public String getDescription();
-  public String getActors();
-  public String getURL();
   public int getMinutes();
   public int getHours();
   
@@ -94,10 +92,66 @@ public interface Program {
 
   public Channel getChannel();
   public Date getDate();
-  public byte[] getPicture();
 
+  /**
+   * Gets the value of a binary field from the program.
+   * 
+   * @param type The type of the wanted field. Must have a binary format.
+   * @return The value of the field or <code>null</code>, if there is no
+   *         value for this field. 
+   */
+  public byte[] getBinaryField(ProgramFieldType type);
+
+  /**
+   * Gets the value of a text field from the program.
+   * 
+   * @param type The type of the wanted field. Must have a text format.
+   * @return The value of the field or <code>null</code>, if there is no
+   *         value for this field. 
+   */
+  public String getTextField(ProgramFieldType type);
+
+  /**
+   * Gets the value of a int field from the program.
+   * 
+   * @param type The type of the wanted field. Must have a int format.
+   * @return The value of the field or <code>-1</code>, if there is no
+   *         value for this field. 
+   */
+  public int getIntField(ProgramFieldType type);
+
+  /**
+   * Gets the value of a time field from the program.
+   * 
+   * @param type The type of the wanted field. Must have a time format.
+   * @return The value of the field or <code>-1</code>, if there is no
+   *         value for this field. 
+   */
+  public int getTimeField(ProgramFieldType type);
+
+  /**
+   * Gets the value of a time field as String of the pattern "h:mm".
+   * 
+   * @param type The type of the wanted field. Must have a time format.
+   * @return The value of the field as String or <code>null</code>, if there is
+   *         no value for this field. 
+   */
+  public String getTimeFieldAsString(ProgramFieldType type);
+
+  /**
+   * Marks the program for a plugin.
+   * 
+   * @param plugin The plugin to mark the program for.
+   */
   public void mark(Plugin plugin);
 
+  /**
+   * Removes the marks from the program for a plugin.
+   * <p>
+   * If the program wasn't marked for the plugin, nothing happens.
+   * 
+   * @param plugin The plugin to remove the mark for.
+   */
   public void unmark(Plugin plugin);
 
   /**

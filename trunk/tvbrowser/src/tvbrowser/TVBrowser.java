@@ -30,27 +30,12 @@ package tvbrowser;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.logging.*;
 
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 
-
-import tvbrowser.core.ChannelList;
-import tvbrowser.core.DataService;
-import tvbrowser.core.PluginManager;
-import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.*;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
@@ -58,9 +43,9 @@ import util.exc.ErrorHandler;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 
-
+import com.gc.systray.SystemTrayIconListener;
+import com.gc.systray.SystemTrayIconManager;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
-import com.gc.systray.*;
 
 /**
  * TV-Browser
@@ -82,8 +67,6 @@ public class TVBrowser {
   
   private static MainFrame mainFrame;
 
-  private JMenu mPluginsMenu;
-
   
   
   /**
@@ -104,6 +87,9 @@ public class TVBrowser {
     try {
       // Get the default Logger
       Logger mainLogger = Logger.getLogger("");
+
+      // Use a even simpler Formatter for console logging
+      mainLogger.getHandlers()[0].setFormatter(createFormatter());
       
       // Add a file handler
       new File("log").mkdir();
@@ -284,8 +270,6 @@ public class TVBrowser {
       mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
     
-    devplugin.Channel[] chlist=ChannelList.getSubscribedChannels();
-    
     if (Settings.getShowAssistant()) {
       mainFrame.runSetupAssistant();  
 
@@ -339,6 +323,37 @@ public class TVBrowser {
     mainFrame.validate();
   }
   
+  }
+
+
+  /**
+   * Creates a very simple Formatter for log formatting
+   * 
+   * @return a very simple Formatter for log formatting.
+   */
+  private static Formatter createFormatter() {
+    return new Formatter() {
+      public synchronized String format(LogRecord record) {
+        StringBuffer sb = new StringBuffer();
+
+        String message = formatMessage(record);
+        sb.append(record.getLevel().getLocalizedName());
+        sb.append(": ");
+        sb.append(message);
+        sb.append("\n");
+        if (record.getThrown() != null) {
+          try {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            record.getThrown().printStackTrace(pw);
+            pw.close();
+            sb.append(sw.toString());
+          } catch (Exception ex) {
+          }
+        }
+        return sb.toString();
+      }
+    };
   }
 
 }

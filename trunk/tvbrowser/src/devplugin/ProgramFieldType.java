@@ -23,13 +23,17 @@
  *   $Author$
  * $Revision$
  */
-package tvbrowserdataservice.file;
+package devplugin;
 
 import java.util.ArrayList;
 
 /**
+ * Contains all the field types of a program.
  * 
- * 
+ * @see Program#getBinaryField(ProgramFieldType)
+ * @see Program#getTextField(ProgramFieldType)
+ * @see Program#getIntField(ProgramFieldType)
+ * @see Program#getTimeField(ProgramFieldType)
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramFieldType {
@@ -76,7 +80,7 @@ public class ProgramFieldType {
     = new ProgramFieldType(11, "director", TEXT_FORMAT, true);
 
   public static final ProgramFieldType SHOWVIEW_NR_TYPE
-    = new ProgramFieldType(12, "showview number", INT_FORMAT, true);
+    = new ProgramFieldType(12, "showview number", TEXT_FORMAT, true);
 
   public static final ProgramFieldType INFO_TYPE
     = new ProgramFieldType(13, "info bits", INT_FORMAT, true);
@@ -96,11 +100,8 @@ public class ProgramFieldType {
   public static final ProgramFieldType NET_PLAYING_TIME_TYPE
     = new ProgramFieldType(18, "net playing time", INT_FORMAT, true);
 
- // public static final ProgramFieldType FSK_TYPE
- //   = new ProgramFieldType(19, "fsk", TEXT_FORMAT, true);
-
   public static final ProgramFieldType VPS_TYPE
-      = new ProgramFieldType(19, "vps", INT_FORMAT, true);
+      = new ProgramFieldType(19, "vps", TIME_FORMAT, true);
 
   public static final ProgramFieldType SCRIPT_TYPE
       = new ProgramFieldType(20, "script", TEXT_FORMAT, true);
