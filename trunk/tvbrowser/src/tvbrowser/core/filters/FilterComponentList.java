@@ -39,6 +39,7 @@ import java.util.Iterator;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
+import tvbrowser.core.filters.filtercomponents.PluginIconFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
@@ -139,7 +140,10 @@ public class FilterComponentList {
       filterComponent = new KeywordFilterComponent(name, description);
     }
     else if (className.endsWith(".PluginFilterComponent")) {
-      filterComponent = new PluginFilterComponent(name, description);
+        filterComponent = new PluginFilterComponent(name, description);
+    }
+    else if (className.endsWith(".PluginIconFilterComponent")) {
+        filterComponent = new PluginIconFilterComponent(name, description);
     }
     else if (className.endsWith(".ChannelFilterComponent")) {
       filterComponent = new ChannelFilterComponent(name, description);
