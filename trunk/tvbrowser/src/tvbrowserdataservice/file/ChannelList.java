@@ -34,7 +34,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -134,23 +133,26 @@ public class ChannelList {
       line = line.trim();
       if (line.length() > 0) {
         // This is not an empty line -> read it
-        StringTokenizer tokenizer = new StringTokenizer(line, ";");
-        if (tokenizer.countTokens() < 4) {
+
+        /* Instead of StringTokenizer (previous implementation) we use String#split(), because
+           StringTokenizer ignores empty tokens. */
+        String[] tokens = line.split(";");
+        if (tokens.length<4) {
           throw new FileFormatException("Syntax error in mirror file line "
             + lineCount + ": '" + line + "'");
         }
 
         String country=null, timezone=null, id=null, name=null, copyright=null, webpage=null, iconUrl=null, categoryStr=null;
         try {
-          country = tokenizer.nextToken().trim();
-          timezone = tokenizer.nextToken().trim();
-          id = tokenizer.nextToken().trim();
-          name = tokenizer.nextToken().trim();
-          copyright = tokenizer.nextToken().trim();
-          webpage = tokenizer.nextToken().trim();
-          iconUrl = tokenizer.nextToken().trim();
-          categoryStr = tokenizer.nextToken().trim();
-        }catch (java.util.NoSuchElementException e) {
+          country = tokens[0];
+          timezone = tokens[1];
+          id = tokens[2];
+          name = tokens[3];
+          copyright = tokens[4];
+          webpage = tokens[5];
+          iconUrl = tokens[6];
+          categoryStr = tokens[7];
+        }catch (ArrayIndexOutOfBoundsException e) {
           // ignore
         }
 
@@ -164,7 +166,7 @@ public class ChannelList {
         }
         Channel channel = new Channel(dataService, name, id,
           TimeZone.getTimeZone(timezone), country,copyright,webpage, mGroup, null, categories);
-        if (iconLoader != null && iconUrl != null) {
+        if (iconLoader != null && iconUrl != null && iconUrl.length()>0) {
           Icon icon = iconLoader.getIcon(id, iconUrl);
           if (icon != null) {
             channel.setDefaultIcon(icon);
@@ -214,8 +216,9 @@ public class ChannelList {
         + ";" + channel.getId()
         + ";" + channel.getName()
         + ";" + channel.getCopyrightNotice()
-        + ";" + (channel.getWebpage()==null?"http://tvbrowser.sourceforge.net":channel.getWebpage())
-        + ";" + (channelItem.getIconUrl()==null?"":channelItem.getIconUrl()));
+        + ";" + (channel.getWebpage()==null?"http://tvbrowser.org":channel.getWebpage())
+        + ";" + (channelItem.getIconUrl()==null?"":channelItem.getIconUrl())
+        + ";" + (channel.getCategories()));
     }
     writer.close();
     
@@ -255,14 +258,12 @@ public class ChannelList {
 
   
   class IconLoader {
-    private File mDir;
     private File mIconDir;
     private File mIconIndexFile;
     private String mGroup;
     private Properties mProperties;
     
     public IconLoader(String group, File dir) throws IOException {
-      mDir = dir;
       mGroup = group;
       mIconDir = new File(dir+"/icons_"+mGroup);
       if (!mIconDir.exists()) {
@@ -293,7 +294,7 @@ public class ChannelList {
           util.io.IOUtilities.download(new URL(url), iconFile);
 					icon = getIconFromFile(iconFile); 
         }catch(IOException e) {
-          mLog.warning("could not download icon from "+url);
+          mLog.warning("channel "+channelId+": could not download icon from "+url);
 				}				 
       }
       if (icon != null) {

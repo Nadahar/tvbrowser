@@ -350,15 +350,24 @@ public class PrimaryDataManager {
         String id = tokenizer.nextToken().trim();
         String name = tokenizer.nextToken().trim();
         
-        String copyright=null, webpage=null, iconUrl=null;        
+        String copyright=null, webpage=null, iconUrl=null, categoryStr=null;
         try {
           copyright = tokenizer.nextToken().trim();
           webpage = tokenizer.nextToken().trim();
-          iconUrl = tokenizer.nextToken();
+          iconUrl = tokenizer.nextToken().trim();
+          categoryStr = tokenizer.nextToken().trim();
         } catch(NoSuchElementException e) {
           // ignore, we don't need these feelds 
         }
-        Channel channel = new Channel(null, name, id, TimeZone.getTimeZone(timezone), country, copyright,webpage, null);
+        int categories = Channel.CATEGORY_NONE;
+        if (categoryStr != null) {
+          try {
+            categories = Integer.parseInt(categoryStr);
+          }catch(NumberFormatException e) {
+            categories = Channel.CATEGORY_NONE;
+          }
+        }
+        Channel channel = new Channel(null, name, id, TimeZone.getTimeZone(timezone), country, copyright,webpage, null, null, categories);
         result.addChannel(channel, iconUrl);
       }
     }
