@@ -159,7 +159,7 @@ public class SearchPlugin extends Plugin {
         "Allows searching programs containing a certain text.");
     String author = "Til Schneider, www.murfman.de";
 
-    return new PluginInfo(name, desc, author, new Version(1, 4));
+    return new PluginInfo(name, desc, author, new Version(1, 5));
   }
 
   public static SearchPlugin getInstance() {
