@@ -100,7 +100,7 @@ public class DialogRating extends JDialog {
     public DialogRating(Frame frame, TVRaterPlugin rater, String programtitle) {
         super(frame, true);
         _parent = frame;
-
+        System.out.println(">" + programtitle + "<");
         setTitle(_mLocalizer.msg("title", "View Rating"));
 
         _rater = rater;
@@ -129,6 +129,7 @@ public class DialogRating extends JDialog {
     public DialogRating(Frame parent, TVRaterPlugin rater, Program program) {
         super(parent, true);
         _parent = parent;
+        System.out.println(">" + program.getTitle() + "<");
         setTitle(_mLocalizer.msg("title", "View Rating"));
 
         _rater = rater;
