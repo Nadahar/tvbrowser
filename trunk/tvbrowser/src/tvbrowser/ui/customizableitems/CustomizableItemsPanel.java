@@ -24,12 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.customizableitems;
 
 import javax.swing.*;
@@ -37,8 +31,16 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class CustomizableItemsPanel extends JPanel {
-  
+
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(CustomizableItemsPanel.class);
+
   private static final Insets ZERO_INSETS = new Insets(0, 0, 0, 0);
 
   private final DefaultListModel mLeftListModel, mRightListModel;
@@ -50,6 +52,8 @@ public class CustomizableItemsPanel extends JPanel {
 
   public CustomizableItemsPanel(String leftText, String rightText) {
     super(new GridLayout(1,2));
+    
+    String msg;
 
     JPanel leftPanel=new JPanel(new BorderLayout());
     JPanel rightPanel=new JPanel(new BorderLayout());
@@ -95,19 +99,23 @@ public class CustomizableItemsPanel extends JPanel {
     JPanel panel5=new JPanel(new BorderLayout());
 
     mRightBt = new JButton(new ImageIcon("imgs/Forward24.gif"));
-    mRightBt.setToolTipText("Markierte Zeilen in rechte Liste verschieben");
+    msg = mLocalizer.msg("tooltip.right", "Move selected rows in right list");
+    mRightBt.setToolTipText(msg);
     mRightBt.setMargin(ZERO_INSETS);
 
     mLeftBt = new JButton(new ImageIcon("imgs/Back24.gif"));
-    mLeftBt.setToolTipText("Markierte Zeilen in linke Liste verschieben");
+    msg = mLocalizer.msg("tooltip.left", "Move selected rows in left list");
+    mLeftBt.setToolTipText(msg);
     mLeftBt.setMargin(ZERO_INSETS);
 
     mUpBt = new JButton(new ImageIcon("imgs/Up24.gif"));
-    mUpBt.setToolTipText("Markierte Zeilen nach oben verschieben");
+    msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
+    mUpBt.setToolTipText(msg);
     mUpBt.setMargin(ZERO_INSETS);
 
     mDownBt = new JButton(new ImageIcon("imgs/Down24.gif"));
-    mDownBt.setToolTipText("Markierte Zeilen nach oben verschieben");
+    msg = mLocalizer.msg("tooltip.down", "Move selected rows down");
+    mDownBt.setToolTipText(msg);
     mDownBt.setMargin(ZERO_INSETS);
 
     panel2.add(mRightBt,BorderLayout.SOUTH);

@@ -32,6 +32,9 @@ package util.io;
  * @author  Til Schneider, www.murfman.de
  */
 public class Profiler {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(Profiler.class.getName());
   
   private static Profiler mDefaultProfiler;
   
@@ -70,7 +73,7 @@ public class Profiler {
     long delta = System.currentTimeMillis() - mLastMillis;
 
     if (mLastMillis == -1) {
-      System.out.println("Profiler: " + text);
+      mLog.info("Profiler: " + text);
     } else {
       long millis = delta % 1000;
       delta /= 1000;
@@ -78,14 +81,15 @@ public class Profiler {
       delta /= 60;
       long minutes = delta;
       
-      System.out.print("Profiler: " + text + ": ");
+      String msg = "Profiler: " + text + ": ";
       if (minutes > 0) {
-        System.out.print(minutes + " min ");
+        msg += minutes + " min ";
       }
       if ((minutes > 0) || (secs > 0)) {
-        System.out.print(secs + " sec ");
+        msg += secs + " sec ";
       }
-      System.out.println(millis + " millis");
+      msg += millis + " millis";
+      mLog.info(msg);
     }
     
     mLastMillis = System.currentTimeMillis();

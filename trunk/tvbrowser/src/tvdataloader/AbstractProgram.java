@@ -43,6 +43,9 @@ import devplugin.Channel;
  * @author Martin Oberhauser
  */
 public abstract class AbstractProgram implements Serializable, devplugin.Program {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(AbstractProgram.class.getName());
   
   /** Contains all listeners that listen for events from this program. */
   transient EventListenerList mListenerList;
@@ -94,7 +97,7 @@ public abstract class AbstractProgram implements Serializable, devplugin.Program
   public void addChangeListener(ChangeListener listener) {
     // TODO: The ProgramPanels to not unregister themselves
     /*
-    System.out.println("mListenerList.getListenerCount(): " + mListenerList.getListenerCount());
+    mLog.info("mListenerList.getListenerCount(): " + mListenerList.getListenerCount());
     if (mListenerList.getListenerCount() != 0) {
       throw new RuntimeException("test");
     }

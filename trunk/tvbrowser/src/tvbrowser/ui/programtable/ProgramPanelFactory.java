@@ -24,20 +24,15 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.programtable;
 
 import java.util.ArrayList;
 
 /**
  * For a better performance, a program panel factory is used (reuse unused objects).
+ *
+ * @author Martin Oberhauser
  */
-
 public class ProgramPanelFactory {
 
   private static ArrayList panelList=new ArrayList(100);

@@ -43,11 +43,16 @@ import tvbrowser.core.*;
 
 public class SettingsDlg extends JDialog implements ActionListener {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(SettingsDlg.class);
+  
   private JButton cancelBtn, okBtn;
   private JTabbedPane tabPane;
+  
+  
 
   public SettingsDlg(java.awt.Frame parent) {
-    super(parent,"Settings");
+    super(parent, mLocalizer.msg("settings", "Settings"));
     setModal(true);
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
@@ -63,11 +68,9 @@ public class SettingsDlg extends JDialog implements ActionListener {
     tab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
     tabPane.addTab(tab.getName(),tab);
 
-
     tab=new PluginSettingsTab();
     tab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
     tabPane.addTab(tab.getName(),tab);
-
 
     Object[] plugins=PluginManager.getInstalledPlugins();
 
@@ -81,14 +84,14 @@ public class SettingsDlg extends JDialog implements ActionListener {
 
     JPanel pushButtonPanel=new JPanel();
 
-    cancelBtn=new JButton("Cancel");
-    okBtn=new JButton("OK");
-
-    pushButtonPanel.add(cancelBtn);
-    pushButtonPanel.add(okBtn);
-
-    cancelBtn.addActionListener(this);
+    okBtn=new JButton(mLocalizer.msg("ok", "OK"));
     okBtn.addActionListener(this);
+    pushButtonPanel.add(okBtn);
+    getRootPane().setDefaultButton(okBtn);
+
+    cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
+    cancelBtn.addActionListener(this);
+    pushButtonPanel.add(cancelBtn);
 
     contentPane.add(pushButtonPanel,BorderLayout.SOUTH);
     contentPane.add(tabPane,BorderLayout.CENTER);
@@ -101,7 +104,7 @@ public class SettingsDlg extends JDialog implements ActionListener {
     Object source=event.getSource();
 
     if (source==cancelBtn) {
-      setVisible(false);
+      dispose();
     }else if (source==okBtn) {
       devplugin.SettingsTab curTab;
       for (int i=0;i<tabPane.getTabCount();i++) {
@@ -113,10 +116,8 @@ public class SettingsDlg extends JDialog implements ActionListener {
       } catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
       }
-      setVisible(false);
+      dispose();
     }
-
-
   }
 
 }

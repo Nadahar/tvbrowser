@@ -43,13 +43,28 @@ import tvbrowser.core.*;
 
 public class ChannelsSettingsTab extends devplugin.SettingsTab {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(ChannelsSettingsTab.class.getName());
+  
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ChannelsSettingsTab.class);
+  
   private CustomizableItemsPanel panel;
-  public String getName() { return "Channels"; }
+  public String getName() {
+    return mLocalizer.msg("channels", "Channels");
+  }
 
+  
+  
   public ChannelsSettingsTab() {
     super();
+    
+    String msg;
+    
     setLayout(new BorderLayout());
-    panel=CustomizableItemsPanel.createCustomizableItemsPanel("Available channels:","Subscribed channels:");
+    String leftText = mLocalizer.msg("availableChannels", "Available channels");
+    String rightText = mLocalizer.msg("subscribedChannels", "Subscribed channels");
+    panel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
 
     JTextArea textArea=new JTextArea(2,40);
     textArea.setOpaque(false);
@@ -58,7 +73,10 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     textArea.setEnabled(false);
     textArea.setLineWrap(true);
     textArea.setWrapStyleWord(true);
-    textArea.setText("Use the arrow buttons to subscribe or unsubscribe channels and the up and down buttons to create your personal ordering of your favourite channels.");
+    msg = mLocalizer.msg("infoText", "Use the left and right buttons to "
+      + "subscribe or unsubscribe channels and the up and down buttons to "
+      + "create your personal ordering of your favourite channels.");
+    textArea.setText(msg);
     textArea.setBorder(BorderFactory.createEmptyBorder(10,5,5,0));
 
 
@@ -69,36 +87,35 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     Enumeration enum=ChannelList.getChannels();
 
     Channel[] subscribedChannels=new Channel[ChannelList.getNumberOfSubscribedChannels()];
-System.out.println("soweit ok");
+    mLog.fine("ok till now");
     while (enum.hasMoreElements()) {
       ch=(Channel)enum.nextElement();
-      System.out.println("channel "+ch.getName());
+      mLog.fine("channel "+ch.getName());
       //if (ch.isSubscribed()) {
       if (ChannelList.isSubscribedChannel(ch.getId())) {
-      	System.out.println("is subscribed");
+      	mLog.fine("is subscribed");
       //  subscribedChannels[ch.getPos()]=ch;
      	int pos=ChannelList.getPos(ch.getId());
       	subscribedChannels[pos]=ch;
       }else{
         panel.addElementLeft(ch.getName());
-        System.out.println("is NOT subscribed");
+        mLog.fine("is NOT subscribed");
       }
     }
-    System.out.println("done");
+    mLog.fine("done");
     
-    System.out.println("subscribedChannel.length: "+subscribedChannels.length);
+    mLog.fine("subscribedChannel.length: "+subscribedChannels.length);
 
     for (int i=0;i<subscribedChannels.length;i++) {
       panel.addElementRight(subscribedChannels[i].getName());
     }
 
-System.out.println("DONE!");
-
-
+    mLog.fine("DONE!");
   }
 
+  
+  
   public void ok() {
-
     StringBuffer channels=new StringBuffer();
     Object[] list=panel.getElementsRight();
     ChannelList.setSubscribeChannels(list);
@@ -116,7 +133,6 @@ System.out.println("DONE!");
     }
 
     Settings.setSubscribedChannels(channels.toString());
-
-
   }
+  
 }

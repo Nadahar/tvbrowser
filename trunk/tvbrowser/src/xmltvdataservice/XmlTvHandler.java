@@ -44,6 +44,9 @@ import devplugin.*;
  * @author Til Schneider, www.murfman.de
  */
 public class XmlTvHandler extends DefaultHandler {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(XmlTvHandler.class.getName());
   
   /**
    * The maximum length of a short info. Used for generating a short info out of a
@@ -109,12 +112,12 @@ public class XmlTvHandler extends DefaultHandler {
    */
   public void endDocument() throws SAXException {
     /* // dump all channels found
-    System.out.print("Channels found: ");
+    String msg = "Channels found: ";
     Iterator iter = mChannelSet.iterator();
     while (iter.hasNext()) {
-      System.out.print(", " + iter.next());
+      msg += ", " + iter.next();
     }
-    System.out.println();
+    mLog.info(msg);
     */
   }
   
@@ -146,7 +149,7 @@ public class XmlTvHandler extends DefaultHandler {
       if (currElement.equals("programme")) {
         /*
         if (mLocator != null) {
-          System.out.println("In line " + mLocator.getLineNumber());
+          mLog.info("In line " + mLocator.getLineNumber());
         }
         */
         
@@ -173,8 +176,6 @@ public class XmlTvHandler extends DefaultHandler {
         mCalendar.set(Calendar.DAY_OF_MONTH, day);
         java.util.Date utilDate = mCalendar.getTime();
         long daysSince1970 = utilDate.getTime() / (24 * 60 * 60 * 1000);
-        // System.out.println("daysSince1970: " + daysSince1970 + ", year: " + year
-        //   + ", month: " + month + ", day: " + day + ", utilDate: " + utilDate);
         devplugin.Date date = new devplugin.Date((int) daysSince1970);
         
         // Get the time
@@ -244,7 +245,7 @@ public class XmlTvHandler extends DefaultHandler {
       mCurrProgram.setLength(lengthInMinutes);
     }
     else if (currElement.equals("programme")) {
-      // System.out.println("Program found: " + mCurrProgram);
+      // mLog.info("Program found: " + mCurrProgram);
       
       mProgramDispatcher.dispatch(mCurrProgram);
       mCurrProgram = null;
@@ -308,7 +309,7 @@ public class XmlTvHandler extends DefaultHandler {
     IOUtilities.replace(mCurrTextBuffer, " und quot;", "\"");
     IOUtilities.replace(mCurrTextBuffer, " und deg;", "\u00b0");
     
-    // System.out.println("deg: " + Integer.toHexString('°'));
+    // mLog.info("deg: " + Integer.toHexString('°'));
 
     return mCurrTextBuffer.toString().trim();
   }

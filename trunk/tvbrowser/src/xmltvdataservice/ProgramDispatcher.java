@@ -43,6 +43,11 @@ import tvdataloader.*;
  * @author  Til Schneider, www.murfman.de
  */
 public class ProgramDispatcher {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(ProgramDispatcher.class.getName());
+
+  
   
   /**
    * Contains for a Date (key) a hash containing for a Channel (key)
@@ -92,7 +97,7 @@ public class ProgramDispatcher {
       = getChannelDayProgram(date, channel, false);
 
     if (channelDayProgram != null) {
-      System.out.println("Found " + channelDayProgram.getProgramCount()
+      mLog.info("Found " + channelDayProgram.getProgramCount()
         + " programs for " + channel.getName() + " on " + date);
     }
     

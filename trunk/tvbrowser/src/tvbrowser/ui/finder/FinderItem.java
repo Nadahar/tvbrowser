@@ -24,13 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package tvbrowser.ui.finder;
 
 import javax.swing.*;
@@ -41,8 +34,9 @@ import tvbrowser.core.*;
 
 /**
  * A FinderItem object represents an item of the Finder.
+ *
+ * @author Martin Oberhauser
  */
-
 public class FinderItem extends JLabel implements MouseListener {
 
   private devplugin.Date date;
@@ -163,8 +157,5 @@ public class FinderItem extends JLabel implements MouseListener {
    * Implementation of the MouseListener interface.
    */
   public void mouseReleased(MouseEvent e) { }
-
-
-
 
 }

@@ -85,11 +85,11 @@ class ProgramDayTime extends JPanel {
     
     if (col<0) {
       throw new RuntimeException("cannot add program from channel "+p.getChannel());
-
     }
     ProgramPanel panel=ProgramPanelFactory.createProgramPanel(p);
     cols[col].add(panel);
   }
+  
 }
 
 
@@ -335,12 +335,10 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     for (int i=0;i<c;i++) {
     	posY+=part[i].getHeight();
     }
-    System.out.println();
     int s=hour%(24/NUM_OF_DAYTIMES);   
     
     posY+=part[c].getHeight()/NUM_OF_DAYTIMES*s - scrollPane.getHeight()/2;
 	scrollPane.getViewport().setViewPosition(new Point(posX,posY));      
-  
   }
 
 

@@ -50,10 +50,7 @@ public class Localizer {
     }
     
     Locale locale = Locale.getDefault();
-    
-    System.out.println("clazz: " + clazz + " mKeyPrefix: " + mKeyPrefix
-      + " mBaseName: " + mBaseName);
-    
+   
     try {
       mBundle = ResourceBundle.getBundle(mBaseName, locale, clazz.getClassLoader());
     }

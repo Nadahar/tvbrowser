@@ -40,6 +40,9 @@ import tvdataloader.*;
  * @author Til Schneider, www.murfman.de
  */
 public class MutableChannelDayProgram extends AbstractChannelDayProgram {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(MutableChannelDayProgram.class.getName());
   
   /** The date of this program list. */  
   private devplugin.Date mDate;
@@ -170,12 +173,12 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
    */
   public java.util.Iterator getPrograms() {
     /*
-    System.out.println(">>> Dump:");
+    mLog.info(">>> Dump:");
     Iterator iter = mProgramList.iterator();
     while (iter.hasNext()) {
-      System.out.println("  " + iter.next());
+      mLog.info("  " + iter.next());
     }
-    System.out.println("<<< Dump finished");
+    mLog.info("<<< Dump finished");
     */
     
     return mProgramList.iterator();
