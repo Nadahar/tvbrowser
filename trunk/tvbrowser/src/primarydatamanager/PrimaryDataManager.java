@@ -27,8 +27,6 @@ package primarydatamanager;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.TimeZone;
 import java.util.logging.*;
@@ -54,7 +52,6 @@ public class PrimaryDataManager {
   private File mPreparedDir;
   private File mWorkDir;
   private File mBackupDir;
-  private File mBaseDir;
   private File mConfigDir;
   
   private ChannelList[] mChannelListArr;
@@ -62,10 +59,10 @@ public class PrimaryDataManager {
   
   private RawDataProcessor mRawDataProcessor;
   
-  private LinkedList mDataServiceList;
+
      
   public PrimaryDataManager(File baseDir) throws PreparationException {
-    mBaseDir = baseDir;
+
     mRawDir      = new File(baseDir, "raw");
     mPreparedDir = new File(baseDir, "prepared");
     mWorkDir     = new File(baseDir, "temp");
@@ -340,24 +337,24 @@ public class PrimaryDataManager {
         if (line.trim().length()==0) {  // ignore empty lines
           continue;
         }
-      
-        StringTokenizer tokenizer = new StringTokenizer(line, ";");
-        if (tokenizer.countTokens() < 4) {
+
+        String[] tokens = line.split(";");
+        if (tokens.length < 4) {
           throw new PreparationException("invalid line in '"+fileName+"': "+line);
         }
-        String country = tokenizer.nextToken().trim();
-        String timezone = tokenizer.nextToken().trim();
-        String id = tokenizer.nextToken().trim();
-        String name = tokenizer.nextToken().trim();
-        
-        String copyright=null, webpage=null, iconUrl=null, categoryStr=null;
+
+        String country=null, timezone=null, id=null, name=null, copyright=null, webpage=null, iconUrl=null, categoryStr=null;
         try {
-          copyright = tokenizer.nextToken().trim();
-          webpage = tokenizer.nextToken().trim();
-          iconUrl = tokenizer.nextToken().trim();
-          categoryStr = tokenizer.nextToken().trim();
-        } catch(NoSuchElementException e) {
-          // ignore, we don't need these feelds 
+          country = tokens[0];
+          timezone = tokens[1];
+          id = tokens[2];
+          name = tokens[3];
+          copyright = tokens[4];
+          webpage = tokens[5];
+          iconUrl = tokens[6];
+          categoryStr = tokens[7];
+        } catch(ArrayIndexOutOfBoundsException e) {
+          // ignore, we don't need these fields
         }
         int categories = Channel.CATEGORY_NONE;
         if (categoryStr != null) {

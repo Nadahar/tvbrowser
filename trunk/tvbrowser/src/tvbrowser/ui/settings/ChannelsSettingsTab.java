@@ -617,7 +617,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       }
 
       if (mCategories > 0) {
-        System.out.println(channel+"; "+channel.getCategories());
         if ((channel.getCategories() & mCategories) == 0) {
           return false;
         }
@@ -674,6 +673,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     }
 
     public void refresh() {
+      ChannelList.create();
       Channel[] channels = ChannelList.getSubscribedChannels();
       mAvailableChannels = ChannelList.getAvailableChannels();
       for (int i=0; i<channels.length; i++) {
