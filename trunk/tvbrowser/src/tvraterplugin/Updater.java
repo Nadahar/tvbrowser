@@ -63,7 +63,8 @@ public class Updater implements Progress {
 	/** Localizer */
 	private static final Localizer _mLocalizer = Localizer.getLocalizerFor(Updater.class);
 	/** Location of Update-Skript */
-	private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
+	private static String LOCATION = "http://localhost/updater.php";
+//	private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
 	/** The Plugin */
 	private TVRaterPlugin _tvraterPlugin;
 
@@ -112,7 +113,7 @@ public class Updater implements Progress {
 
 			out.close();
 		} catch (Exception e) {
-			ErrorHandler.handle(_mLocalizer.msg("updateError", "An error occured while updateting the Database"), e);
+			ErrorHandler.handle(_mLocalizer.msg("updateError", "An error occured while updateting the TVRater Database"), e);
 			e.printStackTrace();
 		}
 

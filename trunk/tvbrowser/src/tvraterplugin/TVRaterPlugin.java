@@ -38,200 +38,249 @@ import devplugin.Version;
 
 /**
  * This Plugin gives the User the possibility to rate a Movie
- *
+ * 
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
-	private Properties _settings;
-	private Point _locationRaterDialog = null;
 
-	private Point _locationOverviewDialog = null;
-	private Dimension _dimensionOverviewDialog = null;
+    private Properties _settings;
 
-	private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterPlugin.class);
+    private Point _locationRaterDialog = null;
 
-	private Database _tvraterDB = new Database();
+    private Point _locationOverviewDialog = null;
 
-	public String getContextMenuItemText() {
-		return mLocalizer.msg("contextMenuText", "View rating");
-	}
+    private Dimension _dimensionOverviewDialog = null;
 
-	public PluginInfo getInfo() {
-		String name = mLocalizer.msg("pluginName", "TV Rater");
-		String desc = mLocalizer.msg("description", "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
-		String author = "Bodo Tasche";
-		return new PluginInfo(name, desc, author, new Version(0, 1));
-	}
+    private static final Localizer mLocalizer = Localizer
+            .getLocalizerFor(TVRaterPlugin.class);
 
-	/**
-	 * This method is invoked by the host-application if the user has choosen your
-	 * plugin from the menu.
-	 */
-	public void execute() {
-		DialogOverview dlg = new DialogOverview(getParentFrame(), this);
-		dlg.pack();
-		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-			public void componentResized(ComponentEvent e) {
-				_dimensionOverviewDialog = e.getComponent().getSize();
-			}
+    private Database _tvraterDB = new Database();
 
-			public void componentMoved(ComponentEvent e) {
-				e.getComponent().getLocation(_locationOverviewDialog);
-			}
-		});
 
-		if ((_locationOverviewDialog != null) && (_dimensionOverviewDialog != null)) {
-			dlg.setLocation(_locationOverviewDialog);
-			dlg.setSize(_dimensionOverviewDialog);
-			dlg.show();
-		} else {
-			dlg.setSize(300, 250);
-			UiUtilities.centerAndShow(dlg);
-			_locationOverviewDialog = dlg.getLocation();
-			_dimensionOverviewDialog = dlg.getSize();
-		}
+    public String getContextMenuItemText() {
+        return mLocalizer.msg("contextMenuText", "View rating");
+    }
 
-	}
+    public PluginInfo getInfo() {
+        String name = mLocalizer.msg("pluginName", "TV Rater");
+        String desc = mLocalizer
+                .msg(
+                        "description",
+                        "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
+        String author = "Bodo Tasche";
+        return new PluginInfo(name, desc, author, new Version(0, 1));
+    }
 
-	public void execute(Program program) {
-		DialogRating dlg = new DialogRating(getParentFrame(), program, _tvraterDB);
-		dlg.pack();
-		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-			public void componentMoved(ComponentEvent e) {
-				e.getComponent().getLocation(_locationRaterDialog);
-			}
-		});
+    /**
+     * This method is invoked by the host-application if the user has choosen
+     * your plugin from the menu.
+     */
+    public void execute() {
+        DialogOverview dlg = new DialogOverview(getParentFrame(), this);
+        dlg.pack();
+        dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 
-		if (_locationRaterDialog != null) {
-			dlg.setLocation(_locationRaterDialog);
-			dlg.show();
-		} else {
-			UiUtilities.centerAndShow(dlg);
-			_locationRaterDialog = dlg.getLocation();
-		}
-	}
+            public void componentResized(ComponentEvent e) {
+                _dimensionOverviewDialog = e.getComponent().getSize();
+            }
 
-	public Properties storeSettings() {
-		return _settings;
-	}
+            public void componentMoved(ComponentEvent e) {
+                e.getComponent().getLocation(_locationOverviewDialog);
+            }
+        });
 
-	public void loadSettings(Properties settings) {
-		if (settings == null) {
-			settings = new Properties();
-		}
+        if ((_locationOverviewDialog != null)
+                && (_dimensionOverviewDialog != null)) {
+            dlg.setLocation(_locationOverviewDialog);
+            dlg.setSize(_dimensionOverviewDialog);
+            dlg.show();
+        } else {
+            dlg.setSize(300, 250);
+            UiUtilities.centerAndShow(dlg);
+            _locationOverviewDialog = dlg.getLocation();
+            _dimensionOverviewDialog = dlg.getSize();
+        }
 
-		this._settings = settings;
-	}
+    }
 
-	public SettingsTab getSettingsTab() {
-		return new TVRaterSettingsTab(_settings);
-	}
+    public void execute(Program program) {
+        DialogRating dlg = new DialogRating(getParentFrame(), this, program);
+        dlg.pack();
+        dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 
-	public String getMarkIconName() {
-		return "tvraterplugin/tvrater.gif";
-	}
+            public void componentMoved(ComponentEvent e) {
+                e.getComponent().getLocation(_locationRaterDialog);
+            }
+        });
 
-	public String getButtonText() {
-		return mLocalizer.msg("pluginName", "TV Rater");
-	}
+        if (_locationRaterDialog != null) {
+            dlg.setLocation(_locationRaterDialog);
+            dlg.show();
+        } else {
+            UiUtilities.centerAndShow(dlg);
+            _locationRaterDialog = dlg.getLocation();
+        }
+    }
 
-	public String getButtonIconName() {
-		return "tvraterplugin/tvrater.gif";
-	}
+    public Properties storeSettings() {
+        return _settings;
+    }
 
-	/**
-	 * Gets the description text for the program table icons provided by this
-	 * Plugin.
-	 * <p>
-	 * Return <code>null</code> if your plugin does not provide this feature.
-	 * 
-	 * @return The description text for the program table icons.
-	 * @see #getProgramTableIcons(Program)
-	 */
-	public String getProgramTableIconText() {
-		return mLocalizer.msg("icon", "Rating");
-	}
+    public void loadSettings(Properties settings) {
+        if (settings == null) {
+            settings = new Properties();
+        }
 
-	/**
-	 * Gets the icons this Plugin provides for the given program. These icons will
-	 * be shown in the program table under the start time.
-	 * <p>
-	 * Return <code>null</code> if your plugin does not provide this feature.
-	 * 
-	 * @param program The programs to get the icons for.
-	 * @return The icons for the given program or <code>null</code>.
-	 * @see #getProgramTableIconText()
-	 */
-	public Icon[] getProgramTableIcons(Program program) {
-		Rating rating;
+        this._settings = settings;
 
-		if (_settings.getProperty("ownRating","").equalsIgnoreCase("true")) {
-			rating = _tvraterDB.getPersonalRating(program);
-			if (rating != null) {
-				Icon[] iconArray = { new RatingIcon(rating, RatingIcon.PERSONALRATING)};
-				return iconArray;
-			}
-		}
+		System.out.println("Starte TVRaterPlugin");
+        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
+            updateDB();
+        }
+    }
 
-		rating = _tvraterDB.getOverallRating(program);
-		if (rating != null) {
-			Icon[] iconArray = { new RatingIcon(rating, RatingIcon.OVERALLRATING)};
-			return iconArray;
-		}
+    public SettingsTab getSettingsTab() {
+        return new TVRaterSettingsTab(_settings);
+    }
 
-		if (_settings.getProperty("ownRating","").equalsIgnoreCase("false")) {
-			rating = _tvraterDB.getPersonalRating(program);
-			if (rating != null) {
-				Icon[] iconArray = { new RatingIcon(rating, RatingIcon.PERSONALRATING)};
-				return iconArray;
-			}
-		}
-		
-		return null;
-	}
+    public String getMarkIconName() {
+        return "tvraterplugin/tvrater.gif";
+    }
 
-	/**
-	 * Returns the Database for the Ratings
-	 * @return Rating-Database
-	 */
-	public Database getDatabase() {
-		return _tvraterDB;
-	}
-	
-	/**
-	 * Returns the Settings for this Plugin
-	 * @return Settings
-	 */
-	public Properties getSettings() {
-		return _settings;
-	}
+    public String getButtonText() {
+        return mLocalizer.msg("pluginName", "TV Rater");
+    }
 
-	/**
-	 * Called by the host-application during start-up. 
-	 *
-	 * @see #writeData(ObjectOutputStream)
-	 */
-	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		_tvraterDB.readData(in);
-	}
+    public String getButtonIconName() {
+        return "tvraterplugin/tvrater.gif";
+    }
 
-	/**
-	 * Counterpart to loadData. Called when the application shuts down.
-	 *
-	 * @see #readData(ObjectInputStream)
-	 */
-	public void writeData(ObjectOutputStream out) throws IOException {
-		_tvraterDB.writeData(out);
-	}
-	
-	/**
-	 * Gets the parent frame.
-	 * <p>
-	 * The parent frame may be used for showing dialogs.
-	 * 
-	 * @return The parent frame.
-	 */
-	public java.awt.Frame getParentFrameForTVRater() {
-	  return getParentFrame();
-	}
+    /**
+     * Gets the description text for the program table icons provided by this
+     * Plugin.
+     * <p>
+     * Return <code>null</code> if your plugin does not provide this feature.
+     * 
+     * @return The description text for the program table icons.
+     * @see #getProgramTableIcons(Program)
+     */
+    public String getProgramTableIconText() {
+        return mLocalizer.msg("icon", "Rating");
+    }
+
+    /**
+     * Gets the icons this Plugin provides for the given program. These icons
+     * will be shown in the program table under the start time.
+     * <p>
+     * Return <code>null</code> if your plugin does not provide this feature.
+     * 
+     * @param program
+     *            The programs to get the icons for.
+     * @return The icons for the given program or <code>null</code>.
+     * @see #getProgramTableIconText()
+     */
+    public Icon[] getProgramTableIcons(Program program) {
+        Rating rating;
+
+        if (_settings.getProperty("ownRating", "").equalsIgnoreCase("true")) {
+            rating = _tvraterDB.getPersonalRating(program);
+            if (rating != null) {
+                Icon[] iconArray = { new RatingIcon(rating,
+                        RatingIcon.PERSONALRATING)};
+                return iconArray;
+            }
+        }
+
+        rating = _tvraterDB.getOverallRating(program);
+        if (rating != null) {
+            Icon[] iconArray = { new RatingIcon(rating,
+                    RatingIcon.OVERALLRATING)};
+            return iconArray;
+        }
+
+        if (_settings.getProperty("ownRating", "").equalsIgnoreCase("false")) {
+            rating = _tvraterDB.getPersonalRating(program);
+            if (rating != null) {
+                Icon[] iconArray = { new RatingIcon(rating,
+                        RatingIcon.PERSONALRATING)};
+                return iconArray;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the Database for the Ratings
+     * 
+     * @return Rating-Database
+     */
+    public Database getDatabase() {
+        return _tvraterDB;
+    }
+
+    /**
+     * Returns the Settings for this Plugin
+     * 
+     * @return Settings
+     */
+    public Properties getSettings() {
+        return _settings;
+    }
+
+    /**
+     * Called by the host-application during start-up.
+     * 
+     * @see #writeData(ObjectOutputStream)
+     */
+    public void readData(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        _tvraterDB.readData(in);
+    }
+
+    /**
+     * Counterpart to loadData. Called when the application shuts down.
+     * 
+     * @see #readData(ObjectInputStream)
+     */
+    public void writeData(ObjectOutputStream out) throws IOException {
+        _tvraterDB.writeData(out);
+    }
+
+    /**
+     * Gets the parent frame.
+     * <p>
+     * The parent frame may be used for showing dialogs.
+     * 
+     * @return The parent frame.
+     */
+    public java.awt.Frame getParentFrameForTVRater() {
+
+        return getParentFrame();
+    }
+
+    /**
+     * Calls Update-Thread when the TvData has Changed
+     */
+    public void handleTvDataChanged() {
+        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 4) {
+            updateDB();
+        }
+
+    }
+
+    private void updateDB() {
+        final TVRaterPlugin tvrater = this;
+
+        Thread updateThread = new Thread() {
+
+            public void run() {
+                System.out.println("Updater gestartet");
+                Updater up = new Updater(tvrater);
+                up.run();
+            }
+        };
+        updateThread.start();
+    }
+
 }
