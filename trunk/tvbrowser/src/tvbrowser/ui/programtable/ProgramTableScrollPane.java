@@ -26,9 +26,17 @@
 
 package tvbrowser.ui.programtable;
 
+import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
+
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+
 
 import devplugin.Channel;
 
@@ -37,16 +45,27 @@ import devplugin.Channel;
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramTableScrollPane extends JScrollPane
-  implements ProgramTableModelListener
+  implements ProgramTableModelListener, FocusListener
 {
   
   private ProgramTable mProgramTable;
   private ChannelPanel mChannelPanel;
   
+  private boolean mBorderPainted;
+  
+  private Border mDefaultBorder = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(1,1,1,1),BorderFactory.createLineBorder(Color.gray));
+  
+  private Border mFocusBorder = new LineBorder(Color.gray,2);
+  
   /**
    * Creates a new instance of ProgramTableScrollPane.
    */
   public ProgramTableScrollPane(ProgramTableModel model) {
+    
+    setFocusable(true);    
+    addFocusListener(this);
+    
+    
     mProgramTable = new ProgramTable(model);
     model.addProgramTableModelListener(this);
     
@@ -61,7 +80,11 @@ public class ProgramTableScrollPane extends JScrollPane
     setColumnHeaderView(mChannelPanel);
      
     setOpaque(false);
+    setBorder(mDefaultBorder);
     
+    getHorizontalScrollBar().setFocusable(false);
+    getVerticalScrollBar().setFocusable(false);
+        
   }
   
   
@@ -83,7 +106,6 @@ public class ProgramTableScrollPane extends JScrollPane
       mProgramTable.getModel().getShownChannels()); 
     setColumnHeaderView(mChannelPanel);
     this.updateUI();
-    //mChannelPanel.updateUI();
   }
   
   public void setColumnWidth(int columnWidth) {
@@ -146,4 +168,34 @@ public class ProgramTableScrollPane extends JScrollPane
   public void tableCellUpdated(int col, int row) {
   }
 
+  public void setBorderPainted(boolean borderPainted) {
+    if (borderPainted!=mBorderPainted) {
+      mBorderPainted=borderPainted;
+      if (mBorderPainted) {
+        setBorder(mFocusBorder);
+      }
+      else {
+        setBorder(mDefaultBorder);
+      }
+    }
+  }
+
+	
+	public void focusGained(FocusEvent arg0) {
+    setBorderPainted(true);
+	}
+
+
+
+	
+	public void focusLost(FocusEvent arg0) {
+    setBorderPainted(false);
+	}
+
+
+
 }
+
+
+
+//class ProgramTableBorder 

@@ -72,8 +72,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(MainFrame.class);
 
-  // private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
-
+ 
   private JDialog mConfigAssistantDialog;
   private SoftwareUpdateItem[] mSoftwareUpdateItems=null;
   private ProgramTableScrollPane mProgramTableScrollPane;
@@ -246,15 +245,14 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
 
-   finderPanel=FinderPanel.getInstance();
-   finderPanel.setDateListener(this);
-   dateChanged(new devplugin.Date());
+    finderPanel=FinderPanel.getInstance();
+    finderPanel.setDateListener(this);
+    dateChanged(new devplugin.Date(), null);
     
     mDefaultToolBar=new HorizontalToolBar(this,new FilterChooser(this,mProgramTableModel));
     mDateTimeToolBar=new VerticalToolBar(this,finderPanel);
     
-   
-  
+      
     
     JLabel lb=mStatusBar.getLabel();
     new MenuHelpTextAdapter(settingsMenuItem, mLocalizer.msg("menuinfo.settings",""), lb); 
@@ -275,7 +273,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     skinPanel.add(mStatusBar,BorderLayout.SOUTH);
 
     jcontentPane.add(skinPanel,BorderLayout.CENTER);
-
+    
   }
 
   public JLabel getStatusBarLabel() {
@@ -548,23 +546,29 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    * Called when new TV data was downloaded or when TV data was imported.
    */
   private void newTvDataAvailable() {
-    changeDate(finderPanel.getSelectedDate());
+    changeDate(finderPanel.getSelectedDate(), null);
   }
 
 
-  private void changeDate(Date date) {      
-    mStatusBar.getProgressBar().setMaximum(100);
-    mProgramTableModel.setDate(date);
+  private void changeDate(Date date, devplugin.ProgressMonitor monitor) {      
+    //mStatusBar.getProgressBar().setMaximum(100);
+    
+    
+    mProgramTableModel.setDate(date, monitor);
+    
 
+/*
     if (finderPanel != null) {
       finderPanel.update();
     }
+*/    
+    
     if (date.equals(new devplugin.Date())) {
       // If this is today -> scroll to now
       scrollToNow();
     }
     
-    mStatusBar.getProgressBar().setValue(0);
+    //mStatusBar.getProgressBar().setValue(0);
   }
 
 
@@ -572,8 +576,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   /**
    * Implementation of Interface DateListener
    */
-  public void dateChanged(final devplugin.Date date) { 
-      changeDate(date);
+  public void dateChanged(final devplugin.Date date, devplugin.ProgressMonitor monitor) { 
+      changeDate(date, monitor);
   }
 
 
@@ -689,7 +693,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
     if (Settings.settingHasChanged(new String[]{"programpanel.iconPlugins","programpanel.infoFields"})) {
       // Force a recreation of the table content
-      mProgramTableModel.setDate(finderPanel.getSelectedDate());
+      mProgramTableModel.setDate(finderPanel.getSelectedDate(),null);
     }
   }
   
