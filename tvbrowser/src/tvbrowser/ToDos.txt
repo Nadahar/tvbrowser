@@ -32,7 +32,7 @@ java.lang.NullPointerException
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 - Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
 
-Bugs (Achtung: es exisiteren weitere Bugs auf SF!!) :
+Bugs (Achtung: es existieren weitere Bugs auf SF!!) :
 - Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
 - Exception bei Drag&-Drop in der Toolbar: java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
 - Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert, 
