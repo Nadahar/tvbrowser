@@ -28,6 +28,10 @@
 package primarydatamanager.primarydataservice;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import primarydatamanager.primarydataservice.util.Entities;
 
 public class EntryReader {
  
@@ -48,25 +52,34 @@ public class EntryReader {
   
    
   
-  private String convertString(String s) {
-    
-       StringBuffer buf=new StringBuffer(s);
-    
-       replace(buf,"&nbsp;",' ');
-       replace(buf,"&#196;",'\u00c4');
-       replace(buf,"&#214;",'\u00d6');
-       replace(buf,"&#220;",'\u00dc');
-       replace(buf,"&#228;",'\u00e4');
-       replace(buf,"&#246;",'\u00f6');
-       replace(buf,"&#252;",'\u00fc');
-       replace(buf,"&#223;",'\u00df'); 
-       replace(buf,"&quot;",'\"');  
-       replace(buf,"&#8222;",'\"');
-       replace(buf,"&#8220;",'\"');
-       replace(buf,"&amp;",'&');
-     
-    
-       return buf.toString();
+  private String replaceEntity(String line, int from, int to) {
+    String entity=line.substring(from,to+1);
+    StringBuffer newLine=new StringBuffer(line);
+    newLine.replace(from,to+1,Entities.decode(entity));
+    return newLine.toString();
+  }
+  
+  private String convertString(String line) {
+    //String oldLine=line;
+    int from=0;
+    while (from<line.length()) {
+      
+      if (line.charAt(from)=='&') {
+        int to=from+1;
+        while (to<line.length()) {
+          if (line.charAt(to)==';') {
+            line=replaceEntity(line,from,to);
+            break;
+          }
+          to++;
+        }        
+      }
+      from++;
+      
+    }
+    //if (!line.equals(oldLine))
+    //System.out.println(line+" WAS "+oldLine);
+    return line;
      }
   
   public Entry next() throws IOException {
