@@ -40,7 +40,7 @@ import devplugin.Version;
  * This Plugin gives the User the possibility to rate a Movie
  * 
  * TODO: Get Personal Ratings from Server 
- * TODO: Rate Episodes not, the hole Series 
+ * TODO: Rate Episodes not, the whole Series 
  * 
  * @author Bodo Tasche
  */
@@ -264,7 +264,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * Calls Update-Thread when the TvData has Changed
      */
     public void handleTvDataChanged() {
-        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 4) {
+        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3) {
             updateDB();
         }
 
