@@ -292,7 +292,7 @@ public class DataService implements devplugin.PluginManager {
 			}
 	);
 			    
-   
+   if (fList==null) return false;
    return fList.length>0;
    
    

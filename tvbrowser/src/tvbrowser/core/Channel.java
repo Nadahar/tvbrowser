@@ -4,32 +4,33 @@ public class Channel implements java.io.Serializable, devplugin.Channel {
 
     private String name;
     private int id;
-    private int pos;
-    public static final int NOT_SUBSCRIBED=-1;
+  //  private int pos;
+ //   public static final int NOT_SUBSCRIBED=-1;
 
     public Channel(String name, int id) {
         this.name=name;
         this.id=id;
-        pos=NOT_SUBSCRIBED;
+     //   pos=NOT_SUBSCRIBED;
 
     }
 
-    public void unsubscribe() {
+  /*  public void unsubscribe() {
         pos=NOT_SUBSCRIBED;
     }
-
+*/
     public String toString() {
-        return name+" ("+id+") pos: "+pos;
+       // return name+" ("+id+") pos: "+pos;
+       return name;
     }
 
-    public void setPos(int pos) {
+  /*  public void setPos(int pos) {
         this.pos=pos;
-    }
+    }*/
 
-    public int getPos() {
+   /* public int getPos() {
         return pos;
     }
-
+*/
     public String getName() {
         return name;
     }
@@ -43,7 +44,7 @@ public class Channel implements java.io.Serializable, devplugin.Channel {
         return (ch.getId()==id);
     }
 
-    public boolean isSubscribed() {
+  /*  public boolean isSubscribed() {
         return pos!=NOT_SUBSCRIBED;
-    }
+    }*/
 }

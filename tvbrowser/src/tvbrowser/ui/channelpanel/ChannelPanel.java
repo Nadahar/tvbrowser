@@ -51,11 +51,13 @@ public class ChannelPanel extends JPanel {
 
         while (enum.hasMoreElements()) {
             Channel ch=(Channel)enum.nextElement();
-             if (ch.isSubscribed()) {
-                labels[ch.getPos()]=new JLabel(ch.getName());
-                labels[ch.getPos()].setOpaque(false);
-                labels[ch.getPos()].setHorizontalAlignment(JLabel.CENTER);
-                labels[ch.getPos()].setPreferredSize(new Dimension(colWidth,15));
+            // if (ch.isSubscribed()) {
+            if (ChannelList.isSubscribedChannel(ch.getId())) {
+            	int pos=ChannelList.getPos(ch.getId());
+                labels[pos]=new JLabel(ch.getName());
+                labels[pos].setOpaque(false);
+                labels[pos].setHorizontalAlignment(JLabel.CENTER);
+                labels[pos].setPreferredSize(new Dimension(colWidth,15));
             }
 
         }

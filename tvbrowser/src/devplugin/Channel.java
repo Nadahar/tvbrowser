@@ -36,7 +36,7 @@ public interface Channel {
    * Returns the channel position (ranking by the user) or -1, if the channel
    * is not subscribed.
    */
-    public int getPos();
+  //  public int getPos();
 
     /**
      * Returns the name of the channel.
@@ -53,5 +53,5 @@ public interface Channel {
     /**
      * Returns true, if the channel is subscribed
      */
-    public boolean isSubscribed();
+ //   public boolean isSubscribed();
 }

@@ -62,20 +62,30 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     Enumeration enum=ChannelList.getChannels();
 
     Channel[] subscribedChannels=new Channel[ChannelList.getNumberOfSubscribedChannels()];
-
+System.out.println("soweit ok");
     while (enum.hasMoreElements()) {
       ch=(Channel)enum.nextElement();
-      if (ch.isSubscribed()) {
-        subscribedChannels[ch.getPos()]=ch;
+      System.out.println("channel "+ch.getName());
+      //if (ch.isSubscribed()) {
+      if (ChannelList.isSubscribedChannel(ch.getId())) {
+      	System.out.println("is subscribed");
+      //  subscribedChannels[ch.getPos()]=ch;
+     	int pos=ChannelList.getPos(ch.getId());
+      	subscribedChannels[pos]=ch;
       }else{
         panel.addElementLeft(ch.getName());
+        System.out.println("is NOT subscribed");
       }
     }
+    System.out.println("done");
+    
+    System.out.println("subscribedChannel.length: "+subscribedChannels.length);
 
     for (int i=0;i<subscribedChannels.length;i++) {
       panel.addElementRight(subscribedChannels[i].getName());
     }
 
+System.out.println("DONE!");
 
 
   }

@@ -75,7 +75,9 @@ class ProgramDayTime extends JPanel {
   }
 
   public void addProgram(tvdataloader.AbstractProgram p) {
-    int col=p.getChannel().getPos();
+  //  int col=p.getChannel().getPos();
+    int col=ChannelList.getPos(p.getChannel().getId());
+    
     if (col<0) {
       throw new RuntimeException("cannot add program from channel "+p.getChannel());
 
@@ -197,8 +199,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
       part[i]=new ProgramDayTime(ChannelList.getNumberOfSubscribedChannels());
     }
 
-    long time_2=System.currentTimeMillis();
-
+ 
     ProgramPanelFactory.reset();
 
     if (dayProgram != null) {
@@ -213,10 +214,18 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
         curDayProgram=(tvdataloader.AbstractChannelDayProgram)iterator.next();
 
         progs=curDayProgram.getPrograms();
+        
+        
+        
+        
         while (progs.hasNext()) {
           curProgram=(tvdataloader.AbstractProgram)progs.next();
           h=curProgram.getHours();
           int inx=h/((24/part.length));
+          
+          devplugin.Channel channel=curProgram.getChannel();
+         // System.out.println("title: "+curProgram.getTitle()+" pos: "+channel.getPos()+" "+channel.getName());
+          
           part[inx].addProgram(curProgram);
         }
       }
@@ -339,7 +348,9 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
    * interface ScrollableTablePanel
    */
   public void scrollTo(Channel ch) {
-    int pos=ch.getPos();
+    //int pos=ch.getPos();
+    int pos=ChannelList.getPos(ch.getId());
+    
     int y=(int)scrollPane.getViewport().getViewPosition().getY();
 
     int x=centerPanel.getWidth()/ChannelList.getNumberOfSubscribedChannels()*pos;
