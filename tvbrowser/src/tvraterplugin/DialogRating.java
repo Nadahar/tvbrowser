@@ -236,12 +236,28 @@ public class DialogRating extends JDialog {
         detailsButtons.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?showId=" + _overallrating.getIntValue(Rating.ID));
+                int id = 0;
+                
+                if (_overallrating != null) {
+                    id = _overallrating.getIntValue(Rating.ID);
+                }
+                
+                if ((_personalrating != null) && (id <= 0)){
+                    id = _personalrating.getIntValue(Rating.ID);
+                }
+                
+                BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?showId=" + id);
             }
         });
 
         if ((_overallrating == null) || ( _overallrating.getIntValue(Rating.ID) < 0)) {
             detailsButtons.setEnabled(false);
+            System.out.println("wow");
+        }
+        
+        if ((_personalrating != null) && ( _personalrating.getIntValue(Rating.ID) > 0)) {
+            detailsButtons.setEnabled(true);
+            System.out.println("wow3");
         }
         
         leftbuttonPanel.add(detailsButtons);
@@ -382,12 +398,14 @@ public class DialogRating extends JDialog {
                     str = "0" + str;
                 }
                 
-                ratingPanel.add(new JLabel(
-                    	RatingIconTextFactory.getGenres().getProperty( 
-                    	        	str, 
-                    	        	"[TRANSLATIONERROR:" + 
-                    	        	str + " ]"))
-                    	        	, c);
+                String text = "";
+                if (RatingIconTextFactory.getGenres().containsKey(str)) {
+                    text = RatingIconTextFactory.getGenres().getProperty(str);
+                } else {
+                    text = RatingIconTextFactory.getGenres().getProperty("999");
+                }
+                
+                ratingPanel.add(new JLabel(text), c);
             } else {
                 ratingPanel.add(new JLabel("-"), c);
             }
