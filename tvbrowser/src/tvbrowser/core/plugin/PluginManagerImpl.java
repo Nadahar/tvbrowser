@@ -318,23 +318,7 @@ public class PluginManagerImpl implements PluginManager {
    * @since 1.1
    */
   public void handleProgramDoubleClick(Program program) {
-    if (program == null) {
-      // Nothing to do
-      return;
-    }
-    
-    PluginAccess defaultContextMenuPlugin
-      = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
-    if (defaultContextMenuPlugin != null) {
-      ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
-      Action action = menu.getAction();
-      if (action != null) {
-        ActionEvent evt = new ActionEvent(program, 0, null);
-        action.actionPerformed(evt);
-      }
-
-    }
-    
+    handleProgramDoubleClick(program, null);
   }
   
   /**
@@ -355,7 +339,12 @@ public class PluginManagerImpl implements PluginManager {
     
     PluginAccess defaultContextMenuPlugin
       = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
-    if (defaultContextMenuPlugin != null && !defaultContextMenuPlugin.getId().equals(caller.getId())) {
+    
+    if ((caller != null)  && (defaultContextMenuPlugin.getId().equals(caller.getId()))) {
+      return;
+    }
+    
+    if (defaultContextMenuPlugin != null) {
       ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
       Action action = menu.getAction();
       if (action != null) {
