@@ -4,6 +4,7 @@
 package devplugin;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import util.ui.ImageUtilities;
 
@@ -81,8 +82,7 @@ public class ProgramInfoHelper {
      * @return created Icon
      */
     private static Icon createIcon(String fileName) {
-        return ImageUtilities.createImageIconFromJar("imgs/" + fileName,
-                ProgramInfoHelper.class);
+        return new ImageIcon("imgs/" + fileName);
     }
 
 }
