@@ -161,6 +161,7 @@ public class DataService implements devplugin.PluginManager {
       tvdataDir.mkdir();
     }
     
+
     // Create a interactor that translates the database orders
     TvDataBase dataBaseInteractor = new TvDataBase() {
       public void updateDayProgram(MutableChannelDayProgram program) {
@@ -179,6 +180,7 @@ public class DataService implements devplugin.PluginManager {
     
     // Get the start date
     devplugin.Date startDate = new Date().addDays(-1);
+    
     
     // Split the subsribed channels by data service
     Channel[] subscribedChannels = ChannelList.getSubscribedChannels();
@@ -216,7 +218,9 @@ public class DataService implements devplugin.PluginManager {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
       ErrorHandler.handle(msg, downloadException);
     }
-
+   
+    
+    
     // Let the plugins react on the new data
     PluginManager.fireTvDataChanged();
     

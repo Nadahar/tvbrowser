@@ -146,7 +146,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
       cl.show(mCardPn,mCurCardPanel.toString());
       
       if (mCurCardPanel==mFinishedPanel) {
-        mCancelBt.setText("Finish");
+        mCancelBt.setText(mLocalizer.msg("finish","Finish"));
         mNextBt.setEnabled(false);
         mBackBt.setEnabled(false);
       }
