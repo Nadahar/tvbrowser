@@ -469,32 +469,16 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       showSettingsDialog();
     }
     else if (src==donorMenuItem) {
-      try {
-        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.donors",""));
-      }catch(java.io.IOException e) {
-        ErrorHandler.handle(e.getLocalizedMessage(),e);
-      }
+      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.donors",""));
     }
     else if (src==faqMenuItem) {
-      try {
-        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.faq",""));
-      }catch(java.io.IOException e) {
-        ErrorHandler.handle(e.getLocalizedMessage(),e);
-      }
+      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.faq",""));
     }
     else if (src==forumMenuItem) {
-      try {
-        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.forum",""));
-      }catch(java.io.IOException e) {
-        ErrorHandler.handle(e.getLocalizedMessage(),e);
-      }
+      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.forum",""));      
     }
     else if (src==websiteMenuItem) {
-      try {
-        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.tvbrowser",""));
-      }catch(java.io.IOException e) {
-        ErrorHandler.handle(e.getLocalizedMessage(),e);
-      }
+      util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.tvbrowser",""));
     }
     else if (src==configAssistantMenuItem) {
       runSetupAssistant();
@@ -837,16 +821,13 @@ public void showHelpDialog() {
   Locale locale=Locale.getDefault();
   String language=locale.getLanguage();
       
-  try {
+  
     java.io.File indexFile = new java.io.File("help/"+language+"/index.html");
     if (!indexFile.exists()) {
       indexFile = new java.io.File("help/default/index.html");
-    }    
-    util.ui.BrowserLauncher.openURL("file://"+indexFile.getAbsolutePath());
-  }catch(java.io.IOException e) {
-    e.printStackTrace();
-    ErrorHandler.handle(e.getLocalizedMessage(),e);
-  }
+    } 
+    util.ui.BrowserLauncher.openURL(indexFile.getAbsolutePath());
+  
   
 }
 

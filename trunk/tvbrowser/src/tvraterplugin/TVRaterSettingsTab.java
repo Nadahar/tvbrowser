@@ -117,11 +117,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 
 		newAccount.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?Page=newuser");
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?Page=newuser");
 			}
 		});
 
@@ -131,11 +127,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 
 		lostPassword.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?Page=lostpasswd");
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?Page=lostpasswd");
 			}
 		});
 

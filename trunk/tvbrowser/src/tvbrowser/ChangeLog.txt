@@ -1,5 +1,9 @@
 Changelog TVBrowser
 
+0.9.7.4:
+- made webbrowser choosable
+
+
 0.9.7.3:
 - added downnload status info
 - Extended program table

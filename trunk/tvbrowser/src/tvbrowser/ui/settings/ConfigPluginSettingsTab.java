@@ -29,7 +29,7 @@ package tvbrowser.ui.settings;
 import javax.swing.*;
 
 import tvbrowser.core.PluginLoader;
-import tvbrowser.core.PluginManager;
+
 
 import java.awt.*;
 

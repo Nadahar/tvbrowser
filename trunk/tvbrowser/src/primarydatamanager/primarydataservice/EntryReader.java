@@ -28,8 +28,7 @@
 package primarydatamanager.primarydataservice;
 
 import java.io.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import primarydatamanager.primarydataservice.util.Entities;
 
@@ -77,8 +76,6 @@ public class EntryReader {
       from++;
       
     }
-    //if (!line.equals(oldLine))
-    //System.out.println(line+" WAS "+oldLine);
     return line;
      }
   

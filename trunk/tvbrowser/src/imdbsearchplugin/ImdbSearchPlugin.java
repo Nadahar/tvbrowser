@@ -26,7 +26,6 @@
 
 package imdbsearchplugin;
 
-import java.io.IOException;
 
 import util.ui.BrowserLauncher;
 import devplugin.PluginInfo;
@@ -60,13 +59,9 @@ public class ImdbSearchPlugin extends devplugin.Plugin {
   		
   		public void execute(Program program) {
   			String search = program.getTitle();
-  			search = search.trim().replace(' ', '+');
-  			
-  			try {
-				BrowserLauncher.openURL("http://www.imdb.com/Tsearch?title=" + search);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+  			search = search.trim().replace(' ', '+');  			
+  			BrowserLauncher.openURL("http://www.imdb.com/Tsearch?title=" + search);
+			
   		}
   		
   		public String getMarkIconName() {

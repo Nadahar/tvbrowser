@@ -259,7 +259,7 @@ public class TVBrowser {
       JMenuItem quitMenuItem = new JMenuItem("Quit");
       trayMenu.add(openMenuItem);
       trayMenu.add(quitMenuItem);  
-    
+   
       openMenuItem.setEnabled(false);
     
       openMenuItem.addActionListener(new java.awt.event.ActionListener() {

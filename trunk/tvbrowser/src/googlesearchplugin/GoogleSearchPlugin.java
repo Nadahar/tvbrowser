@@ -26,7 +26,6 @@
 
 package googlesearchplugin;
 
-import java.io.IOException;
 
 import util.ui.BrowserLauncher;
 import devplugin.PluginInfo;
@@ -60,13 +59,9 @@ public class GoogleSearchPlugin extends devplugin.Plugin {
   		
   		public void execute(Program program) {
   			String search = program.getTitle();
-  			search = search.trim().replace(' ', '+');
-  			
-  			try {
-				BrowserLauncher.openURL("http://www.google.com/search?q=" + search);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+  			search = search.trim().replace(' ', '+');  			
+  			BrowserLauncher.openURL("http://www.google.com/search?q=" + search);
+			
   		}
   		
   		public String getMarkIconName() {

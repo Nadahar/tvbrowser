@@ -32,11 +32,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import devplugin.Plugin;
-import devplugin.SettingsTab;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
 import tvbrowser.core.PluginStateListener;
-import tvbrowser.core.Settings;
 import tvbrowser.ui.customizableitems.SortableItemList;
 
  

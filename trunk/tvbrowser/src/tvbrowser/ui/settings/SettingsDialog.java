@@ -38,7 +38,7 @@ import devplugin.SettingsTab;
 import devplugin.Plugin;
 
 import tvbrowser.core.PluginLoader;
-import tvbrowser.core.PluginManager;
+
 
 /**
  *

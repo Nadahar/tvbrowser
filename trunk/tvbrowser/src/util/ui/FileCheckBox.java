@@ -42,55 +42,55 @@ public class FileCheckBox extends JComponent {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FileCheckBox.class);
   
-  protected String title;
-  protected File file;
-  protected JCheckBox checkbox;
-  protected JTextField textfield;
-  protected JButton choosebtn;
-  protected JFileChooser fileChooser;
+  protected String mTitle;
+  //protected File mFile;
+  protected JCheckBox mCheckbox;
+  protected JTextField mTextfield;
+  protected JButton mChoosebtn;
+  protected JFileChooser mFileChooser;
 
   
   
   public FileCheckBox(String title, File file, int tab) {
-    this.title=title;
-    this.file=file;
+    mTitle=title;
+    //mFile=file;
 
     this.setLayout(new BorderLayout(5,0));
 
-    checkbox=new JCheckBox(title);
+    mCheckbox=new JCheckBox(title);
     if (file!=null) {
-      textfield=new JTextField(file.getAbsolutePath());
+      mTextfield=new JTextField(file.getAbsolutePath());
     }else{
-      textfield=new JTextField("");
+      mTextfield=new JTextField("");
     }
 
     if (tab>0) {
-      Dimension dim=textfield.getPreferredSize();
-      checkbox.setPreferredSize(new Dimension(tab,(int)dim.getHeight()));
+      Dimension dim=mTextfield.getPreferredSize();
+      mCheckbox.setPreferredSize(new Dimension(tab,(int)dim.getHeight()));
     }
 
-    choosebtn=new JButton(mLocalizer.msg("change", "Change"));
+    mChoosebtn=new JButton(mLocalizer.msg("change", "Change"));
 
-    add(checkbox,BorderLayout.WEST);
-    add(textfield,BorderLayout.CENTER);
-    add(choosebtn,BorderLayout.EAST);
+    add(mCheckbox,BorderLayout.WEST);
+    add(mTextfield,BorderLayout.CENTER);
+    add(mChoosebtn,BorderLayout.EAST);
 
-    checkbox.addActionListener(new ActionListener() {
+    mCheckbox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        setSelected(checkbox.isSelected());
+        setSelected(mCheckbox.isSelected());
       }
     }
     );
 
-    choosebtn.addActionListener(new ActionListener() {
+    mChoosebtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        if (fileChooser==null) {
-          fileChooser=new JFileChooser();
+        if (mFileChooser==null) {
+          mFileChooser=new JFileChooser();
         }
-        fileChooser.showOpenDialog(getParent());
-        File f=fileChooser.getSelectedFile();
+        mFileChooser.showOpenDialog(getParent());
+        File f=mFileChooser.getSelectedFile();
         if (f!=null) {
-          textfield.setText(f.getAbsolutePath());
+          mTextfield.setText(f.getAbsolutePath());
         }
       }
     }
@@ -98,40 +98,52 @@ public class FileCheckBox extends JComponent {
   }
 
   public void setFileChooser(JFileChooser chooser) {
-    fileChooser=chooser;
+    mFileChooser=chooser;
   }
 
 
   public void setSelected(boolean value) {
-    checkbox.setSelected(value);
-    textfield.setEnabled(value);
-    choosebtn.setEnabled(value);
+    mCheckbox.setSelected(value);
+    mTextfield.setEnabled(value);
+    mChoosebtn.setEnabled(value);
   }
 
   public boolean isSelected() {
-    return checkbox.isSelected();
+    return mCheckbox.isSelected();
+  }
+  
+  public void setFile(File f) {
+    if (f!=null) {
+      mTextfield.setText(f.getAbsolutePath());
+    }else{
+      mTextfield.setText("");
+    }
+  }
+  
+  public File getFile() {
+    return new File(mTextfield.getText());
   }
 
   public void setEnabled(boolean value) {
-    checkbox.setEnabled(value);
-    textfield.setEnabled(value);
-    choosebtn.setEnabled(value);
+    mCheckbox.setEnabled(value);
+    mTextfield.setEnabled(value);
+    mChoosebtn.setEnabled(value);
   }
 
   public boolean isEnabled() {
-    return textfield.isEnabled();
+    return mTextfield.isEnabled();
   }
 
   public JTextField getTextField() {
-    return textfield;
+    return mTextfield;
   }
 
   public JCheckBox getCheckBox() {
-    return checkbox;
+    return mCheckbox;
   }
 
   public JButton getButton() {
-    return choosebtn;
+    return mChoosebtn;
   }
 
 }
