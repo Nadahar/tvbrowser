@@ -28,11 +28,13 @@ package tvbrowser.core;
 
 import java.io.*;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import java.util.zip.*;
+import java.util.regex.*;
 
 import java.net.URL;
 
@@ -42,6 +44,7 @@ import util.exc.*;
 import util.io.IOUtilities;
 
 import devplugin.Date;
+import devplugin.Program;
 import tvdataloader.*;
 
 /**
@@ -489,6 +492,8 @@ public class DataService implements devplugin.PluginManager {
     return null;
   }
 
+  
+  
   public tvbrowser.ui.ContextMenu createPluginContextMenu(java.awt.Frame parent) {
 	tvbrowser.ui.ContextMenu menu=new tvbrowser.ui.ContextMenu(parent);
 	Object[] plugins=PluginManager.getInstalledPlugins();
@@ -497,6 +502,8 @@ public class DataService implements devplugin.PluginManager {
 		}
 	return menu;
   }
+  
+  
   
   /**
    * Imports previously exported tv data.
@@ -594,5 +601,81 @@ public class DataService implements devplugin.PluginManager {
       }
     }
   }
+  
+  
+
+  /**
+   * Searches the data for programs which match a regular expression.
+   *
+   * @param regex The regular expression programs must match to.
+   * @param inTitle Should be searched in the title?
+   * @param inText Should be searched in the desription?
+   * @param caseSensitive Should the search be case sensitive?
+   * @param channels The channels to search in.
+   * @param startDate The date to start the search.
+   * @param nrDays The number of days to include after the start date. If
+   *        negative the days before the start date are used.
+   */
+  public devplugin.Program[] search(String regex, boolean inTitle, boolean inText,
+    boolean caseSensitive, devplugin.Channel[] channels,
+    devplugin.Date startDate, int nrDays)
+    throws TvBrowserException
+  {
+    int flags = 0;
+    if (! caseSensitive) {
+      flags &= Pattern.CASE_INSENSITIVE;
+    }
+
+    Pattern pattern = Pattern.compile(regex, flags);
+    
+    if (nrDays < 0) {
+      startDate.addDays(nrDays);
+      nrDays = 0 - nrDays;
+    }
+    
+    ArrayList hitList = new ArrayList();
+    int missingDataCount = 0;
+    for (int day = 0; day <= nrDays; day++) {
+      for (int channelIdx = 0; channelIdx < channels.length; channelIdx++) {
+        devplugin.Channel channel = channels[channelIdx];
+        Iterator programIter = getChannelDayProgram(startDate, channel);
+        if (programIter == null) {
+          // Give up if we didn't get data for tenth time
+          missingDataCount++;
+          if (missingDataCount > 10) {
+            // There is no more data -> stop
+            day = nrDays;
+          }
+        } else {
+          while (programIter.hasNext()) {
+            Program prog = (Program) programIter.next();
+            boolean matches = false;
+            
+            if (inTitle) {
+              Matcher matcher = pattern.matcher(prog.getTitle());
+              matches = matcher.matches();
+            }
+            if ((! matches) && inText) {
+              Matcher matcher = pattern.matcher(prog.getDescription());
+              matches = matcher.matches();
+            }
+            
+            if (matches) {
+              hitList.add(prog);
+            }
+          }
+        }
+      }
+      
+      // The next day
+      startDate.addDays(1);
+    }
+    
+    Program[] hitArr = new Program[hitList.size()];
+    hitList.toArray(hitArr);
+    
+    return hitArr;
+  }
+  
 
 }

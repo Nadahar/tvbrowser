@@ -37,15 +37,25 @@ import util.ui.Localizer;
  */
 public class TvBrowserException extends Exception {
   
+  /** The class whichs localizer should be used to get the localized error message. */  
   private Class mMsgClass;
+  /** The key of the error message. */  
   private String mMsgKey;
+  /** The deafault error message (english). */  
   private String mDefaultMsg;
+  /** The arguments to parse into the error message. */  
   private Object[] mMsgArgs;
 
   
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
     Object msgArg1)
@@ -57,6 +67,13 @@ public class TvBrowserException extends Exception {
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
+   * @param msgArg2 The argument that should replace <CODE>{1}</CODE>.
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
     Object msgArg1, Object msgArg2)
@@ -68,6 +85,14 @@ public class TvBrowserException extends Exception {
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
+   * @param msgArg2 The argument that should replace <CODE>{1}</CODE>.
+   * @param msgArg3 The argument that should replace <CODE>{2}</CODE>.
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
     Object msgArg1, Object msgArg2, Object msgArg3)
@@ -79,6 +104,13 @@ public class TvBrowserException extends Exception {
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArgs The arguments that should replace the appropriate place holder.
+   *        See {@link java.text.MessageFormat} for details.
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
     Object[] msgArgs)
@@ -90,6 +122,13 @@ public class TvBrowserException extends Exception {
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
+   * @param cause The exception that causes this exception. (nested exception).
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
     Object msgArg1, Throwable cause)
@@ -101,6 +140,14 @@ public class TvBrowserException extends Exception {
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
+   * @param msgArg2 The argument that should replace <CODE>{1}</CODE>.
+   * @param cause The exception that causes this exception. (nested exception).
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
     Object msgArg1, Object msgArg2, Throwable cause)
@@ -112,6 +159,15 @@ public class TvBrowserException extends Exception {
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
+   * @param msgArg2 The argument that should replace <CODE>{1}</CODE>.
+   * @param msgArg3 The argument that should replace <CODE>{2}</CODE>.
+   * @param cause The exception that causes this exception. (nested exception).
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
     Object msgArg1, Object msgArg2, Object msgArg3, Throwable cause)
@@ -123,6 +179,14 @@ public class TvBrowserException extends Exception {
   
   /**
    * Creates a new instance of TvBrowserException.
+   *
+   * @param msgClass The class whichs localizer should be used to get the
+   *        localized error message.
+   * @param msgKey The key of the error message.
+   * @param defaultMsg The deafault error message (english).
+   * @param msgArgs The arguments that should replace the appropriate place holder.
+   *        See {@link java.text.MessageFormat} for details.
+   * @param cause The exception that causes this exception. (nested exception).
    */
   public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object[] msgArgs, Throwable cause)
@@ -137,6 +201,11 @@ public class TvBrowserException extends Exception {
   
   
   
+  /**
+   * Gets the error message. (NOT localized!)
+   *
+   * @return the error message. (NOT localized!)
+   */  
   public String getMessage() {
     if (mMsgArgs == null) {
       return mDefaultMsg;
@@ -149,6 +218,8 @@ public class TvBrowserException extends Exception {
   
   /**
    * Gets the localized message of this exception.
+   *
+   * @return the localized message.
    */
   public String getLocalizedMessage() {
     return Localizer.getLocalizerFor(mMsgClass).msg(mMsgKey, mDefaultMsg, mMsgArgs);

@@ -28,6 +28,8 @@ package devplugin;
 
 import java.util.Iterator;
 
+import util.exc.TvBrowserException;
+
 /**
  * The PluginManager provides some usefull methods for a plugin.
  * Currently, two methods are implemented. More methods may follow.
@@ -60,5 +62,22 @@ public interface PluginManager {
    * If the requested data is not available, null is returned.
    */
   public Iterator getChannelDayProgram(devplugin.Date date, Channel channel);
+
+  /**
+   * Searches the data for programs which match a regular expression.
+   *
+   * @param regex The regular expression programs must match to.
+   * @param inTitle Should be searched in the title?
+   * @param inText Should be searched in the desription?
+   * @param caseSensitive Should the search be case sensitive?
+   * @param channels The channels to search in.
+   * @param startDate The date to start the search.
+   * @param nrDays The number of days to include after the start date. If
+   *        negative the days before the start date are used.
+   */
+  public Program[] search(String regex, boolean inTitle, boolean inText,
+    boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
+    int nrDays)
+    throws TvBrowserException;
   
 }
