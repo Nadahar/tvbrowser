@@ -143,5 +143,20 @@ public class SortableItemList extends JPanel implements ActionListener {
     
   }
   
+  /**
+   * Returns the Up-Button
+   * @return Up-Button
+   */
+  public JButton getUpButton() {
+    return mUpBt;
+  }
+  
+  /**
+   * Returns the Down-Button
+   * @return Down-Button
+   */
+  public JButton getDownButton() {
+    return mDownBt;
+  }
   
 }
