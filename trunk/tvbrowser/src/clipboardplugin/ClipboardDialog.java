@@ -160,7 +160,7 @@ public class ClipboardDialog extends JDialog {
         sendButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                showSendDialog(mPlugin);
+                showSendDialog();
             }
 
         });
@@ -263,10 +263,9 @@ public class ClipboardDialog extends JDialog {
     /**
      * Shows the Send-Dialog
      * 
-     * @param plugin Plugin that called
      * @param dialog
      */
-    private void showSendDialog(Plugin plugin) {
+    private void showSendDialog() {
         Program[] prgList = new Program[mClipList.size()];
 
         for (int i = 0; i < mClipList.size(); i++) {
