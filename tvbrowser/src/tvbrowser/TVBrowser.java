@@ -459,8 +459,6 @@ public class TVBrowser {
             }
           });
           mPluginsMenu.add(item);
-      //    new MenuHelpTextAdapter(item, plugin.getInfo().getDescription(), mStatusBar.getLabel()); 
-
         }
       }
       
