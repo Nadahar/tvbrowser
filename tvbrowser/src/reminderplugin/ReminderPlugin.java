@@ -143,7 +143,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       
     int version = in.readInt();
     
-	  mReminderList.setReminderTimerListener(null);
+    mReminderList.setReminderTimerListener(null);
     
     mReminderList.read(in);    
      

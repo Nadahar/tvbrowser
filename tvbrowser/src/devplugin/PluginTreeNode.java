@@ -140,18 +140,22 @@ public class PluginTreeNode extends DefaultMutableTreeNode {
       if (type == TYPE_NODE) {
         String title = (String)in.readObject();
         n = new PluginTreeNode(title);
+        add(n);
       }
       else if (type == TYPE_PROGRAM) {
-        //ProgramItem item = (ProgramItem)in.readObject();
         ProgramItem item = new ProgramItem();
         item.read(in);
         n = new PluginTreeNode(item);
+        if (item.getProgram() != null) {
+          add(n);
+        }
       }
       else {
         throw new IOException("invalid type: "+type);
       }
-      add(n);
+
       n.load(in);
+
     }
   }
     

@@ -28,7 +28,7 @@ public class ProgramItem {
     Date date = new Date(in);
     String progId = (String)in.readObject();
     mProgram = Plugin.getPluginManager().getProgram(date, progId);
-    
+
     int keyCnt = in.readInt();
     for (int i=0; i<keyCnt; i++) {
       String key = (String)in.readObject();
