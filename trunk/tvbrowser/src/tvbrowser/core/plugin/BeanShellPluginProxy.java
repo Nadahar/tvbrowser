@@ -14,10 +14,7 @@ import javax.swing.tree.MutableTreeNode;
 import bsh.Interpreter;
 
 import util.exc.TvBrowserException;
-import devplugin.ChannelDayProgram;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
+import devplugin.*;
 import devplugin.beanshell.BeanShellScriptIf;
 
 
@@ -275,7 +272,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
   
 
    
-    public MutableTreeNode getRootNode() {
+    public PluginTreeNode getRootNode() {
       return null;
     }
     

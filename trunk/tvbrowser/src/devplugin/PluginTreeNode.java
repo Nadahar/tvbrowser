@@ -30,36 +30,193 @@ package devplugin;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.*;
+import java.lang.reflect.Array;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 import tvbrowser.ui.pluginview.PluginTreeModel;
 
 
 
-public class PluginTreeNode extends DefaultMutableTreeNode {
+public class PluginTreeNode /*extends DefaultMutableTreeNode*/ {
 
   private static int TYPE_NODE = 1;
   private static int TYPE_PROGRAM = 2;
-  
-  private int mType;
-    
+
+  public static int VIEW_TYPE_DEFAULT = 0;
+  public static int VIEW_TYPE_SORT_BY_DATE = 1;
+  public static int VIEW_TYPE_SUMMARIZE = 2;
+
+  private int mNodeType;
+  private int mViewType;
+  private ArrayList mChildNodes;
+  private Object mObject;
+
+
+  private DefaultMutableTreeNode mDefaultNode;
+
+
+  private PluginTreeNode(int type, Object o) {
+    mChildNodes = new ArrayList();
+    mNodeType = type;
+    mViewType = VIEW_TYPE_DEFAULT;
+    mObject = o;
+    mDefaultNode = new DefaultMutableTreeNode(mObject);
+  }
+
   public PluginTreeNode(String title) {
-    super(title);   
-    mType = TYPE_NODE;
+    this(TYPE_NODE, title);
   }
-    
+
+  public PluginTreeNode(Object o) {
+    this(TYPE_NODE, o);
+  }
+
   public PluginTreeNode(ProgramItem item) {
-    super(item);
-    mType = TYPE_PROGRAM;
+    this(TYPE_PROGRAM, item);
   }
-  
+
+  public MutableTreeNode getMutableTreeNode() {
+    return mDefaultNode;
+  }
+
+
+  public void setViewType(int type) {
+    if (mViewType != type) {
+      mViewType = type;
+      if (mViewType == VIEW_TYPE_SORT_BY_DATE) {
+        switchToSortByDateView();
+      }
+      else if (mViewType == VIEW_TYPE_SUMMARIZE) {
+        switchToSummarizedView();
+      }
+    }
+  }
+
+  private void switchToDefaultView() {
+
+
+  }
+
+  private void switchToSortByDateView() {
+    Map dateMap = new HashMap();
+    //mDefaultNode.getParent().
+    mDefaultNode.removeAllChildren();
+    //mDefaultNode = new DefaultMutableTreeNode(mObject);
+
+    // Walk through all child nodes and add programs into the dateMap object
+    Iterator it = mChildNodes.iterator();
+    while (it.hasNext()) {
+      PluginTreeNode n = (PluginTreeNode)it.next();
+      if (n.mNodeType == TYPE_NODE) {
+        n.switchToSortByDateView();
+        mDefaultNode.add(n.getMutableTreeNode());
+      }
+      else if (n.mNodeType == TYPE_PROGRAM) {
+        ProgramItem progItem = (ProgramItem)n.getUserObject();
+        Date date = progItem.getProgram().getDate();
+        ArrayList list = (ArrayList)dateMap.get(date);
+        if (list == null) {
+          list = new ArrayList();
+          dateMap.put(date, list);
+        }
+        list.add(progItem);
+      }
+    }
+
+    // Create the new nodes
+    Set keySet = dateMap.keySet();
+    Date[] dates = new Date[keySet.size()];
+    keySet.toArray(dates);
+    Arrays.sort(dates);
+    Date today = Date.getCurrentDate();
+    Date nextDay = today.addDays(1);
+    for (int i=0; i<dates.length; i++) {
+      String dateStr;
+      if (today.equals(dates[i])) {
+        dateStr = "heute";
+      }
+      else if (today.equals(dates[i])) {
+        dateStr = "morgen";
+      }
+      else {
+        dateStr = dates[i].toString();
+      }
+      DefaultMutableTreeNode node = new DefaultMutableTreeNode(dateStr);
+      mDefaultNode.add(node);
+      List list = (List)dateMap.get(dates[i]);
+      Iterator iterator = list.iterator();
+      while (iterator.hasNext()) {
+        ProgramItem progItem = (ProgramItem)iterator.next();
+        node.add(new DefaultMutableTreeNode(progItem));
+      }
+    }
+  /*  it = keySet.iterator();
+    while (it.hasNext()) {
+      Date d = (Date)it.next();
+      DefaultMutableTreeNode node = new DefaultMutableTreeNode(d);
+      mDefaultNode.add(node);
+      ArrayList list = (ArrayList)dateMap.get(d);
+      Iterator iterator = list.iterator();
+      while (iterator.hasNext()) {
+        ProgramItem progItem = (ProgramItem)iterator.next();
+        node.add(new DefaultMutableTreeNode(progItem));
+      }
+    } */
+
+  }
+
+  private void switchToSummarizedView() {
+
+  }
+
+  public Object getUserObject() {
+    return mObject;
+  }
+
+  public void removeAllChildren() {
+    mChildNodes.clear();
+    mDefaultNode.removeAllChildren();
+  }
+
+
+  public void add(PluginTreeNode node) {
+    mChildNodes.add(node);
+    //mDefaultNode.add(node.getMutableTreeNode());
+  }
+
+
   public void update() {
-    PluginTreeModel.getInstance().reload(this);   
+
+    switchToSortByDateView();
+
+    //dumpNode(mDefaultNode, 0);
+
+    PluginTreeModel.getInstance().reload(mDefaultNode);
+   // PluginTreeModel.getInstance().insertNodeInto(null, null, 2);
   }
-  
+
+               /*
+  private void dumpNode(DefaultMutableTreeNode node, int depth) {
+    Enumeration enum = node.children();
+    while (enum.hasMoreElements()) {
+      DefaultMutableTreeNode n = (DefaultMutableTreeNode) enum.nextElement();
+      for (int i=0; i<depth; i++) {
+          System.out.print("  ");
+      }
+      if (n.isLeaf()) {
+        System.out.println("LEAF: "+n.getUserObject());
+      }
+      else {
+        System.out.println("NODE: "+n.getUserObject());
+        dumpNode(n, depth+1);
+      }
+
+    }
+  }
+          */
   public PluginTreeNode addProgram(Program program) {
     return addProgram(new ProgramItem(program));
   }
@@ -67,47 +224,80 @@ public class PluginTreeNode extends DefaultMutableTreeNode {
   public PluginTreeNode addProgram(ProgramItem item) {
     PluginTreeNode node = new PluginTreeNode(item);
     add(node);
-    update();
     return node;
   }
-  
+
+
+  private PluginTreeNode findProgramTreeNode(PluginTreeNode root, Program prog, boolean recursive) {
+    Iterator it = root.mChildNodes.iterator();
+    while (it.hasNext()) {
+      PluginTreeNode node = (PluginTreeNode)it.next();
+      if (node.mNodeType == TYPE_NODE) {
+        if (recursive) {
+          PluginTreeNode n = findProgramTreeNode(node, prog, recursive);
+          if (n!=null) {
+            return n;
+          }
+        }
+      }
+      else if (node.mNodeType == TYPE_PROGRAM) {
+        ProgramItem item = (ProgramItem)node.getUserObject();
+        if (item.getProgram().equals(prog)) {
+          return node;
+        }
+      }
+    }
+    return null;
+  }
+
+  private PluginTreeNode findProgramTreeNode(Program prog, boolean recursive) {
+    return findProgramTreeNode(this, prog, recursive);
+  }
+
+  /*
   private PluginTreeNode getProgramTreeNode(ProgramItem item) {
     Enumeration enum = children();
     while (enum.hasMoreElements()) {
       PluginTreeNode n = (PluginTreeNode)enum.nextElement();
-      if (n.mType == TYPE_PROGRAM) {
+      if (n.mNodeType == TYPE_PROGRAM) {
         if (item.equals(n.getUserObject())) {
           return n;
         }
       }
     }
     return null;
-  }
+
+  }  */
   
   public void removeProgram(ProgramItem item) {
-    PluginTreeNode node = getProgramTreeNode(item);
+    PluginTreeNode node = findProgramTreeNode(item.getProgram(), false);
     if (node != null) {
-      remove(node);
-      update();
+      mChildNodes.remove(node);
     }
   }
   
   public PluginTreeNode addNode(String title) {
     PluginTreeNode node = new PluginTreeNode(title);
     add(node);
-    update();
     return node;
   }
   
   public ProgramItem[] getPrograms() {
     ArrayList list = new ArrayList();
-    Enumeration enum = children();
-    while (enum.hasMoreElements()) {
-      PluginTreeNode n = (PluginTreeNode)enum.nextElement();
-      if (n.mType == TYPE_PROGRAM) {
+    Iterator it = mChildNodes.iterator();
+    while (it.hasNext()) {
+      PluginTreeNode n = (PluginTreeNode)it.next();
+      if (n.mNodeType == TYPE_PROGRAM) {
         list.add(n.getUserObject());
       }
     }
+  /*  Enumeration enum = children();
+    while (enum.hasMoreElements()) {
+      PluginTreeNode n = (PluginTreeNode)enum.nextElement();
+      if (n.mNodeType == TYPE_PROGRAM) {
+        list.add(n.getUserObject());
+      }
+    }        */
     ProgramItem[] result = new ProgramItem[list.size()];
     list.toArray(result);
     return result;    
@@ -115,12 +305,14 @@ public class PluginTreeNode extends DefaultMutableTreeNode {
   
   
   public void store(ObjectOutputStream out) throws IOException {
-    int childrenCnt = getChildCount();
+    int childrenCnt = mChildNodes.size();
     out.writeInt(childrenCnt);
+
     for (int i=0; i<childrenCnt; i++) {
-      PluginTreeNode n = (PluginTreeNode)getChildAt(i);
-      out.writeInt(n.mType);
-      if (n.mType == TYPE_NODE) {
+      //PluginTreeNode n = (PluginTreeNode)getChildAt(i);
+      PluginTreeNode n = (PluginTreeNode)mChildNodes.get(i);
+      out.writeInt(n.mNodeType);
+      if (n.mNodeType == TYPE_NODE) {
         String title = (String)n.getUserObject();
         out.writeObject(title);
       }

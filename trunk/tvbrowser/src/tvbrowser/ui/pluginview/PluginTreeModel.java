@@ -30,24 +30,46 @@ package tvbrowser.ui.pluginview;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+
 import tvbrowser.core.plugin.PluginProxy;
+import devplugin.PluginTreeNode;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
 
 
 public class PluginTreeModel extends DefaultTreeModel {
 
-  private static PluginTreeModel sInstance; 
-    
+  private static PluginTreeModel sInstance;
+
+  
+
   private PluginTreeModel() {
     super(new DefaultMutableTreeNode("Plugins"));        
   }
   
   
   public void addPluginTree(PluginProxy plugin) {
-    MutableTreeNode pluginRoot = plugin.getRootNode();
+    PluginTreeNode pluginRoot = plugin.getRootNode();
     MutableTreeNode root = (MutableTreeNode)this.getRoot();
-    root.insert(pluginRoot, 0);
+
+    root.insert(pluginRoot.getMutableTreeNode(), 0);
   }
-    
+
+  public Plugin getPlugin(TreePath path) {
+    if (path.getPathCount()>0) {
+      Object o = path.getPathComponent(1);
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode)o;
+      o = node.getUserObject();
+      if (o instanceof Plugin) {
+        Plugin plugin = (Plugin)o;
+        return plugin;
+      }
+
+    }
+    return null;
+  }
+
   public static PluginTreeModel getInstance() {
     if (sInstance == null) {
       sInstance = new PluginTreeModel();
@@ -58,196 +80,3 @@ public class PluginTreeModel extends DefaultTreeModel {
     
 }
 
-
-/*
-public class PluginTreeModel implements TreeModel, ProgramContainerListener {
-
-  private PluginRootNode[] mPluginRootNodes;
-  private String mRoot; 
-  private ArrayList mTreeModelListeners;
-    
-  public PluginTreeModel(PluginProxy[] plugins) {
-    mTreeModelListeners = new ArrayList();
-    ArrayList pluginRootNodes = new ArrayList();
-    //mPluginRootNodes = new PluginRootNode[plugins.length];
-    for (int i=0; i<plugins.length; i++) {
-      if (plugins[i].canUseProgramTree()) {  
-        PluginRootNode n = new PluginRootNode(plugins[i], PluginRootNode.VIEW_TYPE_DEFINED_BY_PLUGIN);
-        pluginRootNodes.add(n);
-        ProgramContainer container = Plugin.getPluginManager().getProgramContainer(plugins[i].getId());
-        container.addContainerListener(this);
-      }
-    }
-    mPluginRootNodes = new PluginRootNode[pluginRootNodes.size()];
-    pluginRootNodes.toArray(mPluginRootNodes);
-    mRoot = "Plugins";
-  }
-    
-  public Object getRoot() {
-   return mRoot;
-  }
-
-  
-  public int getChildCount(Object node) {
-    if (node == mRoot) {
-      return mPluginRootNodes.length;
-    }
-    else {
-      PluginRootNode n = (PluginRootNode)node;
-      return n.getChildCount();
-    }
-    
-  }
-
-  
-  public boolean isLeaf(Object node) {
-    if (node == mRoot) {
-      return false;
-    }
-    else if (node instanceof PluginRootNode) {
-      return false;
-    }
-    return true;
-  }
-
-  
-  
-   
-  public void addTreeModelListener(TreeModelListener listener) {
-    mTreeModelListeners.add(listener);   
-  }
-
-  public void removeTreeModelListener(TreeModelListener listener) {
-    mTreeModelListeners.remove(listener);       
-  }
-
-   
-  public Object getChild(Object node, int index) {
-    if (node == mRoot) {
-      return mPluginRootNodes[index];
-    }
-    else if (node instanceof TreeNode) {
-      TreeNode n = (TreeNode)node;
-      return n.getChildAt(index);
-    }
-    return null;
-  }
-
-   
-  public int getIndexOfChild(Object arg0, Object arg1) {
-    return 0;
-  }
-
-   
-  public void valueForPathChanged(TreePath arg0, Object arg1) {
-        
-  }
-  
-
-
-  public void programAdded(ProgramItem item) {
-      
-  }
-
- 
-  public void programRemoved(ProgramItem item) {
-      
-  }
-
-  
-  public void containerAdded(ProgramContainer parent, ProgramContainer container) {
-      
-  }
-
- 
-  public void containerRemoved(ProgramContainer container) {
-      
-  }
-
-  
-
-  
-  class PluginRootNode implements devplugin.TreeNode{
-    
-    public static final int VIEW_TYPE_DEFINED_BY_PLUGIN = 1;
-    public static final int VIEW_TYPE_SORTED_BY_TITLE = 2;
-    public static final int VIEW_TYPE_SORTED_BY_NAME = 3;
-    public static final int VIEW_TYPE_NO_SUBFOLDERS = 4;
-    
-    private PluginProxy mPlugin;
-    private int mViewType;
-    private TreeNode[] mNodes;
-     
-    public PluginRootNode(PluginProxy plugin, int type) {
-      mPlugin = plugin;
-      
-      ProgramContainer container = Plugin.getPluginManager().getProgramContainer(plugin.getId());
-      //ProgramItem[] items = container.getPrograms();
-      
-      
-      mViewType = type;
-      
-      if (type == VIEW_TYPE_DEFINED_BY_PLUGIN) {
-        mNodes = createPluginDefinedStructure(container);
-      }
-      else if (type == VIEW_TYPE_NO_SUBFOLDERS) {
-     //   mNodes = createNoSubfolderStructure(container);
-      }
-      else if (type == VIEW_TYPE_SORTED_BY_TITLE) {
-     //   mNodes = createSortedByTitleStructure(container);
-      }
-      else if (type == VIEW_TYPE_SORTED_BY_NAME) {
-     //   mNodes = createSortedByNameStructure(container);
-      }
-    }
-    
-    public String toString() {
-      return mPlugin.getInfo().getName();
-    }
-    
-    public int getViewType() {
-      return mViewType;  
-    }
-    
-    public Object getChildAt(int index) {
-      //if (mViewType == VIEW_TYPE_DEFINED_BY_PLUGIN)
-      //return null;
-      return mNodes[index];
-    }
-    
-    public int getChildCount() {
-      return mNodes.length;
-    }
-
-  
-    public boolean isChild() {
-      return false;
-    }
-    
-    
-    private TreeNode[] createPluginDefinedStructure(ProgramContainer container) {
-      ProgramItem[] progs = container.getPrograms();
-      TreeNode[] result = new TreeNode[progs.length];
-      for (int i=0; i<progs.length; i++) {
-        result[i] = new Node(progs[i].getProgram().getTitle());
-      }        
-      return result;
-    }
-    
-    private TreeNode[] createSortedByTitleNode(Program[] progs) {
-      return new TreeNode[0];   
-    }
-    
-    private TreeNode[] createSortedByTimeNode(Program[] progs) {
-      return new TreeNode[0];   
-    }
-    
-  }
-
-
-
-
-
-    
-}
-*/

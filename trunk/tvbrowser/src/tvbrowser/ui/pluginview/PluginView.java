@@ -26,43 +26,137 @@
 
 package tvbrowser.ui.pluginview;
 
-import java.awt.BorderLayout;
+import java.awt.*;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import javax.swing.*;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.programtable.ProgramTable;
+import tvbrowser.ui.mainframe.MainFrame;
+import devplugin.*;
 
 
 
 
 
-public class PluginView extends JPanel {
+public class PluginView extends JPanel implements MouseListener {
     
-  private JTree mTree;  
-    
+  private JTree mTree;
+  private PluginTreeModel mModel;
+
+  private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
+  private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
+
   public PluginView() {
     super(new BorderLayout());
- /*   PluginTreeModel model = PluginTreeModel.getInstance();
-    
-    PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
-    for (int i=0; i<plugins.length; i++) {
-      if (plugins[i].canUseProgramTree()) {
-        TreeNode n = Plugin.getPluginManager().getTree(plugins[i].getId());
-        model.getPluginNode().add(n);
-      }
-    }         
-    */
-    
+
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    PluginTreeModel model = PluginTreeModel.getInstance();
+    mModel = PluginTreeModel.getInstance();
     for (int i=0; i<plugins.length; i++) {
       if (plugins[i].canUseProgramTree()) {
-        model.addPluginTree(plugins[i]);
+        mModel.addPluginTree(plugins[i]);
       }
     }
     
-    mTree = new JTree(model);
+    mTree = new JTree(mModel);
+    mTree.addMouseListener(this);
     add(new JScrollPane(mTree), BorderLayout.CENTER);
   }
- 
+
+
+  public void mouseClicked(MouseEvent e) {
+    ProgramItem programItem = null;
+    TreePath path = mTree.getPathForLocation(e.getX(), e.getY());
+    if (path == null) {
+      return;
+    }
+
+    mTree.setSelectionPath(path);
+    DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+    Object o = node.getUserObject();
+    if (o instanceof ProgramItem) {
+      programItem = (ProgramItem)o;
+    }
+    else {
+      return;
+    }
+
+    if (SwingUtilities.isRightMouseButton(e)) {
+     showContextMenu(mModel.getPlugin(path),(ProgramItem)o, e.getX(), e.getY());
+    }
+    else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+      MainFrame.getInstance().scrollToProgram(programItem.getProgram());
+    }
+    
+  }
+
+
+  private void showContextMenu(Plugin rootNodePlugin, final ProgramItem program, int x, int y) {
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem showInTableMI = new JMenuItem("Show");
+    showInTableMI.setFont(CONTEXT_MENU_BOLDFONT);
+    showInTableMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().scrollToProgram(program.getProgram());
+      }
+    });
+
+    menu.add(showInTableMI);
+
+    JMenu copyMenu = new JMenu("Export...");
+    copyMenu.setFont(CONTEXT_MENU_PLAINFONT);
+    menu.add(copyMenu);
+
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    for (int i=0; i<plugins.length; i++) {
+      if (plugins[i].canReceivePrograms()) {
+        final PluginProxy plugin = plugins[i];
+        if (!rootNodePlugin.getId().equals(plugin.getId())) {
+          JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
+          item.setFont(CONTEXT_MENU_PLAINFONT);
+          copyMenu.add(item);
+          item.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+              plugin.receivePrograms(new Program[]{program.getProgram()});
+            }
+          });
+        }
+      }
+    }
+
+    menu.addSeparator();
+
+    JMenuItem[] pluginMenuItems = PluginProxyManager.createPluginContextMenuItems(program.getProgram(), false);
+    for (int i=0; i<pluginMenuItems.length; i++) {
+      menu.add(pluginMenuItems[i]);
+    }
+
+
+    menu.show(mTree, x-10, y-10);
+
+  }
+
+  public void mouseEntered(MouseEvent e) {
+  }
+
+  public void mouseExited(MouseEvent e) {
+
+  }
+
+  public void mousePressed(MouseEvent e) {
+
+  }
+
+  public void mouseReleased(MouseEvent e) {
+
+  }
+
 }

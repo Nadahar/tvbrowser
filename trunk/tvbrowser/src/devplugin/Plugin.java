@@ -718,7 +718,8 @@ abstract public class Plugin {
   }*/
    public PluginTreeNode getRootNode() {
      if (mRootNode == null) {
-       mRootNode = new PluginTreeNode(getInfo().getName());  
+       //mRootNode = new PluginTreeNode(getInfo().getName());
+       mRootNode = new PluginTreeNode(this);
        ObjectInputStream in;
        try {
         in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
@@ -746,5 +747,10 @@ abstract public class Plugin {
         e.printStackTrace();
      }    
    }
-    
+
+
+   public String toString() {
+     return getInfo().getName();
+   }
+
 }

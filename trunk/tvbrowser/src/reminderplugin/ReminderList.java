@@ -162,12 +162,22 @@ public class ReminderList implements ActionListener {
       item.setMinutes(minutes);
     }      
   }*/
-  
-  
+
+
+  public void add(Program[] programs, int minutes) {
+    for (int i=0; i<programs.length; i++) {
+      ReminderListItem item = new ReminderListItem(programs[i], minutes);
+      programs[i].mark(ReminderPlugin.getInstance());
+      mRoot.addProgram(item.getProgramItem());
+    }
+    mRoot.update();
+  }
+
   public void add(Program program, int minutes) {
     ReminderListItem item = new ReminderListItem(program, minutes);
     program.mark(ReminderPlugin.getInstance());
     mRoot.addProgram(item.getProgramItem());
+    mRoot.update();
   }
   
  
@@ -206,6 +216,7 @@ public class ReminderList implements ActionListener {
         mRoot.removeProgram(items[i]);
       }
     }
+    mRoot.update();
     //removeExpiredItems(mRootNode);
   }
  
@@ -213,6 +224,7 @@ public class ReminderList implements ActionListener {
   public void remove(ProgramItem item) {
     mRoot.removeProgram(item);
     item.getProgram().unmark(ReminderPlugin.getInstance());
+    mRoot.update();
   }
   
   public boolean contains(Program program) {
@@ -239,7 +251,8 @@ public class ReminderList implements ActionListener {
         remove(items[i]);
       }
     }
-    
+    mRoot.update();
+
   }
   
   /*
