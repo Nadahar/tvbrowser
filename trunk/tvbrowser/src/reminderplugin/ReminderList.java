@@ -27,8 +27,10 @@
 package reminderplugin;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.awt.event.*;
 
@@ -102,40 +104,62 @@ public class ReminderList implements ActionListener {
    * If there is no such item, null is returned.
    */
   public ReminderListItem getItemWithProgram(Program program) {
-    TreeLeaf[] leafs = mRootNode.getLeafs();
+    return getItemWithProgram(mRootNode, program);
+  }
+  
+  private ReminderListItem getItemWithProgram(TreeNode node, Program program) {
+    TreeLeaf[] leafs = node.getLeafs();
     for (int i=0; i<leafs.length; i++) {
       TreeLeaf leaf = leafs[i];
       if (leaf.getProgram().equals(program)) {
         return new ReminderListItem(leaf);
       }      
     }
-    return null;
+    
+    TreeNode[] nodes = node.getNodes();
+    for (int i=0; i<nodes.length; i++) {
+      ReminderListItem item = getItemWithProgram(nodes[i], program);
+      if (item != null) {
+        return item;
+      }
+    }
+    return null; 
   }
 
   
-  
-  public void add(Program program, int minutes) {
+  public void add(TreeNode node, Program program, int minutes) {
     if (!program.isExpired()) {
       ReminderListItem item = this.getItemWithProgram(program);
       // create a new entry
       if (item == null) {        
-        TreeLeaf leaf = mRootNode.add(program);   
+        TreeLeaf leaf = node.add(program);   
         item = new ReminderListItem(leaf);
         program.mark(ReminderPlugin.getInstance());        
       }
       item.setMinutes(minutes);
-    }    
-  
+    }      
+  }
+  public void add(Program program, int minutes) {
+    add(mRootNode, program, minutes);  
   }
   
  
   public void remove(Program program) {
-    TreeLeaf[] leafs = mRootNode.getLeafs();
+    remove(mRootNode, program);
+  }
+  
+  private void remove(TreeNode node, Program program) {
+    TreeLeaf[] leafs = node.getLeafs();
     for (int i=0; i<leafs.length; i++) {
       if (leafs[i].getProgram().equals(program)) {
-        mRootNode.remove(leafs[i]);
+        node.remove(leafs[i]);
         program.unmark(ReminderPlugin.getInstance());
       }
+    }
+    
+    TreeNode[] nodes = node.getNodes();
+    for (int i=0; i<nodes.length; i++) {
+      remove(nodes[i], program);
     }
   }
  
@@ -151,34 +175,71 @@ public class ReminderList implements ActionListener {
   
   
   public void removeExpiredItems() {
-    TreeLeaf[] leafs = mRootNode.getLeafs();
+    removeExpiredItems(mRootNode);
+  }
+  
+  private void removeExpiredItems(TreeNode node) {
+    TreeLeaf[] leafs = node.getLeafs();
     for (int i=0; i<leafs.length; i++) {
       if (leafs[i].getProgram().isExpired()) {
         mRootNode.remove(leafs[i]);
       }
     }
+    TreeNode[] nodes = node.getNodes();
+    for (int i=0; i<nodes.length; i++) {
+      removeExpiredItems(nodes[i]);
+    }
   }
 
   public boolean contains(Program program) {
-    TreeLeaf[] leafs = mRootNode.getLeafs();
+    return contains(mRootNode, program);
+  }
+  
+  private boolean contains(TreeNode node, Program program) {
+    TreeLeaf[] leafs = node.getLeafs();
     for (int i=0; i<leafs.length; i++) {
       if (leafs[i].getProgram().equals(program)) {
         return true;
       }
     }
-    return false;
+    
+    TreeNode[] nodes = node.getNodes();
+    for (int i=0; i<nodes.length; i++) {
+      boolean result = contains(nodes[i], program);
+      if (result) {
+        return true;
+      }
+    }
+    
+    return false;  
   }
   
   
   public ReminderListItem[] getReminderItems() {
-    TreeLeaf[] leafs = mRootNode.getLeafs();
-    ReminderListItem[] result = new ReminderListItem[leafs.length];
+    Collection col = getReminderItems(mRootNode);
+    ReminderListItem[] result = new ReminderListItem[col.size()];
+    col.toArray(result);
     
-    for (int i=0; i<result.length; i++) {
-      result[i]=new ReminderListItem(leafs[i]);
-    }
     Arrays.sort(result);
     return result;
+  }
+  
+  private Collection getReminderItems(TreeNode node) {
+      TreeLeaf[] leafs = node.getLeafs();
+      //ReminderListItem[] result = new ReminderListItem[leafs.length];
+      Collection result = new ArrayList();
+      
+      for (int i=0; i<leafs.length; i++) {
+        result.add(new ReminderListItem(leafs[i]));
+      }
+      
+      TreeNode[] nodes = node.getNodes();
+      for (int i=0; i<nodes.length; i++) {
+        Collection c = getReminderItems(nodes[i]);
+        result.addAll(c);
+      }
+      
+      return result; 
   }
       
       

@@ -63,7 +63,7 @@ public class TreeNodeImpl extends DefaultMutableTreeNode implements TreeNode {
     return mKey;
   }
   
-  public String getTitle() {
+  public String getName() {
     return mTitle;
   }
   
@@ -96,7 +96,7 @@ public class TreeNodeImpl extends DefaultMutableTreeNode implements TreeNode {
     out.writeInt(nodes.length);
     for (int i=0; i<nodes.length; i++) {
       out.writeObject(nodes[i].getKey());
-      out.writeObject(nodes[i].getTitle());
+      out.writeObject(nodes[i].getName());
       nodes[i].write(out);
     } 
   }
@@ -177,4 +177,34 @@ public class TreeNodeImpl extends DefaultMutableTreeNode implements TreeNode {
     return true;
   }
     
+  public int compareTo(Object o) {
+      
+    if (o instanceof TreeNode) {
+      TreeNode n = (TreeNode)o;
+      return mTitle.compareTo(n.toString());
+    }
+    return -1;
+  }
+  
+ 
+
+  public TreeNode getNodeByName(String name) {
+    TreeNode[] nodes = getNodes();
+    for (int i=0; i<nodes.length; i++) {
+      if (nodes[i].getName().equals(name)) {
+        return nodes[i];
+      }
+    }
+    return null;
+  }
+
+  public TreeNode getNodeByKey(String key) {
+    TreeNode[] nodes = getNodes();
+    for (int i=0; i<nodes.length; i++) {
+      if (nodes[i].getKey().equals(key)) {
+        return nodes[i];
+      }
+    }
+    return null;
+  }
 }

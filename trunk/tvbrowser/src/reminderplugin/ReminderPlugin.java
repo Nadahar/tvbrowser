@@ -53,6 +53,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   private ReminderList mReminderList;
   private Properties mSettings;
   private HashSet mReminderItemsTrash;
+  private TreeNode mTreeRoot;
   
   
   /**
@@ -63,8 +64,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
   
   public void onActivation() {
-    TreeNode tree = getPluginManager().getTree(getId()); 
-    mReminderList = new ReminderList(tree);
+    mTreeRoot = getPluginManager().getTree(getId()); 
+    mReminderList = new ReminderList(mTreeRoot);
     mReminderList.setReminderTimerListener(this);
     mReminderItemsTrash = new HashSet();
   }
@@ -241,12 +242,26 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    */
   
   public void receivePrograms(Program[] programArr) {
+    String nodeName = createNodeName();
+    TreeNode node = mTreeRoot.createNode(nodeName,nodeName);
     int minutes = 3;
     for (int i = 0; i < programArr.length; i++) {
-      mReminderList.add(programArr[i], minutes);
+      mReminderList.add(node, programArr[i], minutes);
     } 
   }
   
+  private String createNodeName() {
+    String name = "importiert";
+    if (mTreeRoot.getNodeByName(name)==null) {
+      return name;
+    }
+    for (int i=1;;i++) {
+      String result = name+" ("+i+")";
+      if (mTreeRoot.getNodeByName(result)==null) {
+        return result;
+      }
+    }
+  }
 
   
   public Action getButtonAction() {
