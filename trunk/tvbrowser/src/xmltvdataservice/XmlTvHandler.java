@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,7 +70,7 @@ public class XmlTvHandler extends DefaultHandler {
   /** The set where the found channel names are stored. */
   private HashSet mChannelSet = new HashSet();
 
-  private GregorianCalendar mCalendar;
+  private /*GregorianCalendar*/ Calendar mCalendar;
 
 
 
@@ -86,7 +86,9 @@ public class XmlTvHandler extends DefaultHandler {
     mProgramDispatcher = programDispatcher;
     mSubscribedChannelArr = subscribedChannelArr;
 
-    mCalendar = new GregorianCalendar();
+   // mCalendar = new GregorianCalendar();
+    //GregorianCalendar.get
+    mCalendar=java.util.Calendar.getInstance();
   }
 
 
@@ -166,12 +168,14 @@ public class XmlTvHandler extends DefaultHandler {
         int minutes = Integer.parseInt(start.substring(10, 12));
 
         // Get the date
-        mCalendar.set(Calendar.YEAR, year);
-        mCalendar.set(Calendar.MONTH, month - 1);
-        mCalendar.set(Calendar.DAY_OF_MONTH, day);
-        java.util.Date utilDate = mCalendar.getTime();
-        long daysSince1970 = utilDate.getTime() / (24 * 60 * 60 * 1000);
-        devplugin.Date date = new devplugin.Date((int) daysSince1970);
+     
+		mCalendar.set(Calendar.DAY_OF_MONTH, day+1);
+		mCalendar.set(Calendar.MONTH, month - 1);
+		mCalendar.set(Calendar.YEAR, year);
+		int daysSince1970 = (int)(mCalendar.getTimeInMillis() / 1000L / 60L / 60L / 24L);
+		devplugin.Date date=new devplugin.Date(daysSince1970);
+        
+       
 
         // Get the time
         int time = hours * 60 + minutes;
