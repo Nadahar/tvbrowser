@@ -30,23 +30,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.TimeZone;
 
-import devplugin.*;
-import devplugin.Channel;
-
 import junit.framework.TestCase;
-
-import util.io.IOUtilities;
-
-import test.tvbrowserdataservice.DayProgramFileTest;
-
-import tvbrowserdataservice.file.*;
-import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.FileFormatException;
-import tvbrowserdataservice.file.ProgramField;
-import tvbrowserdataservice.file.ProgramFrame;
 import primarydatamanager.PreparationException;
 import primarydatamanager.PrimaryDataManager;
 import primarydatamanager.primarydataservice.PrimaryDataService;
+import test.tvbrowserdataservice.DayProgramFileTest;
+import tvbrowserdataservice.file.*;
+import util.io.IOUtilities;
+import devplugin.Channel;
+import devplugin.ProgramFieldType;
 
 /**
  * 
@@ -67,8 +59,7 @@ public class PrimaryDataManagerTest extends TestCase {
     // Create a new test environment
     testDir.mkdir();
     
-    PrimaryDataManager manager = new PrimaryDataManager();
-    manager.setBaseDir("test");
+    PrimaryDataManager manager = new PrimaryDataManager(new File("test"));
     manager.setDataServiceArr(new PrimaryDataService[] { new TestPDS() });
     
     // Create the prepared data

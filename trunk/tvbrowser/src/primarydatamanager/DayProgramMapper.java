@@ -108,13 +108,13 @@ public class DayProgramMapper {
   private void mapExactMatches(DayProgramFile rawFile, ArrayList progList) throws PreparationException {
     for (int frameNr = 0; frameNr < rawFile.getProgramFrameCount(); frameNr++) {
       ProgramFrame rawFrame = rawFile.getProgramFrameAt(frameNr);
-      int rawStarttime = PrimaryDataManager.getProgramStartTime(rawFrame);
-      String rawTitle = PrimaryDataManager.getProgramTitle(rawFrame);
+      int rawStarttime = PrimaryDataUtilities.getProgramStartTime(rawFrame);
+      String rawTitle = PrimaryDataUtilities.getProgramTitle(rawFrame);
       
       for (int i = 0; i < progList.size(); i++) {
         ProgramFrame prepFrame = (ProgramFrame) progList.get(i);
-        int prepStarttime = PrimaryDataManager.getProgramStartTime(prepFrame);
-        String prepTitle = PrimaryDataManager.getProgramTitle(prepFrame);
+        int prepStarttime = PrimaryDataUtilities.getProgramStartTime(prepFrame);
+        String prepTitle = PrimaryDataUtilities.getProgramTitle(prepFrame);
         
         if ((rawStarttime == prepStarttime) && rawTitle.equals(prepTitle)) {
           // This is a match -> map the program
