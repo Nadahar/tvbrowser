@@ -323,6 +323,9 @@ public class Settings {
   public static final StringProperty propUserDefinedWebbrowser
     = new StringProperty(mProp, "webbrowser", null);
 
+  public static final BooleanProperty propOnlyMinimizeWhenWindowClosing
+    = new BooleanProperty(mProp, "onlyMinimizeWhenWindowClosing", true);
+
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "text&icon",
                          new String[] { "text&icon", "text", "icon" });

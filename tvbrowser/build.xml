@@ -54,7 +54,7 @@
   <property name="runtime.dir" value="runtime"/>
   <property name="win.dir" value="win"/>
   <property name="tvbrowser.runtime.dir" value="${runtime.dir}/tvbrowser"/>
-  <property name="tvbrowser_win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
+  <property name="tvbrowser-win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
   <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
   <property name="primarydatamanager.runtime.dir" value="${runtime.dir}/primarydatamanager"/>
   <property name="pdsrunner.runtime.dir" value="${runtime.dir}/pdsrunner"/>
@@ -98,9 +98,10 @@
     <echo message="  doc           Generates the JavaDoc documentation."/>
     <echo message="  make          Compiles the source code."/>
     <echo message="  runtime       Prepares the runtime directory."/>
-    <echo message="  runtime_win   Windows runtime."/>
-    <echo message="  runtime_tools Creates the TV-Browser-Tools."/>
+    <echo message="  runtime-win   Prepares the runtime Windows runtime."/>
+    <echo message="  runtime-tools Creates the TV-Browser-Tools."/>
     <echo message="  run           Runs the project."/>
+    <echo message="  run-win       Runs the project using the Windows runtime."/>
     <echo message="  installer     Creates a Windows installer for the project."/>
     <echo message="  public        Creates all the stuff that can be downloaded."/>
     <echo message="  test          Does the JUnit tests."/>
@@ -308,7 +309,7 @@
   <!--
    | Creates the runtime directory.
    +-->
-  <target name="runtime_tools" depends="make">
+  <target name="runtime-tools" depends="make">
     <echo message="Creating the jars ..." />
 
 	<!-- Make the MirrorUpdater runtime -->
@@ -393,9 +394,6 @@
   </target>
 
 
-
-
-
   <!--
    | Runs the project.
    +-->
@@ -408,12 +406,27 @@
 
 
   <!--
+   | Runs the project.
+   +-->
+  <target name="run-win" depends="runtime-win">
+    <java jar="${tvbrowser-win.runtime.dir}/tvbrowser.jar"
+          dir="${tvbrowser-win.runtime.dir}"
+          fork="true">
+    </java>
+  </target>
+
+
+  <!--
    | 
    +-->
-  <target name="runtime_win" depends="runtime">
-    <mkdir dir="${tvbrowser_win.runtime.dir}" />
-    <copy todir="${tvbrowser_win.runtime.dir}">
+  <target name="runtime-win" depends="runtime">
+    <mkdir dir="${tvbrowser-win.runtime.dir}" />
+    <copy todir="${tvbrowser-win.runtime.dir}">
       <fileset dir="${tvbrowser.runtime.dir}"/>
+      <fileset dir="${win.dir}" includes="DesktopIndicator.dll"/>
+    </copy>
+    <copy todir="${tvbrowser-win.runtime.dir}/imgs">
+      <fileset dir="${win.dir}" includes="taskicon.ico"/>
     </copy>
   </target>
   
@@ -425,7 +438,7 @@
      classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
      classpath="${jsmooth.dir}/lib/jsmoothgen-ant.jar"/> 
 
-  <target name="exe" depends="runtime_win" description="Creates a Windows Executable with the help of JSmooth (http://jsmooth.sf.net)"> 
+  <target name="exe" depends="runtime-win" description="Creates a Windows Executable with the help of JSmooth (http://jsmooth.sf.net)"> 
     <jsmoothgen project="${jsmooth.dir}/tvbrowser.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/> 
   </target>  
 
@@ -433,11 +446,11 @@
   <!--
    | Creates a Windows installer for the project.
    +-->
-  <target name="installer" depends="runtime_win, exe">
+  <target name="installer" depends="runtime-win, exe">
     <mkdir dir="${public.dir}"/>
     <exec executable="${installer.dir}/makensis.exe"
           failonerror="true">
-      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${tvbrowser_win.runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
+      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${tvbrowser-win.runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
     </exec>
   </target>
 
