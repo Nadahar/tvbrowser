@@ -214,6 +214,21 @@ public class PluginManagerImpl implements PluginManager {
     return PluginProxyManager.getInstance().getActivatedPluginForId(pluginId);
   }
   
+  
+  /**
+   * Returns a list of all installed Plugins.
+   * <p>
+   * This method always returns an empty array! Use
+   * {@link #getActivatedPlugins()} instead!
+   * 
+   * @return An empty array!
+   * 
+   * @deprecated Since 1.1. Use {@link #getActivatedPlugins()} instead.
+   */
+  public Plugin[] getInstalledPlugins() {
+    return new Plugin[0];
+  }
+  
 
   /**
    * Gets a TvDataService for a class name.

@@ -140,6 +140,18 @@ public interface PluginManager {
   public PluginAccess getActivatedPluginForId(String pluginId);
 
   /**
+   * Returns a list of all installed Plugins.
+   * <p>
+   * This method always returns an empty array! Use
+   * {@link #getActivatedPlugins()} instead!
+   * 
+   * @return An empty array!
+   * 
+   * @deprecated Since 1.1. Use {@link #getActivatedPlugins()} instead.
+   */
+  public Plugin[] getInstalledPlugins();
+  
+  /**
    * Gets a TvDataService for a class name.
    *
    * @param dataServiceClassName the class name of the wanted TvDataService.
