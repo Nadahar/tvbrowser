@@ -3,6 +3,7 @@ Changelog CapturePlugin
 v2.03:
 - new ActionMenu-Handler added
 - TimeOut-Setting
+- Support for Plugin-Tree
 
 v2.02:
 - Changed to new Plugin-Interface
