@@ -45,13 +45,21 @@ import devplugin.*;
  * @author  Til Schneider, www.murfman.de
  */
 public class SearchDialog extends JDialog {
+
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(SearchDialog.class);
   
   private static final Border DIALOG_BORDER
     = BorderFactory.createEmptyBorder(5, 5, 0, 5);
   
   private static final String[] TIME_STRING_ARR = new String[] {
-    "n‰chsten 14 Tagen", "Alle Daten", "Heute", "Morgen", "Eine Woche",
-    "3 Wochen", "letzte Woche"
+    mLocalizer.msg("search.14", "N‰chste 14 Tagen"),
+    mLocalizer.msg("search.1000", "Alle Daten"),
+    mLocalizer.msg("search.0", "Heute"),
+    mLocalizer.msg("search.1", "Morgen"),
+    mLocalizer.msg("search.7", "Eine Woche"),
+    mLocalizer.msg("search.21", "3 Wochen"),
+    mLocalizer.msg("search.-7", "Letzte Woche")
   };
 
   private static final int[] TIME_VALUE_ARR = new int[] {
@@ -73,9 +81,11 @@ public class SearchDialog extends JDialog {
   public SearchDialog(Frame parent) {
     super(parent);
     
-    setTitle("Sendungen suchen");
-    
+    String msg;
     JPanel p1;
+    
+    msg = mLocalizer.msg("dlgTitle", "Search programs");
+    setTitle(msg);
     
     JPanel main = new JPanel(new TabLayout(1));
     main.setBorder(DIALOG_BORDER);
@@ -85,8 +95,10 @@ public class SearchDialog extends JDialog {
     p1 = new JPanel(new TabLayout(2));
     main.add(p1);
     
-    p1.add(new JLabel("Suchbegriff"));
-    p1.add(new JLabel("Zeitraum"));
+    msg = mLocalizer.msg("searchTerm", "Search term");
+    p1.add(new JLabel(msg));
+    msg = mLocalizer.msg("period", "Period");
+    p1.add(new JLabel(msg));
 
     mPatternTF = new JTextField(20);
     p1.add(mPatternTF);
@@ -95,43 +107,52 @@ public class SearchDialog extends JDialog {
 
     // search in
     p1 = new JPanel(new TabLayout(1));
-    p1.setBorder(BorderFactory.createTitledBorder("Suchen in"));
+    msg = mLocalizer.msg("searchIn", "Search in");
+    p1.setBorder(BorderFactory.createTitledBorder(msg));
     main.add(p1);
 
-    mSearchTitleChB = new JCheckBox("Titel");
+    msg = mLocalizer.msg("title", "Title");
+    mSearchTitleChB = new JCheckBox(msg);
     mSearchTitleChB.setSelected(true);
     p1.add(mSearchTitleChB);
 
-    mSearchInTextChB = new JCheckBox("Info-Text");
+    msg = mLocalizer.msg("infoText", "Information text");
+    mSearchInTextChB = new JCheckBox(msg);
     p1.add(mSearchInTextChB);
     
     // options
     p1 = new JPanel(new TabLayout(1));
-    p1.setBorder(BorderFactory.createTitledBorder("Optionen"));
+    msg = mLocalizer.msg("options", "Options");
+    p1.setBorder(BorderFactory.createTitledBorder(msg));
     main.add(p1);
     
     ButtonGroup bg = new ButtonGroup();
-    mMatchExactlyRB = new JRadioButton("Genaue ‹bereinstimmung");
+    msg = mLocalizer.msg("matchExactly", "Match exactly");
+    mMatchExactlyRB = new JRadioButton(msg);
     bg.add(mMatchExactlyRB);
     p1.add(mMatchExactlyRB);
     
-    mMatchSubstringRB = new JRadioButton("Suchbegriff ist ein Stichwort");
+    msg = mLocalizer.msg("matchSubstring", "Term is a keyword");
+    mMatchSubstringRB = new JRadioButton(msg);
     mMatchSubstringRB.setSelected(true);
     bg.add(mMatchSubstringRB);
     p1.add(mMatchSubstringRB);
     
-    mRegexRB = new JRadioButton("Suchbegriff ist Regul‰rer Ausdruck");
+    msg = mLocalizer.msg("matchRegex", "Term is a regular expression");
+    mRegexRB = new JRadioButton(msg);
     bg.add(mRegexRB);
     p1.add(mRegexRB);
     
-    mCaseSensitiveChB = new JCheckBox("Groﬂ-/Kleinschreibung beachten");
+    msg = mLocalizer.msg("caseSensitive", "Case sensitive");
+    mCaseSensitiveChB = new JCheckBox(msg);
     p1.add(mCaseSensitiveChB);
         
     // the buttons
     JPanel buttonPn = new JPanel();
     main.add(buttonPn);
     
-    mSearchBt = new JButton("Suchen");
+    msg = mLocalizer.msg("search", "Search");
+    mSearchBt = new JButton(msg);
     mSearchBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         search();
@@ -140,7 +161,8 @@ public class SearchDialog extends JDialog {
     buttonPn.add(mSearchBt);
     getRootPane().setDefaultButton(mSearchBt);
 
-    mCloseBt = new JButton("Abbrechen");
+    msg = mLocalizer.msg("cancel", "Cancel");
+    mCloseBt = new JButton(msg);
     mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dispose();
@@ -177,10 +199,12 @@ public class SearchDialog extends JDialog {
         caseSensitive, channels, startDate, nrDays);
 
       if (programArr.length == 0) {
-        String msg = "Keine Sendungen mit '" + mPatternTF.getText() + "' gefunden!";
+        String msg = mLocalizer.msg("nothingFound",
+          "No programs found with '{0}'!", mPatternTF.getText());
         JOptionPane.showMessageDialog(this, msg);
       } else {
-        String title = "Sendungen mit '" + mPatternTF.getText() + "'";
+        String title = mLocalizer.msg("hitsTitle",
+          "Sendungen mit '{0}'",  mPatternTF.getText());
         showHitsDialog(programArr, title);
       }
     }
@@ -209,7 +233,7 @@ public class SearchDialog extends JDialog {
     JPanel buttonPn = new JPanel();
     main.add(buttonPn, BorderLayout.SOUTH);
     
-    JButton closeBt = new JButton("Schlieﬂen");
+    JButton closeBt = new JButton(mLocalizer.msg("close", "Close"));
     closeBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dlg.dispose();

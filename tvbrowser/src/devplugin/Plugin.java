@@ -53,6 +53,9 @@ class TimerListener implements ActionListener {
 
 abstract public class Plugin {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(Plugin.class.getName());
+  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class);
   
@@ -105,10 +108,10 @@ abstract public class Plugin {
    * from the file system.
    *
    */
-
- public void loadData(java.io.ObjectInputStream in) {
-
- }
+  public void loadData(java.io.ObjectInputStream in) {
+  }
+  
+  
 
   /**
    * Gegenstück zu loadData. Beim Beenden der Applikation wird storeData
@@ -129,7 +132,6 @@ abstract public class Plugin {
    * load your plugins settings from the file system.
    */
   public void loadSettings(Properties settings) {
-
   }
 
   /**
@@ -137,14 +139,18 @@ abstract public class Plugin {
    * store your plugins settings to the file system.
    */
   public Properties storeSettings() {
-      return null;
+    return null;
   }
 
   /**
    * Implement this function to provide information about your plugin.
    */
   public PluginInfo getInfo() {
-      return new PluginInfo("unknown","no description","no author given",new Version(0,0));
+    String name = mLocalizer.msg("unkown", "Unknown");
+    String desc = mLocalizer.msg("noDescription", "No description");
+    String author = mLocalizer.msg("noAuthor", "No author given");
+    
+    return new PluginInfo(name, desc, author, new Version(0, 0));
   }
 
   /**
@@ -154,7 +160,7 @@ abstract public class Plugin {
    * this feature.
    */
   public String getContextMenuItemText() {
-      return "new Plugin";
+    return null;
   }
 
   /**
@@ -165,7 +171,7 @@ abstract public class Plugin {
    *
    */
   public String getButtonText() {
-      return "new Plugin";
+    return mLocalizer.msg("newPlugin", "New plugin");
   }
 
   /**
@@ -173,7 +179,7 @@ abstract public class Plugin {
    *
    */
   public SettingsTab getSettingsTab() {
-      return null;
+    return null;
   }
 
   /**
@@ -181,7 +187,6 @@ abstract public class Plugin {
    * plugin from the context menu.
    */
   public void execute(Program program) {
-
   }
 
   /**
@@ -189,7 +194,6 @@ abstract public class Plugin {
    * plugin from the menu.
    */
   public void execute() {
-
   }
 
   /**
@@ -203,9 +207,9 @@ abstract public class Plugin {
       if (icon==null) {
         return null;
       }
-      JarEntry entry=jarFile.getJarEntry(getMarkIcon());
+      JarEntry entry=jarFile.getJarEntry(icon);
       if (entry==null) {
-        System.out.println("could not find icon '"+icon+"'");
+        mLog.warning("could not find icon '" + icon + "' in jar file " + jarFile.getName());
         return null;
       }
       try {
@@ -228,7 +232,6 @@ abstract public class Plugin {
    * Returns the name of the file, containing your plugin icon (in the jar-File).
    */
   abstract public String getMarkIcon();
-
 
 }
 

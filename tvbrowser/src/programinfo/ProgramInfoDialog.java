@@ -38,8 +38,16 @@ import java.awt.event.*;
 
 public class ProgramInfoDialog extends JDialog {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ProgramInfoDialog.class);
+  
+  
+  
   public ProgramInfoDialog(Frame parent, devplugin.Program program) {
     super(parent);
+    
+    setTitle(mLocalizer.msg("title", "Program information"));
+    
     JPanel mainPane=(JPanel)getContentPane();
     mainPane.setPreferredSize(new Dimension(450,250));
     JPanel contentPane=new JPanel(new BorderLayout());
@@ -66,14 +74,15 @@ public class ProgramInfoDialog extends JDialog {
       labelText="";
     }
     else {
-      if ((info&0x1) == 0x1) labelText+="? ("+info+")  ";
-      if ((info&0x2) == 0x2) labelText+="16:9  ";
-      if ((info&0x4) == 0x4) labelText+="dolby  ";
-      if ((info&0x8) == 0x8) labelText+="oo";
-      if ((info&0x10) == 0x10) labelText+="stereo  ";
-      if ((info&0x20) == 0x20) labelText+="untertitel  ";
-      if ((info&0x40) == 0x40) labelText+="live";
-      if ((info&0x80) == 0x80) labelText+="s/w";
+      // TODO: This is TVgenial specific!!
+      if ((info&0x1) == 0x1) labelText += "? (" + info + ")  ";
+      if ((info&0x2) == 0x2) labelText += mLocalizer.msg("16to9", "16:9") + "  ";
+      if ((info&0x4) == 0x4) labelText += mLocalizer.msg("dolby", "Dolby") + "  ";
+      if ((info&0x8) == 0x8) labelText += "oo  ";
+      if ((info&0x10) == 0x10) labelText += mLocalizer.msg("stereo", "Stereo") + "  ";
+      if ((info&0x20) == 0x20) labelText += mLocalizer.msg("subtitle", "Subtitle") + "  ";
+      if ((info&0x40) == 0x40) labelText += mLocalizer.msg("live", "Live") + "live  ";
+      if ((info&0x80) == 0x80) labelText += mLocalizer.msg("blackAndWhite", "b/w") + "  ";
     }
 
     JLabel infoLabel=new JLabel();
@@ -121,7 +130,7 @@ public class ProgramInfoDialog extends JDialog {
 
     JPanel btnPanel=new JPanel(new BorderLayout());
 
-    JButton closeBtn=new JButton("Close");
+    JButton closeBtn=new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
@@ -133,10 +142,6 @@ public class ProgramInfoDialog extends JDialog {
 
     mainPane.add(btnPanel,BorderLayout.SOUTH);
     mainPane.add(new JScrollPane(contentPane),BorderLayout.CENTER);
-
-
   }
-
-
 
 }

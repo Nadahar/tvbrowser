@@ -24,27 +24,32 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package programinfo;
+
+import util.ui.UiUtilities;
 
 import devplugin.*;
 
-
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ProgramInfo extends devplugin.Plugin {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ProgramInfo.class);
+  
   public String getContextMenuItemText() {
-    return "info";
+    return mLocalizer.msg("contextMenuText", "Program information");
   }
 
   public PluginInfo getInfo() {
-    return new PluginInfo("ProgramInfo","Zeigt Informationen zu einer Sendung an.","Martin Oberhauser",new Version(1,0));
+    String name = mLocalizer.msg("pluginName", "Sendungsinfo-Betrachter");
+    String desc = mLocalizer.msg("description", "Zeigt Informationen zu einer Sendung an.");
+    String author = "Martin Oberhauser";
 
+    return new PluginInfo(name, desc, author, new Version(1, 0));
   }
 
   public String getButtonText() {
@@ -54,8 +59,8 @@ public class ProgramInfo extends devplugin.Plugin {
 
   public void execute(devplugin.Program program) {
     ProgramInfoDialog dlg=new ProgramInfoDialog(parent, program);
-    dlg.show();
     dlg.pack();
+    UiUtilities.centerAndShow(dlg);
   }
 
   public String getMarkIcon() {

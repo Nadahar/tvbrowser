@@ -39,28 +39,34 @@ import java.awt.event.*;
 
 public class ReminderDialog extends /*PluginDialog*/JDialog {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ReminderDialog.class);
 
-  private static String[] listItems={"remind me when the program begins",
-    "remind me one minute before",
-    "reminde me two minutes before",
-    "remind me three minutes before",
-    "remind me five minutes before",
-    "remind me ten minutes before",
-    "remind me 15 minutes before",
-    "remind me 30 minutes before",
-    "remind me one hour before"};
+  public static final String[] SMALL_REMIND_MSG_ARR
+    = new String[ReminderFrame.REMIND_MSG_ARR.length - 1];
 
+  private static final int[] SMALL_REMIND_VALUE_ARR
+    = new int[ReminderFrame.REMIND_VALUE_ARR.length - 1];
+  
+  static {
+    // use the same entries as the ReminderFrame but without "don't remind me"
+    System.arraycopy(ReminderFrame.REMIND_MSG_ARR, 1, SMALL_REMIND_MSG_ARR, 0,
+      SMALL_REMIND_MSG_ARR.length);
+    System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 1, SMALL_REMIND_VALUE_ARR, 0,
+      SMALL_REMIND_VALUE_ARR.length);
+  }
 
-
-  private boolean ok=false;
+  private boolean mOkPressed=false;
 
   private JComboBox list;
 
+  
+  
   public ReminderDialog(Frame parent, devplugin.Program program) {
     super(parent,true);
 
 util.io.Profiler.getDefault().show("2.1");
-    setTitle("New reminder item");
+    setTitle(mLocalizer.msg("title", "New reminder"));
 
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
@@ -82,7 +88,7 @@ util.io.Profiler.getDefault().show("2.2");
     panel5.add(infoPanel,BorderLayout.EAST);
 
 util.io.Profiler.getDefault().show("2.3");
-    list=new JComboBox(listItems);
+    list=new JComboBox(SMALL_REMIND_MSG_ARR);
     list.setSelectedIndex(5);
 
     JPanel panel1=new JPanel(new BorderLayout(10,0));
@@ -98,10 +104,9 @@ util.io.Profiler.getDefault().show("2.4");
     panel6.add(panel1,BorderLayout.NORTH);
     panel2.add(panel6,BorderLayout.SOUTH);
 
-
 util.io.Profiler.getDefault().show("2.5");
     JPanel panel3=new JPanel(new GridLayout(1,0,10,0));
-    JButton cancelBtn=new JButton("Cancel");
+    JButton cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
     cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         hide();
@@ -109,10 +114,10 @@ util.io.Profiler.getDefault().show("2.5");
     }
     );
 util.io.Profiler.getDefault().show("2.6");
-    JButton okBtn=new JButton("OK");
+    JButton okBtn=new JButton(mLocalizer.msg("ok", "OK"));
     okBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        ok=true;
+        mOkPressed=true;
         hide();
       }
     }
@@ -130,16 +135,19 @@ util.io.Profiler.getDefault().show("2.7");
 util.io.Profiler.getDefault().show("2.8");
     pack();
 util.io.Profiler.getDefault().show("2.9");
-    setVisible(true);
-util.io.Profiler.getDefault().show("2.10");
   }
 
-  public int getReminderSelection() {
-    return list.getSelectedIndex();
+  
+  
+  public int getReminderMinutes() {
+    int idx = list.getSelectedIndex();
+    return SMALL_REMIND_VALUE_ARR[idx];
   }
 
-  public boolean ok() {
-    return ok;
+  
+  
+  public boolean getOkPressed() {
+    return mOkPressed;
   }
 
 }

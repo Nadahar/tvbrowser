@@ -37,74 +37,77 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import util.ui.UiUtilities;
+
 public class ReminderFrame extends JFrame {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
 
-  private static String[] listItems={
-    "don't remind me",
-    "remind me when the program begins",
-   "remind me one minute before",
-   "reminde me two minutes before",
-   "remind me three minutes before",
-   "remind me five minutes before",
-   "remind me ten minutes before",
-   "remind me 15 minutes before",
-   "remind me 30 minutes before",
-    "remind me one hour before"};
+  public static final String[] REMIND_MSG_ARR = {
+    mLocalizer.msg("remind.-1", "Don't remind me"),
+    mLocalizer.msg("remind.0", "Remind me when the program begins"),
+    mLocalizer.msg("remind.1", "Remind me one minute before"),
+    mLocalizer.msg("remind.2", "Remind me 2 minutes before"),
+    mLocalizer.msg("remind.3", "Remind me 3 minutes before"),
+    mLocalizer.msg("remind.5", "Remind me 5 minutes before"),
+    mLocalizer.msg("remind.10", "Remind me 10 minutes before"),
+    mLocalizer.msg("remind.15", "Remind me 15 minutes before"),
+    mLocalizer.msg("remind.30", "Remind me 30 minutes before"),
+    mLocalizer.msg("remind.60", "Remind me one hour before")
+  };
 
-    private static int[] listValues={-1, 0, 1, 2, 3, 5, 10, 15, 30, 60};
-
-    public ReminderFrame(final ReminderList list, ReminderListItem item) {
-
-      super("Reminder");
-      list.remove(item);
-      final Program prog=item.getProgram();
-      JPanel jcontentPane=(JPanel)getContentPane();
-      jcontentPane.setLayout(new BorderLayout(0,10));
-      jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-      JPanel progPanel=new JPanel(new BorderLayout());
-
-      JLabel channelLabel=new JLabel(prog.getChannel().getName());
-
-      progPanel.add(channelLabel,BorderLayout.EAST);
-
-      progPanel.add(Plugin.getPluginManager().createProgramPanel(prog),BorderLayout.CENTER);
-
-      JPanel btnPanel=new JPanel(new BorderLayout(10,0));
-      JButton closeBtn=new JButton("Done");
-
-      final JComboBox comboBox=new JComboBox();
-      int i=0;
-      while(i<listValues.length && listValues[i]<item.getReminderMinutes()) {
-        comboBox.addItem(listItems[i]);
-        i++;
-      }
-
-      btnPanel.add(comboBox,BorderLayout.WEST);
-      btnPanel.add(closeBtn,BorderLayout.EAST);
-
-      jcontentPane.add(progPanel,BorderLayout.NORTH);
-      jcontentPane.add(btnPanel,BorderLayout.SOUTH);
-
-      closeBtn.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent event){
-          int inx=comboBox.getSelectedIndex()-1;
-          if (inx>0) {
-            ReminderListItem item=new ReminderListItem(prog,inx);
-            list.add(item);
-          }
-          hide();
-        }
-      }
-      );
-
-
-      this.pack();
-      this.show();
-
+  public static final int[] REMIND_VALUE_ARR = {-1, 0, 1, 2, 3, 5, 10, 15, 30, 60};
+  
+  
+  
+  public ReminderFrame(final ReminderList list, ReminderListItem item) {
+    super(mLocalizer.msg("title", "Erinnerung"));
+    
+    list.remove(item);
+    final Program prog=item.getProgram();
+    JPanel jcontentPane=(JPanel)getContentPane();
+    jcontentPane.setLayout(new BorderLayout(0,10));
+    jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    JPanel progPanel=new JPanel(new BorderLayout());
+    
+    JLabel channelLabel=new JLabel(prog.getChannel().getName());
+    
+    progPanel.add(channelLabel,BorderLayout.EAST);
+    
+    progPanel.add(Plugin.getPluginManager().createProgramPanel(prog),BorderLayout.CENTER);
+    
+    JPanel btnPanel=new JPanel(new BorderLayout(10,0));
+    JButton closeBtn=new JButton(mLocalizer.msg("close", "Close"));
+    
+    final JComboBox comboBox=new JComboBox();
+    int i=0;
+    while(i<REMIND_VALUE_ARR.length && REMIND_VALUE_ARR[i]<item.getReminderMinutes()) {
+      comboBox.addItem(REMIND_MSG_ARR[i]);
+      i++;
     }
-
-
-
+    
+    btnPanel.add(comboBox,BorderLayout.WEST);
+    btnPanel.add(closeBtn,BorderLayout.EAST);
+    
+    jcontentPane.add(progPanel,BorderLayout.NORTH);
+    jcontentPane.add(btnPanel,BorderLayout.SOUTH);
+    
+    closeBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event){
+        int inx=comboBox.getSelectedIndex()-1;
+        if (inx>0) {
+          int minutes = REMIND_VALUE_ARR[inx];
+          ReminderListItem item = new ReminderListItem(prog, minutes);
+          list.add(item);
+        }
+        hide();
+      }
+    }
+    );
+    
+    this.pack();
+    UiUtilities.centerAndShow(this);
+  }
 
 }

@@ -2,18 +2,18 @@
  * TV-Browser
  * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
  *
- * This program is free software; you can redistribute it and/or
+ * This mProgram is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This mProgram is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
+ * along with this mProgram; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
@@ -41,16 +41,14 @@ import devplugin.*;
 
 public class ReminderListItem implements Serializable, Comparable {
 
-  private int reminderSelection;
-  private Program program;
-
-  private static int[] listValues={0,1,2,3,5,10,15,30,60};
+  private int mReminderMinutes;
+  private Program mProgram;
 
 
 
-  public ReminderListItem(devplugin.Program prog, int reminderSelection) {
-    this.reminderSelection=reminderSelection;
-    this.program=prog;
+  public ReminderListItem(devplugin.Program prog, int reminderMinutes) {
+    mReminderMinutes = reminderMinutes;
+    mProgram = prog;
   }
   
   
@@ -60,9 +58,9 @@ public class ReminderListItem implements Serializable, Comparable {
    */
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
-    out.writeInt(reminderSelection);
-    out.writeObject(program.getDate());
-    out.writeObject(program.getID());
+    out.writeInt(mReminderMinutes);
+    out.writeObject(mProgram.getDate());
+    out.writeObject(mProgram.getID());
   }
 
   
@@ -74,13 +72,13 @@ public class ReminderListItem implements Serializable, Comparable {
     throws IOException, ClassCastException
   {
     int version = in.readInt();
-    reminderSelection = in.readInt();
+    mReminderMinutes = in.readInt();
     
     try {
       devplugin.Date programDate = (devplugin.Date) in.readObject();
       String programId = (String) in.readObject();
 
-      program = Plugin.getPluginManager().getProgram(programDate, programId);
+      mProgram = Plugin.getPluginManager().getProgram(programDate, programId);
     }
     catch (ClassNotFoundException exc) {
       throw new IOException("Class not found: " + exc.getMessage());
@@ -90,33 +88,27 @@ public class ReminderListItem implements Serializable, Comparable {
   
 
   public devplugin.Program getProgram() {
-    return program;
-  }
-
-  public int getReminderSelection() {
-    return reminderSelection;
+    return mProgram;
   }
 
   public int getReminderMinutes() {
-    if (reminderSelection < listValues.length) {
-      return listValues[reminderSelection];
-    }
-    throw new RuntimeException("invalid reminder selection");
-
+    return mReminderMinutes;
   }
 
 
-  public void setReminderSelection(int value) {
-    reminderSelection=value;
+  public void setReminderMinutes(int minutes) {
+    mReminderMinutes = minutes;
   }
 
+  
+  
   public int compareTo(Object obj) {
     ReminderListItem item=(ReminderListItem)obj;
 
-    int res=program.getDate().compareTo(item.getProgram().getDate());
+    int res=mProgram.getDate().compareTo(item.getProgram().getDate());
     if (res!=0) return res;
 
-    int minThis=program.getHours()*60+program.getMinutes();
+    int minThis=mProgram.getHours()*60+mProgram.getMinutes();
     int minOther=item.getProgram().getHours()*60+item.getProgram().getMinutes();
 
     if (minThis<minOther) {

@@ -24,13 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package reminderplugin;
 
 import java.util.Properties;
@@ -42,15 +35,23 @@ import devplugin.*;
 
 import util.ui.*;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ReminderSettingsTab extends devplugin.SettingsTab {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ReminderSettingsTab.class);
+  
   private JCheckBox reminderwindowCheckBox;
   private FileCheckBox soundFileCheckBox;
   private FileCheckBox execFileCheckBox;
   private Properties settings;
 
   public String getName() {
-    return "reminder";
+    return mLocalizer.msg("tabName", "Reminder");
   }
 
   public void ok() {
@@ -66,20 +67,23 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
 
   public ReminderSettingsTab(Properties settings) {
     super();
+    
+    String msg;
 
     setLayout(new BorderLayout());
     this.settings=settings;
 
     JPanel reminderPanel=new JPanel();
 
-    reminderPanel.setBorder(BorderFactory.createTitledBorder("Remind me by:"));
+    msg = mLocalizer.msg("remindBy", "Remind me by");
+    reminderPanel.setBorder(BorderFactory.createTitledBorder(msg));
 
     reminderPanel.setLayout(new BoxLayout(reminderPanel,BoxLayout.Y_AXIS));
     JPanel panel1=new JPanel(new BorderLayout());
-    reminderwindowCheckBox=new JCheckBox("Erinnerungsfenster");
+    msg = mLocalizer.msg("reminderWindow", "Reminder window");
+    reminderwindowCheckBox = new JCheckBox(msg);
     panel1.add(reminderwindowCheckBox,BorderLayout.WEST);
     reminderPanel.add(panel1);
-
 
     String soundFName=settings.getProperty("soundfile","/");
     String execFName=settings.getProperty("execfile","/");
@@ -87,14 +91,17 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     File soundFile=new File(soundFName);
     File execFile=new File(execFName);
 
-    soundFileCheckBox=new FileCheckBox("playing sound:",soundFile,200);
-    execFileCheckBox=new FileCheckBox("executing program:",execFile,200);
+    msg = mLocalizer.msg("playlingSound", "Play sound");
+    soundFileCheckBox = new FileCheckBox(msg, soundFile, 200);
+    msg = mLocalizer.msg("executeProgram", "Execute program");
+    execFileCheckBox = new FileCheckBox(msg, execFile, 200);
 
     JFileChooser soundChooser=new JFileChooser("sound/");
     JFileChooser execChooser=new JFileChooser("/");
 
     String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
-    String msg = "Sound-Datei (*.wav, *.aif, *.rmf, *.au, *.mid)";
+    msg = mLocalizer.msg("soundFileFilter", "Sound file ({0})",
+      "*.wav, *.aif, *.rmf, *.au, *.mid");
     soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
 
     reminderwindowCheckBox.setSelected(settings.getProperty("usemsgbox","true").equals("true"));
@@ -111,8 +118,5 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     add(reminderPanel,BorderLayout.NORTH);
     updateUI();
   }
-
-
-
 
 }

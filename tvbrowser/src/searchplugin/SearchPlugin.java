@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.regex.*;
 
 import util.exc.TvBrowserException;
+import util.ui.UiUtilities;
 
 import devplugin.*;
 
@@ -40,6 +41,11 @@ import devplugin.*;
  * @author  Til Schneider, www.murfman.de
  */
 public class SearchPlugin extends Plugin {
+
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
+
+  
   
   /**
    * Creates a new instance of SearchPlugin.
@@ -55,7 +61,7 @@ public class SearchPlugin extends Plugin {
    */
   public void execute() {
     SearchDialog dlg = new SearchDialog(super.parent);
-    dlg.show();
+    UiUtilities.centerAndShow(dlg);
   }
 
 
@@ -70,16 +76,18 @@ public class SearchPlugin extends Plugin {
   
   
   public String getButtonText() {
-    return "Sendungen suchen";
+    return mLocalizer.msg("searchPrograms", "Search programs");
   }
 
   
   
   public PluginInfo getInfo() {
-    return new PluginInfo("Sendungen suchen",
-      "Ermöglicht das Suchen von Sendungen, die einem bestimmten Text enthalten.",
-      "Til Schneider, www.murfman.de",
-      new Version(1, 0));
+    String name = mLocalizer.msg("searchPrograms", "Search programs");
+    String desc = mLocalizer.msg("description",
+      "Allows searching programs containing a certain text.");
+    String author = "Til Schneider, www.murfman.de";
+
+    return new PluginInfo(name, desc, author, new Version(1, 0));
   }
   
   
