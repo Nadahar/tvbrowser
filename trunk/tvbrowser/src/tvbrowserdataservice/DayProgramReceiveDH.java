@@ -39,12 +39,14 @@ import util.io.DownloadHandler;
  */
 public class DayProgramReceiveDH implements DownloadHandler {
 
-  private File mDataDir;
+  private TvBrowserDataService mDataService;
   private TvDataBaseUpdater mUpdater;
 
 
-  public DayProgramReceiveDH(File dataDir, TvDataBaseUpdater updater) {
-    mDataDir = dataDir;
+  public DayProgramReceiveDH(TvBrowserDataService dataService,
+    TvDataBaseUpdater updater)
+  {
+    mDataService = dataService;
     mUpdater = updater;
   }
 
@@ -53,7 +55,7 @@ public class DayProgramReceiveDH implements DownloadHandler {
     throws TvBrowserException
   {
     System.out.println("Receiving file " + fileName);
-    File completeFile = new File(mDataDir, fileName);
+    File completeFile = new File(mDataService.getDataDir(), fileName);
     try {
       DayProgramFile prog = new DayProgramFile();
       prog.readFromStream(stream);
@@ -68,11 +70,15 @@ public class DayProgramReceiveDH implements DownloadHandler {
         "Saving dayprogram file failed: {0}", completeFile.getAbsolutePath(),
         exc);
     }
+    
+    mDataService.checkCancelDownload();
   }
 
 
   public void handleFileNotFound(String fileName) throws TvBrowserException {
-    // There is no data for this day -> Do nothing
+    // There is no data for this day
+    
+    mDataService.checkCancelDownload();
   }
 
 }

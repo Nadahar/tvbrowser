@@ -176,7 +176,7 @@ public class Channel {
 
 
   public String toString() {
-    return mName + " (" + mCountry + "," + mDataService.getInfo().getName() + ")";
+    return mName + " (" + mDataService.getInfo().getName() + ")";
   }
 
 

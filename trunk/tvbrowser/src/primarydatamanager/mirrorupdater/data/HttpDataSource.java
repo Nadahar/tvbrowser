@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.NumberFormat;
 
 import primarydatamanager.mirrorupdater.UpdateException;
 import util.io.IOUtilities;
@@ -42,6 +43,9 @@ public class HttpDataSource implements DataSource {
   
   private String mBaseUrl;
   
+  private int mBytesRead;
+  private int mFilesChecked;
+  
 
 
   public HttpDataSource(String url) {
@@ -54,6 +58,8 @@ public class HttpDataSource implements DataSource {
 
 
   public boolean fileExists(String fileName) throws UpdateException {
+    mFilesChecked++;
+    
     InputStream in = null;
     try {
       in = IOUtilities.getStream(new URL(mBaseUrl + fileName));
@@ -85,11 +91,21 @@ public class HttpDataSource implements DataSource {
 
   public byte[] loadFile(String fileName) throws UpdateException {
     try {
-      return IOUtilities.loadFileFromHttpServer(new URL(mBaseUrl + fileName));
+      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(mBaseUrl + fileName));
+      mBytesRead += data.length;
+      return data;
     }
     catch (IOException exc) {
       throw new UpdateException("Loading file failed: " + mBaseUrl + fileName, exc);
     }
+  }
+
+
+
+  public void close() throws UpdateException {
+    System.out.println("In total there were "
+      + NumberFormat.getInstance().format(mFilesChecked) + " files checked and "
+      + NumberFormat.getInstance().format(mBytesRead) + " bytes read.");
   }
 
 }

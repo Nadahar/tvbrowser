@@ -23,32 +23,35 @@
  *   $Author$
  * $Revision$
  */
-package tvdataservice;
+package util.ui.progress;
 
-import devplugin.Channel;
-import devplugin.Date;
+import javax.swing.JProgressBar;
+
+import devplugin.ProgressMonitor;
 
 /**
  * 
  * 
  * @author Til Schneider, www.murfman.de
  */
-public interface TvDataBase {
-
-  /**
-   * Updates the given day program.
-   * 
-   * @param program The day program to update.
-   */
-  public void updateDayProgram(MutableChannelDayProgram program);
+public class ProgressBarProgressMonitor implements ProgressMonitor {
   
-  public boolean isDayProgramAvailable(Date date, Channel channel);
+  private JProgressBar mProgressBar;
+  
+  
+  public ProgressBarProgressMonitor(JProgressBar progressBar) {
+    mProgressBar = progressBar;
+  }
 
-  /**
-   * Returns wether the download should be canceled.
-   * 
-   * @return Wether the download should be canceled.
-   */  
-  public boolean cancelDownload();
+
+  public void setMaximum(int maximum) {
+    mProgressBar.setMaximum(maximum);
+  }
+
+
+
+  public void setValue(int value) {
+    mProgressBar.setValue(value);
+  }
 
 }

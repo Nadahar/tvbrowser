@@ -55,7 +55,7 @@ public class MutableProgram implements Program {
    * The maximum length of a short info. Used for generating a short info out of a
    * (long) description.
    */
-  private static final int MAX_SHORT_INFO_LENGTH = 100;
+  public static final int MAX_SHORT_INFO_LENGTH = 100;
   
   /** A plugin array that can be shared by all the programs that are not marked
    * by any plugin. */

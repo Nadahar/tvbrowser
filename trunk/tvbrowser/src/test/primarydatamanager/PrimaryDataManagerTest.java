@@ -146,6 +146,10 @@ public class PrimaryDataManagerTest extends TestCase {
         new Channel(null, "Test", "test", TimeZone.getTimeZone("MET"), "de")
       };
     }
+
+    public int getReadBytesCount() {
+      return 0;
+    }
     
   } 
 

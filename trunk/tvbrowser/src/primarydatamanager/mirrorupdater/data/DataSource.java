@@ -37,5 +37,7 @@ public interface DataSource {
   public boolean fileExists(String fileName) throws UpdateException;
 
   public byte[] loadFile(String fileName) throws UpdateException;
+  
+  public void close() throws UpdateException;
 
 }
