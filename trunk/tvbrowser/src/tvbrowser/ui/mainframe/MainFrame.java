@@ -338,7 +338,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         JMenuItem item=new JMenuItem(services[i].getInfo().getName(),new ImageIcon("imgs/About16.gif"));
         item.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
-            LicenseBox box=new LicenseBox(null, license, false);
+            LicenseBox box=new LicenseBox(mSingleton, license, false);
             util.ui.UiUtilities.centerAndShow(box);
           }        
         });
