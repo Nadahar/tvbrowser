@@ -695,7 +695,8 @@ public class PluginProxyManager {
     //       variable
     PluginProxy[] activatedPluginArr = mActivatedPluginCache;
     
-    // Check whether the cache is already filled 
+    // Check whether the cache is already filled
+
     if (activatedPluginArr == null) {
       // The cache is empty -> We've got to fill it
       
