@@ -286,7 +286,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
        mMainFrame.setShowChannellist(mChannellistMI.isSelected());  
      }
      else if (source == mPluginOverviewMI) {
-       mMainFrame.setShowPluginOverview(mPluginOverviewMI.isSelected());  
+       boolean selected = mPluginOverviewMI.isSelected();
+       mMainFrame.setShowPluginOverview(selected);
+       mMainFrame.setPluginViewButton(selected);
      }
      else if (source == mRestoreMI) {
        mMainFrame.restoreViews();

@@ -38,5 +38,7 @@ public interface CustomizableItemsListener {
 
     public void leftListSelectionChanged(ListSelectionEvent event);
     public void rightListSelectionChanged(ListSelectionEvent event);
+    public void itemsTransferredToLeftList(Object[] items);
+    public void itemsTransferredToRightList(Object[] items);
 
 }

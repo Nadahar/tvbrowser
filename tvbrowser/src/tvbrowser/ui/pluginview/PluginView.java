@@ -129,7 +129,7 @@ public class PluginView extends JPanel implements MouseListener {
       return new ProgramContextMenu(mTree, selectedPath, mModel.getPlugin(selectedPath[0]), selectedPrograms);
     }
     else if (node.getType() == Node.PLUGIN_ROOT) {
-      return new PluginContextMenu(mTree, selectedPath[0], mModel.getPlugin(selectedPath[0]));
+      return new PluginContextMenu(mTree, selectedPath[0], mModel.getPlugin(selectedPath[0]), node.getActionMenus());
     }
     else if (node.getType() == Node.CUSTOM_NODE) {
       return new CustomNodeContextMenu(mTree, selectedPath[0], node.getActionMenus());

@@ -46,6 +46,10 @@ public class Node extends DefaultMutableTreeNode {
     mActionMenuList.remove(menu);
   }
 
+  public void removeAllActionMenus() {
+    mActionMenuList.clear();
+  }
+
   public ActionMenu[] getActionMenus() {
     ActionMenu[] result = new ActionMenu[mActionMenuList.size()];
     mActionMenuList.toArray(result);

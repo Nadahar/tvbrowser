@@ -30,6 +30,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import util.ui.UiUtilities;
 
@@ -47,12 +49,13 @@ public class CustomizableItemsPanel extends JPanel {
   private final JList mLeftList, mRightList;
   
   private JButton mRightBt, mLeftBt, mUpBt, mDownBt;
-  
+  private ArrayList mListeners;
   
 
   public CustomizableItemsPanel(String leftText, String rightText) {
     super(new GridLayout(1,2));
-    
+
+    mListeners = new ArrayList();
     String msg;
 
     JPanel leftPanel=new JPanel(new BorderLayout());
@@ -77,7 +80,21 @@ public class CustomizableItemsPanel extends JPanel {
         updateEnabled();
       }
     });
-    
+
+    mLeftList.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        fireLeftListSelectionChanged(e);
+      }
+    }
+    );
+
+    mRightList.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        fireRightListSelectionChanged(e);
+      }
+    }
+    );
+
     JLabel leftLabel=new JLabel(leftText);
     JLabel rightLabel=new JLabel(rightText);
 
@@ -141,13 +158,19 @@ public class CustomizableItemsPanel extends JPanel {
 
     mRightBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        moveSelectedItems(mLeftList, mRightList);
+        Object[] items = moveSelectedItems(mLeftList, mRightList);
+        if (items != null) {
+          fireItemTransferredToRightList(items);
+        }
       }
     });
 
     mLeftBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        moveSelectedItems(mRightList, mLeftList);
+        Object[] items = moveSelectedItems(mRightList, mLeftList);
+        if (items != null) {
+          fireItemTransferredToLeftList(items);
+        }
       }
     });
 
@@ -190,12 +213,50 @@ public class CustomizableItemsPanel extends JPanel {
     mRightListModel.addElement(item);
   }
 
+  public void insertElementLeft(int index, Object item) {
+    mLeftListModel.add(index, item);
+  }
+
+  public void insertElementRight(int index, Object item) {
+    mRightListModel.add(index, item);
+  }
+
+  public void setElementsLeft(Object[] items) {
+    mLeftListModel.clear();
+    for (int i=0; i<items.length; i++) {
+      mLeftListModel.addElement(items[i]);
+    }
+  }
+
+  public void setElementsRight(Object[] items) {
+    mRightListModel.clear();
+    for (int i=0; i<items.length; i++) {
+      mRightListModel.addElement(items[i]);
+    }
+  }
+
   public Object[] getElementsLeft() {
     return mLeftListModel.toArray();
   }
 
   public Object[] getElementsRight() {
     return mRightListModel.toArray();
+  }
+
+  public Object getElementAtRight(int inx) {
+    return mRightListModel.getElementAt(inx);
+  }
+
+  public Object getElementAtLeft(int inx) {
+    return mLeftListModel.getElementAt(inx);
+  }
+
+  public void removeLeft(Object o) {
+    mLeftListModel.removeElement(o);
+  }
+
+  public void removeRight(Object o) {
+    mRightListModel.removeElement(o);
   }
 
   public Object getLeftSelection() {
@@ -212,7 +273,7 @@ public class CustomizableItemsPanel extends JPanel {
   
   public Object[] getLeftSelections() {
       return getSelectedValues(mLeftList);
-    }
+  }
 
   private Object[] getSelectedValues(JList list) {
     int[] inx=list.getSelectedIndices();
@@ -223,6 +284,50 @@ public class CustomizableItemsPanel extends JPanel {
     return res;
   }
 
+
+  public void setCellRenderer(ListCellRenderer renderer) {
+    mLeftList.setCellRenderer(renderer);
+    mRightList.setCellRenderer(renderer);
+  }
+
+
+  public void addCustomizableItemsListener(CustomizableItemsListener listener) {
+    mListeners.add(listener);
+  }
+
+  private void fireLeftListSelectionChanged(final ListSelectionEvent e) {
+    Iterator it = mListeners.iterator();
+    while (it.hasNext()) {
+      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      listener.leftListSelectionChanged(e);
+    }
+  }
+
+   private void fireRightListSelectionChanged(final ListSelectionEvent e) {
+    Iterator it = mListeners.iterator();
+    while (it.hasNext()) {
+      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      listener.rightListSelectionChanged(e);
+    }
+  }
+
+  private void fireItemTransferredToLeftList(Object[] items) {
+    Iterator it = mListeners.iterator();
+    while (it.hasNext()) {
+      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      listener.itemsTransferredToLeftList(items);
+    }
+  }
+
+  private void fireItemTransferredToRightList(Object[] items) {
+    Iterator it = mListeners.iterator();
+    while (it.hasNext()) {
+      CustomizableItemsListener listener = (CustomizableItemsListener)it.next();
+      listener.itemsTransferredToRightList(items);
+    }
+  }
+
+        /*
   public void addListSelectionListenerLeft(final CustomizableItemsListener listener) {
     mLeftList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
@@ -240,6 +345,8 @@ public class CustomizableItemsPanel extends JPanel {
     }
     );
   }
+       */
+
 
   public static CustomizableItemsPanel createCustomizableItemsPanel(String leftText, String rightText) {
     return new CustomizableItemsPanel(leftText, rightText);
@@ -247,16 +354,24 @@ public class CustomizableItemsPanel extends JPanel {
   
   
 
-  private void moveSelectedItems(JList fromList, JList toList) {
+  private Object[] moveSelectedItems(JList fromList, JList toList) {
     DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
     DefaultListModel toModel = (DefaultListModel) toList.getModel();
     
     // get the selection
     int[] selection = fromList.getSelectedIndices();
+
+
+
     if (selection.length == 0) {
-      return;
+      return null;
     }
-    
+
+    Object[] objects = new Object[selection.length];
+    for (int i=0; i<selection.length; i++) {
+      objects[i] = fromModel.getElementAt(selection[i]);
+    }
+
     // get the target insertion position
     int targetPos = toList.getMaxSelectionIndex();
     if (targetPos == -1) {
@@ -286,9 +401,14 @@ public class CustomizableItemsPanel extends JPanel {
     // ensure the selection is visible
     toList.ensureIndexIsVisible(toList.getMaxSelectionIndex());
     toList.ensureIndexIsVisible(toList.getMinSelectionIndex());
+
+
+    return objects;
   }
 
-  
+
+
+
   
   private void moveSelectedItems(JList list, int nrRows) {
     DefaultListModel model = (DefaultListModel) list.getModel();

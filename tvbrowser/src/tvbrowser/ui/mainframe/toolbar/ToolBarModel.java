@@ -24,11 +24,14 @@
  * $Revision$
  */
 
-package util.ui.toolbar;
+package tvbrowser.ui.mainframe.toolbar;
 
-import java.awt.event.ActionEvent;
+import javax.swing.*;
 
-public interface ToolBarEvent {
-  public ToolBarItem getItem();
-  public ActionEvent getActionEvent();
+
+public interface ToolBarModel {
+
+  public Action[] getActions();
+  public Action[] getAvailableActions();
+    
 }

@@ -33,10 +33,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.logging.Level;
-
-import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -56,10 +53,13 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.ui.SkinPanel;
+import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
+import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
@@ -104,14 +104,12 @@ public class MainFrame extends JFrame implements DateListener {
   private Thread downloadingThread;
   private JPanel jcontentPane;
   private SkinPanel skinPanel;
-  private tvbrowser.ui.mainframe.MainToolBar mToolBar;
+  private DefaultToolBarModel mToolBarModel;
+  private ToolBar mToolBar;
   private StatusBar mStatusBar;
 
-  private JMenu mPluginsMenu;
-  
   private static MainFrame mSingleton;
 
-  private TimeChooserPanel mTimeChooser;
   private ChannelChooserPanel mChannelChooser;
   private MenuBar mMenuBar;
   private Component mCenterComponent;
@@ -127,8 +125,6 @@ private Node mDateChannelNode;
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
 		mIsVisible = false;
-    String msg;
-    Icon icon;
 
     mStatusBar = new StatusBar();
     
@@ -178,17 +174,10 @@ private Node mDateChannelNode;
     FinderPanel.getInstance().setDateListener(this);
     dateChanged(new devplugin.Date(), null, null);
         
-    JLabel lb=mStatusBar.getLabel();
     skinPanel.add(centerPanel, BorderLayout.CENTER);
     
     mChannelChooser = new ChannelChooserPanel(this);
-       
-    /* create panels */
-    
- //   JPanel pluginPanel = ;
- //   JPanel datechooser = new DateChooserPanel(this,FinderPanel.getInstance());
- //   JPanel timechooser = new TimeChooserPanel(this);
-    
+
     /* create structure */    
     mRootNode = new Node(null);
     mPluginsNode = new Node(mRootNode);
@@ -212,9 +201,7 @@ private Node mDateChannelNode;
     this.setShowTimeButtons(Settings.propShowTimeButtons.getBoolean());
     this.setShowDatelist(Settings.propShowDatelist.getBoolean());
     this.setShowChannellist(Settings.propShowChannels.getBoolean());
-    
-        
-    
+
     updateToolBar();
     
     
@@ -274,10 +261,10 @@ private Node mDateChannelNode;
     if (mToolBar!=null) {
       contentPane.remove(mToolBar);
     }
-    
-    mToolBar = new MainToolBar(this, new util.ui.toolbar.DefaultToolBarModel());
-    mToolBar.setStatusLabel(mStatusBar.getLabel());    
-    
+
+    mToolBarModel = DefaultToolBarModel.getInstance();
+    mToolBar = new ToolBar(mToolBarModel, mStatusBar.getLabel());
+
     if (location!=null) {
       contentPane.add(mToolBar, location);
     }
@@ -288,9 +275,9 @@ private Node mDateChannelNode;
     return mProgramTableScrollPane;
   }
 
-  
+
   public void updateToolbar() {
-    mToolBar.refresh();
+    mToolBar.update();
   }
   
   public DefaultProgramTableModel getProgramTableModel() {
@@ -304,16 +291,21 @@ private Node mDateChannelNode;
     }
     return mSingleton;
   }
-  
+
+  public boolean isShowAllFilterActivated() {
+    return mProgramTableModel.getProgramFilter() instanceof ShowAllFilter;
+  }
+
   public void setProgramFilter(ProgramFilter filter) {
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
+    mToolBarModel.setFilterButtonSelected(!isShowAllFilterActivated());
+    mToolBar.update();
   }
 
   public ProgramFilter getProgramFilter() {
-      
     if (mProgramTableModel == null) {
-        return null;
+      return null;
     }
     
     return mProgramTableModel.getProgramFilter();
@@ -468,7 +460,7 @@ private Node mDateChannelNode;
   }
   
   public void storeSettings() {
-    mToolBar.storeSettings();
+    mToolBarModel.store();
     mRootNode.storeProperties();
     Settings.propLastUsedFilter.setString(getProgramFilter().getName());
   }
@@ -478,7 +470,7 @@ private Node mDateChannelNode;
 
 
   private void onDownloadStart() {
-    mToolBar.showStopButton();
+    mToolBarModel.showStopButton();
     mMenuBar.showStopMenuItem();
   }
 
@@ -488,7 +480,7 @@ private Node mDateChannelNode;
     TvDataUpdater.getInstance().stopDownload();
     mStatusBar.getProgressBar().setValue(0);
     
-    mToolBar.showUpdateButton();
+    mToolBarModel.showUpdateButton();
     mMenuBar.showUpdateMenuItem();
 
     FinderPanel.getInstance().updateUI();
@@ -716,7 +708,7 @@ public void showHelpDialog() {
    * Updates the TimeChooser-Buttons
    */
   public void updateButtons() {
-    mTimeChooser.updateButtons();
+    //mTimeChooser.updateButtons();
   }
 
 
@@ -776,14 +768,34 @@ public void showHelpDialog() {
     updateViews();
   }
 
+
+/*  public void setPluginViewToolbarButtonSelected(boolean selected) {
+    mToolBar.setPluginViewToolbarButtonSelected(selected);
+  } */
+
+
+  public void setPluginViewButton(boolean selected) {
+    if (mToolBarModel != null) {
+      System.out.println("set button to "+selected);
+      mToolBarModel.setPluginViewButtonSelected(selected);
+      mToolBar.update();
+    }
+  }
+
   public void setShowPluginOverview(boolean visible) {
+    System.out.println("show plugin overview: "+visible);
+
     if (visible) {
       mPluginsNode.setLeaf(new PluginView());
     }
     else {
       mPluginsNode.setLeaf(null);
     }
-    Settings.propShowPluginView.setBoolean(visible);    
+   // Settings.propShowPluginView.setBoolean(visible);
+   // if (mToolBar != null) {
+   //   mToolBar.setPluginViewToolbarButtonSelected(visible);
+   // }
+ /*      */
     updateViews();
   }
   

@@ -44,14 +44,18 @@ import util.ui.menu.MenuUtil;
 public class PluginContextMenu extends AbstractContextMenu {
 
 
-
+  private ActionMenu[] mActionMenus;
   private Action mDefaultAction;
   private Plugin mPlugin;
 
-  public PluginContextMenu(JTree tree, TreePath path, Plugin plugin) {
+  public PluginContextMenu(JTree tree, TreePath path, Plugin plugin, ActionMenu[] menus) {
     super(tree);
     mDefaultAction = getCollapseExpandAction(path);
     mPlugin = plugin;
+    mActionMenus = menus;
+    if (mActionMenus == null) {
+      mActionMenus = new ActionMenu[]{};
+    }
   }
 
   public JPopupMenu getPopupMenu() {
@@ -67,6 +71,14 @@ public class PluginContextMenu extends AbstractContextMenu {
       JMenuItem pluginMI = new JMenuItem(action);
       pluginMI.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
       menu.add(pluginMI);
+    }
+
+    if (mActionMenus.length>0) {
+      menu.addSeparator();
+      for (int i=0; i<mActionMenus.length; i++) {
+        JMenuItem menuItem = MenuUtil.createMenuItem(mActionMenus[i]);
+        menu.add(menuItem);
+      }
     }
 
     return menu;
