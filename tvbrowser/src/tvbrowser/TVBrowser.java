@@ -110,10 +110,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
 
     System.out.println("starting up...\n");
-    TVBrowser frame = new TVBrowser();
+    final TVBrowser frame = new TVBrowser();
     frame.pack();
     frame.setSize(700,500);
     frame.setVisible(true);
+
+    // scroll to now
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        frame.scrollToNow();
+      }
+    });
   }
 
   
@@ -241,8 +248,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
         quit();
       }
     });
-    
-    scrollToNow();
   }
 
   
