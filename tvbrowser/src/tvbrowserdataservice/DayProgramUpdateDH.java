@@ -87,13 +87,15 @@ public class DayProgramUpdateDH implements DownloadHandler {
       
       // Tell the database updater that this file needs an update
       mUpdater.addUpdateJobForDayProgramFile(completeFileName);
-    } catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.2",
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(getClass(), "error.1",
         "Updating dayprogram file failed: {0}", completeFile.getAbsolutePath(),
         exc);
     }
-
-    mDataService.checkCancelDownload();
+    finally {
+      mDataService.checkCancelDownload();
+    }
   }
   
   

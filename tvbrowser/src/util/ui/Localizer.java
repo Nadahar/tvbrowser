@@ -254,7 +254,25 @@ public class Localizer {
     
     if (msg == null) {
       if (mBundle != null) {
-        mLog.warning("Key '" + key + "' not found in resource bundle '" + mBaseName + "'");
+        // Workaround: There is a bug in the logging mechanism of Java.
+        //             When someone tries to log an exception which uses
+        //             localization then the logging stucks in a deadlock,
+        //             when the exception message was not found in the resource
+        //             bundle. The reason of this is, that the following log
+        //             waits until the error log has finished and the error log
+        //             waits until this method returns, but this method does not
+        //             return because the following log waits. -- A classical
+        //             dead lock.
+        // Solution:   We do the following log in another thread, so this method
+        //             can return and the error log gets its message and can
+        //             unlock the logging.
+        final String fkey = key;
+        Thread logThread = new Thread() {
+          public void run() {
+            mLog.warning("Key '" + fkey + "' not found in resource bundle '" + mBaseName + "'");
+          }
+        };
+        logThread.start();
       }
       return "[" + key + "#" + defaultMsg + "]";
     } else {
