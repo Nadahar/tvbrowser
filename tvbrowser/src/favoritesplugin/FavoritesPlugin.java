@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,6 @@
 package favoritesplugin;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.awt.Dimension;
 
@@ -47,12 +46,9 @@ public class FavoritesPlugin extends Plugin {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesPlugin.class);
 
-  private static FavoritesPlugin mInstance;
-  
-  private Favorite[] mFavoriteArr;
-  
-  private Plugin[] mClientPluginArr;
-  
+  private static FavoritesPlugin mInstance;  
+  private Favorite[] mFavoriteArr;  
+  private String[] mClientPluginArr;  
   private Properties mSettings;
 
   
@@ -62,7 +58,7 @@ public class FavoritesPlugin extends Plugin {
    */
   public FavoritesPlugin() {
     mFavoriteArr = new Favorite[0];
-    mClientPluginArr = new Plugin[0];
+    mClientPluginArr = new String[0];
     
     mInstance = this;
   }
@@ -97,30 +93,13 @@ public class FavoritesPlugin extends Plugin {
     }
 
     // Get the client plugins
-    Plugin[] installedPluginArr = Plugin.getPluginManager().getInstalledPlugins();
-    ArrayList clientPluginList = new ArrayList();
     size = in.readInt();
+    
+    mClientPluginArr=new String[size];
     for (int i = 0; i < size; i++) {
       String className = (String) in.readObject();
-
-      // Get the plugin with the right class name
-      Plugin plugin = null;
-      for (int j = 0; j < installedPluginArr.length; j++) {
-        if (className.equals(installedPluginArr[j].getClass().getName())) {
-          plugin = installedPluginArr[j];
-          break;
-        }
-      }
-      
-      // If the plugin was found -> add it to the list
-      if (plugin != null) {
-        clientPluginList.add(plugin);
-      }
+      mClientPluginArr[i]=className;
     }
-
-    // copy the list into the array
-    mClientPluginArr = new Plugin[clientPluginList.size()];
-    clientPluginList.toArray(mClientPluginArr);
   }
 
 
@@ -135,7 +114,7 @@ public class FavoritesPlugin extends Plugin {
     
     out.writeInt(mClientPluginArr.length);
     for (int i = 0; i < mClientPluginArr.length; i++) {
-      out.writeObject(mClientPluginArr[i].getClass().getName());
+      out.writeObject(mClientPluginArr[i]);
     }
   }
   
@@ -256,6 +235,15 @@ public class FavoritesPlugin extends Plugin {
   }
 
   
+  static Plugin getPluginByClassName(String className) {
+    Plugin[] plugins = Plugin.getPluginManager().getInstalledPlugins();
+    for (int i=0; i<plugins.length; i++) {
+      if (className.equals(plugins[i].getClass().getName())) {
+        return plugins[i];
+      }
+    }
+    return null;
+  }
   
   void mark(Program[] programArr) {
     // mark all programs with this plugin
@@ -265,7 +253,10 @@ public class FavoritesPlugin extends Plugin {
 
     // Pass the program list to all client plugins
     for (int i = 0; i < mClientPluginArr.length; i++) {
-      mClientPluginArr[i].execute(programArr);
+      Plugin p = getPluginByClassName(mClientPluginArr[i]);
+      if (p!=null) {
+        p.execute(programArr);
+      }
     }
   }
 
@@ -291,13 +282,13 @@ public class FavoritesPlugin extends Plugin {
   
   
   
-  public Plugin[] getClientPlugins() {
+  public String[] getClientPlugins() {
     return mClientPluginArr;
   }
   
   
   
-  public void setClientPlugins(Plugin[] clientPluginArr) {
+  public void setClientPlugins(String[] clientPluginArr) {
     mClientPluginArr = clientPluginArr;
   }
 

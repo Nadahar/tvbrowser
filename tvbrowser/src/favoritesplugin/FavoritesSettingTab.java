@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,8 +47,8 @@ public class FavoritesSettingTab implements SettingsTab {
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
   
   private JPanel mSettingsPn;
-  private Plugin[] mChoosablePluginArr;
-  private JCheckBox[] mChoosablePluginChBArr;
+  private Plugin[] mSelectablePluginArr;
+  private JCheckBox[] mSelectablePluginChBArr;
 
   
   
@@ -73,21 +73,23 @@ public class FavoritesSettingTab implements SettingsTab {
     mSettingsPn.add(main, BorderLayout.NORTH);
     
     // get the client plugins
-    Plugin[] clientPluginArr
+    String[] clientPluginArr
       = FavoritesPlugin.getInstance().getClientPlugins();
     
     // get the installed plugins
     Plugin[] installedPluginArr = Plugin.getPluginManager().getInstalledPlugins();
     
     // create a list of those who support multiple program execution
-    ArrayList chooseablePluginList = new ArrayList();
-    for (int i = 0; i < installedPluginArr.length; i++) {
+    ArrayList selectablePluginList = new ArrayList();
+    for (int i=0; i<installedPluginArr.length; i++) {
       if (installedPluginArr[i].supportMultipleProgramExecution()) {
-        chooseablePluginList.add(installedPluginArr[i]);
+        selectablePluginList.add(installedPluginArr[i]);
       }
     }
+    
+    
 
-    if (chooseablePluginList.size() == 0) {
+    if (selectablePluginList.size() == 0) {
       msg = mLocalizer.msg("noPlugins", "There are no plugins that can receive multiple programs.");
       main.add(new JLabel(msg));
     } else {
@@ -96,25 +98,27 @@ public class FavoritesSettingTab implements SettingsTab {
     }
     
     // put them into an array
-    mChoosablePluginArr = new Plugin[chooseablePluginList.size()];
-    chooseablePluginList.toArray(mChoosablePluginArr);
+    mSelectablePluginArr = new Plugin[selectablePluginList.size()];
+    selectablePluginList.toArray(mSelectablePluginArr);
     
     // create a check box for each
-    mChoosablePluginChBArr = new JCheckBox[mChoosablePluginArr.length];
-    for (int i = 0; i < mChoosablePluginArr.length; i++) {
-      String name = mChoosablePluginArr[i].getInfo().getName();
-      mChoosablePluginChBArr[i] = new JCheckBox(name);
-      main.add(mChoosablePluginChBArr[i]);
+    mSelectablePluginChBArr = new JCheckBox[mSelectablePluginArr.length];
+    for (int i = 0; i < mSelectablePluginArr.length; i++) {
+      String name = mSelectablePluginArr[i].getInfo().getName();
+      mSelectablePluginChBArr[i] = new JCheckBox(name);
+      main.add(mSelectablePluginChBArr[i]);
       
       // check wether the plugin is currently a client of the FavoritesPlugin
       boolean isClient = false;
+      
       for (int j = 0; j < clientPluginArr.length; j++) {
-        if (mChoosablePluginArr[i] == clientPluginArr[j]) {
+        
+        if (mSelectablePluginArr[i].getClass().getName().equals(clientPluginArr[j])) {
           isClient = true;
           break;
         }
       }
-      mChoosablePluginChBArr[i].setSelected(isClient);
+      mSelectablePluginChBArr[i].setSelected(isClient);
     }
     
     return mSettingsPn;
@@ -126,18 +130,18 @@ public class FavoritesSettingTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
+    
     // Find out the plugins that should be client
     ArrayList clientPluginList = new ArrayList();
-    for (int i = 0; i < mChoosablePluginChBArr.length; i++) {
-      if (mChoosablePluginChBArr[i].isSelected()) {
-        clientPluginList.add(mChoosablePluginArr[i]);
+    for (int i = 0; i < mSelectablePluginChBArr.length; i++) {
+      if (mSelectablePluginChBArr[i].isSelected()) {
+        clientPluginList.add(mSelectablePluginArr[i].getClass().getName());
       }
     }
     
     // Put them into an array
-    Plugin[] clientPluginArr = new Plugin[clientPluginList.size()];
+    String[] clientPluginArr = new String[clientPluginList.size()];
     clientPluginList.toArray(clientPluginArr);
-    
     FavoritesPlugin.getInstance().setClientPlugins(clientPluginArr);
   }
 
