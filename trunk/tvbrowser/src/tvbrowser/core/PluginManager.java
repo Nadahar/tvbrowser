@@ -291,6 +291,24 @@ public class PluginManager {
     }
     return mContextMenuPlugins;
   }
+  
+  /**
+   * 
+   * @return an array of plugins which implements the execute() method
+   */
+  public Plugin[] getExecutablePlugins() {    
+    ArrayList pluginList = new ArrayList();
+    Plugin[] installedPlugins=getInstalledPlugins();
+    for (int i=0;i<installedPlugins.length;i++) {
+      Plugin plugin=installedPlugins[i];
+      if (plugin.getButtonText()!=null) {
+        pluginList.add(plugin);
+      }
+    }
+    Plugin[] result = new Plugin[pluginList.size()];
+    pluginList.toArray(result);
+    return result;   
+  }
 
   /**
    * Creates a context menu containing all subscribed plugins that support context

@@ -29,13 +29,16 @@ package tvbrowser.ui.settings;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.VerticalToolBar;
 import util.ui.*;
 
+import devplugin.Plugin;
 import devplugin.SettingsTab;
 
 /**
@@ -54,7 +57,7 @@ public class ButtonsSettingsTab implements SettingsTab {
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
   private TimePanel mEarlyTimePn, mMiddayTimePn, mAfternoonTimePn, mEveningTimePn;
   private JLabel mEarlyLb, mAfternoonLb, mMiddayLb, mEveningLb;
-
+  private OrderChooser mButtonList;
  
 
 
@@ -73,31 +76,25 @@ public class ButtonsSettingsTab implements SettingsTab {
     
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.NORTH);
-
-    // buttons panel
+    
     JPanel toolBarPanel=new JPanel();
     toolBarPanel.setLayout(new BoxLayout(toolBarPanel,BoxLayout.Y_AXIS));
-    JPanel buttonPanel=new JPanel(new GridLayout(1,0));
     main.add(toolBarPanel);
- 
-    JPanel visibleBtnsPanel=new JPanel(new BorderLayout());
-    JPanel panel3=new JPanel(new BorderLayout());
-    msg = mLocalizer.msg("showButtons", "Show buttons");
-    panel3.setBorder(BorderFactory.createTitledBorder(msg));
-    panel3.setLayout(new BoxLayout(panel3,BoxLayout.Y_AXIS));
-
-    mTimeCheck = new JCheckBox(mLocalizer.msg("buttons.time", "Time buttons"));
-    updateCheck = new JCheckBox(mLocalizer.msg("buttons.update", "Update"));
-    settingsCheck = new JCheckBox(mLocalizer.msg("buttons.settings", "Settings"));
-    panel3.add(mTimeCheck);
-    panel3.add(updateCheck);
-    panel3.add(settingsCheck);
-
-    mTimeCheck.setSelected(Settings.propShowTimeButtons.getBoolean());
-    updateCheck.setSelected(Settings.propShowUpdateButton.getBoolean());
-    settingsCheck.setSelected(Settings.propShowPreferencesButton.getBoolean());
     
-    visibleBtnsPanel.add(panel3,BorderLayout.NORTH);
+    
+    /* visible buttons */
+    JPanel toolbarbuttonsPanel = new JPanel(new BorderLayout());
+    toolbarbuttonsPanel.setBorder(BorderFactory.createTitledBorder("Toolbar buttons"));
+    
+    ButtonItem[] availableButtons = getAvailableButtons();
+    ButtonItem[] toolbarButtons = getSelectedToolbarButtons(availableButtons);
+    mButtonList = new OrderChooser(toolbarButtons, availableButtons);
+    toolbarbuttonsPanel.add(mButtonList,BorderLayout.WEST);
+ 
+
+
+
+  /* 'text and images' buttons */
 
     JPanel labelBtnsPanel=new JPanel(new BorderLayout());
     JPanel panel4=new JPanel(new BorderLayout());
@@ -125,13 +122,24 @@ public class ButtonsSettingsTab implements SettingsTab {
     panel4.add(textAndPicRadio);
     labelBtnsPanel.add(panel4,BorderLayout.NORTH);
 
-    buttonPanel.add(visibleBtnsPanel);
-    buttonPanel.add(labelBtnsPanel);
 
-    // time buttons
 
-    JPanel timeButtonsPn=new JPanel(new GridLayout(2,4));
+
+   /* enable time buttons */
+
+    JPanel enableTimeButtonsPn = new JPanel(new BorderLayout());
+    mTimeCheck = new JCheckBox(mLocalizer.msg("buttons.time", "Time buttons"));
+    mTimeCheck.setSelected(Settings.propShowTimeButtons.getBoolean());
+    enableTimeButtonsPn.add(mTimeCheck,BorderLayout.WEST);
+
+
+    /* time buttons */
+
+    JPanel timeButtonsPn=new JPanel(new GridLayout(0,4));
     timeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
+    
+   
+    
     
     
     mEarlyTimePn     = new TimePanel(Settings.propEarlyTime.getInt());    
@@ -155,8 +163,10 @@ public class ButtonsSettingsTab implements SettingsTab {
     timeButtonsPn.add(mEveningLb);
     timeButtonsPn.add(mEveningTimePn);
 
-    toolBarPanel.add(buttonPanel);
-
+ 
+    toolBarPanel.add(toolbarbuttonsPanel);
+    toolBarPanel.add(labelBtnsPanel);
+    toolBarPanel.add(enableTimeButtonsPn);    
     toolBarPanel.add(timeButtonsPn);
 
 
@@ -184,13 +194,62 @@ public class ButtonsSettingsTab implements SettingsTab {
   }
   
   
+  private ButtonItem[] getSelectedToolbarButtons(ButtonItem[] availableItems) {
+    
+    
+    String[] toolbarButtons = Settings.propToolbarButtons.getStringArray();
+    if (toolbarButtons == null) {
+      ButtonItem[] result = new ButtonItem[availableItems.length];
+      System.arraycopy(availableItems, 0, result, 0, availableItems.length);
+      return result;
+    }
+    ArrayList list = new ArrayList();
+    for (int i=0; i<toolbarButtons.length; i++) {
+      String itemName = toolbarButtons[i];
+      for (int j=0; j<availableItems.length; j++) {
+         if (availableItems[j].getId().equals(itemName)) {
+           list.add(availableItems[j]);
+         }
+        
+      }
+    }
+        
+    ButtonItem[] result = new ButtonItem[list.size()];
+    list.toArray(result);
+    return result;
+  }
+  
+  
+  private ButtonItem[] getAvailableButtons() {
+    
+    Plugin[] plugins = PluginManager.getInstance().getExecutablePlugins();
+    ButtonItem[] items = new ButtonItem[plugins.length + 2];
+    
+    items[0]=new ButtonItem("#update","Update");
+    items[1]=new ButtonItem("#settings","Settings");
+    for (int i=2; i<items.length; i++) {
+      items[i]=new ButtonItem(plugins[i-2]);
+    }
+    return items;
+     
+  }
+  
+  
+ 
+    
+  
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
     Settings.propShowTimeButtons.setBoolean(mTimeCheck.isSelected());
-    Settings.propShowUpdateButton.setBoolean(updateCheck.isSelected());
-    Settings.propShowPreferencesButton.setBoolean(settingsCheck.isSelected());
+    
+    Object[] oItems = mButtonList.getOrder();
+    String[] items = new String[oItems.length];
+    for (int i=0; i<oItems.length; i++) {
+      items[i] = ((ButtonItem)oItems[i]).getId();
+    }
+    Settings.propToolbarButtons.setStringArray(items);
     
     if (textOnlyRadio.isSelected()) {
       Settings.propToolbarButtonStyle.setString("text");
@@ -213,7 +272,6 @@ public class ButtonsSettingsTab implements SettingsTab {
    */
   public Icon getIcon() {
     
-  //  return new ImageIcon("imgs/TVBrowser16.png");
     return null;
     
   }
@@ -263,6 +321,29 @@ class TimePanel extends JPanel {
     mTimeSp.setEnabled(val);
   }
 }
+
+
+  class ButtonItem {
+    
+    private String mText, mId;
+    
+    public ButtonItem(String id, String text) {
+      mText = text;
+      mId = id;
+    }
+        
+    public ButtonItem(Plugin p) {
+      this(p.getClass().getName(), p.getButtonText());
+    }
+    
+    public String getId() {
+      return mId;
+    }
+    
+    public String toString() {
+      return mText;
+    }
+  }
   
 }
 

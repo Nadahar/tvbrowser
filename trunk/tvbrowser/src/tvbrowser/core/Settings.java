@@ -184,7 +184,7 @@ public class Settings {
     }
       
     propArr = new Property[] {
-      propShowUpdateButton, propShowPreferencesButton, propToolbarButtonStyle
+      propShowUpdateButton, propShowPreferencesButton, propToolbarButtonStyle, propToolbarButtons
     };
     if (mProp.hasChanged(propArr)) {
       mainFrame.getHorizontalToolBar().updateButtons();
@@ -230,10 +230,12 @@ public class Settings {
       model.setDate(FinderPanel.getInstance().getSelectedDate(), null, null);
     }
     
-    
+    /*
     if (mProp.hasChanged(propHiddenPluginButtons)) {
       mainFrame.getHorizontalToolBar().updateButtons();
     }
+    */
+    
     
     mProp.clearChanges();
   }
@@ -316,10 +318,14 @@ public class Settings {
 
   public static final BooleanProperty propShowTimeButtons
     = new BooleanProperty(mProp, "showTimeButtons", true);
-
+  /**
+   * @deprecated
+   */
   public static final BooleanProperty propShowUpdateButton
     = new BooleanProperty(mProp, "showUpdateButton", true);
-
+/**
+ * @deprecated
+ */
   public static final BooleanProperty propShowPreferencesButton
     = new BooleanProperty(mProp, "showPreferencesButton", true);
 
@@ -354,8 +360,16 @@ public class Settings {
   public static final IntProperty propColumnWidth
     = new IntProperty(mProp, "columnwidth", 200);
   
+  /**
+   * @deprecated
+   */
   public static final StringArrayProperty propHiddenPluginButtons
     = new StringArrayProperty(mProp, "hiddenPluginButtons", new String[0]);
+
+  public static final StringArrayProperty propToolbarButtons
+    = new StringArrayProperty(mProp, "toolbarButtons",
+            null  // we show all buttons, if this property is not set
+     ); 
 
   public static final StringProperty propDefaultContextMenuPlugin
     = new StringProperty(mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");

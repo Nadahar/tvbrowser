@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
-import tvbrowser.core.Settings;
 
 /**
  * TV-Browser
@@ -82,27 +81,6 @@ public class PictureButton extends JButton implements FocusListener {
     mDescription=description;
     mStatusBar=statusBar;
   }
-  /*
-  public void setText(String text) {
-  //  if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
-    //  super.setText(null);
-    //  super.setToolTipText(text);
-  //  } else {
-      super.setText(text);
-  //    super.setToolTipText(null);
-  //  }
-  }
-*/
-  
-  /*
-  public void setIcon(Icon icon) {
-    //if (Settings.propToolbarButtonStyle.getString().equals("text")) {
-    //  super.setIcon(null);
-    //} else {
-      super.setIcon(icon);
-   // }
-  }
-  */
   
   
   private void handleMouseEntered() {

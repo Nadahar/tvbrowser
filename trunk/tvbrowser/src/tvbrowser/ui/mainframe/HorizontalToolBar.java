@@ -150,6 +150,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
   public void updateButtons() {    
     JButton[] toolbarButtons = this.getToolbarButtons();
     mToolbar.setButtons(toolbarButtons, getToolbarStyle());    
+    mToolbar.updateToolbar();
   }
   
   
@@ -168,30 +169,29 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     
     String msg = tvbrowser.TVBrowser.mLocalizer.msg("button.update", "Update");
     JButton btn = new PictureButton(msg, new ImageIcon("imgs/Refresh24.gif"),MainFrame.mLocalizer.msg("menuinfo.update",""),mParent.getStatusBarLabel());
-    btn.addActionListener(this);
+    btn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				mParent.updateTvData();			
+			}
+    });
     return btn;
   }
   private JButton createSettingsBtn() {
       String msg = tvbrowser.TVBrowser.mLocalizer.msg("button.settings", "Settings");
       JButton settingsBtn = new PictureButton(msg, new ImageIcon("imgs/Preferences24.gif"),MainFrame.mLocalizer.msg("menuinfo.settings",""),mParent.getStatusBarLabel());
-      settingsBtn.addActionListener(this);
+      settingsBtn.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {				
+          mParent.showSettingsDialog();
+				}});
       return settingsBtn;
   }
   
   
-  private JButton[] getToolbarButtons() {
+  private JButton[] getAllToolbarButtons() {
     ArrayList buttons = new ArrayList();
-    
-    if (Settings.propShowUpdateButton.getBoolean()) {
-      mUpdateBtn=createUpdateBtn();
-      buttons.add(mUpdateBtn);
-    }
-    
-    if (Settings.propShowPreferencesButton.getBoolean()) {
-      mSettingsBtn=createSettingsBtn();    
-      buttons.add(mSettingsBtn);
-    }
-        
+       
+    buttons.add(createSettingsBtn());
+    buttons.add(createUpdateBtn());    
         
     Plugin[] installedPlugins=PluginManager.getInstance().getInstalledPlugins();
     
@@ -200,7 +200,38 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
       
       if (plugin.getButtonText()!=null) {
         String pluginClassName = plugin.getClass().getName();
-        if (!Settings.propHiddenPluginButtons.containsItem(pluginClassName)) {
+        Icon icon = plugin.getButtonIcon();
+        JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
+        buttons.add(btn);    
+        btn.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent event) {
+            plugin.execute();
+          }
+        });
+      }
+    }
+       
+    JButton[] result = new JButton[buttons.size()];
+    buttons.toArray(result);
+    return result;
+  }
+  
+  private JButton[] getToolbarButtons() {
+    ArrayList buttons = new ArrayList();
+    
+    String[] buttonNames = Settings.propToolbarButtons.getStringArray();
+    if (buttonNames == null) {
+      return getAllToolbarButtons();
+    }
+    
+    for (int i=0; i<buttonNames.length; i++) {
+      if ("#update".equals(buttonNames[i])) {
+        buttons.add(createUpdateBtn());
+      }else if ("#settings".equals(buttonNames[i])) {
+        buttons.add(createSettingsBtn());
+      }else {
+        final Plugin plugin = PluginLoader.getInstance().getActivePluginByClassName(buttonNames[i]);
+        if (plugin!=null) {
           Icon icon = plugin.getButtonIcon();
           JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
           buttons.add(btn);    
@@ -212,8 +243,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
         }
       }
     }
-        
-       
+    
         
     JButton[] result = new JButton[buttons.size()];
     buttons.toArray(result);
@@ -230,13 +260,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src==mUpdateBtn) {
-      mParent.updateTvData();
-    }
-    else if (src==mSettingsBtn) {
-      mParent.showSettingsDialog();      
-    }
-    else if (src==mChannelChooser) {
+    if (src==mChannelChooser) {
       if (mChannelChooser.getSelectedIndex()>0) {
         mParent.showChannel((Channel)mChannelChooser.getSelectedItem());
         mChannelChooser.setSelectedIndex(0);
