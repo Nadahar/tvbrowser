@@ -26,7 +26,6 @@
 
 package programinfo;
 
-import java.util.Iterator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,7 +55,7 @@ public class ProgramInfoDialog extends JDialog {
   
   
   public ProgramInfoDialog(Frame parent, devplugin.Program program) {
-    super(parent);
+    super(parent,true);
     
     String msg;
     JTextArea ta;
