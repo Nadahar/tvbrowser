@@ -95,9 +95,9 @@ public class ProgramFrameDispatcher {
   
   
   /**
-     * @deprecated
-     */  
-  
+   * @deprecated Use {@link #dispatchProgramFrame(ProgramFrame, devplugin.Date)}
+   *             instead.
+   */  
   public void dispatch(ProgramFrame frame, devplugin.Date date, Channel channel) throws IOException, FileFormatException {
     String country=channel.getCountry();
     String ch=channel.getId();

@@ -275,8 +275,8 @@ public class ProgramField implements Cloneable {
   private void checkFormat() throws FileFormatException {
     // Check whether the field data has the right format
     if (! getType().isRightFormat(mDataFormat)) {
-      throw new FileFormatException("The field " + getType().getName()
-        + " must have the " + ProgramFieldType.getFormatName(getType().getFormat())
+      throw new FileFormatException("The field '" + getType().getName()
+        + "' must have the " + ProgramFieldType.getFormatName(getType().getFormat())
         + " but it has the " + ProgramFieldType.getFormatName(mDataFormat));
     }
   }

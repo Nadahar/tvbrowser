@@ -178,8 +178,8 @@ public class ProgramFrame implements Cloneable {
         
         if (field.getTypeId() == cmp.getTypeId()) {
           throw new FileFormatException("Program field #" + i + " and "
-            + " program field #" + j + " have the same type ID: "
-            + field.getTypeId());
+            + "program field #" + j + " have the same type: "
+            + ProgramFieldType.getTypeForId(field.getTypeId()).getName());
         }
       }
     }
