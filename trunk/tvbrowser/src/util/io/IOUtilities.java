@@ -373,5 +373,36 @@ public class IOUtilities {
       return (int) (millis / 1000L / 60L / 60L / 24L);
     }
   }
+
+  
+     
+  /**
+   * Encodes the specified String using a simple XOR encryption.
+   *
+   * @param text The text to encode
+   * @param seed The seed of the Random object to use for getting the keys
+   */
+  public static String xorEncode(String text, long seed) {
+    java.util.Random rnd = new java.util.Random(seed);
+    
+    char[] charArr = new char[text.length()];
+    for (int i = 0; i < charArr.length; i++) {
+      charArr[i] = (char)(text.charAt(i) ^ rnd.nextInt()); // XOR
+    }
+    return new String(charArr);
+  }
+
+  
+  
+  /**
+   * Decodes the specified String using a simple XOR encryption.
+   *
+   * @param text The text to encode
+   * @param seed The seed of the Random object to use for getting the keys
+   */
+  public static String xorDecode(String text, long seed) {
+    // We use XOR encoding -> encoding and decoding are the same
+    return xorEncode(text, seed);
+  }
   
 }

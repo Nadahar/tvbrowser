@@ -33,13 +33,14 @@ import java.io.*;
 import javax.swing.*;
 
 import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 
 import tvdataservice.TvDataService;
 import devplugin.Channel;
 import tvbrowser.ui.SkinPanel;
 
 class TVBrowserProperties extends java.util.Properties {
-
+  
   private HashSet unconfirmedSettingItems=new HashSet();
 
   public TVBrowserProperties() {
@@ -135,6 +136,27 @@ class TVBrowserProperties extends java.util.Properties {
 		return null;	
 	}
 
+  
+  public void setBoolean(String key, boolean value) {
+    setProperty(key, value ? "true" : "false");
+  }
+
+  
+  
+  public boolean getBoolean(String key, boolean defaultValue) {
+    String asString = getProperty(key);
+    
+    if ("true".equalsIgnoreCase(asString)) {
+      return true;
+    }
+    else if ("false".equalsIgnoreCase(asString)) {
+      return false;
+    }
+    else {
+      return defaultValue;
+    }
+  }
+  
 }
 
 
@@ -150,6 +172,8 @@ public class Settings {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Settings.class.getName());
 
+  private static final long PROXY_PASSWORD_SEED = 6528587292713416704L;
+
   private static TVBrowserProperties settings=null;
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
   public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
@@ -157,6 +181,8 @@ public class Settings {
 
   private static final String SETTINGS_FILE="settings.prop";
   private static final String USER_DIR="tvbrowser";
+
+  
   
   public static boolean settingHasChanged(String[] key) {
 
@@ -240,6 +266,8 @@ public class Settings {
     }
 
     initSubscribedChannels();
+
+    updateProxySettings(getHttpProxySettings(), getFtpProxySettings());
   }
 
 
@@ -593,6 +621,125 @@ public class Settings {
       Integer.toString(location.y)
     };
     settings.setStringList("windowlocation", locStr);
+  }
+  
+  
+  
+  public static void setProxySettings(ProxySettings httpSettings,
+    ProxySettings ftpSettings)
+  {
+    setProxySettings(httpSettings, "proxy.http.");
+    setProxySettings(ftpSettings, "proxy.ftp.");
+    
+    updateProxySettings(httpSettings, ftpSettings);
+  }
+
+  
+  
+  private static void updateProxySettings(ProxySettings httpSettings,
+    ProxySettings ftpSettings)
+  {
+    boolean proxySet = httpSettings.mUseProxy || ftpSettings.mUseProxy;
+    
+    System.setProperty("proxySet", proxySet ? "true" : "false");
+    
+    updateProxySettings(httpSettings, "http.");
+    updateProxySettings(ftpSettings, "ftp.");
+  }
+
+  
+  
+  private static void updateProxySettings(ProxySettings httpSettings,
+    String prefix)
+  {
+    String proxyHost, proxyPort, proxyUser, proxyPassword;
+    if (httpSettings.mUseProxy) {
+      proxyHost = httpSettings.mHost;
+      proxyPort = httpSettings.mPort;
+      
+      if (httpSettings.mAuthentifyAtProxy) {
+        proxyUser = httpSettings.mUser;
+        proxyPassword = httpSettings.mPassword;
+      } else {
+        proxyUser = proxyPassword = "";
+      }
+    } else {
+      proxyHost = proxyPort = proxyUser = proxyPassword = "";
+    }
+    
+    System.setProperty(prefix + "proxyHost", proxyHost);
+    System.setProperty(prefix + "proxyPort", proxyPort);
+    System.setProperty(prefix + "proxyUser", proxyUser);
+    System.setProperty(prefix + "proxyPassword", proxyPassword);
+  }
+  
+  
+  
+  public static ProxySettings getHttpProxySettings() {
+    return getProxySettings("proxy.http.");
+  }
+
+  
+  
+  public static ProxySettings getFtpProxySettings() {
+    return getProxySettings("proxy.ftp.");
+  }
+  
+  
+  
+  private static void setProxySettings(ProxySettings proxySettings, String prefix) {
+    settings.setBoolean(prefix + "useProxy", proxySettings.mUseProxy);
+    settings.setProperty(prefix + "host", proxySettings.mHost);
+    settings.setProperty(prefix + "port", proxySettings.mPort);
+    settings.setBoolean(prefix + "authentifyAtProxy", proxySettings.mAuthentifyAtProxy);
+    settings.setProperty(prefix + "user", proxySettings.mUser);
+    
+    // We use a simple XOR encoding.
+    // Because this project is open source we can't make a better encoding.
+    // But this way the password is at least no plain text.
+    String decodedPw = proxySettings.mPassword;
+    String encodedPw = null;
+    if (decodedPw != null) {
+      encodedPw = IOUtilities.xorEncode(decodedPw, PROXY_PASSWORD_SEED);
+    }
+    settings.setProperty(prefix + "password", encodedPw);
+  }
+
+  
+  
+  private static ProxySettings getProxySettings(String prefix) {
+    ProxySettings proxySettings = new ProxySettings();
+
+    proxySettings.mUseProxy = settings.getBoolean(prefix + "useProxy", false);
+    proxySettings.mHost = settings.getProperty(prefix + "host", "");
+    proxySettings.mPort = settings.getProperty(prefix + "port", "");
+    proxySettings.mAuthentifyAtProxy = settings.getBoolean(prefix + "authentifyAtProxy", false);
+    proxySettings.mUser = settings.getProperty(prefix + "user", "");
+    
+    String encodedPw = settings.getProperty(prefix + "password", "");
+    String decodedPw = null;
+    if (encodedPw != null) {
+      decodedPw = IOUtilities.xorDecode(encodedPw, PROXY_PASSWORD_SEED);
+    }
+    proxySettings.mPassword = decodedPw;
+    
+    return proxySettings;
+  }
+  
+  
+  // inner class ProxySettings
+  
+  
+  /**
+   * Holds the settings for a proxy
+   */
+  public static class ProxySettings {
+    public boolean mUseProxy;
+    public String mHost;
+    public String mPort;
+    public boolean mAuthentifyAtProxy;
+    public String mUser;
+    public String mPassword;
   }
 	
 }

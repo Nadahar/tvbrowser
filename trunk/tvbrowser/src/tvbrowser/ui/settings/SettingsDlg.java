@@ -67,6 +67,10 @@ public class SettingsDlg extends JDialog implements ActionListener {
     tab=new AppearanceSettingsTab();
     tab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
     tabPane.addTab(tab.getName(),tab);
+
+    tab=new ProxySettingsTab();
+    tab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    tabPane.addTab(tab.getName(),tab);
     
     tab=new DataServiceSettingsTab();
     tab.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
