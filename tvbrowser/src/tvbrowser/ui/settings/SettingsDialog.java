@@ -217,6 +217,10 @@ public class SettingsDialog {
     node = new SettingNode(new ChannelsSettingsTabNew2());
     root.add(node);
 
+    node = new SettingNode(new ChannelsSettingsTabNew3());
+    root.add(node);
+
+    
 
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
     PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();
