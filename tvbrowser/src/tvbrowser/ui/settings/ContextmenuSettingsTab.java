@@ -210,16 +210,15 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     }
     
     PluginManager.getInstance().setDefaultContextMenuPlugin(mDefaultPlugin);
+		if (mDefaultPlugin!=null) {
+		  Settings.propDefaultContextMenuPlugin.setString(mDefaultPlugin.getClass().getName());
+    }
+		else {
+			if (o.length>0) {
+        Settings.propDefaultContextMenuPlugin.setString(((Plugin)o[0]).getClass().getName());
+      }      
+		}
     
-    /*
-    if (mDefaultPlugin!=null) {      
-        Settings.setDefaultContextMenuPlugin(mDefaultPlugin.getClass().getName());         
-    }else{
-      if (o.length>0) {
-        Settings.setDefaultContextMenuPlugin(((Plugin)o[0]).getClass().getName());
-      }
-    }     
-    */
     
    
 	}
