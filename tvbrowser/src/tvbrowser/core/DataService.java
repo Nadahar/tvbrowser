@@ -248,20 +248,27 @@ public class DataService implements devplugin.PluginManager {
    * Gets the day program for the specified date.
    *
    * @param date The date to get the day program for.
+   * @param allowDownload false, if no dataservice call is required
    * @return the day program for the specified date.
    */
-  public DayProgram getDayProgram(devplugin.Date date) {
-    // if date is null throw a NullPointerException
+  public DayProgram getDayProgram(devplugin.Date date, boolean allowDownload) {
+  	// if date is null throw a NullPointerException
     if (date == null) {
       throw new NullPointerException("date is null!");
     }
 
     // try to get the DayProgram from the cache.
     DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
+    
+    if (!allowDownload) {
+    	return dayProgram;
+    }
 
     if (dayProgram == null) {
       try {
         // The program is not in the cache -> try to load it
+		//System.out.println("downloading prog for "+date.toString());
+        
         dayProgram = loadDayProgram(date);
         // mLog.info("Loading program for " + date + " (" + date.hashCode() + ") "
         //   + ((dayProgram == null) ? "failed" : "suceed"));
@@ -435,7 +442,9 @@ public static void deleteExpiredFiles(int lifespan) {
    * @return The program for the specified channel and date.
    */
   public devplugin.Program getProgram(devplugin.Date date, String progID) {
-    DayProgram dayProgram = getDayProgram(date);
+  	
+  	
+    DayProgram dayProgram = getDayProgram(date, false);
 
     if (dayProgram == null) {
       return null;
@@ -508,7 +517,7 @@ public static void deleteExpiredFiles(int lifespan) {
    * @return the programs of the specified channel and date.
    */
   public Iterator getChannelDayProgram(devplugin.Date date, devplugin.Channel channel) {
-    DayProgram dayProgram = getDayProgram(date);
+    DayProgram dayProgram = getDayProgram(date, false);
     if (dayProgram == null) {
       return null;
     }

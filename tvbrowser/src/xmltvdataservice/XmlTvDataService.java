@@ -51,7 +51,7 @@ import devplugin.*;
  * <p>
  * TV 5, KABEL 1, ARD, PREMIERE, SAT.1, BAYERN, TRT, N-TV, SWR, ARTE, VIVA, MTV,
  * MTV2, MDR, Neunlive, EUROSPORT, 3SAT, RTL 2, ORF 2, KINDER KANAL, NBC, NORD 3,
- * HESSEN, PHOENIX, CNN, SF1, ORB, DSF, SUPER RTL, ZDF, VOX, EURONEWS, PRO 7, RTL,
+ * HESSEN, PHOENIX, CNN, SF1, RBB, DSF, SUPER RTL, ZDF, VOX, EURONEWS, PRO 7, RTL,
  * ORF 1
  *
  * @author Til Schneider, www.murfman.de
@@ -133,7 +133,7 @@ public class XmlTvDataService extends AbstractTvDataService {
 
       // foreign channels
       new Channel(this, "CNN", 601),
-      new Channel(this, "ORB", 602),
+      new Channel(this, "RBB Brandenburg", 602),
       new Channel(this, "ORF 1", 603),
       new Channel(this, "ORF 2", 604),
       new Channel(this, "SF1", 605),
