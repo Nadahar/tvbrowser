@@ -122,7 +122,7 @@ public class FilterComponentList {
   
   private void writeComponent(ObjectOutputStream out, FilterComponent comp) throws IOException {
     out.writeObject(comp.getClass().getName());
-    out.writeInt(1);
+    out.writeInt(comp.getVersion());
     out.writeObject(comp.getName());
     out.writeObject(comp.getDescription());
     comp.write(out);
