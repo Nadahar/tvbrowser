@@ -39,6 +39,7 @@ public abstract class Property {
   
   private PropertyManager mManager;
   private String mKey;
+  /** Vector for Change-Listeners */
   private Vector mChangeList;
   
   public Property(PropertyManager manager, String key) {
@@ -65,15 +66,28 @@ public abstract class Property {
     return mKey;
   }
   
-  
+  /**
+   * Add a ChangeListener to this Property.
+   * Everytime this Property is changed, a event will be
+   * fired
+   * 
+   * @param l Listener to add 
+   */
   public void addChangeListener(ChangeListener l) {
       mChangeList.add(l);
   }
   
+  /**
+   * Remove a ChangeListener from this Property 
+   * @param l Listener to remove
+   */
   public void removeChangeListener(ChangeListener l) {
       mChangeList.remove(l);
   }
 
+  /**
+   * Fire ChangeEvent and inform every Listener about changes in this Property
+   */
   public void fireChangeEvent() {
       for (int i = 0; i < mChangeList.size(); i++) {
           ChangeListener l = (ChangeListener) mChangeList.get(i);
