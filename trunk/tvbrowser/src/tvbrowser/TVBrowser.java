@@ -39,6 +39,7 @@ import tvbrowser.core.*;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.filter.FilterChooser;
+import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.UpdateDlg;
@@ -185,7 +186,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     
     mLog.info("Loading filters...");
-    tvbrowser.ui.filter.FilterList.load();
+    FilterComponentList.init();
+    
+    //tvbrowser.ui.filter.FilterList.load();
 
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
@@ -435,6 +438,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private void quit() {
     mLog.info("Storing plugin data");
     PluginManager.finalizeInstalledPlugins();
+    
+    mLog.info("Storing filter components");
+    FilterComponentList.store();
 
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();

@@ -71,7 +71,7 @@ public class XmlTvDataService extends AbstractTvDataService {
   private static final devplugin.PluginInfo INFO=new devplugin.PluginInfo(
           "XMLTV",
           "35 deutschsprachige Sender",
-          "Martin Oberhauser",
+          "Til Schneider",
           new Version(2,0)
           );
 

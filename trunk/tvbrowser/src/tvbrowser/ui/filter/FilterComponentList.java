@@ -38,11 +38,11 @@ public class FilterComponentList {
   
   private static HashSet mComponents;
   
-  static {
+  public static void init () {
     
     mComponents=new HashSet();
     
-    File filterCompFile=new File(FilterList.FILTER_DIRECTORY,"filter.comp");
+    File filterCompFile=new File(tvbrowser.core.Settings.getFilterDirectory(),"filter.comp");
     ObjectInputStream in=null;
     if (filterCompFile.isFile()) {
       try {
@@ -54,18 +54,21 @@ public class FilterComponentList {
       if (in!=null) {
         try {
          in.close();
-        }catch (IOException e) {}
+        }catch (IOException e) {
+        e.printStackTrace();}
       }
     }
     
   }
   
   public static void store() {
-    File filterCompFile=new File(FilterList.FILTER_DIRECTORY,"filter.comp");
+    File filterCompFile=new File(tvbrowser.core.Settings.getFilterDirectory(),"filter.comp");
     try {
       store(new ObjectOutputStream(new FileOutputStream(filterCompFile)));
     }catch(FileNotFoundException e) {
+      e.printStackTrace();
     }catch(IOException e) {      
+      e.printStackTrace();
     }
   }
   
@@ -88,7 +91,7 @@ public class FilterComponentList {
         }
       }     
     }catch(IOException e) {
-      
+      e.printStackTrace();
     } catch (ClassNotFoundException e) {      
       e.printStackTrace();
     }
@@ -98,11 +101,9 @@ public class FilterComponentList {
   private static void store(ObjectOutputStream out) throws IOException {
     out.writeInt(1);
     int cnt=mComponents.size();
-    System.out.println("storing "+cnt+" components");
     out.writeInt(cnt);
     Iterator it=mComponents.iterator();
     while (it.hasNext()) {
-      System.out.println("+ ");
       FilterComponent comp=(FilterComponent)it.next();
       out.writeObject(comp.getClass().getName());
       comp.store(out);
