@@ -27,12 +27,10 @@
 package xmltvdataservice;
 
 import java.io.*;
-import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.net.URL;
 
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
 import util.exc.TvBrowserException;
@@ -40,7 +38,7 @@ import util.io.IOUtilities;
 import util.tvdataservice.*;
 
 import devplugin.*;
-import tvdataservice.*;
+
 
 /**
  * A data service that reads TV-Data in the XMLTV-Format.
@@ -227,7 +225,10 @@ public class XmlTvDataService extends AbstractTvDataService {
 
     // The year is not saved in a devplugin.Date
     // so we've got to get the date from the current date
-    java.util.Calendar now = new java.util.GregorianCalendar();
+    
+   // java.util.Calendar now = new java.util.GregorianCalendar();
+   java.util.Calendar now=java.util.Calendar.getInstance();
+   now.setTimeInMillis(System.currentTimeMillis());
     int year = now.get(java.util.Calendar.YEAR);
 
     int nowMonth = now.get(java.util.Calendar.MONTH);
@@ -235,6 +236,9 @@ public class XmlTvDataService extends AbstractTvDataService {
       // They want the given date of the following year
       year++;
     }
+
+	
+
 
     // e.g. "tv_20030418.xml"
     StringBuffer fileNameBuf = new StringBuffer();
