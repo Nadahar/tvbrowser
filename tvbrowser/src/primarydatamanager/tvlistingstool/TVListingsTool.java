@@ -1,140 +1,47 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
 package primarydatamanager.tvlistingstool;
 
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
+import java.io.File;
 
 
-import devplugin.Channel;
-import devplugin.Date;
+import primarydatamanager.mirrorupdater.data.DataSource;
+import primarydatamanager.mirrorupdater.data.DataTarget;
+import primarydatamanager.mirrorupdater.data.FileDataTarget;
+import primarydatamanager.mirrorupdater.data.HttpDataSource;
 
-import tvbrowserdataservice.file.ChannelList;
-import tvbrowserdataservice.file.FileFormatException;
-import tvbrowserdataservice.file.SummaryFile;
 
 public class TVListingsTool {
- 
-  private String mGroup;
-  private String mMirror; 
-  private ArrayList mReport;
- 
-  public TVListingsTool(String mirror, String group) {
-    mGroup = group;
-    mMirror = mirror;  
-    mReport = new ArrayList();  
-  }
-  
-  
-  private String getFileContent(String fileName) {
-    URL url;
-    try {
-      url = new URL(mMirror + "/"+fileName);
-    } catch (MalformedURLException e) {
-      return null;
-    }
-    InputStream in;
-    String result;
-    try {
-      in = url.openStream();
-      BufferedReader reader=new BufferedReader(new InputStreamReader(in));
-      result = reader.readLine();
-      reader.close();
-    }catch(IOException e) {
-      return null;
-    }
-    return result;
-  }
-  
-  public String getMirrorWeight() {
-    return getFileContent(mGroup+"_weight");
-  }
-  
-  public String getLastUpdate() {
-    return getFileContent(mGroup+"_lastupdate");
-  }
-  
-  private int getLongestChannelName(Channel[] channelArr) {
-    int result =0;
-    for (int i=0; i<channelArr.length; i++) {
-      if (result<channelArr[i].getName().length()) {
-        result = channelArr[i].getName().length();
-      }
-    }
-    return result;
-  }
-  
-  public void dumpAvailableDayProgramVersions() throws IOException, FileFormatException {
-    URL summaryFileUrl=null;
-    URL channelListFileUrl=null;
-    try {
-      summaryFileUrl = new URL(mMirror + "/" + mGroup + "_summary.gz");
-      channelListFileUrl = new URL(mMirror+ "/" +mGroup + "_channellist.gz");
-    } catch (MalformedURLException e) {
-      System.out.println("invalid url: "+mMirror+" (groupName is "+mGroup+")");
-      return;
-    }
     
-    System.out.println("mirror: "+mMirror+" ("+mGroup+")"+
-       "\nweight: "+getMirrorWeight()+
-       "; last update: "+getLastUpdate());
-    System.out.println("Available TV listings:");
-        
-    InputStream in = summaryFileUrl.openStream();
-    SummaryFile summary = new SummaryFile();
-    summary.readFromStream(in);
-    in.close();
-    
-    in = channelListFileUrl.openStream();
-    ChannelList channelList=new ChannelList(mGroup);
-    channelList.readFromStream(in, null);
-    in.close();
-    
-    Channel[] channelArr = channelList.createChannelArray();
-    int colWidth = getLongestChannelName(channelArr);
-    for (int i=0; i<channelArr.length; i++) {
-      String ch = channelArr[i].getName();
-      System.out.print(ch+":");
-      boolean warn = false;
-      for (int j=0; j<colWidth-ch.length(); j++) System.out.print(" ");
-        Date date = Date.getCurrentDate();
-        for (int j=0; j<35; j++) {
-          if (j%7==0) {
-            System.out.print("|");
-          }        
-          int version = summary.getDayProgramVersion(date.addDays(j), channelArr[i].getCountry(), channelArr[i].getId(), 0);
-      
-          if (version<0) {
-            System.out.print(".");
-            if (j<7) {
-              warn=true;
-            }
-          } 
-          else if (version<10) System.out.print(version);
-          else {
-            System.out.print("*");
-          } 
-        }
-        
-        
-        System.out.println("|");
-        if (warn) {
-          mReport.add("Missing TV listing(s) for channel "+ch);
-        }
-      }
-    }
-  
-  private int printReport() {
-    for (int i=0; i<mReport.size(); i++) {
-      System.out.println(mReport.get(i));
-    }
-    return mReport.size();
-  }
- 
   private static void usage() {
     System.out.println("usage: TVListingsViewer [-url mirrorUrl] [-groups groupName:groupName...]");
   }
  
-  public static void main(String[] args) throws IOException, FileFormatException {
+  public static void main(String[] args) throws Exception {
     
     if (args.length==0) {
       usage();
@@ -156,7 +63,7 @@ public class TVListingsTool {
       }
       else if (args[i].equalsIgnoreCase("-groups")) {
         if ((i + 1) >= args.length) {
-          System.out.println("option '-ggroups' without group name");
+          System.out.println("option '-groups' without group name");
           System.exit(1);
         } else {
           groupNameList = args[i+1];
@@ -174,24 +81,15 @@ public class TVListingsTool {
     }
     
     String[] groupNames = groupNameList.split(":");
-    TVListingsTool[] tools = new TVListingsTool[groupNames.length];
-    for (int i=0; i<groupNames.length; i++) {
-      tools[i] = new TVListingsTool(mirrorUrlName, groupNames[i]);
-      tools[i].dumpAvailableDayProgramVersions();
-      System.out.println();
-    }
     
-    int lines=0;
-    for (int i=0; i<tools.length; i++) {
-      lines+=tools[i].printReport();
-    }
-    if (lines==0) {
-      System.out.println("\n\nSUCCESS\n");
-    }
-    else {
-      System.out.println("\n\nTHERE WERE ERRORS\n");
-    }
+    DataSource source = new HttpDataSource("http://tvbrowser.dyndns.tv");
+    DataTarget target = new FileDataTarget(new File("."));
+    
+    MirrorVisualizer visualizer = new HtmlMirrorVisualizer(source, target, groupNames);
+    visualizer.visualize();
     
   }
+
+
   
 }

@@ -47,10 +47,14 @@ li {
 }
 
 td {
-
-
   font-size:10pt;
   font-family : Verdana, Arial, Sans-serif;
+}
+
+th {
+  font-size:10pt;
+  font-family : Verdana, Arial, Sans-serif;
+  font-weight: bold;
 }
 
 ul {

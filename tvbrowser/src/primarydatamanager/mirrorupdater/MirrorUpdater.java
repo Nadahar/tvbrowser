@@ -28,6 +28,7 @@ package primarydatamanager.mirrorupdater;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -41,6 +42,8 @@ import primarydatamanager.mirrorupdater.config.Configuration;
 import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
 import primarydatamanager.mirrorupdater.data.DataSource;
 import primarydatamanager.mirrorupdater.data.DataTarget;
+import primarydatamanager.tvlistingstool.HtmlMirrorVisualizer;
+import primarydatamanager.tvlistingstool.MirrorVisualizer;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
@@ -60,6 +63,7 @@ public class MirrorUpdater {
     = java.util.logging.Logger.getLogger(MirrorUpdater.class.getName());
   
   private static final int MAX_DAYS_WITHOUT_DATA = 7;
+  private static final Date TODAY = Date.getCurrentDate();
 
   private DataSource mDataSource;
   private DataTarget mDataTarget;
@@ -82,8 +86,59 @@ public class MirrorUpdater {
     mChannelGroupArr=config.getChannelgroups();
     mDeadlineDay = new Date().addDays(-2);
   }
+/*
+  public void visualize(PrintStream out, String group, SummaryFile summaryFile, ChannelList channelList, String lastupdate) {
+      int DAY_COUNT=25;
+      String mUrl ="sagichnicht";
+      
+      out.println("<html>");
+      out.println("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head");
+      out.println("body>");
+      out.println("<h1>Mirror: "+mUrl+"</h1>");    
+      out.println("<table width=\"1000\">");
+      out.print("<tr><th width=\"200\"></th>");  
+      for (int i=0; i < DAY_COUNT; i++) {
+        out.print("<th class=\"header_date\">"+TODAY.addDays(i).getDayOfMonth()+".</th>");
+      }    
+      out.println("</tr>");      
+      
+      
+    out.println("<tr><td class=\"group_header\">"+group.toUpperCase()+"</td><td colspan=\""+DAY_COUNT+"\"></td></tr>");
+    
+    out.println("<tr><td class=\"header_channel\">" +
+            "<table width=\"100%\"><tr><td class=\"group_info\"><strong>last update:</strong></td><td class=\"group_info\">"+lastupdate+"</td></tr>" +
+            "<tr><td class=\"group_info\"><strong># of channels:</strong></td><td class=\"group_info\">"+channelList.getChannelCount()+"</td></tr></table>" +
+            "</td><td colspan=\""+DAY_COUNT+"\"></td></tr>");
+    
+    for (int ch = 0; ch < channelList.getChannelCount(); ch++) {
+      Channel channel = channelList.getChannelAt(ch);
+      out.print  ("<tr><th class=\"header_channel\" align=\"right\">" + channel + "</th>");
+        
+      for (int i=0; i< DAY_COUNT; i++) {          
+        int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getCountry(), channel.getId(), 0);
+        if (version >= 0) {
+          out.print("<td class=\"table_content\"></td>");     
+        }
+        else {
+          out.print("<td class=\"table_empty\"></td>");   
+        }
+      }
+    
+      out.println("</tr>");
+    }
+    out.println("<tr><td colspan=\""+(DAY_COUNT + 1) + "\"></td></tr>");
+    out.println();
+    
+    out.println("</table>");    
+    out.println("</body>");
+    out.println("</html>");   
 
+    
+  }
 
+  */
+  
+    
 
   public void updateMirror() throws UpdateException {
     try {
@@ -111,6 +166,12 @@ public class MirrorUpdater {
       
       // Update the meta files
       updateMetaFiles(channelArr);
+      
+      if (mChannelGroupArr != null) {
+        MirrorVisualizer visualizer = new HtmlMirrorVisualizer(mDataSource, mDataTarget, mChannelGroupArr);
+        visualizer.visualize();
+      }
+      
     }
     finally {
       // Close data source and data target
@@ -378,13 +439,17 @@ public class MirrorUpdater {
     writeGroupFile(mDataTarget,data,"lastupdate");
     
     // Create the index.html
-    String html = createIndexHtml(channelArr);
-    mDataTarget.writeFile("index.html", html.getBytes());
+   // String html = createIndexHtml(channelArr);
+    
+    
+   // MirrorVisualizer visualizer = new HtmlMirrorVisualizer(mDataSource, mDataTarget, mChannelGroupArr);
+   // visualizer.visualize();
   }
 
 
 
-  private String createIndexHtml(Channel[] channelArr) {
+  
+  private String createIndexHtmlOLD(Channel[] channelArr) {
     StringBuffer buffer = new StringBuffer();
     
     buffer.append("<html><head>");
