@@ -224,7 +224,7 @@ public class AboutBox extends JDialog {
     buf.append("<div id=\"small\">");
     
     buf.append(mLocalizer.msg("copyrightText",
-          "Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider under the"
+          "Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider, Bodo Tasche, under the"
           + "GNU General Public License"));
           
     buf.append("</div>");
