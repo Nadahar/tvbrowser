@@ -106,20 +106,19 @@ public class ProgramFrame implements Cloneable {
 
 
 
-  public void removeProgramFieldAt(int index) {
-    mProgramFieldList.remove(index);
+  public ProgramField removeProgramFieldAt(int index) {
+    return (ProgramField) mProgramFieldList.remove(index);
   }
 
 
 
-  public boolean removeProgramFieldOfType(ProgramFieldType type) {
+  public ProgramField removeProgramFieldOfType(ProgramFieldType type) {
     int index = getProgramFieldIndexForTypeId(type.getTypeId());
     
     if (index == -1) {
-      return false;
+      return null;
     } else {
-      removeProgramFieldAt(index);
-      return true;
+      return removeProgramFieldAt(index);
     }
   }
 
