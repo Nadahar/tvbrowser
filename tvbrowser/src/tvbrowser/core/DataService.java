@@ -26,35 +26,26 @@
 
 package tvbrowser.core;
 
+import java.awt.Font;
 import java.io.*;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import java.util.zip.*;
+import java.util.*;
 import java.util.logging.Level;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.swing.JProgressBar;
 
-import util.exc.*;
+import tvdataservice.*;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.ui.progress.ProgressMonitorGroup;
-
-import java.awt.Font;
-
 import devplugin.*;
-import devplugin.Channel;
-import devplugin.ChannelDayProgram;
 import devplugin.Date;
-import devplugin.Program;
-
-import tvdataservice.MutableProgram;
-import tvdataservice.TvDataBase;
-import tvdataservice.TvDataService;
-import tvdataservice.MutableChannelDayProgram;
 
 /**
  * The DataService is a singletons that manages the TV data.
@@ -395,8 +386,12 @@ public class DataService implements devplugin.PluginManager {
 
 
   /**
+   * Corrects the ChannelDayProgram.
+   * <p>
    * Checks whether all programs have a length. If not the length will be
-   * calculated
+   * calculated.
+   * <p>
+   * For programs having no showview number calculation is tried.
    * 
    * @param prog The program to correct
    */
@@ -508,7 +503,7 @@ public class DataService implements devplugin.PluginManager {
           int r=val%10000;
           int month=r/100;
           int day=r%100;
-          Date curDate=new Date(val/10000,r/100,r%100);
+          Date curDate=new Date(year, month, day);
           return curDate.getValue()<d.getValue();
 				}
 			}	

@@ -33,12 +33,12 @@ import java.util.logging.Level;
 import tvbrowserdataservice.file.*;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.FileFormatException;
-import tvbrowserdataservice.file.ProgramFieldType;
 import tvbrowserdataservice.file.ProgramFrame;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataBase;
 import util.exc.TvBrowserException;
+import devplugin.*;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
@@ -202,87 +202,24 @@ public class TvDataBaseUpdater {
     
     MutableProgram program
       = new MutableProgram(channel, date, startTime / 60, startTime % 60);
-
-    // end time
-    field = frame.getProgramFieldOfType(ProgramFieldType.END_TIME_TYPE);
-    if (field != null) {
-      int endTime = field.getTimeData();
-      if (endTime < startTime) {
-        // program ends the next day
-        endTime += 24 * 60;
+      
+    int fieldCount = frame.getProgramFieldCount();
+    for (int i = 0; i < fieldCount; i++) {
+      field = frame.getProgramFieldAt(i);
+      ProgramFieldType type = field.getType();
+      if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+        program.setBinaryField(type, field.getBinaryData());
       }
-      int length = endTime - startTime;
-      program.setLength(length);
+      else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        program.setTextField(type, field.getTextData());
+      }
+      else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
+        program.setIntField(type, field.getIntData());
+      }
+      else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+        program.setTimeField(type, field.getTimeData());
+      }
     }
-
-    // title
-    field = frame.getProgramFieldOfType(ProgramFieldType.TITLE_TYPE);
-    if (field != null) {
-      program.setTitle(field.getTextData());
-    }
-
-    // TODO: Has no expression in devplugin.Program: original title
-    // field = frame.getProgramFieldOfType(ProgramFieldType.ORIGINAL_TITLE_TYPE);
-    
-    // TODO: Has no expression in devplugin.Program: episode
-    // field = frame.getProgramFieldOfType(ProgramFieldType.EPISODE_TYPE);
-    
-    // TODO: Has no expression in devplugin.Program: original episode
-    // field = frame.getProgramFieldOfType(ProgramFieldType.ORIGINAL_EPISODE_TYPE);
-    
-    // short description
-    field = frame.getProgramFieldOfType(ProgramFieldType.SHORT_DESCRIPTION_TYPE);
-    if (field != null) {
-      program.setShortInfo(field.getTextData());
-    }
-    
-    // description
-    field = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
-    if (field != null) {
-      program.setDescription(field.getTextData());
-    }
-
-    // image
-    field = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
-    if (field != null) {
-      program.setPicture(field.getBinaryData());
-    }
-
-    // actor list
-    field = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
-    if (field != null) {
-      program.setActors(field.getTextData());
-    }
-
-    // TODO: Has no expression in devplugin.Program: director
-    // field = frame.getProgramFieldOfType(ProgramFieldType.DIRECTOR_TYPE);
-
-    // TODO: Has no expression in devplugin.Program: showview number
-    // field = frame.getProgramFieldOfType(ProgramFieldType.SHOWVIEW_NR_TYPE);
-    
-    // info bits
-    field = frame.getProgramFieldOfType(ProgramFieldType.INFO_TYPE);
-    if (field != null) {
-      program.setInfo(field.getIntData());
-    }
-
-    // TODO: Has no expression in devplugin.Program: age limit
-    // field = frame.getProgramFieldOfType(ProgramFieldType.AGE_LIMIT_TYPE);
-    
-    // film url
-    field = frame.getProgramFieldOfType(ProgramFieldType.URL_TYPE);
-    if (field != null) {
-      program.setURL(field.getTextData());
-    }
-
-    // TODO: Has no expression in devplugin.Program: genre                         
-    // field = frame.getProgramFieldOfType(ProgramFieldType.GENRE_TYPE);
-    
-    // TODO: Has no expression in devplugin.Program: origin
-    // field = frame.getProgramFieldOfType(ProgramFieldType.ORIGIN_TYPE);
-    
-    // TODO: Has no expression in devplugin.Program: net playing time
-    // field = frame.getProgramFieldOfType(ProgramFieldType.NET_PLAYING_TIME);
 
     return program;
   }

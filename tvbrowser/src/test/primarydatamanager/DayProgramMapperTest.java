@@ -25,6 +25,7 @@
  */
 package test.primarydatamanager;
 
+import devplugin.*;
 import junit.framework.TestCase;
 
 import primarydatamanager.DayProgramMapper;

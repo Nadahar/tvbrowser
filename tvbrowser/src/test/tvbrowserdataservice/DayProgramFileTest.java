@@ -28,6 +28,8 @@ package test.tvbrowserdataservice;
 import java.io.File;
 import java.io.IOException;
 
+import devplugin.*;
+
 import junit.framework.TestCase;
 
 import tvbrowserdataservice.file.*;
