@@ -53,4 +53,4 @@ Erledigt:
 - (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
 - (B) Default-Icon fur Sender, die kein Icon haben
 - (B) Hilfe - Einrichtungsassistent geht nicht
-- (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail) (Bodo, fast fertig)
+- (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail)
