@@ -26,19 +26,22 @@
 
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import tvbrowser.core.PluginManager;
-import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.VerticalToolBar;
-import util.ui.*;
+import javax.swing.*;
 
-import devplugin.Plugin;
+import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.mainframe.VerticalToolBar;
+import util.ui.OrderChooser;
+import util.ui.TabLayout;
 import devplugin.SettingsTab;
 
 /**
@@ -218,26 +221,28 @@ public class ButtonsSettingsTab implements SettingsTab {
     list.toArray(result);
     return result;
   }
-  
-  
+
+
   private ButtonItem[] getAvailableButtons() {
+    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     
-    Plugin[] plugins = PluginManager.getInstance().getExecutablePlugins();
-    ButtonItem[] items = new ButtonItem[plugins.length + 2];
+    ArrayList buttonList = new ArrayList();
+    buttonList.add(new ButtonItem("#update","Update"));
+    buttonList.add(new ButtonItem("#settings","Settings"));
     
-    items[0]=new ButtonItem("#update","Update");
-    items[1]=new ButtonItem("#settings","Settings");
-    for (int i=2; i<items.length; i++) {
-      items[i]=new ButtonItem(plugins[i-2]);
+    for (int i = 0; i < pluginArr.length; i++) {
+      if (pluginArr[i].getButtonAction() != null) {
+        buttonList.add(new ButtonItem(pluginArr[i]));
+      }
     }
-    return items;
-     
-  }
-  
-  
- 
     
-  
+    // Create an array from the list
+    ButtonItem[] buttonArr = new ButtonItem[buttonList.size()];
+    buttonList.toArray(buttonArr);
+    return buttonArr;
+  }
+
+
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
@@ -332,8 +337,8 @@ class TimePanel extends JPanel {
       mId = id;
     }
         
-    public ButtonItem(Plugin p) {
-      this(p.getClass().getName(), p.getButtonText());
+    public ButtonItem(PluginProxy p) {
+      this(p.getId(), (String) p.getButtonAction().getValue(Action.NAME));
     }
     
     public String getId() {

@@ -30,14 +30,17 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
 
-import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
-import devplugin.Plugin;
 import devplugin.ProgramFieldType;
 import devplugin.SettingsTab;
 
@@ -118,7 +121,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private IconPlugin[] getAvailableIconPlugins() {
     ArrayList list = new ArrayList();
     
-    Plugin[] pluginArr = PluginManager.getInstance().getInstalledPlugins();
+    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       String iconText = pluginArr[i].getProgramTableIconText();
       if (iconText != null) {
@@ -139,8 +142,8 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     for (int i = 0; i < selPluginArr.length; i++) {
       // Find the corresponing IconPlugin and put it into the list
       for (int j = 0; j < allArr.length; j++) {
-        String className = allArr[j].getPlugin().getClass().getName();
-        if (className.equals(selPluginArr[i])) {
+        String pluginId = allArr[j].getPlugin().getId();
+        if (pluginId.equals(selPluginArr[i])) {
           list.add(allArr[j]);
           break;
         }
@@ -184,13 +187,13 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   public void saveSettings() {
     // icons
     Object[] iconPluginArr = mIconPluginOCh.getOrder();
-    String[] classNameArr = new String[iconPluginArr.length];
+    String[] pluginIdArr = new String[iconPluginArr.length];
     for (int i = 0; i < iconPluginArr.length; i++) {
       IconPlugin plugin = (IconPlugin) iconPluginArr[i];
-      classNameArr[i] = plugin.getPlugin().getClass().getName();
-      System.out.println("Setting '" + classNameArr[i] + "'");
+      pluginIdArr[i] = plugin.getPlugin().getId();
+      System.out.println("Setting '" + pluginIdArr[i] + "'");
     }
-    Settings.propProgramTableIconPlugins.setStringArray(classNameArr);
+    Settings.propProgramTableIconPlugins.setStringArray(pluginIdArr);
     
     // info text
     Object[] infoFieldArr = mInfoTextOCh.getOrder();
@@ -220,13 +223,13 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   
   class IconPlugin {
     
-    private Plugin mPlugin;
+    private PluginProxy mPlugin;
     
-    public IconPlugin(Plugin plugin) {
+    public IconPlugin(PluginProxy plugin) {
       mPlugin = plugin;
     }
     
-    public Plugin getPlugin() {
+    public PluginProxy getPlugin() {
       return mPlugin;
     }
     

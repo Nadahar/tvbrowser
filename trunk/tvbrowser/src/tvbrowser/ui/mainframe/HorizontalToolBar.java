@@ -34,21 +34,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.*;
 
-import tvbrowser.core.PluginLoader;
-import tvbrowser.core.PluginManager;
-import tvbrowser.core.PluginStateListener;
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.filter.FilterChooser;
 import util.ui.Toolbar;
@@ -113,23 +104,16 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     add(mToolbar,BorderLayout.CENTER);
     add(comboboxPanel,BorderLayout.EAST);
     
-    PluginLoader.getInstance().addPluginStateListener(new PluginStateListener(){
+    PluginProxyManager.getInstance().addPluginStateListener(
+      new PluginStateAdapter() {
+        public void pluginActivated(Plugin p) {
+          updateButtons();
+        }
 
-			public void pluginActivated(Plugin p) {				
-			  updateButtons();	
-			}
-
-			public void pluginDeactivated(Plugin p) {
-        updateButtons();				
-			}
-
-			public void pluginLoaded(Plugin p) {
-			}
-
-			public void pluginUnloaded(Plugin p) {
-			}
-    });
-    
+        public void pluginDeactivated(Plugin p) {
+          updateButtons();
+        }
+      }); 
   }
   
   public int getToolbarStyle() {
@@ -187,70 +171,82 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
   }
   
   
-  private JButton[] getAllToolbarButtons() {
-    ArrayList buttons = new ArrayList();
-       
-    buttons.add(createSettingsBtn());
-    buttons.add(createUpdateBtn());    
-        
-    Plugin[] installedPlugins=PluginManager.getInstance().getInstalledPlugins();
-    
-    for (int i=0;i<installedPlugins.length;i++) {
-      final Plugin plugin=installedPlugins[i];
-      
-      if (plugin.getButtonText()!=null) {
-        String pluginClassName = plugin.getClass().getName();
-        Icon icon = plugin.getButtonIcon();
-        JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
-        buttons.add(btn);    
-        btn.addActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent event) {
-            plugin.execute();
-          }
-        });
-      }
-    }
-       
-    JButton[] result = new JButton[buttons.size()];
-    buttons.toArray(result);
-    return result;
-  }
-  
   private JButton[] getToolbarButtons() {
     ArrayList buttons = new ArrayList();
     
     String[] buttonNames = Settings.propToolbarButtons.getStringArray();
+    PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     if (buttonNames == null) {
-      return getAllToolbarButtons();
-    }
-    
-    for (int i=0; i<buttonNames.length; i++) {
-      if ("#update".equals(buttonNames[i])) {
-        buttons.add(createUpdateBtn());
-      }else if ("#settings".equals(buttonNames[i])) {
-        buttons.add(createSettingsBtn());
-      }else {
-        final Plugin plugin = PluginLoader.getInstance().getActivePluginByClassName(buttonNames[i]);
-        if (plugin!=null) {
-          Icon icon = plugin.getButtonIcon();
-          JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
-          buttons.add(btn);    
-          btn.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event) {
-              plugin.execute();
+      // Show all buttons
+      buttons.add(createSettingsBtn());
+      buttons.add(createUpdateBtn());    
+
+      PluginProxy[] pluginArr = pluginMng.getActivatedPlugins();
+      for (int i = 0; i < pluginArr.length; i++) {
+        JButton button = createPluginButton(pluginArr[i]);
+        if (button != null) {
+          buttons.add(button);
+        }
+      }
+    } else {
+      // Show only the selected buttons
+      for (int i = 0; i < buttonNames.length; i++) {
+        if ("#update".equals(buttonNames[i])) {
+          buttons.add(createUpdateBtn());
+        } else if ("#settings".equals(buttonNames[i])) {
+          buttons.add(createSettingsBtn());
+        } else {
+          // Get the plugin
+          String pluginId = buttonNames[i];
+          PluginProxy plugin = pluginMng.getPluginForId(pluginId);
+          if (plugin == null) {
+            // The plugin was not found
+            // -> Check whether the old class name is used
+            pluginId = "java." + pluginId;
+            plugin = pluginMng.getPluginForId(pluginId);
+            
+            if (plugin != null) {
+              // There are still the old class names in use -> Save it as ID
+              buttonNames[i] = pluginId;
+              Settings.propToolbarButtons.setStringArray(buttonNames);
             }
-          });
+          }
+          
+          // Add the button
+          JButton button = createPluginButton(plugin);
+          if (button != null) {
+            buttons.add(button);
+          }
         }
       }
     }
     
-        
+    // Create an array from the list    
     JButton[] result = new JButton[buttons.size()];
     buttons.toArray(result);
     return result;
   }
-  
-  
+
+
+  private JButton createPluginButton(PluginProxy plugin) {
+    if ((plugin != null) && plugin.isActivated()) {
+      final Action action = plugin.getButtonAction();
+
+      String text = (String) action.getValue(Action.NAME);
+      String desc = (String) action.getValue(Action.SHORT_DESCRIPTION);
+      Icon icon = (Icon) action.getValue(Plugin.BIG_ICON);
+      
+      JButton button = new PictureButton(text, icon, desc, mParent.getStatusBarLabel());
+      button.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          action.actionPerformed(evt);
+        }
+      });
+      return button;
+    } else {
+      return null;
+    }
+  }
   
   
   public JButton getUpdateBtn() {

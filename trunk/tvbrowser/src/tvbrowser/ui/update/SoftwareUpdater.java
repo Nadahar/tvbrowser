@@ -27,17 +27,23 @@
 
 package tvbrowser.ui.update;
 
-import devplugin.Version;
-
-import java.net.*;
-import java.io.*;
-import java.util.regex.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import tvbrowser.TVBrowser;
-import tvbrowser.core.PluginLoader;
 import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvdataservice.TvDataService;
+import devplugin.Version;
 
 public class SoftwareUpdater {
 	
@@ -156,9 +162,10 @@ public class SoftwareUpdater {
     while (it.hasNext()) {
       SoftwareUpdateItem ui=(SoftwareUpdateItem)it.next();
       
-      devplugin.Plugin installedPlugin = PluginLoader.getInstance().getPluginByName(ui.getName());
+      String name = ui.getName();
+      String pluginId = "java." + name.toLowerCase() + "." + name;
       
-     
+      PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
       
       if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(ui.getVersion())>=0) {
         it.remove();

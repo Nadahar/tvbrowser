@@ -407,18 +407,14 @@ public class ListViewDialog extends JDialog {
             Program p = (Program) mProgramJList.getModel().getElementAt(inx);
             mProgramJList.setSelectedIndex(inx);
             JPopupMenu menu = devplugin.Plugin.getPluginManager()
-                    .createPluginContextMenu(p, mPlugin);
+                    .createPluginContextMenu(p);
             menu.show(mProgramJList, e.getX() - 15, e.getY() - 15);
         } else if (SwingUtilities.isLeftMouseButton(e)
                 && (e.getClickCount() == 2)) {
             int inx = mProgramJList.locationToIndex(e.getPoint());
             Program p = (Program) mProgramJList.getModel().getElementAt(inx);
 
-            Plugin plugin = devplugin.Plugin.getPluginManager()
-                    .getDefaultContextMenuPlugin();
-            if (plugin != null) {
-                plugin.execute(p);
-            }
+            devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p);
         }
     }
 }

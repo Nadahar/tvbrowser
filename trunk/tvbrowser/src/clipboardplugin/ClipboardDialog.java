@@ -98,7 +98,7 @@ public class ClipboardDialog extends JDialog {
                     if (inx == -1) { return; }
                     Program p = (Program) mProgramJList.getModel().getElementAt(inx);
                     mProgramJList.setSelectedIndex(inx);
-                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p, mPlugin);
+                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p);
                     menu.show(mProgramJList, e.getX() - 15, e.getY() - 15);
                 } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
                     int inx = mProgramJList.locationToIndex(e.getPoint());
@@ -106,10 +106,7 @@ public class ClipboardDialog extends JDialog {
                     if (inx == -1) { return; }
                     Program p = (Program) mProgramJList.getModel().getElementAt(inx);
 
-                    Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
-                    if (plugin != null) {
-                        plugin.execute(p);
-                    }
+                    devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p);
                 }
             }
         });

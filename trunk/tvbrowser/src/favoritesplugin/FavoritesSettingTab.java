@@ -47,7 +47,7 @@ public class FavoritesSettingTab implements SettingsTab {
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
   
   private JPanel mSettingsPn;
-  private Plugin[] mSelectablePluginArr;
+  private PluginAccess[] mSelectablePluginArr;
   private JCheckBox[] mSelectablePluginChBArr;
 
   
@@ -73,21 +73,19 @@ public class FavoritesSettingTab implements SettingsTab {
     mSettingsPn.add(main, BorderLayout.NORTH);
     
     // get the client plugins
-    String[] clientPluginArr
-      = FavoritesPlugin.getInstance().getClientPlugins();
+    String[] clientPluginIdArr
+      = FavoritesPlugin.getInstance().getClientPluginIds();
     
     // get the installed plugins
-    Plugin[] installedPluginArr = Plugin.getPluginManager().getInstalledPlugins();
+    PluginAccess[] activePluginArr = Plugin.getPluginManager().getActivatedPlugins();
     
     // create a list of those who support multiple program execution
     ArrayList selectablePluginList = new ArrayList();
-    for (int i=0; i<installedPluginArr.length; i++) {
-      if (installedPluginArr[i].supportMultipleProgramExecution()) {
-        selectablePluginList.add(installedPluginArr[i]);
+    for (int i=0; i<activePluginArr.length; i++) {
+      if (activePluginArr[i].canReceivePrograms()) {
+        selectablePluginList.add(activePluginArr[i]);
       }
     }
-    
-    
 
     if (selectablePluginList.size() == 0) {
       msg = mLocalizer.msg("noPlugins", "There are no plugins that can receive multiple programs.");
@@ -98,7 +96,7 @@ public class FavoritesSettingTab implements SettingsTab {
     }
     
     // put them into an array
-    mSelectablePluginArr = new Plugin[selectablePluginList.size()];
+    mSelectablePluginArr = new PluginAccess[selectablePluginList.size()];
     selectablePluginList.toArray(mSelectablePluginArr);
     
     // create a check box for each
@@ -111,9 +109,8 @@ public class FavoritesSettingTab implements SettingsTab {
       // check wether the plugin is currently a client of the FavoritesPlugin
       boolean isClient = false;
       
-      for (int j = 0; j < clientPluginArr.length; j++) {
-        
-        if (mSelectablePluginArr[i].getClass().getName().equals(clientPluginArr[j])) {
+      for (int j = 0; j < clientPluginIdArr.length; j++) {
+        if (mSelectablePluginArr[i].getId().equals(clientPluginIdArr[j])) {
           isClient = true;
           break;
         }
@@ -130,19 +127,18 @@ public class FavoritesSettingTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    
     // Find out the plugins that should be client
-    ArrayList clientPluginList = new ArrayList();
+    ArrayList clientPluginIdList = new ArrayList();
     for (int i = 0; i < mSelectablePluginChBArr.length; i++) {
       if (mSelectablePluginChBArr[i].isSelected()) {
-        clientPluginList.add(mSelectablePluginArr[i].getClass().getName());
+        clientPluginIdList.add(mSelectablePluginArr[i].getId());
       }
     }
     
     // Put them into an array
-    String[] clientPluginArr = new String[clientPluginList.size()];
-    clientPluginList.toArray(clientPluginArr);
-    FavoritesPlugin.getInstance().setClientPlugins(clientPluginArr);
+    String[] clientPluginIdArr = new String[clientPluginIdList.size()];
+    clientPluginIdList.toArray(clientPluginIdArr);
+    FavoritesPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
   }
 
   

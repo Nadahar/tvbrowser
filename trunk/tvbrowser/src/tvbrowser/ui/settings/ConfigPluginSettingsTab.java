@@ -27,9 +27,13 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import tvbrowser.core.PluginLoader;
+import tvbrowser.core.plugin.PluginProxy;
 import devplugin.Plugin;
 import devplugin.SettingsTab;
 
@@ -39,15 +43,21 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
      = util.ui.Localizer.getLocalizerFor(ConfigPluginSettingsTab.class);
 
  
-  private Plugin mPlugin;
-  private boolean mPluginIsInstalled;
+  private PluginProxy mPlugin;
+  
   private SettingsTab mSettingsTab;
   private JPanel mContentPanel;
+  
+  /**
+   * Specifies whether the plugin was activated last time the content panel was
+   * created.
+   */
+  private boolean mPluginWasActivatedLastTime;
+
   private JPanel mPluginPanel;
   
-  public ConfigPluginSettingsTab(devplugin.Plugin plugin) {
-    mPlugin=plugin;
-    mPluginIsInstalled=PluginLoader.getInstance().isActivePlugin(mPlugin);
+  public ConfigPluginSettingsTab(PluginProxy plugin) {
+    mPlugin = plugin;
   }
   
   
@@ -57,78 +67,89 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
     PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo());
     pluginInfoPanel.setDefaultBorder();
     mContentPanel.add(pluginInfoPanel,BorderLayout.NORTH);
-    mPluginPanel=createContentPanel();
+    
+    updatePluginPanel();
     mContentPanel.add(mPluginPanel,BorderLayout.CENTER);
+    
     return mContentPanel;
-    
-  }
- 
-  public JPanel createContentPanel() {
-    
-    
-    if (!mPluginIsInstalled) {
-      JPanel result=new JPanel(new BorderLayout());
-      result.add(new JLabel(mLocalizer.msg("notactivated","This Plugin is currently not activated.")),BorderLayout.WEST);
-      return result;
-    }
-      
-    JPanel content=new JPanel(new BorderLayout());
-
-    mSettingsTab=mPlugin.getSettingsTab();
-    if (mSettingsTab!=null) {
-        content.add(mSettingsTab.createSettingsPanel(), BorderLayout.CENTER);
-    }
-       
-    return content;
-    
   }
 
-  
-    /**
-     * Called by the host-application, if the user wants to save the settings.
-     */
-    public void saveSettings() {
-      if (mSettingsTab!=null) {
-        mSettingsTab.saveSettings();
-      }
+
+  public void updatePluginPanel() {
+    // Check whether we've got something to do
+    if ((mPluginPanel != null)
+        && (mPlugin.isActivated() == mPluginWasActivatedLastTime))
+    {
+      // Nothing to do
+      return;
     }
+    
+    if (mPluginPanel == null) {
+      mPluginPanel = new JPanel(new BorderLayout());
+    } else {
+      mPluginPanel.removeAll();
+    }
+    
+    if (mPlugin.isActivated()) {
+      mSettingsTab = mPlugin.getSettingsTab();
+      if (mSettingsTab != null) {
+        mPluginPanel.add(mSettingsTab.createSettingsPanel(), BorderLayout.CENTER);
+      }
+    } else {
+      // The plugin is not activated -> Tell it the user
+      mSettingsTab = null;
+
+      String msg = mLocalizer.msg("notactivated", "This Plugin is currently not activated.");
+      mPluginPanel.add(new JLabel(msg), BorderLayout.WEST);
+    }
+    
+    mPluginWasActivatedLastTime = mPlugin.isActivated();
+
+    mContentPanel.updateUI();
+  }
 
   
-    /**
-     * Returns the name of the tab-sheet.
-     */
-    public Icon getIcon() {
-      return mPlugin.getMarkIcon();
+  /**
+   * Called by the host-application, if the user wants to save the settings.
+   */
+  public void saveSettings() {
+    if (mSettingsTab != null) {
+      mSettingsTab.saveSettings();
     }
-  
-  
-    /**
-     * Returns the title of the tab-sheet.
-     */
-    public String getTitle() {
-      return mPlugin.getInfo().getName();
-    }
+  }
 
-		
-		public void settingsChanged(SettingsTab tab, Object activatedPlugins) {
-      Plugin[] activatedPluginList=(Plugin[])activatedPlugins;
-      boolean oldVal=mPluginIsInstalled;
-      mPluginIsInstalled=false;
-      for (int i=0;i<activatedPluginList.length&&!mPluginIsInstalled;i++) {
-        if (mPlugin.equals(activatedPluginList[i])) {
-          mPluginIsInstalled=true;
-        }
-      }
-      
-      if (oldVal!=mPluginIsInstalled) {        
-        if (mContentPanel!=null) {
-          mContentPanel.remove(mPluginPanel);
-          mPluginPanel=createContentPanel();
-          mContentPanel.add(mPluginPanel,BorderLayout.CENTER);
-          mContentPanel.updateUI();
-        }
-      }
-      
-		}
+
+  /**
+   * Returns the name of the tab-sheet.
+   */
+  public Icon getIcon() {
+    Action action = mPlugin.getButtonAction();
+    Icon icon = null;
+    if (action != null) {
+      icon = (Icon) action.getValue(Action.SMALL_ICON);
+    }
+    
+    if (icon == null) {
+      // The plugin has no button icon -> Try the mark icon
+      icon = mPlugin.getMarkIcon();
+    }
+    
+    return icon;
+  }
+
+
+  /**
+   * Returns the title of the tab-sheet.
+   */
+  public String getTitle() {
+    return mPlugin.getInfo().getName();
+  }
+
+
+  public void settingsChanged(SettingsTab tab, Object activatedPlugins) {
+    if (mContentPanel != null) {
+      updatePluginPanel();
+    }
+  }
   
 }

@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 
 import util.ui.Localizer;
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.Program;
 
 /**
@@ -91,14 +92,14 @@ public class SendDialog extends JDialog {
         panel.setLayout(new GridBagLayout());
 
         // get the installed plugins
-        Plugin[] installedPluginArr = Plugin.getPluginManager().getInstalledPlugins();
+        PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
 
         Arrays.sort(installedPluginArr, new ObjectComperator());
 
         // create a list of those who support multiple program execution
         Vector selectablePluginList = new Vector();
         for (int i = 0; i < installedPluginArr.length; i++) {
-            if ((installedPluginArr[i] != mPlugin) && (installedPluginArr[i].supportMultipleProgramExecution())) {
+            if ((installedPluginArr[i] != mPlugin) && (installedPluginArr[i].canReceivePrograms())) {
                 selectablePluginList.add(installedPluginArr[i]);
             }
         }

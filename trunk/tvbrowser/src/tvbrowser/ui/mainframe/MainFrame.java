@@ -39,6 +39,10 @@ import javax.swing.*;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.*;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateAdapter;
+import tvbrowser.core.plugin.PluginStateListener;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.FilterChooser;
@@ -168,8 +172,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mPluginDownloadMenuItem = new JMenuItem(msg, icon);
     mPluginDownloadMenuItem.addActionListener(this);
   
-    createPluginsMenu();
-   
+    updatePluginsMenu();
     
     // Help menu
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
@@ -276,28 +279,17 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
     jcontentPane.add(skinPanel,BorderLayout.CENTER);
     
-    
-    PluginLoader.getInstance().addPluginStateListener(new PluginStateListener(){
+    PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
+      public void pluginActivated(Plugin p) {
+        updatePluginsMenu();
+      }
 
-			public void pluginActivated(Plugin p) {
-        createPluginsMenu();				
-			}
-
-			public void pluginDeactivated(Plugin p) {
-        createPluginsMenu();
-			}
-
-			public void pluginLoaded(Plugin p) {
-        createPluginsMenu();
-			}
-
-			public void pluginUnloaded(Plugin p) {
-        createPluginsMenu();
-			}
+      public void pluginDeactivated(Plugin p) {
+        updatePluginsMenu();
+      }
     });
 
-		setJMenuBar(menuBar);
-    
+    setJMenuBar(menuBar);    
   }
 
   public JLabel getStatusBarLabel() {
@@ -327,6 +319,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   public static MainFrame getInstance() {
     if (mSingleton==null) {
+      mLog.info("Initializing main frame...");
       mSingleton=new MainFrame();
     }
     return mSingleton;
@@ -352,9 +345,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
   public void quit() {
-   
     mLog.info("Finishing plugins");
-    PluginLoader.getInstance().shutdownAllPlugins();
+    PluginProxyManager.getInstance().shutdownAllPlugins();
     
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
@@ -373,47 +365,32 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     System.exit(0);
   }
 
-
-
   
-  
- 
-  private void createPluginsMenu() {
-    mPluginsMenu.removeAll();
+  public void updatePluginsMenu() {
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    updatePluginsMenu(mPluginsMenu, plugins);
     
-    Object[] plugins = PluginLoader.getInstance().getActivePlugins();
-    JMenuItem item;
-    HashMap map = new HashMap();
-    for (int i = 0;i<plugins.length;i++) {
-      
-      final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
-      plugin.setParent(this);
-      String btnTxt = plugin.getButtonText();
-      if (btnTxt != null) {
-        int k = 1;
-        String txt = btnTxt;
-        while (map.get(txt) != null) {
-          txt = btnTxt+"("+k+")";
-          k++;
-        }
-        map.put(txt,btnTxt);
-
-        item = new JMenuItem(btnTxt);
-        item.setIcon(plugin.getButtonIcon());
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            plugin.execute();
-          }
-        });
-        mPluginsMenu.add(item);
-        new MenuHelpTextAdapter(item, plugin.getInfo().getDescription(), mStatusBar.getLabel()); 
-
-      }
+    // Create the MenuHelpTextAdapter
+    for (int i = 0; i < mPluginsMenu.getItemCount(); i++) {
+      JMenuItem item = mPluginsMenu.getItem(i);
+      new MenuHelpTextAdapter(item, plugins[i].getInfo().getDescription(),
+                              mStatusBar.getLabel()); 
     }
     
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mPluginDownloadMenuItem);
-        
+  }
+  
+
+  public static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
+    pluginsMenu.removeAll();
+    
+    for (int i = 0; i < plugins.length; i++) {
+      Action action = plugins[i].getButtonAction();
+      if (action != null) {
+        pluginsMenu.add(new JMenuItem(action));
+      }
+    }
   }
 
 

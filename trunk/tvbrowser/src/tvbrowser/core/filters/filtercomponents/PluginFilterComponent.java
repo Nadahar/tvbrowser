@@ -23,16 +23,20 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.core.filters.filtercomponents;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
-import tvbrowser.core.PluginLoader;
-import tvbrowser.core.PluginManager;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
 import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import devplugin.Plugin;
 import devplugin.Program;
 
@@ -45,7 +49,7 @@ public class PluginFilterComponent implements FilterComponent {
 
     
   private JComboBox mBox;
-  private devplugin.Plugin mPlugin;
+  private PluginProxy mPlugin;
   
   private String mDescription, mName;
   
@@ -59,19 +63,23 @@ public class PluginFilterComponent implements FilterComponent {
   }
     
   public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-      
-    String pluginClassName=(String)in.readObject();
-    mPlugin = PluginLoader.getInstance().getActivePluginByClassName(pluginClassName);
-
+    String pluginId;
+    if (version == 1) {
+      String pluginClassName = (String) in.readObject();
+      pluginId = "java." + pluginClassName;
+    } else {
+      pluginId = (String) in.readObject();
+    }
+    
+    mPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
   }
     
   public void write(ObjectOutputStream out) throws IOException {
-      
     if (mPlugin==null) {
       out.writeObject("[invalid]"); 
     }
     else {
-      out.writeObject(mPlugin.getClass().getName());
+      out.writeObject(mPlugin.getId());
     }    
   }
     
@@ -96,32 +104,28 @@ public class PluginFilterComponent implements FilterComponent {
     ta.setOpaque(false);
     ta.setEditable(false);
     ta.setFocusable(false);
-    content.add(ta,BorderLayout.NORTH);       
-    Plugin[] plugins=PluginManager.getInstance().getInstalledPlugins();
+    content.add(ta,BorderLayout.NORTH);
+
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     mBox=new JComboBox(plugins);
-    content.add(mBox,BorderLayout.CENTER);
-            
     if (mPlugin!=null) {
-      for (int i=0;i<plugins.length;i++) {
-        if (plugins[i].getClass().getName().equals(mPlugin.getClass().getName())) {
-          mBox.setSelectedItem(plugins[i]);
-          break;
-        }                
-      }
-    }            
-    return content;
+      mBox.setSelectedItem(mPlugin);
     }
-    
+    content.add(mBox,BorderLayout.CENTER);
+
+    return content;
+  }
+
+
     public String toString() {
         return "plugin";
     }
         
     
         
-    public void ok() {
-        mPlugin=(devplugin.Plugin)mBox.getSelectedItem();
-        
-    }
+  public void ok() {
+    mPlugin = (PluginProxy) mBox.getSelectedItem();
+  }
 
 		
 		public int getVersion() {
