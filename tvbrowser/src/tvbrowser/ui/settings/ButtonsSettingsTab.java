@@ -39,9 +39,9 @@ import javax.swing.*;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.ui.mainframe.VerticalToolBar;
 import util.ui.OrderChooser;
 import util.ui.TabLayout;
+import util.ui.UiUtilities;
 import devplugin.SettingsTab;
 
 /**
@@ -56,13 +56,11 @@ public class ButtonsSettingsTab implements SettingsTab {
   
   private JPanel mSettingsPn;
  
-  private JCheckBox mTimeCheck, updateCheck, settingsCheck;
+  private JCheckBox updateCheck, settingsCheck;
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
-  private TimePanel mEarlyTimePn, mMiddayTimePn, mAfternoonTimePn, mEveningTimePn;
-  private JLabel mEarlyLb, mAfternoonLb, mMiddayLb, mEveningLb;
   private OrderChooser mButtonList;
  
-
+  private TimesListPanel mTimeButtonsPn;
 
   public ButtonsSettingsTab()  {
   }
@@ -125,77 +123,20 @@ public class ButtonsSettingsTab implements SettingsTab {
     panel4.add(textAndPicRadio);
     labelBtnsPanel.add(panel4,BorderLayout.NORTH);
 
-
-
-
-   /* enable time buttons */
-
-    JPanel enableTimeButtonsPn = new JPanel(new BorderLayout());
-    mTimeCheck = new JCheckBox(mLocalizer.msg("buttons.time", "Time buttons"));
-    mTimeCheck.setSelected(Settings.propShowTimeButtons.getBoolean());
-    enableTimeButtonsPn.add(mTimeCheck,BorderLayout.WEST);
-
-
-    /* time buttons */
-
-    JPanel timeButtonsPn=new JPanel(new GridLayout(0,4));
-    timeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
-    
-   
+    mTimeButtonsPn = new TimesListPanel(Settings.propTimeButtons.getIntArray());  //createTimeButtonsPanel();
+    mTimeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
     
     
-    
-    mEarlyTimePn     = new TimePanel(Settings.propEarlyTime.getInt());    
-    mMiddayTimePn    = new TimePanel(Settings.propMiddayTime.getInt());
-    mAfternoonTimePn = new TimePanel(Settings.propAfternoonTime.getInt());
-    mEveningTimePn   = new TimePanel(Settings.propEveningTime.getInt());
-    
-    mEarlyLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.early","Early")+":");
-    timeButtonsPn.add(mEarlyLb);
-    timeButtonsPn.add(mEarlyTimePn); 
-    
-    mMiddayLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.midday","Midday")+":");
-    timeButtonsPn.add(mMiddayLb);
-    timeButtonsPn.add(mMiddayTimePn);
-    
-    mAfternoonLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.afternoon","Afternoon")+":");
-    timeButtonsPn.add(mAfternoonLb);
-    timeButtonsPn.add(mAfternoonTimePn); 
-    
-    mEveningLb=new JLabel(VerticalToolBar.mLocalizer.msg("button.evening","Evening")+":");
-    timeButtonsPn.add(mEveningLb);
-    timeButtonsPn.add(mEveningTimePn);
-
  
-    toolBarPanel.add(toolbarbuttonsPanel);
-    toolBarPanel.add(labelBtnsPanel);
-    toolBarPanel.add(enableTimeButtonsPn);    
-    toolBarPanel.add(timeButtonsPn);
-
-
-    mTimeCheck.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        enableTimeButtons(mTimeCheck.isSelected());
-      }
-    });
+    JPanel buttonsPn = new JPanel(new GridLayout(1,2));
+    buttonsPn.add(toolbarbuttonsPanel);
+    buttonsPn.add(labelBtnsPanel);
+    toolBarPanel.add(buttonsPn);
     
-    enableTimeButtons(mTimeCheck.isSelected());
+    toolBarPanel.add(mTimeButtonsPn);
     
     return mSettingsPn;
   }
-
-  private void enableTimeButtons(boolean val) {
-    boolean b=mTimeCheck.isSelected();
-    mEarlyTimePn.setEnabled(b);
-    mAfternoonTimePn.setEnabled(b);
-    mMiddayTimePn.setEnabled(b);
-    mEveningTimePn.setEnabled(b);
-    mEarlyLb.setEnabled(b);
-    mAfternoonLb.setEnabled(b);
-    mMiddayLb.setEnabled(b);
-    mEveningLb.setEnabled(b);
-  }
-  
   
   private ButtonItem[] getSelectedToolbarButtons(ButtonItem[] availableItems) {
     
@@ -247,7 +188,7 @@ public class ButtonsSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    Settings.propShowTimeButtons.setBoolean(mTimeCheck.isSelected());
+   // Settings.propShowTimeButtons.setBoolean(mTimeCheck.isSelected());
     
     Object[] oItems = mButtonList.getOrder();
     String[] items = new String[oItems.length];
@@ -264,10 +205,16 @@ public class ButtonsSettingsTab implements SettingsTab {
       Settings.propToolbarButtonStyle.setString("text&icon");
     }
     
-    Settings.propEarlyTime.setInt(mEarlyTimePn.getTime());
+    int[] x = mTimeButtonsPn.getTimes();
+    Settings.propTimeButtons.setIntArray(mTimeButtonsPn.getTimes());
+    for (int i=0; i<x.length; i++) {
+      System.out.println(x[i]);
+    }
+    
+ /*   Settings.propEarlyTime.setInt(mEarlyTimePn.getTime());
     Settings.propMiddayTime.setInt(mMiddayTimePn.getTime());
     Settings.propAfternoonTime.setInt(mAfternoonTimePn.getTime());
-    Settings.propEveningTime.setInt(mEveningTimePn.getTime());
+    Settings.propEveningTime.setInt(mEveningTimePn.getTime());*/
   }
 
   
@@ -289,6 +236,7 @@ public class ButtonsSettingsTab implements SettingsTab {
   public String getTitle() {
     return mLocalizer.msg("buttons", "Buttons");
   }
+
 
 
 class TimePanel extends JPanel {
@@ -327,6 +275,85 @@ class TimePanel extends JPanel {
   }
 }
 
+  class TimesListPanel extends JPanel {
+    private ArrayList mRows;
+    private JPanel mListPn;
+      
+    public TimesListPanel(int[] times) {
+        
+      mRows = new ArrayList();        
+      setLayout(new BorderLayout());
+      
+      mListPn = new JPanel();
+      mListPn.setLayout(new BoxLayout(mListPn, BoxLayout.Y_AXIS));
+      add(mListPn, BorderLayout.CENTER);
+       
+      for (int i=0; i<times.length; i++) {
+        final Row row = new Row(times[i]);
+        mRows.add(row);
+        row.getRemoveButton().addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent arg) {
+            mRows.remove(row);
+            updateContent();
+          }
+        });
+      }
+      JButton newBtn = UiUtilities.createToolBarButton(mLocalizer.msg("new","New"),new ImageIcon("imgs/New16.gif"));
+      JPanel southPn = new JPanel(new BorderLayout());
+      southPn.add(newBtn, BorderLayout.WEST);
+      
+      add(southPn, BorderLayout.SOUTH);
+      newBtn.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent event) {
+          mRows.add(new Row(0));
+          updateContent();            
+        }        
+      });
+      
+      updateContent();
+    }
+    
+    private void updateContent() {
+      mListPn.removeAll();
+      for (int i=0; i<mRows.size(); i++) {
+        Row row = (Row)mRows.get(i);
+        mListPn.add(row);
+      }
+      mListPn.updateUI();
+    }
+    
+    
+    public int[] getTimes() {
+      int[] result = new int[mRows.size()];
+      for (int i=0; i<result.length; i++) {
+        result[i] = ((Row)mRows.get(i)).getTime();
+      }
+      return result;
+    }
+  }
+
+  class Row extends JPanel {
+    
+    private JButton mRemoveBtn;
+    private TimePanel mTimePn;  
+    
+    public Row(int time) {
+      setLayout(new BorderLayout());        
+      mRemoveBtn = UiUtilities.createToolBarButton(mLocalizer.msg("delete","Delete"),new ImageIcon("imgs/Delete16.gif"));
+      add(mTimePn = new TimePanel(time), BorderLayout.CENTER);
+      add(mRemoveBtn, BorderLayout.EAST);
+      
+    }
+    
+    public JButton getRemoveButton() {
+      return mRemoveBtn;
+    }
+    
+    public int getTime() {
+      return mTimePn.getTime();
+    }
+    
+  }
 
   class ButtonItem {
     
