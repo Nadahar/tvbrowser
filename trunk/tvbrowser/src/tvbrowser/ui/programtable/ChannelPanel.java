@@ -44,18 +44,18 @@ public class ChannelPanel extends JPanel {
   
   private JScrollPane scrollPane=null;
   
+  private JLabel [] labels;
   
   
   public ChannelPanel() {
     int n=ChannelList.getNumberOfSubscribedChannels();
-    setLayout(new BorderLayout());
+   setLayout(new GridLayout(1,0,0,0));
     
-    JPanel content=new JPanel();
+  
+    setOpaque(true);
+    setBackground(new java.awt.Color(208,199,241));
     
-    content.setOpaque(true);
-    content.setBackground(new java.awt.Color(208,199,241));
-    
-    JLabel []labels=new JLabel[n];
+    labels=new JLabel[n];
     Enumeration enum=ChannelList.getChannels();
     int colWidth=Settings.getColumnWidth();
     
@@ -74,9 +74,8 @@ public class ChannelPanel extends JPanel {
       if (labels[i]==null) {
         labels[i] = new JLabel(mLocalizer.msg("unknown", "Unknown"));
       }
-      content.add(labels[i]);
+      add(labels[i]);
     }
-    add(content,BorderLayout.WEST);
   }
   
   

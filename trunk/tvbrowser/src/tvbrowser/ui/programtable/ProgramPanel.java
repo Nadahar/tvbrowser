@@ -26,18 +26,12 @@
 
 package tvbrowser.ui.programtable;
 
-import java.util.HashSet;
+
 import java.util.Iterator;
-import java.util.StringTokenizer;
+
 
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.font.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-
 import javax.swing.*;
-import javax.swing.text.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -97,7 +91,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
 
   public void paintComponent(Graphics g) {
-    g.setFont(bold);
+  	g.setFont(bold);
     g.setColor(Color.black);
     g.drawString(timeStr,0,bold.getSize());
     mTitleIcon.paintIcon(this, g, WIDTH_LEFT, 0);

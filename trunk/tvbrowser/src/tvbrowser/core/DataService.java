@@ -239,7 +239,18 @@ public class DataService implements devplugin.PluginManager {
     }
   }
 
-  
+
+  /**
+	 * Returns the day program for the specified date.
+	 * 
+	 * 
+	 * @param date The date to get the day program for.
+	 * @throws NullPointerException if date is null.
+	 */
+  public DayProgram getDayProgram(devplugin.Date date) {
+  	return getDayProgram(date, true);
+  	
+  }
   
   /**
    * Returns the day program for the specified date.
@@ -247,14 +258,16 @@ public class DataService implements devplugin.PluginManager {
    * @param date The date to get the day program for.
    * @throws NullPointerException if date is null.
    */
-  public DayProgram getDayProgram(devplugin.Date date) {
+  public DayProgram getDayProgram(devplugin.Date date, boolean useCache) {
     // if date is null throw a NullPointerException
     if (date == null) {
       throw new NullPointerException("date is null!");
     }
 
     // try to get the DayProgram from the cache.
-    DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
+    DayProgram dayProgram=null;
+    
+    if (useCache) dayProgram = (DayProgram) mDayProgramHash.get(date);
     
     if (dayProgram == null) {
       try {
