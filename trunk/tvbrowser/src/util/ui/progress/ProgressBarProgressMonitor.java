@@ -25,8 +25,9 @@
  */
 package util.ui.progress;
 
-import javax.swing.JProgressBar;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import devplugin.ProgressMonitor;
 
@@ -37,38 +38,49 @@ import devplugin.ProgressMonitor;
  */
 public class ProgressBarProgressMonitor implements ProgressMonitor {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ProgressBarProgressMonitor.class.getName());
-  
-  private JProgressBar mProgressBar;
-  private JLabel mLabel;
-  
-  
-  public ProgressBarProgressMonitor(JProgressBar progressBar, JLabel label) {
-    mProgressBar = progressBar;
-    mLabel = label;
-  }
-  
-  public ProgressBarProgressMonitor(JProgressBar progressBar) {
-      this(progressBar,null);
-  }
+    private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ProgressBarProgressMonitor.class.getName());
 
+    private JProgressBar mProgressBar;
 
-  public void setMaximum(int maximum) {
-    mProgressBar.setMaximum(maximum);
-  }
+    private JLabel mLabel;
 
+    public ProgressBarProgressMonitor(JProgressBar progressBar, JLabel label) {
+        mProgressBar = progressBar;
+        mLabel = label;
+    }
 
+    public ProgressBarProgressMonitor(JProgressBar progressBar) {
+        this(progressBar, null);
+    }
 
-  public void setValue(int value) {
-    mProgressBar.setValue(value);
-  }
-  
-  public void setMessage(String msg) {
-    if (mLabel!=null) {
-      mLabel.setText(msg);
-      mLog.info("Progress: " + msg);
-    } 
-  }
+    public void setMaximum(final int maximum) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                mProgressBar.setMaximum(maximum);
+            }
+        });
+    }
+
+    public void setValue(final int value) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                mProgressBar.setValue(value);
+            }
+        });
+    }
+
+    public void setMessage(final String msg) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                if (mLabel != null) {
+                    mLabel.setText(msg);
+                    mLog.info("Progress: " + msg);
+                }
+            }
+        });
+    }
 
 }

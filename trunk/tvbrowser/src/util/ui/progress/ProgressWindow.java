@@ -25,11 +25,18 @@
  */
 
 package util.ui.progress;
-import javax.swing.*;
-import util.ui.*;
-import util.ui.progress.Progress;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
+import util.ui.UiUtilities;
 
 public class ProgressWindow implements devplugin.ProgressMonitor {
 
@@ -77,8 +84,12 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
     
   }
 
-  public void setMessage(String msg) {
-    mLabel.setText(msg);
+  public void setMessage(final String msg) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+            mLabel.setText(msg);
+        }
+      });
   }
   
   /*
