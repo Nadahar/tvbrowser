@@ -181,7 +181,15 @@ public class ManageFavoritesDialog extends JDialog {
 		  Program p=(Program)mProgramListModel.getElementAt(inx);
 		  JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(p,FavoritesPlugin.getInstance());
 		  menu.show(mProgramList, e.getX() - 15, e.getY() - 15);
-		}
+		} else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+			int inx=mProgramList.locationToIndex(e.getPoint());
+			Program p=(Program)mProgramListModel.getElementAt(inx);
+
+			Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
+            if (plugin != null) {
+                plugin.execute(p);
+            }
+        }
 		}
     	});
     
