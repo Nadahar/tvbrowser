@@ -1,0 +1,8 @@
+Changelog PremiereDataService
+
+1.0.1:
+- bugfixes
+- renamed to PremiereDataService
+
+1.0:
+- initial version

@@ -1,0 +1,10 @@
+Changelog XmlTvDataLoader
+
+1.0.2
+- no Serializable Classes any more
+
+1.0.1
+- bugfixes
+
+1.0:
+- initial version
