@@ -34,8 +34,6 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import listviewplugin.ListViewPlugin;
-
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -99,8 +97,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("pluginName", "TV Rater"));
-        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", ListViewPlugin.class)));
-        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", ListViewPlugin.class)));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", TVRaterPlugin.class)));
+        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", TVRaterPlugin.class)));
         
         return action;
     }    
@@ -149,7 +147,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "View rating"));
-        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", ListViewPlugin.class)));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", TVRaterPlugin.class)));
         
         return new Action[] {action};
     }
