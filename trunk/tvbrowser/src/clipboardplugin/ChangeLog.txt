@@ -1,0 +1,15 @@
+Changelog ClipBoardPlugin
+
+0.10:
+- Added Buttons for sorting and deleting entries
+
+0.03:
+- Sort Array of Programs in SendDialog
+
+0.02:
+- Fix: Double-Click on empty List causes Nullpointer
+
+0.01:
+- initial version
+
+
