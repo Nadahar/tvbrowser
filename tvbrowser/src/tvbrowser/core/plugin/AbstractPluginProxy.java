@@ -525,6 +525,46 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @see #handleTvDataUpdateFinished()
    */
   protected abstract void doHandleTvDataDeleted(ChannelDayProgram oldProg);
+
+  
+  public void onActivation() {
+    try {
+      doOnActivation();
+    }
+    catch (RuntimeException exc) {
+      handlePluginException(exc);
+    }
+  }
+  
+  
+  protected abstract void doOnActivation();
+  
+
+  public void onDeactivation() {
+    try {
+      doOnDeactivation();
+    }
+    catch (RuntimeException exc) {
+      handlePluginException(exc);
+    }
+  }
+
+  
+  protected abstract void doOnDeactivation();
+
+  
+  public boolean canUseProgramTree() {
+    try {
+      return doCanUseProgramTree();
+    }
+    catch (RuntimeException exc) {
+      handlePluginException(exc);
+      return false;
+    }
+  }
+
+  
+  protected abstract boolean doCanUseProgramTree();
   
 
   /**
@@ -565,5 +605,5 @@ public abstract class AbstractPluginProxy implements PluginProxy {
         + "may only be called on activated plugins.", getInfo().getName());
     }
   }
-
+  
 }

@@ -261,13 +261,13 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
 
  
-    public void onActivation() {        
+    public void doOnActivation() {        
     }
 
-    public void onDeactivation() {       
+    public void doOnDeactivation() {       
     }
 
-    public boolean canUseProgramTree() {
+    public boolean doCanUseProgramTree() {
         return false;
     }
 
