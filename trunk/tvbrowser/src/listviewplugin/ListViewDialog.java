@@ -508,11 +508,9 @@ public class ListViewDialog extends JDialog {
         }
         
         if (prg == null) {
-            System.out.println("RETURN");
             return;
         }
         
-        System.out.println("OK");
         if (SwingUtilities.isRightMouseButton(e)) {
             JPopupMenu menu = devplugin.Plugin.getPluginManager()
                     .createPluginContextMenu(prg);
