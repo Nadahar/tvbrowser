@@ -34,6 +34,8 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.*;
@@ -58,8 +60,8 @@ public class ManageFavoritesDialog extends JDialog {
   private DefaultListModel mFavoritesListModel, mProgramListModel;
   private JList mFavoritesList, mProgramList;
   private JSplitPane mSplitPane;
-  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mImportBt, mOkBt,
-    mCancelBt;
+  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt;
+  private JButton mOkBt, mCancelBt;
   
   private boolean mOkWasPressed = false;
   
@@ -133,6 +135,16 @@ public class ManageFavoritesDialog extends JDialog {
     });
     toolbarPn.add(mDownBt);
 
+    msg = mLocalizer.msg("sort", "Sort favorites alphabetically");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Sort24.gif", getClass());
+    mSortBt = UiUtilities.createToolBarButton(msg, icon);
+    mSortBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        sortFavorites();
+      }
+    });
+    toolbarPn.add(mSortBt);
+
     msg = mLocalizer.msg("import", "Import favorites from TVgenial");
     icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Import24.gif", getClass());
     mImportBt = UiUtilities.createToolBarButton(msg, icon);
@@ -192,31 +204,31 @@ public class ManageFavoritesDialog extends JDialog {
       }
     });
     
-    
-	
-	mProgramList.addMouseListener(new MouseAdapter() {
-	  public void mouseClicked(MouseEvent e) {
-	    if (SwingUtilities.isRightMouseButton(e)) {
-		  int inx=mProgramList.locationToIndex(e.getPoint());
-		  Program p=(Program)mProgramListModel.getElementAt(inx);
-		  JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(p,FavoritesPlugin.getInstance());
-		  menu.show(mProgramList, e.getX() - 15, e.getY() - 15);
-		} else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-			int inx=mProgramList.locationToIndex(e.getPoint());
-			Program p=(Program)mProgramListModel.getElementAt(inx);
+    mProgramList.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if (SwingUtilities.isRightMouseButton(e)) {
+          int inx = mProgramList.locationToIndex(e.getPoint());
+          Program p = (Program) mProgramListModel.getElementAt(inx);
+          JPopupMenu menu = Plugin.getPluginManager()
+              .createPluginContextMenu(p, FavoritesPlugin.getInstance());
+          menu.show(mProgramList, e.getX() - 15, e.getY() - 15);
+        } else if (SwingUtilities.isLeftMouseButton(e)
+            && (e.getClickCount() == 2)) {
+          int inx = mProgramList.locationToIndex(e.getPoint());
+          Program p = (Program) mProgramListModel.getElementAt(inx);
 
-			Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
-            if (plugin != null) {
-                plugin.execute(p);
-            }
+          Plugin plugin = Plugin.getPluginManager()
+              .getDefaultContextMenuPlugin();
+          if (plugin != null) {
+            plugin.execute(p);
+          }
         }
-		}
-    	});
-    
+      }
+    });
+
     buttonPn.add(mCancelBt);
     
     favoriteSelectionChanged();
-   
   }
   
   
@@ -237,6 +249,8 @@ public class ManageFavoritesDialog extends JDialog {
     
     mUpBt.setEnabled(selection > 0);
     mDownBt.setEnabled((selection != -1) && (selection < (size - 1)));
+    
+    mSortBt.setEnabled(size >= 2);
     
     if (selection == -1) {
       mProgramListModel.clear();
@@ -317,6 +331,36 @@ public class ManageFavoritesDialog extends JDialog {
       }
     }
   }
+
+  
+  protected void sortFavorites() {
+    String msg = mLocalizer.msg("reallySort", "Do you really want to sort your " +
+        "favorites?\n\nThe current order will get lost.");
+    String title = UIManager.getString("OptionPane.titleText");
+    
+    int result = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION);
+    if (result == JOptionPane.YES_OPTION) {
+      // Create a comparator for Favorites
+      Comparator comp = new Comparator() {
+        public int compare(Object o1, Object o2) {
+          String text1 = ((Favorite) o1).getSearchFormSettings().getSearchText();
+          String text2 = ((Favorite) o2).getSearchFormSettings().getSearchText();
+          return text1.compareTo(text2);
+        }
+      };
+      
+      // Sort the list
+      Object[] asArr = mFavoritesListModel.toArray();
+      Arrays.sort(asArr, comp);
+      mFavoritesListModel.removeAllElements();
+      for (int i = 0; i < asArr.length; i++) {
+        mFavoritesListModel.addElement(asArr[i]);
+      }
+      
+      // Update the buttons
+      favoriteSelectionChanged();
+    }
+  }
   
 
   protected void importFavorites() {
@@ -378,8 +422,12 @@ public class ManageFavoritesDialog extends JDialog {
         JOptionPane.showMessageDialog(this, msg);
       } else {
         // Scroll to the end
-        int idx = mFavoritesListModel.size() - 1;
-        mFavoritesList.ensureIndexIsVisible(idx);
+        mFavoritesList.ensureIndexIsVisible(mFavoritesListModel.size() - 1);
+        
+        // Select the first new fevorite
+        int firstNewIdx = mFavoritesListModel.size() - importedFavoritesCount;
+        mFavoritesList.setSelectedIndex(firstNewIdx);
+        mFavoritesList.ensureIndexIsVisible(firstNewIdx);
 
         msg = mLocalizer.msg("importDone", "There were {0} new favorites imported.",
             new Integer(importedFavoritesCount));
