@@ -61,18 +61,39 @@ public class TextAreaIcon implements Icon {
     setText(text);
   }
   
-  
+  /**
+   * Creates a TextAreaIcon with the specified font and width.
+   */
+  public TextAreaIcon(Font font, int width) {
+    mWidth = width;
+    mFont = font;
+    mText = "";
+  }
+    
+  /**
+   * Sets the maximum Linecount
+   * @param maxLineCount Max Count of Lines
+   */
   public void setMaximumLineCount(int maxLineCount) {
     mMaxLineCount = maxLineCount;
+    if (mTextLineArr.length >= mMaxLineCount) {
+      setText(mText);
+    }
   }
   
-  
-  
+  /**
+   * Get the maximum LineCount
+   * @return Maximum LineCount
+   */
   public int getMaximumLineCount() {
     return mMaxLineCount;
   }
 
 
+  /**
+   * Set the Text of this Icon
+   * @param text Text in this Icon
+   */
   public void setText(String text) {
     mText = text;
     StringReader reader;
@@ -92,7 +113,10 @@ public class TextAreaIcon implements Icon {
     }
   }
 
-
+  /**
+   * Set the Text of this Icon
+   * @param textReader Text in this Icon
+   */
   public void setText(Reader textReader) throws IOException {
     if (textReader == null) {
       mTextLineArr = null;
