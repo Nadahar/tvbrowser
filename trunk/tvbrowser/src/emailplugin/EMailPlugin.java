@@ -148,7 +148,8 @@ public class EMailPlugin extends Plugin {
     	String emailText = new String();
     	
     	for (int i = 0; i < program.length; i++) {
-    		emailText += program[i].getChannel().getName() + " " + program[i].getDateString() + ", " + program[i].getTimeString() + "-" + program[i].getTimeFieldAsString(ProgramFieldType.END_TIME_TYPE) + " " + program[i].getTitle() + "\n";
+    		emailText += program[i].getDateString() + ", "+program[i].getChannel().getName() + "\n" + 
+			             program[i].getTimeString() + " - " + program[i].getTimeFieldAsString(ProgramFieldType.END_TIME_TYPE) + "   " + program[i].getTitle() + "\n\n";
     	}
 
     	if (mSettings.getProperty("application", "").trim().equals("")) {	
