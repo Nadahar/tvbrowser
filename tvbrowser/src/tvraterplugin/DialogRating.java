@@ -27,11 +27,11 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -241,13 +241,37 @@ public class DialogRating extends JDialog {
 
 		
 		if (rating != null) {
-			ratingPanel.setLayout(new GridLayout(6, 1));			
-			ratingPanel.add(createRatingBox(_mLocalizer.msg("overall", "Overall") + ":", rating.getIntValue(Rating.OVERALL)));
-			ratingPanel.add(createRatingBox(_mLocalizer.msg("action", "Action") + ":", rating.getIntValue(Rating.ACTION)));
-			ratingPanel.add(createRatingBox(_mLocalizer.msg("fun", "Fun") + ":", rating.getIntValue(Rating.FUN)));
-			ratingPanel.add(createRatingBox(_mLocalizer.msg("erotic", "Erotic") + ":", rating.getIntValue(Rating.EROTIC)));
-			ratingPanel.add(createRatingBox(_mLocalizer.msg("tension", "Tension") + ":", rating.getIntValue(Rating.TENSION)));
-			ratingPanel.add(createRatingBox(_mLocalizer.msg("entitlement", "Entitlement") + ":", rating.getIntValue(Rating.ENTITLEMENT)));
+
+			GridBagConstraints labc = new GridBagConstraints();
+			labc.weightx = 1;
+			labc.weighty = 1;
+			labc.fill = GridBagConstraints.BOTH;
+
+			GridBagConstraints c = new GridBagConstraints();
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			c.weightx = 0;
+			c.weighty = 0;
+			c.fill = GridBagConstraints.HORIZONTAL;
+
+			ratingPanel.setLayout(new GridBagLayout());
+			
+			ratingPanel.add(new JLabel(_mLocalizer.msg("overall", "Overall") + ":", JLabel.LEFT), labc);
+			ratingPanel.add(createRatingBox( rating.getIntValue(Rating.OVERALL)), c);
+			
+			ratingPanel.add(new JLabel(_mLocalizer.msg("action", "Action") + ":", JLabel.LEFT), labc);
+			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.ACTION)), c);
+			
+			ratingPanel.add(new JLabel(_mLocalizer.msg("fun", "Fun") + ":", JLabel.LEFT), labc);
+			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.FUN)), c);
+			
+			ratingPanel.add(new JLabel(_mLocalizer.msg("erotic", "Erotic") + ":", JLabel.LEFT), labc);
+			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.EROTIC)), c);
+			
+			ratingPanel.add(new JLabel(_mLocalizer.msg("tension", "Tension") + ":", JLabel.LEFT), labc);
+			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.TENSION)), c);
+			
+			ratingPanel.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":", JLabel.LEFT), labc);
+			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.ENTITLEMENT)), c);
 		} else {
 			ratingPanel.setLayout(new BorderLayout());			
 			JTextPane pane = new JTextPane();
@@ -255,7 +279,9 @@ public class DialogRating extends JDialog {
 			
 			if (_length < TVRaterPlugin.MINLENGTH) {
 				pane.setText("<center style='font-family: helvetica'>"+
-							_mLocalizer.msg("tooshort", "Program too short for rating. The minimum lenght is " + TVRaterPlugin.MINLENGTH + " min.<br>This reduces traffic on the server.")
+							_mLocalizer.msg("tooshort1", "Program too short for rating. The minimum lenght is ")
+							+ TVRaterPlugin.MINLENGTH + 
+							_mLocalizer.msg("tooshort2", " min.<br>This reduces traffic on the server.")
 							+"</center>");
 			} else {
 				pane.setText("<center style='font-family: helvetica'>"+
@@ -278,20 +304,12 @@ public class DialogRating extends JDialog {
 	 * @param value Value to show (1-5)
 	 * @return JPanel with rating-box
 	 */
-	private Component createRatingBox(String name, int value) {
-		JPanel box = new JPanel(new BorderLayout());
-
-		box.add(new JLabel(name), BorderLayout.NORTH);
-
+	private Component createRatingBox(int value) {
 		if (value > -1) {
-			box.add(new JLabel(Integer.toString(value) + "/5", JLabel.CENTER), BorderLayout.CENTER);
+			return new JLabel(RatingIconTextFactory.getStringForRating(value), (Icon)RatingIconTextFactory.getImageIconForRating(value), JLabel.LEFT);
 		} else {
-			box.add(new JLabel("---", JLabel.CENTER), BorderLayout.CENTER);
+			return new JLabel("-");
 		}
-
-		box.setBorder(BorderFactory.createEtchedBorder());
-
-		return box;
 	}
 
 	/**
@@ -300,15 +318,37 @@ public class DialogRating extends JDialog {
 	 * @return voting-panel
 	 */
 	private JPanel createVotingPanel(Rating rating) {
-		JPanel voting = new JPanel(new GridLayout(6, 1));
+		JPanel voting = new JPanel(new GridBagLayout());
 		voting.setBorder(BorderFactory.createTitledBorder(_mLocalizer.msg("yourRating", "Your Rating")));
 
-		voting.add(createVotingBox(_mLocalizer.msg("overall", "Overall") + ":", _personalrating.getIntValue(Rating.OVERALL), 0));
-		voting.add(createVotingBox(_mLocalizer.msg("action", "Action") + ":", _personalrating.getIntValue(Rating.ACTION), 1));
-		voting.add(createVotingBox(_mLocalizer.msg("fun", "Fun") + ":", _personalrating.getIntValue(Rating.FUN), 2));
-		voting.add(createVotingBox(_mLocalizer.msg("erotic", "Erotic") + ":", _personalrating.getIntValue(Rating.EROTIC), 3));
-		voting.add(createVotingBox(_mLocalizer.msg("tension", "Tension") + ":", _personalrating.getIntValue(Rating.TENSION), 4));
-		voting.add(createVotingBox(_mLocalizer.msg("entitlement", "Entitlement") + ":", _personalrating.getIntValue(Rating.ENTITLEMENT), 5));
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.fill = GridBagConstraints.NONE;
+
+		GridBagConstraints labc = new GridBagConstraints();
+		labc.weightx = 1;
+		labc.weighty = 1;
+		labc.fill = GridBagConstraints.BOTH;
+
+		voting.add(new JLabel(_mLocalizer.msg("overall", "Overall") + ":"), labc);
+		voting.add(createVotingBox(_personalrating.getIntValue(Rating.OVERALL), 0), c);
+
+		voting.add(new JLabel(_mLocalizer.msg("action", "Action") + ":"), labc);
+		voting.add(createVotingBox(_personalrating.getIntValue(Rating.ACTION), 1), c);
+
+		voting.add(new JLabel(_mLocalizer.msg("fun", "Fun") + ":"), labc);
+		voting.add(createVotingBox( _personalrating.getIntValue(Rating.FUN), 2), c);
+
+		voting.add(new JLabel(_mLocalizer.msg("erotic", "Erotic") + ":"), labc);
+		voting.add(createVotingBox(_personalrating.getIntValue(Rating.EROTIC), 3), c);
+
+		voting.add(new JLabel(_mLocalizer.msg("tension", "Tension") + ":"), labc);
+		voting.add(createVotingBox(_personalrating.getIntValue(Rating.TENSION), 4), c);
+
+		voting.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":"), labc);
+		voting.add(createVotingBox(_personalrating.getIntValue(Rating.ENTITLEMENT), 5), c);
 
 		return voting;
 	}
@@ -321,11 +361,7 @@ public class DialogRating extends JDialog {
 	 * @param ratingbox number of the Box
 	 * @return a Panel with a Voting-Box
 	 */
-	private Component createVotingBox(String name, int value, int ratingbox) {
-		JPanel box = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		box.add(new JLabel(name));
-
+	private Component createVotingBox(int value, int ratingbox) {
 		Integer[] values = { new Integer(0), new Integer(1), new Integer(2), new Integer(3), new Integer(4), new Integer(5) };
 
 		JComboBox valuebox = new JComboBox(values);
@@ -335,11 +371,8 @@ public class DialogRating extends JDialog {
 		valuebox.setSelectedIndex(value);
 
 		_ratings[ratingbox] = valuebox;
-		box.add(valuebox);
 
-	//	box.setBorder(BorderFactory.createEtchedBorder());
-
-		return box;
+		return valuebox;
 	}
 
 }
