@@ -35,7 +35,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -45,7 +44,7 @@ import devplugin.Program;
 
 
 /**
- * Dieser Filter akzeptiert Sendungen mit selbst definiertbaren min und max Längen 
+ * Dieser Filter akzeptiert Sendungen mit selbst definiertbaren min und max Lï¿½ngen 
  * 
  * @author bodo
  */
@@ -69,7 +68,7 @@ public class ProgramLengthFilterComponent implements FilterComponent {
     }    
     
     /**
-     * Gibt die Version zurück
+     * Gibt die Version zurï¿½ck
      * @see tvbrowser.core.filters.FilterComponent#getVersion()
      */
     public int getVersion() {
@@ -77,7 +76,7 @@ public class ProgramLengthFilterComponent implements FilterComponent {
     }
 
     /**
-     * Aktzeptiert nur Sendungen einer bestimmten Länge
+     * Aktzeptiert nur Sendungen einer bestimmten Lï¿½nge
      * @see tvbrowser.core.filters.FilterComponent#accept(devplugin.Program)
      */
     public boolean accept(Program program) {
@@ -125,32 +124,25 @@ public class ProgramLengthFilterComponent implements FilterComponent {
 
 		_minSpinner = new JSpinner(new SpinnerNumberModel(_min, 0, 1000, 1));;
 		_maxSpinner = new JSpinner(new SpinnerNumberModel(_max, 0, 1000, 1));;
-		_minBox = new JCheckBox(mLocalizer.msg("minimum", "minimum"), _useMin);
-		_maxBox = new JCheckBox(mLocalizer.msg("maximum", "maximum"), _useMax);
+		_minBox = new JCheckBox(mLocalizer.msg("minimum", "minimum in Minutes") + ":", _useMin);
+		_maxBox = new JCheckBox(mLocalizer.msg("maximum", "maximum in Minutes") + ":", _useMax);
 
-		final JLabel minMinutes = new JLabel(mLocalizer.msg("Minutes", "Minutes"));
-		final JLabel maxMinutes = new JLabel(mLocalizer.msg("Minutes", "Minutes"));
-		
 		if (!_useMin) {
             _minSpinner.setEnabled(false);
-            minMinutes.setEnabled(false);
 		}
 
 		if (!_useMax) {
             _maxSpinner.setEnabled(false);
-            maxMinutes.setEnabled(false);
 		}
 		
 		_minBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 _minSpinner.setEnabled(_minBox.isSelected());
-                minMinutes.setEnabled(_minBox.isSelected());
             }
 		});
 		_maxBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 _maxSpinner.setEnabled(_maxBox.isSelected());
-                maxMinutes.setEnabled(_minBox.isSelected());
             }
 		});
 		
@@ -158,8 +150,7 @@ public class ProgramLengthFilterComponent implements FilterComponent {
     	
         GridBagConstraints a = new GridBagConstraints();
         a.gridwidth = GridBagConstraints.REMAINDER;
-        a.fill = GridBagConstraints.HORIZONTAL;
-		a.weightx = 0.7;
+        a.fill = GridBagConstraints.NONE;
 
         GridBagConstraints b = new GridBagConstraints();
         b.fill = GridBagConstraints.NONE;
@@ -168,12 +159,10 @@ public class ProgramLengthFilterComponent implements FilterComponent {
        _maxSpinner.setEditor(new JSpinner.NumberEditor(_maxSpinner, "###0"));
 
 		panel.add(_minBox, b);
-		panel.add(_minSpinner, b);    	
-		panel.add(minMinutes, a);    	
+		panel.add(_minSpinner, a);    	
 
 		panel.add(_maxBox, b);    	
-		panel.add(_maxSpinner, b);    	
-		panel.add(maxMinutes, a);    	
+		panel.add(_maxSpinner, a);    	
     
         return panel;
     }
@@ -191,7 +180,7 @@ public class ProgramLengthFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt den momentanen Namen des Filters zurück
+     * Gibt den momentanen Namen des Filters zurï¿½ck
      * @see tvbrowser.core.filters.FilterComponent#getName()
      */
     public String getName() {
@@ -199,7 +188,7 @@ public class ProgramLengthFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt die momentane Beschreibung des Filters zurück
+     * Gibt die momentane Beschreibung des Filters zurï¿½ck
      * @see tvbrowser.core.filters.FilterComponent#getDescription()
      */
     public String getDescription() {
@@ -223,7 +212,7 @@ public class ProgramLengthFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt den Namen des Filters zurück 
+     * Gibt den Namen des Filters zurï¿½ck 
      */
     public String toString() {
         return mLocalizer.msg("ProgrammLength", "Program length");
@@ -244,16 +233,16 @@ public class ProgramLengthFilterComponent implements FilterComponent {
      */
     private String _desc;
 
-    /** Minimal-Länge */
+    /** Minimal-Lï¿½nge */
 	private int _min;
-	/** Maximal-Länge */
+	/** Maximal-Lï¿½nge */
 	private int _max;
 	/** Minimum benutzen? */
 	private boolean _useMin;
 	/** Maximum benutzen */
 	private boolean _useMax;
 	
-	/** GUI-Komponenten für das Panel */
+	/** GUI-Komponenten fï¿½r das Panel */
 	private JSpinner _minSpinner;
 	private JSpinner _maxSpinner;
 	private JCheckBox _minBox;
