@@ -91,6 +91,9 @@ public class GridFlowLayout implements LayoutManager {
         
         int rows = totalLength / width +1;
         int compsPerRow = (int) (width / (compDimension.getWidth()+mHGap));
+				if (compsPerRow == 0) {
+          compsPerRow = 1;
+				}
         
         int rowLength = (int) (compsPerRow * compDimension.getWidth()+ (mHGap*compsPerRow-1));
         int rowHeight = (int) (rows * compDimension.getHeight()+ (mVGap*rows-1));
