@@ -97,10 +97,14 @@ public class SearchPlugin extends Plugin {
 
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
-
-    out.writeInt(mSearchHistory.length);
-    for (int i = 0; i < mSearchHistory.length; i++) {
-      mSearchHistory[i].writeData(out);
+    
+    if (mSearchHistory == null) {
+      out.writeInt(0); // length
+    } else {
+      out.writeInt(mSearchHistory.length);
+      for (int i = 0; i < mSearchHistory.length; i++) {
+        mSearchHistory[i].writeData(out);
+      }
     }
   }
 
