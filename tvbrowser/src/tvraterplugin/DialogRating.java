@@ -246,8 +246,9 @@ public class DialogRating extends JDialog {
 	private JPanel createRatingPanel(Rating rating) {
 		JPanel ratingPanel = new JPanel();
 		
+		
 		String titel = _mLocalizer.msg("overallRating", "Overall Rating");
-		if (rating.getIntValue(Rating.COUNT) > 0) {
+		if ((rating != null) && (rating.getIntValue(Rating.COUNT) > 0)) {
 		    titel += " (" + rating.getIntValue(Rating.COUNT) +")";
 		}
 		
