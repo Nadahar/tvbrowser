@@ -20,11 +20,15 @@
 package tvraterplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -166,10 +170,27 @@ public class TVRaterSettingsTab implements SettingsTab {
 		updatePanel.add(new JLabel(mLocalizer.msg("transmit", "Transmit data")), BorderLayout.WEST);
 		updatePanel.add(_updateTime, BorderLayout.CENTER);
 
+			
 		main.add(updatePanel);
 		
-		panel.add(main, BorderLayout.NORTH);
+		panel.add(main, BorderLayout.CENTER);
 
+        JLabel urlLabel = new JLabel("<html><u>http://tvaddicted.wannawork.de</u></html>");
+        urlLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        urlLabel.setForeground(Color.BLUE);
+        urlLabel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                BrowserLauncher.openURL("http://tvaddicted.wannawork.de");
+            }
+        });
+        
+        JPanel urlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        
+        urlPanel.add(urlLabel);
+        
+        panel.add(urlPanel, BorderLayout.SOUTH);
+
+		
 		return panel;
 	}
 
