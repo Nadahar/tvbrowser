@@ -32,6 +32,8 @@ import java.io.UnsupportedEncodingException;
 
 import java.util.logging.Level;
 
+import util.io.IOUtilities;
+
 import devplugin.*;
 
 /**
@@ -299,15 +301,7 @@ public class ProgramField implements Cloneable {
     if (dataLength == 0) {
       mData = null;
     } else {
-      mData = new byte[dataLength];
-      int offset = 0;
-      while (offset < dataLength) {
-        int len = stream.read(mData, offset, dataLength - offset);
-        if (len == -1) {
-          throw new FileFormatException("Unexpected end of file");
-        }
-        offset += len;
-      }
+      mData = IOUtilities.readBinaryData(stream, dataLength);
     }
   }
 

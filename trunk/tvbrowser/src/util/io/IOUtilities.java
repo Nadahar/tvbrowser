@@ -549,5 +549,31 @@ public class IOUtilities {
     // We use XOR encoding -> encoding and decoding are the same
     return xorEncode(text, seed);
   }
+
+
+  /**
+   * Reads a number of bytes into an array.
+   * 
+   * @param stream The stream to read from
+   * @param length The number of bytes to read
+   * @return An array containing the read bytes
+   * @throws IOException When the end of the stream has been reached or
+   *                     reading failed
+   */
+  public static byte[] readBinaryData(InputStream stream, int length)
+    throws IOException
+  {
+    byte[] data = new byte[length];
+    int offset = 0;
+    while (offset < length) {
+      int len = stream.read(data, offset, length - offset);
+      if (len == -1) {
+        throw new IOException("Unexpected end of stream");
+      }
+      offset += len;
+    }
+    
+    return data;
+  }
   
 }

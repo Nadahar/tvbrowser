@@ -239,19 +239,18 @@ public Date(Date d) {
       MONTH_MSG_ARR[month], Integer.toString(dayOfMonth));
   }
 
+
   /**
    * @deprecated
    */   
-  
   public int getDaysSince1970() {
-    Calendar cal=getCalendar();
+    Calendar cal = getCalendar();
     int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
     int daylight = cal.get(Calendar.DST_OFFSET);
-    long millis = System.currentTimeMillis() + zoneOffset + daylight;
+    java.util.Date utilDate = cal.getTime();
+    long millis = utilDate.getTime() + zoneOffset + daylight;
     return (int) (millis / 1000L / 60L / 60L / 24L);     
   }
-  
-  
    
 
   public Date addDays(int days) {

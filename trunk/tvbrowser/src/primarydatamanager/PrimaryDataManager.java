@@ -34,10 +34,7 @@ import java.util.StringTokenizer;
 import java.util.logging.*;
 
 import primarydatamanager.primarydataservice.PrimaryDataService;
-import tvbrowserdataservice.file.ChannelList;
-import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.FileFormatException;
-import tvbrowserdataservice.file.Mirror;
+import tvbrowserdataservice.file.*;
 import util.io.IOUtilities;
 import util.io.VerySimpleFormatter;
 import devplugin.Channel;
@@ -135,14 +132,17 @@ public class PrimaryDataManager {
       catch (IOException exc) {
         throw new PreparationException("Deleting old raw directory failed", exc);
       }    
-    
-      // Create a new raw directory
+    }
+    */
+
+    // Create a new raw directory if it does not exist
+    if (! mRawDir.exists()) {
       if (! mRawDir.mkdir()) {
         throw new PreparationException("Could not create raw directory: "
           + mRawDir.getAbsolutePath());
       }
     }
-    */
+
     // Update the mirror list
     updateMirrorList();
     
@@ -152,10 +152,23 @@ public class PrimaryDataManager {
     // Process the new raw data
     mRawDataProcessor.processRawDataDir(mRawDir, mPreparedDir, mWorkDir);
     
+    // Create a summary file
+    createSummaryFile();
     
     // Create the channel list
     if (!doUpdateOnly) {
       createChannelList();
+    }
+
+    if (doUpdateOnly) {
+      // keep the old channel list file    
+      File fromFile = new File(mPreparedDir, ChannelList.FILE_NAME);
+      File toFile = new File(mWorkDir, ChannelList.FILE_NAME);    
+      if (!fromFile.renameTo(toFile)) {
+        throw new PreparationException("Renaming file '"
+                  + fromFile.getAbsolutePath() + "' to '"
+                  + toFile.getAbsolutePath() + "' failed");
+      }
     }
     
     // Delete the old backup
@@ -174,7 +187,6 @@ public class PrimaryDataManager {
           + mBackupDir.getAbsolutePath() + "' failed");
       }
     }
-        
 
     // Let the work dir become the new prepared dir
     if (! mWorkDir.renameTo(mPreparedDir)) {
@@ -182,18 +194,6 @@ public class PrimaryDataManager {
         + mWorkDir.getAbsolutePath() + "' to '"
         + mPreparedDir.getAbsolutePath() + "' failed");
     }
-    
-    if (doUpdateOnly) {
-          // keep the old channel list file    
-          File fromFile = new File(mBackupDir, ChannelList.FILE_NAME);
-          File toFile = new File(mPreparedDir, ChannelList.FILE_NAME);    
-          if (!fromFile.renameTo(toFile)) {
-            throw new PreparationException("Renaming file '"
-                      + fromFile.getAbsolutePath() + "' to '"
-                      + toFile.getAbsolutePath() + "' failed");
-          }
-        }
-    
     
     // Print out the statistics
     mLog.info("In total there were "
@@ -422,6 +422,48 @@ public class PrimaryDataManager {
     }
   }
 
+
+  private void createSummaryFile()
+    throws PreparationException
+  {
+    // Create the file
+    SummaryFile summary = new SummaryFile();
+    File[] fileArr = mWorkDir.listFiles();
+    for (int fileIdx = 0; fileIdx < fileArr.length; fileIdx++) {
+      String fileName = fileArr[fileIdx].getName();
+      if (fileName.endsWith("_full.prog.gz")) {
+        // This is a complete file -> Put its version to the summary
+        try {
+          Date date = DayProgramFile.getDateFromFileName(fileName);
+          String country = DayProgramFile.getCountryFromFileName(fileName);
+          String channelId = DayProgramFile.getChannelNameFromFileName(fileName);
+          String levelName = DayProgramFile.getLevelFromFileName(fileName);
+          int level = DayProgramFile.getLevelIndexForId(levelName);
+          if (level == -1) {
+            throw new PreparationException("Day program file has unknown level '"
+              + levelName + "': " + fileArr[fileIdx].getAbsolutePath());
+          }
+          int version = DayProgramFile.readVersionFromFile(fileArr[fileIdx]);
+          
+          summary.setDayProgramVersion(date, country, channelId, level, version);
+        }
+        catch (Exception exc) {
+          throw new PreparationException("Adding day program file to summary " +
+            "failed: " + fileArr[fileIdx].getAbsolutePath(), exc);
+        }
+      }
+    }
+
+    // Save the file
+    File file = new File(mWorkDir, SummaryFile.SUMMARY_FILE_NAME);
+    try {
+      summary.writeToFile(file);
+    }
+    catch (Exception exc) {
+      throw new PreparationException("Writing summary file failed: "
+        + file.getAbsolutePath(), exc);
+    }
+  }
 
   
   private void updateMirrorList() throws PreparationException {

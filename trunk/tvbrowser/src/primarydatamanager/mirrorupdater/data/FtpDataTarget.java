@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 
+import org.apache.commons.net.ftp.*;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
@@ -120,7 +121,7 @@ public class FtpDataTarget implements DataTarget {
     
        // Set the file type to binary
        try {
-         boolean success = mFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+         boolean success = mFTPClient.setFileType(FTP.BINARY_FILE_TYPE);
          checkReplyCode();
          if (! success) {
            throw new UpdateException("Setting file type to binary failed");
@@ -225,10 +226,11 @@ public class FtpDataTarget implements DataTarget {
       }
     }
     
-    if (!success) {
+    if (success) {
+      mBytesWritten += data.length;
+    } else {
       throw new UpdateException("Could not write file '" + fileName + "'");
     }
-   
   }
 
 

@@ -27,6 +27,7 @@ package tvbrowserdataservice;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -136,6 +137,18 @@ public class TvBrowserDataService extends AbstractTvDataService {
     //       we need it for the programs.
     updateChannelList(mirror);
     
+    // Try to get summary file
+    SummaryFile summary;
+    try {
+      summary = loadSummaryFile(mirror);
+    }
+    catch (Exception exc) {
+      mLog.log(Level.WARNING, "Getting summary file from mirror "
+        + mirror.getUrl() + " failed.", exc);
+      
+      summary = null;
+    }
+    
     // Create a download manager and add all the jobs
     mDownloadManager = new DownloadManager(mirror.getUrl());
     TvDataBaseUpdater updater = new TvDataBaseUpdater(this, dataBase);
@@ -150,7 +163,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
         
         for (int i = 0; i < channelArr.length; i++) {
           addDownloadJob(dataBase, date, level, channelArr[i].getId(),
-                         channelArr[i].getCountry(), receiveDH, updateDH);
+                         channelArr[i].getCountry(), receiveDH, updateDH, summary);
         }
       }
       
@@ -363,7 +376,10 @@ public class TvBrowserDataService extends AbstractTvDataService {
     updateChannelList(mirror, false);  
   }
 
-  private void updateChannelList(Mirror mirror, boolean forceUpdate) throws TvBrowserException {
+
+  private void updateChannelList(Mirror mirror, boolean forceUpdate)
+    throws TvBrowserException
+  {
     File file = new File(mDataDir, ChannelList.FILE_NAME);
     if (forceUpdate || needsUpdate(file)) {
       String url = mirror.getUrl() + "/" + ChannelList.FILE_NAME;
@@ -381,38 +397,86 @@ public class TvBrowserDataService extends AbstractTvDataService {
   }
 
 
+  private SummaryFile loadSummaryFile(Mirror mirror)
+    throws IOException, FileFormatException
+  {
+    String url = mirror.getUrl() + "/" + SummaryFile.SUMMARY_FILE_NAME;
+    
+    InputStream stream = null;
+    try {
+      stream = IOUtilities.getStream(new URL(url));
+      
+      SummaryFile summary = new SummaryFile();
+      summary.readFromStream(stream);
+      
+      return summary;
+    }
+    finally {
+      if (stream != null) {
+        stream.close();
+      }
+    }
+  }
 
-  private void addDownloadJob(TvDataUpdateManager dataBase, Date date, String level,
-    String channelName, String country,
-    DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH)
+
+  private void addDownloadJob(TvDataUpdateManager dataBase, Date date,
+    String level, String channelName, String country,
+    DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH,
+    SummaryFile summary)
     throws TvBrowserException
   {
+    // NOTE: summary is null when getting failed
+    
     String completeFileName = DayProgramFile.getProgramFileName(date,
       country, channelName, level);
     File completeFile = new File(mDataDir, completeFileName);
-            
+    int levelIdx = DayProgramFile.getLevelIndexForId(level);
+    
     // Check whether we already have data for this day
     if (completeFile.exists()) {
-      // We have data -> Add an update job
+      // We have data -> Check whether the mirror has an update
               
       // Get the version of the file
-      int version;
+      int localVersion;
       try {
-        version = DayProgramFile.readVersionFromFile(completeFile);
+        localVersion = DayProgramFile.readVersionFromFile(completeFile);
       }
       catch (Exception exc) {
         throw new TvBrowserException(getClass(), "error.5",
           "Reading version of TV data file failed: {0}",
           completeFile.getAbsolutePath(), exc);
       }
-  
-      String updateFileName = DayProgramFile.getProgramFileName(date,
-        country, channelName, level, version);
-              
-      mDownloadManager.addDownloadJob(updateFileName, updateDH);
+      
+      // Check whether the mirror has a newer version
+      boolean needsUpdate = true;
+      if (summary != null) {
+        int mirrorVersion = summary.getDayProgramVersion(date, country,
+          channelName, levelIdx);
+        
+        needsUpdate = (mirrorVersion > localVersion);
+      }
+
+      if (needsUpdate) {
+        // We need an update -> Add an update job
+        String updateFileName = DayProgramFile.getProgramFileName(date,
+          country, channelName, level, localVersion);
+                
+        mDownloadManager.addDownloadJob(updateFileName, updateDH);
+      }
     } else {
-      // We have no data -> add a receive job
-      mDownloadManager.addDownloadJob(completeFileName, receiveDH);
+      // We have no data -> Check whether the mirror has
+      boolean needsUpdate = true;
+      if (summary != null) {
+        int mirrorVersion = summary.getDayProgramVersion(date, country,
+          channelName, levelIdx);
+        
+        needsUpdate = (mirrorVersion != -1);
+      }
+
+      if (needsUpdate) {
+        // We need an receive -> Add a download job
+        mDownloadManager.addDownloadJob(completeFileName, receiveDH);
+      }  
     }
   }
 
