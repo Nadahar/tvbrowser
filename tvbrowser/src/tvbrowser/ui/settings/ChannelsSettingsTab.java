@@ -24,23 +24,21 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.settings;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
-
+import devplugin.Channel;
 import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
 import tvbrowser.core.*;
 
-
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ChannelsSettingsTab extends devplugin.SettingsTab {
 
   private static java.util.logging.Logger mLog

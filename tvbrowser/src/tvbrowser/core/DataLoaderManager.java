@@ -18,14 +18,15 @@
  *
  */
  
- package tvbrowser.core;
- 
- import java.io.*;
- import java.net.*;
- import java.util.HashMap;
- import java.util.Iterator;
- import java.util.Properties;
- import tvdataloader.TVDataServiceInterface;
+package tvbrowser.core;
+
+import java.io.*;
+import java.net.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
+import tvdataloader.TVDataServiceInterface;
 import util.exc.*;
 
 //import util.exc.*;
@@ -150,10 +151,11 @@ import util.exc.*;
 		} 		
  	}
  	
- 	public static TVDataServiceInterface getDataLoader(String name) {
- 		return (TVDataServiceInterface) tvdataloaders.get(name);
+ 	public static TVDataServiceInterface getDataLoader(String className) {
+ 		return (TVDataServiceInterface) tvdataloaders.get(className);
  	}
  	
+    /*
  	public static String[] getDataLoaderNames() {
  		Iterator it=tvdataloaders.keySet().iterator();
  		java.util.ArrayList list=new java.util.ArrayList();
@@ -166,15 +168,15 @@ import util.exc.*;
  			result[i]=(String)obj[i];
  		}
  		return result;
- 	} 	
+ 	} 
+    */
  	
- 	private static TVDataServiceInterface[] getDataLoaders() {
- 		Object[] obj=tvdataloaders.values().toArray();
- 		TVDataServiceInterface[] result=new TVDataServiceInterface[obj.length];
- 		for (int i=0;i<result.length;i++) {
- 			result[i]=(TVDataServiceInterface)obj[i];
- 		}
- 		return result;
+ 	public static TVDataServiceInterface[] getDataLoaders() {
+      Collection dataServiceColl = tvdataloaders.values();
+      TVDataServiceInterface[] result = new TVDataServiceInterface[dataServiceColl.size()];
+      dataServiceColl.toArray(result);
+      
+      return result;
  	}
  	
  	public static void connect() {		

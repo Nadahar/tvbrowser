@@ -107,8 +107,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 		
 		JPanel serviceConfigPanel=new JPanel(new BorderLayout());
 		
-		
-		serviceComboBox=new JComboBox(DataLoaderManager.getDataLoaderNames());
+		serviceComboBox=new JComboBox(DataLoaderManager.getDataLoaders());
 		serviceConfigPanel.add(serviceComboBox,BorderLayout.CENTER);
 		configBtn=new JButton("configure...");
 		final String curSelectedService;

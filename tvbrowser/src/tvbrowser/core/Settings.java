@@ -31,8 +31,10 @@ import java.io.*;
 import javax.swing.*;
 
 import util.exc.TvBrowserException;
-import tvbrowser.ui.SkinPanel;
 
+import tvdataloader.TVDataServiceInterface;
+import devplugin.Channel;
+import tvbrowser.ui.SkinPanel;
 
 class TVBrowserProperties extends java.util.Properties {
 		
@@ -164,17 +166,6 @@ public class Settings {
       settings.load(new FileInputStream(new File(getUserDirectoryName(),SETTINGS_FILE)));
     }catch (IOException e) {
       mLog.info("No user settings found. using default user settings");
-    }finally {    	
-		String[] entries=getStringListProperty("subscribedchannels");
-		devplugin.Channel[] result=new devplugin.Channel[entries.length];
-		for (int i=0;i<entries.length;i++) {
-			String entry=entries[i];
-			int pos=entry.indexOf(':');
-			String loaderName=entry.substring(0,pos);
-			String id=entry.substring(pos+1);
-			ChannelList.subscribeChannel(loaderName,Integer.parseInt(id));  		
-		}
-    	
     }
   }
     
@@ -209,17 +200,28 @@ public class Settings {
   public static void setSubscribedChannels(Object[] channels) {
   	String[] entries=new String[channels.length];
   	for (int i=0;i<entries.length;i++) {
-  		Channel ch=(Channel)channels[i];
-  		entries[i]=ch.getDataServiceName()+":"+ch.getId();
+      Channel ch=(Channel)channels[i];
+      entries[i] = ch.getDataService().getClass().getName() + ":" + ch.getId();
   	}
 	setStringListProperty("subscribedchannels", entries);
   }
   
   public static devplugin.Channel[] getSubscribedChannels() {
-  	
-  	
-  	
-  	return null;
+  	String[] entries = getStringListProperty("subscribedchannels");
+    devplugin.Channel[] result=new devplugin.Channel[entries.length];
+    for (int i=0;i<entries.length;i++) {
+      String entry=entries[i];
+      int pos=entry.indexOf(':');
+      String dataServiceClassName = entry.substring(0,pos);
+      String id=entry.substring(pos+1);
+
+      TVDataServiceInterface dataService
+        = DataLoaderManager.getDataLoader(dataServiceClassName);
+      if (dataService != null) { 
+        ChannelList.subscribeChannel(dataService, Integer.parseInt(id));  		
+      }
+    }
+    return result;
   }
 
   /**

@@ -26,29 +26,87 @@
 
 package devplugin;
 
-/**
- * This interface provides a view of the channel object, implemented in the
- * host-application.
- *
- * @author Martin Oberhauser
- */
-public interface Channel {
+import java.io.*;
 
-    /**
-     * Returns the name of the channel.
-     */
-    public String getName();
+import tvdataloader.TVDataServiceInterface;
 
-    /**
-     * Returns a unique ID of the channel
-     */
-    public int getId();
+public class Channel implements Serializable {
 
-    public boolean equals(Channel ch);
+  private TVDataServiceInterface mDataService;
+  private String mName;
+  private int mId;
     
-	public String getDataServiceName();
-	
-	public void init(String name, int id);
 
-   
+  
+  public Channel(TVDataServiceInterface dataService, String name, int id) {
+    mDataService = dataService;
+    mName = name;
+    mId = id;
+  }
+
+
+  
+  /**
+   * Serializes this item.
+   */
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+    
+    out.writeObject(mDataService.getClass().getName());
+    out.writeObject(mName);
+    out.writeInt(mId);
+  }
+
+  
+  
+  /**
+   * Deserializes this item.
+   */
+  private void readObject(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+    
+    String dataServiceClassName = (String) in.readObject();
+    
+    mDataService = Plugin.getPluginManager().getDataService(dataServiceClassName);    
+    mName = (String) in.readObject();
+    mId = in.readInt();
+  }
+
+    
+    
+  public TVDataServiceInterface getDataService() {
+    return mDataService;
+  }
+
+  
+  
+  public String toString() {
+    return mName + " (" + mDataService.getName() + ")";
+  }
+
+  
+  
+  public String getName() {
+    return mName;
+  }
+
+  
+  
+  public int getId() {
+    return mId;
+  }
+
+  
+  
+  public boolean equals(Object obj) {
+    if (obj instanceof Channel) {
+      Channel cmp = (Channel) obj;
+      return (mDataService == cmp.mDataService) && (mId == cmp.mId);
+    }
+    
+    return false;
+  }
+  
 }

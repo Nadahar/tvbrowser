@@ -88,4 +88,7 @@ public interface PluginManager {
    */  
   public Plugin[] getInstalledPlugins();
   
+  
+  public tvdataloader.TVDataServiceInterface getDataService(String dataServiceClassName);
+  
 }

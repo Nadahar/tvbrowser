@@ -35,7 +35,7 @@ package tvbrowser.ui.programtable;
 
 public interface ScrollableTablePanel {
     public void scrollTo(int hour);
-    public void scrollTo(tvbrowser.core.Channel ch);
+    public void scrollTo(devplugin.Channel ch);
     public void up();
     public void down();
     public void left();
