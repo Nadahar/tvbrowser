@@ -50,21 +50,27 @@ public class ReminderListItem implements Comparable {
   
   
   /**
-   * Creates a new instance from a stream
+   * Creates a ReminderListItem from a stream.
+   * <p>
+   * Returns null if the program couldn't be loaded.
    */
-  public ReminderListItem(ObjectInputStream in)
+  public static ReminderListItem readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
-    mReminderMinutes = in.readInt();
+    int reminderMinutes = in.readInt();
     
     devplugin.Date programDate = new devplugin.Date(in);
     String programId = (String) in.readObject();
-
 	
-    mProgram = Plugin.getPluginManager().getProgram(programDate, programId);
+    Program program = Plugin.getPluginManager().getProgram(programDate, programId);
     
-    
+    if (program == null) {
+      // We were not able to load the program
+      return null;
+    } else {
+      return new ReminderListItem(program, reminderMinutes);
+    }
   }
   
   

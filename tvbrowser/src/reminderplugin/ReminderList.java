@@ -60,8 +60,12 @@ public class ReminderList implements ActionListener {
     
     mList = new ArrayList(size);
     for (int i = 0; i < size; i++) {
-      ReminderListItem item = new ReminderListItem(in);
-      add(item.getProgram(), item.getReminderMinutes());
+      ReminderListItem item = ReminderListItem.readData(in);
+      
+      // Only add items that were able to load their program
+      if (item != null) {
+        add(item.getProgram(), item.getReminderMinutes());
+      }
     }
   }
   
