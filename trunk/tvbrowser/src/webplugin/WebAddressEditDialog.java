@@ -147,7 +147,7 @@ public class WebAddressEditDialog extends JDialog {
 
         buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 0));        
         
-        JButton okButton = new JButton(mLocalizer.msg("OK", "OK") + ":");
+        JButton okButton = new JButton(mLocalizer.msg("OK", "OK"));
         
         okButton.addActionListener(new ActionListener() {
 
@@ -157,7 +157,7 @@ public class WebAddressEditDialog extends JDialog {
             
         });
         
-        JButton cancelButton = new JButton(mLocalizer.msg("Cancel", "Cancel") + ":");
+        JButton cancelButton = new JButton(mLocalizer.msg("Cancel", "Cancel"));
 
         cancelButton.addActionListener(new ActionListener() {
 
