@@ -51,27 +51,46 @@ import util.ui.TextAreaIcon;
  */
 public class ErrorHandler {
   
+  /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ErrorHandler.class.getName());
 
+  /** The icon to use for error messages. */  
   private static final Icon ERROR_ICON = UIManager.getIcon("OptionPane.errorIcon");
   
+  /** The parent frame to use for error messages. */  
   private static JFrame mParent;
   
   
 
+  /**
+   * Sets the parent frame to use for error messages.
+   *
+   * @param parentFrame the parent frame to use for error messages.
+   */  
   public static void setFrame(JFrame parentFrame) {
     mParent = parentFrame;
   }
   
   
   
+  /**
+   * Handles a TvBrowserException (Shows and loggs it).
+   *
+   * @param tvExc The exception to handle.
+   */  
   public static void handle(TvBrowserException tvExc) {
     handle(tvExc.getLocalizedMessage(), tvExc);
   }
   
   
   
+  /**
+   * Handles a Throwable (Shows and loggs it).
+   *
+   * @param msg The localized error message to schow to the user.
+   * @param thr The exception to handle.
+   */  
   public static void handle(String msg, Throwable thr) {
     mLog.log(Level.SEVERE, msg, thr);
     
@@ -82,18 +101,47 @@ public class ErrorHandler {
   // inner class ErrorDialog
   
   
+  /**
+   * The dialog used to show exceptions.
+   * <p>
+   * This implementation shows the stacktrace and the nested exceptions as well.
+   */  
   static class ErrorDialog {
     
+    /** The dialog. */    
     private JDialog mDialog;
-    private JPanel mMainPn, mMessagePn, mDetailPn;
-    private JButton mOkBt, mDetailBt;
     
+    /** The main panel. */
+    private JPanel mMainPn;
+    
+    /** The panel containing the message, the icon and the buttons. */
+    private JPanel mMessagePn;
+    
+    /** The panel containing the details (the stacktrace). */    
+    private JPanel mDetailPn;
+    
+    /** The OK button. */
+    private JButton mOkBt;
+    
+    /** The button that shows and hides the details. */    
+    private JButton mDetailBt;
+    
+    /** Holds whether the deatails are currently visible. */    
     private boolean mDetailsVisible;
     
+    /** The throwable whichs details are shown by the dialog. */    
     private Throwable mThrowable;
     
     
     
+    /**
+     * Creates a new instance of ErrorDialog.
+     *
+     * @param parent A component in the component tree the dialog should be
+     *        created for.
+     * @param msg The localized error message.
+     * @param thr The throwable whichs details are shown by the dialog.
+     */    
     public ErrorDialog(Component parent, String msg, Throwable thr) {
       mThrowable = thr;
       
@@ -144,12 +192,21 @@ public class ErrorHandler {
 
 
     
+    /**
+     * Centers and shows the error dialog.
+     */    
     public void centerAndShow() {
       UiUtilities.centerAndShow(mDialog);
     }
     
     
     
+    /**
+     * Creates the details panel containg the details of the throwable and all
+     * its nested throwables (causes).
+     *
+     * @return the details panel.
+     */    
     private JPanel createDetailPanel() {
       JPanel detailPn = new JPanel(new BorderLayout(0, 10));
 
@@ -178,6 +235,12 @@ public class ErrorHandler {
 
     
     
+    /**
+     * Creates a detail panel for one throwable.
+     *
+     * @param thr The throwable to create the details panel for.
+     * @return a detail panel for the specified throwable.
+     */    
     private JComponent createDetailComponent(Throwable thr) {
       String detailText = "";
       try {
@@ -204,6 +267,11 @@ public class ErrorHandler {
     
     
     
+    /**
+     * Sets whether the details should be visible.
+     *
+     * @param detailsVisible whether the details should be visible.
+     */    
     private void setDetailsVisible(boolean detailsVisible) {
       if (detailsVisible != mDetailsVisible) {
         mDetailsVisible = detailsVisible;

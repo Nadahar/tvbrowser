@@ -33,11 +33,14 @@ package util.io;
  */
 public class Profiler {
 
+  /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Profiler.class.getName());
   
+  /** The default profiler. */  
   private static Profiler mDefaultProfiler;
   
+  /** The last measure. */  
   private long mLastMillis = -1;
   
   
@@ -52,6 +55,8 @@ public class Profiler {
   
   /**
    * Gets the default profiler.
+   *
+   * @return the default profiler.
    */
   public static Profiler getDefault() {
     if (mDefaultProfiler == null) {

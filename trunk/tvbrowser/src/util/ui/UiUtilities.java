@@ -38,13 +38,22 @@ import javax.swing.border.Border;
  */
 public class UiUtilities {
 
+  /** The helper label. */  
   private static final JLabel HELPER_LABEL = new JLabel();
   
+  /** The border to use for dialogs. */  
   public static final Border DIALOG_BORDER
     = BorderFactory.createEmptyBorder(10, 10, 0, 10);
   
 
   
+  /**
+   * Centers a window to its parent frame and shows it.
+   * <p>
+   * If the window has no parent frame it will be centered to the screen.
+   *
+   * @param win The window to center and show.
+   */  
   public static void centerAndShow(Window win) {
     Dimension wD = win.getSize();
     Dimension frameD;
@@ -80,10 +89,14 @@ public class UiUtilities {
    * dann hat man ein Problem (Z.B. Wenn man einen Button schreibt, der
    * manchmal eine Fehlermeldung zeigt). Bisher habe ich einfach den
    * Component-Pfad bis zum obersten Frame verfolgt
-   * (@link UiToolkit#getFrameFor(Component)). Das ganze wird dann zum Problem, wenn
-   * man in einem modalen Dialog einen nicht-modalen Dialog zeigt.
+   * (@link UiToolkit#getFrameFor(Component)). Das ganze wird dann zum Problem,
+   * wenn man in einem modalen Dialog einen nicht-modalen Dialog zeigt.
    * Denn dann kann man den nicht-modalen Dialog nämlich erst dann wieder
    * bedienen, wenn der modale zu ist.
+   *
+   * @param parent A component in the component tree where the dialog should be created for.
+   * @param modal Should the new dialog be modal?
+   * @return A new JDialog.
    */
   public static JDialog createDialog(Component parent, boolean modal) {
     Window parentWin = getBestDialogParent(parent);
@@ -103,6 +116,13 @@ public class UiUtilities {
 
   
   
+  /**
+   * Gets the best dialog parent for a new JDialog. The best parent is the last
+   * visible modal dialog in the component tree.
+   *
+   * @param parent One component of the component tree.
+   * @return the best dialog parent for a new JDialog.
+   */  
   public static Window getBestDialogParent(Component parent) {
     Frame root = JOptionPane.getFrameForComponent(parent);
     return getLastModalChildOf(root);
@@ -110,6 +130,12 @@ public class UiUtilities {
 
   
   
+  /**
+   * Gets the last visible modal child dialog of the specified window.
+   *
+   * @param parent The window to get the child from.
+   * @return the last visible modal child dialog of the specified window.
+   */  
   public static Window getLastModalChildOf(Window parent) {
     Window[] children = parent.getOwnedWindows();
     for (int i = 0; i < children.length; i++) {
@@ -128,10 +154,11 @@ public class UiUtilities {
   
   
   /**
-   * Gibt die Breite von str zurück.
+   * Gets the width of the specified String.
    *
-   * @param str Der String, dessen Breite ermittelt werden soll.
-   * @param font Der Font, der Grundlage der Messung sein soll.
+   * @param str The String to get the width for.
+   * @param font The font being the base of the measure.
+   * @return the width of the specified String.
    */
   public static int getStringWidth(Font font, String str) {
     if (str == null) {
@@ -145,10 +172,13 @@ public class UiUtilities {
   
   
   /**
-   * Gibt die Breite von str zurück.
+   * Gets the width of the specified char array.
    *
-   * @param str Der String, dessen Breite ermittelt werden soll.
-   * @param font Der Font, der Grundlage der Messung sein soll.
+   * @param chars The char array to get the width for.
+   * @param offset The offset where to start.
+   * @param length The length of the measure.
+   * @param font The font being the base of the measure.
+   * @return the width of the specified char array.
    */
   public static int getCharsWidth(Font font, char[] chars, int offset, int length) {
     if (chars == null) {

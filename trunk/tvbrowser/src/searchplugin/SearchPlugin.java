@@ -29,8 +29,6 @@ package searchplugin;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import java.util.regex.*;
-
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
 
@@ -90,64 +88,6 @@ public class SearchPlugin extends Plugin {
     String author = "Til Schneider, www.murfman.de";
 
     return new PluginInfo(name, desc, author, new Version(1, 0));
-  }
-  
-  
-  
-  public static Program[] search(String regex, boolean inTitle, boolean inText,
-    boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
-    int nrDays)
-    throws TvBrowserException
-  {
-    int flags = 0;
-    if (! caseSensitive) {
-      flags &= Pattern.CASE_INSENSITIVE;
-    }
-
-    Pattern pattern = Pattern.compile(regex, flags);
-    
-    if (nrDays < 0) {
-      startDate.addDays(nrDays);
-      nrDays = 0 - nrDays;
-    }
-    
-    ArrayList hitList = new ArrayList();
-    for (int day = 0; day <= nrDays; day++) {
-      for (int channelIdx = 0; channelIdx < channels.length; channelIdx++) {
-        Channel channel = channels[channelIdx];
-        Iterator programIter = getPluginManager().getChannelDayProgram(startDate, channel);
-        if (programIter == null) {
-          // There is no more data -> stop
-          day = nrDays;
-        } else {
-          while (programIter.hasNext()) {
-            Program prog = (Program) programIter.next();
-            boolean matches = false;
-            
-            if (inTitle) {
-              Matcher matcher = pattern.matcher(prog.getTitle());
-              matches = matcher.matches();
-            }
-            if ((! matches) && inText) {
-              Matcher matcher = pattern.matcher(prog.getDescription());
-              matches = matcher.matches();
-            }
-            
-            if (matches) {
-              hitList.add(prog);
-            }
-          }
-        }
-      }
-      
-      // The next day
-      startDate.addDays(1);
-    }
-    
-    Program[] hitArr = new Program[hitList.size()];
-    hitList.toArray(hitArr);
-    
-    return hitArr;
   }
 
 }

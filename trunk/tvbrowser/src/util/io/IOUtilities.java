@@ -38,6 +38,7 @@ import java.util.zip.*;
  */
 public class IOUtilities {
 
+  /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(IOUtilities.class.getName());
 
@@ -117,6 +118,8 @@ public class IOUtilities {
    * URL's can be properly resolved.
    *
    * @param page the URL of the page
+   * @throws IOException if something went wrong.
+   * @return a stream reading data from the specified URL.
    */
   public static InputStream getStream(URL page) throws IOException {
     URLConnection conn = page.openConnection();
@@ -150,6 +153,9 @@ public class IOUtilities {
    * until the InputStream has no more data.
    * <p>
    * Note: None of the streams is closed! You have to do that for yourself!
+   *
+   * @param from The stream to read the data from.
+   * @param to The stream to write the data to.
    */
   public static void pipeStreams(InputStream from, OutputStream to)
     throws IOException
@@ -250,6 +256,14 @@ public class IOUtilities {
 
   
   
+  /**
+   * Replaces a substring in the specified String.
+   *
+   * @param original The String to replace the substring in.
+   * @param pattern The pattern to replace.
+   * @param str The String to replace. This string may contain the pattern.
+   * @return The result.
+   */  
   public static String replace(String original, String pattern, String str) {
     StringBuffer buffer = new StringBuffer(original);
     replace(buffer, pattern, str);

@@ -195,8 +195,8 @@ public class SearchDialog extends JDialog {
     int nrDays = TIME_VALUE_ARR[mTimeCB.getSelectedIndex()];
     
     try {
-      Program[] programArr = SearchPlugin.search(regex, inTitle, inText,
-        caseSensitive, channels, startDate, nrDays);
+      Program[] programArr = SearchPlugin.getPluginManager().search(regex,
+        inTitle, inText, caseSensitive, channels, startDate, nrDays);
 
       if (programArr.length == 0) {
         String msg = mLocalizer.msg("nothingFound",

@@ -38,17 +38,31 @@ import javax.swing.filechooser.FileFilter;
  */
 public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
 
+  /** The file extensions this filter should let pass. */  
   String[] mExtenstionList;
+  /** The localized name for this filter. */  
   String mName;
 
 
 
+  /**
+   * Creates a new instance of ExtensionFileFilter.
+   *
+   * @param extension The file extension this filter should let pass.
+   * @param name The localized name for this filter.
+   */  
   public ExtensionFileFilter(String extension, String name) {
     this(new String[] { extension }, name);
   }
 
 
 
+  /**
+   * Creates a new instance of ExtensionFileFilter.
+   *
+   * @param extenstionList The file extensions this filter should let pass.
+   * @param name The localized name for this filter.
+   */  
   public ExtensionFileFilter(String[] extenstionList, String name) {
     super();
 
@@ -63,6 +77,11 @@ public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
 
 
 
+  /**
+   * Gets the localized name of this filter.
+   *
+   * @return the localized name of this filter.
+   */  
   public String toString() {
     return mName;
   }
@@ -71,11 +90,17 @@ public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
   // extends FileFilter
 
 
-  public boolean accept(File f) {
-    if (f.isDirectory()) return true;
+  /**
+   * Returns whether this given File is accepted by this filter.
+   *
+   * @param file The file to check.
+   * @return whether the specified file is accepted.
+   */  
+  public boolean accept(File file) {
+    if (file.isDirectory()) return true;
 
     // Get the lowercase name
-    String name = f.getName().toLowerCase();
+    String name = file.getName().toLowerCase();
 
     // check whether the name ends with one of the extensions
     for (int i = 0; i < mExtenstionList.length; i++) {
@@ -89,6 +114,11 @@ public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
 
 
 
+  /**
+   * Gets the localized name of this filter.
+   *
+   * @return the localized name of this filter.
+   */  
   public String getDescription() {
     return mName;
   }
@@ -97,8 +127,15 @@ public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
   // implements FilenameFilter
 
 
-  public boolean accept(File dir, String mName) {
-    return accept(new File(dir.getPath() + File.separator + mName));
+  /**
+   * Returns whether this given File is accepted by this filter.
+   *
+   * @param dir The directory of the file to check.
+   * @param name The name of the file to check.
+   * @return whether the specified file is accepted.
+   */  
+  public boolean accept(File dir, String name) {
+    return accept(new File(dir.getPath() + File.separator + name));
   }
 
 }
