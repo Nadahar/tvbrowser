@@ -92,7 +92,7 @@ public class ChannelList {
       if (line.length() > 0) {
         // This is not an empty line -> read it
         StringTokenizer tokenizer = new StringTokenizer(line, ";");
-        if (tokenizer.countTokens() != 4) {
+        if (tokenizer.countTokens() < 4) {
           throw new FileFormatException("Syntax error in mirror file line "
             + lineCount + ": '" + line + "'");
         }
