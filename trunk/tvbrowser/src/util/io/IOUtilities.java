@@ -494,7 +494,20 @@ public class IOUtilities {
       return CALENDAR.get(Calendar.HOUR_OF_DAY) * 60 + CALENDAR.get(Calendar.MINUTE);
     }
   }
-
+  
+  
+  /**
+   * Gets a String representation in the format h:mm for a time in minutes after
+   * midnight.
+   * 
+   * @param minutesAfterMidnight The time to get the String for
+   * @return A String for the time
+   */
+  public static String timeToString(int minutesAfterMidnight) {
+    int hours = minutesAfterMidnight / 60;
+    int minutes = minutesAfterMidnight % 60;
+    return hours + ":" + ((minutes < 10) ? "0" : "") + minutes;
+  }
   
   
   /**

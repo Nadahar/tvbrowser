@@ -201,9 +201,8 @@ public class MutableProgram implements Program {
   }
 
 
-
   public final String getTimeString() {
-    return getHours()+":"+((getMinutes()<10)?"0":"")+getMinutes();
+    return IOUtilities.timeToString(getStartTime());
   }
 
 
