@@ -40,6 +40,9 @@ public class EditFilterDlg
 	private static final util.ui.Localizer mLocalizer =
 		util.ui.Localizer.getLocalizerFor(EditFilterDlg.class);
 
+	private static final util.ui.Localizer mFilterLocalizer =
+		util.ui.Localizer.getLocalizerFor(UserFilter.class);	
+	
 	private JButton mNewBtn, mEditBtn, mRemoveBtn, mOkBtn, mCancelBtn;
 	private JFrame mParent;
 	private JList mRuleListBox;
@@ -225,7 +228,7 @@ public class EditFilterDlg
 				tvbrowser.core.filters.FilterComponentList.getInstance().add(rule);
 				String text = mFilterRuleTF.getText();
 				if (text.length() > 0) {
-					text += " or ";
+					text += " "+mFilterLocalizer.msg("or", "or")+" ";
 				}
 				//text+=dlg.getName();
 				text += rule.getName();
@@ -254,8 +257,32 @@ public class EditFilterDlg
 			UserFilter[] userFilterArr = mFilterList.getUserFilterArr();
 			FilterComponent fc = (FilterComponent) mRuleListBox.getSelectedValue();
 
+			// Create the Filter based on the new Rule and check if the FC exists there
+			UserFilter testFilter = new UserFilter("test");
+			
+			try {
+				testFilter.setRule(mFilterRuleTF.getText());
+				
+				if (testFilter.containsRuleComponent(fc.getName())) {
+				    allowRemove = false;
+					JOptionPane.showMessageDialog(
+							this,
+							mLocalizer.msg("usedByAnotherFilter","This filter component is used by filter '{0}'\nRemove the filter first.",mFilterNameTF.getText())
+							);
+				}
+			} catch (Exception ex) {
+			    // Filter creation failed, asume the old one is correct
+				if (mFilter.containsRuleComponent(fc.getName())) {
+				    allowRemove = false;
+					JOptionPane.showMessageDialog(
+							this,
+							mLocalizer.msg("usedByAnotherFilter","This filter component is used by filter '{0}'\nRemove the filter first.",mFilterNameTF.getText())
+							);
+				}
+			}
+			
 			for (int i = 0; i < userFilterArr.length && allowRemove; i++) {
-				if (userFilterArr[i].containsRuleComponent(fc.getName())) {
+				if ((userFilterArr[i] != mFilter) && userFilterArr[i].containsRuleComponent(fc.getName())) {
 					allowRemove = false;
 					JOptionPane.showMessageDialog(
 						this,
