@@ -106,6 +106,12 @@ public class ProgramTableScrollPane extends JScrollPane
     return mProgramTable;
   }
 
+
+  public void forceRepaintAll() {
+    getProgramTable().forceRepaintAll();
+    tableDataChanged();
+    getProgramTable().tableDataChanged();   
+  }
  
   public void repaint() {
     super.repaint();
