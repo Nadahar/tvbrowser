@@ -485,7 +485,7 @@ public class TVBrowser {
       String themepack = Settings.propSkinLFThemepack.getString();
       try {
         SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
-        SkinLookAndFeel.enable();
+        UIManager.setLookAndFeel(new SkinLookAndFeel());
       } catch (Exception exc) {
         ErrorHandler.handle(
           "Could not load themepack.\nSkinLF is disabled now",
