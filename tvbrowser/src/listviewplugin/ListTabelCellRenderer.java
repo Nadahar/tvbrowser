@@ -59,6 +59,7 @@ public class ListTabelCellRenderer extends DefaultTableCellRenderer {
             ChannelLabel clabel = new ChannelLabel();
             
             clabel.setChannel(channel);
+            clabel.setOpaque(label.isOpaque());
             clabel.setForeground(label.getForeground());
             clabel.setBackground(label.getBackground());
 
