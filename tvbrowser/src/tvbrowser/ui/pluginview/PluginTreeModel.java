@@ -27,7 +27,7 @@
 package tvbrowser.ui.pluginview;
 
 
-import javax.swing.tree.DefaultMutableTreeNode;
+
 import javax.swing.tree.DefaultTreeModel;
 
 import devplugin.TreeLeaf;
@@ -57,10 +57,6 @@ public class PluginTreeModel extends DefaultTreeModel {
     return mRoot;
   }
   
- /* public void setRoot(TreeNodeImpl n) {
-    mRoot = (TreeNodeImpl)n;
-    super.setRoot(n);
-  }*/
   
   public Object getRoot() {
     return mRoot;
@@ -77,16 +73,16 @@ public class PluginTreeModel extends DefaultTreeModel {
     TreeNodeImpl n = new TreeNodeImpl(key, title);
     n.setModel(this);
     n.setParent(mRoot);
-    insertNodeInto(n, mRoot, 0);
+    insert(n, mRoot);
     return n;
   }
   
   public void addNode(TreeNode node, TreeNode parent) {
-    insertNodeInto(node, parent, 0);
+    insert(node, parent);
   }
   
   public void addItem(TreeLeaf item, TreeNode parent) {
-    insertNodeInto(item, parent, 0);  
+    insert(item, parent);  
   }
   
   public void removeNode(TreeNode node) {
@@ -95,6 +91,44 @@ public class PluginTreeModel extends DefaultTreeModel {
   
   public void removeItem(TreeLeaf item) {
     removeNodeFromParent(item);    
+  }
+  
+ 
+  
+  private void insert(TreeItem item, TreeNode parent) {
+    this.insertNodeInto(item, parent, findInsertPosition(item, parent));
+  }
+  
+  private int findInsertPosition(TreeItem item, TreeNode parent) {      
+ 
+    if (parent.getChildCount()==0) {
+      return 0;
+    }
+      
+    int comp = 0;
+    int lowBnd = 0;
+    int upBnd = parent.getChildCount() - 1;
+    int i;
+    boolean found = false;
+    for(;;) {
+      if (upBnd == lowBnd) {
+          
+        if (upBnd == parent.getChildCount() - 1) {
+          return upBnd+1;
+        }
+        return upBnd;
+      }        
+      i = (upBnd + lowBnd) / 2;
+      javax.swing.tree.TreeNode n = parent.getChildAt(i);
+      comp = item.compareTo(n);
+      if (comp < 0) {
+        upBnd = i;          
+      }else {
+        lowBnd = i+1;
+      }
+    }
+    
+    
   }
     
 }

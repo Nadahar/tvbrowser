@@ -26,10 +26,15 @@
 
 package devplugin;
 
-import javax.swing.tree.MutableTreeNode;
+
+import tvbrowser.ui.pluginview.TreeItem;
 
 
-public interface TreeNode extends MutableTreeNode {
+public interface TreeNode extends TreeItem { //MutableTreeNode, Comparable {
+    
+    public String getName();
+    
+    public String getKey();
     
     public TreeNode createNode(String key, String title);
 
@@ -42,5 +47,9 @@ public interface TreeNode extends MutableTreeNode {
     public TreeLeaf[] getLeafs();
 
     public TreeNode[] getNodes();
+    
+    public TreeNode getNodeByName(String name);
+    
+    public TreeNode getNodeByKey(String key);
     
 }

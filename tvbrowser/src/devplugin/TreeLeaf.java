@@ -28,10 +28,12 @@ package devplugin;
 
 import javax.swing.tree.MutableTreeNode;
 
+import tvbrowser.ui.pluginview.TreeItem;
+
 import devplugin.Program;
 
 
-public interface TreeLeaf extends MutableTreeNode {
+public interface TreeLeaf extends TreeItem { //MutableTreeNode, Comparable {
   public Program getProgram();
   public void setProperty(String key, String value);
   public String getProperty(String key);

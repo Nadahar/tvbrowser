@@ -114,4 +114,30 @@ public class TreeLeafImpl extends DefaultMutableTreeNode implements TreeLeaf {
     return false;
   }
     
+  public int compareTo(Object o) {
+    if (o instanceof TreeLeaf) {
+      TreeLeaf leaf = (TreeLeaf)o;
+      int result = getProgram().getDate().compareTo(leaf.getProgram().getDate());
+      if (result == 0) {
+        int t1 = getProgram().getHours()*60+getProgram().getMinutes();
+        int t2 = leaf.getProgram().getHours()*60+leaf.getProgram().getMinutes();
+        if (t1 > t2) {
+          return 1;
+        }
+        else if (t1 < t2) {
+          return -1;
+        }
+        else {
+          return 0;
+        }
+      }
+      else {
+        return result;
+      }      
+      
+    }else {
+      return 1;  
+    }
+    
+  }
 }
