@@ -78,7 +78,7 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
     contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
      
     if (mPlugin.getButtonText()!=null) {
-      mAddToToolbarCb=new JCheckBox("Plugin in Werkzeugleiste anzeigen");
+      mAddToToolbarCb=new JCheckBox(mLocalizer.msg("showPluginInToolBar","Show plugin in toolbar"));
       String pluginClassName = mPlugin.getClass().getName();
       boolean hidden = Settings.propHiddenPluginButtons.containsItem(pluginClassName);
       mAddToToolbarCb.setSelected(! hidden);
@@ -110,8 +110,9 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
       
       if (mPluginIsInstalled && mPlugin.getButtonText()!=null && mAddToToolbarCb!=null) {
         boolean hidden = ! mAddToToolbarCb.isSelected();
+        System.out.println("plugin "+mPlugin+" is hidden: "+hidden);
         String className = mPlugin.getClass().getName();
-        if (hidden) {
+        if (!hidden) {
           Settings.propHiddenPluginButtons.removeItem(className);
         }
         else if (! Settings.propHiddenPluginButtons.containsItem(className)) {

@@ -124,6 +124,70 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     }
     p1.add(mProgramArrangementCB);
     
+    
+    // column width
+       JPanel colWidthPn=new JPanel(new BorderLayout());
+    
+       colWidthPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columnwidth","column width")));
+       mColWidthSl=new JSlider(SwingConstants.HORIZONTAL, 0, 300, Settings.propColumnWidth.getInt());
+       colWidthPn.add(mColWidthSl,BorderLayout.WEST);
+       mColWidthSl.setPreferredSize(new Dimension(300,15));
+    
+       mDefaultBtn=new JButton(mLocalizer.msg("default","default"));
+       mDefaultBtn.addActionListener(this);
+       colWidthPn.add(mDefaultBtn,BorderLayout.EAST);
+    
+       main.add(colWidthPn);
+    
+       // day range
+    
+       JPanel pn=new JPanel(new GridLayout(2,2,0,3));
+       pn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("range","Range"))); 
+  
+       pn.add(new JLabel(mLocalizer.msg("startOfDay","Start of day")));    
+       JPanel panel1=new JPanel(new BorderLayout(7,0));
+    
+       String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
+    
+       mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
+       mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, timePattern));
+    
+       panel1.add(mStartOfDayTimeSp,BorderLayout.WEST);
+       panel1.add(new JLabel("("+mLocalizer.msg("today","today")+")"));
+       pn.add(panel1);
+    
+       pn.add(new JLabel(mLocalizer.msg("endOfDay","End of day")));
+       panel1=new JPanel(new BorderLayout(7,0));
+    
+       mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
+       mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, timePattern));
+    
+       panel1.add(mEndOfDayTimeSp,BorderLayout.WEST);
+       panel1.add(new JLabel("("+mLocalizer.msg("nextDay","next day")+")"));
+       pn.add(panel1);
+    
+       int minutes;
+       Calendar cal = Calendar.getInstance();
+       minutes = Settings.propProgramTableStartOfDay.getInt();    
+       cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
+       cal.set(Calendar.MINUTE, minutes % 60);
+       mStartOfDayTimeSp.setValue(cal.getTime());
+    
+       minutes = Settings.propProgramTableEndOfDay.getInt();    
+       cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
+       cal.set(Calendar.MINUTE, minutes % 60);
+       mEndOfDayTimeSp.setValue(cal.getTime());
+    
+       main.add(pn);
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // program table background panel
     p1 = new JPanel(new BorderLayout());
     msg = mLocalizer.msg("tableBackground", "Table background");
@@ -259,60 +323,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mTimeOfDayPanel.add(mTimeOfDayEveningTF);
     mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEveningTF));
     
-    // column width
-    JPanel colWidthPn=new JPanel(new BorderLayout());
-    
-    colWidthPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columnwidth","column width")));
-    mColWidthSl=new JSlider(SwingConstants.HORIZONTAL, 0, 300, Settings.propColumnWidth.getInt());
-    colWidthPn.add(mColWidthSl,BorderLayout.WEST);
-    mColWidthSl.setPreferredSize(new Dimension(300,15));
-    
-    mDefaultBtn=new JButton(mLocalizer.msg("default","default"));
-    mDefaultBtn.addActionListener(this);
-    colWidthPn.add(mDefaultBtn,BorderLayout.EAST);
-    
-    main.add(colWidthPn);
-    
-    // day range
-    
-    JPanel pn=new JPanel(new GridLayout(2,2,0,3));
-    pn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("range","Range"))); 
-  
-    pn.add(new JLabel(mLocalizer.msg("startOfDay","Start of day")));    
-    JPanel panel1=new JPanel(new BorderLayout(7,0));
-    
-    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
-    
-    mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
-    mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, timePattern));
-    
-    panel1.add(mStartOfDayTimeSp,BorderLayout.WEST);
-    panel1.add(new JLabel("("+mLocalizer.msg("today","today")+")"));
-    pn.add(panel1);
-    
-    pn.add(new JLabel(mLocalizer.msg("endOfDay","End of day")));
-    panel1=new JPanel(new BorderLayout(7,0));
-    
-    mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
-    mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, timePattern));
-    
-    panel1.add(mEndOfDayTimeSp,BorderLayout.WEST);
-    panel1.add(new JLabel("("+mLocalizer.msg("nextDay","next day")+")"));
-    pn.add(panel1);
-    
-    int minutes;
-    Calendar cal = Calendar.getInstance();
-    minutes = Settings.propProgramTableStartOfDay.getInt();    
-    cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
-    cal.set(Calendar.MINUTE, minutes % 60);
-    mStartOfDayTimeSp.setValue(cal.getTime());
-    
-    minutes = Settings.propProgramTableEndOfDay.getInt();    
-    cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
-    cal.set(Calendar.MINUTE, minutes % 60);
-    mEndOfDayTimeSp.setValue(cal.getTime());
-    
-    main.add(pn);
+   
 
     handleBackgroundStyle();
     handleTimeBlockShowWest();
