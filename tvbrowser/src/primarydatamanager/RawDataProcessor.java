@@ -280,11 +280,23 @@ public class RawDataProcessor {
     for (int frameIdx = 0; frameIdx < prog.getProgramFrameCount(); frameIdx++) {
       ProgramFrame frame = prog.getProgramFrameAt(frameIdx);
       
-      // Remove all empty fields from the day program
+      // Trim text fields and remove all empty fields from the day program
       for (int fieldIdx = frame.getProgramFieldCount() - 1; fieldIdx >= 0; fieldIdx--) {
         ProgramField field = frame.getProgramFieldAt(fieldIdx);
-        byte[] data = field.getBinaryData();
         
+        // Trim text fields
+        if (field.getType().getFormat() == ProgramFieldType.TEXT_FORMAT) {
+          String oldText = field.getTextData();
+          if (oldText != null) {
+            String newText = oldText.trim();
+            if (oldText.length() != newText.length()) {
+              field.setTextData(newText);
+            }
+          }
+        }
+        
+        // Remove empty fields
+        byte[] data = field.getBinaryData();
         if ((data == null) || (data.length == 0)) {
           frame.removeProgramFieldAt(fieldIdx);
         }
