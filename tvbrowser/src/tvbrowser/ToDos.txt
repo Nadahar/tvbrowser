@@ -39,6 +39,8 @@ Bugs (Achtung: es existieren weitere Bugs auf SF!!) :
 - Exception bei Drag&-Drop in der Toolbar: java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
 - Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert, 
   das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
+- Wenn in der Sender-Konfiguration ziemlich oft mit Hoch/runter gearbeitet wird, kommt ein OutOfMemory
+
 
 Entfernte ToDos:
 - Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
