@@ -43,7 +43,7 @@ public class StatusBar extends JPanel {
    mProgressBar = new JProgressBar();
    mProgressBar.setOpaque(false);
    mProgressBar.setBorder(BorderFactory.createLoweredBevelBorder());
-     
+        
    add(mProgressBar,BorderLayout.EAST);
    add(mInfoLabel,BorderLayout.CENTER);
    this.setPreferredSize(new Dimension(0,20));

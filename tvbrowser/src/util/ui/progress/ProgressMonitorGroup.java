@@ -26,6 +26,7 @@
 package util.ui.progress;
 
 import javax.swing.JProgressBar;
+import javax.swing.JLabel;
 
 import devplugin.ProgressMonitor;
 
@@ -54,8 +55,8 @@ public class ProgressMonitorGroup {
   }
 
 
-  public ProgressMonitorGroup(JProgressBar progressBar, int totalWeight) {
-    this (new ProgressBarProgressMonitor(progressBar), totalWeight);
+  public ProgressMonitorGroup(JProgressBar progressBar, JLabel label, int totalWeight) {
+    this (new ProgressBarProgressMonitor(progressBar, label), totalWeight);
   }
   
   
@@ -73,6 +74,10 @@ public class ProgressMonitorGroup {
 
       public void setValue(int value) {
         setCurrentMonitorValue(value);
+      }
+      
+      public void setMessage(String msg) {
+        mDelegate.setMessage(msg);
       }
     };
   }

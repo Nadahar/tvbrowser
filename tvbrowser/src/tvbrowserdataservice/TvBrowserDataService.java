@@ -131,9 +131,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
     Mirror[] mirrorArr = loadMirrorList();
     
     // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr);
+    Mirror mirror = chooseUpToDateMirror(mirrorArr, monitor);
     mLog.fine("Using mirror " + mirror.getUrl());
-    System.out.println("mirror: "+mirror.getUrl());
+    monitor.setMessage(mLocalizer.msg("info.1","Downloading from mirror {0}",mirror.getUrl()));
     
     // Update the mirrorlist (for the next time)
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
@@ -174,8 +174,10 @@ public class TvBrowserDataService extends AbstractTvDataService {
     }
     finally {
       // Update the programs for which the update suceed in every case
+      monitor.setMessage(mLocalizer.msg("info.2","Updating tv data base"));
+    
       updater.updateTvDataBase();
-
+      monitor.setMessage("");
       // Clean up ressources
       mDownloadManager = null;
       mTvDataBase = null;
@@ -258,12 +260,14 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 
 
-  private Mirror chooseUpToDateMirror(Mirror[] mirrorArr)
+  private Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor)
     throws TvBrowserException
   {
     // Choose a random Mirror
     Mirror mirror = chooseMirror(mirrorArr, null);
-      
+    if (monitor!=null) {
+      monitor.setMessage(mLocalizer.msg("info.3","Choosing mirror {0}",mirror.getUrl()));    
+    }  
     // Check whether the mirror is up to date and available
     for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
       try {
@@ -275,6 +279,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
           mirror = chooseMirror(mirrorArr, mirror);
           mLog.info("Mirror " + oldMirror.getUrl() + " is out of date. Choosing "
             + mirror.getUrl() + " instead.");
+          if (monitor!=null) {
+            monitor.setMessage(mLocalizer.msg("info.4","Mirror {0} is out of date. Choosing {1}",oldMirror.getUrl(),mirror.getUrl()));
+          }
         }
       }
       catch (TvBrowserException exc) {
@@ -283,6 +290,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
         mirror = chooseMirror(mirrorArr, mirror);
         mLog.info("Mirror " + oldMirror.getUrl()
           + " is not available. Choosing " + mirror.getUrl() + " instead.");
+        if (monitor!=null) {
+          monitor.setMessage(mLocalizer.msg("info.5","Mirror {0} is not available. Choosing {1}",oldMirror.getUrl(), mirror.getUrl()));
+        }  
       }
     }
     
@@ -541,7 +551,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     Mirror[] mirrorArr = loadMirrorList();
     
     // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr);
+    Mirror mirror = chooseUpToDateMirror(mirrorArr,null);
     mLog.fine("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)

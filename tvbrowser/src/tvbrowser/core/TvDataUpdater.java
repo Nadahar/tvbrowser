@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import javax.swing.JProgressBar;
+import javax.swing.JLabel;
 
 import devplugin.*;
 import devplugin.Channel;
@@ -93,7 +94,7 @@ public class TvDataUpdater {
    * @param daysToDownload The number of days until today to download the
    *        program for.
    */
-  public void downloadTvData(int daysToDownload, JProgressBar progressBar) {
+  public void downloadTvData(int daysToDownload, JProgressBar progressBar, JLabel label) {
     if (! TvDataServiceManager.getInstance().licensesAccepted()) {
       return;
     }
@@ -139,7 +140,7 @@ public class TvDataUpdater {
     
     // Create the ProgressMonitorGroup
     ProgressMonitorGroup monitorGroup
-      = new ProgressMonitorGroup(progressBar, subscribedChannels.length);
+      = new ProgressMonitorGroup(progressBar, label, subscribedChannels.length);
     
     // Work on the job list
     Throwable downloadException = null;

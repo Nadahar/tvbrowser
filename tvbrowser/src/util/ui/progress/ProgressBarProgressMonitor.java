@@ -26,6 +26,7 @@
 package util.ui.progress;
 
 import javax.swing.JProgressBar;
+import javax.swing.JLabel;
 
 import devplugin.ProgressMonitor;
 
@@ -37,10 +38,16 @@ import devplugin.ProgressMonitor;
 public class ProgressBarProgressMonitor implements ProgressMonitor {
   
   private JProgressBar mProgressBar;
+  private JLabel mLabel;
   
+  
+  public ProgressBarProgressMonitor(JProgressBar progressBar, JLabel label) {
+    mProgressBar = progressBar;
+    mLabel = label;
+  }
   
   public ProgressBarProgressMonitor(JProgressBar progressBar) {
-    mProgressBar = progressBar;
+      this(progressBar,null);
   }
 
 
@@ -52,6 +59,12 @@ public class ProgressBarProgressMonitor implements ProgressMonitor {
 
   public void setValue(int value) {
     mProgressBar.setValue(value);
+  }
+  
+  public void setMessage(String msg) {
+    if (mLabel!=null) {
+      mLabel.setText(msg);
+    } 
   }
 
 }
