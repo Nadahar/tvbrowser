@@ -99,10 +99,10 @@ public class MediaPanel {
 
       g2d.setColor(new Color(180, 180, 180, 100));
 
-      g2d.fillRoundRect(5, 10, 90, 100, 10, 10);
+      g2d.fillRoundRect(5, 10, 90, 200, 10, 10);
+      g2d.fillRoundRect(105, 10, 690, 200, 10, 10);
       
-      g2d.fillRoundRect(105, 10, 690, 100, 10, 10);
-      g2d.fillRoundRect(5, 120, 790, 470, 10, 10);
+      g2d.fillRoundRect(5, 220, 790, 370, 10, 10);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -114,7 +114,7 @@ public class MediaPanel {
 
   public void startLoop() {
     Color box = new Color(180, 180, 180, 100);
-    Font textFont = new Font("SansSerif", Font.BOLD, 12);
+    Font textFont = new Font("SansSerif", Font.BOLD, 18);
 
     while (!mStopLoop) {
 
@@ -156,15 +156,16 @@ public class MediaPanel {
   private void drawChannels(Graphics2D g2d, Font textFont) {
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
     
-    int max = 5;
+    int max = 3;
     if (max > channels.length) {
       max = channels.length;
     }
     
     for (int i = 0; i < max; i++) {
-      DrawToolBox.drawFontWithShadow(g2d, channels[i].getName(), 100*i, 200, 1, textFont);
-      channels[i].getIcon().paintIcon(null, g2d, 100*i, 180);
-      
+      DrawToolBox.drawFontWithShadow(g2d, channels[i].getName(), 100+230*i, 250, 1, textFont);
+      channels[i].getIcon().paintIcon(null, g2d, 100+230*i, 230);
+      g2d.setColor(Color.BLACK);
+      g2d.drawLine(95+230*i,235, 95+230*i, 580);
     }
   }
   
