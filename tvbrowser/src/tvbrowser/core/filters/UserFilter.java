@@ -384,7 +384,11 @@ public class UserFilter implements devplugin.ProgramFilter {
     }
     mName=name;
   }
-      
+
+  public String getName() {
+      return mName;
+  }
+  
   public String toString() { 
     return mName;
   }
