@@ -164,14 +164,6 @@ public class AdditionalParams extends JDialog {
 
         mList = new JList(mListModel);
 
-        mList.addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                selectionChanged();
-            }
-
-        });
-
         panel.add(new JScrollPane(mList), BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -203,8 +195,8 @@ public class AdditionalParams extends JDialog {
 
         buttons.add(remove);
 
-        JButton up = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Up16.gif",this.getClass()));
-        up.setToolTipText(mLocalizer.msg("Remove","Remove"));
+        final JButton up = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Up16.gif",this.getClass()));
+        up.setToolTipText(mLocalizer.msg("Up","Up"));
         buttons.add(up);
 
         up.addActionListener(new ActionListener() {
@@ -215,8 +207,8 @@ public class AdditionalParams extends JDialog {
           
         });
         
-        JButton down = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Down16.gif",this.getClass()));
-        down.setToolTipText(mLocalizer.msg("Remove","Remove"));
+        final JButton down = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Down16.gif",this.getClass()));
+        down.setToolTipText(mLocalizer.msg("Down","Down"));
         buttons.add(down);
 
         down.addActionListener(new ActionListener() {
@@ -228,6 +220,25 @@ public class AdditionalParams extends JDialog {
         });
         
         panel.add(buttons, BorderLayout.SOUTH);
+
+        mList.addListSelectionListener(new ListSelectionListener() {
+
+          public void valueChanged(ListSelectionEvent e) {
+              selectionChanged();
+              System.out.println(mList.getSelectedIndex());
+              if (mList.getSelectedIndex() == 0) {
+                up.setEnabled(false);
+                down.setEnabled(true);
+              } else if (mList.getSelectedIndex() == mListModel.getSize()-1){
+                up.setEnabled(true);
+                down.setEnabled(false);
+              } else {
+                up.setEnabled(true);
+                down.setEnabled(true);
+              }
+          }
+
+        });
 
         return panel;
     }
