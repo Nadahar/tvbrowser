@@ -79,7 +79,6 @@ public interface TvDataService {
   public PluginInfo getInfo();
   
   
-  
-  // public int getTimeZone
+ 
 
 }

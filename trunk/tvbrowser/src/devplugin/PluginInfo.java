@@ -42,6 +42,7 @@ public final class PluginInfo {
     private String name="";
     private String description="";
     private String author="";
+    private String license=null;
 
     public PluginInfo() {
     }
@@ -64,10 +65,16 @@ public final class PluginInfo {
         this(name,desc,author);
         this.version=version;
     }
+    
+    public PluginInfo(String name, String desc, String author, Version version, String license) {
+      this(name,desc,author,version);
+      this.license=license;
+    }
 
     public Version getVersion() { return version; }
     public String getName() { return name; }
     public String getDescription() { return description; }
     public String getAuthor() { return author; }
+    public String getLicense() { return license; }
 
 }

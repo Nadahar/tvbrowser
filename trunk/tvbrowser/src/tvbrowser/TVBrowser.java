@@ -26,6 +26,7 @@
 
 package tvbrowser;
 
+
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
@@ -45,7 +46,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 
 
-import tvbrowser.core.ChannelList;
 import tvbrowser.core.DataService;
 import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
@@ -54,7 +54,6 @@ import tvbrowser.ui.configassistant.ConfigAssistant;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
-import tvbrowser.ui.licensebox.LicenseBox;
 import util.exc.ErrorHandler;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
@@ -278,16 +277,28 @@ public class TVBrowser {
       mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
     
-    // scroll to now
+    if (Settings.getShowAssistant()) {
+      final javax.swing.JDialog progDlg=new util.ui.progress.ProgressDlg(mainFrame,mLocalizer.msg("loadingAssistant",""));
+      
+      Thread configThread = new Thread() {
+        public void run() {
+          javax.swing.JDialog dlg=new ConfigAssistant(mainFrame);
+          progDlg.hide();
+          util.ui.UiUtilities.centerAndShow(dlg);  
+                dlg.hide();
+                dlg.dispose();
+                dlg=null;
+        }
+      };
+     
+      configThread.start();
+      util.ui.UiUtilities.centerAndShow(progDlg);
+
+    }
+     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         
-       
-        if (Settings.getShowAssistant()) {  
-          javax.swing.JDialog dlg=new ConfigAssistant(mainFrame);
-          util.ui.UiUtilities.centerAndShow(dlg);      
-        }
-        else {        
           if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
             mainFrame.runUpdateThread(Settings.getDownloadPeriod());
           }        
@@ -297,10 +308,10 @@ public class TVBrowser {
           } else {
             mainFrame.scrollToNow();
           }
-        }
         
      }
     });
+        
   }
 
   public static void updateLookAndFeel() {

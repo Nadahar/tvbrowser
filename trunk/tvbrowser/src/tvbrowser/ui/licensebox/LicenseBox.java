@@ -40,7 +40,7 @@ public class LicenseBox extends JDialog implements ActionListener {
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(LicenseBox.class); 
   
-  public LicenseBox(JFrame parent, boolean mustAgree) {
+  public LicenseBox(JFrame parent, String licenseTxt, boolean mustAgree) {
     
     super(parent, true);
     mMustAgree=mustAgree;
@@ -49,13 +49,13 @@ public class LicenseBox extends JDialog implements ActionListener {
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
  
-    String licenseTxt=mLocalizer.msg("license","license text");
     JTextArea ta=new JTextArea(licenseTxt);
     ta.setLineWrap(true);
     ta.setWrapStyleWord(true);
     ta.setEditable(false);
+    ta.setOpaque(true);
+    ta.setFocusable(true);
     
-    Font f=new Font("Monospaced",Font.PLAIN,12);
     
     JPanel btnPanel=new JPanel();
     
@@ -97,7 +97,10 @@ public class LicenseBox extends JDialog implements ActionListener {
       });
     }
     
-    contentPane.add(new JScrollPane(ta),BorderLayout.CENTER);
+    JPanel panel1=new JPanel(new BorderLayout());
+    panel1.add(new JScrollPane(ta),BorderLayout.CENTER);
+    panel1.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    contentPane.add(panel1,BorderLayout.CENTER);
     contentPane.add(btnPanel,BorderLayout.SOUTH);
     
     
@@ -106,6 +109,7 @@ public class LicenseBox extends JDialog implements ActionListener {
    
     
   }
+  
   
   public void actionPerformed(ActionEvent e) {
     if (e.getSource()==mDisagreeBt) {

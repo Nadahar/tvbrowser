@@ -30,15 +30,10 @@
 package printplugin;
 
 import util.ui.UiUtilities;
-import java.io.*;
-import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.Properties;
-import java.awt.print.*;
 import javax.print.*;
-import javax.print.DocFlavor.*;
-import java.io.*;
-import java.awt.print.*;
 import javax.swing.*;
 import devplugin.*;
 

@@ -170,7 +170,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
         possibleValues, possibleValues[2]);       
         
         if (selectedValue==possibleValues[0]) {
-          hide();
+         hide();
         }
         else if (selectedValue==possibleValues[1]) {
           tvbrowser.core.Settings.setShowAssistant(false);

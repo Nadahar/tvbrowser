@@ -31,6 +31,8 @@ import java.net.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
+
+import tvbrowser.ui.licensebox.LicenseBox;
 import tvdataservice.TvDataService;
 
 public class TvDataServiceManager {
@@ -74,6 +76,28 @@ public class TvDataServiceManager {
     return mSingleton;
   }
 
+
+  public boolean licensesAccepted() {
+    TvDataService services[]=getDataServices();
+    for (int i=0;i<services.length;i++) {
+      TvDataService s=services[i];
+      String license=s.getInfo().getLicense();
+      if (license!=null) {
+        Properties p=s.storeSettings();
+      
+        if (p==null || !"false".equals(p.getProperty("showLicenseBox"))) {        
+          LicenseBox box=new LicenseBox(null, license, true);
+          util.ui.UiUtilities.centerAndShow(box);
+          if (!box.agreed()) {
+            return false;
+          }
+          p.setProperty("showLicenseBox","false");
+        }
+        s.loadSettings(p);
+      }
+    }    
+    return true;
+  }
 
 
   /**

@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.logging.Level;
 
 import devplugin.*;
@@ -59,6 +58,11 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(TvBrowserDataService.class.getName());
+    
+  /** The localizer for this class. */
+  public static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
+
   
   private static final int MAX_META_DATA_AGE = 2;
   private static final int MAX_UP_TO_DATE_CHECKS = 10;
@@ -109,6 +113,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {
+    /*
     if (!"false".equals(mSettings.getProperty("showLicenseBox"))) {
       LicenseBox box=new LicenseBox(null, true);
       util.ui.UiUtilities.centerAndShow(box);
@@ -117,7 +122,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
       }
       mSettings.setProperty("showLicenseBox","false");
     }
-    
+    */
     mTvDataBase = dataBase;
     mProgressMonitor = monitor;
     
@@ -545,6 +550,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 */
 
+  
   /**
    * Gets information about this TvDataService
    */
@@ -553,7 +559,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
       "TV-Browser",
       "Die eigenen TV-Daten des TV-Browser-Projektes",
       "Til Schneider, www.murfman.de",
-      new Version(0, 1));
+      new Version(0, 1),
+      mLocalizer.msg("license",""));
   }
 
 }

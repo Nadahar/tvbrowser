@@ -100,8 +100,6 @@ public class DataService implements devplugin.PluginManager {
 
     progressBar = new JProgressBar();
     progressBar.setStringPainted(false);
-
-    //loadTvDataService();
   }
 
 
@@ -130,6 +128,8 @@ public class DataService implements devplugin.PluginManager {
 		mIsDownloading=false;
 	}
 
+  
+
   /**
    * Starts the download of new TV data
    *
@@ -138,6 +138,11 @@ public class DataService implements devplugin.PluginManager {
    */
   public void startDownload(int daysToDownload) {
     // TODO: Update the progress bar
+    
+    
+    if (!TvDataServiceManager.getInstance().licensesAccepted()) {
+      return;
+    }
     
     // Set the download flag
     mIsDownloading = true;
