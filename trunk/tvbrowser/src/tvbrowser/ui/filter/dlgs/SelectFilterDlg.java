@@ -105,8 +105,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     
     
     JPanel panel2=new JPanel(new GridLayout(0,1,0,7));
-    mUpBtn = new JButton(new ImageIcon("imgs/Up16.gif"));
-    mDownBtn=new JButton(new ImageIcon("imgs/Down16.gif"));
+    mUpBtn = new JButton(new ImageIcon("imgs/up16.gif"));
+    mDownBtn=new JButton(new ImageIcon("imgs/down16.gif"));
     mUpBtn.addActionListener(this);
     mDownBtn.addActionListener(this);   
     panel2.add(mUpBtn);
