@@ -312,6 +312,16 @@ public class PrintDialog extends JDialog implements Printable
                                                      new Date((Date) mUntilDate.getSelectedItem()));
             mFilterCounter = 0;
 
+            if (mFilterCount == 0)
+            {
+               JOptionPane.showMessageDialog(null,
+                                             mLocalizer.msg("nodata" ,"No data"),
+                                             mLocalizer.msg("printProgram" ,"Print program"),
+                                             JOptionPane.ERROR_MESSAGE);
+               return;
+
+            }
+
          }
 
 
@@ -364,7 +374,7 @@ public class PrintDialog extends JDialog implements Printable
 
                Font pageHeaderFont = new Font("SansSerif", Font.BOLD, 8);
                FontMetrics metrics = g.getFontMetrics(pageHeaderFont);
-               String pageHeader = mLocalizer.msg("programFrom", "program from") + mCountDate.toString();
+               String pageHeader = mLocalizer.msg("programFrom", "program from") + " " + mCountDate.toString();
                int pageWidth = metrics.stringWidth(pageHeader);
                int pageX = (int) pageFormat.getImageableX() + ((int) pageFormat.getImageableWidth() / 2) - (pageWidth /2 );
 
