@@ -29,7 +29,7 @@ import tvbrowser.core.Settings;
 
 public class ButtonPanel extends JPanel {
 
-  private JButton[] mTimeBtns;
+  private JButton[] mTimeBtns, mPluginBtns;
   private JButton mUpdateBtn, mPrefBtn;
   
   
@@ -54,11 +54,33 @@ public class ButtonPanel extends JPanel {
     mPrefBtn=prefBtn;
   }
   
-  
+  public void setPluginButtons() {
+  	java.util.ArrayList pluginBtns=new java.util.ArrayList();
+	String[] buttonPluginArr = Settings.getButtonPlugins();
+		for (int i = 0; i < buttonPluginArr.length; i++) {
+		  final devplugin.Plugin plugin = PluginManager.getPlugin(buttonPluginArr[i]);
+		  if ((plugin != null) && PluginManager.isInstalled(plugin)) {
+			Icon icon = plugin.getButtonIcon();
+			JButton btn = new PictureButton(plugin.getButtonText(), icon);
+			//add(btn);
+			pluginBtns.add(btn);
+			btn.addActionListener(new ActionListener(){
+			  public void actionPerformed(ActionEvent event) {
+				plugin.execute();
+			  }
+			});
+		  }
+		}
+	Object[] objs=pluginBtns.toArray();
+	mPluginBtns=new JButton[objs.length];
+	for (int i=0;i<objs.length;i++) {
+		mPluginBtns[i]=(JButton)objs[i];		
+	}
+  }
   
   public void update() {
     this.removeAll();
-    JButton btn;
+    //JButton btn;
     String msg;
     if (Settings.isTimeBtnVisible()) {
       for (int i=0;i<mTimeBtns.length;i++) {
@@ -75,6 +97,11 @@ public class ButtonPanel extends JPanel {
       add(mPrefBtn);
     }
     
+    for (int i=0;i<mPluginBtns.length;i++) {
+    	add(mPluginBtns[i]);
+    }
+    
+    /*
     String[] buttonPluginArr = Settings.getButtonPlugins();
     for (int i = 0; i < buttonPluginArr.length; i++) {
       final devplugin.Plugin plugin = PluginManager.getPlugin(buttonPluginArr[i]);
@@ -88,7 +115,7 @@ public class ButtonPanel extends JPanel {
           }
         });
       }
-    }
+    }*/
     this.updateUI();
   }
   

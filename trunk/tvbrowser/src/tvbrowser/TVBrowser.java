@@ -76,13 +76,15 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private ProgramTableScrollPane mProgramTableScrollPane;
   private DefaultProgramTableModel mProgramTableModel;
 
+  private JPanel mNorthPanel;
+
   private Thread downloadingThread;
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
     mImportTvDataMI, mExportTvDataMI, aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem;
   private SkinPanel skinPanel;
-  private ButtonPanel buttonPanel;
+  private JPanel/*ButtonPanel*/ mButtonPanel;
   private static String curLookAndFeel;
   public static final devplugin.Version VERSION=new devplugin.Version(0,95,false,"0.9.5");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
@@ -327,20 +329,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     skinPanel.setLayout(new BorderLayout());
 
 
-    JPanel northPanel = new JPanel(new BorderLayout());
-    northPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    northPanel.setOpaque(false);
+    mNorthPanel = new JPanel(new BorderLayout());
+    mNorthPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+    mNorthPanel.setOpaque(false);
 
     JPanel eastPanel = new JPanel(new BorderLayout(0,5));
 
     eastPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-    buttonPanel=new ButtonPanel();
-    buttonPanel.setTimeButtons(createTimeBtns());
-    buttonPanel.setUpdateButton(createUpdateBtn());
-    buttonPanel.setPreferencesButton(createPreferencesBtn());
-    buttonPanel.update();
-    northPanel.add(buttonPanel,BorderLayout.WEST);
+    mButtonPanel=createButtonPanel();
+    
+    mNorthPanel.add(mButtonPanel,BorderLayout.WEST);
 
     JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.setOpaque(false);
@@ -386,7 +385,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     eastPanel.add(panel1,BorderLayout.SOUTH);
 
-    skinPanel.add(northPanel,BorderLayout.NORTH);
+    skinPanel.add(mNorthPanel,BorderLayout.NORTH);
     skinPanel.add(eastPanel,BorderLayout.EAST);
     skinPanel.add(centerPanel, BorderLayout.CENTER);
 
@@ -438,7 +437,15 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   	}
   }
 
-  
+  private JPanel createButtonPanel() {
+	ButtonPanel result=new ButtonPanel();
+	result.setTimeButtons(createTimeBtns());
+	result.setUpdateButton(createUpdateBtn());
+	result.setPreferencesButton(createPreferencesBtn());
+	result.setPluginButtons();
+	result.update();
+	return result;
+  }
   
   private void updatePluginsMenu() {
     mPluginsMenu.removeAll();
@@ -797,7 +804,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
     if (Settings.settingHasChanged(new String[]{"timebutton","updatebutton","preferencesbutton",
     "buttontype","buttonplugins"})) {
-      buttonPanel.update();
+      mNorthPanel.remove(mButtonPanel);
+      mButtonPanel=createButtonPanel();
+      mNorthPanel.add(mButtonPanel,BorderLayout.WEST);
+      mNorthPanel.updateUI();
     }
     
     if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
@@ -828,52 +838,7 @@ private void showUpdatePluginsDlg() {
 	
 	PluginUpdate.updatePlugins(mainFrame);
 	
-	/*
-	Object[] options = {"check now","cancel"};
-	int n = JOptionPane.showOptionDialog(mainFrame,
-	"TV-Browser checks for new and updated versions of plug-ins avaiailable "+
-	" on the internet.\nDo you want to check for new plugins?",
-		"Update plugins",
-		JOptionPane.YES_NO_OPTION,
-		JOptionPane.QUESTION_MESSAGE,
-		null,
-		options,
-		options[0]); 
-		
-	if (n==JOptionPane.YES_OPTION) {
-			final util.ui.ProgressWindow win=new util.ui.ProgressWindow(this);
-			win.show();
-			win.setText("searching for new plugins...");
-			UpdateItem[] list=null;
-			try {
-				list=PluginUpdate.getPluginList();
-			}catch (TvBrowserException exc) {
-				util.exc.ErrorHandler.handle(exc);
-			}finally{	
-				win.dispose();
-			}
-			if (list.length==0) {
-				JOptionPane.showMessageDialog(mainFrame,"Sorry, no new plugins available.");
-			}else {
-				SelectPluginsDlg selDlg=new SelectPluginsDlg(mainFrame,list);
-				UiUtilities.centerAndShow(selDlg);				
-				selDlg.dispose();
-				if (selDlg.getResult()==SelectPluginsDlg.OK) {
-					DownloadPluginsDlg dlDlg=new DownloadPluginsDlg(mainFrame,list);
-					
-					dlDlg.dispose();		
-				}						
-			}
-		
-		
-			
-		
-	}
-	//javax.swing.JDialog dlg=new tvbrowser.ui.update.UpdatePluginsDlg(this);
-	//dlg.pack();
-	//UiUtilities.centerAndShow(dlg);
-	//dlg.dispose();
-	 * */
+	
 	
 }
 
