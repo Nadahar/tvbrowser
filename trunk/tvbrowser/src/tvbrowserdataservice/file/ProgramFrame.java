@@ -131,9 +131,9 @@ public class ProgramFrame implements Cloneable {
 
 
 
-  public void addProgramField(ProgramField frame) {
-    if (frame==null) return;
-    mProgramFieldList.add(frame);
+  public void addProgramField(ProgramField field) {
+    if (field==null) return;
+    mProgramFieldList.add(field);
   }
 
 
