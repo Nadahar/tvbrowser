@@ -44,6 +44,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
  
   public ConfigAssistant(JFrame parent) {
     super(parent, true);
+    setTitle(mLocalizer.msg("title","Setup assistant"));
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     
