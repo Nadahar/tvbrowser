@@ -25,6 +25,9 @@ import java.io.*;
 
 import util.exc.TvBrowserException;
 
+import devplugin.Channel;
+import tvdataloader.TVDataServiceInterface;
+
 /**
  * ChannelList contains a list of all available channels in the system.
  * Use this class to subscribe channels.
@@ -35,29 +38,26 @@ import util.exc.TvBrowserException;
 public class ChannelList {
   
   private static Vector channels=new Vector();
-  public static final String CHANNEL_FILE="channels.prop";
+ // public static final String CHANNEL_FILE="channels.prop";
   
   private static ArrayList subscribedChannels=new ArrayList();
   
    
   
-	public static void addDataLoaderChannels(String dataloaderName) {
-		
-		tvdataloader.TVDataServiceInterface dataloader=DataLoaderManager.getDataLoader(dataloaderName);
-		int num=dataloader.getNumberOfAvailableChannels();
-		Channel[] channelList=new Channel[num];
-		for (int i=0;i<num;i++) {
-			channelList[i]=new Channel(dataloaderName);
-		}
-		dataloader.initializeAvailableChannels(channelList);
-		for (int i=0;i<num;i++) {
-			channels.add(channelList[i]);
-		}
-	}
+  public static void addDataLoaderChannels(TVDataServiceInterface dataService) {
+    Channel[] channelList = dataService.getAvailableChannels();
+
+    for (int i = 0; i < channelList.length; i++) {
+      channels.add(channelList[i]);
+    }
+  }
+  
+  
   
   /**
    * Stores the channel file CHANNEL_FILE.
    */
+  /*
   public static void writeChannelList() throws TvBrowserException {
 	PrintWriter out = null;
 	try {
@@ -78,6 +78,7 @@ public class ChannelList {
 	  }
 	}
   }
+   */
   
   
   
@@ -85,8 +86,8 @@ public class ChannelList {
    * Subscribes a channel
    * @param id the channel's ID
    */
-  public static void subscribeChannel(String loader, int id) {  
-	Channel ch=getChannel(loader,id);
+  public static void subscribeChannel(TVDataServiceInterface dataService, int id) {  
+	Channel ch = getChannel(dataService,id);
 	subscribedChannels.add(ch);
   }
   
@@ -111,13 +112,12 @@ public class ChannelList {
    * Returns a new Channel object with the specified ID or null, if the
    * given ID does not exist.
    */
-  public static Channel getChannel(String loader, int id) {
-	Channel result;
+  public static Channel getChannel(TVDataServiceInterface dataService, int id) {
 	Enumeration enum=channels.elements();
 	while (enum.hasMoreElements()) {
-	  result=(Channel)enum.nextElement();
-	  if (result.getDataServiceName().equals(loader) && result.getId()==id) {
-		return result;
+	  Channel channel = (Channel) enum.nextElement();
+	  if (channel.getDataService().equals(dataService) && channel.getId()==id) {
+		return channel;
 	  }
 	}
 	return null;
@@ -172,7 +172,7 @@ public class ChannelList {
 	if (channel==null) return false;
 	for (int i=0;i<subscribedChannels.size();i++) {    
 	  Channel ch=(Channel)subscribedChannels.get(i);
-	  if (ch!=null && ch.getId()==channel.getId() && ch.getDataServiceName().equals(channel.getDataServiceName())) {
+	  if (ch!=null && ch.getId()==channel.getId() && ch.getDataService().equals(channel.getDataService())) {
 		return true;
 	  }
 	}

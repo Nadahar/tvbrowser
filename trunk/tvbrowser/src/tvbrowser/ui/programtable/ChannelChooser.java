@@ -24,22 +24,22 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.programtable;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
+import devplugin.Channel;
 import tvbrowser.ui.finder.FinderItem;
 import tvbrowser.ui.programtable.ScrollableTablePanel;
 import tvbrowser.core.*;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ChannelChooser extends JPanel implements MouseListener {
 
     private JWindow win=null;

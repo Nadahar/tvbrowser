@@ -27,7 +27,7 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
   /** Specifies whether file that have been parsed should be deleted. */
   private static final boolean DELETE_PARSED_FILES = false;
   
-  private Channel[] mSubscribedChannelArr;
+  private Channel[] mAvailableChannelArr;
   
   private Properties mSettings;
   
@@ -46,6 +46,14 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
    */
   public MultipleChannelTvDataService() {
   }
+
+  
+  
+  /**
+   * Gets the default list of the channels that are available by this data
+   * service.
+   */
+  protected abstract Channel[] getDefaultAvailableChannels();
   
   
   
@@ -99,20 +107,11 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
   
   
   /**
-   * Gets the subscribed channels.
-   */
-  protected Channel[] getChannels() {
-    return mSubscribedChannelArr;
-  }
-  
-  
-  
-  /**
    * Called by the host-application before starting to download.
    */
   public void connect() throws TvBrowserException {
+    System.out.println("connect" + this);
     mProgramDispatcher = new ProgramDispatcher();
-    mSubscribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
     mAlreadyDownloadedFiles = new HashSet();
   }
   
@@ -123,8 +122,8 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
    * clean-up.
    */
   public void disconnect() throws TvBrowserException {
+    System.out.println("disconnect");
     mProgramDispatcher = null;
-    mSubscribedChannelArr = null;
     mAlreadyDownloadedFiles = null;
   }
 
@@ -136,6 +135,7 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
   public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
     devplugin.Channel channel) throws TvBrowserException
   {
+    System.out.println("mProgramDispatcher: " + mProgramDispatcher + ", this: " + this);
     MutableChannelDayProgram channelDayProgram
       = mProgramDispatcher.getChannelDayProgram(date, channel);
     
@@ -220,8 +220,14 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
   
   
   
-  public javax.swing.JPanel getSettingsPanel() {
+  public SettingsPanel getSettingsPanel() {
     return null;
+  }
+
+  
+  
+  public boolean hasSettingsPanel() {
+    return false;
   }
   
   
@@ -255,6 +261,18 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
     throws java.io.IOException, ClassNotFoundException
   {
     return (AbstractChannelDayProgram)in.readObject();
+  }
+
+
+
+  /**
+   * Gets the list of the channels that are available by this data service.
+   */
+  public Channel[] getAvailableChannels() {
+    if (mAvailableChannelArr == null) {
+      mAvailableChannelArr = getDefaultAvailableChannels();
+    }
+    return mAvailableChannelArr;
   }
   
 }

@@ -46,9 +46,10 @@ import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.ButtonPanel;
 import tvbrowser.ui.PictureButton;
 
-
 import util.exc.*;
 import util.ui.*;
+
+import tvdataloader.TVDataServiceInterface;
 
 /**
  * TV-Browser
@@ -59,6 +60,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(TVBrowser.class.getName());
   
+  /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
   
@@ -320,15 +322,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   private static void createChannelList() {
   	DataLoaderManager.initDataLoaders();
-  	String[] dataLoaderNames=DataLoaderManager.getDataLoaderNames();
-  	for (int i=0;i<dataLoaderNames.length;i++) {
-  		/*try {
-			ChannelList.readChannelList(dataLoaderNames[i]);
-		} catch (TvBrowserException exc) {
-			mLog.warning("No channel file found. using default channel settings.");
-			ChannelList.createDefaultChannelList(dataLoaderNames[i]);
-		}*/
-		ChannelList.addDataLoaderChannels(dataLoaderNames[i]);
+  	TVDataServiceInterface[] dataServiceArr = DataLoaderManager.getDataLoaders();
+  	for (int i=0;i<dataServiceArr.length;i++) {
+      ChannelList.addDataLoaderChannels(dataServiceArr[i]);
   	}
   }
 		

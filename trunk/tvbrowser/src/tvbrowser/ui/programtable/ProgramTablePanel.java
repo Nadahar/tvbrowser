@@ -44,6 +44,8 @@ import tvbrowser.core.*;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.ContextMenu;
 
+import devplugin.Channel;
+
 class ProgramDayTime extends JPanel {
 
   private JPanel centerPanel;

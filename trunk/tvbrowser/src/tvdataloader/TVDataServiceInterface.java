@@ -24,18 +24,14 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvdataloader;
 
 import util.exc.TvBrowserException;
 
 /**
  * To write your own tv-data-loader implement this interface.
+ *
+ * @author Martin Oberhauser
  */
 public interface TVDataServiceInterface {
 
@@ -70,19 +66,28 @@ public interface TVDataServiceInterface {
   public void loadSettings(java.util.Properties settings);
   
   
-  	/**
-	 * Called by the host-application during shut-down. Implements this method to
-	 * store your dataservices settings to the file system.
-	 */
+  /**
+   * Called by the host-application during shut-down. Implements this method to
+   * store your dataservices settings to the file system.
+   */
   public java.util.Properties storeSettings();
   
   public SettingsPanel getSettingsPanel();
   
   public boolean hasSettingsPanel();
   
-  public int getNumberOfAvailableChannels();
   
-  public void initializeAvailableChannels(devplugin.Channel[] channels);
-   
+  
+  /**
+   * Gets the list of the channels that are available by this data service.
+   */
+  public devplugin.Channel[] getAvailableChannels();
+  
+  
+  
+  /**
+   * Gets the localized name of this TV data service.
+   */
+  public String getName();
 
 }

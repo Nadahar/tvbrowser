@@ -55,7 +55,7 @@ import tvdataloader.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class PremiereDataService implements TvDataServiceInterface {
+public class PremiereDataService extends MultipleChannelTvDataService {
 
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
@@ -63,13 +63,54 @@ public class PremiereDataService implements TvDataServiceInterface {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(PremiereDataService.class.getName());
-  
+
   
   
   /**
    * Creates a new instance of PremiereDataService.
    */
   public PremiereDataService() {
+  }
+
+  
+  
+  /**
+   * Gets the localized name of this TV data service.
+   */
+  public String getName() {
+    return mLocalizer.msg("name", "Premiere data service");
+  }
+  
+  
+  
+  /**
+   * Gets the default list of the channels that are available by this data
+   * service.
+   */
+  protected Channel[] getDefaultAvailableChannels() {
+    return new Channel[] {
+      // main channels
+      new Channel(this, "13th Street", 1),
+      new Channel(this, "Beate-Uhse.TV", 2),
+      new Channel(this, "Classica", 3),
+      new Channel(this, "Disney Channel", 4),
+      new Channel(this, "Fox Kids", 5),
+      new Channel(this, "Heimatkanal", 6),
+      new Channel(this, "Junior", 7),
+      new Channel(this, "MGM", 8),
+      new Channel(this, "Premiere 1", 9),
+      new Channel(this, "Premiere 2", 10),
+      new Channel(this, "Premiere 3", 11),
+      new Channel(this, "Premiere 4", 12),
+      new Channel(this, "Premiere 5", 13),
+      new Channel(this, "Premiere 6", 14),
+      new Channel(this, "Premiere 7", 15),
+      new Channel(this, "Premiere Krimi", 16),
+      new Channel(this, "Premiere Nostalgie", 17),
+      new Channel(this, "Premiere Serie", 18),
+      new Channel(this, "Premiere Start", 19),
+      new Channel(this, "Studio Universal", 20)
+    };
   }
 
   
@@ -308,7 +349,7 @@ public class PremiereDataService implements TvDataServiceInterface {
   
   
   private Channel getChannelForName(String channelName) {
-    Channel[] channelArr = getChannels();
+    Channel[] channelArr = getAvailableChannels();
     for (int i = 0; i < channelArr.length; i++) {
       if (channelArr[i].getName().equalsIgnoreCase(channelName)) {
         return channelArr[i];
