@@ -111,7 +111,7 @@ public class DeviceSelector extends JDialog {
     private void createGUI() {
         setLocationRelativeTo(getParent());
         
-        setTitle("CapturePlugin");
+        setTitle(mLocalizer.msg("title", "CapturePlugin"));
         
         JPanel panel = (JPanel) getContentPane();
         
@@ -141,7 +141,7 @@ public class DeviceSelector extends JDialog {
             }
         });
         
-        panel.add(createNamedPanel(mDeviceSelector, "Gerät:"), d);
+        panel.add(createNamedPanel(mDeviceSelector, mLocalizer.msg("device", "Device")+ ":"), d);
         
         mFunction = new JComboBox();
         fillFunctionList();
@@ -160,17 +160,16 @@ public class DeviceSelector extends JDialog {
             fillProgramList();
         }
         
-        panel.add(createNamedPanel(mFunction, "Funktion wählen:"), d);
+        panel.add(createNamedPanel(mFunction, mLocalizer.msg("chooseFunction" , "Choose Function") + ":"), d);
 
         JScrollPane scpane = new JScrollPane(mProgramList);
         scpane.setPreferredSize(new Dimension(400, 200));
         
-        panel.add(createNamedPanel(scpane, "Sendung die weitergegeben werden:"), c);
-
+        panel.add(createNamedPanel(scpane, mLocalizer.msg("usingPrograms", "Programs that are used") + ":"), c);
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         
-        JButton ok = new JButton ("OK");
+        JButton ok = new JButton (mLocalizer.msg("OK","OK"));
         
         ok.addActionListener(new ActionListener() {
 
@@ -181,7 +180,7 @@ public class DeviceSelector extends JDialog {
             
         });
         
-        JButton cancel = new JButton ("Cancel");
+        JButton cancel = new JButton (mLocalizer.msg("Cancel","Cancel"));
         
         cancel.addActionListener(new ActionListener() {
 
@@ -210,7 +209,6 @@ public class DeviceSelector extends JDialog {
         DeviceIf device = (DeviceIf) mDeviceSelector.getSelectedItem();
         
         if (device.isAbleToAddAndRemovePrograms() && (mFunction.getSelectedIndex() < 2)) {
-            System.out.println(mFunction.getSelectedIndex());
             
             if (mFunction.getSelectedIndex() == 0) {
                 for (int i = 0; i < mProgram.length; i++) {
@@ -255,8 +253,8 @@ public class DeviceSelector extends JDialog {
         String[] str = new String[num];
         
         if (device.isAbleToAddAndRemovePrograms()) {
-            str[0] = "Hinzufügen";
-            str[1] = "Entfernen";
+            str[0] = mLocalizer.msg("Add", "Add");
+            str[1] = mLocalizer.msg("Remove", "Remove");
         }
         
         for (int i=start;i < commands.length+start;i++) {
