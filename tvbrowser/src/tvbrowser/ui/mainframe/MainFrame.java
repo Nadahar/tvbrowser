@@ -95,7 +95,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, licenseMenuItem;
+   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, licenseMenuItem, donorMenuItem,
+   faqMenuItem, forumMenuItem, websiteMenuItem;
   private SkinPanel skinPanel;
   private HorizontalToolBar mDefaultToolBar;
   private VerticalToolBar mDateTimeToolBar;
@@ -161,7 +162,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     tvDataMenu.addSeparator();
     
     msg = mLocalizer.msg("menuitem.license","Terms of Use");
-    licenseMenuItem=new JMenuItem(msg);
+    licenseMenuItem=new JMenuItem(msg,new ImageIcon("imgs/About16.gif"));
     licenseMenuItem.addActionListener(this);
     tvDataMenu.add(licenseMenuItem);
     
@@ -181,24 +182,44 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     
     // Help menu
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
-  helpMenu.setMnemonic(KeyEvent.VK_H);
+    helpMenu.setMnemonic(KeyEvent.VK_H);
     menuBar.add(helpMenu);
 
     icon = new ImageIcon("imgs/Help16.gif");
     msg = mLocalizer.msg("menuitem.help", "Help...");    
     helpMenuItem = new JMenuItem(msg, icon);
-  helpMenuItem.setMnemonic(KeyEvent.VK_H);
-  helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
+    helpMenuItem.setMnemonic(KeyEvent.VK_H);
+    helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
  
     helpMenuItem.addActionListener(this);
     helpMenu.add(helpMenuItem);
     
     helpMenu.addSeparator();
     
+    icon = new ImageIcon("imgs/WebComponent16.gif");
+    msg=mLocalizer.msg("menuitem.donors","Donors");
+    donorMenuItem=new JMenuItem(msg,icon);
+    donorMenuItem.addActionListener(this);
+    helpMenu.add(donorMenuItem);
+    
+    faqMenuItem=new JMenuItem("FAQ",icon);
+    faqMenuItem.addActionListener(this);
+    helpMenu.add(faqMenuItem);
+    
+    forumMenuItem=new JMenuItem("Forum",icon);
+    forumMenuItem.addActionListener(this);
+    helpMenu.add(forumMenuItem);
+    
+    websiteMenuItem=new JMenuItem("Website",icon);
+    websiteMenuItem.addActionListener(this);
+    helpMenu.add(websiteMenuItem);
+    
+    helpMenu.addSeparator();
+    
     icon = new ImageIcon("imgs/About16.gif");
     msg = mLocalizer.msg("menuitem.about", "About...");
     aboutMenuItem = new JMenuItem(msg, icon);
-  aboutMenuItem.setMnemonic(KeyEvent.VK_B);
+    aboutMenuItem.setMnemonic(KeyEvent.VK_B);
     aboutMenuItem.addActionListener(this);
     helpMenu.add(aboutMenuItem);
     
@@ -361,6 +382,34 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     }
     else if (src == settingsMenuItem) {
       showSettingsDialog();
+    }
+    else if (src==donorMenuItem) {
+      try {
+        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.donors",""));
+      }catch(java.io.IOException e) {
+        ErrorHandler.handle(e.getLocalizedMessage(),e);
+      }
+    }
+    else if (src==faqMenuItem) {
+      try {
+        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.faq",""));
+      }catch(java.io.IOException e) {
+        ErrorHandler.handle(e.getLocalizedMessage(),e);
+      }
+    }
+    else if (src==forumMenuItem) {
+      try {
+        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.forum",""));
+      }catch(java.io.IOException e) {
+        ErrorHandler.handle(e.getLocalizedMessage(),e);
+      }
+    }
+    else if (src==websiteMenuItem) {
+      try {
+        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.tvbrowser",""));
+      }catch(java.io.IOException e) {
+        ErrorHandler.handle(e.getLocalizedMessage(),e);
+      }
     }
     else if (src==aboutMenuItem) {
       showAboutBox();
@@ -627,7 +676,16 @@ public void askForDataUpdate() {
 
 public void showHelpDialog() {
   String msg = mLocalizer.msg("helproot", "help/default/index.html");
-  util.ui.HelpDialog.showHelpPage(this,msg+"index.html",null);
+  //util.ui.HelpDialog.showHelpPage(this,msg+"index.html",null);
+  
+  try {
+    java.io.File indexFile=new java.io.File(mLocalizer.msg("helproot", "help/default/index.html"));
+    util.ui.BrowserLauncher.openURL("file://"+indexFile.getAbsolutePath());
+  }catch(java.io.IOException e) {
+    e.printStackTrace();
+    ErrorHandler.handle(e.getLocalizedMessage(),e);
+  }
+  
 }
 
 
