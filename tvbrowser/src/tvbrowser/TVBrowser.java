@@ -403,7 +403,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   
   
   private void onDownloadStart() {
-    DataService.getInstance().setIsDownloading(true);
     updateBtn.setText(mLocalizer.msg("button.stop", "Stop"));
     updateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop update..."));
@@ -412,7 +411,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   
   
   private void onDownloadDone() {
-    DataService.getInstance().setIsDownloading(false);
     DataService.getInstance().getProgressBar().setValue(0);
     updateBtn.setText(mLocalizer.msg("button.update", "Update"));
     updateBtn.setIcon(new ImageIcon("imgs/Import24.gif"));
@@ -574,8 +572,15 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     try {
       DayProgram prog = DataService.getInstance().getDayProgram(date);
       programTablePanel.setDayProgram(prog);
-      if (finderPanel != null) finderPanel.update();
-    } catch (TvBrowserException exc) {
+      if (finderPanel != null) {
+        finderPanel.update();
+      }
+      if (date.equals(new devplugin.Date())) {
+        // If this is today -> scroll to now
+        scrollToNow();
+      }
+    }
+    catch (TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
   }
@@ -703,7 +708,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
    */
   private void updateTvData() {
     if (DataService.getInstance().isDownloading()) {
-      DataService.getInstance().setIsDownloading(false);
       onDownloadDone();
     } else {
       UpdateDlg dlg = new UpdateDlg(this, true);

@@ -151,14 +151,14 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       g.setColor(new Color(255,0,0,40));
       g.fill3DRect(0,0,WIDTH,mHeight,true);
 
-      int x = WIDTH - 16;
-      int y = mHeight - 16;
+      int x = WIDTH - 1;
+      int y = mHeight - 1;
       while (pluginIter.hasNext()) {
         Plugin plugin = (Plugin) pluginIter.next();
         Icon icon = plugin.getMarkIcon();
         if (icon != null) {
-          icon.paintIcon(this, g, x, y);
-          x -= 16;
+          x -= icon.getIconWidth();
+          icon.paintIcon(this, g, x, y - icon.getIconHeight());
         }
       }
     }
