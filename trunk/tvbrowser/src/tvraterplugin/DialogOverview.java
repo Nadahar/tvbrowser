@@ -292,6 +292,8 @@ public class DialogOverview extends JDialog {
                     JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), _mLocalizer.msg("updateSuccess",
                             "Update was successfull!"));
                 }
+                
+                _update.setEnabled(true);
             };
         };
         updateThread.start();
