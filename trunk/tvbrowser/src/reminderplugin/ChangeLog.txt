@@ -1,5 +1,8 @@
 Changelog ReminderPlugin
 
+1.1.0
+- Added "Send to other Plugin"
+
 1.0.9
 - Added Button for sending the Program-List
 - Added Icons for Channels

@@ -26,16 +26,37 @@
 
 package reminderplugin;
 
-import java.util.Properties;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Properties;
+import java.util.Vector;
 
-import devplugin.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import util.ui.*;
+import tvbrowser.core.plugin.PluginProxy;
+import util.ui.ExtensionFileFilter;
+import util.ui.FileCheckBox;
+import util.ui.ImageUtilities;
+import util.ui.TabLayout;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.SettingsTab;
 
 /**
  * TV-Browser
@@ -57,6 +78,8 @@ public class ReminderSettingsTab implements SettingsTab {
   private FileCheckBox mExecFileChB;
   private JSpinner mAutoCloseReminderTimeSp;
 
+  private JCheckBox mSendToPlugin;
+  private JComboBox mAvailabePlugins;
   
   
   public ReminderSettingsTab(Properties settings) {
@@ -126,6 +149,32 @@ public class ReminderSettingsTab implements SettingsTab {
 
     reminderPn.add(soundPn);
     reminderPn.add(mExecFileChB);
+    
+    JPanel pluginPn = new JPanel(new BorderLayout(5, 0));
+    
+    mSendToPlugin = new JCheckBox(mLocalizer.msg("sendToPlugin", "Send to Plugin:"));
+    mAvailabePlugins = new JComboBox(getAvailablePlugins());
+    mSendToPlugin.setSelected(mSettings.getProperty("usesendplugin","false").equals("true"));
+    mAvailabePlugins.setEnabled(mSendToPlugin.isSelected());
+
+    for (int i = 0; i < mAvailabePlugins.getItemCount(); i++) {
+        PluginAccess plugin = (PluginAccess) mAvailabePlugins.getItemAt(i);
+        if (plugin.getId().equals(mSettings.getProperty("usethisplugin", ""))) {
+            mAvailabePlugins.setSelectedIndex(i);
+        }
+    }
+    
+    pluginPn.add(mSendToPlugin, BorderLayout.WEST);
+    
+    mSendToPlugin.addChangeListener(new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+            mAvailabePlugins.setEnabled(mSendToPlugin.isSelected());
+        }
+    });
+    
+    pluginPn.add(mAvailabePlugins, BorderLayout.CENTER);
+    
+    reminderPn.add(pluginPn);
 
     // Auto close time of the reminder frame
     p1 = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -151,6 +200,36 @@ public class ReminderSettingsTab implements SettingsTab {
   
   
   /**
+   * Gets the Availabe Plugins who can receive Programs
+   * @return available Plugins 
+   */
+  private Vector getAvailablePlugins() {
+      // get the installed plugins
+      PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
+
+      PluginAccess[] copy = new PluginProxy[installedPluginArr.length];
+      
+      for (int i = 0; i < installedPluginArr.length;i++) {
+          copy[i] = installedPluginArr[i];
+      }
+      
+      
+      Arrays.sort(copy, new ObjectComperator());
+
+      // create a list of those who support multiple program execution
+      Vector selectablePluginList = new Vector();
+      for (int i = 0; i < copy.length; i++) {
+          if (copy[i].canReceivePrograms()) {
+              selectablePluginList.add(copy[i]);
+          }
+      }
+      
+      return selectablePluginList;
+  }
+
+
+
+  /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
@@ -160,6 +239,9 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("usemsgbox",new Boolean(mReminderWindowChB.isSelected()).toString());
     mSettings.setProperty("usesound",new Boolean(mSoundFileChB.isSelected()).toString());
     mSettings.setProperty("useexec",new Boolean(mExecFileChB.isSelected()).toString());
+
+    mSettings.setProperty("usesendplugin",new Boolean(mSendToPlugin.isSelected()).toString());
+    mSettings.setProperty("usethisplugin", ((PluginAccess)mAvailabePlugins.getSelectedItem()).getId());
     
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
   }
@@ -183,4 +265,14 @@ public class ReminderSettingsTab implements SettingsTab {
     return mLocalizer.msg("tabName", "Reminder");
   }
 
+  /**
+   * Comperator needed to Sort List of Plugins
+   */
+  private class ObjectComperator implements Comparator {
+
+      public int compare(Object o1, Object o2) {
+          return o1.toString().compareTo(o2.toString());
+      }
+
+  }
 }
