@@ -91,7 +91,6 @@ class TVBrowserProperties extends java.util.Properties {
 
 		 ArrayList list=new ArrayList();
 		 int cur=0, last=0;
-		 String a;
 		 while (cur<s.length()) {
 		   cur=s.indexOf(',',last);
 		   if (cur==-1) {
@@ -346,9 +345,8 @@ public class Settings {
   public static void setSubscribedChannels(Channel[] channels) {
   	String[] entries = new String[channels.length];
   	for (int i=0;i<entries.length;i++) {
-      Channel ch=(Channel)channels[i];
       String dsClassName = channels[i].getDataService().getClass().getName();
-      entries[i] = dsClassName + ":" + ch.getId();
+      entries[i] = dsClassName + ":" + channels[i].getId();
   	}
 
 	settings.setStringList("subscribedchannels", entries);
@@ -414,7 +412,7 @@ public class Settings {
     }
     
     public static int getAfternoonTime() {
-      String time=settings.getProperty("timebutton.afternoon","10080");
+      String time=settings.getProperty("timebutton.afternoon","1080");
       return Integer.parseInt(time);
     }
     
