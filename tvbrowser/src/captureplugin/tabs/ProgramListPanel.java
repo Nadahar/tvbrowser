@@ -118,21 +118,24 @@ public class ProgramListPanel extends JPanel {
 
         mProgramTable.addMouseListener(new MouseAdapter() {
 
+            public void mousePressed(MouseEvent evt) {
+              if (evt.isPopupTrigger()) {
+                showPopup(evt);
+              }
+            }
+
+            public void mouseReleased(MouseEvent evt) {
+              if (evt.isPopupTrigger()) {
+                showPopup(evt);
+              }
+            }          
+          
             public void mouseClicked(MouseEvent e) {
                 int column = mProgramTable.columnAtPoint(e.getPoint());
                 if (column != 1) {
                     return;
                 }
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    int row = mProgramTable.rowAtPoint(e.getPoint());
-
-                    mProgramTable.changeSelection(row, 0, false, false);
-                    
-                    Program p = (Program) mProgramTableModel.getValueAt(row, 1);
-                    
-                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p, CapturePlugin.getInstance());
-                    menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
-                } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+                if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
                     int row = mProgramTable.rowAtPoint(e.getPoint());
                     mProgramTable.changeSelection(row, 0, false, false);
                     Program p = (Program) mProgramTableModel.getValueAt(row, 1);
@@ -161,7 +164,21 @@ public class ProgramListPanel extends JPanel {
         add(btnPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Shows the Popup
+     * @param e Mouse-Event
+     */
+    private void showPopup(MouseEvent e) {
+      int row = mProgramTable.rowAtPoint(e.getPoint());
 
+      mProgramTable.changeSelection(row, 0, false, false);
+      
+      Program p = (Program) mProgramTableModel.getValueAt(row, 1);
+      
+      JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p, CapturePlugin.getInstance());
+      menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
+    }
+    
     /**
      * Delete was pressed
      */

@@ -82,6 +82,18 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
+  public void mousePressed(MouseEvent e) {
+    if (e.isPopupTrigger()) {
+      showPopup(e);
+    }
+  }
+
+  public void mouseReleased(MouseEvent e) {
+    if (e.isPopupTrigger()) {
+      showPopup(e);
+    }
+  }    
+  
 
   public void mouseClicked(MouseEvent e) {
 
@@ -89,16 +101,7 @@ public class PluginView extends JPanel implements MouseListener {
     if (path == null) {
       return;
     }
-    boolean isRightClick = SwingUtilities.isRightMouseButton(e);
     boolean isDoubleClick = SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2);
-
-    // After right click, there is should be only one path selected
-    if (isRightClick) {
-      if (!mTree.getSelectionModel().isPathSelected(path)) {
-        mTree.setSelectionPath(path);
-      }
-    }
-
 
     TreePath[] selectedPaths = mTree.getSelectionPaths();
 
@@ -107,10 +110,7 @@ public class PluginView extends JPanel implements MouseListener {
       return;
     }
 
-    if (isRightClick) {
-      menu.getPopupMenu().show(mTree, e.getX(), e.getY());
-    }
-    else if (isDoubleClick) {
+    if (isDoubleClick) {
       Action defaultAction = menu.getDefaultAction();
       if (defaultAction != null) {
         defaultAction.actionPerformed(new ActionEvent(mTree, 0, ""));
@@ -119,6 +119,31 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
+  /**
+   * Shows the Popup
+   * @param e MouseEvent for X/Y Coordinates
+   */
+  private void showPopup(MouseEvent e) {
+    TreePath path = mTree.getPathForLocation(e.getX(), e.getY());
+    if (path == null) {
+      return;
+    }
+
+    // After Popup-Trigger, there is should be only one path selected
+    if (!mTree.getSelectionModel().isPathSelected(path)) {
+      mTree.setSelectionPath(path);
+    }
+    
+    TreePath[] selectedPaths = mTree.getSelectionPaths();
+
+    ContextMenu menu = createContextMenu(selectedPaths);
+    if (menu == null) {
+      return;
+    }
+    
+    menu.getPopupMenu().show(mTree, e.getX(), e.getY());
+  }
+  
 
   public ContextMenu createContextMenu(TreePath[] selectedPath) {
     if (selectedPath == null || selectedPath.length == 0) {
@@ -158,16 +183,6 @@ public class PluginView extends JPanel implements MouseListener {
   public void mouseExited(MouseEvent e) {
 
   }
-
-  public void mousePressed(MouseEvent e) {
-
-  }
-
-  public void mouseReleased(MouseEvent e) {
-
-  }
-
-
 
 
 }

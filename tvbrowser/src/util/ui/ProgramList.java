@@ -123,16 +123,23 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      */
     public void addMouseListeners(final Plugin caller) {
       addMouseListener(new MouseAdapter() {
+        
+        public void mousePressed(MouseEvent e) {
+          if (e.isPopupTrigger()) {
+            showPopup(e, caller);
+          }
+        }
+
+        public void mouseReleased(MouseEvent e) {
+          if (e.isPopupTrigger()) {
+            showPopup(e, caller);
+          }
+        }    
+        
         public void mouseClicked(MouseEvent e) {
           PluginManager mng = Plugin.getPluginManager();
-          if (SwingUtilities.isRightMouseButton(e)) {
-            int inx = locationToIndex(e.getPoint());
-            setSelectedIndex(inx);
-            Program prog = (Program) getModel().getElementAt(inx);
-            JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
-  
-            menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
-          } else if (SwingUtilities.isLeftMouseButton(e)
+          
+          if (SwingUtilities.isLeftMouseButton(e)
               && (e.getClickCount() == 2)) {
             int inx = locationToIndex(e.getPoint());
             Program prog = (Program) ProgramList.this.getModel()
@@ -144,6 +151,23 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
       });
     }
 
+    /**
+     * Shows the Popup
+     * @param e MouseEvent for X/Y Coordinates
+     * @param caller Plugin that called this
+     */
+    private void showPopup(MouseEvent e, Plugin caller) {
+      PluginManager mng = Plugin.getPluginManager();
+
+      int inx = locationToIndex(e.getPoint());
+      setSelectedIndex(inx);
+      Program prog = (Program) getModel().getElementAt(inx);
+      JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
+
+      menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
+      
+    }
+    
     /* (non-Javadoc)
      * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
      */
