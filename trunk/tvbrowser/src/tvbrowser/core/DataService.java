@@ -905,18 +905,27 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
    *
    * @return a plugin context menu.
    */
+  
+  
+  
   public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller) {
-	Font font=BOLDFONT;
+	//Font font=PLAINFONT;
 	javax.swing.JPopupMenu menu = new javax.swing.JPopupMenu();
-	devplugin.Plugin[] pluginArr = PluginManager.getInstalledPlugins();
+  devplugin.Plugin defaultPlugin=PluginManager.getContextMenuDefaultPlugin();
+	//devplugin.Plugin[] pluginArr = PluginManager.getInstalledPlugins();
+  devplugin.Plugin[] pluginArr = PluginManager.getContextMenuPlugins();
 	for (int i = 0; i < pluginArr.length; i++) {
 	  final devplugin.Plugin plugin = pluginArr[i];
 	  if (!plugin.equals(caller)) {
 		String text = plugin.getContextMenuItemText();
 		if (text != null) {
 		  javax.swing.JMenuItem item = new javax.swing.JMenuItem(text);
-		  item.setFont(font);
-		  font=PLAINFONT;
+      if (plugin==defaultPlugin) {
+        item.setFont(BOLDFONT);
+      }
+      else {
+        item.setFont(PLAINFONT);
+      }
 		  item.setIcon(plugin.getMarkIcon());
 		  item.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent event) {

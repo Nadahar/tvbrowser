@@ -365,13 +365,10 @@ public class ProgramTable extends JPanel
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       if (program != null) {
         // This is a left double click
-        // -> Execute the program using the first plugin that is in the context menu
-        devplugin.Plugin[] instPluginArr = PluginManager.getInstalledPlugins();
-        for (int i = 0; i < instPluginArr.length; i++) {
-          if (instPluginArr[i].getContextMenuItemText() != null) {
-            instPluginArr[i].execute(program);
-            break;
-          }
+        // -> Execute the program using the user defined default plugin
+        devplugin.Plugin plugin=PluginManager.getContextMenuDefaultPlugin();
+        if (plugin!=null) {
+          plugin.execute(program);  
         }
       }
     }

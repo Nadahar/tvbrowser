@@ -94,27 +94,6 @@ class TVBrowserProperties extends java.util.Properties {
     
     return s.split(",");
     
-    /*
-	String s=getProperty(key);
-		 if (s==null) return new String[0];
-
-		 ArrayList list=new ArrayList();
-		 int cur=0, last=0;
-		 while (cur<s.length()) {
-		   cur=s.indexOf(',',last);
-		   if (cur==-1) {
-			 cur=s.length();
-		   }
-		   list.add(s.substring(last,cur).trim());
-		   cur++;
-		   last=cur;
-		 }
-
-		 String[] result=new String[list.size()];
-		 for (int i=0;i<list.size();i++) {
-			 result[i]=(String)list.get(i);
-		 }
-		 return result;*/
   }
   
 	public void setFont(String key, Font f) {
@@ -633,6 +612,27 @@ public class Settings {
    	 settings.setStringList("hiddenbuttonplugins",plugins);
    }
 
+   public static String getDefaultContextMenuPlugin() {
+     return settings.getProperty("contextmenudefaultplugin","programinfo.ProgramInfo");
+   }
+   
+   public static void setDefaultContextMenuPlugin(String pluginName) {
+     settings.setProperty("contextmenudefaultplugin",pluginName);
+   }
+
+   public static void setContextMenuItemPlugins(String[] plugins) {
+     settings.setStringList("contextmenuitemplugins",plugins);
+   }
+
+
+  public static String[] getContextMenuItemPlugins() {
+    if (settings.getProperty("contextmenuitemplugins") == null) {
+      return getInstalledPlugins();
+    }
+    else {
+      return settings.getStringList("contextmenuitemplugins");
+    }
+  }
 
 
   /**
