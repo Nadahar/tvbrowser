@@ -362,4 +362,34 @@ public class Entities {
     add("&euro",   8364);
 
   }
+  
+  
+  private static String replaceEntity(String line, int from, int to) {
+    String entity=line.substring(from,to+1);
+    StringBuffer newLine=new StringBuffer(line);
+    newLine.replace(from,to+1,Entities.decode(entity));
+    return newLine.toString();
+  }
+  
+  
+  public static String convertString(String line) {
+    int from=0;
+    while (from<line.length()) {      
+      if (line.charAt(from)=='&') {
+        int to=from+1;
+        while (to<line.length()) {
+          if (line.charAt(to)==';') {
+            line=replaceEntity(line,from,to);
+            break;
+          }
+          to++;
+        }        
+      }
+      from++;
+    }
+    return line;
+  }
+  
+  
+  
 }
