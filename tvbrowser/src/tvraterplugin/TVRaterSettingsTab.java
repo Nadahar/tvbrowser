@@ -167,7 +167,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 
 		_updateTime = new JComboBox(updateStrings);
 
-		_updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "4")));
+		_updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "3")));
 
 		JPanel updatePanel = new JPanel(new BorderLayout(5, 0));
 		updatePanel.add(new JLabel(mLocalizer.msg("transmit", "Transmit data")), BorderLayout.WEST);
