@@ -32,10 +32,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.*;
 
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -49,7 +46,7 @@ import devplugin.*;
 
 public class PluginView extends JPanel implements MouseListener {
     
-  private JTree mTree;
+  private PluginTree mTree;
   private PluginTreeModel mModel;
 
   private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
@@ -65,11 +62,16 @@ public class PluginView extends JPanel implements MouseListener {
         mModel.addPluginTree(plugins[i]);
       }
     }
-    
-    mTree = new JTree(mModel);
+
+    DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+    renderer.setLeafIcon(null);
+    mTree = new PluginTree(mModel);
     mTree.setSelectionModel(new PluginTreeSelectionModel());
     mTree.addMouseListener(this);
+    mTree.setCellRenderer(renderer);
     add(new JScrollPane(mTree), BorderLayout.CENTER);
+
+
   }
 
 
@@ -83,15 +85,21 @@ public class PluginView extends JPanel implements MouseListener {
       }
     }
     else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode) mTree.getLastSelectedPathComponent();
+      TreePath[] paths = mTree.getSelectionPaths();
+      Node node = (Node)paths[0].getLastPathComponent();
       Object o = node.getUserObject();
-      if (o instanceof ProgramItem) {
+      if (node.getType() == Node.PROGRAM) {
         programItem = (ProgramItem)o;
+        MainFrame.getInstance().scrollToProgram(programItem.getProgram());
+      }
+      else if (node.getType() == Node.PLUGIN_ROOT) {
+        Plugin plugin = (Plugin)o;
+        plugin.getButtonAction().actionPerformed(null);
       }
       else {
         return;
       }
-      MainFrame.getInstance().scrollToProgram(programItem.getProgram());
+
     }
     
   }
@@ -99,9 +107,9 @@ public class PluginView extends JPanel implements MouseListener {
 
   private void showContextMenu(TreePath[] paths, int x, int y) {
 
-    DefaultMutableTreeNode node =(DefaultMutableTreeNode)paths[0].getLastPathComponent();
+    Node node = (Node)paths[0].getLastPathComponent();
     Object userObject = node.getUserObject();
-    if (userObject instanceof ProgramItem) {
+    if (node.getType() == Node.PROGRAM) {
       Program[] programs = new Program[paths.length];
       for (int i=0; i<programs.length; i++) {
         DefaultMutableTreeNode curNode = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
@@ -109,11 +117,26 @@ public class PluginView extends JPanel implements MouseListener {
       }
       showContextMenu(mModel.getPlugin(paths[0]), programs, x, y);
     }
-    else if (userObject instanceof Plugin) {
-      System.out.println("show Plugin context menu");
+    else if (node.getType() == Node.PLUGIN_ROOT) {
+      showPluginContextMenu(mModel.getPlugin(paths[0]), x, y);
+    }
+    else if (node.getType() == Node.SORTING_NODE) {
+      System.out.println("Sorting option");
     }
 
 
+
+
+  }
+
+  private void showPluginContextMenu(Plugin plugin, int x, int y) {
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem actionMI = new JMenuItem(plugin.getButtonAction().getValue(Action.NAME)+"...");
+    actionMI.setFont(CONTEXT_MENU_BOLDFONT);
+    actionMI.addActionListener(plugin.getButtonAction());
+
+    menu.add(actionMI);
+    menu.show(mTree, x-10, y-10);
   }
 
   private void showContextMenu(Plugin rootNodePlugin, final Program[] programs, int x, int y) {
