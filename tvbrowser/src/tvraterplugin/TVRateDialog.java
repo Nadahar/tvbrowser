@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
 import devplugin.Program;
 
 /**
@@ -17,7 +18,7 @@ import devplugin.Program;
  */
 public class TVRateDialog extends JDialog {
 
-	private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVRaterPlugin.class);
+	private static final Localizer _mLocalizer = Localizer.getLocalizerFor(TVRaterPlugin.class);
 
 	/**
 	 * @param parent
@@ -25,7 +26,7 @@ public class TVRateDialog extends JDialog {
 	 */
 	public TVRateDialog(Frame parent, Program program) {
 		super(parent, true);
-		setTitle(mLocalizer.msg("contextMenuText", "View Rating"));
+		setTitle(_mLocalizer.msg("contextMenuText", "View Rating"));
 		
 		JPanel panel = (JPanel) this.getContentPane();
 
