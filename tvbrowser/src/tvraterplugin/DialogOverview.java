@@ -36,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -185,7 +184,7 @@ public class DialogOverview extends JDialog {
     protected void view() {
         if ((_tabbed.getSelectedIndex() == 0)
                 && (_overall.getSelectedValue() != null)) {
-
+            
             Runnable runLater = new Runnable() {
                 public void run() {
                     DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(),
@@ -194,7 +193,8 @@ public class DialogOverview extends JDialog {
                     UiUtilities.centerAndShow(dlg);
                 }
             };
-            SwingUtilities.invokeLater(runLater);
+            
+            new Thread(runLater).start();
         } else if ((_tabbed.getSelectedIndex() == 1)
                 && (_personal.getSelectedValue() != null)) {
             Runnable runLater = new Runnable() {
@@ -205,7 +205,7 @@ public class DialogOverview extends JDialog {
                     UiUtilities.centerAndShow(dlg);
                 }
             };
-            SwingUtilities.invokeLater(runLater);
+            new Thread(runLater).start();
         }
     }
 

@@ -37,10 +37,8 @@ public class ListViewDialog extends JDialog {
     /**
      * Creates the Dialog
      * 
-     * @param frame
-     *            Frame for modal
-     * @param plugin
-     *            Plugin for reference
+     * @param frame Frame for modal
+     * @param plugin Plugin for reference
      */
     public ListViewDialog(Frame frame, Plugin plugin) {
         super(frame, true);
@@ -60,8 +58,7 @@ public class ListViewDialog extends JDialog {
 
         Date date = new Date();
         for (int i = 0; i < channels.length; i++) {
-            Iterator it = Plugin.getPluginManager().getChannelDayProgram(date,
-                    channels[i]);
+            Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
             while ((it != null) && (it.hasNext())) {
                 Program program = (Program) it.next();
                 if (program.isOnAir()) {
@@ -75,11 +72,10 @@ public class ListViewDialog extends JDialog {
     /**
      * Creates the GUI
      */
-private void createGUI() {
+    private void createGUI() {
         JPanel content = (JPanel) this.getContentPane();
         content.setLayout(new BorderLayout());
-        content.add(new JLabel(mLocalizer.msg("nowRunning", "Now Running:")),
-                BorderLayout.NORTH);
+        content.add(new JLabel(mLocalizer.msg("nowRunning", "Now Running:")), BorderLayout.NORTH);
 
         _programJList = new JList(_programList);
 
@@ -90,21 +86,16 @@ private void createGUI() {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     int inx = _programJList.locationToIndex(e.getPoint());
-                    Program p = (Program) _programJList.getModel()
-                            .getElementAt(inx);
+                    Program p = (Program) _programJList.getModel().getElementAt(inx);
                     _programJList.setSelectedIndex(inx);
-                    JPopupMenu menu = devplugin.Plugin.getPluginManager()
-                            .createPluginContextMenu(p,
-                                    ListViewPlugin.getInstance());
+                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p,
+                            ListViewPlugin.getInstance());
                     menu.show(_programJList, e.getX() - 15, e.getY() - 15);
-                } else if (SwingUtilities.isLeftMouseButton(e)
-                        && (e.getClickCount() == 2)) {
+                } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
                     int inx = _programJList.locationToIndex(e.getPoint());
-                    final Program p = (Program) _programJList.getModel()
-                            .getElementAt(inx);
+                    final Program p = (Program) _programJList.getModel().getElementAt(inx);
 
-                    final Plugin plugin = devplugin.Plugin.getPluginManager()
-                            .getDefaultContextMenuPlugin();
+                    final Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
                     if (plugin != null) {
                         Runnable runLater = new Runnable() {
 
@@ -112,7 +103,7 @@ private void createGUI() {
                                 plugin.execute(p);
                             }
                         };
-                        SwingUtilities.invokeLater(runLater);
+                        new Thread(runLater).start();
                     }
                 }
             }
@@ -134,9 +125,9 @@ private void createGUI() {
         });
         buttonPn.add(okButton);
     }
+
     /** The localizer used by this class. */
-    private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-            .getLocalizerFor(ListViewDialog.class);
+    private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ListViewDialog.class);
 
     private JList _programJList;
 
