@@ -36,13 +36,13 @@
   <property file="build.properties"/>
   <property environment="env"/>
 
-  <property name="version.file" value="${version}"/>
+  <property name="tvbrowser.version.file" value="${tvbrowser.version}"/>
   <property name="programname" value="TV-Browser"/>
   <property name="programname.file" value="TvBrowser"/>
 
-  <property name="doc.header" value="${programname} ${version} API"/>
-  <property name="doc.title" value="API documentation for ${programname} ${version}"/>
-  <property name="doc.bottom" value="${programname} ${version}, Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)"/>
+  <property name="doc.header" value="${programname} ${tvbrowser.version} API"/>
+  <property name="doc.title" value="API documentation for ${programname} ${tvbrowser.version}"/>
+  <property name="doc.bottom" value="${programname} ${tvbrowser.version}, Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)"/>
 
   <property name="lib.dir" value="lib"/>
   <property name="src.dir" value="src"/>
@@ -55,9 +55,7 @@
   <property name="win.dir" value="win"/>
   <property name="tvbrowser.runtime.dir" value="${runtime.dir}/tvbrowser"/>
   <property name="tvbrowser-win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
-  <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
-  <property name="primarydatamanager.runtime.dir" value="${runtime.dir}/primarydatamanager"/>
-  <property name="pdsrunner.runtime.dir" value="${runtime.dir}/pdsrunner"/>
+  <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
   <property name="installer.dir" value="installer"/>
   <property name="jsmooth.dir" value="jsmooth"/>
   <property name="public.dir" value="public"/>
@@ -91,22 +89,23 @@
     <echo message="usage: build [target]"/>
     <echo message=""/>
     <echo message="available targets:"/>
-    <echo message="  targets       Shows this list of targets."/>
-    <echo message="  dump-info     Dumps some information (VM-Version...)."/>
-    <echo message="  clean         Deletes the classes and unpacked directory."/>
-    <echo message="  clean-runtime Deletes the runtime directory."/>
-    <echo message="  doc           Generates the JavaDoc documentation."/>
-    <echo message="  make          Compiles the source code."/>
-    <echo message="  runtime       Prepares the runtime directory."/>
-    <echo message="  runtime-win   Prepares the runtime Windows runtime."/>
-    <echo message="  runtime-tools Creates the TV-Browser-Tools."/>
-    <echo message="  run           Runs the project."/>
-    <echo message="  run-win       Runs the project using the Windows runtime."/>
-    <echo message="  installer     Creates a Windows installer for the project."/>
-    <echo message="  public        Creates all the stuff that can be downloaded."/>
-    <echo message="  test          Does the JUnit tests."/>
-    <echo message="  statcvs       Generates the CVS statistics."/>
-    <echo message="  all           Creates all (Same as public)."/>
+    <echo message="  targets          Shows this list of targets."/>
+    <echo message="  dump-info        Dumps some information (VM-Version...)."/>
+    <echo message="  clean            Deletes the classes and unpacked directory."/>
+    <echo message="  clean-runtime    Deletes the runtime directory."/>
+    <echo message="  doc              Generates the JavaDoc documentation."/>
+    <echo message="  make             Compiles the source code."/>
+    <echo message="  runtime          Prepares the runtime directory."/>
+    <echo message="  runtime-win      Prepares the runtime Windows runtime."/>
+    <echo message="  runtime-tools    Creates the TV-Browser-Tools."/>
+    <echo message="  run              Runs the project."/>
+    <echo message="  run-win          Runs the project using the Windows runtime."/>
+    <echo message="  installer        Creates a Windows installer for the project."/>
+    <echo message="  public           Creates all the stuff that can be downloaded."/>
+    <echo message="  public-tvdatakit Packs the TV data starter kit."/>
+    <echo message="  test             Does the JUnit tests."/>
+    <echo message="  statcvs          Generates the CVS statistics."/>
+    <echo message="  all              Creates all (Same as public)."/>
   </target>
 
 
@@ -309,46 +308,21 @@
   </target>
 
 
-     
-
-
-
   <!--
    | Creates the runtime directory.
    +-->
   <target name="runtime-tools" depends="make">
     <echo message="Creating the jars ..." />
 
-	<!-- Make the MirrorUpdater runtime -->
-    <mkdir dir="${mirrorupdater.runtime.dir}"/>
+    <mkdir dir="${tvdatatools.runtime.dir}"/>
+    <mkdir dir="${tvdatatools.runtime.dir}/prepared"/>
 
-	<!-- Make the PrimaryManager runtime -->
-    <mkdir dir="${primarydatamanager.runtime.dir}"/>
-    <mkdir dir="${primarydatamanager.runtime.dir}/prepared"/>
-
-    
-    <!-- Make the PDSRunner runtime -->
-    <mkdir dir="${pdsrunner.runtime.dir}"/>
-    
-    <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
+    <!-- Extract the libraries for the jars into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
     <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
 
-    <mkdir dir="${unpacked.dir}/xercesImpl.jar"/>
-    <unjar src="${lib.dir}/xercesImpl.jar" dest="${unpacked.dir}/xercesImpl.jar"/>
-
-    <mkdir dir="${unpacked.dir}/xml-apis.jar"/>
-    <unjar src="${lib.dir}/xml-apis.jar" dest="${unpacked.dir}/xml-apis.jar"/>
- 
-    <mkdir dir="${unpacked.dir}/resolver.jar"/>
-    <unjar src="${lib.dir}/resolver.jar" dest="${unpacked.dir}/resolver.jar"/>
-
-    <mkdir dir="${unpacked.dir}/xmlParserAPIs.jar"/>
-    <unjar src="${lib.dir}/xmlParserAPIs.jar" dest="${unpacked.dir}/xmlParserAPIs.jar"/>
-
-
-	<!-- Pack the MirrorUpdater.jar -->    
-    <jar jarfile="${mirrorupdater.runtime.dir}/MirrorUpdater.jar"
+    <!-- Pack the MirrorUpdater.jar -->    
+    <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
          compress="false"
          index="true">
       <manifest>
@@ -356,46 +330,50 @@
       </manifest>
       <fileset dir="${classes.dir}" includes="primarydatamanager/mirrorupdater/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${unpacked.dir}/commons-net.jar" includes="org/**"/>
     </jar>
 
-
-    <jar jarfile="${primarydatamanager.runtime.dir}/PrimaryDataManager.jar"
+    <!-- Pack the PrimaryDataManager.jar -->    
+    <jar jarfile="${tvdatatools.runtime.dir}/PrimaryDataManager.jar"
          compress="false"
          index="true">
-       <manifest>
-          <attribute name="Main-Class" value="primarydatamanager.PrimaryDataManager"/>
-       </manifest>
-       <fileset dir="${classes.dir}" includes="primarydatamanager/**"/>
-       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
-	   <fileset dir="${classes.dir}" includes="devplugin/**"/>
-       <fileset dir="${classes.dir}" includes="util/**"/>
+      <manifest>
+        <attribute name="Main-Class" value="primarydatamanager.PrimaryDataManager"/>
+      </manifest>
+      <fileset dir="${classes.dir}"
+               includes="primarydatamanager/**" 
+               excludes="**/secret/**" />
+      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>
+      <fileset dir="${classes.dir}" includes="util/**"/>
     </jar>
     
-    <jar jarfile="${pdsrunner.runtime.dir}/PDSRunner.jar"
-       compress="false"
-       index="true">
-       <manifest>
-         <attribute name="Main-Class" value="primarydatamanager.PDSRunner"/>
-       </manifest>
-       <fileset dir="${classes.dir}" includes="primarydatamanager/**"/>
-       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
-	   <fileset dir="${classes.dir}" includes="devplugin/**"/>
-       <fileset dir="${classes.dir}" includes="util/**"/>
-      <fileset dir="${unpacked.dir}/xercesImpl.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/xml-apis.jar" includes="org/**"/> 
-      <fileset dir="${unpacked.dir}/resolver.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/xmlParserAPIs.jar" includes="org/**"/>
-     </jar>  
+    <!-- Pack the PDSRunner.jar -->    
+    <jar jarfile="${tvdatatools.runtime.dir}/PDSRunner.jar"
+         compress="false"
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="primarydatamanager.PDSRunner"/>
+      </manifest>
+      <fileset dir="${classes.dir}"
+               includes="primarydatamanager/**" 
+               excludes="**/secret/**" />
+      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>
+      <fileset dir="${classes.dir}" includes="util/**"/>
+    </jar>  
 
     <!-- Copy the file(s) -->
-    <copy todir="${primarydatamanager.runtime.dir}/prepared">
+    <copy todir="${tvdatatools.runtime.dir}/prepared">
       <fileset dir="${txt.dir}" includes="mirrorlist.txt"/>
     </copy>
     
-    <copy todir="${mirrorupdater.runtime.dir}">
+    <copy todir="${tvdatatools.runtime.dir}">
       <fileset dir="${txt.dir}" includes="MirrorUpdater.ini"/>
     </copy>
   </target>
@@ -455,8 +433,8 @@
     <exec executable="${installer.dir}/makensis.exe"
           failonerror="true">
       <arg value="/NOCD"/>
-      <arg value="/DVERSION=${version}"/>
-      <arg value="/DVERSION_FILE=${version.file}"/>
+      <arg value="/DVERSION=${tvbrowser.version}"/>
+      <arg value="/DVERSION_FILE=${tvbrowser.version.file}"/>
       <arg value="/DPROG_NAME=${programname}"/>
       <arg value="/DPROG_NAME_FILE=${programname.file}"/>
       <arg value="/DRUNTIME_DIR=${tvbrowser-win.runtime.dir}"/>
@@ -467,6 +445,48 @@
   </target>
 
 
+  <!--
+   | Packs the TV data starter kit
+   |
+   | This target depends on clean-runtime to be sure that the runtime
+   | directory contains no stuff we don't want to be destributed.
+   +-->
+  <target name="public-tvdatakit" depends="clean, clean-runtime, test, runtime-tools">
+    <!-- Compile the example PDSs -->
+    <mkdir dir="classes-tvdatakit"/>
+    
+    <javac destdir="classes-tvdatakit"
+           debug="${debug}"
+           deprecation="true"
+           srcdir="tvdatakit/workspace/java">
+      <classpath>
+        <fileset dir="${tvdatatools.runtime.dir}">
+          <include name="PrimaryDataManager.jar"/>
+        </fileset>
+        <fileset dir="tvdatakit/workspace/java">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+    
+    <!-- Pack the TvDataStarterKit zip -->
+    <mkdir dir="${public.dir}"/>
+    
+    <zip destfile="${public.dir}/TvDataStarterKit_v${tvdatakit.version}.zip">
+      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}"
+                  dir="tvdatakit"/>
+      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}/workspace/java"
+                  dir="${tvdatatools.runtime.dir}">
+        <include name="*.jar"/>
+      </zipfileset>
+      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}/workspace/java"
+                  dir="classes-tvdatakit"/>
+      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}/workspace/java"
+                  dir="${txt.dir}"
+                  includes="LICENSE.txt"/>
+    </zip>
+  </target>
+  
 
   <!--
    | Creates all the stuff that can be downloaded.
@@ -477,18 +497,18 @@
   <target name="public" depends="clean, clean-runtime, test, runtime, doc, installer">
     <mkdir dir="${public.dir}"/>
 
-    <zip destfile="${public.dir}/tvbrowser_v${version}_bin.zip">
-      <zipfileset prefix="tvbrowser_v${version}"
+    <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_bin.zip">
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}"
                   dir="${tvbrowser.runtime.dir}"/>
     </zip>
 
-    <zip destfile="${public.dir}/tvbrowser_v${version}_doc.zip">
-      <zipfileset prefix="tvbrowser_v${version}/doc"
+    <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_doc.zip">
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/doc"
                   dir="${doc.dir}"/>
     </zip>
 
-    <zip destfile="${public.dir}/tvbrowser_v${version}_src.zip">
-      <zipfileset prefix="tvbrowser_v${version}/src"
+    <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_src.zip">
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
                   dir="${src.dir}">
         <include name="com/**"/>
         <include name="help/**"/>
@@ -501,13 +521,13 @@
         <exclude name="**/secret/**"/>
         <exclude name="**/CVS/**"/>
       </zipfileset>
-      <zipfileset prefix="tvbrowser_v${version}/src"
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
                   dir="${txt.dir}"
                   includes="LICENSE.txt"/>
     </zip>
 
-    <zip destfile="${public.dir}/tvbrowser_v${version}_cvs.zip">
-      <zipfileset prefix="tvbrowser_v${version}"
+    <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_cvs.zip">
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}"
                   dir=".">
         <include name="Overview.txt"/>
         <include name="build.*"/>
@@ -575,14 +595,14 @@
    | Zips the source code of one package.
    +-->
   <target name="-zipPackageSrc" if="package">
-    <zip destfile="${public.dir}/${package}_v${version}_src.zip">
-      <zipfileset prefix="tvbrowser_v${version}/src"
+    <zip destfile="${public.dir}/${package}_v${tvbrowser.version}_src.zip">
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
                   dir="${src.dir}">
         <include name="${package}/**"/>
         <exclude name="**/secret/**"/>
         <exclude name="**/CVS/**"/>
       </zipfileset>
-      <zipfileset prefix="tvbrowser_v${version}/src"
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
                   dir="${txt.dir}"
                   includes="LICENSE.txt"/>
 
