@@ -21,11 +21,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import util.ui.Localizer;
+import util.ui.ProgramList;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
-import devplugin.ProgramList;
 
 /**
  * Shows a List when a specific rated program will air

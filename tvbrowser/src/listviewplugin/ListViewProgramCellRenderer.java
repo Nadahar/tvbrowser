@@ -113,12 +113,15 @@ public class ListViewProgramCellRenderer extends DefaultListCellRenderer {
       Program program = (Program) value;
       
       mProgramPanel.setProgram(program);
+      mProgramPanel.setTextColor(label.getForeground());
+
       mChannelName.setText(program.getChannel().getName()+":");
+      mChannelName.setForeground(label.getForeground());
 
       String time = program.getTimeFieldAsString(ProgramFieldType.END_TIME_TYPE);
       
       mRunTill.setText(mLocalizer.msg("till", "till") + " " + time + " " + mLocalizer.msg("oclock", "o'clock"));
-      
+      mRunTill.setForeground(label.getForeground());
       mMainPanel.setBackground(label.getBackground());
       mMainPanel.setForeground(label.getForeground());
       mMainPanel.setEnabled(label.isEnabled());

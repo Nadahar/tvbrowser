@@ -41,6 +41,7 @@ import javax.swing.JScrollPane;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.ProgramList;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.TabLayout;
@@ -48,7 +49,6 @@ import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import devplugin.ProgramList;
 
 /**
  * A dialog for searching programs.
