@@ -138,6 +138,15 @@ public interface Program {
   public int getIntField(ProgramFieldType type);
 
   /**
+   * Gets the value of a int field as String.
+   * 
+   * @param type The type of the wanted field. Must have a int format.
+   * @return The value of the field as String or <code>null</code>, if there is
+   *         no value for this field. 
+   */
+  public String getIntFieldAsString(ProgramFieldType type);
+
+  /**
    * Gets the value of a time field from the program.
    * 
    * @param type The type of the wanted field. Must have a time format.

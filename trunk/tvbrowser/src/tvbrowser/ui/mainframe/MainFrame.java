@@ -71,7 +71,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(MainFrame.class);
 
-  private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
+  // private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
 
   private JDialog mConfigAssistantDialog;
   private SoftwareUpdateItem[] mSoftwareUpdateItems=null;
@@ -674,6 +674,11 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       mProgramTableScrollPane.setColumnWidth(Settings.getColumnWidth());
       mProgramTableScrollPane.updateChannelPanel();
       mProgramTableScrollPane.getProgramTable().updateLayout();
+    }
+
+    if (Settings.settingHasChanged(new String[]{"programpanel.iconPlugins","programpanel.infoFields"})) {
+      // Force a recreation of the table content
+      mProgramTableModel.setDate(finderPanel.getSelectedDate());
     }
   }
   

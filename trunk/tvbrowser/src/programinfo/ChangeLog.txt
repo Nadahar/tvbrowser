@@ -1,12 +1,15 @@
 Changelog PrograminfoPlugin
 
+1.0.6:
+- Shows the movie format using icons
+
 1.0.5:
 - Program info rewritten to show all new Program data fields.
 
 1.0.4:
 - remember window positon
 
-1.0.3: requires TVBrowser 0.95
+1.0.3: requires TVBrowser 0.9.5
 - Program-Info-Dialog shows by which plugins the program is marked.
 
 1.0.2

@@ -236,5 +236,20 @@ public class UiUtilities {
   }
   
  
+  /**
+   * Creates a text area that holds a help text.
+   * 
+   * @param msg The help text.
+   * @return A text area containing the help text.
+   */
+  public static JTextArea createHelpTextArea(String msg) {
+    JTextArea descTA = new JTextArea(msg);
+    descTA.setEditable(false);
+    descTA.setOpaque(false);
+    descTA.setWrapStyleWord(true);
+    descTA.setLineWrap(true);
+    
+    return descTA;
+  }
   
 }

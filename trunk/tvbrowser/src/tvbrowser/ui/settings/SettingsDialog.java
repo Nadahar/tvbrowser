@@ -153,10 +153,7 @@ public class SettingsDialog {
     PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();
     pluginSettingsTab.addSettingsChangeListener(contextmenuSettingsTab);
     
-    
-    
     // Appearance
-    
     node = new SettingNode(
     new DefaultSettingsTab(mLocalizer.msg("appearance","appearance"),null));
     root.add(node);
@@ -165,6 +162,7 @@ public class SettingsDialog {
     node.add(new SettingNode(new LookAndFeelSettingsTab()));
     node.add(new SettingNode(new FontsSettingsTab()));
     node.add(new SettingNode(new ProgramTableSettingsTab()));
+    node.add(new SettingNode(new ProgramPanelSettingsTab()));
     node.add(new SettingNode(contextmenuSettingsTab));
     
     // Plugins

@@ -115,7 +115,7 @@ public class ProgramInfo extends devplugin.Plugin {
     String desc =
       mLocalizer.msg("description", "Show information about a program");
     String author = "Martin Oberhauser";
-    return new PluginInfo(name, desc, author, new Version(1, 5));
+    return new PluginInfo(name, desc, author, new Version(1, 6));
   }
 
 
@@ -125,7 +125,7 @@ public class ProgramInfo extends devplugin.Plugin {
 
 
   public void execute(Program program) {
-    ProgramInfoDialog dlg = new ProgramInfoDialog(parent, program, mInfoBitArr,
+    ProgramInfoDialog dlg = new ProgramInfoDialog(getParentFrame(), program, mInfoBitArr,
                                                   mInfoIconArr, mInfoMsgArr);
     dlg.pack();
     dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -159,6 +159,20 @@ public class ProgramInfo extends devplugin.Plugin {
 
   public String getButtonIconName() {
     return null;
+  }
+
+
+  /**
+   * Gets the description text for the program table icons provided by this
+   * Plugin.
+   * <p>
+   * If the plugin does not provide such icons <code>null</code> will be returned.
+   * 
+   * @return The description text for the program table icons.
+   * @see #getProgramTableIcons(Program)
+   */
+  public String getProgramTableIconText() {
+    return mLocalizer.msg("programTableIconText", "Movie format");
   }
 
 

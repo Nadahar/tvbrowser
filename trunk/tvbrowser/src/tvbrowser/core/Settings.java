@@ -38,6 +38,7 @@ import util.io.IOUtilities;
 import tvdataservice.TvDataService;
 import devplugin.Channel;
 import devplugin.Plugin;
+import devplugin.ProgramFieldType;
 import tvbrowser.ui.SkinPanel;
 
 class TVBrowserProperties extends java.util.Properties {
@@ -57,7 +58,6 @@ class TVBrowserProperties extends java.util.Properties {
     }
 
     return super.setProperty(key,value);
-
   }
 
   public boolean isUnconfirmedSettingItem(String key) {
@@ -76,26 +76,94 @@ class TVBrowserProperties extends java.util.Properties {
       return;
     }
     
-    String line="";
-    
-    for (int i=0;i<values.length-1;i++) {
-      line+=values[i]+",";
+    StringBuffer buffer = new StringBuffer();
+    for (int i = 0; i < values.length; i++) {
+      if (i != 0) {
+        buffer.append(',');
+      }
+      buffer.append(values[i]);
     }
-    line+=values[values.length-1];
-    setProperty(key,line);
+    setProperty(key, buffer.toString());
   }
-  
-  
+
+
   public String[] getStringList(String key) {
+    return getStringList(key, new String[0]);
+  }    
+  
+  
+  public String[] getStringList(String key, String[] defaultList) {    
+    String s = getProperty(key);
+    if (s == null) {
+      return defaultList;
+    }
+
+    return s.split(",");
+  }
+  
+
+  /**
+   * Stores an int array in the settings.
+   * 
+   * @param key The key where to store.
+   * @param intArr The int array to store.
+   */  
+  public void setIntList(String key, int[] intArr) {
+    StringBuffer buffer = new StringBuffer();
     
-    String s=getProperty(key);
-    if (s==null) {
-      return new String[0];
+    for (int i = 0; i < intArr.length; i++) {
+      if (i != 0) {
+        buffer.append(',');
+      }
+      buffer.append(intArr[i]);
+    }
+
+    setProperty(key, buffer.toString());
+  }
+
+
+  /**
+   * Gets an int array from the Settings.
+   * <p>
+   * If there is nothing stored for the given key or if the stored String can't
+   * be converted into an int array, an empty array is returned.
+   * 
+   * @param key The key where the array is stored.
+   * @return An int array from the settings.
+   */
+  public int[] getIntList(String key) {
+    return getIntList(key, new int[0]);
+  }
+  
+  
+  /**
+   * Gets an int array from the Settings.
+   * <p>
+   * If there is nothing stored for the given key or if the stored String can't
+   * be converted into an int array, <code>defaultArr</code> is returned.
+   * 
+   * @param key The key where the array is stored.
+   * @param defaultArr The array to return when getting from the settings failed.
+   * @return An int array from the settings
+   */
+  public int[] getIntList(String key, int[] defaultArr) {
+    if (getProperty(key) == null) {
+      return defaultArr;
     }
     
-    return s.split(",");
-    
+    try {
+      String[] stringArr = getStringList(key);
+      int[] intArr = new int[stringArr.length];
+      for (int i = 0; i < stringArr.length; i++) {
+        intArr[i] = Integer.parseInt(stringArr[i]);
+      }
+      return intArr;
+    }
+    catch (NumberFormatException exc) {
+      return defaultArr;
+    }
   }
+
   
 	public void setFont(String key, Font f) {
 		String fStr[]=new String[3];
@@ -183,20 +251,21 @@ public class Settings {
   private static final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
   private static final Font PROGRAMINFOFONT=new Font("Dialog",Font.PLAIN,10);
   private static final Font CHANNELNAMEFONT=new Font("Dialog",Font.BOLD,12);
-  private static final Font PROGRAMTIMEFONT=new Font("Dialog",Font.BOLD,12); 
+  private static final Font PROGRAMTIMEFONT=new Font("Dialog",Font.BOLD,12);
+  
+  /** The cached program info fields */
+  private static ProgramFieldType[] mProgramInfoFields;  
+   
   
   public static boolean settingHasChanged(String[] key) {
-
-		  boolean result=false;
-		  for (int i=0;i<key.length;i++) {
-			  if (settings.isUnconfirmedSettingItem(key[i])) {
-				  result=true;
-			  }
-		  }
-		  return result;
-	  }
-
-
+    boolean result = false;
+    for (int i = 0; i < key.length; i++) {
+      if (settings.isUnconfirmedSettingItem(key[i])) {
+        result = true;
+      }
+    }
+    return result;
+  }
 
 
   /**
@@ -798,6 +867,58 @@ public class Settings {
   
   public static void setProgramTimeFont(java.awt.Font f) {
     settings.setFont("font.programtime",f);
+  }
+
+  public static ProgramFieldType[] getProgramInfoFields() {
+    if (mProgramInfoFields == null) {
+      int[] defaultArr = new int[] {
+        ProgramFieldType.EPISODE_TYPE.getTypeId(),
+        ProgramFieldType.ORIGIN_TYPE.getTypeId(),
+        ProgramFieldType.PRODUCTION_YEAR_TYPE.getTypeId(),
+        ProgramFieldType.SHOWVIEW_NR_TYPE.getTypeId(),
+        ProgramFieldType.SHORT_DESCRIPTION_TYPE.getTypeId(),
+        ProgramFieldType.DESCRIPTION_TYPE.getTypeId(),
+      };
+      
+      int[] fieldIdArr = settings.getIntList("programpanel.infoFields", defaultArr);
+      ArrayList list = new ArrayList();
+      for (int i = 0; i < fieldIdArr.length; i++) {
+        ProgramFieldType type = ProgramFieldType.getTypeForId(fieldIdArr[i]);
+        if (type != null) {
+          list.add(type);
+        }
+      }
+      
+      ProgramFieldType[] asArr = new ProgramFieldType[list.size()];
+      list.toArray(asArr);
+      mProgramInfoFields = asArr;
+    }
+    
+    return mProgramInfoFields;
+  }
+
+  public static void setProgramInfoFields(ProgramFieldType[] fieldArr) {
+    int[] fieldIdArr = new int[fieldArr.length];
+    for (int i = 0; i < fieldIdArr.length; i++) {
+      fieldIdArr[i] = fieldArr[i].getTypeId();
+    }
+    settings.setIntList("programpanel.infoFields", fieldIdArr);
+    
+    // Clear the cached fields
+    mProgramInfoFields = null;
+  }
+
+  public static String[] getProgramTableIconPlugins() {
+    String[] defaultList = new String[] {
+      "programinfo.ProgramInfo",
+      "tvraterplugin.TVRaterPlugin",
+    };
+    
+    return settings.getStringList("programpanel.iconPlugins", defaultList);
+  }
+
+  public static void setProgramTableIconPlugins(String[] pluginList) {
+    settings.setStringList("programpanel.iconPlugins", pluginList);
   }
   
   public static boolean isWindowMaximized() {

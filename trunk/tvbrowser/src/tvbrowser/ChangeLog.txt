@@ -2,6 +2,10 @@ Changelog TVBrowser
 
 current:
 - added downnload status info
+- Extended program table
+    - Support for plugin icons
+    - The info text is now freely configurable
+    - The table is much faster
 
 
 0.9.7.1, 0.9.7.2:

@@ -349,6 +349,24 @@ public class MutableProgram implements Program {
   }
   
   
+
+  /**
+   * Gets the value of a int field as String.
+   * 
+   * @param type The type of the wanted field. Must have a int format.
+   * @return The value of the field as String or <code>null</code>, if there is
+   *         no value for this field. 
+   */
+  public String getIntFieldAsString(ProgramFieldType type) {
+    int value = getIntField(type);
+    if (value == -1) {
+      return null;
+    } else {
+      return Integer.toString(value);
+    }
+  }
+  
+  
   public int getTimeField(ProgramFieldType type) {
     Integer value = (Integer) getField(type, ProgramFieldType.TIME_FORMAT);
     if (value == null) {

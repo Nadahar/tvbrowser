@@ -193,9 +193,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     if (program.isExpired()) {
       String msg = mLocalizer.msg("programAlreadyExpired",
         "The program is already expired!");
-      JOptionPane.showMessageDialog(parent, msg);
+      JOptionPane.showMessageDialog(getParentFrame(), msg);
     } else {
-      ReminderDialog dlg = new ReminderDialog(parent, program);
+      ReminderDialog dlg = new ReminderDialog(getParentFrame(), program);
       UiUtilities.centerAndShow(dlg);
       if (dlg.getOkPressed()) {
         int minutes = dlg.getReminderMinutes();
@@ -221,7 +221,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
 
   public void execute() {
-    JDialog dlg= new ReminderListDialog(parent, reminderList);
+    JDialog dlg= new ReminderListDialog(getParentFrame(), reminderList);
     dlg.setSize(600,350);
     UiUtilities.centerAndShow(dlg);
     dlg.dispose();

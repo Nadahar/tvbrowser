@@ -49,13 +49,10 @@ public class PrintPlugin extends devplugin.Plugin
    private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PrintPlugin.class);
 
-   private static PrintPlugin mInstance;
-
    public PrintService[] mAllServices;
 
    public PrintPlugin()
    {
-      mInstance=this;
    }
 
    public String getButtonIconName()
@@ -129,7 +126,7 @@ public class PrintPlugin extends devplugin.Plugin
 
       if(start)
       {
-         PrintDialog dlg = new PrintDialog(super.parent, this);
+         PrintDialog dlg = new PrintDialog(getParentFrame(), this);
          UiUtilities.centerAndShow(dlg);
       }
 

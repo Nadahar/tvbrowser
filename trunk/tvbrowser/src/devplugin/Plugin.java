@@ -32,60 +32,108 @@ import java.util.Properties;
 import java.util.jar.JarFile;
 
 import javax.swing.Icon;
-import javax.swing.Timer;
 
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 
+/**
+ * Superclass for all TV-Browser plugins.
+ * <p>
+ * To create a plugin do the following:
+ * <ol>
+ * <li>Create a class that extends this class and name its package equal to the
+ *     class name but with lowercase letters.
+ *     E.g. <code>myplugin.MyPlugin</code>.</li>
+ * <li>Write your plugin code in that class.</li>
+ * <li>Pack your plugin class including all needed ressources in a jar file
+ *     named equal to your class. E.g. <code>MyPlugin.jar</code>.
+ * <li>Put the jar in the <code>plugin</code> directory of your TV-Browser
+ *     installation.
+ * </ol>
+ * 
+ * @author Martin Oberhauser
+ * @author Til Schneider, www.murfman.de
+ */
 abstract public class Plugin {
-  
+
+  /** The localizer used by this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
-  
-  protected JarFile jarFile;
-  private static PluginManager pluginManager;
-  protected Timer timer;
-  protected java.awt.Frame parent;
-  private Icon buttonIcon;
-  private Icon markIcon;
+
+  /** The jar file of this plugin. May be used to load ressources. */  
+  private JarFile mJarFile;
+  /**
+   * The plugin manager. It's the plugin's connection to TV-Browser.
+   * <p>
+   * Every communication between TV-Browser and the plugin is either initiated
+   * by TV-Browser or made by using the plugin manager.
+   */
+  private static PluginManager mPluginManager;
+  /** The parent frame. May be used for dialogs. */
+  private java.awt.Frame mParentFrame;
+  /** The cached icon to use for the toolbar and the menu. */
+  private Icon mButtonIcon;
+  /** The cached icon to use for marking programs. */
+  private Icon mMarkIcon;
   
   
   
   /**
-   * Called by the host-application to provide access to the plugin manager
+   * Called by the host-application to provide access to the plugin manager.
    */
   final public static void setPluginManager(PluginManager manager) {
-    if (pluginManager == null ) {
-      pluginManager = manager;
+    if (mPluginManager == null ) {
+      mPluginManager = manager;
     }
   }
   
   
-  
   /**
-   * Use this method to call methods of the plugin manager
+   * Use this method to call methods of the plugin manager.
+   * <p>
+   * The plugin manager is your connection to TV-Browser. Every communication
+   * between TV-Browser and the plugin is either initiated by TV-Browser or made
+   * by using the plugin manager.
    */
   final public static PluginManager getPluginManager() {
-    return pluginManager;
+    return mPluginManager;
+  }
+  
+
+  /**
+   * Gets the jar file of this plugin. May be used to load ressources.
+   */  
+  final protected JarFile getJarFile() {
+    return mJarFile;
   }
   
   
-  
   /**
-   * Called by the host-application.
+   * Called by the host-application to provide the parent frame.
    */
   final public void setParent(java.awt.Frame parent) {
-    this.parent = parent;
+    this.mParentFrame = parent;
   }
   
   
+  /**
+   * Gets the parent frame.
+   * <p>
+   * The parent frame may be used for showing dialogs.
+   * 
+   * @return The parent frame.
+   */
+  final protected java.awt.Frame getParentFrame() {
+    return mParentFrame;
+  }
+  
   
   /**
-   * Called by the host-application
+   * Called by the host-application to provide the jar file.
    */
   final public void setJarFile(java.io.File jarFile) throws TvBrowserException {
     try {
-      this .jarFile = new JarFile(jarFile);
+      this .mJarFile = new JarFile(jarFile);
     } catch (java.io.IOException exc) {
       throw new TvBrowserException(getClass(), "error.1",
         "Setting file failed!\n({0})", exc);
@@ -140,7 +188,7 @@ abstract public class Plugin {
   
   
   /**
-   * Implement this function to provide information about your plugin.
+   * Implement this method to provide information about your plugin.
    */
   public PluginInfo getInfo() {
     String name = mLocalizer.msg( "unkown" ,"Unknown" );
@@ -155,8 +203,8 @@ abstract public class Plugin {
   /**
    * This method is called by the host-application to show the plugin in the
    * context menu.
-   * Let getContextMenuItemText return null if your plugin does not provide
-   * this feature.
+   * <p>
+   * Return <code>null</code> if your plugin does not provide this feature.
    */
   public String getContextMenuItemText() {
     return null;
@@ -166,10 +214,7 @@ abstract public class Plugin {
   
   /**
    * This method is called by the host-application to show the plugin in the
-   * menu (or in a button in further versions).
-   * Let getContextMenuItemText return null if your plugin does not provide
-   * this feature.
-   *
+   * menu or in the toolbar.
    */
   public String getButtonText() {
     return mLocalizer.msg( "newPlugin" ,"New plugin" );
@@ -179,6 +224,8 @@ abstract public class Plugin {
   
   /**
    * Returns a new SettingsTab object, which is added to the settings-window.
+   * <p>
+   * Return <code>null</code> if your plugin does not provide this feature.
    */
   public SettingsTab getSettingsTab() {
     return null;
@@ -186,6 +233,12 @@ abstract public class Plugin {
   
   
   
+  /**
+   * Gets whether the plugin supports execution of multiple programs.
+   * 
+   * @return Whether the plugin supports execution of multiple programs.
+   * @see #execute(Program[])
+   */
   public boolean supportMultipleProgramExecution() {
     return false;
   }
@@ -194,6 +247,8 @@ abstract public class Plugin {
   
   /**
    * This method is invoked for multiple program execution.
+   * 
+   * @see #supportMultipleProgramExecution()
    */
   public void execute(Program[] programArr) {
   }
@@ -211,52 +266,91 @@ abstract public class Plugin {
   
   /**
    * This method is invoked by the host-application if the user has choosen your
-   * plugin from the menu.
+   * plugin from the menu or the toolbar.
    */
   public void execute() {
   }
   
   
-  
+  /**
+   * Gets the icon used for marking programs in the program table.
+   * 
+   * @see #getMarkIconName()
+   */
   public final Icon getMarkIcon() {
-    if (markIcon== null ) {
+    if (mMarkIcon== null ) {
       String iconFileName = getMarkIconName();
       if (iconFileName != null) {
-        markIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
+        mMarkIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
       }
     }
-    return markIcon;
-  }
-  
-  
-  
-  public final Icon getButtonIcon() {
-    if (buttonIcon == null ) {
-      String iconFileName = getButtonIconName();
-      if (iconFileName != null) {
-        buttonIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
-      }
-    }
-    return buttonIcon;
+    return mMarkIcon;
   }
   
   
   /**
-   * Returns the name of the file, containing your plugin icon (in the jar-File).
+   * Gets the icon used for the toolbar and the menu.
+   * 
+   * @see #getButtonIconName()
+   */
+  public final Icon getButtonIcon() {
+    if (mButtonIcon == null ) {
+      String iconFileName = getButtonIconName();
+      if (iconFileName != null) {
+        mButtonIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
+      }
+    }
+    return mButtonIcon;
+  }
+  
+  
+  /**
+   * Returns the name of the file, containing your mark icon (in the jar-File).
+   * <p>
+   * This icon is used for marking programs in the program table.
+   * <p>
+   * Return <code>null</code> if your plugin does not provide this feature.
+   * 
+   * @see #getMarkIcon()
    */
   abstract public String getMarkIconName();
   
+
+  /**
+   * Returns the name of the file, containing your button icon (in the jar-File).
+   * <p>
+   * This icon is used for the toolbar and the menu.
+   * <p>
+   * Return <code>null</code> if your plugin does not provide this feature.
+   * 
+   * @see #getButtonIcon()
+   */
   abstract public String getButtonIconName();
 
 
   /**
-   * Gets the icons this Plugin provides for the given program. These icons will
-   * be shown in the program table.
+   * Gets the description text for the program table icons provided by this
+   * Plugin.
    * <p>
-   * If the plugin does not provide such icons <code>null</code> will be returned.
+   * Return <code>null</code> if your plugin does not provide this feature.
+   * 
+   * @return The description text for the program table icons.
+   * @see #getProgramTableIcons(Program)
+   */
+  public String getProgramTableIconText() {
+    return null;
+  }
+  
+  
+  /**
+   * Gets the icons this Plugin provides for the given program. These icons will
+   * be shown in the program table under the start time.
+   * <p>
+   * Return <code>null</code> if your plugin does not provide this feature.
    * 
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
+   * @see #getProgramTableIconText()
    */
   public Icon[] getProgramTableIcons(Program program) {
     return null;
@@ -278,6 +372,7 @@ abstract public class Plugin {
    */
   public void handleTvDataChanged(ChannelDayProgram newProg) {
   }
+
   
   /**
    * This method is automatically called, when the TV data has changed.
@@ -291,6 +386,7 @@ abstract public class Plugin {
    */
   public void handleTvDataChanged() {
   }
+
 
   /**
    * This method is automatically called, when TV data was added.
@@ -310,6 +406,7 @@ abstract public class Plugin {
     handleTvDataChanged(newProg);
   }
 
+
   /**
    * This method is automatically called, when TV data was deleted.
    * (E.g. after an update).
@@ -322,7 +419,13 @@ abstract public class Plugin {
    */
   public void handleTvDataDeleted(ChannelDayProgram oldProg) {
   }
-  
+
+
+  /**
+   * Gets the name of the plugin.
+   * <p>
+   * This way Plugin objects may be used directly in GUI components like JLists.
+   */  
   final public String toString() {
       return getInfo().getName();
   }

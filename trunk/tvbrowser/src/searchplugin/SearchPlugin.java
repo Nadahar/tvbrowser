@@ -93,7 +93,7 @@ private static SearchPlugin mInstance;
    * plugin from the menu.
    */
   public void execute() {
-    SearchDialog dlg = new SearchDialog(super.parent);
+    SearchDialog dlg = new SearchDialog(getParentFrame());
     UiUtilities.centerAndShow(dlg);
   }
 
@@ -104,7 +104,7 @@ private static SearchPlugin mInstance;
    * plugin from the context menu.
    */
   public void execute(Program program) {
-    SearchDialog dlg = new SearchDialog(super.parent);
+    SearchDialog dlg = new SearchDialog(getParentFrame());
     dlg.setPatternText(program.getTitle());
     UiUtilities.centerAndShow(dlg);
   }
