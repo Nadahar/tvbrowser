@@ -72,10 +72,6 @@ import devplugin.Program;
  */
 public class ListViewDialog extends JDialog {
 
-    /** The localizer for the time-phrases. */
-    public static final util.ui.Localizer mTimeLocalizer = util.ui.Localizer
-            .getLocalizerFor(TimeChooserPanel.class);
-
     /** The localizer used by this class. */
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer
             .getLocalizerFor(ListViewDialog.class);
@@ -95,15 +91,14 @@ public class ListViewDialog extends JDialog {
     /** Time-Spinner for mOn */
     private JSpinner mTimeSpinner = new JSpinner(new SpinnerDateModel());
     /** Text for mRuns */
-    final static String[] TIMETEXT = { mTimeLocalizer.msg("button.now", "Now"),
+    final static String[] TIMETEXT = { mLocalizer.msg("now", "Now"),
             mLocalizer.msg("15min", "in 15 minutes"),
-            mLocalizer.msg("30min", "in 30 minutes"),
-            mTimeLocalizer.msg("button.early", "Early"),
-            mTimeLocalizer.msg("button.midday", "Midday"),
-            mTimeLocalizer.msg("button.afternoon", "Afternoon"),
-            mTimeLocalizer.msg("button.evening", "Evening") };
+            mLocalizer.msg("30min", "in 30 minutes")};
     /** Select for mRuns */
-    private JComboBox mBox = new JComboBox(TIMETEXT);
+    private JComboBox mBox;
+    
+    /** Times */
+    private int[] mTimes = Settings.propTimeButtons.getIntArray();
     
     /** Plugin that created the Dialog */
     private Plugin mPlugin;
@@ -255,33 +250,12 @@ public class ListViewDialog extends JDialog {
     private int calcTimeForSelection(int selectedIndex) {
         int time = getCurrentTime();
 
-        switch (selectedIndex) {
-        case 1:
-            time += 15;
-            break;
-
-        case 2:
-            time += 30;
-            break;
-
-        case 3:
-            time = Settings.propEarlyTime.getInt();
-            break;
-
-        case 4:
-            time = Settings.propMiddayTime.getInt();
-            break;
-
-        case 5:
-            time = Settings.propAfternoonTime.getInt();
-            break;
-
-        case 6:
-            time = Settings.propEveningTime.getInt();
-            break;
-
-        default:
-            break;
+        if (selectedIndex == 1) {
+            return time+15;
+        } else if (selectedIndex == 2) {
+            return time+30;
+        } else if (selectedIndex > 2) {
+            return mTimes[selectedIndex-3];
         }
 
         return time;
@@ -297,6 +271,21 @@ public class ListViewDialog extends JDialog {
         content.setLayout(new BorderLayout());
         content.setBorder(UiUtilities.DIALOG_BORDER);
 
+        Vector data = new Vector();
+        
+        data.add(TIMETEXT[0]);
+        data.add(TIMETEXT[1]);
+        data.add(TIMETEXT[2]);
+
+        for (int i=0;i<mTimes.length; i++) {
+            int h = mTimes[i]/60;
+            int m = mTimes[i]%60;
+            String title = mLocalizer.msg("at", "at") + " " + h+":"+(m<10?"0":"")+m;
+            data.add(title);
+        }
+        
+        mBox = new JComboBox(data);
+        
         mBox.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
