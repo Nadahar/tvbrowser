@@ -43,6 +43,7 @@ import java.util.Enumeration;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -60,6 +61,7 @@ import util.exc.ErrorHandler;
 import util.ui.ExtensionFileFilter;
 import util.ui.ImageUtilities;
 import util.ui.ProgramList;
+import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Program;
@@ -79,7 +81,7 @@ public class ManageFavoritesDialog extends JDialog {
   private JList mFavoritesList;
   private ProgramList mProgramList;
   private JSplitPane mSplitPane;
-  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt;
+  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt, mSendBt;
   private JButton mOkBt, mCancelBt;
   
   private boolean mOkWasPressed = false;
@@ -164,6 +166,17 @@ public class ManageFavoritesDialog extends JDialog {
     });
     toolbarPn.add(mSortBt);
 
+    msg = mLocalizer.msg("send", "Send Programs to another Plugin");
+    icon = new ImageIcon("imgs/SendToPlugin24.png");
+    mSendBt = UiUtilities.createToolBarButton(msg, icon);
+    mSendBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+          showSendDialog();
+      }
+    });
+    toolbarPn.add(mSendBt);
+    
+    
     msg = mLocalizer.msg("import", "Import favorites from TVgenial");
     icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Import24.gif", getClass());
     mImportBt = UiUtilities.createToolBarButton(msg, icon);
@@ -250,9 +263,12 @@ public class ManageFavoritesDialog extends JDialog {
     
     if (selection == -1) {
       mProgramListModel.clear();
+      mSendBt.setEnabled(false);
     } else {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
       Program[] programArr = fav.getPrograms();
+
+      mSendBt.setEnabled(programArr.length > 0);
       
       mProgramListModel.clear();
       mProgramListModel.ensureCapacity(programArr.length);
@@ -262,6 +278,20 @@ public class ManageFavoritesDialog extends JDialog {
     }
   }
 
+  public void showSendDialog() {
+      int selection = mFavoritesList.getSelectedIndex();
+
+      if(selection == -1) {
+          return;
+      }
+      
+      Favorite fav = (Favorite) mFavoritesListModel.get(selection);
+      Program[] programArr = fav.getPrograms();
+
+      SendToPluginDialog send = new SendToPluginDialog(this, programArr);
+
+      send.show();
+  }
   
 
   protected void newFavorite() {
