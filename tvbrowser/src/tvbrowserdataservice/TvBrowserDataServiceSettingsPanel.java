@@ -157,6 +157,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         mAddBtn.setHorizontalAlignment(JButton.LEFT);
         mRemoveBtn.setHorizontalAlignment(JButton.LEFT);
         mResetBtn.setHorizontalAlignment(JButton.LEFT);
+        mInfoBtn.setHorizontalAlignment(JButton.LEFT);
 
         btnPn.add(mAddBtn);
         btnPn.add(mRemoveBtn);

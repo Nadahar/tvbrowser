@@ -8,7 +8,6 @@ TODOs:
 - News-Plugin:
     Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
     evtl. Option "News automatisch holen"
-- (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
 - Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea)
 - kuerzere Texte fuer die Symbolbuttons
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
@@ -58,4 +57,4 @@ Erledigt:
 - (B) Default-Icon fur Sender, die kein Icon haben
 - (B) Hilfe - Einrichtungsassistent geht nicht
 - (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail)
-
+- (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
