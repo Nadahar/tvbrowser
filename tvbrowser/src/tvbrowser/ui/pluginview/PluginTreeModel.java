@@ -56,7 +56,7 @@ public class PluginTreeModel extends DefaultTreeModel {
     root.insert(pluginRoot.getMutableTreeNode(), 0);
   }
 
-  public Plugin getPlugin(TreePath path) {
+  public static Plugin getPlugin(TreePath path) {
     if (path.getPathCount()>0) {
       Object o = path.getPathComponent(1);
       DefaultMutableTreeNode node = (DefaultMutableTreeNode)o;

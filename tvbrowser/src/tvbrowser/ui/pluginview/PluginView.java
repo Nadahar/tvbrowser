@@ -67,6 +67,7 @@ public class PluginView extends JPanel implements MouseListener {
     }
     
     mTree = new JTree(mModel);
+    mTree.setSelectionModel(new PluginTreeSelectionModel());
     mTree.addMouseListener(this);
     add(new JScrollPane(mTree), BorderLayout.CENTER);
   }
@@ -74,40 +75,57 @@ public class PluginView extends JPanel implements MouseListener {
 
   public void mouseClicked(MouseEvent e) {
     ProgramItem programItem = null;
-    TreePath path = mTree.getPathForLocation(e.getX(), e.getY());
-    if (path == null) {
-      return;
-    }
-
-    mTree.setSelectionPath(path);
-    DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
-    Object o = node.getUserObject();
-    if (o instanceof ProgramItem) {
-      programItem = (ProgramItem)o;
-    }
-    else {
-      return;
-    }
 
     if (SwingUtilities.isRightMouseButton(e)) {
-     showContextMenu(mModel.getPlugin(path),(ProgramItem)o, e.getX(), e.getY());
+      TreePath[] paths = mTree.getSelectionPaths();
+      if (paths!=null && paths.length>0) {
+        showContextMenu(mTree.getSelectionPaths(), e.getX(), e.getY());
+      }
     }
     else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) mTree.getLastSelectedPathComponent();
+      Object o = node.getUserObject();
+      if (o instanceof ProgramItem) {
+        programItem = (ProgramItem)o;
+      }
+      else {
+        return;
+      }
       MainFrame.getInstance().scrollToProgram(programItem.getProgram());
     }
     
   }
 
 
-  private void showContextMenu(Plugin rootNodePlugin, final ProgramItem program, int x, int y) {
+  private void showContextMenu(TreePath[] paths, int x, int y) {
+ /*   if (paths.length==1) {
+      TreePath path = paths[0];
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+      Object o = node.getUserObject();
+      if (o instanceof ProgramItem) {
+        showContextMenu(mModel.getPlugin(path),(ProgramItem)o, x, y);
+      }
+    }
+    else {   */
+      Program[] programs = new Program[paths.length];
+      for (int i=0; i<programs.length; i++) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
+        programs[i] = ((ProgramItem)node.getUserObject()).getProgram();
+      }
+      showContextMenu(mModel.getPlugin(paths[0]), programs, x, y);
+   // }
+  }
+
+  private void showContextMenu(Plugin rootNodePlugin, final Program[] programs, int x, int y) {
     JPopupMenu menu = new JPopupMenu();
     JMenuItem showInTableMI = new JMenuItem("Show");
     showInTableMI.setFont(CONTEXT_MENU_BOLDFONT);
     showInTableMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().scrollToProgram(program.getProgram());
+        MainFrame.getInstance().scrollToProgram(programs[0]);
       }
     });
+    showInTableMI.setEnabled(programs.length == 1);
 
     menu.add(showInTableMI);
 
@@ -125,7 +143,7 @@ public class PluginView extends JPanel implements MouseListener {
           copyMenu.add(item);
           item.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-              plugin.receivePrograms(new Program[]{program.getProgram()});
+              plugin.receivePrograms(programs);
             }
           });
         }
@@ -134,9 +152,10 @@ public class PluginView extends JPanel implements MouseListener {
 
     menu.addSeparator();
 
-    JMenuItem[] pluginMenuItems = PluginProxyManager.createPluginContextMenuItems(program.getProgram(), false);
+    JMenuItem[] pluginMenuItems = PluginProxyManager.createPluginContextMenuItems(programs[0], false);
     for (int i=0; i<pluginMenuItems.length; i++) {
       menu.add(pluginMenuItems[i]);
+      pluginMenuItems[i].setEnabled(programs.length == 1);
     }
 
 

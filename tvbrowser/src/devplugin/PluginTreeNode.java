@@ -63,19 +63,20 @@ public class PluginTreeNode /*extends DefaultMutableTreeNode*/ {
     mNodeType = type;
     mViewType = VIEW_TYPE_DEFAULT;
     mObject = o;
-    mDefaultNode = new DefaultMutableTreeNode(mObject);
+    mDefaultNode = new Node(mObject);
   }
 
   public PluginTreeNode(String title) {
     this(TYPE_NODE, title);
   }
 
-  public PluginTreeNode(Object o) {
-    this(TYPE_NODE, o);
+  public PluginTreeNode(Plugin plugin) {
+    this(TYPE_NODE, plugin);
   }
 
   public PluginTreeNode(ProgramItem item) {
     this(TYPE_PROGRAM, item);
+    mDefaultNode.setAllowsChildren(false);
   }
 
   public MutableTreeNode getMutableTreeNode() {
@@ -350,5 +351,18 @@ public class PluginTreeNode /*extends DefaultMutableTreeNode*/ {
 
     }
   }
-    
+
+
+  class Node extends DefaultMutableTreeNode {
+
+    public Node(Object o) {
+      super(o);
+    }
+
+    public boolean isLeaf() {
+      return !getAllowsChildren();
+    }
+
+  }
+
 }
