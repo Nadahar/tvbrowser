@@ -28,7 +28,6 @@ java.lang.NullPointerException
 	at tvbrowser.core.TvDataUpdater.downloadTvData(TvDataUpdater.java:165)
 	at tvbrowser.ui.mainframe.MainFrame$6.run(MainFrame.java:556)
   Meldung passst nicht zum Problem
-- Hilfe - Einrichtungsassistent geht nicht
 - Button Lieblingssendungen ist zu klein
 - Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
 - (B) Umlaute im Einrichtungsassistent
@@ -54,3 +53,4 @@ Erledigt:
 - (B) Uebernehmen-Knopf in Einstellungen
 - (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
 - (B) Default-Icon fur Sender, die kein Icon haben
+- (B) Hilfe - Einrichtungsassistent geht nicht

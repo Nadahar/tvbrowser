@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -316,7 +314,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.tvbrowser",""));
      }
      else if (source == mConfigAssistantMI) {
-         
+         mMainFrame.runSetupAssistant();
      }
      else if (source == mAboutMI) {
        mMainFrame.showAboutBox();
