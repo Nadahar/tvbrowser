@@ -107,6 +107,8 @@ public class ProgramListDialog extends JDialog {
         
         _programJList = new ProgramList(prg);
 
+        _programJList.addMouseListeners(TVRaterPlugin.getInstance());
+        
         JScrollPane scroll = new JScrollPane(_programJList);
 
         content.add(scroll, BorderLayout.CENTER);
