@@ -126,8 +126,9 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       // "body" +
       // "{ background-image:url(back.jpg); padding:10px; }" +
       "#title" +
-      "{ font-size:15px; font-family:Dialog; " +
-      "text-align:center; font-weight:bold; }" +
+      "{ font-size:15px; font-family:Dialog; text-align:center; font-weight:bold; }" +
+      "#maininfo" +
+      "{ font-size:9px; font-family:Dialog; text-align:right; font-weight:bold; }" +
       "#time" +
       "{ font-size:9px; font-family:Dialog; text-align:center; }" +
       "#info" +
@@ -140,21 +141,19 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       "</style>" +
       "</head>" +
       "<body>");
+      
+    buffer.append("<table width=\"100%\"><tr><td valign=\"top\">");
     
-    openPara(buffer, "title");
-    buffer.append(prog.getChannel().getName() + ": " + prog.getTitle());
-    closePara(buffer);
-    
+    newPara(buffer, "title", prog.getTitle());
+
     openPara(buffer, "time");
-    buffer.append(prog.getDateString() + " - ");
-    int minutes = prog.getMinutes();
-    int hours = prog.getHours();
-    buffer.append(hours + ":" + (minutes < 10 ? "0" : "") + minutes);
     int length = prog.getLength();
     if (length > 0) {
       msg = mLocalizer.msg("minutes", "{0} min", new Integer(length));
-      buffer.append(" - " + msg + " (");
+      buffer.append(msg + " (");
       
+      int hours = prog.getHours();
+      int minutes = prog.getMinutes();
       int endTime = (hours * 60 + minutes + length) % (24 * 60);
       minutes = endTime % 60;
       hours = endTime / 60;
@@ -168,8 +167,15 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       }
       buffer.append(")");
     }
-
     closePara(buffer);
+
+    buffer.append("</td><td width=\"1%\" valign=\"top\" nowrap>");
+
+    newPara(buffer, "maininfo", prog.getDateString());
+    newPara(buffer, "maininfo", prog.getTimeString());
+    newPara(buffer, "maininfo", prog.getChannel().getName());
+
+    buffer.append("</td></tr></table>");
 
     buffer.append("<br>\n");
     int offset = buffer.length();
