@@ -1,6 +1,9 @@
 Changelog TVBrowser
 
-current (0.9.7):
+current (0.9.8):
+- Program now supports all new data fields
+
+0.9.7:
 - Bugfixes:
     - Stopping updates works now
 - Changed the TvDataService-Interface

@@ -240,6 +240,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="favoritesplugin/**"/>
     </jar>
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/ShowviewPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
+    </jar>
 
 	<!-- Pack the TV data service jars -->    
     <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
@@ -457,6 +461,10 @@
 
     <antcall target="-zipPackageSrc">
       <param name="package" value="favoritesplugin"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="showviewplugin"/>
     </antcall>
   </target>
 

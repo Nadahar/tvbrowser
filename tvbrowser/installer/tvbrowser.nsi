@@ -253,6 +253,13 @@ Section "Lieblingssendungen verwalten"
   File "${RUNTIME_DIR}\plugins\FavoritesPlugin.jar"
 SectionEnd
 
+Section "Showviewnummern berechnen"
+  SectionIn 1
+
+  SetOutPath "$INSTDIR\plugins"
+  File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
+SectionEnd
+
 Section "Drucken"
   SectionIn 1
 
