@@ -115,6 +115,13 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /** Panel under a Mouse ? */
   private boolean mMouseOver = false;  
   
+  /** Orientation Progressbar in X_AXIS */
+  final public static int X_AXIS = 0;
+  /** Orientation Progressbar in Y_AXIS */
+  final public static int Y_AXIS = 1;
+  /** Orientation of Progressbar */
+  private int mAxis = Y_AXIS;
+  
   /**
    * Creates a new instance of ProgramPanel.
    */  
@@ -136,6 +143,18 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */  
   public ProgramPanel(Program prog) {
     this();
+    setProgram(prog);
+  }
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   *
+   * @param prog The program to show in this panel.
+   * @param axis Orientation of ProgressBar (X_AXIS/Y_AXIS)
+   */  
+  public ProgramPanel(Program prog, int axis) {
+    this();
+    mAxis = axis;
     setProgram(prog);
   }
 
@@ -359,16 +378,30 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       } else {
         elapsedMinutes = minutesAfterMidnight - startTime;
       }
-      int progressY = 0;
-      if (progLength > 0) {
-        progressY = elapsedMinutes * height / progLength;
-      }
+      
+      if (mAxis == X_AXIS) {
+          int progressX = 0;
+          if (progLength > 0) {
+            progressX = elapsedMinutes * width / progLength;
+          }
 
-      grp.setColor(COLOR_ON_AIR_DARK);
-      grp.fillRect(1, 1, width - 2, progressY - 1);
-      grp.setColor(COLOR_ON_AIR_LIGHT);
-      grp.fillRect(1, progressY, width - 2, height - progressY - 1);
-      grp.draw3DRect(0, 0, width - 1, height - 1, true);
+          grp.setColor(COLOR_ON_AIR_DARK);
+          grp.fillRect(1, 1, progressX - 1, height - 1);
+          grp.setColor(COLOR_ON_AIR_LIGHT);
+          grp.fillRect(progressX, 1, width - progressX - 2, height - 1);
+          grp.draw3DRect(0, 0, width - 1, height - 1, true);
+      } else {
+          int progressY = 0;
+          if (progLength > 0) {
+            progressY = elapsedMinutes * height / progLength;
+          }
+
+          grp.setColor(COLOR_ON_AIR_DARK);
+          grp.fillRect(1, 1, width - 2, progressY - 1);
+          grp.setColor(COLOR_ON_AIR_LIGHT);
+          grp.fillRect(1, progressY, width - 2, height - progressY - 1);
+          grp.draw3DRect(0, 0, width - 1, height - 1, true);
+      }
     }
 
     // If there are plugins that have marked the program -> paint the background
