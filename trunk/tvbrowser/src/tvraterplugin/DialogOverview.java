@@ -71,11 +71,6 @@ public class DialogOverview extends JDialog {
     /** List of overall Ratings */
     private JList _overall;
     
-    /** Data for personal Rating */
-    private Vector _personalData;
-    /** Data for overall Rating */
-    private Vector _overallData;
-
     /** Der Update-Button */
     private JButton _update;
 
@@ -103,12 +98,12 @@ public class DialogOverview extends JDialog {
 
         RatingComparator comperator = new RatingComparator();
 
-        _overallData = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
-        Collections.sort(_overallData, comperator);
+        Vector overallData = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
+        Collections.sort(overallData, comperator);
 
         _tabbed = new JTabbedPane();
 
-        _overall = new JList(_overallData);
+        _overall = new JList(overallData);
         _overall.setCellRenderer(new RatingCellRenderer());
         _overall.addMouseListener(new MouseAdapter() {
 
@@ -124,10 +119,10 @@ public class DialogOverview extends JDialog {
 
         _tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(_overall));
 
-        _personalData = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
-        Collections.sort(_personalData, comperator);
+        Vector personalData = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
+        Collections.sort(personalData, comperator);
 
-        _personal = new JList(_personalData);
+        _personal = new JList(personalData);
         _personal.setCellRenderer(new RatingCellRenderer());
         _personal.addMouseListener(new MouseAdapter() {
 
@@ -268,13 +263,14 @@ public class DialogOverview extends JDialog {
     private void updateLists() {
         RatingComparator comperator = new RatingComparator();
 
-        _personalData.removeAllElements();
-        _personalData.addAll((Collection) _tvraterPlugin.getDatabase().getPersonalRating());
-        Collections.sort(_personalData, comperator);
+        Vector personalVector = new Vector((Collection) _tvraterPlugin.getDatabase().getPersonalRating());
+        Collections.sort(personalVector, comperator);
+        _personal.setListData(personalVector);
 
-        _overallData.removeAllElements();
-        _overallData.addAll((Collection) _tvraterPlugin.getDatabase().getOverallRating());
-        Collections.sort(_overallData, comperator);
+        Vector overallVector = new Vector((Collection) _tvraterPlugin.getDatabase().getOverallRating());
+        Collections.sort(overallVector, comperator);
+        _overall.setListData(overallVector);
+
     }
 
     /**
@@ -290,12 +286,8 @@ public class DialogOverview extends JDialog {
                 Updater up = new Updater(_tvraterPlugin);
                 up.run();
 
-                RatingComparator comperator = new RatingComparator();
-                Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
-                Collections.sort(overallVector, comperator);
-                _overall.setListData(overallVector);
-                _update.setEnabled(true);
-
+                updateLists();
+                
                 if (up.wasSuccessfull()) {
                     JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), _mLocalizer.msg("updateSuccess",
                             "Update was successfull!"));
