@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.dlgs;
 
 import javax.swing.*;
 import java.awt.*;

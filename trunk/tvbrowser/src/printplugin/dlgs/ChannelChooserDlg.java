@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.dlgs;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

@@ -24,10 +24,12 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.dlgs;
 
 import javax.swing.*;
 import javax.swing.event.*;
+
+import printplugin.*;
 
 import devplugin.Channel;
 import devplugin.Date;
@@ -81,11 +83,11 @@ public class PrintDialog extends JDialog {
     JPanel btnsPn = new JPanel();
     btnsPn.setLayout(new BoxLayout(btnsPn,BoxLayout.Y_AXIS));
     
-    JButton printerSetupBtn = new JButton("Drucker einrichten...",ImageUtilities.createImageIconFromJar("printplugin/PageSetup24.gif", getClass()));
-    JButton pageBtn = new JButton("Seite einrichten...", ImageUtilities.createImageIconFromJar("printplugin/Properties24.gif", getClass()));
-    JButton previewBtn = new JButton("Vorschau...", ImageUtilities.createImageIconFromJar("printplugin/PrintPreview24.gif", getClass()));
-    JButton printBtn = new JButton("Drucken", ImageUtilities.createImageIconFromJar("printplugin/Print24.gif", getClass()));   
-    JButton cancelBtn = new JButton("Abbrechen", ImageUtilities.createImageIconFromJar("printplugin/Stop24.gif", getClass()));
+    JButton printerSetupBtn = new JButton("Drucker einrichten...",ImageUtilities.createImageIconFromJar("printplugin/imgs/PageSetup24.gif", getClass()));
+    JButton pageBtn = new JButton("Seite einrichten...", ImageUtilities.createImageIconFromJar("printplugin/imgs/Properties24.gif", getClass()));
+    JButton previewBtn = new JButton("Vorschau...", ImageUtilities.createImageIconFromJar("printplugin/imgs/PrintPreview24.gif", getClass()));
+    JButton printBtn = new JButton("Drucken", ImageUtilities.createImageIconFromJar("printplugin/imgs/Print24.gif", getClass()));   
+    JButton cancelBtn = new JButton("Abbrechen", ImageUtilities.createImageIconFromJar("printplugin/imgs/Stop24.gif", getClass()));
     
     printerSetupBtn.setHorizontalAlignment(SwingConstants.LEFT);
     pageBtn.setHorizontalAlignment(SwingConstants.LEFT);
