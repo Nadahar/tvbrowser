@@ -28,8 +28,10 @@
 package tvbrowser.ui.settings;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 import devplugin.Channel;
 import util.ui.UiUtilities;
@@ -42,20 +44,22 @@ public class ChannelConfigDlg implements ActionListener {
   
   private Channel[] mChannelList;
   private JDialog mDialog;
-  private JButton mCloseBt, mApplyTimeCorrectionBt;
+  private JButton mCloseBt, mOKBt;
   private JComboBox mCorrectionCB;
-    
+
+  /** FileName for Icon */
+  private JTextField mIconFileName;
+  /** Button to Change FileName */
+  private JButton mChangeIcon;
+  
   public ChannelConfigDlg(Component parent, String title, Channel[] channelList) {
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(title);
     
     JPanel main=new JPanel(new BorderLayout());
     main.setBorder(BorderFactory.createEmptyBorder(6,6,5,5));
-    mDialog.setContentPane(main);
         
-    JPanel content=new JPanel();
-    content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
-    JPanel dayLightPn=new JPanel(new BorderLayout());
+    JPanel content=new JPanel(new GridBagLayout());
     
     JPanel panel1=new JPanel();
     panel1.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("DLSTTitle","Day light saving time correction")));
@@ -84,29 +88,72 @@ public class ChannelConfigDlg implements ActionListener {
     pn.add(mCorrectionCB,BorderLayout.EAST);
     panel1.add(pn);
     panel1.add(txt);
+
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    c.weightx = 1.0;
+    c.fill = GridBagConstraints.HORIZONTAL;
     
-    dayLightPn.add(panel1,BorderLayout.CENTER);
-    JPanel p1=new JPanel(new BorderLayout());
-    mApplyTimeCorrectionBt=new JButton(mLocalizer.msg("apply","Apply"));
-    mApplyTimeCorrectionBt.addActionListener(this);
-    p1.add(mApplyTimeCorrectionBt,BorderLayout.SOUTH);
-    dayLightPn.add(p1,BorderLayout.EAST);
-    content.add(dayLightPn);
+    content.add(panel1, c);
+    
+    
+    // Configuration for Icons 
+    JPanel iconConfig = new JPanel();
+    iconConfig.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channelIcon","Channel Icon")));
+    iconConfig.setLayout(new BorderLayout(5, 2));
+    mIconFileName = new JTextField();
+    mChangeIcon = new JButton(mLocalizer.msg("change","Change"));
+    mChangeIcon.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent event) {
+            File file = new File(mIconFileName.getText());
+            JFileChooser fileChooser = new JFileChooser(file.getParent());
+            String[] extArr = { ".jpg", ".jpeg", ".gif", ".png"};
+            fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
+            fileChooser.showOpenDialog(mDialog);
+            File selection = fileChooser.getSelectedFile();
+            if (selection != null) {
+                mIconFileName.setText(selection.getAbsolutePath());
+            }
+          }
+    
+    });
+    
+    
+    JLabel iconLabel = new JLabel(mLocalizer.msg("icon","Icon"));
+    iconConfig.add(iconLabel, BorderLayout.WEST);
+    iconConfig.add(mIconFileName, BorderLayout.CENTER);
+    iconConfig.add(mChangeIcon, BorderLayout.EAST);
+    
+    if (channelList.length != 1) {
+        iconLabel.setEnabled(false);
+        iconConfig.setEnabled(false);
+        mIconFileName.setEditable(false);
+        mChangeIcon.setEnabled(false);
+    } else {
+        mIconFileName.setText(channelList[0].getIconFileName());
+    }
+    
+    
+    content.add(iconConfig, c);
+    // Configuration for Icons
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     
-    mCloseBt = new JButton(mLocalizer.msg("close", "Close"));
+    mOKBt=new JButton(mLocalizer.msg("ok","OK"));
+    mOKBt.addActionListener(this);
     
+    mCloseBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
     mCloseBt.addActionListener(this);
     
+    buttonPn.add(mOKBt);
     buttonPn.add(mCloseBt);
     
-    main.add(content,BorderLayout.NORTH);
+    main.add(content,BorderLayout.CENTER);
     main.add(buttonPn,BorderLayout.SOUTH);
     
-    
     mChannelList=channelList;
-    mDialog.setSize(400,200);
+    mDialog.getContentPane().add(main);
+    mDialog.setSize(300,200);
   }
   
   public void centerAndShow() {
@@ -115,14 +162,19 @@ public class ChannelConfigDlg implements ActionListener {
   
   public void actionPerformed(ActionEvent e) {
     Object o=e.getSource();
-    if (o==mApplyTimeCorrectionBt) {
+    if (o==mOKBt) {
       int correction=mCorrectionCB.getSelectedIndex()-1;
       for (int i=0;i<mChannelList.length;i++) {
          mChannelList[i].setDayLightSavingTimeCorrection(correction);
-      }      
+      }
+      
+      if (mChannelList.length == 1) {
+          mChannelList[0].setIconFileName(mIconFileName.getText());
+      }
+      mDialog.hide();
     }
     else if (o==mCloseBt) {
-      mDialog.hide();  
+      mDialog.hide();
     }
     
     
