@@ -105,7 +105,7 @@ public class VerticalToolBar extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     Object o=e.getSource();
     if (o==mNowBt) {
-      mParent.onNowBtn();    
+      mParent.scrollToNow();    
     }
     else if (o==mEarlyBt) {
       mParent.onEarlyBtn();

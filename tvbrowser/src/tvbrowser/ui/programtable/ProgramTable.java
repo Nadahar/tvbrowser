@@ -37,6 +37,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.ui.programtable.background.*;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 
@@ -403,6 +404,7 @@ public class ProgramTable extends JPanel
   
   private int getTimeYOfColumn(int col, int minutesAfterMidnight) {
     int timeY = mLayout.getColumnStart(col);
+    Date mainDate = mModel.getDate();
     
     // Walk to the program that starts before the specified time
     int lastCellHeight = 0;
@@ -410,6 +412,10 @@ public class ProgramTable extends JPanel
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       Program program = panel.getProgram();
       int startTime = program.getHours() * 60 + program.getMinutes();
+      
+      // Add 24 hours for every day different to the model's main date
+      startTime += program.getDate().getNumberOfDaysSince(mainDate) * 24 * 60;
+      
       if (startTime > minutesAfterMidnight) {
         // It was the last program
         timeY += lastCellHeight / 2; // Hit the center of the program
