@@ -107,13 +107,24 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
 
   /**
+   * Gets the ID of the given Java plugin.
+   * 
+   * @param javaPlugin The Java plugin to get the ID for.
+   * @return The ID of the given Java plugin.
+   */
+  public static String getJavaPluginId(Plugin javaPlugin) {
+    return "java." + javaPlugin.getClass().getName();
+  }
+
+
+  /**
    * Gets the ID of this plugin.
    * 
    * @return The ID of this plugin.
    */
   public String getId() {
     if (mId == null) {
-      mId = "java." + mPlugin.getClass().getName();
+      mId = getJavaPluginId(mPlugin);
     }
     return mId;
   }

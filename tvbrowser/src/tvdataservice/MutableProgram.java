@@ -55,14 +55,14 @@ public class MutableProgram implements Program {
   
   /** A plugin array that can be shared by all the programs that are not marked
    * by any plugin. */
-  private static final Plugin[] EMPTY_PLUGIN_ARR = new Plugin[0];
+  private static final PluginAccess[] EMPTY_PLUGIN_ARR = new PluginAccess[0];
 
   /** Contains all listeners that listen for events from this program. */
   private EventListenerList mListenerList;
 
   /** Containes all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
-  private Plugin[] mMarkedByPluginArr;
+  private PluginAccess[] mMarkedByPluginArr;
 
   /** Contains whether this program is currently on air. */
   private boolean mOnAir;
@@ -169,7 +169,6 @@ public class MutableProgram implements Program {
    * @see #removeChangeListener
    */
   public void addChangeListener(ChangeListener listener) {
-    // TODO: The ProgramPanels do not unregister themselves
     mListenerList.add(ChangeListener.class, listener);
   }
 
@@ -242,13 +241,41 @@ public class MutableProgram implements Program {
   }
 
 
+  /**
+   * Marks the program for a Java plugin.
+   * 
+   * @param javaPlugin The plugin to mark the program for.
+   */
+  public final void mark(Plugin javaPlugin) {
+    PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(javaPlugin.getId());
+    mark(plugin);
+  }
 
-  public final void mark(devplugin.Plugin plugin) {
+  
+  /**
+   * Removes the marks from the program for a Java plugin.
+   * <p>
+   * If the program wasn't marked for the plugin, nothing happens.
+   * 
+   * @param javaPlugin The plugin to remove the mark for.
+   */
+  public final void unmark(Plugin javaPlugin) {
+    PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(javaPlugin.getId());
+    unmark(plugin);
+  }
+  
+
+  /**
+   * Marks the program for a plugin.
+   * 
+   * @param plugin The plugin to mark the program for.
+   */
+  public final void mark(PluginAccess plugin) {
     boolean alreadyMarked = getMarkedByPluginIndex(plugin) != -1;
     if (! alreadyMarked) {
       // Append the new plugin
       int oldCount = mMarkedByPluginArr.length;
-      Plugin[] newArr = new Plugin[oldCount + 1];
+      PluginAccess[] newArr = new PluginAccess[oldCount + 1];
       System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, oldCount);
       newArr[oldCount] = plugin;
       mMarkedByPluginArr = newArr;
@@ -258,8 +285,14 @@ public class MutableProgram implements Program {
   }
 
 
-
-  public final void unmark(devplugin.Plugin plugin) {
+  /**
+   * Removes the marks from the program for a plugin.
+   * <p>
+   * If the program wasn't marked for the plugin, nothing happens.
+   * 
+   * @param plugin The plugin to remove the mark for.
+   */
+  public final void unmark(PluginAccess plugin) {
     int idx = getMarkedByPluginIndex(plugin);
     if (idx != -1) {
       if (mMarkedByPluginArr.length == 1) {
@@ -267,7 +300,7 @@ public class MutableProgram implements Program {
         mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
       } else {
         int oldCount = mMarkedByPluginArr.length;
-        Plugin[] newArr = new Plugin[oldCount - 1];
+        PluginAccess[] newArr = new PluginAccess[oldCount - 1];
         System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, idx);
         System.arraycopy(mMarkedByPluginArr, idx + 1, newArr, idx, oldCount - idx - 1);
         mMarkedByPluginArr = newArr;
@@ -279,7 +312,7 @@ public class MutableProgram implements Program {
 
   
   
-  private int getMarkedByPluginIndex(Plugin plugin) {
+  private int getMarkedByPluginIndex(PluginAccess plugin) {
     for (int i = 0; i < mMarkedByPluginArr.length; i++) {
       if (mMarkedByPluginArr[i] == plugin) {
         return i;
@@ -293,7 +326,7 @@ public class MutableProgram implements Program {
   /**
    * Gets all {@link devplugin.Plugin}s that have marked this program.
    */
-  public Plugin[] getMarkedByPlugins() {
+  public PluginAccess[] getMarkedByPlugins() {
     return mMarkedByPluginArr;
   }
 

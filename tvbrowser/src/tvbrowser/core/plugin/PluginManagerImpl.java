@@ -175,6 +175,17 @@ public class PluginManagerImpl implements PluginManager {
     return PluginProxyManager.getInstance().getActivatedPlugins();
   }
 
+
+  /**
+   * Gets the ID of the given Java plugin.
+   * 
+   * @param javaPlugin The Java plugin to get the ID for.
+   * @return The ID of the given Java plugin.
+   */
+  public String getJavaPluginId(Plugin javaPlugin) {
+    return JavaPluginProxy.getJavaPluginId(javaPlugin);
+  }
+
   
   /**
    * Gets the activated plugin with the given ID.

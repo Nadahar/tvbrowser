@@ -199,11 +199,27 @@ public interface Program {
   public Iterator getFieldIterator();
 
   /**
+   * Marks the program for a Java plugin.
+   * 
+   * @param javaPlugin The plugin to mark the program for.
+   */
+  public void mark(Plugin javaPlugin);
+
+  /**
+   * Removes the marks from the program for a Java plugin.
+   * <p>
+   * If the program wasn't marked for the plugin, nothing happens.
+   * 
+   * @param javaPlugin The plugin to remove the mark for.
+   */
+  public void unmark(Plugin javaPlugin);
+
+  /**
    * Marks the program for a plugin.
    * 
    * @param plugin The plugin to mark the program for.
    */
-  public void mark(Plugin plugin);
+  public void mark(PluginAccess plugin);
 
   /**
    * Removes the marks from the program for a plugin.
@@ -212,7 +228,7 @@ public interface Program {
    * 
    * @param plugin The plugin to remove the mark for.
    */
-  public void unmark(Plugin plugin);
+  public void unmark(PluginAccess plugin);
 
   /**
    * Sets whether this program is marked as "on air".
@@ -225,9 +241,9 @@ public interface Program {
   public boolean isOnAir();
 
   /**
-   * Gets all {@link devplugin.Plugin}s that have marked this program.
+   * Gets all {@link PluginAccess}s that have marked this program.
    */
-  public Plugin[] getMarkedByPlugins();
+  public PluginAccess[] getMarkedByPlugins();
 
   /**
    * Gets whether this program is expired.

@@ -153,6 +153,16 @@ abstract public class Plugin {
   
   
   /**
+   * Gets the ID of this plugin.
+   * 
+   * @return The ID of this plugin.
+   */
+  final public String getId() {
+    return getPluginManager().getJavaPluginId(this);
+  }
+  
+  
+  /**
    * Called by the host-application to provide the parent frame.
    *
    * @param parent The parent frame.
