@@ -27,7 +27,9 @@
 package tvbrowser.ui.settings;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 
 import devplugin.Channel;
@@ -70,7 +72,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     String leftText = mLocalizer.msg("availableChannels", "Available channels");
     String rightText = mLocalizer.msg("subscribedChannels", "Subscribed channels");
     panel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
-
+    panel.setBorder(BorderFactory.createEmptyBorder(3,3,10,3));
     JTextArea textArea=new JTextArea(2,40);
     textArea.setOpaque(false);
     textArea.setEditable(false);
@@ -84,9 +86,41 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     textArea.setText(msg);
     textArea.setBorder(BorderFactory.createEmptyBorder(10,5,5,0));
 
-
+    final JButton configChannelBtn=new JButton(mLocalizer.msg("configSelectedChannels","Configure selected channels"));
+    JPanel southPn=new JPanel();
+    southPn.setLayout(new BoxLayout(southPn,BoxLayout.Y_AXIS));
+    southPn.add(configChannelBtn);
+    southPn.add(textArea);
+    
+    final JList rightList=panel.getRightList();
+    int []sel=rightList.getSelectedIndices();
+    configChannelBtn.setEnabled(sel.length>0);
+    rightList.addListSelectionListener(new ListSelectionListener() {
+       public void valueChanged(ListSelectionEvent e) {
+         int []sel=rightList.getSelectedIndices();
+         configChannelBtn.setEnabled(sel.length>0);
+       }
+    });
+    
+    configChannelBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+          Object[] o=panel.getRightSelections();
+          
+          Channel[] channelList=new Channel[o.length];
+          for (int i=0;i<o.length;i++) {
+            channelList[i]=(Channel)o[i];
+          }
+          ChannelConfigDlg dlg=new ChannelConfigDlg(mSettingsPn,mLocalizer.msg("configSelectedChannels","Configure selected channels"),channelList);
+          dlg.centerAndShow();
+      }
+      
+    });
+    
+    
+    
+  
     mSettingsPn.add(panel,BorderLayout.CENTER);
-    mSettingsPn.add(textArea,BorderLayout.SOUTH);
+    mSettingsPn.add(southPn,BorderLayout.SOUTH);
 
     Channel ch;
     Iterator iter = ChannelList.getChannels();

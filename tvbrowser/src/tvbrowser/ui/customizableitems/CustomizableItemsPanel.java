@@ -165,6 +165,14 @@ public class CustomizableItemsPanel extends JPanel {
     
     updateEnabled();
   }
+  
+  public JList getLeftList() {
+    return mLeftList;
+  }
+  
+  public JList getRightList() {
+    return mRightList;
+  }
 
   public void addElementLeft(Object item) {
     mLeftListModel.addElement(item);
@@ -188,6 +196,23 @@ public class CustomizableItemsPanel extends JPanel {
 
   public Object getRightSelection() {
     return mRightList.getSelectedValue();
+  }
+  
+  public Object[] getRightSelections() {
+    return getSelectedValues(mRightList);
+  }
+  
+  public Object[] getLeftSelections() {
+      return getSelectedValues(mLeftList);
+    }
+
+  private Object[] getSelectedValues(JList list) {
+    int[] inx=list.getSelectedIndices();
+    Object[] res=new Object[inx.length];
+    for (int i=0;i<inx.length;i++) {
+      res[i]=list.getModel().getElementAt(inx[i]);
+    }
+    return res;
   }
 
   public void addListSelectionListenerLeft(final CustomizableItemsListener listener) {

@@ -387,6 +387,7 @@ public class Settings {
         ChannelList.subscribeChannel(dataService, id);
       }
     }
+    ChannelList.loadDayLightSavingTimeCorrections();
   }
 
 

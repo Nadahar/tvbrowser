@@ -128,6 +128,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mDownBt);
 
     mSplitPane = new JSplitPane();
+    mSplitPane.setDividerLocation(100);
     main.add(mSplitPane, BorderLayout.CENTER);
     
     mFavoritesListModel = new DefaultListModel();

@@ -29,6 +29,7 @@ package xmltvdataservice;
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.net.URL;
+import java.util.TimeZone;
 
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
@@ -99,55 +100,56 @@ public class XmlTvDataService extends AbstractTvDataService {
    * service.
    */
   protected Channel[] getDefaultAvailableChannels() {
+    TimeZone zone=TimeZone.getTimeZone("GMT+1"); 
     return new Channel[] {
       // main channels
-      new Channel(this, "ARD","ARD"),
-      new Channel(this, "ZDF","ZDF"),
-      new Channel(this, "Kabel 1","KABEL 1"),
-      new Channel(this, "PRO 7", "PRO 7"),
-      new Channel(this, "RTL", "RTL"),
-      new Channel(this, "RTL 2", "RTL 2"),
-      new Channel(this, "SAT.1", "SAT.1"),
-      new Channel(this, "Super RTL", "SUPER RTL"),
-      new Channel(this, "VOX", "VOX"),
+      new Channel(this, "ARD","ARD",zone),
+      new Channel(this, "ZDF","ZDF",zone),
+      new Channel(this, "Kabel 1","KABEL 1",zone),
+      new Channel(this, "PRO 7", "PRO 7",zone),
+      new Channel(this, "RTL", "RTL",zone),
+      new Channel(this, "RTL 2", "RTL 2",zone),
+      new Channel(this, "SAT.1", "SAT.1",zone),
+      new Channel(this, "Super RTL", "SUPER RTL",zone),
+      new Channel(this, "VOX", "VOX",zone),
 
       // minor channels
-      new Channel(this, "3Sat", "3SAT"),
-      new Channel(this, "arte", "ARTE"),
-      new Channel(this, "Bayern", "BAYERN"),
-      new Channel(this, "Hessen", "HESSEN"),
-      new Channel(this, "Kinder Kanal", "KINDER KANAL"),
-      new Channel(this, "MDR", "MDR"),
-      new Channel(this, "NBC", "NBC"),
-      new Channel(this, "9 live", "Neunlive"),
-      new Channel(this, "NORD 3", "NORD 3"),
-      new Channel(this, "PHOENIX", "PHOENIX"),
-      new Channel(this, "SWR", "SWR"),
-      new Channel(this, "TV 5", "TV 5"),
+      new Channel(this, "3Sat", "3SAT",zone),
+      new Channel(this, "arte", "ARTE",zone),
+      new Channel(this, "Bayern", "BAYERN",zone),
+      new Channel(this, "Hessen", "HESSEN",zone),
+      new Channel(this, "Kinder Kanal", "KINDER KANAL",zone),
+      new Channel(this, "MDR", "MDR",zone),
+      new Channel(this, "NBC", "NBC",zone),
+      new Channel(this, "9 live", "Neunlive",zone),
+      new Channel(this, "NORD 3", "NORD 3",zone),
+      new Channel(this, "PHOENIX", "PHOENIX",zone),
+      new Channel(this, "SWR", "SWR",zone),
+      new Channel(this, "TV 5", "TV 5",zone),
 
       // music channels
-      new Channel(this, "MTV", "MTV"),
-      new Channel(this, "MTV2", "MTV2"),
-      new Channel(this, "VIVA", "VIVA"),
+      new Channel(this, "MTV", "MTV",zone),
+      new Channel(this, "MTV2", "MTV2",zone),
+      new Channel(this, "VIVA", "VIVA",zone),
 
       // sport channels
-      new Channel(this, "DSF", "DSF"),
-      new Channel(this, "EuroSport", "EUROSPORT"),
+      new Channel(this, "DSF", "DSF",zone),
+      new Channel(this, "EuroSport", "EUROSPORT",zone),
 
       // news channels
-      new Channel(this, "EuroNews", "EURONEWS"),
-      new Channel(this, "n-tv", "N-TV"),
+      new Channel(this, "EuroNews", "EURONEWS",zone),
+      new Channel(this, "n-tv", "N-TV",zone),
 
       // pay TV
-      new Channel(this, "Premiere", "PREMIERE"),
+      new Channel(this, "Premiere", "PREMIERE",zone),
 
       // foreign channels
-      new Channel(this, "CNN", "CNN"),
-      new Channel(this, "RBB Brandenburg", "ORB"),
-      new Channel(this, "ORF 1", "ORF 1"),
-      new Channel(this, "ORF 2", "ORF 2"),
-      new Channel(this, "SF1", "SF1"),
-      new Channel(this, "TRT", "TRT")
+      new Channel(this, "CNN", "CNN",zone),
+      new Channel(this, "RBB Brandenburg", "ORB",zone),
+      new Channel(this, "ORF 1", "ORF 1",zone),
+      new Channel(this, "ORF 2", "ORF 2",zone),
+      new Channel(this, "SF1", "SF1",zone),
+      new Channel(this, "TRT", "TRT",zone)
     };
   }
 
