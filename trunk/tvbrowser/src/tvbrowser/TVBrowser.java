@@ -423,6 +423,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private void onDownloadDone() {
+  	DataService.getInstance().stopDownload();
     DataService.getInstance().getProgressBar().setValue(0);
     updateBtn.setText(mLocalizer.msg("button.update", "Update"));
     updateBtn.setIcon(new ImageIcon("imgs/Import24.gif"));

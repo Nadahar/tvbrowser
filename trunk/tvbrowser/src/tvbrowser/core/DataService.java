@@ -139,7 +139,9 @@ public class DataService implements devplugin.PluginManager {
     return onlineMode;
   }
 
-
+	public void stopDownload() {
+		mIsDownloading=false;
+	}
 
   /**
    * Starts the download of new TV data
@@ -154,10 +156,12 @@ public class DataService implements devplugin.PluginManager {
     }
 
     // connect
-    progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
-    progressBar.setStringPainted(true);
-    TvDataServiceManager.getInstance().connect();
-
+    if (!onlineMode) {
+    	progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
+    	progressBar.setStringPainted(true);
+    	TvDataServiceManager.getInstance().connect();
+    }
+    
     // download the missing data day by day and channel by channel
     progressBar.setStringPainted(false);
     mIsDownloading = true;
@@ -208,7 +212,9 @@ public class DataService implements devplugin.PluginManager {
 
     mIsDownloading = false;
 
-    TvDataServiceManager.getInstance().disconnect();
+	if (!onlineMode) {
+    	TvDataServiceManager.getInstance().disconnect();
+	}
 
     if (downloadException != null) {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
