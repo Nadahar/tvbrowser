@@ -6,6 +6,7 @@ current:
     - Support for plugin icons
     - The info text is now freely configurable
     - The table is much faster
+- Faster download of TV data (summary file, more simultanious download threads)
 
 
 0.9.7.1, 0.9.7.2:
