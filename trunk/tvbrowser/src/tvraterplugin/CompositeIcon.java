@@ -16,39 +16,62 @@
  * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package tvraterplugin;
-
 import java.awt.Component;
 import java.awt.Graphics;
-
 import javax.swing.Icon;
 
 /**
- * @author bodum
+ * This class is a Wrapper for two Icons.
+ * 
+ * @author bodo
  */
 public class CompositeIcon implements Icon {
 	
-	  private Icon icon1;
-	  private Icon icon2;
-	 
-	  public CompositeIcon(Icon icon1, Icon icon2)
-	  {
-	    this.icon1 = icon1;
-	    this.icon2 = icon2;
-	  }
-	  
-	  public int getIconHeight()
-	  {
-	    return Math.max(icon1.getIconHeight(), icon2.getIconHeight());
-	  }
-	 
-	  public int getIconWidth()
-	  {
-	    return icon1.getIconWidth() + icon2.getIconWidth() + 2;
-	  }
-	  
-	  public void paintIcon(Component c, Graphics g, int x, int y)
-	  {
-	    icon1.paintIcon(c, g, x, y);
-	    icon2.paintIcon(c, g, x + icon1.getIconWidth() + 2, y);
-	  }
+	/**
+	 * Icon 1
+	 */
+	private Icon icon1;
+	/**
+	 * Icon 2
+	 */
+	private Icon icon2;
+	
+	/**
+	 * Creates the CompositeIcon
+	 * 
+	 * @param icon1 Icon 1
+	 * @param icon2 Icon 2
+	 */
+	public CompositeIcon(Icon icon1, Icon icon2) {
+		this.icon1 = icon1;
+		this.icon2 = icon2;
+	}
+	
+	/**
+	 * Gets the Height
+	 * @retun Height
+	 */
+	public int getIconHeight() {
+		return Math.max(icon1.getIconHeight(), icon2.getIconHeight());
+	}
+	
+	/**
+	 * Gets the Width
+	 * @return Width
+	 */
+	public int getIconWidth() {
+		return icon1.getIconWidth() + icon2.getIconWidth() + 2;
+	}
+	
+	/**
+	 * Paints the Icon
+	 * @param c Component to paint on
+	 * @param g Graphics-Object to use
+	 * @param x X-Value
+	 * @param y Y-Value
+	 */
+	public void paintIcon(Component c, Graphics g, int x, int y) {
+		icon1.paintIcon(c, g, x, y);
+		icon2.paintIcon(c, g, x + icon1.getIconWidth() + 2, y);
+	}
 }
