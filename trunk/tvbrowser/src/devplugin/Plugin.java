@@ -328,14 +328,14 @@ abstract public class Plugin {
    * 
    * @see #getProgramFromContextMenuActionEvent(ActionEvent)
    */
-  public ActionMenu getContextMenuActions(Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     // Check whether the old and deprecated methods are used
     String contextMenuItemText = getContextMenuItemText();
     if (contextMenuItemText != null) {
       // The old and deprecated methods are used -> create an action for them
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
-          execute(getProgramFromContextMenuActionEvent(evt));
+          execute(program);
         }
       };
       action.putValue(Action.NAME, contextMenuItemText);
