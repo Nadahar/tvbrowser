@@ -86,6 +86,15 @@ class TVBrowserProperties extends java.util.Properties {
   
   
   public String[] getStringList(String key) {
+    
+    String s=getProperty(key);
+    if (s==null) {
+      return new String[0];
+    }
+    
+    return s.split(",");
+    
+    /*
 	String s=getProperty(key);
 		 if (s==null) return new String[0];
 
@@ -105,7 +114,7 @@ class TVBrowserProperties extends java.util.Properties {
 		 for (int i=0;i<list.size();i++) {
 			 result[i]=(String)list.get(i);
 		 }
-		 return result;
+		 return result;*/
   }
   
 	public void setFont(String key, Font f) {
@@ -356,8 +365,10 @@ public class Settings {
 
 
   private static void initSubscribedChannels() {
-  	String[] entries = settings.getStringList("subscribedchannels");
+    String[] entries = settings.getStringList("subscribedchannels");
     if (settings.getProperty("subscribedchannels") == null) {
+      return;
+      /*
     	// Install by default the first 9 channels of the XmlTvDataService
       TvDataServiceManager mng = TvDataServiceManager.getInstance();
       TvDataService xmltvService = mng.getDataService("xmltvdataservice.XmlTvDataService");
@@ -368,13 +379,15 @@ public class Settings {
         setSubscribedChannels(defaultChannelArr);
       }
 	  entries = settings.getStringList("subscribedchannels");
+    */
     }
     
-    
 
+    
     for (int i = 0; i < entries.length; i++) {
       String entry = entries[i];
       int pos = entry.indexOf(':');
+      if (pos<0) continue;  // invalid entry
       String dataServiceClassName = entry.substring(0,pos);
       String id = entry.substring(pos + 1);
 

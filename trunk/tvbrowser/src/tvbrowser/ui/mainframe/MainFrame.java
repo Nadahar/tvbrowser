@@ -684,7 +684,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     ChannelList.create();    
     DataService.getInstance().subscribedChannelsChanged();
     mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
-    mDefaultToolBar.updateChannelChooser();    
+    mDefaultToolBar.updateChannelChooser();  
   }
   
     
