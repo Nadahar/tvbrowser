@@ -29,6 +29,8 @@ import java.io.*;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.StringTokenizer;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -65,6 +67,8 @@ public class PrimaryDataManager {
   
   private int mReadBytesCount;
   
+  private HashSet mForceCompleteUpdateChannelSet;
+  
   
   
   public PrimaryDataManager() {
@@ -86,6 +90,16 @@ public class PrimaryDataManager {
 
   public void setDataServiceArr(PrimaryDataService[] dataServiceArr) {
     mDataServiceArr = dataServiceArr;
+  }
+  
+  
+  
+  public void forceCompleteUpdateFor(String channel) {
+    if (mForceCompleteUpdateChannelSet == null) {
+      mForceCompleteUpdateChannelSet = new HashSet();
+    }
+    
+    mForceCompleteUpdateChannelSet.add(channel);
   }
 
 
@@ -593,7 +607,21 @@ public class PrimaryDataManager {
     throws PreparationException
   {
     // Map the programs
-    new DayProgramMapper().map(rawProg, preparedFile);
+    if ((mForceCompleteUpdateChannelSet != null)
+      && mForceCompleteUpdateChannelSet.contains(channel))
+    {
+      // We should force a complete update for this channel
+      // We do this by giving each program in the rawProg a ID of -1.
+      // This way, it will get a new ID
+      mLog.warning("Forcing complete update for Day program: " + date + ", "
+        + country + ", " + channel);
+
+      for (int i = 0; i < rawProg.getProgramFrameCount(); i++) {
+        rawProg.getProgramFrameAt(i).setId(-1);
+      }
+    } else {
+      new DayProgramMapper().map(rawProg, preparedFile);
+    }
     
     // Check whether we have programs that did not find a match
     boolean someProgramsAreUnmapped = false;
@@ -1040,11 +1068,27 @@ public class PrimaryDataManager {
       try {
         PrimaryDataManager manager = new PrimaryDataManager();
 
-        PrimaryDataService[] dataServiceArr = new PrimaryDataService[args.length];        
+        ArrayList pdsList = new ArrayList();
         for (int i = 0; i < args.length; i++) {
-          dataServiceArr[i] = createPrimaryDataService(args[i]);
+          if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
+            if ((i + 1) >= args.length) {
+              System.out.println("You have to specify a semicolon separated " +
+                "list of channels after -forceCompleteUpdate");
+              System.exit(1);
+            } else {
+              i++;
+              StringTokenizer tokenizer = new StringTokenizer(args[i], ";");
+              while (tokenizer.hasMoreTokens()) {
+                manager.forceCompleteUpdateFor(tokenizer.nextToken());
+              }
+            }
+          } else {
+            pdsList.add(createPrimaryDataService(args[i]));
+          }
         }
-        manager.setDataServiceArr(dataServiceArr);
+        PrimaryDataService[] pdsArr = new PrimaryDataService[pdsList.size()];
+        pdsList.toArray(pdsArr);        
+        manager.setDataServiceArr(pdsArr);
         
         manager.updateRawDataDir();
       }
