@@ -416,11 +416,41 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
   public void scrollToNow() {
-    // Scroll to now
+    // Get the current time
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
-    mProgramTableScrollPane.scrollToTime(hour * 60);
+    
+    // Choose the day.
+    // NOTE: If its early in the morning before the setted "day start" we should
+    //       stay at the last day - otherwise the user won't see the current
+    //       program. But until when should we stay at the old day?
+    //       Example: day start: 0:00, day end: 6:00
+    //       Directly after the day start is not a good choice, because the new
+    //       day program table will not contain programs that started before 0:00.
+    //       Directly after the day end is also not a good choice, because a
+    //       minute before the old day program will not contain the coming programs.
+    //       So I think the best choice will be the middle, in this case 3:00.
+    devplugin.Date day = new devplugin.Date();
+    int dayStart = Settings.propProgramTableStartOfDay.getInt();
+    int dayEnd = Settings.propProgramTableEndOfDay.getInt();
+    int splitHour = (dayEnd - dayStart) / 60;
+    if (hour < splitHour) {
+      // It's early in the morning -> use the program table of yesterday
+      day = day.addDays(-1);
+      hour += 24;
+    }
+    
+    // Change to the shown day program to today if nessesary
+    // and scroll to "now" afterwards
+    final int fHour = hour;
+    FinderPanel.getInstance().markDate(day, new Runnable() {
+      public void run() {
+        // Scroll to now
+        mProgramTableScrollPane.scrollToTime(fHour * 60);
+      }
+    });
   }
+
 
   public void runSetupAssistant() {
     
@@ -499,20 +529,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   
   public void onEveningBtn() {
     mProgramTableScrollPane.scrollToTime(Settings.propEveningTime.getInt());
-  }
-  
-  public void onNowBtn() {
-    // Change to the shown day program to today if nessesary
-    devplugin.Date today = new devplugin.Date();
-  //  if (! today.equals(FinderPanel.getInstance().getSelectedDate())) {
-      FinderPanel.getInstance().markDate(today, new Runnable(){
-
-				public void run() {
-					scrollToNow();					
-				}});
- //   }
-
-  //  scrollToNow();
   }
 
 

@@ -28,6 +28,7 @@ package tvbrowser.ui.programtable;
 
 import util.ui.ProgramPanel;
 import devplugin.Channel;
+import devplugin.Date;
 import devplugin.ProgramFilter;
 
 /**
@@ -39,6 +40,8 @@ public interface ProgramTableModel {
   public void addProgramTableModelListener(ProgramTableModelListener listener);
   
   public Channel[] getShownChannels();
+  
+  public Date getDate();
   
   public int getColumnCount();
   
