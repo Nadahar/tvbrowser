@@ -29,13 +29,12 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -52,6 +51,7 @@ import tvbrowser.core.PluginStateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.filter.FilterChooser;
+import util.ui.Toolbar;
 import devplugin.Channel;
 import devplugin.Plugin;
 
@@ -67,7 +67,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
   private FilterChooser mFilterChooser;
   private JComboBox mChannelChooser;
   private DefaultComboBoxModel mChannelChooserModel;
-  private JPanel mBtnPanel;
+  private Toolbar mToolbar;
   
   public HorizontalToolBar(MainFrame parent, FilterChooser filterChooser) {
     setOpaque(false);
@@ -76,8 +76,10 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
     setLayout(new BorderLayout());
     
-    mBtnPanel=createButtonPanel();
-    
+    //mToolbar=createButtonPanel();
+    mToolbar = new Toolbar();
+    mToolbar.setOpaque(false);
+    mToolbar.setButtons(getToolbarButtons(), getToolbarStyle());
 
     JPanel comboboxPanel=new JPanel(new GridLayout(0,1));
     mChannelChooserModel=new DefaultComboBoxModel();
@@ -107,7 +109,8 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     comboboxPanel.add(mChannelChooser);
     comboboxPanel.add(mFilterChooser);
     
-    add(mBtnPanel,BorderLayout.WEST);
+
+    add(mToolbar,BorderLayout.CENTER);
     add(comboboxPanel,BorderLayout.EAST);
     
     PluginLoader.getInstance().addPluginStateListener(new PluginStateListener(){
@@ -129,48 +132,28 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     
   }
   
-  public void updateButtons() {
-    remove(mBtnPanel);
-    mBtnPanel=createButtonPanel();
-    add(mBtnPanel,BorderLayout.WEST);
-    updateUI();
+  private int getToolbarStyle() {
+    int style = 0;
+    if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
+      style = Toolbar.ICON;      
+    }
+    if (Settings.propToolbarButtonStyle.getString().equals("text")) {
+      style = Toolbar.TEXT;       
+    }
+    if (Settings.propToolbarButtonStyle.getString().equals("text&icon")) {
+      style = Toolbar.ICON|Toolbar.TEXT;        
+    }
     
+    return style;
   }
   
-  public JPanel createButtonPanel() {
-    
-    JPanel panel=new JPanel();
-    panel.setLayout(new BoxLayout(panel,BoxLayout.X_AXIS));
-    panel.setOpaque(false);  
-    
-    JPanel defaultBtnPanel=new JPanel(new GridLayout(1,0,10,0));
-    defaultBtnPanel.setBorder(BorderFactory.createEmptyBorder(0,5,0,20));
-    defaultBtnPanel.setOpaque(false);
-    int width=0;
-    if (Settings.propShowUpdateButton.getBoolean()) {
-      mUpdateBtn=createUpdateBtn();
-      defaultBtnPanel.add(mUpdateBtn);
-      width+=100;
-    }
-    if (Settings.propShowPreferencesButton.getBoolean()) {
-      mSettingsBtn=createSettingsBtn();    
-      defaultBtnPanel.add(mSettingsBtn);
-      width+=100;
-    }
-    Dimension dim=defaultBtnPanel.getPreferredSize();
-    dim.width=width;
-    defaultBtnPanel.setPreferredSize(dim);
-    
-    JPanel pluginsPanel=createPluginPanel();
-    
-    panel.add(defaultBtnPanel);
-   
-    panel.add(pluginsPanel);
-        
-    return panel;
-    
+  public void updateButtons() {    
+    JButton[] toolbarButtons = this.getToolbarButtons();
+    mToolbar.setButtons(toolbarButtons, getToolbarStyle());    
   }
   
+  
+ 
   
   public void updateChannelChooser() {    
     mChannelChooserModel.removeAllElements();
@@ -195,10 +178,21 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
       return settingsBtn;
   }
   
-  private JPanel createPluginPanel() {
-    JPanel result=new JPanel(new GridLayout(1,0,10,0));
-    result.setOpaque(false);
-   
+  
+  private JButton[] getToolbarButtons() {
+    ArrayList buttons = new ArrayList();
+    
+    if (Settings.propShowUpdateButton.getBoolean()) {
+      mUpdateBtn=createUpdateBtn();
+      buttons.add(mUpdateBtn);
+    }
+    
+    if (Settings.propShowPreferencesButton.getBoolean()) {
+      mSettingsBtn=createSettingsBtn();    
+      buttons.add(mSettingsBtn);
+    }
+        
+        
     Plugin[] installedPlugins=PluginManager.getInstance().getInstalledPlugins();
     
     for (int i=0;i<installedPlugins.length;i++) {
@@ -209,7 +203,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
         if (!Settings.propHiddenPluginButtons.containsItem(pluginClassName)) {
           Icon icon = plugin.getButtonIcon();
           JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
-          result.add(btn);
+          buttons.add(btn);    
           btn.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent event) {
               plugin.execute();
@@ -217,30 +211,17 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
           });
         }
       }
-        //boolean allowAdding=true;
-        //for (int j=0;j<hiddenPlugins.length;j++) {
-        //  Plugin p=PluginManager.getPlugin(hiddenPlugins[j]);
-        //  if (p!=null && PluginManager.isInstalled(p) && p.equals(plugin)) {
-        //    allowAdding=false;
-        //    break;
-        //  }
-        //}
-        /*
-        if (allowAdding) {
-          Icon icon = plugin.getButtonIcon();
-          JButton btn = new PictureButton(plugin.getButtonText(), icon, plugin.getInfo().getDescription(), mParent.getStatusBarLabel());
-          result.add(btn);
-          btn.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event) {
-              plugin.execute();
-            }
-          });
-        }*/
-     // }
     }
-    
+        
+       
+        
+    JButton[] result = new JButton[buttons.size()];
+    buttons.toArray(result);
     return result;
   }
+  
+  
+  
   
   public JButton getUpdateBtn() {
     return mUpdateBtn;

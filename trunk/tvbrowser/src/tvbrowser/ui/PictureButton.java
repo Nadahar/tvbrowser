@@ -58,7 +58,7 @@ public class PictureButton extends JButton implements FocusListener {
     
     setIcon(icon);
     setText(title);
-    
+    //setToolTipText(title);
     setOpaque(false);
     setVerticalTextPosition(SwingConstants.BOTTOM);
     setHorizontalTextPosition(SwingConstants.CENTER);
@@ -82,27 +82,27 @@ public class PictureButton extends JButton implements FocusListener {
     mDescription=description;
     mStatusBar=statusBar;
   }
-  
+  /*
   public void setText(String text) {
-    if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
-      super.setText(null);
-      super.setToolTipText(text);
-    } else {
+  //  if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
+    //  super.setText(null);
+    //  super.setToolTipText(text);
+  //  } else {
       super.setText(text);
-      super.setToolTipText(null);
-    }
+  //    super.setToolTipText(null);
+  //  }
   }
-
+*/
   
-  
+  /*
   public void setIcon(Icon icon) {
-    if (Settings.propToolbarButtonStyle.getString().equals("text")) {
-      super.setIcon(null);
-    } else {
+    //if (Settings.propToolbarButtonStyle.getString().equals("text")) {
+    //  super.setIcon(null);
+    //} else {
       super.setIcon(icon);
-    }
+   // }
   }
-  
+  */
   
   
   private void handleMouseEntered() {
