@@ -48,14 +48,18 @@ public class FtpDataTarget implements DataTarget {
   private FTPClient mFTPClient;
   private String mServerUrl;
   private String mPath;
-  
+  private int mPort;
+  private String mUser, mPassword;
   private long mBytesWritten;
+  
+  
 
   
   public FtpDataTarget(String serverUrl, String path, int port, String user,
     String password)
     throws UpdateException
   {
+    
     // Cut off the protocol (we know, it's FTP)
     if (serverUrl.startsWith("ftp://")) {
       serverUrl = serverUrl.substring(6);
@@ -63,70 +67,87 @@ public class FtpDataTarget implements DataTarget {
 
     mServerUrl = serverUrl;
     mPath = path;
+    mPort = port;
+    mUser = user;
+    mPassword = password;
     
-    // Connect to the server    
-    mFTPClient = new FTPClient();
-    try {
-      mFTPClient.connect(mServerUrl, port);
-      mLog.fine("Connected to " + mServerUrl + ":" + port);
-      
-      checkReplyCode();
-    }
-    catch(Exception exc) {
-      if (mFTPClient.isConnected()) {
-        try {
-          mFTPClient.disconnect();
-        } catch(IOException exc2) {
-          // do nothing
-        }
-      }
-      throw new UpdateException("Could not connect to server '" + mServerUrl
-                                + "'", exc);
-    }
-    
-    // Log in
-    try {
-      boolean success = mFTPClient.login(user, password);
-      checkReplyCode();
-      if (! success) {
-        throw new UpdateException("Login failed");
-      }
-    } catch (Exception exc) {
-      throw new UpdateException("Login using user='" + user
-          + "' and password=(" + password.length() + " characters) failed", exc);
-    }
-    
-    // Set the file type to binary
-    try {
-      boolean success = mFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-      checkReplyCode();
-      if (! success) {
-        throw new UpdateException("Setting file type to binary failed");
-      }
-    } catch (Exception exc) {
-      throw new UpdateException("Setting file type to binary failed", exc);
-    }
-    
-    // Change directory
-    try {
-      boolean success = mFTPClient.changeWorkingDirectory(mPath);
-      checkReplyCode();
-      if (! success) {
-        throw new UpdateException("Could not change to directory '" + mPath + "'");
-      }
-    } catch (Exception exc) {
-      throw new UpdateException("Could not change to directory '" + mPath + "'",
-                                exc);
-    }
-    mLog.fine("Changed to directory " + mPath);
+    mFTPClient=null;
+    reset();
+   
   }
 
 
+  private void reset() throws UpdateException {
+    if (mFTPClient!=null && mFTPClient.isConnected()) {
+      try {
+        mFTPClient.disconnect();
+      } catch (IOException e) {
+        // ignore
+      }      
+    }
+    
+    // Connect to the server    
+       mFTPClient = new FTPClient();
+       try {
+         mFTPClient.connect(mServerUrl, mPort);
+         mLog.fine("Connected to " + mServerUrl + ":" + mPort);
+         mFTPClient.setSoTimeout(15000);
+         checkReplyCode();
+       }
+       catch(Exception exc) {
+         if (mFTPClient.isConnected()) {
+           try {
+             mFTPClient.disconnect();
+           } catch(IOException exc2) {
+             // do nothing
+           }
+         }
+         throw new UpdateException("Could not connect to server '" + mServerUrl
+                                   + "'", exc);
+       }
+    
+       // Log in
+       try {
+         boolean success = mFTPClient.login(mUser, mPassword);
+         checkReplyCode();
+         if (! success) {
+           throw new UpdateException("Login failed");
+         }
+       } catch (Exception exc) {
+         throw new UpdateException("Login using user='" + mUser
+             + "' and password=(" + mPassword.length() + " characters) failed", exc);
+       }
+    
+       // Set the file type to binary
+       try {
+         boolean success = mFTPClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+         checkReplyCode();
+         if (! success) {
+           throw new UpdateException("Setting file type to binary failed");
+         }
+       } catch (Exception exc) {
+         throw new UpdateException("Setting file type to binary failed", exc);
+       }
+    
+       // Change directory
+       try {
+         boolean success = mFTPClient.changeWorkingDirectory(mPath);
+         checkReplyCode();
+         if (! success) {
+           throw new UpdateException("Could not change to directory '" + mPath + "'");
+         }
+       } catch (Exception exc) {
+         throw new UpdateException("Could not change to directory '" + mPath + "'",
+                                   exc);
+       }
+       mLog.fine("Changed to directory " + mPath);
+    
+  }
 
   private void checkReplyCode() throws UpdateException {
     // Check the reply code to verify success.
     int reply = mFTPClient.getReplyCode();
-        
+      
     if (! FTPReply.isPositiveCompletion(reply)) {
       throw new UpdateException("FTP server '" + mServerUrl
         + "' sent negative completion. Reply: " + reply + ": "
@@ -174,26 +195,40 @@ public class FtpDataTarget implements DataTarget {
 
 
   public void writeFile(String fileName, byte[] data) throws UpdateException {
-    ByteArrayInputStream stream = new ByteArrayInputStream(data);
-    try {
-      boolean success = mFTPClient.storeFile(fileName, stream);
-      checkReplyCode();
-      if (! success) {
-        throw new UpdateException("Could not write file '" + fileName + "'");
-      }
-    } catch (Exception exc) {
-      // Try to delete the corrupt file
+    
+    boolean success=false;
+    int tryCount=3;
+    while (!success && tryCount>0) {
       try {
-        deleteFile(fileName);
+        
+        ByteArrayInputStream stream = new ByteArrayInputStream(data);
+        success = mFTPClient.storeFile(fileName, stream);
+        checkReplyCode();
+        if (!success) {
+          throw new UpdateException("Could not write file '" + fileName + "'");
+        }
+      } catch (Exception exc) {
+        // Try to delete the corrupt file
+        try {
+          deleteFile(fileName);
+        }
+        catch (Exception exc2) {
+          // Do nothing
+        }
+        tryCount--;
+        success=false;
+        System.err.println("Could not write file '"+fileName+"'. Reason: "+exc.getMessage());
+        if (tryCount>0) {
+          System.err.println("trying again...");
+          reset(); 
+        }
       }
-      catch (Exception exc2) {
-        // Do nothing
-      }
-      
-      throw new UpdateException("Could not write file '" + fileName + "'", exc);
     }
     
-    mBytesWritten += data.length;
+    if (!success) {
+      throw new UpdateException("Could not write file '" + fileName + "'");
+    }
+   
   }
 
 

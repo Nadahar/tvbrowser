@@ -67,6 +67,8 @@ public class MirrorUpdater {
   private Date mDeadlineDay;
   
   private String[] mTargetFileArr;
+  
+  private static final String WELCOME_MESSAGE="MirrorUpdater for TV-Browser v0.1";
 
 
 
@@ -337,6 +339,9 @@ public class MirrorUpdater {
 
 
   public static void main(String[] args) {
+    
+    System.out.println(WELCOME_MESSAGE);
+    
     // setup logging
     try {
       // Get the default Logger

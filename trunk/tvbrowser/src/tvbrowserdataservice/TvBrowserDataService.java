@@ -97,6 +97,11 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     mDataDir = new File("tvbrowsertvdata");
     
+//  Ensure that the data directory is present
+     if (! mDataDir.exists()) {
+       mDataDir.mkdir();
+     }
+    
     // TODO: Make the subscribed levels configurable
     mSubsribedLevelArr = DayProgramFile.LEVEL_ARR;
   }
@@ -112,26 +117,14 @@ public class TvBrowserDataService extends AbstractTvDataService {
     Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {
-    /*
-    if (!"false".equals(mSettings.getProperty("showLicenseBox"))) {
-      LicenseBox box=new LicenseBox(null, true);
-      util.ui.UiUtilities.centerAndShow(box);
-      if (!box.agreed()) {
-        return;
-      }
-      mSettings.setProperty("showLicenseBox","false");
-    }
-    */
+    
     mTvDataBase = dataBase;
     mProgressMonitor = monitor;
     
     mDirectlyLoadedBytes = 0;
     mChangedProgramFileList = new ArrayList();
     
-    // Ensure that the data directory is present
-    if (! mDataDir.exists()) {
-      mDataDir.mkdir();
-    }
+    
     
     // Delete outdated files
     deleteOutdatedFiles();

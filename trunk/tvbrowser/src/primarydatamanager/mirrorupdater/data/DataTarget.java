@@ -33,7 +33,7 @@ import primarydatamanager.mirrorupdater.UpdateException;
  * @author Til Schneider, www.murfman.de
  */
 public interface DataTarget {
-  
+ 
   public String[] listFiles() throws UpdateException;
   
   public void deleteFile(String fileName) throws UpdateException;
