@@ -1,5 +1,9 @@
 Changelog TVRaterPlugin
 
+0.04:
+- Count of Ratings on Server is now Saved
+- Unneeded Threads removed
+
 0.03:
 - Beta release
 - New GUI
