@@ -25,7 +25,7 @@ import java.util.Comparator;
  * This class compares two Ratings. It uses the Title to compare them.
  * @author bodo tasche
  */
-public class RatingComperator implements Comparator {
+public class RatingComparator implements Comparator {
 
 	/**
 	 * Compares two Ratings

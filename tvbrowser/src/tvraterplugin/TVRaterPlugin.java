@@ -27,6 +27,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
 
+import javax.swing.Icon;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.PluginInfo;
@@ -48,7 +50,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
 	private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterPlugin.class);
 
-	private Database tvraterDB = new Database();
+	private Database _tvraterDB = new Database();
 
 	public String getContextMenuItemText() {
 		return mLocalizer.msg("contextMenuText", "View rating");
@@ -66,13 +68,13 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	 * plugin from the menu.
 	 */
 	public void execute() {
-		DialogOverview dlg = new DialogOverview(getParentFrame(), tvraterDB);
+		DialogOverview dlg = new DialogOverview(getParentFrame(), _tvraterDB);
 		dlg.pack();
 		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
 				_dimensionOverviewDialog = e.getComponent().getSize();
 			}
-			
+
 			public void componentMoved(ComponentEvent e) {
 				e.getComponent().getLocation(_locationOverviewDialog);
 			}
@@ -88,11 +90,11 @@ public class TVRaterPlugin extends devplugin.Plugin {
 			_locationOverviewDialog = dlg.getLocation();
 			_dimensionOverviewDialog = dlg.getSize();
 		}
-		
+
 	}
 
 	public void execute(Program program) {
-		DialogRating dlg = new DialogRating(getParentFrame(), program, tvraterDB);
+		DialogRating dlg = new DialogRating(getParentFrame(), program, _tvraterDB);
 		dlg.pack();
 		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentMoved(ComponentEvent e) {
@@ -138,12 +140,63 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	}
 
 	/**
+	 * Gets the description text for the program table icons provided by this
+	 * Plugin.
+	 * <p>
+	 * Return <code>null</code> if your plugin does not provide this feature.
+	 * 
+	 * @return The description text for the program table icons.
+	 * @see #getProgramTableIcons(Program)
+	 */
+	public String getProgramTableIconText() {
+		return mLocalizer.msg("icon", "Rating");
+	}
+
+	/**
+	 * Gets the icons this Plugin provides for the given program. These icons will
+	 * be shown in the program table under the start time.
+	 * <p>
+	 * Return <code>null</code> if your plugin does not provide this feature.
+	 * 
+	 * @param program The programs to get the icons for.
+	 * @return The icons for the given program or <code>null</code>.
+	 * @see #getProgramTableIconText()
+	 */
+	public Icon[] getProgramTableIcons(Program program) {
+		Rating rating;
+
+		if (_settings.getProperty("ownRating").equalsIgnoreCase("true")) {
+			rating = _tvraterDB.getPersonalRating(program);
+			if (rating != null) {
+				Icon[] iconArray = { new RatingIcon(rating, RatingIcon.PERSONALRATING)};
+				return iconArray;
+			}
+		}
+
+		rating = _tvraterDB.getOverallRating(program);
+		if (rating != null) {
+			Icon[] iconArray = { new RatingIcon(rating, RatingIcon.OVERALLRATING)};
+			return iconArray;
+		}
+
+		if (_settings.getProperty("ownRating").equalsIgnoreCase("false")) {
+			rating = _tvraterDB.getPersonalRating(program);
+			if (rating != null) {
+				Icon[] iconArray = { new RatingIcon(rating, RatingIcon.PERSONALRATING)};
+				return iconArray;
+			}
+		}
+		
+		return null;
+	}
+
+	/**
 	 * Called by the host-application during start-up. 
 	 *
 	 * @see #writeData(ObjectOutputStream)
 	 */
 	public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		tvraterDB.readData(in);
+		_tvraterDB.readData(in);
 	}
 
 	/**
@@ -152,7 +205,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	 * @see #readData(ObjectInputStream)
 	 */
 	public void writeData(ObjectOutputStream out) throws IOException {
-		tvraterDB.writeData(out);
+		_tvraterDB.writeData(out);
 	}
 
 }
