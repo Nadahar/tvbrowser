@@ -65,8 +65,6 @@ public class Updater {
 	}
 
 	public void doUpdate() throws Exception {
-		System.out.println("Update!!");
-
 		URL url = new URL(LOCATION);
 
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();

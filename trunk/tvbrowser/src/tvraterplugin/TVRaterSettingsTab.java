@@ -103,7 +103,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 		c.weightx = 1.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 0, 0, 3);
-		_password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password"), 21));
+		_password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password",""), 21));
 		user.add(_password, c);
 
 		c.gridwidth = GridBagConstraints.RELATIVE;

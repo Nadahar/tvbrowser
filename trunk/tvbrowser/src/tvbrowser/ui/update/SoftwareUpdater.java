@@ -35,7 +35,7 @@ import java.util.regex.*;
 import java.util.*;
 
 import tvbrowser.TVBrowser;
-import tvbrowser.core.PluginManager;
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.TvDataServiceManager;
 import tvdataservice.TvDataService;
 
@@ -147,9 +147,7 @@ public class SoftwareUpdater {
       // remove incompatible items
 			Version required=ui.getRequiredVerion();
 			if (required!=null && TVBrowser.VERSION.compareTo(required)<0) {
-        System.out.println("required: "+required);
-        System.out.println("this: "+TVBrowser.VERSION);
-			  it.remove();	
+        it.remove();	
 			}      			
 		}
     
@@ -158,14 +156,16 @@ public class SoftwareUpdater {
     while (it.hasNext()) {
       SoftwareUpdateItem ui=(SoftwareUpdateItem)it.next();
       
-      devplugin.Plugin installedPlugin=PluginManager.getInstance().getPluginByName(ui.getName());
+      devplugin.Plugin installedPlugin = PluginLoader.getInstance().getPluginByName(ui.getName());
+      
+     
       
       if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(ui.getVersion())>=0) {
         it.remove();
       }     
     }
     
-//  remove already installed dataservices
+    //  remove already installed dataservices
      it=updateItems.iterator();
      while (it.hasNext()) {
        SoftwareUpdateItem ui=(SoftwareUpdateItem)it.next();

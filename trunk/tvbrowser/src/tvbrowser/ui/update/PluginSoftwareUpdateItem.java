@@ -42,6 +42,10 @@ public class PluginSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
   
   private boolean mSuccess;
   
+    private static java.util.logging.Logger mLog
+     = java.util.logging.Logger.getLogger(PluginSoftwareUpdateItem.class.getName());
+
+  
     private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginSoftwareUpdateItem.class);
   
@@ -71,12 +75,11 @@ public class PluginSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
     });
       
     if (mSuccess) {
-      JOptionPane.showMessageDialog(null,mLocalizer.msg("restartprogram","please restart tvbrowser before..."));
-    }
-    else {
-      JOptionPane.showMessageDialog(null,mLocalizer.msg("error.1","donwload failed",mUrl,toFile.getAbsolutePath()));
-    }
-  
+    JOptionPane.showMessageDialog(null,mLocalizer.msg("restartprogram","please restart tvbrowser before..."));
+  }
+  else {
+    JOptionPane.showMessageDialog(null,mLocalizer.msg("error.1","donwload failed",mUrl,toFile.getAbsolutePath()));
+  }
     return mSuccess;
 	}
 	

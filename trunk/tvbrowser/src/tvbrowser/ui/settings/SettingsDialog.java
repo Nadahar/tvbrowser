@@ -37,6 +37,7 @@ import util.ui.*;
 import devplugin.SettingsTab;
 import devplugin.Plugin;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
 
 /**
@@ -151,7 +152,7 @@ public class SettingsDialog {
     
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
     PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();
-    pluginSettingsTab.addSettingsChangeListener(contextmenuSettingsTab);
+    //pluginSettingsTab.addSettingsChangeListener(contextmenuSettingsTab);
     
     // Appearance
     node = new SettingNode(
@@ -169,7 +170,7 @@ public class SettingsDialog {
     node = new SettingNode(pluginSettingsTab);
     root.add(node);
     
-    Plugin[] pluginArr = PluginManager.getInstance().getAvailablePlugins();
+    Plugin[] pluginArr = PluginLoader.getInstance().getAllPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       ConfigPluginSettingsTab tab=new ConfigPluginSettingsTab(pluginArr[i]);
       node.add(new SettingNode(tab));

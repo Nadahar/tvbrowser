@@ -278,10 +278,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       }
     });
     if (mGroup!=null) {
-      if (mGroupListModel.contains(mGroup)) {
-        System.out.println("not new!");
-      }
-      else {
+      if (!mGroupListModel.contains(mGroup)) {
         mGroupListModel.addElement(mGroup);
         TvBrowserDataService.getInstance().addGroup(mGroup);
       }

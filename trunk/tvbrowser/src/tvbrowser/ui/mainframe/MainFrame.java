@@ -57,6 +57,7 @@ import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Plugin;
 
 /**
  * TV-Browser
@@ -274,6 +275,26 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
     jcontentPane.add(skinPanel,BorderLayout.CENTER);
     
+    
+    PluginLoader.getInstance().addPluginStateListener(new PluginStateListener(){
+
+			public void pluginActivated(Plugin p) {
+        createPluginsMenu();				
+			}
+
+			public void pluginDeactivated(Plugin p) {
+        createPluginsMenu();
+			}
+
+			public void pluginLoaded(Plugin p) {
+        createPluginsMenu();
+			}
+
+			public void pluginUnloaded(Plugin p) {
+        createPluginsMenu();
+			}
+    });
+    
   }
 
   public JLabel getStatusBarLabel() {
@@ -307,8 +328,10 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
   public void quit() {
-    mLog.info("Storing plugin data");
-    PluginManager.getInstance().finalizeInstalledPlugins();
+    PluginManager.getInstance().storeSettings();
+    
+    mLog.info("Finishing plugins");
+    PluginLoader.getInstance().shutdownAllPlugins();
     
     mLog.info("Storing filter components");
     FilterComponentList.store();
@@ -346,7 +369,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private void createPluginsMenu() {
     mPluginsMenu.removeAll();
     
-    Object[] plugins = PluginManager.getInstance().getInstalledPlugins();
+    Object[] plugins = PluginLoader.getInstance().getActivePlugins();
     JMenuItem item;
     HashMap map = new HashMap();
     for (int i = 0;i<plugins.length;i++) {
@@ -533,6 +556,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
 
+    FinderPanel.getInstance().updateUI();
+
     Settings.setLastDownloadDate(Date.getCurrentDate());
 
   }
@@ -671,7 +696,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     }
     
     if (Settings.settingHasChanged(new String[]{"updatebutton","preferencesbutton",
-    "buttontype","plugins"})) {
+    "buttontype" /*,"plugins"*/})) {
       mDefaultToolBar.updateButtons();
     }
     

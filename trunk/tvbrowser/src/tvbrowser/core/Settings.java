@@ -735,7 +735,7 @@ public class Settings {
   public static String[] getInstalledPlugins() {
     if (settings.getProperty("plugins") == null) {
       // Install by default all plugins
-      Plugin[] availableArr = PluginManager.getInstance().getAvailablePlugins();
+      Plugin[] availableArr = PluginLoader.getInstance().getAllPlugins();
       String[] classNameArr = new String[availableArr.length];
       for (int i = 0; i < availableArr.length; i++) {
         classNameArr[i] = availableArr[i].getClass().getName();
@@ -753,9 +753,27 @@ public class Settings {
       return;
     }
     
+    String[] pluginList = getInstalledPlugins();
+    
+    // if we do have the new plugin already, there is nothing to do 
+    for (int i=0;i<pluginList.length;i++) {
+      if (plugin.equals(pluginList[i])) {
+        return;
+      }
+    }
+    
+    String[] newPluginList = new String[pluginList.length+1];
+    for (int i=0;i<pluginList.length;i++) {
+      newPluginList[i]=pluginList[i];
+    }
+    newPluginList[pluginList.length]=plugin;
+    
+    setInstalledPlugins(newPluginList);
+    
+    /*
     String[] pluginList=settings.getStringList("plugins");
     
-    /* if we do have the new plugin already, there is nothing to do */
+    // if we do have the new plugin already, there is nothing to do 
     for (int i=0;i<pluginList.length;i++) {
       if (plugin.equals(pluginList[i])) {
         return;
@@ -768,7 +786,7 @@ public class Settings {
     }
     else {
       settings.setProperty("plugins",plugin);      
-    }
+    }*/
   }
 
 
@@ -864,8 +882,6 @@ public class Settings {
   }
   
   public static void setAutomaticDownload(int autoDL) {
-    System.out.println("setAutoDownload: "+autoDL);
-    
     if (autoDL==Settings.DAILY) {
       settings.setProperty("autodownload","daily");
     }
