@@ -101,8 +101,6 @@ public class SendToPluginDialog extends JDialog {
 
     Arrays.sort(copy, new ObjectComperator());
 
-    System.out.println(">>" + mCaller.getId());
-
     // create a list of those who support multiple program execution
     Vector selectablePluginList = new Vector();
     for (int i = 0; i < copy.length; i++) {
