@@ -73,6 +73,9 @@ public class ProgramDispatcher {
    * @param program The program to dispatch
    */
   public void dispatch(Program program) {
+    
+    //System.out.println("dispatch program: "+program.getTitle()+" - "+program.getDate());
+    
     Date date = program.getDate();
     Channel channel = program.getChannel();
 

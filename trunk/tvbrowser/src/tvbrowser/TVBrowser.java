@@ -186,6 +186,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
     
+    System.out.println("current date: "+devplugin.Date.getCurrentDate().toString());
+    
     mainFrame=new TVBrowser();
     
     // Set the right size
@@ -648,7 +650,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private void changeDate(devplugin.Date date) {    	
-	devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
+	//devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
+    
+    devplugin.Date nextDate=new devplugin.Date(date);
+    nextDate.addDays(1);
+   // devplugin.Date nextDate=date.addDays(1);
     DataService.getInstance().getProgressBar().setMaximum(100);
     DayProgram today = DataService.getInstance().getDayProgram(date, true, 0, 49);
     DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate, true, 50, 99);

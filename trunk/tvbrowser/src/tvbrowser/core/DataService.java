@@ -179,8 +179,10 @@ public class DataService implements devplugin.PluginManager {
     else {
     	progressBar.setMaximum(20*subscribedChannels.length);
     }
+    //devplugin.Date date=new Date();
+    //date.addDays(-1); // get yesterday too
     devplugin.Date date=new Date();
-    date.addDays(-1); // get yesterday too
+    /*date=*/date.addDays(-1);
     TvBrowserException downloadException = null;
     
 	
@@ -224,13 +226,13 @@ public class DataService implements devplugin.PluginManager {
         	prog=this.loadChannelDayProgramFromDisk(file);
          }
         
-		System.out.println("Date: "+date.toString()+", Channel: "+channel.getName());
+		//System.out.println("Date: "+date.toString()+", Channel: "+channel.getName());
           
         
         if (!file.exists() || (prog!=null && !prog.isComplete())) {
           // We don't have the file or the file is not complete -> download it
           if (!file.exists()) {
-          	System.out.println("File does not exist");
+          	System.out.println("File '"+file.getName()+"' does not exist");
           }
           if (prog!=null) {
           	System.out.println("complete? "+prog.isComplete());
@@ -238,7 +240,7 @@ public class DataService implements devplugin.PluginManager {
           try {
             prog = downloadDayProgram(date, channel);
             if (prog!=null) {
-				System.out.println("after download: complete? "+prog.isComplete());
+				      System.out.println("after download: complete? "+prog.isComplete());
             }else{
             	System.out.println("could not download program");
             }
@@ -276,7 +278,9 @@ public class DataService implements devplugin.PluginManager {
 
       // Create a new Date object, because the other one is used as key
       // in mDayProgramHash.
-      date = new devplugin.Date(date.getDaysSince1970() + 1);
+      date=new devplugin.Date(date);
+      /*date=*/date.addDays(1);
+      //date = new devplugin.Date(date.getDaysSince1970() + 1);
     }
 
     mIsDownloading = false;
@@ -344,7 +348,7 @@ public class DataService implements devplugin.PluginManager {
 		try {
 			in = new ObjectInputStream(new FileInputStream(file));
 			prog = new MutableChannelDayProgram(in);
-		}catch (Exception exc) {
+ 		}catch (Exception exc) {
 			//throw new TvBrowserException(getClass(), "error.1",
 			//	   "Error when reading program of {0} on {1}!\n({2})",
 			//	   "unknown", "unknown", file.getAbsolutePath(), exc);
@@ -371,6 +375,7 @@ public class DataService implements devplugin.PluginManager {
     throws TvBrowserException
   {
   	
+    
     Channel[] channels=ChannelList.getSubscribedChannels();
 
     boolean useProgressBar=false;
@@ -442,7 +447,9 @@ public class DataService implements devplugin.PluginManager {
    * @return if the data is available.
    */
   public static boolean dataAvailable(devplugin.Date date) {
-    final String dateStr = "" + date.getDaysSince1970();
+    //final String dateStr = "" + date.getDaysSince1970();
+    
+    final String dateStr=date.getDateString();
 
     String fList[] = new File(Settings.getTVDataDirectory()).list(
       new java.io.FilenameFilter() {
@@ -460,15 +467,17 @@ public class DataService implements devplugin.PluginManager {
  * Deletes expired tvdata files older then lifespan days.
  * @param lifespan
  */
-
+// TODO: re-implement this method
 public static void deleteExpiredFiles(int lifespan) {
 	
 		if (lifespan<0) {
 			return;  // manually
 		}
-		devplugin.Date d=new devplugin.Date();
-		d.addDays(-lifespan);
-		final int date=d.getDaysSince1970();
+		final devplugin.Date d=new devplugin.Date();
+	/*	final devplugin.Date ddd=*/d.addDays(-lifespan);
+		//final int date=d.getDaysSince1970();
+    //final long date=d.getValue();
+    final Date curDate=new Date();
 	
 		File fList[]=new File(Settings.getTVDataDirectory()).listFiles(
 			new java.io.FilenameFilter() {
@@ -477,7 +486,16 @@ public static void deleteExpiredFiles(int lifespan) {
 					int p=name.lastIndexOf('.');
 					String s=name.substring(p+1,name.length());
 					int val=Integer.parseInt(s);
-					return val<date;
+          int year=val/10000;
+          int r=val%10000;
+          int month=r/100;
+          int day=r%100;
+          curDate.setYear(val/10000);
+          curDate.setMonth(r/100);
+          curDate.setDay(r%100);
+          //System.out.println(curDate.getDateString()+" <--> "+ddd.getDateString());
+          return curDate.getValue()<d.getValue();
+					//return val<date;
 				}
 			}	
 		);
@@ -745,7 +763,8 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
     }
 
     if (nrDays < 0) {
-      startDate.addDays(nrDays);
+      //startDate.addDays(nrDays);
+      /*startDate=*/startDate.addDays(nrDays);
       nrDays = 0 - nrDays;
     }
 
@@ -785,6 +804,7 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
 
       // The next day
       startDate.addDays(1);
+     //startDate=startDate.addDays(1);
     }
 
     Program[] hitArr = new Program[hitList.size()];
@@ -812,9 +832,11 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
     // save the program to disk
     if (prog != null) {
       File file = getChannelDayProgramFile(date, channel);
-
+      
       ObjectOutputStream out = null;
       try {
+        
+        
         out = new ObjectOutputStream(new FileOutputStream(file));
         MutableChannelDayProgram mutProg = (MutableChannelDayProgram) prog;
         mutProg.writeData(out);
@@ -846,9 +868,15 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
   private File getChannelDayProgramFile(devplugin.Date date,
     devplugin.Channel channel)
   {
-    String fileName = "" + channel.getId()
+   /* String fileName = "" + channel.getId()
       + "_" + channel.getDataService().getClass().getName()
       + "." + date.getDaysSince1970();
+   */   
+    String fileName = "" + channel.getId()
+          + "_" + channel.getDataService().getClass().getPackage().getName()
+          + "." + date.getDateString();   
+      
+      
     return new File(Settings.getTVDataDirectory(), fileName);
   }
 

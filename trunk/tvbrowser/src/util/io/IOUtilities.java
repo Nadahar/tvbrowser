@@ -374,6 +374,8 @@ public class IOUtilities {
    * Gets the number of days since 1st Jan 1970.
    * <p>
    * This method does not create any objects.
+   * 
+   * @deprecated
    */
   public static int getDaysSince1970() {
     synchronized(CALENDAR) {
