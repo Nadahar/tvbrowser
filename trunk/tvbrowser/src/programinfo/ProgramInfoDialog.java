@@ -31,6 +31,7 @@ import javax.swing.event.HyperlinkListener;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 
 
 import util.io.IOUtilities;
@@ -81,8 +82,10 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent evt) {
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          String url = evt.getURL().toString();          
-          BrowserLauncher.openURL(url);          
+          URL url = evt.getURL();
+          if (url != null) {
+            BrowserLauncher.openURL(url.toString());
+          }
         }
       }
     });
