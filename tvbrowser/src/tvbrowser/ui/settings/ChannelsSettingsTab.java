@@ -26,23 +26,43 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.ui.customizableitems.SortableItemList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
+import util.ui.LinkButton;
 import util.ui.UiUtilities;
-import util.ui.BrowserLauncher;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
@@ -214,17 +234,13 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       panel.add(refreshList, c.xy(1, 13));
       panel.add(configureChannels, c.xyw(5, 13, 3));
 
-      JLabel urlLabel = new JLabel("<html><u>Wollen Sie eigene Sender anbieten? Dann klicken Sie hier!</u></html>", JLabel.CENTER);
-              urlLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-              urlLabel.setForeground(Color.BLUE);
-              urlLabel.addMouseListener(new MouseAdapter() {
-                  public void mouseClicked(MouseEvent e) {
-                      BrowserLauncher.openURL("http://tvbrowser.org/provide_tv_data.php");
-                  }
-              });
-      urlLabel.setBorder(BorderFactory.createEmptyBorder(5,0,3,0));
-       panel.add(urlLabel, c.xyw(1,14,7));
+      LinkButton urlLabel = new LinkButton(
+          mLocalizer.msg("addOwnChannels","Wollen Sie eigene Sender anbieten? Dann klicken Sie hier!"),
+          mLocalizer.msg("addOwnChannelsUrl", "http://tvbrowser.org/provide_tv_data.php"));
 
+      urlLabel.setBorder(BorderFactory.createEmptyBorder(5,0,3,0));
+
+      panel.add(urlLabel, c.xyw(1,14,7));
     }
 
     fillChannelListBox();
@@ -324,10 +340,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     return panel;
   }
 
-
-
-
-
   private ItemListener mFilterItemListener = new ItemListener(){
     public void itemStateChanged(ItemEvent e) {
       fillChannelListBox();
@@ -402,10 +414,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     }
 
   }
-
-
-
-
 
   /**
    * Called by the host-application, if the user wants to save the settings.
