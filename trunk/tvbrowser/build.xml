@@ -245,7 +245,6 @@
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
-    <unjar src="${lib.dir}/idw-gpl.jar" dest="${unpacked.dir}/idw-gpl.jar"/>
     <unjar src="${lib.dir}/bsh-2.0b1.jar" dest="${unpacked.dir}/bsh-2.0b1.jar"/>
 
 	<!-- Pack the tvbrowser.jar -->    

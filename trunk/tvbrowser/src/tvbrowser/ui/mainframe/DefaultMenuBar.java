@@ -75,7 +75,9 @@ public class DefaultMenuBar extends MenuBar {
     // "View" menu
     viewMenu.add(mToolbarMI);
     viewMenu.add(mTimeBtnsMI);
+    viewMenu.add(mDatelistMI);
     viewMenu.add(mChannellistMI);
+    viewMenu.add(mPluginOverviewMI);
     viewMenu.addSeparator();
     viewMenu.add(mFiltersMenu);
     viewMenu.add(mPluginsViewMenu);
@@ -113,6 +115,7 @@ public class DefaultMenuBar extends MenuBar {
     
     mUpdateMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));    
     mHelpMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
+    mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,0));
         
   }
 
