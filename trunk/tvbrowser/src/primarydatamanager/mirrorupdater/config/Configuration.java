@@ -42,5 +42,7 @@ public interface Configuration {
   public String getPrimaryServerUrl();
 
   public int getMirrorWeight();
+  
+  public String[] getChannelgroups();
 
 }

@@ -7,6 +7,26 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
   private java.io.PrintStream mErr;
   private boolean mThereWhereErrors;
   
+  public static final devplugin.ChannelGroup MAIN=createChannelGroup("main");
+  public static final devplugin.ChannelGroup LOCAL=createChannelGroup("local");
+  public static final devplugin.ChannelGroup OTHERS=createChannelGroup("others");
+  public static final devplugin.ChannelGroup DIGITAL=createChannelGroup("digital");
+  public static final devplugin.ChannelGroup RADIO=createChannelGroup("radio");
+  public static final devplugin.ChannelGroup AUSTRIA=createChannelGroup("austria");
+
+  
+  
+  private static final devplugin.ChannelGroup createChannelGroup(final String id) {
+    return new devplugin.ChannelGroup() {
+      public String getName() {
+        return id;
+      }
+     public String getId() {
+       return id;
+     }
+    };    
+  }
+  
   public boolean execute(String dir, java.io.PrintStream err) {
     mErr=err;
     mThereWhereErrors=false;

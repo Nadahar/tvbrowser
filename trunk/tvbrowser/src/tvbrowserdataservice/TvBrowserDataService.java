@@ -26,12 +26,13 @@
 package tvbrowserdataservice;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+
+
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import java.util.Properties;
-import java.util.logging.Level;
+
 
 import devplugin.*;
 import devplugin.Channel;
@@ -44,7 +45,8 @@ import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
-import util.io.IOUtilities;
+
+
 import util.tvdataservice.AbstractTvDataService;
 
 /**
@@ -62,17 +64,23 @@ public class TvBrowserDataService extends AbstractTvDataService {
     = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
   
-  private static final int MAX_META_DATA_AGE = 2;
-  private static final int MAX_UP_TO_DATE_CHECKS = 10;
-  private static final int MAX_LAST_UPDATE_DAYS = 5;
+  private DownloadManager mDownloadManager;
+  private TvDataBaseUpdater mUpdater;
+  private TvDataUpdateManager mTvDataBase;
+  private int mTotalDownloadJobCount;
+  private ProgressMonitor mProgressMonitor;
 
-  private static final Mirror[] DEFAULT_MIRROR_LIST = new Mirror[] {
-    //new Mirror("http://192.168.0.1/~martin")
-    new Mirror("http://www.murfman.de/tvdata"),
-    new Mirror("http://tvbrowser.waidi.net"),
-    new Mirror("http://tvbrowser.dyndns.tv")
-    
+
+  private static final String[] DEFAULT_CHANNEL_GROUPS = new String[] {
+    "http://tvbrowser.dyndns.tv/digital",
+    "http://tvbrowser.dyndns.tv/austria",
+    "http://tvbrowser.dyndns.tv/main",
+    "http://tvbrowser.dyndns.tv/local",
+    "http://tvbrowser.dyndns.tv/others", 
+    "http://tvbrowser.dyndns.tv/radio",
   };
+  
+  private ChannelGroup[] mChannelGroupArr;
 
   private Properties mSettings;
   
@@ -80,15 +88,11 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   private Channel[] mAvailableChannelArr;
   
-  //private String[] mSubsribedLevelArr;
+  private String[] mSubsribedLevelArr;
   private TvDataLevel[] mSubscribedLevelArr;
   
-  private int mDirectlyLoadedBytes;
+  private int mDirectlyLoadedBytes;  
   
-  private DownloadManager mDownloadManager;
-  private TvDataUpdateManager mTvDataBase;
-  private ProgressMonitor mProgressMonitor;
-  private int mTotalDownloadJobCount;
   
   public Version getAPIVersion() {
     return new Version(1,0); 
@@ -96,11 +100,19 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   public TvBrowserDataService() {
     mSettings = new Properties();
+    
+    mChannelGroupArr=new ChannelGroup[DEFAULT_CHANNEL_GROUPS.length];
+    for (int i=0;i<DEFAULT_CHANNEL_GROUPS.length;i++) {
+      mChannelGroupArr[i]=new ChannelGroup(this, DEFAULT_CHANNEL_GROUPS[i]);
+    }
+    
   }
 
-
   public void setWorkingDirectory(File dataDir) {
-    mDataDir=dataDir; 
+    mDataDir=dataDir;
+    for (int i=0;i<DEFAULT_CHANNEL_GROUPS.length;i++) {
+      mChannelGroupArr[i].setWorkingDirectory(dataDir);
+    } 
   }
 
 
@@ -109,90 +121,97 @@ public class TvBrowserDataService extends AbstractTvDataService {
    * 
    * @throws TvBrowserException
    */  
+  
   public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
     Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {    
-    mTvDataBase = dataBase;
-    mProgressMonitor = monitor;
     
-    mDirectlyLoadedBytes = 0;
+    mTvDataBase=dataBase;    
+    mProgressMonitor = monitor;
+  
+    mProgressMonitor.setMessage(mLocalizer.msg("info.7","Preparing download..."));
+    
+    ArrayList[] channelList=new ArrayList[mChannelGroupArr.length];
+    for (int i=0;i<channelList.length;i++) {
+      mChannelGroupArr[i].resetDirectlyLoadedBytes();
+      channelList[i]=new ArrayList();
+    }
     
     // Delete outdated files
     deleteOutdatedFiles();
     
-    // load the mirror list
-    Mirror[] mirrorArr = loadMirrorList();
-    
-    // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr, monitor);
-    mLog.info("Using mirror " + mirror.getUrl());
-    monitor.setMessage(mLocalizer.msg("info.1","Downloading from mirror {0}",mirror.getUrl()));
-    
-    // Update the mirrorlist (for the next time)
-    updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
-    
-    // Update the channel list
-    // NOTE: We have to load the channel list before the programs, because
-    //       we need it for the programs.
-    updateChannelList(mirror);
-    
-    // Try to get summary file
-    SummaryFile summary;
-    try {
-      summary = loadSummaryFile(mirror);
-    }
-    catch (Exception exc) {
-      mLog.log(Level.WARNING, "Getting summary file from mirror "
-        + mirror.getUrl() + " failed.", exc);
-      
-      summary = null;
+    for (int i=0;i<channelArr.length;i++) {
+      String groupName=channelArr[i].getGroup().getId();
+      for (int j=0;j<mChannelGroupArr.length;j++) {       
+        if (mChannelGroupArr[j].isGroupMember(channelArr[i])) {       
+          channelList[j].add(channelArr[i]);
+        }        
+      }       
     }
     
-    // Create a download manager and add all the jobs
-    mDownloadManager = new DownloadManager(mirror.getUrl());
-    TvDataBaseUpdater updater = new TvDataBaseUpdater(this, dataBase);
+    mProgressMonitor.setMessage(mLocalizer.msg("info.8","Finding mirror..."));
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      mChannelGroupArr[i].chooseMirrors();
+    }
+    
+    mProgressMonitor.setMessage(mLocalizer.msg("info.7","Preparing download..."));
+    
+    
+    //  Create a download manager and add all the jobs
+    mDownloadManager = new DownloadManager();
+    mUpdater = new TvDataBaseUpdater(this, dataBase);
     
     // Add a receive or a update job for each channel and day
-    DayProgramReceiveDH receiveDH = new DayProgramReceiveDH(this, updater);
-    DayProgramUpdateDH updateDH   = new DayProgramUpdateDH(this, updater);
-    Date date = startDate;
-    for (int day = 0; day < dateCount; day++) {
-      for (int levelIdx = 0; levelIdx < mSubscribedLevelArr.length; levelIdx++) {
-        String level = mSubscribedLevelArr[levelIdx].getId();
-        
-        for (int i = 0; i < channelArr.length; i++) {
-          addDownloadJob(dataBase, date, level, channelArr[i].getId(),
-                         channelArr[i].getCountry(), receiveDH, updateDH, summary);
-        }
+    DayProgramReceiveDH receiveDH = new DayProgramReceiveDH(this, mUpdater);
+    DayProgramUpdateDH updateDH   = new DayProgramUpdateDH(this, mUpdater);
+   
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      
+      Date date = startDate;
+      for (int day = 0; day < dateCount; day++) {
+
+        for (int levelIdx = 0; levelIdx < mSubscribedLevelArr.length; levelIdx++) {
+          
+          String level = mSubscribedLevelArr[levelIdx].getId();
+          Iterator it=channelList[i].iterator();
+          while (it.hasNext()) {
+            Channel ch=(Channel)it.next();
+            addDownloadJob(dataBase, mChannelGroupArr[i].getMirror(), date, level, ch.getId(),
+                                   ch.getCountry(), receiveDH, updateDH, mChannelGroupArr[i].getSummary());
+            }
+          }
+          date = date.addDays(1);
+        }      
       }
       
-      date = date.addDays(1);
-    }
+      
+      mProgressMonitor.setMessage(mLocalizer.msg("info.1","Downloading..."));
     
-    // Initialize the ProgressMonitor
-    mTotalDownloadJobCount = mDownloadManager.getDownloadJobCount();
-    mProgressMonitor.setMaximum(mTotalDownloadJobCount);
+
+      // Initialize the ProgressMonitor
+      mTotalDownloadJobCount = mDownloadManager.getDownloadJobCount();
+      mProgressMonitor.setMaximum(mTotalDownloadJobCount);
     
-    // Let the download begin
-    try {
-      mDownloadManager.runDownload();
-    }
-    finally {
-      // Update the programs for which the update suceed in every case
-      monitor.setMessage(mLocalizer.msg("info.2","Updating tv data base"));
+      // Let the download begin
+      try {
+        mDownloadManager.runDownload();
+      }
+      finally {
+        // Update the programs for which the update suceed in every case
+        mProgressMonitor.setMessage(mLocalizer.msg("info.2","Updating tv data base"));
+        mUpdater.updateTvDataBase();
+        mProgressMonitor.setMessage("");
+        
+        // Clean up ressources
+        mDownloadManager = null;
+        mTvDataBase = null;
+        mProgressMonitor = null;
+      }   
     
-      updater.updateTvDataBase();
-      monitor.setMessage("");
-      // Clean up ressources
-      mDownloadManager = null;
-      mTvDataBase = null;
-      mProgressMonitor = null;
-    }
   }
-
-
-
+    
+    
   private void deleteOutdatedFiles() {
     // Delete all day programs older than 3 days
     Date deadlineDay = new Date().addDays(- 3);
@@ -217,270 +236,67 @@ public class TvBrowserDataService extends AbstractTvDataService {
       }
     }
   }
-
-
-
-  private Mirror[] loadMirrorList() throws TvBrowserException {
-    File file = new File(mDataDir, Mirror.MIRROR_LIST_FILE_NAME);
-    try { 
-      return Mirror.readMirrorListFromFile(file);
-    }
-    catch (Exception exc) {
-      // Loading the mirror list failed -> return the default list
-      return DEFAULT_MIRROR_LIST;
-    }
-  }
-
-
-
-  private void updateMetaFile(String serverUrl, String metaFileName) throws TvBrowserException {
-    File file = new File(mDataDir, metaFileName);
     
-    // Download the new file if needed
-    if (needsUpdate(file)) {
-      String url = serverUrl + "/" + metaFileName;
-      try {
-        IOUtilities.download(new URL(url), file);
-        
-        mDirectlyLoadedBytes += (int) file.length();
-      }
-      catch (IOException exc) {
-        throw new TvBrowserException(getClass(), "error.1",
-          "Downloading file from '{0}' to '{1}' failed",
-          url, file.getAbsolutePath(), exc);
-      }
-    }
-  }
-
-
-
-  private boolean needsUpdate(File file) {
-    if (! file.exists()) {
-      return true;
-    } else {
-      long minLastModified = System.currentTimeMillis()
-        - ((long)MAX_META_DATA_AGE * 24L * 60L * 60L * 1000L);
-      return file.lastModified() < minLastModified;
-    }
-  }
-
-
-
-  private Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor)
-    throws TvBrowserException
+  private void addDownloadJob(TvDataUpdateManager dataBase, Mirror mirror, Date date,
+          String level, String channelName, String country,
+          DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH,
+          SummaryFile summary)
+          throws TvBrowserException
   {
-    // Choose a random Mirror
-    Mirror mirror = chooseMirror(mirrorArr, null);
-    if (monitor!=null) {
-      monitor.setMessage(mLocalizer.msg("info.3","Try to connect to mirror {0}",mirror.getUrl()));    
-    }  
-    // Check whether the mirror is up to date and available
-    for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
-      try {
-        if (mirrorIsUpToDate(mirror)) {
-          break;
-        } else {
-          // This one is not up to date -> choose another one
-          Mirror oldMirror = mirror;
-          mirror = chooseMirror(mirrorArr, mirror);
-          mLog.info("Mirror " + oldMirror.getUrl() + " is out of date. Choosing "
-            + mirror.getUrl() + " instead.");
-          if (monitor!=null) {
-            monitor.setMessage(mLocalizer.msg("info.4","Mirror {0} is out of date. Choosing {1}",oldMirror.getUrl(),mirror.getUrl()));
-          }
-        }
-      }
-      catch (TvBrowserException exc) {
-        // This one is not available -> choose another one
-        Mirror oldMirror = mirror;
-        mirror = chooseMirror(mirrorArr, mirror);
-        mLog.info("Mirror " + oldMirror.getUrl()
-          + " is not available. Choosing " + mirror.getUrl() + " instead.");
-        if (monitor!=null) {
-          monitor.setMessage(mLocalizer.msg("info.5","Mirror {0} is not available. Choosing {1}",oldMirror.getUrl(), mirror.getUrl()));
-        }  
-      }
-    }
-    
-    // Return the mirror
-    return mirror;
-  }
-
-
-
-  private Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror)
-    throws TvBrowserException
-  {
-    // Get the total weight
-    int totalWeight = 0;
-    for (int i = 0; i < mirrorArr.length; i++) {
-      totalWeight += mirrorArr[i].getWeight();
-    }
-    
-    // Choose a weight
-    int chosenWeight = (int) (Math.random() * totalWeight);
-    
-    // Find the chosen mirror
-    int currWeight = 0;
-    for (int i = 0; i < mirrorArr.length; i++) {
-      currWeight += mirrorArr[i].getWeight();
-      if (currWeight > chosenWeight) {
-        Mirror mirror = mirrorArr[i];
-        // Check whether this is the old mirror
-        if ((mirror == oldMirror) && (mirrorArr.length > 1)) {
-          // We chose the old mirror -> chose another one
-          return chooseMirror(mirrorArr, oldMirror);
-        } else {
-          return mirror;
-        }
-      }
-    }
-    
-    // We didn't find a mirror? This should not happen -> throw exception
-    throw new TvBrowserException(getClass(), "error.2",
-      "No mirror found (chosen weight={0}, total weight={1})",
-      new Integer(chosenWeight), new Integer(totalWeight));
-  }
-
-
-
-  private boolean mirrorIsUpToDate(Mirror mirror)
-    throws TvBrowserException
-  {
-    // Load the lastupdate file and parse it
-    String url = mirror.getUrl() + "/lastupdate";
-    Date lastupdated;
-    try {
-      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(url));
-      mDirectlyLoadedBytes += data.length;
+  // NOTE: summary is null when getting failed
       
-      // Parse is. E.g.: '2003-10-09 11:48:45'
-      String asString = new String(data);
-      int year = Integer.parseInt(asString.substring(0, 4));
-      int month = Integer.parseInt(asString.substring(5, 7));
-      int day = Integer.parseInt(asString.substring(8, 10));
-      lastupdated = new Date(year, month, day);
-    }
-    catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.3",
-        "Loading lastupdate file failed: {0}",
-        url, exc);
-    }
-    
-    return lastupdated.compareTo(new Date().addDays(- MAX_LAST_UPDATE_DAYS)) >= 0;
-  }
-
-
-  
-  private void updateChannelList(Mirror mirror) throws TvBrowserException {
-    updateChannelList(mirror, false);  
-  }
-
-
-  private void updateChannelList(Mirror mirror, boolean forceUpdate)
-    throws TvBrowserException
-  {
-    File file = new File(mDataDir, ChannelList.FILE_NAME);
-    if (forceUpdate || needsUpdate(file)) {
-      String url = mirror.getUrl() + "/" + ChannelList.FILE_NAME;
-      try {
-        IOUtilities.download(new URL(url), file);
-      }
-      catch (Exception exc) {
-        throw new TvBrowserException(getClass(), "error.4",
-          "Server has no channel list: {0}", mirror.getUrl(), exc);
-      }
+  String completeFileName = DayProgramFile.getProgramFileName(date,
+            country, channelName, level);
+  File completeFile = new File(mDataDir, completeFileName);
       
-      // Invalidate the channel list
-      mAvailableChannelArr = null;
-    }
-  }
-
-
-  private SummaryFile loadSummaryFile(Mirror mirror)
-    throws IOException, FileFormatException
-  {
-    String url = mirror.getUrl() + "/" + SummaryFile.SUMMARY_FILE_NAME;
+  int levelIdx = DayProgramFile.getLevelIndexForId(level);
     
-    InputStream stream = null;
-    try {
-      stream = IOUtilities.getStream(new URL(url));
-      
-      SummaryFile summary = new SummaryFile();
-      summary.readFromStream(stream);
-      
-      return summary;
-    }
-    finally {
-      if (stream != null) {
-        stream.close();
-      }
-    }
-  }
-
-
-  private void addDownloadJob(TvDataUpdateManager dataBase, Date date,
-    String level, String channelName, String country,
-    DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH,
-    SummaryFile summary)
-    throws TvBrowserException
-  {
-    // NOTE: summary is null when getting failed
-    
-    String completeFileName = DayProgramFile.getProgramFileName(date,
-      country, channelName, level);
-    File completeFile = new File(mDataDir, completeFileName);
-    int levelIdx = DayProgramFile.getLevelIndexForId(level);
-    
-    // Check whether we already have data for this day
-    if (completeFile.exists()) {
-      // We have data -> Check whether the mirror has an update
+  // Check whether we already have data for this day
+  if (completeFile.exists()) {
+    // We have data -> Check whether the mirror has an update
               
-      // Get the version of the file
-      int localVersion;
-      try {
-        localVersion = DayProgramFile.readVersionFromFile(completeFile);
-      }
-      catch (Exception exc) {
-        throw new TvBrowserException(getClass(), "error.5",
-          "Reading version of TV data file failed: {0}",
-          completeFile.getAbsolutePath(), exc);
+    // Get the version of the file
+    int localVersion;
+    try {
+      localVersion = DayProgramFile.readVersionFromFile(completeFile);
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(getClass(), "error.5",
+                "Reading version of TV data file failed: {0}",
+                completeFile.getAbsolutePath(), exc);
       }
       
       // Check whether the mirror has a newer version
       boolean needsUpdate = true;
       if (summary != null) {
         int mirrorVersion = summary.getDayProgramVersion(date, country,
-          channelName, levelIdx);
-        
+                channelName, levelIdx);
         needsUpdate = (mirrorVersion > localVersion);
       }
 
       if (needsUpdate) {
         // We need an update -> Add an update job
         String updateFileName = DayProgramFile.getProgramFileName(date,
-          country, channelName, level, localVersion);
-                
-        mDownloadManager.addDownloadJob(updateFileName, updateDH);
+                country, channelName, level, localVersion);
+        mDownloadManager.addDownloadJob(mirror.getUrl(),updateFileName, updateDH);
       }
     } else {
       // We have no data -> Check whether the mirror has
       boolean needsUpdate = true;
       if (summary != null) {
         int mirrorVersion = summary.getDayProgramVersion(date, country,
-          channelName, levelIdx);
-        
+                channelName, levelIdx);
         needsUpdate = (mirrorVersion != -1);
       }
-
+       
       if (needsUpdate) {
-        // We need an receive -> Add a download job
-        mDownloadManager.addDownloadJob(completeFileName, receiveDH);
+        // We need an receive -> Add a download job          
+        mDownloadManager.addDownloadJob(mirror.getUrl(),completeFileName, receiveDH);
       }  
     }
   }
-
-
+    
+    
 
   void checkCancelDownload() {
     if (mTvDataBase.cancelDownload()) {
@@ -496,8 +312,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   boolean isDayProgramInDataBase(Date date, Channel channel) {
     return mTvDataBase.isDayProgramAvailable(date, channel);
   }
-  
-  
+   
   File getDataDir() {
     return mDataDir;
   }
@@ -555,7 +370,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
   }
 
 
-
   /**
    * Called by the host-application during shut-down. Implements this method to
    * store your dataservices settings to the file system.
@@ -563,8 +377,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
   public Properties storeSettings() {
     return mSettings;
   }
-
-
 
   public boolean hasSettingsPanel() {
     return true;
@@ -577,58 +389,39 @@ public class TvBrowserDataService extends AbstractTvDataService {
   }
 
 
-
   /**
    * Gets the list of the channels that are available by this data service.
    */
   public Channel[] getAvailableChannels() {
-    if (mAvailableChannelArr == null) {
-      File channelFile = new File(mDataDir, ChannelList.FILE_NAME);
-      if (channelFile.exists()) {
-        try {
-          ChannelList channelList = new ChannelList();
-          channelList.readFromFile(channelFile, this);
-          mAvailableChannelArr = channelList.createChannelArray();
-        }
-        catch (Exception exc) {
-          mLog.log(Level.WARNING, "Loading channellist failed: "
-            + channelFile.getAbsolutePath(), exc);
-        }
-      }
-      
-      if (mAvailableChannelArr == null) {
-        // There is no channel file or loading failed
-        // -> create a list with some channels
-        //mAvailableChannelArr = createDefaultChannels();
-        mAvailableChannelArr=new Channel[]{};
-      }
+    
+    ArrayList channelList=new ArrayList();
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      Channel[] ch=mChannelGroupArr[i].getAvailableChannels();
+      for (int j=0;j<ch.length;j++) {
+        channelList.add(ch[j]);  
+      }    
     }
     
-    return mAvailableChannelArr;
+    Channel[] result=new Channel[channelList.size()];
+    channelList.toArray(result);
+    return result;
   }
   
   
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
-    // load the mirror list
-    Mirror[] mirrorArr = loadMirrorList();
     
-    // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr,monitor);
-    mLog.info("Using mirror " + mirror.getUrl());
-
-    // Update the mirrorlist (for the next time)
-    if (monitor!=null) {
-      monitor.setMessage(mLocalizer.msg("info.6","downloading channel list"));
+    ArrayList channelList=new ArrayList();
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      monitor.setMessage("Checking group "+i+" of "+mChannelGroupArr.length+" ...");
+      Channel[] ch=mChannelGroupArr[i].checkForAvailableChannels();
+      for (int j=0;j<ch.length;j++) {
+        channelList.add(ch[j]);  
+      }    
     }
-    updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
     
-    
-    // Update the channel list
-    updateChannelList(mirror,true);
-    if (monitor!=null) {
-      monitor.setMessage("");
-    } 
-    return getAvailableChannels();
+    Channel[] result=new Channel[channelList.size()];
+    channelList.toArray(result);
+    return result;
   }
   
   public boolean supportsDynamicChannelList() {

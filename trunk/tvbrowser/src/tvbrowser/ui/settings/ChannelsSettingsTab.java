@@ -199,6 +199,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     ArrayList availableChannelList = new ArrayList();
     while (iter.hasNext()) {
       Channel channel = (Channel) iter.next();
+      
       if (ChannelList.isSubscribedChannel(channel)) {
         int pos = ChannelList.getPos(channel);
         subscribedChannelArr[pos] = channel;
