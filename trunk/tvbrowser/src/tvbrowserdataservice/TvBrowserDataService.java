@@ -38,9 +38,7 @@ import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.Version;
 
-import tvbrowserdataservice.file.ChannelList;
-import tvbrowserdataservice.file.DayProgramFile;
-import tvbrowserdataservice.file.Mirror;
+import tvbrowserdataservice.file.*;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataBase;
 import util.exc.TvBrowserException;

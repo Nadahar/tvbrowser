@@ -1,6 +1,6 @@
 
 
-package tvbrowserdataservice;
+package tvbrowserdataservice.file;
 
 public class TvDataLevel {
   
