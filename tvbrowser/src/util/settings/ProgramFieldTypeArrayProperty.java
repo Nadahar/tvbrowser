@@ -34,98 +34,101 @@ import devplugin.ProgramFieldType;
  */
 public class ProgramFieldTypeArrayProperty extends Property {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ProgramFieldTypeArrayProperty.class.getName());
+	private static java.util.logging.Logger mLog = java.util.logging.Logger
+			.getLogger(ProgramFieldTypeArrayProperty.class.getName());
 
-  private ProgramFieldType[] mDefaultValue;
-  private ProgramFieldType[] mCachedValue;
-  
-  
-  
-  public ProgramFieldTypeArrayProperty(PropertyManager manager, String key,
-    ProgramFieldType[] defaultValue)
-  {
-    super(manager, key);
+	private ProgramFieldType[] mDefaultValue;
 
-    mDefaultValue = defaultValue;
-    mCachedValue = null;
-  }
+	private ProgramFieldType[] mCachedValue;
 
+	public ProgramFieldTypeArrayProperty(PropertyManager manager, String key,
+			ProgramFieldType[] defaultValue) {
+		super(manager, key);
 
-  public ProgramFieldType[] getDefault() {
-    return mDefaultValue;
-  }
+		mDefaultValue = defaultValue;
+		mCachedValue = null;
+	}
 
+	public ProgramFieldType[] getDefault() {
+		return mDefaultValue;
+	}
 
-  public ProgramFieldType[] getProgramFieldTypeArray() {
-    if (mCachedValue == null) {
-      String asString = getProperty();
-  
-      if (asString != null) {
-        String[] splits = asString.split(",");
-        try {
-          ProgramFieldType[] arr = new ProgramFieldType[splits.length];
-          for (int i = 0; i < splits.length; i++) {
-            int id = Integer.parseInt(splits[i]);
-            arr[i] = ProgramFieldType.getTypeForId(id);
-          }
-          
-          mCachedValue = arr;
-        }
-        catch (NumberFormatException exc) {
-          // We use the default value
-          mLog.warning("Property " + getKey() + " has an illegal value: '"
-            + asString + "'. Using the default.");
-        }
-      }
-  
-      if (mCachedValue == null) {
-        mCachedValue = mDefaultValue;
-      }
-    }
+	public ProgramFieldType[] getProgramFieldTypeArray() {
+		if (mCachedValue == null) {
+			String asString = getProperty();
 
-    return mCachedValue;
-  }
-  
-  
-  public void setProgramFieldTypeArray(ProgramFieldType[] value) {
-    if (value == null) {
-      throw new IllegalArgumentException("You can't set a null value");
-    }
-    
-    boolean equalsDefault = false;
-    if ((mDefaultValue != null) && (value.length == mDefaultValue.length)) {
-      equalsDefault = true;
-      for (int i = 0; i < value.length; i++) {
-        if (! value[i].equals(mDefaultValue[i])) {
-          equalsDefault = false;
-          break;
-        }
-      }
-    }
-    
-    if (equalsDefault) {
-      setProperty(null);
-    } else {
-      StringBuffer buffer = new StringBuffer();
-    
-      for (int i = 0; i < value.length; i++) {
-        if (i != 0) {
-          buffer.append(',');
-        }
+			if (asString != null) {
 
-        buffer.append(value[i].getTypeId());
-      }
-      
-      setProperty(buffer.toString());
-    }
-    
-    mCachedValue = value;
-  }
-  
-  
-  protected void clearCache() {
-    mCachedValue = null;
-  }
+				if (asString.trim().length() == 0) {
+					mCachedValue = new ProgramFieldType[0];
+				} else {
+
+					String[] splits = asString.split(",");
+
+					try {
+						ProgramFieldType[] arr = new ProgramFieldType[splits.length];
+						for (int i = 0; i < splits.length; i++) {
+							int id = Integer.parseInt(splits[i]);
+							arr[i] = ProgramFieldType.getTypeForId(id);
+						}
+
+						mCachedValue = arr;
+					} catch (NumberFormatException exc) {
+						// We use the default value
+						mLog.warning("Property " + getKey()
+								+ " has an illegal value: '" + asString
+								+ "'. Using the default.");
+					}
+				}
+			}
+
+			if (mCachedValue == null) {
+				mCachedValue = mDefaultValue;
+			}
+		}
+
+		return mCachedValue;
+	}
+
+	public void setProgramFieldTypeArray(ProgramFieldType[] value) {
+		if (value == null) {
+			throw new IllegalArgumentException("You can't set a null value");
+		}
+
+		boolean equalsDefault = false;
+		if ((mDefaultValue != null) && (value.length == mDefaultValue.length)) {
+			equalsDefault = true;
+			for (int i = 0; i < value.length; i++) {
+				if (!value[i].equals(mDefaultValue[i])) {
+					equalsDefault = false;
+					break;
+				}
+			}
+		}
+
+		if (equalsDefault) {
+			setProperty(null);
+		} else {
+			StringBuffer buffer = new StringBuffer();
+
+			for (int i = 0; i < value.length; i++) {
+				if (i != 0) {
+					buffer.append(',');
+				}
+
+				buffer.append(value[i].getTypeId());
+			}
+
+			System.out.println(buffer.toString());
+
+			setProperty(buffer.toString());
+		}
+
+		mCachedValue = value;
+	}
+
+	protected void clearCache() {
+		mCachedValue = null;
+	}
 
 }
