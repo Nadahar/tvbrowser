@@ -11,7 +11,6 @@ TODOs:
     evtl. Option "News automatisch holen"
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 - (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
-- (B) Default-Icon fur Sender, die kein Icon haben
 - Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea)
 - kuerzere Texte fuer die Symbolbuttons
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
@@ -32,23 +31,20 @@ java.lang.NullPointerException
 - Hilfe - Einrichtungsassistent geht nicht
 - Button Lieblingssendungen ist zu klein
 - Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
-- (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
 - (B) Umlaute im Einrichtungsassistent
 - "irgendwie" hervorheben, dass gerade ein Filter ausgewaehlt ist (und deshalb nicht alle Sendungen sichtbar sind).
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 - Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
 
-
-Entfernte ToDos:
-- Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
-- Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
-
-Bugs:
+Bugs (Achtung: es exisiteren weitere Bugs auf SF!!) :
 - Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
 - Exception bei Drag&-Drop in der Toolbar: java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
 - Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert, 
   das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
 
+Entfernte ToDos:
+- Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
+- Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
 
 Erledigt:
 - (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
@@ -56,3 +52,5 @@ Erledigt:
 - (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
 - (B) Einstellungen --> Aussehen --> Look&Feel --> Hintergrund: hat praktisch keine Bedeutung
 - (B) Uebernehmen-Knopf in Einstellungen
+- (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
+- (B) Default-Icon fur Sender, die kein Icon haben
