@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -157,6 +157,11 @@ public class DataService implements devplugin.PluginManager {
   public void startDownload(int daysToDownload) {
     if (tvdataloader == null) {
       return;
+    }
+    
+    File tvdataDir=new File(Settings.DATA_DIR);
+    if (!tvdataDir.exists()) {
+    	tvdataDir.mkdir();
     }
     
     progressBar.setString("connecting...");

@@ -51,7 +51,7 @@ public class Settings {
 
   private static final String SETTINGS_FILE="settings.prop";
   private static final String USER_DIR="tvbrowser";
-  public static String DATA_DIR="tvdata";
+  public static final String DATA_DIR="tvdata";
 
 
 
