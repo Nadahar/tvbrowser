@@ -193,6 +193,7 @@
       <fileset dir="${src.dir}" includes="**/*.gif"/>
       <fileset dir="${src.dir}" includes="**/*.jpg"/>
       <fileset dir="${src.dir}" includes="**/*.png"/>
+      <fileset dir="${src.dir}" includes="**/*.ico"/>
       <fileset dir="${src.dir}" includes="**/*.dtd"/>
       <fileset dir="${src.dir}" includes="**/*.properties"/>
     </copy>
@@ -424,9 +425,6 @@
     <copy todir="${tvbrowser-win.runtime.dir}">
       <fileset dir="${tvbrowser.runtime.dir}"/>
       <fileset dir="${win.dir}" includes="DesktopIndicator.dll"/>
-    </copy>
-    <copy todir="${tvbrowser-win.runtime.dir}/imgs">
-      <fileset dir="${win.dir}" includes="taskicon.ico"/>
     </copy>
   </target>
   

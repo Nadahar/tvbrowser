@@ -165,7 +165,6 @@ Section "${PROG_NAME} (erforderlich)"
 
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
-  File "${RUNTIME_DIR}\..\..\win\taskicon.ico"
 
   SetOutPath "$INSTDIR\help\de"
   File "${RUNTIME_DIR}\help\de\*.*"

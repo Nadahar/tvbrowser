@@ -294,7 +294,7 @@ public class TVBrowser {
         mLog.info("could not load library "+iconTrayLib.getAbsolutePath());
       }
       else {
-        systrayImageHandle = SystemTrayIconManager.loadImage("imgs/taskicon.ico");
+        systrayImageHandle = SystemTrayIconManager.loadImage("imgs/TVBrowser.ico");
         if (systrayImageHandle == -1) {
           mLog.info("Could not load system tray icon");
           mUseSystemTray = false;
