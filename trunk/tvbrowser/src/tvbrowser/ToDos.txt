@@ -8,14 +8,12 @@ TODOs:
 - News-Plugin:
     Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
     evtl. Option "News automatisch holen"
-- (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 - (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
 - Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea)
 - kuerzere Texte fuer die Symbolbuttons
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden
 - Statusbar kann nicht ausgeblendet werden
-- (M) Tooltips fuer Buttons fehlen
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
 - fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
 - (M) F2 (plugin-view ein-ausblenden) funktioniert nicht, wenn die plugin-view den focus hat
@@ -50,7 +48,10 @@ Erledigt:
 - (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
 - (B) Einstellungen --> Aussehen --> Look&Feel --> Hintergrund: hat praktisch keine Bedeutung
 - (B) Uebernehmen-Knopf in Einstellungen
+- (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
+- (M) Tooltips fuer Buttons fehlen
 - (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
 - (B) Default-Icon fur Sender, die kein Icon haben
 - (B) Hilfe - Einrichtungsassistent geht nicht
 - (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail)
+

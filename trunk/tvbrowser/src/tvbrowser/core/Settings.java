@@ -188,7 +188,9 @@ public class Settings {
     }
       
     propArr = new Property[] {
-      propShowUpdateButton, propShowPreferencesButton, propToolbarButtonStyle, propToolbarButtons
+     /* propShowUpdateButton, propShowPreferencesButton, */propToolbarButtonStyle,
+      propToolbarButtons, propToolbarIsFloatable, propToolbarLocation,
+      propToolbarUseBigIcons
     };
     if (mProp.hasChanged(propArr)) {
       mainFrame.updateToolbar();
@@ -336,13 +338,13 @@ public class Settings {
   /**
    * @deprecated
    */
-  public static final BooleanProperty propShowUpdateButton
-    = new BooleanProperty(mProp, "showUpdateButton", true);
+//  public static final BooleanProperty propShowUpdateButton
+//    = new BooleanProperty(mProp, "showUpdateButton", true);
 /**
  * @deprecated
  */
-  public static final BooleanProperty propShowPreferencesButton
-    = new BooleanProperty(mProp, "showPreferencesButton", true);
+//  public static final BooleanProperty propShowPreferencesButton
+//    = new BooleanProperty(mProp, "showPreferencesButton", true);
 
   public static final BooleanProperty propShowAssistant
     = new BooleanProperty(mProp, "showassistant", true);
@@ -383,8 +385,11 @@ public class Settings {
   public static final StringArrayProperty propToolbarButtons
     = new StringArrayProperty(mProp, "toolbarButtons",
             null  // we show all buttons, if this property is not set
-     ); 
-  
+     );
+
+  public static final BooleanProperty propToolbarUseBigIcons
+    = new BooleanProperty(mProp, "toolbarUseBigIcons", true);
+
   public static final BooleanProperty propToolbarIsFloatable
     = new BooleanProperty(mProp, "toolbarIsFloatable", true);
   

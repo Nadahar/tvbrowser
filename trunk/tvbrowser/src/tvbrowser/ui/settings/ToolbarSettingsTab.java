@@ -27,26 +27,19 @@
 package tvbrowser.ui.settings;
 
 
-import util.ui.OrderChooser;
-import tvbrowser.ui.mainframe.toolbar.ToolBarModel;
-import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
-import tvbrowser.ui.mainframe.toolbar.ToolBar;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.List;
 import java.util.ArrayList;
 
 import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
 import tvbrowser.ui.customizableitems.CustomizableItemsListener;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
-import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.ui.mainframe.toolbar.*;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.core.Settings;
-import devplugin.Program;
-import devplugin.Plugin;
-import devplugin.ActionMenu;
+
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -55,19 +48,83 @@ import devplugin.ActionMenu;
  */
 public class ToolbarSettingsTab implements devplugin.SettingsTab {
 
+  public static final util.ui.Localizer mLocalizer
+       = util.ui.Localizer.getLocalizerFor(ToolbarSettingsTab.class);
+
+
   private CustomizableItemsPanel mOrderPanel;
+  private JComboBox mShowCB, mLocationCB;
+  private JCheckBox mUseBigIconsCb;
 
   public ToolbarSettingsTab() {
 
   }
 
+
+  private JPanel createLeftAlignmentPanel(JPanel content) {
+    JPanel result = new JPanel(new BorderLayout());
+    result.add(content,BorderLayout.WEST);
+    return result;
+  }
+
   public JPanel createSettingsPanel() {
     JPanel panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-    content.add(createOrderPanel());
+    JPanel orderPn = createOrderPanel();
+    JPanel pn1 = createLeftAlignmentPanel(orderPn);
+    pn1.setBorder(BorderFactory.createTitledBorder(""));
+    content.add(pn1);
 
+    JPanel pn = new JPanel(new GridLayout(3,2));
+
+    pn.add(new JLabel(mLocalizer.msg("location","Location")));
+    mLocationCB = new JComboBox(new String[]{
+      mLocalizer.msg("top","top"),
+      mLocalizer.msg("left","left"),
+      mLocalizer.msg("bottom","bottom"),
+      mLocalizer.msg("right","right")
+    });
+    pn.add(mLocationCB);
+
+    String location = Settings.propToolbarLocation.getString();
+    if ("east".equals(location)) {
+      mLocationCB.setSelectedIndex(3);
+    }else if ("west".equals(location)) {
+      mLocationCB.setSelectedIndex(1);
+    }else if ("south".equals(location)) {
+      mLocationCB.setSelectedIndex(2);
+    }
+
+
+    pn.add(new JLabel(mLocalizer.msg("icons","Icons")));
+    mShowCB = new JComboBox(new String[]{
+      ContextMenu.mLocalizer.msg("text.and.icon","text and icon"),
+      ContextMenu.mLocalizer.msg("text","text"),
+      ContextMenu.mLocalizer.msg("icon","icon")
+    });
+
+    String style = Settings.propToolbarButtonStyle.getString();
+    if ("text".equals(style)) {
+      mShowCB.setSelectedIndex(1);
+    }
+    else if ("icon".equals(style)) {
+      mShowCB.setSelectedIndex(2);
+    }
+
+    pn.add(mShowCB);
+    pn.add(new JPanel());
+    mUseBigIconsCb = new JCheckBox(ContextMenu.mLocalizer.msg("bigIcons","Use big icons"));
+    mUseBigIconsCb.setSelected(Settings.propToolbarUseBigIcons.getBoolean());
+
+    pn.add(mUseBigIconsCb);
+
+    JPanel pn2 = createLeftAlignmentPanel(pn);
+    pn2.setBorder(BorderFactory.createTitledBorder(""));
+    content.add(pn2);
 
     panel.add(content, BorderLayout.NORTH);
     return panel;
@@ -77,7 +134,6 @@ public class ToolbarSettingsTab implements devplugin.SettingsTab {
   private JPanel createOrderPanel() {
     JPanel content = new JPanel();
     final DefaultToolBarModel toolbarModel = DefaultToolBarModel.getInstance();
-    //Action[] availableActions = ;
     Action[] currentActions = toolbarModel.getActions();
     ArrayList notSelectedActionsList = new ArrayList(Arrays.asList(toolbarModel.getAvailableActions()));
 
@@ -89,7 +145,9 @@ public class ToolbarSettingsTab implements devplugin.SettingsTab {
     Action[] availableActions = new Action[notSelectedActionsList.size()];
     notSelectedActionsList.toArray(availableActions);
 
-    mOrderPanel = new CustomizableItemsPanel("Available Buttons","Toolbar buttons");
+    mOrderPanel = new CustomizableItemsPanel(
+        mLocalizer.msg("buttonsAvailable","Available Buttons"),
+        mLocalizer.msg("buttonsToolbar","Toolbar buttons"));
 
     mOrderPanel.setCellRenderer(new ActionCellRenderer());
     mOrderPanel.setElementsLeft(availableActions);
@@ -141,6 +199,35 @@ public class ToolbarSettingsTab implements devplugin.SettingsTab {
     }
     DefaultToolBarModel.getInstance().setButtonIds(ids);
     Settings.propToolbarButtons.setStringArray(ids);
+
+    ToolBar toolbar = MainFrame.getInstance().getToolbar();
+    int inx = mShowCB.getSelectedIndex();
+    if (inx == 0) {
+      toolbar.setStyle(ToolBar.STYLE_ICON|ToolBar.STYLE_TEXT);
+    }
+    else if (inx == 1) {
+      toolbar.setStyle(ToolBar.STYLE_TEXT);
+    }
+    else if (inx == 2) {
+      toolbar.setStyle(ToolBar.STYLE_ICON);
+    }
+
+
+    if (mLocationCB.getSelectedIndex() == 1) {
+     toolbar.setToolbarLocation(BorderLayout.WEST);
+    }
+    else if (mLocationCB.getSelectedIndex() == 2) {
+     toolbar.setToolbarLocation(BorderLayout.EAST);
+    }
+    else if (mLocationCB.getSelectedIndex() == 3) {
+     toolbar.setToolbarLocation(BorderLayout.SOUTH);
+    }
+    else{
+      toolbar.setToolbarLocation(BorderLayout.NORTH);
+    }
+
+    toolbar.setUseBigIcons(mUseBigIconsCb.isSelected());
+    toolbar.storeSettings();
   }
 
   public Icon getIcon() {

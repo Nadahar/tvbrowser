@@ -57,7 +57,6 @@ import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
-import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.aboutbox.AboutBox;
@@ -236,28 +235,15 @@ private Node mDateChannelNode;
   
   private void updateToolBar() {
     JPanel contentPane = (JPanel)getContentPane();
-    String locationStr = Settings.propToolbarLocation.getString();
-    String location=null;
-    if ("hidden".equals(locationStr)) {
-      location = null;  
-    }
-    else if ("east".equals(locationStr)) {
-      location = BorderLayout.EAST;
-    }else if ("south".equals(locationStr)) {
-      location = BorderLayout.SOUTH;
-    }else if ("west".equals(locationStr)) {
-      location = BorderLayout.WEST;
-    }else {
-        location = BorderLayout.NORTH;
-    }
     
     if (mToolBar!=null) {
       contentPane.remove(mToolBar);
     }
 
     mToolBarModel = DefaultToolBarModel.getInstance();
-    mToolBar = new ToolBar(mToolBarModel, mStatusBar.getLabel());
-
+    mToolBar = new ToolBar(mToolBarModel);
+    mToolBar.loadSettings();
+    String location = mToolBar.getToolbarLocation();
     if (location!=null) {
       contentPane.add(mToolBar, location);
     }
@@ -272,7 +258,12 @@ private Node mDateChannelNode;
   public void updateToolbar() {
     mToolBar.update();
   }
-  
+
+
+  public ToolBar getToolbar() {
+    return mToolBar;
+  }
+
   public DefaultProgramTableModel getProgramTableModel() {
     return mProgramTableModel;
   }
@@ -454,6 +445,7 @@ private Node mDateChannelNode;
   
   public void storeSettings() {
     mToolBarModel.store();
+    mToolBar.storeSettings();
     mRootNode.storeProperties();
     Settings.propLastUsedFilter.setString(getProgramFilter().getName());
   }

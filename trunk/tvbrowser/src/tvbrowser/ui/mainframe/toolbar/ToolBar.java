@@ -48,6 +48,7 @@ import javax.swing.*;
 
 import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.ToggleButton;
+import tvbrowser.core.Settings;
 import devplugin.Plugin;
 
 public class ToolBar extends JToolBar {
@@ -76,15 +77,15 @@ public class ToolBar extends JToolBar {
   private ContextMenu mContextMenu;
   private int mStyle;
   private int mIconSize;
-  private JLabel mStatusLabel;
+  private String mLocation;
 
-  public ToolBar(ToolBarModel model, JLabel label) {
+  public ToolBar(ToolBarModel model) {
     super();
     mModel = model;
     mStyle = STYLE_TEXT | STYLE_ICON;
     mIconSize = ICON_BIG;
-    mStatusLabel = label;
     mContextMenu = new ContextMenu(this);
+    setToolbarLocation(BorderLayout.NORTH);
     update();
     addMouseListener(new MouseAdapter(){
       public void mouseClicked(MouseEvent e) {
@@ -117,6 +118,14 @@ public class ToolBar extends JToolBar {
       }
 
     }
+
+
+    if (mLocation == BorderLayout.EAST || mLocation == BorderLayout.WEST) {
+      setOrientation(JToolBar.VERTICAL);
+    }else {
+      setOrientation(JToolBar.HORIZONTAL);
+    }
+
     updateUI();
   }
 
@@ -216,6 +225,77 @@ public class ToolBar extends JToolBar {
     return mStyle;
   }
 
+
+  public void loadSettings() {
+    String styleStr = Settings.propToolbarButtonStyle.getString();
+    if ("text".equals(styleStr)) {
+      mStyle = STYLE_TEXT;
+    }
+    else if ("icon".equals(styleStr)) {
+      mStyle = STYLE_ICON;
+    }
+    else {
+      mStyle = STYLE_ICON|STYLE_TEXT;
+    }
+
+    setFloatable(Settings.propToolbarIsFloatable.getBoolean());
+
+
+    String locationStr = Settings.propToolbarLocation.getString();
+    mLocation=null;
+    if ("hidden".equals(locationStr)) {
+      mLocation = null;
+    }else if ("east".equals(locationStr)) {
+      mLocation = BorderLayout.EAST;
+    }else if ("south".equals(locationStr)) {
+      mLocation = BorderLayout.SOUTH;
+    }else if ("west".equals(locationStr)) {
+      mLocation = BorderLayout.WEST;
+    }else {
+      mLocation = BorderLayout.NORTH;
+    }
+  }
+
+  public void storeSettings() {
+
+    if (mStyle == STYLE_TEXT) {
+      Settings.propToolbarButtonStyle.setString("text");
+    }
+    else if (mStyle == STYLE_ICON) {
+      Settings.propToolbarButtonStyle.setString("icon");
+    }
+    else {
+      Settings.propToolbarButtonStyle.setString("text&icon");
+    }
+
+    Settings.propToolbarIsFloatable.setBoolean(isFloatable());
+
+    if (mLocation == null) {
+      Settings.propToolbarLocation.setString("hidden");
+    }
+    else if (mLocation == BorderLayout.SOUTH) {
+      Settings.propToolbarLocation.setString("south");
+    }
+    else if (mLocation == BorderLayout.WEST) {
+      Settings.propToolbarLocation.setString("west");
+    }
+    else if (mLocation == BorderLayout.EAST) {
+      Settings.propToolbarLocation.setString("east");
+    }
+    else {
+      Settings.propToolbarLocation.setString("north");
+    }
+
+  }
+
+  public void setToolbarLocation(String location) {
+    mLocation = location;
+  }
+
+  public String getToolbarLocation() {
+    return mLocation;
+  }
+
   public void setUseBigIcons(boolean arg) {
     if (arg) {
       mIconSize = ICON_BIG;
@@ -233,288 +313,3 @@ public class ToolBar extends JToolBar {
 
 }
 
-/*
-public class ToolBar extends JToolBar implements ToolBarModelListener, MouseListener, DropTargetListener, DragGestureListener, ActionListener {
-  
-  public static int TEXT = 1, ICON = 2;  
-    
-  private ToolBarModel mModel;
-  private HashMap mButtonsHash;
-  private HashMap mVisibleItems;
-  protected int mStyle = TEXT|ICON;
-  private JLabel mLabel;
-  
-  public ToolBar(ToolBarModel model) {
-    mModel = model;
-    model.addToolBarModelListener(this);    
-    addMouseListener(this);    
-    mButtonsHash = new HashMap();
-    mVisibleItems = new HashMap();
-    updateAvailableItemsMap();
-    updateContent();
-    
-    new DropTarget(this, DnDConstants.ACTION_MOVE, this, true);
-  }
-  
-  public ToolBarModel getModel() {
-    return mModel;
-  }
-  
-  public void setStatusLabel(JLabel label) {
-    mLabel = label;
-  }
-
- 
-  public int getStyle() {
-    return mStyle;
-  }
-  
-  public void setStyle(int style) {
-    mStyle = style;
-    refresh();
-  }
-  
-  public void refresh() {
-    mButtonsHash.clear();
-    updateContent();    
-  }
-  
-  private void updateAvailableItemsMap() {
-    mButtonsHash.clear();    
-    ToolBarItem[] items = mModel.getAvailableItems();    
-  }
-  
-  private ToolBarItem getToolBarItem(Component comp) {
-    return (ToolBarItem)mVisibleItems.get(comp);
-  }
-  
-  private void updateContent() {
-    removeAll();
-    mVisibleItems.clear();
-    ToolBarItem[] items = mModel.getVisibleItems();
-    for (int i=0; i<items.length; i++) {
-      ToolBarItem item = items[i];
-      if (item != null) {          
-        if (item instanceof util.ui.toolbar.Separator) {
-          addSeparator();          
-        }
-        else if (item instanceof ToolBarButton) {
-          ToolBarButton toolbarBtn = (ToolBarButton)item;
-          AbstractButton btn = getButton(toolbarBtn);
-          add(btn);
-        }
-        
-        Component lastInsertedComponent = getComponentAtIndex(getComponentCount()-1);
-        DragSource.getDefaultDragSource().createDefaultDragGestureRecognizer(lastInsertedComponent, DnDConstants.ACTION_MOVE, this);
-        mVisibleItems.put(lastInsertedComponent, item);
-        lastInsertedComponent.addMouseListener(this);
-      }
-    }
-    updateUI();
-  }
-  
-  public AbstractButton getButton(ToolBarButton item) {
-    AbstractButton button = (AbstractButton)mButtonsHash.get(item.getId());
-    if (button != null) {
-      return button;
-    }
-    
-    String title = item.getName();
-    Icon icon = item.getIcon();
-    if ((mStyle & TEXT) != TEXT) {
-      title = null;
-    }
-    if ((mStyle & ICON) != ICON) {
-      icon = null;
-    }
-
-    if (item.getType() == ToolBarButton.TYPE_PUSH) {
-      button = new PictureButton(title, icon, item.getDescription(), mLabel);
-    }
-    else if (item.getType() == ToolBarButton.TYPE_TOGGLE) {
-      button = new ToggleButton(title, icon, item.getDescription(), mLabel);
-    }
-    button.addActionListener(this);
-    mButtonsHash.put(item.getId(), button);
-    
-    return button;
-    
-  }
-  
-  public void availableItemsChanged() {
-    updateAvailableItemsMap();
-  }
-
-  public void visibleItemsChanged() {
-    updateContent();
-  }
-
-
-  public void mouseClicked(MouseEvent event) {
-      
-    if (SwingUtilities.isRightMouseButton(event)) {
-      Component comp = event.getComponent();
-      ContextMenu menu = new ContextMenu(this, getToolBarItem(comp));
-      menu.show(comp, event.getX()-15, event.getY()-15);
-    }
-  }
-
-  public void mouseEntered(MouseEvent arg0) {
-  }
-
-  public void mouseExited(MouseEvent arg0) {
-  }
-
-  public void mousePressed(MouseEvent arg0) {
-    
-  }
-
-  public void mouseReleased(MouseEvent arg0) {
-    
-  }
-
-
-  public void dragGestureRecognized(DragGestureEvent event) {
-    ToolBarItem item = getToolBarItem(event.getComponent());
-    if (item != null) {
-      try {         
-        Transferable transferable = new StringTransferable(item.getId());
-        event.startDrag(DragSource.DefaultMoveDrop, transferable);
-      }catch( InvalidDnDOperationException idoe ) {
-        System.err.println( idoe );
-      }
-    }
-  }
-
-
-  public void dragEnter(DropTargetDragEvent arg0) {
-  }
-
-  public void dragOver(DropTargetDragEvent arg0) {
-  }
-
-  public void dropActionChanged(DropTargetDragEvent arg0) {
-  }
-
-  public void drop(DropTargetDropEvent event) {
-    event.acceptDrop(DnDConstants.ACTION_MOVE);   
-    Point p = event.getLocation();
-    JComponent newPlaceComp = (JComponent)getComponentAt(p);
-    
-    
-    
-    DataFlavor[] flavors = event.getCurrentDataFlavors();  
-    Transferable transferable = event.getTransferable();
-    int i=0;
-    DataFlavor flavor=null;
-    while (i<flavors.length) {
-      if (transferable.isDataFlavorSupported(flavors[i])) {
-        flavor = flavors[i];
-        break;
-      }
-      i++;       
-    }
-    if (flavor!=null) {
-      int toInx = getComponentIndex(newPlaceComp);
-           
-      if (getOrientation()==HORIZONTAL) {
-        if (p.x>newPlaceComp.getX()+newPlaceComp.getWidth()/2) {
-          toInx++;
-        }        
-      }
-      else {
-        if (p.y>newPlaceComp.getY()+newPlaceComp.getHeight()/2) {
-          toInx++;
-        }  
-      }
-      
-      
-      String itemId=null;
-    try {
-        itemId = (String)transferable.getTransferData(flavor);
-    } catch (UnsupportedFlavorException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    ToolBarItem[] items = mModel.getVisibleItems();
-      int fromInx = -1;
-      for (i=0; i<items.length; i++) {
-        if (items[i].getId().equals(itemId)) {
-          fromInx = i;
-          break;
-        }
-      }
-      if (fromInx>-1) {
-        // we move the toolbar item from positon 'fromInx' to 'toInx'; 
-        if (toInx == -1) {
-          toInx = getComponentCount();
-        }  
-        ToolBarItem temp = items[fromInx];
-        if (fromInx > toInx) {
-          for (i=fromInx; i>toInx; i--) {
-            items[i]=items[i-1];
-          }
-          items[toInx]=temp;
-        }
-        else if (fromInx < toInx) {
-          for (i=fromInx; i<toInx-1; i++) {
-              items[i]=items[i+1];
-          }
-          items[toInx-1]=temp;
-        }     
-        mModel.setVisibleItems(items);  
-      }      
-    }
-     
-    
-  }
-
-
-  public void dragExit(DropTargetEvent arg0) {
-  }
-
-
-
-  public void actionPerformed(ActionEvent event) {
-    ToolBarItem item = getToolBarItem((JComponent)event.getSource());
-    item.action(event);
-  }
-  
-  
-    
-}
-
-
-
-
-class StringTransferable implements Transferable {
-
-  public static final DataFlavor localStringFlavor = DataFlavor.stringFlavor;
-  public static final DataFlavor[] flavors = { localStringFlavor };
-  private String mMsg;
-    
-  public StringTransferable(String msg) {
-   mMsg = msg;
-  }
-    
-  public DataFlavor[] getTransferDataFlavors() {
-    return flavors;
-  }
-
-   
-  public boolean isDataFlavorSupported(DataFlavor flavor) {
-    return flavor.equals(localStringFlavor);
-  }
-
-  public synchronized Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-    if (isDataFlavorSupported(flavor)) {      
-      return mMsg;
-    }
-    else {
-      throw new UnsupportedFlavorException (flavor);
-    } 
-  }
-}
-
-*/
