@@ -68,15 +68,19 @@ public class SearchDialog extends JDialog {
   private SearchForm mSearchForm;
   private JButton mSearchBt, mCloseBt;
 
-
-
+  /** The Caller-Plugin */
+  private Plugin mPlugin;
+  
   /**
    * Creates a new instance of SearchDialog.
    *
+   * @param plugin The Plugin
    * @param parent The dialog's parent.
    */
-  public SearchDialog(Frame parent) {
+  public SearchDialog(Plugin plugin, Frame parent) {
     super(parent,true);
+    
+    mPlugin = plugin;
     
     String msg;
     
@@ -190,6 +194,9 @@ public class SearchDialog extends JDialog {
     dlg.setContentPane(main);
     
     final ProgramList list = new ProgramList(programArr);
+    
+    list.addMouseListeners(mPlugin);
+    
     main.add(new JScrollPane(list), BorderLayout.CENTER);
     
     JPanel buttonPn = new JPanel(new BorderLayout());
@@ -201,7 +208,7 @@ public class SearchDialog extends JDialog {
     sendBt.setToolTipText(mLocalizer.msg("send", "end Programs to another Plugin"));
     sendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-          SendToPluginDialog send = new SendToPluginDialog(SearchDialog.this, programArr);
+          SendToPluginDialog send = new SendToPluginDialog(mPlugin, SearchDialog.this, programArr);
           send.show();
       }
     });
