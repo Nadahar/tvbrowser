@@ -671,7 +671,8 @@ public class PluginProxyManager {
       mAllPluginCache = allPluginArr;
     }
     
-    return allPluginArr;
+    // Return only a copy so the array may be changed by the caller
+    return (PluginProxy[]) allPluginArr.clone();
   }
 
 
@@ -708,7 +709,8 @@ public class PluginProxyManager {
       mActivatedPluginCache = activatedPluginArr;
     }
     
-    return activatedPluginArr;
+    // Return only a copy so the array may be changed by the caller
+    return (PluginProxy[]) activatedPluginArr.clone();
   }
 
 
