@@ -40,14 +40,15 @@ import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.tree.MutableTreeNode;
 
-import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
+
 
 
 /**
@@ -426,6 +427,26 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   public boolean doCanUseProgramTree() {
     return mPlugin.canUseProgramTree();
+  }
+  
+  /*public TreeNode[] getTreeNodes() {
+    return mPlugin.getTreeNodes();
+  }*/
+  
+  /*public Program[] getStoredPrograms() {
+    return mPlugin.getStoredPrograms();
+  }*/
+  
+  /*public TreeNode getPluginTreeRoot() {
+    return null;
+  }*/
+  
+ /* public ProgramContainer getProgramContainer() {
+    return mPlugin.getProgramContainer();
+  }*/
+  
+  public MutableTreeNode getRootNode() {
+    return mPlugin.getRootNode();
   }
   
 }

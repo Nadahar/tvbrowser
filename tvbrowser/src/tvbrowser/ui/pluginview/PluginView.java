@@ -28,9 +28,11 @@ package tvbrowser.ui.pluginview;
 
 import java.awt.BorderLayout;
 import javax.swing.*;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.TreeNode;
+
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+
+
 
 
 
@@ -40,7 +42,7 @@ public class PluginView extends JPanel {
     
   public PluginView() {
     super(new BorderLayout());
-    PluginTreeModel model = PluginTreeModel.getInstance();
+ /*   PluginTreeModel model = PluginTreeModel.getInstance();
     
     PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
     for (int i=0; i<plugins.length; i++) {
@@ -49,7 +51,15 @@ public class PluginView extends JPanel {
         model.getPluginNode().add(n);
       }
     }         
+    */
     
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    PluginTreeModel model = PluginTreeModel.getInstance();
+    for (int i=0; i<plugins.length; i++) {
+      if (plugins[i].canUseProgramTree()) {
+        model.addPluginTree(plugins[i]);
+      }
+    }
     
     mTree = new JTree(model);
     add(new JScrollPane(mTree), BorderLayout.CENTER);

@@ -191,7 +191,6 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     for (int i = 0; i < iconPluginArr.length; i++) {
       IconPlugin plugin = (IconPlugin) iconPluginArr[i];
       pluginIdArr[i] = plugin.getPlugin().getId();
-      System.out.println("Setting '" + pluginIdArr[i] + "'");
     }
     Settings.propProgramTableIconPlugins.setStringArray(pluginIdArr);
     

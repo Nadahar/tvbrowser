@@ -211,7 +211,6 @@ public class ToolBar extends JToolBar implements ToolBarModelListener, MouseList
   public void drop(DropTargetDropEvent event) {
     event.acceptDrop(DnDConstants.ACTION_MOVE);   
     Point p = event.getLocation();
-    System.out.println(p.getX()+" / "+p.getY());
     JComponent newPlaceComp = (JComponent)getComponentAt(p);
     
     

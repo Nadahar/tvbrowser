@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This mProgram is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,20 +30,35 @@ package reminderplugin;
 import devplugin.*;
 
 
-public class ReminderListItem implements Comparable {
+public class ReminderListItem /*extends ProgramItem*/ implements Comparable {
     
-  private TreeLeaf mLeaf;
+ // private ProgramItem mProgramItem;
     
-  public ReminderListItem(TreeLeaf leaf) {
-    mLeaf = leaf;
+  private ProgramItem mProgramItem;
+    
+  public ReminderListItem(ProgramItem item) {
+    mProgramItem = item;
   }
+  
+  public ReminderListItem(Program prog, int minutes) {
+    mProgramItem = new ProgramItem(prog);
+    setMinutes(minutes);
+  }
+  
+ /* public ReminderListItem(ProgramItem item) {
+    mProgramItem = item;  
+  }*/
     
-  public Program getProgram() {
-    return mLeaf.getProgram();      
+ /* public Program getProgram() {
+   return mProgramItem.getProgram();
+  }*/
+  
+  public ProgramItem getProgramItem() {
+    return mProgramItem;
   }
   
   public int getMinutes() {
-    String m = mLeaf.getProperty("minutes");
+    String m = mProgramItem.getProperty("minutes");
     if (m!=null) {
       try {
         return Integer.parseInt(m);
@@ -55,13 +70,13 @@ public class ReminderListItem implements Comparable {
   }
   
   public void setMinutes(int minutes) {
-    mLeaf.setProperty("minutes",""+minutes);
+      mProgramItem.setProperty("minutes",""+minutes);
+  }
+ 
+  public Program getProgram() {
+    return mProgramItem.getProgram();
   }
   
-  public TreeLeaf getLeaf() {
-    return mLeaf;
-  }
-
   public int compareTo(Object obj) {
     ReminderListItem item=(ReminderListItem)obj;
 

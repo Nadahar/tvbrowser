@@ -53,6 +53,8 @@ public class FavoritesPlugin extends Plugin {
   private String[] mClientPluginIdArr;
   
   private Properties mSettings;
+  
+  private PluginTreeNode mPluginRootNode;
 
   
   
@@ -73,6 +75,9 @@ public class FavoritesPlugin extends Plugin {
   }
   
   
+  /*public void onActivation() {
+    mPluginRootNode = getRootNode();
+  }*/
   
   public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
@@ -94,6 +99,8 @@ public class FavoritesPlugin extends Plugin {
         programArr[j].mark(this);        
       }
     }
+    
+    updateTree();
 
     // Get the client plugins
     size = in.readInt();
@@ -113,6 +120,18 @@ public class FavoritesPlugin extends Plugin {
   }
 
 
+  private void updateTree() {
+    PluginTreeNode node = getRootNode();
+    node.removeAllChildren();
+    for (int i=0; i<mFavoriteArr.length; i++) {
+      PluginTreeNode curNode = node.addNode(mFavoriteArr[i].getTitle());
+      Program[] progs = mFavoriteArr[i].getPrograms();
+      for (int j=0; j<progs.length; j++) {
+        curNode.addProgram(progs[j]);
+      }
+      
+    }
+  }
 
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
@@ -173,6 +192,7 @@ public class FavoritesPlugin extends Plugin {
     
     if (dlg.getOkWasPressed()) {
       mFavoriteArr = dlg.getFavorites();
+      updateTree();
     }
     splitPanePosition=dlg.getSplitpanePosition();
     mSettings.setProperty("splitpanePosition",""+splitPanePosition);
@@ -299,6 +319,10 @@ public class FavoritesPlugin extends Plugin {
    */
   public SettingsTab getSettingsTab() {
     return new FavoritesSettingTab();
+  }
+  
+  public boolean canUseProgramTree() {
+    return true;
   }
   
 }

@@ -110,7 +110,6 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
   }
   
   public void showStopButton() {
-    System.out.println("show stop button");
     mUpdateBtn.setName(TVBrowser.mLocalizer.msg("button.stop", "Stop"));
     mUpdateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));  
     super.refresh();

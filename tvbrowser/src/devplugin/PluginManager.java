@@ -29,6 +29,7 @@ package devplugin;
 import java.util.Iterator;
 
 import javax.swing.JPopupMenu;
+import javax.swing.tree.MutableTreeNode;
 
 
 import tvdataservice.TvDataService;
@@ -205,7 +206,9 @@ public interface PluginManager {
    * @return The root node
    * @since 1.1
    */
-  public TreeNode getTree(String pluginId);
- 
+  //public ProgramContainer getProgramContainer(String pluginId);
+  //public void storeProgramContainer(String pluginId);
+  
+ // public MutableTreeNode getRootNode(String id);
   
 }

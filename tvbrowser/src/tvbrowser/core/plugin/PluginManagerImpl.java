@@ -26,13 +26,23 @@
 package tvbrowser.core.plugin;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataSearcher;
 import tvbrowser.core.TvDataServiceManager;
@@ -56,7 +66,13 @@ public class PluginManagerImpl implements PluginManager {
   /** An example program. */
   private Program mExampleProgram;
   
+  private Map mProgramContainers;
+  
 
+  public PluginManagerImpl() {
+    mProgramContainers = new HashMap();
+  }
+  
   /**
    * Gets a program.
    * 
@@ -337,13 +353,45 @@ public class PluginManagerImpl implements PluginManager {
   }
 
 
-
+/*
   public devplugin.TreeNode getTree(String pluginId) {
     PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
     if (plugin != null) {
       return PluginProgramsManager.getInstance().getTree(plugin);
     }
     return null;
+  }*/
+  
+  /*
+  public ProgramContainer getProgramContainer(String pluginId) {
+    ProgramContainerImpl container = (ProgramContainerImpl)mProgramContainers.get(pluginId);
+    if (container == null) {
+      container = new ProgramContainerImpl();
+      ObjectInputStream in;
+      try {
+        in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserDirectoryName(),pluginId+".container")));
+        container.read(in);
+      } catch (Exception e) {
+         
+      }      
+      mProgramContainers.put(pluginId, container);
+    }
+    return container;
   }
   
+  public void storeProgramContainer(String pluginId) {
+    ProgramContainerImpl container = (ProgramContainerImpl)mProgramContainers.get(pluginId);
+    if (container == null) {
+      return;
+    }
+    
+    ObjectOutputStream out;
+    try {
+      out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserDirectoryName(),pluginId+".container")));
+      container.write(out);
+    } catch(Exception e) {
+      e.printStackTrace();  
+    }
+  }*/
+   
 }

@@ -130,7 +130,7 @@ public class ReminderFrame {
     
     mReminderList = list;
     
-    list.remove(item.getProgram());
+    list.remove(item.getProgramItem());
     mProgram = item.getProgram();
     JPanel jcontentPane = new JPanel(new BorderLayout(0,10));
     if (mDialog != null) {

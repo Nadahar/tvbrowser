@@ -162,7 +162,6 @@ public class FilterButtons implements ActionListener {
                 ProgramPanel panel = model.getProgramPanel(col, row);
                 
                 array.add(panel.getProgram());
-                System.out.println(panel.getProgram());
             }
         }
         

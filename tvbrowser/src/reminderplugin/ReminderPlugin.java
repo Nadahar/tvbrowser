@@ -28,6 +28,7 @@ package reminderplugin;
 import devplugin.*;
 
 import javax.swing.*;
+
 import java.io.*;
 import java.util.*;
 import java.applet.*;
@@ -53,7 +54,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   private ReminderList mReminderList;
   private Properties mSettings;
   private HashSet mReminderItemsTrash;
-  private TreeNode mTreeRoot;
   
   
   /**
@@ -64,8 +64,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
   
   public void onActivation() {
-    mTreeRoot = getPluginManager().getTree(getId()); 
-    mReminderList = new ReminderList(mTreeRoot);
+    PluginTreeNode root = getRootNode();
+    mReminderList = new ReminderList(root);
     mReminderList.setReminderTimerListener(this);
     mReminderItemsTrash = new HashSet();
   }
@@ -90,7 +90,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         new ReminderFrame(getParentFrame(), mReminderList, item,
                         getAutoCloseReminderTime(), iconImage);
     } else {
-      mReminderList.remove(item.getProgram());
+      mReminderList.remove(item.getProgramItem());
     }
     if ("true" .equals(mSettings.getProperty( "useexec" ))) {
       String fName=mSettings.getProperty( "execfile" );
@@ -144,9 +144,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     int version = in.readInt();
     
 	  mReminderList.setReminderTimerListener(null);
-    if (version < 3) {
-      mReminderList.read(in);
-    }
+    
+    mReminderList.read(in);    
      
     mReminderList.removeExpiredItems();
     mReminderList.setReminderTimerListener(this);   
@@ -155,7 +154,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version 3 (since TV-Browser 1.1)
+    out.writeInt(2);
+    mReminderList.writeData(out);    
+    storeRootNode();
   }
   
   
@@ -167,7 +168,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   public void loadSettings(Properties settings) {
-    System.out.println("loading reminder settings...");
     if (settings == null ) {
       settings = new Properties();
     }
@@ -242,14 +242,15 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    */
   
   public void receivePrograms(Program[] programArr) {
-    String nodeName = createNodeName();
+  /*  String nodeName = createNodeName();
     TreeNode node = mTreeRoot.createNode(nodeName,nodeName);
     int minutes = 3;
     for (int i = 0; i < programArr.length; i++) {
       mReminderList.add(node, programArr[i], minutes);
-    } 
+    } */
   }
   
+  /*
   private String createNodeName() {
     String name = "importiert";
     if (mTreeRoot.getNodeByName(name)==null) {
@@ -261,7 +262,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         return result;
       }
     }
-  }
+  }*/
 
   
   public Action getButtonAction() {

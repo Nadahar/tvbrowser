@@ -95,7 +95,6 @@ public class Toolbar extends JComponent implements ComponentListener, ActionList
     }
     
     if ((style&TEXT) != TEXT) {  // hide button titles
-      System.out.println("hide text");
       mButtonWidth=40;
       for (int i=0; i<mButtons.length; i++) {
         mButtons[i].setPreferredSize(new Dimension(mButtonWidth,0));

@@ -268,9 +268,7 @@ public class OnDemandDayProgramFile {
       stream.skip(offset);
 
       Object value = objIn.readObject();
-      
-      // System.out.println("Loaded field " + offset + ": '" + value + "'");
-      
+       
       stream.close();
 
       return value;

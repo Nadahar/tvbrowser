@@ -40,10 +40,8 @@ import java.util.Set;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.pluginview.PluginTreeModel;
-import tvbrowser.ui.pluginview.TreeNodeImpl;
-
 import devplugin.PluginAccess;
-import devplugin.TreeNode;
+
 
 
 
@@ -65,7 +63,7 @@ public class PluginProgramsManager {
     }
     return mInstance;
   }
-    
+    /*
   public TreeNode getTree(PluginAccess plugin) {
     TreeNode node = (devplugin.TreeNode)mPluginTrees.get(plugin);
     if (node == null) {
@@ -117,8 +115,9 @@ public class PluginProgramsManager {
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     }
-    return node;  
+    return node; 
+     
   }
-    
+    */
     
 }

@@ -74,8 +74,7 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
           if (program != null) {
             long startTime = program.getDate().getValue() * 10000
                 + program.getHours() * 60 + program.getMinutes();
-            // System.out.print(startTime+", ");
-  
+            
             if (startTime < minStartTime) {
               minStartTime = startTime;
               minProgram = program;
@@ -88,8 +87,7 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
 
       // Layout the program
       if (minProgram != null) {
-        //System.out.println("\n"+program.getChannel().getName()+": TITLE: "+program.getTitle()+", DATE: "+program.getDate()+", TIME: "+program.getHours()+":"+program.getMinutes()+" --> "+minStartTime);
-
+        
         int programRow = rowIdxArr[programCol];
 
         // Get the y position for the program
