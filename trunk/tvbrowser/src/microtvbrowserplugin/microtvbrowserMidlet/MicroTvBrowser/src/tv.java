@@ -57,8 +57,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 	private final static int STATUS_SEARCH_REMINDER_2 = 7;
 	private final static int STATUS_SEARCH_FAVO_1 = 8;
 	private final static int STATUS_SEARCH_FAVO_2 = 9;
-	private final static int STATUS_DETAIL_REMINDER = 10;
-	private final static int STATUS_DETAIL_FAVO = 11;
 	
 	private final static int STATUS_SEARCH_ENTER_TITLE = 12;
 	private final static int STATUS_SEARCH_ENTER_TIME = 13;
@@ -726,7 +724,20 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 					synchronized (this.prog_data_store){
 						calendar.setTime(searchDate);
 						lastSearchData = searchTime(actuel_day,calendar.get(calendar.HOUR_OF_DAY),calendar.get(calendar.MINUTE));
-						createProgList(search+" "+calendar.get(calendar.HOUR_OF_DAY)+":"+(calendar.get(calendar.MINUTE)),this.dayNavi,null,lastSearchData);
+						
+						String title = search+" ";
+						if (calendar.get(calendar.HOUR_OF_DAY) < 10){
+							title += "0"+calendar.get(calendar.HOUR_OF_DAY);
+						} else {
+							title += calendar.get(calendar.HOUR_OF_DAY);
+						}
+						title += ":";
+						if (calendar.get(calendar.MINUTE) < 10){
+							title += "0"+calendar.get(calendar.MINUTE);
+						} else {
+							title += calendar.get(calendar.MINUTE);
+						}
+						createProgList(title,this.dayNavi,null,lastSearchData);
 					}
 					return;
 				}/*
@@ -754,7 +765,19 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 					synchronized (this.prog_data_store){
 						calendar.setTime(searchDate);
 						lastSearchData = searchTime(actuel_day,calendar.get(calendar.HOUR_OF_DAY),calendar.get(calendar.MINUTE));
-						createProgList(search+" "+calendar.get(calendar.HOUR_OF_DAY)+":"+(calendar.get(calendar.MINUTE)),this.dayNavi,null,lastSearchData);
+						String title = search+" ";
+						if (calendar.get(calendar.HOUR_OF_DAY) < 10){
+							title += "0"+calendar.get(calendar.HOUR_OF_DAY);
+						} else {
+							title += calendar.get(calendar.HOUR_OF_DAY);
+						}
+						title += ":";
+						if (calendar.get(calendar.MINUTE) < 10){
+							title += "0"+calendar.get(calendar.MINUTE);
+						} else {
+							title += calendar.get(calendar.MINUTE);
+						}
+						createProgList(title,this.dayNavi,null,lastSearchData);
 					}
 					return;
 				}
@@ -1377,7 +1400,14 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 				naviNext = "";
 			}
 		}
-		boolean withChannel = useChannelNameInNowList && (mode == nowNavi);
+		boolean withChannel = false;
+		if ((STATUS == this.STATUS_SEARCH_FAVO_2) 
+		|| (STATUS == this.STATUS_SEARCH_REMINDER_2)
+		|| (STATUS == this.STATUS_SEARCH_TIME_RESULT)
+		|| (STATUS == this.STATUS_NOW_LIST)
+		|| (STATUS == this.STATUS_SEARCH_TITLE_RESULT)){
+			withChannel = useChannelNameInNowList;
+		}
 		list = new List(title,List.IMPLICIT);
 		int counter = Math.max(1,progID.length);
 		if (naviNext != null){
