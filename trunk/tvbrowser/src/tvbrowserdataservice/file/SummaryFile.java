@@ -183,10 +183,10 @@ public class SummaryFile extends AbstractFile {
     for (int frameIdx = 0; frameIdx < frameCount; frameIdx++) {
       String country = readString(gIn);
       String channelId = readString(gIn);
-      
       ChannelFrame frame = new ChannelFrame(country, channelId);
       String key = getChannelKey(country, channelId);
       mChannelFrameHash.put(key, frame);
+      
       
       int daysCount = gIn.read();
       Date date = startDate;
@@ -239,6 +239,7 @@ public class SummaryFile extends AbstractFile {
     gOut.write((byte) (frameCount));
 
     System.out.println("write frames...");
+    System.out.println("frameCount: "+frameCount);
 		
     // The frames
     Date startDate = new Date(minStartDaysSince1970);
@@ -246,7 +247,8 @@ public class SummaryFile extends AbstractFile {
     iter = mChannelFrameHash.values().iterator();
     while (iter.hasNext()) {
       ChannelFrame frame = (ChannelFrame) iter.next();
-
+      
+      
       System.out.println(frame.getChannelId()+", "+frame.getStartDaysSince1970()+", "+frame.getDaysCount(minStartDaysSince1970));
 			
       writeString(gOut, frame.getCountry());

@@ -258,15 +258,17 @@ public class PluginManager {
     
     ArrayList list = new ArrayList();
     String[] contextMenuPluginsStrArr = Settings.propContextMenuItemPlugins.getStringArray();
-    
+	
     
     /* Add active plugins given by the settings */
-    for (int i=0;i<contextMenuPluginsStrArr.length;i++) {
-      Plugin p = PluginLoader.getInstance().getActivePluginByClassName(contextMenuPluginsStrArr[i]);
-      if (p!=null) {
-        list.add(p);
+    if (contextMenuPluginsStrArr!=null) {
+		  for (int i=0;i<contextMenuPluginsStrArr.length;i++) {
+        Plugin p = PluginLoader.getInstance().getActivePluginByClassName(contextMenuPluginsStrArr[i]);
+        if (p!=null) {
+          list.add(p);
+        }
       }
-    }   
+		}
       
     /* Add the other (active) plugins */
     Plugin[] activePlugins = PluginLoader.getInstance().getActivePlugins();
