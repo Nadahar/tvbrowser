@@ -71,6 +71,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
   private JComboBox mServiceCB, mTVDataLifespanCB, mBrowseModeCB;
   private JButton mConfigBt;
   private JButton mChangeDataDirBt;
+  private JButton mDeleteTVDataBt;
   private JTextField mTvDataTF;
 
 
@@ -92,13 +93,23 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 
     msg = mLocalizer.msg("deleteTvData", "Delete TV data");
     tvDataPn.add(new JLabel(msg));
+    
+    JPanel panel1=new JPanel(new FlowLayout());
+    
+    
 	mTVDataLifespanCB=new JComboBox(DELETE_MSG_ARR);
 	
 	makeSelectionInTVDataLifespanCB(Settings.getTVDataLifespan());
 	
 	
-    tvDataPn.add(mTVDataLifespanCB);
-
+   // tvDataPn.add(mTVDataLifespanCB);
+   panel1.add(mTVDataLifespanCB);
+   mDeleteTVDataBt=new JButton("delete...");
+   mDeleteTVDataBt.addActionListener(this);
+   panel1.add(mDeleteTVDataBt);
+   
+	tvDataPn.add(panel1);
+	
     msg = mLocalizer.msg("tvDataFolder", "TV data folder");
     tvDataPn.add(new JLabel(msg));
     p1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
@@ -200,23 +211,27 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
       	DataServiceConfigDlg dlg = new DataServiceConfigDlg(this, item);
       	dlg.centerAndShow();
     }
+    else if (source==mDeleteTVDataBt) {
+		DeleteTVDataDlg dlg = new DeleteTVDataDlg(this);
+				dlg.centerAndShow();
+    }
   }
 
   private void makeSelectionInTVDataLifespanCB(int days) {
-  	 	
-  	if  (days==3) {
+  	 if (days==2) {
+		mTVDataLifespanCB.setSelectedIndex(0);
+  	 }
+  	else if  (days==3) {
   		mTVDataLifespanCB.setSelectedIndex(1);
   	}  	
-  	if (days==7) {
+  	else if (days==7) {
   		mTVDataLifespanCB.setSelectedIndex(2);
   	}
   	
-  	if (days==14) {
+  	else if (days==14) {
 		mTVDataLifespanCB.setSelectedIndex(3);
   	}
-  	if (days<0) {
-  		mTVDataLifespanCB.setSelectedIndex(4);
-  	}
+  	
   	else {
 		mTVDataLifespanCB.setSelectedIndex(4);
   	}
