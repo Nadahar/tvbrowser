@@ -287,7 +287,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     mCategoryCB = new JComboBox();
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPublic","Öffentlich rechtliche"), new Integer(Channel.CATEGORY_PUBLIC)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPublic","Oeffentlich rechtliche"), new Integer(Channel.CATEGORY_PUBLIC)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
@@ -617,6 +617,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       }
 
       if (mCategories > 0) {
+        System.out.println(channel+"; "+channel.getCategories());
         if ((channel.getCategories() & mCategories) == 0) {
           return false;
         }
