@@ -255,7 +255,6 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
     </jar>
-
     <jar jarfile="${tvbrowser.runtime.dir}/plugins/GoogleSearchPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="googlesearchplugin/**"/>
@@ -264,9 +263,16 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="imdbsearchplugin/**"/>
     </jar>
-    
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/TVRaterPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
+    </jar>
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/ListViewPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
+    </jar>
 
-	<!-- Pack the TV data service jars -->    
+    <!-- Pack the TV data service jars -->    
     <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
     <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/TvBrowserDataService.jar"
          compress="false">
@@ -533,11 +539,31 @@
     </antcall>
 
     <antcall target="-zipPackageSrc">
+      <param name="package" value="printplugin"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
       <param name="package" value="favoritesplugin"/>
     </antcall>
 
     <antcall target="-zipPackageSrc">
       <param name="package" value="showviewplugin"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="googlesearchplugin"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="imdbsearchplugin"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="tvraterplugin"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="listviewplugin"/>
     </antcall>
   </target>
 
