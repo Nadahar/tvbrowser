@@ -155,6 +155,14 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     for (addIdx = mProgramList.size(); addIdx > 0; addIdx--) {
       Program cmp = (Program) mProgramList.get(addIdx - 1);
       int cmpTime = cmp.getHours() * 60 + cmp.getMinutes();
+	  	  
+	  if (program.getDate().compareTo(cmp.getDate())>0) {
+        break; // insert here
+      }
+      else if (program.getDate().compareTo(cmp.getDate())<0) {
+        continue;
+      } 
+	  
       if (cmpTime == time) {
         // We already have this program
         return;

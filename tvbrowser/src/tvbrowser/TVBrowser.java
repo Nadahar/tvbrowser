@@ -66,6 +66,7 @@ import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.ui.configassistant.TvdataAssistantDlg;
 import tvbrowser.ui.configassistant.TvdataImportDlg;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.UpdateDlg;
 import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
@@ -597,8 +598,19 @@ public class TVBrowser {
       nextDownloadDate=lastDownloadDate;
     }
 
-    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
-      mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {	
+      if (Settings.propAskForAutoDownload.getBoolean()) {
+	       UpdateDlg dlg = new UpdateDlg(mainFrame, true);
+        dlg.pack();
+        UiUtilities.centerAndShow(dlg);
+        int daysToDownload = dlg.getResult();
+        if (daysToDownload != UpdateDlg.CANCEL) {
+          mainFrame.runUpdateThread(daysToDownload, TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+        }
+      }
+      else {
+	       mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+      }
     }
   }
 

@@ -123,6 +123,30 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     updateTableContent();
   }
   
+  
+  private int compareDateTime(Date d1, int m1, Date d2, int m2) {
+
+
+    if (d1.compareTo(d2)<0) { // (d1<d2)
+      return -1;
+    }
+    else if (d1.compareTo(d2)>0) { //(d1>d2)
+      return 1;
+    }
+    else { // d1 == d2
+      if (m1<m2) {
+        return -1;
+      }
+      else if (m1>m2) {
+        return 1;
+      }
+      else {
+          return 0;
+      }
+    }
+
+  } 
+  
   private synchronized void addChannelDayProgram(int col, ChannelDayProgram cdp,
     int startMinutes, Date startDate, int endMinutes, Date endDate )
   {
@@ -132,8 +156,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       while (it.hasNext()) {
         Program prog=(Program)it.next();
         int time=prog.getHours()*60+prog.getMinutes();
-        if (time>=startMinutes && time<=endMinutes && prog.getDate().compareTo(startDate)>=0 && prog.getDate().compareTo(endDate)<=0) {
-          if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+	    if (compareDateTime(prog.getDate(), time, startDate, startMinutes) >=0 && compareDateTime(prog.getDate(), time, endDate, endMinutes)<=0) {
+		  if (mProgramFilter==null || mProgramFilter.accept(prog)) {
             ProgramPanel panel = new ProgramPanel(prog);
             mProgramColumn[col].add(panel);
           }
@@ -177,25 +201,33 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
     
     for (int i = 0; i < mChannelArr.length; i++) {
-      
-      mProgramColumn[i].clear();
-      ChannelDayProgram cdp = db.getDayProgram(mMainDay, mChannelArr[i]);
-      if (cdp != null) {
-        addChannelDayProgram(i, cdp, mTodayEarliestTime, cdp.getDate(),
-                             24 * 60, cdp.getDate());
+     
+	  mProgramColumn[i].clear();
+      ChannelDayProgram cdpThisDay = db.getDayProgram(mMainDay, mChannelArr[i]);
+
+      ChannelDayProgram cdpNextDay = db.getDayProgram(mNextDay, mChannelArr[i]);
+
+
+
+      if (cdpThisDay != null) {
+        addChannelDayProgram(i, cdpThisDay, mTodayEarliestTime, mMainDay,
+                mTomorrowLatestTime, mNextDay);
       }
 
-      cdp = db.getDayProgram(mNextDay, mChannelArr[i]);
-      if (cdp != null) {
-        addChannelDayProgram(i, cdp, 0, cdp.getDate(), mTomorrowLatestTime,
-                             cdp.getDate());
+
+      if (cdpNextDay != null) {
+        addChannelDayProgram(i, cdpNextDay, mTodayEarliestTime, mMainDay,
+                mTomorrowLatestTime, mNextDay);
       }
-      
+	  
+	  
       if (monitor!=null) {
         monitor.setValue(i);
       }       
       
     }
+	
+	
     boolean showEmptyColumns = mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter;
     
     ArrayList newShownColumns = new ArrayList();
