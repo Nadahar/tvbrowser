@@ -1,0 +1,62 @@
+h1 {
+  font-size:24pt;
+  text-align:center;
+  font-weight: normal;
+}
+
+h2 {
+  font-size:18pt;
+  text-align:left;
+  font-weight: normal;
+}
+
+h3 {
+  font-size:14pt;
+  text-align:left;
+  font-weight: normal;
+}
+
+h4 {
+  font-size:12pt;
+  text-align:left;
+  font-weight: bold;
+}
+
+
+
+em {
+  font-size:75%;
+  font-style:normal;
+  font-family: Courier;
+
+}
+
+p.about {
+  margin-left:20px;
+  margin-top:-15px;
+  margin-bottom:0px;
+}
+
+#menu {
+    
+  margin-left : 5px;
+  margin-right : 10px;
+  margin-bottom : 20px;
+  margin-top : 20px;
+  font-size : 14px;
+}
+
+#submenu {
+    
+  margin-left : 25px;
+  margin-right : 10px;
+  margin-bottom : 10px;
+  margin-top : 10px;
+  font-size : 12px;
+}
+
+a:link    {  font-weight : bold; color:blue; text-decoration:none; }
+a:visited {  font-weight :bold;  color:blue; text-decoration:none; }
+a:hover   {  font-weight:bold;   color:blue;     text-decoration:underline; }
+a:active  {  font-weight:bold;   color:blue;     text-decoration:none; }
+
