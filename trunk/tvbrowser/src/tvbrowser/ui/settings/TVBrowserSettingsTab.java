@@ -248,7 +248,10 @@ public class TVBrowserSettingsTab implements SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return null;
+    
+    return new ImageIcon("imgs/TVBrowser16.png");
+    
+    
   }
   
   

@@ -38,6 +38,12 @@ import tvdataservice.SettingsPanel;
 
 public class DeleteTVDataDlg implements ActionListener {
 	
+  /** The localizer for this class. */
+    private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(DeleteTVDataDlg.class);
+ 
+  
+  
   private JDialog mDialog;
 	private TvDataService dataService;
 	private JButton deleteBtn, closeBtn;
@@ -48,7 +54,9 @@ public class DeleteTVDataDlg implements ActionListener {
   
 	public DeleteTVDataDlg(Component parent) {
 	mDialog = UiUtilities.createDialog(parent, true);
-	mDialog.setTitle("Delete tv data manually");
+  
+  
+	mDialog.setTitle(mLocalizer.msg("title", "Delete tv data manually"));
     
 	JPanel contentPane = (JPanel) mDialog.getContentPane();
 	
@@ -59,10 +67,12 @@ public class DeleteTVDataDlg implements ActionListener {
 	
 	JPanel panel1=new JPanel();
 	
-	panel1.add(new JLabel("delete tv data older than"));
+  
+  
+	panel1.add(new JLabel(mLocalizer.msg("range", "Delete tv data manually")));
 	mDaySp=new JSpinner(new SpinnerNumberModel(5,1,9999,1));
 	panel1.add(mDaySp);
-	panel1.add(new JLabel("days"));
+	panel1.add(new JLabel(mLocalizer.msg("days", "days")));
 	content.add(panel1);
 	
 		
@@ -71,12 +81,12 @@ public class DeleteTVDataDlg implements ActionListener {
 		
 		JPanel pushButtonPanel=new JPanel();
 
-		closeBtn=new JButton("Close");
+		closeBtn=new JButton(mLocalizer.msg("close", "close"));
 		closeBtn.addActionListener(this);
 		pushButtonPanel.add(closeBtn);
 		mDialog.getRootPane().setDefaultButton(closeBtn);
 		
-		deleteBtn=new JButton("Delete now!");
+		deleteBtn=new JButton(mLocalizer.msg("deletenow", "delete now!"));
 		deleteBtn.addActionListener(this);
 		pushButtonPanel.add(deleteBtn);
 		contentPane.add(content,BorderLayout.NORTH);

@@ -28,283 +28,86 @@ package tvbrowser.ui.settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
 
-import util.ui.*;
-
-import tvdataservice.TvDataService;
-import tvbrowser.core.*;
-
-/**
- * TV-Browser
- *
- * @author Martin Oberhauser
- */
-public class DataServiceSettingsTab implements devplugin.SettingsTab, ActionListener {
-  
-  /** The localizer for this class. */
+public class DataServiceSettingsTab implements devplugin.SettingsTab {
+ 
   private static final util.ui.Localizer mLocalizer
-  = util.ui.Localizer.getLocalizerFor(DataServiceSettingsTab.class);
-  
-  private static final String[] DELETE_MSG_ARR = new String[] {
-    mLocalizer.msg("delete.2", "After 2 days"),
-    mLocalizer.msg("delete.3", "After 3 days"),
-    mLocalizer.msg("delete.7", "After 1 week"),
-    mLocalizer.msg("delete.14", "After 2 weeks"),
-    mLocalizer.msg("delete.-1", "Manually")
-  };
-  
-  private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
-    mLocalizer.msg("autoDownload.never", "Never"),
-    mLocalizer.msg("autoDownload.startUp", "When TV-Browser starts up"),
-  };
-  
-  private String[] MODE_MSG_ARR = new String[] {
-    mLocalizer.msg("onlineMode", "Online mode"),
-    mLocalizer.msg("offlineMode", "Offline mode")
-  };
-  
-  private JPanel mSettingsPn;
-  
-  private JComboBox mServiceCB, mTVDataLifespanCB, mBrowseModeCB, mAutoDownloadCB;
-  private JButton mConfigBt;
-  private JButton mChangeDataDirBt;
-  private JButton mDeleteTVDataBt;
-  private JTextField mTvDataTF;
-  
-  
-  
-  public DataServiceSettingsTab() {
-  }
-  
-  
-  
-  public void updateConfigButton() {
-    TvDataService curSelectedService=(TvDataService)mServiceCB.getSelectedItem();
-    boolean enabled = (curSelectedService != null)
-    && curSelectedService.hasSettingsPanel();
-    mConfigBt.setEnabled(enabled);
-  }
-  
-  
-  
-  public void actionPerformed(ActionEvent event) {
-    Object source=event.getSource();
-    if (source == mServiceCB) {
-      updateConfigButton();
-    }
-    else if (source == mChangeDataDirBt) {
-      JFileChooser fc =new JFileChooser();
-      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      fc.setApproveButtonText(mLocalizer.msg("ok", "OK"));
-      fc.setCurrentDirectory(new File(mTvDataTF.getText()));
-      int retVal=fc.showOpenDialog(mSettingsPn);
-      if (retVal==JFileChooser.APPROVE_OPTION) {
-        File f=fc.getSelectedFile();
-        mTvDataTF.setText(f.getAbsolutePath());
-      }
-    }
-    else if (source == mConfigBt) {
-      TvDataService item = (TvDataService)mServiceCB.getSelectedItem();
-      DataServiceConfigDlg dlg = new DataServiceConfigDlg(mSettingsPn, item);
-      dlg.centerAndShow();
-    }
-    else if (source==mDeleteTVDataBt) {
-      DeleteTVDataDlg dlg = new DeleteTVDataDlg(mSettingsPn);
-      dlg.centerAndShow();
-    }
-  }
-  
-  
-  
-  private void makeSelectionInTVDataLifespanCB(int days) {
-    if (days==2) {
-      mTVDataLifespanCB.setSelectedIndex(0);
-    }
-    else if  (days==3) {
-      mTVDataLifespanCB.setSelectedIndex(1);
-    }
-    else if (days==7) {
-      mTVDataLifespanCB.setSelectedIndex(2);
-    }
-    
-    else if (days==14) {
-      mTVDataLifespanCB.setSelectedIndex(3);
-    }
-    
-    else {
-      mTVDataLifespanCB.setSelectedIndex(4);
-    }
-  }
-  
-  
-  
-  private int getDaysFromTVDataLifespanCB() {
-    int inx=mTVDataLifespanCB.getSelectedIndex();
-    if (inx==0) {
-      return 2;
-    }
-    else if (inx==1) {
-      return 3;
-    }
-    else if (inx==2) {
-      return 7;
-    }
-    else if (inx==3) {
-      return 14;
-    }
-    return -1;
-  }
-  
-  
-  /**
-   * Creates the settings panel for this tab.
-   */
+     = util.ui.Localizer.getLocalizerFor(DataServiceSettingsTab.class);
+ 
+ 
   public JPanel createSettingsPanel() {
-    String msg;
-    JPanel p1;
-
-    mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
-    JPanel main = new JPanel(new TabLayout(1));
-    mSettingsPn.add(main, BorderLayout.NORTH);
+    JPanel mainPanel=new JPanel(new BorderLayout());
     
-    // tv data
-    JPanel tvDataPn = new JPanel(new TabLayout(2, true));
-    msg = mLocalizer.msg("tvData", "TV data");
-    tvDataPn.setBorder(BorderFactory.createTitledBorder(msg));
-    main.add(tvDataPn);
+    mainPanel.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
     
-    msg = mLocalizer.msg("deleteTvData", "Delete TV data");
-    tvDataPn.add(new JLabel(msg));
-    
-    JPanel panel1=new JPanel(new FlowLayout());
-    
-    mTVDataLifespanCB=new JComboBox(DELETE_MSG_ARR);
-    
-    makeSelectionInTVDataLifespanCB(Settings.getTVDataLifespan());
-    
-    // tvDataPn.add(mTVDataLifespanCB);
-    panel1.add(mTVDataLifespanCB);
-    mDeleteTVDataBt=new JButton("delete...");
-    mDeleteTVDataBt.addActionListener(this);
-    panel1.add(mDeleteTVDataBt);
-    
-    tvDataPn.add(panel1);
-    
-    msg = mLocalizer.msg("tvDataFolder", "TV data folder");
-    tvDataPn.add(new JLabel(msg));
-    p1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
-    tvDataPn.add(p1);
-    mTvDataTF = new JTextField(Settings.getTVDataDirectory(), 15);
-    p1.add(mTvDataTF);
-    p1.add(new JLabel(" "));
-    mChangeDataDirBt = new JButton("...");
-    mChangeDataDirBt.addActionListener(this);
-    p1.add(mChangeDataDirBt);
-    
-    // browser mode
-    JPanel browseModePn = new JPanel(new TabLayout(2, true));
-    msg = mLocalizer.msg("tvData", "TV data");
-    browseModePn.setBorder(BorderFactory.createTitledBorder(msg));
-    main.add(browseModePn);
-    
-    msg = mLocalizer.msg("autoDownload", "Download automatically");
-    browseModePn.add(new JLabel(msg));
-    mAutoDownloadCB=new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
-    if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
-      mAutoDownloadCB.setSelectedIndex(1);
-    }
-    browseModePn.add(mAutoDownloadCB);
-    
-    msg = mLocalizer.msg("startIn", "Start in");
-    browseModePn.add(new JLabel(msg));
-    mBrowseModeCB=new JComboBox(MODE_MSG_ARR);
-    browseModePn.add(mBrowseModeCB);
-    
-    if (Settings.getStartupInOnlineMode()) {
-      mBrowseModeCB.setSelectedIndex(0);
-    }else{
-      mBrowseModeCB.setSelectedIndex(1);
-    }
-    
-    // TV data service
-    JPanel dataServicePn = new JPanel(new FlowLayout(FlowLayout.LEADING));
-    msg = mLocalizer.msg("configureTvDataServices", "Configure tv data services");
-    dataServicePn.setBorder(BorderFactory.createTitledBorder(msg));
-    main.add(dataServicePn);
-    
-    mServiceCB = new JComboBox(TvDataServiceManager.getInstance().getDataServices());
-    mServiceCB.setRenderer(new DataServiceRenderer());
-    mServiceCB.addActionListener(this);
-    dataServicePn.add(mServiceCB);
-    dataServicePn.add(new JLabel(" "));
-    mConfigBt = new JButton(mLocalizer.msg("configure", "Configure..."));
-    mConfigBt.addActionListener(this);
-    dataServicePn.add(mConfigBt);
-    
-    updateConfigButton();
-    
-    return mSettingsPn;
-  }
-  
-  
-  
-  /**
-   * Called by the host-application, if the user wants to save the settings.
-   */
-  public void saveSettings() {
-    Settings.setTVDataDirectory(mTvDataTF.getText());
-    
-    Settings.setTVDataLifespan(getDaysFromTVDataLifespanCB());
-    
-    Settings.setStartupInOnlineMode(mBrowseModeCB.getSelectedIndex()==0);
-    
-    int inx = mAutoDownloadCB.getSelectedIndex();
-    if (inx == 0) {
-      Settings.setAutomaticDownload("never");
-    } else {
-      Settings.setAutomaticDownload("startup");
-    }
-  }
-  
-  
-  
-  /**
-   * Returns the name of the tab-sheet.
-   */
-  public Icon getIcon() {
-    return null;
-  }
-  
-  
-  
-  /**
-   * Returns the title of the tab-sheet.
-   */
-  public String getTitle() {
-    return mLocalizer.msg("tvData", "TV data");
-  }
-  
-  
-  // inner class DataServiceRenderer
-  
-  
-  class DataServiceRenderer extends DefaultListCellRenderer {
-    
-    public Component getListCellRendererComponent(JList list, Object value,
-    int index, boolean isSelected, boolean cellHasFocus) {
-      if (value instanceof TvDataService) {
-        TvDataService dataService = (TvDataService) value;
-        value = dataService.getName();
-      }
+    String text="TV-Daten-Services sind externe Komponenten, die " +
+      "TV-Daten (z.B. aus dem Internet) laden und sie dann " +
+      "TV-Browser zur Verfügung stellen.\n\n" +
+      "Damit TV-Browser Daten darstellen kann, muß mindestens ein " +
+      "TV-Daten-Service installiert sein.\n\n"+
+      "Wählen Sie ein TV-Daten-Service aus, um Änderungen an der " +
+      "Konfiguration vorzunehmen.\n\n" +
+      "Anmerkung: Nicht jedes TV-Daten-Service unterstützt diese " +
+      "Funktion.\n" +
+      "Bei Problemen wenden Sie sich bitte an den Autor des "+
+      "jeweiligen TV-Daten-Services.";
       
-      return super.getListCellRendererComponent(list, value, index, isSelected,
-      cellHasFocus);
-    }
+      /*
+       * 
+       * 
+       * Die TV-Daten werden nicht direkt mit TV-Browser 
+       * heruntergeladen. Diese Aufgabe übernehmen eigene 
+       * Plugins, sogenannte TVDataServices. Ein solches 
+       * TVDataService lädt die TV-Daten (üblicherweise) 
+       * aus dem Internet und übergibt sie an TV-Browser, 
+       * der sie dann darstellt und speichert (Im Verzeichnis 
+       * tvdataservice/ befinden sich diese TVDataServices in 
+       * Form von .jar-Dateien).
+Es existiert kein einheitliches Protokoll oder Format, mit 
+dem die TV-Daten übertragen werden. PremiereDataService lädt
+ die TV-Daten beispielsweise von premiere.de in Form einer 
+ .txt-Datei, XMLDataService lädt Daten im XMLTV-Format.
+Auf diese Weise sind wir sehr flexibel, wenn es darum geht, 
+neue Sender aufzunehmen.
+Wir sind allerdings auf frei verfügbare TV-Datenquellen 
+angewiesen.
+       */
     
+    JTextArea ta=new JTextArea(mLocalizer.msg("description", "tv data"));
+    ta.setWrapStyleWord(true);
+    ta.setLineWrap(true);
+    ta.setOpaque(false);
+    ta.setEditable(false);
+    ta.setFocusable(false);
+    
+    mainPanel.add(ta,BorderLayout.NORTH);
+    
+    return mainPanel;
   }
+
+  
+    /**
+     * Called by the host-application, if the user wants to save the settings.
+     */
+    public void saveSettings() {
+      
+    }
+
+  
+    /**
+     * Returns the name of the tab-sheet.
+     */
+    public Icon getIcon() {
+      return null;
+    }
+  
+  
+    /**
+     * Returns the title of the tab-sheet.
+     */
+    public String getTitle() {
+      return "TVDataServices";
+    }
   
 }

@@ -171,6 +171,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     });
     p2.add(mBackgroundBt);
+    
+    
+   
 
     return mSettingsPn;
   }
@@ -216,3 +219,4 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   }
 
 }
+

@@ -45,6 +45,7 @@ public class ChannelPanel extends JPanel {
   
   private int mColumnWidth;
   private JLabel[] mLabelArr;
+  private static Font channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
   
   
   public ChannelPanel(int columnWidth, Channel[] channelArr) {
@@ -56,11 +57,12 @@ public class ChannelPanel extends JPanel {
     setColumnWidth(columnWidth);
   }
 
-  
+  public static void fontChanged() {
+    channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
+  }
   
   public void setShownChannels(Channel[] channelArr) {
     removeAll();
-    
     mLabelArr = new JLabel[channelArr.length];
     
     for (int i = 0; i < mLabelArr.length; i++) {
@@ -73,6 +75,7 @@ public class ChannelPanel extends JPanel {
       }
       
       mLabelArr[i] = new JLabel(channelName);
+      mLabelArr[i].setFont(channelNameFont);
       mLabelArr[i].setOpaque(false);
       mLabelArr[i].setHorizontalAlignment(JLabel.CENTER);
       add(mLabelArr[i]);

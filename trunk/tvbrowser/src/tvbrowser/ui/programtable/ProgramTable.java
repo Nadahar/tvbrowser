@@ -230,7 +230,10 @@ public class ProgramTable extends /*JComponent*/SkinPanel
     return null;
   }
 
-
+  public void fontChanged() {
+    mRenderer = new DefaultProgramTableCellRenderer();
+    repaint();
+  }
 
   private void updateLayout() {
     mLayout.updateLayout(mModel, mRenderer);

@@ -108,6 +108,8 @@ public class PluginSettingsTab
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
+    
+    
     String[] buttonPlugins=Settings.getButtonPlugins();
     buttonPluginSet = new HashSet();
     for (int i = 0; i < buttonPlugins.length; i++) {
@@ -142,6 +144,8 @@ public class PluginSettingsTab
     panel.addListSelectionListenerLeft(this);
     panel.addListSelectionListenerRight(this);
     
+    
+    
     mSettingsPn.add(panel, BorderLayout.CENTER);
     
     JPanel southPn = new JPanel(new TabLayout(1));
@@ -153,7 +157,7 @@ public class PluginSettingsTab
     southPn.add(pluginInfoPanel);
         
     JPanel panel1=new JPanel(new BorderLayout());
-	String checkBoxText = mLocalizer.msg("toolbarPlugin", "Add plugin to Toolbar");
+	  String checkBoxText = mLocalizer.msg("toolbarPlugin", "Add plugin to Toolbar");
     addPicBtnCheckBox=new JCheckBox(checkBoxText);
     panel1.add(addPicBtnCheckBox,BorderLayout.WEST);
     southPn.add(panel1);
