@@ -26,17 +26,31 @@
  
 package tvbrowser.ui.aboutbox;
 
-import javax.swing.*;
-
-import util.ui.html.*;
-
 import java.awt.BorderLayout;
-import java.awt.Frame;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import tvbrowser.TVBrowser;
+import util.ui.ImageUtilities;
+import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.ExtendedHTMLEditorKit;
 
 /**
  * 
@@ -48,41 +62,28 @@ public class AboutBox extends JDialog {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(AboutBox.class);
   
-  
-  
-   
-  
   private static Font smallFont=new Font("Dialog", Font.PLAIN, 10);
   private static Font bigFont=new Font("Dialog", Font.PLAIN, 24);
   private static Font normalFont=new Font("Dialog", Font.PLAIN, 12);
   private static Font boldFont=new Font("Dialog",Font.BOLD, 12);
   
-  
-  
+
   public AboutBox(Frame parent) {
     super(parent,true);
-    
+
     setTitle(mLocalizer.msg("about", "About"));
     
     JPanel contentPane=(JPanel)getContentPane();
+    contentPane.setBackground(Color.WHITE);
+    
     contentPane.setLayout(new BorderLayout());
-    contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,11,11));
+
     
-    JPanel btnPanel=new JPanel(new BorderLayout());
-    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
-    final JDialog parentFrame=this;
-    closeBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        parentFrame.hide();
-      }
-    });
-    getRootPane().setDefaultButton(closeBtn);
-    btnPanel.add(closeBtn,BorderLayout.EAST);
-    btnPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-    contentPane.add(btnPanel,BorderLayout.SOUTH);
+    JPanel right = new JPanel();
+    right.setLayout(new BorderLayout());
+    right.setBackground(Color.WHITE);
     
-    
-    JEditorPane infoEP = new JEditorPane();
+    final JEditorPane infoEP = new JEditorPane();
     infoEP.setOpaque(false);
     infoEP.setEditorKit(new ExtendedHTMLEditorKit());
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) infoEP.getDocument();
@@ -90,20 +91,102 @@ public class AboutBox extends JDialog {
     infoEP.setText(text);
     infoEP.setEditable(false);
     
-    contentPane.add(infoEP,BorderLayout.CENTER);
-  
+    right.add(infoEP,BorderLayout.CENTER);
+
+
+    JPanel btnPanel=new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 10));
+    btnPanel.setBackground(Color.WHITE);
+
+    JButton copyClipboard = new JButton(mLocalizer.msg("copyClipboard", "Copy to Clipboard"));
+    copyClipboard.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            Document doc = infoEP.getDocument();
+
+            try {
+                StringSelection sel = new StringSelection(doc.getText(0, doc.getLength()));
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
+            } catch (BadLocationException e1) {
+                e1.printStackTrace();
+            }
+        }
+      });
+    btnPanel.add(copyClipboard);
+    
+    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
+    final JDialog parentFrame=this;
+
+    closeBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        parentFrame.hide();
+      }
+    });
+    
+    getRootPane().setDefaultButton(closeBtn);
+    btnPanel.add(closeBtn);
+    right.add(btnPanel,BorderLayout.SOUTH);
+    
+    contentPane.add(right, BorderLayout.CENTER);
+    
+    Image image = ImageUtilities.createImage("imgs/tvabout.jpg");
+    if (image != null) {
+      ImageUtilities.waitForImageData(image, null);
+      JLabel gfx = new JLabel(new ImageIcon(image));
+      
+      JPanel gfxPanel = new JPanel(new BorderLayout());
+      gfxPanel.setBackground(Color.WHITE);
+      gfxPanel.add(gfx, BorderLayout.SOUTH);
+      
+      contentPane.add(gfxPanel, BorderLayout.WEST);
+    }
   }
   
   private StringBuffer createInfoEntry(StringBuffer buf, String key, String value) {
     
-    buf.append("<tr><td width=\"35%\">");
+    buf.append("<tr><td width=\"35%\" valign=\"top\">");
     buf.append("<div id=\"key\">");
     
     buf.append(key);
     buf.append("</div>");
     return buf.append("</td><td>").append(value).append("</td></tr>");
+  }
+  
+  private StringBuffer createTowLineInfoEntry(StringBuffer buf, String key, String value) {
+      
+      buf.append("<tr><td colspan=\"2\">");
+      buf.append("<div id=\"key\">");
+      buf.append(key);
+      buf.append("</div>");
+      buf.append("</td></tr>");
+
+      buf.append("<tr><td colspan=\"2\">");
+      buf.append("<div>");
+      buf.append(value);
+      buf.append("</div>");
+      buf.append("</td></tr>");
+
+      return buf;
+    }
     
-    
+  
+  private void createSpacer(StringBuffer buf) {
+      buf.append("<tr><td id=\"small\"></td></tr>");
+      
+  }
+
+  private void createJavaVersionEntry(StringBuffer buf) {
+      
+      buf.append("<tr><td colspan=\"2\">");
+      
+      buf.append("<div id=\"small\">");
+
+      buf.append(System.getProperty("java.vm.name") + "<br>");
+      buf.append(System.getProperty("java.vendor") + "<br>");
+      buf.append(System.getProperty("java.home"));
+      
+      buf.append("</div>");
+      
+      buf.append("</td></tr>");
   }
   
   private String createAboutText(ExtendedHTMLDocument doc) {
@@ -113,54 +196,49 @@ public class AboutBox extends JDialog {
                "  <head>" +
                "<style type=\"text/css\" media=\"screen\">" +
                "<!--" +
-               "#title { font-size:18px; font-family:Dialog; text-align:center; font-weight:bold;}" +
-               "#key { font-size:12px; font-famile:Dialog; font-weight:bold; }" +
+               "body {font-family:Dialog;}" +
                "" +
+               "#title { font-size:18px; font-family:Dialog; text-align:center; font-weight:bold; margin-top:5px}" +
+               "#key { font-size:12px; font-family:Dialog; font-weight:bold; }" +
                "" +
-               "" +
-               "#small { font-size:9px; font-family:Dialog; }" +
+               "#small { font-size:9px; font-family:Dialog; margin-bottom: 5px}" +
                "-->" +
                "  </head>" +
                "  <body>" +
-               "    <div id=\"title\">"+mLocalizer.msg("about", "About")+"</div>" +
+               "    <div id=\"title\">"+mLocalizer.msg("version", "Version")+": " + TVBrowser.VERSION.toString() +"</div>" +
                "<p>" +
                "    <table width=\"100%\"");
-               
-    createInfoEntry(buf, mLocalizer.msg("version", "Version"),
-       TVBrowser.VERSION.toString());
-       
-    createInfoEntry(buf, mLocalizer.msg("platform", "Platform"),
+     
+    
+    createInfoEntry(buf, mLocalizer.msg("platform", "Platform") + ":",
        System.getProperty("os.name") + " " + System.getProperty("os.version"));
        
-    createInfoEntry(buf, mLocalizer.msg("system", "System"),
+    createInfoEntry(buf, mLocalizer.msg("system", "System") + ":",
        System.getProperty("os.arch"));
     
-    createInfoEntry(buf, mLocalizer.msg("javaVersion", "Java Version"),
+    createSpacer(buf);
+    
+    createInfoEntry(buf, mLocalizer.msg("javaVersion", "Java Version") + ":",
        System.getProperty("java.version"));
     
-    createInfoEntry(buf, mLocalizer.msg("javaVM", "Java VM"),
-       System.getProperty("java.vm.name"));
+    createJavaVersionEntry(buf);
     
-    createInfoEntry(buf, mLocalizer.msg("javaVendor", "Java vendor"),
-      System.getProperty("java.vendor"));
+    createSpacer(buf);
     
-    createInfoEntry(buf, mLocalizer.msg("javaHome", "Java home"),
-      System.getProperty("java.home"));
-    
-    createInfoEntry(buf, mLocalizer.msg("location", "Location"),
-      System.getProperty("user.country") + "," + System.getProperty("user.language"));
+    createTowLineInfoEntry(buf, mLocalizer.msg("location", "Location") + ":",
+    System.getProperty("user.country") + "," + System.getProperty("user.language"));
                
     java.util.TimeZone timezone = java.util.TimeZone.getDefault();
     int tzOffset = timezone.getRawOffset() / 1000 / 60 / 60;
     String tzOffsetAsString = mLocalizer.msg("hours", "({0,number,+#;#} hours)",
     new Integer(tzOffset));           
                
-    createInfoEntry(buf, mLocalizer.msg("timezone", "Timezone"),
+    createTowLineInfoEntry(buf, mLocalizer.msg("timezone", "Timezone") + ":",
        timezone.getDisplayName() + " " + tzOffsetAsString);         
                 
                
-    buf.append("</p>    </table>");
-    buf.append("<p valign=\"10px\"");
+    buf.append("</table></p>");
+    buf.append("<p>");
     buf.append("<div id=\"small\">");
     
     buf.append(mLocalizer.msg("copyrightText",
