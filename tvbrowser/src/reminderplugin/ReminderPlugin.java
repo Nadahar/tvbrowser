@@ -131,7 +131,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
 
-    reminderList.writeData(out);
+    if (reminderList!=null) {
+    	reminderList.writeData(out);
+    } 
   }
   
   
