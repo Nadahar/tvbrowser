@@ -160,7 +160,7 @@ public class DayProgramFileTest extends TestCase {
     field.setTimeData(endTime);
     frame.addProgramField(field);
 
-    frame.addProgramField(new ProgramField(ProgramFieldType.TITLE_TYPE, title));
+    frame.addProgramField(ProgramField.create(ProgramFieldType.TITLE_TYPE, title));
     
     return frame;
   }

@@ -48,7 +48,7 @@ public class DayProgramMapperTest extends TestCase {
     ProgramFrame cmplFrame3 = createProgramFrame(3, 41, 50, "Otto III");
     ProgramFrame cmplFrame4 = createProgramFrame(5, 31, 40, "Karl Franzon I");
     ProgramFrame cmplFrame5 = createProgramFrame(8, 51, 70, "Affenhaus");
-    cmplFrame5.addProgramField(new ProgramField(ProgramFieldType.DESCRIPTION_TYPE, "Super Film!"));
+    cmplFrame5.addProgramField(ProgramField.create(ProgramFieldType.DESCRIPTION_TYPE, "Super Film!"));
     ProgramFrame cmplFrame6 = createProgramFrame(8, 71, 80, "Rambo III");
 
     cmplFile.addProgramFrame(cmplFrame1);
@@ -66,7 +66,7 @@ public class DayProgramMapperTest extends TestCase {
     ProgramFrame rawFrame4 = createProgramFrame(-1, 31, 40, "Karl Franzon I");
     // all changed but description changed
     ProgramFrame rawFrame5 = createProgramFrame(-1, 80, 90, "Gier-Affenhaus");
-    rawFrame5.addProgramField(new ProgramField(ProgramFieldType.DESCRIPTION_TYPE, "Super Film!"));
+    rawFrame5.addProgramField(ProgramField.create(ProgramFieldType.DESCRIPTION_TYPE, "Super Film!"));
     // all changed
     ProgramFrame rawFrame6 = createProgramFrame(8, 91, 99, "Flugschau");
 
