@@ -172,8 +172,13 @@ public class XmlTvHandler extends DefaultHandler {
 		mCalendar.set(Calendar.DAY_OF_MONTH, day);
 		mCalendar.set(Calendar.MONTH, month - 1);
 		mCalendar.set(Calendar.YEAR, year);
-		int daysSince1970 = (int)(mCalendar.getTimeInMillis() / 1000L / 60L / 60L / 24L);
+		
+		System.out.println("Date: "+day+"."+(month)+"."+year);
+		int zoneOffset = mCalendar.get(Calendar.ZONE_OFFSET);
+			 int daylight = mCalendar.get(Calendar.DST_OFFSET);
+		int daysSince1970 = (int)((mCalendar.getTimeInMillis()+zoneOffset+daylight) / 1000L / 60L / 60L / 24L);
 		devplugin.Date date=new devplugin.Date(daysSince1970);
+		System.out.println("is "+date.toString());
         
        
 
