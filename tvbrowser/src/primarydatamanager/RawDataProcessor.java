@@ -141,6 +141,9 @@ public class RawDataProcessor {
               + fileArr[i].getAbsolutePath(), exc);
           }
         }
+        else {
+          fileArr[i].delete();
+        }
       }
     }
   }

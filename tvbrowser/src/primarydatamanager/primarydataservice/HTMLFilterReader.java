@@ -59,14 +59,6 @@ public class HTMLFilterReader extends FilterReader {
     }
     return tagBuf.toString();
   }
-  /*
-  private int expect(char c) throws IOException {
-    while (ch!=-1 && ch!=c) {
-      ch=in.read();
-    }
-    return ch;
-  }
-  */
   
   private String readQuotedAttribute() throws IOException {
     ch=in.read();

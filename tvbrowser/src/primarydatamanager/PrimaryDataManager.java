@@ -100,7 +100,15 @@ public class PrimaryDataManager {
       throw new PreparationException("Could not create work directory: "
         + mWorkDir.getAbsolutePath());
     }
+    
+    if (!mRawDir.exists()) {
+      if (! mRawDir.mkdir()) {
+        throw new PreparationException("Could not create raw directory: "
+          + mRawDir.getAbsolutePath());
+      }
+    }
 
+/*
     if (!doUpdateOnly) {
       // Delete the old raw directory
       try {
@@ -116,7 +124,7 @@ public class PrimaryDataManager {
           + mRawDir.getAbsolutePath());
       }
     }
-    
+    */
     // Update the mirror list
     updateMirrorList();
     

@@ -1,10 +1,15 @@
 Changelog TVBrowser
 
-current (0.9.8):
+current:
+- added downnload status info
+
+
+0.9.7.1, 0.9.7.2:
 - Program now supports all new data fields
 - DataService class is now splitted into TvDataBase, TvDataUpdater and
   TvDataSearcher. The TvDataBase has now a memory-sensitive cache and a
   Listener functionality.
+
 
 0.9.7:
 - Bugfixes:
