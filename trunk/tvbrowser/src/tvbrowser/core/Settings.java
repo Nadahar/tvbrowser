@@ -324,7 +324,7 @@ public class Settings {
     = new StringProperty(mProp, "webbrowser", null);
 
   public static final BooleanProperty propOnlyMinimizeWhenWindowClosing
-    = new BooleanProperty(mProp, "onlyMinimizeWhenWindowClosing", true);
+    = new BooleanProperty(mProp, "onlyMinimizeWhenWindowClosing", false);
 
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "text&icon",
@@ -397,7 +397,7 @@ public class Settings {
                              ProgramFieldType.PRODUCTION_YEAR_TYPE,
                              ProgramFieldType.SHOWVIEW_NR_TYPE,
                              ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-                             ProgramFieldType.DESCRIPTION_TYPE,
+                          //   ProgramFieldType.DESCRIPTION_TYPE,
                            });
 
   public static final StringArrayProperty propProgramTableIconPlugins
