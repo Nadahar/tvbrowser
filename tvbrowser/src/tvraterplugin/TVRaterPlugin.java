@@ -39,7 +39,6 @@ import devplugin.Version;
 /**
  * This Plugin gives the User the possibility to rate a Movie
  * 
- * TODO: Genre-Rating
  * TODO: Get Personal Ratings from Server
  * TODO: Send Original-Titles to Server 
  * TODO: Rate Episodes not the whole Series 
@@ -80,7 +79,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                         "description",
                         "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 6));
+        return new PluginInfo(name, desc, author, new Version(0, 10));
     }
 
     /**

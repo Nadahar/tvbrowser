@@ -375,11 +375,18 @@ public class DialogRating extends JDialog {
             ratingPanel.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":", JLabel.LEFT), labc);
             
             if (rating.getIntValue(Rating.GENRE) >= 0) {
+                
+                String str = Integer.toString(rating.getIntValue(Rating.GENRE));
+                
+                while (str.length() < 3) {
+                    str = "0" + str;
+                }
+                
                 ratingPanel.add(new JLabel(
                     	RatingIconTextFactory.getGenres().getProperty( 
-                    	        	Integer.toString(rating.getIntValue(Rating.GENRE)), 
+                    	        	str, 
                     	        	"[TRANSLATIONERROR:" + 
-                    	        	Integer.toString(rating.getIntValue(Rating.GENRE)).toString() + " ]"))
+                    	        	str + " ]"))
                     	        	, c);
             } else {
                 ratingPanel.add(new JLabel("-"), c);
