@@ -344,7 +344,14 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       return;
     }
 
+    // Disarm html entities
+    text = IOUtilities.replace(text.trim(), "<", "&lt;");
+    text = IOUtilities.replace(text.trim(), ">", "&gt;");
+    
+    // Translate line breaks to html breaks
     text = IOUtilities.replace(text.trim(), "\n", "<br>");
+    
+    // Create links for URLs
     if (createLinks) {
       text = text.replaceAll("(http://|www.)[^\\s<]*", "<a href=\"$0\">$0</a>");
     }
