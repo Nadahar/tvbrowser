@@ -87,7 +87,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	}
 
 	public SettingsTab getSettingsTab() {
-	  return new TVRaterSettingsTab(_settings);
+    return new TVRaterSettingsTab(_settings);
 	}
 	
 	public String getMarkIconName() {
