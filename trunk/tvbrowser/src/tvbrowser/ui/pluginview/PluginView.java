@@ -26,21 +26,29 @@
 
 package tvbrowser.ui.pluginview;
 
-import java.awt.*;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import javax.swing.*;
-import javax.swing.tree.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.Action;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
 
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.ui.programtable.ProgramTable;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.pluginview.contextmenu.*;
-import devplugin.*;
-import util.ui.menu.MenuUtil;
+import tvbrowser.ui.pluginview.contextmenu.ContextMenu;
+import tvbrowser.ui.pluginview.contextmenu.CustomNodeContextMenu;
+import tvbrowser.ui.pluginview.contextmenu.PluginContextMenu;
+import tvbrowser.ui.pluginview.contextmenu.ProgramContextMenu;
+import tvbrowser.ui.pluginview.contextmenu.RootNodeContextMenu;
+import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
+import devplugin.Program;
+import devplugin.ProgramItem;
 
 
 
@@ -126,10 +134,10 @@ public class PluginView extends JPanel implements MouseListener {
         selectedPrograms[i] = program;
       }
 
-      return new ProgramContextMenu(mTree, selectedPath, mModel.getPlugin(selectedPath[0]), selectedPrograms);
+      return new ProgramContextMenu(mTree, selectedPath, PluginTreeModel.getPlugin(selectedPath[0]), selectedPrograms);
     }
     else if (node.getType() == Node.PLUGIN_ROOT) {
-      return new PluginContextMenu(mTree, selectedPath[0], mModel.getPlugin(selectedPath[0]), node.getActionMenus());
+      return new PluginContextMenu(mTree, selectedPath[0], PluginTreeModel.getPlugin(selectedPath[0]), node.getActionMenus());
     }
     else if (node.getType() == Node.CUSTOM_NODE) {
       return new CustomNodeContextMenu(mTree, selectedPath[0], node.getActionMenus());
