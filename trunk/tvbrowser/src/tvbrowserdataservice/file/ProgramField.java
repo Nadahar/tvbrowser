@@ -194,9 +194,10 @@ public class ProgramField implements Cloneable {
   
   
   public String getTextData() {
-		if (mData==null) {
-			return null;
-		}
+    if (mData==null) {
+    	return null;
+    }
+    
     try {
       return new String(mData, TEXT_CHARSET);
     }
@@ -250,6 +251,32 @@ public class ProgramField implements Cloneable {
     mData = intToData(minutesAfter1970);
   }
 
+  
+  /**
+   * Gets a String representation of the data value. 
+   * 
+   * @return the data value as String.
+   */
+  public String getDataAsString() {
+    if (mDataFormat == ProgramFieldType.TEXT_FORMAT) {
+      return "'" + getTextData() + "'";
+    }
+    else if (mDataFormat == ProgramFieldType.INT_FORMAT) {
+      return Integer.toString(getIntData());
+    }
+    else if (mDataFormat == ProgramFieldType.TIME_FORMAT) {
+      int time = getTimeData();
+      int hours = time / 60;
+      int minutes = time % 60;
+      return hours + ":" + ((minutes < 10) ? "0" : "") + minutes;
+    }
+    else if (mDataFormat == ProgramFieldType.BINARY_FORMAT) {
+      return "(binary)";
+    }
+    else {
+      return "(unknown)";
+    }
+  }
 
 
   private static int dataToInt(byte[] data) {
