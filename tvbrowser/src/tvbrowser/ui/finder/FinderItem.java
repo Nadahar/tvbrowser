@@ -53,7 +53,7 @@ public class FinderItem extends JLabel implements MouseListener {
     super();
     this.listener=listener;
     date=d;
-    if (new devplugin.Date().equals(d)) {
+    if (new devplugin.Date().equals(d)) {    	
       setText("today");
     }else {
       setText(d.toString());

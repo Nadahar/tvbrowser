@@ -11,6 +11,8 @@ current:
 - remember window size
 - remember window location
 - Use more icons for menu items and buttons
+- shortcuts for menu items added
+- keyboard navigable
 
 0.9.3:
 - bugfixes
