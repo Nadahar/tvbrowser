@@ -146,7 +146,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   private void handleMouseClicked(MouseEvent evt, Program program) {
     if (SwingUtilities.isRightMouseButton(evt)) {
       if (program != null) {
-        JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program);
+        JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, ProgramInfo.getInstance());
         menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
       }
     }

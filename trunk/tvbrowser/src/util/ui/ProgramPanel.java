@@ -509,31 +509,18 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     return mProgram;
   }
   
-  
-  /**
-   * Adds a MouseListener that shows the plugin context menu when the user
-   * does a right click on the program panel. 
-   * 
-   * @param caller The Plugin to exclude from the context menu. When
-   *        <code>null</code> no plugin is excluded.
-   * 
-   * @deprecated Since 1.1. Use {@link #addPluginContextMenuMouseListener()}
-   *             instead.
-   */
-  public void addPluginContextMenuMouseListener(Plugin caller) {
-    addPluginContextMenuMouseListener();
-  }
-  
-  
   /**
    * Adds a MouseListener that shows the plugin context menu when the user does
    * a right click on the program panel. 
+   * 
+   * @param caller The Plugin to exclude from the context menu. When
+   *        <code>null</code> no plugin is excluded.
    */
-  public void addPluginContextMenuMouseListener() {
+  public void addPluginContextMenuMouseListener(final Plugin caller) {
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
         if (SwingUtilities.isRightMouseButton(evt)) {
-          JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram);
+          JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram, caller);
           menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
         } else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
           Plugin.getPluginManager().handleProgramDoubleClick(mProgram);

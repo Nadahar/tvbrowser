@@ -93,7 +93,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
             iconImage = getParentFrame().getIconImage();
         }
 
-        new ReminderFrame(getParentFrame(), mReminderList, item,
+        new ReminderFrame(this, getParentFrame(), mReminderList, item,
                         getAutoCloseReminderTime(), iconImage);
     } else {
       mReminderList.remove(item.getProgramItem());
@@ -271,7 +271,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        JDialog dlg= new ReminderListDialog(getParentFrame(), mReminderList);
+        JDialog dlg= new ReminderListDialog(ReminderPlugin.this, getParentFrame(), mReminderList);
         dlg.setSize(600,350);
         UiUtilities.centerAndShow(dlg);
         dlg.dispose();
