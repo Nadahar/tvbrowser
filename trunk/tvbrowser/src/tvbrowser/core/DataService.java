@@ -51,6 +51,9 @@ import tvdataloader.*;
  */
 public class DataService implements devplugin.PluginManager {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(DataService.class.getName());
+  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DataService.class);
   
@@ -164,7 +167,7 @@ public class DataService implements devplugin.PluginManager {
     	tvdataDir.mkdir();
     }
     
-    progressBar.setString("connecting...");
+    progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
     progressBar.setStringPainted(true);
     try {
       tvdataloader.connect();
@@ -256,9 +259,9 @@ public class DataService implements devplugin.PluginManager {
     if (dayProgram == null) {
       try {
         // The program is not in the cache -> try to load it
-        System.out.println("Loading program for " + date + " (" + date.hashCode() + ")");
+        mLog.info("Loading program for " + date + " (" + date.hashCode() + ")");
         dayProgram = loadDayProgram(date);
-        System.out.println("Loading program " + ((dayProgram == null) ? "failed" : "suceed"));
+        mLog.info("Loading program " + ((dayProgram == null) ? "failed" : "suceed"));
 
         // put it in the cache
         if (dayProgram != null) {

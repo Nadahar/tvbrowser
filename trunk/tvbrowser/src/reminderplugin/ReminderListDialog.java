@@ -24,14 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
-
 package reminderplugin;
 
 
@@ -42,105 +34,115 @@ import java.awt.event.*;
 import java.util.Iterator;
 import devplugin.Program;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ReminderListDialog extends JDialog {
 
-  private static String[] listItems={
-    "remind me when the program begins",
-   "remind me one minute before",
-   "reminde me two minutes before",
-   "remind me three minutes before",
-   "remind me five minutes before",
-   "remind me ten minutes before",
-   "remind me 15 minutes before",
-   "remind me 30 minutes before",
-    "remind me one hour before",
-   "don't remind me"};
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ReminderListDialog.class);
+  
+  private static final String[] REMIND_MSG_ARR = ReminderFrame.REMIND_MSG_ARR;
+  private static final int[] REMIND_VALUE_ARR = ReminderFrame.REMIND_VALUE_ARR;
 
-
-
-  private static final int DONT_REMEMBER=9;
+  private static final int DONT_REMEMBER = 0;
 
   private ReminderList reminderList;
-
-    public ReminderListDialog(Frame parent, ReminderList list) {
-        super(parent,true);
-        reminderList=list;
-        setTitle("Erinnerungen");
-
-        JPanel contentpane=(JPanel)getContentPane();
-        contentpane.setLayout(new BorderLayout(0,12));
-        contentpane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        JLabel label=new JLabel("Sie werden an folgende Sendungen erinnert:");
-        contentpane.add(label,BorderLayout.NORTH);
-
-        JPanel listPanel=new JPanel();
-        listPanel.setLayout(new BoxLayout(listPanel,BoxLayout.Y_AXIS));
-
-
-
-        if (list!=null) {
-            Iterator it=list.getReminderItems();
-            while (it.hasNext()) {
-              ReminderListItem item=(ReminderListItem)it.next();
-              listPanel.add(createListItemPanel(item));
-            }
-        }
-
-       contentpane.add(new JScrollPane(listPanel),BorderLayout.CENTER);
-
-        JPanel btnPanel=new JPanel(new BorderLayout());
-        JButton closeBtn=new JButton("Schlieﬂen");
-
-        closeBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                hide();
-            }
-        }
-         );
-
-        btnPanel.add(closeBtn,BorderLayout.EAST);
-        contentpane.add(btnPanel,BorderLayout.SOUTH);
+  
+  
+  
+  public ReminderListDialog(Frame parent, ReminderList list) {
+    super(parent,true);
+    
+    String msg;
+    
+    reminderList=list;
+    setTitle(mLocalizer.msg("title", "Reminder"));
+    
+    JPanel contentpane=(JPanel)getContentPane();
+    contentpane.setLayout(new BorderLayout(0,12));
+    contentpane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    msg = mLocalizer.msg("labelText", "You will be reminded for the following programs:");
+    JLabel label = new JLabel(msg);
+    contentpane.add(label,BorderLayout.NORTH);
+    
+    JPanel listPanel=new JPanel();
+    listPanel.setLayout(new BoxLayout(listPanel,BoxLayout.Y_AXIS));
+    
+    if (list!=null) {
+      Iterator it=list.getReminderItems();
+      while (it.hasNext()) {
+        ReminderListItem item=(ReminderListItem)it.next();
+        listPanel.add(createListItemPanel(item));
+      }
     }
+    
+    contentpane.add(new JScrollPane(listPanel),BorderLayout.CENTER);
+    
+    JPanel btnPanel=new JPanel(new BorderLayout());
+    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
+    
+    closeBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        hide();
+      }
+    });
+    
+    btnPanel.add(closeBtn,BorderLayout.EAST);
+    contentpane.add(btnPanel,BorderLayout.SOUTH);
+  }
+  
+  
+  
+  private JPanel createListItemPanel(final ReminderListItem item) {
+    
+    Program prog=item.getProgram();
+    
+    JPanel result=new JPanel(new BorderLayout());
+    result.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+    JPanel panel1=new JPanel(new BorderLayout());
+    JPanel panel2=new JPanel(new BorderLayout());
+    final JComboBox box1=new JComboBox(REMIND_MSG_ARR);
+    
+    box1.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        int inx = box1.getSelectedIndex();
+        if (inx == DONT_REMEMBER) {
+          reminderList.remove(item);
+        } else {
+          item.setReminderMinutes(REMIND_VALUE_ARR[inx]);
+        }
+      }
+    });
 
-
-    private JPanel createListItemPanel(final ReminderListItem item) {
-
-      Program prog=item.getProgram();
-
-        JPanel result=new JPanel(new BorderLayout());
-        result.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        JPanel panel1=new JPanel(new BorderLayout());
-        JPanel panel2=new JPanel(new BorderLayout());
-        final JComboBox box1=new JComboBox(listItems);
-
-        box1.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            int inx=box1.getSelectedIndex();
-            if (inx==DONT_REMEMBER) {
-              reminderList.remove(item);
-            }else{
-              item.setReminderSelection(inx);
-            }
-          }
-        });
-
-        box1.setSelectedIndex(item.getReminderSelection());
-
-        JLabel dateLabel=new JLabel(prog.getDate().toString());
-        JLabel channelLabel=new JLabel(prog.getChannel().getName());
-        dateLabel.setPreferredSize(new java.awt.Dimension(100,(int)dateLabel.getPreferredSize().getHeight()));
-
-        JPanel panel3=new JPanel(new BorderLayout());
-        panel3.add(channelLabel,BorderLayout.NORTH);
-        panel1.add(dateLabel,BorderLayout.NORTH);
-        panel1.add(panel3,BorderLayout.CENTER);
-        panel2.add(box1,BorderLayout.NORTH);
-
-        result.add(panel1,BorderLayout.WEST);
-        result.add(panel2,BorderLayout.EAST);
-        result.add(devplugin.Plugin.getPluginManager().createProgramPanel(prog),BorderLayout.CENTER);
-
-        return result;
+    // select the right item
+    int minutes = item.getReminderMinutes();
+    int idx = 0;
+    for (int i = 0; i < REMIND_VALUE_ARR.length; i++) {
+      if (minutes == REMIND_VALUE_ARR[i]) {
+        idx = i;
+        break;
+      }
     }
+    box1.setSelectedIndex(idx);
+    
+    JLabel dateLabel=new JLabel(prog.getDate().toString());
+    JLabel channelLabel=new JLabel(prog.getChannel().getName());
+    dateLabel.setPreferredSize(new java.awt.Dimension(100,(int)dateLabel.getPreferredSize().getHeight()));
+    
+    JPanel panel3=new JPanel(new BorderLayout());
+    panel3.add(channelLabel,BorderLayout.NORTH);
+    panel1.add(dateLabel,BorderLayout.NORTH);
+    panel1.add(panel3,BorderLayout.CENTER);
+    panel2.add(box1,BorderLayout.NORTH);
+    
+    result.add(panel1,BorderLayout.WEST);
+    result.add(panel2,BorderLayout.EAST);
+    result.add(devplugin.Plugin.getPluginManager().createProgramPanel(prog),BorderLayout.CENTER);
+    
+    return result;
+  }
 
 }

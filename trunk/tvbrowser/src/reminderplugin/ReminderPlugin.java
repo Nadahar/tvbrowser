@@ -24,13 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package reminderplugin;
 
 import devplugin.*;
@@ -42,7 +35,13 @@ import java.applet.*;
 import java.net.URL;
 
 import util.exc.*;
+import util.ui.UiUtilities;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
   private static final util.ui.Localizer mLocalizer
@@ -92,8 +91,11 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
 
   public PluginInfo getInfo() {
-    return new PluginInfo("Reminder","Eine einfache Implementierung einer Erinnerungsfunktion",
-                          "Martin Oberhauser",new Version(1,0));
+    String name = mLocalizer.msg("pluginName", "Reminder");
+    String desc = mLocalizer.msg("description", "Eine einfache Implementierung einer Erinnerungsfunktion.");
+    String author = "Martin Oberhauser";
+    
+    return new PluginInfo(name, desc, author, new Version(1, 0));
 
   }
 
@@ -141,11 +143,11 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
 
   public String getContextMenuItemText() {
-    return "remind me";
+    return mLocalizer.msg("contextMenuText", "Remind me");
   }
 
   public String getButtonText() {
-    return "Reminder";
+    return mLocalizer.msg("buttonText", "Reminder list");
   }
 
   public devplugin.SettingsTab getSettingsTab() {
@@ -154,14 +156,16 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
   public void execute(devplugin.Program program) {
 util.io.Profiler.getDefault().show("3.1");
-    ReminderDialog dlg=new ReminderDialog(parent,program);
+    ReminderDialog dlg = new ReminderDialog(parent,program);
 util.io.Profiler.getDefault().show("3.2");
-    if (dlg.ok()) {
+    UiUtilities.centerAndShow(dlg);
+util.io.Profiler.getDefault().show("3.3");
+    if (dlg.getOkPressed()) {
       program.mark(this);
       if (reminderList==null) {
         reminderList=new ReminderList();
       }
-      reminderList.add(new ReminderListItem(program,dlg.getReminderSelection()));
+      reminderList.add(new ReminderListItem(program, dlg.getReminderMinutes()));
     }else {
 
     }
@@ -171,7 +175,7 @@ util.io.Profiler.getDefault().show("3.2");
   public void execute() {
     JDialog dlg=new ReminderListDialog(parent, reminderList);
     dlg.setSize(600,350);
-    dlg.show();
+    UiUtilities.centerAndShow(dlg);
     dlg.dispose();
   }
 

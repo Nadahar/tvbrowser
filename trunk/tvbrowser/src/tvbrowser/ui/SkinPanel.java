@@ -24,13 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package tvbrowser.ui;
 
 import javax.swing.*;
@@ -41,8 +34,9 @@ import tvbrowser.core.Settings;
 
 /**
  * A SkinPanel is a JPanel with the capability to have a background image
+ *
+ * @author Martin Oberhauser
  */
-
 public class SkinPanel extends JPanel {
   private Image image;
   private int hImg;
@@ -118,10 +112,6 @@ public class SkinPanel extends JPanel {
         g.drawImage(image, x, y, this);
       }
     }
-
   }
-
-
-
 
 }

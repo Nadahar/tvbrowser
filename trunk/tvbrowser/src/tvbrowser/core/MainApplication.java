@@ -24,18 +24,13 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.core;
 
 /**
  * This interface provides an own view of the DataService class.
+ *
+ * @author Martin Oberhauser
  */
-
 public interface MainApplication {
 
     public void updateLookAndFeel();

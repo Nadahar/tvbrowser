@@ -24,39 +24,57 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class UpdateDlg extends JDialog implements ActionListener {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(UpdateDlg.class);
+  
   public static final int CANCEL=-1;
 
+  private static final String[] PERIOD_MSG_ARR = {
+    mLocalizer.msg("period.0", "Today"),
+    mLocalizer.msg("period.1", "Up to tomorrow"),
+    mLocalizer.msg("period.2", "Next 2 days"),
+    mLocalizer.msg("period.3", "Next 3 days"),
+    mLocalizer.msg("period.4", "Next 4 days"),
+    mLocalizer.msg("period.5", "Next 5 days"),
+    mLocalizer.msg("period.6", "Next 6 days"),
+    mLocalizer.msg("period.7", "Next week"),
+    mLocalizer.msg("period.1000", "Get all")
+  };
+  
   private JButton cancelBtn, updateBtn;
   private int result=0;
   private JComboBox comboBox;
-  private static String[] comboBoxEntries={"today", "up to tomorrow", "next 2 days", "next 3 days","next 4 days","next 5 days", "next 6 days","1 week","get all"};
   private JCheckBox checkBox;
 
+  
+  
   public UpdateDlg(JFrame parent, boolean modal) {
     super(parent,modal);
+    
+    String msg;
+    
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-    this.setTitle("Update");
+    this.setTitle(mLocalizer.msg("dlgTitle", "TV data update"));
     JPanel buttonPanel=new JPanel();
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-    cancelBtn=new JButton("cancel");
-    updateBtn=new JButton("update now");
+    cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
+    updateBtn=new JButton(mLocalizer.msg("updateNow", "Update now"));
 
     cancelBtn.addActionListener(this);
     updateBtn.addActionListener(this);
@@ -69,17 +87,15 @@ public class UpdateDlg extends JDialog implements ActionListener {
     JPanel northPanel=new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel,BoxLayout.Y_AXIS));
 
-
     JPanel panel1=new JPanel(new BorderLayout(7,0));
-    panel1.add(new JLabel("update program for"),BorderLayout.WEST);
-    comboBox=new JComboBox();
-    for (int i=0;i<comboBoxEntries.length;i++) {
-      comboBox.addItem(comboBoxEntries[i]);
-    }
+    msg = mLocalizer.msg("period", "Update program for");
+    panel1.add(new JLabel(msg), BorderLayout.WEST);
+    comboBox = new JComboBox(PERIOD_MSG_ARR);
     comboBox.setSelectedIndex(0);
     panel1.add(comboBox,BorderLayout.EAST);
     northPanel.add(panel1);
-    checkBox=new JCheckBox("remember settings");
+    msg = mLocalizer.msg("rememberSettings", "Remember settings");
+    checkBox=new JCheckBox(msg);
     JPanel panel2=new JPanel(new BorderLayout());
     panel2.add(checkBox,BorderLayout.WEST);
 

@@ -24,13 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package tvbrowser.ui;
 
 import javax.swing.*;
@@ -41,9 +34,9 @@ import java.util.*;
 
 /**
  * The context menu is shown by clicking the right mouse button at the program table.
+ *
+ * @author Martin Oberhauser
  */
-
-
 public class ContextMenu extends JPopupMenu implements ActionListener {
 
     private devplugin.Program program;
