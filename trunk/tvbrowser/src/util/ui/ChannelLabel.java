@@ -76,7 +76,7 @@ public class ChannelLabel extends JLabel {
         	
         	int x = 1+20-ic.getIconWidth() / 2;
         	int y = 1+10-ic.getIconHeight() / 2;
-        	System.out.println(ic.getIconWidth());
+
         	ic.paintIcon(this, g, x, y);
         
         	ImageIcon imgIcon = new ImageIcon(img);
@@ -92,7 +92,6 @@ public class ChannelLabel extends JLabel {
      * @param text Text
      */
     public void setText(String text) {
-        System.out.println(text);
         super.setText(text);
     }
 }
