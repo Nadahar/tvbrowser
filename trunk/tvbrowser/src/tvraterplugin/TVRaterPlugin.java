@@ -25,12 +25,14 @@ import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Iterator;
 import java.util.Properties;
 
 import javax.swing.Icon;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
@@ -45,6 +47,7 @@ import devplugin.Version;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
+    
     public final static int MINLENGTH = 15;
     
     private Properties _settings;
@@ -78,7 +81,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                         "description",
                         "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 65));
+        return new PluginInfo(name, desc, author, new Version(0, 66));
     }
 
     /**
@@ -298,6 +301,36 @@ public class TVRaterPlugin extends devplugin.Plugin {
      */
     public static TVRaterPlugin getInstance() {
         return _tvRaterInstance;
+    }
+
+    /**
+     * Returns true if Program is rateable (Length > MINLENGTH or last Program of Day) 
+     * @param program Program to check
+     * @return true if program is rateable
+     */
+    public boolean isProgramRateable(Program program) {
+        if ((program.getTitle() != null) && (program.getLength() >= TVRaterPlugin.MINLENGTH)) {
+            return true;
+        }
+        
+        if ((program.getTitle() != null) && (program.getLength() <= 0)) {
+            program.getChannel();
+            
+            Iterator it = Plugin.getPluginManager().getChannelDayProgram(program.getDate(), program.getChannel());
+            
+            Program last = null;
+            
+            while ((it != null) && (it.hasNext())) {
+                last = (Program) it.next();
+            }
+            
+            if (program == last) {
+                return true;
+            }
+            
+        }
+
+        return false;
     }
     
 }

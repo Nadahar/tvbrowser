@@ -425,7 +425,7 @@ public class Updater implements Progress {
                 Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
                 while ((it != null) && (it.hasNext())) {
                     Program program = (Program) it.next();
-                    if ((program != null) && (program.getTitle() != null) && (program.getLength() >= TVRaterPlugin.MINLENGTH)) {
+                    if ((program != null) && _tvraterPlugin.isProgramRateable(program)) {
                         if (!table.containsKey(program.getTitle())) {
                             table.put(program.getTitle(), program);
                         }

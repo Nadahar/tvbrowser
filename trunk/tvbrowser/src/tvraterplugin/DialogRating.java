@@ -87,6 +87,9 @@ public class DialogRating extends JDialog {
     /** The Genre */
     private GenreComboBox _genre;  
     
+    /** The Program that is rated */
+    private Program _program = null;
+    
     /**
      * Creates the DialgoRating
      * 
@@ -108,7 +111,7 @@ public class DialogRating extends JDialog {
             _personalrating = new Rating(programtitle);
         }
 
-        _length = 90;
+        _length = TVRaterPlugin.MINLENGTH+1;
         _title = programtitle;
         _originaltitle = null;
         createGUI();
@@ -139,6 +142,7 @@ public class DialogRating extends JDialog {
         _length = program.getLength();
         _title = program.getTitle();
         _originaltitle = program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
+        _program = program;
         createGUI();
     }
 
@@ -394,12 +398,10 @@ public class DialogRating extends JDialog {
             ratingPanel.setLayout(new BorderLayout());
             JTextPane pane = new JTextPane();
             pane.setContentType("text/html");
-
-            if (_length < TVRaterPlugin.MINLENGTH) {
+            
+            if ((_program != null) && !_rater.isProgramRateable(_program)) {
                 pane.setText("<center style='font-family: helvetica'>"
-                        + _mLocalizer.msg("tooshort1", "Program too short for rating. The minimum lenght is ")
-                        + TVRaterPlugin.MINLENGTH
-                        + _mLocalizer.msg("tooshort2", " min.<br>This reduces traffic on the server.") + "</center>");
+                        + _mLocalizer.msg("tooshort", "Program too short for rating. <br>The minimum lenght is {0} min.<br>This reduces traffic on the server.", new Integer(TVRaterPlugin.MINLENGTH)));
             } else {
                 pane.setText("<center style='font-family: helvetica'>"
                         + _mLocalizer.msg("doesntexist", "Sorry, rating doesn't exist!") + "</center>");
