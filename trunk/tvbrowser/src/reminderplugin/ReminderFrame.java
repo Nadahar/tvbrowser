@@ -142,11 +142,14 @@ public class ReminderFrame {
     // text label
     String msg;
     int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
-    if (IOUtilities.getMinutesAfterMidnight() <= progMinutesAfterMidnight) {
-      msg = mLocalizer.msg("soonStarts", "Soon starts");
-    } else {
+    Date today = Date.getCurrentDate();
+    if (today.compareTo(mProgram.getDate())>=0 && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
       msg = mLocalizer.msg("alreadyRunning", "Already running");
     }
+    else {
+      msg = mLocalizer.msg("soonStarts", "Soon starts");
+    }
+    
     progPanel.add(new JLabel(msg), BorderLayout.NORTH);
     
     JLabel channelLabel=new JLabel(mProgram.getChannel().getName());
