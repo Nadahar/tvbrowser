@@ -320,6 +320,7 @@ public class TVBrowser {
     
     
     // Set the right size
+    mLog.info("Setting frame size and location");    
     mainFrame.setSize(Settings.getWindowSize());
     Point location = Settings.getWindowLocation();
     if (location == null) {
@@ -343,26 +344,24 @@ public class TVBrowser {
     }
     
     if (Settings.getShowAssistant()) {
+      mLog.info("Running setup assistant");    
       mainFrame.runSetupAssistant();  
     }
-    else { 
-    
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        
-        if (ChannelList.getNumberOfSubscribedChannels()>0 && Settings.getAutomaticDownload()!=Settings.NEVER) {
-          handleAutomaticDownload();
-        }              
-     
-        boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-        if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
-          mainFrame.askForDataUpdate();
-        } else {
-          mainFrame.scrollToNow();
+    else {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          if (ChannelList.getNumberOfSubscribedChannels()>0 && Settings.getAutomaticDownload()!=Settings.NEVER) {
+            handleAutomaticDownload();
+          }              
+       
+          boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+          if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
+            mainFrame.askForDataUpdate();
+          } else {
+            mainFrame.scrollToNow();
+          }
         }
-        
-     }
-    });
+      });
     }
   }
 
