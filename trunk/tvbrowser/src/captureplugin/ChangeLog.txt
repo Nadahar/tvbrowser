@@ -1,5 +1,8 @@
 Changelog CapturePlugin
 
+v2.03:
+- new ActionMenu-Handler added
+
 v2.02:
 - Changed to new Plugin-Interface
 
