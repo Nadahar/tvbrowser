@@ -67,23 +67,23 @@ public class DialogRating extends JDialog {
 	/** Original Title */
 	private String _originaltitle;
 	
-	/** Database to use */
-	private Database _tvraterDB;
+	/** Rater Plugin */
+	private TVRaterPlugin _rater;
 
 	/**
 	 * Creates the DialgoRating
 	 * 
 	 * @param parent ParentFrame
+	 * @param rater TVRaterPlugin
 	 * @param programtitle the Title of the Program to rate
-	 * @param tvraterDB the Database
 	 */
-	public DialogRating(Frame parent, String programtitle, Database tvraterDB) {
-		super(parent, true);
+	public DialogRating(Frame frame, TVRaterPlugin rater, String programtitle) {
+		super(frame, true);
 		setTitle(_mLocalizer.msg("title", "View Rating"));
 
-		_tvraterDB = tvraterDB;
-		_overallrating = _tvraterDB.getOverallRating(programtitle);
-		_personalrating = _tvraterDB.getPersonalRating(programtitle);
+		_rater = rater;
+		_overallrating = _rater.getDatabase().getOverallRating(programtitle);
+		_personalrating = _rater.getDatabase().getPersonalRating(programtitle);
 		
 		if (_personalrating == null) {
 			_personalrating = new Rating(programtitle);
@@ -100,16 +100,17 @@ public class DialogRating extends JDialog {
 	 * Creates the DialgoRating
 	 * 
 	 * @param parent Parent-Frame
+	 * @param rater TVRaterPlugin
 	 * @param program Program to rate
 	 * @param tvraterDB the Database
 	 */
-	public DialogRating(Frame parent, Program program, Database tvraterDB) {
+	public DialogRating(Frame parent, TVRaterPlugin rater, Program program) {
 		super(parent, true);
 		setTitle(_mLocalizer.msg("title", "View Rating"));
 
-		_tvraterDB = tvraterDB;
-		_overallrating = _tvraterDB.getOverallRating(program);
-		_personalrating = _tvraterDB.getPersonalRating(program);
+		_rater = rater;
+		_overallrating = _rater.getDatabase().getOverallRating(program);
+		_personalrating = rater.getDatabase().getPersonalRating(program);
 
 		if (_personalrating == null) {
 			_personalrating = new Rating(program.getTitle());
@@ -167,21 +168,7 @@ public class DialogRating extends JDialog {
 
 		rate.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int[] values = new int[6];
-
-				for (int i = 0; i < 6; i++) {
-					values[i] = _ratings[i].getSelectedIndex();
-				}
-
-				_personalrating.setValue(Rating.OVERALL, _ratings[0].getSelectedIndex());
-				_personalrating.setValue(Rating.ACTION, _ratings[1].getSelectedIndex());
-				_personalrating.setValue(Rating.FUN, _ratings[2].getSelectedIndex());
-				_personalrating.setValue(Rating.EROTIC, _ratings[3].getSelectedIndex());
-				_personalrating.setValue(Rating.TENSION, _ratings[4].getSelectedIndex());
-				_personalrating.setValue(Rating.ENTITLEMENT, _ratings[5].getSelectedIndex());
-				
-				_tvraterDB.setPersonalRating(_personalrating);
-				hide();
+			    rateWasPressed();
 			}
 		});
 
@@ -207,6 +194,39 @@ public class DialogRating extends JDialog {
 		pack();
 	}
 
+	private void rateWasPressed(){
+	
+		int[] values = new int[6];
+
+		for (int i = 0; i < 6; i++) {
+			values[i] = _ratings[i].getSelectedIndex();
+		}
+
+		_personalrating.setValue(Rating.OVERALL, _ratings[0].getSelectedIndex());
+		_personalrating.setValue(Rating.ACTION, _ratings[1].getSelectedIndex());
+		_personalrating.setValue(Rating.FUN, _ratings[2].getSelectedIndex());
+		_personalrating.setValue(Rating.EROTIC, _ratings[3].getSelectedIndex());
+		_personalrating.setValue(Rating.TENSION, _ratings[4].getSelectedIndex());
+		_personalrating.setValue(Rating.ENTITLEMENT, _ratings[5].getSelectedIndex());
+		
+		_rater.getDatabase().setPersonalRating(_personalrating);
+		hide();
+
+        if (Integer.parseInt(_rater.getSettings().getProperty("updateIntervall", "0")) == 1) {
+
+            Thread updateThread = new Thread() {
+
+                public void run() {
+                    System.out.println("Updater gestartet");
+                    Updater up = new Updater(_rater);
+                    up.run();
+                }
+            };
+            updateThread.start();
+        }
+
+	}
+	
 	/**
 	 * Creates the RatingPanel
 	 * 

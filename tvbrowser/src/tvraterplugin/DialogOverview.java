@@ -57,6 +57,8 @@ public class DialogOverview extends JDialog {
 	private JList _personal;
 	/** List of overall Ratings */
 	private JList _overall;
+	/** Der Update-Button */
+	private JButton _update;
 
 	/**
 	 * Creates the Overview Dialog
@@ -124,9 +126,9 @@ public class DialogOverview extends JDialog {
 		c.fill = GridBagConstraints.NONE;
 		c.insets = new Insets(5, 5, 5, 5);
 
-		JButton update = new JButton(_mLocalizer.msg("update", "Update"));
-		buttonpanel.add(update, c);
-		update.addActionListener(new java.awt.event.ActionListener() {
+		_update = new JButton(_mLocalizer.msg("update", "Update"));
+		buttonpanel.add(_update, c);
+		_update.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				update();
 			}
@@ -162,10 +164,10 @@ public class DialogOverview extends JDialog {
 	 */
 	protected void view() {
 		if ((_tabbed.getSelectedIndex() == 0) && (_overall.getSelectedValue() != null)) {
-			DialogRating dlg = new DialogRating((Frame)this.getParent(), ((Rating)_overall.getSelectedValue()).getTitle(), _tvraterPlugin.getDatabase());
+			DialogRating dlg = new DialogRating((Frame)this.getParent(), _tvraterPlugin, ((Rating)_overall.getSelectedValue()).getTitle());
 			UiUtilities.centerAndShow(dlg);
 		} else if ((_tabbed.getSelectedIndex() == 1) && (_personal.getSelectedValue() != null)) {
-			DialogRating dlg = new DialogRating((Frame)this.getParent(), ((Rating)_personal.getSelectedValue()).getTitle(), _tvraterPlugin.getDatabase());
+			DialogRating dlg = new DialogRating((Frame)this.getParent(), _tvraterPlugin, ((Rating)_personal.getSelectedValue()).getTitle());
 			UiUtilities.centerAndShow(dlg);
 		}
 	}
@@ -174,13 +176,20 @@ public class DialogOverview extends JDialog {
 	 * Updates the Database from the Server
 	 */
 	protected void update() {
-		Updater up = new Updater(_tvraterPlugin);
-		up.run();
+      Thread updateThread = new Thread() {
+        public void run() {
+        	_update.setEnabled(false);
+           	System.out.println("Updater gestartet");
+       		Updater up = new Updater(_tvraterPlugin);
+       		up.run();
 
-		RatingComparator comperator = new RatingComparator();
-		Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
-		Collections.sort(overallVector, comperator);
-		_overall.setListData(overallVector);
-			
+       		RatingComparator comperator = new RatingComparator();
+       		Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
+       		Collections.sort(overallVector, comperator);
+       		_overall.setListData(overallVector);
+       		_update.setEnabled(true);
+        }
+      };
+      updateThread.start();
 	}
 }
