@@ -17,17 +17,7 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
   
   
   private static final devplugin.ChannelGroup createChannelGroup(final String id) {
-    return new devplugin.ChannelGroup() {
-      public String getName() {
-        return id;
-      }
-     public String getId() {
-       return id;
-     }
-     public String getDescription() {
-       return "";
-     }
-    };    
+    return new devplugin.ChannelGroupImpl(id, id, "");    
   }
   
   public boolean execute(String dir, java.io.PrintStream err) {

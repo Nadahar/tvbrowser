@@ -40,6 +40,7 @@ import tvdataservice.TvDataService;
 
 import devplugin.Channel;
 import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
 
 /**
  * 
@@ -57,17 +58,7 @@ public class ChannelList {
   
   public ChannelList(final String groupName) {
     mChannelList = new ArrayList();
-    mGroup=new ChannelGroup() {
-      public String getName() {
-        return groupName;
-      }
-      public String getId() {
-        return groupName;
-      }
-      public String getDescription() {
-        return "";
-      }
-    };
+    mGroup=new ChannelGroupImpl(groupName, groupName, "");
   }
   
   public ChannelList(ChannelGroup group) {
