@@ -168,10 +168,25 @@ public class SearchFormSettings {
    * @return The search text as regular expression
    */
   public String getSearchTextAsRegex() {
-    switch (mMatch) {
-      case MATCH_EXACTLY: return "\\Q" + mSearchText + "\\E";
-      case MATCH_KEYWORD: return ".*\\Q" + mSearchText + "\\E.*";
-      default: return mSearchText;
+    if ((mMatch == MATCH_EXACTLY) || (mMatch == MATCH_KEYWORD)) {
+      // NOTE: We replace all whitespace with a regex that matches whitespace.
+      //       This way the search hits will contain "The film", when the user
+      //       entered "The    film"
+      // NOTE: All words are quoted with "\Q" and "\E". This way regex code will
+      //       be ignored within the search text. (A search for "C++" will not
+      //       result in an syntax error)
+      String regex = "\\Q" + mSearchText.replaceAll("\\s+", "\\\\E\\\\s+\\\\Q") + "\\E";
+      
+      // Add '.*' to beginning an end to match keywords
+      if (mMatch == MATCH_KEYWORD) {
+        regex = ".*" + regex + ".*";
+      }
+      
+      System.out.println("regex: '" + regex + "'");
+      
+      return regex;
+    } else {
+      return mSearchText;
     }
   }
 
