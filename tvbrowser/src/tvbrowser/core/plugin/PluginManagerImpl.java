@@ -245,8 +245,7 @@ public class PluginManagerImpl implements PluginManager {
    */
   public ProgramFilter[] getAvailableFilters() {
     if (mAvailableFilters == null) {
-      FilterList filterList = new FilterList();
-      filterList.create();
+      FilterList filterList = FilterList.getInstance();
       mAvailableFilters = filterList.getFilterArr();
     }
     

@@ -332,16 +332,15 @@ public class TVBrowser {
     int windowWidth = Settings.propWindowWidth.getInt();
     int windowHeight = Settings.propWindowHeight.getInt();
     mainFrame.setSize(windowWidth, windowHeight);
-    
     int windowX = Settings.propWindowX.getInt();
     int windowY = Settings.propWindowY.getInt();
-    if (windowX == -1) {
+		if (windowX == -1) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
       mainFrame.show();
     }
-    ErrorHandler.setFrame(mainFrame);
+		ErrorHandler.setFrame(mainFrame);
     
     splash.hideSplash();
     

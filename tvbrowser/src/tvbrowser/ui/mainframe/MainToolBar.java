@@ -99,18 +99,23 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
     return TEXT|ICON;
   }
   
+  public void refresh() {
+    loadAvailableItems();
+    loadVisibleItems();
+    super.refresh();
+  }
+  
   public void showStopButton() {
-    System.out.println("showStopButton()");
+    System.out.println("show stop button");
     mUpdateBtn.setName(TVBrowser.mLocalizer.msg("button.stop", "Stop"));
     mUpdateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));  
-    refresh();
+    super.refresh();
   }
   
   public void showUpdateButton() {
-    System.out.println("showUpdateButton()");
     mUpdateBtn.setName(TVBrowser.mLocalizer.msg("button.update", "Update"));
     mUpdateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
-    refresh();
+    super.refresh();
   }
   
   private void loadAvailableItems() {
@@ -182,12 +187,9 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
     }
     else {
       String id =item.getId();
-      System.out.println("id: "+id);
       PluginProxyManager pluginMng = PluginProxyManager.getInstance();
       PluginProxy p = pluginMng.getPluginForId(id);
-      System.out.println("plugin: "+p.getId());
       Action action = p.getButtonAction();
-      System.out.println("action: "+action.toString());
       action.actionPerformed(event.getActionEvent());
     }
   }

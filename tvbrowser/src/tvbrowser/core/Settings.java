@@ -174,6 +174,11 @@ public class Settings {
       scrollPane.getProgramTable().setProgramTableLayout(null);
     }
     
+    if (mProp.hasChanged(propDeactivatedPlugins)) {
+      mainFrame.updatePluginsMenu();
+      mainFrame.updateToolbar();
+    }
+    
     propArr = new Property[] {
       propTableBackgroundStyle, propOneImageBackground,
       propTimeBlockSize, propTimeBlockBackground1, propTimeBlockBackground2,

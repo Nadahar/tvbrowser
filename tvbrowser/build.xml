@@ -97,11 +97,12 @@
     <echo message="  clean-runtime     Deletes the runtime directory."/>
     <echo message="  doc               Generates the JavaDoc documentation."/>
     <echo message="  make              Compiles the source code."/>
+    <echo message="  make-mac          Compiles the source code for Mac OS X."/>
     <echo message="  runtime           Prepares the runtime directory."/>
     <echo message="  runtime-win       Prepares the runtime Windows runtime."/>
     <echo message="  runtime-tools     Creates the TV-Browser-Tools."/>
     <echo message="  runtime-tvdatakit Creates the runtime for the TV data starter kit."/>
-    <echo message="  macos             Creates the Mac OS X stuff" />
+    <echo message="  runtime-mac       Creates the Mac OS X stuff" />
     <echo message="  run               Runs the project."/>
     <echo message="  run-win           Runs the project using the Windows runtime."/>
     <echo message="  installer         Creates a Windows installer for the project."/>
@@ -191,6 +192,7 @@
       <classpath>
         <path refid="classpath"/>
       </classpath>
+      <exclude name="**/macosx/*"/>
     </javac>
 
     <copy todir="${classes.dir}">
@@ -204,7 +206,33 @@
   </target>
 
 
+ <!--
+   | Compiles the source code.
+   +-->
+  <target name="make-mac">
+    <echo message="Compiling the source code ..." />
+    <mkdir dir="${classes.dir}"/>
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true">
+      <src>
+        <path refid="sourcepath"/>
+      </src>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+    </javac>
 
+    <copy todir="${classes.dir}">
+      <fileset dir="${src.dir}" includes="**/*.gif"/>
+      <fileset dir="${src.dir}" includes="**/*.jpg"/>
+      <fileset dir="${src.dir}" includes="**/*.png"/>
+      <fileset dir="${src.dir}" includes="**/*.ico"/>
+      <fileset dir="${src.dir}" includes="**/*.dtd"/>
+      <fileset dir="${src.dir}" includes="**/*.properties"/>
+    </copy>
+  </target>
+
+
+ 
   <!--
    | Creates the runtime directory.
    +-->
@@ -565,15 +593,14 @@
            classpath="macosx/jarbundler-1.2.jar"
            classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
 
-  <target name="macosx" depends="runtime">
+  <target name="runtime-mac" depends="make-mac, runtime">
+    <delete dir="${tvbrowser-mac.runtime.dir}"/>
     <mkdir dir="${tvbrowser-mac.runtime.dir}" />
       <jarbundler dir="${tvbrowser-mac.runtime.dir}"
           verbose="false"
           name="TV-Browser"
           mainclass="tvbrowser.TVBrowser" 
-          version="${tvbrowser.version}"
-          infostring="TV-Browser ${tvbrowser.version}"
-          aboutmenuname="TV-Browser"
+      
           jvmversion="1.4+"
 	       bundleid="org.tvbrowser"
 	       smalltabs="true"
