@@ -522,8 +522,7 @@ public class UserFilter implements devplugin.ProgramFilter {
       }
     
       public boolean containsRuleComponent(String compName) {
-        boolean result=mRule.toString().equalsIgnoreCase(compName);
-        return (mRule.toString().equalsIgnoreCase(compName)); 
+        return (mRule.getName().equalsIgnoreCase(compName)); 
       }
     
   }
