@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.50
+- First official release
+
 0.07
 - New Button for Program-List
 
