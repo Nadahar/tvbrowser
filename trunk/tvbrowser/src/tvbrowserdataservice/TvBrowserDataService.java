@@ -28,6 +28,7 @@ package tvbrowserdataservice;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -79,7 +80,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   private Channel[] mAvailableChannelArr;
   
-  private String[] mSubsribedLevelArr;
+  //private String[] mSubsribedLevelArr;
+  private TvDataLevel[] mSubscribedLevelArr;
   
   private int mDirectlyLoadedBytes;
   
@@ -103,9 +105,11 @@ public class TvBrowserDataService extends AbstractTvDataService {
     }
     
     // TODO: Make the subscribed levels configurable
-    mSubsribedLevelArr = DayProgramFile.LEVEL_ARR;
+   // mSubsribedLevelArr = DayProgramFile.LEVEL_ARR;
   }
 
+
+  
 
 
   /**
@@ -149,8 +153,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
     DayProgramUpdateDH updateDH   = new DayProgramUpdateDH(this, updater);
     Date date = startDate;
     for (int day = 0; day < dateCount; day++) {
-      for (int levelIdx = 0; levelIdx < mSubsribedLevelArr.length; levelIdx++) {
-        String level = mSubsribedLevelArr[levelIdx];
+      for (int levelIdx = 0; levelIdx < mSubscribedLevelArr.length; levelIdx++) {
+        String level = mSubscribedLevelArr[levelIdx].getId();
         
         for (int i = 0; i < channelArr.length; i++) {
           addDownloadJob(dataBase, date, level, channelArr[i].getId(),
@@ -448,6 +452,26 @@ public class TvBrowserDataService extends AbstractTvDataService {
    */
   public void loadSettings(Properties settings) {
     mSettings = settings;
+    
+    String[] levelIds=settings.getProperty("level","").split(":::");
+    ArrayList levelList=new ArrayList();
+    for (int i=0;i<DayProgramFile.LEVEL_ARR.length;i++) {
+      if (DayProgramFile.LEVEL_ARR[i].isRequired()) {
+        levelList.add(DayProgramFile.LEVEL_ARR[i]);
+      }
+      else{
+        for (int j=0;j<levelIds.length;j++) {
+          if (levelIds[j].equals(DayProgramFile.LEVEL_ARR[i].getId())) {
+            levelList.add(DayProgramFile.LEVEL_ARR[i]);
+          }  
+        }
+      }     
+    }
+    
+    mSubscribedLevelArr=new TvDataLevel[levelList.size()];
+    for (int i=0;i<levelList.size();i++) {
+      mSubscribedLevelArr[i]=(TvDataLevel)levelList.get(i);
+    } 
   }
 
 
@@ -463,13 +487,13 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 
   public boolean hasSettingsPanel() {
-    return false;
+    return true;
   }
 
 
 
   public SettingsPanel getSettingsPanel() {
-    return null;
+    return TvBrowserDataServiceSettingsPanel.getInstance(mSettings);  
   }
 
 
