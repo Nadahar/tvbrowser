@@ -89,10 +89,13 @@ public abstract class AbstractTvDataService implements TvDataService {
    * Parses the specified file.
    *
    * @param file The file to parse.
+   * @param date The date to load the data for
+   * @param channel The channel to load the data for
    * @param programDispatcher The ProgramDispatcher where to store the found
    *        programs.
    */
-  protected abstract void parseFile(File file, ProgramDispatcher programDispatcher)
+  protected abstract void parseFile(File file, devplugin.Date date,
+    Channel channel, ProgramDispatcher programDispatcher)
     throws TvBrowserException;
 
 
@@ -113,8 +116,6 @@ public abstract class AbstractTvDataService implements TvDataService {
     if (mProgramDispatcher != null) {
       throw new IllegalArgumentException("We are already connected!");
     }
-
-    System.out.println("connecting " + this);
 
     mProgramDispatcher = new ProgramDispatcher();
     mAlreadyDownloadedFiles = new HashSet();
@@ -143,8 +144,6 @@ public abstract class AbstractTvDataService implements TvDataService {
   public ChannelDayProgram downloadDayProgram(devplugin.Date date,
     devplugin.Channel channel) throws TvBrowserException
   {
-    System.out.println("downloading " + this);
-
     if (mProgramDispatcher == null) {
       throw new IllegalArgumentException("We are not connected!");
     }
@@ -157,13 +156,6 @@ public abstract class AbstractTvDataService implements TvDataService {
     if (channelDayProgram == null) {
       loadFileFor(date, channel);
       channelDayProgram = mProgramDispatcher.getChannelDayProgram(date, channel);
-    }
-
-    // Check whether the AbstractChannelDayProgram is complete
-    if ((channelDayProgram != null)) {
-      if (! channelDayProgram.isComplete()) {
-        channelDayProgram = null;
-      }
     }
 
     return channelDayProgram;
@@ -215,7 +207,7 @@ public abstract class AbstractTvDataService implements TvDataService {
     // parse the file
     if (localFile.exists()) {
       try {
-        parseFile(localFile, mProgramDispatcher);
+        parseFile(localFile, date, channel, mProgramDispatcher);
       }
       catch (TvBrowserException exc) {
         // The file is corrupt -> delete it

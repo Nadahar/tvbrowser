@@ -32,6 +32,8 @@ import java.awt.event.*;
 
 import util.ui.*;
 
+import devplugin.Program;
+
 /**
  * TV-Browser
  *
@@ -155,16 +157,48 @@ public class ProgramInfoDialog extends JDialog {
     StringBuffer buf = new StringBuffer();
 
     // TODO: This is TVgenial specific!!
-    if ((info&0x1) == 0x1) buf.append("? (" + info + ")  ");
-    if ((info&0x2) == 0x2) buf.append(mLocalizer.msg("16to9", "16:9") + "  ");
-    if ((info&0x4) == 0x4) buf.append(mLocalizer.msg("dolby", "Dolby") + "  ");
-    if ((info&0x8) == 0x8) buf.append("oo  ");
-    if ((info&0x10) == 0x10) buf.append(mLocalizer.msg("stereo", "Stereo") + "  ");
-    if ((info&0x20) == 0x20) buf.append(mLocalizer.msg("subtitle", "Subtitle") + "  ");
-    if ((info&0x40) == 0x40) buf.append(mLocalizer.msg("live", "Live") + "live  ");
-    if ((info&0x80) == 0x80) buf.append(mLocalizer.msg("blackAndWhite", "b/w") + "  ");
+    if (bitSet(info, Program.INFO_VISION_BLACK_AND_WHITE)) {
+      buf.append(mLocalizer.msg("blackAndWhite", "Black and white") + "  ");
+    }
+    if (bitSet(info, Program.INFO_VISION_4_TO_3)) {
+      buf.append(mLocalizer.msg("4to3", "4:3") + "  ");
+    }
+    if (bitSet(info, Program.INFO_VISION_16_TO_9)) {
+      buf.append(mLocalizer.msg("16to9", "16:9") + "  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_MONO)) {
+      buf.append(mLocalizer.msg("mono", "Mono") + "  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_STEREO)) {
+      buf.append(mLocalizer.msg("stereo", "Stereo") + "  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_DOLBY_SURROUND)) {
+      buf.append(mLocalizer.msg("dolbySurround", "Dolby surround") + "  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_DOLBY_DIGITAL_5_1)) {
+      buf.append(mLocalizer.msg("dolbyDigital5.1", "Dolby digital 5.1") + "  ");
+    }
+    if (bitSet(info, Program.INFO_AUDIO_TWO_CHANNEL_TONE)) {
+      buf.append(mLocalizer.msg("twoChannelTone", "Two channel tone") + "  ");
+    }
+    if (bitSet(info, Program.INFO_SUBTITLE)) {
+      buf.append(mLocalizer.msg("subtitle", "Subtitle") + "  ");
+    }
+    if (bitSet(info, Program.INFO_LIVE)) {
+      buf.append(mLocalizer.msg("live", "Live") + "  ");
+    }
     
     return buf.toString();
+  }
+  
+  
+  
+  /**
+   * Returns whether a bit (or combination of bits) is set in the specified
+   * number.
+   */
+  private boolean bitSet(int num, int pattern) {
+    return (num & pattern) == pattern;
   }
   
 }

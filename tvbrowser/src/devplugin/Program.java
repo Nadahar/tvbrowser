@@ -37,6 +37,19 @@ import javax.swing.event.ChangeListener;
  */
 public interface Program {
 
+  public static final int INFO_VISION_BLACK_AND_WHITE  = 1 << 1;
+  public static final int INFO_VISION_4_TO_3           = 1 << 2;
+  public static final int INFO_VISION_16_TO_9          = 1 << 3;
+  public static final int INFO_AUDIO_MONO              = 1 << 4;
+  public static final int INFO_AUDIO_STEREO            = 1 << 5;
+  public static final int INFO_AUDIO_DOLBY_SURROUND    = 1 << 6;
+  public static final int INFO_AUDIO_DOLBY_DIGITAL_5_1 = 1 << 7;
+  public static final int INFO_AUDIO_TWO_CHANNEL_TONE  = 1 << 8;
+  public static final int INFO_SUBTITLE                = 1 << 9;
+  public static final int INFO_LIVE                    = 1 << 10;
+
+  
+  
   /**
    * Adds a ChangeListener to the program.
    *

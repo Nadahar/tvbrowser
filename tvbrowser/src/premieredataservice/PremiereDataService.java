@@ -30,6 +30,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.StringTokenizer;
 import java.util.regex.*;
 import java.net.URL;
 
@@ -189,7 +190,8 @@ public class PremiereDataService extends AbstractTvDataService {
    * @param programDispatcher The ProgramDispatcher where to store the found
    *        programs.
    */
-  protected void parseFile(File file, ProgramDispatcher programDispatcher)
+  protected void parseFile(File file, devplugin.Date date,
+    Channel channel, ProgramDispatcher programDispatcher)
     throws TvBrowserException
   {
     HashSet knownChannelNameSet = new HashSet();
@@ -264,7 +266,7 @@ public class PremiereDataService extends AbstractTvDataService {
             matcher.find();
 
             if (progLine == 0) {
-              currProgram = extractProgram(matcher, knownChannelNameSet, cal);
+              currProgram = extractProgram(matcher, date, knownChannelNameSet, cal);
               if (currProgram != null) {
                 descriptionBuffer = new StringBuffer();
                 additionalInfoBuffer = new StringBuffer();
@@ -319,7 +321,8 @@ public class PremiereDataService extends AbstractTvDataService {
 
 
   private MutableProgram extractProgram(Matcher matcher,
-    HashSet knownChannelNameSet, Calendar cal) {
+    devplugin.Date startDate, HashSet knownChannelNameSet, Calendar cal)
+  {
     // regex: "([^:]*): (\\d*)\\.(\\d*)\\./(\\d*):(\\d*)"
     String channelName = matcher.group(1);
     String dayStr = matcher.group(2);
@@ -338,12 +341,21 @@ public class PremiereDataService extends AbstractTvDataService {
     cal.set(Calendar.DAY_OF_MONTH, day);
     cal.set(Calendar.MONTH, month - 1);
     int daysSince1970 = (int)(cal.getTimeInMillis() / 1000L / 60L / 60L / 24L);
-    devplugin.Date date = new devplugin.Date(daysSince1970);
-
+    
+    // Only get the next few days (to avoid out of memory)
+    int minDaysSince1970 = startDate.getDaysSince1970();
+    int maxDaysSince1970 = minDaysSince1970;
+    if ((daysSince1970 < minDaysSince1970) || (daysSince1970 > maxDaysSince1970)) {
+      // This program doesn't interest us
+      return null;
+    }
+    
+    devplugin.Date progDate = new devplugin.Date(daysSince1970);
+    
     int hours = Integer.parseInt(hoursStr);
     int minutes = Integer.parseInt(minutesStr);
 
-    return new MutableProgram(channel, date, hours, minutes);
+    return new MutableProgram(channel, progDate, hours, minutes);
   }
 
 
@@ -415,11 +427,8 @@ public class PremiereDataService extends AbstractTvDataService {
       case 4: {
         // regex: "Bild- und Tonformate: (.*)"
         String formats = matcher.group(1);
-
-        if (formats.length() > 0) {
-          additionalInfoBuffer.append(mLocalizer.msg("formats", "Screen and sound formats:") + " ");
-          additionalInfoBuffer.append(formats + "\n");
-        }
+        int info = extractInfo(formats);
+        currProgram.setInfo(info);
       } break;
 
       case 5: {
@@ -433,15 +442,50 @@ public class PremiereDataService extends AbstractTvDataService {
         // regex: ""
 
         // Add the line to the description until there is an empty line
-        if (descriptionBuffer.length() == 0) {
-          // mLog.info("new desc");
-        } else {
-          // mLog.info("### old desc");
-        }
-
         descriptionBuffer.append(matcher.group(1));
       } break;
     } // switch(progLine)
   }
 
+  
+  
+  private int extractInfo(String formats) {
+    int info = 0;
+    
+    StringTokenizer tokenizer = new StringTokenizer(formats, "/");
+    while (tokenizer.hasMoreTokens()) {
+      String format = tokenizer.nextToken();
+      
+      if (format.equalsIgnoreCase("k.A.")) {
+        // noop
+      }
+      else if (format.equalsIgnoreCase("4:3")) {
+        info |= Program.INFO_VISION_4_TO_3;
+      }
+      else if (format.equalsIgnoreCase("16:9")) {
+        info |= Program.INFO_VISION_16_TO_9;
+      }
+      else if (format.equalsIgnoreCase("Mono")) {
+        info |= Program.INFO_AUDIO_MONO;
+      }
+      else if (format.equalsIgnoreCase("Stereo")) {
+        info |= Program.INFO_AUDIO_STEREO;
+      }
+      else if (format.equalsIgnoreCase("Dolby Surround")) {
+        info |= Program.INFO_AUDIO_DOLBY_SURROUND;
+      }
+      else if (format.equalsIgnoreCase("Dolby Digital 5.1")) {
+        info |= Program.INFO_AUDIO_DOLBY_DIGITAL_5_1;
+      }
+      else if (format.equalsIgnoreCase("Zweikanalton")) {
+        info |= Program.INFO_AUDIO_TWO_CHANNEL_TONE;
+      }
+      else {
+        mLog.info("Unknown vision or audio format: '" + format + "'");
+      }
+    }
+    
+    return info;
+  }
+  
 }

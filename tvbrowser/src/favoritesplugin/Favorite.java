@@ -242,12 +242,18 @@ public class Favorite {
   public Program[] getPrograms() {
     return mProgramArr;
   }
+
+  
+  
+  public void unmarkPrograms() {
+    FavoritesPlugin.getInstance().unmark(mProgramArr);
+  }
   
 
   
   public void updatePrograms() throws TvBrowserException {
     // Unmark all programs in the old list
-    FavoritesPlugin.getInstance().unmark(mProgramArr);
+    unmarkPrograms();
     
     // Search for matching programs
     String regex;

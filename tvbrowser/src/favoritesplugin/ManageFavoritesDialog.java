@@ -181,6 +181,9 @@ public class ManageFavoritesDialog extends JDialog {
   protected void deleteSelectedFavorite() {
     int selection = mFavoritesList.getSelectedIndex();
     if (selection != -1) {
+      Favorite fav = (Favorite) mFavoritesListModel.get(selection);
+      fav.unmarkPrograms();
+      
       mFavoritesListModel.remove(selection);
     }
   }
