@@ -90,6 +90,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         handleTimerEvent();
       }
     });
+    mTimer.start();
   }
 
   public void setTimeRange(int todayEarliestTime, int tomorrowLatestTime) {
@@ -174,42 +175,22 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
    }
     
-  	
-    
-  	
+    handleTimerEvent();
+
   //  deregisterFromPrograms(mMainDay, mMainDayProgramCount);
   //  deregisterFromPrograms(mNextDay, mNextDayProgramCount);
     
     mMainDay = mainDay;
     mNextDay = nextDay;
 
-if (mTimer!=null) {
-
-    // Start the timer if one of the day 
-    //int todayDaysSince1970 = IOUtilities.getDaysSince1970();
-    //if (((mMainDay != null) && (mMainDay.getDate().getDaysSince1970() == todayDaysSince1970))
-    //  || ((mNextDay != null) && (mNextDay.getDate().getDaysSince1970() == todayDaysSince1970)))
-
-  devplugin.Date today=new devplugin.Date();
-   if ((mMainDay!=null && mMainDay.getDate().equals(today))
-      || (mNextDay!=null && mNextDay.getDate().equals(today)))
-    
-    
-    
-    {
-      mTimer.start();
-      handleTimerEvent();
-    } else {
-      mTimer.stop();
-    }
-}   
- //   updateProgramCount();
-
    // registerAtPrograms(mMainDay, mMainDayProgramCount);
    // registerAtPrograms(mNextDay, mNextDayProgramCount);
     
     registerAtPrograms(mProgramColumn);
-    
+
+    // Update the programs on air
+    updateProgramsOnAir();
+
     fireTableDataChanged();
   }
 
@@ -410,27 +391,24 @@ if (mTimer!=null) {
     if (minutesAfterMidnight == mLastTimerMinutesAfterMidnight) {
       return;
     }
-    
+
     mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
-    /*
-    int todayDaysSince1970 = IOUtilities.getDaysSince1970();
-    if (mMainDay.getDate().getDaysSince1970() == todayDaysSince1970) {
+        
+    // Update the programs on air
+    updateProgramsOnAir();
+  }
+
+  
+  
+  private synchronized void updateProgramsOnAir() {
+    if (mMainDay != null) {
       mMainDay.markProgramsOnAir();
     }
-    else if (mNextDay.getDate().getDaysSince1970() == todayDaysSince1970) {
-      mNextDay.markProgramsOnAir();
-    }
-    */
-    
-    devplugin.Date today=new devplugin.Date();
-    if (mMainDay.getDate().equals(today)) {
-      mMainDay.markProgramsOnAir();
-    }
-    else if (mNextDay.getDate().equals(today)) {
+    if (mNextDay != null) {
       mNextDay.markProgramsOnAir();
     }
   }
-
+  
 
 
   public void stateChanged(ChangeEvent evt) {

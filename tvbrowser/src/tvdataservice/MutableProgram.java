@@ -366,14 +366,12 @@ public class MutableProgram implements Program {
 
   //System.out.print(getTitle()+": "+getDate().getValue()+": ");
 
-  if (today.compareTo(getDate())<0) {
-    //System.out.println("not expired");
-    return false;
-  }
-  if (today.compareTo(getDate())>0) {
-    //System.out.println("expired");
-    return true;
-  }
+    if (today.compareTo(getDate()) < 0) {
+      return false;
+    }
+    if (today.compareTo(getDate()) > 0) {
+      return ! isOnAir();
+    }
 
     // This program is (or was) today -> We've got to check the time
     int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
