@@ -1,4 +1,4 @@
-Changelog GoogleSearchPlugin
+Changelog TVRaterPlugin
 
-1.0:
+0.01:
 - initial version
