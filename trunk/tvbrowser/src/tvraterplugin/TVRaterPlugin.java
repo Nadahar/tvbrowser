@@ -19,7 +19,10 @@
 
 package tvraterplugin;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ComponentEvent;
+import java.util.Properties;
 
 import util.ui.UiUtilities;
 import devplugin.PluginInfo;
@@ -33,8 +36,9 @@ import devplugin.Version;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
-	private java.awt.Point location = null;
-	private java.awt.Dimension size = null;
+	private Properties _settings;
+	private Point _location = null;
+	private Dimension _size = null;
 
 	private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVRaterPlugin.class);
 
@@ -49,9 +53,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
 		return new PluginInfo(name, desc, author, new Version(1, 0));
 	}
 
-	public String getButtonText() {
-		return null;
-	}
 
 	public void execute(Program program) {
 		TVRateDialog dlg = new TVRateDialog(parent, program);
@@ -59,34 +60,50 @@ public class TVRaterPlugin extends devplugin.Plugin {
 		dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 
 			public void componentMoved(ComponentEvent e) {
-				e.getComponent().getLocation(location);
+				e.getComponent().getLocation(_location);
 			}
 
 			public void componentResized(ComponentEvent e) {
-				e.getComponent().getSize(size);
+				e.getComponent().getSize(_size);
 			}
 
 		});
 
-		if (size != null) {
-			dlg.setSize(size);
+		if (_size != null) {
+			dlg.setSize(_size);
 		}
-		if (location != null) {
-			dlg.setLocation(location);
+		if (_location != null) {
+			dlg.setLocation(_location);
 			dlg.show();
 		} else {
 			UiUtilities.centerAndShow(dlg);
-			size = dlg.getSize();
-			location = dlg.getLocation();
+			_size = dlg.getSize();
+			_location = dlg.getLocation();
 		}
 	}
 
+	public Properties storeSettings() {
+	  return _settings;
+	}
+  
+	public void loadSettings(Properties settings) {
+	  if (settings == null ) {
+		settings = new Properties();
+	  }
+    
+	  this._settings = settings;
+	}
+
 	public SettingsTab getSettingsTab() {
-	  return new TVRaterSettingsTab();
+	  return new TVRaterSettingsTab(_settings);
 	}
 	
 	public String getMarkIconName() {
-		return "googlesearchplugin/google.gif";
+		return "tvraterplugin/tvrater.gif";
+	}
+
+	public String getButtonText() {
+		return null;
 	}
 
 	public String getButtonIconName() {
