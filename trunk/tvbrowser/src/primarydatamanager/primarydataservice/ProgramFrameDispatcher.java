@@ -55,6 +55,9 @@ public class ProgramFrameDispatcher {
   
   public void dispatchProgramFrame(ProgramFrame frame, devplugin.Date date)  {
     
+    if (frame==null) {
+      return;
+    }
     DayProgramFile file=(DayProgramFile)mDayPrograms.get(date);
     if (file==null) {
       file=new DayProgramFile(date,mChannel);

@@ -108,6 +108,7 @@ public class ProgramFieldType {
 
   public static final ProgramFieldType REPETITION_OF_TYPE
     = new ProgramFieldType(21,"repition of",TEXT_FORMAT,true);
+   
     
   public static final ProgramFieldType MUSIC_TYPE
     = new ProgramFieldType(22,"music",TEXT_FORMAT,true);
@@ -117,6 +118,9 @@ public class ProgramFieldType {
     
   public static final ProgramFieldType PRODUCTION_YEAR_TYPE
     = new ProgramFieldType(24,"production year", INT_FORMAT, true);
+
+  public static final ProgramFieldType REPETITION_ON_TYPE
+      = new ProgramFieldType(25,"repition on",TEXT_FORMAT,true);
 
   private int mTypeId;
 
