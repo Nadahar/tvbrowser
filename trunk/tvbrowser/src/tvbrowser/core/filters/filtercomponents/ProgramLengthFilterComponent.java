@@ -45,14 +45,16 @@ public class ProgramLengthFilterComponent implements FilterComponent {
         _desc = description;
     }    
     
-    /* (non-Javadoc)
+    /**
+     * Gibt die Version zurück
      * @see tvbrowser.core.filters.FilterComponent#getVersion()
      */
     public int getVersion() {
         return 1;
     }
 
-    /* (non-Javadoc)
+    /**
+     * Aktzeptiert nur Sendungen einer bestimmten Länge
      * @see tvbrowser.core.filters.FilterComponent#accept(devplugin.Program)
      */
     public boolean accept(Program program) {
@@ -68,7 +70,8 @@ public class ProgramLengthFilterComponent implements FilterComponent {
         return true;
     }
 
-    /* (non-Javadoc)
+    /**
+     * Liest die Einstellungen
      * @see tvbrowser.core.filters.FilterComponent#read(java.io.ObjectInputStream, int)
      */
     public void read(ObjectInputStream in, int version) throws IOException,
@@ -79,7 +82,8 @@ public class ProgramLengthFilterComponent implements FilterComponent {
 		_max = in.readInt();
     }
 
-    /* (non-Javadoc)
+    /**
+     * Schreibt die Einstellungen
      * @see tvbrowser.core.filters.FilterComponent#write(java.io.ObjectOutputStream)
      */
     public void write(ObjectOutputStream out) throws IOException {
@@ -89,7 +93,8 @@ public class ProgramLengthFilterComponent implements FilterComponent {
 		out.writeInt(_max);
     }
 
-    /* (non-Javadoc)
+    /** 
+     * Erzeugt das Settings-Panel
      * @see tvbrowser.core.filters.FilterComponent#getPanel()
      */
     public JPanel getPanel() {
@@ -151,17 +156,8 @@ public class ProgramLengthFilterComponent implements FilterComponent {
     }
 
 
-	private int _min;
-	private int _max;
-	private boolean _useMin;
-	private boolean _useMax;
-	
-	private JSpinner _minSpinner;
-	private JSpinner _maxSpinner;
-	private JCheckBox _minBox;
-	private JCheckBox _maxBox;
-
-    /* (non-Javadoc)
+    /**
+     * Schreibt die GUI-Daten in die Variablen
      * @see tvbrowser.core.filters.FilterComponent#ok()
      */
     public void ok() {
@@ -224,4 +220,19 @@ public class ProgramLengthFilterComponent implements FilterComponent {
      * Beschreibung des Filters
      */
     private String _desc;
+
+    /** Minimal-Länge */
+	private int _min;
+	/** Maximal-Länge */
+	private int _max;
+	/** Minimum benutzen? */
+	private boolean _useMin;
+	/** Maximum benutzen */
+	private boolean _useMax;
+	
+	/** GUI-Komponenten für das Panel */
+	private JSpinner _minSpinner;
+	private JSpinner _maxSpinner;
+	private JCheckBox _minBox;
+	private JCheckBox _maxBox;
 }
