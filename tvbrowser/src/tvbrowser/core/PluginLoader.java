@@ -266,35 +266,8 @@ public class PluginLoader {
   }
   
   
-  
-  /**
-   * Deactivates a plugin. A deactivated plugin must be activated before you
-   * can use it again.
-   * 
-   * @param plugin
-   */
-  public void deactivatePlugin(Plugin plugin) {
-    String userDirectoryName = Settings.getUserDirectoryName();
-        
-    // save the plugin data
-    File f = new File(userDirectoryName, plugin.getClass().getName() + ".dat");
-    ObjectOutputStream out = null;
-    try {
-      out = new ObjectOutputStream(new FileOutputStream(f));
-      plugin.writeData(out);
-    }
-    catch(Throwable thr) {
-      String msg = mLocalizer.msg("error.3", "Saving data for plugin {0} failed!\n({1})",
-        plugin.getInfo().getName(), f.getAbsolutePath());
-      ErrorHandler.handle(msg, thr);
-    }
-    finally {
-      if (out != null) {
-        try { out.close(); } catch (IOException exc) {}
-      }
-    }
-
-    // save the plugin settings
+  public synchronized void storePluginSettings(Plugin plugin) {
+    File f=null;
     try {
       Properties prop=plugin.storeSettings();
       if (prop!=null) {
@@ -312,7 +285,42 @@ public class PluginLoader {
       String msg = mLocalizer.msg("error.4", "Saving settings for plugin {0} failed!\n({1})",
         plugin.getButtonText(), f.getAbsolutePath());
       ErrorHandler.handle(msg, thr);
+    }    
+  }
+  
+  public synchronized void storePluginData(Plugin plugin) {
+    String userDirectoryName = Settings.getUserDirectoryName();
+        
+    // save the plugin data
+    File f = new File(userDirectoryName, plugin.getClass().getName() + ".dat");
+    ObjectOutputStream out = null;
+    try {
+      out = new ObjectOutputStream(new FileOutputStream(f));
+      plugin.writeData(out);
     }
+    catch(Throwable thr) {
+      String msg = mLocalizer.msg("error.3", "Saving data for plugin {0} failed!\n({1})",
+          plugin.getInfo().getName(), f.getAbsolutePath());
+      ErrorHandler.handle(msg, thr);
+    }
+    finally {
+      if (out != null) {
+        try { out.close(); } catch (IOException exc) {}
+      }
+    }
+  }
+  
+  
+  /**
+   * Deactivates a plugin. A deactivated plugin must be activated before you
+   * can use it again.
+   * 
+   * @param plugin
+   */
+  public void deactivatePlugin(Plugin plugin) {
+    
+    storePluginData(plugin);
+    storePluginSettings(plugin);    
     
     mActivePlugins.remove(plugin);
     mInactivePlugins.add(plugin);

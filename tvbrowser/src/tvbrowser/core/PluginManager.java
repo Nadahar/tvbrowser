@@ -71,19 +71,11 @@ public class PluginManager {
 				}
       }
     );
+    
+    
+    
   }
 
-  /**
-   * Store a list of all installed plugins into the settings file
-   *
-   */
-
-  public void storeSettings() {
-    Plugin[] pluginArr = PluginLoader.getInstance().getActivePlugins();
-    String[] classNameArr = pluginArrToClassNameArr(pluginArr);
-  
-    Settings.propInstalledPlugins.setStringArray(classNameArr);
-  }
 
   /**
    * Loads all plugins from the plugins directory.
