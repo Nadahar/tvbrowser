@@ -31,6 +31,8 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -44,6 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -97,6 +100,9 @@ public class TVBrowser {
   private static boolean mUseSystemTray;
   
   private static MainFrame mainFrame;
+
+  /** State of the Window (max/normal) */
+  private static int mState;
   
   private static void showUsage() {
     
@@ -355,7 +361,7 @@ public class TVBrowser {
             mainFrame.show();
           }
           mainFrame.toFront();
-          mainFrame.setExtendedState(java.awt.Frame.NORMAL);          
+          mainFrame.setExtendedState(mState);          
         }
         public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
         } 
@@ -363,6 +369,22 @@ public class TVBrowser {
 
       mgr.setRightClickView(trayMenu);
 
+      mainFrame.addComponentListener(new ComponentListener() {
+
+        public void componentResized(ComponentEvent e) {
+            int state = mainFrame.getExtendedState();
+            if ((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
+                mState = JFrame.MAXIMIZED_BOTH;
+            } else {
+                mState = JFrame.NORMAL;
+            }
+        }
+
+        public void componentHidden(ComponentEvent e) {}
+        public void componentMoved(ComponentEvent e) {}
+        public void componentShown(ComponentEvent e) {}
+    });       
+      
       mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
         public void windowClosing(java.awt.event.WindowEvent evt) {
           if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
