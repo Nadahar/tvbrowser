@@ -76,6 +76,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     italic=new Font(f.getName(),Font.PLAIN,f.getSize()-2);
   }
 
+  
+  
+  /**
+   * Creates a new instance of ProgramPanel.
+   *
+   * @param prog The program to show in this panel.
+   */  
+  public ProgramPanel() {
+  }
+  
 
   
   /**
