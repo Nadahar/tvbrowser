@@ -26,10 +26,17 @@
 
 package devplugin;
 
-import java.io.*;
+import java.awt.Image;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.TimeZone;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import tvdataservice.TvDataService;
+import util.ui.ImageUtilities;
 
 public class Channel {
 
@@ -43,7 +50,9 @@ public class Channel {
   private int mDayLightSavingTimeCorrection;
   private ChannelGroup mGroup;
 
-
+  /** FileName for the Icon */
+  private String mIconFileName;
+  private ImageIcon mIcon;
 
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group)
@@ -252,6 +261,39 @@ public class Channel {
    */
   public void copySettingsToChannel(Channel to) {
       to.setDayLightSavingTimeCorrection(mDayLightSavingTimeCorrection);
+      to.setIconFileName(mIconFileName);
+  }
+  
+  /**
+   * Returns the Icon for this Channel
+   * @return
+   */
+  public Icon getIcon() {
+      if ((mIcon == null) && (getIconFileName() != null)){
+          Image img = ImageUtilities.createImage(getIconFileName());
+          if (img != null) {
+              mIcon = new ImageIcon(img);
+          }
+      }
+      
+      return mIcon;
+  }
+  
+  /**
+   * Gets the Filename for an Icon
+   * @return Filename of the Icon
+   */
+  public String getIconFileName() {
+      return mIconFileName;
+  }
+  
+  /**
+   * Sets the Filename for an Icon
+   * @param filename Filename for Icon
+   */
+  public void setIconFileName(String filename) {
+      mIconFileName = filename;
+      mIcon = null;
   }
   
   public boolean equals(Object obj) {
