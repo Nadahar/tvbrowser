@@ -65,7 +65,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   private MainFrame mMainFrame;
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mTimeBtnsMI, mDatelistMI,
-                    mChannellistMI, mCreateFilterMI, mRestoreMI, mUpdateMI,
+                    mChannellistMI, mPluginOverviewMI, mCreateFilterMI, mRestoreMI, mUpdateMI,
                     mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI,
                     mConfigAssistantMI, mAboutMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu;  
@@ -105,12 +105,18 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mToolbarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewToolbar","Toolbar"));
     mToolbarMI.addActionListener(this);
     mToolbarMI.setSelected(!"hidden".equals(Settings.propToolbarLocation.getString()));
-    mTimeBtnsMI = new JCheckBoxMenuItem("TODO: Zeitknoepfe");
+    mTimeBtnsMI = new JCheckBoxMenuItem("Zeitknoepfe");
+    mTimeBtnsMI.setSelected(true);
     mTimeBtnsMI.addActionListener(this);
-    mDatelistMI = new JCheckBoxMenuItem("TODO: Datum");
+    mDatelistMI = new JCheckBoxMenuItem("Datum");
+    mDatelistMI.setSelected(true);
     mDatelistMI.addActionListener(this);
-    mChannellistMI = new JCheckBoxMenuItem("TODO: Sender");
+    mChannellistMI = new JCheckBoxMenuItem("Sender");
+    mChannellistMI.setSelected(true);
     mChannellistMI.addActionListener(this);
+    mPluginOverviewMI = new JCheckBoxMenuItem("Plugin Uebersicht");
+    mPluginOverviewMI.setSelected(true);
+    mPluginOverviewMI.addActionListener(this);
     
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
     updateFiltersMenu();
@@ -170,7 +176,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
               item.setSelected(true);
             }});
       }
-      
+      result[0].setSelected(true);
       return result;
     }
 
@@ -243,11 +249,23 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      if (source == mSettingsMI) {
        mMainFrame.showSettingsDialog();
      }
+     else if (source == mTimeBtnsMI) {
+       mMainFrame.setShowTimeButtons(mTimeBtnsMI.isSelected());   
+     }     
      else if (source == mQuitMI) {
        mMainFrame.quit();
      }
      else if (source == mToolbarMI) {
        mMainFrame.setShowToolbar(mToolbarMI.isSelected());
+     }
+     else if (source == mDatelistMI) {
+       mMainFrame.setShowDatelist(mDatelistMI.isSelected());  
+     }
+     else if (source == mChannellistMI) {
+       mMainFrame.setShowChannellist(mChannellistMI.isSelected());  
+     }
+     else if (source == mPluginOverviewMI) {
+       mMainFrame.setShowPluginOverview(mPluginOverviewMI.isSelected());  
      }
      else if (source == mUpdateMI) {
        mMainFrame.updateTvData();
@@ -272,6 +290,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      }
      else if (source == mConfigAssistantMI) {
          
+     }
+     else if (source == mAboutMI) {
+       mMainFrame.showAboutBox();
      }
      else if (source == mCreateFilterMI) {
        mMainFrame.showFilterDialog();

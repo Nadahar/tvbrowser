@@ -1,6 +1,7 @@
 Changelog TVBrowser
 
 1.1
+- New mainframe layout
 - Menu bar for MacOS X added
 - New toolbar added (drag&drop)
 - Added Channel-Logos
@@ -10,6 +11,9 @@ Changelog TVBrowser
   Warning: Old plugins will be compatible except when they access other plugins.
            Because there is no direct access to plugins any more, these plugins
            must be changed to access other plugins using their proxies.
+
+1.0.1
+ - bugfix: removed "import searchplugin..."
 
 1.0 final
  - bugfix: ask before autodownload on startup

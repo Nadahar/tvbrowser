@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Insets;
+import java.awt.Component;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -48,12 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
-import net.infonode.docking.RootWindow;
-import net.infonode.docking.SplitWindow;
-import net.infonode.docking.View;
-import net.infonode.docking.util.DockingUtil;
-import net.infonode.docking.util.ViewMap;
-import net.infonode.util.Direction;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -61,6 +55,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
@@ -68,6 +63,7 @@ import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
+import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
@@ -78,6 +74,8 @@ import tvdataservice.TvDataService;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
+import util.ui.view.Node;
+import util.ui.view.SplitViewProperties;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -91,7 +89,7 @@ import java.lang.reflect.Constructor;
  *
  * @author Martin Oberhauser
  */
-public class MainFrame extends JFrame implements /*ActionListener, */DateListener {
+public class MainFrame extends JFrame implements DateListener {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(tvbrowser.TVBrowser.class.getName());
@@ -100,6 +98,8 @@ public class MainFrame extends JFrame implements /*ActionListener, */DateListene
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(MainFrame.class);
 
+  private Node mTimebuttonsNode, mDateNode, mRootNode, mChannelNode;
+  private Node mPluginsNode;
  
   private JDialog mConfigAssistantDialog;
   private SoftwareUpdateItem[] mSoftwareUpdateItems=null;
@@ -118,8 +118,10 @@ public class MainFrame extends JFrame implements /*ActionListener, */DateListene
   private TimeChooserPanel mTimeChooser;
   private ChannelChooserPanel mChannelChooser;
   private MenuBar mMenuBar;
+  private Component mCenterComponent;
   
  
+  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
 		
@@ -177,47 +179,52 @@ public class MainFrame extends JFrame implements /*ActionListener, */DateListene
     JLabel lb=mStatusBar.getLabel();
     skinPanel.add(centerPanel, BorderLayout.CENTER);
     
-    ViewMap viewMap = new ViewMap();
-    
-    mTimeChooser = new TimeChooserPanel(this);
     mChannelChooser = new ChannelChooserPanel(this);
+       
+    /* create panels */
     
-    View programTableView = new View("Programm-Tabelle", null, skinPanel);
-    View timeView = new View("Zeit", null, mTimeChooser);
-    View dateView = new View("Datum", null, new DateChooserPanel(this, FinderPanel.getInstance()));
-    View channelView = new View("Sender", null, mChannelChooser);
+    JPanel pluginPanel = new PluginView();
+    JPanel datechooser = new DateChooserPanel(this,FinderPanel.getInstance());
+    JPanel timechooser = new TimeChooserPanel(this);
     
-    viewMap.addView(0, programTableView);
-    viewMap.addView(1, timeView);
-    viewMap.addView(2, dateView);
-    viewMap.addView(3, channelView);
-
-   
-    RootWindow rootWindow = DockingUtil.createRootWindow(viewMap, true);
+    /* create structure */    
+    mRootNode = new Node(null);
+    mPluginsNode = new Node(mRootNode);
+    Node mainframeNode = new Node(mRootNode);
+    Node programtableNode = new Node(mainframeNode);
+    Node navigationNode = new Node(mainframeNode);    
+    mTimebuttonsNode = new Node(navigationNode);
+    Node dateChannelNode = new Node(navigationNode);
+    mDateNode = new Node(dateChannelNode);
+    mChannelNode = new Node(dateChannelNode);
     
-    rootWindow.setWindow(new SplitWindow(true,
-            1,
-            programTableView,
-            new SplitWindow(false,0.25f,timeView,new SplitWindow(false,0.25f,dateView,channelView))));
     
-    rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(true);
     
-    rootWindow.getWindowBar(Direction.LEFT).setEnabled(true);
-
-    rootWindow.getRootWindowProperties().getWindowAreaProperties().setInsets(new Insets(0,0,0,0));
-    rootWindow.getRootWindowProperties().getSplitWindowProperties().setDividerSize(2);
-    rootWindow.getWindowBar(Direction.LEFT).getTabWindowProperties().getTabProperties().getNormalButtonProperties().getCloseButtonProperties().setVisible(false);
+    // TODO: find a way to store these settings
+    mRootNode.setProperties(new SplitViewProperties(false, SplitViewProperties.LEFT, 150));
+    mainframeNode.setProperties(new SplitViewProperties(false, SplitViewProperties.RIGHT, 150));
+    navigationNode.setProperties(new SplitViewProperties(true, SplitViewProperties.LEFT, 100));
+    dateChannelNode.setProperties(new SplitViewProperties(true, SplitViewProperties.LEFT, 100));
     
-    rootWindow.getRootWindowProperties().getDockingWindowProperties().getTabProperties().
-    getHighlightedButtonProperties().getCloseButtonProperties().setVisible(false);
-
-    rootWindow.getRootWindowProperties().getWindowAreaProperties().setBackgroundColor(new Color(110, 130, 180));
-        
+    
+    /* create views */
+    mPluginsNode.setLeaf(pluginPanel);
+    programtableNode.setLeaf(skinPanel);
+    mTimebuttonsNode.setLeaf(timechooser);
+    mDateNode.setLeaf(datechooser);
+    mChannelNode.setLeaf(mChannelChooser);    
+    
+    
     updateToolBar();
     
-    jcontentPane.add(rootWindow,BorderLayout.CENTER);
-    jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
     
+    mCenterComponent = mRootNode.getComponent();
+    if (mCenterComponent!=null) {
+      jcontentPane.add(mCenterComponent,BorderLayout.CENTER);
+    }
+ 
+       
+    jcontentPane.add(mStatusBar, BorderLayout.SOUTH);    
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
       public void pluginActivated(Plugin p) {
         updatePluginsMenu();
@@ -229,6 +236,11 @@ public class MainFrame extends JFrame implements /*ActionListener, */DateListene
     });
 
     setJMenuBar(mMenuBar);    
+    
+    
+    FilterList filterList = FilterList.getInstance();
+    ProgramFilter[] filterArr = filterList.getFilterArr();
+    setProgramFilter(filterArr[0]);
   }
 
   public JLabel getStatusBarLabel() {
@@ -632,31 +644,8 @@ public void showHelpDialog() {
       indexFile = new java.io.File("help/default/index.html");
     } 
     util.ui.BrowserLauncher.openURL(indexFile.getAbsolutePath());
-  
-  
 }
-/*
-private JMenuItem[] createFilterMenuItems() {
-  ButtonGroup group = new ButtonGroup();
-  FilterList filterList = new FilterList();
-  filterList.create();
-  ProgramFilter[] filterArr = filterList.getFilterArr();
-  JRadioButtonMenuItem[] result = new JRadioButtonMenuItem[filterArr.length];
-  for (int i=0; i<filterArr.length; i++) {
-    final ProgramFilter filter = filterArr[i];
-    result[i] = new JRadioButtonMenuItem(filter.toString());
-    final JRadioButtonMenuItem item = result[i];    
-    group.add(item);
-    result[i].addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent event) {
-          mProgramTableModel.setProgramFilter(filter);
-          item.setSelected(true);
-        }});
-  }
-  
-  return result;
-}
-*/
+
   /**
    * Updates the TimeChooser-Buttons
    */
@@ -673,7 +662,59 @@ private JMenuItem[] createFilterMenuItems() {
       Settings.propToolbarLocation.setString("hidden");
     }
     updateToolBar();
+    jcontentPane.validate();
+  }
   
+  private void updateViews() {
+    jcontentPane = (JPanel)getContentPane();
+    jcontentPane.remove(mCenterComponent);
+    mCenterComponent = mRootNode.getComponent();
+    jcontentPane.add(mCenterComponent,BorderLayout.CENTER);      
+    jcontentPane.validate();
+  }
+  
+  public void setShowTimeButtons(boolean visible) {
+    if (visible) {
+      mTimebuttonsNode.setLeaf(new TimeChooserPanel(this));
+    }
+    else {
+      mTimebuttonsNode.setLeaf(null);
+    }
+    
+   
+    updateViews();
+    
+    
+  }
+  
+  public void setShowDatelist(boolean visible) {
+    if (visible) {
+      mDateNode.setLeaf(new DateChooserPanel(this,FinderPanel.getInstance()));
+    }
+    else {
+      mDateNode.setLeaf(null);
+    }
+    updateViews();
+  }
+
+  public void setShowChannellist(boolean visible) {
+    if (visible) {
+      mChannelNode.setLeaf(new ChannelChooserPanel(this));
+    }
+    else {
+      mChannelNode.setLeaf(null);
+    }
+    updateViews();
+  }
+
+  public void setShowPluginOverview(boolean visible) {
+    if (visible) {
+      mPluginsNode.setLeaf(new PluginView());
+    }
+    else {
+      mPluginsNode.setLeaf(null);
+    }
+    updateViews();
   }
 
 }
