@@ -467,22 +467,18 @@ public class DataService implements devplugin.PluginManager {
  * Deletes expired tvdata files older then lifespan days.
  * @param lifespan
  */
-// TODO: re-implement this method
-public static void deleteExpiredFiles(int lifespan) {
+  public static void deleteExpiredFiles(int lifespan) {
 	
-		if (lifespan<0) {
-			return;  // manually
-		}
-		final devplugin.Date d=new devplugin.Date();
-	/*	final devplugin.Date ddd=*/d.addDays(-lifespan);
-		//final int date=d.getDaysSince1970();
-    //final long date=d.getValue();
+    if (lifespan<0) {
+      return;  // manually
+    }
+    final devplugin.Date d=new devplugin.Date();
+    d.addDays(-lifespan);
     final Date curDate=new Date();
 	
 		File fList[]=new File(Settings.getTVDataDirectory()).listFiles(
 			new java.io.FilenameFilter() {
-				public boolean accept(File dir, String name) {
-				
+				public boolean accept(File dir, String name) {				
 					int p=name.lastIndexOf('.');
 					String s=name.substring(p+1,name.length());
 					int val=Integer.parseInt(s);
@@ -493,9 +489,7 @@ public static void deleteExpiredFiles(int lifespan) {
           curDate.setYear(val/10000);
           curDate.setMonth(r/100);
           curDate.setDay(r%100);
-          //System.out.println(curDate.getDateString()+" <--> "+ddd.getDateString());
           return curDate.getValue()<d.getValue();
-					//return val<date;
 				}
 			}	
 		);

@@ -1,3 +1,28 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
 
 package tvbrowser.ui.filter.filters;
 
@@ -9,16 +34,16 @@ import tvbrowser.core.PluginManager;
 import devplugin.Plugin;
 import devplugin.Program;
 
-public class PluginFilterRule extends FilterRule {
+public class PluginFilterComponent extends FilterComponent {
     
     private JComboBox mBox;
     private devplugin.Plugin mPlugin;
     
-    public PluginFilterRule(String name, String description) {
+    public PluginFilterComponent(String name, String description) {
         super(name, description);
     }
     
-    public PluginFilterRule(ObjectInputStream in) {
+    public PluginFilterComponent(ObjectInputStream in) {
         try {
             int version=in.readInt();
             mName=(String)in.readObject();
@@ -55,10 +80,7 @@ public class PluginFilterRule extends FilterRule {
         
         //Plugin plugin=PluginManager.getPlugin(mPluginClassName);
         
-        System.out.println("accept program '"+program.getTitle()+"' ?");
-        if (mPlugin==null) {
-            System.out.println("uups! no plugin");
-        }
+        
         Plugin[] markedBy=program.getMarkedByPlugins();
         for (int i=0;i<markedBy.length;i++) {
             if (markedBy[i]==mPlugin) {

@@ -4,7 +4,9 @@ current:
 - bugfix in SkinPanel
 - new feature: filter
 - new devplugin.Date class
-- new settings: choose directories for tvdataservice chaches
+- new settings:
+      * choose directories for tvdataservice chaches
+      * choose fonts
 
 0.9.5.1:
 - bugfix in XmlTvDataService

@@ -191,11 +191,11 @@ public class ReminderList implements ActionListener {
         cal.setTime(new java.util.Date());
         int time=cal.get(Calendar.HOUR_OF_DAY)*60+cal.get(Calendar.MINUTE);
  
-        System.out.println("current time: "+time);
+        //System.out.println("current time: "+time);
  
         devplugin.Date today=devplugin.Date.getCurrentDate();
     
-        System.out.println("current date: "+today.getValue());
+        //System.out.println("current date: "+today.getValue());
 
         Iterator it=this.getReminderItems();
         while (it.hasNext()) {
@@ -206,9 +206,9 @@ public class ReminderList implements ActionListener {
           int h=item.getProgram().getHours();
           int d=item.getReminderMinutes();
 
-          System.out.println("item time: "+(h*60)+m);
-          System.out.println("item date: "+item.getProgram().getDate().getValue());
-          System.out.println("reminder minutes: "+d);
+         // System.out.println("item time: "+(h*60)+m);
+         // System.out.println("item date: "+item.getProgram().getDate().getValue());
+         // System.out.println("reminder minutes: "+d);
       
       
           int diff=today.compareTo(item.getProgram().getDate());

@@ -47,43 +47,44 @@ class Token {
 public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
  
     private String mName, mRule;    
-    private java.util.HashSet mRules;
+    //private java.util.HashSet mRules;
     private File mFile=null;
 
-    private int curInx, curTokenInx;
-    private char[] ruleLine;
-    private Token[] tokenList=null;
-    private Token curToken;
+    private static int curInx, curTokenInx;
+    private static char[] ruleLine;
+    private static Token[] tokenList=null;
+    private static Token curToken;
     
     private Node root, curNode;
 
  
     public Filter(String name) {
         mName=name;
-       mRules=new java.util.HashSet();
+       //mRules=new java.util.HashSet();
     }
 
     public Filter(File file) {
         mFile=file;
         ObjectInputStream in=null;
-        mRules=new java.util.HashSet();
+        //mRules=new java.util.HashSet();
         try {
             in=new ObjectInputStream(new FileInputStream(file));            
             int version=in.readInt();
             mName=(String)in.readObject();
             mRule=(String)in.readObject();
+            /*
             int rulesCnt=in.readInt();
             for (int i=0;i<rulesCnt;i++) {
                 String className=(String)in.readObject();
                 if ("tvbrowser.ui.filter.filters.KeywordFilterRule".equals(className)) {
-                    mRules.add(new KeywordFilterRule(in));
+                    mRules.add(new KeywordFilterComponent(in));
                 }else if ("tvbrowser.ui.filter.filters.PluginFilterRule".equals(className)) {
-                    mRules.add(new PluginFilterRule(in));
+                    mRules.add(new PluginFilterComponent(in));
                 }else{
                     System.out.println("invalid filter");
                 }
                                
-            }
+            }*/
         }catch (IOException e) {
             ErrorHandler.handle("Could not read filter from file", e);
         }catch (ClassNotFoundException e) {
@@ -91,6 +92,10 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
         }finally {
             try { if (in!=null) in.close(); } catch (IOException e) {}
         }
+        
+        try {
+          in.close();
+        }catch(IOException e) {}
         
         try {
             createTokenTree();            
@@ -128,23 +133,29 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
         return mName;
     }
     
-    public void addRule(FilterRule rule) {
+    public boolean containsRuleComponent(String comp) {
+      return root.containsRuleComponent(comp);
+    }
+    
+    /*
+    public void addRule(FilterComponent rule) {
         mRules.add(rule);
     }
     
-    public void removeRule(FilterRule rule) {
+    public void removeRule(FilterComponent rule) {
         mRules.remove(rule);
     }
-    
-    public FilterRule[] getRules() {
+    */
+    /*
+    public FilterComponent[] getRules() {
         Object[] o=mRules.toArray();
-        FilterRule[] result=new FilterRule[o.length];
+      FilterComponent[] result=new FilterComponent[o.length];
         for (int i=0;i<result.length;i++) {
-            result[i]=(FilterRule)o[i];            
+            result[i]=(FilterComponent)o[i];            
         }
         return result;
     }
-    
+    */
     public void store(File directory) {
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException("directory expected");
@@ -155,13 +166,14 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
             out.writeInt(1);
             out.writeObject(mName);
             out.writeObject(mRule);
+            /*
             out.writeInt(mRules.size());
             java.util.Iterator it=mRules.iterator();
             while (it.hasNext()) {
                 Object o=it.next();
                 out.writeObject(o.getClass().getName());
-                ((FilterRule)o).store(out);
-            }
+                ((FilterComponent)o).store(out);
+            }*/
         }catch (IOException e) {
             ErrorHandler.handle("Could not write filter to file", e); 
         }finally {
@@ -194,25 +206,34 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
     * 
     */
     
-    public boolean accept(devplugin.Program prog) {        
+    public boolean accept(devplugin.Program prog) {
+        if (root==null) {
+          return false;        
+        }
         return root.accept(prog);
     }
     
-    private boolean createTokenTree() throws ParserException {
-        tokenList=createTokenList();
+    private void createTokenTree() throws ParserException {
+        tokenList=createTokenList(mRule);
         curTokenInx=-1;
-        boolean result=false;
         curToken=getNextToken();
-        root=rule();
-               
-        //root.dump();
-        
-        return result;
+        if (curToken!=null) {
+          root=rule();
+        }
     }
     
-    private Token[] createTokenList() {
+    public static void testTokenTree(String rule) throws ParserException {
+        tokenList=createTokenList(rule);
+        curTokenInx=-1;
+        curToken=getNextToken();
+        if (curToken!=null) {
+          rule();
+        } 
+    }
+    
+    private static Token[] createTokenList(String rule) {
         
-        ruleLine=mRule.toCharArray();
+        ruleLine=rule.toCharArray();
         curInx=0;
         Token curToken=null;
         ArrayList list=new ArrayList();
@@ -230,7 +251,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
         return result;
     }
     
-    private void ignoreSpaces() {
+    private static void ignoreSpaces() {
         while (curInx<ruleLine.length && Character.isWhitespace(ruleLine[curInx])) {
             curInx++;
         }   
@@ -238,7 +259,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
     
     
     
-    private void readString() {
+    private static void readString() {
         while (curInx<ruleLine.length
                 && !Character.isWhitespace(ruleLine[curInx])
                 && ruleLine[curInx]!='('
@@ -249,7 +270,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
         
         
     // eins or (zwei or drei and vier) and fünf    
-    private Token readNextToken() {
+    private static Token readNextToken() {
         
         
         ignoreSpaces();
@@ -285,7 +306,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
     }
     
     
-    private void expectToken(int type) throws ParserException {
+    private static void expectToken(int type) throws ParserException {
         if (curTokenInx>=tokenList.length) {
             throw new ParserException("unexpected end of rule");
         }
@@ -309,7 +330,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
     }
     
     
-    private Token getNextToken() {
+    private static Token getNextToken() {
         curTokenInx++;
         if (tokenList.length>curTokenInx) {
             return tokenList[curTokenInx];
@@ -317,7 +338,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
         return null;
     }
     
-    private Node rule() throws ParserException {
+    private static Node rule() throws ParserException {
         Node result=new OrNode();
         
         if (curToken.type==Token.LEFT_BRACKET) {
@@ -347,7 +368,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
     }
     
     
-    private Node condTerm() throws ParserException {
+    private static Node condTerm() throws ParserException {
         Node result=new AndNode();
         
         if (curToken.type==Token.LEFT_BRACKET) {
@@ -375,7 +396,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
         return result;
     }
     
-    private Node condFact() throws ParserException {
+    private static Node condFact() throws ParserException {
         Node result;
         
         if (curToken.type==Token.LEFT_BRACKET) {
@@ -395,18 +416,19 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
     }
     
  
-    private Node item() throws ParserException {
+    private static Node item() throws ParserException {
         Token tk=curToken;
         if (tk.type!=Token.ITEM) {
             throw new ParserException("filter rule expected.");
         }
-        Iterator it=mRules.iterator();
+      //  Iterator it=mRules.iterator();
+      Iterator it=FilterComponentList.iterator();
         while (it.hasNext()) {
-            FilterRule rule=(FilterRule)it.next();
-            if (tk.value.equals(rule.getName())) {
-                return new ItemNode(rule);
-                                 
-            }            
+          FilterComponent rule=(FilterComponent)it.next();
+          //System.out.println("try: "+rule.getName());
+          if (tk.value.equals(rule.getName())) {
+            return new ItemNode(rule);                                 
+          }            
         }
         throw new ParserException(tk.value+" is not a valid filter rule");
     }
@@ -427,7 +449,17 @@ abstract class Node {
     public abstract boolean accept(devplugin.Program prog);
     
     public abstract void dump();
-        
+    
+    public boolean containsRuleComponent(String compName) {
+        Iterator it=nodes.iterator();
+        while (it.hasNext()) {
+            Node n=(Node)it.next();
+            if (n.containsRuleComponent(compName)) {
+              return true;
+            }
+        }
+        return false;  
+    }     
 }
 
 class OrNode extends Node {
@@ -454,6 +486,9 @@ class OrNode extends Node {
         }
         System.out.println("}");        
     }
+    
+  
+
 }
     
 class AndNode extends Node {
@@ -502,8 +537,8 @@ class NotNode extends Node {
 }
 
 class ItemNode extends Node {
-    private FilterRule mRule;
-    public ItemNode(FilterRule rule) {
+    private FilterComponent mRule;
+    public ItemNode(FilterComponent rule) {
         mRule=rule;            
     }
     
@@ -513,6 +548,13 @@ class ItemNode extends Node {
     
     public void dump() {
         System.out.println("ItemNode {"+mRule.getName()+" }");
+    }
+    
+    public boolean containsRuleComponent(String compName) {
+      System.out.print(mRule.getName()+"<-->"+compName+": ");
+      boolean result=mRule.getName().equalsIgnoreCase(compName);
+      System.out.println(result);
+      return (mRule.getName().equalsIgnoreCase(compName)); 
     }
     
 }
