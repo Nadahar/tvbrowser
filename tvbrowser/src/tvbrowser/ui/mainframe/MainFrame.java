@@ -62,11 +62,12 @@ import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.FilterChooser;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.finder.FinderPanel;
+import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.PluginUpdate;
-import tvbrowser.ui.licensebox.LicenseBox;
+import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
@@ -94,7 +95,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, licenseMenuItem, donorMenuItem,
+   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, /*licenseMenuItem,*/ donorMenuItem,
    faqMenuItem, forumMenuItem, websiteMenuItem;
   private SkinPanel skinPanel;
   private HorizontalToolBar mDefaultToolBar;
@@ -161,9 +162,14 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     tvDataMenu.addSeparator();
     
     msg = mLocalizer.msg("menuitem.license","Terms of Use");
-    licenseMenuItem=new JMenuItem(msg,new ImageIcon("imgs/About16.gif"));
-    licenseMenuItem.addActionListener(this);
-    tvDataMenu.add(licenseMenuItem);
+    //JMenu licenseMenuItem=new JMenu(msg,new ImageIcon("imgs/About16.gif"));
+    JMenu licenseMenu=new JMenu(msg);
+    //licenseMenuItem.addActionListener(this);
+    tvDataMenu.add(licenseMenu);
+    
+    addLicenseMenuItems(licenseMenu);
+    
+    //licenseMenu.add(new JMenu("TV-Browser"));
     
     // Plugins menu
     mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
@@ -263,7 +269,11 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     new MenuHelpTextAdapter(updateMenuItem, mLocalizer.msg("menuinfo.update",""), lb);
     new MenuHelpTextAdapter(mPluginDownloadMenuItem, mLocalizer.msg("menuinfo.findplugins",""), lb); 
     new MenuHelpTextAdapter(helpMenuItem, mLocalizer.msg("menuinfo.help",""), lb); 
-    new MenuHelpTextAdapter(aboutMenuItem, mLocalizer.msg("menuinfo.about",""), lb); 
+    new MenuHelpTextAdapter(aboutMenuItem, mLocalizer.msg("menuinfo.about",""), lb);
+    new MenuHelpTextAdapter(donorMenuItem,mLocalizer.msg("website.donors",""),lb); 
+    new MenuHelpTextAdapter(faqMenuItem,mLocalizer.msg("website.faq",""),lb); 
+    new MenuHelpTextAdapter(forumMenuItem,mLocalizer.msg("website.forum",""),lb); 
+    new MenuHelpTextAdapter(websiteMenuItem,mLocalizer.msg("website.tvbrowser",""),lb); 
     
 
     skinPanel.add(mDefaultToolBar,BorderLayout.NORTH);
@@ -279,6 +289,25 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     return mStatusBar.getLabel();
   }
 
+
+  private void addLicenseMenuItems(JMenu licenseMenu) {
+    
+    TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+    for (int i=0;i<services.length;i++) {
+      final String license=services[i].getInfo().getLicense();
+      if (license!=null) {
+        JMenuItem item=new JMenuItem(services[i].getInfo().getName(),new ImageIcon("imgs/About16.gif"));
+        item.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent e) {
+            LicenseBox box=new LicenseBox(null, license, false);
+            util.ui.UiUtilities.centerAndShow(box);
+          }        
+        });
+        licenseMenu.add(item);
+      }
+    }
+    
+  }
 
   public void quit() {
     mLog.info("Storing plugin data");
@@ -341,7 +370,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         item.setIcon(plugin.getButtonIcon());
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent event) {
-            mLog.info("Plugin menu item pressed");
             plugin.execute();
           }
         });
@@ -374,10 +402,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     }
     else if (src == updateMenuItem) {
       updateTvData();
-    }
-    else if (src == licenseMenuItem) {
-      LicenseBox box=new LicenseBox(this, false);
-      util.ui.UiUtilities.centerAndShow(box);
     }
     else if (src == settingsMenuItem) {
       showSettingsDialog();
