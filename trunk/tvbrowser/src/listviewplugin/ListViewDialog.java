@@ -499,7 +499,7 @@ public class ListViewDialog extends JDialog {
     }
     
     if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-      devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg);
+      devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg, mPlugin);
     }
   }
 

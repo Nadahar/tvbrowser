@@ -145,7 +145,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
             Program prog = (Program) ProgramList.this.getModel()
                 .getElementAt(inx);
   
-            mng.handleProgramDoubleClick(prog);
+            mng.handleProgramDoubleClick(prog, caller);
           }
         }
       });

@@ -169,7 +169,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
   private void handleMouseClicked(MouseEvent evt, Program program) {
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-      Plugin.getPluginManager().handleProgramDoubleClick(program);
+      Plugin.getPluginManager().handleProgramDoubleClick(program, ProgramInfo.getInstance());
     }
   }  
   

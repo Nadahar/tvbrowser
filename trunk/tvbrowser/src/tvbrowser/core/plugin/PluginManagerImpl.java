@@ -279,10 +279,10 @@ public class PluginManagerImpl implements PluginManager {
                                                Date.getCurrentDate(), 14, 45);
       prog.setTitle("Die Waltons");
       prog.setShortInfo("Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr.");
-      prog.setDescription("Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haust�r aus sehnsuchtsvoll hinterhersieht.");
+      prog.setDescription("Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haust\u00FCr aus sehnsuchtsvoll hinterhersieht.");
       prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, "123-456");
       prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE,
-                        "Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Gro�mutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton)");
+                        "Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Gro\u00dfmutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton)");
       prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, 6);
       prog.setTextField(ProgramFieldType.EPISODE_TYPE, "Der Postflieger");
       prog.setTextField(ProgramFieldType.GENRE_TYPE, "Familie");
@@ -309,7 +309,9 @@ public class PluginManagerImpl implements PluginManager {
   /**
    * Handles a double click on a program.
    * <p>
-   * Executes the default context menu plugin.
+   * Executes the default context menu plugin. Plugins should use 
+   * handleProgramDoubleClick(Program program, Plugin caller). It prevetns the 
+   * Plugin to be activated a second time. 
    * 
    * @param program The program to pass to the default context menu plugin.
    * 
@@ -324,6 +326,36 @@ public class PluginManagerImpl implements PluginManager {
     PluginAccess defaultContextMenuPlugin
       = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
     if (defaultContextMenuPlugin != null) {
+      ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
+      Action action = menu.getAction();
+      if (action != null) {
+        ActionEvent evt = new ActionEvent(program, 0, null);
+        action.actionPerformed(evt);
+      }
+
+    }
+    
+  }
+  
+  /**
+   * Handles a double click on a program.
+   * <p>
+   * Executes the default context menu plugin.
+   * 
+   * @param program The program to pass to the default context menu plugin.
+   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice
+   * 
+   * @since 1.1
+   */
+  public void handleProgramDoubleClick(Program program, Plugin caller) {
+    if (program == null) {
+      // Nothing to do
+      return;
+    }
+    
+    PluginAccess defaultContextMenuPlugin
+      = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
+    if (defaultContextMenuPlugin != null && !defaultContextMenuPlugin.getId().equals(caller.getId())) {
       ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
       Action action = menu.getAction();
       if (action != null) {

@@ -188,13 +188,27 @@ public interface PluginManager {
   /**
    * Handles a double click on a program.
    * <p>
-   * Executes the default context menu plugin.
+   * Executes the default context menu plugin. Plugins should use 
+   * handleProgramDoubleClick(Program program, Plugin caller). It prevents the 
+   * Plugin to be activated a second time. 
    * 
    * @param program The program to pass to the default context menu plugin.
    * 
    * @since 1.1
    */
-  public void handleProgramDoubleClick(Program program);
+  public void handleProgramDoubleClick(Program program);  
+  
+  /**
+   * Handles a double click on a program.
+   * <p>
+   * Executes the default context menu plugin.
+   * 
+   * @param program The program to pass to the default context menu plugin.
+   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice
+   * 
+   * @since 1.1
+   */
+  public void handleProgramDoubleClick(Program program, Plugin caller);
 
   /**
    * In TV-Browser 1.1 a plugin can store its programs in a structure like
