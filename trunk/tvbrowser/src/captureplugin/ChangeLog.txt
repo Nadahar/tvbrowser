@@ -1,4 +1,8 @@
 Changelog CapturePlugin
 
+v2.01:
+- Changed to new Plugin-Interface
+- Fixed some minor bugs
+
 v2.0:
 - Refactored everything & added Tons of new Features

@@ -26,6 +26,8 @@
 package captureplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -57,8 +59,27 @@ public class CapturePluginDialog extends JDialog {
     public CapturePluginDialog(Frame parent, CapturePluginData data) {
         super(parent);
 
-        this.mData = data;
-        this.setModal(true);
+        mData = data;
+        setModal(true);
+        createGui(parent);
+    }
+
+    /**
+     * creates a new Dialog
+     */
+    public CapturePluginDialog(Dialog parent, CapturePluginData data) {
+        super(parent);
+
+        mData = data;
+        setModal(true);
+        createGui(parent);
+    }    
+    
+    /**
+     * Creates the GUI
+     * @param parent Parent
+     */
+    public void createGui(Component parent) {
         this.getContentPane().setLayout(new BorderLayout());
         if (parent != null) {
             this.setLocation(parent.getLocation().x + (parent.getWidth() / 2) - 200, parent.getLocation().y + (parent.getHeight() / 2)
@@ -66,7 +87,7 @@ public class CapturePluginDialog extends JDialog {
         }
         this.setTitle(mLocalizer.msg("Title", "Capture Plugin - Settings"));
 
-        mPanel = new CapturePluginPanel((JFrame) parent, data);
+        mPanel = new CapturePluginPanel((JFrame) parent, mData);
         this.getContentPane().add(mPanel, BorderLayout.CENTER);
         this.setSize(500, 450);
         

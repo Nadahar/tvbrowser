@@ -36,6 +36,7 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -126,7 +127,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String desc = mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
         String author = "Bodo Tasche, Andreas Hessel";
 
-        return new PluginInfo(name, desc, author, new Version(2, 0));
+        return new PluginInfo(name, desc, author, new Version(2, 01));
     }
 
     /**
@@ -150,17 +151,25 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     public void executeProgram(Program program) {
         
+        Component comp = UiUtilities.getLastModalChildOf(getParentFrame()); 
+
         if (mConfig.getDevices().size() <= 0) {
-            JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("CreateDevice","Please create Device first!"));
+            JOptionPane.showMessageDialog(comp, mLocalizer.msg("CreateDevice","Please create Device first!"));
             
-            CapturePluginDialog dialog = new CapturePluginDialog(getParentFrame(), mConfig);
+            CapturePluginDialog dialog;
+            
+            if (comp instanceof JFrame) {
+                dialog = new CapturePluginDialog((JFrame) comp, mConfig);
+            } else {
+                dialog = new CapturePluginDialog((JDialog) comp, mConfig);
+            }
+            
             dialog.show(CapturePluginPanel.TAB_DEVICELIST);
             return;
         }
         
         DeviceSelector select = new DeviceSelector(UiUtilities.getLastModalChildOf(getParentFrame()), mConfig.getDeviceArray(), program);
 
-        Component comp = UiUtilities.getLastModalChildOf(getParentFrame()); 
         
         int x = comp.getWidth() / 2;
         int y = comp.getHeight() / 2;
