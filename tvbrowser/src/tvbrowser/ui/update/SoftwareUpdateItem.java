@@ -27,12 +27,72 @@
 package tvbrowser.ui.update;
 
 import util.exc.TvBrowserException;
+import java.util.HashMap;
+
 import devplugin.Version;
 
-public interface SoftwareUpdateItem {
+public abstract class SoftwareUpdateItem {
 	
-	public String getName();
-	
+  private HashMap mPropertyMap;
+  protected String mName;
+  
+  public SoftwareUpdateItem(String name) {
+    mName = name;
+    mPropertyMap = new HashMap();
+  }
+  
+  public void addProperty(String key, String value) {
+    mPropertyMap.put(key, value);  
+  }
+  public String getProperty(String key) {
+    return (String)mPropertyMap.get(key);
+  }
+  
+  public Version getVersion() {
+    String v = getProperty("version");
+    if (v==null) {
+      return null;
+    }
+    String[] s = v.split("\\.");
+    if (s.length!=2) {
+      return null;
+    }
+    int major, minor;
+    boolean stable;
+    try {
+      major = Integer.parseInt(s[0]);
+      minor = Integer.parseInt(s[1]);
+    }catch(NumberFormatException e) {
+      return null;
+    }
+    stable = "true".equalsIgnoreCase(getProperty("stable"));
+    return new Version(major, minor, stable, getProperty("version.name"));
+  }
+  
+  public Version getRequiredVersion() {
+    String v = getProperty("requires");
+    if (v==null) {
+      return null;
+    }
+    String[] s = v.split("\\.");
+    if (s.length!=2) {
+      return null;
+    }
+    int major, minor;
+    try {
+      major = Integer.parseInt(s[0]);
+      minor = Integer.parseInt(s[1]);
+    }catch(NumberFormatException e) {
+      return null;
+    }
+    return new Version(major, minor);      
+  }
+    
+   
+	public String getName() {
+    return mName;   
+  }
+	/*
 	public Version getVersion();
 	
 	public Version getRequiredVerion();
@@ -40,8 +100,17 @@ public interface SoftwareUpdateItem {
 	public String getUrl();
 	
 	public String getDescription();
+    */
 	
-	public boolean download() throws TvBrowserException;
+	public void download() throws TvBrowserException {
+    String url = getProperty("download");
+    if (url == null) {
+      throw new TvBrowserException(SoftwareUpdateItem.class, "error.2", "No Url");
+    }
+    download(url);
+  }
+    
+  protected abstract void download(String url) throws TvBrowserException;
 	
 	
 }

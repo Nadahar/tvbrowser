@@ -30,12 +30,10 @@ package tvbrowser.ui.update;
 import java.io.File;
 import java.net.URL;
 
-import javax.swing.JOptionPane;
-
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 
-public class DataserviceSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
+public class DataserviceSoftwareUpdateItem extends SoftwareUpdateItem {
 	
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(DataserviceSoftwareUpdateItem.class);
@@ -45,21 +43,18 @@ public class DataserviceSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
 		super(name);
 	}
 	
-  public boolean download() throws TvBrowserException {
+  public void download(String url) throws TvBrowserException {
     
-    boolean success=false;
     File toFile=new File("dataservice",mName+".jar.inst");
+    
     try {
-      IOUtilities.download(new URL(mUrl),toFile);
-      JOptionPane.showMessageDialog(null,mLocalizer.msg("restartprogram","please restart tvbrowser before..."));
-      success=true;
+      
+      IOUtilities.download(new URL(url),toFile);
+      
     }catch (Exception exc) {
-      throw new TvBrowserException(AbstractSoftwareUpdateItem.class, "error.1",
-              "Download failed", mUrl,toFile.getAbsolutePath(),exc);
+      throw new TvBrowserException(SoftwareUpdateItem.class, "error.1",
+              "Download failed", url,toFile.getAbsolutePath(),exc);
     }
-    
-    
-    return success;
   }
 	
 	
