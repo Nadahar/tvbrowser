@@ -41,7 +41,6 @@ public class TvdataImportDlg extends JDialog {
  
   private JButton mOkBt, mCancelBt;
   private JTextField mDirectoryTF;
-  private JCheckBox mDeleteOldFilesCb;
   private int mResult;
   
   public static final int CANCEL=0, OK=1, ERROR=2;
@@ -72,7 +71,7 @@ public class TvdataImportDlg extends JDialog {
     mOkBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         try {
-          importDirectory(mDirectoryTF.getText(),toDirName, !mDeleteOldFilesCb.isSelected());
+          importDirectory(mDirectoryTF.getText(),toDirName);
           mResult=OK;
           hide();
         }catch(Exception e) {
@@ -113,10 +112,8 @@ public class TvdataImportDlg extends JDialog {
     directoryInputPn.add(mDirectoryTF,BorderLayout.CENTER);
     directoryInputPn.add(browseBt,BorderLayout.EAST);
     
-    mDeleteOldFilesCb=new JCheckBox(mLocalizer.msg("deleteImportedData","Delete imported data from source"));
     
     dlgPn.add(directoryInputPn);
-    dlgPn.add(mDeleteOldFilesCb);
     
     contentPane.add(dlgPn,BorderLayout.CENTER);
     contentPane.add(btnPn,BorderLayout.SOUTH);
@@ -128,7 +125,7 @@ public class TvdataImportDlg extends JDialog {
     return mResult;
   }
   
-  private void importDirectory(String fromDirName, String toDirName, boolean copy) throws Exception {
+  private void importDirectory(String fromDirName, String toDirName) throws Exception {
     
     File fromDir=new File(fromDirName);
     if (!fromDir.exists() || !fromDir.isDirectory()) {
@@ -142,14 +139,9 @@ public class TvdataImportDlg extends JDialog {
       }
     }
     
-    if (copy) {
-      copyDirectory(fromDir,toDir);
-    }
-    else {
-      if (!fromDir.renameTo(toDir)) {
-        throw new Exception(mLocalizer.msg("error.3","Could not rename directory from '{0}' to '{0}'",fromDir.getAbsolutePath(),toDir.getAbsolutePath()));
-      }
-    }
+    copyDirectory(fromDir,toDir);
+    
+    
     
   }
   
