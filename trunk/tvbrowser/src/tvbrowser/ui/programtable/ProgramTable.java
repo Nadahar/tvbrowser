@@ -391,7 +391,8 @@ public class ProgramTable extends JPanel
   
   
   private void handleMouseClicked(MouseEvent evt) {
-    mMouse = evt.getPoint();      
+    mMouse = evt.getPoint();  
+    updateUI();
     Program program = getProgramAt(evt.getX(), evt.getY());
     if (SwingUtilities.isRightMouseButton(evt)) {
       if (program != null) {
@@ -423,7 +424,7 @@ public class ProgramTable extends JPanel
       if (Settings.propMouseOver.getBoolean()) {
           if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
               mMouse = evt.getPoint();
-              repaint();
+              updateUI();      
           }
       }
   }
@@ -433,7 +434,7 @@ public class ProgramTable extends JPanel
         JViewport viewport = (JViewport) getParent();
       	if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
           mMouse = null;
-          repaint();      
+          updateUI();      
       	}
       }
   }  
