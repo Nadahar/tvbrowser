@@ -48,6 +48,7 @@ import tvbrowser.core.DayProgram;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Program;
+import devplugin.Date;
 
 /**
  *
@@ -126,14 +127,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     setDayPrograms(mMainDay, mNextDay);
   }
   
-  private void addChannelDayProgram(int col, ChannelDayProgram cdp, int start, int end) {
+  private void addChannelDayProgram(int col, ChannelDayProgram cdp, int startMinutes, Date startDate, int endMinutes, Date endDate ) {
     if (cdp==null) return;
     Iterator it=cdp.getPrograms();  
     if (it!=null) {
       while (it.hasNext()) {
         Program prog=(Program)it.next();
         int time=prog.getHours()*60+prog.getMinutes();
-        if (time>=start && time<=end) {
+        if (time>=startMinutes && time<=endMinutes && prog.getDate().compareTo(startDate)>=0 && prog.getDate().compareTo(endDate)<=0) {
           if (mProgramFilter==null || mProgramFilter.accept(prog)) {
             mProgramColumn[col].add(prog);
           }
@@ -165,13 +166,17 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     mProgramColumn[i].clear();
     ChannelDayProgram cdp;
     if (mainDay!=null) {
-      cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);     
-      addChannelDayProgram(i,cdp,mTodayEarliestTime,24*60);
+      cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);
+      if (cdp!=null) {     
+        addChannelDayProgram(i,cdp,mTodayEarliestTime,cdp.getDate(),24*60,cdp.getDate());
+      }
     }
     
     if (nextDay!=null) { 
       cdp=nextDay.getChannelDayProgram(mShownChannelArr[i]);
-      addChannelDayProgram(i,cdp,0,mTomorrowLatestTime);
+      if (cdp!=null) {
+        addChannelDayProgram(i,cdp,0,cdp.getDate(),mTomorrowLatestTime,cdp.getDate());
+      }
     }
    }
     

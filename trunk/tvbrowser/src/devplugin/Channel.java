@@ -27,6 +27,7 @@
 package devplugin;
 
 import java.io.*;
+import java.util.TimeZone;
 
 import tvdataservice.TvDataService;
 
@@ -35,15 +36,32 @@ public class Channel {
   private TvDataService mDataService;
   private String mName;
   private String mId;
+  private TimeZone mTimeZone;
+  private int mDayLightSavingTimeCorrection;
 
 
-
-  public Channel(TvDataService dataService, String name, String id) {
+  public Channel(TvDataService dataService, String name, String id, TimeZone timeZone) {
     mDataService = dataService;
     mName = name;
     mId = id;
+    mTimeZone=timeZone;
+    mDayLightSavingTimeCorrection=0;
+  }
+  
+  public Channel(TvDataService dataService, String name, TimeZone timeZone) {
+    this(dataService, name, name, timeZone);
+  }
+  
+/**
+ * @deprecated
+ */
+  public Channel(TvDataService dataService, String name, String id) {
+    this(dataService, name, id, TimeZone.getDefault());
   }
 
+  /**
+   * @deprecated
+   */
   public Channel(TvDataService dataService, String name) {
   	this(dataService,name,name);
 	}
@@ -56,20 +74,20 @@ public class Channel {
     String dataServiceClassName = (String) in.readObject();
     
     String channelId;
+    
+    
     if (version==1) {
     	channelId=""+in.readInt();
     }
     else {
     	channelId=(String)in.readObject();
     }
-    
-    
+        
     Channel channel = getChannel(dataServiceClassName, channelId);
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
         + dataServiceClassName + " not found!");
     }
-    
     return channel;
   }
   
@@ -105,7 +123,17 @@ public class Channel {
     return null;
   }
   
-
+  public TimeZone getTimeZone() {
+    return mTimeZone;
+  }
+  
+  public void setDayLightSavingTimeCorrection(int correction) {
+    mDayLightSavingTimeCorrection=correction;
+  }
+  
+  public int getDayLightSavingTimeCorrection() {
+    return mDayLightSavingTimeCorrection;
+  }
 
   public TvDataService getDataService() {
     return mDataService;

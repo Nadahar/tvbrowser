@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 import java.util.regex.*;
+import java.util.TimeZone;
 import java.net.URL;
 
 import util.exc.*;
@@ -92,28 +93,29 @@ public class PremiereDataService extends AbstractTvDataService {
    * service.
    */
   protected Channel[] getDefaultAvailableChannels() {
+    TimeZone zone=TimeZone.getTimeZone("GMT+1"); 
     return new Channel[] {
       // main channels
-      new Channel(this, "13th Street"),
-      new Channel(this, "Beate-Uhse.TV"),
-      new Channel(this, "Classica"),
-      new Channel(this, "Disney Channel"),
-      new Channel(this, "Fox Kids"),
-      new Channel(this, "Heimatkanal"),
-      new Channel(this, "Junior"),
-      new Channel(this, "MGM"),
-      new Channel(this, "Premiere 1"),
-      new Channel(this, "Premiere 2"),
-      new Channel(this, "Premiere 3"),
-      new Channel(this, "Premiere 4"),
-      new Channel(this, "Premiere 5"),
-      new Channel(this, "Premiere 6"),
-      new Channel(this, "Premiere 7"),
-      new Channel(this, "Premiere Krimi"),
-      new Channel(this, "Premiere Nostalgie"),
-      new Channel(this, "Premiere Serie"),
-      new Channel(this, "Premiere Start"),
-      new Channel(this, "Studio Universal")
+      new Channel(this, "13th Street",zone),
+      new Channel(this, "Beate-Uhse.TV",zone),
+      new Channel(this, "Classica",zone),
+      new Channel(this, "Disney Channel",zone),
+      new Channel(this, "Fox Kids",zone),
+      new Channel(this, "Heimatkanal",zone),
+      new Channel(this, "Junior",zone),
+      new Channel(this, "MGM",zone),
+      new Channel(this, "Premiere 1",zone),
+      new Channel(this, "Premiere 2",zone),
+      new Channel(this, "Premiere 3",zone),
+      new Channel(this, "Premiere 4",zone),
+      new Channel(this, "Premiere 5",zone),
+      new Channel(this, "Premiere 6",zone),
+      new Channel(this, "Premiere 7",zone),
+      new Channel(this, "Premiere Krimi",zone),
+      new Channel(this, "Premiere Nostalgie",zone),
+      new Channel(this, "Premiere Serie",zone),
+      new Channel(this, "Premiere Start",zone),
+      new Channel(this, "Studio Universal",zone)
     };
   }
 

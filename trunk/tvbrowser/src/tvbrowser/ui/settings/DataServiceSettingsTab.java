@@ -40,7 +40,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     JPanel mainPanel=new JPanel(new BorderLayout());
     
     mainPanel.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
-    
+    /*
     String text="TV-Daten-Services sind externe Komponenten, die " +
       "TV-Daten (z.B. aus dem Internet) laden und sie dann " +
       "TV-Browser zur Verfügung stellen.\n\n" +
@@ -52,7 +52,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
       "Funktion.\n" +
       "Bei Problemen wenden Sie sich bitte an den Autor des "+
       "jeweiligen TV-Daten-Services.";
-      
+      */
       /*
        * 
        * 

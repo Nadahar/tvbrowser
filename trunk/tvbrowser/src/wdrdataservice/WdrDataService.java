@@ -32,10 +32,12 @@
  import util.exc.TvBrowserException;
  import util.io.IOUtilities;
  
+ 
  import java.io.*;
  import java.net.URL;
 import java.util.Calendar;
 import java.util.regex.*;
+ import java.util.TimeZone;
  
  public class WdrDataService extends AbstractTvDataService {
  	
@@ -53,14 +55,15 @@ import java.util.regex.*;
 	   * service.
 	   */
 	  protected  Channel[] getDefaultAvailableChannels() {
+      TimeZone zone=TimeZone.getTimeZone("GMT+1"); 
 	  	Channel[] list=new Channel[7];
-	  	list[0]=new Channel(this,"1live","1live");
-	  	list[1]=new Channel(this,"WDR2","wdr2");
-		list[2]=new Channel(this,"WDR3","wdr3");
-		list[3]=new Channel(this,"WDR4","wdr4");
-		list[4]=new Channel(this,"WDR5","radio5");
-		list[5]=new Channel(this,"Funkhaus Europa","europa");
-		list[6]=new Channel(this,"WDR","wdr-fs");
+	  	list[0]=new Channel(this,"1live","1live",zone);
+	  	list[1]=new Channel(this,"WDR2","wdr2",zone);
+		list[2]=new Channel(this,"WDR3","wdr3",zone);
+		list[3]=new Channel(this,"WDR4","wdr4",zone);
+		list[4]=new Channel(this,"WDR5","radio5",zone);
+		list[5]=new Channel(this,"Funkhaus Europa","europa",zone);
+		list[6]=new Channel(this,"WDR","wdr-fs",zone);
 		return list;	
 	  	
 	  }

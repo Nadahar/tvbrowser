@@ -1,8 +1,5 @@
 Changelog TVBrowser
 
-TODO:
-	- Zeitzonen fuer Sender
-
 
 current (0.9.6.1):
 - bugfixes:
@@ -13,6 +10,7 @@ current (0.9.6.1):
 - new layout in main frame
 - show plugin buttons by default
 - new layout in settings dialog
+- support time zones
 
 
 0.9.6:

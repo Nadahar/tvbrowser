@@ -27,7 +27,7 @@
 package tvdataservice;
 
 import java.io.*;
-
+import java.util.TimeZone;
 
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ChangeListener;
@@ -93,7 +93,10 @@ public class MutableProgram implements Program {
   private int mMinutes;
 
   /** The hour-component of the start time of the program. */
-  private int mHours;
+  private int mNormalizedHours;
+  
+  private int mLocalHours;
+  private devplugin.Date mLocalDate;
 
   /** The length of this program in minutes. */
   private int mLength = -1;
@@ -105,12 +108,12 @@ public class MutableProgram implements Program {
   private Channel mChannel;
 
   /** The date of this program. */
-  private devplugin.Date mDate;
+  private devplugin.Date mNormalizedDate;
 
   /** The picture of this program (may be null). */
   private byte[] mPicture;
 
-
+  
 
   /**
    * Creates a new instance of MutableProgram.
@@ -123,15 +126,19 @@ public class MutableProgram implements Program {
    * @param hours The hour-component of the start time of the program.
    * @param minutes The minute-component of the start time of the program.
    */
-  public MutableProgram(Channel channel, devplugin.Date date,
-    int hours, int minutes)
+  public MutableProgram(Channel channel, devplugin.Date localDate,
+    int localHours, int localMinutes)
   {
+    
+    
     // These attributes are not mutable, because they build the ID.
     mChannel = channel;
-    mDate = date;
-    mHours = hours;
-    mMinutes = minutes;
-
+    mLocalDate = localDate;
+    mLocalHours = localHours;
+    mMinutes = localMinutes;
+    
+    normalizeTimeZone(mLocalDate,mLocalHours);
+    
     mTitle = ""; // The title is not-null.
     
     mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
@@ -139,7 +146,30 @@ public class MutableProgram implements Program {
     init();
   }
 
-  
+  private void normalizeTimeZone(devplugin.Date localDate, int localHours) {
+    TimeZone channelTimeZone=mChannel.getTimeZone();
+    TimeZone localTimeZone=TimeZone.getDefault();
+    
+    int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
+ 
+    timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();
+ 
+    mNormalizedHours=localHours+timeZoneOffset;
+    mNormalizedDate=localDate;
+    
+    if (mNormalizedHours>23) {
+      mNormalizedHours-=24;
+      mNormalizedDate=mNormalizedDate.addDays(1);
+    }
+    if (mNormalizedHours<0) {
+      mNormalizedHours+=24;
+      mNormalizedDate=mNormalizedDate.addDays(-1);
+    }
+    
+   // System.out.println("channel local: "+mLocalHours+" "+mLocalDate);
+   // System.out.println("normalized: "+mNormalizedHours+" "+mNormalizedDate);
+   // System.out.println();
+  }
   
   public MutableProgram(ObjectInputStream in)
     throws IOException, ClassNotFoundException
@@ -152,14 +182,16 @@ public class MutableProgram implements Program {
     mActors = (String) in.readObject();
     mURL = (String) in.readObject();
     mMinutes = in.readInt();
-    mHours = in.readInt();
+    mLocalHours = in.readInt();
     mLength = in.readInt();
     mInfo = in.readInt();
 
     mChannel = Channel.readData(in, false);
-    mDate = new devplugin.Date(in);
+    mLocalDate = new devplugin.Date(in);
     
     mPicture = (byte[]) in.readObject();
+    
+    normalizeTimeZone(mLocalDate,mLocalHours);
     
     init();
   }
@@ -178,12 +210,12 @@ public class MutableProgram implements Program {
     out.writeObject(mActors);
     out.writeObject(mURL);
     out.writeInt(mMinutes);
-    out.writeInt(mHours);
+    out.writeInt(mLocalHours);
     out.writeInt(mLength);
     out.writeInt(mInfo);
 
     mChannel.writeData(out);
-    mDate.writeData(out);
+    mLocalDate.writeData(out);
     
     out.writeObject(mPicture);
   }
@@ -518,7 +550,11 @@ public class MutableProgram implements Program {
    * @return the hour-component of the start time.
    */
   public int getHours() {
-    return mHours;
+    return mNormalizedHours;
+  }
+  
+  public int getLocalHours() {
+    return mLocalHours;
   }
 
 
@@ -581,9 +617,12 @@ public class MutableProgram implements Program {
    * @return the date.
    */
   public devplugin.Date getDate() {
-    return mDate;
+    return mNormalizedDate;
   }
 
+  public devplugin.Date getLocalDate() {
+    return mLocalDate;
+  }
 
 
   /**
@@ -613,8 +652,8 @@ public class MutableProgram implements Program {
    * @return A String representation for debugging.
    */
   public String toString() {
-    return "On " + mChannel.getName() + " at " + mHours + ":" + mMinutes
-      + ", " + mDate + ": '" + mTitle + "'";
+    return "On " + mChannel.getName() + " at " + mNormalizedHours + ":" + mMinutes
+      + ", " + mNormalizedDate + ": '" + mTitle + "'";
   }
   
 }

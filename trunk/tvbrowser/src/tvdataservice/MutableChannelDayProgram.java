@@ -258,6 +258,11 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       while (iter.hasNext()) {
         
         Program prog = (Program) iter.next();
+        if (!prog.getDate().equals(today)) {
+          continue;
+        }
+        
+    //    System.out.println("trying program: "+prog.getHours()+":"+prog.getMinutes()+" "+prog.getTitle()+", date: "+prog.getDate());
         
         /*
         int startTime = prog.getHours() * 60 + prog.getMinutes();
@@ -269,6 +274,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
         }
         */
         int startTime = prog.getHours() * 60 + prog.getMinutes();
+      //  System.out.println("time: "+time+", startTime: "+startTime);
         if (startTime>time) {
           break;
         }

@@ -289,6 +289,9 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
     
+    mLog.info("Storing channel day light saving time corrections");
+    ChannelList.storeDayLightSavingTimeCorrections();
+    
     mLog.info("Storing window size and location");
     boolean maximized = getExtendedState() == JFrame.MAXIMIZED_BOTH;
     Settings.setWindowIsMaximized(maximized);

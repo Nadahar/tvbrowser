@@ -21,6 +21,7 @@
 package tvbrowser.core;
 
 import java.util.*;
+import java.io.*;
 
 import devplugin.Channel;
 import tvdataservice.TvDataService;
@@ -38,7 +39,83 @@ public class ChannelList {
 
   private static ArrayList mSubscribedChannels = new ArrayList();
 
+  public static void loadDayLightSavingTimeCorrections() {
+    File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
+    if (!f.exists()) {
+      return; 
+    }
+    
+    FileReader fr;
+    BufferedReader reader=null; 
+    try {
+      fr=new FileReader(f);
+      reader=new BufferedReader(fr);
+      String line;
+      for (;;){
+        line=reader.readLine();
+        if (line==null) {
+          break;
+        }
+        int pos=line.indexOf('=');
+        try {
+          String key=line.substring(0,pos);
+          String val=line.substring(pos+1);
+          if (val!=null) {
+            int corr=Integer.parseInt(val);            
+            
+            pos = key.indexOf(':');
+            String dataServiceClassName = key.substring(0,pos);
+            String id = key.substring(pos + 1);
 
+            TvDataService dataService
+              = TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+
+            Channel ch=ChannelList.getChannel(dataService,id);
+            if (ch!=null) {
+              ch.setDayLightSavingTimeCorrection(corr);
+            }
+            
+          }
+          
+          
+          
+          
+        }catch(IndexOutOfBoundsException e) {
+          // ignore
+        }
+      }
+      
+    }catch(IOException e) {
+      // ignore
+    }
+    if (reader!=null) {
+      try { reader.close(); }catch(IOException exc){}
+    }
+  }
+  
+  public static void storeDayLightSavingTimeCorrections() {
+    File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
+    
+    FileWriter fw;
+    PrintWriter out=null;
+    try {
+      fw=new FileWriter(f);
+      out=new PrintWriter(fw);
+      Channel[] channels=getSubscribedChannels();
+        for (int i=0;i<channels.length;i++) {
+          int corr=channels[i].getDayLightSavingTimeCorrection();
+          if (corr!=0) {
+            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+corr);  
+          }
+        }
+    }catch(IOException e) {
+      // ignore  
+    }
+    if (out!=null) {
+      out.close();
+    }
+    
+  }
 
   public static void addDataServiceChannels(TvDataService dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
