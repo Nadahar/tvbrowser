@@ -274,6 +274,11 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
     centerPanel.update(Settings.getTableSkin(),Settings.getTableBGMode());
   }
 
+
+	public void paintComponent(Graphics g) {
+		stateChanged(null);
+	}
+
   private void drag(Point p)
   {
     isDragging=true;
@@ -336,7 +341,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
    * interface ScrollableTablePanel
    */
   public void scrollTo(int hour) {
-
+  	
     int inx=hour*NUM_OF_DAYTIMES/24;
     int x=(int)scrollPane.getViewport().getViewPosition().getX();
     int y=centerPanel.getHeight()/NUM_OF_DAYTIMES*inx;

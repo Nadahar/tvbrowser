@@ -41,7 +41,7 @@ import tvbrowser.core.*;
 public class ChannelPanel extends JPanel {
 
     private JScrollPane scrollPane=null;
-  //  private int curX=0;
+
     public ChannelPanel() {
         int n=ChannelList.getNumberOfSubscribedChannels();
         setLayout(new BorderLayout());
@@ -79,16 +79,12 @@ public class ChannelPanel extends JPanel {
 
 
     public void scroll(int x) {
-        scrollPane.getViewport().setViewPosition(new Point(x,0));
-      //  curX=x;
+    	scrollPane.getViewport().setViewPosition(new Point(x,0));
+    	
+     
     }
     
- /*   public void repaint() {
-    	
-    	if (scrollPane!=null) {
-    		scroll(curX);
-			System.out.println("scrolling... to "+curX);
-			
-    	} 
-    }*/
+   
+    
+   
 }
