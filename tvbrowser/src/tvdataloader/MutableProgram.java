@@ -41,6 +41,12 @@ import tvdataloader.*;
  */
 public class MutableProgram extends AbstractProgram {
   
+  /**
+   * The maximum length of a short info. Used for generating a short info out of a
+   * (long) description.
+   */  
+  private static final int MAX_SHORT_INFO_LENGTH = 100;
+  
   /** The cached ID of this program. */
   transient private String mId;
   
@@ -155,10 +161,28 @@ public class MutableProgram extends AbstractProgram {
   
   /**
    * Sets a short information about the program (about three lines). May be null.
+   * <p>
+   * If the legth of the short info exceeds 100 characters it will be cut using
+   * a smart algorithm.
    *
    * @param shortInfo The new short info.
    */
   public void setShortInfo(String shortInfo) {
+    if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH)) {
+      // Get the end of the last fitting sentense
+      int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
+      int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
+      
+      int cutIdx = Math.max(lastDot, lastMidDot);
+      
+      // But show at least half the maximum length
+      if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
+        cutIdx = shortInfo.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
+      }
+      
+      shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
+    }
+    
     mShortInfo = shortInfo;
     fireStateChanged();
   }

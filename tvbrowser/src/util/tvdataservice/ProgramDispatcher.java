@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package xmltvdataservice;
+package util.tvdataservice;
 
 import java.util.HashMap;
 

@@ -176,11 +176,18 @@ SubSectionEnd
 
 SubSection "Daten-Services"
 
-Section "XML-TV-DatenService"
+Section "XML-TV-Datenservice"
   SectionIn 1 2
 
   SetOutPath "$INSTDIR\tvdataloader"
   File "${RUNTIME_DIR}\tvdataloader\XmlTvDataService.jar"
+SectionEnd
+
+Section "Premiere-DatenService"
+  SectionIn 1 2
+
+  SetOutPath "$INSTDIR\tvdataloader"
+  File "${RUNTIME_DIR}\tvdataloader\PremiereDataService.jar"
 SectionEnd
 
 SubSectionEnd
