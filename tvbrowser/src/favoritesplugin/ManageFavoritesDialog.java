@@ -156,16 +156,6 @@ public class ManageFavoritesDialog extends JDialog {
     });
     toolbarPn.add(mDownBt);
 
-    msg = mLocalizer.msg("sort", "Sort favorites alphabetically");
-    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Sort24.gif", getClass());
-    mSortBt = UiUtilities.createToolBarButton(msg, icon);
-    mSortBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        sortFavorites();
-      }
-    });
-    toolbarPn.add(mSortBt);
-
     msg = mLocalizer.msg("send", "Send Programs to another Plugin");
     icon = new ImageIcon("imgs/SendToPlugin24.png");
     mSendBt = UiUtilities.createToolBarButton(msg, icon);
@@ -176,7 +166,16 @@ public class ManageFavoritesDialog extends JDialog {
     });
     toolbarPn.add(mSendBt);
     
-    
+    msg = mLocalizer.msg("sort", "Sort favorites alphabetically");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Sort24.gif", getClass());
+    mSortBt = UiUtilities.createToolBarButton(msg, icon);
+    mSortBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        sortFavorites();
+      }
+    });
+    toolbarPn.add(mSortBt);
+
     msg = mLocalizer.msg("import", "Import favorites from TVgenial");
     icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Import24.gif", getClass());
     mImportBt = UiUtilities.createToolBarButton(msg, icon);
