@@ -54,6 +54,7 @@ public class PluginSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
     
     final File toFile=new File("plugins",mName+".jar.inst");
     
+    
     mSuccess=true;
     ProgressWindow progWin=new util.ui.progress.ProgressWindow(null,mLocalizer.msg("downloading","downloading update item..."));
     progWin.run(new Progress(){

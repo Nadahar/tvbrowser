@@ -739,6 +739,30 @@ public class Settings {
   }
 
 
+  public static void addInstalledPlugin(String plugin) {
+    
+    if (plugin==null) {
+      return;
+    }
+    
+    String[] pluginList=settings.getStringList("plugins");
+    
+    /* if we do have the new plugin already, there is nothing to do */
+    for (int i=0;i<pluginList.length;i++) {
+      if (plugin.equals(pluginList[i])) {
+        return;
+      }
+    }
+    
+    if (pluginList.length>0) {
+      String pluginListStr=settings.getProperty("plugins","");
+      settings.setProperty("plugins",pluginList+","+plugin);
+    }
+    else {
+      settings.setProperty("plugins",plugin);      
+    }
+  }
+
 
   public static void setInstalledPlugins(String[] plugins) {
 	  settings.setStringList("plugins", plugins);
