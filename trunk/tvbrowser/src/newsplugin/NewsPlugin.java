@@ -126,7 +126,7 @@ public class NewsPlugin extends Plugin {
     String desc = mLocalizer.msg( "description" ,"Gets the TV-Browser news after each TV data update." );
     String author = "Til Schneider, www.murfman.de";
     
-    return new PluginInfo(name, desc, author, new Version(1, 1));
+    return new PluginInfo(name, desc, author, new Version(1, 2));
   }
   
 
@@ -138,7 +138,7 @@ public class NewsPlugin extends Plugin {
       Date lastNews;
       if (mNewsList.isEmpty()) {
         // We have no news
-        lastNews = new Date(System.currentTimeMillis() - FIRST_NEWS_DAYS * 24 * 60 * 60 * 1000);
+        lastNews = new Date(System.currentTimeMillis() - (long)FIRST_NEWS_DAYS * 24L * 60L * 60L * 1000L);
       } else {
         News last = (News) mNewsList.get(mNewsList.size() - 1);
         lastNews = last.getTime();
@@ -155,7 +155,6 @@ public class NewsPlugin extends Plugin {
         + fill(cal.get(Calendar.SECOND), 2);
       
       URL url = new URL(NEWS_URL + "?lastNews=" + asString);
-      System.out.println("url: " + url);
       byte[] newsData = IOUtilities.loadFileFromHttpServer(url);
       String news = new String(newsData, "ISO-8859-1");
       if (news.startsWith("<?xml version=\"1.0\" ")) {
@@ -278,12 +277,12 @@ public class NewsPlugin extends Plugin {
     int size = in.readInt();
     mNewsList.clear();
     mNewsList.ensureCapacity(size);
-    Date deadline = new Date(System.currentTimeMillis() - MAX_NEWS_AGE * 24 * 60 * 60 * 1000);
+    Date deadline = new Date(System.currentTimeMillis() - (long)MAX_NEWS_AGE * 24L * 60L * 60L * 1000L);
     for (int i = 0; i < size; i++) {
       News news = News.readData(in, version);
-      
+
       // Don't add the old news
-      if (deadline.before(news.getTime())) {
+      if (news.getTime().after(deadline)) {
         mNewsList.add(news);
       }
     }
