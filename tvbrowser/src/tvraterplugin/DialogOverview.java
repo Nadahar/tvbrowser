@@ -48,8 +48,7 @@ import util.ui.UiUtilities;
 public class DialogOverview extends JDialog {
 
     /** Localizer */
-    private static final Localizer _mLocalizer = Localizer
-            .getLocalizerFor(DialogOverview.class);
+    private static final Localizer _mLocalizer = Localizer.getLocalizerFor(DialogOverview.class);
 
     /** The TVRaterPlugin with the Database */
     private TVRaterPlugin _tvraterPlugin;
@@ -69,10 +68,8 @@ public class DialogOverview extends JDialog {
     /**
      * Creates the Overview Dialog
      * 
-     * @param parent
-     *            Parent-Frame
-     * @param tvraterDB
-     *            Database to use
+     * @param parent Parent-Frame
+     * @param tvraterDB Database to use
      */
     public DialogOverview(Frame parent, TVRaterPlugin tvraterPlugin) {
         super(parent, true);
@@ -93,8 +90,7 @@ public class DialogOverview extends JDialog {
 
         RatingComparator comperator = new RatingComparator();
 
-        Vector overallVector = new Vector(_tvraterPlugin.getDatabase()
-                .getOverallRating());
+        Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
         Collections.sort(overallVector, comperator);
 
         _tabbed = new JTabbedPane();
@@ -103,35 +99,30 @@ public class DialogOverview extends JDialog {
         _overall.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
-                if ((e.getButton() == MouseEvent.BUTTON1)
-                        && (e.getClickCount() == 2)) {
+                if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
                     view();
                 }
                 super.mouseClicked(e);
             }
         });
 
-        _tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"),
-                new JScrollPane(_overall));
+        _tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(_overall));
 
-        Vector personalVector = new Vector(_tvraterPlugin.getDatabase()
-                .getPersonalRating());
+        Vector personalVector = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
         Collections.sort(personalVector, comperator);
 
         _personal = new JList(personalVector);
         _personal.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
-                if ((e.getButton() == MouseEvent.BUTTON1)
-                        && (e.getClickCount() == 2)) {
+                if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
                     view();
                 }
                 super.mouseClicked(e);
             }
         });
 
-        _tabbed.addTab(_mLocalizer.msg("personal", "Your Ratings"),
-                new JScrollPane(_personal));
+        _tabbed.addTab(_mLocalizer.msg("personal", "Your Ratings"), new JScrollPane(_personal));
 
         panel.add(_tabbed, BorderLayout.CENTER);
 
@@ -182,30 +173,16 @@ public class DialogOverview extends JDialog {
      * Creates a DialogRating with the selected Rating
      */
     protected void view() {
-        if ((_tabbed.getSelectedIndex() == 0)
-                && (_overall.getSelectedValue() != null)) {
-            
-            Runnable runLater = new Runnable() {
-                public void run() {
-                    DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(),
-                   			_tvraterPlugin, ((Rating) _overall.getSelectedValue()).getTitle());
+        if ((_tabbed.getSelectedIndex() == 0) && (_overall.getSelectedValue() != null)) {
 
-                    UiUtilities.centerAndShow(dlg);
-                }
-            };
-            
-            new Thread(runLater).start();
-        } else if ((_tabbed.getSelectedIndex() == 1)
-                && (_personal.getSelectedValue() != null)) {
-            Runnable runLater = new Runnable() {
-                public void run() {
-                    DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(),
-                            _tvraterPlugin, ((Rating) _personal.getSelectedValue())
-                                    .getTitle());
-                    UiUtilities.centerAndShow(dlg);
-                }
-            };
-            new Thread(runLater).start();
+            DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(), _tvraterPlugin,
+                    ((Rating) _overall.getSelectedValue()).getTitle());
+
+            UiUtilities.centerAndShow(dlg);
+        } else if ((_tabbed.getSelectedIndex() == 1) && (_personal.getSelectedValue() != null)) {
+            DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(), _tvraterPlugin,
+                    ((Rating) _personal.getSelectedValue()).getTitle());
+            UiUtilities.centerAndShow(dlg);
         }
     }
 
@@ -213,27 +190,19 @@ public class DialogOverview extends JDialog {
      * Updates the Database from the Server
      */
     protected void update() {
-        Thread updateThread = new Thread() {
+        _update.setEnabled(false);
+        System.out.println("Updater gestartet");
+        Updater up = new Updater(_tvraterPlugin);
+        up.run();
 
-            public void run() {
-                _update.setEnabled(false);
-                System.out.println("Updater gestartet");
-                Updater up = new Updater(_tvraterPlugin);
-                up.run();
+        RatingComparator comperator = new RatingComparator();
+        Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
+        Collections.sort(overallVector, comperator);
+        _overall.setListData(overallVector);
+        _update.setEnabled(true);
 
-                RatingComparator comperator = new RatingComparator();
-                Vector overallVector = new Vector(_tvraterPlugin.getDatabase()
-                        .getOverallRating());
-                Collections.sort(overallVector, comperator);
-                _overall.setListData(overallVector);
-                _update.setEnabled(true);
-
-                if (up.wasSuccessfull()) {
-                    JOptionPane.showMessageDialog(getParent(),
-                            _mLocalizer.msg("updateSuccess", "Update was successfull!"));
-                }
-            }
-        };
-        updateThread.start();
+        if (up.wasSuccessfull()) {
+            JOptionPane.showMessageDialog(getParent(), _mLocalizer.msg("updateSuccess", "Update was successfull!"));
+        }
     }
 }
