@@ -28,7 +28,8 @@ package favoritesplugin;
 
 import java.io.*;
 import java.util.Properties;
-import java.awt.Dimension;
+import java.util.ArrayList;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -71,16 +72,17 @@ public class FavoritesPlugin extends Plugin {
     mInstance = this;
   }
 
-  
-  
+
+
+
   public static FavoritesPlugin getInstance() {
     return mInstance;
   }
-  
-  
-  /*public void onActivation() {
-    mPluginRootNode = getRootNode();
-  }*/
+
+  ImageIcon getImageIcon(String fileName) {
+    return createImageIcon(fileName);
+  }
+
   
   public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
@@ -122,12 +124,26 @@ public class FavoritesPlugin extends Plugin {
     }
   }
 
+  private void deleteFavorite(Favorite favorite) {
+    favorite.unmarkPrograms();
+    ArrayList list = new ArrayList();
+    for (int i=0; i<mFavoriteArr.length; i++) {
+      if (!mFavoriteArr[i].equals(favorite)) {
+        list.add(mFavoriteArr[i]);
+      }
+    }
+    mFavoriteArr = new Favorite[list.size()];
+    list.toArray(mFavoriteArr);
+    updateTree();
+  }
 
-  private void updateTree() {
+ public void updateTree() {
     PluginTreeNode node = getRootNode();
     node.removeAllChildren();
     for (int i=0; i<mFavoriteArr.length; i++) {
       PluginTreeNode curNode = node.addNode(mFavoriteArr[i].getTitle());
+      curNode.addAction(new EditFavoriteAction(mFavoriteArr[i]));
+      curNode.addAction(new DeleteFavoriteAction(mFavoriteArr[i]));
       Program[] progs = mFavoriteArr[i].getPrograms();
       for (int j=0; j<progs.length; j++) {
         curNode.addProgram(progs[j]);
@@ -192,7 +208,9 @@ public class FavoritesPlugin extends Plugin {
       action.setBigIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
       action.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
       action.setShortDescription(mLocalizer.msg("favoritesManager", "Manage favorite programs"));
-      action.setText(mLocalizer.msg( "manageFavorites", "Manage Favorites" ));
+      action.setText(mLocalizer.msg( "buttonText", "Manage Favorites" ));
+
+
 
       return new ActionMenu(action);
     }
@@ -245,6 +263,7 @@ public class FavoritesPlugin extends Plugin {
       System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
       newFavoritesArr[mFavoriteArr.length] = favorite;
       mFavoriteArr = newFavoritesArr;
+      updateTree();
     }
   }
   
@@ -327,5 +346,41 @@ public class FavoritesPlugin extends Plugin {
   public boolean canUseProgramTree() {
     return true;
   }
-  
+
+
+  class EditFavoriteAction extends ButtonAction {
+
+    private Favorite mFavorite;
+
+    public EditFavoriteAction(Favorite favorite) {
+      mFavorite = favorite;
+      super.setSmallIcon(createImageIcon("favoritesplugin/Edit16.gif"));
+      super.setText(mLocalizer.msg("edit","edit"));
+
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      EditFavoriteDialog dlg = new EditFavoriteDialog(getParentFrame(), mFavorite);
+      dlg.centerAndShow();
+      if (dlg.getOkWasPressed()) {
+        FavoritesPlugin.getInstance().updateTree();
+      }
+    }
+  }
+
+  class DeleteFavoriteAction extends ButtonAction {
+
+    private Favorite mFavorite;
+
+    public DeleteFavoriteAction(Favorite favorite) {
+      mFavorite = favorite;
+      super.setSmallIcon(createImageIcon("favoritesplugin/Delete16.gif"));
+      super.setText(mLocalizer.msg("delete","delete"));
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      deleteFavorite(mFavorite);
+    }
+  }
+
 }

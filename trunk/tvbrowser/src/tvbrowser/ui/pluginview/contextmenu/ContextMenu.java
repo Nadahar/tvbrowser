@@ -24,52 +24,20 @@
  * $Revision$
  */
 
-package devplugin;
+
+
+package tvbrowser.ui.pluginview.contextmenu;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 01.01.2005
- * Time: 11:45:28
+ * Date: 03.01.2005
+ * Time: 20:48:17
  */
+public interface ContextMenu {
 
-public class ContextMenuAction extends AbstractAction {
+  public JPopupMenu getPopupMenu();
+  public Action getDefaultAction();
 
-    private ActionListener mListener;
-
-    public ContextMenuAction(String title, Icon icon) {
-      putValue(Action.NAME, title);
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public ContextMenuAction(String title) {
-      putValue(Action.NAME, title);
-    }
-
-    public ContextMenuAction() {
-    }  
-
-    public void setText(String text) {
-      putValue(Action.NAME, text);
-    }
-
-    public void setSmallIcon(Icon icon) {
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public void setActionListener(ActionListener listener) {
-      mListener = listener;
-    }
-
-    public void actionPerformed(ActionEvent event) {
-      if (mListener != null) {
-        mListener.actionPerformed(event);
-      }
-    }
-
-  }
-
-
+}

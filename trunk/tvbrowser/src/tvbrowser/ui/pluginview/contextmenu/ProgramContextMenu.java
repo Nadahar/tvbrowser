@@ -1,0 +1,128 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
+
+
+package tvbrowser.ui.pluginview.contextmenu;
+
+import tvbrowser.ui.pluginview.Node;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+
+import javax.swing.tree.TreePath;
+import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import devplugin.ProgramItem;
+import devplugin.Plugin;
+import devplugin.Program;
+import util.ui.menu.MenuUtil;
+
+/**
+ * Created by: Martin Oberhauser (martin@tvbrowser.org)
+ * Date: 03.01.2005
+ * Time: 22:07:30
+ */
+public class ProgramContextMenu extends AbstractContextMenu {
+
+  /** The localizer for this class. */
+      private static final util.ui.Localizer mLocalizer
+        = util.ui.Localizer.getLocalizerFor(ProgramContextMenu.class);
+
+
+
+  private TreePath[] mPaths;
+  private Action mDefaultAction;
+  private Plugin mPlugin;
+  private Program[] mPrograms;
+
+  public ProgramContextMenu(JTree tree, TreePath[] paths, Plugin plugin, Program[] programs) {
+    super(tree);
+    mPaths = paths;
+    mPlugin = plugin;
+    mPrograms = programs;
+    mDefaultAction = new AbstractAction(){
+        public void actionPerformed(ActionEvent e) {
+          Node node = (Node)mPaths[0].getLastPathComponent();
+          ProgramItem programItem = (ProgramItem) node.getUserObject();
+          MainFrame.getInstance().scrollToProgram(programItem.getProgram());
+        }
+      };
+      mDefaultAction.putValue(Action.NAME, mLocalizer.msg("show","show"));
+  }
+
+  public JPopupMenu getPopupMenu() {
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem showMI = new JMenuItem(mDefaultAction);
+    showMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+
+    showMI.setEnabled(mPaths.length == 1);
+    menu.add(showMI);
+
+    JMenu exportMI = new JMenu(mLocalizer.msg("export","export"));
+    exportMI.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+    menu.add(exportMI);
+
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    for (int i=0; i<plugins.length; i++) {
+      if (plugins[i].canReceivePrograms()) {
+        final PluginProxy plugin = plugins[i];
+        if (!mPlugin.getId().equals(plugin.getId())) {
+          JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
+          item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+          item.setIcon(plugins[i].getMarkIcon());
+          exportMI.add(item);
+          item.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+              plugin.receivePrograms(mPrograms);
+            }
+          });
+        }
+      }
+    }
+
+    menu.addSeparator();
+
+    JMenuItem[] pluginMenuItems = PluginProxyManager.createPluginContextMenuItems(mPrograms[0], false);
+    for (int i=0; i<pluginMenuItems.length; i++) {
+      menu.add(pluginMenuItems[i]);
+      pluginMenuItems[i].setEnabled(mPrograms.length == 1);
+    }
+
+    return menu;
+  }
+
+  public Action getDefaultAction() {
+    if (mPaths.length == 1) {
+      return mDefaultAction;
+    }
+    else {
+      return null;
+    }
+  }
+}

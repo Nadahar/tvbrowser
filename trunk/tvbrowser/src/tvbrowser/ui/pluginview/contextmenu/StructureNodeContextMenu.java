@@ -24,52 +24,39 @@
  * $Revision$
  */
 
-package devplugin;
+
+
+package tvbrowser.ui.pluginview.contextmenu;
+
+import util.ui.menu.MenuUtil;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.tree.TreePath;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 01.01.2005
- * Time: 11:45:28
+ * Date: 06.01.2005
+ * Time: 12:01:17
  */
+public class StructureNodeContextMenu extends AbstractContextMenu {
 
-public class ContextMenuAction extends AbstractAction {
+  private Action mDefaultAction;
 
-    private ActionListener mListener;
-
-    public ContextMenuAction(String title, Icon icon) {
-      putValue(Action.NAME, title);
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public ContextMenuAction(String title) {
-      putValue(Action.NAME, title);
-    }
-
-    public ContextMenuAction() {
-    }  
-
-    public void setText(String text) {
-      putValue(Action.NAME, text);
-    }
-
-    public void setSmallIcon(Icon icon) {
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public void setActionListener(ActionListener listener) {
-      mListener = listener;
-    }
-
-    public void actionPerformed(ActionEvent event) {
-      if (mListener != null) {
-        mListener.actionPerformed(event);
-      }
-    }
-
+  public StructureNodeContextMenu(JTree tree, TreePath path) {
+    super(tree);
+    mDefaultAction = getCollapseExpandAction(path);
   }
 
+  public JPopupMenu getPopupMenu() {
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem item = new JMenuItem(mDefaultAction);
+    item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+    menu.add(item);
+    return menu;
+  }
 
+  public Action getDefaultAction() {
+    return null;
+  }
+
+}

@@ -32,7 +32,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 import java.applet.*;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -62,7 +62,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public ReminderPlugin() {
     mInstance = this;
   }
+
   
+
   public void onActivation() {
     PluginTreeNode root = getRootNode();
     mReminderList = new ReminderList(root);
@@ -73,8 +75,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public static ReminderPlugin getInstance() {
     return mInstance;
   }
-  
-    
+
+
+
   public void timeEvent(ReminderListItem item) {
     if ("true" .equals(mSettings.getProperty( "usesound" ))) {
       playSound(mSettings.getProperty( "soundfile" ));

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@ import javax.swing.*;
 import tvbrowser.core.*;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.menu.MenuUtil;
 import devplugin.*;
 
 /**
@@ -90,14 +91,14 @@ public class PluginProxyManager {
    * 
    * @see #createPluginContextMenu(Program) 
    */
-  private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
+ // private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
 
   /**
    * The font to use in the context menu for the default plugin.
    * 
    * @see #createPluginContextMenu(Program) 
    */
-  private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
+ // private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
   
   /** The list containing all plugins (PluginListItem objects) in the right order. */
   private ArrayList mPluginList;
@@ -842,7 +843,7 @@ public class PluginProxyManager {
     return mDefaultContextMenuPlugin;
   }
 
-
+   /*
   private static JMenuItem getMenuItem(ActionMenu menu) {
     JMenuItem result;
     if (menu.hasSubItems()) {
@@ -863,7 +864,7 @@ public class PluginProxyManager {
     result.setFont(CONTEXT_MENU_PLAINFONT);
     return result;
   }
-
+        */
   public static JMenuItem[] createPluginContextMenuItems(Program program, boolean markDefaultPlugin) {
     ArrayList items = new ArrayList();
     PluginProxy defaultPlugin = getInstance().getDefaultContextMenuPlugin();
@@ -872,11 +873,11 @@ public class PluginProxyManager {
       PluginProxy plugin = pluginArr[i];
       ActionMenu actionMenu = plugin.getContextMenuActions(program);
       if (actionMenu != null) {
-        JMenuItem menuItem = getMenuItem(actionMenu);
+        JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
         items.add(menuItem);
         if (plugin == defaultPlugin && markDefaultPlugin) {
           if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-            menuItem.setFont(CONTEXT_MENU_BOLDFONT);
+            menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
           }
         }
       }
