@@ -27,8 +27,8 @@
 package tvbrowser;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -54,6 +54,7 @@ import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
+import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 
 
@@ -114,12 +115,9 @@ public class TVBrowser {
       ErrorHandler.handle(msg, exc);
     }
     
-    
-    
     SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
       new Color(63, 114, 133), Color.WHITE);
     UiUtilities.centerAndShow(splash);
-    
     
 	/*Maybe there are tvdataservices to install (.jar.inst files)*/
 	TvDataServiceManager.installPendingDataServices();
@@ -171,7 +169,12 @@ public class TVBrowser {
     splash.setMessage(msg);
     
     mainFrame=new MainFrame();
+    
+    // Set the program icon
+    Image iconImage = ImageUtilities.createImage("imgs/TVBrowser16.gif");
+    mainFrame.setIconImage(iconImage);
 
+    // Initialize the tray icon
     File iconTrayLib=new File("DesktopIndicator.dll");
     boolean useWindowsIconTray=false;
 

@@ -122,34 +122,47 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(panel,BorderLayout.CENTER);
     mSettingsPn.add(southPn,BorderLayout.SOUTH);
 
-    Channel ch;
+    // Split the channels in subscribed and available
     Iterator iter = ChannelList.getChannels();
-
-    Channel[] subscribedChannels=new Channel[ChannelList.getNumberOfSubscribedChannels()];
-    mLog.fine("ok till now");
+    int subscribedChannelCount = ChannelList.getNumberOfSubscribedChannels();
+    Channel[] subscribedChannelArr = new Channel[subscribedChannelCount];
+    ArrayList availableChannelList = new ArrayList();
     while (iter.hasNext()) {
-      ch = (Channel) iter.next();
-      mLog.fine("channel "+ch.getName());
-      //if (ch.isSubscribed()) {
-      if (ChannelList.isSubscribedChannel(ch)) {
-      	mLog.fine("is subscribed");
-      //  subscribedChannels[ch.getPos()]=ch;
-     	int pos=ChannelList.getPos(ch);
-      	subscribedChannels[pos]=ch;
-      }else{
-        panel.addElementLeft(ch);
-        mLog.fine("is NOT subscribed");
+      Channel channel = (Channel) iter.next();
+      if (ChannelList.isSubscribedChannel(channel)) {
+        int pos = ChannelList.getPos(channel);
+        subscribedChannelArr[pos] = channel;
+      } else {
+        availableChannelList.add(channel);
       }
     }
-    mLog.fine("done");
     
-    mLog.fine("subscribedChannel.length: "+subscribedChannels.length);
+    // Sort the available channels
+    Channel[] availableChannelArr = new Channel[availableChannelList.size()];
+    availableChannelList.toArray(availableChannelArr);
+    Arrays.sort(availableChannelArr, createChannelComparator());
 
-    for (int i=0;i<subscribedChannels.length;i++) {
-      panel.addElementRight(subscribedChannels[i]);
+    // Add the available channels
+    for (int i = 0; i < availableChannelArr.length; i++) {
+      panel.addElementLeft(availableChannelArr[i]);
+    }
+
+    // Add the subscribed channels    
+    for (int i = 0; i < subscribedChannelArr.length; i++) {
+      panel.addElementRight(subscribedChannelArr[i]);
     }
     
     return mSettingsPn;
+  }
+
+
+
+  private Comparator createChannelComparator() {
+    return new Comparator() {
+      public int compare(Object o1, Object o2) {
+        return o1.toString().compareTo(o2.toString());
+      }
+    };
   }
 
   
