@@ -418,27 +418,7 @@ public class Settings {
     return res;
   }
 
-/*
-  private static Object[] getListProperty(String key, String defaultValue) {
-    String s=settings.getProperty(key,defaultValue);
-    ArrayList result=new ArrayList();
-    int pos=0;
-    int last=0, cur=0, cnt=0;
-    int value;
-    Channel ch;
-    String a;
-    while (cur<s.length()) {
-      cur=s.indexOf(',',last);
-      if (cur==-1) { cur=s.length(); }
-      a=s.substring(last,cur);
-      value=Integer.parseInt(a.trim());
-      result.add(new Integer(value));
-      cur++;
-      last=cur;
-    }
-    return result.toArray();
-  }
-*/
+
 
   public static String[] getButtonPlugins() {
 
@@ -449,56 +429,12 @@ public class Settings {
    	 settings.setStringList("buttonplugins",plugins);
    }
 
-/*
-   private static String[] getStringListProperty(String key) {
 
-	  String s=settings.getProperty(key);
-	  if (s==null) return new String[0];
-
-	  ArrayList list=new ArrayList();
-	  int cur=0, last=0;
-	  String a;
-	  while (cur<s.length()) {
-		cur=s.indexOf(',',last);
-		if (cur==-1) {
-		  cur=s.length();
-		}
-		list.add(s.substring(last,cur).trim());
-		cur++;
-		last=cur;
-	  }
-
-	  String[] result=new String[list.size()];
-	  for (int i=0;i<list.size();i++) {
-		  result[i]=(String)list.get(i);
-	  }
-	  return result;
-
-	}*/
-/*
-	private static void setStringListProperty(String key, String[] strList) {
-		if (strList==null || strList.length==0) {
-			settings.setProperty(key,"");
-			return;
-		}
-
-		String line="";
-
-		for (int i=0;i<strList.length-1;i++) {
-			line+=strList[i]+",";
-		}
-		line+=strList[strList.length-1];
-		settings.setProperty(key,line);
-	}
-*/
 
   /**
    * Returns all installed plugins as an array of Strings
    */
   public static String[] getInstalledPlugins() {
-//<<<<<<< Settings.java
-//    return settings.getStringList("plugins");
-//=======
     if (settings.getProperty("plugins") == null) {
       // Install by default all plugins
       devplugin.Plugin[] availableArr = PluginManager.getAvailablePlugins();
@@ -510,7 +446,6 @@ public class Settings {
     }
     
     return settings.getStringList("plugins");
-//>>>>>>> 1.26
   }
 
 
@@ -599,7 +534,7 @@ public class Settings {
 	public static java.awt.Font getProgramInfoFont() {
 		Font f=settings.getFont("programinfofont");
 		if (f==null) {
-			f=new Font("Helvetica",Font.PLAIN,12);
+			f=new Font("Helvetica",Font.PLAIN,10);
 		}
 		return f;
 	}

@@ -29,7 +29,7 @@ package tvbrowser.ui.programtable;
 
 import java.util.Iterator;
 
-import java.util.Calendar;
+
 
 import java.awt.*;
 import javax.swing.*;
@@ -77,9 +77,12 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private devplugin.Program mProgram;
 
   static {
-    Font f=new JTextArea().getFont();
-    bold=new Font(f.getName(),Font.BOLD,f.getSize());
-    italic=new Font(f.getName(),Font.PLAIN,f.getSize()-2);
+   // Font f=new JTextArea().getFont();
+   // bold=new Font(f.getName(),Font.BOLD,f.getSize());
+   // italic=new Font(f.getName(),Font.PLAIN,f.getSize()-2);
+   bold=Settings.getProgramTitleFont();
+   italic=Settings.getProgramInfoFont();
+   
   }
 
   
