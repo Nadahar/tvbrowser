@@ -101,7 +101,6 @@ public class ListAction extends AbstractAction {
      * @param name show Name?
      */
     private void createGui(boolean icon, boolean name) {
-        // TODO: Translate this!
         if (name)
             putValue(Action.NAME, mLocalizer.msg("showList", "Show List"));
         
