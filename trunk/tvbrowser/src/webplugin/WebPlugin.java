@@ -222,10 +222,4 @@ public class WebPlugin extends Plugin {
   		    }    
     }
 
-    /**
-     * Returns NO Button-Text
-     */
-    protected String getButtonText() {
-        return null;
-    }
 }

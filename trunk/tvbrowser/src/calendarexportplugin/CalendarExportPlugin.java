@@ -65,15 +65,6 @@ public class CalendarExportPlugin extends Plugin {
     public String getMarkIconName() {
         return "calendarexportplugin/calendar.png";
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getButtonText()
-     */
-    public String getButtonText() {
-        return null;
-    }
     
     /*
      *  (non-Javadoc)
