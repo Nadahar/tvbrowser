@@ -5,6 +5,7 @@ package tvraterplugin;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.Comparator;
 import java.util.TreeSet;
 
 import javax.swing.DefaultComboBoxModel;
@@ -15,13 +16,17 @@ import javax.swing.ListCellRenderer;
 
 
 /**
+ * This Class shows a Combobox filled with all Genres
+ * 
  * @author bodo
  */
-public class GenreComboBox extends JComboBox implements ListCellRenderer {
+public class GenreComboBox extends JComboBox implements ListCellRenderer, Comparator {
 
     public GenreComboBox(int curRating) {
-        TreeSet tree = new TreeSet(RatingIconTextFactory.getGenres().keySet());
+        TreeSet tree = new TreeSet(this);
 
+        tree.addAll(RatingIconTextFactory.getGenres().keySet());
+        
         DefaultComboBoxModel model = new DefaultComboBoxModel(tree.toArray());
 	    setModel(model);
 
@@ -80,5 +85,27 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer {
         }        
         return label;
     }
+
+
+	/**
+	 * Compares two Genres
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
+	public int compare(Object o1, Object o2) {
+		
+		String a = o1.toString();
+		String b = o2.toString();
+
+		if (a.charAt(0) < b.charAt(0)) {
+			return -1;
+		} else if (a.charAt(0) > b.charAt(0)) {
+			return 1;
+		} 
+
+		String aText = RatingIconTextFactory.getGenres().getProperty(a, "-").toString();
+		String bText = RatingIconTextFactory.getGenres().getProperty(b, "-").toString();
+		
+		return aText.compareTo(bText);
+	}
 
 }
