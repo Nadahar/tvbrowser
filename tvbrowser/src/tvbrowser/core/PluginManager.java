@@ -24,28 +24,29 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.core;
 
 import devplugin.Plugin;
-
 
 import java.io.*;
 import java.util.Properties;
 import java.util.HashMap;
 
+import util.exc.*;
 
 /**
  * The PluginManager is a Class for communicating with installed plugins.
+ *
+ * @author Martin Oberhauser
  */
-
 public class PluginManager {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(PluginManager.class.getName());
+  
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(PluginManager.class);
+  
   private static HashMap plugins;
   private static HashMap installedPlugins;
 
@@ -61,8 +62,10 @@ public class PluginManager {
         ObjectInputStream in=new ObjectInputStream(new FileInputStream(f));
         plugin.loadData(in);
         in.close();
-      }catch(IOException e) {
-        e.printStackTrace();
+      } catch (IOException exc) {
+        String msg = mLocalizer.msg("error.1", "Loading data for plugin {0} failed!\n({1})",
+          plugin.getButtonText(), f.getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
   }
@@ -71,21 +74,22 @@ public class PluginManager {
    * Calls storeData for each Plugin and stores the plugins data
    */
   private static void storePluginData(Plugin plugin) {
-
     Object data=plugin.storeData();
     if (data!=null) {
+      String dir=Settings.getUserDirectoryName();
+      File f=new File(dir);
+      if (!f.exists()) {
+        f.mkdir();
+      }
+      f=new File(dir,plugin.getClass().getName()+".dat");
       try {
-        String dir=Settings.getUserDirectoryName();
-        File f=new File(dir);
-        if (!f.exists()) {
-          f.mkdir();
-        }
-        f=new File(dir,plugin.getClass().getName()+".dat");
         ObjectOutputStream out=new ObjectOutputStream(new FileOutputStream(f));
         out.writeObject(data);
         out.close();
-      }catch(IOException e) {
-        e.printStackTrace();
+      } catch(IOException exc) {
+        String msg = mLocalizer.msg("error.2", "Saving data for plugin {0} failed!\n({1})",
+          plugin.getButtonText(), f.getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
 
@@ -102,8 +106,10 @@ public class PluginManager {
         p.load(in);
         in.close();
         plugin.loadSettings(p);
-      }catch(IOException e) {
-        e.printStackTrace();
+      } catch (IOException exc) {
+        String msg = mLocalizer.msg("error.3", "Loading settings for plugin {0} failed!\n({1})",
+          plugin.getButtonText(), f.getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }else{
       plugin.loadSettings(new Properties());
@@ -113,18 +119,20 @@ public class PluginManager {
   private static void storePluginSettings(Plugin plugin) {
     Properties prop=plugin.storeSettings();
     if (prop!=null) {
+      String dir=Settings.getUserDirectoryName();
+      File f=new File(dir);
+      if (!f.exists()) {
+        f.mkdir();
+      }
+      f=new File(dir,plugin.getClass().getName()+".prop");
       try {
-        String dir=Settings.getUserDirectoryName();
-
-        File f=new File(dir);
-        if (!f.exists()) {
-          f.mkdir();
-        }
-        f=new File(dir,plugin.getClass().getName()+".prop");
         FileOutputStream out=new FileOutputStream(f);
         prop.store(out,"settings");
-      }catch(IOException e) {
-        e.printStackTrace();
+        out.close();
+      } catch (IOException exc) {
+        String msg = mLocalizer.msg("error.4", "Saving settings for plugin {0} failed!\n({1})",
+          plugin.getButtonText(), f.getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
   }
@@ -187,9 +195,11 @@ public class PluginManager {
     java.net.URL[] urlList=new java.net.URL[fileList.length];
     for (int i=0;i<urlList.length;i++) {
       try {
-        urlList[i]=new java.net.URL("file://"+fileList[i].getAbsolutePath());
-      }catch(java.net.MalformedURLException e) {
-        e.printStackTrace();
+        urlList[i] = fileList[i].toURL();
+      } catch (java.net.MalformedURLException exc) {
+        String msg = mLocalizer.msg("error.5", "Loading plugin failed!\n({0})",
+          fileList[i].getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
 
@@ -209,24 +219,21 @@ public class PluginManager {
         plugins.put(p.getClass().getName(),p);
 
         devplugin.PluginInfo info=p.getInfo();
-        Logger.message("PluginManager.loadAvailablePlugins","Plugin "+name+" available");
-
-      }catch(ClassNotFoundException e) {
-        Logger.exception(e);
-      }catch(InstantiationException e) {
-        Logger.exception(e);
-      }catch(IllegalAccessException e) {
-        Logger.exception(e);
+        mLog.info("Plugin " + name + " available");
+      }
+      catch (Exception exc) {
+        String msg = mLocalizer.msg("error.5", "Loading plugin failed!\n({0})",
+          fileList[i].getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
-
-
   }
+  
+  
 
   /**
    * Returns the installed plugins as an array of Plugin-Objects
    */
-
   public static Object[] getInstalledPlugins() {
     if (installedPlugins!=null) {
       return installedPlugins.values().toArray();

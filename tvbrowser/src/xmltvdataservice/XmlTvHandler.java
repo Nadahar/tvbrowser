@@ -191,8 +191,6 @@ public class XmlTvHandler extends DefaultHandler {
       }
     }
     catch (RuntimeException exc) {
-      System.err.println("Exception: " + exc);
-      exc.printStackTrace();
       throw new SAXException("Exception handling start tag '" + currElement + "'!", exc);
     }
   }

@@ -37,6 +37,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import util.exc.*;
+
 import tvbrowser.core.*;
 
 public class SettingsDlg extends JDialog implements ActionListener {
@@ -108,8 +110,8 @@ public class SettingsDlg extends JDialog implements ActionListener {
       }
       try {
         Settings.storeSettings();
-      }catch (java.io.IOException e) {
-        e.printStackTrace();
+      } catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
       }
       setVisible(false);
     }

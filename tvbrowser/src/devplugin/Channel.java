@@ -24,19 +24,14 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package devplugin;
 
 /**
  * This interface provides a view of the channel object, implemented in the
  * host-application.
+ *
+ * @author Martin Oberhauser
  */
-
 public interface Channel {
 
   /**

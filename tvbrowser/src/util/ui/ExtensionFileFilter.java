@@ -30,6 +30,12 @@ import java.io.*;
 
 import javax.swing.filechooser.FileFilter;
 
+/**
+ * A file filter that allows to specify a set of extension for determining,
+ * whether a file should be shown.
+ *
+ * @autor  Til Schneider, www.murfman.de
+ */
 public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
 
   String[] mExtenstionList;

@@ -24,25 +24,24 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.core;
 
 import java.util.*;
 import java.io.*;
 import javax.swing.*;
 
+import util.exc.TvBrowserException;
 
 /**
  * The Settings class provides access to the settings of the whole application
  * (except the plugins).
+ *
+ * @author Martin Oberhauser
  */
-
 public class Settings {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(Settings.class.getName());
 
   private static Properties settings=null;
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
@@ -75,12 +74,27 @@ public class Settings {
   /**
    * Store all settings. This method is called on quitting the application.
    */
-  public static void storeSettings() throws IOException {
+  public static void storeSettings() throws TvBrowserException {
     File f=new File(getUserDirectoryName());
     if (!f.exists()) {
       f.mkdirs();
     }
-    settings.store(new FileOutputStream(new File(getUserDirectoryName(),SETTINGS_FILE)),"settings");
+    
+    File settingsFile = new File(getUserDirectoryName(), SETTINGS_FILE);
+    FileOutputStream out = null;
+    try {
+      out = new FileOutputStream(settingsFile);
+      settings.store(out, "settings");
+    }
+    catch (IOException exc) {
+      throw new TvBrowserException(Settings.class, "error.1",
+        "Error when saving settings!\n({0})", settingsFile.getAbsolutePath(), exc);
+    }
+    finally {
+      if (out != null) {
+        try { out.close(); } catch (IOException exc) {}
+      }
+    }
   }
 
   /**
@@ -92,7 +106,7 @@ public class Settings {
     try {
       settings.load(new FileInputStream(new File(getUserDirectoryName(),SETTINGS_FILE)));
     }catch (IOException e) {
-      Logger.message("Settings.loadSettings","no user settings found. using default user settings");
+      mLog.info("No user settings found. using default user settings");
     }finally{
       String value=settings.getProperty("subscribed","1,2,3,4,5");
       int pos=0;

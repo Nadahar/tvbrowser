@@ -41,9 +41,13 @@ import java.util.*;
 import java.applet.*;
 import java.net.URL;
 
+import util.exc.*;
 
 public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ReminderPlugin.class);
+  
   private ReminderList reminderList=null;
   private Properties settings;
   private Icon icon=null;
@@ -54,12 +58,13 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     if ("true".equals(settings.getProperty("usesound"))) {
       String fName=settings.getProperty("soundfile");
       try {
-        URL url=new URL("file:"+fName);
+        URL url = new File(fName).toURL();
         AudioClip clip=Applet.newAudioClip(url);
         clip.play();
-      }catch(java.net.MalformedURLException e) {
-        JOptionPane.showMessageDialog(parent,"Could not open file '"+fName+"'");
-        e.printStackTrace();
+      } catch(java.net.MalformedURLException exc) {
+        String msg = mLocalizer.msg("error.1",
+          "Error loading reminder sound file!\n({0})", fName, exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
 
@@ -71,9 +76,10 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       String fName=settings.getProperty("execfile");
       try {
         Runtime.getRuntime().exec(fName);
-      }catch(IOException e) {
-        JOptionPane.showMessageDialog(parent,"Could not open '"+fName+"");
-        e.printStackTrace();
+      } catch (IOException exc) {
+        String msg = mLocalizer.msg("error.2",
+          "Error executing reminder program!\n({0})", fName, exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
     
@@ -98,10 +104,11 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       try {
         reminderList=(ReminderList)in.readObject();
         in.close();
-      }catch(ClassNotFoundException e) {
-        e.printStackTrace();
-      }catch(IOException e) {
-        e.printStackTrace();
+      }
+      catch(Exception exc) {
+        String msg = mLocalizer.msg("error.3",
+          "Error loading reminder list!\n({0})", exc);
+        ErrorHandler.handle(msg, exc);
       }
 
       reminderList.removeExpiredItems();

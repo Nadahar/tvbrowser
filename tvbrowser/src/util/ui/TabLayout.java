@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package searchplugin;
+package util.ui;
 
 import java.awt.*;
 

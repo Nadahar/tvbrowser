@@ -35,6 +35,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import util.exc.*;
+import util.ui.TabLayout;
+
 import devplugin.*;
 
 /**
@@ -181,9 +184,8 @@ public class SearchDialog extends JDialog {
         showHitsDialog(programArr, title);
       }
     }
-    catch (java.util.regex.PatternSyntaxException exc) {
-      String msg = "Fehler in regulärem Ausdruck!\n\n" + exc.getMessage();
-      JOptionPane.showMessageDialog(this, msg);
+    catch (TvBrowserException exc) {
+      ErrorHandler.handle(exc);
     }
   }
   
