@@ -50,7 +50,7 @@ public class ProgramFieldType {
                            
   public static final ProgramFieldType TITLE_TYPE
     = new ProgramFieldType(3, "title", TEXT_FORMAT, true);
-
+    
   public static final ProgramFieldType ORIGINAL_TITLE_TYPE
     = new ProgramFieldType(4, "original title", TEXT_FORMAT, true);
     
@@ -87,6 +87,17 @@ public class ProgramFieldType {
   public static final ProgramFieldType URL_TYPE
     = new ProgramFieldType(15, "film url", TEXT_FORMAT, true);
                            
+  public static final ProgramFieldType GENRE_TYPE
+    = new ProgramFieldType(16, "genre", TEXT_FORMAT, true);                         
+
+  public static final ProgramFieldType ORIGIN_TYPE
+    = new ProgramFieldType(17, "origin", TEXT_FORMAT, true);
+
+  public static final ProgramFieldType NET_PLAYING_TIME
+    = new ProgramFieldType(18, "net playing time", INT_FORMAT, true);
+
+  public static final ProgramFieldType FSK_TYPE
+    = new ProgramFieldType(19, "fsk", TEXT_FORMAT, true);
 
   private int mTypeId;
 

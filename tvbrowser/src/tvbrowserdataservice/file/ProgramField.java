@@ -59,6 +59,24 @@ public class ProgramField implements Cloneable {
     mType = null;
   }
   
+  public ProgramField(ProgramFieldType type, String text) {
+    setType(type);
+    setTextData(text);
+    //System.out.println(text);
+  }
+  
+  public ProgramField(ProgramFieldType type, byte[] data) {
+    setType(type);
+    setBinaryData(data);
+  }
+  
+  public ProgramField(ProgramFieldType type, int value) {
+    setType(type);
+    setIntData(value);
+    //System.out.println(value);
+  }
+  
+  
   
   
   public Object clone() {

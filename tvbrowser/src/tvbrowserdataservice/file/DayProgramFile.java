@@ -47,8 +47,7 @@ public class DayProgramFile {
     mVersion = 1;
     mProgramFrameList = new ArrayList();
   }
-
-
+  
   
   /**
    * @return
