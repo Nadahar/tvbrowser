@@ -149,9 +149,9 @@ public class TVBrowser {
           int result=dlg.getSelection();
           if (result==TvdataAssistantDlg.IMPORT_DATA) {
             TvdataImportDlg importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata","import tv data"),"tvdata",Settings.getTVDataDirectory());
-            UiUtilities.centerAndShow(importDlg);
-            Settings.setShowAssistant(importDlg.getResult()!=TvdataImportDlg.OK);  
-          }          
+            UiUtilities.centerAndShow(importDlg);  
+          }
+          Settings.setShowAssistant(result==TvdataAssistantDlg.RUN_ASSISTANT);         
         }
       }
         

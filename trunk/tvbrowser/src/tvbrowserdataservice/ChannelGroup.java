@@ -30,6 +30,7 @@ package tvbrowserdataservice;
 import devplugin.Date;
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -44,7 +45,7 @@ import util.io.IOUtilities;
 public class ChannelGroup implements devplugin.ChannelGroup {
   
   private String mID;
-  private String mMirrorUrl;
+  private String[] mMirrorUrlArr;
   
   private File mDataDir;
   private Channel[] mAvailableChannelArr;
@@ -54,6 +55,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private TvDataBaseUpdater mUpdater;
   
   private String mGroupName=null;
+  private String mDescription;
   
   private int mDirectlyLoadedBytes;
   
@@ -71,13 +73,15 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private static final int MAX_LAST_UPDATE_DAYS = 5;
 
  
-  public ChannelGroup(TvBrowserDataService dataservice, String groupUrl) {
-    int inx=groupUrl.lastIndexOf('/');    
-    mID=groupUrl.substring(inx+1,groupUrl.length());
-    mMirrorUrl=groupUrl.substring(0,inx+1);
+  public ChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls) {
+    mID=id;
     mDataService=dataservice;
+    mMirrorUrlArr=mirrorUrls;
     
-    
+  }
+  
+  public String[] getMirrorArr() {
+    return mMirrorUrlArr;
   }
   
   public boolean isGroupMember(Channel ch) {
@@ -88,6 +92,35 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     mDataDir=dataDir; 
   }
   
+  private String getLocaleProperty(Properties prop, String key, String defaultValue) {
+    Locale locale=Locale.getDefault();
+    String language=locale.getLanguage();
+    String result=prop.getProperty(key+"_"+language);
+    if (result==null) {
+      result=prop.getProperty(key+"_default",defaultValue);
+    }
+    return result;
+          
+  }
+  
+  
+  public String getDescription() {
+    if (mDescription!=null) {
+      return mDescription;
+    }
+    File file = new File(mDataDir, mID);
+    if (!file.exists()) {
+      return ""; 
+    }
+    Properties prop=new Properties();
+    try {
+      prop.load(new FileInputStream(file));
+      return getLocaleProperty(prop,"description","");      
+    } catch (IOException e) {
+      return "";
+    }
+    
+  }
   
   public String getName() {
     if (mGroupName!=null) {
@@ -98,6 +131,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     if (!file.exists()) {
       return mID; 
     }
+    
+    
+    // TODO: use method getLocaleProperty
     Properties prop=new Properties();
     try {
       prop.load(new FileInputStream(file));
@@ -108,7 +144,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         result=prop.getProperty("default",mID);
       }
       return result;
-      //System.out.println(locale.getLanguage());
+      
     } catch (IOException e) {
       return mID;
     }
@@ -117,7 +153,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
        
   }
   
-  
+  public String toString() {
+    return getName();
+  }
     
   
   
@@ -187,7 +225,14 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         return Mirror.readMirrorListFromFile(file);
       }
       catch (Exception exc) {
-        return new Mirror[]{new Mirror(mMirrorUrl)};
+        
+        Mirror[] mirrorList=new Mirror[mMirrorUrlArr.length];
+        for (int i=0;i<mMirrorUrlArr.length;i++) {
+          mirrorList[i]=new Mirror(mMirrorUrlArr[i]);
+        }
+        return mirrorList;
+        
+        
       }
     }
     
@@ -195,6 +240,20 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror)
      throws TvBrowserException
    {
+     
+     /* remove the old mirror from the mirrorlist */
+     if (oldMirror!=null) {
+       ArrayList mirrors=new ArrayList();
+       for (int i=0;i<mirrorArr.length;i++) {
+         if (oldMirror!=mirrorArr[i]) {
+           mirrors.add(mirrorArr[i]);
+         }
+       }
+       mirrorArr=new Mirror[mirrors.size()];
+       mirrors.toArray(mirrorArr);
+     }
+     
+     
      // Get the total weight
      int totalWeight = 0;
      for (int i = 0; i < mirrorArr.length; i++) {
@@ -221,9 +280,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
      }
     
      // We didn't find a mirror? This should not happen -> throw exception
+     StringBuffer buf=new StringBuffer();
+     for (int i=0;i<mMirrorUrlArr.length;i++) {
+       buf.append(mMirrorUrlArr[i]).append("\n");
+     }
+     
      throw new TvBrowserException(getClass(), "error.2",
-       "No mirror found (chosen weight={0}, total weight={1})",
-       new Integer(chosenWeight), new Integer(totalWeight));
+       "No mirror found\ntried following mirrors: ",buf.toString());
    }
     
   private boolean mirrorIsUpToDate(Mirror mirror)
@@ -358,13 +421,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   }
     
     
-  public Channel[] checkForAvailableChannels() throws TvBrowserException {
+  public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
           
     // load the mirror list
     Mirror[] mirrorArr = loadMirrorList();
     
     // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr,null);
+    Mirror mirror = chooseUpToDateMirror(mirrorArr, monitor);
     mLog.info("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)
@@ -395,6 +458,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
              public String getId() {
                return mID;
              }
+             public String getDescription() {
+               return mDescription;
+             }
            };
            
            
@@ -424,4 +490,16 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 		return mID;
 	}  
   
+  public boolean equals(Object obj) {
+    
+    if (obj instanceof devplugin.ChannelGroup) {
+      devplugin.ChannelGroup group=(devplugin.ChannelGroup)obj;
+      return group.getId().equalsIgnoreCase(mID);
+    }
+    return false;
+    
+  }
+
+	
+	
 }

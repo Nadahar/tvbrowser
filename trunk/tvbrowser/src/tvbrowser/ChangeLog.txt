@@ -1,13 +1,13 @@
 Changelog TVBrowser
 
-current:
+0.9.7.3:
 - added downnload status info
 - Extended program table
     - Support for plugin icons
     - The info text is now freely configurable
     - The table is much faster
 - Faster download of TV data (summary file, more simultanious download threads)
-
+- Support for channel groups
 
 0.9.7.1, 0.9.7.2:
 - Program now supports all new data fields

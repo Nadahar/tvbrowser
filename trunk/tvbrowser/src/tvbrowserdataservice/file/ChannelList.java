@@ -64,6 +64,9 @@ public class ChannelList {
       public String getId() {
         return groupName;
       }
+      public String getDescription() {
+        return "";
+      }
     };
   }
   
