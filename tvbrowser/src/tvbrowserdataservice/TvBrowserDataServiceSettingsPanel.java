@@ -67,7 +67,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
     private JTextArea mGroupDescriptionTA;
 
-    private JButton mAddBtn, mRemoveBtn, mResetBtn;
+    private JButton mAddBtn, mRemoveBtn, mResetBtn, mInfoBtn;
 
     private JList mGroupList;
 
@@ -145,15 +145,20 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         mResetBtn = new JButton(mLocalizer.msg("reset", "Reset"), ImageUtilities.createImageIconFromJar(
                 "tvbrowserdataservice/Refresh24.gif", getClass()));
 
+        mInfoBtn =  new JButton("Information", ImageUtilities.createImageIconFromJar(
+                "tvbrowserdataservice/Information24.gif", getClass()));
+        
         mAddBtn.setHorizontalAlignment(JButton.LEFT);
         mRemoveBtn.setHorizontalAlignment(JButton.LEFT);
         mResetBtn.setHorizontalAlignment(JButton.LEFT);
 
         btnPn.add(mAddBtn);
         btnPn.add(mRemoveBtn);
+        btnPn.add(mInfoBtn);
 
         mAddBtn.addActionListener(this);
         mRemoveBtn.addActionListener(this);
+        mInfoBtn.addActionListener(this);
         mResetBtn.addActionListener(this);
 
         panel3.add(btnPn, BorderLayout.NORTH);
@@ -188,6 +193,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
             public void valueChanged(ListSelectionEvent arg0) {
                 mRemoveBtn.setEnabled(mGroupList.getSelectedIndex() >= 0);
+                mInfoBtn.setEnabled(mGroupList.getSelectedIndex() >= 0);
                 ChannelGroup group = (ChannelGroup) mGroupList.getSelectedValue();
                 if (group == null) {
                     mGroupDescriptionTA.setText("");
@@ -198,6 +204,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         });
 
         mRemoveBtn.setEnabled(mGroupList.getSelectedIndex() >= 0);
+        mInfoBtn.setEnabled(mGroupList.getSelectedIndex() >= 0);
         fillGroupList(TvBrowserDataService.getInstance().getChannelGroups());
 
     }
@@ -266,7 +273,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
         String groupUrl = url.substring(0, pos);
 
-        ChannelGroup group = new ChannelGroup(TvBrowserDataService.getInstance(), groupId, new String[] { groupUrl });
+        ChannelGroup group = new ChannelGroup(TvBrowserDataService.getInstance(), groupId, new String[] { groupUrl }, mSettings);
         group.checkForAvailableChannels(monitor);
         return group;
     }
@@ -326,6 +333,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
             ChannelGroup[] groups = TvBrowserDataService.getInstance().getDefaultGroups();
             fillGroupList(groups);
             TvBrowserDataService.getInstance().setChannelGroups(groups);
+        } else if (source == mInfoBtn) {
+            JOptionPane.showMessageDialog(this, "Hello");
         }
 
     }
