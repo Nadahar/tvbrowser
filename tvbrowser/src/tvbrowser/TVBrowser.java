@@ -36,6 +36,8 @@ import java.io.*;
 import java.util.logging.*;
 
 
+import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+
 
 import tvbrowser.core.*;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
@@ -147,7 +149,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     Settings.loadSettings();
     
-	File f=new File(Settings.getTVDataDirectory());
+	 File f=new File(Settings.getTVDataDirectory());
 		if (!f.exists()) {
 			mLog.info("Creating tv data directory...");
 			if (!f.mkdirs()) {
@@ -160,14 +162,27 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
     splash.setMessage(msg);
     
-    try {
-      curLookAndFeel = Settings.getLookAndFeel();
-      UIManager.setLookAndFeel(curLookAndFeel);
+    if (Settings.isSkinLFEnabled()) {
+      String themepack=Settings.getSkinLFThemepack();
+      try {
+        SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
+        SkinLookAndFeel.enable();
+      }catch(Exception exc) {
+        ErrorHandler.handle("Could not load themepack",exc);
+      }
     }
-    catch (Exception exc) {
-      msg = mLocalizer.msg("error.1", "Unable to set look and feel.");
-      ErrorHandler.handle(msg, exc);
+    else {
+      try {
+        curLookAndFeel = Settings.getLookAndFeel();
+        UIManager.setLookAndFeel(curLookAndFeel);
+      }
+      catch (Exception exc) {
+        msg = mLocalizer.msg("error.1", "Unable to set look and feel.");
+        ErrorHandler.handle(msg, exc);
+      }
     }
+    
+    
     
     devplugin.Plugin.setPluginManager(DataService.getInstance());
     

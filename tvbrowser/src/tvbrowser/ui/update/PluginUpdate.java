@@ -81,7 +81,7 @@ public class PluginUpdate {
 							DownloadPluginsDlg dlDlg=new DownloadPluginsDlg(mainFrame,list);
 					
 							dlDlg.dispose();
-							JOptionPane.showMessageDialog(mainFrame,mLocalizer.msg("restartprogram","Pleas  restart TV-Browser"));		
+							JOptionPane.showMessageDialog(mainFrame,mLocalizer.msg("restartprogram","Please  restart TV-Browser"));		
 						}						
 				//	}
 			}	
@@ -94,7 +94,7 @@ public class PluginUpdate {
 
 			URL url=new URL("http://tvbrowser.sourceforge.net/plugins/plugins.txt");
 			
-			//URL url=new File("plugins.txt").toURL();
+		//	URL url=new File("plugins.txt").toURL();
 			
 			URLConnection con=url.openConnection();
 		

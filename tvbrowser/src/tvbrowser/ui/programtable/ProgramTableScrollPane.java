@@ -125,6 +125,10 @@ public class ProgramTableScrollPane extends JScrollPane
     
     scrollPos.y = mProgramTable.getTimeY(minutesAfterMidnight)
       - (getViewport().getHeight() / 2);
+      
+    if (scrollPos.y<0) {
+      scrollPos.y=0;
+    }
 
     getViewport().setViewPosition(scrollPos);
   }

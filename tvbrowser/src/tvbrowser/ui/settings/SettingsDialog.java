@@ -149,10 +149,10 @@ public class SettingsDialog {
     node = new SettingNode(new TVBrowserSettingsTab());
     root.add(node);    
     node.add(new SettingNode(new ChannelsSettingsTab()));
+    node.add(new SettingNode(new SkinLFSettingsTab()));
     
     
-    
-    // Appearance section
+    // ProgramTable section
     
     node=new SettingNode(new ProgramTableSettingsTab());
     root.add(node);
