@@ -26,17 +26,31 @@
 
 package favoritesplugin;
 
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
 
-import util.exc.*;
-import util.ui.*;
-
-import devplugin.*;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.ui.ChannelListCellRenderer;
+import util.ui.SearchForm;
+import util.ui.TabLayout;
+import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Plugin;
 
 /**
  *
@@ -242,24 +256,4 @@ public class EditFavoriteDialog {
     return mOkWasPressed;
   }
 
-  
-  // inner class ChannelListCellRenderer
-  
-  
-  class ChannelListCellRenderer extends DefaultListCellRenderer {
-    
-    public Component getListCellRendererComponent(JList list, Object value,
-      int index, boolean isSelected, boolean cellHasFocus)
-    {
-      if (value instanceof Channel) {
-        Channel channel = (Channel)value;
-        value = channel.getName();
-      }
-      
-      return super.getListCellRendererComponent(list, value, index, isSelected,
-        cellHasFocus);
-    }
-    
-  }
-  
 }
