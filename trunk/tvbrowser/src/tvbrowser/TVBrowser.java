@@ -129,6 +129,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       new Color(63, 114, 133), Color.WHITE);
     UiUtilities.centerAndShow(splash);
     
+    
 	/*Maybe there are tvdataservices to install (.jar.inst files)*/
 	TvDataServiceManager.installPendingDataServices();
     
@@ -139,6 +140,15 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     createChannelList();
     
     Settings.loadSettings();
+    
+	File f=new File(Settings.getTVDataDirectory());
+		if (!f.exists()) {
+			mLog.info("Creating tv data directory...");
+			if (!f.mkdirs()) {
+				mLog.info("Could not create directory + "+f.getAbsolutePath());
+			}
+		}
+    
     
     mLog.info("Loading Look&Feel...");
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
@@ -281,15 +291,16 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	mPluginsMenu.setMnemonic(KeyEvent.VK_P);
     menuBar.add(mPluginsMenu);
     
-    updatePluginsMenu();
+    
 
-    mPluginsMenu.addSeparator();
+    //mPluginsMenu.addSeparator();
     
     icon = new ImageIcon("imgs/Search16.gif");
     msg = mLocalizer.msg("menuitem.findPluginsInWeb", "Find plugins in the web...");
     mPluginDownloadMenuItem = new JMenuItem(msg, icon);
     mPluginDownloadMenuItem.addActionListener(this);
-    mPluginsMenu.add(mPluginDownloadMenuItem);
+	createPluginsMenu();
+   
     
     // Help menu
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
@@ -447,7 +458,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	return result;
   }
   
-  private void updatePluginsMenu() {
+  private void createPluginsMenu() {
     mPluginsMenu.removeAll();
 
     Object[] plugins = PluginManager.getInstalledPlugins();
@@ -477,6 +488,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
         mPluginsMenu.add(item);
       }
     }
+    
+    mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mPluginDownloadMenuItem);
+        
   }
 
 
@@ -623,8 +638,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   private void changeDate(devplugin.Date date) {
     devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
-    DayProgram today = DataService.getInstance().getDayProgram(date);
-    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate);
+    DayProgram today = DataService.getInstance().getDayProgram(date, true);
+    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate, true);
     mProgramTableModel.setDayPrograms(today, tomorrow);
 
     if (finderPanel != null) {
@@ -696,6 +711,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     String msg;
 
     File defaultFile = new File("tvdata" + EXPORTED_TV_DATA_EXTENSION);
+	//File defaultFile = new File(Settings.getTVDataDirectory() + EXPORTED_TV_DATA_EXTENSION);
+    
     chooser.setSelectedFile(defaultFile);
     msg = mLocalizer.msg("importDlgTitle", "Import TV data");
     chooser.setDialogTitle(msg);
@@ -800,7 +817,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       mProgramTableScrollPane.getProgramTable().updateBackground();
     }
     if (Settings.settingHasChanged(new String[]{"plugins"})) {
-      updatePluginsMenu();
+      createPluginsMenu();
     }
     if (Settings.settingHasChanged(new String[]{"timebutton","updatebutton","preferencesbutton",
     "buttontype","buttonplugins"})) {
@@ -816,8 +833,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       DataService.getInstance().subscribedChannelsChanged();
 
       mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
-      devplugin.Date showingDate = finderPanel.getSelectedDate();
-      changeDate(showingDate);
+      //devplugin.Date showingDate = finderPanel.getSelectedDate();
+      //changeDate(showingDate);
     }
   }
   

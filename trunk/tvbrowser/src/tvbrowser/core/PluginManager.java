@@ -198,7 +198,11 @@ public class PluginManager {
 		
 	for (int i=0;i<fileList.length;i++) {
 		String fName=fileList[i].getAbsolutePath();
-		fileList[i].renameTo(new File(fName.substring(0,fName.length()-5)));
+		File fNewFile=new File(fName.substring(0,fName.length()-5));
+		if (fNewFile.exists()) {
+			fNewFile.delete();
+		}
+		fileList[i].renameTo(fNewFile);
 	}
   }
 
