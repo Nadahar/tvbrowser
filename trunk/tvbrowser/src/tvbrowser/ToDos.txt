@@ -14,7 +14,6 @@ TODOs:
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
 - (M) F2 (plugin-view ein-ausblenden) funktioniert nicht, wenn die plugin-view den focus hat
-- Settings - Kontextmenue zeigt den Eintrag des Erinnerers nicht an
 - SCHWERWIEGEND: Das Programm konnte nicht fuer den gesamten Zeitraum heruntergeladen werden!
 java.lang.NullPointerException
 	at tvbrowserdataservice.TvBrowserDataService.updateTvData(TvBrowserDataService.java:246)
@@ -57,3 +56,4 @@ Erledigt:
 - (B) fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
 - (B) Umlaute im Einrichtungsassistent
 - (B) Statusbar kann nicht ausgeblendet werden
+- (B) Settings - Kontextmenue zeigt den Eintrag des Erinnerers nicht an
