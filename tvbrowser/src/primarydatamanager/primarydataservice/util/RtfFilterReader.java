@@ -33,13 +33,21 @@ import java.io.*;
 public class RtfFilterReader extends FilterReader {
   
   private int depth=0;
-	private static int DEPTH=2;
+	private static int DEPTH=2;  
+  private int minDepth;
 	
   public RtfFilterReader (Reader in) {
+    this(in, DEPTH);
+    //super(in);
+    //depth=0;
+    //minDepth = DEPTH;
+    //this(in, DEPTH);
+  }
+
+  public RtfFilterReader (Reader in, int depth) {
     super(in);
-    depth=0;
-		
-    
+    this.depth=0;
+    minDepth=depth;
   }
 
   public boolean markSupported () {
@@ -171,7 +179,8 @@ public class RtfFilterReader extends FilterReader {
 				  depth--;
 			  }		
 		  }while (ch=='{' || ch=='}');
-		}while (depth!=DEPTH && ch!=-1);
+	//	}while (depth!=DEPTH && ch!=-1);
+    }while (depth!=minDepth && ch!=-1);
 		return ch;		
 	}
 	

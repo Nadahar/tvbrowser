@@ -114,7 +114,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     
     setViewportView(mList);
     Date date=Date.getCurrentDate();
-    for (int i=0;i<28;i++) {
+    for (int i=-1;i<28;i++) {
       mModel.addElement(new FinderItem(mList,date.addDays(i)));
     }
     
