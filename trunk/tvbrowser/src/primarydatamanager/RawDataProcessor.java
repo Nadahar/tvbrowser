@@ -157,7 +157,7 @@ public class RawDataProcessor {
     String[] levelFileNameArr = new String[DayProgramFile.LEVEL_ARR.length];
     for (int i = 0; i < levelFileNameArr.length; i++) {
       levelFileNameArr[i] = DayProgramFile.getProgramFileName(date, country,
-        channel, DayProgramFile.LEVEL_ARR[i]);
+        channel, DayProgramFile.LEVEL_ARR[i].getId());
     }
     
     // Load the level files if they exist
@@ -237,7 +237,7 @@ public class RawDataProcessor {
         // We already have an old program file
         
         // Check whether the new version should come into quarantine
-        String level = DayProgramFile.LEVEL_ARR[i];
+        String level = DayProgramFile.LEVEL_ARR[i].getId();
         if (quarantine) {
           // Copy the old files
           copyFiles(levelProgArr[i], date, country, channel, level,
@@ -359,7 +359,7 @@ public class RawDataProcessor {
       // Get the maximum ID from the complete file and all update files
       int maxId = PrimaryDataUtilities.getMaxId(preparedFile);
       for (int i = 0; i < DayProgramFile.LEVEL_ARR.length; i++) {
-        String level = DayProgramFile.LEVEL_ARR[i];
+        String level = DayProgramFile.LEVEL_ARR[i].getId();
         int updateMaxId = getMaxIdOfUpdateFiles(date, country, channel, level,
                                                 preparedDir);
         if (updateMaxId > maxId) {
