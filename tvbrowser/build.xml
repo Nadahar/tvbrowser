@@ -277,6 +277,19 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="newsplugin/**"/>
     </jar>
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/CalendarExportPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="calendarexportplugin/**"/>
+    </jar>
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/ClipboardPlugin.jar"
+        compress="false">
+      <fileset dir="${classes.dir}" includes="clipboardplugin/**"/>
+    </jar>
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/CapturePlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="captureplugin/**"/>
+    </jar>
+  	
 
     <!-- Pack the TV data service jars -->    
     <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
