@@ -121,14 +121,14 @@ Function un.onInit
 FunctionEnd
 
 Function un.UninstallTvDataPage
-  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
-    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
+  !insertmacro MUI_HEADER_TEXT "TV-Daten lï¿½schen" \
+    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelï¿½scht werden sollen"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 FunctionEnd
 
 Function un.UninstallSettingsPage
-  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
-    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
+  !insertmacro MUI_HEADER_TEXT "Einstellungen lï¿½schen" \
+    "Bestimmen Sie, ob Ihre Einstellungen gelï¿½scht werden sollen"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 FunctionEnd
 
@@ -247,7 +247,7 @@ Section "${PROG_NAME} (erforderlich)"
 SectionEnd # end the section
 
 
-Section "Verknüpfung auf dem Desktop"
+Section "Verknï¿½pfung auf dem Desktop"
   SectionIn 1 2
 
   # Set the directory where the shortcuts should be executed in
@@ -262,7 +262,7 @@ SectionEnd
 SubSection "Daten-Services"
 
   Section "TV-Browser-Datenservice"
-    SectionIn 1 2
+    SectionIn 1 2 RO
   
     SetOutPath "$INSTDIR\tvdataservice"
     File "${RUNTIME_DIR}\tvdataservice\TvBrowserDataService.jar"
@@ -350,7 +350,7 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
   SectionEnd
   
-  Section "Was läuft gerade"
+  Section "Was lï¿½uft gerade"
     SectionIn 1
   
     SetOutPath "$INSTDIR\plugins"
