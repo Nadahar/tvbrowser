@@ -38,7 +38,7 @@ import devplugin.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class Favorite implements Serializable {
+public class Favorite {
   
   public static final int MODE_MATCH_EXACTLY = 1;
   public static final int MODE_TERM_IS_KEYWORD = 2;
@@ -52,7 +52,7 @@ public class Favorite implements Serializable {
   private boolean mUseCertainTimeOfDay;
   private int mCertainFromTime, mCertainToTime;
   
-  private ArrayList mProgramList;
+  private Program[] mProgramArr;
   
   
   
@@ -70,7 +70,7 @@ public class Favorite implements Serializable {
     mCertainFromTime = 0;
     mCertainToTime = 23 * 60 + 59; // 23:59
     
-    mProgramList = new ArrayList();
+    mProgramArr = new Program[0];
   }
   
   
@@ -78,8 +78,7 @@ public class Favorite implements Serializable {
   /**
    * Serializes this Object.
    */
-  private void writeObject(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+  public void writeData(ObjectOutputStream out) throws IOException {
     out.writeObject(mTerm);
     out.writeBoolean(mSearchInTitle);
     out.writeBoolean(mSearchInText);
@@ -97,11 +96,10 @@ public class Favorite implements Serializable {
     out.writeInt(mCertainToTime);
 
     // Don't save the programs but only their date and id
-    out.writeInt(mProgramList.size());
-    for (int i = 0; i < mProgramList.size(); i++) {
-      Program program = (Program) mProgramList.get(i);
-      out.writeObject(program.getDate());
-      out.writeObject(program.getID());
+    out.writeInt(mProgramArr.length);
+    for (int i = 0; i < mProgramArr.length; i++) {
+      out.writeObject(mProgramArr[i].getDate());
+      out.writeObject(mProgramArr[i].getID());
     }
   }
 
@@ -110,39 +108,35 @@ public class Favorite implements Serializable {
   /**
    * Deserializes this Object.
    */
-  private void readObject(ObjectInputStream in)
-    throws IOException, ClassCastException
+  public void readData(int version, ObjectInputStream in)
+    throws IOException, ClassNotFoundException
   {
-    int version = in.readInt();
-    try {
-      mTerm = (String) in.readObject();
-      mSearchInTitle = in.readBoolean();
-      mSearchInText = in.readBoolean();
-      mSearchMode = in.readInt();
-      mUseCertainChannel = in.readBoolean();
+    mTerm = (String) in.readObject();
+    mSearchInTitle = in.readBoolean();
+    mSearchInText = in.readBoolean();
+    mSearchMode = in.readInt();
+    mUseCertainChannel = in.readBoolean();
 
-      int certainChannelId = in.readInt();
-      mCertainChannel = getChannelForId(certainChannelId);
+    int certainChannelId = in.readInt();
+    mCertainChannel = getChannelForId(certainChannelId);
 
-      mUseCertainTimeOfDay = in.readBoolean();
-      mCertainFromTime = in.readInt();
-      mCertainToTime = in.readInt();
+    mUseCertainTimeOfDay = in.readBoolean();
+    mCertainFromTime = in.readInt();
+    mCertainToTime = in.readInt();
 
-      // Don't save the programs but only their date and id
-      int size = in.readInt();
-      mProgramList = new ArrayList(size);
-      for (int i = 0; i < size; i++) {
-        Date date = (Date) in.readObject();
-        String progID = (String) in.readObject();
-        Program program = Plugin.getPluginManager().getProgram(date, progID);
-        if (program != null) {
-          mProgramList.add(program);
-        }
+    // Don't save the programs but only their date and id
+    int size = in.readInt();
+    ArrayList programList = new ArrayList(size);
+    for (int i = 0; i < size; i++) {
+      Date date = (Date) in.readObject();
+      String progID = (String) in.readObject();
+      Program program = Plugin.getPluginManager().getProgram(date, progID);
+      if (program != null) {
+        programList.add(program);
       }
     }
-    catch (ClassNotFoundException exc) {
-      throw new IOException("Class not found: " + exc.getMessage());
-    }
+    mProgramArr = new Program[programList.size()];
+    programList.toArray(mProgramArr);
   }
   
   
@@ -237,22 +231,15 @@ public class Favorite implements Serializable {
 
   
   
-  public Iterator getProgramIterator() {
-    return mProgramList.iterator();
+  public Program[] getPrograms() {
+    return mProgramArr;
   }
   
 
   
   public void updatePrograms() throws TvBrowserException {
     // Unmark all programs in the old list
-    Iterator progIter = mProgramList.iterator();
-    while (progIter.hasNext()) {
-      Program program = (Program) progIter.next();
-      FavoritesPlugin.getInstance().unmark(program);
-    }
-    
-    // Clear the list
-    mProgramList.clear();
+    FavoritesPlugin.getInstance().unmark(mProgramArr);
     
     // Search for matching programs
     String regex;
@@ -280,24 +267,24 @@ public class Favorite implements Serializable {
     Program[] matchingProgArr = Plugin.getPluginManager().search(regex, inTitle,
       inText, caseSensitive, channels, startDate, nrDays);
     
-    // Add the programs to the list
-    for (int i = 0; i < matchingProgArr.length; i++) {
-      Program program = matchingProgArr[i];
-      
-      // Check whether the program is within the specified time of day
-      if (mUseCertainTimeOfDay) {
+    // Check whether the program is within the specified time of day
+    if (mUseCertainTimeOfDay) {
+      ArrayList passedList = new ArrayList();
+      for (int i = 0; i < matchingProgArr.length; i++) {
+        Program program = matchingProgArr[i];
         int startTime = program.getHours() * 60 + program.getMinutes();
-        if ((startTime < mCertainFromTime) || (startTime > mCertainToTime)) {
-          continue;
+        if ((startTime >= mCertainFromTime) && (startTime <= mCertainToTime)) {
+          passedList.add(program);
         }
       }
-      
-      // Add this program
-      mProgramList.add(program);
-      
-      // mark this program
-      FavoritesPlugin.getInstance().mark(program);
+      mProgramArr = new Program[passedList.size()];
+      passedList.toArray(mProgramArr);
+    } else {
+      mProgramArr = matchingProgArr;
     }
+    
+    // mark these programs
+    FavoritesPlugin.getInstance().mark(mProgramArr);
   }
 
   

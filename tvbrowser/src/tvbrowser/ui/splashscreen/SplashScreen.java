@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,11 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
- 
+
 package tvbrowser.ui.splashscreen;
  
-import javax.swing.JFrame;
+import javax.swing.JWindow;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Dimension;
@@ -29,7 +35,7 @@ import javax.swing.JLabel;
 import java.awt.BorderLayout;
 import tvbrowser.ui.SkinPanel;
 
-public class SplashScreen extends JFrame {
+public class SplashScreen extends JWindow {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
@@ -51,19 +57,16 @@ public class SplashScreen extends JFrame {
     msgLabel.setHorizontalAlignment(JLabel.CENTER);
     contentPane.add(msgLabel,BorderLayout.CENTER);
     
-     this.setUndecorated(true);
-    
     this.setSize(width,height);
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
     this.setBounds((screenSize.width-width)/2,(screenSize.height-height)/2,width,height);
-    
-    
   }
-  
+
+
+
   public void setMessage(String msg) {
     msgLabel.setText(msg);
   }
-  
-  
+
 }

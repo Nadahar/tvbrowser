@@ -26,7 +26,8 @@
 
 package favoritesplugin;
 
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import util.ui.UiUtilities;
@@ -47,7 +48,9 @@ public class FavoritesPlugin extends Plugin {
 
   private static FavoritesPlugin mInstance;
   
-  private Favorite[] mFavoritesArr;
+  private Favorite[] mFavoriteArr;
+  
+  private Plugin[] mClientPluginArr;
 
   
   
@@ -55,7 +58,8 @@ public class FavoritesPlugin extends Plugin {
    * Creates a new instance of FavoritesPlugin.
    */
   public FavoritesPlugin() {
-    mFavoritesArr = new Favorite[0];
+    mFavoriteArr = new Favorite[0];
+    mClientPluginArr = new Plugin[0];
     
     mInstance = this;
   }
@@ -68,27 +72,68 @@ public class FavoritesPlugin extends Plugin {
   
   
   
-  public void loadData(ObjectInputStream in) {
-    try {
-      mFavoritesArr = (Favorite[]) in.readObject();
-      
-      for (int i = 0; i < mFavoritesArr.length; i++) {
-        Iterator progIter = mFavoritesArr[i].getProgramIterator();
-        while (progIter.hasNext()) {
-          Program program = (Program) progIter.next();
-          mark(program);
+  public void loadData(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+
+    // get the favorites
+    int size = in.readInt();
+    mFavoriteArr = new Favorite[size];
+    for (int i = 0; i < size; i++) {
+      mFavoriteArr[i] = new Favorite();
+      mFavoriteArr[i].readData(version, in);
+    }
+
+    // mark all the favorites
+    for (int i = 0; i < mFavoriteArr.length; i++) {
+      Program[] programArr = mFavoriteArr[i].getPrograms();
+      for (int j = 0; j < programArr.length; j++) {
+        programArr[j].mark(this);        
+      }
+    }
+
+    // Get the client plugins
+    Plugin[] installedPluginArr = Plugin.getPluginManager().getInstalledPlugins();
+    ArrayList clientPluginList = new ArrayList();
+    size = in.readInt();
+    for (int i = 0; i < size; i++) {
+      String className = (String) in.readObject();
+
+      // Get the plugin with the right class name
+      Plugin plugin = null;
+      for (int j = 0; j < installedPluginArr.length; j++) {
+        if (className.equals(installedPluginArr[j].getClass().getName())) {
+          plugin = installedPluginArr[j];
+          break;
         }
       }
-    } catch (Exception exc) {
-      String msg = mLocalizer.msg( "error.1", "Error loading favorite list!\n({0})" , exc);
-      ErrorHandler.handle(msg, exc);
+
+      // If the plugin was found -> add it to the list
+      if (plugin != null) {
+        clientPluginList.add(plugin);
+      }
     }
+
+    // copy the list into the array
+    mClientPluginArr = new Plugin[clientPluginList.size()];
+    clientPluginList.toArray(mClientPluginArr);
   }
 
-  
-  
-  public Object storeData() {
-    return mFavoritesArr;
+
+
+  public void storeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+
+    out.writeInt(mFavoriteArr.length);
+    for (int i = 0; i < mFavoriteArr.length; i++) {
+      mFavoriteArr[i].writeData(out);
+    }
+    
+    out.writeInt(mClientPluginArr.length);
+    for (int i = 0; i < mClientPluginArr.length; i++) {
+      out.writeObject(mClientPluginArr.getClass().getName());
+    }
   }
   
   
@@ -98,11 +143,11 @@ public class FavoritesPlugin extends Plugin {
    * plugin from the menu.
    */
   public void execute() {
-    ManageFavoritesDialog dlg = new ManageFavoritesDialog(parent, mFavoritesArr);
+    ManageFavoritesDialog dlg = new ManageFavoritesDialog(parent, mFavoriteArr);
     UiUtilities.centerAndShow(dlg);
     
     if (dlg.getOkWasPressed()) {
-      mFavoritesArr = dlg.getFavorites();
+      mFavoriteArr = dlg.getFavorites();
     }
   }
 
@@ -117,10 +162,10 @@ public class FavoritesPlugin extends Plugin {
       dlg.centerAndShow();
       
       if (dlg.getOkWasPressed()) {
-        Favorite[] newFavoritesArr = new Favorite[mFavoritesArr.length + 1];
-        System.arraycopy(mFavoritesArr, 0, newFavoritesArr, 0, mFavoritesArr.length);
-        newFavoritesArr[mFavoritesArr.length] = favorite;
-        mFavoritesArr = newFavoritesArr;
+        Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
+        System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
+        newFavoritesArr[mFavoriteArr.length] = favorite;
+        mFavoriteArr = newFavoritesArr;
       }
     }
   }
@@ -162,17 +207,24 @@ public class FavoritesPlugin extends Plugin {
 
   
   
-  void unmark(Program program) {
-    if (program != null) {
-      program.unmark(this);
+  void unmark(Program[] programArr) {
+    // unmark all programs with this plugin
+    for (int i = 0; i < programArr.length; i++) {
+      programArr[i].unmark(this);    
     }
   }
 
   
   
-  void mark(Program program) {
-    if (program != null) {
-      program.mark(this);
+  void mark(Program[] programArr) {
+    // mark all programs with this plugin
+    for (int i = 0; i < programArr.length; i++) {
+      programArr[i].mark(this);    
+    }
+
+    // Pass the program list to all client plugins
+    for (int i = 0; i < mClientPluginArr.length; i++) {
+      mClientPluginArr[i].execute(programArr);
     }
   }
 
@@ -187,14 +239,35 @@ public class FavoritesPlugin extends Plugin {
   public void handleTvDataChanged() {
     System.out.println("Updating favorites");
     // Update all favorites
-    for (int i = 0; i < mFavoritesArr.length; i++) {
+    for (int i = 0; i < mFavoriteArr.length; i++) {
       try {
-        mFavoritesArr[i].updatePrograms();
+        mFavoriteArr[i].updatePrograms();
       }
       catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
       }
     }
   }
+  
+  
+  
+  public Plugin[] getClientPlugins() {
+    return mClientPluginArr;
+  }
+  
+  
+  
+  public void setClientPlugins(Plugin[] clientPluginArr) {
+    mClientPluginArr = clientPluginArr;
+  }
 
+  
+  
+  /**
+   * Returns a new SettingsTab object, which is added to the settings-window.
+   */
+  public SettingsTab getSettingsTab() {
+    return new FavoritesSettingTab();
+  }
+  
 }
