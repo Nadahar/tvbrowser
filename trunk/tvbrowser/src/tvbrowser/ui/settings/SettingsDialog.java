@@ -143,8 +143,7 @@ public class SettingsDialog {
     
     icon = new ImageIcon("imgs/Preferences16.gif");
     msg = mLocalizer.msg("settings", "Settings");
-    SettingNode root = //new SettingNode(icon, msg);
-                       new SettingNode(new DefaultSettingsTab(msg,icon));
+    SettingNode root = new SettingNode(new DefaultSettingsTab(msg,icon));
     
     // Channels
     node = new SettingNode(new ChannelsSettingsTab());
@@ -154,11 +153,12 @@ public class SettingsDialog {
     PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();
     pluginSettingsTab.addSettingsChangeListener(contextmenuSettingsTab);
     
+    
+    
     // Appearance
     
     node = new SettingNode(
     new DefaultSettingsTab(mLocalizer.msg("appearance","appearance"),null));
-    //new AppearanceSettingsTab());
     root.add(node);
     
     node.add(new SettingNode(new ButtonsSettingsTab()));
@@ -173,7 +173,9 @@ public class SettingsDialog {
     
     Plugin[] pluginArr = PluginManager.getInstance().getAvailablePlugins();
     for (int i = 0; i < pluginArr.length; i++) {
-      node.add(new SettingNode(new ConfigPluginSettingsTab(pluginArr[i])));
+      ConfigPluginSettingsTab tab=new ConfigPluginSettingsTab(pluginArr[i]);
+      node.add(new SettingNode(tab));
+      pluginSettingsTab.addSettingsChangeListener(tab);
     }
     
     // TVDataServices

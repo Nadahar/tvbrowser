@@ -27,6 +27,9 @@
 package tvbrowser.ui.settings;
 
 import javax.swing.*;
+
+import tvbrowser.core.PluginManager;
+
 import java.awt.*;
 
 import devplugin.SettingsTab;
@@ -34,37 +37,49 @@ import devplugin.Plugin;
 
 
 
-public class ConfigPluginSettingsTab implements SettingsTab {
+public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListener {
  
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ConfigPluginSettingsTab.class);
 
  
   private Plugin mPlugin;
+  private boolean mPluginIsInstalled;
   private SettingsTab mSettingsTab;
   private JCheckBox mAddToToolbarCb;
+  private JPanel mContentPanel;
+  private JPanel mPluginPanel;
   
   public ConfigPluginSettingsTab(devplugin.Plugin plugin) {
     mPlugin=plugin;
-    mSettingsTab=mPlugin.getSettingsTab();
+    mPluginIsInstalled=PluginManager.getInstance().isInstalled(mPlugin);
   }
- 
+  
+  
   public JPanel createSettingsPanel() {
-    
-    /*
-    if (mSettingsTab!=null) {
-      return mSettingsTab.createSettingsPanel();
-    }
-    */
-    
-    JPanel contentPanel=new JPanel();
-    contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
-    contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
-    
+    mContentPanel=new JPanel(new BorderLayout());
+    mContentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
     PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo());
     pluginInfoPanel.setDefaultBorder();
-    contentPanel.add(pluginInfoPanel);
+    mContentPanel.add(pluginInfoPanel,BorderLayout.NORTH);
+    mPluginPanel=createContentPanel();
+    mContentPanel.add(mPluginPanel,BorderLayout.CENTER);
+    return mContentPanel;
     
+  }
+ 
+  public JPanel createContentPanel() {
+    
+    
+    if (!mPluginIsInstalled) {
+      JPanel result=new JPanel(new BorderLayout());
+      result.add(new JLabel(mLocalizer.msg("notactivated","This Plugin is currently not activated.")),BorderLayout.WEST);
+      return result;
+    }
+      
+    JPanel contentPanel=new JPanel();
+    contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
+     
     if (mPlugin.getButtonText()!=null) {
       mAddToToolbarCb=new JCheckBox("Plugin in Werkzeugleiste anzeigen");
       mAddToToolbarCb.setSelected(tvbrowser.core.Settings.getPluginButtonVisible(mPlugin));
@@ -73,7 +88,7 @@ public class ConfigPluginSettingsTab implements SettingsTab {
       contentPanel.add(panel); 
     }
     
-    
+    mSettingsTab=mPlugin.getSettingsTab();
     if (mSettingsTab!=null) {
       contentPanel.add(mSettingsTab.createSettingsPanel());
     }
@@ -83,17 +98,6 @@ public class ConfigPluginSettingsTab implements SettingsTab {
     content.add(contentPanel,BorderLayout.NORTH);
     return content;
     
-    
-    /*
-    else if (mPlugin.getButtonText()!=null) {
-      return create
-    }
-    else {
-      JPanel mainPanel=new JPanel(new BorderLayout());
-      mainPanel.add(new JLabel(mLocalizer.msg("notsupported","This plugin does not support any settings")));  
-      return mainPanel;
-    }
-    */
   }
 
   
@@ -104,7 +108,7 @@ public class ConfigPluginSettingsTab implements SettingsTab {
       if (mSettingsTab!=null) {
         mSettingsTab.saveSettings();
       }
-      if (mPlugin.getButtonText()!=null) {
+      if (mPluginIsInstalled && mPlugin.getButtonText()!=null && mAddToToolbarCb!=null) {
         tvbrowser.core.Settings.setPluginButtonVisible(mPlugin,mAddToToolbarCb.isSelected());
       }  
       
@@ -125,5 +129,27 @@ public class ConfigPluginSettingsTab implements SettingsTab {
     public String getTitle() {
       return mPlugin.getInfo().getName();
     }
+
+		
+		public void settingsChanged(SettingsTab tab, Object activatedPlugins) {
+      Plugin[] activatedPluginList=(Plugin[])activatedPlugins;
+      boolean oldVal=mPluginIsInstalled;
+      mPluginIsInstalled=false;
+      for (int i=0;i<activatedPluginList.length&&!mPluginIsInstalled;i++) {
+        if (mPlugin.equals(activatedPluginList[i])) {
+          mPluginIsInstalled=true;
+        }
+      }
+      
+      if (oldVal!=mPluginIsInstalled) {        
+        if (mContentPanel!=null) {
+          mContentPanel.remove(mPluginPanel);
+          mPluginPanel=createContentPanel();
+          mContentPanel.add(mPluginPanel,BorderLayout.CENTER);
+          mContentPanel.updateUI();
+        }
+      }
+      
+		}
   
 }
