@@ -26,6 +26,9 @@ Viel Spass!
 
 Martin
 
+Bei Problemen hilft die FAQ-Seite: http://members.liwest.at/firebird/faq.html
+oder das Hilfe-Forum: http://sourceforge.net/forum/forum.php?forum_id=271266
+
 Aktuelles rund um TV-Browser ist auf der TV-Browser-Website zu finden: http://tvbrowser.sourceforge.net
 
 Dort sind auch immer neben der aktuellsten Version auch neue Plugins verfuegbar.
