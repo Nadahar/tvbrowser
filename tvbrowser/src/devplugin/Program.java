@@ -28,6 +28,8 @@ package devplugin;
 
 
 
+import java.util.Iterator;
+
 import javax.swing.event.ChangeListener;
 
 /**
@@ -137,6 +139,20 @@ public interface Program {
    *         no value for this field. 
    */
   public String getTimeFieldAsString(ProgramFieldType type);
+  
+  /**
+   * Gets the number of fields this program has.
+   * 
+   * @return the number of fields this program has.
+   */
+  public int getFieldCount();
+  
+  /**
+   * Gets an iterator over the types of all fields this program has.
+   * 
+   * @return an iterator over {@link ProgramFieldType}s.
+   */
+  public Iterator getFieldIterator();
 
   /**
    * Marks the program for a plugin.

@@ -259,6 +259,9 @@ abstract public class Plugin {
    * Does by default nothing.
    * 
    * @param newProg The new ChannelDayProgram.
+   * @deprecated Since 0.9.7.2 Use
+   *             {@link #handleTvDataAdded(ChannelDayProgram)}
+   *             instead.
    */
   public void handleTvDataChanged(ChannelDayProgram newProg) {
   }
@@ -269,11 +272,42 @@ abstract public class Plugin {
    * <p>
    * Does by default nothing.
    * 
-   * @deprecated Since 0.9.8. Use
-   *             {@link #handleTvDataChanged(ChannelDayProgram, MutableChannelDayProgram}
-   *             instead.
+   * @deprecated Since 0.9.7.1 Use
+   *             {@link #handleTvDataAdded(ChannelDayProgram)} and
+   *             {@link #handleTvDataRemoved(ChannelDayProgram)} instead.
    */
   public void handleTvDataChanged() {
+  }
+
+  /**
+   * This method is automatically called, when TV data was added.
+   * (E.g. after an update).
+   * <p>
+   * The TV data may be modified by the plugin!
+   * <p>
+   * Does by default nothing. Use this method to mark programs that are of
+   * interest for the plugin.
+   * 
+   * @param newProg The new ChannelDayProgram.
+   * @see #handleTvDataDeleted(ChannelDayProgram)
+   */
+  public void handleTvDataAdded(ChannelDayProgram newProg) {
+    // Call the old and deprecated methods
+    handleTvDataChanged();
+    handleTvDataChanged(newProg);
+  }
+
+  /**
+   * This method is automatically called, when TV data was deleted.
+   * (E.g. after an update).
+   * <p>
+   * Does by default nothing. Use this method to unmark programs that were of
+   * interest for the plugin.
+   * 
+   * @param oldProg The old ChannelDayProgram which was deleted.
+   * @see #handleTvDataAdded(ChannelDayProgram)
+   */
+  public void handleTvDataDeleted(ChannelDayProgram oldProg) {
   }
   
   final public String toString() {

@@ -26,9 +26,6 @@
 
 package tvdataservice;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.*;
 
 import javax.swing.event.ChangeEvent;
@@ -88,7 +85,6 @@ public class MutableProgram implements Program {
   /** Contains for a {@link ProgramFieldType} (key) the field value. */
   private HashMap mFieldHash;
 
-  
 
   /**
    * Creates a new instance of MutableProgram.
@@ -104,16 +100,31 @@ public class MutableProgram implements Program {
   public MutableProgram(Channel channel, devplugin.Date localDate,
     int localHours, int localMinutes)
   {
-    init();
+    this (channel, localDate);
+    
+    int localStartTime = localHours * 60 + localMinutes;
+    setTimeField(ProgramFieldType.START_TIME_TYPE, localStartTime);
+  }
+  
+
+  /**
+   * Creates a new instance of MutableProgram.
+   * <p>
+   * The parameters channel, date, hours and minutes build the ID. That's why they
+   * are not mutable.
+   *
+   * @param channel The channel object of this program.
+   * @param date The date of this program.
+   */
+  public MutableProgram(Channel channel, devplugin.Date localDate) {
+    mFieldHash = new HashMap();
+    mListenerList = new EventListenerList();
+    mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
+    mOnAir = false;
 
     // These attributes are not mutable, because they build the ID.
     mChannel = channel;
     mLocalDate = localDate;
-    
-    int localStartTime = localHours * 60 + localMinutes;
-    setTimeField(ProgramFieldType.START_TIME_TYPE, localStartTime);
-    
-    normalizeTimeZone(mLocalDate, localStartTime);
     
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
@@ -143,111 +154,6 @@ public class MutableProgram implements Program {
   }
 
   
-  public MutableProgram(ObjectInputStream in)
-    throws IOException, ClassNotFoundException
-  {
-    init();
-
-    int version = in.readInt();
-    
-    if (version == 1) {
-      setTitle((String) in.readObject());
-      setShortInfo((String) in.readObject());
-      setDescription((String) in.readObject());
-      setTextField(ProgramFieldType.ACTOR_LIST_TYPE, (String) in.readObject());
-      setTextField(ProgramFieldType.URL_TYPE, (String) in.readObject());
-      
-      int minutes = in.readInt();
-      int localHours = in.readInt();
-      int localStartTime = localHours * 60 + minutes;
-      setTimeField(ProgramFieldType.START_TIME_TYPE, localStartTime);
-      
-      setLength(in.readInt());
-      setInfo(in.readInt());
-
-      mChannel = Channel.readData(in, false);
-      mLocalDate = new devplugin.Date(in);
-      
-      setBinaryField(ProgramFieldType.IMAGE_TYPE, (byte[]) in.readObject());
-    } else {
-      mChannel = Channel.readData(in, false);
-      mLocalDate = new devplugin.Date(in);
-      
-      synchronized (mFieldHash) {
-        mFieldHash.clear();
-        int fieldCount = in.readInt();
-        for (int i = 0; i < fieldCount; i++) {
-          int typeId = in.readInt();
-          ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
-          if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
-            setBinaryField(type, (byte[]) in.readObject());
-          }
-          else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-            setTextField(type, (String) in.readObject());
-          }
-          else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
-            setIntField(type, in.readInt());
-          }
-          else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
-            setTimeField(type, in.readInt());
-          }
-        }
-      }
-    }
-    
-    normalizeTimeZone(mLocalDate, getLocalStartTime());
-  }
-
-  
-  
-  /**
-   * Serialized this object.
-   */
-  public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // file version
-    
-    mChannel.writeData(out);
-    mLocalDate.writeData(out);
-    
-    synchronized (mFieldHash) {
-      Set keySet = mFieldHash.keySet();
-      int fieldCount = keySet.size();
-      out.writeInt(fieldCount);
-      Iterator iter = keySet.iterator();
-      for (int i = 0; i < fieldCount; i++) {
-        ProgramFieldType type = (ProgramFieldType) iter.next();
-        out.writeInt(type.getTypeId());
-        
-        if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
-          out.writeObject(getBinaryField(type));
-        }
-        else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-          out.writeObject(getTextField(type));
-        }
-        else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
-          out.writeInt(getIntField(type));
-        }
-        else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
-          out.writeInt(getTimeField(type));
-        }
-      }
-    }
-  }
-
-
-
-  /**
-   * Initializes the program.
-   */
-  private void init() {
-    mFieldHash = new HashMap();
-    mListenerList = new EventListenerList();
-    mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
-    mOnAir = false;
-  }
-
-
-
   /**
    * Adds a ChangeListener to the program.
    *
@@ -472,7 +378,7 @@ public class MutableProgram implements Program {
   }
 
 
-  private Object getField(ProgramFieldType type, int fieldFormat) {
+  protected Object getField(ProgramFieldType type, int fieldFormat) {
     if (type.getFormat() != fieldFormat) {
       throw new IllegalArgumentException("The field " + type.getName()
         + " can't be read as " + ProgramFieldType.getFormatName(fieldFormat)
@@ -482,6 +388,26 @@ public class MutableProgram implements Program {
     synchronized (mFieldHash) {
       return mFieldHash.get(type);
     }
+  }
+
+
+  /**
+   * Gets the number of fields this program has.
+   * 
+   * @return the number of fields this program has.
+   */
+  public int getFieldCount() {
+    return mFieldHash.size();
+  }
+
+
+  /**
+   * Gets an iterator over the types of all fields this program has.
+   * 
+   * @return an iterator over {@link ProgramFieldType}s.
+   */
+  public Iterator getFieldIterator() {
+    return mFieldHash.keySet().iterator();
   }
   
   
@@ -520,10 +446,14 @@ public class MutableProgram implements Program {
       obj = new Integer(value);
     }
     setField(type, ProgramFieldType.TIME_FORMAT, obj);
+    
+    if (type == ProgramFieldType.START_TIME_TYPE) {
+      normalizeTimeZone(mLocalDate, value);
+    }
   }
   
   
-  private void setField(ProgramFieldType type, int fieldFormat, Object value) {
+  protected void setField(ProgramFieldType type, int fieldFormat, Object value) {
     if (type.getFormat() != fieldFormat) {
       throw new IllegalArgumentException("The field " + type.getName()
         + " can't be written as " + ProgramFieldType.getFormatName(fieldFormat)
