@@ -46,12 +46,12 @@ class TVBrowserProperties extends java.util.Properties {
 			String oldVal=getProperty(key);
 			if (oldVal!=null && !oldVal.equals(value)) {
 					unconfirmedSettingItems.add(key);
-					System.out.println(" --> changed from '"+oldVal+" ' to '"+value+"'");
-			}else if (value!=null) {
+					System.out.println(" --> (1) changed from '"+oldVal+" ' to '"+value+"'");
+			}else if (oldVal==null && value!=null) {
 				unconfirmedSettingItems.add(key);
-				System.out.println(" --> changed from '"+oldVal+" ' to '"+value+"'");
+				System.out.println(" --> (2) changed from '"+oldVal+" ' to '"+value+"'");
 			}else {
-				System.out.println(" --> no changes '"+oldVal+" ' is '"+value+"'");
+				System.out.println(" --> (3) no changes '"+oldVal+" ' is '"+value+"'");
 			}
 			
 			return super.setProperty(key,value);
@@ -243,7 +243,7 @@ public class Settings {
   }
 
   public static boolean isPreferencesBtnVisible() {
-    return "visible".equals(settings.getProperty("updatebutton","hidden"));
+    return "visible".equals(settings.getProperty("preferencesbutton","hidden"));
   }
 
   public static void setPreferencesBtnVisible(boolean value) {

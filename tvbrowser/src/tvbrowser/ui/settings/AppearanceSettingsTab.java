@@ -317,7 +317,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     Settings.setTimeBtnVisible(mTimeCheck.isSelected());
     Settings.setUpdateBtnVisible(updateCheck.isSelected());
     Settings.setPreferencesBtnVisible(settingsCheck.isSelected());
-
+    
 
     if (textOnlyRadio.isSelected()) {
       Settings.setButtonSettings(Settings.TEXT_ONLY);

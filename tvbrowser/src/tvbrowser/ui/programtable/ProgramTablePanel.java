@@ -341,6 +341,9 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     int s=hour%(24/NUM_OF_DAYTIMES);   
     
     posY+=part[c].getHeight()/NUM_OF_DAYTIMES*s - scrollPane.getHeight()/2;
+    if (posY<0) {
+    	posY=0;
+    }
 	scrollPane.getViewport().setViewPosition(new Point(posX,posY));      
   }
 

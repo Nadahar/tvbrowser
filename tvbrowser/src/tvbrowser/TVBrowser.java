@@ -40,10 +40,11 @@ import tvbrowser.ui.programtable.ProgramTablePanel;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.UpdateDlg;
-import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.settings.SettingsDlg;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import tvbrowser.ui.aboutbox.AboutBox;
+import tvbrowser.ui.ButtonPanel;
+import tvbrowser.ui.PictureButton;
 
 import util.exc.*;
 import util.ui.*;
@@ -65,13 +66,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private JButton mNowBt, mEarlyBt, mMorningBt, mMiddayBt, mEveningBt,
     updateBtn, settingsBtn;
   private ProgramTablePanel programTablePanel;
-  private JPanel buttonPanel;
+  //private JPanel buttonPanel;
   private Thread downloadingThread;
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, updateMenuItem, mImportTvDataMI, mExportTvDataMI,
   			aboutMenuItem;
   private SkinPanel skinPanel;
+  private ButtonPanel buttonPanel;
   private static String curLookAndFeel;
   public static final String VERSION="0.9.2";
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION;
@@ -179,7 +181,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
     JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
-	// JMenu pluginsMenu = //getPluginMenu();
+	
    pluginsMenu=new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
    updatePluginMenu(pluginsMenu);
 
@@ -255,7 +257,19 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     eastPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-    buttonPanel = createButtonPanel();
+    //buttonPanel = createButtonPanel();
+    buttonPanel=new ButtonPanel();
+   buttonPanel.setTimButtons(createTimeBtns());
+   buttonPanel.setUpdateButton(createUpdateBtn());
+   buttonPanel.setPreferencesButton(createPreferencesBtn());
+   buttonPanel.update();
+    
+   /* if (Settings.isTimeBtnVisible()) {
+    	JComponents[]=this.createTimeBtns();
+    	
+    }
+    */
+    
     northPanel.add(buttonPanel,BorderLayout.WEST);
 
     programTablePanel = new ProgramTablePanel(this);
@@ -290,7 +304,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
     );
 
-    //eastPanel.add(comboBox,BorderLayout.SOUTH);
     eastPanel.add(panel1,BorderLayout.SOUTH);
 
     skinPanel.add(northPanel,BorderLayout.NORTH);
@@ -338,11 +351,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   
   
-	//private JMenu getPluginMenu() {
+		
   private void updatePluginMenu(JMenu theMenu) {
-	//final JMenu pluginMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
 	theMenu.removeAll();
-System.out.println("creating menu: "+theMenu.getItemCount()+" items");
 
 	Object[] plugins = PluginManager.getInstalledPlugins();
 	JMenuItem item;
@@ -362,7 +373,6 @@ System.out.println("creating menu: "+theMenu.getItemCount()+" items");
 
 		item = new JMenuItem(btnTxt);
 		theMenu.add(item);
-		System.out.println("adding "+btnTxt);
 		item.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent event) {
 			mLog.info("Plugin menu item pressed");
@@ -454,8 +464,68 @@ System.out.println("creating menu: "+theMenu.getItemCount()+" items");
 
   
   
-  private JPanel createButtonPanel() {
-    String msg;
+  private JButton[] createTimeBtns() {
+  	String msg;
+  	JButton[] result=new JButton[5];
+	msg = mLocalizer.msg("botton.now", "Now");
+	mNowBt = new PictureButton(msg, new ImageIcon("imgs/TimeNow24.gif"));
+	mNowBt.addActionListener(this);
+	result[0]=mNowBt;
+      
+	msg = mLocalizer.msg("botton.early", "Early");
+	mEarlyBt = new PictureButton(msg, new ImageIcon("imgs/TimeEarly24.gif"));
+	mEarlyBt.addActionListener(this);
+	result[1]=mEarlyBt;
+      
+	msg = mLocalizer.msg("botton.morning", "Morning");
+	mMorningBt = new PictureButton(msg, new ImageIcon("imgs/TimeMorning24.gif"));
+	mMorningBt.addActionListener(this);
+	result[2]=mMorningBt;
+
+	msg = mLocalizer.msg("botton.midday", "Midday");
+	mMiddayBt = new PictureButton(msg, new ImageIcon("imgs/TimeMidday24.gif"));
+	mMiddayBt.addActionListener(this);
+	result[3]=mMiddayBt;
+      
+	msg = mLocalizer.msg("botton.evening", "Evening");
+	mEveningBt = new PictureButton(msg, new ImageIcon("imgs/TimeEvening24.gif"));
+	mEveningBt.addActionListener(this);
+	result[4]=mEveningBt;
+	
+	return result;
+  }
+  
+  
+  private JButton createUpdateBtn() {
+	String msg = mLocalizer.msg("button.update", "Update");
+	updateBtn = new PictureButton(msg, new ImageIcon("imgs/Import24.gif"));
+	updateBtn.addActionListener(this);
+	return updateBtn;
+  }
+  
+  private JButton createPreferencesBtn() {
+	String msg = mLocalizer.msg("button.settings", "Settings");
+	settingsBtn = new PictureButton(msg, new ImageIcon("imgs/Preferences24.gif"));
+	settingsBtn.addActionListener(this);
+	return settingsBtn;
+  }
+  /*
+  private JButton createPluginBtn(final devplugin.Plugin plugin) {
+	Icon ico=plugin.getButtonIcon();
+	JButton btn=new PictureButton(plugin.getButtonText(),ico);
+
+		btn.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event) {
+				plugin.execute();	
+			}
+		});
+  	return btn;	
+  }
+  
+  */
+  
+  	
+  /*  String msg;
     
     JPanel result = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
     result.setOpaque(false);
@@ -529,8 +599,8 @@ System.out.println("creating menu: "+theMenu.getItemCount()+" items");
    }
 
 
-   return result;
-  }
+   return result;*/
+ // }
 
 
   
@@ -698,23 +768,22 @@ System.out.println("creating menu: "+theMenu.getItemCount()+" items");
     dlg.pack();
     UiUtilities.centerAndShow(dlg);
     if (Settings.settingHasChanged(new String[]{"lookandfeel"})) {
-		System.out.println("CHANGED: lookandfeel");
 		updateLookAndFeel();
     }
     if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
-		System.out.println("CHANGED: applicationskin, useapplicationskin");
 		updateApplicationSkin();    	
     }
     if (Settings.settingHasChanged(new String[]{"tablebgmode","tablebackground"})) {
-		System.out.println("CHANGED: tablebgmode, tablebackground");
 		programTablePanel.updateBackground();
     }
     if (Settings.settingHasChanged(new String[]{"plugins"})) {
-    	System.out.println("CHANGED: plugins");
     	programTablePanel.setPluginContextMenu(DataService.getInstance().createPluginContextMenu(this));
    		updatePluginMenu(pluginsMenu);
     }
-    //if (Settings.settingHasChanged(new ))
+    if (Settings.settingHasChanged(new String[]{"timebutton","updatebutton","preferencesbutton",
+    "buttontype","buttonplugins"})) {
+    	buttonPanel.update();   	
+    }
     
 	
   }
