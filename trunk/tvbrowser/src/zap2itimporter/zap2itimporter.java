@@ -140,10 +140,10 @@ public class zap2itimporter implements tvdataservice.TvDataService{
     try {
       settings.setProperty(USER,username);
       settings.setProperty(PASS,password);
-      settings.setProperty(this.CHANNEL_NUMBER,Integer.toString(channels.length));
+      settings.setProperty(CHANNEL_NUMBER,Integer.toString(channels.length));
       for (int i =0;i<channels.length;i++){
-        settings.setProperty(this.CHANNEL_NAME+i,channels[i].getName());
-        settings.setProperty(this.CHANNEL_ID+i,channels[i].getId());
+        settings.setProperty(CHANNEL_NAME+i,channels[i].getName());
+        settings.setProperty(CHANNEL_ID+i,channels[i].getId());
       }
     } catch (Exception E){
       E.printStackTrace();
@@ -224,33 +224,33 @@ class mySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.ev
     GridBagLayout gridbag = new GridBagLayout();
     GridBagConstraints c = new GridBagConstraints();
     panel.setLayout(gridbag);
-    c.fill = c.HORIZONTAL;
-    c.anchor = c.WEST;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.anchor = GridBagConstraints.WEST;
     c.weightx = 1.0;
     javax.swing.JLabel userNameLabel = new javax.swing.JLabel("username");
     gridbag.setConstraints(userNameLabel, c);
     panel.add(userNameLabel);
     
     username = new javax.swing.JTextField(zap2it.username);
-    c.anchor = c.EAST;
+    c.anchor = GridBagConstraints.EAST;
     c.gridwidth = GridBagConstraints.REMAINDER;
     gridbag.setConstraints(username, c);
     panel.add(username);
     
     c.gridwidth = GridBagConstraints.RELATIVE;
-    c.anchor = c.WEST;
+    c.anchor = GridBagConstraints.WEST;
     javax.swing.JLabel passwordLabel = new javax.swing.JLabel("password");
     gridbag.setConstraints(passwordLabel, c);
     panel.add(passwordLabel);
     
     password = new javax.swing.JTextField(zap2it.password);
-    c.anchor = c.EAST;
+    c.anchor = GridBagConstraints.EAST;
     c.gridwidth = GridBagConstraints.REMAINDER;
     gridbag.setConstraints(password, c);
     panel.add(password);
     
     javax.swing.JButton update = new javax.swing.JButton("update channellist");
-    c.anchor = c.EAST;
+    c.anchor = GridBagConstraints.EAST;
     gridbag.setConstraints(update, c);
     panel.add(update);
     

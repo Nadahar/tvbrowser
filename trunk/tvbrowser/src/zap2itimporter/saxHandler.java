@@ -351,7 +351,7 @@ public class saxHandler extends org.xml.sax.helpers.DefaultHandler{
                                                         }
                                                          */
             } else {
-              System.out.println("kein program gefunden für "+programID);
+              System.out.println("kein program gefunden fï¿½r "+programID);
             }
             
           }
@@ -519,7 +519,7 @@ public class saxHandler extends org.xml.sax.helpers.DefaultHandler{
             channelID = null;
             channelCallSign = null;
             channelName = null;
-            status = this.STATUS_CHANNELS;
+            status = STATUS_CHANNELS;
           }
           break;
         }
