@@ -383,38 +383,40 @@ public class DataService implements devplugin.PluginManager {
   }
 
 /**
- * Deletes all expired tvdata files 
- *
+ * Deletes expired tvdata files older then lifespan days.
+ * @param lifespan
  */
 
-public static void deleteExpiredTVData() {
+public static void deleteExpiredFiles(int lifespan) {
 	
-	int lifespan=Settings.getTVDataLifespan();
-	if (lifespan<0) {
-		return;  // manually
-	}
-	devplugin.Date d=new devplugin.Date();
-	d.addDays(-lifespan);
-	final int date=d.getDaysSince1970();
-	
-	File fList[]=new File(Settings.getTVDataDirectory()).listFiles(
-		new java.io.FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				
-				int p=name.lastIndexOf('.');
-				String s=name.substring(p+1,name.length());
-				int val=Integer.parseInt(s);
-				return val<date;
-			}
-		}	
-	);
-	if (fList!=null) {
-		for (int i=0;i<fList.length;i++) {
-			fList[i].delete();
+		if (lifespan<0) {
+			return;  // manually
 		}
-	}
+		devplugin.Date d=new devplugin.Date();
+		d.addDays(-lifespan);
+		final int date=d.getDaysSince1970();
+	
+		File fList[]=new File(Settings.getTVDataDirectory()).listFiles(
+			new java.io.FilenameFilter() {
+				public boolean accept(File dir, String name) {
+				
+					int p=name.lastIndexOf('.');
+					String s=name.substring(p+1,name.length());
+					int val=Integer.parseInt(s);
+					return val<date;
+				}
+			}	
+		);
+		if (fList!=null) {
+			for (int i=0;i<fList.length;i++) {
+				fList[i].delete();
+			}
+		}
+	
 	
 }
+
+
 
 
   /**

@@ -150,8 +150,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     PluginManager.initInstalledPlugins();
     
     mLog.info("Deleting expired tv data...");
-    DataService.deleteExpiredTVData();
-    
+
+    DataService.deleteExpiredFiles(Settings.getTVDataLifespan());
+
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
