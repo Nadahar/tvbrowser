@@ -27,8 +27,14 @@ package listviewplugin;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+
+import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -63,7 +69,7 @@ public class ListViewPlugin extends Plugin {
     /**
      * Creates the Dialog
      */
-    public void execute() {
+    public void showDialog() {
         final ListViewDialog dlg = new ListViewDialog(getParentFrame(), this);
 
         dlg.pack();
@@ -92,29 +98,37 @@ public class ListViewPlugin extends Plugin {
     }
 
     /**
-     * Returns the Button-Text
-     */
-    public String getButtonText() {
-        return mLocalizer.msg("buttonName", "View Liste");
-    }
-
-    /**
      * Icon to show for a marked program
      */
     public String getMarkIconName() {
         return "listviewplugin/listview16.gif";
     }
 
-    /**
-     * Returns the Button-Icon
-     */
-    public String getButtonIconName() {
-        return "listviewplugin/listview16.gif";
-    }
 
+    /*
+     *  (non-Javadoc)
+     * @see devplugin.Plugin#getButtonAction()
+     */
+    public Action getButtonAction() {
+        AbstractAction action = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent evt) {
+                showDialog();
+            }
+        };
+        action.putValue(Action.NAME, mLocalizer.msg("buttonName", "View Liste"));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("listviewplugin/listview16.gif", ListViewPlugin.class)));
+        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("listviewplugin/listview24.gif", ListViewPlugin.class)));
+        
+        
+        return action;
+    }
+    
+    
     /** Needed for Position */
     private Point _locationListDialog = null;
 
     /** Needed for Position */
     private Dimension _dimensionListDialog = null;
+    
 }
