@@ -13,9 +13,7 @@ public class DownloadManager {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(DownloadManager.class.getName());
-  
-  private String mServerUrl;
-  
+    
   private int mConcurrentDownloads;
   
   private LinkedList mJobList;
@@ -26,28 +24,25 @@ public class DownloadManager {
 
 
 
-  public DownloadManager(String serverUrl) {
-    this(serverUrl, 10);
+  
+  public DownloadManager() {
+    this(10);
   }
+  
+  
+  public DownloadManager(int concurrentDownloads) {
+     
+      mConcurrentDownloads = concurrentDownloads;
+    
+      mJobList = new LinkedList();
+    }
   
   
 
-  public DownloadManager(String serverUrl, int concurrentDownloads) {
-    if (! serverUrl.startsWith("http://")) {
-      serverUrl = "http://" + serverUrl;
-    }
-    
-    mServerUrl = serverUrl;
-    mConcurrentDownloads = concurrentDownloads;
-    
-    mJobList = new LinkedList();
-  }
   
-  
-  
-  public void addDownloadJob(String fileName, DownloadHandler handler) {
+  public void addDownloadJob(String serverUrl, String fileName, DownloadHandler handler) {
     synchronized(mJobList) {
-      mJobList.add(new DownloadJob(fileName, handler));
+      mJobList.add(new DownloadJob(serverUrl, fileName, handler));
     }
   }
 
@@ -124,7 +119,7 @@ public class DownloadManager {
       }
       
       if (job != null) {
-        String url = mServerUrl + "/" + job.getFileName();
+        String url = job.getServerUrl() + "/" + job.getFileName();
         InputStream stream = null;
         try {
           stream = IOUtilities.getStream(new URL(url));
@@ -183,14 +178,20 @@ public class DownloadManager {
     
     private String mFileName;
     private DownloadHandler mHandler;
+    private String mServerUrl;
     
-    public DownloadJob(String fileName, DownloadHandler handler) {
+    public DownloadJob(String serverUrl, String fileName, DownloadHandler handler) {
       mFileName = fileName;
       mHandler = handler;
+      mServerUrl = serverUrl;
     }
     
     public String getFileName() {
       return mFileName;
+    }
+    
+    public String getServerUrl() {
+      return mServerUrl;
     }
     
     public DownloadHandler getDownloadHandler() {

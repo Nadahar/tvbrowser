@@ -60,5 +60,9 @@ public class DummyConfiguration implements Configuration {
   public int getMirrorWeight() {
     return 100;
   }
+  
+  public String[] getChannelgroups() {
+    return new String[]{"premiere"}; 
+  }
 
 }

@@ -39,6 +39,7 @@ import java.util.zip.GZIPOutputStream;
 import tvdataservice.TvDataService;
 
 import devplugin.Channel;
+import devplugin.ChannelGroup;
 
 /**
  * 
@@ -51,9 +52,24 @@ public class ChannelList {
   
   private ArrayList mChannelList;
   
+  private ChannelGroup mGroup;
   
-  public ChannelList() {
+  
+  public ChannelList(final String groupName) {
     mChannelList = new ArrayList();
+    mGroup=new ChannelGroup() {
+      public String getName() {
+        return groupName;
+      }
+      public String getId() {
+        return groupName;
+      }
+    };
+  }
+  
+  public ChannelList(ChannelGroup group) {
+    mChannelList = new ArrayList();
+    mGroup=group;
   }
   
   
@@ -105,7 +121,7 @@ public class ChannelList {
         String webpage = tokenizer.nextToken().trim();
         
         Channel channel = new Channel(dataService, name, id,
-          TimeZone.getTimeZone(timezone), country,copyright,webpage);
+          TimeZone.getTimeZone(timezone), country,copyright,webpage, mGroup);
           
         addChannel(channel);
       }

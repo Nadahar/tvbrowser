@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -67,10 +68,10 @@ public class MirrorUpdater {
   
   private Date mDeadlineDay;
   
+  private String[] mChannelGroupArr;
   private String[] mTargetFileArr;
-  
+    
   private static final String PROGRAM_TITLE = "MirrorUpdater for TV-Browser v0.2";
-
 
 
   public MirrorUpdater(Configuration config) {
@@ -78,7 +79,7 @@ public class MirrorUpdater {
     mDataTarget = config.getDataTarget();
     mPrimaryServerUrl = config.getPrimaryServerUrl();
     mMirrorWeight = config.getMirrorWeight();
-    
+    mChannelGroupArr=config.getChannelgroups();
     mDeadlineDay = new Date().addDays(-2);
   }
 
@@ -99,7 +100,7 @@ public class MirrorUpdater {
       }
       
       // Get the channellist
-      Channel[] channelArr = updateChannelList();
+      Channel[] channelArr = updateChannelLists();
       
       // Update the day programs for all channels
       for (int i = 0; i < channelArr.length; i++) {
@@ -144,25 +145,50 @@ public class MirrorUpdater {
   }
 
 
+  private Channel[] updateChannelLists() throws UpdateException {
+		
+    
+    
+    if (mChannelGroupArr==null) {
+      return updateChannelList(null);
+    }
+    else {
+    
+      HashSet channelSet=new HashSet();
+      for (int i=0;i<mChannelGroupArr.length;i++) {
+        Channel[] ch=updateChannelList(mChannelGroupArr[i]);
+        for (int j=0;j<ch.length;j++) {
+          channelSet.add(ch[j]);
+        }
+      }
+    
+      Channel[] channels=new Channel[channelSet.size()];
+      channelSet.toArray(channels);
+      return channels;
+    }
+    
+    
+  }
 
-  private Channel[] updateChannelList() throws UpdateException {
-    byte[] data = mDataSource.loadFile(ChannelList.FILE_NAME);
+
+  private Channel[] updateChannelList(String groupname) throws UpdateException {
+    byte[] data = mDataSource.loadFile((groupname!=null?groupname+"_":"")+ChannelList.FILE_NAME);
     
     // Read the channel list
     Channel[] channelArr;
     try {
       ByteArrayInputStream stream = new ByteArrayInputStream(data);
       
-      ChannelList list = new ChannelList();
+      ChannelList list = new ChannelList(groupname);
       list.readFromStream(stream, null);
       channelArr = list.createChannelArray();
     }
     catch (Exception exc) {
-      throw new UpdateException("Reading channel list failed", exc);
+      throw new UpdateException("Reading channel list for group "+groupname+" failed", exc);
     }
     
     // Store the (new) channel list
-    mDataTarget.writeFile(ChannelList.FILE_NAME, data);
+    mDataTarget.writeFile((groupname!=null?groupname+"_":"")+ChannelList.FILE_NAME, data);
     
     return channelArr;
   }
@@ -266,7 +292,34 @@ public class MirrorUpdater {
     return false;
   }
 
+  private void writeGroupFile(DataTarget target, byte[] data, String fName) throws UpdateException {
+    
+    if (mChannelGroupArr==null) {
+      target.writeFile(fName,data);
+    }
+    else {
+      for (int i=0;i<mChannelGroupArr.length;i++) {
+        String group=mChannelGroupArr[i];
+        target.writeFile(group+"_"+fName, data);
+      }
+    }    
+  }
 
+  private void copyGroupFile(DataTarget target, DataSource source, String fName) throws UpdateException {
+    
+    if (mChannelGroupArr==null) {
+      byte[] data = mDataSource.loadFile(fName);
+      target.writeFile(fName, data);
+    }
+    else {
+      for (int i=0;i<mChannelGroupArr.length;i++) {
+        String group=mChannelGroupArr[i];
+        byte[] data = mDataSource.loadFile(group+"_"+fName);
+        target.writeFile(group+"_"+fName, data);
+      }
+    }
+    
+  }
 
   private void updateMetaFiles(Channel[] channelArr) throws UpdateException {
     byte[] data;
@@ -276,17 +329,25 @@ public class MirrorUpdater {
     mDataTarget.writeFile("primaryserver", data);
 
     // Copy the mirrorlist.gz
-    data = mDataSource.loadFile(Mirror.MIRROR_LIST_FILE_NAME);
-    mDataTarget.writeFile(Mirror.MIRROR_LIST_FILE_NAME, data);
-
+    copyGroupFile(mDataTarget,mDataSource,Mirror.MIRROR_LIST_FILE_NAME);
+    
     // Copy the summary.gz
-    data = mDataSource.loadFile(SummaryFile.SUMMARY_FILE_NAME);
-    mDataTarget.writeFile(SummaryFile.SUMMARY_FILE_NAME, data);
-
+    copyGroupFile(mDataTarget,mDataSource,SummaryFile.SUMMARY_FILE_NAME);
+    
+    // Copy the group files
+    if (mChannelGroupArr!=null) {
+      for (int i=0;i<mChannelGroupArr.length;i++) {
+        data = mDataSource.loadFile(mChannelGroupArr[i]);
+        mDataTarget.writeFile(mChannelGroupArr[i], data);
+      }
+    }
+    
+    
     // Create the weight file
     if (mMirrorWeight>=0) {  // don't change the weight file, if the weight is invalid
       data = Integer.toString(mMirrorWeight).getBytes();
-      mDataTarget.writeFile("weight", data);
+      //mDataTarget.writeFile("weight", data);
+      writeGroupFile(mDataTarget,data,"weight");
     }
     
     // Create the lastupdate file
@@ -304,7 +365,9 @@ public class MirrorUpdater {
       + ((minute < 10) ? "0" : "") + minute + ":"
       + ((second < 10) ? "0" : "") + second;
     data = lastUpdate.getBytes();
-    mDataTarget.writeFile("lastupdate", data);
+    
+    //mDataTarget.writeFile("lastupdate", data);
+    writeGroupFile(mDataTarget,data,"lastupdate");
     
     // Create the index.html
     String html = createIndexHtml(channelArr);
@@ -326,8 +389,7 @@ public class MirrorUpdater {
     buffer.append("<p><b>Warning:</b> The data provided here may only be used ");
     buffer.append("by the TV-Browser project. Any other use is illegal!</p>");
     
-    buffer.append("The mirror has a weight of <code>" + mMirrorWeight + "</code> ");
-    buffer.append("and was last updated on <code>");
+    buffer.append("The mirror was last updated on <code>");
     DateFormat format = DateFormat.getDateTimeInstance(DateFormat.MEDIUM,
       DateFormat.MEDIUM, Locale.UK);
     buffer.append(format.format(new java.util.Date()));
@@ -347,9 +409,17 @@ public class MirrorUpdater {
   }
 
 
-
+  
   public static void main(String[] args) {
     System.out.println(PROGRAM_TITLE);
+    String configFileName;
+    
+    if (args.length>0) {
+      configFileName=args[0];
+    }
+    else {
+      configFileName="MirrorUpdater.ini";
+    }
     
     // setup logging
     try {
@@ -375,13 +445,9 @@ public class MirrorUpdater {
     System.setProperty("http.agent", PROGRAM_TITLE); 
 
     // Start the update    
-    String propertiesFileName = "MirrorUpdater.ini";
-    if (args.length > 0) {
-      propertiesFileName = args[0];
-    }
     
     try {
-      Configuration config = new PropertiesConfiguration(propertiesFileName);
+      Configuration config = new PropertiesConfiguration(configFileName);
       MirrorUpdater updater = new MirrorUpdater(config);
       updater.updateMirror();
     }

@@ -41,11 +41,12 @@ public class Channel {
   private String mCopyrightNotice;
   private String mWebpage;
   private int mDayLightSavingTimeCorrection;
+  private ChannelGroup mGroup;
 
 
 
   public Channel(TvDataService dataService, String name, String id,
-    TimeZone timeZone, String country, String copyrightNotice, String webpage)
+    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group)
   {
     if (country.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
@@ -60,7 +61,15 @@ public class Channel {
     mCopyrightNotice=copyrightNotice;
     mWebpage=webpage;
     mDayLightSavingTimeCorrection=0;
+    mGroup=group;
   }
+  
+  public Channel(TvDataService dataService, String name, String id,
+      TimeZone timeZone, String country, String copyrightNotice, String webpage) {
+        
+    this(dataService,name,id,timeZone,country,copyrightNotice,webpage,null);     
+  }
+  
   
   public Channel(TvDataService dataService, String name, String id,
       TimeZone timeZone, String country, String copyrightNotice)
@@ -169,6 +178,10 @@ public class Channel {
   
   public String getWebpage() {
     return mWebpage;
+  }
+  
+  public ChannelGroup getGroup() {
+    return mGroup;
   }
   
   public static Channel getChannel(String dataServiceClassName, String channelId) {

@@ -48,6 +48,7 @@ public class PropertiesConfiguration implements Configuration {
   private DataSource mDataSource;
   private DataTarget mDataTarget;
   private int mMirrorWeight;
+  private String[] mChannelgroups;
   
   
   
@@ -119,6 +120,17 @@ public class PropertiesConfiguration implements Configuration {
       throw new UpdateException("Error getting mirror weight from "
         + "properties file: " + propertiesFileName, exc);
     }
+    
+     // Get the channel groups
+     
+     String s = prop.getProperty("groups");
+     if (s==null) {
+       mChannelgroups=null;
+     }
+     else {
+       mChannelgroups=s.split(":");
+     }  
+    
   }
 
 
@@ -189,6 +201,10 @@ public class PropertiesConfiguration implements Configuration {
 
   public int getMirrorWeight() {
     return mMirrorWeight;
+  }
+  
+  public String[] getChannelgroups() {
+    return mChannelgroups; 
   }
 
 }

@@ -92,7 +92,7 @@ public class PrimaryDataManagerTest extends TestCase {
     prepProg3.writeToFile(new File(prepDir, "2010-01-03_de_test_base_full.gz"));
     
     // Start the update
-    manager.updateRawDataDir(false);
+    manager.updateRawDataDir(false,false);
     // TODO: Check the result
   }
 
