@@ -783,5 +783,9 @@ public class DataService implements devplugin.PluginManager {
     
     return prog;
   }
+  
+  public devplugin.Plugin[] getInstalledPlugins() {
+  	return PluginManager.getInstalledPlugins();
+  }
 
 }

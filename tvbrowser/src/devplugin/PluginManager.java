@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -81,5 +81,11 @@ public interface PluginManager {
     boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
     int nrDays)
     throws TvBrowserException;
+    
+  /**
+   * Returns a list of all installed Plugins
+   * @return
+   */  
+  public Plugin[] getInstalledPlugins();
   
 }
