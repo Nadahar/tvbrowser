@@ -355,7 +355,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     JButton bt = new JButton(mLocalizer.msg("change", "Change"));
     bt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        JFileChooser fileChooser=new JFileChooser();
+        File file = new File(tf.getText());
+        JFileChooser fileChooser = new JFileChooser(file.getParent());
         String[] extArr = { ".jpg", ".jpeg", ".gif", ".png"};
         fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
         fileChooser.showOpenDialog(mSettingsPn);

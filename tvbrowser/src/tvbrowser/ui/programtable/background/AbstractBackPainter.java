@@ -25,6 +25,7 @@
  */
 package tvbrowser.ui.programtable.background;
 
+import java.awt.*;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -51,7 +52,10 @@ public abstract class AbstractBackPainter implements BackgroundPainter {
   protected void fillImage(Graphics grp, int x, int y, int width, int height,
     Image img, Rectangle clipBounds)
   {
-    if (img != null) {
+    if (img == null) {
+      grp.setColor(Color.WHITE);
+      grp.fillRect(x, y, width, height);
+    } else {
       // Check whether we have to paint anything
       if (! clipBounds.intersects(x, y, width, height)) {
         // Nothing to do

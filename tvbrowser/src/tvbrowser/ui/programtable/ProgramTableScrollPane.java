@@ -23,7 +23,6 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.programtable;
 
 import java.awt.Color;
@@ -33,16 +32,12 @@ import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 import tvbrowser.ui.programtable.background.BackgroundPainter;
-
-
 import devplugin.Channel;
 
 /**
