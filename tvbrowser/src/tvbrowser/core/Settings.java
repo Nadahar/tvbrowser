@@ -347,22 +347,10 @@ public class Settings {
   private static void initSubscribedChannels() {
     String[] entries = settings.getStringList("subscribedchannels");
     if (settings.getProperty("subscribedchannels") == null) {
+      System.out.println("no subscribed channels");
       return;
-      /*
-    	// Install by default the first 9 channels of the XmlTvDataService
-      TvDataServiceManager mng = TvDataServiceManager.getInstance();
-      TvDataService xmltvService = mng.getDataService("xmltvdataservice.XmlTvDataService");
-      if (xmltvService != null) {
-        Channel[] channelArr = xmltvService.getAvailableChannels();
-        Channel[] defaultChannelArr = new Channel[9];
-        System.arraycopy(channelArr, 0, defaultChannelArr, 0, defaultChannelArr.length);
-        setSubscribedChannels(defaultChannelArr);
-      }
-	  entries = settings.getStringList("subscribedchannels");
-    */
     }
     
-
     
     for (int i = 0; i < entries.length; i++) {
       String entry = entries[i];

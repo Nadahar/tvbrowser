@@ -119,7 +119,6 @@ public class ChannelList {
 
   private static void addDataServiceChannels(TvDataService dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
-
     for (int i = 0; i < channelArr.length; i++) {
       mAvailableChannels.add(channelArr[i]);
     }
@@ -140,10 +139,10 @@ public class ChannelList {
    * @param id the channel's ID
    */
   public static void subscribeChannel(TvDataService dataService, String id) {
-	Channel ch = getChannel(dataService, id);
-  if (ch!=null) {
-		mSubscribedChannels.add(ch);
-	}	
+	  Channel ch = getChannel(dataService, id);
+    if (ch!=null) {
+		  mSubscribedChannels.add(ch);
+	  }	
   }
 
 
@@ -172,14 +171,14 @@ public class ChannelList {
    * given ID does not exist.
    */
   public static Channel getChannel(TvDataService dataService, String id) {
-	Iterator iter = mAvailableChannels.iterator();
-	while (iter.hasNext()) {
-	  Channel channel = (Channel) iter.next();
-	  if (channel.getDataService().equals(dataService) && channel.getId().equals(id)) {
-		return channel;
+    Iterator iter = mAvailableChannels.iterator();
+	  while (iter.hasNext()) {
+	    Channel channel = (Channel) iter.next();
+      if (channel.getDataService().equals(dataService) && channel.getId().equals(id)) {
+		    return channel;
+	    }
 	  }
-	}
-	return null;
+    return null;
   }
 
 
@@ -208,14 +207,14 @@ public class ChannelList {
    * Returns true, if the specified channel is currently subscribed.
    */
   public static boolean isSubscribedChannel(Channel channel) {
-	if (channel==null) return false;
-	for (int i=0;i<mSubscribedChannels.size();i++) {
-	  Channel ch=(Channel)mSubscribedChannels.get(i);
-	  if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataService().equals(channel.getDataService())) {
-		return true;
+	  if (channel==null) return false;
+	  for (int i=0;i<mSubscribedChannels.size();i++) {
+	    Channel ch=(Channel)mSubscribedChannels.get(i);
+	    if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataService().equals(channel.getDataService())) {
+		    return true;
+	    }
 	  }
-	}
-	return false;
+	  return false;
   }
 
 

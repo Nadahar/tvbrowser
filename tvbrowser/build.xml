@@ -56,6 +56,7 @@
   <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
   <property name="primarydatamanager.runtime.dir" value="${runtime.dir}/primarydatamanager"/>
   <property name="installer.dir" value="installer"/>
+  <property name="jsmooth.dir" value="jsmooth"/>
   <property name="public.dir" value="public"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
 
@@ -367,11 +368,19 @@
   </target>
 
 
+  <taskdef name="jsmoothgen" 
+     classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
+     classpath="${jsmooth.dir}/lib/jsmoothgen-ant.jar"/> 
+
+  <target name="exe" depends="runtime" description="Creates a Windows Executable with the help of JSmooth (http://jsmooth.sf.net)"> 
+    <jsmoothgen project="${jsmooth.dir}/tvbrowser.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/> 
+  </target>  
+
 
   <!--
    | Creates a Windows installer for the project.
    +-->
-  <target name="installer" depends="runtime">
+  <target name="installer" depends="runtime, exe">
     <mkdir dir="${public.dir}"/>
     <exec executable="${installer.dir}/makensis.exe"
           failonerror="true">
@@ -447,19 +456,7 @@
         <include name="package-lists/jdk/package-list"/>
       </zipfileset>
     </zip>
-<!--
-    <antcall target="-zipPackageSrc">
-      <param name="package" value="xmltvdataservice"/>
-    </antcall>
 
-    <antcall target="-zipPackageSrc">
-      <param name="package" value="premieredataservice"/>
-    </antcall>
-
-		<antcall target="-zipPackageSrc">
-      <param name="package" value="wdrdataservice"/>
-    </antcall>
--->
     <antcall target="-zipPackageSrc">
       <param name="package" value="programinfo"/>
     </antcall>

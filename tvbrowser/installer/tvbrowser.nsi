@@ -3,7 +3,7 @@
 #
 #
 # TV-Browser
-# Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+# Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -86,9 +86,9 @@ Section "${PROG_NAME} (erforderlich)"
   # Set output path to the installation directory.
   SetOutPath "$INSTDIR"
   File "${RUNTIME_DIR}\LICENSE.txt"
-  File "${RUNTIME_DIR}\tvbrowser.jar"
+  File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\website.url"
-  File "${RUNTIME_DIR}\where_is_the_exe.txt"
+  
 
   WriteUninstaller "Uninstall.exe"
 
@@ -163,7 +163,7 @@ Section "Verknüpfungen im Start-Menü"
 
   CreateShortCut \
     "$SMPROGRAMS\${PROG_NAME}\${PROG_NAME}.lnk" \
-    "$INSTDIR\tvbrowser.jar"
+    "$INSTDIR\tvbrowser.exe"
 
   CreateShortCut \
     "$SMPROGRAMS\${PROG_NAME}\Lizenz.lnk" \
@@ -189,7 +189,7 @@ Section "Verknüpfung auf dem Desktop"
 
   CreateShortCut \
     "$DESKTOP\${PROG_NAME}.lnk" \
-    "$INSTDIR\tvbrowser.jar"
+    "$INSTDIR\tvbrowser.exe"
 SectionEnd
 
 SubSectionEnd
