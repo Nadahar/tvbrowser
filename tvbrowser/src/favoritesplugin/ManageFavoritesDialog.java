@@ -28,9 +28,18 @@ package favoritesplugin;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+
 import javax.swing.*;
 import javax.swing.event.*;
 
+import util.exc.ErrorHandler;
 import util.ui.*;
 
 import devplugin.*;
@@ -49,7 +58,8 @@ public class ManageFavoritesDialog extends JDialog {
   private DefaultListModel mFavoritesListModel, mProgramListModel;
   private JList mFavoritesList, mProgramList;
   private JSplitPane mSplitPane;
-  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mOkBt, mCancelBt;
+  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mImportBt, mOkBt,
+    mCancelBt;
   
   private boolean mOkWasPressed = false;
   
@@ -122,6 +132,16 @@ public class ManageFavoritesDialog extends JDialog {
       }
     });
     toolbarPn.add(mDownBt);
+
+    msg = mLocalizer.msg("import", "Import favorites from TVgenial");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Import24.gif", getClass());
+    mImportBt = UiUtilities.createToolBarButton(msg, icon);
+    mImportBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        importFavorites();
+      }
+    });
+    toolbarPn.add(mImportBt);
 
     mSplitPane = new JSplitPane();
     mSplitPane.setDividerLocation(splitPanePosition);
@@ -298,6 +318,75 @@ public class ManageFavoritesDialog extends JDialog {
     }
   }
   
+
+  protected void importFavorites() {
+    JFileChooser fileChooser = new JFileChooser();
+    String[] extArr = { ".txt" };
+    String msg = mLocalizer.msg("importFile.TVgenial", "Text file (from TVgenial) (.txt)");
+    fileChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
+    fileChooser.showOpenDialog(this);
+    
+    File file = fileChooser.getSelectedFile();
+    if (file != null) {
+      FileReader reader = null;
+      int importedFavoritesCount = 0;
+      try {
+        reader = new FileReader(file);
+        BufferedReader lineReader = new BufferedReader(reader);
+        String line;
+        while ((line = lineReader.readLine()) != null) {
+          line = line.trim();
+          if ((line.length() > 0) && (! line.startsWith("***"))) {
+            // This is a favorite -> Check whether we already have such a favorite
+            Enumeration enum = mFavoritesListModel.elements();
+            boolean alreadyKnown = false;
+            while (enum.hasMoreElements()) {
+              Favorite fav = (Favorite) enum.nextElement();
+              String searchText = fav.getSearchFormSettings().getSearchText();
+              if (line.equalsIgnoreCase(searchText)) {
+                alreadyKnown = true;
+                break;
+              }
+            }
+            
+            // Import the favorite if it is new
+            if (! alreadyKnown) {
+              Favorite fav = new Favorite();
+              fav.getSearchFormSettings().setSearchText(line);
+              fav.updatePrograms();
+              
+              mFavoritesListModel.addElement(fav);
+              importedFavoritesCount++;
+            }
+          }
+        }
+      }
+      catch (Exception exc) {
+        msg = mLocalizer.msg("error.1", "Importing text file failed: {0}.",
+                             file.getAbsolutePath());
+        ErrorHandler.handle(msg, exc);
+      }
+      finally {
+        if (reader != null) {
+          try { reader.close(); } catch (IOException exc) {}
+        }
+      }
+
+      if (importedFavoritesCount == 0) {
+        msg = mLocalizer.msg("error.2", "There are no new favorites in {0}.",
+                             file.getAbsolutePath());
+        JOptionPane.showMessageDialog(this, msg);
+      } else {
+        // Scroll to the end
+        int idx = mFavoritesListModel.size() - 1;
+        mFavoritesList.ensureIndexIsVisible(idx);
+
+        msg = mLocalizer.msg("importDone", "There were {0} new favorites imported.",
+            new Integer(importedFavoritesCount));
+        JOptionPane.showMessageDialog(this, msg);
+      }
+    }
+  }
   
 
   public boolean getOkWasPressed() {
