@@ -1,24 +1,25 @@
 TODOs:
 
-- Senderlisten direkt vom Server holen
+- Senderlisten direkt vom Server holen (Bodo, fast fertig)
 - Je Senderliste Infos zum "Privider" darstellen (Name, Website, E-Mail)
-- Gestern und Morgen reinladen für Sender in einer anderen Zeitzone
+- Gestern und Morgen reinladen fï¿½r Sender in einer anderen Zeitzone
 - Logos zu allen Sendern
 - Anpassbarkeit der GUI (wo welches Element ist)
 - Ordner in den Lieblingssendungen
-- Übernehmen-Knopf in Einstellungen
+- ï¿½bernehmen-Knopf in Einstellungen
 - News-Plugin:
     Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
     evtl. Option "News automatisch holen"
-- Übernehmen-Knopf in Einstellungen
-- Button in Toolbar für die Menüoption Ansicht--> Plugin-Übersicht
-- Einstellungen für die Toolbar im Einstellungen-Dialog
+- ï¿½bernehmen-Knopf in Einstellungen
+- Button in Toolbar fï¿½r die Menï¿½option Ansicht--> Plugin-ï¿½bersicht
+- Einstellungen fï¿½r die Toolbar im Einstellungen-Dialog
 
 
 
 Bugs:
-- Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste verändert wird.
+- Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste verï¿½ndert wird.
 - Exception bei Drag&-Drop in der Toolbar: java.awt.dnd.InvalidDnDOperationException: Drag and drop in progress
-
+- Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert, 
+  das fÃ¼hrt zu einer Nullpointer beim speichern der abon. Sender.
 
 
