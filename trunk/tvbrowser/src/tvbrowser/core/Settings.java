@@ -31,6 +31,7 @@ import java.io.*;
 import javax.swing.*;
 
 import util.exc.TvBrowserException;
+import tvbrowser.ui.SkinPanel;
 
 
 class TVBrowserProperties extends java.util.Properties {
@@ -79,7 +80,6 @@ public class Settings {
 
 	private static TVBrowserProperties settings=null;
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
-  public static final int NONE=0, WALLPAPER=1, COLUMNS=2;
   public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
 
 
@@ -191,17 +191,17 @@ public class Settings {
     String mode=settings.getProperty("tablebgmode","cols");
 
     if ("cols".equals(mode)) {
-      return COLUMNS;
+      return SkinPanel.COLUMNS;
     }else if ("wallpaper".equals(mode)) {
-      return WALLPAPER;
+      return SkinPanel.WALLPAPER;
     }
-    return NONE;
+    return SkinPanel.NONE;
   }
 
   public static void setTableBGMode(int mode) {
-    if (mode==COLUMNS) {
+    if (mode==SkinPanel.COLUMNS) {
       settings.setProperty("tablebgmode","cols");
-    }else if (mode==WALLPAPER) {
+    }else if (mode==SkinPanel.WALLPAPER) {
       settings.setProperty("tablebgmode","wallpaper");
     }else {
       settings.setProperty("tablebgmode","none");
