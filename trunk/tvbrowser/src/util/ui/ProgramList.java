@@ -150,6 +150,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
           PluginManager mng = Plugin.getPluginManager();
           if (SwingUtilities.isRightMouseButton(e)) {
             int inx = locationToIndex(e.getPoint());
+            setSelectedIndex(inx);
             Program prog = (Program) getModel().getElementAt(inx);
             JPopupMenu menu = mng.createPluginContextMenu(prog);
   
