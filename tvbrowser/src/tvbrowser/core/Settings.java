@@ -250,7 +250,7 @@ public class Settings {
                          getUserDirectoryName() + File.separator + "filters");
                          
   public static final ChannelArrayProperty propSubscribedChannels
-    = new ChannelArrayProperty(mProp, "subscribedchannels", null);
+    = new ChannelArrayProperty(mProp, "subscribedchannels", new devplugin.Channel[]{});
 
   public static final IntProperty propEarlyTime
     = new IntProperty(mProp, "timebutton.early", 6 * 60);

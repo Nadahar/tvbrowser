@@ -128,7 +128,11 @@ public class PluginLoader {
     Iterator pluginIter = mActivePlugins.iterator();
     while (pluginIter.hasNext()) {
       Plugin plugin = (Plugin) pluginIter.next();
-      plugin.handleTvDataChanged();
+      try {
+        plugin.handleTvDataChanged();
+      }catch(Throwable t) {
+        mLog.warning("Exception in Plugin "+plugin+": "+t);
+      }
     }
   }
 

@@ -464,29 +464,10 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     if (! dataAvailable) {
       askForDataUpdate();
     }
-    /*
-    final javax.swing.JDialog progDlg=new util.ui.progress.ProgressDlg(this,mLocalizer.msg("loadingAssistant",""));
-    final JFrame parent=this;
-      
-          Thread configThread = new Thread() {
-            public void run() {
-              javax.swing.JDialog dlg=new tvbrowser.ui.configassistant.ConfigAssistant(parent);
-              progDlg.hide();
-              util.ui.UiUtilities.centerAndShow(dlg);  
-                    dlg.hide();
-                    dlg.dispose();
-                    dlg=null;
-              
-              boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-              if (! dataAvailable) {
-                askForDataUpdate();
-              }
-            }
-          };
-     
-          configThread.start();
-          util.ui.UiUtilities.centerAndShow(progDlg);
-    */
+    
+    Settings.handleChangedSettings();
+    
+   
   }
 
   public void actionPerformed(ActionEvent event) {
@@ -594,24 +575,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
   private void changeDate(Date date, devplugin.ProgressMonitor monitor) {      
-    //mStatusBar.getProgressBar().setMaximum(100);
-    
-    
     mProgramTableModel.setDate(date, monitor);
-    
-
-/*
-    if (finderPanel != null) {
-      finderPanel.update();
-    }
-*/    
     
     if (date.equals(new devplugin.Date())) {
       // If this is today -> scroll to now
       scrollToNow();
     }
-    
-    //mStatusBar.getProgressBar().setValue(0);
   }
 
 
@@ -689,70 +658,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   public void showSettingsDialog() {
     SettingsDialog dlg = new SettingsDialog(this);
     dlg.centerAndShow();
-    
-//<<<<<<< MainFrame.java
-//    if (Settings.settingHasChanged(new String[]{"font.programtitle","font.programinfo","font.programtime","font.channelname","usedefaultfonts"})) {
-//      util.ui.ProgramPanel.updateFonts();
-//      tvbrowser.ui.programtable.ChannelPanel.fontChanged();
-//      mProgramTableScrollPane.getProgramTable().fontChanged();
-//      mProgramTableScrollPane.tableDataChanged();
-//      mProgramTableScrollPane.getProgramTable().tableDataChanged();
-//    }
-//    if (Settings.settingHasChanged(new String[]{"lookandfeel","skinLF.themepack","skinLF.enabled"})) {
-//      TVBrowser.updateLookAndFeel();
-//    }
-//    if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
-//      updateApplicationSkin();
-//    }
-//    if (Settings.settingHasChanged(new String[]{"table.layout"})) {
-//      mProgramTableScrollPane.getProgramTable().setProgramTableLayout(null);
-//    }
-//   if (Settings.settingHasChanged( new String[] {
-//      "timebutton.early", "timebutton.midday", "timebutton.afternoon",
-//      "timebutton.evening",
-//      "tablebackground.edge", "tablebackground.early",
-//      "tablebackground.midday", "tablebackground.afternoon",
-//      "tablebackground.evening" } ))
-//    {
-//      mProgramTableScrollPane.getProgramTable().updateBackground();
-//    }
-//    
-//    if (Settings.settingHasChanged(new String[]{"updatebutton","preferencesbutton",
-//    "buttontype" /*,"plugins"*/})) {
-//      mDefaultToolBar.updateButtons();
-//    }
-//    
-//    if (Settings.settingHasChanged(new String[]{"timebutton"})) {
-//      mDateTimeToolBar.updateButtons();
-//    }
-//    if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
-//      onSubscribedChannelsChanged();
-//    }
-//    
-//    if (Settings.settingHasChanged(new String[]{"programtable.endofday","programtable.startofday"})) {
-//      mProgramTableModel.setTimeRange(Settings.getProgramTableStartOfDay(),Settings.getProgramTableEndOfDay());
-//    }
-//    
-//    if (Settings.settingHasChanged(new String[]{"columnwidth"})) {
-//      util.ui.ProgramPanel.updateColumnWidth();
-//      mProgramTableScrollPane.setColumnWidth(Settings.getColumnWidth());
-//      mProgramTableScrollPane.updateChannelPanel();
-//      mProgramTableScrollPane.getProgramTable().updateLayout();
-//    }
-//
-//    if (Settings.settingHasChanged(new String[]{"programpanel.iconPlugins","programpanel.infoFields"})) {
-//      // Force a recreation of the table content
-//      mProgramTableModel.setDate(finderPanel.getSelectedDate(),null);
-//    }
-//  }
-//  
-//  public void onSubscribedChannelsChanged() {
-//    ChannelList.create();    
-//    mProgramTableModel.setChannels(ChannelList.getSubscribedChannels());
-//    mDefaultToolBar.updateChannelChooser();  
-//=======
     Settings.handleChangedSettings();
-////>>>>>>> 1.30
   }
   
     
@@ -761,7 +667,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    */
   private void showAboutBox() {
     AboutBox box=new AboutBox(this);
-    //box.pack();
     box.setSize(450,550);
     UiUtilities.centerAndShow(box);
     box.dispose();
@@ -799,23 +704,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         }
       });
       
-      /*
-      final util.ui.ProgressWindow win=new util.ui.ProgressWindow(this);
-      win.setMessage(mLocalizer.msg("title.2","searching for new plugins..."));
-      try {
-      
-        java.net.URL url=null;
-        //url=new java.io.File("plugins.txt").toURL();
-        url=new java.net.URL("http://tvbrowser.sourceforge.net/plugins/plugins2.txt");    
-        SoftwareUpdater softwareUpdater=null;
-        softwareUpdater=new SoftwareUpdater(url);
-        items=softwareUpdater.getAvailableSoftwareUpdateItems();
-      }catch (java.io.IOException e) {      
-        e.printStackTrace();
-      }finally{ 
-        win.hide();
-      }
-      */
       
       if (mSoftwareUpdateItems==null) {
         JOptionPane.showMessageDialog(this,mLocalizer.msg("error.1","software check failed."));

@@ -106,7 +106,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     if (channelArr == null) {
       throw new NullPointerException("shownChannelArr is null!");
     }
-    
+    System.out.println("now "+channelArr.length+" channels available");
     mChannelArr = channelArr;
     
 	  mProgramColumn=new ArrayList[mChannelArr.length];
@@ -119,6 +119,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   public void setProgramFilter(ProgramFilter filter) {
+    System.out.println("new Filter set: "+filter);
   	mProgramFilter=filter;
     fireTableDataChanged();
     updateTableContent();
@@ -171,6 +172,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       monitor.setValue(0);
     }
     
+    System.out.println("number of channels: "+mChannelArr.length);
+    
     for (int i = 0; i < mChannelArr.length; i++) {
       
       mProgramColumn[i].clear();
@@ -191,14 +194,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       }       
       
     }
+    boolean showEmptyColumns = mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter;
     
-    if (!(mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter)) {
-    
+      System.out.println("ShowAllFilter is NOT set");
       ArrayList newShownColumns = new ArrayList();
       ArrayList newShownChannels = new ArrayList();
       for (int i=0; i<mProgramColumn.length; i++) {
         //System.out.println("# of progs in col "+i+": "+mProgramColumn[i].size());
-        if (mProgramColumn[i].size()>0) {
+        if (showEmptyColumns || mProgramColumn[i].size()>0) {
           newShownColumns.add(mProgramColumn[i]);
           newShownChannels.add(mChannelArr[i]);
         }
@@ -208,7 +211,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     
       newShownColumns.toArray(mShownProgramColumn);
       newShownChannels.toArray(mShownChannelArr);
-    } 
+    
+    if (mShownProgramColumn!=null) System.out.println("number of shown columns AFTER: "+mShownProgramColumn.length);
+     
     
     SwingUtilities.invokeLater(new Runnable() {
               public void run() {
