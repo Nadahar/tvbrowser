@@ -333,39 +333,36 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   
   
   private void updatePluginMenu(JMenu theMenu) {
-	theMenu.removeAll();
-
-	Object[] plugins = PluginManager.getInstalledPlugins();
-	JMenuItem item;
-	HashMap map = new HashMap();
-	for (int i = 0;i<plugins.length;i++) {
-	  final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
-	  plugin.setParent(this);
-	  String btnTxt = plugin.getButtonText();
-	  if (btnTxt != null) {
-		int k = 1;
-		String txt = btnTxt;
-		while (map.get(txt) != null) {
-		  txt = btnTxt+"("+k+")";
-		  k++;
-		}
-		map.put(txt,btnTxt);
-
-		item = new JMenuItem(btnTxt);
-		theMenu.add(item);
-		item.addActionListener(new ActionListener() {
-		  public void actionPerformed(ActionEvent event) {
-			mLog.info("Plugin menu item pressed");
-			plugin.execute();
-		  }
-		}
-		);
-	  }
-	}
-
-//	  return pluginMenu;
+    theMenu.removeAll();
+    
+    Object[] plugins = PluginManager.getInstalledPlugins();
+    JMenuItem item;
+    HashMap map = new HashMap();
+    for (int i = 0;i<plugins.length;i++) {
+      final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
+      plugin.setParent(this);
+      String btnTxt = plugin.getButtonText();
+      if (btnTxt != null) {
+        int k = 1;
+        String txt = btnTxt;
+        while (map.get(txt) != null) {
+          txt = btnTxt+"("+k+")";
+          k++;
+        }
+        map.put(txt,btnTxt);
+        
+        item = new JMenuItem(btnTxt);
+        item.setIcon(plugin.getButtonIcon());
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent event) {
+            mLog.info("Plugin menu item pressed");
+            plugin.execute();
+          }
+        });
+        theMenu.add(item);
+      }
+    }
   }
-
 
   
   

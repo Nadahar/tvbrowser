@@ -35,6 +35,8 @@ import javax.swing.event.EventListenerList;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
+import util.io.IOUtilities;
+
 import devplugin.Channel;
 
 /**
@@ -202,5 +204,28 @@ public abstract class AbstractProgram implements Serializable, devplugin.Program
   public Iterator getMarkedByIterator() {
     return mMarkedBySet.iterator();
   }
-   
+
+  
+
+  /**
+   * Gets whether this program is expired.
+   */
+  public boolean isExpired() {
+    int currentDaysSince1970 = IOUtilities.getDaysSince1970();
+    int programDaysSince1970 = getDate().getDaysSince1970();
+    
+    if (programDaysSince1970 < currentDaysSince1970) {
+      return true;
+    }
+    if (programDaysSince1970 > currentDaysSince1970) {
+      return false;
+    }
+    
+    // This program is (or was) today -> We've got to check the time
+    int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength();
+    
+    return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
+  }
+  
 }

@@ -24,13 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package devplugin;
 
 import java.util.Iterator;
@@ -39,6 +32,8 @@ import javax.swing.event.ChangeListener;
 
 /**
  * This interface provides a view of the program object in the host-application.
+ *
+ * @author Martin Oberhauser
  */
 public interface Program {
 
@@ -103,4 +98,9 @@ public interface Program {
    */
   public Iterator getMarkedByIterator();
 
+  /**
+   * Gets whether this program is expired.
+   */
+  public boolean isExpired();
+  
 }

@@ -26,7 +26,7 @@
 
 package searchplugin;
 
-
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -51,6 +51,8 @@ public class SearchDialog extends JDialog {
   /** The localizer of this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchDialog.class);
+  
+  private static final Color SECOND_ROW_COLOR = new Color(250, 250, 220);
   
   /** The messages for the time combo box. */  
   private static final String[] TIME_STRING_ARR = new String[] {
@@ -258,6 +260,7 @@ public class SearchDialog extends JDialog {
         dlg.dispose();
       }
     });
+    dlg.getRootPane().setDefaultButton(closeBt);
     buttonPn.add(closeBt);
     
     dlg.setSize(400, 400);
@@ -305,6 +308,10 @@ public class SearchDialog extends JDialog {
         comp.setEnabled(label.isEnabled());
         comp.setBorder(label.getBorder());
         comp.setOpaque(true);
+        
+        if ((index % 2 == 1) && (! isSelected)) {
+          comp.setBackground(SECOND_ROW_COLOR);
+        }
         
         return comp;
       }

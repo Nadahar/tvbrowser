@@ -102,7 +102,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     String name = mLocalizer.msg( "pluginName" ,"Reminder" );
     String desc = mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion." );
     String author = "Martin Oberhauser (darras@users.sourceforge.net)" ;
-    return new PluginInfo(name, desc, author, new Version(1, 0));
+    return new PluginInfo(name, desc, author, new Version(1, 1));
     
   }
   
@@ -164,13 +164,19 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    * plugin from the context menu.
    */
   public void execute(Program program) {
-    ReminderDialog dlg = new ReminderDialog(parent, program);
-    UiUtilities.centerAndShow(dlg);
-    if (dlg.getOkPressed()) {
-      int minutes = dlg.getReminderMinutes();
-      addToReminderList(program, minutes);
+    if (program.isExpired()) {
+      String msg = mLocalizer.msg("programAlreadyExpired",
+        "The program is already expired!");
+      JOptionPane.showMessageDialog(parent, msg);
+    } else {
+      ReminderDialog dlg = new ReminderDialog(parent, program);
+      UiUtilities.centerAndShow(dlg);
+      if (dlg.getOkPressed()) {
+        int minutes = dlg.getReminderMinutes();
+        addToReminderList(program, minutes);
+      }
+      dlg.dispose();
     }
-    dlg.dispose();
   }
     
     
