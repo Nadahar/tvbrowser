@@ -129,6 +129,9 @@ public class Toolbar extends JComponent implements ComponentListener, ActionList
     int visibleBtnsCount;
     if (mButtons.length * buttonWidth > getWidth()) {
       visibleBtnsCount = (getWidth()- GROUP_BUTTON_WIDTH) / buttonWidth;
+			if (visibleBtnsCount < 0) {
+				visibleBtnsCount=0;
+			}
     }
     else {
       visibleBtnsCount = mButtons.length;

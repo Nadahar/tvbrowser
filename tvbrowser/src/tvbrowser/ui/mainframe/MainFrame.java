@@ -58,6 +58,7 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 
+
 /**
  * TV-Browser
  *
@@ -100,7 +101,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     Icon icon;
 
     JMenuBar menuBar = new JMenuBar();
-    setJMenuBar(menuBar);
+    
     
     mStatusBar = new StatusBar();
  
@@ -294,6 +295,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         createPluginsMenu();
 			}
     });
+
+		setJMenuBar(menuBar);
     
   }
 
