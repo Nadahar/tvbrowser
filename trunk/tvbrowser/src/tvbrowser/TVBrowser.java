@@ -195,11 +195,15 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     // TV-Browser menu
     JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
+    mainMenu.setMnemonic(KeyEvent.VK_B);
     menuBar.add(mainMenu);
     
     icon = new ImageIcon("imgs/Preferences16.gif");
     msg = mLocalizer.msg("menuitem.settings", "Settings...");
     settingsMenuItem = new JMenuItem(msg, icon);
+    settingsMenuItem.setMnemonic(KeyEvent.VK_S);
+	settingsMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_S, ActionEvent.CTRL_MASK));
     settingsMenuItem.addActionListener(this);
     mainMenu.add(settingsMenuItem);
     
@@ -207,16 +211,25 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     msg = mLocalizer.msg("menuitem.exit", "Exit...");
     quitMenuItem = new JMenuItem(msg);
+	quitMenuItem.setMnemonic(KeyEvent.VK_E);
     quitMenuItem.addActionListener(this);
+    
+	quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+			KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+    
     mainMenu.add(quitMenuItem);
     
     // TV data menu
     JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
+    tvDataMenu.setMnemonic(KeyEvent.VK_D);
     menuBar.add(tvDataMenu);
 
     icon = new ImageIcon("imgs/Refresh16.gif");
     msg = mLocalizer.msg("menuitem.update", "Update...");
     updateMenuItem = new JMenuItem(msg, icon);
+    updateMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
+ 
+    updateMenuItem.setMnemonic(KeyEvent.VK_U);
     updateMenuItem.addActionListener(this);
     tvDataMenu.add(updateMenuItem);
 
@@ -225,17 +238,20 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     icon = new ImageIcon("imgs/Import16.gif");
     msg = mLocalizer.msg("menuitem.import", "Import...");
     mImportTvDataMI = new JMenuItem(msg, icon);
+	mImportTvDataMI.setMnemonic(KeyEvent.VK_I);
     mImportTvDataMI.addActionListener(this);
     tvDataMenu.add(mImportTvDataMI);
 
     icon = new ImageIcon("imgs/Export16.gif");
     msg = mLocalizer.msg("menuitem.export", "Export...");
     mExportTvDataMI = new JMenuItem(msg, icon);
+	mExportTvDataMI.setMnemonic(KeyEvent.VK_E);
     mExportTvDataMI.addActionListener(this);
     tvDataMenu.add(mExportTvDataMI);
     
     // Plugins menu
     pluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+	pluginsMenu.setMnemonic(KeyEvent.VK_P);
     menuBar.add(pluginsMenu);
     
     updatePluginMenu(pluginsMenu);
@@ -250,11 +266,15 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     // Help menu
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
+	helpMenu.setMnemonic(KeyEvent.VK_H);
     menuBar.add(helpMenu);
 
     icon = new ImageIcon("imgs/Help16.gif");
-    msg = mLocalizer.msg("menuitem.help", "Help...");
+    msg = mLocalizer.msg("menuitem.help", "Help...");    
     JMenuItem helpMenuItem = new JMenuItem(msg, icon);
+	helpMenuItem.setMnemonic(KeyEvent.VK_H);
+	helpMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
+ 
     helpMenuItem.setEnabled(false);
     helpMenu.add(helpMenuItem);
     
@@ -263,6 +283,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     icon = new ImageIcon("imgs/About16.gif");
     msg = mLocalizer.msg("menuitem.about", "About...");
     aboutMenuItem = new JMenuItem(msg, icon);
+	aboutMenuItem.setMnemonic(KeyEvent.VK_B);
     aboutMenuItem.addActionListener(this);
     helpMenu.add(aboutMenuItem);
     

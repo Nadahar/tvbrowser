@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,8 +36,8 @@ package tvbrowser.ui.programtable;
 public interface ScrollableTablePanel {
     public void scrollTo(int hour);
     public void scrollTo(devplugin.Channel ch);
-    public void up();
-    public void down();
-    public void left();
-    public void right();
+    public void up(int step);
+    public void down(int step);
+    public void left(int step);
+    public void right(int step);
 }

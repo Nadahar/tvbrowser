@@ -139,7 +139,7 @@ class ProgramColumn extends JPanel {
   }
 }
 
-public class ProgramTablePanel extends JPanel implements MouseInputListener, ScrollableTablePanel, ActionListener {
+public class ProgramTablePanel extends JComponent implements MouseInputListener, ScrollableTablePanel, ActionListener, KeyListener {
 
   private static int NUM_OF_DAYTIMES=6;
 
@@ -179,6 +179,12 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     timer=new javax.swing.Timer(10000,this);
     channelChooser=new ChannelChooser(parent,this);
     channelPanel=new ChannelPanel();
+    
+	addKeyListener(this);
+    
+	setFocusable(true);
+	
+    
   }
 
   public void setPluginContextMenu(ContextMenu menu) {
@@ -231,6 +237,9 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     scrollPane.setWheelScrollingEnabled(true);
     scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
     scrollPane.getVerticalScrollBar().setUnitIncrement(30);
+    
+	
+    
 
     /*JViewport*/ headerPanel=new JViewport();
 
@@ -386,13 +395,15 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   }
 
   /**
-   * interface ScrollableTablePanel (currently unused)
+   * interface ScrollableTablePanel 
    */
-  public void up() {
+  public void up(int step) {
     Point pos=scrollPane.getViewport().getViewPosition();
-    int height=scrollPane.getHeight()*1/2;
-
-    pos.y=pos.y-height;
+    if (step<0) {
+    	step=scrollPane.getHeight()*3/4;
+    }
+    
+    pos.y=pos.y-step;
     if (pos.y<0) pos.y=0;
 
     scrollPane.getViewport().setViewPosition(pos);
@@ -400,39 +411,45 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   }
 
   /**
-   * interface ScrollableTablePanel (currently unused)
+   * interface ScrollableTablePanel 
    */
-  public void down() {
+  public void down(int step) {
     Point pos=scrollPane.getViewport().getViewPosition();
-    int height=scrollPane.getHeight()*1/2;
+    if (step<0) {
+			step=scrollPane.getHeight()*3/4;
+		}
     int maxY=centerPanel.getHeight()-scrollPane.getViewport().getHeight();
 
-    pos.y=pos.y+height;
+    pos.y=pos.y+step;
     if (pos.y>maxY) pos.y=maxY;
 
     scrollPane.getViewport().setViewPosition(pos);
   }
 
   /**
-   * interface ScrollableTablePanel (currently unused)
+   * interface ScrollableTablePanel 
    */
-  public void left() {
+  public void left(int step) {
     Point pos=scrollPane.getViewport().getViewPosition();
-    int width=Settings.getColumnWidth();
-    pos.x=pos.x-width;
+    if (step<0) {
+			step=scrollPane.getWidth()*3/4;
+		}
+    pos.x=pos.x-step;
     if (pos.x<0) pos.x=0;
 
     scrollPane.getViewport().setViewPosition(pos);
   }
 
   /**
-   * interface ScrollableTablePanel (currently unused)
+   * interface ScrollableTablePanel 
    */
-  public void right() {
+  public void right(int step) {
     Point pos=scrollPane.getViewport().getViewPosition();
-    int width=Settings.getColumnWidth();
+    if (step<0) {
+		step=scrollPane.getWidth()*3/4;
+	}
     int maxX=centerPanel.getWidth()-scrollPane.getViewport().getWidth();
-    pos.x=pos.x+width;
+    pos.x=pos.x+step;
     if (pos.x>maxX) pos.x=maxX;
 
     scrollPane.getViewport().setViewPosition(pos);
@@ -478,7 +495,8 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
    * interface MouseInputListener
    */
   public void mouseClicked(MouseEvent e) {
-    Point pos=scrollPane.getViewport().getViewPosition();
+  	requestFocus();
+	Point pos=scrollPane.getViewport().getViewPosition();
     Point p=new Point(e.getX(),e.getY());
     if (SwingUtilities.isRightMouseButton(e)) {
       devplugin.Program prog=getProgram(p);
@@ -509,5 +527,38 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     }
     isDragging=false;
   }
+  
+  /**
+   * interface KeyListener
+   *
+   */
+
+  public void keyPressed(KeyEvent e) {
+  	
+  	if (e.getKeyCode()==KeyEvent.VK_UP) {
+  		if (e.isShiftDown()) up(50); else up(10);
+  	}
+  	else if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+		if (e.isShiftDown()) down(50); else down(10);
+  	}
+  	else if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+		if (e.isShiftDown()) left(50); else left(10);
+  	}
+  	else if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
+		if (e.isShiftDown()) right(50); else right(10);
+  	}
+  	
+  	
+  }
+		  
+  public void keyReleased(KeyEvent e) {
+  	
+  }
+		   
+
+  public void keyTyped(KeyEvent e) {
+  	
+  }
+
 
 }

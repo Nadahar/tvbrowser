@@ -42,7 +42,7 @@ import java.util.Vector;
 import devplugin.Date;
 import tvbrowser.core.*;
 
-public class FinderPanel extends JPanel implements FinderListener {
+public class FinderPanel extends JComponent implements FinderListener {
   private FinderItem curSelectedFinderItem=null;
   private DateListener dataChangedListener=null;
   private Vector itemList;
@@ -91,6 +91,8 @@ public class FinderPanel extends JPanel implements FinderListener {
     add(scrollPane,BorderLayout.CENTER);
     updateUI();
     dataChangedListener.dateChanged(new devplugin.Date());
+    
+    
 
   }
 
@@ -147,6 +149,10 @@ public class FinderPanel extends JPanel implements FinderListener {
       curSelectedFinderItem=item;
     }
   }
+
+
+ 
+
 
 
 }
