@@ -102,6 +102,8 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
     // (layoutChanged() may set mBlockYArr to null during paining)
     TimeBlock[] blockArr = createBlockArray(layout, model);
     boolean toggleFlag = true;
+    int minY;
+    int maxY = -1;
     for (int i = 0; i < blockArr.length; i++) {
       // Get the image of this time block
       Image backImg;
@@ -112,8 +114,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       }
 
       // Get the y positions of this time block
-      int minY = mBlockArr[i].mStartY;
-      int maxY;
+      minY = mBlockArr[i].mStartY;
       if ((i + 1) < blockArr.length) {
         maxY = mBlockArr[i + 1].mStartY;
       } else {
@@ -130,6 +131,28 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       
       // Toggle the background
       toggleFlag = ! toggleFlag;
+    }
+    
+    // Paint the rest if needed
+    if (maxY < tableHeight) {
+      minY = maxY + 1;
+      maxY = tableHeight;
+      
+      // Get the image of this time block
+      Image backImg;
+      if (toggleFlag) {
+        backImg = mBackgroundImage1;
+      } else {
+        backImg = mBackgroundImage2;
+      }
+
+      // Paint the background of this time block
+      int x = minCol * columnWidth;
+      for (int col = minCol; col <= maxCol; col++) {
+        fillImage(grp, x, minY, columnWidth, (maxY - minY), backImg, clipBounds);
+        
+        x += columnWidth;
+      }
     }
   }
 
