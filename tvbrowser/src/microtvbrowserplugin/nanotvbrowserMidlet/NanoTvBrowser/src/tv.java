@@ -102,7 +102,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       command_exec = new exec(this);
       command_exec.start();
     } else {
-      F.append("v. 0.80\n");
+      F.append("v. 0.81\n");
       F.append("www.tvbrowser.org\n");
       F.append("pumpkin@gmx.de\n");
       F.addCommand(CMD_GO_PROG_LIST);
