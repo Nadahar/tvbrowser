@@ -59,7 +59,7 @@ public class FinderPanel extends JComponent implements FinderListener {
     labelList.setLayout(new GridLayout(0,1));
     
     
-    JScrollPane scrollPane=new JScrollPane(labelList);
+    JScrollPane scrollPane=new JScrollPane(labelList,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
     FinderItem item;
     itemList=new Vector();

@@ -42,8 +42,6 @@ public class ProgramTableScrollPane extends JScrollPane
   
   private ProgramTable mProgramTable;
   private ChannelPanel mChannelPanel;
-  private ChannelChooser mChannelChooser;
-  
   
   /**
    * Creates a new instance of ProgramTableScrollPane.
@@ -61,10 +59,7 @@ public class ProgramTableScrollPane extends JScrollPane
     mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),
       model.getShownChannels());
     setColumnHeaderView(mChannelPanel);
-    
-    mChannelChooser = new ChannelChooser(this);
-    setCorner(JScrollPane.UPPER_RIGHT_CORNER, mChannelChooser);
-    
+     
     setOpaque(false);
     
   }
@@ -74,13 +69,6 @@ public class ProgramTableScrollPane extends JScrollPane
   public ProgramTable getProgramTable() {
     return mProgramTable;
   }
-
-/*
-  public ChannelPanel getChannelPanel() {
-    return mChannelPanel;
-  }
- */
-
 
  
   public void repaint() {
@@ -111,7 +99,14 @@ public class ProgramTableScrollPane extends JScrollPane
       if (channel.equals(shownChannelArr[col])) {
         Point scrollPos = getViewport().getViewPosition();
         if (scrollPos != null) {
-          scrollPos.x = col * mProgramTable.getColumnWidth();
+          scrollPos.x = col * mProgramTable.getColumnWidth() -  getViewport().getWidth()/2 + mProgramTable.getColumnWidth()/2;
+          if (scrollPos.x<0) {
+            scrollPos.x=0;
+          }
+          int max=mProgramTable.getWidth()-getViewport().getWidth();
+          if (scrollPos.x>max) {
+            scrollPos.x=max;
+          }
           getViewport().setViewPosition(scrollPos);
         }
       }
@@ -128,6 +123,11 @@ public class ProgramTableScrollPane extends JScrollPane
       
     if (scrollPos.y<0) {
       scrollPos.y=0;
+    }
+    
+    int max=mProgramTable.getHeight()-getViewport().getHeight();
+    if (scrollPos.y>max) {
+      scrollPos.y=max;
     }
 
     getViewport().setViewPosition(scrollPos);

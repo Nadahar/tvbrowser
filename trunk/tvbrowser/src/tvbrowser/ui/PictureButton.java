@@ -46,7 +46,8 @@ public class PictureButton extends JButton {
   private static Insets NULL_INSETS = new Insets(0, 0, 0, 0);
   private static Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
 
-
+  private String mDescription;
+  private JLabel mStatusBar;
 
   public PictureButton(String title, Icon icon) {
     super();
@@ -72,7 +73,11 @@ public class PictureButton extends JButton {
     handleMouseExited();
   }
   
-  
+  public PictureButton(String title, Icon icon, String description, JLabel statusBar) {
+    this(title,icon);
+    mDescription=description;
+    mStatusBar=statusBar;
+  }
   
   public void setText(String text) {
     if (Settings.getButtonSettings() == Settings.ICON_ONLY) {
@@ -98,11 +103,17 @@ public class PictureButton extends JButton {
   
   private void handleMouseEntered() {
     setBorderPainted(true);
+    if (mStatusBar!=null) {
+      mStatusBar.setText(mDescription);
+    }
   }
   
   
   public void handleMouseExited() {
     setBorderPainted(false);
+    if (mStatusBar!=null) {
+      mStatusBar.setText("");
+    }
   }  
 
 }
