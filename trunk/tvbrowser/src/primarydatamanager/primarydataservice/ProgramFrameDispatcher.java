@@ -56,10 +56,13 @@ public class ProgramFrameDispatcher {
   
   
   public void dispatchProgramFrame(ProgramFrame frame, devplugin.Date date)  {
-    
-    if (frame==null) {
-      return;
+    if (frame == null) {
+      throw new NullPointerException("frame is null");
     }
+    if (date == null) {
+      throw new NullPointerException("date is null");
+    }
+
     DayProgramFile file=(DayProgramFile)mDayPrograms.get(date);
     if (file==null) {
       file=new DayProgramFile(date,mChannel);
