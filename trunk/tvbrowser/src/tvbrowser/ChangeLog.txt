@@ -1,5 +1,9 @@
 Changelog TVBrowser
 
+current:
+- bugfixes:
+	- don't scroll to invalid time position 
+
 0.9.6:
 - bugfix in SkinPanel
 - new feature: filter

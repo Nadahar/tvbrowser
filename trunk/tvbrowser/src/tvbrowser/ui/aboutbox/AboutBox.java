@@ -123,6 +123,10 @@ public class AboutBox extends JDialog {
     String copyrightText = mLocalizer.msg("copyrightText",
       "Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider under the"
       + "GNU General Public License");
+    
+    copyrightText+="\nThis product includes software developed " +
+                   "by L2FProd.com (http://www.L2FProd.com/).";
+                   
     JTextArea copyrightArea=new JTextArea(copyrightText);
     
     copyrightArea.setFont(smallFont);

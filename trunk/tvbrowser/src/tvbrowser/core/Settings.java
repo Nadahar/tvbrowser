@@ -550,6 +550,22 @@ public class Settings {
       settings.setProperty("useapplicationskin","no");
     }
   }
+  
+  public static boolean isSkinLFEnabled() {
+    return settings.getBoolean("skinLF.enabled",false);
+  }
+  
+  public static void setSkinLFEnabled(boolean val) {
+    settings.setBoolean("skinLF.enabled",val);
+  }
+  
+  public static String getSkinLFThemepack() {
+    return settings.getProperty("skinLF.themepack");
+  }
+  
+  public static void setSkinLFThemepack(String val) {
+    settings.setProperty("skinLF.themepack",val);
+  }
 
   public static void setLookAndFeel(String lf) {
 
