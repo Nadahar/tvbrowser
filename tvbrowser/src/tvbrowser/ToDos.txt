@@ -35,7 +35,7 @@ Bugs (Achtung: es existieren weitere Bugs auf SF!!) :
 
 Entfernte ToDos:
 - Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
-- Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
+
 
 Erledigt:
 - (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
@@ -57,3 +57,4 @@ Erledigt:
 - (B) Umlaute im Einrichtungsassistent
 - (B) Statusbar kann nicht ausgeblendet werden
 - (B) Settings - Kontextmenue zeigt den Eintrag des Erinnerers nicht an
+- (M) Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
