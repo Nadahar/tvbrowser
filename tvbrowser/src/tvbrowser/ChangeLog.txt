@@ -26,6 +26,9 @@ Changelog TVBrowser
     - Unhandled exceptions (such as NullPointerException) are detected now
     - When the TV-Browser window is not yet up, the error is shown in a frame,
       not in a dialog.
+- SystemTrayIcon improved
+    - Translated
+    - Added Plugin-Menu
 
 0.9.7.3:
 - added downnload status info
