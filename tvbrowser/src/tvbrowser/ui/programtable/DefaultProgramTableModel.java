@@ -420,6 +420,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     for (int row = 0; row < getRowCount(col); row++) {
       ProgramPanel panel = getProgramPanel(col, row);
       if (program == panel.getProgram()) {
+        // Tell the panel that its program has changed
+        panel.programHasChanged();
+        
+        // Fire the event
         fireTableCellUpdated(col, row);
         return;
       }

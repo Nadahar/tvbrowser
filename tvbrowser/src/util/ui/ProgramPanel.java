@@ -198,6 +198,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   
   /**
    * Gets the height.
+   * 
+   * @return The height.
    */
   public int getHeight() {
     return mHeight;
@@ -218,7 +220,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * Sets the program this panel shows.
    *
    * @param program The program to show in this panel.
-   */  
+   * @param maxHeight The maximum height the program should have (in pixels).
+   */
   public void setProgram(devplugin.Program program, int maxHeight) {
     
     Program oldProgram = mProgram;
@@ -229,11 +232,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       // Get the start time
       mProgramTimeAsString = program.getTimeString();
 
-      // Get the icons from the plugins
-      mIconArr = getPluginIcons(program);
-
       // Set the new title
       mTitleIcon.setText(program.getTitle());
+      
+      programHasChanged();
     }
     
     // Calculate the maximum description lines
@@ -353,7 +355,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
 
     // Draw all the text
-    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
+    if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()
+      && mTextColor.equals(Color.BLACK))
+    {
       grp.setColor(Color.gray);
     } else {
       grp.setColor(mTextColor);
@@ -459,6 +463,26 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       }
     });
   }
+
+
+  /**
+   * Should be called, when the program has changed.
+   * <p>
+   * If you use this program panel directly (this is the case, when you have
+   * added it into a JPanel), you don't have to call this method. This is done
+   * automatically.
+   * <p>
+   * But if you use this panel just as renderer (e.g. for a list) you have to
+   * register at the programs as ChangeListener and call this method when
+   * {@link ChangeListener#stateChanged(javax.swing.event.ChangeEvent)} was
+   * called.
+   * 
+   * @see Program#addChangeListener(ChangeListener)
+   */
+  public void programHasChanged() {
+    // Get the icons from the plugins
+    mIconArr = getPluginIcons(mProgram);
+  }
   
   
   // implements ChangeListener
@@ -473,9 +497,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */  
   public void stateChanged(ChangeEvent evt) {
     if (evt.getSource() == mProgram) {
-      // Get the icons from the plugins
-      mIconArr = getPluginIcons(mProgram);
-
+      programHasChanged();
       repaint();
     }
   }
