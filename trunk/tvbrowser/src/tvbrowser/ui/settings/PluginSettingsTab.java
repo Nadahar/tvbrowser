@@ -73,6 +73,8 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     JPanel content=new JPanel();
     content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
     
+	content.setBorder(BorderFactory.createEmptyBorder(20,30,20,30));
+    
     pluginInfoPanel=new PluginInfoPanel();
     
     setLayout(new BorderLayout());

@@ -79,7 +79,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     setLayout(new BorderLayout());
     JPanel content=new JPanel();
     content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
-    content.setBorder(BorderFactory.createEmptyBorder(20,50,20,50));
+    content.setBorder(BorderFactory.createEmptyBorder(20,30,20,30));
 
     JPanel lfPanel=new JPanel(new BorderLayout(10,0));
     msg = mLocalizer.msg("lookAndFeel", "Aussehen");
