@@ -40,13 +40,12 @@ import java.util.regex.*;
  public class WdrDataService extends AbstractTvDataService {
  	
 	
-	 public String getName() {
-	 	return "WDR";
-	 }
-
-	public devplugin.Version getVersion() {
-		return new devplugin.Version(1,1);
-	  }
+  private static PluginInfo INFO=new PluginInfo(
+    "WDR-DataService",
+    "Die Sender von WDR (1live, WDR, WDR2, WDR3, WDR4, WDR5, Funkhaus Europa)",
+    "Martin Oberhauser",
+    new Version(2,0)
+    );
 	
 	
 	/**
@@ -306,7 +305,9 @@ import java.util.regex.*;
 		}
 
 
-
+  public devplugin.PluginInfo getInfo() {
+    return INFO;
+  }
 
  	
  }

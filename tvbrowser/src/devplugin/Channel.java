@@ -114,7 +114,7 @@ public class Channel {
 
 
   public String toString() {
-    return mName + " (" + mDataService.getName() + ")";
+    return mName + " (" + mDataService.getInfo().getName() + ")";
   }
 
 

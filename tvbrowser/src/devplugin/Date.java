@@ -107,7 +107,7 @@ public class Date implements Comparable {
 
 
 public Date(Calendar cal) {
-  mCalendar=cal;
+  mCalendar=(Calendar)cal.clone();
   mYear=mCalendar.get(Calendar.YEAR);
   mMonth=mCalendar.get(Calendar.MONTH)+1;
   mDay=mCalendar.get(Calendar.DAY_OF_MONTH);

@@ -37,11 +37,7 @@ import devplugin.ChannelDayProgram;
  */
 public interface TvDataService {
 
-  /**
-   * Gets the localized name of this TV data service.
-   */
-  public String getName();
-
+ 
   /**
    * Called by the host-application before starting to download.
    */
@@ -79,6 +75,10 @@ public interface TvDataService {
    */
   public devplugin.Channel[] getAvailableChannels();
   
-  public devplugin.Version getVersion();
+  /**
+   * Gets information about this TvDataService
+   * 
+   */
+  public devplugin.PluginInfo getInfo();
 
 }

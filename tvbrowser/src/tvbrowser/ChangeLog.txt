@@ -4,10 +4,13 @@ current:
 - bugfix in SkinPanel
 - new feature: filter
 - new devplugin.Date class
+- new settings dialog
 - new settings:
-      * choose directories for tvdataservice chaches
+      * choose directories for tvdataservice caches
       * choose fonts
-- New settings dialog
+      * choose time space for day programms
+- use folder %HOME/.tvbrowser for personal settings
+
 
 0.9.5.1:
 - bugfix in XmlTvDataService

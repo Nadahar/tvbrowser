@@ -65,7 +65,15 @@ public class PremiereDataService extends AbstractTvDataService {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(PremiereDataService.class.getName());
 
-
+  private static devplugin.PluginInfo INFO=new devplugin.PluginInfo(
+        mLocalizer.msg("name", "Premiere data service"),
+        "Die Sender von premiere (13th Street, Beate-Uhse.TV, Classica, Disney Channel, " +
+        "Fox Kids, Heimatkanal, Junior, MGM, Premiere 1, Premiere 2, Premiere 3, " +
+        "Premiere 4, Premiere 5, Premiere 6, Premiere 7, Premiere Krimi, " +
+        "Premiere Nostalgie, Premiere Serie, Premiere Start, Studio Universal)",
+        "Til Schneider",
+        new Version(2,0)
+  );
 
   /**
    * Creates a new instance of PremiereDataService.
@@ -73,18 +81,10 @@ public class PremiereDataService extends AbstractTvDataService {
   public PremiereDataService() {
   }
 
-  public devplugin.Version getVersion() {
-  	return new devplugin.Version(1,2);
+
+  public devplugin.PluginInfo getInfo() {
+    return INFO;
   }
-
-
-  /**
-   * Gets the localized name of this TV data service.
-   */
-  public String getName() {
-    return mLocalizer.msg("name", "Premiere data service");
-  }
-
 
 
   /**
