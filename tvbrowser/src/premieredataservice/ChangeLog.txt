@@ -1,5 +1,8 @@
 Changelog PremiereDataService
 
+current (1.0.2): required TVBrowser 0.94
+- Version added
+
 1.0.1: requires TVBrowser 0.93
 - bugfixes
 - renamed to PremiereDataService

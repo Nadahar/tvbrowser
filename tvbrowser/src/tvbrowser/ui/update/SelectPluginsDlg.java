@@ -48,6 +48,7 @@ public class SelectPluginsDlg extends JDialog implements ActionListener {
 	
 	
 	private JButton mCancelBtn, mDownloadBtn;
+	private JLabel mDeveloperVersionLb, mStableVersionLb;
 	private JList mList;
 	private UpdateItemPanel[] mPanelList;
 	private Frame mParent;
@@ -97,9 +98,83 @@ public class SelectPluginsDlg extends JDialog implements ActionListener {
 		scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
 		
 		
+		JPanel southPanel=new JPanel();
+		southPanel.setLayout(new BoxLayout(southPanel,BoxLayout.Y_AXIS));
+		
+		mDeveloperVersionLb=new JLabel();
+		mStableVersionLb=new JLabel();
+		mDeveloperVersionLb=new JLabel();
+		
+		JPanel tvbPanel=new JPanel();
+		tvbPanel.setLayout(new BoxLayout(tvbPanel,BoxLayout.Y_AXIS));
+		
+		JPanel instVersPanel=new JPanel(new BorderLayout());
+		instVersPanel.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+		instVersPanel.add(new JLabel("installed version:"),BorderLayout.WEST);
+		instVersPanel.add(new JLabel(tvbrowser.TVBrowser.VERSION.toString()),BorderLayout.EAST);
+		
+		JPanel stableVersPanel=new JPanel(new BorderLayout());
+		stableVersPanel.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+		stableVersPanel.add(new JLabel("latest stable version:"),BorderLayout.WEST);
+		stableVersPanel.add(mStableVersionLb,BorderLayout.EAST);
+		
+		JPanel devVersPanel=new JPanel(new BorderLayout());
+		devVersPanel.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+		devVersPanel.add(new JLabel("latest developer version:"),BorderLayout.WEST);
+		devVersPanel.add(mDeveloperVersionLb,BorderLayout.EAST);
+				
+		tvbPanel.add(instVersPanel);
+		tvbPanel.add(stableVersPanel);
+		tvbPanel.add(devVersPanel);
+		
+		devplugin.Version latestStableV=null, latestDeveloperV=null;
+		for (int i=0;i<list.length;i++) {
+			if (list[i].getType()==UpdateItem.TVBROWSER) {
+				VersionItem[] versions=list[i].getVersions();
+				for (int j=0;j<versions.length;j++) {
+					if (versions[j].isStable()) {
+						if (latestStableV==null || versions[j].getVersion().compareTo(latestStableV)>0) {
+							latestStableV=versions[j].getVersion();
+						}
+					}else{  // not stable
+						if (latestDeveloperV==null || versions[j].getVersion().compareTo(latestDeveloperV)>0) {
+							latestDeveloperV=versions[j].getVersion();
+						}
+					}
+				}
+			}
+		}
+		
+		if (latestDeveloperV==null) {
+			mDeveloperVersionLb.setText("-");
+		}else {
+			mDeveloperVersionLb.setText(latestDeveloperV.toString());
+		}
+		
+		if (latestStableV==null) {
+			mStableVersionLb.setText("-");
+		}else {
+			mStableVersionLb.setText(latestStableV.toString());
+		}
+		tvbPanel.setBorder(BorderFactory.createTitledBorder("Information about new TV-Browser versions"));
+		
+		if (latestDeveloperV!=null || latestStableV!=null) {
+			JTextArea area=new JTextArea("To download new versions of TV-Browser, please visit our website on http://tvbrowser.sourceforge.net");
+			area.setWrapStyleWord(true);
+			area.setLineWrap(true);
+			area.setEditable(false);
+			area.setFocusable(false);
+			area.setOpaque(false);
+			area.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+			tvbPanel.add(area);
+		}
+		
+		southPanel.add(tvbPanel);
+		southPanel.add(btnPanel);
+		
 		contentPane.add(txtArea,BorderLayout.NORTH);
 		contentPane.add(scrollPane,BorderLayout.CENTER);
-		contentPane.add(btnPanel,BorderLayout.SOUTH);
+		contentPane.add(southPanel,BorderLayout.SOUTH);
 		this.setSize(350,400);
 			
 	}
@@ -172,9 +247,17 @@ class UpdateItemPanel extends JPanel implements ActionListener {
 		if (item.getType()==UpdateItem.PLUGIN) {
 			devplugin.Plugin plugin=PluginManager.getPluginByName(item.getName());
 			if (plugin!=null) {
-				version=version=plugin.getInfo().getVersion().toString();
+				version=plugin.getInfo().getVersion().toString();
 			}
 		}
+		else if (item.getType()==UpdateItem.DATASERVICE) {
+			tvdataservice.TvDataService service=tvbrowser.core.TvDataServiceManager.getInstance().getDataService(item.getName());
+			if (service!=null) {
+				version=service.getVersion().toString();	
+			}
+		}
+		
+		
 		JPanel versionPanel=new JPanel(new BorderLayout());
 		versionPanel.setOpaque(false);
 		versionPanel.setBorder(BorderFactory.createEmptyBorder(0,40,0,0));

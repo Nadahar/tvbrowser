@@ -54,9 +54,11 @@ public class ChannelList {
    * Subscribes a channel
    * @param id the channel's ID
    */
-  public static void subscribeChannel(TvDataService dataService, int id) {
+  public static void subscribeChannel(TvDataService dataService, String id) {
 	Channel ch = getChannel(dataService, id);
-	mSubscribedChannels.add(ch);
+	if (ch!=null) {
+		mSubscribedChannels.add(ch);
+	}	
   }
 
 
@@ -84,11 +86,11 @@ public class ChannelList {
    * Returns a new Channel object with the specified ID or null, if the
    * given ID does not exist.
    */
-  public static Channel getChannel(TvDataService dataService, int id) {
+  public static Channel getChannel(TvDataService dataService, String id) {
 	Iterator iter = mAvailableChannels.iterator();
 	while (iter.hasNext()) {
 	  Channel channel = (Channel) iter.next();
-	  if (channel.getDataService().equals(dataService) && channel.getId()==id) {
+	  if (channel.getDataService().equals(dataService) && channel.getId().equals(id)) {
 		return channel;
 	  }
 	}

@@ -93,6 +93,9 @@ public class PluginUpdate {
 		try {
 
 			URL url=new URL("http://tvbrowser.sourceforge.net/plugins/plugins.txt");
+			
+			//URL url=new File("plugins.txt").toURL();
+			
 			URLConnection con=url.openConnection();
 		
 			InputStream in=con.getInputStream();
@@ -135,6 +138,9 @@ public class PluginUpdate {
 					}
 					else if ("dataservice".equals(typeStr)) {
 						type=UpdateItem.DATASERVICE;
+					}
+					else if ("tvbrowser".equals(typeStr)) {
+						type=UpdateItem.TVBROWSER;
 					}
 					
 					curUpdateItem=(UpdateItem)updateItems.get(name+type);

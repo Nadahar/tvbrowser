@@ -73,6 +73,9 @@ public class VersionItem {
 		return mRequired;
 	}
 	
+	public boolean isStable() {
+		return mStable;
+	}
 	
 	
 }

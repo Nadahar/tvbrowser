@@ -40,7 +40,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(UpdateDlg.class);
   
-  public static final int CANCEL=-1;
+  public static final int CANCEL=-1, GETALL=99;
 
   private static final String[] PERIOD_MSG_ARR = {
     mLocalizer.msg("period.0", "Today"),
@@ -125,6 +125,9 @@ public class UpdateDlg extends JDialog implements ActionListener {
     }
     else if (source==updateBtn) {
       result=comboBox.getSelectedIndex();
+      if (result==comboBox.getItemCount()-1) {
+      	result=GETALL;
+      }
       if (checkBox.isSelected()) {
         Settings.setDownloadPeriod(result);
       }

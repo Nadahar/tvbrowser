@@ -73,6 +73,9 @@ public class PremiereDataService extends AbstractTvDataService {
   public PremiereDataService() {
   }
 
+  public devplugin.Version getVersion() {
+  	return new devplugin.Version(1,2);
+  }
 
 
   /**
@@ -91,26 +94,26 @@ public class PremiereDataService extends AbstractTvDataService {
   protected Channel[] getDefaultAvailableChannels() {
     return new Channel[] {
       // main channels
-      new Channel(this, "13th Street", 1),
-      new Channel(this, "Beate-Uhse.TV", 2),
-      new Channel(this, "Classica", 3),
-      new Channel(this, "Disney Channel", 4),
-      new Channel(this, "Fox Kids", 5),
-      new Channel(this, "Heimatkanal", 6),
-      new Channel(this, "Junior", 7),
-      new Channel(this, "MGM", 8),
-      new Channel(this, "Premiere 1", 9),
-      new Channel(this, "Premiere 2", 10),
-      new Channel(this, "Premiere 3", 11),
-      new Channel(this, "Premiere 4", 12),
-      new Channel(this, "Premiere 5", 13),
-      new Channel(this, "Premiere 6", 14),
-      new Channel(this, "Premiere 7", 15),
-      new Channel(this, "Premiere Krimi", 16),
-      new Channel(this, "Premiere Nostalgie", 17),
-      new Channel(this, "Premiere Serie", 18),
-      new Channel(this, "Premiere Start", 19),
-      new Channel(this, "Studio Universal", 20)
+      new Channel(this, "13th Street"),
+      new Channel(this, "Beate-Uhse.TV"),
+      new Channel(this, "Classica"),
+      new Channel(this, "Disney Channel"),
+      new Channel(this, "Fox Kids"),
+      new Channel(this, "Heimatkanal"),
+      new Channel(this, "Junior"),
+      new Channel(this, "MGM"),
+      new Channel(this, "Premiere 1"),
+      new Channel(this, "Premiere 2"),
+      new Channel(this, "Premiere 3"),
+      new Channel(this, "Premiere 4"),
+      new Channel(this, "Premiere 5"),
+      new Channel(this, "Premiere 6"),
+      new Channel(this, "Premiere 7"),
+      new Channel(this, "Premiere Krimi"),
+      new Channel(this, "Premiere Nostalgie"),
+      new Channel(this, "Premiere Serie"),
+      new Channel(this, "Premiere Start"),
+      new Channel(this, "Studio Universal")
     };
   }
 
@@ -210,7 +213,7 @@ public class PremiereDataService extends AbstractTvDataService {
         // Example: "Titel: Lieben Sie Brahms?"
         Pattern.compile("Titel: (.*)"),
         // Example: "Episode:  - Genre:  - Länge: 01:55 Stunden"
-        Pattern.compile("Episode: (.*) - Genre: (.*) - Länge: (\\d*):(\\d*) Stunden"),
+        Pattern.compile("Episode: (.*) - Genre: (.*) - L\u00E4nge: (\\d*):(\\d*) Stunden"),
         // Example: "Produktionsland: USA - Produktionsjahr: 1960 - Regie: Anatole Litvak"
         Pattern.compile("Produktionsland: (.*) - Produktionsjahr: (.*) - Regie: (.*)"),
         // Example: "Bild- und Tonformate: 4:3/Mono"

@@ -5,6 +5,9 @@ current:
 - Show also the next morning
 - Compact and Time synchronous program table layout
 - online update for plugins and dataservices
+- progressbar improved (for online mode)
+- download incomplete channel day programs
+- changed channel id from int to String
 
 0.9.4:
 - Better readable text in Splash Screen

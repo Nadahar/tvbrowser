@@ -44,7 +44,9 @@ import java.util.regex.*;
 	 	return "WDR";
 	 }
 
-	 
+	public devplugin.Version getVersion() {
+		return new devplugin.Version(1,1);
+	  }
 	
 	
 	/**
@@ -53,13 +55,13 @@ import java.util.regex.*;
 	   */
 	  protected  Channel[] getDefaultAvailableChannels() {
 	  	Channel[] list=new Channel[7];
-	  	list[0]=new Channel(this,"1live",0);
-	  	list[1]=new Channel(this,"WDR2",1);
-		list[2]=new Channel(this,"WDR3",2);
-		list[3]=new Channel(this,"WDR4",3);
-		list[4]=new Channel(this,"WDR5",4);
-		list[5]=new Channel(this,"Funkhaus Europa",5);
-		list[6]=new Channel(this,"WDR",6);
+	  	list[0]=new Channel(this,"1live");
+	  	list[1]=new Channel(this,"WDR2");
+		list[2]=new Channel(this,"WDR3");
+		list[3]=new Channel(this,"WDR4");
+		list[4]=new Channel(this,"WDR5");
+		list[5]=new Channel(this,"Funkhaus Europa");
+		list[6]=new Channel(this,"WDR");
 		return list;	
 	  	
 	  }
@@ -92,6 +94,23 @@ import java.util.regex.*;
 		//System.out.println("returning "+"woche"+weekOfYear+".zip");
 		//return "woche"+weekOfYear+".zip";
 		String s;
+		
+		String cid=channel.getId();
+		if ("1live".equals(cid) ||
+			"wdr2".equals(cid) ||
+			"wdr3".equals(cid) ||
+			"wdr4".equals(cid) ||
+			"radio5".equals(cid) ||
+			"europa".equals(cid) ||
+			"wdr-fs".equals(cid)) {
+				
+			return weekOfYear+cid+".txt";
+		}
+		else {
+			throw new IllegalArgumentException("invalid channel id");
+		}
+		
+		/*
 		switch (channel.getId()) {
 			case 0: s="1live"; break;
 			case 1: s="wdr2"; break;
@@ -104,7 +123,7 @@ import java.util.regex.*;
 		}
 		
 		return weekOfYear+s+".txt";
-		
+		*/
 		}
 
 
@@ -196,7 +215,7 @@ import java.util.regex.*;
 					int year=Integer.parseInt(newDateMatcher.group(4));
 					
 					Calendar cal=Calendar.getInstance();
-					cal.set(Calendar.DAY_OF_MONTH, day+1);
+					cal.set(Calendar.DAY_OF_MONTH, day);
 					cal.set(Calendar.MONTH, month - 1);
 					cal.set(Calendar.YEAR, year);
 					int daysSince1970 = (int)(cal.getTimeInMillis() / 1000L / 60L / 60L / 24L);

@@ -173,26 +173,67 @@ public class DataService implements devplugin.PluginManager {
     mIsDownloading = true;
 
     Channel[] subscribedChannels=ChannelList.getSubscribedChannels();
-    progressBar.setMaximum((daysToDownload + 2) * subscribedChannels.length);
+    if (daysToDownload!=tvbrowser.ui.UpdateDlg.GETALL) {
+    	progressBar.setMaximum((daysToDownload + 2) * subscribedChannels.length);
+    }
+    else {
+    	progressBar.setMaximum(20*subscribedChannels.length);
+    }
     devplugin.Date date=new Date();
     date.addDays(-1); // get yesterday too
     TvBrowserException downloadException = null;
-    for (int i = 0; i < daysToDownload + 2; i++) {
+    System.out.println("daysToDownload: "+daysToDownload);
+    
+	
+	
+	/* if we can't find any data for one channel, we don't load any data for
+	  that channel any longer. if 
+	 */
+	boolean downloadChannelData[]=new boolean[subscribedChannels.length];
+	
+	 
+	/* if we can't find any data on one day (for all channels), we stop */
+	boolean anyDataFound=true; 
+		
+	for (int i=0;i<downloadChannelData.length;i++) {
+		downloadChannelData[i]=true;
+	}
+	
+    for (int i = 0; (i < daysToDownload + 2)&&(anyDataFound); i++) {
       DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
       if (dayProgram == null) {
         dayProgram = new DayProgram(date);
       }
 
+      anyDataFound=false;
       for (int j = 0; (j < subscribedChannels.length) && mIsDownloading; j++) {
         progressBar.setValue(i * subscribedChannels.length + j + 1);
+		if (!downloadChannelData[j]) {
+			continue;
+		}
+		
 
         // Check whether we already have the wanted ChannelDayProgram
         devplugin.Channel channel = subscribedChannels[j];
+        
+		
+        
         File file = getChannelDayProgramFile(date, channel);
-        if (! file.exists()) {
-          // We don't have -> download it
+        
+        
+		ChannelDayProgram prog=null;
+        if (file.exists()) {  // file is        
+        	prog=this.loadChannelDayProgramFromDisk(file);
+        	//System.out.println("file found ("+date.toString()+", "+channel.getName()+"), prog.isComplete() is "+prog.isComplete());
+        }
+        
+        
+        if (!file.exists() || (prog!=null && !prog.isComplete())) {
+          // We don't have the file or the file is not complete -> download it
+          
+          //System.out.println("must download program for "+date.toString()+", "+channel.getName());
           try {
-            ChannelDayProgram prog = downloadDayProgram(date, channel);
+            prog = downloadDayProgram(date, channel);
 
             if (prog != null) {
               dayProgram.addChannelDayProgram(prog);
@@ -214,6 +255,12 @@ public class DataService implements devplugin.PluginManager {
               mLog.log(Level.WARNING, "Download of dayprogram failed!", tvExc);
             }
           }
+        }
+        if (prog!=null) {
+        	anyDataFound=true;
+        }else{
+			downloadChannelData[j]=false;
+			System.out.println("channel "+channel.getName()+" is out ("+date.toString()+")");
         }
       }
 
@@ -284,6 +331,25 @@ public class DataService implements devplugin.PluginManager {
     return dayProgram;
   }
 
+	private devplugin.ChannelDayProgram loadChannelDayProgramFromDisk(File file) {
+		ChannelDayProgram prog=null;
+		ObjectInputStream in = null;
+		try {
+			in = new ObjectInputStream(new FileInputStream(file));
+			prog = new MutableChannelDayProgram(in);
+		}catch (Exception exc) {
+			//throw new TvBrowserException(getClass(), "error.1",
+			//	   "Error when reading program of {0} on {1}!\n({2})",
+			//	   "unknown", "unknown", file.getAbsolutePath(), exc);
+			file.delete();
+			System.out.println("must delete file "+file.getAbsolutePath());
+		}finally {
+			if (in != null) {
+				try { in.close(); } catch (IOException exc) {}
+			}
+		}
+		return prog;	
+	}
 
 
   /**
@@ -331,6 +397,9 @@ public class DataService implements devplugin.PluginManager {
       File file = getChannelDayProgramFile(date, channels[i]);
       if (file.exists()) {
         // We have it on disk -> load it
+		ChannelDayProgram prog=loadChannelDayProgramFromDisk(file);
+		if (prog!=null) dayProgram.addChannelDayProgram(prog);
+        /*
         ObjectInputStream in = null;
         try {
           in = new ObjectInputStream(new FileInputStream(file));
@@ -346,7 +415,7 @@ public class DataService implements devplugin.PluginManager {
           if (in != null) {
             try { in.close(); } catch (IOException exc) {}
           }
-        }
+        }*/
       }
       else if (isOnlineMode()) {
         // We don't have it on disk, but we are online -> download it
