@@ -101,9 +101,10 @@ public class ChannelList {
         String timezone = tokenizer.nextToken().trim();
         String id = tokenizer.nextToken().trim();
         String name = tokenizer.nextToken().trim();
+        String copyright = tokenizer.nextToken().trim();
         
         Channel channel = new Channel(dataService, name, id,
-          TimeZone.getTimeZone(timezone), country);
+          TimeZone.getTimeZone(timezone), country,copyright);
           
         addChannel(channel);
       }
@@ -144,7 +145,8 @@ public class ChannelList {
       writer.println(channel.getCountry()
         + ";" + channel.getTimeZone().getID()
         + ";" + channel.getId()
-        + ";" + channel.getName());
+        + ";" + channel.getName()
+        + ";" + channel.getCopyrightNotice());
     }
     writer.close();
     
