@@ -722,40 +722,51 @@ public class PrimaryDataManager {
         // base: All information but description and the image
         levelFrame = (ProgramFrame) frame.clone();
         levelFrame.removeProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+        levelFrame.removeProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
       } else {
-        ProgramField levelField = null;
+        ProgramField levelField1 = null;
+        ProgramField levelField2 = null;
 
         switch (levelIdx) {        
           case 1:
-            // image16-00: Only the image between 16 pm and midnight
+            // more16-00: Only the descriptions and the actor list
+            //            between 16 pm and midnight
             if (getProgramStartTime(frame) > (16 * 60)) {
-              levelField = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
+              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+              levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
             }
             break;
           case 2:
-            // image00-16: Only the image between midnight and 16 pm
+            // more00-16: Only the descriptions and the actor list
+            //            between midnight and 16 pm
             if (getProgramStartTime(frame) <= (16 * 60)) {
-              levelField = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
+              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+              levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
             }
             break;
           case 3:
-            // desc16-00: Only the descriptions between 16 pm and midnight
+            // image16-00: Only the image between 16 pm and midnight
             if (getProgramStartTime(frame) > (16 * 60)) {
-              levelField = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
             }
             break;
           case 4:
-            // desc00-16: Only the descriptions between midnight and 16 pm
+            // image00-16: Only the image between midnight and 16 pm
             if (getProgramStartTime(frame) <= (16 * 60)) {
-              levelField = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
             }
             break;
         }
         
-        if (levelField != null) {
+        if ((levelField1 != null) || (levelField2 != null)) {
           levelFrame = new ProgramFrame(frame.getId());
-          levelFrame.addProgramField(levelField);
+          if (levelField1 != null) {
+            levelFrame.addProgramField(levelField1);
+          }
+          if (levelField2 != null) {
+            levelFrame.addProgramField(levelField2);
+          }
         }
       }
       
@@ -856,12 +867,25 @@ public class PrimaryDataManager {
 
 
   private void createChannelList() throws PreparationException {
+    Date today = new Date();
+    
     ChannelList list = new ChannelList();
     for (int serviceIdx = 0; serviceIdx < mDataServiceArr.length; serviceIdx++) {
       Channel[] channelArr = mDataServiceArr[serviceIdx].getAvailableChannels();
       for (int i = 0; i < channelArr.length; i++) {
         list.addChannel(channelArr[i]);
-        System.out.println("Adding channel " + channelArr[i].getName());
+        
+        // Check whether the data service delivered up-to-date data for this
+        // channel
+        String rawFileName = DayProgramFile.getProgramFileName(today,
+          channelArr[i].getCountry(), channelArr[i].getId());
+        File rawFile = new File(mRawDir, rawFileName);
+        if (! rawFile.exists()) {
+          System.out.println("WARNING: Data service "
+            + mDataServiceArr[serviceIdx].getClass().getName() + " did not "
+            + "deliver up-to-date data for channel " + channelArr[i].getName()
+            + ". (File " + rawFile.getAbsolutePath() + " does not exist)");
+        }
       }
     }
     

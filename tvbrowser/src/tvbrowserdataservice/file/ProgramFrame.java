@@ -59,7 +59,12 @@ public class ProgramFrame implements Cloneable {
   
   public Object clone() {
     try {
-      return super.clone();
+      ProgramFrame clone = (ProgramFrame) super.clone();
+      
+      // Make a deep copy of the field list
+      clone.mProgramFieldList = (ArrayList) mProgramFieldList.clone();
+      
+      return clone;
     }
     catch (CloneNotSupportedException exc) {
       // This will never happen, since this class implements Cloneable

@@ -25,11 +25,14 @@
  */
 package primarydatamanager.mirrorupdater.data;
 
+import java.io.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import primarydatamanager.mirrorupdater.UpdateException;
+import util.io.IOUtilities;
 
 /**
  * 
@@ -66,6 +69,28 @@ public class FileDataTarget implements DataTarget {
     File file = new File(mDir, fileName);
     if (! file.delete()) {
       throw new UpdateException("Deleting file failed: " + fileName);
+    }
+  }
+
+
+  public byte[] loadFile(String fileName) throws UpdateException {
+    File file = new File(mDir, fileName);
+    
+    FileInputStream in = null;
+    try {
+      in = new FileInputStream(file);
+      ByteArrayOutputStream out = new ByteArrayOutputStream((int) file.length());
+      IOUtilities.pipeStreams(in, out);
+      out.close();
+      return out.toByteArray();
+    }
+    catch (IOException exc) {
+      throw new UpdateException("Loading file failed: " + fileName, exc);
+    }
+    finally {
+      if (in != null) {
+        try { in.close(); } catch (IOException exc) {}
+      }
     }
   }
 
