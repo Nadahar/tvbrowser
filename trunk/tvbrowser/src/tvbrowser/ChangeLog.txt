@@ -8,6 +8,7 @@ current:
 - Subscribe some channels by default
 - show timezone in about box
 - make fonts chooseable (in settings file)
+- remember window size
 
 0.9.3:
 - bugfixes

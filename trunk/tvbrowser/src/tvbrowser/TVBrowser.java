@@ -81,6 +81,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private static String curLookAndFeel;
   public static final String VERSION="0.9.4";
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION;
+  
+  private static TVBrowser mainFrame;
 
   private JMenu pluginsMenu;
 
@@ -153,20 +155,22 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
 	splash.setMessage(msg);
-    final TVBrowser frame = new TVBrowser();
-    frame.setSize(700,500);
-    UiUtilities.centerAndShow(frame);
-    ErrorHandler.setFrame(frame);
 
-	//splash.hide();
+	mainFrame=new TVBrowser();
+    mainFrame.setSize(Settings.getWindowSize());
+    UiUtilities.centerAndShow(mainFrame);
+    ErrorHandler.setFrame(mainFrame);
+
+	splash.hide();
 
     // maximize the frame
-    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    
 
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        frame.scrollToNow();
+        mainFrame.scrollToNow();
         DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());
       }
     });
@@ -334,6 +338,15 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
+    
+    mLog.info("Storing window size");
+    Settings.setWindowSize(mainFrame.getSize());
+    
+    try {
+    	Settings.storeSettings();
+    }catch(TvBrowserException e) {
+		ErrorHandler.handle(e);
+    }
 
     mLog.info("Quitting");
     System.exit(0);

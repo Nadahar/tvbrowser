@@ -408,8 +408,10 @@ public static void deleteExpiredTVData() {
 			}
 		}	
 	);
-	for (int i=0;i<fList.length;i++) {
-		fList[i].delete();
+	if (fList!=null) {
+		for (int i=0;i<fList.length;i++) {
+			fList[i].delete();
+		}
 	}
 	
 }
