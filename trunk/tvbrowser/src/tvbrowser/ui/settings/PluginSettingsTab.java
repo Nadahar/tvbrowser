@@ -152,12 +152,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     //Plugin pluginList[]=PluginManager.getInstance().getAvailablePlugins();
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
     
-    PluginProxy[] copy = new PluginProxy[pluginList.length];
-    for (int i = 0; i < pluginList.length;i++) {
-        copy[i] = pluginList[i];
-    }
     
-    Arrays.sort(copy, new Comparator() {
+    Arrays.sort(pluginList, new Comparator() {
 
         public int compare(Object o1, Object o2) {
             return o1.toString().compareTo(o2.toString());
@@ -165,8 +161,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         
     });    
     
-    for (int i=0;i<copy.length;i++) {
-      mListModel.addElement(copy[i]);
+    for (int i=0;i<pluginList.length;i++) {
+      mListModel.addElement(pluginList[i]);
  //     if (PluginLoader.getInstance().isActivePlugin(pluginList[i])) {
  //       mActivatedPlugins.add(pluginList[i]);
  //     }
