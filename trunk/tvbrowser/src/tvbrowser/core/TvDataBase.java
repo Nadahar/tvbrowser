@@ -116,7 +116,7 @@ public class TvDataBase {
       }
     }
 
-    // Invalidate the program file from the cache
+    // Invalidate the old program file from the cache
     OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
     if (oldProgFile != null) {
       oldProgFile.setValid(false);
@@ -125,6 +125,13 @@ public class TvDataBase {
       removeCacheEntry(key);
     }
 
+    // Create a new program file
+    OnDemandDayProgramFile newProgFile
+      = new OnDemandDayProgramFile(file, prog);
+
+    // Put the new program file in the cache
+    addCacheEntry(key, newProgFile);
+
     // Inform the listeners about adding the new program
     // NOTE: This must happen before saving to give the listeners the chance to
     //       change the data and have those changes saved to disk.
@@ -132,16 +139,9 @@ public class TvDataBase {
     
     // Save the new program
     try {
-      // Create a new program file
-      OnDemandDayProgramFile newProgFile
-        = new OnDemandDayProgramFile(file, prog);
-
       // Save the day program
       newProgFile.saveDayProgram();
 
-      // Saving succeed -> Put the new program file in the cache
-      addCacheEntry(key, newProgFile);
-      
       // Delete the backup
       if (backupFile != null) {
         backupFile.delete();
@@ -153,7 +153,10 @@ public class TvDataBase {
       }
     }
     catch (IOException exc) {
-      // Undo the adding
+      // Remove the new program from the cache
+      removeCacheEntry(key);
+
+      // Inform the listeners about removing the new program
       fireDayProgramDeleted(prog);
 
       // Try to restore the backup
