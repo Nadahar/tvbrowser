@@ -208,7 +208,7 @@ public class DialogOverview extends JDialog {
                 _update.setEnabled(true);
 
                 if (up.wasSuccessfull()) {
-                    JOptionPane.showMessageDialog(getParent(), _mLocalizer.msg("updateSuccess",
+                    JOptionPane.showMessageDialog(null, _mLocalizer.msg("updateSuccess",
                             "Update was successfull!"));
                 }
             };

@@ -1,5 +1,12 @@
 Changelog TVRaterPlugin
 
+0.06 
+- Every Rating-Category can have it's own Text now
+
+0.05
+- Manual Update Bug fixed, several others,too
+- Showing rating Icon in Overview
+
 0.04:
 - Count of Ratings on Server is now Saved
 - Unneeded Threads removed

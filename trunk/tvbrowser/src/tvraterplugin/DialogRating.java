@@ -72,6 +72,9 @@ public class DialogRating extends JDialog {
 	/** Rater Plugin */
 	private TVRaterPlugin _rater;
 
+	/** Empty Personal Rating */
+	private boolean _emptyPersonal = false;
+	
 	/**
 	 * Creates the DialgoRating
 	 * 
@@ -88,6 +91,7 @@ public class DialogRating extends JDialog {
 		_personalrating = _rater.getDatabase().getPersonalRating(programtitle);
 		
 		if (_personalrating == null) {
+		    _emptyPersonal = true;
 			_personalrating = new Rating(programtitle);
 		}
 		
@@ -115,6 +119,7 @@ public class DialogRating extends JDialog {
 		_personalrating = rater.getDatabase().getPersonalRating(program);
 
 		if (_personalrating == null) {
+		    _emptyPersonal = true;
 			_personalrating = new Rating(program.getTitle());
 		}
 
@@ -221,13 +226,12 @@ public class DialogRating extends JDialog {
         if (Integer.parseInt(_rater.getSettings().getProperty("updateIntervall", "0")) == 1) {
 
             Thread updateThread = new Thread() {
-
                 public void run() {
                     System.out.println("Updater gestartet");
                     Updater up = new Updater(_rater);
                     up.run();
                     if (up.wasSuccessfull()) {
-                        JOptionPane.showMessageDialog(_rater.getParentFrameForTVRater(),
+                        JOptionPane.showMessageDialog(null,
                                 _mLocalizer.msg("updateSuccess", "Update was successfull!"));
                     }
                 }
@@ -271,22 +275,22 @@ public class DialogRating extends JDialog {
 			ratingPanel.setLayout(new GridBagLayout());
 			
 			ratingPanel.add(new JLabel(_mLocalizer.msg("overall", "Overall") + ":", JLabel.LEFT), labc);
-			ratingPanel.add(createRatingBox( rating.getIntValue(Rating.OVERALL)), c);
+			ratingPanel.add(createRatingBox(rating, Rating.OVERALL), c);
 			
 			ratingPanel.add(new JLabel(_mLocalizer.msg("action", "Action") + ":", JLabel.LEFT), labc);
-			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.ACTION)), c);
+			ratingPanel.add(createRatingBox(rating, Rating.ACTION), c);
 			
 			ratingPanel.add(new JLabel(_mLocalizer.msg("fun", "Fun") + ":", JLabel.LEFT), labc);
-			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.FUN)), c);
+			ratingPanel.add(createRatingBox(rating, Rating.FUN), c);
 			
 			ratingPanel.add(new JLabel(_mLocalizer.msg("erotic", "Erotic") + ":", JLabel.LEFT), labc);
-			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.EROTIC)), c);
+			ratingPanel.add(createRatingBox(rating, Rating.EROTIC), c);
 			
 			ratingPanel.add(new JLabel(_mLocalizer.msg("tension", "Tension") + ":", JLabel.LEFT), labc);
-			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.TENSION)), c);
+			ratingPanel.add(createRatingBox(rating, Rating.TENSION), c);
 			
 			ratingPanel.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":", JLabel.LEFT), labc);
-			ratingPanel.add(createRatingBox(rating.getIntValue(Rating.ENTITLEMENT)), c);
+			ratingPanel.add(createRatingBox(rating, Rating.ENTITLEMENT), c);
 		} else {
 			ratingPanel.setLayout(new BorderLayout());			
 			JTextPane pane = new JTextPane();
@@ -319,9 +323,11 @@ public class DialogRating extends JDialog {
 	 * @param value Value to show (1-5)
 	 * @return JPanel with rating-box
 	 */
-	private Component createRatingBox(int value) {
-		if (value > -1) {
-			return new JLabel(RatingIconTextFactory.getStringForRating(value), (Icon)RatingIconTextFactory.getImageIconForRating(value), JLabel.LEFT);
+	private Component createRatingBox(Rating rating, Object type) {
+		if (type != null) {
+		    int value = rating.getIntValue(type);
+			return new JLabel(RatingIconTextFactory.getStringForRating(type, value), 
+			        		(Icon)RatingIconTextFactory.getImageIconForRating(value), JLabel.LEFT);
 		} else {
 			return new JLabel("-");
 		}
@@ -334,36 +340,43 @@ public class DialogRating extends JDialog {
 	 */
 	private JPanel createVotingPanel(Rating rating) {
 		JPanel voting = new JPanel(new GridBagLayout());
-		voting.setBorder(BorderFactory.createTitledBorder(_mLocalizer.msg("yourRating", "Your Rating")));
+		
+		String text = _mLocalizer.msg("yourRating", "Your Rating");
+		
+		if (_emptyPersonal) {
+		    text += "*";
+		}
+		
+		voting.setBorder(BorderFactory.createTitledBorder(text));
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.weightx = 0;
+		c.weightx = 0.5;
 		c.weighty = 0;
-		c.fill = GridBagConstraints.NONE;
+		c.fill = GridBagConstraints.HORIZONTAL;
 
 		GridBagConstraints labc = new GridBagConstraints();
-		labc.weightx = 1;
+		labc.weightx = 0.5;
 		labc.weighty = 1;
 		labc.fill = GridBagConstraints.BOTH;
 
 		voting.add(new JLabel(_mLocalizer.msg("overall", "Overall") + ":"), labc);
-		voting.add(createVotingBox(_personalrating.getIntValue(Rating.OVERALL), 0), c);
+		voting.add(createVotingBox(_personalrating, Rating.OVERALL, 0), c);
 
 		voting.add(new JLabel(_mLocalizer.msg("action", "Action") + ":"), labc);
-		voting.add(createVotingBox(_personalrating.getIntValue(Rating.ACTION), 1), c);
+		voting.add(createVotingBox(_personalrating, Rating.ACTION, 1), c);
 
 		voting.add(new JLabel(_mLocalizer.msg("fun", "Fun") + ":"), labc);
-		voting.add(createVotingBox( _personalrating.getIntValue(Rating.FUN), 2), c);
+		voting.add(createVotingBox( _personalrating, Rating.FUN, 2), c);
 
 		voting.add(new JLabel(_mLocalizer.msg("erotic", "Erotic") + ":"), labc);
-		voting.add(createVotingBox(_personalrating.getIntValue(Rating.EROTIC), 3), c);
+		voting.add(createVotingBox(_personalrating, Rating.EROTIC, 3), c);
 
 		voting.add(new JLabel(_mLocalizer.msg("tension", "Tension") + ":"), labc);
-		voting.add(createVotingBox(_personalrating.getIntValue(Rating.TENSION), 4), c);
+		voting.add(createVotingBox(_personalrating, Rating.TENSION, 4), c);
 
 		voting.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":"), labc);
-		voting.add(createVotingBox(_personalrating.getIntValue(Rating.ENTITLEMENT), 5), c);
+		voting.add(createVotingBox(_personalrating, Rating.ENTITLEMENT, 5), c);
 
 		return voting;
 	}
@@ -371,20 +384,14 @@ public class DialogRating extends JDialog {
 	/**
 	 * Creates a voting Box
 	 * 
-	 * @param name Name of the Rating-Element
-	 * @param value Value to select
+	 * @param rating Rating to use
+	 * @param type what to rate
 	 * @param ratingbox number of the Box
 	 * @return a Panel with a Voting-Box
 	 */
-	private Component createVotingBox(int value, int ratingbox) {
-		Integer[] values = { new Integer(0), new Integer(1), new Integer(2), new Integer(3), new Integer(4), new Integer(5) };
-
-		JComboBox valuebox = new JComboBox(values);
+	private Component createVotingBox(Rating rating, Object type, int ratingbox) {
+		RatingComboBox valuebox = new RatingComboBox(rating, type);
 		
-		valuebox.setRenderer(new RatingEntryCellRenderer());
-		
-		valuebox.setSelectedIndex(value);
-
 		_ratings[ratingbox] = valuebox;
 
 		return valuebox;
