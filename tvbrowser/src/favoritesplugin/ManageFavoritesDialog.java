@@ -31,8 +31,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import util.ui.UiUtilities;
-import util.ui.ProgramListCellRenderer;
+import util.ui.*;
 
 import devplugin.*;
 
@@ -71,30 +70,36 @@ public class ManageFavoritesDialog extends JDialog {
 
     setTitle(mLocalizer.msg("title", "Manage favorite programs"));
     
-    JPanel main = new JPanel(new BorderLayout());
+    JPanel main = new JPanel(new BorderLayout(5, 5));
     main.setBorder(UiUtilities.DIALOG_BORDER);
     setContentPane(main);
     
-    JPanel toolbarPn = new JPanel();
+    JPanel toolbarPn = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
     main.add(toolbarPn, BorderLayout.NORTH);
     
-    mNewBt = new JButton(mLocalizer.msg("new", "New..."));
+    msg = mLocalizer.msg("new", "Create a new favorite...");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/New24.gif", getClass());
+    mNewBt = UiUtilities.createToolBarButton(msg, icon);
     mNewBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         newFavorite();
       }
     });
     toolbarPn.add(mNewBt);
-    
-    mEditBt = new JButton(mLocalizer.msg("edit", "Edit..."));
+
+    msg = mLocalizer.msg("edit", "Edit the selected favorite...");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Edit24.gif", getClass());
+    mEditBt = UiUtilities.createToolBarButton(msg, icon);
     mEditBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         editSelectedFavorite();
       }
     });
     toolbarPn.add(mEditBt);
-    
-    mDeleteBt = new JButton(mLocalizer.msg("delete", "Delete"));
+
+    msg = mLocalizer.msg("delete", "Delete selected favorite...");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Delete24.gif", getClass());
+    mDeleteBt = UiUtilities.createToolBarButton(msg, icon);
     mDeleteBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         deleteSelectedFavorite();
@@ -102,8 +107,8 @@ public class ManageFavoritesDialog extends JDialog {
     });
     toolbarPn.add(mDeleteBt);
 
-    msg = mLocalizer.msg("up", "Move the selected rows up");
-    icon = new ImageIcon("imgs/Up24.gif");
+    msg = mLocalizer.msg("up", "Move the selected favorite up");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Up24.gif", getClass());
     mUpBt = UiUtilities.createToolBarButton(msg, icon);
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -112,8 +117,8 @@ public class ManageFavoritesDialog extends JDialog {
     });
     toolbarPn.add(mUpBt);
     
-    msg = mLocalizer.msg("down", "Move the selected rows down");
-    icon = new ImageIcon("imgs/Down24.gif");
+    msg = mLocalizer.msg("down", "Move the selected favorite down");
+    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Down24.gif", getClass());
     mDownBt = UiUtilities.createToolBarButton(msg, icon);
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -150,7 +155,7 @@ public class ManageFavoritesDialog extends JDialog {
     scrollPane.setBorder(null);
     mSplitPane.setRightComponent(scrollPane);
     
-    JPanel buttonPn = new JPanel();
+    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
     
     mOkBt = new JButton(mLocalizer.msg("ok", "OK"));
@@ -237,10 +242,13 @@ public class ManageFavoritesDialog extends JDialog {
   protected void deleteSelectedFavorite() {
     int selection = mFavoritesList.getSelectedIndex();
     if (selection != -1) {
-      Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      fav.unmarkPrograms();
-      
-      mFavoritesListModel.remove(selection);
+      String msg = mLocalizer.msg("reallyDelete", "Really delete favorite?");
+      if (JOptionPane.showConfirmDialog(this, msg) == JOptionPane.YES_OPTION) {
+        Favorite fav = (Favorite) mFavoritesListModel.get(selection);
+        fav.unmarkPrograms();
+
+        mFavoritesListModel.remove(selection);
+      }
     }
   }
 

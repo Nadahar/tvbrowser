@@ -86,18 +86,18 @@ public class SettingsDlg extends JDialog implements ActionListener {
       }
     }
 
-    JPanel pushButtonPanel=new JPanel();
+    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
     okBtn=new JButton(mLocalizer.msg("ok", "OK"));
     okBtn.addActionListener(this);
-    pushButtonPanel.add(okBtn);
+    buttonPn.add(okBtn);
     getRootPane().setDefaultButton(okBtn);
 
     cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
     cancelBtn.addActionListener(this);
-    pushButtonPanel.add(cancelBtn);
+    buttonPn.add(cancelBtn);
 
-    contentPane.add(pushButtonPanel,BorderLayout.SOUTH);
+    contentPane.add(buttonPn,BorderLayout.SOUTH);
     contentPane.add(tabPane,BorderLayout.CENTER);
 
     this.setSize(500,350);

@@ -65,7 +65,6 @@ public class ReminderDialog extends /*PluginDialog*/JDialog {
   public ReminderDialog(Frame parent, devplugin.Program program) {
     super(parent,true);
 
-util.io.Profiler.getDefault().show("2.1");
     setTitle(mLocalizer.msg("title", "New reminder"));
 
     JPanel contentPane=(JPanel)getContentPane();
@@ -75,7 +74,6 @@ util.io.Profiler.getDefault().show("2.1");
     JLabel titleLabel=new JLabel(program.getChannel().getName()+": "+program.getTitle());
     JPanel infoPanel=new JPanel(new GridLayout(2,1));
 
-util.io.Profiler.getDefault().show("2.2");
     Font font=titleLabel.getFont();
 
     titleLabel.setFont(new Font(font.getName(),Font.BOLD,font.getSize()+4));
@@ -87,15 +85,12 @@ util.io.Profiler.getDefault().show("2.2");
     panel5.add(titleLabel,BorderLayout.WEST);
     panel5.add(infoPanel,BorderLayout.EAST);
 
-util.io.Profiler.getDefault().show("2.3");
     list=new JComboBox(SMALL_REMIND_MSG_ARR);
     list.setSelectedIndex(5);
 
     JPanel panel1=new JPanel(new BorderLayout(10,0));
     panel1.setBorder(BorderFactory.createEmptyBorder(10,0,30,0));
     panel1.add(list,BorderLayout.CENTER);
-
-util.io.Profiler.getDefault().show("2.4");
 
     JPanel panel2=new JPanel(new BorderLayout());
     panel2.add(panel5,BorderLayout.NORTH);
@@ -104,37 +99,33 @@ util.io.Profiler.getDefault().show("2.4");
     panel6.add(panel1,BorderLayout.NORTH);
     panel2.add(panel6,BorderLayout.SOUTH);
 
-util.io.Profiler.getDefault().show("2.5");
-    JPanel panel3=new JPanel(new GridLayout(1,0,10,0));
-    JButton cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
-    cancelBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        hide();
-      }
-    }
-    );
-util.io.Profiler.getDefault().show("2.6");
+    JPanel panel3=new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    
     JButton okBtn=new JButton(mLocalizer.msg("ok", "OK"));
     okBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mOkPressed=true;
         hide();
       }
-    }
-    );
-    panel3.add(cancelBtn);
+    });
     panel3.add(okBtn);
-util.io.Profiler.getDefault().show("2.7");
+    getRootPane().setDefaultButton(okBtn);
 
+    JButton cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
+    cancelBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        hide();
+      }
+    });
+    panel3.add(cancelBtn);
+    
     JPanel panel4=new JPanel(new BorderLayout());
     panel4.add(panel3,BorderLayout.EAST);
 
     contentPane.add(panel2,BorderLayout.NORTH);
     contentPane.add(panel4,BorderLayout.SOUTH);
 
-util.io.Profiler.getDefault().show("2.8");
     pack();
-util.io.Profiler.getDefault().show("2.9");
   }
 
   

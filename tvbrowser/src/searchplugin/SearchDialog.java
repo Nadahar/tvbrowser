@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.FlowLayout;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -151,7 +152,7 @@ public class SearchDialog extends JDialog {
     p1.add(mCaseSensitiveChB);
         
     // the buttons
-    JPanel buttonPn = new JPanel();
+    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn);
     
     msg = mLocalizer.msg("search", "Search");
@@ -238,7 +239,7 @@ public class SearchDialog extends JDialog {
     list.setCellRenderer(new ProgramListCellRenderer());
     main.add(new JScrollPane(list), BorderLayout.CENTER);
     
-    JPanel buttonPn = new JPanel();
+    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
     
     JButton closeBt = new JButton(mLocalizer.msg("close", "Close"));
