@@ -322,12 +322,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   	DataLoaderManager.initDataLoaders();
   	String[] dataLoaderNames=DataLoaderManager.getDataLoaderNames();
   	for (int i=0;i<dataLoaderNames.length;i++) {
-  		try {
+  		/*try {
 			ChannelList.readChannelList(dataLoaderNames[i]);
 		} catch (TvBrowserException exc) {
 			mLog.warning("No channel file found. using default channel settings.");
 			ChannelList.createDefaultChannelList(dataLoaderNames[i]);
-		}
+		}*/
+		ChannelList.addDataLoaderChannels(dataLoaderNames[i]);
   	}
   }
 		

@@ -16,12 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date$
- *   $Author$
- * $Revision$
  */
 
 package xmltvdataservice;
@@ -32,12 +26,10 @@ import java.util.zip.GZIPInputStream;
 import java.net.URL;
 
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
-import util.tvdataservice.*;
 
 import tvdataloader.*;
 import devplugin.*;
@@ -58,11 +50,27 @@ import devplugin.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class XmlTvDataService extends MultipleChannelTvDataService {
+public class XmlTvDataService implements TVDataServiceInterface {
 
+  private static java.util.logging.Logger mLog
+	= java.util.logging.Logger.getLogger(XmlTvDataService.class.getName());
+  
   /** The folder where to put the XML data. */  
-  private static final String XMLTV_FOLDER = "xmldata";
+  private static final String XMLTV_FOLDER = "xmldata" + java.io.File.separator;
 
+  /** Specifies whether file that have been parsed should be deleted. */
+  private static final boolean DELETE_PARSED_FILES = true;
+
+  /**
+   * A list of the files, we downloaded or we tried to download. We need this
+   * list, so we don't attempt to download a file where the download failed.
+   */
+  private ArrayList mAlreadyDownloadedFiles;
+  
+  private ProgramDispatcher mProgramDispatcher;
+  
+  private Channel[] mSubscribedChannelArr;
+  
   
   
   /**
@@ -77,145 +85,330 @@ public class XmlTvDataService extends MultipleChannelTvDataService {
    * Called by the host-application before starting to download.
    */
   public void connect() throws TvBrowserException {
-    super.connect();
+	mProgramDispatcher = new ProgramDispatcher();
     
-    // ensure the xmltv.dtd is present
-    File xmlTvDtdFile = new File(XMLTV_FOLDER + java.io.File.separator + "xmltv.dtd");
+	mSubscribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
     
-    if (! xmlTvDtdFile.exists()) {
-      // create the xmldata directory
-      xmlTvDtdFile.getParentFile().mkdirs();
+	// ensure the xmltv.dtd is present
+	File xmlTvDtdFile = new File(XMLTV_FOLDER + "xmltv.dtd");
+    
+	if (! xmlTvDtdFile.exists()) {
+	  // create the xmldata directory
+	  xmlTvDtdFile.getParentFile().mkdirs();
       
-      // save the xmltv.dtd
-      InputStream stream = null;
-      try {
-        String xmlTvDtdResourceName = "xmltvdataservice/xmltv.dtd";
-        ClassLoader classLoader = getClass().getClassLoader();
-        stream = classLoader.getResourceAsStream(xmlTvDtdResourceName);
+	  // save the xmltv.dtd
+	  InputStream stream = null;
+	  try {
+		String xmlTvDtdResourceName = "xmltvdataservice/xmltv.dtd";
+		ClassLoader classLoader = getClass().getClassLoader();
+		stream = classLoader.getResourceAsStream(xmlTvDtdResourceName);
 
-        IOUtilities.saveStream(stream, xmlTvDtdFile);
-      }
-      catch (IOException exc) {
-        throw new TvBrowserException(getClass(), "error.1",
-          "Error when preparing the XML TV data service directory!", exc);
-      }
-      finally {
-        try {
-          if (stream != null) stream.close();
-        } catch (IOException exc) {}
-      }
-    }
+		IOUtilities.saveStream(stream, xmlTvDtdFile);
+	  }
+	  catch (IOException exc) {
+		throw new TvBrowserException(getClass(), "error.1",
+		  "Error when preparing the XML TV data service directory!", exc);
+	  }
+	  finally {
+		try {
+		  if (stream != null) stream.close();
+		} catch (IOException exc) {}
+	  }
+	}
+    
+	// empty the list of the already downloaded files
+	mAlreadyDownloadedFiles = new ArrayList();
   }
 
   
   
   /**
-   * Downloads the file containing the data for the specified dat and channel.
+   * After the download is done, this method is called. Use this method for
+   * clean-up.
+   */
+  public void disconnect() throws TvBrowserException {
+	mProgramDispatcher = null;
+	mSubscribedChannelArr = null;
+	mAlreadyDownloadedFiles = null;
+  }
+
+  
+  
+  /**
+   * Called by the host-application to read the day-program of a channel from
+   * the file system.
+   * <p>
+   * Enter code like "return (AbstractChannelDayProgram)in.readObject();" here.
    *
-   * @param date The date to load the data for.
-   * @param channel The channel to load the data for.
-   * @param targetFile The file where to store the file.
+   * @param in The stream to read the ChannelDayProgram from.
+   * @return The AbstractChannelDayProgram read from the stream.
    */
-  protected void downloadFileFor(devplugin.Date date, Channel channel,
-    File targetFile) throws TvBrowserException
+  public AbstractChannelDayProgram readChannelDayProgram(java.io.ObjectInputStream in)
+	throws java.io.IOException, ClassNotFoundException
   {
-    String fileName = getFileNameFor(date, channel);
-    String url = "http://www.szing.at/xmltv/" + fileName;
-    try {
-      IOUtilities.download(new URL(url), targetFile);
-    }
-    catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.2",
-        "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
-    }
-  }   
-  
-  
-
-  /**
-   * Gets the name of the directory where to download the data service specific
-   * files.
-   */
-  protected String getDataDirectory() {
-    return XMLTV_FOLDER;
+	return (AbstractChannelDayProgram)in.readObject();
   }
 
   
   
   /**
-   * Gets the name of the file that contains the data of the specified date.
-   */
-  protected String getFileNameFor(devplugin.Date date,
-    devplugin.Channel channel)
-  {
-    java.util.Calendar cal = date.getCalendar();
-    
-    int month = cal.get(java.util.Calendar.MONTH) + 1;
-    int day   = cal.get(java.util.Calendar.DAY_OF_MONTH);
-
-    // The year is not saved in a devplugin.Date
-    // so we've got to get the date from the current date
-    java.util.Calendar now = new java.util.GregorianCalendar();
-    int year = now.get(java.util.Calendar.YEAR);
-    
-    int nowMonth = now.get(java.util.Calendar.MONTH);
-    if ((nowMonth > 11) && (month <= 2)) {
-      // They want the given date of the following year
-      year++;
-    }
-    
-    // e.g. "tv_20030418.xml"
-    StringBuffer fileNameBuf = new StringBuffer();
-    fileNameBuf.append("tv_");
-    IOUtilities.append(fileNameBuf, year, 4);
-    IOUtilities.append(fileNameBuf, month, 2);
-    IOUtilities.append(fileNameBuf, day, 2);
-    fileNameBuf.append(".xml.gz");
-    
-    return fileNameBuf.toString();
-  }
-
-  
-  
-  /**
-   * Parses the specified file.
+   * Returns the whole program of the channel on the specified date.
    *
-   * @param file The file to parse.
-   * @param programDispatcher The ProgramDispatcher where to store the found
-   *        programs.
+   * @param date The date to get the programs for.
+   * @param channel The channel to get the programs for.
+   * @return the whole program of the channel on the specified date.
    */
-  protected void parseFile(File file, ProgramDispatcher programDispatcher)
-    throws TvBrowserException
+  public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
+	Channel channel) throws TvBrowserException
   {
-    XmlTvHandler handler
-      = new XmlTvHandler(programDispatcher, getChannels());
+	MutableChannelDayProgram channelDayProgram
+	  = mProgramDispatcher.getChannelDayProgram(date, channel);
+    
+	// If the wanted AbstractChannelDayProgram isn't already in the cache
+	// load the apropriate XMl file
+	if (channelDayProgram == null) {
+	  loadXmlFileFor(date, channel);
+	  channelDayProgram = mProgramDispatcher.getChannelDayProgram(date, channel);
+	}
 
-    SAXParserFactory factory = SAXParserFactory.newInstance();
-    FileInputStream in = null;
-    GZIPInputStream gzipIn = null;
-    try {
-      in = new FileInputStream(file);
-      gzipIn = new GZIPInputStream(in);
+	// Check whether the AbstractChannelDayProgram is complete
+	if ((channelDayProgram != null)) {
+	  if (! channelDayProgram.isComplete()) {
+		channelDayProgram = null;
+	  }
+	}
+    
+	return channelDayProgram;
+  }
 
-      // The system id is the location where the parser searches the DTD.
-      String systemId = file.getParentFile().toURI().toString();
+  
+  
+  
+  /**
+   * Downloads and parses the XML file for the given date and channel.
+   * <p>
+   * If at any time there is chance to get the list of channels, this method will
+   * only be called once per XML file. This method will parse the XML file and
+   * extract the programs for all channels at once.
+   *
+   * @param date The date to get the programs for.
+   * @param channel The channel to get the programs for. When the channel list
+   *        is available, this parameter will get obsolete.
+   */
+  private void loadXmlFileFor(devplugin.Date date, Channel channel)
+	throws TvBrowserException
+  {
+	// Get the name of the XML file to load
+	String xmlTvFileName = getXmlFileName(date);
+	String gzFileName = getXmlFileName(date) + ".gz";
+	File gzFile = new File(XMLTV_FOLDER + gzFileName);
+    
+	// Check whether the files was already downloaded
+	boolean alreadyDownloaded = false;
+	Iterator iter = mAlreadyDownloadedFiles.iterator();
+	while (iter.hasNext()) {
+	  String fileName = (String) iter.next();
+	  if (fileName.equals(gzFileName)) {
+		alreadyDownloaded = true;
+	  }
+	}
+    
+	// Download the file if nessesary
+	if ((! alreadyDownloaded) && (! gzFile.exists())) {
+	  mAlreadyDownloadedFiles.add(gzFileName);
+	  String gzUrl = "http://www.szing.at/xmltv/" + gzFileName;
+	  try {
+		IOUtilities.download(new URL(gzUrl), gzFile);
+	  }
+	  catch (Exception exc) {
+		gzFile.delete();
+		throw new TvBrowserException(getClass(), "error.2",
+		  "Error downloading '{0}' to '{1}'!", gzUrl, gzFile.getAbsolutePath(), exc);
+	  }
+	}
+      
+	if (! gzFile.exists()) {
+	  // Download must have failed
+	  mLog.info("File '" + gzFile.getAbsolutePath() + "' does not exist!");
+	} else {
+	  // parse the XML file
+	  XmlTvHandler handler
+		= new XmlTvHandler(mProgramDispatcher, mSubscribedChannelArr);
 
-      // parse the file
-      SAXParser saxParser = factory.newSAXParser();
-      saxParser.parse(gzipIn, handler, systemId);
-    }
-    catch (Throwable thr) {
-      throw new TvBrowserException(getClass(), "error.3",
-        "XML TV file is corrupt!\n({0})", file.getAbsolutePath(), thr);
-    }
-    finally {
-      try {
-        if (in != null) in.close();
-      } catch (IOException exc) {}
-      try {
-        if (gzipIn != null) gzipIn.close();
-      } catch (IOException exc) {}
-    }
+	  // Use the default (non-validating) parser
+	  SAXParserFactory factory = SAXParserFactory.newInstance();
+	  FileInputStream in = null;
+	  GZIPInputStream gzipIn = null;
+	  boolean fileIsCorrupt = false;
+	  try {
+		mLog.info("Parsing '" + gzFile.getAbsolutePath() + "'...");
+
+		in = new FileInputStream(gzFile);
+		gzipIn = new GZIPInputStream(in);
+
+		// The system id is the location where the parser searches the DTD.
+		String systemId = gzFile.getParentFile().toURI().toString();
+
+		// parse the file
+		SAXParser saxParser = factory.newSAXParser();
+		saxParser.parse(gzipIn, handler, systemId);
+	  }
+	  catch (Throwable thr) {
+		fileIsCorrupt = true;
+        
+		throw new TvBrowserException(getClass(), "error.3",
+		  "XML TV file is corrupt!\n({0})", gzFile.getAbsolutePath(), thr);
+	  }
+	  finally {
+		try {
+		  if (in != null) in.close();
+		} catch (IOException exc) {}
+		try {
+		  if (gzipIn != null) gzipIn.close();
+		} catch (IOException exc) {}
+
+		// If the file was parsed or currupt:
+		// Delete the file, we don't need it any more
+		if (DELETE_PARSED_FILES || fileIsCorrupt) {
+		  gzFile.delete();
+		}
+	  }
+	}
+  }
+  
+  
+  
+  /**
+   * Gets the name of the XML file that contains the program for the given day.
+   *
+   * @param date The date to get the XML file name for.
+   * @return the name of the XML file.
+   */
+  protected String getXmlFileName(devplugin.Date date) {
+	java.util.Calendar cal = date.getCalendar();
+    
+	int month = cal.get(java.util.Calendar.MONTH) + 1;
+	int day   = cal.get(java.util.Calendar.DAY_OF_MONTH);
+
+	// The year is not saved in a devplugin.Date
+	// so we've got to get the date from the current date
+	java.util.Calendar now = new java.util.GregorianCalendar();
+	int year = now.get(java.util.Calendar.YEAR);
+    
+	int nowMonth = now.get(java.util.Calendar.MONTH);
+	if ((nowMonth > 11) && (month <= 2)) {
+	  // They want the given date of the following year
+	  year++;
+	}
+    
+	// e.g. "tv_20030418.xml"
+	StringBuffer fileNameBuf = new StringBuffer();
+	fileNameBuf.append("tv_");
+	IOUtilities.append(fileNameBuf, year, 4);
+	IOUtilities.append(fileNameBuf, month, 2);
+	IOUtilities.append(fileNameBuf, day, 2);
+	fileNameBuf.append(".xml");
+    
+	return fileNameBuf.toString();
+  }
+
+  
+  
+  /**
+   * Gets a key for hash tables for a channel.
+   *
+   * @param channel The channel to get the key for.
+   * @return The key for the given channel.
+   */
+  protected Object getKeyForChannel(Channel channel) {
+	return new Integer(channel.getId());
+  }
+  
+  
+  
+  /**
+   * Gets a channel for the given name.
+   * <p>
+   * Doesn't work yet.
+   *
+   * @param channelName The name of the channel to get.
+   * @return The channel for the specified name.
+   */
+  protected Channel getChannelForName(String channelName) {
+	// ToDo
+	return null;
   }
    
+   
+  public void loadSettings(java.util.Properties settings) {
+	// TODO: implement this method
+  }
+  
+   public java.util.Properties storeSettings() {
+	// TODO: implement this method
+	return null;
+   }
+  
+   public SettingsPanel getSettingsPanel() {
+	// TODO: implement this method
+	return new MySettingsPanel();
+   }
+   
+   public int getNumberOfAvailableChannels() {
+		return 35;
+   }
+  
+	 public void initializeAvailableChannels(devplugin.Channel[] ch) {
+   
+	ch[0].init("ARD",1);
+	ch[1].init("ZDF",2);
+	ch[2].init("RTL",3);
+	   ch[3].init("Sat.1",4);
+	   ch[4].init("Pro 7",5);
+	   ch[5].init("VOX",8);  
+	   ch[6].init("TV 5", 201);
+	   ch[7].init("Kabel 1", 202);
+	   ch[8].init("Premiere", 203);
+	   ch[9].init("Bayern", 204);
+	   ch[10].init("TRT", 205);
+	   ch[11].init("SWR", 206);
+	   ch[12].init("n-tv", 207);
+	   ch[13].init("arte", 208);
+	   ch[14].init("VIVA", 209);
+	   ch[15].init("MTV", 210);
+	   ch[16].init("MTV2", 211);
+	   ch[17].init("mdr", 212);
+	   ch[18].init("Neunlive", 213);
+	   ch[19].init("3Sat", 214);
+	   ch[20].init("EuroSport", 215);
+	   ch[21].init("RTL 2", 216);
+	   ch[22].init("ORF 2", 217);
+	   ch[23].init("Kinder Kanal", 218);
+	   ch[24].init("NBC", 219);
+	   ch[25].init("Nord 3", 220);
+	   ch[26].init("Hessen", 221);
+	   ch[27].init("Phoenix", 222);
+	   ch[28].init("CNN", 223);
+	   ch[29].init("ORB", 224);
+	   ch[30].init("SF1", 225);
+	   ch[31].init("SUPER RTL", 226);
+	   ch[32].init("DSF", 227);
+	   ch[33].init("EuroNews", 228);
+	   ch[34].init("ORF 1", 229);
+   
+   }
+   
+   class MySettingsPanel extends SettingsPanel {
+   	
+	   public void ok() {
+	   }
+   	
+	   public MySettingsPanel() {
+		   add(new javax.swing.JButton("example"));
+	   }
+	  }
+	public boolean hasSettingsPanel() {
+		return true;
+	}
 }
+

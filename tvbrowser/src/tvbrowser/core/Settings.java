@@ -85,7 +85,7 @@ public class Settings {
 
   private static final String SETTINGS_FILE="settings.prop";
   private static final String USER_DIR="tvbrowser";
-  public static final String DATA_DIR="tvdata";
+  //public static final String DATA_DIR="tvdata";
 
   public static boolean settingHasChanged(String[] key) {	
 		
@@ -113,6 +113,20 @@ public class Settings {
 
     return dir;
   }
+
+
+	public static String getTVDataDirectory() {		
+		String res=settings.getProperty("tvdatadirectory");
+		if (res==null) {
+			java.io.File f=new File("tvdata");
+			res=f.getAbsolutePath();
+		}
+		return res;
+	}
+	
+	public static void setTVDataDirectory(String dir) {
+		settings.setProperty("tvdatadirectory",dir);
+	}
 
   /**
    * Store all settings. This method is called on quitting the application.

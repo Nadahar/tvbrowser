@@ -32,11 +32,29 @@ public class Channel implements java.io.Serializable, devplugin.Channel {
     private int id;
     private String dataService;
     
+    /*
     public Channel(String name, int id, String dataService) {
         this.name=name;
         this.id=id;
         this.dataService=dataService;
+    }*/
+    
+  /*  public Channel(String name, int id) {
+    	this.name=name;
+    	this.id=id;
+    }*/
+    
+	public void init(String name, int id) {
+		this.name=name;
+		this.id=id;
     }
+    
+    
+   public Channel(String dataService) {
+   	this.dataService=dataService;
+   }
+    
+   
 
 	public String getDataServiceName() {
 		return dataService;

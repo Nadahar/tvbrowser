@@ -55,7 +55,7 @@ import tvdataloader.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class PremiereDataService extends MultipleChannelTvDataService {
+public class PremiereDataService implements TvDataServiceInterface {
 
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
