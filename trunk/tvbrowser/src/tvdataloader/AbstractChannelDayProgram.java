@@ -90,18 +90,13 @@ public abstract class AbstractChannelDayProgram implements Serializable {
       }
     }
     
-    if (newOnAir!=programOnAir) {
-      if (programOnAir!=null) {
-        programOnAir.markAsOnAir(false);
-      }
-      programOnAir=newOnAir;
-      if (programOnAir!=null) {
-        programOnAir.markAsOnAir(true);
-      }
+    if (programOnAir!=null) {
+      programOnAir.markAsOnAir(false);
     }
-
-
+    programOnAir=newOnAir;
+    if (programOnAir!=null) {
+      programOnAir.markAsOnAir(true);
+    }
   }
-
 
 }

@@ -155,5 +155,14 @@ public class DayProgram {
     }
     return prog;
   }
+  
+  
+  
+  /**
+   * Gets whether this day program is empty
+   */
+  public boolean isEmpty() {
+    return mDayProgramHash.isEmpty();
+  }
 
 }
