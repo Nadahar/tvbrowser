@@ -210,13 +210,6 @@ public class MutableProgram implements Program {
    */
   public void addChangeListener(ChangeListener listener) {
     // TODO: The ProgramPanels to not unregister themselves
-    /*
-    mLog.info("mListenerList.getListenerCount(): " + mListenerList.getListenerCount());
-    if (mListenerList.getListenerCount() != 0) {
-      throw new RuntimeException("test");
-    }
-    */
-
     mListenerList.add(ChangeListener.class, listener);
   }
 
@@ -351,20 +344,8 @@ public class MutableProgram implements Program {
    * Gets whether this program is expired.
    */
   public boolean isExpired() {
-    //int currentDaysSince1970 = IOUtilities.getDaysSince1970();
-    //int programDaysSince1970 = getDate().getDaysSince1970();
     devplugin.Date today=new devplugin.Date();
 
-/*
-    if (programDaysSince1970 < currentDaysSince1970) {
-      return true;
-    }
-    if (programDaysSince1970 > currentDaysSince1970) {
-      return false;
-    }
-*/
-
-  //System.out.print(getTitle()+": "+getDate().getValue()+": ");
 
     if (today.compareTo(getDate()) < 0) {
       return false;
@@ -375,26 +356,10 @@ public class MutableProgram implements Program {
 
     // This program is (or was) today -> We've got to check the time
     int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
-    //System.out.print("current time: "+currentMinutesAfterMidnight+"; ");
     int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength() - 1;
-    //System.out.println("program time: "+programMinutesAfterMidnight);
     return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
     
   }
-
-
-
-  /**
-   * (This method is a kind of constructor. It reads the program from an
-   * InputStream.)
-   *
-   * @param in The stream to read the program from.
-   */
-  /*
-  public void readProgram(InputStream in) throws TvBrowserException {
-  }
-  */
-
 
 
   /**

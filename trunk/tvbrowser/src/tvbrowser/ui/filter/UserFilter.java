@@ -78,9 +78,8 @@ public class UserFilter extends AbstractFilter {
   
   
   public UserFilter(String name) {
-         mName=name;
-         System.out.println("new filter '"+name+"' created");
-     }
+    mName=name;
+  }
 
   public UserFilter(File file) {
          mFile=file;
@@ -238,7 +237,7 @@ public class UserFilter extends AbstractFilter {
       
   private static void expectToken(int[] type, Token got) throws ParserException {
           if (got==null) {
-              //throw new ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
+              throw new ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
           }
         
           for (int i=0;i<type.length;i++) {
@@ -305,7 +304,7 @@ public class UserFilter extends AbstractFilter {
          Node result, notNode=null;
         
        if (curToken==null) {
-       //  throw new ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
+         throw new ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
        }
         
         
@@ -313,7 +312,7 @@ public class UserFilter extends AbstractFilter {
            notNode=new NotNode();
            curToken=getNextToken();
            if (curToken==null) {
-            // throw new ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
+             throw new ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
            }
             
          }
@@ -408,8 +407,6 @@ public class UserFilter extends AbstractFilter {
     
       public boolean containsRuleComponent(String compName) {
           Iterator it=nodes.iterator();
-          //System.out.println("containsRuleComponent("+compName+")");
-          //dump();
           while (it.hasNext()) {
               Node n=(Node)it.next();
               if (n.containsRuleComponent(compName)) {

@@ -90,8 +90,6 @@ import java.util.regex.*;
 			(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY)) {
 			weekOfYear--;
 		}
-		//System.out.println("returning "+"woche"+weekOfYear+".zip");
-		//return "woche"+weekOfYear+".zip";
 		String s;
 		
 		String cid=channel.getId();
@@ -108,21 +106,8 @@ import java.util.regex.*;
 		else {
 			throw new IllegalArgumentException("invalid channel id: "+cid);
 		}
-		
-		/*
-		switch (channel.getId()) {
-			case 0: s="1live"; break;
-			case 1: s="wdr2"; break;
-			case 2: s="wdr3"; break;
-			case 3: s="wdr4"; break;
-			case 4: s="radio5"; break;
-			case 5: s="europa"; break;
-			case 6: s="wdr-fs"; break;
-			default : throw new IllegalArgumentException("invalid channel id");
-		}
-		
-		return weekOfYear+s+".txt";
-		*/
+    
+    
 		}
 
 
@@ -149,6 +134,15 @@ import java.util.regex.*;
 		}
 	}
 
+
+  private String getString(String s) {
+    try {
+      return new String(s.getBytes(),"ISO-8859-1");
+    }catch(UnsupportedEncodingException e) {
+      return s;
+    } 
+    
+  }
 
 
 	  /**
@@ -237,7 +231,10 @@ import java.util.regex.*;
 						int min=Integer.parseInt(matcher.group(2));
 				
 						currProgram=new MutableProgram(channel, curDate, hour, min);
-						currProgram.setTitle(matcher.group(3));
+						currProgram.setTitle(getString(matcher.group(3)));
+            
+           
+            
 						int len;
 						if (prevProgram!=null) {
 							len=(hour*60+min) - (prevHour*60+prevMin);
@@ -258,9 +255,9 @@ import java.util.regex.*;
 						matcher=regexPatternArr[1].matcher(line);
 						found=matcher.find();
 						if (found) {
-							desc.append(matcher.group(1));
+							desc.append(getString(matcher.group(1)));
 							if (shortInfo==null) {
-								shortInfo=matcher.group(1);
+								shortInfo=getString(matcher.group(1));
 							}
 							line=reader.readLine();
 							lineNr++;

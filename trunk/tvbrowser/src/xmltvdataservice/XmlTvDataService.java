@@ -200,22 +200,14 @@ public class XmlTvDataService extends AbstractTvDataService {
     File targetFile) throws TvBrowserException
   {
       
-    System.out.println("call: downloadFileFor(): Date: "+date+", channel: "+channel.getName()+", File: "+targetFile.getAbsolutePath());  
       
     String fileName = getFileNameFor(date, channel);
     String url = "http://www.szing.at/xmltv/" + fileName;
-    System.out.println("try to download from url: "+url);
     try {
       IOUtilities.download(new URL(url), targetFile);
-      System.out.println("download OK");
     }
     catch (Exception exc) {
     	// ignore error
-      //throw new TvBrowserException(getClass(), "error.2",
-      //  "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
-      //System.out.println("could not download file "+url);
-      //System.out.println("Exception:");
-      //exc.printStackTrace();
     }
     
   }

@@ -63,16 +63,13 @@ public class ProgramInfo extends devplugin.Plugin {
   		public void execute(Program program) {
             ProgramInfoDialog dlg = new ProgramInfoDialog(parent, program);
             dlg.pack();
-            System.out.println("NEW");
             dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
             	
 				public void componentMoved(ComponentEvent e) {
-					System.out.println("moved");
 					e.getComponent().getLocation(location);
 				}
 				
 				public void componentResized(ComponentEvent e) {
-					System.out.println("resized");
 					e.getComponent().getSize(size);
 				}
             	

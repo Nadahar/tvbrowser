@@ -1,3 +1,5 @@
+Scroll down for an english version...
+
 Installation von TV-Browser
 ===========================
 
@@ -5,12 +7,11 @@ Diese Anleitung bezieht sich auf MS-Windows-Systeme. Auf anderen Systemen laeuft
 
 1. Entpacken:
 -------------
-
 ZIP-File mit z.B. WinzIP in das gewuenschte Verzeichnis entpacken (z.B. c:\Programme).
 
 2. Java installieren:
---------------------
-TV-Browser benoetigt Java JRE ab Version 1.4
+---------------------
+TV-Browser benoetigt Java JRE ab Version 1.4.
 Bei Unsicherheit, ob diese (oder eine höhere) Version installiert ist, einfach "java -version" (ohne Anfuehrungszeichen) eingeben.
 Falls eine Fehlermeldung oder eine niedrigere Version als 1.4 ausgegeben wird, muß nun Java installiert werden.
 Die aktuelle Version kann hier gratis heruntergeladen werden: http://java.sun.com/getjava/
@@ -31,4 +32,39 @@ oder das Hilfe-Forum: http://sourceforge.net/forum/forum.php?forum_id=271266
 
 Aktuelles rund um TV-Browser ist auf der TV-Browser-Website zu finden: http://tvbrowser.sourceforge.net
 
-Dort sind auch immer neben der aktuellsten Version auch neue Plugins verfuegbar.
+Dort sind auch immer neben der aktuellsten Version neue Plugins verfuegbar.
+
+
+
+English version:
+
+Installing TV-Browser
+=====================
+
+These instructions are MS Windows specific. However, the procedure is similar for other operating systems.
+
+1. Unzipping:
+-------------
+Use a tool like WinZip to extract the zip file to a directory of your choice (e.g. C:\Program Files).
+
+2. Installing Java:
+-------------------
+TV-Browser requires the Java Runtime Environment (JRE), version 1.4 or newer.
+To check which version is installed on your system, open a command prompt and enter "java -version" (omit quotes).
+If an error message is displayed or you find that you have an older JRE you will now need to install Java.
+Get the current version for free at http://java.sun.com/getjava/
+
+3. Starting TV-Browser:
+-----------------------
+If Java is set up correctly you only need to double click "tvbrowser.jar" in TV-Browser's installation folder. Alternatively, you can start it from a console window using "java -jar tvbrowser.jar" (again, you need to be in the installation folder).
+
+
+Enjoy!
+
+Martin
+
+Problems? Read the FAQ at http://members.liwest.at/firebird/faq.html
+or refer to the help message board at http://sourceforge.net/forum/forum.php?forum_id=271266
+
+Read more about TV-Browser on its home page at http://tvbrowser.sourceforge.net
+This site also holds the current version and all existing plug-ins.

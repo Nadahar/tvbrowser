@@ -35,6 +35,8 @@ import java.io.*;
 
 import java.util.logging.*;
 
+
+
 import tvbrowser.core.*;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -128,9 +130,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
     
     
-      
-    
-    
     
     SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
       new Color(63, 114, 133), Color.WHITE);
@@ -173,7 +172,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     devplugin.Plugin.setPluginManager(DataService.getInstance());
     
     /*Maybe there are plugins to install (.jar.inst files)*/
-	PluginManager.installPendingPlugins();
+	  PluginManager.installPendingPlugins();
     
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
@@ -187,15 +186,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     mLog.info("Loading filters...");
     FilterComponentList.init();
-    
-    //tvbrowser.ui.filter.FilterList.load();
-
+  
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
-    
-
-    //System.out.println("current date: "+devplugin.Date.getCurrentDate().toString());
     
 
     mainFrame=new TVBrowser();
@@ -321,7 +315,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     msg = mLocalizer.msg("menuitem.findPluginsOnWeb", "Find plugins on the web...");
     mPluginDownloadMenuItem = new JMenuItem(msg, icon);
     mPluginDownloadMenuItem.addActionListener(this);
-	createPluginsMenu();
+	
+    createPluginsMenu();
    
     
     // Help menu
@@ -492,6 +487,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     JMenuItem item;
     HashMap map = new HashMap();
     for (int i = 0;i<plugins.length;i++) {
+      
       final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
       plugin.setParent(this);
       String btnTxt = plugin.getButtonText();

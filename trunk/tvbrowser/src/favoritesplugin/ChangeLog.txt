@@ -1,7 +1,7 @@
 Changelog FavoritesPlugin
 
 
-current (1.0.4):
+1.0.4:
 - remember size of ManageFavoritesDialog
 
 1.0.3: requires TVBrowser 0.95

@@ -1,0 +1,18 @@
+TV-Browser
+==========
+
+TV-Browser erfordert die Java-Laufzeitumgebung (JRE) 1.4.
+Sie kann hier
+http://java.sun.com/getjava/index.html
+für das jeweilige Betriebssystem gratis heruntergeladen werden.
+
+Zum Starten von TV-Browser einfach auf "tvbrowser.jar" doppelklicken.
+
+
+
+English version:
+
+TV-Browser requires the Java Runtime Environment (JRE) 1.4 or newer.
+It can be downloaded for free at http://java.sun.com/getjava/index.html
+
+To start TV-Browser please double click "tvbrowser.jar".

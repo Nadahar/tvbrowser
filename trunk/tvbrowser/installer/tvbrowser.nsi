@@ -88,6 +88,7 @@ Section "${PROG_NAME} (erforderlich)"
   File "${RUNTIME_DIR}\LICENSE.txt"
   File "${RUNTIME_DIR}\tvbrowser.jar"
   File "${RUNTIME_DIR}\website.url"
+  File "${RUNTIME_DIR}\where_is_the_exe.txt"
 
   WriteUninstaller "Uninstall.exe"
 
