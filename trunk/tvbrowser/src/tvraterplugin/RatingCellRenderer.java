@@ -64,7 +64,7 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
             return this;
         }
 
-        return null;
+        return new JLabel(obj.toString());
     }
 
 }
