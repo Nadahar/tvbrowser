@@ -33,6 +33,7 @@ import java.awt.event.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import tvbrowser.ui.customizableitems.*;
 import tvbrowser.core.*;
@@ -61,37 +62,63 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
   }
   
   public void ok() {
-    // print button stuff
-    System.out.println("OK");
-    
-    Object[] o1=buttonPluginSet.toArray();
-    for (int i=0;i<o1.length;i++) {
-      System.out.println((String)o1[i]);
-    }
-    
-    // set new installed plugins and remember those including a button
-    Object[] subscribedPluginItemArr = panel.getElementsRight();
-    String[] pluginClassNameArr = new String[subscribedPluginItemArr.length];
-    ArrayList buttonPluginList = new ArrayList();
-    for (int i = 0; i < subscribedPluginItemArr.length; i++) {
-      PluginItem item = (PluginItem)subscribedPluginItemArr[i];
-      pluginClassNameArr[i] = item.getPlugin().getClass().getName();
-      PluginManager.installPlugin(pluginClassNameArr[i]);
-      System.out.println("install plugin " + pluginClassNameArr[i]);
-      if (buttonPluginSet.contains(pluginClassNameArr[i])) {
-        buttonPluginList.add(pluginClassNameArr[i]);
-        System.out.println("including button");
-      }
-    }
-    Settings.setInstalledPlugins(pluginClassNameArr);
-    
-    // Set the subsribed plugins that include a button
-    String[] buttonPluginArr = new String[buttonPluginList.size()];
-    buttonPluginList.toArray(buttonPluginArr);
-    
-    Settings.setButtonPlugins(buttonPluginArr);
-  }
-  
+  	
+	ArrayList oldPlugins=new ArrayList();
+	ArrayList newPlugins=new ArrayList();
+	ArrayList buttonPlugins=new ArrayList();
+	Object[] o;
+	int i;
+  	
+	o=Settings.getInstalledPlugins();
+	for (i=0;i<o.length;i++) {
+		oldPlugins.add(o[i]);
+	}
+  	
+	o=panel.getElementsRight();
+	for (i=0;i<o.length;i++) {
+		newPlugins.add(o[i]);
+	}
+  	
+	oldPlugins.removeAll(newPlugins); 
+	// oldPlugins contains now all unused plugins;
+  	
+	Iterator it=oldPlugins.iterator();  // uninstall unused plugins
+	while (it.hasNext()) {
+		String cur=(String)it.next();
+		PluginManager.uninstallPlugin(cur);
+	}
+  	
+	String[] instPlugins=new String[newPlugins.size()];
+	it=newPlugins.iterator();
+	i=0;
+	while (it.hasNext()) {
+		
+		Plugin obj=((PluginItem)it.next()).getPlugin();
+		//System.out.println(obj.getClass());
+		//String cur=(String)obj;
+		String cur=obj.getClass().getName();
+		if (!PluginManager.isInstalled(cur)) {
+			PluginManager.installPlugin(cur);
+		}
+		instPlugins[i]=cur;
+		if (buttonPluginSet.contains(cur)) {
+			buttonPlugins.add(cur);
+		}
+		i++;
+	}
+	
+	Settings.setInstalledPlugins(instPlugins);
+  	
+	o=buttonPlugins.toArray();
+	String []s=new String[o.length];
+	for (i=0;i<o.length;i++) {
+		s[i]=(String)o[i];
+	}
+	
+	Settings.setButtonPlugins(s);
+	   
+	   
+ }
   
   
   public PluginSettingsTab() {

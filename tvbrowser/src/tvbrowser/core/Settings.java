@@ -32,6 +32,45 @@ import javax.swing.*;
 
 import util.exc.TvBrowserException;
 
+
+class TVBrowserProperties extends java.util.Properties {
+		
+		private HashSet unconfirmedSettingItems=new HashSet();
+		
+		public TVBrowserProperties() {
+			super();
+		}
+		
+		public Object setProperty(String key, String value) {
+			System.out.print("setting "+key);
+			String oldVal=getProperty(key);
+			if (oldVal!=null && !oldVal.equals(value)) {
+					unconfirmedSettingItems.add(key);
+					System.out.println(" --> changed from '"+oldVal+" ' to '"+value+"'");
+			}else if (value!=null) {
+				unconfirmedSettingItems.add(key);
+				System.out.println(" --> changed from '"+oldVal+" ' to '"+value+"'");
+			}else {
+				System.out.println(" --> no changes '"+oldVal+" ' is '"+value+"'");
+			}
+			
+			return super.setProperty(key,value);
+			
+		}
+		
+		public boolean isUnconfirmedSettingItem(String key) {
+			boolean result=false;
+			if (unconfirmedSettingItems.contains(key)) {
+				unconfirmedSettingItems.remove(key);
+				result=true;
+			}
+			return result;
+		}
+		
+		
+	}
+
+
 /**
  * The Settings class provides access to the settings of the whole application
  * (except the plugins).
@@ -43,7 +82,7 @@ public class Settings {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Settings.class.getName());
 
-  private static Properties settings=null;
+	private static TVBrowserProperties settings=null;
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
   public static final int NONE=0, WALLPAPER=1, COLUMNS=2;
   public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
@@ -53,7 +92,17 @@ public class Settings {
   private static final String USER_DIR="tvbrowser";
   public static final String DATA_DIR="tvdata";
 
-
+  public static boolean settingHasChanged(String[] key) {
+		
+		
+		  boolean result=false;
+		  for (int i=0;i<key.length;i++) {
+			  if (settings.isUnconfirmedSettingItem(key[i])) {
+				  result=true;
+			  }
+		  }
+		  return result;
+	  }
 
   /**
    * Returns the user directory. (e.g.: ~/tvbrowser/)
@@ -102,7 +151,7 @@ public class Settings {
    * settings are used.
    */
   public static void loadSettings() {
-    settings=new Properties();
+    settings=new TVBrowserProperties();
     try {
       settings.load(new FileInputStream(new File(getUserDirectoryName(),SETTINGS_FILE)));
     }catch (IOException e) {
