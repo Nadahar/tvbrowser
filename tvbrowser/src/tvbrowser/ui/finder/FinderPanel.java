@@ -34,125 +34,200 @@ package tvbrowser.ui.finder;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Enumeration;
-
-
-import java.util.Vector;
+import java.awt.event.*;
+import java.util.HashMap;
 
 import devplugin.Date;
 import tvbrowser.core.*;
 
-public class FinderPanel extends JComponent implements FinderListener {
-  private FinderItem curSelectedFinderItem=null;
-  private DateListener dataChangedListener=null;
-  private Vector itemList;
+
+
+
+
+
+class FinderItemRenderer extends DefaultListCellRenderer {
   
-  private static FinderPanel mSingleton;
-
-  /**
-   * Constructs a new FinderPanel.
-   */
-  private FinderPanel() {
-
-    setLayout(new BorderLayout());
+  private devplugin.Date mToday;
+  private devplugin.Date mChoosenDate;
+  private HashMap mCells;
+  private JProgressBar mProgressBar;
+  private FinderItem mCurSelectedItem;
+  
+  public FinderItemRenderer() {
+    mToday=Date.getCurrentDate();
+    mCells = new HashMap();
+    mProgressBar=new JProgressBar();
+  }
+  
+  public void chooseDate(devplugin.Date date) {
+    mChoosenDate=date;
+  }
+ 
+  public void setSelectedItem(FinderItem item) {
+    mCurSelectedItem=item;
+  }
+ 
+  public Component getListCellRendererComponent(JList list, Object value,
+                int index, boolean isSelected, boolean cellHasFocus) {
+     
+    FinderItem comp = (FinderItem)value;
     
-    JPanel labelList=new JPanel();
-    labelList.setLayout(new GridLayout(0,1));
-    
-    
-    JScrollPane scrollPane=new JScrollPane(labelList,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
-    FinderItem item;
-    itemList=new Vector();
-
-    devplugin.Date curDate=new Date();
-    devplugin.Date today=new Date(curDate);
-   
-    
-    
-    curDate=curDate.addDays(-3);
-    
-    for (int i=0;i<60;i++) {
-        item=new FinderItem(this, curDate);
-        labelList.add(item);
-        itemList.add(item);
-        if (today.equals(curDate)) {
-          curSelectedFinderItem=item;
-          item.setMark(true);
+    if (cellHasFocus) {
+          comp.setBorder(BorderFactory.createLineBorder(Color.black));
+        }else{
+          comp.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
         }
-        curDate=curDate.addDays(1);
+    
+    
+    if (value==mCurSelectedItem) {
+      comp.setChoosen();  
+    }    
+    else if (isSelected) {
+      comp.setSelected();          
     }
-
-
-    add(scrollPane,BorderLayout.CENTER);
-    updateUI();
+    else {
+      comp.setOpaque(false);          
+    }
+    
+    comp.setEnabled(TvDataBase.getInstance().dataAvailable(comp.getDate()));
+    return comp;    
   }
+ 
 
+} 
 
-  public static FinderPanel getInstance() {
-    if (mSingleton==null) {
-      mSingleton=new FinderPanel();
+public class FinderPanel extends JScrollPane implements MouseListener, MouseMotionListener, KeyListener {
+  
+  private static FinderPanel mInstance;
+  private DateListener mDateChangedListener;
+  
+  private JList mList;
+  private DefaultListModel mModel;
+  private FinderItemRenderer mRenderer;
+  
+  private int mCurMouseItemInx=-1;
+  private Date mCurChoosenDate;
+  
+  private FinderPanel() {
+    
+    mModel=new DefaultListModel();
+    mList=new JList(mModel);
+    mList.setOpaque(false);
+    
+    mRenderer=new FinderItemRenderer();
+    mList.setCellRenderer(mRenderer);
+    
+    setViewportView(mList);
+    Date date=Date.getCurrentDate().addDays(-2);
+    for (int i=0;i<28;i++) {
+      mModel.addElement(new FinderItem(mList,date.addDays(i)));
     }
-    return mSingleton;
+    
+    mList.addMouseMotionListener(this);
+    mList.addMouseListener(this); 
+    mList.addKeyListener(this);
+    
+    markDate(Date.getCurrentDate());
+   
   }
   
-  public void setDateListener(DateListener dataChangedListener) {
-    this.dataChangedListener=dataChangedListener;
+  public static FinderPanel getInstance() {
+    if (mInstance==null) {
+      mInstance=new FinderPanel();
+    } 
+    
+    return mInstance;
   }
-
-
-  /**
-   * Calls the update() method for each FinderItem
-   */
-  public void update() {
-    Enumeration enum=itemList.elements();
-    while (enum.hasMoreElements()) {
-      ((FinderItem)enum.nextElement()).update();
-    }
-
+  
+  public void setDateListener(DateListener dateChangedListener) {
+    mDateChangedListener=dateChangedListener;
   }
-
-  /**
-   * Returns the currently selected date
-   */
-
+  
   public Date getSelectedDate() {
-    return curSelectedFinderItem.getDate();
+    return mCurChoosenDate;
   }
-
-  /**
-   * Marks the FinderItem containing the given date
-   */
-  public void markDate(devplugin.Date date) {
-    if (itemList==null) {
-      throw new RuntimeException("itemList is null");
-    }
-    java.util.Enumeration enum=itemList.elements();
-    FinderItem item;
-    while (enum.hasMoreElements()) {
-      item=(FinderItem)enum.nextElement();
+  
+  public devplugin.ProgressMonitor getProgressMonitorForDate(Date date) {
+    Object[] o=mModel.toArray();
+    for (int i=0;i<o.length;i++) {
+      FinderItem item=(FinderItem)o[i];
+      mRenderer.setSelectedItem(item);
+      
       if (item.getDate().equals(date)) {
-        finderItemStatusChanged(item);
-        return;
-      }
+        return item;
+      }      
+    }
+    
+    return null;
+  }
+  
+  public void markDate(final Date d) {
+    
+    if (d.equals(mCurChoosenDate)) {
+      return;
+    }    
+    
+    Object[] o=mModel.toArray();
+    for (int i=0;i<o.length;i++) {
+      final FinderItem item=(FinderItem)o[i];
+      if (item.getDate().equals(d)) {
+        if (item.isEnabled()) {
+          mCurChoosenDate=d;       
+          mRenderer.setSelectedItem(item);
+          item.startProgress(mDateChangedListener);
+          return;
+        }          
+      } 
     }
   }
 
+	
+	public void mouseClicked(MouseEvent event) {
+    int index=mList.locationToIndex(event.getPoint());    
+		markDate(((FinderItem)mModel.getElementAt(index)).getDate());
+	}
 
 
-  /**
-   * Implementation of the interface "FinderListener". Called by the FinderItem.
-   * Marks the FinderItem and calls the dataChangedListener to update the program table.
-   */
-  public void finderItemStatusChanged(FinderItem item) {
-   if (item!=curSelectedFinderItem) {
-      if (curSelectedFinderItem!=null) {
-        curSelectedFinderItem.setMark(false);
-      }
-      if (dataChangedListener!=null) dataChangedListener.dateChanged(item.getDate());
-      item.setMark(true);
-      curSelectedFinderItem=item;
+	public void mouseEntered(MouseEvent arg0) {		
+	}
+
+	
+	public void mouseExited(MouseEvent arg0) {
+		mList.clearSelection();
+    mCurMouseItemInx=-1;
+	}
+
+	
+	public void mousePressed(MouseEvent arg0) {}
+
+	
+	public void mouseReleased(MouseEvent arg0) {}
+
+
+	public void mouseDragged(MouseEvent arg0) {}
+
+
+	public void mouseMoved(MouseEvent event) {
+    
+    int index=mList.locationToIndex(event.getPoint());
+    if (index != mCurMouseItemInx) {
+      mCurMouseItemInx=index;
+      mList.setSelectedIndex(index);
     }
-  }
+		
+	}
 
+	
+	public void keyPressed(KeyEvent event) {
+		if (event.getKeyCode()==KeyEvent.VK_SPACE) {
+      markDate(((FinderItem)mList.getSelectedValue()).getDate());
+		}		
+	}
+
+	
+	public void keyReleased(KeyEvent arg0) {}
+
+	
+	public void keyTyped(KeyEvent arg0) { }
 }
+

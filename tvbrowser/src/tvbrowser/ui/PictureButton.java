@@ -29,6 +29,8 @@ package tvbrowser.ui;
 import java.awt.Font;
 import java.awt.Insets;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -41,7 +43,7 @@ import tvbrowser.core.Settings;
  *
  * @author Martin Oberhauser
  */
-public class PictureButton extends JButton {
+public class PictureButton extends JButton implements FocusListener {
 
   private static Insets NULL_INSETS = new Insets(0, 0, 0, 0);
   private static Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
@@ -51,6 +53,8 @@ public class PictureButton extends JButton {
 
   public PictureButton(String title, Icon icon) {
     super();
+    
+    addFocusListener(this);
     
     setIcon(icon);
     setText(title);
@@ -114,6 +118,16 @@ public class PictureButton extends JButton {
     if (mStatusBar!=null) {
       mStatusBar.setText("");
     }
-  }  
+  }
+
+	
+	public void focusGained(FocusEvent arg0) {
+		setBorderPainted(true);
+	}
+
+
+	public void focusLost(FocusEvent arg0) {
+    setBorderPainted(false);	
+	}  
 
 }

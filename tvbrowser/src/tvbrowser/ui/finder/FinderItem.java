@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,145 +24,109 @@
  * $Revision$
  */
 
+
 package tvbrowser.ui.finder;
 
 import javax.swing.*;
+
+import tvbrowser.core.DateListener;
+
 import java.awt.*;
-import java.awt.event.*;
 
-import tvbrowser.core.*;
+import devplugin.ProgressMonitor;
+import devplugin.Date;
 
-/**
- * A FinderItem object represents an item of the Finder.
- *
- * @author Martin Oberhauser
- */
-public class FinderItem extends JLabel implements MouseListener {
 
-  /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(FinderItem.class);
+class FinderItem extends JComponent implements ProgressMonitor {
   
-  private devplugin.Date date;
-  private FinderListener listener;
-  private boolean isMarked;
-  public static final Color MARKED_BG_COLOR=new Color(170,154,228);
-  public static final Color SELECTED_BG_COLOR=new Color(236,236,212);
-
+  private devplugin.Date mDate;
+  private static Date TODAY=Date.getCurrentDate();
+  private JProgressBar mProgressBar;
+  private JLabel mLabel;
+  private JList mList;
   
+  private static Color mColorChoosen=new Color(170,154,228);
+  private static Color mColorSelected= new Color(236,236,212);
+  
+  public FinderItem(JList list, Date date) {
+    mDate=date;
+    mList=list;
+    
+    mProgressBar=new JProgressBar();
+    mProgressBar.setForeground(mColorChoosen);
+    mProgressBar.setBorder(null);
+    
+    mLabel=new JLabel(date.toString());
+   
+    setLayout(new BorderLayout());
+    add(mLabel,BorderLayout.CENTER);
+  }   
+  
+  public Date getDate() {
+    return mDate;
+  }
   
   /**
-   * Constructs a new FinderItem containing the specified date (in days since 1900-01-01).
-   * The FinderListener is called, if the FinderItem is selected.
+   * Sets the item as choosen. A choosen item contains the currently viewed date.
+   *
    */
-  public FinderItem(FinderListener listener,devplugin.Date d) {
-    super();
-    this.listener=listener;
-    date=d;
-    if (new devplugin.Date().equals(d)) {    	
-      setText(mLocalizer.msg("today", "Today"));
-    }else {
-      setText(d.toString());
-    }
-
-    addMouseListener(this);
-    update();
-    isMarked=false;  
+  public void setChoosen() {
+    mLabel.setOpaque(true);
+    mLabel.setBackground(mColorChoosen);   
+  }
+  
+  public void setSelected() {
+     mLabel.setOpaque(true);
+     mLabel.setBackground(mColorSelected);   
+  }
+    
+  public void setOpaque(boolean b) {
+    super.setOpaque(b);
+    mLabel.setOpaque(b);    
   }
 
-
-
-  /**
-   * Returns the date.
-   */
-  public devplugin.Date getDate() {
-    return date;
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    mLabel.setEnabled(b);
   }
-
-  /**
-   * Enables (or disables) the FinderItem if program information is available (or unavailable).
-   */
-  public void update() {
-    this.setEnabled(TvDataBase.getInstance().dataAvailable(date));
-    setMark(isMarked());
-  }
-
-
-  /**
-   * Returns true, if the FinderItem is marked.
-   */
-  public boolean isMarked() {
-    return isMarked;
-  }
-
-
-
-  /**
-   * Marks the FinderItem. FinderItems are marked, if the ProgramTablePanel shows
-   * its program.
-   */
-  public void setMark(boolean mark) {
-    isMarked=mark;
-
-    if (isMarked) {
-      setOpaque(true);
-      setBackground(MARKED_BG_COLOR);
-    }
-    else {
-      setOpaque(false);
-      updateUI();
-    }
-  }
-
-  /**
-   * Implementation of the MouseListener interface.
-   */
-  public void mouseClicked(MouseEvent e) {
-
-    if (this.isEnabled() /*|| DataService.getInstance().isOnlineMode()*/) {
-      if (listener!=null) {
-        listener.finderItemStatusChanged(this);
+  
+  public void startProgress(final DateListener listener) {
+    
+    if (listener==null) {
+      return;
+    } 
+    
+    remove(mLabel);
+    add(mProgressBar,BorderLayout.CENTER);
+    final ProgressMonitor monitor=this;
+    Thread thread=new Thread(){
+      public void run() {
+        listener.dateChanged(mDate, monitor);
+        stopProgress();
       }
-    }
+    };
+    thread.start();    
+  }
+  
+  public void stopProgress() {    
+    remove(mProgressBar);
+    add(mLabel,BorderLayout.CENTER);
+    mList.repaint();
+  }
+  
+  public void setMaximum(int maximum) {
+    mProgressBar.setMaximum(maximum);
+  }
+  
+  public void setValue(int value) {
+    mProgressBar.setValue(value);  
+    mList.repaint();       
   }
 
-  /**
-   * Implementation of the MouseListener interface.
-   */
-  public void mouseEntered(MouseEvent e) {
-
-    if (isEnabled()) {
-      setOpaque(true);
-      setBackground(SELECTED_BG_COLOR);
-      this.updateUI();
-
-    }
+  
+  public void setMessage(String msg) {    
   }
-
-
-  /**
-   * Implementation of the MouseListener interface.
-   */
-  public void mouseExited(MouseEvent e) {
-    if (isMarked) {
-      setOpaque(true);
-      setBackground(MARKED_BG_COLOR);
-    }
-    else {
-      setOpaque(false);
-    }
-    updateUI();
-
-  }
-
-  /**
-   * Implementation of the MouseListener interface.
-   */
-  public void mousePressed(MouseEvent e) { }
-
-  /**
-   * Implementation of the MouseListener interface.
-   */
-  public void mouseReleased(MouseEvent e) { }
-
+  
+  
+  
 }
