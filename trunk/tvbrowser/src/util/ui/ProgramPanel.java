@@ -99,7 +99,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /** The program. */  
   private Program mProgram;
 
-
   /**
    * Creates a new instance of ProgramPanel.
    */  
@@ -110,7 +109,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
-    mDescriptionIcon.setMaximumLineCount(3);
+    mDescriptionIcon.setMaximumLineCount(3);    
   }
   
   
@@ -139,8 +138,17 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       mTimeFont = Settings.propProgramTimeFont.getFont();
       mNormalFont = Settings.propProgramInfoFont.getFont();
     }
+    
+    
   }
   
+  
+  public void fontChanged() {
+    mTitleIcon.setFont(mTitleFont);
+    mDescriptionIcon.setFont(mNormalFont);
+    setProgram(mProgram);
+    
+  }
 
   /**
    * (Re)Loads the column width settings.
@@ -200,6 +208,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param program The program to show in this panel.
    */  
   public void setProgram(devplugin.Program program, int maxHeight) {
+    
     Program oldProgram = mProgram;
     mProgram = program;
     
@@ -339,6 +348,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
     grp.setFont(ProgramPanel.mTimeFont);
     grp.drawString(mProgramTimeAsString, 1, mTimeFont.getSize());
+    
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
     mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
 

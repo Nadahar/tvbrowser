@@ -280,38 +280,3 @@ class FontChooserPanel extends JPanel {
     
   }
 
-
-
-/*
-class FontChooser extends JPanel {
-  
-  private JComboBox mFontCB, mStyleCB, mSizeCB;
-  
-  private static java.awt.GraphicsEnvironment ge =
-    java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
-  private static final String[] FONTNAMES = ge.getAvailableFontFamilyNames();
-  
-  
-  
-  
-  public FontChooser(String title) {
-    super();
-    setLayout(new BorderLayout());
-    add(new JLabel(title),BorderLayout.WEST);
-    JPanel panel1=new JPanel(new FlowLayout());
-    
-    mFontCB=new JComboBox(FONTNAMES);
-    mStyleCB=new JComboBox();
-    mSizeCB=new JComboBox();
-    
-    panel1.add(mFontCB);
-    panel1.add(mStyleCB);
-    panel1.add(mSizeCB);
-    
-    add(panel1,BorderLayout.EAST);
-  }
-  
-}
-*/
-
-

@@ -142,6 +142,10 @@ public class TextLineBreaker {
           int breakPos = findBreakPos(mNextWord, maxWidth);
           
           String firstPart = mNextWord.substring(0, breakPos);
+          if (firstPart.length()==0) {
+            mNextWordWidth = -1;
+            return "";
+          }
           
           // Append a minus if the last character is a letter or digit
           char lastChar = firstPart.charAt(firstPart.length() - 1);

@@ -127,7 +127,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
  }
 
   
-}
+
 
 
 class DirectoryChooserPanel extends JPanel {
@@ -146,7 +146,7 @@ class DirectoryChooserPanel extends JPanel {
     mTextField=new JTextField(text);
     add(mTextField,BorderLayout.CENTER);
     
-    mBtn=new JButton("...");
+    mBtn=new JButton(mLocalizer.msg("change","change"));
     mBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         JFileChooser fc =new JFileChooser();
@@ -176,7 +176,7 @@ class DirectoryChooserPanel extends JPanel {
     return mTextField.getText();
   }
 }
-
+}
   class DirectoryChooser extends JPanel {
    
     /** The localizer for this class. */

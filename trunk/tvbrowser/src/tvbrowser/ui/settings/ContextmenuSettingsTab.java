@@ -93,6 +93,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
   public ContextmenuSettingsTab() {
     mList=new SortableItemList(mLocalizer.msg("title","context menu"));
     mList.getList().setVisibleRowCount(10);
+    mList.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
        mList.getList().addMouseListener(new MouseAdapter(){
          public void mouseClicked(MouseEvent e){
@@ -134,35 +135,15 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 
 	public JPanel createSettingsPanel() {
     
-    //String defaultPluginClassName = Settings.getDefaultContextMenuPlugin();
     mDefaultPlugin = PluginManager.getInstance().getDefaultContextMenuPlugin();
-    //mDefaultPlugin=PluginManager.getInstance().getPlugin(defaultPluginClassName);
     
     JPanel contentPanel=new JPanel(new BorderLayout(0,15));
     contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
     
     JPanel panel1=new JPanel();
     panel1.setLayout(new BoxLayout(panel1,BoxLayout.Y_AXIS));
-    //mList=new SortableItemList(mLocalizer.msg("title","context menu"));
     panel1.add(mList);
-   /*
-    mList.getList().setVisibleRowCount(10);
-    
-    mList.getList().addMouseListener(new MouseAdapter(){
-      public void mouseClicked(MouseEvent e){
-        if(e.getClickCount() == 2) {
-          int inx = mList.getList().locationToIndex(e.getPoint());
-          if (inx>=0) {
-            Object item = mList.getList().getModel().getElementAt(inx);;
-            mList.getList().ensureIndexIsVisible(inx);
-            mDefaultPlugin=(Plugin)mList.getList().getSelectedValue();
-            mList.updateUI();
-          }          
-        }
-      }
-    });*/
-    
-   // fillListbox(PluginManager.getInstance().getContextMenuPlugins());
+  
     
     mDefaultPluginBt=new JButton(mLocalizer.msg("defaultPluginBtn",""));
     mDefaultPluginBt.addActionListener(this);
@@ -178,13 +159,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     descBox.setWrapStyleWord(true);
     descBox.setLineWrap(true);
     
-    contentPanel.add(descBox,BorderLayout.CENTER);
-    /*
-    mList.setCellRenderer(new ContextMenuCellRenderer());
-    mList.getList().setOpaque(false);
-  */
-  
-    
+    contentPanel.add(descBox,BorderLayout.CENTER); 
   
 		return contentPanel;
 	}
