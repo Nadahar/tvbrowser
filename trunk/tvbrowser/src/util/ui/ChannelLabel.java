@@ -35,7 +35,6 @@ import javax.swing.JLabel;
 
 import devplugin.Channel;
 
-
 /**
  * A Label for Channels. It shows the Icon and/or the Channel-Name
  */
@@ -49,52 +48,62 @@ public class ChannelLabel extends JLabel {
 
     /**
      * Creates the ChannelLabel
+     * 
      * @param ch Channel to display
      */
     public ChannelLabel(Channel ch) {
         setChannel(ch);
     }
-    
+
     /**
      * Sets the Channel to display
+     * 
      * @param ch Channel to display
      */
     public void setChannel(Channel ch) {
         setIcon(ch.getIcon());
         setText(ch.getName());
     }
-    
+
     /**
      * Sets the Icon
+     * 
      * @param ic Icon
      */
     public void setIcon(Icon ic) {
-        if (ic != null) {
-            BufferedImage img = new BufferedImage(42, 22,BufferedImage.TYPE_INT_RGB);
-        
-        	Graphics2D g = img.createGraphics();
-
-        	g.setColor(Color.WHITE);
-        	g.fillRect(1, 1, 40, 20);
-
-        	int x = 1+20-ic.getIconWidth() / 2;
-        	int y = 1+10-ic.getIconHeight() / 2;
-
-        	ic.paintIcon(this, g, x, y);
-        	
-        	g.setColor(Color.BLACK);
-        	g.drawRect(0, 0, 42, 22);
-        	
-        	ImageIcon imgIcon = new ImageIcon(img);
-        	super.setIcon(imgIcon);
-        } else {
-            super.setIcon(null);
+        if (ic == null) {
+            ic = getDefaultIcon();
         }
+        BufferedImage img = new BufferedImage(42, 22, BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D g = img.createGraphics();
+
+        g.setColor(Color.WHITE);
+        g.fillRect(1, 1, 40, 20);
+
+        int x = 1 + 20 - ic.getIconWidth() / 2;
+        int y = 1 + 10 - ic.getIconHeight() / 2;
+
+        ic.paintIcon(this, g, x, y);
+
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, 42, 22);
+
+        ImageIcon imgIcon = new ImageIcon(img);
+        super.setIcon(imgIcon);
     }
-    
+
+    /**
+     * Returns the Default-Icon 
+     * @return default-icon
+     */
+    private Icon getDefaultIcon() {
+        return new ImageIcon(ImageUtilities.createImageFromJar("imgs/TVBrowser16.gif", ChannelLabel.class));
+    }
 
     /**
      * Sets the Text
+     * 
      * @param text Text
      */
     public void setText(String text) {
