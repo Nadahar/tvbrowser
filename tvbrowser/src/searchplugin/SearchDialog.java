@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ public class SearchDialog extends JDialog {
   
   /** The messages for the time combo box. */  
   private static final String[] TIME_STRING_ARR = new String[] {
-    mLocalizer.msg("search.14", "Nächste 14 Tagen"),
+    mLocalizer.msg("search.14", "Naechste 14 Tagen"),
     mLocalizer.msg("search.1000", "Alle Daten"),
     mLocalizer.msg("search.0", "Heute"),
     mLocalizer.msg("search.1", "Morgen"),
@@ -67,7 +67,8 @@ public class SearchDialog extends JDialog {
     14, 1000, 0, 1, 7, 21, -7
   };
   
-  private JTextField mPatternTF;
+  //private JTextField mPatternTF;
+  private JComboBox mPatternCB;
   private JComboBox mTimeCB;
   private JRadioButton mMatchExactlyRB, mMatchSubstringRB, mRegexRB;
   private JCheckBox mCaseSensitiveChB;
@@ -103,8 +104,15 @@ public class SearchDialog extends JDialog {
     msg = mLocalizer.msg("period", "Period");
     p1.add(new JLabel(msg));
 
-    mPatternTF = new JTextField(20);
-    p1.add(mPatternTF);
+    //mPatternTF = new JTextField(20);
+    mPatternCB=new JComboBox(SearchPlugin.searchHistory.toArray());
+    mPatternCB.setEditable(true);
+    mPatternCB.setMaximumRowCount(3);
+    mPatternCB.setSelectedIndex(-1);
+    
+    //mPatternCB.setSelectedIndex(0);
+    //p1.add(mPatternTF);
+    p1.add(mPatternCB);
     mTimeCB = new JComboBox(TIME_STRING_ARR);
     p1.add(mTimeCB);
 
@@ -173,6 +181,29 @@ public class SearchDialog extends JDialog {
     });
     buttonPn.add(mCloseBt);
     
+	mPatternCB.addItemListener(new ItemListener() {
+			public void itemStateChanged (ItemEvent e) {
+				if (e.getStateChange()!=ItemEvent.SELECTED) return;
+				int inx=mPatternCB.getSelectedIndex();
+				if (inx<0) return;
+				SearchSettings item=(SearchSettings)mPatternCB.getSelectedItem();
+				
+				mSearchInTextChB.setSelected(item.getSearchInInfoText());
+				mSearchTitleChB.setSelected(item.getSearchInTitle());
+				mCaseSensitiveChB.setSelected(item.getCaseSensitive());
+				int option=item.getOption();
+				if (option==SearchSettings.EXACTLY) {
+					mMatchExactlyRB.setSelected(true);
+				}else if (option==SearchSettings.KEYWORD) {
+					mMatchSubstringRB.setSelected(true);
+				}else if (option==SearchSettings.REGULAR_EXPRESSION) {
+					mRegexRB.setSelected(true);
+				}
+    		
+			}
+		});
+    
+    
     pack();
   }
   
@@ -184,7 +215,8 @@ public class SearchDialog extends JDialog {
    * @param text The new pattern text.
    */
   public void setPatternText(String text) {
-    mPatternTF.setText(text);
+  	//mPatternCB.set
+    //mPatternTF.setText(text);
   }
 
   
@@ -194,14 +226,68 @@ public class SearchDialog extends JDialog {
    */  
   private void search() {
     String regex;
-    if (mMatchExactlyRB.isSelected()) {
-      regex = "\\Q" + mPatternTF.getText() + "\\E";
-    }
-    else if (mMatchSubstringRB.isSelected()) {
-      regex = ".*\\Q" + mPatternTF.getText() + "\\E.*";
+    String searchTxt;
+	SearchSettings item;
+	
+	java.util.ArrayList list=SearchPlugin.searchHistory;
+	
+	int sel=mPatternCB.getSelectedIndex();
+    if (sel==-1) {
+		searchTxt=(String)mPatternCB.getSelectedItem();
+		item=new SearchSettings(searchTxt);
+		if (list.size()>0) {
+			list.add(list.get(list.size()-1));
+		}
+		
+		item.setCaseSensitive(mCaseSensitiveChB.isSelected());
+		int opt=0;
+		if (mMatchExactlyRB.isSelected()) opt=SearchSettings.EXACTLY;
+		else if (mMatchSubstringRB.isSelected()) opt=SearchSettings.KEYWORD;
+		else if (mRegexRB.isSelected()) opt=SearchSettings.REGULAR_EXPRESSION;
+		item.setOption(opt);
+		item.setSearchInInfoText(mSearchInTextChB.isSelected());
+		item.setSearchInTitle(mSearchTitleChB.isSelected());
+		
+				
     }
     else {
-      regex = mPatternTF.getText();
+    	item=(SearchSettings)mPatternCB.getSelectedItem();
+    	searchTxt=item.toString();
+    }
+    
+    
+    if (sel==-1) {
+    	sel=list.size()-1;
+    }
+	for (int i=sel;i>0;i--) {
+    	list.set(i,list.get(i-1));
+    }
+    if (list.size()>SearchPlugin.MAXHISTORYLENGTH) {
+    	list.remove(list.size()-1);
+    }
+    if (list.size()>0) {
+    	list.set(0,item);
+    }else{
+    	list.add(item); 
+    }
+	mPatternCB.removeAllItems();
+	java.util.Iterator iterator=list.iterator();
+	while (iterator.hasNext()) {
+		mPatternCB.addItem(iterator.next());
+	}
+    
+    if (mMatchExactlyRB.isSelected()) {
+    	
+      //regex = "\\Q" + mPatternTF.getText() + "\\E";
+	  regex = "\\Q" + searchTxt + "\\E";
+    }
+    else if (mMatchSubstringRB.isSelected()) {
+		//regex = ".*\\Q" + mPatternTF.getText() + "\\E.*";
+      regex = ".*\\Q" + searchTxt + "\\E.*";
+    }
+    else {
+      //regex = mPatternTF.getText();
+	  regex = searchTxt;
     }
     
     boolean inTitle = mSearchTitleChB.isSelected();
@@ -215,13 +301,16 @@ public class SearchDialog extends JDialog {
       Program[] programArr = SearchPlugin.getPluginManager().search(regex,
         inTitle, inText, caseSensitive, channels, startDate, nrDays);
 
+	  
       if (programArr.length == 0) {
         String msg = mLocalizer.msg("nothingFound",
-          "No programs found with '{0}'!", mPatternTF.getText());
+        //  "No programs found with '{0}'!", mPatternTF.getText());
+		"No programs found with '{0}'!", searchTxt);
         JOptionPane.showMessageDialog(this, msg);
       } else {
         String title = mLocalizer.msg("hitsTitle",
-          "Sendungen mit '{0}'",  mPatternTF.getText());
+        //  "Sendungen mit '{0}'",  mPatternTF.getText());
+		"Sendungen mit '{0}'", searchTxt);
         showHitsDialog(programArr, title);
       }
     }

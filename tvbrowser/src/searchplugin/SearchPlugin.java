@@ -27,6 +27,10 @@
 package searchplugin;
 
 import util.ui.UiUtilities;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 
 import devplugin.*;
 
@@ -42,6 +46,9 @@ public class SearchPlugin extends Plugin {
     = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
 
 private static SearchPlugin mInstance;
+
+ static ArrayList searchHistory=new ArrayList();
+ static final int MAXHISTORYLENGTH=10;
   
   /**
    * Creates a new instance of SearchPlugin.
@@ -50,6 +57,35 @@ private static SearchPlugin mInstance;
   	mInstance=this;
   }
 
+  public void readData(ObjectInputStream in)
+	  throws /*IOException, */ClassNotFoundException
+	{
+	  try {
+	  	int version = in.readInt();
+	  	int cntHistItems=in.readInt();
+	  	//searchHistory.new HistoryItem[cntHistItems];
+	  	
+	  	for (int i=0;i<cntHistItems;i++) {
+	  		//searchHistory[i]=new HistoryItem(in);
+	  		searchHistory.add(new SearchSettings(in));
+	  	}
+	  	
+	  }catch (IOException e) {
+	  	
+	  }
+
+	}
+	
+	public void writeData(ObjectOutputStream out) throws IOException {
+		out.writeInt(1); // version
+
+		out.writeInt(searchHistory.size());
+		Iterator iterator=searchHistory.iterator();
+		while (iterator.hasNext()) {
+			((SearchSettings)iterator.next()).writeData(out);			
+		}		
+	  }
+  
   
   
   /**
