@@ -209,6 +209,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="searchplugin/**"/>
     </jar>
+    <jar jarfile="${runtime.dir}/plugins/PrintPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="printplugin/**"/>
+    </jar>
     <jar jarfile="${runtime.dir}/plugins/FavoritesPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="favoritesplugin/**"/>
