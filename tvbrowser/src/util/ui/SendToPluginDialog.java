@@ -35,162 +35,176 @@ import devplugin.Program;
  */
 public class SendToPluginDialog extends JDialog {
 
-    /** Translator */
-    private static final Localizer mLocalizer = Localizer.getLocalizerFor(SendToPluginDialog.class);
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(SendToPluginDialog.class);
 
-    /**
-     * Programs to send
-     */
-    private Program[] mPrograms;
+  /**
+   * Programs to send
+   */
+  private Program[] mPrograms;
 
-    /**
-     * List of Plugins
-     */
-    private JComboBox mPluginList;
+  /**
+   * List of Plugins
+   */
+  private JComboBox mPluginList;
 
-    /**
-     * Create the Dialog
-     * 
-     * @param plug Sender-Plugin
-     * @param owner Owner Frame
-     * @param prg List of Programs to send
-     */
-    public SendToPluginDialog(Frame owner, Program[] prg) {
-        super(owner, true);
-        mPrograms = prg;
-        createDialog();
-        setLocationRelativeTo(owner);
+  private Plugin mCaller;
+
+  /**
+   * Create the Dialog
+   * 
+   * @param plug Sender-Plugin
+   * @param owner Owner Frame
+   * @param prg List of Programs to send
+   */
+  public SendToPluginDialog(Plugin caller, Frame owner, Program[] prg) {
+    super(owner, true);
+    mPrograms = prg;
+    mCaller = caller;
+    createDialog();
+    setLocationRelativeTo(owner);
+  }
+
+  /**
+   * Create the Dialog
+   * 
+   * @param plug Sender-Plugin
+   * @param owner Owner Frame
+   * @param prg List of Programs to send
+   */
+  public SendToPluginDialog(Plugin caller, Dialog owner, Program[] prg) {
+    super(owner, true);
+    mPrograms = prg;
+    mCaller = caller;
+    createDialog();
+    setLocationRelativeTo(owner);
+  }
+
+  /**
+   * Creates the Dialog
+   */
+  private void createDialog() {
+    setTitle(mLocalizer.msg("title", "Send to other Plugin"));
+
+    JPanel panel = (JPanel) this.getContentPane();
+
+    panel.setLayout(new GridBagLayout());
+
+    // get the installed plugins
+    PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
+
+    PluginAccess[] copy = new PluginProxy[installedPluginArr.length];
+
+    for (int i = 0; i < installedPluginArr.length; i++) {
+      copy[i] = installedPluginArr[i];
     }
 
-    /**
-     * Create the Dialog
-     * 
-     * @param plug Sender-Plugin
-     * @param owner Owner Frame
-     * @param prg List of Programs to send
-     */
-    public SendToPluginDialog(Dialog owner, Program[] prg) {
-        super(owner, true);
-        mPrograms = prg;
-        createDialog();
-        setLocationRelativeTo(owner);
+    Arrays.sort(copy, new ObjectComperator());
+
+    System.out.println(">>" + mCaller.getId());
+
+    // create a list of those who support multiple program execution
+    Vector selectablePluginList = new Vector();
+    for (int i = 0; i < copy.length; i++) {
+
+      boolean same = false;
+
+      System.out.println(copy[i].getId());
+      if (mCaller != null) {
+        if (copy[i].getId().equals(mCaller.getId())) {
+          same = true;
+        }
+      }
+
+      if (!same && copy[i].canReceivePrograms()) {
+        selectablePluginList.add(copy[i]);
+      }
     }
 
-    /**
-     * Creates the Dialog
-     */
-    private void createDialog() {
-        setTitle(mLocalizer.msg("title", "Send to other Plugin"));
+    mPluginList = new JComboBox(selectablePluginList);
 
-        JPanel panel = (JPanel) this.getContentPane();
+    GridBagConstraints c = new GridBagConstraints();
 
-        panel.setLayout(new GridBagLayout());
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    c.weightx = 0;
+    c.weighty = 0;
+    c.insets = new Insets(5, 5, 5, 0);
+    c.anchor = GridBagConstraints.WEST;
 
-        // get the installed plugins
-        PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
+    panel.add(new JLabel(mLocalizer.msg("sendTo", "Send programs to")), c);
 
-        PluginAccess[] copy = new PluginProxy[installedPluginArr.length];
-        
-        for (int i = 0; i < installedPluginArr.length;i++) {
-            copy[i] = installedPluginArr[i];
-        }
-        
-        
-        Arrays.sort(copy, new ObjectComperator());
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    c.weightx = 1.0;
+    c.weighty = 0;
+    c.anchor = GridBagConstraints.CENTER;
+    c.insets = new Insets(5, 5, 5, 5);
 
-        // create a list of those who support multiple program execution
-        Vector selectablePluginList = new Vector();
-        for (int i = 0; i < copy.length; i++) {
-            if (copy[i].canReceivePrograms()) {
-                selectablePluginList.add(copy[i]);
-            }
-        }
+    panel.add(mPluginList, c);
 
-        mPluginList = new JComboBox(selectablePluginList);
+    c.gridwidth = GridBagConstraints.REMAINDER;
+    c.anchor = GridBagConstraints.SOUTHEAST;
+    c.weightx = 1.0;
+    c.weighty = 1.0;
 
-        GridBagConstraints c = new GridBagConstraints();
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0;
-        c.weighty = 0;
-        c.insets = new Insets(5, 5, 5, 0);
-        c.anchor = GridBagConstraints.WEST;
+    JButton sendButton = new JButton(mLocalizer.msg("send", "Send"));
 
-        panel.add(new JLabel(mLocalizer.msg("sendTo", "Send programs to")), c);
+    sendButton.addActionListener(new ActionListener() {
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 0;
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(5, 5, 5, 5);
+      public void actionPerformed(ActionEvent evt) {
+        send();
+        hide();
+      }
+    });
 
-        panel.add(mPluginList, c);
+    buttonPanel.add(sendButton);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.SOUTHEAST;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+    JButton cancelButton = new JButton(mLocalizer.msg("cancel", "Cancel"));
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    cancelButton.addActionListener(new ActionListener() {
 
-        JButton sendButton = new JButton(mLocalizer.msg("send", "Send"));
+      public void actionPerformed(ActionEvent evt) {
+        hide();
+      }
+    });
 
-        sendButton.addActionListener(new ActionListener() {
+    buttonPanel.add(cancelButton);
 
-            public void actionPerformed(ActionEvent evt) {
-                send();
-                hide();
-            }
-        });
+    c.insets = new Insets(5, 5, 5, 0);
+    panel.add(buttonPanel, c);
 
-        buttonPanel.add(sendButton);
+    pack();
+    setResizable(false);
+  }
 
-        JButton cancelButton = new JButton(mLocalizer.msg("cancel", "Cancel"));
+  /**
+   * Sends the Data to the selected Plugin
+   */
+  protected void send() {
 
-        cancelButton.addActionListener(new ActionListener() {
+    int result = JOptionPane.YES_OPTION;
+    PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
 
-            public void actionPerformed(ActionEvent evt) {
-                hide();
-            }
-        });
-
-        buttonPanel.add(cancelButton);
-
-        c.insets = new Insets(5, 5, 5, 0);
-        panel.add(buttonPanel, c);
-
-        pack();
-        setResizable(false);
+    if (mPrograms.length > 5) {
+      result = JOptionPane.showConfirmDialog(this, mLocalizer.msg("AskBeforeSend",
+          "Are you really sure to sent {0} Programs\nto \"{1}\"?", new Integer(mPrograms.length), plug.toString()),
+          mLocalizer.msg("Attention", "Attention"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
     }
 
-    /**
-     * Sends the Data to the selected Plugin
-     */
-    protected void send() {
+    if (result == JOptionPane.YES_OPTION) {
+      plug.receivePrograms(mPrograms);
+    }
+  }
 
-        int result = JOptionPane.YES_OPTION; 
-        PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
-            
-        if (mPrograms.length > 5) {
-            result = JOptionPane.showConfirmDialog(this, 
-                    mLocalizer.msg("AskBeforeSend", "Are you really sure to sent {0} Programs\nto \"{1}\"?", new Integer(mPrograms.length), plug.toString()),
-                    mLocalizer.msg("Attention", "Attention"),
-                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        }
-        
-        if (result == JOptionPane.YES_OPTION) {
-            plug.receivePrograms(mPrograms);
-        }
+  /**
+   * Comperator needed to Sort List of Plugins
+   */
+  private class ObjectComperator implements Comparator {
+
+    public int compare(Object o1, Object o2) {
+      return o1.toString().compareTo(o2.toString());
     }
 
-    /**
-     * Comperator needed to Sort List of Plugins
-     */
-    private class ObjectComperator implements Comparator {
-
-        public int compare(Object o1, Object o2) {
-            return o1.toString().compareTo(o2.toString());
-        }
-
-    }
+  }
 }
