@@ -156,7 +156,7 @@ public class ChannelList {
         if (iconLoader != null && iconUrl != null) {
           Icon icon = iconLoader.getIcon(id, iconUrl);
           if (icon != null) {
-            channel.setIcon(icon);
+            channel.setDefaultIcon(icon);
           }        
         }
         addChannel(channel);
