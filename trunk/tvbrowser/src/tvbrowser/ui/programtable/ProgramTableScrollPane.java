@@ -58,17 +58,39 @@ public class ProgramTableScrollPane extends JScrollPane
   private Border mDefaultBorder = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(1,1,1,1),BorderFactory.createLineBorder(Color.gray));
   
   private Border mFocusBorder = new LineBorder(Color.gray,2);
-  
+
+
   /**
    * Creates a new instance of ProgramTableScrollPane.
    */
   public ProgramTableScrollPane(ProgramTableModel model) {
-    
     setFocusable(true);    
     addFocusListener(this);
     
-    
     mProgramTable = new ProgramTable(model);
+    setViewportView(mProgramTable);
+
+    setWheelScrollingEnabled(false);
+    addMouseWheelListener(this);
+    
+    getHorizontalScrollBar().setUnitIncrement(30);
+    getVerticalScrollBar().setUnitIncrement(30);
+
+    getHorizontalScrollBar().setFocusable(false);
+    getVerticalScrollBar().setFocusable(false);
+    
+    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),
+                                     model.getShownChannels());
+    setColumnHeaderView(mChannelPanel);
+     
+    setOpaque(false);
+    setBorder(mDefaultBorder);
+
+    // NOTE: To avoid NullPointerExceptions the registration as listener must
+    //       happen after all member have been initialized.
+    //       (at the end of the constructor)
+    model.addProgramTableModelListener(this);
+
     mProgramTable.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("backgroundpainter")) {
@@ -77,29 +99,8 @@ public class ProgramTableScrollPane extends JScrollPane
         }
       }
     });
-    model.addProgramTableModelListener(this);
-    
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
-    setViewportView(mProgramTable);
-
-    setWheelScrollingEnabled(false);
-    addMouseWheelListener(this);
-    
-    getHorizontalScrollBar().setUnitIncrement(30);
-    getVerticalScrollBar().setUnitIncrement(30);
-    
-    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),
-      model.getShownChannels());
-    setColumnHeaderView(mChannelPanel);
-     
-    setOpaque(false);
-    setBorder(mDefaultBorder);
-    
-    getHorizontalScrollBar().setFocusable(false);
-    getVerticalScrollBar().setFocusable(false);
-        
   }
-  
   
   
   public ProgramTable getProgramTable() {
@@ -175,7 +176,7 @@ public class ProgramTableScrollPane extends JScrollPane
   }
 
 
-  private void handleBackgroundPainterChanged(BackgroundPainter painter) {
+  protected void handleBackgroundPainterChanged(BackgroundPainter painter) {
     setRowHeaderView(painter.getTableWest());
   }
   
