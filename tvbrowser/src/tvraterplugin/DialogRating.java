@@ -22,6 +22,7 @@ package tvraterplugin;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
@@ -135,12 +136,8 @@ public class DialogRating extends JDialog {
 		JPanel titlePanel = new JPanel(new TabLayout(1));
 		titlePanel.setBackground(Color.white);
 
-		String name = _title;
-		JLabel title = new JLabel(name);
-		if (_title.length() > 20) {
-		    name = _title.substring(0, 20);
-		    title.setToolTipText(_title);
-		}
+		JLabel title = new JLabel(_title);
+		title.setPreferredSize(new Dimension(400, 40));
 		
 		title.setHorizontalAlignment(JLabel.CENTER);
 		title.setFont(new Font("Helvetica", Font.BOLD, 20));
