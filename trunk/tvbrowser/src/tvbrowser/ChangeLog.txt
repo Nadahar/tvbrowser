@@ -10,6 +10,7 @@ current:
 - make fonts chooseable (in settings file)
 - remember window size
 - remember window location
+- Use more icons for menu items and buttons
 
 0.9.3:
 - bugfixes

@@ -26,6 +26,8 @@
 
 package programinfo;
 
+import java.util.Iterator;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +35,7 @@ import java.awt.event.*;
 import util.ui.*;
 
 import devplugin.Program;
+import devplugin.Plugin;
 
 /**
  * TV-Browser
@@ -117,6 +120,17 @@ public class ProgramInfoDialog extends JDialog {
     // actors
     bodyPn.add(createTextArea(program.getActors()));
     
+    // plugins
+    Iterator pluginIter = program.getMarkedByIterator();
+    if (pluginIter.hasNext()) {
+      JPanel pluginPn = new JPanel(new FlowLayout(FlowLayout.LEADING));
+      bodyPn.add(pluginPn);
+      while (pluginIter.hasNext()) {
+        Plugin plugin = (Plugin) pluginIter.next();
+        pluginPn.add(new JLabel(plugin.getMarkIcon()));
+      }
+    }
+    
     // buttons
     JPanel buttonPn = new JPanel(new BorderLayout());
     buttonPn.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -130,6 +144,7 @@ public class ProgramInfoDialog extends JDialog {
     }
     );
     buttonPn.add(closeBtn, BorderLayout.EAST);
+    getRootPane().setDefaultButton(closeBtn);
     
     // Scroll to the beginning
     Runnable runnable = new Runnable() {

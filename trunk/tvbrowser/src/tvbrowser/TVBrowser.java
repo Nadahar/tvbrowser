@@ -74,8 +74,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private Thread downloadingThread;
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
-  private JMenuItem settingsMenuItem, updateMenuItem, mImportTvDataMI, mExportTvDataMI,
-  			aboutMenuItem;
+  private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
+    mImportTvDataMI, mExportTvDataMI, aboutMenuItem;
   private SkinPanel skinPanel;
   private ButtonPanel buttonPanel;
   private static String curLookAndFeel;
@@ -86,6 +86,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   private JMenu pluginsMenu;
 
+  
+  
   /**
    * Entry point of the application
    */
@@ -99,12 +101,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       JOptionPane.showMessageDialog(null, msg);
       System.exit(1);
     }
-
+    
     // setup logging
     try {
       // Get the default Logger
       Logger mainLogger = Logger.getLogger("");
-
+      
       // Add a file handler
       new File("log").mkdir();
       Handler fileHandler = new FileHandler("log/tvbrowser.log", 50000, 2, true);
@@ -115,22 +117,22 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       msg = mLocalizer.msg("error.4", "Can't create log file.");
       ErrorHandler.handle(msg, exc);
     }
-
+    
     SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
       new Color(63, 114, 133), Color.WHITE);
     UiUtilities.centerAndShow(splash);
-
+    
     mLog.info("Loading tv data service...");
     msg=mLocalizer.msg("splash.dataService","Loading tv data service...");
     TvDataServiceManager.getInstance().initDataServices();
     createChannelList();
-
+    
     Settings.loadSettings();
-
+    
     mLog.info("Loading Look&Feel...");
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
     splash.setMessage(msg);
-
+    
     try {
       curLookAndFeel = Settings.getLookAndFeel();
       UIManager.setLookAndFeel(curLookAndFeel);
@@ -139,24 +141,22 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       msg = mLocalizer.msg("error.1", "Unable to set look and feel.");
       ErrorHandler.handle(msg, exc);
     }
-
+    
     devplugin.Plugin.setPluginManager(DataService.getInstance());
-
+    
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
-	splash.setMessage(msg);
+    splash.setMessage(msg);
     PluginManager.initInstalledPlugins();
-    
     
     mLog.info("Deleting expired tv data...");
     DataService.deleteExpiredTVData();
     
-
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
-	splash.setMessage(msg);
-
-	mainFrame=new TVBrowser();
+    splash.setMessage(msg);
+    
+    mainFrame=new TVBrowser();
     mainFrame.setSize(Settings.getWindowSize());
     Point location = Settings.getWindowLocation();
     if (location == null) {
@@ -166,13 +166,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       mainFrame.show();
     }
     ErrorHandler.setFrame(mainFrame);
-
-	splash.hide();
-
+    
+    splash.hide();
+    
     // maximize the frame
     //frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     
-
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -188,74 +187,94 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     super(MAINWINDOW_TITLE);
 
     String msg;
+    Icon icon;
 
     JMenuBar menuBar = new JMenuBar();
+    setJMenuBar(menuBar);
+
+    // TV-Browser menu
     JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
-    JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
-    JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
-
-    pluginsMenu=new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-    updatePluginMenu(pluginsMenu);
-
-    settingsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."));
-    JMenuItem quitMenuItem = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
-    updateMenuItem = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."));
-
-    msg = mLocalizer.msg("menuitem.findPluginsInWeb", "Find plugins in the web...");
-    JMenuItem pluginDownloadMenuItem = new JMenuItem(msg);
-    pluginDownloadMenuItem.setEnabled(false);
-    JMenuItem helpMenuItem = new JMenuItem(mLocalizer.msg("menuitem.help", "Help..."));
-    helpMenuItem.setEnabled(false);
-    aboutMenuItem = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."));
-    aboutMenuItem.addActionListener(this);
-
+    menuBar.add(mainMenu);
+    
+    icon = new ImageIcon("imgs/Preferences16.gif");
+    msg = mLocalizer.msg("menuitem.settings", "Settings...");
+    settingsMenuItem = new JMenuItem(msg, icon);
     settingsMenuItem.addActionListener(this);
-    quitMenuItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        quit();
-      }
-    });
-    updateMenuItem.addActionListener(this);
-
     mainMenu.add(settingsMenuItem);
+    
     mainMenu.addSeparator();
-    mainMenu.add(quitMenuItem);
 
+    msg = mLocalizer.msg("menuitem.exit", "Exit...");
+    quitMenuItem = new JMenuItem(msg);
+    quitMenuItem.addActionListener(this);
+    mainMenu.add(quitMenuItem);
+    
+    // TV data menu
+    JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
+    menuBar.add(tvDataMenu);
+
+    icon = new ImageIcon("imgs/Refresh16.gif");
+    msg = mLocalizer.msg("menuitem.update", "Update...");
+    updateMenuItem = new JMenuItem(msg, icon);
+    updateMenuItem.addActionListener(this);
     tvDataMenu.add(updateMenuItem);
+
     tvDataMenu.addSeparator();
 
-    mImportTvDataMI = new JMenuItem(mLocalizer.msg("menuitem.import", "Import..."));
+    icon = new ImageIcon("imgs/Import16.gif");
+    msg = mLocalizer.msg("menuitem.import", "Import...");
+    mImportTvDataMI = new JMenuItem(msg, icon);
     mImportTvDataMI.addActionListener(this);
     tvDataMenu.add(mImportTvDataMI);
 
-    mExportTvDataMI = new JMenuItem(mLocalizer.msg("menuitem.export", "Export..."));
+    icon = new ImageIcon("imgs/Export16.gif");
+    msg = mLocalizer.msg("menuitem.export", "Export...");
+    mExportTvDataMI = new JMenuItem(msg, icon);
     mExportTvDataMI.addActionListener(this);
     tvDataMenu.add(mExportTvDataMI);
+    
+    // Plugins menu
+    pluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+    menuBar.add(pluginsMenu);
+    
+    updatePluginMenu(pluginsMenu);
 
     pluginsMenu.addSeparator();
+    
+    icon = new ImageIcon("imgs/Search16.gif");
+    msg = mLocalizer.msg("menuitem.findPluginsInWeb", "Find plugins in the web...");
+    JMenuItem pluginDownloadMenuItem = new JMenuItem(msg, icon);
+    pluginDownloadMenuItem.setEnabled(false);
     pluginsMenu.add(pluginDownloadMenuItem);
-
-    helpMenu.add(helpMenuItem);
-    helpMenu.addSeparator();
-    helpMenu.add(aboutMenuItem);
-
-    menuBar.add(mainMenu);
-    menuBar.add(tvDataMenu);
-    menuBar.add(pluginsMenu);
+    
+    // Help menu
+    JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
     menuBar.add(helpMenu);
 
-    setJMenuBar(menuBar);
-
+    icon = new ImageIcon("imgs/Help16.gif");
+    msg = mLocalizer.msg("menuitem.help", "Help...");
+    JMenuItem helpMenuItem = new JMenuItem(msg, icon);
+    helpMenuItem.setEnabled(false);
+    helpMenu.add(helpMenuItem);
+    
+    helpMenu.addSeparator();
+    
+    icon = new ImageIcon("imgs/About16.gif");
+    msg = mLocalizer.msg("menuitem.about", "About...");
+    aboutMenuItem = new JMenuItem(msg, icon);
+    aboutMenuItem.addActionListener(this);
+    helpMenu.add(aboutMenuItem);
+    
+    // create content
     jcontentPane = (JPanel)getContentPane();
     jcontentPane.setLayout(new BorderLayout());
 
     int mode;
     if (Settings.useApplicationSkin()) {
       mode = SkinPanel.WALLPAPER;
-    }else {
+    } else {
       mode = SkinPanel.NONE;
     }
-
 
     skinPanel = new SkinPanel(Settings.getApplicationSkin(),mode);
     skinPanel.setLayout(new BorderLayout());
@@ -434,6 +453,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     else if (src == mEveningBt) {
       programTablePanel.scrollTo(18);
     }
+    else if (src == quitMenuItem) {
+      quit(); 
+    }
     else if (src == mImportTvDataMI) {
       importTvData();
     }
@@ -465,7 +487,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   	DataService.getInstance().stopDownload();
     DataService.getInstance().getProgressBar().setValue(0);
     updateBtn.setText(mLocalizer.msg("button.update", "Update"));
-    updateBtn.setIcon(new ImageIcon("imgs/Import24.gif"));
+    updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
 
     newTvDataAvailable();
@@ -526,17 +548,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private JButton createUpdateBtn() {
-	String msg = mLocalizer.msg("button.update", "Update");
-	updateBtn = new PictureButton(msg, new ImageIcon("imgs/Import24.gif"));
-	updateBtn.addActionListener(this);
-	return updateBtn;
+    String msg = mLocalizer.msg("button.update", "Update");
+    updateBtn = new PictureButton(msg, new ImageIcon("imgs/Refresh24.gif"));
+    updateBtn.addActionListener(this);
+    return updateBtn;
   }
 
   private JButton createPreferencesBtn() {
-	String msg = mLocalizer.msg("button.settings", "Settings");
-	settingsBtn = new PictureButton(msg, new ImageIcon("imgs/Preferences24.gif"));
-	settingsBtn.addActionListener(this);
-	return settingsBtn;
+    String msg = mLocalizer.msg("button.settings", "Settings");
+    settingsBtn = new PictureButton(msg, new ImageIcon("imgs/Preferences24.gif"));
+    settingsBtn.addActionListener(this);
+    return settingsBtn;
   }
 
 

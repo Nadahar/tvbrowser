@@ -73,16 +73,17 @@ public class UpdateDlg extends JDialog implements ActionListener {
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
     this.setTitle(mLocalizer.msg("dlgTitle", "TV data update"));
-    JPanel buttonPanel=new JPanel();
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-    cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
+
     updateBtn=new JButton(mLocalizer.msg("updateNow", "Update now"));
-
-    cancelBtn.addActionListener(this);
     updateBtn.addActionListener(this);
-
-    buttonPanel.add(cancelBtn);
     buttonPanel.add(updateBtn);
+    getRootPane().setDefaultButton(updateBtn);
+
+    cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
+    cancelBtn.addActionListener(this);
+    buttonPanel.add(cancelBtn);
 
     contentPane.add(buttonPanel,BorderLayout.SOUTH);
 
@@ -123,17 +124,14 @@ public class UpdateDlg extends JDialog implements ActionListener {
       setVisible(false);
     }
     else if (source==updateBtn) {
-
-
       result=comboBox.getSelectedIndex();
       if (checkBox.isSelected()) {
-        
         tvbrowser.core.Settings.setDownloadPeriod(result);
         System.out.println("storing: "+result);
-        
       }
 
       setVisible(false);
     }
   }
+
 }

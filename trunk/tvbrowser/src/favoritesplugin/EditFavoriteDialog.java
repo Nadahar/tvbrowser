@@ -173,7 +173,7 @@ public class EditFavoriteDialog {
     p2.add(mCertainToTimeSp);
 
     // buttons
-    JPanel buttonPn = new JPanel();
+    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn);
     
     mOkBt = new JButton(mLocalizer.msg("ok", "OK"));
