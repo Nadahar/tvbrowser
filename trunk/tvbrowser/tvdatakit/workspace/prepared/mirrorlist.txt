@@ -1,0 +1,2 @@
+Diese Datei wird nur aus Kompatibilitaetsgrunden benoetigt und ist fuer Client nach 0.9.7.3 ohne Bedeutung.
+

@@ -1,0 +1,187 @@
+<html>
+
+	<head>
+		<title>TV-Browser</title>
+       <link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+
+
+<h1>PROGRAMMDATEN F&Uuml;R TV-BROWSER ANBIETEN</h1>
+<h2>unter Verwendung der TV-Browser-Tools</h2>
+<h1>Teil II</h1>
+
+
+<p>
+Das ist Teil II des TV-Daten-anbieten-Tutorials. Ich gehe davon aus, da&szlig; Teil I erfolgreich durchgearbeitet worden ist. Wir werden wieder die selben Tools wie in Teil I verwenden.
+</p>
+
+<p>
+W&auml;hrend wir in Teil I keine M&ouml;glichkeit hatten, eigene Programmdaten zu verwenden,
+werden wir nun das TV-Programm eines oder mehrerer Sender h&auml;ndisch erzeugen und wie in Teil I auf einen Webserver laden.
+</p>
+<p>
+Wie in Teil I ist auch hier keine Programmierarbeit erforderlich.
+</p>
+
+
+<h3>Ein bi&szlig;chen Background: PrimaryDataServices</h3>
+</p>
+<p>
+Im 1. Teil haben wir SimplePDS bereits kennengelernt.<br />
+PrimaryDataServices (PDS) sind kleine Java-Programme, die TV-Daten
+einsammeln und Informationen &uuml;ber Sender (Name, Zeitzone usw.) liefern.
+Um TV-Daten automatisch einzusammeln, m&uuml;ssen PrimaryDataServices vom
+Daten-Anbieter selber geschrieben (programmiert) werden.<br />
+Neben dem SimplePDS, das wir in Teil I des Tutorials verwendet haben, liegt
+dem Tutorial ein weiteres PDS bei: ExcelPDS (Autor des ExcelPDS ist Til Schneider).
+</p>
+<p>
+Dieses PDS werden wir nun n&auml;her kennenlernen und konfigurieren.
+</p>
+
+<h3>ExcelPDS</h3>
+
+<p>
+Dazu &ouml;ffnen wir zun&auml;chst die Datei TvData.xls mit OpenOffice bzw. MS-Excel.<br />
+Die Datei ist bereits mit ein paar Musterdaten gef&uuml;lt. Die Verwendung sollte also nicht schwer fallen.<br />
+
+F&uuml;r jeden Sender brauchen wir zun&auml;chst eine eigene Tabelle. Unser Excel-File hat im Moment zwei solcher Tabellen (wir sind also f&uuml;r zwei Sender ger&uuml;stet).<br />
+Je nachdem, ob wir beabsichtigen, mehr oder weniger Sender anzubieten, f&uuml;gen wir nun Tabellen hinzu oder l&ouml;schen die zweite Tabelle.<br />
+Die fett-gedruckten Zellen m&uuml;ssen bei jeder Tabelle an der gleichen Position sein.
+</p>
+<p>
+In die zweite Zeile jeder Sender-Tabelle f&uuml;gen wir nun die Informationen &uuml;ber den jweiliges Senders ein:
+</p>
+<table border="1">
+<tr>
+  <td>Channel Name</td>
+  <td>Das ist der Name des Senders, wie er in TV-Browser oben in der Senderspalte dargestellt wird</td>
+</tr>
+<tr>
+  <td>Channel ID</td>
+  <td>Unter diesem Namen behandelt TV-Browser den Sender. Einmal festgelegt, sollte man die ID nicht mehr &auml;ndern. &Auml;ndert man die ID, so entspricht das einem neuen Sender.<br />
+      Als ID sind alphanumerische Zeichen erlaubt (d.h. Ziffern und Buchstaben, keine Sonderzeichen).<br />
+      Innerhalb der Sendergruppe mu&szlig; die ID eindeutig sein (d.h. in der Sendergruppe darf es keinen anderen Sender mit dieser ID geben).<br />
+  </td>
+</tr>
+<tr>
+  <td>Channel Group ID</td>
+  <td>Die Gruppen-ID identifiziert die Sendergruppe.<br />
+      In Teil 1 des Tutorials war die Gruppen-ID auf <em>myfirstgroup</em> festgelegt. Hier k&ouml;nnen wir nun die Gruppen-ID &auml;ndern.<br />
+      F&uuml;r alle Sender sollte die selbe Gruppen-ID verwendet werden. Ein Anbieter kann aber auch mehrere Gruppen-IDs verwenden.<br />
+      Wie die Sender-ID darf auch die Gruppen-ID nur aus alphanumerischen Zeichen bestehen.<br />
+      Wichtig: Eine Gruppen-ID mu&szlig; eindeutig sein. Kein TV-Browser-Benutzer kann zwei verschiedene Gruppen mit der gleichen Gruppen-ID hinzuf&uuml;gen.<br />
+  </td>
+</tr>
+<tr>
+  <td>Time Zone</td>
+  <td>Da TV-Browser die Zeitzone ber&uuml;cksichtigt, aus der der Sender ausstrahlt, mu&szlig; die Zeitzone f&uuml;r den Sender angegeben werden.</td>
+</tr>
+<tr>
+  <td>Country Code</td>
+  <td>F&uuml;r Deutschland ist das z.B. <em>de</em></td>
+</tr>
+<tr>
+  <td>Copyright Message</td>
+  <td>Der Text, der in der Senderspalte ganz unten erscheint.</td>
+</tr>
+<tr>
+  <td>Copyright Website</td>
+  <td>Klickt man auf den Sendernamen in der TV-Programm-Tabelle, so wird diese Website ge&ouml;ffnet</td>
+</tr>
+
+</table>
+
+<p>
+In der darunterliegenden Tabelle f&uuml;gen wir nun die Programmvorschau des Senders ein. Die Tabelle ist selbsterkl&auml;rend.<br />
+Datum, Beginnzeit und Titel sind Pflichtfelder. Der Rest kann ausgef&uuml;llt werden, wenn die entsprechenden Informationen bekannt sind.
+</p>
+<p>
+Wenn alles fertig ausgef&uuml;llt ist, speichern wir die Datei unter dem Namen "TvData.xls" im <em>workspace</em>-Verzeichnis ab.<br />
+Damit k&ouml;nnen wir einen ersten Problelauf starten. Starten wir also den PDSRunner mit
+</p>
+<pre>
+pdsrunner ExcelPDS
+</pre>
+<p>
+Den PDSRunner kennen wir bereits. Diesmal f&uuml;hren wir ihn aber mit dem ExcelPDS aus.<br />
+Sollten Fehler aufgetreten sein, so finden wir die Fehlermeldung im Verzeichnis <em>pdslog</em>.<br />
+War PDSRunner erfolgreich, so haben wir wieder unsere Rohdaten im Verzeichnis <em>raw</em>.<br />
+Nun fehlen noch die anderen beiden Tools: DataManager und MirrorUpdater. Diese m&uuml;ssen wir aber vorher noch konfigurieren.
+</p>
+
+<h3>Konfiguration von DataManager und MirrorUpdater</h3>
+<p>
+Die Konfiguration der beiden Tools h&auml;ngt von der ID unserer Sendergruppe ab - also dem Eintrag in der Excel-Tabelle.<br />
+</p>
+<p>
+Im <em>prepared</em>-Verzeichnis erzeugen wir zwei neue Dateien:
+<ul>
+<li>GRUPPENID.txt</li>
+<li>GRUPPENID_mirrorlist.txt</li>
+</ul>
+Statt <em>GRUPPENID</em> ist nat&uuml;rlich die ID der Gruppe einzusetzen. Der Inhalt entspricht dem Inhalt der Dateien "myfirstgroup.txt" und myfirstgroup_mirrorlist.txt" von <a href="teil1.html">Teil I</a> und sollte inzwischen klar sein.
+</p>
+<p>
+Damit ist der DataManager konfiguriert. Starten wir ihn also:
+</p>
+<pre>
+datamanager ExcelPDS
+</pre>
+<p>
+Damit fehlt uns nur noch der MirrorUpdater. Die Konfigurationsdatei f&uuml;r den MirrorUpdater ist <em>MirrorUpdater.ini</em>. &Ouml;ffnen wir also diese Datei und passen wir die Zeile</p>
+<pre>
+  groups=GRUPPENID
+</pre>
+<p>an. Falls wir mehrere Gruppen-IDs verwenden m&ouml;chten, trennen wir sie mit einem <em>:</em> ab. Also z.B: </p>
+<pre>groups=groupid1:groupid2:groupid3</pre>
+<p>In der Regel sollte aber eine Gruppen-ID gen&uuml;gen.</p>
+<p>
+F&uuml;hren wir nun den MirrorUpdater aus:
+</p>
+<pre>
+  mirrorupdater MirrorUpdater.ini
+</pre>
+<p>
+Geschafft! Die Daten sind nun auf dem Webserver. Wir k&ouml;nnen also die neue Gruppe in TV-Browser einf&uuml;gen. Die URL h&auml;ngt nat&uuml;rlich wieder von der Gruppen-ID ab:<br />
+http://meinwebspace/tv-daten-test/GRUPPENID
+</p>
+
+<p class="note">
+Fragen? Hat's doch nicht geklappt? Bei Problemen helfe ich gerne im <a href="http://forum.tvbrowser.org">Forum</a> weiter.
+</p>
+
+<h3>Regelm&auml;&szlig;e Aktualisierung</h3>
+<p>
+Die Daten auf dem Server m&uuml;ssen nun regelm&auml;&szlig;ig aktualisiert werden. Dazu m&uuml;ssen wir die obigen Tools bei jeder Aktualisierung ausf&uuml;hren:
+</p>
+
+<pre>pdsrunner ExcelPDS
+datamanager ExcelPDS
+mirrorupdater MirrorUpdater.ini
+</pre>
+<p>
+Vorher m&uuml;ssen die Daten nat&uuml;rlich wieder im Excel-File bearbeitet werden.
+</p>
+<p class="note">
+<strong>Wichtig:</strong> Damit verhindert wird, da&szlig; TV-Browser auf Server zugreift, deren TV-Daten veraltet sind, wird auf jedem Server eine Datei mit dem Namen <em>lastupdate</em> gespeichert (dies &uuml;bernimmt der MirrorUpdater f&uuml;r uns).<br />
+TV-Browser l&auml;dt keine Daten von Servern, die l&auml;nger als 5 Tage keine neuen Daten erhalten haben. Ein Daten-Anbieter mu&szlig; also mindestens alle 5 Tage aktualisieren.
+</p>
+
+
+
+
+<p>
+<table width="100%">
+<tr>
+<td align="left"><a href="teil1.html">Zur&uuml;ck zu Teil I</a></td>
+<td align="center"><a href="index.html">&Uuml;bersicht</a></td>
+<td align="right"><!-- <a href="teil3.html">Weiter zu Teil III</a> --></td>
+</tr>
+</table>
+
+</p>
+
+	</body>
+</html>
