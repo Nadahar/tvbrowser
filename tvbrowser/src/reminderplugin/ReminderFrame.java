@@ -41,7 +41,7 @@ import util.io.IOUtilities;
  *
  * @author Martin Oberhauser
  */
-public class ReminderFrame extends JFrame {
+public class ReminderFrame {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
@@ -60,6 +60,21 @@ public class ReminderFrame extends JFrame {
   };
 
   public static final int[] REMIND_VALUE_ARR = {-1, 0, 1, 2, 3, 5, 10, 15, 30, 60};
+  
+  /**
+   * The frame that shows this reminder. The reminder is shown in a frame if
+   * there is no modal dialog open.
+   * <p>
+   * Is <code>null</code> when the reminder is shown in a dialog.
+   */
+  private JFrame mFrame;
+  /**
+   * The dialog that shows this reminder. The reminder is shown in a frame if
+   * there is a modal dialog open.
+   * <p>
+   * Is <code>null</code> when the reminder is shown in a frame.
+   */
+  private JDialog mDialog;
 
   private ReminderList mReminderList;
   private Program mProgram;
@@ -73,15 +88,32 @@ public class ReminderFrame extends JFrame {
   
   
   
-  public ReminderFrame(ReminderList list, ReminderListItem item, int autoCloseSecs) {
-    super(mLocalizer.msg("title", "Reminder"));
+  public ReminderFrame(Component comp, ReminderList list,
+    ReminderListItem item, int autoCloseSecs)
+  {
+    // Check whether we have to use a frame or dialog
+    // Workaround: If there is a modal dialog open a frame is not usable. All
+    //             user interaction will be ignored.
+    //             -> If there is a modal dialog open, we show this reminder as
+    //                dialog, otherwise as frame.
+    Window parent = UiUtilities.getBestDialogParent(comp);
+    String title = mLocalizer.msg("title", "Reminder");
+    if (parent instanceof Dialog) {
+      mDialog = new JDialog((Dialog) parent, title);
+    } else {
+      mFrame = new JFrame(title);
+    }
     
     mReminderList = list;
     
     list.remove(item);
     mProgram = item.getProgram();
-    JPanel jcontentPane=(JPanel)getContentPane();
-    jcontentPane.setLayout(new BorderLayout(0,10));
+    JPanel jcontentPane = new JPanel(new BorderLayout(0,10));
+    if (mDialog != null) {
+      mDialog.setContentPane(jcontentPane);
+    } else {
+      mFrame.setContentPane(jcontentPane);
+    }
     jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
     JPanel progPanel=new JPanel(new BorderLayout(5, 10));
 
@@ -105,7 +137,11 @@ public class ReminderFrame extends JFrame {
     JPanel btnPanel = new JPanel(new BorderLayout(10,0));
     mCloseBtText = mLocalizer.msg("close", "Close");
     mCloseBt = new JButton(mCloseBtText);
-    getRootPane().setDefaultButton(mCloseBt);
+    if (mDialog != null) {
+      mDialog.getRootPane().setDefaultButton(mCloseBt);
+    } else {
+      mFrame.getRootPane().setDefaultButton(mCloseBt);
+    }
     
     mReminderCB = new JComboBox();
     int i=0;
@@ -136,11 +172,19 @@ public class ReminderFrame extends JFrame {
       });
       mAutoCloseTimer.start();
     }
-    
-    this.pack();
-    UiUtilities.centerAndShow(this);
+
+    getWindow().pack();
+    UiUtilities.centerAndShow(getWindow());
   }
 
+
+  private Window getWindow() {
+    if (mDialog != null) {
+      return mDialog;
+    } else {
+      return mFrame;
+    }
+  }
   
   
   private void handleTimerEvent() {
@@ -172,7 +216,7 @@ public class ReminderFrame extends JFrame {
       mAutoCloseTimer.stop();
     }
 
-    dispose();
+    getWindow().dispose();
   }
 
 }
