@@ -179,7 +179,7 @@ public class SummaryFile extends AbstractFile {
 
     // The frames
     mChannelFrameHash.clear();
-    Date startDate = new Date(startDaysSince1970);
+    Date startDate = generateDate(startDaysSince1970);
     for (int frameIdx = 0; frameIdx < frameCount; frameIdx++) {
       String country = readString(gIn);
       String channelId = readString(gIn);
@@ -200,7 +200,29 @@ public class SummaryFile extends AbstractFile {
     gIn.close();
   }
 
-
+  /**
+   * Generates a Date. 
+   * The Constructor of Date is deprecated, it has some troubles with Os/2, but in this
+   * class we only use it to compute the difference between two days. Only for this purpose
+   * it's ok. 
+   * 
+   * @param daysSince1970 Days since 1970
+   * @return Date-Object
+   */
+  private Date generateDate(int daysSince1970) {
+      long l = (long) daysSince1970 * 24 * 60 * 60 * 1000;
+      java.util.Date d = new java.util.Date(l);
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(d);
+      
+      int year = cal.get(Calendar.YEAR);
+      int month = cal.get(Calendar.MONTH) + 1;
+      int day = cal.get(Calendar.DAY_OF_MONTH);
+      
+      return new Date(year, month, day);
+  }
+  
+  
   /**
    * Writes the summary into a stream.
    * 
@@ -242,7 +264,7 @@ public class SummaryFile extends AbstractFile {
     System.out.println("frameCount: "+frameCount);
 		
     // The frames
-    Date startDate = new Date(minStartDaysSince1970);
+    Date startDate = generateDate(minStartDaysSince1970);
 		System.out.println("minStartDaysSince1970: "+minStartDaysSince1970);
     iter = mChannelFrameHash.values().iterator();
     while (iter.hasNext()) {
