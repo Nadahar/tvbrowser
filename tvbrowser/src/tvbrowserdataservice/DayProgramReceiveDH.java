@@ -39,6 +39,9 @@ import util.io.DownloadHandler;
  */
 public class DayProgramReceiveDH implements DownloadHandler {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(DayProgramReceiveDH.class.getName());
+
   private TvBrowserDataService mDataService;
   private TvDataBaseUpdater mUpdater;
 
@@ -54,7 +57,7 @@ public class DayProgramReceiveDH implements DownloadHandler {
   public void handleDownload(String fileName, InputStream stream)
     throws TvBrowserException
   {
-    System.out.println("Receiving file " + fileName);
+    mLog.fine("Receiving file " + fileName);
     File completeFile = new File(mDataService.getDataDir(), fileName);
     try {
       DayProgramFile prog = new DayProgramFile();

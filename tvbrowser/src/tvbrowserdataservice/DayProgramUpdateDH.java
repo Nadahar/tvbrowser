@@ -38,6 +38,9 @@ import util.io.DownloadHandler;
  * @author Til Schneider, www.murfman.de
  */
 public class DayProgramUpdateDH implements DownloadHandler {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(DayProgramReceiveDH.class.getName());
   
   private TvBrowserDataService mDataService;
   private TvDataBaseUpdater mUpdater;
@@ -54,7 +57,7 @@ public class DayProgramUpdateDH implements DownloadHandler {
   public void handleDownload(String fileName, InputStream stream)
     throws TvBrowserException
   {
-    System.out.println("Receiving file " + fileName);
+    mLog.fine("Receiving file " + fileName);
 
     // Convert the file name to a complete file name
     // E.g. from '2003-10-04_de_premiere-1_base_update_15.prog.gz'

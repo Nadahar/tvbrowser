@@ -40,7 +40,10 @@ import util.io.IOUtilities;
  * @author Til Schneider, www.murfman.de
  */
 public class HttpDataSource implements DataSource {
-  
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(HttpDataSource.class.getName());
+
   private String mBaseUrl;
   
   private int mBytesRead;
@@ -103,7 +106,7 @@ public class HttpDataSource implements DataSource {
 
 
   public void close() throws UpdateException {
-    System.out.println("In total there were "
+    mLog.info("In total there were "
       + NumberFormat.getInstance().format(mFilesChecked) + " files checked and "
       + NumberFormat.getInstance().format(mBytesRead) + " bytes read.");
   }

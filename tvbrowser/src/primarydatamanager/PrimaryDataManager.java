@@ -26,18 +26,18 @@
 package primarydatamanager;
 
 import java.io.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import primarydatamanager.primarydataservice.PrimaryDataService;
-
 import tvbrowserdataservice.file.*;
 import util.io.IOUtilities;
+import util.io.VerySimpleFormatter;
 import devplugin.Channel;
 import devplugin.Date;
 
@@ -47,7 +47,10 @@ import devplugin.Date;
  * @author Til Schneider, www.murfman.de
  */
 public class PrimaryDataManager {
-  
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(PrimaryDataManager.class.getName());
+    
   private static int MAX_SHORT_DESCRIPTION_LENGTH = 150;
   
   private File mRawDir;
@@ -152,7 +155,7 @@ public class PrimaryDataManager {
     }
     
     // Print out the statistics
-    System.out.println("In total there were "
+    mLog.info("In total there were "
       + NumberFormat.getInstance().format(mReadBytesCount)
       + " bytes read by the data services");
   }
@@ -168,7 +171,7 @@ public class PrimaryDataManager {
     
     String dir = mRawDir.getAbsolutePath();
     for (int i = 0; i < mDataServiceArr.length; i++) {
-      System.out.println("Executing data service "
+      mLog.fine("Executing data service "
         + mDataServiceArr[i].getClass().getName() + "...");
       
       boolean thereWereErrors = mDataServiceArr[i].execute(dir, System.err);
@@ -180,7 +183,7 @@ public class PrimaryDataManager {
       // Update the number of bytes read
       int readBytes = mDataServiceArr[i].getReadBytesCount();
       mReadBytesCount += readBytes;
-      System.out.println("There were "
+      mLog.info("There were "
         + NumberFormat.getInstance().format(readBytes)
         + " bytes read by " + mDataServiceArr[i].getClass().getName());
     }
@@ -204,8 +207,6 @@ public class PrimaryDataManager {
       // Extract the information from the file name
       // Pattern: <yyyy>-<mm>-<dd>_<country>_<channel>_raw_full.prog.gz
       if (fileName.endsWith("_raw_full.prog.gz")) {
-        System.out.println("Processing raw file " + fileArr[i].getAbsolutePath());
-        
         // Extract the information from the file name
         Date date;
         String country, channel;
@@ -319,6 +320,8 @@ public class PrimaryDataManager {
           File file = new File(mWorkDir, levelFileNameArr[i]);
           try {
             newLevelProgArr[i].writeToFile(file);
+
+            mLog.fine("Created new day program file: " + levelFileNameArr[i]);
           }
           catch (Exception exc) {
             throw new PreparationException("Writing prepared file failed: "
@@ -332,10 +335,15 @@ public class PrimaryDataManager {
         if (levelProgArr[i].equals(newLevelProgArr[i])) {
           // Nothing changed -> Just copy the files
           copyFiles(levelProgArr[i], date, country, channel, level);
+
+          mLog.finest("Nothing to do for day program file: " + levelFileNameArr[i]);
         } else {
           // Something changed -> Create an update
           createUpdate(levelProgArr[i], newLevelProgArr[i], date, country,
                        channel, level);
+
+          mLog.finest("Updated day program file to version "
+            + (levelProgArr[i].getVersion() + 1) + ": " + levelFileNameArr[i]);
         }
       }
     }
@@ -817,32 +825,6 @@ public class PrimaryDataManager {
   }
 
 
-
-  public static void main(String[] args) {
-    if (args.length == 0) {
-      System.out.println("Please specify at least one primary data service");
-      System.exit(1);
-    } else {
-      try {
-        PrimaryDataManager manager = new PrimaryDataManager();
-
-        PrimaryDataService[] dataServiceArr = new PrimaryDataService[args.length];        
-        for (int i = 0; i < args.length; i++) {
-          dataServiceArr[i] = createPrimaryDataService(args[i]);
-        }
-        manager.setDataServiceArr(dataServiceArr);
-        
-        manager.updateRawDataDir();
-      }
-      catch (PreparationException exc) {
-        exc.printStackTrace();
-        System.exit(1);
-      }
-    }
-  }
-
-
-
   private static PrimaryDataService createPrimaryDataService(String className)
     throws PreparationException
   {
@@ -889,7 +871,7 @@ public class PrimaryDataManager {
           channelArr[i].getCountry(), channelArr[i].getId());
         File rawFile = new File(mRawDir, rawFileName);
         if (! rawFile.exists()) {
-          System.out.println("WARNING: Data service "
+          mLog.warning("Data service "
             + mDataServiceArr[serviceIdx].getClass().getName() + " did not "
             + "deliver up-to-date data for channel " + channelArr[i].getName()
             + ". (File " + rawFile.getAbsolutePath() + " does not exist)");
@@ -910,7 +892,7 @@ public class PrimaryDataManager {
 
   
   private void updateMirrorList() throws PreparationException {
-    System.out.println("Updating the mirror list");
+    mLog.fine("Updating the mirror list");
     
     // Load the mirrorlist.txt
     Mirror[] mirrorArr = loadMirrorListTxt();
@@ -1002,7 +984,7 @@ public class PrimaryDataManager {
       return Integer.parseInt(asString);
     }
     catch (Exception exc) {
-      System.out.println("Getting mirror weight of " + mirror.getUrl()
+      mLog.warning("Getting mirror weight of " + mirror.getUrl()
         + " failed");
       return -1;
     }
@@ -1017,6 +999,52 @@ public class PrimaryDataManager {
     catch (Exception exc) {
       // There is no old mirror list -> return an empty array
       return new Mirror[0];
+    }
+  }
+
+
+  public static void main(String[] args) {
+    // setup logging
+    try {
+      // Get the default Logger
+      Logger mainLogger = Logger.getLogger("");
+      mainLogger.setLevel(Level.FINEST);
+      
+      Handler consoleHandler = mainLogger.getHandlers()[0];
+      consoleHandler.setLevel(Level.FINEST);
+      consoleHandler.setFormatter(new VerySimpleFormatter());
+      
+      // Add a file handler
+      new File("log").mkdir();
+      Handler fileHandler = new FileHandler("log/datamanager.log", 50000, 2, true);
+      fileHandler.setLevel(Level.INFO);
+      mainLogger.addHandler(fileHandler);
+    }
+    catch (IOException exc) {
+      System.out.println("Can't create log file");
+      exc.printStackTrace();
+    }
+    
+    // Start the update    
+    if (args.length == 0) {
+      System.out.println("Please specify at least one primary data service");
+      System.exit(1);
+    } else {
+      try {
+        PrimaryDataManager manager = new PrimaryDataManager();
+
+        PrimaryDataService[] dataServiceArr = new PrimaryDataService[args.length];        
+        for (int i = 0; i < args.length; i++) {
+          dataServiceArr[i] = createPrimaryDataService(args[i]);
+        }
+        manager.setDataServiceArr(dataServiceArr);
+        
+        manager.updateRawDataDir();
+      }
+      catch (PreparationException exc) {
+        exc.printStackTrace();
+        System.exit(1);
+      }
     }
   }
 

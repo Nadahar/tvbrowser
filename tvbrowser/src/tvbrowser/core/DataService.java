@@ -41,7 +41,6 @@ import javax.swing.JProgressBar;
 
 import util.exc.*;
 import util.io.IOUtilities;
-import util.ui.progress.ProgressBarProgressMonitor;
 import util.ui.progress.ProgressMonitorGroup;
 
 import java.awt.Font;
@@ -827,7 +826,7 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
   
   
   protected void updateChannelDayProgram(MutableChannelDayProgram prog) {
-    System.out.println("Updating day prog: " + prog.getChannel().getName()
+    mLog.info("Updating day prog: " + prog.getChannel().getName()
       + " " + prog.getDate());
     
     // save the program to disk

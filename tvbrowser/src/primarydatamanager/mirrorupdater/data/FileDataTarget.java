@@ -38,7 +38,10 @@ import primarydatamanager.mirrorupdater.UpdateException;
  * @author Til Schneider, www.murfman.de
  */
 public class FileDataTarget implements DataTarget {
-  
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(FileDataTarget.class.getName());
+
   private File mDir;
   
   private long mBytesWritten;
@@ -102,7 +105,7 @@ public class FileDataTarget implements DataTarget {
 
 
   public void close() throws UpdateException {
-    System.out.println("In total there were "
+    mLog.info("In total there were "
       + NumberFormat.getInstance().format(mBytesWritten) + " bytes written.");
   }
 

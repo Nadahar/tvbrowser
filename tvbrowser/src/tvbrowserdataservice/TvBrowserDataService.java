@@ -127,7 +127,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     // Get a random Mirror that is up to date
     Mirror mirror = chooseUpToDateMirror(mirrorArr);
-    mLog.info("Using mirror " + mirror.getUrl());
+    mLog.fine("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
@@ -275,7 +275,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
         mirror = chooseMirror(mirrorArr, mirror);
-        mLog.log(Level.INFO, "Mirror " + oldMirror.getUrl()
+        mLog.info("Mirror " + oldMirror.getUrl()
           + " is not available. Choosing " + mirror.getUrl() + " instead.");
       }
     }

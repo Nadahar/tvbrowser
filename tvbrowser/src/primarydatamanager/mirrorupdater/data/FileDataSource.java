@@ -40,7 +40,10 @@ import util.io.IOUtilities;
  * @author Til Schneider, www.murfman.de
  */
 public class FileDataSource implements DataSource {
-  
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(FileDataSource.class.getName());
+
   private File mDir;
 
   private int mBytesRead;
@@ -95,7 +98,7 @@ public class FileDataSource implements DataSource {
 
 
   public void close() throws UpdateException {
-    System.out.println("In total there were "
+    mLog.info("In total there were "
       + NumberFormat.getInstance().format(mFilesChecked) + " files checked and "
       + NumberFormat.getInstance().format(mBytesRead) + " bytes read.");
   }
