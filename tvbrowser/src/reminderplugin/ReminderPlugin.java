@@ -292,7 +292,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       // TODO: identify programs by name and time range (so we won't lose a program if its start time has changed)
       Program p = Plugin.getPluginManager().getProgram(trashItem.getProgram().getDate(), trashItem.getProgram().getID());
       if (p != null) {
-        mReminderList.add(trashItem.getProgram(), trashItem.getReminderMinutes());
+        mReminderList.add(p, trashItem.getReminderMinutes());
         p.mark(this);
       }
     }
