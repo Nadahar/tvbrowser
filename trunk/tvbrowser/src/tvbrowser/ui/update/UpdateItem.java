@@ -90,7 +90,7 @@ public class UpdateItem {
 		java.util.Iterator it=mVersionList.iterator();
 		while (it.hasNext()) {
 			VersionItem vi=(VersionItem)it.next();
-			if (vi.getRequired().compareTo(requiredVersion)==1) {
+			if (vi.getRequired()!=null && vi.getRequired().compareTo(requiredVersion)==1) {
 				it.remove();
 			}
 		}

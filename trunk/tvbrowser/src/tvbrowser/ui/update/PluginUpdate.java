@@ -71,9 +71,9 @@ public class PluginUpdate {
 					}finally{	
 						win.dispose();
 					}
-					if (list.length==0) {
-						JOptionPane.showMessageDialog(mainFrame,mLocalizer.msg("nopluginsfound","Sorry, no new plugins available"));
-					}else {
+				//	if (list.length==0) {
+				//		JOptionPane.showMessageDialog(mainFrame,mLocalizer.msg("nopluginsfound","Sorry, no new plugins available"));
+				//	}else {
 						SelectPluginsDlg selDlg=new SelectPluginsDlg(mainFrame,list);
 						UiUtilities.centerAndShow(selDlg);				
 						selDlg.dispose();
@@ -83,7 +83,7 @@ public class PluginUpdate {
 							dlDlg.dispose();
 							JOptionPane.showMessageDialog(mainFrame,mLocalizer.msg("restartprogram","Pleas  restart TV-Browser"));		
 						}						
-					}
+				//	}
 			}	
 	}
 	

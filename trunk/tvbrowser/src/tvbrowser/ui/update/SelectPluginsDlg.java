@@ -87,11 +87,28 @@ public class SelectPluginsDlg extends JDialog implements ActionListener {
 		JPanel listPanel=new JPanel();
    		listPanel.setLayout(new BoxLayout(listPanel,BoxLayout.Y_AXIS));
     	mPanelList=new UpdateItemPanel[list.length];
+    	boolean anyPluginsAvailable=false;
     	for (int i=0;i<list.length;i++) {
-			mPanelList[i]=new UpdateItemPanel(list[i]);
-			mPanelList[i].setEnabled(false);
-			listPanel.add(mPanelList[i]);
+    		if (list[i].getType()==UpdateItem.DATASERVICE ||
+    		    list[i].getType()==UpdateItem.PLUGIN) {
+    		    anyPluginsAvailable=true;
+				mPanelList[i]=new UpdateItemPanel(list[i]);
+				mPanelList[i].setEnabled(false);
+				listPanel.add(mPanelList[i]);
+    		}
 		}
+		
+		mDownloadBtn.setEnabled(anyPluginsAvailable);
+		if (!anyPluginsAvailable) {
+			JTextArea area=new JTextArea(mLocalizer.msg("nopluginsfound","Sorry, no new plugins available"));
+			area.setWrapStyleWord(true);
+			area.setLineWrap(true);
+			area.setEditable(false);
+			area.setFocusable(false);
+			area.setOpaque(false);
+			listPanel.add(area);
+		}
+		
 		centerPanel.add(listPanel,BorderLayout.NORTH);
 		JScrollPane scrollPane = new JScrollPane(centerPanel);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(30);

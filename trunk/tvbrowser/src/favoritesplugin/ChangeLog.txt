@@ -1,6 +1,6 @@
 Changelog FavoritesPlugin
 
-current (1.0.3): requires TVBrowser 0.93
+1.0.3: requires TVBrowser 0.95
 - Manage favorites dialog shows marked programs
 - Manage favorites dialog allows changing the order of favorites
 - context menu to other plugins added
