@@ -279,11 +279,11 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         
-          if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
+          if (Settings.getAutomaticDownload()==Settings.ONSTARTUP && ChannelList.getNumberOfSubscribedChannels()>0) {
             mainFrame.runUpdateThread(Settings.getDownloadPeriod());
           }        
        
-          if (! DataService.dataAvailable(new devplugin.Date())) {
+          if (!DataService.dataAvailable(new devplugin.Date()) && ChannelList.getNumberOfSubscribedChannels()>0) {
             mainFrame.askForDataUpdate();
           } else {
             mainFrame.scrollToNow();

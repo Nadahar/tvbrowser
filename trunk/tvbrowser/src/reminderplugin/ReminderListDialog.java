@@ -32,7 +32,9 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+import util.ui.ImageUtilities;
 import util.ui.ProgramPanel;
+import util.ui.UiUtilities;
 
 import devplugin.Program;
 
@@ -53,7 +55,8 @@ public class ReminderListDialog extends JDialog {
 
   private ReminderList reminderList;
   
-  
+  private JPanel mListPanel;
+  private JScrollPane mScrollPane;
   
   public ReminderListDialog(Frame parent, ReminderList list) {
     super(parent,true);
@@ -70,21 +73,21 @@ public class ReminderListDialog extends JDialog {
     JLabel label = new JLabel(msg);
     contentpane.add(label,BorderLayout.NORTH);
     
-    JPanel listPanel=new JPanel();
-    listPanel.setLayout(new BoxLayout(listPanel,BoxLayout.Y_AXIS));
+    mListPanel=new JPanel();
+    mListPanel.setLayout(new BoxLayout(mListPanel,BoxLayout.Y_AXIS));
     
     if (list!=null) {
       Iterator it=list.getReminderItems();
       while (it.hasNext()) {
         ReminderListItem item=(ReminderListItem)it.next();
-        listPanel.add(createListItemPanel(item));
+        mListPanel.add(createListItemPanel(item));
       }
     }
     
-    JScrollPane scrollPane = new JScrollPane(listPanel);
-    scrollPane.getVerticalScrollBar().setUnitIncrement(30);
-    scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
-    contentpane.add(scrollPane, BorderLayout.CENTER);
+    mScrollPane = new JScrollPane(mListPanel);
+    mScrollPane.getVerticalScrollBar().setUnitIncrement(30);
+    mScrollPane.getHorizontalScrollBar().setUnitIncrement(30);
+    contentpane.add(mScrollPane, BorderLayout.CENTER);
     
     JPanel btnPanel=new JPanel(new BorderLayout());
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
@@ -100,7 +103,11 @@ public class ReminderListDialog extends JDialog {
     contentpane.add(btnPanel,BorderLayout.SOUTH);
   }
   
-  
+  private void removeReminderListItem(ReminderListItem item, JPanel panel) {
+    reminderList.remove(item);    
+    mListPanel.remove(panel);
+    mScrollPane.updateUI();
+  }
   
   private JPanel createListItemPanel(final ReminderListItem item) {
     
@@ -110,13 +117,15 @@ public class ReminderListDialog extends JDialog {
     result.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     JPanel panel1=new JPanel(new BorderLayout());
     JPanel panel2=new JPanel(new BorderLayout());
+    
+    
     final JComboBox box1=new JComboBox(REMIND_MSG_ARR);
     
     box1.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         int inx = box1.getSelectedIndex();
         if (inx == DONT_REMEMBER) {
-          reminderList.remove(item);
+          removeReminderListItem(item,result);
         } else {
           item.setReminderMinutes(REMIND_VALUE_ARR[inx]);
         }
@@ -142,7 +151,24 @@ public class ReminderListDialog extends JDialog {
     panel3.add(channelLabel,BorderLayout.NORTH);
     panel1.add(dateLabel,BorderLayout.NORTH);
     panel1.add(panel3,BorderLayout.CENTER);
-    panel2.add(box1,BorderLayout.NORTH);
+    
+    JPanel panel4=new JPanel();
+    panel4.setLayout(new BoxLayout(panel4,BoxLayout.Y_AXIS));
+    panel2.add(panel4,BorderLayout.NORTH);
+    
+    
+    JPanel panel5=new JPanel(new BorderLayout());
+    panel4.add(box1);
+    panel4.add(panel5);
+    Icon icon = ImageUtilities.createImageIconFromJar("reminderplugin/Delete24.gif", getClass());
+    String msg = mLocalizer.msg("delete", "Delete this program from reminder list");
+    JButton deleteBtn = UiUtilities.createToolBarButton(msg, icon);
+    deleteBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event) {
+        removeReminderListItem(item,result);
+      }
+    });
+    panel5.add(deleteBtn,BorderLayout.EAST);
     
     result.add(panel1,BorderLayout.WEST);
     result.add(panel2,BorderLayout.EAST);

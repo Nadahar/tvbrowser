@@ -212,6 +212,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       mChannelListPanel.addElementRight(subscribedChannelArr[i]);
     }
     
+    int size=mChannelListPanel.getRightList().getModel().getSize();
+    System.out.println("SIZE: "+size);
     
   }
 

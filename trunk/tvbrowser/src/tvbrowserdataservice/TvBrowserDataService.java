@@ -354,10 +354,14 @@ public class TvBrowserDataService extends AbstractTvDataService {
   }
 
 
-
+  
   private void updateChannelList(Mirror mirror) throws TvBrowserException {
+    updateChannelList(mirror, false);  
+  }
+
+  private void updateChannelList(Mirror mirror, boolean forceUpdate) throws TvBrowserException {
     File file = new File(mDataDir, ChannelList.FILE_NAME);
-    if (needsUpdate(file)) {
+    if (forceUpdate || needsUpdate(file)) {
       String url = mirror.getUrl() + "/" + ChannelList.FILE_NAME;
       try {
         IOUtilities.download(new URL(url), file);
@@ -538,7 +542,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
     
     // Update the channel list
-    updateChannelList(mirror);
+    updateChannelList(mirror,true);
     return getAvailableChannels();
   }
   
