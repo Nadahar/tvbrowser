@@ -134,28 +134,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
           this.setFilterComponent(comp); 
         }
          
-         /*  
-        if (mComp!=null) {
-            mCompName=mComp.getName();
-            mNameTF.setText(mComp.getName());
-            mDescTF.setText(mComp.getDescription());
-            
-            int itemsCnt=mRuleList.getItemCount();
-            for (int i=0;i<itemsCnt;i++) {
-                Object o=mRuleList.getItemAt(i);
-                if (o instanceof FilterComponent) {
-                    FilterComponent r=(FilterComponent)o;
-                    if (r.toString().equals(mComp.toString())) {
-                        DefaultComboBoxModel model=(DefaultComboBoxModel)mRuleList.getModel();
-                        model.removeElementAt(i);
-                        model.insertElementAt(mComp,i);
-                        break;
-                    }
-                }
-            }
-            
-            mRuleList.setSelectedItem(mComp);       
-        }*/
+        
            
         updateOkBtn();
                     
@@ -163,43 +142,13 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         UiUtilities.centerAndShow(this);
         
     }
-    /*
-    public void setName(String name) {
-      mNameTF.setText(name);
-    }
     
-    public void setDescription(String desc) {
-      mDescTF.setText(desc);
-    }
-    
-    public String getName() {
-      return mNameTF.getText();
-    }
-    
-    public String getDescription() {
-      return mDescTF.getText();
-    }
-    */
-    
-    /*
-    public void setFilterComponent(String name) {
-      for (int i=0; i<mRuleCb.getItemCount(); i++) {
-        FilterComponent c = (FilterComponent)mRuleCb.getItemAt(i);
-        if (c.toString().equals(name)) {
-          mRuleCb.setSelectedIndex(i);
-          return;
-        }       
-      }
-    }
-    */
     
     private void setFilterComponent(FilterComponent comp) {
-      System.out.println("set filter component to "+comp.toString());
       for (int i=1;  // index 0 does not contain a FilterComponent object
            i<mRuleCb.getItemCount(); i++) {
         System.out.println(mRuleCb.getItemAt(i));
         FilterComponent c = (FilterComponent)mRuleCb.getItemAt(i);
-        System.out.println("compare: "+c+"<-->"+comp);
         if (c.toString().equals(comp.toString())) {
           DefaultComboBoxModel model=(DefaultComboBoxModel)mRuleCb.getModel();
           model.removeElementAt(i);
@@ -281,27 +230,6 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         updateOkBtn();
     }
     
-    /*
-    class FilterComponentItem {
-      
-      private FilterComponent mComponent;
-      private String mName, mDescription;
-      
-      public FilterComponentItem(FilterComponent component) {
-        mComponent = component;      
-      }
-      public void setName(String name) {
-        mName = name;
-      }
-      public void setDescription(String desc) {
-        mDescription = desc;
-      }
-      public String getName() {
-        return mName;
-      }
-      public String getDescription() {
-        return mDescription;
-      }
-    }*/
+    
     
 }
