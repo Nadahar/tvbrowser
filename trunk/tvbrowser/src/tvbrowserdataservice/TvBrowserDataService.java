@@ -28,7 +28,6 @@ package tvbrowserdataservice;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -70,7 +69,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private static final Mirror[] DEFAULT_MIRROR_LIST = new Mirror[] {
     //new Mirror("http://www.murfman.de/tvdata"),
     //new Mirror("http://tvbrowser.waidi.net"),
-    new Mirror("http://tvbrowser.dyndns.tv"),
+    //new Mirror("http://tvbrowser.dyndns.tv"),
+    new Mirror("http://webspace-free.de/Member/TV"),
   };
 
   private Properties mSettings;
@@ -82,8 +82,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private String[] mSubsribedLevelArr;
   
   private int mDirectlyLoadedBytes;
-  
-  private ArrayList mChangedProgramFileList;
   
   private DownloadManager mDownloadManager;
   private TvDataBase mTvDataBase;
@@ -99,10 +97,10 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     mDataDir = new File("tvbrowsertvdata");
     
-//  Ensure that the data directory is present
-     if (! mDataDir.exists()) {
-       mDataDir.mkdir();
-     }
+    //  Ensure that the data directory is present
+    if (! mDataDir.exists()) {
+      mDataDir.mkdir();
+    }
     
     // TODO: Make the subscribed levels configurable
     mSubsribedLevelArr = DayProgramFile.LEVEL_ARR;
@@ -118,15 +116,11 @@ public class TvBrowserDataService extends AbstractTvDataService {
   public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
     Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
-  {
-    
+  {    
     mTvDataBase = dataBase;
     mProgressMonitor = monitor;
     
     mDirectlyLoadedBytes = 0;
-    mChangedProgramFileList = new ArrayList();
-    
-    
     
     // Delete outdated files
     deleteOutdatedFiles();
@@ -324,7 +318,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     }
     
     // We didn't find a mirror? This should not happen -> throw exception
-    throw new TvBrowserException(getClass(), "error.3",
+    throw new TvBrowserException(getClass(), "error.2",
       "No mirror found (chosen weight={0}, total weight={1})",
       new Integer(chosenWeight), new Integer(totalWeight));
   }
@@ -349,7 +343,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
       lastupdated = new Date(year, month, day);
     }
     catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.4",
+      throw new TvBrowserException(getClass(), "error.3",
         "Loading lastupdate file failed: {0}",
         url, exc);
     }
@@ -367,7 +361,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
         IOUtilities.download(new URL(url), file);
       }
       catch (Exception exc) {
-        throw new TvBrowserException(getClass(), "error.6",
+        throw new TvBrowserException(getClass(), "error.4",
           "Server has no channel list: {0}", mirror.getUrl(), exc);
       }
       
@@ -509,6 +503,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     return mAvailableChannelArr;
   }
   
+  
   public Channel[] checkForAvailableChannels() throws TvBrowserException {
     // load the mirror list
     Mirror[] mirrorArr = loadMirrorList();
@@ -521,7 +516,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
     
     // Update the channel list
-     
     updateChannelList(mirror);
     return getAvailableChannels();
   }
@@ -551,7 +545,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   public PluginInfo getInfo() {
     return new devplugin.PluginInfo(
       "TV-Browser",
-      "Die eigenen TV-Daten des TV-Browser-Projektes",
+      mLocalizer.msg("description", "Die eigenen TV-Daten des TV-Browser-Projektes"),
       "Til Schneider, www.murfman.de",
       new Version(0, 1),
       mLocalizer.msg("license",""));
