@@ -135,7 +135,13 @@ public class DialogRating extends JDialog {
 		JPanel titlePanel = new JPanel(new TabLayout(1));
 		titlePanel.setBackground(Color.white);
 
-		JLabel title = new JLabel(_title);
+		String name = _title;
+		JLabel title = new JLabel(name);
+		if (_title.length() > 20) {
+		    name = _title.substring(0, 20);
+		    title.setToolTipText(_title);
+		}
+		
 		title.setHorizontalAlignment(JLabel.CENTER);
 		title.setFont(new Font("Helvetica", Font.BOLD, 20));
 		titlePanel.add(title);
