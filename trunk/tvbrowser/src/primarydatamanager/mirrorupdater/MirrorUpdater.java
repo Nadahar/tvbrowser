@@ -26,12 +26,16 @@
 package primarydatamanager.mirrorupdater;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import devplugin.Channel;
-import devplugin.Date;
 import primarydatamanager.mirrorupdater.config.Configuration;
 import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
 import primarydatamanager.mirrorupdater.data.DataSource;
@@ -39,6 +43,9 @@ import primarydatamanager.mirrorupdater.data.DataTarget;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
+import util.io.VerySimpleFormatter;
+import devplugin.Channel;
+import devplugin.Date;
 
 /**
  * 
@@ -46,6 +53,9 @@ import tvbrowserdataservice.file.Mirror;
  * @author Til Schneider, www.murfman.de
  */
 public class MirrorUpdater {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(MirrorUpdater.class.getName());
   
   private static final int MAX_DAYS_WITHOUT_DATA = 7;
 
@@ -212,10 +222,10 @@ public class MirrorUpdater {
         // Check whether the mirror needs an update
         if (versionOnMirror < versionAtSource) {
           if (versionOnMirror == -1) {
-            System.out.println("Adding version " + versionAtSource
+            mLog.fine("Adding version " + versionAtSource
               + ": " + completeFileName);
           } else {
-            System.out.println("Updating from version "
+            mLog.fine("Updating from version "
               + versionOnMirror + " to " + versionAtSource
               + ": " + completeFileName);
           }
@@ -327,6 +337,27 @@ public class MirrorUpdater {
 
 
   public static void main(String[] args) {
+    // setup logging
+    try {
+      // Get the default Logger
+      Logger mainLogger = Logger.getLogger("");
+      mainLogger.setLevel(Level.FINEST);
+      
+      Handler consoleHandler = mainLogger.getHandlers()[0];
+      consoleHandler.setLevel(Level.FINEST);
+      consoleHandler.setFormatter(new VerySimpleFormatter());
+      
+      // Add a file handler
+      new File("log").mkdir();
+      Handler fileHandler = new FileHandler("log/mirrorupdater.log", 50000, 2, true);
+      fileHandler.setLevel(Level.INFO);
+      mainLogger.addHandler(fileHandler);
+    }
+    catch (IOException exc) {
+      System.out.println("Can't create log file");
+    }
+
+    // Start the update    
     String propertiesFileName = "MirrorUpdater.ini";
     if (args.length > 0) {
       propertiesFileName = args[0];

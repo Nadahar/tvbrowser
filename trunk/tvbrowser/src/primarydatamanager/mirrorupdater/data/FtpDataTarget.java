@@ -42,6 +42,9 @@ import primarydatamanager.mirrorupdater.UpdateException;
  */
 public class FtpDataTarget implements DataTarget {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(FtpDataTarget.class.getName());
+
   private FTPClient mFTPClient;
   private String mServerUrl;
   private String mPath;
@@ -65,7 +68,7 @@ public class FtpDataTarget implements DataTarget {
     mFTPClient = new FTPClient();
     try {
       mFTPClient.connect(mServerUrl, port);
-      System.out.println("Connected to " + mServerUrl + ":" + port);
+      mLog.fine("Connected to " + mServerUrl + ":" + port);
       
       checkReplyCode();
     }
@@ -115,7 +118,7 @@ public class FtpDataTarget implements DataTarget {
       throw new UpdateException("Could not change to directory '" + mPath + "'",
                                 exc);
     }
-    System.out.println("Changed to directory " + mPath);
+    mLog.fine("Changed to directory " + mPath);
   }
 
 
@@ -206,8 +209,8 @@ public class FtpDataTarget implements DataTarget {
       }
     }
     
-    System.out.println("Disconnected from " + mServerUrl);
-    System.out.println("In total there were "
+    mLog.fine("Disconnected from " + mServerUrl);
+    mLog.info("In total there were "
       + NumberFormat.getInstance().format(mBytesWritten) + " bytes written.");
   }
 

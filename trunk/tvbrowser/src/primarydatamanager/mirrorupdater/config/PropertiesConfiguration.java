@@ -39,6 +39,9 @@ import primarydatamanager.mirrorupdater.data.*;
  * @author Til Schneider, www.murfman.de
  */
 public class PropertiesConfiguration implements Configuration {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(PropertiesConfiguration.class.getName());
   
   private DataSource mDataSource;
   private DataTarget mDataTarget;
@@ -121,7 +124,7 @@ public class PropertiesConfiguration implements Configuration {
   private String getProperty(Properties prop, String key, String defaultValue) {
     String value = prop.getProperty(key);
     if (value == null) {
-      System.out.println("Property '" + key + "' not set. Using " + defaultValue);
+      mLog.fine("Property '" + key + "' not set. Using " + defaultValue);
       return defaultValue;
     } else {
       return value;
@@ -148,7 +151,7 @@ public class PropertiesConfiguration implements Configuration {
   {
     String value = prop.getProperty(key);
     if (value == null) {
-      System.out.println("Property '" + key + "' not set. Using " + defaultValue);
+      mLog.fine("Property '" + key + "' not set. Using " + defaultValue);
       return defaultValue;
     } else {
       value = value.trim();
