@@ -64,6 +64,7 @@ import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import devplugin.Channel;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -86,14 +87,15 @@ public class ManageFavoritesDialog extends JDialog {
   
   private boolean mOkWasPressed = false;
   
-  
+  /** The FavoritesPlugin */
+  private Plugin mPlugin;
   
   /**
    * Creates a new instance of ManageFavoritesDialog.
    */
-  public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr, int splitPanePosition) {
+  public ManageFavoritesDialog(Plugin plugin, Frame parent, Favorite[] favoriteArr, int splitPanePosition) {
     super(parent, true);
-    
+    mPlugin = plugin;
     String msg;
     Icon icon;
 
@@ -210,6 +212,7 @@ public class ManageFavoritesDialog extends JDialog {
 
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel);
+    mProgramList.addMouseListeners(mPlugin);
     scrollPane = new JScrollPane(mProgramList);
     scrollPane.setBorder(null);
     mSplitPane.setRightComponent(scrollPane);
@@ -287,7 +290,7 @@ public class ManageFavoritesDialog extends JDialog {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
       Program[] programArr = fav.getPrograms();
 
-      SendToPluginDialog send = new SendToPluginDialog(this, programArr);
+      SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, programArr);
 
       send.show();
   }
@@ -409,10 +412,10 @@ public class ManageFavoritesDialog extends JDialog {
           line = line.trim();
           if ((line.length() > 0) && (! line.startsWith("***"))) {
             // This is a favorite -> Check whether we already have such a favorite
-            Enumeration enum = mFavoritesListModel.elements();
+            Enumeration en = mFavoritesListModel.elements();
             boolean alreadyKnown = false;
-            while (enum.hasMoreElements()) {
-              Favorite fav = (Favorite) enum.nextElement();
+            while (en.hasMoreElements()) {
+              Favorite fav = (Favorite) en.nextElement();
               String searchText = fav.getSearchFormSettings().getSearchText();
               if (line.equalsIgnoreCase(searchText)) {
                 alreadyKnown = true;
