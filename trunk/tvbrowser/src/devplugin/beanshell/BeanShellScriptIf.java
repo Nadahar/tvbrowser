@@ -5,12 +5,11 @@ package devplugin.beanshell;
 
 import java.awt.Frame;
 
-import javax.swing.Action;
 import javax.swing.Icon;
 
+import devplugin.ActionMenu;
 import devplugin.PluginInfo;
 import devplugin.Program;
-import devplugin.ActionMenu;
 
 
 /**

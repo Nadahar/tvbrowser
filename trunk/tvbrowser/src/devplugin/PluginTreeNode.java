@@ -30,15 +30,18 @@ package devplugin;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.*;
-import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.*;
+import javax.swing.Action;
 
-import tvbrowser.ui.pluginview.PluginTreeModel;
 import tvbrowser.ui.pluginview.Node;
+import tvbrowser.ui.pluginview.PluginTreeModel;
 
 
 

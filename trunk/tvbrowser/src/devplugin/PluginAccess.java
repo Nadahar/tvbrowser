@@ -25,7 +25,6 @@
  */
 package devplugin;
 
-import javax.swing.Action;
 import javax.swing.Icon;
 
 
