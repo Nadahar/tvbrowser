@@ -35,6 +35,7 @@ import devplugin.Plugin;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
 import tvbrowser.core.PluginStateListener;
+import tvbrowser.core.Settings;
 import tvbrowser.ui.customizableitems.SortableItemList;
 
  
@@ -220,9 +221,15 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     Object o[]=mList.getItems();
     
     Plugin p[]=new Plugin[o.length];
+    String pluginNames[]=new String[o.length];
     for (int i=0;i<p.length;i++) {
       p[i]=(Plugin)o[i];
+      pluginNames[i]=((Plugin)o[i]).getClass().getName();
     }
+    
+    
+      
+    Settings.setContextMenuItemPlugins(pluginNames);   
     
     PluginManager.getInstance().setContextMenuPlugins(p);
     
@@ -242,13 +249,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         Settings.setDefaultContextMenuPlugin(((Plugin)o[0]).getClass().getName());
       }
     }     
+    */
     
-    String plugins[]=new String[o.length];
-    for (int i=0;i<o.length;i++) {
-      plugins[i]=((Plugin)o[i]).getClass().getName();
-    }
-    Settings.setContextMenuItemPlugins(plugins);   
-    */ 
+   
 	}
 
 	

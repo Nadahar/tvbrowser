@@ -332,7 +332,7 @@ public class MirrorUpdater {
     copyGroupFile(mDataTarget,mDataSource,Mirror.MIRROR_LIST_FILE_NAME);
     
     // Copy the summary.gz
-    copyGroupFile(mDataTarget,mDataSource,SummaryFile.SUMMARY_FILE_NAME);
+    //copyGroupFile(mDataTarget,mDataSource,SummaryFile.SUMMARY_FILE_NAME);
     
     // Copy the group files
     if (mChannelGroupArr!=null) {
