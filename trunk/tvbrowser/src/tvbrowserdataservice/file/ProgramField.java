@@ -62,7 +62,7 @@ public class ProgramField implements Cloneable {
   public ProgramField(ProgramFieldType type, String text) {
     setType(type);
     setTextData(text);
-    //System.out.println(text);
+   // System.out.println(text);
   }
   
   public ProgramField(ProgramFieldType type, byte[] data) {
@@ -73,7 +73,7 @@ public class ProgramField implements Cloneable {
   public ProgramField(ProgramFieldType type, int value) {
     setType(type);
     setIntData(value);
-    //System.out.println(value);
+   // System.out.println(value);
   }
   
   

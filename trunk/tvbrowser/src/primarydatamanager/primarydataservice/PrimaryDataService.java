@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package primarydataservice;
+package primarydatamanager.primarydataservice;
 
 /**
  * @author Martin Oberhauser
@@ -32,6 +32,6 @@ package primarydataservice;
 
 public interface PrimaryDataService {
 
-  public void execute(String dir);
+  public boolean execute(String dir, java.io.PrintStream err);
 
 }
