@@ -88,14 +88,14 @@ public class UiUtilities {
   
   /**
    * Der {@link JDialog} hat einen Riesennachteil: er hat zwei verschiedenen
-   * Konstrukturen: einer für einen Frame als Besitzer und einer für einen
-   * Dialog als Besitzer. Wenn man nun das überliegende Fenster gar nicht kennt,
+   * Konstrukturen: einer fï¿½r einen Frame als Besitzer und einer fï¿½r einen
+   * Dialog als Besitzer. Wenn man nun das ï¿½berliegende Fenster gar nicht kennt,
    * dann hat man ein Problem (Z.B. Wenn man einen Button schreibt, der
    * manchmal eine Fehlermeldung zeigt). Bisher habe ich einfach den
    * Component-Pfad bis zum obersten Frame verfolgt
    * (@link UiToolkit#getFrameFor(Component)). Das ganze wird dann zum Problem,
    * wenn man in einem modalen Dialog einen nicht-modalen Dialog zeigt.
-   * Denn dann kann man den nicht-modalen Dialog nämlich erst dann wieder
+   * Denn dann kann man den nicht-modalen Dialog nï¿½mlich erst dann wieder
    * bedienen, wenn der modale zu ist.
    *
    * @param parent A component in the component tree where the dialog should be created for.
@@ -162,8 +162,8 @@ public class UiUtilities {
   
   
   /**
-   * Gibt einen Button mit Icon und Schrift zurück, der so initialisiert ist,
-   * daß man ihn gut für Symbolleisten nutzen kann (Rahmen nur bei Rollover
+   * Gibt einen Button mit Icon und Schrift zurï¿½ck, der so initialisiert ist,
+   * daï¿½ man ihn gut fï¿½r Symbolleisten nutzen kann (Rahmen nur bei Rollover
    * sichtbar usw.).
    * <P>
    * Wenn text und iconDateiname angegeben sind, dann wird text als TooltipText
@@ -255,5 +255,101 @@ public class UiUtilities {
     
     return descTA;
   }
+  
+  /**
+   * Moves Selected Items from one List to another 
+   * @param fromList Move from this List
+   * @param toList Move into this List
+   * @return Moved Elements
+   */
+  public static Object[] moveSelectedItems(JList fromList, JList toList) {
+    DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
+    DefaultListModel toModel = (DefaultListModel) toList.getModel();
+    
+    // get the selection
+    int[] selection = fromList.getSelectedIndices();
+
+
+
+    if (selection.length == 0) {
+      return null;
+    }
+
+    Object[] objects = new Object[selection.length];
+    for (int i=0; i<selection.length; i++) {
+      objects[i] = fromModel.getElementAt(selection[i]);
+    }
+
+    // get the target insertion position
+    int targetPos = toList.getMaxSelectionIndex();
+    if (targetPos == -1) {
+      targetPos = toModel.getSize();
+    } else {
+      targetPos++;
+    }
+    
+    // move the elements
+    for (int i = selection.length - 1; i >= 0; i--) {
+      Object value = fromModel.remove(selection[i]);
+      toModel.add(targetPos, value);
+    }
+    
+    // change selection of the fromList
+    if (fromModel.getSize() > 0) {
+      int newSelection = selection[0];
+      if (newSelection >= fromModel.getSize()) {
+        newSelection = fromModel.getSize() - 1;
+      }
+      fromList.setSelectedIndex(newSelection);
+    }
+
+    // change selection of the toList
+    toList.setSelectionInterval(targetPos, targetPos + selection.length - 1);
+    
+    // ensure the selection is visible
+    toList.ensureIndexIsVisible(toList.getMaxSelectionIndex());
+    toList.ensureIndexIsVisible(toList.getMinSelectionIndex());
+
+
+    return objects;
+  }
+  
+  /**
+   * Move selected Items in the JList
+   * @param list Move Items in this List
+   * @param nrRows Move Items nrRows up/down
+   */
+  public static void moveSelectedItems(JList list, int nrRows) {
+    DefaultListModel model = (DefaultListModel) list.getModel();
+    
+    // get the selection
+    int[] selection = list.getSelectedIndices();
+    if (selection.length == 0) {
+      return;
+    }
+    
+    System.out.println(selection.length);
+    
+    // Remove the selected items
+    Object[] items = new Object[selection.length];
+    for (int i = selection.length - 1; i >= 0; i--) {
+      items[i] = model.remove(selection[i]);
+    }
+    
+    // insert the elements at the target position
+    int targetPos = selection[0] + nrRows;
+    targetPos = Math.max(targetPos, 0);
+    targetPos = Math.min(targetPos, model.getSize());
+    for (int i = 0; i < items.length; i++) {
+      model.add(targetPos + i, items[i]);
+    }
+    
+    // change selection of the toList
+    list.setSelectionInterval(targetPos, targetPos + selection.length - 1);
+    
+    // ensure the selection is visible
+    list.ensureIndexIsVisible(list.getMaxSelectionIndex());
+    list.ensureIndexIsVisible(list.getMinSelectionIndex());
+  }  
   
 }
