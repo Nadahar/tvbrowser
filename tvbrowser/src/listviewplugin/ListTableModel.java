@@ -152,7 +152,6 @@ public class ListTableModel extends AbstractTableModel {
      * @return ListTableModelData in row
      */
     private ListTableModelData getListTableModelData(int row) {
-        System.out.println(row + "..." + mData.size());
         if ((row < 0) || (row >= mData.size())) {
             return null;
         }
