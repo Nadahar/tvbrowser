@@ -168,6 +168,8 @@ public class DialogOverview extends JDialog {
             }
         });
 
+        getRootPane().setDefaultButton(close);
+
         panel.add(buttonpanel, BorderLayout.SOUTH);
     }
 

@@ -231,6 +231,8 @@ public class DialogRating extends JDialog {
         panel.add(leftbuttonPanel, c);
 
         panel.add(buttonpanel, c);
+        
+        getRootPane().setDefaultButton(cancel);
 
         pack();
     }
