@@ -78,7 +78,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
      * 
-     * @param programArr Array of Programs to show
+     * @param programs Model with Programs to show
      */
     public ProgramList(ListModel programs) {
         super(programs);
@@ -90,7 +90,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     /**
      * Creates the JList and if wanted adds the default MouseListeners
      * 
-     * @param programArr Array of Programs to show
+     * @param programs Model with Programs to show
      * @param mouseListeners If true adds PopUp-MouseListeners
      */
     public ProgramList(ListModel programs, boolean mouseListeners) {
@@ -132,9 +132,11 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         ListModel list = getModel();
         
         for (int i=0; i < list.getSize(); i++) {
-            Program prg = (Program)list.getElementAt(i);
-            prg.addChangeListener(this);
-            mPrograms.add(prg);
+            if (list.getElementAt(i) instanceof Program) {
+                Program prg = (Program)list.getElementAt(i);
+                prg.addChangeListener(this);
+                mPrograms.add(prg);
+            }
         }
     }
     
