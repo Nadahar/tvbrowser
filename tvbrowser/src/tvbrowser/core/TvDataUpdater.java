@@ -29,19 +29,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import javax.swing.JProgressBar;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 
-import devplugin.*;
-import devplugin.Channel;
-import devplugin.Date;
-
-import tvdataservice.*;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataService;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
 import util.ui.progress.ProgressMonitorGroup;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.ProgressMonitor;
 
 /**
  * Updates the TV data.
@@ -63,8 +61,11 @@ public class TvDataUpdater {
   
   private boolean mIsDownloading;
   
+  private ArrayList mListenerList;
+  
   
   private TvDataUpdater() {
+    mListenerList = new ArrayList();
   }
 
 
@@ -74,6 +75,20 @@ public class TvDataUpdater {
     }
     
     return mSingleton;
+  }
+  
+  
+  public void addTvDataUpdateListener(TvDataUpdateListener listener) {
+    synchronized(mListenerList) {
+      mListenerList.add(listener);
+    }
+  }
+
+
+  public void removeTvDataUpdateListener(TvDataUpdateListener listener) {
+    synchronized(mListenerList) {
+      mListenerList.remove(listener);
+    }
   }
   
   
@@ -101,6 +116,9 @@ public class TvDataUpdater {
     
     // Set the download flag
     mIsDownloading = true;
+
+    // Inform the listeners
+    fireTvDataUpdateStarted();
     
     // Limit the days to download to 3 weeks
     if (daysToDownload > 21) {
@@ -173,6 +191,29 @@ public class TvDataUpdater {
     
     // Reset the download flag
     mIsDownloading = false;
+
+    // Inform the listeners
+    fireTvDataUpdateFinished();
+  }
+
+
+  private void fireTvDataUpdateStarted() {
+    synchronized(mListenerList) {
+      for (int i = 0; i < mListenerList.size(); i++) {
+        TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);
+        lst.tvDataUpdateStarted();
+      }
+    }
+  }
+
+
+  private void fireTvDataUpdateFinished() {
+    synchronized(mListenerList) {
+      for (int i = 0; i < mListenerList.size(); i++) {
+        TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);
+        lst.tvDataUpdateFinished();
+      }
+    }
   }
 
 
@@ -197,65 +238,15 @@ public class TvDataUpdater {
    * <p>
    * Checks whether all programs have a length. If not the length will be
    * calculated.
-   * <p>
-   * For programs having no showview number calculation is tried.
    * 
    * @param prog The program to correct
    */
   private void correctChannelDayProgram(MutableChannelDayProgram channelProg,
     boolean updateOnChange)
   {
-    boolean somethingWasChanged = false;
+    boolean somethingChanged = TvDataBase.calculateMissingLengths(channelProg);
 
-    // Go through all programs and correct them
-    // (This is fast, if no correction is needed)
-    for (int progIdx = 0; progIdx < channelProg.getProgramCount(); progIdx++) {
-      Program program = channelProg.getProgramAt(progIdx);
-      if (! (program instanceof MutableProgram)) {
-        continue;
-      }
-      
-      MutableProgram prog = (MutableProgram) program;
-      
-      if (prog.getLength() <= 0) {
-        // Try to get the next program
-        Program nextProgram = null;
-        if ((progIdx + 1) < channelProg.getProgramCount()) {
-          // Try to get it from this ChannelDayProgram
-          nextProgram = channelProg.getProgramAt(progIdx + 1);
-        } else {
-          // This is the last program -> Try to get the first program of the
-          // next ChannelDayProgram
-          Date nextDate = channelProg.getDate().addDays(1);
-          Channel channel = channelProg.getChannel();
-          TvDataBase db = TvDataBase.getInstance();
-          ChannelDayProgram nextDayProg = db.getDayProgram(nextDate, channel);
-          
-          if ((nextDayProg != null) && (nextDayProg.getProgramCount() > 0)) {
-            nextProgram = nextDayProg.getProgramAt(0);
-          }
-        }
-        
-        // Calculate the Length
-        if (nextProgram != null) {
-          int startTime = prog.getHours() * 60 + prog.getMinutes();
-          int endTime = nextProgram.getHours() * 60 + nextProgram.getMinutes();
-          if (endTime < startTime) {
-            // The program ends the next day
-            endTime += 24 * 60;
-          }
-          
-          int length = endTime - startTime;
-          // Only allow a maximum length of 12 hours
-          if (length < 12 * 60) {
-            prog.setLength(length);
-            somethingWasChanged = true;
-          }
-        }
-      }
-    }
-
-    if (somethingWasChanged && updateOnChange) {
+    if (somethingChanged && updateOnChange) {
       // Pass the new ChannelDayProgram to the data base
       TvDataBase.getInstance().setDayProgram(channelProg);
     }
