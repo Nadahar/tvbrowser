@@ -114,6 +114,8 @@ public abstract class AbstractTvDataService implements TVDataServiceInterface {
       throw new IllegalArgumentException("We are already connected!");
     }
     
+    System.out.println("connecting " + this);
+    
     mProgramDispatcher = new ProgramDispatcher();
     mAlreadyDownloadedFiles = new HashSet();
   }
@@ -141,10 +143,12 @@ public abstract class AbstractTvDataService implements TVDataServiceInterface {
   public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
     devplugin.Channel channel) throws TvBrowserException
   {
+    System.out.println("downloading " + this);
+    
     if (mProgramDispatcher == null) {
       throw new IllegalArgumentException("We are not connected!");
     }
-    
+
     MutableChannelDayProgram channelDayProgram
       = mProgramDispatcher.getChannelDayProgram(date, channel);
     

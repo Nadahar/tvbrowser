@@ -119,9 +119,9 @@ public class DataService implements devplugin.PluginManager {
     onlineMode = newMode;
     
     if (newMode) {
-      DataLoaderManager.connect();
+      DataLoaderManager.getInstance().connect();
     } else {
-      DataLoaderManager.disconnect();
+      DataLoaderManager.getInstance().disconnect();
     }
   }
   
@@ -153,7 +153,7 @@ public class DataService implements devplugin.PluginManager {
     // connect
     progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
     progressBar.setStringPainted(true);
-    DataLoaderManager.connect();
+    DataLoaderManager.getInstance().connect();
 
     // download the missing data day by day and channel by channel
     progressBar.setStringPainted(false);
@@ -207,7 +207,7 @@ public class DataService implements devplugin.PluginManager {
     mIsDownloading = false;
     
     
-      DataLoaderManager.disconnect();
+      DataLoaderManager.getInstance().disconnect();
    
     
     if (downloadException != null) {
@@ -746,7 +746,7 @@ public class DataService implements devplugin.PluginManager {
   
   
   public TVDataServiceInterface getDataService(String className) {
-    return DataLoaderManager.getDataLoader(className);
+    return DataLoaderManager.getInstance().getDataLoader(className);
   }
 
 }

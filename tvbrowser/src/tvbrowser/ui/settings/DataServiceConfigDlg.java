@@ -45,7 +45,7 @@ public class DataServiceConfigDlg extends JDialog implements ActionListener {
 		
 		contentPane.setLayout(new BorderLayout());
 		
-		dataLoader=DataLoaderManager.getDataLoader(dataloaderName);
+		dataLoader=DataLoaderManager.getInstance().getDataLoader(dataloaderName);
 		
 		if (dataLoader!=null) {
 			configPanel=dataLoader.getSettingsPanel();
