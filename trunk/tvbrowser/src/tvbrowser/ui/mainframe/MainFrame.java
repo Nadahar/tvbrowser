@@ -47,7 +47,7 @@ import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
-import tvbrowser.ui.update.PluginUpdate;
+import tvbrowser.ui.update.*;
 import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -604,16 +604,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
 
-
    /**
    * Shows the settings dialog.
    */
   public void showSettingsDialog() {
     SettingsDialog dlg = new SettingsDialog(this);
     dlg.centerAndShow();
-    
-    
-    
     
     if (Settings.settingHasChanged(new String[]{"font.programtitle","font.programinfo","font.programtime","font.channelname","usedefaultfonts"})) {
       util.ui.ProgramPanel.updateFonts();
@@ -677,13 +673,51 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
 
-private void showUpdatePluginsDlg() {
+  private void showUpdatePluginsDlg() {
+    Object[] options = {mLocalizer.msg("checknow","Check now"),
+        mLocalizer.msg("cancel","Cancel")};
+    String msg=mLocalizer.msg("question.1","do you want to check for new plugins");     
+    int answer = JOptionPane.showOptionDialog(this,msg,mLocalizer.msg("title.1","update plugins"),
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        options,
+        options[0]); 
   
-  PluginUpdate.updatePlugins(this);
+    if (answer==JOptionPane.YES_OPTION) {
+      SoftwareUpdateItem[] items=null;
+      final util.ui.ProgressWindow win=new util.ui.ProgressWindow(this);
+      win.show();
+      win.setText(mLocalizer.msg("title.2","searching for new plugins..."));
+      try {
+      
+        java.net.URL url=null;
+        //url=new java.io.File("plugins.txt").toURL();
+        url=new java.net.URL("http://tvbrowser.sourceforge.net/plugins/plugins2.txt");    
+        SoftwareUpdater softwareUpdater=null;
+        softwareUpdater=new SoftwareUpdater(url);
+        items=softwareUpdater.getAvailableSoftwareUpdateItems();
+      }catch (java.io.IOException e) {      
+        e.printStackTrace();
+      }finally{ 
+        win.dispose();
+      }
+      
+      
+      if (items==null) {
+        JOptionPane.showMessageDialog(this,mLocalizer.msg("error.1","software check failed."));
+      }
+      else if (items.length==0) {
+        JOptionPane.showMessageDialog(this,mLocalizer.msg("error.2","No new items available"));
+      }
+      else {
+        SoftwareUpdateDlg dlg=new SoftwareUpdateDlg(this);
+        dlg.setSoftwareUpdateItems(items);
+        UiUtilities.centerAndShow(dlg);
+      }
+    }
   
-  
-  
-}
+  }
 
 public void askForDataUpdate() {
   
