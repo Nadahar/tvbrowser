@@ -1,0 +1,4 @@
+Changelog ImdbSearchPlugin
+
+1.0:
+- initial version
