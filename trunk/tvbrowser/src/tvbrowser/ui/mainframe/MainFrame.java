@@ -32,7 +32,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Locale;
 import java.util.logging.Level;
 
@@ -54,8 +56,8 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import net.infonode.docking.RootWindow;
-import net.infonode.docking.View;
 import net.infonode.docking.SplitWindow;
+import net.infonode.docking.View;
 import net.infonode.docking.util.DockingUtil;
 import net.infonode.docking.util.ViewMap;
 import net.infonode.util.Direction;
@@ -436,6 +438,14 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   public static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
     pluginsMenu.removeAll();
+    
+    Arrays.sort(plugins, new Comparator() {
+
+        public int compare(Object o1, Object o2) {
+            return o1.toString().compareTo(o2.toString());
+        }
+
+    });
     
     for (int i = 0; i < plugins.length; i++) {
       Action action = plugins[i].getButtonAction();
