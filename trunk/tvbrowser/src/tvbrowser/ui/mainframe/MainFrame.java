@@ -359,7 +359,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
     
-    TVBrowser.flushSettings();
+    TVBrowser.shutdown();
 
     mLog.info("Closing tv data base");
     try {
