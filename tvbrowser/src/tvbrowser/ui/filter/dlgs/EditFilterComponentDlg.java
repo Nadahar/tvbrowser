@@ -27,23 +27,36 @@
 package tvbrowser.ui.filter.dlgs;
 
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import tvbrowser.core.filters.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
+import tvbrowser.core.filters.filtercomponents.PluginIconFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
-
-
-import util.ui.*;
+import util.ui.UiUtilities;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener {
     
@@ -96,6 +109,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
       mRuleCb.addItem(new KeywordFilterComponent());
       mRuleCb.addItem(new PluginFilterComponent());
+      mRuleCb.addItem(new PluginIconFilterComponent());
       mRuleCb.addItem(new ChannelFilterComponent());   
       mRuleCb.addItem(new TimeFilterComponent());
       mRuleCb.addItem(new ProgramInfoFilterComponent());
