@@ -74,6 +74,10 @@ public class ReminderList implements ActionListener {
     mRoot = root;
     ProgramItem[] items = root.getPrograms();
     for (int i=0; i<items.length; i++) {
+      Program prog = items[i].getProgram();
+      if (prog == null) {
+        throw new NullPointerException("ups");
+      }
       items[i].getProgram().mark(ReminderPlugin.getInstance());
     }
   }
@@ -163,7 +167,6 @@ public class ReminderList implements ActionListener {
   public void add(Program program, int minutes) {
     ReminderListItem item = new ReminderListItem(program, minutes);
     program.mark(ReminderPlugin.getInstance());
-    //mContainer.addProgram(item.getProgramItem());
     mRoot.addProgram(item.getProgramItem());
   }
   
