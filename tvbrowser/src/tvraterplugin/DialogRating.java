@@ -253,9 +253,9 @@ public class DialogRating extends JDialog {
 			JTextPane pane = new JTextPane();
 			pane.setContentType("text/html");
 			
-			if (_length < 75) {
+			if (_length < TVRaterPlugin.MINLENGTH) {
 				pane.setText("<center style='font-family: helvetica'>"+
-							_mLocalizer.msg("tooshort", "Program too short for rating. The minimum lenght is 75 min.<br>This reduces traffic on the server.")
+							_mLocalizer.msg("tooshort", "Program too short for rating. The minimum lenght is " + TVRaterPlugin.MINLENGTH + " min.<br>This reduces traffic on the server.")
 							+"</center>");
 			} else {
 				pane.setText("<center style='font-family: helvetica'>"+

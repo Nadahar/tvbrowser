@@ -42,7 +42,8 @@ import devplugin.Version;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
-
+    public final static int MINLENGTH = 15;
+    
     private Properties _settings;
 
     private Point _locationRaterDialog = null;
