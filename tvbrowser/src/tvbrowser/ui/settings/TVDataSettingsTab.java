@@ -333,7 +333,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
     int index, boolean isSelected, boolean cellHasFocus) {
       if (value instanceof TvDataService) {
         TvDataService dataService = (TvDataService) value;
-        value = dataService.getName();
+        value = dataService.getInfo().getName();
       }
       
       return super.getListCellRendererComponent(list, value, index, isSelected,

@@ -36,6 +36,10 @@ import devplugin.Plugin;
 
 public class ConfigPluginSettingsTab implements SettingsTab {
  
+  private static final util.ui.Localizer mLocalizer
+     = util.ui.Localizer.getLocalizerFor(ConfigPluginSettingsTab.class);
+
+ 
   private Plugin mPlugin;
   private SettingsTab mSettingsTab;
   
@@ -51,7 +55,7 @@ public class ConfigPluginSettingsTab implements SettingsTab {
     }
     else {
       JPanel mainPanel=new JPanel(new BorderLayout());
-      mainPanel.add(new JLabel("This plugin does not support any settings"));  
+      mainPanel.add(new JLabel(mLocalizer.msg("notsupported","This plugin does not support any settings")));  
       return mainPanel;
     }
     

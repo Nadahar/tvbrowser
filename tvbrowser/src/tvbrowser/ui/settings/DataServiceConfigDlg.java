@@ -47,7 +47,7 @@ public class DataServiceConfigDlg implements ActionListener {
   
 	public DataServiceConfigDlg(Component parent, TvDataService dataService) {
     mDialog = UiUtilities.createDialog(parent, true);
-   	mDialog.setTitle("Configure " + dataService.getName());
+   	mDialog.setTitle("Configure " + dataService.getInfo().getName());
     
 		JPanel contentPane = (JPanel) mDialog.getContentPane();
 		
