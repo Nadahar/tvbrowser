@@ -176,8 +176,9 @@ public class PrimaryDataManager {
       
       boolean thereWereErrors = mDataServiceArr[i].execute(dir, System.err);
       if (thereWereErrors) {
-        throw new PreparationException("Getting raw data from primary data "
-          + "service " + mDataServiceArr[i].getClass().getName() + " failed");
+       // do not throw an exception
+       // throw new PreparationException("Getting raw data from primary data "
+       //   + "service " + mDataServiceArr[i].getClass().getName() + " failed");
       }
       
       // Update the number of bytes read
