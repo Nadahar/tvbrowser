@@ -119,13 +119,6 @@ public class TvDataUpdater {
 
     // Inform the listeners
     fireTvDataUpdateStarted();
-    
-    // Limit the days to download to 3 weeks
-    /* this is done server side */
- /*   if (daysToDownload > 21) {
-      daysToDownload = 21;
-    }
-*/
 
     // Add a day to the daysToDownload for today
     daysToDownload ++;
@@ -170,7 +163,7 @@ public class TvDataUpdater {
       ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(channelArr.length);
       try {
         dataService.updateTvData(updateManager, channelArr, startDate,
-        daysToDownload, monitor);
+                                 daysToDownload, monitor);
       }
       catch (Throwable thr) {
         mLog.log(Level.WARNING, "Updating the TV data for TV data service "
@@ -203,7 +196,11 @@ public class TvDataUpdater {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);
-        lst.tvDataUpdateStarted();
+        try {
+          lst.tvDataUpdateStarted();
+        } catch(Throwable thr) {
+          mLog.log(Level.WARNING, "Fireing event 'TV data update started' failed", thr);
+        }
       }
     }
   }
@@ -213,7 +210,11 @@ public class TvDataUpdater {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);
-        lst.tvDataUpdateFinished();
+        try {
+          lst.tvDataUpdateFinished();
+        } catch(Throwable thr) {
+          mLog.log(Level.WARNING, "Fireing event 'TV data update finished' failed", thr);
+        }
       }
     }
   }
