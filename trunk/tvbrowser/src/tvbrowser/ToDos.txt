@@ -19,7 +19,6 @@ TODOs:
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden
 - Statusbar kann nicht ausgeblendet werden
-- (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
 - Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
 - (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
 - (B) Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
@@ -55,3 +54,6 @@ Bugs:
 - Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert, 
   das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
 
+
+Erledigt:
+- (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
