@@ -28,7 +28,6 @@ package favoritesplugin;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import util.ui.UiUtilities;
 import util.exc.*;
@@ -180,7 +179,7 @@ public class FavoritesPlugin extends Plugin {
       "Automatically marks your favorite programs and passes them to other Plugins." );
     String author = "Til Schneider, www.murfman.de" ;
     
-    return new PluginInfo(name, desc, author, new Version(1, 0));
+    return new PluginInfo(name, desc, author, new Version(1, 1));
   }
   
   

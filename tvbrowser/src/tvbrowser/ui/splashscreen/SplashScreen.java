@@ -49,14 +49,13 @@ public class SplashScreen extends JWindow {
     super();
     
     JPanel contentPane=(JPanel)getContentPane();
-    contentPane.setLayout(new BorderLayout());
     SkinPanel content=new SkinPanel(imgName,SkinPanel.SINGLE);
-    
-    contentPane.add(content,BorderLayout.CENTER);
+    content.setLayout(new BorderLayout());
+    contentPane.add(content);
+  
     msgLabel = new JLabel(mLocalizer.msg("loading", "Loading..."));
-    msgLabel.setHorizontalAlignment(JLabel.CENTER);
-    contentPane.add(msgLabel,BorderLayout.CENTER);
-    
+    msgLabel.setHorizontalAlignment(JLabel.LEFT);
+    content.add(msgLabel,BorderLayout.SOUTH);
     this.setSize(width,height);
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     

@@ -79,7 +79,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private SkinPanel skinPanel;
   private ButtonPanel buttonPanel;
   private static String curLookAndFeel;
-  public static final String VERSION="0.9.3";
+  public static final String VERSION="0.9.4";
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION;
 
   private JMenu pluginsMenu;
@@ -149,7 +149,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     UiUtilities.centerAndShow(frame);
     ErrorHandler.setFrame(frame);
 
-	splash.hide();
+	//splash.hide();
 
     // maximize the frame
     frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
