@@ -26,6 +26,7 @@
 package test.primarydatamanager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.TimeZone;
 
@@ -71,6 +72,16 @@ public class PrimaryDataManagerTest extends TestCase {
     
     // Create the prepared data
     prepDir.mkdir();
+    
+    // Create a dummy mirrorlist.txt with an invalid mirror
+    FileOutputStream stream = null;
+    try {
+      stream = new FileOutputStream(new File(prepDir, "mirrorlist.txt"));
+      stream.write("http://gibt.es.net".getBytes());
+    }
+    finally {
+      try { stream.close(); } catch (Exception exc) {}
+    }
     
     DayProgramFile prepProg1 = new DayProgramFile();
     prepProg1.setVersion(1);
