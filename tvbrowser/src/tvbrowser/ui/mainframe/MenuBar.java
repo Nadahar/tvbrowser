@@ -224,6 +224,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
    protected JMenuItem[] createPluginMenuItems() {
      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+
+     Arrays.sort(plugins, new Comparator() {
+         public int compare(Object o1, Object o2) {
+             System.out.println(o1.toString());
+             return o1.toString().compareTo(o2.toString());
+         }
+     });
+     
      ArrayList list = new ArrayList();
      for (int i = 0; i < plugins.length; i++) {
        Action action = plugins[i].getButtonAction();
@@ -235,12 +243,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      }     
      JMenuItem[] result = new JMenuItem[list.size()];
      list.toArray(result);
-     
-     Arrays.sort(result, new Comparator() {
-         public int compare(Object o1, Object o2) {
-             return o1.toString().compareTo(o2.toString());
-         }
-     });
      
      return result;
    }
