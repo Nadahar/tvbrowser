@@ -25,6 +25,7 @@
  */
 package tvbrowser.core;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
@@ -474,8 +475,24 @@ public class Settings {
                                 "tvraterplugin.TVRaterPlugin",
                               });
 
+
+  /** Color for Program on Air - This shows how much was shown til now */
+  public static final ColorProperty propProgramTableColorOnAirDark 
+    = new ColorProperty(mProp, "programpanel.ColorOnAirDark", new Color(128, 128, 255, 80));
+  /** Color for Program on Air - This shows how much is not shown til now */
+  public static final ColorProperty propProgramTableColorOnAirLight 
+    = new ColorProperty(mProp, "programpanel.ColorOnAirLight", new Color(128, 128, 255, 40));
+  /** Color for marked Program */
+  public static final ColorProperty propProgramTableColorMarked 
+    = new ColorProperty(mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 40));
+
+  
   public static final BooleanProperty propMouseOver
     = new BooleanProperty(mProp, "programpanel.MouseOver", false);
+
+  /** Color for Mouse-Over */
+  public static final ColorProperty propMouseOverColor 
+    = new ColorProperty(mProp, "programpanel.MouseOverColor", new Color(200, 200, 0, 40));
   
   public static final BooleanProperty propTitelAlwaysVisible
     = new BooleanProperty(mProp, "programpanel.TitelAlwaysVisible", false);  
