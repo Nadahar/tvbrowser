@@ -165,7 +165,9 @@ public class ChannelList {
     }
     
     gIn.close();
-    iconLoader.close();
+    if (iconLoader != null) {
+      iconLoader.close();
+    }
   }
 
   
