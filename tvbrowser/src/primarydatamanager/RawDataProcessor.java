@@ -45,7 +45,7 @@ public class RawDataProcessor {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(RawDataProcessor.class.getName());
 
-  private static int MAX_SHORT_DESCRIPTION_LENGTH = 150;
+  public static int MAX_SHORT_DESCRIPTION_LENGTH = 150;
   
   /**
    * The percentage of the number of frames that must stay in the version
