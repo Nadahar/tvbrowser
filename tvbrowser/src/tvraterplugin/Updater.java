@@ -24,7 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.StringBufferInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -32,9 +32,20 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.zip.GZIPInputStream;
+import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xalan.serialize.SerializerToXML;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -45,7 +56,7 @@ import devplugin.Program;
  * @author bodo tasche
  */
 public class Updater {
-	private static String LOCATION = "http://localhost/test/test.php"; 
+	private static String LOCATION = "http://localhost/test/xmltest.php"; 
 
 	private TVRaterPlugin _tvraterPlugin;
 
@@ -64,93 +75,149 @@ public class Updater {
 		OutputStream out = connection.getOutputStream();
 		
 		GZIPOutputStream outZipped = new GZIPOutputStream(out);
+		writeData(outZipped);
+		outZipped.close();
 
-		PrintWriter writer = new PrintWriter(outZipped);
-		writeData(writer);
-		writer.close();
-
-		String data = "";
-
-		data = readURLConnection(connection);
+		String data = readURLConnection(connection);
 		System.out.println(data);
-
+		readData(data);
 		out.close();
 	}
 
-	private void writeData(PrintWriter writer) {
+	/**
+	 * @param data
+	 */
+	private void readData(String data) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document document = builder.parse(new StringBufferInputStream(data));
+
+		showAll(document.getDocumentElement());
+	}
+	
+	private void showAll(Node el) {
+		System.out.println(el.getNodeName() + "--" + el.getNodeValue());
+		
+		Node child = el.getFirstChild();
+		while (child != null) {
+			showAll(child);
+			child = child.getNextSibling(); 
+		}
+	}
+
+	/**
+	 * Writes the Data into the Outputstream 
+	 * @param output the Outputstream
+	 * @throws ParserConfigurationException 
+	 * @throws IOException
+	 */
+	private void writeData(OutputStream output) throws ParserConfigurationException, IOException{
 		Hashtable table = createUpdateList();
 		
-		writer.println("<tvrater>");
-		writer.println("<user>");
-		writer.println("<name>");
-		writer.println(_tvraterPlugin.getSettings().getProperty("name"));
-		writer.println("</name>");
-		writer.println("<password>");
-		// TODO : Verschlüsselung des Passwortes
-		writer.println(_tvraterPlugin.getSettings().getProperty("password"));
-		writer.println("</password>");
-		writer.println("</user>");
-		
-		writer.println("<setratings>");
-		
-		ArrayList list = _tvraterPlugin.getDatabase().getChangedPersonal();
-		
-		for (int i=0; i < list.size(); i++) {
-			Rating rating = (Rating)list.get(i);
-			writer.println("<rating>");
-			writer.println("<title>");
-			writer.println(rating.getTitle());
-			writer.println("</title>");
+		Properties props = new Properties();
+		props.put( "encoding", "UTF-8" );
 
-			writer.println("<overall>");
-			writer.println(rating.getIntValue(Rating.OVERALL));
-			writer.println("</overall>");
-			writer.println("<action>");
-			writer.println(rating.getIntValue(Rating.ACTION));
-			writer.println("</action>");
-			writer.println("<entitlement>");
-			writer.println(rating.getIntValue(Rating.ENTITLEMENT));
-			writer.println("</entitlement>");
-			writer.println("<fun>");
-			writer.println(rating.getIntValue(Rating.FUN));
-			writer.println("</fun>");
-			writer.println("<tension>");
-			writer.println(rating.getIntValue(Rating.TENSION));
-			writer.println("</tension>");
-			writer.println("<erotic>");
-			writer.println(rating.getIntValue(Rating.EROTIC));
-			writer.println("</erotic>");
+		SerializerToXML serializer = new SerializerToXML();
+		serializer.init( output, props );
+						
+		Document document;
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		document = builder.newDocument();
+		Element tvrater = document.createElement("tvrater");
+		document.appendChild(tvrater);
+
+		// User		
+		Element user = document.createElement("user");
+
+		Element name = createNodeWithTextValue(document, "name", _tvraterPlugin.getSettings().getProperty("name"));
+		user.appendChild(name);
+
+		Element password = createNodeWithTextValue(document, "password",IOUtilities.xorEncode(_tvraterPlugin.getSettings().getProperty("password"), 21));
+		user.appendChild(password);
+		
+		tvrater.appendChild(user);
+
+		// Command
+		Element command = createNodeWithTextValue(document, "command", "Update");
+		tvrater.appendChild(command);
+
+		// Data
+		Element data = document.createElement("data");
+		tvrater.appendChild(data);
+
+		// Setratings
+		Element setratings = document.createElement("setratings");
+		data.appendChild(setratings);
+
+		ArrayList list = _tvraterPlugin.getDatabase().getChangedPersonal();
+		for (int i=0; i < list.size(); i++) {
+			Element ratingElement = document.createElement("rating");
+			setratings.appendChild(ratingElement);
 			
-			writer.println("</rating>");
+			Rating rating = (Rating)list.get(i);
+			ratingElement.appendChild(
+				createNodeWithTextValue(document, "title", rating.getTitle())
+			);
+
+			ratingElement.appendChild(
+				createNodeWithTextValue(document, "overall", rating.getIntValue(Rating.OVERALL))
+			);
+			ratingElement.appendChild(
+				createNodeWithTextValue(document, "action", rating.getIntValue(Rating.ACTION))
+			);
+			ratingElement.appendChild(
+				createNodeWithTextValue(document, "entitlement", rating.getIntValue(Rating.ENTITLEMENT))
+			);
+			ratingElement.appendChild(
+				createNodeWithTextValue(document, "fun", rating.getIntValue(Rating.FUN))
+			);
+			ratingElement.appendChild(
+				createNodeWithTextValue(document, "tension", rating.getIntValue(Rating.TENSION))
+			);
+			ratingElement.appendChild(
+				createNodeWithTextValue(document, "erotic", rating.getIntValue(Rating.EROTIC))
+			);
+			
 		}
-		
-		//_tvraterPlugin.getDatabase().emptyChangedPersonal();
-		
-		writer.println("</setratings>");
-		
-		writer.println("<getratings>");
-		
+	//	_tvraterPlugin.getDatabase().emptyChangedPersonal();
+
+		// GetRatings
+		Element getratings = document.createElement("getratings");
+		data.appendChild(getratings);
+
 		Enumeration enum = table.elements();
-		System.out.println("Size: " + table.size());
 		while (enum.hasMoreElements()) {
-			writer.println("<program>");
-			writer.println("<title>");
+			Element program = document.createElement("program");
+			getratings.appendChild(program);
+
 			Program prog = (Program) enum.nextElement();
-			writer.println(prog.getTitle());
-			writer.println("</title>");
-			writer.println("</program>");
+
+			program.appendChild(
+				createNodeWithTextValue(document, "title", prog.getTitle())
+			);
+			
 		}
-		
-		writer.println("</getratings>");
-		
-		writer.println("</tvrater>");
+
+		serializer.serialize(document);
+	}
+
+	private Element createNodeWithTextValue(Document doc, String nodename, String value) {
+		Element el = doc.createElement(nodename);
+		el.appendChild(doc.createTextNode(value));
+		return el;
+	}
+
+	private Element createNodeWithTextValue(Document doc, String nodename, int value) {
+		return createNodeWithTextValue(doc, nodename, Integer.toString(value));
 	}
 
 	private static String readURLConnection(URLConnection uc) throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(uc.getInputStream())));
+//			reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(uc.getInputStream())));
+			reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
 			String line = null;
 			int letter = 0;
 			while ((letter = reader.read()) != -1)
@@ -177,20 +244,20 @@ public class Updater {
 		Date date = new Date();
 		for (int d = 0; d < 31; d++) {
 			for (int i = 0; i < channels.length; i++) {
-				Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
-				while ((it != null) && (it.hasNext())) {
-					Program program = (Program) it.next();
-					if (program.getLength() >= 75) {
-						if (!table.containsKey(program.getTitle())) {
-							table.put(program.getTitle(), program);
+						Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
+						while ((it != null) && (it.hasNext())) {
+							Program program = (Program) it.next();
+							if (program.getLength() >= 75) {
+								if (!table.containsKey(program.getTitle())) {
+									table.put(program.getTitle(), program);
+								}
+							}
 						}
 					}
+
+					date = date.addDays(1);
 				}
+
+				return table;
 			}
-
-			date = date.addDays(1);
-		}
-
-		return table;
-	}
-}
+		}			 

@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import util.io.IOUtilities;
 import util.ui.BrowserLauncher;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -54,7 +55,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 
 	private JTextField _name;
 	private JPasswordField _password;
-	private JCheckBox _includeFav;
+//	private JCheckBox _includeFav;
 	private JCheckBox _ownRating;
 	private JComboBox _updateTime;
 
@@ -102,8 +103,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 		c.weightx = 1.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 0, 0, 3);
-		// TODO: Entschlüsseln des Passwortes!
-		_password = new JPasswordField(_settings.getProperty("password"));
+		_password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password"), 21));
 		user.add(_password, c);
 
 		c.gridwidth = GridBagConstraints.RELATIVE;
@@ -147,12 +147,12 @@ public class TVRaterSettingsTab implements SettingsTab {
 
 		main.add(user);
 
-		_includeFav =
+	/*	_includeFav =
 			new JCheckBox(
 				mLocalizer.msg("includeFavorites", "Include Favorites into rating"),
 				_settings.getProperty("includeFavorites", "true").equals("true"));
 		main.add(_includeFav);
-
+*/
 		_ownRating =
 			new JCheckBox(
 				mLocalizer.msg("ownRating", "Use own rating if available"),
@@ -187,13 +187,13 @@ public class TVRaterSettingsTab implements SettingsTab {
 	 */
 	public void saveSettings() {
 		_settings.setProperty("name", _name.getText());
-		// TODO: Verschlüsselung!!
-		_settings.setProperty("password", new String(_password.getPassword()));
-		if (_includeFav.isSelected()) {
+		_settings.setProperty("password", IOUtilities.xorEncode(new String(_password.getPassword()), 21));
+/*		if (_includeFav.isSelected()) {
 			_settings.setProperty("includeFavorites", "true");
 		} else {
 			_settings.setProperty("includeFavorites", "false");
 		}
+*/
 		if (_ownRating.isSelected()) {
 			_settings.setProperty("ownRating", "true");
 		} else {
