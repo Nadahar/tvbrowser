@@ -39,6 +39,7 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
 
@@ -60,19 +61,21 @@ public class MediaPanel {
   private int mWidth, mHeight;
 
   private Image background;
-  
-  private MediaProgramPanel mProgramPanel;
-  
 
-  public MediaPanel(MediaCenterFrame parent, int width, int height, BufferStrategy strategy) {
+  private MediaProgramPanel mProgramPanel;
+
+  private MediaCenterPlugin mPlugin;
+  
+  public MediaPanel(MediaCenterPlugin plugin, MediaCenterFrame parent, int width, int height, BufferStrategy strategy) {
     mParent = parent;
     mStrategy = strategy;
-
+    mPlugin = plugin;
+    
     mWidth = width;
     mHeight = height;
 
     background = createBackgroundImage();
-    
+
     mProgramPanel = new MediaProgramPanel();
   }
 
@@ -95,7 +98,11 @@ public class MediaPanel {
       g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
       g2d.setColor(new Color(180, 180, 180, 100));
-      g2d.fillRoundRect(50, 10, mWidth - 100, 100, 10, 10);
+
+      g2d.fillRoundRect(5, 10, 90, 100, 10, 10);
+      
+      g2d.fillRoundRect(105, 10, 690, 100, 10, 10);
+      g2d.fillRoundRect(5, 120, 790, 470, 10, 10);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -107,23 +114,24 @@ public class MediaPanel {
 
   public void startLoop() {
     Color box = new Color(180, 180, 180, 100);
-    Font textFont = new Font("SansSerif", Font.BOLD, 14);
+    Font textFont = new Font("SansSerif", Font.BOLD, 12);
 
     while (!mStopLoop) {
-      
+
       synchronized (this) {
-      Graphics2D g2d = (Graphics2D) mStrategy.getDrawGraphics();
-      g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        Graphics2D g2d = (Graphics2D) mStrategy.getDrawGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-      g2d.drawImage(background, 0, 0, null);
+        g2d.drawImage(background, 0, 0, null);
 
-      Program prg = Plugin.getPluginManager().getExampleProgram();
+        Program prg = Plugin.getPluginManager().getExampleProgram();
 
-      drawProgram(g2d, prg, textFont);
-      
-      // finally, we've completed drawing so clear up the graphics
-      // and flip the buffer over
-      g2d.dispose();
+        drawProgram(g2d, prg, textFont);
+        drawChannels(g2d, textFont);
+
+        // finally, we've completed drawing so clear up the graphics
+        // and flip the buffer over
+        g2d.dispose();
       }
 
       mStrategy.show();
@@ -141,8 +149,23 @@ public class MediaPanel {
   }
 
   private void drawProgram(Graphics2D g2d, Program prg, Font textFont) {
-    mProgramPanel.setProgram(prg, textFont, 480);
-    mProgramPanel.paintPanel(g2d, textFont, 60, 10);
+    mProgramPanel.setProgram(prg, textFont, 680);
+    mProgramPanel.paintPanel(g2d, textFont, 110, 8);
+  }
+
+  private void drawChannels(Graphics2D g2d, Font textFont) {
+    Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
+    
+    int max = 5;
+    if (max > channels.length) {
+      max = channels.length;
+    }
+    
+    for (int i = 0; i < max; i++) {
+      DrawToolBox.drawFontWithShadow(g2d, channels[i].getName(), 100*i, 200, 1, textFont);
+      channels[i].getIcon().paintIcon(null, g2d, 100*i, 180);
+      
+    }
   }
   
   public synchronized void doPaint() {
@@ -158,14 +181,21 @@ public class MediaPanel {
     mProgramPanel.lastLine();
     doPaint();
   }
-  
-  
+
   public synchronized void nextDay() {
   }
 
   public synchronized void lastDay() {
   }
 
+  public synchronized void nextChannel() {
+    
+  }
+  
+  public synchronized void lastChannel() {
+    
+  }
+  
   public void close() {
     mStopLoop = true;
   }

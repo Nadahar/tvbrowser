@@ -42,6 +42,8 @@ import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import util.ui.ImageUtilities;
+
 /**
  * This class represents the Frame.
  * 
@@ -67,10 +69,13 @@ public class MediaCenterFrame extends Canvas {
    * @param y Height
    * @param fullscreen Fullscreen-Mode ?
    */
-  public MediaCenterFrame(int x, int y, boolean fullscreen) {
+  public MediaCenterFrame(MediaCenterPlugin plugin, int x, int y, boolean fullscreen) {
     // create a frame to contain our game
     mFrame = new JFrame("TV-Browser MediaCenter");
 
+    mFrame.setIconImage(ImageUtilities.createImageFromJar("mediacenterplugin/images/krdc16.png",
+        MediaCenterPlugin.class));
+    
     // get hold the content of the frame and set up the resolution of the game
     JPanel panel = (JPanel) mFrame.getContentPane();
     panel.setPreferredSize(new Dimension(x, y));
@@ -87,7 +92,7 @@ public class MediaCenterFrame extends Canvas {
     createBufferStrategy(2);
     BufferStrategy buffer = getBufferStrategy();
 
-    mMediaPanel = new MediaPanel(this, x, y, buffer);
+    mMediaPanel = new MediaPanel(plugin, this, x, y, buffer);
 
     KeyMediaAdapter keyAdapter = new KeyMediaAdapter(mMediaPanel);
 
