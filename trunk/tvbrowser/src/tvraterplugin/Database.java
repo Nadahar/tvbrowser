@@ -71,6 +71,13 @@ public class Database {
 		return null;
 	}
 	
+	/**
+	 * Sets the Rating
+	 * @param rating
+	 */
+	public void setOverallRating(Rating rating) {
+		_overalrating.put(rating.getTitle(), rating);
+	}
 	
 	/**
 	 * Gets the personal Ratings in this Database

@@ -223,5 +223,15 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	public void writeData(ObjectOutputStream out) throws IOException {
 		_tvraterDB.writeData(out);
 	}
-
+	
+	/**
+	 * Gets the parent frame.
+	 * <p>
+	 * The parent frame may be used for showing dialogs.
+	 * 
+	 * @return The parent frame.
+	 */
+	public java.awt.Frame getParentFrameForTVRater() {
+	  return getParentFrame();
+	}
 }

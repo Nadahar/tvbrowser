@@ -37,7 +37,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -175,12 +174,13 @@ public class DialogOverview extends JDialog {
 	 * Updates the Database from the Server
 	 */
 	protected void update() {
-		Updater up = new Updater((Frame) this.getParent(), _tvraterPlugin);
-		try {
-			up.doUpdate();
-		} catch (Exception e) {
-			ErrorHandler.handle(_mLocalizer.msg("updateError", "An error occured while updateting the Database"), e);
-			e.printStackTrace();
-		}
+		Updater up = new Updater(_tvraterPlugin);
+		up.run();
+
+		RatingComparator comperator = new RatingComparator();
+		Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
+		Collections.sort(overallVector, comperator);
+		_overall.setListData(overallVector);
+			
 	}
 }
