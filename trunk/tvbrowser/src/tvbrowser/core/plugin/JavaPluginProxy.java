@@ -246,8 +246,8 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       if (prop != null) {
         fOut = new FileOutputStream(tmpPropFile);
         prop.store(fOut, "Settings for plugin " + getInfo().getName());
+        fOut.close();
       }
-      fOut.close();
 
       // Saving suceed -> Delete the old file and rename the temp file
       File propFile = new File(userDirectory, getId() + ".prop");
@@ -416,15 +416,15 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   }
 
 
-  public void onActivation() {
+  public void doOnActivation() {
     mPlugin.onActivation();
   }
 
-  public void onDeactivation() {
+  public void doOnDeactivation() {
     mPlugin.onDeactivation();
   }
 
-  public boolean canUseProgramTree() {
+  public boolean doCanUseProgramTree() {
     return mPlugin.canUseProgramTree();
   }
   
