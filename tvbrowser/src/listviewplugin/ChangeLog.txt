@@ -1,0 +1,4 @@
+Changelog TVRaterPlugin
+
+0.01:
+- initial version
