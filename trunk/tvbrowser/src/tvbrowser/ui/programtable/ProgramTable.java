@@ -59,8 +59,7 @@ import devplugin.Program;
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramTable extends JPanel
-  implements ProgramTableModelListener
-{
+implements ProgramTableModelListener {
   
   private int mColumnWidth;
   private int mHeight;
@@ -70,31 +69,31 @@ public class ProgramTable extends JPanel
   private BackgroundPainter mBackgroundPainter;
   
   private Point mDraggingPoint;
-
+  
   private Point mMouse;
   
-  private JPopupMenu mPopupMenu;  
+  private JPopupMenu mPopupMenu;
   
   /**
    * Creates a new instance of ProgramTable.
    */
   public ProgramTable(ProgramTableModel model) {
     setProgramTableLayout(null);
-
+    
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
     setCursor(new Cursor(Cursor.HAND_CURSOR));
     updateBackground();
-
+    
     setBackground(Color.white);
     setOpaque(true);
-
+    
     // setFocusable(true);
     addMouseMotionListener(new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent evt) {
         handleMouseDragged(evt);
       }
-          
+      
       public void mouseMoved(MouseEvent evt) {
         handleMouseMoved(evt);
       }
@@ -108,11 +107,11 @@ public class ProgramTable extends JPanel
       }
       public void mouseExited(MouseEvent evt) {
         handleMouseExited(evt);
-      }      
+      }
     });
     
   }
-
+  
   
   
   protected void setModel(ProgramTableModel model) {
@@ -121,9 +120,9 @@ public class ProgramTable extends JPanel
     
     updateLayout();
   }
-
-
-
+  
+  
+  
   public ProgramTableModel getModel() {
     return mModel;
   }
@@ -132,7 +131,7 @@ public class ProgramTable extends JPanel
     return mLayout;
   }
   
- 
+  
   public void setProgramTableLayout(ProgramTableLayout layout) {
     if (layout == null) {
       // Use the default layout
@@ -150,8 +149,8 @@ public class ProgramTable extends JPanel
       revalidate();
     }
   }
-
-
+  
+  
   public void setColumnWidth(int columnWidth) {
     mColumnWidth = columnWidth;
   }
@@ -161,8 +160,8 @@ public class ProgramTable extends JPanel
   public int getColumnWidth() {
     return mColumnWidth;
   }
-
-
+  
+  
   public void updateBackground() {
     BackgroundPainter oldPainter = mBackgroundPainter;
     
@@ -175,11 +174,11 @@ public class ProgramTable extends JPanel
       mBackgroundPainter = new OneImageBackPainter();
     } else { // timeBlock
       mBackgroundPainter = new TimeBlockBackPainter();
-    } 
+    }
     mBackgroundPainter.layoutChanged(mLayout, mModel);
     
     firePropertyChange("backgroundpainter", oldPainter, mBackgroundPainter);
-
+    
     repaint();
   }
   
@@ -187,21 +186,21 @@ public class ProgramTable extends JPanel
   public BackgroundPainter getBackgroundPainter() {
     return mBackgroundPainter;
   }
-
-
+  
+  
   public void paintComponent(Graphics grp) {
     if (Settings.propEnableAntialiasing.getBoolean()) {
       final Graphics2D g2d = (Graphics2D) grp;
       if (null != g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       }
     }
     
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
-        
+    
     // Paint the table cells
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;
@@ -214,7 +213,7 @@ public class ProgramTable extends JPanel
     super.paintComponent(grp);
     int tableHeight = Math.max(mHeight, clipBounds.y + clipBounds.height);
     mBackgroundPainter.paintBackground(grp, mColumnWidth, tableHeight,
-      minCol, maxCol, clipBounds, mLayout, mModel);
+    minCol, maxCol, clipBounds, mLayout, mModel);
     
     boolean mouseOver = false;
     
@@ -229,44 +228,43 @@ public class ProgramTable extends JPanel
         // Render the program
         if (panel != null) {
           int cellHeight = panel.getHeight();
-
+          
           // Check whether the cell is within the clipping area
           if (((y + cellHeight) > clipBounds.y)
-            && (y < (clipBounds.y + clipBounds.height)))
-          {
-
-            if (Settings.propMouseOver.getBoolean()) {
-                Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
-            	if ((mMouse != null) && (rec.contains(mMouse))) {
-                	mouseOver = true;
-            	} else {
-            	    mouseOver = false;
-            	}
-            } 
+          && (y < (clipBounds.y + clipBounds.height))) {
             
-//          Paint the cell            
+            if (Settings.propMouseOver.getBoolean()) {
+              Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
+              if ((mMouse != null) && (rec.contains(mMouse))) {
+                mouseOver = true;
+              } else {
+                mouseOver = false;
+              }
+            }
+            
+            //          Paint the cell
             grp.translate(x, y);
-
+            
             panel.setSize(mColumnWidth, cellHeight);
-            panel.paint(mouseOver, grp);            
+            panel.paint(mouseOver, grp);
             
             // grp.drawRect(0, 0, mColumnWidth, cellHeight);
             grp.translate(-x, -y);
           }
-
+          
           // Move to the next row in this column
           y += cellHeight;
         }
       }
-
+      
       // paint the timeY
       // int timeY = getTimeYOfColumn(col, util.io.IOUtilities.getMinutesAfterMidnight());
       // grp.drawLine(x, timeY, x + mColumnWidth, timeY);
-
+      
       // Move to the next column
       x += mColumnWidth;
     }
-
+    
     
     
     // Paint the copyright notices
@@ -277,8 +275,8 @@ public class ProgramTable extends JPanel
     }
     
     if (clipBounds.width - x > 0) {
-        grp.setColor(Color.WHITE);
-        grp.fillRect(x, 0, clipBounds.width - x, clipBounds.height);
+      grp.setColor(Color.WHITE);
+      grp.fillRect(x, 0, clipBounds.width - x, clipBounds.height);
     }
     
     /*
@@ -294,9 +292,9 @@ public class ProgramTable extends JPanel
   public Dimension getPreferredSize() {
     return new Dimension(mModel.getColumnCount() * mColumnWidth, mHeight);
   }
-
-
-
+  
+  
+  
   public Program getProgramAt(int x, int y) {
     int col = x / mColumnWidth;
     
@@ -318,18 +316,18 @@ public class ProgramTable extends JPanel
     
     return null;
   }
-
-
+  
+  
   public void forceRepaintAll() {
     for (int col = 0; col < mModel.getColumnCount(); col++) {
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
         panel.forceRepaint();
       }
-   }
+    }
   }
-
-
+  
+  
   public void updateLayout() {
     mLayout.updateLayout(mModel);
     
@@ -346,68 +344,75 @@ public class ProgramTable extends JPanel
         mHeight = colHeight;
       }
     }
-
+    
     // Add 20 for the copyright notice
     mHeight += 20;
-
+    
     if (mBackgroundPainter != null) {
       mBackgroundPainter.layoutChanged(mLayout, mModel);
     }
-
+    
     repaint();
   }
-
-
-
+  
+  
+  
   public void scrollBy(int deltaX, int deltaY) {
     if (getParent() instanceof JViewport) {
       JViewport viewport = (JViewport) getParent();
       Point viewPos = viewport.getViewPosition();
       
-      viewPos.x += deltaX;
-      viewPos.y += deltaY;
-
-      int maxX = getWidth() - viewport.getWidth();
-      int maxY = getHeight() - viewport.getHeight();
+      if (deltaX!=0){
+        viewPos.x += deltaX;
+        
+        int maxX = getWidth() - viewport.getWidth();
+        
+        viewPos.x = Math.min(viewPos.x, maxX);
+        viewPos.x = Math.max(viewPos.x, 0);
+        
+        viewport.setViewPosition(viewPos);
+      }
       
-      viewPos.x = Math.min(viewPos.x, maxX);
-      viewPos.x = Math.max(viewPos.x, 0);
-      viewPos.y = Math.min(viewPos.y, maxY);
-      viewPos.y = Math.max(viewPos.y, 0);
-      
-      viewport.setViewPosition(viewPos);
+      if (deltaY !=0){
+        viewPos.y += deltaY;
+        int maxY = getHeight() - viewport.getHeight();
+        viewPos.y = Math.min(viewPos.y, maxY);
+        viewPos.y = Math.max(viewPos.y, 0);
+        
+        viewport.setViewPosition(viewPos);
+      }
     }
   }
-
-
+  
+  
   /**
    * Creates a context menu containg all subscribed plugins that support context
    * menues.
-   * 
+   *
    * @param program The program to create the context menu for.
    * @return a plugin context menu.
    */
-  private JPopupMenu createPluginContextMenu(Program program) {  
-    return PluginProxyManager.createPluginContextMenu(program); 
+  private JPopupMenu createPluginContextMenu(Program program) {
+    return PluginProxyManager.createPluginContextMenu(program);
   }
   
   
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
-
+    
     mDraggingPoint = evt.getPoint();
   }
-
+  
   
   
   private void handleMouseClicked(MouseEvent evt) {
-    mMouse = evt.getPoint();  
+    mMouse = evt.getPoint();
     updateUI();
     Program program = getProgramAt(evt.getX(), evt.getY());
     if (SwingUtilities.isRightMouseButton(evt)) {
       if (program != null) {
-          mPopupMenu = createPluginContextMenu(program);
-          mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
+        mPopupMenu = createPluginContextMenu(program);
+        mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
       }
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
@@ -428,26 +433,26 @@ public class ProgramTable extends JPanel
       scrollBy(deltaX, deltaY);
     }
   }
-
+  
   
   private void handleMouseMoved(MouseEvent evt) {
-      if (Settings.propMouseOver.getBoolean()) {
-          if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
-              mMouse = evt.getPoint();
-              updateUI();      
-          }
+    if (Settings.propMouseOver.getBoolean()) {
+      if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
+        mMouse = evt.getPoint();
+        updateUI();
       }
+    }
   }
-
+  
   private void handleMouseExited(MouseEvent evt) {
-      if (Settings.propMouseOver.getBoolean()) {
-        JViewport viewport = (JViewport) getParent();
-      	if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
-          mMouse = null;
-          updateUI();      
-      	}
+    if (Settings.propMouseOver.getBoolean()) {
+      JViewport viewport = (JViewport) getParent();
+      if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
+        mMouse = null;
+        updateUI();
       }
-  }  
+    }
+  }
   
   public int getTimeY(int minutesAfterMidnight) {
     // Get the total time y
@@ -465,11 +470,11 @@ public class ProgramTable extends JPanel
     if (parts == 0) {
       // avoid division by zero
       return 0;
-    } else {      
+    } else {
       return totalTimeY / parts;
     }
   }
-
+  
   
   
   private int getTimeYOfColumn(int col, int minutesAfterMidnight) {
@@ -506,7 +511,7 @@ public class ProgramTable extends JPanel
   private Rectangle getCellRect(int cellCol, int cellRow) {
     int x = cellCol * mColumnWidth;
     int width = mColumnWidth;
-
+    
     int y = mLayout.getColumnStart(cellCol);
     for (int row = 0; row < mModel.getRowCount(cellCol); row++) {
       ProgramPanel panel = mModel.getProgramPanel(cellCol, row);
@@ -523,16 +528,16 @@ public class ProgramTable extends JPanel
   
   
   // implements ProgramTableModelListener
-
-
+  
+  
   public void tableDataChanged() {
     updateLayout();
     revalidate();
     repaint();
   }
-
-
-
+  
+  
+  
   public void tableCellUpdated(int col, int row) {
     Rectangle cellRect = getCellRect(col, row);
     
@@ -540,5 +545,5 @@ public class ProgramTable extends JPanel
       repaint(cellRect);
     }
   }
-
+  
 }
