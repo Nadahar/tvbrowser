@@ -28,6 +28,9 @@ package tvbrowser.ui.programtable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+
 
 
 import devplugin.Channel;
@@ -45,7 +48,6 @@ public class ChannelPanel extends JPanel {
   
   private int mColumnWidth;
   private JLabel[] mLabelArr;
-  private static Font channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
   
   
   public ChannelPanel(int columnWidth, Channel[] channelArr) {
@@ -58,12 +60,12 @@ public class ChannelPanel extends JPanel {
   }
 
   public static void fontChanged() {
-    channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
+    ChannelLabel.fontChaned();
   }
   
   public void setShownChannels(Channel[] channelArr) {
     removeAll();
-    mLabelArr = new JLabel[channelArr.length];
+    mLabelArr = new ChannelLabel[channelArr.length];
     
     for (int i = 0; i < mLabelArr.length; i++) {
       String channelName = null;
@@ -74,10 +76,7 @@ public class ChannelPanel extends JPanel {
         channelName = mLocalizer.msg("unknown", "Unknown");
       }
       
-      mLabelArr[i] = new JLabel(channelName);
-      mLabelArr[i].setFont(channelNameFont);
-      mLabelArr[i].setOpaque(false);
-      mLabelArr[i].setHorizontalAlignment(JLabel.CENTER);
+      mLabelArr[i]=new ChannelLabel(channelArr[i]);  
       add(mLabelArr[i]);
     }
     
@@ -92,6 +91,43 @@ public class ChannelPanel extends JPanel {
     for (int i = 0; i < mLabelArr.length; i++) {
       mLabelArr[i].setPreferredSize(new Dimension(mColumnWidth, 15));
     }
-  }
-  
+  }  
 }
+
+class ChannelLabel extends JLabel {
+   
+    private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
+    private static Font channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
+  
+    public static void fontChaned() {
+      channelNameFont=tvbrowser.core.Settings.getChannelNameFont();
+    }
+  
+    public ChannelLabel(final Channel ch) {
+      super(ch.getName());
+      setFont(channelNameFont);
+      setOpaque(false);
+      setHorizontalAlignment(JLabel.CENTER);
+            
+      setCursor(linkCursor);
+      addMouseListener(new MouseAdapter(){
+        public void  mouseClicked(MouseEvent e) { 
+          try {
+            util.ui.BrowserLauncher.openURL(ch.getWebpage());
+          } catch (IOException e1) {
+            e1.printStackTrace();
+          }
+        }
+        
+        public void mouseEntered(MouseEvent e) {
+          e.getComponent().setForeground(Color.blue);
+        }
+        
+        public void mouseExited(MouseEvent e) {
+          e.getComponent().setForeground(Color.black);
+        }        
+      }
+    );
+    } 
+  }
+

@@ -105,6 +105,11 @@ Section "${PROG_NAME} (erforderlich)"
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
 
+  SetOutPath "$INSTDIR"
+  File "${RUNTIME_DIR}\..\..\win\DesktopIndicator.dll"
+  
+  SetOutPath "$INSTDIR\imgs"
+  File "${RUNTIME_DIR}\..\..\win\taskicon.ico"
   
   CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
@@ -199,19 +204,21 @@ Section "TV-Browser-Datenservice"
   File "${RUNTIME_DIR}\tvdataservice\TvBrowserDataService.jar"
 SectionEnd
 
-Section "Premiere-Datenservice"
-  SectionIn 1 2
-
-  SetOutPath "$INSTDIR\tvdataservice"
-  File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
-SectionEnd
-
-Section "WDR-Datenservice"
-  SectionIn 1 2
-
-  SetOutPath "$INSTDIR\tvdataservice"
-  File "${RUNTIME_DIR}\tvdataservice\WdrDataService.jar"
-SectionEnd
+#
+#Section "Premiere-Datenservice"
+#  SectionIn 1 2
+#
+#  SetOutPath "$INSTDIR\tvdataservice"
+#  File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
+#SectionEnd
+#
+#Section "WDR-Datenservice"
+#  SectionIn 1 2
+#
+#  SetOutPath "$INSTDIR\tvdataservice"
+#  File "${RUNTIME_DIR}\tvdataservice\WdrDataService.jar"
+#SectionEnd
+#
 
 SubSectionEnd
 

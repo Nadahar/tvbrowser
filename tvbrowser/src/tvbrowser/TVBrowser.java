@@ -179,11 +179,19 @@ public class TVBrowser {
     // Initialize the tray icon
     File iconTrayLib=new File("DesktopIndicator.dll");
     boolean useWindowsIconTray=false;
-
+    int systrayImageHandle=-1;
+    
     if (iconTrayLib.exists()) {
       useWindowsIconTray=SystemTrayIconManager.initializeSystemDependent();
       if (!useWindowsIconTray) {
         mLog.info("could not load library "+iconTrayLib.getAbsolutePath());
+      }
+      else {
+        systrayImageHandle = SystemTrayIconManager.loadImage("imgs/taskicon.ico");
+        if (systrayImageHandle == -1) {
+          mLog.info("Could load system tray icon");
+          useWindowsIconTray=false;
+        }
       }
     }
     
@@ -191,11 +199,7 @@ public class TVBrowser {
     if (useWindowsIconTray) {
       mLog.info("platform independent mode is OFF");
           
-      int quick = SystemTrayIconManager.loadImage("taskicon.ico");
-      if (quick == -1) {
-        mLog.info("could load system tray icon");
-      }
-      final SystemTrayIconManager mgr = new SystemTrayIconManager(quick, "Test tooltip");
+      final SystemTrayIconManager mgr = new SystemTrayIconManager(systrayImageHandle, TVBrowser.MAINWINDOW_TITLE);
       mgr.setVisible(true);
       JPopupMenu trayMenu = new JPopupMenu();
       final JMenuItem openMenuItem = new JMenuItem("Open");
@@ -207,9 +211,9 @@ public class TVBrowser {
     
       openMenuItem.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent e) {
-          mainFrame.show();
-          openMenuItem.setEnabled(false);  
+          mainFrame.show();          
           mainFrame.toFront();
+          mainFrame.setExtendedState(java.awt.Frame.NORMAL);          
         }
       }); 
     
@@ -218,7 +222,7 @@ public class TVBrowser {
           mgr.setVisible(false);
           mainFrame.quit();  
         }
-      });      
+        });      
 
       mgr.addSystemTrayIconListener(new SystemTrayIconListener() {
         public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
@@ -230,6 +234,7 @@ public class TVBrowser {
             mainFrame.show();
           }
           mainFrame.toFront();
+          mainFrame.setExtendedState(java.awt.Frame.NORMAL);          
         }
         public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
         } 
@@ -248,6 +253,8 @@ public class TVBrowser {
         }
       });
     }
+    
+    
     else {
       mLog.info("platform independent mode is ON");    
       

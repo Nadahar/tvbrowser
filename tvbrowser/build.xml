@@ -252,7 +252,7 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>
     </jar>
-    -->
+    
     <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/PremiereDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="premieredataservice/**"/>
@@ -261,7 +261,7 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="wdrdataservice/**"/>
     </jar>
-
+-->
 	<!-- Copy the other stuff -->    
     <echo message="Copying the images and all the other stuff ..." />
     <mkdir dir="${tvbrowser.runtime.dir}/imgs"/>
@@ -370,7 +370,7 @@
    | This target depends on clean-runtime to be sure that the runtime
    | directory contains no stuff we don't want to be destributed.
    +-->
-  <target name="public" depends="clean-runtime, test, runtime, doc, installer">
+  <target name="public" depends="clean-runtime, runtime, doc, installer">
     <mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/tvbrowser_v${version}_bin.zip">
@@ -430,7 +430,7 @@
         <include name="package-lists/jdk/package-list"/>
       </zipfileset>
     </zip>
-
+<!--
     <antcall target="-zipPackageSrc">
       <param name="package" value="xmltvdataservice"/>
     </antcall>
@@ -442,7 +442,7 @@
 		<antcall target="-zipPackageSrc">
       <param name="package" value="wdrdataservice"/>
     </antcall>
-
+-->
     <antcall target="-zipPackageSrc">
       <param name="package" value="programinfo"/>
     </antcall>

@@ -34,6 +34,7 @@ import java.util.Properties;
 
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvdataservice.TvDataService;
+import util.exc.ErrorHandler;
 
 public class TvDataServiceManager {
 
@@ -144,13 +145,27 @@ public class TvDataServiceManager {
       ClassLoader dataserviceClassLoader=new java.net.URLClassLoader(urls,ClassLoader.getSystemClassLoader());
 
       Class c=dataserviceClassLoader.loadClass(name.toLowerCase()+"."+name);
-      result=(tvdataservice.TvDataService)c.newInstance();
+      result=(tvdataservice.TvDataService)c.newInstance();     
     } catch (Exception exc) {
-      //String msg = mLocalizer.msg("error.5", "Loading tv data service failed!\n({0})",
-      //f.getAbsolutePath(), exc);
-      //ErrorHandler.handle(msg, exc);
-      exc.printStackTrace();
+      String msg = mLocalizer.msg("error.5", "Loading tv data service failed!\n({0})",
+      f.getAbsolutePath(), exc);
+      ErrorHandler.handle(msg, exc);
+      return null;  
     }
+    
+    try {
+      devplugin.Version v=result.getAPIVersion();
+      // version must be at least 1.0
+      if ((new devplugin.Version(1,0).compareTo(v)<0)) throw new AbstractMethodError();
+    }catch(Throwable t) {
+      String msg = mLocalizer.msg("error.6", "Tv data service {0} is not compatible to this version of TV-Browser",
+      name, t);
+      ErrorHandler.handle(msg, t);
+      return null;
+    }
+    
+    
+    
     return result;
   }
 
@@ -216,22 +231,6 @@ public class TvDataServiceManager {
   public TvDataService getDataService(String className) {
     return (TvDataService) mTvDataServiceHash.get(className);
   }
-
-    /*
-    public static String[] getDataServiceNames() {
-        Iterator it=mTvDataServiceHash.keySet().iterator();
-        java.util.ArrayList list=new java.util.ArrayList();
-        while (it.hasNext()) {
-            list.add(it.next());
-        }
-        Object[] obj=list.toArray();
-        String[] result=new String[obj.length];
-        for (int i=0;i<obj.length;i++) {
-            result[i]=(String)obj[i];
-        }
-        return result;
-    }
-     */
 
 
   public void initDataServices() {
