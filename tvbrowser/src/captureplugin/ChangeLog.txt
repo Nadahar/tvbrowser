@@ -1,0 +1,4 @@
+Changelog CapturePlugin
+
+v2.0:
+- Refactored everything & added Tons of new Features
