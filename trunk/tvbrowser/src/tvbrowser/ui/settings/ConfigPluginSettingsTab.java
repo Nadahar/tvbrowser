@@ -34,7 +34,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import tvbrowser.core.plugin.PluginProxy;
-import devplugin.Plugin;
 import devplugin.SettingsTab;
 
 public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListener {
