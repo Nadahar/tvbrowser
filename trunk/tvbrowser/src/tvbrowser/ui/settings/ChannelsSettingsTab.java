@@ -1,28 +1,28 @@
 /*
- * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date$
- *   $Author$
- * $Revision$
- */
+* TV-Browser
+* Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+* CVS information:
+*  $RCSfile$
+*   $Source$
+*     $Date$
+*   $Author$
+* $Revision$
+*/
 
 package tvbrowser.ui.settings;
 
@@ -90,10 +90,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
   /** Name of the current selected Channel*/
   private JLabel mChannelName;
 
-  /** Category of the current selected Channel*/
-  private JLabel mChannelCategory;
-
-  /** Country of the current selected Channel*/
+   /** Country of the current selected Channel*/
   private JLabel mChannelCountry;
 
   /** TimeZone of the current selected Channel*/
@@ -164,7 +161,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         moveChannelsToRight();
       }
     });
-    
+
     JButton leftBt = new JButton(new ImageIcon("imgs/Back24.gif"));
     leftBt.setToolTipText(mLocalizer.msg("tooltip.left", "Move selected rows in left list"));
     leftBt.setMargin(UiUtilities.ZERO_INSETS);
@@ -174,7 +171,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         moveChannelsToLeft();
       }
     });
-    
+
     panel.add(rightBt, c.xy(3, 4));
     panel.add(leftBt, c.xy(3, 6));
 
@@ -226,7 +223,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
           configChannels();
         }
       });
-      
+
       panel.add(refreshList, c.xy(1, 13));
       panel.add(configureChannels, c.xyw(5, 13, 3));
 
@@ -270,7 +267,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     }
 
     mCountryCB = new JComboBox();
-    mCountryCB.addItem(new FilterItem("Alle Länder", null));
+    mCountryCB.addItem(new FilterItem(mLocalizer.msg("allCountries","All Countries"), null));
     Iterator it = countries.iterator();
     while (it.hasNext()) {
       String country = (String)it.next();
@@ -280,7 +277,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
 
     mTimezoneCB = new JComboBox();
-    mTimezoneCB.addItem(new FilterItem("Alle Zeitzonen", null));
+    mTimezoneCB.addItem(new FilterItem(mLocalizer.msg("allTimezones","All Timezones"), null));
     TimeZone zone = TimeZone.getDefault();
     mTimezoneCB.addItem(new FilterItem(zone.getDisplayName(), zone));
     for (int i=-12; i<12; i++) {
@@ -289,20 +286,20 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     }
 
     mCategoryCB = new JComboBox();
-    mCategoryCB.addItem(new FilterItem("Alle Kategorien", null));
-    mCategoryCB.addItem(new FilterItem("Private", new Integer(Channel.CATEGORY_PRIVATE)));
-    mCategoryCB.addItem(new FilterItem("Öffentlich rechtliche", new Integer(Channel.CATEGORY_PUBLIC)));
-    mCategoryCB.addItem(new FilterItem("Digitale", new Integer(Channel.CATEGORY_DIGITAL)));
-    mCategoryCB.addItem(new FilterItem("Alle Spartenkanäle", new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
-    mCategoryCB.addItem(new FilterItem("Musik", new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
-    mCategoryCB.addItem(new FilterItem("Sport", new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
-    mCategoryCB.addItem(new FilterItem("Nachrichten", new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
-    mCategoryCB.addItem(new FilterItem("Sonstige Sparten", new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPublic","Öffentlich rechtliche"), new Integer(Channel.CATEGORY_PUBLIC)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers","Sonstige Sparten"), new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
 
 
     mProviderCB = new JComboBox();
 
-    mProviderCB.addItem(new FilterItem("Alle Anbieter", null));
+    mProviderCB.addItem(new FilterItem(mLocalizer.msg("allProviders","All Providers"), null));
     Object[] providers = groups.toArray();
     for (int i=0; i<providers.length; i++) {
       mProviderCB.addItem(new FilterItem((String)providers[i], providers[i]));
@@ -342,36 +339,31 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     JPanel panel = new JPanel();
     panel.setLayout(new FormLayout("default, 3dlu, default:grow",
-        "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
+        "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
 
     CellConstraints c = new CellConstraints();
 
-    panel.add(new JLabel("Details:"), c.xyw(1, 1, 3));
+    panel.add(new JLabel(mLocalizer.msg("details","Details")+":"), c.xyw(1, 1, 3));
 
-    panel.add(new JLabel("Kanal:"), c.xy(1, 3));
+    panel.add(new JLabel(mLocalizer.msg("channel","Kanal")+":"), c.xy(1, 3));
 
     mChannelName = new JLabel();
     panel.add(mChannelName, c.xy(3, 3));
 
-    panel.add(new JLabel("Kategorie:"), c.xy(1, 5));
-
-    mChannelCategory = new JLabel();
-    panel.add(mChannelCategory, c.xy(3, 5));
-
-    panel.add(new JLabel("Land:"), c.xy(1, 7));
+    panel.add(new JLabel(mLocalizer.msg("country","Land")+":"), c.xy(1, 5));
 
     mChannelCountry = new JLabel();
-    panel.add(mChannelCountry, c.xy(3, 7));
+    panel.add(mChannelCountry, c.xy(3, 5));
 
-    panel.add(new JLabel("Zeitzone:"), c.xy(1, 9));
+    panel.add(new JLabel(mLocalizer.msg("timezone","Zeitzone")+":"), c.xy(1, 7));
 
     mChannelTimeZone = new JLabel();
-    panel.add(mChannelTimeZone, c.xy(3, 9));
+    panel.add(mChannelTimeZone, c.xy(3, 7));
 
-    panel.add(new JLabel("Betreiber:"), c.xy(1, 11));
+    panel.add(new JLabel(mLocalizer.msg("provider","Betreiber")+":"), c.xy(1, 9));
 
     mChannelProvider = new JLabel();
-    panel.add(mChannelProvider, c.xy(3, 11));
+    panel.add(mChannelProvider, c.xy(3, 9));
 
 
 
@@ -387,13 +379,17 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     if ((ch != null) && (ch.length == 1)) {
       Channel channel = (Channel) ch[0];
       mChannelName.setText(channel.getName());
-      mChannelCategory.setText("Not Defined");
-      mChannelCountry.setText(channel.getCountry());
+      Locale loc = new Locale(Locale.getDefault().getLanguage(), channel.getCountry());
+      mChannelCountry.setText(loc.getDisplayCountry());
       mChannelTimeZone.setText(channel.getTimeZone().getDisplayName());
-      mChannelProvider.setText("Not Defined");
+      if (channel.getGroup() != null) {
+        mChannelProvider.setText(channel.getGroup().getProviderName());
+      }
+      else {
+        mChannelProvider.setText("-");
+      }
     } else {
       mChannelName.setText("");
-      mChannelCategory.setText("");
       mChannelCountry.setText("");
       mChannelTimeZone.setText("");
       mChannelProvider.setText("");
@@ -437,14 +433,13 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
 
   private void fillSubscribedChannelsListBox() {
-    System.out.println("fillSubscribedChannelsListBox");
-   ((DefaultListModel) mSubscribedChannels.getModel()).removeAllElements();
+    ((DefaultListModel) mSubscribedChannels.getModel()).removeAllElements();
     Collection subscribedChannels = mChannelListModel.getSubscribedChannels();
 
-   int subscribedChannelCount = subscribedChannels.size();
-  Channel[] subscribedChannelArr = new Channel[subscribedChannelCount];
-  Channel[] channels = mChannelListModel.getAvailableChannels();
-  for (int i = 0; i < channels.length; i++) {
+    int subscribedChannelCount = subscribedChannels.size();
+    Channel[] subscribedChannelArr = new Channel[subscribedChannelCount];
+    Channel[] channels = mChannelListModel.getAvailableChannels();
+    for (int i = 0; i < channels.length; i++) {
       Channel channel = channels[i];
       if (ChannelList.isSubscribedChannel(channel)) {
         int pos = ChannelList.getPos(channel);
@@ -461,7 +456,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
 
   private void fillAvailableChannelsListBox() {
-    System.out.println("fillAvailableChannelsListBox");
     TimeZone timeZone = (TimeZone)((FilterItem)mTimezoneCB.getSelectedItem()).getValue();
     String country = (String)((FilterItem)mCountryCB.getSelectedItem()).getValue();
     String provider = (String)((FilterItem)mProviderCB.getSelectedItem()).getValue();
@@ -546,7 +540,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    */
   private void configChannels() {
     Object[] o=mSubscribedChannels.getSelectedValues();
-    
+
     Channel[] channelList=new Channel[o.length];
     for (int i=0;i<o.length;i++) {
       channelList[i]=(Channel)o[i];
@@ -555,7 +549,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     dlg.centerAndShow();
     mSubscribedChannels.updateUI();
   }
-  
+
   /**
    * Move Channels to the subscribed Channels
    */
@@ -594,7 +588,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     public boolean accept(Channel channel) {
       if (mTimezone != null) {
-        System.out.println("timezone: "+mTimezone.getDisplayName());
         if (channel.getTimeZone().getRawOffset() != mTimezone.getRawOffset()) {
           return false;
         }
@@ -629,7 +622,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         }
       }
 
-    return true;
+      return true;
     }
   }
 
