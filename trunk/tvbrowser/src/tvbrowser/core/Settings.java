@@ -160,6 +160,10 @@ public class Settings {
     return "visible".equals(settings.getProperty("timebutton","visible"));
   }
   
+  public static void setTimeBtnVisible(boolean value) {
+    settings.setProperty("timebutton", value ? "visible" : "hidden");
+  }
+
   public static boolean isPrevNextBtnVisible() {
     return "visible".equals(settings.getProperty("prevnextbutton","visible"));
   }
