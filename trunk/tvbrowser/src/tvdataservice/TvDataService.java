@@ -72,7 +72,7 @@ public interface TvDataService {
    * Gets the list of the channels that are available by this data service.
    */
   public Channel[] getAvailableChannels();
-  public Channel[] checkForAvailableChannels() throws TvBrowserException;
+  public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException;
   public boolean supportsDynamicChannelList();
   
   /**
