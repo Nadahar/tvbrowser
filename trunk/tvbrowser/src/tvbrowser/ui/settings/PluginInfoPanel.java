@@ -107,7 +107,12 @@ import java.awt.*;
     
    public void setPluginInfo(devplugin.PluginInfo info) {
      nameLabel.setText(info.getName());
-     versionLabel.setText(info.getVersion().toString());
+     
+     if (info.getVersion() == null) {
+         versionLabel.setText("");
+     } else {
+         versionLabel.setText(info.getVersion().toString());
+     }
      authorLabel.setText(info.getAuthor());
      descriptionArea.setText(info.getDescription());
    }
