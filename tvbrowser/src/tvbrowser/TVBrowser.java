@@ -129,26 +129,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	splash.setMessage(msg);
     PluginManager.initInstalledPlugins();
 
-    mLog.info("Loading selections...");
-    msg = mLocalizer.msg("splash.selections", "Loading selections...");
-	splash.setMessage(msg);
-    String dir = Settings.getUserDirectoryName();
-    File selectionsFile = new File(dir, "selections");
-    try {
-      ObjectInputStream in = new ObjectInputStream(new FileInputStream(selectionsFile));
-      ProgramSelection selection = (ProgramSelection)in.readObject();
-      in.close();
-      DataService.getInstance().setSelection(selection);
-    }
-    catch(FileNotFoundException exc) {
-      mLog.info("No selections found");
-    }
-    catch(Exception exc) {
-      msg = mLocalizer.msg("error.2", "Error when loading selections file.\n({0})",
-        selectionsFile.getAbsolutePath(), exc);
-      ErrorHandler.handle(msg, exc);
-    }
-
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
 	splash.setMessage(msg);
@@ -323,30 +303,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     mLog.info("Storing plugin data");
     PluginManager.finalizeInstalledPlugins();
 
-    mLog.info("Storing selection data");
-    ProgramSelection selection = DataService.getInstance().getSelection();
-    if (selection == null) {
-      mLog.info("No selection data to store");
-    } else {
-      String dir = Settings.getUserDirectoryName();
-      File selectionsFile = new File(dir, "selections");
-      try {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(selectionsFile));
-        out.writeObject(selection);
-        out.close();
-      } catch(IOException exc) {
-        String msg = mLocalizer.msg("error.3", "Error when saving selections file.\n({0})",
-          selectionsFile.getAbsolutePath(), exc);
-        ErrorHandler.handle(msg, exc);
-      }
-    }
-
     mLog.info("Quitting");
-
     System.exit(0);
   }
 
-  
+
+
   private static void createChannelList() {
 	try {
 		 ChannelList.readChannelList();
@@ -792,8 +754,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     if (Settings.settingHasChanged(new String[]{"subscribed"})) {
     	createChannelList();
     	programTablePanel.subscribedChannelsChanged();
+		DataService.getInstance().subscribedChannelsChanged();
 		devplugin.Date showingDate = finderPanel.getSelectedDate();
-		DataService.getInstance().deleteDayProgramCache();
 		DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
 		try {
 			programTablePanel.setDayProgram(dayProgram);

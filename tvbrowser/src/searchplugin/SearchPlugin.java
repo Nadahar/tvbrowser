@@ -31,11 +31,13 @@ import util.ui.UiUtilities;
 import devplugin.*;
 
 /**
+ * Provides a dialog for searching programs.
  *
- * @author  Til Schneider, www.murfman.de
+ * @author Til Schneider, www.murfman.de
  */
 public class SearchPlugin extends Plugin {
 
+  /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
 
@@ -57,9 +59,5 @@ public class SearchPlugin extends Plugin {
     SearchDialog dlg = new SearchDialog(super.parent);
     UiUtilities.centerAndShow(dlg);
   }
-
-
-
- 
 
 }
