@@ -39,7 +39,8 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
      private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(FontsSettingsTab.class);
  
-  private JCheckBox mUseDefaultFontsCB; 
+  private JCheckBox mUseDefaultFontsCB;
+  private JCheckBox mEnableAntialiasingCB;
   
   private FontChooserPanel mTitleFontPanel, mInfoFontPanel,
     mChannelNameFontPanel, mTimeFontPanel;
@@ -61,8 +62,11 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     
     mUseDefaultFontsCB=new JCheckBox(mLocalizer.msg("UseDefaultFonts", "Use default fonts"));
     mUseDefaultFontsCB.setSelected(Settings.propUseDefaultFonts.getBoolean());
+    mEnableAntialiasingCB=new JCheckBox(mLocalizer.msg("EnableAntialiasing", "Enable antialiasing"));
+    mEnableAntialiasingCB.setSelected(Settings.propEnableAntialiasing.getBoolean());
     
     checkBoxPanel.add(mUseDefaultFontsCB);
+    checkBoxPanel.add(mEnableAntialiasingCB, BorderLayout.SOUTH);
     
     content.add(checkBoxPanel);
     
@@ -130,6 +134,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
       Settings.propChannelNameFont.setFont(mChannelNameFontPanel.getChoosenFont());
       Settings.propProgramTimeFont.setFont(mTimeFontPanel.getChoosenFont());
       Settings.propUseDefaultFonts.setBoolean(mUseDefaultFontsCB.isSelected());
+      Settings.propEnableAntialiasing.setBoolean(mEnableAntialiasingCB.isSelected());
     }
 
   
