@@ -247,8 +247,8 @@ public class DataService implements devplugin.PluginManager {
       try {
         // The program is not in the cache -> try to load it
         dayProgram = loadDayProgram(date);
-        mLog.info("Loading program for " + date + " (" + date.hashCode() + ") "
-          + ((dayProgram == null) ? "failed" : "suceed"));
+        // mLog.info("Loading program for " + date + " (" + date.hashCode() + ") "
+        //   + ((dayProgram == null) ? "failed" : "suceed"));
       }
       catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
@@ -637,7 +637,7 @@ public class DataService implements devplugin.PluginManager {
   {
     int flags = 0;
     if (! caseSensitive) {
-      flags &= Pattern.CASE_INSENSITIVE;
+      flags |= Pattern.CASE_INSENSITIVE;
     }
 
     Pattern pattern;

@@ -48,9 +48,9 @@ import tvdataloader.*;
  * in a text format.
  * <p>
  * Currently the source deliveres the following programs:<br>
- * 13th Street, Classica, Disney Channel, Fox Kids, Heimatkanal, Junior, MGM,
- * Premiere 1, Premiere 2, Premiere 3, Premiere 4, Premiere 5, Premiere 6,
- * Premiere 7, Premiere Krimi, Premiere Nostalgie, Premiere Serie,
+ * 13th Street, Beate-Uhse.TV, Classica, Disney Channel, Fox Kids, Heimatkanal,
+ * Junior, MGM, Premiere 1, Premiere 2, Premiere 3, Premiere 4, Premiere 5,
+ * Premiere 6, Premiere 7, Premiere Krimi, Premiere Nostalgie, Premiere Serie,
  * Premiere Start, Studio Universal
  *
  * @author Til Schneider, www.murfman.de
@@ -87,13 +87,29 @@ public class PremiereDataService extends MultipleChannelTvDataService {
   /**
    * Gets the name of the file that contains the data of the specified date.
    */
-  protected String getFileNameFor(Date date) {
-    // Example: http://www.premiere.de/content/download/mguide_d_s_05_03.txt
+  protected String getFileNameFor(Date date, Channel channel) {
+    // Movie guide:  http://www.premiere.de/content/download/mguide_d_s_05_03.txt
+    // Erotic guide: http://www.premiere.de/content/download/eguide_d_s_05_03.txt
     Calendar cal = date.getCalendar();
     int month = cal.get(Calendar.MONTH) + 1;
     int year = cal.get(Calendar.YEAR) % 100;
     
-    return "mguide_d_s_"
+    // Check whether the channel is a channel of the erotic guide
+    // TODO: a smarter implementation that detects the channels dynamically
+    boolean isEroticGuide = false;
+    if (channel.getName().equalsIgnoreCase("BEATE-UHSE.TV")) {
+      isEroticGuide = true;
+    }
+
+    // Take the right prefix
+    String fileNamePrefix;
+    if (isEroticGuide) {
+      fileNamePrefix = "eguide_d_s_";
+    } else {
+      fileNamePrefix = "mguide_d_s_";
+    }
+    
+    return fileNamePrefix
       + ((month < 10) ? ("0" + month) : ("" + month))
       + "_"
       + ((year < 10) ? ("0" + year) : ("" + year))
@@ -112,9 +128,7 @@ public class PremiereDataService extends MultipleChannelTvDataService {
   protected void downloadFileFor(devplugin.Date date, Channel channel,
     File targetFile) throws TvBrowserException
   {
-    if (true) return;
-    
-    String fileName = getFileNameFor(date);
+    String fileName = getFileNameFor(date, channel);
     String url = "http://www.premiere.de/content/download/" + fileName;
     try {
       IOUtilities.download(new URL(url), targetFile);

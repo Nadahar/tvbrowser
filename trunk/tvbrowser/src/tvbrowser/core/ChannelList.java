@@ -112,6 +112,7 @@ public class ChannelList {
     channels.add(new Channel("Premiere Serie", 317, s));
     channels.add(new Channel("Premiere Start", 318, s));
     channels.add(new Channel("Studio Universal", 319, s));
+    channels.add(new Channel("Beate-Uhse.TV", 320, s));
   }
   
   /**

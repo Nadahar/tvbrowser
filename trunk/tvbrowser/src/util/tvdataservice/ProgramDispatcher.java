@@ -96,10 +96,12 @@ public class ProgramDispatcher {
     MutableChannelDayProgram channelDayProgram
       = getChannelDayProgram(date, channel, false);
 
+    /*
     if (channelDayProgram != null) {
       mLog.info("Found " + channelDayProgram.getProgramCount()
         + " programs for " + channel.getName() + " on " + date);
     }
+    */
     
     return channelDayProgram;
   }

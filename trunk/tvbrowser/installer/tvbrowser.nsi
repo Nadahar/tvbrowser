@@ -183,7 +183,7 @@ Section "XML-TV-Datenservice"
   File "${RUNTIME_DIR}\tvdataloader\XmlTvDataService.jar"
 SectionEnd
 
-Section "Premiere-DatenService"
+Section "Premiere-Datenservice"
   SectionIn 1 2
 
   SetOutPath "$INSTDIR\tvdataloader"
@@ -193,7 +193,7 @@ SectionEnd
 SubSectionEnd
 
 
-SubSection /e "Plugins"
+SubSection "Plugins"
 
 Section "Sendungsinfo-Betrachter"
   SectionIn 1

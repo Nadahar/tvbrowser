@@ -40,12 +40,12 @@ Do NOT add these directories to the CVS!!
 classes:
   Contains the compiled code.
 
-classes:
+doc:
   Contains the Javadoc documentation.
-
-runtime:
-  Contains the TV-Browser runtime directory.
 
 public:
   Contains all the stuff that can be downloaded on the home page.
+
+runtime:
+  Contains the TV-Browser runtime directory.
 

@@ -60,7 +60,8 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
   /**
    * Gets the name of the file that contains the data of the specified date.
    */
-  protected abstract String getFileNameFor(devplugin.Date date);
+  protected abstract String getFileNameFor(devplugin.Date date,
+    devplugin.Channel channel);
 
   
   
@@ -172,7 +173,7 @@ public abstract class MultipleChannelTvDataService implements TVDataServiceInter
     throws TvBrowserException
   {
     String dataDirectory = getDataDirectory() + File.separator;
-    String fileName = getFileNameFor(date);
+    String fileName = getFileNameFor(date, channel);
     
     // Check whether the file is already present
     File localFile = new File(dataDirectory + fileName);

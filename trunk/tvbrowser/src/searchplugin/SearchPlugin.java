@@ -72,11 +72,11 @@ public class SearchPlugin extends Plugin {
   }
   
   public PluginInfo getInfo() {
-	  String name = mLocalizer.msg( "searchPrograms" ,"Search programs" );
-	  String desc = mLocalizer.msg( "description" ,"Allows searching programs containing a certain text." );
-	  String author = "Til Schneider, www.murfman.de" ;
-	  
-	  return new PluginInfo(name, desc, author, new Version(1, 0));
-	}
+    String name = mLocalizer.msg( "searchPrograms" ,"Search programs" );
+    String desc = mLocalizer.msg( "description" ,"Allows searching programs containing a certain text." );
+    String author = "Til Schneider, www.murfman.de" ;
 
-  } 
+    return new PluginInfo(name, desc, author, new Version(1, 0));
+  }
+
+} 

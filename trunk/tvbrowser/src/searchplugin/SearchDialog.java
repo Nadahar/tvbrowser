@@ -237,7 +237,13 @@ public class SearchDialog extends JDialog {
     
     JComponent[] programPanelArr = new JComponent[programArr.length];
     for (int i = 0; i < programArr.length; i++) {
-      programPanelArr[i] = Plugin.getPluginManager().createProgramPanel(programArr[i]);
+      JPanel p1 = new JPanel(new BorderLayout());
+      JComponent progPn = Plugin.getPluginManager().createProgramPanel(programArr[i]);
+      p1.add(progPn, BorderLayout.CENTER);
+      String msg = programArr[i].getDate() + " - " + programArr[i].getChannel().getName();
+      p1.add(new JLabel(msg), BorderLayout.NORTH);
+      
+      programPanelArr[i] = p1;
     }
     JList list = new JList(programPanelArr);
     list.setCellRenderer(new ComponentCellRenderer());
@@ -255,7 +261,7 @@ public class SearchDialog extends JDialog {
     buttonPn.add(closeBt);
     
     dlg.setSize(400, 400);
-    dlg.show();
+    UiUtilities.centerAndShow(dlg);
   }
   
   
