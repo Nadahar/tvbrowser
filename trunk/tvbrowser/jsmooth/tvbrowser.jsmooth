@@ -7,10 +7,10 @@
 <JVMSearchPath>exepath</JVMSearchPath> 
 <JVMSearchPath>jview</JVMSearchPath> 
 <arguments></arguments> 
-<executableName>..\runtime\tvbrowser\tvbrowser.exe</executableName> 
-<iconLocation>..\runtime\tvbrowser\imgs\tvbrowser16.gif</iconLocation> 
+<executableName>..\runtime\tvbrowser_win\tvbrowser.exe</executableName> 
+<iconLocation>..\runtime\tvbrowser_win\imgs\tvbrowser16.gif</iconLocation> 
 <initialMemoryHeap>-1</initialMemoryHeap> 
-<jarLocation>..\runtime\tvbrowser\tvbrowser.jar</jarLocation> 
+<jarLocation>..\runtime\tvbrowser_win\tvbrowser.jar</jarLocation> 
 <mainClassName>tvbrowser.TVBrowser</mainClassName> 
 <maximumMemoryHeap>-1</maximumMemoryHeap> 
 <maximumVersion></maximumVersion> 

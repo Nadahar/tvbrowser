@@ -194,6 +194,9 @@ public class ProgramField implements Cloneable {
   
   
   public String getTextData() {
+		if (mData==null) {
+			return null;
+		}
     try {
       return new String(mData, TEXT_CHARSET);
     }

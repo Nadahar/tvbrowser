@@ -53,6 +53,7 @@
   <property name="classes.dir" value="classes"/>
   <property name="runtime.dir" value="runtime"/>
   <property name="tvbrowser.runtime.dir" value="${runtime.dir}/tvbrowser"/>
+  <property name="tvbrowser_win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
   <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
   <property name="primarydatamanager.runtime.dir" value="${runtime.dir}/primarydatamanager"/>
   <property name="installer.dir" value="installer"/>
@@ -254,10 +255,7 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="imdbsearchplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser.runtime.dir}/plugins/TVRaterPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
-    </jar>
+    
 
 	<!-- Pack the TV data service jars -->    
     <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
@@ -265,21 +263,7 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
     </jar>
-    <!--
-    <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/XmlTvDataService.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>
-    </jar>
-    
-    <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/PremiereDataService.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="premieredataservice/**"/>
-    </jar>
-		<jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/WdrDataService.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="wdrdataservice/**"/>
-    </jar>
--->
+  
 	<!-- Copy the other stuff -->    
     <echo message="Copying the images and all the other stuff ..." />
     <mkdir dir="${tvbrowser.runtime.dir}/imgs"/>
@@ -290,7 +274,6 @@
       <fileset dir="${txt.dir}" includes="INSTALL.txt"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${txt.dir}" includes="website.url"/>
-      <fileset dir="${txt.dir}" includes="where_is_the_exe.txt"/>
     </copy>
 
     <mkdir dir="${tvbrowser.runtime.dir}/themepacks"/>
@@ -368,11 +351,25 @@
   </target>
 
 
+  <!--
+   | 
+   +-->
+  <target name="runtime_win" depends="runtime">
+    <mkdir dir="${tvbrowser_win.runtime.dir}" />
+    <copy todir="${tvbrowser_win.runtime.dir}">
+      <fileset dir="${tvbrowser.runtime.dir}"/>
+    </copy>
+  </target>
+  
+  
+  <!--
+   |  Creates a windows executable
+   +-->
   <taskdef name="jsmoothgen" 
      classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
      classpath="${jsmooth.dir}/lib/jsmoothgen-ant.jar"/> 
 
-  <target name="exe" depends="runtime" description="Creates a Windows Executable with the help of JSmooth (http://jsmooth.sf.net)"> 
+  <target name="exe" depends="runtime_win" description="Creates a Windows Executable with the help of JSmooth (http://jsmooth.sf.net)"> 
     <jsmoothgen project="${jsmooth.dir}/tvbrowser.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/> 
   </target>  
 
@@ -380,11 +377,11 @@
   <!--
    | Creates a Windows installer for the project.
    +-->
-  <target name="installer" depends="runtime, exe">
+  <target name="installer" depends="runtime_win, exe">
     <mkdir dir="${public.dir}"/>
     <exec executable="${installer.dir}/makensis.exe"
           failonerror="true">
-      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${tvbrowser.runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
+      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${tvbrowser_win.runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
     </exec>
   </target>
 
