@@ -28,9 +28,6 @@ package tvbrowser;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Image;
-import java.awt.Point;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -46,11 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -58,8 +51,8 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
-import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvdataAssistantDlg;
 import tvbrowser.ui.configassistant.TvdataImportDlg;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -74,8 +67,6 @@ import util.ui.ImageUtilities;
 import util.ui.NotBoldMetalTheme;
 import util.ui.UiUtilities;
 
-import com.gc.systray.SystemTrayIconListener;
-import com.gc.systray.SystemTrayIconManager;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 import devplugin.Date;
@@ -97,12 +88,11 @@ public class TVBrowser {
   public static final devplugin.Version VERSION=new devplugin.Version(1,0,true,"1.0");
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
   
-  private static boolean mUseSystemTray;
+  private static SystemTray mTray;
   
   private static MainFrame mainFrame;
 
-  /** State of the Window (max/normal) */
-  private static int mState;
+
   
   /**
    * Specifies whether the save thread should stop. The save thread saves every
@@ -321,112 +311,11 @@ public class TVBrowser {
     Image iconImage = ImageUtilities.createImage("imgs/TVBrowser16.gif");
     mainFrame.setIconImage(iconImage);
 
-    // Initialize the tray icon
-    File iconTrayLib=new File("DesktopIndicator.dll");
-    mUseSystemTray = false;
-    int systrayImageHandle=-1;
+    mTray = new SystemTray();
     
-    if (iconTrayLib.exists()) {
-      mUseSystemTray = SystemTrayIconManager.initializeSystemDependent();
-      if (! mUseSystemTray) {
-        mLog.info("could not load library "+iconTrayLib.getAbsolutePath());
-      }
-      else {
-        systrayImageHandle = SystemTrayIconManager.loadImage("imgs/TVBrowser.ico");
-        if (systrayImageHandle == -1) {
-          mLog.info("Could not load system tray icon");
-          mUseSystemTray = false;
-        }
-      }
-    }
-    
-// --->> Windows only
-    if (mUseSystemTray) {
-      mLog.info("platform independent mode is OFF");
-          
-      final SystemTrayIconManager mgr = new SystemTrayIconManager(systrayImageHandle, TVBrowser.MAINWINDOW_TITLE);
-      mgr.setVisible(true);
-      JPopupMenu trayMenu = new JPopupMenu();
-      final JMenuItem openMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
-      JMenuItem quitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
-      trayMenu.add(openMenuItem);
-      trayMenu.addSeparator();
-      trayMenu.add(createPluginsMenu());
-      trayMenu.addSeparator();
-      trayMenu.add(quitMenuItem);  
-      	
-      
-      openMenuItem.setEnabled(false);
-    
-      openMenuItem.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-          mainFrame.show();          
-          mainFrame.toFront();
-          mainFrame.setExtendedState(mState);                          
-        }
-      }); 
-    
-      quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-          mgr.setVisible(false);
-          mainFrame.quit();  
-        }
-      });      
-
-      mgr.addSystemTrayIconListener(new SystemTrayIconListener() {
-        public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
-        }
-        public void mouseClickedRightButton(Point pos, SystemTrayIconManager ssource) {
-        }
-        public void mouseLeftDoubleClicked(Point pos, SystemTrayIconManager source) {
-          if (!mainFrame.isVisible()) {
-            mainFrame.show();
-          }
-          mainFrame.toFront();
-          mainFrame.setExtendedState(mState);          
-        }
-        public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
-        } 
-      });
-
-      mgr.setRightClickView(trayMenu);
-
-      mainFrame.addComponentListener(new ComponentListener() {
-
-        public void componentResized(ComponentEvent e) {
-            int state = mainFrame.getExtendedState();
-            if ((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
-                mState = JFrame.MAXIMIZED_BOTH;
-            } else {
-                mState = JFrame.NORMAL;
-            }
-        }
-
-        public void componentHidden(ComponentEvent e) {}
-        public void componentMoved(ComponentEvent e) {}
-        public void componentShown(ComponentEvent e) {}
-    });       
-      
-      mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-        public void windowClosing(java.awt.event.WindowEvent evt) {
-          if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
-            // Only minimize the main window, don't quit
-            mainFrame.hide();
-            openMenuItem.setEnabled(true); 
-          } else {
-            mgr.setVisible(false);
-            mainFrame.quit();
-          }
-        }
-        public void windowIconified(java.awt.event.WindowEvent evt) {
-          mainFrame.hide();
-          openMenuItem.setEnabled(true);  
-        }
-      });
-    }
-    
-    
-    else {
+    if (mTray.initSystemTray()) {
+        mTray.createMenus(mainFrame);
+    } else {
       mLog.info("platform independent mode is ON");    
       
       mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -529,19 +418,9 @@ public class TVBrowser {
     
   }
   
-  private static JMenu createPluginsMenu() {
-    JMenu pluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-    
-    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    MainFrame.updatePluginsMenu(pluginsMenu, plugins);
-    
-    return pluginsMenu;
-  }
-  
   public static boolean isUsingSystemTray() {
-    return mUseSystemTray;
+    return mTray.isTrayUsed();
   }
-
 
   private static void handleAutomaticDownload() {
     String autoDLType = Settings.propAutoDownloadType.getString();
