@@ -25,14 +25,12 @@
  */
 package primarydatamanager.mirrorupdater.data;
 
-import java.io.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.NumberFormat;
 
 import primarydatamanager.mirrorupdater.UpdateException;
-import util.io.IOUtilities;
 
 /**
  * 
@@ -43,6 +41,7 @@ public class FileDataTarget implements DataTarget {
   
   private File mDir;
   
+  private long mBytesWritten;
   
 
   /**
@@ -73,28 +72,6 @@ public class FileDataTarget implements DataTarget {
   }
 
 
-  public byte[] loadFile(String fileName) throws UpdateException {
-    File file = new File(mDir, fileName);
-    
-    FileInputStream in = null;
-    try {
-      in = new FileInputStream(file);
-      ByteArrayOutputStream out = new ByteArrayOutputStream((int) file.length());
-      IOUtilities.pipeStreams(in, out);
-      out.close();
-      return out.toByteArray();
-    }
-    catch (IOException exc) {
-      throw new UpdateException("Loading file failed: " + fileName, exc);
-    }
-    finally {
-      if (in != null) {
-        try { in.close(); } catch (IOException exc) {}
-      }
-    }
-  }
-
-
 
   public void writeFile(String fileName, byte[] data) throws UpdateException {
     File file = new File(mDir, fileName);
@@ -103,6 +80,8 @@ public class FileDataTarget implements DataTarget {
     try {
       stream = new FileOutputStream(file);
       stream.write(data);
+      
+      mBytesWritten += data.length;
     }
     catch (IOException exc) {
       // Try to delete the corrupt file
@@ -123,6 +102,8 @@ public class FileDataTarget implements DataTarget {
 
 
   public void close() throws UpdateException {
+    System.out.println("In total there were "
+      + NumberFormat.getInstance().format(mBytesWritten) + " bytes written.");
   }
 
 }

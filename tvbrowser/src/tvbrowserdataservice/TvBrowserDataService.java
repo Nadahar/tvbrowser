@@ -62,10 +62,13 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private static final int MAX_META_DATA_AGE = 7;
   private static final int MAX_UP_TO_DATE_CHECKS = 10;
   private static final int MAX_LAST_UPDATE_DAYS = 3;
-  private static final String PRIMARY_SERVER_URL
-    = "http://192.168.1.2/tvdata/";
-    // = "http://tvbrowser.sourceforge.net/tvdata/";
-  
+
+  private static final Mirror[] DEFAULT_MIRROR_LIST = new Mirror[] {
+    new Mirror("http://www.murfman.de/tvdata"),
+    new Mirror("http://tvbrowser.waidi.net"),
+    new Mirror("http://tvbrowser.dyndns.tv"),
+  };
+
   private Properties mSettings;
   
   private File mDataDir;
@@ -124,6 +127,10 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     // Get a random Mirror that is up to date
     Mirror mirror = chooseUpToDateMirror(mirrorArr);
+    mLog.info("Using mirror " + mirror.getUrl());
+
+    // Update the mirrorlist (for the next time)
+    updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
     
     // Update the channel list
     // NOTE: We have to load the channel list before the programs, because
@@ -200,14 +207,13 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 
   private Mirror[] loadMirrorList() throws TvBrowserException {
-    updateMetaFile(PRIMARY_SERVER_URL, Mirror.MIRROR_LIST_FILE_NAME);
     File file = new File(mDataDir, Mirror.MIRROR_LIST_FILE_NAME);
     try { 
       return Mirror.readMirrorListFromFile(file);
     }
     catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.2",
-        "Loading mirror list failed", exc);
+      // Loading the mirror list failed -> return the default list
+      return DEFAULT_MIRROR_LIST;
     }
   }
 
@@ -216,9 +222,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private void updateMetaFile(String serverUrl, String metaFileName) throws TvBrowserException {
     File file = new File(mDataDir, metaFileName);
     
-    // Download a new channellist if needed
+    // Download the new file if needed
     if (needsUpdate(file)) {
-      String url = serverUrl + metaFileName;
+      String url = serverUrl + "/" + metaFileName;
       try {
         IOUtilities.download(new URL(url), file);
         
@@ -250,7 +256,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     throws TvBrowserException
   {
     // Choose a random Mirror
-    Mirror mirror = chooseMirror(mirrorArr);
+    Mirror mirror = chooseMirror(mirrorArr, null);
       
     // Check whether the mirror is up to date and available
     for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
@@ -260,7 +266,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
         } else {
           // This one is not up to date -> choose another one
           Mirror oldMirror = mirror;
-          mirror = chooseMirror(mirrorArr);
+          mirror = chooseMirror(mirrorArr, mirror);
           mLog.info("Mirror " + oldMirror.getUrl() + " is out of date. Choosing "
             + mirror.getUrl() + " instead.");
         }
@@ -268,9 +274,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
       catch (TvBrowserException exc) {
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
-        mirror = chooseMirror(mirrorArr);
+        mirror = chooseMirror(mirrorArr, mirror);
         mLog.log(Level.INFO, "Mirror " + oldMirror.getUrl()
-          + " is not available. Choosing " + mirror.getUrl() + " instead.", exc);
+          + " is not available. Choosing " + mirror.getUrl() + " instead.");
       }
     }
     
@@ -280,7 +286,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 
 
-  private Mirror chooseMirror(Mirror[] mirrorArr)
+  private Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror)
     throws TvBrowserException
   {
     // Get the total weight
@@ -297,7 +303,14 @@ public class TvBrowserDataService extends AbstractTvDataService {
     for (int i = 0; i < mirrorArr.length; i++) {
       currWeight += mirrorArr[i].getWeight();
       if (currWeight > chosenWeight) {
-        return mirrorArr[i];
+        Mirror mirror = mirrorArr[i];
+        // Check whether this is the old mirror
+        if ((mirror == oldMirror) && (mirrorArr.length > 1)) {
+          // We chose the old mirror -> chose another one
+          return chooseMirror(mirrorArr, oldMirror);
+        } else {
+          return mirror;
+        }
       }
     }
     

@@ -126,9 +126,11 @@ public class IOUtilities {
    * @throws IOException if something went wrong.
    * @return a stream reading data from the specified URL.
    */
-  public static InputStream getStream(URL page) throws IOException {
+  public static InputStream getStream(URL page, boolean followRedirects)
+    throws IOException
+  {
     URLConnection conn = page.openConnection();
-    if (conn instanceof HttpURLConnection) {
+    if (followRedirects && (conn instanceof HttpURLConnection)) {
       HttpURLConnection hconn = (HttpURLConnection) conn;
       hconn.setInstanceFollowRedirects(false);
       int response = hconn.getResponseCode();
@@ -138,12 +140,16 @@ public class IOUtilities {
       // that was input to the new, redirected URL
       if (redirect) {
         String loc = conn.getHeaderField("Location");
-        if (loc.startsWith("http", 0)) {
+        if (loc == null) {
+          throw new FileNotFoundException("URL points to a redirect without "
+            + "target location: " + page);
+        }
+        if (loc.startsWith("http")) {
           page = new URL(loc);
         } else {
           page = new URL(page, loc);
         }
-        return getStream(page);
+        return getStream(page, followRedirects);
       }
     }
     
@@ -151,6 +157,12 @@ public class IOUtilities {
     return in;
   }
 
+
+  public static InputStream getStream(URL page)
+    throws IOException
+  {
+    return getStream(page, true);
+  }
 
 
   /**

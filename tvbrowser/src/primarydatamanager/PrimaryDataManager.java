@@ -25,9 +25,14 @@
  */
 package primarydatamanager;
 
+import java.io.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 import primarydatamanager.primarydataservice.PrimaryDataService;
 
@@ -110,6 +115,9 @@ public class PrimaryDataManager {
         + mRawDir.getAbsolutePath());
     }
 
+    // Update the mirror list
+    updateMirrorList();
+    
     // Get the new raw data
     loadNewRawData();
     
@@ -118,9 +126,6 @@ public class PrimaryDataManager {
     
     // Create the channel list
     createChannelList();
-    
-    // Rescue the mirro list
-    copyMirrorList();
     
     // Delete the old backup
     try {
@@ -904,22 +909,114 @@ public class PrimaryDataManager {
 
 
   
-  private void copyMirrorList() throws PreparationException {
-    try {
-      File fromFile = new File(mPreparedDir, "mirrorlist.txt");
-      if (fromFile.exists()) {
-        File toFile = new File(mWorkDir, "mirrorlist.txt");
-        IOUtilities.copy(fromFile, toFile);
-      }
-
-      fromFile = new File(mPreparedDir, Mirror.MIRROR_LIST_FILE_NAME);
-      if (fromFile.exists()) {
-        File toFile = new File(mWorkDir, Mirror.MIRROR_LIST_FILE_NAME);
-        IOUtilities.copy(fromFile, toFile);
+  private void updateMirrorList() throws PreparationException {
+    System.out.println("Updating the mirror list");
+    
+    // Load the mirrorlist.txt
+    Mirror[] mirrorArr = loadMirrorListTxt();
+        
+    // Now update the weights. Use the old mirror list if a mirror is not
+    // available
+    Mirror[] oldMirrorArr = null;
+    for (int mirrorIdx = 0; mirrorIdx < mirrorArr.length; mirrorIdx++) {
+      Mirror mirror = mirrorArr[mirrorIdx];
+          
+      int weight = getMirrorWeight(mirror);
+      if (weight >= 0) {
+        mirror.setWeight(weight);
+      } else {
+        // We didn't get the weight -> Try to get the old weight
+        if (oldMirrorArr == null) {
+          oldMirrorArr = loadOldMirrorList();
+        }
+            
+        for (int i = 0; i < oldMirrorArr.length; i++) {
+          if (oldMirrorArr[i].getUrl().equals(mirror.getUrl())) {
+            // This is the same mirror -> use the old weight
+            mirror.setWeight(oldMirrorArr[i].getWeight());
+          }
+        }
       }
     }
+    
+    // Save the mirrorlist.gz
+    File toFile = new File(mWorkDir, Mirror.MIRROR_LIST_FILE_NAME);
+    try {
+      Mirror.writeMirrorListToFile(toFile, mirrorArr);
+    }
     catch (IOException exc) {
-      throw new PreparationException("Rescuing mirror list failed", exc);
+      throw new PreparationException("Writing mirror list failed", exc);
+    }
+
+    // Copy the mirrorlist.txt
+    File fromFile = new File(mPreparedDir, "mirrorlist.txt");
+    toFile = new File(mWorkDir, "mirrorlist.txt");
+    try {
+      IOUtilities.copy(fromFile, toFile);
+    }
+    catch (IOException exc) {
+      throw new PreparationException("Copying mirrorlist.txt failed", exc);
+    }
+  }
+
+
+  private Mirror[] loadMirrorListTxt() throws PreparationException {
+    ArrayList mirrorList = new ArrayList();
+
+    File fromFile = new File(mPreparedDir, "mirrorlist.txt");
+    FileInputStream stream = null;
+    try {
+      stream = new FileInputStream(fromFile);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            
+      String line;
+      while ((line = reader.readLine()) != null) {
+        line = line.trim();
+        if (line.length() != 0) {
+          mirrorList.add(new Mirror(line));
+        }
+      }
+    }
+    catch (Exception exc) {
+      throw new PreparationException("Loading mirrorlist.txt failed", exc);
+    }
+    finally {
+      if (stream != null) {
+        try { stream.close(); } catch (IOException exc) {}
+      } 
+    }
+        
+    // Convert the list into an array
+    Mirror[] mirrorArr = new Mirror[mirrorList.size()];
+    mirrorList.toArray(mirrorArr);
+    
+    return mirrorArr;
+  }
+
+
+  private int getMirrorWeight(Mirror mirror) {
+    try {
+      String url = mirror.getUrl() + "/weight";
+      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(url));
+      String asString = new String(data);
+      return Integer.parseInt(asString);
+    }
+    catch (Exception exc) {
+      System.out.println("Getting mirror weight of " + mirror.getUrl()
+        + " failed");
+      return -1;
+    }
+  }
+
+
+  private Mirror[] loadOldMirrorList() {
+    File fromFile = new File(mPreparedDir, Mirror.MIRROR_LIST_FILE_NAME);
+    try {
+      return Mirror.readMirrorListFromFile(fromFile);
+    }
+    catch (Exception exc) {
+      // There is no old mirror list -> return an empty array
+      return new Mirror[0];
     }
   }
 

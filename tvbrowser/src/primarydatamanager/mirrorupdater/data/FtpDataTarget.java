@@ -26,9 +26,7 @@
 package primarydatamanager.mirrorupdater.data;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.NumberFormat;
 
 import org.apache.commons.net.ftp.FTPClient;
@@ -36,7 +34,6 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import primarydatamanager.mirrorupdater.UpdateException;
-import util.io.IOUtilities;
 
 /**
  * 
@@ -50,8 +47,6 @@ public class FtpDataTarget implements DataTarget {
   private String mPath;
   
   private long mBytesWritten;
-  private long mBytesRead;
-
 
   
   public FtpDataTarget(String serverUrl, String path, int port, String user,
@@ -200,28 +195,6 @@ public class FtpDataTarget implements DataTarget {
 
 
 
-  public byte[] loadFile(String fileName) throws UpdateException {
-    try {
-      InputStream in = mFTPClient.retrieveFileStream(fileName);
-      checkReplyCode();
-      if (in == null) {
-        throw new UpdateException("Could not load file '" + fileName + "'");
-      }
-      
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      IOUtilities.pipeStreams(in, out);
-      out.close();
-      byte[] data = out.toByteArray();
-      
-      mBytesRead += data.length;
-      
-      return data;
-    } catch (Exception exc) {
-      throw new UpdateException("Could not load file '" + fileName + "'", exc);
-    }
-  }
-
-
   public void close() throws UpdateException {
     if (mFTPClient.isConnected()) {
       try {
@@ -235,8 +208,7 @@ public class FtpDataTarget implements DataTarget {
     
     System.out.println("Disconnected from " + mServerUrl);
     System.out.println("In total there were "
-      + NumberFormat.getInstance().format(mBytesWritten) + " bytes written and "
-      + NumberFormat.getInstance().format(mBytesRead) + " bytes read.");
+      + NumberFormat.getInstance().format(mBytesWritten) + " bytes written.");
   }
 
 }

@@ -40,8 +40,6 @@ public interface DataTarget {
   
   public void writeFile(String fileName, byte[] data) throws UpdateException;
   
-  public byte[] loadFile(String fileName) throws UpdateException;
-
   public void close() throws UpdateException;
 
 }
