@@ -40,6 +40,7 @@ import primarydatamanager.mirrorupdater.config.Configuration;
 import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
 import primarydatamanager.mirrorupdater.data.DataSource;
 import primarydatamanager.mirrorupdater.data.DataTarget;
+import tvbrowserdataservice.file.*;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
@@ -68,7 +69,7 @@ public class MirrorUpdater {
   
   private String[] mTargetFileArr;
   
-  private static final String WELCOME_MESSAGE="MirrorUpdater for TV-Browser v0.1";
+  private static final String WELCOME_MESSAGE="MirrorUpdater for TV-Browser v0.2";
 
 
 
@@ -277,6 +278,10 @@ public class MirrorUpdater {
     // Copy the mirrorlist.gz
     data = mDataSource.loadFile(Mirror.MIRROR_LIST_FILE_NAME);
     mDataTarget.writeFile(Mirror.MIRROR_LIST_FILE_NAME, data);
+
+    // Copy the summary.gz
+    data = mDataSource.loadFile(SummaryFile.SUMMARY_FILE_NAME);
+    mDataTarget.writeFile(SummaryFile.SUMMARY_FILE_NAME, data);
 
     // Create the weight file
     if (mMirrorWeight>=0) {  // don't change the weight file, if the weight is invalid

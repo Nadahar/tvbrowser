@@ -31,33 +31,26 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import util.exc.TvBrowserException;
-
 import devplugin.Date;
 
 /**
  * @author Til Schneider, www.murfman.de
  */
-public class DayProgramFile {
+public class DayProgramFile extends AbstractFile {
   
   private transient devplugin.Channel mChannel;
   private transient devplugin.Date mDate;
   
-//  public static final String[] LEVEL_ARR = {
-//    "base", "more16-00", "more00-16" // , "image16-00", "image00-16"
-//  };
-  
   /** The localizer for this class. */
-      public static final util.ui.Localizer mLocalizer
-        = util.ui.Localizer.getLocalizerFor(DayProgramFile.class);
-  
+  public static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(DayProgramFile.class);
   
   public static final TvDataLevel[] LEVEL_ARR = new TvDataLevel[] {
     new TvDataLevel("base","Basis TV-Daten",true),
     new TvDataLevel("more00-16",mLocalizer.msg("more00-16","")),
     new TvDataLevel("more16-00",mLocalizer.msg("more16-00","")),
-  //  new TvDataLevel("image00-16",""),
-  //  new TvDataLevel("image16-00",""),
-    
+    // new TvDataLevel("image00-16",""),
+    // new TvDataLevel("image16-00",""),
   };
 
   private static final int FILE_VERSION = 1;
@@ -318,23 +311,6 @@ public class DayProgramFile {
   }
 
 
-
-  public void readFromFile(File file) throws IOException, FileFormatException {
-    FileInputStream stream = null;
-    try {
-      stream = new FileInputStream(file);
-      
-      readFromStream(stream);
-    }
-    finally {
-      if (stream != null) {
-        try { stream.close(); } catch (IOException exc) {}
-      }
-    }
-  }
-
-
-
   public void writeToStream(OutputStream stream)
     throws IOException, FileFormatException
   {
@@ -353,37 +329,6 @@ public class DayProgramFile {
     }
     
     gOut.close();
-  }
-
-
-
-  public void writeToFile(File file) throws IOException, FileFormatException {
-    // NOTE: We need two try blocks to ensure that the file is closed in the
-    //       outer block.
-    
-    try {
-      FileOutputStream stream = null;
-      try {
-        stream = new FileOutputStream(file);
-        
-        writeToStream(stream);
-      }
-      finally {
-        // Close the file in every case
-        if (stream != null) {
-          try { stream.close(); } catch (IOException exc) {}
-        }
-      }
-    }
-    catch (IOException exc) {
-      file.delete();
-      throw exc;
-    }
-    catch (FileFormatException exc) {
-      file.delete();
-      throw new FileFormatException("Writing file failed "
-        + file.getAbsolutePath(), exc);
-    }
   }
 
 
@@ -490,6 +435,34 @@ public class DayProgramFile {
       throw new TvBrowserException(DayProgramFile.class, "error.1",
         "Program file name has wrong syntax: {0}", fileName, exc);
     }
+  }
+
+
+  public static String getLevelFromFileName(String fileName)
+    throws TvBrowserException
+  {
+    try {
+      // E.g. '2003-10-04_de_premiere-1_base_update_15.prog.gz'
+      //   or '2003-10-04_de_premiere-1_base_full.prog.gz'
+      int channelEnd = fileName.indexOf('_', 14);
+      int levelEnd = fileName.indexOf('_', channelEnd + 1);
+      return fileName.substring(channelEnd + 1, levelEnd);
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(DayProgramFile.class, "error.1",
+        "Program file name has wrong syntax: {0}", fileName, exc);
+    }
+  }
+  
+  
+  public static int getLevelIndexForId(String levelId) {
+    for (int i = 0; i < LEVEL_ARR.length; i++) {
+      if (levelId.equals(LEVEL_ARR[i].getId())) {
+        return i;
+      }
+    }
+    
+    return -1;
   }
 
 
