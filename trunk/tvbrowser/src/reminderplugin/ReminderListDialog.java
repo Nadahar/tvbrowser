@@ -42,6 +42,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import util.ui.ChannelLabel;
 import util.ui.ImageUtilities;
 import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
@@ -186,11 +187,7 @@ public class ReminderListDialog extends JDialog {
     box1.setSelectedIndex(idx);
     
     JLabel dateLabel=new JLabel(prog.getDate().toString());
-    JLabel channelLabel=new JLabel(prog.getChannel().getName());
-    
-    if (prog.getChannel().getIcon() != null) {
-        channelLabel.setIcon(prog.getChannel().getIcon());
-    }
+    ChannelLabel channelLabel=new ChannelLabel(prog.getChannel());
     
     dateLabel.setPreferredSize(new java.awt.Dimension(100,(int)dateLabel.getPreferredSize().getHeight()));
     

@@ -26,7 +26,6 @@
 package util.ui;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -46,9 +45,16 @@ public class ChannelLabel extends JLabel {
      * Creates the ChannelLabel
      */
     public ChannelLabel() {
-        
     }
 
+    /**
+     * Creates the ChannelLabel
+     * @param ch Channel to display
+     */
+    public ChannelLabel(Channel ch) {
+        setChannel(ch);
+    }
+    
     /**
      * Sets the Channel to display
      * @param ch Channel to display
