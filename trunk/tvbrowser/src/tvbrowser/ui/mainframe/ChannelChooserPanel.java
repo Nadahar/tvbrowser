@@ -23,7 +23,7 @@ public class ChannelChooserPanel extends JPanel {
 
     
     private Vector mChannelChooserModel = new Vector();
-    
+    private JList mList;
     private MainFrame mParent;
     
     /**
@@ -33,27 +33,30 @@ public class ChannelChooserPanel extends JPanel {
         mParent =frame;
         updateChannelChooser();
         
-        final JList list = new JList(mChannelChooserModel);
+        mList = new JList(mChannelChooserModel);
         
         setLayout(new BorderLayout());
-        add(new JScrollPane(list));
+        add(new JScrollPane(mList));
         
-        list.addListSelectionListener(new ListSelectionListener() {
+        mList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                mParent.showChannel((Channel)list.getSelectedValue());
+                mParent.showChannel((Channel)mList.getSelectedValue());
             }
             
         });
         
-        list.setCellRenderer(new ChannelListCellRenderer());
+        mList.setCellRenderer(new ChannelListCellRenderer());
     }
 
-    public void updateChannelChooser() {    
+    public void updateChannelChooser() {  
         mChannelChooserModel.removeAllElements();
         Channel[] channelList=tvbrowser.core.ChannelList.getSubscribedChannels();
         for (int i=0;i<channelList.length;i++) {
           mChannelChooserModel.addElement(channelList[i]);
+        }
+        if (mList != null) {
+          mList.updateUI();
         }
       }    
 
