@@ -40,6 +40,8 @@ import devplugin.Channel;
  */
 public class ChannelLabel extends JLabel {
 
+    static Icon DEFAULT_ICON = new ImageIcon("./imgs/TVBrowser16.gif"); 
+  
     /**
      * Creates the ChannelLabel
      */
@@ -91,14 +93,14 @@ public class ChannelLabel extends JLabel {
 
         ImageIcon imgIcon = new ImageIcon(img);
         super.setIcon(imgIcon);
-    }
+    } 
 
     /**
      * Returns the Default-Icon 
      * @return default-icon
      */
     private Icon getDefaultIcon() {
-        return new ImageIcon("./imgs/TVBrowser16.gif");
+        return DEFAULT_ICON;
     }
 
     /**
