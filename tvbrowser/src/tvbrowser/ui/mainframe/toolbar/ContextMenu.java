@@ -28,8 +28,11 @@ package tvbrowser.ui.mainframe.toolbar;
 
 
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.core.Settings;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 import javax.swing.*;
 
 
@@ -56,11 +59,46 @@ public class ContextMenu {
     mMenu.removeAll();
     mMenu.add(createButtonSizeMenuItem());
     mMenu.add(createViewMenu());
+    mMenu.add(createLocationMenu());
     mMenu.addSeparator();
-    mMenu.add(createSetupItem());
+    mMenu.add(createConfigureItem());
   }
 
- 
+
+  private JMenu createLocationMenu() {
+    JMenu menu = new JMenu(mLocalizer.msg("location", "Location"));
+    JRadioButtonMenuItem topMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("top","Top"));
+    JRadioButtonMenuItem leftMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("left","Left"));
+    menu.add(topMenuItem);
+    menu.add(leftMenuItem);
+    ButtonGroup group = new ButtonGroup();
+    group.add(topMenuItem);
+    group.add(leftMenuItem);
+    String loc = Settings.propToolbarLocation.getString();
+   if ("west".equals(loc)) {
+      leftMenuItem.setSelected(true);
+    }
+    else {
+      topMenuItem.setSelected(true);
+    }
+    topMenuItem.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mToolBar.setToolbarLocation(BorderLayout.NORTH);
+        mToolBar.storeSettings();
+        MainFrame.getInstance().updateToolbar();
+      }
+    });
+
+    leftMenuItem.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mToolBar.setToolbarLocation(BorderLayout.WEST);
+        mToolBar.storeSettings();
+        MainFrame.getInstance().updateToolbar();
+      }
+    });
+    return menu;
+  }
+
   private JMenu createViewMenu() {
     JMenu menu = new JMenu(mLocalizer.msg("view","view"));
     JRadioButtonMenuItem allMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("text.and.icon","text and icon"));
@@ -86,6 +124,7 @@ public class ContextMenu {
     allMenuItem.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         mToolBar.setStyle(ToolBar.STYLE_TEXT | ToolBar.STYLE_ICON);
+        mToolBar.storeSettings();
         mToolBar.update();
       }
     });
@@ -93,6 +132,7 @@ public class ContextMenu {
     textonlyMenuItem.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         mToolBar.setStyle(ToolBar.STYLE_TEXT);
+        mToolBar.storeSettings();
         mToolBar.update();
       }
     });
@@ -100,6 +140,7 @@ public class ContextMenu {
     icononlyMenuItem.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         mToolBar.setStyle(ToolBar.STYLE_ICON);
+        mToolBar.storeSettings();
         mToolBar.update();
       }
     });
@@ -112,6 +153,7 @@ public class ContextMenu {
     item.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mToolBar.setUseBigIcons(!mToolBar.useBigIcons());
+        mToolBar.storeSettings();
         mToolBar.update();
       }
     });
@@ -119,7 +161,7 @@ public class ContextMenu {
     return item;
   }
 
-  private JMenuItem createSetupItem() {
+  private JMenuItem createConfigureItem() {
     JMenuItem item = new JMenuItem(mLocalizer.msg("configure","Configure")+"...");
     item.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {

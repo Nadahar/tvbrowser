@@ -82,10 +82,8 @@ public class ToolBar extends JToolBar {
   public ToolBar(ToolBarModel model) {
     super();
     mModel = model;
-    mStyle = STYLE_TEXT | STYLE_ICON;
-    mIconSize = ICON_BIG;
+    loadSettings();
     mContextMenu = new ContextMenu(this);
-    setToolbarLocation(BorderLayout.NORTH);
     setFloatable(false);
     update();
     addMouseListener(new MouseAdapter(){
@@ -222,7 +220,8 @@ public class ToolBar extends JToolBar {
   }
 
 
-  public void loadSettings() {
+  private void loadSettings() {
+
     String styleStr = Settings.propToolbarButtonStyle.getString();
     if ("text".equals(styleStr)) {
       mStyle = STYLE_TEXT;
@@ -235,16 +234,11 @@ public class ToolBar extends JToolBar {
     }
 
 
+    setUseBigIcons(Settings.propToolbarUseBigIcons.getBoolean());
 
     String locationStr = Settings.propToolbarLocation.getString();
     mLocation=null;
-    if ("hidden".equals(locationStr)) {
-      mLocation = null;
-    }else if ("east".equals(locationStr)) {
-      mLocation = BorderLayout.EAST;
-    }else if ("south".equals(locationStr)) {
-      mLocation = BorderLayout.SOUTH;
-    }else if ("west".equals(locationStr)) {
+    if ("west".equals(locationStr)) {
       mLocation = BorderLayout.WEST;
     }else {
       mLocation = BorderLayout.NORTH;
@@ -270,24 +264,20 @@ public class ToolBar extends JToolBar {
       Settings.propToolbarButtonStyle.setString("text&icon");
     }
 
-
+    Settings.propToolbarUseBigIcons.setBoolean(mIconSize == ICON_BIG);
 
     if (mLocation == null) {
       Settings.propToolbarLocation.setString("hidden");
     }
-    else if (mLocation == BorderLayout.SOUTH) {
-      Settings.propToolbarLocation.setString("south");
-    }
     else if (mLocation == BorderLayout.WEST) {
       Settings.propToolbarLocation.setString("west");
-    }
-    else if (mLocation == BorderLayout.EAST) {
-      Settings.propToolbarLocation.setString("east");
     }
     else {
       Settings.propToolbarLocation.setString("north");
     }
-    
+
+
+
   }
 
   public void setToolbarLocation(String location) {

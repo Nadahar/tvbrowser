@@ -189,7 +189,7 @@ public class Settings {
       
     propArr = new Property[] {
      /* propShowUpdateButton, propShowPreferencesButton, */propToolbarButtonStyle,
-      propToolbarButtons, propToolbarLocation,
+      propToolbarButtons, propToolbarLocation, propIsTooolbarVisible,
       propToolbarUseBigIcons
     };
     if (mProp.hasChanged(propArr)) {
@@ -358,6 +358,9 @@ public class Settings {
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "text&icon",
                          new String[] { "text&icon", "text", "icon" });
+
+  public static final BooleanProperty propIsTooolbarVisible
+    = new BooleanProperty(mProp, "isToolbarVisible", true);
 
   public static final BooleanProperty propIsSkinLFEnabled
     = new BooleanProperty(mProp, "skinLF.enabled", false);

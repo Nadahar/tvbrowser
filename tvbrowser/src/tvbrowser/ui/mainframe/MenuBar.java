@@ -103,8 +103,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
     mQuitMI.addActionListener(this);
     mToolbarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewToolbar","Toolbar"));
+    mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
     mToolbarMI.addActionListener(this);
-    mToolbarMI.setSelected(!"hidden".equals(Settings.propToolbarLocation.getString()));
     mTimeBtnsMI = new JCheckBoxMenuItem("Zeitknoepfe");
     mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
     mTimeBtnsMI.addActionListener(this);
