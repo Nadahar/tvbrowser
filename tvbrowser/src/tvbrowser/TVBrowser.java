@@ -50,6 +50,7 @@ import tvbrowser.core.DataService;
 import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.ui.configassistant.ConfigAssistant;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
@@ -281,26 +282,21 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         
-        if (Settings.isFirstStart()) {
-          LicenseBox box=new LicenseBox(mainFrame, true);
-          util.ui.UiUtilities.centerAndShow(box);
-          if (!box.agreed()) {
-            mainFrame.quit();
+       
+        if (Settings.getShowAssistant()) {  
+          javax.swing.JDialog dlg=new ConfigAssistant(mainFrame);
+          util.ui.UiUtilities.centerAndShow(dlg);      
+        }
+        else {        
+          if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
+            mainFrame.runUpdateThread(Settings.getDownloadPeriod());
+          }        
+       
+          if (! DataService.dataAvailable(new devplugin.Date())) {
+            mainFrame.askForDataUpdate();
+          } else {
+            mainFrame.scrollToNow();
           }
-        }
-              	
-        if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
-          mainFrame.runUpdateThread(Settings.getDownloadPeriod());
-        }
-        
-        if (ChannelList.getNumberOfSubscribedChannels()==0) {
-        	JOptionPane.showMessageDialog(mainFrame,"There are no channels selected for download.");
-        }
-        else
-        if (! DataService.dataAvailable(new devplugin.Date())) {
-          mainFrame.askForDataUpdate();
-        } else {
-          mainFrame.scrollToNow();
         }
         
      }

@@ -39,6 +39,7 @@ import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.Version;
 
+import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
@@ -108,6 +109,15 @@ public class TvBrowserDataService extends AbstractTvDataService {
     Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {
+    if (!"false".equals(mSettings.getProperty("showLicenseBox"))) {
+      LicenseBox box=new LicenseBox(null, true);
+      util.ui.UiUtilities.centerAndShow(box);
+      if (!box.agreed()) {
+        return;
+      }
+      mSettings.setProperty("showLicenseBox","false");
+    }
+    
     mTvDataBase = dataBase;
     mProgressMonitor = monitor;
     
@@ -492,15 +502,38 @@ public class TvBrowserDataService extends AbstractTvDataService {
       if (mAvailableChannelArr == null) {
         // There is no channel file or loading failed
         // -> create a list with some channels
-        mAvailableChannelArr = createDefaultChannels();
+        //mAvailableChannelArr = createDefaultChannels();
+        mAvailableChannelArr=new Channel[]{};
       }
     }
     
     return mAvailableChannelArr;
   }
+  
+  public Channel[] checkForAvailableChannels() throws TvBrowserException {
+    // load the mirror list
+    Mirror[] mirrorArr = loadMirrorList();
+    
+    // Get a random Mirror that is up to date
+    Mirror mirror = chooseUpToDateMirror(mirrorArr);
+    mLog.fine("Using mirror " + mirror.getUrl());
+
+    // Update the mirrorlist (for the next time)
+    updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
+    
+    // Update the channel list
+     
+    updateChannelList(mirror);
+    return getAvailableChannels();
+  }
+  
+  public boolean supportsDynamicChannelList() {
+    return true;
+  }
 
 
-
+  
+/*
   private Channel[] createDefaultChannels() {
     TimeZone zone = TimeZone.getTimeZone("MET");
     return new Channel[] {
@@ -510,7 +543,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     };
   }
 
-
+*/
 
   /**
    * Gets information about this TvDataService

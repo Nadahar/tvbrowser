@@ -117,7 +117,7 @@ public class ChannelList {
     
   }
 
-  public static void addDataServiceChannels(TvDataService dataService) {
+  private static void addDataServiceChannels(TvDataService dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
 
     for (int i = 0; i < channelArr.length; i++) {
@@ -125,7 +125,15 @@ public class ChannelList {
     }
   }
 
+  public static void create() {
+    mAvailableChannels.clear();
+    TvDataService[] dataServiceArr
+            = TvDataServiceManager.getInstance().getDataServices();
 
+    for (int i=0;i<dataServiceArr.length;i++) {
+      addDataServiceChannels(dataServiceArr[i]);
+    }
+  }
 
   /**
    * Subscribes a channel

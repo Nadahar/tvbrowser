@@ -515,10 +515,13 @@ public class Settings {
     settings.setProperty("preferencesbutton",value?"visible":"hidden");
   }
   
-  public static boolean isFirstStart() {
-    boolean result=!"false".equals(settings.getProperty("isFirstStart"));
-    settings.setProperty("isFirstStart","false");
+  public static boolean getShowAssistant() {
+    boolean result=!"false".equals(settings.getProperty("showassistant"));
     return result;
+  }
+  
+  public static void setShowAssistant(boolean val) {
+    settings.setBoolean("showassistant",val);
   }
 
   public static int getButtonSettings() {
