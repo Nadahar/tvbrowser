@@ -51,7 +51,7 @@ InstallDirRegKey HKCU "Software\${PROG_NAME}" "Install directory"
 SetCompressor lzma
 
 # The icons of the installer and uninstaller
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-install.ico" 
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-install.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-uninstall.ico"
 
 !define MUI_WELCOMEPAGE_TITLE_3LINES
@@ -63,8 +63,8 @@ SetCompressor lzma
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER ${PROG_NAME}
 
 # Remember the selected start menu folder in registry
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${PROG_NAME}" 
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${PROG_NAME}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
 # Use no descriptions in the components page
@@ -135,7 +135,7 @@ FunctionEnd
 
 #--------------------------------
 #Languages
- 
+
 !insertmacro MUI_LANGUAGE "German"
 
 
@@ -160,7 +160,7 @@ Section "${PROG_NAME} (erforderlich)"
   File "${RUNTIME_DIR}\website.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
   File "${RUNTIME_DIR}\..\..\win\DesktopIndicator.dll"
-  
+
   WriteUninstaller "Uninstall.exe"
 
   SetOutPath "$INSTDIR\imgs"
@@ -174,7 +174,7 @@ Section "${PROG_NAME} (erforderlich)"
 
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
-  
+
   # CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
 
@@ -222,11 +222,11 @@ Section "${PROG_NAME} (erforderlich)"
     SetOutPath "$INSTDIR"
 
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-  
+
     CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\${PROG_NAME}.lnk" \
       "$INSTDIR\tvbrowser.exe"
-  
+
     CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\Lizenz.lnk" \
       "$INSTDIR\LICENSE.txt"
@@ -241,7 +241,7 @@ Section "${PROG_NAME} (erforderlich)"
       "" \
       "$INSTDIR\Uninstall.exe" \
       0
-  
+
   !insertmacro MUI_STARTMENU_WRITE_END
 
 SectionEnd # end the section
@@ -263,18 +263,18 @@ SubSection "Daten-Services"
 
   Section "TV-Browser-Datenservice"
     SectionIn 1 2 RO
-  
+
     SetOutPath "$INSTDIR\tvdataservice"
     File "${RUNTIME_DIR}\tvdataservice\TvBrowserDataService.jar"
   SectionEnd
-  
+
   #Section "Premiere-Datenservice"
   #  SectionIn 1 2
   #
   #  SetOutPath "$INSTDIR\tvdataservice"
   #  File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
   #SectionEnd
-  
+
   #Section "WDR-Datenservice"
   #  SectionIn 1 2
   #
@@ -289,72 +289,79 @@ SubSection "Plugins"
 
   Section "Sendungsinfo-Betrachter"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ProgramInfo.jar"
   SectionEnd
-  
+
   Section "Erinnerer"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ReminderPlugin.jar"
   SectionEnd
-  
+
   Section "Sendungen suchen"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
   SectionEnd
-  
+
   Section "Drucken"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
   SectionEnd
-  
+
   Section "Lieblingssendungen verwalten"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\FavoritesPlugin.jar"
   SectionEnd
-  
+
   Section "Showviewnummern berechnen"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
   SectionEnd
-  
+
   Section "Google-Suche"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\GoogleSearchPlugin.jar"
   SectionEnd
-  
+
   Section "IMDB-Suche"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ImdbSearchPlugin.jar"
   SectionEnd
-  
+
   Section "TV-Bewertungen"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
   SectionEnd
-  
+
   Section "Was läuft gerade"
     SectionIn 1
-  
+
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ListViewPlugin.jar"
+  SectionEnd
+
+  Section "Nachrichten"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\NewsPlugin.jar"
   SectionEnd
 
 SubSectionEnd
@@ -364,14 +371,14 @@ SubSectionEnd
 Section "Uninstall"
   # Read whether "Remove TV data" was seleted in the "UninstallTvData.ini"
   !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallTvData.ini" "Field 2" "State"
-  
+
   # Remove TV data if "Remove TV data" was seleted in the "UninstallTvData.ini"
   StrCmp $INI_VALUE "1" "" +2
     RMDir /r "$INSTDIR\tvdata"
 
   # Read whether "Remove settings" was seleted in the "UninstallSettings.ini"
   !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallSettings.ini" "Field 2" "State"
-  
+
   # Remove settings if "Remove settings" was seleted in the "UninstallSettings.ini"
   StrCmp $INI_VALUE "1" "" +2
     RMDir /r "$PROFILE\.tvbrowser"
