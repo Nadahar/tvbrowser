@@ -39,7 +39,6 @@ import tvdataservice.TvDataService;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.ProgramFieldType;
-import tvbrowser.ui.SkinPanel;
 
 class TVBrowserProperties extends java.util.Properties {
   
@@ -466,7 +465,7 @@ public class Settings {
 
 
   public static int getEarlyTime() {
-    String time=settings.getProperty("timebutton.early","240");
+    String time=settings.getProperty("timebutton.early", "360"); // 6:00
     return Integer.parseInt(time);
   }
   
@@ -479,7 +478,7 @@ public class Settings {
     
     
     public static int getMiddayTime() {
-      String time=settings.getProperty("timebutton.midday","720");
+      String time=settings.getProperty("timebutton.midday","720"); // 12:00
       return Integer.parseInt(time);
     }
   
@@ -488,7 +487,7 @@ public class Settings {
     }
     
     public static int getAfternoonTime() {
-      String time=settings.getProperty("timebutton.afternoon","1080");
+      String time=settings.getProperty("timebutton.afternoon","1080"); // 18:00
       return Integer.parseInt(time);
     }
     
@@ -497,7 +496,7 @@ public class Settings {
     }
     
   public static int getEveningTime() {
-      String time=settings.getProperty("timebutton.evening","1260");
+      String time=settings.getProperty("timebutton.evening","1200"); // 20:00
       return Integer.parseInt(time);
     }
   
@@ -526,42 +525,44 @@ public class Settings {
     }
   }
 
-
-
-  /**
-   * Returns the background mode of the TV table.
-   * Possible values are COLUMN, WALLPAPER and NONE
-   */
-  public static int getTableBGMode() {
-    String mode=settings.getProperty("tablebgmode","cols");
-
-    if ("cols".equals(mode)) {
-      return SkinPanel.COLUMNS;
-    }else if ("wallpaper".equals(mode)) {
-      return SkinPanel.WALLPAPER;
-    }
-    return SkinPanel.NONE;
+  public static String getTableBackgroundEdge() {
+    return settings.getProperty("tablebackground.edge", "imgs/columns_edge.jpg");
   }
 
-  public static void setTableBGMode(int mode) {
-    if (mode==SkinPanel.COLUMNS) {
-      settings.setProperty("tablebgmode","cols");
-    }else if (mode==SkinPanel.WALLPAPER) {
-      settings.setProperty("tablebgmode","wallpaper");
-    }else {
-      settings.setProperty("tablebgmode","none");
-    }
+  public static void setTableBackgroundEdge(String value) {
+    settings.setProperty("tablebackground.edge", value);
   }
 
-  /**
-   * Returns the background picture of the TV table.
-   */
-  public static String getTableSkin() {
-    return settings.getProperty("tablebackground","imgs/columns.jpg");
+  public static String getTableBackgroundEarly() {
+    return settings.getProperty("tablebackground.early", "imgs/columns_early.jpg");
   }
 
-  public static void setTableSkin(String value) {
-    settings.setProperty("tablebackground",value);
+  public static void setTableBackgroundEarly(String value) {
+    settings.setProperty("tablebackground.early", value);
+  }
+  
+  public static String getTableBackgroundMidday() {
+    return settings.getProperty("tablebackground.midday", "imgs/columns_midday.jpg");
+  }
+
+  public static void setTableBackgroundMidday(String value) {
+    settings.setProperty("tablebackground.midday", value);
+  }
+  
+  public static String getTableBackgroundAfternoon() {
+    return settings.getProperty("tablebackground.afternoon", "imgs/columns_afternoon.jpg");
+  }
+
+  public static void setTableBackgroundAfternoon(String value) {
+    settings.setProperty("tablebackground.afternoon", value);
+  }
+  
+  public static String getTableBackgroundEvening() {
+    return settings.getProperty("tablebackground.evening", "imgs/columns_evening.jpg");
+  }
+
+  public static void setTableBackgroundEvening(String value) {
+    settings.setProperty("tablebackground.evening", value);
   }
 
   public static boolean isTimeBtnVisible() {

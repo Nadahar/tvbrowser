@@ -26,19 +26,17 @@
 
 package tvbrowser.ui.settings;
 
-import java.io.File;
-
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
-import util.ui.TabLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
-import tvbrowser.core.Settings;
-import tvbrowser.ui.SkinPanel;
+import javax.swing.*;
 
+import tvbrowser.core.Settings;
+import util.ui.TabLayout;
 import devplugin.SettingsTab;
 
 
@@ -54,12 +52,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JPanel mSettingsPn;
   
   private JComboBox mProgramArrangementCB;
-  private JRadioButton mBlankRB, mWallpaperRB, mColumnsRB;
 
-  private JLabel mBackgroundLb;
-  private JButton mBackgroundBt, mDefaultBtn;
-  private JTextField mBackgroundTF;
-  
+  private JButton mDefaultBtn;
+  private JTextField mBackgroundEdgeTF, mBackgroundEarlyTF, mBackgroundMiddayTF,
+    mBackgroundAfternoonTF, mBackgroundEveningTF;
+    
   private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
   private JSlider mColWidthSl;
   
@@ -76,19 +73,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
-    if (source == mBlankRB) {
-      if (mBlankRB.isSelected()) {
-        mBackgroundLb.setEnabled(false);
-        mBackgroundBt.setEnabled(false);
-        mBackgroundTF.setEnabled(false);
-      }
-    } else if (source == mWallpaperRB || source == mColumnsRB) {
-      if (mWallpaperRB.isSelected() || mColumnsRB.isSelected()) {
-        mBackgroundLb.setEnabled(true);
-        mBackgroundBt.setEnabled(true);
-        mBackgroundTF.setEnabled(true);
-      }
-    } else if (source==mDefaultBtn) {
+    if (source == mDefaultBtn) {
       mColWidthSl.setValue(200);
     }
   }
@@ -100,7 +85,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    */
   public JPanel createSettingsPanel() {
     String msg;
-    JPanel p1, p2;
+    JPanel p1;
     
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -126,67 +111,41 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     p1.add(mProgramArrangementCB);
     
     // program table background panel
-    p1 = new JPanel(new TabLayout(1));
+    p1 = new JPanel(new TabLayout(3));
     msg = mLocalizer.msg("tableBackground", "Table background");
     p1.setBorder(BorderFactory.createTitledBorder(msg));
     main.add(p1);
-    
-    // program table background style
-    p2 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
-    p1.add(p2);
-    
-    p2.add(new JLabel(mLocalizer.msg("alignment", "Alignment")));
 
-    ButtonGroup tablePanelBtnGroup = new ButtonGroup();
+    p1.add(new JLabel(mLocalizer.msg("edge", "Edge")));
+    mBackgroundEdgeTF = new JTextField(Settings.getTableBackgroundEdge(), 15);
+    p1.add(mBackgroundEdgeTF);
+    p1.add(createBrowseButton(mBackgroundEdgeTF));
 
-    mBlankRB = new JRadioButton(mLocalizer.msg("blank", "Blank"));
-    mBlankRB.setSelected(Settings.getTableBGMode() == SkinPanel.NONE);
-    mBlankRB.addActionListener(this);
-    tablePanelBtnGroup.add(mBlankRB);
-    p2.add(mBlankRB);
+    p1.add(new JLabel(mLocalizer.msg("early", "Early")));
+    mBackgroundEarlyTF = new JTextField(Settings.getTableBackgroundEarly(), 15);
+    p1.add(mBackgroundEarlyTF);
+    p1.add(createBrowseButton(mBackgroundEarlyTF));
 
-    mWallpaperRB = new JRadioButton(mLocalizer.msg("wallpaper", "Wallpaper"));
-    mWallpaperRB.setSelected(Settings.getTableBGMode() == SkinPanel.WALLPAPER);
-    mWallpaperRB.addActionListener(this);
-    tablePanelBtnGroup.add(mWallpaperRB);
-    p2.add(mWallpaperRB);
+    p1.add(new JLabel(mLocalizer.msg("midday", "Midday")));
+    mBackgroundMiddayTF = new JTextField(Settings.getTableBackgroundMidday(), 15);
+    p1.add(mBackgroundMiddayTF);
+    p1.add(createBrowseButton(mBackgroundMiddayTF));
 
-    mColumnsRB = new JRadioButton(mLocalizer.msg("columns", "Columns"));
-    mColumnsRB.setSelected(Settings.getTableBGMode() == SkinPanel.COLUMNS);
-    mColumnsRB.addActionListener(this);
-    tablePanelBtnGroup.add(mColumnsRB);
-    p2.add(mColumnsRB);
+    p1.add(new JLabel(mLocalizer.msg("afternoon", "Afternoon")));
+    mBackgroundAfternoonTF = new JTextField(Settings.getTableBackgroundAfternoon(), 15);
+    p1.add(mBackgroundAfternoonTF);
+    p1.add(createBrowseButton(mBackgroundAfternoonTF));
 
-    // program table background image
-    p2 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
-    p1.add(p2);
-
-    mBackgroundLb = new JLabel(mLocalizer.msg("background", "Background"));
-    p2.add(mBackgroundLb);
-    
-    mBackgroundTF = new JTextField(Settings.getTableSkin(), 15);
-    p2.add(mBackgroundTF);
-
-    mBackgroundBt = new JButton(mLocalizer.msg("change", "Change"));
-    mBackgroundBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        JFileChooser fileChooser=new JFileChooser();
-        String[] extArr = { ".jpg", ".jpeg", ".gif", ".png"};
-        fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
-        fileChooser.showOpenDialog(mSettingsPn);
-        File selection = fileChooser.getSelectedFile();
-        if (selection != null) {
-          mBackgroundTF.setText(selection.getAbsolutePath());
-        }
-      }
-    });
-    p2.add(mBackgroundBt);
+    p1.add(new JLabel(mLocalizer.msg("evening", "Evening")));
+    mBackgroundEveningTF = new JTextField(Settings.getTableBackgroundEvening(), 15);
+    p1.add(mBackgroundEveningTF);
+    p1.add(createBrowseButton(mBackgroundEveningTF));
     
     // column width
     JPanel colWidthPn=new JPanel(new BorderLayout());
     
     colWidthPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columnwidth","column width")));
-    mColWidthSl=new JSlider(JSlider.HORIZONTAL,0,300,Settings.getColumnWidth());
+    mColWidthSl=new JSlider(SwingConstants.HORIZONTAL,0,300,Settings.getColumnWidth());
     colWidthPn.add(mColWidthSl,BorderLayout.WEST);
     mColWidthSl.setPreferredSize(new Dimension(300,15));
     
@@ -243,6 +202,28 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     return mSettingsPn;
   }
 
+
+  private JButton createBrowseButton(final JTextField tf) {
+    JButton bt = new JButton(mLocalizer.msg("change", "Change"));
+    bt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent event) {
+        JFileChooser fileChooser=new JFileChooser();
+        String[] extArr = { ".jpg", ".jpeg", ".gif", ".png"};
+        fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
+        fileChooser.showOpenDialog(mSettingsPn);
+        File selection = fileChooser.getSelectedFile();
+        if (selection != null) {
+          tf.setText(selection.getAbsolutePath());
+        }
+      }
+    });
+    
+    Dimension size = bt.getPreferredSize();
+    size.height = tf.getPreferredSize().height;
+    bt.setPreferredSize(size);
+    
+    return bt;
+  }
   
   
   /**
@@ -255,14 +236,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       Settings.setTableLayout(Settings.TABLE_LAYOUT_TIME_SYNCHRONOUS);
     }
     
-    Settings.setTableSkin(mBackgroundTF.getText());
-    if (mWallpaperRB.isSelected()) {
-      Settings.setTableBGMode(SkinPanel.WALLPAPER);
-    } else if (mColumnsRB.isSelected()) {
-      Settings.setTableBGMode(SkinPanel.COLUMNS);
-    } else {
-      Settings.setTableBGMode(SkinPanel.NONE);
-    }
+    Settings.setTableBackgroundEdge(mBackgroundEdgeTF.getText());
+    Settings.setTableBackgroundEarly(mBackgroundEarlyTF.getText());
+    Settings.setTableBackgroundMidday(mBackgroundMiddayTF.getText());
+    Settings.setTableBackgroundAfternoon(mBackgroundAfternoonTF.getText());
+    Settings.setTableBackgroundEvening(mBackgroundEveningTF.getText());
     
     Settings.setColumnWidth(mColWidthSl.getValue());
     
