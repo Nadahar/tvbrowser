@@ -261,7 +261,7 @@ public class CapturePlugin extends devplugin.Plugin {
                         dev.executeAdditionalCommand(parent, num, program);
                     }
                 };
-                caction.putValue(Action.NAME, commands[i]);
+                caction.putValue(Action.NAME, commands[y]);
                 commandList.add(caction);
             }
 
