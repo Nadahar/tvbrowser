@@ -3,6 +3,7 @@ Changelog FavoritesPlugin
 1.0.6:
 - Added import of favorites from TVgenial
 - Added sort button
+- ManageFavoritesDialog shows number of marked programs
 
 1.0.5:
 - bugfix
