@@ -76,7 +76,7 @@ public class TVBrowser {
     String msg;
     
     // Check whether the TV-Browser was started in the right directory
-    if (! new File("tvbrowser.jar").exists()) {
+    if (! new File("tvbrowser.jar").exists() && ! new File("tvbrowser.exe").exists()) {
       msg = mLocalizer.msg("error.2",
         "Please start TV-Browser in the TV-Browser directory!");
       JOptionPane.showMessageDialog(null, msg);

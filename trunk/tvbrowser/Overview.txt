@@ -17,6 +17,9 @@ Directories stored in CVS:
 installer:
   Contains all files needed to create the Windows installer.
 
+jsmooth:
+  Contains the jsmooth files (http://jsmooth.sourceforge.net)
+
 lib:
   Contains external libraries.
 
