@@ -57,6 +57,8 @@ public class MicroTvBrowserPlugin extends Plugin{
 	private static final String PROP_DAYS_TO_EXPORT = "days";
 	private static final String PROP_CHANNELS_TO_EXPORT = "channels";
 	private static final String PROP_CHANNEL = "channel";
+
+	private static final String PROP_CHANNEL_NAME_IN_NOW_LIST = "channelInNow";
 	
 	
 	public void loadSettings(Properties settings) {
@@ -70,12 +72,14 @@ public class MicroTvBrowserPlugin extends Plugin{
 			useNanoEdition = Boolean.getBoolean(settings.getProperty(PROP_USE_NANO));
 			exportLevel = Integer.parseInt(settings.getProperty(PROP_EXPORT_LEVEL));
 			useIconsInProgList = new Boolean(settings.getProperty(PROP_USE_ICONS_IN_PROG_LIST)).booleanValue();
+			channelNameInNowList = new Boolean (settings.getProperty(PROP_CHANNEL_NAME_IN_NOW_LIST)).booleanValue();
 		} catch (Exception E){
 		}
 	}
 	
 	public Properties storeSettings() {
 		Properties P = new Properties();
+		P.setProperty(PROP_CHANNEL_NAME_IN_NOW_LIST, Boolean.toString (channelNameInNowList));
 		P.setProperty(PROP_USE_ICONS_IN_PROG_LIST,Boolean.toString(useIconsInProgList));
 		P.setProperty(PROP_EXPORT_LEVEL,Integer.toString(exportLevel));
 		P.setProperty(PROP_USE_NANO,Boolean.toString(useNanoEdition));
@@ -107,7 +111,7 @@ public class MicroTvBrowserPlugin extends Plugin{
 		String name = "MicroTvBrowser";
 		String desc = "Creates MIDlets";
 		String author = "Gilson Laurent";
-		return new PluginInfo(name, desc, author, new Version(0,11));
+		return new PluginInfo(name, desc, author, new Version(0,12));
 	}
 	
 	/**
@@ -219,6 +223,7 @@ public class MicroTvBrowserPlugin extends Plugin{
 	JDialog configDialog;
 	devplugin.SettingsTab configDialogSettings;
 
+	private boolean channelNameInNowList = false;	
 	
 	public void showSettings(){
 		configDialog = new JDialog(getParentFrame(),true);
@@ -292,6 +297,20 @@ public class MicroTvBrowserPlugin extends Plugin{
 	 */
 	public void setUseIconsInProgList(boolean useIcons) {
 		useIconsInProgList = useIcons;
+	}
+	
+	/** Getter for property channelNameInNowList.
+	 * @return Value of property channelNameInNowList.
+	 */
+	public boolean isChannelNameInNowList() {
+		return channelNameInNowList;
+	}
+	
+	/** Setter for property channelNameInNowList.
+	 * @param channelNameInNowList New value of property channelNameInNowList.
+	 */
+	public void setChannelNameInNowList(boolean channelNameInNowList) {
+		this.channelNameInNowList = channelNameInNowList;
 	}
 	
 }

@@ -13,10 +13,13 @@ import javax.swing.*;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 import util.ui.progress.*;
+import util.ui.Localizer;
 
 import devplugin.*;
 
 public class MIDletCreator implements Progress{
+	
+	static Localizer mLocalizer = Localizer.getLocalizerFor(MIDletCreator.class);
 	
 	private static final int block_size = 250;
 	private ProgressWindow progress;
@@ -73,7 +76,7 @@ public class MIDletCreator implements Progress{
 	
 	public void run(){
 		try {
-			progress.setMessage("collecting channels");
+			progress.setMessage(mLocalizer.msg("collecting channels","collecting channels"));
 			PluginManager PM = mtbp.getPluginManager();
 			Channel[] CH = PM.getSubscribedChannels();
 			Vector Export = new Vector();
@@ -91,7 +94,7 @@ public class MIDletCreator implements Progress{
 			
 			Channel[] CH_to_export = (Channel[]) Export.toArray(new Channel[Export.size()]);
 			
-			progress.setMessage("creating jar and config");
+			progress.setMessage(mLocalizer.msg("creating jar and config","creating jar and config"));
 
 			//zuerst die MANIFEST-Datei:
 			JarFile JA = mtbp.getJarFilePublic();
@@ -115,31 +118,31 @@ public class MIDletCreator implements Progress{
 			DataOutputStream basic = new DataOutputStream(jar);
 			
 			
-			basic.writeUTF("Error");
-			basic.writeUTF("Data too old");
-			basic.writeUTF("show");
-			basic.writeUTF("no data found");
-			basic.writeUTF("exit");
-			basic.writeUTF("back");
-			basic.writeUTF("channels");
-			basic.writeUTF("dates");
-			basic.writeUTF("please wait");
-			basic.writeUTF("working...");
+			basic.writeUTF(mLocalizer.msg("Error","Error"));
+			basic.writeUTF(mLocalizer.msg("Data too old","Data too old"));
+			basic.writeUTF(mLocalizer.msg("show","show"));
+			basic.writeUTF(mLocalizer.msg("no data found","no data found"));
+			basic.writeUTF(mLocalizer.msg("exit","exit"));
+			basic.writeUTF(mLocalizer.msg("back","back"));
+			basic.writeUTF(mLocalizer.msg("channels","channels"));
+			basic.writeUTF(mLocalizer.msg("dates","dates"));
+			basic.writeUTF(mLocalizer.msg("please wait","please wait"));
+			basic.writeUTF(mLocalizer.msg("working...","working..."));
 			
 			
-			basic.writeUTF("prog. list");
-			basic.writeUTF("search");
-			basic.writeUTF("title");
-			basic.writeUTF("time");
+			basic.writeUTF(mLocalizer.msg("prog. list","prog. list"));
+			basic.writeUTF(mLocalizer.msg("search","search"));
+			basic.writeUTF(mLocalizer.msg("title","title"));
+			basic.writeUTF(mLocalizer.msg("time","time"));
 
-			basic.writeUTF("favorite");
-			basic.writeUTF("reminder");
+			basic.writeUTF(mLocalizer.msg("favorite","favorite"));
+			basic.writeUTF(mLocalizer.msg("reminder","reminder"));
 
-			basic.writeUTF("detail");
-			basic.writeUTF("search for");
+			basic.writeUTF(mLocalizer.msg("detail","detail"));
+			basic.writeUTF(mLocalizer.msg("search for","search for"));
 
-			basic.writeUTF("channel");
-			basic.writeUTF("now");
+			basic.writeUTF(mLocalizer.msg("channel","channel"));
+			basic.writeUTF(mLocalizer.msg("now","now"));
 			
 			
 			java.util.Date now = new java.util.Date();
@@ -200,7 +203,8 @@ public class MIDletCreator implements Progress{
 				System.out.println ("EX: "+i+" "+dataToExport[i].getLocalizedName());
 				basic.writeUTF(dataToExport[i].getLocalizedName());
 			}
-			basic.writeBoolean(this.mtbp.isUseIconsInProgList());
+			basic.writeBoolean(mtbp.isUseIconsInProgList());
+			basic.writeBoolean(mtbp.isChannelNameInNowList());
 			basic.flush();
 			
 			
@@ -219,7 +223,7 @@ public class MIDletCreator implements Progress{
 			devplugin.Date today = new devplugin.Date();
 			title_id = new Hashtable();
 
-			progress.setMessage("collecting title strings");
+			progress.setMessage(mLocalizer.msg("collecting title strings","collecting title strings"));
 			Hashtable title_hash = new Hashtable();
 			for (int j =0;j<CH_to_export.length;j++){
 				for (int i=0;i<data_length;i++){
@@ -272,7 +276,7 @@ public class MIDletCreator implements Progress{
 			jar.putNextEntry(new JarEntry("prog"));
 			DataOutputStream dayprog = new DataOutputStream(jar);
 			dayprog.writeInt(data_length*CH_to_export.length);
-			progress.setMessage("converting basic data");
+			progress.setMessage(mLocalizer.msg("converting basic data","converting basic data"));
 			for (int i=0;i<data_length;i++){
 				devplugin.Date D = new devplugin.Date(today);
 				D = D.addDays(i);
@@ -306,7 +310,14 @@ public class MIDletCreator implements Progress{
 									System.out.println ("BB "+toSave.getHours());
 									System.out.println (toSave.toString());
 									error = true;
-									exportLog.append("Can't export "+toSave.getTitle()+", invalid time: "+toSave.getHours()+":"+toSave.getMinutes()+"\n");
+									
+									
+									//"Can't export "+toSave.getTitle()+", invalid time: "+toSave.getHours()+":"+toSave.getMinutes()
+									//"Can't export {0}, invalid time: {1}:{2}"
+									
+									Object[] O = {toSave.getTitle(),Integer.toString(toSave.getHours()),Integer.toString(toSave.getMinutes())};
+									exportLog.append(mLocalizer.msg("Can't export 0, invalid time: 1:2","Can't export {0}, invalid time: {1}:{2}",O));
+									exportLog.append("\n");
 									limithour = toSave.getHours() + 1;
 								} else {
 									limithour +=4;
@@ -321,7 +332,12 @@ public class MIDletCreator implements Progress{
 							DataOutputStream prog_out = new DataOutputStream(temp_out);
 							String title = toSave.getTitle();
 							if (title == null){
-								exportLog.append(CH_to_export[j]+": Entry without title ? ("+D.getDayOfMonth()+":"+(D.getMonth()+1)+" "+toSave.getHours()+":"+toSave.getMinutes()+")\n");
+								
+								//CH_to_export[j]+": Entry without title ? ("+D.getDayOfMonth()+"."+(D.getMonth()+1)+" "+toSave.getHours()+":"+toSave.getMinutes()+")\n"
+								//"{0}: Entry without title ? ({1}.{2} {3}:{4})"
+								Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth()+1)),Integer.toString(toSave.getHours()),Integer.toString(toSave.getMinutes())};
+								exportLog.append(mLocalizer.msg("0: Entry without title ? (1.2 3:4)","{0}: Entry without title ? ({1}.{2} {3}:{4})",O));
+								exportLog.append("\n");
 								title = "";
 							}
 							
@@ -377,7 +393,11 @@ public class MIDletCreator implements Progress{
 							to_use.add(temp_out.toByteArray());
 						}
 					} else {
-						exportLog.append("Can't export "+CH_to_export[j]+" on "+D.getDayOfMonth()+":"+(D.getMonth()+1)+" : No valid data found\n");
+						//"Can't export "+CH_to_export[j]+" on "+D.getDayOfMonth()+":"+(D.getMonth()+1)+" : No valid data found\n"
+						//"Can't export {0} on {1}:{2} : No valid data found"
+						Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth()+1))};
+						exportLog.append(mLocalizer.msg("Can't export 0 on 1:2 : No valid data found","Can't export {0} on {1}:{2} : No valid data found",O));
+						exportLog.append("\n");						
 					}
 					
 					int size_of_record = 0;
@@ -405,7 +425,7 @@ public class MIDletCreator implements Progress{
 			}
 			
 			
-			progress.setMessage("converting icons");
+			progress.setMessage(mLocalizer.msg("converting icons","converting icons"));
 			jar.putNextEntry(new JarEntry("i"));
 			DataOutputStream icons = new DataOutputStream(jar);
 			
@@ -467,7 +487,7 @@ public class MIDletCreator implements Progress{
 			
 			
 			if (dataToExport.length !=0){
-				progress.setMessage("converting extended data");
+				progress.setMessage(mLocalizer.msg("converting extended data","converting extended data"));
 				for (int j =0;j<CH_to_export.length;j++){
 					for (int i=0;i<data_length;i++){
 						devplugin.Date D = new devplugin.Date (today);
@@ -546,16 +566,15 @@ public class MIDletCreator implements Progress{
 			);
 			BUF.flush();
 			BUF.close();
-			progress.setMessage("done");
+			progress.setMessage(mLocalizer.msg("done","done"));
 			try {
 				String user_log = exportLog.toString();
 				if (user_log.length()!=0){
-					JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),"MIDlet created, but with problems:\n"+user_log,"done", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),mLocalizer.msg("MIDlet created, but with problems","MIDlet created, but with problems")+":\n"+user_log,mLocalizer.msg("done","done"), JOptionPane.WARNING_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),"MIDlet created.\n Please install now \n"+JAD.toString()+"\n on your mobile device.","done", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),mLocalizer.msg("MIDlet created.","MIDlet created.")+"\n"+mLocalizer.msg("Please install now","Please install now")+"\n"+JAD.toString()+"\n"+mLocalizer.msg("on your mobile device.","on your mobile device."),mLocalizer.msg("done","done"), JOptionPane.INFORMATION_MESSAGE);
 				}
 			} catch (Exception E1){
-				System.out.println("caught getParentFrame-Bug");
 				E1.printStackTrace(System.out);
 			}
 			
@@ -564,7 +583,7 @@ public class MIDletCreator implements Progress{
 			E.printStackTrace(new PrintWriter(BOUT));
 			//LOG.append (BOUT.toString());
 			E.printStackTrace();
-			JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),"MIDlet NOT created because: \n"+BOUT.toString(),"ERROR", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(mtbp.getParentFramePublic(),mLocalizer.msg("MIDlet NOT created because:","MIDlet NOT created because:")+" \n"+BOUT.toString(),mLocalizer.msg("ERROR","ERROR"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -603,7 +622,8 @@ public class MIDletCreator implements Progress{
 			//Reale Werte: 5  13  26  42  45  66
 			//              10  20  30  44  50
 			if ((yellow!=5) && (yellow!=13) && (yellow!=26) && (yellow!=42) && (yellow!=45) && (yellow!=66)){
-				exportLog.append("Can't parse rating for "+p.getTitle()+" "+yellow+"\n");
+				exportLog.append(mLocalizer.msg("Can't parse rating for","Can't parse rating for")+" "+p.getTitle()+"\n");
+				exportLog.append("\n");				
 			}
 			if (yellow < 10){
 				return 5;

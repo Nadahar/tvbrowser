@@ -42,6 +42,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 	
 	private static final int blockNavi = -2;
 	private static final int dayNavi = -3;
+	private static final int nowNavi = -4;
 	
 	
 	private final static int STATUS_MAIN_MENU = 0;
@@ -123,6 +124,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 	private static int data_number_of_channels;
 	
 	private static boolean useIconsInProglist = true;
+	private static boolean useChannelNameInNowList = false;
 	
 	private static String[] channel_names;
 	private static String[] extended_data;
@@ -872,8 +874,20 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 					long delta = nowTime - data_create_time;
 					actuel_day = (int)((delta) / (24*60*60*1000));
 					calendar.setTime(new Date(nowTime));
-					lastSearchData = this.searchTime(actuel_day,calendar.get(calendar.HOUR_OF_DAY)+1,calendar.get(calendar.MINUTE));
-					this.createProgList(now+" "+(calendar.get(calendar.HOUR_OF_DAY)+1)+":"+calendar.get(calendar.MINUTE),0,null,lastSearchData);
+					lastSearchData = this.searchTime(actuel_day,calendar.get(calendar.HOUR_OF_DAY),calendar.get(calendar.MINUTE));
+					String title = now+" ";
+					if (calendar.get(calendar.HOUR_OF_DAY) < 10){
+						title += "0"+calendar.get(calendar.HOUR_OF_DAY);
+					} else {
+						title += calendar.get(calendar.HOUR_OF_DAY);
+					}
+					title += ":";
+					if (calendar.get(calendar.MINUTE) < 10){
+						title += "0"+calendar.get(calendar.MINUTE);
+					} else {
+						title += calendar.get(calendar.MINUTE);
+					}
+					this.createProgList(title,nowNavi,null,lastSearchData);
 					return;
 				}
 			}
@@ -1027,6 +1041,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 	protected int[] searchText(int day, String text) throws Exception {
 		int[] toReturn = new int[5];
 		int counter = 0;
+		byte[] searchFor = text.getBytes("ISO8859_1");
 		for (int i =0;i<this.channel_names.length;i++){
 			int ID = (i << 16) | (day << 8);
 			getRawData(ID);
@@ -1046,7 +1061,21 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 					byte2 = 256 + byte2;
 				}
 				int titleID = ((byte1 << 8) | (byte2));
-				if (new String(title_data_store.getRecord(titleID),"ISO8859_1").toLowerCase().indexOf(text) != -1){
+				byte[] toCheck = title_data_store.getRecord(titleID);
+
+				boolean found = false;
+				
+				for (int ii=0;(ii<(toCheck.length - searchFor.length)) && (!found);ii++){
+					for (int jj=0;jj<searchFor.length;jj++){
+						found = true;
+						int diff = searchFor[jj] - toCheck[ii+jj];
+						if (!((diff == 0) || (diff == -32) || (diff == 32))){
+							found = false;
+							jj = searchFor.length;
+						}
+					}
+				}
+				if (found){
 					toReturn[counter] = ID | j;
 					counter++;
 					if (toReturn.length == counter){
@@ -1149,7 +1178,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		} else {
 			gauge = null;
 			form = new Form("MircoTvBrowser");
-			form.append("version 0.11\n");
+			form.append("version 0.12\n");
 			form.append("www.tvBrowser.org\n");
 			form.append("pumpkin@gmx.de\n");
 			form.addCommand(CMD_EXIT);
@@ -1227,7 +1256,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		getRawData(ID);
 		
 		form = new Form(detail);
-		System.out.println ("1");
 		form.append(new StringItem(channel, this.channel_names[chan]));
 		
 		int	hour = raw_data_cache[base];
@@ -1243,7 +1271,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		} else {
 			s += min;
 		}
-		System.out.println ("2");
 		form.append(new StringItem(time,s));
 		
 		int byte1 = raw_data_cache[base+4];
@@ -1256,7 +1283,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		}
 		int titleID = ((byte1 << 8) | (byte2));
 		
-		System.out.println ("3");
 		form.append(
 		new StringItem(
 		title,
@@ -1264,17 +1290,14 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		
 		int rating = (raw_data_cache[base+3] & 0xE0) >> 5;
 		if (rating != 6){
-			System.out.println ("4");
 			form.append(Bewertungs_Icons[rating]);
 		}
 		//favo ?
 		if ((raw_data_cache[base+3] & 0x08)!=0){
-			System.out.println ("5");
 			form.append(Favorite_Icon);
 		}
 		//reminder ?
 		if ((raw_data_cache[base+3] & 0x10)!=0){
-			System.out.println ("6");
 			form.append(Reminder_Icon);
 		}
 		
@@ -1354,7 +1377,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 				naviNext = "";
 			}
 		}
-		
+		boolean withChannel = useChannelNameInNowList && (mode == nowNavi);
 		list = new List(title,List.IMPLICIT);
 		int counter = Math.max(1,progID.length);
 		if (naviNext != null){
@@ -1382,7 +1405,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 				} else {
 					getRawData(progID[i]);
 					progListMapping[counter] = progID[i];
-					list.append(getTitle(progID[i]),getIcon(progID[i]));
+					list.append(getTitle(progID[i],withChannel),getIcon(progID[i]));
 				}
 				counter++;
 			}
@@ -1403,15 +1426,16 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 	}
 	
 	
-	protected String getTitle(int ID) throws Exception{
+	protected String getTitle(int ID, boolean withChannel) throws Exception{
 		
 		String s = null;
 		
 		int prog = (ID & 0xFF);
+		int channel = (ID & 0xFF0000) >> 16;
+
 		//ab da steht das Programm:
 		int base = 6+(6*prog);
 
-		System.out.println ("ID "+ID+" prog: "+prog+" length "+raw_data_cache.length);
 		//hour:
 		if (raw_data_cache[base] < 10){
 			s = "0"+raw_data_cache[base]+":";
@@ -1425,7 +1449,9 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		} else {
 			s = s +raw_data_cache[base+1];
 		}
-		System.out.println("time-string: "+s);
+		if (withChannel){
+			s += " "+this.channel_names[channel];
+		}
 		//title-ID:
 		int byte1 = raw_data_cache[base+4];
 		int byte2 = raw_data_cache[base+5];
@@ -1436,7 +1462,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 			byte2 = 256 + byte2;
 		}
 		int titleID = ((byte1 << 8) | (byte2));
-		System.out.println ("titleID "+titleID);
 		s = s + " "+new String(title_data_store.getRecord(titleID),"ISO8859_1");
 		return s;
 	}
@@ -1572,7 +1597,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		}
 		
 		useIconsInProglist = DIN.readBoolean();
-		
+		useChannelNameInNowList = true;//DIN.readBoolean();
 		DIN.close();
 	}
 	
@@ -1695,14 +1720,23 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 		}
 		title_data_store = RecordStore.openRecordStore("title",true);
 		int number_of_recordes2 = 0;
+		byte[] temp = new byte[100];
 		try {
 			DataInputStream DIN = new DataInputStream(this.getClass().getResourceAsStream("title"));
 			number_of_recordes2 = DIN.readInt();
 			gauge.setMaxValue(number_of_recordes2+500);
 			for (int i=0;i<number_of_recordes2;i++){
-				byte[] temp = new byte[DIN.readInt()];
-				DIN.readFully(temp);
-				title_data_store.addRecord(temp,0,temp.length);
+				int length = DIN.readInt();
+				if (length > temp.length){
+					temp = new byte[length];
+					System.out.println ("allco 1: "+length);
+				}
+				int offset = 0;
+				while (offset!=length){
+					offset += DIN.read(temp,offset,length-offset);
+				}
+				
+				title_data_store.addRecord(temp,0,length);
 				gauge.setValue(i);
 			}
 			//System.out.println("copied "+number_of_recordes2+" titles");
@@ -1719,9 +1753,15 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
 			//System.out.println("GO");
 			for (int i=0;i<number_of_recordes;i++){
 				int length = DIN.readInt();
-				byte[] temp = new byte[length];
-				DIN.readFully(temp);
-				prog_data_store.addRecord(temp,0,temp.length);
+				if (length > temp.length){
+					temp = new byte[length];
+					System.out.println ("allco 2: "+length);
+				}
+				int offset = 0;
+				while (offset!=length){
+					offset += DIN.read(temp,offset,length-offset);
+				}
+				prog_data_store.addRecord(temp,0,length);
 				gauge.setValue(i+number_of_recordes2);
 			}
 			//System.out.println("copied "+number_of_recordes+" progs");
