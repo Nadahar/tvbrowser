@@ -52,9 +52,10 @@ public class EditFavoriteDialog {
   private Channel[] mSubscribedChannelArr;
 
   private JDialog mDialog;
-  private JTextField mTermTF;
-  private JCheckBox mSearchTitleChB, mSearchInTextChB;
-  private JRadioButton mMatchExactlyRB, mMatchSubstringRB, mRegexRB;
+  // private JTextField mTermTF;
+  // private JCheckBox mSearchTitleChB, mSearchInTextChB;
+  // private JRadioButton mMatchExactlyRB, mMatchSubstringRB, mRegexRB;
+  private SearchForm mSearchForm;
   private JCheckBox mCertainChannelChB, mCertainTimeOfDayChB;
   private JComboBox mCertainChannelCB;
   private JSpinner mCertainFromTimeSp, mCertainToTimeSp;
@@ -82,49 +83,9 @@ public class EditFavoriteDialog {
     JPanel p1, p2;
     String msg;
     
-    // term
-    p1 = new JPanel(new TabLayout(2));
-    main.add(p1);
-    
-    p1.add(new JLabel(mLocalizer.msg("term", "Term")));
-    mTermTF = new JTextField(15);
-    p1.add(mTermTF);
-    
-    // search in
-    p1 = new JPanel(new TabLayout(1));
-    msg = mLocalizer.msg("searchIn", "Search in");
-    p1.setBorder(BorderFactory.createTitledBorder(msg));
-    main.add(p1);
-
-    msg = mLocalizer.msg("title", "Title");
-    mSearchTitleChB = new JCheckBox(msg);
-    p1.add(mSearchTitleChB);
-
-    msg = mLocalizer.msg("infoText", "Information text");
-    mSearchInTextChB = new JCheckBox(msg);
-    p1.add(mSearchInTextChB);
-    
-    // options
-    p1 = new JPanel(new TabLayout(1));
-    msg = mLocalizer.msg("options", "Options");
-    p1.setBorder(BorderFactory.createTitledBorder(msg));
-    main.add(p1);
-    
-    ButtonGroup bg = new ButtonGroup();
-    msg = mLocalizer.msg("matchExactly", "Match exactly");
-    mMatchExactlyRB = new JRadioButton(msg);
-    bg.add(mMatchExactlyRB);
-    p1.add(mMatchExactlyRB);
-    
-    msg = mLocalizer.msg("matchSubstring", "Term is a keyword");
-    mMatchSubstringRB = new JRadioButton(msg);
-    bg.add(mMatchSubstringRB);
-    p1.add(mMatchSubstringRB);
-    
-    msg = mLocalizer.msg("matchRegex", "Term is a regular expression");
-    mRegexRB = new JRadioButton(msg);
-    bg.add(mRegexRB);
-    p1.add(mRegexRB);
+    // search form
+    mSearchForm = new SearchForm(false, false);
+    main.add(mSearchForm);
     
     // limitations
     p1 = new JPanel(new TabLayout(2));
@@ -221,14 +182,7 @@ public class EditFavoriteDialog {
   
   
   private void loadValues() {
-    mTermTF.setText(mFavorite.getTerm());
-    mSearchTitleChB.setSelected(mFavorite.getSearchInTitle());
-    mSearchInTextChB.setSelected(mFavorite.getSearchInText());
-    
-    int searchMode = mFavorite.getSearchMode();
-    mMatchExactlyRB.setSelected(searchMode == Favorite.MODE_MATCH_EXACTLY);
-    mMatchSubstringRB.setSelected(searchMode == Favorite.MODE_TERM_IS_KEYWORD);
-    mRegexRB.setSelected(searchMode == Favorite.MODE_TERM_IS_REGEX);
+    mSearchForm.setSearchFormSettings(mFavorite.getSearchFormSettings());
 
     mCertainChannelChB.setSelected(mFavorite.getUseCertainChannel());
     Channel certainChannel = mFavorite.getCertainChannel();
@@ -253,19 +207,7 @@ public class EditFavoriteDialog {
   
   
   private boolean saveValues() {
-    mFavorite.setTerm(mTermTF.getText());
-    mFavorite.setSearchInTitle(mSearchTitleChB.isSelected());
-    mFavorite.setSearchInText(mSearchInTextChB.isSelected());
-    
-    if (mMatchExactlyRB.isSelected()) {
-      mFavorite.setSearchMode(Favorite.MODE_MATCH_EXACTLY);
-    }
-    else if (mMatchSubstringRB.isSelected()) {
-      mFavorite.setSearchMode(Favorite.MODE_TERM_IS_KEYWORD);
-    }
-    else if (mRegexRB.isSelected()) {
-      mFavorite.setSearchMode(Favorite.MODE_TERM_IS_REGEX);
-    }
+    mFavorite.setSearchFormSettings(mSearchForm.getSearchFormSettings());
 
     mFavorite.setUseCertainChannel(mCertainChannelChB.isSelected());
     Channel certainChannel = (Channel)mCertainChannelCB.getSelectedItem();

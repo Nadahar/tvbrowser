@@ -53,6 +53,17 @@ public class TabLayout implements LayoutManager {
   }
 
 
+  /**
+   * Constructs a TabLayout.
+   *
+   * @param columns The number of columns.
+   * @param xAbs horizontal gap between the components
+   * @param yAbs vertical gap between the components
+   */
+  public TabLayout(int columns, int xAbs, int yAbs) {
+    this(columns, xAbs, yAbs, false);
+  }
+
 
   /**
    * Constructs a TabLayout.
@@ -63,10 +74,26 @@ public class TabLayout implements LayoutManager {
    *        size equal to their preferred size.
    */
   public TabLayout(int columns, boolean dontMaximizeComponents) {
+    this(columns, 3, 3, dontMaximizeComponents);
+  }
+
+
+  /**
+   * Constructs a TabLayout.
+   *
+   * @param columns The number of columns.
+   * @param xAbs horizontal gap between the components
+   * @param yAbs vertical gap between the components
+   * @param dontMaximizeComponents If true the Components of a Container using this
+   *        TabLayout are not maximized to fit in their cell but have a maximum
+   *        size equal to their preferred size.
+   */
+  public TabLayout(int columns, int xAbs, int yAbs, boolean dontMaximizeComponents) {
     if (columns < 1) columns = 1;
     this.anzahlSpalten = columns;
     this.dontMaximizeComponents = dontMaximizeComponents;
-    this.xAbs = this.yAbs = 3;
+    this.xAbs = xAbs;
+    this.yAbs = yAbs;
   }
 
 
