@@ -115,9 +115,11 @@ public class ProgramInfoDialog extends JDialog {
       shortInfoLength -= 3;
     }
     String shortInfoSub = shortInfo.substring(0, shortInfoLength);
-    String descSub = desc.substring(0, shortInfoLength);
-    if (! shortInfoSub.equals(descSub)) {
-      bodyPn.add(createTextArea(shortInfo));
+    if (desc != null) {
+      String descSub = desc.substring(0, shortInfoLength);
+      if (! shortInfoSub.equals(descSub)) {
+        bodyPn.add(createTextArea(shortInfo));
+      }
     }
 
     // actors

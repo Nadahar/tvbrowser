@@ -39,7 +39,7 @@ import java.util.Calendar;
 import java.util.regex.*;
  import java.util.TimeZone;
  
- public class WdrDataService extends AbstractTvDataService {
+ public class WdrDataService extends AbstractOldTvDataServiceBridge {
  	
 	
   private static PluginInfo INFO=new PluginInfo(

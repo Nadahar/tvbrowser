@@ -57,7 +57,7 @@ import tvdataservice.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class PremiereDataService extends AbstractTvDataService {
+public class PremiereDataService extends AbstractOldTvDataServiceBridge {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer

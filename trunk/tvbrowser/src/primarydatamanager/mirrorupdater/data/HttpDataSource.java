@@ -25,7 +25,6 @@
  */
 package primarydatamanager.mirrorupdater.data;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,25 +84,11 @@ public class HttpDataSource implements DataSource {
 
 
   public byte[] loadFile(String fileName) throws UpdateException {
-    InputStream in = null;
     try {
-      in = IOUtilities.getStream(new URL(mBaseUrl + fileName));
-
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      
-      IOUtilities.pipeStreams(in, out);
-      
-      out.close();
-      
-      return out.toByteArray();
+      return IOUtilities.loadFileFromHttpServer(new URL(mBaseUrl + fileName));
     }
     catch (IOException exc) {
       throw new UpdateException("Loading file failed: " + mBaseUrl + fileName, exc);
-    }
-    finally {
-      if (in != null) {
-        try { in.close(); } catch (IOException exc) {}
-      }
     }
   }
 

@@ -26,9 +26,12 @@
 
 package tvdataservice;
 
-import util.exc.TvBrowserException;
+import java.util.Properties;
 
-import devplugin.ChannelDayProgram;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import util.exc.TvBrowserException;
 
 /**
  * To write your own TV data service implement this interface.
@@ -37,51 +40,41 @@ import devplugin.ChannelDayProgram;
  */
 public interface TvDataService {
 
- 
   /**
-   * Called by the host-application before starting to download.
-   */
-  public void connect() throws TvBrowserException;
+   * Updates the TV data provided by this data service.
+   * 
+   * @throws TvBrowserException
+   */  
+  public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
+    Date startDate, int dateCount)
+    throws TvBrowserException;
 
   /**
-   * Returns the whole program of the channel on the specified date.
+   * Called by the host-application during start-up. Implements this method to
+   * load your dataservices settings from the file system.
    */
-  public ChannelDayProgram downloadDayProgram(devplugin.Date date,
-    devplugin.Channel channel) throws TvBrowserException;
-
-  /**
-   * After the download is done, this method is called. Use this method for clean-up.
-   */
-  public void disconnect() throws TvBrowserException;
-
-	/**
-	 * Called by the host-application during start-up. Implements this method to
-	 * load your dataservices settings from the file system.
-	 */
-  public void loadSettings(java.util.Properties settings);
+  public void loadSettings(Properties settings);
 
   /**
    * Called by the host-application during shut-down. Implements this method to
    * store your dataservices settings to the file system.
    */
-  public java.util.Properties storeSettings();
-
-  public SettingsPanel getSettingsPanel();
+  public Properties storeSettings();
 
   public boolean hasSettingsPanel();
+
+  public SettingsPanel getSettingsPanel();
 
   /**
    * Gets the list of the channels that are available by this data service.
    */
-  public devplugin.Channel[] getAvailableChannels();
+  public Channel[] getAvailableChannels();
   
   /**
    * Gets information about this TvDataService
-   * 
    */
-  public devplugin.PluginInfo getInfo();
+  public PluginInfo getInfo();
   
-  
- // public int getTimeZone
+  // public int getTimeZone
 
 }

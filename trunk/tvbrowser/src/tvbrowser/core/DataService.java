@@ -34,8 +34,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import java.util.zip.*;
-import java.util.regex.*;
 import java.util.logging.Level;
+import java.util.regex.*;
 
 import javax.swing.JProgressBar;
 
@@ -48,6 +48,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
 
+import tvdataservice.TvDataBase;
 import tvdataservice.TvDataService;
 import tvdataservice.MutableChannelDayProgram;
 
@@ -132,135 +133,99 @@ public class DataService implements devplugin.PluginManager {
    *        program for.
    */
   public void startDownload(int daysToDownload) {
+    // TODO: Update the progress bar
+    
+    System.out.println("daysToDownload: " + daysToDownload);
+    
+    // Limit the days to download to 3 weeks
+    if (daysToDownload > 21) {
+      daysToDownload = 21;
+    }
+
+    // Add a day to the daysToDownload for yesterday and today
+    daysToDownload += 2;
+    
+    // Ensure that the tvdata directory exists
     File tvdataDir = new File(Settings.getTVDataDirectory());
-    if (!tvdataDir.exists()) {
+    if (! tvdataDir.exists()) {
       tvdataDir.mkdir();
     }
-
-
-    // connect
-   // if (!onlineMode) {
-    	progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
-    	progressBar.setStringPainted(true);
-    	TvDataServiceManager.getInstance().connect();
-   // }
     
-    // download the missing data day by day and channel by channel
-    progressBar.setStringPainted(false);
-    mIsDownloading = true;
-
-    Channel[] subscribedChannels=ChannelList.getSubscribedChannels();
-    if (daysToDownload!=tvbrowser.ui.mainframe.UpdateDlg.GETALL) {
-    	progressBar.setMaximum((daysToDownload + 2) * subscribedChannels.length);
-    }
-    else {
-    	progressBar.setMaximum(20*subscribedChannels.length);
-    }
-    devplugin.Date date=new Date();
-    date=date.addDays(-1);
-    TvBrowserException downloadException = null;
+    // Create a interactor that translates the database orders
+    TvDataBase dataBaseInteractor = new TvDataBase() {
+      public void updateDayProgram(MutableChannelDayProgram program) {
+        updateChannelDayProgram(program);
+      }
+  
+      public boolean isDayProgramAvailable(Date date, Channel channel) {
+        return isChannelDayProgramAvailable(date, channel);
+      }
+    };
     
-	
-	/* if we can't find any data for one channel, we don't load any data for
-	  that channel any longer. if 
-	 */
-	boolean downloadChannelData[]=new boolean[subscribedChannels.length];
-	
-	 
-	/* if we can't find any data on one day (for all channels), we stop */
-	boolean anyDataFound=true; 
-		
-	for (int i=0;i<downloadChannelData.length;i++) {
-		downloadChannelData[i]=true;
-	}
-	
-    for (int i = 0; (i < daysToDownload + 2)&&(anyDataFound); i++) {
-      DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
-      if (dayProgram == null) {
-        dayProgram = new DayProgram(date);
+    // Get the start date
+    devplugin.Date startDate = new Date().addDays(-1);
+    
+    // Split the subsribed channels by data service
+    Channel[] subscribedChannels = ChannelList.getSubscribedChannels();
+    UpdateJob[] jobArr = toUpdateJobArr(subscribedChannels);
+    
+    // Work on the job list
+    Throwable downloadException = null;
+    for (int i = 0; i < jobArr.length; i++) {
+      TvDataService dataService = jobArr[i].getDataService();
+      Channel[] channelArr = jobArr[i].getChannelList();
+      try {
+        dataService.updateTvData(dataBaseInteractor, channelArr, startDate,
+          daysToDownload);
       }
-
-      anyDataFound=false;
-      for (int j = 0; (j < subscribedChannels.length) && mIsDownloading; j++) {
-        progressBar.setValue(i * subscribedChannels.length + j + 1);
-		if (!downloadChannelData[j]) {
-			continue;
-		}
-		
-
-        // Check whether we already have the wanted ChannelDayProgram
-        devplugin.Channel channel = subscribedChannels[j];
+      catch (Throwable thr) {
+        mLog.log(Level.WARNING, "Updating the TV data for TV data service "
+          + dataService.getInfo().getName() + " failed", thr);
         
-		
-        
-        File file = getChannelDayProgramFile(date, channel);
-        
-        
-		ChannelDayProgram prog=null;
-        if (file.exists()) {  // file is        
-        	prog=this.loadChannelDayProgramFromDisk(file);
-         }
-                
-        
-        if (!file.exists() || (prog!=null && !prog.isComplete())) {
-          // We don't have the file or the file is not complete -> download it
-          
-          try {
-            prog = downloadDayProgram(date, channel);
-            
-            if (prog != null) {
-              dayProgram.addChannelDayProgram(prog);
-            }
-          }
-          catch (Throwable thr) {
-            TvBrowserException tvExc;
-            if (thr instanceof TvBrowserException) {
-              tvExc = (TvBrowserException) thr;
-            } else {
-              tvExc = new TvBrowserException(getClass(), "error.5",
-                "Download of dayprogram failed!", thr);
-            }
-            
-            // Remeber only the first exception, log it if there are more exception
-            if (downloadException == null) {
-              downloadException = tvExc;
-            } else {
-              mLog.log(Level.WARNING, "Download of dayprogram failed!", tvExc);
-            }
-          }
-        }
-        if (prog!=null) {
-        	anyDataFound=true;
-        }else{
-			downloadChannelData[j]=false;
-       }
+        downloadException = thr;
       }
-
-      if (! dayProgram.isEmpty()) {
-        mDayProgramHash.put(date, dayProgram);
-      }
-
-      // Create a new Date object, because the other one is used as key
-      // in mDayProgramHash.
-      date=new devplugin.Date(date);
-      date=date.addDays(1);
-      //date = new devplugin.Date(date.getDaysSince1970() + 1);
     }
 
-    mIsDownloading = false;
-
-	//if (!onlineMode) {
-    	TvDataServiceManager.getInstance().disconnect();
-	//}
-
+    // Show the exception if there was one
     if (downloadException != null) {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
       ErrorHandler.handle(msg, downloadException);
     }
-    
 
     // Let the plugins react on the new data
     PluginManager.fireTvDataChanged();
+  }
+
+
+
+  private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels) {
+    ArrayList jobList = new ArrayList();
+    for (int channelIdx = 0; channelIdx < subscribedChannels.length; channelIdx++) {
+      Channel channel = subscribedChannels[channelIdx];
+      
+      // Get the UpdateJob for this channel
+      UpdateJob job = null;
+      for (int i = 0; i < jobList.size(); i++) {
+        UpdateJob currJob = (UpdateJob) jobList.get(i);
+        if (currJob.getDataService().equals(channel.getDataService())) {
+          job = currJob;
+          break;
+        }
+      }
+      if (job == null) {
+        // There is no job fo this channel -> create one
+        job = new UpdateJob(channel.getDataService());
+        jobList.add(job);
+      }
+      
+      // Add the channel to the UpdateJob
+      job.addChannel(channel);
+    }
+    
+    // Convert the list into an array and return it
+    UpdateJob[] jobArr = new UpdateJob[jobList.size()];
+    jobList.toArray(jobArr);
+    return jobArr;
   }
 
 
@@ -762,50 +727,39 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
   }
 
 
-
-  protected ChannelDayProgram downloadDayProgram(devplugin.Date date,
-    devplugin.Channel channel)
-    throws TvBrowserException
-  {
-    //mLog.info("Downloading the TV data for " + channel.getName() + " on " + date);
-    ChannelDayProgram prog;
-
-    // download the program
-    TvDataService dataService = channel.getDataService();
-    if (dataService == null) {
-      return null;
-    }
-    prog = dataService.downloadDayProgram(date, channel);
-
-    // save the program to disk
-    if (prog != null) {
-      File file = getChannelDayProgramFile(date, channel);
-      
-      ObjectOutputStream out = null;
-      try {
-        
-        
-        out = new ObjectOutputStream(new FileOutputStream(file));
-        MutableChannelDayProgram mutProg = (MutableChannelDayProgram) prog;
-        mutProg.writeData(out);
-      }
-      catch (IOException exc) {
-        String msg = mLocalizer.msg("error.2",
-          "Error when saving program of {0} on {1}!\n({2})",
-          channel.getName(), date, file.getAbsolutePath());
-        ErrorHandler.handle(msg, exc);
-
-        prog = null;
-      }
-      finally {
-        if (out != null) {
-          try { out.close(); } catch (IOException exc) {}
-        }
-      }
-    }
-
-    return prog;
+  public boolean isChannelDayProgramAvailable(Date date, Channel channel) {
+    File file = getChannelDayProgramFile(date, channel);
+    return file.exists();
   }
+  
+  
+  protected void updateChannelDayProgram(MutableChannelDayProgram prog) {
+    System.out.println("Updating day prog: " + prog.getChannel().getName()
+      + " " + prog.getDate());
+    
+    // save the program to disk
+    File file = getChannelDayProgramFile(prog.getDate(), prog.getChannel());
+    
+    ObjectOutputStream out = null;
+    try {
+      out = new ObjectOutputStream(new FileOutputStream(file));
+      prog.writeData(out);
+    }
+    catch (IOException exc) {
+      String msg = mLocalizer.msg("error.2",
+        "Error when saving program of {0} on {1}!\n({2})",
+      prog.getChannel().getName(), prog.getDate(), file.getAbsolutePath());
+      ErrorHandler.handle(msg, exc);
+
+      prog = null;
+    }
+    finally {
+      if (out != null) {
+        try { out.close(); } catch (IOException exc) {}
+      }
+    }
+  }
+  
 
   public devplugin.Plugin[] getInstalledPlugins() {
   	return PluginManager.getInstalledPlugins();
@@ -866,5 +820,38 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
 	return menu;
   }
 
+
+  // inner class UpdateJob
+
+
+  private class UpdateJob {
+    
+    private TvDataService mTvDataService;
+    private ArrayList mChannelList;
+    
+    
+    public UpdateJob(TvDataService dataService) {
+      mTvDataService = dataService;
+      mChannelList = new ArrayList();
+    }
+    
+    
+    public void addChannel(Channel channel) {
+      mChannelList.add(channel);
+    }
+    
+    
+    public TvDataService getDataService() {
+      return mTvDataService;
+    }
+    
+    
+    public Channel[] getChannelList() {
+      Channel[] channelArr = new Channel[mChannelList.size()];
+      mChannelList.toArray(channelArr);
+      return channelArr;
+    }
+
+  }
 
 }

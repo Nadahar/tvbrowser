@@ -54,6 +54,7 @@ public class IOUtilities {
    * @param url The URL of the file to download.
    * @param targetFile The file where to store the downloaded data.
    * @throws IOException When download or saving failed.
+   * @see #loadFileFromHttpServer(URL)
    */  
   public static void download(URL url, File targetFile) throws IOException {
     mLog.info("Downloading '" + url + "' to '"
@@ -148,6 +149,34 @@ public class IOUtilities {
     
     InputStream in = conn.getInputStream();
     return in;
+  }
+
+
+
+  /**
+   * Loads a file from a Http server.
+   * 
+   * @param url The URL of the file
+   * @return The content of the file
+   * @throws IOException When the download failed
+   * @see #download(URL, File)
+   */
+  public static byte[] loadFileFromHttpServer(URL url) throws IOException {
+    InputStream in = null;
+    try {
+      in = IOUtilities.getStream(url);
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      
+      pipeStreams(in, out);
+      
+      out.close();
+      return out.toByteArray();
+    }
+    finally {
+      if (in != null) {
+        try { in.close(); } catch (IOException exc) {}
+      }
+    }
   }
   
   
