@@ -60,7 +60,7 @@ public class ChannelPanel extends JPanel {
   }
 
   public static void fontChanged() {
-    ChannelLabel.fontChaned();
+    ChannelLabel.fontChanged();
   }
   
   public void setShownChannels(Channel[] channelArr) {
@@ -99,7 +99,7 @@ class ChannelLabel extends JLabel {
     private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
     private static Font channelNameFont;
   
-    public static void fontChaned() {
+    public static void fontChanged() {
       boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();
       if (useDefaults) {
         channelNameFont = Settings.propChannelNameFont.getDefault();
@@ -111,11 +111,17 @@ class ChannelLabel extends JLabel {
     public ChannelLabel(final Channel ch) {
       super(ch.getName());
 
+      // Check whether the font was set
       if (channelNameFont == null) {
-        fontChaned();
+        fontChanged();
       }
 
-      setFont(channelNameFont);
+      // Avoid that a null-font is set
+      // (Happens when the font from the config is null)
+      if (channelNameFont != null) {
+        setFont(channelNameFont);
+      }
+      
       setOpaque(false);
       setHorizontalAlignment(SwingConstants.CENTER);
             
