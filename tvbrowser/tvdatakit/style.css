@@ -18,6 +18,7 @@ h3 {
   text-align:left;
   font-family : Verdana, Arial, Sans-serif;
   font-weight: bold;
+  margin-top : 50px;
 
 }
 
@@ -32,7 +33,7 @@ h4 {
 
 
 p {
-  font-size:14pt;
+  font-size:10pt;
   font-family : Verdana, Arial, Sans-serif;
 }
 
@@ -45,14 +46,14 @@ p {
 td {
 
 
-  font-size:14pt;
+  font-size:10pt;
   font-family : Verdana, Arial, Sans-serif;
 }
 
 ul {
   text-align:left;
 
-  font-size:14pt;
+  font-size:10pt;
   font-family : Verdana, Arial, Sans-serif;
 
 }
@@ -61,7 +62,7 @@ pre {
   background-color:#FFFFE0;
   font-weight : normal;
   font-family: Courier;
-  font-size:12pt;
+  font-size:10pt;
   padding:12px;
 }
 
