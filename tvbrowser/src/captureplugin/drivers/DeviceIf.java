@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.JFrame;
-
 import devplugin.Program;
 
 /**
@@ -60,7 +58,7 @@ public interface DeviceIf extends Cloneable {
      * Creates a Config-Dialog for this Device
      * @param parent Parent-Frame
      */
-    public void configDevice(JFrame parent);
+    public void configDevice(Window parent);
 
     /**
      * Is this Program in the List of selected Recordings?

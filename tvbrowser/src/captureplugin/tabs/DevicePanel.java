@@ -28,6 +28,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -36,6 +37,7 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -44,12 +46,11 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceCreatorDialog;
 import captureplugin.drivers.DeviceIf;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
 
 
 /**
@@ -152,7 +153,17 @@ public class DevicePanel extends JPanel {
     
     private void addDevice() {
         
-        DeviceCreatorDialog dialog = new DeviceCreatorDialog(mOwner);
+        Window parent = UiUtilities.getLastModalChildOf(mOwner);
+        
+        DeviceCreatorDialog dialog;
+        
+        if (parent instanceof JDialog){
+            dialog = new DeviceCreatorDialog((JDialog) parent);
+        } else {
+            dialog = new DeviceCreatorDialog((JFrame) parent);
+        }
+        
+        
         UiUtilities.centerAndShow(dialog);
         
         DeviceIf device = dialog.createDevice();
@@ -170,7 +181,7 @@ public class DevicePanel extends JPanel {
         DeviceIf device = (DeviceIf) mDeviceList.getSelectedValue();
         
         if (device != null) {
-            device.configDevice(mOwner);
+            device.configDevice(UiUtilities.getLastModalChildOf(mOwner));
             mDeviceList.repaint();
         }
     }

@@ -114,8 +114,17 @@ public class DefaultDevice implements DeviceIf {
     /* (non-Javadoc)
      * @see captureplugin.drivers.DeviceIf#configDevice(javax.swing.JFrame)
      */
-    public void configDevice(JFrame owner) {
-        DefaultKonfigurator config = new DefaultKonfigurator(owner, (DeviceConfig) mConfig.clone());
+    public void configDevice(Window owner) {
+        
+        
+        DefaultKonfigurator config;
+        
+        
+        if (owner instanceof JDialog) {
+            config = new DefaultKonfigurator((JDialog)owner, (DeviceConfig) mConfig.clone());
+        } else {
+            config = new DefaultKonfigurator((JFrame) owner, (DeviceConfig) mConfig.clone());
+        }
         UiUtilities.centerAndShow(config);
         
         if (config.okWasPressed()) {
