@@ -84,12 +84,16 @@ public class ListTable extends JTable implements ChangeListener {
 
         for (int i = 0; i < model.getRowCount(); i++) {
             Program prg = model.getProgram(i);
-            prg.addChangeListener(this);
-            mPrograms.add(prg);
+            if (prg != null) {
+                prg.addChangeListener(this);
+                mPrograms.add(prg);
+            }
 
             prg = model.getNextProgram(i);
-            prg.addChangeListener(this);
-            mPrograms.add(prg);
+            if (prg != null) {
+                prg.addChangeListener(this);
+                mPrograms.add(prg);
+            }
         }
     }
 
