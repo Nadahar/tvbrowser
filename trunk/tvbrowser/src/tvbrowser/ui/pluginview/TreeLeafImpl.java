@@ -106,5 +106,12 @@ public class TreeLeafImpl extends DefaultMutableTreeNode implements TreeLeaf {
     return (String)mProperties.get(key);
   }
     
+  public boolean isLeaf() {
+    return true;
+  }
+
+  public boolean getAllowsChildren() {
+    return false;
+  }
     
 }

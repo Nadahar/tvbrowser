@@ -130,7 +130,7 @@ public class ReminderFrame {
     
     mReminderList = list;
     
-    list.remove(item);
+    list.remove(item.getProgram());
     mProgram = item.getProgram();
     JPanel jcontentPane = new JPanel(new BorderLayout(0,10));
     if (mDialog != null) {
@@ -172,7 +172,7 @@ public class ReminderFrame {
     
     mReminderCB = new JComboBox();
     int i=0;
-    while(i<REMIND_VALUE_ARR.length && REMIND_VALUE_ARR[i]<item.getReminderMinutes()) {
+    while(i<REMIND_VALUE_ARR.length && REMIND_VALUE_ARR[i]<item.getMinutes()) {
       mReminderCB.addItem(REMIND_MSG_ARR[i]);
       i++;
     }

@@ -26,100 +26,49 @@
 
 package reminderplugin;
 
-import java.io.*;
 
 import devplugin.*;
 
-/**
- * TV-Browser
- *
- * @author Martin Oberhauser
- */
+
 public class ReminderListItem implements Comparable {
-
-  private int mReminderMinutes;
-  private Program mProgram;
-
-
-
-  public ReminderListItem(devplugin.Program prog, int reminderMinutes) {
-    mReminderMinutes = reminderMinutes;
-    mProgram = prog;
-  }
-  
-  
-  
-  /**
-   * Creates a ReminderListItem from a stream.
-   * <p>
-   * Returns null if the program couldn't be loaded.
-   */
-  public static ReminderListItem readData(ObjectInputStream in)
-    throws IOException, ClassNotFoundException
-  {
-    int version = in.readInt();
-    int reminderMinutes = in.readInt();
     
-    devplugin.Date programDate = new devplugin.Date(in);
-    String programId = (String) in.readObject();
-	
-    Program program = Plugin.getPluginManager().getProgram(programDate, programId);
+  private TreeLeaf mLeaf;
     
-    if (program == null) {
-      // We were not able to load the program
-      return null;
-    } else {
-      return new ReminderListItem(program, reminderMinutes);
+  public ReminderListItem(TreeLeaf leaf) {
+    mLeaf = leaf;
+  }
+    
+  public Program getProgram() {
+    return mLeaf.getProgram();      
+  }
+  
+  public int getMinutes() {
+    String m = mLeaf.getProperty("minutes");
+    if (m!=null) {
+      try {
+        return Integer.parseInt(m);
+      }catch(NumberFormatException e) {
+        return 10;
+      }
     }
+    return 10;
   }
   
-  
-  
-  /**
-   * Serialized this object.
-   */
-  public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-    out.writeInt(mReminderMinutes);
-    mProgram.getDate().writeData(out);
-    out.writeObject(mProgram.getID());
+  public void setMinutes(int minutes) {
+    mLeaf.setProperty("minutes",""+minutes);
   }
   
-  
-
-  public devplugin.Program getProgram() {
-    return mProgram;
+  public TreeLeaf getLeaf() {
+    return mLeaf;
   }
 
-  public int getReminderMinutes() {
-    return mReminderMinutes;
-  }
-
-
-  public void setReminderMinutes(int minutes) {
-    mReminderMinutes = minutes;
-  }
-  
-  
-  
-  public boolean isExpired() {
-    if (mProgram == null) {
-      // The program wasn't found after deserialization.
-      return true;
-    } else {
-      return mProgram.isExpired();
-    }
-  }
-
-  
-  
   public int compareTo(Object obj) {
     ReminderListItem item=(ReminderListItem)obj;
 
-    int res=mProgram.getDate().compareTo(item.getProgram().getDate());
+    int res=getProgram().getDate().compareTo(item.getProgram().getDate());
     if (res!=0) return res;
 
-    int minThis=mProgram.getHours()*60+mProgram.getMinutes();
+    int minThis=getProgram().getHours()*60+getProgram().getMinutes();
     int minOther=item.getProgram().getHours()*60+item.getProgram().getMinutes();
 
     if (minThis<minOther) {
@@ -130,5 +79,4 @@ public class ReminderListItem implements Comparable {
 
     return 0;
   }
-
 }

@@ -168,5 +168,13 @@ public class TreeNodeImpl extends DefaultMutableTreeNode implements TreeNode {
        nodes[i].setParent(node);
      }
    }
+  
+  public boolean isLeaf() {
+    return false;
+  }
+
+  public boolean getAllowsChildren() {
+    return true;
+  }
     
 }
