@@ -19,6 +19,7 @@ Changelog TVBrowser
     - time blocks
     - time of day
 - Better settings management
+- Searching allowes now to search in all program fields (except for binaries)
 
 0.9.7.3:
 - added downnload status info

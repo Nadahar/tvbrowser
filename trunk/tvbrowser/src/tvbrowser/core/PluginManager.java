@@ -37,29 +37,29 @@ import devplugin.*;
 
 
 public class PluginManager {
-  
+
   private static PluginManager mInstance;
   private Plugin mDefaultContextMenuPlugin;
   private Plugin[] mContextMenuPlugins;
   private static String PLUGIN_DIRECTORY="plugins";
-  
+
   private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
   private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
 
-  
+
   private PluginManager() {
     PluginLoader.getInstance().addPluginStateListener(
       new PluginStateListener(){
 
         public void pluginActivated(Plugin p) {
-          updateContextMenuPlugins();   
+          updateContextMenuPlugins(); 
         }
-  
+
         public void pluginDeactivated(Plugin p) {
           updateContextMenuPlugins();
         }
-  
-        public void pluginLoaded(Plugin p) {    
+
+        public void pluginLoaded(Plugin p) {  
         }
 
 				public void pluginUnloaded(Plugin p) {
@@ -68,24 +68,24 @@ public class PluginManager {
       }
     );
   }
-  
+
   /**
    * Store a list of all installed plugins into the settings file
    *
    */
-  
+
   public void storeSettings() {
     Plugin[] pluginArr = PluginLoader.getInstance().getActivePlugins();
     String[] classNameArr = pluginArrToClassNameArr(pluginArr);
-    
+  
     Settings.propInstalledPlugins.setStringArray(classNameArr);
   }
-  
+
   /**
    * Loads all plugins from the plugins directory.
    * @throws TvBrowserException
    */
-  private void loadAllPlugins() throws TvBrowserException {    
+  private void loadAllPlugins() throws TvBrowserException {  
       File file=new File(PLUGIN_DIRECTORY);
       if (!file.exists()) {
         return;
@@ -96,17 +96,17 @@ public class PluginManager {
           return f.getName().endsWith(".jar");
         }
       });
-    
+  
       for (int i=0;i<fileList.length;i++) {
         PluginLoader.getInstance().loadPlugin(fileList[i]);
       }
-    
+  
     }
 
 
   /**
    * Activates an array of plugins
-   * 
+   *
    * @param classNames An array of classnames
    */
   public void activatePlugins(String[] classNames) {
@@ -128,7 +128,7 @@ public class PluginManager {
         list.add(plugin);
       }
     }
-    
+  
     Plugin[] asArr = new Plugin[list.size()];
     list.toArray(asArr);
     return asArr;
@@ -140,7 +140,7 @@ public class PluginManager {
     for (int i = 0; i < pluginArr.length; i++) {
       classNameArr[i] = pluginArr[i].getClass().getName();
     }
-    
+  
     return classNameArr;
   }
 
@@ -149,7 +149,7 @@ public class PluginManager {
     if (plugin == null) {
       throw new NullPointerException("plugin is null");
     }
-  
+
     String[] installedList = Settings.propInstalledPlugins.getStringArray();
 
     if (installedList == null) {
@@ -157,20 +157,20 @@ public class PluginManager {
       Plugin[] pluginArr = PluginLoader.getInstance().getAllPlugins();
       installedList = pluginArrToClassNameArr(pluginArr);
     }
-    
+  
     // Add the plugin
     String[] newInstalledList = new String[installedList.length + 1];
     System.arraycopy(installedList, 0, newInstalledList, 0, installedList.length);
     String className = plugin.getClass().getName();
     newInstalledList[newInstalledList.length - 1] = className;
-    
+  
     // Save the property
     Settings.propInstalledPlugins.setStringArray(newInstalledList);
   }
-  
- 
+
+
   public void installPendingPlugins() {
-    
+  
     File file=new File(PLUGIN_DIRECTORY);
     if (!file.exists()) {
       return;
@@ -190,41 +190,41 @@ public class PluginManager {
       fileList[i].renameTo(fNewFile);
       String pluginName=fNewFile.getName().substring(0,fNewFile.getName().length()-4);
       pluginName=pluginName.toLowerCase()+"."+pluginName;
-    
+  
       Plugin plugin = PluginLoader.getInstance().getPluginByClassName(pluginName);
       installPlugin(plugin);
     }
-    
-  }
   
+  }
+
   public static Plugin[] createPluginArr(Collection col) {
     Plugin[] result = new Plugin[col.size()];
     col.toArray(result);
-    return result;  
+    return result;
   }
-  
+
   /**
    * returns an array of all currently activated plugins
    */
   public Plugin[] getInstalledPlugins() {
     return PluginLoader.getInstance().getActivePlugins();
   }
-  
+
   /**
    * The default context menu plugin can be executed by double-click into the
    * program table.
-   * 
+   *
    */
   public void setDefaultContextMenuPlugin(Plugin plugin) {
     mDefaultContextMenuPlugin = plugin;
   }
-  
-  
+
+
   public Plugin getDefaultContextMenuPlugin() {
     return mDefaultContextMenuPlugin;
   }
-  
-  
+
+
   /**
    * This method should be called on start-up.
    */
@@ -238,28 +238,28 @@ public class PluginManager {
       installedPlugins = pluginArrToClassNameArr(allPluginArr);
     }
     activatePlugins(installedPlugins);
-    
-    // init the context menu    
+  
+    // init the context menu  
     updateContextMenuPlugins();
 
-    String className = Settings.propDefaultContextMenuPlugin.getString();    
+    String className = Settings.propDefaultContextMenuPlugin.getString();  
     Plugin plugin = PluginLoader.getInstance().getActivePluginByClassName(className);
-    setDefaultContextMenuPlugin(plugin);    
-  }
-    
-  /**
-   * Set the context menu plugins 
-   */ 
-  public void setContextMenuPlugins(Plugin[] plugins) {
-    mContextMenuPlugins = plugins;    
+    setDefaultContextMenuPlugin(plugin);  
   }
   
+  /**
+   * Set the context menu plugins
+   */
+  public void setContextMenuPlugins(Plugin[] plugins) {
+    mContextMenuPlugins = plugins;  
+  }
+
   private void updateContextMenuPlugins() {
-    
+  
     ArrayList list = new ArrayList();
     String[] contextMenuPluginsStrArr = Settings.propContextMenuItemPlugins.getStringArray();
 	
-    
+  
     /* Add active plugins given by the settings */
     if (contextMenuPluginsStrArr!=null) {
 		  for (int i=0;i<contextMenuPluginsStrArr.length;i++) {
@@ -269,7 +269,7 @@ public class PluginManager {
         }
       }
 		}
-      
+    
     /* Add the other (active) plugins */
     Plugin[] activePlugins = PluginLoader.getInstance().getActivePlugins();
     for (int i=0;i<activePlugins.length;i++) {
@@ -277,21 +277,21 @@ public class PluginManager {
       if (p.getContextMenuItemText()!= null && !list.contains(p)) {
         list.add(p);
       }
-    }      
-      
+    }    
+    
     /* create the array*/
     mContextMenuPlugins=createPluginArr(list);
-    
-  }
   
+  }
+
   public Plugin[] getContextMenuPlugins() {
-    
+  
     if (mContextMenuPlugins == null) {
       return new Plugin[]{};
     }
     return mContextMenuPlugins;
   }
-  
+
   /**
    * Creates a context menu containing all subscribed plugins that support context
    * menues.
@@ -325,8 +325,8 @@ public class PluginManager {
     }
     return menu;
   }
-  
-  
+
+
   public static PluginManager getInstance() {
     if (mInstance==null) {
       mInstance=new PluginManager();

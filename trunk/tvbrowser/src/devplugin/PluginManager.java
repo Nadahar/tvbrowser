@@ -59,7 +59,7 @@ public interface PluginManager {
   public Iterator getChannelDayProgram(devplugin.Date date, Channel channel);
 
   /**
-   * Searches the data for programs which match a regular expression.
+   * Searches the TV data for programs which match a regular expression.
    *
    * @param regex The regular expression programs must match to.
    * @param inTitle Should be searched in the title?
@@ -71,10 +71,35 @@ public interface PluginManager {
    *        negative the days before the start date are used.
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    * @return The matching programs.
+   * 
+   * @deprecated Use {@link #search(String, boolean, ProgramFieldType[], Date, int, Channel[], boolean)}
+   *             instead.
    */
   public Program[] search(String regex, boolean inTitle, boolean inText,
     boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
     int nrDays)
+    throws TvBrowserException;
+
+  /**
+   * Searches the TV data base for programs that match a regular expression.
+   * 
+   * @param regex The regular expression programs must match to.
+   * @param caseSensitive Should the search be case sensitive?
+   * @param fieldArr The fields to search in
+   * @param startDate The date to start the search.
+   * @param nrDays The number of days to include after the start date. If
+   *        negative the days before the start date are used.
+   * @param channels The channels to search in.
+   * @param sortByStartTime Should the results be sorted by the start time?
+   *        If not, the results will be grouped by date and channel and the
+   *        search will be faster.
+   * @return The matching programs.
+   * @throws TvBrowserException
+   * @throws TvBrowserException If there is a syntax error in the regular expression.
+   */
+  public Program[] search(String regex, boolean caseSensitive,
+    ProgramFieldType[] fieldArr, Date startDate, int nrDays, Channel[] channels,
+    boolean sortByStartTime)
     throws TvBrowserException;
 
   /**
