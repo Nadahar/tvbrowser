@@ -674,7 +674,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void setShowChannellist(boolean visible) {
     if (visible) {
-      mChannelNode.setLeaf(new ChannelChooserPanel(this));
+      mChannelNode.setLeaf(mChannelChooser);
     } else {
       mChannelNode.setLeaf(null);
     }
