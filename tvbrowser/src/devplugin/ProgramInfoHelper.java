@@ -6,8 +6,6 @@ package devplugin;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import util.ui.ImageUtilities;
-
 /**
  * Holds all Information needed to Display the additional
  * Informations to a Program, like Black and White..
