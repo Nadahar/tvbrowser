@@ -277,14 +277,11 @@ public class TVRaterPlugin extends devplugin.Plugin {
         final TVRaterPlugin tvrater = this;
 
         Thread updateThread = new Thread() {
-
             public void run() {
-                System.out.println("Updater gestartet");
                 Updater up = new Updater(tvrater);
                 up.run();
             }
         };
         updateThread.start();
     }
-
 }

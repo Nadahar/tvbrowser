@@ -18,10 +18,9 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-   
+
     /** Translator */
-    private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-            .getLocalizerFor(ListViewPlugin.class);
+    private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ListViewPlugin.class);
 
     /**
      * Creates the Plugin
@@ -29,15 +28,13 @@ public class ListViewPlugin extends Plugin {
     public ListViewPlugin() {
         _listViewInstance = this;
     }
-    
+
     /**
      * Returns Informations about this Plugin
      */
     public PluginInfo getInfo() {
         String name = mLocalizer.msg("pluginName", "View List Plugin");
-        String desc = mLocalizer
-                .msg("description",
-                        "Shows a List of current running Programs");
+        String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
         String author = "Bodo Tasche";
         return new PluginInfo(name, desc, author, new Version(1, 0));
     }
@@ -47,38 +44,29 @@ public class ListViewPlugin extends Plugin {
      */
     public void execute() {
         final ListViewDialog dlg = new ListViewDialog(getParentFrame(), this);
-        
-        Runnable runLater = new Runnable() {
 
-            public void run() {
+        dlg.pack();
+        dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 
-
-                dlg.pack();
-                dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-
-                    public void componentResized(ComponentEvent e) {
-                        _dimensionListDialog = e.getComponent().getSize();
-                    }
-
-                    public void componentMoved(ComponentEvent e) {
-                        e.getComponent().getLocation(_locationListDialog);
-                    }
-                });
-
-                if ((_locationListDialog != null)
-                        && (_dimensionListDialog != null)) {
-                    dlg.setLocation(_locationListDialog);
-                    dlg.setSize(_dimensionListDialog);
-                    dlg.show();
-                } else {
-                    dlg.setSize(500, 600);
-                    UiUtilities.centerAndShow(dlg);
-                    _locationListDialog = dlg.getLocation();
-                    _dimensionListDialog = dlg.getSize();
-                }
+            public void componentResized(ComponentEvent e) {
+                _dimensionListDialog = e.getComponent().getSize();
             }
-        };
-        new Thread(runLater).start();
+
+            public void componentMoved(ComponentEvent e) {
+                e.getComponent().getLocation(_locationListDialog);
+            }
+        });
+
+        if ((_locationListDialog != null) && (_dimensionListDialog != null)) {
+            dlg.setLocation(_locationListDialog);
+            dlg.setSize(_dimensionListDialog);
+            dlg.show();
+        } else {
+            dlg.setSize(500, 600);
+            UiUtilities.centerAndShow(dlg);
+            _locationListDialog = dlg.getLocation();
+            _dimensionListDialog = dlg.getSize();
+        }
 
     }
 
@@ -94,7 +82,7 @@ public class ListViewPlugin extends Plugin {
     }
 
     /**
-     * Returns the Button-Icon 
+     * Returns the Button-Icon
      */
     public String getButtonIconName() {
         return "listviewplugin/listview16.gif";
@@ -102,17 +90,19 @@ public class ListViewPlugin extends Plugin {
 
     /**
      * Returns an Instance of this Plugin
+     * 
      * @return Instance of this Plugin
      */
     public static ListViewPlugin getInstance() {
         return _listViewInstance;
     }
-    
+
     /** Instance of this Plugin */
     private static ListViewPlugin _listViewInstance;
-    
+
     /** Needed for Position */
     private Point _locationListDialog = null;
+
     /** Needed for Position */
     private Dimension _dimensionListDialog = null;
 }
