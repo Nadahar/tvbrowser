@@ -240,7 +240,9 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
 
-    finderPanel = new FinderPanel(this);
+   finderPanel=FinderPanel.getInstance();
+   finderPanel.setDateListener(this);
+   dateChanged(new devplugin.Date());
     
     mDefaultToolBar=new HorizontalToolBar(this,new FilterChooser(this,mProgramTableModel));
     mDateTimeToolBar=new VerticalToolBar(this,finderPanel);

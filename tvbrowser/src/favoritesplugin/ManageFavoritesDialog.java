@@ -60,7 +60,7 @@ public class ManageFavoritesDialog extends JDialog {
   /**
    * Creates a new instance of ManageFavoritesDialog.
    */
-  public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr) {
+  public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr, int splitPanePosition) {
     super(parent, true);
     
     mSubsribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
@@ -128,7 +128,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mDownBt);
 
     mSplitPane = new JSplitPane();
-    mSplitPane.setDividerLocation(100);
+    mSplitPane.setDividerLocation(splitPanePosition);
     main.add(mSplitPane, BorderLayout.CENTER);
     
     mFavoritesListModel = new DefaultListModel();
@@ -192,12 +192,17 @@ public class ManageFavoritesDialog extends JDialog {
     buttonPn.add(mCancelBt);
     
     favoriteSelectionChanged();
-    pack();
-    
-    
+   
   }
   
   
+  public int getSplitpanePosition() {
+    return mSplitPane.getDividerLocation();
+  }
+  
+  public void setSplitpanePosition(int val) {
+    mSplitPane.setDividerLocation(val);
+  }
   
   protected void favoriteSelectionChanged() {
     int selection = mFavoritesList.getSelectedIndex();

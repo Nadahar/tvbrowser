@@ -73,7 +73,7 @@ public class XmlTvDataService extends AbstractTvDataService {
           "XMLTV",
           "35 deutschsprachige Sender",
           "Til Schneider",
-          new Version(2,0)
+          new Version(2,1)
           );
 
   /**

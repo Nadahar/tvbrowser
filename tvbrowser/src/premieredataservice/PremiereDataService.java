@@ -73,7 +73,7 @@ public class PremiereDataService extends AbstractTvDataService {
         "Premiere 4, Premiere 5, Premiere 6, Premiere 7, Premiere Krimi, " +
         "Premiere Nostalgie, Premiere Serie, Premiere Start, Studio Universal)",
         "Til Schneider",
-        new Version(2,0)
+        new Version(2,1)
   );
 
   /**
