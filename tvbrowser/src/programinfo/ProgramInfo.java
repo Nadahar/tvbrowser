@@ -45,8 +45,8 @@ public class ProgramInfo extends devplugin.Plugin {
   		}
   		
   		public PluginInfo getInfo() {
-			String name = mLocalizer.msg( "pluginName" ,"Sendungsinfo-Betrachter" );
-			String desc = mLocalizer.msg( "description" ,"Zeigt Informationen zu einer Sendung an." );
+			String name = mLocalizer.msg( "pluginName" ,"Program information" );
+			String desc = mLocalizer.msg( "description" ,"Show information about a program" );
 			String author = "Martin Oberhauser" ;
 			return new PluginInfo(name, desc, author, new Version(1, 2));
   		} 

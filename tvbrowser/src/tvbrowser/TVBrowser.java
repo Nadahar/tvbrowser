@@ -158,6 +158,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         frame.scrollToNow();
+        DataService.getInstance().setOnlineMode(Settings.getStartupInOnlineMode());
       }
     });
   }
@@ -273,6 +274,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       mLocalizer.msg("onlineMode", "Online mode")
     };
     final JComboBox comboBox = new JComboBox(items);
+    
+    if (Settings.getStartupInOnlineMode()) {
+    	comboBox.setSelectedIndex(1);
+    }
 
     eastPanel.add(finderPanel,BorderLayout.CENTER);
 
