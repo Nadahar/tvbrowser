@@ -116,7 +116,7 @@ public class Toolbar extends JComponent implements ComponentListener, ActionList
   
  
    
-  private void updateToolbar() {
+  public void updateToolbar() {
     mButtonPanel.removeAll();
     popupMenu.removeAll();
     if (mButtons == null || mButtons.length<1) {

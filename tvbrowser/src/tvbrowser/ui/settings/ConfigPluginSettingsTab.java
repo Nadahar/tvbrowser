@@ -30,7 +30,6 @@ import java.awt.BorderLayout;
 import javax.swing.*;
 
 import tvbrowser.core.PluginLoader;
-import tvbrowser.core.Settings;
 import devplugin.Plugin;
 import devplugin.SettingsTab;
 
@@ -43,7 +42,6 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
   private Plugin mPlugin;
   private boolean mPluginIsInstalled;
   private SettingsTab mSettingsTab;
-  private JCheckBox mAddToToolbarCb;
   private JPanel mContentPanel;
   private JPanel mPluginPanel;
   
@@ -76,17 +74,7 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
       
     JPanel contentPanel=new JPanel();
     contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
-     
-    if (mPlugin.getButtonText()!=null) {
-      mAddToToolbarCb=new JCheckBox(mLocalizer.msg("showPluginInToolBar","Show plugin in toolbar"));
-      String pluginClassName = mPlugin.getClass().getName();
-      boolean hidden = Settings.propHiddenPluginButtons.containsItem(pluginClassName);
-      mAddToToolbarCb.setSelected(! hidden);
-      JPanel panel=new JPanel(new BorderLayout());
-      panel.add(mAddToToolbarCb,BorderLayout.WEST);
-      contentPanel.add(panel); 
-    }
-    
+         
     mSettingsTab=mPlugin.getSettingsTab();
     if (mSettingsTab!=null) {
       contentPanel.add(mSettingsTab.createSettingsPanel());
@@ -107,18 +95,6 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
       if (mSettingsTab!=null) {
         mSettingsTab.saveSettings();
       }
-      
-      if (mPluginIsInstalled && mPlugin.getButtonText()!=null && mAddToToolbarCb!=null) {
-        boolean hidden = ! mAddToToolbarCb.isSelected();
-        System.out.println("plugin "+mPlugin+" is hidden: "+hidden);
-        String className = mPlugin.getClass().getName();
-        if (!hidden) {
-          Settings.propHiddenPluginButtons.removeItem(className);
-        }
-        else if (! Settings.propHiddenPluginButtons.containsItem(className)) {
-          Settings.propHiddenPluginButtons.addItem(className);
-        }
-      }  
     }
 
   
