@@ -174,7 +174,6 @@ public class PluginManager {
 
 
   public void installPendingPlugins() {
-  
     File file=new File(PLUGIN_DIRECTORY);
     if (!file.exists()) {
       return;
@@ -192,15 +191,6 @@ public class PluginManager {
         fNewFile.delete();
       }
       fileList[i].renameTo(fNewFile);
-      String pluginName=fNewFile.getName().substring(0,fNewFile.getName().length()-4);
-      pluginName=pluginName.toLowerCase()+"."+pluginName;
-  
-      Plugin plugin = PluginLoader.getInstance().getPluginByClassName(pluginName);
-      if (plugin == null) {
-        mLog.warning("Installing plugin failed. Plugin not found: " + pluginName);
-      } else {
-        installPlugin(plugin);
-      }
     }
   }
 
