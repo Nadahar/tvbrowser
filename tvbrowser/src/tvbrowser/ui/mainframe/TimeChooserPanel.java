@@ -30,14 +30,20 @@ package tvbrowser.ui.mainframe;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import tvbrowser.core.Settings;
 import util.ui.GridFlowLayout;
 
 
-public class TimeChooserPanel extends JPanel {
+public class TimeChooserPanel extends JPanel implements ChangeListener, AncestorListener {
     
     /** The localizer for this class. */
     public static final util.ui.Localizer mLocalizer
@@ -57,7 +63,8 @@ public class TimeChooserPanel extends JPanel {
       
       mGridPn = new JPanel(new GridFlowLayout(5,5,GridFlowLayout.TOP, GridFlowLayout.CENTER));
       add(mGridPn,BorderLayout.CENTER);
-      
+
+      addAncestorListener(this);
       
       createContent();
       
@@ -72,6 +79,10 @@ public class TimeChooserPanel extends JPanel {
  
     }
     
+    public void stateChanged(ChangeEvent e) {
+        createContent();
+    }
+
     public void updateButtons() {
       createContent();
     }
@@ -94,14 +105,26 @@ public class TimeChooserPanel extends JPanel {
           }
         });
       }
-        
-     
-
-      
     }
-    
-   
 
-    
-    
-  }
+    /* (non-Javadoc)
+     * @see javax.swing.event.AncestorListener#ancestorAdded(javax.swing.event.AncestorEvent)
+     */
+    public void ancestorAdded(AncestorEvent event) {
+        Settings.propTimeButtons.addChangeListener(this);        
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.event.AncestorListener#ancestorMoved(javax.swing.event.AncestorEvent)
+     */
+    public void ancestorMoved(AncestorEvent event) {
+        // TODO Auto-generated method stub
+    }
+
+    /* (non-Javadoc)
+     * @see javax.swing.event.AncestorListener#ancestorRemoved(javax.swing.event.AncestorEvent)
+     */
+    public void ancestorRemoved(AncestorEvent event) {
+        Settings.propTimeButtons.removeChangeListener(this);        
+    }
+}

@@ -25,6 +25,11 @@
  */
 package util.settings;
 
+import java.util.Vector;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 /**
  * 
  * 
@@ -34,12 +39,12 @@ public abstract class Property {
   
   private PropertyManager mManager;
   private String mKey;
-  
+  private Vector mChangeList;
   
   public Property(PropertyManager manager, String key) {
     mManager = manager;
     mKey = key;
-    
+    mChangeList = new Vector();
     // Register this property
     mManager.addProperty(this);
   }
@@ -47,6 +52,7 @@ public abstract class Property {
 
   protected void setProperty(String value) {
     mManager.setProperty(mKey, value);
+    fireChangeEvent();
   }
   
   
@@ -59,6 +65,21 @@ public abstract class Property {
     return mKey;
   }
   
+  
+  public void addChangeListener(ChangeListener l) {
+      mChangeList.add(l);
+  }
+  
+  public void removeChangeListener(ChangeListener l) {
+      mChangeList.remove(l);
+  }
+
+  public void fireChangeEvent() {
+      for (int i = 0; i < mChangeList.size(); i++) {
+          ChangeListener l = (ChangeListener) mChangeList.get(i);
+          l.stateChanged(new ChangeEvent(this));
+      }
+  }
   
   protected abstract void clearCache();
 
