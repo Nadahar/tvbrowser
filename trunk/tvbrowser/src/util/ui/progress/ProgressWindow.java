@@ -38,7 +38,9 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
   
   public ProgressWindow(Component parent, String msg) {
     mDialog=UiUtilities.createDialog(parent,true);
+   
     JPanel content=(JPanel)mDialog.getContentPane();
+    content.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     content.setLayout(new BorderLayout());
     mLabel=new JLabel(msg);
     mLabel.setHorizontalAlignment(SwingConstants.CENTER);

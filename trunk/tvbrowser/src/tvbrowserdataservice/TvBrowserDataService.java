@@ -150,8 +150,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
       }       
     }
     
-    mProgressMonitor.setMessage(mLocalizer.msg("info.8","Finding mirror..."));
+    
     for (int i=0;i<mChannelGroupArr.length;i++) {
+      mProgressMonitor.setMessage(mLocalizer.msg("info.8","Finding mirror for group {0} ({1} of {2})...",mChannelGroupArr[i].getName(),""+i,""+mChannelGroupArr.length));
       mChannelGroupArr[i].chooseMirrors();
     }
     
@@ -412,7 +413,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     ArrayList channelList=new ArrayList();
     for (int i=0;i<mChannelGroupArr.length;i++) {
-      monitor.setMessage("Checking group "+i+" of "+mChannelGroupArr.length+" ...");
+      
+      monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking group {0} - ({1} of {2})",mChannelGroupArr[i].getName(),""+i,""+mChannelGroupArr.length));
       Channel[] ch=mChannelGroupArr[i].checkForAvailableChannels();
       for (int j=0;j<ch.length;j++) {
         channelList.add(ch[j]);  

@@ -114,6 +114,7 @@ public class PDSRunner {
             mLog.warning("There were errors during the execution of primary data service "+pds.getClass().getName());
           }else{
             mLog.fine(pds.getClass().getName()+ " terminated normally");
+            logFile.delete();
           }
           errOut.close();
         }catch(IOException exc) {

@@ -86,12 +86,14 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener {
 	
 	
 	
-}
+
 
 
 class SoftwareUpdateItemPanel extends JPanel {
   
   private JButton mDownloadBt;
+  
+  
   
   public SoftwareUpdateItemPanel(SoftwareUpdateItem item) {
     setLayout(new BorderLayout());
@@ -110,7 +112,7 @@ class SoftwareUpdateItemPanel extends JPanel {
     
     JPanel downloadPn=new JPanel(new BorderLayout());
     
-    mDownloadBt=new JButton("downlaod");
+    mDownloadBt=new JButton(mLocalizer.msg("download","Download"));
     
     downloadPn.add(mDownloadBt,BorderLayout.SOUTH);
     add(downloadPn,BorderLayout.EAST);
@@ -125,8 +127,8 @@ class SoftwareUpdateItemPanel extends JPanel {
 
 class SoftwareUpdateItemListPanel extends JPanel {
   
-  JPanel mContent;
- 
+  private JPanel mContent;
+  
   public SoftwareUpdateItemListPanel() {
     setLayout(new BorderLayout());
     mContent=new JPanel();
@@ -144,9 +146,10 @@ class SoftwareUpdateItemListPanel extends JPanel {
         boolean success=false;
         try {
           success=item.download();
-        }catch(TvBrowserException exc) {
+				} catch (TvBrowserException exc) {
           util.exc.ErrorHandler.handle(exc);
         }
+                  
         if (success) {
           mContent.remove(panel);
           updateUI();
@@ -156,5 +159,5 @@ class SoftwareUpdateItemListPanel extends JPanel {
     
   }
   
-  
+}
 }

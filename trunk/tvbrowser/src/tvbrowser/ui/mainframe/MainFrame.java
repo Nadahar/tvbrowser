@@ -601,8 +601,18 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         onDownloadStart();
         JProgressBar progressBar = mStatusBar.getProgressBar();
         TvDataUpdater.getInstance().downloadTvData(daysToDownload, progressBar, mStatusBar.getLabel());
-        onDownloadDone();
-        newTvDataAvailable();
+        
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            onDownloadDone();
+            newTvDataAvailable();
+          }
+        
+        });
+        
+        
+        
       }
     };
     downloadingThread.start();
