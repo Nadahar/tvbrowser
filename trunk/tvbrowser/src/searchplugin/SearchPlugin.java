@@ -25,17 +25,21 @@
  */
 package searchplugin;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
-import devplugin.*;
-
-import javax.swing.*;
+import devplugin.ActionMenu;
+import devplugin.ButtonAction;
+import devplugin.ContextMenuAction;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.Version;
 
 /**
  * Provides a dialog for searching programs.
@@ -118,7 +122,7 @@ public class SearchPlugin extends Plugin {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        SearchDialog dlg = new SearchDialog(getParentFrame());
+        SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
         UiUtilities.centerAndShow(dlg);
       }
     });
@@ -137,7 +141,7 @@ public class SearchPlugin extends Plugin {
      action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
      action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent event) {
-          SearchDialog dlg = new SearchDialog(getParentFrame());
+          SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
           dlg.setPatternText(program.getTitle());
           UiUtilities.centerAndShow(dlg);
         }

@@ -26,15 +26,28 @@
 
 package reminderplugin;
 
-import devplugin.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Image;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
-import util.ui.UiUtilities;
-import util.ui.ProgramPanel;
 import util.io.IOUtilities;
+import util.ui.ProgramPanel;
+import util.ui.UiUtilities;
+import devplugin.Date;
+import devplugin.Program;
 
 /**
  * TV-Browser
@@ -104,6 +117,7 @@ public class ReminderFrame {
   /**
    * Creates a new instance of ReminderFrame.
    * 
+   * @param plugin The ReminderPlugin
    * @param comp A component in the parent window.
    * @param list The list of all reminders.
    * @param item The reminder to show.
@@ -111,7 +125,7 @@ public class ReminderFrame {
    *                      window. -1 disables auto-closing.
    * @param iconImage The icon image to use for the reminder frame.
    */
-  public ReminderFrame(Component comp, ReminderList list,
+  public ReminderFrame(ReminderPlugin plugin, Component comp, ReminderList list,
     ReminderListItem item, int autoCloseSecs, Image iconImage)
   {
     // Check whether we have to use a frame or dialog
@@ -158,7 +172,7 @@ public class ReminderFrame {
     progPanel.add(channelLabel,BorderLayout.EAST);
     
     ProgramPanel panel = new ProgramPanel(mProgram);
-    panel.addPluginContextMenuMouseListener();
+    panel.addPluginContextMenuMouseListener(plugin);
     progPanel.add(panel, BorderLayout.CENTER);
     
     JPanel btnPanel = new JPanel(new BorderLayout(10,0));
