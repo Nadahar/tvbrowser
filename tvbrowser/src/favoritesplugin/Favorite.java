@@ -63,7 +63,7 @@ public class Favorite implements Serializable {
     mTerm = "";
     mSearchInTitle = true;
     mSearchInText = false;
-    mSearchMode = MODE_TERM_IS_KEYWORD;
+    mSearchMode = MODE_MATCH_EXACTLY;
     mUseCertainChannel = false;
     mCertainChannel = null;
     mUseCertainTimeOfDay = false;

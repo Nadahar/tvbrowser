@@ -161,7 +161,10 @@ public abstract class AbstractProgram implements Serializable, devplugin.Program
    * Sets whether this program is marked as "on air".
    */
   public void markAsOnAir(boolean onAir) {
-    if (onAir != mOnAir) { // avoid unnessesary calls of fireStateChanged()
+    // avoid unnessesary calls of fireStateChanged()
+    // call fireStateChanged() anyway if we are "on air"
+    // (for updating the "progress bar" painted by the ProgramPanel)
+    if (onAir || (onAir != mOnAir)) {
       mOnAir = onAir;
       fireStateChanged();
     }  

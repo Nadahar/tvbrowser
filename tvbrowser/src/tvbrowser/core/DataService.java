@@ -221,6 +221,11 @@ public class DataService implements devplugin.PluginManager {
     date.addDays(-1); // get yesterday too
     TvBrowserException downloadException = null;
     for (int i = 0; i < daysToDownload + 2; i++) {
+      DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
+      if (dayProgram == null) {
+        dayProgram = new DayProgram(date);
+      }
+      
       for (int j = 0; (j < subscribedChannels.length) && mIsDownloading; j++) {
         progressBar.setValue(i * subscribedChannels.length + j + 1);
         
@@ -231,7 +236,11 @@ public class DataService implements devplugin.PluginManager {
         }
         
         try {
-          downloadDayProgram(date, channel);
+          AbstractChannelDayProgram prog = downloadDayProgram(date, channel);
+
+          if (prog != null) {
+            dayProgram.addChannelDayProgram(prog);
+          }
         }
         catch (TvBrowserException exc) {
           if (downloadException == null) {
@@ -241,7 +250,14 @@ public class DataService implements devplugin.PluginManager {
           continue;
         }
       }
-      date.addDays(1);
+      
+      if (! dayProgram.isEmpty()) {
+        mDayProgramHash.put(date, dayProgram);
+      }
+      
+      // Create a new Date object, because the other one is used as key
+      // in mDayProgramHash.
+      date = new devplugin.Date(date.getDaysSince1970() + 1);
     }
 
     mIsDownloading = false;
@@ -277,9 +293,7 @@ public class DataService implements devplugin.PluginManager {
     }
 
     // try to get the DayProgram from the cache.
-    DayProgram dayProgram=null;
-    
-    dayProgram = (DayProgram) mDayProgramHash.get(date);
+    DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
     
     if (dayProgram == null) {
       try {

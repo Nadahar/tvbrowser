@@ -29,6 +29,7 @@ package tvbrowser.ui.programtable;
 
 import java.util.Iterator;
 
+import java.util.Calendar;
 
 import java.awt.*;
 import javax.swing.*;
@@ -47,6 +48,12 @@ import tvbrowser.core.*;
  * @author Martin Oberhauser
  */
 public class ProgramPanel extends JComponent implements ChangeListener {
+  
+  private static final Color COLOR_ON_AIR_DARK  = new Color(128, 128, 255, 80);
+  private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
+  private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
+  
+  private static final Calendar CALENDAR = Calendar.getInstance();
 
   /** The bold font. */
   private static final Font bold;
@@ -131,25 +138,28 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /**
    * Paints the component.
    *
-   * @param g The graphics context to paint to.
+   * @param grp The graphics context to paint to.
    */  
-  public void paintComponent(Graphics g) {
-  	g.setFont(bold);
-    g.setColor(Color.black);
-    g.drawString(mProgramTimeAsString,0,bold.getSize());
-    mTitleIcon.paintIcon(this, g, WIDTH_LEFT, 0);
-    mDescriptionIcon.paintIcon(this, g, WIDTH_LEFT, mTitleIcon.getIconHeight());
-
+  public void paintComponent(Graphics grp) {
     if (mProgram.isOnAir()) {
-      g.setColor(new Color(128,128,255,40));
-      g.fill3DRect(0, 0, WIDTH, mHeight, true);
+      int minutesAfterMidnight = getMinutesAfterMidnight();
+      int length = mProgram.getLength();
+      int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
+      int elapsedMinutes = minutesAfterMidnight - startTime;
+      int progressX = elapsedMinutes * WIDTH / length;
+
+      grp.setColor(COLOR_ON_AIR_DARK);
+      grp.fillRect(1, 1, progressX - 1, mHeight - 2);
+      grp.setColor(COLOR_ON_AIR_LIGHT);
+      grp.fillRect(progressX, 1, WIDTH - progressX - 1, mHeight - 2);
+      grp.draw3DRect(0, 0, WIDTH - 1, mHeight - 1, true);
     }
 
     // paint the icons of the plugins that have marked the mProgram
     Iterator pluginIter = mProgram.getMarkedByIterator();
     if (pluginIter.hasNext()) {
-      g.setColor(new Color(255,0,0,40));
-      g.fill3DRect(0,0,WIDTH,mHeight,true);
+      grp.setColor(COLOR_MARKED);
+      grp.fill3DRect(0, 0, WIDTH, mHeight, true);
 
       int x = WIDTH - 1;
       int y = mHeight - 1;
@@ -158,10 +168,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
         Icon icon = plugin.getMarkIcon();
         if (icon != null) {
           x -= icon.getIconWidth();
-          icon.paintIcon(this, g, x, y - icon.getIconHeight());
+          icon.paintIcon(this, grp, x, y - icon.getIconHeight());
         }
       }
     }
+
+  	grp.setFont(bold);
+    grp.setColor(Color.black);
+    grp.drawString(mProgramTimeAsString, 1, bold.getSize());
+    mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
+    mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
   }
 
   
@@ -197,6 +213,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */
   public devplugin.Program getProgram() {
     return mProgram;
+  }
+  
+  
+  
+  /**
+   * Gets the number of minutes since midnight
+   */
+  private int getMinutesAfterMidnight() {
+    CALENDAR.setTimeInMillis(System.currentTimeMillis());
+    return CALENDAR.get(Calendar.HOUR_OF_DAY) * 60 + CALENDAR.get(Calendar.MINUTE);
   }
   
   

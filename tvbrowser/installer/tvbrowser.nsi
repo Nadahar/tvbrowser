@@ -188,25 +188,32 @@ SubSectionEnd
 
 SubSection /e "Plugins"
 
-Section "Programm-Info-Plugin"
+Section "Sendungsinfo-Betrachter"
   SectionIn 1
 
   SetOutPath "$INSTDIR\plugins"
   File "${RUNTIME_DIR}\plugins\ProgramInfo.jar"
 SectionEnd
 
-Section "Reminder-Plugin"
+Section "Erinnerer"
   SectionIn 1
 
   SetOutPath "$INSTDIR\plugins"
   File "${RUNTIME_DIR}\plugins\ReminderPlugin.jar"
 SectionEnd
 
-Section "Search-Plugin"
+Section "Sendungen suchen"
   SectionIn 1
 
   SetOutPath "$INSTDIR\plugins"
   File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
+SectionEnd
+
+Section "Lieblingssendungen verwalten"
+  SectionIn 1
+
+  SetOutPath "$INSTDIR\plugins"
+  File "${RUNTIME_DIR}\plugins\FavoritesPlugin.jar"
 SectionEnd
 
 SubSectionEnd
