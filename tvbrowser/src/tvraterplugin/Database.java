@@ -131,10 +131,17 @@ public class Database {
 	/**
 	 * Empties the ChangedPersonal List
 	 */
-	public void emptyChangedPersonal() {
+	public void clearChangedPersonal() {
 		_changedpersonal = new ArrayList();
 	}
 
+	/**
+	 * Empties the ChangedPersonal List
+	 */
+	public void clearOverall() {
+		_overalrating = new HashMap();
+	}	
+	
 	/**
 	 * Called by the host-application during start-up. 
 	 * Loads the data.

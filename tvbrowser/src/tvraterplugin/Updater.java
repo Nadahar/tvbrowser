@@ -180,6 +180,7 @@ public class Updater implements Progress {
 	 * @param node Node to analyse
 	 */
 	private void readRatingData(Node node) {
+	    _tvraterPlugin.getDatabase().clearOverall();
 		Node child = node.getFirstChild();
 		while (child != null) {
 			if (child.getNodeName().equals("rating")) {
@@ -312,7 +313,7 @@ public class Updater implements Progress {
 			ratingElement.appendChild(createNodeWithTextValue(document, "erotic", rating.getIntValue(Rating.EROTIC)));
 
 		}
-		_tvraterPlugin.getDatabase().emptyChangedPersonal();
+		_tvraterPlugin.getDatabase().clearChangedPersonal();
 
 		// GetRatings
 		Element getratings = document.createElement("getratings");

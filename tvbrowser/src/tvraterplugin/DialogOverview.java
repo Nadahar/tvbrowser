@@ -96,6 +96,7 @@ public class DialogOverview extends JDialog {
         _tabbed = new JTabbedPane();
 
         _overall = new JList(overallVector);
+        _overall.setCellRenderer(new RatingCellRenderer());
         _overall.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
@@ -112,6 +113,7 @@ public class DialogOverview extends JDialog {
         Collections.sort(personalVector, comperator);
 
         _personal = new JList(personalVector);
+        _personal.setCellRenderer(new RatingCellRenderer());
         _personal.addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {

@@ -381,7 +381,7 @@ public class DialogRating extends JDialog {
 
 		JComboBox valuebox = new JComboBox(values);
 		
-		valuebox.setRenderer(new RatingCellRenderer());
+		valuebox.setRenderer(new RatingEntryCellRenderer());
 		
 		valuebox.setSelectedIndex(value);
 

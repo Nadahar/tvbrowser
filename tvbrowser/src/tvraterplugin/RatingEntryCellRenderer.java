@@ -31,10 +31,10 @@ import javax.swing.ListCellRenderer;
  * 
  * @author bodo
  */
-public class RatingCellRenderer extends JLabel implements ListCellRenderer {
+public class RatingEntryCellRenderer extends JLabel implements ListCellRenderer {
 
 
-    public RatingCellRenderer() {
+    public RatingEntryCellRenderer() {
         setOpaque(true);
     }
 
@@ -50,8 +50,8 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
         if (obj == null) {
             return new JLabel("Empty");
         }
-        if (obj instanceof Rating) {
-            int overall = ((Rating) obj).getIntValue(Rating.OVERALL);
+        if (obj instanceof Integer) {
+            Integer rating = ((Integer) obj);
             if (isSelected || hasFocus) {
                 this.setBackground(list.getSelectionBackground());
                 this.setForeground(list.getSelectionForeground());
@@ -60,9 +60,9 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
                 this.setForeground(list.getForeground());
             }
 
-            ImageIcon rateing = RatingIconTextFactory.getImageIconForRating(overall);
+            ImageIcon rateing = RatingIconTextFactory.getImageIconForRating(rating.intValue());
             this.setIcon(rateing);
-            this.setText(((Rating) obj).getTitle());
+            this.setText(RatingIconTextFactory.getStringForRating(rating.intValue()));
 
             return this;
         }
