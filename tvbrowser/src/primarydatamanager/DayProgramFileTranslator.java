@@ -101,7 +101,6 @@ public class DayProgramFileTranslator {
       throw new IOException("File is not a directory: " + destDir.getAbsolutePath());
     }
     
-    
     DayProgramFile prog = new DayProgramFile();
     prog.readFromFile(file);
 
@@ -228,10 +227,14 @@ public class DayProgramFileTranslator {
       try {
         for (int i = 0; i < args.length; i++) {
           File file = new File(args[i]);
-          if (file.isDirectory()) {
-            translateAllDayPrograms(file);
+          if (! file.exists()) {
+            System.out.println("File does not exist: " + file.getAbsolutePath());
           } else {
-            translateDayProgram(file,new File("."));
+            if (file.isDirectory()) {
+              translateAllDayPrograms(file);
+            } else {
+              translateDayProgram(file,new File("."));
+            }
           }
         }
       }
