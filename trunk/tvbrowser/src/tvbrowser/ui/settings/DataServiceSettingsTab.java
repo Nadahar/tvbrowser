@@ -157,10 +157,9 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
     if (source == mServiceCB) {
-      String item=(String)mServiceCB.getSelectedItem();
-      tvdataloader.TVDataServiceInterface curSelectedService
-        = DataLoaderManager.getInstance().getDataLoader(item);
-      boolean enabled = (item != null) && (curSelectedService != null)
+      TVDataServiceInterface curSelectedService=(TVDataServiceInterface)mServiceCB.getSelectedItem();
+     
+      boolean enabled = (curSelectedService != null)
         && curSelectedService.hasSettingsPanel();
       mConfigBt.setEnabled(enabled);
     }
@@ -176,9 +175,11 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
       }
     }
     else if (source == mConfigBt) {
-      String item=(String)mServiceCB.getSelectedItem();
-      DataServiceConfigDlg dlg = new DataServiceConfigDlg(this, item);
-      dlg.centerAndShow();
+		TVDataServiceInterface item=(TVDataServiceInterface)mServiceCB.getSelectedItem();
+      if (item!=null && item.hasSettingsPanel()) {
+      	DataServiceConfigDlg dlg = new DataServiceConfigDlg(this, item.getName());
+      	dlg.centerAndShow();
+      }
     }
   }
   
