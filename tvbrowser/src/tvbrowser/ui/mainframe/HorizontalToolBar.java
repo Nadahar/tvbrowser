@@ -86,7 +86,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
               if (value instanceof Channel) {
                 label.setText(((Channel)value).getName());
               }
-              else {
+              else if (value != null){
                 label.setText(value.toString());
               }
 
