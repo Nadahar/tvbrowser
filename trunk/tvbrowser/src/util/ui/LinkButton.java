@@ -52,7 +52,24 @@ public class LinkButton extends JButton implements ActionListener{
         setBorderPainted(false);
         setRolloverEnabled(true);
         setUI(new MetalButtonUI());
+        setToolTipText(mUrl);
         addActionListener(this);
+    }
+    
+    /**
+     * Sets the Text in the LinkButton
+     * @param text new Text
+     */
+    public void setText(String text) {
+      super.setText("<html><FONT COLOR='BLUE'><u>"+text+"</u></FONT></html>");
+    }
+ 
+    /**
+     * Set the URL in the LinkButton
+     * @param url new Url
+     */
+    public void setUrl(String url) {
+      mUrl = url;
     }
     
     /* (non-Javadoc)
