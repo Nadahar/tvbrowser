@@ -4,6 +4,7 @@ current:
 - New program table
 - Show also the next morning
 - Compact and Time synchronous program table layout
+- online update for plugins and dataservices
 
 0.9.4:
 - Better readable text in Splash Screen
