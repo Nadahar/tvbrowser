@@ -135,6 +135,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
 	splash.setMessage(msg);
     PluginManager.initInstalledPlugins();
+    
+    
+    mLog.info("Deleting expired tv data...");
+    DataService.deleteExpiredTVData();
+    
 
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");

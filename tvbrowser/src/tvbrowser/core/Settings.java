@@ -439,13 +439,18 @@ public class Settings {
 
   }
   
+  /**
+   *  Returns the tvdata lifespan in days
+   * 
+   **/
+  
   public static int getTVDataLifespan() {
   	String lifespan=settings.getProperty("tvdatalifespan");
 	int result;
 	try {
 		result=Integer.parseInt(lifespan);
 	} catch (NumberFormatException e) {
-		result=0;
+		result=3;
 	}
 	return result;  	
   }

@@ -116,7 +116,7 @@ public class DataService implements devplugin.PluginManager {
    * @param newMode whether we are in online mode.
    */
   public void setOnlineMode(boolean newMode) {
-    if ((newMode == onlineMode)/* || (tvdataservice == null)*/) {
+    if ((newMode == onlineMode)) {
       return;
     }
 
@@ -282,11 +282,7 @@ public class DataService implements devplugin.PluginManager {
   protected DayProgram loadDayProgram(devplugin.Date date)
     throws TvBrowserException
   {
- /*
-    if (tvdataservice == null) {
-      return null;
-    }
-*/
+ 
     Channel[] channels=ChannelList.getSubscribedChannels();
 
     boolean useProgressBar=false;
@@ -386,6 +382,37 @@ public class DataService implements devplugin.PluginManager {
     return fList.length > 0;
   }
 
+/**
+ * Deletes all expired tvdata files 
+ *
+ */
+
+public static void deleteExpiredTVData() {
+	
+	int lifespan=Settings.getTVDataLifespan();
+	if (lifespan<0) {
+		return;  // manually
+	}
+	devplugin.Date d=new devplugin.Date();
+	d.addDays(-lifespan);
+	final int date=d.getDaysSince1970();
+	
+	File fList[]=new File(Settings.getTVDataDirectory()).listFiles(
+		new java.io.FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				
+				int p=name.lastIndexOf('.');
+				String s=name.substring(p+1,name.length());
+				int val=Integer.parseInt(s);
+				return val<date;
+			}
+		}	
+	);
+	for (int i=0;i<fList.length;i++) {
+		fList[i].delete();
+	}
+	
+}
 
 
   /**
