@@ -277,6 +277,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     
     // Get the column of this program
     int col = getColumnOfChannel(program.getChannel());
+    if (col == -1) {
+      // This program is not shown in this table
+      return;
+    }
     
     // Get the row of this program
     int row = 0;
