@@ -64,6 +64,9 @@ public class XmlTvDataService extends AbstractTvDataService {
 
   /** The folder where to put the XML data. */
   private static final String XMLTV_FOLDER = "xmldata";
+  
+  private static java.util.logging.Logger mLog
+      = java.util.logging.Logger.getLogger(XmlTvDataService.class.getName());
 
 
 
@@ -282,7 +285,11 @@ public class XmlTvDataService extends AbstractTvDataService {
     throws TvBrowserException
   {
   	
-  	
+    mLog.info("call: parseFile: file: "+file.getName()+", date: "+date+", channel: "+channel.getName());
+  	if (programDispatcher==null) {
+      mLog.info("programDispatcher is null");
+    }
+    
     XmlTvHandler handler
       = new XmlTvHandler(programDispatcher, getAvailableChannels());
 

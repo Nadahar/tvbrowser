@@ -247,8 +247,12 @@ public class XmlTvHandler extends DefaultHandler {
       mCurrProgram.setLength(lengthInMinutes);
     }
     else if (currElement.equals("programme")) {
-      // mLog.info("Program found: " + mCurrProgram);
-
+      if (mCurrProgram==null) {
+        mLog.info("mCurrProgram is null");
+      }
+   //   else {
+   //    mLog.info("Program found: " + mCurrProgram.getTitle()+" ("+mCurrProgram.getDateString()+", "+mCurrProgram.getTimeString()+", "+mCurrProgram.getChannel().getName()+")");
+   //   }
       mProgramDispatcher.dispatch(mCurrProgram);
       mCurrProgram = null;
     }
