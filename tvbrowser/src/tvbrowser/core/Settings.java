@@ -205,6 +205,7 @@ public class Settings {
       model.setChannels(ChannelList.getSubscribedChannels());
       
       mainFrame.getHorizontalToolBar().updateChannelChooser();  
+      mainFrame.updateChannelChooser();
     }
       
     propArr = new Property[] {

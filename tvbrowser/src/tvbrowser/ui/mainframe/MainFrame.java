@@ -124,6 +124,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private static MainFrame mSingleton;
 
   private TimeChooserPanel mTimeChooser;
+  private ChannelChooserPanel mChannelChooser;
   
  
   private MainFrame() {
@@ -302,11 +303,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     ViewMap viewMap = new ViewMap();
     
     mTimeChooser = new TimeChooserPanel(this);
+    mChannelChooser = new ChannelChooserPanel(this);
     
     View programTableView = new View("Programm-Tabelle", null, skinPanel);
     View timeView = new View("Zeit", null, mTimeChooser);
     View dateView = new View("Datum", null, new DateChooserPanel(this, FinderPanel.getInstance()));
-    View channelView = new View("Sender", null, new ChannelChooserPanel(this));
+    View channelView = new View("Sender", null, mChannelChooser);
     
     viewMap.addView(0, programTableView);
     viewMap.addView(1, timeView);
@@ -680,6 +682,10 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
   
+  public void updateChannelChooser() {
+    mChannelChooser.updateChannelChooser();
+    
+  }
   
   /**
    * Starts the tv data update.
