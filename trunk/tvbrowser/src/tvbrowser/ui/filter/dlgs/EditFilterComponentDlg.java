@@ -50,7 +50,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     private tvbrowser.core.filters.FilterComponent mSelectedFilterComponent;
     private JComboBox mRuleCb;
     private JPanel mCenterPanel, mRulePanel=null, mContentPane;
-    private JButton mOkBtn, mCancelBtn, mUpdateBtn;
+    private JButton mOkBtn, mCancelBtn;
     private JTextField mDescTF, mNameTF;
    
     
@@ -155,7 +155,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
            
         updateOkBtn();
                     
-        setSize(500,440);
+        setSize(500, 500);
         UiUtilities.centerAndShow(this);
         
     }
