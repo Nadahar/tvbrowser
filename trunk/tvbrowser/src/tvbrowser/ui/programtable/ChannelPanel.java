@@ -68,14 +68,6 @@ public class ChannelPanel extends JPanel {
     mLabelArr = new ChannelLabel[channelArr.length];
     
     for (int i = 0; i < mLabelArr.length; i++) {
-      String channelName = null;
-      if (channelArr[i] != null) {
-        channelName = channelArr[i].getName();
-      }
-      if (channelName == null) {
-        channelName = mLocalizer.msg("unknown", "Unknown");
-      }
-      
       mLabelArr[i]=new ChannelLabel(channelArr[i]);  
       add(mLabelArr[i]);
     }
@@ -92,9 +84,9 @@ public class ChannelPanel extends JPanel {
       mLabelArr[i].setPreferredSize(new Dimension(mColumnWidth, 15));
     }
   }  
-}
 
-class ChannelLabel extends JLabel {
+  
+  static class ChannelLabel extends JLabel {
    
     private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
     private static Font channelNameFont;
@@ -107,10 +99,15 @@ class ChannelLabel extends JLabel {
         channelNameFont = Settings.propChannelNameFont.getFont();
       }
     }
-  
+    
     public ChannelLabel(final Channel ch) {
-      super(ch.getName());
-
+      // Set the channel name as text
+      String channelName = ch.getName();
+      if (channelName == null) {
+        channelName = mLocalizer.msg("unknown", "Unknown");
+      }
+      setText(channelName);
+      
       // Check whether the font was set
       if (channelNameFont == null) {
         fontChanged();
@@ -139,6 +136,8 @@ class ChannelLabel extends JLabel {
           e.getComponent().setForeground(Color.black);
         }        
       });
-    } 
-  }
+    }
 
+  } // inner class ChannelLabel
+
+}
