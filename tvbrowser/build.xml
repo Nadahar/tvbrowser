@@ -52,6 +52,7 @@
   <property name="themepacks.dir" value="themepacks"/>
   <property name="classes.dir" value="classes"/>
   <property name="runtime.dir" value="runtime"/>
+  <property name="win.dir" value="win"/>
   <property name="tvbrowser.runtime.dir" value="${runtime.dir}/tvbrowser"/>
   <property name="tvbrowser_win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
   <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
@@ -427,16 +428,16 @@
     <zip destfile="${public.dir}/tvbrowser_v${version}_src.zip">
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${src.dir}">
-        <include name="tvbrowser/**/*.java"/>
-        <include name="tvbrowser/**/*.properties"/>
-        <include name="imgs/**/*.gif"/>
-        <include name="imgs/**/*.jpg"/>
-        <include name="devplugin/**/*.java"/>
-        <include name="devplugin/**/*.properties"/>
-        <include name="tvdataservice/**/*.java"/>
-        <include name="tvdataservice/**/*.properties"/>
-        <include name="util/**/*.java"/>
-        <include name="util/**/*.properties"/>
+        <include name="com/**"/>
+        <include name="help/**"/>
+        <include name="imgs/**"/>
+        <include name="test/**"/>
+        <include name="tvbrowser/**"/>
+        <include name="devplugin/**"/>
+        <include name="tvdataservice/**"/>
+        <include name="util/**"/>
+        <exclude name="**/secret/**"/>
+        <exclude name="**/CVS/**"/>
       </zipfileset>
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${txt.dir}"
@@ -448,27 +449,18 @@
                   dir=".">
         <include name="Overview.txt"/>
         <include name="build.*"/>
-      </zipfileset>
-      <zipfileset prefix="tvbrowser_v${version}/${installer.dir}"
-                  dir="${installer.dir}"
-                  includes="*"/>
-      <zipfileset prefix="tvbrowser_v${version}/${lib.dir}"
-                  dir="${lib.dir}"
-                  includes="*"/>
-      <zipfileset prefix="tvbrowser_v${version}/${src.dir}"
-                  dir="${src.dir}">
-        <include name="**/*.java"/>
-        <include name="**/*.properties"/>
-        <include name="**/*.txt"/>
-        <include name="**/*.dtd"/>
-        <include name="**/*.gif"/>
-        <include name="**/*.jpg"/>
-        <include name="**/*.html"/>
-      </zipfileset>
-      <zipfileset prefix="tvbrowser_v${version}/${txt.dir}"
-                  dir="${txt.dir}">
-        <include name="*"/>
-        <include name="package-lists/jdk/package-list"/>
+        <include name="${installer.dir}/**"/>
+        <include name="${jsmooth.dir}/**"/>
+        <include name="${lib.dir}/**"/>
+        <include name="${src.dir}/**"/>
+        <include name="${statcvs.dir}/**"/>
+        <exclude name="${statcvs.dir}/cvslog.txt"/>
+        <exclude name="${statcvs.output.dir}/**"/>
+        <include name="${themepacks.dir}/**"/>
+        <include name="${txt.dir}/**"/>
+        <include name="${win.dir}/**"/>
+        <exclude name="**/secret/**"/>
+        <exclude name="**/CVS/**"/>
       </zipfileset>
     </zip>
 
@@ -504,11 +496,9 @@
     <zip destfile="${public.dir}/${package}_v${version}_src.zip">
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${src.dir}">
-        <include name="${package}/**/*.java"/>
-        <include name="${package}/**/*.properties"/>
-        <include name="${package}/**/*.gif"/>
-        <include name="${package}/**/*.jpg"/>
-        <include name="${package}/**/*.dtd"/>
+        <include name="${package}/**"/>
+        <exclude name="**/secret/**"/>
+        <exclude name="**/CVS/**"/>
       </zipfileset>
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${txt.dir}"
