@@ -53,14 +53,28 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   
   private JComboBox mProgramArrangementCB;
 
-  private JButton mDefaultBtn;
-  private JTextField mBackgroundEdgeTF, mBackgroundEarlyTF, mBackgroundMiddayTF,
-    mBackgroundAfternoonTF, mBackgroundEveningTF;
-    
-  private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
-  private JSlider mColWidthSl;
+  private JComboBox mBackgroundStyleCB;
+  private JPanel mBackgoundPanel;
   
+  private JPanel mOneImagePanel;
+  private JTextField mOneImageBackgroundTF;
 
+  private JPanel mTimeBlockPanel;
+  private JSpinner mTimeBlockSizeSp;
+  private JTextField mTimeBlockBackground1TF, mTimeBlockBackground2TF;
+  private JCheckBox mTimeBlockShowWestChB;
+  private JLabel mTimeBlockWestImage1Lb, mTimeBlockWestImage2Lb;
+  private JTextField mTimeBlockWestImage1TF, mTimeBlockWestImage2TF;
+  private JButton mTimeBlockWestImage1Bt, mTimeBlockWestImage2Bt;
+
+  private JPanel mTimeOfDayPanel;
+  private JTextField mTimeOfDayEdgeTF, mTimeOfDayEarlyTF, mTimeOfDayMiddayTF,
+    mTimeOfDayAfternoonTF, mTimeOfDayEveningTF;
+
+  private JSlider mColWidthSl;
+  private JButton mDefaultBtn;
+
+  private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
   
   
   /**
@@ -85,7 +99,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    */
   public JPanel createSettingsPanel() {
     String msg;
-    JPanel p1;
+    JPanel p1, p2;
     
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -111,35 +125,139 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     p1.add(mProgramArrangementCB);
     
     // program table background panel
-    p1 = new JPanel(new TabLayout(3));
+    p1 = new JPanel(new BorderLayout());
     msg = mLocalizer.msg("tableBackground", "Table background");
     p1.setBorder(BorderFactory.createTitledBorder(msg));
     main.add(p1);
+    
+    p2 = new JPanel(new FlowLayout(FlowLayout.LEADING));
+    p1.add(p2, BorderLayout.NORTH);
+    
+    msg = mLocalizer.msg("tableBackgroundStyle", "Table background style");
+    p2.add(new JLabel(msg));
 
-    p1.add(new JLabel(mLocalizer.msg("edge", "Edge")));
-    mBackgroundEdgeTF = new JTextField(Settings.getTableBackgroundEdge(), 15);
-    p1.add(mBackgroundEdgeTF);
-    p1.add(createBrowseButton(mBackgroundEdgeTF));
+    String[] msgArr = {
+      mLocalizer.msg("style.white", "White"),
+      mLocalizer.msg("style.oneImage", "One image"),
+      mLocalizer.msg("style.timeBlock", "Time block"),
+      mLocalizer.msg("style.timeOfDay", "Time of day"),
+    };
+    mBackgroundStyleCB = new JComboBox(msgArr);
+    String style = Settings.getTableBackgroundStyle();
+    if (style.equals("white")) {
+      mBackgroundStyleCB.setSelectedIndex(0);
+    }
+    if (style.equals("oneimage")) {
+      mBackgroundStyleCB.setSelectedIndex(1);
+    }
+    if (style.equals("timeblock")) {
+      mBackgroundStyleCB.setSelectedIndex(2);
+    }
+    if (style.equals("timeofday")) {
+      mBackgroundStyleCB.setSelectedIndex(3);
+    }
+    mBackgroundStyleCB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleBackgroundStyle();
+      }
+    });
+    p2.add(mBackgroundStyleCB);
+    
+    mBackgoundPanel = new JPanel(new BorderLayout());
+    p1.add(mBackgoundPanel, BorderLayout.CENTER);
+    
+    // one image background
+    mOneImagePanel = new JPanel(new TabLayout(3));
 
-    p1.add(new JLabel(mLocalizer.msg("early", "Early")));
-    mBackgroundEarlyTF = new JTextField(Settings.getTableBackgroundEarly(), 15);
-    p1.add(mBackgroundEarlyTF);
-    p1.add(createBrowseButton(mBackgroundEarlyTF));
+    msg = mLocalizer.msg("oneImage.image", "Image");
+    mOneImagePanel.add(new JLabel(msg));
+    mOneImageBackgroundTF = new JTextField(Settings.getOneImageBackground(), 15);
+    mOneImagePanel.add(mOneImageBackgroundTF);
+    mOneImagePanel.add(createBrowseButton(mOneImageBackgroundTF));
+    
+    // time block background
+    mTimeBlockPanel = new JPanel(new TabLayout(1));
 
-    p1.add(new JLabel(mLocalizer.msg("midday", "Midday")));
-    mBackgroundMiddayTF = new JTextField(Settings.getTableBackgroundMidday(), 15);
-    p1.add(mBackgroundMiddayTF);
-    p1.add(createBrowseButton(mBackgroundMiddayTF));
+    p1 = new JPanel(new FlowLayout(FlowLayout.LEADING));
+    mTimeBlockPanel.add(p1);
+    msg = mLocalizer.msg("timeBlock.blockSize", "Block size");
+    p1.add(new JLabel(msg));
+    mTimeBlockSizeSp = new JSpinner();
+    mTimeBlockSizeSp.setValue(new Integer(Settings.getTimeBlockSize()));
+    p1.add(mTimeBlockSizeSp);
+    msg = mLocalizer.msg("timeBlock.hours", "hours");
+    p1.add(new JLabel(msg));
 
-    p1.add(new JLabel(mLocalizer.msg("afternoon", "Afternoon")));
-    mBackgroundAfternoonTF = new JTextField(Settings.getTableBackgroundAfternoon(), 15);
-    p1.add(mBackgroundAfternoonTF);
-    p1.add(createBrowseButton(mBackgroundAfternoonTF));
+    p1 = new JPanel(new TabLayout(3));
+    mTimeBlockPanel.add(p1);
+    
+    msg = mLocalizer.msg("timeBlock.background1", "Image 1");
+    p1.add(new JLabel(msg));
+    mTimeBlockBackground1TF = new JTextField(Settings.getTimeBlockBackground1(), 15);
+    p1.add(mTimeBlockBackground1TF);
+    p1.add(createBrowseButton(mTimeBlockBackground1TF));
+    
+    msg = mLocalizer.msg("timeBlock.background2", "Image 2");
+    p1.add(new JLabel(msg));
+    mTimeBlockBackground2TF = new JTextField(Settings.getTimeBlockBackground2(), 15);
+    p1.add(mTimeBlockBackground2TF);
+    p1.add(createBrowseButton(mTimeBlockBackground2TF));
+    
+    msg = mLocalizer.msg("timeBlock.showWest", "Show left border");
+    mTimeBlockShowWestChB = new JCheckBox(msg, Settings.getTimeBlockShowWest());
+    mTimeBlockShowWestChB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleTimeBlockShowWest();
+      }
+    });
+    mTimeBlockPanel.add(mTimeBlockShowWestChB);
 
-    p1.add(new JLabel(mLocalizer.msg("evening", "Evening")));
-    mBackgroundEveningTF = new JTextField(Settings.getTableBackgroundEvening(), 15);
-    p1.add(mBackgroundEveningTF);
-    p1.add(createBrowseButton(mBackgroundEveningTF));
+    p1 = new JPanel(new TabLayout(3));
+    mTimeBlockPanel.add(p1);
+
+    msg = mLocalizer.msg("timeBlock.west1", "Border image 1");
+    mTimeBlockWestImage1Lb = new JLabel(msg);
+    p1.add(mTimeBlockWestImage1Lb);
+    mTimeBlockWestImage1TF = new JTextField(Settings.getTimeBlockWestImage1(), 15);
+    p1.add(mTimeBlockWestImage1TF);
+    mTimeBlockWestImage1Bt = createBrowseButton(mTimeBlockWestImage1TF);
+    p1.add(mTimeBlockWestImage1Bt);
+
+    msg = mLocalizer.msg("timeBlock.west2", "Border image 2");
+    mTimeBlockWestImage2Lb = new JLabel(msg);
+    p1.add(mTimeBlockWestImage2Lb);
+    mTimeBlockWestImage2TF = new JTextField(Settings.getTimeBlockWestImage2(), 15);
+    p1.add(mTimeBlockWestImage2TF);
+    mTimeBlockWestImage2Bt = createBrowseButton(mTimeBlockWestImage2TF);
+    p1.add(mTimeBlockWestImage2Bt);
+
+    // time of day background
+    mTimeOfDayPanel = new JPanel(new TabLayout(3));
+
+    mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.edge", "Edge")));
+    mTimeOfDayEdgeTF = new JTextField(Settings.getTimeOfDayBackgroundEdge(), 15);
+    mTimeOfDayPanel.add(mTimeOfDayEdgeTF);
+    mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEdgeTF));
+
+    mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.early", "Early")));
+    mTimeOfDayEarlyTF = new JTextField(Settings.getTimeOfDayBackgroundEarly(), 15);
+    mTimeOfDayPanel.add(mTimeOfDayEarlyTF);
+    mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEarlyTF));
+
+    mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.midday", "Midday")));
+    mTimeOfDayMiddayTF = new JTextField(Settings.getTimeOfDayBackgroundMidday(), 15);
+    mTimeOfDayPanel.add(mTimeOfDayMiddayTF);
+    mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayMiddayTF));
+
+    mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.afternoon", "Afternoon")));
+    mTimeOfDayAfternoonTF = new JTextField(Settings.getTimeOfDayBackgroundAfternoon(), 15);
+    mTimeOfDayPanel.add(mTimeOfDayAfternoonTF);
+    mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayAfternoonTF));
+
+    mTimeOfDayPanel.add(new JLabel(mLocalizer.msg("timeOfDay.evening", "Evening")));
+    mTimeOfDayEveningTF = new JTextField(Settings.getTimeOfDayBackgroundEvening(), 15);
+    mTimeOfDayPanel.add(mTimeOfDayEveningTF);
+    mTimeOfDayPanel.add(createBrowseButton(mTimeOfDayEveningTF));
     
     // column width
     JPanel colWidthPn=new JPanel(new BorderLayout());
@@ -167,8 +285,6 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
     mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, timePattern));
-    mStartOfDayTimeSp.setBorder(null);
-    
     
     panel1.add(mStartOfDayTimeSp,BorderLayout.WEST);
     panel1.add(new JLabel("("+mLocalizer.msg("today","today")+")"));
@@ -179,7 +295,6 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
     mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, timePattern));
-    mEndOfDayTimeSp.setBorder(null);
     
     panel1.add(mEndOfDayTimeSp,BorderLayout.WEST);
     panel1.add(new JLabel("("+mLocalizer.msg("nextDay","next day")+")"));
@@ -199,7 +314,40 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     main.add(pn);
 
+    handleBackgroundStyle();
+    handleTimeBlockShowWest();
+
     return mSettingsPn;
+  }
+
+
+  private void handleBackgroundStyle() {
+    JPanel newPn;
+    switch (mBackgroundStyleCB.getSelectedIndex()) {
+      case 0:  newPn = null; break;            // white
+      case 1:  newPn = mOneImagePanel; break;  // oneimage
+      case 2:  newPn = mTimeBlockPanel; break; // timeblock
+      default: newPn = mTimeOfDayPanel; break; // timeofday
+    }
+    
+    mBackgoundPanel.removeAll();
+    if (newPn != null) {
+      mBackgoundPanel.add(newPn, BorderLayout.CENTER);
+    }
+    mBackgoundPanel.revalidate();
+    mBackgoundPanel.repaint();
+  }
+
+
+  private void handleTimeBlockShowWest() {
+    boolean enabled = mTimeBlockShowWestChB.isSelected();
+    
+    mTimeBlockWestImage1Lb.setEnabled(enabled);
+    mTimeBlockWestImage1TF.setEnabled(enabled);
+    mTimeBlockWestImage1Bt.setEnabled(enabled);
+    mTimeBlockWestImage2Lb.setEnabled(enabled);
+    mTimeBlockWestImage2TF.setEnabled(enabled);
+    mTimeBlockWestImage2Bt.setEnabled(enabled);
   }
 
 
@@ -236,11 +384,30 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       Settings.setTableLayout(Settings.TABLE_LAYOUT_TIME_SYNCHRONOUS);
     }
     
-    Settings.setTableBackgroundEdge(mBackgroundEdgeTF.getText());
-    Settings.setTableBackgroundEarly(mBackgroundEarlyTF.getText());
-    Settings.setTableBackgroundMidday(mBackgroundMiddayTF.getText());
-    Settings.setTableBackgroundAfternoon(mBackgroundAfternoonTF.getText());
-    Settings.setTableBackgroundEvening(mBackgroundEveningTF.getText());
+    String backgroundStyle;
+    switch (mBackgroundStyleCB.getSelectedIndex()) {
+      case 0:  backgroundStyle = "white"; break;
+      case 1:  backgroundStyle = "oneimage"; break;
+      case 2:  backgroundStyle = "timeblock"; break;
+      default: backgroundStyle = "timeofday"; break;
+    }
+    Settings.setTableBackgroundStyle(backgroundStyle);
+    
+    Settings.setOneImageBackground(mOneImageBackgroundTF.getText());
+    
+    Integer blockSize = (Integer) mTimeBlockSizeSp.getValue();
+    Settings.setTimeBlockSize(blockSize.intValue());
+    Settings.setTimeBlockBackground1(mTimeBlockBackground1TF.getText());
+    Settings.setTimeBlockBackground2(mTimeBlockBackground2TF.getText());
+    Settings.setTimeBlockShowWest(mTimeBlockShowWestChB.isSelected());
+    Settings.setTimeBlockWestImage1(mTimeBlockWestImage1TF.getText());
+    Settings.setTimeBlockWestImage2(mTimeBlockWestImage2TF.getText());
+
+    Settings.setTimeOfDayBackgroundEdge(mTimeOfDayEdgeTF.getText());
+    Settings.setTimeOfDayBackgroundEarly(mTimeOfDayEarlyTF.getText());
+    Settings.setTimeOfDayBackgroundMidday(mTimeOfDayMiddayTF.getText());
+    Settings.setTimeOfDayBackgroundAfternoon(mTimeOfDayAfternoonTF.getText());
+    Settings.setTimeOfDayBackgroundEvening(mTimeOfDayEveningTF.getText());
     
     Settings.setColumnWidth(mColWidthSl.getValue());
     

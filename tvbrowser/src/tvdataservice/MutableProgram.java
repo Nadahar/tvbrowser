@@ -162,7 +162,7 @@ public class MutableProgram implements Program {
    * @see #removeChangeListener
    */
   public void addChangeListener(ChangeListener listener) {
-    // TODO: The ProgramPanels to not unregister themselves
+    // TODO: The ProgramPanels do not unregister themselves
     mListenerList.add(ChangeListener.class, listener);
   }
 
@@ -572,9 +572,28 @@ public class MutableProgram implements Program {
   }
 
 
+  /**
+   * Gets the the start time of the program in minutes after midnight.
+   *
+   * @return the start time.
+   */
+  public int getStartTime() {
+    return mNormalizedStartTime;
+  }
+
 
   /**
-   * Returns the minute-component of the start time of the program.
+   * Gets the hour-component of the start time of the program.
+   *
+   * @return the hour-component of the start time.
+   */
+  public int getHours() {
+    return mNormalizedStartTime / 60;
+  }
+
+
+  /**
+   * Gets the minute-component of the start time of the program.
    *
    * @return the minute-component of the start time.
    */
@@ -582,16 +601,6 @@ public class MutableProgram implements Program {
     return mNormalizedStartTime % 60;
   }
 
-
-
-  /**
-   * Returns the hour-component of the start time of the program.
-   *
-   * @return the hour-component of the start time.
-   */
-  public int getHours() {
-    return mNormalizedStartTime / 60;
-  }
   
   public int getLocalStartTime() {
     return getTimeField(ProgramFieldType.START_TIME_TYPE);

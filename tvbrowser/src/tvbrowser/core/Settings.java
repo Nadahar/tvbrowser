@@ -525,44 +525,116 @@ public class Settings {
     }
   }
 
-  public static String getTableBackgroundEdge() {
-    return settings.getProperty("tablebackground.edge", "imgs/columns_edge.jpg");
+  public static String getTableBackgroundStyle() {
+    return settings.getProperty("tablebackground.style", "timeblock");
   }
 
-  public static void setTableBackgroundEdge(String value) {
-    settings.setProperty("tablebackground.edge", value);
-  }
-
-  public static String getTableBackgroundEarly() {
-    return settings.getProperty("tablebackground.early", "imgs/columns_early.jpg");
-  }
-
-  public static void setTableBackgroundEarly(String value) {
-    settings.setProperty("tablebackground.early", value);
+  public static void setTableBackgroundStyle(String tablebackground) {
+    settings.setProperty("tablebackground.style", tablebackground);
   }
   
-  public static String getTableBackgroundMidday() {
-    return settings.getProperty("tablebackground.midday", "imgs/columns_midday.jpg");
+  public static String getOneImageBackground() {
+    return settings.getProperty("tablebackground.oneImage.image", "imgs/columns_evening.jpg");
   }
 
-  public static void setTableBackgroundMidday(String value) {
-    settings.setProperty("tablebackground.midday", value);
+  public static void setOneImageBackground(String value) {
+    settings.setProperty("tablebackground.oneImage.image", value);
   }
   
-  public static String getTableBackgroundAfternoon() {
-    return settings.getProperty("tablebackground.afternoon", "imgs/columns_afternoon.jpg");
-  }
-
-  public static void setTableBackgroundAfternoon(String value) {
-    settings.setProperty("tablebackground.afternoon", value);
+  public static int getTimeBlockSize() {
+    String asString = settings.getProperty("tablebackground.timeBlock.size", "2");
+    try {
+      return Integer.parseInt(asString);
+    }
+    catch (Exception exc) {
+      return 2;
+    }
   }
   
-  public static String getTableBackgroundEvening() {
-    return settings.getProperty("tablebackground.evening", "imgs/columns_evening.jpg");
+  public static void setTimeBlockSize(int value) {
+    settings.setProperty("tablebackground.timeBlock.size", Integer.toString(value));
+  }
+  
+  public static String getTimeBlockBackground1() {
+    return settings.getProperty("tablebackground.timeBlock.image1", "imgs/columns_evening.jpg");
+  }
+  
+  public static void setTimeBlockBackground1(String value) {
+    settings.setProperty("tablebackground.timeBlock.image1", value);
+  }
+  
+  public static String getTimeBlockBackground2() {
+    return settings.getProperty("tablebackground.timeBlock.image2", "imgs/columns_afternoon.jpg");
+  }
+  
+  public static void setTimeBlockBackground2(String value) {
+    settings.setProperty("tablebackground.timeBlock.image2", value);
   }
 
-  public static void setTableBackgroundEvening(String value) {
-    settings.setProperty("tablebackground.evening", value);
+  public static String getTimeBlockWestImage1() {
+    return settings.getProperty("tablebackground.timeBlock.west1", "imgs/columns_evening.jpg");
+  }
+  
+  public static void setTimeBlockWestImage1(String value) {
+    settings.setProperty("tablebackground.timeBlock.west1", value);
+  }
+  
+  public static String getTimeBlockWestImage2() {
+    return settings.getProperty("tablebackground.timeBlock.west2", "imgs/columns_afternoon.jpg");
+  }
+  
+  public static void setTimeBlockWestImage2(String value) {
+    settings.setProperty("tablebackground.timeBlock.west2", value);
+  }
+
+  public static boolean getTimeBlockShowWest() {
+    String asString = settings.getProperty("tablebackground.timeBlock.showWest", "true");
+    return asString.equals("true");
+  }
+
+  public static void setTimeBlockShowWest(boolean showWest) {
+    String asString = showWest ? "true" : "false";
+    settings.setProperty("tablebackground.timeBlock.showWest", asString);
+  }
+
+  public static String getTimeOfDayBackgroundEdge() {
+    return settings.getProperty("tablebackground.timeofday.edge", "imgs/columns_edge.jpg");
+  }
+
+  public static void setTimeOfDayBackgroundEdge(String value) {
+    settings.setProperty("tablebackground.timeofday.edge", value);
+  }
+
+  public static String getTimeOfDayBackgroundEarly() {
+    return settings.getProperty("tablebackground.timeofday.early", "imgs/columns_early.jpg");
+  }
+
+  public static void setTimeOfDayBackgroundEarly(String value) {
+    settings.setProperty("tablebackground.timeofday.early", value);
+  }
+  
+  public static String getTimeOfDayBackgroundMidday() {
+    return settings.getProperty("tablebackground.timeofday.midday", "imgs/columns_midday.jpg");
+  }
+
+  public static void setTimeOfDayBackgroundMidday(String value) {
+    settings.setProperty("tablebackground.timeofday.midday", value);
+  }
+  
+  public static String getTimeOfDayBackgroundAfternoon() {
+    return settings.getProperty("tablebackground.timeofday.afternoon", "imgs/columns_afternoon.jpg");
+  }
+
+  public static void setTimeOfDayBackgroundAfternoon(String value) {
+    settings.setProperty("tablebackground.timeofday.afternoon", value);
+  }
+  
+  public static String getTimeOfDayBackgroundEvening() {
+    return settings.getProperty("tablebackground.timeofday.evening", "imgs/columns_evening.jpg");
+  }
+
+  public static void setTimeOfDayBackgroundEvening(String value) {
+    settings.setProperty("tablebackground.timeofday.evening", value);
   }
 
   public static boolean isTimeBtnVisible() {

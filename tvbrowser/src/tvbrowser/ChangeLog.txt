@@ -5,6 +5,19 @@ Changelog TVBrowser
 - command line options added:
       -minimized
       -nosplash
+- The length of the last program of a day is now calculated when TV-Browser has
+  the data for the next day.
+- Plugin.handleTvDataChanged() is now called only once after a TV data download.
+- Program table now breaks big words
+- No more bold fonts are used in the menu and buttons
+- TV-Browser now recognizes changes in the TV data made by someone else.
+  This also fixes problems that come up when the TV-Browser process was killed
+  and therefore wasn't able to save the Plugin settings.
+- Program table now supports background styles:
+    - white
+    - one image
+    - time blocks
+    - time of day
 
 0.9.7.3:
 - added downnload status info

@@ -1,4 +1,3 @@
-
 /*
  * TV-Browser
  * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
@@ -24,18 +23,19 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.programtable;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+
 import javax.swing.*;
 
-import tvbrowser.core.Settings;
 import tvbrowser.core.PluginManager;
-import util.ui.ImageUtilities;
+import tvbrowser.core.Settings;
+import tvbrowser.ui.programtable.background.*;
 import util.ui.ProgramPanel;
-
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -53,13 +53,10 @@ public class ProgramTable extends JPanel
   
   private ProgramTableLayout mLayout;
   private ProgramTableModel mModel;
+  private BackgroundPainter mBackgroundPainter;
   
   private Point mDraggingPoint;
-  
-  private int mEarlyTime, mMiddayTime, mAfternoonTime, mEveningTime;
-  
-  private Image mBackgroundImageEdge, mBackgroundImageEarly,
-    mBackgroundImageMidday, mBackgroundImageAfternoon, mBackgroundImageEvening;
+
   
   /**
    * Creates a new instance of ProgramTable.
@@ -130,8 +127,7 @@ public class ProgramTable extends JPanel
     }
   }
 
-  
-  
+
   public void setColumnWidth(int columnWidth) {
     mColumnWidth = columnWidth;
   }
@@ -143,31 +139,38 @@ public class ProgramTable extends JPanel
   }
 
 
-
   public void updateBackground() {
-    mEarlyTime     = Settings.getEarlyTime();
-    mMiddayTime    = Settings.getMiddayTime();
-    mAfternoonTime = Settings.getAfternoonTime();
-    mEveningTime   = Settings.getEveningTime();
-
-    mBackgroundImageEdge      = ImageUtilities.createImage(Settings.getTableBackgroundEdge());
-    mBackgroundImageEarly     = ImageUtilities.createImage(Settings.getTableBackgroundEarly());
-    mBackgroundImageMidday    = ImageUtilities.createImage(Settings.getTableBackgroundMidday());
-    mBackgroundImageAfternoon = ImageUtilities.createImage(Settings.getTableBackgroundAfternoon());
-    mBackgroundImageEvening   = ImageUtilities.createImage(Settings.getTableBackgroundEvening());
+    BackgroundPainter oldPainter = mBackgroundPainter;
+    
+    String background = Settings.getTableBackgroundStyle();
+    if (background.equals("timeblock")) {
+      mBackgroundPainter = new TimeBlockBackPainter();
+    } else if (background.equals("timeofday")) {
+      mBackgroundPainter = new TimeOfDayBackPainter();
+    } else if (background.equals("white")) {
+      mBackgroundPainter = new WhiteBackPainter();
+    } else { // oneimage
+      mBackgroundPainter = new OneImageBackPainter();
+    }
+    mBackgroundPainter.layoutChanged(mLayout, mModel);
+    
+    firePropertyChange("backgroundpainter", oldPainter, mBackgroundPainter);
 
     repaint();
   }
   
+  
+  public BackgroundPainter getBackgroundPainter() {
+    return mBackgroundPainter;
+  }
 
 
   public void paintComponent(Graphics grp) {
-    super.paintComponent(grp);
-    
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
     
+    // Paint the table cells
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;
     int maxCol = (clipBounds.x + clipBounds.width) / mColumnWidth;
@@ -175,12 +178,14 @@ public class ProgramTable extends JPanel
       maxCol = mModel.getColumnCount() - 1;
     }
     
+    // Paint the background
+    int tableHeight = Math.max(mHeight, clipBounds.y + clipBounds.height);
+    mBackgroundPainter.paintBackground(grp, mColumnWidth, tableHeight,
+      minCol, maxCol, clipBounds, mLayout, mModel);
+    
     int x = minCol * mColumnWidth;
     for (int col = minCol; col <= maxCol; col++) {
       int y = mLayout.getColumnStart(col);
-      
-      // Hintergrund vor den Sendungen
-      fillImage(grp, x, 0, mColumnWidth, y, mBackgroundImageEdge, clipBounds);
       
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         // Get the program
@@ -190,9 +195,6 @@ public class ProgramTable extends JPanel
         if (panel != null) {
           int cellHeight = panel.getHeight();
 
-          Image backImg = getBackgroundImageFor(panel.getProgram());
-          fillImage(grp, x, y, mColumnWidth, cellHeight, backImg, clipBounds);
-          
           // Check whether the cell is within the clipping area
           if (((y + cellHeight) > clipBounds.y)
             && (y < (clipBounds.y + clipBounds.height)))
@@ -210,10 +212,6 @@ public class ProgramTable extends JPanel
         }
       }
 
-      // Hintergrund nach den Sendungen
-      fillImage(grp, x, y, mColumnWidth, mHeight - y, mBackgroundImageEdge,
-                clipBounds);
-      
       // paint the timeY
       // int timeY = getTimeYOfColumn(col, util.io.IOUtilities.getMinutesAfterMidnight());
       // grp.drawLine(x, timeY, x + mColumnWidth, timeY);
@@ -236,49 +234,6 @@ public class ProgramTable extends JPanel
       (int)(Math.random() * 256)));
     grp.drawRect(clipBounds.x, clipBounds.y, clipBounds.width - 1, clipBounds.height - 1);
     /**/
-  }
-
-
-  private Image getBackgroundImageFor(Program prog) {
-    int startTime = prog.getHours() * 60 + prog.getMinutes();
-    if (startTime >= mEveningTime) {
-      return mBackgroundImageEvening;
-    } else if (startTime >= mAfternoonTime) {
-      return mBackgroundImageAfternoon;
-    } else if (startTime >= mMiddayTime) {
-      return mBackgroundImageMidday;
-    } else if (startTime >= mEarlyTime) {
-      return mBackgroundImageEarly;
-    } else {
-      // It is before early -> it's still evening
-      return mBackgroundImageEvening;
-    }
-  }
-
-
-
-  private void fillImage(Graphics grp, int x, int y, int width, int height,
-    Image img, Rectangle clipBounds)
-  {
-    if (img != null) {
-      // Check whether we have to paint anything
-      if (! clipBounds.intersects(x, y, width, height)) {
-        // Nothing to do
-        return;
-      }
-      
-      int imgH = img.getHeight(this);
-      if (imgH < 1) {
-        // Illegal image size
-        return;
-      }
-      
-      int minY = Math.max(y, clipBounds.y);
-      int maxY = Math.min(y + height, clipBounds.y + clipBounds.height);
-      for (int py = minY; py < maxY; py += imgH) {
-        grp.drawImage(img, x, py, this);
-      }  
-    }
   }
   
   
@@ -335,6 +290,10 @@ public class ProgramTable extends JPanel
 
     // Add 20 for the copyright notice
     mHeight += 20;
+
+    if (mBackgroundPainter != null) {
+      mBackgroundPainter.layoutChanged(mLayout, mModel);
+    }
 
     repaint();
   }
