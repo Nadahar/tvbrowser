@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import tvbrowserdataservice.TvDataLevel;
+
 import devplugin.Date;
 
 /**
@@ -40,8 +42,22 @@ public class DayProgramFile {
   private transient devplugin.Channel mChannel;
   private transient devplugin.Date mDate;
   
-  public static final String[] LEVEL_ARR = {
-    "base", "more16-00", "more00-16" // , "image16-00", "image00-16"
+//  public static final String[] LEVEL_ARR = {
+//    "base", "more16-00", "more00-16" // , "image16-00", "image00-16"
+//  };
+  
+  /** The localizer for this class. */
+      public static final util.ui.Localizer mLocalizer
+        = util.ui.Localizer.getLocalizerFor(DayProgramFile.class);
+  
+  
+  public static final TvDataLevel[] LEVEL_ARR = new TvDataLevel[] {
+    new TvDataLevel("base","Basis TV-Daten",true),
+    new TvDataLevel("more00-16",mLocalizer.msg("more00-16","")),
+    new TvDataLevel("more16-00",mLocalizer.msg("more16-00","")),
+  //  new TvDataLevel("image00-16",""),
+  //  new TvDataLevel("image16-00",""),
+    
   };
 
   private static final int FILE_VERSION = 1;
