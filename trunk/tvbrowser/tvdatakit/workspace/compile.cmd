@@ -1,11 +1,5 @@
 @echo off
 
-call setEnv.cmd
+call setClasspath.cmd
 
-set PATH=%PATH%;%JAVA_HOME%\bin
-
-cd java
-javac -classpath poi-2.5-final-20040302.jar;PDSRunner.jar ExcelPDS.java
-cd ..
-
-pause
+javac -classpath java/PDSRunner.jar;%PDS_CLASSPATH% -sourcepath java -d java SimplePDS.java ExcelPDS.java XmlTvPDS.java

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+The TV data.
+
+The XML format used here is XMLTV. See http://membled.com/work/apps/xmltv/
+
+Don't be shocked of the big example programme tag. Most of the nested tags are
+not required.
+
+Since the channel information is read from the file TvChannels.xml you don't
+have to add channel tags in this file. Present channel tags will be ignored
+by the XmlTvPDS.
+
+WARNING: In the example programme tag are some tags defined that contain
+information that are supported by TV-Browser but have no equivalence in XMLTV.
+Those tags are marked with a "(TV-Browser only)" in the description. If you use
+those tags the file will not be valid according to the XMLTV-DTD any more. Since
+all these tags are not required you don't have to use them.
+-->
+
+<tv>
+
+  <!--
+   | An example program.
+   |
+   | Attributes:
+   |   channel:   (required) The channel ID. This value corresponds to the 'id'
+   |              attribute in the TvChannels.xml
+   |   start:     (required) The start date and time
+   |   vps-start: The VPS start time
+   |   showview:  The showview number
+   +-->
+  <programme channel="test24"
+             start="200407101030"
+             vps-start="200407101045"
+             showview="563 123">
+  
+    <!--
+     | (required) The "title" or "original title", according to the 'lang'.
+     | (Only the "title" is required, the "original title" is optional)
+     |
+     | If the 'lang' attribute is missing or equal to the channel's country,
+     | the tag is used as "title", otherwise it is used as "original title".
+     +-->
+    <title lang="de">Die Simpsons</title>
+    <title lang="orig">The Simpsons</title>
+
+    <!--
+     | The "episode" or "original episode". Which one is used is specified by
+     | the 'lang' attribute in the same way as the title tag.
+     +-->
+    <sub-title lang="de">Der Teufelsprung</sub-title>
+    <sub-title lang="orig">Bart the Daredevil</sub-title>
+    
+    <!-- The description. -->
+    <desc>
+      Nach einer Stuntshow möchte Bart gerne Stuntman werden und übt wie
+      verrückt.
+    </desc>
+    
+    <!-- The production year -->
+    <date>1990</date>
+    
+    <!-- The age limit -->
+    <rating>6</rating>
+    
+    <!-- The film URL -->
+    <url>www.thesimpsons.com</url>
+    
+    <!-- The genre -->
+    <category>Zeichentrick</category>
+    
+    <!-- The origin -->
+    <country>USA</country>
+    
+    <!--
+     | "subtitles for aurally handicapped" or "original with subtitle".
+     |
+     | Which one is set it specified by the lang attribute in the same way as
+     | the title tag.
+     | Same as channel country means there are "subtitles for aurally handicapped"
+     | any other value means it's the "original with subtitle"
+     +-->
+    <subtitles lang="de"/>   <!-- "subtitles for aurally handicapped" -->
+    <subtitles lang="orig"/> <!-- "original with subtitle" -->
+    
+    <!-- (TV-Browser only) Specifies whether the program is live -->
+    <live>yes</live> <!-- Program.INFO_LIVE -->
+  
+    <!-- Specifies that this program is a repition -->
+    <previously-shown start="200407081030"/>
+    
+    <!-- (TV-Browser only) Specifies that this program will be repeated -->
+    <next-time-shown start="200407121030"/>
+
+    <!-- The net playing time -->
+    <length units="minutes">25</length>
+    
+    <credits>
+      <!-- The actor list. More actors can be specified by multiple tags -->
+      <actor>Bart (Sandra Schwittau)</actor>
+      <actor>Lisa (Sabine Bohlmann)</actor>
+      
+      <!-- The director -->
+      <director>Matt Groening</director>
+      
+      <!-- The script writer -->
+      <writer>Matt Groening</writer>
+      
+      <!-- The moderation -->
+      <presenter>Lutz Mackensy</presenter>
+      
+      <!-- (TV-Browser only) The music -->
+      <music>Peter Palaber</music>
+    </credits>
+    
+    <video>
+      <!-- black and white? -->
+      <colour>no</colour>
+      
+      <!--
+       | The video format.
+       |
+       | The following values are allowed:
+       |   4:3
+       |   16:9
+       +-->
+      <aspect>4:3</aspect>
+    </video>
+    
+    <audio>
+      <!--
+       | The audio format
+       |
+       | The following values are allowed:
+       |   mono
+       |   stereo
+       |   surround
+       |   5.1              (TV-Browser only)
+       |   two channel tone (TV-Browser only)
+       +-->
+      <stereo>stereo</stereo>
+    </audio>
+  
+  </programme>
+
+  
+  <!-- A minium program. -->
+  <programme channel="test24" start="200407101100">
+    <title>Nachrichten</title>
+  </programme>
+
+  
+  <!-- Some other programs -->
+  <programme channel="test24" start="200407101115">
+    <title>Rambo</title>
+    <desc>Ein Mann wird ramponiert</desc>
+  </programme>
+
+  <programme channel="test24" start="200407101500">
+    <title>Nachmittags-Report</title>
+    <desc>News from all over the world</desc>
+  </programme>
+
+  <programme channel="test24" start="200407101600">
+    <title>Bla bla</title>
+    <desc>News from all over the world</desc>
+  </programme>
+      
+</tv>

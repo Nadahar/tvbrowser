@@ -1,6 +1,5 @@
 #!/bin/bash
- 
-java -cp java:java/PDSRunner.jar:java/poi-2.5-final-20040302.jar primarydatamanager.PDSRunner $*
 
+. ./setClasspath.sh
 
-
+java -cp java/PDSRunner.jar:"$PDS_CLASSPATH" primarydatamanager.PDSRunner $*

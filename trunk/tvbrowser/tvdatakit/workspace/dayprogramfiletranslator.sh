@@ -1,5 +1,5 @@
 #!/bin/bash
 
-java -cp java:java/PrimaryDataManager.jar primarydatamanager.DayProgramFileTranslator $*
+. ./setClasspath.sh
 
-
+java -cp java/PrimaryDataManager.jar:"$PDS_CLASSPATH" primarydatamanager.DayProgramFileTranslator $*
