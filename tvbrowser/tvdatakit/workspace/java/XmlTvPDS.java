@@ -403,6 +403,12 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
                 int time = extractTime(vps);
                 mFrame.addProgramField(ProgramField.create(ProgramFieldType.VPS_TYPE, time));
               }
+              
+              String stop = attributes.getValue("stop");
+              if (stop != null) {
+                mFrame.addProgramField(ProgramField.create(ProgramFieldType.END_TIME_TYPE,
+                    extractTime(stop)));
+              }
             }
             catch (IOException exc) {
               logException(exc);
