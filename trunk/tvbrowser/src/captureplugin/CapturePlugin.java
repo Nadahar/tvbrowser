@@ -44,7 +44,11 @@ import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 /**
  * Plugin to send the TV-Data to an external program
@@ -136,21 +140,30 @@ public class CapturePlugin extends devplugin.Plugin {
 
 
     /**
-     * Return tur if execute(program[]) is supported
+     * Return true if execute(program[]) is supported
      */
     public boolean canReceivePrograms() {
-        return false;
+        return true;
     }
-    
+
     /**
-     * This method is invoked by the host-application if the user has choosen
-     * your plugin from the context menu.
+     * Receives a list of programs from another plugin.
+     * <p>
+     * Override this method to receive programs from other plugins.
+     * 
+     * @param programArr The programs passed from the other plugin.
+     * @see #canReceivePrograms()
      */
-    public void executeProgram(Program program) {
-        
+    public void receivePrograms(Program[] programArr) {
+        showExecuteDialog(programArr);
+    }    
+    
+    private void showExecuteDialog(Program[] program) {
         Window comp = UiUtilities.getLastModalChildOf(getParentFrame()); 
 
-        System.out.println(comp.getClass().toString());
+        if (comp instanceof JDialog) {
+            comp = (Window) comp.getParent();
+        }
         
         if (mConfig.getDevices().size() <= 0) {
             JOptionPane.showMessageDialog(comp, mLocalizer.msg("CreateDevice","Please create Device first!"));
@@ -167,14 +180,19 @@ public class CapturePlugin extends devplugin.Plugin {
             return;
         }
         
-        DeviceSelector select = new DeviceSelector(comp, mConfig.getDeviceArray(), program);
+        DeviceSelector select;
+        
+        if (comp instanceof JDialog)
+            select = new DeviceSelector((JDialog) comp, mConfig.getDeviceArray(), program);
+        else 
+            select = new DeviceSelector((JFrame) comp, mConfig.getDeviceArray(), program);
         
         int x = comp.getWidth() / 2;
         int y = comp.getHeight() / 2;
 
-        select.show(comp.getFocusOwner(), x, y);
+        select.show();        
     }
-
+    
     /*
      *  (non-Javadoc)
      * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
@@ -183,7 +201,9 @@ public class CapturePlugin extends devplugin.Plugin {
         AbstractAction action = new AbstractAction() {
 
             public void actionPerformed(ActionEvent evt) {
-                executeProgram(program);
+                Program[] programArr = new Program[1];
+                programArr[0] = program;
+                showExecuteDialog(programArr);
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("record", "record Program"));
@@ -292,5 +312,4 @@ public class CapturePlugin extends devplugin.Plugin {
         return mConfig;
     }
     
-
 }

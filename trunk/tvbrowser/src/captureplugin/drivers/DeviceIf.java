@@ -100,7 +100,7 @@ public interface DeviceIf extends Cloneable {
      * @param program Program
      * @return List of additional Commands
      */
-    public String[] getAdditionalCommands(Program program);
+    public String[] getAdditionalCommands();
     
     /**
      * Execute a additional Command. The Number must corospond to the
