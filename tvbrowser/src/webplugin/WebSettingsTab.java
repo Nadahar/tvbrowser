@@ -181,7 +181,6 @@ public class WebSettingsTab implements SettingsTab {
      */
     private void createButtons() {
         mStartStop = new JButton(mStartIcon);
-        
         mStartStop.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -194,6 +193,7 @@ public class WebSettingsTab implements SettingsTab {
         });
         
         mNew = new JButton(ImageUtilities.createImageIconFromJar("webplugin/New16.gif", WebSettingsTab.class));
+        mNew.setToolTipText(mLocalizer.msg("New", "Add a new Site"));
         mNew.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 newPressed();
@@ -201,6 +201,7 @@ public class WebSettingsTab implements SettingsTab {
         });
 
         mEdit = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Edit16.gif", WebSettingsTab.class));
+        mEdit.setToolTipText(mLocalizer.msg("Edit", "Edit Site"));
         
         mEdit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -209,6 +210,7 @@ public class WebSettingsTab implements SettingsTab {
         });
         
         mDelete = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Delete16.gif", WebSettingsTab.class));
+        mDelete.setToolTipText(mLocalizer.msg("DeleteSite", "Delete Site"));
         
         mDelete.addActionListener(new ActionListener() {
 
@@ -219,6 +221,7 @@ public class WebSettingsTab implements SettingsTab {
         });
         
         mUp = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Up16.gif", WebSettingsTab.class));
+        mUp.setToolTipText(mLocalizer.msg("Up", "Move selected Site up"));
 
         mUp.addActionListener(new ActionListener() {
 
@@ -230,6 +233,7 @@ public class WebSettingsTab implements SettingsTab {
         
         
         mDown = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Down16.gif", WebSettingsTab.class));
+        mDown.setToolTipText(mLocalizer.msg("Down", "Move selected Site down"));
 
         mDown.addActionListener(new ActionListener() {
 
@@ -250,8 +254,10 @@ public class WebSettingsTab implements SettingsTab {
 
         if (!adr.isActive()) {
             mStartStop.setIcon(mStartIcon);
+            mStartStop.setToolTipText(mLocalizer.msg("Enable", "Enable Site"));
         } else {
             mStartStop.setIcon(mStopIcon);
+            mStartStop.setToolTipText(mLocalizer.msg("Disable", "Disable Site"));
         }
 
         mEdit.setEnabled(adr.isUserEntry());
