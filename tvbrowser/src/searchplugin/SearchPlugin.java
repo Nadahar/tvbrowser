@@ -28,10 +28,14 @@ package searchplugin;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
 import devplugin.*;
+
+import javax.swing.*;
 
 /**
  * Provides a dialog for searching programs.
@@ -109,48 +113,48 @@ public class SearchPlugin extends Plugin {
   }
 
 
-  /**
-   * This method is invoked by the host-application if the user has choosen your
-   * plugin from the menu.
-   */
-  public void execute() {
-    SearchDialog dlg = new SearchDialog(getParentFrame());
-    UiUtilities.centerAndShow(dlg);
+
+  public Action getButtonAction() {
+    ButtonAction action = new ButtonAction();
+    action.setActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        SearchDialog dlg = new SearchDialog(getParentFrame());
+        UiUtilities.centerAndShow(dlg);
+      }
+    });
+
+    action.setBigIcon(createImageIcon("searchplugin/Find24.gif"));
+    action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
+    action.setShortDescription(mLocalizer.msg("description","Allows searching programs containing a certain text."));
+    action.setText(mLocalizer.msg("searchPrograms", "Search programs"));
+
+    return action;
   }
 
-  /**
-   * This method is invoked by the host-application if the user has choosen your
-   * plugin from the context menu.
-   */
-  public void execute(Program program) {
-    SearchDialog dlg = new SearchDialog(getParentFrame());
-    dlg.setPatternText(program.getTitle());
-    UiUtilities.centerAndShow(dlg);
+  public Action[] getContextMenuActions(final Program program) {
+    ContextMenuAction action = new ContextMenuAction();
+     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
+     action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
+     action.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent event) {
+          SearchDialog dlg = new SearchDialog(getParentFrame());
+          dlg.setPatternText(program.getTitle());
+          UiUtilities.centerAndShow(dlg);
+        }
+      });
+      return new Action[]{action};
   }
 
-  /**
-   * Returns the name of the file, containing your plugin icon (in the jar-File).
-   */
+
+
+
+
+
+
   public String getMarkIconName() {
     return "searchplugin/Find16.gif";
   }
-
-  /**
-   * This method is called by the host-application to show the plugin in the
-   * context menu.
-   */
-  public String getContextMenuItemText() {
-    return mLocalizer.msg("searchRepetion", "Search repetition");
-  }
-
-  public String getButtonIconName() {
-    return "searchplugin/Find16.gif";
-  }
-
-  public String getButtonText() {
-    return mLocalizer.msg("searchPrograms", "Search programs");
-  }
-
+  
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("searchPrograms", "Search programs");
     String desc =

@@ -29,16 +29,15 @@ package programinfo;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 import util.ui.UiUtilities;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.ProgramInfoHelper;
-import devplugin.Version;
+import devplugin.*;
 
 /**
  * TV-Browser
@@ -56,7 +55,7 @@ public class ProgramInfo extends devplugin.Plugin {
   
   private Point mLocation = null;
   private Dimension mSize = null;
-
+  
   private Properties mSettings;
 
   private static devplugin.Plugin mInstance;
@@ -94,11 +93,21 @@ public class ProgramInfo extends devplugin.Plugin {
   public ProgramInfo() {
     mInstance = this;
   }
-  
-  
-  public String getContextMenuItemText() {
-    return mLocalizer.msg("contextMenuText", "Program information");
+
+  public Action[] getContextMenuActions(final Program program) {
+    ContextMenuAction action = new ContextMenuAction();
+    action.setText(mLocalizer.msg("contextMenuText", "Program information"));
+    action.setSmallIcon(createImageIcon("programinfo/Information16.gif"));
+    action.setActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event) {
+        showProgramInformation(program);
+      }
+    });
+
+    return new Action[]{action};
   }
+
+
 
   public static devplugin.Plugin getInstance() {
     if (mInstance == null) {
@@ -118,9 +127,7 @@ public class ProgramInfo extends devplugin.Plugin {
   }
 
 
-  public String getButtonText() {
-    return null;
-  }
+
 
 
   public devplugin.SettingsTab getSettingsTab() {
@@ -187,7 +194,7 @@ public class ProgramInfo extends devplugin.Plugin {
       return 0;
   }
   
-  public void execute(Program program) {
+  private void showProgramInformation(Program program) {
     
     String styleSheet = mSettings.getProperty("stylesheet_v1",DEFAULT_STYLE_SHEET);
     
@@ -223,9 +230,7 @@ public class ProgramInfo extends devplugin.Plugin {
   }
 
 
-  public String getButtonIconName() {
-    return null;
-  }
+
 
 
   /**

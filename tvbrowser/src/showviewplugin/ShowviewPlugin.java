@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.ProgramFieldType;
 
+
 /**
  * Plugin that tries to calculate the Showview numbers for new TV data. 
  * 
@@ -46,20 +47,6 @@ public class ShowviewPlugin extends Plugin {
 
   
   public ShowviewPlugin() {
-  }
-
-
-  public String getButtonText() {
-    return null;
-  }
-
-  public String getMarkIconName() {
-    return null;
-  }
-
-
-  public String getButtonIconName() {
-    return null;
   }
 
 

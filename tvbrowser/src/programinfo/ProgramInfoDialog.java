@@ -90,7 +90,9 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
         }
       }
     });
-    
+
+
+
     mInfoEP.addMouseListener(new MouseAdapter(){
       public void mouseClicked(MouseEvent e) {
         handleMouseClicked(e, program);
@@ -122,18 +124,18 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     SwingUtilities.invokeLater(runnable);
   }
   
-  
+
   private void handleMouseClicked(MouseEvent evt, Program program) {
     if (SwingUtilities.isRightMouseButton(evt)) {
       if (program != null) {
-        JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, ProgramInfo.getInstance());
+        JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program);
         menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
       }
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       Plugin.getPluginManager().handleProgramDoubleClick(program);
     }
-  }
+  }  
   
   private String createInfoText(Program prog, ExtendedHTMLDocument doc,
     int[] infoBitArr, Icon[] infoIconArr, String[] infoMsgArr)

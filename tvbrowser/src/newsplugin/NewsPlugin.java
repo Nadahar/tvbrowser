@@ -34,14 +34,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.awt.event.ActionEvent;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
+import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
+import reminderplugin.ReminderListDialog;
 
 /**
  * A plugin that gets after each TV data update news from the TV-Browser website
@@ -87,35 +90,25 @@ public class NewsPlugin extends Plugin {
   }
 
 
-  /**
-   * Gets the button text.
-   * 
-   * @return The button text.
-   */
-  public String getButtonText() {
-    return mLocalizer.msg("news", "News");
-  }
-  
 
-  /**
-   * Gets the button icon.
-   * 
-   * @return The button icon.
-   */
-  public String getButtonIconName() {
-    return "newsplugin/Information16.gif";
+
+   public Action getButtonAction() {
+    AbstractAction action = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList, -1);
+        dlg.centerAndShow();
+      }
+    };
+
+    action.putValue(Action.NAME, mLocalizer.msg( "news" ,"News" ));
+    action.putValue(Action.SMALL_ICON, createImageIcon("newsplugin/Information16.gif"));
+    action.putValue(BIG_ICON, createImageIcon("newsplugin/Information24.gif"));
+    action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
+
+    return action;
   }
 
-  
-  /**
-   * Opens the news dialog.
-   */
-  public void execute() {
-    NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList, -1);
-    dlg.centerAndShow();
-  }
-  
-  
+   
   /**
    * Gets the plugin info.
    * 
@@ -133,7 +126,7 @@ public class NewsPlugin extends Plugin {
   /**
    * Checks for new news.
    */
-  public void handleTvDataChanged() {
+  public void handleTvDataUpdateFinished() {
     try {
       Date lastNews;
       if (mNewsList.isEmpty()) {

@@ -98,22 +98,23 @@ public class PluginView extends JPanel implements MouseListener {
 
 
   private void showContextMenu(TreePath[] paths, int x, int y) {
- /*   if (paths.length==1) {
-      TreePath path = paths[0];
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-      Object o = node.getUserObject();
-      if (o instanceof ProgramItem) {
-        showContextMenu(mModel.getPlugin(path),(ProgramItem)o, x, y);
-      }
-    }
-    else {   */
+    assert paths != null && paths.length > 0;
+
+    DefaultMutableTreeNode node =(DefaultMutableTreeNode)paths[0].getLastPathComponent();
+    Object userObject = node.getUserObject();
+    if (userObject instanceof ProgramItem) {
       Program[] programs = new Program[paths.length];
       for (int i=0; i<programs.length; i++) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
-        programs[i] = ((ProgramItem)node.getUserObject()).getProgram();
+        DefaultMutableTreeNode curNode = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
+        programs[i] = ((ProgramItem)curNode.getUserObject()).getProgram();
       }
       showContextMenu(mModel.getPlugin(paths[0]), programs, x, y);
-   // }
+    }
+    else if (userObject instanceof Plugin) {
+      System.out.println("show Plugin context menu");
+    }
+
+
   }
 
   private void showContextMenu(Plugin rootNodePlugin, final Program[] programs, int x, int y) {
