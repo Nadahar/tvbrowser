@@ -7,8 +7,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ComponentEvent;
 
-import javax.swing.SwingUtilities;
-
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -80,7 +78,7 @@ public class ListViewPlugin extends Plugin {
                 }
             }
         };
-        SwingUtilities.invokeLater(runLater);
+        new Thread(runLater).start();
 
     }
 
