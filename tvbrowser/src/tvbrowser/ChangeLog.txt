@@ -2,7 +2,13 @@ Changelog TVBrowser
 
 
 1.0 RC 02
-- bugfix: set property "showmsgbox" to true, if it's not initialized
+- bugfix: ReminderPlugin: set property "showmsgbox" to true, if it's not initialized
+- bugfix: Program table: apply changed fonts immediately
+- bugfix: Program table: don't allow zero as program column width
+- bugfix: Program table: don't allow time blocks smaller than 1 hour
+- bugfix: util.ui.TextLineBreaker: don't attempt to draw lines shorter than one character
+- bugfix: util.ui.FileCheckBox: don't ignore cancel button
+
 
 0.9.8:
 - made webbrowser choosable

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,7 +43,6 @@ public class FileCheckBox extends JComponent {
     = util.ui.Localizer.getLocalizerFor(FileCheckBox.class);
   
   protected String mTitle;
-  //protected File mFile;
   protected JCheckBox mCheckbox;
   protected JTextField mTextfield;
   protected JButton mChoosebtn;
@@ -53,9 +52,7 @@ public class FileCheckBox extends JComponent {
   
   public FileCheckBox(String title, File file, int tab) {
     mTitle=title;
-    //mFile=file;
-
-    this.setLayout(new BorderLayout(5,0));
+    setLayout(new BorderLayout(5,0));
 
     mCheckbox=new JCheckBox(title);
     if (file!=null) {
@@ -87,10 +84,12 @@ public class FileCheckBox extends JComponent {
         if (mFileChooser==null) {
           mFileChooser=new JFileChooser();
         }
-        mFileChooser.showOpenDialog(getParent());
-        File f=mFileChooser.getSelectedFile();
-        if (f!=null) {
-          mTextfield.setText(f.getAbsolutePath());
+        int retVal = mFileChooser.showOpenDialog(getParent());
+        if (retVal == JFileChooser.APPROVE_OPTION) {
+          File f=mFileChooser.getSelectedFile();
+          if (f!=null) {
+            mTextfield.setText(f.getAbsolutePath());
+          }
         }
       }
     }

@@ -278,7 +278,9 @@ public class SearchForm extends JPanel {
       case SearchFormSettings.SEARCH_IN_ALL:
         mSearchAllRB.setSelected(true); break;
       case SearchFormSettings.SEARCH_IN_USER_DEFINED:
-        mSearchUserDefinedRB.setSelected(true); break;
+        mSearchUserDefinedRB.setSelected(true);
+        updateEnabled();
+        break;
     }
 
     mUserDefinedFieldTypeArr = settings.getUserDefinedFieldTypes();

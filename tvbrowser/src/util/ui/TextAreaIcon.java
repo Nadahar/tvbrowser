@@ -49,7 +49,7 @@ public class TextAreaIcon implements Icon {
   private String[] mTextLineArr;
   private Font mFont;
   private int mMaxLineCount = -1;
-
+  private String mText;
 
 
   /**
@@ -58,11 +58,16 @@ public class TextAreaIcon implements Icon {
   public TextAreaIcon(String text, Font font, int width) {
     mWidth = width;
     mFont = font;
-    
     setText(text);
   }
   
-  
+  public void setFont(Font font) {
+    mFont = font;
+    if (mTextLineArr!=null) System.out.print("changed from "+mTextLineArr.length);
+    setText(mText);
+    if (mTextLineArr!=null) System.out.println(" to "+mTextLineArr.length);
+    
+  }
   
   public void setMaximumLineCount(int maxLineCount) {
     mMaxLineCount = maxLineCount;
@@ -76,6 +81,7 @@ public class TextAreaIcon implements Icon {
 
 
   public void setText(String text) {
+    mText = text;
     StringReader reader;
     
     if (text == null) {

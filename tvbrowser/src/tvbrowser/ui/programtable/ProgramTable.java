@@ -267,7 +267,12 @@ public class ProgramTable extends JPanel
 
 
   public void fontChanged() {
-    updateLayout();
+    for (int col = 0; col < mModel.getColumnCount(); col++) {
+      for (int row = 0; row < mModel.getRowCount(col); row++) {
+        ProgramPanel panel = mModel.getProgramPanel(col, row);
+        panel.fontChanged();
+      }
+    }
   }
 
 

@@ -97,7 +97,6 @@ public class TVBrowser {
   private static boolean mUseSystemTray;
   
   private static MainFrame mainFrame;
-
   
   private static void showUsage() {
     
@@ -335,7 +334,7 @@ public class TVBrowser {
         public void actionPerformed(java.awt.event.ActionEvent e) {
           mainFrame.show();          
           mainFrame.toFront();
-          mainFrame.setExtendedState(java.awt.Frame.NORMAL);          
+          mainFrame.setExtendedState(java.awt.Frame.NORMAL);                          
         }
       }); 
     
@@ -369,7 +368,7 @@ public class TVBrowser {
           if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
             // Only minimize the main window, don't quit
             mainFrame.hide();
-            openMenuItem.setEnabled(true);  
+            openMenuItem.setEnabled(true); 
           } else {
             mgr.setVisible(false);
             mainFrame.quit();

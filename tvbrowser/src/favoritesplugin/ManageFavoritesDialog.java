@@ -269,7 +269,12 @@ public class ManageFavoritesDialog extends JDialog {
     int selection = mFavoritesList.getSelectedIndex();
     if (selection != -1) {
       String msg = mLocalizer.msg("reallyDelete", "Really delete favorite?");
-      if (JOptionPane.showConfirmDialog(this, msg) == JOptionPane.YES_OPTION) {
+      
+      if (JOptionPane.showConfirmDialog(this, 
+      msg, msg = mLocalizer.msg("delete", "Delete selected favorite..."), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      
+      
+   //   if (JOptionPane.showConfirmDialog(this, msg) == JOptionPane.YES_OPTION) {
         Favorite fav = (Favorite) mFavoritesListModel.get(selection);
         fav.unmarkPrograms();
 

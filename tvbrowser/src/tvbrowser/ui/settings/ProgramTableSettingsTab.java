@@ -129,9 +129,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
        JPanel colWidthPn=new JPanel(new BorderLayout());
     
        colWidthPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columnwidth","column width")));
-       mColWidthSl=new JSlider(SwingConstants.HORIZONTAL, 0, 300, Settings.propColumnWidth.getInt());
+       mColWidthSl=new JSlider(SwingConstants.HORIZONTAL, 50, 300, Settings.propColumnWidth.getInt());
+
        colWidthPn.add(mColWidthSl,BorderLayout.WEST);
-       mColWidthSl.setPreferredSize(new Dimension(300,15));
+       mColWidthSl.setPreferredSize(new Dimension(250,25));
     
        mDefaultBtn=new JButton(mLocalizer.msg("default","default"));
        mDefaultBtn.addActionListener(this);
@@ -246,8 +247,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mTimeBlockPanel.add(p1);
     msg = mLocalizer.msg("timeBlock.blockSize", "Block size");
     p1.add(new JLabel(msg));
-    mTimeBlockSizeSp = new JSpinner();
-    mTimeBlockSizeSp.setValue(new Integer(Settings.propTimeBlockSize.getInt()));
+    mTimeBlockSizeSp = new JSpinner(new SpinnerNumberModel(Settings.propTimeBlockSize.getInt(), 1, 23, 1));
+    //mTimeBlockSizeSp.setValue(new Integer(Settings.propTimeBlockSize.getInt()));
     p1.add(mTimeBlockSizeSp);
     msg = mLocalizer.msg("timeBlock.hours", "hours");
     p1.add(new JLabel(msg));
