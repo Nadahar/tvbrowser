@@ -109,9 +109,10 @@ public class ReminderFrame {
    * @param item The reminder to show.
    * @param autoCloseSecs The number seconds to wait before auto-closing the
    *                      window. -1 disables auto-closing.
+   * @param iconImage The icon image to use for the reminder frame.
    */
   public ReminderFrame(Component comp, ReminderList list,
-    ReminderListItem item, int autoCloseSecs)
+    ReminderListItem item, int autoCloseSecs, Image iconImage)
   {
     // Check whether we have to use a frame or dialog
     // Workaround: If there is a modal dialog open a frame is not usable. All
@@ -124,6 +125,7 @@ public class ReminderFrame {
       mDialog = new JDialog((Dialog) parent, title);
     } else {
       mFrame = new JFrame(title);
+      mFrame.setIconImage(iconImage);
     }
     
     mReminderList = list;

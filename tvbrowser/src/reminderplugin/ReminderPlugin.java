@@ -30,6 +30,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 import java.applet.*;
+import java.awt.Image;
 import java.net.URL;
 import util.exc.*;
 import util.ui.UiUtilities;
@@ -76,8 +77,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     }
     
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
+      Image iconImage = getParentFrame().getIconImage();
       new ReminderFrame(getParentFrame(), mReminderList, item,
-                        getAutoCloseReminderTime());
+                        getAutoCloseReminderTime(), iconImage);
     } else {
       mReminderList.remove(item);
     }
