@@ -30,8 +30,11 @@ import javax.swing.*;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
 
 import java.awt.event.*;
 import java.awt.Font;
@@ -99,18 +102,27 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
   }
   
   public void actionPerformed(ActionEvent event) {
-    mDownloadStarted=true;
-    tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
-    int channelCount=0;
-    for (int i=0;i<services.length;i++) {
-      if (services[i].supportsDynamicChannelList()) {
-        try {
-          devplugin.Channel channelList[]=services[i].checkForAvailableChannels();
-        }catch (TvBrowserException e) {
-          ErrorHandler.handle(e);
+    
+    
+    final ProgressWindow win=new ProgressWindow(MainFrame.getInstance());
+        
+    win.run(new Progress(){
+      public void run() {
+        mDownloadStarted=true;
+        tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+        int channelCount=0;
+        for (int i=0;i<services.length;i++) {
+          if (services[i].supportsDynamicChannelList()) {
+            try {
+              devplugin.Channel channelList[]=services[i].checkForAvailableChannels(win);
+            }catch (TvBrowserException e) {
+              ErrorHandler.handle(e);
+            }
+          }
         }
       }
-    }
+    });
+    
     int cnt=getChannelCount();
     if (cnt>0) {
       mStatusLabel.setText(mLocalizer.msg("availableChannels","({0}) channels available.",""+cnt));
@@ -120,6 +132,8 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
     }
     ChannelList.create();
     mBtns.enableNextButton();
+    
+    
   }
 
   

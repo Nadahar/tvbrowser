@@ -37,6 +37,8 @@ import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
 import tvbrowser.core.*;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
 
 /**
  * TV-Browser
@@ -133,22 +135,30 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       
       updateChannelListBtn.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
-          int channelCount=0;
-          for (int i=0;i<services.length;i++) {
-            if (services[i].supportsDynamicChannelList()) {
-              try {
-                devplugin.Channel channelList[]=services[i].checkForAvailableChannels();
-              }catch (TvBrowserException exc) {
-                ErrorHandler.handle(exc);
+          
+          final ProgressWindow win=new ProgressWindow(tvbrowser.ui.mainframe.MainFrame.getInstance());
+        
+          win.run(new Progress(){
+            public void run() {
+              int channelCount=0;
+              tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+              for (int i=0;i<services.length;i++) {
+                if (services[i].supportsDynamicChannelList()) {
+                  try {
+                    devplugin.Channel channelList[]=services[i].checkForAvailableChannels(win);
+                  }catch (TvBrowserException exc) {
+                    ErrorHandler.handle(exc);
+                  }
+                }
               }
+              ChannelList.create();
+              fillChannelListBox();
             }
-          }
-          ChannelList.create();
-          fillChannelListBox();
-        }
-      }
-      );
+           
+          });
+       
+        }  
+      });
     
       configChannelBtn.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {

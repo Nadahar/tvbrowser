@@ -95,13 +95,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   public TvBrowserDataService() {
     mSettings = new Properties();
-    /*
-    mDataDir = new File("tvbrowsertvdata");
-    
-    //  Ensure that the data directory is present
-    if (! mDataDir.exists()) {
-      mDataDir.mkdir();
-    }*/
   }
 
 
@@ -266,7 +259,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     // Choose a random Mirror
     Mirror mirror = chooseMirror(mirrorArr, null);
     if (monitor!=null) {
-      monitor.setMessage(mLocalizer.msg("info.3","Choosing mirror {0}",mirror.getUrl()));    
+      monitor.setMessage(mLocalizer.msg("info.3","Try to connect to mirror {0}",mirror.getUrl()));    
     }  
     // Check whether the mirror is up to date and available
     for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
@@ -551,19 +544,26 @@ public class TvBrowserDataService extends AbstractTvDataService {
   }
   
   
-  public Channel[] checkForAvailableChannels() throws TvBrowserException {
+  public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
     // load the mirror list
     Mirror[] mirrorArr = loadMirrorList();
     
     // Get a random Mirror that is up to date
-    Mirror mirror = chooseUpToDateMirror(mirrorArr,null);
+    Mirror mirror = chooseUpToDateMirror(mirrorArr,monitor);
     mLog.info("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)
+    if (monitor!=null) {
+      monitor.setMessage(mLocalizer.msg("info.6","downloading channel list"));
+    }
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
+    
     
     // Update the channel list
     updateChannelList(mirror,true);
+    if (monitor!=null) {
+      monitor.setMessage("");
+    } 
     return getAvailableChannels();
   }
   
@@ -571,19 +571,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
     return true;
   }
 
-
-  
-/*
-  private Channel[] createDefaultChannels() {
-    TimeZone zone = TimeZone.getTimeZone("MET");
-    return new Channel[] {
-      new Channel(this, "Premiere 1", "premiere-1", zone, "de"),
-      new Channel(this, "Premiere 2", "premiere-2", zone, "de"),
-      new Channel(this, "Premiere 3", "premiere-3", zone, "de"),
-    };
-  }
-
-*/
 
   
   /**

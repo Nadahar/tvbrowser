@@ -52,6 +52,8 @@ import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
 import devplugin.Channel;
 import devplugin.Date;
 
@@ -71,6 +73,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
 
+  private JDialog mConfigAssistantDialog;
+  private SoftwareUpdateItem[] mSoftwareUpdateItems=null;
   private ProgramTableScrollPane mProgramTableScrollPane;
   private DefaultProgramTableModel mProgramTableModel;
   private Thread downloadingThread;
@@ -389,6 +393,24 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   public void runSetupAssistant() {
     
+    ProgressWindow progWin=new ProgressWindow(this,mLocalizer.msg("loadingAssistant",""));
+    final JFrame parent=this;
+    progWin.run(new Progress(){    
+      public void run() {
+        mConfigAssistantDialog=new tvbrowser.ui.configassistant.ConfigAssistant(parent);   
+      }    
+    });
+    
+    util.ui.UiUtilities.centerAndShow(mConfigAssistantDialog);  
+    mConfigAssistantDialog.hide();
+    mConfigAssistantDialog.dispose();
+    mConfigAssistantDialog=null;
+              
+    boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+    if (! dataAvailable) {
+      askForDataUpdate();
+    }
+    /*
     final javax.swing.JDialog progDlg=new util.ui.progress.ProgressDlg(this,mLocalizer.msg("loadingAssistant",""));
     final JFrame parent=this;
       
@@ -410,7 +432,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
      
           configThread.start();
           util.ui.UiUtilities.centerAndShow(progDlg);
-    
+    */
   }
 
   public void actionPerformed(ActionEvent event) {
@@ -685,10 +707,28 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         options[0]); 
   
     if (answer==JOptionPane.YES_OPTION) {
-      SoftwareUpdateItem[] items=null;
+      
+      
+      ProgressWindow progWin=new ProgressWindow(this,mLocalizer.msg("title.2","searching for new plugins..."));
+      
+      progWin.run(new Progress(){
+        public void run() {
+          try {
+            java.net.URL url=null;
+            //url=new java.io.File("plugins.txt").toURL();
+            url=new java.net.URL("http://tvbrowser.sourceforge.net/plugins/plugins2.txt");    
+            SoftwareUpdater softwareUpdater=null;
+            softwareUpdater=new SoftwareUpdater(url);
+            mSoftwareUpdateItems=softwareUpdater.getAvailableSoftwareUpdateItems();
+          }catch (java.io.IOException e) {      
+            e.printStackTrace();
+          }
+        }
+      });
+      
+      /*
       final util.ui.ProgressWindow win=new util.ui.ProgressWindow(this);
-      win.show();
-      win.setText(mLocalizer.msg("title.2","searching for new plugins..."));
+      win.setMessage(mLocalizer.msg("title.2","searching for new plugins..."));
       try {
       
         java.net.URL url=null;
@@ -700,19 +740,19 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       }catch (java.io.IOException e) {      
         e.printStackTrace();
       }finally{ 
-        win.dispose();
+        win.hide();
       }
+      */
       
-      
-      if (items==null) {
+      if (mSoftwareUpdateItems==null) {
         JOptionPane.showMessageDialog(this,mLocalizer.msg("error.1","software check failed."));
       }
-      else if (items.length==0) {
+      else if (mSoftwareUpdateItems.length==0) {
         JOptionPane.showMessageDialog(this,mLocalizer.msg("error.2","No new items available"));
       }
       else {
         SoftwareUpdateDlg dlg=new SoftwareUpdateDlg(this);
-        dlg.setSoftwareUpdateItems(items);
+        dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
         UiUtilities.centerAndShow(dlg);
       }
     }
