@@ -72,17 +72,13 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
       return result;
     }
       
-    JPanel contentPanel=new JPanel();
-    contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
-         
+    JPanel content=new JPanel(new BorderLayout());
+
     mSettingsTab=mPlugin.getSettingsTab();
     if (mSettingsTab!=null) {
-      contentPanel.add(mSettingsTab.createSettingsPanel());
+        content.add(mSettingsTab.createSettingsPanel(), BorderLayout.CENTER);
     }
-        
-    
-    JPanel content=new JPanel(new BorderLayout());
-    content.add(contentPanel,BorderLayout.NORTH);
+       
     return content;
     
   }
