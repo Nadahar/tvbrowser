@@ -274,20 +274,46 @@ public class TvDataBase {
   }
 
 
-  private OnDemandDayProgramFile loadDayProgram(Date date, Channel channel) {
+  private synchronized OnDemandDayProgramFile loadDayProgram(Date date,
+    Channel channel)
+  {
     File file = getDayProgramFile(date, channel);
     if (! file.exists()) {
       return null;
     }
     
     try {
+      // Load the program file
       OnDemandDayProgramFile progFile
         = new OnDemandDayProgramFile(file, date, channel);
       progFile.loadDayProgram();
       
       boolean somethingChanged = calculateMissingLengths(progFile.getDayProgram());
       if (somethingChanged) {
-        // progFile.saveDayProgram();
+        // Some missing lengths could now be calculated
+        // -> Try to save the changes
+        
+        // We use a temporary file. If saving suceeds we rename it
+        File tempFile = new File(file.getAbsolutePath() + ".changed");
+        try {
+          // Try to save the changed program
+          OnDemandDayProgramFile newProgFile
+            = new OnDemandDayProgramFile(tempFile, progFile.getDayProgram());
+          newProgFile.saveDayProgram();
+          
+          // Saving the changed version succeed -> Delete the original
+          file.delete();
+          
+          // Use the changed version now
+          tempFile.renameTo(file);
+        } catch (Exception exc) {
+          // Saving the changes failed
+          // -> remove the temp file and keep the old one
+          tempFile.delete();
+        }
+        
+        // Now load the new version
+        progFile.loadDayProgram();
       }
       
       return progFile;
