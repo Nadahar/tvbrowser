@@ -39,6 +39,7 @@ import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 
 
@@ -99,7 +100,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       mRuleCb.addItem(new TimeFilterComponent());
       mRuleCb.addItem(new ProgramInfoFilterComponent());
       mRuleCb.addItem(new ProgramLengthFilterComponent());
-                   
+      mRuleCb.addItem(new ProgramRunningFilterComponent());
+      
         typePanel.add(mRuleCb,BorderLayout.EAST);
         
         northPanel.add(namePanel);
