@@ -178,9 +178,8 @@ public class PrintDialog extends JDialog implements Printable
       try
       {
 // Funktioniert nicht... hmm
-//       setCursor(Cursor.WAIT_CURSOR);
-//       displayPrintMsg();
-//       UiUtilities.centerAndShow(this);
+//         displayPrintMsg();
+//         UiUtilities.centerAndShow(this);
 
 
          Thread thread;
@@ -206,9 +205,6 @@ public class PrintDialog extends JDialog implements Printable
    {
       mMain.removeAll();
 
-      mMain.add(new JLabel(mLocalizer.msg("dataprint", "dataPrint")));
-      mMain.add(new JLabel(mLocalizer.msg("dataprint", "dataPrint")));
-      mMain.add(new JLabel(mLocalizer.msg("dataprint", "dataPrint")));
       mMain.add(new JLabel(mLocalizer.msg("dataprint", "dataPrint")));
 
       pack();
