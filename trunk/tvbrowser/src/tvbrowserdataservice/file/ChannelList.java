@@ -117,8 +117,16 @@ public class ChannelList {
     String line;
     int lineCount = 1;
     
-    File dataDir = TvBrowserDataService.getInstance().getWorkingDirectory();
-    IconLoader iconLoader = new IconLoader(mGroup.getId(), dataDir);
+    /**
+     * ChannelList.readFromStream is called by both MirrorUpdater
+     * and TvBrowserDataService. The MirrorUpdater calls this method
+     * without DataService and doesn't need the IconLoader
+     */
+    IconLoader iconLoader = null;
+    if (dataService != null && dataService instanceof TvBrowserDataService) {
+      File dataDir = ((TvBrowserDataService)dataService).getWorkingDirectory();
+      iconLoader = new IconLoader(mGroup.getId(), dataDir);
+    }
     
     while ((line = reader.readLine()) != null) {
       line = line.trim();
@@ -145,7 +153,7 @@ public class ChannelList {
         
         Channel channel = new Channel(dataService, name, id,
           TimeZone.getTimeZone(timezone), country,copyright,webpage, mGroup);
-        if (iconUrl != null) {
+        if (iconLoader != null && iconUrl != null) {
           Icon icon = iconLoader.getIcon(id, iconUrl);
           if (icon != null) {
             channel.setIcon(icon);
