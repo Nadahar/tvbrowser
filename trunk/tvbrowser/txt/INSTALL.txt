@@ -33,10 +33,10 @@ Viel Spass!
 
 
 
-Bei Problemen hilft die FAQ-Seite: http://tvbrowser.sourceforge.net/faq.html
-oder das Hilfe-Forum: http://tvbrowser.sourceforge.net/forum.html
+Bei Problemen hilft die FAQ-Seite: http://www.tvbrowser.org/faq.html
+oder das Hilfe-Forum: http://www.tvbrowser.org/forum.html
 
-Aktuelles rund um TV-Browser ist auf der TV-Browser-Website zu finden: http://tvbrowser.sourceforge.net
+Aktuelles rund um TV-Browser ist auf der TV-Browser-Website zu finden: http://www.tvbrowser.org
 
 Dort sind auch immer neben der aktuellsten Version neue Plugins verfuegbar.
 
@@ -75,8 +75,8 @@ If Java is set up correctly you only need to double click "tvbrowser.jar" in TV-
 Enjoy!
 
 
-Problems? Read the FAQ at http://tvbrowser.sourceforge.net/faq.html
+Problems? Read the FAQ at http://www.tvbrowser.org/faq.html
 or refer to the help message board at http://tvbrowser.sourceforge.net/forum.html
 
-Read more about TV-Browser on its home page at http://tvbrowser.sourceforge.net
+Read more about TV-Browser on its home page at http://www.tvbrowser.org
 This site also holds the current version and all existing plug-ins.

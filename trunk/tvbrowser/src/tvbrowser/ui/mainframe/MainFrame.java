@@ -27,7 +27,6 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -52,8 +51,6 @@ import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
 import tvdataservice.TvDataService;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -352,34 +349,14 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
   public void quit() {
-    PluginManager.getInstance().storeSettings();
-    
+   
     mLog.info("Finishing plugins");
     PluginLoader.getInstance().shutdownAllPlugins();
     
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
     
-    mLog.info("Storing channel day light saving time corrections");
-    ChannelList.storeDayLightSavingTimeCorrections();
-    
-    mLog.info("Storing window size and location");
-    boolean maximized = getExtendedState() == Frame.MAXIMIZED_BOTH;
-    Settings.propIsWindowMaximized.setBoolean(maximized);
-    if (! maximized) {
-      // Save the window size and location only when not maximized
-      Settings.propWindowWidth.setInt(getWidth());
-      Settings.propWindowHeight.setInt(getHeight());
-      Settings.propWindowX.setInt(getX());
-      Settings.propWindowY.setInt(getY());
-    }
-    
-    mLog.info("Storing settings");
-    try {
-      Settings.storeSettings();
-    } catch (TvBrowserException e) {
-      ErrorHandler.handle(e);
-    }
+    TVBrowser.flushSettings();
 
     mLog.info("Closing tv data base");
     try {

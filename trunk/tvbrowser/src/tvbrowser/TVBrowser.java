@@ -439,6 +439,51 @@ public class TVBrowser {
         }
       });
     }
+    
+    
+    /* Every 5 minutes we store all the settings in case of an unexpected failure */
+    new javax.swing.Timer(1000*60*5, new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        flushSettings();
+      }
+    }).start();
+    
+    
+  }
+  
+  
+  public static synchronized void flushSettings() {    
+    
+    final PluginLoader pl = PluginLoader.getInstance();
+    devplugin.Plugin[] p = PluginLoader.getInstance().getActivePlugins();
+    for (int i=0; i<p.length; i++) {
+      mLog.info("Storing plugin settings of plugin "+p[i].getInfo().getName()+"...");
+      pl.storePluginData(p[i]);
+      pl.storePluginSettings(p[i]);
+    }
+        
+    mLog.info("Storing channel day light saving time corrections");
+    ChannelList.storeDayLightSavingTimeCorrections();  
+    
+    
+    mLog.info("Storing window size and location");
+    boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
+    Settings.propIsWindowMaximized.setBoolean(maximized);
+    if (! maximized) {
+      // Save the window size and location only when not maximized
+      Settings.propWindowWidth.setInt(mainFrame.getWidth());
+      Settings.propWindowHeight.setInt(mainFrame.getHeight());
+      Settings.propWindowX.setInt(mainFrame.getX());
+      Settings.propWindowY.setInt(mainFrame.getY());
+    }
+    
+    mLog.info("Storing settings");
+    try {
+      Settings.storeSettings();
+    } catch (TvBrowserException e) {
+      ErrorHandler.handle(e);
+    }
+    
   }
   
   private static JMenu createPluginsMenu() {

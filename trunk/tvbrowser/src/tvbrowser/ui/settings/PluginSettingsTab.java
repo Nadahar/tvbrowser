@@ -204,21 +204,17 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         loader.activatePlugin(plugin);
       }
       
-    //  if (mActivatedPlugins.contains(plugin)) {
-    //    mActivatedPlugins.remove(plugin);
-    //  }else{
-    //    mActivatedPlugins.add(plugin);
-    //  }
       mList.updateUI();
       updateBtns();          
-   //   Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
-   //   mActivatedPlugins.toArray(installedPluginList);
-   //   Iterator it=mChangeListener.iterator();
-   //   while (it.hasNext()) {
-   //     SettingsChangeListener listener=(SettingsChangeListener)it.next();
-   //     listener.settingsChanged(this,installedPluginList);
-   //   }
     }    
+    
+    
+    Plugin[] pluginArr = PluginLoader.getInstance().getActivePlugins();
+    String[] classNameArr = pluginArrToClassNameArr(pluginArr);
+  
+    Settings.propInstalledPlugins.setStringArray(classNameArr);    
+    
+    
   }
   
 
@@ -226,10 +222,21 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     mChangeListener.add(listener);
   }
 	
+  private String[] pluginArrToClassNameArr(Plugin[] pluginArr) {
+    String[] classNameArr = new String[pluginArr.length];
+    for (int i = 0; i < pluginArr.length; i++) {
+      classNameArr[i] = pluginArr[i].getClass().getName();
+    }
+  
+    return classNameArr;
+  }
+  
 	public void saveSettings() {
   //  Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
   //  mActivatedPlugins.toArray(installedPluginList);
-  //  PluginManager.getInstance().setInstalledPlugins(installedPluginList);    
+  //  PluginManager.getInstance().setInstalledPlugins(installedPluginList);
+  
+    
 	}
 
 	

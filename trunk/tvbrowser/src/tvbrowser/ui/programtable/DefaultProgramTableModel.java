@@ -256,10 +256,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
   public int getRowCount(int col) {
-    //return mMainDayProgramCount[col] + mNextDayProgramCount[col];
-    
-    return mShownProgramColumn[col].size();
-    
+    return mShownProgramColumn[col].size();   
   }
 
 
@@ -324,8 +321,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   protected int getColumnOfChannel(Channel channel) {
-    for (int col = 0; col < mChannelArr.length; col++) {
-      if (channel.equals(mChannelArr[col])) {
+    for (int col = 0; col < mShownChannelArr.length; col++) {
+    //for (int col = 0; col < mChannelArr.length; col++) {
+      //if (channel.equals(mChannelArr[col])) {
+      if (channel.equals(mShownChannelArr[col])) {
         return col;
       }
     }
