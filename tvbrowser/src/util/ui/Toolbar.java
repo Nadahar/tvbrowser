@@ -56,7 +56,7 @@ public class Toolbar extends JComponent implements ComponentListener, ActionList
     mButtonPanel.setFocusable(false);
     mGroupBtnPanel = new JPanel(new BorderLayout());
     
-    mGroupBtn = new JButton(new ImageIcon("imgs/more.png"));
+    mGroupBtn = new JButton(">>");
     mGroupBtn.setBorder(BorderFactory.createEmptyBorder());
     
     mGroupBtnPanel.add(mGroupBtn, BorderLayout.WEST);

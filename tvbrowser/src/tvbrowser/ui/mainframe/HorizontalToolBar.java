@@ -73,7 +73,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     setOpaque(false);
     mParent=parent;
     mFilterChooser=filterChooser;
-    setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+    setBorder(BorderFactory.createEmptyBorder(5,1,0,1));
     setLayout(new BorderLayout());
     
     //mToolbar=createButtonPanel();
