@@ -237,7 +237,7 @@ public class FavoritesPlugin extends Plugin {
     int splitPanePosition=getIntegerSetting(mSettings,"splitpanePosition",200);
     int width=getIntegerSetting(mSettings,"width",500);
     int height=getIntegerSetting(mSettings,"height",300);
-    ManageFavoritesDialog dlg = new ManageFavoritesDialog(getParentFrame(), mFavoriteArr,splitPanePosition);
+    ManageFavoritesDialog dlg = new ManageFavoritesDialog(this, getParentFrame(), mFavoriteArr,splitPanePosition);
     dlg.setSize(new Dimension(width,height));
     UiUtilities.centerAndShow(dlg);
     
