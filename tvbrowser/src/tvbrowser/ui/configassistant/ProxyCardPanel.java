@@ -47,6 +47,7 @@ class ProxyCardPanel extends AbstractCardPanel {
 
   public boolean onNext() {
     mProxySettingsTab.saveSettings();
+	tvbrowser.TVBrowser.updateProxySettings();
     return true;
   }
   
