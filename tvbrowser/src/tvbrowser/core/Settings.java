@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -300,7 +300,7 @@ public class Settings {
    }
   
    public static void setButtonPlugins(String[] plugins) {
-	 setStringListProperty("buttonplugins",plugins);
+   	 setStringListProperty("buttonplugins",plugins);
    }
    
    
@@ -331,18 +331,19 @@ public class Settings {
 	}
 
 	private static void setStringListProperty(String key, String[] strList) {
-			if (strList==null || strList.length==0) return;
+		if (strList==null || strList.length==0) {
+			settings.setProperty(key,"");
+			return;
+		} 
 
-				String line="";
-
-				for (int i=0;i<strList.length-1;i++) {
-				  line+=strList[i]+",";
-				}
-				line+=strList[strList.length-1];
-
-				settings.setProperty(key,line);
-		
+		String line="";
+			
+		for (int i=0;i<strList.length-1;i++) {
+			line+=strList[i]+",";
 		}
+		line+=strList[strList.length-1];
+		settings.setProperty(key,line);		
+	}
 
 
   /**

@@ -60,20 +60,37 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
   }
 
   public void ok() {
+  	System.out.println("OK");
+  	
+  	Object[] o1=buttonPluginSet.toArray();
+  	for (int i=0;i<o1.length;i++) {
+  		System.out.println((String)o1[i]);
+  	}
+  	
+  	
    Object[] o=panel.getElementsRight();
    String[] s=new String[o.length];
+   java.util.ArrayList list=new java.util.ArrayList();
    for (int i=0;i<o.length;i++) {
 	   s[i]=(String)o[i];
 	 PluginManager.installPlugin(s[i]);
+	 System.out.println("install plugin "+s[i]);
+	 if (buttonPluginSet.contains(s[i])) {
+	 	list.add(s[i]);
+	 	System.out.println("including button");
+	 }
       
    }
    Settings.setInstalledPlugins(s);
     
     
-   o=buttonPluginSet.toArray();
+    
+  // o=buttonPluginSet.toArray();
+  o=list.toArray();
    s=new String[o.length];
    for (int i=0;i<o.length;i++) {
 	   s[i]=(String)o[i];
+	   System.out.println("button: "+s[i]);
    }
    Settings.setButtonPlugins(s);
 
