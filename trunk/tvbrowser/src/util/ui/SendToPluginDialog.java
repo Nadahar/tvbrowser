@@ -19,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tvbrowser.core.plugin.PluginProxy;
@@ -166,8 +167,20 @@ public class SendToPluginDialog extends JDialog {
      * Sends the Data to the selected Plugin
      */
     protected void send() {
-        PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
-        plug.receivePrograms(mPrograms);
+
+        int result = JOptionPane.YES_OPTION; 
+            
+        if (mPrograms.length > 5) {
+            result = JOptionPane.showConfirmDialog(this, 
+                    mLocalizer.msg("AskBeforeSend", "Are you really sure to sent {0} Programs\nto the selected Plugin?", new Integer(mPrograms.length)),
+                    mLocalizer.msg("Attention", "Attention"),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        }
+        
+        if (result == JOptionPane.YES_OPTION) {
+            PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
+            plug.receivePrograms(mPrograms);
+        }
     }
 
     /**
