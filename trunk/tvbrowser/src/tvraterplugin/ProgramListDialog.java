@@ -44,7 +44,7 @@ public class ProgramListDialog extends JDialog {
      */
     public ProgramListDialog(Frame parent, String title) {
         super(parent, true);
-        setTitle(mLocalizer.msg("ListDialog", "Listening"));
+        setTitle(mLocalizer.msg("ListDialogTitle", "Programs with \"{0}\"", title));
 
         _title = title;
 
@@ -117,14 +117,16 @@ public class ProgramListDialog extends JDialog {
         JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
         content.add(buttonPn, BorderLayout.SOUTH);
 
-        JButton okButton = new JButton(mLocalizer.msg("ok", "OK"));
-        okButton.addActionListener(new ActionListener() {
+        JButton closeButton = new JButton(mLocalizer.msg("close", "Close"));
+        closeButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent evt) {
                 dispose();
             }
         });
-        buttonPn.add(okButton);
+        buttonPn.add(closeButton);
+
+        getRootPane().setDefaultButton(closeButton);
         pack();
     }
 
