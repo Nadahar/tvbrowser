@@ -151,24 +151,6 @@ public class AboutBox extends JDialog {
     return buf.append("</td><td>").append(value).append("</td></tr>");
   }
   
-  private StringBuffer createTowLineInfoEntry(StringBuffer buf, String key, String value) {
-      
-      buf.append("<tr><td colspan=\"2\">");
-      buf.append("<div id=\"key\">");
-      buf.append(key);
-      buf.append("</div>");
-      buf.append("</td></tr>");
-
-      buf.append("<tr><td colspan=\"2\">");
-      buf.append("<div>");
-      buf.append(value);
-      buf.append("</div>");
-      buf.append("</td></tr>");
-
-      return buf;
-    }
-    
-  
   private void createSpacer(StringBuffer buf) {
       buf.append("<tr><td id=\"small\"></td></tr>");
       
@@ -225,7 +207,7 @@ public class AboutBox extends JDialog {
     
     createSpacer(buf);
     
-    createTowLineInfoEntry(buf, mLocalizer.msg("location", "Location") + ":",
+    createInfoEntry(buf, mLocalizer.msg("location", "Location") + ":",
     System.getProperty("user.country") + "," + System.getProperty("user.language"));
                
     java.util.TimeZone timezone = java.util.TimeZone.getDefault();
@@ -233,7 +215,7 @@ public class AboutBox extends JDialog {
     String tzOffsetAsString = mLocalizer.msg("hours", "({0,number,+#;#} hours)",
     new Integer(tzOffset));           
                
-    createTowLineInfoEntry(buf, mLocalizer.msg("timezone", "Timezone") + ":",
+    createInfoEntry(buf, mLocalizer.msg("timezone", "Timezone") + ":",
        timezone.getDisplayName() + " " + tzOffsetAsString);         
                 
                
