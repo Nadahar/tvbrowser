@@ -86,7 +86,7 @@ public class PrimaryDataManager {
 
 
 
-  public void updateRawDataDir() throws PreparationException {
+  public void updateRawDataDir(boolean doUpdateOnly) throws PreparationException {
     // Delete the old work directory
     try {
       IOUtilities.deleteDirectory(mWorkDir);
@@ -101,20 +101,22 @@ public class PrimaryDataManager {
         + mWorkDir.getAbsolutePath());
     }
 
-    // Delete the old raw directory
-    try {
-      IOUtilities.deleteDirectory(mRawDir);
-    }
-    catch (IOException exc) {
-      throw new PreparationException("Deleting old raw directory failed", exc);
+    if (!doUpdateOnly) {
+      // Delete the old raw directory
+      try {
+        IOUtilities.deleteDirectory(mRawDir);
+      }
+      catch (IOException exc) {
+        throw new PreparationException("Deleting old raw directory failed", exc);
+      }    
+    
+      // Create a new raw directory
+      if (! mRawDir.mkdir()) {
+        throw new PreparationException("Could not create raw directory: "
+          + mRawDir.getAbsolutePath());
+      }
     }
     
-    // Create a new raw directory
-    if (! mRawDir.mkdir()) {
-      throw new PreparationException("Could not create raw directory: "
-        + mRawDir.getAbsolutePath());
-    }
-
     // Update the mirror list
     updateMirrorList();
     
@@ -124,8 +126,11 @@ public class PrimaryDataManager {
     // Process the new raw data
     mRawDataProcessor.processRawDataDir(mRawDir, mPreparedDir, mWorkDir);
     
+    
     // Create the channel list
-    createChannelList();
+    if (!doUpdateOnly) {
+      createChannelList();
+    }
     
     // Delete the old backup
     try {
@@ -143,6 +148,7 @@ public class PrimaryDataManager {
           + mBackupDir.getAbsolutePath() + "' failed");
       }
     }
+        
 
     // Let the work dir become the new prepared dir
     if (! mWorkDir.renameTo(mPreparedDir)) {
@@ -150,6 +156,18 @@ public class PrimaryDataManager {
         + mWorkDir.getAbsolutePath() + "' to '"
         + mPreparedDir.getAbsolutePath() + "' failed");
     }
+    
+    if (doUpdateOnly) {
+          // keep the old channel list file    
+          File fromFile = new File(mBackupDir, ChannelList.FILE_NAME);
+          File toFile = new File(mPreparedDir, ChannelList.FILE_NAME);    
+          if (!fromFile.renameTo(toFile)) {
+            throw new PreparationException("Renaming file '"
+                      + fromFile.getAbsolutePath() + "' to '"
+                      + toFile.getAbsolutePath() + "' failed");
+          }
+        }
+    
     
     // Print out the statistics
     mLog.info("In total there were "
@@ -400,17 +418,29 @@ public class PrimaryDataManager {
     
     // Start the update    
     if (args.length == 0) {
-      System.out.println("Please specify at least one primary data service");
+      System.out.println("USAGE: PrimaryDataManager [-update]  [-forceCompleteUpdate [channel{;channel}]] pds ...");
+      System.out.println("\nEXAMPLES:");
+      System.out.println("Update tv data from ArdPDS and ZdfPDS:");
+      System.out.println("PrimaryDataManager -update .ArdPDS .ZdfPDS");
+      System.out.println("\nUpdate tv data from ArdPDS and ZdfPDS; force a complete update of channel zdf and ndr");
+      System.out.println("PrimaryDataManager -update -forceCompleteUpdate zdf:ndr .ArdPDS .ZdfPDS");
+      System.out.println("\nUpdate all channels; write new channel list file");
+      System.out.println("PrimaryDataManager .ArdPDS .ZdfPDS .RtlPDS .Pro7PDS\n");
+      
       System.exit(1);
     } else {
       try {
         PrimaryDataManager manager = new PrimaryDataManager(new File("."));
 
         ArrayList pdsList = new ArrayList();
+        boolean update=false;
         for (int i = 0; i < args.length; i++) {
-          if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
+          if (args[i].equalsIgnoreCase("-update")) {
+            update=true;  
+          }
+          else if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
             if ((i + 1) >= args.length) {
-              System.out.println("You have to specify a semicolon separated " +
+              System.out.println("You have to specify a colon separated " +
                 "list of channels after -forceCompleteUpdate");
               System.exit(1);
             } else {
@@ -424,11 +454,17 @@ public class PrimaryDataManager {
             pdsList.add(createPrimaryDataService(args[i]));
           }
         }
+        
+        if (pdsList.size()==0) {
+          System.out.println("Please specify at least one primary data service");
+          System.exit(-1);
+        }
+        
         PrimaryDataService[] pdsArr = new PrimaryDataService[pdsList.size()];
         pdsList.toArray(pdsArr);        
         manager.setDataServiceArr(pdsArr);
         
-        manager.updateRawDataDir();
+        manager.updateRawDataDir(update);
         
         // Exit with error code 2 if some day programs were put into quarantine
         if (manager.mRawDataProcessor.getQuarantineCount() != 0) {
