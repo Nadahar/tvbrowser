@@ -144,7 +144,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     JTextArea licenseTA=new JTextArea();
     licenseTA.setText("TV-Browser includes software developed " +
                       "by L2FProd.com (http://www.L2FProd.com/).\n"+
-                      "Skin Look And Feel 1.2.3\n"+
+                      "Skin Look And Feel 1.2.4\n"+
                       "Copyright (c) 2000-2002 L2FProd.com.  All rights reserved.");
     
     licenseTA.setWrapStyleWord(true);

@@ -28,10 +28,7 @@ package tvbrowser.ui.settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-
-import tvdataservice.TvDataService;
 import tvbrowser.core.*;
 
 /**
@@ -39,19 +36,11 @@ import tvbrowser.core.*;
  *
  * @author Martin Oberhauser
  */
-public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener {
+public class TVDataSettingsTab implements devplugin.SettingsTab {
   
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(TVDataSettingsTab.class);
-  
-  private static final String[] DELETE_MSG_ARR = new String[] {
-    mLocalizer.msg("delete.2", "After 2 days"),
-    mLocalizer.msg("delete.3", "After 3 days"),
-    mLocalizer.msg("delete.7", "After 1 week"),
-    mLocalizer.msg("delete.14", "After 2 weeks"),
-    mLocalizer.msg("delete.-1", "Manually")
-  };
   
   private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
     mLocalizer.msg("autoDownload.never", "Never"),
@@ -60,7 +49,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
   
   private JPanel mSettingsPn;
   
-  private JComboBox mTVDataLifespanCB, mAutoDownloadCB;
+  private JComboBox mAutoDownloadCB;
   private JButton mChangeDataDirBt;
   private JButton mDeleteTVDataBt;
   private JTextField mTvDataTF;
@@ -68,58 +57,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
   
   
   public TVDataSettingsTab() {
-  }
-  
- 
-  
-  public void actionPerformed(ActionEvent event) {
-    Object source=event.getSource();
-  
-    if (source==mDeleteTVDataBt) {
-      DeleteTVDataDlg dlg = new DeleteTVDataDlg(mSettingsPn);
-      dlg.centerAndShow();
-    }
-  }
-  
-  
-  
-  private void makeSelectionInTVDataLifespanCB(int days) {
-    if (days==2) {
-      mTVDataLifespanCB.setSelectedIndex(0);
-    }
-    else if  (days==3) {
-      mTVDataLifespanCB.setSelectedIndex(1);
-    }
-    else if (days==7) {
-      mTVDataLifespanCB.setSelectedIndex(2);
-    }
-    
-    else if (days==14) {
-      mTVDataLifespanCB.setSelectedIndex(3);
-    }
-    
-    else {
-      mTVDataLifespanCB.setSelectedIndex(4);
-    }
-  }
-  
-  
-  
-  private int getDaysFromTVDataLifespanCB() {
-    int inx=mTVDataLifespanCB.getSelectedIndex();
-    if (inx==0) {
-      return 2;
-    }
-    else if (inx==1) {
-      return 3;
-    }
-    else if (inx==2) {
-      return 7;
-    }
-    else if (inx==3) {
-      return 14;
-    }
-    return -1;
   }
   
   
@@ -140,24 +77,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
     
     mSettingsPn.add(tvDataPn,BorderLayout.NORTH);
     
-    msg = mLocalizer.msg("deleteTvData", "Delete TV data");    
-    tvDataPn.add(new JLabel(msg));
-    JPanel panel1=new JPanel(new BorderLayout());
-    
-    mTVDataLifespanCB=new JComboBox(DELETE_MSG_ARR);
-    
-    makeSelectionInTVDataLifespanCB(Settings.getTVDataLifespan());
-    
-    panel1.add(mTVDataLifespanCB,BorderLayout.WEST);
-    tvDataPn.add(panel1);
-    panel1=new JPanel(new BorderLayout());
-    tvDataPn.add(new JPanel());
-    msg=mLocalizer.msg("delete.now","Delete now...");
-    mDeleteTVDataBt=new JButton(msg);
-    mDeleteTVDataBt.addActionListener(this);
-    panel1.add(mDeleteTVDataBt,BorderLayout.WEST);
-    tvDataPn.add(panel1);
-    
+
     //tvDataPn.add(panel1);
     msg = mLocalizer.msg("autoDownload", "Download automatically");
     tvDataPn.add(new JLabel(msg));
@@ -177,9 +97,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-     
-    Settings.setTVDataLifespan(getDaysFromTVDataLifespanCB());
-    
+      
     int inx = mAutoDownloadCB.getSelectedIndex();
     if (inx == 0) {
       Settings.setAutomaticDownload("never");
@@ -204,25 +122,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab, ActionListener 
    */
   public String getTitle() {
     return mLocalizer.msg("tvData", "TV data");
-  }
-  
-  
-  // inner class DataServiceRenderer
-  
-  
-  class DataServiceRenderer extends DefaultListCellRenderer {
-    
-    public Component getListCellRendererComponent(JList list, Object value,
-    int index, boolean isSelected, boolean cellHasFocus) {
-      if (value instanceof TvDataService) {
-        TvDataService dataService = (TvDataService) value;
-        value = dataService.getInfo().getName();
-      }
-      
-      return super.getListCellRendererComponent(list, value, index, isSelected,
-      cellHasFocus);
-    }
-    
   }
   
 }

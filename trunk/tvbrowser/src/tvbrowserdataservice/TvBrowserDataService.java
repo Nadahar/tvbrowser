@@ -38,7 +38,6 @@ import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.Version;
 
-import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;

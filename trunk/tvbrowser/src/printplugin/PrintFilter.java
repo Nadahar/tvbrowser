@@ -34,7 +34,6 @@ import java.util.Iterator;
 import devplugin.*;
 import java.util.ArrayList;
 import tvbrowser.ui.programtable.*;
-import javax.swing.*;
 
 /**
  * Print Channel information.
