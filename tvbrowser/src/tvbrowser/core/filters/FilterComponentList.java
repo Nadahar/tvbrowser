@@ -41,6 +41,7 @@ import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 
 public class FilterComponentList {
@@ -148,10 +149,14 @@ public class FilterComponentList {
     }
     else if (className.endsWith(".ProgramInfoFilterComponent")) {
         filterComponent = new ProgramInfoFilterComponent(name, description);
-  }
+    }
     else if (className.endsWith(".ProgramLengthFilterComponent")) {
         filterComponent = new ProgramLengthFilterComponent(name, description);
-  }
+    }
+    else if (className.endsWith(".ProgramRunningFilterComponent")) {
+        filterComponent = new ProgramRunningFilterComponent(name, description);
+    }
+    
     else {
       //throw new IOException("error reading filter component: "+className+" unknown");
       mLog.warning("error reading filter component: "+className+" unknown");
