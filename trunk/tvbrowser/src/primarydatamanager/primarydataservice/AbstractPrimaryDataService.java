@@ -27,20 +27,28 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
   }
    
   public static int getCurrentWeekOfYear(int beginOfWeek) {
+
     Calendar cal = Calendar.getInstance();
 
+    return getWeekOfYear(cal,beginOfWeek);
+   
+      
+  }
+  
+  public static int getWeekOfYear(Calendar cal, int beginOfWeek) {
     int firstDayOfWeek = cal.getFirstDayOfWeek();
     int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
     int weekOfYear = cal.get(Calendar.WEEK_OF_YEAR);
 
-    if (dayOfWeek < beginOfWeek && dayOfWeek >= firstDayOfWeek) {
+    int diff;
+    if (firstDayOfWeek!=beginOfWeek) {
+      if (dayOfWeek>=firstDayOfWeek && dayOfWeek<beginOfWeek) {
+        weekOfYear--;
+      }
     }
-    else {
-      weekOfYear++;
-    }
+    
     return weekOfYear;
-      
   }
    
   public static int findNumber(String s) {    
