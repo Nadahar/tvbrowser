@@ -341,6 +341,7 @@
       <fileset dir="${txt.dir}" includes="INSTALL.txt"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${txt.dir}" includes="website.url"/>
+      <fileset dir="${txt.dir}" includes="default.properties"/>
     </copy>
 
     <mkdir dir="${tvbrowser.runtime.dir}/themepacks"/>

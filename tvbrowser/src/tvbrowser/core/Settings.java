@@ -29,10 +29,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.UIManager;
-
 import tvbrowser.TVBrowser;
+import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -53,6 +52,8 @@ public class Settings {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Settings.class.getName());
 
+  private static DefaultSettings mDefaultSettings = new DefaultSettings();
+
   private static final long PROXY_PASSWORD_SEED = 6528587292713416704L;
 
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
@@ -61,7 +62,7 @@ public class Settings {
   
   private static final String SETTINGS_FILE="settings.prop";
   private static final String OLD_USER_DIR = "tvbrowser";
-  private static final String USER_DIR = ".tvbrowser";
+  private static final String USER_DIR = mDefaultSettings.getProperty("userdir",".tvbrowser");
   
   private static final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
   private static final Font PROGRAMINFOFONT=new Font("Dialog",Font.PLAIN,10);
@@ -72,11 +73,13 @@ public class Settings {
   private static PropertyManager mProp = new PropertyManager();
 
 
+
+
   /**
    * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
-    String dir = System.getProperty("user.home", "");
+    String dir = mDefaultSettings.getProperty("userhome",System.getProperty("user.home", ""));
     String oldDir = dir;
     
     if (dir.length() != 0) {
@@ -254,7 +257,7 @@ public class Settings {
     = new BooleanProperty(mProp, "usedefaultdirectories", true);
   
   public static final StringProperty propTVDataDirectory
-    = new StringProperty(mProp, "directory.tvdata", "tvdata");
+    = new StringProperty(mProp, "directory.tvdata", mDefaultSettings.getProperty("tvdatadir","tvdata"));
   
   public static final StringProperty propFilterDirectory
     = new StringProperty(mProp, "directory.filters",
@@ -372,7 +375,7 @@ public class Settings {
     = new StringProperty(mProp, "skinLF.themepack", "themepacks/themepack.zip");
 
   public static final StringProperty propLookAndFeel
-    = new StringProperty(mProp, "lookandfeel", UIManager.getCrossPlatformLookAndFeelClassName());
+    = new StringProperty(mProp, "lookandfeel1_1",mDefaultSettings.getProperty("lookandfeel",UIManager.getCrossPlatformLookAndFeelClassName()));
 
   public static final IntProperty propColumnWidth
     = new IntProperty(mProp, "columnwidth", 200);

@@ -210,16 +210,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       action.setText(mLocalizer.msg( "pluginName" ,"Reminder"));
       action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));
 
-      /*
-        ContextMenuAction action = new ContextMenuAction();
-        action.setText(mLocalizer.msg( "contextMenuText.DontRemindMe" ,"Don't remind me"));  
-        action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));  
-        action.setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent event) {
-            mReminderList.remove(program);  
-          }
-        });
-        return new ActionMenu(action);   */
+
         final ReminderListItem item = mReminderList.getReminderItem(program);
         String[] entries = ReminderFrame.REMIND_MSG_ARR;
         ActionMenu[] actions = new ActionMenu[entries.length];
