@@ -97,7 +97,7 @@ public class TVBrowser {
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(1,0,false,"1.0 RC04");
+  public static final devplugin.Version VERSION=new devplugin.Version(1,0,false,"1.0 RC05");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
   
   private static boolean mUseSystemTray;
@@ -653,7 +653,7 @@ public class TVBrowser {
   }
 
 
-  private static void updateProxySettings() {
+  public static void updateProxySettings() {
     String httpHost = "", httpPort = "", httpUser = "", httpPassword = "";
     String ftpHost = "",  ftpPort = "",  ftpUser = "",  ftpPassword = "";
     
