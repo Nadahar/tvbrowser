@@ -244,7 +244,15 @@ public class Channel {
   }
 
 
-
+  /**
+   * Copies the Settins in this Channel (DaylightSaving etc..) into
+   * another Channel
+   * @param to to this Channel
+   */
+  public void copySettingsToChannel(Channel to) {
+      to.setDayLightSavingTimeCorrection(mDayLightSavingTimeCorrection);
+  }
+  
   public boolean equals(Object obj) {
     if (obj instanceof Channel) {
       Channel cmp = (Channel) obj;
