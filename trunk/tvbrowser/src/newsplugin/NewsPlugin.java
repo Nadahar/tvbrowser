@@ -57,7 +57,7 @@ public class NewsPlugin extends Plugin {
   
   /** The URL of the news skript. */
   private static final String NEWS_URL
-    = "http://murf.mine.nu/tvbrowser-news/newsplugin-get.php";
+    = "http://www.tvbrowser.org/newsplugin/newsplugin-get.php";
   
   /** When we have no news get the news of the last week. */
   private static int FIRST_NEWS_DAYS = 7;
