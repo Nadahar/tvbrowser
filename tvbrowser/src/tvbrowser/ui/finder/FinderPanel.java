@@ -181,6 +181,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
         if (item.isEnabled()) {
           mCurChoosenDate=d;       
           mRenderer.setSelectedItem(item);
+          mList.setSelectedValue(item, true);
           item.startProgress(mDateChangedListener, callback);
           if (callback!=null) {
             callback.run();
