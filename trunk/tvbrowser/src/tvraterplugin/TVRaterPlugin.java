@@ -271,7 +271,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * Calls Update-Thread when the TvData has Changed
      */
     public void handleTvDataChanged() {
-        if (Integer.parseInt(_settings.getProperty("updateIntervall", "4")) < 3) {
+        if (Integer.parseInt(_settings.getProperty("updateIntervall", "3")) < 3) {
             updateDB();
         }
 
