@@ -85,18 +85,12 @@ public class ToolbarSettingsTab implements devplugin.SettingsTab {
     mLocationCB = new JComboBox(new String[]{
       mLocalizer.msg("top","top"),
       mLocalizer.msg("left","left"),
-      mLocalizer.msg("bottom","bottom"),
-      mLocalizer.msg("right","right")
     });
     pn.add(mLocationCB);
 
     String location = Settings.propToolbarLocation.getString();
-    if ("east".equals(location)) {
-      mLocationCB.setSelectedIndex(3);
-    }else if ("west".equals(location)) {
+    if ("west".equals(location)) {
       mLocationCB.setSelectedIndex(1);
-    }else if ("south".equals(location)) {
-      mLocationCB.setSelectedIndex(2);
     }
 
 
@@ -215,12 +209,6 @@ public class ToolbarSettingsTab implements devplugin.SettingsTab {
 
     if (mLocationCB.getSelectedIndex() == 1) {
      toolbar.setToolbarLocation(BorderLayout.WEST);
-    }
-    else if (mLocationCB.getSelectedIndex() == 2) {
-     toolbar.setToolbarLocation(BorderLayout.EAST);
-    }
-    else if (mLocationCB.getSelectedIndex() == 3) {
-     toolbar.setToolbarLocation(BorderLayout.SOUTH);
     }
     else{
       toolbar.setToolbarLocation(BorderLayout.NORTH);

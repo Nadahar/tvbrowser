@@ -214,7 +214,13 @@ public class MutableProgram implements Program {
 
 
   public final String getDateString() {
+    Date d = getDate();
+    if (d == null) {
+      System.out.println(this.toString());
+      return "";
+    }
     return getDate().toString();
+
   }
 
 

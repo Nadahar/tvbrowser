@@ -189,7 +189,7 @@ public class Settings {
       
     propArr = new Property[] {
      /* propShowUpdateButton, propShowPreferencesButton, */propToolbarButtonStyle,
-      propToolbarButtons, propToolbarIsFloatable, propToolbarLocation,
+      propToolbarButtons, propToolbarLocation,
       propToolbarUseBigIcons
     };
     if (mProp.hasChanged(propArr)) {
@@ -389,9 +389,6 @@ public class Settings {
 
   public static final BooleanProperty propToolbarUseBigIcons
     = new BooleanProperty(mProp, "toolbarUseBigIcons", true);
-
-  public static final BooleanProperty propToolbarIsFloatable
-    = new BooleanProperty(mProp, "toolbarIsFloatable", true);
   
   public static final StringProperty propToolbarLocation
     = new StringProperty(mProp, "toolbarLocation", "north");

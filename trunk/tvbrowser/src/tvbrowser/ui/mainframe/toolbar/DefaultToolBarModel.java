@@ -242,9 +242,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
     popup.addPopupMenuListener(new PopupMenuListener(){
       public void popupMenuCanceled(PopupMenuEvent e) {
-        System.out.println("cancel");
         AbstractButton button = (AbstractButton)item.getValue(ToolBar.ACTION_VALUE);
-        System.out.println("state: "+button.isSelected());
         button.setSelected(!MainFrame.getInstance().isShowAllFilterActivated());
         MainFrame.getInstance().updateToolbar();
       }

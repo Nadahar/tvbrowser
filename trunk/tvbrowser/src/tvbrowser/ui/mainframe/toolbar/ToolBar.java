@@ -86,6 +86,7 @@ public class ToolBar extends JToolBar {
     mIconSize = ICON_BIG;
     mContextMenu = new ContextMenu(this);
     setToolbarLocation(BorderLayout.NORTH);
+    setFloatable(false);
     update();
     addMouseListener(new MouseAdapter(){
       public void mouseClicked(MouseEvent e) {
@@ -95,6 +96,7 @@ public class ToolBar extends JToolBar {
       }
     });
   }
+
 
   public void update() {
     super.removeAll();
@@ -119,12 +121,6 @@ public class ToolBar extends JToolBar {
 
     }
 
-
-    if (mLocation == BorderLayout.EAST || mLocation == BorderLayout.WEST) {
-      setOrientation(JToolBar.VERTICAL);
-    }else {
-      setOrientation(JToolBar.HORIZONTAL);
-    }
 
     updateUI();
   }
@@ -238,7 +234,6 @@ public class ToolBar extends JToolBar {
       mStyle = STYLE_ICON|STYLE_TEXT;
     }
 
-    setFloatable(Settings.propToolbarIsFloatable.getBoolean());
 
 
     String locationStr = Settings.propToolbarLocation.getString();
@@ -254,6 +249,13 @@ public class ToolBar extends JToolBar {
     }else {
       mLocation = BorderLayout.NORTH;
     }
+
+    if (mLocation == BorderLayout.EAST || mLocation == BorderLayout.WEST) {
+      setOrientation(JToolBar.VERTICAL);
+    }else {
+      setOrientation(JToolBar.HORIZONTAL);
+    }
+
   }
 
   public void storeSettings() {
@@ -268,7 +270,7 @@ public class ToolBar extends JToolBar {
       Settings.propToolbarButtonStyle.setString("text&icon");
     }
 
-    Settings.propToolbarIsFloatable.setBoolean(isFloatable());
+
 
     if (mLocation == null) {
       Settings.propToolbarLocation.setString("hidden");
@@ -285,7 +287,7 @@ public class ToolBar extends JToolBar {
     else {
       Settings.propToolbarLocation.setString("north");
     }
-
+    
   }
 
   public void setToolbarLocation(String location) {

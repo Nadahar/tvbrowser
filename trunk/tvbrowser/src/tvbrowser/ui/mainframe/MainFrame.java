@@ -194,7 +194,7 @@ private Node mDateChannelNode;
     this.setShowDatelist(Settings.propShowDatelist.getBoolean());
     this.setShowChannellist(Settings.propShowChannels.getBoolean());
 
-    updateToolBar();
+    updateToolbar();
     
     
     mCenterComponent = mRootNode.getComponent();
@@ -233,7 +233,7 @@ private Node mDateChannelNode;
   }
   
   
-  private void updateToolBar() {
+  public void updateToolbar() {
     JPanel contentPane = (JPanel)getContentPane();
     
     if (mToolBar!=null) {
@@ -246,8 +246,11 @@ private Node mDateChannelNode;
     String location = mToolBar.getToolbarLocation();
     if (location!=null) {
       contentPane.add(mToolBar, location);
+      System.out.println("show toolbar at "+location);
     }
-      
+    contentPane.invalidate();
+    contentPane.updateUI();
+
   }
   
   public ProgramTableScrollPane getProgramTableScrollPane() {
@@ -255,9 +258,9 @@ private Node mDateChannelNode;
   }
 
 
-  public void updateToolbar() {
-    mToolBar.update();
-  }
+
+
+
 
 
   public ToolBar getToolbar() {
@@ -695,7 +698,7 @@ public void showHelpDialog() {
     else {
       Settings.propToolbarLocation.setString("hidden");
     }
-    updateToolBar();
+    updateToolbar();
     jcontentPane.validate();
   }
   
