@@ -697,13 +697,17 @@ public class MutableProgram implements Program {
       + ", " + getDateString() + ": '" + getTitle() + "'";
   }
   
-  public boolean equals(devplugin.Program program) {
-    return program!=null
-       && mChannel.equals(program.getChannel())
-       && getDate().equals(program.getDate())
-       && getHours() == program.getHours()
-       && getMinutes() == program.getMinutes()
-       && getTitle().equals(program.getTitle());
+  public boolean equals(Object o) {
+    if (o instanceof devplugin.Program) {
+      devplugin.Program program = (devplugin.Program)o;
+      return program!=null
+             && mChannel.equals(program.getChannel())
+             && getDate().equals(program.getDate())
+             && getHours() == program.getHours()
+             && getMinutes() == program.getMinutes()
+             && getTitle().equals(program.getTitle());
+    }
+    return false;
   }
-  
+ 
 }

@@ -84,15 +84,14 @@ public class ReminderList implements ActionListener {
    * <p>
    * If there is no such item, null is returned.
    */
-  private ReminderListItem getItemWithProgram(Program program) {
+  public ReminderListItem getItemWithProgram(Program program) {
     Iterator iter = mList.iterator();
     while (iter.hasNext()) {
       ReminderListItem item = (ReminderListItem) iter.next();
-      if (item.getProgram().equals(program)) {
+      if (program.equals(item.getProgram())) {
         return item;
       }
-    }
-    
+    }    
     return null;
   }
 
@@ -111,14 +110,17 @@ public class ReminderList implements ActionListener {
     }
   }
 
-  
+  public int size() {
+    return mList.size();
+  }
+ 
   
   public void remove(ReminderListItem item) {
     mList.remove(item);
     item.getProgram().unmark(ReminderPlugin.getInstance());
   }
   
-  
+ 
   
   public void remove(Program program) {
     Iterator itemIter = mList.iterator();
