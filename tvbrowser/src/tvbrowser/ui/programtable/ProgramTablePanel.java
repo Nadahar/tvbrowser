@@ -231,8 +231,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
           int inx=h/((24/part.length));
           
           devplugin.Channel channel=curProgram.getChannel();
-         // System.out.println("title: "+curProgram.getTitle()+" pos: "+channel.getPos()+" "+channel.getName());
-          
+         
           part[inx].addProgram(curProgram);
         }
       }
@@ -335,23 +334,27 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
 
     Point p=scrollPane.getViewport().getViewPosition();
     channelPanel.scroll(p.x);
+  //  System.out.println(p.y);
   }
 
   /**
    * interface ScrollableTablePanel
    */
-  public void scrollTo(int hour) {
-  	
-    int inx=hour*NUM_OF_DAYTIMES/24;
-    int x=(int)scrollPane.getViewport().getViewPosition().getX();
-    int y=centerPanel.getHeight()/NUM_OF_DAYTIMES*inx;
-    int maxY=centerPanel.getHeight()-scrollPane.getViewport().getHeight();
-
-    if (y>maxY) {
-      y=maxY;
+  public void scrollTo(int hour) {	
+	int c=(int)(NUM_OF_DAYTIMES*hour/24.0);
+ 	
+	int posY=0;
+	int posX=(int)scrollPane.getViewport().getViewPosition().getX();
+    for (int i=0;i<c;i++) {
+    	posY+=part[i].getHeight();
+    	System.out.print("*"+part[i].getHeight()+"*");
     }
-
-    scrollPane.getViewport().setViewPosition(new Point(x,y));
+    System.out.println();
+    int s=hour%(24/NUM_OF_DAYTIMES);   
+    
+    posY+=part[c].getHeight()/NUM_OF_DAYTIMES*s - scrollPane.getHeight()/2;
+	scrollPane.getViewport().setViewPosition(new Point(posX,posY));      
+  
   }
 
 
@@ -374,7 +377,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
   }
 
   /**
-   * interface ScrollableTablePanel
+   * interface ScrollableTablePanel (currently unused)
    */
   public void up() {
     Point pos=scrollPane.getViewport().getViewPosition();
@@ -388,7 +391,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
   }
 
   /**
-   * interface ScrollableTablePanel
+   * interface ScrollableTablePanel (currently unused)
    */
   public void down() {
     Point pos=scrollPane.getViewport().getViewPosition();
@@ -402,7 +405,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
   }
 
   /**
-   * interface ScrollableTablePanel
+   * interface ScrollableTablePanel (currently unused)
    */
   public void left() {
     Point pos=scrollPane.getViewport().getViewPosition();
@@ -414,7 +417,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Cha
   }
 
   /**
-   * interface ScrollableTablePanel
+   * interface ScrollableTablePanel (currently unused)
    */
   public void right() {
     Point pos=scrollPane.getViewport().getViewPosition();
