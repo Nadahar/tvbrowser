@@ -99,7 +99,7 @@ public class SendDialog extends JDialog {
         // create a list of those who support multiple program execution
         Vector selectablePluginList = new Vector();
         for (int i = 0; i < installedPluginArr.length; i++) {
-            if ((installedPluginArr[i] != mPlugin) && (installedPluginArr[i].canReceivePrograms())) {
+            if (installedPluginArr[i].canReceivePrograms()) {
                 selectablePluginList.add(installedPluginArr[i]);
             }
         }
@@ -108,7 +108,7 @@ public class SendDialog extends JDialog {
 
         GridBagConstraints c = new GridBagConstraints();
 
-        c.gridwidth = GridBagConstraints.RELATIVE;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0;
         c.weighty = 0;
         c.insets = new Insets(5, 5, 5, 0);
@@ -119,6 +119,7 @@ public class SendDialog extends JDialog {
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 1.0;
         c.weighty = 0;
+        c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(5, 5, 5, 5);
 
         panel.add(mPluginList, c);
@@ -164,9 +165,8 @@ public class SendDialog extends JDialog {
      * Sends the Data to the selected Plugin
      */
     protected void send() {
-        Plugin plug = (Plugin) mPluginList.getSelectedItem();
-
-        plug.execute(mPrograms);
+        PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
+        plug.receivePrograms(mPrograms);
     }
 
     /**
