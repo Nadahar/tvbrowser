@@ -321,8 +321,8 @@ public class ChannelList {
         Channel[] channels=getSubscribedChannels();
           for (int i=0;i<channels.length;i++) {
             String filename = channels[i].getIconFileName();
-            if (filename != null) {
-              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+filename);  
+            if ((filename != null) && (filename.trim().length() > 0)){
+              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+filename.trim());  
             }
           }
       }catch(IOException e) {

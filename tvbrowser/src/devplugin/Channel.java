@@ -53,6 +53,8 @@ public class Channel {
   /** FileName for the Icon */
   private String mIconFileName;
   private Icon mIcon;
+  /** The Default-Icon */
+  private Icon mDefaultIcon;
 
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon)
@@ -237,6 +239,14 @@ public class Channel {
     return mDataService;
   }
 
+  /**
+   * Sets the Default-Icon. This Icon is shown if no Icon is set by the User
+   * @param icon Default-Icon
+   */
+  public void setDefaultIcon(Icon icon) {
+      mDefaultIcon = icon;
+  }
+  
   public void setIcon(Icon icon) {
     mIcon = icon;
   }
@@ -284,6 +294,10 @@ public class Channel {
           }
       }
       
+      if (mIcon == null) {
+          return mDefaultIcon;
+      }
+      
       return mIcon;
   }
   
@@ -300,14 +314,8 @@ public class Channel {
    * @param filename Filename for Icon
    */
   public void setIconFileName(String filename) {
-      if ((filename == null) && (mIcon == null)) {
-          mIconFileName = filename;
-          mIcon = null;
-      } else if (filename != null){
-          mIconFileName = filename;
-          mIcon = null;
-      }
-      
+      mIconFileName = filename;
+      mIcon = null;
   }
   
   public boolean equals(Object obj) {
