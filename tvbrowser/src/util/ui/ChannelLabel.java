@@ -73,18 +73,18 @@ public class ChannelLabel extends JLabel {
             BufferedImage img = new BufferedImage(42, 22,BufferedImage.TYPE_INT_RGB);
         
         	Graphics2D g = img.createGraphics();
-        
-        	g.setColor(Color.BLACK);
-        	g.fillRect(0, 0, 42, 22);
-        	
+
         	g.setColor(Color.WHITE);
         	g.fillRect(1, 1, 40, 20);
-        	
+
         	int x = 1+20-ic.getIconWidth() / 2;
         	int y = 1+10-ic.getIconHeight() / 2;
 
         	ic.paintIcon(this, g, x, y);
-        
+        	
+        	g.setColor(Color.BLACK);
+        	g.drawRect(0, 0, 42, 22);
+        	
         	ImageIcon imgIcon = new ImageIcon(img);
         	super.setIcon(imgIcon);
         } else {
