@@ -34,7 +34,6 @@ import printplugin.dlgs.PrintDialog;
 
 import java.awt.print.*;
 import java.util.Properties;
-import javax.print.*;
 import devplugin.*;
 
 /**
@@ -50,8 +49,7 @@ public class PrintPlugin extends devplugin.Plugin
    private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PrintPlugin.class);
 
-   public PrintService[] mAllServices;
-
+   
    public PrintPlugin()
    {
    }
@@ -74,7 +72,7 @@ public class PrintPlugin extends devplugin.Plugin
    {
        String name = mLocalizer.msg("printProgram" ,"Print program");
        String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
-       String author = "Robert Inzinger";
+       String author = "Robert Inzinger, Martin Oberhauser";
 
        return new PluginInfo(name, desc, author, new Version(0, 5));
    }
@@ -104,40 +102,13 @@ public class PrintPlugin extends devplugin.Plugin
   }
 
 
-  public void executeOLD() {
-    
-    PrinterJob printJob = PrinterJob.getPrinterJob();
-    System.out.println("printservice: "+printJob.getPrintService().getName());
-     
-    printJob.printDialog();
-     
-    System.out.println("printservice: "+printJob.getPrintService().getName());     
-     
-    Channel[] channelList = getPluginManager().getSubscribedChannels();
-    PageFormat pageFormat = printJob.defaultPage();
-    Date date = Date.getCurrentDate();
-    int dayCount = 3;
-    double zoom = 0.4;
-     
-  /*  Printer printer = new Printer(PageFactory.createPages(pageFormat, zoom, channelList, date, dayCount));
-     
-    printJob.setPrintable(printer);
-     
-    try {
-      printJob.print();
-    } catch (PrinterException e) {
-      e.printStackTrace();
-    }
-    */
-  }
-
-
+ 
 
   
 
    public void loadSettings(Properties settings)
    {
-      mAllServices = PrintServiceLookup.lookupPrintServices(null, null);
+      
    }
 
 }

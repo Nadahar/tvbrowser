@@ -291,16 +291,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
               mFilter.setName(mFilterNameTF.getText());
             }
             
-            
-          /*
-            java.util.Enumeration enum=mComponentListModel.elements();
-            while (enum.hasMoreElements()) {
-              FilterComponentList.add(((FilterComponentItem)enum.nextElement()).getComponent());
-            }
-         */
+         
             try {
               mFilter.setRule(mFilterRuleTF.getText());
-              System.out.println("store!");
               FilterComponentList.getInstance().store();
               hide();
             }catch(ParserException exc) {              

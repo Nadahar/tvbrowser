@@ -47,6 +47,11 @@ import java.awt.print.PrinterJob;
 
 public class PrintDialog extends JDialog {
   
+   static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(PrintDialog.class);
+
+  
+  
   private JRadioButton mFromRb, mAllRb, mAllChannelsRb, mSelectedChannelsRb;
   private JComboBox mDateCb, mDayStartCb, mDayEndCb, mFilterCb, mSizeCb, mSortingCb;
   private JSpinner mDayCountSpinner, mNumberOfColumnsSp;
@@ -66,7 +71,7 @@ public class PrintDialog extends JDialog {
   public PrintDialog(final Frame parent, PrinterJob printerJob) {
     super(parent, true);
     mParent = parent;
-    setTitle("Drucken");
+    setTitle(mLocalizer.msg("print","Print"));
     mPrinterJob = printerJob;
     mPageFormat = printerJob.defaultPage();
     
@@ -81,11 +86,11 @@ public class PrintDialog extends JDialog {
     JPanel btnsPn = new JPanel();
     btnsPn.setLayout(new BoxLayout(btnsPn,BoxLayout.Y_AXIS));
     
-    JButton printerSetupBtn = new JButton("Drucker einrichten...",ImageUtilities.createImageIconFromJar("printplugin/imgs/PageSetup24.gif", getClass()));
-    JButton pageBtn = new JButton("Seite einrichten...", ImageUtilities.createImageIconFromJar("printplugin/imgs/Properties24.gif", getClass()));
-    JButton previewBtn = new JButton("Vorschau...", ImageUtilities.createImageIconFromJar("printplugin/imgs/PrintPreview24.gif", getClass()));
-    JButton printBtn = new JButton("Drucken", ImageUtilities.createImageIconFromJar("printplugin/imgs/Print24.gif", getClass()));   
-    JButton cancelBtn = new JButton("Abbrechen", ImageUtilities.createImageIconFromJar("printplugin/imgs/Stop24.gif", getClass()));
+    JButton printerSetupBtn = new JButton(mLocalizer.msg("configPrinter","Configure printer")+"...",ImageUtilities.createImageIconFromJar("printplugin/imgs/PageSetup24.gif", getClass()));
+    JButton pageBtn = new JButton(mLocalizer.msg("pageSetup","Page Setup")+"...", ImageUtilities.createImageIconFromJar("printplugin/imgs/Properties24.gif", getClass()));
+    JButton previewBtn = new JButton(mLocalizer.msg("preview","Preview")+"...", ImageUtilities.createImageIconFromJar("printplugin/imgs/PrintPreview24.gif", getClass()));
+    JButton printBtn = new JButton(mLocalizer.msg("print","Drucken"), ImageUtilities.createImageIconFromJar("printplugin/imgs/Print24.gif", getClass()));   
+    JButton cancelBtn = new JButton(mLocalizer.msg("cancel","Abbrechen"), ImageUtilities.createImageIconFromJar("printplugin/imgs/Stop24.gif", getClass()));
     
     printerSetupBtn.setHorizontalAlignment(SwingConstants.LEFT);
     pageBtn.setHorizontalAlignment(SwingConstants.LEFT);
@@ -127,10 +132,10 @@ public class PrintDialog extends JDialog {
       public void actionPerformed(ActionEvent event) {
         mPrinter = createPrinter();
         if (mPrinter.getNumberOfPages()==0) {
-          JOptionPane.showMessageDialog(parent,"Es sind keine Seiten zu drucken.");
+          JOptionPane.showMessageDialog(parent,mLocalizer.msg("noPagesToPrint","There are no pages to print."));
         }
         else {
-          PreviewDlg dlg = new PreviewDlg(parent, mPrinter, mPageFormat/*mPrinterJob.defaultPage()*/, mPrinter.getNumberOfPages());  
+          PreviewDlg dlg = new PreviewDlg(parent, mPrinter, mPageFormat, mPrinter.getNumberOfPages());  
           util.ui.UiUtilities.centerAndShow(dlg);
         }
       }
@@ -152,7 +157,7 @@ public class PrintDialog extends JDialog {
       public void actionPerformed(ActionEvent event) {
         mPrinter = createPrinter();
         if (mPrinter.getNumberOfPages()==0) {
-          JOptionPane.showMessageDialog(parent,"Es sind keine Seiten zu drucken.");
+          JOptionPane.showMessageDialog(parent,mLocalizer.msg("noPagesToPrint","There are no pages to print."));
         }
         else {
           hide();  
@@ -196,27 +201,27 @@ public class PrintDialog extends JDialog {
     
     JPanel datePn = new JPanel();
     datePn.setLayout(new BoxLayout(datePn,BoxLayout.Y_AXIS));
-    datePn.setBorder(BorderFactory.createTitledBorder("Zeitraum"));
+    datePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("period","Period")));
     
     JPanel pn1 = new JPanel();
     pn1.setLayout(new BoxLayout(pn1,BoxLayout.X_AXIS));
-    pn1.add(mFromRb = new JRadioButton("Ab"));
+    pn1.add(mFromRb = new JRadioButton(mLocalizer.msg("from","from")));
     pn1.add(mDateCb = new JComboBox(createDateObjects(21)));
-    pn1.add(mForLabel = new JLabel("Programm fuer"));
+    pn1.add(mForLabel = new JLabel(mLocalizer.msg("numberOfDays","Programm fuer")));
     pn1.add(mDayCountSpinner = new JSpinner(new SpinnerNumberModel(5,1,28,1)));
-    pn1.add(mDaysLabel = new JLabel("Tage"));
+    pn1.add(mDaysLabel = new JLabel(mLocalizer.msg("days","days")));
     
     JPanel pn2 = new JPanel(new BorderLayout());
-    pn2.add(mAllRb = new JRadioButton("Alles"),BorderLayout.WEST);
+    pn2.add(mAllRb = new JRadioButton(mLocalizer.msg("all","all")),BorderLayout.WEST);
     
     datePn.add(pn1);
     datePn.add(pn2);
     
     JPanel timePn = new JPanel(new GridLayout(2,2));
-    timePn.setBorder(BorderFactory.createTitledBorder("Uhrzeit"));
-    timePn.add(new JLabel("Tagesbeginn:"));
+    timePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("time","Time")));
+    timePn.add(new JLabel(mLocalizer.msg("startOfDay","Start of day")+":"));
     timePn.add(mDayStartCb=new JComboBox(createIntegerArray(0,23,1)));
-    timePn.add(new JLabel("Tagesende:"));
+    timePn.add(new JLabel(mLocalizer.msg("endOfDay","End of day")+":"));
     timePn.add(mDayEndCb=new JComboBox(createIntegerArray(12,36,1)));
     
     mDayStartCb.setRenderer(new TimeListCellRenderer());
@@ -228,36 +233,36 @@ public class PrintDialog extends JDialog {
     
     JPanel channelPn = new JPanel();
     channelPn.setLayout(new BoxLayout(channelPn,BoxLayout.Y_AXIS));
-    channelPn.setBorder(BorderFactory.createTitledBorder("Sender"));
+    channelPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channels","channels")));
     
     JPanel allChannelsPn = new JPanel(new BorderLayout());
-    allChannelsPn.add(mAllChannelsRb=new JRadioButton("Alle"));
+    allChannelsPn.add(mAllChannelsRb=new JRadioButton(mLocalizer.msg("allChannels","All")));
     
     JPanel channelSelectionPn = new JPanel(new BorderLayout());    
-    channelSelectionPn.add(mSelectedChannelsRb=new JRadioButton("Ausgewaehlte: 10 von 23 Sender ausgewaehlt"),BorderLayout.WEST);
-    channelSelectionPn.add(mChangeSelectedChannelsBt=new JButton("aendern.."),BorderLayout.EAST);
+    channelSelectionPn.add(mSelectedChannelsRb=new JRadioButton(),BorderLayout.WEST);
+    channelSelectionPn.add(mChangeSelectedChannelsBt=new JButton(mLocalizer.msg("change","change")+"..."),BorderLayout.EAST);
     
     channelPn.add(allChannelsPn);
     channelPn.add(channelSelectionPn);
     
     JPanel filterPn = new JPanel(new GridLayout(1,2));
-    filterPn.setBorder(BorderFactory.createTitledBorder("Filter"));
-    filterPn.add(mUseFilterCB=new JCheckBox("Filter verwenden:"));
+    filterPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("filter","Filter")));
+    filterPn.add(mUseFilterCB=new JCheckBox(mLocalizer.msg("useFilter","use filter")+":"));
     filterPn.add(mFilterCb=new JComboBox(Plugin.getPluginManager().getAvailableFilters()));
     
     JPanel layoutPn = new JPanel(new GridLayout(2,2));
-    layoutPn.setBorder(BorderFactory.createTitledBorder("Layout:"));;
+    layoutPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("layout","layout")+":"));
     
-    layoutPn.add(new JLabel("Spalten pro Seite:"));
+    layoutPn.add(new JLabel(mLocalizer.msg("columnsPerPage","Columns per page")+":"));
     layoutPn.add(mNumberOfColumnsSp = new JSpinner(new SpinnerNumberModel(5,1,20,1)));
     
-    layoutPn.add(new JLabel("Sortiert nach"));
-    layoutPn.add(mSortingCb = new JComboBox(new String[]{"Sender","Beginnzeit"}));
+    layoutPn.add(new JLabel(mLocalizer.msg("sortedBy","sorted by")));
+    layoutPn.add(mSortingCb = new JComboBox(new String[]{mLocalizer.msg("channel",""),mLocalizer.msg("time","time")}));
        
     JPanel programSettingsPn = new JPanel(new BorderLayout());
-    programSettingsPn.setBorder(BorderFactory.createTitledBorder("Programmelement"));
+    programSettingsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("programItem","program item")));
     
-    programSettingsPn.add(mShowPluginMarkCB = new JCheckBox("Plugin-Markierung anzeigen"),BorderLayout.SOUTH);
+    programSettingsPn.add(mShowPluginMarkCB = new JCheckBox(mLocalizer.msg("showPluginMarking","Show plugin marking")),BorderLayout.SOUTH);
     
     Icon ico = createDemoProgramPanel();
     System.out.println(ico.getIconWidth()+" / "+ico.getIconHeight());
@@ -268,7 +273,7 @@ public class PrintDialog extends JDialog {
     
     
     JPanel pn5 = new JPanel(new BorderLayout());
-    pn5.add(mProgramPanelConfigBt = new JButton("anpassen.."),BorderLayout.NORTH);
+    pn5.add(mProgramPanelConfigBt = new JButton(mLocalizer.msg("configure","configure")+"..."),BorderLayout.NORTH);
     JScrollPane scrollPane = new JScrollPane(pn6);
     scrollPane.setPreferredSize(new Dimension(250,100));
     programSettingsPn.add(scrollPane,BorderLayout.WEST);
@@ -361,7 +366,7 @@ public class PrintDialog extends JDialog {
   }
   
   private void updateSelectedChannelsPanel() {
-    mSelectedChannelsRb.setText("Ausgewaehlte: "+mChannels.length+" Sender ausgewaehlt");
+    mSelectedChannelsRb.setText(mLocalizer.msg("selectedChannels","Selected: {0} channels selected.",""+mChannels.length));
   }
   
   private Date[] createDateObjects(int days) {
@@ -426,7 +431,6 @@ public class PrintDialog extends JDialog {
   }
   
   private ProgramIconSettings getProgramIconSettings() {
-    System.out.println("# of fields: "+mProgramIconSettings.getProgramInfoFields().length);
     return mProgramIconSettings;
   }
   
@@ -484,7 +488,7 @@ public class PrintDialog extends JDialog {
     
   }
   
-}
+
 
 
 class PercentListCellRenderer extends DefaultListCellRenderer {
@@ -525,7 +529,7 @@ class TimeListCellRenderer extends DefaultListCellRenderer {
         label.setText(val+":00");            
       }
       else {
-        label.setText((val-24)+":00 (naechster Tag)");
+        label.setText((val-24)+":00 ("+mLocalizer.msg("nextDay","next day")+")");
       }
     }
                 
@@ -534,4 +538,4 @@ class TimeListCellRenderer extends DefaultListCellRenderer {
   
 }
 
-
+}

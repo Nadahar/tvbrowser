@@ -159,19 +159,9 @@ public class FilterComponentList {
   }
   
   public boolean exists(String name) {
-    return mComponentMap.containsKey(name.toUpperCase());
-    /*
-    System.out.println("does component "+name+" exist?");
-    Iterator it=mComponentSet.iterator();
-    while (it.hasNext()) {
-      FilterComponent comp=(FilterComponent)it.next();
-      if (comp.toString().equalsIgnoreCase(name)) {
-        return true;
-      }
-    }
-    System.out.println("no!");*/
-  
+    return mComponentMap.containsKey(name.toUpperCase());  
   }
   
   
+
 }

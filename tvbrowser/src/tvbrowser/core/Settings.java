@@ -28,6 +28,8 @@ package tvbrowser.core;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.UIManager;
 
@@ -67,6 +69,8 @@ public class Settings {
   private static final Font PROGRAMTIMEFONT=new Font("Dialog",Font.BOLD,12);
   
   private static PropertyManager mProp = new PropertyManager();
+  
+  private static HashMap mPropertiesHash = new HashMap();
 
 
   /**
@@ -469,4 +473,18 @@ public class Settings {
   public static final EncodedStringProperty propFtpProxyPassword
     = new EncodedStringProperty(mProp, "proxy.ftp.password", "", PROXY_PASSWORD_SEED);
 	
+  
+  public static BooleanProperty propUpdateListingsByDataService(String className) {
+    return getBooleanProperty("using.tvdataservice."+className, true);
+  }
+  
+  private static BooleanProperty getBooleanProperty(String key, boolean defaultValue) {
+    BooleanProperty prop = (BooleanProperty)mPropertiesHash.get(key);
+    if (prop==null) {
+      prop = new BooleanProperty(mProp, key, defaultValue);
+      mPropertiesHash.put(key, prop);
+    }
+    return prop;
+  }
+  
 }

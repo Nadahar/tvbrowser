@@ -30,6 +30,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataServiceManager;
+import tvdataservice.TvDataService;
+
 /**
  * TV-Browser
  *
@@ -58,7 +61,8 @@ public class UpdateDlg extends JDialog implements ActionListener {
   private int result=0;
   private JComboBox comboBox;
   private JCheckBox checkBox;
-
+  private JCheckBox[] mDataServiceCbArr;
+  private TvDataService[] mTvDataServiceArr;
   
   
   public UpdateDlg(JFrame parent, boolean modal) {
@@ -96,9 +100,28 @@ public class UpdateDlg extends JDialog implements ActionListener {
     comboBox = new JComboBox(PERIOD_MSG_ARR);
     panel1.add(comboBox,BorderLayout.EAST);
     northPanel.add(panel1);
+    
+    mTvDataServiceArr = TvDataServiceManager.getInstance().getDataServices();
+    if (mTvDataServiceArr.length>1) {
+      panel1.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+      JPanel dataServicePanel = new JPanel();
+      dataServicePanel.setLayout(new BoxLayout(dataServicePanel, BoxLayout.Y_AXIS));
+      dataServicePanel.setBorder(BorderFactory.createTitledBorder("Diese Datenquellen verwenden:"));
+      mDataServiceCbArr = new JCheckBox[mTvDataServiceArr.length];
+      for (int i=0; i<mTvDataServiceArr.length; i++) {
+        mDataServiceCbArr[i] = new JCheckBox(mTvDataServiceArr[i].getInfo().getName());
+        mDataServiceCbArr[i].setSelected(Settings.propUpdateListingsByDataService(mTvDataServiceArr[i].getClass().getName()).getBoolean());
+        dataServicePanel.add(mDataServiceCbArr[i]);        
+      }
+      JPanel p = new JPanel(new BorderLayout());
+      p.add(dataServicePanel,BorderLayout.CENTER);
+      northPanel.add(p);
+    }
+    
     msg = mLocalizer.msg("rememberSettings", "Remember settings");
     checkBox=new JCheckBox(msg);
     JPanel panel2=new JPanel(new BorderLayout());
+    panel2.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
     
     try {
       int inx = Settings.propDownloadPeriod.getInt();
@@ -119,6 +142,9 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
   public int getResult() { return result; }
 
+  public TvDataService[] getSelectedTvDataServices() {
+    return null;
+  }
   
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
@@ -133,6 +159,11 @@ public class UpdateDlg extends JDialog implements ActionListener {
       }
       if (checkBox.isSelected()) {
         Settings.propDownloadPeriod.setInt(result);
+        for (int i=0; i<mTvDataServiceArr.length; i++) {
+          boolean b = mDataServiceCbArr[i].isSelected();          
+          Settings.propUpdateListingsByDataService(mTvDataServiceArr[i].getClass().getName()).setBoolean(b);                
+        }
+        
       }
 
       setVisible(false);

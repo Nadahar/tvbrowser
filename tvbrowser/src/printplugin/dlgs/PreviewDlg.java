@@ -42,10 +42,14 @@ public class PreviewDlg extends JDialog implements ActionListener {
   private JButton mPrevBt, mNextBt;
   private JLabel mSiteLb;
   
+  private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(PreviewDlg.class);
+
+  
   public PreviewDlg(Frame parent, Printable printer, PageFormat pageFormat, int numberOfPages) {
   
     super(parent, true);
-    setTitle("Vorschau");
+    setTitle(mLocalizer.msg("preview","preview"));
     mPrinter = printer;
     mPageFormat = pageFormat;
     
@@ -80,9 +84,8 @@ public class PreviewDlg extends JDialog implements ActionListener {
               
   }
   
-  private void updateSiteLabelText() {
-    mSiteLb.setText((mPreviewComponent.getPageIndex()+1)+" of "+mPreviewComponent.getNumberOfPages());
-    System.out.println(mSiteLb.getText());
+  private void updateSiteLabelText() {    
+    mSiteLb.setText(mLocalizer.msg("pageInfo","page {0} of {1}",""+(mPreviewComponent.getPageIndex()+1), ""+mPreviewComponent.getNumberOfPages()));
   }
   
   public void actionPerformed(ActionEvent event) {
@@ -150,13 +153,9 @@ class PreviewComponent extends JComponent {
     g.scale(ZOOM,ZOOM);
     g.setColor(Color.white);
     g.fillRect(0,0,(int)mPageFormat.getWidth(), (int)mPageFormat.getHeight());
-    
-  //  g.drawRect(0,0,(int)mPageFormat.getWidth(), (int)mPageFormat.getHeight());
     g.setColor(Color.lightGray);
     g.drawRect((int)mPageFormat.getImageableX(), (int)mPageFormat.getImageableY(), (int)mPageFormat.getImageableWidth(), (int)mPageFormat.getImageableHeight());
     g.setColor(Color.black);
-  //  g.setColor(Color.white);
-   // g.fillRect((int)mPageFormat.getImageableX(), (int)mPageFormat.getImageableY(), (int)mPageFormat.getImageableWidth(), (int)mPageFormat.getImageableHeight());
     
     try {
       mPrintable.print(g, null, mPageIndex);
