@@ -37,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
@@ -225,6 +226,10 @@ public class DialogRating extends JDialog {
                     System.out.println("Updater gestartet");
                     Updater up = new Updater(_rater);
                     up.run();
+                    if (up.wasSuccessfull()) {
+                        JOptionPane.showMessageDialog(_rater.getParentFrameForTVRater(),
+                                _mLocalizer.msg("updateSuccess", "Update was successfull!"));
+                    }
                 }
             };
             updateThread.start();

@@ -167,7 +167,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 		updatePanel.add(_updateTime, BorderLayout.CENTER);
 
 		main.add(updatePanel);
-
+		
 		panel.add(main, BorderLayout.NORTH);
 
 		return panel;
