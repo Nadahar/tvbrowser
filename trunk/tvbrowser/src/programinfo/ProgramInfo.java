@@ -49,12 +49,10 @@ import devplugin.*; /**
   			return null ;
   		}
   		
-  		public void execute(devplugin.Program[] program) {
-  			if (program!=null && program.length==1) {
-  				ProgramInfoDialog dlg= new ProgramInfoDialog(parent, program[0]);
-				dlg.pack();
-				UiUtilities.centerAndShow(dlg);
-  			}
+  		public void execute(Program program) {
+            ProgramInfoDialog dlg = new ProgramInfoDialog(parent, program);
+            dlg.pack();
+            UiUtilities.centerAndShow(dlg);
   		}
   		
   		public String getMarkIconName() {

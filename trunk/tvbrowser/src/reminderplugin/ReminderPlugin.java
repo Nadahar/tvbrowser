@@ -157,22 +157,32 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     return new ReminderSettingsTab(settings);
   }
   
-  public void execute(devplugin.Program[] programArr) {
-    if (programArr == null) return;
-    if (programArr.length == 1) {
-      ReminderDialog dlg = new ReminderDialog(parent, programArr[0]);
-      UiUtilities.centerAndShow(dlg);
-      if (dlg.getOkPressed()) {
-        int minutes = dlg.getReminderMinutes();
-        addToReminderList(programArr[0], minutes);
-      }
-      dlg.dispose();
-    } else {
-      // multiple program execution
-      int minutes = 3;
-      for (int i = 0; i < programArr.length; i++) {
-        addToReminderList(programArr[i], minutes);
-      }
+  
+  
+  /**
+   * This method is invoked by the host-application if the user has choosen your
+   * plugin from the context menu.
+   */
+  public void execute(Program program) {
+    ReminderDialog dlg = new ReminderDialog(parent, program);
+    UiUtilities.centerAndShow(dlg);
+    if (dlg.getOkPressed()) {
+      int minutes = dlg.getReminderMinutes();
+      addToReminderList(program, minutes);
+    }
+    dlg.dispose();
+  }
+    
+    
+    
+  /**
+   * This method is invoked for multiple program execution.
+   */
+  public void execute(Program[] programArr) {
+    // multiple program execution
+    int minutes = 3;
+    for (int i = 0; i < programArr.length; i++) {
+      addToReminderList(programArr[i], minutes);
     }
   }
 
