@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@ package devplugin;
 import java.util.Iterator;
 
 import javax.swing.JPopupMenu;
+
 
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
@@ -195,4 +196,16 @@ public interface PluginManager {
    */
   public void handleProgramDoubleClick(Program program);
 
+  /**
+   * In TV-Browser 1.1 a plugin can store its programs in a structure like
+   * a direktory. This method returns the root node of this structure for
+   * a plugin.
+   * 
+   * @param pluginId
+   * @return The root node
+   * @since 1.1
+   */
+  public TreeNode getTree(String pluginId);
+ 
+  
 }

@@ -4,6 +4,7 @@ Changelog TVBrowser
 - New mainframe layout
 - Menu bar for MacOS X added
 - New toolbar added (drag&drop)
+- Plugin-View (tree) added
 - Added Channel-Logos
 - Added new Filter to select if the Program is running, was running or will be running
 - Added localisation for Filters. Now it is possible to write "Untertitelt und nicht Morgens"

@@ -112,5 +112,6 @@ public interface PluginAccess {
    * @return the icon to use for marking programs in the program table.
    */
   public Icon getMarkIcon();
-
+  
+  
 }
