@@ -214,17 +214,23 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected void doSaveSettings(File userDirectory) throws TvBrowserException {
     mLog.info("Storing plugin settings for " + getId() + "...");
 
-    // save the plugin data
-    File datFile = new File(userDirectory, getId() + ".dat");
+    // save the plugin data in a temp file
+    File tmpDatFile = new File(userDirectory, getId() + ".dat.temp");
     ObjectOutputStream out = null;
     try {
-      out = new ObjectOutputStream(new FileOutputStream(datFile));
+      out = new ObjectOutputStream(new FileOutputStream(tmpDatFile));
       mPlugin.writeData(out);
+      out.close();
+
+      // Saving suceed -> Delete the old file and rename the temp file
+      File datFile = new File(userDirectory, getId() + ".dat");
+      datFile.delete();
+      tmpDatFile.renameTo(datFile);
     }
     catch(Throwable thr) {
       throw new TvBrowserException(getClass(), "error.5",
           "Saving data for plugin {0} failed.\n({1})",
-          getInfo().getName(), datFile.getAbsolutePath(), thr);
+          getInfo().getName(), tmpDatFile.getAbsolutePath(), thr);
     }
     finally {
       if (out != null) {
@@ -232,21 +238,26 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       }
     }
     
-    // save the plugin settings
+    // save the plugin settings in a temp file
     FileOutputStream fOut = null;
-    File propFile = new File(userDirectory, getId() + ".prop");
+    File tmpPropFile = new File(userDirectory, getId() + ".prop");
     try {
       Properties prop = mPlugin.storeSettings();
       if (prop != null) {
-        fOut = new FileOutputStream(propFile);
-        prop.store(fOut, "settings");
+        fOut = new FileOutputStream(tmpPropFile);
+        prop.store(fOut, "Settings for plugin " + getInfo().getName());
       }
+      fOut.close();
+
+      // Saving suceed -> Delete the old file and rename the temp file
+      File propFile = new File(userDirectory, getId() + ".prop");
+      propFile.delete();
+      tmpPropFile.renameTo(propFile);
     }
     catch (Throwable thr) {
-      String msg = mLocalizer.msg("error.6",
-        "Saving settings for plugin {0} failed.\n({1})",
-        getInfo().getName(), propFile.getAbsolutePath());
-      ErrorHandler.handle(msg, thr);
+      throw new TvBrowserException(getClass(), "error.6",
+          "Saving settings for plugin {0} failed.\n({1})",
+          getInfo().getName(), tmpPropFile.getAbsolutePath(), thr);
     }    
     finally {
       if (fOut != null) {
