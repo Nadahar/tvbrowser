@@ -26,6 +26,7 @@
 package util.ui;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Dimension;
@@ -110,6 +111,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /** Color of the Text */
   private Color mTextColor = Color.BLACK;
+  
+  /** Panel under a Mouse ? */
+  private boolean mMouseOver = false;  
   
   /**
    * Creates a new instance of ProgramPanel.
@@ -374,6 +378,21 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       grp.fill3DRect(0, 0, width, height, true);
     }
 
+    if (mMouseOver) {
+        Color test       = new Color(200, 200, 0, 40);
+        grp.setColor(test);
+        grp.fillRect(0, 0, width-1, height-1);
+        
+        float dash[] = {10.0f};
+        BasicStroke dashed = new BasicStroke(1.0f, 
+                                                          BasicStroke.CAP_BUTT, 
+                                                          BasicStroke.JOIN_MITER, 
+                                                          10.0f, dash, 0.0f);
+        grp.setColor(Color.BLACK);
+        grp.setStroke(dashed);
+        grp.drawRect(0, 0, width -1, height-1);
+    }    
+    
     // Draw all the text
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()
       && mTextColor.equals(Color.BLACK))
@@ -545,5 +564,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   public Color getTextColor() {
       return mTextColor;
   }
+  
+  /**
+   * Paints the ProgramPanel
+   * @param mouse under a Mouse and needs highlight?
+   * @param g Graphics-Object
+   */
+  public void paint(boolean mouse, Graphics g) {
+      mMouseOver = mouse;
+      super.paint(g);
+  }  
   
 }

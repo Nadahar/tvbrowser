@@ -41,7 +41,6 @@ import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import tvbrowser.ui.programtable.background.OneImageBackPainter;
@@ -71,6 +70,9 @@ public class ProgramTable extends JPanel
   
   private Point mDraggingPoint;
 
+  private Point mMouse;
+  
+  private JPopupMenu mPopupMenu;  
   
   /**
    * Creates a new instance of ProgramTable.
@@ -91,6 +93,10 @@ public class ProgramTable extends JPanel
       public void mouseDragged(MouseEvent evt) {
         handleMouseDragged(evt);
       }
+          
+      public void mouseMoved(MouseEvent evt) {
+        handleMouseMoved(evt);
+      }
     });
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
@@ -99,6 +105,9 @@ public class ProgramTable extends JPanel
       public void mouseClicked(MouseEvent evt) {
         handleMouseClicked(evt);
       }
+      public void mouseExited(MouseEvent evt) {
+        handleMouseExited(evt);
+      }      
     });
     
   }
@@ -183,7 +192,7 @@ public class ProgramTable extends JPanel
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
-    
+        
     // Paint the table cells
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;
@@ -196,6 +205,8 @@ public class ProgramTable extends JPanel
     int tableHeight = Math.max(mHeight, clipBounds.y + clipBounds.height);
     mBackgroundPainter.paintBackground(grp, mColumnWidth, tableHeight,
       minCol, maxCol, clipBounds, mLayout, mModel);
+    
+    boolean mouseOver = false;
     
     int x = minCol * mColumnWidth;
     for (int col = minCol; col <= maxCol; col++) {
@@ -213,10 +224,22 @@ public class ProgramTable extends JPanel
           if (((y + cellHeight) > clipBounds.y)
             && (y < (clipBounds.y + clipBounds.height)))
           {
-            // Paint the cell
+
+            if (Settings.propMouseOver.getBoolean()) {
+                Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
+            	if ((mMouse != null) && (rec.contains(mMouse))) {
+                	mouseOver = true;
+            	} else {
+            	    mouseOver = false;
+            	}
+            } 
+            
+//          Paint the cell            
             grp.translate(x, y);
+
             panel.setSize(mColumnWidth, cellHeight);
-            panel.paint(grp);
+            panel.paint(mouseOver, grp);            
+            
             // grp.drawRect(0, 0, mColumnWidth, cellHeight);
             grp.translate(-x, -y);
           }
@@ -368,11 +391,12 @@ public class ProgramTable extends JPanel
   
   
   private void handleMouseClicked(MouseEvent evt) {
+    mMouse = evt.getPoint();      
     Program program = getProgramAt(evt.getX(), evt.getY());
     if (SwingUtilities.isRightMouseButton(evt)) {
       if (program != null) {
-        JPopupMenu menu = createPluginContextMenu(program);
-        menu.show(this, evt.getX() - 15, evt.getY() - 15);
+          mPopupMenu = createPluginContextMenu(program);
+          mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
       }
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
@@ -394,6 +418,25 @@ public class ProgramTable extends JPanel
     }
   }
 
+  
+  private void handleMouseMoved(MouseEvent evt) {
+      if (Settings.propMouseOver.getBoolean()) {
+          if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
+              mMouse = evt.getPoint();
+              repaint();
+          }
+      }
+  }
+
+  private void handleMouseExited(MouseEvent evt) {
+      if (Settings.propMouseOver.getBoolean()) {
+        JViewport viewport = (JViewport) getParent();
+      	if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
+          mMouse = null;
+          repaint();      
+      	}
+      }
+  }  
   
   public int getTimeY(int minutesAfterMidnight) {
     // Get the total time y
