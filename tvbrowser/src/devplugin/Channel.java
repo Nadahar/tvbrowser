@@ -327,6 +327,22 @@ public class Channel {
   }
   
   /**
+   * Returns true, if the 
+   * @return
+   */
+  public boolean hasIcon() {
+    if ((mUseUserIcon) && (mIcon == null) && (getIconFileName() != null)) {
+      getIcon();
+    }
+    
+    if ((mIcon != null) || (mDefaultIcon != null)) {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  /**
    * Gets the Filename for an Icon
    * @return Filename of the Icon
    */
