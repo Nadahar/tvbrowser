@@ -37,6 +37,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import captureplugin.CapturePlugin;
+
 import util.ui.Localizer;
 import util.ui.ProgramPanel;
 
@@ -114,7 +116,7 @@ public class CaptureTimeDialog extends JDialog {
         namePanel.setLayout(new BorderLayout());
 
         ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
-        p.addPluginContextMenuMouseListener();
+        p.addPluginContextMenuMouseListener(CapturePlugin.getInstance());
         
         namePanel.add(p);
         
