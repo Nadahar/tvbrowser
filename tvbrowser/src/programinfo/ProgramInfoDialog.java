@@ -88,8 +88,10 @@ public class ProgramInfoDialog extends JDialog {
     headerPn.add(timePn, BorderLayout.EAST);
     timePn.add(new JLabel(program.getDateString()));
     timePn.add(new JLabel(program.getTimeString()));
-    msg = mLocalizer.msg("min", "{0} min", new Integer(program.getLength()));
-    timePn.add(new JLabel(msg));
+    if (program.getLength()>0) {
+    	msg = mLocalizer.msg("min", "{0} min", new Integer(program.getLength()));
+    	timePn.add(new JLabel(msg));
+    }
     
     // add all the other information
     JPanel bodyPn = new JPanel(new TabLayout(1));

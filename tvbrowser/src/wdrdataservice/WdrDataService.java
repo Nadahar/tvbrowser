@@ -84,11 +84,6 @@ import java.util.regex.*;
 			
 		Calendar cal=date.getCalendar();
 		int weekOfYear=cal.get(Calendar.WEEK_OF_YEAR);
-		System.out.println("weekOfYear: "+weekOfYear);
-		System.out.println("firstdayofweek: "+cal.getFirstDayOfWeek());
-		System.out.println("minimaldaysinfirstweek: "+cal.getMinimalDaysInFirstWeek());
-		System.out.println("monday: "+Calendar.MONDAY);	
-		System.out.println("dayofweek: "+cal.get(Calendar.DAY_OF_WEEK));
 		
 		if ((cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SATURDAY) &&
 			(cal.get(Calendar.DAY_OF_WEEK)!=Calendar.SUNDAY)) {
@@ -150,10 +145,14 @@ import java.util.regex.*;
 		Channel channel, ProgramDispatcher programDispatcher)
 		throws TvBrowserException {
 			
-		MutableProgram currProgram=null;	
+		MutableProgram currProgram=null, prevProgram=null;	
 		BufferedReader reader;	
 		int lineNr=0;
 		Date curDate;
+		int prevMin=-1;
+		int prevHour=-1;
+		Program prog;
+		
 		try {
 		
 			FileReader fileReader = new FileReader(file);
@@ -219,7 +218,18 @@ import java.util.regex.*;
 				
 						currProgram=new MutableProgram(channel, curDate, hour, min);
 						currProgram.setTitle(matcher.group(3));
-											}
+						int len;
+						if (prevProgram!=null) {
+							len=(hour*60+min) - (prevHour*60+prevMin);
+							if (len<0) {
+								len+=1440;
+							}
+							prevProgram.setLength(len);						
+						}
+						prevProgram=currProgram;
+						prevHour=hour;
+						prevMin=min;
+					}
 			
 					// get description
 					StringBuffer desc=new StringBuffer();
