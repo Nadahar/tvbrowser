@@ -48,6 +48,7 @@
   <property name="src.dir" value="src"/>
   <property name="txt.dir" value="txt"/>
   <property name="doc.dir" value="doc"/>
+  <property name="unpacked.dir" value="unpacked"/>
   <property name="themepacks.dir" value="themepacks"/>
   <property name="classes.dir" value="classes"/>
   <property name="runtime.dir" value="runtime"/>
@@ -61,6 +62,10 @@
 
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+      <exclude name="ant.jar"/>
+    </fileset>
     <!-- <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/> -->
   </path>
 
@@ -79,7 +84,7 @@
     <echo message="available targets:"/>
     <echo message="  targets       Shows this list of targets."/>
     <echo message="  dump-info     Dumps some information (VM-Version...)."/>
-    <echo message="  clean         Deletes the classes directory."/>
+    <echo message="  clean         Deletes the classes and unpacked directory."/>
     <echo message="  clean-runtime Deletes the runtime directory."/>
     <echo message="  doc           Generates the JavaDoc documentation."/>
     <echo message="  make          Compiles the source code."/>
@@ -116,6 +121,7 @@
    +-->
   <target name="clean">
     <delete dir="${classes.dir}"/>
+    <delete dir="${unpacked.dir}"/>
   </target>
 
 
@@ -187,6 +193,12 @@
     <echo message="Creating the jars ..." />
 
     <mkdir dir="${runtime.dir}"/>
+    
+    <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
+    <mkdir dir="${unpacked.dir}/skinlf.jar"/>
+    <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
+
+	<!-- Pack the tvbrowser.jar -->    
     <jar jarfile="${runtime.dir}/tvbrowser.jar"
          compress="false"
          manifest="${txt.dir}/manifest.mf">
@@ -194,9 +206,11 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
 	<fileset dir="${classes.dir}" includes="com/**"/>
     </jar>
 
+	<!-- Pack the plugin jars -->    
     <mkdir dir="${runtime.dir}/plugins"/>
     <jar jarfile="${runtime.dir}/plugins/ProgramInfo.jar"
          compress="false">
@@ -219,6 +233,7 @@
       <fileset dir="${classes.dir}" includes="favoritesplugin/**"/>
     </jar>
 
+	<!-- Pack the TV data service jars -->    
     <mkdir dir="${runtime.dir}/tvdataservice"/>
     <jar jarfile="${runtime.dir}/tvdataservice/XmlTvDataService.jar"
          compress="false">
@@ -233,6 +248,7 @@
       <fileset dir="${classes.dir}" includes="wdrdataservice/**"/>
     </jar>
 
+	<!-- Copy the other stuff -->    
     <echo message="Copying the images and all the other stuff ..." />
     <mkdir dir="${runtime.dir}/imgs"/>
     <copy todir="${runtime.dir}/imgs">
