@@ -34,6 +34,9 @@ import devplugin.ProgramFieldType;
  */
 public class ProgramFieldTypeArrayProperty extends Property {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(ProgramFieldTypeArrayProperty.class.getName());
+
   private ProgramFieldType[] mDefaultValue;
   private ProgramFieldType[] mCachedValue;
   
@@ -59,7 +62,7 @@ public class ProgramFieldTypeArrayProperty extends Property {
       String asString = getProperty();
   
       if (asString != null) {
-        String[] splits = asString.split(":");
+        String[] splits = asString.split(",");
         try {
           ProgramFieldType[] arr = new ProgramFieldType[splits.length];
           for (int i = 0; i < splits.length; i++) {
@@ -71,6 +74,8 @@ public class ProgramFieldTypeArrayProperty extends Property {
         }
         catch (NumberFormatException exc) {
           // We use the default value
+          mLog.warning("Property " + getKey() + " has an illegal value: '"
+            + asString + "'. Using the default.");
         }
       }
   
