@@ -91,7 +91,7 @@ public class TVBrowser {
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(0,97,false,"0.9.7.4");
+  public static final devplugin.Version VERSION=new devplugin.Version(0,98,false,"0.9.8");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
   
   private static boolean mUseSystemTray;
@@ -99,11 +99,22 @@ public class TVBrowser {
   private static MainFrame mainFrame;
 
   
+  private static void showUsage() {
+    
+    System.out.println("command line options:");
+    System.out.println("    - minimized    The main window will be minimized after start up");
+    System.out.println("    - nosplash     No splash screen during start up");
+    System.out.println();
+    
+  }
   
   /**
    * Entry point of the application
    */
   public static void main(String[] args) {
+    
+    showUsage();
+    
     String msg;
     
     // Check whether the TV-Browser was started in the right directory
