@@ -38,15 +38,7 @@ import java.util.HashSet;
 
 
 import tvbrowser.core.Settings;
-//import javax.swing.event.*;
-//import javax.swing.tree.*;
 
-//import util.ui.*;
-
-//import devplugin.SettingsTab;
-//import devplugin.Plugin;
-
-//import tvbrowser.core.PluginManager;
 
 public class DirectoriesSettingsTab implements SettingsTab {
   
@@ -56,8 +48,8 @@ public class DirectoriesSettingsTab implements SettingsTab {
  
   
   private JCheckBox mUseDefaultFolderCB;
-  private DirectoryChooserPanel mTVDataFolderPanel, mDataServiceCachPanel;
-  
+  private DirectoryChooserPanel mTVDataFolderPanel; 
+    
   public DirectoriesSettingsTab() {
     
   }
@@ -86,9 +78,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
     final DirectoryChooser directoriesPanel=new DirectoryChooser();
     
     mTVDataFolderPanel=new DirectoryChooserPanel(mLocalizer.msg("tvdatadir", "tv data folder"),Settings.getTVDataDirectory());
-    mDataServiceCachPanel=new DirectoryChooserPanel(mLocalizer.msg("tvdataservicecache", "tv data service cache folder"),Settings.getDataServiceCacheDirectory());
     directoriesPanel.add(mTVDataFolderPanel);
-    directoriesPanel.add(mDataServiceCachPanel);
     directoriesPanel.setEnabled(!mUseDefaultFolderCB.isSelected());
 
     content.add(directoriesPanel);
@@ -112,11 +102,11 @@ public class DirectoriesSettingsTab implements SettingsTab {
   public void saveSettings() {
     if (mUseDefaultFolderCB.isSelected()) {
       Settings.setTVDataDirectory(Settings.TVDATA_DIR);
-      Settings.setDataServiceCacheDirectory(Settings.DATASERVICECACHE_DIR);
+      //Settings.setDataServiceCacheDirectory(Settings.DATASERVICECACHE_DIR);
     }
     else {  
       Settings.setTVDataDirectory(mTVDataFolderPanel.getText());
-      Settings.setDataServiceCacheDirectory(mDataServiceCachPanel.getText());
+      //Settings.setDataServiceCacheDirectory(mDataServiceCachPanel.getText());
     }
     Settings.setUseDefaultDirectories(mUseDefaultFolderCB.isSelected());
   }

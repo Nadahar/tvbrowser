@@ -40,6 +40,8 @@ import util.exc.TvBrowserException;
  * @author Martin Oberhauser
  */
 public interface TvDataService {
+  
+  public void setWorkingDirectory(java.io.File dataDir);
 
   /**
    * Updates the TV data provided by this data service.

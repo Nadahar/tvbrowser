@@ -111,7 +111,7 @@ Section "${PROG_NAME} (erforderlich)"
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\..\..\win\taskicon.ico"
   
-  CreateDirectory "$INSTDIR\tvdata"
+#  CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
   
 

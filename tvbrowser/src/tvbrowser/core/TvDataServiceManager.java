@@ -145,7 +145,9 @@ public class TvDataServiceManager {
       ClassLoader dataserviceClassLoader=new java.net.URLClassLoader(urls,ClassLoader.getSystemClassLoader());
 
       Class c=dataserviceClassLoader.loadClass(name.toLowerCase()+"."+name);
-      result=(tvdataservice.TvDataService)c.newInstance();     
+      result=(tvdataservice.TvDataService)c.newInstance(); 
+      
+      
     } catch (Exception exc) {
       String msg = mLocalizer.msg("error.5", "Loading tv data service failed!\n({0})",
       f.getAbsolutePath(), exc);
@@ -157,6 +159,18 @@ public class TvDataServiceManager {
       devplugin.Version v=result.getAPIVersion();
       // version must be at least 1.0
       if ((new devplugin.Version(1,0).compareTo(v)<0)) throw new AbstractMethodError();
+      
+      String root=Settings.getTVDataDirectory();
+      File rootDir=new File(root);
+      if (!rootDir.exists()) {
+        rootDir.mkdirs();
+      }
+      File tvDataDir=new File(rootDir,result.getClass().getName());
+      if (!tvDataDir.exists()) {
+        tvDataDir.mkdirs();
+      } 
+      result.setWorkingDirectory(tvDataDir);    
+      
     }catch(Throwable t) {
       String msg = mLocalizer.msg("error.6", "Tv data service {0} is not compatible to this version of TV-Browser",
       name, t);

@@ -34,6 +34,8 @@ import java.util.logging.*;
 import javax.swing.*;
 
 import tvbrowser.core.*;
+import tvbrowser.ui.configassistant.TvdataAssistantDlg;
+import tvbrowser.ui.configassistant.TvdataImportDlg;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
@@ -103,29 +105,67 @@ public class TVBrowser {
     }
     
     
+    
+    
+    Settings.loadSettings();
+    
+    File f=new File(Settings.getTVDataDirectory());
+    if (!f.exists()) {        
+      
+      devplugin.Version prevVersion=Settings.getTVBrowserVersion();  
+      
+      /* if we have got no tvdata and no assistant will be loaded there must exist an older
+       * tv-browser. so ask the user for importing existing tv data. 
+       * prevVersion must be null because older tv-browser versions do not have this field
+       * in the config file. */
+      if (!Settings.getShowAssistant() && prevVersion==null) {       
+        
+        boolean showTvdataAssistant=true;
+        while (showTvdataAssistant) {
+          showTvdataAssistant=false;          
+          TvdataAssistantDlg dlg=new TvdataAssistantDlg();
+          UiUtilities.centerAndShow(dlg);
+          int result=dlg.getSelection();
+          if (result==TvdataAssistantDlg.IMPORT_DATA) {
+            if (prevVersion==null) {
+              TvdataImportDlg importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata.step1","step 1: .."),"tvdata",Settings.getTVDataDirectory());
+              UiUtilities.centerAndShow(importDlg);
+              if (importDlg.getResult()==TvdataImportDlg.OK) {
+                importDlg=new TvdataImportDlg(mLocalizer.msg("importtvdata.step1","step 2: .."), "tvbrowsertvdata",Settings.getTVDataDirectory()+"/tvbrowserdataservice.TvBrowserDataService");
+                UiUtilities.centerAndShow(importDlg);
+              }
+              showTvdataAssistant=importDlg.getResult()!=TvdataImportDlg.OK;
+            }
+          }else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
+            Settings.setShowAssistant(true);
+          }
+        }        
+
+      }
+      mLog.info("Creating tv data directory...");
+      
+      if (!f.mkdirs()) {
+        mLog.info("Could not create directory + "+f.getAbsolutePath());
+      }
+      
+    }
+    
     SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
       new Color(63, 114, 133), Color.WHITE);
     UiUtilities.centerAndShow(splash);
     
-	/*Maybe there are tvdataservices to install (.jar.inst files)*/
-	TvDataServiceManager.installPendingDataServices();
+    Settings.setTVBrowserVersion(VERSION);  
+    
+	  /*Maybe there are tvdataservices to install (.jar.inst files)*/
+	  TvDataServiceManager.installPendingDataServices();
     
     mLog.info("Loading tv data service...");
     msg = mLocalizer.msg("splash.dataService", "Loading tv data service...");
     splash.setMessage(msg);
     TvDataServiceManager.getInstance().initDataServices();
     tvbrowser.core.ChannelList.create();
-    
-    Settings.loadSettings();
-    
-	 File f=new File(Settings.getTVDataDirectory());
-		if (!f.exists()) {
-			mLog.info("Creating tv data directory...");
-			if (!f.mkdirs()) {
-				mLog.info("Could not create directory + "+f.getAbsolutePath());
-			}
-		}
-    
+        
+    Settings.initSubscribedChannels();
     
     mLog.info("Loading Look&Feel...");
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
@@ -265,9 +305,20 @@ public class TVBrowser {
       mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
     
+    
+    
+    
+    /*
+    // check if an other tvbrowser version was installed before
+    devplugin.Version lastVersion=Settings.getTVBrowserVersion();
+    if (VERSION.compareTo(lastVersion)!=0) {
+      if (Settings.getDataServiceCacheDirectory())
+    }
+  */  
+    
+    
     if (Settings.getShowAssistant()) {
       mainFrame.runSetupAssistant();  
-
     }
     else { 
     
