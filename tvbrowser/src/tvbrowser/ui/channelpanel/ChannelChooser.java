@@ -33,10 +33,10 @@
 package tvbrowser.ui.channelpanel;
 
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.event.*;
 import java.awt.*;
 
+import tvbrowser.ui.finder.FinderItem;
 import tvbrowser.ui.programtable.ScrollableTablePanel;
 import tvbrowser.core.*;
 
@@ -126,7 +126,7 @@ class ChannelItem extends JLabel implements MouseListener {
 
     public void mouseEntered(MouseEvent e) {
       setOpaque(true);
-      setBackground(Color.darkGray);
+      setBackground(FinderItem.MARKED_BG_COLOR);
       updateUI();
     }
 }

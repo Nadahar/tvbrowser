@@ -48,6 +48,8 @@ public class FinderItem extends JLabel implements MouseListener {
   private devplugin.Date date;
   private FinderListener listener;
   private boolean isMarked;
+  public static final Color MARKED_BG_COLOR=new Color(170,154,228);
+  public static final Color SELECTED_BG_COLOR=new Color(236,236,212);
 
   /**
    * Constructs a new FinderItem containing the specified date (in days since 1900-01-01).
@@ -103,7 +105,7 @@ public class FinderItem extends JLabel implements MouseListener {
 
     if (isMarked) {
       setOpaque(true);
-      setBackground(Color.darkGray);
+      setBackground(MARKED_BG_COLOR);
     }
     else {
       setOpaque(false);
@@ -130,7 +132,7 @@ public class FinderItem extends JLabel implements MouseListener {
 
     if (isEnabled()) {
       setOpaque(true);
-      setBackground(Color.yellow);
+      setBackground(SELECTED_BG_COLOR);
       this.updateUI();
 
     }
@@ -143,7 +145,7 @@ public class FinderItem extends JLabel implements MouseListener {
   public void mouseExited(MouseEvent e) {
     if (isMarked) {
       setOpaque(true);
-      setBackground(Color.darkGray);
+      setBackground(MARKED_BG_COLOR);
     }
     else {
       setOpaque(false);
