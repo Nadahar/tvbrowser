@@ -37,7 +37,7 @@ Wie die XML-Datei erzeugt wird, ist allein Sache des Programmierers des Datensam
 Wenn ich bisher von <i>einer</i> XML-Datei gesprochen habe, so ist das nicht ganz richtig: Eigentlich handelt es sich um zwei XML-Dateien. In der einen, der <em>TvChannels.xml</em>, werden die Daten zu den Sendern abgelegt. In der zweiten, der <em>TvData.xml</em>, stehen dann die eigentlichen TV-Daten.
 </p>
 <p>
-Als XML-Format wird <a href="http://membled.com/work/apps/xmltv">XMLTV</a> eingesetzt. An manchen Stellen, wo TV-Browser Informationen unterst&uuml;tzt, die in XMLTV kein &Auml;quivalent haben, wurde das Format etwas aufgebohrt. Diese Zusatzm&ouml;glichkeiten m&uuml;ssen jedoch nicht genutzt werden, so dass f&uuml;r die TV-Daten auch g&uuml;ltiges XMLTV genutzt werden kann.
+Als XML-Format wird <a href="http://membled.com/work/apps/xmltv" target="_blank">XMLTV</a> eingesetzt. An manchen Stellen, wo TV-Browser Informationen unterst&uuml;tzt, die in XMLTV kein &Auml;quivalent haben, wurde das Format etwas aufgebohrt. Diese Zusatzm&ouml;glichkeiten m&uuml;ssen jedoch nicht genutzt werden, so dass f&uuml;r die TV-Daten auch g&uuml;ltiges XMLTV genutzt werden kann.
 </p>
 <p>
 Bei XMLTV werden die Daten &uuml;ber die Sender normalerweise in der selben Datei gespeichert, wie die eigentlichen TV-Daten. Dass die Daten bei uns getrennt werden, hat folgende Gr&uuml;nde:
@@ -59,7 +59,7 @@ Jetzt aber mal genug von diesem theoretischen Geschwafel! Jetzt wollen wir mal z
 Die Eintr&auml;ge dieser Datei entsprechen der Zeile 2 in der Excel-Datei aus Teil II. Damit man sich leichter zurecht findet, sind hier schon zwei Beispielsender zu sehen. Beim ersten Sender steht vor jedem Tag ein Beschreibungskommentar.
 </p>
 <p>
-Die einzelnen Eintr&auml;ge (Details siehe <a href="teil2.html#channelTable">Tabelle aus Teil II</a>):
+Die einzelnen Eintr&auml;ge (Details siehe <a href="teil2.html#channelTable" target="_blank">Tabelle aus Teil II</a>):
 <ul>
   <li><b>Attribut <em>id</em></b> (Channel ID): Diese ID wird sowohl von TV-Browser, als auch sp&auml;ter in der <em>TvData.xml</em> verwendet und darf nur alphanumerische Zeichen enthalten.</li>
   <li><b>Tag <em>&lt;name&gt;</em></b> (Channel Name): Der Name des Senders, wie er in TV-Browser angezeigt wird.</li>
@@ -115,7 +115,7 @@ Jetzt k&ouml;nnen wir einen ersten Probelauf wagen. Wir starten also wie auch in
 pdsrunner XmlTvPDS
 </pre>
 <p>
-Wie gewohnt finden wir eventuelle Fehlermeldungen im Verzeichnis <em>pdslog</em>. Wenn alles funktioniert hat liegen die Rohdaten im Verzeichnis <em>raw</em>. Jetzt m&uuml;ssen die Daten nur noch vom DataManager aufbereitet und vom MirrorUpdater hochgeladen werden. Diese m&uuml;ssen jedoch wieder zuerst konfiguriert werden. Das wird genauso gemacht, wie in Teil II im Abschnitt <a href="teil2.html#configuration">Konfiguration von DataManager und MirrorUpdater</a> beschrieben. Statt dem ExcelPDS muss nat&uuml;rlich das XmlTvPDS verwendet werden.
+Wie gewohnt finden wir eventuelle Fehlermeldungen im Verzeichnis <em>pdslog</em>. Wenn alles funktioniert hat liegen die Rohdaten im Verzeichnis <em>raw</em>. Jetzt m&uuml;ssen die Daten nur noch vom DataManager aufbereitet und vom MirrorUpdater hochgeladen werden. Diese m&uuml;ssen jedoch wieder zuerst konfiguriert werden. Das wird genauso gemacht, wie in Teil II im Abschnitt <a href="teil2.html#configuration" target="_blank">Konfiguration von DataManager und MirrorUpdater</a> beschrieben. Statt dem ExcelPDS muss nat&uuml;rlich das XmlTvPDS verwendet werden.
 </p>
 
 <h3>Regelm&auml;&szlig;e Aktualisierung</h3>
