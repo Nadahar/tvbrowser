@@ -29,6 +29,8 @@ package reminderplugin;
 import java.util.Properties;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 
 import devplugin.*;
@@ -45,19 +47,20 @@ public class ReminderSettingsTab implements SettingsTab {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderSettingsTab.class);
 
-  private Properties settings;
+  private Properties mSettings;
   
   private JPanel mSettingsPn;
   
-  private JCheckBox reminderwindowCheckBox;
-  private FileCheckBox soundFileCheckBox;
-  private FileCheckBox execFileCheckBox;
+  private JCheckBox mReminderWindowChB;
+  private FileCheckBox mSoundFileChB;
+  private JButton mSoundTestBt;
+  private FileCheckBox mExecFileChB;
   private JSpinner mAutoCloseReminderTimeSp;
 
   
   
   public ReminderSettingsTab(Properties settings) {
-    this.settings = settings;
+    this.mSettings = settings;
   }
 
   
@@ -81,19 +84,19 @@ public class ReminderSettingsTab implements SettingsTab {
     reminderPn.setBorder(BorderFactory.createTitledBorder(msg));
     
     msg = mLocalizer.msg("reminderWindow", "Reminder window");
-    reminderwindowCheckBox = new JCheckBox(msg);
-    reminderPn.add(reminderwindowCheckBox);
+    mReminderWindowChB = new JCheckBox(msg);
+    reminderPn.add(mReminderWindowChB);
     
-    String soundFName=settings.getProperty("soundfile","/");
-    String execFName=settings.getProperty("execfile","/");
+    String soundFName=mSettings.getProperty("soundfile","/");
+    String execFName=mSettings.getProperty("execfile","/");
 
     File soundFile=new File(soundFName);
     File execFile=new File(execFName);
 
     msg = mLocalizer.msg("playlingSound", "Play sound");
-    soundFileCheckBox = new FileCheckBox(msg, soundFile, 0);
+    mSoundFileChB = new FileCheckBox(msg, soundFile, 0);
     msg = mLocalizer.msg("executeProgram", "Execute program");
-    execFileCheckBox = new FileCheckBox(msg, execFile, 0);
+    mExecFileChB = new FileCheckBox(msg, execFile, 0);
 
     JFileChooser soundChooser=new JFileChooser("sound/");
     JFileChooser execChooser=new JFileChooser("/");
@@ -103,15 +106,26 @@ public class ReminderSettingsTab implements SettingsTab {
       "*.wav, *.aif, *.rmf, *.au, *.mid");
     soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
 
-    reminderwindowCheckBox.setSelected(settings.getProperty("usemsgbox","true").equals("true"));
-    soundFileCheckBox.setSelected(settings.getProperty("usesound","false").equals("true"));
-    execFileCheckBox.setSelected(settings.getProperty("useexec","false").equals("true"));
+    mReminderWindowChB.setSelected(mSettings.getProperty("usemsgbox","true").equals("true"));
+    mSoundFileChB.setSelected(mSettings.getProperty("usesound","false").equals("true"));
+    mExecFileChB.setSelected(mSettings.getProperty("useexec","false").equals("true"));
 
-    soundFileCheckBox.setFileChooser(soundChooser);
-    execFileCheckBox.setFileChooser(execChooser);
+    mSoundFileChB.setFileChooser(soundChooser);
+    mExecFileChB.setFileChooser(execChooser);
+    
+    JPanel soundPn = new JPanel(new BorderLayout(5, 0));
+    soundPn.add(mSoundFileChB, BorderLayout.CENTER);
+    msg = mLocalizer.msg("test", "Test");
+    mSoundTestBt = new JButton(msg);
+    mSoundTestBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
+      }
+    });
+    soundPn.add(mSoundTestBt, BorderLayout.EAST);
 
-    reminderPn.add(soundFileCheckBox);
-    reminderPn.add(execFileCheckBox);
+    reminderPn.add(soundPn);
+    reminderPn.add(mExecFileChB);
 
     // Auto close time of the reminder frame
     p1 = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -121,7 +135,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     int autoCloseReminderTime = 0;
     try {
-      String asString = settings.getProperty("autoCloseReminderTime", "0");
+      String asString = mSettings.getProperty("autoCloseReminderTime", "0");
       autoCloseReminderTime = Integer.parseInt(asString);
     } catch (Exception exc) {}
     mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,0,600,1));
@@ -140,14 +154,14 @@ public class ReminderSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    settings.setProperty("soundfile",soundFileCheckBox.getTextField().getText());
-    settings.setProperty("execfile",execFileCheckBox.getTextField().getText());
+    mSettings.setProperty("soundfile",mSoundFileChB.getTextField().getText());
+    mSettings.setProperty("execfile",mExecFileChB.getTextField().getText());
 
-    settings.setProperty("usemsgbox",new Boolean(reminderwindowCheckBox.isSelected()).toString());
-    settings.setProperty("usesound",new Boolean(soundFileCheckBox.isSelected()).toString());
-    settings.setProperty("useexec",new Boolean(execFileCheckBox.isSelected()).toString());
+    mSettings.setProperty("usemsgbox",new Boolean(mReminderWindowChB.isSelected()).toString());
+    mSettings.setProperty("usesound",new Boolean(mSoundFileChB.isSelected()).toString());
+    mSettings.setProperty("useexec",new Boolean(mExecFileChB.isSelected()).toString());
     
-    settings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
+    mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
   }
 
   
