@@ -29,6 +29,8 @@
 
 package printplugin;
 
+import printplugin.dlgs.PrintDialog;
+
 import util.ui.UiUtilities;
 
 import java.awt.print.*;
@@ -59,11 +61,11 @@ public class PrintPlugin extends devplugin.Plugin
 
    public String getButtonIconName()
    {
-      return "printplugin/Print16.gif";
+      return "printplugin/imgs/Print16.gif";
    }
    public String getMarkIconName()
    {
-      return "printplugin/Print16.gif";
+      return "printplugin/imgs/Print16.gif";
    }
 
    public String getButtonText()
