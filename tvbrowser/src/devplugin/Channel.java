@@ -39,12 +39,13 @@ public class Channel {
   private TimeZone mTimeZone;
   private String mCountry;
   private String mCopyrightNotice;
+  private String mWebpage;
   private int mDayLightSavingTimeCorrection;
 
 
 
   public Channel(TvDataService dataService, String name, String id,
-    TimeZone timeZone, String country, String copyrightNotice)
+    TimeZone timeZone, String country, String copyrightNotice, String webpage)
   {
     if (country.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
@@ -57,13 +58,20 @@ public class Channel {
     mTimeZone=timeZone;
     mCountry = country;
     mCopyrightNotice=copyrightNotice;
+    mWebpage=webpage;
     mDayLightSavingTimeCorrection=0;
+  }
+  
+  public Channel(TvDataService dataService, String name, String id,
+      TimeZone timeZone, String country, String copyrightNotice)
+  {
+      this(dataService,name,id,timeZone,country, copyrightNotice,null);
   }
 
   public Channel(TvDataService dataService, String name, TimeZone timeZone,
     String country, String copyrightNotice)
   {
-    this(dataService, name, name, timeZone, country, copyrightNotice);
+    this(dataService, name, name, timeZone, country, copyrightNotice, null);
   }
   
   /**
@@ -73,7 +81,7 @@ public class Channel {
   public Channel(TvDataService dataService, String name, String id,
      TimeZone timeZone, String country)
    {
-      this(dataService,name,id,timeZone,country,"(no copyright notice)");
+      this(dataService,name,id,timeZone,country,"(no copyright notice)",null);
    }
   
   /**
@@ -82,7 +90,7 @@ public class Channel {
   public Channel(TvDataService dataService, String name, TimeZone timeZone,
       String country)
     {
-      this(dataService, name, name, timeZone, country, "(no copyright given)");
+      this(dataService, name, name, timeZone, country, "(no copyright given)",null);
     }
   
   /**
@@ -157,6 +165,10 @@ public class Channel {
   
   public String getCopyrightNotice() {
     return mCopyrightNotice;
+  }
+  
+  public String getWebpage() {
+    return mWebpage;
   }
   
   public static Channel getChannel(String dataServiceClassName, String channelId) {

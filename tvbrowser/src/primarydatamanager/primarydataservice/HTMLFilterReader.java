@@ -140,7 +140,10 @@ public class HTMLFilterReader extends FilterReader {
       inx=buf.indexOf("&nbsp;");
       if (inx>=0) {
         buf.replace(inx,inx+6," ");
-      }      
+      }
+      
+      
+            
     }while (inx>=0);
     
     return buf.toString();

@@ -102,9 +102,10 @@ public class ChannelList {
         String id = tokenizer.nextToken().trim();
         String name = tokenizer.nextToken().trim();
         String copyright = tokenizer.nextToken().trim();
+        String webpage = tokenizer.nextToken().trim();
         
         Channel channel = new Channel(dataService, name, id,
-          TimeZone.getTimeZone(timezone), country,copyright);
+          TimeZone.getTimeZone(timezone), country,copyright,webpage);
           
         addChannel(channel);
       }
@@ -146,7 +147,8 @@ public class ChannelList {
         + ";" + channel.getTimeZone().getID()
         + ";" + channel.getId()
         + ";" + channel.getName()
-        + ";" + channel.getCopyrightNotice());
+        + ";" + channel.getCopyrightNotice()
+        + ";" + (channel.getWebpage()==null?"http://tvbrowser.sourceforge.net":channel.getWebpage()));
     }
     writer.close();
     
