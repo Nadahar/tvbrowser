@@ -123,6 +123,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     updateTableContent();
   }
   
+  public ProgramFilter getProgramFilter() {
+      return mProgramFilter;
+  }
   
   private int compareDateTime(Date d1, int m1, Date d2, int m2) {
 

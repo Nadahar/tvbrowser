@@ -304,8 +304,18 @@ private Node mDateChannelNode;
   
   public void setProgramFilter(ProgramFilter filter) {
     mProgramTableModel.setProgramFilter(filter);
+    mMenuBar.updateFiltersMenu();
   }
 
+  public ProgramFilter getProgramFilter() {
+      
+      if (mProgramTableModel == null) {
+          return null;
+      }
+      
+      return mProgramTableModel.getProgramFilter();
+    }
+  
   public void quit() {
     mLog.info("Finishing plugins");
     PluginProxyManager.getInstance().shutdownAllPlugins();

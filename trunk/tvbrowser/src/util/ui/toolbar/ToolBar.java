@@ -130,7 +130,7 @@ public class ToolBar extends JToolBar implements ToolBarModelListener, MouseList
     updateUI();
   }
   
-  private JButton getButton(ToolBarButton item) {
+  public JButton getButton(ToolBarButton item) {
     JButton button = (JButton)mButtonsHash.get(item.getId());
     if (button != null) {
       return button;
