@@ -29,7 +29,6 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -47,6 +46,7 @@ import util.ui.ImageUtilities;
 import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -69,8 +69,13 @@ public class ReminderListDialog extends JDialog {
   private JPanel mListPanel;
   private JScrollPane mScrollPane;
   
-  public ReminderListDialog(Frame parent, ReminderList list) {
+  /** The Reminder-Plugin */
+  private Plugin mPlugin;
+  
+  public ReminderListDialog(Plugin plugin, Frame parent, ReminderList list) {
     super(parent,true);
+    
+    mPlugin = plugin;
     
     String msg;
     
@@ -148,7 +153,7 @@ public class ReminderListDialog extends JDialog {
           i++;
       }*/
       
-      SendToPluginDialog send = new SendToPluginDialog(this, programArr);
+      SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, programArr);
 
       send.show();
   }  
@@ -225,7 +230,7 @@ public class ReminderListDialog extends JDialog {
     result.add(panel2,BorderLayout.EAST);
     
     ProgramPanel panel = new ProgramPanel(prog);
-    panel.addPluginContextMenuMouseListener();
+    panel.addPluginContextMenuMouseListener(mPlugin);
     result.add(panel, BorderLayout.CENTER);
     
     return result;
