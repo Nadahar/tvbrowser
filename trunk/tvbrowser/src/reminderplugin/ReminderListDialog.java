@@ -104,9 +104,9 @@ public class ReminderListDialog extends JDialog {
   
   private JPanel createListItemPanel(final ReminderListItem item) {
     
-    Program prog=item.getProgram();
+    final Program prog=item.getProgram();
     
-    JPanel result=new JPanel(new BorderLayout());
+    final JPanel result=new JPanel(new BorderLayout());
     result.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     JPanel panel1=new JPanel(new BorderLayout());
     JPanel panel2=new JPanel(new BorderLayout());
@@ -147,6 +147,17 @@ public class ReminderListDialog extends JDialog {
     result.add(panel1,BorderLayout.WEST);
     result.add(panel2,BorderLayout.EAST);
     result.add(new ProgramPanel(prog), BorderLayout.CENTER);
+    
+    result.addMouseListener(new MouseAdapter() {
+    	public void mouseClicked(MouseEvent e) {
+    		if (SwingUtilities.isRightMouseButton(e)) {
+				JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(prog,ReminderPlugin.getInstance());
+				menu.show(result, e.getX() - 15, e.getY() - 15);
+				
+			}
+    	}
+    });
+    
     
     return result;
   }

@@ -82,7 +82,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private SkinPanel skinPanel;
   private ButtonPanel buttonPanel;
   private static String curLookAndFeel;
-  public static final String VERSION="0.9.4";
+  public static final String VERSION="0.9.5";
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION;
   
   private static TVBrowser mainFrame;
