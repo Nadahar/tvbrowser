@@ -27,8 +27,8 @@ Viel Spass!
 
 Martin
 
-Bei Problemen hilft die FAQ-Seite: http://members.liwest.at/firebird/faq.html
-oder das Hilfe-Forum: http://sourceforge.net/forum/forum.php?forum_id=271266
+Bei Problemen hilft die FAQ-Seite: http://tvbrowser.sourceforge.net/faq.html
+oder das Hilfe-Forum: http://tvbrowser.sourceforge.net/forum.html
 
 Aktuelles rund um TV-Browser ist auf der TV-Browser-Website zu finden: http://tvbrowser.sourceforge.net
 
@@ -63,8 +63,8 @@ Enjoy!
 
 Martin
 
-Problems? Read the FAQ at http://members.liwest.at/firebird/faq.html
-or refer to the help message board at http://sourceforge.net/forum/forum.php?forum_id=271266
+Problems? Read the FAQ at http://tvbrowser.sourceforge.net/faq.html
+or refer to the help message board at http://tvbrowser.sourceforge.net/forum.html
 
 Read more about TV-Browser on its home page at http://tvbrowser.sourceforge.net
 This site also holds the current version and all existing plug-ins.

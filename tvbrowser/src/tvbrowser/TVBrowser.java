@@ -320,17 +320,6 @@ public class TVBrowser {
     }
     
     
-    
-    
-    /*
-    // check if an other tvbrowser version was installed before
-    devplugin.Version lastVersion=Settings.getTVBrowserVersion();
-    if (VERSION.compareTo(lastVersion)!=0) {
-      if (Settings.getDataServiceCacheDirectory())
-    }
-  */  
-    
-    
     if (Settings.getShowAssistant()) {
       mainFrame.runSetupAssistant();  
     }
@@ -339,9 +328,9 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         
-        if (Settings.getAutomaticDownload()==Settings.ONSTARTUP && ChannelList.getNumberOfSubscribedChannels()>0) {
-          mainFrame.runUpdateThread(Settings.getDownloadPeriod());
-        }        
+        if (ChannelList.getNumberOfSubscribedChannels()>0 && Settings.getAutomaticDownload()!=Settings.NEVER) {
+          handleAutomaticDownload();
+        }              
      
         boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
         if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
@@ -353,6 +342,38 @@ public class TVBrowser {
      }
     });
     }
+  }
+
+
+  private static void handleAutomaticDownload() {
+    
+    devplugin.Date lastDownloadDate=Settings.getLastDownloadDate();
+    if (lastDownloadDate==null) {
+      lastDownloadDate=devplugin.Date.getCurrentDate().addDays(-100);
+    }
+    devplugin.Date today=devplugin.Date.getCurrentDate();
+    
+    //int daysSinceLastDownload=today.getNumberOfDaysSince(lastDownload);
+    Date nextDownloadDate=null;
+    int autoDL=Settings.getAutomaticDownload();
+    
+    
+    if (autoDL==Settings.DAILY) {
+      nextDownloadDate=lastDownloadDate.addDays(1);
+    }
+    else if (autoDL==Settings.EVERY3DAYS) {
+      nextDownloadDate=lastDownloadDate.addDays(3);
+    }
+    else if (autoDL==Settings.WEEKLY) {
+      nextDownloadDate=lastDownloadDate.addDays(7);
+    }
+          
+    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
+      mainFrame.runUpdateThread(Settings.getAutoDownloadPeriod());
+    }
+    
+    
+    
   }
 
   public static void updateLookAndFeel() {

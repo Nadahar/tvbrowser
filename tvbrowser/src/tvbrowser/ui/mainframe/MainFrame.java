@@ -533,6 +533,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
 
+    Settings.setLastDownloadDate(Date.getCurrentDate());
+
   }
 
 

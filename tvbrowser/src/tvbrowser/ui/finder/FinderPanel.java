@@ -35,7 +35,6 @@ package tvbrowser.ui.finder;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashMap;
 
 import devplugin.Date;
 import tvbrowser.core.*;
@@ -47,15 +46,11 @@ import tvbrowser.core.*;
 
 class FinderItemRenderer extends DefaultListCellRenderer {
   
-  private devplugin.Date mToday;
   private devplugin.Date mChoosenDate;
-  private HashMap mCells;
   private JProgressBar mProgressBar;
   private FinderItem mCurSelectedItem;
   
   public FinderItemRenderer() {
-    mToday=Date.getCurrentDate();
-    mCells = new HashMap();
     mProgressBar=new JProgressBar();
   }
   

@@ -28,8 +28,11 @@ package tvbrowser.ui.settings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import tvbrowser.core.*;
+import tvbrowser.ui.mainframe.UpdateDlg;
 
 /**
  * TV-Browser
@@ -43,8 +46,12 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   = util.ui.Localizer.getLocalizerFor(TVDataSettingsTab.class);
   
   private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
-    mLocalizer.msg("autoDownload.never", "Never"),
-    mLocalizer.msg("autoDownload.startUp", "When TV-Browser starts up"),
+  //  mLocalizer.msg("autoDownload.never", "Never"),
+  //  mLocalizer.msg("autoDownload.startUp", "When TV-Browser starts up"),
+    mLocalizer.msg("autoDownload.daily", "Once a day"),
+    mLocalizer.msg("autoDownload.every3days","Every three days"),
+    mLocalizer.msg("autoDownload.weekly","Weekly")
+    
   };
   
   private JPanel mSettingsPn;
@@ -53,7 +60,10 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JButton mChangeDataDirBt;
   private JButton mDeleteTVDataBt;
   private JTextField mTvDataTF;
-  
+  private JCheckBox mAutoDownloadCb;
+  private JComboBox mAutoDownloadPeriodCB;
+  private JRadioButton mDonotAskBeforeDownloadRB;
+  private JRadioButton mAskBeforeDownloadRB;
   
   
   public TVDataSettingsTab() {
@@ -70,27 +80,99 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
        
+    JPanel onStartupPn=new JPanel();
+    onStartupPn.setLayout(new BoxLayout(onStartupPn,BoxLayout.Y_AXIS));   
+    onStartupPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("autoDownload", "Download automatically")));
     
-    JPanel tvDataPn=new JPanel(new GridLayout(0,2,0,7));
+    JPanel autoDownloadPn=new JPanel(new GridLayout(0,2,0,7));
     
-    tvDataPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("tvData", "TV data")));
     
-    mSettingsPn.add(tvDataPn,BorderLayout.NORTH);
+    onStartupPn.add(autoDownloadPn);
     
-
-    //tvDataPn.add(panel1);
-    msg = mLocalizer.msg("autoDownload", "Download automatically");
-    tvDataPn.add(new JLabel(msg));
+    mSettingsPn.add(onStartupPn,BorderLayout.NORTH);
+    
+    mAutoDownloadCb = new JCheckBox(mLocalizer.msg("onStartUp", "On startup"));
+    autoDownloadPn.add(mAutoDownloadCb);
   
     mAutoDownloadCB=new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
-    if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
+    if (Settings.getAutomaticDownload()==Settings.DAILY) {
+      mAutoDownloadCB.setSelectedIndex(0);
+    }
+    else if (Settings.getAutomaticDownload()==Settings.EVERY3DAYS) {
       mAutoDownloadCB.setSelectedIndex(1);
     }
-    tvDataPn.add(mAutoDownloadCB);
+    else if (Settings.getAutomaticDownload()==Settings.WEEKLY) {
+      mAutoDownloadCB.setSelectedIndex(2);
+    }
+          
+    mAutoDownloadCb.setSelected(Settings.getAutomaticDownload()!=Settings.NEVER);      
+    
+   
+    autoDownloadPn.add(mAutoDownloadCB);
+    
+    JPanel askBeforeDLPanel=new JPanel();
+    askBeforeDLPanel.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+    
+
+    askBeforeDLPanel.setLayout(new BoxLayout(askBeforeDLPanel,BoxLayout.Y_AXIS));
+        
+    mAskBeforeDownloadRB=new JRadioButton(mLocalizer.msg("autoDownload.ask","Ask before downloading"));
+    mDonotAskBeforeDownloadRB=new JRadioButton(mLocalizer.msg("autoDownload.dontask","Don't ask, download for"));
+    
+    ButtonGroup buttonGroup=new ButtonGroup();
+    buttonGroup.add(mAskBeforeDownloadRB);
+    buttonGroup.add(mDonotAskBeforeDownloadRB);
+    
+    if (Settings.getAskForAutoDownload()) {
+      mAskBeforeDownloadRB.setSelected(true);
+    }
+    else {
+      mDonotAskBeforeDownloadRB.setSelected(true);
+    }
+    
+    JPanel pn1=new JPanel(new BorderLayout());
+    JPanel pn2=new JPanel(new BorderLayout());
+    JPanel pn3=new JPanel(new BorderLayout());
+    
+    pn1.add(mAskBeforeDownloadRB,BorderLayout.WEST);
+    
+    pn2.add(mDonotAskBeforeDownloadRB,BorderLayout.WEST);
+    pn2.add(pn3,BorderLayout.CENTER);
+    mAutoDownloadPeriodCB=new JComboBox(UpdateDlg.PERIOD_MSG_ARR);
+    pn3.add(mAutoDownloadPeriodCB,BorderLayout.WEST);
+    
+    int autoDLPeriod=Settings.getAutoDownloadPeriod();
+    if (autoDLPeriod==UpdateDlg.GETALL) {
+      mAutoDownloadPeriodCB.setSelectedIndex(mAutoDownloadPeriodCB.getItemCount()-1);
+    }
+    else {
+      mAutoDownloadPeriodCB.setSelectedIndex(autoDLPeriod);
+    }
+    
+    askBeforeDLPanel.add(pn1);
+    askBeforeDLPanel.add(pn2);
+    
+    onStartupPn.add(askBeforeDLPanel);
+    
+    
+    mAutoDownloadCb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event) {
+        setAutoDownloadEnabled(mAutoDownloadCb.isSelected());
+      }
+    });
+    
+    setAutoDownloadEnabled(mAutoDownloadCb.isSelected());
     
     return mSettingsPn;
   }
   
+  
+  public void setAutoDownloadEnabled(boolean enabled) {
+    mAskBeforeDownloadRB.setEnabled(enabled);
+    mDonotAskBeforeDownloadRB.setEnabled(enabled);
+    mAutoDownloadCB.setEnabled(enabled);
+    mAutoDownloadPeriodCB.setEnabled(enabled);
+  }
   
   
   /**
@@ -99,11 +181,30 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   public void saveSettings() {
       
     int inx = mAutoDownloadCB.getSelectedIndex();
-    if (inx == 0) {
-      Settings.setAutomaticDownload("never");
-    } else {
-      Settings.setAutomaticDownload("startup");
+    
+    if (!mAutoDownloadCb.isEnabled()) {
+      Settings.setAutomaticDownload(Settings.NEVER);
     }
+    else if (inx == 0) {
+      Settings.setAutomaticDownload(Settings.DAILY);
+    }
+    else if (inx == 1) {
+      Settings.setAutomaticDownload(Settings.EVERY3DAYS);
+    }
+    else if (inx == 2) {
+      Settings.setAutomaticDownload(Settings.WEEKLY);
+    }
+    
+    Settings.setAskForAutoDownload(mAskBeforeDownloadRB.isSelected());
+    
+    inx=mAutoDownloadPeriodCB.getSelectedIndex();
+    if (inx==mAutoDownloadPeriodCB.getItemCount()-1) {
+      Settings.setDownloadPeriod(UpdateDlg.GETALL);
+    }
+    else {
+      Settings.setDownloadPeriod(inx);
+    }
+             
   }
   
   

@@ -214,6 +214,28 @@ class TVBrowserProperties extends java.util.Properties {
     }
   }
   
+  public void setDate(String key, devplugin.Date date) {
+    setProperty(key,date.getYear()+"-"+date.getMonth()+"-"+date.getDayOfMonth());
+  }
+  
+  public devplugin.Date getDate(String key) {
+    String s=getProperty(key);
+    if (s==null) return null;
+    
+    String[] ds=s.split("-");
+    if (ds.length!=3) {
+      return null;
+    }
+    
+    try {
+      return new devplugin.Date(Integer.parseInt(ds[0]),
+                                Integer.parseInt(ds[1]),
+                                Integer.parseInt(ds[2]));
+    }catch(NumberFormatException exc) {
+      return null;    
+    }
+  }
+  
 }
 
 
@@ -238,7 +260,7 @@ public class Settings {
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
   public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
 
-  public static final int NEVER=0, ONSTARTUP=1;
+  public static final int NEVER=0, DAILY=1, ONSTARTUP=DAILY, EVERY3DAYS=2, WEEKLY=3;
   
   private static final String SETTINGS_FILE="settings.prop";
   private static final String OLD_USER_DIR = "tvbrowser";
@@ -753,6 +775,24 @@ public class Settings {
   public static void setInstalledPlugins(String[] plugins) {
 	  settings.setStringList("plugins", plugins);
   }
+  
+  public static void setAutoDownloadPeriod(int period) {
+      settings.setProperty("autodownloadperiod",""+period);
+    }
+
+    public static int getAutoDownloadPeriod() {
+      String period=settings.getProperty("autodownloadperiod");
+      if (period==null) return getDownloadPeriod();
+      int result;
+      try {
+        result=Integer.parseInt(period);
+      } catch (NumberFormatException e) {
+        result=0;
+      }
+      return result;
+
+    }
+
 
   public static void setDownloadPeriod(int period) {
   	settings.setProperty("downloadperiod",""+period);
@@ -809,14 +849,58 @@ public class Settings {
     if ("startup".equals(autoDL)) {
       return ONSTARTUP;
     }
+    else if ("daily".equals(autoDL)){
+      return DAILY;
+    }
+    else if ("every3days".equals(autoDL)){
+      return EVERY3DAYS;
+    }
+    else if ("WEEKLY".equals(autoDL)){
+      return WEEKLY;
+    }
     else {
       return NEVER;
     }
   }
   
+  public static void setAutomaticDownload(int autoDL) {
+    System.out.println("setAutoDownload: "+autoDL);
+    
+    if (autoDL==Settings.DAILY) {
+      settings.setProperty("autodownload","daily");
+    }
+    else if (autoDL==Settings.EVERY3DAYS) {
+      settings.setProperty("autodownload","every3days");
+    }
+    else if (autoDL==Settings.WEEKLY) {
+      settings.setProperty("autodownload","weekly");
+    }
+    else {
+      settings.setProperty("autodownload","never");
+    }
+  }
+  
+  public static void setAskForAutoDownload(boolean b) {
+    settings.setBoolean("askForAutoDownload",b);
+  }
+  
+  public static boolean getAskForAutoDownload() {
+    return settings.getBoolean("askForAutoDownload",false);
+  }
+  
+  public static void setLastDownloadDate(devplugin.Date date) {
+    settings.setDate("lastdownload",date);
+  }
+  
+  public static devplugin.Date getLastDownloadDate() {
+    return settings.getDate("lastdownload");
+  }
+  
+  /*
   public static void setAutomaticDownload(String autoDL) {
     settings.setProperty("autodownload",autoDL);
   }
+  */
   
   public static java.awt.Font getProgramTitleFont() {
     if (getUseDefaultFonts()) {

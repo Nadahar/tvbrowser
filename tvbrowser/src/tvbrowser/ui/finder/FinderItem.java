@@ -39,6 +39,10 @@ import devplugin.Date;
 
 class FinderItem extends JComponent implements ProgressMonitor {
   
+  private static final util.ui.Localizer mLocalizer
+     = util.ui.Localizer.getLocalizerFor(FinderItem.class);
+  
+  
   private devplugin.Date mDate;
   private static Date TODAY=Date.getCurrentDate();
   private JProgressBar mProgressBar;
@@ -56,7 +60,13 @@ class FinderItem extends JComponent implements ProgressMonitor {
     mProgressBar.setForeground(mColorChoosen);
     mProgressBar.setBorder(null);
     
-    mLabel=new JLabel(date.toString());
+    mLabel=new JLabel();
+    if (date.equals(TODAY)) {
+      mLabel.setText(mLocalizer.msg("today","today"));
+    }
+    else {
+      mLabel.setText(date.toString());
+    }
    
     setLayout(new BorderLayout());
     add(mLabel,BorderLayout.CENTER);
