@@ -1,6 +1,11 @@
 Changelog XmlTvDataLoader
 
-1.0.3: required TVBrowser 0.9.5
+current:
+- 
+1.0.4: requires TVBrowser 0.9.5
+- bugfix: delete incomplete files
+
+1.0.3: requires TVBrowser 0.9.5
 
 1.0.2: requires TVBrowser 0.93
 - no Serializable Classes any more

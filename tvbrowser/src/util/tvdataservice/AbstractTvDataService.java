@@ -153,6 +153,10 @@ public abstract class AbstractTvDataService implements TvDataService {
 
     // If the wanted AbstractChannelDayProgram isn't already in the cache
     // load the apropriate XMl file
+    
+    System.out.println("dataservice want to download program for "+date.toString()+", "+channel.getName());
+    System.out.println("channelDayProgram is "+channelDayProgram);
+    
     if (channelDayProgram == null) {
       loadFileFor(date, channel);
       channelDayProgram = mProgramDispatcher.getChannelDayProgram(date, channel);

@@ -41,7 +41,7 @@ import devplugin.Program;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class ProgramTable extends SkinPanel
+public class ProgramTable extends /*JComponent*/SkinPanel
   implements ProgramTableModelListener
 {
   
@@ -152,6 +152,7 @@ public class ProgramTable extends SkinPanel
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
+    
     
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;

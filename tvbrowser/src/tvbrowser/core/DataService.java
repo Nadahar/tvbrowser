@@ -224,13 +224,24 @@ public class DataService implements devplugin.PluginManager {
         	prog=this.loadChannelDayProgramFromDisk(file);
          }
         
+		System.out.println("Date: "+date.toString()+", Channel: "+channel.getName());
+          
         
         if (!file.exists() || (prog!=null && !prog.isComplete())) {
           // We don't have the file or the file is not complete -> download it
-          
+          if (!file.exists()) {
+          	System.out.println("File does not exist");
+          }
+          if (prog!=null) {
+          	System.out.println("complete? "+prog.isComplete());
+          }
           try {
             prog = downloadDayProgram(date, channel);
-
+            if (prog!=null) {
+				System.out.println("after download: complete? "+prog.isComplete());
+            }else{
+            	System.out.println("could not download program");
+            }
             if (prog != null) {
               dayProgram.addChannelDayProgram(prog);
             }

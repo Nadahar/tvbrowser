@@ -43,5 +43,7 @@ public interface ProgramTableModel {
   
   public int getRowCount(int col);
   
+  public void setProgramFilter(ProgramFilter filter);
+  
   public Program getProgram(int col, int row);
 }

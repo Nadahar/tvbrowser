@@ -1,6 +1,12 @@
 Changelog TVBrowser
 
 current:
+- 
+
+0.9.5.1:
+- bugfix in XmlTvDataService
+
+0.9.5:
 - New program table
 - Show also the next morning
 - Compact and Time synchronous program table layout
