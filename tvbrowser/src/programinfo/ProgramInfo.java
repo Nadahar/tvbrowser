@@ -47,7 +47,11 @@ public class ProgramInfo extends devplugin.Plugin {
 
   private static final util.ui.Localizer mLocalizer =
     util.ui.Localizer.getLocalizerFor(ProgramInfo.class);
-
+  
+  private static java.util.logging.Logger mLog
+      = java.util.logging.Logger.getLogger(ProgramInfo.class.getName());
+  
+  
   private java.awt.Point location = null;
   private java.awt.Dimension size = null;
 
@@ -86,7 +90,7 @@ public class ProgramInfo extends devplugin.Plugin {
     "}\n";
 
   public ProgramInfo() {
-
+    mInstance = this;
   }
   
   
@@ -95,6 +99,11 @@ public class ProgramInfo extends devplugin.Plugin {
   }
 
   public static devplugin.Plugin getInstance() {
+    if (mInstance == null) {
+      // this should never happen
+      mLog.severe("mInstance is null");
+      mInstance = new ProgramInfo();
+    }
     return mInstance;
   }
 
