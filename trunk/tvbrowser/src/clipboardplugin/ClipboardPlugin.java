@@ -5,11 +5,16 @@ package clipboardplugin;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
@@ -37,6 +42,46 @@ public class ClipboardPlugin extends Plugin {
     /** Needed for Position */
     private Dimension mDimensionListDialog = null;
 
+    public Action getButtonAction() {
+        AbstractAction action = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent evt) {
+                showDialog();
+            }
+        };
+        action.putValue(Action.NAME, mLocalizer.msg("pluginName", "Clipboard"));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("clipboardplugin/clipboard.png", ClipboardPlugin.class)));
+        
+        return action;
+    }
+    
+    public Action[] getContextMenuActions(final Program program) {
+
+        final boolean inList = mClipboard.indexOf(program) > -1; 
+        
+        AbstractAction action = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent evt) {
+                if (inList) {
+                    program.unmark(ClipboardPlugin.this);
+                    mClipboard.remove(program);
+                } else {
+                    program.mark(ClipboardPlugin.this);
+                    mClipboard.add(program);
+                }
+            }
+        };
+        
+        if (inList) {
+            action.putValue(Action.NAME, mLocalizer.msg("contextMenuRemoveText", "Remove from Clipboard"));
+        } else {
+            action.putValue(Action.NAME, mLocalizer.msg("contextMenuAddText", "Add to Clipboard"));
+        }
+
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("clipboardplugin/clipboard.png", ClipboardPlugin.class)));
+        
+        return new Action[] {action};
+    }
     
     /*
      * (non-Javadoc)
@@ -49,56 +94,11 @@ public class ClipboardPlugin extends Plugin {
         String author = "Bodo Tasche";
         return new PluginInfo(name, desc, author, new Version(0, 10));
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#supportMultipleProgramExecution()
-     */
-    public boolean supportMultipleProgramExecution() {
-        return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getMarkIconName()
-     */
-    public String getMarkIconName() {
-        return "clipboardplugin/clipboard.png";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getContextMenuItemText()
-     */
-    public String getContextMenuItemText() {
-        return mLocalizer.msg("contextMenuText", "Add to Clipboard");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getButtonText()
-     */
-    public String getButtonText() {
-        return mLocalizer.msg("pluginName", "Clipboard");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getButtonIconName()
-     */
-    public String getButtonIconName() {
-        return "clipboardplugin/clipboard.png";
-    }
-
+    
     /**
      * Creates the Dialog
      */
-    public void execute() {
+    public void showDialog() {
     	
     	if (mClipboard.size() == 0) {
     		JOptionPane.showMessageDialog(getParentFrame(),  mLocalizer.msg("empty", "The Clipboard is empty."));
@@ -131,32 +131,18 @@ public class ClipboardPlugin extends Plugin {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#execute()
-     */
-    public void execute(Program program) {
-        if (mClipboard.indexOf(program) > -1) {
-            program.unmark(this);
-            mClipboard.remove(program);
-        } else {
-            program.mark(this);
-            mClipboard.add(program);
-        }
-        
-        
+    public boolean canReceivePrograms() {
+        return true;
     }
 
-    /**
-     * This method is invoked for multiple program execution.
-     * 
-     * @see #supportMultipleProgramExecution()
-     */
-    public void execute(Program[] programArr) {
+
+    public void receivePrograms(Program[] programArr) {
         for (int i = 0; i < programArr.length; i++) {
-            programArr[i].mark(this);
-            mClipboard.add(programArr[i]);
+            if (!mClipboard.contains(programArr[i])) {
+                programArr[i].mark(this);
+            	mClipboard.add(programArr[i]);
+            }
         }
     }
+    
 }
