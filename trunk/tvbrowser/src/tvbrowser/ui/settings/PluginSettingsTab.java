@@ -57,7 +57,7 @@ public class PluginSettingsTab
   
   private CustomizableItemsPanel panel;
   private PluginInfoPanel pluginInfoPanel;
-  private HashSet buttonPluginSet;
+  private HashSet hiddenButtonPluginSet;
   private JCheckBox addPicBtnCheckBox;
   private Plugin curSelectedPlugin=null;
 
@@ -80,7 +80,7 @@ public class PluginSettingsTab
       curSelectedPlugin = item.getPlugin();
       
       showPluginInfo(curSelectedPlugin);
-      addPicBtnCheckBox.setSelected(buttonPluginSet.contains(item.getPlugin()));
+      addPicBtnCheckBox.setSelected(!(hiddenButtonPluginSet.contains(item.getPlugin())));
     }
   }
   
@@ -93,7 +93,7 @@ public class PluginSettingsTab
       
       showPluginInfo(curSelectedPlugin);
       addPicBtnCheckBox.setEnabled(item.getPlugin().getButtonText() != null);
-      addPicBtnCheckBox.setSelected(buttonPluginSet.contains(item.getPlugin()));
+      addPicBtnCheckBox.setSelected(!(hiddenButtonPluginSet.contains(item.getPlugin())));
     }
   }
  
@@ -110,12 +110,12 @@ public class PluginSettingsTab
     
     
     
-    String[] buttonPlugins=Settings.getButtonPlugins();
-    buttonPluginSet = new HashSet();
+    String[] buttonPlugins=Settings.getHiddenButtonPlugins();
+    hiddenButtonPluginSet = new HashSet();
     for (int i = 0; i < buttonPlugins.length; i++) {
       Plugin plugin = PluginManager.getPlugin(buttonPlugins[i]);
       if (plugin != null) {
-        buttonPluginSet.add(plugin);
+        hiddenButtonPluginSet.add(plugin);
       }
     }
     
@@ -166,10 +166,10 @@ public class PluginSettingsTab
         if (curSelectedPlugin==null) {
           return;
         }
-        if (addPicBtnCheckBox.isSelected()) {
-          buttonPluginSet.add((Plugin) curSelectedPlugin);
+        if (!addPicBtnCheckBox.isSelected()) {
+          hiddenButtonPluginSet.add((Plugin) curSelectedPlugin);
         }else{
-          buttonPluginSet.remove((Plugin) curSelectedPlugin);
+          hiddenButtonPluginSet.remove((Plugin) curSelectedPlugin);
         }
       }
     });
@@ -195,20 +195,20 @@ public class PluginSettingsTab
     // Set the new plugins
     PluginManager.setInstalledPlugins(pluginArr);
     
-    // Find out the plugins that should have a button
-	ArrayList buttonPluginClassNameList = new ArrayList();
+    // Find out the plugins that should have NO button
+	ArrayList hiddenButtonPluginClassNameList = new ArrayList();
     for (int i = 0; i < pluginArr.length; i++) {
-      if (buttonPluginSet.contains(pluginArr[i])) {
-        buttonPluginClassNameList.add(pluginArr[i].getClass().getName());
+      if (hiddenButtonPluginSet.contains(pluginArr[i])) {
+        hiddenButtonPluginClassNameList.add(pluginArr[i].getClass().getName());
       }
     }
     
     // Convert the buttonPluginList to an array    
-    String[] buttonPluginClassNameArr = new String[buttonPluginClassNameList.size()];
-    buttonPluginClassNameList.toArray(buttonPluginClassNameArr);
+    String[] hiddenButtonPluginClassNameArr = new String[hiddenButtonPluginClassNameList.size()];
+    hiddenButtonPluginClassNameList.toArray(hiddenButtonPluginClassNameArr);
 
     // Set the buttonPluginArr
-    Settings.setButtonPlugins(buttonPluginClassNameArr);
+    Settings.setHiddenButtonPlugins(hiddenButtonPluginClassNameArr);
   }
 
   

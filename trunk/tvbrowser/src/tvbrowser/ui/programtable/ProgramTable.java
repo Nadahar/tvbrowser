@@ -156,7 +156,7 @@ public class ProgramTable extends JPanel
     if (f.exists() && f.isFile()) {
       mBackgroundImage=new ImageIcon(Settings.getTableSkin()).getImage();
     }
-    
+    repaint();
   }
   
 
