@@ -25,7 +25,6 @@
 package captureplugin.drivers;
 
 import captureplugin.drivers.defaultdriver.DefaultDriver;
-import captureplugin.drivers.pinnacle.PinnacleDriver;
 
 
 /**

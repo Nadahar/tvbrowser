@@ -45,6 +45,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.utils.ProgramTimeComparator;
@@ -173,13 +174,13 @@ public class ProgramListPanel extends JPanel {
        DeviceIf dev = (DeviceIf) mProgramTableModel.getValueAt(row, 0);
        Program prg = (Program) mProgramTableModel.getValueAt(row, 1);
 
-       int ret = JOptionPane.showConfirmDialog(mParent, 
+       int ret = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(mParent), 
                mLocalizer.msg("ReallyDelete","Really delete recording?"),
                mLocalizer.msg("Delete", "Delete?"),
                JOptionPane.YES_NO_OPTION);
        
        if (ret == JOptionPane.YES_OPTION) {
-           dev.remove(mParent, prg);
+           dev.remove(UiUtilities.getLastModalChildOf(mParent), prg);
            
            mProgramTableModel.removeColumn(row);
            

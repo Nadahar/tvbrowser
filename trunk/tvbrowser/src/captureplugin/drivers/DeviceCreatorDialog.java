@@ -77,6 +77,17 @@ public class DeviceCreatorDialog extends JDialog {
     }
 
     /**
+     * Creates the Dialog
+     * 
+     * @param owner Parent-Frame
+     */
+    public DeviceCreatorDialog(JDialog owner) {
+        super(owner, true);
+        createGUI();
+        setTitle(mLocalizer.msg("Title", "Create Device"));
+    }    
+    
+    /**
      * Create the GUI
      */
     private void createGUI() {
