@@ -57,7 +57,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.VerticalToolBar;
+import tvbrowser.ui.mainframe.TimeChooserPanel;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.Channel;
@@ -74,7 +74,7 @@ public class ListViewDialog extends JDialog {
 
     /** The localizer for the time-phrases. */
     public static final util.ui.Localizer mTimeLocalizer = util.ui.Localizer
-            .getLocalizerFor(VerticalToolBar.class);
+            .getLocalizerFor(TimeChooserPanel.class);
 
     /** The localizer used by this class. */
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer
