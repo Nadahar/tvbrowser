@@ -62,8 +62,7 @@ public abstract class AbstractProgramTableLayout implements ProgramTableLayout {
     }
     else if ((row < 0) || (row >= mCellHeightArr[col].length)) {
       mLog.warning("Row out of bounds " + row + "! Bounds: [0.." + (mCellHeightArr[col].length - 1) + "]");
-      throw new NullPointerException();
-      // return 0;
+      return 0;
     }
     else {
       return mCellHeightArr[col][row];

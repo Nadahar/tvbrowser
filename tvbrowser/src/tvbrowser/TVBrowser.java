@@ -591,6 +591,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private void changeDate(devplugin.Date date) {
+    System.out.println("Changing to date: " + date);
     devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
     DayProgram today = DataService.getInstance().getDayProgram(date);
     DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate);

@@ -169,7 +169,7 @@ public class XmlTvHandler extends DefaultHandler {
 
         // Get the date
      
-		mCalendar.set(Calendar.DAY_OF_MONTH, day+1);
+		mCalendar.set(Calendar.DAY_OF_MONTH, day);
 		mCalendar.set(Calendar.MONTH, month - 1);
 		mCalendar.set(Calendar.YEAR, year);
 		int daysSince1970 = (int)(mCalendar.getTimeInMillis() / 1000L / 60L / 60L / 24L);
