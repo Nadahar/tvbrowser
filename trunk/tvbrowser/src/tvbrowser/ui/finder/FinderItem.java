@@ -39,12 +39,18 @@ import tvbrowser.core.*;
  */
 public class FinderItem extends JLabel implements MouseListener {
 
+  /** The localizer for this class. */
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(FinderItem.class);
+  
   private devplugin.Date date;
   private FinderListener listener;
   private boolean isMarked;
   public static final Color MARKED_BG_COLOR=new Color(170,154,228);
   public static final Color SELECTED_BG_COLOR=new Color(236,236,212);
 
+  
+  
   /**
    * Constructs a new FinderItem containing the specified date (in days since 1900-01-01).
    * The FinderListener is called, if the FinderItem is selected.
@@ -54,16 +60,16 @@ public class FinderItem extends JLabel implements MouseListener {
     this.listener=listener;
     date=d;
     if (new devplugin.Date().equals(d)) {    	
-      setText("today");
+      setText(mLocalizer.msg("today", "Today"));
     }else {
       setText(d.toString());
     }
 
     addMouseListener(this);
     update();
-    isMarked=false;
-    
+    isMarked=false;  
   }
+
 
 
   /**

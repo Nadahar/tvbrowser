@@ -91,10 +91,8 @@ public class FinderPanel extends JComponent implements FinderListener {
     add(scrollPane,BorderLayout.CENTER);
     updateUI();
     dataChangedListener.dateChanged(new devplugin.Date());
-    
-    
-
   }
+
 
 
   /**
@@ -120,7 +118,6 @@ public class FinderPanel extends JComponent implements FinderListener {
    * Marks the FinderItem containing the given date
    */
   public void markDate(devplugin.Date date) {
-
     if (itemList==null) {
       throw new RuntimeException("itemList is null");
     }
@@ -129,11 +126,13 @@ public class FinderPanel extends JComponent implements FinderListener {
     while (enum.hasMoreElements()) {
       item=(FinderItem)enum.nextElement();
       if (item.getDate().equals(date)) {
-          finderItemStatusChanged(item);
-          return;
+        finderItemStatusChanged(item);
+        return;
       }
     }
   }
+
+
 
   /**
    * Implementation of the interface "FinderListener". Called by the FinderItem.
@@ -149,10 +148,5 @@ public class FinderPanel extends JComponent implements FinderListener {
       curSelectedFinderItem=item;
     }
   }
-
-
- 
-
-
 
 }
