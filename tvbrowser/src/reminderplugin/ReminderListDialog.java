@@ -88,11 +88,15 @@ public class ReminderListDialog extends JDialog {
     mListPanel.setLayout(new BoxLayout(mListPanel,BoxLayout.Y_AXIS));
     
     if (list!=null) {
-      Iterator it=list.getReminderItems();
+      ReminderListItem[] items = list.getReminderItems();
+      for (int i=0; i<items.length; i++) {
+        mListPanel.add(createListItemPanel(items[i]));
+      }
+    /*  Iterator it=list.getReminderItems();
       while (it.hasNext()) {
         ReminderListItem item=(ReminderListItem)it.next();
         mListPanel.add(createListItemPanel(item));
-      }
+      }*/
     }
     
     mScrollPane = new JScrollPane(mListPanel);
@@ -131,15 +135,18 @@ public class ReminderListDialog extends JDialog {
   }
   
   private void showSendDialog() {
-      Program[] programArr = new Program[reminderList.size()];
-
-      int i = 0;
-      Iterator it = reminderList.getReminderItems();      
+      
+      ReminderListItem[] items = reminderList.getReminderItems();
+      Program[] programArr = new Program[items.length];
+      for (int i=0; i<items.length; i++) {
+        programArr[i] = items[i].getProgram();
+      }
+   /*   Iterator it = reminderList.getReminderItems();      
       while (it.hasNext()) {
           ReminderListItem item = (ReminderListItem)it.next();
           programArr[i] = item.getProgram();
           i++;
-      }
+      }*/
       
       SendToPluginDialog send = new SendToPluginDialog(this, programArr);
 
@@ -147,7 +154,7 @@ public class ReminderListDialog extends JDialog {
   }  
   
   private void removeReminderListItem(ReminderListItem item, JPanel panel) {
-    reminderList.remove(item);    
+    reminderList.remove(item.getProgram());    
     mListPanel.remove(panel);
     mScrollPane.updateUI();
   }
@@ -170,13 +177,13 @@ public class ReminderListDialog extends JDialog {
         if (inx == DONT_REMEMBER) {
           removeReminderListItem(item,result);
         } else {
-          item.setReminderMinutes(REMIND_VALUE_ARR[inx]);
+          item.setMinutes(REMIND_VALUE_ARR[inx]);
         }
       }
     });
 
     // select the right item
-    int minutes = item.getReminderMinutes();
+    int minutes = item.getMinutes();
     int idx = 0;
     for (int i = 0; i < REMIND_VALUE_ARR.length; i++) {
       if (minutes == REMIND_VALUE_ARR[i]) {

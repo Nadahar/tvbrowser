@@ -32,6 +32,8 @@ import java.io.*;
 import java.util.*;
 import java.applet.*;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import util.exc.*;
 import util.ui.UiUtilities;
@@ -58,22 +60,20 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    */
   public ReminderPlugin() {
     mInstance = this;
-
-    mReminderList = new ReminderList();
-    mReminderList.setReminderTimerListener(this);
-    mReminderItemsTrash = new HashSet();
-    
-    
   }
   
-  
+  private void init() {
+      TreeNode tree = getPluginManager().getTree(getId()); 
+      mReminderList = new ReminderList(tree);
+      mReminderList.setReminderTimerListener(this);
+      mReminderItemsTrash = new HashSet();
+  }
   
   public static ReminderPlugin getInstance() {
     return mInstance;
   }
   
-  
-  
+    
   public void timeEvent(ReminderListItem item) {
     if ("true" .equals(mSettings.getProperty( "usesound" ))) {
       playSound(mSettings.getProperty( "soundfile" ));
@@ -89,7 +89,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         new ReminderFrame(getParentFrame(), mReminderList, item,
                         getAutoCloseReminderTime(), iconImage);
     } else {
-      mReminderList.remove(item);
+      mReminderList.remove(item.getProgram());
     }
     if ("true" .equals(mSettings.getProperty( "useexec" ))) {
       String fName=mSettings.getProperty( "execfile" );
@@ -138,53 +138,24 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   public void readData(ObjectInputStream in)
-    throws IOException, ClassNotFoundException
-  {
+    throws IOException, ClassNotFoundException {
       
-     
-      
+    init();
     int version = in.readInt();
     
-	// Remove from the old list
-    mReminderList.setReminderTimerListener(null);
+	  mReminderList.setReminderTimerListener(null);
     if (version < 3) {
-      mReminderList = new ReminderList(in);
-    } else {
-      mReminderList = new ReminderList();
+      mReminderList.read(in);
     }
-    mReminderList.setReminderTimerListener(this);
-    if (mReminderList != null) {
-      mReminderList.removeExpiredItems();
-      mReminderList.setReminderTimerListener(this);
-      
-      // mark the programs
-      Iterator iter = mReminderList.getReminderItems();
-      while (iter.hasNext()) {
-        ReminderListItem item = (ReminderListItem) iter.next();
-        item.getProgram().mark( this );
-      }
-    }
-    
-    
-    TreeNode tree = getPluginManager().getTree(getId()); 
-    TreeLeaf[] leafes = tree.getLeafs();
-    for (int i=0; i<leafes.length; i++) {
-      if (!addToReminderList(leafes[i])) {
-        tree.remove(leafes[i]);
-      }
-    }
-   
-    
-    
-    
-    
+     
+    mReminderList.removeExpiredItems();
+    mReminderList.setReminderTimerListener(this);   
   }
 
   
   
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(3); // version 3 (since TV-Browser 1.1)
-  //	mReminderList.writeData(out);
   }
   
   
@@ -196,6 +167,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   public void loadSettings(Properties settings) {
+    System.out.println("loading reminder settings...");
     if (settings == null ) {
       settings = new Properties();
     }
@@ -221,87 +193,83 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     return autoCloseReminderTime;
   }
   
-  
-  
-  public String getContextMenuItemText() {
-    return mLocalizer.msg( "contextMenuText" ,"Remind me" );
-  }
-  
-  public String getButtonText() {
-    return mLocalizer.msg( "buttonText" ,"Reminder list" );
-  }
-  
   public devplugin.SettingsTab getSettingsTab() {
     return new ReminderSettingsTab(mSettings);
   }
   
-  
-  
-  /**
-   * This method is invoked by the host-application if the user has choosen your
-   * plugin from the context menu.
-   */
-  public void execute(Program program) {
-    if (program.isExpired()) {
-      String msg = mLocalizer.msg("programAlreadyExpired",
-        "The program is already expired!");
-      JOptionPane.showMessageDialog(getParentFrame(), msg);
-    } else {
-            
-      ReminderDialog dlg = new ReminderDialog(getParentFrame(), program, mSettings);
-      UiUtilities.centerAndShow(dlg);
-      if (dlg.getOkPressed()) {
-        int minutes = dlg.getReminderMinutes();
-        addToReminderList(program, minutes);        
-        program.mark(this);        
-      }
-      dlg.dispose();
+  public Action[] getContextMenuActions(final Program program) {
+    final Plugin plugin = this;  
+    if (mReminderList.contains(program)) {
+        ContextMenuAction action = new ContextMenuAction();
+        action.setText(mLocalizer.msg( "contextMenuText.DontRemindMe" ,"Don't remind me"));  
+        action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));  
+        action.setActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent event) {
+            mReminderList.remove(program);  
+          }
+        });
+        return new Action[]{action};
+    }
+    else if (program.isExpired() || program.isOnAir()) {
+      return new Action[]{};
+    }
+    else {
+      ContextMenuAction action = new ContextMenuAction();
+      action.setText(mLocalizer.msg( "contextMenuText" ,"Remind me" ));  
+      action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));  
+      action.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent event) {
+          ReminderDialog dlg = new ReminderDialog(getParentFrame(), program, mSettings);
+          UiUtilities.centerAndShow(dlg);
+          if (dlg.getOkPressed()) {
+            int minutes = dlg.getReminderMinutes();
+            mReminderList.add(program, minutes);    
+          }
+          dlg.dispose();            
+        }
+      });
+      return new Action[]{action};
     }
   }
-    
-  
-  
-    
+      
     
   /**
    * This method is invoked for multiple program execution.
    */
-  public void execute(Program[] programArr) {
-    // multiple program execution
+  
+  public void receivePrograms(Program[] programArr) {
     int minutes = 3;
     for (int i = 0; i < programArr.length; i++) {
-      addToReminderList(programArr[i], minutes);
-    }
+      mReminderList.add(programArr[i], minutes);
+    } 
   }
-
   
 
-  public void execute() {
-    JDialog dlg= new ReminderListDialog(getParentFrame(), mReminderList);
-    dlg.setSize(600,350);
-    UiUtilities.centerAndShow(dlg);
-    dlg.dispose();
-  }
+  
+  public Action getButtonAction() {
+    AbstractAction action = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        JDialog dlg= new ReminderListDialog(getParentFrame(), mReminderList);
+        dlg.setSize(600,350);
+        UiUtilities.centerAndShow(dlg);
+        dlg.dispose();
+      }
+    };
 
-  private boolean addToReminderList(TreeLeaf item) {
-    return mReminderList.add(item.getProgram(), 10);
+    action.putValue(Action.NAME, mLocalizer.msg( "buttonText" ,"Reminder list" ));
+    action.putValue(Action.SMALL_ICON, createImageIcon("reminderplugin/TipOfTheDay16.gif"));
+    action.putValue(BIG_ICON, createImageIcon("reminderplugin/TipOfTheDay24.gif"));
+    action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
     
+    return action;
   }
+ 
   
-  private void addToReminderList(Program program, int minutes) {
-    mReminderList.add(program, minutes);
-    TreeNode tree = getPluginManager().getTree(getId());        
-    TreeLeaf leaf = tree.add(program);
-    leaf.setProperty("reminderminutes",""+minutes);
-    
+  public Icon[] getProgramTableIcons(Program program) {
+    Icon icon = createImageIcon("reminderplugin/TipOfTheDay16.gif");
+    return new Icon[]{icon};
   }
-  
-  
-  
-  public String getMarkIconName() { return "reminderplugin/TipOfTheDay16.gif" ; }
-  public String getButtonIconName() { return "reminderplugin/TipOfTheDay16.gif" ; }
-
-  
+ 
   public boolean supportMultipleProgramExecution() {
     return true;
   }
@@ -316,6 +284,11 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
    */
+  /*
+   
+   since the programs are managed by the program tree, we have
+   nothing to do here...
+   
   public void handleTvDataDeleted(ChannelDayProgram oldProg) {
     
     // Remove the deleted programs from the reminder list
@@ -341,17 +314,43 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       // TODO: identify programs by name and time range (so we won't lose a program if its start time has changed)
       Program p = Plugin.getPluginManager().getProgram(trashItem.getProgram().getDate(), trashItem.getProgram().getID());
       if (p != null) {
-        mReminderList.add(p, trashItem.getReminderMinutes());
+        mReminderList.add(p, trashItem.getMinutes());
         p.mark(this);
       }
     }
     mReminderItemsTrash.clear();
     
   }
+  */
+    
+    
   
-  public boolean usePluginTree() {
-    return true;
+  class ContextMenuAction extends AbstractAction {
+
+    private ActionListener mListener;
+      
+    public ContextMenuAction() {
+        
+    }
+    
+    public void setText(String text) {
+      putValue(Action.NAME, text);
+    }
+     
+    public void setSmallIcon(Icon icon) {
+      putValue(Action.SMALL_ICON, icon);  
+    }
+    
+    public void setActionListener(ActionListener listener) {
+      mListener = listener; 
+    }
+    
+    public void actionPerformed(ActionEvent event) {
+      if (mListener != null) {
+        mListener.actionPerformed(event);
+      }
+    }
+      
   }
-  
 
 } 

@@ -27,10 +27,13 @@
 package reminderplugin;
 
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.awt.event.*;
 
 import util.io.IOUtilities;
+
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.Date;
@@ -44,37 +47,42 @@ import devplugin.TreeLeaf;
  */
 public class ReminderList implements ActionListener {
 
-  private ArrayList mList;
   private ReminderTimerListener mListener=null;
   private javax.swing.Timer mTimer;
+  private TreeNode mRootNode;
 
 
-  public ReminderList() {
-    mList = new ArrayList();
+  public ReminderList(TreeNode node) {
+    mRootNode = node;
+    
+    TreeLeaf[] leafs = node.getLeafs();
+    for (int i=0; i<leafs.length; i++) {
+      leafs[i].getProgram().mark(ReminderPlugin.getInstance());
+    }
   }
 
   
-  
-  public ReminderList(ObjectInputStream in)
+  public void read(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
     TreeNode tree = Plugin.getPluginManager().getTree(ReminderPlugin.getInstance().getId());        
     
       
     int version = in.readInt();
-    if (version == 1) {       
-    
-      int size = in.readInt();
-    
-      mList = new ArrayList(size);
+    if (version == 1) {      
+      int size = in.readInt();    
       for (int i = 0; i < size; i++) {
-        ReminderListItem item = ReminderListItem.readData(in);
-      
+        int v = in.readInt();
+        int reminderMinutes = in.readInt();
+        Date programDate = new Date(in);
+        String programId = (String) in.readObject();
+        Program program = Plugin.getPluginManager().getProgram(programDate, programId);
+        
         // Only add items that were able to load their program
-        if (item != null) {
-          TreeLeaf leaf = tree.add(item.getProgram());
-          leaf.setProperty("reminderminutes",""+item.getReminderMinutes());
-          add(item.getProgram(), item.getReminderMinutes());
+        if (program != null) {
+          TreeLeaf leaf = tree.add(program);
+          leaf.setProperty("reminderminutes",""+reminderMinutes);
+          add(program, reminderMinutes);
         }
       }
     }
@@ -84,12 +92,6 @@ public class ReminderList implements ActionListener {
   
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
-    
-  /*  out.writeInt(mList.size());
-    for (int i = 0; i < mList.size(); i++) {
-      ReminderListItem item = (ReminderListItem) mList.get(i);
-      item.writeData(out);
-    }*/
   }
   
   
@@ -100,60 +102,43 @@ public class ReminderList implements ActionListener {
    * If there is no such item, null is returned.
    */
   public ReminderListItem getItemWithProgram(Program program) {
-    Iterator iter = mList.iterator();
-    while (iter.hasNext()) {
-      ReminderListItem item = (ReminderListItem) iter.next();
-      if (program.equals(item.getProgram())) {
-        return item;
-      }
-    }    
+    TreeLeaf[] leafs = mRootNode.getLeafs();
+    for (int i=0; i<leafs.length; i++) {
+      TreeLeaf leaf = leafs[i];
+      if (leaf.getProgram().equals(program)) {
+        return new ReminderListItem(leaf);
+      }      
+    }
     return null;
   }
 
   
   
-  public boolean add(Program program, int minutes) {
-    ReminderListItem item = getItemWithProgram(program);
-    if (item == null) {
-      item = new ReminderListItem(program, minutes);
-      if (! item.isExpired()) {
-        mList.add(item);
-        program.mark(ReminderPlugin.getInstance());
+  public void add(Program program, int minutes) {
+    if (!program.isExpired()) {
+      ReminderListItem item = this.getItemWithProgram(program);
+      // create a new entry
+      if (item == null) {        
+        TreeLeaf leaf = mRootNode.add(program);   
+        item = new ReminderListItem(leaf);
+        program.mark(ReminderPlugin.getInstance());        
       }
-      else {
-        return false;
-      }
-    } else {
-      item.setReminderMinutes(minutes);
-    }
-    return true;
-  }
-
-  public int size() {
-    return mList.size();
-  }
- 
+      item.setMinutes(minutes);
+    }    
   
-  public void remove(ReminderListItem item) {
-    mList.remove(item);
-    item.getProgram().unmark(ReminderPlugin.getInstance());
   }
   
  
-  
   public void remove(Program program) {
-    Iterator itemIter = mList.iterator();
-    while (itemIter.hasNext()) {
-      ReminderListItem item = (ReminderListItem) itemIter.next();
-      if (item.getProgram().equals(program)) {
-        itemIter.remove();
+    TreeLeaf[] leafs = mRootNode.getLeafs();
+    for (int i=0; i<leafs.length; i++) {
+      if (leafs[i].getProgram().equals(program)) {
+        mRootNode.remove(leafs[i]);
         program.unmark(ReminderPlugin.getInstance());
-        return;
       }
     }
   }
-
-  
+ 
   
   public void setReminderTimerListener(ReminderTimerListener listener) {
     this.mListener = listener;
@@ -166,36 +151,37 @@ public class ReminderList implements ActionListener {
   
   
   public void removeExpiredItems() {
-    Iterator itemIter = mList.iterator();
-    while (itemIter.hasNext()) {
-      ReminderListItem item = (ReminderListItem) itemIter.next();
-      
-      if (item.isExpired()) {
-        itemIter.remove();
+    TreeLeaf[] leafs = mRootNode.getLeafs();
+    for (int i=0; i<leafs.length; i++) {
+      if (leafs[i].getProgram().isExpired()) {
+        mRootNode.remove(leafs[i]);
       }
     }
   }
 
-  
-  
-  public Iterator getReminderItems() {
-    final Object[] obj=mList.toArray();
-    Arrays.sort(obj);
-    return new Iterator() {
-      private int pos=0;
-      public boolean hasNext() {
-        return (pos<obj.length);
+  public boolean contains(Program program) {
+    TreeLeaf[] leafs = mRootNode.getLeafs();
+    for (int i=0; i<leafs.length; i++) {
+      if (leafs[i].getProgram().equals(program)) {
+        return true;
       }
-
-      public Object next() {
-        return obj[pos++];
-      }
-
-      public void remove() {}
-    };
+    }
+    return false;
   }
-
   
+  
+  public ReminderListItem[] getReminderItems() {
+    TreeLeaf[] leafs = mRootNode.getLeafs();
+    ReminderListItem[] result = new ReminderListItem[leafs.length];
+    
+    for (int i=0; i<result.length; i++) {
+      result[i]=new ReminderListItem(leafs[i]);
+    }
+    Arrays.sort(result);
+    return result;
+  }
+      
+      
   // implements ActionListener
   
   
@@ -210,17 +196,16 @@ public class ReminderList implements ActionListener {
 
     devplugin.Date today = new devplugin.Date();
 
-    Iterator it = this.getReminderItems();
-    while (it.hasNext()) {
-      ReminderListItem item = (ReminderListItem) it.next();
-      if (item.getReminderMinutes() < 0) {
+    ReminderListItem[] items = getReminderItems();
+    for (int i=0; i<items.length; i++) {
+      if (items[i].getMinutes() < 0) {
         continue;
       }
        
-      Date remindDate = item.getProgram().getDate(); 
-      int m = item.getProgram().getMinutes();
-      int h = item.getProgram().getHours();
-      int d = item.getReminderMinutes();
+      Date remindDate = items[i].getProgram().getDate(); 
+      int m = items[i].getProgram().getMinutes();
+      int h = items[i].getProgram().getHours();
+      int d = items[i].getMinutes();
       int remindTime = h*60+m - d;
       if (remindTime<0) {
         remindTime = -remindTime;
@@ -231,9 +216,11 @@ public class ReminderList implements ActionListener {
 
 			int diff = today.compareTo(remindDate);
 			if (diff > 0 || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime)) {
-        mListener.timeEvent(item);
+        mListener.timeEvent(items[i]);
       }
     }
   }
+  
+  
   
 }
