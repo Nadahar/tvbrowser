@@ -19,11 +19,8 @@
 
 package tvraterplugin;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringBufferInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -44,7 +41,6 @@ import org.apache.xalan.serialize.SerializerToXML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
@@ -63,8 +59,8 @@ public class Updater implements Progress {
 	/** Localizer */
 	private static final Localizer _mLocalizer = Localizer.getLocalizerFor(Updater.class);
 	/** Location of Update-Skript */
-	private static String LOCATION = "http://localhost/wannawork3/tvaddicted/updater.php";
-//	private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
+//	private static String LOCATION = "http://localhost/wannawork3/tvaddicted/updater.php";
+	private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
 	/** The Plugin */
 	private TVRaterPlugin _tvraterPlugin;
 
@@ -93,24 +89,21 @@ public class Updater implements Progress {
 			writeData(outZipped);
 			outZipped.close();
 
-			String data = readURLConnection(connection);
-			System.out.println(data);
-			if (!data.startsWith("<?")) {
-
-				if (data.startsWith("Error:")) {
-					data = data.substring(6);
-				}
-
-				JOptionPane.showMessageDialog(
+			Node data = readURLConnection(connection);
+			
+			if (data.getNodeName().equals("error")) {
+			    String message = getTextFromNode(data);
+			    
+			    JOptionPane.showMessageDialog(
 					_tvraterPlugin.getParentFrameForTVRater(), 
 					_mLocalizer.msg("serverError","The Server has send the following error:")+ "\n" +
-					data.trim(), 
+					message, 
 					_mLocalizer.msg("error", "Error while updating TV Rater"), 
 					JOptionPane.ERROR_MESSAGE);
 			} else {
 				readData(data);
 			}
-
+			
 			out.close();
 		} catch (Exception e) {
 			ErrorHandler.handle(_mLocalizer.msg("updateError", "An error occured while updateting the TVRater Database"), e);
@@ -120,19 +113,36 @@ public class Updater implements Progress {
 	}
 
 	/**
+	 * Gets the Text within a Node
+     * @param data Node to rip the Text from
+     * @return Text in the Node
+     */
+    private String getTextFromNode(Node data) {
+        Node child = data.getFirstChild();
+        StringBuffer text = new StringBuffer();
+        
+        while (child != null) {
+            
+            if (child.getNodeType() == Node.TEXT_NODE) {
+                text.append(child.getNodeValue());
+            }
+            
+            child = child.getNextSibling();
+        }
+        
+        return text.toString();
+    }
+
+    /**
 	 * Reads the String returned by the PHP-Skript and parses the
 	 * DOM
 	 * @param data String-DOM representation
 	 */
-	private void readData(String data) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document = builder.parse(new StringBufferInputStream(data));
-
-		Node child = document.getDocumentElement().getFirstChild();
+	private void readData(Node node) {
+		Node child = node.getFirstChild();
 		while (child != null) {
 			if (child.getNodeName().equals("data")) {
-				readData(child);
+				readRatingData(child);
 			}
 			child = child.getNextSibling();
 		}
@@ -142,7 +152,7 @@ public class Updater implements Progress {
 	 * Reads the Data in this Node
 	 * @param node Node to analyse
 	 */
-	private void readData(Node node) {
+	private void readRatingData(Node node) {
 		Node child = node.getFirstChild();
 		while (child != null) {
 			if (child.getNodeName().equals("rating")) {
@@ -322,26 +332,16 @@ public class Updater implements Progress {
 	 * @return Data returned from the URL
 	 * @throws Exception IOException etc...
 	 */
-	private static String readURLConnection(URLConnection uc) throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		BufferedReader reader = null;
+	private static Node readURLConnection(URLConnection uc) throws Exception {
+	    Document document;
 		try {
-			reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(uc.getInputStream())));
-			//reader = new BufferedReader(new InputStreamReader(uc.getInputStream()));
-			String line = null;
-			int letter = 0;
-			while ((letter = reader.read()) != -1)
-				buffer.append((char) letter);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			document = builder.parse(new GZIPInputStream(uc.getInputStream()));
 		} catch (Exception e) {
 			throw e;
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException io) {
-				throw io;
-			}
 		}
-		return buffer.toString();
+		return document.getDocumentElement();
 	}
 
 	/**
@@ -360,7 +360,7 @@ public class Updater implements Progress {
 				Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
 				while ((it != null) && (it.hasNext())) {
 					Program program = (Program) it.next();
-					if (program.getLength() >= 75) {
+					if (program.getLength() >= TVRaterPlugin.MINLENGTH) {
 						if (!table.containsKey(program.getTitle())) {
 							table.put(program.getTitle(), program);
 						}
