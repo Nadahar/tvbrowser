@@ -26,6 +26,8 @@
 package util.ui;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -86,40 +88,59 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * It's the height the panel has with a maximum of 3 information rows.
    */  
   private int mPreferredHeight = 0;
+  /**
+   * The date and title as String. Is null when date and title should not be
+   * shown.
+   */  
+  private String mDateAndChannelAsString;
+  /** The start time as String. */  
+  private String mProgramTimeAsString;
   /** The icon used to render the title. */  
   private TextAreaIcon mTitleIcon;
   /** The icon used to render the description. */  
   private TextAreaIcon mDescriptionIcon;
-  /** The start time as String. */  
-  private String mProgramTimeAsString;
   /** The icons to show on the left side under the start time. */
   private Icon[] mIconArr;
   /** The program. */  
   private Program mProgram;
 
-  
-  
+
   /**
    * Creates a new instance of ProgramPanel.
    *
-   * @param prog The program to show in this panel.
+   * @param showDateAndChannel Should date and title be shown?
    */  
-  public ProgramPanel() {
+  public ProgramPanel(boolean showDateAndChannel) {
+    if (showDateAndChannel) {
+      // The empty String indicated that date and title should be shown
+      mDateAndChannelAsString = "";
+    }
+    
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);    
   }
   
-
   
   /**
    * Creates a new instance of ProgramPanel.
    *
    * @param prog The program to show in this panel.
+   * @param showDateAndChannel Should date and title be shown?
    */  
-  public ProgramPanel(devplugin.Program prog) {
-    this();
+  public ProgramPanel(Program prog, boolean showDateAndChannel) {
+    this(showDateAndChannel);
     setProgram(prog);
+  }
+
+
+  /**
+   * Creates a new instance of ProgramPanel.
+   *
+   * @param prog The program to show in this panel.
+   */  
+  public ProgramPanel(Program prog) {
+    this(prog, true);
   }
 
 
@@ -196,12 +217,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
-      // Get the icons from the plugins
-      mIconArr = getPluginIcons(program);
+      
+      mDateAndChannelAsString = program.getDateString() + " - " + 
       
       // Get the start time
       mProgramTimeAsString = program.getTimeString();
-      
+
+      // Get the icons from the plugins
+      mIconArr = getPluginIcons(program);
+
       // Set the new title
       mTitleIcon.setText(program.getTitle());
     }
@@ -402,6 +426,26 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */
   public Program getProgram() {
     return mProgram;
+  }
+  
+  
+  /**
+   * Adds a MouseListener that shows the plugin context menu when the user
+   * does a right click on the program panel. 
+   * 
+   * @param caller The Plugin to exclude from the context menu. When
+   *        <code>null</code> no plugin is excluded.
+   */
+  public void addPluginContextMenuMouseListener(final Plugin caller) {
+    addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent evt) {
+        if (SwingUtilities.isRightMouseButton(evt)) {
+          JPopupMenu menu
+            = PluginManager.createPluginContextMenu(mProgram, caller);
+          menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
+        }
+      }
+    });
   }
   
   

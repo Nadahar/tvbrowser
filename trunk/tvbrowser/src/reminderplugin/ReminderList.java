@@ -29,6 +29,8 @@ package reminderplugin;
 import java.io.*;
 import java.util.*;
 import java.awt.event.*;
+
+import util.io.IOUtilities;
 import devplugin.Program;
 
 /**
@@ -38,13 +40,13 @@ import devplugin.Program;
  */
 public class ReminderList implements ActionListener {
 
-  private ArrayList list;
-  private ReminderTimerListener listener=null;
-  private javax.swing.Timer timer;
+  private ArrayList mList;
+  private ReminderTimerListener mListener=null;
+  private javax.swing.Timer mTimer;
 
 
   public ReminderList() {
-    list = new ArrayList();
+    mList = new ArrayList();
   }
 
   
@@ -56,10 +58,10 @@ public class ReminderList implements ActionListener {
     
     int size = in.readInt();
     
-    list = new ArrayList(size);
+    mList = new ArrayList(size);
     for (int i = 0; i < size; i++) {
       ReminderListItem item = new ReminderListItem(in);
-      list.add(item);
+      add(item.getProgram(), item.getReminderMinutes());
     }
   }
   
@@ -68,9 +70,9 @@ public class ReminderList implements ActionListener {
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
     
-    out.writeInt(list.size());
-    for (int i = 0; i < list.size(); i++) {
-      ReminderListItem item = (ReminderListItem) list.get(i);
+    out.writeInt(mList.size());
+    for (int i = 0; i < mList.size(); i++) {
+      ReminderListItem item = (ReminderListItem) mList.get(i);
       item.writeData(out);
     }
   }
@@ -83,7 +85,7 @@ public class ReminderList implements ActionListener {
    * If there is no such item, null is returned.
    */
   private ReminderListItem getItemWithProgram(Program program) {
-    Iterator iter = list.iterator();
+    Iterator iter = mList.iterator();
     while (iter.hasNext()) {
       ReminderListItem item = (ReminderListItem) iter.next();
       if (item.getProgram().equals(program)) {
@@ -101,7 +103,7 @@ public class ReminderList implements ActionListener {
     if (item == null) {
       item = new ReminderListItem(program, minutes);
       if (! item.isExpired()) {
-        list.add(item);
+        mList.add(item);
         program.mark(ReminderPlugin.getInstance());
       }
     } else {
@@ -112,14 +114,14 @@ public class ReminderList implements ActionListener {
   
   
   public void remove(ReminderListItem item) {
-    list.remove(item);
+    mList.remove(item);
     item.getProgram().unmark(ReminderPlugin.getInstance());
   }
   
   
   
   public void remove(Program program) {
-    Iterator itemIter = list.iterator();
+    Iterator itemIter = mList.iterator();
     while (itemIter.hasNext()) {
       ReminderListItem item = (ReminderListItem) itemIter.next();
       if (item.getProgram().equals(program)) {
@@ -133,17 +135,17 @@ public class ReminderList implements ActionListener {
   
   
   public void setReminderTimerListener(ReminderTimerListener listener) {
-    this.listener = listener;
+    this.mListener = listener;
     if (listener != null) {
-      timer = new javax.swing.Timer(10000, this);
-      timer.start();
+      mTimer = new javax.swing.Timer(10000, this);
+      mTimer.start();
     }
   }
 
   
   
   public void removeExpiredItems() {
-    Iterator itemIter = list.iterator();
+    Iterator itemIter = mList.iterator();
     while (itemIter.hasNext()) {
       ReminderListItem item = (ReminderListItem) itemIter.next();
       
@@ -156,7 +158,7 @@ public class ReminderList implements ActionListener {
   
   
   public Iterator getReminderItems() {
-    final Object[] obj=list.toArray();
+    final Object[] obj=mList.toArray();
     Arrays.sort(obj);
     return new Iterator() {
       private int pos=0;
@@ -177,51 +179,43 @@ public class ReminderList implements ActionListener {
   
   
   public void actionPerformed(ActionEvent event) {
-   
-        if (listener == null) {
-          timer.stop();
-          return;
+    if (mListener == null) {
+      mTimer.stop();
+      return;
+    }
+
+    Calendar cal = new GregorianCalendar();
+    cal.setTime(new java.util.Date());
+
+    devplugin.Date today = new devplugin.Date();
+
+    Iterator it = this.getReminderItems();
+    while (it.hasNext()) {
+      ReminderListItem item = (ReminderListItem) it.next();
+      if (item.getReminderMinutes() < 0) {
+        continue;
+      }
+
+      int m = item.getProgram().getMinutes();
+      int h = item.getProgram().getHours();
+      int d = item.getReminderMinutes();
+
+      int diff = today.compareTo(item.getProgram().getDate());
+
+      if (diff > 0) {
+        mListener.timeEvent(item);
+      } else {
+        int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+        int remindMinutesAfterMidnight = h * 60 + m - d;
+
+        if (diff < 0) {
+          currentMinutesAfterMidnight -= 1440;
         }
-    
-    
-           
-        devplugin.Date date=new devplugin.Date();
-    
-        Calendar cal=new GregorianCalendar();
-        cal.setTime(new java.util.Date());
-        int time=cal.get(Calendar.HOUR_OF_DAY)*60+cal.get(Calendar.MINUTE);
- 
-        devplugin.Date today=new devplugin.Date();
-    
-        Iterator it=this.getReminderItems();
-        while (it.hasNext()) {
-          ReminderListItem item=(ReminderListItem)it.next();
-          if (item.getReminderMinutes()<0) continue;
 
-          int m=item.getProgram().getMinutes();
-          int h=item.getProgram().getHours();
-          int d=item.getReminderMinutes();
-
-          int diff=today.compareTo(item.getProgram().getDate());
-
-          if (diff>0) {
-            listener.timeEvent(item);    
-          }
-         else {
-     
-            int currentMinutesAfterMidnight = util.io.IOUtilities.getMinutesAfterMidnight();
-            int remindMinutesAfterMidnight = h * 60 + m -d;
-        
-            if (diff<0) {
-              currentMinutesAfterMidnight-=1440;
-            }
-        
-            if (currentMinutesAfterMidnight>=remindMinutesAfterMidnight) {
-              listener.timeEvent(item);
-            }
-        
-          }
-      
+        if (currentMinutesAfterMidnight >= remindMinutesAfterMidnight) {
+          mListener.timeEvent(item);
+        }
+      }
     }
   }
   

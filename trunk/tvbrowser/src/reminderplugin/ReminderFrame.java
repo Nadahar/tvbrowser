@@ -27,6 +27,7 @@
 package reminderplugin;
 
 import devplugin.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -73,7 +74,7 @@ public class ReminderFrame extends JFrame {
   
   
   public ReminderFrame(ReminderList list, ReminderListItem item, int autoCloseSecs) {
-    super(mLocalizer.msg("title", "Erinnerung"));
+    super(mLocalizer.msg("title", "Reminder"));
     
     mReminderList = list;
     
@@ -97,7 +98,9 @@ public class ReminderFrame extends JFrame {
     JLabel channelLabel=new JLabel(mProgram.getChannel().getName());
     progPanel.add(channelLabel,BorderLayout.EAST);
     
-    progPanel.add(new ProgramPanel(mProgram), BorderLayout.CENTER);
+    ProgramPanel panel = new ProgramPanel(mProgram);
+    panel.addPluginContextMenuMouseListener(ReminderPlugin.getInstance());
+    progPanel.add(panel, BorderLayout.CENTER);
     
     JPanel btnPanel = new JPanel(new BorderLayout(10,0));
     mCloseBtText = mLocalizer.msg("close", "Close");
