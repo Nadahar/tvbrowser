@@ -480,6 +480,17 @@ public class IOUtilities {
       offset = patternIdx + str.length();
     } while (patternIdx != -1);
   }
+  
+  
+  
+  /**
+   * Clears an StringBuffer
+   * 
+   * @param buffer The buffer to clear
+   */
+  public static void clear(StringBuffer buffer) {
+    buffer.delete(0, buffer.length());
+  }
 
   
 
