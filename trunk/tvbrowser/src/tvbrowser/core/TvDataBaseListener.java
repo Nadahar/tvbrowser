@@ -23,39 +23,19 @@
  *   $Author$
  * $Revision$
  */
- 
-package tvbrowser.ui.mainframe;
+package tvbrowser.core;
 
-import javax.swing.*;
-import java.awt.*;
+import devplugin.ChannelDayProgram;
 
-public class StatusBar extends JPanel {
-  
-  private JProgressBar mProgressBar;
-  private JLabel mInfoLabel;  
-  
- public StatusBar() {
-   setOpaque(false);
-   setLayout(new BorderLayout(10,0));
-   setBorder(BorderFactory.createEmptyBorder(0,2,2,2));
-   mInfoLabel=new JLabel();
-   mInfoLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-   mProgressBar = new JProgressBar();
-   mProgressBar.setOpaque(false);
-   mProgressBar.setBorder(BorderFactory.createLoweredBevelBorder());
-     
-   add(mProgressBar,BorderLayout.EAST);
-   add(mInfoLabel,BorderLayout.CENTER);
-   this.setPreferredSize(new Dimension(0,20));
- }
- 
- public JProgressBar getProgressBar() {
-   return mProgressBar;
- }
- 
- public JLabel getLabel() {
-   return mInfoLabel;
- }
-  
+/**
+ * A listener that listens for TV data events  
+ * 
+ * @author Til Schneider, www.murfman.de
+ */
+public interface TvDataBaseListener {
+
+  public void dayProgramAdded(ChannelDayProgram prog);
+
+  public void dayProgramDeleted(ChannelDayProgram prog);
+
 }
-

@@ -83,7 +83,7 @@ public class FinderItem extends JLabel implements MouseListener {
    * Enables (or disables) the FinderItem if program information is available (or unavailable).
    */
   public void update() {
-    this.setEnabled(DataService.dataAvailable(date));
+    this.setEnabled(TvDataBase.getInstance().dataAvailable(date));
     setMark(isMarked());
   }
 

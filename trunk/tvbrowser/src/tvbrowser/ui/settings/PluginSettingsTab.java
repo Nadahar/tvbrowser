@@ -137,10 +137,10 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     });
     
     mActivatedPlugins=new HashSet();
-    Plugin pluginList[]=PluginManager.getAvailablePlugins();
+    Plugin pluginList[]=PluginManager.getInstance().getAvailablePlugins();
     for (int i=0;i<pluginList.length;i++) {
       mListModel.addElement(pluginList[i]);
-      if (PluginManager.isInstalled(pluginList[i])) {
+      if (PluginManager.getInstance().isInstalled(pluginList[i])) {
         mActivatedPlugins.add(pluginList[i]);
       }
     }
@@ -215,7 +215,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 	public void saveSettings() {
     Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
     mActivatedPlugins.toArray(installedPluginList);
-    PluginManager.setInstalledPlugins(installedPluginList);    
+    PluginManager.getInstance().setInstalledPlugins(installedPluginList);    
 	}
 
 	

@@ -181,7 +181,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
    
     
     //String[] hiddenPlugins=Settings.getHiddenButtonPlugins();
-    Plugin[] installedPlugins=PluginManager.getInstalledPlugins();
+    Plugin[] installedPlugins=PluginManager.getInstance().getInstalledPlugins();
     
     for (int i=0;i<installedPlugins.length;i++) {
       final Plugin plugin=installedPlugins[i];

@@ -23,9 +23,7 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser;
-
 
 import java.awt.Color;
 import java.awt.Image;
@@ -46,6 +44,8 @@ import util.ui.UiUtilities;
 import com.gc.systray.SystemTrayIconListener;
 import com.gc.systray.SystemTrayIconManager;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+
+import devplugin.Date;
 
 /**
  * TV-Browser
@@ -133,21 +133,16 @@ public class TVBrowser {
     
     updateLookAndFeel();
     
-    
-    devplugin.Plugin.setPluginManager(DataService.getInstance());
-    
-    /*Maybe there are plugins to install (.jar.inst files)*/
-	  PluginManager.installPendingPlugins();
+    // Maybe there are plugins to install (.jar.inst files)
+    PluginManager.installPendingPlugins();
     
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);
-    PluginManager.initInstalledPlugins();
+    PluginManager.getInstance().loadPlugins();
     
     mLog.info("Deleting expired tv data...");
-
-    DataService.deleteExpiredFiles(1);
-    
+    TvDataBase.getInstance().deleteExpiredFiles(1);
     
     mLog.info("Loading filters...");
     FilterComponentList.init();
@@ -279,15 +274,16 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         
-          if (Settings.getAutomaticDownload()==Settings.ONSTARTUP && ChannelList.getNumberOfSubscribedChannels()>0) {
-            mainFrame.runUpdateThread(Settings.getDownloadPeriod());
-          }        
-       
-          if (!DataService.dataAvailable(new devplugin.Date()) && ChannelList.getNumberOfSubscribedChannels()>0) {
-            mainFrame.askForDataUpdate();
-          } else {
-            mainFrame.scrollToNow();
-          }
+        if (Settings.getAutomaticDownload()==Settings.ONSTARTUP && ChannelList.getNumberOfSubscribedChannels()>0) {
+          mainFrame.runUpdateThread(Settings.getDownloadPeriod());
+        }        
+     
+        boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+        if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
+          mainFrame.askForDataUpdate();
+        } else {
+          mainFrame.scrollToNow();
+        }
         
      }
     });

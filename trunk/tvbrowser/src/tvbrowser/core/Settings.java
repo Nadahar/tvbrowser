@@ -37,6 +37,7 @@ import util.io.IOUtilities;
 
 import tvdataservice.TvDataService;
 import devplugin.Channel;
+import devplugin.Plugin;
 import tvbrowser.ui.SkinPanel;
 
 class TVBrowserProperties extends java.util.Properties {
@@ -651,7 +652,7 @@ public class Settings {
   public static String[] getInstalledPlugins() {
     if (settings.getProperty("plugins") == null) {
       // Install by default all plugins
-      devplugin.Plugin[] availableArr = PluginManager.getAvailablePlugins();
+      Plugin[] availableArr = PluginManager.getInstance().getAvailablePlugins();
       String[] classNameArr = new String[availableArr.length];
       for (int i = 0; i < availableArr.length; i++) {
         classNameArr[i] = availableArr[i].getClass().getName();

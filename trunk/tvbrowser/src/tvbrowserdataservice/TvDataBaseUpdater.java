@@ -36,7 +36,7 @@ import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.ProgramFrame;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
-import tvdataservice.TvDataBase;
+import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import devplugin.*;
 import devplugin.Channel;
@@ -54,13 +54,13 @@ public class TvDataBaseUpdater {
     = java.util.logging.Logger.getLogger(TvDataBaseUpdater.class.getName());
   
   private TvBrowserDataService mDataService;
-  private TvDataBase mDataBase;
+  private TvDataUpdateManager mDataBase;
   
   private HashSet mUpdateJobSet;
   
   
   public TvDataBaseUpdater(TvBrowserDataService dataService,
-    TvDataBase dataBase)
+    TvDataUpdateManager dataBase)
   {
     mDataService = dataService;
     mDataBase = dataBase;

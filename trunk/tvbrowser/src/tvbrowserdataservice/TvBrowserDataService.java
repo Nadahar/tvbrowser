@@ -40,7 +40,7 @@ import devplugin.Version;
 
 import tvbrowserdataservice.file.*;
 import tvdataservice.SettingsPanel;
-import tvdataservice.TvDataBase;
+import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
 import util.io.IOUtilities;
@@ -85,7 +85,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private int mDirectlyLoadedBytes;
   
   private DownloadManager mDownloadManager;
-  private TvDataBase mTvDataBase;
+  private TvDataUpdateManager mTvDataBase;
   private ProgressMonitor mProgressMonitor;
   private int mTotalDownloadJobCount;
   
@@ -113,7 +113,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
    * 
    * @throws TvBrowserException
    */  
-  public void updateTvData(TvDataBase dataBase, Channel[] channelArr,
+  public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
     Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException
   {    
@@ -377,7 +377,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 
 
-  private void addDownloadJob(TvDataBase dataBase, Date date, String level,
+  private void addDownloadJob(TvDataUpdateManager dataBase, Date date, String level,
     String channelName, String country,
     DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH)
     throws TvBrowserException

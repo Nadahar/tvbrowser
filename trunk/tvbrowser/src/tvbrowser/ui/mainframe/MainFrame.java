@@ -34,30 +34,11 @@ import java.awt.event.KeyEvent;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.KeyStroke;
-
+import javax.swing.*;
 
 import tvbrowser.TVBrowser;
-import tvbrowser.core.ChannelList;
-import tvbrowser.core.DataService;
-import tvbrowser.core.DateListener;
-import tvbrowser.core.DayProgram;
-import tvbrowser.core.PluginManager;
-import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.*;
 import tvbrowser.ui.SkinPanel;
-
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.FilterChooser;
 import tvbrowser.ui.filter.FilterComponentList;
@@ -72,6 +53,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
 import devplugin.Channel;
+import devplugin.Date;
 
 /**
  * TV-Browser
@@ -117,9 +99,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     JMenuBar menuBar = new JMenuBar();
     setJMenuBar(menuBar);
     
-    
-    mStatusBar=new StatusBar(DataService.getInstance().getProgressBar());
-    
+    mStatusBar = new StatusBar();
  
     // TV-Browser menu
     JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
@@ -325,7 +305,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   public void quit() {
     mLog.info("Storing plugin data");
-    PluginManager.finalizeInstalledPlugins();
+    PluginManager.getInstance().finalizeInstalledPlugins();
     
     mLog.info("Storing filter components");
     FilterComponentList.store();
@@ -363,7 +343,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private void createPluginsMenu() {
     mPluginsMenu.removeAll();
     
-    Object[] plugins = PluginManager.getInstalledPlugins();
+    Object[] plugins = PluginManager.getInstance().getInstalledPlugins();
     JMenuItem item;
     HashMap map = new HashMap();
     for (int i = 0;i<plugins.length;i++) {
@@ -420,7 +400,9 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
                     dlg.hide();
                     dlg.dispose();
                     dlg=null;
-              if (! DataService.dataAvailable(new devplugin.Date())) {
+              
+              boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+              if (! dataAvailable) {
                 askForDataUpdate();
               }
             }
@@ -522,8 +504,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
   private void onDownloadDone() {
-    DataService.getInstance().stopDownload();
-    DataService.getInstance().getProgressBar().setValue(0);
+    TvDataUpdater.getInstance().stopDownload();
+    mStatusBar.getProgressBar().setValue(0);
     
     JButton updateBtn=mDefaultToolBar.getUpdateBtn();
     updateBtn.setText(TVBrowser.mLocalizer.msg("button.update", "Update"));
@@ -547,12 +529,9 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   }
 
 
-  private void changeDate(devplugin.Date date) {      
-    devplugin.Date nextDate = date.addDays(1);
-    DataService.getInstance().getProgressBar().setMaximum(100);
-    DayProgram today = DataService.getInstance().getDayProgram(date, 0, 49);
-    DayProgram tomorrow = DataService.getInstance().getDayProgram(nextDate, 50, 99);
-    mProgramTableModel.setDayPrograms(today, tomorrow);
+  private void changeDate(Date date) {      
+    mStatusBar.getProgressBar().setMaximum(100);
+    mProgramTableModel.setDate(date);
 
     if (finderPanel != null) {
       finderPanel.update();
@@ -561,8 +540,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       // If this is today -> scroll to now
       scrollToNow();
     }
-  DataService.getInstance().getProgressBar().setValue(0);
-  
+    
+    mStatusBar.getProgressBar().setValue(0);
   }
 
 
@@ -595,11 +574,11 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   public void runUpdateThread(final int daysToDownload) {
     
   if (daysToDownload != UpdateDlg.CANCEL) {
-    final JFrame parent = this;
     downloadingThread = new Thread() {
       public void run() {
         onDownloadStart();
-        DataService.getInstance().startDownload(daysToDownload);
+        JProgressBar progressBar = mStatusBar.getProgressBar();
+        TvDataUpdater.getInstance().downloadTvData(daysToDownload, progressBar);
         onDownloadDone();
         newTvDataAvailable();
       }
@@ -614,8 +593,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    * Starts the tv data update.
    */
   public void updateTvData() {
-    if (DataService.getInstance().isDownloading()) {
-      DataService.getInstance().stopDownload();
+    if (TvDataUpdater.getInstance().isDownloading()) {
+      TvDataUpdater.getInstance().stopDownload();
     } else {
       UpdateDlg dlg = new UpdateDlg(this, true);
       dlg.pack();
@@ -682,7 +661,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   
   public void onSubscribedChannelsChanged() {
     ChannelList.create();    
-    DataService.getInstance().subscribedChannelsChanged();
     mProgramTableModel.setShownChannels(ChannelList.getSubscribedChannels());
     mDefaultToolBar.updateChannelChooser();  
   }
@@ -733,11 +711,9 @@ public void askForDataUpdate() {
 
 
 public void showHelpDialog() {
-  String msg = mLocalizer.msg("helproot", "help/default/index.html");
-  //util.ui.HelpDialog.showHelpPage(this,msg+"index.html",null);
-  
+  String helproot = mLocalizer.msg("helproot", "help/default/index.html");
   try {
-    java.io.File indexFile=new java.io.File(mLocalizer.msg("helproot", "help/default/index.html"));
+    java.io.File indexFile = new java.io.File(helproot);
     util.ui.BrowserLauncher.openURL("file://"+indexFile.getAbsolutePath());
   }catch(java.io.IOException e) {
     e.printStackTrace();

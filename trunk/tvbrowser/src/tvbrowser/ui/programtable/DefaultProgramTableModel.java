@@ -23,13 +23,6 @@
  *   $Author$
  * $Revision$
  */
-
-/*
- * DefaultProgramTableModel.java
- *
- * Created on 24. Mai 2003, 13:28
- */
-
 package tvbrowser.ui.programtable;
 
 import java.util.ArrayList;
@@ -41,9 +34,8 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.core.TvDataBase;
 import util.io.IOUtilities;
-
-import tvbrowser.core.DayProgram;
 
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -65,7 +57,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private ArrayList mListenerList;
   
   private Channel[] mShownChannelArr;
-  private DayProgram mMainDay, mNextDay;
+  private Date mMainDay, mNextDay;
   
   private ArrayList[] mProgramColumn;
   
@@ -79,10 +71,15 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   /**
    * Creates a new instance of DefaultProgramTableModel.
    */
-  public DefaultProgramTableModel(Channel[] shownChannelArr, int todayEarliestTime, int tomorrowLatestTime) {
+  public DefaultProgramTableModel(Channel[] shownChannelArr,
+    int todayEarliestTime, int tomorrowLatestTime)
+  {
     mListenerList = new ArrayList();
     mTodayEarliestTime=todayEarliestTime;
     mTomorrowLatestTime=tomorrowLatestTime;
+
+    mMainDay = new Date();
+    mNextDay = mMainDay.addDays(1);
     
 	setShownChannels(shownChannelArr);
     
@@ -115,16 +112,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 		mProgramColumn[i]=new ArrayList();
 	}
     
- //   updateProgramCount();
- //   fireTableDataChanged();
- 	setDayPrograms(mMainDay,mNextDay);
+    updateTableContent();
   }
   
   
   public void setProgramFilter(ProgramFilter filter) {
   	mProgramFilter=filter;
     fireTableDataChanged();
-    setDayPrograms(mMainDay, mNextDay);
+    updateTableContent();
   }
   
   private void addChannelDayProgram(int col, ChannelDayProgram cdp, int startMinutes, Date startDate, int endMinutes, Date endDate ) {
@@ -143,54 +138,36 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
   }
   
-  public void setDayPrograms(DayProgram mainDay, DayProgram nextDay) {
+
+  public void setDate(Date date) {
+    mMainDay = date;
+    mNextDay = date.addDays(1);
     
+    updateTableContent();
+  }
+  
+  
+  private void updateTableContent() {
     deregisterFromPrograms(mProgramColumn);
-    /*
-  	for (int i=0;i<mShownChannelArr.length;i++) {
-      ChannelDayProgram cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);
+    
+    TvDataBase db = TvDataBase.getInstance();
+    for (int i = 0; i < mShownChannelArr.length; i++) {
       mProgramColumn[i].clear();
-      if (cdp!=null) {
-        Iterator it=cdp.getPrograms();
-        while (it.hasNext()) {
-          Program prog=(Program)it.next();
-          if (mProgramFilter==null || mProgramFilter.accept(prog)) {
-            mProgramColumn[i].add(prog);
-          }
-        }
-      }    
-    }
-   */
-   
-  for (int i=0;i<mShownChannelArr.length;i++) {
-    mProgramColumn[i].clear();
-    ChannelDayProgram cdp;
-    if (mainDay!=null) {
-      cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);
-      if (cdp!=null) {     
-        addChannelDayProgram(i,cdp,mTodayEarliestTime,cdp.getDate(),24*60,cdp.getDate());
+      ChannelDayProgram cdp = db.getDayProgram(mMainDay, mShownChannelArr[i]);
+      if (cdp != null) {
+        addChannelDayProgram(i, cdp, mTodayEarliestTime, cdp.getDate(),
+                             24 * 60, cdp.getDate());
+      }
+
+      cdp = db.getDayProgram(mNextDay, mShownChannelArr[i]);
+      if (cdp != null) {
+        addChannelDayProgram(i, cdp, 0, cdp.getDate(), mTomorrowLatestTime,
+                             cdp.getDate());
       }
     }
-    
-    if (nextDay!=null) { 
-      cdp=nextDay.getChannelDayProgram(mShownChannelArr[i]);
-      if (cdp!=null) {
-        addChannelDayProgram(i,cdp,0,cdp.getDate(),mTomorrowLatestTime,cdp.getDate());
-      }
-    }
-   }
-    
+
     handleTimerEvent();
 
-  //  deregisterFromPrograms(mMainDay, mMainDayProgramCount);
-  //  deregisterFromPrograms(mNextDay, mNextDayProgramCount);
-    
-    mMainDay = mainDay;
-    mNextDay = nextDay;
-
-   // registerAtPrograms(mMainDay, mMainDayProgramCount);
-   // registerAtPrograms(mNextDay, mNextDayProgramCount);
-    
     registerAtPrograms(mProgramColumn);
 
     // Update the programs on air
@@ -253,20 +230,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     */
   }
 
-  
-  
-  private Program getProgram(DayProgram dayProgram, int col, int index) {
-    if (dayProgram == null) {
-      return null;
-    }
-      
-    ChannelDayProgram prg = dayProgram.getChannelDayProgram(mShownChannelArr[col]);
-    if (prg == null) {
-      return null;
-    }
-    
-    return prg.getProgramAt(index);
-  }
   
   
   /*
@@ -402,18 +365,24 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     // Update the programs on air
     updateProgramsOnAir();
   }
-
   
   
   private synchronized void updateProgramsOnAir() {
-    if (mMainDay != null) {
-      mMainDay.markProgramsOnAir();
-    }
-    if (mNextDay != null) {
-      mNextDay.markProgramsOnAir();
+    TvDataBase db = TvDataBase.getInstance();
+    for (int i = 0; i < mShownChannelArr.length; i++) {
+      Channel channel = mShownChannelArr[i];
+
+      ChannelDayProgram dayProg = db.getDayProgram(mMainDay, channel);
+      if (dayProg != null) {
+        dayProg.markProgramOnAir();
+      }
+
+      dayProg = db.getDayProgram(mNextDay, channel);
+      if (dayProg != null) {
+        dayProg.markProgramOnAir();
+      }
     }
   }
-  
 
 
   public void stateChanged(ChangeEvent evt) {

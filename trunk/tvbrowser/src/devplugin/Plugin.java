@@ -34,7 +34,6 @@ import java.util.jar.JarFile;
 import javax.swing.Icon;
 import javax.swing.Timer;
 
-import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 
@@ -261,7 +260,7 @@ abstract public class Plugin {
    * 
    * @param newProg The new ChannelDayProgram.
    */
-  public void handleTvDataChanged(MutableChannelDayProgram newProg) {
+  public void handleTvDataChanged(ChannelDayProgram newProg) {
   }
   
   /**

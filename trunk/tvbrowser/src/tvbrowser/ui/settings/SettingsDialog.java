@@ -171,7 +171,7 @@ public class SettingsDialog {
     node = new SettingNode(pluginSettingsTab);
     root.add(node);
     
-    Plugin[] pluginArr = PluginManager.getAvailablePlugins();
+    Plugin[] pluginArr = PluginManager.getInstance().getAvailablePlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       node.add(new SettingNode(new ConfigPluginSettingsTab(pluginArr[i])));
     }

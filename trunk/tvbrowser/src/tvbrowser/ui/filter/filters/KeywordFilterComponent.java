@@ -23,11 +23,12 @@
  *   $Author$
  * $Revision$
  */
-
-
 package tvbrowser.ui.filter.filters;
 
 import javax.swing.*;
+
+import tvbrowser.core.TvDataSearcher;
+
 import java.awt.*;
 import java.util.regex.*;
 
@@ -171,7 +172,8 @@ public class KeywordFilterComponent extends FilterComponent {
             searchInTitle=true;
             searchInInfo=true;
         }
-        return tvbrowser.core.DataService.getInstance().search(program,mPattern,searchInTitle,searchInInfo);
+        return TvDataSearcher.getInstance().search(program, mPattern,
+          searchInTitle, searchInInfo);
         
        
        

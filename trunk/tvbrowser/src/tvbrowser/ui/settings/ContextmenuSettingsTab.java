@@ -92,8 +92,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 
 	public JPanel createSettingsPanel() {
     
-   
-    mDefaultPlugin=PluginManager.getPlugin(Settings.getDefaultContextMenuPlugin());
+    String defaultPluginClassName = Settings.getDefaultContextMenuPlugin();
+    mDefaultPlugin=PluginManager.getInstance().getPlugin(defaultPluginClassName);
     
     JPanel contentPanel=new JPanel(new BorderLayout(0,15));
     contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
@@ -119,9 +119,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
       }
     });
     
-    fillListbox(PluginManager.getContextMenuPlugins());
-    
-    
+    fillListbox(PluginManager.getInstance().getContextMenuPlugins());
     
     mDefaultPluginBt=new JButton(mLocalizer.msg("defaultPluginBtn",""));
     mDefaultPluginBt.addActionListener(this);
