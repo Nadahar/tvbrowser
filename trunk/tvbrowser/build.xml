@@ -220,8 +220,7 @@
       <classpath>
         <path refid="classpath"/>
       </classpath>
-      <exclude name="**/microtvbrowserplugin/microtvbrowserMidlet/**"/>
-      <exclude name="**/microtvbrowserplugin/nanotvbrowserMidlet/**"/>
+      <exclude name="microtvbrowserplugin/**"/>
     </javac>
 
     <copy todir="${classes.dir}">
