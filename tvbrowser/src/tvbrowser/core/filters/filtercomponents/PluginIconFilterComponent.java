@@ -76,11 +76,9 @@ public class PluginIconFilterComponent implements FilterComponent {
     }
 
     public boolean accept(Program program) {
-
-        if (mPlugin.getProgramTableIcons(program) != null) {
+        if (mPlugin.isActivated() && mPlugin.getProgramTableIcons(program) != null) {
             return true;
         }
-        
         return false;
     }
 
