@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import util.exc.ErrorHandler;
+
 /**
  * BrowserLauncher is a class that provides one static method, openURL, which opens the default
  * web browser for the current user of the system to the given URL.  It may support other
@@ -178,6 +180,10 @@ public class BrowserLauncher {
      * URLs containing spaces to work.
      */
     private static final String THIRD_WINDOWS_PARAMETER = "\"\"";
+    
+    private static final util.ui.Localizer mLocalizer
+     = util.ui.Localizer.getLocalizerFor(BrowserLauncher.class);
+ 
 	
 	/**
 	 * The shell parameters for Netscape that opens a given URL in an already-open copy of Netscape
@@ -463,13 +469,31 @@ public class BrowserLauncher {
 		}
 		return browser;
 	}
+  
+  public static void openURL(String url) {
+    String browserExecutable = tvbrowser.core.Settings.getUserDefinedWebbrowser();
+    
+    try {
+    
+      if (browserExecutable !=null) {
+        Runtime.getRuntime().exec(new String[] { (String) browserExecutable, url});    
+      }
+      else {
+        openURLusingDefaultBrowser(url);
+      }
+    }catch(IOException exc) {
+      ErrorHandler.handle(mLocalizer.msg("error.1","Could not open Webbrowser"),exc);
+    }
+    
+  }
 
 	/**
 	 * Attempts to open the default web browser to the given URL.
 	 * @param url The URL to open
 	 * @throws IOException If the web browser could not be located or does not run
 	 */
-	public static void openURL(String url) throws IOException {
+	private static void openURLusingDefaultBrowser(String url) throws IOException {
+    
 		if (!loadedWithoutErrors) {
 			throw new IOException("Exception in finding browser: " + errorMessage);
 		}

@@ -31,8 +31,7 @@ import javax.swing.event.HyperlinkListener;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.util.logging.Level;
+
 
 import util.io.IOUtilities;
 import util.ui.*;
@@ -78,13 +77,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     infoEP.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent evt) {
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          String url = evt.getURL().toString();
-          try {
-            BrowserLauncher.openURL(url);
-          }
-          catch (IOException exc) {
-            mLog.log(Level.WARNING, "Could not open URL: " + url, exc);
-          }
+          String url = evt.getURL().toString();          
+          BrowserLauncher.openURL(url);          
         }
       }
     });

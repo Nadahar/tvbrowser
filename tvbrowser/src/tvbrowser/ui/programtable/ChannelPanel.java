@@ -29,9 +29,6 @@ package tvbrowser.ui.programtable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-
-
 
 import devplugin.Channel;
 
@@ -112,11 +109,7 @@ class ChannelLabel extends JLabel {
       setCursor(linkCursor);
       addMouseListener(new MouseAdapter(){
         public void  mouseClicked(MouseEvent e) { 
-          try {
-            util.ui.BrowserLauncher.openURL(ch.getWebpage());
-          } catch (IOException e1) {
-            e1.printStackTrace();
-          }
+          util.ui.BrowserLauncher.openURL(ch.getWebpage());
         }
         
         public void mouseEntered(MouseEvent e) {

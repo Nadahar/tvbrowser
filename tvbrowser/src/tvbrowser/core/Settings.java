@@ -597,7 +597,22 @@ public class Settings {
   public static void setShowAssistant(boolean val) {
     settings.setBoolean("showassistant",val);
   }
-
+  
+  public static String getUserDefinedWebbrowser() {
+    return settings.getProperty("webbrowser");
+    
+  }
+  
+  public static void setUserDefinedWebbrowser(String browser) {
+    if (browser==null) {
+      settings.remove("webbrowser");
+    }
+    else {
+      settings.setProperty("webbrowser",browser);
+    } 
+  }
+  
+  
   public static int getButtonSettings() {
     String val=settings.getProperty("buttontype","text&icon");
     if ("text&icon".equals(val)) {

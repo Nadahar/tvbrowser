@@ -30,9 +30,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import tvbrowser.core.*;
 import tvbrowser.ui.mainframe.UpdateDlg;
+import util.ui.FileCheckBox;
+
 
 /**
  * TV-Browser
@@ -64,6 +67,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JComboBox mAutoDownloadPeriodCB;
   private JRadioButton mDonotAskBeforeDownloadRB;
   private JRadioButton mAskBeforeDownloadRB;
+  private FileCheckBox mWebbrowserFCB;
   
   
   public TVDataSettingsTab() {
@@ -79,6 +83,10 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
 
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    
+    JPanel content = new JPanel();
+    content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
+    
        
     JPanel onStartupPn=new JPanel();
     onStartupPn.setLayout(new BoxLayout(onStartupPn,BoxLayout.Y_AXIS));   
@@ -89,7 +97,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     
     onStartupPn.add(autoDownloadPn);
     
-    mSettingsPn.add(onStartupPn,BorderLayout.NORTH);
+    mSettingsPn.add(content,BorderLayout.NORTH);
     
     mAutoDownloadCb = new JCheckBox(mLocalizer.msg("onStartUp", "On startup"));
     autoDownloadPn.add(mAutoDownloadCb);
@@ -163,6 +171,21 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     
     setAutoDownloadEnabled(mAutoDownloadCb.isSelected());
     
+    content.add(onStartupPn);
+    
+    mWebbrowserFCB = new FileCheckBox(mLocalizer.msg("userDefinedWebbrowser","user defined webbrowser"),null,0);
+    mWebbrowserFCB.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("browser","Webbrowser")));
+    
+    mWebbrowserFCB.setSelected(Settings.getUserDefinedWebbrowser()!=null);
+    
+    String browserExecutable = Settings.getUserDefinedWebbrowser();
+    if (browserExecutable !=null) {
+      mWebbrowserFCB.setFile(new File(browserExecutable));
+    }
+    
+    content.add(mWebbrowserFCB);
+    
+    
     return mSettingsPn;
   }
   
@@ -204,6 +227,13 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     else {
       Settings.setDownloadPeriod(inx);
     }
+    
+    if (mWebbrowserFCB.isSelected()) {
+      Settings.setUserDefinedWebbrowser(mWebbrowserFCB.getFile().getAbsolutePath());
+    }
+    else {
+      Settings.setUserDefinedWebbrowser(null);
+    }
              
   }
   
@@ -222,7 +252,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("tvData", "TV data");
+    return mLocalizer.msg("others", "others");
   }
   
 }
