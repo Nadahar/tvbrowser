@@ -44,7 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
-
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -78,75 +77,85 @@ import devplugin.*;
 
 import java.lang.reflect.Constructor;
 
-
 /**
  * TV-Browser
- *
+ * 
  * @author Martin Oberhauser
  */
 public class MainFrame extends JFrame implements DateListener {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(tvbrowser.TVBrowser.class.getName());
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+      .getLogger(tvbrowser.TVBrowser.class.getName());
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(MainFrame.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MainFrame.class);
 
   private Node mTimebuttonsNode, mDateNode, mRootNode, mChannelNode;
+
   private Node mPluginsNode;
- 
+
   private JDialog mConfigAssistantDialog;
-  private SoftwareUpdateItem[] mSoftwareUpdateItems=null;
+
+  private SoftwareUpdateItem[] mSoftwareUpdateItems = null;
+
   private ProgramTableScrollPane mProgramTableScrollPane;
+
   private DefaultProgramTableModel mProgramTableModel;
+
   private Thread downloadingThread;
+
   private JPanel jcontentPane;
+
   private JPanel skinPanel;
+
   private DefaultToolBarModel mToolBarModel;
+
   private ToolBar mToolBar;
+
   private StatusBar mStatusBar;
 
   private static MainFrame mSingleton;
 
   private ChannelChooserPanel mChannelChooser;
+
   private MenuBar mMenuBar;
+
   private Component mCenterComponent;
-  
+
   private boolean mIsVisible;
 
-private Node mMainframeNode;
+  private Node mMainframeNode;
 
-private Node mNavigationNode;
+  private Node mNavigationNode;
 
-private Node mDateChannelNode;
-  
+  private Node mDateChannelNode;
+
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
-		mIsVisible = false;
+    mIsVisible = false;
 
     mStatusBar = new StatusBar();
-    
-		if (System.getProperty("mrj.version") != null) {
-			/* create the menu bar for MacOS X */
-	    try {
+
+    if (System.getProperty("mrj.version") != null) {
+      /* create the menu bar for MacOS X */
+      try {
         Class impl = Class.forName("tvbrowser.ui.mainframe.macosx.MacOSXMenuBar");
-			  Class mainFrameClass = this.getClass();
-			  Class jlabelClass = Class.forName("javax.swing.JLabel");
-			  Constructor cons = impl.getConstructor(new Class[]{mainFrameClass, jlabelClass});
-			  mMenuBar = (MenuBar)cons.newInstance(new Object[]{this, mStatusBar.getLabel()});
-			}catch(Exception e) {
-        mLog.warning("Could not instantiate MacOSXMenuBar\n"+e.toString());
-				mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
-				mLog.info("Using default menu bar");
-			}
-			
-    }else {
-	    mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
+        Class mainFrameClass = this.getClass();
+        Class jlabelClass = Class.forName("javax.swing.JLabel");
+        Constructor cons = impl.getConstructor(new Class[] { mainFrameClass, jlabelClass });
+        mMenuBar = (MenuBar) cons.newInstance(new Object[] { this, mStatusBar.getLabel() });
+      } catch (Exception e) {
+        mLog.warning("Could not instantiate MacOSXMenuBar\n" + e.toString());
+        mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
+        mLog.info("Using default menu bar");
+      }
+
+    } else {
+      mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
     }
-    
+
     // create content
-    jcontentPane = (JPanel)getContentPane();
+    jcontentPane = (JPanel) getContentPane();
     jcontentPane.setLayout(new BorderLayout());
 
     skinPanel = new JPanel();
@@ -155,7 +164,7 @@ private Node mDateChannelNode;
     JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    
+
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
@@ -165,28 +174,27 @@ private Node mDateChannelNode;
 
     FinderPanel.getInstance().setDateListener(this);
     dateChanged(new devplugin.Date(), null, null);
-        
+
     skinPanel.add(centerPanel, BorderLayout.CENTER);
-    
+
     mChannelChooser = new ChannelChooserPanel(this);
 
-    /* create structure */    
+    /* create structure */
     mRootNode = new Node(null);
     mPluginsNode = new Node(mRootNode);
     mMainframeNode = new Node(mRootNode);
     Node programtableNode = new Node(mMainframeNode);
-    mNavigationNode = new Node(mMainframeNode);    
+    mNavigationNode = new Node(mMainframeNode);
     mTimebuttonsNode = new Node(mNavigationNode);
     mDateChannelNode = new Node(mNavigationNode);
     mDateNode = new Node(mDateChannelNode);
-    mChannelNode = new Node(mDateChannelNode);    
-   
+    mChannelNode = new Node(mDateChannelNode);
+
     mRootNode.setProperty(Settings.propViewRoot);
     mMainframeNode.setProperty(Settings.propViewMainframe);
     mNavigationNode.setProperty(Settings.propViewNavigation);
     mDateChannelNode.setProperty(Settings.propViewDateChannel);
- 
-    
+
     /* create views */
     programtableNode.setLeaf(skinPanel);
     this.setShowPluginOverview(Settings.propShowPluginView.getBoolean());
@@ -195,15 +203,14 @@ private Node mDateChannelNode;
     this.setShowChannellist(Settings.propShowChannels.getBoolean());
 
     updateToolbar();
-    
-    
+
     mCenterComponent = mRootNode.getComponent();
-    if (mCenterComponent!=null) {
-      jcontentPane.add(mCenterComponent,BorderLayout.CENTER);
+    if (mCenterComponent != null) {
+      jcontentPane.add(mCenterComponent, BorderLayout.CENTER);
     }
- 
-       
-    jcontentPane.add(mStatusBar, BorderLayout.SOUTH);    
+
+    if (Settings.propIsStatusbarVisible.getBoolean())
+      jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
       public void pluginActivated(Plugin p) {
         updatePluginsMenu();
@@ -214,29 +221,27 @@ private Node mDateChannelNode;
       }
     });
 
-    setJMenuBar(mMenuBar);    
-    
-    
+    setJMenuBar(mMenuBar);
+
     FilterList filterList = FilterList.getInstance();
 
     ProgramFilter filter = filterList.getFilterByName(Settings.propLastUsedFilter.getString());
-    
+
     if (filter == null) {
-        filter = filterList.getDefaultFilter();
+      filter = filterList.getDefaultFilter();
     }
-    
+
     setProgramFilter(filter);
   }
 
   public JLabel getStatusBarLabel() {
     return mStatusBar.getLabel();
   }
-  
-  
+
   public void updateToolbar() {
-    JPanel contentPane = (JPanel)getContentPane();
-    
-    if (mToolBar!=null) {
+    JPanel contentPane = (JPanel) getContentPane();
+
+    if (mToolBar != null) {
       contentPane.remove(mToolBar);
     }
 
@@ -251,16 +256,10 @@ private Node mDateChannelNode;
     contentPane.updateUI();
 
   }
-  
+
   public ProgramTableScrollPane getProgramTableScrollPane() {
     return mProgramTableScrollPane;
   }
-
-
-
-
-
-
 
   public ToolBar getToolbar() {
     return mToolBar;
@@ -269,11 +268,10 @@ private Node mDateChannelNode;
   public DefaultProgramTableModel getProgramTableModel() {
     return mProgramTableModel;
   }
-  
 
   public static MainFrame getInstance() {
-    if (mSingleton==null) {
-      mSingleton=new MainFrame();
+    if (mSingleton == null) {
+      mSingleton = new MainFrame();
     }
     return mSingleton;
   }
@@ -293,24 +291,23 @@ private Node mDateChannelNode;
     if (mProgramTableModel == null) {
       return null;
     }
-    
+
     return mProgramTableModel.getProgramFilter();
   }
-  
+
   public void quit() {
     mLog.info("Finishing plugins");
     PluginProxyManager.getInstance().shutdownAllPlugins();
-    
+
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
-    
+
     TVBrowser.shutdown();
 
     mLog.info("Closing tv data base");
     try {
       TvDataBase.getInstance().close();
-    }
-    catch (Exception exc) {
+    } catch (Exception exc) {
       mLog.log(Level.WARNING, "Closing TV data base failed", exc);
     }
 
@@ -318,28 +315,24 @@ private Node mDateChannelNode;
     System.exit(0);
   }
 
-  
   public void updatePluginsMenu() {
     mMenuBar.updatePluginsMenu();
   }
-
 
   private static JMenuItem createMenuItem(ActionMenu menu) {
     JMenuItem result;
     if (menu.hasSubItems()) {
       result = new JMenu(menu.getAction());
       ActionMenu[] subItems = menu.getSubItems();
-      for (int i=0; i<subItems.length; i++) {
+      for (int i = 0; i < subItems.length; i++) {
         result.add(createMenuItem(subItems[i]));
       }
-    }
-    else {
+    } else {
       result = new JMenuItem(menu.getAction());
     }
     return result;
 
   }
-
 
   /**
    * @deprecated TODO: check, if we can remove this method
@@ -349,15 +342,14 @@ private Node mDateChannelNode;
   public static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
     pluginsMenu.removeAll();
 
-
     Arrays.sort(plugins, new Comparator() {
 
-        public int compare(Object o1, Object o2) {
-            return o1.toString().compareTo(o2.toString());
-        }
+      public int compare(Object o1, Object o2) {
+        return o1.toString().compareTo(o2.toString());
+      }
 
     });
-    
+
     for (int i = 0; i < plugins.length; i++) {
       ActionMenu action = plugins[i].getButtonAction();
       if (action != null) {
@@ -366,9 +358,6 @@ private Node mDateChannelNode;
       }
     }
   }
-
-
-
 
   public void scrollToProgram(Program program) {
     scrollTo(program.getDate(), program.getHours());
@@ -390,14 +379,14 @@ private Node mDateChannelNode;
 
     // Choose the day.
     // NOTE: If its early in the morning before the setted "day start" we should
-    //       stay at the last day - otherwise the user won't see the current
-    //       program. But until when should we stay at the old day?
-    //       Example: day start: 0:00, day end: 6:00
-    //       Directly after the day start is not a good choice, because the new
-    //       day program table will not contain programs that started before 0:00.
-    //       Directly after the day end is also not a good choice, because a
-    //       minute before the old day program will not contain the coming programs.
-    //       So I think the best choice will be the middle, in this case 3:00.
+    // stay at the last day - otherwise the user won't see the current
+    // program. But until when should we stay at the old day?
+    // Example: day start: 0:00, day end: 6:00
+    // Directly after the day start is not a good choice, because the new
+    // day program table will not contain programs that started before 0:00.
+    // Directly after the day end is also not a good choice, because a
+    // minute before the old day program will not contain the coming programs.
+    // So I think the best choice will be the middle, in this case 3:00.
 
     int dayStart = Settings.propProgramTableStartOfDay.getInt();
     int dayEnd = Settings.propProgramTableEndOfDay.getInt();
@@ -407,7 +396,7 @@ private Node mDateChannelNode;
       day = day.addDays(-1);
       hour += 24;
     }
-    
+
     // Change to the shown day program to today if nessesary
     // and scroll to "now" afterwards
     final int fHour = hour;
@@ -419,32 +408,30 @@ private Node mDateChannelNode;
     });
   }
 
-
   public void runSetupAssistant() {
-    
-    ProgressWindow progWin=new ProgressWindow(this,mLocalizer.msg("loadingAssistant",""));
-    final JFrame parent=this;
-    progWin.run(new Progress(){    
+
+    ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg("loadingAssistant", ""));
+    final JFrame parent = this;
+    progWin.run(new Progress() {
       public void run() {
-        mConfigAssistantDialog=new tvbrowser.ui.configassistant.ConfigAssistant(parent);   
-      }    
+        mConfigAssistantDialog = new tvbrowser.ui.configassistant.ConfigAssistant(parent);
+      }
     });
-    
-    util.ui.UiUtilities.centerAndShow(mConfigAssistantDialog);  
+
+    util.ui.UiUtilities.centerAndShow(mConfigAssistantDialog);
     mConfigAssistantDialog.hide();
     mConfigAssistantDialog.dispose();
-    mConfigAssistantDialog=null;
-              
+    mConfigAssistantDialog = null;
+
     boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-    if (! dataAvailable) {
+    if (!dataAvailable) {
       askForDataUpdate();
     }
-    
+
     Settings.handleChangedSettings();
-    
-   
+
   }
-  
+
   public void storeSettings() {
     mToolBarModel.store();
     mToolBar.storeSettings();
@@ -452,21 +439,15 @@ private Node mDateChannelNode;
     Settings.propLastUsedFilter.setString(getProgramFilter().getName());
   }
 
-
-
-
-
   private void onDownloadStart() {
     mToolBarModel.showStopButton();
     mMenuBar.showStopMenuItem();
   }
 
-
-
   private void onDownloadDone() {
     TvDataUpdater.getInstance().stopDownload();
     mStatusBar.getProgressBar().setValue(0);
-    
+
     mToolBarModel.showUpdateButton();
     mMenuBar.showUpdateMenuItem();
 
@@ -474,7 +455,6 @@ private Node mDateChannelNode;
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
 
   }
-
 
   public void showChannel(Channel ch) {
     mProgramTableScrollPane.scrollToChannel(ch);
@@ -489,10 +469,7 @@ private Node mDateChannelNode;
     changeDate(FinderPanel.getInstance().getSelectedDate(), null, null);
   }
 
-
-  private void changeDate(final Date date, final ProgressMonitor monitor,
-    final Runnable callback)
-  {
+  private void changeDate(final Date date, final ProgressMonitor monitor, final Runnable callback) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mProgramTableModel.setDate(date, monitor, callback);
@@ -500,49 +477,39 @@ private Node mDateChannelNode;
     });
   }
 
-
-
   /**
    * Implementation of Interface DateListener
    */
-  public void dateChanged(final devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback) { 
-      changeDate(date, monitor, callback);
+  public void dateChanged(final devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback) {
+    changeDate(date, monitor, callback);
   }
 
-
-
-
-
   public void runUpdateThread(final int daysToDownload, final TvDataService[] services) {
-    
+
     downloadingThread = new Thread() {
       public void run() {
         onDownloadStart();
         JProgressBar progressBar = mStatusBar.getProgressBar();
         TvDataUpdater.getInstance().downloadTvData(daysToDownload, services, progressBar, mStatusBar.getLabel());
-        
-        
+
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             onDownloadDone();
             newTvDataAvailable();
           }
-        
+
         });
-        
-        
-        
+
       }
     };
     downloadingThread.start();
   }
 
-  
   public void updateChannelChooser() {
     mChannelChooser.updateChannelChooser();
-    
+
   }
-  
+
   /**
    * Starts the tv data update.
    */
@@ -560,8 +527,7 @@ private Node mDateChannelNode;
     }
   }
 
-
-   /**
+  /**
    * Shows the settings dialog.
    */
   public void showSettingsDialog() {
@@ -574,155 +540,131 @@ private Node mDateChannelNode;
     Settings.handleChangedSettings();
   }
 
-
   /**
    * Shows the about box
    */
   public void showAboutBox() {
-    AboutBox box=new AboutBox(this);
-    box.setSize(500,520);
+    AboutBox box = new AboutBox(this);
+    box.setSize(500, 520);
     UiUtilities.centerAndShow(box);
     box.dispose();
   }
 
-
   public void showUpdatePluginsDlg() {
-    Object[] options = {mLocalizer.msg("checknow","Check now"),
-        mLocalizer.msg("cancel","Cancel")};
-    String msg=mLocalizer.msg("question.1","do you want to check for new plugins");     
-    int answer = JOptionPane.showOptionDialog(this,msg,mLocalizer.msg("title.1","update plugins"),
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE,
-        null,
-        options,
-        options[0]); 
-  
-    if (answer==JOptionPane.YES_OPTION) {
-      
-      
-      ProgressWindow progWin=new ProgressWindow(this,mLocalizer.msg("title.2","searching for new plugins..."));
-      
-      progWin.run(new Progress(){
+    Object[] options = { mLocalizer.msg("checknow", "Check now"), mLocalizer.msg("cancel", "Cancel") };
+    String msg = mLocalizer.msg("question.1", "do you want to check for new plugins");
+    int answer = JOptionPane.showOptionDialog(this, msg, mLocalizer.msg("title.1", "update plugins"),
+        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+    if (answer == JOptionPane.YES_OPTION) {
+
+      ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg("title.2", "searching for new plugins..."));
+
+      progWin.run(new Progress() {
         public void run() {
           try {
-            java.net.URL url=null;
-            url=new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");    
-            SoftwareUpdater softwareUpdater=null;
-            softwareUpdater=new SoftwareUpdater(url);
-            mSoftwareUpdateItems=softwareUpdater.getAvailableSoftwareUpdateItems();
-          }catch (java.io.IOException e) {      
+            java.net.URL url = null;
+            url = new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");
+            SoftwareUpdater softwareUpdater = null;
+            softwareUpdater = new SoftwareUpdater(url);
+            mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
+          } catch (java.io.IOException e) {
             e.printStackTrace();
           }
         }
       });
-      
-      
-      if (mSoftwareUpdateItems==null) {
-        JOptionPane.showMessageDialog(this,mLocalizer.msg("error.1","software check failed."));
-      }
-      else if (mSoftwareUpdateItems.length==0) {
-        JOptionPane.showMessageDialog(this,mLocalizer.msg("error.2","No new items available"));
-      }
-      else {
-        SoftwareUpdateDlg dlg=new SoftwareUpdateDlg(this);
+
+      if (mSoftwareUpdateItems == null) {
+        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.1", "software check failed."));
+      } else if (mSoftwareUpdateItems.length == 0) {
+        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2", "No new items available"));
+      } else {
+        SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(this);
         dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
         UiUtilities.centerAndShow(dlg);
       }
     }
-  
+
   }
-  
-  
+
   public void show() {
     super.show();
     mIsVisible = true;
     mRootNode.update();
   }
 
-public void askForDataUpdate() {
-  
-  String msg1 = mLocalizer.msg("askforupdatedlg.1","update now");
-  String msg2 = mLocalizer.msg("askforupdatedlg.2","later");
-  String msg3 = mLocalizer.msg("askforupdatedlg.3","No tv data for todays program available.");
-  String msg4 = mLocalizer.msg("askforupdatedlg.4","Do you want to update now?");
-  String msg5 = mLocalizer.msg("askforupdatedlg.5","Update tv data");
-  
-  
-  
-  Object[] options = {msg1,msg2};
-  int result = JOptionPane.showOptionDialog(this,          
-    msg3+"\n\n"+
-    msg4,
-    msg5,
-    JOptionPane.YES_NO_OPTION,
-    JOptionPane.QUESTION_MESSAGE,
-    null,options,options[0]);
-    
-  if (result==JOptionPane.YES_OPTION) {
-    updateTvData();
-  } 
-}
+  public void askForDataUpdate() {
 
-public void showFilterDialog() {
-  SelectFilterDlg dlg=new SelectFilterDlg(this);
-  util.ui.UiUtilities.centerAndShow(dlg);
-  mMenuBar.updateFiltersMenu();
-}
+    String msg1 = mLocalizer.msg("askforupdatedlg.1", "update now");
+    String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
+    String msg3 = mLocalizer.msg("askforupdatedlg.3", "No tv data for todays program available.");
+    String msg4 = mLocalizer.msg("askforupdatedlg.4", "Do you want to update now?");
+    String msg5 = mLocalizer.msg("askforupdatedlg.5", "Update tv data");
 
-public void showHelpDialog() {
-  
-  Locale locale=Locale.getDefault();
-  String language=locale.getLanguage();
-      
-  
-    java.io.File indexFile = new java.io.File("help/"+language+"/index.html");
+    Object[] options = { msg1, msg2 };
+    int result = JOptionPane.showOptionDialog(this, msg3 + "\n\n" + msg4, msg5, JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+    if (result == JOptionPane.YES_OPTION) {
+      updateTvData();
+    }
+  }
+
+  public void showFilterDialog() {
+    SelectFilterDlg dlg = new SelectFilterDlg(this);
+    util.ui.UiUtilities.centerAndShow(dlg);
+    mMenuBar.updateFiltersMenu();
+  }
+
+  public void showHelpDialog() {
+
+    Locale locale = Locale.getDefault();
+    String language = locale.getLanguage();
+
+    java.io.File indexFile = new java.io.File("help/" + language + "/index.html");
     if (!indexFile.exists()) {
       indexFile = new java.io.File("help/default/index.html");
-    } 
+    }
     util.ui.BrowserLauncher.openURL(indexFile.getAbsolutePath());
-}
+  }
 
   /**
    * Updates the TimeChooser-Buttons
    */
   public void updateButtons() {
-    //mTimeChooser.updateButtons();
+    // mTimeChooser.updateButtons();
   }
-
 
   public void setShowToolbar(boolean visible) {
     Settings.propIsTooolbarVisible.setBoolean(visible);
     updateToolbar();
   }
-  
+
   private void updateViews() {
     if (mIsVisible) {
-      jcontentPane = (JPanel)getContentPane();
+      jcontentPane = (JPanel) getContentPane();
       jcontentPane.remove(mCenterComponent);
       mCenterComponent = mRootNode.getComponent();
-      jcontentPane.add(mCenterComponent,BorderLayout.CENTER);      
+      jcontentPane.add(mCenterComponent, BorderLayout.CENTER);
       jcontentPane.validate();
     }
   }
-  
+
   public void setShowTimeButtons(boolean visible) {
     if (visible) {
       mTimebuttonsNode.setLeaf(new TimeChooserPanel(this));
-    }
-    else {
+    } else {
       mTimebuttonsNode.setLeaf(null);
-    }    
+    }
     Settings.propShowTimeButtons.setBoolean(visible);
     updateViews();
-    
-    
+
   }
-  
+
   public void setShowDatelist(boolean visible) {
     if (visible) {
-      mDateNode.setLeaf(new DateChooserPanel(this,FinderPanel.getInstance()));
-    }
-    else {
+      mDateNode.setLeaf(new DateChooserPanel(this, FinderPanel.getInstance()));
+    } else {
       mDateNode.setLeaf(null);
     }
     Settings.propShowDatelist.setBoolean(visible);
@@ -732,23 +674,21 @@ public void showHelpDialog() {
   public void setShowChannellist(boolean visible) {
     if (visible) {
       mChannelNode.setLeaf(new ChannelChooserPanel(this));
-    }
-    else {
+    } else {
       mChannelNode.setLeaf(null);
     }
     Settings.propShowChannels.setBoolean(visible);
     updateViews();
   }
 
-
-/*  public void setPluginViewToolbarButtonSelected(boolean selected) {
-    mToolBar.setPluginViewToolbarButtonSelected(selected);
-  } */
-
+  /*
+   * public void setPluginViewToolbarButtonSelected(boolean selected) {
+   * mToolBar.setPluginViewToolbarButtonSelected(selected); }
+   */
 
   public void setPluginViewButton(boolean selected) {
     if (mToolBarModel != null) {
-      System.out.println("set button to "+selected);
+      System.out.println("set button to " + selected);
       mToolBarModel.setPluginViewButtonSelected(selected);
       mToolBar.update();
     }
@@ -757,20 +697,41 @@ public void showHelpDialog() {
   public void setShowPluginOverview(boolean visible) {
     if (visible) {
       mPluginsNode.setLeaf(new PluginView());
-    }
-    else {
+    } else {
       mPluginsNode.setLeaf(null);
     }
     updateViews();
   }
-  
-  
+
   public void restoreViews() {
     mRootNode.setProperty(Settings.propViewRoot.getDefault());
     mMainframeNode.setProperty(Settings.propViewMainframe.getDefault());
     mNavigationNode.setProperty(Settings.propViewNavigation.getDefault());
     mDateChannelNode.setProperty(Settings.propViewDateChannel.getDefault());
     mRootNode.update();
+  }
+
+  /**
+   * Makes the StatusBar visible
+   * @param visible true if Statusbar should be visible
+   */
+  public void setShowStatusbar(boolean visible) {
+    JPanel contentPane = (JPanel) getContentPane();
+
+    Settings.propIsStatusbarVisible.setBoolean(visible);
+
+    if (visible && !contentPane.isAncestorOf(mStatusBar)) {
+      System.out.println("Added");
+      jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
+    }
+    else if (contentPane.isAncestorOf(mStatusBar)) {
+      System.out.println("Removed");
+      jcontentPane.remove(mStatusBar);
+    }
+
+    contentPane.invalidate();
+    contentPane.updateUI();
+  
   }
 
 }
