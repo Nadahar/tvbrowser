@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package devplugin;
+package util.io;
 
 /**
  * A little helper class that allows a simple profiling (time measuring).

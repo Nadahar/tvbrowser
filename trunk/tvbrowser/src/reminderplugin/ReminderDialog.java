@@ -59,7 +59,7 @@ public class ReminderDialog extends /*PluginDialog*/JDialog {
   public ReminderDialog(Frame parent, devplugin.Program program) {
     super(parent,true);
 
-devplugin.Profiler.getDefault().show("2.1");
+util.io.Profiler.getDefault().show("2.1");
     setTitle("New reminder item");
 
     JPanel contentPane=(JPanel)getContentPane();
@@ -69,7 +69,7 @@ devplugin.Profiler.getDefault().show("2.1");
     JLabel titleLabel=new JLabel(program.getChannel().getName()+": "+program.getTitle());
     JPanel infoPanel=new JPanel(new GridLayout(2,1));
 
-devplugin.Profiler.getDefault().show("2.2");
+util.io.Profiler.getDefault().show("2.2");
     Font font=titleLabel.getFont();
 
     titleLabel.setFont(new Font(font.getName(),Font.BOLD,font.getSize()+4));
@@ -81,7 +81,7 @@ devplugin.Profiler.getDefault().show("2.2");
     panel5.add(titleLabel,BorderLayout.WEST);
     panel5.add(infoPanel,BorderLayout.EAST);
 
-devplugin.Profiler.getDefault().show("2.3");
+util.io.Profiler.getDefault().show("2.3");
     list=new JComboBox(listItems);
     list.setSelectedIndex(5);
 
@@ -89,7 +89,7 @@ devplugin.Profiler.getDefault().show("2.3");
     panel1.setBorder(BorderFactory.createEmptyBorder(10,0,30,0));
     panel1.add(list,BorderLayout.CENTER);
 
-devplugin.Profiler.getDefault().show("2.4");
+util.io.Profiler.getDefault().show("2.4");
 
     JPanel panel2=new JPanel(new BorderLayout());
     panel2.add(panel5,BorderLayout.NORTH);
@@ -99,7 +99,7 @@ devplugin.Profiler.getDefault().show("2.4");
     panel2.add(panel6,BorderLayout.SOUTH);
 
 
-devplugin.Profiler.getDefault().show("2.5");
+util.io.Profiler.getDefault().show("2.5");
     JPanel panel3=new JPanel(new GridLayout(1,0,10,0));
     JButton cancelBtn=new JButton("Cancel");
     cancelBtn.addActionListener(new ActionListener() {
@@ -108,7 +108,7 @@ devplugin.Profiler.getDefault().show("2.5");
       }
     }
     );
-devplugin.Profiler.getDefault().show("2.6");
+util.io.Profiler.getDefault().show("2.6");
     JButton okBtn=new JButton("OK");
     okBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -119,7 +119,7 @@ devplugin.Profiler.getDefault().show("2.6");
     );
     panel3.add(cancelBtn);
     panel3.add(okBtn);
-devplugin.Profiler.getDefault().show("2.7");
+util.io.Profiler.getDefault().show("2.7");
 
     JPanel panel4=new JPanel(new BorderLayout());
     panel4.add(panel3,BorderLayout.EAST);
@@ -127,11 +127,11 @@ devplugin.Profiler.getDefault().show("2.7");
     contentPane.add(panel2,BorderLayout.NORTH);
     contentPane.add(panel4,BorderLayout.SOUTH);
 
-devplugin.Profiler.getDefault().show("2.8");
+util.io.Profiler.getDefault().show("2.8");
     pack();
-devplugin.Profiler.getDefault().show("2.9");
+util.io.Profiler.getDefault().show("2.9");
     setVisible(true);
-devplugin.Profiler.getDefault().show("2.10");
+util.io.Profiler.getDefault().show("2.10");
   }
 
   public int getReminderSelection() {

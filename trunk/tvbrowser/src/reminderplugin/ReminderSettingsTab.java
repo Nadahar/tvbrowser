@@ -37,8 +37,10 @@ import java.util.Properties;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+
 import devplugin.*;
 
+import util.ui.FileCheckBox;
 
 public class ReminderSettingsTab extends devplugin.SettingsTab {
 

@@ -27,11 +27,18 @@
 package tvbrowser.core;
 
 import java.io.*;
+
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import java.util.zip.*;
+
 import java.net.URL;
 
 import javax.swing.JProgressBar;
+
+import util.io.IOUtilities;
 
 import devplugin.Date;
 import tvdataloader.*;
@@ -101,6 +108,9 @@ public class DataService implements devplugin.PluginManager {
   
   
   
+  /**
+   * Gets the DataService singleton.
+   */
   public static DataService getInstance() {
     if (mSingleton == null) {
       mSingleton = new DataService();
@@ -312,23 +322,20 @@ public class DataService implements devplugin.PluginManager {
    * @param date
    */
   public static boolean dataAvailable(devplugin.Date date) {
-  		
-  final String dateStr=""+date.getDaysSince1970();
-	
-	String fList[]=new File(Settings.DATA_DIR).list(				    
-	
-			new java.io.FilenameFilter() {
-				    public boolean accept(File dir, String name) {
-				    	return name.endsWith(dateStr);	
-				    }
-			}
-	);
-			    
-   if (fList==null) return false;
-   return fList.length>0;
-   
-   
+    final String dateStr = "" + date.getDaysSince1970();
+    
+    String fList[] = new File(Settings.DATA_DIR).list(
+      new java.io.FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          return name.endsWith(dateStr);
+        }
+      }
+    );
+    
+    if (fList == null) return false;
+    return fList.length > 0;
   }
+
 
 
   /**
@@ -352,9 +359,13 @@ public class DataService implements devplugin.PluginManager {
     programSelection=selection;
   }
 
+
+
   public ProgramSelection getSelection() {
     return programSelection;
   }
+
+
 
   public void markProgram(devplugin.Program prog, devplugin.Plugin plugin) {
     if (programSelection==null) {
@@ -362,6 +373,8 @@ public class DataService implements devplugin.PluginManager {
     }
     programSelection.addProgram(prog,plugin);
   }
+
+
 
   public javax.swing.JComponent createProgramPanel(devplugin.Program prog) {
     return new tvbrowser.ui.programtable.ProgramPanel(prog);
@@ -430,5 +443,96 @@ public class DataService implements devplugin.PluginManager {
     
     return null;
   }
+
   
+  
+  /**
+   * Imports previously exported tv data.
+   * <p>
+   * In fact the files that are not already present in the tvdata directory
+   * are extracted from the zip file.
+   *
+   * @param targetFile The file to export the tv data to.
+   */
+  public void importTvData(File srcFile) throws IOException {
+    ZipFile zipFile = null;
+    InputStream in = null;
+    
+    try {
+      zipFile = new ZipFile(srcFile);
+      Enumeration entryEnum = zipFile.entries();
+      while (entryEnum.hasMoreElements()) {
+        ZipEntry entry = (ZipEntry) entryEnum.nextElement();
+
+        if (entry.getName().startsWith(Settings.DATA_DIR)) {
+          File tvdataFile = new File(entry.getName());
+          if (! tvdataFile.exists()) {
+            in = zipFile.getInputStream(entry);
+            IOUtilities.saveStream(in, tvdataFile);
+            in.close();
+          }
+        }
+      }
+    }
+    finally {
+      if (zipFile != null) {
+        try { zipFile.close(); } catch (IOException exc) {}
+      }
+      if (in != null) {
+        try { in.close(); } catch (IOException exc) {}
+      }
+    }
+  }
+  
+  
+  
+  /**
+   * Exports all known tv data to the specified file.
+   * <p>
+   * In fact the tvdata directory is packed into a zip file.
+   *
+   * @param targetFile The file to export the tv data to.
+   */
+  public void exportTvData(File targetFile) throws IOException {
+    File tvdataDir = new File(Settings.DATA_DIR);
+    File[] children = tvdataDir.listFiles();
+    
+    // When the tvdata directory is empty -> do nothing
+    if (children == null) {
+      // No data available
+      return;
+    }
+
+    FileOutputStream out = null;
+    ZipOutputStream zipOut = null;
+    FileInputStream in = null;
+    
+    try {
+      out = new FileOutputStream(targetFile);
+      zipOut = new ZipOutputStream(out);
+      
+      // Add all files in the tvdata directory to the zip file
+      for (int i = 0; i < children.length; i++) {
+        String fileName = Settings.DATA_DIR + File.separator + children[i].getName();
+        ZipEntry entry = new ZipEntry(fileName);
+        
+        zipOut.putNextEntry(entry);
+        in = new FileInputStream(children[i]);
+        IOUtilities.pipeStreams(in, zipOut);
+        in.close();
+      }
+    }
+    finally {
+      if (zipOut != null) {
+        try { zipOut.close(); } catch (IOException exc) {}
+      }
+      if (out != null) {
+        try { out.close(); } catch (IOException exc) {}
+      }
+      if (in != null) {
+        try { in.close(); } catch (IOException exc) {}
+      }
+    }
+  }
+
 }

@@ -146,9 +146,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
 
   public void execute(devplugin.Program program) {
-devplugin.Profiler.getDefault().show("3.1");
+util.io.Profiler.getDefault().show("3.1");
     ReminderDialog dlg=new ReminderDialog(parent,program);
-devplugin.Profiler.getDefault().show("3.2");
+util.io.Profiler.getDefault().show("3.2");
     if (dlg.ok()) {
       program.mark(this);
       if (reminderList==null) {

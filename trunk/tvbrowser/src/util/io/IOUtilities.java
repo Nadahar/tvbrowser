@@ -24,19 +24,19 @@
  * $Revision$
  */
 
-package xmltvdataservice;
+package util.io;
 
 import java.io.*;
 import java.net.*;
 import java.util.zip.*;
 
 /**
- * A utilities class for the XmlTvDataService. It constists of serveral static
+ * A utilities class for I/O stuff. It constists of serveral static
  * methods that perform some usefull things.
  *
  * @author Til Schneider, www.murfman.de
  */
-public class XmlTvUtilities {
+public class IOUtilities {
 
   /**
    * Downloads a file from a HTTP server.
@@ -81,11 +81,7 @@ public class XmlTvUtilities {
     try {
       out = new FileOutputStream(targetFile);
       
-      int len;
-      byte[] buffer = new byte[10240];
-      while ((len = (stream.read(buffer))) != -1) {
-        out.write(buffer, 0, len);
-      }
+      pipeStreams(stream, out);
     }
     finally {
       try {
@@ -140,6 +136,24 @@ public class XmlTvUtilities {
     
     InputStream in = conn.getInputStream();
     return in;
+  }
+  
+  
+
+  /**
+   * Pipes all data from the specified InputStream to the specified OutputStream,
+   * until the InputStream has no more data.
+   * <p>
+   * Note: None of the streams is closed! You have to do that for yourself!
+   */
+  public static void pipeStreams(InputStream from, OutputStream to)
+    throws IOException
+  {
+    int len;
+    byte[] buffer = new byte[10240];
+    while ((len = (from.read(buffer))) != -1) {
+      to.write(buffer, 0, len);
+    }
   }
 
   

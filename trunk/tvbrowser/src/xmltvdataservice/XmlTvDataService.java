@@ -35,6 +35,8 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
+import util.io.IOUtilities;
+
 import tvdataloader.*;
 import devplugin.*;
 
@@ -58,7 +60,10 @@ public class XmlTvDataService implements TVDataServiceInterface {
   
   /** The folder where to put the XML data. */  
   private static final String XMLTV_FOLDER = "xmldata" + java.io.File.separator;
-  
+
+  /** Specifies whether file that have been parsed should be deleted. */
+  private static final boolean DELETE_PARSED_FILES = true;
+
   /**
    * A list of the files, we downloaded or we tried to download. We need this
    * list, so we don't attempt to download a file where the download failed.
@@ -101,7 +106,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
         ClassLoader classLoader = getClass().getClassLoader();
         stream = classLoader.getResourceAsStream(xmlTvDtdResourceName);
 
-        XmlTvUtilities.saveStream(stream, xmlTvDtdFile);
+        IOUtilities.saveStream(stream, xmlTvDtdFile);
       }
       finally {
         try {
@@ -161,7 +166,15 @@ public class XmlTvDataService implements TVDataServiceInterface {
     // If the wanted AbstractChannelDayProgram isn't already in the cache
     // load the apropriate XMl file
     if (channelDayProgram == null) {
-      channelDayProgram = loadXmlFileFor(date, channel);
+      loadXmlFileFor(date, channel);
+      channelDayProgram = mProgramDispatcher.getChannelDayProgram(date, channel);
+    }
+
+    // Check whether the AbstractChannelDayProgram is complete
+    if ((channelDayProgram != null)) {
+      if (! channelDayProgram.isComplete()) {
+        channelDayProgram = null;
+      }
     }
     
     return channelDayProgram;
@@ -180,12 +193,8 @@ public class XmlTvDataService implements TVDataServiceInterface {
    * @param date The date to get the programs for.
    * @param channel The channel to get the programs for. When the channel list
    *        is available, this parameter will get obsolete.
-   * @return The ChannelDayProgram for the specified date and channel or
-   *         null if the download failed.
    */
-  private MutableChannelDayProgram loadXmlFileFor(devplugin.Date date,
-    Channel channel)
-  {
+  private void loadXmlFileFor(devplugin.Date date, Channel channel) {
     // Get the name of the XML file to load
     String xmlTvFileName = getXmlFileName(date);
     String gzFileName = getXmlFileName(date) + ".gz";
@@ -206,7 +215,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
       mAlreadyDownloadedFiles.add(gzFileName);
       String gzUrl = "http://www.szing.at/xmltv/" + gzFileName;
       try {
-        XmlTvUtilities.download(new URL(gzUrl), gzFile);
+        IOUtilities.download(new URL(gzUrl), gzFile);
       }
       catch (Exception exc) {
         System.out.println("Error downloading '" + gzUrl + "' to '"
@@ -220,7 +229,6 @@ public class XmlTvDataService implements TVDataServiceInterface {
     if (! gzFile.exists()) {
       // Download must have failed
       System.out.println("File '" + gzFile.getAbsolutePath() + "' does not exist!");
-      return null;
     } else {
       // parse the XML file
       XmlTvHandler handler
@@ -230,6 +238,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
       SAXParserFactory factory = SAXParserFactory.newInstance();
       FileInputStream in = null;
       GZIPInputStream gzipIn = null;
+      boolean fileIsCorrupt = false;
       try {
         System.out.println("Parsing '" + gzFile.getAbsolutePath() + "'...");
 
@@ -239,13 +248,15 @@ public class XmlTvDataService implements TVDataServiceInterface {
         // The system id is the location where the parser searches the DTD.
         String systemId = gzFile.getParentFile().toURI().toString();
 
+        // parse the file
         SAXParser saxParser = factory.newSAXParser();
         saxParser.parse(gzipIn, handler, systemId);
-        // System.out.println(".. Parsing done!");
       }
       catch (Throwable thr) {
         System.err.println("Error reading '" + gzFile.getAbsolutePath() + "': " + thr);
         thr.printStackTrace();
+
+        fileIsCorrupt = true;
       }
       finally {
         try {
@@ -256,23 +267,11 @@ public class XmlTvDataService implements TVDataServiceInterface {
         } catch (IOException exc) {}
       }
 
-      // Get the MutableChannelDayProgram
-      MutableChannelDayProgram channelDayProgram
-        = mProgramDispatcher.getChannelDayProgram(date, channel);
-
-      // Check whether the AbstractChannelDayProgram is complete
-      // complete means: The last program starts after 22:00
-      if ((channelDayProgram != null)) {
-        if (! channelDayProgram.isComplete()) {
-          channelDayProgram = null;
-          
-          // Delete the incomplete file so it will be downloaded on the next
-          // update, when it may be complete
-          gzFile.delete();
-        }
+      // If the file was parsed or currupt:
+      // Delete the file, we don't need it any more
+      if (DELETE_PARSED_FILES || fileIsCorrupt) {
+        gzFile.delete();
       }
-      
-      return channelDayProgram;
     }
   }
   
@@ -304,9 +303,9 @@ public class XmlTvDataService implements TVDataServiceInterface {
     // e.g. "tv_20030418.xml"
     StringBuffer fileNameBuf = new StringBuffer();
     fileNameBuf.append("tv_");
-    XmlTvUtilities.append(fileNameBuf, year, 4);
-    XmlTvUtilities.append(fileNameBuf, month, 2);
-    XmlTvUtilities.append(fileNameBuf, day, 2);
+    IOUtilities.append(fileNameBuf, year, 4);
+    IOUtilities.append(fileNameBuf, month, 2);
+    IOUtilities.append(fileNameBuf, day, 2);
     fileNameBuf.append(".xml");
     
     return fileNameBuf.toString();

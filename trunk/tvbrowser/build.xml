@@ -190,6 +190,7 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="tvdataloader/**"/>
+      <fileset dir="${classes.dir}" includes="util/**"/>
     </jar>
 
     <mkdir dir="${runtime.dir}/interfaces"/>
@@ -289,6 +290,7 @@
         <include name="imgs/**/*.jpg"/>
         <include name="devplugin/**/*.java"/>
         <include name="tvdataloader/**/*.java"/>
+        <include name="util/**/*.java"/>
       </zipfileset>
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${txt.dir}"

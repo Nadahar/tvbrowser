@@ -26,6 +26,8 @@
 
 package tvbrowser;
 
+import java.util.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -39,7 +41,7 @@ import tvbrowser.ui.UpdateDlg;
 import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.settings.SettingsDlg;
 
-import java.util.*;
+import util.ui.*;
 
 /**
  * TV-Browser
@@ -47,15 +49,16 @@ import java.util.*;
  */
 public class TVBrowser extends JFrame implements ActionListener, DateListener, MainApplication {
 
+  private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
+  
   private JButton mNowBt, mEarlyBt, mMorningBt, mMiddayBt, mEveningBt,
     updateBtn, settingsBtn, searchBtn;
   private ProgramTablePanel programTablePanel;
   private JPanel buttonPanel;
-  //private JProgressBar progressBar;
   private Thread downloadingThread;
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
-  private JMenuItem settingsMenuItem, updateMenuItem;
+  private JMenuItem settingsMenuItem, updateMenuItem, mImportTvDataMI, mExportTvDataMI;
   private SkinPanel skinPanel;
   private static String curLookAndFeel;
   public static String MAINWINDOW_TITLE="TV-Browser v0.9.0";
@@ -146,9 +149,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     JMenuItem searchMenuItem=new JMenuItem("Search...");
     updateMenuItem=new JMenuItem("Update");
 
-    JMenuItem importMenuItem=new JMenuItem("Import");
-    JMenuItem exportMenuItem=new JMenuItem("Export");
-
     JMenuItem pluginDownloadMenuItem=new JMenuItem("Find plugins on the web");
     JMenuItem helpMenuItem=new JMenuItem("Help");
     JMenuItem infoMenuItem=new JMenuItem("About...");
@@ -168,8 +168,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     tvDataMenu.add(searchMenuItem);
     tvDataMenu.add(updateMenuItem);
     tvDataMenu.addSeparator();
-    tvDataMenu.add(importMenuItem);
-    tvDataMenu.add(exportMenuItem);
+
+    mImportTvDataMI = new JMenuItem("Import");
+    mImportTvDataMI.addActionListener(this);
+    tvDataMenu.add(mImportTvDataMI);
+
+    mExportTvDataMI = new JMenuItem("Export");
+    mExportTvDataMI.addActionListener(this);
+    tvDataMenu.add(mExportTvDataMI);
 
     pluginsMenu.addSeparator();
     pluginsMenu.add(pluginDownloadMenuItem);
@@ -325,6 +331,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   
   
   private void scrollToNow() {
+    // TODO: change to the shown day program to today if nessesary
+
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     programTablePanel.scrollTo(hour);
@@ -333,55 +341,34 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   
   
   public void actionPerformed(ActionEvent event) {
-    if (event.getSource() == mNowBt) {
+    Object src = event.getSource();
+    
+    if (src == mNowBt) {
       scrollToNow();
     }
-    else if (event.getSource() == mEarlyBt) {
+    else if (src == mEarlyBt) {
       programTablePanel.scrollTo(4);
     }
-    else if (event.getSource() == mMorningBt) {
+    else if (src == mMorningBt) {
       programTablePanel.scrollTo(8);
     }
-    else if (event.getSource() == mMiddayBt) {
+    else if (src == mMiddayBt) {
       programTablePanel.scrollTo(12);
     }
-    else if (event.getSource() == mEveningBt) {
+    else if (src == mEveningBt) {
       programTablePanel.scrollTo(18);
     }
-
-    else if (event.getSource()==updateBtn || event.getSource()==updateMenuItem) {
-      
-      if (DataService.getInstance().isDownloading()) {
-        DataService.getInstance().setIsDownloading(false);
-        onDownloadDone();
-      }
-      else {
-        
-        UpdateDlg dlg=new UpdateDlg(this,true);
-        dlg.pack();
-        dlg.show();
-        final int daysToDownload=dlg.getResult();
-        if (daysToDownload!=UpdateDlg.CANCEL) {
-          final JFrame parent=this;
-          downloadingThread=new Thread() {
-            public void run() {
-              onDownloadStart();
-              DataService.getInstance().startDownload(daysToDownload);
-              onDownloadDone();
-            }
-          };
-          downloadingThread.start();
-        }
-      }
-      
-    } else if (event.getSource()==settingsMenuItem || event.getSource()==settingsBtn) {
-      SettingsDlg dlg=new SettingsDlg(this);
-      dlg.pack();
-      dlg.show();
-      dlg.dispose();
-      updateLookAndFeel();
-      updateApplicationSkin();
-      this.updateProgramTableSkin();
+    else if (src == mImportTvDataMI) {
+      importTvData();
+    }
+    else if (src == mExportTvDataMI) {
+      exportTvData();
+    }
+    else if ((src == updateBtn) || (src == updateMenuItem)) {
+      updateTvData();
+    }
+    else if ((src == settingsMenuItem) || (src == settingsBtn)) {
+      showSettingsDialog();
     }
   }
   
@@ -516,7 +503,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
 
   public void updateLookAndFeel() {
-
     if (curLookAndFeel==null || !curLookAndFeel.equals(Settings.getLookAndFeel())) {
       try {
         curLookAndFeel=Settings.getLookAndFeel();
@@ -532,8 +518,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
   }
 
-  public void updateApplicationSkin() {
 
+  
+  public void updateApplicationSkin() {
     int mode;
     if (Settings.useApplicationSkin()) {
       mode=Settings.WALLPAPER;
@@ -545,9 +532,103 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
   }
 
+
+
   public void updateProgramTableSkin() {
     programTablePanel.updateBackground();
   }
 
+  
+  
+  private void importTvData() {
+    JFileChooser chooser = new JFileChooser();
+    
+    File defaultFile = new File("tvdata" + EXPORTED_TV_DATA_EXTENSION);
+    chooser.setSelectedFile(defaultFile);
+    chooser.setDialogTitle("TV-Daten importieren");
+    String msg = "TV-Daten (*" + EXPORTED_TV_DATA_EXTENSION + ")";
+    chooser.addChoosableFileFilter(new ExtensionFileFilter(EXPORTED_TV_DATA_EXTENSION, msg));
 
+    chooser.showOpenDialog(this);
+    
+    File targetFile = chooser.getSelectedFile();
+    if ((targetFile != null) && (targetFile.exists())) {
+      try {
+        DataService.getInstance().importTvData(targetFile);
+      }
+      catch (IOException exc) {
+        System.err.println("Importing tv data failed: " + exc);
+        exc.printStackTrace();
+      }
+    }
+  }
+
+  
+  
+  private void exportTvData() {
+    JFileChooser chooser = new JFileChooser();
+    
+    File defaultFile = new File("tvdata" + EXPORTED_TV_DATA_EXTENSION);
+    chooser.setSelectedFile(defaultFile);
+    chooser.setDialogTitle("TV-Daten exportieren");
+    String msg = "TV-Daten (*" + EXPORTED_TV_DATA_EXTENSION + ")";
+    chooser.addChoosableFileFilter(new ExtensionFileFilter(EXPORTED_TV_DATA_EXTENSION, msg));
+
+    chooser.showSaveDialog(this);
+    
+    File targetFile = chooser.getSelectedFile();
+    if (targetFile != null) {
+      try {
+        DataService.getInstance().exportTvData(targetFile);
+      }
+      catch (IOException exc) {
+        System.err.println("Exporting tv data failed: " + exc);
+        exc.printStackTrace();
+      }
+    }
+  }
+  
+  
+
+  /**
+   * Starts the tv data update.
+   */
+  private void updateTvData() {
+    if (DataService.getInstance().isDownloading()) {
+      DataService.getInstance().setIsDownloading(false);
+      onDownloadDone();
+    } else {
+      UpdateDlg dlg = new UpdateDlg(this, true);
+      dlg.pack();
+      dlg.show();
+      final int daysToDownload = dlg.getResult();
+      if (daysToDownload != UpdateDlg.CANCEL) {
+        final JFrame parent = this;
+        downloadingThread = new Thread() {
+          public void run() {
+            onDownloadStart();
+            DataService.getInstance().startDownload(daysToDownload);
+            onDownloadDone();
+          }
+        };
+        downloadingThread.start();
+      }
+    }
+  }
+
+  
+  
+  /**
+   * Shows the settings dialog.
+   */
+  private void showSettingsDialog() {
+    SettingsDlg dlg = new SettingsDlg(this);
+    dlg.pack();
+    dlg.show();
+    dlg.dispose();
+    updateLookAndFeel();
+    updateApplicationSkin();
+    this.updateProgramTableSkin();
+  }
+  
 }
