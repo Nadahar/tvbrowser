@@ -78,5 +78,7 @@ public interface TvDataService {
    * Gets the list of the channels that are available by this data service.
    */
   public devplugin.Channel[] getAvailableChannels();
+  
+  public devplugin.Version getVersion();
 
 }

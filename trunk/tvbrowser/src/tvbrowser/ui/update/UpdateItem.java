@@ -39,7 +39,7 @@ public class UpdateItem {
 	private ArrayList mVersionList;
 	private VersionItem mSelectedItem;
 	
-	public static final int PLUGIN=0, DATASERVICE=1;
+	public static final int PLUGIN=0, DATASERVICE=1, TVBROWSER=2;
 	
 	
 	public UpdateItem(String name, int type) {

@@ -60,6 +60,9 @@ public class XmlTvHandler extends DefaultHandler {
 
   /** The currently parsed program. */
   private MutableProgram mCurrProgram;
+  
+  
+ // private HashMap mChannelIDs=new HashMap();
 
   /**
    * The XML locator. It can be used to ask for the location of the parser
@@ -67,10 +70,10 @@ public class XmlTvHandler extends DefaultHandler {
    */
   private Locator mLocator;
 
-  /** The set where the found channel names are stored. */
-  private HashSet mChannelSet = new HashSet();
+ 
+ private HashMap mChannelMap=new HashMap();
 
-  private /*GregorianCalendar*/ Calendar mCalendar;
+  private Calendar mCalendar;
 
 
 
@@ -86,9 +89,54 @@ public class XmlTvHandler extends DefaultHandler {
     mProgramDispatcher = programDispatcher;
     mSubscribedChannelArr = subscribedChannelArr;
 
-   // mCalendar = new GregorianCalendar();
-    //GregorianCalendar.get
     mCalendar=java.util.Calendar.getInstance();
+    /*
+    mChannelIDs.put("ARD",new Integer(1));
+	mChannelIDs.put("ZDF",new Integer(2));
+	mChannelIDs.put("KABEL 1",new Integer(3));
+	mChannelIDs.put("PRO 7",new Integer(4));
+	mChannelIDs.put("RTL",new Integer(5));
+	mChannelIDs.put("RTL 2",new Integer(6));
+	mChannelIDs.put("SAT.1",new Integer(7));
+	mChannelIDs.put("SUPER RTL",new Integer(8));
+	mChannelIDs.put("VOX",new Integer(9));
+	
+	mChannelIDs.put("3SAT",new Integer(100));
+	mChannelIDs.put("ARTE",new Integer(101));
+	mChannelIDs.put("BAYERN",new Integer(102));
+	mChannelIDs.put("HESSEN",new Integer(103));
+	mChannelIDs.put("KINDER KANAL",new Integer(104));
+	mChannelIDs.put("MDR",new Integer(105));
+	mChannelIDs.put("NBC",new Integer(106));
+	mChannelIDs.put("Neunlive",new Integer(107));
+	mChannelIDs.put("NORD 3",new Integer(108));
+	mChannelIDs.put("PHOENIX",new Integer(109));
+	mChannelIDs.put("SWR",new Integer(110));
+	mChannelIDs.put("TV 5",new Integer(111));
+	
+	mChannelIDs.put("MTV",new Integer(201));
+	mChannelIDs.put("MTV2",new Integer(202));
+	mChannelIDs.put("VIVA",new Integer(203));
+	
+	mChannelIDs.put("DSF",new Integer(301));
+	mChannelIDs.put("EUROSPORT",new Integer(302));
+	
+	mChannelIDs.put("EURONEWS",new Integer(401));
+	mChannelIDs.put("N-TV",new Integer(402));
+	
+	mChannelIDs.put("PREMIERE",new Integer(501));
+	
+	mChannelIDs.put("CNN",new Integer(601));
+	mChannelIDs.put("ORB",new Integer(602));
+	mChannelIDs.put("ORF 1",new Integer(603));
+	mChannelIDs.put("ORF 2",new Integer(604));
+	mChannelIDs.put("SF1",new Integer(605));
+	mChannelIDs.put("TRT",new Integer(606));
+		*/
+	
+			 
+				
+    
   }
 
 
@@ -315,19 +363,30 @@ public class XmlTvHandler extends DefaultHandler {
   }
 
 
+	
 
-  protected Channel getChannelForName(String channelName) {
-    // Add this channel name to the set of channels known by this XML file.
-    mChannelSet.add(channelName);
-
-    for (int i = 0; i < mSubscribedChannelArr.length; i++) {
-      Channel channel = mSubscribedChannelArr[i];
-      if (channel.getName().equalsIgnoreCase(channelName)) {
-        return channel;
-      }
-    }
-
-    return null;
-  }
+	protected Channel getChannelForName(String channelName) {
+		Channel ch=(Channel)mChannelMap.get(channelName);
+		if (ch!=null) {
+			return ch;
+		}
+		
+	/*	Integer iDObj=(Integer)mChannelIDs.get(channelName);
+		if (iDObj==null) {
+			return null;
+		}
+		int iD=iDObj.intValue();
+*/
+		for (int i = 0; i < mSubscribedChannelArr.length; i++) {
+			Channel channel = mSubscribedChannelArr[i];
+			if (channel.getId().equals(channelName)) {
+				mChannelMap.put(channelName,channel);
+				return channel;
+			}
+      
+		}
+		
+		return null;
+	}
 
 }

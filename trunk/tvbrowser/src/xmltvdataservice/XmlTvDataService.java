@@ -73,7 +73,9 @@ public class XmlTvDataService extends AbstractTvDataService {
   public XmlTvDataService() {
   }
 
-
+  public devplugin.Version getVersion() {
+	  return new devplugin.Version(1,3);
+  }
 
   /**
    * Gets the localized name of this TV data service.
@@ -91,53 +93,53 @@ public class XmlTvDataService extends AbstractTvDataService {
   protected Channel[] getDefaultAvailableChannels() {
     return new Channel[] {
       // main channels
-      new Channel(this, "ARD", 1),
-      new Channel(this, "ZDF", 2),
-      new Channel(this, "Kabel 1", 3),
-      new Channel(this, "PRO 7", 4),
-      new Channel(this, "RTL", 5),
-      new Channel(this, "RTL 2", 6),
-      new Channel(this, "SAT.1", 7),
-      new Channel(this, "Super RTL", 8),
-      new Channel(this, "VOX", 9),
+      new Channel(this, "ARD","ARD"),
+      new Channel(this, "ZDF","ZDF"),
+      new Channel(this, "Kabel 1","KABEL 1"),
+      new Channel(this, "PRO 7", "PRO 7"),
+      new Channel(this, "RTL", "RTL"),
+      new Channel(this, "RTL 2", "RTL 2"),
+      new Channel(this, "SAT.1", "SAT.1"),
+      new Channel(this, "Super RTL", "SUPER RTL"),
+      new Channel(this, "VOX", "VOX"),
 
       // minor channels
-      new Channel(this, "3Sat", 100),
-      new Channel(this, "arte", 101),
-      new Channel(this, "Bayern", 102),
-      new Channel(this, "Hessen", 103),
-      new Channel(this, "Kinder Kanal", 104),
-      new Channel(this, "MDR", 105),
-      new Channel(this, "NBC", 106),
-      new Channel(this, "Neunlive", 107),
-      new Channel(this, "NORD 3", 108),
-      new Channel(this, "PHOENIX", 109),
-      new Channel(this, "SWR", 110),
-      new Channel(this, "TV 5", 111),
+      new Channel(this, "3Sat", "3SAT"),
+      new Channel(this, "arte", "ARTE"),
+      new Channel(this, "Bayern", "BAYERN"),
+      new Channel(this, "Hessen", "HESSEN"),
+      new Channel(this, "Kinder Kanal", "KINDER KANAL"),
+      new Channel(this, "MDR", "MDR"),
+      new Channel(this, "NBC", "NBC"),
+      new Channel(this, "9 live", "Neunlive"),
+      new Channel(this, "NORD 3", "NORD 3"),
+      new Channel(this, "PHOENIX", "PHOENIX"),
+      new Channel(this, "SWR", "SWR"),
+      new Channel(this, "TV 5", "TV 5"),
 
       // music channels
-      new Channel(this, "MTV", 201),
-      new Channel(this, "MTV2", 202),
-      new Channel(this, "VIVA", 203),
+      new Channel(this, "MTV", "MTV"),
+      new Channel(this, "MTV2", "MTV2"),
+      new Channel(this, "VIVA", "VIVA"),
 
       // sport channels
-      new Channel(this, "DSF", 301),
-      new Channel(this, "EuroSport", 302),
+      new Channel(this, "DSF", "DSF"),
+      new Channel(this, "EuroSport", "EUROSPORT"),
 
       // news channels
-      new Channel(this, "EuroNews", 401),
-      new Channel(this, "n-tv", 402),
+      new Channel(this, "EuroNews", "EURONEWS"),
+      new Channel(this, "n-tv", "N-TV"),
 
       // pay TV
-      new Channel(this, "Premiere", 501),
+      new Channel(this, "Premiere", "PREMIERE"),
 
       // foreign channels
-      new Channel(this, "CNN", 601),
-      new Channel(this, "RBB Brandenburg", 602),
-      new Channel(this, "ORF 1", 603),
-      new Channel(this, "ORF 2", 604),
-      new Channel(this, "SF1", 605),
-      new Channel(this, "TRT", 606)
+      new Channel(this, "CNN", "CNN"),
+      new Channel(this, "RBB Brandenburg", "ORB"),
+      new Channel(this, "ORF 1", "ORF 1"),
+      new Channel(this, "ORF 2", "ORF 2"),
+      new Channel(this, "SF1", "SF1"),
+      new Channel(this, "TRT", "TRT")
     };
   }
 
@@ -296,6 +298,11 @@ public class XmlTvDataService extends AbstractTvDataService {
         if (gzipIn != null) gzipIn.close();
       } catch (IOException exc) {}
     }
+    
+    tvdataservice.MutableChannelDayProgram prog=programDispatcher.getChannelDayProgram(date,channel);
+    
+    
+    
   }
 
 }

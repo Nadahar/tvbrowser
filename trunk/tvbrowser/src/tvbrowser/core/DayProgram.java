@@ -79,12 +79,15 @@ public class DayProgram {
     Object key = getKeyFor(prog.getChannel());
 
     // Check whether we already have this ChannelDayProgram
+    /*
+     ignore; maybe the old dayprogram was not complete 
+     
     if (mDayProgramHash.get(key) != null) {
       throw new IllegalArgumentException("The ChannelDayProgram for "
         + prog.getChannel().getName() + " is already in this day program "
         + "(from " + mDate + ")!");
     }
-
+*/
     // Put it into the cache
     mDayProgramHash.put(key, prog);
   }

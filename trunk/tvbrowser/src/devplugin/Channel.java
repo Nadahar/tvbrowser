@@ -34,17 +34,19 @@ public class Channel {
 
   private TvDataService mDataService;
   private String mName;
-  private int mId;
+  private String mId;
 
 
 
-  public Channel(TvDataService dataService, String name, int id) {
+  public Channel(TvDataService dataService, String name, String id) {
     mDataService = dataService;
     mName = name;
     mId = id;
   }
 
-  
+  public Channel(TvDataService dataService, String name) {
+  	this(dataService,name,name);
+	}
   
   public static Channel readData(ObjectInputStream in, boolean allowNull)
     throws IOException, ClassNotFoundException
@@ -52,7 +54,15 @@ public class Channel {
     int version = in.readInt();
     
     String dataServiceClassName = (String) in.readObject();
-    int channelId = in.readInt();
+    
+    String channelId;
+    if (version==1) {
+    	channelId=""+in.readInt();
+    }
+    else {
+    	channelId=(String)in.readObject();
+    }
+    
     
     Channel channel = getChannel(dataServiceClassName, channelId);
     if ((channel == null) && (! allowNull)) {
@@ -69,15 +79,15 @@ public class Channel {
    * Serialized this object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
 
     out.writeObject(mDataService.getClass().getName());
-    out.writeInt(mId);
+    out.writeObject(mId);
   }
 
   
   
-  public static Channel getChannel(String dataServiceClassName, int channelId) {
+  public static Channel getChannel(String dataServiceClassName, String channelId) {
     if (dataServiceClassName == null) {
       // Fast return
       return null;
@@ -86,7 +96,7 @@ public class Channel {
     Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
     for (int i = 0; i < channelArr.length; i++) {
       if (dataServiceClassName.equals(channelArr[i].getDataService().getClass().getName())
-        && (channelArr[i].getId() == channelId))
+        && (channelArr[i].getId().equals(channelId)))
       {
         return channelArr[i];
       }      
@@ -115,7 +125,7 @@ public class Channel {
 
 
 
-  public int getId() {
+  public String getId() {
     return mId;
   }
 

@@ -318,7 +318,7 @@ public class Settings {
         = TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
 
       if (dataService != null) {
-        ChannelList.subscribeChannel(dataService, Integer.parseInt(id));
+        ChannelList.subscribeChannel(dataService, id);
       }
     }
   }

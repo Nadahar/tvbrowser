@@ -90,7 +90,13 @@ public class Favorite {
     mUseCertainChannel = in.readBoolean();
 
     String certainChannelServiceClassName = (String) in.readObject();
-    int certainChannelId = in.readInt();
+    String certainChannelId;
+    if (version==1) {
+    	certainChannelId=""+in.readInt();
+    }else{
+    	certainChannelId=(String)in.readObject();
+    }
+    
     mCertainChannel = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
 
     mUseCertainTimeOfDay = in.readBoolean();
@@ -118,7 +124,7 @@ public class Favorite {
    * Serializes this Object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
     
     out.writeObject(mTerm);
     out.writeBoolean(mSearchInTitle);
@@ -127,13 +133,14 @@ public class Favorite {
     out.writeBoolean(mUseCertainChannel);
 
     String certainChannelServiceClassName = null;
-    int certainChannelId = -1;
+   // int certainChannelId = -1;
+    String certainChannelId="";
     if (mCertainChannel != null) {
       certainChannelServiceClassName = mCertainChannel.getDataService().getClass().getName();
       certainChannelId = mCertainChannel.getId();
     }
     out.writeObject(certainChannelServiceClassName);
-    out.writeInt(certainChannelId);
+    out.writeObject(certainChannelId);
     
     out.writeBoolean(mUseCertainTimeOfDay);
     out.writeInt(mCertainFromTime);

@@ -208,6 +208,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
           mainFrame.runUpdateThread(Settings.getDownloadPeriod());
         }
         
+        if (ChannelList.getNumberOfSubscribedChannels()==0) {
+        	JOptionPane.showMessageDialog(mainFrame,"There are no channels selected for download.");
+        }
+        else
         if (! DataService.dataAvailable(new devplugin.Date())) {
           askForDataUpdate();
         } else {
