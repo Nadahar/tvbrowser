@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import tvbrowserdataservice.TvDataLevel;
+import tvbrowserdataservice.file.TvDataLevel;
 
 import devplugin.Date;
 

@@ -103,7 +103,7 @@ public class MirrorUpdater {
       // Update the day programs for all channels
       for (int i = 0; i < channelArr.length; i++) {
         for (int j = 0; j < DayProgramFile.LEVEL_ARR.length; j++) {
-          updateDayProgramsFor(channelArr[i], DayProgramFile.LEVEL_ARR[j]);
+          updateDayProgramsFor(channelArr[i], DayProgramFile.LEVEL_ARR[j].getId());
         }
       }
       
