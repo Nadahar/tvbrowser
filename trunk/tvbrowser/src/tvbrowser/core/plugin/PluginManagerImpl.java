@@ -26,13 +26,6 @@
 package tvbrowser.core.plugin;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,7 +35,6 @@ import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataSearcher;
 import tvbrowser.core.TvDataServiceManager;
@@ -50,7 +42,16 @@ import tvbrowser.core.filters.FilterList;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -248,23 +249,9 @@ public class PluginManagerImpl implements PluginManager {
    * @param program The program to create the context menu for
    * @param caller The calling plugin.
    * @return a context menu for the given program.
-   * 
-   * @deprecated Since 1.1. Use {@link #createPluginContextMenu(Program)}
-   *             instead.
    */
   public JPopupMenu createPluginContextMenu(Program program, Plugin caller) {
-    return PluginProxyManager.createPluginContextMenu(program);
-  }
-
-
-  /**
-   * Creates a context menu for the given program containing all plugins.
-   * 
-   * @param program The program to create the context menu for
-   * @return a context menu for the given program.
-   */
-  public JPopupMenu createPluginContextMenu(Program program) {
-    return PluginProxyManager.createPluginContextMenu(program);
+    return PluginProxyManager.createPluginContextMenu(program, caller);
   }
 
 

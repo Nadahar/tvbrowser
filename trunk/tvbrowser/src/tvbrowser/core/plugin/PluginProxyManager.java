@@ -25,21 +25,28 @@
  */
 package tvbrowser.core.plugin;
 
-import java.awt.Font;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.*;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
-import tvbrowser.core.*;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
+import tvbrowser.core.TvDataBaseListener;
+import tvbrowser.core.TvDataUpdateListener;
+import tvbrowser.core.TvDataUpdater;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.menu.MenuUtil;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.ChannelDayProgram;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.Program;
 
 /**
  * Manages all plugin proxies and creates them on startup.
@@ -865,19 +872,32 @@ public class PluginProxyManager {
     return result;
   }
         */
-  public static JMenuItem[] createPluginContextMenuItems(Program program, boolean markDefaultPlugin) {
+  
+  /**
+   * Creates the MenuItems for the ContextMenus
+   */
+  public static JMenuItem[] createPluginContextMenuItems(Plugin callerplugin, Program program, boolean markDefaultPlugin) {
     ArrayList items = new ArrayList();
     PluginProxy defaultPlugin = getInstance().getDefaultContextMenuPlugin();
     PluginProxy[] pluginArr = getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       PluginProxy plugin = pluginArr[i];
-      ActionMenu actionMenu = plugin.getContextMenuActions(program);
-      if (actionMenu != null) {
-        JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
-        items.add(menuItem);
-        if (plugin == defaultPlugin && markDefaultPlugin) {
-          if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-            menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+      
+      boolean equalsPlugin = false;
+      
+      if ((callerplugin != null) && (callerplugin.getId().equals(plugin.getId()))) {
+        equalsPlugin = true;
+      }
+      
+      if (!equalsPlugin) {
+        ActionMenu actionMenu = plugin.getContextMenuActions(program);
+        if (actionMenu != null) {
+          JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
+          items.add(menuItem);
+          if (plugin == defaultPlugin && markDefaultPlugin) {
+            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
+              menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+            }
           }
         }
       }
@@ -918,8 +938,20 @@ public class PluginProxyManager {
    */
 
   public static JPopupMenu createPluginContextMenu(Program program) {
+    return createPluginContextMenu(program, null);
+  }
+  
+  /**
+   * Creates a context menu for the given program containing all plugins.
+   * 
+   * @param program The program to create the context menu for
+   * @param plugin The Plugin that wants to create the ContextMenu
+   * @return a context menu for the given program.
+   */
+
+  public static JPopupMenu createPluginContextMenu(Program program, Plugin plugin) {
     JPopupMenu menu = new JPopupMenu();
-    JMenuItem[] items = createPluginContextMenuItems(program, true);
+    JMenuItem[] items = createPluginContextMenuItems(plugin, program, true);
     for (int i=0; i<items.length; i++) {
       menu.add(items[i]);
     }
