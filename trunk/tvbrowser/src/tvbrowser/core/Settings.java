@@ -70,18 +70,18 @@ class TVBrowserProperties extends java.util.Properties {
   
   
   public void setStringList(String key, String[] values) {
-	if (values==null || values.length==0) {
-				setProperty(key,"");
-				return;
-			}
-
-			String line="";
-
-			for (int i=0;i<values.length-1;i++) {
-				line+=values[i]+",";
-			}
-			line+=values[values.length-1];
-			setProperty(key,line);	
+    if (values==null || values.length==0) {
+      setProperty(key,"");
+      return;
+    }
+    
+    String line="";
+    
+    for (int i=0;i<values.length-1;i++) {
+      line+=values[i]+",";
+    }
+    line+=values[values.length-1];
+    setProperty(key,line);
   }
   
   

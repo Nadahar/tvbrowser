@@ -321,19 +321,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     eastPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-    //buttonPanel = createButtonPanel();
     buttonPanel=new ButtonPanel();
-   buttonPanel.setTimButtons(createTimeBtns());
-   buttonPanel.setUpdateButton(createUpdateBtn());
-   buttonPanel.setPreferencesButton(createPreferencesBtn());
-   buttonPanel.update();
-
-   /* if (Settings.isTimeBtnVisible()) {
-    	JComponents[]=this.createTimeBtns();
-
-    }
-    */
-
+    buttonPanel.setTimeButtons(createTimeBtns());
+    buttonPanel.setUpdateButton(createUpdateBtn());
+    buttonPanel.setPreferencesButton(createPreferencesBtn());
+    buttonPanel.update();
     northPanel.add(buttonPanel,BorderLayout.WEST);
 
     programTablePanel = new ProgramTablePanel(this);
@@ -427,22 +419,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private void updatePluginMenu(JMenu theMenu) {
     theMenu.removeAll();
 
-    Object[] plugins = PluginManager.getInstalledPlugins();
+    devplugin.Plugin[] pluginArr = PluginManager.getInstalledPlugins();
     JMenuItem item;
-    HashMap map = new HashMap();
-    for (int i = 0;i<plugins.length;i++) {
-      final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
+    for (int i = 0; i < pluginArr.length; i++) {
+      final devplugin.Plugin plugin = pluginArr[i];
       plugin.setParent(this);
       String btnTxt = plugin.getButtonText();
       if (btnTxt != null) {
-        int k = 1;
-        String txt = btnTxt;
-        while (map.get(txt) != null) {
-          txt = btnTxt+"("+k+")";
-          k++;
-        }
-        map.put(txt,btnTxt);
-
         item = new JMenuItem(btnTxt);
         item.setIcon(plugin.getButtonIcon());
         item.addActionListener(new ActionListener() {
@@ -742,6 +725,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	}
   }
 
+  
+  
   /**
    * Starts the tv data update.
    */
@@ -767,42 +752,41 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     dlg.pack();
     UiUtilities.centerAndShow(dlg);
     if (Settings.settingHasChanged(new String[]{"lookandfeel"})) {
-		updateLookAndFeel();
+      updateLookAndFeel();
     }
     if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
-		updateApplicationSkin();
+      updateApplicationSkin();
     }
     if (Settings.settingHasChanged(new String[]{"tablebgmode","tablebackground"})) {
-		programTablePanel.updateBackground();
+      programTablePanel.updateBackground();
     }
     if (Settings.settingHasChanged(new String[]{"plugins"})) {
-    	programTablePanel.setPluginContextMenu(DataService.getInstance().createPluginContextMenu(this));
-   		updatePluginMenu(pluginsMenu);
+      programTablePanel.setPluginContextMenu(DataService.getInstance().createPluginContextMenu(this));
+      updatePluginMenu(pluginsMenu);
     }
     if (Settings.settingHasChanged(new String[]{"timebutton","updatebutton","preferencesbutton",
     "buttontype","buttonplugins"})) {
-    	buttonPanel.update();
+      buttonPanel.update();
     }
-
+    
     if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
-    	createChannelList();
-    	programTablePanel.subscribedChannelsChanged();
-		DataService.getInstance().subscribedChannelsChanged();
-		devplugin.Date showingDate = finderPanel.getSelectedDate();
-		DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
-		try {
-			programTablePanel.setDayProgram(dayProgram);
-		} catch(TvBrowserException exc) {
-	  		ErrorHandler.handle(exc);
-		}
+      createChannelList();
+      programTablePanel.subscribedChannelsChanged();
+      DataService.getInstance().subscribedChannelsChanged();
+      devplugin.Date showingDate = finderPanel.getSelectedDate();
+      DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
+      try {
+        programTablePanel.setDayProgram(dayProgram);
+      } catch(TvBrowserException exc) {
+        ErrorHandler.handle(exc);
+      }
     }
-
   }
+  
+  
+  
   /**
-   *
    * Shows the about box
-   * @author darras
-   *
    */
   private void showAboutBox() {
   	AboutBox box=new AboutBox(this);
