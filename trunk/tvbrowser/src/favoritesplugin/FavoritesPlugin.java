@@ -28,6 +28,7 @@ package favoritesplugin;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import util.ui.UiUtilities;
 import util.exc.*;
@@ -50,6 +51,8 @@ public class FavoritesPlugin extends Plugin {
   private Favorite[] mFavoriteArr;
   
   private Plugin[] mClientPluginArr;
+  
+  private java.awt.Dimension mDlgDim;
 
   
   
@@ -135,7 +138,32 @@ public class FavoritesPlugin extends Plugin {
     }
   }
   
+  /**
+    * Called by the host-application during start-up. Implements this method to
+    * load your plugins settings from the file system.
+    */
+   public void loadSettings(Properties settings) {
+     
+     if (settings==null) {
+       throw new IllegalArgumentException("settings is null"); 
+     }
+     int width=Integer.parseInt(settings.getProperty("width","500"));
+     int height=Integer.parseInt(settings.getProperty("height","300"));
+     mDlgDim=new java.awt.Dimension(width,height);
+   }
   
+  
+  
+   /**
+    * Called by the host-application during shut-down. Implements this method to
+    * store your plugins settings to the file system.
+    */
+   public Properties storeSettings() {
+     Properties result=new Properties();
+     result.setProperty("width",""+mDlgDim.width);
+     result.setProperty("height",""+mDlgDim.height);
+     return result;
+   }
 
   /**
    * This method is invoked by the host-application if the user has choosen your
@@ -143,11 +171,13 @@ public class FavoritesPlugin extends Plugin {
    */
   public void execute() {
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(parent, mFavoriteArr);
+    dlg.setSize(mDlgDim);
     UiUtilities.centerAndShow(dlg);
     
     if (dlg.getOkWasPressed()) {
       mFavoriteArr = dlg.getFavorites();
     }
+    dlg.getSize(mDlgDim);
   }
 
   
@@ -179,7 +209,7 @@ public class FavoritesPlugin extends Plugin {
       "Automatically marks your favorite programs and passes them to other Plugins." );
     String author = "Til Schneider, www.murfman.de" ;
     
-    return new PluginInfo(name, desc, author, new Version(1, 3));
+    return new PluginInfo(name, desc, author, new Version(1, 4));
   }
   
   
