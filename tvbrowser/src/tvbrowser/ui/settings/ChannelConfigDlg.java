@@ -154,6 +154,10 @@ public class ChannelConfigDlg implements ActionListener {
     mChannelList=channelList;
     mDialog.getContentPane().add(main);
     mDialog.pack();
+    
+    if (mDialog.getWidth() < 300) {
+        mDialog.setSize(300, mDialog.getHeight());
+    }
   }
   
   public void centerAndShow() {
