@@ -35,8 +35,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-
 
 /**
  * This is a Button that allows the selection of a Color
