@@ -91,7 +91,10 @@ public class ProgramField implements Cloneable {
   }
 
   public static ProgramField create(ProgramFieldType type, String text) {
-    if (text==null) return null;
+    if ((text == null) || (text.length() == 0)) {
+      return null;
+    }
+    
     ProgramField p=new ProgramField();
     p.setType(type);
     p.setTextData(text);
@@ -99,7 +102,10 @@ public class ProgramField implements Cloneable {
   }
   
   public static ProgramField create(ProgramFieldType type, byte[] data) {
-    if (data==null) return null;
+    if ((data == null) || (data.length == 0)) {
+      return null;
+    }
+    
     ProgramField p=new ProgramField();
     p.setType(type);
     p.setBinaryData(data);
