@@ -29,10 +29,13 @@ package tvbrowserdataservice;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -40,6 +43,8 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -56,6 +61,7 @@ import tvdataservice.SettingsPanel;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
+import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
@@ -210,6 +216,13 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     }
 
     private void fillGroupList(devplugin.ChannelGroup[] groups) {
+        Arrays.sort(groups,new Comparator() {
+            public int compare(Object o1, Object o2) {
+                devplugin.ChannelGroup g1 = (devplugin.ChannelGroup) o1;
+                devplugin.ChannelGroup g2 = (devplugin.ChannelGroup) o2;
+                return g1.getName().compareToIgnoreCase(g2.getName());
+            }
+        });
         mGroupListModel.removeAllElements();
         for (int i = 0; i < groups.length; i++) {
             mGroupListModel.addElement(groups[i]);
@@ -334,7 +347,19 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
             fillGroupList(groups);
             TvBrowserDataService.getInstance().setChannelGroups(groups);
         } else if (source == mInfoBtn) {
-            JOptionPane.showMessageDialog(this, "Hello");
+            ChannelGroup group = (ChannelGroup) mGroupList.getSelectedValue();
+
+            if (group != null) {
+                ChannelGroupDialog dialog;
+                
+                Window parent = UiUtilities.getBestDialogParent(this);
+                if (parent instanceof JFrame) {
+                    dialog = new ChannelGroupDialog((JFrame)parent, group);
+                } else {
+                    dialog = new ChannelGroupDialog((JDialog)parent, group);
+                }
+                dialog.show();
+            }
         }
 
     }
