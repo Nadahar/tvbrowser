@@ -58,7 +58,7 @@ public class ProgramPanelFactory {
     }
 
     result=(ProgramPanel)panelList.get(curPos);
-    result.init(prog);
+    result.setProgram(prog);
     curPos++;
     return result;
 
