@@ -48,6 +48,7 @@ public class ChannelList {
       }
     }
     loadDayLightSavingTimeCorrections();
+    loadChannelIcons();
   }
 
 
@@ -104,6 +105,14 @@ public class ChannelList {
       try { reader.close(); }catch(IOException exc){}
     }
   }
+
+  /**
+   * Stores all settings used for the Channels 
+   */
+  public static void storeAllSettings() {
+      storeDayLightSavingTimeCorrections();
+      storeChannelIcons();
+  }  
   
   public static void storeDayLightSavingTimeCorrections() {
     File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
@@ -245,5 +254,82 @@ public class ChannelList {
 	return result;
   }
 
+  /**
+   * Loads the Icon-Filenames 
+   */
+  private static void loadChannelIcons() {
+      File f=new File(Settings.getUserDirectoryName(),"channel_icons.txt");
+      if (!f.exists()) {
+        return; 
+      }
+      
+      FileReader fr;
+      BufferedReader reader=null; 
+      try {
+        fr=new FileReader(f);
+        reader=new BufferedReader(fr);
+        String line;
+        for (;;){
+          line=reader.readLine();
+          if (line==null) {
+            break;
+          }
+          int pos=line.indexOf('=');
+          try {
+            String key=line.substring(0,pos);
+            String val=line.substring(pos+1);
+            if (val!=null) {
+              pos = key.indexOf(':');
+              String dataServiceClassName = key.substring(0,pos);
+              String id = key.substring(pos + 1);
 
+              TvDataService dataService
+                = TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+
+              Channel ch=ChannelList.getChannel(dataService,id);
+              if (ch!=null) {
+                ch.setIconFileName(val);
+              }
+              
+            }
+          }catch(IndexOutOfBoundsException e) {
+            // ignore
+          }
+        }
+        
+      }catch(IOException e) {
+        // ignore
+      }
+      if (reader!=null) {
+        try { reader.close(); }catch(IOException exc){}
+      }
+  }
+
+
+  
+  /**
+   * Stores all Icons 
+   */
+  private static void storeChannelIcons() {
+      File f=new File(Settings.getUserDirectoryName(),"channel_icons.txt");
+      
+      FileWriter fw;
+      PrintWriter out=null;
+      try {
+        fw=new FileWriter(f);
+        out=new PrintWriter(fw);
+        Channel[] channels=getSubscribedChannels();
+          for (int i=0;i<channels.length;i++) {
+            String filename = channels[i].getIconFileName();
+            if (filename != null) {
+              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+filename);  
+            }
+          }
+      }catch(IOException e) {
+        // ignore  
+      }
+      if (out!=null) {
+        out.close();
+      }
+  }
 }
