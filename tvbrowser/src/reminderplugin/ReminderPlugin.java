@@ -46,9 +46,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   private static ReminderPlugin mInstance;
   
-  private ReminderList reminderList= null;
-  private Properties settings;
-  private Icon icon= null;
+  private ReminderList mReminderList;
+  private Properties mSettings;
   
   
   
@@ -58,8 +57,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public ReminderPlugin() {
     mInstance = this;
 
-    reminderList = new ReminderList();
-    reminderList.setReminderTimerListener(this);
+    mReminderList = new ReminderList();
+    mReminderList.setReminderTimerListener(this);
   }
   
   
@@ -71,8 +70,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   public void timeEvent(ReminderListItem item) {
-    if ("true" .equals(settings.getProperty( "usesound" ))) {
-      String fName=settings.getProperty( "soundfile" );
+    if ("true" .equals(mSettings.getProperty( "usesound" ))) {
+      String fName=mSettings.getProperty( "soundfile" );
       try {
         URL url = new File(fName).toURL();
         AudioClip clip=Applet.newAudioClip(url);
@@ -83,13 +82,13 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       }
     }
     
-    if ("true" .equals(settings.getProperty( "usemsgbox" ))) {
-      new ReminderFrame(reminderList, item, getAutoCloseReminderTime());
+    if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
+      new ReminderFrame(mReminderList, item, getAutoCloseReminderTime());
     } else {
-      reminderList.remove(item);
+      mReminderList.remove(item);
     }
-    if ("true" .equals(settings.getProperty( "useexec" ))) {
-      String fName=settings.getProperty( "execfile" );
+    if ("true" .equals(mSettings.getProperty( "useexec" ))) {
+      String fName=mSettings.getProperty( "execfile" );
       try {
         Runtime.getRuntime().exec(fName);
       } catch (IOException exc) {
@@ -114,16 +113,16 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   {
     int version = in.readInt();
 	// Remove from the old list
-    reminderList.setReminderTimerListener(null);
+    mReminderList.setReminderTimerListener(null);
     
-    reminderList = new ReminderList(in);
-    reminderList.setReminderTimerListener(this);
-    if (reminderList != null) {
-      reminderList.removeExpiredItems();
-      reminderList.setReminderTimerListener(this);
+    mReminderList = new ReminderList(in);
+    mReminderList.setReminderTimerListener(this);
+    if (mReminderList != null) {
+      mReminderList.removeExpiredItems();
+      mReminderList.setReminderTimerListener(this);
       
       // mark the programs
-      Iterator iter = reminderList.getReminderItems();
+      Iterator iter = mReminderList.getReminderItems();
       while (iter.hasNext()) {
         ReminderListItem item = (ReminderListItem) iter.next();
         item.getProgram().mark( this );
@@ -135,13 +134,13 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
-  	reminderList.writeData(out);
+  	mReminderList.writeData(out);
   }
   
   
   
   public Properties storeSettings() {
-    return settings;
+    return mSettings;
   }
   
   
@@ -151,7 +150,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       settings = new Properties();
     }
     
-    this.settings = settings;
+    this.mSettings = settings;
   }
   
   
@@ -163,7 +162,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   private int getAutoCloseReminderTime() {
     int autoCloseReminderTime = 0;
     try {
-      String asString = settings.getProperty("autoCloseReminderTime", "0");
+      String asString = mSettings.getProperty("autoCloseReminderTime", "0");
       autoCloseReminderTime = Integer.parseInt(asString);
     } catch (Exception exc) {}
     return autoCloseReminderTime;
@@ -180,7 +179,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
   
   public devplugin.SettingsTab getSettingsTab() {
-    return new ReminderSettingsTab(settings);
+    return new ReminderSettingsTab(mSettings);
   }
   
   
@@ -221,7 +220,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
 
   public void execute() {
-    JDialog dlg= new ReminderListDialog(getParentFrame(), reminderList);
+    JDialog dlg= new ReminderListDialog(getParentFrame(), mReminderList);
     dlg.setSize(600,350);
     UiUtilities.centerAndShow(dlg);
     dlg.dispose();
@@ -230,7 +229,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   private void addToReminderList(Program program, int minutes) {
-    reminderList.add(program, minutes);
+    mReminderList.add(program, minutes);
   }
   
   
@@ -242,5 +241,23 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public boolean supportMultipleProgramExecution() {
     return true;
   }
-  
+
+
+  /**
+   * Removes the deleted programs from the reminder list.
+   * <p>
+   * This method is automatically called, when TV data was deleted.
+   * (E.g. after an update).
+   * 
+   * @param oldProg The old ChannelDayProgram which was deleted.
+   * @see #handleTvDataAdded(ChannelDayProgram)
+   */
+  public void handleTvDataDeleted(ChannelDayProgram oldProg) {
+    // Remove the deleted programs from the reminder list
+    for (int i = 0; i < oldProg.getProgramCount(); i++) {
+      Program prog = oldProg.getProgramAt(i);
+      mReminderList.remove(prog);
+    }
+  }
+
 } 

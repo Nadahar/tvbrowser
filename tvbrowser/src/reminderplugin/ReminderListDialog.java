@@ -23,7 +23,6 @@
  *   $Author$
  * $Revision$
  */
-
 package reminderplugin;
 
 import java.util.Iterator;
@@ -172,18 +171,10 @@ public class ReminderListDialog extends JDialog {
     
     result.add(panel1,BorderLayout.WEST);
     result.add(panel2,BorderLayout.EAST);
-    result.add(new ProgramPanel(prog), BorderLayout.CENTER);
     
-    result.addMouseListener(new MouseAdapter() {
-    	public void mouseClicked(MouseEvent e) {
-    		if (SwingUtilities.isRightMouseButton(e)) {
-				JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(prog,ReminderPlugin.getInstance());
-				menu.show(result, e.getX() - 15, e.getY() - 15);
-				
-			}
-    	}
-    });
-    
+    ProgramPanel panel = new ProgramPanel(prog);
+    panel.addPluginContextMenuMouseListener(ReminderPlugin.getInstance());
+    result.add(panel, BorderLayout.CENTER);
     
     return result;
   }
