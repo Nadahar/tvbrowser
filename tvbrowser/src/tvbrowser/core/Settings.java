@@ -191,7 +191,7 @@ public class Settings {
     }
       
     propArr = new Property[] {
-     /* propShowUpdateButton, propShowPreferencesButton, */propToolbarButtonStyle,
+      propToolbarButtonStyle,
       propToolbarButtons, propToolbarLocation, propIsTooolbarVisible,
       propToolbarUseBigIcons
     };
@@ -204,8 +204,9 @@ public class Settings {
     }
     
     if (mProp.hasChanged(propSubscribedChannels)) {
+      System.out.println("channels changed!");
       ChannelList.create();
-      
+      System.out.println("# of channels: "+ChannelList.getSubscribedChannels().length);
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
       model.setChannels(ChannelList.getSubscribedChannels());
       

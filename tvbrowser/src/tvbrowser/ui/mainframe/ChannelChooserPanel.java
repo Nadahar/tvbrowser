@@ -4,11 +4,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.util.Vector;
-
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -22,7 +18,7 @@ import devplugin.Channel;
 public class ChannelChooserPanel extends JPanel {
 
     
-    private Vector mChannelChooserModel = new Vector();
+    private DefaultListModel mChannelChooserModel;
     private JList mList;
     private MainFrame mParent;
     
@@ -31,8 +27,9 @@ public class ChannelChooserPanel extends JPanel {
      */
     public ChannelChooserPanel(MainFrame frame) {
         mParent =frame;
+
+        mChannelChooserModel = new DefaultListModel();
         updateChannelChooser();
-        
         mList = new JList(mChannelChooserModel);
         
         setLayout(new BorderLayout());
@@ -55,9 +52,6 @@ public class ChannelChooserPanel extends JPanel {
         for (int i=0;i<channelList.length;i++) {
           mChannelChooserModel.addElement(channelList[i]);
         }
-        if (mList != null) {
-          mList.updateUI();
-        }
-      }    
+      }
 
 }

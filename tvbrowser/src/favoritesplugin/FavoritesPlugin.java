@@ -130,6 +130,11 @@ public class FavoritesPlugin extends Plugin {
     for (int i=0; i<mFavoriteArr.length; i++) {
       if (!mFavoriteArr[i].equals(favorite)) {
         list.add(mFavoriteArr[i]);
+        try {
+          mFavoriteArr[i].updatePrograms();     // due to overlapping favorites we refresh all of our favorites
+        } catch (TvBrowserException e) {
+          ErrorHandler.handle(e);
+        }
       }
     }
     mFavoriteArr = new Favorite[list.size()];
