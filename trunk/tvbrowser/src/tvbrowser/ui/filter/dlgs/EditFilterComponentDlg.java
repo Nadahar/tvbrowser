@@ -34,6 +34,7 @@ import java.awt.event.*;
 
 
 import tvbrowser.ui.filter.filters.*;
+import tvbrowser.ui.filter.*;
 import util.ui.*;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener {
@@ -46,6 +47,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     private JPanel mCenterPanel, mRulePanel=null, mContentPane;
     private JButton mOkBtn, mCancelBtn;
     private JTextField mDescTF, mNameTF;
+    private String mCompName=null;
     
     public EditFilterComponentDlg(JFrame parent, FilterComponent comp) {
         super(parent,true);
@@ -114,6 +116,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         mContentPane.add(panel,BorderLayout.CENTER);
            
         if (mComp!=null) {
+            mCompName=mComp.getName();
             mNameTF.setText(mComp.getName());
             mDescTF.setText(mComp.getDescription());
             
@@ -160,12 +163,19 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         }
         
         else if (o==mOkBtn) {
-          mComp=(FilterComponent)mRuleList.getSelectedItem();
-          mComp.setName(mNameTF.getText());
-          mComp.setDescription(mDescTF.getText());
-          mComp.ok();
+          
+          String compName=mNameTF.getText();
+          if (!compName.equalsIgnoreCase(mCompName) && FilterComponentList.componentExists(compName)) {
+            JOptionPane.showMessageDialog(this,"Component '"+compName+"' already exists");
+          }
+          else {
+            mComp=(FilterComponent)mRuleList.getSelectedItem();
+            mComp.setName(mNameTF.getText());
+            mComp.setDescription(mDescTF.getText());
+            mComp.ok();
             hide();
-        }
+          }
+        }  
         else if (o==mCancelBtn) {
             hide();
         }

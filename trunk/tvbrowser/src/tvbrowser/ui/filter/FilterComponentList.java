@@ -121,4 +121,15 @@ public class FilterComponentList {
     mComponents.remove(component);
   }
   
+  public static boolean componentExists(String name) {
+    Iterator it=mComponents.iterator();
+    while (it.hasNext()) {
+      FilterComponent comp=(FilterComponent)it.next();
+      if (comp.getName().equalsIgnoreCase(name)) {
+          return true;
+      }
+    }
+    return false;
+  }
+  
 }

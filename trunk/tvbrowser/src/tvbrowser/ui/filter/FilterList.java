@@ -89,4 +89,14 @@ public class FilterList {
         mFilterList.remove(filter);
     }
     
+    public static boolean containsFilter(String name) {
+      Iterator it=mFilterList.iterator();
+      while (it.hasNext()) {
+        Filter f=(Filter)it.next();
+        if (f.getName().equalsIgnoreCase(name)) {
+          return true;
+        }
+      }
+      return false;
+    }
 }
