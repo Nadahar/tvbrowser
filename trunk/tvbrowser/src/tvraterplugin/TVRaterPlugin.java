@@ -186,24 +186,21 @@ public class TVRaterPlugin extends devplugin.Plugin {
         if (_settings.getProperty("ownRating", "").equalsIgnoreCase("true")) {
             rating = _tvraterDB.getPersonalRating(program);
             if (rating != null) {
-                Icon[] iconArray = { new RatingIcon(rating,
-                        RatingIcon.PERSONALRATING)};
+                Icon[] iconArray = { RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))}; 
                 return iconArray;
             }
         }
 
         rating = _tvraterDB.getOverallRating(program);
         if (rating != null) {
-            Icon[] iconArray = { new RatingIcon(rating,
-                    RatingIcon.OVERALLRATING)};
+            Icon[] iconArray = { RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))};
             return iconArray;
         }
 
         if (_settings.getProperty("ownRating", "").equalsIgnoreCase("false")) {
             rating = _tvraterDB.getPersonalRating(program);
             if (rating != null) {
-                Icon[] iconArray = { new RatingIcon(rating,
-                        RatingIcon.PERSONALRATING)};
+                Icon[] iconArray = {RatingIconTextFactory.getImageIconForRating(rating.getIntValue(Rating.OVERALL))};
                 return iconArray;
             }
         }

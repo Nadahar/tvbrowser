@@ -26,7 +26,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-
 /**
  * The CellRenderer for the Ratings
  * 
@@ -34,29 +33,34 @@ import javax.swing.ListCellRenderer;
  */
 public class RatingCellRenderer extends JLabel implements ListCellRenderer {
 
-    public RatingCellRenderer () {
+
+    public RatingCellRenderer() {
         setOpaque(true);
     }
-    
-    /* (non-Javadoc)
-     * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList,
+     *      java.lang.Object, int, boolean, boolean)
      */
     public Component getListCellRendererComponent(JList list, Object obj,
             int index, boolean isSelected, boolean hasFocus) {
-       
+
         if (obj instanceof Integer) {
-            if(isSelected || hasFocus) {
-                this.setBackground( list.getSelectionBackground());
-                this.setForeground( list.getSelectionForeground());
+            Integer rating = ((Integer) obj);
+            if (isSelected || hasFocus) {
+                this.setBackground(list.getSelectionBackground());
+                this.setForeground(list.getSelectionForeground());
             } else {
-                this.setBackground( list.getBackground());
-                this.setForeground( list.getForeground());
+                this.setBackground(list.getBackground());
+                this.setForeground(list.getForeground());
             }
-            
-            
-            ImageIcon rateing = RatingIcon.getImageIconForRating(((Integer)obj).intValue());
+
+            ImageIcon rateing = RatingIconTextFactory.getImageIconForRating(rating.intValue());
             this.setIcon(rateing);
-            this.setText("Bad Movie");
+            this.setText(RatingIconTextFactory.getStringForRating(rating.intValue()));
+
             return this;
         }
 
