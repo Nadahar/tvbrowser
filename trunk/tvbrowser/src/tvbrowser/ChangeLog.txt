@@ -2,6 +2,11 @@ Changelog TVBrowser
 
 current:
 - delete expired tv data
+- Better readable text in Splash Screen
+- Error message when TV-Browser starts in wrong directory
+- Install all plugins by default
+- Subscribe some channels by default
+- show timezone in about box
 
 0.9.3:
 - bugfixes
