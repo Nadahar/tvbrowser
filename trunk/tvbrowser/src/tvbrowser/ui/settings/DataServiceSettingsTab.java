@@ -68,7 +68,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
   };
 
 
-  private JComboBox mServiceCB;
+  private JComboBox mServiceCB, mTVDataLifespanCB;
   private JButton mConfigBt;
   private JButton mChangeDataDirBt;
   private JTextField mTvDataTF;
@@ -92,7 +92,12 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 
     msg = mLocalizer.msg("deleteTvData", "Detele TV data");
     tvDataPn.add(new JLabel(msg));
-    tvDataPn.add(new JComboBox(DELETE_MSG_ARR));
+	mTVDataLifespanCB=new JComboBox(DELETE_MSG_ARR);
+	int sel=Settings.getTVDataLifespan();
+	if (sel<DELETE_MSG_ARR.length) {
+		mTVDataLifespanCB.setSelectedIndex(sel);
+	}
+    tvDataPn.add(mTVDataLifespanCB);
 
     msg = mLocalizer.msg("tvDataFolder", "TV data folder");
     tvDataPn.add(new JLabel(msg));
@@ -142,8 +147,12 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 
 
   public void ok() {
-    System.out.println("OK");
     Settings.setTVDataDirectory(mTvDataTF.getText());
+    
+	Settings.setTVDataLifespan(mTVDataLifespanCB.getSelectedIndex());
+	
+    
+    
   }
 
 
