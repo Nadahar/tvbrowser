@@ -29,18 +29,14 @@ package tvbrowser.ui.update;
 
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
-import util.ui.progress.Progress;
-import util.ui.progress.ProgressWindow;
-
 import java.net.*;
 import java.io.*;
 
-import javax.swing.JOptionPane;
 
-public class PluginSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
+public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {
 	
   
-  private boolean mSuccess;
+  
   
     private static java.util.logging.Logger mLog
      = java.util.logging.Logger.getLogger(PluginSoftwareUpdateItem.class.getName());
@@ -54,34 +50,16 @@ public class PluginSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
 		super(name);
 	}
 	
-	public boolean download() throws TvBrowserException {
+	protected void download(final String url) throws TvBrowserException {
     
     final File toFile=new File("plugins",mName+".jar.inst");
-    
-    
-    mSuccess=true;
-    ProgressWindow progWin=new util.ui.progress.ProgressWindow(null,mLocalizer.msg("downloading","downloading update item..."));
-    progWin.run(new Progress(){
-      public void run() {
-        
-        try {
-				  IOUtilities.download(new URL(mUrl),toFile);
-		    } catch (MalformedURLException e) {
-					mSuccess=false;
-			  } catch (IOException e) {
-          mSuccess=false;
-        }
-      }
-    });
-      
-    if (mSuccess) {
-    JOptionPane.showMessageDialog(null,mLocalizer.msg("restartprogram","please restart tvbrowser before..."));
+    try {        
+        IOUtilities.download(new URL(url),toFile);        
+    }catch (Exception exc) {
+      throw new TvBrowserException(SoftwareUpdateItem.class, "error.1",
+                "Download failed", url,toFile.getAbsolutePath(),exc);
+    }
   }
-  else {
-    JOptionPane.showMessageDialog(null,mLocalizer.msg("error.1","donwload failed",mUrl,toFile.getAbsolutePath()));
-  }
-    return mSuccess;
-	}
 	
 	
 }
