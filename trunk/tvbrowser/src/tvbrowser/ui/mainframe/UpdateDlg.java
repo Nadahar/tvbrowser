@@ -42,7 +42,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
   
   public static final int CANCEL=-1, GETALL=99;
 
-  private static final String[] PERIOD_MSG_ARR = {
+  public static final String[] PERIOD_MSG_ARR = {
     mLocalizer.msg("period.0", "Today"),
     mLocalizer.msg("period.1", "Up to tomorrow"),
     mLocalizer.msg("period.2", "Next 2 days"),

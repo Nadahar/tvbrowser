@@ -119,6 +119,26 @@ public class Date implements Comparable {
     mMonth=cal.get(Calendar.MONTH)+1;
     mDay=cal.get(Calendar.DAY_OF_MONTH);
   }
+  
+  /**
+   * @since 0.9.7.4
+   * This method may not return the exactly number of days since the calculation
+   * is confounded by daylight savings time switchovers...
+   * Around midnight the result may not be correct.
+   */
+  
+  public int getNumberOfDaysSince(Date d) {
+    Calendar cal_1 = d.getCalendar();
+    java.util.Date utilDate_1 = cal_1.getTime();
+    long millis_1 = utilDate_1.getTime();
+    
+    Calendar cal_2 = getCalendar();
+    java.util.Date utilDate_2 = cal_2.getTime();
+    long millis_2 = utilDate_2.getTime();
+    
+    return (int)((millis_2-millis_1) / 1000L / 60L / 60L / 24L);  
+    
+  }
 
 public int getYear() {
   return mYear;
