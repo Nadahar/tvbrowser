@@ -49,6 +49,7 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
 
+
 /**
  * A plugin proxy for Java plugins.
  *

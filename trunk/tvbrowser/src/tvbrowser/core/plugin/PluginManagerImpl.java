@@ -336,4 +336,14 @@ public class PluginManagerImpl implements PluginManager {
     return PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
   }
 
+
+
+  public devplugin.TreeNode getTree(String pluginId) {
+    PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+    if (plugin != null) {
+      return PluginProgramsManager.getInstance().getTree(plugin);
+    }
+    return null;
+  }
+  
 }

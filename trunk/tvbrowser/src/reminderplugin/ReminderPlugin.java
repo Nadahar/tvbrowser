@@ -230,11 +230,17 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       if (dlg.getOkPressed()) {
         int minutes = dlg.getReminderMinutes();
         addToReminderList(program, minutes);
+        TreeNode tree = getPluginManager().getTree(getId());        
+        tree.add(program);
+        program.mark(this);
+        
       }
       dlg.dispose();
     }
   }
     
+  
+  
     
     
   /**
@@ -312,7 +318,12 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         p.mark(this);
       }
     }
-    mReminderItemsTrash.clear();   
+    mReminderItemsTrash.clear();
+    
+  }
+  
+  public boolean usePluginTree() {
+    return true;
   }
   
 

@@ -24,34 +24,23 @@
  * $Revision$
  */
 
-package tvbrowser.ui.pluginview;
+package devplugin;
 
-import java.awt.BorderLayout;
-import javax.swing.*;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.TreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 
+public interface TreeNode extends MutableTreeNode {
+    
+    public TreeNode createNode(String key, String title);
 
-public class PluginView extends JPanel {
+    public void add(Program prog);
+
+    public void remove(TreeNode node);
+
+    public void remove(TreeLeaf item);
+
+    public TreeLeaf[] getLeafs();
+
+    public TreeNode[] getNodes();
     
-  private JTree mTree;  
-    
-  public PluginView() {
-    super(new BorderLayout());
-    PluginTreeModel model = PluginTreeModel.getInstance();
-    TreeNodeImpl root = model.createRootNode("plugins", "Plugins");
-    
-    PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
-    for (int i=0; i<plugins.length; i++) {
-      TreeNode n = Plugin.getPluginManager().getTree(plugins[i].getId());
-      root.add(n);
-    }         
-    
-    
-    mTree = new JTree(model);
-    add(new JScrollPane(mTree), BorderLayout.CENTER);
-  }
- 
 }
