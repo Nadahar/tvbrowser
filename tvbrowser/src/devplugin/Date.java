@@ -105,7 +105,17 @@ public class Date implements Comparable {
     mDay=cal.get(Calendar.DAY_OF_MONTH);
   }
 
+public int getYear() {
+  return mYear;
+}
 
+public int getMonth() {
+  return mMonth;
+}
+
+public int getDayOfMonth() {
+  return mDay;
+}
 public Date(Calendar cal) {
   mYear=cal.get(Calendar.YEAR);
   mMonth=cal.get(Calendar.MONTH)+1;
