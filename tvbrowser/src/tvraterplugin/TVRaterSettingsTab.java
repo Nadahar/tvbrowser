@@ -176,7 +176,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 			
 		main.add(updatePanel);
 		
-		panel.add(main, BorderLayout.CENTER);
+		panel.add(main, BorderLayout.NORTH);
 
         JLabel urlLabel = new JLabel("<html><u>http://tvaddicted.wannawork.de</u></html>", JLabel.CENTER);
         urlLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -204,6 +204,7 @@ public class TVRaterSettingsTab implements SettingsTab {
         }
         
         
+        panel.add(new JPanel(), BorderLayout.CENTER);
         panel.add(urlPanel, BorderLayout.SOUTH);
 
 		
