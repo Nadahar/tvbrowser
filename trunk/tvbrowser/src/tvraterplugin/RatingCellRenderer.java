@@ -51,7 +51,25 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
             return new JLabel("Empty");
         }
         if (obj instanceof Rating) {
-            int overall = ((Rating) obj).getIntValue(Rating.OVERALL);
+        	Rating rating = (Rating) obj;
+        	Rating personal = TVRaterPlugin.getInstance().getDatabase().getPersonalRating(rating.getTitle());
+        	
+            int overall = rating.getIntValue(Rating.OVERALL);
+
+            if ((personal == null) || (personal.getIntValue(Rating.OVERALL) == -1)){
+                ImageIcon rateing = RatingIconTextFactory.getImageIconForRating(overall);
+                this.setIcon(rateing);
+            } else {
+                int personaloverall = personal.getIntValue(Rating.OVERALL);
+            	CompositeIcon composite = new CompositeIcon(
+            			RatingIconTextFactory.getImageIconForRating(overall),
+            			RatingIconTextFactory.getImageIconForRating(personaloverall)
+            	);
+            	this.setIcon(composite);
+            }
+			
+            this.setText(((Rating) obj).getTitle());
+
             if (isSelected || hasFocus) {
                 this.setBackground(list.getSelectionBackground());
                 this.setForeground(list.getSelectionForeground());
@@ -59,10 +77,6 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
                 this.setBackground(list.getBackground());
                 this.setForeground(list.getForeground());
             }
-
-            ImageIcon rateing = RatingIconTextFactory.getImageIconForRating(overall);
-            this.setIcon(rateing);
-            this.setText(((Rating) obj).getTitle());
 
             return this;
         }
