@@ -503,7 +503,7 @@ public class TVBrowser {
     }
 
     if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
-      mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt());
+      mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
     }
   }
 

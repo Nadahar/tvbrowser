@@ -109,8 +109,8 @@ public class TvDataUpdater {
    * @param daysToDownload The number of days until today to download the
    *        program for.
    */
-  public void downloadTvData(int daysToDownload, JProgressBar progressBar, JLabel label) {
-    if (! TvDataServiceManager.getInstance().licensesAccepted()) {
+  public void downloadTvData(int daysToDownload, TvDataService[] services, JProgressBar progressBar, JLabel label) {
+    if (! TvDataServiceManager.getInstance().licensesAccepted(services)) {
       return;
     }
     
@@ -121,9 +121,11 @@ public class TvDataUpdater {
     fireTvDataUpdateStarted();
     
     // Limit the days to download to 3 weeks
-    if (daysToDownload > 21) {
+    /* this is done server side */
+ /*   if (daysToDownload > 21) {
       daysToDownload = 21;
     }
+*/
 
     // Add a day to the daysToDownload for today
     daysToDownload ++;
@@ -154,7 +156,7 @@ public class TvDataUpdater {
     
     // Split the subsribed channels by data service
     Channel[] subscribedChannels = ChannelList.getSubscribedChannels();
-    UpdateJob[] jobArr = toUpdateJobArr(subscribedChannels);
+    UpdateJob[] jobArr = toUpdateJobArr(subscribedChannels, services);
     
     // Create the ProgressMonitorGroup
     ProgressMonitorGroup monitorGroup
@@ -253,7 +255,8 @@ public class TvDataUpdater {
   }
 
 
-  private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels) {
+  private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels, TvDataService[] services) {
+    
     ArrayList jobList = new ArrayList();
     for (int channelIdx = 0; channelIdx < subscribedChannels.length; channelIdx++) {
       Channel channel = subscribedChannels[channelIdx];
@@ -269,6 +272,20 @@ public class TvDataUpdater {
       }
       if (job == null) {
         // There is no job fo this channel -> create one
+         
+          // check, if we can use this dataservice
+          TvDataService service = channel.getDataService();
+          boolean useService = false;
+          for (int k = 0; k<services.length; k++) {
+            if (services[k].equals(service)) {
+              useService = true;
+              break;
+            }            
+          }
+          if (!useService) {
+            continue;
+          }
+          
         job = new UpdateJob(channel.getDataService());
         jobList.add(job);
       }

@@ -68,6 +68,7 @@ public class Settings {
   private static final Font CHANNELNAMEFONT=new Font("Dialog",Font.BOLD,12);
   private static final Font PROGRAMTIMEFONT=new Font("Dialog",Font.BOLD,12);
   
+
   private static PropertyManager mProp = new PropertyManager();
   
   private static HashMap mPropertiesHash = new HashMap();
@@ -405,8 +406,7 @@ public class Settings {
                              ProgramFieldType.ORIGIN_TYPE,
                              ProgramFieldType.PRODUCTION_YEAR_TYPE,
                              ProgramFieldType.SHOWVIEW_NR_TYPE,
-                             ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-                          //   ProgramFieldType.DESCRIPTION_TYPE,
+                             ProgramFieldType.SHORT_DESCRIPTION_TYPE
                            });
 
   public static final StringArrayProperty propProgramTableIconPlugins
@@ -473,18 +473,9 @@ public class Settings {
   public static final EncodedStringProperty propFtpProxyPassword
     = new EncodedStringProperty(mProp, "proxy.ftp.password", "", PROXY_PASSWORD_SEED);
 	
+  public static final StringArrayProperty propDataServicesForUpdate
+    = new StringArrayProperty(mProp,"tvdataservices.update",null);
   
-  public static BooleanProperty propUpdateListingsByDataService(String className) {
-    return getBooleanProperty("using.tvdataservice."+className, true);
-  }
-  
-  private static BooleanProperty getBooleanProperty(String key, boolean defaultValue) {
-    BooleanProperty prop = (BooleanProperty)mPropertiesHash.get(key);
-    if (prop==null) {
-      prop = new BooleanProperty(mProp, key, defaultValue);
-      mPropertiesHash.put(key, prop);
-    }
-    return prop;
-  }
+ 
   
 }

@@ -28,6 +28,7 @@ package tvbrowser.core;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
@@ -78,8 +79,7 @@ public class TvDataServiceManager {
   }
 
 
-  public boolean licensesAccepted() {
-    TvDataService services[]=getDataServices();
+  public boolean licensesAccepted(TvDataService services[]) {
     for (int i=0;i<services.length;i++) {
       TvDataService s=services[i];
       String license=s.getInfo().getLicense();
@@ -246,6 +246,21 @@ public class TvDataServiceManager {
     return (TvDataService) mTvDataServiceHash.get(className);
   }
 
+  public TvDataService[] getTvDataServices(String[] classNames) {
+    if (classNames == null) {
+      return getDataServices();
+    }
+    ArrayList list = new ArrayList();
+    for (int i=0; i<classNames.length; i++) {
+      TvDataService service = getDataService(classNames[i]);
+      if (service!=null) {
+        list.add(service); 
+      }
+    }
+    TvDataService[] result = new TvDataService[list.size()];
+    list.toArray(result);
+    return result;
+  }
 
   public void initDataServices() {
     loadTvDataServices();

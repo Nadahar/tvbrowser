@@ -29,6 +29,8 @@ package tvbrowser.ui.mainframe;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataServiceManager;
 import tvdataservice.TvDataService;
@@ -61,8 +63,10 @@ public class UpdateDlg extends JDialog implements ActionListener {
   private int result=0;
   private JComboBox comboBox;
   private JCheckBox checkBox;
-  private JCheckBox[] mDataServiceCbArr;
-  private TvDataService[] mTvDataServiceArr;
+  private TvDataServiceCheckBox[] mDataServiceCbArr;
+  private TvDataService[] mSelectedTvDataServiceArr;
+  //private TvDataService[] mAvailableTvDataServiceArr;
+  
   
   
   public UpdateDlg(JFrame parent, boolean modal) {
@@ -101,16 +105,20 @@ public class UpdateDlg extends JDialog implements ActionListener {
     panel1.add(comboBox,BorderLayout.EAST);
     northPanel.add(panel1);
     
-    mTvDataServiceArr = TvDataServiceManager.getInstance().getDataServices();
-    if (mTvDataServiceArr.length>1) {
+    
+    TvDataService[] serviceArr = TvDataServiceManager.getInstance().getDataServices();
+    if (serviceArr.length>1) {
       panel1.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
       JPanel dataServicePanel = new JPanel();
       dataServicePanel.setLayout(new BoxLayout(dataServicePanel, BoxLayout.Y_AXIS));
       dataServicePanel.setBorder(BorderFactory.createTitledBorder("Diese Datenquellen verwenden:"));
-      mDataServiceCbArr = new JCheckBox[mTvDataServiceArr.length];
-      for (int i=0; i<mTvDataServiceArr.length; i++) {
-        mDataServiceCbArr[i] = new JCheckBox(mTvDataServiceArr[i].getInfo().getName());
-        mDataServiceCbArr[i].setSelected(Settings.propUpdateListingsByDataService(mTvDataServiceArr[i].getClass().getName()).getBoolean());
+      mDataServiceCbArr = new TvDataServiceCheckBox[serviceArr.length];
+      
+      String[] checkedServiceNames = Settings.propDataServicesForUpdate.getStringArray();
+      
+      for (int i=0; i<serviceArr.length; i++) {
+        mDataServiceCbArr[i] = new TvDataServiceCheckBox(serviceArr[i]);
+        mDataServiceCbArr[i].setSelected(tvDataServiceIsChecked(serviceArr[i], checkedServiceNames));
         dataServicePanel.add(mDataServiceCbArr[i]);        
       }
       JPanel p = new JPanel(new BorderLayout());
@@ -140,10 +148,26 @@ public class UpdateDlg extends JDialog implements ActionListener {
   }
 
 
+  private boolean tvDataServiceIsChecked(TvDataService service, String[] serviceNames) {
+    if (serviceNames == null) {
+      return true;
+    }
+    for (int i=0; i<serviceNames.length; i++) {
+      if (service.getClass().getName().equals(serviceNames[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public int getResult() { return result; }
 
   public TvDataService[] getSelectedTvDataServices() {
-    return null;
+    if (mSelectedTvDataServiceArr == null) {
+      mSelectedTvDataServiceArr = TvDataServiceManager.getInstance().getDataServices();
+    }
+    
+    return mSelectedTvDataServiceArr;
   }
   
   public void actionPerformed(ActionEvent event) {
@@ -157,17 +181,46 @@ public class UpdateDlg extends JDialog implements ActionListener {
       if (result==comboBox.getItemCount()-1) {
       	result=GETALL;
       }
+      
+      if (mDataServiceCbArr == null) {  // there is only one tvdataservice available
+        mSelectedTvDataServiceArr = TvDataServiceManager.getInstance().getDataServices();
+      }
+      else {
+        ArrayList dataServiceList = new ArrayList();   
+        for (int i=0; i<mDataServiceCbArr.length; i++) {
+          if (mDataServiceCbArr[i].isSelected()) {
+            dataServiceList.add(mDataServiceCbArr[i].getTvDataService());
+          }
+        }
+        mSelectedTvDataServiceArr = new TvDataService[dataServiceList.size()];
+        dataServiceList.toArray(mSelectedTvDataServiceArr);
+      }
+      
       if (checkBox.isSelected()) {
         Settings.propDownloadPeriod.setInt(result);
-        for (int i=0; i<mTvDataServiceArr.length; i++) {
-          boolean b = mDataServiceCbArr[i].isSelected();          
-          Settings.propUpdateListingsByDataService(mTvDataServiceArr[i].getClass().getName()).setBoolean(b);                
-        }
         
+        String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
+        for (int i=0; i<dataServiceArr.length; i++) {
+          dataServiceArr[i] = mSelectedTvDataServiceArr[i].getClass().getName();        
+        }
+        Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);        
       }
-
       setVisible(false);
     }
   }
 
+}
+
+class TvDataServiceCheckBox extends JCheckBox {
+ 
+  private TvDataService mService;
+  
+  public TvDataServiceCheckBox(TvDataService service) {
+    super(service.getInfo().getName());
+    mService = service; 
+  }
+  
+  public TvDataService getTvDataService() {
+    return mService;
+  }
 }
