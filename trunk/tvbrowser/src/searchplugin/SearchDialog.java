@@ -28,17 +28,27 @@ package searchplugin;
 
 
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.awt.FlowLayout;
-import java.awt.event.*;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
-
-import util.exc.*;
-import util.ui.*;
-
-import devplugin.*;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.ui.SearchForm;
+import util.ui.SearchFormSettings;
+import util.ui.TabLayout;
+import util.ui.UiUtilities;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramList;
 
 /**
  * A dialog for searching programs.
@@ -175,8 +185,7 @@ public class SearchDialog extends JDialog {
     main.setBorder(UiUtilities.DIALOG_BORDER);
     dlg.setContentPane(main);
     
-    final JList list = new JList(programArr);
-    list.setCellRenderer(new ProgramListCellRenderer());
+    final ProgramList list = new ProgramList(programArr);
     main.add(new JScrollPane(list), BorderLayout.CENTER);
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
@@ -191,29 +200,7 @@ public class SearchDialog extends JDialog {
     dlg.getRootPane().setDefaultButton(closeBt);
     buttonPn.add(closeBt);
     
-    
-    
-    list.addMouseListener(new MouseAdapter() {
-		public void mouseClicked(MouseEvent e) {
-    		if (SwingUtilities.isRightMouseButton(e)) {
-				int inx=list.locationToIndex(e.getPoint());
-				JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(programArr[inx],SearchPlugin.getInstance());
-				
-				menu.show(list, e.getX() - 15, e.getY() - 15);
-			} else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-				int inx=list.locationToIndex(e.getPoint());
-				Program p=programArr[inx];
-
-				Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
-	            if (plugin != null) {
-	                plugin.execute(p);
-	            }
-	        }
-    	}
-    	
-    });
-    
-	dlg.setSize(400, 400);
+   	dlg.setSize(400, 400);
 	UiUtilities.centerAndShow(dlg);
     
   }
