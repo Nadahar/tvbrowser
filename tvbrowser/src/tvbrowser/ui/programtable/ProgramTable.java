@@ -231,7 +231,7 @@ public class ProgramTable extends JPanel
     }
     
     if (clipBounds.width - x > 0) {
-        grp.setColor(Color.YELLOW);
+        grp.setColor(Color.WHITE);
         grp.fillRect(x, 0, clipBounds.width - x, clipBounds.height);
     }
     
