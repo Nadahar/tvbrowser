@@ -14,6 +14,8 @@ Changelog TVBrowser
            must be changed to access other plugins using their proxies.
 - Added new Filter:SubtitleFilter
 - Added new FilterComponent: PluginIcon
+- Filtersorting is saved now
+- Last used Filter is loaded at start
 
 1.0.1
  - bugfix: removed "import searchplugin..."
