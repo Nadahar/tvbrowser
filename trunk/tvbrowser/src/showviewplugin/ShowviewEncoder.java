@@ -79,7 +79,6 @@ public class ShowviewEncoder {
   /**
    * Calculates the Showview Number for the given Program.
    * 
-   * @param prog
    * @return The Showview number for the given Program.
    * @throws TvBrowserException When the calculation failed.
    */

@@ -210,17 +210,13 @@ public class ProgramFieldType {
   }
 
 
-  /**
-   * @return
-   */
+ 
   public int getTypeId() {
     return mTypeId;
   }
 
 
-  /**
-   * @return
-   */
+ 
   public String getName() {
     return mName;
   }

@@ -119,6 +119,7 @@ class TVBrowserProperties extends java.util.Properties {
     }
 
     setProperty(key, buffer.toString());
+    
   }
 
 
@@ -160,7 +161,7 @@ class TVBrowserProperties extends java.util.Properties {
       return intArr;
     }
     catch (NumberFormatException exc) {
-      return defaultArr;
+      return new int[0];
     }
   }
 
@@ -344,21 +345,7 @@ public class Settings {
 		settings.setProperty("directory.tvdata",dir);
 	}
   
-  /*
-  public static String getDataServiceCacheDirectory() {
-    String res=settings.getProperty("directory.dataservicecache");
-    if (res==null) {
-      System.out.println("must return "+DATASERVICECACHE_DIR);
-      return DATASERVICECACHE_DIR;      
-    }
-    System.out.println("ok: "+res);
-    return res;
-  }
-  
-  public static void setDataServiceCacheDirectory(String dir) {
-    settings.setProperty("directory.dataservicecache",dir);
-  }
-  */
+
   public static String getFilterDirectory() {
     String res=settings.getProperty("directory.filters");
     if (res==null) {
@@ -434,7 +421,6 @@ public class Settings {
   public static void initSubscribedChannels() {
     String[] entries = settings.getStringList("subscribedchannels");
     if (settings.getProperty("subscribedchannels") == null) {
-      System.out.println("no subscribed channels");
       return;
     }
     
@@ -895,6 +881,7 @@ public class Settings {
 
   public static ProgramFieldType[] getProgramInfoFields() {
     if (mProgramInfoFields == null) {
+      
       int[] defaultArr = new int[] {
         ProgramFieldType.GENRE_TYPE.getTypeId(),
         ProgramFieldType.EPISODE_TYPE.getTypeId(),

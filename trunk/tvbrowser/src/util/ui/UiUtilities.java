@@ -167,7 +167,7 @@ public class UiUtilities {
    *
    * @param text Der Text des Buttons (Kann null sein, wenn der Button keinen
    *        Text enthalten soll)
-   * @param iconDateiname Der Dateiname des Icons des Buttons (Kann ebenfalls
+   * @param icon Das Icon des Buttons (Kann ebenfalls
    *        null sein, wenn der Button kein Icon enthalten soll).
    */
   public static JButton createToolBarButton(String text, Icon icon) {

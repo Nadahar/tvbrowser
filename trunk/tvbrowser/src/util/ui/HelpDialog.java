@@ -212,8 +212,8 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
 
   /**
-   * Hilfsmethode für {@link hyperlinkUpdate(HyperlinkEvent)}.
-   * <P>
+   * Hilfsmethode für {@link #hyperlinkUpdate(HyperlinkEvent) hyperlinkUpdate}.
+   * <p>
    * Fügt die aktuelle Seite zum mHistoryStack hinzu.
    */
   protected void addThisSiteToHistory() {
@@ -236,7 +236,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
 
   /**
-   * Hilfsmethode für {@link actionPerformed(ActionEvent)}.
+   * Hilfsmethode für {@link #actionPerformed(ActionEvent)}.
    * <P>
    * Ruft die oberste Seite des mHistoryStack wieder auf.
    */

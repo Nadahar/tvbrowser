@@ -279,7 +279,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /**
    * Paints the component.
    *
-   * @param grp The graphics context to paint to.
+   * @param g The graphics context to paint to.
    */  
   public void paintComponent(Graphics g) {
     int width = getWidth();

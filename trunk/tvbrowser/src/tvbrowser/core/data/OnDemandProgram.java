@@ -60,7 +60,7 @@ public class OnDemandProgram extends MutableProgram {
    * are not mutable.
    *
    * @param channel The channel object of this program.
-   * @param date The date of this program.
+   * @param localDate The date of this program.
    */
   public OnDemandProgram(Channel channel, devplugin.Date localDate,
     OnDemandDayProgramFile onDemandFile)

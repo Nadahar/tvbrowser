@@ -93,9 +93,9 @@ public class MutableProgram implements Program {
    * are not mutable.
    *
    * @param channel The channel object of this program.
-   * @param date The date of this program.
-   * @param hours The hour-component of the start time of the program.
-   * @param minutes The minute-component of the start time of the program.
+   * @param localDate The date of this program.
+   * @param localHours The hour-component of the start time of the program.
+   * @param localMinutes The minute-component of the start time of the program.
    */
   public MutableProgram(Channel channel, devplugin.Date localDate,
     int localHours, int localMinutes)
@@ -114,7 +114,7 @@ public class MutableProgram implements Program {
    * are not mutable.
    *
    * @param channel The channel object of this program.
-   * @param date The date of this program.
+   * @param localDate The date of this program.
    */
   public MutableProgram(Channel channel, devplugin.Date localDate) {
     mFieldHash = new HashMap();

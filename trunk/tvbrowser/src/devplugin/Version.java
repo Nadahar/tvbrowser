@@ -62,10 +62,7 @@ public final class Version implements Comparable {
   	return name;
   }
 
-  public void setStable(boolean val) {
-  	stable=val;
-  }
-  
+
   public boolean isStable() {
   	return stable;
   }

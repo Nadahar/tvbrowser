@@ -77,7 +77,7 @@ public class ProgramFrame implements Cloneable {
 
 
   /**
-   * @return
+   * @return id
    */
   public int getId() {
     return mId;

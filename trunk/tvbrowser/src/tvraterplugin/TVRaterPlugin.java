@@ -165,7 +165,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 	public Icon[] getProgramTableIcons(Program program) {
 		Rating rating;
 
-		if (_settings.getProperty("ownRating").equalsIgnoreCase("true")) {
+		if (_settings.getProperty("ownRating","").equalsIgnoreCase("true")) {
 			rating = _tvraterDB.getPersonalRating(program);
 			if (rating != null) {
 				Icon[] iconArray = { new RatingIcon(rating, RatingIcon.PERSONALRATING)};
@@ -179,7 +179,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 			return iconArray;
 		}
 
-		if (_settings.getProperty("ownRating").equalsIgnoreCase("false")) {
+		if (_settings.getProperty("ownRating","").equalsIgnoreCase("false")) {
 			rating = _tvraterDB.getPersonalRating(program);
 			if (rating != null) {
 				Icon[] iconArray = { new RatingIcon(rating, RatingIcon.PERSONALRATING)};

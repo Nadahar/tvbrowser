@@ -30,7 +30,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 /**
- * A HTML editor kit that supports the integration von {@link Component}s.
+ * A HTML editor kit that supports the integration of Components.
  * 
  * @author Til Schneider, www.murfman.de
  */

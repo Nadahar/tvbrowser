@@ -71,9 +71,7 @@ public class DayProgramFile extends AbstractFile {
     mDate=date;
     mChannel=channel;
   }
-  /**
-   * @return
-   */
+  
   
   public devplugin.Date getDate() {
     return mDate;

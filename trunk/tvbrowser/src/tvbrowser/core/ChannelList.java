@@ -155,8 +155,6 @@ public class ChannelList {
   /**
    * Marks the specified mAvailableChannels as 'subscribed'. All other mAvailableChannels become
    * 'unsubscribed'
-   *
-   * @param mAvailableChannels the subscribed mAvailableChannels (array of String)
    */
   public static void setSubscribeChannels(Channel[] channelArr) {
 	mSubscribedChannels = new ArrayList(channelArr.length);
