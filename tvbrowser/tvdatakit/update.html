@@ -1,0 +1,108 @@
+<html>
+
+	<head>
+		<title>TV-Browser</title>
+       <link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+
+
+<h1>PROGRAMMDATEN F&Uuml;R TV-BROWSER ANBIETEN</h1>
+<h2>unter Verwendung der TV-Browser-Tools</h2>
+<h1>Update von 1.x auf 2.x</h1>
+
+
+
+<p>
+<table>
+<tr>
+<td><strong>Autor:</strong></td>
+<td>Martin Oberhauser</td>
+</tr>
+<tr>
+<td><strong>Version:</strong></td>
+<td>2.0  (27. September 2004)</td>
+</tr>
+</table>
+</p>
+
+<p>
+TV-Browser unterst&uuml;tzt ab Version 1.1 ein neues Feature: Endlich kann TV-Browser auch Senderlogos darstellen.<br />
+Die Senderlogos m&uuml;ssen dabei (sinnvollerweise) vom TV-Daten-Anbieter bereitgestellt werden. Daher mu&szlig;ten wir die TV-Browser-Tools erweitern.
+</p>
+<p>
+Auf dieser Seite werde ich die &Auml;nderungen erl&auml;utern und erkl&auml;ren, wie man von den Tools der Version 1.x auf die neue 2.x aktualisiert.
+</p>
+<p>
+Eines kann ich schonmal vorwegnehmen:<br />
+<strong>Ein Umstieg auf 2.x ist nur erforderlich, wenn man mit den TV-Daten auch Senderlogos anbieten m&ouml;chte. TV-Browser 1.1 kann auch Daten laden, die mit &auml;lteren Tools aufbereitet worden sind.</strong>
+</p>
+
+<h3>Installation</h3>
+
+<p>
+Zun&auml;chst entpacken wir das TV-Data-Kit (falls nicht eh schon passiert).<br />
+</p>
+
+<p>
+Neu in 2.x ist das Verzeichnis <em>config</em> im workspace-Verzeichnis. Verschieben wir zun&auml;chst alle *.txt-Dateien aus dem alten <em>prepared</em>-Verzeichnis in das neue Verzeichnis <em>config</em>.<br />
+Der neue DataManager l&auml;dt die txt-Dateien nicht mehr aus dem <em>prepared</em>, sondern aus dem <em>config</em>-Verzeichnis. So haben wir unser txt-Dateien immer griffbereit, wenn wir sie ver&auml;ndern wollen<br />
+Au&szlig;erdem brauchen wir in unserem neuen prepared-Verzeichnis nat&uuml;rlich die Dateien aus dem alten prepared-Verzeichnis. Kopieren wir sie als her&uuml;ber (die txt-Dateien brauchen wir hier nicht mehr).
+</p>
+<p>
+Als n&auml;chstes m&uuml;ssen wir eine neue Datei mit einem Texteditor erstellen und mit dem Namen <em>[Gruppenname]_channellist.txt</em> abspeichern - also z.B. myfirstgroup_channellist.txt.<br />
+Wie der Dateiname schon verr&auml;t, handelt es sich hierbei um die Senderliste. In den Tools der Version 1.x mu&szlig;ten hat der DataManager uns die Senderliste automatisch erzeugt, jetzt machen wir das selber.
+</p>
+
+<p>
+Der Aufbau der Senderliste ist ganz einfach: In jeder Zeile befinden sich die Angaben zu <em>einem</em> Sender.<br />
+
+Aufbau einer Zeile:
+</p>
+<pre>land;zeitzone;senderk&uuml;rzel;sendername;copyright;sender-url;icon-url</pre>
+<p>
+Eine Datei k&ouml;nnte z.B. so aussehen:
+</p>
+<pre>de;GMT+01:00;ard;ARD;(c) by DasErste/TV-Browser;http://www.ard.de;http://www.tvbrowser.org/icons/ard.gif
+de;GMT+01:00;rtl;RTL;Copyright by RTL;http://www.rtl.de;http://www.tvbrowser.org/icons/rtl.gif
+de;GMT+01:00;superrtl;SuperRTL;Copyright by Super RTL;http://www.superrtl.de/;http://www.tvbrowser.org/icons/superrtl.gif
+de;MET;zdf;ZDF;(c) by ZDF/TV-Browser;http://www.zdf.de;http://www.tvbrowser.org/icons/zdf.gif
+de;MET;vox;Vox;(c) by Vox;http://www.vox.de;http://www.tvbrowser.org/icons/vox.gif
+de;GMT+01:00;rtl2;RTL 2;Copyright by RTL2/TV-Browser;http://www.rtl2.de;http://www.tvbrowser.org/icons/rtl2.gif
+de;GMT+01:00;pro7;Pro7;Copyright by Pro 7/TV-Browser;http://www.prosieben.de;http://www.tvbrowser.org/icons/pro7.gif
+de;GMT+01:00;sat1;Sat.1;Copyright by Sat.1/TV-Browser;http://www.sat1.de;http://www.tvbrowser.org/icons/sat1.gif
+de;GMT+01:00;kabel1;Kabel 1;Copyright by Kabel 1/TV-Browser;http://www.kabel1.de;http://www.tvbrowser.org/icons/kabel1.gif</pre>
+
+
+
+<p>
+Wichtig ist, da&szlig; alle Sender der Gruppe in dieser Datei vertreten sind.<br />
+Die Angabe eines Icon-URL ist dabei optional. Fehlt diese, so stellt TV-Browser eben kein Icon zum Sender dar.<br />
+TV-Browser l&auml;dt das Icon jeweils nur 1x herunter. Erst wenn eine neue URL angegeben ist, wird TV-Browser veranla&szlig;t, das Icon neu zu laden. Sollte also ein Sender sein Logo &auml;ndern, so mu&szlig; nur in dieser Datei eine andere URL eingetragen werden.
+</p>
+
+<p>
+Damit sind wir ger&uuml;stet f&uuml;r die TV-Browser-Tools 2!
+</p>
+
+<h3>Der neue DataManager</h3>
+<p>
+Bisher haben wir den DataManager so gestartet: <pre>datamanager meinPDS</pre>
+</p>
+
+<p>
+Da wir die Angaben zu den Sendern jetzt im config-Verzeichnis speichern und editieren k&ouml;nnen, braucht der DataManager unser PDS nicht mehr. Wir starten ihn nun so:
+</p>
+<pre>datamanager mygroup</pre>
+<p>
+mygroup ist dabei der Name der Gruppe, die wir anbieten.
+</p>
+
+<p>TODO: PDSs anpassen und hier dokumentieren</p>
+
+<p>
+<a href="index.html">Zur&uuml;ck zur &Uuml;bersicht</a>
+</p>
+
+</body>
+</html>
