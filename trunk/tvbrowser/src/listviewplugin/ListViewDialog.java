@@ -1,5 +1,27 @@
 /*
- * Created on 11.04.2004
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package listviewplugin;
 
@@ -24,12 +46,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -59,11 +81,11 @@ public class ListViewDialog extends JDialog {
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer
             .getLocalizerFor(ListViewDialog.class);
 
-    /** JList component */
-    private JList mProgramJList;
+    /** The Table */
+    private JTable mProgramTable;
 
-    /** Vector with Programs */
-    private Vector mProgramList;
+    /** THe Table-Model */
+    private ListTableModel mModel;
     
     /** Runs at ... */
     private JRadioButton mRuns = new JRadioButton(mLocalizer.msg("runs", "Running"));
@@ -115,7 +137,7 @@ public class ListViewDialog extends JDialog {
      * Genereates the List of Programs
      */
     private void generateList(Date date, int time) {
-        mProgramList = new Vector();
+        mModel = new ListTableModel();
 
         // If Time > 24 try next Day
         if (time > 60 * 24) {
@@ -126,24 +148,90 @@ public class ListViewDialog extends JDialog {
         Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 
         for (int i = 0; i < channels.length; i++) {
-            if (!fillList(date, time, channels[i])) {
-                // No Program added, try yesterday
-                fillList(date.addDays(-1), time + 60 * 24, channels[i]);
+
+            Program prg = findProgram(date, time, channels[i]);
+            Program nprg = null;
+            
+            if (prg == null) {
+                prg = findProgram(date.addDays(-1), time + 60 * 24, channels[i]);
             }
+            
+            if (prg != null) {
+                nprg = findNextProgram(prg);
+            } else {
+                Iterator it = Plugin.getPluginManager().getChannelDayProgram(date,  channels[i]);                
+                
+                if ((it != null) && (it.hasNext())) {
+                    Program p = (Program) it.next();
+                    if (p.getStartTime() > time) {
+                        nprg = p;
+                    } else {
+                        nprg = findProgram(date, time + 60, channels[i]);
+                    }
+                } else {
+                    
+                    nprg = findProgram(date, time + 60, channels[i]);
+                }
+                
+            }
+                
+            
+            mModel.addRow(channels[i], prg, nprg);
+            
         }
 
+        if (mProgramTable != null) {
+            mProgramTable.setModel(mModel);
+            setTableColumProperties();
+        }
+        
+    
     }
 
     /**
-     * Fills a List
+     * Finds the program after the given Program
+     * @param prg Search Program after this
+     * @return following Program
+     */
+    private Program findNextProgram(Program prg) {
+        Iterator it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate(), prg.getChannel());
+
+        Program nprg = null;
+        boolean last = false;
+        
+        while ((it != null) && (it.hasNext())) {
+            Program p = (Program) it.next();
+            
+            if (prg.equals(p) && it.hasNext()) {
+                    return (Program)it.next();
+            } else if (prg.equals(p) && !it.hasNext()) {
+                last = true;
+            }
+        }
+
+        if (last) {
+            it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate().addDays(1), prg.getChannel());
+            
+            if ((it != null) && (it.hasNext())) {
+               Program p = (Program) it.next();
+               
+               return p;
+            }
+            
+        }
+        
+        return nprg;
+    }
+
+    /**
+     * Finds a Program for a Date/time on a certain Channel
      * 
      * @param date Date
-     * @param channels Channel
+     * @param time Time
+     * @param channel Channel
      * @return added a Program
      */
-    private boolean fillList(Date date, int time, Channel channel) {
-        boolean added = false;
-
+    private Program findProgram(Date date, int time, Channel channel) {
         Iterator it = Plugin.getPluginManager().getChannelDayProgram(date,
                 channel);
         while ((it != null) && (it.hasNext())) {
@@ -153,19 +241,10 @@ public class ListViewDialog extends JDialog {
             int ende = program.getStartTime() + program.getLength();
             
             if ((start <= time) && (ende > time)) {
-                mProgramList.add(program);
-                added = true;
+                return program;
             }
         }
-        return added;
-    }
-
-    /**
-     * Updates the List
-     */
-    private void updateList(Date date, int time) {
-        generateList(date, time);
-        mProgramJList.setListData(mProgramList);
+        return null;
     }
 
     /**
@@ -223,7 +302,7 @@ public class ListViewDialog extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
                 int time = calcTimeForSelection(mBox.getSelectedIndex());
-                updateList(new Date(), time);
+                generateList(new Date(), time);
             }
 
         });
@@ -342,22 +421,23 @@ public class ListViewDialog extends JDialog {
         content.add(topPanel, BorderLayout.NORTH);
 
         // Rest of the GUI
-        
-        mProgramJList = new JList(mProgramList);
+        mProgramTable = new JTable(mModel);
+        mProgramTable.getTableHeader().setReorderingAllowed(false);
+        mProgramTable.getTableHeader().setResizingAllowed(false);
 
-        mProgramJList.setCellRenderer(new ProgramCellRenderer());
-
-        mProgramJList.addMouseListener(new MouseAdapter() {
-
+        mProgramTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                mouseClickedOnList(e);
+                mouseClickedOnTable(e);
             }
+            
         });
 
-        JScrollPane scroll = new JScrollPane(mProgramJList);
+        setTableColumProperties();
+        
+        JScrollPane scroll = new JScrollPane(mProgramTable,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         content.add(scroll, BorderLayout.CENTER);
-
+        
         JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING, 0, 5));
         content.add(buttonPn, BorderLayout.SOUTH);
 
@@ -374,6 +454,20 @@ public class ListViewDialog extends JDialog {
     }
 
     /**
+     * Sets teh Table-Properties
+     */
+    private void setTableColumProperties() {
+        mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new ListTabelCellRenderer());
+        mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ListTabelCellRenderer());
+        mProgramTable.getColumnModel().getColumn(2).setCellRenderer(new ListTabelCellRenderer());
+        int width = Settings.propColumnWidth.getInt();
+        mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
+        mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
+        mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
+        
+    }
+
+    /**
      * Refresh the List with current settings
      */
     private void refreshView() {
@@ -384,14 +478,14 @@ public class ListViewDialog extends JDialog {
 
         if (mRuns.isSelected()) {
             int time = calcTimeForSelection(mBox.getSelectedIndex());
-            updateList(new Date(), time);
+            generateList(new Date(), time);
         } else {
             java.util.Date startTime = (java.util.Date) mTimeSpinner.getValue();
             Calendar cal = Calendar.getInstance();
             cal.setTime(startTime);
             int minutes = cal.get(Calendar.HOUR_OF_DAY) * 60
                     + cal.get(Calendar.MINUTE);
-            updateList((Date) mDate.getSelectedItem(), minutes);
+            generateList((Date) mDate.getSelectedItem(), minutes);
         }
     }
 
@@ -400,21 +494,33 @@ public class ListViewDialog extends JDialog {
      * 
      * @param e Event
      */
-    private void mouseClickedOnList(MouseEvent e) {
+    private void mouseClickedOnTable(MouseEvent e) {
+        
+        int col = mProgramTable.getColumnModel().getColumnIndexAtX(e.getX());
+        int row = mProgramTable.rowAtPoint(e.getPoint());
+        mProgramTable.setRowSelectionInterval(row, row);
 
+        Program prg = null;
+        
+        if (col == 1) {
+            prg = mModel.getProgram(row);
+        } else if (col == 2) {
+            prg = mModel.getNextProgram(row);
+        }
+        
+        if (prg == null) {
+            System.out.println("RETURN");
+            return;
+        }
+        
+        System.out.println("OK");
         if (SwingUtilities.isRightMouseButton(e)) {
-            int inx = mProgramJList.locationToIndex(e.getPoint());
-            Program p = (Program) mProgramJList.getModel().getElementAt(inx);
-            mProgramJList.setSelectedIndex(inx);
             JPopupMenu menu = devplugin.Plugin.getPluginManager()
-                    .createPluginContextMenu(p);
-            menu.show(mProgramJList, e.getX() - 15, e.getY() - 15);
+                    .createPluginContextMenu(prg);
+            menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
         } else if (SwingUtilities.isLeftMouseButton(e)
                 && (e.getClickCount() == 2)) {
-            int inx = mProgramJList.locationToIndex(e.getPoint());
-            Program p = (Program) mProgramJList.getModel().getElementAt(inx);
-
-            devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p);
+            devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg);
         }
     }
 }
