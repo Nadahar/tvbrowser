@@ -199,6 +199,12 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     }
     
     dayProgram = prog;
+    
+    // Remember the scroll position for a later restore
+    Point oldViewPosition = null;
+    if (scrollPane != null) {
+      oldViewPosition = scrollPane.getViewport().getViewPosition();
+    }
 
     if (scrollPane!=null) remove(scrollPane);
     if (centerPanel!=null) remove(centerPanel);
@@ -224,7 +230,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     headerPanel.add(channelPanel); 
     scrollPane.setColumnHeader(headerPanel);
 
-	scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER,channelChooser);
+    scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER,channelChooser);
 
     for (int i=0;i<part.length;i++) {
       part[i]=new ProgramDayTime(ChannelList.getNumberOfSubscribedChannels());
@@ -273,6 +279,10 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
 
     this.validate();
 
+    // Restore the scroll position
+    if (oldViewPosition != null) {
+      scrollPane.getViewport().setViewPosition(oldViewPosition);
+    }
   }
 
   public void updateBackground() {

@@ -61,9 +61,10 @@ public class ContextMenu extends JPopupMenu implements ActionListener {
             return;
         }
 
-        JMenuItem item=new JMenuItem(itemText);
-        add(item);
+        JMenuItem item = new JMenuItem(itemText);
+        item.setIcon(plugin.getMarkIcon());
         item.addActionListener(this);
+        add(item);
 
         int i=1;
         String txt=itemText;

@@ -79,10 +79,14 @@ public class ReminderListDialog extends JDialog {
       }
     }
     
-    contentpane.add(new JScrollPane(listPanel),BorderLayout.CENTER);
+    JScrollPane scrollPane = new JScrollPane(listPanel);
+    scrollPane.getVerticalScrollBar().setUnitIncrement(30);
+    scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
+    contentpane.add(scrollPane, BorderLayout.CENTER);
     
     JPanel btnPanel=new JPanel(new BorderLayout());
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
+    getRootPane().setDefaultButton(closeBtn);
     
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
