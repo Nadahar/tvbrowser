@@ -30,6 +30,7 @@ package imdbsearchplugin;
 import util.ui.BrowserLauncher;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.Version;
 
 /**
@@ -50,7 +51,7 @@ public class ImdbSearchPlugin extends devplugin.Plugin {
 			String name = mLocalizer.msg( "pluginName" ,"IDMB Search" );
 			String desc = mLocalizer.msg( "description" ,"Searches at IMDB for a Movie" );
 			String author = "Bodo Tasche" ;
-			return new PluginInfo(name, desc, author, new Version(1, 0));
+			return new PluginInfo(name, desc, author, new Version(1, 01));
   		} 
   		
   		public String getButtonText() {
@@ -58,7 +59,13 @@ public class ImdbSearchPlugin extends devplugin.Plugin {
   		}
   		
   		public void execute(Program program) {
-  			String search = program.getTitle();
+  			
+  			String search = program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
+  			
+  			if ((search == null) || (search.trim().length() == 0)) {
+  				search = program.getTitle();
+  			}
+  		
   			search = search.trim().replace(' ', '+');  			
   			BrowserLauncher.openURL("http://www.imdb.com/Tsearch?title=" + search);
 			

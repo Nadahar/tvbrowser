@@ -1,4 +1,7 @@
 Changelog ImdbSearchPlugin
 
+1.01:
+- Searches for original Title if present
+
 1.0:
 - initial version
