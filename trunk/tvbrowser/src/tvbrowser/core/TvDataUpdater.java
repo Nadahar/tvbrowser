@@ -195,9 +195,9 @@ public class TvDataUpdater {
     // Inform the listeners
     fireTvDataUpdateFinished();
   }
-
-
-  private void fireTvDataUpdateStarted() {
+  
+  
+  void fireTvDataUpdateStarted() {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);
@@ -207,7 +207,7 @@ public class TvDataUpdater {
   }
 
 
-  private void fireTvDataUpdateFinished() {
+  void fireTvDataUpdateFinished() {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataUpdateListener lst = (TvDataUpdateListener) mListenerList.get(i);

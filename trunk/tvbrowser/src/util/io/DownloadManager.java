@@ -120,6 +120,7 @@ public class DownloadManager {
       
       if (job != null) {
         String url = job.getServerUrl() + "/" + job.getFileName();
+        mLog.info("Loading " + url + "...");
         InputStream stream = null;
         try {
           stream = IOUtilities.getStream(new URL(url));

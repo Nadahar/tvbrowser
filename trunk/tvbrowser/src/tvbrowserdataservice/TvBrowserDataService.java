@@ -104,12 +104,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
   private File mDataDir;
   
-  private Channel[] mAvailableChannelArr;
-  
-  private String[] mSubsribedLevelArr;
   private TvDataLevel[] mSubscribedLevelArr;
-  
-  private int mDirectlyLoadedBytes;  
   
   private static TvBrowserDataService mInstance;
   
@@ -205,7 +200,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
     deleteOutdatedFiles();
     
     mProgressMonitor.setMessage(mLocalizer.msg("info.7","Preparing download..."));
-    
    
     //  Create a download manager and add all the jobs
     mDownloadManager = new DownloadManager();
