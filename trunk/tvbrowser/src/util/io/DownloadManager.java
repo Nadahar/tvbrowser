@@ -73,6 +73,14 @@ public class DownloadManager {
       mConcurrentDownloads = 1;
     }
     mWaitingThread = Thread.currentThread();
+
+    // Set the max. connections
+    if (mConcurrentDownloads > 5) {    
+      System.setProperty("http.maxConnections", Integer.toString(mConcurrentDownloads));
+    } else {
+      // This is the default
+      System.setProperty("http.maxConnections", "5");
+    }
     
     for (int i = 0; i < mConcurrentDownloads; i++) {
       Thread downloadThread = new Thread() {

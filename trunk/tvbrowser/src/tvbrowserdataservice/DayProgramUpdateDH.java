@@ -28,6 +28,9 @@ package tvbrowserdataservice;
 import java.io.File;
 import java.io.InputStream;
 
+import devplugin.Channel;
+import devplugin.Date;
+
 import tvbrowserdataservice.file.DayProgramFile;
 import util.exc.TvBrowserException;
 import util.io.DownloadHandler;
@@ -60,11 +63,7 @@ public class DayProgramUpdateDH implements DownloadHandler {
     mLog.fine("Receiving file " + fileName);
 
     // Convert the file name to a complete file name
-    // E.g. from '2003-10-04_de_premiere-1_base_update_15.prog.gz'
-    //        to '2003-10-04_de_premiere-1_base_full.prog.gz'
-    int updatePos = fileName.lastIndexOf("_update_");
-    String completeFileName = fileName.substring(0, updatePos)
-      + "_full.prog.gz";
+    String completeFileName = updateFileNameToCompleteFileName(fileName);
     
     File completeFile = new File(mDataService.getDataDir(), completeFileName);
     try {
@@ -101,8 +100,33 @@ public class DayProgramUpdateDH implements DownloadHandler {
   
   public void handleFileNotFound(String fileName) throws TvBrowserException {
     // There is no update for this day
-
     mDataService.checkCancelDownload();
+    
+    // We have a up-to-date version of the day program in the
+    // TvBrowserDataService directory. But maybe the program was deleted from
+    // the TvDataBase directory -> Check this.
+    Date date = DayProgramFile.getDateFromFileName(fileName);
+    String country = DayProgramFile.getCountryFromFileName(fileName);
+    String channelName = DayProgramFile.getChannelNameFromFileName(fileName);
+    Channel channel = mDataService.getChannel(country, channelName);
+    if ((channel != null)
+      && (! mDataService.isDayProgramInDataBase(date, channel)))
+    {
+      // This day program is NOT in the database -> update it
+      mUpdater.addUpdateJob(date, channel);
+    }
+  }
+
+
+  private String updateFileNameToCompleteFileName(String updateFileName) {
+    // E.g. from '2003-10-04_de_premiere-1_base_update_15.prog.gz'
+    //        to '2003-10-04_de_premiere-1_base_full.prog.gz'
+    
+    int updatePos = updateFileName.lastIndexOf("_update_");
+    String completeFileName = updateFileName.substring(0, updatePos)
+      + "_full.prog.gz";
+
+    return completeFileName;
   }
 
 }

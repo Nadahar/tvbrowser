@@ -132,7 +132,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     // Get a random Mirror that is up to date
     Mirror mirror = chooseUpToDateMirror(mirrorArr, monitor);
-    mLog.fine("Using mirror " + mirror.getUrl());
+    mLog.info("Using mirror " + mirror.getUrl());
     monitor.setMessage(mLocalizer.msg("info.1","Downloading from mirror {0}",mirror.getUrl()));
     
     // Update the mirrorlist (for the next time)
@@ -433,7 +433,12 @@ public class TvBrowserDataService extends AbstractTvDataService {
     // Update the ProgressMonitor
     int jobCount = mDownloadManager.getDownloadJobCount();
     mProgressMonitor.setValue(mTotalDownloadJobCount - jobCount);
-  }  
+  }
+  
+  
+  boolean isDayProgramInDataBase(Date date, Channel channel) {
+    return mTvDataBase.isDayProgramAvailable(date, channel);
+  }
   
   
   File getDataDir() {
@@ -552,7 +557,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     // Get a random Mirror that is up to date
     Mirror mirror = chooseUpToDateMirror(mirrorArr,null);
-    mLog.fine("Using mirror " + mirror.getUrl());
+    mLog.info("Using mirror " + mirror.getUrl());
 
     // Update the mirrorlist (for the next time)
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
