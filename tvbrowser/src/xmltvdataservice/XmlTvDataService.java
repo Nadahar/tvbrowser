@@ -195,8 +195,9 @@ public class XmlTvDataService extends AbstractTvDataService {
       IOUtilities.download(new URL(url), targetFile);
     }
     catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.2",
-        "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
+    	// ignore error
+      //throw new TvBrowserException(getClass(), "error.2",
+      //  "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
     }
   }
 

@@ -66,7 +66,7 @@ public class ProgramTable extends SkinPanel
 
     setColumnWidth(Settings.getColumnWidth());
     setModel(model);
-    
+    setCursor(new Cursor(Cursor.HAND_CURSOR));
     updateBackground();
 
     // setFocusable(true);

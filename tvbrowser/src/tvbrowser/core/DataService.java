@@ -231,6 +231,7 @@ public class DataService implements devplugin.PluginManager {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
       ErrorHandler.handle(msg, downloadException);
     }
+    
 
     // Let the plugins react on the new data
     PluginManager.fireTvDataChanged();
