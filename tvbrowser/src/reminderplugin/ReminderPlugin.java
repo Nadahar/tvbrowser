@@ -40,10 +40,32 @@ import util.ui.UiUtilities;
  * @author Martin Oberhauser
  */
 public class ReminderPlugin extends Plugin implements ReminderTimerListener {
+  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderPlugin. class );
-  private ReminderList reminderList= null ;private Properties settings;
-  private Icon icon= null ;
+  
+  private static ReminderPlugin mInstance;
+  
+  private ReminderList reminderList= null;
+  private Properties settings;
+  private Icon icon= null;
+  
+  
+  
+  /**
+   * Creates a new instance of ReminderPlugin.
+   */
+  public ReminderPlugin() {
+    mInstance = this;
+  }
+  
+  
+  
+  public static ReminderPlugin getInstance() {
+    return mInstance;
+  }
+  
+  
   
   public void timeEvent(ReminderListItem item) {
     if ("true" .equals(settings.getProperty( "usesound" ))) {
@@ -60,6 +82,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     
     if ("true" .equals(settings.getProperty( "usemsgbox" ))) {
       new ReminderFrame(reminderList, item);
+    } else {
+      reminderList.remove(item);
     }
     if ("true" .equals(settings.getProperty( "useexec" ))) {
       String fName=settings.getProperty( "execfile" );
@@ -69,14 +93,10 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         String msg = mLocalizer.msg( "error.2" ,"Error executing reminder program!\n({0})" , fName, exc);
         ErrorHandler.handle(msg, exc);
       }
-      
-    } // remove the item
-    if (item.getReminderMinutes() <= 0) {
-      item.getProgram().unmark( this );
-      reminderList.remove(item);
     }
-    
   }
+  
+  
   
   public PluginInfo getInfo() {
     String name = mLocalizer.msg( "pluginName" ,"Reminder" );
@@ -91,13 +111,16 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     throws IOException, ClassNotFoundException
   {
     reminderList = (ReminderList) in.readObject();
-
-    reminderList.removeExpiredItems();
-    reminderList.setReminderTimerListener( this ); // mark the programs
-    Iterator iter = reminderList.getReminderItems();
-    while (iter.hasNext()) {
-      ReminderListItem item = (ReminderListItem) iter.next();
-      item.getProgram().mark( this );
+    if (reminderList != null) {
+      reminderList.removeExpiredItems();
+      reminderList.setReminderTimerListener( this );
+      
+      // mark the programs
+      Iterator iter = reminderList.getReminderItems();
+      while (iter.hasNext()) {
+        ReminderListItem item = (ReminderListItem) iter.next();
+        item.getProgram().mark( this );
+      }
     }
   }
 
@@ -114,11 +137,12 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
   
   public void loadSettings(Properties settings) {
-    if (settings== null ) {
-      settings= new Properties();
+    // if (this.settings != null) throw new NullPointerException("sdfkg");
+    if (settings == null ) {
+      settings = new Properties();
     }
     
-    this .settings=settings;
+    this.settings = settings;
   }
   
   public String getContextMenuItemText() {
@@ -166,16 +190,10 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   private void addToReminderList(Program program, int minutes) {
     if (reminderList == null ) {
       reminderList = new ReminderList();
+      reminderList.setReminderTimerListener(this);
     }
     
-    ReminderListItem item = reminderList.getItemWithProgram(program);
-    if (item == null) {
-      program.mark(this);
-      item = new ReminderListItem(program, minutes);
-      reminderList.add(item);
-    } else {
-      item.setReminderMinutes(minutes);
-    }
+    reminderList.add(program, minutes);
   }
   
   

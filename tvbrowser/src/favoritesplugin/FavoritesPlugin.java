@@ -108,7 +108,7 @@ public class FavoritesPlugin extends Plugin {
           break;
         }
       }
-
+      
       // If the plugin was found -> add it to the list
       if (plugin != null) {
         clientPluginList.add(plugin);
@@ -132,7 +132,7 @@ public class FavoritesPlugin extends Plugin {
     
     out.writeInt(mClientPluginArr.length);
     for (int i = 0; i < mClientPluginArr.length; i++) {
-      out.writeObject(mClientPluginArr.getClass().getName());
+      out.writeObject(mClientPluginArr[i].getClass().getName());
     }
   }
   

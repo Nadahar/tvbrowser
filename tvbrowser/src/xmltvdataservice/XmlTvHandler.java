@@ -291,23 +291,25 @@ public class XmlTvHandler extends DefaultHandler {
     // Workaround: There is an error in the german XMLTV files:
     // All '&' characters are replaced by ' und ',
     // so '&auml;' becomes ' und auml;' so the XML parser can't replace it.
-    IOUtilities.replace(mCurrTextBuffer, " und auml;", "\u00e4");
-    IOUtilities.replace(mCurrTextBuffer, " und Auml;", "\u00c4");
-    IOUtilities.replace(mCurrTextBuffer, " und ouml;", "\u00f6");
-    IOUtilities.replace(mCurrTextBuffer, " und Ouml;", "\u00d6");
-    IOUtilities.replace(mCurrTextBuffer, " und uuml;", "\u00fc");
-    IOUtilities.replace(mCurrTextBuffer, " und Uuml;", "\u00dc");
-    IOUtilities.replace(mCurrTextBuffer, " und szlig;", "\u00df");
-    IOUtilities.replace(mCurrTextBuffer, " und middot;", "\u00b7");
-    IOUtilities.replace(mCurrTextBuffer, " und aacute;", "\u00e1");
-    IOUtilities.replace(mCurrTextBuffer, " und eacute;", "\u00e9");
-    IOUtilities.replace(mCurrTextBuffer, " und oacute;", "\u00f3");
-    IOUtilities.replace(mCurrTextBuffer, " und agrave;", "\u00e0");
-    IOUtilities.replace(mCurrTextBuffer, " und egrave;", "\u00e8");
-    IOUtilities.replace(mCurrTextBuffer, " und ograve;", "\u00f2");
-    IOUtilities.replace(mCurrTextBuffer, " und amp;", "\u0026");
-    IOUtilities.replace(mCurrTextBuffer, " und quot;", "\"");
-    IOUtilities.replace(mCurrTextBuffer, " und deg;", "\u00b0");
+    IOUtilities.replace(mCurrTextBuffer, " und auml;",    "\u00e4");
+    IOUtilities.replace(mCurrTextBuffer, " und Auml;",    "\u00c4");
+    IOUtilities.replace(mCurrTextBuffer, " und aacute;",  "\u00e1");
+    IOUtilities.replace(mCurrTextBuffer, " und agrave;",  "\u00e0");
+    IOUtilities.replace(mCurrTextBuffer, " und eacute;",  "\u00e9");
+    IOUtilities.replace(mCurrTextBuffer, " und egrave;",  "\u00e8");
+    IOUtilities.replace(mCurrTextBuffer, " und ouml;",    "\u00f6");
+    IOUtilities.replace(mCurrTextBuffer, " und Ouml;",    "\u00d6");
+    IOUtilities.replace(mCurrTextBuffer, " und oacute;",  "\u00f3");
+    IOUtilities.replace(mCurrTextBuffer, " und ograve;",  "\u00f2");
+    IOUtilities.replace(mCurrTextBuffer, " und uuml;",    "\u00fc");
+    IOUtilities.replace(mCurrTextBuffer, " und Uuml;",    "\u00dc");
+    IOUtilities.replace(mCurrTextBuffer, " und ntilde;",  "\u00f1");
+    IOUtilities.replace(mCurrTextBuffer, " und szlig;",   "\u00df");
+    IOUtilities.replace(mCurrTextBuffer, " und middot;",  "\u00b7");
+    IOUtilities.replace(mCurrTextBuffer, " und amp;",     "\u0026");
+    IOUtilities.replace(mCurrTextBuffer, " und deg;",     "\u00b0");
+    IOUtilities.replace(mCurrTextBuffer, " und quot;",    "\"");
+    IOUtilities.replace(mCurrTextBuffer, " und curren;",  "e");
     
     // mLog.info("deg: " + Integer.toHexString('°'));
 

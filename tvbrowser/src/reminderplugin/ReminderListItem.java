@@ -24,21 +24,20 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
-
 package reminderplugin;
 
 import java.io.*;
 
 import util.exc.*;
+import util.io.IOUtilities;
 
 import devplugin.*;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ReminderListItem implements Serializable, Comparable {
 
   private int mReminderMinutes;
@@ -98,6 +97,27 @@ public class ReminderListItem implements Serializable, Comparable {
 
   public void setReminderMinutes(int minutes) {
     mReminderMinutes = minutes;
+  }
+  
+  
+  
+  public boolean isExpired() {
+    int currentDaysSince1970 = IOUtilities.getDaysSince1970();
+    int programDaysSince1970 = mProgram.getDate().getDaysSince1970();
+    
+    if (programDaysSince1970 < currentDaysSince1970) {
+      return true;
+    }
+    if (programDaysSince1970 > currentDaysSince1970) {
+      return false;
+    }
+    
+    // This program is (or was) today -> We've got to check the time
+    int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    int programMinutesAfterMidnight = mProgram.getHours() * 60
+      + mProgram.getMinutes() + mProgram.getLength();
+    
+    return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
   }
 
   

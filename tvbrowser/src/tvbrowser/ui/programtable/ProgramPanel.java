@@ -37,6 +37,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.ui.TextAreaIcon;
+import util.io.IOUtilities;
 
 import devplugin.Plugin;
 
@@ -52,8 +53,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static final Color COLOR_ON_AIR_DARK  = new Color(128, 128, 255, 80);
   private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
   private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
-  
-  private static final Calendar CALENDAR = Calendar.getInstance();
 
   /** The bold font. */
   private static final Font bold;
@@ -142,7 +141,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */  
   public void paintComponent(Graphics grp) {
     if (mProgram.isOnAir()) {
-      int minutesAfterMidnight = getMinutesAfterMidnight();
+      int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int length = mProgram.getLength();
       int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
       int elapsedMinutes = minutesAfterMidnight - startTime;
@@ -213,16 +212,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */
   public devplugin.Program getProgram() {
     return mProgram;
-  }
-  
-  
-  
-  /**
-   * Gets the number of minutes since midnight
-   */
-  private int getMinutesAfterMidnight() {
-    CALENDAR.setTimeInMillis(System.currentTimeMillis());
-    return CALENDAR.get(Calendar.HOUR_OF_DAY) * 60 + CALENDAR.get(Calendar.MINUTE);
   }
   
   
