@@ -480,9 +480,10 @@ public class ManageFavoritesDialog extends JDialog {
           
           info += ")";
         }
+        info += " (" + fav.getPrograms().length + ")";
+        
         value = info;
       }
-      
       return super.getListCellRendererComponent(list, value, index, isSelected,
         cellHasFocus);
     }
