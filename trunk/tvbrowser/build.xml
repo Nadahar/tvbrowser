@@ -48,6 +48,7 @@
   <property name="src.dir" value="src"/>
   <property name="txt.dir" value="txt"/>
   <property name="doc.dir" value="doc"/>
+  <property name="themepacks.dir" value="themepacks"/>
   <property name="classes.dir" value="classes"/>
   <property name="runtime.dir" value="runtime"/>
   <property name="installer.dir" value="installer"/>
@@ -192,6 +193,7 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+	<fileset dir="${classes.dir}" includes="com/**"/>
     </jar>
 
     <mkdir dir="${runtime.dir}/plugins"/>
@@ -238,11 +240,15 @@
       <fileset dir="${txt.dir}" includes="where_is_the_exe.txt"/>
     </copy>
 
+    <mkdir dir="${runtime.dir}/themepacks"/>
+    <copy todir="${runtime.dir}/themepacks">
+    <fileset dir="themepacks"/>
+    </copy>
 
-		<mkdir dir="${runtime.dir}/help"/>
-		<copy todir="${runtime.dir}/help">
-			<fileset dir="${src.dir}/help"/>
-		</copy>
+    <mkdir dir="${runtime.dir}/help"/>
+    <copy todir="${runtime.dir}/help">
+    <fileset dir="${src.dir}/help"/>
+    </copy>
   </target>
 
 

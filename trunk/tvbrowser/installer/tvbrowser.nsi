@@ -94,18 +94,21 @@ Section "${PROG_NAME} (erforderlich)"
 
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
-
 	
 
-	SetOutPath "$INSTDIR\help\de"
-	File "${RUNTIME_DIR}\help\de\*.*"
+  SetOutPath "$INSTDIR\help\de"
+  File "${RUNTIME_DIR}\help\de\*.*"
 
-	SetOutPath "$INSTDIR\help\default"
-	File "${RUNTIME_DIR}\help\default\*.*"
+  SetOutPath "$INSTDIR\help\default"
+  File "${RUNTIME_DIR}\help\default\*.*"
+
+  SetOutPath "$INSTDIR\themepacks"
+  File "${RUNTIME_DIR}\themepacks\*.*"
 
   
   CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
+  
 
 
   # Register uninstaller at Windows (Add/Remove programs)

@@ -253,16 +253,7 @@ public class XmlTvHandler extends DefaultHandler {
     else if (currElement.equals("programme")) {
       if (mCurrProgram==null) {
         mLog.info("mCurrProgram is null");
-      }
-    //  else {
-    //   mLog.info("Program found: " + mCurrProgram.getTitle()+" ("+mCurrProgram.getDateString()+", "+mCurrProgram.getTimeString()+", "+mCurrProgram.getChannel().getName()+")");
-    //  }
-    
-    // TODO: remove the following line:     
-    
-  //   if (mCurrProgram!=null && mCurrProgram.getChannel().getName().equals("ARD"))
-     
-     
+      } 
      
       mProgramDispatcher.dispatch(mCurrProgram);
       mCurrProgram = null;
