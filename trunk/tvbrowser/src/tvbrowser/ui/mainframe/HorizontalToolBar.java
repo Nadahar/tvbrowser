@@ -132,7 +132,7 @@ public class HorizontalToolBar extends JPanel implements ActionListener {
     
   }
   
-  private int getToolbarStyle() {
+  public int getToolbarStyle() {
     int style = 0;
     if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
       style = Toolbar.ICON;      
