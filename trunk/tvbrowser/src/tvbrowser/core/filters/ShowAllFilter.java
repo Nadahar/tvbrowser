@@ -40,7 +40,10 @@ public class ShowAllFilter implements devplugin.ProgramFilter {
   }
   
   
-  
+  public String getName() {
+      return toString();
+  }
+
   public String toString() {
     return mLocalizer.msg("ShowAll","Show all");
   }

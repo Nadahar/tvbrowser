@@ -42,7 +42,9 @@ public class PluginFilter implements ProgramFilter {
     
   }
   
-  
+  public String getName() {
+      return toString();
+  }
   
   public String toString() {
     return mLocalizer.msg("pluginfFilterName","Marked programs");

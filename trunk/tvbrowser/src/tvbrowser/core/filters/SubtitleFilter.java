@@ -58,7 +58,11 @@ public class SubtitleFilter implements ProgramFilter {
     private boolean bitSet(int num, int pattern) {
         return (num & pattern) == pattern;
     }    
-    
+
+    public String getName() {
+        return toString();
+    }
+
     /**
      * Name of Filter
      */

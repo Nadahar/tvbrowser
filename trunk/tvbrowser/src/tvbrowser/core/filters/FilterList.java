@@ -118,7 +118,7 @@ public class FilterList {
       curFilterName=inxIn.readLine();
       while (curFilterName!=null){
         for (int i=cnt;i<filterArr.length;i++) {
-          if (filterArr[i].toString().equalsIgnoreCase(curFilterName)) {
+          if (filterArr[i].getName().equalsIgnoreCase(curFilterName)) {
             //swap i<-->cnt
             ProgramFilter h = filterArr[cnt];
             filterArr[cnt] = filterArr[i];
@@ -204,6 +204,22 @@ public class FilterList {
       if (mFilterArr[i] instanceof UserFilter) {
         ((UserFilter)mFilterArr[i]).store();   
       }
+    }
+
+    
+    
+    File inxFile=new File(mFilterDirectory,FILTER_INDEX);
+    BufferedWriter inxOut=null;
+    
+    try {
+        inxOut = new BufferedWriter(new FileWriter(inxFile));
+        
+        for (int i = 0; i < mFilterArr.length; i++) {
+            inxOut.write(mFilterArr[i].getName()+ "\n");
+        }
+        inxOut.close();
+    } catch (Exception e) {
+        
     }
   }
 }
