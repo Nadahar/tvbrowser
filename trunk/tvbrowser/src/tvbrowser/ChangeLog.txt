@@ -1,6 +1,6 @@
 Changelog TVBrowser
 
-1.0 RC 06
+1.0 final
  - bugfix: ask before autodownload on startup
  - bugfix: "timezone bug" (didn't show programs after 24:00)
 
