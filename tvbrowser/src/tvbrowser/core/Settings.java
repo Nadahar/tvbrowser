@@ -229,6 +229,11 @@ public class Settings {
       model.setDate(FinderPanel.getInstance().getSelectedDate(), null);
     }
     
+    
+    if (mProp.hasChanged(propHiddenPluginButtons)) {
+      mainFrame.getHorizontalToolBar().updateButtons();
+    }
+    
     mProp.clearChanges();
   }
   

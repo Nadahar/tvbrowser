@@ -80,10 +80,6 @@ public class DayProgramFileTranslator {
       if (fileArr[i].getName().endsWith(".prog.gz")) {
         translateDayProgram(fileArr[i],destDir);
       }
-      // do not touch subfolders (since we store the results in a subfolder)
-      //if (fileArr[i].isDirectory()) {
-      //    translateAllDayPrograms(fileArr[i]);
-      //}
     }
   }
 
@@ -111,9 +107,6 @@ public class DayProgramFileTranslator {
 
     FileOutputStream stream = null;
     try {
-      
-      System.out.println(file.getAbsolutePath()+" --> "+new File(destDir,transFileName).getAbsolutePath());
-    
       
       stream = new FileOutputStream(new File(destDir,transFileName));
       PrintWriter writer = new PrintWriter(stream);

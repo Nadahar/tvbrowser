@@ -270,7 +270,6 @@ public class PrimaryDataManager {
         File destDir=new File(txtDir,"txt");
         destDir.mkdirs();
         try {
-          System.out.println("translat");
           DayProgramFileTranslator.translateAllDayPrograms(txtDir);
         } catch (IOException e) {
           e.printStackTrace();
@@ -282,94 +281,6 @@ public class PrimaryDataManager {
     }
   }
 
-/*
-  private void loadNewRawData() throws PreparationException {
-    if (mDataServiceArr == null) {
-      throw new PreparationException("No primary data services specified");
-    }
-    
-    mDataServiceList=new LinkedList();
-    for (int i=0;i<mDataServiceArr.length;i++) {
-      mDataServiceList.add(mDataServiceArr[i]);
-    }
-    
-    
-    
-    mActiveThreadCount =0;
-    mWaitingThread = Thread.currentThread();
-    
-    //  Set the max. connections
-     if (CONCURRENT_DOWNLOADS > 5) {    
-       System.setProperty("http.maxConnections", Integer.toString(CONCURRENT_DOWNLOADS));
-     }
-    
-    for (int i=0;i<CONCURRENT_DOWNLOADS;i++) {
-      Thread downloadThread = new Thread() {
-        public void run() {
-          PDSThreadRun();
-        }
-      };
-      downloadThread.start();
-    }
-    
-    //  Wait until all jobs are processed    
-    boolean isFinished;
-    do {
-      try {
-        Thread.sleep(Long.MAX_VALUE);
-      } catch (InterruptedException exc) {}
-      
-      synchronized (mDataServiceList) {
-        isFinished = mDataServiceList.isEmpty() && (mActiveThreadCount == 0);
-      }
-    } while (! isFinished);
-    
-  }
-  
-  
-
-
-  private void PDSThreadRun() {
-    mActiveThreadCount++;
-
-    boolean isFinished = false;
-    do {
-      // Get the next job
-      PrimaryDataService pds = null;
-      
-      synchronized (mDataServiceList) {
-        if (mDataServiceList.isEmpty()) {
-          isFinished = true;
-        } else {
-          pds = (PrimaryDataService) mDataServiceList.removeFirst();
-        }
-      }
-      
-      if (pds != null) {
-        String dir = mRawDir.getAbsolutePath();
-        File logFile=new File(mPDSLogDir,pds.getClass().getName()+".txt");
-        try {
-          FileOutputStream out=new FileOutputStream(logFile);
-          PrintStream errOut=new PrintStream(out);
-          boolean thereWereErrors = pds.execute(dir, errOut);
-          if (thereWereErrors) {
-            mLog.warning("There were errors during the execution of primary data service "+pds.getClass().getName());
-          }else{
-            mLog.fine(pds.getClass().getName()+ " terminated normally");
-          }
-          errOut.close();
-        }catch(IOException exc) {
-          mLog.log(Level.SEVERE, "Error executing primary data service "+pds.getClass().getName(), exc);
-        }
-      }
-    } while (! isFinished);
-    
-    mActiveThreadCount--;
-
-    mWaitingThread.interrupt();
-  }
- 
- */
  
   public static PrimaryDataService createPrimaryDataService(String className)
     throws PreparationException
@@ -487,11 +398,6 @@ public class PrimaryDataManager {
 
   private void createSummaryFiles() throws PreparationException {
 
-		//System.out.println("creating summary files...");
-    /* create summary file for the old system */
-		
- //   createSummaryFile(null);
-    
     /* create summary files for the new system */
     for (int i=0;i<mGroupArr.length;i++) {
 			System.out.println("creating summary file for group "+mGroupArr[i]+"...");
