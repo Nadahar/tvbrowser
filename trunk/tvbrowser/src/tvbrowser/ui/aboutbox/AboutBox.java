@@ -16,6 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
  
 package tvbrowser.ui.aboutbox;
@@ -151,6 +157,14 @@ public class AboutBox extends JDialog {
       System.getProperty("java.home")));
     infoPanel.add(new InfoEntry(mLocalizer.msg("location", "Location"),
       System.getProperty("user.country") + "," + System.getProperty("user.language")));
+    
+    java.util.TimeZone timezone = java.util.TimeZone.getDefault();
+    int tzOffset = timezone.getRawOffset() / 1000 / 60 / 60;
+    String tzOffsetAsString = mLocalizer.msg("hours", "({0,number,+#;#} hours)",
+      new Integer(tzOffset));
+    infoPanel.add(new InfoEntry(mLocalizer.msg("timezone", "Timezone"),
+      timezone.getDisplayName() + " " + tzOffsetAsString));
+    
     infoPanel.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
     
     panel1.add(infoPanel,BorderLayout.NORTH);
