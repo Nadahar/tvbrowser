@@ -93,8 +93,8 @@ public class PluginView extends JPanel implements MouseListener {
         MainFrame.getInstance().scrollToProgram(programItem.getProgram());
       }
       else if (node.getType() == Node.PLUGIN_ROOT) {
-        Plugin plugin = (Plugin)o;
-        plugin.getButtonAction().actionPerformed(null);
+      //  Plugin plugin = (Plugin)o;
+      //  plugin.getButtonAction().actionPerformed(null);
       }
       else {
         return;
@@ -108,7 +108,6 @@ public class PluginView extends JPanel implements MouseListener {
   private void showContextMenu(TreePath[] paths, int x, int y) {
 
     Node node = (Node)paths[0].getLastPathComponent();
-    Object userObject = node.getUserObject();
     if (node.getType() == Node.PROGRAM) {
       Program[] programs = new Program[paths.length];
       for (int i=0; i<programs.length; i++) {
@@ -118,7 +117,7 @@ public class PluginView extends JPanel implements MouseListener {
       showContextMenu(mModel.getPlugin(paths[0]), programs, x, y);
     }
     else if (node.getType() == Node.PLUGIN_ROOT) {
-      showPluginContextMenu(mModel.getPlugin(paths[0]), x, y);
+      showPluginContextMenu(paths[0], mModel.getPlugin(paths[0]), x, y);
     }
     else if (node.getType() == Node.SORTING_NODE) {
       System.out.println("Sorting option");
@@ -129,14 +128,36 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
-  private void showPluginContextMenu(Plugin plugin, int x, int y) {
+  private void showPluginContextMenu(final TreePath treePath, Plugin plugin, int x, int y) {
     JPopupMenu menu = new JPopupMenu();
-    JMenuItem actionMI = new JMenuItem(plugin.getButtonAction().getValue(Action.NAME)+"...");
-    actionMI.setFont(CONTEXT_MENU_BOLDFONT);
+
+    JMenuItem collapseExpandMI = new JMenuItem();
+    collapseExpandMI.setFont(CONTEXT_MENU_BOLDFONT);
+    if (mTree.isExpanded(treePath)) {
+      collapseExpandMI.setText("Collapse");
+      collapseExpandMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          mTree.collapsePath(treePath);
+        }
+      });
+    }
+    else {
+      collapseExpandMI.setText("Expand");
+      collapseExpandMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          mTree.expandPath(treePath);
+        }
+      });
+    }
+
+    /*JMenuItem actionMI = new JMenuItem(plugin.getButtonAction().getValue(Action.NAME)+"...");
+    actionMI.setFont(CONTEXT_MENU_PLAINFONT);
     actionMI.addActionListener(plugin.getButtonAction());
 
+    menu.add(collapseExpandMI);
+    menu.addSeparator();
     menu.add(actionMI);
-    menu.show(mTree, x-10, y-10);
+    menu.show(mTree, x-10, y-10); */      
   }
 
   private void showContextMenu(Plugin rootNodePlugin, final Program[] programs, int x, int y) {

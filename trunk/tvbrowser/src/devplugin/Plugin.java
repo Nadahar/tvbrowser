@@ -306,7 +306,9 @@ abstract public class Plugin {
     execute(programArr);
   }
 
-  
+
+
+
   /**
    * Gets the actions for the context menu of a program.
    * <p>
@@ -326,7 +328,7 @@ abstract public class Plugin {
    * 
    * @see #getProgramFromContextMenuActionEvent(ActionEvent)
    */
-  public Action[] getContextMenuActions(Program program) {
+  public ActionMenu getContextMenuActions(Program program) {
     // Check whether the old and deprecated methods are used
     String contextMenuItemText = getContextMenuItemText();
     if (contextMenuItemText != null) {
@@ -339,7 +341,8 @@ abstract public class Plugin {
       action.putValue(Action.NAME, contextMenuItemText);
       action.putValue(Action.SMALL_ICON, getMarkIcon());
       
-      return new Action[] { action }; 
+      //return new Action[] { action };
+      return new ActionMenu(action);
     } else {
       // This plugin supports no context menus
       return null;
@@ -387,7 +390,7 @@ abstract public class Plugin {
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
    */
-  public Action getButtonAction() {
+  public ActionMenu getButtonAction() {
     // Check whether the old and deprecated methods are used
     String buttonText = getButtonText();
     if (buttonText != null) {
@@ -408,7 +411,7 @@ abstract public class Plugin {
         }
       }
       
-      return action; 
+      return new ActionMenu(action); 
     } else {
       // This plugin supports no button
       return null;

@@ -44,6 +44,7 @@ import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
+import devplugin.ActionMenu;
 import reminderplugin.ReminderListDialog;
 
 /**
@@ -92,7 +93,7 @@ public class NewsPlugin extends Plugin {
 
 
 
-   public Action getButtonAction() {
+   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList, -1);
@@ -105,7 +106,7 @@ public class NewsPlugin extends Plugin {
     action.putValue(BIG_ICON, createImageIcon("newsplugin/Information24.gif"));
     action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
 
-    return action;
+    return new ActionMenu(action);
   }
 
    

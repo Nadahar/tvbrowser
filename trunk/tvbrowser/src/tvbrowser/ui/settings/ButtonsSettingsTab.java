@@ -43,6 +43,7 @@ import util.ui.OrderChooser;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.SettingsTab;
+import devplugin.ActionMenu;
 
 /**
  * TV-Browser
@@ -366,7 +367,7 @@ class TimePanel extends JPanel {
     }
         
     public ButtonItem(PluginProxy p) {
-      this(p.getId(), (String) p.getButtonAction().getValue(Action.NAME));
+      this(p.getId(), (String) p.getButtonAction().getAction().getValue(Action.NAME));
     }
     
     public String getId() {

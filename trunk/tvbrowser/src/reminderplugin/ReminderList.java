@@ -275,7 +275,18 @@ public class ReminderList implements ActionListener {
     return false;  
   }
   */
-  
+
+
+  public ReminderListItem getReminderItem(Program prog) {
+    ProgramItem[] items = mRoot.getProgramItems();
+    for (int i=0; i<items.length; i++) {
+      if (items[i].getProgram().equals(prog)) {
+        return new ReminderListItem(items[i]);
+      }
+    }
+    return null;
+  }
+
   public ReminderListItem[] getReminderItems() {
    /* Collection col = getReminderItems(mRootNode);
     ReminderListItem[] result = new ReminderListItem[col.size()];

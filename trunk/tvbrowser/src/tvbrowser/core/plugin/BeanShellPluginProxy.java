@@ -122,29 +122,38 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return null;
     }
 
+    private void setActionMenuDefaultValues(ActionMenu menu) {
+      Action action = menu.getAction();
+      if (action != null) {
+        if (action.getValue(Action.SMALL_ICON) == null) {
+          action.putValue(Action.SMALL_ICON, BEANICON);
+        }
+        if (action.getValue(Action.NAME) == null) {
+          action.putValue(Action.NAME, mBshFile.getName());
+        }
+      }
+      else {
+        ActionMenu[] subItems = menu.getSubItems();
+        for (int i=0; i<subItems.length; i++) {
+          setActionMenuDefaultValues(subItems[i]);
+        }
+      }
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see tvbrowser.core.plugin.AbstractPluginProxy#goGetContextMenuActions(devplugin.Program)
      */
-    protected Action[] goGetContextMenuActions(Program program) {
+    protected ActionMenu goGetContextMenuActions(Program program) {
         if (mScript == null) { return null; }
 
         try {
-            Action[] actions = mScript.getContextMenuActions(program);
 
-            for (int i = 0; i < actions.length; i++) {
-                if (actions[i].getValue(Action.SMALL_ICON) == null) {
-                    actions[i].putValue(Action.SMALL_ICON, BEANICON);
-                }
+          ActionMenu actionMenu = mScript.getContextMenuActions(program);
+          setActionMenuDefaultValues(actionMenu);
 
-                if (actions[i].getValue(Action.NAME) == null) {
-                    actions[i].putValue(Action.NAME, mBshFile.getName());
-                }
-
-            }
-
-            return actions;
+          return actionMenu;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,21 +166,13 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
      * 
      * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetButtonAction()
      */
-    protected Action doGetButtonAction() {
+    protected ActionMenu doGetButtonAction() {
         if (mScript == null) { return null; }
 
         try {
-            Action action = mScript.getButtonAction();
-
-            if (action.getValue(Action.SMALL_ICON) == null) {
-                action.putValue(Action.SMALL_ICON, BEANICON);
-            }
-
-            if (action.getValue(Action.NAME) == null) {
-                action.putValue(Action.NAME, mBshFile.getName());
-            }
-
-            return action;
+            ActionMenu menu = mScript.getButtonAction();
+            setActionMenuDefaultValues(menu);
+            return menu;
         } catch (Exception e) {
         }
 

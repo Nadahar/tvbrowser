@@ -10,6 +10,7 @@ import javax.swing.Icon;
 
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ActionMenu;
 
 
 /**
@@ -31,13 +32,13 @@ public interface BeanShellScriptIf {
     /* (non-Javadoc)
      * @see tvbrowser.core.plugin.AbstractPluginProxy#goGetContextMenuActions(devplugin.Program)
      */    
-    public Action[] getContextMenuActions(Program program);
+    public ActionMenu getContextMenuActions(Program program);
     
 
     /* (non-Javadoc)
      * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetButtonAction()
      */
-    public Action getButtonAction();
+    public ActionMenu getButtonAction();
     
     /*
      * (non-Javadoc)

@@ -37,11 +37,7 @@ import javax.swing.ImageIcon;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.Version;
+import devplugin.*;
 
 /**
  * This Plugin gives the User the possibility to rate a Movie
@@ -89,7 +85,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
      *  (non-Javadoc)
      * @see devplugin.Plugin#getButtonAction()
      */
-    public Action getButtonAction() {
+    public ActionMenu getButtonAction() {
         AbstractAction action = new AbstractAction() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -100,7 +96,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", TVRaterPlugin.class)));
         action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", TVRaterPlugin.class)));
         
-        return action;
+        return new ActionMenu(action);
     }    
     
     /**
@@ -139,7 +135,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
      *  (non-Javadoc)
      * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
      */
-    public Action[] getContextMenuActions(final Program program) {
+    public ActionMenu getContextMenuActions(final Program program) {
         AbstractAction action = new AbstractAction() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -149,7 +145,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "View rating"));
         action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/3.gif", TVRaterPlugin.class)));
         
-        return new Action[] {action};
+        return new ActionMenu(action);
     }
     
     

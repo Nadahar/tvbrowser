@@ -133,7 +133,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public PluginInfo getInfo() {
     String name = mLocalizer.msg( "pluginName" ,"Reminder" );
     String desc = mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion." );
-    String author = "Martin Oberhauser (darras@users.sourceforge.net)" ;
+    String author = "Martin Oberhauser (martin@tvbrowser.org)" ;
     return new PluginInfo(name, desc, author, new Version(1, 10));
   }
   
@@ -201,8 +201,13 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 		return "reminderplugin/TipOfTheDay16.gif";
   }
 	
-  public Action[] getContextMenuActions(final Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     if (mReminderList.contains(program)) {
+      ContextMenuAction action = new ContextMenuAction();
+      action.setText(mLocalizer.msg( "pluginName" ,"Reminder"));
+      action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));
+
+      /*
         ContextMenuAction action = new ContextMenuAction();
         action.setText(mLocalizer.msg( "contextMenuText.DontRemindMe" ,"Don't remind me"));  
         action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));  
@@ -211,10 +216,31 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
             mReminderList.remove(program);  
           }
         });
-        return new Action[]{action};
+        return new ActionMenu(action);   */
+        final ReminderListItem item = mReminderList.getReminderItem(program);
+        String[] entries = ReminderFrame.REMIND_MSG_ARR;
+        ActionMenu[] actions = new ActionMenu[entries.length];
+        for (int i=0; i<actions.length; i++) {
+          final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
+          ContextMenuAction a = new ContextMenuAction();
+          a.setText(entries[i]);
+          a.setActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+              if (minutes == -1) {
+                mReminderList.remove(program);
+              }
+              else {
+                item.setMinutes(minutes);
+              }
+            }
+          });
+          actions[i] = new ActionMenu(a, minutes == item.getMinutes());
+        }
+
+        return new ActionMenu(action, actions);
     }
     else if (program.isExpired() || program.isOnAir()) {
-      return new Action[]{};
+      return null;
     }
     else {
       ContextMenuAction action = new ContextMenuAction();
@@ -231,7 +257,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
           dlg.dispose();            
         }
       });
-      return new Action[]{action};
+      return new ActionMenu(action);
     }
   }
       
@@ -245,7 +271,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
   
 
-  public Action getButtonAction() {
+  public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         JDialog dlg= new ReminderListDialog(getParentFrame(), mReminderList);
@@ -260,7 +286,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     action.putValue(BIG_ICON, createImageIcon("reminderplugin/TipOfTheDay24.gif"));
     action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
     
-    return action;
+    return new ActionMenu(action);
   }
  
  

@@ -19,11 +19,7 @@ import javax.swing.JOptionPane;
 import util.ui.ExtensionFileFilter;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.Version;
+import devplugin.*;
 
 /**
  * This Plugin exports vCal and iCal Files
@@ -70,7 +66,7 @@ public class CalendarExportPlugin extends Plugin {
      *  (non-Javadoc)
      * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
      */
-    public Action[] getContextMenuActions(final Program program) {
+    public ActionMenu getContextMenuActions(final Program program) {
         AbstractAction action = new AbstractAction() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -81,7 +77,7 @@ public class CalendarExportPlugin extends Plugin {
         action.putValue(Action.NAME, mLocalizer.msg("contextMenuText","Export to Calendar-File"));
         action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("calendarexportplugin/calendar.png", CalendarExportPlugin.class)));
         
-        return new Action[] {action};
+        return new ActionMenu(action);
     }
     
     /*

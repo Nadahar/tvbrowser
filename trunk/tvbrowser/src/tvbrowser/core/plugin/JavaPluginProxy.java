@@ -315,7 +315,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
    */
-  protected Action[] goGetContextMenuActions(Program program) {
+  protected ActionMenu goGetContextMenuActions(Program program) {
     return mPlugin.getContextMenuActions(program);
   }
 
@@ -326,7 +326,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
    */
-  protected Action doGetButtonAction() {
+  protected ActionMenu doGetButtonAction() {
     return mPlugin.getButtonAction();
   }
 

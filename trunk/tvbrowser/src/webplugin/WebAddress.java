@@ -1,28 +1,28 @@
 /*
- * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date$
- *   $Author$
- * $Revision$
- */
+* TV-Browser
+* Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+* CVS information:
+*  $RCSfile$
+*   $Source$
+*     $Date$
+*   $Author$
+* $Revision$
+*/
 package webplugin;
 
 import java.io.IOException;
@@ -38,168 +38,168 @@ import util.ui.ImageUtilities;
  * A Web-Address
  */
 public class WebAddress implements Cloneable {
-    /** Default-Icon */
-    private final static ImageIcon DEFAULTICON = ImageUtilities.createImageIconFromJar("webplugin/Search16.gif", WebAddress.class);
+  /** Default-Icon */
+  private final static ImageIcon DEFAULTICON = ImageUtilities.createImageIconFromJar("webplugin/Search16.gif", WebAddress.class);
 
-    /** URL */
-    private String mUrl;
+  /** URL */
+  private String mUrl;
 
-    /** Icon */
-    private String mIconFile;
+  /** Icon */
+  private String mIconFile;
 
-    /** Name */
-    private String mName;
+  /** Name */
+  private String mName;
 
-    /** Encoding */
-    private String mEncoding;
+  /** Encoding */
+  private String mEncoding;
 
-    /** Entered by User ? */
-    private boolean mUserEntry = false;
+  /** Entered by User ? */
+  private boolean mUserEntry = false;
 
-    /** Active ? */
-    private boolean mActive = true;
+  /** Active ? */
+  private boolean mActive = true;
 
-    /**
-     * Create the Address
-     * 
-     * @param name Name
-     * @param url Url ( {0} as placeholder )
-     * @param iconFile Icon-File
-     * @param encoding Which encoding (UTF-8, ...)
-     * @param userEntry Is this Entry editable?
-     * @param active Is this Entry active?
-     */
-    public WebAddress(String name, String url, String iconFile, String encoding, boolean userEntry, boolean active) {
-        mName = name;
-        mIconFile = iconFile;
-        mUrl = url;
-        mEncoding = encoding;
-        mUserEntry = userEntry;
-        mActive = active;
+  /**
+   * Create the Address
+   *
+   * @param name Name
+   * @param url Url ( {0} as placeholder )
+   * @param iconFile Icon-File
+   * @param encoding Which encoding (UTF-8, ...)
+   * @param userEntry Is this Entry editable?
+   * @param active Is this Entry active?
+   */
+  public WebAddress(String name, String url, String iconFile, String encoding, boolean userEntry, boolean active) {
+    mName = name;
+    mIconFile = iconFile;
+    mUrl = url;
+    mEncoding = encoding;
+    mUserEntry = userEntry;
+    mActive = active;
+  }
+
+  /**
+   * Create a Copy of a WebAddress
+   *
+   * @param address Copy Settings from this WebAddress
+   */
+  public WebAddress(WebAddress address) {
+    mName = address.getName();
+    mIconFile = address.getIconFile();
+    mUrl = address.getUrl();
+    mEncoding = address.getEncoding();
+    mUserEntry = address.isUserEntry();
+    mActive = address.isActive();
+  }
+
+  /**
+   * Create a WebAddress with a Stream
+   * @param in Input-Stream
+   */
+  public WebAddress(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    readData(in);
+  }
+
+  public void setName(String name) {
+    mName = name;
+  }
+
+  public String getName() {
+    return mName;
+  }
+
+  public void setUrl(String url) {
+    mUrl = url;
+  }
+
+  public String getUrl() {
+    return mUrl;
+  }
+
+  public void setIconFile(String iconFile) {
+    mIconFile = iconFile;
+  }
+
+  public String getIconFile() {
+    return mIconFile;
+  }
+
+  public Icon getIcon() {
+
+    if (mIconFile == null || mIconFile.length() == 0) { return DEFAULTICON; }
+
+    try {
+      Icon icon = ImageUtilities.createImageIconFromJar(mIconFile, this.getClass());
+      if ((icon != null) && (icon.getIconWidth() > 0)){
+        return icon;
+      }
+    } catch (Exception e) {
     }
 
-    /**
-     * Create a Copy of a WebAddress
-     * 
-     * @param address Copy Settings from this WebAddress
-     */
-    public WebAddress(WebAddress address) {
-        mName = address.getName();
-        mIconFile = address.getIconFile();
-        mUrl = address.getUrl();
-        mEncoding = address.getEncoding();
-        mUserEntry = address.isUserEntry();
-        mActive = address.isActive();
+    return DEFAULTICON;
+
+  }
+
+  public void setEncoding(String encoding) {
+    mEncoding = encoding;
+  }
+
+  public String getEncoding() {
+    if (mEncoding == null) {
+      mEncoding = "UTF-8";
     }
 
-    /**
-     * Create a WebAddress with a Stream
-     * @param in Input-Stream
-     */
-    public WebAddress(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        readData(in);
-    }
+    return mEncoding;
+  }
 
-    public void setName(String name) {
-        mName = name;
-    }
+  public boolean isActive() {
 
-    public String getName() {
-        return mName;
-    }
+    if ((mUrl == null) || (mUrl.trim().length() == 0)) { return false; }
 
-    public void setUrl(String url) {
-        mUrl = url;
-    }
+    if (mName.trim().length() == 0) { return false; }
 
-    public String getUrl() {
-        return mUrl;
-    }
+    return mActive;
+  }
 
-    public void setIconFile(String iconFile) {
-        mIconFile = iconFile;
-    }
+  public void setActive(boolean active) {
+    mActive = active;
+  }
 
-    public String getIconFile() {
-        return mIconFile;
-    }
+  public boolean isUserEntry() {
+    return mUserEntry;
+  }
 
-    public Icon getIcon() {
+  public void setUserEntry(boolean user) {
+    mUserEntry = user;
+  }
 
-        if (mIconFile == null || mIconFile.length() == 0) { return DEFAULTICON; }
+  public String toString() {
+    return mName;
+  }
 
-        try {
-            Icon icon = ImageUtilities.createImageIconFromJar(mIconFile, this.getClass());
-            if ((icon != null) && (icon.getIconWidth() > 0)){ 
-                return icon; 
-            }
-        } catch (Exception e) {
-        }
+  public Object clone() {
+    return new WebAddress(this);
+  }
 
-        return DEFAULTICON;
+  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    int version = in.readInt();
 
-    }
+    mName = (String) in.readObject();
+    mIconFile = (String) in.readObject();
+    mUrl = (String) in.readObject();
+    mEncoding = (String) in.readObject();
+    mUserEntry = in.readBoolean();
+    mActive = in.readBoolean();
+  }
 
-    public void setEncoding(String encoding) {
-        mEncoding = encoding;
-    }
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1);
 
-    public String getEncoding() {
-        if (mEncoding == null) {
-            mEncoding = "UTF-8";
-        }
-        
-        return mEncoding;
-    }
-
-    public boolean isActive() {
-
-        if ((mUrl == null) || (mUrl.trim().length() == 0)) { return false; }
-
-        if (mName.trim().length() == 0) { return false; }
-
-        return mActive;
-    }
-
-    public void setActive(boolean active) {
-        mActive = active;
-    }
-
-    public boolean isUserEntry() {
-        return mUserEntry;
-    }
-
-    public void setUserEntry(boolean user) {
-        mUserEntry = user;
-    }
-
-    public String toString() {
-        return mName;
-    }
-
-    public Object clone() {
-        return new WebAddress(this);
-    }
-
-    public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        int version = in.readInt();
-        
-        mName = (String) in.readObject();
-        mIconFile = (String) in.readObject();
-        mUrl = (String) in.readObject();
-        mEncoding = (String) in.readObject();
-        mUserEntry = in.readBoolean();
-        mActive = in.readBoolean();
-    }
-    
-    public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(1);
-        
-        out.writeObject(mName);
-        out.writeObject(mIconFile);
-        out.writeObject(mUrl);
-        out.writeObject(mEncoding);
-        out.writeBoolean(mUserEntry);
-        out.writeBoolean(mActive);
-    }
+    out.writeObject(mName);
+    out.writeObject(mIconFile);
+    out.writeObject(mUrl);
+    out.writeObject(mEncoding);
+    out.writeBoolean(mUserEntry);
+    out.writeBoolean(mActive);
+  }
 }

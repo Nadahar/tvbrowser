@@ -10,6 +10,7 @@ import javax.swing.*;
 import devplugin.SettingsTab;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ActionMenu;
 
 public class ProgramInfoSettingsTab implements SettingsTab {
 
@@ -50,8 +51,10 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 			public void actionPerformed(ActionEvent event) {
 			  saveSettings();
         Program program = Plugin.getPluginManager().getExampleProgram();
-        Action[] action = ProgramInfo.getInstance().getContextMenuActions(program);
-        action[0].actionPerformed(event);
+        ActionMenu actionMenu = ProgramInfo.getInstance().getContextMenuActions(program);
+        actionMenu.getAction().actionPerformed(event);
+        //Action[] action = ProgramInfo.getInstance().getContextMenuActions(program);
+        //action[0].actionPerformed(event);
 			}
     });
     

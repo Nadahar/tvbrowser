@@ -63,7 +63,7 @@ public interface PluginProxy extends PluginAccess {
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
    */
-  public Action getButtonAction();
+  public ActionMenu getButtonAction();
 
   /**
    * This method is automatically called, when the TV data update is finished.

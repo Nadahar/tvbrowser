@@ -94,7 +94,7 @@ public class ProgramInfo extends devplugin.Plugin {
     mInstance = this;
   }
 
-  public Action[] getContextMenuActions(final Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("contextMenuText", "Program information"));
     action.setSmallIcon(createImageIcon("programinfo/Information16.gif"));
@@ -104,7 +104,7 @@ public class ProgramInfo extends devplugin.Plugin {
       }
     });
 
-    return new Action[]{action};
+    return new ActionMenu(action);
   }
 
 

@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 
 import tvbrowser.core.plugin.PluginProxy;
 import devplugin.SettingsTab;
+import devplugin.ActionMenu;
 
 public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListener {
  
@@ -122,7 +123,11 @@ public class ConfigPluginSettingsTab implements SettingsTab, SettingsChangeListe
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    Action action = mPlugin.getButtonAction();
+    ActionMenu actionMenu = mPlugin.getButtonAction();
+    Action action = null;
+    if (actionMenu !=null) {
+      action = actionMenu.getAction();
+    }
     Icon icon = null;
     if (action != null) {
       icon = (Icon) action.getValue(Action.SMALL_ICON);
