@@ -54,6 +54,7 @@ public class MicroTvBrowserPlugin extends devplugin.Plugin{
   private static final String PROP_CHANNEL = "channel";
   
   private static final String PROP_CHANNEL_NAME_IN_NOW_LIST = "channelInNow";
+  private static final String PROP_STANDART_DIR = "saveTo";
   
   static util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MicroTvBrowserPlugin.class);
   
@@ -69,6 +70,7 @@ public class MicroTvBrowserPlugin extends devplugin.Plugin{
       exportLevel = Integer.parseInt(settings.getProperty(PROP_EXPORT_LEVEL));
       useIconsInProgList = new Boolean(settings.getProperty(PROP_USE_ICONS_IN_PROG_LIST)).booleanValue();
       channelNameInNowList = new Boolean(settings.getProperty(PROP_CHANNEL_NAME_IN_NOW_LIST)).booleanValue();
+      lastUsedDir = settings.getProperty(PROP_STANDART_DIR,null);
     } catch (Exception E){
     }
   }
@@ -84,6 +86,7 @@ public class MicroTvBrowserPlugin extends devplugin.Plugin{
     for (int i=0;i<channelList.length;i++){
       P.setProperty(PROP_CHANNEL+i,channelList[i]);
     }
+    P.setProperty(PROP_STANDART_DIR,lastUsedDir);
     return P;
   }
   
@@ -107,7 +110,7 @@ public class MicroTvBrowserPlugin extends devplugin.Plugin{
     String name = "MicroTvBrowser";
     String desc = mLocalizer.msg( "Creates MIDlets" ,"Creates MIDlets" );
     String author = "Gilson Laurent";
-    return new devplugin.PluginInfo(name, desc, author, new devplugin.Version(0,81));
+    return new devplugin.PluginInfo(name, desc, author, new devplugin.Version(0,83));
   }
   
   /**

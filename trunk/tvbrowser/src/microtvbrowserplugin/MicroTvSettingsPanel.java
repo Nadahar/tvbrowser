@@ -45,9 +45,9 @@ public class MicroTvSettingsPanel extends javax.swing.JPanel {
     valuesForExport.put(new Integer(2),mLocalizer.msg("add short description, year, actors","add short description, year, actors"));
     valuesForExport.put(new Integer(3),mLocalizer.msg("add long description, orignal title/episode, moderation","add long description, orignal title/episode, moderation"));
     valuesForExport.put(new Integer(4),mLocalizer.msg("everything","everything"));
+    this.radioMicroEdition.setSelected(true);
     this.sliderExportStateChanged(null);
     this.sliderDaysStateChanged(null);
-    this.radioMicroEdition.setSelected(true);
     
   }
   
