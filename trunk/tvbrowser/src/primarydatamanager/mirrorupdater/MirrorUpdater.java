@@ -338,7 +338,7 @@ public class MirrorUpdater {
     if (mChannelGroupArr!=null) {
       for (int i=0;i<mChannelGroupArr.length;i++) {
         data = mDataSource.loadFile(mChannelGroupArr[i]+"_info");
-        mDataTarget.writeFile(mChannelGroupArr[i], data);
+        mDataTarget.writeFile(mChannelGroupArr[i]+"_info", data);
       }
     }
     

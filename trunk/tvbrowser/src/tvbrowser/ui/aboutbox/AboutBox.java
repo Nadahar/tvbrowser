@@ -27,12 +27,14 @@
 package tvbrowser.ui.aboutbox;
 
 import javax.swing.*;
+
+import util.ui.html.*;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
-import java.awt.Dimension;
 
 import tvbrowser.TVBrowser;
 
@@ -48,36 +50,7 @@ public class AboutBox extends JDialog {
   
   
   
-  class InfoEntry extends JPanel {
-    
-    public InfoEntry(String key, String value) {
-      setLayout(new BorderLayout(11,0));
-      JLabel lLabel=new JLabel(key);
-      JLabel rLabel=new JLabel(value,JLabel.RIGHT);
-      lLabel.setFont(AboutBox.boldFont);
-      rLabel.setFont(AboutBox.normalFont);
-      add(lLabel,BorderLayout.WEST);
-      add(rLabel,BorderLayout.EAST);
-    }
-  }
-  
-  
-  
-  class PicturePanel extends JPanel {
-    private Icon image;
-    public PicturePanel(String picName) {
-      image=new ImageIcon(picName);
-    }
-    public void paintComponent(java.awt.Graphics g) {
-      java.awt.Rectangle rect=g.getClipBounds();
-      image.paintIcon(this,g,(rect.width-image.getIconWidth())/2,(rect.height-image.getIconHeight())/2);
-    }
-    
-    public Dimension getPreferredSize() {
-      return new Dimension(image.getIconWidth(),image.getIconHeight());
-    }
-  }
-  
+   
   
   private static Font smallFont=new Font("Dialog", Font.PLAIN, 10);
   private static Font bigFont=new Font("Dialog", Font.PLAIN, 24);
@@ -108,76 +81,102 @@ public class AboutBox extends JDialog {
     btnPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
     contentPane.add(btnPanel,BorderLayout.SOUTH);
     
-    JPanel titlePanel=new JPanel(new BorderLayout());
-    JLabel titleLabel=new JLabel("TV-Browser",JLabel.CENTER);
-    JLabel subTitleLabel=new JLabel("http://tvbrowser.sourceforge.net",JLabel.CENTER);
-    titleLabel.setFont(bigFont);
-    subTitleLabel.setFont(smallFont);
-    titlePanel.add(titleLabel,BorderLayout.NORTH);
-    titlePanel.add(subTitleLabel,BorderLayout.SOUTH);
     
-    contentPane.add(titlePanel,BorderLayout.NORTH);
+    JEditorPane infoEP = new JEditorPane();
+    infoEP.setOpaque(false);
+    infoEP.setEditorKit(new ExtendedHTMLEditorKit());
+    ExtendedHTMLDocument doc = (ExtendedHTMLDocument) infoEP.getDocument();
+    String text = createAboutText(doc);
+    infoEP.setText(text);
+    infoEP.setEditable(false);
     
-    JPanel content=new JPanel(new BorderLayout());
-    Font font;
-    String copyrightText = mLocalizer.msg("copyrightText",
-      "Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider under the"
-      + "GNU General Public License");
+    contentPane.add(infoEP,BorderLayout.CENTER);
+  
+  }
+  
+  private StringBuffer createInfoEntry(StringBuffer buf, String key, String value) {
     
-    copyrightText+="\nThis product includes software developed " +
-                   "by L2FProd.com (http://www.L2FProd.com/).";
-                   
-    JTextArea copyrightArea=new JTextArea(copyrightText);
+    buf.append("<tr><td width=\"35%\">");
+    buf.append("<div id=\"key\">");
     
-    copyrightArea.setFont(smallFont);
-    copyrightArea.setWrapStyleWord(true);
-    copyrightArea.setEditable(false);
-    copyrightArea.setLineWrap(true);
-    copyrightArea.setOpaque(false);
-    copyrightArea.setFocusable(false);
+    buf.append(key);
+    buf.append("</div>");
+    return buf.append("</td><td>").append(value).append("</td></tr>");
     
-    content.add(copyrightArea,BorderLayout.SOUTH);
-    contentPane.add(content,BorderLayout.CENTER);
     
-    JPanel infoPanel=new JPanel();
-    infoPanel.setLayout(new BoxLayout(infoPanel,BoxLayout.Y_AXIS));
+  }
+  
+  private String createAboutText(ExtendedHTMLDocument doc) {
+  
+    StringBuffer buf=new StringBuffer();
+    buf.append("<html>" +
+               "  <head>" +
+               "<style type=\"text/css\" media=\"screen\">" +
+               "<!--" +
+               "#title { font-size:18px; font-family:Dialog; text-align:center; font-weight:bold;}" +
+               "#key { font-size:12px; font-famile:Dialog; font-weight:bold; }" +
+               "" +
+               "" +
+               "" +
+               "#small { font-size:9px; font-family:Dialog; }" +
+               "-->" +
+               "  </head>" +
+               "  <body>" +
+               "    <div id=\"title\">"+mLocalizer.msg("about", "About")+"</div>" +
+               "<p>" +
+               "    <table width=\"100%\"");
+               
+    createInfoEntry(buf, mLocalizer.msg("version", "Version"),
+       TVBrowser.VERSION.toString());
+       
+    createInfoEntry(buf, mLocalizer.msg("platform", "Platform"),
+       System.getProperty("os.name") + " " + System.getProperty("os.version"));
+       
+    createInfoEntry(buf, mLocalizer.msg("system", "System"),
+       System.getProperty("os.arch"));
     
-    JPanel panel2=new JPanel(new BorderLayout());
+    createInfoEntry(buf, mLocalizer.msg("javaVersion", "Java Version"),
+       System.getProperty("java.version"));
     
-    JPanel panel1=new JPanel(new BorderLayout());
-    infoPanel.add(new InfoEntry(mLocalizer.msg("version", "Version"),
-      TVBrowser.VERSION.toString()));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("platform", "Platform"),
-      System.getProperty("os.name") + " " + System.getProperty("os.version")));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("system", "System"),
-      System.getProperty("os.arch")));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("javaVersion", "Java Version"),
-      System.getProperty("java.version")));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("javaVM", "Java VM"),
-      System.getProperty("java.vm.name")));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("javaVendor", "Java vendor"),
-      System.getProperty("java.vendor")));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("javaHome", "Java home"),
-      System.getProperty("java.home")));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("location", "Location"),
-      System.getProperty("user.country") + "," + System.getProperty("user.language")));
+    createInfoEntry(buf, mLocalizer.msg("javaVM", "Java VM"),
+       System.getProperty("java.vm.name"));
     
+    createInfoEntry(buf, mLocalizer.msg("javaVendor", "Java vendor"),
+      System.getProperty("java.vendor"));
+    
+    createInfoEntry(buf, mLocalizer.msg("javaHome", "Java home"),
+      System.getProperty("java.home"));
+    
+    createInfoEntry(buf, mLocalizer.msg("location", "Location"),
+      System.getProperty("user.country") + "," + System.getProperty("user.language"));
+               
     java.util.TimeZone timezone = java.util.TimeZone.getDefault();
     int tzOffset = timezone.getRawOffset() / 1000 / 60 / 60;
     String tzOffsetAsString = mLocalizer.msg("hours", "({0,number,+#;#} hours)",
-      new Integer(tzOffset));
-    infoPanel.add(new InfoEntry(mLocalizer.msg("timezone", "Timezone"),
-      timezone.getDisplayName() + " " + tzOffsetAsString));
+    new Integer(tzOffset));           
+               
+    createInfoEntry(buf, mLocalizer.msg("timezone", "Timezone"),
+       timezone.getDisplayName() + " " + tzOffsetAsString);         
+                
+               
+    buf.append("</p>    </table>");
+    buf.append("<p valign=\"10px\"");
+    buf.append("<div id=\"small\">");
     
-    infoPanel.setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
+    buf.append(mLocalizer.msg("copyrightText",
+          "Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider under the"
+          + "GNU General Public License"));
+          
+    buf.append("</div>");
     
-    panel1.add(infoPanel,BorderLayout.NORTH);
+    buf.append("<div id=\"small\">");
+    buf.append("This product includes software developed " +
+                       "by L2FProd.com (http://www.L2FProd.com/).");
     
-    panel2.add(new PicturePanel("imgs/icon.gif"),BorderLayout.WEST);
-    panel2.add(panel1,BorderLayout.EAST);
-    panel2.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
-    
-    content.add(panel2,BorderLayout.CENTER);
+    buf.append("</div>");
+    buf.append("</p>");
+    buf.append("  </body>" +
+               "</html>");
+    return buf.toString();
   }
-  
 }

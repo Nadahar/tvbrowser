@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package programinfo;
+package util.ui.html;
 
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
