@@ -42,7 +42,7 @@
 
   <property name="doc.header" value="${programname} ${tvbrowser.version} API"/>
   <property name="doc.title" value="API documentation for ${programname} ${tvbrowser.version}"/>
-  <property name="doc.bottom" value="${programname} ${tvbrowser.version}, Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)"/>
+  <property name="doc.bottom" value="${programname} ${tvbrowser.version}, Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)"/>
 
   <property name="lib.dir" value="lib"/>
   <property name="src.dir" value="src"/>
@@ -55,6 +55,7 @@
   <property name="win.dir" value="win"/>
   <property name="tvbrowser.runtime.dir" value="${runtime.dir}/tvbrowser"/>
   <property name="tvbrowser-win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
+  <property name="tvbrowser-mac.runtime.dir" value="${runtime.dir}/tvbrowser_mac"/>
   <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
   <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
   <property name="installer.dir" value="installer"/>
@@ -100,6 +101,7 @@
     <echo message="  runtime-win       Prepares the runtime Windows runtime."/>
     <echo message="  runtime-tools     Creates the TV-Browser-Tools."/>
     <echo message="  runtime-tvdatakit Creates the runtime for the TV data starter kit."/>
+    <echo message="  macos             Creates the Mac OS X stuff" />
     <echo message="  run               Runs the project."/>
     <echo message="  run-win           Runs the project using the Windows runtime."/>
     <echo message="  installer         Creates a Windows installer for the project."/>
@@ -551,6 +553,37 @@
         <exclude name="**/CVS/**"/>
       </zipfileset>
     </zip>
+  </target>
+
+
+
+  <!-- Creates the Mac OS X stuff
+  -->
+  <taskdef name="jarbundler" 
+           classpath="macosx/jarbundler-1.2.jar"
+           classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
+
+  <target name="macosx" depends="runtime">
+    <mkdir dir="${tvbrowser-mac.runtime.dir}" />
+      <jarbundler dir="${tvbrowser-mac.runtime.dir}"
+          verbose="false"
+          name="TV-Browser"
+          mainclass="tvbrowser.TVBrowser" 
+          version="${tvbrowser.version}"
+          infostring="TV-Browser ${tvbrowser.version}"
+          aboutmenuname="TV-Browser"
+          jvmversion="1.4+"
+	       bundleid="org.tvbrowser"
+	       smalltabs="true"
+          antialiasedgraphics="true"
+          antialiasedtext="true"
+          liveresize="true"
+          growboxintrudes="false"
+          screenmenu="true"
+          workingdirectory="/Library/TV-Browser"
+          jars="${tvbrowser.runtime.dir}/tvbrowser.jar">
+     </jarbundler>
+
   </target>
 
 
