@@ -19,12 +19,10 @@ Changelog TVBrowser
     - time blocks
     - time of day
 - Better settings management
-<<<<<<< ChangeLog.txt
 - Automatic tv listings update on start up
 - new version of PrintPlugin added
 - new filter components: channel, time
 - hide empty columns if a filter is used
-=======
 - Searching allowes now to search in all program fields (except for binaries)
 - Improved Error handling:
     - Nicer error dialog that has a button for copying all nessesary information
@@ -38,7 +36,6 @@ Changelog TVBrowser
 - Added 2 new Filters:
     - Program-Length
     - Additional Infomations (e.g. Stereo)
->>>>>>> 1.45
 
 0.9.7.3:
 - added downnload status info
