@@ -163,16 +163,19 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     setLayout(new BorderLayout());
     final ScrollableTablePanel tablePanel=this;
     part=new ProgramDayTime[NUM_OF_DAYTIMES];
-    contextMenu=new ContextMenu(parent);
-    Object[] plugins=PluginManager.getInstalledPlugins();
-    for (int i=0;i<plugins.length;i++) {
-      contextMenu.addPlugin((devplugin.Plugin)plugins[i]);
-    }
+    
+    
+	contextMenu=DataService.getInstance().createPluginContextMenu(parent);
+   		
 
     timer=new javax.swing.Timer(10000,this);
     channelChooser=new ChannelChooser(this);
     channelPanel=new ChannelPanel();
   }
+  
+  public void setPluginContextMenu(ContextMenu menu) {
+	 contextMenu=menu;
+   }
 
   /**
    * Changes the dayprogram to prog and repaints the program table.

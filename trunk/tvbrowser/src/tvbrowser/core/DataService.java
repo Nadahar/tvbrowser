@@ -484,7 +484,14 @@ public class DataService implements devplugin.PluginManager {
     return null;
   }
 
-  
+  public tvbrowser.ui.ContextMenu createPluginContextMenu(java.awt.Frame parent) {
+	tvbrowser.ui.ContextMenu menu=new tvbrowser.ui.ContextMenu(parent);
+	Object[] plugins=PluginManager.getInstalledPlugins();
+		for (int i=0;i<plugins.length;i++) {
+		  menu.addPlugin((devplugin.Plugin)plugins[i]);
+		}
+	return menu;
+  }
   
   /**
    * Imports previously exported tv data.

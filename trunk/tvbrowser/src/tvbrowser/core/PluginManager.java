@@ -143,6 +143,11 @@ public class PluginManager {
 		loadPluginData(p);
 		loadPluginSettings(p);		
 	}
+	
+	private static void finalizePlugin(Plugin p) {
+			storePluginData(p);
+			storePluginSettings(p);
+		}
 
   /**
    * Kind of constructor
@@ -162,8 +167,8 @@ public class PluginManager {
   public static void finalizeInstalledPlugins() {
     Object[] p=getInstalledPlugins();
     for (int i=0;i<p.length;i++) {
-      storePluginData((Plugin)p[i]);
-      storePluginSettings((Plugin)p[i]);
+     // storePluginData((Plugin)p[i]);
+     // storePluginSettings((Plugin)p[i]);
     }
   }
 

@@ -52,7 +52,7 @@ import util.ui.*;
  * TV-Browser
  * @author Martin Oberhauser
  */
-public class TVBrowser extends JFrame implements ActionListener, DateListener, MainApplication {
+public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(TVBrowser.class.getName());
@@ -76,7 +76,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   public static final String VERSION="0.9.2";
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION;
 
-  
+  private JMenu pluginsMenu;
 
   /**
    * Entry point of the application
@@ -179,7 +179,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
     JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
-    JMenu pluginsMenu = getPluginMenu();
+	// JMenu pluginsMenu = //getPluginMenu();
+   pluginsMenu=new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+   updatePluginMenu(pluginsMenu);
 
     settingsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."));
     JMenuItem quitMenuItem = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
@@ -336,39 +338,44 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
   
   
-  private JMenu getPluginMenu() {
-    final JMenu pluginMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+	//private JMenu getPluginMenu() {
+  private void updatePluginMenu(JMenu theMenu) {
+	//final JMenu pluginMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+	theMenu.removeAll();
+System.out.println("creating menu: "+theMenu.getItemCount()+" items");
 
-    Object[] plugins = PluginManager.getInstalledPlugins();
-    JMenuItem item;
-    HashMap map = new HashMap();
-    for (int i = 0;i<plugins.length;i++) {
-      final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
-      plugin.setParent(this);
-      String btnTxt = plugin.getButtonText();
-      if (btnTxt != null) {
-        int k = 1;
-        String txt = btnTxt;
-        while (map.get(txt) != null) {
-          txt = btnTxt+"("+k+")";
-          k++;
-        }
-        map.put(txt,btnTxt);
+	Object[] plugins = PluginManager.getInstalledPlugins();
+	JMenuItem item;
+	HashMap map = new HashMap();
+	for (int i = 0;i<plugins.length;i++) {
+	  final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
+	  plugin.setParent(this);
+	  String btnTxt = plugin.getButtonText();
+	  if (btnTxt != null) {
+		int k = 1;
+		String txt = btnTxt;
+		while (map.get(txt) != null) {
+		  txt = btnTxt+"("+k+")";
+		  k++;
+		}
+		map.put(txt,btnTxt);
 
-        item = new JMenuItem(btnTxt);
-        pluginMenu.add(item);
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent event) {
-            mLog.info("Plugin menu item pressed");
-            plugin.execute();
-          }
-        }
-        );
-      }
-    }
+		item = new JMenuItem(btnTxt);
+		theMenu.add(item);
+		System.out.println("adding "+btnTxt);
+		item.addActionListener(new ActionListener() {
+		  public void actionPerformed(ActionEvent event) {
+			mLog.info("Plugin menu item pressed");
+			plugin.execute();
+		  }
+		}
+		);
+	  }
+	}
 
-    return pluginMenu;
+//	  return pluginMenu;
   }
+
 
   
   
@@ -592,12 +599,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   }
 
 
-
+/*
   public void updateProgramTableSkin() {
     programTablePanel.updateBackground();
   }
 
-  
+  */
   
   private void importTvData() {
     JFileChooser chooser = new JFileChooser();
@@ -683,18 +690,34 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
   
   
-  /**
+   /**
    * Shows the settings dialog.
    */
   private void showSettingsDialog() {
     SettingsDlg dlg = new SettingsDlg(this);
     dlg.pack();
     UiUtilities.centerAndShow(dlg);
-    updateLookAndFeel();
-    updateApplicationSkin();
-    this.updateProgramTableSkin();
+    if (Settings.settingHasChanged(new String[]{"lookandfeel"})) {
+		System.out.println("CHANGED: lookandfeel");
+		updateLookAndFeel();
+    }
+    if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
+		System.out.println("CHANGED: applicationskin, useapplicationskin");
+		updateApplicationSkin();    	
+    }
+    if (Settings.settingHasChanged(new String[]{"tablebgmode","tablebackground"})) {
+		System.out.println("CHANGED: tablebgmode, tablebackground");
+		programTablePanel.updateBackground();
+    }
+    if (Settings.settingHasChanged(new String[]{"plugins"})) {
+    	System.out.println("CHANGED: plugins");
+    	programTablePanel.setPluginContextMenu(DataService.getInstance().createPluginContextMenu(this));
+   		updatePluginMenu(pluginsMenu);
+    }
+    //if (Settings.settingHasChanged(new ))
+    
+	
   }
-  
   /**
    * 
    * Shows the about box
