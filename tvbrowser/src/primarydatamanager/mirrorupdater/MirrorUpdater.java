@@ -392,7 +392,7 @@ public class MirrorUpdater {
     buffer.append("</head><body>");
     buffer.append("<p>This is a mirror of <code>");
     buffer.append(mPrimaryServerUrl + "</code> for the ");
-    buffer.append("<a href=\"http://tvbrowser.sourceforge.net\">TV-Browser project</a>.</p>");
+    buffer.append("<a href=\"http://www.tvbrowser.org\">TV-Browser project</a>.</p>");
     
     buffer.append("<p><b>Warning:</b> The data provided here may only be used ");
     buffer.append("by the TV-Browser project. Any other use is illegal!</p>");

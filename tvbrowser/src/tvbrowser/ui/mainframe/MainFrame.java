@@ -688,8 +688,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         public void run() {
           try {
             java.net.URL url=null;
-            //url=new java.io.File("plugins.txt").toURL();
-            url=new java.net.URL("http://tvbrowser.sourceforge.net/plugins/plugins2.txt");    
+            url=new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");    
             SoftwareUpdater softwareUpdater=null;
             softwareUpdater=new SoftwareUpdater(url);
             mSoftwareUpdateItems=softwareUpdater.getAvailableSoftwareUpdateItems();

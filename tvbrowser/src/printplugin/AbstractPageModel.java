@@ -51,7 +51,7 @@ public abstract class AbstractPageModel implements PageModel {
    }
 
    public String getFooter() {
-     return "Copyright (c) by TV-Browser - http://tvbrowser.sourceforge.net";
+     return "Copyright (c) by TV-Browser - http://www.tvbrowser.org";
    }
   
   

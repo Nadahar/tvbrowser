@@ -38,7 +38,7 @@ public class TvbrowserSoftwareUpdateItem extends AbstractSoftwareUpdateItem {
 	
 	public boolean download() throws TvBrowserException {
     try {
-      BrowserLauncher.openURL("http://tvbrowser.sourceforge.net");    
+      BrowserLauncher.openURL("http://www.tvbrowser.org");    
     }catch (Exception exc) {
       throw new TvBrowserException(BrowserLauncher.class, "error.1",
               "Could not open webbrowser", exc);

@@ -43,7 +43,7 @@ public class PropertiesConfiguration implements Configuration {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(PropertiesConfiguration.class.getName());
     
-  private static final String PRIMARY_SERVER_URL = "http://tvbrowser.dyndns.tv";
+  private static final String PRIMARY_SERVER_URL = "http://www.tvbrowser.org";
   
   private DataSource mDataSource;
   private DataTarget mDataTarget;

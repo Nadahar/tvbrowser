@@ -79,12 +79,12 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private Channel[] mChannelsTempArr;
 
   private static final String[][] DEFAULT_CHANNEL_GROUP_MIRRORS = new String[][] {
-    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
-    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
-    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
-    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
-    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
-    new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},   
+    new String[] {"http://www.tvbrowser.org/mirrorlists"},
+    new String[] {"http://www.tvbrowser.org/mirrorlists"},
+    new String[] {"http://www.tvbrowser.org/mirrorlists"},
+    new String[] {"http://www.tvbrowser.org/mirrorlists"},
+    new String[] {"http://www.tvbrowser.org/mirrorlists"},
+    new String[] {"http://www.tvbrowser.org/mirrorlists"},   
   };
   
   private static final String[] DEFAULT_CHANNEL_GROUP_NAMES = new String[] {
