@@ -667,7 +667,7 @@ public class Settings {
    *  Returns the tvdata lifespan in days
    * 
    **/
-  
+  /*
   public static int getTVDataLifespan() {
   	String lifespan=settings.getProperty("tvdatalifespan");
 	int result;
@@ -682,7 +682,8 @@ public class Settings {
   public static void setTVDataLifespan(int lifespan) {
 	settings.setProperty("tvdatalifespan",""+lifespan);
   }
-  
+  */
+  /*
   public static boolean getStartupInOnlineMode() {
   	return "yes".equals(settings.getProperty("startupinonlinemode"));
   }
@@ -695,7 +696,7 @@ public class Settings {
 		settings.setProperty("startupinonlinemode","no");
   	}
   }
-  
+  */
   public static int getAutomaticDownload() {
     String autoDL=settings.getProperty("autodownload");
     if ("startup".equals(autoDL)) {

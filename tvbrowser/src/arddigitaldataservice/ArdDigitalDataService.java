@@ -60,9 +60,9 @@ import java.util.regex.*;
       TimeZone zone=TimeZone.getTimeZone("GMT+1"); 
       
       return new Channel[] {
-        new Channel(this,"Eins MuXx","muxx",zone),
-        new Channel(this,"Eins Extra","extra",zone),
-        new Channel(this,"Eins Festival","festival",zone)
+        new Channel(this,"Eins MuXx","muxx",zone,"de",null),
+        new Channel(this,"Eins Extra","extra",zone,"de",null),
+        new Channel(this,"Eins Festival","festival",zone,"de",null)
       };      
     }
 

@@ -154,7 +154,7 @@ public class PrimaryDataManagerTest extends TestCase {
 
     public Channel[] getAvailableChannels() {
       return new Channel[] {
-        new Channel(null, "Test", "test", TimeZone.getTimeZone("MET"), "de")
+        new Channel(null, "Test", "test", TimeZone.getTimeZone("MET"), "de",null)
       };
     }
 

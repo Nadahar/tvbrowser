@@ -160,7 +160,7 @@ public class TVBrowser {
     
     mLog.info("Deleting expired tv data...");
 
-    DataService.deleteExpiredFiles(Settings.getTVDataLifespan());
+    DataService.deleteExpiredFiles(1);
     
     
     mLog.info("Loading filters...");
