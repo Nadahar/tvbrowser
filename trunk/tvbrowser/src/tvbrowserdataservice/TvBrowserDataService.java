@@ -226,7 +226,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
           Iterator it=group.getChannels();
           while (it.hasNext()) {
             Channel ch=(Channel)it.next();
-            addDownloadJob(dataBase, group.getMirror(), date, level, ch.getId(),
+            addDownloadJob(dataBase, group.getMirror(), date, level, ch,
                 ch.getCountry(), receiveDH, updateDH, group.getSummary());
             }
           }
@@ -289,20 +289,20 @@ public class TvBrowserDataService extends AbstractTvDataService {
   }
     
   private void addDownloadJob(TvDataUpdateManager dataBase, Mirror mirror, Date date,
-          String level, String channelName, String country,
+          String level, Channel channel, String country,
           DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH,
           SummaryFile summary)
           throws TvBrowserException
   {
   // NOTE: summary is null when getting failed
   String completeFileName = DayProgramFile.getProgramFileName(date,
-            country, channelName, level);
+            country, channel.getId(), level);
   File completeFile = new File(mDataDir, completeFileName);
       
   int levelIdx = DayProgramFile.getLevelIndexForId(level);
     
   // Check whether we already have data for this day
-  if (completeFile.exists()) {
+  if (dataBase.isDayProgramAvailable(date, channel)) {
     // We have data -> Check whether the mirror has an update
               
     // Get the version of the file
@@ -321,14 +321,14 @@ public class TvBrowserDataService extends AbstractTvDataService {
       boolean needsUpdate = true;
       if (summary != null) {
         int mirrorVersion = summary.getDayProgramVersion(date, country,
-                channelName, levelIdx);
+                channel.getId(), levelIdx);
         needsUpdate = (mirrorVersion > localVersion);
       }
 
       if (needsUpdate) {
         // We need an update -> Add an update job
         String updateFileName = DayProgramFile.getProgramFileName(date,
-                country, channelName, level, localVersion);
+                country, channel.getId(), level, localVersion);
         mDownloadManager.addDownloadJob(mirror.getUrl(),updateFileName, updateDH);
       }
     } else {
@@ -336,7 +336,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
       boolean needsUpdate = true;
       if (summary != null) {
         int mirrorVersion = summary.getDayProgramVersion(date, country,
-                channelName, levelIdx);
+                channel.getId(), levelIdx);
         needsUpdate = (mirrorVersion != -1);
         
       }
