@@ -8,19 +8,21 @@ Diese Anleitung bezieht sich auf MS-Windows-Systeme. Auf anderen Systemen laeuft
 1. Entpacken:
 -------------
 ZIP-File mit z.B. WinzIP in das gewuenschte Verzeichnis entpacken (z.B. c:\Programme).
+Im Mehrbenutzerbetrieb muss jeder Benutzer Schreib(!)-rechte auf das Verzeichnis "tvdata" haben. In dieses Verzeichnis werden die TV-Daten gespeichert und sollen moeglichst mit anderen Benutzern auf dem selben System geteilt werden. In den Einstellungen kann hierfuer auch ein anderes Verzeichnis angegeben werden.
 
 2. Java installieren:
 ---------------------
 TV-Browser benoetigt Java JRE ab Version 1.4.
-Bei Unsicherheit, ob diese (oder eine höhere) Version installiert ist, einfach "java -version" (ohne Anfuehrungszeichen) eingeben.
-Falls eine Fehlermeldung oder eine niedrigere Version als 1.4 ausgegeben wird, muß nun Java installiert werden.
-Die aktuelle Version kann hier gratis heruntergeladen werden: http://java.sun.com/getjava/
+Bei Unsicherheit, ob diese (oder eine hoehere) Version installiert ist, einfach "java -version" (ohne Anfuehrungszeichen) eingeben.
+Falls eine Fehlermeldung oder eine niedrigere Version als 1.4 ausgegeben wird, muss nun Java installiert werden.
+Die aktuelle Version kann hier gratis heruntergeladen werden: http://www.java.com
 
 3. TV-Browser starten:
 ----------------------
 Wenn Java ordnungsgemaess installiert ist, muss nur die Datei "tvbrowser.jar" doppelgeklickt werden.
 Alternativ kann TV-Browser auch von der Konsole gestartet werden:
 "java -jar tvbrowser.jar"
+Wichtig: vorher in das Installationsverzeichnis wechseln. Ein Aufruf der Form "java -jar /usr/local/tvbrowser/tvbrowser.jar" funktioniert nicht!
 
 
 4. Kommandozeilen-Optionen:
@@ -34,7 +36,7 @@ Viel Spass!
 
 
 Bei Problemen hilft die FAQ-Seite: http://www.tvbrowser.org/faq.html
-oder das Hilfe-Forum: http://www.tvbrowser.org/forum.html
+oder das Hilfe-Forum: http://forum.tvbrowser.org
 
 Aktuelles rund um TV-Browser ist auf der TV-Browser-Website zu finden: http://www.tvbrowser.org
 
