@@ -216,9 +216,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     int mode;
     if (Settings.useApplicationSkin()) {
-      mode = Settings.WALLPAPER;
+      mode = SkinPanel.WALLPAPER;
     }else {
-      mode = Settings.NONE;
+      mode = SkinPanel.NONE;
     }
 
 
@@ -630,9 +630,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   public void updateApplicationSkin() {
     int mode;
     if (Settings.useApplicationSkin()) {
-      mode = Settings.WALLPAPER;
+      mode = SkinPanel.WALLPAPER;
     }else {
-      mode = Settings.NONE;
+      mode = SkinPanel.NONE;
     }
 
     skinPanel.update(Settings.getApplicationSkin(),mode);

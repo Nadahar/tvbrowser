@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,12 +23,11 @@ package tvbrowser.ui.splashscreen;
 import javax.swing.JFrame;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.Graphics;
 import java.awt.Dimension;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
+import tvbrowser.ui.SkinPanel;
 
 public class SplashScreen extends JFrame {
 
@@ -45,12 +44,14 @@ public class SplashScreen extends JFrame {
     
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
+    SkinPanel content=new SkinPanel(imgName,SkinPanel.SINGLE);
+    
+    contentPane.add(content,BorderLayout.CENTER);
     msgLabel = new JLabel(mLocalizer.msg("loading", "Loading..."));
     msgLabel.setHorizontalAlignment(JLabel.CENTER);
-    contentPane.add(msgLabel,BorderLayout.SOUTH);
+    contentPane.add(msgLabel,BorderLayout.CENTER);
     
-    image=new ImageIcon(imgName).getImage();
-    this.setUndecorated(true);
+     this.setUndecorated(true);
     
     this.setSize(width,height);
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -58,10 +59,6 @@ public class SplashScreen extends JFrame {
     this.setBounds((screenSize.width-width)/2,(screenSize.height-height)/2,width,height);
     
     
-  }
-  
-  public void paint(Graphics g) {
-    g.drawImage(image,0,0,null);
   }
   
   public void setMessage(String msg) {

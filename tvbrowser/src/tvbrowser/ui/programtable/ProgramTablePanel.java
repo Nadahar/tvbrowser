@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -199,6 +199,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     content=new JPanel(new BorderLayout());
 
     centerPanel=new SkinPanel(Settings.getTableSkin(),Settings.getTableBGMode());
+    centerPanel.setColDiff(Settings.getColumnWidth());
 
     centerPanel.setLayout(new BorderLayout());
     centerPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));

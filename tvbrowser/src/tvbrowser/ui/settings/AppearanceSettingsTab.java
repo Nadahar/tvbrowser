@@ -32,6 +32,7 @@ import java.awt.event.*;
 import java.io.*;
 
 import tvbrowser.core.*;
+import tvbrowser.ui.SkinPanel;
 
 import util.exc.*;
 
@@ -148,11 +149,11 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     tablePanelBtnGroup.add(columnsRadio);
 
     int mode=Settings.getTableBGMode();
-    if (mode==Settings.NONE) {
+    if (mode==SkinPanel.NONE) {
       blankRadio.setSelected(true);
-    }else if (mode==Settings.WALLPAPER) {
+    }else if (mode==SkinPanel.WALLPAPER) {
       wallpaperRadio.setSelected(true);
-    }else if (mode==Settings.COLUMNS) {
+    }else if (mode==SkinPanel.COLUMNS) {
       columnsRadio.setSelected(true);
     }
 
@@ -307,11 +308,11 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
 
     Settings.setTableSkin(this.skinTableBGTextField.getText());
     if (wallpaperRadio.isSelected()) {
-      Settings.setTableBGMode(Settings.WALLPAPER);
+      Settings.setTableBGMode(SkinPanel.WALLPAPER);
     }else if (columnsRadio.isSelected()) {
-      Settings.setTableBGMode(Settings.COLUMNS);
+      Settings.setTableBGMode(SkinPanel.COLUMNS);
     }else {
-      Settings.setTableBGMode(Settings.NONE);
+      Settings.setTableBGMode(SkinPanel.NONE);
     }
 
     Settings.setTimeBtnVisible(mTimeCheck.isSelected());
