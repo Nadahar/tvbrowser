@@ -60,7 +60,7 @@ public class PrimaryDataManagerTest extends TestCase {
     testDir.mkdir();
     
     PrimaryDataManager manager = new PrimaryDataManager(new File("test"));
-    manager.setDataServiceArr(new PrimaryDataService[] { new TestPDS() });
+    manager.setGroupName("test");
     
     // Create the prepared data
     prepDir.mkdir();

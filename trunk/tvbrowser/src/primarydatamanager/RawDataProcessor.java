@@ -31,6 +31,7 @@ import java.util.HashSet;
 
 import tvbrowserdataservice.file.*;
 import util.io.IOUtilities;
+import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
 
@@ -68,7 +69,7 @@ public class RawDataProcessor {
     mDeadlineDay = new Date().addDays(-2);
   }
 
-
+  
   public void forceCompleteUpdateFor(String channel) {
     if (mForceCompleteUpdateChannelSet == null) {
       mForceCompleteUpdateChannelSet = new HashSet();
@@ -83,7 +84,7 @@ public class RawDataProcessor {
   }
 
 
-  public void processRawDataDir(File rawDir, File preparedDir, File workDir)
+  public void processRawDataDir(File rawDir, File preparedDir, File workDir, ChannelList channelList)
     throws PreparationException
   {
     if (! rawDir.exists()) {
@@ -113,6 +114,12 @@ public class RawDataProcessor {
 
           int channelEnd = fileName.indexOf('_', countryEnd + 1);
           channel = fileName.substring(countryEnd + 1, channelEnd);
+          
+          // if the file does not belong to our group, we ignore it
+          if (!RawDataProcessor.channelBelongsToGroup(channelList, channel, country)) {
+            continue;   
+          }
+          
         }
         catch (Exception exc) {
           throw new PreparationException("Raw file name has wrong pattern: "
@@ -148,6 +155,17 @@ public class RawDataProcessor {
     }
 
   }
+  
+  public static boolean channelBelongsToGroup(ChannelList list, String channelId, String country) {
+
+      for (int i=0; i<list.getChannelCount(); i++) {
+        Channel ch = list.getChannelAt(i);
+        if (ch.getId().equals(channelId) && ch.getCountry().equals(country)) {
+          return true;  
+        }
+      }
+        return false;
+    }
 
 
   private void processRawFile(DayProgramFile rawProg, Date date,

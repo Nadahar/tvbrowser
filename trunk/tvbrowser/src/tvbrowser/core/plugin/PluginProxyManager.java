@@ -745,9 +745,12 @@ public class PluginProxyManager {
    */
   private PluginProxy getPluginForId(String pluginId, int state) {
     synchronized(mPluginList) {
+      /*if (pluginId == null) {
+        return null;
+      }*/
       for (int i = 0; i < mPluginList.size(); i++) {
         PluginListItem item = (PluginListItem) mPluginList.get(i);
-        if (pluginId.equals(item.getPlugin().getId())) {
+        if (item != null && pluginId.equals(item.getPlugin().getId())) {
           if ((state == -1) || (item.getState() == state)) {
             return item.getPlugin();
           } else {

@@ -52,10 +52,10 @@ public class Channel {
 
   /** FileName for the Icon */
   private String mIconFileName;
-  private ImageIcon mIcon;
+  private Icon mIcon;
 
   public Channel(TvDataService dataService, String name, String id,
-    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group)
+    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon)
   {
     if (country.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
@@ -72,6 +72,11 @@ public class Channel {
     mWebpage=webpage;
     mDayLightSavingTimeCorrection=0;
     mGroup=group;
+    mIcon=icon;
+  }
+  
+  public Channel(TvDataService dataService, String name, String id, TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group) {
+     this(dataService,name,id,timeZone,country,copyrightNotice,webpage,group,null);  
   }
   
   public Channel(TvDataService dataService, String name, String id,
@@ -232,6 +237,9 @@ public class Channel {
     return mDataService;
   }
 
+  public void setIcon(Icon icon) {
+    // TODO: implement me!
+  }
 
 
   public String toString() {
