@@ -886,7 +886,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     } else {
       gauge = null;
       form = new Form("MicroTvBrowser");
-      form.append("Version 0.14\n");
+      form.append("Version 0.80\n");
       form.append("www.tvBrowser.org\n");
       form.append("pumpkin@gmx.de\n");
       
