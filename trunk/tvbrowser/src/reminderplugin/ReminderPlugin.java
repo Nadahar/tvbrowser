@@ -236,7 +236,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
         return new ActionMenu(action, actions);
     }
-    else if (program.isExpired() || program.isOnAir()) {
+    else if ((program.isExpired() || program.isOnAir()) && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {
       return null;
     }
     else {
