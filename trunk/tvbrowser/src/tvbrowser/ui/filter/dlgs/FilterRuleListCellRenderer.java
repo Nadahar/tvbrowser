@@ -34,15 +34,18 @@ import tvbrowser.ui.filter.filters.*;
 
 public class FilterRuleListCellRenderer extends DefaultListCellRenderer {
     
+    private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(FilterRuleListCellRenderer.class);
+  
     public Component getListCellRendererComponent(JList list, Object value,
        int index, boolean isSelected, boolean cellHasFocus)
      {
        JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
          index, isSelected, cellHasFocus);
 
-        if (value instanceof FilterRule) {
-        FilterRule rule=(FilterRule)value;
-            label.setText("rule: <"+rule.getName()+"> Description: "+rule.getDescription());
+        if (value instanceof FilterComponent) {
+          FilterComponent rule=(FilterComponent)value;
+            label.setText(mLocalizer.msg("componentString", "Name: <{0}> Description: {1}", rule.getName(), rule.getDescription()));
        }
        
        return label;

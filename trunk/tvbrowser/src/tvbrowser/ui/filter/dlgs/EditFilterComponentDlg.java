@@ -36,32 +36,37 @@ import java.awt.event.*;
 import tvbrowser.ui.filter.filters.*;
 import util.ui.*;
 
-public class FilterRuleDlg extends JDialog implements ActionListener, DocumentListener {
+public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener {
     
-    private FilterRule mRule;
+    private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(EditFilterComponentDlg.class);
+  
+    private FilterComponent mComp;
     private JComboBox mRuleList;
     private JPanel mCenterPanel, mRulePanel=null, mContentPane;
     private JButton mOkBtn, mCancelBtn;
     private JTextField mDescTF, mNameTF;
     
-    public FilterRuleDlg(JFrame parent, FilterRule rule) {
+    public EditFilterComponentDlg(JFrame parent, FilterComponent comp) {
         super(parent,true);
-        mRule=rule;
-        /*if (mRule==null) {       
-        }*/
+        mComp=comp;
+        
         mContentPane=(JPanel)getContentPane();
         mContentPane.setLayout(new BorderLayout(7,7));
         mContentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        setTitle("Edit filter rule");
+        setTitle(mLocalizer.msg("title", "Edit filter component"));
             
         JPanel northPanel=new JPanel();
         northPanel.setLayout(new BoxLayout(northPanel,BoxLayout.Y_AXIS));    
             
         JPanel namePanel=new JPanel(new BorderLayout());
+        namePanel.setBorder(BorderFactory.createEmptyBorder(0,0,7,0));
         JPanel descPanel=new JPanel(new BorderLayout());
+        descPanel.setBorder(BorderFactory.createEmptyBorder(0,0,7,0));
+        
         JPanel typePanel=new JPanel(new BorderLayout());
         
-        namePanel.add(new JLabel("Rule name:"),BorderLayout.WEST);
+        namePanel.add(new JLabel(mLocalizer.msg("componentName", "Component name:")),BorderLayout.WEST);
         mNameTF=new JTextField(20);
         //mNameTF.addActionListener(this);
         
@@ -69,15 +74,15 @@ public class FilterRuleDlg extends JDialog implements ActionListener, DocumentLi
         
         namePanel.add(mNameTF,BorderLayout.EAST);
         mDescTF=new JTextField(20);
-        descPanel.add(new JLabel("Description:"),BorderLayout.WEST);
+        descPanel.add(new JLabel(mLocalizer.msg("componentDescription", "Description:")),BorderLayout.WEST);
         descPanel.add(mDescTF,BorderLayout.EAST);
-        typePanel.add(new JLabel("Type:"),BorderLayout.WEST);
+        typePanel.add(new JLabel(mLocalizer.msg("componentType", "Type:")),BorderLayout.WEST);
         
         mRuleList=new JComboBox();
         mRuleList.addActionListener(this);
-        mRuleList.addItem("must choose one");
-        mRuleList.addItem(new KeywordFilterRule("no name","no desc"));
-        mRuleList.addItem(new PluginFilterRule("no name","no desc"));
+        mRuleList.addItem(mLocalizer.msg("hint", "must choose one"));
+        mRuleList.addItem(new KeywordFilterComponent(mLocalizer.msg("keywordName", "no name"),mLocalizer.msg("keywordDescription", "no desc")));
+        mRuleList.addItem(new PluginFilterComponent(mLocalizer.msg("pluginName", "no name"), mLocalizer.msg("pluginDescription", "no desc")));
            
         typePanel.add(mRuleList,BorderLayout.EAST);
         
@@ -88,46 +93,50 @@ public class FilterRuleDlg extends JDialog implements ActionListener, DocumentLi
         
         JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
-        mOkBtn=new JButton("OK");
+        mOkBtn=new JButton(mLocalizer.msg("okButton", "OK"));
         mOkBtn.addActionListener(this);
         buttonPn.add(mOkBtn);
         getRootPane().setDefaultButton(mOkBtn);
 
-        mCancelBtn=new JButton("Cancel");
+        mCancelBtn=new JButton(mLocalizer.msg("cancelButton", "Cancel"));
         mCancelBtn.addActionListener(this);
         buttonPn.add(mCancelBtn);
         
        
+        JPanel panel=new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("componentSettings", "Component settings:")));
+       
         mCenterPanel=new JPanel(new BorderLayout());
+        panel.add(mCenterPanel);
         
         mContentPane.add(northPanel,BorderLayout.NORTH);
         mContentPane.add(buttonPn,BorderLayout.SOUTH);
-        mContentPane.add(mCenterPanel,BorderLayout.CENTER);
+        mContentPane.add(panel,BorderLayout.CENTER);
            
-        if (mRule!=null) {
-            mNameTF.setText(mRule.getName());
-            mDescTF.setText(mRule.getDescription());
+        if (mComp!=null) {
+            mNameTF.setText(mComp.getName());
+            mDescTF.setText(mComp.getDescription());
             
             int itemsCnt=mRuleList.getItemCount();
             for (int i=0;i<itemsCnt;i++) {
                 Object o=mRuleList.getItemAt(i);
-                if (o instanceof FilterRule) {
-                    FilterRule r=(FilterRule)o;
-                    if (r.toString().equals(mRule.toString())) {
+                if (o instanceof FilterComponent) {
+                    FilterComponent r=(FilterComponent)o;
+                    if (r.toString().equals(mComp.toString())) {
                         DefaultComboBoxModel model=(DefaultComboBoxModel)mRuleList.getModel();
                         model.removeElementAt(i);
-                        model.insertElementAt(mRule,i);
+                        model.insertElementAt(mComp,i);
                         break;
                     }
                 }
             }
             
-            mRuleList.setSelectedItem(mRule);       
+            mRuleList.setSelectedItem(mComp);       
         }
            
         updateOkBtn();
                     
-        setSize(400,350);
+        setSize(500,440);
         UiUtilities.centerAndShow(this);
         
     }
@@ -139,10 +148,10 @@ public class FilterRuleDlg extends JDialog implements ActionListener, DocumentLi
                 mCenterPanel.remove(mRulePanel);
             }
             Object item=mRuleList.getSelectedItem();
-            if (item instanceof FilterRule) {                
-                FilterRule fItem=(FilterRule)item;
+            if (item instanceof FilterComponent) {                
+                FilterComponent fItem=(FilterComponent)item;
                 mRulePanel=fItem.getPanel();
-                mRulePanel.setBorder(BorderFactory.createEmptyBorder(0,30,0,0));
+                mRulePanel.setBorder(BorderFactory.createEmptyBorder(0,17,0,0));
                 mCenterPanel.add(mRulePanel,BorderLayout.NORTH);
             }
             mContentPane.updateUI();
@@ -151,10 +160,10 @@ public class FilterRuleDlg extends JDialog implements ActionListener, DocumentLi
         }
         
         else if (o==mOkBtn) {
-            mRule=(FilterRule)mRuleList.getSelectedItem();
-            mRule.setName(mNameTF.getText());
-            mRule.setDescription(mDescTF.getText());
-            mRule.ok();
+          mComp=(FilterComponent)mRuleList.getSelectedItem();
+          mComp.setName(mNameTF.getText());
+          mComp.setDescription(mDescTF.getText());
+          mComp.ok();
             hide();
         }
         else if (o==mCancelBtn) {
@@ -163,15 +172,15 @@ public class FilterRuleDlg extends JDialog implements ActionListener, DocumentLi
         
     }
     
-    public FilterRule getRule() {
-        return mRule;
+    public FilterComponent getFilterComponent() {
+        return mComp;
     }
     
     private void updateOkBtn() {
         if (mOkBtn!=null)
         mOkBtn.setEnabled(
             !("".equals(mNameTF.getText()))
-            && mRuleList.getSelectedItem() instanceof FilterRule
+            && mRuleList.getSelectedItem() instanceof FilterComponent
         );
     }
     

@@ -36,7 +36,7 @@ public class FilterList {
     private static HashSet mFilterList;
     
     public static void load() {
-        
+        System.out.println("loading filterlist");
         mFilterList=new HashSet();
         File[] list=new File(FILTER_DIRECTORY).listFiles(new FileFilter() {
             public boolean accept(File f) {
@@ -49,9 +49,11 @@ public class FilterList {
                 mFilterList.add(f);
             }
         }        
+        System.out.println("done");
     }
     
     public static void store() {
+      System.out.println("storing filter list:");
         Iterator it=mFilterList.iterator();
         File directory=new File(FILTER_DIRECTORY);
         if (!directory.exists()) {
@@ -60,6 +62,7 @@ public class FilterList {
         while (it.hasNext()) {
             ((Filter)it.next()).store(directory);
         }
+       System.out.println("done");
     }
     
     public static Filter[] getFilterList() {

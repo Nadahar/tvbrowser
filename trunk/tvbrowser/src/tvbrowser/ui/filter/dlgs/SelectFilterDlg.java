@@ -37,6 +37,10 @@ import tvbrowser.ui.filter.*;
 
 public class SelectFilterDlg extends JDialog implements ActionListener {
 	
+  private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(SelectFilterDlg.class);
+  
+  
   private JList mFilterList;
   private JFrame mParent;
   private JButton mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn;
@@ -47,9 +51,9 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
 		super(parent,true);
 		mParent=parent;
 		JPanel contentPane=(JPanel)getContentPane();
-		contentPane.setLayout(new BorderLayout(7,7));
+		contentPane.setLayout(new BorderLayout(7,13));
 		contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-		setTitle("Edit Filters");
+		setTitle(mLocalizer.msg("title","Edit Filters"));
 
     mFilterListModel=new DefaultListModel();
     mFilterList=new JList(mFilterListModel);
@@ -67,9 +71,9 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     
     JPanel btnPanel=new JPanel(new BorderLayout());
     JPanel panel1=new JPanel(new GridLayout(0,1,0,7));
-    mNewBtn=new JButton("new");
-    mEditBtn=new JButton("edit");
-    mRemoveBtn=new JButton("delete");
+    mNewBtn=new JButton(mLocalizer.msg("newButton", "new"));
+    mEditBtn=new JButton(mLocalizer.msg("editButton", "edit"));
+    mRemoveBtn=new JButton(mLocalizer.msg("deleteButton", "delete"));
     mNewBtn.addActionListener(this);
     mEditBtn.addActionListener(this);
     mRemoveBtn.addActionListener(this);
@@ -80,23 +84,31 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
-    mOkBtn=new JButton("OK");
+    mOkBtn=new JButton(mLocalizer.msg("okButton", "OK"));
     buttonPn.add(mOkBtn);
     mOkBtn.addActionListener(this);
     getRootPane().setDefaultButton(mOkBtn);
 
-    mCancelBtn=new JButton("Cancel");
+    mCancelBtn=new JButton(mLocalizer.msg("cancelButton", "Cancel"));
     mCancelBtn.addActionListener(this);
     buttonPn.add(mCancelBtn);
     
+    String txt="Choose a filter to edit or create a new one.";
+    JTextArea ta=new JTextArea(mLocalizer.msg("hint", txt));
+    ta.setLineWrap(true);
+    ta.setWrapStyleWord(true);
+    ta.setOpaque(false);
+    ta.setEditable(false);
+    ta.setFocusable(false);
     
     contentPane.add(new JScrollPane(mFilterList),BorderLayout.CENTER);
     contentPane.add(btnPanel,BorderLayout.EAST);
     contentPane.add(buttonPn,BorderLayout.SOUTH);
+    contentPane.add(ta,BorderLayout.NORTH);
 		
         
     updateBtns();
-		setSize(200,250);
+		setSize(280,280);
 		
 		
 	}
@@ -133,7 +145,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
                 Filter filter=(Filter)enum.nextElement();
                 FilterList.add(filter);
             }
-            FilterList.store();            
+            FilterList.store();   
+            FilterComponentList.store();         
             hide();
         }
         else if (e.getSource()==mCancelBtn) {
