@@ -541,8 +541,10 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
   private void onDownloadStart() {
     JButton updateBtn=mHorizontalToolBar.getUpdateBtn();
-    updateBtn.setText(TVBrowser.mLocalizer.msg("button.stop", "Stop"));
-    updateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
+    if (updateBtn != null) {
+      updateBtn.setText(TVBrowser.mLocalizer.msg("button.stop", "Stop"));
+      updateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
+    }
     updateMenuItem.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop update..."));
   }
 
@@ -553,12 +555,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mStatusBar.getProgressBar().setValue(0);
     
     JButton updateBtn=mHorizontalToolBar.getUpdateBtn();
-    updateBtn.setText(TVBrowser.mLocalizer.msg("button.update", "Update"));
-    updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
+    if (updateBtn != null) {
+      updateBtn.setText(TVBrowser.mLocalizer.msg("button.update", "Update"));
+      updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
+    }
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
 
     FinderPanel.getInstance().updateUI();
-
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
 
   }
