@@ -80,6 +80,9 @@ public class DataService implements devplugin.PluginManager {
   }
 
 
+  public void deleteDayProgramCache() {
+  	mDayProgramHash.clear();
+  }
 
   private void loadTvDataLoader() {   
     // Get the tv data loader jar file
@@ -240,25 +243,14 @@ public class DataService implements devplugin.PluginManager {
   }
 
 
-  /**
-	 * Returns the day program for the specified date.
-	 * 
-	 * 
-	 * @param date The date to get the day program for.
-	 * @throws NullPointerException if date is null.
-	 */
-  public DayProgram getDayProgram(devplugin.Date date) {
-  	return getDayProgram(date, true);
-  	
-  }
-  
+ 
   /**
    * Returns the day program for the specified date.
    * 
    * @param date The date to get the day program for.
    * @throws NullPointerException if date is null.
    */
-  public DayProgram getDayProgram(devplugin.Date date, boolean useCache) {
+  public DayProgram getDayProgram(devplugin.Date date) {
     // if date is null throw a NullPointerException
     if (date == null) {
       throw new NullPointerException("date is null!");
@@ -267,7 +259,7 @@ public class DataService implements devplugin.PluginManager {
     // try to get the DayProgram from the cache.
     DayProgram dayProgram=null;
     
-    if (useCache) dayProgram = (DayProgram) mDayProgramHash.get(date);
+    dayProgram = (DayProgram) mDayProgramHash.get(date);
     
     if (dayProgram == null) {
       try {

@@ -793,7 +793,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     	createChannelList();
     	programTablePanel.subscribedChannelsChanged();
 		devplugin.Date showingDate = finderPanel.getSelectedDate();
-		DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate, false);
+		DataService.getInstance().deleteDayProgramCache();
+		DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
 		try {
 			programTablePanel.setDayProgram(dayProgram);
 		} catch(TvBrowserException exc) {
