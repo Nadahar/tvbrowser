@@ -68,7 +68,6 @@ public class MirrorUpdater {
   private DataSource mDataSource;
   private DataTarget mDataTarget;
   private String mPrimaryServerUrl;
-  private int mMirrorWeight;
   
   private Date mDeadlineDay;
   
@@ -82,62 +81,10 @@ public class MirrorUpdater {
     mDataSource = config.getDataSource();
     mDataTarget = config.getDataTarget();
     mPrimaryServerUrl = config.getPrimaryServerUrl();
-    mMirrorWeight = config.getMirrorWeight();
+    //mMirrorWeight = config.getMirrorWeight();
     mChannelGroupArr=config.getChannelgroups();
     mDeadlineDay = new Date().addDays(-2);
   }
-/*
-  public void visualize(PrintStream out, String group, SummaryFile summaryFile, ChannelList channelList, String lastupdate) {
-      int DAY_COUNT=25;
-      String mUrl ="sagichnicht";
-      
-      out.println("<html>");
-      out.println("<head><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head");
-      out.println("body>");
-      out.println("<h1>Mirror: "+mUrl+"</h1>");    
-      out.println("<table width=\"1000\">");
-      out.print("<tr><th width=\"200\"></th>");  
-      for (int i=0; i < DAY_COUNT; i++) {
-        out.print("<th class=\"header_date\">"+TODAY.addDays(i).getDayOfMonth()+".</th>");
-      }    
-      out.println("</tr>");      
-      
-      
-    out.println("<tr><td class=\"group_header\">"+group.toUpperCase()+"</td><td colspan=\""+DAY_COUNT+"\"></td></tr>");
-    
-    out.println("<tr><td class=\"header_channel\">" +
-            "<table width=\"100%\"><tr><td class=\"group_info\"><strong>last update:</strong></td><td class=\"group_info\">"+lastupdate+"</td></tr>" +
-            "<tr><td class=\"group_info\"><strong># of channels:</strong></td><td class=\"group_info\">"+channelList.getChannelCount()+"</td></tr></table>" +
-            "</td><td colspan=\""+DAY_COUNT+"\"></td></tr>");
-    
-    for (int ch = 0; ch < channelList.getChannelCount(); ch++) {
-      Channel channel = channelList.getChannelAt(ch);
-      out.print  ("<tr><th class=\"header_channel\" align=\"right\">" + channel + "</th>");
-        
-      for (int i=0; i< DAY_COUNT; i++) {          
-        int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getCountry(), channel.getId(), 0);
-        if (version >= 0) {
-          out.print("<td class=\"table_content\"></td>");     
-        }
-        else {
-          out.print("<td class=\"table_empty\"></td>");   
-        }
-      }
-    
-      out.println("</tr>");
-    }
-    out.println("<tr><td colspan=\""+(DAY_COUNT + 1) + "\"></td></tr>");
-    out.println();
-    
-    out.println("</table>");    
-    out.println("</body>");
-    out.println("</html>");   
-
-    
-  }
-
-  */
-  
     
 
   public void updateMirror() throws UpdateException {
@@ -411,14 +358,6 @@ public class MirrorUpdater {
       }
     }
     
-    
-    // Create the weight file
-    if (mMirrorWeight>=0) {  // don't change the weight file, if the weight is invalid
-      data = Integer.toString(mMirrorWeight).getBytes();
-      //mDataTarget.writeFile("weight", data);
-      writeGroupFile(mDataTarget,data,"weight");
-    }
-    
     // Create the lastupdate file
     Calendar cal = Calendar.getInstance();
     int year = cal.get(Calendar.YEAR);
@@ -435,15 +374,8 @@ public class MirrorUpdater {
       + ((second < 10) ? "0" : "") + second;
     data = lastUpdate.getBytes();
     
-    //mDataTarget.writeFile("lastupdate", data);
     writeGroupFile(mDataTarget,data,"lastupdate");
     
-    // Create the index.html
-   // String html = createIndexHtml(channelArr);
-    
-    
-   // MirrorVisualizer visualizer = new HtmlMirrorVisualizer(mDataSource, mDataTarget, mChannelGroupArr);
-   // visualizer.visualize();
   }
 
 
