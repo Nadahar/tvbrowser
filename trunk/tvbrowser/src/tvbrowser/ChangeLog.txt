@@ -1,5 +1,9 @@
 Changelog TVBrowser
 
+1.0 RC 06
+ - bugfix: ask before autodownload on startup
+ - bugfix: "timezone bug" (didn't show programs after 24:00)
+
 1.0 RC 05
  - bugfix: merge dayprograms correctly
  - bugfix: proxy authentication

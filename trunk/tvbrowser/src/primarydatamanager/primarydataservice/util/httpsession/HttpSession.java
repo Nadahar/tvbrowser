@@ -76,5 +76,13 @@ public class HttpSession {
   public HttpURLConnection getURLConnection() {
     return mUrlConnection;
   }
+
+  public void setCookie(String cookie) {
+    mCookie = cookie;
+  }
+  
+  public String getCookie() {
+    return mCookie;
+  }
   
 }
