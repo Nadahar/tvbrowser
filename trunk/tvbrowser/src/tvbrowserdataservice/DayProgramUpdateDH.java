@@ -68,6 +68,9 @@ public class DayProgramUpdateDH implements DownloadHandler {
       // Read the update from the stream
       DayProgramFile updateProg = new DayProgramFile();
       updateProg.readFromStream(stream);
+
+      // When we are here then the loading suceed -> The file is OK.
+      // It is not a corrupt because it is currently being updated.
       
       // Load the complete file
       DayProgramFile completeProg = new DayProgramFile();
