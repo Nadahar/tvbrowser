@@ -247,7 +247,7 @@ Section "${PROG_NAME} (erforderlich)"
 SectionEnd # end the section
 
 
-Section "Verknï¿½pfung auf dem Desktop"
+Section "Verknüpfung auf dem Desktop"
   SectionIn 1 2
 
   # Set the directory where the shortcuts should be executed in
@@ -350,7 +350,7 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
   SectionEnd
   
-  Section "Was lï¿½uft gerade"
+  Section "Was läuft gerade"
     SectionIn 1
   
     SetOutPath "$INSTDIR\plugins"
