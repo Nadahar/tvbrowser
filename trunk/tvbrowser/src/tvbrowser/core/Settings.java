@@ -563,71 +563,80 @@ public class Settings {
 		settings.setProperty("startupinonlinemode","no");
   	}
   }
-
-	public static int getAutomaticDownload() {
-		String autoDL=settings.getProperty("autodownload");
-		if ("startup".equals(autoDL)) {
-			return ONSTARTUP;
-		}
-		else {
-			return NEVER;
-		}
-	}
-	
-	public static void setAutomaticDownload(String autoDL) {
-		settings.setProperty("autodownload",autoDL);
-	}
-	
-	public static java.awt.Font getProgramTitleFont() {
-		Font f=settings.getFont("programtitlefont");
-		if (f==null) {
-			f=new Font("Helvetica",Font.BOLD,12);
-		}
-		return f;
-	}
-	
-	public static void setProgramTitleFont(java.awt.Font f) {
-		settings.setFont("programtitlefont",f);
-		
-	}
-	
-	public static java.awt.Font getProgramInfoFont() {
-		Font f=settings.getFont("programinfofont");
-		if (f==null) {
-			f=new Font("Helvetica",Font.PLAIN,10);
-		}
-		return f;
-	}
-	
-	public static void setProgramInfoFont(java.awt.Font f) {
-		settings.setFont("programinfofont",f);
-	}
-	
-	public static java.awt.Dimension getWindowSize() {
-		String dimStr[]=settings.getStringList("windowsize");
-		if (dimStr.length>=2) {
-			try {
-				int width=Integer.parseInt(dimStr[0]);
-				int height=Integer.parseInt(dimStr[1]);
-				return new java.awt.Dimension(width,height);
-			}catch (NumberFormatException e) {
-				return new java.awt.Dimension(700,500);
-			}
-		}
-		return new java.awt.Dimension(700,500);		
-	}
   
-	public static void setWindowSize(java.awt.Dimension dim) {
-		String dimStr[]=new String[2];
-		dimStr[0]=""+dim.width;
-		dimStr[1]=""+dim.height;
-		settings.setStringList("windowsize",dimStr);
-	}
+  public static int getAutomaticDownload() {
+    String autoDL=settings.getProperty("autodownload");
+    if ("startup".equals(autoDL)) {
+      return ONSTARTUP;
+    }
+    else {
+      return NEVER;
+    }
+  }
+  
+  public static void setAutomaticDownload(String autoDL) {
+    settings.setProperty("autodownload",autoDL);
+  }
+  
+  public static java.awt.Font getProgramTitleFont() {
+    Font f=settings.getFont("programtitlefont");
+    if (f==null) {
+      f=new Font("Helvetica",Font.BOLD,12);
+    }
+    return f;
+  }
+  
+  public static void setProgramTitleFont(java.awt.Font f) {
+    settings.setFont("programtitlefont",f);
+  }
+  
+  public static java.awt.Font getProgramInfoFont() {
+    Font f=settings.getFont("programinfofont");
+    if (f==null) {
+      f=new Font("Helvetica",Font.PLAIN,10);
+    }
+    return f;
+  }
+  
+  public static void setProgramInfoFont(java.awt.Font f) {
+    settings.setFont("programinfofont",f);
+  }
+  
+  
+  public static boolean isWindowMaximized() {
+    return settings.getBoolean("window.isMaximized", false);
+  }
+  
+  public static void setWindowIsMaximized(boolean maximized) {
+    settings.setBoolean("window.isMaximized", maximized);
+  }
+  
+  
+  public static java.awt.Dimension getWindowSize() {
+    String dimStr[]=settings.getStringList("windowsize");
+    if (dimStr.length>=2) {
+      try {
+        int width=Integer.parseInt(dimStr[0]);
+        int height=Integer.parseInt(dimStr[1]);
+        return new java.awt.Dimension(width,height);
+      }catch (NumberFormatException e) {
+        return new java.awt.Dimension(700,500);
+      }
+    }
+    return new java.awt.Dimension(700,500);
+  }
+  
+  public static void setWindowSize(java.awt.Dimension dim) {
+    String dimStr[]=new String[2];
+    dimStr[0]=""+dim.width;
+    dimStr[1]=""+dim.height;
+    settings.setStringList("windowsize",dimStr);
+  }
   
   
   
   public static Point getWindowLocation() {
-		String locStr[] = settings.getStringList("windowlocation");
+    String locStr[] = settings.getStringList("windowlocation");
     if (locStr.length != 2) {
       return null;
     } else {
