@@ -71,15 +71,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   public void timeEvent(ReminderListItem item) {
     if ("true" .equals(mSettings.getProperty( "usesound" ))) {
-      String fName=mSettings.getProperty( "soundfile" );
-      try {
-        URL url = new File(fName).toURL();
-        AudioClip clip=Applet.newAudioClip(url);
-        clip.play();
-      } catch (java.net.MalformedURLException exc) {
-        String msg = mLocalizer.msg( "error.1" ,"Error loading reminder sound file!\n({0})" , fName, exc);
-        ErrorHandler.handle(msg, exc);
-      }
+      playSound(mSettings.getProperty( "soundfile" ));
     }
     
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
@@ -97,9 +89,26 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       }
     }
   }
-  
-  
-  
+
+
+  /**
+   * Plays a sound.
+   *  
+   * @param fileName The file name of the sound to play.
+   */
+  static void playSound(String fileName) {
+    try {
+      URL url = new File(fileName).toURL();
+      AudioClip clip=Applet.newAudioClip(url);
+      clip.play();
+    } catch (java.net.MalformedURLException exc) {
+      String msg = mLocalizer.msg( "error.1",
+        "Error loading reminder sound file!\n({0})" , fileName, exc);
+      ErrorHandler.handle(msg, exc);
+    }
+  }
+
+
   public PluginInfo getInfo() {
     String name = mLocalizer.msg( "pluginName" ,"Reminder" );
     String desc = mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion." );
