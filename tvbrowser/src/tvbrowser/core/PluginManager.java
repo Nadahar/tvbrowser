@@ -85,7 +85,7 @@ public class PluginManager {
   
   
   public void loadPlugins() {
-    Plugin[] p=getInstalledPlugins();
+    Plugin[] p=getAvailablePlugins();
     for (int i=0;i<p.length;i++) {
       initPlugin((Plugin)p[i]);
     }
@@ -337,6 +337,15 @@ public class PluginManager {
           list.add(p);
         }      
       }
+      
+      Plugin[] unconfiguredPlugins=getInstalledPlugins();
+      for (int i=0;i<unconfiguredPlugins.length;i++) {
+        Plugin p=unconfiguredPlugins[i];
+        if (!list.contains(p) && p!=null && p.getContextMenuItemText()!=null) {
+          list.add(p);
+        }
+      }
+      
       mContextMenuPluginList=new Plugin[list.size()];
       list.toArray(mContextMenuPluginList);
     }

@@ -74,7 +74,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 		c.weightx = 1.0;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.insets = new Insets(0, 0, 0, 3);
-		_name = new JTextField(_settings.getProperty("name"));
+		_name = new JTextField(_settings.getProperty("name","noname"));
 		user.add(_name, c);
 
 		c.weightx = 0;
