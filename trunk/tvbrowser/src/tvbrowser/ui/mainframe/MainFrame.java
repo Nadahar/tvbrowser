@@ -297,15 +297,21 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     skinPanel.add(centerPanel, BorderLayout.CENTER);
     
     ViewMap viewMap = new ViewMap();
-
+    
     mTimeChooser = new TimeChooserPanel(this);
     
-    viewMap.addView(0, new View("Programm-Tabelle", null, skinPanel));
+    View programTableView = new View("Programm-Tabelle", null, skinPanel);
+    
+    
+    viewMap.addView(0, programTableView);
     viewMap.addView(1, new View("Zeit", null, mTimeChooser));
     viewMap.addView(2, new View("Datum", null, new DateChooserPanel(this, FinderPanel.getInstance())));
     viewMap.addView(3, new View("Sender", null, new ChannelChooserPanel(this)));
 
-    RootWindow rootWindow = DockingUtil.createRootWindow(viewMap, true);    
+    RootWindow rootWindow = DockingUtil.createRootWindow(viewMap, true);
+    
+    rootWindow.getRootWindowProperties().getSplitWindowProperties().setContinuousLayoutEnabled(true);
+    
     rootWindow.getWindowBar(Direction.LEFT).setEnabled(true);
 
     rootWindow.getRootWindowProperties().getWindowAreaProperties().setInsets(new Insets(0,0,0,0));
@@ -530,23 +536,11 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       showUpdatePluginsDlg();
     }
   }
+  
+  public void scrollToTime(int time) {
+    mProgramTableScrollPane.scrollToTime(time);
+  }
 
-
-  public void onEarlyBtn() {
-    mProgramTableScrollPane.scrollToTime(Settings.propEarlyTime.getInt());
-  }
-  
-  public void onMiddayBtn() {
-    mProgramTableScrollPane.scrollToTime(Settings.propMiddayTime.getInt());
-  }
-  
-  public void onAfternoonBtn() {
-     mProgramTableScrollPane.scrollToTime(Settings.propAfternoonTime.getInt());
-   }
-  
-  public void onEveningBtn() {
-    mProgramTableScrollPane.scrollToTime(Settings.propEveningTime.getInt());
-  }
 
 
   private void onDownloadStart() {

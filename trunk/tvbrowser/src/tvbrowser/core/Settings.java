@@ -180,8 +180,7 @@ public class Settings {
       propTimeBlockShowWest, propTimeBlockWestImage1, propTimeBlockWestImage2,
       propTimeOfDayBackgroundEdge, propTimeOfDayBackgroundEarly,
       propTimeOfDayBackgroundMidday, propTimeOfDayBackgroundAfternoon,
-      propTimeOfDayBackgroundEvening,
-      propEarlyTime, propMiddayTime, propAfternoonTime, propEveningTime
+      propTimeOfDayBackgroundEvening
     };
     if (mProp.hasChanged(propArr)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
@@ -193,10 +192,6 @@ public class Settings {
     };
     if (mProp.hasChanged(propArr)) {
       mainFrame.getHorizontalToolBar().updateButtons();
-    }
-      
-    if (mProp.hasChanged(propShowTimeButtons)) {
-        mainFrame.updateButtons();
     }
     
     if (mProp.hasChanged(propSubscribedChannels)) {
@@ -259,18 +254,32 @@ public class Settings {
   public static final ChannelArrayProperty propSubscribedChannels
     = new ChannelArrayProperty(mProp, "subscribedchannels", new devplugin.Channel[]{});
 
+  /**
+   * @deprecated
+   */
   public static final IntProperty propEarlyTime
     = new IntProperty(mProp, "timebutton.early", 6 * 60);
 
+  /**
+   * @deprecated
+   */
   public static final IntProperty propMiddayTime
     = new IntProperty(mProp, "timebutton.midday", 12 * 60);
 
+  /**
+   * @deprecated
+   */
   public static final IntProperty propAfternoonTime
     = new IntProperty(mProp, "timebutton.afternoon", 18 * 60);
 
+  /**
+   * @deprecated
+   */
   public static final IntProperty propEveningTime
     = new IntProperty(mProp, "timebutton.evening", 20 * 60);
 
+  
+  
   public static final ChoiceProperty propTableLayout
     = new ChoiceProperty(mProp, "table.layout", "timeSynchronous",
                          new String[] { "timeSynchronous", "compact" });
@@ -315,8 +324,11 @@ public class Settings {
   public static final StringProperty propTimeOfDayBackgroundEvening
     = new StringProperty(mProp, "tablebackground.timeofday.evening", "imgs/columns_evening.jpg");
 
+  /*
   public static final BooleanProperty propShowTimeButtons
     = new BooleanProperty(mProp, "showTimeButtons", true);
+    */
+  
   /**
    * @deprecated
    */
@@ -358,6 +370,9 @@ public class Settings {
 
   public static final IntProperty propColumnWidth
     = new IntProperty(mProp, "columnwidth", 200);
+  
+  public static final IntArrayProperty propTimeButtons
+  = new IntArrayProperty(mProp, "timeButtons", new int[]{6*60, 12*60, 18*60, 20*60});
   
   /**
    * @deprecated

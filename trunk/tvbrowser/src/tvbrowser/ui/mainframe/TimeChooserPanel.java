@@ -36,6 +36,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import tvbrowser.core.Settings;
+
 
 public class TimeChooserPanel extends JPanel implements ActionListener {
     
@@ -65,35 +67,56 @@ public class TimeChooserPanel extends JPanel implements ActionListener {
     }
     
     private JPanel createTimeBtnPanel() {
-      JPanel result=new JPanel(new GridLayout(0,1,0,5));
-      result.setOpaque(false);
+      JPanel result = new JPanel(new BorderLayout());
+      JPanel gridPn = new JPanel(new GridLayout(0, 2, 2, 2));
+      result.add(gridPn,BorderLayout.CENTER);
+      
       String msg;
       msg = mLocalizer.msg("button.now", "Now");
       mNowBt=new JButton(msg);
       mNowBt.addActionListener(this);
-      result.add(mNowBt); 
+      
+      result.add(mNowBt, BorderLayout.SOUTH);
+      
+      int[] times = Settings.propTimeButtons.getIntArray();
+      
+      for (int i=0; i<times.length; i++) {
+        final int time = times[i];
+        int h = time/60;
+        int m = time%60;
+        String title = h+":"+(m<10?"0":"")+m;
+        JButton btn = new JButton(title);
+        gridPn.add(btn);
+        btn.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent arg0) {
+            mParent.scrollToTime(time);
+          }
+        });
+      }
+        
+     
 
-      if (tvbrowser.core.Settings.propShowTimeButtons.getBoolean()) {
-        msg = mLocalizer.msg("button.early", "Early");
-        mEarlyBt=new JButton(msg);
+     // if (tvbrowser.core.Settings.propShowTimeButtons.getBoolean()) {
+  /*      msg = mLocalizer.msg("button.early", "Early");
+        mEarlyBt=new JButton("9:00");
         mEarlyBt.addActionListener(this);
-        result.add(mEarlyBt);
+        gridPn.add(mEarlyBt);
      
         msg = mLocalizer.msg("button.midday", "Midday");
-        mMiddayBt=new JButton(msg);
+        mMiddayBt=new JButton("12:00");
         mMiddayBt.addActionListener(this);
-        result.add(mMiddayBt);
+        gridPn.add(mMiddayBt);
         
         msg = mLocalizer.msg("button.afternoon", "Afternoon");
-        mAfternoonBt=new JButton(msg);
+        mAfternoonBt=new JButton("14:00");
         mAfternoonBt.addActionListener(this);
-        result.add(mAfternoonBt);
+        gridPn.add(mAfternoonBt);
       
         msg = mLocalizer.msg("button.evening", "Evening");
-        mEveningBt=new JButton(msg);
+        mEveningBt=new JButton("20:00");
         mEveningBt.addActionListener(this);
-        result.add(mEveningBt);
-      }
+        gridPn.add(mEveningBt);
+      //}*/
       
       return result;
     }
@@ -103,7 +126,7 @@ public class TimeChooserPanel extends JPanel implements ActionListener {
       if (o==mNowBt) {
         mParent.scrollToNow();    
       }
-      else if (o==mEarlyBt) {
+   /*   else if (o==mEarlyBt) {
         mParent.onEarlyBtn();
       }
       else if (o==mMiddayBt) {
@@ -114,7 +137,7 @@ public class TimeChooserPanel extends JPanel implements ActionListener {
           }
       else if (o==mEveningBt) {
         mParent.onEveningBtn();
-      }
+      }*/
     
     }
     

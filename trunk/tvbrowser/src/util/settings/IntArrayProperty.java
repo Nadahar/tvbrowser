@@ -55,22 +55,20 @@ public class IntArrayProperty extends Property {
   public int[] getIntArray() {
     if (mCachedValue == null) {
       String asString = getProperty();
-  
       if (asString != null) {
         String[] splits = asString.split(",");
-        if (splits.length == 3) {
-          try {
-            int[] intArr = new int[splits.length];
-            for (int i = 0; i < intArr.length; i++) {
-              intArr[i] = Integer.parseInt(splits[i]);
-            }
+        try {
+          int[] intArr = new int[splits.length];
+          for (int i = 0; i < intArr.length; i++) {
+            intArr[i] = Integer.parseInt(splits[i]);
+          }
             
-            // Reading succeed -> Set the mCachedValue
-            mCachedValue = intArr;      
-          }
-          catch(NumberFormatException exc) {
-            // We use the default value
-          }
+          // Reading succeed -> Set the mCachedValue
+          mCachedValue = intArr;      
+        }
+        catch(NumberFormatException exc) {
+          // We use the default value
+          exc.printStackTrace();
         }
       }
   
