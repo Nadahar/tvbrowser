@@ -42,7 +42,7 @@ public class ChannelConfigDlg implements ActionListener {
   
   private Channel[] mChannelList;
   private JDialog mDialog;
-  private JButton mOkBt, mCancelBt;
+  private JButton mCloseBt, mApplyTimeCorrectionBt;
   private JComboBox mCorrectionCB;
     
   public ChannelConfigDlg(Component parent, String title, Channel[] channelList) {
@@ -55,9 +55,12 @@ public class ChannelConfigDlg implements ActionListener {
         
     JPanel content=new JPanel();
     content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
-    JPanel dayLightPn=new JPanel();
-    dayLightPn.setLayout(new BoxLayout(dayLightPn,BoxLayout.Y_AXIS));
-    dayLightPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("DLSTTitle","Day light saving time correction")));
+    JPanel dayLightPn=new JPanel(new BorderLayout());
+    
+    JPanel panel1=new JPanel();
+    panel1.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("DLSTTitle","Day light saving time correction")));
+    
+    panel1.setLayout(new BoxLayout(panel1,BoxLayout.Y_AXIS));
     
     JPanel pn=new JPanel(new BorderLayout());
     JLabel lb=new JLabel(mLocalizer.msg("correction","Correction"));
@@ -79,21 +82,24 @@ public class ChannelConfigDlg implements ActionListener {
     txt.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
     
     pn.add(mCorrectionCB,BorderLayout.EAST);
-    dayLightPn.add(pn);
-    dayLightPn.add(txt);
+    panel1.add(pn);
+    panel1.add(txt);
     
+    dayLightPn.add(panel1,BorderLayout.CENTER);
+    JPanel p1=new JPanel(new BorderLayout());
+    mApplyTimeCorrectionBt=new JButton(mLocalizer.msg("apply","Apply"));
+    mApplyTimeCorrectionBt.addActionListener(this);
+    p1.add(mApplyTimeCorrectionBt,BorderLayout.SOUTH);
+    dayLightPn.add(p1,BorderLayout.EAST);
     content.add(dayLightPn);
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     
-    mOkBt = new JButton(SettingsDialog.mLocalizer.msg("ok", "OK"));
-    mCancelBt = new JButton(SettingsDialog.mLocalizer.msg("cancel", "Cancel"));
+    mCloseBt = new JButton(mLocalizer.msg("close", "Close"));
     
-    mOkBt.addActionListener(this);
-    mCancelBt.addActionListener(this);
+    mCloseBt.addActionListener(this);
     
-    buttonPn.add(mOkBt);
-    buttonPn.add(mCancelBt);
+    buttonPn.add(mCloseBt);
     
     main.add(content,BorderLayout.NORTH);
     main.add(buttonPn,BorderLayout.SOUTH);
@@ -101,7 +107,6 @@ public class ChannelConfigDlg implements ActionListener {
     
     mChannelList=channelList;
     mDialog.setSize(400,200);
-    //mDialog.pack();
   }
   
   public void centerAndShow() {
@@ -110,14 +115,13 @@ public class ChannelConfigDlg implements ActionListener {
   
   public void actionPerformed(ActionEvent e) {
     Object o=e.getSource();
-    if (o==mOkBt) {
+    if (o==mApplyTimeCorrectionBt) {
       int correction=mCorrectionCB.getSelectedIndex()-1;
       for (int i=0;i<mChannelList.length;i++) {
          mChannelList[i].setDayLightSavingTimeCorrection(correction);
       }      
-      mDialog.hide();
     }
-    else if (o==mCancelBt) {
+    else if (o==mCloseBt) {
       mDialog.hide();  
     }
     

@@ -62,7 +62,7 @@ import com.l2fprod.gui.plaf.skin.DefaultButton;
  * @author    fred
  * @created   27 avril 2002
  */
-public class GtkTableHeaderRenderer extends DefaultTableCellRenderer implements javax.swing.plaf.UIResource; {
+public class GtkTableHeaderRenderer extends DefaultTableCellRenderer implements javax.swing.plaf.UIResource {
 
   boolean isSelected;
   boolean hasFocus;
