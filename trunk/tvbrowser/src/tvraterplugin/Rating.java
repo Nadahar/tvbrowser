@@ -114,7 +114,7 @@ public class Rating implements Serializable {
 			return -1;
 		}
 
-		Object value = ((Integer) _values.get(key));
+		Object value = _values.get(key);
 		if (value instanceof Integer) {
 			return ((Integer) value).intValue();
 		}
