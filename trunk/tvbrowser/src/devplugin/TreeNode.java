@@ -33,7 +33,7 @@ public interface TreeNode extends MutableTreeNode {
     
     public TreeNode createNode(String key, String title);
 
-    public void add(Program prog);
+    public TreeLeaf add(Program prog);
 
     public void remove(TreeNode node);
 

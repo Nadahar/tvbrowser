@@ -62,6 +62,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     mReminderList = new ReminderList();
     mReminderList.setReminderTimerListener(this);
     mReminderItemsTrash = new HashSet();
+    
+    
   }
   
   
@@ -138,11 +140,18 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
+      
+     
+      
     int version = in.readInt();
+    
 	// Remove from the old list
     mReminderList.setReminderTimerListener(null);
-    
-    mReminderList = new ReminderList(in);
+    if (version < 3) {
+      mReminderList = new ReminderList(in);
+    } else {
+      mReminderList = new ReminderList();
+    }
     mReminderList.setReminderTimerListener(this);
     if (mReminderList != null) {
       mReminderList.removeExpiredItems();
@@ -155,13 +164,27 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         item.getProgram().mark( this );
       }
     }
+    
+    
+    TreeNode tree = getPluginManager().getTree(getId()); 
+    TreeLeaf[] leafes = tree.getLeafs();
+    for (int i=0; i<leafes.length; i++) {
+      if (!addToReminderList(leafes[i])) {
+        tree.remove(leafes[i]);
+      }
+    }
+   
+    
+    
+    
+    
   }
 
   
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
-  	mReminderList.writeData(out);
+    out.writeInt(3); // version 3 (since TV-Browser 1.1)
+  //	mReminderList.writeData(out);
   }
   
   
@@ -229,11 +252,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       UiUtilities.centerAndShow(dlg);
       if (dlg.getOkPressed()) {
         int minutes = dlg.getReminderMinutes();
-        addToReminderList(program, minutes);
-        TreeNode tree = getPluginManager().getTree(getId());        
-        tree.add(program);
-        program.mark(this);
-        
+        addToReminderList(program, minutes);        
+        program.mark(this);        
       }
       dlg.dispose();
     }
@@ -263,10 +283,17 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     dlg.dispose();
   }
 
-  
+  private boolean addToReminderList(TreeLeaf item) {
+    return mReminderList.add(item.getProgram(), 10);
+    
+  }
   
   private void addToReminderList(Program program, int minutes) {
     mReminderList.add(program, minutes);
+    TreeNode tree = getPluginManager().getTree(getId());        
+    TreeLeaf leaf = tree.add(program);
+    leaf.setProperty("reminderminutes",""+minutes);
+    
   }
   
   

@@ -31,8 +31,11 @@ import java.util.*;
 import java.awt.event.*;
 
 import util.io.IOUtilities;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.Date;
+import devplugin.TreeNode;
+import devplugin.TreeLeaf;
 
 /**
  * TV-Browser
@@ -55,17 +58,24 @@ public class ReminderList implements ActionListener {
   public ReminderList(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
-    int version = in.readInt();
+    TreeNode tree = Plugin.getPluginManager().getTree(ReminderPlugin.getInstance().getId());        
     
-    int size = in.readInt();
-    
-    mList = new ArrayList(size);
-    for (int i = 0; i < size; i++) {
-      ReminderListItem item = ReminderListItem.readData(in);
       
-      // Only add items that were able to load their program
-      if (item != null) {
-        add(item.getProgram(), item.getReminderMinutes());
+    int version = in.readInt();
+    if (version == 1) {       
+    
+      int size = in.readInt();
+    
+      mList = new ArrayList(size);
+      for (int i = 0; i < size; i++) {
+        ReminderListItem item = ReminderListItem.readData(in);
+      
+        // Only add items that were able to load their program
+        if (item != null) {
+          TreeLeaf leaf = tree.add(item.getProgram());
+          leaf.setProperty("reminderminutes",""+item.getReminderMinutes());
+          add(item.getProgram(), item.getReminderMinutes());
+        }
       }
     }
   }
@@ -73,13 +83,13 @@ public class ReminderList implements ActionListener {
   
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
     
-    out.writeInt(mList.size());
+  /*  out.writeInt(mList.size());
     for (int i = 0; i < mList.size(); i++) {
       ReminderListItem item = (ReminderListItem) mList.get(i);
       item.writeData(out);
-    }
+    }*/
   }
   
   
@@ -102,7 +112,7 @@ public class ReminderList implements ActionListener {
 
   
   
-  public void add(Program program, int minutes) {
+  public boolean add(Program program, int minutes) {
     ReminderListItem item = getItemWithProgram(program);
     if (item == null) {
       item = new ReminderListItem(program, minutes);
@@ -110,9 +120,13 @@ public class ReminderList implements ActionListener {
         mList.add(item);
         program.mark(ReminderPlugin.getInstance());
       }
+      else {
+        return false;
+      }
     } else {
       item.setReminderMinutes(minutes);
     }
+    return true;
   }
 
   public int size() {

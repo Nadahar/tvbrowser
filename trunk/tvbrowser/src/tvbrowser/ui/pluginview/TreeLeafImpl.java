@@ -32,13 +32,15 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.TreeLeaf;
 
 
 
-public class TreeLeafImpl implements TreeLeaf {
+public class TreeLeafImpl extends DefaultMutableTreeNode implements TreeLeaf {
 
   private Program mProgram;  
   private HashMap mProperties;
@@ -46,6 +48,7 @@ public class TreeLeafImpl implements TreeLeaf {
   
   
   public TreeLeafImpl(Program prog) {
+    super();
     mProgram = prog;
     mProperties = new HashMap();
   }
