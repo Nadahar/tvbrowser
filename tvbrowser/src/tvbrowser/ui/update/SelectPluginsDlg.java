@@ -110,17 +110,17 @@ public class SelectPluginsDlg extends JDialog implements ActionListener {
 		
 		JPanel instVersPanel=new JPanel(new BorderLayout());
 		instVersPanel.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
-		instVersPanel.add(new JLabel("installed version:"),BorderLayout.WEST);
+		instVersPanel.add(new JLabel(mLocalizer.msg("installedversion","Installed version:")),BorderLayout.WEST);
 		instVersPanel.add(new JLabel(tvbrowser.TVBrowser.VERSION.toString()),BorderLayout.EAST);
 		
 		JPanel stableVersPanel=new JPanel(new BorderLayout());
 		stableVersPanel.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
-		stableVersPanel.add(new JLabel("latest stable version:"),BorderLayout.WEST);
+		stableVersPanel.add(new JLabel(mLocalizer.msg("lateststable","Latest stable version:")),BorderLayout.WEST);
 		stableVersPanel.add(mStableVersionLb,BorderLayout.EAST);
 		
 		JPanel devVersPanel=new JPanel(new BorderLayout());
 		devVersPanel.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
-		devVersPanel.add(new JLabel("latest developer version:"),BorderLayout.WEST);
+		devVersPanel.add(new JLabel(mLocalizer.msg("latestdeveloper","latest developer version:")),BorderLayout.WEST);
 		devVersPanel.add(mDeveloperVersionLb,BorderLayout.EAST);
 				
 		tvbPanel.add(instVersPanel);
@@ -156,10 +156,10 @@ public class SelectPluginsDlg extends JDialog implements ActionListener {
 		}else {
 			mStableVersionLb.setText(latestStableV.toString());
 		}
-		tvbPanel.setBorder(BorderFactory.createTitledBorder("Information about new TV-Browser versions"));
+		tvbPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("infotext.version","Information about new TV-Browser versions")));
 		
 		if (latestDeveloperV!=null || latestStableV!=null) {
-			JTextArea area=new JTextArea("To download new versions of TV-Browser, please visit our website on http://tvbrowser.sourceforge.net");
+			JTextArea area=new JTextArea(mLocalizer.msg("infotext.download","To download new versions of TV-Browser, please visit our website on http://tvbrowser.sourceforge.net"));
 			area.setWrapStyleWord(true);
 			area.setLineWrap(true);
 			area.setEditable(false);

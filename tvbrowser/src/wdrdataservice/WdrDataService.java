@@ -55,13 +55,13 @@ import java.util.regex.*;
 	   */
 	  protected  Channel[] getDefaultAvailableChannels() {
 	  	Channel[] list=new Channel[7];
-	  	list[0]=new Channel(this,"1live");
-	  	list[1]=new Channel(this,"WDR2");
-		list[2]=new Channel(this,"WDR3");
-		list[3]=new Channel(this,"WDR4");
-		list[4]=new Channel(this,"WDR5");
-		list[5]=new Channel(this,"Funkhaus Europa");
-		list[6]=new Channel(this,"WDR");
+	  	list[0]=new Channel(this,"1live","1live");
+	  	list[1]=new Channel(this,"WDR2","wdr2");
+		list[2]=new Channel(this,"WDR3","wdr3");
+		list[3]=new Channel(this,"WDR4","wdr4");
+		list[4]=new Channel(this,"WDR5","radio5");
+		list[5]=new Channel(this,"Funkhaus Europa","europa");
+		list[6]=new Channel(this,"WDR","wdr-fs");
 		return list;	
 	  	
 	  }
@@ -107,7 +107,7 @@ import java.util.regex.*;
 			return weekOfYear+cid+".txt";
 		}
 		else {
-			throw new IllegalArgumentException("invalid channel id");
+			throw new IllegalArgumentException("invalid channel id: "+cid);
 		}
 		
 		/*

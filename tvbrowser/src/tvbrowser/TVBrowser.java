@@ -300,7 +300,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     //mPluginsMenu.addSeparator();
     
     icon = new ImageIcon("imgs/Search16.gif");
-    msg = mLocalizer.msg("menuitem.findPluginsInWeb", "Find plugins in the web...");
+    msg = mLocalizer.msg("menuitem.findPluginsOnWeb", "Find plugins on the web...");
     mPluginDownloadMenuItem = new JMenuItem(msg, icon);
     mPluginDownloadMenuItem.addActionListener(this);
 	createPluginsMenu();
