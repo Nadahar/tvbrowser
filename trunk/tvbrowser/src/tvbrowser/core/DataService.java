@@ -732,12 +732,12 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
     //Program prog = (Program) programIter.next();
     boolean matches = false;
 
-    if (inTitle) {
+    if (inTitle && prog.getTitle()!=null) {
         Matcher matcher = pattern.matcher(prog.getTitle());
         matches = matcher.matches();
     }
     
-    if ((! matches) && inText) {
+    if ((! matches) && inText && prog.getDescription()!=null) {
         Matcher matcher = pattern.matcher(prog.getDescription());
         matches = matcher.matches();
     }
@@ -802,11 +802,11 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
             Program prog = (Program) programIter.next();
             boolean matches = false;
 
-            if (inTitle) {
+            if (inTitle && prog.getTitle()!=null) {
               Matcher matcher = pattern.matcher(prog.getTitle());
               matches = matcher.matches();
             }
-            if ((! matches) && inText) {
+            if ((! matches) && inText && prog.getDescription()!=null) {
               Matcher matcher = pattern.matcher(prog.getDescription());
               matches = matcher.matches();
             }

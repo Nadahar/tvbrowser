@@ -83,6 +83,7 @@ public class SettingsDialog {
       }
     });
     JScrollPane scrollPane = new JScrollPane(mSelectionTree);
+    scrollPane.setMinimumSize(new Dimension(150,0));
     scrollPane.setBorder(null);
     mSplitPane.setLeftComponent(scrollPane);
     
