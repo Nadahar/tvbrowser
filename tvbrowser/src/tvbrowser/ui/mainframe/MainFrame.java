@@ -542,8 +542,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private void onDownloadStart() {
     JButton updateBtn=mHorizontalToolBar.getUpdateBtn();
     if (updateBtn != null) {
-      updateBtn.setText(TVBrowser.mLocalizer.msg("button.stop", "Stop"));
-      updateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
+      int toolbarStyle = mHorizontalToolBar.getToolbarStyle();
+      if ((toolbarStyle & util.ui.Toolbar.TEXT) == util.ui.Toolbar.TEXT) {
+        updateBtn.setText(TVBrowser.mLocalizer.msg("button.stop", "Stop"));
+      }
+      if ((toolbarStyle & util.ui.Toolbar.ICON) == util.ui.Toolbar.ICON) {
+        updateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
+      }
     }
     updateMenuItem.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop update..."));
   }
@@ -556,8 +561,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     
     JButton updateBtn=mHorizontalToolBar.getUpdateBtn();
     if (updateBtn != null) {
-      updateBtn.setText(TVBrowser.mLocalizer.msg("button.update", "Update"));
-      updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
+      int toolbarStyle = mHorizontalToolBar.getToolbarStyle();
+      if ((toolbarStyle & util.ui.Toolbar.TEXT) == util.ui.Toolbar.TEXT) {
+        updateBtn.setText(TVBrowser.mLocalizer.msg("button.update", "Update"));
+      }
+      if ((toolbarStyle & util.ui.Toolbar.ICON) == util.ui.Toolbar.ICON) {
+        updateBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
+      }
     }
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
 
