@@ -533,7 +533,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       
       public void mouseClicked(MouseEvent evt) {
         if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-          Plugin.getPluginManager().handleProgramDoubleClick(mProgram);
+          Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
         }
       }
     });

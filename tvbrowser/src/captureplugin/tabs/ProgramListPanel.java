@@ -140,7 +140,7 @@ public class ProgramListPanel extends JPanel {
                     mProgramTable.changeSelection(row, 0, false, false);
                     Program p = (Program) mProgramTableModel.getValueAt(row, 1);
 
-                    devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p);
+                    devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p, CapturePlugin.getInstance());
                 }
             }
         });
