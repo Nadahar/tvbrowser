@@ -72,6 +72,10 @@ public class ProgramListDialog extends JDialog {
      * Genereates the List of Programs
      */
     private void generateList() {
+        if (_title == null) {
+            return;
+        }
+        
         _programList = new Vector();
 
         Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
