@@ -340,8 +340,10 @@ public class SearchForm extends JPanel {
   public void setHistory(SearchFormSettings[] history) {
     if (mPatternCB != null) {
       mPatternCBModel.removeAllElements();
-      for (int i = 0; i < history.length; i++) {
-        mPatternCBModel.addElement(history[i]);
+      if (history != null) {
+        for (int i = 0; i < history.length; i++) {
+          mPatternCBModel.addElement(history[i]);
+        }
       }
       
       mPatternCB.getEditor().selectAll();
