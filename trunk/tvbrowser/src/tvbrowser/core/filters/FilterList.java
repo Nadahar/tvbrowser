@@ -78,6 +78,7 @@ public class FilterList {
     /* Add default filters. The user may not remove them. */
     filterList.add(new ShowAllFilter());
     filterList.add(new PluginFilter());
+    filterList.add(new SubtitleFilter());
     
     
     /* Read the available filters from the file system and add them to the array */

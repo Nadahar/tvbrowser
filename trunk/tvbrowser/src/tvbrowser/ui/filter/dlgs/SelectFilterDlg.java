@@ -37,6 +37,7 @@ import java.awt.event.*;
 
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
+import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.filters.PluginFilter;
 
@@ -155,8 +156,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
       }
       System.out.println("result: "+(item instanceof ShowAllFilter || item instanceof PluginFilter));
       
-      mEditBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter || item instanceof PluginFilter));
-      mRemoveBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter || item instanceof PluginFilter));  
+      mEditBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter));
+      mRemoveBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter));  
 
       int inx=mFilterListBox.getSelectedIndex();
       mUpBtn.setEnabled(inx>0);
