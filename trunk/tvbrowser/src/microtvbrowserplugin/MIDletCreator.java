@@ -167,7 +167,18 @@ public class MIDletCreator implements Progress{
 			
 			java.util.Date now = new java.util.Date();
 			java.util.Date now2 = new java.util.Date(now.getYear(),now.getMonth(),now.getDate(),0,1);
-			basic.writeLong(now2.getTime());
+			
+                        
+//    int createDay = DIN.readByte();
+//    int createMonth = DIN.readByte();
+//    int createYear = DIN.readShort();
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(now);
+                        basic.writeByte(c.get(c.DAY_OF_MONTH));
+                        basic.writeByte(c.get(c.MONTH));
+                        basic.writeShort(c.get(c.YEAR));
+                        
+                        //basic.writeLong(now2.getTime());
 			basic.writeLong(System.currentTimeMillis());
 			int data_length = mtbp.getDaysToExport();
 			basic.writeByte(data_length);

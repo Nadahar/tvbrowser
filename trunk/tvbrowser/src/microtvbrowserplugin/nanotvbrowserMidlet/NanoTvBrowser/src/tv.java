@@ -175,15 +175,13 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
    * Zeigt den nächsten Block an.
    */
   public void show_prog_block(){
-    calendar.setTime(new Date(data_create_time + (day_to_show*24*60*60*1000)));
+    calendar.setTime(new Date(data_create_time + ((day_to_show+1)*24*60*60*1000)));
     list = new List(channel_names[channel_to_show]+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),List.IMPLICIT);
     int prevblock = block_to_show - 1;
-    System.out.println("prevblock: "+prevblock);
     if ( (prevblock >= 0) || ((prevblock < 0) && ((day_to_show) > data_min_day)) ){
       if (prevblock < 0){
         prevblock = 5;
       }
-      System.out.println("prevblock NOW: "+prevblock);
       list.append("<< "+block_names[prevblock],null);
     }
     
