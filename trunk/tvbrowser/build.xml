@@ -56,6 +56,7 @@
   <property name="tvbrowser_win.runtime.dir" value="${runtime.dir}/tvbrowser_win"/>
   <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
   <property name="primarydatamanager.runtime.dir" value="${runtime.dir}/primarydatamanager"/>
+  <property name="pdsrunner.runtime.dir" value="${runtime.dir}/pdsrunner"/>
   <property name="installer.dir" value="installer"/>
   <property name="jsmooth.dir" value="jsmooth"/>
   <property name="public.dir" value="public"/>
@@ -294,11 +295,14 @@
     <mkdir dir="${primarydatamanager.runtime.dir}/prepared"/>
 
     
+    <!-- Make the PDSRunner runtime -->
+    <mkdir dir="${pdsrunner.runtime.dir}"/>
+    
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
     <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
 
-	<!-- Pack the tvbrowser.jar -->    
+	<!-- Pack the MirrorUpdater.jar -->    
     <jar jarfile="${mirrorupdater.runtime.dir}/MirrorUpdater.jar"
          compress="false"
          index="true">
@@ -312,19 +316,30 @@
       <fileset dir="${unpacked.dir}/commons-net.jar" includes="org/**"/>
     </jar>
 
+
     <jar jarfile="${primarydatamanager.runtime.dir}/PrimaryDataManager.jar"
          compress="false"
          index="true">
        <manifest>
           <attribute name="Main-Class" value="primarydatamanager.PrimaryDataManager"/>
        </manifest>
-      <fileset dir="${classes.dir}" includes="primarydatamanager/**"/>
-    <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+       <fileset dir="${classes.dir}" includes="primarydatamanager/**"/>
+       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
 	   <fileset dir="${classes.dir}" includes="devplugin/**"/>
        <fileset dir="${classes.dir}" includes="util/**"/>
     </jar>
     
-    
+    <jar jarfile="${pdsrunner.runtime.dir}/PDSRunner.jar"
+       compress="false"
+       index="true">
+       <manifest>
+         <attribute name="Main-Class" value="primarydatamanager.PDSRunner"/>
+       </manifest>
+       <fileset dir="${classes.dir}" includes="primarydatamanager/**"/>
+       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+	   <fileset dir="${classes.dir}" includes="devplugin/**"/>
+       <fileset dir="${classes.dir}" includes="util/**"/>
+     </jar>  
 
     <!-- Copy the file(s) -->
     <copy todir="${primarydatamanager.runtime.dir}/prepared">

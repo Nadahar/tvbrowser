@@ -34,6 +34,7 @@ public class TagReader {
   
   private Reader mIn;
   private HTMLTag mCurTag;
+  private String mEncoding;
  
   private boolean mExpectTag;
   private int mChar;
@@ -45,10 +46,14 @@ public class TagReader {
     mExpectTag=true;
   }
   
+  public void setEncoding(String encoding) throws UnsupportedEncodingException {
+     String test=new String("".toString().getBytes(),encoding);
+     mEncoding=encoding; 
+  }
+  
   public Tag next() {
     HTMLTag tag;
-    try {
-     
+    try {     
       if (mExpectTag) {
         tag=new HTMLTag(true);
         while (mChar!=-1 && mChar!='<') {
@@ -64,7 +69,7 @@ public class TagReader {
       
     }
     else {
-      tag=new HTMLTag(false);
+      tag=new HTMLTag(false, mEncoding);
       while (mChar!=-1 && mChar!='<') {
         tag.append((char)mChar);
         mChar=mIn.read(); 
@@ -95,12 +100,18 @@ class HTMLTag implements Tag {
   private boolean mIsTag;
   private char mPrevChar;
   private boolean mIsConverted;
+  private String mEncoding;
   
   public HTMLTag(boolean isTag) {
     mBuf=new StringBuffer();
     mIsTag=isTag;
     mPrevChar=0;
     mIsConverted=true;
+  }
+  
+  public HTMLTag(boolean isTag, String encoding) {
+    this(isTag);
+    mEncoding=encoding;
   }
   
   public boolean isTextTag() {
@@ -121,7 +132,7 @@ class HTMLTag implements Tag {
   
   public String getName() {
     if (!mIsConverted && !mIsTag) {
-      convert(mBuf);
+      mBuf=convert(mBuf);
       mIsConverted=true;
     }
     return mBuf.toString();
@@ -166,18 +177,41 @@ class HTMLTag implements Tag {
   }
 
   private void replaceEntity(StringBuffer line, int from, int to) {
-     String entity=line.substring(from,to+1);
-     line.replace(from,to+1,Entities.decode(entity));     
+    String entity=line.substring(from,to+1);
+     
+    String replace=null;
+    if (mEncoding!=null) {       
+      try {  
+        replace=new String(Entities.decode(entity).getBytes("ISO-8859-1"),"ISO-8859-1");
+ 			} catch (UnsupportedEncodingException e) {
+			  e.printStackTrace();
+		  }       
+    }else{
+      replace=Entities.decode(entity);
+    }
+    line.replace(from,to+1,replace);     
    }
   
-   private void convert(StringBuffer line) {
+   private StringBuffer convert(StringBuffer line) {
      int from=0;
-     while (from<line.length()) {      
-       if (line.charAt(from)=='&') {
+     StringBuffer result=null;
+     if (mEncoding!=null) {
+       try {
+				 result=new StringBuffer(new String(line.toString().getBytes(mEncoding)));
+       } catch (UnsupportedEncodingException e) {
+				// ignore
+			 }
+     }
+     else {
+       result=new StringBuffer(line.toString());
+     }
+     
+     while (from<result.length()) {      
+       if (result.charAt(from)=='&') {
          int to=from+1;
-         while (to<line.length()) {
-           if (line.charAt(to)==';') {
-             replaceEntity(line,from,to);
+         while (to<result.length()) {
+           if (result.charAt(to)==';') {
+             replaceEntity(result,from,to);
              break;
            }
            to++;
@@ -186,6 +220,8 @@ class HTMLTag implements Tag {
        from++;
       
      }
+     
+     return result;
     }
 
 
