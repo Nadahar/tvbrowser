@@ -72,7 +72,7 @@ public class ShowDetailsAction extends AbstractAction {
         }
         
         if (name)
-            putValue(Action.NAME, mLocalizer.msg("showDetails", "Show Details"));
+            putValue(Action.NAME, mLocalizer.msg("showDetailsOnWeb", "Show Details on the Web"));
         
         if (icon)
             putValue(Action.SMALL_ICON, ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/details16.gif", getClass()));
