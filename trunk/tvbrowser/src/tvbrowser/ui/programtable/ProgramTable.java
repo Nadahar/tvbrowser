@@ -57,7 +57,10 @@ public class ProgramTable extends JPanel
   private BackgroundPainter mBackgroundPainter;
   
   private Point mDraggingPoint;
-
+  
+  private Point mMouse;
+  
+  private JPopupMenu mPopupMenu;
   
   /**
    * Creates a new instance of ProgramTable.
@@ -78,6 +81,11 @@ public class ProgramTable extends JPanel
       public void mouseDragged(MouseEvent evt) {
         handleMouseDragged(evt);
       }
+      
+      public void mouseMoved(MouseEvent evt) {
+        handleMouseMoved(evt);
+      }
+
     });
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
@@ -86,6 +94,10 @@ public class ProgramTable extends JPanel
       public void mouseClicked(MouseEvent evt) {
         handleMouseClicked(evt);
       }
+      public void mouseExited(MouseEvent evt) {
+         handleMouseExited(evt);
+      }
+      
     });
     
   }
@@ -170,7 +182,10 @@ public class ProgramTable extends JPanel
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
-    
+
+    JViewport viewport = (JViewport) getParent();
+    int viewportStartY = viewport.getViewPosition().y;
+   
     // Paint the table cells
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;
@@ -202,8 +217,22 @@ public class ProgramTable extends JPanel
           {
             // Paint the cell
             grp.translate(x, y);
+            
+            boolean mouse = false;
+            int textstart = 0;
+            
+            Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
+            if ((mMouse != null) && (rec.contains(mMouse))) {
+                mouse = true;
+            }
+            
+            if (y < viewportStartY) {
+                textstart = viewportStartY-y;                
+            }
+            
             panel.setSize(mColumnWidth, cellHeight);
-            panel.paint(grp);
+            panel.paint(mouse, textstart, grp);
+
             // grp.drawRect(0, 0, mColumnWidth, cellHeight);
             grp.translate(-x, -y);
           }
@@ -211,6 +240,7 @@ public class ProgramTable extends JPanel
           // Move to the next row in this column
           y += cellHeight;
         }
+
       }
 
       // paint the timeY
@@ -221,6 +251,11 @@ public class ProgramTable extends JPanel
       x += mColumnWidth;
     }
 
+    if (viewport.getWidth() - x > 0) {
+        grp.setColor(Color.WHITE);
+        grp.fillRect(x, 0, viewport.getWidth() - x, viewport.getHeight());
+    }
+    
     // Paint the copyright notices
     Channel[] channelArr = mModel.getShownChannels();
     for (int i = 0; i < channelArr.length; i++) {
@@ -349,11 +384,13 @@ public class ProgramTable extends JPanel
   
   
   private void handleMouseClicked(MouseEvent evt) {
+    mMouse = evt.getPoint();
+    repaint();
     Program program = getProgramAt(evt.getX(), evt.getY());
     if (SwingUtilities.isRightMouseButton(evt)) {
       if (program != null) {
-        JPopupMenu menu = createPluginContextMenu(program);
-        menu.show(this, evt.getX() - 15, evt.getY() - 15);
+        mPopupMenu = createPluginContextMenu(program);
+        mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
       }
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
@@ -368,7 +405,20 @@ public class ProgramTable extends JPanel
     }
   }
   
-  
+  private void handleMouseMoved(MouseEvent evt) {
+      if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
+          mMouse = evt.getPoint();
+          repaint();
+      }
+  }
+
+  private void handleMouseExited(MouseEvent evt) {
+      JViewport viewport = (JViewport) getParent();
+      if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
+          mMouse = null;
+          repaint();      
+      }
+  }
   
   private void handleMouseDragged(MouseEvent evt) {
     if (mDraggingPoint != null) {
