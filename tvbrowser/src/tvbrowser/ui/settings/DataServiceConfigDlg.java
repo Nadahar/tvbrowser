@@ -16,6 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 
 
@@ -25,23 +31,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import util.ui.UiUtilities;
+
 import tvdataloader.TVDataServiceInterface;
 import tvdataloader.SettingsPanel;
 import tvbrowser.core.DataLoaderManager;
 
-
-public class DataServiceConfigDlg extends JDialog implements ActionListener {
+public class DataServiceConfigDlg implements ActionListener {
 	
+  private JDialog mDialog;
 	private TVDataServiceInterface dataLoader;
 	private JButton cancelBtn, okBtn;
 	private SettingsPanel configPanel;
 	
-	public DataServiceConfigDlg(Frame parent, String dataloaderName) {
-		super(parent,true);
-    	this.setTitle("Configure "+dataloaderName);
+  
+  
+	public DataServiceConfigDlg(Component parent, String dataloaderName) {
+    mDialog = UiUtilities.createDialog(parent, true);
     
-		JPanel contentPane=(JPanel)getContentPane();
-		
+   	mDialog.setTitle("Configure "+dataloaderName);
+    
+		JPanel contentPane = (JPanel) mDialog.getContentPane();
 		
 		contentPane.setLayout(new BorderLayout());
 		
@@ -65,20 +75,30 @@ public class DataServiceConfigDlg extends JDialog implements ActionListener {
 			okBtn=new JButton("OK");
 			okBtn.addActionListener(this);
 			pushButtonPanel.add(okBtn);
-			getRootPane().setDefaultButton(okBtn);
+			mDialog.getRootPane().setDefaultButton(okBtn);
 		}
 		cancelBtn=new JButton("Cancel");
 		cancelBtn.addActionListener(this);
 		pushButtonPanel.add(cancelBtn);
 		
 		contentPane.add(pushButtonPanel,BorderLayout.SOUTH);
+    
+    mDialog.pack();
 	}
+  
+  
+  
+  public void centerAndShow() {
+    UiUtilities.centerAndShow(mDialog);
+  }
+  
 	
+  
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==okBtn) {
 			configPanel.ok();
 		}else if (e.getSource()==cancelBtn) {
-			this.hide();
+			mDialog.dispose();
 		}
 		
 	}
