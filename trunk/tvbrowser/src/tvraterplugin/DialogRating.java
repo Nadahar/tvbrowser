@@ -245,7 +245,13 @@ public class DialogRating extends JDialog {
 	 */
 	private JPanel createRatingPanel(Rating rating) {
 		JPanel ratingPanel = new JPanel();
-		ratingPanel.setBorder(BorderFactory.createTitledBorder(_mLocalizer.msg("overallRating", "Overall Rating")));
+		
+		String titel = _mLocalizer.msg("overallRating", "Overall Rating");
+		if (rating.getIntValue(Rating.COUNT) > 0) {
+		    titel += " (" + rating.getIntValue(Rating.COUNT) +")";
+		}
+		
+		ratingPanel.setBorder(BorderFactory.createTitledBorder(titel));
 
 		
 		if (rating != null) {

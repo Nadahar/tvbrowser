@@ -190,19 +190,27 @@ public class DialogOverview extends JDialog {
      * Updates the Database from the Server
      */
     protected void update() {
-        _update.setEnabled(false);
-        System.out.println("Updater gestartet");
-        Updater up = new Updater(_tvraterPlugin);
-        up.run();
+        Thread updateThread = new Thread() {
 
-        RatingComparator comperator = new RatingComparator();
-        Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
-        Collections.sort(overallVector, comperator);
-        _overall.setListData(overallVector);
-        _update.setEnabled(true);
+            public void run() {
 
-        if (up.wasSuccessfull()) {
-            JOptionPane.showMessageDialog(getParent(), _mLocalizer.msg("updateSuccess", "Update was successfull!"));
-        }
+                _update.setEnabled(false);
+                System.out.println("Updater gestartet");
+                Updater up = new Updater(_tvraterPlugin);
+                up.run();
+
+                RatingComparator comperator = new RatingComparator();
+                Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
+                Collections.sort(overallVector, comperator);
+                _overall.setListData(overallVector);
+                _update.setEnabled(true);
+
+                if (up.wasSuccessfull()) {
+                    JOptionPane.showMessageDialog(getParent(), _mLocalizer.msg("updateSuccess",
+                            "Update was successfull!"));
+                }
+            };
+        };
+        updateThread.start();
     }
 }
