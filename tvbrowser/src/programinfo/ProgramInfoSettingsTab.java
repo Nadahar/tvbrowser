@@ -19,35 +19,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   private JTextArea mStyleSheetTa;
   private Properties mSettings;
   
-  private static final String DEFAULT_STYLE_SHEET = "#title {\n" +
-  "  font-size:15px;\n" +
-  "  font-family:Dialog;\n" +
-  "  text-align:center;\n" +
-  "  font-weight:bold;\n" +
-  "}\n\n" +
-  "#time {\n" +
-    "  font-size:9px;\n" +
-    "  font-family:Dialog;\n" +
-    "  text-align:center;\n" +
-    "}\n\n" +
-  "#maininfo {\n" +
-  "  font-size:9px;\n" +
-  "  font-family:Dialog;\n" +
-  "  text-align:right;\n" +
-  "  font-weight:bold;\n" +
-  "}\n\n" +  
-  "#info {\n" +
-  "  font-size:9px;\n" +
-  "  font-family:Dialog;\n" +
-  "}\n\n" +
-  "#text {\n" +
-  "  font-size:11px;\n" +
-  "  font-family:Dialog;\n" +
-  "}\n\n" +
-  "#small {\n" +
-  "  font-size:9px;\n" +
-  "  font-family:Dialog;\n" +
-  "}\n";
+  
 
   public ProgramInfoSettingsTab(Properties settings) {
     mSettings = settings;
@@ -61,7 +33,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mStyleSheetTa = new JTextArea();
     String styleSheet = mSettings.getProperty("stylesheet_v1");
     if (styleSheet == null) {
-      styleSheet = DEFAULT_STYLE_SHEET;
+      styleSheet = ProgramInfo.DEFAULT_STYLE_SHEET;
     }
     
     mStyleSheetTa.setText(styleSheet);
@@ -81,7 +53,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     defaultBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        mStyleSheetTa.setText(DEFAULT_STYLE_SHEET);
+        mStyleSheetTa.setText(ProgramInfo.DEFAULT_STYLE_SHEET);
       }
     });
     

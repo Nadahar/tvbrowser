@@ -57,6 +57,36 @@ public class ProgramInfo extends devplugin.Plugin {
   private Properties mSettings;
 
   private static devplugin.Plugin mInstance;
+  
+  public static final String DEFAULT_STYLE_SHEET = "#title {\n" +
+    "  font-size:15px;\n" +
+    "  font-family:Dialog;\n" +
+    "  text-align:center;\n" +
+    "  font-weight:bold;\n" +
+    "}\n\n" +
+    "#time {\n" +
+      "  font-size:9px;\n" +
+      "  font-family:Dialog;\n" +
+      "  text-align:center;\n" +
+      "}\n\n" +
+    "#maininfo {\n" +
+    "  font-size:9px;\n" +
+    "  font-family:Dialog;\n" +
+    "  text-align:right;\n" +
+    "  font-weight:bold;\n" +
+    "}\n\n" +  
+    "#info {\n" +
+    "  font-size:9px;\n" +
+    "  font-family:Dialog;\n" +
+    "}\n\n" +
+    "#text {\n" +
+    "  font-size:11px;\n" +
+    "  font-family:Dialog;\n" +
+    "}\n\n" +
+    "#small {\n" +
+    "  font-size:9px;\n" +
+    "  font-family:Dialog;\n" +
+    "}\n";
 
   public ProgramInfo() {
     mInfoBitArr = new int[] {
@@ -152,7 +182,7 @@ public class ProgramInfo extends devplugin.Plugin {
 
   public void execute(Program program) {
     
-    String styleSheet = mSettings.getProperty("stylesheet_v1","");
+    String styleSheet = mSettings.getProperty("stylesheet_v1",DEFAULT_STYLE_SHEET);
     
     ProgramInfoDialog dlg = new ProgramInfoDialog(getParentFrame(), styleSheet, program, mInfoBitArr,
                                                   mInfoIconArr, mInfoMsgArr);
