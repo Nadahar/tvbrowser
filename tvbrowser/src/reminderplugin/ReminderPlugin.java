@@ -62,11 +62,11 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     mInstance = this;
   }
   
-  private void init() {
-      TreeNode tree = getPluginManager().getTree(getId()); 
-      mReminderList = new ReminderList(tree);
-      mReminderList.setReminderTimerListener(this);
-      mReminderItemsTrash = new HashSet();
+  public void onActivation() {
+    TreeNode tree = getPluginManager().getTree(getId()); 
+    mReminderList = new ReminderList(tree);
+    mReminderList.setReminderTimerListener(this);
+    mReminderItemsTrash = new HashSet();
   }
   
   public static ReminderPlugin getInstance() {
@@ -140,7 +140,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException {
       
-    init();
     int version = in.readInt();
     
 	  mReminderList.setReminderTimerListener(null);
@@ -278,6 +277,12 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     return true;
   }
 
+  public boolean canUseProgramTree() {
+    return true;
+  }
+  
+ 
+  
 
   /**
    * Removes the deleted programs from the reminder list.

@@ -260,4 +260,15 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return "bsh." + mBshFile.getName();
     }
 
+ 
+    public void onActivation() {        
+    }
+
+    public void onDeactivation() {       
+    }
+
+    public boolean canUseProgramTree() {
+        return false;
+    }
+
 }

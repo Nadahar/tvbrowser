@@ -674,4 +674,32 @@ abstract public class Plugin {
   public void handleTvDataChanged(ChannelDayProgram newProg) {
   }
 
+  /**
+   * This method is automatically called immediatly before the plugin gets
+   * activated.
+   *
+   * @since 1.1
+   */
+  public void onActivation() {      
+  }
+  
+  /**
+   * This method is automatically called immediatly after deactivating
+   * the plugin.
+   *
+   * @since 1.1
+   */
+  public void onDeactivation() {      
+  }
+  
+  /**
+   * 
+   * @return true, if the programs of this plugin are handled by the plugin
+   *      tree view
+   * @since 1.1
+   */
+  public boolean canUseProgramTree() {
+    return false;
+  }
+  
 }
