@@ -40,13 +40,14 @@ import util.ui.ImageUtilities;
 
 public class Channel {
 
-  public static final int CATEGORY_PRIVATE = 1 << 1;
-  public static final int CATEGORY_PUBLIC = 1 << 2;
-  public static final int CATEGORY_DIGITAL = 1 << 3;
-  public static final int CATEGORY_SPECIAL_MUSIC = 1 << 4;
-  public static final int CATEGORY_SPECIAL_SPORT = 1 << 5;
-  public static final int CATEGORY_SPECIAL_NEWS = 1 << 6;
-  public static final int CATEGORY_SPECIAL_OTHER = 1 << 7;
+  public static final int CATEGORY_NONE = 0;
+  public static final int CATEGORY_PRIVATE = 1;
+  public static final int CATEGORY_PUBLIC = 1 << 1;
+  public static final int CATEGORY_DIGITAL = 1 << 2;
+  public static final int CATEGORY_SPECIAL_MUSIC = 1 << 3;
+  public static final int CATEGORY_SPECIAL_SPORT = 1 << 4;
+  public static final int CATEGORY_SPECIAL_NEWS = 1 << 5;
+  public static final int CATEGORY_SPECIAL_OTHER = 1 << 6;
 
   private TvDataService mDataService;
   private String mName;
@@ -93,7 +94,7 @@ public class Channel {
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon)
   {
-    this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, 0);
+    this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, CATEGORY_NONE);
   }
 
   public Channel(TvDataService dataService, String name, String id, TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group) {
@@ -357,7 +358,8 @@ public class Channel {
   public boolean isUsingUserIcon() {
       return mUseUserIcon;
   }
-  
+
+
   public boolean equals(Object obj) {
     if (obj instanceof Channel) {
       Channel cmp = (Channel) obj;

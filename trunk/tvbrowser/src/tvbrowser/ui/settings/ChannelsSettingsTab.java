@@ -31,14 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -109,8 +102,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
   /** Provider of the current selected Channel*/
   private JLabel mChannelProvider;
 
-
+  /** Comboboxes for filtering */
   private JComboBox mCategoryCB, mProviderCB, mTimezoneCB, mCountryCB;
+
+  /** Model of the list boxes */
+  private ChannelListModel mChannelListModel;
 
 
   /**
@@ -127,6 +123,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    */
   public ChannelsSettingsTab(boolean showAllButtons) {
     mShowAllButtons = showAllButtons;
+    mChannelListModel = new ChannelListModel();
   }
 
   /**
@@ -135,7 +132,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    */
   public JPanel createSettingsPanel() {
     JPanel panel = new JPanel();
-    // FormDebugPanel panel = new FormDebugPanel();
 
     FormLayout layout = new FormLayout("default:grow(0.5), 3dlu, default, 3dlu, default:grow(0.5), 3dlu, default",
         "default, 3dlu, default:grow, default, 3dlu, default, default:grow, 3dlu, top:default, 3dlu, default, 3dlu, default, default");
@@ -243,7 +239,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       panel.add(urlLabel, c.xyw(1,14,7));
     }
 
-    fillChannelListBox();
+    fillSubscribedChannelsListBox();
+    fillAvailableChannelsListBox();
+
 
     return panel;
   }
@@ -279,13 +277,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       Locale locale = new Locale(Locale.getDefault().getLanguage(), country);
       mCountryCB.addItem(new FilterItem(locale.getDisplayCountry(), country));
     }
-  /*  mCountryCB.addItem(new FilterItem(Locale.CANADA.getDisplayCountry(), Locale.CANADA));
-    mCountryCB.addItem(new FilterItem(Locale.FRANCE.getDisplayCountry(), Locale.FRANCE));
-    mCountryCB.addItem(new FilterItem(Locale.GERMANY.getDisplayCountry(), Locale.GERMANY));
-    mCountryCB.addItem(new FilterItem(Locale.ITALY.getDisplayCountry(), Locale.ITALY));
-    mCountryCB.addItem(new FilterItem(Locale.UK.getDisplayCountry(), Locale.UK));
-    mCountryCB.addItem(new FilterItem(Locale.US.getDisplayCountry(), Locale.US));*/
-
 
 
     mTimezoneCB = new JComboBox();
@@ -328,13 +319,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     CellConstraints c = new CellConstraints();
 
     panel.add(new JLabel("Filter:"), c.xyw(1, 1, 3));
- //   panel.add(new JLabel("Land"), c.xy(1, 3));
     panel.add(mCountryCB, c.xy(1, 3));
- //   panel.add(new JLabel("Zeitzone"), c.xy(1, 5));
     panel.add(mTimezoneCB, c.xy(1, 5));
- //   panel.add(new JLabel("Anbieter"), c.xy(1, 7));
     panel.add(mProviderCB, c.xy(1, 7));
- //   panel.add(new JLabel("Kategorie"), c.xy(1, 9));
     panel.add(mCategoryCB, c.xy(1, 9));
 
     return panel;
@@ -342,7 +329,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
   private ItemListener mFilterItemListener = new ItemListener(){
     public void itemStateChanged(ItemEvent e) {
-      fillChannelListBox();
+      fillAvailableChannelsListBox();
     }
   };
 
@@ -353,7 +340,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    */
   private Component createDetailsPanel() {
 
-    // FormDebugPanel panel = new FormDebugPanel();
     JPanel panel = new JPanel();
     panel.setLayout(new FormLayout("default, 3dlu, default:grow",
         "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
@@ -447,36 +433,54 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     return mLocalizer.msg("channels","Channels");
   }
 
-  /**
-   * Fill the ChannelListBoxes with the Channels
-   */
-  private void fillChannelListBox() {
-
-    TimeZone timeZone = (TimeZone)((FilterItem)mTimezoneCB.getSelectedItem()).getValue();
-    String country = (String)((FilterItem)mCountryCB.getSelectedItem()).getValue();
-    String provider = (String)((FilterItem)mProviderCB.getSelectedItem()).getValue();
-
-    ChannelFilter filter = new ChannelFilter(timeZone, country, provider, 0);
 
 
 
-    ((DefaultListModel) mSubscribedChannels.getModel()).removeAllElements();
-    ((DefaultListModel) mAllChannels.getModel()).removeAllElements();
+  private void fillSubscribedChannelsListBox() {
+    System.out.println("fillSubscribedChannelsListBox");
+   ((DefaultListModel) mSubscribedChannels.getModel()).removeAllElements();
+    Collection subscribedChannels = mChannelListModel.getSubscribedChannels();
 
-    // Split the channels in subscribed and available
-    Channel[] channels = ChannelList.getAvailableChannels();
-    int subscribedChannelCount = ChannelList.getNumberOfSubscribedChannels();
-    Channel[] subscribedChannelArr = new Channel[subscribedChannelCount];
-    ArrayList availableChannelList = new ArrayList();
-
-    for (int i = 0; i < channels.length; i++) {
+   int subscribedChannelCount = subscribedChannels.size();
+  Channel[] subscribedChannelArr = new Channel[subscribedChannelCount];
+  Channel[] channels = mChannelListModel.getAvailableChannels();
+  for (int i = 0; i < channels.length; i++) {
       Channel channel = channels[i];
-
       if (ChannelList.isSubscribedChannel(channel)) {
         int pos = ChannelList.getPos(channel);
         ChannelList.getSubscribedChannels()[pos].copySettingsToChannel(channel);
         subscribedChannelArr[pos] = channel;
-      } else if (filter.accept(channel)) {
+      }
+    }
+
+    // Add the subscribed channels
+    for (int i = 0; i < subscribedChannelArr.length; i++) {
+      ((DefaultListModel) mSubscribedChannels.getModel()).addElement(subscribedChannelArr[i]);
+    }
+  }
+
+
+  private void fillAvailableChannelsListBox() {
+    System.out.println("fillAvailableChannelsListBox");
+    TimeZone timeZone = (TimeZone)((FilterItem)mTimezoneCB.getSelectedItem()).getValue();
+    String country = (String)((FilterItem)mCountryCB.getSelectedItem()).getValue();
+    String provider = (String)((FilterItem)mProviderCB.getSelectedItem()).getValue();
+    Integer categoryInt = (Integer)((FilterItem)mCategoryCB.getSelectedItem()).getValue();
+    int categories = 0;
+    if (categoryInt != null) {
+      categories = categoryInt.intValue();
+    }
+
+    ChannelFilter filter = new ChannelFilter(timeZone, country, provider, categories);
+    ((DefaultListModel) mAllChannels.getModel()).removeAllElements();
+
+    // Split the channels in subscribed and available
+    Channel[] channels = mChannelListModel.getAvailableChannels();
+    ArrayList availableChannelList = new ArrayList();
+
+    for (int i = 0; i < channels.length; i++) {
+      Channel channel = channels[i];
+      if (!mChannelListModel.isSubscribed(channel) && filter.accept(channel)) {
         availableChannelList.add(channel);
       }
     }
@@ -489,11 +493,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     // Add the available channels
     for (int i = 0; i < availableChannelArr.length; i++) {
       ((DefaultListModel) mAllChannels.getModel()).addElement(availableChannelArr[i]);
-    }
-
-    // Add the subscribed channels
-    for (int i = 0; i < subscribedChannelArr.length; i++) {
-      ((DefaultListModel) mSubscribedChannels.getModel()).addElement(subscribedChannelArr[i]);
     }
   }
 
@@ -530,8 +529,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            ChannelList.create();
-            fillChannelListBox();
+            mChannelListModel.refresh();
+            fillSubscribedChannelsListBox();
+            fillAvailableChannelsListBox();
+
           }
 
         });
@@ -559,7 +560,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    * Move Channels to the subscribed Channels
    */
   private void moveChannelsToRight() {
-    UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels);
+    Object[] objects = UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels);
+    for (int i=0; i<objects.length; i++) {
+      mChannelListModel.subscribeChannel((Channel)objects[i]);
+    }
+
   }
 
   /**
@@ -567,7 +572,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    *
    */
   private void moveChannelsToLeft() {
-    UiUtilities.moveSelectedItems(mSubscribedChannels, mAllChannels);
+    Object[] objects = UiUtilities.moveSelectedItems(mSubscribedChannels, mAllChannels);
+    for (int i=0; i<objects.length; i++) {
+      mChannelListModel.unsubscribeChannel((Channel)objects[i]);
+    }
+    fillAvailableChannelsListBox();
   }
 
 
@@ -585,6 +594,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     public boolean accept(Channel channel) {
       if (mTimezone != null) {
+        System.out.println("timezone: "+mTimezone.getDisplayName());
         if (channel.getTimeZone().getRawOffset() != mTimezone.getRawOffset()) {
           return false;
         }
@@ -611,10 +621,15 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         }else{
           return false;
         }
-
       }
 
-      return true;
+      if (mCategories > 0) {
+        if ((channel.getCategories() & mCategories) == 0) {
+          return false;
+        }
+      }
+
+    return true;
     }
   }
 
@@ -641,6 +656,48 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     }
 
 
+
+  }
+
+
+
+  private class ChannelListModel {
+
+    private HashSet mSubscribedChannels;
+    private Channel[] mAvailableChannels;
+
+    public ChannelListModel() {
+      mSubscribedChannels = new HashSet();
+      refresh();
+    }
+
+    public void subscribeChannel(Channel ch) {
+      mSubscribedChannels.add(ch);
+    }
+
+    public void unsubscribeChannel(Channel ch) {
+      mSubscribedChannels.remove(ch);
+    }
+
+    public void refresh() {
+      Channel[] channels = ChannelList.getSubscribedChannels();
+      mAvailableChannels = ChannelList.getAvailableChannels();
+      for (int i=0; i<channels.length; i++) {
+        subscribeChannel(channels[i]);
+      }
+    }
+
+    public boolean isSubscribed(Channel ch) {
+      return mSubscribedChannels.contains(ch);
+    }
+
+    public Channel[] getAvailableChannels() {
+      return mAvailableChannels;
+    }
+
+    public Collection getSubscribedChannels() {
+      return mSubscribedChannels;
+    }
 
   }
 
