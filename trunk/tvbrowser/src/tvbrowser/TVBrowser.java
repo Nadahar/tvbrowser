@@ -399,6 +399,8 @@ public class TVBrowser {
     mLog.info("Channel Settings (day light saving time corrections/icons)");
     ChannelList.storeAllSettings();  
     
+    mainFrame.storeSettings();
+    
     mLog.info("Storing window size and location");
     boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
     Settings.propIsWindowMaximized.setBoolean(maximized);

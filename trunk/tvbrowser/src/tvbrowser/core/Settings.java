@@ -191,7 +191,7 @@ public class Settings {
       propShowUpdateButton, propShowPreferencesButton, propToolbarButtonStyle, propToolbarButtons
     };
     if (mProp.hasChanged(propArr)) {
-      mainFrame.getHorizontalToolBar().updateButtons();
+      mainFrame.updateToolbar();
     }
     
     if (mProp.hasChanged(propTimeButtons)) {
@@ -204,7 +204,6 @@ public class Settings {
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
       model.setChannels(ChannelList.getSubscribedChannels());
       
-      mainFrame.getHorizontalToolBar().updateChannelChooser();  
       mainFrame.updateChannelChooser();
     }
       
@@ -385,11 +384,19 @@ public class Settings {
   public static final StringArrayProperty propHiddenPluginButtons
     = new StringArrayProperty(mProp, "hiddenPluginButtons", new String[0]);
 
+  
+ 
   public static final StringArrayProperty propToolbarButtons
     = new StringArrayProperty(mProp, "toolbarButtons",
             null  // we show all buttons, if this property is not set
      ); 
-
+  
+  public static final BooleanProperty propToolbarIsFloatable
+    = new BooleanProperty(mProp, "toolbarIsFloatable", true);
+  
+  public static final StringProperty propToolbarLocation
+    = new StringProperty(mProp, "toolbarLocation", "north");
+  
   public static final StringProperty propDefaultContextMenuPlugin
     = new StringProperty(mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");
   
