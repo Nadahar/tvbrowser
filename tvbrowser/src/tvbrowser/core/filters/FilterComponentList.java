@@ -1,11 +1,20 @@
 package tvbrowser.core.filters;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 
 public class FilterComponentList {
@@ -100,8 +109,14 @@ public class FilterComponentList {
       filterComponent = new ChannelFilterComponent(name, description);
     }
     else if (className.endsWith(".TimeFilterComponent")) {
-      filterComponent = new TimeFilterComponent(name, description);
+        filterComponent = new TimeFilterComponent(name, description);
     }
+    else if (className.endsWith(".ProgramInfoFilterComponent")) {
+        filterComponent = new ProgramInfoFilterComponent(name, description);
+  }
+    else if (className.endsWith(".ProgramLengthFilterComponent")) {
+        filterComponent = new ProgramLengthFilterComponent(name, description);
+  }
     else {
       throw new IOException("error reading filter component: "+className+" unknown");      
     }
