@@ -29,6 +29,7 @@ import java.io.*;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.logging.*;
 
@@ -55,10 +56,16 @@ public class PrimaryDataManager {
   private File mPreparedDir;
   private File mWorkDir;
   private File mBackupDir;
+  private File mPDSLogDir;
   
   private PrimaryDataService[] mDataServiceArr;
   
   private RawDataProcessor mRawDataProcessor;
+  
+  private static final int CONCURRENT_DOWNLOADS=5;
+  private LinkedList mDataServiceList;
+  private int mActiveThreadCount;
+  private Thread mWaitingThread;
   
   private int mReadBytesCount;
   
@@ -68,6 +75,7 @@ public class PrimaryDataManager {
     mPreparedDir = new File(baseDir, "prepared");
     mWorkDir     = new File(baseDir, "temp");
     mBackupDir   = new File(baseDir, "backup");
+    mPDSLogDir   = new File(baseDir, "pdslog");
     
     mRawDataProcessor = new RawDataProcessor();
   }
@@ -101,6 +109,15 @@ public class PrimaryDataManager {
         + mWorkDir.getAbsolutePath());
     }
     
+    // Create the pds log directory
+    if (! mPDSLogDir.exists()) {
+      if (! mPDSLogDir.mkdir()) {
+        throw new PreparationException("Could not create log directory: "
+           + mPDSLogDir.getAbsolutePath());
+        }   
+    }
+    
+    // Make sure that the raw directory exists
     if (!mRawDir.exists()) {
       if (! mRawDir.mkdir()) {
         throw new PreparationException("Could not create raw directory: "
@@ -189,8 +206,100 @@ public class PrimaryDataManager {
   }
 
 
+  private void loadNewRawData() throws PreparationException {
+    if (mDataServiceArr == null) {
+      throw new PreparationException("No primary data services specified");
+    }
+    
+    mDataServiceList=new LinkedList();
+    for (int i=0;i<mDataServiceArr.length;i++) {
+      mDataServiceList.add(mDataServiceArr[i]);
+    }
+    
+    
+    
+    mActiveThreadCount =0;
+    mWaitingThread = Thread.currentThread();
+    
+    //  Set the max. connections
+     if (CONCURRENT_DOWNLOADS > 5) {    
+       System.setProperty("http.maxConnections", Integer.toString(CONCURRENT_DOWNLOADS));
+     }
+    
+    for (int i=0;i<CONCURRENT_DOWNLOADS;i++) {
+      Thread downloadThread = new Thread() {
+        public void run() {
+          PDSThreadRun();
+        }
+      };
+      downloadThread.start();
+    }
+    
+    //  Wait until all jobs are processed    
+    boolean isFinished;
+    do {
+      try {
+        Thread.sleep(Long.MAX_VALUE);
+      } catch (InterruptedException exc) {}
+      
+      synchronized (mDataServiceList) {
+        isFinished = mDataServiceList.isEmpty() && (mActiveThreadCount == 0);
+      }
+    } while (! isFinished);
+    
+  }
+  
+  
 
-  private void loadNewRawData()
+
+  private void PDSThreadRun() {
+    mActiveThreadCount++;
+
+    boolean isFinished = false;
+    do {
+      // Get the next job
+      PrimaryDataService pds = null;
+      
+      synchronized (mDataServiceList) {
+        if (mDataServiceList.isEmpty()) {
+          isFinished = true;
+        } else {
+          pds = (PrimaryDataService) mDataServiceList.removeFirst();
+        }
+      }
+      
+      if (pds != null) {
+        String dir = mRawDir.getAbsolutePath();
+        File logFile=new File(mPDSLogDir,pds.getClass().getName()+".txt");
+        try {
+          FileOutputStream out=new FileOutputStream(logFile);
+          PrintStream errOut=new PrintStream(out);
+          boolean thereWereErrors = pds.execute(dir, errOut);
+          if (thereWereErrors) {
+            mLog.warning("There were errors during the execution of primary data service "+pds.getClass().getName());
+          }else{
+            mLog.fine(pds.getClass().getName()+ " terminated normally");
+          }
+          errOut.close();
+        }catch(IOException exc) {
+          mLog.log(Level.SEVERE, "Error executing primary data service "+pds.getClass().getName(), exc);
+        }
+      }
+    } while (! isFinished);
+    
+    mActiveThreadCount--;
+
+    mWaitingThread.interrupt();
+  }
+ 
+ 
+ 
+ 
+ 
+ /*
+ 
+
+  private void loadNewRawDataOLD()
     throws PreparationException
   {
     if (mDataServiceArr == null) {
@@ -198,13 +307,15 @@ public class PrimaryDataManager {
     }
     
     String dir = mRawDir.getAbsolutePath();
+    
+    
     for (int i = 0; i < mDataServiceArr.length; i++) {
       mLog.fine("Executing data service "
         + mDataServiceArr[i].getClass().getName() + "...");
       
       boolean thereWereErrors = mDataServiceArr[i].execute(dir, System.err);
       if (thereWereErrors) {
-       // do not throw an exception
+       // do not throw any exception
        // throw new PreparationException("Getting raw data from primary data "
        //   + "service " + mDataServiceArr[i].getClass().getName() + " failed");
       }
@@ -218,7 +329,7 @@ public class PrimaryDataManager {
     }
   }
 
-
+*/
   private static PrimaryDataService createPrimaryDataService(String className)
     throws PreparationException
   {
