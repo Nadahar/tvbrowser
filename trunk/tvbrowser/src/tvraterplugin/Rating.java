@@ -47,10 +47,8 @@ public class Rating implements Serializable {
 
 	/** ID of the rating in the online-database */
 	public static final String ID = "id";
-	
 	/** The Genre */
 	public static final String GENRE = "genre";	
-	
 	/** How many Users have rated this Entry */
 	public static final String COUNT = "count";	
 	
@@ -118,7 +116,11 @@ public class Rating implements Serializable {
 	public int getIntValue(Object key) {
 	    
 		if (_values.get(key) == null) {
-			return -1;
+		    
+		    if ((key == GENRE) || (key == ID) || (key == COUNT)) {
+				return -1;
+		    }
+			return 2;
 		}
 
 		Object value = _values.get(key);

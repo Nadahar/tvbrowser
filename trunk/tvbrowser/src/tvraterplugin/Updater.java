@@ -234,6 +234,16 @@ public class Updater implements Progress {
             } else if (nodename.equals("id")) {
                 int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
                 rating.setValue(Rating.ID, value);
+                
+                if (rating.getTitle() != null) {
+                    Rating personal = _tvraterPlugin.getDatabase().getPersonalRating(rating.getTitle());
+                    
+                    if (personal != null) {
+                        personal.setValue(Rating.ID, value);
+                    }
+                } else {
+                    System.out.println("No Title");
+                }
             }
 
             child = child.getNextSibling();
