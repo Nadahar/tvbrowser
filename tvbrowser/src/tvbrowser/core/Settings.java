@@ -405,6 +405,9 @@ public class Settings {
   
   public static final StringProperty propDefaultContextMenuPlugin
     = new StringProperty(mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");
+
+  public static final StringProperty propLastUsedFilter
+  = new StringProperty(mProp, "lastusedfilter", null);
   
   /**
    * The order of the plugin IDs.
