@@ -84,7 +84,7 @@ class ProgramDayTime extends JPanel {
   }
 
   public void addProgram(Program prog) {
-    int col = ChannelList.getPos(prog.getChannel().getId());
+    int col = ChannelList.getPos(prog.getChannel());
 
     if (col<0) {
       return; // cannot add program (channel is not subscribed)
@@ -372,7 +372,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
    * interface ScrollableTablePanel
    */
   public void scrollTo(Channel ch) {
-    int pos=ChannelList.getPos(ch.getId());
+    int pos=ChannelList.getPos(ch);
 
     int y=(int)scrollPane.getViewport().getViewPosition().getY();
 

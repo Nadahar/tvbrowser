@@ -132,9 +132,11 @@ public class ReminderList implements ActionListener {
   
   
   public void setReminderTimerListener(ReminderTimerListener listener) {
-    this.listener=listener;
-    timer=new javax.swing.Timer(10000,this);
-    timer.start();
+    this.listener = listener;
+    if (listener != null) {
+      timer = new javax.swing.Timer(10000, this);
+      timer.start();
+    }
   }
 
   
@@ -174,6 +176,11 @@ public class ReminderList implements ActionListener {
   
   
   public void actionPerformed(ActionEvent event) {
+    if (listener == null) {
+      timer.stop();
+      return;
+    }
+    
     devplugin.Date date=new devplugin.Date();
 
     Calendar cal=new GregorianCalendar();

@@ -95,7 +95,7 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
       if (ChannelList.isSubscribedChannel(ch)) {
       	mLog.fine("is subscribed");
       //  subscribedChannels[ch.getPos()]=ch;
-     	int pos=ChannelList.getPos(ch.getId());
+     	int pos=ChannelList.getPos(ch);
       	subscribedChannels[pos]=ch;
       }else{
         panel.addElementLeft(ch);
