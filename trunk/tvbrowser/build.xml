@@ -3,7 +3,7 @@
  | Ant build script for the TV-Browser project.
  |
  | TV-Browser
- | Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ | Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  |
  | This program is free software; you can redistribute it and/or
  | modify it under the terms of the GNU General Public License
@@ -451,7 +451,7 @@
    | This target depends on clean-runtime to be sure that the runtime
    | directory contains no stuff we don't want to be destributed.
    +-->
-  <target name="public-tvdatakit" depends="clean, clean-runtime, test, runtime-tools">
+  <target name="public-tvdatakit" depends="clean, test, clean-runtime, runtime-tools">
     <!-- Compile the example PDSs -->
     <mkdir dir="classes-tvdatakit"/>
     
@@ -472,16 +472,16 @@
     <!-- Pack the TvDataStarterKit zip -->
     <mkdir dir="${public.dir}"/>
     
-    <zip destfile="${public.dir}/TvDataStarterKit_v${tvdatakit.version}.zip">
-      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}"
+    <zip destfile="${public.dir}/TvDataStarterKit-${tvdatakit.version}.zip">
+      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}"
                   dir="tvdatakit"/>
-      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}/workspace/java"
+      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}/workspace/java"
                   dir="${tvdatatools.runtime.dir}">
         <include name="*.jar"/>
       </zipfileset>
-      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}/workspace/java"
+      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}/workspace/java"
                   dir="classes-tvdatakit"/>
-      <zipfileset prefix="TvDataStarterKit_v${tvdatakit.version}/workspace/java"
+      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}/workspace/java"
                   dir="${txt.dir}"
                   includes="LICENSE.txt"/>
     </zip>
