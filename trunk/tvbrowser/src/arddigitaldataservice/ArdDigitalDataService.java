@@ -126,8 +126,6 @@ import java.util.regex.*;
     String fileName = getFileNameFor(date, channel);
     String url = "http://www.ard-digital.de/programm/download/" + fileName;
     
-    System.out.println("downloading "+url);
-    
     try {
       IOUtilities.download(new URL(url), targetFile);
     }
@@ -136,7 +134,7 @@ import java.util.regex.*;
       //throw new TvBrowserException(getClass(), "error.1",
       //  "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
     }
-    System.out.println("done!");
+
   }
 
  
@@ -161,18 +159,17 @@ import java.util.regex.*;
     
     
     
-    System.out.println("parsing...");
     
-    Pattern datePattern=Pattern.compile("(.*), (\\d+).(.*) (\\d+)");
+    Pattern datePattern=Pattern.compile("(.*), (\\d+)[.](.*) (\\d+)");
     
     Pattern titlePattern;
     int offset;
     if (channel.getId().equals("festival")) {
-      titlePattern=Pattern.compile("(.*)(\\t+)(\\d+).(\\d{2})(.*)");
+      titlePattern=Pattern.compile("(.*)(\\t+)(\\d+)[.](\\d{2})(.*)");
       offset=3;
     }
     else {
-      titlePattern=Pattern.compile("^(\\d+).(\\d{2})(.*)");
+      titlePattern=Pattern.compile("^(\\d+)[.](\\d{2})(.*)");
       offset=1;      
     }
     
@@ -181,6 +178,7 @@ import java.util.regex.*;
     Calendar cal=date.getCalendar();
     Date curDate;
     int prevHour=0;
+    int prevMin=0;
     
     int day=cal.get(Calendar.DAY_OF_WEEK);
     if (day!=Calendar.SATURDAY) {
@@ -209,10 +207,8 @@ import java.util.regex.*;
           line=reader.readLine();
           continue;
         }
-        //System.out.println("LINE: <"+line+">");
         matcher=datePattern.matcher(line);
         if (matcher.find()) {
-          System.out.println("found date line: "+line);
           break;
         }
         line=reader.readLine();
@@ -233,19 +229,26 @@ import java.util.regex.*;
         if (matcher.find()) {
           int h=Integer.parseInt(matcher.group(offset));
           int min=Integer.parseInt(matcher.group(offset+1));
-          if (h<prevHour) { // next day
-            curDate=curDate.addDays(1);
+          int length=(h*60+min) - (prevHour*60+prevMin);
+          if (length<0) {
+            length+=1440;
+            curDate=curDate.addDays(1);  // next day
           }
+         // if (h<prevHour) { // next day
+         //   curDate=curDate.addDays(1);
+         // }
           prevHour=h;
           if (curProgram!=null && shortInfo.length()>0) {
             curProgram.setShortInfo(shortInfo.toString());
+            curProgram.setDescription(shortInfo.toString());
             shortInfo.setLength(0);
           }
           curProgram=new MutableProgram(channel,curDate, h, min);
           curProgram.setTitle(matcher.group(offset+2).trim());
           curProgram.setShortInfo("");
+          curProgram.setDescription("");
+          curProgram.setLength(length);
           programDispatcher.dispatch(curProgram);
-          System.out.println(h+":"+min+"    "+curProgram.getTitle()+" ("+curDate+")");
         }else{
           matcher=datePattern.matcher(line);
           if (!matcher.find()) {
@@ -262,150 +265,7 @@ import java.util.regex.*;
       // ignore 
       
     }  
-      
-      
-      /*
-    MutableProgram currProgram=null, prevProgram=null;  
-    BufferedReader reader;  
-    int lineNr=0;
-    Date curDate;
-    int prevMin=-1;
-    int prevHour=-1;
-    Program prog;
-    
-    try {
-    
-      FileReader fileReader = new FileReader(file);
-      reader = new BufferedReader(fileReader);
-      
-      Pattern[] regexPatternArr = new Pattern[] {
-      // Example: "00:00  Eins Live Freitag Klubbing" 
-      Pattern.compile("(\\d+):(\\d+)\t(.*)"),
-      // Example: " Ein Host, ein DJ und die Nacht beginnt"
-      Pattern.compile("\t(.*)"),
-      // Example: "Samstag, den 17.05.2003"
-      Pattern.compile("(.*) (\\d+).(\\d+).(\\d+)")    
-      };
-      
-      String line=reader.readLine();
-      lineNr++;
-      // ignore first line
-      line=reader.readLine();
-      lineNr++;
-      
-      boolean found=false;
-      Matcher matcher=null;
-      
-      found=false;
-      boolean newDateFound=false;
-      Matcher newDateMatcher=null;
-      while (line!=null && !newDateFound) {
-        newDateMatcher=regexPatternArr[2].matcher(line);
-        newDateFound=newDateMatcher.find();
-        line=reader.readLine();
-        lineNr++;
-        
-      }
-      
-      while (line!=null) {  
-        // we're at the beginning of a day program now
-          
-          int day=Integer.parseInt(newDateMatcher.group(2));
-          int month=Integer.parseInt(newDateMatcher.group(3));
-          int year=Integer.parseInt(newDateMatcher.group(4));
-          
-          Calendar cal=Calendar.getInstance();
-          cal.set(Calendar.DAY_OF_MONTH, day);
-          cal.set(Calendar.MONTH, month - 1);
-          cal.set(Calendar.YEAR, year);
-          //int daysSince1970 = (int)(cal.getTimeInMillis() / 1000L / 60L / 60L / 24L);
-          //curDate=new Date(daysSince1970);
-          curDate=new devplugin.Date(cal);
-          
-        newDateFound=false;
-        while (line!=null && !newDateFound) {
-      
-          found=false;
-          while (line != null && !found) {
-            matcher = regexPatternArr[0].matcher(line);
-            found=matcher.find();
-            line=reader.readLine();
-            lineNr++;       
-          }
-          if (found) {
-        
-            int hour=Integer.parseInt(matcher.group(1));
-            int min=Integer.parseInt(matcher.group(2));
-        
-            currProgram=new MutableProgram(channel, curDate, hour, min);
-            currProgram.setTitle(getString(matcher.group(3)));
-            
-           
-            
-            int len;
-            if (prevProgram!=null) {
-              len=(hour*60+min) - (prevHour*60+prevMin);
-              if (len<0) {
-                len+=1440;
-              }
-              prevProgram.setLength(len);           
-            }
-            prevProgram=currProgram;
-            prevHour=hour;
-            prevMin=min;
-          }
-      
-          // get description
-          StringBuffer desc=new StringBuffer();
-          String shortInfo=null;
-          while (line!=null && found) { 
-            matcher=regexPatternArr[1].matcher(line);
-            found=matcher.find();
-            if (found) {
-              desc.append(getString(matcher.group(1)));
-              if (shortInfo==null) {
-                shortInfo=getString(matcher.group(1));
-              }
-              line=reader.readLine();
-              lineNr++;
-            }           
-          }
-          if (shortInfo==null) {
-            shortInfo="";
-          }
-          
-          if (currProgram!=null) {
-            currProgram.setDescription(desc.toString());
-            currProgram.setShortInfo(shortInfo);
-            programDispatcher.dispatch(currProgram);
-            currProgram=null;
-          }
-      
-          boolean newProgFound=false;
-          newDateFound=false;
-            
-          Matcher newProgramMatcher;
-          while (line!=null && !newProgFound && !newDateFound) {
-            newProgramMatcher=regexPatternArr[0].matcher(line);
-            newProgFound=newProgramMatcher.find();
-            if (!newProgFound) {
-              newDateMatcher=regexPatternArr[2].matcher(line);
-              newDateFound=newDateMatcher.find();
-            }
-            if (!newProgFound && !newDateFound) {
-              line=reader.readLine();
-              lineNr++;
-            }
-          }
-        }
-  } 
-      
-    }catch (Exception exc) {
-        throw new TvBrowserException(getClass(), "error.1",
-      "Error parsing wdr tv data file line {0}!\n('{1}')",
-      new Integer(lineNr), file.getAbsolutePath(), exc);
-    } 
-    */
+     
     }
 
 

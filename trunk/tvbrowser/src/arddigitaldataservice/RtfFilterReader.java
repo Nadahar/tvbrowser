@@ -100,10 +100,23 @@ public class RtfFilterReader extends FilterReader {
 				buf.append((char)getNext());
 				buf.append((char)getNext());
 				String specChar=buf.toString();
-				if (specChar.equals("fc")) {
-					
-					return '\u00fc';
-				}
+        
+				if (specChar.equals("c4")) {					
+					return '\u00c4';
+				}else if (specChar.equals("d6")) {         
+          return '\u00d6';
+        }else if (specChar.equals("dc")) {         
+          return '\u00dc';
+        }else if (specChar.equals("e4")) {         
+          return '\u00e4';
+        }else if (specChar.equals("f6")) {         
+          return '\u00f6';
+        }else if (specChar.equals("fc")) {         
+          return '\u00fc';
+        }else if (specChar.equals("df")) {         
+          return '\u00df';
+        }        
+        
 			}
 			else {
 				do {
@@ -126,54 +139,21 @@ public class RtfFilterReader extends FilterReader {
 }
 
 	
-	private int getNext() throws IOException {
+  private int getNext() throws IOException {
 
-	//	int ch=in.read();
-		int ch;
+    int ch;
 		do {
-		//while (depth!=DEPTH && ch!=-1) {
-			do {
-			ch=in.read();
-			if (ch=='{') {
-				depth++;
-		//		ch=in.read();
-			}
-			else if (ch=='}') {
-				depth--;
-			//	ch=in.read();
-			}
-
-			/*
-			while (depth==DEPTH && ch=='\\') {
-				do {
-					ch=in.read();
-				} while (ch!=' ' && ch!=-1);
-				ch=in.read();
-			}
-*/
-			/*if (depth==DEPTH && ch=='\\') {
-		 		do {
-		 			ch=in.read();
-		 		}while (ch!=' ' && ch!=-1);
-
-			}*/
-		
-			}while (ch=='{' || ch=='}');
-
-
-			
-	
-			
-			
-		//	ch=in.read();
-	//	}
+      do {
+        ch=in.read();
+        if (ch=='{') {
+				  depth++;
+        }
+			  else if (ch=='}') {
+				  depth--;
+			  }		
+		  }while (ch=='{' || ch=='}');
 		}while (depth!=DEPTH && ch!=-1);
-		return ch;
-				
-	
-
-		
-		
+		return ch;		
 	}
 	
   public int readOLD() throws IOException {
@@ -185,8 +165,7 @@ public class RtfFilterReader extends FilterReader {
         ch=in.read();
         continue;
       }
-			//return ch;
-
+			
 			while (ch=='\\') {
 				ch=in.read();
 
@@ -198,51 +177,8 @@ public class RtfFilterReader extends FilterReader {
 				}
 			}
 				
-				return ch;
+			return ch;
 				
-			
-			
-			
-  /*  if (ch=='\\') {
-      
-      ch=in.read();
-     
-     // if (ch=='*') {  // ignore
-     //   ch=ignoreGroup('{');
-     //   continue;
-     // }
-      
-      StringBuffer buf=new StringBuffer();
-      
-      do {
-        buf.append((char)ch);
-        ch=in.read();
-        if (ch=='{') {
-          ch=ignoreGroup(ch);
-        }
-      }while (ch!=-1 && ch!=' '); 
-      String specialChar=buf.toString();
-      
-      if (ch==-1) {
-        return -1;
-      }
-      
-      if (specialChar.equals("tab")) {
-        return '\t';
-      }
-      
-      if (specialChar.equals("par")) {
-        return '\n';
-      }
-      
-      else {  
-        ch=in.read();
-        continue;
-      }
-    }
-    else { // plain
-       return ch;
-    }*/
     }
     
   }
