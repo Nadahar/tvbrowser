@@ -55,10 +55,10 @@ public class WebPlugin extends Plugin {
     .getLocalizerFor(WebPlugin.class);    
     
     /** Default-Addresses */
+    final static WebAddress WEB_OFDB        = new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={0}", "webplugin/ofdb.gif", "ISO-8859-1", false, true);
+    final static WebAddress WEB_IMDB        = new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={0}", "webplugin/imdb.gif", "UTF-8", false, true);
     final static WebAddress WEB_GOOGLE      = new WebAddress("Google", "http://www.google.com/search?q=%22{0}%22", "webplugin/google.gif", "UTF-8", false, true);
-    final static WebAddress WEB_IMDB        = new WebAddress("ImdB", "http://akas.imdb.com/Tsearch?title={0}", "webplugin/imdb.gif", "UTF-8", false, true);
     final static WebAddress WEB_ALTAVISTA   = new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%20{0}%20", "webplugin/altavista.gif", "UTF-8", false, false);
-    final static WebAddress WEB_OFDB        = new WebAddress("OfdB", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={0}", null, "ISO-8859-1", false, false);
     
     /** The WebAddresses */ 
     private Vector mAddresses;
@@ -157,11 +157,11 @@ public class WebPlugin extends Plugin {
         
        WebAddress test = new WebAddress("Test", "http://akas.imdb.com/Tsearch?title={0}", null, "ISO-8859-1", true, false);
         
-        mAddresses.add(WEB_GOOGLE);
-        mAddresses.add(WEB_IMDB);
-        mAddresses.add(WEB_OFDB);
-        mAddresses.add(WEB_ALTAVISTA);
-        mAddresses.add(test);
+       mAddresses.add(WEB_OFDB);
+       mAddresses.add(WEB_IMDB);
+       mAddresses.add(WEB_GOOGLE);
+       mAddresses.add(WEB_ALTAVISTA);
+       mAddresses.add(test);
     }
     
     /**
