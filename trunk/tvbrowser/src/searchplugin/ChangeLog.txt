@@ -1,7 +1,8 @@
 Changelog SearchPlugin
 
 current:
-- 
+1.0.4: requires TVBrowser 0.95 
+- bugfix: show inital setting for "show repition" context menu
 
 1.0.3: requires TVBrowser 0.95
 - Search program repetitions (deutsch: Wiederholungen suchen)

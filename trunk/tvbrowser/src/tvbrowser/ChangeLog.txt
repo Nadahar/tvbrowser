@@ -12,6 +12,7 @@ current:
       * -time for time buttons
       * -column width
 - use folder %HOME/.tvbrowser for personal settings
+- scrolling in ProgramTable optimized (big images)
 
 
 0.9.5.1:

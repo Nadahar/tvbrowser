@@ -32,6 +32,9 @@ import devplugin.Plugin;
 public class PluginFilter extends DefaultFilter {
     
  
+  private static final util.ui.Localizer mLocalizer
+          = util.ui.Localizer.getLocalizerFor(PluginFilter.class);
+ 
     
   public boolean accept(devplugin.Program prog) {
     Plugin[] p=prog.getMarkedByPlugins();
@@ -42,7 +45,7 @@ public class PluginFilter extends DefaultFilter {
   
   
   public String getName() {
-    return "Plugin";
+    return mLocalizer.msg("pluginfFilterName","Marked programs");
   }
 
   

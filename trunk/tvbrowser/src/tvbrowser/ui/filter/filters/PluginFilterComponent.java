@@ -74,17 +74,7 @@ public class PluginFilterComponent extends FilterComponent {
     }
     
     public boolean accept(Program program) {
-        /*Plugin plugin=(devplugin.Plugin)mBox.getSelectedItem();
-        Plugin[] markedBy=program.getMarkedByPlugins();
-        for (int i=0;i<markedBy.length;i++) {
-            if (markedBy[i]==plugin) {
-                return true;
-            }
-        }*/
-        
-        //Plugin plugin=PluginManager.getPlugin(mPluginClassName);
-        
-        
+         
         Plugin[] markedBy=program.getMarkedByPlugins();
         for (int i=0;i<markedBy.length;i++) {
             if (markedBy[i]==mPlugin) {
