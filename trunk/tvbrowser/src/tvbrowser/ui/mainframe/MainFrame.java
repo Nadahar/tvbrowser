@@ -267,21 +267,21 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     skinPanel.add(mStatusBar,BorderLayout.SOUTH);
 
     jcontentPane.add(skinPanel,BorderLayout.CENTER);
-
+/*
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         quit();
       }
-    });
+    });    
+    )*/
   }
-
 
   public JLabel getStatusBarLabel() {
     return mStatusBar.getLabel();
   }
 
 
-  private void quit() {
+  public void quit() {
     mLog.info("Storing plugin data");
     PluginManager.finalizeInstalledPlugins();
     
