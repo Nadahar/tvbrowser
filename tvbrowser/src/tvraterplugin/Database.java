@@ -36,6 +36,7 @@ public class Database {
 	private HashMap _personalrating = new HashMap();
 	/** The changes since the last contact with the Server */
 	private ArrayList _changedpersonal = new ArrayList();
+	
 	/**
 	 * Gets the overall Ratings in this Database
 	 * 
@@ -44,6 +45,7 @@ public class Database {
 	public Collection getOverallRating() {
 		return _overalrating.values();
 	}
+	
 	/**
 	 * Gets one overall Rating for a specific Program
 	 * 
@@ -53,6 +55,7 @@ public class Database {
 	public Rating getOverallRating(Program program) {
 		return getOverallRating(program.getTitle().toLowerCase());
 	}
+	
 	/**
 	 * Gets one overall Rating for a specific title
 	 * 
@@ -65,6 +68,7 @@ public class Database {
 		}
 		return null;
 	}
+	
 	/**
 	 * Sets the Rating
 	 * 
@@ -73,6 +77,7 @@ public class Database {
 	public void setOverallRating(Rating rating) {
 		_overalrating.put(rating.getTitle().toLowerCase(), rating);
 	}
+	
 	/**
 	 * Gets the personal Ratings in this Database
 	 * 
@@ -81,6 +86,7 @@ public class Database {
 	public Collection getPersonalRating() {
 		return _personalrating.values();
 	}
+	
 	/**
 	 * Gets one personal Rating for a specific Program
 	 * 
@@ -91,9 +97,12 @@ public class Database {
 		Rating rating = getPersonalRating(program.getTitle().toLowerCase());
 		if (rating == null) {
 			rating = getPersonalRating(program.getTitle());
+			_personalrating.remove(rating);
+			_personalrating.put(rating.getTitle().toLowerCase(), rating);
 		}
 		return rating;
 	}
+	
 	/**
 	 * Gets one personal Rating for a specific title
 	 * 
@@ -101,14 +110,17 @@ public class Database {
 	 * @return the personal Rating
 	 */
 	public Rating getPersonalRating(String title) {
-		if (_personalrating.get(title.toLowerCase()) != null) {
-			return (Rating) _personalrating.get(title.toLowerCase());
-		} else if (_personalrating.get(title) != null) {
-			return (Rating) _personalrating.get(title);
+		Rating rating = (Rating) _personalrating.get(title.toLowerCase()); 
+		
+		if (rating == null) {
+			rating = (Rating) _personalrating.get(title);
+			_personalrating.remove(rating);
+			_personalrating.put(rating.getTitle().toLowerCase(), rating);
 		}
 		
-		return null;
+		return rating;
 	}
+	
 	/**
 	 * Saves the personal Rating in the Database
 	 * 
@@ -122,21 +134,25 @@ public class Database {
 			_changedpersonal.add(rating);
 		}
 	}
+	
 	public ArrayList getChangedPersonal() {
 		return _changedpersonal;
 	}
+	
 	/**
 	 * Empties the ChangedPersonal List
 	 */
 	public void clearChangedPersonal() {
 		_changedpersonal = new ArrayList();
 	}
+	
 	/**
 	 * Empties the ChangedPersonal List
 	 */
 	public void clearOverall() {
 		_overalrating = new HashMap();
 	}
+	
 	/**
 	 * Called by the host-application during start-up. Loads the data.
 	 * 
@@ -148,6 +164,7 @@ public class Database {
 		_overalrating = (HashMap) in.readObject();
 		_changedpersonal = (ArrayList) in.readObject();
 	}
+	
 	/**
 	 * Counterpart to loadData. Called when the application shuts down. Saves
 	 * the data.
