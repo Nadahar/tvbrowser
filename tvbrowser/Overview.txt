@@ -1,14 +1,10 @@
 The build script:
 -----------------
 
-build.cmd:
-  Allows starting the build script from a Windows platform.
-
-build.sh:
-  Allows starting the build script from a Unix platform.
-
 build.xml:
-  The build script itself. (ANT)
+  The build script.
+  To use it, you need Ant. Ant could be downloaded from the Ant homepage:
+  http://ant.apache.org
 
 build.properties:
   The properties of the build script.

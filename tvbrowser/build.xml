@@ -370,7 +370,7 @@
    | This target depends on clean-runtime to be sure that the runtime
    | directory contains no stuff we don't want to be destributed.
    +-->
-  <target name="public" depends="clean-runtime, runtime, doc, installer">
+  <target name="public" depends="clean, clean-runtime, test, runtime, doc, installer">
     <mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/tvbrowser_v${version}_bin.zip">
