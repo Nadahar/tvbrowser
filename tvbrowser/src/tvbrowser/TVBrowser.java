@@ -64,7 +64,7 @@ public class TVBrowser {
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(0,97,false,"0.9.7.3-01");
+  public static final devplugin.Version VERSION=new devplugin.Version(0,97,false,"0.9.7.3-02");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
   
   private static MainFrame mainFrame;
