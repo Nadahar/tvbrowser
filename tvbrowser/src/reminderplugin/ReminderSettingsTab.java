@@ -40,7 +40,7 @@ import java.io.*;
 
 import devplugin.*;
 
-import util.ui.FileCheckBox;
+import util.ui.*;
 
 public class ReminderSettingsTab extends devplugin.SettingsTab {
 
@@ -93,21 +93,13 @@ public class ReminderSettingsTab extends devplugin.SettingsTab {
     JFileChooser soundChooser=new JFileChooser("sound/");
     JFileChooser execChooser=new JFileChooser("/");
 
-    soundChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
-      public boolean accept(File f) {
-        String name=f.getName().toLowerCase();
-        return f.isFile() && (name.endsWith(".wav") || name.endsWith(".aif") || name.endsWith("rmf") || name.endsWith(".au") || name.endsWith(".mid"));
-      }
-      public String getDescription() {
-        return "Sound files";
-      }
-    }
-    );
+    String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
+    String msg = "Sound-Datei (*.wav, *.aif, *.rmf, *.au, *.mid)";
+    soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
 
     reminderwindowCheckBox.setSelected(settings.getProperty("usemsgbox","true").equals("true"));
     soundFileCheckBox.setSelected(settings.getProperty("usesound","false").equals("true"));
     execFileCheckBox.setSelected(settings.getProperty("useexec","false").equals("true"));
-
 
     soundFileCheckBox.setFileChooser(soundChooser);
     execFileCheckBox.setFileChooser(execChooser);
