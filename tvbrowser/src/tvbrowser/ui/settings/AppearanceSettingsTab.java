@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,6 @@ package tvbrowser.ui.settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.awt.event.*;
 import java.io.*;
 
@@ -56,7 +55,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
   private JButton skinTableBGBtn;
   private JTextField skinTableBGTextField;
 
-  private JCheckBox mTimeCheck, prevNextCheck, updateCheck, settingsCheck, searchCheck;
+  private JCheckBox mTimeCheck, updateCheck, settingsCheck;
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
 
   class LookAndFeelObj {
@@ -202,16 +201,12 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     panel3.setLayout(new BoxLayout(panel3,BoxLayout.Y_AXIS));
 
     mTimeCheck = new JCheckBox(mLocalizer.msg("buttons.time", "Time buttons"));
-    msg = mLocalizer.msg("buttons.nextPrevious", "Next / Previous");
-    prevNextCheck = new JCheckBox(msg);
     updateCheck = new JCheckBox(mLocalizer.msg("buttons.update", "Update"));
     settingsCheck = new JCheckBox(mLocalizer.msg("buttons.settings", "Settings"));
-    searchCheck = new JCheckBox(mLocalizer.msg("buttons.search", "Search"));
     panel3.add(mTimeCheck);
-    panel3.add(prevNextCheck);
     panel3.add(updateCheck);
     panel3.add(settingsCheck);
-    panel3.add(searchCheck);
+    
 
     mTimeCheck.setSelected(Settings.isTimeBtnVisible());
     updateCheck.setSelected(Settings.isUpdateBtnVisible());

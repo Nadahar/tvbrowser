@@ -63,7 +63,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
   
   private JButton mNowBt, mEarlyBt, mMorningBt, mMiddayBt, mEveningBt,
-    updateBtn, settingsBtn, searchBtn;
+    updateBtn, settingsBtn;
   private ProgramTablePanel programTablePanel;
   private JPanel buttonPanel;
   private Thread downloadingThread;
@@ -183,8 +183,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
     settingsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."));
     JMenuItem quitMenuItem = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
-    JMenuItem searchMenuItem = new JMenuItem(mLocalizer.msg("menuitem.search", "Search..."));
-    searchMenuItem.setEnabled(false);
     updateMenuItem = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."));
 
     msg = mLocalizer.msg("menuitem.findPluginsInWeb", "Find plugins in the web...");
@@ -207,7 +205,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     mainMenu.addSeparator();
     mainMenu.add(quitMenuItem);
 
-    tvDataMenu.add(searchMenuItem);
     tvDataMenu.add(updateMenuItem);
     tvDataMenu.addSeparator();
 
@@ -507,20 +504,21 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
 
 	String[] buttonPlugins=Settings.getButtonPlugins();
-   for (int i=0;i<buttonPlugins.length;i++) {
-	   final devplugin.Plugin p=PluginManager.getPlugin(buttonPlugins[i]);
-	   System.out.println("button plugin: "+p.getButtonText());
-	   Icon ico=p.getButtonIcon();
-	   if (ico==null) {
-		   System.out.println("ico");
+	
+	for (int i=0;i<buttonPlugins.length;i++) {
+	   
+		if (PluginManager.isInstalled(buttonPlugins[i])) {
+			final devplugin.Plugin p=PluginManager.getPlugin(buttonPlugins[i]);
+			Icon ico=p.getButtonIcon();
+			JButton btn=new PictureButton(p.getButtonText(),ico);
+			result.add(btn);
+			btn.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent event) {
+					p.execute();	
+				}
+			});
 	   }
-	   JButton btn=new PictureButton(p.getButtonText(),ico);
-	   result.add(btn);
-	   btn.addActionListener(new ActionListener(){
-		   public void actionPerformed(ActionEvent event) {
-			   p.execute();	
-		   }
-	   });
+	   
    }
 
 
