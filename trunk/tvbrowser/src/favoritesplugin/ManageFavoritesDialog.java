@@ -58,6 +58,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
 import util.ui.ExtensionFileFilter;
 import util.ui.ImageUtilities;
 import util.ui.ProgramList;
@@ -83,8 +84,8 @@ public class ManageFavoritesDialog extends JDialog {
   private ProgramList mProgramList;
   private JSplitPane mSplitPane;
   private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt, mSendBt;
-  private JButton mOkBt, mCancelBt;
-  
+  private JButton mCloseBt;
+
   private boolean mOkWasPressed = false;
   
   /** The FavoritesPlugin */
@@ -220,25 +221,16 @@ public class ManageFavoritesDialog extends JDialog {
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
     
-    mOkBt = new JButton(mLocalizer.msg("ok", "OK"));
-    mOkBt.addActionListener(new ActionListener() {
+    mCloseBt = new JButton(mLocalizer.msg("close", "Close"));
+    mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mOkWasPressed = true;
         dispose();
       }
     });
-    buttonPn.add(mOkBt);
-    getRootPane().setDefaultButton(mOkBt);
+    buttonPn.add(mCloseBt);
+    getRootPane().setDefaultButton(mCloseBt);
 
-    mCancelBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
-    mCancelBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        dispose();
-      }
-    });
-    
-    buttonPn.add(mCancelBt);
-    
     favoriteSelectionChanged();
   }
   
@@ -334,13 +326,18 @@ public class ManageFavoritesDialog extends JDialog {
       
       if (JOptionPane.showConfirmDialog(this, 
       msg, msg = mLocalizer.msg("delete", "Delete selected favorite..."), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-      
-      
-   //   if (JOptionPane.showConfirmDialog(this, msg) == JOptionPane.YES_OPTION) {
         Favorite fav = (Favorite) mFavoritesListModel.get(selection);
         fav.unmarkPrograms();
-
         mFavoritesListModel.remove(selection);
+        Object[] o = mFavoritesListModel.toArray();
+        for (int i=0; i<o.length; i++) {
+          Favorite f = (Favorite)o[i];
+          try {
+            f.updatePrograms();
+          } catch (TvBrowserException e) {
+            ErrorHandler.handle(e);
+          }
+        }
       }
     }
   }
