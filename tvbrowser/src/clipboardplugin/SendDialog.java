@@ -47,21 +47,15 @@ public class SendDialog extends JDialog {
     private JComboBox mPluginList;
 
     /**
-     * The Sender-Plugin
-     */
-    private Plugin mPlugin;
-
-    /**
      * Create the Dialog
      * 
      * @param plug Sender-Plugin
      * @param owner Owner Frame
      * @param prg List of Programs to send
      */
-    public SendDialog(Plugin plug, Frame owner, Program[] prg) {
+    public SendDialog(Frame owner, Program[] prg) {
         super(owner, true);
         mPrograms = prg;
-        mPlugin = plug;
         createDialog();
         setLocationRelativeTo(owner);
     }
@@ -73,10 +67,9 @@ public class SendDialog extends JDialog {
      * @param owner Owner Frame
      * @param prg List of Programs to send
      */
-    public SendDialog(Plugin plug, Dialog owner, Program[] prg) {
+    public SendDialog(Dialog owner, Program[] prg) {
         super(owner, true);
         mPrograms = prg;
-        mPlugin = plug;
         createDialog();
         setLocationRelativeTo(owner);
     }

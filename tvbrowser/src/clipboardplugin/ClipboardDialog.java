@@ -19,14 +19,13 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
-import util.ui.ProgramListCellRenderer;
+import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -42,7 +41,7 @@ public class ClipboardDialog extends JDialog {
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClipboardDialog.class);
 
     /** JList component */
-    private JList mProgramJList;
+    private ProgramList mProgramJList;
 
     /** ParentFrame */
     private Frame mFrame;
@@ -86,9 +85,8 @@ public class ClipboardDialog extends JDialog {
         JPanel content = (JPanel) this.getContentPane();
         content.setLayout(new BorderLayout());
         content.setBorder(UiUtilities.DIALOG_BORDER);
-        mProgramJList = new JList(mClipList);
-
-        mProgramJList.setCellRenderer(new ProgramListCellRenderer());
+        
+        mProgramJList = new ProgramList(mClipList);
 
         mProgramJList.addMouseListener(new MouseAdapter() {
 
@@ -110,7 +108,7 @@ public class ClipboardDialog extends JDialog {
                 }
             }
         });
-
+        
         JScrollPane scroll = new JScrollPane(mProgramJList);
 
         content.add(scroll, BorderLayout.CENTER);
@@ -181,6 +179,8 @@ public class ClipboardDialog extends JDialog {
             }
         });
 
+        
+        
         buttonPn.add(closeButton, BorderLayout.EAST);
         getRootPane().setDefaultButton(closeButton);
 
@@ -272,7 +272,7 @@ public class ClipboardDialog extends JDialog {
             prgList[i] = (Program) mClipList.get(i);
         }
 
-        SendDialog send = new SendDialog(plugin, this, prgList);
+        SendDialog send = new SendDialog(this, prgList);
 
         send.show();
     }
