@@ -77,11 +77,9 @@ public class PluginManagerImpl implements PluginManager {
   public Program getProgram(Date date, String progID) {
     TvDataBase db = TvDataBase.getInstance();
 
-    Iterator channelIter = ChannelList.getChannels();
-    while (channelIter.hasNext()) {
-      Channel channel = (Channel) channelIter.next();
-
-      ChannelDayProgram dayProg = db.getDayProgram(date, channel);
+    Channel[] channels = ChannelList.getAvailableChannels();
+    for (int i = 0; i < channels.length; i++) {
+      ChannelDayProgram dayProg = db.getDayProgram(date, channels[i]);
       if (dayProg != null) {
         Program prog = dayProg.getProgram(progID);
         if (prog != null) {
