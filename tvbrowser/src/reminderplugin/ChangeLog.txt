@@ -2,6 +2,8 @@ Changelog ReminderPlugin
 
 1.0.4
 - remember default setting
+- Reminder window is now closable when a modal dialog is open.
+  (in this case a JDialog is used, no JFrame)
 
 1.0.3 requires TVBrowser 0.95
 - Reminder closes automatically after x seconds (optional)
