@@ -69,7 +69,7 @@ public class MirrorUpdater {
   
   private String[] mTargetFileArr;
   
-  private static final String WELCOME_MESSAGE="MirrorUpdater for TV-Browser v0.2";
+  private static final String PROGRAM_TITLE = "MirrorUpdater for TV-Browser v0.2";
 
 
 
@@ -349,8 +349,7 @@ public class MirrorUpdater {
 
 
   public static void main(String[] args) {
-    
-    System.out.println(WELCOME_MESSAGE);
+    System.out.println(PROGRAM_TITLE);
     
     // setup logging
     try {
@@ -371,6 +370,9 @@ public class MirrorUpdater {
     catch (IOException exc) {
       System.out.println("Can't create log file");
     }
+
+    // Set the String to use for indicating the user agent in http requests
+    System.setProperty("http.agent", PROGRAM_TITLE); 
 
     // Start the update    
     String propertiesFileName = "MirrorUpdater.ini";
