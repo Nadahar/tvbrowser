@@ -99,8 +99,7 @@ public class Database {
 			return (Rating)_personalrating.get(title);
 		}
 
-		Rating rating = new Rating(title);
-		return rating;
+		return null;
 	}
 
 
@@ -108,7 +107,7 @@ public class Database {
 	 * Saves the personal Rating in the Database
 	 * @param rating save this Rating 
 	 */
-	protected void setPersonalRating(Rating rating) {
+	public void setPersonalRating(Rating rating) {
 		if (_personalrating.get(rating.getTitle()) == null) {
 			_personalrating.put(rating.getTitle(), rating);
 		} 
@@ -116,6 +115,10 @@ public class Database {
 		if (!_changedpersonal.contains(rating)) {
 			_changedpersonal.add(rating);
 		}
+	}
+
+	public ArrayList getChangedPersonal() {
+		return _changedpersonal;
 	}
 
 	/**

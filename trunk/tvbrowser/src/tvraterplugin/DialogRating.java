@@ -84,6 +84,11 @@ public class DialogRating extends JDialog {
 		_tvraterDB = tvraterDB;
 		_overallrating = _tvraterDB.getOverallRating(programtitle);
 		_personalrating = _tvraterDB.getPersonalRating(programtitle);
+		
+		if (_personalrating == null) {
+			_personalrating = new Rating(programtitle);
+		}
+		
 		_length = 90;
 		_title = programtitle;
 		_originaltitle = null;
@@ -105,6 +110,11 @@ public class DialogRating extends JDialog {
 		_tvraterDB = tvraterDB;
 		_overallrating = _tvraterDB.getOverallRating(program);
 		_personalrating = _tvraterDB.getPersonalRating(program);
+
+		if (_personalrating == null) {
+			_personalrating = new Rating(program.getTitle());
+		}
+
 		_length = program.getLength();
 		_title = program.getTitle();
 		_originaltitle = program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
