@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.57
+- Database could create a Nullpointer, fixed
+
 0.56
 - Bug in Case-Sensivity removed
 

@@ -53,6 +53,10 @@ public class Database {
 	 * @return the overall Rating
 	 */
 	public Rating getOverallRating(Program program) {
+		if ((program == null) || (program.getTitle() == null) ) { 
+			return null;
+		}
+		
 		return getOverallRating(program.getTitle().toLowerCase());
 	}
 	
