@@ -49,6 +49,33 @@ import devplugin.Program;
 public class ProgramList extends JList implements ChangeListener, ListDataListener {
 
     private Vector mPrograms = new Vector();
+   
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     * 
+     * @param programArr Array of Programs to show
+     */
+    public ProgramList(Vector programArr) {
+        super(programArr);
+        setCellRenderer(new ProgramListCellRenderer());
+        addMouseListeners();
+    }    
+    
+
+    /**
+     * Creates the JList and adds the default MouseListeners (PopUpBox)
+     * 
+     * @param programArr Array of Programs to show
+     * @param mouseListeners If true adds PopUp-MouseListeners
+     */
+    public ProgramList(Vector programArr, boolean mouseListener) {
+        super(programArr);
+        setCellRenderer(new ProgramListCellRenderer());
+        if (mouseListener) {
+            addMouseListeners();
+        }
+    }    
     
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
