@@ -57,7 +57,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.TimeChooserPanel;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.Channel;
