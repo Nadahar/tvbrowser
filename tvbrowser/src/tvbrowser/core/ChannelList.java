@@ -21,9 +21,6 @@
 package tvbrowser.core;
 
 import java.util.*;
-import java.io.*;
-
-import util.exc.TvBrowserException;
 
 import devplugin.Channel;
 import tvdataservice.TvDataService;

@@ -157,8 +157,7 @@ public class Settings {
 
   private static final String SETTINGS_FILE="settings.prop";
   private static final String USER_DIR="tvbrowser";
-  //public static final String DATA_DIR="tvdata";
-
+  
   public static boolean settingHasChanged(String[] key) {
 
 		  boolean result=false;
@@ -262,6 +261,7 @@ public class Settings {
   private static void initSubscribedChannels() {
   	String[] entries = settings.getStringList("subscribedchannels");
     if (settings.getProperty("subscribedchannels") == null) {
+    	System.out.println("no channels subscribed!");
       // Install by default the first 9 channels of the XmlTvDataService
       TvDataServiceManager mng = TvDataServiceManager.getInstance();
       TvDataService xmltvService = mng.getDataService("xmltvdataservice.XmlTvDataService");
@@ -271,7 +271,9 @@ public class Settings {
         System.arraycopy(channelArr, 0, defaultChannelArr, 0, defaultChannelArr.length);
         setSubscribedChannels(defaultChannelArr);
       }
+	  entries = settings.getStringList("subscribedchannels");
     }
+    
     
 
     for (int i = 0; i < entries.length; i++) {
