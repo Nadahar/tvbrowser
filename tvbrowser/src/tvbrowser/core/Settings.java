@@ -438,5 +438,48 @@ public class Settings {
   	return result;
 
   }
+  
+  public static int getTVDataLifespan() {
+  	String lifespan=settings.getProperty("tvdatalifespan");
+	int result;
+	try {
+		result=Integer.parseInt(lifespan);
+	} catch (NumberFormatException e) {
+		result=0;
+	}
+	return result;  	
+  }
 
+  public static void setTVDataLifespan(int lifespan) {
+	settings.setProperty("tvdatalifespan",""+lifespan);
+  }
+  
+  public static boolean getStartupInOnlineMode() {
+  	return "yes".equals(settings.getProperty("startupinonlinemode"));
+  }
+  
+  public static void setStartupInOnlineMode(boolean value) {
+    if (value) {
+    	settings.setProperty("startupinonlinemode","yes");
+  	}
+  	else {
+		settings.setProperty("startupinonlinemode","no");
+  	}
+  }
+
+	public static int getAutomaticDownloadPeriod() {
+		String period=settings.getProperty("autodownloadperiod");
+		int result;
+		try {
+			result=Integer.parseInt(period);
+		} catch (NumberFormatException e) {
+			result=0;
+		}
+		return result;  
+	}
+	
+	public static void setAutomaticDownloadPeriod(int period) {
+		settings.setProperty("autodownloadperiod",""+period);
+	}
+	
 }

@@ -62,6 +62,7 @@ public class FinderItem extends JLabel implements MouseListener {
     addMouseListener(this);
     update();
     isMarked=false;
+    
   }
 
 

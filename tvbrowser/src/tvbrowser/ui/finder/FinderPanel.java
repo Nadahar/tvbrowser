@@ -54,10 +54,13 @@ public class FinderPanel extends JPanel implements FinderListener {
 
     setLayout(new BorderLayout());
     this.dataChangedListener=dataChangedListener;
+    
     JPanel labelList=new JPanel();
     labelList.setLayout(new GridLayout(0,1));
+    
+    
     JScrollPane scrollPane=new JScrollPane(labelList);
-
+    
     FinderItem item;
     itemList=new Vector();
 
