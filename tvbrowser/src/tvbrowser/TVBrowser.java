@@ -54,6 +54,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.PluginManager;
@@ -661,6 +664,19 @@ public class TVBrowser {
       if (Settings.propHttpProxyAuthentifyAtProxy.getBoolean()) {
         httpUser     = Settings.propHttpProxyUser.getString();
         httpPassword = Settings.propHttpProxyPassword.getString();
+        if (httpPassword == null) {
+          httpPassword="";
+				}
+
+				final String user=httpUser;
+				final String pw=httpPassword;
+				Authenticator.setDefault(
+					new Authenticator() {
+					  public PasswordAuthentication getPasswordAuthentication() {
+              return new PasswordAuthentication(user, pw.toCharArray());
+					  }
+				  }
+				);
       }
     }
     
