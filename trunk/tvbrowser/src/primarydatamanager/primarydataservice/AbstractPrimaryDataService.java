@@ -100,7 +100,7 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
    * @param exc The exception to log.
    * @see #logMessage(String)
    */
-  protected final void logException(Exception exc) {
+  public final void logException(Exception exc) {
     exc.printStackTrace(mErr);
     mThereWhereErrors=true;
   }
@@ -113,7 +113,7 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
    * @param msg
    * @see #logException(Exception)
    */
-  protected final void logMessage(String msg) {
+  public final void logMessage(String msg) {
     mErr.println(msg);
     mThereWhereErrors=true;
   }
