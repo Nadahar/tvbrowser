@@ -222,11 +222,11 @@ public class MultipleFieldReader extends Reader {
       return false;
     }
 
-    if (! shortDesc.endsWith("...")) {
-      return false;
+    if (shortDesc.endsWith("...")) {
+      return description.startsWith(shortDesc.substring(0, shortDesc.length() - 3));
+    } else {
+      return description.equals(shortDesc);
     }
-    
-    return description.startsWith(shortDesc.substring(0, shortDesc.length() - 3));
   }
 
   
