@@ -430,6 +430,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     updateBtn.setIcon(new ImageIcon("imgs/Import24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
     
+    newTvDataAvailable();
+  }
+
+  
+  
+  /**
+   * Updates the program table and the finder panel.
+   * <p>
+   * Called when new TV data was downloaded or when TV data was imported.
+   */
+  private void newTvDataAvailable() {
     try {
       devplugin.Date showingDate = finderPanel.getSelectedDate();
       DayProgram dayProgram = DataService.getInstance().getDayProgram(showingDate);
@@ -437,9 +448,11 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     } catch(TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
-    if (finderPanel != null) finderPanel.update();
+    if (finderPanel != null) {
+      finderPanel.update();
+    }
   }
-
+  
   
   
   private JButton[] createTimeBtns() {
@@ -588,6 +601,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     if ((targetFile != null) && (targetFile.exists())) {
       try {
         DataService.getInstance().importTvData(targetFile);
+
+        newTvDataAvailable();
       }
       catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
