@@ -39,6 +39,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 
 import util.exc.TvBrowserException;
+import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
 
 /**
@@ -381,8 +382,10 @@ abstract public class Plugin {
       String iconFileName = getButtonIconName();
       if (iconFileName != null) {
         Icon icon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
-        action.putValue(Action.SMALL_ICON, icon);
-        action.putValue(BIG_ICON, icon);
+        if (icon != null) {
+          action.putValue(Action.SMALL_ICON, icon);
+          action.putValue(BIG_ICON, new FixedSizeIcon(24, 24, icon));
+        }
       }
       
       return action; 
