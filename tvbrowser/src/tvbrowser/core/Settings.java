@@ -194,6 +194,10 @@ public class Settings {
       mainFrame.getHorizontalToolBar().updateButtons();
     }
     
+    if (mProp.hasChanged(propTimeButtons)) {
+      mainFrame.updateButtons();
+    }
+    
     if (mProp.hasChanged(propSubscribedChannels)) {
       ChannelList.create();
       
