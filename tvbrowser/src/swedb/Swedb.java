@@ -6,15 +6,21 @@
 
 package swedb;
 
-import devplugin.*;
-import tvdataservice.*;
-import util.exc.*;
-import java.util.*;
-import java.util.zip.*;
-import java.net.*;
 import java.awt.Frame;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Properties;
+import java.util.TimeZone;
+import java.util.zip.GZIPInputStream;
+
 import javax.swing.JOptionPane;
-import java.io.*;
+
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
+import devplugin.Channel;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
 
 /**
  *
