@@ -74,6 +74,7 @@ public class DefaultMenuBar extends MenuBar {
     
     // "View" menu
     viewMenu.add(mToolbarMI);
+    viewMenu.add(mStatusbarMI);
     viewMenu.add(mTimeBtnsMI);
     viewMenu.add(mDatelistMI);
     viewMenu.add(mChannellistMI);

@@ -64,7 +64,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
   private MainFrame mMainFrame;
 
-  protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mTimeBtnsMI, mDatelistMI,
+  protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
                     mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI;
@@ -105,6 +105,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mToolbarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewToolbar","Toolbar"));
     mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
     mToolbarMI.addActionListener(this);
+    
+    mStatusbarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewStatusbar","Statusbar"));
+    mStatusbarMI.setSelected(Settings.propIsStatusbarVisible.getBoolean());
+    mStatusbarMI.addActionListener(this);
+    
     mTimeBtnsMI = new JCheckBoxMenuItem("Zeitknoepfe");
     mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
     mTimeBtnsMI.addActionListener(this);
@@ -279,6 +284,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      }
      else if (source == mToolbarMI) {
        mMainFrame.setShowToolbar(mToolbarMI.isSelected());
+     }
+     else if (source == mStatusbarMI) {
+       mMainFrame.setShowStatusbar(mStatusbarMI.isSelected());
      }
      else if (source == mDatelistMI) {
        mMainFrame.setShowDatelist(mDatelistMI.isSelected());  
