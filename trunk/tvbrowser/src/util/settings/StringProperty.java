@@ -58,17 +58,22 @@ public class StringProperty extends Property {
     if (mCachedValue == null) {
       String asString = getProperty();
       if (asString == null) {
-        mCachedValue = mDefaultValue;
-      }
-      else if (asString.equals(NULL_VALUE)) {
-        mCachedValue = null;
+        if (mDefaultValue == null) {
+          mCachedValue = NULL_VALUE;
+        } else {
+          mCachedValue = mDefaultValue;
+        }
       }
       else {
         mCachedValue = asString;
       }
     }
 
-    return mCachedValue;
+    if (mCachedValue.equals(NULL_VALUE)) {
+      return null;
+    } else {
+      return mCachedValue;
+    }
   }
   
   
@@ -76,10 +81,11 @@ public class StringProperty extends Property {
     if (value == null) {
       value = NULL_VALUE;
     }
-    
-    if ((mDefaultValue == null) ? (value == mDefaultValue)
+
+    if ((mDefaultValue == null) ? (value.equals(NULL_VALUE))
                                 : value.equals(mDefaultValue))
     {
+      // The default value was set
       setProperty(null);
     } else {
       setProperty(value);

@@ -105,7 +105,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     else if (dlType.equals("every3days")) {
       mAutoDownloadCB.setSelectedIndex(1);
     }
-    else if (dlType.equals("WEEKLY")) {
+    else if (dlType.equals("weekly")) {
       mAutoDownloadCB.setSelectedIndex(2);
     }
           
@@ -218,7 +218,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       Settings.propAutoDownloadType.setString("every3days");
     }
     else if (inx == 2) {
-      Settings.propAutoDownloadType.setString("WEEKLY");
+      Settings.propAutoDownloadType.setString("weekly");
     }
     
     Settings.propAskForAutoDownload.setBoolean(mAskBeforeDownloadRB.isSelected());
