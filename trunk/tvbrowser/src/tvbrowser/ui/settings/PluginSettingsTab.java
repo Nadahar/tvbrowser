@@ -31,12 +31,9 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 
-import util.ui.TabLayout;
+import java.util.*;
 
-import tvbrowser.ui.customizableitems.*;
 import tvbrowser.core.*;
 
 import devplugin.Plugin;
@@ -46,214 +43,191 @@ import devplugin.Plugin;
  *
  * @author Martin Oberhauser
  */
-public class PluginSettingsTab
-  implements devplugin.SettingsTab, CustomizableItemsListener
-{
+
+
+public class PluginSettingsTab implements devplugin.SettingsTab {
+  
+  class ContextMenuCellRenderer extends DefaultListCellRenderer {
+    
+     public Component getListCellRendererComponent(JList list, Object value,
+          int index, boolean isSelected, boolean cellHasFocus) {
+           
+          JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+            index, isSelected, cellHasFocus);
+
+          if (value instanceof Plugin) {
+            Plugin plugin=(Plugin)value;
+            JPopupMenu menu=new JPopupMenu();
+            
+            label.setEnabled(mActivatedPlugins.contains(plugin));
+            label.setText(plugin.getInfo().getName());
+           
+            label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
+            label.setOpaque(false);
+            label.setBackground(menu.getBackground());
+            JPanel panel=new JPanel(new BorderLayout());
+            panel.add(label,BorderLayout.CENTER);
+            Icon ico=plugin.getMarkIcon();
+            if (ico==null) {
+              ico=new ImageIcon("imgs/Jar16.gif");
+            }
+            panel.add(new JLabel(ico),BorderLayout.WEST);
+            if (isSelected) {
+              panel.setBackground(Color.gray);
+            }
+            return panel;
+          }
+
+          return label;
+        }
+
+  
+    
+   }
+  
   
   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
+     = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
   
-  private JPanel mSettingsPn;
-  
-  private CustomizableItemsPanel panel;
-  private PluginInfoPanel pluginInfoPanel;
-  private HashSet hiddenButtonPluginSet;
-  private JCheckBox addPicBtnCheckBox;
-  private Plugin curSelectedPlugin=null;
-
-  
+  private JList mList;
+  private JButton mStartStopBtn;
+  private DefaultListModel mListModel;
+  private Collection mChangeListener;
+  private PluginInfoPanel mPluginInfoPanel;
+  private Collection mActivatedPlugins;
   
   public PluginSettingsTab() {
+    mChangeListener=new HashSet();
   }
-  
-  
-  
-  private void showPluginInfo(Plugin plugin) {
-    pluginInfoPanel.setPluginInfo(plugin.getInfo());
-  }
-  
-  
-  
-  public void leftListSelectionChanged(ListSelectionEvent event) {
-    PluginItem item = (PluginItem)panel.getLeftSelection();
-    if (item != null) {
-      curSelectedPlugin = item.getPlugin();
-      
-      showPluginInfo(curSelectedPlugin);
-      addPicBtnCheckBox.setSelected(!(hiddenButtonPluginSet.contains(item.getPlugin())));
-    }
-  }
-  
-  
-  
-  public void rightListSelectionChanged(ListSelectionEvent event) {
-    PluginItem item = (PluginItem)panel.getRightSelection();
-    if (item != null) {
-      curSelectedPlugin = item.getPlugin();
-      
-      showPluginInfo(curSelectedPlugin);
-      addPicBtnCheckBox.setEnabled(item.getPlugin().getButtonText() != null);
-      addPicBtnCheckBox.setSelected(!(hiddenButtonPluginSet.contains(item.getPlugin())));
-    }
-  }
- 
-  
-  
-  /**
-   * Creates the settings panel for this tab.
-   */
-  public JPanel createSettingsPanel() {
-    String msg;
 
-    mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+	public JPanel createSettingsPanel() {
     
+    JPanel contentPanel=new JPanel(new BorderLayout());
+    contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
     
+    JPanel pluginListPanel=new JPanel(new BorderLayout(5,5));
     
-    String[] buttonPlugins=Settings.getHiddenButtonPlugins();
-    hiddenButtonPluginSet = new HashSet();
-    for (int i = 0; i < buttonPlugins.length; i++) {
-      Plugin plugin = PluginManager.getPlugin(buttonPlugins[i]);
-      if (plugin != null) {
-        hiddenButtonPluginSet.add(plugin);
-      }
-    }
-    
-    
-    pluginInfoPanel=new PluginInfoPanel();
-    
-    String leftText = mLocalizer.msg("availablePlugins", "Available plugins");
-    String rightText = mLocalizer.msg("subscribedPlugins", "Subscribed plugins");
-    panel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
-
-    // Init the not installed plugins
-    Plugin[] availablePluginArr = PluginManager.getAvailablePlugins();
-    for (int i = 0; i < availablePluginArr.length; i++) {
-      if (! PluginManager.isInstalled(availablePluginArr[i])) {
-        panel.addElementLeft(new PluginItem(availablePluginArr[i]));
-      }
-    }
-
-    // Init the installed plugins
-    Plugin[] installedPluginArr = PluginManager.getInstalledPlugins();
-    for (int i = 0; i < installedPluginArr.length; i++) {
-      panel.addElementRight(new PluginItem(installedPluginArr[i]));
-    }
-    
-    panel.addListSelectionListenerLeft(this);
-    panel.addListSelectionListenerRight(this);
-    
-    
-    
-    mSettingsPn.add(panel, BorderLayout.CENTER);
-    
-    JPanel southPn = new JPanel(new TabLayout(1));
-    mSettingsPn.add(southPn, BorderLayout.SOUTH);
-    
-    msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
-    pluginInfoPanel.setBorder(BorderFactory.createTitledBorder(msg));
-    
-    southPn.add(pluginInfoPanel);
-        
-    JPanel panel1=new JPanel(new BorderLayout());
-	  String checkBoxText = mLocalizer.msg("toolbarPlugin", "Add plugin to Toolbar");
-    addPicBtnCheckBox=new JCheckBox(checkBoxText);
-    panel1.add(addPicBtnCheckBox,BorderLayout.WEST);
-    southPn.add(panel1);
-    
-    addPicBtnCheckBox.addActionListener(new ActionListener() {  
-      public void actionPerformed(ActionEvent e) {
-        if (curSelectedPlugin==null) {
-          return;
-        }
-        if (!addPicBtnCheckBox.isSelected()) {
-          hiddenButtonPluginSet.add((Plugin) curSelectedPlugin);
-        }else{
-          hiddenButtonPluginSet.remove((Plugin) curSelectedPlugin);
+    mListModel=new DefaultListModel();
+    mList=new JList(mListModel);
+    mList.setCellRenderer(new ContextMenuCellRenderer());
+    mList.setVisibleRowCount(10);
+    mList.setOpaque(false);
+    mList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    mList.addListSelectionListener(new ListSelectionListener(){
+      public void valueChanged(ListSelectionEvent e) {
+        updateBtns();
+        Plugin p=(Plugin)mList.getSelectedValue();
+        if (p!=null) {
+          mPluginInfoPanel.setPluginInfo(p.getInfo());
         }
       }
     });
-    addPicBtnCheckBox.setEnabled(false);
     
-    return mSettingsPn;
-  }
-
-
-  
-  /**
-   * Called by the host-application, if the user wants to save the settings.
-   */
-  public void saveSettings() {
-    // Get the plugins that should be installed
-	Object[] selectionArr = panel.getElementsRight();
-    Plugin[] pluginArr = new Plugin[selectionArr.length];
-    for (int i = 0; i < selectionArr.length; i++) {
-      PluginItem item = (PluginItem) selectionArr[i];
-      pluginArr[i] = item.getPlugin();
-    }
-
-    // Set the new plugins
-    PluginManager.setInstalledPlugins(pluginArr);
+    mList.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e){
+        if(e.getClickCount() == 2) {
+          int inx = mList.locationToIndex(e.getPoint());
+          if (inx>=0) {
+            Object item = mListModel.getElementAt(inx);;
+            mList.ensureIndexIsVisible(inx);
+            onStartStopBtnClicked((Plugin)item);
+          }
+        }
+      }
+    });
     
-    // Find out the plugins that should have NO button
-	ArrayList hiddenButtonPluginClassNameList = new ArrayList();
-    for (int i = 0; i < pluginArr.length; i++) {
-      if (hiddenButtonPluginSet.contains(pluginArr[i])) {
-        hiddenButtonPluginClassNameList.add(pluginArr[i].getClass().getName());
+    mActivatedPlugins=new HashSet();
+    Plugin pluginList[]=PluginManager.getAvailablePlugins();
+    for (int i=0;i<pluginList.length;i++) {
+      mListModel.addElement(pluginList[i]);
+      if (PluginManager.isInstalled(pluginList[i])) {
+        mActivatedPlugins.add(pluginList[i]);
       }
     }
     
-    // Convert the buttonPluginList to an array    
-    String[] hiddenButtonPluginClassNameArr = new String[hiddenButtonPluginClassNameList.size()];
-    hiddenButtonPluginClassNameList.toArray(hiddenButtonPluginClassNameArr);
+    pluginListPanel.add(new JScrollPane(mList),BorderLayout.CENTER);
+    pluginListPanel.add(new JLabel(mLocalizer.msg("availablePlugins", "Available plugins")),BorderLayout.NORTH);
+    
+    JPanel btnPanel=new JPanel(new BorderLayout());
+    mStartStopBtn=new JButton();
+    mStartStopBtn.setPreferredSize(new Dimension(140,30));
+    mStartStopBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event) {
+        Plugin plugin=(Plugin)mList.getSelectedValue();
+        onStartStopBtnClicked(plugin);
+      }
+    });
+    btnPanel.add(mStartStopBtn,BorderLayout.NORTH);
+    pluginListPanel.add(btnPanel,BorderLayout.EAST);
+    
+    contentPanel.add(pluginListPanel,BorderLayout.NORTH); 
+    
+    
+    JPanel infoPanel=new JPanel(new BorderLayout());
+    contentPanel.add(infoPanel,BorderLayout.CENTER);
+    
+    mPluginInfoPanel=new PluginInfoPanel();
+    infoPanel.add(mPluginInfoPanel,BorderLayout.NORTH);
+    
+    updateBtns();
+    
+		return contentPanel;
+	}
 
-    // Set the buttonPluginArr
-    Settings.setHiddenButtonPlugins(hiddenButtonPluginClassNameArr);
-  }
 
-  
-  
-  /**
-   * Returns the name of the tab-sheet.
-   */
-  public Icon getIcon() {
-    return null;
+  private void updateBtns() {
+    Plugin plugin=(Plugin)mList.getSelectedValue();
+    mStartStopBtn.setEnabled(plugin!=null);
+    if (mActivatedPlugins.contains(plugin)) {
+      mStartStopBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
+      mStartStopBtn.setText(mLocalizer.msg("deactivate",""));
+    }else{
+      mStartStopBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
+      mStartStopBtn.setText(mLocalizer.msg("activate",""));
+    }      
+    
   }
   
+  private void onStartStopBtnClicked(Plugin plugin) {
+    if (plugin!=null) {
+      if (mActivatedPlugins.contains(plugin)) {
+        mActivatedPlugins.remove(plugin);
+      }else{
+        mActivatedPlugins.add(plugin);
+      }
+      mList.updateUI();
+      updateBtns();          
+      Iterator it=mChangeListener.iterator();
+      while (it.hasNext()) {
+        SettingsChangeListener listener=(SettingsChangeListener)it.next();
+        Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
+        mActivatedPlugins.toArray(installedPluginList);
+        listener.settingsChanged(this,installedPluginList);
+      }
+    }    
+  }
   
-  
-  /**
-   * Returns the title of the tab-sheet.
-   */
-  public String getTitle() {
+
+  public void addSettingsChangeListener(SettingsChangeListener listener) {
+    mChangeListener.add(listener);
+  }
+	
+	public void saveSettings() {
+    Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
+    mActivatedPlugins.toArray(installedPluginList);
+    PluginManager.setInstalledPlugins(installedPluginList);    
+	}
+
+	
+	public Icon getIcon() {
+		return null;
+	}
+
+	
+	public String getTitle() {
     return mLocalizer.msg("plugins", "Plugins");
-  }  
+	}
   
   
-  // inner class PluginItem
-  
-  
-  class PluginItem {
-    
-    private Plugin mPlugin;
-    
-    
-    public PluginItem(Plugin plugin) {
-      mPlugin = plugin;
-    }
-    
-    
-    public Plugin getPlugin() {
-      return mPlugin;
-    }
-    
-    
-    public String toString() {
-      return mPlugin.getInfo().getName();
-    }
-    
-  } // inner class PluginItem
-  
-  
- 
 }
+

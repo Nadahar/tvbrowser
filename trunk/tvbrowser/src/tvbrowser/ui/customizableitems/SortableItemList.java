@@ -115,6 +115,10 @@ public class SortableItemList extends JPanel implements ActionListener {
     mListModel.removeAllElements();
   }
   
+  public boolean contains(Object o) {
+    return mListModel.contains(o);
+  }
+   
   public Object[] getItems() {
     return mListModel.toArray();
   }

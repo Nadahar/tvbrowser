@@ -295,7 +295,10 @@ public class PluginManager {
     if (mContextMenuDefaultPlugin==null || contextMenuDefaultPluginsChanged) {
       mContextMenuDefaultPlugin=getPlugin(Settings.getDefaultContextMenuPlugin());
     }
-    return mContextMenuDefaultPlugin;
+    if (isInstalled(mContextMenuDefaultPlugin)) {
+      return mContextMenuDefaultPlugin;
+    }
+    return null;
   }
   
   public static Plugin[] getContextMenuPlugins() {
@@ -306,7 +309,7 @@ public class PluginManager {
       ArrayList list=new ArrayList();
       for (int i=0;i<plugins.length;i++) {
         Plugin p=getPlugin(plugins[i]);
-        if (p!=null && p.getContextMenuItemText()!=null) {
+        if (p!=null && p.getContextMenuItemText()!=null && isInstalled(p)) {
           list.add(p);
         }      
       }
@@ -339,10 +342,6 @@ public class PluginManager {
   }
 
   
-  
-  /**
-   * Returns the installed mAvailablePluginHash as an array of Plugin-Objects
-   */
   public static void setInstalledPlugins(Plugin[] pluginArr) {
     // Create the new list and init those plugins who are new
     ArrayList newInstalledPluginList = new ArrayList(pluginArr.length);
