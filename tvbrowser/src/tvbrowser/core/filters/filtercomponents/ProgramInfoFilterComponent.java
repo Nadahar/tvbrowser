@@ -19,11 +19,10 @@ import javax.swing.JPanel;
 import tvbrowser.core.filters.FilterComponent;
 import util.ui.ImageUtilities;
 import devplugin.Program;
+import devplugin.ProgramInfoHelper;
 
 /**
  * Filtert nach bestimmten Programm-Informationen (zum Beispiel Untertitel)
- * 
- * FIXME: Grafiken müssen noch eingecheckt werden
  * 
  * @author bodo
  */
@@ -99,15 +98,15 @@ public class ProgramInfoFilterComponent implements FilterComponent {
         GridBagConstraints b = new GridBagConstraints();
         b.fill = GridBagConstraints.NONE;
         
-        _checkBox = new JCheckBox[mInfoMsgArr.length];
+        _checkBox = new JCheckBox[ProgramInfoHelper.mInfoMsgArr.length];
         
-        for (int i = 0; i < mInfoMsgArr.length; i++) {
+        for (int i = 0; i < ProgramInfoHelper.mInfoMsgArr.length; i++) {
         
         	final JCheckBox box = new JCheckBox();
         	_checkBox[i] = box;
-        	JLabel label = new JLabel(mInfoMsgArr[i], mInfoIconArr[i], JLabel.LEFT);
+        	JLabel label = new JLabel(ProgramInfoHelper.mInfoMsgArr[i], ProgramInfoHelper.mInfoIconArr[i], JLabel.LEFT);
         	
-        	if (bitSet(selectedBits, mInfoBitArr[i])) {
+        	if (bitSet(selectedBits, ProgramInfoHelper.mInfoBitArr[i])) {
         		box.setSelected(true);
         	}
         	
@@ -119,7 +118,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
         	 
             panel.add(box,b);
             panel.add(label,c);
-            System.out.println(mInfoMsgArr[i]);
+            System.out.println(ProgramInfoHelper.mInfoMsgArr[i]);
         }
         
         return panel;
@@ -135,8 +134,8 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     
     	for (int i = 0; i < _checkBox.length; i++) {
     		if (_checkBox[i].isSelected()) {
-    			System.out.println(mInfoMsgArr[i]);
-    			selectedBits = selectedBits | mInfoBitArr[i];
+    			System.out.println(ProgramInfoHelper.mInfoMsgArr[i]);
+    			selectedBits = selectedBits | ProgramInfoHelper.mInfoBitArr[i];
     		}
         }
         this.selectedBits = selectedBits;
@@ -197,7 +196,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
      * @return Icon
      */
     private Icon createIcon(String fileName) {
-        return ImageUtilities.createImageIconFromJar("programinfo/" + fileName, getClass());
+        return ImageUtilities.createImageIconFromJar("imgs/" + fileName, getClass());
     }
 
     /**
@@ -209,60 +208,6 @@ public class ProgramInfoFilterComponent implements FilterComponent {
      * Die CheckBoxen für den Panel
      */
     private JCheckBox[] _checkBox;
-
-    /**
-     * Alle Infos
-     */
-    private int[] mInfoBitArr = new int[] { Program.INFO_VISION_BLACK_AND_WHITE,
-            Program.INFO_VISION_4_TO_3, Program.INFO_VISION_16_TO_9,
-            Program.INFO_AUDIO_MONO, Program.INFO_AUDIO_STEREO,
-            Program.INFO_AUDIO_DOLBY_SURROUND,
-            Program.INFO_AUDIO_DOLBY_DIGITAL_5_1,
-            Program.INFO_AUDIO_TWO_CHANNEL_TONE,
-            Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED, Program.INFO_LIVE,
-            Program.INFO_ORIGINAL_WITH_SUBTITLE,};
-
-    /**
-     * Alle Icons
-     */
-    private Icon[] mInfoIconArr = new Icon[] { createIcon("Info_BlackAndWhite.gif"), // INFO_VISION_BLACK_AND_WHITE
-            null, // INFO_VISION_4_TO_3
-            createIcon("Info_16to9.gif"), // INFO_VISION_16_TO_9
-            createIcon("Info_Mono.gif"), // INFO_AUDIO_MONO
-            createIcon("Info_Stereo.gif"), // INFO_AUDIO_STEREO
-            createIcon("Info_DolbySurround.gif"), // INFO_AUDIO_DOLBY_SURROUND
-            createIcon("Info_DolbyDigital51.gif"), // INFO_AUDIO_DOLBY_DIGITAL_5_1
-            createIcon("Info_TwoChannelTone.gif"), // INFO_AUDIO_TWO_CHANNEL_TONE
-            createIcon("Info_SubtitleForAurallyHandicapped.gif"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
-            null, // INFO_LIVE
-            createIcon("Info_OriginalWithSubtitle.gif"), // INFO_ORIGINAL_WITH_SUBTITLE
-    };
-
-    /**
-     * Alle Texte
-     */
-    private String[] mInfoMsgArr = new String[] {
-            mLocalizer.msg("blackAndWhite", "Black and white"),
-            // INFO_VISION_BLACK_AND_WHITE
-            mLocalizer.msg("4to3", "4:3"),
-            // INFO_VISION_4_TO_3
-            mLocalizer.msg("16to9", "16:9"),
-            // INFO_VISION_16_TO_9
-            mLocalizer.msg("mono", "Mono"),
-            // INFO_AUDIO_MONO
-            mLocalizer.msg("stereo", "Stereo"),
-            // INFO_AUDIO_STEREO
-            mLocalizer.msg("dolbySurround", "Dolby surround"),
-            // INFO_AUDIO_DOLBY_SURROUND
-            mLocalizer.msg("dolbyDigital5.1", "Dolby digital 5.1"),
-            // INFO_AUDIO_DOLBY_DIGITAL_5_1
-            mLocalizer.msg("twoChannelTone", "Two channel tone"),
-            // INFO_AUDIO_TWO_CHANNEL_TONE
-            mLocalizer.msg("subtitleForAurallyHandicapped",
-                    "Subtitle for aurally handicapped"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
-            mLocalizer.msg("live", "Live"), // INFO_LIVE
-            mLocalizer.msg("originalWithSubtitle", "Original with subtitle"), // INFO_ORIGINAL_WITH_SUBTITLE
-    };
 
     /**
      * Der Lokalizer
