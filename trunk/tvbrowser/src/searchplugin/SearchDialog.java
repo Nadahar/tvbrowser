@@ -200,7 +200,15 @@ public class SearchDialog extends JDialog {
 				JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(programArr[inx],SearchPlugin.getInstance());
 				
 				menu.show(list, e.getX() - 15, e.getY() - 15);
-			}
+			} else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+				int inx=list.locationToIndex(e.getPoint());
+				Program p=programArr[inx];
+
+				Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
+	            if (plugin != null) {
+	                plugin.execute(p);
+	            }
+	        }
     	}
     	
     });
