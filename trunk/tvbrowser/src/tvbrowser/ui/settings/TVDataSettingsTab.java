@@ -33,6 +33,7 @@ import java.io.File;
 
 import javax.swing.*;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.UpdateDlg;
 import util.ui.FileCheckBox;
@@ -65,6 +66,8 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JRadioButton mDonotAskBeforeDownloadRB;
   private JRadioButton mAskBeforeDownloadRB;
   private FileCheckBox mWebbrowserFCB;
+  
+  private JCheckBox mOnlyMinimizeWhenWindowClosingChB;
   
   
   public TVDataSettingsTab() {
@@ -174,6 +177,17 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     
     content.add(mWebbrowserFCB);
     
+    if (TVBrowser.isUsingSystemTray()) {
+      JPanel mainWindowPn = new JPanel(new BorderLayout());
+      String msg = mLocalizer.msg("mainWindow", "Main window");
+      mainWindowPn.setBorder(BorderFactory.createTitledBorder(msg));
+      content.add(mainWindowPn);
+
+      msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing", "When closing the main window only minimize TV-Browser, don't quit.");
+      boolean checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean();
+      mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked);
+      mainWindowPn.add(mOnlyMinimizeWhenWindowClosingChB);
+    }
     
     return mSettingsPn;
   }
@@ -224,6 +238,11 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       webbrowser = null;
     }
     Settings.propUserDefinedWebbrowser.setString(webbrowser);
+
+    if (mOnlyMinimizeWhenWindowClosingChB != null) {
+      boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected();
+      Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
+    }
   }
   
   

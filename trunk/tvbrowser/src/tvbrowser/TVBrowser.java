@@ -26,11 +26,7 @@
 package tvbrowser;
 
 import java.awt.*;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.Point;
 import java.io.*;
-import java.util.Iterator;
 import java.util.logging.*;
 
 import javax.swing.*;
@@ -72,6 +68,8 @@ public class TVBrowser {
   private static String curLookAndFeel;
   public static final devplugin.Version VERSION=new devplugin.Version(0,97,false,"0.9.7.4");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
+  
+  private static boolean mUseSystemTray;
   
   private static MainFrame mainFrame;
 
@@ -262,25 +260,25 @@ public class TVBrowser {
 
     // Initialize the tray icon
     File iconTrayLib=new File("DesktopIndicator.dll");
-    boolean useWindowsIconTray=false;
+    mUseSystemTray = false;
     int systrayImageHandle=-1;
     
     if (iconTrayLib.exists()) {
-      useWindowsIconTray=SystemTrayIconManager.initializeSystemDependent();
-      if (!useWindowsIconTray) {
+      mUseSystemTray = SystemTrayIconManager.initializeSystemDependent();
+      if (! mUseSystemTray) {
         mLog.info("could not load library "+iconTrayLib.getAbsolutePath());
       }
       else {
         systrayImageHandle = SystemTrayIconManager.loadImage("imgs/taskicon.ico");
         if (systrayImageHandle == -1) {
-          mLog.info("Could load system tray icon");
-          useWindowsIconTray=false;
+          mLog.info("Could not load system tray icon");
+          mUseSystemTray = false;
         }
       }
     }
     
 // --->> Windows only
-    if (useWindowsIconTray) {
+    if (mUseSystemTray) {
       mLog.info("platform independent mode is OFF");
           
       final SystemTrayIconManager mgr = new SystemTrayIconManager(systrayImageHandle, TVBrowser.MAINWINDOW_TITLE);
@@ -306,7 +304,7 @@ public class TVBrowser {
           mgr.setVisible(false);
           mainFrame.quit();  
         }
-        });      
+      });      
 
       mgr.addSystemTrayIconListener(new SystemTrayIconListener() {
         public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
@@ -325,13 +323,19 @@ public class TVBrowser {
       });
 
       mgr.setRightClickView(trayMenu);
-    
+
       mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-        public void windowClosing(java.awt.event.WindowEvent e) {
-          mgr.setVisible(false);
-          mainFrame.quit();
+        public void windowClosing(java.awt.event.WindowEvent evt) {
+          if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
+            // Only minimize the main window, don't quit
+            mainFrame.hide();
+            openMenuItem.setEnabled(true);  
+          } else {
+            mgr.setVisible(false);
+            mainFrame.quit();
+          }
         }
-        public void windowIconified(java.awt.event.WindowEvent e) {
+        public void windowIconified(java.awt.event.WindowEvent evt) {
           mainFrame.hide();
           openMenuItem.setEnabled(true);  
         }
@@ -396,6 +400,11 @@ public class TVBrowser {
         }
       });
     }
+  }
+  
+  
+  public static boolean isUsingSystemTray() {
+    return mUseSystemTray;
   }
 
 

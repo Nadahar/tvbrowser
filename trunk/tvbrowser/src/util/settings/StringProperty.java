@@ -32,6 +32,8 @@ package util.settings;
  */
 public class StringProperty extends Property {
 
+  private static final String NULL_VALUE = "(null)";
+
   private String mDefaultValue;
   private String mCachedValue;
   
@@ -57,7 +59,11 @@ public class StringProperty extends Property {
       String asString = getProperty();
       if (asString == null) {
         mCachedValue = mDefaultValue;
-      } else {
+      }
+      else if (asString.equals(NULL_VALUE)) {
+        mCachedValue = null;
+      }
+      else {
         mCachedValue = asString;
       }
     }
@@ -68,10 +74,12 @@ public class StringProperty extends Property {
   
   public void setString(String value) {
     if (value == null) {
-      throw new IllegalArgumentException("You can't set a null value");
+      value = NULL_VALUE;
     }
     
-    if (value.equals(mDefaultValue)) {
+    if ((mDefaultValue == null) ? (value == mDefaultValue)
+                                : value.equals(mDefaultValue))
+    {
       setProperty(null);
     } else {
       setProperty(value);
