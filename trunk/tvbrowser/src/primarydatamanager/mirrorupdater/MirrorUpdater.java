@@ -279,8 +279,10 @@ public class MirrorUpdater {
     mDataTarget.writeFile(Mirror.MIRROR_LIST_FILE_NAME, data);
 
     // Create the weight file
-    data = Integer.toString(mMirrorWeight).getBytes();
-    mDataTarget.writeFile("weight", data);
+    if (mMirrorWeight>=0) {  // don't change the weight file, if the weight is invalid
+      data = Integer.toString(mMirrorWeight).getBytes();
+      mDataTarget.writeFile("weight", data);
+    }
     
     // Create the lastupdate file
     Calendar cal = Calendar.getInstance();

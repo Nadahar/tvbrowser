@@ -71,7 +71,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     infoEP.setEditorKit(new ExtendedHTMLEditorKit());
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) infoEP.getDocument();
     String text = createInfoText(program, doc);
-    // System.out.println(text);
     infoEP.setText(text);
     infoEP.setEditable(false);
     infoEP.addHyperlinkListener(new HyperlinkListener() {
@@ -345,7 +344,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
     text = IOUtilities.replace(text.trim(), "\n", "<br>");
     if (createLinks) {
-      System.out.println("creating links");
       text = text.replaceAll("(http://|www.)[^\\s<]*", "<a href=\"$0\">$0</a>");
     }
     

@@ -51,7 +51,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     JPanel centerPanel=new JPanel(new BorderLayout());
     
     mCardPn=new JPanel(new CardLayout());
-    mCardPn.setBorder(BorderFactory.createEmptyBorder(3,100,10,10));
+    mCardPn.setBorder(BorderFactory.createEmptyBorder(3,100,10,20));
       
     JPanel btnPanel=new JPanel(new BorderLayout());
     JPanel panel1=new JPanel();

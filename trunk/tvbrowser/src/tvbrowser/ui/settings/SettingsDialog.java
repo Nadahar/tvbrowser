@@ -143,8 +143,8 @@ public class SettingsDialog {
     
     icon = new ImageIcon("imgs/Preferences16.gif");
     msg = mLocalizer.msg("settings", "Settings");
-    SettingNode root = new SettingNode(icon, msg);
-    
+    SettingNode root = //new SettingNode(icon, msg);
+                       new SettingNode(new DefaultSettingsTab(msg,icon));
     
     // Channels
     node = new SettingNode(new ChannelsSettingsTab());
@@ -156,7 +156,9 @@ public class SettingsDialog {
     
     // Appearance
     
-    node = new SettingNode(new AppearanceSettingsTab());
+    node = new SettingNode(
+    new DefaultSettingsTab(mLocalizer.msg("appearance","appearance"),null));
+    //new AppearanceSettingsTab());
     root.add(node);
     
     node.add(new SettingNode(new ButtonsSettingsTab()));
@@ -183,7 +185,7 @@ public class SettingsDialog {
     }
     
     // Advanced
-    node = new SettingNode(new AdvancedSettingsTab());
+    node = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("advanced","advanced"),null));
     root.add(node);
     
     node.add(new SettingNode(new ProxySettingsTab()));
@@ -226,6 +228,52 @@ public class SettingsDialog {
     
     mSettingsPn.revalidate();
     mSettingsPn.repaint();
+  }
+  
+  
+  private class DefaultSettingsTab implements devplugin.SettingsTab {
+   
+    private String mTitle;
+    private Icon mIcon;
+
+    public DefaultSettingsTab(String title, Icon icon) {
+      mTitle=title;
+      mIcon=icon;
+    }
+    
+    public JPanel createSettingsPanel() {
+      JPanel contentPanel=new JPanel();
+      
+      contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
+      contentPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+      JLabel titleLb=new JLabel(mTitle);
+      titleLb.setFont(new Font("Dialog",Font.PLAIN,32));
+      JLabel lb=new JLabel(mLocalizer.msg("selectCategory","Please select a category on the left."));
+      lb.setFont(new Font("Dialog",Font.PLAIN,14));
+      lb.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
+      
+      
+      contentPanel.add(titleLb);
+      contentPanel.add(lb);
+      return contentPanel;
+    }
+    
+	
+		public void saveSettings() {
+			
+		}
+
+		
+		public Icon getIcon() {
+      
+			return mIcon;
+		}
+
+	
+		public String getTitle() {
+			return mTitle;
+		}
+    
   }
   
   

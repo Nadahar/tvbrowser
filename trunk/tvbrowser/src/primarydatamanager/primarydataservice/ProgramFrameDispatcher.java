@@ -53,6 +53,8 @@ public class ProgramFrameDispatcher {
     mDayPrograms=new HashMap();
   }
   
+  
+  
   public void dispatchProgramFrame(ProgramFrame frame, devplugin.Date date)  {
     
     if (frame==null) {
