@@ -140,7 +140,6 @@ public class PluginManager {
 
 
 	private static void initPlugin(Plugin p) {
-		p.init();
 		loadPluginData(p);
 		loadPluginSettings(p);		
 	}
@@ -242,8 +241,7 @@ public class PluginManager {
         String name=p.getClass().getName();
         plugins.put(p.getClass().getName(),p);
 
-        //devplugin.PluginInfo info=p.getInfo();
-        mLog.info("Plugin " + name + " available");
+       	mLog.info("Plugin " + name + " available");
       }
       catch (Exception exc) {
         String msg = mLocalizer.msg("error.5", "Loading plugin failed!\n({0})",
@@ -282,24 +280,6 @@ public class PluginManager {
   }
   
   
- /* public static Object[] getInstalledPlugins() {
-    if (installedPlugins!=null) {
-      return installedPlugins.values().toArray();
-    }
-
-    Object o[]=Settings.getInstalledPlugins();  // array of String
-    installedPlugins=new HashMap();
-
-    loadAvailablePlugins();
-    for (int i=0;i<o.length;i++) {
-      Plugin p=(Plugin)plugins.get(o[i]);
-      if (p==null) continue;
-      installedPlugins.put(p.getClass().getName(),p);
-    }
-
-    return installedPlugins.values().toArray();
-  }
-*/
   /**
    * Returns a devplugin.Plugin object with the specified name, or null if
    * the plugin does not exist.
