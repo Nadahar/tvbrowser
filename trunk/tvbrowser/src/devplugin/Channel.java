@@ -256,9 +256,9 @@ public class Channel {
 
 
   public String toString() {
-    if (mDataService!=null) {
-      return mName + " (" + mDataService.getInfo().getName() + ")";
-    }
+    //if (mDataService!=null) {
+    //  return mName + " (" + mDataService.getInfo().getName() + ")";
+    //}
     return mName;
   }
 
@@ -350,5 +350,7 @@ public class Channel {
 
     return false;
   }
+
+
 
 }

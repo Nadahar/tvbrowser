@@ -32,5 +32,10 @@ public interface ChannelGroup {
   public String getName();
   public String getId(); 
   public String getDescription();
-  
+
+  /**
+   * @since 1.1
+   * @return
+   */
+  public String getProviderName();
 }

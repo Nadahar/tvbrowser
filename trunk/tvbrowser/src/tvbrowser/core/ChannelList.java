@@ -211,11 +211,19 @@ public class ChannelList {
 
   /**
    * Returns an Enumeration of all available Channel objects.
+   *
+   * @deprecated Use getAvailableChannels
    */
   public static Iterator getChannels() {
 	return mAvailableChannels.iterator();
   }
 
+
+  public static Channel[] getAvailableChannels() {
+    Channel[] result = new Channel[mAvailableChannels.size()];
+    mAvailableChannels.toArray(result);
+    return result;
+  }
 
 
   /**

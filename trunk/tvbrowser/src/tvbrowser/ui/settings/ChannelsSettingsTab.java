@@ -57,6 +57,7 @@ import util.ui.ChannelListCellRenderer;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import devplugin.Channel;
+import devplugin.ChannelGroup;
 
 /**
  * TV-Browser
@@ -139,7 +140,22 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       southPn.add(btnPanel);
       
       final JList rightList=mChannelListPanel.getRightList();
-      
+
+      rightList.addListSelectionListener(new ListSelectionListener(){
+        public void valueChanged(ListSelectionEvent e) {
+          Channel ch = (Channel)rightList.getSelectedValue();
+          if (ch != null) {
+            System.out.println(ch.getName()+", "+ch.getCountry());
+            ChannelGroup group = ch.getGroup();
+            if (group != null) {
+              System.out.println(group.getName()+", "+group.getDescription());
+            }
+          }
+        }
+      });
+
+
+
       mChannelListPanel.getRightList().setCellRenderer(new ChannelListCellRenderer());
       mChannelListPanel.getLeftList().setCellRenderer(new ChannelListCellRenderer());
       int []sel=rightList.getSelectedIndices();

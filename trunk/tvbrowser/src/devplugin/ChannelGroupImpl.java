@@ -29,14 +29,19 @@ package devplugin;
 
 public class ChannelGroupImpl implements ChannelGroup {
 
-  private String mId, mName, mDescription;
+  private String mId, mName, mDescription, mProvider;
 
-	public ChannelGroupImpl(String id, String name, String description) {
+	public ChannelGroupImpl(String id, String name, String description, String provider) {
     mId = id;
     mName = name;
     mDescription = description;
+    mProvider = provider;
 	}
-  
+
+  public ChannelGroupImpl(String id, String name, String description) {
+    this(id, name, description, null);
+  }
+
 	public String getName() {
 		return mName;
 	}
@@ -47,6 +52,10 @@ public class ChannelGroupImpl implements ChannelGroup {
 
 	public String getDescription() {
 		return mDescription;
-	}  
-  
+	}
+
+  public String getProviderName() {
+    return mProvider;
+  }
+
 }

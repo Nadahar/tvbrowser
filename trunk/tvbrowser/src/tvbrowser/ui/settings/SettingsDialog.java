@@ -65,7 +65,6 @@ public class SettingsDialog {
   private JTree mSelectionTree;
   private JPanel mSettingsPn;
   private JScrollPane mSettingsPane;
-  //private JButton mOkBt, mCancelBt;
 
   private JButton mOkBt, mCancelBt, mApplyBt;
 
@@ -113,9 +112,13 @@ public class SettingsDialog {
     }
 
     mSettingsPn = new JPanel(new BorderLayout());
+
+    // TODO: do we need a JScrollPane here?
     mSettingsPane = new JScrollPane(mSettingsPn);
     mSettingsPane.setPreferredSize(new Dimension(410, 300));
     mSplitPane.setRightComponent(mSettingsPane);
+ //   mSplitPane.setRightComponent(mSettingsPn);
+ //  mSettingsPn.setPreferredSize(new Dimension(410, 300));
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
@@ -207,6 +210,10 @@ public class SettingsDialog {
     // Channels
     node = new SettingNode(new ChannelsSettingsTab());
     root.add(node);
+
+    node = new SettingNode(new ChannelsSettingsTabNew());
+    root.add(node);
+
 
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
     PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();

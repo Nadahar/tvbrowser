@@ -77,8 +77,10 @@ public class ChannelList {
     mChannelList = new ArrayList();
     mGroup=group;
   }
-  
-  
+
+
+
+
   public void addChannel(Channel channel) {
     mChannelList.add(new ChannelItem(channel, null));
   }
