@@ -267,9 +267,15 @@ public class CapturePlugin extends devplugin.Plugin {
             actionList.add(new ActionMenu(action, commandActions));
         }
 
+        if (actionList.size() == 1) {
+          ActionMenu menu = (ActionMenu) actionList.get(0);
+          return new ActionMenu(mainaction, menu.getSubItems());
+        }
+        
         ActionMenu[] actions = new ActionMenu[actionList.size()];
         actionList.toArray(actions);
 
+        
         return new ActionMenu(mainaction, actions);
     }
 
