@@ -24,7 +24,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import listviewplugin.ListViewPlugin;
 import util.ui.Localizer;
 import util.ui.ProgramListCellRenderer;
 import devplugin.Channel;
@@ -41,13 +40,13 @@ public class ProgramListDialog extends JDialog {
     /**
      * Creates the Dialog
      * @param parent ParentFrame
-     * @param rating
+     * @param title Titel of Program
      */
-    public ProgramListDialog(Frame parent, Rating rating) {
+    public ProgramListDialog(Frame parent, String title) {
         super(parent, true);
         setTitle(mLocalizer.msg("ListDialog", "Listening"));
 
-        _rating = rating;
+        _title = title;
 
         generateList();
         createGUI();
@@ -68,7 +67,7 @@ public class ProgramListDialog extends JDialog {
                 Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
                 while ((it != null) && (it.hasNext())) {
                     Program program = (Program) it.next();
-                    if (program.getTitle().equals(_rating.getTitle())) {
+                    if (program.getTitle().equals(_title)) {
                         _programList.add(program);
                     }
                 }
@@ -97,7 +96,7 @@ public class ProgramListDialog extends JDialog {
                     Program p = (Program) _programJList.getModel().getElementAt(inx);
                     _programJList.setSelectedIndex(inx);
                     JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p,
-                            ListViewPlugin.getInstance());
+                            TVRaterPlugin.getInstance());
                     menu.show(_programJList, e.getX() - 15, e.getY() - 15);
                 } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
                     int inx = _programJList.locationToIndex(e.getPoint());
@@ -131,7 +130,7 @@ public class ProgramListDialog extends JDialog {
 
 
     
-    private Rating _rating;
+    private String _title;
 
     private JList _programJList;
 

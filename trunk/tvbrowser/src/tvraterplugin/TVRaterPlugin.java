@@ -60,7 +60,13 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
     private Database _tvraterDB = new Database();
 
+    /** Instance of this Plugin */
+    private static TVRaterPlugin _tvRaterInstance;
 
+    public TVRaterPlugin() {
+        _tvRaterInstance = this;
+    }
+    
     public String getContextMenuItemText() {
         return mLocalizer.msg("contextMenuText", "View rating");
     }
@@ -284,4 +290,14 @@ public class TVRaterPlugin extends devplugin.Plugin {
         };
         updateThread.start();
     }
+    
+    /**
+     * Returns an Instance of this Plugin
+     * 
+     * @return Instance of this Plugin
+     */
+    public static TVRaterPlugin getInstance() {
+        return _tvRaterInstance;
+    }
+    
 }
