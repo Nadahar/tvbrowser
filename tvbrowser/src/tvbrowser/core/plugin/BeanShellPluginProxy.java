@@ -12,12 +12,12 @@ import javax.swing.ImageIcon;
 
 import bsh.Interpreter;
 
-import tvbrowser.core.plugin.beanshell.BeanShellScriptIf;
 import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.beanshell.BeanShellScriptIf;
 
 
 /**
