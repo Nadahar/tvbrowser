@@ -36,6 +36,7 @@ import java.util.logging.*;
 import primarydatamanager.primarydataservice.PrimaryDataService;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.Mirror;
 import util.io.IOUtilities;
 import util.io.VerySimpleFormatter;
@@ -201,7 +202,29 @@ public class PrimaryDataManager {
       
     int quarantineCount = mRawDataProcessor.getQuarantineCount();
     if (quarantineCount > 0) {
-      mLog.warning(quarantineCount + " day programs where put into quarantine");
+      mLog.warning(quarantineCount + " day programs where put into quarantine");   
+      
+      File txtDir = new File(mPreparedDir, "quarantine");
+      if (!txtDir.exists()) {
+        System.out.println("file "+txtDir.getAbsolutePath()+" does not exist");
+      }
+      if (!txtDir.isDirectory()) {
+        System.out.println("file "+txtDir.getAbsolutePath()+" is not a directory");
+      }
+      
+      if (txtDir.exists() && txtDir.isDirectory()) {
+        File destDir=new File(txtDir,"txt");
+        destDir.mkdirs();
+        try {
+          System.out.println("translat");
+          DayProgramFileTranslator.translateAllDayPrograms(txtDir,destDir);
+        } catch (IOException e) {
+          e.printStackTrace();
+        } catch (FileFormatException e) {
+          e.printStackTrace();
+        }
+      }
+        
     }
   }
 

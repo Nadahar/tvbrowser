@@ -42,19 +42,25 @@ import tvbrowserdataservice.file.*;
  */
 public class DayProgramFileTranslator {
   
-  public static void translateAllDayPrograms(File dir)
+  public static void translateAllDayPrograms(File srcDir, File destDir)
     throws IOException, FileFormatException
   {
-    if (! dir.exists()) {
-      throw new IOException("Directory does not exist: " + dir.getAbsolutePath());
+    if (! srcDir.exists()) {
+      throw new IOException("Directory does not exist: " + srcDir.getAbsolutePath());
     }
     
-    if (! dir.isDirectory()) {
-      throw new IOException("File is not an directory: " + dir.getAbsolutePath());
+    if (! srcDir.isDirectory()) {
+      throw new IOException("File is not a directory: " + srcDir.getAbsolutePath());
     }
+    
+    if (! destDir.isDirectory()) {
+          throw new IOException("File is not a directory: " + destDir.getAbsolutePath());
+        }
+    
+    System.out.println("translate source: "+srcDir.getAbsolutePath()+" to "+destDir.getAbsolutePath());
     
     // Delete the old translations
-    File[] fileArr = dir.listFiles();
+    File[] fileArr = srcDir.listFiles();
     for (int i = 0; i < fileArr.length; i++) {
       if (fileArr[i].getName().endsWith(".prog.txt")) {
         // This is an old translation -> delete it
@@ -68,30 +74,46 @@ public class DayProgramFileTranslator {
     // Go through all files and translate
     for (int i = 0; i < fileArr.length; i++) {
       if (fileArr[i].getName().endsWith(".prog.gz")) {
-        translateDayProgram(fileArr[i]);
+        translateDayProgram(fileArr[i],destDir);
       }
       if (fileArr[i].isDirectory()) {
-        translateAllDayPrograms(fileArr[i]);
+        File dest=new File(srcDir,"txt");
+        dest.mkdirs();
+        translateAllDayPrograms(fileArr[i],dest);
       }
     }
   }
 
 
 
-  public static void translateDayProgram(File file)
+  public static void translateDayProgram(File file, File destDir)
     throws IOException, FileFormatException
   {
+    
+    if (! destDir.exists()) {
+      throw new IOException("Directory does not exist: " + destDir.getAbsolutePath());
+    }
+    
+    if (! destDir.isDirectory()) {
+      throw new IOException("File is not a directory: " + destDir.getAbsolutePath());
+    }
+    
+    
     DayProgramFile prog = new DayProgramFile();
     prog.readFromFile(file);
 
-    String progFileName = file.getAbsolutePath();
+    String progFileName = file.getName();  //file.getAbsolutePath();
     // -8 for .prog.gz
     String transFileName = progFileName.substring(0, progFileName.length() - 8)
       + ".prog.txt";
 
     FileOutputStream stream = null;
     try {
-      stream = new FileOutputStream(transFileName);
+      
+      System.out.println(file.getAbsolutePath()+" --> "+new File(destDir,transFileName).getAbsolutePath());
+    
+      
+      stream = new FileOutputStream(new File(destDir,transFileName));
       PrintWriter writer = new PrintWriter(stream);
       
       writer.println("Version: " + prog.getVersion());
@@ -201,9 +223,11 @@ public class DayProgramFileTranslator {
         for (int i = 0; i < args.length; i++) {
           File file = new File(args[i]);
           if (file.isDirectory()) {
-            translateAllDayPrograms(file);
+            File dest=new File(file,"txt");
+            dest.mkdirs();
+            translateAllDayPrograms(file,dest);
           } else {
-            translateDayProgram(file);
+            translateDayProgram(file,new File("."));
           }
         }
       }
