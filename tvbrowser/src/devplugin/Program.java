@@ -23,10 +23,7 @@
  *   $Author$
  * $Revision$
  */
-
 package devplugin;
-
-
 
 import java.util.Iterator;
 
@@ -47,9 +44,27 @@ public interface Program {
   public static final int INFO_AUDIO_DOLBY_SURROUND    = 1 << 6;
   public static final int INFO_AUDIO_DOLBY_DIGITAL_5_1 = 1 << 7;
   public static final int INFO_AUDIO_TWO_CHANNEL_TONE  = 1 << 8;
-  public static final int INFO_SUBTITLE                = 1 << 9;
+  /**
+   * A subtitle for aurally handicapped. The subtitle is in the same language as
+   * the audio.
+   * 
+   * @see #INFO_ORIGINAL_WITH_SUBTITLE
+   */
+  public static final int INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED = 1 << 9;
   public static final int INFO_LIVE                    = 1 << 10;
-
+  /**
+   * Original with subtitle. The subtitle is in another language as
+   * the audio.
+   *
+   * @see #INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
+   */
+  public static final int INFO_ORIGINAL_WITH_SUBTITLE  = 1 << 11;
+  
+  /**
+   * @deprecated Since 0.9.8. Use {@link #INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED}
+   *             or {@link #INFO_ORIGINAL_WITH_SUBTITLE} instead.
+   */
+  public static final int INFO_SUBTITLE = INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
   
   
   /**
