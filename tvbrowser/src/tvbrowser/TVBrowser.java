@@ -40,6 +40,7 @@ import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.UpdateDlg;
 import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.settings.SettingsDlg;
+import tvbrowser.ui.splashscreen.SplashScreen;
 
 import util.ui.*;
 
@@ -61,7 +62,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   private JMenuItem settingsMenuItem, updateMenuItem, mImportTvDataMI, mExportTvDataMI;
   private SkinPanel skinPanel;
   private static String curLookAndFeel;
-  public static String MAINWINDOW_TITLE="TV-Browser v0.9.0";
+  public static String MAINWINDOW_TITLE="TV-Browser v0.9.2";
 
 
 
@@ -70,6 +71,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
    */
   public static void main(String[] args) {
     System.out.println("please wait...");
+    
+    SplashScreen splash=new SplashScreen("imgs/splash.jpg",400,300);
+    //splash.setSize(50,50);
+    splash.show();
 
     try {
       ChannelList.readChannelList();
@@ -78,9 +83,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       ChannelList.createDefaultChannelList();
     }
 
-
+	splash.setMessage("loading Settings...");
     Settings.loadSettings();
     System.out.print("loading Look&Feel..."); System.out.flush();
+    splash.setMessage("loading Look&Feel...");
 
     try {
       curLookAndFeel=Settings.getLookAndFeel();
@@ -93,15 +99,18 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     System.out.println("done");
     
     System.out.print("loading data service..."); System.out.flush();
+	splash.setMessage("loading data service...");
     devplugin.Plugin.setPluginManager(DataService.getInstance());
     System.out.println("done");
 
     System.out.print("loading plugins..."); System.out.flush();
+	splash.setMessage("loading plugins...");
     PluginManager.initInstalledPlugins();
     System.out.println("done");
 
 
     System.out.print("loading selections..."); System.out.flush();
+	splash.setMessage("loading selections...");
     try {
       String dir=Settings.getUserDirectoryName();
       File f=new File(dir,"selections");
@@ -118,12 +127,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       e.printStackTrace();
     }
 
-
+	splash.setMessage("starting up...");
     System.out.println("starting up...\n");
     final TVBrowser frame = new TVBrowser();
     frame.pack();
     frame.setSize(700,500);
     frame.setVisible(true);
+
+	splash.hide();
 
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
