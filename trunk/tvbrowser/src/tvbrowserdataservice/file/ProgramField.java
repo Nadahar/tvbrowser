@@ -75,10 +75,9 @@ public class ProgramField implements Cloneable {
     setIntData(value);
    // System.out.println(value);
   }
-  
-  
-  
-  
+
+
+
   public Object clone() {
     try {
       return super.clone();
@@ -119,6 +118,16 @@ public class ProgramField implements Cloneable {
   public void setType(ProgramFieldType type) {
     mType = type;
     mTypeId = type.getTypeId();
+  }
+  
+  
+  
+  /**
+   * Is used for a field in an update file that should be deleted.
+   */
+  public void removeData() {
+    mDataFormat = ProgramFieldType.UNKOWN_FORMAT;
+    mData = null;
   }
 
 
@@ -243,15 +252,19 @@ public class ProgramField implements Cloneable {
     int dataLength = ((stream.read() & 0xFF) << 16)
                    | ((stream.read() & 0xFF) << 8)
                    |  (stream.read() & 0xFF);
-    
-    mData = new byte[dataLength];
-    int offset = 0;
-    while (offset < dataLength) {
-      int len = stream.read(mData, offset, dataLength - offset);
-      if (len == -1) {
-        throw new FileFormatException("Unexpected end of file");
+                   
+    if (dataLength == 0) {
+      mData = null;
+    } else {
+      mData = new byte[dataLength];
+      int offset = 0;
+      while (offset < dataLength) {
+        int len = stream.read(mData, offset, dataLength - offset);
+        if (len == -1) {
+          throw new FileFormatException("Unexpected end of file");
+        }
+        offset += len;
       }
-      offset += len;
     }
   }
 
@@ -277,6 +290,43 @@ public class ProgramField implements Cloneable {
       
       // Write the data
       stream.write(mData);
+    }
+  }
+
+
+
+  public static boolean arraysAreEqual(byte[] array1, byte[] array2) {
+    if ((array1 == null) || (array2 == null)) {
+      return array1 == array2; // true when both are null
+    }
+    
+    if (array1.length != array2.length) {
+      return false;
+    }
+    
+    for (int i = 0; i < array1.length; i++) {
+      if (array1[i] != array2[i]) {
+        return false;
+      }
+    }
+    
+    // Everything was equal
+    return true;
+  }
+
+
+
+  public boolean equals(Object obj) {
+    if (obj instanceof ProgramField) {
+      ProgramField field = (ProgramField) obj;
+      
+      if (getTypeId() != field.getTypeId()) {
+        return false;
+      }
+      
+      return arraysAreEqual(mData, field.mData);
+    } else {
+      return false;
     }
   }
 

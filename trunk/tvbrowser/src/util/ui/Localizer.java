@@ -99,10 +99,19 @@ public class Localizer {
    * @param clazz The Class to create the Localizer for.
    */
   private Localizer(Class clazz) {
-    String packageName = clazz.getPackage().getName();
-    mKeyPrefix = clazz.getName().substring(packageName.length() + 1) + ".";
+    String className = clazz.getName();
+    int lastDot = className.lastIndexOf('.');
+    String packageName;
+    if (lastDot == -1) {
+      // This class has no package
+      packageName = "";
+    } else {
+      packageName = className.substring(0, lastDot);
+    }
 
-    int lastDot = packageName.lastIndexOf('.');
+    mKeyPrefix = className.substring(packageName.length() + 1) + ".";
+
+    lastDot = packageName.lastIndexOf('.');
     if (lastDot == -1) {
       mBaseName = packageName + "." + packageName;
     } else {

@@ -120,20 +120,40 @@ public class DayProgramFile {
     }
     
     // Go through all frames in the update file
-    for (int frameNr = 0; frameNr < updateFile.getProgramFrameCount(); frameNr++) {
-      ProgramFrame frame = updateFile.getProgramFrameAt(frameNr);
+    merge(updateFile, false);
+    
+    // Upgrade to the new version
+    setVersion(updateFile.getVersion());
+  }
+
+
+
+  public void merge(DayProgramFile otherProg) throws FileFormatException {
+    merge(otherProg, false);
+  }
+  
+  
+  
+  private void merge(DayProgramFile otherProg, boolean allowDeleting)
+    throws FileFormatException
+  {
+    // Go through all frames in the merge the day programs
+    for (int frameNr = 0; frameNr < otherProg.getProgramFrameCount(); frameNr++) {
+      ProgramFrame frame = otherProg.getProgramFrameAt(frameNr);
       
       // Check whether this frame should be deleted
       // This is the case when the frame has no fields
       if (frame.getProgramFieldCount() == 0) {
-        // Delete the frame
-        int index = getProgramFrameIndexForId(frame.getId());
-        if (index == -1) {
-          throw new FileFormatException("The update file says that the program"
-            + " frame with the ID " + frame.getId() + " should be deleted, but "
-            + " there is no such frame in this file.");
+        // Delete the frame if allowed
+        if (allowDeleting) {
+          int index = getProgramFrameIndexForId(frame.getId());
+          if (index == -1) {
+            throw new FileFormatException("The other file says that the program"
+              + " frame with the ID " + frame.getId() + " should be deleted, but "
+              + " there is no such frame in this file.");
+          }
+          removeProgramFrameAt(index);
         }
-        removeProgramFrameAt(index);
       } else {
         // Insert or update the frame
         
@@ -151,22 +171,25 @@ public class DayProgramFile {
         
         // Replace all fields the update file provides
         for (int i = 0; i < frame.getProgramFieldCount(); i++) {
-          ProgramField copy = (ProgramField) frame.getProgramFieldAt(i).clone();
+          ProgramField field = frame.getProgramFieldAt(i);
           
           // Remove the old field, if present
-          int fieldIdx = targetFrame.getProgramFieldIndexForTypeId(copy.getTypeId());
+          int fieldIdx = targetFrame.getProgramFieldIndexForTypeId(field.getTypeId());
           if (fieldIdx != -1) {
             targetFrame.removeProgramFieldAt(fieldIdx);
           }
           
-          // Add the copied field
-          targetFrame.addProgramField(copy);
+          // Check whether to update or delete the field
+          if (field.getBinaryData() == null) {
+            // This field should be deleted -> Do nothing
+          } else {
+            // This field should be updated -> Add a copy of the field
+            ProgramField copy = (ProgramField) field.clone();
+            targetFrame.addProgramField(copy);
+          }
         }
       }
     }
-    
-    // Upgrade to the new version
-    setVersion(updateFile.getVersion());
   }
   
   
@@ -254,16 +277,31 @@ public class DayProgramFile {
 
 
   public void writeToFile(File file) throws IOException, FileFormatException {
-    FileOutputStream stream = null;
+    // NOTE: We need two try blocks to ensure that the file is closed in the
+    //       outer block.
+    
     try {
-      stream = new FileOutputStream(file);
-      
-      writeToStream(stream);
-    }
-    finally {
-      if (stream != null) {
-        try { stream.close(); } catch (IOException exc) {}
+      FileOutputStream stream = null;
+      try {
+        stream = new FileOutputStream(file);
+        
+        writeToStream(stream);
       }
+      finally {
+        // Close the file in every case
+        if (stream != null) {
+          try { stream.close(); } catch (IOException exc) {}
+        }
+      }
+    }
+    catch (IOException exc) {
+      file.delete();
+      throw exc;
+    }
+    catch (FileFormatException exc) {
+      file.delete();
+      throw new FileFormatException("Writing file failed "
+        + file.getAbsolutePath(), exc);
     }
   }
 
@@ -313,8 +351,34 @@ public class DayProgramFile {
     
     return buf.toString();
   }
-  
-  
-  
+
+
+
+  public boolean equals(Object obj) {
+    if (obj instanceof DayProgramFile) {
+      DayProgramFile file = (DayProgramFile) obj;
+      
+      if (getProgramFrameCount() != file.getProgramFrameCount()) {
+        return false;
+      }
+      
+      for (int i = 0; i < getProgramFrameCount(); i++) {
+        ProgramFrame frame = getProgramFrameAt(i);
+        
+        int index = file.getProgramFrameIndexForId(frame.getId());
+        if (index == -1) {
+          return false;
+        } else {
+          if (! frame.equals(file.getProgramFrameAt(index))) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 }
