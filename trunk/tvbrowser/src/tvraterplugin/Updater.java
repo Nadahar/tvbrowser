@@ -79,7 +79,23 @@ public class Updater implements Progress {
 	 * @throws Exception IOException
 	 */
 	public void run() {
-		try {
+
+	    if ( (_tvraterPlugin.getSettings().getProperty("name") == null) ||
+	         (_tvraterPlugin.getSettings().getProperty("name").length() == 0) ||
+	         (_tvraterPlugin.getSettings().getProperty("password") == null) ||
+	         (_tvraterPlugin.getSettings().getProperty("password").length() == 0)) {
+	        
+		    JOptionPane.showMessageDialog(
+					_tvraterPlugin.getParentFrameForTVRater(), 
+					_mLocalizer.msg("noUser","Please Enter your Userdata in the\nconfiguration of this Plugin"),
+					_mLocalizer.msg("error", "Error while updating TV Rater"),
+					JOptionPane.ERROR_MESSAGE);
+		    return;
+	    }
+	    
+
+	    
+	    try {
 			URL url = new URL(LOCATION);
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
