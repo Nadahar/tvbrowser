@@ -1,7 +1,13 @@
 Changelog TVBrowser
 
+current (0.9.7):
+- Bugfixes:
+    - Stopping updates works now
+- Changed the TvDataService-Interface
+- Settings: The list of the available channels is now sorted
+- Program icon
 
-current (0.9.6.1):
+0.9.6.1:
 - bugfixes:
 	- don't scroll to invalid time/channel positions
 	- remember download period "get all"
@@ -13,7 +19,6 @@ current (0.9.6.1):
 - show plugin buttons by default
 - new layout in settings dialog
 - support time zones
-
 
 0.9.6:
 - bugfix in SkinPanel
