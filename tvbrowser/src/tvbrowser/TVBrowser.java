@@ -104,11 +104,13 @@ public class TVBrowser {
       ErrorHandler.handle(msg, exc);
     }
     
-    
-    
-    
+    // Load the settings
     Settings.loadSettings();
     
+    // Set the String to use for indicating the user agent in http requests
+    System.setProperty("http.agent", MAINWINDOW_TITLE); 
+    
+    // Check whether TV-Browser is started the first time
     File f=new File(Settings.getTVDataDirectory());
     if (!f.exists()) {        
       

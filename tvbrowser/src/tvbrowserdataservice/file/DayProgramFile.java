@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import tvbrowserdataservice.file.TvDataLevel;
+import util.exc.TvBrowserException;
 
 import devplugin.Date;
 
@@ -443,6 +443,54 @@ public class DayProgramFile {
     return buf.toString();
   }
 
+
+  public static Date getDateFromFileName(String fileName)
+    throws TvBrowserException
+  {
+    try {
+      // E.g. '2003-10-04_de_premiere-1_base_update_15.prog.gz'
+      //   or '2003-10-04_de_premiere-1_base_full.prog.gz'  
+      int year = Integer.parseInt(fileName.substring(0, 4));
+      int month = Integer.parseInt(fileName.substring(5, 7));
+      int day = Integer.parseInt(fileName.substring(8, 10));
+      return new Date(year, month, day);
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(DayProgramFile.class, "error.1",
+        "Program file name has wrong syntax: {0}", fileName, exc);
+    }
+  }
+
+
+  public static String getCountryFromFileName(String fileName)
+    throws TvBrowserException
+  {
+    try {
+      // E.g. '2003-10-04_de_premiere-1_base_update_15.prog.gz'
+      //   or '2003-10-04_de_premiere-1_base_full.prog.gz'
+      return fileName.substring(11, 13);
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(DayProgramFile.class, "error.1",
+        "Program file name has wrong syntax: {0}", fileName, exc);
+    }
+  }
+
+
+  public static String getChannelNameFromFileName(String fileName)
+    throws TvBrowserException
+  {
+    try {
+      // E.g. '2003-10-04_de_premiere-1_base_update_15.prog.gz'
+      //   or '2003-10-04_de_premiere-1_base_full.prog.gz'
+      int channelEnd = fileName.indexOf('_', 14);
+      return fileName.substring(14, channelEnd);
+    }
+    catch (Exception exc) {
+      throw new TvBrowserException(DayProgramFile.class, "error.1",
+        "Program file name has wrong syntax: {0}", fileName, exc);
+    }
+  }
 
 
   public boolean equals(Object obj) {

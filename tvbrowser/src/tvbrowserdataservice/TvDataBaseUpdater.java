@@ -74,27 +74,14 @@ public class TvDataBaseUpdater {
   {
     // Parse the information from the fileName
     // E.g. '2003-10-04_de_premiere-1_base_full.prog.gz'
-    Date date;
-    Channel channel;
-    try {
-      int year = Integer.parseInt(fileName.substring(0, 4));
-      int month = Integer.parseInt(fileName.substring(5, 7));
-      int day = Integer.parseInt(fileName.substring(8, 10));
-      date = new Date(year, month, day);
-      
-      String country = fileName.substring(11, 13);
-      int underscorePos = fileName.indexOf('_', 14);
-      String channelName = fileName.substring(14, underscorePos);
-      
-      channel = mDataService.getChannel(country, channelName);
-      if (channel == null) {
-        throw new TvBrowserException(TvDataBaseUpdater.class, "error.1",
-          "Channel not found: {0} from {1}", channelName, country);
-      }
-    }
-    catch (Exception exc) {
-      throw new TvBrowserException(TvDataBaseUpdater.class, "error.2",
-        "Program file name has wrong syntax: {0}", fileName, exc);
+    Date date = DayProgramFile.getDateFromFileName(fileName);
+    String country = DayProgramFile.getCountryFromFileName(fileName);
+    String channelName = DayProgramFile.getChannelNameFromFileName(fileName);
+    
+    Channel channel = mDataService.getChannel(country, channelName);
+    if (channel == null) {
+      throw new TvBrowserException(TvDataBaseUpdater.class, "error.1",
+        "Channel not found: {0} from {1}", channelName, country);
     }
     
     addUpdateJob(date, channel);
