@@ -143,8 +143,6 @@ public class TVBrowser {
           if (args[i].indexOf("=") > 0) {
               String key = args[i].substring(2, args[i].indexOf("="));
               String value = args[i].substring(args[i].indexOf("=")+1);
-              System.out.println(key + "---" + value);
-              
               if (key.equals("user.language")) {
                   Locale.setDefault(new Locale(value));
               } else {
