@@ -183,14 +183,19 @@ public class ReminderList implements ActionListener {
       return;
     }
     
+    
+           
     devplugin.Date date=new devplugin.Date();
-
+    
     Calendar cal=new GregorianCalendar();
     cal.setTime(new java.util.Date());
     int time=cal.get(Calendar.HOUR_OF_DAY)*60+cal.get(Calendar.MINUTE);
-
-    long minutesNow = (long)date.getDaysSince1970() * 60 * 24 + (long)time;
-    long minutesItem;
+ 
+    System.out.println("current time: "+time);
+ 
+    devplugin.Date today=devplugin.Date.getCurrentDate();
+    
+    System.out.println("current date: "+today.getValue());
 
     Iterator it=this.getReminderItems();
     while (it.hasNext()) {
@@ -201,12 +206,40 @@ public class ReminderList implements ActionListener {
       int h=item.getProgram().getHours();
       int d=item.getReminderMinutes();
 
-      minutesItem=item.getProgram().getDate().getDaysSince1970()*60*24 + h*60 + m;
-      minutesItem-=item.getReminderMinutes();
+      System.out.println("item time: "+(h*60)+m);
+      System.out.println("item date: "+item.getProgram().getDate().getValue());
+      System.out.println("reminder minutes: "+d);
+      
+      
+      int diff=today.compareTo(item.getProgram().getDate());
 
-      if (minutesItem <= minutesNow) {
-        listener.timeEvent(item);
+    //  if (today.compareTo(item.getProgram().getDate())>0) {
+      if (diff>0) {
+        System.out.println("fire!");        
+        listener.timeEvent(item);    
       }
+     // else /*if (today.compareTo(item.getProgram().getDate()==0)*/{
+     else {
+     
+        int currentMinutesAfterMidnight = util.io.IOUtilities.getMinutesAfterMidnight();
+        int remindMinutesAfterMidnight = h * 60 + m -d;
+        
+        if (diff<0) {
+          currentMinutesAfterMidnight-=1440;
+        }
+        
+        System.out.println("current minutes after midnight: "+currentMinutesAfterMidnight);
+        System.out.println("remind me at: "+remindMinutesAfterMidnight);
+        
+        if (currentMinutesAfterMidnight>=remindMinutesAfterMidnight) {
+          listener.timeEvent(item);
+        }
+        
+      }
+      
+      
+   
+      
     }
   }
   

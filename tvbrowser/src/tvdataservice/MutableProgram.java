@@ -351,21 +351,37 @@ public class MutableProgram implements Program {
    * Gets whether this program is expired.
    */
   public boolean isExpired() {
-    int currentDaysSince1970 = IOUtilities.getDaysSince1970();
-    int programDaysSince1970 = getDate().getDaysSince1970();
+    //int currentDaysSince1970 = IOUtilities.getDaysSince1970();
+    //int programDaysSince1970 = getDate().getDaysSince1970();
+    devplugin.Date today=devplugin.Date.getCurrentDate();
 
+/*
     if (programDaysSince1970 < currentDaysSince1970) {
       return true;
     }
     if (programDaysSince1970 > currentDaysSince1970) {
       return false;
     }
+*/
+
+  //System.out.print(getTitle()+": "+getDate().getValue()+": ");
+
+  if (today.compareTo(getDate())<0) {
+    //System.out.println("not expired");
+    return false;
+  }
+  if (today.compareTo(getDate())>0) {
+    //System.out.println("expired");
+    return true;
+  }
 
     // This program is (or was) today -> We've got to check the time
     int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    //System.out.print("current time: "+currentMinutesAfterMidnight+"; ");
     int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength() - 1;
-
+    //System.out.println("program time: "+programMinutesAfterMidnight);
     return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
+    
   }
 
 

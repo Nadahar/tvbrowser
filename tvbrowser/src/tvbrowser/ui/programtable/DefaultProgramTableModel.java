@@ -180,11 +180,15 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 if (mTimer!=null) {
 
     // Start the timer if one of the day 
-    int todayDaysSince1970 = IOUtilities.getDaysSince1970();
-    if (((mMainDay != null) && (mMainDay.getDate().getDaysSince1970() == todayDaysSince1970))
-      || ((mNextDay != null) && (mNextDay.getDate().getDaysSince1970() == todayDaysSince1970)))
+    //int todayDaysSince1970 = IOUtilities.getDaysSince1970();
+    //if (((mMainDay != null) && (mMainDay.getDate().getDaysSince1970() == todayDaysSince1970))
+    //  || ((mNextDay != null) && (mNextDay.getDate().getDaysSince1970() == todayDaysSince1970)))
 
-   
+  devplugin.Date today=new devplugin.Date();
+   if ((mMainDay!=null && mMainDay.getDate().equals(today))
+      || (mNextDay!=null && mNextDay.getDate().equals(today)))
+    
+    
     
     {
       mTimer.start();
@@ -402,12 +406,21 @@ if (mTimer!=null) {
     }
     
     mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
-    
+    /*
     int todayDaysSince1970 = IOUtilities.getDaysSince1970();
     if (mMainDay.getDate().getDaysSince1970() == todayDaysSince1970) {
       mMainDay.markProgramsOnAir();
     }
     else if (mNextDay.getDate().getDaysSince1970() == todayDaysSince1970) {
+      mNextDay.markProgramsOnAir();
+    }
+    */
+    
+    devplugin.Date today=new devplugin.Date();
+    if (mMainDay.getDate().equals(today)) {
+      mMainDay.markProgramsOnAir();
+    }
+    else if (mNextDay.getDate().equals(today)) {
       mNextDay.markProgramsOnAir();
     }
   }

@@ -68,12 +68,18 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
       // Find out the currProgram with the currProgram with the lowest start time
       program = null;
       int programCol = 0;
-      int minStartTime = Integer.MAX_VALUE;
+     // int minStartTime = Integer.MAX_VALUE;
+      long minStartTime=Long.MAX_VALUE;
       for (int col = 0; col < model.getColumnCount(); col++) {
         Program currProgram = model.getProgram(col, rowIdxArr[col]);
         if (currProgram != null) {
-          int startTime = currProgram.getDate().getDaysSince1970() * 24 * 60
-            + currProgram.getHours() * 60 + currProgram.getMinutes();
+      //    int startTime = currProgram.getDate().getDaysSince1970() * 24 * 60
+      //      + currProgram.getHours() * 60 + currProgram.getMinutes();
+        
+        //long startTime=devplugin.Date.getCurrentDate().getValue()*10000 + currProgram.getHours()*60+currProgram.getMinutes();
+        
+        long startTime=currProgram.getDate().getValue()*10000+currProgram.getHours()*60+currProgram.getMinutes();
+        //System.out.print(startTime+", ");
           if (startTime < minStartTime) {
             minStartTime = startTime;
             program = currProgram;
@@ -81,9 +87,14 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
           }
         }
       }
-
+    
       // Layout the program
       if (program != null) {
+        
+        //System.out.println("\n"+program.getChannel().getName()+": TITLE: "+program.getTitle()+", DATE: "+program.getDate()+", TIME: "+program.getHours()+":"+program.getMinutes()+" --> "+minStartTime);
+            
+        
+        
         int programRow = rowIdxArr[programCol];
 
         // Get the y position for the currProgram

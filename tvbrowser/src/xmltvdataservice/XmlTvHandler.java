@@ -177,11 +177,15 @@ public class XmlTvHandler extends DefaultHandler {
 		mCalendar.set(Calendar.MONTH, month - 1);
 		mCalendar.set(Calendar.YEAR, year);
 		
+    /*
+    
 		int zoneOffset = mCalendar.get(Calendar.ZONE_OFFSET);
 			 int daylight = mCalendar.get(Calendar.DST_OFFSET);
 		int daysSince1970 = (int)((mCalendar.getTimeInMillis()+zoneOffset+daylight) / 1000L / 60L / 60L / 24L);
 		devplugin.Date date=new devplugin.Date(daysSince1970);
-		       
+		      */
+          
+    devplugin.Date date=new devplugin.Date(mCalendar);       
 
         // Get the time
         int time = hours * 60 + minutes;
@@ -250,9 +254,16 @@ public class XmlTvHandler extends DefaultHandler {
       if (mCurrProgram==null) {
         mLog.info("mCurrProgram is null");
       }
-   //   else {
-   //    mLog.info("Program found: " + mCurrProgram.getTitle()+" ("+mCurrProgram.getDateString()+", "+mCurrProgram.getTimeString()+", "+mCurrProgram.getChannel().getName()+")");
-   //   }
+    //  else {
+    //   mLog.info("Program found: " + mCurrProgram.getTitle()+" ("+mCurrProgram.getDateString()+", "+mCurrProgram.getTimeString()+", "+mCurrProgram.getChannel().getName()+")");
+    //  }
+    
+    // TODO: remove the following line:     
+    
+  //   if (mCurrProgram!=null && mCurrProgram.getChannel().getName().equals("ARD"))
+     
+     
+     
       mProgramDispatcher.dispatch(mCurrProgram);
       mCurrProgram = null;
     }

@@ -234,7 +234,7 @@ public class XmlTvDataService extends AbstractTvDataService {
     devplugin.Channel channel)
   {
       
-    System.out.println("call: getFileNameFor(): date: "+date+", channel: "+channel.getName());  
+    //System.out.println("call: getFileNameFor(): date: "+date+", channel: "+channel.getName());  
       
     java.util.Calendar cal = date.getCalendar();
 
@@ -266,7 +266,7 @@ public class XmlTvDataService extends AbstractTvDataService {
     fileNameBuf.append(".xml.gz");
 
 
-    System.out.println("result: "+fileNameBuf.toString());
+    //System.out.println("result: "+fileNameBuf.toString());
 
     return fileNameBuf.toString();
   }
@@ -325,6 +325,9 @@ public class XmlTvDataService extends AbstractTvDataService {
     tvdataservice.MutableChannelDayProgram prog=programDispatcher.getChannelDayProgram(date,channel);
     if (prog==null) {
         System.out.println("prog is null");
+    }
+    else {
+      System.out.println("ok, prog is NOT null");
     }
     // if we don't have the whole program, we delete the file. so we can
     // download it again later.

@@ -36,7 +36,9 @@ import java.io.*;
 
 import java.util.Calendar;
 
-import util.io.IOUtilities;
+//import com.sun.rsasign.o;
+
+//import util.io.IOUtilities;
 
 public class Date implements Comparable {
 
@@ -70,20 +72,65 @@ public class Date implements Comparable {
   
   
   
-  private int date;  // days since 70-01-01
+  //private int date;  // days since 70-01-01
+  private int mYear;
+  private int mMonth;
+  private int mDay;
+  private Calendar mCalendar;
+  
+  private static Date DATE=new Date();
 
   /**
    * Constructs a new Date object, initialized with the current date.
    */
   public Date() {
-    date = IOUtilities.getDaysSince1970();
+    mCalendar=Calendar.getInstance();
+    mYear=mCalendar.get(Calendar.YEAR);
+    mMonth=mCalendar.get(Calendar.MONTH)+1;
+    mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
   }
 
+/**
+ * 
+ * @deprecated
+ */
   public Date(int daysSince1970) {
-    date=daysSince1970;
+    
+    long l=(long)daysSince1970*24*60*60*1000;
+    java.util.Date d=new java.util.Date(l);
+    mCalendar=Calendar.getInstance();
+    mCalendar.setTime(d);
+    mYear=mCalendar.get(Calendar.YEAR);
+    mMonth=mCalendar.get(Calendar.MONTH)+1;
+    mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
   }
+
+
+public Date(Calendar cal) {
+  mCalendar=cal;
+  mYear=mCalendar.get(Calendar.YEAR);
+  mMonth=mCalendar.get(Calendar.MONTH)+1;
+  mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
+}
+
+public Date(Date d) {
+  mYear=d.mYear;
+  mMonth=d.mMonth;
+  mDay=d.mDay;
+  mCalendar=Calendar.getInstance();
+  mCalendar.set(Calendar.YEAR,mYear);
+  mCalendar.set(Calendar.MONTH,mMonth-1);
+  mCalendar.set(Calendar.DAY_OF_MONTH,mDay);
+  
+}
+  
+  
 
   
+  
+  public static Date getCurrentDate() {
+    return DATE;
+  }
   
   /**
    * Creates a new instance from a stream.
@@ -92,7 +139,27 @@ public class Date implements Comparable {
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
-    date = in.readInt();
+    if (version==1) {
+      int date=in.readInt();
+        // TODO:
+      long l=(long)date*24*60*60*1000;
+      java.util.Date d=new java.util.Date(l);
+      mCalendar=Calendar.getInstance();
+      mCalendar.setTime(d);
+      mYear=mCalendar.get(Calendar.YEAR);
+      mMonth=mCalendar.get(Calendar.MONTH)+1;
+      mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
+    }
+    else {
+      mYear=in.readInt();
+      mMonth=in.readInt();
+      mDay=in.readInt();
+      mCalendar=Calendar.getInstance();  
+      mCalendar.set(Calendar.YEAR,mYear);
+      mCalendar.set(Calendar.MONTH,mMonth-1);
+      mCalendar.set(Calendar.DAY_OF_MONTH,mDay);
+    }
+    
   }
 
   
@@ -101,8 +168,10 @@ public class Date implements Comparable {
    * Writes this instance to a stream.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-    out.writeInt(date);
+    out.writeInt(2); // version
+    out.writeInt(mYear);
+    out.writeInt(mMonth);
+    out.writeInt(mDay);
   }
   
   
@@ -110,67 +179,125 @@ public class Date implements Comparable {
   /**
    * A hash code implementation that returns the same code for equal Dates.
    */
+  
   public int hashCode() {
-    return date;
+    return mCalendar.hashCode(); 
+  }
+  
+  public String getDateString() {
+    
+   // return ""+mYear+ (mMonth<10?"0":"") + mMonth + (mDay<10?"0":"") + mDay;
+    return ""+getValue();
+    
   }
   
   
+  public long getValue() {
+    return mYear*10000 + mMonth*100 + mDay;
+  }
 
   public boolean equals(Object obj) {
+    
     if (obj instanceof Date) {
-      return ((Date) obj).date == this.date;
+        Date d=(Date)obj;
+        return d.getValue()==getValue();
+     // return (d.mMonth==mMonth && d.mYear==mYear && d.mDay==mDay);
     } else {
+      
       return false;
+      
     }
+    
   }
-
 
 
   public java.util.Calendar getCalendar() {
-    java.util.Calendar result=new java.util.GregorianCalendar();
+    return mCalendar;
 
-    long l=(long)date*24*60*60*1000;
-
-    java.util.Date d=new java.util.Date(l);
-    result.setTime(d);
-
-    return result;
   }
 
   
   
   public String toString() {
-    java.util.Calendar cal = getCalendar();
-    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
-    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-    int month = cal.get(Calendar.MONTH);
+    
+    //return mDay+".";
+    
+    
+    //java.util.Calendar cal = getCalendar();
+    int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK) - 1;
+    int dayOfMonth = mCalendar.get(Calendar.DAY_OF_MONTH);
+    int month = mCalendar.get(Calendar.MONTH);  
 
     return mLocalizer.msg("datePattern", "{0}, {1} {2}", DAY_MSG_ARR[dayOfWeek],
       MONTH_MSG_ARR[month], Integer.toString(dayOfMonth));
   }
 
+  /**
+   * @deprecated
+   */   
+  
+  public int getDaysSince1970() {
+    int zoneOffset = mCalendar.get(Calendar.ZONE_OFFSET);
+    int daylight = mCalendar.get(Calendar.DST_OFFSET);
+    long millis = System.currentTimeMillis() + zoneOffset + daylight;
+    return (int) (millis / 1000L / 60L / 60L / 24L);     
+  }
   
   
-  public long getDaysSince1900() {
-    return date+25569;
+       
+       
+  
+  public void setMonth(int month) {
+    mMonth=month;
+    mCalendar.set(Calendar.MONTH,mMonth-1);
+  }
+  
+  public void setYear(int year) {
+    mYear=year;
+    mCalendar.set(Calendar.YEAR,mYear);
+  }
+  
+  public void setDay(int day) {
+    mDay=day;
+    mCalendar.set(Calendar.DAY_OF_MONTH,mDay);
   }
 
-  public int getDaysSince1970() {
-    return date;
-  }
 
   public void addDays(int days) {
-    date+=days;
+     addDaysToDate(days);     
+   }
+   
+   
+   
+/*
+  public Date addDays(int days) {
+    Date result=new Date(this);
+    result.addDaysToDate(days);
+    return result;
+  }
+*/
+  private void addDaysToDate(int days) {    
+    mCalendar.add(Calendar.DAY_OF_MONTH, days);
+    mYear=mCalendar.get(Calendar.YEAR);
+    mMonth=mCalendar.get(Calendar.MONTH)+1;
+    mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
   }
 
   public int compareTo(Object obj) {
     Date d=(Date)obj;
-    if (date<d.getDaysSince1970()) {
+    
+    long val=d.getValue();
+    long thisVal=getValue();
+    
+    if (thisVal<val) {
       return -1;
-    }else if (date>d.getDaysSince1970()) {
+    }
+    else if (thisVal>val) {
       return 1;
     }
     return 0;
+    
+   
   }
 
 }
