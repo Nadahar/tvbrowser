@@ -40,39 +40,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     JPanel mainPanel=new JPanel(new BorderLayout());
     
     mainPanel.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
-    /*
-    String text="TV-Daten-Services sind externe Komponenten, die " +
-      "TV-Daten (z.B. aus dem Internet) laden und sie dann " +
-      "TV-Browser zur Verfügung stellen.\n\n" +
-      "Damit TV-Browser Daten darstellen kann, muß mindestens ein " +
-      "TV-Daten-Service installiert sein.\n\n"+
-      "Wählen Sie ein TV-Daten-Service aus, um Änderungen an der " +
-      "Konfiguration vorzunehmen.\n\n" +
-      "Anmerkung: Nicht jedes TV-Daten-Service unterstützt diese " +
-      "Funktion.\n" +
-      "Bei Problemen wenden Sie sich bitte an den Autor des "+
-      "jeweiligen TV-Daten-Services.";
-      */
-      /*
-       * 
-       * 
-       * Die TV-Daten werden nicht direkt mit TV-Browser 
-       * heruntergeladen. Diese Aufgabe übernehmen eigene 
-       * Plugins, sogenannte TVDataServices. Ein solches 
-       * TVDataService lädt die TV-Daten (üblicherweise) 
-       * aus dem Internet und übergibt sie an TV-Browser, 
-       * der sie dann darstellt und speichert (Im Verzeichnis 
-       * tvdataservice/ befinden sich diese TVDataServices in 
-       * Form von .jar-Dateien).
-Es existiert kein einheitliches Protokoll oder Format, mit 
-dem die TV-Daten übertragen werden. PremiereDataService lädt
- die TV-Daten beispielsweise von premiere.de in Form einer 
- .txt-Datei, XMLDataService lädt Daten im XMLTV-Format.
-Auf diese Weise sind wir sehr flexibel, wenn es darum geht, 
-neue Sender aufzunehmen.
-Wir sind allerdings auf frei verfügbare TV-Datenquellen 
-angewiesen.
-       */
+    
     
     JTextArea ta=new JTextArea(mLocalizer.msg("description", "tv data"));
     ta.setWrapStyleWord(true);

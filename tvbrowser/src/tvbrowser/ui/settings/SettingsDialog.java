@@ -150,6 +150,10 @@ public class SettingsDialog {
     node = new SettingNode(new ChannelsSettingsTab());
     root.add(node);
     
+    ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
+    PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();
+    pluginSettingsTab.addSettingsChangeListener(contextmenuSettingsTab);
+    
     // Appearance
     
     node = new SettingNode(new AppearanceSettingsTab());
@@ -159,13 +163,13 @@ public class SettingsDialog {
     node.add(new SettingNode(new LookAndFeelSettingsTab()));
     node.add(new SettingNode(new FontsSettingsTab()));
     node.add(new SettingNode(new ProgramTableSettingsTab()));
-    node.add(new SettingNode(new ContextmenuSettingsTab()));
+    node.add(new SettingNode(contextmenuSettingsTab));
     
     // Plugins
-    node = new SettingNode(new PluginSettingsTab());
+    node = new SettingNode(pluginSettingsTab);
     root.add(node);
     
-    Plugin[] pluginArr = PluginManager.getInstalledPlugins();
+    Plugin[] pluginArr = PluginManager.getAvailablePlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       node.add(new SettingNode(new ConfigPluginSettingsTab(pluginArr[i])));
     }

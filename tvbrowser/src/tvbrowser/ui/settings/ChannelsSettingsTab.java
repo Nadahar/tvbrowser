@@ -213,8 +213,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     }
     
     int size=mChannelListPanel.getRightList().getModel().getSize();
-    System.out.println("SIZE: "+size);
-    
   }
 
   private Comparator createChannelComparator() {

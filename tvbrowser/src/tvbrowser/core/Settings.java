@@ -655,7 +655,7 @@ public class Settings {
 
 
   public static void setInstalledPlugins(String[] plugins) {
-	settings.setStringList("plugins", plugins);
+	  settings.setStringList("plugins", plugins);
   }
 
   public static void setDownloadPeriod(int period) {

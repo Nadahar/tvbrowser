@@ -415,7 +415,7 @@ public class PrimaryDataManager {
               System.exit(1);
             } else {
               i++;
-              StringTokenizer tokenizer = new StringTokenizer(args[i], ";");
+              StringTokenizer tokenizer = new StringTokenizer(args[i], ":");
               while (tokenizer.hasMoreTokens()) {
                 manager.forceCompleteUpdateFor(tokenizer.nextToken());
               }
