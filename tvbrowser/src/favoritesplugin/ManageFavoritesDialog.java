@@ -341,6 +341,8 @@ public class ManageFavoritesDialog extends JDialog {
         public int compare(Object o1, Object o2) {
           String text1 = ((Favorite) o1).getSearchFormSettings().getSearchText();
           String text2 = ((Favorite) o2).getSearchFormSettings().getSearchText();
+          text1 = text1.toLowerCase();
+          text2 = text2.toLowerCase();
           return text1.compareTo(text2);
         }
       };
