@@ -55,7 +55,8 @@ public class SystemTray {
       = java.util.logging.Logger.getLogger(SystemTray.class.getName());
 
     /** The localizer for this class. */
-    public static util.ui.Localizer mLocalizer;
+    public static util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(SystemTray.class);
 
     /** Image-Handle */
     private int mSystrayImageHandle;
