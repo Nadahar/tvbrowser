@@ -204,6 +204,8 @@ public class CapturePlugin extends devplugin.Plugin {
 
         final DeviceIf[] devices = mConfig.getDeviceArray();
 
+        final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
+        
         Action mainaction = new devplugin.ContextMenuAction();
         mainaction.putValue(Action.NAME, mLocalizer.msg("record", "record Program"));
         mainaction.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png",
@@ -224,7 +226,7 @@ public class CapturePlugin extends devplugin.Plugin {
                 if (dev.isInList(program)) {
                     AbstractAction caction = new AbstractAction() {
                         public void actionPerformed(ActionEvent evt) {
-                            dev.remove(null, program);
+                            dev.remove(parent, program);
                             updateMarkedPrograms();
                         }
                     };
@@ -233,7 +235,7 @@ public class CapturePlugin extends devplugin.Plugin {
                 } else {
                     AbstractAction caction = new AbstractAction() {
                         public void actionPerformed(ActionEvent evt) {
-                            dev.add(null, program);
+                            dev.add(parent, program);
                             updateMarkedPrograms();
                         }
                     };
@@ -252,7 +254,7 @@ public class CapturePlugin extends devplugin.Plugin {
                 AbstractAction caction = new AbstractAction() {
 
                     public void actionPerformed(ActionEvent evt) {
-                        dev.executeAdditionalCommand(null, num, program);
+                        dev.executeAdditionalCommand(parent, num, program);
                     }
                 };
                 caction.putValue(Action.NAME, commands[i]);
