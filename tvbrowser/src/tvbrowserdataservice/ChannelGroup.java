@@ -31,6 +31,8 @@ import devplugin.Date;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -60,6 +62,8 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private int mDirectlyLoadedBytes;
   
   private TvBrowserDataService mDataService;  
+  
+  private HashSet mChannels;
    
   private static java.util.logging.Logger mLog
      = java.util.logging.Logger.getLogger(ChannelGroup.class.getName());
@@ -77,7 +81,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     mID=id;
     mDataService=dataservice;
     mMirrorUrlArr=mirrorUrls;
-    
+    mChannels=new HashSet();
   }
   
   public String[] getMirrorArr() {
@@ -90,6 +94,16 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    
   public void setWorkingDirectory(File dataDir) {
     mDataDir=dataDir; 
+  }
+  
+  
+  
+  public void addChannel(Channel ch) {
+    mChannels.add(ch);
+  }
+  
+  public Iterator getChannels() {
+    return mChannels.iterator();
   }
   
   private String getLocaleProperty(Properties prop, String key, String defaultValue) {
@@ -108,7 +122,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     if (mDescription!=null) {
       return mDescription;
     }
-    File file = new File(mDataDir, mID);
+    File file = new File(mDataDir, mID+"_info");
     if (!file.exists()) {
       return ""; 
     }
@@ -127,13 +141,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       return mGroupName;
     }
     
-    File file = new File(mDataDir, mID);
+    File file = new File(mDataDir, mID+"_info");
     if (!file.exists()) {
       return mID; 
     }
     
     
-    // TODO: use method getLocaleProperty
+    
     Properties prop=new Properties();
     try {
       prop.load(new FileInputStream(file));
@@ -434,7 +448,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     updateMetaFile(mirror.getUrl(), mID+"_"+Mirror.MIRROR_LIST_FILE_NAME);    
     
     // Update the groupname file
-    updateMetaFile(mirror.getUrl(), mID);
+    updateMetaFile(mirror.getUrl(), mID+"_info");
     
     // Update the channel list
     updateChannelList(mirror,true); 

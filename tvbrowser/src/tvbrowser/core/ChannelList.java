@@ -161,12 +161,11 @@ public class ChannelList {
   public static void setSubscribeChannels(Channel[] channelArr) {
 	mSubscribedChannels = new ArrayList(channelArr.length);
 	for (int i = 0; i < channelArr.length; i++) {
-      if (channelArr[i] == null) {
-        throw new NullPointerException("channel #" + i + " is null!");
-      }
-
-      mSubscribedChannels.add(channelArr[i]);
-	}
+    if (channelArr[i] == null) {
+      throw new NullPointerException("channel #" + i + " is null!");
+    }
+    mSubscribedChannels.add(channelArr[i]);
+	  }
   }
 
 

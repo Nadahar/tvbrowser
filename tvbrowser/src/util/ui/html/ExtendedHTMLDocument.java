@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package programinfo;
+package util.ui.html;
 
 import java.awt.Component;
 import java.util.ArrayList;

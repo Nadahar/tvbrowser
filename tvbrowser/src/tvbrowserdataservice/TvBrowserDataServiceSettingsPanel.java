@@ -262,7 +262,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 		try {
 			page = new URL(url);
 		} catch (MalformedURLException e) {
-			JOptionPane.showMessageDialog(this,url+" is not a valid URL");
+			JOptionPane.showMessageDialog(this,mLocalizer.msg("invalidUrl","'{0}' is not a valid URL",url));
 			return;
 		}
     
@@ -278,8 +278,13 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       }
     });
     if (mGroup!=null) {
-      mGroupListModel.addElement(mGroup);
-      TvBrowserDataService.getInstance().addGroup(mGroup);
+      if (mGroupListModel.contains(mGroup)) {
+        System.out.println("not new!");
+      }
+      else {
+        mGroupListModel.addElement(mGroup);
+        TvBrowserDataService.getInstance().addGroup(mGroup);
+      }
     }          
     
   }

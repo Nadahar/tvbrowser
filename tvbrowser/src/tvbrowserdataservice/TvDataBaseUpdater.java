@@ -95,8 +95,11 @@ public class TvDataBaseUpdater {
 
 
 
-  public void updateTvDataBase() {
+  public void updateTvDataBase(ProgressMonitor monitor) {
+    monitor.setMaximum(mUpdateJobSet.size());
+    int i=0;
     for (Iterator iter = mUpdateJobSet.iterator(); iter.hasNext();) {
+      monitor.setValue(i++);
       UpdateJob updateJob = (UpdateJob) iter.next();
       
       try {

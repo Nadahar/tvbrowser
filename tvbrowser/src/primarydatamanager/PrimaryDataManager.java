@@ -55,7 +55,6 @@ public class PrimaryDataManager {
   private File mPreparedDir;
   private File mWorkDir;
   private File mBackupDir;
-//  private File mPDSLogDir;
   
   private Channel[] mChannelArr;
   private String[] mGroupArr;
@@ -104,9 +103,12 @@ public class PrimaryDataManager {
     /* create an array of all available groupnames */
     HashSet groupSet=new HashSet();
     for (int i=0;i<mChannelArr.length;i++) {
-      String gn=mChannelArr[i].getGroup().getId();
-      if (!groupSet.contains(gn)) {
-        if (gn!=null) groupSet.add(gn);
+      devplugin.ChannelGroup group=mChannelArr[i].getGroup();
+      if (group!=null) {
+        String gn=group.getId();
+        if (!groupSet.contains(gn)) {
+          if (gn!=null) groupSet.add(gn);
+        }
       }
     }
     mGroupArr=new String[groupSet.size()];
@@ -120,20 +122,6 @@ public class PrimaryDataManager {
     mRawDataProcessor.forceCompleteUpdateFor(channel);
   }
 
-/*
-  public void copyGroupnameFiles() {
-   
-    for (int i=0;i<mGroupArr.length;i++) {      
-      File fromFile=new File(mPreparedDir,mGroupArr[i]);
-      File toFile=new File(mWorkDir,mGroupArr[i]);
-      try {
-        util.io.IOUtilities.copy(fromFile,toFile);
-      } catch (IOException exc) {
-        mLog.warning("Could not copy file from "+fromFile.getAbsolutePath()+" to "+toFile.getAbsolutePath());
-      }     
-    }    
-  }
-*/
 
   public void createGroupnameFiles() throws PreparationException {
    
@@ -647,7 +635,7 @@ public class PrimaryDataManager {
     try {
       String url = mirror.getUrl() + "/weight"+(groupName!=null?"_"+groupName:"");
       byte[] data = IOUtilities.loadFileFromHttpServer(new URL(url));
-      String asString = new String(data);
+      String asString = new String(data).trim();
       return Integer.parseInt(asString);
     }
     catch (Exception exc) {
