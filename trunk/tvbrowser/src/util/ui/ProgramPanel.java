@@ -462,6 +462,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */  
   public void stateChanged(ChangeEvent evt) {
     if (evt.getSource() == mProgram) {
+      // Get the icons from the plugins
+      mIconArr = getPluginIcons(mProgram);
+
       repaint();
     }
   }
