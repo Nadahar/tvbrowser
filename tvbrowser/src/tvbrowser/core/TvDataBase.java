@@ -124,6 +124,14 @@ public class TvDataBase {
       // Remove the old entry from the cache (if it exists)
       removeCacheEntry(key);
     }
+
+    // Inform the listeners
+    // NOTE: This must happen before saving to give the listeners the chance to
+    //       change the data.
+    if (oldProg != null) {
+      fireDayProgramDeleted(oldProg);
+    }
+    fireDayProgramAdded(prog);
     
     // Save the new program
     try {
@@ -141,23 +149,20 @@ public class TvDataBase {
       
       // Put the new program file in the cache
       addCacheEntry(key, newProgFile);
-    
-      // Inform the listeners
-      if (oldProg != null) {
-        fireDayProgramDeleted(oldProg);
-      }
-      fireDayProgramAdded(prog);
     }
     catch (IOException exc) {
+      fireDayProgramDeleted(prog);
+
       boolean restoredBackup = false;
       if (backupFile != null) {
         if (backupFile.renameTo(file)) {
           restoredBackup = true;
+          fireDayProgramAdded(oldProg);
         } else {
           backupFile.delete();
         }
       }
-      
+
       String msg = "Saving program for " + channel + " from " + date + " failed.";
       if (restoredBackup) {
         msg += " The old version was restored.";
