@@ -31,9 +31,19 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -154,8 +164,14 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
                   }
                 }
               }
-              ChannelList.create();
-              fillChannelListBox();
+              
+              SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    ChannelList.create();
+                    fillChannelListBox();
+                }
+                  
+              });
             }
            
           });
