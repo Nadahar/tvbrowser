@@ -98,6 +98,8 @@
     <echo message="  doc           Generates the JavaDoc documentation."/>
     <echo message="  make          Compiles the source code."/>
     <echo message="  runtime       Prepares the runtime directory."/>
+    <echo message="  runtime_win   Windows runtime."/>
+    <echo message="  runtime_tools Creates the TV-Browser-Tools."/>
     <echo message="  run           Runs the project."/>
     <echo message="  installer     Creates a Windows installer for the project."/>
     <echo message="  public        Creates all the stuff that can be downloaded."/>
@@ -291,6 +293,24 @@
       <fileset dir="${src.dir}/help"/>
     </copy>
 
+    
+    <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
+    <mkdir dir="${unpacked.dir}/commons-net.jar"/>
+    <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
+
+  </target>
+
+
+     
+
+
+
+  <!--
+   | Creates the runtime directory.
+   +-->
+  <target name="runtime_tools" depends="make">
+    <echo message="Creating the jars ..." />
+
 	<!-- Make the MirrorUpdater runtime -->
     <mkdir dir="${mirrorupdater.runtime.dir}"/>
 
@@ -305,6 +325,19 @@
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
     <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
+
+    <mkdir dir="${unpacked.dir}/xercesImpl.jar"/>
+    <unjar src="${lib.dir}/xercesImpl.jar" dest="${unpacked.dir}/xercesImpl.jar"/>
+
+    <mkdir dir="${unpacked.dir}/xml-apis.jar"/>
+    <unjar src="${lib.dir}/xml-apis.jar" dest="${unpacked.dir}/xml-apis.jar"/>
+ 
+    <mkdir dir="${unpacked.dir}/resolver.jar"/>
+    <unjar src="${lib.dir}/resolver.jar" dest="${unpacked.dir}/resolver.jar"/>
+
+    <mkdir dir="${unpacked.dir}/xmlParserAPIs.jar"/>
+    <unjar src="${lib.dir}/xmlParserAPIs.jar" dest="${unpacked.dir}/xmlParserAPIs.jar"/>
+
 
 	<!-- Pack the MirrorUpdater.jar -->    
     <jar jarfile="${mirrorupdater.runtime.dir}/MirrorUpdater.jar"
@@ -343,6 +376,10 @@
        <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
 	   <fileset dir="${classes.dir}" includes="devplugin/**"/>
        <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${unpacked.dir}/xercesImpl.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/xml-apis.jar" includes="org/**"/> 
+      <fileset dir="${unpacked.dir}/resolver.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/xmlParserAPIs.jar" includes="org/**"/>
      </jar>  
 
     <!-- Copy the file(s) -->
@@ -356,7 +393,7 @@
   </target>
 
 
-     
+
 
 
   <!--
