@@ -116,6 +116,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   private String createInfoText(Program prog, ExtendedHTMLDocument doc,
     int[] infoBitArr, Icon[] infoIconArr, String[] infoMsgArr)
   {
+    // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
+    
     StringBuffer buffer = new StringBuffer();
     
     buffer.append("<html><head>" +
@@ -203,6 +205,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     newPara(buffer, "info", prog, ProgramFieldType.EPISODE_TYPE);
     newPara(buffer, "info", prog, ProgramFieldType.GENRE_TYPE);
     newPara(buffer, "info", prog, ProgramFieldType.REPETITION_OF_TYPE);
+    newPara(buffer, "info", prog, ProgramFieldType.REPETITION_ON_TYPE);
     newPara(buffer, "info", prog, ProgramFieldType.AGE_LIMIT_TYPE);
     newPara(buffer, "info", prog, ProgramFieldType.VPS_TYPE);
     newPara(buffer, "info", prog, ProgramFieldType.SHOWVIEW_NR_TYPE);

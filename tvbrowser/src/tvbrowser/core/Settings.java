@@ -872,6 +872,7 @@ public class Settings {
   public static ProgramFieldType[] getProgramInfoFields() {
     if (mProgramInfoFields == null) {
       int[] defaultArr = new int[] {
+        ProgramFieldType.GENRE_TYPE.getTypeId(),
         ProgramFieldType.EPISODE_TYPE.getTypeId(),
         ProgramFieldType.ORIGIN_TYPE.getTypeId(),
         ProgramFieldType.PRODUCTION_YEAR_TYPE.getTypeId(),
