@@ -34,7 +34,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import util.io.IOUtilities;
 import util.tvdataservice.ProgramDispatcher;
 
-import tvdataloader.*;
+import tvdataservice.*;
 import devplugin.*;
 
 /**
@@ -49,27 +49,27 @@ public class XmlTvHandler extends DefaultHandler {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(XmlTvHandler.class.getName());
 
-  /** The program dipatcher used to store the programs. */  
+  /** The program dipatcher used to store the programs. */
   private ProgramDispatcher mProgramDispatcher;
-  
+
   /** The list of channels to search for. */
   private Channel[] mSubscribedChannelArr;
 
-  /** The StringBuffer that collects the text of a tag. */  
+  /** The StringBuffer that collects the text of a tag. */
   private StringBuffer mCurrTextBuffer = new StringBuffer();
-  
-  /** The currently parsed program. */  
+
+  /** The currently parsed program. */
   private MutableProgram mCurrProgram;
-  
+
   /**
    * The XML locator. It can be used to ask for the location of the parser
    * within the XML file.
-   */  
+   */
   private Locator mLocator;
-  
-  /** The set where the found channel names are stored. */  
+
+  /** The set where the found channel names are stored. */
   private HashSet mChannelSet = new HashSet();
-  
+
   private GregorianCalendar mCalendar;
 
 
@@ -79,13 +79,13 @@ public class XmlTvHandler extends DefaultHandler {
    *
    * @param date The date to look for.
    * @param channel The channel to look for.
-   */  
+   */
   public XmlTvHandler(ProgramDispatcher programDispatcher,
     Channel[] subscribedChannelArr)
   {
     mProgramDispatcher = programDispatcher;
     mSubscribedChannelArr = subscribedChannelArr;
-    
+
     mCalendar = new GregorianCalendar();
   }
 
@@ -98,8 +98,8 @@ public class XmlTvHandler extends DefaultHandler {
     // no op
   }
 
-  
-  
+
+
   /**
    * Receive notification of the end of the document.
    *
@@ -115,7 +115,7 @@ public class XmlTvHandler extends DefaultHandler {
     mLog.info(msg);
     */
   }
-  
+
 
 
   /**
@@ -125,7 +125,7 @@ public class XmlTvHandler extends DefaultHandler {
    * @param simpleName The simple name.
    * @param qualifiedName The qualified name.
    * @param attrs The attributes of the tag.
-   */  
+   */
   public void startElement(String namespaceURI, String simpleName,
     String qualifiedName, Attributes attrs) throws SAXException
   {
@@ -147,7 +147,7 @@ public class XmlTvHandler extends DefaultHandler {
           mLog.info("In line " + mLocator.getLineNumber());
         }
         */
-        
+
         String start       = attrs.getValue("start");
         String stop        = attrs.getValue("stop");
         String channelName = attrs.getValue("channel");
@@ -157,7 +157,7 @@ public class XmlTvHandler extends DefaultHandler {
         if (start.length() < 12) {
           return;
         }
-        
+
         // Get the numbers from the start String
         int year = Integer.parseInt(start.substring(0, 4));
         int month = Integer.parseInt(start.substring(4, 6));
@@ -172,13 +172,13 @@ public class XmlTvHandler extends DefaultHandler {
         java.util.Date utilDate = mCalendar.getTime();
         long daysSince1970 = utilDate.getTime() / (24 * 60 * 60 * 1000);
         devplugin.Date date = new devplugin.Date((int) daysSince1970);
-        
+
         // Get the time
         int time = hours * 60 + minutes;
-        
+
         // extract the channel
         Channel channel = getChannelForName(channelName);
-        
+
         if (channel == null) {
           mCurrProgram = null;
         } else {
@@ -199,7 +199,7 @@ public class XmlTvHandler extends DefaultHandler {
    * @param namespaceURI The namspace.
    * @param simpleName The simple name.
    * @param qualifiedName The qualified name.
-   */  
+   */
   public void endElement(String namespaceURI, String simpleName,
     String qualifiedName) throws SAXException
   {
@@ -222,7 +222,7 @@ public class XmlTvHandler extends DefaultHandler {
     }
     else if (currElement.equals("desc")) {
       String desc = getText();
-      
+
       mCurrProgram.setShortInfo(desc);
       mCurrProgram.setDescription(desc);
     }
@@ -238,7 +238,7 @@ public class XmlTvHandler extends DefaultHandler {
     }
     else if (currElement.equals("programme")) {
       // mLog.info("Program found: " + mCurrProgram);
-      
+
       mProgramDispatcher.dispatch(mCurrProgram);
       mCurrProgram = null;
     }
@@ -252,13 +252,13 @@ public class XmlTvHandler extends DefaultHandler {
    * @param buf The buffer where the text is stored.
    * @param offset The offset whithin the buffer
    * @param len The length of the text.
-   */  
+   */
   public void characters(char[] buf, int offset, int len) throws SAXException {
     mCurrTextBuffer.append(buf, offset, len);
   }
 
-  
-  
+
+
   /**
    * Called by the XML-SAX-parser to set the Locator object.
    *
@@ -269,9 +269,9 @@ public class XmlTvHandler extends DefaultHandler {
   public void setDocumentLocator (Locator locator) {
     mLocator = locator;
   }
-  
-  
-  
+
+
+
   /**
    * Gets the text of the current tag.
    * <p>
@@ -302,14 +302,14 @@ public class XmlTvHandler extends DefaultHandler {
     IOUtilities.replace(mCurrTextBuffer, " und deg;",     "\u00b0");
     IOUtilities.replace(mCurrTextBuffer, " und quot;",    "\"");
     IOUtilities.replace(mCurrTextBuffer, " und curren;",  "e");
-    
+
     // mLog.info("deg: " + Integer.toHexString('°'));
 
     return mCurrTextBuffer.toString().trim();
   }
-  
-  
-  
+
+
+
   protected Channel getChannelForName(String channelName) {
     // Add this channel name to the set of channels known by this XML file.
     mChannelSet.add(channelName);
@@ -320,8 +320,8 @@ public class XmlTvHandler extends DefaultHandler {
         return channel;
       }
     }
-    
+
     return null;
   }
- 
+
 }

@@ -49,23 +49,24 @@ import tvbrowser.ui.PictureButton;
 import util.exc.*;
 import util.ui.*;
 
-import tvdataloader.TVDataServiceInterface;
+import tvdataservice.TvDataService;
 
 /**
  * TV-Browser
+ *
  * @author Martin Oberhauser
  */
 public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(TVBrowser.class.getName());
-  
+
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
-  
+
   private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
-  
+
   private JButton mNowBt, mEarlyBt, mMorningBt, mMiddayBt, mEveningBt,
     updateBtn, settingsBtn;
   private ProgramTablePanel programTablePanel;
@@ -88,12 +89,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
    */
   public static void main(String[] args) {
     String msg;
-    
+
     // setup logging
     try {
       // Get the default Logger
       Logger mainLogger = Logger.getLogger("");
-      
+
       // Add a file handler
       new File("log").mkdir();
       Handler fileHandler = new FileHandler("log/tvbrowser.log", 50000, 2, true);
@@ -104,17 +105,17 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       msg = mLocalizer.msg("error.4", "Can't create log file.");
       ErrorHandler.handle(msg, exc);
     }
-    
+
     SplashScreen splash = new SplashScreen("imgs/splash.jpg",400,300);
     splash.show();
-    
-    mLog.info("Loading tv data loader...");
-    msg=mLocalizer.msg("splash.dataService","Loading tv data loader...");
-    DataLoaderManager.getInstance().initDataLoaders();
+
+    mLog.info("Loading tv data service...");
+    msg=mLocalizer.msg("splash.dataService","Loading tv data service...");
+    TvDataServiceManager.getInstance().initDataServices();
     createChannelList();
 
     Settings.loadSettings();
-    
+
     mLog.info("Loading Look&Feel...");
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
     splash.setMessage(msg);
@@ -127,7 +128,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       msg = mLocalizer.msg("error.1", "Unable to set look and feel.");
       ErrorHandler.handle(msg, exc);
     }
-    
+
     devplugin.Plugin.setPluginManager(DataService.getInstance());
 
     mLog.info("Loading plugins...");
@@ -144,10 +145,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     ErrorHandler.setFrame(frame);
 
 	splash.hide();
-    
+
     // maximize the frame
     frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-    
+
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -156,18 +157,18 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     });
   }
 
-  
-  
+
+
   public TVBrowser() {
     super(MAINWINDOW_TITLE);
-    
+
     String msg;
-    
+
     JMenuBar menuBar = new JMenuBar();
     JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
     JMenu tvDataMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
-	
+
     pluginsMenu=new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
     updatePluginMenu(pluginsMenu);
 
@@ -222,7 +223,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     jcontentPane = (JPanel)getContentPane();
     jcontentPane.setLayout(new BorderLayout());
-    
+
     int mode;
     if (Settings.useApplicationSkin()) {
       mode = SkinPanel.WALLPAPER;
@@ -249,13 +250,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
    buttonPanel.setUpdateButton(createUpdateBtn());
    buttonPanel.setPreferencesButton(createPreferencesBtn());
    buttonPanel.update();
-    
+
    /* if (Settings.isTimeBtnVisible()) {
     	JComponents[]=this.createTimeBtns();
-    	
+
     }
     */
-    
+
     northPanel.add(buttonPanel,BorderLayout.WEST);
 
     programTablePanel = new ProgramTablePanel(this);
@@ -306,14 +307,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     });
   }
 
-  
-  
+
+
   private void quit() {
     mLog.info("Storing plugin data");
     PluginManager.finalizeInstalledPlugins();
-    
-    mLog.info("Storing dataloader settings");
-    DataLoaderManager.getInstance().finalizeDataLoaders();
+
+    mLog.info("Storing dataservice settings");
+    TvDataServiceManager.getInstance().finalizeDataServices();
 
     mLog.info("Quitting");
     System.exit(0);
@@ -322,19 +323,19 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private static void createChannelList() {
-  	TVDataServiceInterface[] dataServiceArr
-      = DataLoaderManager.getInstance().getDataLoaders();
-    
+  	TvDataService[] dataServiceArr
+      = TvDataServiceManager.getInstance().getDataServices();
+
   	for (int i=0;i<dataServiceArr.length;i++) {
-      ChannelList.addDataLoaderChannels(dataServiceArr[i]);
+      ChannelList.addDataServiceChannels(dataServiceArr[i]);
   	}
   }
-		
-  
-  
+
+
+
   private void updatePluginMenu(JMenu theMenu) {
     theMenu.removeAll();
-    
+
     Object[] plugins = PluginManager.getInstalledPlugins();
     JMenuItem item;
     HashMap map = new HashMap();
@@ -350,7 +351,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
           k++;
         }
         map.put(txt,btnTxt);
-        
+
         item = new JMenuItem(btnTxt);
         item.setIcon(plugin.getButtonIcon());
         item.addActionListener(new ActionListener() {
@@ -364,8 +365,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
   }
 
-  
-  
+
+
   private void scrollToNow() {
     // TODO: change to the shown day program to today if nessesary
 
@@ -373,12 +374,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     programTablePanel.scrollTo(hour);
   }
-  
-  
-  
+
+
+
   public void actionPerformed(ActionEvent event) {
     Object src = event.getSource();
-    
+
     if (src == mNowBt) {
       scrollToNow();
     }
@@ -407,31 +408,31 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       showSettingsDialog();
     }
     else if (src==aboutMenuItem) {
-      showAboutBox();   	
+      showAboutBox();
     }
   }
-  
-  
-  
+
+
+
   private void onDownloadStart() {
     updateBtn.setText(mLocalizer.msg("button.stop", "Stop"));
     updateBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop update..."));
   }
-  
-  
-  
+
+
+
   private void onDownloadDone() {
     DataService.getInstance().getProgressBar().setValue(0);
     updateBtn.setText(mLocalizer.msg("button.update", "Update"));
     updateBtn.setIcon(new ImageIcon("imgs/Import24.gif"));
     updateMenuItem.setText(mLocalizer.msg("menuitem.update", "Update..."));
-    
+
     newTvDataAvailable();
   }
 
-  
-  
+
+
   /**
    * Updates the program table and the finder panel.
    * <p>
@@ -449,9 +450,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       finderPanel.update();
     }
   }
-  
-  
-  
+
+
+
   private JButton[] createTimeBtns() {
   	String msg;
   	JButton[] result=new JButton[5];
@@ -459,12 +460,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	mNowBt = new PictureButton(msg, new ImageIcon("imgs/TimeNow24.gif"));
 	mNowBt.addActionListener(this);
 	result[0]=mNowBt;
-      
+
 	msg = mLocalizer.msg("botton.early", "Early");
 	mEarlyBt = new PictureButton(msg, new ImageIcon("imgs/TimeEarly24.gif"));
 	mEarlyBt.addActionListener(this);
 	result[1]=mEarlyBt;
-      
+
 	msg = mLocalizer.msg("botton.morning", "Morning");
 	mMorningBt = new PictureButton(msg, new ImageIcon("imgs/TimeMorning24.gif"));
 	mMorningBt.addActionListener(this);
@@ -474,32 +475,32 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	mMiddayBt = new PictureButton(msg, new ImageIcon("imgs/TimeMidday24.gif"));
 	mMiddayBt.addActionListener(this);
 	result[3]=mMiddayBt;
-      
+
 	msg = mLocalizer.msg("botton.evening", "Evening");
 	mEveningBt = new PictureButton(msg, new ImageIcon("imgs/TimeEvening24.gif"));
 	mEveningBt.addActionListener(this);
 	result[4]=mEveningBt;
-	
+
 	return result;
   }
-  
-  
+
+
   private JButton createUpdateBtn() {
 	String msg = mLocalizer.msg("button.update", "Update");
 	updateBtn = new PictureButton(msg, new ImageIcon("imgs/Import24.gif"));
 	updateBtn.addActionListener(this);
 	return updateBtn;
   }
-  
+
   private JButton createPreferencesBtn() {
 	String msg = mLocalizer.msg("button.settings", "Settings");
 	settingsBtn = new PictureButton(msg, new ImageIcon("imgs/Preferences24.gif"));
 	settingsBtn.addActionListener(this);
 	return settingsBtn;
   }
-  
 
-  
+
+
   private void changeDate(devplugin.Date date) {
     try {
       DayProgram prog = DataService.getInstance().getDayProgram(date);
@@ -517,14 +518,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
   }
 
-  
-  
+
+
   /**
    * Implementation of Interface DateListener
-   * 
+   *
    */
   public void dateChanged(final devplugin.Date date) {
-    if (DataService.getInstance().isOnlineMode()) {     
+    if (DataService.getInstance().isOnlineMode()) {
       downloadingThread = new Thread() {
         public void run() {
           onDownloadStart();
@@ -558,7 +559,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   }
 
 
-  
+
   public void updateApplicationSkin() {
     int mode;
     if (Settings.useApplicationSkin()) {
@@ -578,12 +579,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   }
 
   */
-  
+
   private void importTvData() {
     JFileChooser chooser = new JFileChooser();
-    
+
     String msg;
-    
+
     File defaultFile = new File("tvdata" + EXPORTED_TV_DATA_EXTENSION);
     chooser.setSelectedFile(defaultFile);
     msg = mLocalizer.msg("importDlgTitle", "Import TV data");
@@ -593,7 +594,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     chooser.addChoosableFileFilter(new ExtensionFileFilter(EXPORTED_TV_DATA_EXTENSION, msg));
 
     chooser.showOpenDialog(this);
-    
+
     File targetFile = chooser.getSelectedFile();
     if ((targetFile != null) && (targetFile.exists())) {
       try {
@@ -607,13 +608,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
   }
 
-  
-  
+
+
   private void exportTvData() {
     JFileChooser chooser = new JFileChooser();
-    
+
     String msg;
-    
+
     File defaultFile = new File("tvdata" + EXPORTED_TV_DATA_EXTENSION);
     chooser.setSelectedFile(defaultFile);
     msg = mLocalizer.msg("exportDlgTitle", "Export TV data");
@@ -623,7 +624,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     chooser.addChoosableFileFilter(new ExtensionFileFilter(EXPORTED_TV_DATA_EXTENSION, msg));
 
     chooser.showSaveDialog(this);
-    
+
     File targetFile = chooser.getSelectedFile();
     if (targetFile != null) {
       try {
@@ -634,8 +635,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       }
     }
   }
-  
-  
+
+
 
   /**
    * Starts the tv data update.
@@ -662,8 +663,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
   }
 
-  
-  
+
+
    /**
    * Shows the settings dialog.
    */
@@ -675,7 +676,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 		updateLookAndFeel();
     }
     if (Settings.settingHasChanged(new String[]{"applicationskin","useapplicationskin"})) {
-		updateApplicationSkin();    	
+		updateApplicationSkin();
     }
     if (Settings.settingHasChanged(new String[]{"tablebgmode","tablebackground"})) {
 		programTablePanel.updateBackground();
@@ -686,9 +687,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
     if (Settings.settingHasChanged(new String[]{"timebutton","updatebutton","preferencesbutton",
     "buttontype","buttonplugins"})) {
-    	buttonPanel.update();   	
+    	buttonPanel.update();
     }
-    
+
     if (Settings.settingHasChanged(new String[]{"subscribedchannels"})) {
     	createChannelList();
     	programTablePanel.subscribedChannelsChanged();
@@ -699,12 +700,12 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 			programTablePanel.setDayProgram(dayProgram);
 		} catch(TvBrowserException exc) {
 	  		ErrorHandler.handle(exc);
-		}    	
+		}
     }
-	
+
   }
   /**
-   * 
+   *
    * Shows the about box
    * @author darras
    *
@@ -715,5 +716,5 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   	UiUtilities.centerAndShow(box);
   	box.dispose();
   }
-  
+
 }

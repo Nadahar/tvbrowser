@@ -32,11 +32,13 @@
 
 package devplugin;
 
+import java.io.*;
+
 import java.util.Calendar;
 
 import util.io.IOUtilities;
 
-public class Date implements java.io.Serializable, Comparable {
+public class Date implements Comparable {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Date.class);
@@ -80,6 +82,29 @@ public class Date implements java.io.Serializable, Comparable {
   public Date(int daysSince1970) {
     date=daysSince1970;
   }
+
+  
+  
+  /**
+   * Creates a new instance from a stream.
+   */
+  public Date(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+    date = in.readInt();
+  }
+
+  
+  
+  /**
+   * Writes this instance to a stream.
+   */
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+    out.writeInt(date);
+  }
+  
   
   
   /**

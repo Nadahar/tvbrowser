@@ -42,9 +42,12 @@ import util.exc.*;
 import util.io.IOUtilities;
 
 import devplugin.Channel;
+import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
-import tvdataloader.*;
+
+import tvdataservice.TvDataService;
+import tvdataservice.MutableChannelDayProgram;
 
 /**
  * The DataService is a singletons that manages the TV data.
@@ -53,45 +56,45 @@ import tvdataloader.*;
  */
 public class DataService implements devplugin.PluginManager {
 
-  /** The logger for this class. */  
+  /** The logger for this class. */
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(DataService.class.getName());
-  
-  /** The localizer for this class. */  
+
+  /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DataService.class);
-  
-  /** The singleton. */  
+
+  /** The singleton. */
   private static DataService mSingleton;
-  
-  /** <CODE>true</CODE> if we are in online mode. */  
+
+  /** <CODE>true</CODE> if we are in online mode. */
   private boolean onlineMode=false;
-   
-  /** The progress bar to use for showing the update process. */  
+
+  /** The progress bar to use for showing the update process. */
   private JProgressBar progressBar;
-  
-  /** <CODE>True</CODE> if we are currently downloading TV data. */  
+
+  /** <CODE>True</CODE> if we are currently downloading TV data. */
   private boolean mIsDownloading = false;
-  
+
   /** Holds for a Date (key) a DayProgram (value). Used as cache. */
   private HashMap mDayProgramHash;
 
-  
-  
+
+
   /**
    * Creates a new instance of DataService.
-   */  
+   */
   private DataService() {
     mDayProgramHash = new HashMap();
-    
+
     progressBar = new JProgressBar();
     progressBar.setStringPainted(false);
-    
-    //loadTvDataLoader();
+
+    //loadTvDataService();
   }
 
 
-  
+
   /**
    * Gets the DataService singleton.
    *
@@ -104,7 +107,7 @@ public class DataService implements devplugin.PluginManager {
     return mSingleton;
   }
 
-  
+
 
   /**
    * Sets whether we are in online mode.
@@ -112,54 +115,53 @@ public class DataService implements devplugin.PluginManager {
    * @param newMode whether we are in online mode.
    */
   public void setOnlineMode(boolean newMode) {
-    if ((newMode == onlineMode)/* || (tvdataloader == null)*/) {
+    if ((newMode == onlineMode)/* || (tvdataservice == null)*/) {
       return;
     }
-    
+
     onlineMode = newMode;
-    
+
     if (newMode) {
-      DataLoaderManager.getInstance().connect();
+      TvDataServiceManager.getInstance().connect();
     } else {
-      DataLoaderManager.getInstance().disconnect();
+      TvDataServiceManager.getInstance().disconnect();
     }
   }
-  
- 
+
+
 
   /**
    * Gets whether we are in online mode.
    *
    * @return whether we are in online mode.
-   */  
+   */
   public boolean isOnlineMode() {
     return onlineMode;
   }
 
-  
+
 
   /**
    * Starts the download of new TV data
    *
    * @param daysToDownload The number of days until today to download the
    *        program for.
-   */  
+   */
   public void startDownload(int daysToDownload) {
     File tvdataDir = new File(Settings.getTVDataDirectory());
     if (!tvdataDir.exists()) {
       tvdataDir.mkdir();
     }
-    
+
     // connect
     progressBar.setString(mLocalizer.msg("connecting", "Connecting..."));
     progressBar.setStringPainted(true);
-    DataLoaderManager.getInstance().connect();
+    TvDataServiceManager.getInstance().connect();
 
     // download the missing data day by day and channel by channel
     progressBar.setStringPainted(false);
     mIsDownloading = true;
-    
-    ObjectOutputStream out;
+
     Channel[] subscribedChannels=ChannelList.getSubscribedChannels();
     progressBar.setMaximum((daysToDownload + 2) * subscribedChannels.length);
     devplugin.Date date=new Date();
@@ -170,17 +172,17 @@ public class DataService implements devplugin.PluginManager {
       if (dayProgram == null) {
         dayProgram = new DayProgram(date);
       }
-      
+
       for (int j = 0; (j < subscribedChannels.length) && mIsDownloading; j++) {
         progressBar.setValue(i * subscribedChannels.length + j + 1);
-        
+
         // Check whether we already have the wanted ChannelDayProgram
         devplugin.Channel channel = subscribedChannels[j];
         File file = getChannelDayProgramFile(date, channel);
         if (! file.exists()) {
           // We don't have -> download it
           try {
-            AbstractChannelDayProgram prog = downloadDayProgram(date, channel);
+            ChannelDayProgram prog = downloadDayProgram(date, channel);
 
             if (prog != null) {
               dayProgram.addChannelDayProgram(prog);
@@ -194,20 +196,20 @@ public class DataService implements devplugin.PluginManager {
           }
         }
       }
-      
+
       if (! dayProgram.isEmpty()) {
         mDayProgramHash.put(date, dayProgram);
       }
-      
+
       // Create a new Date object, because the other one is used as key
       // in mDayProgramHash.
       date = new devplugin.Date(date.getDaysSince1970() + 1);
     }
 
     mIsDownloading = false;
-    
-    DataLoaderManager.getInstance().disconnect();
-    
+
+    TvDataServiceManager.getInstance().disconnect();
+
     if (downloadException != null) {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
       ErrorHandler.handle(msg, downloadException);
@@ -218,7 +220,7 @@ public class DataService implements devplugin.PluginManager {
   }
 
 
- 
+
   /**
    * Gets the day program for the specified date.
    *
@@ -233,7 +235,7 @@ public class DataService implements devplugin.PluginManager {
 
     // try to get the DayProgram from the cache.
     DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
-    
+
     if (dayProgram == null) {
       try {
         // The program is not in the cache -> try to load it
@@ -245,12 +247,12 @@ public class DataService implements devplugin.PluginManager {
         ErrorHandler.handle(exc);
       }
     }
-    
+
     return dayProgram;
   }
-    
 
-  
+
+
   /**
    * Loads the day program for the specified date. If the program could not be
    * found on the disk, it will be downloaded if we are in online mode or if
@@ -263,30 +265,30 @@ public class DataService implements devplugin.PluginManager {
   protected DayProgram loadDayProgram(devplugin.Date date)
     throws TvBrowserException
   {
- /* 	
-    if (tvdataloader == null) {
+ /*
+    if (tvdataservice == null) {
       return null;
     }
 */
     Channel[] channels=ChannelList.getSubscribedChannels();
-    
+
     boolean useProgressBar=false;
     if (isOnlineMode() && !dataAvailable(date)) {
       useProgressBar=true;
       progressBar.setMaximum(channels.length);
     }
-    
+
     // Get the day program for the specified date from the cache
     DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
     if (dayProgram == null) {
       dayProgram = new DayProgram(date);
     }
-    
+
     // Load or download all missing channel day programs
     boolean someDataWasDownloaded = false;
     for (int i = 0; i < channels.length; i++) {
       // Update the progress bar
-      TVDataServiceInterface dataService = channels[i].getDataService();
+      TvDataService dataService = channels[i].getDataService();
       if (useProgressBar) {
         progressBar.setValue(i+1);
       }
@@ -303,12 +305,8 @@ public class DataService implements devplugin.PluginManager {
         ObjectInputStream in = null;
         try {
           in = new ObjectInputStream(new FileInputStream(file));
-          tvdataloader.AbstractChannelDayProgram prog
-            = dataService.readChannelDayProgram(in);
-
-          if (prog != null) {
-            dayProgram.addChannelDayProgram(prog);
-          }
+          ChannelDayProgram prog = new MutableChannelDayProgram(in);
+          dayProgram.addChannelDayProgram(prog);
         }
         catch (Exception exc) {
           throw new TvBrowserException(getClass(), "error.1",
@@ -323,7 +321,7 @@ public class DataService implements devplugin.PluginManager {
       }
       else if (isOnlineMode()) {
         // We don't have it on disk, but we are online -> download it
-        AbstractChannelDayProgram prog = downloadDayProgram(date, channels[i]);
+        ChannelDayProgram prog = downloadDayProgram(date, channels[i]);
 
         if (prog != null) {
           dayProgram.addChannelDayProgram(prog);
@@ -331,19 +329,19 @@ public class DataService implements devplugin.PluginManager {
         }
       }
     }
-    
+
     // If the day program is not empty -> return it and put it in the cache
     if (! dayProgram.iterator().hasNext()) {
       // day program is empty -> return null
       return null;
     } else {
       mDayProgramHash.put(date, dayProgram);
-      
+
       // Let the plugins react on the new data
       if (someDataWasDownloaded) {
         PluginManager.fireTvDataChanged();
       }
-      
+
       return dayProgram;
     }
   }
@@ -358,7 +356,7 @@ public class DataService implements devplugin.PluginManager {
    */
   public static boolean dataAvailable(devplugin.Date date) {
     final String dateStr = "" + date.getDaysSince1970();
-    
+
     String fList[] = new File(Settings.getTVDataDirectory()).list(
       new java.io.FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -366,7 +364,7 @@ public class DataService implements devplugin.PluginManager {
         }
       }
     );
-    
+
     if (fList == null) return false;
     return fList.length > 0;
   }
@@ -384,7 +382,7 @@ public class DataService implements devplugin.PluginManager {
    */
   public devplugin.Program getProgram(devplugin.Date date, String progID) {
     DayProgram dayProgram = getDayProgram(date);
-    
+
     if (dayProgram == null) {
       return null;
     } else {
@@ -399,13 +397,13 @@ public class DataService implements devplugin.PluginManager {
    *
    * @param prog The program to get the component for.
    * @return a JComponent that shows the specified program.
-   */  
+   */
   public javax.swing.JComponent createProgramPanel(devplugin.Program prog) {
     return new tvbrowser.ui.programtable.ProgramPanel(prog);
   }
-  
-  
-  
+
+
+
   /**
    * Gets the progress bar used to show the download progress.
    *
@@ -414,9 +412,9 @@ public class DataService implements devplugin.PluginManager {
   public JProgressBar getProgressBar() {
     return progressBar;
   }
-  
-  
-  
+
+
+
   /**
    * Gets whether the data service is currently downloading data.
    *
@@ -425,9 +423,9 @@ public class DataService implements devplugin.PluginManager {
   public boolean isDownloading() {
     return mIsDownloading;
   }
-  
-  
-  
+
+
+
   /**
    * Gets the subscribed channels.
    *
@@ -436,9 +434,9 @@ public class DataService implements devplugin.PluginManager {
   public devplugin.Channel[] getSubscribedChannels() {
     return ChannelList.getSubscribedChannels();
   }
-  
-  
-  
+
+
+
   /**
    * Called, when the ChannelList has changed.
    */
@@ -454,9 +452,9 @@ public class DataService implements devplugin.PluginManager {
       }
     }
   }
-  
-  
-  
+
+
+
   /**
    * Gets an iterator through all programs of the specified channel at the
    * specified date.
@@ -473,24 +471,23 @@ public class DataService implements devplugin.PluginManager {
       return null;
     }
 
-    AbstractChannelDayProgram channelDayProgram
-      = dayProgram.getChannelDayProgram(channel);
+    ChannelDayProgram channelDayProgram = dayProgram.getChannelDayProgram(channel);
     if (channelDayProgram == null) {
       return null;
     }
-    
+
     return channelDayProgram.getPrograms();
   }
 
-  
-  
+
+
   /**
    * Creates a context menu containg all subscribed plugins that support context
    * menues.
    *
    * @return a plugin context menu.
    * @param parent The parent for the context menu.
-   */  
+   */
   public tvbrowser.ui.ContextMenu createPluginContextMenu(java.awt.Frame parent) {
 	tvbrowser.ui.ContextMenu menu=new tvbrowser.ui.ContextMenu(parent);
 	Object[] plugins=PluginManager.getInstalledPlugins();
@@ -499,9 +496,9 @@ public class DataService implements devplugin.PluginManager {
 		}
 	return menu;
   }
-  
-  
-  
+
+
+
   /**
    * Imports previously exported tv data.
    * <p>
@@ -514,7 +511,7 @@ public class DataService implements devplugin.PluginManager {
   public void importTvData(File srcFile) throws TvBrowserException {
     ZipFile zipFile = null;
     InputStream in = null;
-    
+
     try {
       zipFile = new ZipFile(srcFile);
       Enumeration entryEnum = zipFile.entries();
@@ -545,9 +542,9 @@ public class DataService implements devplugin.PluginManager {
     // Let the plugins react on the new data
     PluginManager.fireTvDataChanged();
   }
-  
-  
-  
+
+
+
   /**
    * Exports all known tv data to the specified file.
    * <p>
@@ -559,7 +556,7 @@ public class DataService implements devplugin.PluginManager {
   public void exportTvData(File targetFile) throws TvBrowserException {
     File tvdataDir = new File(Settings.getTVDataDirectory());
     File[] children = tvdataDir.listFiles();
-    
+
     // When the tvdata directory is empty -> do nothing
     if (children == null) {
       // No data available
@@ -569,16 +566,16 @@ public class DataService implements devplugin.PluginManager {
     FileOutputStream out = null;
     ZipOutputStream zipOut = null;
     FileInputStream in = null;
-    
+
     try {
       out = new FileOutputStream(targetFile);
       zipOut = new ZipOutputStream(out);
-      
+
       // Add all files in the tvdata directory to the zip file
       for (int i = 0; i < children.length; i++) {
         String fileName = children[i].getName();
         ZipEntry entry = new ZipEntry(fileName);
-        
+
         zipOut.putNextEntry(entry);
         in = new FileInputStream(children[i]);
         IOUtilities.pipeStreams(in, zipOut);
@@ -601,8 +598,8 @@ public class DataService implements devplugin.PluginManager {
       }
     }
   }
-  
-  
+
+
 
   /**
    * Searches the data for programs which match a regular expression.
@@ -636,12 +633,12 @@ public class DataService implements devplugin.PluginManager {
       throw new TvBrowserException(getClass(), "error.8",
         "Syntax error in the regualar expression of the search pattern!", exc);
     }
-    
+
     if (nrDays < 0) {
       startDate.addDays(nrDays);
       nrDays = 0 - nrDays;
     }
-    
+
     ArrayList hitList = new ArrayList();
     int missingDataCount = 0;
     for (int day = 0; day <= nrDays; day++) {
@@ -659,7 +656,7 @@ public class DataService implements devplugin.PluginManager {
           while (programIter.hasNext()) {
             Program prog = (Program) programIter.next();
             boolean matches = false;
-            
+
             if (inTitle) {
               Matcher matcher = pattern.matcher(prog.getTitle());
               matches = matcher.matches();
@@ -668,35 +665,35 @@ public class DataService implements devplugin.PluginManager {
               Matcher matcher = pattern.matcher(prog.getDescription());
               matches = matcher.matches();
             }
-            
+
             if (matches) {
               hitList.add(prog);
             }
           }
         }
       }
-      
+
       // The next day
       startDate.addDays(1);
     }
-    
+
     Program[] hitArr = new Program[hitList.size()];
     hitList.toArray(hitArr);
-    
+
     return hitArr;
   }
 
-  
-  
-  protected AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
+
+
+  protected ChannelDayProgram downloadDayProgram(devplugin.Date date,
     devplugin.Channel channel)
     throws TvBrowserException
   {
     mLog.info("Downloading the TV data for " + channel.getName() + " on " + date);
-    AbstractChannelDayProgram prog;
+    ChannelDayProgram prog;
 
     // download the program
-    TVDataServiceInterface dataService = channel.getDataService();
+    TvDataService dataService = channel.getDataService();
     if (dataService == null) {
       return null;
     }
@@ -705,18 +702,19 @@ public class DataService implements devplugin.PluginManager {
     // save the program to disk
     if (prog != null) {
       File file = getChannelDayProgramFile(date, channel);
-      
+
       ObjectOutputStream out = null;
       try {
         out = new ObjectOutputStream(new FileOutputStream(file));
-        out.writeObject(prog);
+        MutableChannelDayProgram mutProg = (MutableChannelDayProgram) prog;
+        mutProg.writeData(out);
       }
       catch (IOException exc) {
         String msg = mLocalizer.msg("error.2",
           "Error when saving program of {0} on {1}!\n({2})",
           channel.getName(), date, file.getAbsolutePath());
         ErrorHandler.handle(msg, exc);
-        
+
         prog = null;
       }
       finally {
@@ -725,15 +723,15 @@ public class DataService implements devplugin.PluginManager {
         }
       }
     }
-    
+
     return prog;
   }
-  
+
   public devplugin.Plugin[] getInstalledPlugins() {
   	return PluginManager.getInstalledPlugins();
   }
 
-  
+
 
   private File getChannelDayProgramFile(devplugin.Date date,
     devplugin.Channel channel)
@@ -744,10 +742,10 @@ public class DataService implements devplugin.PluginManager {
     return new File(Settings.getTVDataDirectory(), fileName);
   }
 
-  
-  
-  public TVDataServiceInterface getDataService(String className) {
-    return DataLoaderManager.getInstance().getDataLoader(className);
+
+
+  public TvDataService getDataService(String className) {
+    return TvDataServiceManager.getInstance().getDataService(className);
   }
 
 }

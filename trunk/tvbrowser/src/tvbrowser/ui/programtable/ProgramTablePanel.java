@@ -24,12 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.programtable;
 
 import javax.swing.*;
@@ -45,7 +39,14 @@ import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.ContextMenu;
 
 import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Program;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 class ProgramDayTime extends JPanel {
 
   private JPanel centerPanel;
@@ -82,16 +83,16 @@ class ProgramDayTime extends JPanel {
     return null;
   }
 
-  public void addProgram(tvdataloader.AbstractProgram p) {
-    int col=ChannelList.getPos(p.getChannel().getId());
-    
+  public void addProgram(Program prog) {
+    int col = ChannelList.getPos(prog.getChannel().getId());
+
     if (col<0) {
       return; // cannot add program (channel is not subscribed)
     }
-    ProgramPanel panel=ProgramPanelFactory.createProgramPanel(p);
+    ProgramPanel panel=ProgramPanelFactory.createProgramPanel(prog);
     cols[col].add(panel);
   }
-  
+
 }
 
 
@@ -157,7 +158,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   private Frame parent;
 
   private javax.swing.Timer timer;
-  
+
   private JViewport headerPanel;
 
   /**
@@ -169,29 +170,29 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     setLayout(new BorderLayout());
     final ScrollableTablePanel tablePanel=this;
     part=new ProgramDayTime[NUM_OF_DAYTIMES];
-    
-    
+
+
 	contextMenu=DataService.getInstance().createPluginContextMenu(parent);
-   		
+
 
     timer=new javax.swing.Timer(10000,this);
     channelChooser=new ChannelChooser(parent,this);
     channelPanel=new ChannelPanel();
   }
-  
+
   public void setPluginContextMenu(ContextMenu menu) {
 	 contextMenu=menu;
    }
-   
+
    public void subscribedChannelsChanged() {
    	if (channelPanel!=null && headerPanel!=null) {
    		headerPanel.remove(channelPanel);
    	}
 	channelPanel=new ChannelPanel();
-	
-	
+
+
 	channelChooser=new ChannelChooser(parent,this);
-	
+
    }
 
   /**
@@ -202,9 +203,9 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     if (timer.isRunning()) {
       timer.stop();
     }
-    
+
     dayProgram = prog;
-    
+
     // Remember the scroll position for a later restore
     Point oldViewPosition = null;
     if (scrollPane != null) {
@@ -229,10 +230,10 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     scrollPane.setWheelScrollingEnabled(true);
     scrollPane.getHorizontalScrollBar().setUnitIncrement(30);
     scrollPane.getVerticalScrollBar().setUnitIncrement(30);
-    
+
     /*JViewport*/ headerPanel=new JViewport();
-   
-    headerPanel.add(channelPanel); 
+
+    headerPanel.add(channelPanel);
     scrollPane.setColumnHeader(headerPanel);
 
     scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER,channelChooser);
@@ -240,26 +241,26 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
     for (int i=0;i<part.length;i++) {
       part[i]=new ProgramDayTime(ChannelList.getNumberOfSubscribedChannels());
     }
- 
+
     ProgramPanelFactory.reset();
 
     if (dayProgram != null) {
       Iterator iterator=dayProgram.iterator();
-      tvdataloader.AbstractChannelDayProgram curDayProgram;
+      ChannelDayProgram curDayProgram;
 
       Iterator progs;
-      tvdataloader.AbstractProgram curProgram;
+      Program curProgram;
       int h;
 
       while (iterator.hasNext()) {
-        curDayProgram=(tvdataloader.AbstractChannelDayProgram)iterator.next();
+        curDayProgram = (ChannelDayProgram) iterator.next();
 
-        progs=curDayProgram.getPrograms();        
-        
+        progs = curDayProgram.getPrograms();
+
         while (progs.hasNext()) {
-          curProgram=(tvdataloader.AbstractProgram)progs.next();
+          curProgram = (Program) progs.next();
           h=curProgram.getHours();
-          int inx=h/((24/part.length));          
+          int inx=h/((24/part.length));
           part[inx].addProgram(curProgram);
         }
       }
@@ -348,21 +349,21 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   /**
    * interface ScrollableTablePanel
    */
-  public void scrollTo(int hour) {	
+  public void scrollTo(int hour) {
 	int c=(int)(NUM_OF_DAYTIMES*hour/24.0);
- 	
+
 	int posY=0;
 	int posX=(int)scrollPane.getViewport().getViewPosition().getX();
     for (int i=0;i<c;i++) {
     	posY+=part[i].getHeight();
     }
-    int s=hour%(24/NUM_OF_DAYTIMES);   
-    
+    int s=hour%(24/NUM_OF_DAYTIMES);
+
     posY+=part[c].getHeight()/NUM_OF_DAYTIMES*s - scrollPane.getHeight()/2;
     if (posY<0) {
     	posY=0;
     }
-	scrollPane.getViewport().setViewPosition(new Point(posX,posY));      
+	scrollPane.getViewport().setViewPosition(new Point(posX,posY));
   }
 
 
@@ -372,7 +373,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
    */
   public void scrollTo(Channel ch) {
     int pos=ChannelList.getPos(ch.getId());
-    
+
     int y=(int)scrollPane.getViewport().getViewPosition().getY();
 
     int x=centerPanel.getWidth()/ChannelList.getNumberOfSubscribedChannels()*pos;

@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
- 
+
 package tvbrowser.core;
 
 import java.io.*;
@@ -32,81 +32,81 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import tvdataloader.TVDataServiceInterface;
+import tvdataservice.TvDataService;
 import util.exc.*;
 
 //import util.exc.*;
- 
-public class DataLoaderManager {
-  
+
+public class TvDataServiceManager {
+
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
-  = util.ui.Localizer.getLocalizerFor(DataLoaderManager.class);
-  
-  private static DataLoaderManager mSingleton;
-  
-  private HashMap mTvDataLoaderHash;
+  = util.ui.Localizer.getLocalizerFor(TvDataServiceManager.class);
 
-  
-  
-  private DataLoaderManager() {
+  private static TvDataServiceManager mSingleton;
+
+  private HashMap mTvDataServiceHash;
+
+
+
+  private TvDataServiceManager() {
   }
-  
 
-  
-  public static DataLoaderManager getInstance() {
+
+
+  public static TvDataServiceManager getInstance() {
     if (mSingleton == null) {
-      mSingleton = new DataLoaderManager();
+      mSingleton = new TvDataServiceManager();
     }
-    
+
     return mSingleton;
   }
 
-  
+
 
   /**
-   * Loads the TV data loader.
+   * Loads the TV data service.
    */
-  private void loadTvDataLoaders() {
-    if (mTvDataLoaderHash != null) {
-      throw new IllegalArgumentException("The data loaders are already loaded!");
+  private void loadTvDataServices() {
+    if (mTvDataServiceHash != null) {
+      throw new IllegalArgumentException("The data services are already loaded!");
     }
-    
-    mTvDataLoaderHash = new HashMap();
-    
-    // Get the tv data loader jar file
-    String[] fList=new File("tvdataloader").list(new FilenameFilter() {
+
+    mTvDataServiceHash = new HashMap();
+
+    // Get the tv data service jar file
+    String[] fList=new File("tvdataservice").list(new FilenameFilter() {
       public boolean accept(File dir, String fName) {
         return fName.endsWith(".jar");
       }
     });
-    
+
     for (int i=0;i<fList.length;i++) {
       String className=fList[i];
       if (className.length()>4) {
         className = className.substring(0,className.length()-4);
-        TVDataServiceInterface cur = loadDataLoader(className);
+        TvDataService cur = loadDataService(className);
         if (cur != null) {
-          mTvDataLoaderHash.put(cur.getClass().getName(), cur);
+          mTvDataServiceHash.put(cur.getClass().getName(), cur);
         }
       }
     }
   }
-  
-  
-  
-  private TVDataServiceInterface loadDataLoader(String name) {
-    TVDataServiceInterface result=null;
+
+
+
+  private TvDataService loadDataService(String name) {
+    TvDataService result=null;
     String fName=name+".jar";
-    
-    File f=new File("tvdataloader",fName);
-    
+
+    File f=new File("tvdataservice",fName);
+
     try {
       URL[] urls={ f.toURL() };
-      ClassLoader dataloaderClassLoader=new java.net.URLClassLoader(urls,ClassLoader.getSystemClassLoader());
-      
-      Class c=dataloaderClassLoader.loadClass(name.toLowerCase()+"."+name);
-      result=(tvdataloader.TVDataServiceInterface)c.newInstance();
+      ClassLoader dataserviceClassLoader=new java.net.URLClassLoader(urls,ClassLoader.getSystemClassLoader());
+
+      Class c=dataserviceClassLoader.loadClass(name.toLowerCase()+"."+name);
+      result=(tvdataservice.TvDataService)c.newInstance();
     } catch (Exception exc) {
       //String msg = mLocalizer.msg("error.5", "Loading tv data service failed!\n({0})",
       //f.getAbsolutePath(), exc);
@@ -115,10 +115,10 @@ public class DataLoaderManager {
     }
     return result;
   }
-  
 
-  
-  private void loadServiceSettings(TVDataServiceInterface service) {
+
+
+  private void loadServiceSettings(TvDataService service) {
     Class c=service.getClass();
     String dir=Settings.getUserDirectoryName();
     File f=new File(dir,c.getName()+".service");
@@ -140,9 +140,9 @@ public class DataLoaderManager {
     }
   }
 
-  
-  
-  private void storeServiceSettings(TVDataServiceInterface service) {
+
+
+  private void storeServiceSettings(TvDataService service) {
     Properties prop=service.storeSettings();
     if (prop!=null) {
       String dir=Settings.getUserDirectoryName();
@@ -163,25 +163,25 @@ public class DataLoaderManager {
       }
     }
   }
-  
-  
-  
-  public void finalizeDataLoaders() {
-    Object obj[]=mTvDataLoaderHash.values().toArray();
+
+
+
+  public void finalizeDataServices() {
+    Object obj[]=mTvDataServiceHash.values().toArray();
     for (int i=0;i<obj.length;i++) {
-      storeServiceSettings((TVDataServiceInterface)obj[i]);
+      storeServiceSettings((TvDataService)obj[i]);
     }
   }
-  
-  
-  
-  public TVDataServiceInterface getDataLoader(String className) {
-    return (TVDataServiceInterface) mTvDataLoaderHash.get(className);
+
+
+
+  public TvDataService getDataService(String className) {
+    return (TvDataService) mTvDataServiceHash.get(className);
   }
-  
+
     /*
-    public static String[] getDataLoaderNames() {
-        Iterator it=mTvDataLoaderHash.keySet().iterator();
+    public static String[] getDataServiceNames() {
+        Iterator it=mTvDataServiceHash.keySet().iterator();
         java.util.ArrayList list=new java.util.ArrayList();
         while (it.hasNext()) {
             list.add(it.next());
@@ -194,30 +194,30 @@ public class DataLoaderManager {
         return result;
     }
      */
-  
-  
-  public void initDataLoaders() {
-    loadTvDataLoaders();
-    Object obj[]=mTvDataLoaderHash.values().toArray();
+
+
+  public void initDataServices() {
+    loadTvDataServices();
+    Object obj[]=mTvDataServiceHash.values().toArray();
     for (int i=0;i<obj.length;i++) {
-      loadServiceSettings((TVDataServiceInterface)obj[i]);
+      loadServiceSettings((TvDataService)obj[i]);
     }
   }
-  
-  
-  
-  public TVDataServiceInterface[] getDataLoaders() {
-    Collection dataServiceColl = mTvDataLoaderHash.values();
-    TVDataServiceInterface[] result = new TVDataServiceInterface[dataServiceColl.size()];
+
+
+
+  public TvDataService[] getDataServices() {
+    Collection dataServiceColl = mTvDataServiceHash.values();
+    TvDataService[] result = new TvDataService[dataServiceColl.size()];
     dataServiceColl.toArray(result);
-    
+
     return result;
   }
-  
-  
-  
+
+
+
   public void connect() {
-    TVDataServiceInterface[] dl=getDataLoaders();
+    TvDataService[] dl=getDataServices();
     for (int i=0;i<dl.length;i++) {
       try {
         dl[i].connect();
@@ -226,11 +226,11 @@ public class DataLoaderManager {
       }
     }
   }
-  
-  
-  
+
+
+
   public void disconnect() {
-    TVDataServiceInterface[] dl=getDataLoaders();
+    TvDataService[] dl=getDataServices();
     for (int i=0;i<dl.length;i++) {
       try {
         dl[i].disconnect();

@@ -72,57 +72,26 @@ public class Favorite {
     
     mProgramArr = new Program[0];
   }
-  
-  
-  
-  /**
-   * Serializes this Object.
-   */
-  public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeObject(mTerm);
-    out.writeBoolean(mSearchInTitle);
-    out.writeBoolean(mSearchInText);
-    out.writeInt(mSearchMode);
-    out.writeBoolean(mUseCertainChannel);
-
-    String certainChannelLoaderClassName = null;
-    int certainChannelId = -1;
-    if (mCertainChannel != null) {
-      certainChannelLoaderClassName = mCertainChannel.getDataService().getClass().getName();
-      certainChannelId = mCertainChannel.getId();
-    }
-    out.writeObject(certainChannelLoaderClassName);
-    out.writeInt(certainChannelId);
-    
-    out.writeBoolean(mUseCertainTimeOfDay);
-    out.writeInt(mCertainFromTime);
-    out.writeInt(mCertainToTime);
-
-    // Don't save the programs but only their date and id
-    out.writeInt(mProgramArr.length);
-    for (int i = 0; i < mProgramArr.length; i++) {
-      out.writeObject(mProgramArr[i].getDate());
-      out.writeObject(mProgramArr[i].getID());
-    }
-  }
 
   
   
   /**
    * Deserializes this Object.
    */
-  public void readData(int version, ObjectInputStream in)
+  public Favorite(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
+    int version = in.readInt();
+    
     mTerm = (String) in.readObject();
     mSearchInTitle = in.readBoolean();
     mSearchInText = in.readBoolean();
     mSearchMode = in.readInt();
     mUseCertainChannel = in.readBoolean();
 
-    String certainChannelLoaderClassName = (String) in.readObject();
+    String certainChannelServiceClassName = (String) in.readObject();
     int certainChannelId = in.readInt();
-    mCertainChannel = getChannel(certainChannelLoaderClassName, certainChannelId);
+    mCertainChannel = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
 
     mUseCertainTimeOfDay = in.readBoolean();
     mCertainFromTime = in.readInt();
@@ -132,7 +101,7 @@ public class Favorite {
     int size = in.readInt();
     ArrayList programList = new ArrayList(size);
     for (int i = 0; i < size; i++) {
-      Date date = (Date) in.readObject();
+      Date date = new Date(in);
       String progID = (String) in.readObject();
       Program program = Plugin.getPluginManager().getProgram(date, progID);
       if (program != null) {
@@ -143,6 +112,41 @@ public class Favorite {
     programList.toArray(mProgramArr);
   }
   
+  
+  
+  /**
+   * Serializes this Object.
+   */
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+    
+    out.writeObject(mTerm);
+    out.writeBoolean(mSearchInTitle);
+    out.writeBoolean(mSearchInText);
+    out.writeInt(mSearchMode);
+    out.writeBoolean(mUseCertainChannel);
+
+    String certainChannelServiceClassName = null;
+    int certainChannelId = -1;
+    if (mCertainChannel != null) {
+      certainChannelServiceClassName = mCertainChannel.getDataService().getClass().getName();
+      certainChannelId = mCertainChannel.getId();
+    }
+    out.writeObject(certainChannelServiceClassName);
+    out.writeInt(certainChannelId);
+    
+    out.writeBoolean(mUseCertainTimeOfDay);
+    out.writeInt(mCertainFromTime);
+    out.writeInt(mCertainToTime);
+
+    // Don't save the programs but only their date and id
+    out.writeInt(mProgramArr.length);
+    for (int i = 0; i < mProgramArr.length; i++) {
+      mProgramArr[i].getDate().writeData(out);
+      out.writeObject(mProgramArr[i].getID());
+    }
+  }
+
   
   
   public String getTerm() {
@@ -289,26 +293,6 @@ public class Favorite {
     
     // mark these programs
     FavoritesPlugin.getInstance().mark(mProgramArr);
-  }
-
-  
-  
-  private Channel getChannel(String dataLoaderClassName, int channelId) {
-    if (dataLoaderClassName == null) {
-      // Fast return
-      return null;
-    }
-    
-    Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
-    for (int i = 0; i < channelArr.length; i++) {
-      if (dataLoaderClassName.equals(channelArr[i].getDataService().getClass().getName())
-        && (channelArr[i].getId() == channelId))
-      {
-        return channelArr[i];
-      }      
-    }
-    
-    return null;
   }
   
 }

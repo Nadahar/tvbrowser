@@ -24,14 +24,21 @@
  * $Revision$
  */
 
-package tvdataloader;
+package tvdataservice;
 
 import java.io.*;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import javax.swing.event.EventListenerList;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 
-import devplugin.*;
-import tvdataloader.*;
+import devplugin.Channel;
+import devplugin.Program;
 
 /**
  * One program. Consists of the Channel, the time, the title and some extra
@@ -39,55 +46,67 @@ import tvdataloader.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class MutableProgram extends AbstractProgram {
-  
+public class MutableProgram implements Program {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(MutableProgram.class.getName());
+
   /**
    * The maximum length of a short info. Used for generating a short info out of a
    * (long) description.
-   */  
+   */
   private static final int MAX_SHORT_INFO_LENGTH = 100;
-  
+
+  /** Contains all listeners that listen for events from this program. */
+  transient EventListenerList mListenerList;
+
+  /** Containes all Plugins that mark this program. */
+  transient HashSet mMarkedBySet;
+
+  /** Contains whether this program is currently on air. */
+  transient boolean mOnAir;
+
   /** The cached ID of this program. */
   transient private String mId;
-  
+
   /** The program's title. */
   private String mTitle;
-  
+
   /** The program's short info. Shown on the program table. May be null. */
   private String mShortInfo;
-  
+
   /** The program's description. May be null. */
   private String mDescription;
-  
+
   /** The program's actors. May be null. */
   private String mActors;
-  
-  /** The URL, where the user can find information about this program. May be null. */  
+
+  /** The URL, where the user can find information about this program. May be null. */
   private String mURL;
-  
+
   /** The minute-component of the start time of the program. */
   private int mMinutes;
-  
+
   /** The hour-component of the start time of the program. */
   private int mHours;
-  
+
   /** The length of this program in minutes. */
   private int mLength = -1;
-  
-  /** The additional information of the program. May be null. */  
+
+  /** The additional information of the program. May be null. */
   private int mInfo;
-  
-  /** The channel object of this program. */  
+
+  /** The channel object of this program. */
   private Channel mChannel;
-  
-  /** The date of this program. */  
+
+  /** The date of this program. */
   private devplugin.Date mDate;
-  
-  /** The picture of this program (may be null). */  
+
+  /** The picture of this program (may be null). */
   private byte[] mPicture;
-  
-  
-  
+
+
+
   /**
    * Creates a new instance of MutableProgram.
    * <p>
@@ -109,10 +128,209 @@ public class MutableProgram extends AbstractProgram {
     mMinutes = minutes;
 
     mTitle = ""; // The title is not-null.
+
+    init();
   }
 
   
   
+  public MutableProgram(ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+
+    mTitle = (String) in.readObject();
+    mShortInfo = (String) in.readObject();
+    mDescription = (String) in.readObject();
+    mActors = (String) in.readObject();
+    mURL = (String) in.readObject();
+    mMinutes = in.readInt();
+    mHours = in.readInt();
+    mLength = in.readInt();
+    mInfo = in.readInt();
+
+    mChannel = Channel.readData(in, false);
+    mDate = new devplugin.Date(in);
+    
+    mPicture = (byte[]) in.readObject();
+    
+    init();
+  }
+
+  
+  
+  /**
+   * Serialized this object.
+   */
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+    
+    out.writeObject(mTitle);
+    out.writeObject(mShortInfo);
+    out.writeObject(mDescription);
+    out.writeObject(mActors);
+    out.writeObject(mURL);
+    out.writeInt(mMinutes);
+    out.writeInt(mHours);
+    out.writeInt(mLength);
+    out.writeInt(mInfo);
+
+    mChannel.writeData(out);
+    mDate.writeData(out);
+    
+    out.writeObject(mPicture);
+  }
+
+
+
+  /**
+   * Initializes the program.
+   */
+  private void init() {
+    mListenerList = new EventListenerList();
+    mMarkedBySet = new HashSet();
+    mOnAir = false;
+  }
+
+
+
+  /**
+   * Adds a ChangeListener to the program.
+   *
+   * @param listener the ChangeListener to add
+   * @see #fireStateChanged
+   * @see #removeChangeListener
+   */
+  public void addChangeListener(ChangeListener listener) {
+    // TODO: The ProgramPanels to not unregister themselves
+    /*
+    mLog.info("mListenerList.getListenerCount(): " + mListenerList.getListenerCount());
+    if (mListenerList.getListenerCount() != 0) {
+      throw new RuntimeException("test");
+    }
+    */
+
+    mListenerList.add(ChangeListener.class, listener);
+  }
+
+
+
+  /**
+   * Removes a ChangeListener from the program.
+   *
+   * @param listener the ChangeListener to remove
+   * @see #fireStateChanged
+   * @see #addChangeListener
+   */
+  public void removeChangeListener(ChangeListener listener) {
+    mListenerList.remove(ChangeListener.class, listener);
+  }
+
+
+
+  /**
+   * Send a ChangeEvent, whose source is this program, to each listener.
+   *
+   * @see #addChangeListener
+   * @see EventListenerList
+   */
+  protected void fireStateChanged() {
+    Object[] listeners = mListenerList.getListenerList();
+    ChangeEvent changeEvent = null;
+    for (int i = listeners.length - 2; i >= 0; i -= 2) {
+      if (listeners[i]==ChangeListener.class) {
+        if (changeEvent == null) {
+          changeEvent = new ChangeEvent(this);
+        }
+        ((ChangeListener)listeners[i+1]).stateChanged(changeEvent);
+      }
+    }
+  }
+
+
+
+  public final String getTimeString() {
+    return getHours()+":"+((getMinutes()<10)?"0":"")+getMinutes();
+  }
+
+
+  public final String getDateString() {
+    return getDate().toString();
+  }
+
+
+
+  /**
+   * Sets whether this program is marked as "on air".
+   */
+  public void markAsOnAir(boolean onAir) {
+    // avoid unnessesary calls of fireStateChanged()
+    // call fireStateChanged() anyway if we are "on air"
+    // (for updating the "progress bar" painted by the ProgramPanel)
+    if (onAir || (onAir != mOnAir)) {
+      mOnAir = onAir;
+      fireStateChanged();
+    }
+  }
+
+
+
+  /**
+   * Gets whether this program is marked as "on air".
+   */
+  public boolean isOnAir() {
+    return mOnAir;
+  }
+
+
+
+  public final void mark(devplugin.Plugin plugin) {
+    mMarkedBySet.add(plugin);
+    fireStateChanged();
+  }
+
+
+
+  public final void unmark(devplugin.Plugin plugin) {
+    mMarkedBySet.remove(plugin);
+    fireStateChanged();
+  }
+
+
+
+  /**
+   * Gets an iterator for all {@link devplugin.Program}s that have marked
+   * this program.
+   */
+  public Iterator getMarkedByIterator() {
+    return mMarkedBySet.iterator();
+  }
+
+
+
+  /**
+   * Gets whether this program is expired.
+   */
+  public boolean isExpired() {
+    int currentDaysSince1970 = IOUtilities.getDaysSince1970();
+    int programDaysSince1970 = getDate().getDaysSince1970();
+
+    if (programDaysSince1970 < currentDaysSince1970) {
+      return true;
+    }
+    if (programDaysSince1970 > currentDaysSince1970) {
+      return false;
+    }
+
+    // This program is (or was) today -> We've got to check the time
+    int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    int programMinutesAfterMidnight = getHours() * 60 + getMinutes() + getLength();
+
+    return (programMinutesAfterMidnight < currentMinutesAfterMidnight);
+  }
+
+
+
   /**
    * (This method is a kind of constructor. It reads the program from an
    * InputStream.)
@@ -123,8 +341,8 @@ public class MutableProgram extends AbstractProgram {
   public void readProgram(InputStream in) throws TvBrowserException {
   }
   */
-  
-  
+
+
 
   /**
    * Gets the ID of this program. This ID is unique for a certain date.
@@ -138,8 +356,8 @@ public class MutableProgram extends AbstractProgram {
     return mId;
   }
 
-  
-  
+
+
   /**
    * Sets the title of this program.
    *
@@ -159,8 +377,8 @@ public class MutableProgram extends AbstractProgram {
     return mTitle;
   }
 
-  
-  
+
+
   /**
    * Sets a short information about the program (about three lines). May be null.
    * <p>
@@ -174,17 +392,17 @@ public class MutableProgram extends AbstractProgram {
       // Get the end of the last fitting sentense
       int lastDot = shortInfo.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
       int lastMidDot = shortInfo.lastIndexOf('\u00b7', MAX_SHORT_INFO_LENGTH);
-      
+
       int cutIdx = Math.max(lastDot, lastMidDot);
-      
+
       // But show at least half the maximum length
       if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
         cutIdx = shortInfo.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
       }
-      
+
       shortInfo = shortInfo.substring(0, cutIdx + 1) + "...";
     }
-    
+
     mShortInfo = shortInfo;
     fireStateChanged();
   }
@@ -197,7 +415,7 @@ public class MutableProgram extends AbstractProgram {
   public String getShortInfo() {
     return mShortInfo;
   }
-  
+
 
 
   /**
@@ -219,8 +437,8 @@ public class MutableProgram extends AbstractProgram {
     return mDescription;
   }
 
-  
-  
+
+
   /**
    * Sets the names of some actors. May be null.
    *
@@ -239,7 +457,7 @@ public class MutableProgram extends AbstractProgram {
   public String getActors() {
     return mActors;
   }
-  
+
 
 
   /**
@@ -263,8 +481,8 @@ public class MutableProgram extends AbstractProgram {
     return mURL;
   }
 
-  
-  
+
+
   /**
    * Returns the minute-component of the start time of the program.
    *
@@ -274,8 +492,8 @@ public class MutableProgram extends AbstractProgram {
     return mMinutes;
   }
 
-  
-  
+
+
   /**
    * Returns the hour-component of the start time of the program.
    *
@@ -285,7 +503,7 @@ public class MutableProgram extends AbstractProgram {
     return mHours;
   }
 
-  
+
   /**
    * Sets the length of this program in minutes.
    *
@@ -295,7 +513,7 @@ public class MutableProgram extends AbstractProgram {
     mLength = length;
     fireStateChanged();
   }
-  
+
   /**
    * Gets the length of this program in minutes.
    *
@@ -304,9 +522,9 @@ public class MutableProgram extends AbstractProgram {
   public int getLength() {
     return mLength;
   }
-  
 
-  
+
+
   /**
    * Sets additional information of the program (or zero).
    *
@@ -326,8 +544,8 @@ public class MutableProgram extends AbstractProgram {
     return mInfo;
   }
 
-  
-  
+
+
   /**
    * Returns the channel object of this program.
    *
@@ -336,9 +554,9 @@ public class MutableProgram extends AbstractProgram {
   public Channel getChannel() {
     return mChannel;
   }
-  
 
-  
+
+
   /**
    * Returns the date of this program.
    *
@@ -348,8 +566,8 @@ public class MutableProgram extends AbstractProgram {
     return mDate;
   }
 
-  
-  
+
+
   /**
    * Sets picture date to this program (may be null).
    *
@@ -368,9 +586,9 @@ public class MutableProgram extends AbstractProgram {
   public byte[] getPicture() {
     return mPicture;
   }
-  
-  
-  
+
+
+
   /**
    * Gets a String representation of this program for debugging.
    *

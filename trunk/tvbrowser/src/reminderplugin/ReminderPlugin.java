@@ -107,13 +107,15 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   }
   
   
-  public void loadData(ObjectInputStream in)
+  public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
-    reminderList = (ReminderList) in.readObject();
+    int version = in.readInt();
+    
+    reminderList = new ReminderList(in);
     if (reminderList != null) {
       reminderList.removeExpiredItems();
-      reminderList.setReminderTimerListener( this );
+      reminderList.setReminderTimerListener(this);
       
       // mark the programs
       Iterator iter = reminderList.getReminderItems();
@@ -126,8 +128,10 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
   
   
-  public void storeData(ObjectOutputStream out) throws IOException {
-    out.writeObject(reminderList);
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(1); // version
+
+    reminderList.writeData(out);
   }
   
   
@@ -136,8 +140,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     return settings;
   }
   
+  
+  
   public void loadSettings(Properties settings) {
-    // if (this.settings != null) throw new NullPointerException("sdfkg");
     if (settings == null ) {
       settings = new Properties();
     }

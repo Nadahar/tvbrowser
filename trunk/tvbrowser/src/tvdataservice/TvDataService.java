@@ -24,16 +24,23 @@
  * $Revision$
  */
 
-package tvdataloader;
+package tvdataservice;
 
 import util.exc.TvBrowserException;
 
+import devplugin.ChannelDayProgram;
+
 /**
- * To write your own tv-data-loader implement this interface.
+ * To write your own TV data service implement this interface.
  *
  * @author Martin Oberhauser
  */
-public interface TVDataServiceInterface {
+public interface TvDataService {
+
+  /**
+   * Gets the localized name of this TV data service.
+   */
+  public String getName();
 
   /**
    * Called by the host-application before starting to download.
@@ -43,7 +50,7 @@ public interface TVDataServiceInterface {
   /**
    * Returns the whole program of the channel on the specified date.
    */
-  public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
+  public ChannelDayProgram downloadDayProgram(devplugin.Date date,
     devplugin.Channel channel) throws TvBrowserException;
 
   /**
@@ -51,43 +58,25 @@ public interface TVDataServiceInterface {
    */
   public void disconnect() throws TvBrowserException;
 
-  /**
-   * Called by the host-application to read the day-program of a channel from the file system.
-   * Enter code like "return (AbstractChannelDayProgram)in.readObject();" here.
-   */
-  public AbstractChannelDayProgram readChannelDayProgram(java.io.ObjectInputStream in)
-    throws java.io.IOException, ClassNotFoundException;
-    
-    
 	/**
 	 * Called by the host-application during start-up. Implements this method to
 	 * load your dataservices settings from the file system.
 	 */
   public void loadSettings(java.util.Properties settings);
-  
-  
+
   /**
    * Called by the host-application during shut-down. Implements this method to
    * store your dataservices settings to the file system.
    */
   public java.util.Properties storeSettings();
-  
+
   public SettingsPanel getSettingsPanel();
-  
+
   public boolean hasSettingsPanel();
-  
-  
-  
+
   /**
    * Gets the list of the channels that are available by this data service.
    */
   public devplugin.Channel[] getAvailableChannels();
-  
-  
-  
-  /**
-   * Gets the localized name of this TV data service.
-   */
-  public String getName();
 
 }

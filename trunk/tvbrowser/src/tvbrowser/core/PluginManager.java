@@ -63,7 +63,7 @@ public class PluginManager {
       ObjectInputStream in = null;
       try {
         in = new ObjectInputStream(new FileInputStream(f));
-        plugin.loadData(in);
+        plugin.readData(in);
       }
       catch (Exception exc) {
         String msg = mLocalizer.msg("error.1", "Loading data for plugin {0} failed!\n({1})",
@@ -96,7 +96,7 @@ public class PluginManager {
     ObjectOutputStream out = null;
     try {
       out = new ObjectOutputStream(new FileOutputStream(f));
-      plugin.storeData(out);
+      plugin.writeData(out);
     }
     catch(IOException exc) {
       String msg = mLocalizer.msg("error.2", "Saving data for plugin {0} failed!\n({1})",

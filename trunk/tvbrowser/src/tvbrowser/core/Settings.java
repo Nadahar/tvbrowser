@@ -32,18 +32,18 @@ import javax.swing.*;
 
 import util.exc.TvBrowserException;
 
-import tvdataloader.TVDataServiceInterface;
+import tvdataservice.TvDataService;
 import devplugin.Channel;
 import tvbrowser.ui.SkinPanel;
 
 class TVBrowserProperties extends java.util.Properties {
-		
+
   private HashSet unconfirmedSettingItems=new HashSet();
-  
+
   public TVBrowserProperties() {
     super();
   }
-  
+
   public Object setProperty(String key, String value) {
     String oldVal=getProperty(key);
     if (oldVal!=null && !oldVal.equals(value)) {
@@ -51,11 +51,11 @@ class TVBrowserProperties extends java.util.Properties {
     }else if (oldVal==null && value!=null) {
       unconfirmedSettingItems.add(key);
     }
-    
+
     return super.setProperty(key,value);
-    
+
   }
-  
+
   public boolean isUnconfirmedSettingItem(String key) {
     boolean result=false;
     if (unconfirmedSettingItems.contains(key)) {
@@ -64,7 +64,7 @@ class TVBrowserProperties extends java.util.Properties {
     }
     return result;
   }
-  
+
 }
 
 
@@ -89,8 +89,8 @@ public class Settings {
   private static final String USER_DIR="tvbrowser";
   //public static final String DATA_DIR="tvdata";
 
-  public static boolean settingHasChanged(String[] key) {	
-		
+  public static boolean settingHasChanged(String[] key) {
+
 		  boolean result=false;
 		  for (int i=0;i<key.length;i++) {
 			  if (settings.isUnconfirmedSettingItem(key[i])) {
@@ -117,7 +117,7 @@ public class Settings {
   }
 
 
-	public static String getTVDataDirectory() {		
+	public static String getTVDataDirectory() {
 		String res=settings.getProperty("tvdatadirectory");
 		if (res==null) {
 			java.io.File f=new File("tvdata");
@@ -125,7 +125,7 @@ public class Settings {
 		}
 		return res;
 	}
-	
+
 	public static void setTVDataDirectory(String dir) {
 		settings.setProperty("tvdatadirectory",dir);
 	}
@@ -138,7 +138,7 @@ public class Settings {
     if (!f.exists()) {
       f.mkdirs();
     }
-    
+
     File settingsFile = new File(getUserDirectoryName(), SETTINGS_FILE);
     FileOutputStream out = null;
     try {
@@ -168,12 +168,12 @@ public class Settings {
     catch (IOException evt) {
       mLog.info("No user settings found. using default user settings");
     }
-    
+
     initSubscribedChannels();
   }
 
-  
-  
+
+
   public static void setSubscribedChannels(Channel[] channels) {
   	String[] entries = new String[channels.length];
   	for (int i=0;i<entries.length;i++) {
@@ -183,23 +183,23 @@ public class Settings {
   	}
 	setStringListProperty("subscribedchannels", entries);
   }
-  
-  
-  
+
+
+
   private static void initSubscribedChannels() {
   	String[] entries = getStringListProperty("subscribedchannels");
-    
+
     for (int i = 0; i < entries.length; i++) {
       String entry = entries[i];
       int pos = entry.indexOf(':');
-      String dataLoaderClassName = entry.substring(0,pos);
+      String dataServiceClassName = entry.substring(0,pos);
       String id = entry.substring(pos + 1);
-      
-      TVDataServiceInterface dataLoader
-        = DataLoaderManager.getInstance().getDataLoader(dataLoaderClassName);
-      
-      if (dataLoader != null) { 
-        ChannelList.subscribeChannel(dataLoader, Integer.parseInt(id));  		
+
+      TvDataService dataService
+        = TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+
+      if (dataService != null) {
+        ChannelList.subscribeChannel(dataService, Integer.parseInt(id));
       }
     }
   }
@@ -243,7 +243,7 @@ public class Settings {
   public static boolean isTimeBtnVisible() {
     return "visible".equals(settings.getProperty("timebutton","visible"));
   }
-  
+
   public static void setTimeBtnVisible(boolean value) {
     settings.setProperty("timebutton", value ? "visible" : "hidden");
   }
@@ -359,15 +359,15 @@ public class Settings {
 
 
   public static String[] getButtonPlugins() {
-  	
+
 	 return getStringListProperty("buttonplugins");
    }
-  
+
    public static void setButtonPlugins(String[] plugins) {
    	 setStringListProperty("buttonplugins",plugins);
    }
-   
-   
+
+
    private static String[] getStringListProperty(String key) {
 
 	  String s=settings.getProperty(key);
@@ -391,22 +391,22 @@ public class Settings {
 		  result[i]=(String)list.get(i);
 	  }
 	  return result;
-  	
+
 	}
 
 	private static void setStringListProperty(String key, String[] strList) {
 		if (strList==null || strList.length==0) {
 			settings.setProperty(key,"");
 			return;
-		} 
+		}
 
 		String line="";
-			
+
 		for (int i=0;i<strList.length-1;i++) {
 			line+=strList[i]+",";
 		}
 		line+=strList[strList.length-1];
-		settings.setProperty(key,line);		
+		settings.setProperty(key,line);
 	}
 
 
@@ -417,16 +417,16 @@ public class Settings {
     return getStringListProperty("plugins");
   }
 
-  
-  
+
+
   public static void setInstalledPlugins(String[] plugins) {
 	setStringListProperty("plugins", plugins);
   }
-  
+
   public static void setDownloadPeriod(int period) {
-  	settings.setProperty("downloadperiod",""+period);  	
+  	settings.setProperty("downloadperiod",""+period);
   }
-  
+
   public static int getDownloadPeriod() {
   	String period=settings.getProperty("downloadperiod");
   	int result;
@@ -436,7 +436,7 @@ public class Settings {
   		result=0;
   	}
   	return result;
-  	
+
   }
 
 }

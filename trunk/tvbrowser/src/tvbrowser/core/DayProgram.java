@@ -29,6 +29,8 @@ package tvbrowser.core;
 import java.util.Iterator;
 import java.util.HashMap;
 
+import devplugin.ChannelDayProgram;
+
 /**
  * The DayProgram class holds the whole tv program data of one day.
  *
@@ -38,24 +40,24 @@ public class DayProgram {
 
   /** Contains for a channel ID (key) an AbstractChannelDayProgram (value) */
   private HashMap mDayProgramHash;
-  
+
   /** The date of this day program. */
   private devplugin.Date mDate;
-  
-  
-  
+
+
+
   /**
    * Creates a new instance of DayProgram.
    *
    * @param date The date of the day program.
-   */  
+   */
   public DayProgram(devplugin.Date date) {
     mDayProgramHash = new HashMap();
     mDate = date;
   }
-  
 
-  
+
+
   /**
    * Adds the day program of a single channel.
    *
@@ -63,7 +65,7 @@ public class DayProgram {
    * @throws IllegalArgumentException if the specified ChannelDayProgram has
    *         another date than this day program.
    */
-  public void addChannelDayProgram(tvdataloader.AbstractChannelDayProgram prog)
+  public void addChannelDayProgram(ChannelDayProgram prog)
     throws IllegalArgumentException
   {
     if (! mDate.equals(prog.getDate())) {
@@ -74,35 +76,33 @@ public class DayProgram {
 
     // Get the key
     Object key = new Integer(prog.getChannel().getId());
-    
+
     // Check whether we already have this ChannelDayProgram
     if (mDayProgramHash.get(key) != null) {
       throw new IllegalArgumentException("The ChannelDayProgram for "
         + prog.getChannel().getName() + " is already in this day program "
         + "(from " + mDate + ")!");
     }
-    
+
     // Put it into the cache
     mDayProgramHash.put(key, prog);
   }
-  
-  
-  
+
+
+
   /**
    * Gets the program for the specified channel.
    *
    * @param channel The channel to get the program for.
    * @return the program for the specified channel.
-   */  
-  public tvdataloader.AbstractChannelDayProgram getChannelDayProgram(
-    devplugin.Channel channel)
-  {
+   */
+  public ChannelDayProgram getChannelDayProgram(devplugin.Channel channel) {
     Object key = new Integer(channel.getId());
-    return (tvdataloader.AbstractChannelDayProgram) mDayProgramHash.get(key);
+    return (ChannelDayProgram) mDayProgramHash.get(key);
   }
 
-  
-  
+
+
   /**
    * Gets the date of this day program.
    *
@@ -112,8 +112,8 @@ public class DayProgram {
     return mDate;
   }
 
-  
-  
+
+
   /**
    * Gets all channel day programs of this day program.
    *
@@ -124,22 +124,21 @@ public class DayProgram {
     return mDayProgramHash.values().iterator();
   }
 
-  
+
 
   /**
    * Marks all programs which are currently on air.
    */
   public void markProgramsOnAir() {
-    Iterator it=mDayProgramHash.values().iterator();
-    tvdataloader.AbstractChannelDayProgram cur;
-    while (it.hasNext()) {
-      cur=(tvdataloader.AbstractChannelDayProgram)it.next();
+    Iterator iter = mDayProgramHash.values().iterator();
+    while (iter.hasNext()) {
+      ChannelDayProgram cur = (ChannelDayProgram) iter.next();
       cur.markProgramOnAir();
     }
   }
 
-  
-  
+
+
   /**
    * Gets the program object having the specified ID.
    * <p>
@@ -149,23 +148,21 @@ public class DayProgram {
    * @return the program object having the specified ID.
    */
   public devplugin.Program getProgram(String progID) {
-
-    Iterator it=mDayProgramHash.values().iterator();
+    Iterator it = mDayProgramHash.values().iterator();
     devplugin.Program prog=null;
     while (it.hasNext()) {
-      tvdataloader.AbstractChannelDayProgram acdp =
-        (tvdataloader.AbstractChannelDayProgram)it.next();
+      ChannelDayProgram channelDayProg = (ChannelDayProgram) it.next();
 
-      prog=acdp.getProgram(progID);
-      if (prog!=null) {
+      prog = channelDayProg.getProgram(progID);
+      if (prog != null) {
         return prog;
       }
     }
     return prog;
   }
-  
-  
-  
+
+
+
   /**
    * Gets whether this day program is empty
    */

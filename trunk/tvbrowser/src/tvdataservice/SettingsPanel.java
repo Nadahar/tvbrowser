@@ -23,7 +23,7 @@
  * @author Martin Oberhauser
  */
  
- package tvdataloader;
+ package tvdataservice;
  
  public abstract class SettingsPanel extends javax.swing.JPanel {
  
