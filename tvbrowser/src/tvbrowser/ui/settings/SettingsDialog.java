@@ -44,6 +44,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.ui.UiUtilities;
@@ -64,7 +65,7 @@ public class SettingsDialog {
   private JTree mSelectionTree;
   private JPanel mSettingsPn;
   private JScrollPane mSettingsPane;
-  private JButton mOkBt, mCancelBt;
+  private JButton mOkBt, mCancelBt, mApplyBt;
   
   
   
@@ -135,6 +136,16 @@ public class SettingsDialog {
     });
     buttonPn.add(mCancelBt);
         
+    
+    mApplyBt = new JButton(mLocalizer.msg("apply", "Apply"));
+    mApplyBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        saveSettings();
+        Settings.handleChangedSettings();
+      }
+    });
+    buttonPn.add(mApplyBt);
+    
     mDialog.pack();
     
     showSettingsPanelForSelectedNode();

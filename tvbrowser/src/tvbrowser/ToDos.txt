@@ -1,13 +1,11 @@
 TODOs:
 
-
 - (B) Senderlisten direkt vom Server holen (Bodo, fast fertig)
 - (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail) (Bodo, fast fertig)
 - Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
 - (M) Logos zu allen Sendern
 - Anpassbarkeit der GUI (wo welches Element ist) - nicht so wichtig
 - (M) Ordner in den Lieblingssendungen
-- Uebernehmen-Knopf in Einstellungen
 - News-Plugin:
     Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
     evtl. Option "News automatisch holen"
@@ -19,7 +17,6 @@ TODOs:
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden
 - Statusbar kann nicht ausgeblendet werden
-- Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
 - (M) Tooltips fuer Buttons fehlen
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
 - fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
@@ -43,7 +40,7 @@ java.lang.NullPointerException
 
 Entfernte ToDos:
 - Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
-
+- Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
 
 Bugs:
 - Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
@@ -57,3 +54,4 @@ Erledigt:
 - (B) Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
 - (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
 - (B) Einstellungen --> Aussehen --> Look&Feel --> Hintergrund: hat praktisch keine Bedeutung
+- (B) Uebernehmen-Knopf in Einstellungen
