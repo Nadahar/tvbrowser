@@ -26,7 +26,6 @@ public class ListViewPlugin extends Plugin {
      * Creates the Plugin
      */
     public ListViewPlugin() {
-        _listViewInstance = this;
     }
 
     /**
@@ -36,7 +35,7 @@ public class ListViewPlugin extends Plugin {
         String name = mLocalizer.msg("pluginName", "View List Plugin");
         String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(1, 0));
+        return new PluginInfo(name, desc, author, new Version(1, 20));
     }
 
     /**
@@ -77,6 +76,9 @@ public class ListViewPlugin extends Plugin {
         return mLocalizer.msg("buttonName", "View Liste");
     }
 
+    /**
+     * Icon to show for a marked program
+     */
     public String getMarkIconName() {
         return "listviewplugin/listview16.gif";
     }
@@ -87,18 +89,6 @@ public class ListViewPlugin extends Plugin {
     public String getButtonIconName() {
         return "listviewplugin/listview16.gif";
     }
-
-    /**
-     * Returns an Instance of this Plugin
-     * 
-     * @return Instance of this Plugin
-     */
-    public static ListViewPlugin getInstance() {
-        return _listViewInstance;
-    }
-
-    /** Instance of this Plugin */
-    private static ListViewPlugin _listViewInstance;
 
     /** Needed for Position */
     private Point _locationListDialog = null;

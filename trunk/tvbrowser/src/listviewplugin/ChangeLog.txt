@@ -1,4 +1,11 @@
 Changelog ListViewPlugin
 
-0.01:
+1.2:
+- Added selector for specific Date/Time
+- Fixes Bug when "in 30 Minutes" is next day
+
+1.1:
+- Added selector for "now/in 15 minutes..."
+
+1.0:
 - initial version
