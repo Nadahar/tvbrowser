@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd java
-javac -classpath poi-2.5-final-20040302.jar;PDSRunner.jar SimplePDS.java ExcelPDS.java
-cd ..
+. ./setClasspath.sh
+
+javac -classpath java/PDSRunner.jar:"$PDS_CLASSPATH" -sourcepath java -d java *.java

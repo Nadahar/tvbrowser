@@ -1,5 +1,5 @@
 @echo off
 
-java -cp java:java/PrimaryDataManager.jar primarydatamanager.DayProgramFileTranslator %*
+call setClasspath.cmd
 
-pause
+java -cp java\PrimaryDataManager.jar;%PDS_CLASSPATH% primarydatamanager.DayProgramFileTranslator %*

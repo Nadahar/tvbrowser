@@ -1,5 +1,5 @@
 @echo off
 
-java -cp java;java\PrimaryDataManager.jar;java\poi-2.5-final-20040302.jar primarydatamanager.PrimaryDataManager %*
+call setClasspath.cmd
 
-pause
+java -cp java\PrimaryDataManager.jar;%PDS_CLASSPATH% primarydatamanager.PrimaryDataManager %*
