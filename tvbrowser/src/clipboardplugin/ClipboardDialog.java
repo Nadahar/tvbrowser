@@ -214,6 +214,13 @@ public class ClipboardDialog extends JDialog {
         int[] selection = mProgramJList.getSelectedIndices();
         if (selection.length == 0) return;
 
+        for (int i = 0; i < selection.length; i++) {
+            if (selection[i] >= mClipList.size()) {
+                mProgramJList.setSelectedIndex(-1);
+                return;
+            }
+        }
+        
         int insertPos = selection[0] + nrRows;
         if (insertPos < 0) {
             insertPos = 0;
@@ -226,7 +233,7 @@ public class ClipboardDialog extends JDialog {
         Object[] selectedRows = new Object[selection.length];
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             selectedRows[i] = mClipList.elementAt(selection[i]);
-            mClipList.removeElementAt(selection[i]);
+          	mClipList.removeElementAt(selection[i]);
         }
 
         // Zeilen wieder einf�gen
