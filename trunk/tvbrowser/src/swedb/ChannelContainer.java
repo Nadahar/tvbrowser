@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.StringTokenizer;
 
 /**
  *
@@ -20,17 +21,32 @@ public class ChannelContainer {
   private String id;
   private String name;
   private String baseUrl;
-  private long lastUpdate;
+  private Hashtable lastUpdate = new Hashtable();
   
   /** Creates a new instance of channelContainer */
-  public ChannelContainer(String id, String name, String baseUrl, long time) {
+  public ChannelContainer(String id, String name, String baseUrl, String timeString) {
     this.name = name;
     this.baseUrl = baseUrl;
     this.id = id;
-    lastUpdate = time;
+    try {
+      devplugin.Date now = new devplugin.Date();
+      StringTokenizer ST = new StringTokenizer(timeString,"_");
+      while (ST.hasMoreTokens()){
+        String part = ST.nextToken();
+        StringTokenizer ST2 = new StringTokenizer(part,"-");
+        String dateinfo = ST2.nextToken();
+        StringTokenizer ST3 = new StringTokenizer(dateinfo,":");
+        devplugin.Date day = new devplugin.Date(Integer.parseInt(ST3.nextToken()),Integer.parseInt(ST3.nextToken()),Integer.parseInt(ST3.nextToken()));
+        if (now.compareTo(day) <= 0){
+          lastUpdate.put(dateinfo,new Long(ST2.nextToken()));
+        }
+      }
+    } catch (Exception E){
+    }
+    //lastUpdate = time;
   }
-
-
+  
+  
   /** Getter for property baseUrl.
    * @return Value of property baseUrl.
    */
@@ -80,15 +96,33 @@ public class ChannelContainer {
   /** Getter for property lastUpdate.
    * @return Value of property lastUpdate.
    */
-  public long getLastUpdate() {
-    return lastUpdate;
+  public long getLastUpdate(devplugin.Date day) {
+    Long temp = (Long)lastUpdate.get(Integer.toString(day.getYear())+":"+Integer.toString(day.getMonth())+":"+Integer.toString(day.getDayOfMonth()));
+    if (temp == null){
+      return 0;
+    } else {
+      return temp.longValue();
+    }
   }
   
-  /** Setter for property lastUpdate.
+  /**
+   * Setter for property lastUpdate.
    * @param lastUpdate New value of property lastUpdate.
    */
-  public void setLastUpdate(long lastUpdate) {
-    this.lastUpdate = lastUpdate;
+  public void setLastUpdate(devplugin.Date day, long lastUpdate) {
+    this.lastUpdate.put (Integer.toString(day.getYear())+":"+Integer.toString(day.getMonth())+":"+Integer.toString(day.getDayOfMonth()),new Long (lastUpdate));
   }
-  
+
+  public String getLastUpdateString (){
+    StringBuffer SB = new StringBuffer ();
+    Enumeration enu = lastUpdate.keys();
+    while (enu.hasMoreElements()){
+      String date = (String) enu.nextElement();
+      SB.append(date);
+      SB.append("-");
+      SB.append(lastUpdate.get(date).toString());
+      SB.append("_");
+    }
+    return SB.toString();
+  }
 }
