@@ -176,6 +176,17 @@ public class SearchDialog extends JDialog {
     
     pack();
   }
+  
+  
+  
+  /**
+   * Sets the text of the pattern text field.
+   *
+   * @param text The new pattern text.
+   */
+  public void setPatternText(String text) {
+    mPatternTF.setText(text);
+  }
 
   
   

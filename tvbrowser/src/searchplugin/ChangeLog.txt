@@ -1,5 +1,8 @@
 Changelog SearchPlugin
 
+1.0.3
+- Search program repetitions (deutsch: Wiederholungen suchen)
+
 1.0.2
 - no Serializable Classes any more
 

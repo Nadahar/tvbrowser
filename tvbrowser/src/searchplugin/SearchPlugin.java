@@ -60,15 +60,44 @@ public class SearchPlugin extends Plugin {
     UiUtilities.centerAndShow(dlg);
   }
 
+
+
   /**
-	 * Returns the name of the file, containing your plugin icon (in the jar-File).
-	 */ 
-  public String getMarkIconName() { return null ;}
+   * This method is invoked by the host-application if the user has choosen your
+   * plugin from the context menu.
+   */
+  public void execute(Program program) {
+    SearchDialog dlg = new SearchDialog(super.parent);
+    dlg.setPatternText(program.getTitle());
+    UiUtilities.centerAndShow(dlg);
+  }
+
+
+
+  /**
+   * Returns the name of the file, containing your plugin icon (in the jar-File).
+   */ 
+  public String getMarkIconName() {
+    return "searchplugin/Find16.gif";
+  }
+
+
+
+  /**
+   * This method is called by the host-application to show the plugin in the
+   * context menu.
+   */
+  public String getContextMenuItemText() {
+    return mLocalizer.msg( "searchRepetion", "Search repetition" );
+  }
+
   
-  public String getButtonIconName() { return "searchplugin/Find16.gif" ; }
+  public String getButtonIconName() {
+    return "searchplugin/Find16.gif";
+  }
   
   public String getButtonText() {
-  	return mLocalizer.msg( "searchPrograms" ,"Search programs" );
+  	return mLocalizer.msg( "searchPrograms", "Search programs" );
   }
   
   public PluginInfo getInfo() {
