@@ -1,9 +1,31 @@
-Installation:
+Installation von TV-Browser
+===========================
 
-1. Gesamte Verzeichnisstruktur ingewuenschtes Verzeichnis verschieben
-2. Ausführen mit:
-       java -jar tvbrowser.jar
-   oder (Doppel-)Klick auf tvbrowser.jar
+Diese Anleitung bezieht sich auf MS-Windows-Systeme. Auf anderen Systemen laeuft die Installation aber im Wesentlichen gleich ab.
 
-   (erfordert JRE 1.3)
+1. Entpacken:
+-------------
 
+ZIP-File mit z.B. WinzIP in das gewuenschte Verzeichnis entpacken (z.B. c:\Programme).
+
+2. Java installieren:
+--------------------
+TV-Browser benoetigt Java JRE ab Version 1.4
+Bei Unsicherheit, ob diese (oder eine höhere) Version installiert ist, einfach "java -version" (ohne Anfuehrungszeichen) eingeben.
+Falls eine Fehlermeldung oder eine niedrigere Version als 1.4 ausgegeben wird, muß nun Java installiert werden.
+Die aktuelle Version kann hier gratis heruntergeladen werden: http://java.sun.com/getjava/
+
+3. TV-Browser starten:
+----------------------
+Wenn Java ordnungsgemaess installiert ist, muss nur die Datei "tvbrowser.jar" doppelgeklickt werden.
+Alternativ kann TV-Browser auch von der Konsole gestartet werden:
+"java -jar tvbrowser.jar"
+
+
+Viel Spass!
+
+Martin
+
+Aktuelles rund um TV-Browser ist auf der TV-Browser-Website zu finden: http://tvbrowser.sourceforge.net
+
+Dort sind auch immer neben der aktuellsten Version auch neue Plugins verfuegbar.
