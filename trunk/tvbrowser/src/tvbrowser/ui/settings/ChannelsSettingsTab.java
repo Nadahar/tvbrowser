@@ -205,6 +205,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       
       if (ChannelList.isSubscribedChannel(channel)) {
         int pos = ChannelList.getPos(channel);
+        ChannelList.getSubscribedChannels()[pos].copySettingsToChannel(channel);
         subscribedChannelArr[pos] = channel;
       } else {
         availableChannelList.add(channel);
