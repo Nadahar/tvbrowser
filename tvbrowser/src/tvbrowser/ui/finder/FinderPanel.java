@@ -76,7 +76,7 @@ public class FinderPanel extends JComponent implements FinderListener {
     	from=cur-lifespan;
     }
     
-    for (int i=from;i<cur+28;i++) {
+    for (int i=from;i<cur+56;i++) {
         Date d=new Date(i);
         item=new FinderItem(this, d);
         labelList.add(item);

@@ -265,6 +265,8 @@ public class XmlTvDataService extends AbstractTvDataService {
     Channel channel, ProgramDispatcher programDispatcher)
     throws TvBrowserException
   {
+  	
+  	
     XmlTvHandler handler
       = new XmlTvHandler(programDispatcher, getAvailableChannels());
 

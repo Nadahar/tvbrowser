@@ -125,8 +125,9 @@ import java.util.regex.*;
 			IOUtilities.download(new URL(url), targetFile);
 		}
 		catch (Exception exc) {
-			throw new TvBrowserException(getClass(), "error.1",
-				"Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
+			// ignore error
+			//throw new TvBrowserException(getClass(), "error.1",
+			//	"Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
 		}
 	}
 
