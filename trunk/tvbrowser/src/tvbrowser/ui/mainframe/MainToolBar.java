@@ -130,7 +130,7 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
     mUpdateBtn.setActionListener(this);
     mSettingsBtn.setActionListener(this);
 
-    buttons.add(mFilterBtn = new ToolBarButton("#filter",TVBrowser.mLocalizer.msg("button.filter", "Filter"),MainFrame.mLocalizer.msg("menuinfo.filter",""), new ImageIcon("imgs/Preferences24.gif")));    
+    buttons.add(mFilterBtn = new ToolBarButton("#filter",TVBrowser.mLocalizer.msg("button.filter", "Filter"),MainFrame.mLocalizer.msg("menuinfo.filter",""), new ImageIcon("imgs/Filter24.png")));    
     mFilterBtn.setActionListener(this);
 
     
