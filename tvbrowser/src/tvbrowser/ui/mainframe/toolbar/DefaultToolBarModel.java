@@ -93,7 +93,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mAvailableActions = new HashMap();
     mUpdateAction = createAction(TVBrowser.mLocalizer.msg("button.update", "Update"),"#update",MainFrame.mLocalizer.msg("menuinfo.update",""),new ImageIcon("imgs/Refresh16.gif"), new ImageIcon("imgs/Refresh24.gif"),ToolBar.BUTTON_ACTION, this);
     mSettingsAction = createAction(TVBrowser.mLocalizer.msg("button.settings", "Settings"),"#settings",MainFrame.mLocalizer.msg("menuinfo.settings",""), new ImageIcon("imgs/Preferences16.gif"), new ImageIcon("imgs/Preferences24.gif"), ToolBar.BUTTON_ACTION, this);
-    mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"),"#filter",MainFrame.mLocalizer.msg("menuinfo.filter",""), new ImageIcon("imgs/Filter24.png"), new ImageIcon("imgs/Filter24.png"), ToolBar.TOOGLE_BUTTON_ACTION, this);
+    mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"),"#filter",MainFrame.mLocalizer.msg("menuinfo.filter",""), new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter24.png"), ToolBar.TOOGLE_BUTTON_ACTION, this);
     mPluginViewAction = createAction(TVBrowser.mLocalizer.msg("button.pluginView","Plugin View"),"#pluginView",MainFrame.mLocalizer.msg("menuinfo.pluginView",""), new ImageIcon("imgs/Bookmarks16.gif"), new ImageIcon("imgs/Bookmarks24.gif"), ToolBar.TOOGLE_BUTTON_ACTION, this);
 
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
