@@ -4,6 +4,9 @@ Changelog TVBrowser
  - bugfix: merge dayprograms correctly
  - bugfix: proxy authentication
 
+1.0 RC 04
+- store settings automatically
+
 1.0 RC 02
 - bugfix: ReminderPlugin: set property "showmsgbox" to true, if it's not initialized
 - bugfix: Program table: apply changed fonts immediately
