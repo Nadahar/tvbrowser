@@ -119,7 +119,7 @@ public class PluginFilterComponent implements FilterComponent {
 
 
     public String toString() {
-        return "plugin";
+        return mLocalizer.msg("Plugin", "Plugin");
     }
         
     
