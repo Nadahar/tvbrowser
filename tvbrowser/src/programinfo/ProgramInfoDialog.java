@@ -37,6 +37,8 @@ import java.util.logging.Level;
 import util.io.IOUtilities;
 import util.ui.*;
 
+import util.ui.html.*;
+
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
