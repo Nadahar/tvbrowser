@@ -103,6 +103,7 @@
     <echo message="  run               Runs the project."/>
     <echo message="  run-win           Runs the project using the Windows runtime."/>
     <echo message="  installer         Creates a Windows installer for the project."/>
+    <echo message="  zip-src           Zips the source code."/>
     <echo message="  public            Creates all the stuff that can be downloaded."/>
     <echo message="  public-tvdatakit  Packs the TV data starter kit."/>
     <echo message="  test              Does the JUnit tests."/>
@@ -508,7 +509,7 @@
    | This target depends on clean-runtime to be sure that the runtime
    | directory contains no stuff we don't want to be destributed.
    +-->
-  <target name="public" depends="clean, clean-runtime, test, runtime, doc, installer">
+  <target name="public" depends="clean, clean-runtime, test, runtime, doc, installer, zip-src">
     <mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_bin.zip">
@@ -519,25 +520,6 @@
     <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_doc.zip">
       <zipfileset prefix="tvbrowser_v${tvbrowser.version}/doc"
                   dir="${doc.dir}"/>
-    </zip>
-
-    <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_src.zip">
-      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
-                  dir="${src.dir}">
-        <include name="com/**"/>
-        <include name="help/**"/>
-        <include name="imgs/**"/>
-        <include name="test/**"/>
-        <include name="tvbrowser/**"/>
-        <include name="devplugin/**"/>
-        <include name="tvdataservice/**"/>
-        <include name="util/**"/>
-        <exclude name="**/secret/**"/>
-        <exclude name="**/CVS/**"/>
-      </zipfileset>
-      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
-                  dir="${txt.dir}"
-                  includes="LICENSE.txt"/>
     </zip>
 
     <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_cvs.zip">
@@ -558,6 +540,31 @@
         <exclude name="**/secret/**"/>
         <exclude name="**/CVS/**"/>
       </zipfileset>
+    </zip>
+  </target>
+
+
+	<!--
+   | Zips the source code.
+	 +-->
+  <target name="zip-src">
+    <zip destfile="${public.dir}/tvbrowser_v${tvbrowser.version}_src.zip">
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
+                  dir="${src.dir}">
+        <include name="com/**"/>
+        <include name="help/**"/>
+        <include name="imgs/**"/>
+        <include name="test/**"/>
+        <include name="tvbrowser/**"/>
+        <include name="devplugin/**"/>
+        <include name="tvdataservice/**"/>
+        <include name="util/**"/>
+        <exclude name="**/secret/**"/>
+        <exclude name="**/CVS/**"/>
+      </zipfileset>
+      <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
+                  dir="${txt.dir}"
+                  includes="LICENSE.txt"/>
     </zip>
 
     <antcall target="-zipPackageSrc">
@@ -608,7 +615,7 @@
 
 
   <!--
-   | Helper target for public.
+   | Helper target for pack-src.
    |
    | Zips the source code of one package.
    +-->
