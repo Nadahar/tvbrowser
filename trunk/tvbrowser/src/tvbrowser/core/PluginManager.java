@@ -65,10 +65,12 @@ public class PluginManager {
   private PluginManager() {
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramAdded(ChannelDayProgram prog) {
-        fireTvDataChanged(prog);
+        fireTvDataAdded(prog);
       }
 
-      public void dayProgramDeleted(ChannelDayProgram prog) {}
+      public void dayProgramDeleted(ChannelDayProgram prog) {
+        fireTvDataDeleted(prog);
+      }
     });
 
     Plugin.setPluginManager(createDevpluginPluginManager());
@@ -425,24 +427,36 @@ public class PluginManager {
   public boolean isInstalled(Plugin plugin) {
     return mInstalledPluginList.contains(plugin);
   }
-
   
   
   /**
-   * Calls for every subscribed plugin the handleTvDataChanged() method,
-   * so the mAvailablePluginHash can react on the new data.
+   * Calls for every subscribed plugin the fireTvDataAdded(...) method,
+   * so the Plugin can react on the new data.
    *
-   * @see Plugin#handleTvDataChanged()
+   * @see Plugin#handleTvDataAdded(ChannelDayProgram)
    */
-  private void fireTvDataChanged(ChannelDayProgram newProg) {
+  private void fireTvDataAdded(ChannelDayProgram newProg) {
     Iterator pluginIter = mInstalledPluginList.iterator();
     while (pluginIter.hasNext()) {
       Plugin plugin = (Plugin) pluginIter.next();
-      plugin.handleTvDataChanged();
-      plugin.handleTvDataChanged(newProg);
+      plugin.handleTvDataAdded(newProg);
     }
   }
 
+
+  /**
+   * Calls for every subscribed plugin the fireTvDataRemoved(...) method,
+   * so the Plugin can react on the deleted data.
+   *
+   * @see Plugin#handleTvDataDeleted(ChannelDayProgram)
+   */
+  private void fireTvDataDeleted(ChannelDayProgram newProg) {
+    Iterator pluginIter = mInstalledPluginList.iterator();
+    while (pluginIter.hasNext()) {
+      Plugin plugin = (Plugin) pluginIter.next();
+      plugin.handleTvDataDeleted(newProg);
+    }
+  }
 
   
   private static devplugin.PluginManager createDevpluginPluginManager() {

@@ -23,11 +23,9 @@
  *   $Author$
  * $Revision$
  */
-
 package tvdataservice;
 
 import java.util.*;
-import java.io.*;
 
 import util.io.IOUtilities;
 
@@ -45,9 +43,7 @@ import devplugin.Program;
  */
 public class MutableChannelDayProgram implements ChannelDayProgram {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(MutableChannelDayProgram.class.getName());
-
+  /** The program that is currently on air. May be null. */
   private Program mProgramOnAir;
 
   /** The date of this program list. */
@@ -74,42 +70,6 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     mChannel = channel;
 
     mProgramList = new ArrayList();
-  }
-  
-  
-  
-  public MutableChannelDayProgram(ObjectInputStream in)
-    throws IOException, ClassNotFoundException
-  {
-    int version = in.readInt();
-
-    mDate = new devplugin.Date(in);
-    mChannel = Channel.readData(in, false);
-    
-    int size = in.readInt();
-    mProgramList = new ArrayList(size);
-    for (int i = 0; i < size; i++) {
-      MutableProgram prog = new MutableProgram(in);
-      mProgramList.add(prog);
-    }
-  }
-
-  
-  
-  /**
-   * Writes this instance to a stream.
-   */
-  public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-    
-    mDate.writeData(out);
-    mChannel.writeData(out);
-    
-    out.writeInt(mProgramList.size());
-    for (int i = 0; i < mProgramList.size(); i++) {
-      MutableProgram prog = (MutableProgram) mProgramList.get(i);
-      prog.writeData(out);
-    }
   }
 
 
@@ -207,6 +167,13 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     mProgramList.add(addIdx, program);
   }
 
+
+  /**
+   * Removes all programs from this day program.
+   */
+  public void removeAllPrograms() {
+    mProgramList.clear();
+  }
 
 
   /**

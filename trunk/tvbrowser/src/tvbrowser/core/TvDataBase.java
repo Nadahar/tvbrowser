@@ -28,12 +28,11 @@ package tvbrowser.core;
 import java.io.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvdataservice.MutableChannelDayProgram;
 
 import devplugin.Channel;
@@ -90,7 +89,13 @@ public class TvDataBase {
   
   
   public ChannelDayProgram getDayProgram(Date date, Channel channel) {
-    return getCacheEntry(date, channel, true);
+    OnDemandDayProgramFile progFile = getCacheEntry(date, channel, true);
+    
+    if (progFile != null) {
+      return progFile.getDayProgram();
+    } else {
+      return null;
+    }
   }
   
   
@@ -110,18 +115,32 @@ public class TvDataBase {
         backupFile = null;
       }
     }
+
+    // Invalidate the program file from the cache
+    OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
+    if (oldProgFile != null) {
+      oldProgFile.setValid(false);
+
+      // Remove the old entry from the cache (if it exists)
+      removeCacheEntry(key);
+    }
     
     // Save the new program
     try {
-      saveDayProgram(prog);
+      // Create a new program file
+      OnDemandDayProgramFile newProgFile
+        = new OnDemandDayProgramFile(file, prog);
+
+      // Save the day program
+      newProgFile.saveDayProgram();
       
       // Saving succeed -> Delete the backup
       if (backupFile != null) {
         backupFile.delete();
       }
       
-      // Remove the old entry from the cache (if it exists)
-      removeCacheEntry(key);
+      // Put the new program file in the cache
+      addCacheEntry(key, newProgFile);
     
       // Inform the listeners
       if (oldProg != null) {
@@ -148,38 +167,30 @@ public class TvDataBase {
   }
 
 
-  private synchronized ChannelDayProgram getCacheEntry(Date date,
+  private synchronized OnDemandDayProgramFile getCacheEntry(Date date,
     Channel channel, boolean loadFromDisk)
   {
     String key = getDayProgramKey(date, channel);
-    SoftReference entry = (SoftReference) mTvDataHash.get(key);
 
     // Try to get the program from the cache
-    ChannelDayProgram prog = null;
-    if (entry != null) {
-      prog = (ChannelDayProgram) entry.get();
-      if (prog == null) {
-        // The program was removed by the garbage collector
-        // -> Take the entry from the hash
-        removeCacheEntry(key);
-      }
-    }
+    OnDemandDayProgramFile progFile = (OnDemandDayProgramFile) mTvDataHash.get(key);
     
     // Try to load the program from disk
-    if (loadFromDisk && (prog == null)) {
-      prog = loadDayProgram(date, channel);
-      if (prog != null) {
-        addCacheEntry(key, prog);
-        return prog;
+    if (loadFromDisk && (progFile == null)) {
+      progFile = loadDayProgram(date, channel);
+      if (progFile != null) {
+        addCacheEntry(key, progFile);
       }
     }
     
-    return prog;
+    return progFile;
   }
   
   
-  private synchronized void addCacheEntry(String key, ChannelDayProgram prog) {
-    mTvDataHash.put(key, new SoftReference(prog));
+  private synchronized void addCacheEntry(String key,
+    OnDemandDayProgramFile progFile)
+  {
+    mTvDataHash.put(key, progFile);
   }
   
   
@@ -249,31 +260,21 @@ public class TvDataBase {
   }
 
 
-  private ChannelDayProgram loadDayProgram(Date date, Channel channel) {
+  private OnDemandDayProgramFile loadDayProgram(Date date, Channel channel) {
     File file = getDayProgramFile(date, channel);
     if (! file.exists()) {
       return null;
     }
     
-    FileInputStream in = null;
     try {
-      in = new FileInputStream(file);
-      ObjectInputStream stream = new ObjectInputStream(in);
-
-      MutableChannelDayProgram prog = new MutableChannelDayProgram(stream);
-
-      stream.close();
-      in.close();
-      
-      return prog;
+      OnDemandDayProgramFile progFile
+        = new OnDemandDayProgramFile(file, date, channel);
+      progFile.loadDayProgram();
+      return progFile;
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
         + date + " failed. The file will be deleted...", exc);
 
-      if (in != null) {
-        try { in.close(); } catch (IOException exc2) {}
-      }
-      
       file.delete();
       
       return null;
@@ -281,28 +282,6 @@ public class TvDataBase {
   }
   
   
-  private void saveDayProgram(MutableChannelDayProgram prog)
-    throws IOException
-  {
-    FileOutputStream out = null;
-    try {
-      File file = getDayProgramFile(prog.getDate(), prog.getChannel());
-      out = new FileOutputStream(file);
-      ObjectOutputStream stream = new ObjectOutputStream(out);
-      
-      prog.writeData(stream);
-      
-      stream.close();
-      out.close();
-    }
-    finally {
-      if (out != null) {
-        try { out.close(); } catch (IOException exc) {}
-      }
-    }
-  }
-
-
   private File getDayProgramFile(Date date, Channel channel) {
     String fileName = getDayProgramKey(date, channel);
       
