@@ -98,7 +98,7 @@ public class NewsDialog {
    * @param newNewsCount The number of news that should be marked as new.
    */
   public NewsDialog(Component parent, ArrayList newsList, int newNewsCount) {
-    mDialog = UiUtilities.createDialog(parent, true);
+    mDialog = UiUtilities.createDialog(parent, false);
     mNewsList = newsList;
     mNewNewsCount = newNewsCount;
     
