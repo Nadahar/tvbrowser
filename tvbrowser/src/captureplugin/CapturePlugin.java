@@ -24,7 +24,7 @@
  */
 package captureplugin;
 
-import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -127,7 +127,7 @@ public class CapturePlugin extends devplugin.Plugin {
         String desc = mLocalizer.msg("Desc", "Starts a external Program with configurable Parameters");
         String author = "Bodo Tasche, Andreas Hessel";
 
-        return new PluginInfo(name, desc, author, new Version(2, 01));
+        return new PluginInfo(name, desc, author, new Version(2, 02));
     }
 
     /**
@@ -151,7 +151,7 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     public void executeProgram(Program program) {
         
-        Component comp = UiUtilities.getLastModalChildOf(getParentFrame()); 
+        Window comp = UiUtilities.getLastModalChildOf(getParentFrame()); 
 
         if (mConfig.getDevices().size() <= 0) {
             JOptionPane.showMessageDialog(comp, mLocalizer.msg("CreateDevice","Please create Device first!"));
@@ -168,8 +168,7 @@ public class CapturePlugin extends devplugin.Plugin {
             return;
         }
         
-        DeviceSelector select = new DeviceSelector(UiUtilities.getLastModalChildOf(getParentFrame()), mConfig.getDeviceArray(), program);
-
+        DeviceSelector select = new DeviceSelector(comp, mConfig.getDeviceArray(), program);
         
         int x = comp.getWidth() / 2;
         int y = comp.getHeight() / 2;
