@@ -29,6 +29,8 @@ package tvbrowser.core;
 import devplugin.Plugin;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
@@ -36,7 +38,7 @@ import java.util.Properties;
 import util.exc.*;
 
 /**
- * The PluginManager is a Class for communicating with installed plugins.
+ * The PluginManager is a Class for communicating with installed mAvailablePluginHash.
  *
  * @author Martin Oberhauser
  */
@@ -48,8 +50,8 @@ public class PluginManager {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginManager.class);
   
-  private static HashMap plugins;
-  private static HashMap installedPlugins;
+  private static HashMap mAvailablePluginHash;
+  private static ArrayList mInstalledPluginList;
 
   
   
@@ -133,6 +135,8 @@ public class PluginManager {
     }
   }
 
+  
+  
   private static void storePluginSettings(Plugin plugin) {
     Properties prop=plugin.storeSettings();
     if (prop!=null) {
@@ -154,35 +158,37 @@ public class PluginManager {
     }
   }
 
-
-
-	private static void initPlugin(Plugin p) {
-		loadPluginData(p);
-		loadPluginSettings(p);		
-	}
-	
-	private static void finalizePlugin(Plugin p) {
-			storePluginData(p);
-			storePluginSettings(p);
-		}
-
+  
+  
+  private static void initPlugin(Plugin p) {
+    loadPluginData(p);
+    loadPluginSettings(p);
+  }
+  
+  
+  
+  private static void finalizePlugin(Plugin p) {
+    storePluginData(p);
+    storePluginSettings(p);
+  }
+  
+  
+  
   /**
    * Kind of constructor
    */
-  
   public static void initInstalledPlugins() {
-    //Object[] p=getInstalledPlugins();
     Plugin[] p=getInstalledPlugins();
     for (int i=0;i<p.length;i++) {
-    	initPlugin((Plugin)p[i]);
-     
+      initPlugin((Plugin)p[i]);
     }
   }
+
+
 
   /**
    * Kind of destructor: call plugins to store their data and settings
    */
-  
   public static void finalizeInstalledPlugins() {
     Plugin[] p=getInstalledPlugins();
     for (int i=0;i<p.length;i++) {
@@ -191,46 +197,41 @@ public class PluginManager {
     }
   }
 
+  
+  
   /**
-   * Returns an Array of devplugin.Plugin objects containing all available plugins
+   * Returns an Array of devplugin.Plugin objects containing all available
+   * plugins
    */
-
   public static Plugin[] getAvailablePlugins() {
-    if (plugins==null) {
+    if (mAvailablePluginHash == null) {
       loadAvailablePlugins();
     }
 
-    Object[] obj=plugins.values().toArray();
-    Plugin[] result=new Plugin[obj.length];
-    for (int i=0;i<obj.length;i++) {
-    	result[i]=(Plugin)obj[i];
-    }
-	return result;
+    Collection AvailablePluginCol = mAvailablePluginHash.values();
+    Plugin[] result = new Plugin[AvailablePluginCol.size()];
+    AvailablePluginCol.toArray(result);
+  	return result;
   }
   
 
 
-
-
-
   private static void loadAvailablePlugins() {
-
-    if (plugins!=null) {
+    if (mAvailablePluginHash != null) {
       return;
     }
 
     File file=new File("plugins");
-    plugins=new HashMap();
+    mAvailablePluginHash = new HashMap();
     if (!file.exists()) {
       file.mkdir();
     }
 
     File[] fileList=file.listFiles(new FileFilter() {
-                                   public boolean accept(File f) {
-                                     return f.getName().endsWith(".jar");
-                                   }
-    }
-    );
+      public boolean accept(File f) {
+        return f.getName().endsWith(".jar");
+      }
+    });
     
     java.net.URL[] urlList=new java.net.URL[fileList.length];
     for (int i=0;i<urlList.length;i++) {
@@ -256,7 +257,7 @@ public class PluginManager {
         p.setJarFile(fileList[i]);
 
         String name=p.getClass().getName();
-        plugins.put(p.getClass().getName(),p);
+        mAvailablePluginHash.put(p.getClass().getName(),p);
 
        	mLog.info("Plugin " + name + " available");
       }
@@ -271,90 +272,91 @@ public class PluginManager {
   
 
   /**
-   * Returns the installed plugins as an array of Plugin-Objects
+   * Returns the installed mAvailablePluginHash as an array of Plugin-Objects
    */
-  
-  
   public static Plugin[] getInstalledPlugins() {
-  	
-  	if (installedPlugins==null) {
-  		installedPlugins=new HashMap();
+    boolean installedPluginsChanged = Settings.settingHasChanged(new String[]{"plugins"});
+  	if ((mInstalledPluginList == null) || installedPluginsChanged) {
+  		mInstalledPluginList = new ArrayList();
   		loadAvailablePlugins();
-  		String[] instPI=Settings.getInstalledPlugins();
-  		for (int i=0;i<instPI.length;i++) {
-			Plugin p=(Plugin)plugins.get(instPI[i]);
-			if (p==null) continue;
-			installedPlugins.put(p.getClass().getName(),p);		
-  		}
+  		String[] instPI = Settings.getInstalledPlugins();
+  		for (int i = 0; i < instPI.length; i++) {
+        Plugin plugin = (Plugin) mAvailablePluginHash.get(instPI[i]);
+        if (plugin != null) {
+          mInstalledPluginList.add(plugin);
+        }
+      }
   	}
   	
-	Object[] objs=installedPlugins.values().toArray();
-	Plugin[] result=new Plugin[objs.length];
-	for (int i=0;i<objs.length;i++) {
-		result[i]=(Plugin)objs[i];
-	}
-	return result;
+    Plugin[] subscribedPluginArr = new Plugin[mInstalledPluginList.size()];
+    mInstalledPluginList.toArray(subscribedPluginArr);
+    return subscribedPluginArr;
   }
+
+  
+  
+  /**
+   * Returns the installed mAvailablePluginHash as an array of Plugin-Objects
+   */
+  public static void setInstalledPlugins(Plugin[] pluginArr) {
+    // Create the new list and init those plugins who are new
+    ArrayList newInstalledPluginList = new ArrayList(pluginArr.length);
+    String[] pluginClassNameArr = new String[pluginArr.length];
+    for (int i = 0; i < pluginArr.length; i++) {
+      newInstalledPluginList.add(pluginArr[i]);
+      pluginClassNameArr[i] = pluginArr[i].getClass().getName();
+      if (! isInstalled(pluginArr[i])) {
+        initPlugin(pluginArr[i]);
+      }
+    }
+    
+    // Now finalize those plugins who are not installed any more
+    Iterator iter = mInstalledPluginList.iterator();
+    while (iter.hasNext()) {
+      Plugin plugin = (Plugin) iter.next();
+      if (! newInstalledPluginList.contains(plugin)) {
+        finalizePlugin(plugin);
+      }
+    }
+    
+    // Now set the new list a current list
+    mInstalledPluginList = newInstalledPluginList;
+    
+    // Finally update the Settings
+    Settings.setInstalledPlugins(pluginClassNameArr);
+  }
+  
   
   
   /**
    * Returns a devplugin.Plugin object with the specified name, or null if
    * the plugin does not exist.
    */
-  public static Plugin getPlugin(String plugin) {
-    return (Plugin)plugins.get(plugin);
+  public static Plugin getPlugin(String pluginClassName) {
+    return (Plugin) mAvailablePluginHash.get(pluginClassName);
   }
 
+  
+  
   /**
    * Returns true, if the plugin with the specified name is currently installed.
    */
-  
-  public static boolean isInstalled(String plugin) {
-    return installedPlugins.get(plugin) != null;
+  public static boolean isInstalled(Plugin plugin) {
+    return mInstalledPluginList.contains(plugin);
   }
 
-  /**
-   * Installs the plugin with the specified name.
-   */
   
-  public static void installPlugin(String plugin) {
-
-    Object obj=installedPlugins.get(plugin);
-
-    if (obj!=null) {
-      return;  // already installed
-    }
-
-    obj=plugins.get(plugin);
-    if (obj==null) {
-      throw new RuntimeException("Plugin "+plugin+" not found");
-    }
-
-    installedPlugins.put(plugin,obj);
-    
-    initPlugin((Plugin)obj);
-    
-  }
-
-  /**
-   * Uninstalls the plugin with the specified name
-   */
-  
-  public static void uninstallPlugin(String plugin) {
-    installedPlugins.remove(plugin);
-  }
-
   
   /**
    * Should be called every time the TV data has changed.
    * <p>
    * Calls for every subscribed plugin the handleTvDataChanged() method,
-   * so the plugins can react on the new data.
+   * so the mAvailablePluginHash can react on the new data.
    *
    * @see Plugin#handleTvDataChanged()
    */
   public static void fireTvDataChanged() {
-    Iterator pluginIter = installedPlugins.values().iterator();
+    Iterator pluginIter = mInstalledPluginList.iterator();
     while (pluginIter.hasNext()) {
       Plugin plugin = (Plugin) pluginIter.next();
       plugin.handleTvDataChanged();

@@ -16,6 +16,9 @@ current:
 - dialog on startup, when no tvdata were found
 - helpsystem added
 - settings: tv data tab implemented
+- The order of the plugins is remembered. A double click with the left mouse
+  button in the program table opens the program with the first plugins that
+  is in the context menu
 
 
 0.9.3:

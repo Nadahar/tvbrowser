@@ -494,18 +494,35 @@ public class ProgramTablePanel extends JComponent implements MouseInputListener,
   /**
    * interface MouseInputListener
    */
-  public void mouseClicked(MouseEvent e) {
+  public void mouseClicked(MouseEvent evt) {
   	requestFocus();
-	Point pos=scrollPane.getViewport().getViewPosition();
-    Point p=new Point(e.getX(),e.getY());
-    if (SwingUtilities.isRightMouseButton(e)) {
-      devplugin.Program prog=getProgram(p);
-      if (prog==null) return;
-      contextMenu.setProgram(prog);
-      contextMenu.show(e.getComponent(),e.getX()-15,e.getY()-15);
+	Point pos = scrollPane.getViewport().getViewPosition();
+    Point pnt = new Point(evt.getX(), evt.getY());
+    devplugin.Program program = getProgram(pnt);
+    if (SwingUtilities.isRightMouseButton(evt)) {
+      if (program != null) {
+        // this is a right click -> Show the context menu
+        contextMenu.setProgram(program);
+        contextMenu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
+      }
+    }
+    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+      if (program != null) {
+        // This is a left double click
+        // -> Execute the program using the first plugin that is in the context menu
+        devplugin.Plugin[] instPluginArr = PluginManager.getInstalledPlugins();
+        for (int i = 0; i < instPluginArr.length; i++) {
+          if (instPluginArr[i].getContextMenuItemText() != null) {
+            instPluginArr[i].execute(program);
+            break;
+          }
+        }
+      }
     }
   }
 
+  
+  
   /**
    * interface MouseInputListener
    */

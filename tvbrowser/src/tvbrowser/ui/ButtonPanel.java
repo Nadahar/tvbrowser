@@ -19,84 +19,77 @@
  */
 
 package tvbrowser.ui;
- 
- import javax.swing.*;
- import java.awt.*; 
- import java.awt.event.*;
- 
- import tvbrowser.core.PluginManager;
- import tvbrowser.core.Settings;
- 
- public class ButtonPanel extends JPanel {
- 	
-	
- 	private JButton[] mTimeBtns;
- 	private JButton mUpdateBtn, mPrefBtn;
- 	
- 	public ButtonPanel() {
- 		
- 		setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
- 		setOpaque(false); 		
- 	}
- 	
- 	
- 	
- 	public void setTimButtons(JButton[] timeBtns) {
- 		mTimeBtns=timeBtns;
- 	}
- 	
- 	public void setUpdateButton(JButton updateBtn) {
- 		mUpdateBtn=updateBtn;
- 	}
- 	
- 	public void setPreferencesButton(JButton prefBtn) {
- 		mPrefBtn=prefBtn;
- 	}
- 	
- 	public void update() {
- 		
- 		this.removeAll();
-		JButton btn;
-		String msg;
-		if (Settings.isTimeBtnVisible()) {
-		  for (int i=0;i<mTimeBtns.length;i++) {
-		  	add(mTimeBtns[i]);
-		  }
-      	add(new JSeparator(JSeparator.VERTICAL));
-		}
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+import tvbrowser.core.PluginManager;
+import tvbrowser.core.Settings;
+
+public class ButtonPanel extends JPanel {
+
+  private JButton[] mTimeBtns;
+  private JButton mUpdateBtn, mPrefBtn;
+  
+  
+  
+  public ButtonPanel() {
     
+    setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+    setOpaque(false);
+  }
+  
+  
+  
+  public void setTimeButtons(JButton[] timeBtns) {
+    mTimeBtns=timeBtns;
+  }
+  
+  public void setUpdateButton(JButton updateBtn) {
+    mUpdateBtn=updateBtn;
+  }
+  
+  public void setPreferencesButton(JButton prefBtn) {
+    mPrefBtn=prefBtn;
+  }
+  
+  
+  
+  public void update() {
+    this.removeAll();
+    JButton btn;
+    String msg;
+    if (Settings.isTimeBtnVisible()) {
+      for (int i=0;i<mTimeBtns.length;i++) {
+        add(mTimeBtns[i]);
+      }
+      add(new JSeparator(JSeparator.VERTICAL));
+    }
     
-
-		if (Settings.isUpdateBtnVisible()) {
-		  add(mUpdateBtn);
-		}
-
-   
-		if (Settings.isPreferencesBtnVisible()) {
-		  add(mPrefBtn);
-		}
-
-		String[] buttonPlugins=Settings.getButtonPlugins();
-	
-		for (int i=0;i<buttonPlugins.length;i++) {
-	   
-			if (PluginManager.isInstalled(buttonPlugins[i])) {
-				final devplugin.Plugin p=PluginManager.getPlugin(buttonPlugins[i]);
-				Icon ico=p.getButtonIcon();
-				btn=new PictureButton(p.getButtonText(),ico);
-				add(btn);
-				btn.addActionListener(new ActionListener(){
-					public void actionPerformed(ActionEvent event) {
-						p.execute();	
-					}
-				});
-		   }
-	   
-	   }
-	   this.updateUI(); 		
- 	}
- 		
- 	
- 	
- 	
- }
+    if (Settings.isUpdateBtnVisible()) {
+      add(mUpdateBtn);
+    }
+    
+    if (Settings.isPreferencesBtnVisible()) {
+      add(mPrefBtn);
+    }
+    
+    String[] buttonPluginArr = Settings.getButtonPlugins();
+    for (int i = 0; i < buttonPluginArr.length; i++) {
+      final devplugin.Plugin plugin = PluginManager.getPlugin(buttonPluginArr[i]);
+      if ((plugin != null) && PluginManager.isInstalled(plugin)) {
+        Icon icon = plugin.getButtonIcon();
+        btn = new PictureButton(plugin.getButtonText(), icon);
+        add(btn);
+        btn.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent event) {
+            plugin.execute();
+          }
+        });
+      }
+    }
+    this.updateUI();
+  }
+  
+}
