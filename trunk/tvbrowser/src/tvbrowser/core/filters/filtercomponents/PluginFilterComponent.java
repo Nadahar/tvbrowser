@@ -37,7 +37,6 @@ import javax.swing.JTextArea;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 
