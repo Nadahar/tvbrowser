@@ -100,7 +100,7 @@ public class FilterButtons implements ActionListener {
                 }
             });
 
-            if (curFilter == filter) {
+            if (curFilter != null && filter != null && (curFilter.getName().equals(filter.getName()))) {
                 result[i].setSelected(true);
             }
         }
