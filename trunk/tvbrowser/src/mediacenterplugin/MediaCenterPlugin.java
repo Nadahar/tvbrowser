@@ -60,6 +60,7 @@ public class MediaCenterPlugin extends Plugin {
    * Create the Plugin
    */
   public MediaCenterPlugin() {
+    
   }
   
   /*
@@ -124,7 +125,7 @@ public class MediaCenterPlugin extends Plugin {
       new Runnable() {
 
         public void run() {
-          MediaCenterFrame frame = new MediaCenterFrame(600, 480, false);
+          MediaCenterFrame frame = new MediaCenterFrame(MediaCenterPlugin.this, 800, 600, false);
           mMediaCenterShowing = false;
         }
         
