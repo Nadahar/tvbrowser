@@ -370,10 +370,10 @@ public class Settings {
     return result.toArray();
   }
 
+  
+  
   public static void setInstalledPlugins(String[] plugins) {
-   
-	setStringListProperty("plugins",plugins);
-    
+	setStringListProperty("plugins", plugins);
   }
 
 }

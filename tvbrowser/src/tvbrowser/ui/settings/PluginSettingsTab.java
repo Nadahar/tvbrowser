@@ -24,12 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.settings;
 
 import javax.swing.*;
@@ -37,255 +31,277 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import tvbrowser.ui.customizableitems.*;
 import tvbrowser.core.*;
 
 import devplugin.Plugin;
 import devplugin.PluginInfo;
-import java.util.HashSet;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class PluginSettingsTab extends devplugin.SettingsTab implements CustomizableItemsListener {
-
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
   
-	private CustomizableItemsPanel panel;
-	private PluginInfoPanel pluginInfoPanel;
-	private HashSet buttonPluginSet;
-	private JCheckBox addPicBtnCheckBox;
-	private Plugin curSelectedPlugin=null;
-
+  private static final util.ui.Localizer mLocalizer
+  = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
+  
+  private CustomizableItemsPanel panel;
+  private PluginInfoPanel pluginInfoPanel;
+  private HashSet buttonPluginSet;
+  private JCheckBox addPicBtnCheckBox;
+  private Plugin curSelectedPlugin=null;
+  
   public String getName() {
     return mLocalizer.msg("plugins", "Plugins");
   }
-
+  
   public void ok() {
-  	System.out.println("OK");
-  	
-  	Object[] o1=buttonPluginSet.toArray();
-  	for (int i=0;i<o1.length;i++) {
-  		System.out.println((String)o1[i]);
-  	}
-  	
-  	
-   Object[] o=panel.getElementsRight();
-   String[] s=new String[o.length];
-   java.util.ArrayList list=new java.util.ArrayList();
-   for (int i=0;i<o.length;i++) {
-	   s[i]=(String)o[i];
-	 PluginManager.installPlugin(s[i]);
-	 System.out.println("install plugin "+s[i]);
-	 if (buttonPluginSet.contains(s[i])) {
-	 	list.add(s[i]);
-	 	System.out.println("including button");
-	 }
-      
-   }
-   Settings.setInstalledPlugins(s);
+    // print button stuff
+    System.out.println("OK");
     
+    Object[] o1=buttonPluginSet.toArray();
+    for (int i=0;i<o1.length;i++) {
+      System.out.println((String)o1[i]);
+    }
     
+    // set new installed plugins and remember those including a button
+    Object[] subscribedPluginItemArr = panel.getElementsRight();
+    String[] pluginClassNameArr = new String[subscribedPluginItemArr.length];
+    ArrayList buttonPluginList = new ArrayList();
+    for (int i = 0; i < subscribedPluginItemArr.length; i++) {
+      PluginItem item = (PluginItem)subscribedPluginItemArr[i];
+      pluginClassNameArr[i] = item.getPlugin().getClass().getName();
+      PluginManager.installPlugin(pluginClassNameArr[i]);
+      System.out.println("install plugin " + pluginClassNameArr[i]);
+      if (buttonPluginSet.contains(pluginClassNameArr[i])) {
+        buttonPluginList.add(pluginClassNameArr[i]);
+        System.out.println("including button");
+      }
+    }
+    Settings.setInstalledPlugins(pluginClassNameArr);
     
-  // o=buttonPluginSet.toArray();
-  o=list.toArray();
-   s=new String[o.length];
-   for (int i=0;i<o.length;i++) {
-	   s[i]=(String)o[i];
-	   System.out.println("button: "+s[i]);
-   }
-   Settings.setButtonPlugins(s);
-
- }
-
-
+    // Set the subsribed plugins that include a button
+    String[] buttonPluginArr = new String[buttonPluginList.size()];
+    buttonPluginList.toArray(buttonPluginArr);
+    
+    Settings.setButtonPlugins(buttonPluginArr);
+  }
+  
+  
+  
   public PluginSettingsTab() {
     super();
     
-	String[] buttonPlugins=Settings.getButtonPlugins();
-	   buttonPluginSet=new HashSet();
-	   for (int i=0;i<buttonPlugins.length;i++) {
-		   buttonPluginSet.add(buttonPlugins[i]);
-	   }
+    String[] buttonPlugins=Settings.getButtonPlugins();
+    buttonPluginSet=new HashSet();
+    for (int i=0;i<buttonPlugins.length;i++) {
+      buttonPluginSet.add(buttonPlugins[i]);
+    }
     
-	   setLayout(new BorderLayout());
-	   JPanel content=new JPanel();
-	   content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
-
-	   pluginInfoPanel=new PluginInfoPanel();
-
+    setLayout(new BorderLayout());
+    JPanel content=new JPanel();
+    content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
+    
+    pluginInfoPanel=new PluginInfoPanel();
+    
     
     setLayout(new BorderLayout());
     
     String msg;
-
+    
     pluginInfoPanel=new PluginInfoPanel();
-
+    
     String leftText = mLocalizer.msg("availablePlugins", "Available plugins");
     String rightText = mLocalizer.msg("subscribedPlugins", "Subscribed plugins");
     panel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
-
+    
     Object[] o=PluginManager.getAvailablePlugins();
     for (int i=0;i<o.length;i++) {
-      String plugin=((Plugin)o[i]).getClass().getName();
-      if (PluginManager.isInstalled(plugin)) {
-        panel.addElementRight(plugin);
-      }else{
-        panel.addElementLeft(plugin);
+      Plugin plugin = (Plugin)o[i];
+      if (PluginManager.isInstalled(plugin.getClass().getName())) {
+        panel.addElementRight(new PluginItem(plugin));
+      } else {
+        panel.addElementLeft(new PluginItem(plugin));
       }
     }
-
+    
     panel.addListSelectionListenerLeft(this);
     panel.addListSelectionListenerRight(this);
-
-   // add(panel,BorderLayout.NORTH);
-
-   content.add(panel);
-	
-	  // JPanel panel1=new JPanel(new BorderLayout());
-	msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
-	   pluginInfoPanel.setBorder(BorderFactory.createTitledBorder(msg));
-	  
-	   //panel1.add(pluginInfoPanel,BorderLayout.NORTH);
-
-	  // add(panel1,BorderLayout.CENTER);
-	  content.add(pluginInfoPanel);
-   
-   
-	  JPanel panel1=new JPanel(new BorderLayout());
-	  addPicBtnCheckBox=new JCheckBox("Add plugin to Toolbar");
-	  panel1.add(addPicBtnCheckBox,BorderLayout.WEST);
-	  content.add(panel1);
-   
-	  addPicBtnCheckBox.addActionListener(new ActionListener() {
-   	
-		   public void actionPerformed(ActionEvent e) {
-			   if (curSelectedPlugin==null) {
-				   return;
-			   }
-			   String pluginName=((Plugin)curSelectedPlugin).getClass().getName();
-			   if (addPicBtnCheckBox.isSelected()) {
-				   buttonPluginSet.add(pluginName);   				
-			   }else{
-				   buttonPluginSet.remove(pluginName);
-			   }
-		   }
-   	 
-	  }
-	  );
-   
-	  add(content,BorderLayout.NORTH);
-
-
-
+    
+    // add(panel,BorderLayout.NORTH);
+    
+    content.add(panel);
+    
+    // JPanel panel1=new JPanel(new BorderLayout());
+    msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
+    pluginInfoPanel.setBorder(BorderFactory.createTitledBorder(msg));
+    
+    //panel1.add(pluginInfoPanel,BorderLayout.NORTH);
+    
+    // add(panel1,BorderLayout.CENTER);
+    content.add(pluginInfoPanel);
+    
+    
+    JPanel panel1=new JPanel(new BorderLayout());
+    addPicBtnCheckBox=new JCheckBox("Add plugin to Toolbar");
+    panel1.add(addPicBtnCheckBox,BorderLayout.WEST);
+    content.add(panel1);
+    
+    addPicBtnCheckBox.addActionListener(new ActionListener() {
+      
+      public void actionPerformed(ActionEvent e) {
+        if (curSelectedPlugin==null) {
+          return;
+        }
+        String pluginName=((Plugin)curSelectedPlugin).getClass().getName();
+        if (addPicBtnCheckBox.isSelected()) {
+          buttonPluginSet.add(pluginName);
+        }else{
+          buttonPluginSet.remove(pluginName);
+        }
+      }
+      
+    }
+    );
+    
+    add(content,BorderLayout.NORTH);
+    
+    
+    
 /*
-
+ 
     JPanel panel1=new JPanel(new BorderLayout());
     msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
     pluginInfoPanel.setBorder(BorderFactory.createTitledBorder(msg));
-
+ 
     panel1.add(pluginInfoPanel,BorderLayout.NORTH);
-
+ 
     add(panel1,BorderLayout.CENTER);
-    */
+ */
   }
-
   
   
-  private void showPluginInfo(String pluginName) {
-    Plugin plugin=PluginManager.getPlugin(pluginName);
-    if (plugin==null) {
-
-    }else{
-      pluginInfoPanel.setPluginInfo(plugin.getInfo());
-    }
+  
+  private void showPluginInfo(Plugin plugin) {
+    pluginInfoPanel.setPluginInfo(plugin.getInfo());
   }
-
+  
   
   
   public void leftListSelectionChanged(ListSelectionEvent event) {
-  String pluginName=panel.getLeftSelection();
-  addPicBtnCheckBox.setEnabled(false);
-	  showPluginInfo(pluginName);
-		
-  curSelectedPlugin=PluginManager.getPlugin(pluginName);
-  if (curSelectedPlugin!=null) {
-	  String pluginClassName=((Plugin)curSelectedPlugin).getClass().getName();
-	  addPicBtnCheckBox.setSelected(buttonPluginSet.contains(pluginClassName));
+    PluginItem item = (PluginItem)panel.getLeftSelection();
+    if (item != null) {
+      curSelectedPlugin = item.getPlugin();
+      
+      showPluginInfo(curSelectedPlugin);
+      String pluginClassName = item.getPlugin().getClass().getName();
+      addPicBtnCheckBox.setSelected(buttonPluginSet.contains(pluginClassName));
+    }
   }
-}
-
-public void rightListSelectionChanged(ListSelectionEvent event) {
-  String pluginName=panel.getRightSelection();
-  showPluginInfo(pluginName);
-	
-  curSelectedPlugin=PluginManager.getPlugin(pluginName);
-  if (curSelectedPlugin!=null) {
-	  addPicBtnCheckBox.setEnabled(curSelectedPlugin.getButtonText()!=null);   
-	  String pluginClassName=((Plugin)curSelectedPlugin).getClass().getName();
-	  addPicBtnCheckBox.setSelected(buttonPluginSet.contains(pluginClassName));
+  
+  
+  
+  public void rightListSelectionChanged(ListSelectionEvent event) {
+    PluginItem item = (PluginItem)panel.getRightSelection();
+    if (item != null) {
+      curSelectedPlugin = item.getPlugin();
+      
+      showPluginInfo(curSelectedPlugin);
+      addPicBtnCheckBox.setEnabled(item.getPlugin().getButtonText() != null);
+      String pluginClassName = item.getPlugin().getClass().getName();
+      addPicBtnCheckBox.setSelected(buttonPluginSet.contains(pluginClassName));
+    }
   }
+  
+  
+  // inner class PluginItem
+  
+  
+  class PluginItem {
     
-}
-
+    private Plugin mPlugin;
+    
+    
+    public PluginItem(Plugin plugin) {
+      mPlugin = plugin;
+    }
+    
+    
+    public Plugin getPlugin() {
+      return mPlugin;
+    }
+    
+    
+    public String toString() {
+      return mPlugin.getInfo().getName();
+    }
+    
+  } // inner class PluginItem
   
   
   // inner class PluginInfoPanel
   
-
+  
   class PluginInfoPanel extends JPanel {
-
+    
     private JLabel nameLabel;
     private JLabel versionLabel;
     private JLabel authorLabel;
     private JTextArea descriptionArea;
-
+    
     public PluginInfoPanel() {
       setLayout(new BorderLayout(10,0));
-
+      
       String msg;
-
+      
       JPanel leftPanel=new JPanel(new BorderLayout());
       JPanel rightPanel=new JPanel(new BorderLayout());
-
+      
       msg = mLocalizer.msg("name", "Name");
       leftPanel.add(new JLabel(msg), BorderLayout.NORTH);
       rightPanel.add(nameLabel=new JLabel("-"),BorderLayout.NORTH);
-
+      
       JPanel panel1=new JPanel(new BorderLayout());
       JPanel panel2=new JPanel(new BorderLayout());
-
+      
       msg = mLocalizer.msg("version", "Version");
       panel1.add(new JLabel(msg), BorderLayout.NORTH);
       panel2.add(versionLabel=new JLabel("-"),BorderLayout.NORTH);
-
+      
       JPanel panel3=new JPanel(new BorderLayout());
       JPanel panel4=new JPanel(new BorderLayout());
-
+      
       msg = mLocalizer.msg("author", "Author");
       panel3.add(new JLabel(msg), BorderLayout.NORTH);
       panel4.add(authorLabel=new JLabel("-"),BorderLayout.NORTH);
-
+      
       panel1.add(panel3,BorderLayout.CENTER);
       panel2.add(panel4,BorderLayout.CENTER);
-
+      
       JPanel panel5=new JPanel(new BorderLayout());
       msg = mLocalizer.msg("description", "Description");
       panel5.add(new JLabel(msg), BorderLayout.NORTH);
-
+      
       descriptionArea=new JTextArea(3,40);
       descriptionArea.setLineWrap(true);
       descriptionArea.setEditable(false);
       descriptionArea.setOpaque(false);
-
+      
       panel3.add(panel5,BorderLayout.CENTER);
       panel4.add(descriptionArea,BorderLayout.CENTER);
-
+      
       leftPanel.add(panel1,BorderLayout.CENTER);
       rightPanel.add(panel2,BorderLayout.CENTER);
-
+      
       add(leftPanel,BorderLayout.WEST);
       add(rightPanel,BorderLayout.CENTER);
     }
-
+    
     
     
     public void setPluginInfo(PluginInfo info) {
@@ -294,7 +310,7 @@ public void rightListSelectionChanged(ListSelectionEvent event) {
       authorLabel.setText(info.getAuthor());
       descriptionArea.setText(info.getDescription());
     }
-
-  }
-
+    
+  } // inner class PluginInfoPanel
+  
 }
