@@ -51,7 +51,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 		String name = mLocalizer.msg("pluginName", "TV Rater");
 		String desc = mLocalizer.msg("description", "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
 		String author = "Bodo Tasche";
-		return new PluginInfo(name, desc, author, new Version(1, 0));
+		return new PluginInfo(name, desc, author, new Version(0, 1));
 	}
 
 
