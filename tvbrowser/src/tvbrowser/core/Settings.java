@@ -196,7 +196,7 @@ public class Settings {
     }
       
     if (mProp.hasChanged(propShowTimeButtons)) {
-      mainFrame.getVerticalToolBar().updateButtons();
+        mainFrame.updateButtons();
     }
     
     if (mProp.hasChanged(propSubscribedChannels)) {
