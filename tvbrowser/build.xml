@@ -331,6 +331,7 @@
         <attribute name="Main-Class" value="primarydatamanager.mirrorupdater.MirrorUpdater"/>
       </manifest>
       <fileset dir="${classes.dir}" includes="primarydatamanager/mirrorupdater/**"/>
+      <fileset dir="${classes.dir}" includes="primarydatamanager/tvlistingstool/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
@@ -485,7 +486,7 @@
    | This target depends on clean-runtime to be sure that the runtime
    | directory contains no stuff we don't want to be destributed.
    +-->
-  <target name="public-tvdatakit" depends="clean, test, clean-runtime, runtime-tvdatakit">
+  <target name="public-tvdatakit" depends="clean, clean-runtime, test, runtime-tvdatakit">
     
     <!-- Pack the TvDataStarterKit zip -->
     <mkdir dir="${public.dir}"/>
