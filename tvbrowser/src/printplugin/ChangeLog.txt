@@ -1,6 +1,17 @@
-Version 0.1
+Version 0.5
 
-1.) Init Version.
+Redesign
+
+
+Version 0.4
+
+1.) Bugfixes.
+
+Version 0.3
+
+1.) Bugfixes,
+2.) Erweiterung um die Möglichkeit auch Filter auszudrucken.
+
 
 Version 0.2
 
@@ -14,11 +25,7 @@ Version 0.2
 6.) Diverse Fehlerabfragen eingebaut.
 7.) Fehlertexte erweitert.   
 
-Version 0.3
+Version 0.1
 
-1.) Bugfixes,
-2.) Erweiterung um die Möglichkeit auch Filter auszudrucken.
+1.) Init Version.
 
-Version 0.4
-
-1.) Bugfixes.

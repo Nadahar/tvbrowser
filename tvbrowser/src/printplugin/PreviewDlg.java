@@ -1,3 +1,29 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
 package printplugin;
 
 import javax.swing.*;
@@ -19,6 +45,7 @@ public class PreviewDlg extends JDialog implements ActionListener {
   public PreviewDlg(Frame parent, Printable printer, PageFormat pageFormat, int numberOfPages) {
   
     super(parent, true);
+    setTitle("Vorschau");
     mPrinter = printer;
     mPageFormat = pageFormat;
     
@@ -38,9 +65,11 @@ public class PreviewDlg extends JDialog implements ActionListener {
     southPn.add(mSiteLb, BorderLayout.CENTER);
     
     mPreviewComponent = new PreviewComponent(mPrinter, mPageFormat, numberOfPages);
+    JPanel borderPn = new JPanel(new BorderLayout());
+    borderPn.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    borderPn.add(mPreviewComponent);
     
-    
-    content.add(mPreviewComponent, BorderLayout.CENTER);
+    content.add(borderPn, BorderLayout.CENTER);
     content.add(southPn, BorderLayout.SOUTH);
     updateSiteLabelText();
     
@@ -116,10 +145,18 @@ class PreviewComponent extends JComponent {
   }
   
   public void paintComponent(Graphics graphics) {
+    super.paintComponent(graphics);
     Graphics2D g = (Graphics2D)graphics;
     g.scale(ZOOM,ZOOM);
-    g.drawRect(0,0,(int)mPageFormat.getWidth(), (int)mPageFormat.getHeight());
+    g.setColor(Color.white);
+    g.fillRect(0,0,(int)mPageFormat.getWidth(), (int)mPageFormat.getHeight());
+    
+  //  g.drawRect(0,0,(int)mPageFormat.getWidth(), (int)mPageFormat.getHeight());
+    g.setColor(Color.lightGray);
     g.drawRect((int)mPageFormat.getImageableX(), (int)mPageFormat.getImageableY(), (int)mPageFormat.getImageableWidth(), (int)mPageFormat.getImageableHeight());
+    g.setColor(Color.black);
+  //  g.setColor(Color.white);
+   // g.fillRect((int)mPageFormat.getImageableX(), (int)mPageFormat.getImageableY(), (int)mPageFormat.getImageableWidth(), (int)mPageFormat.getImageableHeight());
     
     try {
       mPrintable.print(g, null, mPageIndex);

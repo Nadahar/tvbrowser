@@ -24,49 +24,43 @@
  * $Revision$
  */
 
+
 package printplugin;
 
-import java.awt.*;
+import devplugin.Program;
 
-import javax.swing.Icon;
-
-public class ColumnHeader implements Icon {
-
-  private static Font mFont = new Font("Dialog",Font.BOLD,24);
-  private int mWidth, mHeight;
-  private String mTitle;
-  private double mZoom;
+public abstract class AbstractColumnModel implements ColumnModel {
   
-  public ColumnHeader(String title, int width, int height, double zoom) {
-    mTitle = title;
-    mWidth = width;
-    mHeight = height;
-    mZoom = zoom;
+  private String mTitle;
+  private Program[] mPrograms;
+
+
+  public AbstractColumnModel() {
+    mPrograms = new Program[]{};
   }
 
-	public int getIconHeight() {
-		return mHeight;
-	}
+  public AbstractColumnModel(Program[] progs) {
+    mPrograms = progs;
+  }
 
-	
-	public int getIconWidth() {
-		return mHeight;
-	}
+  public void setPrograms(Program[] progs) {
+    mPrograms = progs;
+  }
 
-	
-	public void paintIcon(Component comp, Graphics g, int x, int y) {
-    g.translate(x,y);
-   // Graphics2D g = (Graphics2D)graphics;
-  //  g.scale(mZoom, mZoom);
-		FontMetrics metrics = g.getFontMetrics(mFont);
-    int width=metrics.stringWidth(mTitle);
-    g.setFont(mFont);
-    g.drawRect(0,0,mWidth,mHeight);
-    g.drawString(mTitle,(mWidth-width)/2,mFont.getSize());
-  //  g.scale(1/mZoom, 1/mZoom);
-  g.translate(-x,-y);
-	}
+  public Program getProgramAt(int inx) {
+    if (inx>=0 && inx<mPrograms.length) {
+      return mPrograms[inx];
+    }
+    return null;
+  }
+
   
-  
+  public int getProgramCount() {
+    if (mPrograms == null) {
+      return 0;
+    }
+    return mPrograms.length;
+  }
+
   
 }

@@ -155,6 +155,19 @@ public class OrderChooser extends JPanel {
     return asArr;
   }
 
+  public void invertSelection() {
+    for (int i = 0; i < mListModel.size(); i++) {
+      SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+      item.setSelected(!item.isSelected());
+    }
+  }
+
+  public void selectAll() {
+    for (int i = 0; i < mListModel.size(); i++) {
+      SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+      item.setSelected(true);
+    }
+  }
 
   protected void moveSelectedItems(int nrRows) {
     int[] selection = mList.getSelectedIndices();

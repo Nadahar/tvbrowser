@@ -27,42 +27,39 @@
 package printplugin;
 
 import java.awt.Graphics;
-import java.awt.print.*;
-import java.util.ArrayList;
+
+import devplugin.Program;
 
 
-public class Printer implements Printable {
-  
-  private Page[] mPages;
-  
-  public Printer(PageModel[] pageModelArr, PageRenderer pageRenderer) {
-  
-    System.out.println("Printer.java: Creating pages for "+pageModelArr.length+" virtual pages");
-  
-    ArrayList pages = new ArrayList();
-    for (int i=0;i<pageModelArr.length;i++) {
-      Page[] p = pageRenderer.createPages(pageModelArr[i]);
-      for (int j=0;j<p.length;j++) {
-        pages.add(p[j]);
-      }
+
+public class ProgramItem {
+    private Program mProgram;
+    private ProgramIcon mIcon;
+    private double mx, my;
+    public ProgramItem(Program prog, ProgramIconSettings settings) {
+      mProgram = prog;
+      mIcon = new ProgramIcon(prog, settings, ChannelPageRenderer.COLUMN_WIDTH);
     }
-    mPages = new Page[pages.size()];
-    pages.toArray(mPages);   
-  }
-
-  public int getNumberOfPages() {
-    return mPages.length;
-  }
-
-	public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
-    
-    if (pageIndex>=mPages.length) {
-      return NO_SUCH_PAGE;
+    public void setPos(double x, double y) {
+      mx=x;
+      my=y;
     }
-    mPages[pageIndex].printPage(g);
+    public double getX() { return mx; }
+    public double getY() { return my; }
+    public int getHeight() {
+      return mIcon.getIconHeight();
+    }
+    public void setMaximumHeight(int maxHeight) {
+      mIcon.setMaximumHeight(maxHeight);
+    }
     
-		return PAGE_EXISTS;
-	}
-  
-  
-}
+    public Program getProgram() { return mProgram; }
+    public void paint(Graphics g, int x, int y) {
+      mIcon.paintIcon(null, g, x, y);
+    }
+    
+    public void paint(Graphics g) {
+      paint(g, (int)getX(), (int)getY());
+    }
+    
+  }

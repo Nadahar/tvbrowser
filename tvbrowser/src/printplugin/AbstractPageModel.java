@@ -26,47 +26,41 @@
 
 package printplugin;
 
-import java.awt.*;
+import java.util.*;
+import devplugin.*;
 
-import javax.swing.Icon;
-
-public class ColumnHeader implements Icon {
-
-  private static Font mFont = new Font("Dialog",Font.BOLD,24);
-  private int mWidth, mHeight;
-  private String mTitle;
-  private double mZoom;
+public abstract class AbstractPageModel implements PageModel {
   
-  public ColumnHeader(String title, int width, int height, double zoom) {
-    mTitle = title;
-    mWidth = width;
-    mHeight = height;
-    mZoom = zoom;
-  }
+  private ArrayList mColumns;
 
-	public int getIconHeight() {
-		return mHeight;
-	}
-
-	
-	public int getIconWidth() {
-		return mHeight;
-	}
-
-	
-	public void paintIcon(Component comp, Graphics g, int x, int y) {
-    g.translate(x,y);
-   // Graphics2D g = (Graphics2D)graphics;
-  //  g.scale(mZoom, mZoom);
-		FontMetrics metrics = g.getFontMetrics(mFont);
-    int width=metrics.stringWidth(mTitle);
-    g.setFont(mFont);
-    g.drawRect(0,0,mWidth,mHeight);
-    g.drawString(mTitle,(mWidth-width)/2,mFont.getSize());
-  //  g.scale(1/mZoom, 1/mZoom);
-  g.translate(-x,-y);
-	}
+   public AbstractPageModel() {
+     mColumns = new ArrayList();
+   }
   
+   public void addColumn(ColumnModel col) {
+     mColumns.add(col);
+   }
+  
+   /*
+   public void addChannelDayProgram(Channel channel, Program[] programArr) {
+     ColumnModel col = new DefaultColumnModel(channel.getName(), programArr);
+     mColumns.add(col);
+   }
+   */
+
+
+   public int getColumnCount() {
+     return mColumns.size();
+   }
+
+  
+   public ColumnModel getColumnAt(int inx) {
+     return (ColumnModel)mColumns.get(inx);
+   }
+
+   public String getFooter() {
+     return "Copyright (c) by TV-Browser - http://tvbrowser.sourceforge.net";
+   }
   
   
 }
