@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.61
+- Remove Xalan, it's not present in Java 1.5
+
 0.60
 - I hate Nullpointers ;). One in the Updater fixed
 
