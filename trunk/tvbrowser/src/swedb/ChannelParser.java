@@ -6,13 +6,12 @@
 
 package swedb;
 
-import javax.xml.parsers.*;
-import java.util.Vector;
-import org.xml.sax.Attributes;
 import java.io.InputStream;
-import java.io.FileInputStream;
+import java.util.Vector;
 
-import java.net.*;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
 
 /**
  *

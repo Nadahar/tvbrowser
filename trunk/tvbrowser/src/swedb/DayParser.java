@@ -6,20 +6,21 @@
 
 package swedb;
 
-import tvdataservice.*;
-import devplugin.*;
-
-import javax.xml.parsers.*;
-import java.util.Vector;
-import org.xml.sax.Attributes;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import org.xml.sax.SAXParseException;
-import java.net.*;
-import org.xml.sax.InputSource;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.ByteArrayInputStream;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
+
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+import devplugin.Channel;
+import devplugin.ProgramFieldType;
 
 /**
  *
