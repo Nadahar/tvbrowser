@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -jar MirrorUpdater.jar $*
+java -jar java/MirrorUpdater.jar $*
