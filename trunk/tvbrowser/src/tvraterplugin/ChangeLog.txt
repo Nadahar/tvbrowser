@@ -1,7 +1,15 @@
 Changelog TVRaterPlugin
 
+0.03:
+- Beta release
+- New GUI
+- ErrorHandlers improved
+- Dialog-Bug fixed
+
+0.02:
+- First Beta release
+
 0.01:
 - initial version
-
-0.1:
 - GUI nearly ready
+
