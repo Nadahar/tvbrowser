@@ -87,6 +87,8 @@ Section "${PROG_NAME} (erforderlich)"
   SetOutPath "$INSTDIR"
   File "${RUNTIME_DIR}\LICENSE.txt"
   File "${RUNTIME_DIR}\tvbrowser.jar"
+  File "${RUNTIME_DIR}\website.url"
+
   WriteUninstaller "Uninstall.exe"
 
   SetOutPath "$INSTDIR\imgs"
@@ -95,7 +97,7 @@ Section "${PROG_NAME} (erforderlich)"
   
   CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
-  CreateDirectory "$INSTDIR\tvdataloader"
+
 
   # Register uninstaller at Windows (Add/Remove programs)
   WriteRegExpandStr \
@@ -127,7 +129,7 @@ Section "${PROG_NAME} (erforderlich)"
     HKLM \
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
     "URLUpdateInfo" \
-    "http://members.liwest.at/firebird"
+    "http://tvbrowser.sourceforge.net"
 
 SectionEnd # end the section
 
@@ -149,6 +151,10 @@ Section "Verknüpfungen im Start-Menü"
   CreateShortCut \
     "$SMPROGRAMS\${PROG_NAME}\Lizenz.lnk" \
     "$INSTDIR\LICENSE.txt"
+
+	CreateShortCut \
+    "$SMPROGRAMS\${PROG_NAME}\Website.lnk" \
+    "http://tvbrowser.sourceforge.net"
 
   CreateShortCut \
     "$SMPROGRAMS\${PROG_NAME}\${PROG_NAME} deinstallieren.lnk" \
@@ -186,6 +192,13 @@ Section "Premiere-Datenservice"
 
   SetOutPath "$INSTDIR\tvdataservice"
   File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
+SectionEnd
+
+Section "WDR-Datenservice"
+  SectionIn 1 2
+
+  SetOutPath "$INSTDIR\tvdataservice"
+  File "${RUNTIME_DIR}\tvdataservice\WdrDataService.jar"
 SectionEnd
 
 SubSectionEnd

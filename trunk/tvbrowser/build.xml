@@ -221,6 +221,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="premieredataservice/**"/>
     </jar>
+		<jar jarfile="${runtime.dir}/tvdataservice/WdrDataService.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="wdrdataservice/**"/>
+    </jar>
 
     <echo message="Copying the images and all the other stuff ..." />
     <mkdir dir="${runtime.dir}/imgs"/>
@@ -230,6 +234,7 @@
     <copy todir="${runtime.dir}">
       <fileset dir="${txt.dir}" includes="INSTALL.txt"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
+			<fileset dir="${txt.dir}" includes="website.url"/>
     </copy>
 
     <mkdir dir="${runtime.dir}/tvdata"/>
@@ -304,6 +309,10 @@
       <param name="package" value="premieredataservice"/>
     </antcall>
 
+		<antcall target="-zipPackageSrc">
+      <param name="package" value="wdrdataservice"/>
+    </antcall>
+
     <antcall target="-zipPackageSrc">
       <param name="package" value="programinfo"/>
     </antcall>
@@ -340,6 +349,7 @@
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${txt.dir}"
                   includes="LICENSE.txt"/>
+			
     </zip>
   </target>
   
