@@ -26,15 +26,10 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import javax.swing.*;
-
 import tvbrowser.core.Settings;
 import devplugin.SettingsTab;
 
@@ -46,7 +41,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
  
   
   private JCheckBox mUseDefaultFolderCB;
-  private DirectoryChooserPanel mTVDataFolderPanel; 
+  private util.ui.DirectoryChooserPanel mTVDataFolderPanel; 
     
   public DirectoriesSettingsTab() {
     
@@ -72,12 +67,13 @@ public class DirectoriesSettingsTab implements SettingsTab {
     
     content.add(checkBoxPanel);
     
-    final DirectoryChooser directoriesPanel=new DirectoryChooser();
+    final tvbrowser.ui.settings.DirectoryChooser directoriesPanel=new tvbrowser.ui.settings.DirectoryChooser();
 
     msg = mLocalizer.msg("tvdatadir", "tv data folder");
     String tvDataDir = Settings.propTVDataDirectory.getString();    
-    mTVDataFolderPanel=new DirectoryChooserPanel(msg, tvDataDir);
-    directoriesPanel.add(mTVDataFolderPanel);
+    mTVDataFolderPanel=new util.ui.DirectoryChooserPanel(msg, tvDataDir);
+    directoriesPanel.addDirectoryChooserPanel(mTVDataFolderPanel);
+    //directoriesPanel.add(mTVDataFolderPanel);
     directoriesPanel.setEnabled(!mUseDefaultFolderCB.isSelected());
 
     content.add(directoriesPanel);
@@ -130,81 +126,6 @@ public class DirectoriesSettingsTab implements SettingsTab {
 
 
 
-class DirectoryChooserPanel extends JPanel {
- 
-  private JTextField mTextField;
-  private JButton mBtn;
-  private JLabel mLabel;
-  
-  public DirectoryChooserPanel(String title, String text) {
-    
-    setLayout(new BorderLayout(7,0));
-    mLabel=new JLabel(title);
-    mLabel.setBorder(BorderFactory.createEmptyBorder(0,13,0,0));
-    add(mLabel,BorderLayout.WEST);
-    
-    mTextField=new JTextField(text);
-    add(mTextField,BorderLayout.CENTER);
-    
-    mBtn=new JButton(mLocalizer.msg("change","change"));
-    mBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        JFileChooser fc =new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Ok");
-        fc.setCurrentDirectory(new File(mTextField.getText()));
-        int retVal=fc.showOpenDialog(getParent());
-        if (retVal==JFileChooser.APPROVE_OPTION) {
-          File f=fc.getSelectedFile();
-          mTextField.setText(f.getAbsolutePath());
-        }
-      }
-    });
-    
-    add(mBtn,BorderLayout.EAST); 
-     
-  }
-  
-  public void setEnabled(boolean enabled) {
-    super.setEnabled(enabled);
-    mTextField.setEnabled(enabled);
-    mBtn.setEnabled(enabled);  
-    mLabel.setEnabled(enabled);
-  }
-  
-  public String getText() {
-    return mTextField.getText();
-  }
+
 }
-}
-  class DirectoryChooser extends JPanel {
-   
-    /** The localizer for this class. */
-       private static final util.ui.Localizer mLocalizer
-       = util.ui.Localizer.getLocalizerFor(DirectoryChooser.class);
- 
-   
-    private HashSet mSet;
-    
-    public DirectoryChooser() {
-      setLayout(new GridLayout(0,1,0,3));
-    
-      setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("UserDefinedFolders", "User defined folders")));
-      mSet=new HashSet();
-    }
-    
-    public void add(DirectoryChooserPanel panel) {
-      super.add(panel);
-      mSet.add(panel);
-    }
-    
-    public void setEnabled(boolean enabled) {
-      super.setEnabled(enabled);
-      Iterator it=mSet.iterator();
-      while (it.hasNext()) {
-        ((JPanel)it.next()).setEnabled(enabled);
-      }
-      
-    }
-    
-  }
+  
