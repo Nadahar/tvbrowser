@@ -30,9 +30,12 @@ h4 {
 
 }
 
-
-
 p {
+  font-size:10pt;
+  font-family : Verdana, Arial, Sans-serif;
+}
+
+li {
   font-size:10pt;
   font-family : Verdana, Arial, Sans-serif;
 }
