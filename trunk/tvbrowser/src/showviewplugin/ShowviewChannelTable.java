@@ -47,19 +47,19 @@ public class ShowviewChannelTable {
     new ChannelTableEntry("ARTE", 10),
     new ChannelTableEntry("VOX", 11),
     new ChannelTableEntry("DSF", 12),
-    new ChannelTableEntry("ORF1", 14),
-    new ChannelTableEntry("ORF2", 15),
-    new ChannelTableEntry("WDR", "WDR3", 17),
-    new ChannelTableEntry(new String[] {"BR Bayern", "BR", "BR3"}, 18),
+    new ChannelTableEntry("ORF1", "ORF 1", 14),
+    new ChannelTableEntry("ORF2", "ORF 2", 15),
+    new ChannelTableEntry("WDR", "WDR3", "WDR 3", 17),
+    new ChannelTableEntry(new String[] {"BR Bayern", "Bayern", "BR", "BR3", "BR 3"}, 18),
     new ChannelTableEntry("NDR", "N3", 19),
-    new ChannelTableEntry("Schweiz SF1", "SF1", 24),
-    new ChannelTableEntry("HR Hessen", "HR3", 26),
+    new ChannelTableEntry("Schweiz SF1", "SF1", "SF 1", 24),
+    new ChannelTableEntry("HR Hessen", "HR", "HR3", "HR 3", 26),
     new ChannelTableEntry("SFB", 27),
-    new ChannelTableEntry(new String[] {"SWR3", "Südwest", "RP", "BW", "Saarland"}, 29),
-    new ChannelTableEntry("MDR", "MDR3", 32),
+    new ChannelTableEntry(new String[] {"SWR", "SWR3", "SWR 3", "Südwest", "RP", "BW", "Saarland"}, 29),
+    new ChannelTableEntry("MDR", "MDR3", "MDR 3", 32),
     new ChannelTableEntry("ORB", 35),
     new ChannelTableEntry("TV Berlin", 38),
-    new ChannelTableEntry("Schweiz SF2", "SF2", 39),
+    new ChannelTableEntry("Schweiz SF2", "SF2", "SF 2", 39),
     new ChannelTableEntry("FAB", 41),
     new ChannelTableEntry("TV München", 44),
     new ChannelTableEntry("tv.nrw", 46),
@@ -93,8 +93,8 @@ public class ShowviewChannelTable {
     new ChannelTableEntry("TV5", 133),
     new ChannelTableEntry("NBC", 144),
     new ChannelTableEntry("TNT", 149),
-    new ChannelTableEntry("MTV2", 162),
-    new ChannelTableEntry("Super RTL", 179),
+    new ChannelTableEntry("MTV2", "MTV 2", 162),
+    new ChannelTableEntry("Super RTL", "SuperRTL", 179),
     new ChannelTableEntry("VIVAplus", 181),
     new ChannelTableEntry("HSE", 189),    
     new ChannelTableEntry("Onyx", 205),
@@ -123,10 +123,24 @@ public class ShowviewChannelTable {
     }
 
 
-    public ChannelTableEntry(String channelName1, String channelName2,
+    public ChannelTableEntry(String chName1, String chName2,
       int channelNumber)
     {
-      this(new String[] { channelName1, channelName2 }, channelNumber);
+      this(new String[] { chName1, chName2 }, channelNumber);
+    }
+
+
+    public ChannelTableEntry(String chName1, String chName2, String chName3,
+      int channelNumber)
+    {
+      this(new String[] { chName1, chName2, chName3 }, channelNumber);
+    }
+
+
+    public ChannelTableEntry(String chName1, String chName2, String chName3,
+      String chName4, int channelNumber)
+    {
+      this(new String[] { chName1, chName2, chName3, chName4 }, channelNumber);
     }
 
 
