@@ -104,7 +104,7 @@ public class Settings implements SettingsTab, java.awt.event.ActionListener{
 		showIconsInProgList = new JCheckBox (mLocalizer.msg("include icons in prog list","include icons in prog list"));
 		showIconsInProgList.setSelected(belongs.isUseIconsInProgList());
 		
-		showChannelNameInNowList = new JCheckBox (mLocalizer.msg("include channelname in now list","include channelname in now list"));
+		showChannelNameInNowList = new JCheckBox (mLocalizer.msg("include channelname in lists","include channelname in lists"));
 		showChannelNameInNowList.setSelected(belongs.isChannelNameInNowList());
 		
 		
@@ -124,7 +124,7 @@ public class Settings implements SettingsTab, java.awt.event.ActionListener{
 	}
 
 	public String getTitle(){
-		return "microTVBrowser";
+		return "MicroTvBrowser";
 	}
 	
 	public void saveSettings(){

@@ -85,7 +85,7 @@ public class MicroTvSettingsPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         add(radioMicroEdition, gridBagConstraints);
 
-        jLabel3.setText("Days");
+        jLabel3.setText(java.util.ResourceBundle.getBundle("microtvbrowserplugin/microtvbrowserplugin").getString("MicroTvSettingsPanel.day(s)"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
