@@ -17,12 +17,6 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.settings;
 
 import javax.swing.*;
@@ -33,6 +27,11 @@ import java.io.*;
 
 import tvbrowser.core.*;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class AppearanceSettingsTab extends devplugin.SettingsTab implements ActionListener {
 
   private JComboBox lfComboBox;
@@ -45,7 +44,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
   private JButton skinTableBGBtn;
   private JTextField skinTableBGTextField;
 
-  private JCheckBox prevNextCheck, updateCheck, settingsCheck, searchCheck;
+  private JCheckBox mTimeCheck, prevNextCheck, updateCheck, settingsCheck, searchCheck;
   private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
 
   class LookAndFeelObj {
@@ -81,11 +80,9 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
       }
     }
 
-
     lfPanel.add(lfLabel,BorderLayout.WEST);
     lfPanel.add(lfComboBox,BorderLayout.CENTER);
     lfLabel.setPreferredSize(new Dimension(200,(int)lfLabel.getPreferredSize().getHeight()));
-
 
     JPanel skinPanel=new JPanel(new BorderLayout(10,0));
     skinCheckBox=new JCheckBox("Use Skin:");
@@ -174,7 +171,6 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     tablePanel.add(panel1);
     tablePanel.add(tableBGPanel);
 
-
     JPanel buttonPanel=new JPanel(new GridLayout(1,0));
     buttonPanel.setBorder(BorderFactory.createTitledBorder("Buttons"));
 
@@ -182,15 +178,19 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     JPanel panel3=new JPanel(new BorderLayout());
     panel3.setBorder(BorderFactory.createTitledBorder("Show buttons:"));
     panel3.setLayout(new BoxLayout(panel3,BoxLayout.Y_AXIS));
+
+    mTimeCheck=new JCheckBox("Time buttons");
     prevNextCheck=new JCheckBox("Next / Previous");
     updateCheck=new JCheckBox("Update");
     settingsCheck=new JCheckBox("Settings");
     searchCheck=new JCheckBox("Search");
+    panel3.add(mTimeCheck);
     panel3.add(prevNextCheck);
     panel3.add(updateCheck);
     panel3.add(settingsCheck);
     panel3.add(searchCheck);
 
+    mTimeCheck.setSelected(Settings.isTimeBtnVisible());
     prevNextCheck.setSelected(Settings.isPrevNextBtnVisible());
     updateCheck.setSelected(Settings.isUpdateBtnVisible());
     settingsCheck.setSelected(Settings.isPreferencesBtnVisible());
@@ -297,6 +297,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
       Settings.setTableBGMode(Settings.NONE);
     }
 
+    Settings.setTimeBtnVisible(mTimeCheck.isSelected());
     Settings.setPrevNextBtnVisible(prevNextCheck.isSelected());
     Settings.setUpdateBtnVisible(updateCheck.isSelected());
     Settings.setPreferencesBtnVisible(settingsCheck.isSelected());

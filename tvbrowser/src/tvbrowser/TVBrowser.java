@@ -409,29 +409,28 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   
   
   private JPanel createButtonPanel() {
-    JPanel result=new JPanel();
+    JPanel result = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
     result.setOpaque(false);
-    result.setLayout(new FlowLayout(FlowLayout.LEFT,5,5));
 
     if (Settings.isTimeBtnVisible()) {
       // mNowBt, mEarlyBt, mDayBt, mEveningBt
-      mNowBt = new PictureButton("Jetzt", new ImageIcon("imgs/Back24.gif"));
+      mNowBt = new PictureButton("Jetzt", new ImageIcon("imgs/TimeNow24.gif"));
       mNowBt.addActionListener(this);
       result.add(mNowBt);
       
-      mEarlyBt = new PictureButton("Früh", new ImageIcon("imgs/Back24.gif"));
+      mEarlyBt = new PictureButton("Früh", new ImageIcon("imgs/TimeEarly24.gif"));
       mEarlyBt.addActionListener(this);
       result.add(mEarlyBt);
       
-      mMorningBt = new PictureButton("Vormittag", new ImageIcon("imgs/Back24.gif"));
+      mMorningBt = new PictureButton("Vormittag", new ImageIcon("imgs/TimeMorning24.gif"));
       mMorningBt.addActionListener(this);
       result.add(mMorningBt);
 
-      mMiddayBt = new PictureButton("Mittag", new ImageIcon("imgs/Back24.gif"));
+      mMiddayBt = new PictureButton("Mittag", new ImageIcon("imgs/TimeMidday24.gif"));
       mMiddayBt.addActionListener(this);
       result.add(mMiddayBt);
       
-      mEveningBt = new PictureButton("Abend", new ImageIcon("imgs/Back24.gif"));
+      mEveningBt = new PictureButton("Abend", new ImageIcon("imgs/TimeEvening24.gif"));
       mEveningBt.addActionListener(this);
       result.add(mEveningBt);
       
