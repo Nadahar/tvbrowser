@@ -50,6 +50,10 @@ public class ShowviewPlugin extends Plugin {
   }
 
 
+  public String getButtonText() {
+    return null;
+  }
+
   public String getMarkIconName() {
     return null;
   }
