@@ -53,6 +53,7 @@ import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
+import tvbrowser.ui.licensebox.LicenseBox;
 import util.exc.ErrorHandler;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
@@ -76,7 +77,7 @@ public class TVBrowser {
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(0,96,false,"0.9.6.1");
+  public static final devplugin.Version VERSION=new devplugin.Version(0,97,false,"0.9.7");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
   
   private static MainFrame mainFrame;
@@ -114,6 +115,7 @@ public class TVBrowser {
       msg = mLocalizer.msg("error.4", "Can't create log file.");
       ErrorHandler.handle(msg, exc);
     }
+    
     
     SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
       new Color(63, 114, 133), Color.WHITE);
@@ -277,7 +279,16 @@ public class TVBrowser {
     
     // scroll to now
     SwingUtilities.invokeLater(new Runnable() {
-      public void run() {      	
+      public void run() {
+        
+        if (Settings.isFirstStart()) {
+          LicenseBox box=new LicenseBox(mainFrame, true);
+          util.ui.UiUtilities.centerAndShow(box);
+          if (!box.agreed()) {
+            mainFrame.quit();
+          }
+        }
+              	
         if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
           mainFrame.runUpdateThread(Settings.getDownloadPeriod());
         }

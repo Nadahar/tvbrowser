@@ -514,6 +514,12 @@ public class Settings {
   public static void setPreferencesBtnVisible(boolean value) {
     settings.setProperty("preferencesbutton",value?"visible":"hidden");
   }
+  
+  public static boolean isFirstStart() {
+    boolean result=!"false".equals(settings.getProperty("isFirstStart"));
+    settings.setProperty("isFirstStart","false");
+    return result;
+  }
 
   public static int getButtonSettings() {
     String val=settings.getProperty("buttontype","text&icon");
