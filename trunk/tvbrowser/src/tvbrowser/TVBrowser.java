@@ -295,7 +295,8 @@ public class TVBrowser {
       util.ui.UiUtilities.centerAndShow(progDlg);
 
     }
-     
+    else { 
+    
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         
@@ -311,7 +312,7 @@ public class TVBrowser {
         
      }
     });
-        
+    }
   }
 
   public static void updateLookAndFeel() {
