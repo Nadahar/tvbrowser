@@ -139,6 +139,8 @@ public class FavoritesPlugin extends Plugin {
 
  public void updateTree() {
     PluginTreeNode node = getRootNode();
+    node.removeAllActions();
+    node.addAction(new CreateFavoriteAction());
     node.removeAllChildren();
     for (int i=0; i<mFavoriteArr.length; i++) {
       PluginTreeNode curNode = node.addNode(mFavoriteArr[i].getTitle());
@@ -249,8 +251,14 @@ public class FavoritesPlugin extends Plugin {
     mSettings.setProperty("height",""+dlg.getHeight());
   }
 
-  
-  
+
+
+  private void addFavorite(Favorite fav) {
+    Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
+    System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
+    newFavoritesArr[mFavoriteArr.length] = fav;
+    mFavoriteArr = newFavoritesArr;
+  }
 
   public void showEditFavoriteDialog(Program program) {
     Favorite favorite = new Favorite(program.getTitle());
@@ -259,10 +267,11 @@ public class FavoritesPlugin extends Plugin {
     dlg.centerAndShow();
 
     if (dlg.getOkWasPressed()) {
-      Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
+      addFavorite(favorite);
+    /*  Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
       System.arraycopy(mFavoriteArr, 0, newFavoritesArr, 0, mFavoriteArr.length);
       newFavoritesArr[mFavoriteArr.length] = favorite;
-      mFavoriteArr = newFavoritesArr;
+      mFavoriteArr = newFavoritesArr;   */
       updateTree();
     }
   }
@@ -363,7 +372,7 @@ public class FavoritesPlugin extends Plugin {
       EditFavoriteDialog dlg = new EditFavoriteDialog(getParentFrame(), mFavorite);
       dlg.centerAndShow();
       if (dlg.getOkWasPressed()) {
-        FavoritesPlugin.getInstance().updateTree();
+        updateTree();
       }
     }
   }
@@ -380,6 +389,24 @@ public class FavoritesPlugin extends Plugin {
 
     public void actionPerformed(ActionEvent e) {
       deleteFavorite(mFavorite);
+    }
+  }
+
+  class CreateFavoriteAction extends ButtonAction {
+    
+    public CreateFavoriteAction() {
+      super.setSmallIcon(createImageIcon("favoritesplugin/New16.gif"));
+      super.setText("Create new favorite");
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      Favorite favorite = new Favorite();
+      EditFavoriteDialog dlg = new EditFavoriteDialog(getParentFrame(), favorite);
+      dlg.centerAndShow();
+      if (dlg.getOkWasPressed()) {
+        addFavorite(favorite);
+        updateTree();
+      }
     }
   }
 

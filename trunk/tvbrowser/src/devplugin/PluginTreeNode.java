@@ -80,6 +80,11 @@ private Node mDefaultNode;
     mDefaultNode.addActionMenu(menu);
   }
 
+
+  public void removeAllActions() {
+    mDefaultNode.removeAllActionMenus();
+  }
+
   public void addAction(Action action) {
     addActionMenu(new ActionMenu(action));
   }

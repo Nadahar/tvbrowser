@@ -157,7 +157,7 @@ public class ChannelList {
 
   /**
    * Subscribes a channel
-   * @param id the channel's ID
+   * @param channel
    */
   public static void subscribeChannel(Channel channel) {
     mSubscribedChannels.add(channel);

@@ -24,10 +24,9 @@
  * $Revision$
  */
 
-package util.ui.toolbar;
+package tvbrowser.ui.mainframe.toolbar;
 
-import java.awt.Component;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -41,17 +40,200 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.dnd.InvalidDnDOperationException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.*;
 
 import tvbrowser.ui.PictureButton;
+import tvbrowser.ui.ToggleButton;
+import devplugin.Plugin;
 
+public class ToolBar extends JToolBar {
+
+
+
+
+  public static final String ACTION_VALUE = "ActionValue";
+  public static final String ACTION_TYPE_KEY = "ActionType";
+  public static final String ACTION_ID_KEY = "ActionId";
+  public static final String ACTION_IS_SELECTED = "ActionIsSelected";
+
+  public static final int BUTTON_ACTION = 0;
+  public static final int TOOGLE_BUTTON_ACTION = 1;
+  public static final int SEPARATOR = 2;
+
+  public static final int STYLE_TEXT = 1, STYLE_ICON = 2;
+  private static final int ICON_BIG = 1, ICON_SMALL = 2;
+
+  private static Insets NULL_INSETS = new Insets(0, 0, 0, 0);
+  private static Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
+
+
+
+  private ToolBarModel mModel;
+  private ContextMenu mContextMenu;
+  private int mStyle;
+  private int mIconSize;
+  private JLabel mStatusLabel;
+
+  public ToolBar(ToolBarModel model, JLabel label) {
+    super();
+    mModel = model;
+    mStyle = STYLE_TEXT | STYLE_ICON;
+    mIconSize = ICON_BIG;
+    mStatusLabel = label;
+    mContextMenu = new ContextMenu(this);
+    update();
+    addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+        if (SwingUtilities.isRightMouseButton(e)) {
+          mContextMenu.show(e.getX(), e.getY());
+        }
+      }
+    });
+  }
+
+  public void update() {
+    super.removeAll();
+    Action[] actions = mModel.getActions();
+    for (int i=0; i<actions.length; i++) {
+      Action action = actions[i];
+      Integer typeInteger = (Integer)action.getValue(ACTION_TYPE_KEY);
+      int type = -1;
+      if (typeInteger != null) {
+        type = typeInteger.intValue();
+      }
+
+      if (type == TOOGLE_BUTTON_ACTION) {
+        addToggleButton(action);
+      }
+      else if (type == SEPARATOR) {
+        addSeparator();
+      }
+      else {
+        addButton(action);
+      }
+
+    }
+    updateUI();
+  }
+
+
+
+  private void addToggleButton(Action action) {
+    final JToggleButton button = new JToggleButton(action);
+    action.putValue(ACTION_VALUE, button);
+    addButtonProperties(button, action);
+    Boolean isSelected = (Boolean)action.getValue(ACTION_IS_SELECTED);
+    if (isSelected!=null) {
+      button.setSelected(isSelected.booleanValue());
+    }
+    button.setBorderPainted(isSelected!=null && isSelected.booleanValue());
+    button.addMouseListener(new MouseAdapter () {
+      public void mouseEntered(MouseEvent e) {
+        if (!button.isSelected()) {
+          button.setBorderPainted(true);
+        }
+      }
+      public void mouseExited(MouseEvent e) {
+        if (!button.isSelected()) {
+          button.setBorderPainted(false);
+        }
+      }
+    });
+
+    add(button);
+  }
+
+  private void addButton(final Action action) {
+    final JButton button = new JButton();
+    addButtonProperties(button, action);
+    button.setBorderPainted(false);
+
+    button.addMouseListener(new MouseAdapter () {
+      public void mouseEntered(MouseEvent e) {
+        button.setBorderPainted(true);
+      }
+      public void mouseExited(MouseEvent e) {
+        button.setBorderPainted(false);
+      }
+    });
+
+    add(button);
+  }
+
+  private void addButtonProperties(final AbstractButton button, final Action action) {
+    String tooltip = (String)action.getValue(Action.SHORT_DESCRIPTION);
+    Icon icon = getIcon(action);
+    String title = getTitle(action);
+
+    button.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        action.actionPerformed(e);
+      }
+    });
+
+
+
+    button.setText(title);
+    button.setIcon(icon);
+    button.setVerticalTextPosition(SwingConstants.BOTTOM);
+    button.setHorizontalTextPosition(SwingConstants.CENTER);
+    button.setFont(TEXT_FONT);
+    button.setMargin(NULL_INSETS);
+    button.setFocusPainted(false);
+    button.setToolTipText(tooltip);
+  }
+
+  private String getTitle(Action action) {
+    if ((mStyle & STYLE_TEXT) == STYLE_TEXT) {
+      return (String)action.getValue(Action.NAME);
+    }
+    return null;
+  }
+
+  private Icon getIcon(Action action) {
+    if ((mStyle & STYLE_ICON) == STYLE_ICON) {
+      Icon icon;
+      if (mIconSize == ICON_BIG) {
+        icon = (Icon)action.getValue(Plugin.BIG_ICON);
+      }
+      else {
+        icon = (Icon)action.getValue(Action.SMALL_ICON);
+      }
+      return icon;
+    }
+    return null;
+  }
+
+  public void setStyle(int style) {
+    mStyle = style;
+  }
+
+  public int getStyle() {
+    return mStyle;
+  }
+
+  public void setUseBigIcons(boolean arg) {
+    if (arg) {
+      mIconSize = ICON_BIG;
+    }
+    else {
+      mIconSize = ICON_SMALL;
+    }
+  }
+
+  public boolean useBigIcons() {
+    return mIconSize == ICON_BIG;
+  }
+
+
+
+}
+
+/*
 public class ToolBar extends JToolBar implements ToolBarModelListener, MouseListener, DropTargetListener, DragGestureListener, ActionListener {
   
   public static int TEXT = 1, ICON = 2;  
@@ -117,7 +299,8 @@ public class ToolBar extends JToolBar implements ToolBarModelListener, MouseList
           addSeparator();          
         }
         else if (item instanceof ToolBarButton) {
-          JButton btn = getButton((ToolBarButton)item);
+          ToolBarButton toolbarBtn = (ToolBarButton)item;
+          AbstractButton btn = getButton(toolbarBtn);
           add(btn);
         }
         
@@ -130,8 +313,8 @@ public class ToolBar extends JToolBar implements ToolBarModelListener, MouseList
     updateUI();
   }
   
-  public JButton getButton(ToolBarButton item) {
-    JButton button = (JButton)mButtonsHash.get(item.getId());
+  public AbstractButton getButton(ToolBarButton item) {
+    AbstractButton button = (AbstractButton)mButtonsHash.get(item.getId());
     if (button != null) {
       return button;
     }
@@ -144,8 +327,13 @@ public class ToolBar extends JToolBar implements ToolBarModelListener, MouseList
     if ((mStyle & ICON) != ICON) {
       icon = null;
     }
-            
-    button = new PictureButton(title, icon, item.getDescription(), mLabel);
+
+    if (item.getType() == ToolBarButton.TYPE_PUSH) {
+      button = new PictureButton(title, icon, item.getDescription(), mLabel);
+    }
+    else if (item.getType() == ToolBarButton.TYPE_TOGGLE) {
+      button = new ToggleButton(title, icon, item.getDescription(), mLabel);
+    }
     button.addActionListener(this);
     mButtonsHash.put(item.getId(), button);
     
@@ -329,3 +517,4 @@ class StringTransferable implements Transferable {
   }
 }
 
+*/

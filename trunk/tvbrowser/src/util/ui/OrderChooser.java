@@ -56,12 +56,12 @@ public class OrderChooser extends JPanel {
   /**
    * Konstruiert einen OrderChooser.
    * <P>
-   * Die Reihenfolge wird aus currOrder �bernommen. Dann wird das Array
+   * Die Reihenfolge wird aus currOrder Uebernommen. Dann wird das Array
    * allItems durchgegangen und jedes Objekt, das nicht in der Reihenfolge
    * vorkommt, wird aufgenommen.
    *
    * @param currOrder Die aktuelle Reihenfolge
-   * @param allItems Alle m�glichen Objekte (die Objekte der aktuellen Reihenfolge
+   * @param allItems Alle moeglichen Objekte (die Objekte der aktuellen Reihenfolge
    *        eingeschlossen)
    */
   public OrderChooser(Object[] currOrder, Object[] allItems) {
