@@ -102,11 +102,11 @@ public class ProgramLengthFilterComponent implements FilterComponent {
 
 		_minSpinner = new JSpinner(new SpinnerNumberModel(_min, 0, 1000, 1));;
 		_maxSpinner = new JSpinner(new SpinnerNumberModel(_max, 0, 1000, 1));;
-		_minBox = new JCheckBox("minimum", _useMin);
-		_maxBox = new JCheckBox("maximum", _useMax);
+		_minBox = new JCheckBox(mLocalizer.msg("minimum", "minimum"), _useMin);
+		_maxBox = new JCheckBox(mLocalizer.msg("maximum", "maximum"), _useMax);
 
-		final JLabel minMinutes = new JLabel("Minutes");
-		final JLabel maxMinutes = new JLabel("Minutes");
+		final JLabel minMinutes = new JLabel(mLocalizer.msg("Minutes", "Minutes"));
+		final JLabel maxMinutes = new JLabel(mLocalizer.msg("Minutes", "Minutes"));
 		
 		if (!_useMin) {
             _minSpinner.setEnabled(false);
