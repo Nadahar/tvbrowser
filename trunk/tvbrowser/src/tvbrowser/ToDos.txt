@@ -1,7 +1,7 @@
 TODOs:
 
 - Senderlisten direkt vom Server holen (Bodo, fast fertig)
-- Je Senderliste Infos zum "Privider" darstellen (Name, Website, E-Mail)
+- Je Senderliste Infos zum "Privider" darstWellen (Name, Website, E-Mail) (Bodo, fast fertig)
 - Gestern und Morgen reinladen f�r Sender in einer anderen Zeitzone
 - Logos zu allen Sendern
 - Anpassbarkeit der GUI (wo welches Element ist)
@@ -10,7 +10,6 @@ TODOs:
 - News-Plugin:
     Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
     evtl. Option "News automatisch holen"
-- �bernehmen-Knopf in Einstellungen
 - Button in Toolbar f�r die Men�option Ansicht--> Plugin-�bersicht
 - Einstellungen f�r die Toolbar im Einstellungen-Dialog
 
