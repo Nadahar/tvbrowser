@@ -52,6 +52,8 @@
   <property name="themepacks.dir" value="themepacks"/>
   <property name="classes.dir" value="classes"/>
   <property name="runtime.dir" value="runtime"/>
+  <property name="tvbrowser.runtime.dir" value="${runtime.dir}/tvbrowser"/>
+  <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
   <property name="installer.dir" value="installer"/>
   <property name="public.dir" value="public"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
@@ -192,83 +194,113 @@
   <target name="runtime" depends="make">
     <echo message="Creating the jars ..." />
 
-    <mkdir dir="${runtime.dir}"/>
+	<!-- Make the TV-Browser runtime -->
+    <mkdir dir="${tvbrowser.runtime.dir}"/>
     
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
 
 	<!-- Pack the tvbrowser.jar -->    
-    <jar jarfile="${runtime.dir}/tvbrowser.jar"
+    <jar jarfile="${tvbrowser.runtime.dir}/tvbrowser.jar"
          compress="false"
-         manifest="${txt.dir}/manifest.mf">
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="tvbrowser.TVBrowser"/>
+      </manifest>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${classes.dir}" includes="com/**"/>
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
-	<fileset dir="${classes.dir}" includes="com/**"/>
     </jar>
 
 	<!-- Pack the plugin jars -->    
-    <mkdir dir="${runtime.dir}/plugins"/>
-    <jar jarfile="${runtime.dir}/plugins/ProgramInfo.jar"
+    <mkdir dir="${tvbrowser.runtime.dir}/plugins"/>
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/ProgramInfo.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="programinfo/**"/>
     </jar>
-    <jar jarfile="${runtime.dir}/plugins/ReminderPlugin.jar"
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/ReminderPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="reminderplugin/**"/>
     </jar>
-    <jar jarfile="${runtime.dir}/plugins/SearchPlugin.jar"
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/SearchPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="searchplugin/**"/>
     </jar>
-    <jar jarfile="${runtime.dir}/plugins/PrintPlugin.jar"
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/PrintPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="printplugin/**"/>
     </jar>
-    <jar jarfile="${runtime.dir}/plugins/FavoritesPlugin.jar"
+    <jar jarfile="${tvbrowser.runtime.dir}/plugins/FavoritesPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="favoritesplugin/**"/>
     </jar>
 
 	<!-- Pack the TV data service jars -->    
-    <mkdir dir="${runtime.dir}/tvdataservice"/>
-    <jar jarfile="${runtime.dir}/tvdataservice/XmlTvDataService.jar"
+    <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
+    <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/XmlTvDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>
     </jar>
-    <jar jarfile="${runtime.dir}/tvdataservice/PremiereDataService.jar"
+    <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/PremiereDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="premieredataservice/**"/>
     </jar>
-		<jar jarfile="${runtime.dir}/tvdataservice/WdrDataService.jar"
+		<jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/WdrDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="wdrdataservice/**"/>
     </jar>
 
 	<!-- Copy the other stuff -->    
     <echo message="Copying the images and all the other stuff ..." />
-    <mkdir dir="${runtime.dir}/imgs"/>
-    <copy todir="${runtime.dir}/imgs">
+    <mkdir dir="${tvbrowser.runtime.dir}/imgs"/>
+    <copy todir="${tvbrowser.runtime.dir}/imgs">
       <fileset dir="${classes.dir}/imgs"/>
     </copy>
-    <copy todir="${runtime.dir}">
+    <copy todir="${tvbrowser.runtime.dir}">
       <fileset dir="${txt.dir}" includes="INSTALL.txt"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${txt.dir}" includes="website.url"/>
       <fileset dir="${txt.dir}" includes="where_is_the_exe.txt"/>
     </copy>
 
-    <mkdir dir="${runtime.dir}/themepacks"/>
-    <copy todir="${runtime.dir}/themepacks">
-    <fileset dir="themepacks"/>
+    <mkdir dir="${tvbrowser.runtime.dir}/themepacks"/>
+    <copy todir="${tvbrowser.runtime.dir}/themepacks">
+      <fileset dir="themepacks"/>
     </copy>
 
-    <mkdir dir="${runtime.dir}/help"/>
-    <copy todir="${runtime.dir}/help">
-    <fileset dir="${src.dir}/help"/>
+    <mkdir dir="${tvbrowser.runtime.dir}/help"/>
+    <copy todir="${tvbrowser.runtime.dir}/help">
+      <fileset dir="${src.dir}/help"/>
+    </copy>
+
+	<!-- Make the MirrorUpdater runtime -->
+    <mkdir dir="${mirrorupdater.runtime.dir}"/>
+    
+    <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
+    <mkdir dir="${unpacked.dir}/commons-net.jar"/>
+    <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
+
+	<!-- Pack the tvbrowser.jar -->    
+    <jar jarfile="${mirrorupdater.runtime.dir}/MirrorUpdater.jar"
+         compress="false"
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="primarydatamanager.mirrorupdater.MirrorUpdater"/>
+      </manifest>
+      <fileset dir="${classes.dir}" includes="primarydatamanager/mirrorupdater/**"/>
+      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>
+      <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${unpacked.dir}/commons-net.jar" includes="org/**"/>
+    </jar>
+
+    <!-- Copy the file(s) -->
+    <copy todir="${mirrorupdater.runtime.dir}">
+      <fileset dir="${txt.dir}" includes="MirrorUpdater.ini"/>
     </copy>
   </target>
 
@@ -278,8 +310,8 @@
    | Runs the project.
    +-->
   <target name="run" depends="runtime">
-    <java jar="${runtime.dir}/tvbrowser.jar"
-          dir="${runtime.dir}"
+    <java jar="${tvbrowser.runtime.dir}/tvbrowser.jar"
+          dir="${tvbrowser.runtime.dir}"
           fork="true">
     </java>
   </target>
@@ -293,7 +325,7 @@
     <mkdir dir="${public.dir}"/>
     <exec executable="${installer.dir}/makensis.exe"
           failonerror="true">
-      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
+      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${tvbrowser.runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
     </exec>
   </target>
 
@@ -310,7 +342,7 @@
 
     <zip destfile="${public.dir}/tvbrowser_v${version}_bin.zip">
       <zipfileset prefix="tvbrowser_v${version}"
-                  dir="${runtime.dir}"/>
+                  dir="${tvbrowser.runtime.dir}"/>
     </zip>
 
     <zip destfile="${public.dir}/tvbrowser_v${version}_doc.zip">

@@ -344,9 +344,9 @@ public class DayProgramFile {
     if (updateVersion > 0) {
       buf.append("_update_");
       buf.append(updateVersion);
-      buf.append(".gz");
+      buf.append(".prog.gz");
     } else {
-      buf.append("_full.gz");
+      buf.append("_full.prog.gz");
     }
     
     return buf.toString();
