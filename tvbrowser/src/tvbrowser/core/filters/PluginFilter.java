@@ -26,8 +26,6 @@
 
 package tvbrowser.core.filters;
 
-
-import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.ProgramFilter;
 
