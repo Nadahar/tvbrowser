@@ -159,6 +159,7 @@ public class SettingsDialog {
     node.add(new SettingNode(new LookAndFeelSettingsTab()));
     node.add(new SettingNode(new FontsSettingsTab()));
     node.add(new SettingNode(new ProgramTableSettingsTab()));
+    node.add(new SettingNode(new ContextmenuSettingsTab()));
     
     // Plugins
     node = new SettingNode(new PluginSettingsTab());

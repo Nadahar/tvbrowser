@@ -133,7 +133,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     // Get a random Mirror that is up to date
     Mirror mirror = chooseUpToDateMirror(mirrorArr);
     mLog.fine("Using mirror " + mirror.getUrl());
-
+    
     // Update the mirrorlist (for the next time)
     updateMetaFile(mirror.getUrl(), Mirror.MIRROR_LIST_FILE_NAME);
     

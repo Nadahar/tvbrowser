@@ -52,7 +52,8 @@ public class PluginManager {
   
   private static HashMap mAvailablePluginHash;
   private static ArrayList mInstalledPluginList;
-
+  private static Plugin[] mContextMenuPluginList;
+  private static Plugin mContextMenuDefaultPlugin;
   
   
   /**
@@ -289,7 +290,31 @@ public class PluginManager {
     }
   }
   
+  public static Plugin getContextMenuDefaultPlugin() {
+    boolean contextMenuDefaultPluginsChanged= Settings.settingHasChanged(new String[]{"contextmenudefaultplugin"});
+    if (mContextMenuDefaultPlugin==null || contextMenuDefaultPluginsChanged) {
+      mContextMenuDefaultPlugin=getPlugin(Settings.getDefaultContextMenuPlugin());
+    }
+    return mContextMenuDefaultPlugin;
+  }
   
+  public static Plugin[] getContextMenuPlugins() {
+    boolean contextMenuPluginsChanged= Settings.settingHasChanged(new String[]{"contextmenuitemplugins"});
+    if (mContextMenuPluginList==null || contextMenuPluginsChanged) {
+    
+      String plugins[]=Settings.getContextMenuItemPlugins();
+      ArrayList list=new ArrayList();
+      for (int i=0;i<plugins.length;i++) {
+        Plugin p=getPlugin(plugins[i]);
+        if (p!=null && p.getContextMenuItemText()!=null) {
+          list.add(p);
+        }      
+      }
+      mContextMenuPluginList=new Plugin[list.size()];
+      list.toArray(mContextMenuPluginList);
+    }
+    return mContextMenuPluginList;
+  }
 
   /**
    * Returns the installed mAvailablePluginHash as an array of Plugin-Objects
