@@ -196,7 +196,11 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public devplugin.SettingsTab getSettingsTab() {
     return new ReminderSettingsTab(mSettings);
   }
-  
+
+  public String getMarkIconName() {
+		return "reminderplugin/TipOfTheDay16.gif";
+  }
+	
   public Action[] getContextMenuActions(final Program program) {
     final Plugin plugin = this;  
     if (mReminderList.contains(program)) {
@@ -270,7 +274,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     return new Icon[]{icon};
   }
  
-  public boolean supportMultipleProgramExecution() {
+  public boolean canReceivePrograms() {
     return true;
   }
 
