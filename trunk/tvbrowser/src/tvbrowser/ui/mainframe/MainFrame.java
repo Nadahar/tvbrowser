@@ -609,14 +609,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
 
 
 
-  public void runUpdateThread(final int daysToDownload) {
+  public void runUpdateThread(final int daysToDownload, final TvDataService[] services) {
     
-  if (daysToDownload != UpdateDlg.CANCEL) {
     downloadingThread = new Thread() {
       public void run() {
         onDownloadStart();
         JProgressBar progressBar = mStatusBar.getProgressBar();
-        TvDataUpdater.getInstance().downloadTvData(daysToDownload, progressBar, mStatusBar.getLabel());
+        TvDataUpdater.getInstance().downloadTvData(daysToDownload, services, progressBar, mStatusBar.getLabel());
         
         
         SwingUtilities.invokeLater(new Runnable() {
@@ -633,7 +632,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     };
     downloadingThread.start();
   }
-  }
 
   
   
@@ -647,7 +645,10 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       UpdateDlg dlg = new UpdateDlg(this, true);
       dlg.pack();
       UiUtilities.centerAndShow(dlg);
-      runUpdateThread(dlg.getResult());
+      int daysToDownload = dlg.getResult();
+      if (daysToDownload != UpdateDlg.CANCEL) {
+        runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
+      }
     }
   }
 

@@ -43,10 +43,13 @@ public class PropertyManager {
   private HashSet mChangedKeySet;
   
   
+  
   public PropertyManager() {
     mProperties = new Properties();
     mPropertyHash = new HashMap();
     mChangedKeySet = new HashSet();
+    
+    
   }
 
 
@@ -144,6 +147,7 @@ public class PropertyManager {
 
       // Check whether this key is known      
       boolean isKnown = (mPropertyHash.get(key) != null);
+      
       if (! isKnown) {
         mLog.info("Removing unknown setting: " + key + " ("
           + mProperties.get(key) + ")");
