@@ -103,19 +103,19 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    mHttpProxySettingsPanel.setUseProxy(mHttpProxySettingsPanel.getUseProxy());
-    mHttpProxySettingsPanel.setHost(mHttpProxySettingsPanel.getHost());
-    mHttpProxySettingsPanel.setPort(mHttpProxySettingsPanel.getPort());
-    mHttpProxySettingsPanel.setAuthentifyAtProxy(mHttpProxySettingsPanel.getAuthentifyAtProxy());
-    mHttpProxySettingsPanel.setUser(mHttpProxySettingsPanel.getUser());
-    mHttpProxySettingsPanel.setPassword(mHttpProxySettingsPanel.getPassword());
+    Settings.propHttpProxyUseProxy.setBoolean(mHttpProxySettingsPanel.getUseProxy());
+    Settings.propHttpProxyHost.setString(mHttpProxySettingsPanel.getHost());
+    Settings.propHttpProxyPort.setString(mHttpProxySettingsPanel.getPort());
+    Settings.propHttpProxyAuthentifyAtProxy.setBoolean(mHttpProxySettingsPanel.getAuthentifyAtProxy());
+    Settings.propHttpProxyUser.setString(mHttpProxySettingsPanel.getUser());
+    Settings.propHttpProxyPassword.setString(mHttpProxySettingsPanel.getPassword());
     
-    mFtpProxySettingsPanel.setUseProxy(mFtpProxySettingsPanel.getUseProxy());
-    mFtpProxySettingsPanel.setHost(mFtpProxySettingsPanel.getHost());
-    mFtpProxySettingsPanel.setPort(mFtpProxySettingsPanel.getPort());
-    mFtpProxySettingsPanel.setAuthentifyAtProxy(mFtpProxySettingsPanel.getAuthentifyAtProxy());
-    mFtpProxySettingsPanel.setUser(mFtpProxySettingsPanel.getUser());
-    mFtpProxySettingsPanel.setPassword(mFtpProxySettingsPanel.getPassword());
+    Settings.propFtpProxyUseProxy.setBoolean(mFtpProxySettingsPanel.getUseProxy());
+    Settings.propFtpProxyHost.setString(mFtpProxySettingsPanel.getHost());
+    Settings.propFtpProxyPort.setString(mFtpProxySettingsPanel.getPort());
+    Settings.propFtpProxyAuthentifyAtProxy.setBoolean(mFtpProxySettingsPanel.getAuthentifyAtProxy());
+    Settings.propFtpProxyUser.setString(mFtpProxySettingsPanel.getUser());
+    Settings.propFtpProxyPassword.setString(mFtpProxySettingsPanel.getPassword());
   }
 
   
@@ -274,7 +274,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
 
 
     public String getPassword() {
-      return mPasswordPF.getText();
+      return new String(mPasswordPF.getPassword());
     }
     
   }

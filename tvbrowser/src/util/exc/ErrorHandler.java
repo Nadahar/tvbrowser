@@ -307,7 +307,13 @@ public class ErrorHandler {
         
         thr = thr.getCause();
       }
-      buffer.append("----- End of stacktrace -----\n");
+      
+      // Remove trailing newlines
+      while (buffer.charAt(buffer.length() - 1) == '\n') {
+        buffer.deleteCharAt(buffer.length() - 1);
+      }
+      
+      buffer.append("\n----- End of stacktrace -----\n");
       
       StringSelection content = new StringSelection(buffer.toString());
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(content, null);
