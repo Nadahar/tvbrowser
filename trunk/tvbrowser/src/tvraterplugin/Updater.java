@@ -59,11 +59,13 @@ public class Updater implements Progress {
 	/** Localizer */
 	private static final Localizer _mLocalizer = Localizer.getLocalizerFor(Updater.class);
 	/** Location of Update-Skript */
-//	private static String LOCATION = "http://localhost/wannawork3/tvaddicted/updater.php";
+//	private static String LOCATION = "http://localhost/private/wannawork3/tvaddicted/updater.php";
 	private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
 	/** The Plugin */
 	private TVRaterPlugin _tvraterPlugin;
-
+	/** Update Successfull ? */
+	private boolean _wasSuccessfull = false;
+	
 	/**
 	 * Creates the Updater
 	 * @param tvraterPlugin Plugin that uses the Updater
@@ -102,16 +104,25 @@ public class Updater implements Progress {
 					JOptionPane.ERROR_MESSAGE);
 			} else {
 				readData(data);
+				_wasSuccessfull = true;
 			}
+
 			
 			out.close();
 		} catch (Exception e) {
 			ErrorHandler.handle(_mLocalizer.msg("updateError", "An error occured while updateting the TVRater Database"), e);
 			e.printStackTrace();
 		}
-
 	}
 
+	/**
+	 * Was the update successfull?
+	 * @return Successfully updated ?
+	 */
+	public boolean wasSuccessfull() {
+	    return _wasSuccessfull;
+	}
+	
 	/**
 	 * Gets the Text within a Node
      * @param data Node to rip the Text from
@@ -337,6 +348,7 @@ public class Updater implements Progress {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
+			
 			document = builder.parse(new GZIPInputStream(uc.getInputStream()));
 		} catch (Exception e) {
 			throw e;

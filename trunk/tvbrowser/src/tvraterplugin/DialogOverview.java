@@ -1,20 +1,19 @@
 /*
- * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * TV-Browser Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 package tvraterplugin;
@@ -33,9 +32,11 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -46,150 +47,193 @@ import util.ui.UiUtilities;
  * @author bodo tasche
  */
 public class DialogOverview extends JDialog {
-	/** Localizer */
-	private static final Localizer _mLocalizer = Localizer.getLocalizerFor(DialogOverview.class);
 
-	/** The TVRaterPlugin with the Database */
-	private TVRaterPlugin _tvraterPlugin;
-	/** The tabbed Pane */
-	private JTabbedPane _tabbed;
-	/** List of personal Ratings */
-	private JList _personal;
-	/** List of overall Ratings */
-	private JList _overall;
-	/** Der Update-Button */
-	private JButton _update;
+    /** Localizer */
+    private static final Localizer _mLocalizer = Localizer
+            .getLocalizerFor(DialogOverview.class);
 
-	/**
-	 * Creates the Overview Dialog
-	 * @param parent Parent-Frame
-	 * @param tvraterDB Database to use
-	 */
-	public DialogOverview(Frame parent, TVRaterPlugin tvraterPlugin) {
-		super(parent, true);
-		setTitle(_mLocalizer.msg("title", "Rating-Overview"));
+    /** The TVRaterPlugin with the Database */
+    private TVRaterPlugin _tvraterPlugin;
 
-		_tvraterPlugin = tvraterPlugin;
+    /** The tabbed Pane */
+    private JTabbedPane _tabbed;
 
-		createGUI();
-	}
+    /** List of personal Ratings */
+    private JList _personal;
 
-	/**
-	 * Creates the GUI
-	 */
-	private void createGUI() {
-		JPanel panel = (JPanel) getContentPane();
+    /** List of overall Ratings */
+    private JList _overall;
 
-		panel.setLayout(new BorderLayout());
+    /** Der Update-Button */
+    private JButton _update;
 
-		RatingComparator comperator = new RatingComparator();
+    /**
+     * Creates the Overview Dialog
+     * 
+     * @param parent
+     *            Parent-Frame
+     * @param tvraterDB
+     *            Database to use
+     */
+    public DialogOverview(Frame parent, TVRaterPlugin tvraterPlugin) {
+        super(parent, true);
+        setTitle(_mLocalizer.msg("title", "Rating-Overview"));
 
-		Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
-		Collections.sort(overallVector, comperator);
+        _tvraterPlugin = tvraterPlugin;
 
-		_tabbed = new JTabbedPane();
+        createGUI();
+    }
 
-		_overall = new JList(overallVector);
-		_overall.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
-					view();
-				}
-				super.mouseClicked(e);
-			}
-		});
+    /**
+     * Creates the GUI
+     */
+    private void createGUI() {
+        JPanel panel = (JPanel) getContentPane();
 
-		_tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(_overall));
+        panel.setLayout(new BorderLayout());
 
-		Vector personalVector = new Vector(_tvraterPlugin.getDatabase().getPersonalRating());
-		Collections.sort(personalVector, comperator);
+        RatingComparator comperator = new RatingComparator();
 
-		_personal = new JList(personalVector);
-		_personal.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
-					view();
-				}
-				super.mouseClicked(e);
-			}
-		});
+        Vector overallVector = new Vector(_tvraterPlugin.getDatabase()
+                .getOverallRating());
+        Collections.sort(overallVector, comperator);
 
+        _tabbed = new JTabbedPane();
 
-		_tabbed.addTab(_mLocalizer.msg("personal", "Your Ratings"), new JScrollPane(_personal));
+        _overall = new JList(overallVector);
+        _overall.addMouseListener(new MouseAdapter() {
 
-		panel.add(_tabbed, BorderLayout.CENTER);
+            public void mouseClicked(MouseEvent e) {
+                if ((e.getButton() == MouseEvent.BUTTON1)
+                        && (e.getClickCount() == 2)) {
+                    view();
+                }
+                super.mouseClicked(e);
+            }
+        });
 
-		JPanel buttonpanel = new JPanel(new GridBagLayout());
+        _tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"),
+                new JScrollPane(_overall));
 
-		GridBagConstraints c = new GridBagConstraints();
-		c.weightx = 0;
-		c.fill = GridBagConstraints.NONE;
-		c.insets = new Insets(5, 5, 5, 5);
+        Vector personalVector = new Vector(_tvraterPlugin.getDatabase()
+                .getPersonalRating());
+        Collections.sort(personalVector, comperator);
 
-		_update = new JButton(_mLocalizer.msg("update", "Update"));
-		buttonpanel.add(_update, c);
-		_update.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				update();
-			}
-		});
+        _personal = new JList(personalVector);
+        _personal.addMouseListener(new MouseAdapter() {
 
-		GridBagConstraints c2 = new GridBagConstraints();
-		c2.weightx = 1;
-		c2.fill = GridBagConstraints.HORIZONTAL;
+            public void mouseClicked(MouseEvent e) {
+                if ((e.getButton() == MouseEvent.BUTTON1)
+                        && (e.getClickCount() == 2)) {
+                    view();
+                }
+                super.mouseClicked(e);
+            }
+        });
 
-		buttonpanel.add(new JPanel(), c2);
+        _tabbed.addTab(_mLocalizer.msg("personal", "Your Ratings"),
+                new JScrollPane(_personal));
 
-		JButton view = new JButton(_mLocalizer.msg("view", "View"));
-		buttonpanel.add(view, c);
-		view.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				view();
-			}
-		});
+        panel.add(_tabbed, BorderLayout.CENTER);
 
-		JButton close = new JButton(_mLocalizer.msg("close", "Close"));
-		buttonpanel.add(close, c);
-		close.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hide();
-			}
-		});
+        JPanel buttonpanel = new JPanel(new GridBagLayout());
 
-		panel.add(buttonpanel, BorderLayout.SOUTH);
-	}
+        GridBagConstraints c = new GridBagConstraints();
+        c.weightx = 0;
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(5, 5, 5, 5);
 
-	/**
-	 * Creates a DialogRating with the selected Rating
-	 */
-	protected void view() {
-		if ((_tabbed.getSelectedIndex() == 0) && (_overall.getSelectedValue() != null)) {
-			DialogRating dlg = new DialogRating((Frame)this.getParent(), _tvraterPlugin, ((Rating)_overall.getSelectedValue()).getTitle());
-			UiUtilities.centerAndShow(dlg);
-		} else if ((_tabbed.getSelectedIndex() == 1) && (_personal.getSelectedValue() != null)) {
-			DialogRating dlg = new DialogRating((Frame)this.getParent(), _tvraterPlugin, ((Rating)_personal.getSelectedValue()).getTitle());
-			UiUtilities.centerAndShow(dlg);
-		}
-	}
+        _update = new JButton(_mLocalizer.msg("update", "Update"));
+        buttonpanel.add(_update, c);
+        _update.addActionListener(new java.awt.event.ActionListener() {
 
-	/**
-	 * Updates the Database from the Server
-	 */
-	protected void update() {
-      Thread updateThread = new Thread() {
-        public void run() {
-        	_update.setEnabled(false);
-           	System.out.println("Updater gestartet");
-       		Updater up = new Updater(_tvraterPlugin);
-       		up.run();
+            public void actionPerformed(ActionEvent e) {
+                update();
+            }
+        });
 
-       		RatingComparator comperator = new RatingComparator();
-       		Vector overallVector = new Vector(_tvraterPlugin.getDatabase().getOverallRating());
-       		Collections.sort(overallVector, comperator);
-       		_overall.setListData(overallVector);
-       		_update.setEnabled(true);
+        GridBagConstraints c2 = new GridBagConstraints();
+        c2.weightx = 1;
+        c2.fill = GridBagConstraints.HORIZONTAL;
+
+        buttonpanel.add(new JPanel(), c2);
+
+        JButton view = new JButton(_mLocalizer.msg("view", "View"));
+        buttonpanel.add(view, c);
+        view.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                view();
+            }
+        });
+
+        JButton close = new JButton(_mLocalizer.msg("close", "Close"));
+        buttonpanel.add(close, c);
+        close.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                hide();
+            }
+        });
+
+        panel.add(buttonpanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Creates a DialogRating with the selected Rating
+     */
+    protected void view() {
+        if ((_tabbed.getSelectedIndex() == 0)
+                && (_overall.getSelectedValue() != null)) {
+
+            final DialogRating dlg = new DialogRating((Frame) this.getParent(),
+                   			_tvraterPlugin, ((Rating) _overall.getSelectedValue()).getTitle());
+
+            Runnable runLater = new Runnable() {
+                public void run() {
+                    UiUtilities.centerAndShow(dlg);
+                }
+            };
+            SwingUtilities.invokeLater(runLater);
+        } else if ((_tabbed.getSelectedIndex() == 1)
+                && (_personal.getSelectedValue() != null)) {
+            final DialogRating dlg = new DialogRating((Frame) this.getParent(),
+                    _tvraterPlugin, ((Rating) _personal.getSelectedValue())
+                            .getTitle());
+            Runnable runLater = new Runnable() {
+                public void run() {
+                    UiUtilities.centerAndShow(dlg);
+                }
+            };
+            SwingUtilities.invokeLater(runLater);
         }
-      };
-      updateThread.start();
-	}
+    }
+
+    /**
+     * Updates the Database from the Server
+     */
+    protected void update() {
+        Thread updateThread = new Thread() {
+
+            public void run() {
+                _update.setEnabled(false);
+                System.out.println("Updater gestartet");
+                Updater up = new Updater(_tvraterPlugin);
+                up.run();
+
+                RatingComparator comperator = new RatingComparator();
+                Vector overallVector = new Vector(_tvraterPlugin.getDatabase()
+                        .getOverallRating());
+                Collections.sort(overallVector, comperator);
+                _overall.setListData(overallVector);
+                _update.setEnabled(true);
+
+                if (up.wasSuccessfull()) {
+                    JOptionPane.showMessageDialog(getParent(),
+                            _mLocalizer.msg("updateSuccess", "Update was successfull!"));
+                }
+            }
+        };
+        updateThread.start();
+    }
 }
