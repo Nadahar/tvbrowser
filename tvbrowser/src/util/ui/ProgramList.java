@@ -67,7 +67,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * Creates the JList and adds the default MouseListeners (PopUpBox)
      * 
      * @param programArr Array of Programs to show
-     * @param mouseListeners If true adds PopUp-MouseListeners
+     * @param mouseListener If true adds PopUp-MouseListeners
      */
     public ProgramList(Vector programArr, boolean mouseListener) {
         super(programArr);
@@ -75,7 +75,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         if (mouseListener) {
             addMouseListeners();
         }
-    }    
+    }
     
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)

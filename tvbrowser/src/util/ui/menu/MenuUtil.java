@@ -24,52 +24,44 @@
  * $Revision$
  */
 
-package devplugin;
+package util.ui.menu;
+
+import devplugin.ActionMenu;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.*;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 01.01.2005
- * Time: 11:45:28
+ * Date: 02.01.2005
+ * Time: 19:07:40
  */
+public class MenuUtil {
 
-public class ContextMenuAction extends AbstractAction {
+  public static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
+  public static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
 
-    private ActionListener mListener;
 
-    public ContextMenuAction(String title, Icon icon) {
-      putValue(Action.NAME, title);
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public ContextMenuAction(String title) {
-      putValue(Action.NAME, title);
-    }
-
-    public ContextMenuAction() {
-    }  
-
-    public void setText(String text) {
-      putValue(Action.NAME, text);
-    }
-
-    public void setSmallIcon(Icon icon) {
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public void setActionListener(ActionListener listener) {
-      mListener = listener;
-    }
-
-    public void actionPerformed(ActionEvent event) {
-      if (mListener != null) {
-        mListener.actionPerformed(event);
+  public static JMenuItem createMenuItem(ActionMenu menu) {
+    JMenuItem result;
+    if (menu.hasSubItems()) {
+      result = new JMenu(menu.getAction());
+      ActionMenu[] subItems = menu.getSubItems();
+      for (int i=0; i<subItems.length; i++) {
+        result.add(createMenuItem(subItems[i]));
       }
     }
-
+    else {
+      if (menu.isSelected()) {
+        result = new JCheckBoxMenuItem(menu.getAction().getValue(Action.NAME).toString(), true);
+      }
+      else {
+        result = new JMenuItem(menu.getAction());
+      }
+    }
+    result.setFont(CONTEXT_MENU_PLAINFONT);
+    return result;
   }
 
 
+}

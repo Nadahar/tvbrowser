@@ -2,8 +2,10 @@ package tvbrowser.ui.pluginview;
 
 import devplugin.ProgramItem;
 import devplugin.Plugin;
+import devplugin.ActionMenu;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.ArrayList;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -17,14 +19,17 @@ public class Node extends DefaultMutableTreeNode {
   public static final int PLUGIN_ROOT = 1;
   public static final int PROGRAM = 2;
   public static final int STRUCTURE_NODE = 3; // a node created by the PluginTreeNode object
-  public static final int SORTING_NODE = 4;   // a node created by the plugin
+  public static final int CUSTOM_NODE = 4;   // a node created by the plugin
 
   private int mType;
+
+  private ArrayList mActionMenuList;
 
 
   public Node(int type, Object o) {
     super(o);
     mType = type;
+    mActionMenuList = new ArrayList();
   }
 
   public Node(ProgramItem programItem) {
@@ -32,7 +37,22 @@ public class Node extends DefaultMutableTreeNode {
     setAllowsChildren(false);
   }
 
- 
+
+  public void addActionMenu(ActionMenu menu) {
+    mActionMenuList.add(menu);
+  }
+
+  public void removeActionMenu(ActionMenu menu) {
+    mActionMenuList.remove(menu);
+  }
+
+  public ActionMenu[] getActionMenus() {
+    ActionMenu[] result = new ActionMenu[mActionMenuList.size()];
+    mActionMenuList.toArray(result);
+    return result;
+  }
+
+
 
  /* public void setType(int type) {
     mType = type;

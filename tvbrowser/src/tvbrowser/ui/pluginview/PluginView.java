@@ -38,7 +38,9 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.programtable.ProgramTable;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.pluginview.contextmenu.*;
 import devplugin.*;
+import util.ui.menu.MenuUtil;
 
 
 
@@ -49,8 +51,6 @@ public class PluginView extends JPanel implements MouseListener {
   private PluginTree mTree;
   private PluginTreeModel mModel;
 
-  private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
-  private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
 
   public PluginView() {
     super(new BorderLayout());
@@ -76,12 +76,91 @@ public class PluginView extends JPanel implements MouseListener {
 
 
   public void mouseClicked(MouseEvent e) {
+
+    TreePath path = mTree.getPathForLocation(e.getX(), e.getY());
+    if (path == null) {
+      return;
+    }
+    boolean isRightClick = SwingUtilities.isRightMouseButton(e);
+    boolean isDoubleClick = SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2);
+
+    // After right click, there is should be only one path selected
+    if (isRightClick) {
+      if (!mTree.getSelectionModel().isPathSelected(path)) {
+        mTree.setSelectionPath(path);
+      }
+    }
+
+
+    TreePath[] selectedPaths = mTree.getSelectionPaths();
+
+    ContextMenu menu = createContextMenu(selectedPaths);
+    if (menu == null) {
+      return;
+    }
+
+    if (isRightClick) {
+      menu.getPopupMenu().show(mTree, e.getX(), e.getY());
+    }
+    else if (isDoubleClick) {
+      Action defaultAction = menu.getDefaultAction();
+      if (defaultAction != null) {
+        defaultAction.actionPerformed(new ActionEvent(mTree, 0, ""));
+      }
+    }
+
+  }
+
+
+  public ContextMenu createContextMenu(TreePath[] selectedPath) {
+    if (selectedPath == null || selectedPath.length == 0) {
+      return null;
+    }
+
+    Node node = (Node)selectedPath[0].getLastPathComponent();
+    if (node.getType() == Node.PROGRAM) {
+      Program[] selectedPrograms = new Program[selectedPath.length];
+      for (int i=0; i<selectedPath.length; i++) {
+        DefaultMutableTreeNode curNode = (DefaultMutableTreeNode) selectedPath[i].getLastPathComponent();
+        Program program = ((ProgramItem)curNode.getUserObject()).getProgram();
+        selectedPrograms[i] = program;
+      }
+
+      return new ProgramContextMenu(mTree, selectedPath, mModel.getPlugin(selectedPath[0]), selectedPrograms);
+    }
+    else if (node.getType() == Node.PLUGIN_ROOT) {
+      return new PluginContextMenu(mTree, selectedPath[0], mModel.getPlugin(selectedPath[0]));
+    }
+    else if (node.getType() == Node.CUSTOM_NODE) {
+      return new CustomNodeContextMenu(mTree, selectedPath[0], node.getActionMenus());
+    }
+    else if (node.getType() == Node.ROOT) {
+      return new RootNodeContextMenu(mTree, selectedPath[0]);
+    }
+    else if (node.getType() == Node.STRUCTURE_NODE) {
+      return new StructureNodeContextMenu(mTree, selectedPath[0]);
+    }
+    return null;
+
+  }
+
+
+        /*
+  public void mouseClicked(MouseEvent e) {
     ProgramItem programItem = null;
 
     if (SwingUtilities.isRightMouseButton(e)) {
-      TreePath[] paths = mTree.getSelectionPaths();
-      if (paths!=null && paths.length>0) {
-        showContextMenu(mTree.getSelectionPaths(), e.getX(), e.getY());
+
+      TreePath p = mTree.getPathForLocation(e.getX(), e.getY());
+      if (p!=null) {
+        if (!mTree.getSelectionModel().isPathSelected(p)) {
+          mTree.setSelectionPath(p);
+          showContextMenu(p, e.getX(), e.getY());
+        }
+        else {
+          showContextMenu(p, e.getX(), e.getY());
+        }
+
       }
     }
     else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
@@ -105,22 +184,24 @@ public class PluginView extends JPanel implements MouseListener {
   }
 
 
-  private void showContextMenu(TreePath[] paths, int x, int y) {
+  private void showContextMenu(TreePath path, int x, int y) {
 
-    Node node = (Node)paths[0].getLastPathComponent();
+    Node node = (Node)path.getLastPathComponent();
     if (node.getType() == Node.PROGRAM) {
-      Program[] programs = new Program[paths.length];
-      for (int i=0; i<programs.length; i++) {
-        DefaultMutableTreeNode curNode = (DefaultMutableTreeNode) paths[i].getLastPathComponent();
-        programs[i] = ((ProgramItem)curNode.getUserObject()).getProgram();
-      }
-      showContextMenu(mModel.getPlugin(paths[0]), programs, x, y);
+   //   Program[] programs = new Program[paths.length];
+   //   for (int i=0; i<programs.length; i++) {
+        DefaultMutableTreeNode curNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+        Program program = ((ProgramItem)curNode.getUserObject()).getProgram();
+    //  }
+      showContextMenu(path, mModel.getPlugin(path), new Program[]{program}, x, y);
     }
     else if (node.getType() == Node.PLUGIN_ROOT) {
-      showPluginContextMenu(paths[0], mModel.getPlugin(paths[0]), x, y);
+      showPluginContextMenu(path, mModel.getPlugin(path), x, y);
     }
-    else if (node.getType() == Node.SORTING_NODE) {
-      System.out.println("Sorting option");
+    else if (node.getType() == Node.CUSTOM_NODE) {
+      ActionMenu[] menus = node.getActionMenus();
+      showContextMenu(path, menus, x, y);
+
     }
 
 
@@ -128,11 +209,11 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
-  private void showPluginContextMenu(final TreePath treePath, Plugin plugin, int x, int y) {
-    JPopupMenu menu = new JPopupMenu();
 
+  private JMenuItem createCollapseExpandMenuItem(final TreePath treePath) {
     JMenuItem collapseExpandMI = new JMenuItem();
-    collapseExpandMI.setFont(CONTEXT_MENU_BOLDFONT);
+
+    collapseExpandMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
     if (mTree.isExpanded(treePath)) {
       collapseExpandMI.setText("Collapse");
       collapseExpandMI.addActionListener(new ActionListener(){
@@ -149,21 +230,52 @@ public class PluginView extends JPanel implements MouseListener {
         }
       });
     }
-
-    /*JMenuItem actionMI = new JMenuItem(plugin.getButtonAction().getValue(Action.NAME)+"...");
-    actionMI.setFont(CONTEXT_MENU_PLAINFONT);
-    actionMI.addActionListener(plugin.getButtonAction());
-
-    menu.add(collapseExpandMI);
-    menu.addSeparator();
-    menu.add(actionMI);
-    menu.show(mTree, x-10, y-10); */      
+    return collapseExpandMI;
   }
 
-  private void showContextMenu(Plugin rootNodePlugin, final Program[] programs, int x, int y) {
+  private void showContextMenu(TreePath path, ActionMenu[] actionMenus, int x, int y) {
     JPopupMenu menu = new JPopupMenu();
+
+    menu.add(createCollapseExpandMenuItem(path));
+
+    if (actionMenus.length > 0) {
+      for (int i=0; i<actionMenus.length; i++) {
+        JMenuItem menuItem = MenuUtil.createMenuItem(actionMenus[i]);
+        menu.add(menuItem);
+      }
+    }
+    menu.show(mTree, x, y);
+  }
+
+  private void showPluginContextMenu(TreePath treePath, Plugin plugin, int x, int y) {
+    JPopupMenu menu = new JPopupMenu();
+
+    menu.add(createCollapseExpandMenuItem(treePath));
+
+
+
+    ActionMenu actionMenu = plugin.getButtonAction();
+    if (actionMenu != null) {
+      menu.addSeparator();
+      JMenuItem actionMI = MenuUtil.createMenuItem(actionMenu);
+      menu.add(actionMI);
+    }
+
+
+
+
+    menu.show(mTree, x-10, y-10);
+  }
+
+  private void showContextMenu(TreePath treePath, Plugin rootNodePlugin, final Program[] programs, int x, int y) {
+    JPopupMenu menu = new JPopupMenu();
+
+    menu.add(createCollapseExpandMenuItem(treePath));
+
+    menu.addSeparator();
+
     JMenuItem showInTableMI = new JMenuItem("Show");
-    showInTableMI.setFont(CONTEXT_MENU_BOLDFONT);
+    showInTableMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
     showInTableMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().scrollToProgram(programs[0]);
@@ -174,7 +286,7 @@ public class PluginView extends JPanel implements MouseListener {
     menu.add(showInTableMI);
 
     JMenu copyMenu = new JMenu("Export...");
-    copyMenu.setFont(CONTEXT_MENU_PLAINFONT);
+    copyMenu.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
     menu.add(copyMenu);
 
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
@@ -183,7 +295,7 @@ public class PluginView extends JPanel implements MouseListener {
         final PluginProxy plugin = plugins[i];
         if (!rootNodePlugin.getId().equals(plugin.getId())) {
           JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
-          item.setFont(CONTEXT_MENU_PLAINFONT);
+          item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
           copyMenu.add(item);
           item.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -206,7 +318,7 @@ public class PluginView extends JPanel implements MouseListener {
     menu.show(mTree, x-10, y-10);
 
   }
-
+                  */
   public void mouseEntered(MouseEvent e) {
   }
 
@@ -221,5 +333,8 @@ public class PluginView extends JPanel implements MouseListener {
   public void mouseReleased(MouseEvent e) {
 
   }
+
+
+
 
 }

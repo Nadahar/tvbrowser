@@ -35,6 +35,7 @@ import java.lang.reflect.Array;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.*;
 
 import tvbrowser.ui.pluginview.PluginTreeModel;
 import tvbrowser.ui.pluginview.Node;
@@ -47,6 +48,7 @@ public class PluginTreeNode {
   private ArrayList mChildNodes;
   private Object mObject;
 
+
 private Node mDefaultNode;
 
   private PluginTreeNode(int type, Object o) {
@@ -54,11 +56,10 @@ private Node mDefaultNode;
     mNodeType = type;
     mObject = o;
     mDefaultNode = new Node(type, mObject);
-    ;
   }
 
   public PluginTreeNode(String title) {
-    this(Node.SORTING_NODE, title);
+    this(Node.CUSTOM_NODE, title);
   }
 
   public PluginTreeNode(Plugin plugin) {
@@ -75,23 +76,19 @@ private Node mDefaultNode;
     return mDefaultNode;
   }
 
- /*
-  public void setViewType(int type) {
-    if (mViewType != type) {
-      mViewType = type;
-      if (mViewType == VIEW_TYPE_SORT_BY_DATE) {
-        switchToSortByDateView();
-      }
-      else if (mViewType == VIEW_TYPE_SUMMARIZE) {
-        switchToSummarizedView();
-      }
-    }
-  }  */
-
-  private void switchToDefaultView() {
-
-
+  public void addActionMenu(ActionMenu menu) {
+    mDefaultNode.addActionMenu(menu);
   }
+
+  public void addAction(Action action) {
+    addActionMenu(new ActionMenu(action));
+  }
+
+  public ActionMenu[] getActionMenus() {
+    return mDefaultNode.getActionMenus();
+  }
+
+
 
   private void switchToSortByDateView() {
     Map dateMap = new HashMap();
@@ -134,7 +131,7 @@ private Node mDefaultNode;
       else {
         dateStr = dates[i].toString();
       }
-      //DefaultMutableTreeNode node = new DefaultMutableTreeNode(dateStr);
+
       Node node = new Node(Node.STRUCTURE_NODE, dateStr);
       mDefaultNode.add(node);
       List list = (List)dateMap.get(dates[i]);
@@ -142,14 +139,10 @@ private Node mDefaultNode;
       while (iterator.hasNext()) {
         ProgramItem progItem = (ProgramItem)iterator.next();
         node.add(new Node(progItem));
-        //node.add(new DefaultMutableTreeNode(progItem));
       }
     }
   }
 
-  private void switchToSummarizedView() {
-
-  }
 
   public Object getUserObject() {
     return mObject;
@@ -259,7 +252,6 @@ private Node mDefaultNode;
     Iterator it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = (PluginTreeNode)it.next();
-      //if (n.mNodeType == TYPE_PROGRAM) {
       if (n.isLeaf()) {
         ProgramItem item = (ProgramItem)n.getUserObject();
         list.add(item.getProgram());

@@ -24,52 +24,54 @@
  * $Revision$
  */
 
-package devplugin;
+
+
+package tvbrowser.ui.pluginview.contextmenu;
+
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
+import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
+
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 01.01.2005
- * Time: 11:45:28
+ * Date: 03.01.2005
+ * Time: 22:12:32
  */
+public abstract class AbstractContextMenu implements ContextMenu {
 
-public class ContextMenuAction extends AbstractAction {
+  /** The localizer for this class. */
+    private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(AbstractContextMenu.class);
 
-    private ActionListener mListener;
+  private JTree mTree;
 
-    public ContextMenuAction(String title, Icon icon) {
-      putValue(Action.NAME, title);
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public ContextMenuAction(String title) {
-      putValue(Action.NAME, title);
-    }
-
-    public ContextMenuAction() {
-    }  
-
-    public void setText(String text) {
-      putValue(Action.NAME, text);
-    }
-
-    public void setSmallIcon(Icon icon) {
-      putValue(Action.SMALL_ICON, icon);
-    }
-
-    public void setActionListener(ActionListener listener) {
-      mListener = listener;
-    }
-
-    public void actionPerformed(ActionEvent event) {
-      if (mListener != null) {
-        mListener.actionPerformed(event);
-      }
-    }
-
+  protected AbstractContextMenu(JTree tree) {
+    mTree = tree;
   }
 
+  protected Action getCollapseExpandAction(final TreePath treePath) {
 
+    final boolean mIsExpanded = mTree.isExpanded(treePath);
+
+    Action action = new AbstractAction(){
+      public void actionPerformed(ActionEvent e) {
+        if (mIsExpanded) {
+          mTree.collapsePath(treePath);
+        }
+        else {
+          mTree.expandPath(treePath);
+        }
+      }
+    };
+    if (mIsExpanded) {
+      action.putValue(Action.NAME, mLocalizer.msg("collapse","collapse"));
+    }
+    else {
+      action.putValue(Action.NAME, mLocalizer.msg("expand","expand"));
+    }
+
+    return action;
+  }
+}
