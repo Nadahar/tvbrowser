@@ -95,7 +95,7 @@ public class RawDataProcessor {
     File[] fileArr = rawDir.listFiles();
     for (int i = 0; i < fileArr.length; i++) {
       String fileName = fileArr[i].getName();
-      
+			
       // Extract the information from the file name
       // Pattern: <yyyy>-<mm>-<dd>_<country>_<channel>_raw_full.prog.gz
       if (fileName.endsWith("_raw_full.prog.gz")) {
@@ -146,6 +146,7 @@ public class RawDataProcessor {
         }
       }
     }
+
   }
 
 
@@ -153,6 +154,10 @@ public class RawDataProcessor {
     String country, String channel, File preparedDir, File workDir)
     throws PreparationException
   {
+
+		System.out.println(date+"; "+channel+"...");
+
+		
     // Prepare the raw file (check mandatory fields, remove empty fields, ...)
     prepareDayProgram(rawProg, date, country, channel);
     

@@ -1,7 +1,7 @@
 Changelog ReminderPlugin
 
 1.0.4
-- 
+- remember default setting
 
 1.0.3 requires TVBrowser 0.95
 - Reminder closes automatically after x seconds (optional)
