@@ -26,10 +26,6 @@
 
 package searchplugin;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
 
 import devplugin.*;
@@ -64,30 +60,6 @@ public class SearchPlugin extends Plugin {
 
 
 
-  /**
-   * Returns the name of the file, containing your plugin icon (in the jar-File).
-   */
-  public String getMarkIconName() {
-    return null;
-  }
-
-  public String getButtonIconName() {
-  	return "searchplugin/Find16.gif";
-  }
-  
-  public String getButtonText() {
-    return mLocalizer.msg("searchPrograms", "Search programs");
-  }
-
-  
-  
-  public PluginInfo getInfo() {
-    String name = mLocalizer.msg("searchPrograms", "Search programs");
-    String desc = mLocalizer.msg("description",
-      "Allows searching programs containing a certain text.");
-    String author = "Til Schneider, www.murfman.de";
-
-    return new PluginInfo(name, desc, author, new Version(1, 0));
-  }
+ 
 
 }

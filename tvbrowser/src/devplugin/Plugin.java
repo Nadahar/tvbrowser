@@ -37,7 +37,6 @@ import java.util.Properties;
 import javax.swing.Timer;
 import java.util.jar.*;
 import javax.swing.Icon;
-import java.io.InputStream;
 import java.awt.event.*;
 
 import util.exc.*;
@@ -51,7 +50,7 @@ class TimerListener implements ActionListener {
 
 
 
-abstract public class Plugin {
+public class Plugin {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Plugin.class.getName());
@@ -63,9 +62,30 @@ abstract public class Plugin {
   private static PluginManager pluginManager=null;
   protected Timer timer;
   protected java.awt.Frame parent;
+  
+  private Properties properties;
  
   private Icon buttonIcon=null;
 	private Icon markIcon=null;
+
+
+final public void init() {
+	
+	properties=new Properties();
+	
+	String fName=getClass().getPackage().getName()+"/plugin.properties";
+	JarEntry entry=jarFile.getJarEntry(fName);
+	
+	if (entry!=null) {
+		try {
+			java.io.InputStream in=jarFile.getInputStream(entry);
+			properties.load(in);
+		}catch (java.io.IOException e){
+			e.printStackTrace();
+		}
+	}
+	
+}	
 
 
   /**
@@ -144,24 +164,37 @@ abstract public class Plugin {
     return null;
   }
 
-  /**
-   * Implement this function to provide information about your plugin.
-   */
-  public PluginInfo getInfo() {
+ final public String getName() {
+ 	return properties.getProperty("name","unknown");
+ }
+  
+  final public String getVersion() {
+  	return properties.getProperty("version","unknown");
+  }
+  
+  final public String getDescription() {
+  	return properties.getProperty("description","");
+  }
+  
+  final public String getAuthor() {
+  	return properties.getProperty("author","");
+  }
+  
+ /* public PluginInfo getInfo() {
     String name = mLocalizer.msg("unkown", "Unknown");
     String desc = mLocalizer.msg("noDescription", "No description");
     String author = mLocalizer.msg("noAuthor", "No author given");
     
     return new PluginInfo(name, desc, author, new Version(0, 0));
   }
-
+*/
   /**
    * This method is called by the host-application to show the plugin in the
    * context menu.
    * Let getContextMenuItemText return null if your plugin does not provide
    * this feature.
    */
-  public String getContextMenuItemText() {
+  final public String getContextMenuItemText() {
     return null;
   }
 
@@ -172,8 +205,8 @@ abstract public class Plugin {
    * this feature.
    *
    */
-  public String getButtonText() {
-    return mLocalizer.msg("newPlugin", "New plugin");
+  final public String getButtonText() {
+    return properties.getProperty("buttontext");
   }
 
   /**
@@ -188,7 +221,7 @@ abstract public class Plugin {
    * This method is invoked by the host-application if the user has choosen your
    * plugin from the context menu.
    */
-  public void execute(Program program) {
+  public void execute(Program[] program) {
   }
 
   /**
@@ -216,7 +249,7 @@ abstract public class Plugin {
 		  return null;
 		}
 		try {
-		  InputStream in=jarFile.getInputStream(entry);
+		  java.io.InputStream in=jarFile.getInputStream(entry);
 		  byte[] b=new byte[(int)entry.getSize()];
 		  in.read(b);
 		  in.close();
@@ -235,27 +268,24 @@ abstract public class Plugin {
   
   
   public final Icon getMarkIcon() {
+  	
+  	
+  	
 	  if (markIcon==null) {
-		  markIcon=createIcon(getMarkIconName());
+		  markIcon=createIcon(properties.getProperty("markicon",""));
 	  }
 	  return markIcon;
 	}
   
 	public final Icon getButtonIcon() {
 	  if (buttonIcon==null) {
-		  buttonIcon=createIcon(getButtonIconName());
+		  buttonIcon=createIcon(properties.getProperty("buttonicon",""));
 	  }
 	  return buttonIcon;
 	}
-
-
-  /**
-   * Returns the name of the file, containing your plugin icon (in the jar-File).
-   */
-  abstract public String getMarkIconName();
-  
-  abstract public String getButtonIconName();
+	
+	final public boolean supportMultiProgs() {
+		return ("yes".equals(properties.getProperty("supportsmultiprogs","no")));
+	}
 
 }
-
-

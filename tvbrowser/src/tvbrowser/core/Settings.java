@@ -87,8 +87,7 @@ public class Settings {
   private static final String USER_DIR="tvbrowser";
   public static final String DATA_DIR="tvdata";
 
-  public static boolean settingHasChanged(String[] key) {
-		
+  public static boolean settingHasChanged(String[] key) {	
 		
 		  boolean result=false;
 		  for (int i=0;i<key.length;i++) {
@@ -393,8 +392,8 @@ public class Settings {
   /**
    * Returns all installed plugins as an array of Strings
    */
-  public static Object[] getInstalledPlugins() {
-
+  public static String[] getInstalledPlugins() {
+/*
     String s=settings.getProperty("plugins");
     if (s==null) return new String[0];
 
@@ -412,6 +411,8 @@ public class Settings {
     }
 
     return result.toArray();
+    */
+    return getStringListProperty("plugins");
   }
 
   
