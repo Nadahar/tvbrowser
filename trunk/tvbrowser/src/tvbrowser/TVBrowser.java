@@ -89,6 +89,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
    */
   public static void main(String[] args) {
     String msg;
+    
+    // Check whether the TV-Browser was started in the right directory
+    if (! new File("tvbrowser.jar").exists()) {
+      msg = mLocalizer.msg("error.2",
+        "Please start TV-Browser in the TV-Browser directory!");
+      JOptionPane.showMessageDialog(null, msg);
+      System.exit(1);
+    }
 
     // setup logging
     try {
@@ -106,8 +114,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       ErrorHandler.handle(msg, exc);
     }
 
-    SplashScreen splash = new SplashScreen("imgs/splash.jpg",400,300);
-    splash.show();
+    SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
+      new Color(63, 114, 133), Color.WHITE);
+    UiUtilities.centerAndShow(splash);
 
     mLog.info("Loading tv data service...");
     msg=mLocalizer.msg("splash.dataService","Loading tv data service...");

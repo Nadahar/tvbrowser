@@ -25,47 +25,79 @@
  */
 
 package tvbrowser.ui.splashscreen;
- 
-import javax.swing.JWindow;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.Dimension;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.BorderLayout;
-import tvbrowser.ui.SkinPanel;
+
+import javax.swing.JWindow;
+
+import util.ui.ImageUtilities;
 
 public class SplashScreen extends JWindow {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
   
-  private Image image;
-  private JLabel msgLabel;
+  private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 12);
+  
+  private Image mImage;
+  private String mMessage;
+  private int mMsgX, mMsgY;
+  private Color mBackground, mForeground;
   
   
   
-  public SplashScreen(String imgName, int width, int height) {  
+  public SplashScreen(String imgFileName, int msgX, int msgY,
+    Color background, Color foreground)
+  {
     super();
     
-    JPanel contentPane=(JPanel)getContentPane();
-    SkinPanel content=new SkinPanel(imgName,SkinPanel.SINGLE);
-    content.setLayout(new BorderLayout());
-    contentPane.add(content);
-  
-    msgLabel = new JLabel(mLocalizer.msg("loading", "Loading..."));
-    msgLabel.setHorizontalAlignment(JLabel.LEFT);
-    content.add(msgLabel,BorderLayout.SOUTH);
-    this.setSize(width,height);
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    setFont(MESSAGE_FONT);
     
-    this.setBounds((screenSize.width-width)/2,(screenSize.height-height)/2,width,height);
+    mImage = ImageUtilities.createImage(imgFileName);
+    if (mImage != null) {
+      ImageUtilities.waitForImageData(mImage, null);
+      setSize(mImage.getWidth(null), mImage.getHeight(null));
+    } else {
+      setSize(100, 50);
+    }
+    
+    mMessage = mLocalizer.msg("loading", "Loading...");
+    
+    mMsgX = msgX;
+    mMsgY = msgY;
+    
+    mBackground = background;
+    mForeground = foreground;
   }
 
+  
+  
+  public void paint(Graphics grp) {
+    if (mImage != null) {
+      grp.drawImage(mImage, 0, 0, null);
+    }
+    
+    // Draw the message border
+    grp.setColor(mBackground);
+    for (int x = -1; x <= 1; x++) {
+      for (int y = -1; y <= 1; y++) {
+        grp.drawString(mMessage, mMsgX + x, mMsgY + y);
+      }
+    }
 
+    // Draw the message itself
+    grp.setColor(mForeground);
+    grp.drawString(mMessage, mMsgX, mMsgY);
+  }
+  
 
+  
   public void setMessage(String msg) {
-    msgLabel.setText(msg);
+    mMessage = msg;
+    repaint();
   }
 
 }
