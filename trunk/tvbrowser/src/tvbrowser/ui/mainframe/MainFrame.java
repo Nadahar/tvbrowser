@@ -28,6 +28,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -343,7 +344,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     ChannelList.storeDayLightSavingTimeCorrections();
     
     mLog.info("Storing window size and location");
-    boolean maximized = getExtendedState() == JFrame.MAXIMIZED_BOTH;
+    boolean maximized = getExtendedState() == Frame.MAXIMIZED_BOTH;
     Settings.setWindowIsMaximized(maximized);
     if (! maximized) {
       // Save the window size and location only when not maximized
@@ -675,7 +676,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     if (Settings.settingHasChanged(new String[]{"table.layout"})) {
       mProgramTableScrollPane.getProgramTable().setProgramTableLayout(null);
     }
-    if (Settings.settingHasChanged(new String[]{"tablebgmode","tablebackground"})) {
+    if (Settings.settingHasChanged( new String[] {
+      "timebutton.early", "timebutton.midday", "timebutton.afternoon",
+      "timebutton.evening",
+      "tablebackground.edge", "tablebackground.early",
+      "tablebackground.midday", "tablebackground.afternoon",
+      "tablebackground.evening" } ))
+    {
       mProgramTableScrollPane.getProgramTable().updateBackground();
     }
     
