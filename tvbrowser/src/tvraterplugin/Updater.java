@@ -61,8 +61,7 @@ public class Updater implements Progress {
     private static final Localizer _mLocalizer = Localizer.getLocalizerFor(Updater.class);
 
     /** Location of Update-Skript */
-    //	private static String LOCATION =
-    // "http://localhost/private/wannawork3/tvaddicted/updater.php";
+    //private static String LOCATION = "http://localhost/private/wannawork3/tvaddicted/updater.php";
     private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
 
     /** The Plugin */
@@ -232,6 +231,9 @@ public class Updater implements Progress {
             } else if (nodename.equals("genre")) {
                 int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
                 rating.setValue(Rating.GENRE, value);
+            } else if (nodename.equals("id")) {
+                int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+                rating.setValue(Rating.ID, value);
             }
 
             child = child.getNextSibling();

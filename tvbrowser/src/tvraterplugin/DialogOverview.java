@@ -19,6 +19,8 @@
 package tvraterplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,12 +33,14 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
+import util.ui.BrowserLauncher;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -130,6 +134,21 @@ public class DialogOverview extends JDialog {
 
         JPanel buttonpanel = new JPanel(new GridBagLayout());
 
+        GridBagConstraints c4 = new GridBagConstraints();
+        c4.gridwidth = GridBagConstraints.REMAINDER;
+        
+        JLabel urlLabel = new JLabel("<html><u>http://tvaddicted.wannawork.de</u></html>");
+        urlLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        urlLabel.setForeground(Color.BLUE);
+        urlLabel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                BrowserLauncher.openURL("http://tvaddicted.wannawork.de");
+            }
+        });
+        
+        buttonpanel.add(urlLabel, c4);
+        
+        
         GridBagConstraints c = new GridBagConstraints();
         c.weightx = 0;
         c.fill = GridBagConstraints.NONE;

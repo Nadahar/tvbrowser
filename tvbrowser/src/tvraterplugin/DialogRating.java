@@ -40,6 +40,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
+import util.ui.BrowserLauncher;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.TabLayout;
@@ -228,6 +229,21 @@ public class DialogRating extends JDialog {
 
         leftbuttonPanel.add(showListButton);
 
+        JButton detailsButtons = new JButton(ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/details16.gif", getClass()));
+        detailsButtons.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?showId=" + _overallrating.getIntValue(Rating.ID));
+            }
+        });
+
+        if ((_overallrating == null) || ( _overallrating.getIntValue(Rating.ID) < 0)) {
+            detailsButtons.setEnabled(false);
+        }
+        
+        leftbuttonPanel.add(detailsButtons);
+        
+        
         panel.add(leftbuttonPanel, c);
 
         panel.add(buttonpanel, c);
@@ -351,6 +367,9 @@ public class DialogRating extends JDialog {
 
             ratingPanel.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":", JLabel.LEFT), labc);
             ratingPanel.add(createRatingBox(rating, Rating.ENTITLEMENT), c);
+            
+            ratingPanel.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":", JLabel.LEFT), labc);
+            ratingPanel.add(createRatingBox(rating, Rating.GENRE), c);
         } else {
             ratingPanel.setLayout(new BorderLayout());
             JTextPane pane = new JTextPane();
@@ -381,7 +400,7 @@ public class DialogRating extends JDialog {
      * @return JPanel with rating-box
      */
     private Component createRatingBox(Rating rating, Object type) {
-        if (type != null) {
+        if ((type != null)) {
             int value = rating.getIntValue(type);
             return new JLabel(RatingIconTextFactory.getStringForRating(type, value), (Icon) RatingIconTextFactory
                     .getImageIconForRating(value), JLabel.LEFT);
@@ -435,6 +454,9 @@ public class DialogRating extends JDialog {
 
         voting.add(new JLabel(_mLocalizer.msg("entitlement", "Entitlement") + ":"), labc);
         voting.add(createVotingBox(_personalrating, Rating.ENTITLEMENT, 5), c);
+
+        voting.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":"), labc);
+        voting.add(createVotingBox(_personalrating, Rating.GENRE, 5), c);
 
         return voting;
     }
