@@ -1,4 +1,4 @@
-Changelog TVRaterPlugin
+Changelog ListViewPlugin
 
 0.01:
 - initial version
