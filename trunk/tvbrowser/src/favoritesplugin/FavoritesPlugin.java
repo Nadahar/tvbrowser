@@ -291,16 +291,7 @@ public class FavoritesPlugin extends Plugin {
 
 
 
-  public void handleTvDataAdded(ChannelDayProgram newProg) {
-    updateFavorites();
-  }
-
-  public void handleTvDataDeleted(ChannelDayProgram oldProg) {
-    updateFavorites();
-  }
-
-
-  public void updateFavorites() {
+  public void handleTvDataUpdateFinished() {
     // Update all favorites
     for (int i = 0; i < mFavoriteArr.length; i++) {
       try {

@@ -8,6 +8,8 @@ import java.util.Properties;
 import javax.swing.*;
 
 import devplugin.SettingsTab;
+import devplugin.Plugin;
+import devplugin.Program;
 
 public class ProgramInfoSettingsTab implements SettingsTab {
 
@@ -47,7 +49,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     previewBtn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event) {
 			  saveSettings();
-        ProgramInfo.getInstance().execute(devplugin.Plugin.getPluginManager().getExampleProgram());
+        Program program = Plugin.getPluginManager().getExampleProgram();
+        Action[] action = ProgramInfo.getInstance().getContextMenuActions(program);
+        action[0].actionPerformed(event);
 			}
     });
     

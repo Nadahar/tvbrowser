@@ -44,6 +44,7 @@ import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
 import devplugin.Program;
+import devplugin.Plugin;
 
 /**
  * Manages all plugin proxies and creates them on startup.
@@ -854,12 +855,10 @@ public class PluginProxyManager {
     PluginProxy[] pluginArr = getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       PluginProxy plugin = pluginArr[i];
-
       Action[] actionArr = plugin.getContextMenuActions(program);
       if (actionArr != null) {
         for (int j = 0; j < actionArr.length; j++) {
           Action action = actionArr[j];
-
           try {
             JMenuItem item = createPluginContextMenuItem(program, action);
 
@@ -868,12 +867,11 @@ public class PluginProxyManager {
             } else {
               item.setFont(CONTEXT_MENU_PLAINFONT);
             }
-
             items.add(item);
           }
           catch (Throwable thr) {
             mLog.log(Level.WARNING, "Adding context menu item from plugin '"
-                + plugin + "' failed", thr);
+              + plugin + "' failed", thr);
           }
         }
       }
@@ -891,6 +889,7 @@ public class PluginProxyManager {
    * @param program The program to create the context menu for
    * @return a context menu for the given program.
    */
+
   public static JPopupMenu createPluginContextMenu(Program program) {
     JPopupMenu menu = new JPopupMenu();
     JMenuItem[] items = createPluginContextMenuItems(program, true);
@@ -900,7 +899,8 @@ public class PluginProxyManager {
     return menu;
   }
 
-  
+
+
   private static JMenuItem createPluginContextMenuItem(final Program program,
     final Action action)
   {
