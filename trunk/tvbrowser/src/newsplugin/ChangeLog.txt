@@ -1,0 +1,4 @@
+Changelog NewsPlugin
+
+1.0:
+- initial version
