@@ -181,12 +181,24 @@ public class Settings {
       String dsClassName = channels[i].getDataService().getClass().getName();
       entries[i] = dsClassName + ":" + ch.getId();
   	}
-	setStringListProperty("subscribedchannels", entries);
+  	setStringListProperty("subscribedchannels", entries);
   }
 
 
 
   private static void initSubscribedChannels() {
+    if (settings.getProperty("subscribedchannels") == null) {
+      // Install by default the first 9 channels of the XmlTvDataService
+      TvDataServiceManager mng = TvDataServiceManager.getInstance();
+      TvDataService xmltvService = mng.getDataService("xmltvdataservice.XmlTvDataService");
+      if (xmltvService != null) {
+        Channel[] channelArr = xmltvService.getAvailableChannels();
+        Channel[] defaultChannelArr = new Channel[9];
+        System.arraycopy(channelArr, 0, defaultChannelArr, 0, defaultChannelArr.length);
+        setSubscribedChannels(defaultChannelArr);
+      }
+    }
+    
   	String[] entries = getStringListProperty("subscribedchannels");
 
     for (int i = 0; i < entries.length; i++) {
@@ -204,6 +216,8 @@ public class Settings {
     }
   }
 
+  
+  
   /**
    * Returns the background mode of the TV table.
    * Possible values are COLUMN, WALLPAPER and NONE
@@ -414,6 +428,16 @@ public class Settings {
    * Returns all installed plugins as an array of Strings
    */
   public static String[] getInstalledPlugins() {
+    if (settings.getProperty("plugins") == null) {
+      // Install by default all plugins
+      devplugin.Plugin[] availableArr = PluginManager.getAvailablePlugins();
+      String[] classNameArr = new String[availableArr.length];
+      for (int i = 0; i < availableArr.length; i++) {
+        classNameArr[i] = availableArr[i].getClass().getName();
+      }
+      setInstalledPlugins(classNameArr);
+    }
+    
     return getStringListProperty("plugins");
   }
 
