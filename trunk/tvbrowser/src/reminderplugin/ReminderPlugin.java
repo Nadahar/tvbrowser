@@ -284,11 +284,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     return action;
   }
  
-  
-  public Icon[] getProgramTableIcons(Program program) {
-    Icon icon = createImageIcon("reminderplugin/TipOfTheDay16.gif");
-    return new Icon[]{icon};
-  }
+ 
  
   public boolean canReceivePrograms() {
     return true;
@@ -350,33 +346,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   */
     
     
-  
-  class ContextMenuAction extends AbstractAction {
 
-    private ActionListener mListener;
-      
-    public ContextMenuAction() {
-        
-    }
-    
-    public void setText(String text) {
-      putValue(Action.NAME, text);
-    }
-     
-    public void setSmallIcon(Icon icon) {
-      putValue(Action.SMALL_ICON, icon);  
-    }
-    
-    public void setActionListener(ActionListener listener) {
-      mListener = listener; 
-    }
-    
-    public void actionPerformed(ActionEvent event) {
-      if (mListener != null) {
-        mListener.actionPerformed(event);
-      }
-    }
-      
-  }
 
 } 

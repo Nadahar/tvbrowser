@@ -29,11 +29,15 @@ package favoritesplugin;
 import java.io.*;
 import java.util.Properties;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import util.ui.UiUtilities;
 import util.exc.*;
 
 import devplugin.*;
+import javax.swing.*;
+
 
 /**
  * Plugin for managing the favorite programs.
@@ -54,7 +58,6 @@ public class FavoritesPlugin extends Plugin {
   
   private Properties mSettings;
   
-  private PluginTreeNode mPluginRootNode;
 
   
   
@@ -172,17 +175,45 @@ public class FavoritesPlugin extends Plugin {
    private int getIntegerSetting(Properties prop, String key, int defaultValue) {
      int res=defaultValue;
      try {
-       res=Integer.parseInt(mSettings.getProperty(key,""+defaultValue));
-     }catch (NumberFormatException e) {       
+       res = Integer.parseInt(prop.getProperty(key,""+defaultValue));
+     }catch (NumberFormatException e) {
      }
       return res;
    }
 
-  /**
-   * This method is invoked by the host-application if the user has choosen your
-   * plugin from the menu.
-   */
-  public void execute() {
+    public Action getButtonAction() {
+      ButtonAction action = new ButtonAction();
+      action.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          showManageFavoritesDialog();
+        }
+      });
+
+      action.setBigIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+      action.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+      action.setShortDescription(mLocalizer.msg("favoritesManager", "Manage favorite programs"));
+      action.setText(mLocalizer.msg( "manageFavorites", "Manage Favorites" ));
+
+      return action;
+    }
+
+
+
+
+   public Action[] getContextMenuActions(final Program program) {
+     ContextMenuAction action = new ContextMenuAction();
+     action.setText(mLocalizer.msg("contextMenuText", "Add to favorite programs"));
+     action.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+     action.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent event) {
+          showEditFavoriteDialog(program);
+        }
+      });
+      return new Action[]{action};
+   }
+
+
+  private void showManageFavoritesDialog() {
     int splitPanePosition=getIntegerSetting(mSettings,"splitpanePosition",200);
     int width=getIntegerSetting(mSettings,"width",500);
     int height=getIntegerSetting(mSettings,"height",300);
@@ -202,11 +233,8 @@ public class FavoritesPlugin extends Plugin {
 
   
   
-  /**
-   * This method is invoked by the host-application if the user has choosen your
-   * plugin from the context menu.
-   */
-  public void execute(Program program) {
+
+  public void showEditFavoriteDialog(Program program) {
     Favorite favorite = new Favorite(program.getTitle());
 
     EditFavoriteDialog dlg = new EditFavoriteDialog(getParentFrame(), favorite);
@@ -220,7 +248,7 @@ public class FavoritesPlugin extends Plugin {
     }
   }
   
-  
+
   
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("favoritesManager", "Manage favorite programs");
@@ -230,33 +258,14 @@ public class FavoritesPlugin extends Plugin {
     
     return new PluginInfo(name, desc, author, new Version(1, 7));
   }
-  
-  
-  
+
+
+
   public String getMarkIconName() {
     return "favoritesplugin/ThumbUp16.gif";
   }
+  
 
-  
-  
-  public String getContextMenuItemText() {
-	return mLocalizer.msg("contextMenuText", "Add to favorite programs");
-  }
-
-  
-  
-  public String getButtonIconName() {
-    return "favoritesplugin/ThumbUp16.gif";
-  }
-  
-  
-  
-  public String getButtonText() {
-  	return mLocalizer.msg( "manageFavorites", "Manage Favorites" );
-  }
-
-  
-  
   void unmark(Program[] programArr) {
     // unmark all programs with this plugin
     for (int i = 0; i < programArr.length; i++) {
@@ -280,15 +289,18 @@ public class FavoritesPlugin extends Plugin {
     }
   }
 
-  
-  
-  /**
-   * This method is automatically called, when the TV data has changed.
-   * (E.g. after an update).
-   * <p>
-   * Updates all favorites.
-   */
-  public void handleTvDataChanged() {
+
+
+  public void handleTvDataAdded(ChannelDayProgram newProg) {
+    updateFavorites();
+  }
+
+  public void handleTvDataDeleted(ChannelDayProgram oldProg) {
+    updateFavorites();
+  }
+
+
+  public void updateFavorites() {
     // Update all favorites
     for (int i = 0; i < mFavoriteArr.length; i++) {
       try {
