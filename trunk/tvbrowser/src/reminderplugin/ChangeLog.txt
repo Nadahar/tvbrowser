@@ -1,5 +1,8 @@
 Changelog ReminderPlugin
 
+current:
+- 
+
 1.0.3 requires TVBrowser 0.95
 - Reminder closes automatically after x seconds (optional)
 - context menu to other plugins added

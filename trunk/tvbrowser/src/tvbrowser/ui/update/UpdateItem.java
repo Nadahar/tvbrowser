@@ -115,7 +115,7 @@ public class UpdateItem {
 			if (mType==UpdateItem.PLUGIN) {
 				targetFile=new File("plugins",mName+".jar.inst");
 			}else{
-				targetFile=new File("dataservice",mName+".jar.inst");
+				targetFile=new File("tvdataservice",mName+".jar.inst");
 			}
 			util.io.IOUtilities.download(sourceURL,targetFile);
 		}

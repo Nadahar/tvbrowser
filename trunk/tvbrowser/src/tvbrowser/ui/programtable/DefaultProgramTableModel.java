@@ -30,6 +30,8 @@ import devplugin.Program;
 public class DefaultProgramTableModel implements ProgramTableModel, ChangeListener {
   
   private static final int TOMORROW_LATEST_TIME = 5 * 60; // Until 5:00 am
+  private static final int TODAY_EARLIEST_TIME = 5 * 60; // Until 5:00 am
+
 
   private ArrayList mListenerList;
   
@@ -41,6 +43,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   private int mLastTimerMinutesAfterMidnight;
   private Timer mTimer;
+  
+  private ProgramFilter mProgramFilter=null;
 
 
 
@@ -73,8 +77,15 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
   
   
+  public void setProgramFilter(ProgramFilter filter) {
+  	mProgramFilter=filter;
+  }
   
   public void setDayPrograms(DayProgram mainDay, DayProgram nextDay) {
+  	
+  	
+  	
+  	
     deregisterFromPrograms(mMainDay, mMainDayProgramCount);
     deregisterFromPrograms(mNextDay, mNextDayProgramCount);
     

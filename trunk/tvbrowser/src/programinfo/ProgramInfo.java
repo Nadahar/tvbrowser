@@ -30,12 +30,17 @@ import util.ui.UiUtilities;
 
 import devplugin.*;
 
+import java.awt.event.*;
+
 /**
  * TV-Browser
  *
  * @author Martin Oberhauser
  */
 public class ProgramInfo extends devplugin.Plugin {
+	
+		private java.awt.Point location=null;
+		private java.awt.Dimension size=null;
 	
 		private static final util.ui.Localizer mLocalizer
 			= util.ui.Localizer.getLocalizerFor(ProgramInfo. class );
@@ -48,7 +53,7 @@ public class ProgramInfo extends devplugin.Plugin {
 			String name = mLocalizer.msg( "pluginName" ,"Program information" );
 			String desc = mLocalizer.msg( "description" ,"Show information about a program" );
 			String author = "Martin Oberhauser" ;
-			return new PluginInfo(name, desc, author, new Version(1, 3));
+			return new PluginInfo(name, desc, author, new Version(1, 4));
   		} 
   		
   		public String getButtonText() {
@@ -58,7 +63,32 @@ public class ProgramInfo extends devplugin.Plugin {
   		public void execute(Program program) {
             ProgramInfoDialog dlg = new ProgramInfoDialog(parent, program);
             dlg.pack();
-            UiUtilities.centerAndShow(dlg);
+            System.out.println("NEW");
+            dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
+            	
+				public void componentMoved(ComponentEvent e) {
+					System.out.println("moved");
+					e.getComponent().getLocation(location);
+				}
+				
+				public void componentResized(ComponentEvent e) {
+					System.out.println("resized");
+					e.getComponent().getSize(size);
+				}
+            	
+            });
+            
+            if (size!=null) {
+            	dlg.setSize(size);
+            }
+            if (location!=null) {
+            	dlg.setLocation(location);
+            	dlg.show();
+            }else{
+            	UiUtilities.centerAndShow(dlg);
+            	size=dlg.getSize();
+            	location=dlg.getLocation();
+            }
   		}
   		
   		public String getMarkIconName() {

@@ -74,7 +74,7 @@ public class XmlTvDataService extends AbstractTvDataService {
   }
 
   public devplugin.Version getVersion() {
-	  return new devplugin.Version(1,3);
+	  return new devplugin.Version(1,4);
   }
 
   /**
@@ -301,7 +301,11 @@ public class XmlTvDataService extends AbstractTvDataService {
     
     tvdataservice.MutableChannelDayProgram prog=programDispatcher.getChannelDayProgram(date,channel);
     
-    
+    // if we don't have the whole program, we delete the file. so we can
+    // download it again later.
+    if (!prog.isComplete()) {
+    	file.delete();	
+    }
     
   }
 
