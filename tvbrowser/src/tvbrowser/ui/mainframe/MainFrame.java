@@ -242,8 +242,14 @@ private Node mDateChannelNode;
     
     
     FilterList filterList = FilterList.getInstance();
-    ProgramFilter[] filterArr = filterList.getFilterArr();
-    setProgramFilter(filterArr[0]);
+
+    ProgramFilter filter = filterList.getFilterByName(Settings.propLastUsedFilter.getString());
+    
+    if (filter == null) {
+        filter = filterList.getDefaultFilter();
+    }
+    
+    setProgramFilter(filter);
   }
 
   public JLabel getStatusBarLabel() {
@@ -309,12 +315,12 @@ private Node mDateChannelNode;
 
   public ProgramFilter getProgramFilter() {
       
-      if (mProgramTableModel == null) {
-          return null;
-      }
-      
-      return mProgramTableModel.getProgramFilter();
+    if (mProgramTableModel == null) {
+        return null;
     }
+    
+    return mProgramTableModel.getProgramFilter();
+  }
   
   public void quit() {
     mLog.info("Finishing plugins");
@@ -430,7 +436,7 @@ private Node mDateChannelNode;
   public void storeSettings() {
     mToolBar.storeSettings();
     mRootNode.storeProperties();
-    
+    Settings.propLastUsedFilter.setString(getProgramFilter().getName());
   }
 
   public void scrollToTime(int time) {
