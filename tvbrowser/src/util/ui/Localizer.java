@@ -117,9 +117,6 @@ public class Localizer {
     catch (MissingResourceException exc) {
       mLog.warning("ResourceBundle not found: '" + mBaseName + "'");
     }
-
-    System.out.println("mBaseName: " + mBaseName + ", locale: '" + locale
-      + "', bundle loc: '" + mBundle.getLocale() + "'");
   }
   
   
@@ -236,8 +233,6 @@ public class Localizer {
    * @return a localized message.
    */  
   public String msg(String key, String defaultMsg) {
-    System.out.println("mBaseName: " + mBaseName + ", key: " + key
-      + ", locale: " + mBundle.getLocale());
     key = mKeyPrefix + key;
     
     String msg = null;
