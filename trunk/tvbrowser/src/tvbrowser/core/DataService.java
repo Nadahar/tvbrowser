@@ -182,9 +182,7 @@ public class DataService implements devplugin.PluginManager {
     devplugin.Date date=new Date();
     date.addDays(-1); // get yesterday too
     TvBrowserException downloadException = null;
-    System.out.println("daysToDownload: "+daysToDownload);
     
-	
 	
 	/* if we can't find any data for one channel, we don't load any data for
 	  that channel any longer. if 
@@ -224,14 +222,12 @@ public class DataService implements devplugin.PluginManager {
 		ChannelDayProgram prog=null;
         if (file.exists()) {  // file is        
         	prog=this.loadChannelDayProgramFromDisk(file);
-        	//System.out.println("file found ("+date.toString()+", "+channel.getName()+"), prog.isComplete() is "+prog.isComplete());
-        }
+         }
         
         
         if (!file.exists() || (prog!=null && !prog.isComplete())) {
           // We don't have the file or the file is not complete -> download it
           
-          //System.out.println("must download program for "+date.toString()+", "+channel.getName());
           try {
             prog = downloadDayProgram(date, channel);
 
@@ -260,8 +256,7 @@ public class DataService implements devplugin.PluginManager {
         	anyDataFound=true;
         }else{
 			downloadChannelData[j]=false;
-			System.out.println("channel "+channel.getName()+" is out ("+date.toString()+")");
-        }
+       }
       }
 
       if (! dayProgram.isEmpty()) {
@@ -308,17 +303,18 @@ public class DataService implements devplugin.PluginManager {
     // try to get the DayProgram from the cache.
     DayProgram dayProgram = (DayProgram) mDayProgramHash.get(date);
     
+    /*
     if (!allowDownload) {
     	return dayProgram;
     }
-
+*/
     if (dayProgram == null) {
       try {
         // The program is not in the cache -> try to load it
-		if (progressStart<0 || progressEnd<0 || progressStart>progressEnd) {
+		if (allowDownload && (progressStart<0 || progressEnd<0 || progressStart>progressEnd)) {
         	throw new IllegalArgumentException("invalid range for progress bar");
         }
-        dayProgram = loadDayProgram(date, progressStart, progressEnd);
+        dayProgram = loadDayProgram(date, allowDownload, progressStart, progressEnd);
         // mLog.info("Loading program for " + date + " (" + date.hashCode() + ") "
         //   + ((dayProgram == null) ? "failed" : "suceed"));
       }
@@ -342,7 +338,6 @@ public class DataService implements devplugin.PluginManager {
 			//	   "Error when reading program of {0} on {1}!\n({2})",
 			//	   "unknown", "unknown", file.getAbsolutePath(), exc);
 			file.delete();
-			System.out.println("must delete file "+file.getAbsolutePath());
 		}finally {
 			if (in != null) {
 				try { in.close(); } catch (IOException exc) {}
@@ -361,14 +356,14 @@ public class DataService implements devplugin.PluginManager {
    * @throws TvBrowserException If the download failed.
    * @return The DayProgram for the specified day.
    */
-  protected DayProgram loadDayProgram(devplugin.Date date, int progressStart, int progressEnd)
+  protected DayProgram loadDayProgram(devplugin.Date date, boolean allowDownload, int progressStart, int progressEnd)
     throws TvBrowserException
   {
   	
     Channel[] channels=ChannelList.getSubscribedChannels();
 
     boolean useProgressBar=false;
-    if (isOnlineMode() && !dataAvailable(date)) {
+    if (allowDownload && isOnlineMode() && !dataAvailable(date)) {
       useProgressBar=true;
       //progressBar.setMaximum(channels.length);
     }
@@ -399,25 +394,8 @@ public class DataService implements devplugin.PluginManager {
         // We have it on disk -> load it
 		ChannelDayProgram prog=loadChannelDayProgramFromDisk(file);
 		if (prog!=null) dayProgram.addChannelDayProgram(prog);
-        /*
-        ObjectInputStream in = null;
-        try {
-          in = new ObjectInputStream(new FileInputStream(file));
-          ChannelDayProgram prog = new MutableChannelDayProgram(in);
-          dayProgram.addChannelDayProgram(prog);
-        }
-        catch (Exception exc) {
-          throw new TvBrowserException(getClass(), "error.1",
-            "Error when reading program of {0} on {1}!\n({2})",
-            channels[i].getName(), date, file.getAbsolutePath(), exc);
-        }
-        finally {
-          if (in != null) {
-            try { in.close(); } catch (IOException exc) {}
-          }
-        }*/
       }
-      else if (isOnlineMode()) {
+      else if (allowDownload && isOnlineMode()) {
         // We don't have it on disk, but we are online -> download it
         ChannelDayProgram prog = downloadDayProgram(date, channels[i]);
 
@@ -515,8 +493,7 @@ public static void deleteExpiredFiles(int lifespan) {
    */
   public devplugin.Program getProgram(devplugin.Date date, String progID) {
   	
-  	
-    DayProgram dayProgram = getDayProgram(date, false, -1, -1);
+  	DayProgram dayProgram = getDayProgram(date, false, -1, -1);
 
     if (dayProgram == null) {
       return null;
@@ -568,7 +545,7 @@ public static void deleteExpiredFiles(int lifespan) {
     while (dayProgramIter.hasNext()) {
       DayProgram dayProgram = (DayProgram) dayProgramIter.next();
       try {
-        loadDayProgram(dayProgram.getDate(),-1,-1);
+        loadDayProgram(dayProgram.getDate(),false, -1,-1);
       }
       catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);

@@ -28,9 +28,6 @@ package reminderplugin;
 
 import java.io.*;
 
-import util.exc.*;
-import util.io.IOUtilities;
-
 import devplugin.*;
 
 /**
@@ -64,7 +61,11 @@ public class ReminderListItem implements Comparable {
     devplugin.Date programDate = new devplugin.Date(in);
     String programId = (String) in.readObject();
 
+	System.out.println("programId: "+programId);
+
     mProgram = Plugin.getPluginManager().getProgram(programDate, programId);
+    
+    //System.out.println("program: "+mProgram.toString());
   }
   
   

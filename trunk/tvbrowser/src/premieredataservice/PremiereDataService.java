@@ -213,7 +213,7 @@ public class PremiereDataService extends AbstractTvDataService {
         // Example: "Titel: Lieben Sie Brahms?"
         Pattern.compile("Titel: (.*)"),
         // Example: "Episode:  - Genre:  - Länge: 01:55 Stunden"
-        Pattern.compile("Episode: (.*) - Genre: (.*) - L\u00E4nge: (\\d*):(\\d*) Stunden"),
+        Pattern.compile("Episode: (.*) - Genre: (.*) - L.nge: (\\d*):(\\d*) Stunden"),
         // Example: "Produktionsland: USA - Produktionsjahr: 1960 - Regie: Anatole Litvak"
         Pattern.compile("Produktionsland: (.*) - Produktionsjahr: (.*) - Regie: (.*)"),
         // Example: "Bild- und Tonformate: 4:3/Mono"

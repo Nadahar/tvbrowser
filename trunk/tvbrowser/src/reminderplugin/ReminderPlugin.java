@@ -113,8 +113,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
-
-    // Remove from the old list
+	// Remove from the old list
     reminderList.setReminderTimerListener(null);
     
     reminderList = new ReminderList(in);
@@ -135,8 +134,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-
+    out.writeInt(2); // version
   	reminderList.writeData(out);
   }
   
