@@ -109,7 +109,7 @@ public class SkinPanel extends JPanel {
     super.paintComponent(g);
     return;
 	 }
-    
+    super.paintComponent(g);
     
 	 if (mode==SINGLE) {
 		 g.drawImage(image, 0, 0, this);

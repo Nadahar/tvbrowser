@@ -66,7 +66,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     = java.util.logging.Logger.getLogger(TVBrowser.class.getName());
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer
+  public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
 
   private static final String EXPORTED_TV_DATA_EXTENSION = ".tv.zip";
@@ -247,7 +247,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
     JMenuBar menuBar = new JMenuBar();
     setJMenuBar(menuBar);
-
+    
+ 
     // TV-Browser menu
     JMenu mainMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
     mainMenu.setMnemonic(KeyEvent.VK_B);
@@ -538,16 +539,16 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       scrollToNow();
     }
     else if (src == mEarlyBt) {
-      mProgramTableScrollPane.scrollToTime(4 * 60); // 0 .. 8
+      mProgramTableScrollPane.scrollToTime(Settings.getEarlyTime());
     }
     else if (src == mMorningBt) {
-      mProgramTableScrollPane.scrollToTime(10 * 60); // 8 .. 12
+      mProgramTableScrollPane.scrollToTime(Settings.getMorningTime());
     }
     else if (src == mMiddayBt) {
-      mProgramTableScrollPane.scrollToTime(15 * 60); // 12 .. 18
+      mProgramTableScrollPane.scrollToTime(Settings.getMiddayTime());
     }
     else if (src == mEveningBt) {
-      mProgramTableScrollPane.scrollToTime(21 * 60); // 18 .. 24
+      mProgramTableScrollPane.scrollToTime(Settings.getEveningTime());
     }
     else if (src == quitMenuItem) {
       quit(); 
@@ -611,27 +612,27 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private JButton[] createTimeBtns() {
   	String msg;
   	JButton[] result=new JButton[5];
-	msg = mLocalizer.msg("botton.now", "Now");
+	msg = mLocalizer.msg("button.now", "Now");
 	mNowBt = new PictureButton(msg, new ImageIcon("imgs/TimeNow24.gif"));
 	mNowBt.addActionListener(this);
 	result[0]=mNowBt;
 
-	msg = mLocalizer.msg("botton.early", "Early");
+	msg = mLocalizer.msg("button.early", "Early");
 	mEarlyBt = new PictureButton(msg, new ImageIcon("imgs/TimeEarly24.gif"));
 	mEarlyBt.addActionListener(this);
 	result[1]=mEarlyBt;
 
-	msg = mLocalizer.msg("botton.morning", "Morning");
+	msg = mLocalizer.msg("button.morning", "Morning");
 	mMorningBt = new PictureButton(msg, new ImageIcon("imgs/TimeMorning24.gif"));
 	mMorningBt.addActionListener(this);
 	result[2]=mMorningBt;
 
-	msg = mLocalizer.msg("botton.midday", "Midday");
+	msg = mLocalizer.msg("button.midday", "Midday");
 	mMiddayBt = new PictureButton(msg, new ImageIcon("imgs/TimeMidday24.gif"));
 	mMiddayBt.addActionListener(this);
 	result[3]=mMiddayBt;
 
-	msg = mLocalizer.msg("botton.evening", "Evening");
+	msg = mLocalizer.msg("button.evening", "Evening");
 	mEveningBt = new PictureButton(msg, new ImageIcon("imgs/TimeEvening24.gif"));
 	mEveningBt.addActionListener(this);
 	result[4]=mEveningBt;
@@ -875,6 +876,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     if (Settings.settingHasChanged(new String[]{"programtable.endofday","programtable.startofday"})) {
       mProgramTableModel.setTimeRange(Settings.getProgramTableStartOfDay(),Settings.getProgramTableEndOfDay());
+    }
+    
+    if (Settings.settingHasChanged(new String[]{"columnwidth"})) {
+      util.ui.ProgramPanel.updateColumnWidth();
+      mProgramTableScrollPane.setColumnWidth(Settings.getColumnWidth());
+      mProgramTableScrollPane.updateChannelPanel();
+      mProgramTableScrollPane.getProgramTable().updateLayout();
     }
   }
   

@@ -69,6 +69,9 @@ public class ProgramTable extends /*JComponent*/SkinPanel
     setCursor(new Cursor(Cursor.HAND_CURSOR));
     updateBackground();
 
+    setBackground(Color.white);
+    setOpaque(true);
+
     // setFocusable(true);
     addMouseMotionListener(new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent evt) {
@@ -105,8 +108,11 @@ public class ProgramTable extends /*JComponent*/SkinPanel
     return mModel;
   }
   
+  public ProgramTableLayout getProgramTableLayout() {
+    return mLayout;
+  }
   
-  
+ 
   public void setProgramTableLayout(ProgramTableLayout layout) {
     if (layout == null) {
       // Use the default layout
@@ -130,6 +136,8 @@ public class ProgramTable extends /*JComponent*/SkinPanel
   public void setColumnWidth(int columnWidth) {
     mColumnWidth = columnWidth;
     setColDiff(mColumnWidth);
+    mRenderer = new DefaultProgramTableCellRenderer();
+    
   }
   
   
@@ -148,7 +156,6 @@ public class ProgramTable extends /*JComponent*/SkinPanel
 
   public void paintComponent(Graphics grp) {
     super.paintComponent(grp);
-
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
@@ -235,7 +242,7 @@ public class ProgramTable extends /*JComponent*/SkinPanel
     repaint();
   }
 
-  private void updateLayout() {
+  public void updateLayout() {
     mLayout.updateLayout(mModel, mRenderer);
     
     // Set the height equal to the highest column

@@ -92,7 +92,7 @@ public class FilterComponentList {
     } catch (ClassNotFoundException e) {      
       e.printStackTrace();
     }
-    System.out.println("components read");
+    
   }
   
   private static void store(ObjectOutputStream out) throws IOException {

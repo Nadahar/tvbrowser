@@ -45,7 +45,6 @@ public class ProgramTableScrollPane extends JScrollPane
   private ChannelChooser mChannelChooser;
   
   
-  
   /**
    * Creates a new instance of ProgramTableScrollPane.
    */
@@ -65,6 +64,9 @@ public class ProgramTableScrollPane extends JScrollPane
     
     mChannelChooser = new ChannelChooser(this);
     setCorner(JScrollPane.UPPER_RIGHT_CORNER, mChannelChooser);
+    
+    setOpaque(false);
+    
   }
   
   
@@ -78,6 +80,15 @@ public class ProgramTableScrollPane extends JScrollPane
     return mChannelPanel;
   }
  */
+
+
+ 
+  public void repaint() {
+    super.repaint();
+    if (mProgramTable!=null) mProgramTable.repaint();
+    if (mChannelPanel!=null) mChannelPanel.repaint(); 
+  }
+
  
   public void updateChannelPanel() {
     mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),

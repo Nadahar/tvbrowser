@@ -57,10 +57,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JRadioButton mBlankRB, mWallpaperRB, mColumnsRB;
 
   private JLabel mBackgroundLb;
-  private JButton mBackgroundBt;
+  private JButton mBackgroundBt, mDefaultBtn;
   private JTextField mBackgroundTF;
   
   private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
+  private JSlider mColWidthSl;
   
 
   
@@ -87,6 +88,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         mBackgroundBt.setEnabled(true);
         mBackgroundTF.setEnabled(true);
       }
+    } else if (source==mDefaultBtn) {
+      mColWidthSl.setValue(200);
     }
   }
   
@@ -177,6 +180,19 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     });
     p2.add(mBackgroundBt);
     
+    // column width
+    JPanel colWidthPn=new JPanel(new BorderLayout());
+    
+    colWidthPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columnwidth","column width")));
+    mColWidthSl=new JSlider(JSlider.HORIZONTAL,0,300,Settings.getColumnWidth());
+    colWidthPn.add(mColWidthSl,BorderLayout.WEST);
+    mColWidthSl.setPreferredSize(new Dimension(300,15));
+    
+    mDefaultBtn=new JButton(mLocalizer.msg("default","default"));
+    mDefaultBtn.addActionListener(this);
+    colWidthPn.add(mDefaultBtn,BorderLayout.EAST);
+    
+    main.add(colWidthPn);
     
     // day range
     
@@ -246,6 +262,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       Settings.setTableBGMode(SkinPanel.NONE);
     }
     
+    Settings.setColumnWidth(mColWidthSl.getValue());
     
     Calendar cal=Calendar.getInstance();
     Date startTime = (Date) mStartOfDayTimeSp.getValue();
