@@ -58,7 +58,11 @@ import devplugin.ChannelGroupImpl;
 public class ChannelList {
 
   public static final String FILE_NAME = "channellist.gz";
-  
+
+	private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(ChannelList.class.getName());
+
+	
   private ArrayList mChannelList;
   
   private ChannelGroup mGroup;
@@ -264,8 +268,12 @@ public class ChannelList {
       }
       if (icon == null) {
         //download the icon
-        util.io.IOUtilities.download(new URL(url), iconFile);
-        icon = getIconFromFile(iconFile);  
+				try {
+          util.io.IOUtilities.download(new URL(url), iconFile);
+					icon = getIconFromFile(iconFile); 
+        }catch(IOException e) {
+          mLog.warning("could not download icon from "+url);
+				}				 
       }
       if (icon != null) {
         mProperties.setProperty(key, url);
