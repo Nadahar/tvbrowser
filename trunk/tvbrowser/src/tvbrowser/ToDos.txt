@@ -32,8 +32,8 @@ java.lang.NullPointerException
 - Hilfe - Einrichtungsassistent geht nicht
 - Button Lieblingssendungen ist zu klein
 - Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
-- Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
-- Umlaute im Einrichtungsassistent
+- (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
+- (B) Umlaute im Einrichtungsassistent
 - "irgendwie" hervorheben, dass gerade ein Filter ausgewaehlt ist (und deshalb nicht alle Sendungen sichtbar sind).
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 
