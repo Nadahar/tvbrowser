@@ -29,8 +29,6 @@ package devplugin;
 import java.util.Iterator;
 
 import javax.swing.JPopupMenu;
-import javax.swing.tree.MutableTreeNode;
-
 
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
@@ -166,20 +164,9 @@ public interface PluginManager {
    * @param program The program to create the context menu for
    * @param caller The calling plugin.
    * @return a context menu for the given program.
-   * 
-   * @deprecated Since 1.1. Use {@link #createPluginContextMenu(Program)}
-   *             instead.
    */
   public JPopupMenu createPluginContextMenu(Program program, Plugin caller);
 
-  /**
-   * Creates a context menu for the given program containing all plugins.
-   * 
-   * @param program The program to create the context menu for
-   * @return a context menu for the given program.
-   */
-  public JPopupMenu createPluginContextMenu(Program program);
-  
   /**
    * Returns an array of all available filters.
    * 
