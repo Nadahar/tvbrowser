@@ -14,9 +14,7 @@ TODOs:
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden
 - Statusbar kann nicht ausgeblendet werden
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
-- fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
 - (M) F2 (plugin-view ein-ausblenden) funktioniert nicht, wenn die plugin-view den focus hat
-- Erinnerer: Sendungen an ein anderes Plugin weitergeben sollte nicht fuer Erinnerer selbst gehen
 - Settings - Kontextmenue zeigt den Eintrag des Erinnerers nicht an
 - SCHWERWIEGEND: Das Programm konnte nicht fuer den gesamten Zeitraum heruntergeladen werden!
 java.lang.NullPointerException
@@ -26,7 +24,6 @@ java.lang.NullPointerException
   Meldung passst nicht zum Problem
 - Button Lieblingssendungen ist zu klein
 - Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
-- (B) Umlaute im Einrichtungsassistent
 - Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
 - Titel immer sichtbar-Option im ProgramPanel benutzen
 - Übersetzungen für die Farben im ProgramPanel-Settings-Dialog
@@ -57,3 +54,6 @@ Erledigt:
 - (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
 - (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
 - (M) "irgendwie" hervorheben, dass gerade ein Filter ausgewaehlt ist (und deshalb nicht alle Sendungen sichtbar sind).
+- (B) Erinnerer: Sendungen an ein anderes Plugin weitergeben sollte nicht fuer Erinnerer selbst gehen
+- (B) fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
+- (B) Umlaute im Einrichtungsassistent
