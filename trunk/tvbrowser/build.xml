@@ -183,7 +183,7 @@
    | Compiles the source code.
    +-->
   <target name="make">
-    <echo message="Compiling the source code ..." />
+    <echo message="Compiling the source code ... " />
     <mkdir dir="${classes.dir}"/>
     <javac destdir="${classes.dir}" debug="${debug}" deprecation="true">
       <src>
@@ -193,6 +193,8 @@
         <path refid="classpath"/>
       </classpath>
       <exclude name="**/macosx/*"/>
+      <exclude name="**/microtvbrowserplugin/microtvbrowserMidlet/**"/>
+      <exclude name="**/microtvbrowserplugin/nanotvbrowserMidlet/**"/>
     </javac>
 
     <copy todir="${classes.dir}">
@@ -219,6 +221,8 @@
       <classpath>
         <path refid="classpath"/>
       </classpath>
+      <exclude name="**/microtvbrowserplugin/microtvbrowserMidlet/**"/>
+      <exclude name="**/microtvbrowserplugin/nanotvbrowserMidlet/**"/>
     </javac>
 
     <copy todir="${classes.dir}">
