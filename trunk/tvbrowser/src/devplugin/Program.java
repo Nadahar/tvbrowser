@@ -44,6 +44,7 @@ public interface Program {
   public static final int INFO_AUDIO_DOLBY_SURROUND    = 1 << 6;
   public static final int INFO_AUDIO_DOLBY_DIGITAL_5_1 = 1 << 7;
   public static final int INFO_AUDIO_TWO_CHANNEL_TONE  = 1 << 8;
+
   /**
    * A subtitle for aurally handicapped. The subtitle is in the same language as
    * the audio.
