@@ -167,7 +167,6 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
    */
   public void markDate(final Date d, Runnable callback) {
     
-    System.out.println("markDate "+d);
     if (d.equals(mCurChoosenDate)) {
       if (callback!=null) {
         callback.run();
