@@ -238,14 +238,14 @@ public class SearchDialog extends JDialog {
    * @param programArr The hits.
    * @param title The dialog's title.
    */  
-  private void showHitsDialog(Program[] programArr, String title) {
+  private void showHitsDialog(final Program[] programArr, String title) {
     final JDialog dlg = new JDialog(this, title, true);
     
     JPanel main = new JPanel(new BorderLayout());
     main.setBorder(UiUtilities.DIALOG_BORDER);
     dlg.setContentPane(main);
     
-    JList list = new JList(programArr);
+    final JList list = new JList(programArr);
     list.setCellRenderer(new ProgramListCellRenderer());
     main.add(new JScrollPane(list), BorderLayout.CENTER);
     
@@ -261,8 +261,23 @@ public class SearchDialog extends JDialog {
     dlg.getRootPane().setDefaultButton(closeBt);
     buttonPn.add(closeBt);
     
-    dlg.setSize(400, 400);
-    UiUtilities.centerAndShow(dlg);
+    
+    
+    list.addMouseListener(new MouseAdapter() {
+		public void mouseClicked(MouseEvent e) {
+    		if (SwingUtilities.isRightMouseButton(e)) {
+				int inx=list.locationToIndex(e.getPoint());
+				JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(programArr[inx],SearchPlugin.getInstance());
+				
+				menu.show(list, e.getX() - 15, e.getY() - 15);
+			}
+    	}
+    	
+    });
+    
+	dlg.setSize(400, 400);
+	UiUtilities.centerAndShow(dlg);
+    
   }
   
 }

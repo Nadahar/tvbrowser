@@ -174,10 +174,26 @@ public class ManageFavoritesDialog extends JDialog {
         dispose();
       }
     });
+    
+    
+	
+	mProgramList.addMouseListener(new MouseAdapter() {
+	  public void mouseClicked(MouseEvent e) {
+	    if (SwingUtilities.isRightMouseButton(e)) {
+		  int inx=mProgramList.locationToIndex(e.getPoint());
+		  Program p=(Program)mProgramListModel.getElementAt(inx);
+		  JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu(p,FavoritesPlugin.getInstance());
+		  menu.show(mProgramList, e.getX() - 15, e.getY() - 15);
+		}
+		}
+    	});
+    
     buttonPn.add(mCancelBt);
     
     favoriteSelectionChanged();
     pack();
+    
+    
   }
   
   

@@ -41,12 +41,13 @@ public class SearchPlugin extends Plugin {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchPlugin.class);
 
-  
+private static SearchPlugin mInstance;
   
   /**
    * Creates a new instance of SearchPlugin.
    */
   public SearchPlugin() {
+  	mInstance=this;
   }
 
   
@@ -107,5 +108,9 @@ public class SearchPlugin extends Plugin {
 
     return new PluginInfo(name, desc, author, new Version(1, 3));
   }
+  
+  public static SearchPlugin getInstance() {
+	return mInstance;
+  } 
 
 } 
