@@ -83,12 +83,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   public DefaultProgramTableModel(Channel[] shownChannelArr) {
     mListenerList = new ArrayList();
     
-    mProgramColumn=new ArrayList[shownChannelArr.length];
-    for (int i=0;i<mProgramColumn.length;i++) {
-        mProgramColumn[i]=new ArrayList();
-    }
-
-    setShownChannels(shownChannelArr);
+    
+	setShownChannels(shownChannelArr);
     
     mTimer = new Timer(10000, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -106,8 +102,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     
     mShownChannelArr = shownChannelArr;
     
+	mProgramColumn=new ArrayList[mShownChannelArr.length];
+	for (int i=0;i<mProgramColumn.length;i++) {
+		mProgramColumn[i]=new ArrayList();
+	}
+    
  //   updateProgramCount();
-    fireTableDataChanged();
+ //   fireTableDataChanged();
+ 	setDayPrograms(mMainDay,mNextDay);
   }
   
   
@@ -117,10 +119,24 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     setDayPrograms(mMainDay, mNextDay);
   }
   
+  private void addChannelDayProgram(int col, ChannelDayProgram cdp, int start, int end) {
+    if (cdp==null) return;
+    Iterator it=cdp.getPrograms();  
+    while (it.hasNext()) {
+      Program prog=(Program)it.next();
+      int time=prog.getHours()*60+prog.getMinutes();
+      if (time>=start && time<=end) {
+        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+          mProgramColumn[col].add(prog);
+        }
+      }
+    }
+  }
+  
   public void setDayPrograms(DayProgram mainDay, DayProgram nextDay) {
     
     deregisterFromPrograms(mProgramColumn);
-    
+    /*
   	for (int i=0;i<mShownChannelArr.length;i++) {
       ChannelDayProgram cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);
       mProgramColumn[i].clear();
@@ -134,7 +150,21 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         }
       }    
     }
+   */
    
+  for (int i=0;i<mShownChannelArr.length;i++) {
+    mProgramColumn[i].clear();
+    ChannelDayProgram cdp;
+    if (mainDay!=null) {
+      cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);     
+      addChannelDayProgram(i,cdp,TODAY_EARLIEST_TIME,24*60);
+    }
+    
+    if (nextDay!=null) { 
+      cdp=nextDay.getChannelDayProgram(mShownChannelArr[i]);
+      addChannelDayProgram(i,cdp,0,TOMORROW_LATEST_TIME);
+    }
+   }
     
   	
     
@@ -144,6 +174,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     
     mMainDay = mainDay;
     mNextDay = nextDay;
+
+if (mTimer!=null) {
 
     // Start the timer if one of the day 
     int todayDaysSince1970 = IOUtilities.getDaysSince1970();
@@ -158,7 +190,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     } else {
       mTimer.stop();
     }
-    
+}   
  //   updateProgramCount();
 
    // registerAtPrograms(mMainDay, mMainDayProgramCount);
@@ -200,7 +232,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   public Program getProgram(int col, int row) {
       
-      return (Program)mProgramColumn[col].get(row);
+      ArrayList list=mProgramColumn[col];
+      if (list.size()<=row) return null;
+      return (Program)list.get(row);
+     // if (mProgramColumn[col].size()<=row) return null;
+     // return (Program)mProgramColumn[col].get(row);
       
       
       /*
