@@ -93,7 +93,7 @@ public class ChannelPanel extends JPanel {
   }  
 
   
-  static class ChannelLabel extends JLabel {
+  static class ChannelLabel extends util.ui.ChannelLabel {
    
     private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
     private static Font channelNameFont;

@@ -28,7 +28,6 @@ package listviewplugin;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import tvbrowser.core.Settings;
+import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
 import devplugin.Program;
@@ -56,9 +56,11 @@ public class ListTabelCellRenderer extends DefaultTableCellRenderer {
 
             Channel channel = (Channel) value;
 
-            label.setIcon(channel.getIcon());
-            label.setFont(label.getFont().deriveFont(Font.BOLD));
-            label.setText(channel.getName());
+            ChannelLabel clabel = new ChannelLabel();
+            
+            clabel.setChannel(channel);
+            clabel.setForeground(label.getForeground());
+            clabel.setBackground(label.getBackground());
 
             if (channel.getIcon() != null) {
                 if (getSize().height < channel.getIcon().getIconHeight()) {
@@ -68,10 +70,11 @@ public class ListTabelCellRenderer extends DefaultTableCellRenderer {
                 }
             }
 
-            if (label.getHeight() > table.getRowHeight(row)) {
-                table.setRowHeight(row, label.getHeight());
+            if (clabel.getHeight() > table.getRowHeight(row)) {
+                table.setRowHeight(row, clabel.getHeight());
             }
-
+            
+            label = clabel;
         } else if (value instanceof Program) {
 
             ProgramPanel panel = new ProgramPanel((Program) value, ProgramPanel.X_AXIS);
