@@ -28,6 +28,7 @@ package tvbrowser.core;
 
 import java.util.*;
 import java.awt.Font;
+import java.awt.Point;
 import java.io.*;
 import javax.swing.*;
 
@@ -558,14 +559,38 @@ public class Settings {
 				return new java.awt.Dimension(700,500);
 			}
 		}
-		return new java.awt.Dimension(700,500);
-		
+		return new java.awt.Dimension(700,500);		
 	}
+  
 	public static void setWindowSize(java.awt.Dimension dim) {
 		String dimStr[]=new String[2];
 		dimStr[0]=""+dim.width;
 		dimStr[1]=""+dim.height;
 		settings.setStringList("windowsize",dimStr);
 	}
+  
+  
+  
+  public static Point getWindowLocation() {
+		String locStr[] = settings.getStringList("windowlocation");
+    if (locStr.length != 2) {
+      return null;
+    } else {
+      int x = Integer.parseInt(locStr[0]);
+      int y = Integer.parseInt(locStr[1]);
+      
+      return new Point(x, y);
+    }
+  }
+  
+  
+  
+  public static void setWindowLocation(Point location) {
+    String locStr[] = new String[] {
+      Integer.toString(location.x),
+      Integer.toString(location.y)
+    };
+    settings.setStringList("windowlocation", locStr);
+  }
 	
 }

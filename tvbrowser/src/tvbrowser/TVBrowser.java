@@ -158,7 +158,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 	mainFrame=new TVBrowser();
     mainFrame.setSize(Settings.getWindowSize());
-    UiUtilities.centerAndShow(mainFrame);
+    Point location = Settings.getWindowLocation();
+    if (location == null) {
+      UiUtilities.centerAndShow(mainFrame);
+    } else {
+      mainFrame.setLocation(location);
+      mainFrame.show();
+    }
     ErrorHandler.setFrame(mainFrame);
 
 	splash.hide();
@@ -339,13 +345,14 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     mLog.info("Storing dataservice settings");
     TvDataServiceManager.getInstance().finalizeDataServices();
     
-    mLog.info("Storing window size");
+    mLog.info("Storing window size and location");
     Settings.setWindowSize(mainFrame.getSize());
+    Settings.setWindowLocation(mainFrame.getLocation());
     
     try {
     	Settings.storeSettings();
-    }catch(TvBrowserException e) {
-		ErrorHandler.handle(e);
+    } catch (TvBrowserException e) {
+      ErrorHandler.handle(e);
     }
 
     mLog.info("Quitting");
