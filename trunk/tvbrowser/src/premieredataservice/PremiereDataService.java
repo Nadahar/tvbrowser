@@ -176,8 +176,9 @@ public class PremiereDataService extends AbstractTvDataService {
       IOUtilities.download(new URL(url), targetFile);
     }
     catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.1",
-        "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
+     // ignore error
+     // throw new TvBrowserException(getClass(), "error.1",
+     //   "Error downloading '{0}' to '{1}'!", url, targetFile.getAbsolutePath(), exc);
     }
   }
 
@@ -263,7 +264,9 @@ public class PremiereDataService extends AbstractTvDataService {
 
             // Get the right regex matcher
             Matcher matcher = regexPatternArr[progLine].matcher(line);
-            matcher.find();
+            if (!matcher.find()) {  // must find!
+            	return;
+            }
 
             if (progLine == 0) {
               currProgram = extractProgram(matcher, date, knownChannelNameSet, cal);
