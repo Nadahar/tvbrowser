@@ -117,6 +117,13 @@ public class MutableProgram implements Program {
    * @param localDate The date of this program.
    */
   public MutableProgram(Channel channel, devplugin.Date localDate) {
+    if (channel == null) {
+      throw new NullPointerException("channel is null");
+    }
+    if (localDate == null) {
+      throw new NullPointerException("localDate is null");
+    }
+    
     mFieldHash = new HashMap();
     mListenerList = new EventListenerList();
     mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
@@ -696,18 +703,35 @@ public class MutableProgram implements Program {
     return "On " + mChannel.getName() + " at " + getHours() + ":" + getMinutes()
       + ", " + getDateString() + ": '" + getTitle() + "'";
   }
-  
+
+
   public boolean equals(Object o) {
     if (o instanceof devplugin.Program) {
       devplugin.Program program = (devplugin.Program)o;
       return program!=null
-             && mChannel.equals(program.getChannel())
-             && getDate().equals(program.getDate())
+             && equals(mChannel, program.getChannel())
+             && equals(getDate(), program.getDate())
              && getHours() == program.getHours()
-             && getMinutes() == program.getMinutes()
-             && getTitle().equals(program.getTitle());
+             && getMinutes()  == program.getMinutes()
+             && equals(getTitle(), program.getTitle());
     }
     return false;
+  }
+
+
+  /**
+   * Gets whether two objects are equal. Can handle null values.
+   * 
+   * @param o1 The first object.
+   * @param o2 The second object.
+   * @return Whether the two objects are equal.
+   */
+  private boolean equals(Object o1, Object o2) {
+    if ((o1 == null) || (o2 == null)) {
+      return (o1 == o2);
+    } else {
+      return o1.equals(o2);
+    }
   }
  
 }
