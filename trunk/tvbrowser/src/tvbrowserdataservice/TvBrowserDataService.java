@@ -34,6 +34,8 @@ import java.util.Iterator;
 
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 
 import devplugin.*;
 import devplugin.Channel;
@@ -44,11 +46,14 @@ import devplugin.Version;
 import tvbrowserdataservice.file.*;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
+import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
 
 
 import util.tvdataservice.AbstractTvDataService;
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
 
 /**
  * 
@@ -71,6 +76,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private int mTotalDownloadJobCount;
   private ProgressMonitor mProgressMonitor;
 
+  private Channel[] mChannelsTempArr;
 
   private static final String[][] DEFAULT_CHANNEL_GROUP_MIRRORS = new String[][] {
     new String[] {"http://tvbrowser.dyndns.tv", "http://tvbrowser.waidi.net", "http://tvbrowser.powered-by-hetzner.de","http://tvbrowser.wannawork.de","http://www.watchersnet.de/tv-browser"},
@@ -408,7 +414,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
   
 
   /**
-   * Called by the host-application during start-up. Implements this method to
+   * Called by the host-application during start-up. Implement this method to
    * load your dataservices settings from the file system.
    */
   public void loadSettings(Properties settings) {
@@ -493,6 +499,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
    * Gets the list of the channels that are available by this data service.
    */
   public Channel[] getAvailableChannels() {
+    System.out.println("call: getAvailableChannels()");
     
     ArrayList channelList=new ArrayList();
     Iterator it=mChannelGroupSet.iterator();
@@ -504,8 +511,47 @@ public class TvBrowserDataService extends AbstractTvDataService {
       }       
     }
     
+    
+    if (channelList.size()==0) {
+         Object[] options = {"Jetzt herunterladen (empfohlen)",
+                    "Sp\u00E4ter neu einrichten"};
+      int n = JOptionPane.showOptionDialog(null,
+           "Es befindet sich keine aktuelle Senderliste auf dem System.\n" +
+           "Senderlisten werden ben\u00F6tigt, um TV-Browser mitzuteilen,\nwelche Sender zur Verf\u00FCgung stehen.\n\n" +
+           "Soll nun eine aktuelle Senderliste heruntergeladen werden? (erfordert eine Internetverbinung)",
+           "Keine Senderlisten verf\u00FCgbar",
+           JOptionPane.YES_NO_CANCEL_OPTION,
+           JOptionPane.QUESTION_MESSAGE,
+           null,
+           options,
+           options[0]);
+      
+      if (n==0) {
+        final ProgressWindow win=new ProgressWindow(null);
+        mChannelsTempArr=null;
+        win.run(new Progress(){
+          public void run() {
+            try {
+              mChannelsTempArr = checkForAvailableChannels(win);
+            }catch (TvBrowserException exc) {
+              ErrorHandler.handle(exc);
+            }
+          }
+        });
+        if (mChannelsTempArr==null) {
+          return new Channel[0]; 
+        }
+        Channel[] result=new Channel[mChannelsTempArr.length];
+        System.arraycopy(mChannelsTempArr,0,result,0,result.length);
+    
+        return result;
+      }  
+    }
+    
+    
     Channel[] result=new Channel[channelList.size()];
     channelList.toArray(result);
+      
     return result;
     
   }
@@ -545,7 +591,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
       "TV-Browser",
       mLocalizer.msg("description", "Die eigenen TV-Daten des TV-Browser-Projektes"),
       "Til Schneider, www.murfman.de",
-      new Version(0, 1),
+      new Version(0, 2),
       mLocalizer.msg("license",""));
   }
 
