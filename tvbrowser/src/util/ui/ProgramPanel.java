@@ -70,9 +70,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static final boolean USE_FULL_HEIGHT = true;
   private static final boolean PAINT_EXPIRED_PROGRAMS_PALE = true;
   
-  private static final Color COLOR_ON_AIR_DARK  = new Color(128, 128, 255, 80);
-  private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
-  private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
   private static final Composite NORMAL_COMPOSITE = AlphaComposite.SrcOver;
   private static final Composite PALE_COMPOSITE
     = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
@@ -386,9 +383,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
             progressX = elapsedMinutes * width / progLength;
           }
 
-          grp.setColor(COLOR_ON_AIR_DARK);
+          grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
           grp.fillRect(1, 1, progressX - 1, height - 1);
-          grp.setColor(COLOR_ON_AIR_LIGHT);
+          grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
           grp.fillRect(progressX, 1, width - progressX - 2, height - 1);
           grp.draw3DRect(0, 0, width - 1, height - 1, true);
       } else {
@@ -397,9 +394,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
             progressY = elapsedMinutes * height / progLength;
           }
 
-          grp.setColor(COLOR_ON_AIR_DARK);
+          grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
           grp.fillRect(1, 1, width - 2, progressY - 1);
-          grp.setColor(COLOR_ON_AIR_LIGHT);
+          grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
           grp.fillRect(1, progressY, width - 2, height - progressY - 1);
           grp.draw3DRect(0, 0, width - 1, height - 1, true);
       }
@@ -408,12 +405,12 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     // If there are plugins that have marked the program -> paint the background
     PluginAccess[] markedByPluginArr = mProgram.getMarkedByPlugins();
     if (markedByPluginArr.length != 0) {
-      grp.setColor(COLOR_MARKED);
+      grp.setColor(Settings.propProgramTableColorMarked.getColor());
       grp.fill3DRect(0, 0, width, height, true);
     }
 
     if (mMouseOver) {
-        Color test       = new Color(200, 200, 0, 40);
+        Color test       = Settings.propMouseOverColor.getColor();
         grp.setColor(test);
         grp.fillRect(0, 0, width-1, height-1);
         
