@@ -42,8 +42,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       = util.ui.Localizer.getLocalizerFor(LookAndFeelSettingsTab.class);
 
   private JCheckBox mUseSkinLFCb;
-  private JCheckBox mSkinCheckBox;
-  private JTextField mSkinTextField;
   private JComboBox mLfComboBox;
   private JPanel mSettingsPn;
   private JLabel mLookAndFeelLb;
@@ -81,44 +79,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     JPanel northPanel=new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel,BoxLayout.Y_AXIS));
-    
-    
-    //  Background
-    JPanel skinPanel = new JPanel(new BorderLayout(5, 0));
-    northPanel.add(skinPanel);
-    msg = mLocalizer.msg("background", "Background");
-    mSkinCheckBox = new JCheckBox(msg);
-    mSkinTextField = new JTextField(Settings.propApplicationSkin.getString());
-    msg = mLocalizer.msg("change", "Change");
-    final JButton skinChooseBtn = new JButton(msg);
-    skinPanel.add(mSkinCheckBox,BorderLayout.WEST);
-    skinPanel.add(mSkinTextField,BorderLayout.CENTER);
-    skinPanel.add(skinChooseBtn,BorderLayout.EAST);
-    mSkinCheckBox.setSelected(Settings.propUseApplicationSkin.getBoolean());
-    skinChooseBtn.setEnabled(Settings.propUseApplicationSkin.getBoolean());
-    mSkinTextField.setEnabled(Settings.propUseApplicationSkin.getBoolean());
-
-    mSkinCheckBox.addActionListener(new ActionListener() {
-       public void actionPerformed(ActionEvent event) {
-         skinChooseBtn.setEnabled(mSkinCheckBox.isSelected());
-         mSkinTextField.setEnabled(mSkinCheckBox.isSelected());
-       }
-    }
-    );
-
-    skinChooseBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        JFileChooser fileChooser=new JFileChooser();
-        String[] extArr = { ".jpg", ".jpeg", ".gif", ".png"};
-        fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
-        fileChooser.showOpenDialog(mSettingsPn);
-        File f=fileChooser.getSelectedFile();
-        if (f!=null) {
-          mSkinTextField.setText(f.getAbsolutePath());
-        }
-      }
-    });
-
     
   // Look and feel
      JPanel lfPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -224,9 +184,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     LookAndFeelObj obj=(LookAndFeelObj)mLfComboBox.getSelectedItem();
     Settings.propLookAndFeel.setString(obj.getLFClassName());
  
-    Settings.propUseApplicationSkin.setBoolean(mSkinCheckBox.isSelected());
-    Settings.propApplicationSkin.setString(mSkinTextField.getText());
-    
     Settings.propIsSkinLFEnabled.setBoolean(mUseSkinLFCb.isSelected());
     Settings.propSkinLFThemepack.setString(mThemepackTf.getText());    
   }
