@@ -26,23 +26,11 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -54,6 +42,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
 import util.ui.UiUtilities;
+import util.ui.BrowserLauncher;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
@@ -129,7 +118,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     // FormDebugPanel panel = new FormDebugPanel();
 
     FormLayout layout = new FormLayout("default:grow(0.5), 3dlu, default, 3dlu, default:grow(0.5), 3dlu, default",
-        "default, 3dlu, default:grow, default, 3dlu, default, default:grow, 3dlu, top:default, 3dlu, default, 3dlu, default");
+        "default, 3dlu, default:grow, default, 3dlu, default, default:grow, 3dlu, top:default, 3dlu, default, 3dlu, default, default");
 
     panel.setLayout(layout);
     panel.setBorder(Borders.DLU4_BORDER);
@@ -204,6 +193,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     panel.add(channelList.getUpButton(), c.xy(7, 4));
     panel.add(channelList.getDownButton(), c.xy(7, 6));
 
+
     // Bottom Buttons
 
     if (mShowAllButtons) {
@@ -223,6 +213,18 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       
       panel.add(refreshList, c.xy(1, 13));
       panel.add(configureChannels, c.xyw(5, 13, 3));
+
+      JLabel urlLabel = new JLabel("<html><u>Wollen Sie eigene Sender anbieten? Dann klicken Sie hier!</u></html>", JLabel.CENTER);
+              urlLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+              urlLabel.setForeground(Color.BLUE);
+              urlLabel.addMouseListener(new MouseAdapter() {
+                  public void mouseClicked(MouseEvent e) {
+                      BrowserLauncher.openURL("http://tvbrowser.org/provide_tv_data.php");
+                  }
+              });
+      urlLabel.setBorder(BorderFactory.createEmptyBorder(5,0,3,0));
+       panel.add(urlLabel, c.xyw(1,14,7));
+
     }
 
     fillChannelListBox();
@@ -373,6 +375,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mChannelProvider = new JLabel();
     panel.add(mChannelProvider, c.xy(3, 11));
 
+
+
     return panel;
   }
 
@@ -432,7 +436,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return "Kanäle";
+    return mLocalizer.msg("channels","Channels");
   }
 
   /**
