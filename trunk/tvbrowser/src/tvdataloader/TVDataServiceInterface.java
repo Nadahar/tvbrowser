@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -76,7 +76,13 @@ public interface TVDataServiceInterface {
 	 */
   public java.util.Properties storeSettings();
   
-  public javax.swing.JPanel getSettingsPanel();
+  public SettingsPanel getSettingsPanel();
+  
+  public boolean hasSettingsPanel();
+  
+  public int getNumberOfAvailableChannels();
+  
+  public void initializeAvailableChannels(devplugin.Channel[] channels);
    
 
 }

@@ -16,12 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date$
- *   $Author$
- * $Revision$
  */
 
 package tvbrowser.core;
@@ -40,137 +34,49 @@ import util.exc.TvBrowserException;
  */
 public class ChannelList {
   
-  private static Vector channels;
+  private static Vector channels=new Vector();
   public static final String CHANNEL_FILE="channels.prop";
   
   private static ArrayList subscribedChannels=new ArrayList();
   
+   
   
-  /**
-   * If the file CHANNEL_FILE does not exist, a default channel list is created by calling this
-   * method.
-   */
-  public static void createDefaultChannelList(String dataServiceName) {
-  	String s=dataServiceName;
-    if (channels==null) {
-    	channels=new Vector();
-    }
-    channels.add(new Channel("ARD",1,s));
-    channels.add(new Channel("ZDF",2,s));
-    channels.add(new Channel("RTL",3,s));
-    channels.add(new Channel("Sat.1",4,s));
-    channels.add(new Channel("Pro 7",5,s));
-    channels.add(new Channel("VOX",8,s));
-    
-    
-    channels.add(new Channel("TV 5", 201,s));
-    channels.add(new Channel("Kabel 1", 202,s));
-    channels.add(new Channel("Premiere", 203,s));
-    channels.add(new Channel("Bayern", 204,s));
-    channels.add(new Channel("TRT", 205,s));
-    channels.add(new Channel("SWR", 206,s));
-    channels.add(new Channel("n-tv", 207,s));
-    channels.add(new Channel("arte", 208,s));
-    channels.add(new Channel("VIVA", 209,s));
-    channels.add(new Channel("MTV", 210,s));
-    channels.add(new Channel("MTV2", 211,s));
-    channels.add(new Channel("mdr", 212,s));
-    channels.add(new Channel("Neunlive", 213,s));
-    channels.add(new Channel("3Sat", 214,s));
-    channels.add(new Channel("EuroSport", 215,s));
-    channels.add(new Channel("RTL 2", 216,s));
-    channels.add(new Channel("ORF 2", 217,s));
-    channels.add(new Channel("Kinder Kanal", 218,s));
-    channels.add(new Channel("NBC", 219,s));
-    channels.add(new Channel("Nord 3", 220,s));
-    channels.add(new Channel("Hessen", 221,s));
-    channels.add(new Channel("Phoenix", 222,s));
-    channels.add(new Channel("CNN", 223,s));
-    channels.add(new Channel("ORB", 224,s));
-    channels.add(new Channel("SF1", 225,s));
-    channels.add(new Channel("SUPER RTL", 226,s));
-    channels.add(new Channel("DSF", 227,s));
-    channels.add(new Channel("EuroNews", 228,s));
-    channels.add(new Channel("ORF 1", 229,s));
-
-    channels.add(new Channel("13th Street", 301, s));
-    channels.add(new Channel("Classica", 302, s));
-    channels.add(new Channel("Disney Channel", 303, s));
-    channels.add(new Channel("Fox Kids", 304, s));
-    channels.add(new Channel("Heimatkanal", 305, s));
-    channels.add(new Channel("Junior", 306, s));
-    channels.add(new Channel("MGM", 307, s));
-    channels.add(new Channel("Premiere 1", 308, s));
-    channels.add(new Channel("Premiere 2", 309, s));
-    channels.add(new Channel("Premiere 3", 310, s));
-    channels.add(new Channel("Premiere 4", 311, s));
-    channels.add(new Channel("Premiere 5", 312, s));
-    channels.add(new Channel("Premiere 6", 313, s));
-    channels.add(new Channel("Premiere 7", 314, s));
-    channels.add(new Channel("Premiere Krimi", 315, s));
-    channels.add(new Channel("Premiere Nostalgie", 316, s));
-    channels.add(new Channel("Premiere Serie", 317, s));
-    channels.add(new Channel("Premiere Start", 318, s));
-    channels.add(new Channel("Studio Universal", 319, s));
-    channels.add(new Channel("Beate-Uhse.TV", 320, s));
-  }
-  
-  /**
-   * Opens the file CHANNEL_FILE to extract the available channels.
-   */
-  public static void readChannelList(String dataServiceName) throws TvBrowserException {
-    BufferedReader in = null;
-    try {
-      in = new BufferedReader(new FileReader(CHANNEL_FILE));
-      String line, a, b;
-      int pos, id;
-      while(true) {
-        line=in.readLine();
-        if (line==null) break;
-        pos=line.indexOf(' ');
-        a=line.substring(0,pos);
-        b=line.substring(pos+1);
-
-        id=Integer.parseInt(a);
-        Channel ch=new Channel(b,id,dataServiceName);
-        channels.add(ch);
-      }
-    }
-    catch (IOException exc) {
-      throw new TvBrowserException(ChannelList.class, "error.1", 
-        "Can't read channel list!\n({0})", CHANNEL_FILE, exc);
-    }
-    finally {
-      if (in != null) {
-        try { in.close(); } catch (IOException exc) {}
-      }
-    }
-  }
-  
-  
+	public static void addDataLoaderChannels(String dataloaderName) {
+		
+		tvdataloader.TVDataServiceInterface dataloader=DataLoaderManager.getDataLoader(dataloaderName);
+		int num=dataloader.getNumberOfAvailableChannels();
+		Channel[] channelList=new Channel[num];
+		for (int i=0;i<num;i++) {
+			channelList[i]=new Channel(dataloaderName);
+		}
+		dataloader.initializeAvailableChannels(channelList);
+		for (int i=0;i<num;i++) {
+			channels.add(channelList[i]);
+		}
+	}
   
   /**
    * Stores the channel file CHANNEL_FILE.
    */
   public static void writeChannelList() throws TvBrowserException {
-    PrintWriter out = null;
-    try {
-      new PrintWriter(new FileWriter(CHANNEL_FILE));
-      Enumeration enum=channels.elements();
-      while (enum.hasMoreElements()) {
-        Channel ch=(Channel)enum.nextElement();
-        out.println(ch.getId()+" "+ch.getName());
-      }
-    }
-    catch (IOException exc) {
-      throw new TvBrowserException(ChannelList.class, "error.2", 
-        "Can't write channel list!\n({0})", CHANNEL_FILE, exc);
-    }
-    finally {
-      if (out != null) {
-        out.close();
-      }
-    }
+	PrintWriter out = null;
+	try {
+	  new PrintWriter(new FileWriter(CHANNEL_FILE));
+	  Enumeration enum=channels.elements();
+	  while (enum.hasMoreElements()) {
+		Channel ch=(Channel)enum.nextElement();
+		out.println(ch.getId()+" "+ch.getName());
+	  }
+	}
+	catch (IOException exc) {
+	  throw new TvBrowserException(ChannelList.class, "error.2", 
+		"Can't write channel list!\n({0})", CHANNEL_FILE, exc);
+	}
+	finally {
+	  if (out != null) {
+		out.close();
+	  }
+	}
   }
   
   
@@ -180,8 +86,8 @@ public class ChannelList {
    * @param id the channel's ID
    */
   public static void subscribeChannel(String loader, int id) {  
-    Channel ch=getChannel(loader,id);
-    subscribedChannels.add(ch);
+	Channel ch=getChannel(loader,id);
+	subscribedChannels.add(ch);
   }
   
   
@@ -194,10 +100,10 @@ public class ChannelList {
    * @param channels the subscribed channels (array of String)
    */
   public static void setSubscribeChannels(Object[] channels) {
-  	subscribedChannels=new ArrayList();
-  	for (int i=0;i<channels.length;i++) {
-  		subscribedChannels.add(channels[i]);
-  	}
+	subscribedChannels=new ArrayList();
+	for (int i=0;i<channels.length;i++) {
+		subscribedChannels.add(channels[i]);
+	}
   }
 
   
@@ -206,28 +112,28 @@ public class ChannelList {
    * given ID does not exist.
    */
   public static Channel getChannel(String loader, int id) {
-    Channel result;
-    Enumeration enum=channels.elements();
-    while (enum.hasMoreElements()) {
-      result=(Channel)enum.nextElement();
-      if (result.getDataServiceName().equals(loader) && result.getId()==id) {
-      	return result;
-      }
-    }
-    return null;
+	Channel result;
+	Enumeration enum=channels.elements();
+	while (enum.hasMoreElements()) {
+	  result=(Channel)enum.nextElement();
+	  if (result.getDataServiceName().equals(loader) && result.getId()==id) {
+		return result;
+	  }
+	}
+	return null;
   }
   
   
   
   public static int getPos(int id) {
-    for (int i=0;i<subscribedChannels.size();i++) {    
-      Channel ch=(Channel)subscribedChannels.get(i);
-      int curId=ch.getId();
-      if (curId==id) {
-        return i;
-      }
-    }
-    return -1;
+	for (int i=0;i<subscribedChannels.size();i++) {    
+	  Channel ch=(Channel)subscribedChannels.get(i);
+	  int curId=ch.getId();
+	  if (curId==id) {
+		return i;
+	  }
+	}
+	return -1;
   }
   
   
@@ -237,15 +143,15 @@ public class ChannelList {
    * the given  channel name does not exist.
    */
   public static Channel getChannel(String name) {
-    Channel result;
-    Enumeration enum=channels.elements();
-    while (enum.hasMoreElements()) {
-      result=(Channel)enum.nextElement();
-      if (result.getName().equals(name)) {
-        return result;
-      }
-    }
-    return null;
+	Channel result;
+	Enumeration enum=channels.elements();
+	while (enum.hasMoreElements()) {
+	  result=(Channel)enum.nextElement();
+	  if (result.getName().equals(name)) {
+		return result;
+	  }
+	}
+	return null;
   }
   
   
@@ -254,7 +160,7 @@ public class ChannelList {
    * Returns an Enumeration of all available Channel objects.
    */
   public static Enumeration getChannels() {
-    return channels.elements();
+	return channels.elements();
   }
   
   
@@ -263,14 +169,14 @@ public class ChannelList {
    * Returns true, if the specified channel is currently subscribed.
    */
   public static boolean isSubscribedChannel(Channel channel) {
-  	if (channel==null) return false;
-    for (int i=0;i<subscribedChannels.size();i++) {    
-      Channel ch=(Channel)subscribedChannels.get(i);
-      if (ch!=null && ch.getId()==channel.getId() && ch.getDataServiceName().equals(channel.getDataServiceName())) {
-      	return true;
-      }
-    }
-    return false;
+	if (channel==null) return false;
+	for (int i=0;i<subscribedChannels.size();i++) {    
+	  Channel ch=(Channel)subscribedChannels.get(i);
+	  if (ch!=null && ch.getId()==channel.getId() && ch.getDataServiceName().equals(channel.getDataServiceName())) {
+		return true;
+	  }
+	}
+	return false;
   }
   
   
@@ -279,7 +185,7 @@ public class ChannelList {
    * Returns the number of subscribed channels.
    */
   public static int getNumberOfSubscribedChannels() {  
-    return subscribedChannels.size();
+	return subscribedChannels.size();
   }
   
   
@@ -288,11 +194,11 @@ public class ChannelList {
    * Returns all subscribed channels.
    */
   public static Channel[] getSubscribedChannels() {
-    Channel[] result=new Channel[subscribedChannels.size()];
-    for (int i=0;i<subscribedChannels.size();i++) {
-      result[i]=(Channel)subscribedChannels.get(i);
-    }
-    return result;
+	Channel[] result=new Channel[subscribedChannels.size()];
+	for (int i=0;i<subscribedChannels.size();i++) {
+	  result[i]=(Channel)subscribedChannels.get(i);
+	}
+	return result;
   }
   
 

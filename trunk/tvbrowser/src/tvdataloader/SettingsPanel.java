@@ -16,39 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date$
- *   $Author$
- * $Revision$
  */
-
-package devplugin;
-
+ 
 /**
- * This interface provides a view of the channel object, implemented in the
- * host-application.
- *
+ * TV-Browser
  * @author Martin Oberhauser
  */
-public interface Channel {
-
-    /**
-     * Returns the name of the channel.
-     */
-    public String getName();
-
-    /**
-     * Returns a unique ID of the channel
-     */
-    public int getId();
-
-    public boolean equals(Channel ch);
-    
-	public String getDataServiceName();
-	
-	public void init(String name, int id);
-
-   
-}
+ 
+ package tvdataloader;
+ 
+ public abstract class SettingsPanel extends javax.swing.JPanel {
+ 
+ 	public abstract void ok();
+ 	
+ }
