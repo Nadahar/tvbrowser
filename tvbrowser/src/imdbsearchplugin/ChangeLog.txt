@@ -1,5 +1,8 @@
 Changelog ImdbSearchPlugin
 
+1.03:
+- Use akas.imdb.com, Also Known As-Database query
+
 1.02:
 - Use URLEncode to change special Chars
 
