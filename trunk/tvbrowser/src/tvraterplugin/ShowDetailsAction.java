@@ -24,6 +24,7 @@ import javax.swing.Action;
 
 import util.ui.BrowserLauncher;
 import util.ui.ImageUtilities;
+import util.ui.Localizer;
 
 
 /**
@@ -31,6 +32,9 @@ import util.ui.ImageUtilities;
  * @author bodo
  */
 public class ShowDetailsAction extends AbstractAction {
+    private static final Localizer mLocalizer = Localizer
+            .getLocalizerFor(ShowDetailsAction.class);
+
     /** ID of Program in Database */
     private int _id;
     
@@ -68,7 +72,7 @@ public class ShowDetailsAction extends AbstractAction {
         }
         
         if (name)
-            putValue(Action.NAME, "Show Details");
+            putValue(Action.NAME, mLocalizer.msg("showDetails", "Show Details"));
         
         if (icon)
             putValue(Action.SMALL_ICON, ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/details16.gif", getClass()));

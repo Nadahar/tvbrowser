@@ -26,6 +26,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import util.ui.ImageUtilities;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 
@@ -35,6 +36,8 @@ import util.ui.UiUtilities;
  * @author bodum
  */
 public class ListAction extends AbstractAction {
+    private static final Localizer mLocalizer = Localizer
+    	.getLocalizerFor(ListAction.class);
 
     /** Title of Program to show */
     private String _title;
@@ -100,7 +103,7 @@ public class ListAction extends AbstractAction {
     private void createGui(boolean icon, boolean name) {
         // TODO: Translate this!
         if (name)
-            putValue(Action.NAME, "Show List");
+            putValue(Action.NAME, mLocalizer.msg("showList", "Show List"));
         
         if (icon)
             putValue(Action.SMALL_ICON, ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/listview16.gif", getClass()));
