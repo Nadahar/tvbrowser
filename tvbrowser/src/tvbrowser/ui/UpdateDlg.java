@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ package tvbrowser.ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
+import tvbrowser.core.Settings;
 /**
  * TV-Browser
  *
@@ -94,7 +94,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
     msg = mLocalizer.msg("period", "Update program for");
     panel1.add(new JLabel(msg), BorderLayout.WEST);
     comboBox = new JComboBox(PERIOD_MSG_ARR);
-    comboBox.setSelectedIndex(0);
+    //comboBox.setSelectedIndex(0);
     panel1.add(comboBox,BorderLayout.EAST);
     northPanel.add(panel1);
     msg = mLocalizer.msg("rememberSettings", "Remember settings");
@@ -102,9 +102,9 @@ public class UpdateDlg extends JDialog implements ActionListener {
     JPanel panel2=new JPanel(new BorderLayout());
     
     try {
-    	comboBox.setSelectedIndex(tvbrowser.core.Settings.getDownloadPeriod());
+    	comboBox.setSelectedIndex(Settings.getDownloadPeriod());
      }catch(IllegalArgumentException e) {
-    	comboBox.setSelectedIndex(0);
+     	comboBox.setSelectedIndex(0);
     }
     panel2.add(checkBox,BorderLayout.WEST);
 
@@ -126,8 +126,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
     else if (source==updateBtn) {
       result=comboBox.getSelectedIndex();
       if (checkBox.isSelected()) {
-        tvbrowser.core.Settings.setDownloadPeriod(result);
-        System.out.println("storing: "+result);
+        Settings.setDownloadPeriod(result);
       }
 
       setVisible(false);

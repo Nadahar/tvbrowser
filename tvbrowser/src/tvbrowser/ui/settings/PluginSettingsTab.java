@@ -129,7 +129,7 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
         }
       }
     });
-    
+    addPicBtnCheckBox.setEnabled(false);
     add(content,BorderLayout.NORTH);
   }
   

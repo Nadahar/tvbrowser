@@ -177,6 +177,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
       	
+		if (Settings.getAutomaticDownload()==Settings.ONSTARTUP) {
+			mainFrame.runUpdateThread(Settings.getDownloadPeriod());
+		}
+      	
       	if (!DataService.dataAvailable(new devplugin.Date())) {
       		askForDataUpdate();
       	}else{
@@ -723,7 +727,20 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     }
   }
 
-
+  private void runUpdateThread(final int daysToDownload) {
+  	
+	if (daysToDownload != UpdateDlg.CANCEL) {
+		final JFrame parent = this;
+		downloadingThread = new Thread() {
+			public void run() {
+				onDownloadStart();
+				DataService.getInstance().startDownload(daysToDownload);
+				onDownloadDone();
+			}
+		};
+		downloadingThread.start();
+	}
+  }
 
   /**
    * Starts the tv data update.
@@ -735,18 +752,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
       UpdateDlg dlg = new UpdateDlg(this, true);
       dlg.pack();
       UiUtilities.centerAndShow(dlg);
-      final int daysToDownload = dlg.getResult();
-      if (daysToDownload != UpdateDlg.CANCEL) {
-        final JFrame parent = this;
-        downloadingThread = new Thread() {
-          public void run() {
-            onDownloadStart();
-            DataService.getInstance().startDownload(daysToDownload);
-            onDownloadDone();
-          }
-        };
-        downloadingThread.start();
-      }
+      runUpdateThread(dlg.getResult());
+   
     }
   }
 
