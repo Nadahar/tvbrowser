@@ -97,6 +97,14 @@ public class UpdateDlg extends JDialog implements ActionListener {
     msg = mLocalizer.msg("rememberSettings", "Remember settings");
     checkBox=new JCheckBox(msg);
     JPanel panel2=new JPanel(new BorderLayout());
+    
+    try {
+    	comboBox.setSelectedIndex(tvbrowser.core.Settings.getDownloadPeriod());
+    	System.out.println("selecting: "+tvbrowser.core.Settings.getDownloadPeriod());
+    }catch(IllegalArgumentException e) {
+    	comboBox.setSelectedIndex(0);
+    	System.out.println("huch!");
+    }
     panel2.add(checkBox,BorderLayout.WEST);
 
     northPanel.add(panel2);
@@ -107,10 +115,10 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
   public int getResult() { return result; }
 
-  public boolean rememberSettings() {
+  /*public boolean rememberSettings() {
     return true;
   }
-
+*/
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
     if (source==cancelBtn) {
@@ -122,7 +130,10 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
       result=comboBox.getSelectedIndex();
       if (checkBox.isSelected()) {
-        // TO DO: enter code here :-)
+        
+        tvbrowser.core.Settings.setDownloadPeriod(result);
+        System.out.println("storing: "+result);
+        
       }
 
       setVisible(false);
