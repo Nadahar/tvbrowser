@@ -28,7 +28,6 @@ package primarydatamanager.mirrorupdater;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -81,7 +80,6 @@ public class MirrorUpdater {
     mDataSource = config.getDataSource();
     mDataTarget = config.getDataTarget();
     mPrimaryServerUrl = config.getPrimaryServerUrl();
-    //mMirrorWeight = config.getMirrorWeight();
     mChannelGroupArr=config.getChannelgroups();
     mDeadlineDay = new Date().addDays(-2);
   }
@@ -155,32 +153,23 @@ public class MirrorUpdater {
 
   private Channel[] updateChannelLists() throws UpdateException {
 		
-    
-    
-    if (mChannelGroupArr==null) {
-      return updateChannelList(null);
-    }
-    else {
-    
-      HashSet channelSet=new HashSet();
-      for (int i=0;i<mChannelGroupArr.length;i++) {
-        Channel[] ch=updateChannelList(mChannelGroupArr[i]);
-        for (int j=0;j<ch.length;j++) {
-          channelSet.add(ch[j]);
-        }
+    HashSet channelSet=new HashSet();
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      Channel[] ch=updateChannelList(mChannelGroupArr[i]);
+      for (int j=0;j<ch.length;j++) {
+        channelSet.add(ch[j]);
       }
-    
-      Channel[] channels=new Channel[channelSet.size()];
-      channelSet.toArray(channels);
-      return channels;
     }
     
+    Channel[] channels=new Channel[channelSet.size()];
+    channelSet.toArray(channels);
+    return channels;
     
   }
 
 
   private Channel[] updateChannelList(String groupname) throws UpdateException {
-    byte[] data = mDataSource.loadFile((groupname!=null?groupname+"_":"")+ChannelList.FILE_NAME);
+    byte[] data = mDataSource.loadFile(groupname+"_"+ChannelList.FILE_NAME);
     
     // Read the channel list
     Channel[] channelArr;
@@ -196,7 +185,7 @@ public class MirrorUpdater {
     }
     
     // Store the (new) channel list
-    mDataTarget.writeFile((groupname!=null?groupname+"_":"")+ChannelList.FILE_NAME, data);
+    mDataTarget.writeFile(groupname+"_"+ChannelList.FILE_NAME, data);
     
     return channelArr;
   }
@@ -302,29 +291,18 @@ public class MirrorUpdater {
 
   private void writeGroupFile(DataTarget target, byte[] data, String fName) throws UpdateException {
     
-    if (mChannelGroupArr==null) {
-      target.writeFile(fName,data);
-    }
-    else {
-      for (int i=0;i<mChannelGroupArr.length;i++) {
-        String group=mChannelGroupArr[i];
-        target.writeFile(group+"_"+fName, data);
-      }
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      String group=mChannelGroupArr[i];
+      target.writeFile(group+"_"+fName, data);
     }    
   }
 
   private void copyGroupFile(DataTarget target, DataSource source, String fName) throws UpdateException {
     
-    if (mChannelGroupArr==null) {
-      byte[] data = mDataSource.loadFile(fName);
-      target.writeFile(fName, data);
-    }
-    else {
-      for (int i=0;i<mChannelGroupArr.length;i++) {
-        String group=mChannelGroupArr[i];
-        byte[] data = mDataSource.loadFile(group+"_"+fName);
-        target.writeFile(group+"_"+fName, data);
-      }
+    for (int i=0;i<mChannelGroupArr.length;i++) {
+      String group=mChannelGroupArr[i];
+      byte[] data = mDataSource.loadFile(group+"_"+fName);
+      target.writeFile(group+"_"+fName, data);
     }
     
   }

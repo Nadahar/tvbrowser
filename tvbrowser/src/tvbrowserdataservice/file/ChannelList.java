@@ -36,6 +36,8 @@ import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.swing.Icon;
+
 import tvdataservice.TvDataService;
 
 import devplugin.Channel;
@@ -68,7 +70,11 @@ public class ChannelList {
   
   
   public void addChannel(Channel channel) {
-    mChannelList.add(channel);
+    mChannelList.add(new ChannelItem(channel, null));
+  }
+  
+  public void addChannel(Channel channel, String iconUrl) {
+    mChannelList.add(new ChannelItem(channel, iconUrl));  
   }
   
   
@@ -78,13 +84,16 @@ public class ChannelList {
   
   
   public Channel getChannelAt(int index) {
-    return (Channel) mChannelList.get(index);
+    ChannelItem item = (ChannelItem) mChannelList.get(index);
+    return item.getChannel();
   }
   
   
   public Channel[] createChannelArray() {
     Channel[] channelArr = new Channel[mChannelList.size()];
-    mChannelList.toArray(channelArr);
+    for (int i=0; i<channelArr.length; i++) {
+      channelArr[i] = ((ChannelItem)mChannelList.get(i)).getChannel();
+    }
     return channelArr;
   }
   
@@ -107,17 +116,23 @@ public class ChannelList {
             + lineCount + ": '" + line + "'");
         }
 
-        String country = tokenizer.nextToken().trim();
-        String timezone = tokenizer.nextToken().trim();
-        String id = tokenizer.nextToken().trim();
-        String name = tokenizer.nextToken().trim();
-        String copyright = tokenizer.nextToken().trim();
-        String webpage = tokenizer.nextToken().trim();
+        String country=null, timezone=null, id=null, name=null, copyright=null, webpage=null, iconUrl=null;
+        try {
+          country = tokenizer.nextToken().trim();
+          timezone = tokenizer.nextToken().trim();
+          id = tokenizer.nextToken().trim();
+          name = tokenizer.nextToken().trim();
+          copyright = tokenizer.nextToken().trim();
+          webpage = tokenizer.nextToken().trim();
+          iconUrl = tokenizer.nextToken();
+        }catch (java.util.NoSuchElementException e) {
+          // ignore
+        }
         
         Channel channel = new Channel(dataService, name, id,
           TimeZone.getTimeZone(timezone), country,copyright,webpage, mGroup);
-          
-        addChannel(channel);
+        
+        addChannel(channel, iconUrl);
       }
       lineCount++;
     }
@@ -125,8 +140,7 @@ public class ChannelList {
     gIn.close();
   }
 
-
-
+  
   public void readFromFile(File file, TvDataService dataService)
     throws IOException, FileFormatException
   {
@@ -152,19 +166,20 @@ public class ChannelList {
 
     PrintWriter writer = new PrintWriter(gOut);
     for (int i = 0; i < getChannelCount(); i++) {
-      Channel channel = getChannelAt(i);
+      ChannelItem channelItem = (ChannelItem)mChannelList.get(i);
+      Channel channel = channelItem.getChannel();
       writer.println(channel.getCountry()
         + ";" + channel.getTimeZone().getID()
         + ";" + channel.getId()
         + ";" + channel.getName()
         + ";" + channel.getCopyrightNotice()
-        + ";" + (channel.getWebpage()==null?"http://tvbrowser.sourceforge.net":channel.getWebpage()));
+        + ";" + (channel.getWebpage()==null?"http://tvbrowser.sourceforge.net":channel.getWebpage())
+        + ";" + (channelItem.getIconUrl()==null?"":channelItem.getIconUrl()));
     }
     writer.close();
     
     gOut.close();
   }
-
 
 
   public void writeToFile(File file) throws IOException, FileFormatException {
@@ -196,4 +211,28 @@ public class ChannelList {
     }
   }
 
+  
+  class ChannelItem {
+    private Channel mChannel;
+    private String mIconUrl;
+    
+    public ChannelItem(Channel ch, String iconUrl) {
+      mChannel = ch;
+      mIconUrl = iconUrl;
+      mChannel.setIcon(getIcon());
+    }
+    
+    public Channel getChannel() {
+      return mChannel;
+    }
+    
+    public String getIconUrl() {
+      return mIconUrl;
+    }
+    
+    public Icon getIcon() {
+      // TODO: implement me!
+      return null;
+    }
+  }
 }

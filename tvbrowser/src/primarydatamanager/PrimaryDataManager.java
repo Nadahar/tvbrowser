@@ -26,13 +26,11 @@
 package primarydatamanager;
 
 import java.io.*;
-import java.net.URL;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.logging.*;
 
 import primarydatamanager.primarydataservice.PrimaryDataService;
@@ -56,96 +54,57 @@ public class PrimaryDataManager {
   private File mPreparedDir;
   private File mWorkDir;
   private File mBackupDir;
+  private File mBaseDir;
+  private File mConfigDir;
   
-  private Channel[] mChannelArr;
-  private String[] mGroupArr;
-  
-  private PrimaryDataService[] mDataServiceArr;
+  private ChannelList mChannelList;
+  private String mGroupName;
   
   private RawDataProcessor mRawDataProcessor;
   
-  private static final int CONCURRENT_DOWNLOADS=5;
   private LinkedList mDataServiceList;
-  private int mActiveThreadCount;
-  private Thread mWaitingThread;
-  
-  private int mReadBytesCount;
-
-	private HashMap mGroupNameHashMap;
-  
-   
-  
+     
   public PrimaryDataManager(File baseDir) throws PreparationException {
+    mBaseDir = baseDir;
     mRawDir      = new File(baseDir, "raw");
     mPreparedDir = new File(baseDir, "prepared");
     mWorkDir     = new File(baseDir, "temp");
-    mBackupDir   = new File(baseDir, "backup");    
+    mBackupDir   = new File(baseDir, "backup");
+    mConfigDir   = new File(baseDir, "config");
     mRawDataProcessor = new RawDataProcessor();
   }
-
-
-
-  public void setDataServiceArr(PrimaryDataService[] dataServiceArr) {
-    mDataServiceArr = dataServiceArr;
-    
-    /* create an array of all available channels */
-    ArrayList channels=new ArrayList();
-    
-    for (int serviceIdx = 0; serviceIdx < mDataServiceArr.length; serviceIdx++) {
-      Channel[] channelArr = mDataServiceArr[serviceIdx].getAvailableChannels();
-      for (int i = 0; i < channelArr.length; i++) {
-        channels.add(channelArr[i]);
-      }
-    }
-    
-    mChannelArr=new Channel[channels.size()];
-    channels.toArray(mChannelArr);
-    
-    /* create an array of all available groupnames */
-    HashSet groupSet=new HashSet();
-    for (int i=0;i<mChannelArr.length;i++) {
-      devplugin.ChannelGroup group=mChannelArr[i].getGroup();
-      if (group!=null) {
-        String gn=group.getId();
-        if (!groupSet.contains(gn)) {
-          if (gn!=null) groupSet.add(gn);
-        }
-      }
-    }
-    mGroupArr=new String[groupSet.size()];
-    groupSet.toArray(mGroupArr);
-
-
-		createGroupNameHashMap();
-
+  
+  public void setPreparedDirectory(String preparedDir) {
+    mPreparedDir = new File(mBaseDir, preparedDir);  
   }
   
-  
+  public void setGroupName(String groupName) {
+    mGroupName = groupName;
+  }
+
   
   public void forceCompleteUpdateFor(String channel) {
     mRawDataProcessor.forceCompleteUpdateFor(channel);
   }
 
 
-  public void createGroupnameFiles() throws PreparationException {
+  public void createGroupFiles() throws PreparationException {
    
     /* A groupname file contains the name of the group in
      * an internationalized form */
-    for (int i=0;i<mGroupArr.length;i++) {      
-      File fromFile=new File(mPreparedDir,mGroupArr[i]+".txt");
-      File toFileTxt=new File(mWorkDir,mGroupArr[i]+".txt");
-      File toFile=new File(mWorkDir,mGroupArr[i]+"_info");
-      try {
-				util.io.IOUtilities.copy(fromFile,toFile);
-        util.io.IOUtilities.copy(fromFile,toFileTxt);
-			} catch (IOException exc) {
-				throw new PreparationException("Could not copy file from "+fromFile.getAbsolutePath()+" to "+toFile.getAbsolutePath(),exc);
-			}     
-    }    
+      
+    File fromFile=new File(mConfigDir,mGroupName+".txt");
+    File toFile=new File(mWorkDir,mGroupName+"_info");
+    try {
+		  util.io.IOUtilities.copy(fromFile,toFile);
+    } catch (IOException exc) {
+		  throw new PreparationException("Could not copy file from "+fromFile.getAbsolutePath()+" to "+toFile.getAbsolutePath(),exc);
+		}
+    
   }
   
  
-  public void updateRawDataDir(/*boolean doUpdateOnly, boolean nodata*/) throws PreparationException {
+  public void updateRawDataDir() throws PreparationException {
     // Delete the old work directory
     try {
       IOUtilities.deleteDirectory(mWorkDir);
@@ -167,21 +126,21 @@ public class PrimaryDataManager {
           + mRawDir.getAbsolutePath());
       }
     }
+    
+    //Create the channel list file
+    createChannelList();
 
     // Update the mirror lists
-    updateMirrorLists();
+    updateMirrorList();
       
     // Process the new raw data
-    mRawDataProcessor.processRawDataDir(mRawDir, mPreparedDir, mWorkDir);
+    mRawDataProcessor.processRawDataDir(mRawDir, mPreparedDir, mWorkDir, mChannelList);
     
     // Create a summary files
-    createSummaryFiles();
-    createGroupnameFiles();
-    
-    // Create the channel list
-    createChannelLists();
+    createSummaryFile();
+    createGroupFiles();
 
-	// Delete the old backup
+	  // Delete the old backup
     try {
       IOUtilities.deleteDirectory(mBackupDir);
     }
@@ -206,9 +165,6 @@ public class PrimaryDataManager {
     }
     
     // Print out the statistics
-    mLog.info("In total there were "
-      + NumberFormat.getInstance().format(mReadBytesCount)
-      + " bytes read by the data services");
       
     int quarantineCount = mRawDataProcessor.getQuarantineCount();
     if (quarantineCount > 0) {
@@ -271,112 +227,39 @@ public class PrimaryDataManager {
         + PrimaryDataService.class.getName());
     }
   }
+  
+ 
 
+  private void createChannelList() throws PreparationException {
+    mLog.fine("Updating the channel list");
+      
+    // Load the channellist.txt
+    mChannelList = loadChannelListTxt(mGroupName+"_channellist.txt");
 
-  private void copyChannelList(String groupName)  {
-    
-   // keep the old channel list file    
-   File fromFile = new File(mPreparedDir, (groupName!=null?groupName+"_":"")+ChannelList.FILE_NAME);
-   File toFile = new File(mWorkDir, (groupName!=null?groupName+"_":"")+ChannelList.FILE_NAME);    
-   if (!fromFile.renameTo(toFile)) {
-         mLog.warning("Renaming file '"
-                   + fromFile.getAbsolutePath() + "' to '"
-                   + toFile.getAbsolutePath() + "' failed");
-       }
-    
-    
-  }
-
-
-  private void createChannelLists() throws PreparationException {
-    
-    /* create the channel list for the old system */
-    createChannelList(null);
-    
-    /* create the channel list of each group */
-    for (int i=0;i<mGroupArr.length;i++) {
-      createChannelList(mGroupArr[i]);
-    }
-  }
-
-  private void createChannelList(String groupName) throws PreparationException {
-    Date today = new Date();
-    
-    ChannelList list = new ChannelList(groupName);
-    for (int serviceIdx = 0; serviceIdx < mDataServiceArr.length; serviceIdx++) {
-      Channel[] channelArr = mDataServiceArr[serviceIdx].getAvailableChannels();
-      for (int i = 0; i < channelArr.length; i++) {
-        
-        /* We are interested in channels of this group only */
-        if (groupName!=null && !groupName.equals(channelArr[i].getGroup().getId())) {
-          continue; 
-        }
-        
-        list.addChannel(channelArr[i]);
-        
-        // Check whether the data service delivered up-to-date data for this
-        // channel
-        String rawFileName = DayProgramFile.getProgramFileName(today,
-          channelArr[i].getCountry(), channelArr[i].getId());
-        File rawFile = new File(mRawDir, rawFileName);
-        if (! rawFile.exists()) {
-          mLog.warning("Data service "
-            + mDataServiceArr[serviceIdx].getClass().getName() + " did not "
-            + "deliver up-to-date data for channel " + channelArr[i].getName()
-            + ". (File " + rawFile.getAbsolutePath() + " does not exist)");
-        }
-      }
-    }
-    
-    File file = new File(mWorkDir, (groupName!=null?groupName+"_":"")+ChannelList.FILE_NAME);
+    // Save the mirrorlist.gz
+    File toFile = new File(mWorkDir, mGroupName+"_"+ChannelList.FILE_NAME);
     try {
-      list.writeToFile(file);
+        mChannelList.writeToFile(toFile);  
     }
     catch (Exception exc) {
-      throw new PreparationException("Writing channel list for group "+groupName+" failed: "
-        + file.getAbsolutePath(), exc);
-    }
-  }
-
-
-  private void createSummaryFiles() throws PreparationException {
-
-    /* create summary files for the new system */
-    for (int i=0;i<mGroupArr.length;i++) {
-			System.out.println("creating summary file for group "+mGroupArr[i]+"...");
-      createSummaryFile(mGroupArr[i]);
+      throw new PreparationException("Writing channel list for group "+mGroupName+" failed", exc);
     }
 
-		System.out.println("summary files created.");
-    
+    // Copy the channellist.txt
+ /*   File fromFile = new File(mConfigDir, mGroupName+"_channellist.txt");
+    toFile = new File(mWorkDir, mGroupName+"_channellist.txt");
+    try {
+      IOUtilities.copy(fromFile, toFile);
+    }
+    catch (IOException exc) {
+      throw new PreparationException("Copying channellist.txt for group "+mGroupName+" failed", exc);
+    }*/
   }
 
-
-  private void createGroupNameHashMap() {
-
-		mGroupNameHashMap = new HashMap();
-
-		for (int i=0; i<mDataServiceArr.length; i++) {
-      Channel[] channelArr = mDataServiceArr[i].getAvailableChannels();
-			for (int chInx=0; chInx<channelArr.length; chInx++) {
-				ChannelGroup group = channelArr[chInx].getGroup();
-				if (group!=null) {
-          mGroupNameHashMap.put(channelArr[chInx].getId(), group.getId());
-				}
-			}
-
-		}
-
-  }
-	
-  private boolean channelBelongsToGroup(String channelId, String groupName) {
-
-		String s = (String)mGroupNameHashMap.get(channelId);
-		return groupName.equals(s);
-  }
+  
 	
 	
-  private void createSummaryFile(String groupName)
+  private void createSummaryFile()
     throws PreparationException
   {
     // Create the file
@@ -392,7 +275,8 @@ public class PrimaryDataManager {
           String channelId = DayProgramFile.getChannelNameFromFileName(fileName);
           String levelName = DayProgramFile.getLevelFromFileName(fileName);
 
-					if (channelBelongsToGroup(channelId, groupName)) {
+					//if (channelBelongsToGroup(channelId, country)) {
+          if (RawDataProcessor.channelBelongsToGroup(mChannelList, channelId, country)) {
 						int level = DayProgramFile.getLevelIndexForId(levelName);
             if (level == -1) {
               throw new PreparationException("Day program file has unknown level '"
@@ -413,7 +297,7 @@ public class PrimaryDataManager {
     System.out.println("writing summary to file...");
 		
     // Save the file
-    File file = new File(mWorkDir, (groupName==null?"":groupName+"_")+SummaryFile.SUMMARY_FILE_NAME);
+    File file = new File(mWorkDir, mGroupName+"_"+SummaryFile.SUMMARY_FILE_NAME);
     try {
       summary.writeToFile(file);
     }
@@ -425,50 +309,87 @@ public class PrimaryDataManager {
 		System.out.println("done.");
   }
 
-  
-  private void updateMirrorLists() throws PreparationException {    
-    
-    /* update the mirror list of the old system */
-    updateMirrorList(null);
-    
-    /* update the mirror lists of each group */
-    for (int i=0;i<mGroupArr.length;i++) {
-      updateMirrorList(mGroupArr[i]);      
-    }
-    
-  }
-  
-  private void updateMirrorList(String groupName) throws PreparationException {
+ 
+  private void updateMirrorList() throws PreparationException {
     mLog.fine("Updating the mirror list");
     
     // Load the mirrorlist.txt
-    Mirror[] mirrorArr = loadMirrorListTxt((groupName==null?"":groupName+"_")+"mirrorlist.txt");
+    Mirror[] mirrorArr = loadMirrorListTxt(mGroupName+"_mirrorlist.txt");
 
 		// Save the mirrorlist.gz
-    File toFile = new File(mWorkDir, (groupName==null?"":groupName+"_")+Mirror.MIRROR_LIST_FILE_NAME);
+    File toFile = new File(mWorkDir, mGroupName+"_"+Mirror.MIRROR_LIST_FILE_NAME);
     try {
       Mirror.writeMirrorListToFile(toFile, mirrorArr);
     }
     catch (IOException exc) {
-      throw new PreparationException("Writing mirror list for group "+groupName+" failed", exc);
+      throw new PreparationException("Writing mirror list for group "+mGroupName+" failed", exc);
     }
 
 		// Copy the mirrorlist.txt
-		File fromFile = new File(mPreparedDir, (groupName==null?"":groupName+"_")+"mirrorlist.txt");
-    toFile = new File(mWorkDir, (groupName==null?"":groupName+"_")+"mirrorlist.txt");
+	/*	File fromFile = new File(mPreparedDir, mGroupName+"_mirrorlist.txt");
+    toFile = new File(mWorkDir, mGroupName+"_mirrorlist.txt");
 		try {
       IOUtilities.copy(fromFile, toFile);
     }
     catch (IOException exc) {
-      throw new PreparationException("Copying mirrorlist.txt for group "+groupName+" failed", exc);
-    }
+      throw new PreparationException("Copying mirrorlist.txt for group "+mGroupName+" failed", exc);
+    }*/
   }
  
 
+  private ChannelList loadChannelListTxt(String fileName) throws PreparationException {
+    ChannelList result = new ChannelList((ChannelGroup)null);
+      
+    File fromFile = new File(mConfigDir, fileName);
+    FileInputStream stream = null;
+    try {
+      stream = new FileInputStream(fromFile);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (line.trim().length()==0) {  // ignore empty lines
+          continue;
+        }
+      
+        StringTokenizer tokenizer = new StringTokenizer(line, ";");
+        if (tokenizer.countTokens() < 4) {
+          throw new PreparationException("invalid line in '"+fileName+"': "+line);
+        }
+        String country = tokenizer.nextToken().trim();
+        String timezone = tokenizer.nextToken().trim();
+        String id = tokenizer.nextToken().trim();
+        String name = tokenizer.nextToken().trim();
+        
+        String copyright=null, webpage=null, iconUrl=null;        
+        try {
+          copyright = tokenizer.nextToken().trim();
+          webpage = tokenizer.nextToken().trim();
+          iconUrl = tokenizer.nextToken();
+        } catch(NoSuchElementException e) {
+          // ignore, we don't need these feelds 
+        }
+        Channel channel = new Channel(null, name, id, TimeZone.getTimeZone(timezone), country, copyright,webpage, null);
+        result.addChannel(channel, iconUrl);
+      }
+    }
+    catch (Exception exc) {
+      throw new PreparationException("Loading "+fileName+" failed", exc);
+    }
+    finally {
+      if (stream != null) {
+        try { stream.close(); } catch (IOException exc) {}
+      } 
+    }
+       
+    return result;
+    
+  }
+  
   private Mirror[] loadMirrorListTxt(String fileName) throws PreparationException {
     ArrayList mirrorList = new ArrayList();
 
-    File fromFile = new File(mPreparedDir, fileName);
+    File fromFile = new File(mConfigDir, fileName);
     FileInputStream stream = null;
     try {
       stream = new FileInputStream(fromFile);
@@ -535,13 +456,12 @@ public class PrimaryDataManager {
     
     // Start the update    
     if (args.length == 0) {
-      System.out.println("USAGE: PrimaryDataManager [-forceCompleteUpdate [channel{;channel}]] pds ...");
+      System.out.println("USAGE: PrimaryDataManager group [-forceCompleteUpdate [channel{;channel}]] [-preparedDirectory dir]");
       System.exit(1);
     } else {
       try {
         PrimaryDataManager manager = new PrimaryDataManager(new File("."));
-
-        ArrayList pdsList = new ArrayList();
+        String groupName = null;
         for (int i = 0; i < args.length; i++) {
           if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
             if ((i + 1) >= args.length) {
@@ -555,19 +475,26 @@ public class PrimaryDataManager {
                 manager.forceCompleteUpdateFor(tokenizer.nextToken());
               }
             }
-          } else {
-            pdsList.add(createPrimaryDataService(args[i]));
+          } else if (args[i].equalsIgnoreCase("-preparedDirectory")) {
+            if ((i + 1) >= args.length) {
+              System.out.println("You have to specify the prepared directory name");
+              System.exit(1);
+            } else {
+              i++;
+              manager.setPreparedDirectory(args[i]);
+            }
+          } else if (groupName == null){
+            groupName = args[i];
           }
         }
         
-        if (pdsList.size()==0) {
-          System.out.println("Please specify at least one primary data service");
+        if (groupName == null) {
+          System.out.println("Please specify a channel group");
           System.exit(-1);
         }
         
-        PrimaryDataService[] pdsArr = new PrimaryDataService[pdsList.size()];
-        pdsList.toArray(pdsArr);        
-        manager.setDataServiceArr(pdsArr);
+        
+        manager.setGroupName(groupName);
         
         manager.updateRawDataDir();
         
