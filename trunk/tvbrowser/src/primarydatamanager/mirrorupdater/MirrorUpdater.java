@@ -53,7 +53,7 @@ import util.io.IOUtilities;
  */
 public class MirrorUpdater {
   
-  private static final int MAX_DAYS_WITHOUT_DATA = 4;
+  private static final int MAX_DAYS_WITHOUT_DATA = 7;
 
   private DataSource mDataSource;
   private DataTarget mDataTarget;
@@ -168,7 +168,7 @@ public class MirrorUpdater {
   public void updateDayProgramsFor(Channel channel, String level)
     throws UpdateException
   {
-    Date date = mDeadlineDay;
+    Date date = new Date();
     int daysWithNoData = 0;
     
     while (daysWithNoData < MAX_DAYS_WITHOUT_DATA) {
@@ -363,7 +363,7 @@ public class MirrorUpdater {
       } else {
         // We didn't get the weight -> Try to get the old weight
         if (oldMirrorArr == null) {
-          oldMirrorArr = loadMirrorList();
+          oldMirrorArr = loadOldMirrorList();
         }
         
         for (int i = 0; i < oldMirrorArr.length; i++) {
@@ -392,9 +392,9 @@ public class MirrorUpdater {
   }
     
     
-  private Mirror[] loadMirrorList() throws UpdateException {
+  private Mirror[] loadOldMirrorList() throws UpdateException {
     try {
-      byte[] data = mDataSource.loadFile(Mirror.MIRROR_LIST_FILE_NAME);
+      byte[] data = mDataTarget.loadFile(Mirror.MIRROR_LIST_FILE_NAME);
       ByteArrayInputStream stream = new ByteArrayInputStream(data);
       return Mirror.readMirrorListFromStream(stream);
     }

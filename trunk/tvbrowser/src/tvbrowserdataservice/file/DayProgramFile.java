@@ -38,7 +38,7 @@ import devplugin.Date;
 public class DayProgramFile {
   
   public static final String[] LEVEL_ARR = {
-    "base", "image16-00", "image00-16", "desc16-00", "desc00-16"
+    "base", "more16-00", "more00-16" // , "image16-00", "image00-16"
   };
 
   private static final int FILE_VERSION = 1;

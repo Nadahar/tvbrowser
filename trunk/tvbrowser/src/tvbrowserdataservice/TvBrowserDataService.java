@@ -116,6 +116,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
       mDataDir.mkdir();
     }
     
+    // Delete outdated files
+    deleteOutdatedFiles();
+    
     // load the mirror list
     Mirror[] mirrorArr = loadMirrorList();
     
@@ -164,6 +167,33 @@ public class TvBrowserDataService extends AbstractTvDataService {
       mDownloadManager = null;
       mTvDataBase = null;
       mProgressMonitor = null;
+    }
+  }
+
+
+
+  private void deleteOutdatedFiles() {
+    // Delete all day programs older than 3 weeks
+    Date deadlineDay = new Date().addDays(- 21);
+    
+    File[] fileArr = mDataDir.listFiles();
+    for (int i = 0; i < fileArr.length; i++) {
+      String fileName = fileArr[i].getName();
+      if (fileName.endsWith(".prog.gz")) {
+        try {
+          int year = Integer.parseInt(fileName.substring(0, 4));
+          int month = Integer.parseInt(fileName.substring(5, 7));
+          int day = Integer.parseInt(fileName.substring(8, 10));
+          Date date = new Date(year, month, day);
+          
+          // Is this day program older than the deadline day?
+          if (date.compareTo(deadlineDay) < 0) {
+            // It is -> delete the file
+            fileArr[i].delete();
+          }
+        }
+        catch (Exception exc) {}
+      }
     }
   }
 

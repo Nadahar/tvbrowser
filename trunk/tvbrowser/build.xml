@@ -245,10 +245,12 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
     </jar>
+    <!--
     <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/XmlTvDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>
     </jar>
+    -->
     <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/PremiereDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="premieredataservice/**"/>
