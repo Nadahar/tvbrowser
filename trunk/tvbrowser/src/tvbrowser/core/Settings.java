@@ -38,35 +38,35 @@ import tvbrowser.ui.SkinPanel;
 
 class TVBrowserProperties extends java.util.Properties {
 		
-		private HashSet unconfirmedSettingItems=new HashSet();
-		
-		public TVBrowserProperties() {
-			super();
-		}
-		
-		public Object setProperty(String key, String value) {
-			String oldVal=getProperty(key);
-			if (oldVal!=null && !oldVal.equals(value)) {
-					unconfirmedSettingItems.add(key);
-			}else if (oldVal==null && value!=null) {
-				unconfirmedSettingItems.add(key);
-			}
-			
-			return super.setProperty(key,value);
-			
-		}
-		
-		public boolean isUnconfirmedSettingItem(String key) {
-			boolean result=false;
-			if (unconfirmedSettingItems.contains(key)) {
-				unconfirmedSettingItems.remove(key);
-				result=true;
-			}
-			return result;
-		}
-		
-		
-	}
+  private HashSet unconfirmedSettingItems=new HashSet();
+  
+  public TVBrowserProperties() {
+    super();
+  }
+  
+  public Object setProperty(String key, String value) {
+    String oldVal=getProperty(key);
+    if (oldVal!=null && !oldVal.equals(value)) {
+      unconfirmedSettingItems.add(key);
+    }else if (oldVal==null && value!=null) {
+      unconfirmedSettingItems.add(key);
+    }
+    
+    return super.setProperty(key,value);
+    
+  }
+  
+  public boolean isUnconfirmedSettingItem(String key) {
+    boolean result=false;
+    if (unconfirmedSettingItems.contains(key)) {
+      unconfirmedSettingItems.remove(key);
+      result=true;
+    }
+    return result;
+  }
+  
+}
+
 
 
 /**
@@ -80,7 +80,7 @@ public class Settings {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Settings.class.getName());
 
-	private static TVBrowserProperties settings=null;
+  private static TVBrowserProperties settings=null;
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
   public static final int TEXT_ONLY=0, ICON_ONLY=1, TEXT_AND_ICON=2;
 
@@ -161,67 +161,49 @@ public class Settings {
    * settings are used.
    */
   public static void loadSettings() {
-    settings=new TVBrowserProperties();
+    settings = new TVBrowserProperties();
     try {
       settings.load(new FileInputStream(new File(getUserDirectoryName(),SETTINGS_FILE)));
-    }catch (IOException e) {
+    }
+    catch (IOException evt) {
       mLog.info("No user settings found. using default user settings");
     }
-  }
     
-    /*finally{
-      String value=settings.getProperty("subscribed","1,2,3,4,5");
-      int pos=0;
-      int last=0, cur=0;
-      int channel;
-      Channel ch;
-      String a;
-      while (cur<value.length()) {
-        cur=value.indexOf(',',last);
-        if (cur==-1) { cur=value.length(); }
-        a=value.substring(last,cur);
-        channel=Integer.parseInt(a);
-        ChannelList.subscribeChannel(channel);
-        cur++;
-        last=cur;
-      }
-    }*/
- // }
+    initSubscribedChannels();
+  }
 
-
-
-  /**
-   * Sets the subscribed channels. (e.g.: "1,5,3,8,12,7")
-   */
-  /*public static void setSubscribedChannels(String channels) {
-    settings.setProperty("subscribed",channels);
-  }*/
   
-  public static void setSubscribedChannels(Object[] channels) {
-  	String[] entries=new String[channels.length];
+  
+  public static void setSubscribedChannels(Channel[] channels) {
+  	String[] entries = new String[channels.length];
   	for (int i=0;i<entries.length;i++) {
       Channel ch=(Channel)channels[i];
-      entries[i] = ch.getDataService().getClass().getName() + ":" + ch.getId();
+      String dsClassName = channels[i].getDataService().getClass().getName();
+      entries[i] = dsClassName + ":" + ch.getId();
   	}
 	setStringListProperty("subscribedchannels", entries);
   }
   
-  public static devplugin.Channel[] getSubscribedChannels() {
+  
+  
+  private static void initSubscribedChannels() {
   	String[] entries = getStringListProperty("subscribedchannels");
-    devplugin.Channel[] result=new devplugin.Channel[entries.length];
-    for (int i=0;i<entries.length;i++) {
-      String entry=entries[i];
-      int pos=entry.indexOf(':');
-      String dataServiceClassName = entry.substring(0,pos);
-      String id=entry.substring(pos+1);
-
-      TVDataServiceInterface dataService
-        = DataLoaderManager.getInstance().getDataLoader(dataServiceClassName);
-      if (dataService != null) { 
-        ChannelList.subscribeChannel(dataService, Integer.parseInt(id));  		
+    
+    for (int i = 0; i < entries.length; i++) {
+      String entry = entries[i];
+      int pos = entry.indexOf(':');
+      String dataLoaderClassName = entry.substring(0,pos);
+      String id = entry.substring(pos + 1);
+      
+      TVDataServiceInterface dataLoader
+        = DataLoaderManager.getInstance().getDataLoader(dataLoaderClassName);
+      
+      System.out.println("##" + dataLoaderClassName + ": " + dataLoader);
+      
+      if (dataLoader != null) { 
+        ChannelList.subscribeChannel(dataLoader, Integer.parseInt(id));  		
       }
     }
-    return result;
   }
 
   /**

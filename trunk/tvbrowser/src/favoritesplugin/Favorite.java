@@ -85,10 +85,13 @@ public class Favorite {
     out.writeInt(mSearchMode);
     out.writeBoolean(mUseCertainChannel);
 
+    String certainChannelLoaderClassName = null;
     int certainChannelId = -1;
     if (mCertainChannel != null) {
+      certainChannelLoaderClassName = mCertainChannel.getDataService().getClass().getName();
       certainChannelId = mCertainChannel.getId();
     }
+    out.writeObject(certainChannelLoaderClassName);
     out.writeInt(certainChannelId);
     
     out.writeBoolean(mUseCertainTimeOfDay);
@@ -117,8 +120,9 @@ public class Favorite {
     mSearchMode = in.readInt();
     mUseCertainChannel = in.readBoolean();
 
+    String certainChannelLoaderClassName = (String) in.readObject();
     int certainChannelId = in.readInt();
-    mCertainChannel = getChannelForId(certainChannelId);
+    mCertainChannel = getChannel(certainChannelLoaderClassName, certainChannelId);
 
     mUseCertainTimeOfDay = in.readBoolean();
     mCertainFromTime = in.readInt();
@@ -289,10 +293,17 @@ public class Favorite {
 
   
   
-  private Channel getChannelForId(int channelId) {
+  private Channel getChannel(String dataLoaderClassName, int channelId) {
+    if (dataLoaderClassName == null) {
+      // Fast return
+      return null;
+    }
+    
     Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
     for (int i = 0; i < channelArr.length; i++) {
-      if (channelArr[i].getId() == channelId) {
+      if (dataLoaderClassName.equals(channelArr[i].getDataService().getClass().getName())
+        && (channelArr[i].getId() == channelId))
+      {
         return channelArr[i];
       }      
     }

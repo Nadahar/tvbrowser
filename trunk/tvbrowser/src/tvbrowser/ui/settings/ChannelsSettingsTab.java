@@ -84,12 +84,12 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
     add(textArea,BorderLayout.SOUTH);
 
     Channel ch;
-    Enumeration enum=ChannelList.getChannels();
+    Iterator iter = ChannelList.getChannels();
 
     Channel[] subscribedChannels=new Channel[ChannelList.getNumberOfSubscribedChannels()];
     mLog.fine("ok till now");
-    while (enum.hasMoreElements()) {
-      ch=(Channel)enum.nextElement();
+    while (iter.hasNext()) {
+      ch = (Channel) iter.next();
       mLog.fine("channel "+ch.getName());
       //if (ch.isSubscribed()) {
       if (ChannelList.isSubscribedChannel(ch)) {
@@ -116,24 +116,16 @@ public class ChannelsSettingsTab extends devplugin.SettingsTab {
   
   
   public void ok() {
-    StringBuffer channels=new StringBuffer();
-    Object[] list=panel.getElementsRight();
-    ChannelList.setSubscribeChannels(list);
-    Channel ch;
-    for (int i=0;i<list.length;i++) {
-      //ch=ChannelList.getChannel((String)list[i]);
-      ch=(Channel)list[i];
-     /* if (ch==null) {
-        continue;
-      }*/
-
-      channels.append(ch.getId());
-      if (i<list.length-1) {
-        channels.append(",");
-      }
+    Object[] list = panel.getElementsRight();
+    
+    // Convert the list into a Channel[] and fill channels
+    Channel[] channelArr = new Channel[list.length];
+    for (int i = 0; i < list.length; i++) {
+      channelArr[i] = (Channel) list[i];      
     }
-
-    Settings.setSubscribedChannels(list);
+    
+    ChannelList.setSubscribeChannels(channelArr);
+    Settings.setSubscribedChannels(channelArr);
   }
   
 }

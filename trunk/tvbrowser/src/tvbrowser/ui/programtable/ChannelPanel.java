@@ -57,11 +57,11 @@ public class ChannelPanel extends JPanel {
     setBackground(new java.awt.Color(208,199,241));
     
     labels=new JLabel[n];
-    Enumeration enum=ChannelList.getChannels();
+    Iterator iter = ChannelList.getChannels();
     int colWidth=Settings.getColumnWidth();
     
-    while (enum.hasMoreElements()) {
-      Channel ch=(Channel)enum.nextElement();
+    while (iter.hasNext()) {
+      Channel ch = (Channel) iter.next();
       if (ChannelList.isSubscribedChannel(ch)) {
         int pos=ChannelList.getPos(ch.getId());
         labels[pos]=new JLabel(ch.getName());
