@@ -31,7 +31,7 @@ import devplugin.Program;
  */
 public class Database {
 	/** The overall Rating */
-	private HashMap _overalrating = new HashMap();
+     private  HashMap _overalrating = new HashMap();
 	/** The personal Rating */
 	private HashMap _personalrating = new HashMap();
 	/** The changes since the last contact with the Server */
@@ -42,7 +42,7 @@ public class Database {
 	 * 
 	 * @return all overall Ratings
 	 */
-	public Collection getOverallRating() {
+	public synchronized Collection getOverallRating() {
 		return _overalrating.values();
 	}
 	
@@ -52,7 +52,7 @@ public class Database {
 	 * @param program get Rating for this Program
 	 * @return the overall Rating
 	 */
-	public Rating getOverallRating(Program program) {
+	public synchronized Rating getOverallRating(Program program) {
 		if ((program == null) || (program.getTitle() == null) ) { 
 			return null;
 		}
@@ -66,7 +66,7 @@ public class Database {
 	 * @param title get rating for this Title
 	 * @return the overall Rating
 	 */
-	public Rating getOverallRating(String title) {
+	public synchronized Rating getOverallRating(String title) {
 		if (title == null) {
 			return null;
 		}
@@ -82,7 +82,7 @@ public class Database {
 	 * 
 	 * @param rating
 	 */
-	public void setOverallRating(Rating rating) {
+	public synchronized void setOverallRating(Rating rating) {
 		_overalrating.put(rating.getTitle().toLowerCase(), rating);
 	}
 	
@@ -91,7 +91,7 @@ public class Database {
 	 * 
 	 * @return all personal Ratings
 	 */
-	public Collection getPersonalRating() {
+	public synchronized Collection getPersonalRating() {
 		return _personalrating.values();
 	}
 	
@@ -101,7 +101,7 @@ public class Database {
 	 * @param program get Rating for this Program
 	 * @return the personal Rating
 	 */
-	public Rating getPersonalRating(Program program) {
+	public synchronized Rating getPersonalRating(Program program) {
 		if ((program == null) || (program.getTitle() == null) ) { 
 			return null;
 		}
@@ -123,7 +123,7 @@ public class Database {
 	 * @param title get rating for this Title
 	 * @return the personal Rating
 	 */
-	public Rating getPersonalRating(String title) {
+	public synchronized Rating getPersonalRating(String title) {
 		if (title == null) {
 			return null;
 		}
@@ -143,7 +143,7 @@ public class Database {
 	 * 
 	 * @param rating save this Rating
 	 */
-	public void setPersonalRating(Rating rating) {
+	public synchronized void setPersonalRating(Rating rating) {
 		if (_personalrating.get(rating.getTitle()) != null) {
 			_personalrating.remove(rating.getTitle());
 		}
@@ -157,21 +157,21 @@ public class Database {
 		}
 	}
 	
-	public ArrayList getChangedPersonal() {
+	public synchronized ArrayList getChangedPersonal() {
 		return _changedpersonal;
 	}
 	
 	/**
 	 * Empties the ChangedPersonal List
 	 */
-	public void clearChangedPersonal() {
+	public synchronized void clearChangedPersonal() {
 		_changedpersonal = new ArrayList();
 	}
 	
 	/**
 	 * Empties the ChangedPersonal List
 	 */
-	public void clearOverall() {
+	public synchronized void clearOverall() {
 		_overalrating = new HashMap();
 	}
 	
@@ -180,7 +180,7 @@ public class Database {
 	 * 
 	 * @see #writeData(ObjectOutputStream)
 	 */
-	public void readData(ObjectInputStream in) throws IOException,
+	public synchronized void readData(ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
 		_personalrating = (HashMap) in.readObject();
 		_overalrating = (HashMap) in.readObject();
@@ -193,7 +193,7 @@ public class Database {
 	 * 
 	 * @see #readData(ObjectInputStream)
 	 */
-	public void writeData(ObjectOutputStream out) throws IOException {
+	public synchronized void writeData(ObjectOutputStream out) throws IOException {
 		out.writeObject(_personalrating);
 		out.writeObject(_overalrating);
 		out.writeObject(_changedpersonal);
