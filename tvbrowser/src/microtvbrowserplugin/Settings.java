@@ -32,8 +32,9 @@ import tvbrowser.ui.customizableitems.*;
 
 import java.awt.*;
 import javax.swing.*;
+import util.ui.Localizer;
 
-public class Settings implements SettingsTab{
+public class Settings implements SettingsTab, java.awt.event.ActionListener{
 
 	JPanel lastPanel;
 	
@@ -44,8 +45,13 @@ public class Settings implements SettingsTab{
 	
 	JCheckBox showIconsInProgList;
 	
+	JCheckBox showChannelNameInNowList;
+	
 	MicroTvBrowserPlugin belongs;
 	MicroTvSettingsPanel options;
+	
+	static Localizer mLocalizer = Localizer.getLocalizerFor(Settings.class);
+	
 	
 	public Settings (MicroTvBrowserPlugin Belongs){
 		belongs = Belongs;
@@ -53,8 +59,10 @@ public class Settings implements SettingsTab{
 	
 	public JPanel createSettingsPanel(){
 	
-		items = CustomizableItemsPanel.createCustomizableItemsPanel("avail","included");
-		items.setBorder (BorderFactory.createTitledBorder("channels"));
+		items = CustomizableItemsPanel.createCustomizableItemsPanel(
+			mLocalizer.msg("available","available")
+			,mLocalizer.msg("included","included"));
+		items.setBorder (BorderFactory.createTitledBorder(mLocalizer.msg("channels","channels")));
 		items.clearLeft();
 		items.clearRight();
 		String[] alreadyIncluded = belongs.getChannelList();
@@ -81,20 +89,27 @@ public class Settings implements SettingsTab{
 		}
  
 		options = new MicroTvSettingsPanel();
-		options.setBorder(BorderFactory.createTitledBorder("MIDletsettings"));
+		options.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("MIDletsettings","MIDletsettings")));
 		
 		
 		options.sliderDays.setValue(belongs.getDaysToExport());
 		options.sliderExport.setValue(belongs.getExportLevel());
 		options.radioNanoEdition.setSelected(belongs.isUseNanoEdition());
-		
+		options.radioNanoEdition.addActionListener (this);
+		options.radioMicroEdition.addActionListener (this);
 		
 		JPanel debug = new JPanel ();
-		debug.setBorder(BorderFactory.createTitledBorder("Debug"));
-		showIconsInProgList = new JCheckBox ("exclude icons in prog list");
+		debug.setLayout(new GridLayout (0,1));
+		debug.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Options","Options"))); 
+		showIconsInProgList = new JCheckBox (mLocalizer.msg("include icons in prog list","include icons in prog list"));
 		showIconsInProgList.setSelected(belongs.isUseIconsInProgList());
 		
+		showChannelNameInNowList = new JCheckBox (mLocalizer.msg("include channelname in now list","include channelname in now list"));
+		showChannelNameInNowList.setSelected(belongs.isChannelNameInNowList());
+		
+		
 		debug.add (showIconsInProgList);
+		debug.add (showChannelNameInNowList);
 		
 		JPanel wrap = new JPanel();
 		wrap.setLayout(new BorderLayout(5,5));
@@ -123,6 +138,19 @@ public class Settings implements SettingsTab{
 		belongs.setDaysToExport(options.sliderDays.getValue());
 		belongs.setExportLevel(options.sliderExport.getValue());
 		belongs.setUseIconsInProgList(showIconsInProgList.isSelected());
+		belongs.setChannelNameInNowList(showChannelNameInNowList.isSelected());
+	}
+	
+	public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
+		if (options.radioNanoEdition.isSelected()){
+			options.sliderExport.setEnabled(false);
+			showChannelNameInNowList.setEnabled(false);
+			showIconsInProgList.setEnabled(false);
+		} else {
+			options.sliderExport.setEnabled(true);			
+			showChannelNameInNowList.setEnabled(true);
+			showIconsInProgList.setEnabled(true);
+		}
 	}
 	
 	/*

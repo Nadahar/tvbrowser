@@ -8,6 +8,7 @@ package microtvbrowserplugin;
 
 import java.util.Hashtable;
 import javax.swing.JLabel;
+import util.ui.Localizer;
 
 /**
  *
@@ -17,17 +18,19 @@ public class MicroTvSettingsPanel extends javax.swing.JPanel {
 	
 	Hashtable valuesForExport;
 	int lastValue;
+
+	static Localizer mLocalizer = Localizer.getLocalizerFor(MicroTvSettingsPanel.class);
 	 
 	/** Creates new form MicroTvStettingsPanel */
 	public MicroTvSettingsPanel() {
 		initComponents();
 
 		valuesForExport = new Hashtable();
-		valuesForExport.put (new Integer (0),("basic information"));
-		valuesForExport.put (new Integer (1),("add audio and screentype, favorites, reminder, ratings"));
-		valuesForExport.put (new Integer (2),("add short description, year, actors"));
-		valuesForExport.put (new Integer (3),("add long description, orignal title/episode, moderation"));
-		valuesForExport.put (new Integer (4),("everything"));
+		valuesForExport.put (new Integer (0),mLocalizer.msg("basic information","basic information"));
+		valuesForExport.put (new Integer (1),mLocalizer.msg("add audio and screentype, favorites, reminder, ratings","add audio and screentype, favorites, reminder, ratings"));
+		valuesForExport.put (new Integer (2),mLocalizer.msg("add short description, year, actors","add short description, year, actors"));
+		valuesForExport.put (new Integer (3),mLocalizer.msg("add long description, orignal title/episode, moderation","add long description, orignal title/episode, moderation"));
+		valuesForExport.put (new Integer (4),mLocalizer.msg("everything","everything"));
 		this.sliderExportStateChanged(null);
 		this.sliderDaysStateChanged(null);
 		this.radioMicroEdition.setSelected(true);
@@ -64,12 +67,6 @@ public class MicroTvSettingsPanel extends javax.swing.JPanel {
 
         radioNanoEdition.setText("NanoEdition");
         buttonGroup1.add(radioNanoEdition);
-        radioNanoEdition.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                radioNanoEditionStateChanged(evt);
-            }
-        });
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.RELATIVE;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -157,19 +154,8 @@ public class MicroTvSettingsPanel extends javax.swing.JPanel {
 
     }//GEN-END:initComponents
 
-	private void radioNanoEditionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_radioNanoEditionStateChanged
-		if (this.radioNanoEdition.isSelected()){
-			lastValue = this.sliderExport.getValue();
-			this.sliderExport.setValue(0);
-			this.sliderExport.setEnabled(false);
-		} else {
-			this.sliderExport.setValue(lastValue);
-			this.sliderExport.setEnabled(true);			
-		}
-	}//GEN-LAST:event_radioNanoEditionStateChanged
-
 	private void sliderDaysStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderDaysStateChanged
-		this.labelDays.setText (this.sliderDays.getValue()+" day(s)");
+		this.labelDays.setText (this.sliderDays.getValue()+" "+mLocalizer.msg("day(s)","day(s)"));
 	}//GEN-LAST:event_sliderDaysStateChanged
 
 	private void sliderExportStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderExportStateChanged
