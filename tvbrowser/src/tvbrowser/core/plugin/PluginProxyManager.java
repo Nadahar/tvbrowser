@@ -322,6 +322,8 @@ public class PluginProxyManager {
     
     if (lcFileName.endsWith(".jar")) {
       return new JavaPluginProxy(file);
+    } else if (lcFileName.endsWith(".bsh")) {
+        return new BeanShellPluginProxy(file);
     }
     else if (lcFileName.endsWith(".inst")) {
       // This is a plugins with a pending installation
@@ -750,7 +752,7 @@ public class PluginProxyManager {
       }*/
       for (int i = 0; i < mPluginList.size(); i++) {
         PluginListItem item = (PluginListItem) mPluginList.get(i);
-        if (item != null && pluginId.equals(item.getPlugin().getId())) {
+        if (item != null && pluginId != null && pluginId.equals(item.getPlugin().getId())) {
           if ((state == -1) || (item.getState() == state)) {
             return item.getPlugin();
           } else {
