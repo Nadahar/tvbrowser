@@ -192,11 +192,11 @@ SubSectionEnd
 
 SubSection "Daten-Services"
 
-Section "XML-TV-Datenservice"
+Section "TV-Browser-Datenservice"
   SectionIn 1 2
 
   SetOutPath "$INSTDIR\tvdataservice"
-  File "${RUNTIME_DIR}\tvdataservice\XmlTvDataService.jar"
+  File "${RUNTIME_DIR}\tvdataservice\TvBrowserDataService.jar"
 SectionEnd
 
 Section "Premiere-Datenservice"
