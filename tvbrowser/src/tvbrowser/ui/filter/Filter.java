@@ -102,7 +102,7 @@ public class Filter implements tvbrowser.ui.programtable.ProgramFilter {
     
     
     public void setName(String name) {
-        if (!name.equals(mName)) {
+        if (!name.equals(mName) && mFile!=null) {
             mFile.delete();
         }
         mName=name;

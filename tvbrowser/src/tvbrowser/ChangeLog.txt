@@ -3,6 +3,8 @@ Changelog TVBrowser
 current:
 - bugfix in SkinPanel
 - new feature: filter
+- new devplugin.Date class
+- new settings: choose directories for tvdataservice chaches
 
 0.9.5.1:
 - bugfix in XmlTvDataService

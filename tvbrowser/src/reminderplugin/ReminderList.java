@@ -69,7 +69,6 @@ public class ReminderList implements ActionListener {
     out.writeInt(1); // version
     
     out.writeInt(list.size());
-    System.out.println("write "+list.size()+" items");
     for (int i = 0; i < list.size(); i++) {
       ReminderListItem item = (ReminderListItem) list.get(i);
       item.writeData(out);
@@ -178,64 +177,67 @@ public class ReminderList implements ActionListener {
   
   
   public void actionPerformed(ActionEvent event) {
-    if (listener == null) {
-      timer.stop();
-      return;
-    }
+   
+        if (listener == null) {
+          timer.stop();
+          return;
+        }
     
     
            
-    devplugin.Date date=new devplugin.Date();
+        devplugin.Date date=new devplugin.Date();
     
-    Calendar cal=new GregorianCalendar();
-    cal.setTime(new java.util.Date());
-    int time=cal.get(Calendar.HOUR_OF_DAY)*60+cal.get(Calendar.MINUTE);
+        Calendar cal=new GregorianCalendar();
+        cal.setTime(new java.util.Date());
+        int time=cal.get(Calendar.HOUR_OF_DAY)*60+cal.get(Calendar.MINUTE);
  
-    System.out.println("current time: "+time);
+        System.out.println("current time: "+time);
  
-    devplugin.Date today=devplugin.Date.getCurrentDate();
+        devplugin.Date today=devplugin.Date.getCurrentDate();
     
-    System.out.println("current date: "+today.getValue());
+        System.out.println("current date: "+today.getValue());
 
-    Iterator it=this.getReminderItems();
-    while (it.hasNext()) {
-      ReminderListItem item=(ReminderListItem)it.next();
-      if (item.getReminderMinutes()<0) continue;
+        Iterator it=this.getReminderItems();
+        while (it.hasNext()) {
+          ReminderListItem item=(ReminderListItem)it.next();
+          if (item.getReminderMinutes()<0) continue;
 
-      int m=item.getProgram().getMinutes();
-      int h=item.getProgram().getHours();
-      int d=item.getReminderMinutes();
+          int m=item.getProgram().getMinutes();
+          int h=item.getProgram().getHours();
+          int d=item.getReminderMinutes();
 
-      System.out.println("item time: "+(h*60)+m);
-      System.out.println("item date: "+item.getProgram().getDate().getValue());
-      System.out.println("reminder minutes: "+d);
+          System.out.println("item time: "+(h*60)+m);
+          System.out.println("item date: "+item.getProgram().getDate().getValue());
+          System.out.println("reminder minutes: "+d);
       
       
-      int diff=today.compareTo(item.getProgram().getDate());
+          int diff=today.compareTo(item.getProgram().getDate());
 
-    //  if (today.compareTo(item.getProgram().getDate())>0) {
-      if (diff>0) {
-        System.out.println("fire!");        
-        listener.timeEvent(item);    
-      }
-     // else /*if (today.compareTo(item.getProgram().getDate()==0)*/{
-     else {
+        //  if (today.compareTo(item.getProgram().getDate())>0) {
+          if (diff>0) {
+            System.out.println("fire!");        
+            listener.timeEvent(item);    
+          }
+         // else /*if (today.compareTo(item.getProgram().getDate()==0)*/{
+         else {
      
-        int currentMinutesAfterMidnight = util.io.IOUtilities.getMinutesAfterMidnight();
-        int remindMinutesAfterMidnight = h * 60 + m -d;
+            int currentMinutesAfterMidnight = util.io.IOUtilities.getMinutesAfterMidnight();
+            int remindMinutesAfterMidnight = h * 60 + m -d;
         
-        if (diff<0) {
-          currentMinutesAfterMidnight-=1440;
-        }
+            if (diff<0) {
+              currentMinutesAfterMidnight-=1440;
+            }
         
-        System.out.println("current minutes after midnight: "+currentMinutesAfterMidnight);
-        System.out.println("remind me at: "+remindMinutesAfterMidnight);
+            System.out.println("current minutes after midnight: "+currentMinutesAfterMidnight);
+            System.out.println("remind me at: "+remindMinutesAfterMidnight);
         
-        if (currentMinutesAfterMidnight>=remindMinutesAfterMidnight) {
-          listener.timeEvent(item);
-        }
+            if (currentMinutesAfterMidnight>=remindMinutesAfterMidnight) {
+              listener.timeEvent(item);
+            }
         
-      }
+          }
+      
+      
       
       
    

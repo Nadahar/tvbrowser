@@ -73,7 +73,19 @@ public class ProgramTableScrollPane extends JScrollPane
     return mProgramTable;
   }
 
-  
+/*
+  public ChannelPanel getChannelPanel() {
+    return mChannelPanel;
+  }
+ */
+ 
+  public void updateChannelPanel() {
+    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),
+      mProgramTable.getModel().getShownChannels()); 
+    setColumnHeaderView(mChannelPanel);
+    this.updateUI();
+    //mChannelPanel.updateUI();
+  }
   
   public void setColumnWidth(int columnWidth) {
     mProgramTable.setColumnWidth(columnWidth);

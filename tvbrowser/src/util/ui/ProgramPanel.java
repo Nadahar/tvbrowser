@@ -55,9 +55,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
 
   /** The title font. */
-  private static final Font TITLE_FONT = Settings.getProgramTitleFont();
-  /** The normal font */  
-  private static final Font NORMAL_FONT = Settings.getProgramInfoFont();
+  private static Font TITLE_FONT = Settings.getProgramTitleFont();
+  /** The time font. */
+  private static Font TIME_FONT = Settings.getProgramTimeFont();
+  /** The normal font */ 
+  private static Font NORMAL_FONT = Settings.getProgramInfoFont();
   /** The width of the left part (the time). */  
   private static final int WIDTH_LEFT = 40;
   /** The width of the left part (the title and short info). */  
@@ -102,7 +104,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     setProgram(prog);
   }
 
-  
+  public static void updateFonts() {
+    TITLE_FONT = Settings.getProgramTitleFont();
+    TIME_FONT = Settings.getProgramTimeFont();
+    NORMAL_FONT = Settings.getProgramInfoFont();  
+  }
   
   /**
    * Sets the program this panel shows.
@@ -189,13 +195,14 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
 
     // Draw all the text
-  	grp.setFont(TITLE_FONT);
+  	//grp.setFont(TITLE_FONT);
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
       grp.setColor(Color.gray);
     } else {
       grp.setColor(Color.black);
     }
-    grp.drawString(mProgramTimeAsString, 1, TITLE_FONT.getSize());
+    grp.setFont(ProgramPanel.TIME_FONT);
+    grp.drawString(mProgramTimeAsString, 1, TIME_FONT.getSize());
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
     mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
 

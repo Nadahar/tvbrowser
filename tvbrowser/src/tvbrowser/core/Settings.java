@@ -185,8 +185,14 @@ public class Settings {
   
   private static final String SETTINGS_FILE="settings.prop";
   private static final String USER_DIR="tvbrowser";
-
   
+  public static final String TVDATA_DIR="tvdata";
+  public static final String DATASERVICECACHE_DIR=".";
+  
+  private static final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
+  private static final Font PROGRAMINFOFONT=new Font("Dialog",Font.PLAIN,10);
+  private static final Font CHANNELNAMEFONT=new Font("Dialog",Font.BOLD,12);
+  private static final Font PROGRAMTIMEFONT=new Font("Dialog",Font.BOLD,12); 
   
   public static boolean settingHasChanged(String[] key) {
 
@@ -198,6 +204,9 @@ public class Settings {
 		  }
 		  return result;
 	  }
+
+
+
 
   /**
    * Returns the user directory. (e.g.: ~/tvbrowser/)
@@ -214,20 +223,56 @@ public class Settings {
 
     return dir;
   }
+  
+  
+  public static void setUseDefaultFonts(boolean val) {
+    settings.setProperty("usedefaultfonts",val?"yes":"no");
+  }
+  
+  public static boolean getUseDefaultFonts() {
+    String val=settings.getProperty("usedefaultfonts");
+    return (!"no".equals(val));
+  }
+  
+ 
+  
 
+  public static void setUseDefaultDirectories(boolean val) {
+    settings.setProperty("usedefaultdirectories",val?"yes":"no");
+  }
+
+  public static boolean getUseDefaultDirectories() {
+    String val=settings.getProperty("usedefaultdirectories");
+    return (!"no".equals(val));
+  }
 
 	public static String getTVDataDirectory() {
-		String res=settings.getProperty("tvdatadirectory");
+		String res=settings.getProperty("directory.tvdata");
 		if (res==null) {
-			java.io.File f=new File("tvdata");
-			res=f.getAbsolutePath();
+			//java.io.File f=new File(TVDATA_DIR);
+			//res=f.getAbsolutePath();
+      return TVDATA_DIR;
 		}
 		return res;
 	}
 
 	public static void setTVDataDirectory(String dir) {
-		settings.setProperty("tvdatadirectory",dir);
+		settings.setProperty("directory.tvdata",dir);
 	}
+  
+  public static String getDataServiceCacheDirectory() {
+    String res=settings.getProperty("directory.dataservicecache");
+    if (res==null) {
+      //java.io.File f=new File(DATASERVICECACHE_DIR);
+      //res=f.getAbsolutePath();
+      return DATASERVICECACHE_DIR;      
+    }
+    return res;
+  }
+  
+  public static void setDataServiceCacheDirectory(String dir) {
+    settings.setProperty("directory.dataservicecache",dir);
+  }
 
   /**
    * Store all settings. This method is called on quitting the application.
@@ -579,29 +624,65 @@ public class Settings {
   }
   
   public static java.awt.Font getProgramTitleFont() {
-    Font f=settings.getFont("programtitlefont");
+    if (getUseDefaultFonts()) {
+      return PROGRAMTITLEFONT;
+    }
+    Font f=settings.getFont("font.programtitle");
     if (f==null) {
-      f=new Font("Helvetica",Font.BOLD,12);
+      return PROGRAMTITLEFONT;
     }
     return f;
   }
   
   public static void setProgramTitleFont(java.awt.Font f) {
-    settings.setFont("programtitlefont",f);
+    settings.setFont("font.programtitle",f);
   }
   
   public static java.awt.Font getProgramInfoFont() {
-    Font f=settings.getFont("programinfofont");
+    if (getUseDefaultFonts()) {
+      return PROGRAMINFOFONT;
+    }
+    Font f=settings.getFont("font.programinfo");
     if (f==null) {
-      f=new Font("Helvetica",Font.PLAIN,10);
+      return PROGRAMINFOFONT;
     }
     return f;
   }
   
   public static void setProgramInfoFont(java.awt.Font f) {
-    settings.setFont("programinfofont",f);
+    settings.setFont("font.programinfo",f);
   }
   
+  
+  public static java.awt.Font getChannelNameFont() {
+    if (getUseDefaultFonts()) {
+      return CHANNELNAMEFONT;
+    }
+    Font f=settings.getFont("font.channelname");
+    if (f==null) {
+      return CHANNELNAMEFONT;
+    }
+    return f;
+  }
+  
+  public static void setChannelNameFont(java.awt.Font f) {
+    settings.setFont("font.channelname",f);
+  }
+  
+  public static java.awt.Font getProgramTimeFont() {
+    if (getUseDefaultFonts()) {
+      return PROGRAMTIMEFONT;
+    }
+    Font f=settings.getFont("font.programtime");
+    if (f==null) {
+      return PROGRAMTIMEFONT;
+    }
+    return f;
+  }
+  
+  public static void setProgramTimeFont(java.awt.Font f) {
+    settings.setFont("font.programtime",f);
+  }
   
   public static boolean isWindowMaximized() {
     return settings.getBoolean("window.isMaximized", false);

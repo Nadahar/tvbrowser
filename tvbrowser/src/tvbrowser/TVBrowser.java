@@ -87,7 +87,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
   private SkinPanel skinPanel;
   private JPanel/*ButtonPanel*/ mButtonPanel;
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(0,95,false,"0.9.5.1");
+  public static final devplugin.Version VERSION=new devplugin.Version(0,96,false,"0.9.6.0");
   public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION.toString();
   
   private static TVBrowser mainFrame;
@@ -186,8 +186,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
     
-    System.out.println("current date: "+devplugin.Date.getCurrentDate().toString());
+
+    //System.out.println("current date: "+devplugin.Date.getCurrentDate().toString());
     
+
     mainFrame=new TVBrowser();
     
     // Set the right size
@@ -827,6 +829,16 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     SettingsDialog dlg = new SettingsDialog(this);
     dlg.centerAndShow();
     
+    
+    
+    
+    if (Settings.settingHasChanged(new String[]{"font.programtitle","font.programinfo","font.programtime","font.channelname","usedefaultfonts"})) {
+      util.ui.ProgramPanel.updateFonts();
+      tvbrowser.ui.programtable.ChannelPanel.fontChanged();
+      mProgramTableScrollPane.getProgramTable().fontChanged();
+      mProgramTableScrollPane.tableDataChanged();
+      mProgramTableScrollPane.getProgramTable().tableDataChanged();
+    }
     if (Settings.settingHasChanged(new String[]{"lookandfeel"})) {
       updateLookAndFeel();
     }

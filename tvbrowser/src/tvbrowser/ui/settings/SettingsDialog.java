@@ -144,18 +144,40 @@ public class SettingsDialog {
     msg = mLocalizer.msg("settings", "Settings");
     SettingNode root = new SettingNode(icon, msg);
     
-    // TV-Browser section
-    node = new SettingNode(new TVBrowserSettingsTab());
-    root.add(node);
+    // General section
     
-    node.add(new SettingNode(new ProgramTableSettingsTab()));    
+    node = new SettingNode(new TVBrowserSettingsTab());
+    root.add(node);    
     node.add(new SettingNode(new ChannelsSettingsTab()));
     
+    
+    
+    // Appearance section
+    
+    node=new SettingNode(new ProgramTableSettingsTab());
+    root.add(node);
+    node.add(new SettingNode(new FontsSettingsTab()));
+        
+    
+    
     // TV-Data section
-    node = new SettingNode(new DataServiceSettingsTab());
+    node = new SettingNode(new TVDataSettingsTab());
     root.add(node);
 
     node.add(new SettingNode(new ProxySettingsTab()));
+    node.add(new SettingNode(new DirectoriesSettingsTab()));
+    
+    
+    
+    SettingNode dataServiceNode;
+    dataServiceNode=new SettingNode(new DataServiceSettingsTab());
+    node.add(dataServiceNode);
+    
+    tvdataservice.TvDataService[] services=tvbrowser.core.TvDataServiceManager.getInstance().getDataServices();
+    for (int i=0;i<services.length;i++) {
+      dataServiceNode.add(new SettingNode(new ConfigDataServiceSettingsTab(services[i])));
+    }
+    
     
     // Plugins section
     node = new SettingNode(new PluginSettingsTab());
@@ -163,10 +185,15 @@ public class SettingsDialog {
     
     Plugin[] pluginArr = PluginManager.getInstalledPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
-      SettingsTab tab = pluginArr[i].getSettingsTab();
-      if (tab != null) {
-        node.add(new SettingNode(tab));
+      //SettingsTab tab = pluginArr[i].getSettingsTab();
+      node.add(new SettingNode(new ConfigPluginSettingsTab(pluginArr[i])));
+      
+     /* if (tab==null) {
+        node.add(new SettingNode())
       }
+      else {
+        node.add(new SettingNode(tab));
+      }*/
     }
     
     return root;
