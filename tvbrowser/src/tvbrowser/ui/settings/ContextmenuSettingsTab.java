@@ -89,6 +89,31 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
 
+  public ContextmenuSettingsTab() {
+    mList=new SortableItemList(mLocalizer.msg("title","context menu"));
+    mList.getList().setVisibleRowCount(10);
+    
+       mList.getList().addMouseListener(new MouseAdapter(){
+         public void mouseClicked(MouseEvent e){
+           if(e.getClickCount() == 2) {
+             int inx = mList.getList().locationToIndex(e.getPoint());
+             if (inx>=0) {
+               Object item = mList.getList().getModel().getElementAt(inx);;
+               mList.getList().ensureIndexIsVisible(inx);
+               mDefaultPlugin=(Plugin)mList.getList().getSelectedValue();
+               mList.updateUI();
+             }          
+           }
+         }
+       });
+    mList.setCellRenderer(new ContextMenuCellRenderer());
+        mList.getList().setOpaque(false);
+    fillListbox(PluginManager.getInstance().getContextMenuPlugins());
+    
+    
+    
+    
+  }
 
 	public JPanel createSettingsPanel() {
     
@@ -100,9 +125,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     
     JPanel panel1=new JPanel();
     panel1.setLayout(new BoxLayout(panel1,BoxLayout.Y_AXIS));
-    mList=new SortableItemList(mLocalizer.msg("title","context menu"));
+    //mList=new SortableItemList(mLocalizer.msg("title","context menu"));
     panel1.add(mList);
-   
+   /*
     mList.getList().setVisibleRowCount(10);
     
     mList.getList().addMouseListener(new MouseAdapter(){
@@ -117,9 +142,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
           }          
         }
       }
-    });
+    });*/
     
-    fillListbox(PluginManager.getInstance().getContextMenuPlugins());
+   // fillListbox(PluginManager.getInstance().getContextMenuPlugins());
     
     mDefaultPluginBt=new JButton(mLocalizer.msg("defaultPluginBtn",""));
     mDefaultPluginBt.addActionListener(this);
@@ -136,10 +161,10 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     descBox.setLineWrap(true);
     
     contentPanel.add(descBox,BorderLayout.CENTER);
-    
+    /*
     mList.setCellRenderer(new ContextMenuCellRenderer());
     mList.getList().setOpaque(false);
-  
+  */
 		return contentPanel;
 	}
   
@@ -202,8 +227,32 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 
 	
 	public void settingsChanged(SettingsTab tab, Object obj) {
-    fillListbox((Plugin[])obj);
-		
+    Object[] currentPlugins=mList.getItems();
+    Plugin[] installedPlugins=(Plugin[])obj;
+    
+    // remove all plugins which are not installed any more
+    for (int i=0;i<currentPlugins.length;i++) {
+      Plugin p=(Plugin)currentPlugins[i];
+      boolean isInstalled=false;
+      for (int j=0;j<installedPlugins.length&&!isInstalled;j++) {        
+        if (p.equals(installedPlugins[j])) {
+          isInstalled=true;
+        }
+      }
+      if (!isInstalled) {
+        mList.removeElement(currentPlugins[i]);
+      }
+    }
+    
+    // add all other plugins 
+    //Plugin[] pluginList=PluginManager.getInstance().getAvailablePlugins();
+    for (int i=0;i<installedPlugins.length;i++) {
+      if (installedPlugins[i].getContextMenuItemText()!=null && !mList.contains(installedPlugins[i])) {
+        mList.addElement(installedPlugins[i]);
+      }
+    }
+    
+   	
 	}
   
   

@@ -197,11 +197,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       }
       mList.updateUI();
       updateBtns();          
+      Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
+      mActivatedPlugins.toArray(installedPluginList);
       Iterator it=mChangeListener.iterator();
       while (it.hasNext()) {
         SettingsChangeListener listener=(SettingsChangeListener)it.next();
-        Plugin[] installedPluginList=new Plugin[mActivatedPlugins.size()];
-        mActivatedPlugins.toArray(installedPluginList);
         listener.settingsChanged(this,installedPluginList);
       }
     }    
