@@ -381,14 +381,12 @@ abstract public class Plugin {
 
   
   /**
-   * This method is automatically called, when the TV data has changed.
-   * (E.g. after an update).
+   * This method is automatically called, when the TV data update is finished.
    * <p>
    * Does by default nothing.
    * 
-   * @deprecated Since 0.9.7.1 Use
-   *             {@link #handleTvDataAdded(ChannelDayProgram)} and
-   *             {@link #handleTvDataDeleted(ChannelDayProgram)} instead.
+   * @see #handleTvDataAdded(ChannelDayProgram)
+   * @see #handleTvDataDeleted(ChannelDayProgram)
    */
   public void handleTvDataChanged() {
   }
@@ -405,10 +403,10 @@ abstract public class Plugin {
    * 
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
+   * @see #handleTvDataChanged()
    */
   public void handleTvDataAdded(ChannelDayProgram newProg) {
     // Call the old and deprecated methods
-    handleTvDataChanged();
     handleTvDataChanged(newProg);
   }
 
@@ -422,6 +420,7 @@ abstract public class Plugin {
    * 
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
+   * @see #handleTvDataChanged()
    */
   public void handleTvDataDeleted(ChannelDayProgram oldProg) {
   }

@@ -25,27 +25,21 @@
  */
 package tvbrowser.core;
 
-import devplugin.ChannelDayProgram;
-
 /**
- * A listener that listens for TV data events  
+ * A listener that listenes for TV update events.
  * 
  * @author Til Schneider, www.murfman.de
  */
-public interface TvDataBaseListener {
+public interface TvDataUpdateListener {
 
   /**
-   * Is called when a day program has been added to the TV data base.
-   * 
-   * @param prog The added day program.
+   * Is called when a the TV data update has started.
    */
-  public void dayProgramAdded(ChannelDayProgram prog);
+  public void tvDataUpdateStarted();
 
   /**
-   * Is called when a day program has been deleted from the TV data base.
-   * 
-   * @param prog The deleted day program.
+   * Is called when a the TV data update has finished.
    */
-  public void dayProgramDeleted(ChannelDayProgram prog);
+  public void tvDataUpdateFinished();
 
 }

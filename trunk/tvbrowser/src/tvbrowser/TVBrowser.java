@@ -25,6 +25,7 @@
  */
 package tvbrowser;
 
+import java.awt.*;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Point;
@@ -102,6 +103,16 @@ public class TVBrowser {
     catch (IOException exc) {
       msg = mLocalizer.msg("error.4", "Can't create log file.");
       ErrorHandler.handle(msg, exc);
+    }
+    
+    // Read the command line parameters
+    boolean startMinimized = false;
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].equalsIgnoreCase("-minimized")) {
+        startMinimized = true;
+      } else {
+        mLog.warning("Unknown command line parameter: '" + args[i] + "'");
+      }
     }
     
     // Load the settings
@@ -314,11 +325,15 @@ public class TVBrowser {
     
     splash.hide();
     
-    // maximize the frame
+    // maximize the frame if wanted
     if (Settings.isWindowMaximized()) {
-      mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+      mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
     }
-    
+
+    // minimize the frame if wanted
+    if (startMinimized) {
+      mainFrame.setExtendedState(Frame.ICONIFIED);
+    }
     
     if (Settings.getShowAssistant()) {
       mainFrame.runSetupAssistant();  

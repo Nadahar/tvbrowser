@@ -74,6 +74,15 @@ public class PluginManager {
         fireTvDataDeleted(prog);
       }
     });
+    
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      public void tvDataUpdateStarted() {
+      }
+
+      public void tvDataUpdateFinished() {
+        fireTvDataUpdateFinished();
+      }
+    });
 
     Plugin.setPluginManager(createDevpluginPluginManager());
   }
@@ -215,9 +224,6 @@ public class PluginManager {
 
 
   public static void installPendingPlugins() {
-    
-    ArrayList pendingPlugins=new ArrayList();
-    
 	  File file=new File("plugins");
 	  if (!file.exists()) {
 		  return;
@@ -474,6 +480,21 @@ public class PluginManager {
     while (pluginIter.hasNext()) {
       Plugin plugin = (Plugin) pluginIter.next();
       plugin.handleTvDataDeleted(newProg);
+    }
+  }
+
+
+  /**
+   * Calls for every subscribed plugin the handleTvDataChanged() method,
+   * so the Plugin can react on the new data.
+   *
+   * @see Plugin#handleTvDataChanged()
+   */
+  private void fireTvDataUpdateFinished() {
+    Iterator pluginIter = mInstalledPluginList.iterator();
+    while (pluginIter.hasNext()) {
+      Plugin plugin = (Plugin) pluginIter.next();
+      plugin.handleTvDataChanged();
     }
   }
 

@@ -34,7 +34,9 @@ import java.util.logging.Level;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
 
+import devplugin.*;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
@@ -282,6 +284,12 @@ public class TvDataBase {
       OnDemandDayProgramFile progFile
         = new OnDemandDayProgramFile(file, date, channel);
       progFile.loadDayProgram();
+      
+      boolean somethingChanged = calculateMissingLengths(progFile.getDayProgram());
+      if (somethingChanged) {
+        progFile.saveDayProgram();
+      }
+      
       return progFile;
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
@@ -338,6 +346,68 @@ public class TvDataBase {
         lst.dayProgramDeleted(prog);
       }
     }
+  }
+
+
+  /**
+   * Checks whether all programs have a length. If not, the length will be
+   * calculated.
+   * 
+   * @param channelProg The day program to calculate the lengths for.
+   * @return <code>true</code> when at least one length was missing.
+   */
+  static boolean calculateMissingLengths(ChannelDayProgram channelProg) {
+    boolean somethingChanged = false;
+  
+    // Go through all programs and correct them
+    // (This is fast, if no correction is needed)
+    for (int progIdx = 0; progIdx < channelProg.getProgramCount(); progIdx++) {
+      Program program = channelProg.getProgramAt(progIdx);
+      if (! (program instanceof MutableProgram)) {
+        continue;
+      }
+        
+      MutableProgram prog = (MutableProgram) program;
+        
+      if (prog.getLength() <= 0) {
+        // Try to get the next program
+        Program nextProgram = null;
+        if ((progIdx + 1) < channelProg.getProgramCount()) {
+          // Try to get it from this ChannelDayProgram
+          nextProgram = channelProg.getProgramAt(progIdx + 1);
+        } else {
+          // This is the last program -> Try to get the first program of the
+          // next ChannelDayProgram
+          Date nextDate = channelProg.getDate().addDays(1);
+          Channel channel = channelProg.getChannel();
+          TvDataBase db = TvDataBase.getInstance();
+          ChannelDayProgram nextDayProg = db.getDayProgram(nextDate, channel);
+            
+          if ((nextDayProg != null) && (nextDayProg.getProgramCount() > 0)) {
+            nextProgram = nextDayProg.getProgramAt(0);
+          }
+        }
+          
+        // Calculate the Length
+        if (nextProgram != null) {
+          int startTime = prog.getHours() * 60 + prog.getMinutes();
+          int endTime = nextProgram.getHours() * 60 + nextProgram.getMinutes();
+          if (endTime < startTime) {
+            // The program ends the next day
+            endTime += 24 * 60;
+          }
+            
+          int length = endTime - startTime;
+          // Only allow a maximum length of 12 hours
+          if (length < 12 * 60) {
+            prog.setLength(length);
+            somethingChanged = true;
+          }
+        }
+      }
+    }
+    
+    return somethingChanged;
   }
 
 }
