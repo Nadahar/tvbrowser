@@ -121,6 +121,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   
   private static int data_min_day;
   
+  private static int today;
+  
   private static int data_number_of_channels;
   
   private static boolean useIconsInProglist = true;
@@ -647,8 +649,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         if (command == CMD_VAR_1){
           STATUS = STATUS_PROG_LIST;
           actuel_day = list.getSelectedIndex() + data_min_day;
-          if (((data_min_day == 0) && (list.getSelectedIndex() == 0)) || ((data_min_day != 0) && (list.getSelectedIndex()==1))){
-            calendar.setTime (new Date (System.currentTimeMillis()));
+          if (actuel_day == today){
+            calendar.setTime(new Date(System.currentTimeMillis()));
             actuel_block = calendar.get(calendar.HOUR_OF_DAY)/4;
           } else {
             actuel_block = 5;
@@ -886,7 +888,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     } else {
       gauge = null;
       form = new Form("MicroTvBrowser");
-      form.append("Version 0.80\n");
+      form.append("Version 0.81\n");
       form.append("www.tvBrowser.org\n");
       form.append("pumpkin@gmx.de\n");
       
@@ -966,7 +968,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     
     form = new Form(detail);
     form.append(new StringItem(channel, this.channel_names[chan]));
-    System.out.println ("1");
+    System.out.println("1");
     
     int	hour = raw_data_cache[base];
     int min = raw_data_cache[base+1];
@@ -982,7 +984,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       s += min;
     }
     form.append(new StringItem(time,s));
-    System.out.println ("2");
+    System.out.println("2");
     int byte1 = raw_data_cache[base+4];
     int byte2 = raw_data_cache[base+5];
     if (byte1<0){
@@ -997,24 +999,24 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     new StringItem(
     title,
     new String(title_data_store.getRecord(titleID),"ISO8859_1")));
-    System.out.println ("3");
+    System.out.println("3");
     int rating = (raw_data_cache[base+3] & 0xE0) >> 5;
     if (rating != 6){
-      System.out.println ("4");
+      System.out.println("4");
       form.append(Bewertungs_Icons[rating]);
-      System.out.println ("5");
+      System.out.println("5");
     }
     //favo ?
     if ((raw_data_cache[base+3] & 0x08)!=0){
-      System.out.println ("6");
+      System.out.println("6");
       form.append(Favorite_Icon);
-      System.out.println ("7");
+      System.out.println("7");
     }
     //reminder ?
     if ((raw_data_cache[base+3] & 0x10)!=0){
-      System.out.println ("8");
+      System.out.println("8");
       form.append(Reminder_Icon);
-      System.out.println ("9");
+      System.out.println("9");
     }
     
     int info = raw_data_cache[base+2] | ((raw_data_cache[base+3] & 0x07) << 8);
@@ -1054,9 +1056,9 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       for (int i = 0;i<extended_data.length;i++){
         String data = Din.readUTF();
         if (data.length()!=0){
-System.out.println ("2");
-form.append(new StringItem(extended_data[i],data));
-System.out.println ("3");
+          System.out.println("2");
+          form.append(new StringItem(extended_data[i],data));
+          System.out.println("3");
         }
       }
       Din.close();
@@ -1296,9 +1298,11 @@ System.out.println ("3");
     
     long thisDay = C.getTime().getTime();
     
-    long max_delta_time = (1+data_days)*24l*60l*60l*1000l;
     long delta = thisDay - data_create_time;
     data_min_day = (int)((delta) / (24l*60l*60l*1000l));
+
+    today = data_min_day;
+    
     data_min_day = Math.max(0,data_min_day-1);
     
     gauge.setValue(10);
