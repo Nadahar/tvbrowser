@@ -154,8 +154,8 @@ public abstract class AbstractTvDataService implements TvDataService {
     // If the wanted AbstractChannelDayProgram isn't already in the cache
     // load the apropriate XMl file
     
-    System.out.println("dataservice want to download program for "+date.toString()+", "+channel.getName());
-    System.out.println("channelDayProgram is "+channelDayProgram);
+   // System.out.println("dataservice want to download program for "+date.toString()+", "+channel.getName());
+   // System.out.println("channelDayProgram is "+channelDayProgram);
     
     if (channelDayProgram == null) {
       loadFileFor(date, channel);
@@ -203,6 +203,7 @@ public abstract class AbstractTvDataService implements TvDataService {
         }
         catch (TvBrowserException exc) {
           // File is incomplete -> delete it
+          mLog.info("download failed");
           localFile.delete();
           // rethrow the exception
           throw exc;

@@ -122,12 +122,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private void addChannelDayProgram(int col, ChannelDayProgram cdp, int start, int end) {
     if (cdp==null) return;
     Iterator it=cdp.getPrograms();  
-    while (it.hasNext()) {
-      Program prog=(Program)it.next();
-      int time=prog.getHours()*60+prog.getMinutes();
-      if (time>=start && time<=end) {
-        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
-          mProgramColumn[col].add(prog);
+    if (it!=null) {
+      while (it.hasNext()) {
+        Program prog=(Program)it.next();
+        int time=prog.getHours()*60+prog.getMinutes();
+        if (time>=start && time<=end) {
+          if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+            mProgramColumn[col].add(prog);
+          }
         }
       }
     }
