@@ -238,6 +238,10 @@ public class MIDletCreator implements Progress{
 							if (title == null){
 								title = "";
 							}
+							if (title.length() > 100){
+								title = title.substring(0,100);
+							}
+							
 							Integer I = (Integer) title_hash.get(title);
 							if (I==null){
 								title_hash.put(title,new Integer(1));
@@ -332,14 +336,40 @@ public class MIDletCreator implements Progress{
 							ByteArrayOutputStream temp_out = new ByteArrayOutputStream();
 							DataOutputStream prog_out = new DataOutputStream(temp_out);
 							String title = toSave.getTitle();
+							
 							if (title == null){
 								
 								//CH_to_export[j]+": Entry without title ? ("+D.getDayOfMonth()+"."+(D.getMonth()+1)+" "+toSave.getHours()+":"+toSave.getMinutes()+")\n"
 								//"{0}: Entry without title ? ({1}.{2} {3}:{4})"
-								Object[] O = {CH_to_export[j],Integer.toString(D.getDayOfMonth()),Integer.toString((D.getMonth())),Integer.toString(toSave.getHours()),Integer.toString(toSave.getMinutes())};
+								Object[] O = new Object[5];
+								O[0] = CH_to_export[j];
+								if (D.getDayOfMonth()<10){
+									O[1] = "0"+Integer.toString(D.getDayOfMonth());
+								} else {
+									O[1] = Integer.toString(D.getDayOfMonth());
+								}
+								if (D.getMonth()<10){
+									O[2] = "0"+Integer.toString((D.getMonth()));
+								} else {
+									O[2] = Integer.toString((D.getMonth()));
+								}
+								if (toSave.getHours()<10){
+									O[3] = "0"+Integer.toString(toSave.getHours());
+								} else {
+									O[3] = Integer.toString(toSave.getHours());
+								}
+								if (toSave.getMinutes()<10){
+									O[4] = "0"+Integer.toString(toSave.getMinutes());
+								} else {
+									O[4] = Integer.toString(toSave.getMinutes());
+								}
+								
 								exportLog.append(mLocalizer.msg("0: Entry without title ? (1.2 3:4)","{0}: Entry without title ? ({1}.{2} {3}:{4})",O));
 								exportLog.append("\n");
 								title = "";
+							}
+							if (title.length() > 100){
+								title = title.substring(0,100);
 							}
 							
 							

@@ -32,6 +32,7 @@ import javax.swing.*;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 import util.ui.progress.*;
+import util.ui.Localizer;
 
 import devplugin.*;
 
@@ -60,6 +61,7 @@ public class MicroTvBrowserPlugin extends Plugin{
 
 	private static final String PROP_CHANNEL_NAME_IN_NOW_LIST = "channelInNow";
 	
+	static Localizer mLocalizer = Localizer.getLocalizerFor(MicroTvBrowserPlugin.class);
 	
 	public void loadSettings(Properties settings) {
 		try {
@@ -109,9 +111,9 @@ public class MicroTvBrowserPlugin extends Plugin{
 	
 	public PluginInfo getInfo() {
 		String name = "MicroTvBrowser";
-		String desc = "Creates MIDlets";
+		String desc = mLocalizer.msg( "Creates MIDlets" ,"Creates MIDlets" );
 		String author = "Gilson Laurent";
-		return new PluginInfo(name, desc, author, new Version(0,12));
+		return new PluginInfo(name, desc, author, new Version(0,13));
 	}
 	
 	/**
@@ -119,7 +121,7 @@ public class MicroTvBrowserPlugin extends Plugin{
 	 * menu or in the toolbar.
 	 */
 	public String getButtonText() {
-		return "MicroTvBrowser";//mLocalizer.msg( "newPlugin" ,"New plugin" );
+		return "MicroTvBrowser";//
 	}
 	
 	public SettingsTab getSettingsTab() {
@@ -140,7 +142,9 @@ public class MicroTvBrowserPlugin extends Plugin{
 	 */
 	public void execute() {
 		while (channelList.length==0){
-			if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(getParentFrame(),"No Channels selected. Please use settings to select some.\n\n would you like to see the dialog now ?","nothing to export", JOptionPane.YES_NO_OPTION)){
+			if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(getParentFrame()
+				,mLocalizer.msg( "No Channels selected." ,"No Channels selected. Please use settings to select some.\n\n would you like to see the dialog now ?")
+				,mLocalizer.msg( "nothing to export","nothing to export"), JOptionPane.YES_NO_OPTION)){
 				return;
 			} else {
 				showSettings();
@@ -153,10 +157,10 @@ public class MicroTvBrowserPlugin extends Plugin{
 		if (lastUsedDir!= null){
 			chooser.setCurrentDirectory(new File(lastUsedDir));
 		}
-		chooser.setDialogTitle("choose directory");
+		chooser.setDialogTitle(mLocalizer.msg("choose directory","choose directory"));
 		
 		JPanel jp = new JPanel();
-		JButton jb = new JButton("Settings");
+		JButton jb = new JButton(mLocalizer.msg("Settings","Settings"));
 		jp.add(jb);
 		
 		jb.addActionListener(new java.awt.event.ActionListener() {
@@ -174,7 +178,7 @@ public class MicroTvBrowserPlugin extends Plugin{
 		} else {
 			return;
 		}
-		ProgressWindow progress = new ProgressWindow(getParentFrame(),"Please wait");
+		ProgressWindow progress = new ProgressWindow(getParentFrame(),mLocalizer.msg("Please wait","Please wait"));
 
 		if (this.useNanoEdition){
 			NanoMIDletCreator nano = new NanoMIDletCreator (this,dir,progress);
@@ -240,7 +244,7 @@ public class MicroTvBrowserPlugin extends Plugin{
 			}
 		});
  
-		JButton cancelButton = new JButton ("Cancel");
+		JButton cancelButton = new JButton (mLocalizer.msg("Cancel","Cancel"));
 		cancelButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				dismissSettings (false);
