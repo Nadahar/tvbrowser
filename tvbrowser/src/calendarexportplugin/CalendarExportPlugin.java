@@ -3,16 +3,21 @@
  */
 package calendarexportplugin;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import util.ui.ExtensionFileFilter;
+import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -48,17 +53,9 @@ public class CalendarExportPlugin extends Plugin {
         String desc = mLocalizer.msg("description",
                 "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 2));
+        return new PluginInfo(name, desc, author, new Version(0, 3));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#supportMultipleProgramExecution()
-     */
-    public boolean supportMultipleProgramExecution() {
-        return true;
-    }
 
     /*
      * (non-Javadoc)
@@ -72,46 +69,45 @@ public class CalendarExportPlugin extends Plugin {
     /*
      * (non-Javadoc)
      * 
-     * @see devplugin.Plugin#getContextMenuItemText()
-     */
-    public String getContextMenuItemText() {
-        return mLocalizer.msg("contextMenuText", "Export to Calendar");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see devplugin.Plugin#getButtonText()
      */
     public String getButtonText() {
         return null;
     }
+    
+    /*
+     *  (non-Javadoc)
+     * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
+     */
+    public Action[] getContextMenuActions(final Program program) {
+        AbstractAction action = new AbstractAction() {
 
+            public void actionPerformed(ActionEvent evt) {
+                Program[] programArr = { program };
+                doExport(programArr);
+            }
+        };
+        action.putValue(Action.NAME, mLocalizer.msg("contextMenuText","Export to Calendar-File"));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("calendarexportplugin/calendar.png", CalendarExportPlugin.class)));
+        
+        return new Action[] {action};
+    }
+    
     /*
      * (non-Javadoc)
      * 
-     * @see devplugin.Plugin#getButtonIconName()
+     * @see devplugin.Plugin#canReceivePrograms()
      */
-    public String getButtonIconName() {
-        return "calendarexportplugin/calendar.png";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#execute()
-     */
-    public void execute(Program program) {
-        Program[] programArr = { program };
-        doExport(programArr);
-    }
-
+    public boolean canReceivePrograms() {
+        return true;
+    }    
+    
     /**
      * This method is invoked for multiple program execution.
      * 
      * @see #supportMultipleProgramExecution()
      */
-    public void execute(Program[] programArr) {
+    public void receivePrograms(Program[] programArr) {
         doExport(programArr);
     }
 
