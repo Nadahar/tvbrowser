@@ -28,7 +28,6 @@ package tvbrowser.core;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.swing.UIManager;
 
@@ -69,8 +68,6 @@ public class Settings {
   
 
   private static PropertyManager mProp = new PropertyManager();
-  
-  private static HashMap mPropertiesHash = new HashMap();
 
 
   /**
@@ -268,7 +265,7 @@ public class Settings {
     = new IntProperty(mProp, "timebutton.midday", 12 * 60);
 
   public static final IntProperty propAfternoonTime
-    = new IntProperty(mProp, "timebutton.midday", 18 * 60);
+    = new IntProperty(mProp, "timebutton.afternoon", 18 * 60);
 
   public static final IntProperty propEveningTime
     = new IntProperty(mProp, "timebutton.evening", 20 * 60);
