@@ -112,6 +112,13 @@ public class TvDataSearcher {
     boolean sortByStartTime)
     throws TvBrowserException
   {
+    // Check whether the pattern matches everything
+    if (regex.trim().length() == 0) {
+      // It does -> Return an empty result
+      // (This avoids that a pattern matches everything)
+      return new Program[0];
+    }
+    
     // Should we search in all channels?
     if (channels == null) {
       channels = Settings.propSubscribedChannels.getChannelArray(false);
@@ -292,5 +299,5 @@ public class TvDataSearcher {
     // No match found
     return false;
   }
-
+  
 }

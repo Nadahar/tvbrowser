@@ -168,6 +168,16 @@ public class SearchFormSettings {
    * @return The search text as regular expression
    */
   public String getSearchTextAsRegex() {
+    // TODO: To avoid that the a search pattern matches everything (which takes
+    //       a long time and may mess everything up), we return an empty String
+    //       if the search text is empty.
+    //       -> An empty pattern will cause that the TvDataSearcher returns an
+    //          empty result.
+    if (mSearchText.trim().length() == 0) {
+      return "";
+    }
+    
+    // Build the regex
     if ((mMatch == MATCH_EXACTLY) || (mMatch == MATCH_KEYWORD)) {
       // NOTE: We replace all whitespace with a regex that matches whitespace.
       //       This way the search hits will contain "The film", when the user
