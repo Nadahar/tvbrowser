@@ -3,6 +3,7 @@ Changelog FavoritesPlugin
 1.0.7:
 - Added Send to other Plugins
 - Added Icons for Channels
+- Added "Use Filter"
 
 1.0.6:
 - Added import of favorites from TVgenial

@@ -43,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
+import tvbrowser.core.filters.FilterList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
@@ -51,6 +52,7 @@ import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Plugin;
+import devplugin.ProgramFilter;
 
 /**
  *
@@ -70,8 +72,8 @@ public class EditFavoriteDialog {
   // private JCheckBox mSearchTitleChB, mSearchInTextChB;
   // private JRadioButton mMatchExactlyRB, mMatchSubstringRB, mRegexRB;
   private SearchForm mSearchForm;
-  private JCheckBox mCertainChannelChB, mCertainTimeOfDayChB;
-  private JComboBox mCertainChannelCB;
+  private JCheckBox mCertainChannelChB, mCertainTimeOfDayChB, mCertainFilterChB;
+  private JComboBox mCertainChannelCB, mCertainFilterCB;
   private JSpinner mCertainFromTimeSp, mCertainToTimeSp;
   private JLabel mCertainToTimeLabel;
   private JButton mOkBt, mCancelBt;
@@ -147,6 +149,18 @@ public class EditFavoriteDialog {
     mCertainToTimeSp.setBorder(null);
     p2.add(mCertainToTimeSp);
 
+    
+    mCertainFilterChB = new JCheckBox(mLocalizer.msg("useFilter", "Use Filter")); 
+    mCertainFilterChB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          updateEnabled();
+        }
+      });
+    mCertainFilterCB = new JComboBox(FilterList.getInstance().getFilterArr());
+    p1.add(mCertainFilterChB);
+    p1.add(mCertainFilterCB);
+    
+    
     // buttons
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn);
@@ -191,6 +205,9 @@ public class EditFavoriteDialog {
     mCertainFromTimeSp.setEnabled(enabled);
     mCertainToTimeLabel.setEnabled(enabled);
     mCertainToTimeSp.setEnabled(enabled);
+    
+    enabled = mCertainFilterChB.isSelected();
+    mCertainFilterCB.setEnabled(enabled);
   }
 
   
@@ -215,6 +232,12 @@ public class EditFavoriteDialog {
     cal.set(Calendar.MINUTE, minutes % 60);
     mCertainToTimeSp.setValue(cal.getTime());
 
+    mCertainFilterChB.setSelected(mFavorite.getUseFilter());
+    
+    if (mFavorite.getFilter() != null) {
+        mCertainFilterCB.setSelectedItem(mFavorite.getFilter());
+    }
+    
     updateEnabled();
   }
   
@@ -239,6 +262,9 @@ public class EditFavoriteDialog {
     cal.setTime(toTime);
     minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     mFavorite.setCertainToTime(minutes);
+    
+    mFavorite.setUseFilter(mCertainFilterChB.isSelected());
+    mFavorite.setFilter((ProgramFilter) mCertainFilterCB.getSelectedItem());
     
     try {
       mFavorite.updatePrograms();
