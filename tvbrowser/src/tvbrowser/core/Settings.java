@@ -120,8 +120,15 @@ class TVBrowserProperties extends java.util.Properties {
 		fStr=getStringList(key);
 		if (fStr.length>=3) {
 			String fName=fStr[0];
-			int fStyle=Integer.parseInt(fStr[1]);
-			int fSize=Integer.parseInt(fStr[2]);
+			int fStyle;			
+			int fSize;
+			try {
+				fStyle=Integer.parseInt(fStr[1]);
+				fSize=Integer.parseInt(fStr[2]);
+			}catch(NumberFormatException e) {
+				fStyle=Font.PLAIN;
+				fSize=12;
+			}
 			return new Font(fName,fStyle,fSize);			
 		}
 		return null;	
@@ -225,7 +232,8 @@ public class Settings {
   public static void loadSettings() {
     settings = new TVBrowserProperties();
     try {
-      settings.load(new FileInputStream(new File(getUserDirectoryName(),SETTINGS_FILE)));
+    	File f=new File(getUserDirectoryName(),SETTINGS_FILE);
+      	settings.load(new FileInputStream(f));
     }
     catch (IOException evt) {
       mLog.info("No user settings found. using default user settings");
@@ -251,9 +259,7 @@ public class Settings {
 
 
   private static void initSubscribedChannels() {
-//<<<<<<< Settings.java
   	String[] entries = settings.getStringList("subscribedchannels");
-//=======
     if (settings.getProperty("subscribedchannels") == null) {
       // Install by default the first 9 channels of the XmlTvDataService
       TvDataServiceManager mng = TvDataServiceManager.getInstance();
@@ -266,8 +272,6 @@ public class Settings {
       }
     }
     
-  //	String[] entries = getStringListProperty("subscribedchannels");
-//>>>>>>> 1.26
 
     for (int i = 0; i < entries.length; i++) {
       String entry = entries[i];
@@ -541,6 +545,27 @@ public class Settings {
 	
 	public static void setProgramInfoFont(java.awt.Font f) {
 		settings.setFont("programinfofont",f);
+	}
+	
+	public static java.awt.Dimension getWindowSize() {
+		String dimStr[]=settings.getStringList("windowsize");
+		if (dimStr.length>=2) {
+			try {
+				int width=Integer.parseInt(dimStr[0]);
+				int height=Integer.parseInt(dimStr[1]);
+				return new java.awt.Dimension(width,height);
+			}catch (NumberFormatException e) {
+				return new java.awt.Dimension(700,500);
+			}
+		}
+		return new java.awt.Dimension(700,500);
+		
+	}
+	public static void setWindowSize(java.awt.Dimension dim) {
+		String dimStr[]=new String[2];
+		dimStr[0]=""+dim.width;
+		dimStr[1]=""+dim.height;
+		settings.setStringList("windowsize",dimStr);
 	}
 	
 }
