@@ -74,7 +74,7 @@ import devplugin.Program;
 public class ManageFavoritesDialog extends JDialog {
 
   /** The localizer for this class. */  
-  private static final util.ui.Localizer mLocalizer
+  public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ManageFavoritesDialog.class);
 
   private DefaultListModel mFavoritesListModel, mProgramListModel;

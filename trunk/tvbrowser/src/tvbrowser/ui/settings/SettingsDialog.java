@@ -44,9 +44,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
 import devplugin.SettingsTab;
 
@@ -55,34 +55,36 @@ import devplugin.SettingsTab;
  * @author Til Schneider, www.murfman.de
  */
 public class SettingsDialog {
-  
+
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SettingsDialog.class);
 
   private JDialog mDialog;
-  
+
   private JSplitPane mSplitPane;
   private JTree mSelectionTree;
   private JPanel mSettingsPn;
   private JScrollPane mSettingsPane;
+  //private JButton mOkBt, mCancelBt;
+
   private JButton mOkBt, mCancelBt, mApplyBt;
-  
-  
-  
+
+
+
   /**
    * Creates a new instance of SettingsDialog.
    */
-  public SettingsDialog(Component parent) {
+  public SettingsDialog(Component parent, String selectedTabId) {
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(mLocalizer.msg("settings", "Settings"));
-    
+
     JPanel main = new JPanel(new BorderLayout());
     main.setBorder(UiUtilities.DIALOG_BORDER);
     mDialog.setContentPane(main);
-    
+
     mSplitPane = new JSplitPane();
     main.add(mSplitPane, BorderLayout.CENTER);
-    
+
     TreeNode root = createSelectionTree();
     mSelectionTree = new JTree(root);
     mSelectionTree.setRootVisible(true);
@@ -98,7 +100,7 @@ public class SettingsDialog {
     scrollPane.setMinimumSize(new Dimension(150,0));
     scrollPane.setBorder(null);
     mSplitPane.setLeftComponent(scrollPane);
-    
+
     // Make the viewport as big as the tree when all nodes are expanded
     int categoryCount = root.getChildCount();
     for (int i = categoryCount; i >= 1; i--) {
@@ -109,15 +111,15 @@ public class SettingsDialog {
     for (int i = 1; i <= categoryCount; i++) {
       mSelectionTree.collapseRow(i);
     }
-    
+
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPane = new JScrollPane(mSettingsPn);
     mSettingsPane.setPreferredSize(new Dimension(410, 300));
     mSplitPane.setRightComponent(mSettingsPane);
-    
+
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
-    
+
     mOkBt = new JButton(mLocalizer.msg("ok", "OK"));
     mOkBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -127,7 +129,7 @@ public class SettingsDialog {
     });
     mDialog.getRootPane().setDefaultButton(mOkBt);
     buttonPn.add(mOkBt);
- 
+
     mCancelBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
     mCancelBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -135,8 +137,7 @@ public class SettingsDialog {
       }
     });
     buttonPn.add(mCancelBt);
-        
-    
+
     mApplyBt = new JButton(mLocalizer.msg("apply", "Apply"));
     mApplyBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -145,70 +146,105 @@ public class SettingsDialog {
       }
     });
     buttonPn.add(mApplyBt);
-    
+
     mDialog.pack();
-    
-    showSettingsPanelForSelectedNode();
+
+    if (selectedTabId == null) {
+
+    }
+    else {
+      SettingNode n = findSettingNode((SettingNode)root, selectedTabId);
+      if (n!=null) {
+        showSettingsPanelForNode(n);
+        TreePath selectedPath = new TreePath(n.getPath());
+        mSelectionTree.setSelectionPath(selectedPath);
+      }
+      else {
+        showSettingsPanelForSelectedNode();
+      }
+    }
   }
-  
-  
-  
+
+
+  private SettingNode findSettingNode(SettingNode root, String tabId) {
+
+    if (tabId.equals(root.getId())) {
+      return root;
+    }
+    int cnt = root.getChildCount();
+    for (int i=0; i<cnt; i++) {
+      SettingNode result = findSettingNode((SettingNode)root.getChildAt(i), tabId);
+      if (result != null) {
+        return result;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Creates a new instance of SettingsDialog.
+   */
+  public SettingsDialog(Component parent) {
+    this(parent, null);
+  }
+
+
   public void centerAndShow() {
     UiUtilities.centerAndShow(mDialog);
   }
 
-  
-  
+
+
   private TreeNode createSelectionTree() {
     Icon icon;
     String msg;
     SettingNode node;
-    
+
     icon = new ImageIcon("imgs/Preferences16.gif");
     msg = mLocalizer.msg("settings", "Settings");
     SettingNode root = new SettingNode(new DefaultSettingsTab(msg,icon));
-    
+
     // Channels
     node = new SettingNode(new ChannelsSettingsTab());
     root.add(node);
-    
+
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
     PluginSettingsTab pluginSettingsTab=new PluginSettingsTab();
     //pluginSettingsTab.addSettingsChangeListener(contextmenuSettingsTab);
-    
+
     // Appearance
     node = new SettingNode(
     new DefaultSettingsTab(mLocalizer.msg("appearance","appearance"),null));
     root.add(node);
-    
+
     node.add(new SettingNode(new ButtonsSettingsTab()));
     node.add(new SettingNode(new LookAndFeelSettingsTab()));
     node.add(new SettingNode(new FontsSettingsTab()));
     node.add(new SettingNode(new ProgramTableSettingsTab()));
     node.add(new SettingNode(new ProgramPanelSettingsTab()));
     node.add(new SettingNode(contextmenuSettingsTab));
-    node.add(new SettingNode(new ToolbarSettingsTab()));
+    node.add(new SettingNode(new ToolbarSettingsTab(),"#toolbar"));
 
     // Plugins
     node = new SettingNode(pluginSettingsTab);
     root.add(node);
-    
+
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
-    
+
     Arrays.sort(pluginArr, new Comparator() {
 
         public int compare(Object o1, Object o2) {
             return o1.toString().compareTo(o2.toString());
         }
-        
+
     });
-    
+
     for (int i = 0; i < pluginArr.length; i++) {
       ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
-      node.add(new SettingNode(tab));
+      node.add(new SettingNode(tab, pluginArr[i].getId()));
       pluginSettingsTab.addSettingsChangeListener(tab);
     }
-    
+
     // TVDataServices
     node = new SettingNode(new DataServiceSettingsTab());
     root.add(node);
@@ -216,37 +252,67 @@ public class SettingsDialog {
     for (int i=0;i<services.length;i++) {
       node.add(new SettingNode(new ConfigDataServiceSettingsTab(services[i])));
     }
-    
+
     // Advanced
     node = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("advanced","advanced"),null));
     root.add(node);
-    
+
     node.add(new SettingNode(new ProxySettingsTab()));
     node.add(new SettingNode(new DirectoriesSettingsTab()));
     node.add(new SettingNode(new TVDataSettingsTab()));
-     
+
     return root;
   }
 
-  
-  
+
+
   private void saveSettings() {
     saveSettings((SettingNode) mSelectionTree.getModel().getRoot());
   }
 
-  
-  
+
+
   private void saveSettings(SettingNode node) {
     node.saveSettings();
-    
+
     for (int i = 0; i < node.getChildCount(); i++) {
       saveSettings((SettingNode) node.getChildAt(i));
     }
   }
 
-  
-  
-  private void showSettingsPanelForSelectedNode() {
+  private void showSettingsPanelForNode(SettingNode node) {
+      JPanel pn = node.getSettingsPanel();
+      if (pn != null) {
+        // Make the panel as wide as the scrollpane viewport
+        Dimension viewportSize = mSettingsPane.getViewport().getSize();
+        Dimension pnSize = pn.getPreferredSize();
+        if (pnSize.width > viewportSize.width) {
+          pnSize.width = viewportSize.width;
+          pn.setPreferredSize(pnSize);
+        }
+
+        mSettingsPn.add(pn);
+      }
+    }
+
+
+    private void showSettingsPanelForSelectedNode() {
+      mSettingsPn.removeAll();
+
+      TreePath selection = mSelectionTree.getSelectionPath();
+      if (selection != null) {
+        SettingNode node = (SettingNode) selection.getLastPathComponent();
+        showSettingsPanelForNode(node);
+      }
+
+      mSettingsPn.revalidate();
+      mSettingsPn.repaint();
+    }
+
+
+
+
+ /* private void showSettingsPanelForSelectedNode() {
     mSettingsPn.removeAll();
 
     TreePath selection = mSelectionTree.getSelectionPath();
@@ -262,18 +328,18 @@ public class SettingsDialog {
           pnSize.width = viewportSize.width;
           pn.setPreferredSize(pnSize);
         }
-        
+
         mSettingsPn.add(pn);
       }
     }
-    
+
     mSettingsPn.revalidate();
     mSettingsPn.repaint();
-  }
-  
-  
+  } */
+
+
   private class DefaultSettingsTab implements devplugin.SettingsTab {
-   
+
     private String mTitle;
     private Icon mIcon;
 
@@ -281,10 +347,10 @@ public class SettingsDialog {
       mTitle=title;
       mIcon=icon;
     }
-    
+
     public JPanel createSettingsPanel() {
       JPanel contentPanel=new JPanel();
-      
+
       contentPanel.setLayout(new BoxLayout(contentPanel,BoxLayout.Y_AXIS));
       contentPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
       JLabel titleLb=new JLabel(mTitle);
@@ -292,95 +358,100 @@ public class SettingsDialog {
       JLabel lb=new JLabel(mLocalizer.msg("selectCategory","Please select a category on the left."));
       lb.setFont(new Font("Dialog",Font.PLAIN,14));
       lb.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
-      
-      
+
+
       contentPanel.add(titleLb);
       contentPanel.add(lb);
       return contentPanel;
     }
-    
-	
+
+
 		public void saveSettings() {
-			
+
 		}
 
-		
+
 		public Icon getIcon() {
-      
+
 			return mIcon;
 		}
 
-	
+
 		public String getTitle() {
 			return mTitle;
 		}
-    
+
   }
-  
-  
+
+
   // inner class SettingNode
-  
-  
+
+
   private class SettingNode extends DefaultMutableTreeNode {
 
     private Icon mIcon;
     private JPanel mSettingsPn;
     private SettingsTab mSettingsTab;
+    private String mId;
 
-    
-    
-    public SettingNode(SettingsTab settingsTab) {
-      this(settingsTab.getIcon(), settingsTab.getTitle());
-      
+
+    public SettingNode(Icon icon, String title, String id) {
+      super(title);
+      mIcon = icon;
+      mId = id;
+    }
+
+    public SettingNode(SettingsTab settingsTab, String id) {
+      this(settingsTab.getIcon(), settingsTab.getTitle(), id);
       mSettingsTab = settingsTab;
     }
-    
-    
-    
-    public SettingNode(Icon icon, String title) {
-      super(title);
-      
-      mIcon = icon;
+
+    public SettingNode(SettingsTab settingsTab) {
+      this(settingsTab, null);
     }
-    
-    
-    
+
+
+    public String getId() {
+      return mId;
+    }
+
+
     public boolean isLoaded() {
       return (mSettingsPn != null);
     }
-    
-    
-    
+
+
+
     public void saveSettings() {
       if (isLoaded()) {
         mSettingsTab.saveSettings();
       }
     }
-    
-    
-    
+
+
+
     public JPanel getSettingsPanel() {
       if (! isLoaded()) {
         if (mSettingsTab!=null) {
           mSettingsPn = mSettingsTab.createSettingsPanel();
         }
       }
-      
+
       return mSettingsPn;
     }
-    
-    
-    
+
+
+
     public Icon getIcon() {
       return mIcon;
     }
-    
+
   } // class SettingNode
-  
-  
+
+
   // inner class SettingNodeCellRenderer
-  
-  
+
+
   /**
    * A cell renderer that sets the icon of the SettingNode it renders.
    */
@@ -395,7 +466,7 @@ public class SettingsDialog {
       if (value instanceof SettingNode) {
         SettingNode node = (SettingNode) value;
         Icon icon = node.getIcon();
-        
+
         if (icon != null) {
           label.setIcon(icon);
         }

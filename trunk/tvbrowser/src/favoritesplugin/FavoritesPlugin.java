@@ -396,7 +396,7 @@ public class FavoritesPlugin extends Plugin {
     
     public CreateFavoriteAction() {
       super.setSmallIcon(createImageIcon("favoritesplugin/New16.gif"));
-      super.setText("Create new favorite");
+      super.setText(mLocalizer.msg("new","Create new favorite"));
     }
 
     public void actionPerformed(ActionEvent e) {

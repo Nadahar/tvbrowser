@@ -42,6 +42,12 @@ public class MenuUtil {
   public static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
 
 
+  public static JMenuItem createMenuItem(String title) {
+    JMenuItem result = new JMenuItem(title);
+    result.setFont(CONTEXT_MENU_PLAINFONT);
+    return result;
+  }
+
   public static JMenuItem createMenuItem(ActionMenu menu) {
     JMenuItem result;
     if (menu.hasSubItems()) {

@@ -148,8 +148,6 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       }
     });
     
-    //mActivatedPlugins=new HashSet();
-    //Plugin pluginList[]=PluginManager.getInstance().getAvailablePlugins();
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
     
     
@@ -163,9 +161,6 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     
     for (int i=0;i<pluginList.length;i++) {
       mListModel.addElement(pluginList[i]);
- //     if (PluginLoader.getInstance().isActivePlugin(pluginList[i])) {
- //       mActivatedPlugins.add(pluginList[i]);
- //     }
     }
     
     pluginListPanel.add(new JScrollPane(mList),BorderLayout.CENTER);
