@@ -29,6 +29,9 @@ Changelog TVBrowser
 - SystemTrayIcon improved
     - Translated
     - Added Plugin-Menu
+- Added 2 new Filters:
+    - Program-Length
+    - Additional Infomations (e.g. Stereo)
 
 0.9.7.3:
 - added downnload status info
