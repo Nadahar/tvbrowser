@@ -262,7 +262,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
           continue;
         }
         
-    //    System.out.println("trying program: "+prog.getHours()+":"+prog.getMinutes()+" "+prog.getTitle()+", date: "+prog.getDate());
+      //  System.out.println("trying program: "+prog.getHours()+":"+prog.getMinutes()+" "+prog.getTitle()+", date: "+prog.getDate());
         
         /*
         int startTime = prog.getHours() * 60 + prog.getMinutes();
@@ -311,6 +311,8 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
         
       }
     }
+    
+   // System.out.println("new program on air: "+newProgramOnAir);
     
     // check program length:
     if (newProgramOnAir!=null) {
