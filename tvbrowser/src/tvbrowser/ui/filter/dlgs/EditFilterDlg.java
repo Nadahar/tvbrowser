@@ -259,9 +259,8 @@ public class EditFilterDlg
 					allowRemove = false;
 					JOptionPane.showMessageDialog(
 						this,
-						"This filter component is used by filter '"
-							+ userFilterArr[i].toString()
-							+ "\nRemove the filter first.");
+						mLocalizer.msg("usedByAnotherFilter","This filter component is used by filter '{0}'\nRemove the filter first.",userFilterArr[i].toString())
+						);
 				}
 			}
 			if (allowRemove) {
