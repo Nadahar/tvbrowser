@@ -217,6 +217,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="searchplugin/**"/>
     </jar>
+    <jar jarfile="${runtime.dir}/plugins/FavoritesPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="favoritesplugin/**"/>
+    </jar>
 
     <mkdir dir="${runtime.dir}/tvdataloader"/>
     <jar jarfile="${runtime.dir}/tvdataloader/XmlTvDataService.jar"
@@ -312,6 +316,10 @@
     
     <antcall target="-zipPackageSrc">
       <param name="package" value="searchplugin"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="favoritesplugin"/>
     </antcall>
   </target>
 

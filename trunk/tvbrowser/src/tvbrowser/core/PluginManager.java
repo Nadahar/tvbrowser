@@ -29,8 +29,9 @@ package tvbrowser.core;
 import devplugin.Plugin;
 
 import java.io.*;
-import java.util.Properties;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
 
 import util.exc.*;
 
@@ -327,6 +328,21 @@ public class PluginManager {
     installedPlugins.remove(plugin);
   }
 
-
+  
+  /**
+   * Should be called every time the TV data has changed.
+   * <p>
+   * Calls for every subscribed plugin the handleTvDataChanged() method,
+   * so the plugins can react on the new data.
+   *
+   * @see Plugin#handleTvDataChanged()
+   */
+  public static void fireTvDataChanged() {
+    Iterator pluginIter = installedPlugins.values().iterator();
+    while (pluginIter.hasNext()) {
+      Plugin plugin = (Plugin) pluginIter.next();
+      plugin.handleTvDataChanged();
+    }
+  }
 
 }
