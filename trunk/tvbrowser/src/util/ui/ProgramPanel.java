@@ -428,6 +428,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
           JPopupMenu menu
             = PluginManager.createPluginContextMenu(mProgram, caller);
           menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
+        } else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+                        Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
+            if (plugin != null) {
+                plugin.execute(mProgram);
+            }
         }
       }
     });
