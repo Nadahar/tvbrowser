@@ -41,21 +41,28 @@ public class FilterChooser extends JPanel {
     
     
   private final JComboBox mBox;
+  //private Filter mShowAllFilter;  
+  private ProgramTableModel mModel;  
     
   public FilterChooser(final JFrame parent, final ProgramTableModel model) {
      
     super(new BorderLayout());
     mBox=new JComboBox();
+    mModel=model;
     updateList();
+    model.setProgramFilter((Filter)mBox.getSelectedItem());
     mBox.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Object o=mBox.getSelectedItem();
         if (o instanceof Filter) {
-           model.setProgramFilter((Filter)o);   
+          model.setProgramFilter((Filter)o);   
         }else if (o instanceof String){
           SelectFilterDlg dlg=new SelectFilterDlg(parent);
           util.ui.UiUtilities.centerAndShow(dlg);
           updateList();
+          Filter f=(Filter)mBox.getItemAt(0);
+          mBox.setSelectedIndex(0);
+          model.setProgramFilter(f);  
         }
       }            
     });        
@@ -63,10 +70,10 @@ public class FilterChooser extends JPanel {
     }
     
     
+    
   private void updateList() {
         
     mBox.removeAllItems();
-    mBox.addItem(new ShowAllFilter(mLocalizer.msg("ShowAll","Show all")));  // default filter
     Filter[] f=FilterList.getFilterList();
     for (int i=0;i<f.length;i++) {
       mBox.addItem(f[i]);
@@ -77,14 +84,4 @@ public class FilterChooser extends JPanel {
 }
 
 
-class ShowAllFilter extends Filter {
-    
-  public ShowAllFilter(String title) {
-    super(title);
-  }
-    
-  public boolean accept(devplugin.Program prog) {
-    return true;
-  }
-    
-}
+

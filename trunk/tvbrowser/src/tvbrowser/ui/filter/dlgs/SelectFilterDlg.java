@@ -30,7 +30,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 import tvbrowser.ui.filter.*;
 
@@ -43,7 +42,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
   
   private JList mFilterList;
   private JFrame mParent;
-  private JButton mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn;
+  private JButton mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn, mUpBtn, mDownBtn;
   private DefaultListModel mFilterListModel;  
     
 	public SelectFilterDlg(JFrame parent) {
@@ -80,7 +79,18 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     panel1.add(mNewBtn);
     panel1.add(mEditBtn);
     panel1.add(mRemoveBtn);
-    btnPanel.add(panel1,BorderLayout.NORTH);    
+    btnPanel.add(panel1,BorderLayout.NORTH); 
+    
+    
+    JPanel panel2=new JPanel(new GridLayout(0,1,0,7));
+    mUpBtn = new JButton(new ImageIcon("imgs/Up16.gif"));
+    mDownBtn=new JButton(new ImageIcon("imgs/Down16.gif"));
+    mUpBtn.addActionListener(this);
+    mDownBtn.addActionListener(this);   
+    panel2.add(mUpBtn);
+    panel2.add(mDownBtn);
+    
+    btnPanel.add(panel2,BorderLayout.SOUTH);
     
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
@@ -116,8 +126,12 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
   public void updateBtns() {
       
       Object item=mFilterList.getSelectedValue();
-      mEditBtn.setEnabled(item!=null);
-      mRemoveBtn.setEnabled(item!=null);  
+      mEditBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter));
+      mRemoveBtn.setEnabled(item!=null && !(item instanceof ShowAllFilter));  
+
+      int inx=mFilterList.getSelectedIndex();
+      mUpBtn.setEnabled(inx>0);
+      mDownBtn.setEnabled(inx>=0 && inx<mFilterListModel.getSize()-1);
   }
     
     public void actionPerformed(ActionEvent e) {
@@ -139,12 +153,34 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
             FilterList.remove((Filter)o);
             updateBtns();  
         }
+        else if (e.getSource()==mUpBtn) {
+            int fromInx=mFilterList.getSelectedIndex();
+            Object o=mFilterList.getSelectedValue();
+            mFilterListModel.removeElementAt(fromInx);
+            mFilterListModel.insertElementAt(o,fromInx-1);  
+            mFilterList.setSelectedIndex(fromInx-1);
+        }
+        else if (e.getSource()==mDownBtn) {
+            int fromInx=mFilterList.getSelectedIndex();
+            Object o=mFilterList.getSelectedValue();
+            mFilterListModel.removeElementAt(fromInx);
+            mFilterListModel.insertElementAt(o,fromInx+1);  
+            mFilterList.setSelectedIndex(fromInx+1);
+        }
         else if (e.getSource()==mOkBtn) {
+            Object o[]=mFilterListModel.toArray();
+            FilterList.clear();
+            for (int i=0;i<o.length;i++) {
+              FilterList.add((Filter)o[i]);  
+            }
+         
+          /*
             Enumeration enum=mFilterListModel.elements();
             while (enum.hasMoreElements()) {
                 Filter filter=(Filter)enum.nextElement();
                 FilterList.add(filter);
             }
+            */
             FilterList.store();   
             FilterComponentList.store();         
             hide();
