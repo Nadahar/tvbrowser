@@ -24,30 +24,45 @@
  * $Revision$
  */
 
-package programinfo;
-
-import util.ui.UiUtilities;
-
-
-/**
+package programinfo; import util.ui.UiUtilities;
+import devplugin.*; /**
  * TV-Browser
  *
  * @author Martin Oberhauser
- */
-public class ProgramInfo extends devplugin.Plugin {
-
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(ProgramInfo.class);
+ */ public class ProgramInfo extends devplugin.Plugin {
+	
+		private static final util.ui.Localizer mLocalizer
+			= util.ui.Localizer.getLocalizerFor(ProgramInfo. class );
+		
+		public String getContextMenuItemText() {
+			return mLocalizer.msg( "contextMenuText" ,"Program information" );
+  		}
+  		
+  		public PluginInfo getInfo() {
+			String name = mLocalizer.msg( "pluginName" ,"Sendungsinfo-Betrachter" );
+			String desc = mLocalizer.msg( "description" ,"Zeigt Informationen zu einer Sendung an." );
+			String author = "Martin Oberhauser" ;
+			return new PluginInfo(name, desc, author, new Version(1, 0));
+  		} 
+  		
+  		public String getButtonText() {
+  			return null ;
+  		}
+  		
+  		public void execute(devplugin.Program[] program) {
+  			if (program!=null && program.length==1) {
+  				ProgramInfoDialog dlg= new ProgramInfoDialog(parent, program[0]);
+				dlg.pack();
+				UiUtilities.centerAndShow(dlg);
+  			}
+  		}
+  		
+  		public String getMarkIconName() {
+  			return null ;
+  		}
+  		
+  		public String getButtonIconName() {
+  			return null ;
+ 		 }
   
-
-  public void execute(devplugin.Program[] programs) {
-  	if (programs==null || programs.length!=0) {
-  		throw new IllegalArgumentException("plugin 'ProgramInfo' does not support multiple programs");
-  	}
-    ProgramInfoDialog dlg=new ProgramInfoDialog(parent, programs[0]);
-    dlg.pack();
-    UiUtilities.centerAndShow(dlg);
-  } 
-
-
-}
+} 

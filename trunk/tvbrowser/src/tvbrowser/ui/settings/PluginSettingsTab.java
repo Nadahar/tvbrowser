@@ -203,7 +203,7 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
   
   
   private void showPluginInfo(Plugin plugin) {
-    pluginInfoPanel.setPluginInfo(plugin.getName(), plugin.getAuthor(),plugin.getDescription(),plugin.getVersion());
+    pluginInfoPanel.setPluginInfo(plugin.getInfo());
   }
   
   
@@ -253,7 +253,7 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     
     
     public String toString() {
-      return mPlugin.getName();
+      return mPlugin.getInfo().getName();
     }
     
   } // inner class PluginItem
@@ -319,11 +319,11 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     
     
     
-    public void setPluginInfo(String name, String author, String description, String version) {
-      nameLabel.setText(name);
-      versionLabel.setText(version);
-      authorLabel.setText(author);
-      descriptionArea.setText(description);
+    public void setPluginInfo(devplugin.PluginInfo info) {
+      nameLabel.setText(info.getName());
+      versionLabel.setText(info.getVersion().toString());
+      authorLabel.setText(info.getAuthor());
+      descriptionArea.setText(info.getDescription());
     }
     
   } // inner class PluginInfoPanel
