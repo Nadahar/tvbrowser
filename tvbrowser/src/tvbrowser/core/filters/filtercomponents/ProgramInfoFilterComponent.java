@@ -118,7 +118,6 @@ public class ProgramInfoFilterComponent implements FilterComponent {
         	 
             panel.add(box,b);
             panel.add(label,c);
-            System.out.println(ProgramInfoHelper.mInfoMsgArr[i]);
         }
         
         return panel;
