@@ -26,6 +26,8 @@
 
 package util.ui;
 
+import java.io.File;
+
 import java.awt.*;
 
 import javax.swing.*;
@@ -44,6 +46,21 @@ public class ImageUtilities {
 
   /** The helper label. */  
   private static final JLabel HELPER_LABEL = new JLabel();
+
+  
+  
+  /**
+   * Returns the image in the specified file.
+   * <p>
+   * If the file does not exist null is returned.
+   */
+  public static Image createImage(String fileName) {
+    if (! new File(fileName).exists()) {
+      mLog.warning("File does not exist: '" + fileName + "'");
+      return null;
+    }
+    return Toolkit.getDefaultToolkit().createImage(fileName);
+  }
   
 
   
