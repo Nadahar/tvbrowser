@@ -25,6 +25,7 @@
  */
 package newsplugin;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -34,18 +35,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.awt.event.ActionEvent;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.SwingUtilities;
 
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
-import util.ui.UiUtilities;
+import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
-import devplugin.ActionMenu;
-import reminderplugin.ReminderListDialog;
 
 /**
  * A plugin that gets after each TV data update news from the TV-Browser website
