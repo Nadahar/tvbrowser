@@ -402,14 +402,6 @@ public class RawDataProcessor {
 
         switch (levelIdx) {        
           case 1:
-            // more16-00: Only the descriptions and the actor list
-            //            between 16 pm and midnight
-            if (PrimaryDataUtilities.getProgramStartTime(frame) > (16 * 60)) {
-              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
-              levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
-            }
-            break;
-          case 2:
             // more00-16: Only the descriptions and the actor list
             //            between midnight and 16 pm
             if (PrimaryDataUtilities.getProgramStartTime(frame) <= (16 * 60)) {
@@ -417,15 +409,23 @@ public class RawDataProcessor {
               levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
             }
             break;
-          case 3:
-            // image16-00: Only the image between 16 pm and midnight
+          case 2:
+            // more16-00: Only the descriptions and the actor list
+            //            between 16 pm and midnight
             if (PrimaryDataUtilities.getProgramStartTime(frame) > (16 * 60)) {
+              levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+              levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
+            }
+            break;
+          case 3:
+            // image00-16: Only the image between midnight and 16 pm
+            if (PrimaryDataUtilities.getProgramStartTime(frame) <= (16 * 60)) {
               levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
             }
             break;
           case 4:
-            // image00-16: Only the image between midnight and 16 pm
-            if (PrimaryDataUtilities.getProgramStartTime(frame) <= (16 * 60)) {
+            // image16-00: Only the image between 16 pm and midnight
+            if (PrimaryDataUtilities.getProgramStartTime(frame) > (16 * 60)) {
               levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
             }
             break;
