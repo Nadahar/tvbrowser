@@ -69,7 +69,7 @@ public class MediaProgramPanel {
 
     g2d.setFont(textFont);
     
-    int maxlines = (100 / lineheight) - 1; 
+    int maxlines = (200 / lineheight) - 1; 
 
     if (maxlines > mSplittedText.length) {
       maxlines = mSplittedText.length;
