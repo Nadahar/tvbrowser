@@ -32,6 +32,7 @@ import java.awt.event.*;
 
 import util.io.IOUtilities;
 import devplugin.Program;
+import devplugin.Date;
 
 /**
  * TV-Browser
@@ -201,26 +202,21 @@ public class ReminderList implements ActionListener {
       if (item.getReminderMinutes() < 0) {
         continue;
       }
-
+       
+      Date remindDate = item.getProgram().getDate(); 
       int m = item.getProgram().getMinutes();
       int h = item.getProgram().getHours();
       int d = item.getReminderMinutes();
-
-      int diff = today.compareTo(item.getProgram().getDate());
-
-      if (diff > 0) {
+      int remindTime = h*60+m - d;
+      if (remindTime<0) {
+        remindTime = -remindTime;
+        int days = remindTime / 1440 +1;
+        remindTime = 1440 - (remindTime % 1440);
+        remindDate = remindDate.addDays(-days);
+      }
+      
+      if (today.compareTo(remindDate) >= 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime) {
         mListener.timeEvent(item);
-      } else {
-        int currentMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
-        int remindMinutesAfterMidnight = h * 60 + m - d;
-
-        if (diff < 0) {
-          currentMinutesAfterMidnight -= 1440;
-        }
-
-        if (currentMinutesAfterMidnight >= remindMinutesAfterMidnight) {
-          mListener.timeEvent(item);
-        }
       }
     }
   }
