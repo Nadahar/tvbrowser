@@ -59,23 +59,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     public ProgramList(Vector programArr) {
         super(programArr);
         setCellRenderer(new ProgramListCellRenderer());
-        addMouseListeners();
     }    
-    
-
-    /**
-     * Creates the JList and adds the default MouseListeners (PopUpBox)
-     * 
-     * @param programArr Array of Programs to show
-     * @param mouseListener If true adds PopUp-MouseListeners
-     */
-    public ProgramList(Vector programArr, boolean mouseListener) {
-        super(programArr);
-        setCellRenderer(new ProgramListCellRenderer());
-        if (mouseListener) {
-            addMouseListeners();
-        }
-    }
     
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -85,23 +69,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     public ProgramList(Program[] programArr) {
         super(programArr);
         setCellRenderer(new ProgramListCellRenderer());
-        addMouseListeners();
     }
-
-    /**
-     * Creates the JList and if wanted adds the default MouseListeners
-     * 
-     * @param programArr Array of Programs to show
-     * @param mouseListeners If true adds PopUp-MouseListeners
-     */
-    public ProgramList(Program[] programArr, boolean mouseListeners) {
-        super(programArr);
-        setCellRenderer(new ProgramListCellRenderer());
-        if (mouseListeners) {
-            addMouseListeners();
-        }
-    }
-    
 
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -112,25 +80,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         super(programs);
         programs.addListDataListener(this);
         setCellRenderer(new ProgramListCellRenderer());
-        addMouseListeners();
     }
-
-    /**
-     * Creates the JList and if wanted adds the default MouseListeners
-     * 
-     * @param programs Model with Programs to show
-     * @param mouseListeners If true adds PopUp-MouseListeners
-     */
-    public ProgramList(ListModel programs, boolean mouseListeners) {
-        super(programs);
-        programs.addListDataListener(this);
-        setCellRenderer(new ProgramListCellRenderer());
-        if (mouseListeners) {
-            addMouseListeners();
-        }
-    }
-    
-    
     
     /**
      * Add a ChangeListener to all Programs for repainting
@@ -171,7 +121,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
     /**
      * Add a Mouse-Listener for the Popup-Box
      */
-    private void addMouseListeners() {
+    public void addMouseListeners(final Plugin caller) {
       addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           PluginManager mng = Plugin.getPluginManager();
@@ -179,7 +129,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
             int inx = locationToIndex(e.getPoint());
             setSelectedIndex(inx);
             Program prog = (Program) getModel().getElementAt(inx);
-            JPopupMenu menu = mng.createPluginContextMenu(prog);
+            JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
   
             menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
           } else if (SwingUtilities.isLeftMouseButton(e)
