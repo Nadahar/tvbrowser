@@ -198,47 +198,36 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
     boolean showEmptyColumns = mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter;
     
-      ArrayList newShownColumns = new ArrayList();
-      ArrayList newShownChannels = new ArrayList();
-      for (int i=0; i<mProgramColumn.length; i++) {
-        if (showEmptyColumns || mProgramColumn[i].size()>0) {
-          newShownColumns.add(mProgramColumn[i]);
-          newShownChannels.add(mChannelArr[i]);
+    ArrayList newShownColumns = new ArrayList();
+    ArrayList newShownChannels = new ArrayList();
+    for (int i = 0; i < mProgramColumn.length; i++) {
+      if (showEmptyColumns || mProgramColumn[i].size() > 0) {
+        newShownColumns.add(mProgramColumn[i]);
+        newShownChannels.add(mChannelArr[i]);
+      }
+    }
+    mShownProgramColumn = new ArrayList[newShownColumns.size()];
+    mShownChannelArr = new Channel[newShownChannels.size()];
+
+    newShownColumns.toArray(mShownProgramColumn);
+    newShownChannels.toArray(mShownChannelArr);
+
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        handleTimerEvent();
+
+        registerAtPrograms(mProgramColumn);
+
+        // Update the programs on air
+        updateProgramsOnAir();
+
+        fireTableDataChanged();
+
+        if (callback != null) {
+          callback.run();
         }
       }
-      mShownProgramColumn = new ArrayList[newShownColumns.size()];
-      mShownChannelArr = new Channel[newShownChannels.size()];
-    
-      newShownColumns.toArray(mShownProgramColumn);
-      newShownChannels.toArray(mShownChannelArr);
-    
-     
-    
-    SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                
-                
-                
-                handleTimerEvent();
-    
-                    registerAtPrograms(mProgramColumn);
-    
-                    // Update the programs on air
-                    updateProgramsOnAir();
-    
-                    fireTableDataChanged();
-                
-                    if (callback != null) {
-                      callback.run();
-                    }
-                
-              }
-        
-            });
-    
-    
-    
-    
+    });
   }
 
   
@@ -261,7 +250,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
 
-  public int getRowCount(int col) {
+  public synchronized int getRowCount(int col) {
     return mShownProgramColumn[col].size();   
   }
 
@@ -282,7 +271,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
  
 
-  private void deregisterFromPrograms(ArrayList[] columns) {
+  private synchronized void deregisterFromPrograms(ArrayList[] columns) {
     for (int i=0;i<columns.length;i++) {
       Iterator it=columns[i].iterator();
       while (it.hasNext()) {
@@ -294,7 +283,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
 
 
-  private void registerAtPrograms(ArrayList[] columns) {
+  private synchronized void registerAtPrograms(ArrayList[] columns) {
     for (int i=0;i<columns.length;i++) {
       Iterator it=columns[i].iterator();
       while (it.hasNext()) {
