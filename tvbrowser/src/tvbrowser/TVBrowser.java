@@ -39,6 +39,8 @@ import tvbrowser.ui.configassistant.TvdataAssistantDlg;
 import tvbrowser.ui.configassistant.TvdataImportDlg;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.splashscreen.DummySplash;
+import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -109,9 +111,12 @@ public class TVBrowser {
     
     // Read the command line parameters
     boolean startMinimized = false;
+    boolean showSplashScreen = true;
     for (int i = 0; i < args.length; i++) {
       if (args[i].equalsIgnoreCase("-minimized")) {
         startMinimized = true;
+      } else if (args[i].equalsIgnoreCase("-nosplash")) {
+        showSplashScreen = false;
       } else {
         mLog.warning("Unknown command line parameter: '" + args[i] + "'");
       }
@@ -176,10 +181,17 @@ public class TVBrowser {
       
     }
     
-    SplashScreen splash = new SplashScreen("imgs/splash.jpg", 140, 220,
-      new Color(63, 114, 133), Color.WHITE);
-    UiUtilities.centerAndShow(splash);
+    Splash splash;
     
+    if (showSplashScreen) {
+      splash = new SplashScreen("imgs/splash.jpg", 140, 220,
+         new Color(63, 114, 133), Color.WHITE);      
+    }
+    else {
+      splash = new DummySplash(); 
+    }    
+    
+    splash.showSplash();
     Settings.setTVBrowserVersion(VERSION);  
     
 	  /*Maybe there are tvdataservices to install (.jar.inst files)*/
@@ -343,7 +355,7 @@ public class TVBrowser {
     }
     ErrorHandler.setFrame(mainFrame);
     
-    splash.hide();
+    splash.hideSplash();
     
     // maximize the frame if wanted
     if (Settings.isWindowMaximized()) {

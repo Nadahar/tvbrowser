@@ -34,8 +34,9 @@ import java.awt.Image;
 import javax.swing.JWindow;
 
 import util.ui.ImageUtilities;
+import util.ui.UiUtilities;
 
-public class SplashScreen extends JWindow {
+public class SplashScreen extends JWindow implements Splash {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
@@ -73,7 +74,9 @@ public class SplashScreen extends JWindow {
     mForeground = foreground;
   }
 
-  
+  public void showSplash() {
+    UiUtilities.centerAndShow(this);
+  }
   
   public void paint(Graphics grp) {
     if (mImage != null) {
@@ -99,5 +102,10 @@ public class SplashScreen extends JWindow {
     mMessage = msg;
     repaint();
   }
+
+	
+	public void hideSplash() {
+		hide();		
+	}
 
 }
