@@ -134,10 +134,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       maxDescLines = (maxHeight - mTitleIcon.getIconHeight() - 10) / NORMAL_FONT.getSize();
     }
     mDescriptionIcon.setMaximumLineCount(maxDescLines);
-    if (program.getShortInfo().endsWith("...")) {
+    String shortInfo = program.getShortInfo();
+    if ((shortInfo == null) || shortInfo.endsWith("...")) {
       mDescriptionIcon.setText(program.getDescription());
     } else {
-      mDescriptionIcon.setText(program.getShortInfo());
+      mDescriptionIcon.setText(shortInfo);
     }
 
     mHeight = mTitleIcon.getIconHeight() + 10 + mDescriptionIcon.getIconHeight();
@@ -200,7 +201,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
     // paint the icons of the plugins that have marked the program
     int x = width - 1;
-    int y = height - 1;
+    int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight() + 18;
+    y = Math.min(y, height - 1);
     for (int i = 0; i < markedByPluginArr.length; i++) {
       Icon icon = markedByPluginArr[i].getMarkIcon();
       if (icon != null) {

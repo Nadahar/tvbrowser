@@ -65,7 +65,8 @@ public class MutableProgram implements Program {
   /** Contains all listeners that listen for events from this program. */
   private EventListenerList mListenerList;
 
-  /** Containes all Plugins that mark this program. */
+  /** Containes all Plugins that mark this program. We use a simple array,
+   * because it takes less memory. */
   private Plugin[] mMarkedByPluginArr;
 
   /** Contains whether this program is currently on air. */
