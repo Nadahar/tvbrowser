@@ -41,7 +41,6 @@ import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
@@ -83,11 +82,19 @@ public class ToolBar extends JToolBar {
     setFloatable(false);
     update();
     addMouseListener(new MouseAdapter(){
-      public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
+      
+      public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
           mContextMenu.show(e.getX(), e.getY());
         }
       }
+
+      public void mouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          mContextMenu.show(e.getX(), e.getY());
+        }
+      }  
+      
     });
   }
 

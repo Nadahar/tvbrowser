@@ -101,6 +101,14 @@ implements ProgramTableModelListener {
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
         handleMousePressed(evt);
+        if (evt.isPopupTrigger()) {
+          showPopup(evt);
+        }
+      }
+      public void mouseReleased(MouseEvent evt) {
+        if (evt.isPopupTrigger()) {
+          showPopup(evt);
+        }
       }
       public void mouseClicked(MouseEvent evt) {
         handleMouseClicked(evt);
@@ -396,6 +404,16 @@ implements ProgramTableModelListener {
     return PluginProxyManager.createPluginContextMenu(program);
   }
   
+  private void showPopup(MouseEvent evt) {
+    mMouse = evt.getPoint();
+    updateUI();
+
+    Program program = getProgramAt(evt.getX(), evt.getY());
+    if (program != null) {
+      mPopupMenu = createPluginContextMenu(program);
+      mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
+    }
+  }
   
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
@@ -409,13 +427,8 @@ implements ProgramTableModelListener {
     mMouse = evt.getPoint();
     updateUI();
     Program program = getProgramAt(evt.getX(), evt.getY());
-    if (SwingUtilities.isRightMouseButton(evt)) {
-      if (program != null) {
-        mPopupMenu = createPluginContextMenu(program);
-        mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
-      }
-    }
-    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+    
+    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       if (program != null) {
         // This is a left double click
         // -> Execute the program using the user defined default plugin

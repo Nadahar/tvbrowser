@@ -112,6 +112,18 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
 
     mInfoEP.addMouseListener(new MouseAdapter(){
+      public void mousePressed(MouseEvent evt) {
+        if (evt.isPopupTrigger()) {
+          showPopup(evt, program);
+        }
+      }
+
+      public void mouseReleased(MouseEvent evt) {
+        if (evt.isPopupTrigger()) {
+          showPopup(evt, program);
+        }
+      }      
+      
       public void mouseClicked(MouseEvent e) {
         handleMouseClicked(e, program);
       }
@@ -141,16 +153,22 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     };
     SwingUtilities.invokeLater(runnable);
   }
+
+  /**
+   * Shows the Popup
+   * @param evt MouseEvent for Popup-Location
+   * @param program Program to use for Popup
+   */
+  private void showPopup(MouseEvent evt, Program program) {
+    if (program != null) {
+      JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, ProgramInfo.getInstance());
+      menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
+    }
+  }
   
 
   private void handleMouseClicked(MouseEvent evt, Program program) {
-    if (SwingUtilities.isRightMouseButton(evt)) {
-      if (program != null) {
-        JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, ProgramInfo.getInstance());
-        menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
-      }
-    }
-    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       Plugin.getPluginManager().handleProgramDoubleClick(program);
     }
   }  

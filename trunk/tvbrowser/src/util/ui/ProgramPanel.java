@@ -518,17 +518,38 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */
   public void addPluginContextMenuMouseListener(final Plugin caller) {
     addMouseListener(new MouseAdapter() {
+      
+      public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          showPopup(e, caller);
+        }
+      }
+
+      public void mouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          showPopup(e, caller);
+        }
+      }    
+      
       public void mouseClicked(MouseEvent evt) {
-        if (SwingUtilities.isRightMouseButton(evt)) {
-          JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram, caller);
-          menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
-        } else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
           Plugin.getPluginManager().handleProgramDoubleClick(mProgram);
         }
       }
     });
   }
 
+  /**
+   * Shows the Popup
+   * @param evt Event for X/Y-Coordinates 
+   * @param caller Plugin that called this
+   */
+  private void showPopup(MouseEvent evt, Plugin caller) {
+    if (SwingUtilities.isRightMouseButton(evt)) {
+      JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram, caller);
+      menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
+    }    
+  }
 
   /**
    * Should be called, when the program has changed.
