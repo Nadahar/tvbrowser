@@ -1,5 +1,8 @@
 Changelog PrograminfoPlugin
 
+1.0.9
+- Icons from Plugins shown
+
 1.0.8:
 - Position+Size of Dialog is saved
 

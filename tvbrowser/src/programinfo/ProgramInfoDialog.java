@@ -25,20 +25,38 @@
  */
 package programinfo;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URL;
+import java.util.ArrayList;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
-
-
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
-import util.ui.*;
-
-import util.ui.html.*;
-
+import util.ui.BrowserLauncher;
+import util.ui.UiUtilities;
+import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.ExtendedHTMLEditorKit;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
@@ -208,6 +226,33 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       closePara(buffer);
     }
 
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    ArrayList icons = new ArrayList();
+    for (int i=0; i <plugins.length; i++) {
+        Icon[] ico = plugins[i].getProgramTableIcons(prog); 
+        if (ico != null && !plugins[i].getId().equals("java.programinfo.ProgramInfo")) {
+            for (int t = 0; t<ico.length;t++) {
+                JLabel iconLabel = new JLabel(ico[t]);
+                iconLabel.setToolTipText(plugins[i].getInfo().getName());
+                icons.add(iconLabel);
+            }
+        }
+    }
+    
+    if (icons.size() > 0) {
+        openPara(buffer, "info");
+        // Workaround: Without the &nbsp; the component are not put in one line.
+        buffer.append("&nbsp;");
+        
+        for (int i=0; i < icons.size(); i++) {
+            buffer.append(doc.createCompTag((JLabel)icons.get(i)));
+            buffer.append("&nbsp;");
+        }
+        
+        closePara(buffer);
+    }
+    
+    
     buffer.append("<br>\n");
     int offset = buffer.length();
 
