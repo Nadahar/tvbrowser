@@ -27,7 +27,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ import javax.swing.SpinnerDateModel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import util.ui.TabLayout;
-import util.ui.UiUtilities;
 import devplugin.SettingsTab;
 
 /**

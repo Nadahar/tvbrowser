@@ -38,12 +38,16 @@ import java.net.URLClassLoader;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.tree.MutableTreeNode;
 
 import util.exc.TvBrowserException;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.ChannelDayProgram;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.SettingsTab;
 
 
 

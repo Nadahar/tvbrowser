@@ -25,11 +25,11 @@
  */
 package tvbrowser.core.plugin;
 
-import javax.swing.Action;
-import javax.swing.tree.MutableTreeNode;
-
-import devplugin.*;
-
+import devplugin.ActionMenu;
+import devplugin.ChannelDayProgram;
+import devplugin.PluginAccess;
+import devplugin.PluginTreeNode;
+import devplugin.SettingsTab;
 
 /**
  * Encapsulates a plugin and manages the access to it.

@@ -28,12 +28,15 @@ package tvbrowser.core.plugin;
 import java.awt.Frame;
 import java.io.File;
 
-import javax.swing.Action;
 import javax.swing.Icon;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.ChannelDayProgram;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
 
 /**
  * An abstract implementation of a plugin proxy. Encapsulates all calls to the

@@ -26,25 +26,7 @@
 
 package tvbrowser.core.plugin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-
-
-
-import tvbrowser.core.Settings;
-import tvbrowser.ui.pluginview.PluginTreeModel;
-import devplugin.PluginAccess;
-
-
-
-
 
 public class PluginProgramsManager {
   
