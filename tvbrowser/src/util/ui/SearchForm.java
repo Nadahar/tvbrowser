@@ -301,6 +301,8 @@ public class SearchForm extends JPanel {
     }
 
     mCaseSensitiveChB.setSelected(settings.getCaseSensitive());
+    
+    setNrDays(settings.getNrDays());
   }
   
   
@@ -334,6 +336,8 @@ public class SearchForm extends JPanel {
     settings.setMatch(match);
 
     settings.setCaseSensitive(mCaseSensitiveChB.isSelected());
+    
+    settings.setNrDays(getNrDays());
     
     return settings;
   }

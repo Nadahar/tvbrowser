@@ -60,6 +60,7 @@ public class SearchFormSettings {
   private ProgramFieldType[] mUserDefinedFieldTypes;
   private int mMatch;
   private boolean mCaseSensitive;
+  private int mNrDays;
 
 
   /**
@@ -72,6 +73,7 @@ public class SearchFormSettings {
     mSearchIn = SEARCH_IN_TITLE;
     mMatch = MATCH_KEYWORD;
     mCaseSensitive = false;
+    mNrDays=14;
   }
 
 
@@ -86,7 +88,7 @@ public class SearchFormSettings {
   public SearchFormSettings(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
-    in.readInt(); // version
+    int version = in.readInt(); // version
     
     mSearchText = (String) in.readObject();
     mSearchIn = in.readInt();
@@ -103,6 +105,10 @@ public class SearchFormSettings {
     } else {
       mUserDefinedFieldTypes = null;
     }
+    
+    if (version == 2) {
+        mNrDays = in.readInt();
+    }
   }
 
 
@@ -114,7 +120,7 @@ public class SearchFormSettings {
    * @see #SearchFormSettings(ObjectInputStream)
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
 
     out.writeObject(mSearchText);
     out.writeInt(mSearchIn);
@@ -129,6 +135,8 @@ public class SearchFormSettings {
     } else {
       out.writeInt(0); // No field types
     }
+    
+    out.writeInt(mNrDays);
   }
 
 
@@ -298,4 +306,19 @@ public class SearchFormSettings {
     mCaseSensitive = caseSensitive;
   }
 
+  /**
+   * Gets the Nr of Days
+   * @return Nr of Days to search 
+   */
+  public int getNrDays() {
+      return mNrDays;
+  }
+  
+  /**
+   * Sets the Nr of Days
+   * @param nr
+   */
+  public void setNrDays(int nr) {
+      mNrDays = nr;
+  }
 }
