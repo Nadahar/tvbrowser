@@ -21,6 +21,7 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer {
 
     public GenreComboBox(int curRating) {
         TreeSet tree = new TreeSet(RatingIconTextFactory.getGenres().keySet());
+        
         DefaultComboBoxModel model = new DefaultComboBoxModel(tree.toArray());
 	    setModel(model);
 
@@ -66,9 +67,9 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer {
         	if (value.toString().startsWith("0")) {
             	label.setBackground(Color.WHITE);
         	} else if (value.toString().startsWith("1")) {
-            	label.setBackground(Color.GREEN);
+            	label.setBackground(new Color(239, 238, 244));
         	} else if (value.toString().equals("999")) {
-            	label.setBackground(Color.YELLOW);
+            	label.setBackground(new Color(202, 203, 222));
         	}
             label.setForeground(Color.BLACK);
         }        
