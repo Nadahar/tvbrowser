@@ -325,7 +325,6 @@ public class ChannelList {
     public ChannelItem(Channel ch, String iconUrl) {
       mChannel = ch;
       mIconUrl = iconUrl;
-      //mChannel.setIcon(getIcon());
     }
     
     public Channel getChannel() {
@@ -335,10 +334,6 @@ public class ChannelList {
     public String getIconUrl() {
       return mIconUrl;
     }
-    
-  /*  public Icon getIcon() {
-      // TODO: implement me!
-      return null;
-    }*/
+
   }
 }
