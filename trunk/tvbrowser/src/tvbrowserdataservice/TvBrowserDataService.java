@@ -90,7 +90,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private ProgressMonitor mProgressMonitor;
   private int mTotalDownloadJobCount;
   
-  
+  public Version getAPIVersion() {
+    return new Version(1,0); 
+  }
   
   public TvBrowserDataService() {
     mSettings = new Properties();

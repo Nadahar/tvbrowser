@@ -37,6 +37,38 @@ public class EntryReader {
     mReader=reader;    
   }
   
+  private void replace(StringBuffer buf, String s, char c) {
+       int inx;
+       inx=buf.indexOf(s);
+       while (inx>=0) {
+         buf.replace(inx,inx+s.length(),""+c);
+         inx=buf.indexOf(s);
+       }    
+     }
+  
+   
+  
+  private String convertString(String s) {
+    
+       StringBuffer buf=new StringBuffer(s);
+    
+       replace(buf,"&nbsp;",' ');
+       replace(buf,"&#196;",'\u00c4');
+       replace(buf,"&#214;",'\u00d6');
+       replace(buf,"&#220;",'\u00dc');
+       replace(buf,"&#228;",'\u00e4');
+       replace(buf,"&#246;",'\u00f6');
+       replace(buf,"&#252;",'\u00fc');
+       replace(buf,"&#223;",'\u00df'); 
+       replace(buf,"&quot;",'\"');  
+       replace(buf,"&#8222;",'\"');
+       replace(buf,"&#8220;",'\"');
+       replace(buf,"&amp;",'&');
+     
+    
+       return buf.toString();
+     }
+  
   public Entry next() throws IOException {
     
     int style;
@@ -50,7 +82,7 @@ public class EntryReader {
     }    
     line=mReader.readLine();  
     if (line==null) return null;
-    return new Entry(style,line);   
+    return new Entry(style,convertString(line));   
     
   }
   

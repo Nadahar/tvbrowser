@@ -340,30 +340,8 @@ public class ProgramTable extends JPanel
    *
    * @return a plugin context menu.
    */
-  private JPopupMenu createPluginContextMenu(final Program program) {
-  
-  	return tvbrowser.core.DataService.getInstance().createPluginContextMenu(program, null);
-  /*
-    JPopupMenu menu = new JPopupMenu();
-	Plugin[] pluginArr = PluginManager.getInstalledPlugins();
-    for (int i = 0; i < pluginArr.length; i++) {
-      final devplugin.Plugin plugin = pluginArr[i];
-      if (!plugin.equals(caller)) {
-      	String text = plugin.getContextMenuItemText();
-      	if (text != null) {
-          JMenuItem item = new JMenuItem(text);
-          item.setIcon(plugin.getMarkIcon());
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-              plugin.execute(program);
-          	}
-          });
-          menu.add(item);
-      	}
-      }
-    }
-	return menu;
-	*/
+  private JPopupMenu createPluginContextMenu(final Program program) {  
+  	return tvbrowser.core.DataService.getInstance().createPluginContextMenu(program, null); 
   }
 
   

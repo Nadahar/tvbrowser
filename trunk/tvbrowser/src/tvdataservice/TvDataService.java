@@ -78,7 +78,11 @@ public interface TvDataService {
    */
   public PluginInfo getInfo();
   
-  
+  /**
+   * Gets the Version of the implemented API
+   * Since TV-Browser 0.9.7 getAPIVersion must return 1.0 
+   */
+  public devplugin.Version getAPIVersion();
  
 
 }

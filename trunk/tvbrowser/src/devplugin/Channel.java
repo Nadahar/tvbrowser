@@ -164,7 +164,7 @@ public class Channel {
 
   
   public String getCopyrightNotice() {
-    return mCopyrightNotice;
+    return mCopyrightNotice!=null?mCopyrightNotice:"";
   }
   
   public String getWebpage() {

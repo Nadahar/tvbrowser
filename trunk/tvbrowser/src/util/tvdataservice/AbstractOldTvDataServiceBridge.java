@@ -64,6 +64,9 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
    */
   private HashSet mAlreadyDownloadedFiles;
 
+  public devplugin.Version getAPIVersion() {
+    return new Version(1,0);
+  }
 
 
   /**

@@ -830,6 +830,11 @@ public class PrimaryDataManager {
     throws PreparationException
   {
     Class clazz;
+    
+    if (className.startsWith(".")) {
+      className="primarydatamanager.primarydataservice"+className;
+    }
+    
     try {
       clazz = Class.forName(className);
     }
