@@ -92,27 +92,6 @@ public class ClipboardDialog extends JDialog {
 
     mProgramJList = new ProgramList(mClipList);
 
-    mProgramJList.addMouseListener(new MouseAdapter() {
-
-      public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
-          int inx = mProgramJList.locationToIndex(e.getPoint());
-          if (inx == -1) { return; }
-          Program p = (Program) mProgramJList.getModel().getElementAt(inx);
-          mProgramJList.setSelectedIndex(inx);
-          JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p);
-          menu.show(mProgramJList, e.getX() - 15, e.getY() - 15);
-        } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-          int inx = mProgramJList.locationToIndex(e.getPoint());
-
-          if (inx == -1) { return; }
-          Program p = (Program) mProgramJList.getModel().getElementAt(inx);
-
-          devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p);
-        }
-      }
-    });
-
     JScrollPane scroll = new JScrollPane(mProgramJList);
 
     content.add(scroll, BorderLayout.CENTER);
