@@ -87,6 +87,14 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   public void setFilterButtonSelected(boolean arg) {
     mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, new Boolean(arg));
+    
+    if (arg) {
+      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/FilterSet16.png"));
+      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/FilterSet24.png"));      
+    } else {
+      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/Filter16.png"));
+      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Filter24.png"));
+    }
   }
 
   private void createAvailableActions() {
