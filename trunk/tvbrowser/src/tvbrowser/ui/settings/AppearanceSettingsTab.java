@@ -163,7 +163,10 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
       public void actionPerformed(ActionEvent event) {
         JFileChooser fileChooser=new JFileChooser();
         fileChooser.showOpenDialog(parent);
-        skinTableBGTextField.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        File selection = fileChooser.getSelectedFile();
+        if (selection != null) {
+          skinTableBGTextField.setText(selection.getAbsolutePath());
+        }
       }
     }
     );
