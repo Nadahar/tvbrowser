@@ -228,9 +228,6 @@ public class ReminderList implements ActionListener {
               currentMinutesAfterMidnight-=1440;
             }
         
-            System.out.println("current minutes after midnight: "+currentMinutesAfterMidnight);
-            System.out.println("remind me at: "+remindMinutesAfterMidnight);
-        
             if (currentMinutesAfterMidnight>=remindMinutesAfterMidnight) {
               listener.timeEvent(item);
             }
