@@ -26,14 +26,10 @@
 
 package searchplugin;
 
-import java.net.URL;
 
 import java.awt.Component;
-import java.awt.Image;
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.Toolkit;
-
 import java.awt.event.*;
 
 import javax.swing.*;

@@ -27,8 +27,6 @@
 package searchplugin;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
 
 /**
  * A layout similar to the {@link java.awt.GridLayout}, whose column widths and

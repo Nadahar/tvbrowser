@@ -34,7 +34,6 @@
 package devplugin;
 
 import java.util.Properties;
-import java.io.FileInputStream;
 import javax.swing.Timer;
 import java.util.jar.*;
 import javax.swing.Icon;

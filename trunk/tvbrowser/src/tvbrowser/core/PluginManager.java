@@ -38,9 +38,7 @@ import devplugin.Plugin;
 import java.io.*;
 import java.util.Properties;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import tvbrowser.core.*;
 
 /**
  * The PluginManager is a Class for communicating with installed plugins.

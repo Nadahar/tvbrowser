@@ -33,7 +33,7 @@
 
 package tvbrowser.ui;
 
-import javax.swing.JFrame;
+
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;

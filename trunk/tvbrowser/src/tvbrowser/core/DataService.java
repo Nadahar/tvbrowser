@@ -27,7 +27,6 @@
 package tvbrowser.core;
 
 import java.io.*;
-import java.util.Properties;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.net.URL;

@@ -36,7 +36,6 @@ import devplugin.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Properties;
 
 public class ReminderFrame extends JFrame {
 

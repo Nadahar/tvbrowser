@@ -33,10 +33,8 @@
 package programinfo;
 
 import javax.swing.*;
-import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Calendar;
 
 public class ProgramInfoDialog extends JDialog {
 

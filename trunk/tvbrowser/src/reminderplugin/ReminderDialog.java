@@ -32,7 +32,6 @@
 
 package reminderplugin;
 
-import devplugin.*;
 
 import javax.swing.*;
 import java.awt.*;

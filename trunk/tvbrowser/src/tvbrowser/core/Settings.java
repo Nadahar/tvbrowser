@@ -35,7 +35,6 @@ package tvbrowser.core;
 import java.util.*;
 import java.io.*;
 import javax.swing.*;
-import java.awt.Color;
 
 
 /**
