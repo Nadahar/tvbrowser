@@ -1,7 +1,6 @@
 TODOs:
 
 - (B) Senderlisten direkt vom Server holen (Bodo, fast fertig)
-- (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail) (Bodo, fast fertig)
 - Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
 - (M) Logos zu allen Sendern
 - Anpassbarkeit der GUI (wo welches Element ist) - nicht so wichtig
@@ -54,3 +53,4 @@ Erledigt:
 - (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
 - (B) Default-Icon fur Sender, die kein Icon haben
 - (B) Hilfe - Einrichtungsassistent geht nicht
+- (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail) (Bodo, fast fertig)
