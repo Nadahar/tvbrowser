@@ -1,5 +1,8 @@
 Changelog TVRaterPlugin
 
+0.62
+- Added Popup in Overview
+
 0.61
 - Remove Xalan, it's not present in Java 1.5
 

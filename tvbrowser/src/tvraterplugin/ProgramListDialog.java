@@ -7,6 +7,7 @@
 package tvraterplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -43,6 +44,21 @@ public class ProgramListDialog extends JDialog {
      * @param title Titel of Program
      */
     public ProgramListDialog(Frame parent, String title) {
+        super(parent, true);
+        setTitle(mLocalizer.msg("ListDialogTitle", "Programs with \"{0}\"", title));
+
+        _title = title;
+
+        generateList();
+        createGUI();
+    }
+
+    /**
+     * Creates the Dialog
+     * @param parent ParentFrame
+     * @param title Titel of Program
+     */
+    public ProgramListDialog(Dialog parent, String title) {
         super(parent, true);
         setTitle(mLocalizer.msg("ListDialogTitle", "Programs with \"{0}\"", title));
 

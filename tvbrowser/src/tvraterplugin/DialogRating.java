@@ -40,11 +40,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 
-import util.ui.BrowserLauncher;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.TabLayout;
-import util.ui.UiUtilities;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -220,34 +217,23 @@ public class DialogRating extends JDialog {
         c.gridwidth = 1;
 
         JPanel leftbuttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        JButton showListButton = new JButton(ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/listview16.gif", getClass()));
-        showListButton.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                showList();
-            }
-        });
+        
+        JButton showListButton = new JButton(new ListAction(this, _title, true, false));
 
         leftbuttonPanel.add(showListButton);
 
-        JButton detailsButtons = new JButton(ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/details16.gif", getClass()));
-        detailsButtons.addActionListener(new java.awt.event.ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                int id = 0;
-                
-                if (_overallrating != null) {
-                    id = _overallrating.getIntValue(Rating.ID);
-                }
-                
-                if ((_personalrating != null) && (id <= 0)){
-                    id = _personalrating.getIntValue(Rating.ID);
-                }
-                
-                BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?showId=" + id);
-            }
-        });
+        int id = 0;
+        
+        if (_overallrating != null) {
+            id = _overallrating.getIntValue(Rating.ID);
+        }
+        
+        if ((_personalrating != null) && (id <= 0)){
+            id = _personalrating.getIntValue(Rating.ID);
+        }
+
+        JButton detailsButtons = new JButton(new ShowDetailsAction(id, true, false));
 
         if ((_overallrating == null) || ( _overallrating.getIntValue(Rating.ID) < 0)) {
             detailsButtons.setEnabled(false);
@@ -267,32 +253,6 @@ public class DialogRating extends JDialog {
         getRootPane().setDefaultButton(cancel);
 
         pack();
-    }
-
-    /**
-     * Shows the List with Programs
-     */
-    private void showList() {
-
-        ProgramListDialog dialog = new ProgramListDialog(_parent, _title);
-        
-        if (_dimensionDialog == null) {
-            _dimensionDialog = dialog.getSize();
-            if (_dimensionDialog.width < 300) {
-                _dimensionDialog.width = 300;
-            } else if (_dimensionDialog.width > 500) {
-                _dimensionDialog.width = 500;
-            }
-            if (_dimensionDialog.height > 300) {
-                _dimensionDialog.height = 300;
-            }
-            dialog.setSize(_dimensionDialog);
-        } else {
-            dialog.setSize(_dimensionDialog);
-        }
-        
-        UiUtilities.centerAndShow(dialog);
-
     }
 
     /**

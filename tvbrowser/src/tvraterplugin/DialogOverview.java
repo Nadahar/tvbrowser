@@ -37,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
@@ -105,6 +106,8 @@ public class DialogOverview extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
                     view();
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    showPopUpMen(e);
                 }
                 super.mouseClicked(e);
             }
@@ -122,6 +125,8 @@ public class DialogOverview extends JDialog {
             public void mouseClicked(MouseEvent e) {
                 if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
                     view();
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
+                    showPopUpMen(e);
                 }
                 super.mouseClicked(e);
             }
@@ -192,6 +197,31 @@ public class DialogOverview extends JDialog {
         getRootPane().setDefaultButton(close);
 
         panel.add(buttonpanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Shows the PopUp
+     * @param e MouseEvent
+     */
+    protected void showPopUpMen(MouseEvent e) {
+        if (!(e.getSource() instanceof JList)) {
+            return;
+        }
+        
+        JList list = (JList) e.getSource();
+        
+        int i = list.locationToIndex(e.getPoint());
+        list.setSelectedIndex(i);
+        
+        JPopupMenu menu = new JPopupMenu();
+        
+        Rating selRating = (Rating) list.getSelectedValue();
+        
+        menu.add(new ListAction(this, selRating.getTitle()));
+        menu.add(new ShowDetailsAction(selRating.getIntValue(Rating.ID)));
+        
+        menu.show(list, e.getX(), e.getY());
+        
     }
 
     /**
