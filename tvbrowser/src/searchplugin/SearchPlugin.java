@@ -69,11 +69,13 @@ public class SearchPlugin extends Plugin {
   /**
    * Returns the name of the file, containing your plugin icon (in the jar-File).
    */
-  public String getMarkIcon() {
+  public String getMarkIconName() {
     return null;
   }
 
-  
+  public String getButtonIconName() {
+  	return "searchplugin/Find16.gif";
+  }
   
   public String getButtonText() {
     return mLocalizer.msg("searchPrograms", "Search programs");

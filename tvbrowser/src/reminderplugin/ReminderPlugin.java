@@ -179,8 +179,12 @@ util.io.Profiler.getDefault().show("3.3");
     dlg.dispose();
   }
 
-  public String getMarkIcon() {
+  public String getMarkIconName() {
     return "reminderplugin/TipOfTheDay16.gif";
+  }
+  
+  public String getButtonIconName() {
+  	return "reminderplugin/TipOfTheDay16.gif";
   }
 
 }

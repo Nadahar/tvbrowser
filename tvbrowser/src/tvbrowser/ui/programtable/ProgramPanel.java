@@ -118,7 +118,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       int y = height - 16;
       while (pluginIter.hasNext()) {
         Plugin plugin = (Plugin) pluginIter.next();
-        Icon icon = plugin.getIcon();
+        Icon icon = plugin.getMarkIcon();
         if (icon != null) {
           icon.paintIcon(this, g, x, y);
           x -= 16;

@@ -63,9 +63,14 @@ public class ProgramInfo extends devplugin.Plugin {
     UiUtilities.centerAndShow(dlg);
   }
 
-  public String getMarkIcon() {
+  public String getMarkIconName() {
     return null;
   }
+  
+  public String getButtonIconName() {
+  	return null;
+  }
+  
 
 
 }
