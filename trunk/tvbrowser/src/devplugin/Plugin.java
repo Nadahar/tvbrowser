@@ -599,7 +599,7 @@ abstract public class Plugin {
    * @deprecated Since 1.1. Use {@link #getButtonAction()} instead.
    */
   protected String getButtonText() {
-    return mLocalizer.msg( "newPlugin" ,"New plugin" );
+    return null;
   }
   
 
