@@ -60,9 +60,6 @@ public class ImdbSearchPlugin extends devplugin.Plugin {
   		
   		public void execute(Program program) {
   			String search = program.getTitle();
-  			if (search.indexOf('-') > -1) {
-				search = search.substring(0, search.indexOf('-'));
-  			}
   			search = search.trim().replace(' ', '+');
   			
   			try {
