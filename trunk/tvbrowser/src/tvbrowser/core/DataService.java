@@ -206,9 +206,7 @@ public class DataService implements devplugin.PluginManager {
 
     mIsDownloading = false;
     
-    
-      DataLoaderManager.getInstance().disconnect();
-   
+    DataLoaderManager.getInstance().disconnect();
     
     if (downloadException != null) {
       String msg = mLocalizer.msg("error.7", "Couldn't download the whole program!");
@@ -543,6 +541,9 @@ public class DataService implements devplugin.PluginManager {
         try { in.close(); } catch (IOException exc) {}
       }
     }
+
+    // Let the plugins react on the new data
+    PluginManager.fireTvDataChanged();
   }
   
   
