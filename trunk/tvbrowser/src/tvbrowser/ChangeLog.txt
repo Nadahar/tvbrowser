@@ -18,6 +18,7 @@ Changelog TVBrowser
     - one image
     - time blocks
     - time of day
+- Better settings management
 
 0.9.7.3:
 - added downnload status info
