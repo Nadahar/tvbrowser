@@ -239,6 +239,7 @@ public class NewsDialog {
         String text = news.getText();
         text = IOUtilities.replace(text, "&lt;", "<");
         text = IOUtilities.replace(text, "&gt;", ">");
+        text = IOUtilities.replace(text, "/>", ">"); // JEditorPane knows no XHTML
         buf.append("<tr><td class=\"text\">" + text + "</td></tr>");
 
         buf.append("<tr><td class=\"author\">" + news.getAuthor() + "</td></tr>");
