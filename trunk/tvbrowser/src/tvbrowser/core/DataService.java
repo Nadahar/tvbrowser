@@ -41,6 +41,7 @@ import javax.swing.JProgressBar;
 
 import util.exc.*;
 import util.io.IOUtilities;
+import java.awt.Font;
 
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -56,6 +57,10 @@ import tvdataservice.MutableChannelDayProgram;
  * @author Martin Oberhauser
  */
 public class DataService implements devplugin.PluginManager {
+
+	private static Font PLAINFONT=new Font("Dialog",Font.PLAIN,12);
+	private static Font BOLDFONT=new Font("Dialog",Font.BOLD,12);
+	
 
   /** The logger for this class. */
   private static java.util.logging.Logger mLog
@@ -775,6 +780,7 @@ public static void deleteExpiredFiles(int lifespan) {
    * @return a plugin context menu.
    */
   public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller) {
+	Font font=BOLDFONT;
 	javax.swing.JPopupMenu menu = new javax.swing.JPopupMenu();
 	devplugin.Plugin[] pluginArr = PluginManager.getInstalledPlugins();
 	for (int i = 0; i < pluginArr.length; i++) {
@@ -783,6 +789,8 @@ public static void deleteExpiredFiles(int lifespan) {
 		String text = plugin.getContextMenuItemText();
 		if (text != null) {
 		  javax.swing.JMenuItem item = new javax.swing.JMenuItem(text);
+		  item.setFont(font);
+		  font=PLAINFONT;
 		  item.setIcon(plugin.getMarkIcon());
 		  item.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent event) {

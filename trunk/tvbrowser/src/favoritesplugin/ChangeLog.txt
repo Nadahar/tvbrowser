@@ -1,8 +1,12 @@
 Changelog FavoritesPlugin
 
-current (1.0.2): requires TVBrowser 0.93
+current (1.0.3): requires TVBrowser 0.93
 - Manage favorites dialog shows marked programs
 - Manage favorites dialog allows changing the order of favorites
+- context menu to other plugins added
+
+1.0.2:
+- 
 
 1.0.1:
 - no Serializable Classes any more
