@@ -105,7 +105,6 @@ public class TvDataSearcher {
    *        If not, the results will be grouped by date and channel and the
    *        search will be faster.
    * @return The matching programs.
-   * @throws TvBrowserException
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    */
   public Program[] search(String regex, boolean caseSensitive,
@@ -118,21 +117,8 @@ public class TvDataSearcher {
       channels = Settings.propSubscribedChannels.getChannelArray(false);
     }
     
-    // Get the flags for the regex
-    int flags = Pattern.DOTALL;
-    if (! caseSensitive) {
-      flags |= Pattern.CASE_INSENSITIVE;
-    }
-
-    // Compile the regular expression
-    Pattern pattern;
-    try {
-      pattern = Pattern.compile(regex, flags);
-    }
-    catch (PatternSyntaxException exc) {
-      throw new TvBrowserException(getClass(), "error.1",
-        "Syntax error in the regualar expression of the search pattern!", exc);
-    }
+    // Create the regex pattern
+    Pattern pattern = createSearchPattern(regex, caseSensitive);
 
     if (nrDays < 0) {
       // Search in the past
@@ -183,6 +169,37 @@ public class TvDataSearcher {
 
     // return the result
     return hitArr;
+  }
+
+
+  /**
+   * Creates a pattern for a regular expression.
+   * 
+   * @param regex The regular expression
+   * @param caseSensitive Should the search be case sensitive?
+   * @return The pattern
+   * @throws TvBrowserException If there is a syntax error in the regular expression.
+   */
+  public Pattern createSearchPattern(String regex, boolean caseSensitive)
+    throws TvBrowserException
+  {
+    // Get the flags for the regex
+    int flags = Pattern.DOTALL;
+    if (! caseSensitive) {
+      flags |= Pattern.CASE_INSENSITIVE;
+    }
+
+    // Compile the regular expression
+    Pattern pattern;
+    try {
+      pattern = Pattern.compile(regex, flags);
+    }
+    catch (PatternSyntaxException exc) {
+      throw new TvBrowserException(getClass(), "error.1",
+        "Syntax error in the regualar expression of the search pattern!", exc);
+    }
+    
+    return pattern;
   }
 
 
