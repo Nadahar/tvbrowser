@@ -41,7 +41,7 @@ import util.ui.ImageUtilities;
 public class Channel {
 
   public static final int CATEGORY_NONE = 0;
-  public static final int CATEGORY_PRIVATE = 1;
+  public static final int CATEGORY_RADIO = 1;
   public static final int CATEGORY_PUBLIC = 1 << 1;
   public static final int CATEGORY_DIGITAL = 1 << 2;
   public static final int CATEGORY_SPECIAL_MUSIC = 1 << 3;
