@@ -155,9 +155,4 @@ public class MediaCenterFrame extends Canvas {
     }
   }
 
-  public static void main(String[] args) {
-    MediaCenterFrame center = new MediaCenterFrame(600, 400, false);
-    System.exit(0);
-  }
-
 }

@@ -39,7 +39,8 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import util.ui.TextAreaIcon;
+import devplugin.Plugin;
+import devplugin.Program;
 
 /**
  * @author bodum
@@ -55,41 +56,47 @@ public class MediaPanel {
   private boolean mStopLoop = false;
 
   private boolean mRepaint = false;
-  
+
   private int mWidth, mHeight;
-  
+
   private Image background;
   
+  private MediaProgramPanel mProgramPanel;
+  
+
   public MediaPanel(MediaCenterFrame parent, int width, int height, BufferStrategy strategy) {
     mParent = parent;
     mStrategy = strategy;
-    
+
     mWidth = width;
     mHeight = height;
-    
+
     background = createBackgroundImage();
+    
+    mProgramPanel = new MediaProgramPanel();
   }
 
   private Image createBackgroundImage() {
     Image image;
-    
+
     try {
       URL url = this.getClass().getClassLoader().getResource("mediacenterplugin/images/default_blue.jpg");
 
       Image sourceImage = ImageIO.read(url);
 
-      GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-      image = gc.createCompatibleImage(mWidth,mHeight,Transparency.OPAQUE);
+      GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+          .getDefaultConfiguration();
+      image = gc.createCompatibleImage(mWidth, mHeight, Transparency.OPAQUE);
 
       Graphics2D g2d = (Graphics2D) image.getGraphics();
-      
-      g2d.drawImage(sourceImage.getScaledInstance(mWidth, mHeight, Image.SCALE_SMOOTH),0,0,mWidth, mHeight, null);
+
+      g2d.drawImage(sourceImage.getScaledInstance(mWidth, mHeight, Image.SCALE_SMOOTH), 0, 0, mWidth, mHeight, null);
 
       g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-      
+
       g2d.setColor(new Color(180, 180, 180, 100));
-      g2d.fillRoundRect(50, 10, mWidth-100, 100, 10, 10);
-      
+      g2d.fillRoundRect(50, 10, mWidth - 100, 100, 10, 10);
+
     } catch (Exception e) {
       e.printStackTrace();
       image = new BufferedImage(0, 0, BufferedImage.TYPE_INT_RGB);
@@ -97,27 +104,28 @@ public class MediaPanel {
 
     return image;
   }
-  
+
   public void startLoop() {
     Color box = new Color(180, 180, 180, 100);
     Font textFont = new Font("SansSerif", Font.BOLD, 14);
 
     while (!mStopLoop) {
+      
+      synchronized (this) {
       Graphics2D g2d = (Graphics2D) mStrategy.getDrawGraphics();
       g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-      g2d.drawImage(background, 0,0, null);
+      g2d.drawImage(background, 0, 0, null);
 
-      DrawToolBox.drawFontWithShadow(g2d, "Hello2 : " + mCount, 100, 40, 1, textFont);
+      Program prg = Plugin.getPluginManager().getExampleProgram();
 
-      TextAreaIcon icon = new TextAreaIcon(textFont, 200);     
-      icon.setText("This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing This is very very long Text without any meaing ");
-      icon.setMaximumLineCount(3);
-      icon.paintIcon(mParent, g2d, 40, 200);
+      drawProgram(g2d, prg, textFont);
       
       // finally, we've completed drawing so clear up the graphics
       // and flip the buffer over
       g2d.dispose();
+      }
+
       mStrategy.show();
       mRepaint = false;
 
@@ -128,23 +136,34 @@ public class MediaPanel {
       } catch (Exception e) {
       }
     }
-    
+
     mParent.setVisible(false);
   }
 
-
-  public void doPaint() {
-    mRepaint = true;
+  private void drawProgram(Graphics2D g2d, Program prg, Font textFont) {
+    mProgramPanel.setProgram(prg, textFont, 480);
+    mProgramPanel.paintPanel(g2d, textFont, 60, 10);
   }
   
-  public void nextDay() {
-    mCount++;
+  public synchronized void doPaint() {
+    mRepaint = true;
+  }
+
+  public synchronized void nextLineInDescription() {
+    mProgramPanel.nextLine();
     doPaint();
   }
 
-  public void lastDay() {
-    mCount--;
+  public synchronized void lastLineInDescription() {
+    mProgramPanel.lastLine();
     doPaint();
+  }
+  
+  
+  public synchronized void nextDay() {
+  }
+
+  public synchronized void lastDay() {
   }
 
   public void close() {
