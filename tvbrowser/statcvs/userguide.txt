@@ -1,0 +1,89 @@
+StatCvs v0.1.3 Users Guide
+===========================
+
+Prerequisities
+--------------
+* JRE 1.4
+
+
+Installation
+------------
+* Download latest release from http://statcvs.sf.net.
+* Expand statcvs.zip into some directory.
+* Check out the desired CVS repository into some directory, e.g. c:\myproject.
+* Change into that directory and type 'cvs log > cvslog'.
+
+
+Usage
+-----
+StatCvs requires three parameters in order to start its analysis: 
+
+1. a project name,
+2. a CVS logfile,
+3. the checked out version according to that logfile.
+
+Just call StatCvs with that three parameters, e.g.
+
+   java -jar statcvs.jar MyProject c:\myproject\cvslog c:\myproject
+   
+will generate the HTML Suite for MyProject into the current directory. 
+
+For additional command line options, call:
+
+   java -jar statcvs.jar
+
+
+Ant Task
+--------
+StatCvs comes with an Ant task for the Apache Ant build tool. An example
+build file follows:
+
+<?xml version="1.0"?>
+<project name="StatCvsAnt" default="main" basedir=".">
+  <taskdef name="statcvs" classname="net.sf.statcvs.ant.StatCvsTask"/>
+
+  <target name="main">
+    <statcvs 
+        projectName="StatCvs"
+        projectDirectory="d:/statcvs"
+        cvsLogFile="d:/statcvs/cvs.log"
+        outputDirectory="d:/statcvs/stas"
+        cssFile="http://statcvs.sf.net/stats/statcvs.css"
+        showCredits="yes"/>
+  </target>
+</project>
+
+The attributes projectName, projectDirectory and cvsLogFile are required. The
+other attributes are optional.
+
+
+The statcvs.jar file must be on the classpath.
+
+
+Limitations
+-----------
+* StatCvs analyzes only the default branch of a repository. Analyzing side
+  branches is currently not supported.
+
+* Lines of Code counts will be inaccurate for deleted or moved files.
+  StatCvs will try to calculate a minimum line count for files that
+  are no longer present in the repository. This number can be much
+  smaller than the actual lines of code in the deleted file.
+
+  We can't do much about this right now. StatCvs would need access
+  to the cvs server to get accurate numbers.
+
+* If you update your checked out repository using the "prune empty
+  directories" switch of CVS ("cvs update -P"), files in deleted
+  directories will not be visible to StatCvs.
+
+* Logfiles created with the -d option (specify date range) will not
+  work as expected. Currently, there is no way to limit StatCvs output
+  to a date range.
+
+
+Further Information
+-------------------
+For further information, source code, bug reporting, feature requests,
+and joining the StatCvs development team, visit our sourceforge project
+home page at http://statcvs.sf.net/.
