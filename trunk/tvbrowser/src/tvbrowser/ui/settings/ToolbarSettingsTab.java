@@ -77,7 +77,7 @@ public class ToolbarSettingsTab implements devplugin.SettingsTab {
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-    mShowToolbarCb = new JCheckBox("Show toolbar");
+    mShowToolbarCb = new JCheckBox(mLocalizer.msg("showToolbar","Show toolbar"));
     JPanel cbPanel = new JPanel(new BorderLayout());
     cbPanel.add(mShowToolbarCb);
     content.add(cbPanel);
