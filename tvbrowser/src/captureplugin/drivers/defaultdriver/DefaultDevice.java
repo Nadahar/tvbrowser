@@ -287,7 +287,7 @@ public class DefaultDevice implements DeviceIf {
     /* (non-Javadoc)
      * @see captureplugin.drivers.DeviceIf#getAdditionalCommands(devplugin.Program)
      */
-    public String[] getAdditionalCommands(Program program) {
+    public String[] getAdditionalCommands() {
         
         String[] values = new String[mConfig.getParamList().size()];
         

@@ -24,16 +24,30 @@
  */
 package captureplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 
 import util.ui.Localizer;
+import util.ui.ProgramList;
 import captureplugin.drivers.DeviceIf;
 import devplugin.Program;
 
@@ -41,7 +55,7 @@ import devplugin.Program;
 /**
  * A selector for the Action in the Devices
  */
-public class DeviceSelector extends JPopupMenu {
+public class DeviceSelector extends JDialog {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceSelector.class);
  
@@ -50,9 +64,16 @@ public class DeviceSelector extends JPopupMenu {
     /** List of Devices */
     private DeviceIf[] mDevices;
     /** Program */
-    private Program mProgram;
+    private Program[] mProgram;
+    
+    private ProgramList mProgramList;
+    
     /** Return-Value */
     private int mReturn = JOptionPane.CANCEL_OPTION;
+    
+    private JComboBox mDeviceSelector;
+    
+    private JComboBox mFunction;
     
     /**
      * Creates the Selector
@@ -60,7 +81,8 @@ public class DeviceSelector extends JPopupMenu {
      * @param devices Devices to select from
      * @param prg Program to use
      */
-    public DeviceSelector(Window parent, DeviceIf[] devices, Program prg) {
+    public DeviceSelector(JFrame parent, DeviceIf[] devices, Program[] prg) {
+        super((JFrame) parent);
         mParent = parent;
         mDevices = devices;
         mProgram = prg;
@@ -68,84 +90,230 @@ public class DeviceSelector extends JPopupMenu {
     }
 
     /**
+     * Creates the Selector
+     * @param frame Parent-Frame
+     * @param devices Devices to select from
+     * @param prg Program to use
+     */
+    public DeviceSelector(JDialog parent, DeviceIf[] devices, Program[] prg) {
+        super((JDialog) parent);
+        mParent = parent;
+        mDevices = devices;
+        mProgram = prg;
+        createGUI();
+    }
+
+    
+    /**
      * Creates the GUI
      * @param prg Program to use
      */
     private void createGUI() {
+        setLocationRelativeTo(getParent());
         
-        if (mDevices.length <= 0) {
-            return;
-        }else if (mDevices.length == 1) {
-            JMenu menu = createMenuForDevice(mDevices[0]);
+        setTitle("CapturePlugin");
+        
+        JPanel panel = (JPanel) getContentPane();
+        
+        panel.setLayout(new GridBagLayout());
+        
+        mProgramList= new ProgramList(new DefaultListModel());
+       
+        GridBagConstraints c = new GridBagConstraints();
+        GridBagConstraints d = new GridBagConstraints();
+        
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.REMAINDER;
 
-            while (menu.getItemCount() > 0) {
-                add((JMenuItem) menu.getItem(0));
+        d.weightx = 1.0;
+        d.weighty = 0;
+        d.fill = GridBagConstraints.HORIZONTAL;
+        d.gridwidth = GridBagConstraints.REMAINDER;
+
+        mDeviceSelector = new JComboBox(mDevices);
+        
+        mDeviceSelector.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fillFunctionList();
+            }
+        });
+        
+        panel.add(createNamedPanel(mDeviceSelector, "Gerät:"), d);
+        
+        mFunction = new JComboBox();
+        fillFunctionList();
+
+        mFunction.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fillProgramList();
             }
             
-        } else {
+        });
         
-            for (int i = 0; i < mDevices.length; i++) {
-                add(createMenuForDevice(mDevices[i]));
-            }
+        fillProgramList();
+
+        if (mProgramList.getModel().getSize() == 0) {
+            mFunction.setSelectedIndex(1);
+            fillProgramList();
         }
+        
+        panel.add(createNamedPanel(mFunction, "Funktion wählen:"), d);
+
+        JScrollPane scpane = new JScrollPane(mProgramList);
+        scpane.setPreferredSize(new Dimension(400, 200));
+        
+        panel.add(createNamedPanel(scpane, "Sendung die weitergegeben werden:"), c);
+
+        
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        
+        JButton ok = new JButton ("OK");
+        
+        ok.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                okPressed();
+                hide();
+            }
+            
+        });
+        
+        JButton cancel = new JButton ("Cancel");
+        
+        cancel.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+               hide(); 
+            }
+            
+        });
+        
+        buttonPanel.add(ok);
+        buttonPanel.add(cancel);
+        
+        
+        panel.add(buttonPanel, d);
+            
+        pack();
     }
     
     
     /**
-     * Create the JMenu for a Device
-     * @param device 
-     * @return JMenu for Device
+     * 
      */
-    private JMenu createMenuForDevice(final DeviceIf device) {
+    protected void fillProgramList() {
+        DefaultListModel model = new DefaultListModel();
         
-        String deviceName = device.getName() + " (" + device.getDriver().getDriverName() + ")"; 
+        DeviceIf device = (DeviceIf) mDeviceSelector.getSelectedItem();
         
-        JMenu menu = new JMenu(deviceName);
-
-        if (device.isAbleToAddAndRemovePrograms()) {
-            if (!device.isInList(mProgram)) {
-                JMenuItem item = new JMenuItem(mLocalizer.msg("Add","Add {0}.",mProgram.getTitle()));
-                menu.add(item);
-                
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        device.add(mParent, mProgram);
-                        CapturePlugin.getInstance().updateMarkedPrograms();
+        if (device.isAbleToAddAndRemovePrograms() && (mFunction.getSelectedIndex() < 2)) {
+            System.out.println(mFunction.getSelectedIndex());
+            
+            if (mFunction.getSelectedIndex() == 0) {
+                for (int i = 0; i < mProgram.length; i++) {
+                    if (!device.isInList(mProgram[i])) {
+                        model.addElement(mProgram[i]);
                     }
-                });
-                
+                }
             } else {
-                JMenuItem item = new JMenuItem(mLocalizer.msg("Remove","Remove {0}.",mProgram.getTitle()));
-                menu.add(item);
-
-                item.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        device.remove(mParent, mProgram);
-                        CapturePlugin.getInstance().updateMarkedPrograms();
+                for (int i = 0; i < mProgram.length; i++) {
+                    if (device.isInList(mProgram[i])) {
+                        model.addElement(mProgram[i]);
                     }
-                });
+                }
+                
+            }
+        } else {
+            for (int i = 0; i < mProgram.length; i++) {
+                model.addElement(mProgram[i]);
             }
         }
         
-        String[] menuItems = device.getAdditionalCommands(mProgram);
-        
-        for (int i = 0; i < menuItems.length; i++) {
-            
-            final int num = i;
-            JMenuItem item = new JMenuItem(menuItems[i]); 
-            menu.add(item);
-
-            item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    device.executeAdditionalCommand(mParent, num, mProgram);
-                    CapturePlugin.getInstance().updateMarkedPrograms();
-                }
-            });
-            
-            
-        }
-        
-        return menu;
+        mProgramList.setModel(model);
     }
 
+    /**
+     * 
+     */
+    protected void fillFunctionList() {
+        
+        DeviceIf device = (DeviceIf) mDeviceSelector.getSelectedItem();
+        
+        String[] commands = device.getAdditionalCommands();
+        int num = commands.length;
+        
+        int start = 0;
+
+        if (device.isAbleToAddAndRemovePrograms()) {
+            num+=2;
+            start = 2;
+        }
+
+        String[] str = new String[num];
+        
+        if (device.isAbleToAddAndRemovePrograms()) {
+            str[0] = "Hinzufügen";
+            str[1] = "Entfernen";
+        }
+        
+        for (int i=start;i < commands.length+start;i++) {
+            System.out.println(i-start+"--"+commands[i-start]);
+            str[i] = commands[i-start]; 
+        }
+        
+        DefaultComboBoxModel model = new DefaultComboBoxModel(str);
+        mFunction.setModel(model);
+    }
+
+    /**
+     * @param prgListPanel
+     * @param string
+     * @return
+     */
+    private JPanel createNamedPanel(Component c, String string) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(string));
+        panel.add(c, BorderLayout.CENTER);
+        
+        return panel;
+    }
+
+    private void okPressed() {
+        
+        DeviceIf device = (DeviceIf) mDeviceSelector.getSelectedItem();
+        
+        ListModel model = mProgramList.getModel();
+        
+        int num = mFunction.getSelectedIndex();
+        
+        if (device.isAbleToAddAndRemovePrograms()) {
+            
+            if (num == 0) {
+                for (int i=0; i < model.getSize();i ++) {
+                    device.add((Window)getParent(), (Program) model.getElementAt(i));
+                }
+                
+            } else if (num == 1) {
+                for (int i=0; i < model.getSize();i ++) {
+                    device.remove((Window)getParent(), (Program) model.getElementAt(i));
+                }
+                
+            } else {
+                for (int i=0; i < model.getSize();i ++) {
+                    device.executeAdditionalCommand((Window)getParent(), num-2, (Program) model.getElementAt(i));
+                }
+            }
+            
+        } else {
+            
+            for (int i=0; i < model.getSize();i ++) {
+                device.executeAdditionalCommand((Window)getParent(), num, (Program) model.getElementAt(i));
+            }
+            
+        }
+        CapturePlugin.getInstance().updateMarkedPrograms();
+        
+    }
 }

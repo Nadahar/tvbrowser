@@ -26,6 +26,7 @@ package captureplugin.drivers.defaultdriver;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -35,6 +36,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
@@ -107,6 +109,16 @@ public class CaptureTimeDialog extends JDialog {
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weighty = 0.5;
+        
+        JPanel namePanel = new JPanel();
+        namePanel.setBorder(BorderFactory.createTitledBorder("Sendung:"));
+        namePanel.setLayout(new BorderLayout());
+        JLabel title = new JLabel(mPrgTime.getProgram().getTitle());
+        title.setFont(title.getFont().deriveFont(Font.BOLD));
+        namePanel.add(title);
+        
+        center.add(namePanel, c);
+        center.add(mStart, c);
         
         center.add(mStart, c);
         center.add(mEnd, c);
