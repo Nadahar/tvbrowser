@@ -21,6 +21,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import tvbrowser.core.plugin.PluginProxy;
+
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
@@ -86,13 +88,20 @@ public class SendToPluginDialog extends JDialog {
         // get the installed plugins
         PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
 
-        Arrays.sort(installedPluginArr, new ObjectComperator());
+        PluginAccess[] copy = new PluginProxy[installedPluginArr.length];
+        
+        for (int i = 0; i < installedPluginArr.length;i++) {
+            copy[i] = installedPluginArr[i];
+        }
+        
+        
+        Arrays.sort(copy, new ObjectComperator());
 
         // create a list of those who support multiple program execution
         Vector selectablePluginList = new Vector();
-        for (int i = 0; i < installedPluginArr.length; i++) {
-            if (installedPluginArr[i].canReceivePrograms()) {
-                selectablePluginList.add(installedPluginArr[i]);
+        for (int i = 0; i < copy.length; i++) {
+            if (copy[i].canReceivePrograms()) {
+                selectablePluginList.add(copy[i]);
             }
         }
 
