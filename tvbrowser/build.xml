@@ -54,6 +54,7 @@
   <property name="runtime.dir" value="runtime"/>
   <property name="tvbrowser.runtime.dir" value="${runtime.dir}/tvbrowser"/>
   <property name="mirrorupdater.runtime.dir" value="${runtime.dir}/mirrorupdater"/>
+  <property name="primarydatamanager.runtime.dir" value="${runtime.dir}/primarydatamanager"/>
   <property name="installer.dir" value="installer"/>
   <property name="public.dir" value="public"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
@@ -286,6 +287,11 @@
 
 	<!-- Make the MirrorUpdater runtime -->
     <mkdir dir="${mirrorupdater.runtime.dir}"/>
+
+	<!-- Make the PrimaryManager runtime -->
+    <mkdir dir="${primarydatamanager.runtime.dir}"/>
+    <mkdir dir="${primarydatamanager.runtime.dir}/prepared"/>
+
     
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
@@ -305,12 +311,32 @@
       <fileset dir="${unpacked.dir}/commons-net.jar" includes="org/**"/>
     </jar>
 
+    <jar jarfile="${primarydatamanager.runtime.dir}/PrimaryDataManager.jar"
+         compress="false"
+         index="true">
+       <manifest>
+          <attribute name="Main-Class" value="primarydatamanager.PrimaryDataManager"/>
+       </manifest>
+      <fileset dir="${classes.dir}" includes="primarydatamanager/**"/>
+    <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+	   <fileset dir="${classes.dir}" includes="devplugin/**"/>
+       <fileset dir="${classes.dir}" includes="util/**"/>
+    </jar>
+    
+    
+
     <!-- Copy the file(s) -->
+    <copy todir="${primarydatamanager.runtime.dir}/prepared">
+      <fileset dir="${txt.dir}" includes="mirrorlist.txt"/>
+    </copy>
+    
     <copy todir="${mirrorupdater.runtime.dir}">
       <fileset dir="${txt.dir}" includes="MirrorUpdater.ini"/>
     </copy>
   </target>
 
+
+     
 
 
   <!--
