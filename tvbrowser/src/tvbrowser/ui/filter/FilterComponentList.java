@@ -44,7 +44,7 @@ public class FilterComponentList {
     
     File filterCompFile=new File(tvbrowser.core.Settings.getFilterDirectory(),"filter.comp");
     ObjectInputStream in=null;
-    if (filterCompFile.isFile()) {
+    if (filterCompFile.exists() && filterCompFile.isFile()) {
       try {
         in=new ObjectInputStream(new FileInputStream(filterCompFile));
         read(in);
@@ -63,8 +63,13 @@ public class FilterComponentList {
   
   public static void store() {
     File filterCompFile=new File(tvbrowser.core.Settings.getFilterDirectory(),"filter.comp");
+    
     try {
-      store(new ObjectOutputStream(new FileOutputStream(filterCompFile)));
+      ObjectOutputStream out=new ObjectOutputStream(new FileOutputStream(filterCompFile));
+      store(out);
+      if (out!=null) {
+        out.close();
+      }
     }catch(FileNotFoundException e) {
       e.printStackTrace();
     }catch(IOException e) {      

@@ -41,7 +41,7 @@ import devplugin.Program;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class ProgramTable extends /*JComponent*/SkinPanel
+public class ProgramTable extends JPanel
   implements ProgramTableModelListener
 {
   
@@ -54,7 +54,8 @@ public class ProgramTable extends /*JComponent*/SkinPanel
   
   private Point mDraggingPoint;
   
-  
+  private Image mBackgroundImage;
+  private int mBackgroundMode;
   
   /**
    * Creates a new instance of ProgramTable.
@@ -135,7 +136,7 @@ public class ProgramTable extends /*JComponent*/SkinPanel
   
   public void setColumnWidth(int columnWidth) {
     mColumnWidth = columnWidth;
-    setColDiff(mColumnWidth);
+    //!!!!setColDiff(mColumnWidth);
     mRenderer = new DefaultProgramTableCellRenderer();
     
   }
@@ -149,17 +150,45 @@ public class ProgramTable extends /*JComponent*/SkinPanel
 
 
   public void updateBackground() {
-    update(Settings.getTableSkin(), Settings.getTableBGMode());
+    
+    mBackgroundMode=Settings.getTableBGMode();
+    java.io.File f=new java.io.File(Settings.getTableSkin());
+    if (f.exists() && f.isFile()) {
+      mBackgroundImage=new ImageIcon(Settings.getTableSkin()).getImage();
+    }
+    
   }
   
 
 
   public void paintComponent(Graphics grp) {
     super.paintComponent(grp);
+    
+    
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
     
+    if (mBackgroundMode==SkinPanel.WALLPAPER && mBackgroundImage!=null) {
+     
+      int xMin=clipBounds.x/mBackgroundImage.getWidth(this);
+      int yMin=clipBounds.y/mBackgroundImage.getHeight(this);
+      if (xMin<0) xMin=0;
+      if (yMin<0) yMin=0;
+      
+      int xMax=(clipBounds.x+clipBounds.width) / mBackgroundImage.getWidth(this);
+      int yMax=(clipBounds.y+clipBounds.height) / mBackgroundImage.getHeight(this);
+            
+      if (xMax>=getWidth()) xMax=getWidth();
+      if (yMax>=getHeight()) yMax=getHeight();
+      
+      for (int i=xMin; i<=xMax; i++) {        
+        for (int j=yMin; j<=yMax; j++) {          
+          grp.drawImage(mBackgroundImage,i*mBackgroundImage.getWidth(this),j*mBackgroundImage.getHeight(this),this);
+        }
+      }
+    
+    }
     
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;
@@ -167,9 +196,23 @@ public class ProgramTable extends /*JComponent*/SkinPanel
     if (maxCol >= mModel.getColumnCount()) {
       maxCol = mModel.getColumnCount() - 1;
     }
+    
+    
+ 
     int x = minCol * mColumnWidth;
     for (int col = minCol; col <= maxCol; col++) {
+      
+      // paint background (columns)
+      if (mBackgroundMode==SkinPanel.COLUMNS && mBackgroundImage!=null) {
+        int imgH=mBackgroundImage.getHeight(this);
+        for (int py=0;py<clipBounds.height;py+=imgH) {
+          grp.drawImage(mBackgroundImage,col*mColumnWidth,py+clipBounds.y,this);
+        }  
+      }
+      
       int y = mLayout.getColumnStart(col);
+       
+      
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         // Get the program
         Program program = mModel.getProgram(col, row);

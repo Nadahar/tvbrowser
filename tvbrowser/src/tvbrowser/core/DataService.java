@@ -481,15 +481,17 @@ public class DataService implements devplugin.PluginManager {
 				public boolean accept(File dir, String name) {				
 					int p=name.lastIndexOf('.');
 					String s=name.substring(p+1,name.length());
-					int val=Integer.parseInt(s);
+          int val;
+          try {
+					   val=Integer.parseInt(s);
+          }catch(NumberFormatException e) {
+            return false;
+          }
           int year=val/10000;
           int r=val%10000;
           int month=r/100;
           int day=r%100;
           Date curDate=new Date(val/10000,r/100,r%100);
-          //curDate.setYear(val/10000);
-          //curDate.setMonth(r/100);
-          //curDate.setDay(r%100);
           return curDate.getValue()<d.getValue();
 				}
 			}	

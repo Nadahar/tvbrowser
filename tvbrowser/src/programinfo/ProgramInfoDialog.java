@@ -107,7 +107,9 @@ public class ProgramInfoDialog extends JDialog {
     bodyPn.add(createTextArea(desc));
 
     // Create the shortInfoArea only if the short info differs from the description
-    String shortInfo = program.getShortInfo();
+    String si=program.getShortInfo();
+    
+    String shortInfo = (si==null?"":si);
     int shortInfoLength = shortInfo.length();
     if (shortInfo.endsWith("...")) {
       shortInfoLength -= 3;

@@ -215,8 +215,13 @@ public class SearchDialog extends JDialog {
    * @param text The new pattern text.
    */
   public void setPatternText(String text) {
-  	//mPatternCB.set
-    //mPatternTF.setText(text);
+    ComboBoxEditor editor=mPatternCB.getEditor();
+    JTextField tf=(JTextField)editor.getEditorComponent();
+    tf.setText(text);
+    mSearchTitleChB.setSelected(true);
+    mSearchInTextChB.setSelected(false);
+    mMatchExactlyRB.setSelected(true);
+    mCaseSensitiveChB.setSelected(true);
   }
 
   

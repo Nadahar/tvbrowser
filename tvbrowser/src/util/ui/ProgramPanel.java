@@ -45,7 +45,7 @@ import tvbrowser.core.*;
  *
  * @author Martin Oberhauser
  */
-public class ProgramPanel extends JComponent implements ChangeListener {
+public class ProgramPanel extends JComponent /*tvbrowser.ui.SkinPanel*/ implements ChangeListener {
   
   private static final boolean USE_FULL_HEIGHT = true;
   private static final boolean PAINT_EXPIRED_PROGRAMS_PALE = true;
@@ -53,7 +53,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static final Color COLOR_ON_AIR_DARK  = new Color(128, 128, 255, 80);
   private static final Color COLOR_ON_AIR_LIGHT = new Color(128, 128, 255, 40);
   private static final Color COLOR_MARKED       = new Color(255, 0, 0, 40);
-  
+
+ // private static Image mImage;  
 
   /** The title font. */
   private static Font TITLE_FONT = Settings.getProgramTitleFont();
@@ -89,9 +90,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   public ProgramPanel() {
     mTitleIcon = new TextAreaIcon(null, TITLE_FONT, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, NORMAL_FONT, WIDTH_RIGHT - 5);
-    mDescriptionIcon.setMaximumLineCount(3);
-    
-    
+    mDescriptionIcon.setMaximumLineCount(3);    
   }
   
 
@@ -103,9 +102,14 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    */  
   public ProgramPanel(devplugin.Program prog) {
     this();
-    
     setProgram(prog);
   }
+
+/*
+  public static void setBackgroundImage(Image img) {
+    mImage=img;
+  }
+*/
 
   public static void updateFonts() {
     TITLE_FONT = Settings.getProgramTitleFont();
@@ -174,11 +178,22 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param grp The graphics context to paint to.
    */  
   public void paintComponent(Graphics grp) {
-    int width = getWidth();
-    int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
+   
+  int width = getWidth();
+  int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
+   
+   /*    
+  if (mImage!=null) {
+    int h=mImage.getHeight(this);
+    for (int y=0;y<=height-h;y++) {
+      grp.drawImage(mImage, 0, y, this);
+    }
+  } 
+   */
     
-    // Draw the background if this program is on air
-    if (mProgram.isOnAir()) {
+    
+  // Draw the background if this program is on air
+  if (mProgram.isOnAir()) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
       int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();

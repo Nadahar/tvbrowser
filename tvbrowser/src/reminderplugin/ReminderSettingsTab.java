@@ -125,11 +125,9 @@ public class ReminderSettingsTab implements SettingsTab {
       String asString = settings.getProperty("autoCloseReminderTime", "0");
       autoCloseReminderTime = Integer.parseInt(asString);
     } catch (Exception exc) {}
-    mAutoCloseReminderTimeSp = new JSpinner();
+    mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,0,600,1));
     mAutoCloseReminderTimeSp.setBorder(null);
-    mAutoCloseReminderTimeSp.setValue(new Integer(10000));
     mAutoCloseReminderTimeSp.setPreferredSize(mAutoCloseReminderTimeSp.getPreferredSize());
-    mAutoCloseReminderTimeSp.setValue(new Integer(autoCloseReminderTime));
     p1.add(mAutoCloseReminderTimeSp);
 
     p1.add(new JLabel(mLocalizer.msg("seconds", "seconds (0 = off)")));
