@@ -1,5 +1,8 @@
 Changelog ClipBoardPlugin
 
+0.2:
+- Changed to use new Plugin-Interface
+
 0.10:
 - Added Buttons for sorting and deleting entries
 

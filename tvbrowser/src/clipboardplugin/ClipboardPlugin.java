@@ -92,7 +92,7 @@ public class ClipboardPlugin extends Plugin {
         String name = mLocalizer.msg("pluginName", "Clipboard");
         String desc = mLocalizer.msg("description", "A internal Clipboard for receiving and sending Programs from/to other Plugins.");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 10));
+        return new PluginInfo(name, desc, author, new Version(0, 20));
     }
     
     /**
