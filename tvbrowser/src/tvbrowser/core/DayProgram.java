@@ -66,15 +66,23 @@ public class DayProgram {
   public void addChannelDayProgram(tvdataloader.AbstractChannelDayProgram prog)
     throws IllegalArgumentException
   {
-    if (mDate != null) {
-      if (! mDate.equals(prog.getDate())) {
-        throw new IllegalArgumentException("The specified ChannelDayProgram "
-          + "(from " + prog.getDate() + ") does not belong to this day program "
-          + "(from " + mDate + ")!");
-      }
+    if (! mDate.equals(prog.getDate())) {
+      throw new IllegalArgumentException("The specified ChannelDayProgram "
+        + "(for " + prog.getChannel().getName() + ", from " + prog.getDate()
+        + ") does not belong to this day program (from " + mDate + ")!");
     }
 
+    // Get the key
     Object key = new Integer(prog.getChannel().getId());
+    
+    // Check whether we already have this ChannelDayProgram
+    if (mDayProgramHash.get(key) != null) {
+      throw new IllegalArgumentException("The ChannelDayProgram for "
+        + prog.getChannel().getName() + " is already in this day program "
+        + "(from " + mDate + ")!");
+    }
+    
+    // Put it into the cache
     mDayProgramHash.put(key, prog);
   }
   
