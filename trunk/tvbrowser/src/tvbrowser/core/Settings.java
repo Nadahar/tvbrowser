@@ -749,6 +749,31 @@ public class Settings {
   }
   
   
+  public static void setProgramTableStartOfDay(int StartTimeInMinutes) {
+    settings.setProperty("programtable.startofday",""+StartTimeInMinutes);
+  }
+  
+  public static int getProgramTableStartOfDay() {
+    String val=settings.getProperty("programtable.startofday");
+    if (val==null) {
+      return 0;
+    }
+    return Integer.parseInt(val);
+  }
+  
+  public static void setProgramTableEndOfDay(int StartTimeInMinutes) {
+      settings.setProperty("programtable.endofday",""+StartTimeInMinutes);
+    }
+  
+    public static int getProgramTableEndOfDay() {
+      String val=settings.getProperty("programtable.endofday");
+      if (val==null) {
+        return 5*60;
+      }
+      return Integer.parseInt(val);
+    }
+  
+  
   
   public static void setProxySettings(ProxySettings httpSettings,
     ProxySettings ftpSettings)
