@@ -1,6 +1,6 @@
 Changelog ReminderPlugin
 
-1.0.4 requires TV-Browser 0.95
+1.0.4
 - 
 
 1.0.3 requires TVBrowser 0.95

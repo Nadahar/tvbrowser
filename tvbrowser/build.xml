@@ -234,7 +234,8 @@
     <copy todir="${runtime.dir}">
       <fileset dir="${txt.dir}" includes="INSTALL.txt"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
-			<fileset dir="${txt.dir}" includes="website.url"/>
+      <fileset dir="${txt.dir}" includes="website.url"/>
+      <fileset dir="${txt.dir}" includes="where_is_the_exe.txt"/>
     </copy>
 
 

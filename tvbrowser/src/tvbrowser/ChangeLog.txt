@@ -1,6 +1,6 @@
 Changelog TVBrowser
 
-current:
+0.9.6:
 - bugfix in SkinPanel
 - new feature: filter
 - new devplugin.Date class

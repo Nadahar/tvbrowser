@@ -74,8 +74,6 @@ public class ProgramDispatcher {
    */
   public void dispatch(Program program) {
     
-    //System.out.println("dispatch program: "+program.getTitle()+" - "+program.getDate());
-    
     Date date = program.getDate();
     Channel channel = program.getChannel();
 

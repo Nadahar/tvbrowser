@@ -113,10 +113,7 @@ public class TextAreaIcon implements Icon {
         mTextLineList.add(line);
       }
       
-      if (mMaxLineCount != -1 && mTextLineList.size() > mMaxLineCount) {
-        System.out.println("mMaxLineCount: " + mMaxLineCount
-          + ", mTextLineList.size(): " + mTextLineList.size());
-      }
+      
     }
   }
 

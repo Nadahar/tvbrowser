@@ -187,6 +187,17 @@ public class PremiereDataService extends AbstractTvDataService {
 
 
 
+  private String getString(String s) {
+      try {
+        return new String(s.getBytes(),"ISO-8859-1");
+      }catch(UnsupportedEncodingException e) {
+        return s;
+      } 
+    
+    }
+
+
+
   /**
    * Parses the specified file.
    *
@@ -204,8 +215,9 @@ public class PremiereDataService extends AbstractTvDataService {
     BufferedReader reader = null;
     int lineNr = -1;
     try {
-      fileReader = new FileReader(file);
+      fileReader = new FileReader(file);      
       reader = new BufferedReader(fileReader);
+    
 
       Pattern[] regexPatternArr = new Pattern[] {
         // Example: "STUDIO UNIVERSAL: 01.05./06:00"
@@ -396,13 +408,13 @@ public class PremiereDataService extends AbstractTvDataService {
     switch(progLine) {
       case 1: {
         // regex: "Titel: (.*)"
-        currProgram.setTitle(matcher.group(1));
+        currProgram.setTitle(getString(matcher.group(1)));
       } break;
 
       case 2: {
         // regex: "Episode: (.*) - Genre: (.*) - Länge: (\\d*):(\\d*) Stunden"
-        String episode = matcher.group(1);
-        String genre = matcher.group(2);
+        String episode = getString(matcher.group(1));
+        String genre = getString(matcher.group(2));
         String lengthHoursStr = matcher.group(3);
         String lengthMinutesStr = matcher.group(4);
 
@@ -422,9 +434,9 @@ public class PremiereDataService extends AbstractTvDataService {
 
       case 3: {
         // regex: "Produktionsland: (.*) - Produktionsjahr: (.*) - Regie: (.*)"
-        String country = matcher.group(1);
-        String year = matcher.group(2);
-        String direction = matcher.group(3);
+        String country = getString(matcher.group(1));
+        String year = getString(matcher.group(2));
+        String direction = getString(matcher.group(3));
 
         if (country.length() > 0) {
           additionalInfoBuffer.append(mLocalizer.msg("country", "Production country:") + " ");
@@ -442,14 +454,14 @@ public class PremiereDataService extends AbstractTvDataService {
 
       case 4: {
         // regex: "Bild- und Tonformate: (.*)"
-        String formats = matcher.group(1);
+        String formats = getString(matcher.group(1));
         int info = extractInfo(formats);
         currProgram.setInfo(info);
       } break;
 
       case 5: {
         // regex: "Darsteller: (.*)"
-        String actors = matcher.group(1);
+        String actors = getString(matcher.group(1));
 
         currProgram.setActors(actors);
       } break;
@@ -458,7 +470,7 @@ public class PremiereDataService extends AbstractTvDataService {
         // regex: ""
 
         // Add the line to the description until there is an empty line
-        descriptionBuffer.append(matcher.group(1));
+        descriptionBuffer.append(getString(matcher.group(1)));
       } break;
     } // switch(progLine)
   }

@@ -216,14 +216,6 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    * @return An iterator through the program list.
    */
   public java.util.Iterator getPrograms() {
-    /*
-    mLog.info(">>> Dump:");
-    Iterator iter = mProgramList.iterator();
-    while (iter.hasNext()) {
-      mLog.info("  " + iter.next());
-    }
-    mLog.info("<<< Dump finished");
-    */
 
     return mProgramList.iterator();
   }
@@ -259,7 +251,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     
     devplugin.Date today = new devplugin.Date();
     int time = IOUtilities.getMinutesAfterMidnight();
-    
+     
     if (today.equals(getDate())) {
       // This is the program for today -> Get the program that is currently on air
       Iterator iter = getPrograms();
@@ -276,7 +268,10 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       }
     } else {
       // Check whether this program was for yesterday
-      devplugin.Date yesterday = new devplugin.Date(today.getDaysSince1970() - 1);
+      //devplugin.Date yesterday = new devplugin.Date(today.getDaysSince1970() - 1);
+      
+      devplugin.Date yesterday=today.addDays(-1);
+      
       
       if (yesterday.equals(getDate())) {
         // This program was for yesterday -> Check whether the last program is

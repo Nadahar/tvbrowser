@@ -360,8 +360,7 @@ public class Settings {
   private static void initSubscribedChannels() {
   	String[] entries = settings.getStringList("subscribedchannels");
     if (settings.getProperty("subscribedchannels") == null) {
-    	System.out.println("no channels subscribed!");
-      // Install by default the first 9 channels of the XmlTvDataService
+    	// Install by default the first 9 channels of the XmlTvDataService
       TvDataServiceManager mng = TvDataServiceManager.getInstance();
       TvDataService xmltvService = mng.getDataService("xmltvdataservice.XmlTvDataService");
       if (xmltvService != null) {

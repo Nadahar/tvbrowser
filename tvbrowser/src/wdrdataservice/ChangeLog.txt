@@ -1,7 +1,8 @@
 Changelog WdrDataService
 
-current:
+
 2.0: requires TVBrowser 0.96
+- umlauts
 
 
 1.1: required TVBrowser 0.95
