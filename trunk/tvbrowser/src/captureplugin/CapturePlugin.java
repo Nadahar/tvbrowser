@@ -25,6 +25,7 @@
 package captureplugin;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,9 +33,13 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
@@ -125,25 +130,6 @@ public class CapturePlugin extends devplugin.Plugin {
     }
 
     /**
-     * This method is called by the host-application to show the plugin in the
-     * context menu. Let getContextMenuItemText return null if your plugin does
-     * not provide this feature.
-     */
-    public String getContextMenuItemText() {
-        return mLocalizer.msg("record", "record Program");
-    }
-
-    /**
-     * This method is called by the host-application to show the plugin in the
-     * menu (or in a button in further versions). Let getContextMenuItemText
-     * return null if your plugin does not provide this feature.
-     *  
-     */
-    public String getButtonText() {
-        return mLocalizer.msg("CapturePlugin", "Capture Plugin");
-    }
-
-    /**
      * Returns a new SettingsTab object, which is added to the settings-window.
      */
     public SettingsTab getSettingsTab() {
@@ -154,7 +140,7 @@ public class CapturePlugin extends devplugin.Plugin {
     /**
      * Return tur if execute(program[]) is supported
      */
-    public boolean supportMultipleProgramExecution() {
+    public boolean canReceivePrograms() {
         return false;
     }
     
@@ -162,7 +148,7 @@ public class CapturePlugin extends devplugin.Plugin {
      * This method is invoked by the host-application if the user has choosen
      * your plugin from the context menu.
      */
-    public void execute(Program program) {
+    public void executeProgram(Program program) {
         
         if (mConfig.getDevices().size() <= 0) {
             JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("CreateDevice","Please create Device first!"));
@@ -182,6 +168,22 @@ public class CapturePlugin extends devplugin.Plugin {
         select.show(comp, x, y);
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
+     */
+    public Action[] getContextMenuActions(final Program program) {
+        AbstractAction action = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent evt) {
+                executeProgram(program);
+            }
+        };
+        action.putValue(Action.NAME, mLocalizer.msg("record", "record Program"));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png", CapturePlugin.class)));
+        
+        return new Action[] {action};
+    }
 
     /**
      * Updates the marked Programs.
@@ -231,11 +233,29 @@ public class CapturePlugin extends devplugin.Plugin {
         return v;
     }
 
+    /*
+     *  (non-Javadoc)
+     * @see devplugin.Plugin#getButtonAction()
+     */
+    public Action getButtonAction() {
+        AbstractAction action = new AbstractAction() {
+
+            public void actionPerformed(ActionEvent evt) {
+                showDialog();
+            }
+        };
+        action.putValue(Action.NAME, mLocalizer.msg("CapturePlugin", "Capture Plugin"));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png", CapturePlugin.class)));
+        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin24.png", CapturePlugin.class)));
+        
+        return action;
+    }        
+    
     /**
      * This method is invoked by the host-application if the user has choosen
      * your plugin from the menu.
      */
-    public void execute() {
+    public void showDialog() {
         CapturePluginDialog dialog = new CapturePluginDialog(getParentFrame(), mConfig);
         dialog.show(CapturePluginPanel.TAB_PROGRAMLIST);
         updateMarkedPrograms();
@@ -249,13 +269,6 @@ public class CapturePlugin extends devplugin.Plugin {
         return "captureplugin/capturePlugin.png";
     }
 
-    /**
-     * Returns the Name of the Icon-File for the Button
-     */
-    public String getButtonIconName() {
-        return "captureplugin/capturePlugin.png";
-    }
-    
     /** 
      * Sets the CaputePluginData
      * @param data CapturePluginData
