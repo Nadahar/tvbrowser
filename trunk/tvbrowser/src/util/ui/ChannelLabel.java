@@ -98,7 +98,7 @@ public class ChannelLabel extends JLabel {
      * @return default-icon
      */
     private Icon getDefaultIcon() {
-        return new ImageIcon(ImageUtilities.createImageFromJar("imgs/TVBrowser16.gif", ChannelLabel.class));
+        return new ImageIcon("./imgs/TVBrowser16.gif");
     }
 
     /**
