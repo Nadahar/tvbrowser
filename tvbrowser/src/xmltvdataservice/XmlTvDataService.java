@@ -57,7 +57,7 @@ import devplugin.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class XmlTvDataService extends AbstractTvDataService {
+public class XmlTvDataService extends AbstractOldTvDataServiceBridge {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer

@@ -37,6 +37,10 @@ import devplugin.Date;
  */
 public class DayProgramFile {
   
+  public static final String[] LEVEL_ARR = {
+    "base", "image16-00", "image00-16", "desc16-00", "desc00-16"
+  };
+
   private static final int FILE_VERSION = 1;
 
   private int mVersion;
@@ -209,9 +213,54 @@ public class DayProgramFile {
       }
     }
   }
-  
-  
-  
+
+
+
+  /**
+   * Reads only the version from a stream.
+   * 
+   * @param stream The stream to read from
+   * @return The version of the file
+   * @throws IOException If reading failed
+   * @throws FileFormatException If the file has a unknown file version
+   */  
+  public static int readVersionFromStream(InputStream stream)
+    throws IOException, FileFormatException
+  {
+    GZIPInputStream gIn = new GZIPInputStream(stream);
+      
+    int fileVersion = gIn.read();
+    if (fileVersion > FILE_VERSION) {
+      throw new FileFormatException("Unknown file version: " + fileVersion);
+    }
+      
+    int version = gIn.read();
+
+    gIn.close();
+    
+    return version;
+  }
+
+
+
+  public static int readVersionFromFile(File file)
+    throws IOException, FileFormatException
+  {
+    FileInputStream stream = null;
+    try {
+      stream = new FileInputStream(file);
+      
+      return readVersionFromStream(stream);
+    }
+    finally {
+      if (stream != null) {
+        try { stream.close(); } catch (IOException exc) {}
+      }
+    }
+  }
+
+
+
   public void readFromStream(InputStream stream)
     throws IOException, FileFormatException
   {

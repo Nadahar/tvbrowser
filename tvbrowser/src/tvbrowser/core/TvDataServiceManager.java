@@ -32,9 +32,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 import tvdataservice.TvDataService;
-import util.exc.*;
-
-//import util.exc.*;
 
 public class TvDataServiceManager {
 
@@ -229,32 +226,6 @@ public class TvDataServiceManager {
     dataServiceColl.toArray(result);
 
     return result;
-  }
-
-
-
-  public void connect() {
-    TvDataService[] dl=getDataServices();
-    for (int i=0;i<dl.length;i++) {
-      try {
-        dl[i].connect();
-      } catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
-    }
-  }
-
-
-
-  public void disconnect() {
-    TvDataService[] dl=getDataServices();
-    for (int i=0;i<dl.length;i++) {
-      try {
-        dl[i].disconnect();
-      } catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
-    }
   }
 
 }

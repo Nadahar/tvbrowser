@@ -37,24 +37,52 @@ public class Channel {
   private String mName;
   private String mId;
   private TimeZone mTimeZone;
+  private String mCountry;
   private int mDayLightSavingTimeCorrection;
 
 
-  public Channel(TvDataService dataService, String name, String id, TimeZone timeZone) {
+
+  public Channel(TvDataService dataService, String name, String id,
+    TimeZone timeZone, String country)
+  {
+    if (country.length() != 2) {
+      throw new IllegalArgumentException("country must be a two character "
+        + "ISO country code (as used in top level domains, e.g. 'de' or 'us')");
+    }
+    
     mDataService = dataService;
     mName = name;
     mId = id;
     mTimeZone=timeZone;
+    mCountry = country;
     mDayLightSavingTimeCorrection=0;
   }
+
+  public Channel(TvDataService dataService, String name, TimeZone timeZone,
+    String country)
+  {
+    this(dataService, name, name, timeZone, country);
+  }
   
+  /**
+   * @deprecated
+   */
+  public Channel(TvDataService dataService, String name, String id,
+    TimeZone timeZone)
+  {
+    this(dataService, name, id, timeZone, "??");
+  }
+  
+  /**
+   * @deprecated
+   */
   public Channel(TvDataService dataService, String name, TimeZone timeZone) {
     this(dataService, name, name, timeZone);
   }
   
-/**
- * @deprecated
- */
+  /**
+   * @deprecated
+   */
   public Channel(TvDataService dataService, String name, String id) {
     this(dataService, name, id, TimeZone.getDefault());
   }
@@ -63,9 +91,11 @@ public class Channel {
    * @deprecated
    */
   public Channel(TvDataService dataService, String name) {
-  	this(dataService,name,name);
-	}
-  
+    this(dataService, name, name);
+  }
+
+
+
   public static Channel readData(ObjectInputStream in, boolean allowNull)
     throws IOException, ClassNotFoundException
   {
@@ -127,6 +157,10 @@ public class Channel {
     return mTimeZone;
   }
   
+  public String getCountry() {
+    return mCountry;
+  }
+  
   public void setDayLightSavingTimeCorrection(int correction) {
     mDayLightSavingTimeCorrection=correction;
   }
@@ -142,7 +176,7 @@ public class Channel {
 
 
   public String toString() {
-    return mName + " (" + mDataService.getInfo().getName() + ")";
+    return mName + " (" + mCountry + "," + mDataService.getInfo().getName() + ")";
   }
 
 

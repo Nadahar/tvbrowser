@@ -23,21 +23,25 @@
  *   $Author$
  * $Revision$
  */
-
-package primarydatamanager.primarydataservice;
+package tvdataservice;
 
 import devplugin.Channel;
+import devplugin.Date;
 
 /**
- * @author Martin Oberhauser
+ * 
+ * 
+ * @author Til Schneider, www.murfman.de
  */
-public interface PrimaryDataService {
-
-  public boolean execute(String dir, java.io.PrintStream err);
+public interface TvDataBase {
 
   /**
-   * Gets the list of the channels that are available by this data service.
+   * Updates the given day program.
+   * 
+   * @param program The day program to update.
    */
-  public Channel[] getAvailableChannels();
+  public void updateDayProgram(MutableChannelDayProgram program);
+  
+  public boolean isDayProgramAvailable(Date date, Channel channel);
 
 }

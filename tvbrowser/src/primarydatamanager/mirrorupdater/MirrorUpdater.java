@@ -25,22 +25,26 @@
  */
 package primarydatamanager.mirrorupdater;
 
+import java.io.*;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
+import devplugin.Channel;
 import devplugin.Date;
 import primarydatamanager.mirrorupdater.config.Configuration;
 import primarydatamanager.mirrorupdater.config.PropertiesConfiguration;
 import primarydatamanager.mirrorupdater.data.DataSource;
 import primarydatamanager.mirrorupdater.data.DataTarget;
+import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.Mirror;
+import util.io.IOUtilities;
 
 /**
  * 
@@ -48,12 +52,6 @@ import tvbrowserdataservice.file.DayProgramFile;
  * @author Til Schneider, www.murfman.de
  */
 public class MirrorUpdater {
-
-  public static final String[] LEVEL_ARR = {
-    "base", "image16-00", "image00-16", "desc16-00", "desc00-16"
-  };
-
-  private static final String CHANNEL_LIST_FILE_NAME = "channellist";
 
   private DataSource mDataSource;
   private DataTarget mDataTarget;
@@ -96,13 +94,16 @@ public class MirrorUpdater {
       
       // Update the day programs for all channels
       for (int i = 0; i < channelArr.length; i++) {
-        for (int j = 0; j < LEVEL_ARR.length; j++) {
-          updateDayProgramsFor(channelArr[i], LEVEL_ARR[j]);
+        for (int j = 0; j < DayProgramFile.LEVEL_ARR.length; j++) {
+          updateDayProgramsFor(channelArr[i], DayProgramFile.LEVEL_ARR[j]);
         }
       }
       
       // Update the meta files
       updateMetaFiles(channelArr);
+      
+      // Check for a mirror list
+      updateMirrorList();
     }
     finally {
       // Close the data target
@@ -138,46 +139,23 @@ public class MirrorUpdater {
 
 
   private Channel[] updateChannelList() throws UpdateException {
-    byte[] data = mDataSource.loadFile(CHANNEL_LIST_FILE_NAME);
+    byte[] data = mDataSource.loadFile(ChannelList.FILE_NAME);
     
     // Read the channel list
     Channel[] channelArr;
     try {
       ByteArrayInputStream stream = new ByteArrayInputStream(data);
-      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-      String line;
-      int lineCount = 1;
-      ArrayList channelList = new ArrayList();
-      while ((line = reader.readLine()) != null) {
-        line = line.trim();
-        
-        if (line.length() != 0) {
-          // This is not a empty line
-          
-          StringTokenizer tokenizer = new StringTokenizer(line);
-          if (tokenizer.countTokens() != 2) {
-            throw new UpdateException("Syntax error in channel file line "
-              + lineCount + ": '" + line + "'");
-          }
-  
-          String country = tokenizer.nextToken();
-          String channelName = tokenizer.nextToken();
-          channelList.add(new Channel(country, channelName));
-          
-        }
-
-        lineCount++;
-      }
       
-      channelArr = new Channel[channelList.size()];
-      channelList.toArray(channelArr);
+      ChannelList list = new ChannelList();
+      list.readFromStream(stream, null);
+      channelArr = list.createChannelArray();
     }
-    catch (IOException exc) {
+    catch (Exception exc) {
       throw new UpdateException("Reading channel list failed", exc);
     }
     
     // Store the (new) channel list
-    mDataTarget.writeFile(CHANNEL_LIST_FILE_NAME, data);
+    mDataTarget.writeFile(ChannelList.FILE_NAME, data);
     
     return channelArr;
   }
@@ -192,7 +170,7 @@ public class MirrorUpdater {
     
     while (daysWithNoData < 7) {
       String completeFileName = DayProgramFile.getProgramFileName(date,
-        channel.getCountry(), channel.getChannelName(), level);
+        channel.getCountry(), channel.getId(), level);
         
       // Check which version is on the source
       // version -1 means there is no version
@@ -202,7 +180,7 @@ public class MirrorUpdater {
         boolean finished = false;
         do {
           String updateFileName = DayProgramFile.getProgramFileName(date,
-            channel.getCountry(), channel.getChannelName(), level, versionAtSource);
+            channel.getCountry(), channel.getId(), level, versionAtSource);
           if (mDataSource.fileExists(updateFileName)) {
             // There is an update file for the current version
             // -> The version of the complete file must be at least one higher
@@ -226,7 +204,7 @@ public class MirrorUpdater {
           boolean finished = false;
           do {
             String updateFileName = DayProgramFile.getProgramFileName(date,
-              channel.getCountry(), channel.getChannelName(), level, versionOnMirror);
+              channel.getCountry(), channel.getId(), level, versionOnMirror);
             if (fileIsOnMirror(updateFileName)) {
               // There is an update file for the current version
               // -> The version of the complete file must be at least one higher
@@ -253,7 +231,7 @@ public class MirrorUpdater {
           
           for (int version = 0; version < versionAtSource; version++) {
             String updateFileName = DayProgramFile.getProgramFileName(date,
-              channel.getCountry(), channel.getChannelName(), level, version);
+              channel.getCountry(), channel.getId(), level, version);
 
             data = mDataSource.loadFile(updateFileName);
             mDataTarget.writeFile(updateFileName, data);
@@ -332,7 +310,7 @@ public class MirrorUpdater {
     buffer.append("<p>It contains the TV-Data of the following channels:");
     buffer.append("<ul>");
     for (int i = 0; i < channelArr.length; i++) {
-      buffer.append("<li><code>" + channelArr[i].getChannelName()
+      buffer.append("<li><code>" + channelArr[i].getName()
         + "</code> from <code>" + channelArr[i].getCountry() + "</code></li>");
     }
     buffer.append("</ul></p>");
@@ -340,6 +318,101 @@ public class MirrorUpdater {
     buffer.append("</body></html>");
     
     return buffer.toString();
+  }
+
+
+
+  private void updateMirrorList() throws UpdateException {
+    // Check whether there is a mirrorlist.txt
+    if (! mDataSource.fileExists("mirrorlist.txt")) {
+      // Nothing to do
+      return;
+    }
+     
+    // Load the mirrorlist.txt
+    ArrayList mirrorList = new ArrayList();
+    try {
+      byte[] data = mDataSource.loadFile("mirrorlist.txt");
+      ByteArrayInputStream stream = new ByteArrayInputStream(data);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+      
+      String line;
+      while ((line = reader.readLine()) != null) {
+        line = line.trim();
+        if (line.length() != 0) {
+          mirrorList.add(new Mirror(line, 100));
+        }
+      }
+    }
+    catch (Exception exc) {
+      throw new UpdateException("Loading mirror list failed", exc);
+    }
+    
+    // Now update the weights. Use the old mirror list if a mirror is not
+    // available
+    Mirror[] oldMirrorArr = null;
+    for (int listIdx = 0; listIdx < mirrorList.size(); listIdx++) {
+      Mirror mirror = (Mirror) mirrorList.get(listIdx);
+      
+      int weight = getMirrorWeight(mirror);
+      if (weight >= 0) {
+        mirror.setWeight(weight);
+      } else {
+        // We didn't get the weight -> Try to get the old weight
+        if (oldMirrorArr == null) {
+          oldMirrorArr = loadMirrorList();
+        }
+        
+        for (int i = 0; i < oldMirrorArr.length; i++) {
+          if (oldMirrorArr[i].getUrl().equals(mirror.getUrl())) {
+            // This is the same mirror -> use the old weight
+            mirror.setWeight(oldMirrorArr[i].getWeight());
+          }
+        }
+      }
+    }
+    
+    // Save the mirrorlist
+    try {
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      Mirror[] mirrorArr = new Mirror[mirrorList.size()];
+      mirrorList.toArray(mirrorArr);
+      
+      Mirror.writeMirrorListToStream(stream, mirrorArr);
+      byte[] data = stream.toByteArray();
+      
+      mDataTarget.writeFile(Mirror.MIRROR_LIST_FILE_NAME, data);
+    }
+    catch (Exception exc) {
+      throw new UpdateException("Saving mirror list failed", exc);
+    }
+  }
+    
+    
+  private Mirror[] loadMirrorList() throws UpdateException {
+    try {
+      byte[] data = mDataSource.loadFile(Mirror.MIRROR_LIST_FILE_NAME);
+      ByteArrayInputStream stream = new ByteArrayInputStream(data);
+      return Mirror.readMirrorListFromStream(stream);
+    }
+    catch (Exception exc) {
+      throw new UpdateException("Loading mirror list failed", exc);
+    }
+  }
+
+
+  private int getMirrorWeight(Mirror mirror) {
+    try {
+      String url = mirror.getUrl() + "/weight";
+      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(url));
+      String asString = new String(data);
+      return Integer.parseInt(asString);
+    }
+    catch (Exception exc) {
+      System.out.println("Getting mirror weight of " + mirror.getUrl()
+        + " failed");
+      return -1;
+    }
   }
 
 
@@ -358,43 +431,6 @@ public class MirrorUpdater {
     catch (UpdateException exc) {
       exc.printStackTrace();
     }
-  }
-
-
-  // inner class Channel
-
-
-  private class Channel {
-    
-    private String mCountry;
-    private String mChannelName;
-
-    
-    /**
-     * @param country
-     * @param channelName
-     */
-    public Channel(String country, String channelName) {
-      mCountry = country;
-      mChannelName = channelName;
-    }
-
-    
-    /**
-     * @return
-     */
-    public String getChannelName() {
-      return mChannelName;
-    }
-
-
-    /**
-     * @return
-     */
-    public String getCountry() {
-      return mCountry;
-    }
-
   }
 
 }

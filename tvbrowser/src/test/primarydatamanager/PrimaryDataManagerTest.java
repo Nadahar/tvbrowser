@@ -27,6 +27,9 @@ package test.primarydatamanager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
+
+import devplugin.Channel;
 
 import junit.framework.TestCase;
 
@@ -136,6 +139,12 @@ public class PrimaryDataManagerTest extends TestCase {
         exc.printStackTrace(err);
         return true;
       }
+    }
+
+    public Channel[] getAvailableChannels() {
+      return new Channel[] {
+        new Channel(null, "Test", "test", TimeZone.getTimeZone("MET"), "de")
+      };
     }
     
   } 

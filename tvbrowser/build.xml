@@ -241,6 +241,10 @@
 
 	<!-- Pack the TV data service jars -->    
     <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
+    <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/TvBrowserDataService.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
+    </jar>
     <jar jarfile="${tvbrowser.runtime.dir}/tvdataservice/XmlTvDataService.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>

@@ -26,16 +26,13 @@
 package primarydatamanager;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 
-import primarydatamanager.mirrorupdater.MirrorUpdater;
 import primarydatamanager.primarydataservice.PrimaryDataService;
 
 import tvbrowserdataservice.file.*;
 import util.io.IOUtilities;
+import devplugin.Channel;
 import devplugin.Date;
 
 /**
@@ -45,16 +42,12 @@ import devplugin.Date;
  */
 public class PrimaryDataManager {
   
-  private static final String[] LEVEL_ARR = MirrorUpdater.LEVEL_ARR;
-  
   private File mRawDir;
   private File mPreparedDir;
   private File mWorkDir;
   private File mBackupDir;
   
   private PrimaryDataService[] mDataServiceArr;
-  
-  private ArrayList mChannelList;
   
   private Date mDeadlineDay;
   
@@ -84,8 +77,6 @@ public class PrimaryDataManager {
 
 
   public void updateRawDataDir() throws PreparationException {
-    mChannelList = new ArrayList();
-    
     // Delete the old work directory
     try {
       IOUtilities.deleteDirectory(mWorkDir);
@@ -120,8 +111,11 @@ public class PrimaryDataManager {
     // Process the new raw data
     processRawDataDir();
     
-    // Save the channel list
-    saveChannelList();
+    // Create the channel list
+    createChannelList();
+    
+    // Rescue the mirro list
+    copyMirrorList();
     
     // Delete the old backup
     try {
@@ -239,17 +233,14 @@ public class PrimaryDataManager {
     String country, String channel)
     throws PreparationException
   {
-    // Register the channel
-    registerChannel(country, channel);
-    
     // Remove all empty fields from the day program
     removeEmptyFields(rawProg);
     
     // Get the file names of the level-complete-files
-    String[] levelFileNameArr = new String[LEVEL_ARR.length];
+    String[] levelFileNameArr = new String[DayProgramFile.LEVEL_ARR.length];
     for (int i = 0; i < levelFileNameArr.length; i++) {
       levelFileNameArr[i] = DayProgramFile.getProgramFileName(date, country,
-        channel, LEVEL_ARR[i]);
+        channel, DayProgramFile.LEVEL_ARR[i]);
     }
     
     // Load the level files if they exist
@@ -263,7 +254,8 @@ public class PrimaryDataManager {
         }
         catch (Exception exc) {
           throw new PreparationException("Loading complete file for level "
-            + LEVEL_ARR[i] + " failed: " + levelFileNameArr[i], exc);
+            + DayProgramFile.LEVEL_ARR[i] + " failed: " + levelFileNameArr[i],
+            exc);
         }
       }
     }
@@ -287,7 +279,8 @@ public class PrimaryDataManager {
     mapDayProgram(rawProg, preparedProg, date, country, channel);
     
     // Split the raw file in the levels
-    DayProgramFile newLevelProgArr[] = new DayProgramFile[LEVEL_ARR.length];
+    DayProgramFile newLevelProgArr[]
+      = new DayProgramFile[DayProgramFile.LEVEL_ARR.length];
     for (int i = 0; i < newLevelProgArr.length; i++) {
       newLevelProgArr[i] = extractLevel(rawProg, i);
     }
@@ -310,35 +303,17 @@ public class PrimaryDataManager {
       } else {
         // We already have an old program file
         // -> Check whether something changed
+        String level = DayProgramFile.LEVEL_ARR[i];
         if (levelProgArr[i].equals(newLevelProgArr[i])) {
           // Nothing changed -> Just copy the files
-          copyFiles(levelProgArr[i], date, country, channel, LEVEL_ARR[i]);
+          copyFiles(levelProgArr[i], date, country, channel, level);
         } else {
           // Something changed -> Create an update
           createUpdate(levelProgArr[i], newLevelProgArr[i], date, country,
-                       channel, LEVEL_ARR[i]);
+                       channel, level);
         }
       }
     }
-  }
-
-
-
-  private void registerChannel(String country, String channelName) {
-    // Check if we already have this channel
-    for (int i = 0; i < mChannelList.size(); i++) {
-      Channel channel = (Channel) mChannelList.get(i);
-
-      if (channel.getCountry().equals(country)
-        && channel.getChannelName().equals(channelName))
-      {
-        // We have this channel -> return
-        return;
-      }
-    }
-    
-    // We don't have this channel -> Add it
-    mChannelList.add(new Channel(country, channelName));
   }
 
 
@@ -558,8 +533,9 @@ public class PrimaryDataManager {
     if (someProgramsAreUnmapped) {
       // Get the maximum ID from the complete file and all update files
       int maxId = getMaxId(preparedFile);
-      for (int i = 0; i < LEVEL_ARR.length; i++) {
-        int updateMaxId = getMaxIdOfUpdateFiles(date, country, channel, LEVEL_ARR[i]);
+      for (int i = 0; i < DayProgramFile.LEVEL_ARR.length; i++) {
+        String level = DayProgramFile.LEVEL_ARR[i];
+        int updateMaxId = getMaxIdOfUpdateFiles(date, country, channel, level);
         if (updateMaxId > maxId) {
           maxId = updateMaxId;
         }
@@ -822,68 +798,45 @@ public class PrimaryDataManager {
 
 
 
-  private void saveChannelList() throws PreparationException {
-    File file = new File(mWorkDir, "channellist");
-    FileOutputStream stream = null;
-    try {
-      stream = new FileOutputStream(file);
-      PrintWriter writer = new PrintWriter(stream);
-      
-      for (int i = 0; i < mChannelList.size(); i++) {
-        Channel channel = (Channel) mChannelList.get(i);
-        
-        writer.println(channel.getCountry() + " " + channel.getChannelName());
-      }
-      
-      writer.close();
-    }
-    catch (IOException exc) {
-      throw new PreparationException("Writing channel list file failed: "
-        + file.getAbsolutePath(), exc);
-    }
-    finally {
-      if (stream != null) {
-        try { stream.close(); } catch (IOException exc) {}
+  private void createChannelList() throws PreparationException {
+    ChannelList list = new ChannelList();
+    for (int serviceIdx = 0; serviceIdx < mDataServiceArr.length; serviceIdx++) {
+      Channel[] channelArr = mDataServiceArr[serviceIdx].getAvailableChannels();
+      for (int i = 0; i < channelArr.length; i++) {
+        list.addChannel(channelArr[i]);
+        System.out.println("Adding channel " + channelArr[i].getName());
       }
     }
     
+    File file = new File(mWorkDir, ChannelList.FILE_NAME);
+    try {
+      list.writeToFile(file);
+    }
+    catch (Exception exc) {
+      throw new PreparationException("Writing channel list failed: "
+        + file.getAbsolutePath(), exc);
+    }
   }
 
 
-  // inner class Channel
+  
+  private void copyMirrorList() throws PreparationException {
+    try {
+      File fromFile = new File(mPreparedDir, "mirrorlist.txt");
+      if (fromFile.exists()) {
+        File toFile = new File(mWorkDir, "mirrorlist.txt");
+        IOUtilities.copy(fromFile, toFile);
+      }
 
-
-  private class Channel {
-    
-    private String mCountry;
-    private String mChannelName;
-
-    
-    /**
-     * @param country
-     * @param channelName
-     */
-    public Channel(String country, String channelName) {
-      mCountry = country;
-      mChannelName = channelName;
+      fromFile = new File(mPreparedDir, Mirror.MIRROR_LIST_FILE_NAME);
+      if (fromFile.exists()) {
+        File toFile = new File(mWorkDir, Mirror.MIRROR_LIST_FILE_NAME);
+        IOUtilities.copy(fromFile, toFile);
+      }
     }
-
-    
-    /**
-     * @return
-     */
-    public String getChannelName() {
-      return mChannelName;
+    catch (IOException exc) {
+      throw new PreparationException("Rescuing mirror list failed", exc);
     }
-
-
-    /**
-     * @return
-     */
-    public String getCountry() {
-      return mCountry;
-    }
-
   }
 
 }

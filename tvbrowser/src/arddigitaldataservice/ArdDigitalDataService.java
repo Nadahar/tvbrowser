@@ -39,7 +39,7 @@ import java.util.Calendar;
 import java.util.regex.*;
  import java.util.TimeZone;
  
- public class ArdDigitalDataService extends AbstractTvDataService {
+ public class ArdDigitalDataService extends AbstractOldTvDataServiceBridge {
   
   
   private static PluginInfo INFO=new PluginInfo(
