@@ -26,6 +26,7 @@
 
 package reminderplugin;
 import devplugin.*;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
@@ -97,6 +98,14 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         ErrorHandler.handle(msg, exc);
       }
     }
+    
+    if ("true".equals(mSettings.getProperty("usesendplugin"))) {
+        PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(mSettings.getProperty("usethisplugin"));
+        if (plugin.canReceivePrograms()) {
+            Program[] prArray = { item.getProgram()};
+            plugin.receivePrograms(prArray);
+        }
+    }
   }
 
 
@@ -122,7 +131,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     String name = mLocalizer.msg( "pluginName" ,"Reminder" );
     String desc = mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion." );
     String author = "Martin Oberhauser (darras@users.sourceforge.net)" ;
-    return new PluginInfo(name, desc, author, new Version(1, 9));
+    return new PluginInfo(name, desc, author, new Version(1, 10));
   }
   
   
