@@ -43,6 +43,7 @@ import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
+import util.ui.NotBoldMetalTheme;
 import util.ui.UiUtilities;
 
 import com.gc.systray.SystemTrayIconListener;
@@ -195,6 +196,10 @@ public class TVBrowser {
     mLog.info("Loading Look&Feel...");
     msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
     splash.setMessage(msg);
+
+    // Set the NotBoldMetalTheme for the metal look and feel
+    // (This won't effect other look and feels)
+    javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
     
     updateLookAndFeel();
     
