@@ -93,6 +93,7 @@ public class DownloadManager {
       synchronized (mJobList) {
         isFinished = mJobList.isEmpty() && (mActiveThreadCount == 0);
       }
+      
     } while (! isFinished);
   }
 
@@ -136,16 +137,22 @@ public class DownloadManager {
         if (stream != null) {
           try {
             job.getDownloadHandler().handleDownload(job.getFileName(), stream);
+            stream.close();
           }
           catch (Throwable thr) {
             mLog.log(Level.WARNING, "Error downloading " + url, thr);
+          }
+          finally {
+            if (stream != null) {
+              try { stream.close(); } catch (Throwable thr) {} 
+            }
           }
         }
       }
     } while (! isFinished);
     
     mActiveThreadCount--;
-    
+
     mWaitingThread.interrupt();
   }
 
