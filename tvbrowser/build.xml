@@ -218,6 +218,7 @@
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/idw-gpl.jar" dest="${unpacked.dir}/idw-gpl.jar"/>
+    <unjar src="${lib.dir}/bsh-2.0b1.jar" dest="${unpacked.dir}/bsh-2.0b1.jar"/>
 
 	<!-- Pack the tvbrowser.jar -->    
     <jar jarfile="${tvbrowser.runtime.dir}/tvbrowser.jar"
@@ -233,6 +234,7 @@
       <fileset dir="${classes.dir}" includes="com/**"/>
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/idw-gpl.jar" includes="net/**"/>
+        <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
     </jar>
 
     <!-- Pack the plugin jars -->    
