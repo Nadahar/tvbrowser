@@ -67,9 +67,9 @@ public class TvBrowserDataService extends AbstractTvDataService {
   private static final int MAX_LAST_UPDATE_DAYS = 5;
 
   private static final Mirror[] DEFAULT_MIRROR_LIST = new Mirror[] {
-    //new Mirror("http://www.murfman.de/tvdata"),
-    //new Mirror("http://tvbrowser.waidi.net"),
-    //new Mirror("http://tvbrowser.dyndns.tv"),
+    new Mirror("http://www.murfman.de/tvdata"),
+    new Mirror("http://tvbrowser.waidi.net"),
+    new Mirror("http://tvbrowser.dyndns.tv"),
     new Mirror("http://webspace-free.de/Member/TV"),
   };
 
