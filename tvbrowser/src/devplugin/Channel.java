@@ -40,6 +40,14 @@ import util.ui.ImageUtilities;
 
 public class Channel {
 
+  public static final int CATEGORY_PRIVATE = 1 << 1;
+  public static final int CATEGORY_PUBLIC = 1 << 2;
+  public static final int CATEGORY_DIGITAL = 1 << 3;
+  public static final int CATEGORY_SPECIAL_MUSIC = 1 << 4;
+  public static final int CATEGORY_SPECIAL_SPORT = 1 << 5;
+  public static final int CATEGORY_SPECIAL_NEWS = 1 << 6;
+  public static final int CATEGORY_SPECIAL_OTHER = 1 << 7;
+
   private TvDataService mDataService;
   private String mName;
   private String mId;
@@ -49,6 +57,7 @@ public class Channel {
   private String mWebpage;
   private int mDayLightSavingTimeCorrection;
   private ChannelGroup mGroup;
+  private int mCategories;
 
   /** FileName for the Icon */
   private String mIconFileName;
@@ -60,7 +69,7 @@ public class Channel {
   
   
   public Channel(TvDataService dataService, String name, String id,
-    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon)
+    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories)
   {
     if (country.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
@@ -78,8 +87,15 @@ public class Channel {
     mDayLightSavingTimeCorrection=0;
     mGroup=group;
     mIcon=icon;
+    mCategories = categories;
   }
-  
+
+  public Channel(TvDataService dataService, String name, String id,
+    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon)
+  {
+    this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, 0);
+  }
+
   public Channel(TvDataService dataService, String name, String id, TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group) {
      this(dataService,name,id,timeZone,country,copyrightNotice,webpage,group,null);  
   }
@@ -203,7 +219,12 @@ public class Channel {
   public ChannelGroup getGroup() {
     return mGroup;
   }
-  
+
+
+  public int getCategories() {
+    return mCategories;
+  }
+
   public static Channel getChannel(String dataServiceClassName, String channelId) {
     if (dataServiceClassName == null) {
       // Fast return

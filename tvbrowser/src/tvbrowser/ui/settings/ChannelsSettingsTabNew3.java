@@ -29,9 +29,9 @@ package tvbrowser.ui.settings;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.util.*;
 
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
@@ -42,7 +42,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -62,6 +61,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
+import devplugin.ChannelGroup;
 
 /**
  * This Class represents the Channel-Settings-Tab
@@ -82,9 +82,6 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
   /** The List with the current subscribed Channels */
   private JList mSubscribedChannels;
 
-  /** Left/Right Buttons */
-  private JButton mLeftBtn, mRightBtn;
-
   /** Name of the current selected Channel*/
   private JLabel mChannelName;
 
@@ -99,7 +96,11 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
 
   /** Provider of the current selected Channel*/
   private JLabel mChannelProvider;
-  
+
+
+  private JComboBox mCategoryCB, mProviderCB, mTimezoneCB, mCountryCB;
+
+
   /**
    * Creates the SettingsTab
    */
@@ -130,6 +131,9 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
     panel.setLayout(layout);
     panel.setBorder(Borders.DLU4_BORDER);
     CellConstraints c = new CellConstraints();
+
+
+
 
     // Left Box
     panel.add(new JLabel("Verfügbare Kanäle:"), c.xy(1, 1));
@@ -177,8 +181,8 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
 
     panel.add(new JScrollPane(mSubscribedChannels), c.xywh(5, 3, 1, 5));
 
-    final JButton configureChannels = new JButton("Ausgewählte Kanäle konfig.");
-    
+    final JButton configureChannels = new JButton("Selektierte konfigurieren");
+    configureChannels.setEnabled(false);
     mSubscribedChannels.addListSelectionListener(new ListSelectionListener() {
 
       public void valueChanged(ListSelectionEvent e) {
@@ -200,7 +204,7 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
     // Bottom Buttons
 
     if (mShowAllButtons) {
-      JButton refreshList = new JButton("Senderliste aktualisieren");
+      JButton refreshList = new JButton("Senderliste aktualisieren",new ImageIcon("imgs/Refresh16.gif"));
 
       refreshList.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -230,8 +234,72 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
    */
   private Component createFilterPanel() {
 
-    // FormDebugPanel panel = new FormDebugPanel();
     JPanel panel = new JPanel();
+
+    Channel[] allChannels = ChannelList.getAvailableChannels();
+    HashSet groups = new HashSet();
+    HashSet countries = new HashSet();
+    for (int i=0; i<allChannels.length; i++) {
+      String name = allChannels[i].getGroup().getProviderName();
+      String country = allChannels[i].getCountry();
+      if (name != null) {
+        groups.add(name);
+      }
+      if (country != null) {
+        countries.add(country);
+      }
+    }
+
+    mCountryCB = new JComboBox();
+    mCountryCB.addItem(new FilterItem("Alle Länder", null));
+    Iterator it = countries.iterator();
+    while (it.hasNext()) {
+      String country = (String)it.next();
+      Locale locale = new Locale(Locale.getDefault().getLanguage(), country);
+      mCountryCB.addItem(new FilterItem(locale.getDisplayCountry(), country));
+    }
+  /*  mCountryCB.addItem(new FilterItem(Locale.CANADA.getDisplayCountry(), Locale.CANADA));
+    mCountryCB.addItem(new FilterItem(Locale.FRANCE.getDisplayCountry(), Locale.FRANCE));
+    mCountryCB.addItem(new FilterItem(Locale.GERMANY.getDisplayCountry(), Locale.GERMANY));
+    mCountryCB.addItem(new FilterItem(Locale.ITALY.getDisplayCountry(), Locale.ITALY));
+    mCountryCB.addItem(new FilterItem(Locale.UK.getDisplayCountry(), Locale.UK));
+    mCountryCB.addItem(new FilterItem(Locale.US.getDisplayCountry(), Locale.US));*/
+
+
+
+    mTimezoneCB = new JComboBox();
+    mTimezoneCB.addItem(new FilterItem("Alle Zeitzonen", null));
+    TimeZone zone = TimeZone.getDefault();
+    mTimezoneCB.addItem(new FilterItem(zone.getDisplayName(), zone));
+    for (int i=-12; i<12; i++) {
+      zone = new SimpleTimeZone(i*1000*60*60, "GMT"+(i>=0?"+":"")+i);
+      mTimezoneCB.addItem(new FilterItem(zone.getDisplayName(), zone));
+    }
+
+    mCategoryCB = new JComboBox();
+    mCategoryCB.addItem(new FilterItem("Alle Kategorien", null));
+    mCategoryCB.addItem(new FilterItem("Private", new Integer(Channel.CATEGORY_PRIVATE)));
+    mCategoryCB.addItem(new FilterItem("Öffentlich rechtliche", new Integer(Channel.CATEGORY_PUBLIC)));
+    mCategoryCB.addItem(new FilterItem("Digitale", new Integer(Channel.CATEGORY_DIGITAL)));
+    mCategoryCB.addItem(new FilterItem("Alle Spartenkanäle", new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
+    mCategoryCB.addItem(new FilterItem("Musik", new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
+    mCategoryCB.addItem(new FilterItem("Sport", new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
+    mCategoryCB.addItem(new FilterItem("Nachrichten", new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
+    mCategoryCB.addItem(new FilterItem("Sonstige Sparten", new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
+
+
+    mProviderCB = new JComboBox();
+
+    mProviderCB.addItem(new FilterItem("Alle Anbieter", null));
+    Object[] providers = groups.toArray();
+    for (int i=0; i<providers.length; i++) {
+      mProviderCB.addItem(new FilterItem((String)providers[i], providers[i]));
+    }
+
+    mCountryCB.addItemListener(mFilterItemListener);
+    mTimezoneCB.addItemListener(mFilterItemListener);
+    mCategoryCB.addItemListener(mFilterItemListener);
+    mProviderCB.addItemListener(mFilterItemListener);
 
     panel.setLayout(new FormLayout("default, 3dlu, default:grow",
         "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
@@ -239,17 +307,27 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
     CellConstraints c = new CellConstraints();
 
     panel.add(new JLabel("Filter:"), c.xyw(1, 1, 3));
-    panel.add(new JLabel("Land"), c.xy(1, 3));
-    panel.add(new JComboBox(), c.xy(3, 3));
-    panel.add(new JLabel("Zeitzone"), c.xy(1, 5));
-    panel.add(new JComboBox(), c.xy(3, 5));
-    panel.add(new JLabel("Anbieter"), c.xy(1, 7));
-    panel.add(new JComboBox(), c.xy(3, 7));
-    panel.add(new JLabel("Name"), c.xy(1, 9));
-    panel.add(new JTextField(), c.xy(3, 9));
+ //   panel.add(new JLabel("Land"), c.xy(1, 3));
+    panel.add(mCountryCB, c.xy(1, 3));
+ //   panel.add(new JLabel("Zeitzone"), c.xy(1, 5));
+    panel.add(mTimezoneCB, c.xy(1, 5));
+ //   panel.add(new JLabel("Anbieter"), c.xy(1, 7));
+    panel.add(mProviderCB, c.xy(1, 7));
+ //   panel.add(new JLabel("Kategorie"), c.xy(1, 9));
+    panel.add(mCategoryCB, c.xy(1, 9));
 
     return panel;
   }
+
+
+
+
+
+  private ItemListener mFilterItemListener = new ItemListener(){
+    public void itemStateChanged(ItemEvent e) {
+      fillChannelListBox();
+    }
+  };
 
   /**
    * Create the Details Panel for the Channels
@@ -318,6 +396,10 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
 
   }
 
+
+
+
+
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
@@ -343,6 +425,14 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
    */
   private void fillChannelListBox() {
 
+    TimeZone timeZone = (TimeZone)((FilterItem)mTimezoneCB.getSelectedItem()).getValue();
+    String country = (String)((FilterItem)mCountryCB.getSelectedItem()).getValue();
+    String provider = (String)((FilterItem)mProviderCB.getSelectedItem()).getValue();
+
+    ChannelFilter filter = new ChannelFilter(timeZone, country, provider, 0);
+
+
+
     ((DefaultListModel) mSubscribedChannels.getModel()).removeAllElements();
     ((DefaultListModel) mAllChannels.getModel()).removeAllElements();
 
@@ -359,7 +449,7 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
         int pos = ChannelList.getPos(channel);
         ChannelList.getSubscribedChannels()[pos].copySettingsToChannel(channel);
         subscribedChannelArr[pos] = channel;
-      } else {
+      } else if (filter.accept(channel)) {
         availableChannelList.add(channel);
       }
     }
@@ -452,4 +542,79 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
   private void moveChannelsToLeft() {
     UiUtilities.moveSelectedItems(mSubscribedChannels, mAllChannels);
   }
+
+
+  private class ChannelFilter {
+    private TimeZone mTimezone;
+    private String mCountry;
+    private String mProvider;
+    private int mCategories;
+    public ChannelFilter(TimeZone timeZone, String country, String provider, int categories) {
+      mTimezone = timeZone;
+      mCountry = country;
+      mProvider = provider;
+      mCategories = categories;
+    }
+
+    public boolean accept(Channel channel) {
+      if (mTimezone != null) {
+        if (channel.getTimeZone().getRawOffset() != mTimezone.getRawOffset()) {
+          return false;
+        }
+      }
+
+      if (mCountry != null) {
+        String country = channel.getCountry();
+        if (country!=null) {
+          if (!country.equals(mCountry)) {
+            return false;
+          }
+        }
+        else {
+          return false;
+        }
+      }
+
+      if (mProvider != null) {
+        ChannelGroup group = channel.getGroup();
+        if (group != null && group.getProviderName()!=null) {
+          if (!mProvider.equals(group.getProviderName())) {
+            return false;
+          }
+        }else{
+          return false;
+        }
+
+      }
+
+      return true;
+    }
+  }
+
+  private class FilterItem {
+
+    private String mName;
+    private Object mValue;
+
+    public FilterItem(String name, Object value) {
+      mName = name;
+      mValue = value;
+    }
+
+    public String getName() {
+      return mName;
+    }
+
+    public Object getValue() {
+      return mValue;
+    }
+
+    public String toString() {
+      return mName;
+    }
+
+
+
+  }
+
 }
