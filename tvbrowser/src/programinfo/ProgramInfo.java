@@ -26,6 +26,8 @@
 
 package programinfo;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -52,8 +54,8 @@ public class ProgramInfo extends devplugin.Plugin {
       = java.util.logging.Logger.getLogger(ProgramInfo.class.getName());
   
   
-  private java.awt.Point location = null;
-  private java.awt.Dimension size = null;
+  private Point mLocation = null;
+  private Dimension mSize = null;
 
   private Properties mSettings;
 
@@ -112,7 +114,7 @@ public class ProgramInfo extends devplugin.Plugin {
     String desc =
       mLocalizer.msg("description", "Show information about a program");
     String author = "Martin Oberhauser";
-    return new PluginInfo(name, desc, author, new Version(1, 7));
+    return new PluginInfo(name, desc, author, new Version(1, 8));
   }
 
 
@@ -126,6 +128,17 @@ public class ProgramInfo extends devplugin.Plugin {
   }
 
   public Properties storeSettings() {
+      
+    if (mLocation != null) {
+        mSettings.setProperty("DialogLocation.X", Integer.toString(mLocation.x));
+        mSettings.setProperty("DialogLocation.Y", Integer.toString(mLocation.y));
+    }
+    
+    if (mSize != null) {
+        mSettings.setProperty("DialogSize.Width", Integer.toString(mSize.width));
+        mSettings.setProperty("DialogSize.Heigth", Integer.toString(mSize.height));
+    }
+
     return mSettings;
   }
   
@@ -134,11 +147,46 @@ public class ProgramInfo extends devplugin.Plugin {
   public void loadSettings(Properties settings) {
     if (settings == null ) {
       settings = new Properties();
-    }    
+    }
+    
+    String width = settings.getProperty("DialogSize.Width");
+    String height = settings.getProperty("DialogSize.Height");
+    
+    if ((width != null) && (height != null)) {
+        int w = parseNumber(width);
+        int h = parseNumber(height);
+        mSize = new Dimension(w, h);
+    }
+
+    String x = settings.getProperty("DialogLocation.X");
+    String y = settings.getProperty("DialogLocation.Y");
+    
+    if ((x != null) && (y != null)) {
+        int xv = parseNumber(x);
+        int yv = parseNumber(y);
+        mLocation = new Point(xv, yv);
+    }
+    
     mSettings = settings;    
   }
   
-
+  /**
+   * Parses a Number from a String.
+   * @param str Number in String to Parse
+   * @return Number if successfull. Default is 0
+   */
+  public int parseNumber(String str) {
+      
+      try {
+          int i = Integer.parseInt(str);
+          return i;
+      } catch (Exception e) {
+          
+      }
+      
+      return 0;
+  }
+  
   public void execute(Program program) {
     
     String styleSheet = mSettings.getProperty("stylesheet_v1",DEFAULT_STYLE_SHEET);
@@ -148,24 +196,24 @@ public class ProgramInfo extends devplugin.Plugin {
     dlg.pack();
     dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
       public void componentMoved(ComponentEvent e) {
-        e.getComponent().getLocation(location);
+        e.getComponent().getLocation(mLocation);
       }
 
       public void componentResized(ComponentEvent e) {
-        e.getComponent().getSize(size);
+        e.getComponent().getSize(mSize);
       }
     });
 
-    if (size != null) {
-      dlg.setSize(size);
+    if (mSize != null) {
+      dlg.setSize(mSize);
     }
-    if (location != null) {
-      dlg.setLocation(location);
+    if (mLocation != null) {
+      dlg.setLocation(mLocation);
       dlg.show();
     } else {
       UiUtilities.centerAndShow(dlg);
-      size = dlg.getSize();
-      location = dlg.getLocation();
+      mSize = dlg.getSize();
+      mLocation = dlg.getLocation();
     }
   }
 

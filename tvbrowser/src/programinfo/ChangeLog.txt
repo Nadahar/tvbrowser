@@ -1,5 +1,8 @@
 Changelog PrograminfoPlugin
 
+1.0.8:
+- Position+Size of Dialog is saved
+
 1.0.7:
 - stylesheet for program information window editable
 
