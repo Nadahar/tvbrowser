@@ -98,6 +98,10 @@ private Node mDefaultNode;
 
 
 
+  private Date getDate(Program prog) {
+    return prog.getDate();         // todo: find a smarter implementation
+  }
+
   private void switchToSortByDateView() {
     Map dateMap = new HashMap();
     mDefaultNode.removeAllChildren();
@@ -111,7 +115,7 @@ private Node mDefaultNode;
       }
       else {
         ProgramItem progItem = (ProgramItem)n.getUserObject();
-        Date date = progItem.getProgram().getDate();
+        Date date = getDate(progItem.getProgram());
         ArrayList list = (ArrayList)dateMap.get(date);
         if (list == null) {
           list = new ArrayList();
@@ -198,7 +202,6 @@ private Node mDefaultNode;
     Iterator it = root.mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode node = (PluginTreeNode)it.next();
-      //if (node.mNodeType == TYPE_NODE) {
       if (!node.isLeaf()) {
         if (recursive) {
           PluginTreeNode n = findProgramTreeNode(node, prog, recursive);
@@ -207,7 +210,7 @@ private Node mDefaultNode;
           }
         }
       }
-      else { //if (node.mNodeType == TYPE_PROGRAM) {
+      else {
         ProgramItem item = (ProgramItem)node.getUserObject();
         if (item.getProgram().equals(prog)) {
           return node;
@@ -244,7 +247,6 @@ private Node mDefaultNode;
     Iterator it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = (PluginTreeNode)it.next();
-      //if (n.mNodeType == TYPE_PROGRAM) {
       if (n.isLeaf()) {
         list.add(n.getUserObject());
       }
@@ -277,10 +279,8 @@ private Node mDefaultNode;
     out.writeInt(childrenCnt);
 
     for (int i=0; i<childrenCnt; i++) {
-      //PluginTreeNode n = (PluginTreeNode)getChildAt(i);
       PluginTreeNode n = (PluginTreeNode)mChildNodes.get(i);
       out.writeInt(n.mNodeType);
-      //if (n.mNodeType == TYPE_NODE) {
       if (!n.isLeaf()) {
         String title = (String)n.getUserObject();
         out.writeObject(title);
@@ -332,18 +332,5 @@ private Node mDefaultNode;
   public boolean isLeaf() {
     return (mDefaultNode.getType() == Node.PROGRAM);
   }
-
-   /*
-  class Node extends DefaultMutableTreeNode {
-
-    public Node(Object o) {
-      super(o);
-    }
-
-    public boolean isLeaf() {
-      return !getAllowsChildren();
-    }
-
-  }  */
 
 }

@@ -1,28 +1,28 @@
 /*
- * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date$
- *   $Author$
- * $Revision$
- */
+* TV-Browser
+* Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+*
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* as published by the Free Software Foundation; either version 2
+* of the License, or (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*
+* CVS information:
+*  $RCSfile$
+*   $Source$
+*     $Date$
+*   $Author$
+* $Revision$
+*/
 package devplugin;
 
 import java.awt.Frame;
@@ -76,15 +76,15 @@ abstract public class Plugin {
    */
   public static final String BIG_ICON = "BigIcon";
 
-  /** The localizer used by this class. */  
+  /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
-  
-  /** The jar file of this plugin. May be used to load ressources. */  
+
+  /** The jar file of this plugin. May be used to load ressources. */
   private JarFile mJarFile;
-  
+
   private PluginTreeNode mRootNode;
-  
+
   /**
    * The plugin manager. It's the plugin's connection to TV-Browser.
    * <p>
@@ -92,13 +92,13 @@ abstract public class Plugin {
    * by TV-Browser or made by using the plugin manager.
    */
   private static PluginManager mPluginManager;
-  
+
   /** The parent frame. May be used for dialogs. */
   private Frame mParentFrame;
-  
+
   /** The cached icon to use for marking programs. */
   private Icon mMarkIcon;
-  
+
   /**
    * The old member for the parent frame.
    * <p>
@@ -107,8 +107,8 @@ abstract public class Plugin {
    * @deprecated Use methode {@link #getParentFrame()} instead.
    */
   protected Frame parent;
-  
-  
+
+
   /**
    * Called by the host-application to provide access to the plugin manager.
    * 
@@ -119,8 +119,8 @@ abstract public class Plugin {
       mPluginManager = manager;
     }
   }
-  
-  
+
+
   /**
    * Use this method to call methods of the plugin manager.
    * <p>
@@ -133,7 +133,7 @@ abstract public class Plugin {
   final public static PluginManager getPluginManager() {
     return mPluginManager;
   }
-  
+
 
   /**
    * Called by the host-application to provide the jar file.
@@ -159,8 +159,8 @@ abstract public class Plugin {
   final protected JarFile getJarFile() {
     return mJarFile;
   }
-  
-  
+
+
   /**
    * Gets the ID of this plugin.
    * 
@@ -169,8 +169,8 @@ abstract public class Plugin {
   final public String getId() {
     return getPluginManager().getJavaPluginId(this);
   }
-  
-  
+
+
   /**
    * Called by the host-application to provide the parent frame.
    *
@@ -178,11 +178,11 @@ abstract public class Plugin {
    */
   final public void setParent(Frame parent) {
     this.mParentFrame = parent;
-    
+
     this.parent=parent;
   }
-  
-  
+
+
   /**
    * Gets the parent frame.
    * <p>
@@ -193,8 +193,8 @@ abstract public class Plugin {
   final protected Frame getParentFrame() {
     return mParentFrame;
   }
-  
-  
+
+
   /**
    * Helper method that loads an ImageIcon from the plugin jar file and returns
    * it.
@@ -273,7 +273,7 @@ abstract public class Plugin {
     String name = mLocalizer.msg( "unkown" ,"Unknown" );
     String desc = mLocalizer.msg( "noDescription" ,"No description" );
     String author = mLocalizer.msg( "noAuthor" ,"No author given" );
-    
+
     return new PluginInfo(name, desc, author, new Version(0, 0));
   }
 
@@ -291,7 +291,7 @@ abstract public class Plugin {
     // Call the old and deprecated method
     return supportMultipleProgramExecution();
   }
-  
+
 
   /**
    * Receives a list of programs from another plugin.
@@ -340,7 +340,7 @@ abstract public class Plugin {
       };
       action.putValue(Action.NAME, contextMenuItemText);
       action.putValue(Action.SMALL_ICON, getMarkIcon());
-      
+
       //return new Action[] { action };
       return new ActionMenu(action);
     } else {
@@ -349,7 +349,7 @@ abstract public class Plugin {
     }
   }
 
-  
+
   /**
    * Gets the Program from the ActionEvent that was passed to a context menu
    * action
@@ -410,15 +410,15 @@ abstract public class Plugin {
           action.putValue(BIG_ICON, new FixedSizeIcon(24, 24, icon));
         }
       }
-      
-      return new ActionMenu(action); 
+
+      return new ActionMenu(action);
     } else {
       // This plugin supports no button
       return null;
     }
   }
-  
-  
+
+
   /**
    * Gets the description text for the program table icons provided by this
    * Plugin.
@@ -436,7 +436,7 @@ abstract public class Plugin {
     return null;
   }
 
-  
+
   /**
    * Gets the icons this Plugin provides for the given program. These icons will
    * be shown in the program table under the start time.
@@ -454,7 +454,7 @@ abstract public class Plugin {
     return null;
   }
 
-  
+
   /**
    * Gets the SettingsTab object, which is added to the settings-window.
    * <p>
@@ -485,8 +485,8 @@ abstract public class Plugin {
     }
     return mMarkIcon;
   }
-  
-  
+
+
   /**
    * Gets the name of the file, containing your mark icon (in the jar-File).
    * Should be 16x16.
@@ -599,7 +599,7 @@ abstract public class Plugin {
   public String getContextMenuItemText() {
     return null;
   }
-  
+
 
   /**
    * This method is invoked by the host-application if the user has choosen your
@@ -612,7 +612,7 @@ abstract public class Plugin {
   public void execute(Program program) {
   }
 
-  
+
   /**
    * Gets the text to use for the main menu or the toolbar.
    * <p>
@@ -627,7 +627,7 @@ abstract public class Plugin {
   protected String getButtonText() {
     return null;
   }
-  
+
 
   /**
    * Returns the name of the file, containing your button icon (in the jar-File).
@@ -692,7 +692,7 @@ abstract public class Plugin {
    */
   public void onActivation() {      
   }
-  
+
   /**
    * This method is automatically called immediatly after deactivating
    * the plugin.
@@ -701,7 +701,7 @@ abstract public class Plugin {
    */
   public void onDeactivation() {      
   }
-  
+
   /**
    * 
    * @return true, if the programs of this plugin are handled by the plugin
@@ -711,49 +711,41 @@ abstract public class Plugin {
   public boolean canUseProgramTree() {
     return false;
   }
-  
-  /*public TreeNode[] getTreeNodes() {
-    return null;
-  }*/
-  
- /* public ProgramContainer getProgramContainer() {
-    return Plugin.getPluginManager().getProgramContainer(getId());
-  }*/
-   public PluginTreeNode getRootNode() {
-     if (mRootNode == null) {
-       //mRootNode = new PluginTreeNode(getInfo().getName());
-       mRootNode = new PluginTreeNode(this);
-       ObjectInputStream in;
-       try {
+
+  public PluginTreeNode getRootNode() {
+    if (mRootNode == null) {
+      mRootNode = new PluginTreeNode(this);
+      ObjectInputStream in;
+      try {
         in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
         mRootNode.load(in);
         in.close();
-       } catch (FileNotFoundException e) {
-         
-       } catch (IOException e) {
+      } catch (FileNotFoundException e) {
+
+      } catch (IOException e) {
         e.printStackTrace();
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
-      }    
-     }
-       
-     return mRootNode;
-   }
-   
-   public void storeRootNode() {
-     ObjectOutputStream out;
-     try {
-       out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
-       mRootNode.store(out);
-       out.close();
-     } catch (IOException e) {
-        e.printStackTrace();
-     }    
-   }
+      }
+    }
+
+    return mRootNode;
+  }
+
+  public void storeRootNode() {
+    ObjectOutputStream out;
+    try {
+      out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
+      mRootNode.store(out);
+      out.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
 
-   public String toString() {
-     return getInfo().getName();
-   }
+  public String toString() {
+    return getInfo().getName();
+  }
 
 }
