@@ -28,6 +28,7 @@ package tvbrowser.ui.filter.dlgs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
@@ -36,6 +37,10 @@ import javax.swing.JRadioButtonMenuItem;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.programtable.ProgramTableModel;
+import util.ui.ProgramPanel;
+import util.ui.SendToPluginDialog;
+import devplugin.Program;
 import devplugin.ProgramFilter;
 
 /**
@@ -127,8 +132,46 @@ public class FilterButtons implements ActionListener {
         if (e.getSource() == mCreateFilterMI) {
             mMainFrame.showFilterDialog();
         } else if (e.getSource() == mSendFilterMI) {
-            // TODO: Senden des gefilterten Zeugs
+            sendPrograms();
         }
     }
 
+    /**
+     * Sends the visible Programs to another Plugin
+     */
+    private void sendPrograms() {
+        
+        Program[] prgs = collectPrograms();
+        
+        SendToPluginDialog sendTo = new SendToPluginDialog(mMainFrame, prgs);
+        sendTo.show();
+    }
+
+    /**
+     * Collects all visible Programs
+     * @return visible Programs
+     */
+    private Program[] collectPrograms() {
+        ArrayList array = new ArrayList();
+        
+        ProgramTableModel model = mMainFrame.getProgramTableModel();
+        
+        for (int col = 0; col < model.getColumnCount(); col++) {
+            for (int row = 0; row < model.getRowCount(col); row++) {
+                // Get the program
+                ProgramPanel panel = model.getProgramPanel(col, row);
+                
+                array.add(panel.getProgram());
+                System.out.println(panel.getProgram());
+            }
+        }
+        
+        Program[] prg = new Program[array.size()];
+        
+        for (int i = 0; i < array.size(); i++) {
+            prg[i] = (Program)array.get(i);
+        }
+        
+        return prg;
+    }
 }
