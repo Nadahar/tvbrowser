@@ -82,6 +82,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     mDataService=dataservice;
     mMirrorUrlArr=mirrorUrls;
     mChannels=new HashSet();
+    mDataDir=dataservice.getDataDir();
   }
   
   public String[] getMirrorArr() {
