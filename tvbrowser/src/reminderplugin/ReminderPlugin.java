@@ -48,7 +48,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   private ReminderList mReminderList;
   private Properties mSettings;
-  
+  private HashSet mReminderItemsTrash;
   
   
   /**
@@ -59,6 +59,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
     mReminderList = new ReminderList();
     mReminderList.setReminderTimerListener(this);
+    mReminderItemsTrash = new HashSet();
   }
   
   
@@ -268,13 +269,35 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    */
   public void handleTvDataDeleted(ChannelDayProgram oldProg) {
     
-    /*
-    
     // Remove the deleted programs from the reminder list
-    for (int i = 0; i < oldProg.getProgramCount(); i++) {
+    // and add it to the trash.
+    // When the tv listings update is done, we will restore items for programs
+    // that were not deleted but updated.
+     for (int i = 0; i < oldProg.getProgramCount(); i++) {
       Program prog = oldProg.getProgramAt(i);
-      mReminderList.remove(prog);
-    }*/
+      ReminderListItem item = mReminderList.getItemWithProgram(prog);
+      if (item != null) {
+        mReminderList.remove(prog);
+        mReminderItemsTrash.add(item);
+      }
+    }
   }
+  
+  public void handleTvDataChanged() {
+    
+    Iterator it = mReminderItemsTrash.iterator();
+    while (it.hasNext()) {
+      ReminderListItem trashItem = (ReminderListItem) it.next();
+      // We identify programs by ID
+      // TODO: identify programs by name and time range (so we won't lose a program if its start time has changed)
+      Program p = Plugin.getPluginManager().getProgram(trashItem.getProgram().getDate(), trashItem.getProgram().getID());
+      if (p != null) {
+        mReminderList.add(trashItem.getProgram(), trashItem.getReminderMinutes());
+        p.mark(this);
+      }
+    }
+    mReminderItemsTrash.clear();   
+  }
+  
 
 } 
