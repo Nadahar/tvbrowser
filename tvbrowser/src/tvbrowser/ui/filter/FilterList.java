@@ -33,55 +33,120 @@ import tvbrowser.core.Settings;
 public class FilterList {
     
     public static final String FILTER_DIRECTORY=Settings.getUserDirectoryName()+"/filters";
-    private static HashSet mFilterList;
+    private static final String FILTER_INDEX="filter.index";
+    
+    private static ArrayList mFilterList;
     
     public static void load() {
-        mFilterList=new HashSet();
-        File[] list=new File(FILTER_DIRECTORY).listFiles(new FileFilter() {
+      mFilterList=new ArrayList();
+      mFilterList.add(new ShowAllFilter());  // default filter
+    
+      File[] list=new File(FILTER_DIRECTORY).listFiles(new FileFilter() {
             public boolean accept(File f) {
                 return f.getAbsolutePath().endsWith(".filter");
             }            
-        });
-        if (list!=null) {
-            for (int i=0;i<list.length;i++) {
-                Filter f=new Filter(list[i]);
-                mFilterList.add(f);
+      });
+      if (list!=null) {
+        for (int i=0;i<list.length;i++) {
+          Filter f=new Filter(list[i]);
+          mFilterList.add(f);
+        }
+      }        
+   
+   
+      File inxFile=new File(FILTER_DIRECTORY,FILTER_INDEX);
+      BufferedReader inxIn=null;
+      try {
+        inxIn=new BufferedReader(new FileReader(inxFile));
+        int cnt=0;
+        int size=mFilterList.size();
+        String curFilterName=null;
+        curFilterName=inxIn.readLine();
+        while (curFilterName!=null){
+          
+          for (int i=cnt;i<size;i++) {
+            Filter f=(Filter)mFilterList.get(i);
+            if (f.getName().equalsIgnoreCase(curFilterName)) {
+              //swap i<-->cnt
+              Object o=mFilterList.get(cnt);
+              mFilterList.set(cnt,f);
+              mFilterList.set(i,o);
+              cnt++;
+              break;
             }
-        }        
+          }
+          
+          curFilterName=inxIn.readLine();
+        }
+          
+      }catch (IOException e) {
+          e.printStackTrace();
+      }
+      finally{
+        try{ if (inxIn!=null) inxIn.close();}catch(IOException e){};
+      }
+   
         
     }
     
     public static void store() {
-        Iterator it=mFilterList.iterator();
-        File directory=new File(FILTER_DIRECTORY);
-        if (!directory.exists()) {
-            directory.mkdir();
+      File directory=new File(FILTER_DIRECTORY);
+      if (!directory.exists()) {
+        directory.mkdir();
+      }
+      
+      File inxFile=new File(FILTER_DIRECTORY,FILTER_INDEX);
+      
+      PrintWriter inxOut=null;
+      try {
+        inxOut=new PrintWriter(new FileWriter(inxFile)); 
+      }catch(IOException e) {
+        
+      }
+      for (int i=0;i<mFilterList.size();i++) {
+        Filter f=(Filter)mFilterList.get(i);
+        if (!(f instanceof ShowAllFilter)) {  // don't store default filter
+          f.store(directory);
         }
-        while (it.hasNext()) {
-            ((Filter)it.next()).store(directory);
+        
+        System.out.println("storing "+f.getName());
+        if (inxOut!=null) {
+          System.out.println("ok");
+         inxOut.println(f.getName());
         }
+      }
+      
+      if (inxOut!=null) {
+        inxOut.close();
+      }
+       
+       
        
     }
     
     public static Filter[] getFilterList() {
-        if (mFilterList==null) {
-            load();
-        }
-        Iterator it=mFilterList.iterator();
-        int size=mFilterList.size();
-        Filter[] result=new Filter[size];
-        int i=0;
-        while (it.hasNext()) {
-            result[i++]=(Filter)it.next();
-        }
-        return result;
+      if (mFilterList==null) {
+        load();
+      }
+      int size=mFilterList.size();
+      Filter[] result=new Filter[size];
+        
+      for (int i=0;i<size;i++) {
+        result[i]=(Filter)mFilterList.get(i);    
+      }
+      return result;
+    }
+    
+    
+    public static void clear() {
+      mFilterList.clear();
     }
     
     public static void add(Filter filter) {
-        if (mFilterList.contains(filter)) {
-            
+      
+       if (!mFilterList.contains(filter)) {
+          mFilterList.add(filter);
         }
-        mFilterList.add(filter);
     }
     
     public static void remove(Filter filter) {
