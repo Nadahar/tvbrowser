@@ -93,39 +93,8 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
 	}
 
   public String[] getProgramTableIconPlugins() {
-    return new String[]{"programinfo.ProgramInfo"};
+    return new String[]{"java.programinfo.ProgramInfo"};
   }
-
-	
-	//public Icon[] getPluginIcons(Program program) {
-    
-   // return new Icon[]{};
-    
-    /*
-    ArrayList list = new ArrayList();
-    
-    String[] iconPluginArr = Settings.getProgramTableIconPlugins();
-    Plugin[] pluginArr = Plugin.getPluginManager().getInstalledPlugins();
-    for (int i = 0; i < iconPluginArr.length; i++) {
-      // Find the plugin with this class name and add its icons
-      for (int j = 0; j < pluginArr.length; j++) {
-        String className = pluginArr[j].getClass().getName();
-        if (iconPluginArr[i].equals(className)) {
-          // This is the right plugin -> Add its icons
-          Icon[] iconArr = pluginArr[j].getProgramTableIcons(program);
-          if (iconArr != null) {
-            for (int k = 0; k < iconArr.length; k++) {
-              list.add(iconArr[k]);
-            }
-          }
-        }
-      }
-    }
-    
-    Icon[] asArr = new Icon[list.size()];
-    list.toArray(asArr);
-    return asArr;*/
-//	}
 
 	
 	public Color getColorOnAir_dark() {

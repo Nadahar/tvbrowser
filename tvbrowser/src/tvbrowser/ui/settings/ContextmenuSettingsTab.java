@@ -26,19 +26,25 @@
 
 package tvbrowser.ui.settings; 
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
-import devplugin.Plugin;
-import tvbrowser.core.PluginLoader;
-import tvbrowser.core.PluginManager;
-import tvbrowser.core.PluginStateListener;
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.ui.customizableitems.SortableItemList;
+import devplugin.Plugin;
+import devplugin.Program;
 
- 
 public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener {
 
 
@@ -50,8 +56,10 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
          JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
            index, isSelected, cellHasFocus);
 
-         if (value instanceof Plugin) {
-           Plugin plugin=(Plugin)value;
+         if (value instanceof PluginProxy) {
+           PluginProxy plugin = (PluginProxy) value;
+           Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+           
            JPopupMenu menu=new JPopupMenu();
            Font f;
            if (plugin.equals(mDefaultPlugin)) {
@@ -60,15 +68,29 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
            else {
              f=new Font("Dialog",Font.PLAIN,12);
            }
-           label.setFont(f);        
-           label.setText(plugin.getContextMenuItemText());
+           label.setFont(f);
+           
+           // Get the context menu item text
+           String text = null;
+           Icon icon = null;
+           Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
+           if (actionArr != null) {
+             if (actionArr.length == 1) {
+               text = (String) actionArr[0].getValue(Action.NAME);
+               icon = (Icon) actionArr[0].getValue(Action.SMALL_ICON);
+             } else {
+               text = plugin.getInfo().getName();
+               icon = plugin.getMarkIcon();
+             }
+           }
+           label.setText(text);
            
            label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
            label.setOpaque(false);
            label.setBackground(menu.getBackground());
            JPanel panel=new JPanel(new BorderLayout());
            panel.add(label,BorderLayout.CENTER);
-           panel.add(new JLabel(plugin.getMarkIcon()),BorderLayout.WEST);
+           panel.add(new JLabel(icon),BorderLayout.WEST);
            if (isSelected) {
              panel.setBackground(Color.gray);
            }
@@ -84,7 +106,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 
 
   private JButton mDefaultPluginBt;
-  private Plugin mDefaultPlugin;
+  private PluginProxy mDefaultPlugin;
   private SortableItemList mList;
   
   public static final util.ui.Localizer mLocalizer
@@ -101,7 +123,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
              int inx = mList.getList().locationToIndex(e.getPoint());
              if (inx>=0) {
                mList.getList().ensureIndexIsVisible(inx);
-               mDefaultPlugin=(Plugin)mList.getList().getSelectedValue();
+               mDefaultPlugin = (PluginProxy) mList.getList().getSelectedValue();
                mList.updateUI();
              }          
            }
@@ -111,31 +133,21 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         mList.getList().setOpaque(false);
     fillListbox();
     
-    PluginLoader.getInstance().addPluginStateListener(new PluginStateListener(){
+    PluginProxyManager.getInstance().addPluginStateListener(
+      new PluginStateAdapter() {
+        public void pluginActivated(Plugin p) {
+          fillListbox();
+        }
 
-          public void pluginActivated(Plugin p) {
-            fillListbox();        
-          }
-
-          public void pluginDeactivated(Plugin p) {
-            fillListbox();
-        
-          }
-
-          public void pluginLoaded(Plugin p) {                
-          }
-
-          public void pluginUnloaded(Plugin p) {      
-          }
-    
-        });
-    
-    
+        public void pluginDeactivated(Plugin p) {
+          fillListbox();
+        }
+      });    
   }
 
-	public JPanel createSettingsPanel() {
-    
-    mDefaultPlugin = PluginManager.getInstance().getDefaultContextMenuPlugin();
+  
+  public JPanel createSettingsPanel() {
+    mDefaultPlugin = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
     
     JPanel contentPanel=new JPanel(new BorderLayout(0,15));
     contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
@@ -170,68 +182,61 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     }
     mList.removeAllElements();
     
-    Plugin[] pluginList = PluginManager.getInstance().getContextMenuPlugins();
-    
-    for (int i=0;i<pluginList.length;i++) {
-      if (pluginList[i].getContextMenuItemText()!=null) {
+    PluginProxy[] pluginList = PluginProxyManager.getInstance().getActivatedPlugins();
+    Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+    for (int i = 0; i < pluginList.length; i++) {
+      Action[] actionArr = pluginList[i].getContextMenuActions(exampleProgram);
+      if (actionArr != null) {
         mList.addElement(pluginList[i]);
       }
-    }
-    
+    } 
   }
-  
+
+
   public void actionPerformed(ActionEvent event) {
     Object o=event.getSource();
     if (o==mDefaultPluginBt) {
-      mDefaultPlugin=(Plugin)mList.getList().getSelectedValue();
+      mDefaultPlugin = (PluginProxy) mList.getList().getSelectedValue();
       mList.updateUI();
     }
     
   }
 
 	
-	public void saveSettings() {
-		
-    Object o[]=mList.getItems();
-    
-    Plugin p[]=new Plugin[o.length];
-    String pluginNames[]=new String[o.length];
-    for (int i=0;i<p.length;i++) {
-      p[i]=(Plugin)o[i];
-      pluginNames[i]=((Plugin)o[i]).getClass().getName();
+  public void saveSettings() {
+    Object o[] = mList.getItems();
+
+    String pluginIDs[] = new String[o.length];
+    for (int i = 0; i < o.length; i++) {
+      PluginProxy plugin = (PluginProxy) o[i];
+      pluginIDs[i] = plugin.getId();
     }
-    
-    Settings.propContextMenuItemPlugins.setStringArray(pluginNames);   
-    
-    PluginManager.getInstance().setContextMenuPlugins(p);
-    
+
+    Settings.propPluginOrder.setStringArray(pluginIDs);
+
+    PluginProxyManager.getInstance().setPluginOrder(pluginIDs);
+
     if (!mList.contains(mDefaultPlugin)) {
-      mDefaultPlugin=null;
+      mDefaultPlugin = null;
     }
-    
-    PluginManager.getInstance().setDefaultContextMenuPlugin(mDefaultPlugin);
-		if (mDefaultPlugin!=null) {
-		  Settings.propDefaultContextMenuPlugin.setString(mDefaultPlugin.getClass().getName());
+
+    PluginProxyManager.getInstance().setDefaultContextMenuPlugin(mDefaultPlugin);
+    if (mDefaultPlugin != null) {
+      Settings.propDefaultContextMenuPlugin.setString(mDefaultPlugin.getId());
+    } else {
+      Settings.propDefaultContextMenuPlugin.setString(null);
     }
-		else {
-			if (o.length>0) {
-        Settings.propDefaultContextMenuPlugin.setString(((Plugin)o[0]).getClass().getName());
-      }      
-		}
-    
-    
-   
-	}
+  }
 
-	
-	public Icon getIcon() {
-		return null;
-	}
 
-	
-	public String getTitle() {
-		return mLocalizer.msg("title","context menu");
-	}
+  public Icon getIcon() {
+    return null;
+  }
+
+
+  public String getTitle() {
+    return mLocalizer.msg("title", "context menu");
+  }
 
 	/*
 	public void settingsChanged(SettingsTab tab, Object obj) {

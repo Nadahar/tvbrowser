@@ -102,23 +102,18 @@ public class ProgramIcon implements Icon {
   }
   
   private Icon[] getPluginIcons(Program program) {
-    
     ArrayList list = new ArrayList();
     
     String[] iconPluginArr = mSettings.getProgramTableIconPlugins();
-    
-    Plugin[] pluginArr = Plugin.getPluginManager().getInstalledPlugins();
     for (int i = 0; i < iconPluginArr.length; i++) {
-      // Find the plugin with this class name and add its icons
-      for (int j = 0; j < pluginArr.length; j++) {
-        String className = pluginArr[j].getClass().getName();
-        if (iconPluginArr[i].equals(className)) {
-          // This is the right plugin -> Add its icons
-          Icon[] iconArr = pluginArr[j].getProgramTableIcons(program);
-          if (iconArr != null) {
-            for (int k = 0; k < iconArr.length; k++) {
-              list.add(iconArr[k]);
-            }
+      // Add the icons of this plugin
+      PluginManager mng = Plugin.getPluginManager();
+      PluginAccess plugin = mng.getActivatedPluginForId(iconPluginArr[i]);
+      if (plugin != null) {
+        Icon[] iconArr = plugin.getProgramTableIcons(program);
+        if (iconArr != null) {
+          for (int j = 0; j < iconArr.length; j++) {
+            list.add(iconArr[j]);
           }
         }
       }

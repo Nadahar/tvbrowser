@@ -29,8 +29,6 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
@@ -38,7 +36,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashMap;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.Locale;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -55,15 +54,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.PluginLoader;
-import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.configassistant.TvdataAssistantDlg;
 import tvbrowser.ui.configassistant.TvdataImportDlg;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -296,14 +292,11 @@ public class TVBrowser {
     
     updateLookAndFeel();
     
-    // Maybe there are plugins to install (.jar.inst files)
-    PluginManager.getInstance().installPendingPlugins();
-    
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);
     try {
-      PluginManager.getInstance().init();      
+      PluginProxyManager.getInstance().init();      
     } catch(TvBrowserException exc) {
       ErrorHandler.handle(exc);      
     }
@@ -322,6 +315,7 @@ public class TVBrowser {
     splash.setMessage(msg);
     
     mainFrame=MainFrame.getInstance();
+    PluginProxyManager.getInstance().setParentFrame(mainFrame);
     
     // Set the program icon
     Image iconImage = ImageUtilities.createImage("imgs/TVBrowser16.gif");
@@ -511,18 +505,9 @@ public class TVBrowser {
   }
   
   
-  public static synchronized void flushSettings() {
-    final PluginLoader pl = PluginLoader.getInstance();
-    devplugin.Plugin[] p = PluginLoader.getInstance().getActivePlugins();
-    for (int i=0; i<p.length; i++) {
-      mLog.info("Storing plugin settings of plugin "+p[i].getInfo().getName()+"...");
-      pl.storePluginData(p[i]);
-      pl.storePluginSettings(p[i]);
-    }
-        
+  public static synchronized void flushSettings() {    
     mLog.info("Storing channel day light saving time corrections");
     ChannelList.storeDayLightSavingTimeCorrections();  
-    
     
     mLog.info("Storing window size and location");
     boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
@@ -545,38 +530,13 @@ public class TVBrowser {
   }
   
   private static JMenu createPluginsMenu() {
-      JMenu mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-      
-      Object[] plugins = PluginLoader.getInstance().getActivePlugins();
-      JMenuItem item;
-      HashMap map = new HashMap();
-      for (int i = 0;i<plugins.length;i++) {
-        
-        final devplugin.Plugin plugin = (devplugin.Plugin)plugins[i];
-        plugin.setParent(TVBrowser.mainFrame);
-        String btnTxt = plugin.getButtonText();
-        if (btnTxt != null) {
-          int k = 1;
-          String txt = btnTxt;
-          while (map.get(txt) != null) {
-            txt = btnTxt+"("+k+")";
-            k++;
-          }
-          map.put(txt,btnTxt);
-
-          item = new JMenuItem(btnTxt);
-          item.setIcon(plugin.getButtonIcon());
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-              plugin.execute();
-            }
-          });
-          mPluginsMenu.add(item);
-        }
-      }
-      
-      return mPluginsMenu;
-    }
+    JMenu pluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+    
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    MainFrame.updatePluginsMenu(pluginsMenu, plugins);
+    
+    return pluginsMenu;
+  }
   
   public static boolean isUsingSystemTray() {
     return mUseSystemTray;

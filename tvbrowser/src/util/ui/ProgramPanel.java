@@ -46,8 +46,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -284,29 +285,48 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @return The icons for the program.
    */
   private Icon[] getPluginIcons(Program program) {
-    ArrayList list = new ArrayList();
-    
     String[] iconPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
-    Plugin[] pluginArr = PluginManager.getInstance().getInstalledPlugins();
-    for (int i = 0; i < iconPluginArr.length; i++) {
-      // Find the plugin with this class name and add its icons
-      for (int j = 0; j < pluginArr.length; j++) {
-        String className = pluginArr[j].getClass().getName();
-        if (iconPluginArr[i].equals(className)) {
-          // This is the right plugin -> Add its icons
-          Icon[] iconArr = pluginArr[j].getProgramTableIcons(program);
+    
+    PluginProxyManager mng = PluginProxyManager.getInstance();
+    
+    if ((iconPluginArr == null) || (iconPluginArr.length == 0)) {
+      return new Icon[0];
+    } else {
+      // Add the icons for each plugin
+      ArrayList list = new ArrayList();
+      for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
+        PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
+
+        // Check whether this entry still uses the old class name
+        if (plugin == null) {
+          String asId = "java." + iconPluginArr[pluginIdx];
+          plugin = mng.getPluginForId(asId);
+          
+          if (plugin != null) {
+            // It was the old class name, not an ID
+            // -> Change the class name to an ID and save it
+            iconPluginArr[pluginIdx] = asId;
+            Settings.propProgramTableIconPlugins.setStringArray(iconPluginArr);
+          }
+        }
+        
+        // Now add the icons
+        if ((plugin != null) && plugin.isActivated()) {
+          Icon[] iconArr = plugin.getProgramTableIcons(program);
           if (iconArr != null) {
-            for (int k = 0; k < iconArr.length; k++) {
-              list.add(iconArr[k]);
+            // Add the icons
+            for (int i = 0; i < iconArr.length; i++) {
+              list.add(iconArr[i]);
             }
           }
         }
       }
+
+      // Convert the list to an array
+      Icon[] asArr = new Icon[list.size()];
+      list.toArray(asArr);
+      return asArr;
     }
-    
-    Icon[] asArr = new Icon[list.size()];
-    list.toArray(asArr);
-    return asArr;
   }
 
 
@@ -446,19 +466,27 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * 
    * @param caller The Plugin to exclude from the context menu. When
    *        <code>null</code> no plugin is excluded.
+   * 
+   * @deprecated Since 1.1. Use {@link #addPluginContextMenuMouseListener()}
+   *             instead.
    */
-  public void addPluginContextMenuMouseListener(final Plugin caller) {
+  public void addPluginContextMenuMouseListener(Plugin caller) {
+    addPluginContextMenuMouseListener();
+  }
+  
+  
+  /**
+   * Adds a MouseListener that shows the plugin context menu when the user does
+   * a right click on the program panel. 
+   */
+  public void addPluginContextMenuMouseListener() {
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent evt) {
         if (SwingUtilities.isRightMouseButton(evt)) {
-          JPopupMenu menu
-            = PluginManager.createPluginContextMenu(mProgram, caller);
+          JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram);
           menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
         } else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-                        Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
-            if (plugin != null) {
-                plugin.execute(mProgram);
-            }
+          Plugin.getPluginManager().handleProgramDoubleClick(mProgram);
         }
       }
     });

@@ -28,6 +28,9 @@ package devplugin;
 
 import java.util.Iterator;
 
+import javax.swing.JPopupMenu;
+
+import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
 
 /**
@@ -40,23 +43,30 @@ public interface PluginManager {
 
   /**
    * Gets a program.
-   * <p>
-   * Returns null, if the specified program could not be found.
+   * 
+   * @param date The date when the program is shown.
+   * @param progID The ID of the program.
+   * @return The program or <code>null</code> if there is no such program.
    */
-  public devplugin.Program getProgram(devplugin.Date date, String progID);
+  public Program getProgram(Date date, String progID);
 
   /**
-   * Gets the subscribed channels.
+   * Gets all channels the user has subscribed.
+   * 
+   * @return all channels the user has subscribed.
    */
   public Channel[] getSubscribedChannels();
 
   /**
    * Gets an iterator through all programs of the specified channel at the
    * specified date.
-   * <p>
-   * If the requested data is not available, null is returned.
+   * 
+   * @param date The date of the programs.
+   * @param channel The channel of the programs.
+   * @return an Iterator for all programs of one day and channel or
+   *         <code>null</code> if the requested data is not available.
    */
-  public Iterator getChannelDayProgram(devplugin.Date date, Channel channel);
+  public Iterator getChannelDayProgram(Date date, Channel channel);
 
   /**
    * Searches the TV data for programs which match a regular expression.
@@ -76,7 +86,7 @@ public interface PluginManager {
    *             instead.
    */
   public Program[] search(String regex, boolean inTitle, boolean inText,
-    boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
+    boolean caseSensitive, Channel[] channels, Date startDate,
     int nrDays)
     throws TvBrowserException;
 
@@ -103,23 +113,55 @@ public interface PluginManager {
     throws TvBrowserException;
 
   /**
-   * Returns a list of all installed Plugins
+   * Returns all activated Plugins.
+   * 
+   * @return all activated Plugins.
+   * @since 1.1
    */
-  public Plugin[] getInstalledPlugins();
-
+  public PluginAccess[] getActivatedPlugins();
+  
+  /**
+   * Gets the activated plugin with the given ID.
+   * 
+   * @param pluginId The ID of the wanted plugin.
+   * @return The plugin with the given ID or <code>null</code> if no such plugin
+   *         exists or if the plugin is not activated.
+   */
+  public PluginAccess getActivatedPluginForId(String pluginId);
 
   /**
-   * Returns a TvDataService by class name
+   * Gets a TvDataService for a class name.
+   *
+   * @param dataServiceClassName the class name of the wanted TvDataService.
+   * @return The TvDataService or <code>null</code> if there is no such
+   *         TvDataService. 
    */
-  public tvdataservice.TvDataService getDataService(String dataServiceClassName);
+  public TvDataService getDataService(String dataServiceClassName);
 
   /**
-   * Creates a contextmenu containing items for the other plugins.
+   * Creates a context menu for the given program containing all plugins.
+   * 
+   * @param program The program to create the context menu for
+   * @param caller The calling plugin.
+   * @return a context menu for the given program.
+   * 
+   * @deprecated Since 1.1. Use {@link #createPluginContextMenu(Program)}
+   *             instead.
    */
-  public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller);
+  public JPopupMenu createPluginContextMenu(Program program, Plugin caller);
 
+  /**
+   * Creates a context menu for the given program containing all plugins.
+   * 
+   * @param program The program to create the context menu for
+   * @return a context menu for the given program.
+   */
+  public JPopupMenu createPluginContextMenu(Program program);
+  
   /**
    * Returns an array of all available filters.
+   * 
+   * @return An array of all available filters.
    * @since 0.9.7.4
    */
   public ProgramFilter[] getAvailableFilters();
@@ -127,14 +169,22 @@ public interface PluginManager {
   
   /**
    * Returns an example program. You can use it for preview stuff.
+   * 
+   * @return an example program.
    * @since 0.9.7.4
    */
   public Program getExampleProgram();
   
   
   /**
-   * @since 0.9.7.4
+   * Handles a double click on a program.
+   * <p>
+   * Executes the default context menu plugin.
+   * 
+   * @param program The program to pass to the default context menu plugin.
+   * 
+   * @since 1.1
    */
-  public Plugin getDefaultContextMenuPlugin();
-  
+  public void handleProgramDoubleClick(Program program);
+
 }

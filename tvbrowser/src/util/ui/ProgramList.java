@@ -39,9 +39,11 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import devplugin.Plugin;
+import devplugin.PluginManager;
 import devplugin.Program;
 
 import searchplugin.SearchPlugin;
+import tvbrowser.core.plugin.PluginProxy;
 
 
 /**
@@ -146,26 +148,25 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
      * Add a Mouse-Listener for the Popup-Box
      */
     private void addMouseListeners() {
-        addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent e) {
-        		if (SwingUtilities.isRightMouseButton(e)) {
-    				int inx= locationToIndex(e.getPoint());
-    				JPopupMenu menu=devplugin.Plugin.getPluginManager().createPluginContextMenu((Program) ProgramList.this.getModel().getElementAt(inx),SearchPlugin.getInstance());
-    				
-    				menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
-    			} else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-    				int inx=locationToIndex(e.getPoint());
-    				Program p= (Program) ProgramList.this.getModel().getElementAt(inx);
-
-    				Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
-    	            if (plugin != null) {
-    	                plugin.execute(p);
-    	            }
-    	        }
-        	}
-        	
-        });
-        
+      addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          PluginManager mng = Plugin.getPluginManager();
+          if (SwingUtilities.isRightMouseButton(e)) {
+            int inx = locationToIndex(e.getPoint());
+            Program prog = (Program) getModel().getElementAt(inx);
+            JPopupMenu menu = mng.createPluginContextMenu(prog);
+  
+            menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
+          } else if (SwingUtilities.isLeftMouseButton(e)
+              && (e.getClickCount() == 2)) {
+            int inx = locationToIndex(e.getPoint());
+            Program prog = (Program) ProgramList.this.getModel()
+                .getElementAt(inx);
+  
+            mng.handleProgramDoubleClick(prog);
+          }
+        }
+      });
     }
 
     /* (non-Javadoc)

@@ -44,13 +44,10 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
-import captureplugin.CapturePlugin;
+import util.ui.Localizer;
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.utils.ProgramTimeComparator;
-
-import util.ui.Localizer;
-import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -131,18 +128,14 @@ public class ProgramListPanel extends JPanel {
                     
                     Program p = (Program) mProgramTableModel.getValueAt(row, 1);
                     
-                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p,
-                            CapturePlugin.getInstance());
+                    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p);
                     menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
                 } else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
                     int row = mProgramTable.rowAtPoint(e.getPoint());
                     mProgramTable.changeSelection(row, 0, false, false);
                     Program p = (Program) mProgramTableModel.getValueAt(row, 1);
 
-                    Plugin plugin = devplugin.Plugin.getPluginManager().getDefaultContextMenuPlugin();
-                    if (plugin != null) {
-                        plugin.execute(p);
-                    }
+                    devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p);
                 }
             }
         });

@@ -25,16 +25,29 @@
  */
 package tvbrowser.ui.programtable;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 
-import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
-import tvbrowser.ui.programtable.background.*;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.programtable.background.BackgroundPainter;
+import tvbrowser.ui.programtable.background.OneImageBackPainter;
+import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
+import tvbrowser.ui.programtable.background.TimeOfDayBackPainter;
+import tvbrowser.ui.programtable.background.WhiteBackPainter;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
 import devplugin.Date;
@@ -334,17 +347,16 @@ public class ProgramTable extends JPanel
   }
 
 
-
   /**
    * Creates a context menu containg all subscribed plugins that support context
    * menues.
-   *
+   * 
+   * @param program The program to create the context menu for.
    * @return a plugin context menu.
    */
-  private JPopupMenu createPluginContextMenu(final Program program) {  
-  	return PluginManager.createPluginContextMenu(program, null); 
+  private JPopupMenu createPluginContextMenu(Program program) {  
+    return PluginProxyManager.createPluginContextMenu(program); 
   }
-
   
   
   private void handleMousePressed(MouseEvent evt) {
@@ -367,10 +379,7 @@ public class ProgramTable extends JPanel
       if (program != null) {
         // This is a left double click
         // -> Execute the program using the user defined default plugin
-        Plugin plugin = PluginManager.getInstance().getDefaultContextMenuPlugin();
-        if (plugin!=null) {
-          plugin.execute(program);  
-        }
+        Plugin.getPluginManager().handleProgramDoubleClick(program);
       }
     }
   }

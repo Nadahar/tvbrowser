@@ -373,12 +373,25 @@ public class Settings {
   public static final StringProperty propDefaultContextMenuPlugin
     = new StringProperty(mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");
   
-  public static final StringArrayProperty propContextMenuItemPlugins
-    = new StringArrayProperty(mProp, "contextmenuitemplugins", null);
-  
-  public static final StringArrayProperty propInstalledPlugins
+  /**
+   * The order of the plugin IDs.
+   * <p>
+   * In former times this property hold the list of plugin class names that
+   * should be activated on startup (in the right order). Now it holds IDs, not
+   * class names and activation is controlled by {@link #propDeactivatedPlugins}.
+   */
+  public static final StringArrayProperty propPluginOrder
     = new StringArrayProperty(mProp, "plugins", null);
 
+  /**
+   * The ID's of the plugins that have been deactivated.
+   * <p>
+   * NOTE: By remembering the deactivated plugins rather the activated plugins
+   *       new plugins are activated automatically.
+   */
+  public static final StringArrayProperty propDeactivatedPlugins
+    = new StringArrayProperty(mProp, "deactivatedPlugins", null);
+  
   public static final IntProperty propDownloadPeriod
     = new IntProperty(mProp, "downloadperiod", 0);
 

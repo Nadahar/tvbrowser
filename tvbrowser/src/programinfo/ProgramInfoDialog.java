@@ -40,6 +40,7 @@ import util.ui.*;
 import util.ui.html.*;
 
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -130,14 +131,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       }
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-      if (program != null) {
-        // This is a left double click
-        // -> Execute the program using the user defined default plugin
-        Plugin plugin = Plugin.getPluginManager().getDefaultContextMenuPlugin();
-        if (plugin!=null && plugin!=ProgramInfo.getInstance()) {
-          plugin.execute(program);  
-        }
-      }
+      Plugin.getPluginManager().handleProgramDoubleClick(program);
     }
   }
   

@@ -23,22 +23,29 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.settings;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
-import util.ui.*;
-
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import util.ui.UiUtilities;
 import devplugin.SettingsTab;
-import devplugin.Plugin;
-
-import tvbrowser.core.PluginLoader;
-
 
 /**
  *
@@ -170,9 +177,9 @@ public class SettingsDialog {
     node = new SettingNode(pluginSettingsTab);
     root.add(node);
     
-    Plugin[] pluginArr = PluginLoader.getInstance().getAllPlugins();
+    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
-      ConfigPluginSettingsTab tab=new ConfigPluginSettingsTab(pluginArr[i]);
+      ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
       node.add(new SettingNode(tab));
       pluginSettingsTab.addSettingsChangeListener(tab);
     }
