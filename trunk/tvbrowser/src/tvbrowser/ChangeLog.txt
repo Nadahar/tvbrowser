@@ -1,5 +1,10 @@
 Changelog TVBrowser
 
+1.1
+- Added Channel-Logos
+- Added new Filter to select if the Program is running, was running or will be running
+
+
 1.0 final
  - bugfix: ask before autodownload on startup
  - bugfix: "timezone bug" (didn't show programs after 24:00)
