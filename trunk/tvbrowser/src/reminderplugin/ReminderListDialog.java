@@ -26,12 +26,14 @@
 
 package reminderplugin;
 
+import java.util.Iterator;
 
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-import java.util.Iterator;
+import util.ui.ProgramPanel;
+
 import devplugin.Program;
 
 /**
@@ -144,7 +146,7 @@ public class ReminderListDialog extends JDialog {
     
     result.add(panel1,BorderLayout.WEST);
     result.add(panel2,BorderLayout.EAST);
-    result.add(devplugin.Plugin.getPluginManager().createProgramPanel(prog),BorderLayout.CENTER);
+    result.add(new ProgramPanel(prog), BorderLayout.CENTER);
     
     return result;
   }

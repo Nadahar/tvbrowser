@@ -28,6 +28,8 @@ package tvbrowser.ui.programtable;
 
 import java.util.ArrayList;
 
+import util.ui.ProgramPanel;
+
 /**
  * For a better performance, a program panel factory is used (reuse unused objects).
  *

@@ -27,6 +27,8 @@
 package util.ui;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -44,6 +46,8 @@ public class UiUtilities {
   /** The border to use for dialogs. */  
   public static final Border DIALOG_BORDER
     = BorderFactory.createEmptyBorder(10, 10, 0, 10);
+
+  public static final Insets ZERO_INSETS = new Insets(0, 0, 0, 0);
   
 
   
@@ -151,6 +155,48 @@ public class UiUtilities {
     return parent;
   }
 
+  
+  
+  /**
+   * Gibt einen Button mit Icon und Schrift zurück, der so initialisiert ist,
+   * daß man ihn gut für Symbolleisten nutzen kann (Rahmen nur bei Rollover
+   * sichtbar usw.).
+   * <P>
+   * Wenn text und iconDateiname angegeben sind, dann wird text als TooltipText
+   * gesetzt.
+   *
+   * @param text Der Text des Buttons (Kann null sein, wenn der Button keinen
+   *        Text enthalten soll)
+   * @param iconDateiname Der Dateiname des Icons des Buttons (Kann ebenfalls
+   *        null sein, wenn der Button kein Icon enthalten soll).
+   */
+  public static JButton createToolBarButton(String text, Icon icon) {
+    final JButton btn;
+    if (icon == null) {
+      btn = new JButton(text);
+    } else {
+      btn = new JButton(icon);
+      btn.setToolTipText(text);
+      btn.setBorderPainted(false);
+      btn.setMargin(ZERO_INSETS);
+
+      btn.addMouseListener(new MouseAdapter() {
+        public void mouseEntered(MouseEvent e) {
+          if (btn.isEnabled()) {
+            btn.setBorderPainted(true);
+          }
+        }
+        public void mouseExited(MouseEvent e) {
+          btn.setBorderPainted(false);
+        }
+      });
+    }
+    btn.setFocusPainted(false);
+
+    return btn;
+  }
+
+  
   
   
   /**

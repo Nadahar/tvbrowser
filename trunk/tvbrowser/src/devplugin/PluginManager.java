@@ -46,11 +46,6 @@ public interface PluginManager {
   public devplugin.Program getProgram(devplugin.Date date, String progID);
 
   /**
-   * Returns a JComponent containing information about the given program.
-   */
-  public javax.swing.JComponent createProgramPanel(Program prog);
-
-  /**
    * Gets the subscribed channels.
    */
   public Channel[] getSubscribedChannels();

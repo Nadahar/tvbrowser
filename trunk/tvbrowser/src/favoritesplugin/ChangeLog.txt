@@ -1,5 +1,9 @@
 Changelog FavoritesPlugin
 
+1.0.2:
+- Manage favorites dialog shows marked programs
+- Manage favorites dialog allows changing the order of favorites
+
 1.0.1:
 - no Serializable Classes any more
 

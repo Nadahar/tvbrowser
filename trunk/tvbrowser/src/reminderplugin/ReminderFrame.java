@@ -38,6 +38,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import util.ui.UiUtilities;
+import util.ui.ProgramPanel;
 import util.io.IOUtilities;
 
 public class ReminderFrame extends JFrame {
@@ -85,7 +86,7 @@ public class ReminderFrame extends JFrame {
     JLabel channelLabel=new JLabel(prog.getChannel().getName());
     progPanel.add(channelLabel,BorderLayout.EAST);
     
-    progPanel.add(Plugin.getPluginManager().createProgramPanel(prog),BorderLayout.CENTER);
+    progPanel.add(new ProgramPanel(prog), BorderLayout.CENTER);
     
     JPanel btnPanel=new JPanel(new BorderLayout(10,0));
     JButton closeBtn=new JButton(mLocalizer.msg("close", "Close"));
