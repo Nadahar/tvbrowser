@@ -1,5 +1,8 @@
 Changelog ReminderPlugin
 
+1.0.9
+- Added Button for sending the Program-List
+
 1.0.8
 - Fix for http://forum.tvbrowser.org/viewtopic.php?p=5809 
    (getParentFrame was Null in ReminderPlugin#timeEvent)
