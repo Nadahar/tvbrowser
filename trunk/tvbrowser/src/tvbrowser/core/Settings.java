@@ -419,5 +419,21 @@ public class Settings {
   public static void setInstalledPlugins(String[] plugins) {
 	setStringListProperty("plugins", plugins);
   }
+  
+  public static void setDownloadPeriod(int period) {
+  	settings.setProperty("downloadperiod",""+period);  	
+  }
+  
+  public static int getDownloadPeriod() {
+  	String period=settings.getProperty("downloadperiod");
+  	int result;
+  	try {
+  		result=Integer.parseInt(period);
+  	} catch (NumberFormatException e) {
+  		result=0;
+  	}
+  	return result;
+  	
+  }
 
 }
