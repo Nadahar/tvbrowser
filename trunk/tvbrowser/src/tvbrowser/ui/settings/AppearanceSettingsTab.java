@@ -214,11 +214,9 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     panel3.add(searchCheck);
 
     mTimeCheck.setSelected(Settings.isTimeBtnVisible());
-    prevNextCheck.setSelected(Settings.isPrevNextBtnVisible());
     updateCheck.setSelected(Settings.isUpdateBtnVisible());
     settingsCheck.setSelected(Settings.isPreferencesBtnVisible());
-    searchCheck.setSelected(Settings.isSearchBtnVisible());
-
+    
     visibleBtnsPanel.add(panel3,BorderLayout.NORTH);
 
     JPanel labelBtnsPanel=new JPanel(new BorderLayout());
@@ -322,10 +320,9 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     }
 
     Settings.setTimeBtnVisible(mTimeCheck.isSelected());
-    Settings.setPrevNextBtnVisible(prevNextCheck.isSelected());
     Settings.setUpdateBtnVisible(updateCheck.isSelected());
     Settings.setPreferencesBtnVisible(settingsCheck.isSelected());
-    Settings.setSearchBtnVisible(searchCheck.isSelected());
+
 
     if (textOnlyRadio.isSelected()) {
       Settings.setButtonSettings(Settings.TEXT_ONLY);

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourcceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,36 +35,67 @@ package tvbrowser.ui.settings;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
+import java.awt.event.*;
 
 import tvbrowser.ui.customizableitems.*;
 import tvbrowser.core.*;
 
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import java.util.HashSet;
 
 public class PluginSettingsTab extends devplugin.SettingsTab implements CustomizableItemsListener {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
   
-  private CustomizableItemsPanel panel;
-  private PluginInfoPanel pluginInfoPanel;
+	private CustomizableItemsPanel panel;
+	private PluginInfoPanel pluginInfoPanel;
+	private HashSet buttonPluginSet;
+	private JCheckBox addPicBtnCheckBox;
+	private Plugin curSelectedPlugin=null;
 
   public String getName() {
     return mLocalizer.msg("plugins", "Plugins");
   }
 
   public void ok() {
-    Object[] o=panel.getElementsRight();
-    for (int i=0;i<o.length;i++) {
-      PluginManager.installPlugin((String)o[i]);
-    }
-    Settings.setInstalledPlugins(o);
+   Object[] o=panel.getElementsRight();
+   String[] s=new String[o.length];
+   for (int i=0;i<o.length;i++) {
+	   s[i]=(String)o[i];
+	 PluginManager.installPlugin(s[i]);
+      
+   }
+   Settings.setInstalledPlugins(s);
+    
+    
+   o=buttonPluginSet.toArray();
+   s=new String[o.length];
+   for (int i=0;i<o.length;i++) {
+	   s[i]=(String)o[i];
+   }
+   Settings.setButtonPlugins(s);
 
-  }
+ }
+
 
   public PluginSettingsTab() {
     super();
+    
+	String[] buttonPlugins=Settings.getButtonPlugins();
+	   buttonPluginSet=new HashSet();
+	   for (int i=0;i<buttonPlugins.length;i++) {
+		   buttonPluginSet.add(buttonPlugins[i]);
+	   }
+    
+	   setLayout(new BorderLayout());
+	   JPanel content=new JPanel();
+	   content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
+
+	   pluginInfoPanel=new PluginInfoPanel();
+
+    
     setLayout(new BorderLayout());
     
     String msg;
@@ -88,7 +119,47 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     panel.addListSelectionListenerLeft(this);
     panel.addListSelectionListenerRight(this);
 
-    add(panel,BorderLayout.NORTH);
+   // add(panel,BorderLayout.NORTH);
+
+   content.add(panel);
+	
+	  // JPanel panel1=new JPanel(new BorderLayout());
+	msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
+	   pluginInfoPanel.setBorder(BorderFactory.createTitledBorder(msg));
+	  
+	   //panel1.add(pluginInfoPanel,BorderLayout.NORTH);
+
+	  // add(panel1,BorderLayout.CENTER);
+	  content.add(pluginInfoPanel);
+   
+   
+	  JPanel panel1=new JPanel(new BorderLayout());
+	  addPicBtnCheckBox=new JCheckBox("Add plugin to Toolbar");
+	  panel1.add(addPicBtnCheckBox,BorderLayout.WEST);
+	  content.add(panel1);
+   
+	  addPicBtnCheckBox.addActionListener(new ActionListener() {
+   	
+		   public void actionPerformed(ActionEvent e) {
+			   if (curSelectedPlugin==null) {
+				   return;
+			   }
+			   String pluginName=((Plugin)curSelectedPlugin).getClass().getName();
+			   if (addPicBtnCheckBox.isSelected()) {
+				   buttonPluginSet.add(pluginName);   				
+			   }else{
+				   buttonPluginSet.remove(pluginName);
+			   }
+		   }
+   	 
+	  }
+	  );
+   
+	  add(content,BorderLayout.NORTH);
+
+
+
+/*
 
     JPanel panel1=new JPanel(new BorderLayout());
     msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
@@ -97,6 +168,7 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     panel1.add(pluginInfoPanel,BorderLayout.NORTH);
 
     add(panel1,BorderLayout.CENTER);
+    */
   }
 
   
@@ -113,14 +185,30 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
   
   
   public void leftListSelectionChanged(ListSelectionEvent event) {
-    showPluginInfo(panel.getLeftSelection());
+  String pluginName=panel.getLeftSelection();
+  addPicBtnCheckBox.setEnabled(false);
+	  showPluginInfo(pluginName);
+		
+  curSelectedPlugin=PluginManager.getPlugin(pluginName);
+  if (curSelectedPlugin!=null) {
+	  String pluginClassName=((Plugin)curSelectedPlugin).getClass().getName();
+	  addPicBtnCheckBox.setSelected(buttonPluginSet.contains(pluginClassName));
   }
+}
 
-  
-  
-  public void rightListSelectionChanged(ListSelectionEvent event) {
-    showPluginInfo(panel.getRightSelection());
+public void rightListSelectionChanged(ListSelectionEvent event) {
+  String pluginName=panel.getRightSelection();
+  showPluginInfo(pluginName);
+	
+  curSelectedPlugin=PluginManager.getPlugin(pluginName);
+  if (curSelectedPlugin!=null) {
+	  addPicBtnCheckBox.setEnabled(curSelectedPlugin.getButtonText()!=null);   
+	  String pluginClassName=((Plugin)curSelectedPlugin).getClass().getName();
+	  addPicBtnCheckBox.setSelected(buttonPluginSet.contains(pluginClassName));
   }
+    
+}
+
   
   
   // inner class PluginInfoPanel

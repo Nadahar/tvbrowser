@@ -486,23 +486,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       result.add(new JSeparator(JSeparator.VERTICAL));
     }
     
-    if (Settings.isPrevNextBtnVisible()) {
-      JPanel panel1 = new JPanel(new GridLayout(1,2,5,0));
-      panel1.setOpaque(false);
-      result.add(panel1);
-      
-      msg = mLocalizer.msg("botton.back", "Back");
-      JButton prevBtn = new PictureButton(msg,new ImageIcon("imgs/Back24.gif"));
-      prevBtn.setEnabled(false);
-      prevBtn.addActionListener(this);
-      panel1.add(prevBtn);
-      
-      msg = mLocalizer.msg("botton.forward", "Forward");
-      JButton nextBtn = new PictureButton(msg, new ImageIcon("imgs/Forward24.gif"));
-      nextBtn.setEnabled(false);
-      nextBtn.addActionListener(this);
-      panel1.add(nextBtn);
-    }
+    
 
     if (Settings.isUpdateBtnVisible()) {
       msg = mLocalizer.msg("button.update", "Update");
@@ -511,13 +495,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
       updateBtn.addActionListener(this);
     }
 
-    if (Settings.isSearchBtnVisible()) {
-      msg = mLocalizer.msg("button.search", "Search");
-      searchBtn = new PictureButton(msg, new ImageIcon("imgs/Find24.gif"));
-      searchBtn.setEnabled(false);
-      result.add(searchBtn);
-      searchBtn.addActionListener(this);
-    }
+   
     if (Settings.isPreferencesBtnVisible()) {
       msg = mLocalizer.msg("button.settings", "Settings");
       settingsBtn = new PictureButton(msg, new ImageIcon("imgs/Preferences24.gif"));
@@ -526,7 +504,27 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     }
 
 
-    return result;
+
+
+	String[] buttonPlugins=Settings.getButtonPlugins();
+   for (int i=0;i<buttonPlugins.length;i++) {
+	   final devplugin.Plugin p=PluginManager.getPlugin(buttonPlugins[i]);
+	   System.out.println("button plugin: "+p.getButtonText());
+	   Icon ico=p.getButtonIcon();
+	   if (ico==null) {
+		   System.out.println("ico");
+	   }
+	   JButton btn=new PictureButton(p.getButtonText(),ico);
+	   result.add(btn);
+	   btn.addActionListener(new ActionListener(){
+		   public void actionPerformed(ActionEvent event) {
+			   p.execute();	
+		   }
+	   });
+   }
+
+
+   return result;
   }
 
 

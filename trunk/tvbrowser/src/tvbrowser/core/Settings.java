@@ -184,21 +184,6 @@ public class Settings {
     settings.setProperty("timebutton", value ? "visible" : "hidden");
   }
 
-  public static boolean isPrevNextBtnVisible() {
-    return "visible".equals(settings.getProperty("prevnextbutton","visible"));
-  }
-
-  public static void setPrevNextBtnVisible(boolean value) {
-    settings.setProperty("prevnextbutton",value?"visible":"hidden");
-  }
-
-  public static boolean isSearchBtnVisible() {
-    return "visible".equals(settings.getProperty("searchbutton","visible"));
-  }
-
-  public static void setSearchBtnVisible(boolean value) {
-    settings.setProperty("searchbutton",value?"visible":"hidden");
-  }
 
   public static boolean isUpdateBtnVisible() {
     return "visible".equals(settings.getProperty("updatebutton","visible"));
@@ -308,6 +293,58 @@ public class Settings {
     return result.toArray();
   }
 
+
+  public static String[] getButtonPlugins() {
+  	
+	 return getStringListProperty("buttonplugins");
+   }
+  
+   public static void setButtonPlugins(String[] plugins) {
+	 setStringListProperty("buttonplugins",plugins);
+   }
+   
+   
+   private static String[] getStringListProperty(String key) {
+
+	  String s=settings.getProperty(key);
+	  if (s==null) return new String[0];
+
+	  ArrayList list=new ArrayList();
+	  int cur=0, last=0;
+	  String a;
+	  while (cur<s.length()) {
+		cur=s.indexOf(',',last);
+		if (cur==-1) {
+		  cur=s.length();
+		}
+		list.add(s.substring(last,cur).trim());
+		cur++;
+		last=cur;
+	  }
+
+	  String[] result=new String[list.size()];
+	  for (int i=0;i<list.size();i++) {
+		  result[i]=(String)list.get(i);
+	  }
+	  return result;
+  	
+	}
+
+	private static void setStringListProperty(String key, String[] strList) {
+			if (strList==null || strList.length==0) return;
+
+				String line="";
+
+				for (int i=0;i<strList.length-1;i++) {
+				  line+=strList[i]+",";
+				}
+				line+=strList[strList.length-1];
+
+				settings.setProperty(key,line);
+		
+		}
+
+
   /**
    * Returns all installed plugins as an array of Strings
    */
@@ -332,16 +369,10 @@ public class Settings {
     return result.toArray();
   }
 
-  public static void setInstalledPlugins(Object[] plugins) {
-    if (plugins==null || plugins.length==0) return;
-
-    String line="";
-
-    for (int i=0;i<plugins.length-1;i++) {
-      line+=plugins[i]+",";
-    }
-    line+=plugins[plugins.length-1];
-
-    settings.setProperty("plugins",line);
+  public static void setInstalledPlugins(String[] plugins) {
+   
+	setStringListProperty("plugins",plugins);
+    
   }
+
 }

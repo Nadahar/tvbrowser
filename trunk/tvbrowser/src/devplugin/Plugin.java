@@ -63,7 +63,9 @@ abstract public class Plugin {
   private static PluginManager pluginManager=null;
   protected Timer timer;
   protected java.awt.Frame parent;
-  private Icon markIcon=null;
+ 
+  private Icon buttonIcon=null;
+	private Icon markIcon=null;
 
 
   /**
@@ -196,42 +198,63 @@ abstract public class Plugin {
   public void execute() {
   }
 
+ 
   /**
-   * Returns an Icon representing your plugin. Dou don't have to implement this
-   * method. Implement the getMarkIcon method.
-   *
-   */
-  final public javax.swing.Icon getIcon() {
-    if (markIcon==null) {
-      String icon=getMarkIcon();
-      if (icon==null) {
-        return null;
-      }
-      JarEntry entry=jarFile.getJarEntry(icon);
-      if (entry==null) {
-        mLog.warning("could not find icon '" + icon + "' in jar file " + jarFile.getName());
-        return null;
-      }
-      try {
-        InputStream in=jarFile.getInputStream(entry);
-        byte[] b=new byte[(int)entry.getSize()];
-        in.read(b);
-        in.close();
-        markIcon=new javax.swing.ImageIcon(b);
-      }
-      catch (java.io.IOException exc) {
-        String msg = mLocalizer.msg("error.1", "Unable to load plugin icon from Jar.\n({0})",
-          jarFile.getName(), exc);
-        ErrorHandler.handle(msg, exc);
-      }
-    }
-    return markIcon;
-  }
+	 * Returns an Icon representing your plugin. You don't have to implement this
+	 * method. Implement the getMarkIcon method.
+	 *
+	 */
+	final private Icon createIcon(String iconName) {
+  
+	  Icon result=null;
+		if (iconName==null) {
+		  return null;
+		}
+		JarEntry entry=jarFile.getJarEntry(iconName);
+		if (entry==null) {
+		  System.out.println("could not find icon '"+iconName+"'");
+		  return null;
+		}
+		try {
+		  InputStream in=jarFile.getInputStream(entry);
+		  byte[] b=new byte[(int)entry.getSize()];
+		  in.read(b);
+		  in.close();
+		  result=new javax.swing.ImageIcon(b);
+		}
+		catch (java.io.IOException exc) {
+		  String msg = mLocalizer.msg("error.1", "Unable to load plugin icon from Jar.\n({0})",
+			jarFile.getName(), exc);
+		  ErrorHandler.handle(msg, exc);
+		}
+    
+	  return result;
+	}
+  
+
+  
+  
+  public final Icon getMarkIcon() {
+	  if (markIcon==null) {
+		  markIcon=createIcon(getMarkIconName());
+	  }
+	  return markIcon;
+	}
+  
+	public final Icon getButtonIcon() {
+	  if (buttonIcon==null) {
+		  buttonIcon=createIcon(getButtonIconName());
+	  }
+	  return buttonIcon;
+	}
+
 
   /**
    * Returns the name of the file, containing your plugin icon (in the jar-File).
    */
-  abstract public String getMarkIcon();
+  abstract public String getMarkIconName();
+  
+  abstract public String getButtonIconName();
 
 }
 
