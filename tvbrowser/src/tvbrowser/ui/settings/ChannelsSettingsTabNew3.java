@@ -147,10 +147,22 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
     rightBt.setToolTipText(mLocalizer.msg("tooltip.right", "Move selected rows in right list"));
     rightBt.setMargin(UiUtilities.ZERO_INSETS);
 
+    rightBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        moveChannelsToRight();
+      }
+    });
+    
     JButton leftBt = new JButton(new ImageIcon("imgs/Back24.gif"));
     leftBt.setToolTipText(mLocalizer.msg("tooltip.left", "Move selected rows in left list"));
     leftBt.setMargin(UiUtilities.ZERO_INSETS);
 
+    leftBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        moveChannelsToLeft();
+      }
+    });
+    
     panel.add(rightBt, c.xy(3, 4));
     panel.add(leftBt, c.xy(3, 6));
 
@@ -426,4 +438,18 @@ public class ChannelsSettingsTabNew3 implements devplugin.SettingsTab {
     mSubscribedChannels.updateUI();
   }
   
+  /**
+   * Move Channels to the subscribed Channels
+   */
+  private void moveChannelsToRight() {
+    UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels);
+  }
+
+  /**
+   * Move Channels from the subscribed Channels
+   *
+   */
+  private void moveChannelsToLeft() {
+    UiUtilities.moveSelectedItems(mSubscribedChannels, mAllChannels);
+  }
 }

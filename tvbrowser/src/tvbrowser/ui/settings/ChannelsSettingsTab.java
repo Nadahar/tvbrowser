@@ -272,8 +272,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       }
     };
   }
-
-  
   
   /**
    * Called by the host-application, if the user wants to save the settings.
