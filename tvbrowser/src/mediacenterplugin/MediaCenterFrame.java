@@ -83,7 +83,6 @@ public class MediaCenterFrame extends Canvas {
     // finally make the window visible
     mFrame.pack();
     mFrame.setResizable(false);
-
     mFrame.setVisible(true);
     createBufferStrategy(2);
     BufferStrategy buffer = getBufferStrategy();
@@ -116,10 +115,10 @@ public class MediaCenterFrame extends Canvas {
       });
       addMouseMotionListener(new MouseMotionAdapter() {
         public void mouseDragged(MouseEvent me) {
-          mLocation = getLocation(mLocation);
+          mLocation = mFrame.getLocation(mLocation);
           int x = mLocation.x - mPressed.getX() + me.getX();
           int y = mLocation.y - mPressed.getY() + me.getY();
-          setLocation(x, y);
+          mFrame.setLocation(x, y);
         }
 
       });
