@@ -63,6 +63,10 @@ public class ShowDetailsAction extends AbstractAction {
      */
     private void createGui(boolean icon, boolean name) {
         // TODO: Translate this!
+        if (_id < 0) {
+            setEnabled(false);
+        }
+        
         if (name)
             putValue(Action.NAME, "Show Details");
         
