@@ -95,8 +95,8 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
   private JMenuItem settingsMenuItem, quitMenuItem, updateMenuItem,
-   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, /*licenseMenuItem,*/ donorMenuItem,
-   faqMenuItem, forumMenuItem, websiteMenuItem;
+   aboutMenuItem, helpMenuItem, mPluginDownloadMenuItem, donorMenuItem,
+   faqMenuItem, forumMenuItem, websiteMenuItem, configAssistantMenuItem;
   private SkinPanel skinPanel;
   private HorizontalToolBar mDefaultToolBar;
   private VerticalToolBar mDateTimeToolBar;
@@ -223,6 +223,12 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     
     helpMenu.addSeparator();
     
+    configAssistantMenuItem=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),new ImageIcon("imgs/Preferences16.gif"));
+    configAssistantMenuItem.addActionListener(this);
+    helpMenu.add(configAssistantMenuItem);
+    
+    helpMenu.addSeparator();
+    
     icon = new ImageIcon("imgs/About16.gif");
     msg = mLocalizer.msg("menuitem.about", "About...");
     aboutMenuItem = new JMenuItem(msg, icon);
@@ -276,7 +282,7 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     new MenuHelpTextAdapter(faqMenuItem,mLocalizer.msg("website.faq",""),lb); 
     new MenuHelpTextAdapter(forumMenuItem,mLocalizer.msg("website.forum",""),lb); 
     new MenuHelpTextAdapter(websiteMenuItem,mLocalizer.msg("website.tvbrowser",""),lb); 
-    
+    new MenuHelpTextAdapter(configAssistantMenuItem,mLocalizer.msg("menuinfo.configAssistant",""),lb);
 
     skinPanel.add(mDefaultToolBar,BorderLayout.NORTH);
     skinPanel.add(mDateTimeToolBar,BorderLayout.EAST);
@@ -401,7 +407,29 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     mProgramTableScrollPane.scrollToTime(hour * 60);
   }
 
-
+  public void runSetupAssistant() {
+    
+    final javax.swing.JDialog progDlg=new util.ui.progress.ProgressDlg(this,mLocalizer.msg("loadingAssistant",""));
+    final JFrame parent=this;
+      
+          Thread configThread = new Thread() {
+            public void run() {
+              javax.swing.JDialog dlg=new tvbrowser.ui.configassistant.ConfigAssistant(parent);
+              progDlg.hide();
+              util.ui.UiUtilities.centerAndShow(dlg);  
+                    dlg.hide();
+                    dlg.dispose();
+                    dlg=null;
+              if (! DataService.dataAvailable(new devplugin.Date())) {
+                askForDataUpdate();
+              }
+            }
+          };
+     
+          configThread.start();
+          util.ui.UiUtilities.centerAndShow(progDlg);
+    
+  }
 
   public void actionPerformed(ActionEvent event) {
     Object src = event.getSource();
@@ -442,6 +470,9 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
         ErrorHandler.handle(e.getLocalizedMessage(),e);
       }
     }
+    else if (src==configAssistantMenuItem) {
+      runSetupAssistant();
+    }    
     else if (src==aboutMenuItem) {
       showAboutBox();
     }

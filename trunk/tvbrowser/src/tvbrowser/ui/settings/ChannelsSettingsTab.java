@@ -35,6 +35,8 @@ import java.util.*;
 import devplugin.Channel;
 import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
 import tvbrowser.core.*;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
 
 /**
  * TV-Browser
@@ -51,14 +53,19 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
   
   private JPanel mSettingsPn;
   
-  private CustomizableItemsPanel panel;
+  private CustomizableItemsPanel mChannelListPanel;
+  
+  private boolean mShowAllButtons;
 
   
   
   public ChannelsSettingsTab() {
+    this(true);
   }
  
-  
+  public ChannelsSettingsTab(boolean showAllButtons) {
+    mShowAllButtons=showAllButtons;
+  }
   
   /**
    * Creates the settings panel for this tab.
@@ -68,11 +75,16 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-	
+    
+   
     String leftText = mLocalizer.msg("availableChannels", "Available channels");
     String rightText = mLocalizer.msg("subscribedChannels", "Subscribed channels");
-    panel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
-    panel.setBorder(BorderFactory.createEmptyBorder(3,3,10,3));
+    mChannelListPanel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
+    mChannelListPanel.setBorder(BorderFactory.createEmptyBorder(3,5,10,5));
+   
+    
+    
+   
     JTextArea textArea=new JTextArea(2,40);
     textArea.setOpaque(false);
     textArea.setEditable(false);
@@ -85,26 +97,62 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       + "create your personal ordering of your favourite channels.");
     textArea.setText(msg);
     textArea.setBorder(BorderFactory.createEmptyBorder(10,5,5,0));
-
-    final JButton configChannelBtn=new JButton(mLocalizer.msg("configSelectedChannels","Configure selected channels"));
+    
     JPanel southPn=new JPanel();
     southPn.setLayout(new BoxLayout(southPn,BoxLayout.Y_AXIS));
-    southPn.add(configChannelBtn);
-    southPn.add(textArea);
     
-    final JList rightList=panel.getRightList();
-    int []sel=rightList.getSelectedIndices();
-    configChannelBtn.setEnabled(sel.length>0);
-    rightList.addListSelectionListener(new ListSelectionListener() {
-       public void valueChanged(ListSelectionEvent e) {
-         int []sel=rightList.getSelectedIndices();
-         configChannelBtn.setEnabled(sel.length>0);
-       }
-    });
+    if (mShowAllButtons) {
     
-    configChannelBtn.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-          Object[] o=panel.getRightSelections();
+      final JButton configChannelBtn=new JButton(mLocalizer.msg("configSelectedChannels","Configure selected channels"));
+      JButton updateChannelListBtn=new JButton(mLocalizer.msg("updateChannelList","Update channel list"));
+    
+      
+    
+      JPanel btnPanel=new JPanel(new GridLayout(1,2));
+      JPanel btnBorderLeft=new JPanel(new BorderLayout());
+      btnBorderLeft.setBorder(BorderFactory.createEmptyBorder(0,5,0,5));
+      btnBorderLeft.add(updateChannelListBtn,BorderLayout.CENTER);
+      JPanel btnBorderRight=new JPanel(new BorderLayout());
+      btnBorderRight.setBorder(BorderFactory.createEmptyBorder(0,0,0,8));
+      btnBorderRight.add(configChannelBtn,BorderLayout.CENTER);
+    
+      btnPanel.add(btnBorderLeft);
+      btnPanel.add(btnBorderRight);
+    
+      southPn.add(btnPanel);
+      
+      final JList rightList=mChannelListPanel.getRightList();
+      int []sel=rightList.getSelectedIndices();
+      configChannelBtn.setEnabled(sel.length>0);
+      rightList.addListSelectionListener(new ListSelectionListener() {
+        public void valueChanged(ListSelectionEvent e) {
+          int []sel=rightList.getSelectedIndices();
+          configChannelBtn.setEnabled(sel.length>0);
+        }
+      });
+      
+      updateChannelListBtn.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+          int channelCount=0;
+          for (int i=0;i<services.length;i++) {
+            if (services[i].supportsDynamicChannelList()) {
+              try {
+                devplugin.Channel channelList[]=services[i].checkForAvailableChannels();
+              }catch (TvBrowserException exc) {
+                ErrorHandler.handle(exc);
+              }
+            }
+          }
+          ChannelList.create();
+          fillChannelListBox();
+        }
+      }
+      );
+    
+      configChannelBtn.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          Object[] o=mChannelListPanel.getRightSelections();
           
           Channel[] channelList=new Channel[o.length];
           for (int i=0;i<o.length;i++) {
@@ -112,16 +160,28 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
           }
           ChannelConfigDlg dlg=new ChannelConfigDlg(mSettingsPn,mLocalizer.msg("configSelectedChannels","Configure selected channels"),channelList);
           dlg.centerAndShow();
-      }
-      
-    });
+        }      
+      });
+    }
     
     
+    southPn.add(textArea);
     
-  
-    mSettingsPn.add(panel,BorderLayout.CENTER);
     mSettingsPn.add(southPn,BorderLayout.SOUTH);
+    mSettingsPn.add(mChannelListPanel,BorderLayout.CENTER);
+    
+      
+    fillChannelListBox();     
 
+    return mSettingsPn;
+  }
+
+
+  private void fillChannelListBox() {
+    
+    mChannelListPanel.clearLeft();
+    mChannelListPanel.clearRight();
+    
     // Split the channels in subscribed and available
     Iterator iter = ChannelList.getChannels();
     int subscribedChannelCount = ChannelList.getNumberOfSubscribedChannels();
@@ -144,18 +204,16 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     // Add the available channels
     for (int i = 0; i < availableChannelArr.length; i++) {
-      panel.addElementLeft(availableChannelArr[i]);
+      mChannelListPanel.addElementLeft(availableChannelArr[i]);
     }
 
     // Add the subscribed channels    
     for (int i = 0; i < subscribedChannelArr.length; i++) {
-      panel.addElementRight(subscribedChannelArr[i]);
+      mChannelListPanel.addElementRight(subscribedChannelArr[i]);
     }
     
-    return mSettingsPn;
+    
   }
-
-
 
   private Comparator createChannelComparator() {
     return new Comparator() {
@@ -171,7 +229,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    Object[] list = panel.getElementsRight();
+    Object[] list = mChannelListPanel.getElementsRight();
     
     // Convert the list into a Channel[] and fill channels
     Channel[] channelArr = new Channel[list.length];

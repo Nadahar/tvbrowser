@@ -73,7 +73,7 @@ class SubscribeChannelCardPanel extends AbstractCardPanel {
    }
   public void onShow() {
     super.onShow();
-    mChannelsSettingsTab=new ChannelsSettingsTab();
+    mChannelsSettingsTab=new ChannelsSettingsTab(false);
     mContent.removeAll();
     mContent.add(mChannelsSettingsTab.createSettingsPanel(),BorderLayout.CENTER);
     }

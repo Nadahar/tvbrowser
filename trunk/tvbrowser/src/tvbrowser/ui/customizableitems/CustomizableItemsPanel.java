@@ -166,6 +166,14 @@ public class CustomizableItemsPanel extends JPanel {
     updateEnabled();
   }
   
+  public void clearLeft() {
+    mLeftListModel.clear();
+  }
+  
+  public void clearRight() {
+    mRightListModel.clear();
+  }
+  
   public JList getLeftList() {
     return mLeftList;
   }

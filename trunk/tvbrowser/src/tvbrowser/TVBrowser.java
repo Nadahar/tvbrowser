@@ -50,7 +50,6 @@ import tvbrowser.core.DataService;
 import tvbrowser.core.PluginManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataServiceManager;
-import tvbrowser.ui.configassistant.ConfigAssistant;
 import tvbrowser.ui.filter.FilterComponentList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.SplashScreen;
@@ -285,25 +284,7 @@ public class TVBrowser {
     }
     
     if (Settings.getShowAssistant()) {
-      final javax.swing.JDialog progDlg=new util.ui.progress.ProgressDlg(mainFrame,mLocalizer.msg("loadingAssistant",""));
-      
-      Thread configThread = new Thread() {
-        public void run() {
-          javax.swing.JDialog dlg=new ConfigAssistant(mainFrame);
-          progDlg.hide();
-          util.ui.UiUtilities.centerAndShow(dlg);  
-                dlg.hide();
-                dlg.dispose();
-                dlg=null;
-          if (! DataService.dataAvailable(new devplugin.Date())) {
-            mainFrame.askForDataUpdate();
-          }
-        }
-      };
-     
-      configThread.start();
-      util.ui.UiUtilities.centerAndShow(progDlg);
-      
+      mainFrame.runSetupAssistant();  
 
     }
     else { 
