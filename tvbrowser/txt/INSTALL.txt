@@ -1,0 +1,9 @@
+Installation:
+
+1. Gesamte Verzeichnisstruktur ingewuenschtes Verzeichnis verschieben
+2. Ausführen mit:
+       java -jar tvbrowser.jar
+   oder (Doppel-)Klick auf tvbrowser.jar
+
+   (erfordert JRE 1.3)
+

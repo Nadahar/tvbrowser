@@ -1,0 +1,51 @@
+The build script:
+-----------------
+
+build.cmd:
+  Allows starting the build script from a Windows platform.
+
+build.sh:
+  Allows starting the build script from a Unix platform.
+
+build.xml:
+  The build script itself. (ANT)
+
+build.properties:
+  The properties of the build script.
+
+
+
+Directories stored in CVS:
+--------------------------
+
+installer:
+  Contains all files needed to create the Windows installer.
+
+lib:
+  Contains external libraries.
+
+src:
+  Contains the source code.
+
+txt:
+  Contains text files that are no source code
+
+
+
+Directories created by the build script:
+----------------------------------------
+
+Do NOT add these directories to the CVS!!
+
+classes:
+  Contains the compiled code.
+
+classes:
+  Contains the Javadoc documentation.
+
+runtime:
+  Contains the TV-Browser runtime directory.
+
+public:
+  Contains all the stuff that can be downloaded on the home page.
+

@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+<!--
+ | Ant build script for the TV-Browser project.
+ |
+ | TV-Browser
+ | Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ |
+ | This program is free software; you can redistribute it and/or
+ | modify it under the terms of the GNU General Public License
+ | as published by the Free Software Foundation; either version 2
+ | of the License, or (at your option) any later version.
+ |
+ | This program is distributed in the hope that it will be useful,
+ | but WITHOUT ANY WARRANTY; without even the implied warranty of
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ | GNU General Public License for more details.
+ |
+ | You should have received a copy of the GNU General Public License
+ | along with this program; if not, write to the Free Software
+ | Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ |
+ | Author: Til Schneider, www.murfman.de
+ +-->
+<project name="TV-Browser" default="targets" basedir=".">
+
+  <!--
+   | The properties and paths
+   +-->
+  <property file="build.properties"/>
+  <property environment="env"/>
+
+  <property name="version.file" value="${version}"/>
+  <property name="programname" value="TV-Browser"/>
+  <property name="programname.file" value="TvBrowser"/>
+
+  <property name="doc.header" value="${programname} ${version} API"/>
+  <property name="doc.title" value="API documentation for ${programname} ${version}"/>
+  <property name="doc.bottom" value="${programname} ${version}, Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)"/>
+
+  <property name="lib.dir" value="lib"/>
+  <property name="src.dir" value="src"/>
+  <property name="txt.dir" value="txt"/>
+  <property name="doc.dir" value="doc"/>
+  <property name="classes.dir" value="classes"/>
+  <property name="runtime.dir" value="runtime"/>
+  <property name="installer.dir" value="installer"/>
+  <property name="public.dir" value="public"/>
+  <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
+
+  <path id="sourcepath">
+    <pathelement location="${src.dir}"/>
+  </path>
+
+  <path id="classpath">
+    <pathelement location="${classes.dir}"/>
+    <!-- <pathelement location="${env.JAVA_HOME}/lib/tools.jar"/> -->
+  </path>
+
+  <path id="docpath">
+    <path refid="sourcepath"/>
+  </path>
+
+
+
+  <!--
+   | Display all public targets
+   +-->
+  <target name="targets">
+    <echo message="usage: build [target]"/>
+    <echo message=""/>
+    <echo message="available targets:"/>
+    <echo message="  targets       Shows this list of targets."/>
+    <echo message="  dump-info     Dumps some information (VM-Version...)."/>
+    <echo message="  clean         Deletes the classes directory."/>
+    <echo message="  clean-runtime Deletes the runtime directory."/>
+    <echo message="  doc           Generates the JavaDoc documentation."/>
+    <echo message="  make          Compiles the source code."/>
+    <echo message="  runtime       Prepares the runtime directory."/>
+    <echo message="  run           Runs the project."/>
+    <echo message="  installer     Creates a Windows installer for the project."/>
+    <echo message="  public        Creates all the stuff that can be downloaded."/>
+    <echo message="  all           Creates all (Same as public)."/>
+  </target>
+
+
+
+  <!--
+   | Dump some information.
+   +-->
+  <target name="dump-info">
+    <echo message="JAVA_HOME=${env.JAVA_HOME}" />
+    <echo message="java.vm.info=${java.vm.info}" />
+    <echo message="java.vm.name=${java.vm.name}" />
+    <echo message="java.vm.vendor=${java.vm.vendor}" />
+    <echo message="java.vm.version=${java.vm.version}" />
+    <echo message="os.arch=${os.arch}" />
+    <echo message="os.name=${os.name}" />
+    <echo message="os.version=${os.version}" />
+    <echo message="file.encoding=${file.encoding}" />
+    <echo message="user.language=${user.language}" />
+  </target>
+
+
+
+  <!--
+   | Deletes the classes and the runtime directory.
+   +-->
+  <target name="clean">
+    <delete dir="${classes.dir}"/>
+  </target>
+
+
+
+  <!--
+   | Deletes the runtime directory
+   +-->
+  <target name="clean-runtime">
+    <delete dir="${runtime.dir}"/>
+  </target>
+
+
+
+  <!--
+   | Generates the JavaDoc documentation.
+   +-->
+  <target name="doc">
+    <echo message="Generating JavaDoc documentation ..." />
+    <delete dir="${doc.dir}"/>
+    <mkdir dir="${doc.dir}"/>
+    <javadoc packagenames="*"
+             sourcepathref="docpath"
+             classpathref="classpath"
+             destdir="${doc.dir}"
+             doctitle="${doc.title}"
+             windowtitle="${doc.title}"
+             additionalparam="-breakiterator"
+             header="${doc.header}"
+             bottom="${doc.bottom}"
+             access="package"
+             failonerror="true">
+      <link offline="true"
+            href="${java-api-location}"
+            packagelistLoc="${package-lists.dir}/jdk/"/>
+    </javadoc>
+  </target>
+
+
+
+  <!--
+   | Compiles the source code.
+   +-->
+  <target name="make">
+    <echo message="Compiling the source code ..." />
+    <mkdir dir="${classes.dir}"/>
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true">
+      <src>
+        <path refid="sourcepath"/>
+      </src>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+    </javac>
+
+    <copy todir="${classes.dir}">
+      <fileset dir="${src.dir}" includes="**/*.gif"/>
+      <fileset dir="${src.dir}" includes="**/*.jpg"/>
+      <fileset dir="${src.dir}" includes="**/*.dtd"/>
+    </copy>
+  </target>
+
+
+
+  <!--
+   | Creates the runtime directory.
+   +-->
+  <target name="runtime" depends="make">
+    <echo message="Creating the jars ..." />
+
+    <mkdir dir="${runtime.dir}"/>
+    <jar jarfile="${runtime.dir}/tvbrowser.jar"
+         compress="false"
+         manifest="${txt.dir}/manifest.mf">
+      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>
+      <fileset dir="${classes.dir}" includes="tvdataloader/**"/>
+    </jar>
+
+    <mkdir dir="${runtime.dir}/interfaces"/>
+    <jar jarfile="${runtime.dir}/interfaces/devplugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>
+    </jar>
+    <jar jarfile="${runtime.dir}/interfaces/tvdataloader.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="tvdataloader/**"/>
+    </jar>
+
+    <mkdir dir="${runtime.dir}/plugins"/>
+    <jar jarfile="${runtime.dir}/plugins/ProgramInfo.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="programinfo/**"/>
+    </jar>
+    <jar jarfile="${runtime.dir}/plugins/ReminderPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="reminderplugin/**"/>
+    </jar>
+    <jar jarfile="${runtime.dir}/plugins/SearchPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="searchplugin/**"/>
+    </jar>
+
+    <mkdir dir="${runtime.dir}/tvdataloader"/>
+    <jar jarfile="${runtime.dir}/tvdataloader/XmlTvDataService.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>
+    </jar>
+
+    <echo message="Copying the images and all the other stuff ..." />
+    <mkdir dir="${runtime.dir}/imgs"/>
+    <copy todir="${runtime.dir}/imgs">
+      <fileset dir="${classes.dir}/imgs"/>
+    </copy>
+    <copy todir="${runtime.dir}">
+      <fileset dir="${txt.dir}" includes="INSTALL.txt"/>
+      <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
+    </copy>
+
+    <mkdir dir="${runtime.dir}/tvdata"/>
+  </target>
+
+
+
+  <!--
+   | Runs the project.
+   +-->
+  <target name="run" depends="runtime">
+    <java jar="${runtime.dir}/tvbrowser.jar"
+          dir="${runtime.dir}"
+          fork="true">
+    </java>
+  </target>
+
+
+
+  <!--
+   | Creates a Windows installer for the project.
+   +-->
+  <target name="installer" depends="runtime">
+    <mkdir dir="${public.dir}"/>
+    <exec executable="${installer.dir}/makensis.exe"
+          failonerror="true">
+      <arg line="/NOCD /DVERSION=${version} /DVERSION_FILE=${version.file} /DPROG_NAME=${programname} /DPROG_NAME_FILE=${programname.file} /DRUNTIME_DIR=${runtime.dir} /DINSTALLER_DIR=${installer.dir} /DPUBLIC_DIR=${public.dir} ${installer.dir}\tvbrowser.nsi"/>
+    </exec>
+  </target>
+
+
+
+  <!--
+   | Creates all the stuff that can be downloaded.
+   |
+   | This target depends on clean-runtime to be sure that the runtime
+   | directory contains no stuff we don't want to be destributed.
+   +-->
+  <target name="public" depends="clean-runtime, runtime, doc, installer">
+    <mkdir dir="${public.dir}"/>
+
+    <zip destfile="${public.dir}/tvbrowser_v${version}_bin.zip">
+      <zipfileset prefix="tvbrowser_v${version}"
+                  dir="${runtime.dir}"/>
+    </zip>
+
+    <zip destfile="${public.dir}/tvbrowser_v${version}_doc.zip">
+      <zipfileset prefix="tvbrowser_v${version}/doc"
+                  dir="${doc.dir}"/>
+    </zip>
+
+    <zip destfile="${public.dir}/tvbrowser_v${version}_src.zip">
+      <zipfileset prefix="tvbrowser_v${version}/src"
+                  dir="${src.dir}">
+        <include name="tvbrowser/**/*.java"/>
+        <include name="imgs/**/*.gif"/>
+        <include name="imgs/**/*.jpg"/>
+        <include name="devplugin/**/*.java"/>
+        <include name="tvdataloader/**/*.java"/>
+      </zipfileset>
+      <zipfileset prefix="tvbrowser_v${version}/src"
+                  dir="${txt.dir}"
+                  includes="LICENSE.txt"/>
+    </zip>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="xmltvdataservice"/>
+    </antcall>
+    
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="programinfo"/>
+    </antcall>
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="reminderplugin"/>
+    </antcall>
+    
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="searchplugin"/>
+    </antcall>
+  </target>
+
+  
+  
+  <!--
+   | Helper target for public.
+   |
+   | Zips the source code of one package.
+   +-->
+  <target name="-zipPackageSrc" if="package">
+    <zip destfile="${public.dir}/${package}_v${version}_src.zip">
+      <zipfileset prefix="tvbrowser_v${version}/src"
+                  dir="${src.dir}">
+        <include name="${package}/**/*.java"/>
+        <include name="${package}/**/*.gif"/>
+        <include name="${package}/**/*.jpg"/>
+        <include name="${package}/**/*.dtd"/>
+      </zipfileset>
+      <zipfileset prefix="tvbrowser_v${version}/src"
+                  dir="${txt.dir}"
+                  includes="LICENSE.txt"/>
+    </zip>
+  </target>
+  
+
+
+  <!--
+   | Creates all.
+   +-->
+  <target name="all" depends="public">
+  </target>
+
+</project>
