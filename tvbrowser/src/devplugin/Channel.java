@@ -55,7 +55,10 @@ public class Channel {
   private Icon mIcon;
   /** The Default-Icon */
   private Icon mDefaultIcon;
-
+  /** Use the Icon defined by the User */
+  private boolean mUseUserIcon = false;
+  
+  
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon)
   {
@@ -287,7 +290,7 @@ public class Channel {
    * @return
    */
   public Icon getIcon() {
-      if ((mIcon == null) && (getIconFileName() != null)){
+      if ((mUseUserIcon) && (mIcon == null) && (getIconFileName() != null)){
           Image img = ImageUtilities.createImage(getIconFileName());
           if (img != null) {
               mIcon = new ImageIcon(img);
@@ -316,6 +319,22 @@ public class Channel {
   public void setIconFileName(String filename) {
       mIconFileName = filename;
       mIcon = null;
+  }
+
+  /**
+   * Use the User-Icon if available?
+   * @param use true for using User-Icon
+   */
+  public void useUserIcon(boolean use) {
+      mUseUserIcon = use;
+  }
+  
+  /**
+   * Is using the User-Icon if availabe?
+   * @return Using User-Icon if available?
+   */
+  public boolean isUsingUserIcon() {
+      return mUseUserIcon;
   }
   
   public boolean equals(Object obj) {
