@@ -74,6 +74,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
 
 
   public AppearanceSettingsTab()  {
+    String msg;
 
     setLayout(new BorderLayout());
     JPanel content=new JPanel();
@@ -81,7 +82,8 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     content.setBorder(BorderFactory.createEmptyBorder(20,50,20,50));
 
     JPanel lfPanel=new JPanel(new BorderLayout(10,0));
-    JLabel lfLabel=new JLabel("Java Look & Feel:");
+    msg = mLocalizer.msg("lookAndFeel", "Aussehen");
+    JLabel lfLabel = new JLabel(msg);
 
     LookAndFeelObj[] obj=getLookAndFeelObjs();
     lfComboBox=new JComboBox(obj);
@@ -97,9 +99,11 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     lfLabel.setPreferredSize(new Dimension(200,(int)lfLabel.getPreferredSize().getHeight()));
 
     JPanel skinPanel=new JPanel(new BorderLayout(10,0));
-    skinCheckBox=new JCheckBox("Use Skin:");
-    skinTextField=new JTextField(Settings.getApplicationSkin());
-    final JButton skinChooseBtn=new JButton("Change");
+    msg = mLocalizer.msg("skin", "Background");
+    skinCheckBox = new JCheckBox(msg);
+    skinTextField = new JTextField(Settings.getApplicationSkin());
+    msg = mLocalizer.msg("change", "Change");
+    final JButton skinChooseBtn = new JButton(msg);
     skinPanel.add(skinCheckBox,BorderLayout.WEST);
     skinPanel.add(skinTextField,BorderLayout.CENTER);
     skinPanel.add(skinChooseBtn,BorderLayout.EAST);
@@ -134,11 +138,12 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     JPanel panel2=new JPanel();
     panel2.setLayout(new BoxLayout(panel2,BoxLayout.Y_AXIS));
     tablePanel.setLayout(new BoxLayout(tablePanel,BoxLayout.Y_AXIS));
-    tablePanel.setBorder(BorderFactory.createTitledBorder("Table background:"));
-    ButtonGroup tablePanelBtnGroup=new ButtonGroup();
-    blankRadio=new JRadioButton("blank");
-    wallpaperRadio=new JRadioButton("Wallpaper");
-    columnsRadio=new JRadioButton("Columns");
+    msg = mLocalizer.msg("tableBackground", "Table background");
+    tablePanel.setBorder(BorderFactory.createTitledBorder(msg));
+    ButtonGroup tablePanelBtnGroup = new ButtonGroup();
+    blankRadio = new JRadioButton(mLocalizer.msg("blank", "Blank"));
+    wallpaperRadio = new JRadioButton(mLocalizer.msg("wallpaper", "Wallpaper"));
+    columnsRadio = new JRadioButton(mLocalizer.msg("columns", "Columns"));
     tablePanelBtnGroup.add(blankRadio);
     tablePanelBtnGroup.add(wallpaperRadio);
     tablePanelBtnGroup.add(columnsRadio);
@@ -157,9 +162,9 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     columnsRadio.addActionListener(this);
 
     JPanel tableBGPanel=new JPanel(new BorderLayout(10,0));
-    skinTableBGLabel=new JLabel("Skin:");
+    skinTableBGLabel=new JLabel(mLocalizer.msg("skin", "Background"));
     skinTableBGTextField=new JTextField(Settings.getTableSkin());
-    skinTableBGBtn=new JButton("Change");
+    skinTableBGBtn=new JButton(mLocalizer.msg("change", "Change"));
     tableBGPanel.add(skinTableBGLabel,BorderLayout.WEST);
     tableBGPanel.add(skinTableBGTextField,BorderLayout.CENTER);
     tableBGPanel.add(skinTableBGBtn,BorderLayout.EAST);
@@ -187,18 +192,21 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
     tablePanel.add(tableBGPanel);
 
     JPanel buttonPanel=new JPanel(new GridLayout(1,0));
-    buttonPanel.setBorder(BorderFactory.createTitledBorder("Buttons"));
+    msg = mLocalizer.msg("buttons", "Buttons");
+    buttonPanel.setBorder(BorderFactory.createTitledBorder(msg));
 
     JPanel visibleBtnsPanel=new JPanel(new BorderLayout());
     JPanel panel3=new JPanel(new BorderLayout());
-    panel3.setBorder(BorderFactory.createTitledBorder("Show buttons:"));
+    msg = mLocalizer.msg("showButtons", "Show buttons");
+    panel3.setBorder(BorderFactory.createTitledBorder(msg));
     panel3.setLayout(new BoxLayout(panel3,BoxLayout.Y_AXIS));
 
-    mTimeCheck=new JCheckBox("Time buttons");
-    prevNextCheck=new JCheckBox("Next / Previous");
-    updateCheck=new JCheckBox("Update");
-    settingsCheck=new JCheckBox("Settings");
-    searchCheck=new JCheckBox("Search");
+    mTimeCheck = new JCheckBox(mLocalizer.msg("buttons.time", "Time buttons"));
+    msg = mLocalizer.msg("buttons.nextPrevious", "Next / Previous");
+    prevNextCheck = new JCheckBox(msg);
+    updateCheck = new JCheckBox(mLocalizer.msg("buttons.update", "Update"));
+    settingsCheck = new JCheckBox(mLocalizer.msg("buttons.settings", "Settings"));
+    searchCheck = new JCheckBox(mLocalizer.msg("buttons.search", "Search"));
     panel3.add(mTimeCheck);
     panel3.add(prevNextCheck);
     panel3.add(updateCheck);
@@ -215,11 +223,12 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
 
     JPanel labelBtnsPanel=new JPanel(new BorderLayout());
     JPanel panel4=new JPanel(new BorderLayout());
-    panel4.setBorder(BorderFactory.createTitledBorder("Label:"));
+    msg = mLocalizer.msg("label", "Label");
+    panel4.setBorder(BorderFactory.createTitledBorder(msg));
     panel4.setLayout(new BoxLayout(panel4,BoxLayout.Y_AXIS));
-    textOnlyRadio=new JRadioButton("text only");
-    picOnlyRadio=new JRadioButton("images only");
-    textAndPicRadio=new JRadioButton("text and images");
+    textOnlyRadio = new JRadioButton(mLocalizer.msg("textOnly", "Text only"));
+    picOnlyRadio = new JRadioButton(mLocalizer.msg("imagesOnly", "Images only"));
+    textAndPicRadio = new JRadioButton(mLocalizer.msg("textAndImages", "Text and images"));
     ButtonGroup labelBtnsGroup=new ButtonGroup();
     labelBtnsGroup.add(textOnlyRadio);
     labelBtnsGroup.add(picOnlyRadio);
@@ -286,7 +295,7 @@ public class AppearanceSettingsTab extends devplugin.SettingsTab implements Acti
   }
 
   public String getName() {
-    return "Appearance";
+    return mLocalizer.msg("appearance", "Appearance");
   }
 
   public void ok() {

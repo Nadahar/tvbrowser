@@ -24,12 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package util.ui;
 
 import javax.swing.*;
@@ -38,11 +32,16 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * This class provides a new JComponent containing three components: JCheckBox, JTextField and JButton
+ * This class provides a new JComponent containing three components: JCheckBox,
+ * JTextField and JButton
+ *
+ * @author Martin Oberhauser
  */
-
 public class FileCheckBox extends JComponent {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(FileCheckBox.class);
+  
   protected String title;
   protected File file;
   protected JCheckBox checkbox;
@@ -50,6 +49,8 @@ public class FileCheckBox extends JComponent {
   protected JButton choosebtn;
   protected JFileChooser fileChooser;
 
+  
+  
   public FileCheckBox(String title, File file, int tab) {
     this.title=title;
     this.file=file;
@@ -68,7 +69,7 @@ public class FileCheckBox extends JComponent {
       checkbox.setPreferredSize(new Dimension(tab,(int)dim.getHeight()));
     }
 
-    choosebtn=new JButton("change");
+    choosebtn=new JButton(mLocalizer.msg("change", "Change"));
 
     add(checkbox,BorderLayout.WEST);
     add(textfield,BorderLayout.CENTER);
@@ -132,6 +133,5 @@ public class FileCheckBox extends JComponent {
   public JButton getButton() {
     return choosebtn;
   }
-
 
 }

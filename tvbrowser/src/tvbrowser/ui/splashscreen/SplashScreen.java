@@ -18,51 +18,55 @@
  *
  */
  
- package tvbrowser.ui.splashscreen;
+package tvbrowser.ui.splashscreen;
  
- import javax.swing.JFrame;
- import java.awt.Image;
- import java.awt.Toolkit;
- import java.awt.Graphics;
- import java.awt.Dimension;
- import javax.swing.ImageIcon;
- import javax.swing.JPanel;
- import javax.swing.JLabel;
- import java.awt.BorderLayout;
- 
- public class SplashScreen extends JFrame {
- 
- 	private Image image;
- 	private JLabel msgLabel;
- 	
- 	public SplashScreen(String imgName, int width, int height) {
- 		
- 		super();
- 		
-		JPanel contentPane=(JPanel)getContentPane();
-		contentPane.setLayout(new BorderLayout());
-		msgLabel=new JLabel("loading...");
-		msgLabel.setHorizontalAlignment(JLabel.CENTER);
-		contentPane.add(msgLabel,BorderLayout.SOUTH);
- 		
-		image=new ImageIcon(imgName).getImage();
- 		this.setUndecorated(true);
- 		
- 		this.setSize(width,height);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		
- 		this.setBounds((screenSize.width-width)/2,(screenSize.height-height)/2,width,height);
- 		
- 			
- 	}
- 	
- 	public void paint(Graphics g) {
- 		g.drawImage(image,0,0,null);
- 	}
- 	
- 	public void setMessage(String msg) {
- 		msgLabel.setText(msg);
- 	}
- 	
- 	
- }
+import javax.swing.JFrame;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.Graphics;
+import java.awt.Dimension;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.awt.BorderLayout;
+
+public class SplashScreen extends JFrame {
+
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
+  
+  private Image image;
+  private JLabel msgLabel;
+  
+  
+  
+  public SplashScreen(String imgName, int width, int height) {  
+    super();
+    
+    JPanel contentPane=(JPanel)getContentPane();
+    contentPane.setLayout(new BorderLayout());
+    msgLabel = new JLabel(mLocalizer.msg("loading", "Loading..."));
+    msgLabel.setHorizontalAlignment(JLabel.CENTER);
+    contentPane.add(msgLabel,BorderLayout.SOUTH);
+    
+    image=new ImageIcon(imgName).getImage();
+    this.setUndecorated(true);
+    
+    this.setSize(width,height);
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    
+    this.setBounds((screenSize.width-width)/2,(screenSize.height-height)/2,width,height);
+    
+    
+  }
+  
+  public void paint(Graphics g) {
+    g.drawImage(image,0,0,null);
+  }
+  
+  public void setMessage(String msg) {
+    msgLabel.setText(msg);
+  }
+  
+  
+}

@@ -24,11 +24,6 @@
  * $Revision$
  */
 
-
-/**
- * TV-Browser
- * @author Martin Oberhauser
- */
 package tvbrowser.ui.programtable;
 
 import java.util.HashSet;
@@ -54,6 +49,8 @@ import tvbrowser.core.*;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
+ *
+ * @author Martin Oberhauser
  */
 public class ProgramPanel extends JComponent implements ChangeListener {
 

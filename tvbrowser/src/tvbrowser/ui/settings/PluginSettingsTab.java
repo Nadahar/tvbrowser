@@ -44,11 +44,14 @@ import devplugin.PluginInfo;
 
 public class PluginSettingsTab extends devplugin.SettingsTab implements CustomizableItemsListener {
 
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
+  
   private CustomizableItemsPanel panel;
   private PluginInfoPanel pluginInfoPanel;
 
   public String getName() {
-    return "Plugins";
+    return mLocalizer.msg("plugins", "Plugins");
   }
 
   public void ok() {
@@ -63,10 +66,14 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
   public PluginSettingsTab() {
     super();
     setLayout(new BorderLayout());
+    
+    String msg;
 
     pluginInfoPanel=new PluginInfoPanel();
 
-    panel=CustomizableItemsPanel.createCustomizableItemsPanel("Available plugins:","Installed Plugins:");
+    String leftText = mLocalizer.msg("availablePlugins", "Available plugins");
+    String rightText = mLocalizer.msg("subscribedPlugins", "Subscribed plugins");
+    panel = CustomizableItemsPanel.createCustomizableItemsPanel(leftText, rightText);
 
     Object[] o=PluginManager.getAvailablePlugins();
     for (int i=0;i<o.length;i++) {
@@ -84,14 +91,16 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     add(panel,BorderLayout.NORTH);
 
     JPanel panel1=new JPanel(new BorderLayout());
-
-    pluginInfoPanel.setBorder(BorderFactory.createTitledBorder("Selected Plugin:"));
+    msg = mLocalizer.msg("selectedPlugin", "Selected Plugin");
+    pluginInfoPanel.setBorder(BorderFactory.createTitledBorder(msg));
 
     panel1.add(pluginInfoPanel,BorderLayout.NORTH);
 
     add(panel1,BorderLayout.CENTER);
   }
 
+  
+  
   private void showPluginInfo(String pluginName) {
     Plugin plugin=PluginManager.getPlugin(pluginName);
     if (plugin==null) {
@@ -101,70 +110,86 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     }
   }
 
+  
+  
   public void leftListSelectionChanged(ListSelectionEvent event) {
     showPluginInfo(panel.getLeftSelection());
   }
 
+  
+  
   public void rightListSelectionChanged(ListSelectionEvent event) {
     showPluginInfo(panel.getRightSelection());
   }
-}
+  
+  
+  // inner class PluginInfoPanel
+  
 
-class PluginInfoPanel extends JPanel {
+  class PluginInfoPanel extends JPanel {
 
-  private JLabel nameLabel;
-  private JLabel versionLabel;
-  private JLabel authorLabel;
-  private JTextArea descriptionArea;
+    private JLabel nameLabel;
+    private JLabel versionLabel;
+    private JLabel authorLabel;
+    private JTextArea descriptionArea;
 
-  public PluginInfoPanel() {
-    setLayout(new BorderLayout(10,0));
+    public PluginInfoPanel() {
+      setLayout(new BorderLayout(10,0));
 
-    JPanel leftPanel=new JPanel(new BorderLayout());
-    JPanel rightPanel=new JPanel(new BorderLayout());
+      String msg;
 
-    leftPanel.add(new JLabel("Name:"),BorderLayout.NORTH);
-    rightPanel.add(nameLabel=new JLabel("-"),BorderLayout.NORTH);
+      JPanel leftPanel=new JPanel(new BorderLayout());
+      JPanel rightPanel=new JPanel(new BorderLayout());
 
-    JPanel panel1=new JPanel(new BorderLayout());
-    JPanel panel2=new JPanel(new BorderLayout());
+      msg = mLocalizer.msg("name", "Name");
+      leftPanel.add(new JLabel(msg), BorderLayout.NORTH);
+      rightPanel.add(nameLabel=new JLabel("-"),BorderLayout.NORTH);
 
-    panel1.add(new JLabel("Version:"),BorderLayout.NORTH);
-    panel2.add(versionLabel=new JLabel("-"),BorderLayout.NORTH);
+      JPanel panel1=new JPanel(new BorderLayout());
+      JPanel panel2=new JPanel(new BorderLayout());
 
-    JPanel panel3=new JPanel(new BorderLayout());
-    JPanel panel4=new JPanel(new BorderLayout());
+      msg = mLocalizer.msg("version", "Version");
+      panel1.add(new JLabel(msg), BorderLayout.NORTH);
+      panel2.add(versionLabel=new JLabel("-"),BorderLayout.NORTH);
 
-    panel3.add(new JLabel("Author:"),BorderLayout.NORTH);
-    panel4.add(authorLabel=new JLabel("-"),BorderLayout.NORTH);
+      JPanel panel3=new JPanel(new BorderLayout());
+      JPanel panel4=new JPanel(new BorderLayout());
 
-    panel1.add(panel3,BorderLayout.CENTER);
-    panel2.add(panel4,BorderLayout.CENTER);
+      msg = mLocalizer.msg("author", "Author");
+      panel3.add(new JLabel(msg), BorderLayout.NORTH);
+      panel4.add(authorLabel=new JLabel("-"),BorderLayout.NORTH);
 
-    JPanel panel5=new JPanel(new BorderLayout());
-    panel5.add(new JLabel("Description:"),BorderLayout.NORTH);
+      panel1.add(panel3,BorderLayout.CENTER);
+      panel2.add(panel4,BorderLayout.CENTER);
 
-    descriptionArea=new JTextArea(3,40);
-    descriptionArea.setLineWrap(true);
-    descriptionArea.setEditable(false);
-    descriptionArea.setOpaque(false);
+      JPanel panel5=new JPanel(new BorderLayout());
+      msg = mLocalizer.msg("description", "Description");
+      panel5.add(new JLabel(msg), BorderLayout.NORTH);
 
-    panel3.add(panel5,BorderLayout.CENTER);
-    panel4.add(descriptionArea,BorderLayout.CENTER);
+      descriptionArea=new JTextArea(3,40);
+      descriptionArea.setLineWrap(true);
+      descriptionArea.setEditable(false);
+      descriptionArea.setOpaque(false);
 
-    leftPanel.add(panel1,BorderLayout.CENTER);
-    rightPanel.add(panel2,BorderLayout.CENTER);
+      panel3.add(panel5,BorderLayout.CENTER);
+      panel4.add(descriptionArea,BorderLayout.CENTER);
 
-    add(leftPanel,BorderLayout.WEST);
-    add(rightPanel,BorderLayout.CENTER);
+      leftPanel.add(panel1,BorderLayout.CENTER);
+      rightPanel.add(panel2,BorderLayout.CENTER);
+
+      add(leftPanel,BorderLayout.WEST);
+      add(rightPanel,BorderLayout.CENTER);
+    }
+
+    
+    
+    public void setPluginInfo(PluginInfo info) {
+      nameLabel.setText(info.getName());
+      versionLabel.setText(info.getVersion().toString());
+      authorLabel.setText(info.getAuthor());
+      descriptionArea.setText(info.getDescription());
+    }
+
   }
-
-  public void setPluginInfo(PluginInfo info) {
-    nameLabel.setText(info.getName());
-    versionLabel.setText(info.getVersion().toString());
-    authorLabel.setText(info.getAuthor());
-    descriptionArea.setText(info.getDescription());
-  }
-
 
 }

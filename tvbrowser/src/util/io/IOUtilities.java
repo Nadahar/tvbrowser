@@ -38,6 +38,11 @@ import java.util.zip.*;
  */
 public class IOUtilities {
 
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(IOUtilities.class.getName());
+
+  
+  
   /**
    * Downloads a file from a HTTP server.
    *
@@ -46,7 +51,7 @@ public class IOUtilities {
    * @throws IOException When download or saving failed.
    */  
   public static void download(URL url, File targetFile) throws IOException {
-    System.out.println("Downloading '" + url + "' to '"
+    mLog.info("Downloading '" + url + "' to '"
       + targetFile.getAbsolutePath() + "'");
     
     InputStream stream = null;
@@ -170,7 +175,7 @@ public class IOUtilities {
   public static void unzip(File srcFile, String entryName, File targetFile)
     throws IOException
   {
-    System.out.println("Unzipping '" + entryName + "' from '"
+    mLog.info("Unzipping '" + entryName + "' from '"
       + srcFile.getAbsolutePath() + "' to '" + targetFile.getAbsolutePath() + "'");
     
     InputStream stream = null;
@@ -205,7 +210,7 @@ public class IOUtilities {
   public static void ungzip(File srcFile, File targetFile)
     throws IOException
   {
-    System.out.println("Ungzipping '" + srcFile.getAbsolutePath() +
+    mLog.info("Ungzipping '" + srcFile.getAbsolutePath() +
       "' to '" + targetFile.getAbsolutePath() + "'");
     
     InputStream stream = null;

@@ -58,6 +58,9 @@ import devplugin.*;
  * @author Til Schneider, www.murfman.de
  */
 public class XmlTvDataService implements TVDataServiceInterface {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(XmlTvDataService.class.getName());
   
   /** The folder where to put the XML data. */  
   private static final String XMLTV_FOLDER = "xmldata" + java.io.File.separator;
@@ -233,7 +236,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
       
     if (! gzFile.exists()) {
       // Download must have failed
-      System.out.println("File '" + gzFile.getAbsolutePath() + "' does not exist!");
+      mLog.info("File '" + gzFile.getAbsolutePath() + "' does not exist!");
     } else {
       // parse the XML file
       XmlTvHandler handler
@@ -245,7 +248,7 @@ public class XmlTvDataService implements TVDataServiceInterface {
       GZIPInputStream gzipIn = null;
       boolean fileIsCorrupt = false;
       try {
-        System.out.println("Parsing '" + gzFile.getAbsolutePath() + "'...");
+        mLog.info("Parsing '" + gzFile.getAbsolutePath() + "'...");
 
         in = new FileInputStream(gzFile);
         gzipIn = new GZIPInputStream(in);

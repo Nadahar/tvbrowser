@@ -24,12 +24,6 @@
  * $Revision$
  */
 
-
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
-
 package tvbrowser.ui.programtable;
 
 import javax.swing.*;
@@ -38,51 +32,56 @@ import java.util.*;
 
 import tvbrowser.core.*;
 
+/**
+ * TV-Browser
+ *
+ * @author Martin Oberhauser
+ */
 public class ChannelPanel extends JPanel {
 
-    private JScrollPane scrollPane=null;
-
-    public ChannelPanel() {
-        int n=ChannelList.getNumberOfSubscribedChannels();
-        setLayout(new BorderLayout());
-
-        JPanel content=new JPanel();
-        
-		content.setOpaque(true);
-		content.setBackground(new java.awt.Color(208,199,241));
-
-        JLabel []labels=new JLabel[n];
-        Enumeration enum=ChannelList.getChannels();
-        int colWidth=Settings.getColumnWidth();
-
-        while (enum.hasMoreElements()) {
-            Channel ch=(Channel)enum.nextElement();
-            if (ChannelList.isSubscribedChannel(ch.getId())) {
-            	int pos=ChannelList.getPos(ch.getId());
-                labels[pos]=new JLabel(ch.getName());
-                labels[pos].setOpaque(false);
-                labels[pos].setHorizontalAlignment(JLabel.CENTER);
-                labels[pos].setPreferredSize(new Dimension(colWidth,15));
-            }
-
-        }
-        for (int i=0;i<n;i++) {
-            if (labels[i]==null) {
-                labels[i]=new JLabel("unknown");
-            }
-            content.add(labels[i]);
-        }
-        add(content,BorderLayout.WEST);
-    }
-
-
-    public void scroll(int x) {
-    	scrollPane.getViewport().setViewPosition(new Point(x,0));
-    	
-     
-    }
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(ChannelPanel.class);
+  
+  private JScrollPane scrollPane=null;
+  
+  
+  
+  public ChannelPanel() {
+    int n=ChannelList.getNumberOfSubscribedChannels();
+    setLayout(new BorderLayout());
     
-   
+    JPanel content=new JPanel();
     
+    content.setOpaque(true);
+    content.setBackground(new java.awt.Color(208,199,241));
+    
+    JLabel []labels=new JLabel[n];
+    Enumeration enum=ChannelList.getChannels();
+    int colWidth=Settings.getColumnWidth();
+    
+    while (enum.hasMoreElements()) {
+      Channel ch=(Channel)enum.nextElement();
+      if (ChannelList.isSubscribedChannel(ch.getId())) {
+        int pos=ChannelList.getPos(ch.getId());
+        labels[pos]=new JLabel(ch.getName());
+        labels[pos].setOpaque(false);
+        labels[pos].setHorizontalAlignment(JLabel.CENTER);
+        labels[pos].setPreferredSize(new Dimension(colWidth,15));
+      }
+      
+    }
+    for (int i=0;i<n;i++) {
+      if (labels[i]==null) {
+        labels[i] = new JLabel(mLocalizer.msg("unknown", "Unknown"));
+      }
+      content.add(labels[i]);
+    }
+    add(content,BorderLayout.WEST);
+  }
+  
+  
+  public void scroll(int x) {
+    scrollPane.getViewport().setViewPosition(new Point(x,0));
+  }
    
 }
