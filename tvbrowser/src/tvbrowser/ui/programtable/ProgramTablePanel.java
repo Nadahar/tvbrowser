@@ -154,6 +154,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
   private JPanel content;
   private JLabel statusLabel;
   private DayProgram dayProgram;
+  private Frame parent;
 
   private javax.swing.Timer timer;
   
@@ -164,6 +165,7 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
    */
   public ProgramTablePanel(Frame parent) {
 
+	this.parent=parent;
     setLayout(new BorderLayout());
     final ScrollableTablePanel tablePanel=this;
     part=new ProgramDayTime[NUM_OF_DAYTIMES];
@@ -186,6 +188,9 @@ public class ProgramTablePanel extends JPanel implements MouseInputListener, Scr
    		headerPanel.remove(channelPanel);
    	}
 	channelPanel=new ChannelPanel();
+	
+	
+	channelChooser=new ChannelChooser(parent,this);
 	
    }
 
