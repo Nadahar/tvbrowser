@@ -260,8 +260,7 @@
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="com/**"/>
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/idw-gpl.jar" includes="net/**"/>
-        <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
+      <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
     </jar>
 
     <!-- Pack the plugin jars -->    
