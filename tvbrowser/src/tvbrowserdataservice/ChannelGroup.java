@@ -286,6 +286,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         }
 
         throw new TvBrowserException(getClass(), "error.2", "No mirror found\ntried following mirrors: ", buf.toString());
+
+  
+
     }
 
     private boolean mirrorIsUpToDate(Mirror mirror) throws TvBrowserException {

@@ -140,7 +140,7 @@ public class ChannelList {
             + lineCount + ": '" + line + "'");
         }
 
-        String country=null, timezone=null, id=null, name=null, copyright=null, webpage=null, iconUrl=null;
+        String country=null, timezone=null, id=null, name=null, copyright=null, webpage=null, iconUrl=null, categoryStr=null;
         try {
           country = tokenizer.nextToken().trim();
           timezone = tokenizer.nextToken().trim();
@@ -148,13 +148,22 @@ public class ChannelList {
           name = tokenizer.nextToken().trim();
           copyright = tokenizer.nextToken().trim();
           webpage = tokenizer.nextToken().trim();
-          iconUrl = tokenizer.nextToken();
+          iconUrl = tokenizer.nextToken().trim();
+          categoryStr = tokenizer.nextToken().trim();
         }catch (java.util.NoSuchElementException e) {
           // ignore
         }
-        
+
+        int categories = Channel.CATEGORY_NONE;
+        if (categoryStr != null) {
+          try {
+            categories = Integer.parseInt(categoryStr);
+          }catch(NumberFormatException e) {
+            categories = Channel.CATEGORY_NONE;
+          }
+        }
         Channel channel = new Channel(dataService, name, id,
-          TimeZone.getTimeZone(timezone), country,copyright,webpage, mGroup);
+          TimeZone.getTimeZone(timezone), country,copyright,webpage, mGroup, null, categories);
         if (iconLoader != null && iconUrl != null) {
           Icon icon = iconLoader.getIcon(id, iconUrl);
           if (icon != null) {

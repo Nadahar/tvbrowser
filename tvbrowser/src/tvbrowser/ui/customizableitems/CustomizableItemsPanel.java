@@ -160,7 +160,7 @@ public class CustomizableItemsPanel extends JPanel {
     mRightBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         Object[] items = UiUtilities.moveSelectedItems(mLeftList, mRightList);
-        if (items != null) {
+        if (items != null && items.length>0) {
           fireItemTransferredToRightList(items);
         }
       }
@@ -169,7 +169,7 @@ public class CustomizableItemsPanel extends JPanel {
     mLeftBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         Object[] items = UiUtilities.moveSelectedItems(mRightList, mLeftList);
-        if (items != null) {
+        if (items != null && items.length > 0) {
           fireItemTransferredToLeftList(items);
         }
       }

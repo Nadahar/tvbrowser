@@ -293,7 +293,7 @@ public class UiUtilities {
 
 
     if (selection.length == 0) {
-      return null;
+      return new Object[]{};
     }
 
     Object[] objects = new Object[selection.length];
