@@ -44,13 +44,16 @@ import java.util.StringTokenizer;
 public class PrintProgram
 {
    private Program mProgram;
-   private int mMaxTextWidth, mMaxWidth, mTitleheight, mInfoheight;
+   private int mMaxTextWidth, mMaxWidth, mTitleheight, mInfoheight, mInfoDetailheight;
    private String mStartTime;
    private ArrayList mTitle;
    private ArrayList mInfo;
+   private ArrayList mInfoDetail;
    private Graphics mg;
    private Font mFontTitle, mFontInfo;
    private boolean mCompact;
+   private boolean mChannel;
+   private boolean mMaxInfo;
 
    public PrintProgram(Program program, String fontName, int fontSize, int maxWidth, Graphics g)
    {
@@ -58,13 +61,17 @@ public class PrintProgram
       mMaxWidth = maxWidth;
       mg = g;
       mInfoheight = 0;
+      mInfoDetailheight = 0;
       mCompact = false;
+      mChannel = false;
+      mMaxInfo = false;
 
       mFontTitle = new Font(fontName, Font.BOLD, fontSize);
       mFontInfo  = new Font(fontName, Font.PLAIN, fontSize);
 
       mTitle = new ArrayList();
       mInfo = new ArrayList();
+      mInfoDetail = new ArrayList();
 
       mStartTime = mProgram.getTimeString();
       mMaxTextWidth = mMaxWidth - getMaxStartTimeWidth(mFontTitle);
@@ -74,11 +81,24 @@ public class PrintProgram
 
       splitStringtoList(mInfo, mProgram.getShortInfo(), mFontInfo);
       mInfoheight = (int) ((mFontInfo.getSize() + mFontInfo.getSize() * 0.4) * mInfo.size());
+
+      splitStringtoList(mInfoDetail, mProgram.getDescription(), mFontInfo);
+      mInfoDetailheight = (int) ((mFontInfo.getSize() + mFontInfo.getSize() * 0.4) * mInfoDetail.size());
    }
 
    public void setCompact(boolean compact)
    {
       mCompact = compact;
+   }
+
+   public void setChannel(boolean channel)
+   {
+      mChannel = channel;
+   }
+
+   public void setMaxInfo(boolean maxInfo)
+   {
+      mMaxInfo = maxInfo;
    }
 
    public int draw(int x, int y)
@@ -91,6 +111,12 @@ public class PrintProgram
 
       mg.drawString(mStartTime, x, ypos);
 
+      if (mChannel)
+      {
+         mg.drawString((String) mProgram.getChannel().getName(), textX, ypos);
+         ypos = (int)(ypos + mFontTitle.getSize() + mFontTitle.getSize() * 0.4);
+      }
+
       for (i = 0; i < mTitle.size(); i++)
       {
          mg.drawString((String) mTitle.get(i), textX, ypos);
@@ -99,11 +125,23 @@ public class PrintProgram
 
       if (!mCompact)
       {
-         mg.setFont(mFontInfo);
-         for (i = 0; i < mInfo.size(); i++)
+         if (mMaxInfo)
          {
-            mg.drawString((String) mInfo.get(i), textX, ypos);
-            ypos = (int)(ypos + mFontInfo.getSize() + mFontInfo.getSize() * 0.4);
+            mg.setFont(mFontInfo);
+            for (i = 0; i < mInfoDetail.size(); i++)
+            {
+               mg.drawString((String) mInfoDetail.get(i), textX, ypos);
+               ypos = (int)(ypos + mFontInfo.getSize() + mFontInfo.getSize() * 0.4);
+            }
+         }
+         else
+         {
+            mg.setFont(mFontInfo);
+            for (i = 0; i < mInfo.size(); i++)
+            {
+               mg.drawString((String) mInfo.get(i), textX, ypos);
+               ypos = (int)(ypos + mFontInfo.getSize() + mFontInfo.getSize() * 0.4);
+            }
          }
       }
       return ypos;
@@ -117,7 +155,10 @@ public class PrintProgram
       }
       else
       {
-         return mTitleheight + mInfoheight;
+         if (mMaxInfo)
+            return mTitleheight + mInfoDetailheight;
+         else
+            return mTitleheight + mInfoheight;
       }
    }
    public Program getProgram()

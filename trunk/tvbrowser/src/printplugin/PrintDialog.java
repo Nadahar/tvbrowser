@@ -32,6 +32,7 @@ package printplugin;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Iterator;
+import java.util.Enumeration;
 import javax.swing.*;
 import util.exc.*;
 import util.ui.*;
@@ -41,6 +42,8 @@ import javax.print.DocFlavor.*;
 import java.io.*;
 import java.awt.print.*;
 import javax.print.attribute.*;
+import tvbrowser.ui.programtable.*;
+//tvbrowser.ui.programtable
 import javax.print.attribute.standard.OrientationRequested;
 
 /**
@@ -58,11 +61,14 @@ public class PrintDialog extends JDialog implements Printable
    private JButton mPrintBt, mCloseBt, mTestBt;
    private JTextArea mTestText;
    private JScrollPane areaScrollPane;
-   private JComboBox mPrinterSelect, mOrientation;
+   private JComboBox mPrinterSelect, mOrientation, mFilter;
    private JComboBox mFromDate;
    private JComboBox mUntilDate;
    private JPanel mMain;
    private static PrintDialog mInstance;
+   private ProgramFilter mSelectedFilter;
+   private PrintFilter mPrintFilter;
+   private int mFilterCount, mFilterCounter;
 
 
    Channel[] mChannels;
@@ -102,18 +108,40 @@ public class PrintDialog extends JDialog implements Printable
          mMain.setBorder(UiUtilities.DIALOG_BORDER);
          setContentPane(mMain);
 
-         tmpPanel = new JPanel(new TabLayout(2));
-         mMain.add(tmpPanel);
-
-         tmpPanel.add(new JLabel(mLocalizer.msg("printer", "Printer")));
-         tmpPanel.add(new JLabel(mLocalizer.msg("orientation", "Orientation")));
-
+         mMain.add(new JLabel(mLocalizer.msg("printer", "Printer")));
          this.mPrinterSelect = new JComboBox();
          for(int i = 0; i < printPlugin.mAllServices.length; i++)
          {
             mPrinterSelect.addItem(printPlugin.mAllServices[i].getName());
          }
-         tmpPanel.add(mPrinterSelect);
+         mMain.add(mPrinterSelect);
+
+
+         tmpPanel = new JPanel(new TabLayout(2));
+         mMain.add(tmpPanel);
+
+         tmpPanel.add(new JLabel(mLocalizer.msg("filter", "Filter")));
+         tmpPanel.add(new JLabel(mLocalizer.msg("orientation", "Orientation")));
+
+         this.mFilter = new JComboBox();
+
+         ProgramFilter allProgs = null;
+
+         for (Enumeration e = tvbrowser.ui.filter.FilterListModel.getInstance().elements() ; e.hasMoreElements() ;)
+         {
+            ProgramFilter pf = (ProgramFilter) e.nextElement();
+            mFilter.addItem(pf);
+
+            if (pf instanceof tvbrowser.ui.filter.ShowAllFilter)
+            {
+               allProgs = pf;;
+            }
+         }
+
+         if (allProgs != null)
+            mFilter.setSelectedItem(allProgs);
+
+         tmpPanel.add(mFilter);
 
          this.mOrientation = new JComboBox();
          mOrientation.addItem(mLocalizer.msg("portrait", "Portrait"));
@@ -130,22 +158,22 @@ public class PrintDialog extends JDialog implements Printable
          Date fromDate = new Date(startDate);
          while (fromDate.getValue() < endDate.getValue())
          {
-            mFromDate.addItem(fromDate.toString());
+            mFromDate.addItem(fromDate);
             fromDate = fromDate.addDays(1);
          }
          tmpPanel.add(mFromDate);
 
          this.mUntilDate = new JComboBox();
-         Date utilDate = new Date(startDate);
-         while (utilDate.getValue() < endDate.getValue())
+         Date untilDate = new Date(startDate);
+         while (untilDate.getValue() < endDate.getValue())
          {
-            mUntilDate.addItem(utilDate.toString());
-            utilDate = utilDate.addDays(1);
+            mUntilDate.addItem(untilDate);
+            untilDate = untilDate.addDays(1);
          }
          tmpPanel.add(mUntilDate);
 
 
-   /*
+/*
    //    Only for Test!
          JTextArea mTestText = new JTextArea(10, 50);
          mTestText.setLineWrap(true);
@@ -156,7 +184,24 @@ public class PrintDialog extends JDialog implements Printable
          areaScrollPane.setPreferredSize(new Dimension(250, 250));
 
          tmpPanel.add(areaScrollPane);
-   */
+
+         for (Enumeration e = tvbrowser.ui.filter.FilterListModel.getInstance().elements() ; e.hasMoreElements() ;)
+         {
+            ProgramFilter pf = (ProgramFilter) e.nextElement();
+
+            mTestText.append(pf.toString());
+
+            if (pf instanceof tvbrowser.ui.filter.ShowAllFilter)
+            {
+               mTestText.append(" (Alle Daten)");
+            }
+            else
+            {
+            }
+
+            mTestText.append("\n");
+         }
+*/
 
          JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
          mMain.add(buttonPn);
@@ -257,7 +302,20 @@ public class PrintDialog extends JDialog implements Printable
 
          DocPrintJob job = allServices[i].createPrintJob();
 
-         mOrientation.addItem(mLocalizer.msg("landscape", "Landscape"));
+         mSelectedFilter = (ProgramFilter) mFilter.getSelectedItem();
+
+         if (!(mSelectedFilter instanceof tvbrowser.ui.filter.ShowAllFilter))
+         {
+            mPrintFilter = new PrintFilter("SansSerif", 8, 6, mSelectedFilter);
+
+            mFilterCount = mPrintFilter.readPrograms(new Date((Date) mFromDate.getSelectedItem()),
+                                                     new Date((Date) mUntilDate.getSelectedItem()));
+            mFilterCounter = 0;
+
+         }
+
+
+//         mOrientation.addItem(mLocalizer.msg("landscape", "Landscape"));
 
          Doc doc;
 
@@ -285,74 +343,91 @@ public class PrintDialog extends JDialog implements Printable
 
       try
       {
-         if (pageIndex == 0)
+         if (mSelectedFilter instanceof tvbrowser.ui.filter.ShowAllFilter)
          {
-            mChannelWidth = 100;
-            mChannelsPerPage = (int) pageFormat.getImageableWidth() / mChannelWidth;
-            mChannelWidth = (int) pageFormat.getImageableWidth() / mChannelsPerPage;
-
-            String countDate = (String)mFromDate.getSelectedItem();
-            mCountDate = new Date();
-
-            while(!countDate.equals(mCountDate.toString()))
+            if (pageIndex == 0)
             {
-               mCountDate = mCountDate.addDays(1);
+               mChannelWidth = 100;
+               mChannelsPerPage = (int) pageFormat.getImageableWidth() / mChannelWidth;
+               mChannelWidth = (int) pageFormat.getImageableWidth() / mChannelsPerPage;
+
+               mCountDate = new Date((Date) mFromDate.getSelectedItem());
+               mEndDate = new Date((Date) mUntilDate.getSelectedItem());
+
+               mChannelPageIndex = 0;
+
             }
 
-            String endDate = (String)mUntilDate.getSelectedItem();
-            mEndDate = new Date();
-            while(!endDate.equals(mEndDate.toString()))
+            if (mCountDate.getValue() <= mEndDate.getValue())
             {
-               mEndDate = mEndDate.addDays(1);
+               int channelIndex = 0;
+
+               Font pageHeaderFont = new Font("SansSerif", Font.BOLD, 8);
+               FontMetrics metrics = g.getFontMetrics(pageHeaderFont);
+               String pageHeader = mLocalizer.msg("programFrom", "program from") + mCountDate.toString();
+               int pageWidth = metrics.stringWidth(pageHeader);
+               int pageX = (int) pageFormat.getImageableX() + ((int) pageFormat.getImageableWidth() / 2) - (pageWidth /2 );
+
+               for (int i = 0; i < mChannelsPerPage; i++)
+               {
+
+                  channelIndex = (mChannelPageIndex *  mChannelsPerPage) + i;
+                  if (channelIndex < mChannels.length)
+                  {
+
+                     g.setFont(pageHeaderFont);
+                     g.drawString(pageHeader, pageX, (int) pageFormat.getImageableY() + pageHeaderFont.getSize());
+
+                     PrintChannel printChannel = new PrintChannel(mChannels[channelIndex], "SansSerif", 8, 6, g);
+                     printChannel.draw((int) (pageFormat.getImageableX() + (i * mChannelWidth)),
+                                       (int) (pageFormat.getImageableY() + (pageHeaderFont.getSize() + pageHeaderFont.getSize() * 0.4)),
+                                       mChannelWidth, (int) (pageFormat.getImageableHeight() - (pageHeaderFont.getSize() + pageHeaderFont.getSize() * 0.4)), mCountDate, true, false);
+                  }
+               }
+
+               if (pageIndex == mPageIndex)
+               {
+                  if (channelIndex + 1 >= mChannels.length)
+                  {
+                     mChannelPageIndex = 0;
+                     mCountDate = mCountDate.addDays(1);
+   //                JOptionPane.showMessageDialog(null, "Date change to "  + mCountDate.toString());
+                  }
+                  else
+                  {
+                     mChannelPageIndex++;
+                  }
+               }
+
+               result = PAGE_EXISTS;
             }
-
-            mChannelPageIndex = 0;
-
          }
-
-         if (mCountDate.getValue() <= mEndDate.getValue())
+         else
          {
-            int channelIndex = 0;
 
-            Font pageHeaderFont = new Font("SansSerif", Font.BOLD, 8);
-            FontMetrics metrics = g.getFontMetrics(pageHeaderFont);
-            String pageHeader = mLocalizer.msg("programFrom", "program from") + mCountDate.toString();
-            int pageWidth = metrics.stringWidth(pageHeader);
-            int pageX = (int) pageFormat.getImageableX() + ((int) pageFormat.getImageableWidth() / 2) - (pageWidth /2 );
-
-            for (int i = 0; i < mChannelsPerPage; i++)
+            if (mFilterCounter < mFilterCount)
             {
 
-               channelIndex = (mChannelPageIndex *  mChannelsPerPage) + i;
-               if (channelIndex < mChannels.length)
+               int fc;
+
+               fc = mFilterCounter;
+
+               fc = mPrintFilter.draw((int) pageFormat.getImageableX(),
+                                      (int) pageFormat.getImageableY(),
+                                      (int) pageFormat.getImageableWidth(),
+                                      (int) pageFormat.getImageableHeight(),
+                                      g,
+                                      fc);
+
+               if (pageIndex == mPageIndex)
                {
-
-                  g.setFont(pageHeaderFont);
-                  g.drawString(pageHeader, pageX, (int) pageFormat.getImageableY() + pageHeaderFont.getSize());
-
-                  PrintChannel printChannel = new PrintChannel(mChannels[channelIndex], "SansSerif", 8, 6, g);
-                  printChannel.draw((int) (pageFormat.getImageableX() + (i * mChannelWidth)),
-                                    (int) (pageFormat.getImageableY() + (pageHeaderFont.getSize() + pageHeaderFont.getSize() * 0.4)),
-                                    mChannelWidth, (int) (pageFormat.getImageableHeight() - (pageHeaderFont.getSize() + pageHeaderFont.getSize() * 0.4)), mCountDate, true, false);
+                  mFilterCounter = fc;
                }
+
+               result = PAGE_EXISTS;
             }
 
-            if (pageIndex == mPageIndex)
-            {
-               if (channelIndex + 1 >= mChannels.length)
-               {
-                  mChannelPageIndex = 0;
-                  mCountDate = mCountDate.addDays(1);
-//                JOptionPane.showMessageDialog(null, "Date change to "  + mCountDate.toString());
-               }
-               else
-               {
-                  mChannelPageIndex++;
-               }
-            }
-
-
-            result = PAGE_EXISTS;
+//            JOptionPane.showMessageDialog(null, "Printing of Filter is not implented.");
          }
       }
       catch (Exception e)
