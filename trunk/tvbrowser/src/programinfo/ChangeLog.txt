@@ -1,5 +1,8 @@
 Changelog PrograminfoPlugin
 
+1.0.5:
+- Program info rewritten to show all new Program data fields.
+
 1.0.4:
 - remember window positon
 

@@ -23,22 +23,22 @@
  *   $Author$
  * $Revision$
  */
-
 package devplugin;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Properties;
-import java.util.jar.*;
+import java.util.jar.JarFile;
 
-import javax.swing.Timer;
 import javax.swing.Icon;
+import javax.swing.Timer;
 
-import util.exc.*;
+import tvdataservice.MutableChannelDayProgram;
+import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 
 abstract public class Plugin {
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(Plugin.class.getName());
   
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
@@ -221,7 +221,10 @@ abstract public class Plugin {
   
   public final Icon getMarkIcon() {
     if (markIcon== null ) {
-      markIcon = ImageUtilities.createImageIconFromJar(getMarkIconName(), getClass());
+      String iconFileName = getMarkIconName();
+      if (iconFileName != null) {
+        markIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
+      }
     }
     return markIcon;
   }
@@ -230,7 +233,10 @@ abstract public class Plugin {
   
   public final Icon getButtonIcon() {
     if (buttonIcon == null ) {
-      buttonIcon = ImageUtilities.createImageIconFromJar(getButtonIconName(), getClass());
+      String iconFileName = getButtonIconName();
+      if (iconFileName != null) {
+        buttonIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
+      }
     }
     return buttonIcon;
   }
@@ -245,12 +251,28 @@ abstract public class Plugin {
   abstract public String getButtonIconName();
   
   
+  /**
+   * This method is automatically called, when the TV data has changed.
+   * (E.g. after an update).
+   * <p>
+   * The TV data may be modified by the plugin!
+   * <p>
+   * Does by default nothing.
+   * 
+   * @param newProg The new ChannelDayProgram.
+   */
+  public void handleTvDataChanged(MutableChannelDayProgram newProg) {
+  }
   
   /**
    * This method is automatically called, when the TV data has changed.
    * (E.g. after an update).
    * <p>
    * Does by default nothing.
+   * 
+   * @deprecated Since 0.9.8. Use
+   *             {@link #handleTvDataChanged(ChannelDayProgram, MutableChannelDayProgram}
+   *             instead.
    */
   public void handleTvDataChanged() {
   }

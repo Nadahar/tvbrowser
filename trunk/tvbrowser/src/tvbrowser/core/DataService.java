@@ -157,6 +157,13 @@ public class DataService implements devplugin.PluginManager {
     TvDataBase dataBaseInteractor = new TvDataBase() {
       public void updateDayProgram(MutableChannelDayProgram program) {
         correctChannelDayProgram(program, false);
+
+        // Pass the new ChannelDayProgram to all plugins
+        Plugin[] pluginArr = PluginManager.getInstalledPlugins();
+        for (int i = 0; i < pluginArr.length; i++) {
+          pluginArr[i].handleTvDataChanged(program);
+        }
+
         updateChannelDayProgram(program);
       }
   
