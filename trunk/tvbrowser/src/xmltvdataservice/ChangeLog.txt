@@ -1,5 +1,7 @@
 Changelog XmlTvDataLoader
 
+2.0.1: requires TVBrowser 0.9.6.1
+
 2.0: requires TVBrowser 0.9.6:
 - bufix: NullPointerException (line 306)
 

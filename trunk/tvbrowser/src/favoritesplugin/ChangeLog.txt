@@ -1,5 +1,7 @@
 Changelog FavoritesPlugin
 
+1.0.5:
+- bugfix
 
 1.0.4:
 - remember size of ManageFavoritesDialog

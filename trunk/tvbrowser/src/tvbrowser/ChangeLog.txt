@@ -6,8 +6,10 @@ current (0.9.6.1):
 	- don't scroll to invalid time/channel positions
 	- remember download period "get all"
 	- mark "programs on air" with invalid length
-	- changed format of the time buttons to 24h format 
+	- changed format of the time buttons to 24h format
+	- update finder panel after deleting tv data manually 
 - new layout in main frame
+- removed online mode
 - show plugin buttons by default
 - new layout in settings dialog
 - support time zones

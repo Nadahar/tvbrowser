@@ -33,6 +33,7 @@ import java.awt.event.*;
 
 import util.ui.UiUtilities;
 
+import tvbrowser.ui.finder.FinderPanel;
 import tvdataservice.TvDataService;
 import tvdataservice.SettingsPanel;
 
@@ -93,7 +94,7 @@ public class DeleteTVDataDlg implements ActionListener {
 		
 		contentPane.add(pushButtonPanel,BorderLayout.SOUTH);
     
-	mDialog.pack();
+	 mDialog.pack();
 	}
   
   
@@ -109,6 +110,7 @@ public class DeleteTVDataDlg implements ActionListener {
 			Integer i=(Integer)mDaySp.getValue();
 			tvbrowser.core.DataService.deleteExpiredFiles(i.intValue());
 			mDialog.dispose();
+      FinderPanel.getInstance().update();
 			
 		}else if (e.getSource()==closeBtn) {
 			mDialog.dispose();

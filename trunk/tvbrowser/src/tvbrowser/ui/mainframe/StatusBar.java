@@ -36,14 +36,17 @@ public class StatusBar extends JPanel {
   
  public StatusBar(JProgressBar progressBar) {
    setOpaque(false);
-   setLayout(new BorderLayout());
+   setLayout(new BorderLayout(10,0));
+   setBorder(BorderFactory.createEmptyBorder(0,2,2,2));
    mInfoLabel=new JLabel();
    mInfoLabel.setBorder(BorderFactory.createLoweredBevelBorder());
    mProgressBar=progressBar;
    mProgressBar.setOpaque(false);
+   mProgressBar.setBorder(BorderFactory.createLoweredBevelBorder());
      
    add(mProgressBar,BorderLayout.EAST);
    add(mInfoLabel,BorderLayout.CENTER);
+   this.setPreferredSize(new Dimension(0,20));
  }
  
  public JProgressBar getProgressBar() {

@@ -29,6 +29,7 @@ package favoritesplugin;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.awt.Dimension;
 
 import util.ui.UiUtilities;
 import util.exc.*;
@@ -52,7 +53,7 @@ public class FavoritesPlugin extends Plugin {
   
   private Plugin[] mClientPluginArr;
   
-  private java.awt.Dimension mDlgDim;
+  private Properties mSettings;
 
   
   
@@ -143,13 +144,10 @@ public class FavoritesPlugin extends Plugin {
     * load your plugins settings from the file system.
     */
    public void loadSettings(Properties settings) {
-     
+     mSettings=settings;     
      if (settings==null) {
        throw new IllegalArgumentException("settings is null"); 
      }
-     int width=Integer.parseInt(settings.getProperty("width","500"));
-     int height=Integer.parseInt(settings.getProperty("height","300"));
-     mDlgDim=new java.awt.Dimension(width,height);
    }
   
   
@@ -159,10 +157,17 @@ public class FavoritesPlugin extends Plugin {
     * store your plugins settings to the file system.
     */
    public Properties storeSettings() {
-     Properties result=new Properties();
-     result.setProperty("width",""+mDlgDim.width);
-     result.setProperty("height",""+mDlgDim.height);
-     return result;
+     return mSettings;
+   }
+   
+   
+   private int getIntegerSetting(Properties prop, String key, int defaultValue) {
+     int res=defaultValue;
+     try {
+       res=Integer.parseInt(mSettings.getProperty(key,""+defaultValue));
+     }catch (NumberFormatException e) {       
+     }
+      return res;
    }
 
   /**
@@ -170,14 +175,24 @@ public class FavoritesPlugin extends Plugin {
    * plugin from the menu.
    */
   public void execute() {
-    ManageFavoritesDialog dlg = new ManageFavoritesDialog(parent, mFavoriteArr);
-    dlg.setSize(mDlgDim);
+    int splitPanePosition=getIntegerSetting(mSettings,"splitpanePosition",400);
+    int width=getIntegerSetting(mSettings,"width",500);
+    int height=getIntegerSetting(mSettings,"height",300);
+    ManageFavoritesDialog dlg = new ManageFavoritesDialog(parent, mFavoriteArr,splitPanePosition);
+    dlg.setSize(new Dimension(width,height));
     UiUtilities.centerAndShow(dlg);
     
     if (dlg.getOkWasPressed()) {
       mFavoriteArr = dlg.getFavorites();
     }
-    dlg.getSize(mDlgDim);
+    System.out.print("splitPanePosition changed from "+splitPanePosition+" to ");
+    splitPanePosition=dlg.getSplitpanePosition();
+    System.out.println(splitPanePosition);
+    System.out.println("width changed from "+width+" to "+dlg.getWidth());
+    System.out.println("height changed from "+height+" to "+dlg.getHeight());
+    mSettings.setProperty("splitpanePosition",""+splitPanePosition);
+    mSettings.setProperty("width",""+dlg.getWidth());
+    mSettings.setProperty("height",""+dlg.getHeight());
   }
 
   
@@ -209,7 +224,7 @@ public class FavoritesPlugin extends Plugin {
       "Automatically marks your favorite programs and passes them to other Plugins." );
     String author = "Til Schneider, www.murfman.de" ;
     
-    return new PluginInfo(name, desc, author, new Version(1, 4));
+    return new PluginInfo(name, desc, author, new Version(1, 5));
   }
   
   

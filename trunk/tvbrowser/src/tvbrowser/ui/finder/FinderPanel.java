@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,14 +46,15 @@ public class FinderPanel extends JComponent implements FinderListener {
   private FinderItem curSelectedFinderItem=null;
   private DateListener dataChangedListener=null;
   private Vector itemList;
+  
+  private static FinderPanel mSingleton;
 
   /**
    * Constructs a new FinderPanel.
    */
-  public FinderPanel(DateListener dataChangedListener) {
+  private FinderPanel() {
 
     setLayout(new BorderLayout());
-    this.dataChangedListener=dataChangedListener;
     
     JPanel labelList=new JPanel();
     labelList.setLayout(new GridLayout(0,1));
@@ -92,9 +93,19 @@ public class FinderPanel extends JComponent implements FinderListener {
 
     add(scrollPane,BorderLayout.CENTER);
     updateUI();
-    dataChangedListener.dateChanged(new devplugin.Date());
   }
 
+
+  public static FinderPanel getInstance() {
+    if (mSingleton==null) {
+      mSingleton=new FinderPanel();
+    }
+    return mSingleton;
+  }
+  
+  public void setDateListener(DateListener dataChangedListener) {
+    this.dataChangedListener=dataChangedListener;
+  }
 
 
   /**
@@ -145,7 +156,7 @@ public class FinderPanel extends JComponent implements FinderListener {
       if (curSelectedFinderItem!=null) {
         curSelectedFinderItem.setMark(false);
       }
-      dataChangedListener.dateChanged(item.getDate());
+      if (dataChangedListener!=null) dataChangedListener.dateChanged(item.getDate());
       item.setMark(true);
       curSelectedFinderItem=item;
     }

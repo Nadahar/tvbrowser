@@ -46,7 +46,7 @@ import java.util.regex.*;
     "WDR-DataService",
     "Die Sender von WDR (1live, WDR, WDR2, WDR3, WDR4, WDR5, Funkhaus Europa)",
     "Martin Oberhauser",
-    new Version(2,0)
+    new Version(2,1)
     );
 	
 	
