@@ -84,21 +84,21 @@ public class FinderPanel extends JComponent implements FinderListener {
     	//from=cur-lifespan;
       sub=lifespan;
     }
-    /*curDate=*/curDate.addDays(-sub);
+    curDate=curDate.addDays(-sub);
     
     //for (int i=from;i<cur+56;i++) {
     for (int i=0;i<56+sub;i++) {
         //Date d=new Date(i);
-        Date d=new Date(curDate);
+        //Date d=new Date(curDate);
         //System.out.println("date: "+d);
-        item=new FinderItem(this, d);
+        item=new FinderItem(this, curDate);
         labelList.add(item);
         itemList.add(item);
-        if (today.equals(d)) {
+        if (today.equals(curDate)) {
           curSelectedFinderItem=item;
           item.setMark(true);
         }
-        /*curDate=*/curDate.addDays(1);
+        curDate=curDate.addDays(1);
     }
 
 

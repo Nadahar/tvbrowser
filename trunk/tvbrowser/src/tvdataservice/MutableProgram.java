@@ -353,7 +353,7 @@ public class MutableProgram implements Program {
   public boolean isExpired() {
     //int currentDaysSince1970 = IOUtilities.getDaysSince1970();
     //int programDaysSince1970 = getDate().getDaysSince1970();
-    devplugin.Date today=devplugin.Date.getCurrentDate();
+    devplugin.Date today=new devplugin.Date();
 
 /*
     if (programDaysSince1970 < currentDaysSince1970) {

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,9 +36,6 @@ import java.io.*;
 
 import java.util.Calendar;
 
-//import com.sun.rsasign.o;
-
-//import util.io.IOUtilities;
 
 public class Date implements Comparable {
 
@@ -72,22 +69,25 @@ public class Date implements Comparable {
   
   
   
-  //private int date;  // days since 70-01-01
-  private int mYear;
-  private int mMonth;
-  private int mDay;
-  private Calendar mCalendar;
-  
-  private static Date DATE=new Date();
+  private final int mYear;
+  private final int mMonth;
+  private final int mDay;
 
   /**
    * Constructs a new Date object, initialized with the current date.
    */
   public Date() {
-    mCalendar=Calendar.getInstance();
+    Calendar mCalendar=Calendar.getInstance();
     mYear=mCalendar.get(Calendar.YEAR);
     mMonth=mCalendar.get(Calendar.MONTH)+1;
     mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
+  }
+
+
+  public Date(int year, int month, int dayOfMonth) {
+    mYear=year;
+    mMonth=month;
+    mDay=dayOfMonth;
   }
 
 /**
@@ -98,38 +98,30 @@ public class Date implements Comparable {
     
     long l=(long)daysSince1970*24*60*60*1000;
     java.util.Date d=new java.util.Date(l);
-    mCalendar=Calendar.getInstance();
-    mCalendar.setTime(d);
-    mYear=mCalendar.get(Calendar.YEAR);
-    mMonth=mCalendar.get(Calendar.MONTH)+1;
-    mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
+    Calendar cal=Calendar.getInstance();
+    cal.setTime(d);
+    mYear=cal.get(Calendar.YEAR);
+    mMonth=cal.get(Calendar.MONTH)+1;
+    mDay=cal.get(Calendar.DAY_OF_MONTH);
   }
 
 
 public Date(Calendar cal) {
-  mCalendar=(Calendar)cal.clone();
-  mYear=mCalendar.get(Calendar.YEAR);
-  mMonth=mCalendar.get(Calendar.MONTH)+1;
-  mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
+  mYear=cal.get(Calendar.YEAR);
+  mMonth=cal.get(Calendar.MONTH)+1;
+  mDay=cal.get(Calendar.DAY_OF_MONTH);
 }
 
 public Date(Date d) {
   mYear=d.mYear;
   mMonth=d.mMonth;
   mDay=d.mDay;
-  mCalendar=Calendar.getInstance();
-  mCalendar.set(Calendar.YEAR,mYear);
-  mCalendar.set(Calendar.MONTH,mMonth-1);
-  mCalendar.set(Calendar.DAY_OF_MONTH,mDay);
   
 }
   
-  
-
-  
-  
+   
   public static Date getCurrentDate() {
-    return DATE;
+    return new Date();
   }
   
   /**
@@ -139,12 +131,11 @@ public Date(Date d) {
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
-    if (version==1) {
+    if (version==1) {   // currently, version==2 is used
       int date=in.readInt();
-        // TODO:
       long l=(long)date*24*60*60*1000;
       java.util.Date d=new java.util.Date(l);
-      mCalendar=Calendar.getInstance();
+      Calendar  mCalendar=Calendar.getInstance();
       mCalendar.setTime(d);
       mYear=mCalendar.get(Calendar.YEAR);
       mMonth=mCalendar.get(Calendar.MONTH)+1;
@@ -154,10 +145,6 @@ public Date(Date d) {
       mYear=in.readInt();
       mMonth=in.readInt();
       mDay=in.readInt();
-      mCalendar=Calendar.getInstance();  
-      mCalendar.set(Calendar.YEAR,mYear);
-      mCalendar.set(Calendar.MONTH,mMonth-1);
-      mCalendar.set(Calendar.DAY_OF_MONTH,mDay);
     }
     
   }
@@ -181,14 +168,12 @@ public Date(Date d) {
    */
   
   public int hashCode() {
-    return mCalendar.hashCode(); 
+    return mYear*10000+mMonth*100+mDay;
+
   }
   
   public String getDateString() {
-    
-   // return ""+mYear+ (mMonth<10?"0":"") + mMonth + (mDay<10?"0":"") + mDay;
-    return ""+getValue();
-    
+    return ""+getValue();    
   }
   
   
@@ -201,32 +186,29 @@ public Date(Date d) {
     if (obj instanceof Date) {
         Date d=(Date)obj;
         return d.getValue()==getValue();
-     // return (d.mMonth==mMonth && d.mYear==mYear && d.mDay==mDay);
-    } else {
-      
-      return false;
-      
     }
+    return false;
     
   }
 
 
   public java.util.Calendar getCalendar() {
-    return mCalendar;
-
-  }
+    Calendar cal=Calendar.getInstance();
+    cal.set(Calendar.MONTH,mMonth-1);
+    cal.set(Calendar.YEAR,mYear);
+    cal.set(Calendar.DAY_OF_MONTH,mDay);
+ 
+    return cal;
+   }
 
   
   
   public String toString() {
     
-    //return mDay+".";
-    
-    
-    //java.util.Calendar cal = getCalendar();
-    int dayOfWeek = mCalendar.get(Calendar.DAY_OF_WEEK) - 1;
-    int dayOfMonth = mCalendar.get(Calendar.DAY_OF_MONTH);
-    int month = mCalendar.get(Calendar.MONTH);  
+    Calendar cal=getCalendar();
+    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
+    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+    int month = cal.get(Calendar.MONTH);  
 
     return mLocalizer.msg("datePattern", "{0}, {1} {2}", DAY_MSG_ARR[dayOfWeek],
       MONTH_MSG_ARR[month], Integer.toString(dayOfMonth));
@@ -237,51 +219,23 @@ public Date(Date d) {
    */   
   
   public int getDaysSince1970() {
-    int zoneOffset = mCalendar.get(Calendar.ZONE_OFFSET);
-    int daylight = mCalendar.get(Calendar.DST_OFFSET);
+    Calendar cal=getCalendar();
+    int zoneOffset = cal.get(Calendar.ZONE_OFFSET);
+    int daylight = cal.get(Calendar.DST_OFFSET);
     long millis = System.currentTimeMillis() + zoneOffset + daylight;
     return (int) (millis / 1000L / 60L / 60L / 24L);     
   }
   
   
-       
-       
-  
-  public void setMonth(int month) {
-    mMonth=month;
-    mCalendar.set(Calendar.MONTH,mMonth-1);
-  }
-  
-  public void setYear(int year) {
-    mYear=year;
-    mCalendar.set(Calendar.YEAR,mYear);
-  }
-  
-  public void setDay(int day) {
-    mDay=day;
-    mCalendar.set(Calendar.DAY_OF_MONTH,mDay);
-  }
+   
 
-
-  public void addDays(int days) {
-     addDaysToDate(days);     
+  public Date addDays(int days) {
+     Calendar cal=getCalendar();
+     cal.add(Calendar.DAY_OF_MONTH,days);
+     return new Date(cal);          
    }
    
    
-   
-/*
-  public Date addDays(int days) {
-    Date result=new Date(this);
-    result.addDaysToDate(days);
-    return result;
-  }
-*/
-  private void addDaysToDate(int days) {    
-    mCalendar.add(Calendar.DAY_OF_MONTH, days);
-    mYear=mCalendar.get(Calendar.YEAR);
-    mMonth=mCalendar.get(Calendar.MONTH)+1;
-    mDay=mCalendar.get(Calendar.DAY_OF_MONTH);
-  }
 
   public int compareTo(Object obj) {
     Date d=(Date)obj;

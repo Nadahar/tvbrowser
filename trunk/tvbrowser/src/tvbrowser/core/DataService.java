@@ -182,7 +182,7 @@ public class DataService implements devplugin.PluginManager {
     //devplugin.Date date=new Date();
     //date.addDays(-1); // get yesterday too
     devplugin.Date date=new Date();
-    /*date=*/date.addDays(-1);
+    date=date.addDays(-1);
     TvBrowserException downloadException = null;
     
 	
@@ -279,7 +279,7 @@ public class DataService implements devplugin.PluginManager {
       // Create a new Date object, because the other one is used as key
       // in mDayProgramHash.
       date=new devplugin.Date(date);
-      /*date=*/date.addDays(1);
+      date=date.addDays(1);
       //date = new devplugin.Date(date.getDaysSince1970() + 1);
     }
 
@@ -472,9 +472,9 @@ public class DataService implements devplugin.PluginManager {
     if (lifespan<0) {
       return;  // manually
     }
-    final devplugin.Date d=new devplugin.Date();
-    d.addDays(-lifespan);
-    final Date curDate=new Date();
+    devplugin.Date d1=new devplugin.Date();
+    final devplugin.Date d=d1.addDays(-lifespan);
+    //final Date curDate=new Date();
 	
 		File fList[]=new File(Settings.getTVDataDirectory()).listFiles(
 			new java.io.FilenameFilter() {
@@ -486,9 +486,10 @@ public class DataService implements devplugin.PluginManager {
           int r=val%10000;
           int month=r/100;
           int day=r%100;
-          curDate.setYear(val/10000);
-          curDate.setMonth(r/100);
-          curDate.setDay(r%100);
+          Date curDate=new Date(val/10000,r/100,r%100);
+          //curDate.setYear(val/10000);
+          //curDate.setMonth(r/100);
+          //curDate.setDay(r%100);
           return curDate.getValue()<d.getValue();
 				}
 			}	
@@ -797,7 +798,7 @@ public boolean search(Program prog, Pattern pattern, boolean inTitle, boolean in
       }
 
       // The next day
-      startDate.addDays(1);
+      startDate=startDate.addDays(1);
      //startDate=startDate.addDays(1);
     }
 

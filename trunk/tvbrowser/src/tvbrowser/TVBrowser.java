@@ -660,7 +660,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 	//devplugin.Date nextDate = new devplugin.Date(date.getDaysSince1970() + 1);
     
     devplugin.Date nextDate=new devplugin.Date(date);
-    nextDate.addDays(1);
+    nextDate=nextDate.addDays(1);
    // devplugin.Date nextDate=date.addDays(1);
     DataService.getInstance().getProgressBar().setMaximum(100);
     DayProgram today = DataService.getInstance().getDayProgram(date, true, 0, 49);
