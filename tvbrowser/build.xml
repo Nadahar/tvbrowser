@@ -194,16 +194,6 @@
       <fileset dir="${classes.dir}" includes="util/**"/>
     </jar>
 
-    <mkdir dir="${runtime.dir}/interfaces"/>
-    <jar jarfile="${runtime.dir}/interfaces/devplugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="devplugin/**"/>
-    </jar>
-    <jar jarfile="${runtime.dir}/interfaces/tvdataservice.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
-    </jar>
-
     <mkdir dir="${runtime.dir}/plugins"/>
     <jar jarfile="${runtime.dir}/plugins/ProgramInfo.jar"
          compress="false">

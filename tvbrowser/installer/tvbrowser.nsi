@@ -92,9 +92,7 @@ Section "${PROG_NAME} (erforderlich)"
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
-  SetOutPath "$INSTDIR\interfaces"
-  File "${RUNTIME_DIR}\interfaces\*.*"
-
+  
   CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
   CreateDirectory "$INSTDIR\tvdataloader"
@@ -179,15 +177,15 @@ SubSection "Daten-Services"
 Section "XML-TV-Datenservice"
   SectionIn 1 2
 
-  SetOutPath "$INSTDIR\tvdataloader"
-  File "${RUNTIME_DIR}\tvdataloader\XmlTvDataService.jar"
+  SetOutPath "$INSTDIR\tvdataservice"
+  File "${RUNTIME_DIR}\tvdataservice\XmlTvDataService.jar"
 SectionEnd
 
 Section "Premiere-Datenservice"
   SectionIn 1 2
 
-  SetOutPath "$INSTDIR\tvdataloader"
-  File "${RUNTIME_DIR}\tvdataloader\PremiereDataService.jar"
+  SetOutPath "$INSTDIR\tvdataservice"
+  File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
 SectionEnd
 
 SubSectionEnd
