@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,6 +43,7 @@ import tvbrowser.ui.UpdateDlg;
 import tvbrowser.ui.PictureButton;
 import tvbrowser.ui.settings.SettingsDlg;
 import tvbrowser.ui.splashscreen.SplashScreen;
+import tvbrowser.ui.aboutbox.AboutBox;
 
 import util.exc.*;
 import util.ui.*;
@@ -65,11 +66,13 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
   private Thread downloadingThread;
   private JPanel jcontentPane;
   private FinderPanel finderPanel;
-  private JMenuItem settingsMenuItem, updateMenuItem, mImportTvDataMI, mExportTvDataMI;
+  private JMenuItem settingsMenuItem, updateMenuItem, mImportTvDataMI, mExportTvDataMI,
+  			aboutMenuItem;
   private SkinPanel skinPanel;
   private static String curLookAndFeel;
-  public static String MAINWINDOW_TITLE="TV-Browser v0.9.2";
-
+  public static final String VERSION="0.9.2";
+  public static final String MAINWINDOW_TITLE="TV-Browser v"+VERSION;
+  
 
 
   /**
@@ -91,7 +94,6 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     System.out.println("please wait...");
     
     SplashScreen splash=new SplashScreen("imgs/splash.jpg",400,300);
-    //splash.setSize(50,50);
     splash.show();
 
     try {
@@ -183,7 +185,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
     JMenuItem pluginDownloadMenuItem=new JMenuItem("Find plugins on the web");
     JMenuItem helpMenuItem=new JMenuItem("Help");
-    JMenuItem infoMenuItem=new JMenuItem("About...");
+    aboutMenuItem=new JMenuItem("About...");
+    aboutMenuItem.addActionListener(this);
 
     settingsMenuItem.addActionListener(this);
     quitMenuItem.addActionListener(new ActionListener() {
@@ -214,7 +217,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
     helpMenu.add(helpMenuItem);
     helpMenu.addSeparator();
-    helpMenu.add(infoMenuItem);
+    helpMenu.add(aboutMenuItem);
 
     menuBar.add(mainMenu);
     menuBar.add(tvDataMenu);
@@ -225,7 +228,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
     jcontentPane=(JPanel)getContentPane();
     jcontentPane.setLayout(new BorderLayout());
-
+    
     int mode;
     if (Settings.useApplicationSkin()) {
       mode=Settings.WALLPAPER;
@@ -248,7 +251,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
 
     buttonPanel = createButtonPanel();
     northPanel.add(buttonPanel,BorderLayout.WEST);
-
+    
     programTablePanel=new ProgramTablePanel(this);
     programTablePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     finderPanel=new FinderPanel(this);
@@ -402,6 +405,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     }
     else if ((src == settingsMenuItem) || (src == settingsBtn)) {
       showSettingsDialog();
+    }
+    else if (src==aboutMenuItem) {
+    	showAboutBox();   	
     }
   }
   
@@ -660,6 +666,20 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener, M
     updateLookAndFeel();
     updateApplicationSkin();
     this.updateProgramTableSkin();
+  }
+  
+  /**
+   * 
+   * Shows the about box
+   * @author darras
+   *
+   */
+  private void showAboutBox() {
+	System.out.println("about");
+  	AboutBox box=new AboutBox(this);
+  	box.pack();
+  	box.show();
+  	box.dispose();
   }
   
 }
