@@ -27,22 +27,47 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
+import net.infonode.docking.RootWindow;
+import net.infonode.docking.View;
+import net.infonode.docking.util.DockingUtil;
+import net.infonode.docking.util.ViewMap;
+import net.infonode.util.Direction;
 import tvbrowser.TVBrowser;
-import tvbrowser.core.*;
+import tvbrowser.core.ChannelList;
+import tvbrowser.core.DateListener;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
+import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
-import tvbrowser.core.plugin.PluginStateListener;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.FilterChooser;
@@ -89,13 +114,13 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
    faqMenuItem, forumMenuItem, websiteMenuItem, configAssistantMenuItem;
   private SkinPanel skinPanel;
   private HorizontalToolBar mHorizontalToolBar;
-  private VerticalToolBar mVerticalToolBar;
   private StatusBar mStatusBar;
 
   private JMenu mPluginsMenu;
   
   private static MainFrame mSingleton;
 
+  private TimeChooserPanel mTimeChooser;
   
  
   private MainFrame() {
@@ -255,9 +280,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     dateChanged(new devplugin.Date(), null, null);
     
     mHorizontalToolBar=new HorizontalToolBar(this,new FilterChooser(this,mProgramTableModel));
-    mVerticalToolBar=new VerticalToolBar(this, FinderPanel.getInstance());
-    
-      
     
     JLabel lb=mStatusBar.getLabel();
     new MenuHelpTextAdapter(settingsMenuItem, mLocalizer.msg("menuinfo.settings",""), lb); 
@@ -272,12 +294,32 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
     new MenuHelpTextAdapter(websiteMenuItem,mLocalizer.msg("website.tvbrowser",""),lb); 
     new MenuHelpTextAdapter(configAssistantMenuItem,mLocalizer.msg("menuinfo.configAssistant",""),lb);
 
-    skinPanel.add(mHorizontalToolBar,BorderLayout.NORTH);
-    skinPanel.add(mVerticalToolBar,BorderLayout.EAST);
     skinPanel.add(centerPanel, BorderLayout.CENTER);
-    skinPanel.add(mStatusBar,BorderLayout.SOUTH);
+    
+    ViewMap viewMap = new ViewMap();
 
-    jcontentPane.add(skinPanel,BorderLayout.CENTER);
+    mTimeChooser = new TimeChooserPanel(this);
+    
+    viewMap.addView(0, new View("Programm-Tabelle", null, skinPanel));
+    viewMap.addView(1, new View("Zeit", null, mTimeChooser));
+    viewMap.addView(2, new View("Datum", null, new DateChooserPanel(this, FinderPanel.getInstance())));
+    viewMap.addView(3, new View("Sender", null, new ChannelChooserPanel(this)));
+
+    RootWindow rootWindow = DockingUtil.createRootWindow(viewMap, true);    
+    rootWindow.getWindowBar(Direction.LEFT).setEnabled(true);
+
+    rootWindow.getRootWindowProperties().getWindowAreaProperties().setInsets(new Insets(0,0,0,0));
+    rootWindow.getRootWindowProperties().getSplitWindowProperties().setDividerSize(2);
+    rootWindow.getWindowBar(Direction.LEFT).getTabWindowProperties().getTabProperties().getNormalButtonProperties().getCloseButtonProperties().setVisible(false);
+    
+    rootWindow.getRootWindowProperties().getDockingWindowProperties().getTabProperties().
+    getHighlightedButtonProperties().getCloseButtonProperties().setVisible(false);
+
+    rootWindow.getRootWindowProperties().getWindowAreaProperties().setBackgroundColor(new Color(110, 130, 180));
+        
+    jcontentPane.add(mHorizontalToolBar,BorderLayout.NORTH);
+    jcontentPane.add(rootWindow,BorderLayout.CENTER);
+    jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
     
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
       public void pluginActivated(Plugin p) {
@@ -304,11 +346,6 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
   
   public HorizontalToolBar getHorizontalToolBar() {
     return mHorizontalToolBar;
-  }
-  
-  
-  public VerticalToolBar getVerticalToolBar() {
-    return mVerticalToolBar;
   }
   
   
@@ -748,6 +785,13 @@ public void showHelpDialog() {
     util.ui.BrowserLauncher.openURL(indexFile.getAbsolutePath());
   
   
+}
+
+/**
+ * Updates the TimeChooser-Buttons
+ */
+public void updateButtons() {
+    mTimeChooser.updateButtons();
 }
 
 
