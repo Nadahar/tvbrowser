@@ -50,7 +50,8 @@ public class Channel {
   {
     if (country.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
-        + "ISO country code (as used in top level domains, e.g. 'de' or 'us')");
+        + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
+        + "'" + country + "'");
     }
     
     mDataService = dataService;
