@@ -107,7 +107,7 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 		
 		JPanel serviceConfigPanel=new JPanel(new BorderLayout());
 		
-		serviceComboBox=new JComboBox(DataLoaderManager.getDataLoaders());
+		serviceComboBox=new JComboBox(DataLoaderManager.getInstance().getDataLoaders());
 		serviceConfigPanel.add(serviceComboBox,BorderLayout.CENTER);
 		configBtn=new JButton("configure...");
 		final String curSelectedService;
@@ -158,7 +158,8 @@ public class DataServiceSettingsTab extends devplugin.SettingsTab implements Act
 		Object source=event.getSource();
 		if (source==serviceComboBox) {
 			String item=(String)serviceComboBox.getSelectedItem();
-			tvdataloader.TVDataServiceInterface curSelectedService=DataLoaderManager.getDataLoader(item);
+			tvdataloader.TVDataServiceInterface curSelectedService
+              = DataLoaderManager.getInstance().getDataLoader(item);
 			configBtn.setEnabled(item!=null && curSelectedService!=null && curSelectedService.hasSettingsPanel());
 		}else if (source==changeDataDirBtn){
 			JFileChooser fc =new JFileChooser();

@@ -216,7 +216,7 @@ public class Settings {
       String id=entry.substring(pos+1);
 
       TVDataServiceInterface dataService
-        = DataLoaderManager.getDataLoader(dataServiceClassName);
+        = DataLoaderManager.getInstance().getDataLoader(dataServiceClassName);
       if (dataService != null) { 
         ChannelList.subscribeChannel(dataService, Integer.parseInt(id));  		
       }

@@ -110,7 +110,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     
     mLog.info("Loading tv data loader...");
     msg=mLocalizer.msg("splash.dataService","Loading tv data loader...");
-    DataLoaderManager.initDataLoaders();
+    DataLoaderManager.getInstance().initDataLoaders();
     createChannelList();
 
     Settings.loadSettings();
@@ -312,7 +312,7 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     PluginManager.finalizeInstalledPlugins();
     
     mLog.info("Storing dataloader settings");
-    DataLoaderManager.finalizeDataLoaders();
+    DataLoaderManager.getInstance().finalizeDataLoaders();
 
     mLog.info("Quitting");
     System.exit(0);
@@ -321,8 +321,9 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
 
 
   private static void createChannelList() {
-  	DataLoaderManager.initDataLoaders();
-  	TVDataServiceInterface[] dataServiceArr = DataLoaderManager.getDataLoaders();
+  	TVDataServiceInterface[] dataServiceArr
+      = DataLoaderManager.getInstance().getDataLoaders();
+    
   	for (int i=0;i<dataServiceArr.length;i++) {
       ChannelList.addDataLoaderChannels(dataServiceArr[i]);
   	}
