@@ -187,6 +187,11 @@ public class ReminderListDialog extends JDialog {
     
     JLabel dateLabel=new JLabel(prog.getDate().toString());
     JLabel channelLabel=new JLabel(prog.getChannel().getName());
+    
+    if (prog.getChannel().getIcon() != null) {
+        channelLabel.setIcon(prog.getChannel().getIcon());
+    }
+    
     dateLabel.setPreferredSize(new java.awt.Dimension(100,(int)dateLabel.getPreferredSize().getHeight()));
     
     JPanel panel3=new JPanel(new BorderLayout());
@@ -216,7 +221,7 @@ public class ReminderListDialog extends JDialog {
     result.add(panel2,BorderLayout.EAST);
     
     ProgramPanel panel = new ProgramPanel(prog);
-    panel.addPluginContextMenuMouseListener(ReminderPlugin.getInstance());
+    panel.addPluginContextMenuMouseListener();
     result.add(panel, BorderLayout.CENTER);
     
     return result;

@@ -53,6 +53,7 @@ import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.ChannelListCellRenderer;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import devplugin.Channel;
@@ -138,6 +139,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       southPn.add(btnPanel);
       
       final JList rightList=mChannelListPanel.getRightList();
+      
+      mChannelListPanel.getRightList().setCellRenderer(new ChannelListCellRenderer());
+      mChannelListPanel.getLeftList().setCellRenderer(new ChannelListCellRenderer());
       int []sel=rightList.getSelectedIndices();
       configChannelBtn.setEnabled(sel.length>0);
       rightList.addListSelectionListener(new ListSelectionListener() {
