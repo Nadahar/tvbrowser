@@ -38,15 +38,15 @@ public class ChannelGroupImpl implements ChannelGroup {
 	}
   
 	public String getName() {
-		return null;
+		return mName;
 	}
 	
 	public String getId() {
-		return null;
+		return mId;
 	}
 
 	public String getDescription() {
-		return null;
+		return mDescription;
 	}  
   
 }
