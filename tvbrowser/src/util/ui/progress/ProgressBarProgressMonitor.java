@@ -36,6 +36,9 @@ import devplugin.ProgressMonitor;
  * @author Til Schneider, www.murfman.de
  */
 public class ProgressBarProgressMonitor implements ProgressMonitor {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(ProgressBarProgressMonitor.class.getName());
   
   private JProgressBar mProgressBar;
   private JLabel mLabel;
@@ -64,6 +67,7 @@ public class ProgressBarProgressMonitor implements ProgressMonitor {
   public void setMessage(String msg) {
     if (mLabel!=null) {
       mLabel.setText(msg);
+      mLog.info("Progress: " + msg);
     } 
   }
 

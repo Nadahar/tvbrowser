@@ -35,6 +35,7 @@ import java.awt.event.KeyEvent;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.logging.Level;
 
 import javax.swing.*;
 
@@ -352,10 +353,19 @@ public class MainFrame extends JFrame implements ActionListener, DateListener {
       Settings.setWindowLocation(getLocation());
     }
     
+    mLog.info("Storing settings");
     try {
       Settings.storeSettings();
     } catch (TvBrowserException e) {
       ErrorHandler.handle(e);
+    }
+
+    mLog.info("Closing tv data base");
+    try {
+      TvDataBase.getInstance().close();
+    }
+    catch (Exception exc) {
+      mLog.log(Level.WARNING, "Closing TV data base failed", exc);
     }
 
     mLog.info("Quitting");

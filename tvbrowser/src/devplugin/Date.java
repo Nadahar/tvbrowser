@@ -225,6 +225,16 @@ public Date(Date d) {
   public long getValue() {
     return mYear*10000 + mMonth*100 + mDay;
   }
+  
+  
+  public static Date createDateFromValue(long value) {
+    int year  = (int) (value / 10000L);
+    int month = (int) (value % 10000L / 100L);
+    int day   = (int) (value % 100L);
+    
+    return new Date(year, month, day);
+  }
+  
 
   public boolean equals(Object obj) {
     

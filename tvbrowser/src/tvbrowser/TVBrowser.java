@@ -218,12 +218,19 @@ public class TVBrowser {
     }catch(TvBrowserException exc){
       ErrorHandler.handle(exc);      
     }
-    mLog.info("Deleting expired tv data...");
-    TvDataBase.getInstance().deleteExpiredFiles(1);
-    
+
     mLog.info("Loading filters...");
     FilterComponentList.init();
   
+    msg = mLocalizer.msg("splash.tvData", "Checking TV data base...");
+    splash.setMessage(msg);
+
+    mLog.info("Deleting expired tv data...");
+    TvDataBase.getInstance().deleteExpiredFiles(1);
+
+    mLog.info("Checking tv data inventory...");
+    TvDataBase.getInstance().checkTvDataInventory();
+    
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
@@ -401,6 +408,7 @@ public class TVBrowser {
     
     
   }
+
 
   public static void updateLookAndFeel() {
  
