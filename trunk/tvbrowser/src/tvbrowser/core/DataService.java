@@ -109,25 +109,24 @@ public class DataService implements devplugin.PluginManager {
    * @param newMode
    */
   public void setOnlineMode(boolean newMode) {
-  	
-  	if (newMode==onlineMode || tvdataloader==null) {
-  		return;
-  	}
-  	
-    onlineMode=newMode;
+    if ((newMode == onlineMode) || (tvdataloader == null)) {
+      return;
+    }
+    
+    onlineMode = newMode;
     
     if (newMode) {
-    	try {
-    		tvdataloader.connect();
-    	}catch(IOException e) {
-    		e.printStackTrace();
-    	}
-    }else{
-    	try {
-    		tvdataloader.disconnect();
-    	}catch(IOException e) {
-    		e.printStackTrace();
-    	}
+      try {
+        tvdataloader.connect();
+      } catch(IOException exc) {
+        exc.printStackTrace();
+      }
+    } else {
+      try {
+        tvdataloader.disconnect();
+      } catch(IOException exc) {
+        exc.printStackTrace();
+      }
     }
   }
   
@@ -144,19 +143,19 @@ public class DataService implements devplugin.PluginManager {
       return;
     }
     progressBar.setString("connecting...");
-	progressBar.setStringPainted(true);
+    progressBar.setStringPainted(true);
     tvdataloader.connect();
-	progressBar.setStringPainted(false);
+    progressBar.setStringPainted(false);
     tvdataloader.AbstractChannelDayProgram prog;
     ObjectOutputStream out;
     Channel[] subscribedChannels=ChannelList.getSubscribedChannels();
-    progressBar.setMaximum(subscribedChannels.length);
-    for (int j=0;j<subscribedChannels.length&&isDownloading;j++) {
-    	progressBar.setValue(j+1);
-      devplugin.Date date=new Date();
-      date.addDays(-2);   // get last two days
-      for (int i=0;i<daysToDownload+2;i++) {
-        date.addDays(1);
+    progressBar.setMaximum((daysToDownload + 2) * subscribedChannels.length);
+    devplugin.Date date=new Date();
+    date.addDays(-1); // get yesterday too
+    for (int i = 0; i < daysToDownload + 2; i++) {
+      for (int j = 0; (j < subscribedChannels.length) && isDownloading; j++) {
+        progressBar.setValue(i * subscribedChannels.length + j + 1);
+        
         devplugin.Channel channel=subscribedChannels[j];
         File file=new File(Settings.DATA_DIR,""+channel.getId()+"_"+date.getDaysSince1970());
         if (file.exists()) {
@@ -176,6 +175,7 @@ public class DataService implements devplugin.PluginManager {
           e.printStackTrace();
         }
       }
+      date.addDays(1);
     }
     tvdataloader.disconnect();
   }
