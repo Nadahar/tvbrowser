@@ -42,9 +42,6 @@ import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
 
-import searchplugin.SearchPlugin;
-import tvbrowser.core.plugin.PluginProxy;
-
 
 /**
  * This Class extends a JList for showing Programs 
