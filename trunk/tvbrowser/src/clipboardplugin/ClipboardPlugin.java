@@ -136,6 +136,11 @@ public class ClipboardPlugin extends Plugin {
     }
 
 
+    public String getMarkIconName() {
+        return "clipboardplugin/clipboard.png";
+    }
+
+    
     public void receivePrograms(Program[] programArr) {
         for (int i = 0; i < programArr.length; i++) {
             if (!mClipboard.contains(programArr[i])) {

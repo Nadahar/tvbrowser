@@ -1,7 +1,7 @@
 /*
  * Created on 25.06.2004
  */
-package clipboardplugin;
+package util.ui;
 
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -21,7 +21,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.Localizer;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
@@ -31,10 +30,10 @@ import devplugin.Program;
  * 
  * @author bodum
  */
-public class SendDialog extends JDialog {
+public class SendToPluginDialog extends JDialog {
 
     /** Translator */
-    private static final Localizer mLocalizer = Localizer.getLocalizerFor(SendDialog.class);
+    private static final Localizer mLocalizer = Localizer.getLocalizerFor(SendToPluginDialog.class);
 
     /**
      * Programs to send
@@ -53,7 +52,7 @@ public class SendDialog extends JDialog {
      * @param owner Owner Frame
      * @param prg List of Programs to send
      */
-    public SendDialog(Frame owner, Program[] prg) {
+    public SendToPluginDialog(Frame owner, Program[] prg) {
         super(owner, true);
         mPrograms = prg;
         createDialog();
@@ -67,7 +66,7 @@ public class SendDialog extends JDialog {
      * @param owner Owner Frame
      * @param prg List of Programs to send
      */
-    public SendDialog(Dialog owner, Program[] prg) {
+    public SendToPluginDialog(Dialog owner, Program[] prg) {
         super(owner, true);
         mPrograms = prg;
         createDialog();
