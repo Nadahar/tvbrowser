@@ -141,7 +141,16 @@ public class ProgramInfoDialog extends JDialog {
     btnPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
     mainPane.add(btnPanel,BorderLayout.SOUTH);
-    mainPane.add(new JScrollPane(contentPane),BorderLayout.CENTER);
+    final JScrollPane scrollPane = new JScrollPane(contentPane);
+    mainPane.add(scrollPane, BorderLayout.CENTER);
+    
+    // Scroll to the beginning
+    Runnable runnable = new Runnable() {
+      public void run() {
+        scrollPane.getVerticalScrollBar().setValue(0);
+      }
+    };
+    SwingUtilities.invokeLater(runnable);
   }
 
 }

@@ -227,6 +227,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="xmltvdataservice/**"/>
     </jar>
+    <jar jarfile="${runtime.dir}/tvdataloader/PremiereDataService.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="premieredataservice/**"/>
+    </jar>
 
     <echo message="Copying the images and all the other stuff ..." />
     <mkdir dir="${runtime.dir}/imgs"/>
@@ -305,7 +309,11 @@
     <antcall target="-zipPackageSrc">
       <param name="package" value="xmltvdataservice"/>
     </antcall>
-    
+
+    <antcall target="-zipPackageSrc">
+      <param name="package" value="premieredataservice"/>
+    </antcall>
+
     <antcall target="-zipPackageSrc">
       <param name="package" value="programinfo"/>
     </antcall>

@@ -246,9 +246,9 @@ public class DataService implements devplugin.PluginManager {
     if (dayProgram == null) {
       try {
         // The program is not in the cache -> try to load it
-        mLog.info("Loading program for " + date + " (" + date.hashCode() + ")");
         dayProgram = loadDayProgram(date);
-        mLog.info("Loading program " + ((dayProgram == null) ? "failed" : "suceed"));
+        mLog.info("Loading program for " + date + " (" + date.hashCode() + ") "
+          + ((dayProgram == null) ? "failed" : "suceed"));
       }
       catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);

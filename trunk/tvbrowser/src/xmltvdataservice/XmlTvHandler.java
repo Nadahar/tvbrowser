@@ -32,6 +32,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 import util.io.IOUtilities;
+import util.tvdataservice.ProgramDispatcher;
 
 import tvdataloader.*;
 import devplugin.*;
@@ -47,12 +48,6 @@ public class XmlTvHandler extends DefaultHandler {
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(XmlTvHandler.class.getName());
-  
-  /**
-   * The maximum length of a short info. Used for generating a short info out of a
-   * (long) description.
-   */  
-  private static final int MAX_SHORT_INFO_LENGTH = 100;
 
   /** The program dipatcher used to store the programs. */  
   private ProgramDispatcher mProgramDispatcher;
@@ -228,10 +223,7 @@ public class XmlTvHandler extends DefaultHandler {
     else if (currElement.equals("desc")) {
       String desc = getText();
       
-      // Create a shortinfo
-      String shortInfo = createShortInfo(desc);
-      
-      mCurrProgram.setShortInfo(shortInfo);
+      mCurrProgram.setShortInfo(desc);
       mCurrProgram.setDescription(desc);
     }
     else if (currElement.equals("length")) {
@@ -314,33 +306,6 @@ public class XmlTvHandler extends DefaultHandler {
     // mLog.info("deg: " + Integer.toHexString('°'));
 
     return mCurrTextBuffer.toString().trim();
-  }
-
-
-  
-  /**
-   * Creates a short info out of a long description.
-   *
-   * @param description The description to create the short info from.
-   * @return The created short info.
-   */
-  protected String createShortInfo(String description) {
-    if (description.length() < MAX_SHORT_INFO_LENGTH) {
-      return description;
-    } else {
-      // Get the end of the last fitting sentense
-      int lastDot = description.lastIndexOf('.', MAX_SHORT_INFO_LENGTH);
-      int lastMidDot = description.lastIndexOf('*', MAX_SHORT_INFO_LENGTH);
-      
-      int cutIdx = Math.max(lastDot, lastMidDot);
-      
-      // But show at least half the maximum length
-      if (cutIdx < (MAX_SHORT_INFO_LENGTH / 2)) {
-        cutIdx = description.lastIndexOf(' ', MAX_SHORT_INFO_LENGTH);
-      }
-      
-      return description.substring(0, cutIdx + 1) + "...";
-    }
   }
   
   

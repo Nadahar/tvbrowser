@@ -102,6 +102,11 @@ public class ReminderListItem implements Serializable, Comparable {
   
   
   public boolean isExpired() {
+    if (mProgram == null) {
+      // The program wasn't found after deserialization.
+      return true;
+    }
+    
     int currentDaysSince1970 = IOUtilities.getDaysSince1970();
     int programDaysSince1970 = mProgram.getDate().getDaysSince1970();
     

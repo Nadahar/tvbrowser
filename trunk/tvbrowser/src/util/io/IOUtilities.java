@@ -324,7 +324,7 @@ public class IOUtilities {
       // time zone offset.
       int zoneOffset = CALENDAR.get(Calendar.ZONE_OFFSET);
       long millis = System.currentTimeMillis() + zoneOffset;
-      return (int) (millis / 1000 / 60 / 60 / 24);
+      return (int) (millis / 1000L / 60L / 60L / 24L);
     }
   }
   

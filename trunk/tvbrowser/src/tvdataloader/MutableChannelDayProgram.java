@@ -201,7 +201,7 @@ public class MutableChannelDayProgram extends AbstractChannelDayProgram {
       int endTime = lastProgram.getHours() * 60 + lastProgram.getMinutes()
         + lastProgram.getLength();
       
-      return endTime >= (24 * 60);
+      return endTime >= (23 * 60);
     }
   }
   

@@ -92,6 +92,26 @@ public class ChannelList {
     channels.add(new Channel("DSF", 227,s));
     channels.add(new Channel("EuroNews", 228,s));
     channels.add(new Channel("ORF 1", 229,s));
+
+    channels.add(new Channel("13th Street", 301, s));
+    channels.add(new Channel("Classica", 302, s));
+    channels.add(new Channel("Disney Channel", 303, s));
+    channels.add(new Channel("Fox Kids", 304, s));
+    channels.add(new Channel("Heimatkanal", 305, s));
+    channels.add(new Channel("Junior", 306, s));
+    channels.add(new Channel("MGM", 307, s));
+    channels.add(new Channel("Premiere 1", 308, s));
+    channels.add(new Channel("Premiere 2", 309, s));
+    channels.add(new Channel("Premiere 3", 310, s));
+    channels.add(new Channel("Premiere 4", 311, s));
+    channels.add(new Channel("Premiere 5", 312, s));
+    channels.add(new Channel("Premiere 6", 313, s));
+    channels.add(new Channel("Premiere 7", 314, s));
+    channels.add(new Channel("Premiere Krimi", 315, s));
+    channels.add(new Channel("Premiere Nostalgie", 316, s));
+    channels.add(new Channel("Premiere Serie", 317, s));
+    channels.add(new Channel("Premiere Start", 318, s));
+    channels.add(new Channel("Studio Universal", 319, s));
   }
   
   /**
