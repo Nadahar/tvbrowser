@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ReminderDialog extends /*PluginDialog*/JDialog {
+public class ReminderDialog extends JDialog {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderDialog.class);
@@ -58,11 +58,11 @@ public class ReminderDialog extends /*PluginDialog*/JDialog {
 
   private boolean mOkPressed=false;
 
-  private JComboBox list;
+  private JComboBox mList;
 
+  private JCheckBox mRememberSettingsCb;
   
-  
-  public ReminderDialog(Frame parent, devplugin.Program program) {
+  public ReminderDialog(Frame parent, devplugin.Program program, final java.util.Properties settings) {
     super(parent,true);
 
     setTitle(mLocalizer.msg("title", "New reminder"));
@@ -70,6 +70,9 @@ public class ReminderDialog extends /*PluginDialog*/JDialog {
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
+    JPanel northPn = new JPanel();
+    northPn.setLayout(new BoxLayout(northPn,BoxLayout.Y_AXIS));
 
     JLabel titleLabel=new JLabel(program.getChannel().getName()+": "+program.getTitle());
     JPanel infoPanel=new JPanel(new GridLayout(2,1));
@@ -81,57 +84,78 @@ public class ReminderDialog extends /*PluginDialog*/JDialog {
     infoPanel.add(new JLabel(program.getDateString()));
     infoPanel.add(new JLabel(program.getTimeString()));
 
-    JPanel panel5=new JPanel(new BorderLayout(20,0));
-    panel5.add(titleLabel,BorderLayout.WEST);
-    panel5.add(infoPanel,BorderLayout.EAST);
-
-    list=new JComboBox(SMALL_REMIND_MSG_ARR);
-    list.setSelectedIndex(5);
-
-    JPanel panel1=new JPanel(new BorderLayout(10,0));
-    panel1.setBorder(BorderFactory.createEmptyBorder(10,0,30,0));
-    panel1.add(list,BorderLayout.CENTER);
-
-    JPanel panel2=new JPanel(new BorderLayout());
-    panel2.add(panel5,BorderLayout.NORTH);
-
-    JPanel panel6=new JPanel(new BorderLayout());
-    panel6.add(panel1,BorderLayout.NORTH);
-    panel2.add(panel6,BorderLayout.SOUTH);
-
-    JPanel panel3=new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    JPanel headerPanel=new JPanel(new BorderLayout(20,0));
+    headerPanel.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+    headerPanel.add(titleLabel,BorderLayout.WEST);
+    headerPanel.add(infoPanel,BorderLayout.EAST);
     
-    JButton okBtn=new JButton(mLocalizer.msg("ok", "OK"));
-    okBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mOkPressed=true;
-        hide();
+    
+    northPn.add(headerPanel);
+    
+    mList=new JComboBox(SMALL_REMIND_MSG_ARR);
+    
+    
+    String s=settings.getProperty("defaultReminderEntry");
+    int reminderTime = 5;
+    if (s!=null) {
+      try {
+        reminderTime = Integer.parseInt(s);
+      }catch(NumberFormatException e) {
+        // ignore
       }
-    });
-    panel3.add(okBtn);
-    getRootPane().setDefaultButton(okBtn);
+    }
+    if (reminderTime>=0 && reminderTime<SMALL_REMIND_MSG_ARR.length) {
+      mList.setSelectedIndex(reminderTime);
+    }
+    else {
+      mList.setSelectedIndex(5);
+    }
+    
+    northPn.add(mList);
 
+
+    mRememberSettingsCb = new JCheckBox(mLocalizer.msg("rememberSetting","Remember setting"));
+    JPanel pn1 = new JPanel(new BorderLayout());
+    pn1.add(mRememberSettingsCb, BorderLayout.WEST);
+    northPn.add(pn1);
+
+    JPanel btnPn=new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    btnPn.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+    
     JButton cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
     cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         hide();
       }
     });
-    panel3.add(cancelBtn);
+    btnPn.add(cancelBtn);
     
-    JPanel panel4=new JPanel(new BorderLayout());
-    panel4.add(panel3,BorderLayout.EAST);
+    JButton okBtn=new JButton(mLocalizer.msg("ok", "OK"));
+    okBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mOkPressed=true;
+        if (mRememberSettingsCb.isSelected()) {
+          settings.setProperty("defaultReminderEntry",""+mList.getSelectedIndex());
+        }
+        hide();
+      }
+    });
+    btnPn.add(okBtn);
+    getRootPane().setDefaultButton(okBtn);
 
-    contentPane.add(panel2,BorderLayout.NORTH);
-    contentPane.add(panel4,BorderLayout.SOUTH);
-
+    
+    
+    
+    contentPane.add(northPn,BorderLayout.NORTH);
+    contentPane.add(btnPn,BorderLayout.SOUTH);
+    
     pack();
   }
 
   
   
   public int getReminderMinutes() {
-    int idx = list.getSelectedIndex();
+    int idx = mList.getSelectedIndex();
     return SMALL_REMIND_VALUE_ARR[idx];
   }
 

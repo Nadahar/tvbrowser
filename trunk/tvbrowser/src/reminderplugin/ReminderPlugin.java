@@ -160,7 +160,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       settings = new Properties();
     }
     
-    this.mSettings = settings;
+    mSettings = settings;
+    
   }
   
   
@@ -204,7 +205,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
         "The program is already expired!");
       JOptionPane.showMessageDialog(getParentFrame(), msg);
     } else {
-      ReminderDialog dlg = new ReminderDialog(getParentFrame(), program);
+            
+      ReminderDialog dlg = new ReminderDialog(getParentFrame(), program, mSettings);
       UiUtilities.centerAndShow(dlg);
       if (dlg.getOkPressed()) {
         int minutes = dlg.getReminderMinutes();

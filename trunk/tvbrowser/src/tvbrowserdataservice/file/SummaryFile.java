@@ -95,6 +95,7 @@ public class SummaryFile extends AbstractFile {
     if (frame == null) {
       // There is no frame -> create one
       frame = new ChannelFrame(country, channelId);
+			System.out.println("creating frame for "+country+", "+channelId);
       mChannelFrameHash.put(key, frame);
     }
     
@@ -210,7 +211,11 @@ public class SummaryFile extends AbstractFile {
   {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
 
+		
+		
     gOut.write(FILE_VERSION);
+
+		System.out.println("get the minimum start date...");
     
     // Get the minimum start date
     int minStartDaysSince1970 = Integer.MAX_VALUE;
@@ -233,12 +238,17 @@ public class SummaryFile extends AbstractFile {
     gOut.write((byte) (frameCount >> 8));
     gOut.write((byte) (frameCount));
 
+    System.out.println("write frames...");
+		
     // The frames
     Date startDate = new Date(minStartDaysSince1970);
+		System.out.println("minStartDaysSince1970: "+minStartDaysSince1970);
     iter = mChannelFrameHash.values().iterator();
     while (iter.hasNext()) {
       ChannelFrame frame = (ChannelFrame) iter.next();
-      
+
+      System.out.println(frame.getChannelId()+", "+frame.getStartDaysSince1970()+", "+frame.getDaysCount(minStartDaysSince1970));
+			
       writeString(gOut, frame.getCountry());
       writeString(gOut, frame.getChannelId());
       

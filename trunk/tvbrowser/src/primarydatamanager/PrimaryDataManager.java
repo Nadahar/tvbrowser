@@ -30,6 +30,7 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.logging.*;
@@ -38,8 +39,8 @@ import primarydatamanager.primarydataservice.PrimaryDataService;
 import tvbrowserdataservice.file.*;
 import util.io.IOUtilities;
 import util.io.VerySimpleFormatter;
-import devplugin.Channel;
 import devplugin.Date;
+import devplugin.*;
 
 /**
  * 
@@ -69,6 +70,8 @@ public class PrimaryDataManager {
   private Thread mWaitingThread;
   
   private int mReadBytesCount;
+
+	private HashMap mGroupNameHashMap;
   
    
   
@@ -113,6 +116,9 @@ public class PrimaryDataManager {
     }
     mGroupArr=new String[groupSet.size()];
     groupSet.toArray(mGroupArr);
+
+
+		createGroupNameHashMap();
 
   }
   
@@ -480,40 +486,73 @@ public class PrimaryDataManager {
 
 
   private void createSummaryFiles() throws PreparationException {
-    
+
+		//System.out.println("creating summary files...");
     /* create summary file for the old system */
-    createSummaryFile(null);
+		
+ //   createSummaryFile(null);
     
     /* create summary files for the new system */
     for (int i=0;i<mGroupArr.length;i++) {
+			System.out.println("creating summary file for group "+mGroupArr[i]+"...");
       createSummaryFile(mGroupArr[i]);
     }
+
+		System.out.println("summary files created.");
     
   }
 
+
+  private void createGroupNameHashMap() {
+
+		mGroupNameHashMap = new HashMap();
+
+		for (int i=0; i<mDataServiceArr.length; i++) {
+      Channel[] channelArr = mDataServiceArr[i].getAvailableChannels();
+			for (int chInx=0; chInx<channelArr.length; chInx++) {
+				ChannelGroup group = channelArr[chInx].getGroup();
+				if (group!=null) {
+          mGroupNameHashMap.put(channelArr[chInx].getId(), group.getId());
+				}
+			}
+
+		}
+
+  }
+	
+  private boolean channelBelongsToGroup(String channelId, String groupName) {
+
+		String s = (String)mGroupNameHashMap.get(channelId);
+		return groupName.equals(s);
+  }
+	
+	
   private void createSummaryFile(String groupName)
     throws PreparationException
   {
     // Create the file
     SummaryFile summary = new SummaryFile();
     File[] fileArr = mWorkDir.listFiles();
-    for (int fileIdx = 0; fileIdx < fileArr.length; fileIdx++) {
+		for (int fileIdx = 0; fileIdx < fileArr.length; fileIdx++) {
       String fileName = fileArr[fileIdx].getName();
-      if (fileName.endsWith("_full.prog.gz")) {
+			if (fileName.endsWith("_full.prog.gz")) {
         // This is a complete file -> Put its version to the summary
         try {
           Date date = DayProgramFile.getDateFromFileName(fileName);
           String country = DayProgramFile.getCountryFromFileName(fileName);
           String channelId = DayProgramFile.getChannelNameFromFileName(fileName);
           String levelName = DayProgramFile.getLevelFromFileName(fileName);
-          int level = DayProgramFile.getLevelIndexForId(levelName);
-          if (level == -1) {
-            throw new PreparationException("Day program file has unknown level '"
-              + levelName + "': " + fileArr[fileIdx].getAbsolutePath());
-          }
-          int version = DayProgramFile.readVersionFromFile(fileArr[fileIdx]);
+
+					if (channelBelongsToGroup(channelId, groupName)) {
+						int level = DayProgramFile.getLevelIndexForId(levelName);
+            if (level == -1) {
+              throw new PreparationException("Day program file has unknown level '"
+                + levelName + "': " + fileArr[fileIdx].getAbsolutePath());
+            }
+            int version = DayProgramFile.readVersionFromFile(fileArr[fileIdx]);
           
-          summary.setDayProgramVersion(date, country, channelId, level, version);
+            summary.setDayProgramVersion(date, country, channelId, level, version);
+					}
         }
         catch (Exception exc) {
           throw new PreparationException("Adding day program file to summary " +
@@ -522,6 +561,8 @@ public class PrimaryDataManager {
       }
     }
 
+    System.out.println("writing summary to file...");
+		
     // Save the file
     File file = new File(mWorkDir, (groupName==null?"":groupName+"_")+SummaryFile.SUMMARY_FILE_NAME);
     try {
@@ -531,6 +572,8 @@ public class PrimaryDataManager {
       throw new PreparationException("Writing summary file failed: "
         + file.getAbsolutePath(), exc);
     }
+
+		System.out.println("done.");
   }
 
   
