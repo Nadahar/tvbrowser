@@ -143,7 +143,7 @@ public class FilterButtons implements ActionListener {
         
         Program[] prgs = collectPrograms();
         
-        SendToPluginDialog sendTo = new SendToPluginDialog(mMainFrame, prgs);
+        SendToPluginDialog sendTo = new SendToPluginDialog(null, mMainFrame, prgs);
         sendTo.show();
     }
 
