@@ -419,7 +419,7 @@ public class Settings {
     = new BooleanProperty(mProp, "window.isMaximized", false);
 
   public static final IntProperty propWindowWidth
-    = new IntProperty(mProp, "window.width", 700);
+    = new IntProperty(mProp, "window.width", 770);
 
   public static final IntProperty propWindowHeight
     = new IntProperty(mProp, "window.height", 500);

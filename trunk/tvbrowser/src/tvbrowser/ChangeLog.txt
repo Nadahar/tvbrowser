@@ -1,6 +1,6 @@
 Changelog TVBrowser
 
-0.9.7.4:
+0.9.8:
 - made webbrowser choosable
 - command line options added:
       -minimized
