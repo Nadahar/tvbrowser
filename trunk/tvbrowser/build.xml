@@ -237,7 +237,7 @@
 			<fileset dir="${txt.dir}" includes="website.url"/>
     </copy>
 
- 
+
 		<mkdir dir="${runtime.dir}/help"/>
 		<copy todir="${runtime.dir}/help">
 			<fileset dir="${src.dir}/help"/>
@@ -294,11 +294,15 @@
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${src.dir}">
         <include name="tvbrowser/**/*.java"/>
+        <include name="tvbrowser/**/*.properties"/>
         <include name="imgs/**/*.gif"/>
         <include name="imgs/**/*.jpg"/>
         <include name="devplugin/**/*.java"/>
+        <include name="devplugin/**/*.properties"/>
         <include name="tvdataservice/**/*.java"/>
+        <include name="tvdataservice/**/*.properties"/>
         <include name="util/**/*.java"/>
+        <include name="util/**/*.properties"/>
       </zipfileset>
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${txt.dir}"
@@ -333,7 +337,7 @@
         <include name="package-lists/jdk/package-list"/>
       </zipfileset>
     </zip>
-    
+
     <antcall target="-zipPackageSrc">
       <param name="package" value="xmltvdataservice"/>
     </antcall>
@@ -353,7 +357,7 @@
     <antcall target="-zipPackageSrc">
       <param name="package" value="reminderplugin"/>
     </antcall>
-    
+
     <antcall target="-zipPackageSrc">
       <param name="package" value="searchplugin"/>
     </antcall>
@@ -363,8 +367,8 @@
     </antcall>
   </target>
 
-  
-  
+
+
   <!--
    | Helper target for public.
    |
@@ -375,6 +379,7 @@
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${src.dir}">
         <include name="${package}/**/*.java"/>
+        <include name="${package}/**/*.properties"/>
         <include name="${package}/**/*.gif"/>
         <include name="${package}/**/*.jpg"/>
         <include name="${package}/**/*.dtd"/>
@@ -382,10 +387,10 @@
       <zipfileset prefix="tvbrowser_v${version}/src"
                   dir="${txt.dir}"
                   includes="LICENSE.txt"/>
-			
+
     </zip>
   </target>
-  
+
 
 
   <!--
