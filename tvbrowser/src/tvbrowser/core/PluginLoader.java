@@ -29,6 +29,7 @@ package tvbrowser.core;
 
 
 import devplugin.*;
+import tvbrowser.ui.filter.FilterListModel;
 import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -427,6 +428,16 @@ public class PluginLoader {
         public JPopupMenu createPluginContextMenu(Program program, Plugin caller) {
           return PluginManager.createPluginContextMenu(program, caller);
         }
+
+				public ProgramFilter[] getAvailableFilters() {
+          Object[] o = FilterListModel.getInstance().toArray();
+					ProgramFilter[] result = new ProgramFilter[o.length];
+					for (int i=0;i<result.length;i++) {
+            result[i] = (ProgramFilter) o[i];
+					}
+					return result;
+				}
+				
       };
     }
   

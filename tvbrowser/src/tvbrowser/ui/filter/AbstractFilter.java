@@ -3,7 +3,7 @@
 
 package tvbrowser.ui.filter;
 
-public abstract class AbstractFilter implements tvbrowser.ui.programtable.ProgramFilter {
+public abstract class AbstractFilter implements devplugin.ProgramFilter {
   
  
   public abstract boolean accept(devplugin.Program prog);  

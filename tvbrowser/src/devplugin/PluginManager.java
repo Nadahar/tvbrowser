@@ -93,4 +93,6 @@ public interface PluginManager {
    */
   public javax.swing.JPopupMenu createPluginContextMenu(final Program program, devplugin.Plugin caller);
 
+  public ProgramFilter[] getAvailableFilters();
+	
 }
