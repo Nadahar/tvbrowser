@@ -331,7 +331,7 @@ public class ChannelsSettingsTabNew implements SettingsTab, ActionListener {
   }
 
   public String getTitle() {
-    return "Channels (New)";
+    return "Channels (1)";
   }
 
 
