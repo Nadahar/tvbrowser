@@ -65,8 +65,9 @@ public class ProgramInfo extends devplugin.Plugin {
       Program.INFO_AUDIO_DOLBY_SURROUND,
       Program.INFO_AUDIO_DOLBY_DIGITAL_5_1,
       Program.INFO_AUDIO_TWO_CHANNEL_TONE,
-      Program.INFO_SUBTITLE,
-      Program.INFO_LIVE
+      Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED,
+      Program.INFO_LIVE,
+      Program.INFO_ORIGINAL_WITH_SUBTITLE,
     };
     
     mInfoIconArr = new Icon[] {
@@ -78,8 +79,9 @@ public class ProgramInfo extends devplugin.Plugin {
       createIcon("Info_DolbySurround.gif"),  // INFO_AUDIO_DOLBY_SURROUND
       createIcon("Info_DolbySurround.gif"),  // INFO_AUDIO_DOLBY_DIGITAL_5_1
       createIcon("Info_TwoChannelTone.gif"), // INFO_AUDIO_TWO_CHANNEL_TONE
-      createIcon("Info_Subtitle.gif"),       // INFO_SUBTITLE
-      null                                   // INFO_LIVE
+      createIcon("Info_SubtitleForAurallyHandicapped.gif"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
+      null,                                  // INFO_LIVE
+      createIcon("Info_OriginalWithSubtitle.gif"), // INFO_ORIGINAL_WITH_SUBTITLE
     };
 
     mInfoMsgArr = new String[] {
@@ -91,8 +93,9 @@ public class ProgramInfo extends devplugin.Plugin {
       mLocalizer.msg("dolbySurround", "Dolby surround"),      // INFO_AUDIO_DOLBY_SURROUND
       mLocalizer.msg("dolbyDigital5.1", "Dolby digital 5.1"), // INFO_AUDIO_DOLBY_DIGITAL_5_1
       mLocalizer.msg("twoChannelTone", "Two channel tone"),   // INFO_AUDIO_TWO_CHANNEL_TONE
-      mLocalizer.msg("subtitle", "Subtitle"),                 // INFO_SUBTITLE
-      mLocalizer.msg("live", "Live")                          // INFO_LIVE
+      mLocalizer.msg("subtitleForAurallyHandicapped", "Subtitle for aurally handicapped"), // INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED
+      mLocalizer.msg("live", "Live"),                         // INFO_LIVE
+      mLocalizer.msg("originalWithSubtitle", "Original with subtitle"), // INFO_ORIGINAL_WITH_SUBTITLE
     };
   }
   
