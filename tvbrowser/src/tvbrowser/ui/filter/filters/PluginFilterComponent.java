@@ -36,6 +36,10 @@ import devplugin.Program;
 
 public class PluginFilterComponent extends FilterComponent {
     
+  private static final util.ui.Localizer mLocalizer
+         = util.ui.Localizer.getLocalizerFor(PluginFilterComponent.class);
+ 
+    
     private JComboBox mBox;
     private devplugin.Plugin mPlugin;
     
@@ -94,10 +98,17 @@ public class PluginFilterComponent extends FilterComponent {
     public JPanel getPanel() {
         
         if (mPanel==null) {
-            mPanel=new JPanel(new BorderLayout());        
+            mPanel=new JPanel(new BorderLayout(0,7));
+            JTextArea ta=new JTextArea(mLocalizer.msg("desc","Accept all programs marked by plugin:"));
+            ta.setLineWrap(true);
+            ta.setWrapStyleWord(true);
+            ta.setOpaque(false);
+            ta.setEditable(false);
+            ta.setFocusable(false);
+            mPanel.add(ta,BorderLayout.NORTH);       
             devplugin.Plugin[] plugins=PluginManager.getInstalledPlugins();
             mBox=new JComboBox(plugins);
-            mPanel.add(mBox,BorderLayout.WEST);
+            mPanel.add(mBox,BorderLayout.CENTER);
             
             if (mPlugin!=null) {
                 for (int i=0;i<plugins.length;i++) {

@@ -268,7 +268,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
            // mFilterRuleTF.updateUI();
       }catch(ParserException e) {
         mFilterRuleTF.setBackground(Color.red); 
-        System.out.println(e.getMessage());
         validRule=false;
       }
       

@@ -52,7 +52,6 @@ class SearchSetting {
  }
  
  public SearchSetting(ObjectInputStream in) {
-   System.out.println("loading component");
      try {
          int version=in.readInt();
          keyword=(String)in.readObject();
@@ -63,17 +62,14 @@ class SearchSetting {
      }catch (ClassNotFoundException e) {
          util.exc.ErrorHandler.handle("Could not read filter component from file", e);
      }
-     System.out.println("component loaded");
  }
  
  public void store(ObjectOutputStream out) {
-   System.out.println("storing component 'keyword'");
      try {
          out.writeInt(1);
          out.writeObject(keyword);
          out.writeInt(area);
-         out.writeBoolean(caseSensitive);    
-         System.out.println("done");     
+         out.writeBoolean(caseSensitive);         
      }catch (IOException e) {
          util.exc.ErrorHandler.handle("Could not write filter rule to file", e);
      }

@@ -71,7 +71,6 @@ public class FilterComponentList {
   
   private static void read(ObjectInputStream in) {
     mComponents=new HashSet();
-    System.out.println("reading components...");
     try {
       int version=in.readInt();
       int compCnt=in.readInt();
