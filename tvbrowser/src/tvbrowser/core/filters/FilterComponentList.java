@@ -36,6 +36,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
@@ -159,6 +160,9 @@ public class FilterComponentList {
     }
     else if (className.endsWith(".ProgramRunningFilterComponent")) {
         filterComponent = new ProgramRunningFilterComponent(name, description);
+    }
+    else if (className.endsWith(".BeanShellFilterComponent")) {
+        filterComponent = new BeanShellFilterComponent(name, description);
     }
     
     else {
