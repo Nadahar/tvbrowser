@@ -111,7 +111,9 @@ public class PDSRunner {
           PrintStream errOut=new PrintStream(out);
           boolean thereWereErrors = pds.execute(dir, errOut);
           if (thereWereErrors) {
-            mLog.warning("There were errors during the execution of primary data service "+pds.getClass().getName());
+            mLog.warning("There were errors during the execution of primary "
+                + "data service " + pds.getClass().getName() + ". See log file: "
+                + logFile.getAbsolutePath());
           }else{
             mLog.fine(pds.getClass().getName()+ " terminated normally");
             logFile.delete();
