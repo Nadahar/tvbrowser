@@ -246,6 +246,7 @@
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/bsh-2.0b1.jar" dest="${unpacked.dir}/bsh-2.0b1.jar"/>
+    <unjar src="${lib.dir}/forms-1.0.5.jar" dest="${unpacked.dir}/forms-1.0.5.jar"/>
 
 	<!-- Pack the tvbrowser.jar -->    
     <jar jarfile="${tvbrowser.runtime.dir}/tvbrowser.jar"
@@ -261,6 +262,7 @@
       <fileset dir="${classes.dir}" includes="com/**"/>
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
+      <fileset dir="${unpacked.dir}/forms-1.0.5.jar" includes="com/**"/>
     </jar>
 
     <!-- Pack the plugin jars -->    
