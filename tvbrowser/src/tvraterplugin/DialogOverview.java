@@ -186,22 +186,22 @@ public class DialogOverview extends JDialog {
         if ((_tabbed.getSelectedIndex() == 0)
                 && (_overall.getSelectedValue() != null)) {
 
-            final DialogRating dlg = new DialogRating((Frame) this.getParent(),
-                   			_tvraterPlugin, ((Rating) _overall.getSelectedValue()).getTitle());
-
             Runnable runLater = new Runnable() {
                 public void run() {
+                    DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(),
+                   			_tvraterPlugin, ((Rating) _overall.getSelectedValue()).getTitle());
+
                     UiUtilities.centerAndShow(dlg);
                 }
             };
             SwingUtilities.invokeLater(runLater);
         } else if ((_tabbed.getSelectedIndex() == 1)
                 && (_personal.getSelectedValue() != null)) {
-            final DialogRating dlg = new DialogRating((Frame) this.getParent(),
-                    _tvraterPlugin, ((Rating) _personal.getSelectedValue())
-                            .getTitle());
             Runnable runLater = new Runnable() {
                 public void run() {
+                    DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(),
+                            _tvraterPlugin, ((Rating) _personal.getSelectedValue())
+                                    .getTitle());
                     UiUtilities.centerAndShow(dlg);
                 }
             };
