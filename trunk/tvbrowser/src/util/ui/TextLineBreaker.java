@@ -52,6 +52,7 @@ public class TextLineBreaker {
   private StringBuffer mCurrWordBuffer;
   
   private int mSpaceWidth;
+  private int mMinusWidth;
 
   private String mNextWord;
   private int mNextWordWidth;
@@ -69,6 +70,7 @@ public class TextLineBreaker {
   {
     mFontMetrics = HELPER_LABEL.getFontMetrics(font);
     mSpaceWidth = mFontMetrics.charWidth(' ');
+    mMinusWidth = mFontMetrics.charWidth('-');
     mNextWordWidth = -1;
     
     if (maxLines == -1) {
@@ -136,11 +138,21 @@ public class TextLineBreaker {
       if (newLineWidth > maxWidth) {
         // The next word does not fit
         if (lineWidth == 0) {
-          // The line is empty -> Include the word anyway
-          // TODO: Break the word
+          // The line is empty -> Break the word
+          int breakPos = findBreakPos(mNextWord, maxWidth);
           
-          mNextWordWidth = -1; // Mark the word as processed
-          return mNextWord;
+          String firstPart = mNextWord.substring(0, breakPos);
+          
+          // Append a minus if the last character is a letter or digit
+          char lastChar = firstPart.charAt(firstPart.length() - 1);
+          if (Character.isLetterOrDigit(lastChar)) {
+            firstPart += "-";
+          }
+          
+          mNextWord = mNextWord.substring(breakPos);
+          mNextWordWidth = mFontMetrics.stringWidth(mNextWord);
+          
+          return firstPart;
         } else {
           // Make a line break here (and process the word the next time)
           return mCurrLineBuffer.toString();
@@ -181,6 +193,53 @@ public class TextLineBreaker {
     while ((! isWhiteSpace(mCurrChar)) && (! isEndOfLine(mCurrChar)));
 
     return mCurrWordBuffer.toString();
+  }
+
+
+  /**
+   * Finds the best position to break the word in order to fit into a maximum
+   * width.
+   * 
+   * @param word The word to break
+   * @param maxWidth The maximum width of the word
+   * @return The position where to break the word
+   */
+  private int findBreakPos(String word, int maxWidth) {
+    // Reserve some space for the minus
+    maxWidth -= mMinusWidth;
+    
+    // Binary search for the last fitting character
+    int left = 0;
+    int right = word.length() - 1;
+    while (left < right) {
+      int middle = (left + right + 1) / 2; // +1 to enforce taking the ceil
+      
+      // Check whether this substring fits
+      String subWord = word.substring(0, middle);
+      int subWordWidth = mFontMetrics.stringWidth(subWord);
+      if (subWordWidth < maxWidth) {
+        // It fits -> go on with the right side
+        left = middle;
+      } else {
+        // It fits not -> go on with the left side
+        right = middle - 1;
+      }
+    }
+    int lastFittingPos = left;
+    
+    // Try to find a char that is no letter or digit
+    // E.g. if the word is "Stadt-Land-Fluss" we try to break it in
+    // "Stadt-" and "Land-Fluss" rather than "Stadt-La" and "nd-Fluss"
+    for (int i = lastFittingPos - 1; i >= (lastFittingPos / 2); i--) {
+      char ch = word.charAt(i);
+      if (! Character.isLetterOrDigit(ch)) {
+        // This char is no letter or digit -> break here
+        return i + 1;
+      }
+    }
+
+    // We did not find a better break char -> break at the last fitting char
+    return lastFittingPos;
   }
   
   
