@@ -34,7 +34,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 
 import javax.swing.*;
@@ -149,8 +151,22 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     //mActivatedPlugins=new HashSet();
     //Plugin pluginList[]=PluginManager.getInstance().getAvailablePlugins();
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
-    for (int i=0;i<pluginList.length;i++) {
-      mListModel.addElement(pluginList[i]);
+    
+    PluginProxy[] copy = new PluginProxy[pluginList.length];
+    for (int i = 0; i < pluginList.length;i++) {
+        copy[i] = pluginList[i];
+    }
+    
+    Arrays.sort(copy, new Comparator() {
+
+        public int compare(Object o1, Object o2) {
+            return o1.toString().compareTo(o2.toString());
+        }
+        
+    });    
+    
+    for (int i=0;i<copy.length;i++) {
+      mListModel.addElement(copy[i]);
  //     if (PluginLoader.getInstance().isActivePlugin(pluginList[i])) {
  //       mActivatedPlugins.add(pluginList[i]);
  //     }
