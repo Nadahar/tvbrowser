@@ -44,10 +44,7 @@ import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.Version;
+import devplugin.*;
 
 /**
  * Plugin to send the TV-Data to an external program
@@ -182,7 +179,7 @@ public class CapturePlugin extends devplugin.Plugin {
      *  (non-Javadoc)
      * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
      */
-    public Action[] getContextMenuActions(final Program program) {
+    public ActionMenu getContextMenuActions(final Program program) {
         AbstractAction action = new AbstractAction() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -192,7 +189,7 @@ public class CapturePlugin extends devplugin.Plugin {
         action.putValue(Action.NAME, mLocalizer.msg("record", "record Program"));
         action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png", CapturePlugin.class)));
         
-        return new Action[] {action};
+        return new ActionMenu(action);
     }
 
     /**
@@ -247,7 +244,7 @@ public class CapturePlugin extends devplugin.Plugin {
      *  (non-Javadoc)
      * @see devplugin.Plugin#getButtonAction()
      */
-    public Action getButtonAction() {
+    public ActionMenu getButtonAction() {
         AbstractAction action = new AbstractAction() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -258,7 +255,7 @@ public class CapturePlugin extends devplugin.Plugin {
         action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png", CapturePlugin.class)));
         action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin24.png", CapturePlugin.class)));
         
-        return action;
+        return new ActionMenu(action);
     }        
     
     /**

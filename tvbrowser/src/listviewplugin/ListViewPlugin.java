@@ -39,6 +39,7 @@ import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
+import devplugin.ActionMenu;
 
 /**
  * This Plugin shows a List of current running Programs
@@ -109,7 +110,7 @@ public class ListViewPlugin extends Plugin {
      *  (non-Javadoc)
      * @see devplugin.Plugin#getButtonAction()
      */
-    public Action getButtonAction() {
+    public ActionMenu getButtonAction() {
         AbstractAction action = new AbstractAction() {
 
             public void actionPerformed(ActionEvent evt) {
@@ -121,7 +122,7 @@ public class ListViewPlugin extends Plugin {
         action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("listviewplugin/listview24.gif", ListViewPlugin.class)));
         
         
-        return action;
+        return new ActionMenu(action);
     }
     
     

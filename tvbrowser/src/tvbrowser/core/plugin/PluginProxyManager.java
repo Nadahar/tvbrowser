@@ -33,18 +33,12 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 import tvbrowser.core.*;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import devplugin.ChannelDayProgram;
-import devplugin.PluginAccess;
-import devplugin.Program;
-import devplugin.Plugin;
+import devplugin.*;
 
 /**
  * Manages all plugin proxies and creates them on startup.
@@ -849,13 +843,45 @@ public class PluginProxyManager {
   }
 
 
+  private static JMenuItem getMenuItem(ActionMenu menu) {
+    JMenuItem result;
+    if (menu.hasSubItems()) {
+      result = new JMenu(menu.getAction());
+      ActionMenu[] subItems = menu.getSubItems();
+      for (int i=0; i<subItems.length; i++) {
+        result.add(getMenuItem(subItems[i]));
+      }
+    }
+    else {
+      if (menu.isSelected()) {
+        result = new JCheckBoxMenuItem(menu.getAction().getValue(Action.NAME).toString(), true);
+      }
+      else {
+        result = new JMenuItem(menu.getAction());
+      }
+    }
+    result.setFont(CONTEXT_MENU_PLAINFONT);
+    return result;
+  }
+
   public static JMenuItem[] createPluginContextMenuItems(Program program, boolean markDefaultPlugin) {
     ArrayList items = new ArrayList();
     PluginProxy defaultPlugin = getInstance().getDefaultContextMenuPlugin();
     PluginProxy[] pluginArr = getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       PluginProxy plugin = pluginArr[i];
-      Action[] actionArr = plugin.getContextMenuActions(program);
+      ActionMenu actionMenu = plugin.getContextMenuActions(program);
+      if (actionMenu != null) {
+        JMenuItem menuItem = getMenuItem(actionMenu);
+        items.add(menuItem);
+        if (plugin == defaultPlugin && markDefaultPlugin) {
+          if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
+            menuItem.setFont(CONTEXT_MENU_BOLDFONT);
+          }
+        }
+      }
+
+     /*
       if (actionArr != null) {
         for (int j = 0; j < actionArr.length; j++) {
           Action action = actionArr[j];
@@ -874,7 +900,7 @@ public class PluginProxyManager {
               + plugin + "' failed", thr);
           }
         }
-      }
+      }   */
     }
 
     JMenuItem[] result = new JMenuItem[items.size()];
@@ -900,27 +926,7 @@ public class PluginProxyManager {
   }
 
 
-
-  private static JMenuItem createPluginContextMenuItem(final Program program,
-    final Action action)
-  {
-    String text = (String) action.getValue(Action.NAME);
-    Icon icon = (Icon) action.getValue(Action.SMALL_ICON);
-    
-    JMenuItem item = new JMenuItem(text, icon);
-    
-    item.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        // Set the program as source
-        evt.setSource(program);
-        
-        action.actionPerformed(evt);
-      }
-    });
-    
-    return item;
-  }
-  
+               
   
   /**
    * Registers a PluginStateListener.

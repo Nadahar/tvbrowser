@@ -44,6 +44,7 @@ import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.ui.customizableitems.SortableItemList;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ActionMenu;
 
 public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener {
 
@@ -73,16 +74,20 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
            // Get the context menu item text
            String text = null;
            Icon icon = null;
-           Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
-           if (actionArr != null) {
-             if (actionArr.length == 1) {
-               text = (String) actionArr[0].getValue(Action.NAME);
-               icon = (Icon) actionArr[0].getValue(Action.SMALL_ICON);
-             } else {
+           //Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
+           ActionMenu actionMenu = plugin.getContextMenuActions(exampleProgram);
+           if (actionMenu != null) {
+             Action action = actionMenu.getAction();
+             if (action != null) {
+               text = (String) action.getValue(Action.NAME);
+               icon = (Icon) action.getValue(Action.SMALL_ICON);
+             }
+             else {
                text = plugin.getInfo().getName();
                icon = plugin.getMarkIcon();
              }
            }
+
            label.setText(text);
            
            label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
@@ -185,11 +190,11 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getActivatedPlugins();
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
     for (int i = 0; i < pluginList.length; i++) {
-      Action[] actionArr = pluginList[i].getContextMenuActions(exampleProgram);
-      if (actionArr != null) {
+      ActionMenu actionMenu = pluginList[i].getContextMenuActions(exampleProgram);
+      if (actionMenu != null) {
         mList.addElement(pluginList[i]);
       }
-    } 
+    }
   }
 
 

@@ -114,7 +114,7 @@ public class SearchPlugin extends Plugin {
 
 
 
-  public Action getButtonAction() {
+  public ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -128,10 +128,10 @@ public class SearchPlugin extends Plugin {
     action.setShortDescription(mLocalizer.msg("description","Allows searching programs containing a certain text."));
     action.setText(mLocalizer.msg("searchPrograms", "Search programs"));
 
-    return action;
+    return new ActionMenu(action);
   }
 
-  public Action[] getContextMenuActions(final Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
      action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
      action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
@@ -142,7 +142,7 @@ public class SearchPlugin extends Plugin {
           UiUtilities.centerAndShow(dlg);
         }
       });
-      return new Action[]{action};
+      return new ActionMenu(action);
   }
 
 

@@ -181,7 +181,7 @@ public class FavoritesPlugin extends Plugin {
       return res;
    }
 
-    public Action getButtonAction() {
+    public ActionMenu getButtonAction() {
       ButtonAction action = new ButtonAction();
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -194,13 +194,13 @@ public class FavoritesPlugin extends Plugin {
       action.setShortDescription(mLocalizer.msg("favoritesManager", "Manage favorite programs"));
       action.setText(mLocalizer.msg( "manageFavorites", "Manage Favorites" ));
 
-      return action;
+      return new ActionMenu(action);
     }
 
 
 
 
-   public Action[] getContextMenuActions(final Program program) {
+   public ActionMenu getContextMenuActions(final Program program) {
      ContextMenuAction action = new ContextMenuAction();
      action.setText(mLocalizer.msg("contextMenuText", "Add to favorite programs"));
      action.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
@@ -209,7 +209,7 @@ public class FavoritesPlugin extends Plugin {
           showEditFavoriteDialog(program);
         }
       });
-      return new Action[]{action};
+      return new ActionMenu(action);
    }
 
 

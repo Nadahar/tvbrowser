@@ -332,12 +332,13 @@ public class PluginManagerImpl implements PluginManager {
     PluginAccess defaultContextMenuPlugin
       = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
     if (defaultContextMenuPlugin != null) {
-      Action[] actions = defaultContextMenuPlugin.getContextMenuActions(program);
-      
-      if ((actions != null) && (actions.length != 0)) {
+      ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
+      Action action = menu.getAction();
+      if (action != null) {
         ActionEvent evt = new ActionEvent(program, 0, null);
-        actions[0].actionPerformed(evt); 
+        action.actionPerformed(evt);
       }
+
     }
   }
   

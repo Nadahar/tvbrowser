@@ -33,10 +33,7 @@ import javax.swing.Icon;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import devplugin.ChannelDayProgram;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.SettingsTab;
+import devplugin.*;
 
 /**
  * An abstract implementation of a plugin proxy. Encapsulates all calls to the
@@ -287,7 +284,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
    */
-  public final Action[] getContextMenuActions(Program program) {
+  public final ActionMenu getContextMenuActions(Program program) {
     try {
       return goGetContextMenuActions(program);
     }
@@ -307,7 +304,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * 
    * @see #getContextMenuActions(Program)
    */
-  protected abstract Action[] goGetContextMenuActions(Program program);
+  protected abstract ActionMenu goGetContextMenuActions(Program program);
 
   
   /**
@@ -316,7 +313,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
    */
-  public final Action getButtonAction() {
+  public final ActionMenu getButtonAction() {
     try {
       return doGetButtonAction();
     }
@@ -335,7 +332,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * 
    * @see #getButtonAction()
    */
-  protected abstract Action doGetButtonAction();
+  protected abstract ActionMenu doGetButtonAction();
   
   
   /**

@@ -47,6 +47,7 @@ import util.ui.toolbar.ToolBarButton;
 import util.ui.toolbar.ToolBarEvent;
 import util.ui.toolbar.ToolBarItem;
 import devplugin.Plugin;
+import devplugin.ActionMenu;
 
 
 
@@ -137,12 +138,25 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
     for (int i=0; i<pluginProxys.length; i++) {
+      ActionMenu actionMenu = pluginProxys[i].getButtonAction();
+      if (actionMenu != null) {
+        if (!actionMenu.hasSubItems()) {
+          Action action = actionMenu.getAction();
+          ToolBarButton btn = createPluginButton(pluginProxys[i].getId(),action);
+          btn.setActionListener(this);
+          buttons.add(btn);
+        }
+        else {
+          //TODO: create drop down list button
+        }
+      }
+      /*
       Action action = pluginProxys[i].getButtonAction();
       if (action != null) {
         ToolBarButton btn = createPluginButton(pluginProxys[i].getId(),action);
         btn.setActionListener(this);
         buttons.add(btn);
-      }
+      }  */
     }
     ToolBarItem[] items = new ToolBarItem[buttons.size()];
     buttons.toArray(items);
@@ -174,9 +188,11 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
     for (int i=0; i<pluginProxys.length; i++) {
-      Action action = pluginProxys[i].getButtonAction();
-      if (action != null) {
-        buttonNames.add(pluginProxys[i].getId());
+      ActionMenu actionMenu = pluginProxys[i].getButtonAction();
+      if (actionMenu != null) {
+        if (!actionMenu.hasSubItems()) {
+          buttonNames.add(pluginProxys[i].getId());
+        }
       }
     }
     String[] result = new String[buttonNames.size()];
@@ -199,8 +215,13 @@ public class MainToolBar extends util.ui.toolbar.ToolBar implements ToolBarActio
       String id =item.getId();
       PluginProxyManager pluginMng = PluginProxyManager.getInstance();
       PluginProxy p = pluginMng.getPluginForId(id);
-      Action action = p.getButtonAction();
-      action.actionPerformed(event.getActionEvent());
+      ActionMenu actionMenu = p.getButtonAction();
+      if (actionMenu != null) {
+        if (!actionMenu.hasSubItems()) {
+          Action action = actionMenu.getAction();
+          action.actionPerformed(event.getActionEvent());
+        }
+      }
     }
   }
   

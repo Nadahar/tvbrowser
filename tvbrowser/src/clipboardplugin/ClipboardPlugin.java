@@ -35,7 +35,7 @@ public class ClipboardPlugin extends Plugin {
   /** Needed for Position */
   private Dimension mDimensionListDialog = null;
 
-  public Action getButtonAction() {
+  public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
 
       public void actionPerformed(ActionEvent evt) {
@@ -46,10 +46,10 @@ public class ClipboardPlugin extends Plugin {
     action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("clipboardplugin/clipboard.png", ClipboardPlugin.class)));
     action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("clipboardplugin/clipboard24.png", ClipboardPlugin.class)));
 
-    return action;
+    return new ActionMenu(action);
   }
 
-  public Action[] getContextMenuActions(final Program program) {
+  public ActionMenu getContextMenuActions(final Program program) {
     final PluginTreeNode node = getRootNode();
     final boolean inList = node.contains(program);
 
@@ -75,7 +75,7 @@ public class ClipboardPlugin extends Plugin {
 
     action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("clipboardplugin/clipboard.png", ClipboardPlugin.class)));
 
-    return new Action[] {action};
+    return new ActionMenu(action);
   }
 
   /*

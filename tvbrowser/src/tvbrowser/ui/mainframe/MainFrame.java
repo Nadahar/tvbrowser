@@ -344,8 +344,30 @@ private Node mDateChannelNode;
   public void updatePluginsMenu() {
     mMenuBar.updatePluginsMenu();
   }
-  
 
+
+  private static JMenuItem createMenuItem(ActionMenu menu) {
+    JMenuItem result;
+    if (menu.hasSubItems()) {
+      result = new JMenu(menu.getAction());
+      ActionMenu[] subItems = menu.getSubItems();
+      for (int i=0; i<subItems.length; i++) {
+        result.add(createMenuItem(subItems[i]));
+      }
+    }
+    else {
+      result = new JMenuItem(menu.getAction());
+    }
+    return result;
+
+  }
+
+
+  /**
+   * @deprecated TODO: check, if we can remove this method
+   * @param pluginsMenu
+   * @param plugins
+   */
   public static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
     pluginsMenu.removeAll();
 
@@ -359,9 +381,10 @@ private Node mDateChannelNode;
     });
     
     for (int i = 0; i < plugins.length; i++) {
-      Action action = plugins[i].getButtonAction();
+      ActionMenu action = plugins[i].getButtonAction();
       if (action != null) {
-        pluginsMenu.add(new JMenuItem(action));
+        pluginsMenu.add(createMenuItem(action));
+
       }
     }
   }

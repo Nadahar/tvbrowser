@@ -54,6 +54,7 @@ import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvdataservice.TvDataService;
 import devplugin.ProgramFilter;
+import devplugin.ActionMenu;
 
 
 public abstract class MenuBar extends JMenuBar implements ActionListener {
@@ -221,7 +222,24 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
    }
    
    protected abstract void setPluginMenuItems(JMenuItem[] items);
-    
+
+
+   private JMenuItem createMenuItem(ActionMenu menu) {
+    JMenuItem result;
+    if (menu.hasSubItems()) {
+      result = new JMenu(menu.getTitle());
+      ActionMenu[] subItems = menu.getSubItems();
+      for (int i=0; i<subItems.length; i++) {
+        result.add(createMenuItem(subItems[i]));
+      }
+    }
+    else {
+      result = new JMenuItem(menu.getAction());
+    }
+    return result;
+
+  }
+
    protected JMenuItem[] createPluginMenuItems() {
      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
 
@@ -233,9 +251,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      
      ArrayList list = new ArrayList();
      for (int i = 0; i < plugins.length; i++) {
-       Action action = plugins[i].getButtonAction();
-       if (action != null) {
-         JMenuItem item = new JMenuItem(action);
+       ActionMenu actionMenu = plugins[i].getButtonAction();
+
+       if (actionMenu != null) {
+         JMenuItem item = createMenuItem(actionMenu);
          list.add(item);
          new MenuHelpTextAdapter(item,plugins[i].getInfo().getDescription(),mLabel);
        }

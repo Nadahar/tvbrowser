@@ -77,7 +77,7 @@ public interface PluginAccess {
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
    */
-  public Action[] getContextMenuActions(Program program);
+  public ActionMenu getContextMenuActions(Program program);
 
   /**
    * Gets the description text for the program table icons provided by this
