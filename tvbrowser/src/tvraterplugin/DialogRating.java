@@ -240,7 +240,7 @@ public class DialogRating extends JDialog {
      */
     private void showList() {
 
-        ProgramListDialog dialog = new ProgramListDialog(_parent, _overallrating);
+        ProgramListDialog dialog = new ProgramListDialog(_parent, _title);
         
         if (_dimensionDialog == null) {
             _dimensionDialog = dialog.getSize();
