@@ -1,0 +1,15 @@
+Version 0.1
+
+1.) Init Version.
+
+Version 0.2
+
+1.) Gifs geändert. (Aus dem Java Look and Feel Graphics Repository
+    geholt.)
+2.) Einlesen der Drucker in loadSettings ausgelagert (Dialog wird schneller
+    geöffnet.)
+3.) Asyncrones Drucken über eigenen Thread (bring nicht wirklich was).
+4.) Querdruck (Landscape) eingebaut.
+5.) Anpassungen an TV-Browser 0.9.6
+6.) Diverse Fehlerabfragen eingebaut.
+   
