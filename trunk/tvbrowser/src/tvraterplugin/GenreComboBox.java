@@ -54,12 +54,17 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer {
      */
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
             boolean cellHasFocus) {
-		
-		String str = RatingIconTextFactory.getGenres().getProperty(value.toString(), "[TRANSLATIONERROR:" + value.toString()+ " ]").toString();
 
+    	if (value == null) {
+            JLabel label = new JLabel("");
+    	    label.setOpaque(true);
+            return label;
+    	}
+    	
+		String str = RatingIconTextFactory.getGenres().getProperty(value.toString(), "[TRANSLATIONERROR:" + value.toString()+ " ]").toString();
         JLabel label = new JLabel(str);
 	    label.setOpaque(true);
-    
+
         if (isSelected || cellHasFocus) {
             label.setBackground(list.getSelectionBackground());
             label.setForeground(list.getSelectionForeground());
