@@ -470,7 +470,11 @@ public class PluginManager {
       }
 
       public Iterator getChannelDayProgram(Date date, Channel channel) {
-        return TvDataBase.getInstance().getDayProgram(date, channel).getPrograms();
+        ChannelDayProgram channelDayProgram=TvDataBase.getInstance().getDayProgram(date,channel);
+        if (channelDayProgram==null) {
+          return null;    
+        }
+        return channelDayProgram.getPrograms();
       }
 
       public Program[] search(String regex, boolean inTitle, boolean inText,
