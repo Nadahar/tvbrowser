@@ -138,14 +138,25 @@ public class DataService implements devplugin.PluginManager {
 
   
 
-  public void startDownload(int daysToDownload) throws IOException {
-    if (tvdataloader==null) {
+  public void startDownload(int daysToDownload) {
+    if (tvdataloader == null) {
       return;
     }
+    
     progressBar.setString("connecting...");
     progressBar.setStringPainted(true);
-    tvdataloader.connect();
-    progressBar.setStringPainted(false);
+    try {
+      tvdataloader.connect();
+    }
+    catch (IOException exc) {
+      System.err.println("Connecting to server failed: " + exc);
+      exc.printStackTrace();
+      return;
+    }
+    finally {
+      progressBar.setStringPainted(false);
+    }
+    
     tvdataloader.AbstractChannelDayProgram prog;
     ObjectOutputStream out;
     Channel[] subscribedChannels=ChannelList.getSubscribedChannels();
@@ -161,9 +172,18 @@ public class DataService implements devplugin.PluginManager {
         if (file.exists()) {
           continue;
         }
-        prog=tvdataloader.downloadDayProgram(date,channel);
+        
+        try {
+          prog = tvdataloader.downloadDayProgram(date,channel);
+        }
+        catch (IOException exc) {
+          System.err.println("Downloading day program for " + channel.getName()
+            + " on " + date + " failed: " + exc);
+          exc.printStackTrace();
+          continue;
+        }
 
-        if (prog==null) {
+        if (prog == null) {
           continue;
         }
 
@@ -177,7 +197,13 @@ public class DataService implements devplugin.PluginManager {
       }
       date.addDays(1);
     }
-    tvdataloader.disconnect();
+    try {
+      tvdataloader.disconnect();
+    }
+    catch (IOException exc) {
+      System.err.println("Disonnecting from server failed: " + exc);
+      exc.printStackTrace();
+    }
   }
 
   

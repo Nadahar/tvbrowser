@@ -53,19 +53,14 @@ public class XmlTvDataService implements TVDataServiceInterface {
   private static final String XMLTV_FOLDER = "xmldata" + java.io.File.separator;
   
   /**
-   * This is a hash that contains for a devplugin.Date (as key)
-   * another hash (as value).
-   * <p>
-   * The child hashes contain for a Channel (as key) the ChannelDayProgram
-   * for that day (as value).
-   */
-  // private HashMap mChannelDayProgramHash;
-  
-  /**
    * A list of the files, we downloaded or we tried to download. We need this
    * list, so we don't attempt to download a file where the download failed.
    */
   private ArrayList mAlreadyDownloadedFiles;
+  
+  private ProgramDispatcher mProgramDispatcher;
+  
+  private Channel[] mSubscribedChannelArr;
   
   
   
@@ -81,7 +76,9 @@ public class XmlTvDataService implements TVDataServiceInterface {
    * Called by the host-application before starting to download.
    */
   public void connect() throws IOException {
-    // mChannelDayProgramHash = new HashMap();
+    mProgramDispatcher = new ProgramDispatcher();
+    
+    mSubscribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
     
     // ensure the xmltv.dtd is present
     File xmlTvDtdFile = new File(XMLTV_FOLDER + "xmltv.dtd");
@@ -117,8 +114,8 @@ public class XmlTvDataService implements TVDataServiceInterface {
    * clean-up.
    */
   public void disconnect() throws java.io.IOException {
-    // mChannelDayProgramHash = null;
-    
+    mProgramDispatcher = null;
+    mSubscribedChannelArr = null;
     mAlreadyDownloadedFiles = null;
   }
 
@@ -151,28 +148,16 @@ public class XmlTvDataService implements TVDataServiceInterface {
   public AbstractChannelDayProgram downloadDayProgram(devplugin.Date date,
     Channel channel) throws IOException
   {
-    /*
-    // Get the Channel-to-ChannelDayProgram-hash for the given day
-    HashMap childHash = (HashMap) mChannelDayProgramHash.get(date);
+    MutableChannelDayProgram channelDayProgram
+      = mProgramDispatcher.getChannelDayProgram(date, channel);
     
-    // Check whether the data for this day is already loaded
-    if (childHash == null) {
-    */
-      return loadXmlFileFor(date, channel);
-    /*
-      
-      // now the Channel-to-ChannelDayProgram-hash should be in the cache
-      childHash = (HashMap) mChannelDayProgramHash.get(date);
+    // If the wanted AbstractChannelDayProgram isn't already in the cache
+    // load the apropriate XMl file
+    if (channelDayProgram == null) {
+      channelDayProgram = loadXmlFileFor(date, channel);
     }
-
-    if (childHash == null) {
-      // There is no data for this day and this channel
-      return null;
-    } else {
-      // Get the program from the hash
-      return (AbstractChannelDayProgram)childHash.get(getKeyForChannel(channel));
-    }
-    */
+    
+    return channelDayProgram;
   }
 
   
@@ -188,11 +173,10 @@ public class XmlTvDataService implements TVDataServiceInterface {
    * @param date The date to get the programs for.
    * @param channel The channel to get the programs for. When the channel list
    *        is available, this parameter will get obsolete.
-   * @return The programs of the given date and channel. When the channel list
-   *         is available, this method will return nothing (void). The
-   *         programs will be put into some data structure.
-   */  
-  private AbstractChannelDayProgram loadXmlFileFor(devplugin.Date date,
+   * @return The ChannelDayProgram for the specified date and channel or
+   *         null if the download failed.
+   */
+  private MutableChannelDayProgram loadXmlFileFor(devplugin.Date date,
     Channel channel)
   {
     // Get the name of the XML file to load
@@ -230,64 +214,59 @@ public class XmlTvDataService implements TVDataServiceInterface {
       // Download must have failed
       System.out.println("File '" + gzFile.getAbsolutePath() + "' does not exist!");
       return null;
-    }
+    } else {
+      // parse the XML file
+      XmlTvHandler handler
+        = new XmlTvHandler(mProgramDispatcher, mSubscribedChannelArr);
 
-    // Create a new hash that holds all the programs for the given day.
-    /*
-    HashMap childHash = new HashMap();
-    mChannelDayProgramHash.put(date, childHash);
-    */
-
-    // parse the XML file
-    XmlTvHandler handler = new XmlTvHandler(date, channel);
-
-    // Use the default (non-validating) parser
-    SAXParserFactory factory = SAXParserFactory.newInstance();
-    FileInputStream in = null;
-    GZIPInputStream gzipIn = null;
-    try {
-      System.out.println("Parsing '" + gzFile.getAbsolutePath() + "'...");
-      
-      in = new FileInputStream(gzFile);
-      gzipIn = new GZIPInputStream(in);
-
-      // The system id is the location where the parser searches the DTD.
-      String systemId = gzFile.getParentFile().toURI().toString();
-      
-      SAXParser saxParser = factory.newSAXParser();
-      saxParser.parse(gzipIn, handler, systemId);
-      // System.out.println(".. Parsing done!");
-    }
-    catch (Throwable thr) {
-      System.err.println("Error reading '" + gzFile.getAbsolutePath() + "': " + thr);
-      thr.printStackTrace();
-      
-      return null;
-    }
-    finally {
+      // Use the default (non-validating) parser
+      SAXParserFactory factory = SAXParserFactory.newInstance();
+      FileInputStream in = null;
+      GZIPInputStream gzipIn = null;
       try {
-        if (in != null) in.close();
-      } catch (IOException exc) {}
-      try {
-        if (gzipIn != null) gzipIn.close();
-      } catch (IOException exc) {}
-    }
-    
-    // Get the program from the handler.
-    AbstractChannelDayProgram channelDayProgram = handler.getChannelDayProgram();
-    
-    // If the maximum start time is before 23:00, we assume the file is not
-    // complete. Note that the max start time is the max time over _all_
-    // channels.
-    if (handler.getMaxStartTime() < (23 * 60)) {
-      // Delete the incomplete file
-      gzFile.delete();
+        System.out.println("Parsing '" + gzFile.getAbsolutePath() + "'...");
+
+        in = new FileInputStream(gzFile);
+        gzipIn = new GZIPInputStream(in);
+
+        // The system id is the location where the parser searches the DTD.
+        String systemId = gzFile.getParentFile().toURI().toString();
+
+        SAXParser saxParser = factory.newSAXParser();
+        saxParser.parse(gzipIn, handler, systemId);
+        // System.out.println(".. Parsing done!");
+      }
+      catch (Throwable thr) {
+        System.err.println("Error reading '" + gzFile.getAbsolutePath() + "': " + thr);
+        thr.printStackTrace();
+      }
+      finally {
+        try {
+          if (in != null) in.close();
+        } catch (IOException exc) {}
+        try {
+          if (gzipIn != null) gzipIn.close();
+        } catch (IOException exc) {}
+      }
+
+      // Get the MutableChannelDayProgram
+      MutableChannelDayProgram channelDayProgram
+        = mProgramDispatcher.getChannelDayProgram(date, channel);
+
+      // Check whether the AbstractChannelDayProgram is complete
+      // complete means: The last program starts after 22:00
+      if ((channelDayProgram != null)) {
+        if (! channelDayProgram.isComplete()) {
+          channelDayProgram = null;
+          
+          // Delete the incomplete file so it will be downloaded on the next
+          // update, when it may be complete
+          gzFile.delete();
+        }
+      }
       
-      // forget the incomplete program
-      channelDayProgram = null;
+      return channelDayProgram;
     }
-    
-    return channelDayProgram;
   }
   
   
