@@ -496,7 +496,7 @@ public class MutableProgram implements Program {
   public void setTimeField(ProgramFieldType type, int value) {
     if ((value < 0) || (value >= (24 * 60))) {
       mLog.warning("The time value for field " + type.getName()
-        + " must be between in [0..1439], but it was set to " + value);
+        + " must be between in [0..1439], but it was set to " + value+"; program: "+toString());
     }
     
     Integer obj = null;

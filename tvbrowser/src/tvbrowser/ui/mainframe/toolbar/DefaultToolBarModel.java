@@ -166,6 +166,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         }
       };
 
+      mSeparatorAction.putValue(ToolBar.ACTION_ID_KEY,"#separator");
       mSeparatorAction.putValue(ToolBar.ACTION_TYPE_KEY,new Integer(ToolBar.SEPARATOR));
       mSeparatorAction.putValue(Action.NAME, "----SEPARATOR----");
       }
