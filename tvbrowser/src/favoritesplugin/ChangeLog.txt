@@ -1,0 +1,7 @@
+Changelog FavoritesPlugin
+
+1.0.1:
+- no Serializable Classes any more
+
+1.0:
+- initial version
