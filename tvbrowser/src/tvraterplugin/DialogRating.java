@@ -85,7 +85,10 @@ public class DialogRating extends JDialog {
     /** ParentFrame */
     private Frame _parent;
     /** Size of the Dialog */
-    private static Dimension _dimensionDialog = null;  
+    private static Dimension _dimensionDialog = null;
+
+    /** The Genre */
+    private GenreComboBox _genre;  
     
     /**
      * Creates the DialgoRating
@@ -296,7 +299,8 @@ public class DialogRating extends JDialog {
         _personalrating.setValue(Rating.EROTIC, _ratings[3].getSelectedIndex());
         _personalrating.setValue(Rating.TENSION, _ratings[4].getSelectedIndex());
         _personalrating.setValue(Rating.ENTITLEMENT, _ratings[5].getSelectedIndex());
-
+        _personalrating.setValue(Rating.GENRE, Integer.parseInt(_genre.getSelectedItem().toString()));
+        
         _rater.getDatabase().setPersonalRating(_personalrating);
         hide();
 
@@ -369,7 +373,12 @@ public class DialogRating extends JDialog {
             ratingPanel.add(createRatingBox(rating, Rating.ENTITLEMENT), c);
             
             ratingPanel.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":", JLabel.LEFT), labc);
-            ratingPanel.add(createRatingBox(rating, Rating.GENRE), c);
+            ratingPanel.add(new JLabel(
+                    	RatingIconTextFactory.getGenres().getProperty( 
+                    	        	Integer.toString(rating.getIntValue(Rating.GENRE)), 
+                    	        	"[TRANSLATIONERROR:" + 
+                    	        	Integer.toString(rating.getIntValue(Rating.GENRE)).toString() + " ]"))
+                    	        	, c);
         } else {
             ratingPanel.setLayout(new BorderLayout());
             JTextPane pane = new JTextPane();
@@ -456,7 +465,9 @@ public class DialogRating extends JDialog {
         voting.add(createVotingBox(_personalrating, Rating.ENTITLEMENT, 5), c);
 
         voting.add(new JLabel(_mLocalizer.msg("genre", "Genre") + ":"), labc);
-        voting.add(createVotingBox(_personalrating, Rating.GENRE, 5), c);
+        
+        _genre = new GenreComboBox(_personalrating.getIntValue(Rating.GENRE));
+        voting.add(_genre, c);
 
         return voting;
     }

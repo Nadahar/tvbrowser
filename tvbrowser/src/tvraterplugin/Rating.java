@@ -116,6 +116,7 @@ public class Rating implements Serializable {
 	 * @return Int-Value
 	 */
 	public int getIntValue(Object key) {
+	    
 		if (_values.get(key) == null) {
 			return -1;
 		}
