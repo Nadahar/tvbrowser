@@ -154,13 +154,15 @@ public class DialogRating extends JDialog {
 		panel.add(titlePanel, c);
 
 		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1.0;
+		c.weightx = .5;
 		c.weighty = 1.0;
-		c.gridwidth = GridBagConstraints.REMAINDER;
+		c.gridwidth = 1;
 
 		panel.add(createRatingPanel(_overallrating), c);
 
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		panel.add(createVotingPanel(_personalrating), c);
+
 
 		JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 3, 0));
 
@@ -239,7 +241,7 @@ public class DialogRating extends JDialog {
 
 		
 		if (rating != null) {
-			ratingPanel.setLayout(new GridLayout(1, 6));			
+			ratingPanel.setLayout(new GridLayout(6, 1));			
 			ratingPanel.add(createRatingBox(_mLocalizer.msg("overall", "Overall") + ":", rating.getIntValue(Rating.OVERALL)));
 			ratingPanel.add(createRatingBox(_mLocalizer.msg("action", "Action") + ":", rating.getIntValue(Rating.ACTION)));
 			ratingPanel.add(createRatingBox(_mLocalizer.msg("fun", "Fun") + ":", rating.getIntValue(Rating.FUN)));
@@ -298,7 +300,7 @@ public class DialogRating extends JDialog {
 	 * @return voting-panel
 	 */
 	private JPanel createVotingPanel(Rating rating) {
-		JPanel voting = new JPanel(new GridLayout(1, 6));
+		JPanel voting = new JPanel(new GridLayout(6, 1));
 		voting.setBorder(BorderFactory.createTitledBorder(_mLocalizer.msg("yourRating", "Your Rating")));
 
 		voting.add(createVotingBox(_mLocalizer.msg("overall", "Overall") + ":", _personalrating.getIntValue(Rating.OVERALL), 0));
@@ -320,20 +322,22 @@ public class DialogRating extends JDialog {
 	 * @return a Panel with a Voting-Box
 	 */
 	private Component createVotingBox(String name, int value, int ratingbox) {
-		JPanel box = new JPanel(new BorderLayout());
+		JPanel box = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		box.add(new JLabel(name), BorderLayout.NORTH);
+		box.add(new JLabel(name));
 
-		String[] text = { "0/5", "1/5", "2/5", "3/5", "4/5", "5/5" };
+		Integer[] values = { new Integer(0), new Integer(1), new Integer(2), new Integer(3), new Integer(4), new Integer(5) };
 
-		JComboBox valuebox = new JComboBox(text);
+		JComboBox valuebox = new JComboBox(values);
+		
+		valuebox.setRenderer(new RatingCellRenderer());
 		
 		valuebox.setSelectedIndex(value);
 
 		_ratings[ratingbox] = valuebox;
-		box.add(valuebox, BorderLayout.CENTER);
+		box.add(valuebox);
 
-		box.setBorder(BorderFactory.createEtchedBorder());
+	//	box.setBorder(BorderFactory.createEtchedBorder());
 
 		return box;
 	}
