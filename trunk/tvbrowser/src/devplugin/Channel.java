@@ -38,12 +38,13 @@ public class Channel {
   private String mId;
   private TimeZone mTimeZone;
   private String mCountry;
+  private String mCopyrightNotice;
   private int mDayLightSavingTimeCorrection;
 
 
 
   public Channel(TvDataService dataService, String name, String id,
-    TimeZone timeZone, String country)
+    TimeZone timeZone, String country, String copyrightNotice)
   {
     if (country.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
@@ -55,14 +56,34 @@ public class Channel {
     mId = id;
     mTimeZone=timeZone;
     mCountry = country;
+    mCopyrightNotice=copyrightNotice;
     mDayLightSavingTimeCorrection=0;
   }
 
   public Channel(TvDataService dataService, String name, TimeZone timeZone,
-    String country)
+    String country, String copyrightNotice)
   {
-    this(dataService, name, name, timeZone, country);
+    this(dataService, name, name, timeZone, country, copyrightNotice);
   }
+  
+  /**
+       * @deprecated
+       */  
+  
+  public Channel(TvDataService dataService, String name, String id,
+     TimeZone timeZone, String country)
+   {
+      this(dataService,name,id,timeZone,country,"(no copyright notice)");
+   }
+  
+  /**
+     * @deprecated
+     */  
+  public Channel(TvDataService dataService, String name, TimeZone timeZone,
+      String country)
+    {
+      this(dataService, name, name, timeZone, country, "(no copyright given)");
+    }
   
   /**
    * @deprecated
@@ -134,6 +155,9 @@ public class Channel {
   }
 
   
+  public String getCopyrightNotice() {
+    return mCopyrightNotice;
+  }
   
   public static Channel getChannel(String dataServiceClassName, String channelId) {
     if (dataServiceClassName == null) {

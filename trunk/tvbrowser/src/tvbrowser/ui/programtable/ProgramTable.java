@@ -242,6 +242,14 @@ public class ProgramTable extends JPanel
       // Move to the next column
       x += mColumnWidth;
     }
+    
+    for (int i=0;i<mModel.getColumnCount();i++) {
+      Program p=mModel.getProgram(i,0);
+      if (p!=null) {
+        grp.drawString(p.getChannel().getCopyrightNotice(),i*mColumnWidth+3,getHeight()-5);
+      }
+    }
+    
 
     /*
     // Paint the clipBounds
@@ -289,9 +297,9 @@ public class ProgramTable extends JPanel
     mLayout.updateLayout(mModel, mRenderer);
     
     // Set the height equal to the highest column
-    mHeight = 0;
+    mHeight = 0; //0;
     for (int col = 0; col < mModel.getColumnCount(); col++) {
-      int colHeight = mLayout.getColumnStart(col);
+      int colHeight = mLayout.getColumnStart(col)+20;
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         colHeight += mLayout.getCellHeight(col, row);
       }
