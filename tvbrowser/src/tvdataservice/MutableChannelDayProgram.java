@@ -279,7 +279,19 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     }
     programOnAir=newOnAir;
     if (programOnAir!=null) {
-      programOnAir.markAsOnAir(true);
+      int length=programOnAir.getLength();
+      //System.out.println("onAir: "+programOnAir.getTitle());
+      if (length>=0) {
+          
+          int startTime=programOnAir.getHours()*60+programOnAir.getMinutes();
+          if (((startTime+length)%(60*24)) > time) {
+              programOnAir.markAsOnAir(true);
+             
+          }
+      }
+      else {
+        programOnAir.markAsOnAir(true);
+      }
     }
   }
 

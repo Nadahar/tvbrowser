@@ -56,8 +56,6 @@ public class ReminderList implements ActionListener {
     
     int size = in.readInt();
     
-    System.out.println(size+" items in reminderlist");
-    
     list = new ArrayList(size);
     for (int i = 0; i < size; i++) {
       ReminderListItem item = new ReminderListItem(in);

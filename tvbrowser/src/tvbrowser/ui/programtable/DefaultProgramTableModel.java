@@ -1,4 +1,30 @@
 /*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
+/*
  * DefaultProgramTableModel.java
  *
  * Created on 24. Mai 2003, 13:28
@@ -38,8 +64,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private Channel[] mShownChannelArr;
   private DayProgram mMainDay, mNextDay;
   
+  private ArrayList[] mProgramColumn;
+  
+  //private devplugin.Date mDate;
   /** Holds the number of programs for a column. */
-  private int[] mMainDayProgramCount, mNextDayProgramCount;
+  //private int[] mMainDayProgramCount, mNextDayProgramCount;
   
   private int mLastTimerMinutesAfterMidnight;
   private Timer mTimer;
@@ -53,6 +82,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
    */
   public DefaultProgramTableModel(Channel[] shownChannelArr) {
     mListenerList = new ArrayList();
+    
+    mProgramColumn=new ArrayList[shownChannelArr.length];
+    for (int i=0;i<mProgramColumn.length;i++) {
+        mProgramColumn[i]=new ArrayList();
+    }
 
     setShownChannels(shownChannelArr);
     
@@ -72,22 +106,41 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     
     mShownChannelArr = shownChannelArr;
     
-    updateProgramCount();
+ //   updateProgramCount();
     fireTableDataChanged();
   }
   
   
   public void setProgramFilter(ProgramFilter filter) {
   	mProgramFilter=filter;
+    fireTableDataChanged();
+    setDayPrograms(mMainDay, mNextDay);
   }
   
   public void setDayPrograms(DayProgram mainDay, DayProgram nextDay) {
+    
+    deregisterFromPrograms(mProgramColumn);
+    
+  	for (int i=0;i<mShownChannelArr.length;i++) {
+      ChannelDayProgram cdp=mainDay.getChannelDayProgram(mShownChannelArr[i]);
+      mProgramColumn[i].clear();
+      if (cdp!=null) {
+        Iterator it=cdp.getPrograms();
+        while (it.hasNext()) {
+          Program prog=(Program)it.next();
+          if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+            mProgramColumn[i].add(prog);
+          }
+        }
+      }    
+    }
+   
+    
   	
+    
   	
-  	
-  	
-    deregisterFromPrograms(mMainDay, mMainDayProgramCount);
-    deregisterFromPrograms(mNextDay, mNextDayProgramCount);
+  //  deregisterFromPrograms(mMainDay, mMainDayProgramCount);
+  //  deregisterFromPrograms(mNextDay, mNextDayProgramCount);
     
     mMainDay = mainDay;
     mNextDay = nextDay;
@@ -96,6 +149,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     int todayDaysSince1970 = IOUtilities.getDaysSince1970();
     if (((mMainDay != null) && (mMainDay.getDate().getDaysSince1970() == todayDaysSince1970))
       || ((mNextDay != null) && (mNextDay.getDate().getDaysSince1970() == todayDaysSince1970)))
+
+   
+    
     {
       mTimer.start();
       handleTimerEvent();
@@ -103,10 +159,12 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       mTimer.stop();
     }
     
-    updateProgramCount();
+ //   updateProgramCount();
 
-    registerAtPrograms(mMainDay, mMainDayProgramCount);
-    registerAtPrograms(mNextDay, mNextDayProgramCount);
+   // registerAtPrograms(mMainDay, mMainDayProgramCount);
+   // registerAtPrograms(mNextDay, mNextDayProgramCount);
+    
+    registerAtPrograms(mProgramColumn);
     
     fireTableDataChanged();
   }
@@ -132,12 +190,20 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
   public int getRowCount(int col) {
-    return mMainDayProgramCount[col] + mNextDayProgramCount[col];
+    //return mMainDayProgramCount[col] + mNextDayProgramCount[col];
+    
+    return mProgramColumn[col].size();
+    
   }
 
 
 
   public Program getProgram(int col, int row) {
+      
+      return (Program)mProgramColumn[col].get(row);
+      
+      
+      /*
     if (row < mMainDayProgramCount[col]) {
       // This program is today
       return getProgram(mMainDay, col, row);
@@ -150,6 +216,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       // Illegal row index
       return null;
     }
+    */
   }
 
   
@@ -168,7 +235,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
   
   
-  
+  /*
   private void updateProgramCount() {
     mMainDayProgramCount = new int[mShownChannelArr.length];
     mNextDayProgramCount = new int[mShownChannelArr.length];
@@ -200,9 +267,20 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       }
     }
   }
+*/
 
+  private void deregisterFromPrograms(ArrayList[] columns) {
+      
+    for (int i=0;i<columns.length;i++) {
+      Iterator it=columns[i].iterator();
+      while (it.hasNext()) {
+        Program prog=(Program)it.next();
+        prog.removeChangeListener(this);
+      }
+    }          
+  }
 
-
+/*
   private void deregisterFromPrograms(DayProgram dayProgram, int[] programCountArr) {
     if (dayProgram != null) {
       for (int col = 0; col < mShownChannelArr.length; col++) {
@@ -214,9 +292,25 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       }
     }
   }
+*/
 
-
-
+  private void registerAtPrograms(ArrayList[] columns) {
+  
+    for (int i=0;i<columns.length;i++) {
+      Iterator it=columns[i].iterator();
+      while (it.hasNext()) {
+        Program prog=(Program)it.next();
+        prog.addChangeListener(this);
+      }
+    }          
+     
+         
+     
+        
+  }
+  
+  
+  /*
   private void registerAtPrograms(DayProgram dayProgram, int[] programCountArr) {
     if (dayProgram != null) {
       for (int col = 0; col < mShownChannelArr.length; col++) {
@@ -229,7 +323,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
   }
 
-
+*/
 
   protected void fireTableDataChanged() {
     for (int i = 0; i < mListenerList.size(); i++) {

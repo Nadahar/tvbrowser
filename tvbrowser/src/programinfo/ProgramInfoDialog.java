@@ -171,7 +171,6 @@ public class ProgramInfoDialog extends JDialog {
   private String programInfoToString(int info) {
     StringBuffer buf = new StringBuffer();
 
-    // TODO: This is TVgenial specific!!
     if (bitSet(info, Program.INFO_VISION_BLACK_AND_WHITE)) {
       buf.append(mLocalizer.msg("blackAndWhite", "Black and white") + "  ");
     }

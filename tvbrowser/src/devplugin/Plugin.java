@@ -255,4 +255,8 @@ abstract public class Plugin {
   public void handleTvDataChanged() {
   }
   
+  final public String toString() {
+      return getInfo().getName();
+  }
+  
 }

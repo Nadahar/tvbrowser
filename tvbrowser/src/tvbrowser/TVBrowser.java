@@ -38,6 +38,7 @@ import java.util.logging.*;
 import tvbrowser.core.*;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
+import tvbrowser.ui.filter.FilterChooser;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.SkinPanel;
 import tvbrowser.ui.UpdateDlg;
@@ -176,6 +177,10 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     mLog.info("Deleting expired tv data...");
 
     DataService.deleteExpiredFiles(Settings.getTVDataLifespan());
+    
+    
+    mLog.info("Loading filters...");
+    tvbrowser.ui.filter.FilterList.load();
 
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
@@ -376,6 +381,8 @@ public class TVBrowser extends JFrame implements ActionListener, DateListener {
     	comboBox.setSelectedIndex(1);
     }
 
+    
+    eastPanel.add(new FilterChooser(mainFrame,mProgramTableModel),BorderLayout.NORTH);
     eastPanel.add(finderPanel,BorderLayout.CENTER);
 
     JPanel panel1 = new JPanel();

@@ -105,7 +105,9 @@ public class SkinPanel extends JPanel {
 
    public void paintComponent(Graphics g) {
 	 if (image==null || mode==NONE) {
-	   return;
+	   //return;
+    super.paintComponent(g);
+    return;
 	 }
     
     
