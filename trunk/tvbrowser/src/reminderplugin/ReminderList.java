@@ -52,7 +52,7 @@ public class ReminderList implements Serializable, ActionListener {
    * <p>
    * If there is no such item, null is returned.
    */
-  public ReminderListItem getItemWithProgram(Program program) {
+  private ReminderListItem getItemWithProgram(Program program) {
     Iterator iter = list.iterator();
     while (iter.hasNext()) {
       ReminderListItem item = (ReminderListItem) iter.next();
@@ -64,10 +64,86 @@ public class ReminderList implements Serializable, ActionListener {
     return null;
   }
 
-  public void add(ReminderListItem item) {
-    list.add(item);
+  
+  
+  public void add(Program program, int minutes) {
+    ReminderListItem item = getItemWithProgram(program);
+    if (item == null) {
+      item = new ReminderListItem(program, minutes);
+      if (! item.isExpired()) {
+        list.add(item);
+        program.mark(ReminderPlugin.getInstance());
+      }
+    } else {
+      item.setReminderMinutes(minutes);
+    }
   }
 
+  
+  
+  public void remove(ReminderListItem item) {
+    list.remove(item);
+    item.getProgram().unmark(ReminderPlugin.getInstance());
+  }
+  
+  
+  
+  public void remove(Program program) {
+    Iterator itemIter = list.iterator();
+    while (itemIter.hasNext()) {
+      ReminderListItem item = (ReminderListItem) itemIter.next();
+      if (item.getProgram().equals(program)) {
+        itemIter.remove();
+        program.unmark(ReminderPlugin.getInstance());
+        return;
+      }
+    }
+  }
+
+  
+  
+  public void setReminderTimerListener(ReminderTimerListener listener) {
+    this.listener=listener;
+    timer=new javax.swing.Timer(10000,this);
+    timer.start();
+  }
+
+  
+  
+  public void removeExpiredItems() {
+    Iterator itemIter = list.iterator();
+    while (itemIter.hasNext()) {
+      ReminderListItem item = (ReminderListItem) itemIter.next();
+      
+      if (item.isExpired()) {
+        itemIter.remove();
+      }
+    }
+  }
+
+  
+  
+  public Iterator getReminderItems() {
+    final Object[] obj=list.toArray();
+    Arrays.sort(obj);
+    return new Iterator() {
+      private int pos=0;
+      public boolean hasNext() {
+        return (pos<obj.length);
+      }
+
+      public Object next() {
+        return obj[pos++];
+      }
+
+      public void remove() {}
+    };
+  }
+
+  
+  // implements ActionListener
+  
+  
   public void actionPerformed(ActionEvent event) {
     devplugin.Date date=new devplugin.Date();
 
@@ -90,78 +166,10 @@ public class ReminderList implements Serializable, ActionListener {
       minutesItem=item.getProgram().getDate().getDaysSince1970()*60*24 + h*60 + m;
       minutesItem-=item.getReminderMinutes();
 
-      if (minutesItem==minutesNow) {
+      if (minutesItem <= minutesNow) {
         listener.timeEvent(item);
       }
     }
   }
   
-  
-
-  public void setReminderTimerListener(ReminderTimerListener listener) {
-    this.listener=listener;
-    timer=new javax.swing.Timer(10000,this);
-    timer.start();
-  }
-
-  public void remove(ReminderListItem item) {
-    list.remove(item);
-  }
-
-  public void removeExpiredItems() {
-    devplugin.Date date=new devplugin.Date();
-
-    Calendar cal=new GregorianCalendar();
-    cal.setTime(new java.util.Date(System.currentTimeMillis()));
-    int time=cal.get(Calendar.HOUR_OF_DAY)*60+cal.get(Calendar.MINUTE);
-
-    for (int i=0;i<list.size();i++) {
-      ReminderListItem item=(ReminderListItem)list.get(i);
-      Program program = item.getProgram();
-      
-      boolean remove = false;
-      if (program == null) {
-        remove = true;
-      } else {
-        int cmpRes = program.getDate().compareTo(date);
-        if (cmpRes == -1) {
-          remove = true;
-        }
-        else if (cmpRes==0) {
-          if (program.getMinutes()+item.getProgram().getHours()*60<time) {
-            remove = true;
-          }
-        }
-      }
-      
-      if (remove) {
-        list.remove(i);
-        i--; // check this index another time
-      }      
-    }
-  }
-
-  public Iterator getReminderItems() {
-
-    final Object[] obj=list.toArray();
-    Arrays.sort(obj);
-    return new Iterator() {
-      private int pos=0;
-      public boolean hasNext() {
-        return (pos<obj.length);
-      }
-
-      public Object next() {
-        return obj[pos++];
-      }
-
-      public void remove() {}
-
-    };
-
-  }
-
-
-
-
 }

@@ -95,13 +95,13 @@ public class ReminderFrame extends JFrame {
     
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event){
-        int inx=comboBox.getSelectedIndex()-1;
-        if (inx>0) {
-          int minutes = REMIND_VALUE_ARR[inx];
-          ReminderListItem item = new ReminderListItem(prog, minutes);
-          list.add(item);
+        int inx = comboBox.getSelectedIndex();
+        int minutes = REMIND_VALUE_ARR[inx];
+        if (minutes != -1) {
+          list.add(prog, minutes);
         }
-        hide();
+
+        dispose();
       }
     }
     );

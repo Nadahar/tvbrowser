@@ -29,6 +29,7 @@ package util.io;
 import java.io.*;
 import java.net.*;
 import java.util.zip.*;
+import java.util.Calendar;
 
 /**
  * A utilities class for I/O stuff. It constists of serveral static
@@ -41,6 +42,9 @@ public class IOUtilities {
   /** The logger for this class. */  
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(IOUtilities.class.getName());
+
+  /** A Calendar for time stuff */
+  private static final Calendar CALENDAR = Calendar.getInstance();
 
   
   
@@ -291,6 +295,37 @@ public class IOUtilities {
       
       offset = patternIdx + str.length();
     } while (patternIdx != -1);
+  }
+
+  
+
+  /**
+   * Gets the number of minutes since midnight
+   * <p>
+   * This method does not create any objects.
+   */
+  public static int getMinutesAfterMidnight() {
+    synchronized(CALENDAR) {
+      CALENDAR.setTimeInMillis(System.currentTimeMillis());
+      return CALENDAR.get(Calendar.HOUR_OF_DAY) * 60 + CALENDAR.get(Calendar.MINUTE);
+    }
+  }
+
+  
+  
+  /**
+   * Gets the number of days since 1st Jan 1970.
+   * <p>
+   * This method does not create any objects.
+   */
+  public static int getDaysSince1970() {
+    synchronized(CALENDAR) {
+      // System.currentTimeMillis() deliveres the GMT, so we have to add the
+      // time zone offset.
+      int zoneOffset = CALENDAR.get(Calendar.ZONE_OFFSET);
+      long millis = System.currentTimeMillis() + zoneOffset;
+      return (int) (millis / 1000 / 60 / 60 / 24);
+    }
   }
   
 }

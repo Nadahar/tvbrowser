@@ -55,73 +55,13 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
   private HashSet buttonPluginSet;
   private JCheckBox addPicBtnCheckBox;
   private Plugin curSelectedPlugin=null;
-  
-  public String getName() {
-    return mLocalizer.msg("plugins", "Plugins");
-  }
-  
-  public void ok() {
-  	
-	ArrayList oldPlugins=new ArrayList();
-	ArrayList newPlugins=new ArrayList();
-	ArrayList buttonPlugins=new ArrayList();
-	Object[] o;
-	int i;
-  	
-	o=Settings.getInstalledPlugins();
-	for (i=0;i<o.length;i++) {
-		oldPlugins.add(o[i]);
-	}
-  	
-	o=panel.getElementsRight();
-	for (i=0;i<o.length;i++) {
-		newPlugins.add(o[i]);
-	}
-  	
-	oldPlugins.removeAll(newPlugins); 
-	// oldPlugins contains now all unused plugins;
-  	
-	Iterator it=oldPlugins.iterator();  // uninstall unused plugins
-	while (it.hasNext()) {
-		String cur=(String)it.next();
-		PluginManager.uninstallPlugin(cur);
-	}
-  	
-	String[] instPlugins=new String[newPlugins.size()];
-	it=newPlugins.iterator();
-	i=0;
-	while (it.hasNext()) {
-		
-		Plugin obj=((PluginItem)it.next()).getPlugin();
-		//System.out.println(obj.getClass());
-		//String cur=(String)obj;
-		String cur=obj.getClass().getName();
-		if (!PluginManager.isInstalled(cur)) {
-			PluginManager.installPlugin(cur);
-		}
-		instPlugins[i]=cur;
-		if (buttonPluginSet.contains(cur)) {
-			buttonPlugins.add(cur);
-		}
-		i++;
-	}
-	
-	Settings.setInstalledPlugins(instPlugins);
-  	
-	o=buttonPlugins.toArray();
-	String []s=new String[o.length];
-	for (i=0;i<o.length;i++) {
-		s[i]=(String)o[i];
-	}
-	
-	Settings.setButtonPlugins(s);
-	   
-	   
- }
+
   
   
   public PluginSettingsTab() {
     super();
+
+    String msg;
     
     String[] buttonPlugins=Settings.getButtonPlugins();
     buttonPluginSet=new HashSet();
@@ -135,11 +75,8 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     
     pluginInfoPanel=new PluginInfoPanel();
     
-    
     setLayout(new BorderLayout());
-    
-    String msg;
-    
+        
     pluginInfoPanel=new PluginInfoPanel();
     
     String leftText = mLocalizer.msg("availablePlugins", "Available plugins");
@@ -171,15 +108,13 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
     
     // add(panel1,BorderLayout.CENTER);
     content.add(pluginInfoPanel);
-    
-    
+        
     JPanel panel1=new JPanel(new BorderLayout());
     addPicBtnCheckBox=new JCheckBox("Add plugin to Toolbar");
     panel1.add(addPicBtnCheckBox,BorderLayout.WEST);
     content.add(panel1);
     
-    addPicBtnCheckBox.addActionListener(new ActionListener() {
-      
+    addPicBtnCheckBox.addActionListener(new ActionListener() {  
       public void actionPerformed(ActionEvent e) {
         if (curSelectedPlugin==null) {
           return;
@@ -191,13 +126,69 @@ public class PluginSettingsTab extends devplugin.SettingsTab implements Customiz
           buttonPluginSet.remove(pluginName);
         }
       }
-      
-    }
-    );
+    });
     
     add(content,BorderLayout.NORTH);
+  }
+  
+  
+  
+  public String getName() {
+    return mLocalizer.msg("plugins", "Plugins");
+  }
+
+  
+  
+  public void ok() {
+    // Get the currently installed plugins
+    String[] oldPluginArr = Settings.getInstalledPlugins();
+  	
+    // Get the plugins that should be installed
+	Object[] selectionArr = panel.getElementsRight();
+    String[] newPluginArr = new String[selectionArr.length];
+    for (int i = 0; i < selectionArr.length; i++) {
+      PluginItem item = (PluginItem) selectionArr[i];
+      newPluginArr[i] = item.getPlugin().getClass().getName();
+    }
     
+    // Uninstall all plugins that should not be installed any more
+    for (int i = 0; i < oldPluginArr.length; i++) {
+      boolean keepInstalled = false;
+      for (int j = 0; j < newPluginArr.length; j++) {
+        if (oldPluginArr[i].equals(newPluginArr[j])) {
+          keepInstalled = true;
+          break;
+        }
+      }
+      
+      if (! keepInstalled) {
+        System.out.println("uninstalling " + oldPluginArr[i]);
+		PluginManager.uninstallPlugin(oldPluginArr[i]);
+      }
+    }
     
+    // Install the plugins that are newly selected
+    // And find out the plugins that should have a button
+	ArrayList buttonPluginList = new ArrayList();
+    for (int i = 0; i < newPluginArr.length; i++) {
+      if (! PluginManager.isInstalled(newPluginArr[i])) {
+        System.out.println("installing " + newPluginArr[i]);
+        PluginManager.installPlugin(newPluginArr[i]);
+      }
+      if (buttonPluginSet.contains(newPluginArr[i])) {
+        buttonPluginList.add(newPluginArr[i]);
+      }
+    }
+    
+    // Set the newPluginArr
+    Settings.setInstalledPlugins(newPluginArr);
+
+    // Convert the buttonPluginList to an array    
+    String[] buttonPluginArr = new String[buttonPluginList.size()];
+    buttonPluginList.toArray(buttonPluginArr);
+
+    // Set the buttonPluginArr
+    Settings.setButtonPlugins(buttonPluginArr);
   }
   
   

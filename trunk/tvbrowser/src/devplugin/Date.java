@@ -34,6 +34,8 @@ package devplugin;
 
 import java.util.Calendar;
 
+import util.io.IOUtilities;
+
 public class Date implements java.io.Serializable, Comparable {
 
   private static final util.ui.Localizer mLocalizer
@@ -72,8 +74,7 @@ public class Date implements java.io.Serializable, Comparable {
    * Constructs a new Date object, initialized with the current date.
    */
   public Date() {
-    long dateL=System.currentTimeMillis();
-    date=(int)(dateL/1000/60/60/24);
+    date = IOUtilities.getDaysSince1970();
   }
 
   public Date(int daysSince1970) {
