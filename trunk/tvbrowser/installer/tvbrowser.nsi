@@ -268,6 +268,23 @@ Section "Drucken"
 
 SectionEnd
 
+
+Section "IMDB-Suche"
+  SectionIn 1
+
+  SetOutPath "$INSTDIR\plugins"
+  File "${RUNTIME_DIR}\plugins\ImdbSearchPlugin.jar"
+
+SectionEnd
+
+Section "Google-Suche"
+  SectionIn 1
+
+  SetOutPath "$INSTDIR\plugins"
+  File "${RUNTIME_DIR}\plugins\GoogleSearchPlugin.jar"
+
+SectionEnd
+
 SubSectionEnd
 
 

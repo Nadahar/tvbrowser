@@ -34,6 +34,7 @@ import java.awt.event.*;
 import java.util.Iterator;
 import java.util.Enumeration;
 import javax.swing.*;
+
 import util.ui.*;
 import devplugin.*;
 import javax.print.*;
@@ -84,8 +85,6 @@ public class PrintDialog extends JDialog implements Printable
       {
          setTitle(mLocalizer.msg("printProgram", "Print program"));
 
-   //    PrintService[] allServices = PrintServiceLookup.lookupPrintServices(null, null);
-
          mChannels = Plugin.getPluginManager().getSubscribedChannels();
 
          Date startDate, endDate;
@@ -96,6 +95,7 @@ public class PrintDialog extends JDialog implements Printable
          Iterator programIter = Plugin.getPluginManager().getChannelDayProgram(endDate, mChannels[0]);
 
          while(programIter != null)
+        
          {
             endDate = endDate.addDays(1);
             programIter = Plugin.getPluginManager().getChannelDayProgram(endDate, mChannels[0]);
@@ -170,36 +170,6 @@ public class PrintDialog extends JDialog implements Printable
          tmpPanel.add(mUntilDate);
 
 
-/*
-   //    Only for Test!
-         JTextArea mTestText = new JTextArea(10, 50);
-         mTestText.setLineWrap(true);
-         tmpPanel.add(mTestText);
-
-         JScrollPane areaScrollPane = new JScrollPane(mTestText);
-         areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-         areaScrollPane.setPreferredSize(new Dimension(250, 250));
-
-         tmpPanel.add(areaScrollPane);
-
-         for (Enumeration e = tvbrowser.ui.filter.FilterListModel.getInstance().elements() ; e.hasMoreElements() ;)
-         {
-            ProgramFilter pf = (ProgramFilter) e.nextElement();
-
-            mTestText.append(pf.toString());
-
-            if (pf instanceof tvbrowser.ui.filter.ShowAllFilter)
-            {
-               mTestText.append(" (Alle Daten)");
-            }
-            else
-            {
-            }
-
-            mTestText.append("\n");
-         }
-*/
-
          JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
          mMain.add(buttonPn);
 
@@ -212,8 +182,6 @@ public class PrintDialog extends JDialog implements Printable
                mPageIndex = -1;
 
                startPrintThread();
-//             print();
-
                dispose();
             }
          });
@@ -232,23 +200,11 @@ public class PrintDialog extends JDialog implements Printable
 
          buttonPn.add(mCloseBt);
 
-   /*
-   // Only for Test
-         mTestBt = new JButton("Test");
-         mTestBt.addActionListener(new ActionListener()
-         {
-            public void actionPerformed(ActionEvent evt)
-            {
-               displayPrintMsg();
-            }
-         });
-         buttonPn.add(mTestBt);
-   */
-
          pack();
       }
       catch (Exception e)
       {
+        e.printStackTrace();
          JOptionPane.showMessageDialog(null, e.toString());
       }
    }
@@ -321,8 +277,6 @@ public class PrintDialog extends JDialog implements Printable
 
          }
 
-
-//         mOrientation.addItem(mLocalizer.msg("landscape", "Landscape"));
 
          Doc doc;
 
@@ -398,7 +352,6 @@ public class PrintDialog extends JDialog implements Printable
                   {
                      mChannelPageIndex = 0;
                      mCountDate = mCountDate.addDays(1);
-   //                JOptionPane.showMessageDialog(null, "Date change to "  + mCountDate.toString());
                   }
                   else
                   {
@@ -434,7 +387,6 @@ public class PrintDialog extends JDialog implements Printable
                result = PAGE_EXISTS;
             }
 
-//            JOptionPane.showMessageDialog(null, "Printing of Filter is not implented.");
          }
       }
       catch (Exception e)
