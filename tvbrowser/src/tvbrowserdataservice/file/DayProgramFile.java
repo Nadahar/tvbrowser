@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import devplugin.Date;
+
 /**
  * @author Til Schneider, www.murfman.de
  */
@@ -264,5 +266,55 @@ public class DayProgramFile {
       }
     }
   }
+
+
+
+  public static String getProgramFileName(Date date, String country,
+    String channel)
+  {
+    return getProgramFileName(date, country, channel, "raw", -1);
+  }
+
+
+
+  public static String getProgramFileName(Date date, String country,
+    String channel, String level)
+  {
+    return getProgramFileName(date, country, channel, level, -1);
+  }
+
+
+
+  public static String getProgramFileName(Date date, String country,
+    String channel, String level, int updateVersion)
+  {
+    StringBuffer buf = new StringBuffer();
+    
+    buf.append(date.getYear());
+    buf.append("-");
+    buf.append(date.getMonth() < 10 ? "0" : "");
+    buf.append(date.getMonth());
+    buf.append("-");
+    buf.append(date.getDayOfMonth() < 10 ? "0" : "");
+    buf.append(date.getDayOfMonth());
+    buf.append("_");
+    buf.append(country);
+    buf.append("_");
+    buf.append(channel);
+    buf.append("_");
+    buf.append(level);
+    if (updateVersion > 0) {
+      buf.append("_update_");
+      buf.append(updateVersion);
+      buf.append(".gz");
+    } else {
+      buf.append("_full.gz");
+    }
+    
+    return buf.toString();
+  }
+  
+  
+  
 
 }
