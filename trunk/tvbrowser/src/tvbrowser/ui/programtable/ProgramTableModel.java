@@ -28,6 +28,7 @@ package tvbrowser.ui.programtable;
 
 import util.ui.ProgramPanel;
 import devplugin.Channel;
+import devplugin.ProgramFilter;
 
 /**
  *

@@ -31,6 +31,7 @@ package printplugin;
 
 import util.ui.UiUtilities;
 
+import java.awt.print.*;
 import java.util.Iterator;
 import java.util.Properties;
 import javax.print.*;
@@ -41,6 +42,7 @@ import devplugin.*;
  * Provides a dialog for printing programs.
  *
  * @author Robert Inzinger
+ * @author Martin Oberhauser
  */
 
 public class PrintPlugin extends devplugin.Plugin
@@ -78,60 +80,61 @@ public class PrintPlugin extends devplugin.Plugin
        return new PluginInfo(name, desc, author, new Version(0, 4));
    }
 
-// public void execute(Program program)
-// {
-//    PrintDialog dlg = new PrintDialog(super.parent);
-//    UiUtilities.centerAndShow(dlg);
-// }
-   public void execute()
-   {
-      boolean start = true;
 
-      if (mAllServices.length == 0)
-      {
-         mAllServices = PrintServiceLookup.lookupPrintServices(null, null);
+
+  public void execute() {
+    
+    
+    
+    PrinterJob printJob = PrinterJob.getPrinterJob();
+    
+    PrintDialog dlg = new PrintDialog(getParentFrame(), printJob);
+    util.ui.UiUtilities.centerAndShow(dlg);
+    
+    Printer printer = dlg.getPrinter();
+    
+    if (printer!=null) {
+      printJob.setPrintable(printer);    
+      try {
+        printJob.print();
+      } catch (PrinterException e) {
+        e.printStackTrace();
       }
-
-      Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
-
-      if (channels.length > 0)
-      {
-         Iterator programIter = Plugin.getPluginManager().getChannelDayProgram(new Date(), channels[0]);
-         if (programIter == null)
-         {
-            JOptionPane.showMessageDialog(null,
-                                          mLocalizer.msg("nodata" ,"No data"),
-                                          mLocalizer.msg("printProgram" ,"Print program"),
-                                          JOptionPane.ERROR_MESSAGE);
-            start = false;
-         }
-      }
-      else
-      {
-            JOptionPane.showMessageDialog(null,
-                                          mLocalizer.msg("nochannel" ,"No Channels"),
-                                          mLocalizer.msg("printProgram" ,"Print program"),
-                                          JOptionPane.ERROR_MESSAGE);
-            start = false;
-      }
-
-      if (mAllServices.length == 0)
-      {
-         JOptionPane.showMessageDialog(null,
-                                       mLocalizer.msg("noprinter" ,"No printer"),
-                                       mLocalizer.msg("printProgram" ,"Print program"),
-                                       JOptionPane.ERROR_MESSAGE);
-         start = false;
-      }
-
-      if(start)
-      {
-         PrintDialog dlg = new PrintDialog(getParentFrame(), this);
-         UiUtilities.centerAndShow(dlg);
-      }
+    }
+    
+  }
 
 
-   }
+  public void executeOLD() {
+    
+    PrinterJob printJob = PrinterJob.getPrinterJob();
+    System.out.println("printservice: "+printJob.getPrintService().getName());
+     
+    printJob.printDialog();
+     
+    System.out.println("printservice: "+printJob.getPrintService().getName());     
+     
+    Channel[] channelList = getPluginManager().getSubscribedChannels();
+    PageFormat pageFormat = printJob.defaultPage();
+    Date date = Date.getCurrentDate();
+    int dayCount = 3;
+    double zoom = 0.4;
+     
+  /*  Printer printer = new Printer(PageFactory.createPages(pageFormat, zoom, channelList, date, dayCount));
+     
+    printJob.setPrintable(printer);
+     
+    try {
+      printJob.print();
+    } catch (PrinterException e) {
+      e.printStackTrace();
+    }
+    */
+  }
+
+
+
+  
 
    public void loadSettings(Properties settings)
    {

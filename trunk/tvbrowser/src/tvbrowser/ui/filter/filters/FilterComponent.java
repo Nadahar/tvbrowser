@@ -29,7 +29,7 @@ package tvbrowser.ui.filter.filters;
 import javax.swing.*;
 
 
-public abstract class FilterComponent implements tvbrowser.ui.programtable.ProgramFilter {
+public abstract class FilterComponent implements devplugin.ProgramFilter {
  
     private int mType;
     protected String mName, mDescription;

@@ -45,6 +45,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.Program;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
+import devplugin.ProgramFilter;
 
 /**
  *

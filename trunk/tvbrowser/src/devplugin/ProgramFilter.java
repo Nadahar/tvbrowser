@@ -24,7 +24,7 @@
  * $Revision$
  */
  
-package tvbrowser.ui.programtable;
+package devplugin;
 
 public interface ProgramFilter {
 	
