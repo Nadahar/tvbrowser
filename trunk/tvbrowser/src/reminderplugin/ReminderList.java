@@ -166,18 +166,23 @@ public class ReminderList implements ActionListener {
 
   public void add(Program[] programs, int minutes) {
     for (int i=0; i<programs.length; i++) {
-      ReminderListItem item = new ReminderListItem(programs[i], minutes);
-      programs[i].mark(ReminderPlugin.getInstance());
-      mRoot.addProgram(item.getProgramItem());
+      if (!mRoot.contains(programs[i], true)) {
+        ReminderListItem item = new ReminderListItem(programs[i], minutes);
+        programs[i].mark(ReminderPlugin.getInstance());
+        mRoot.addProgram(item.getProgramItem());
+      }
+      
     }
     mRoot.update();
   }
 
   public void add(Program program, int minutes) {
-    ReminderListItem item = new ReminderListItem(program, minutes);
-    program.mark(ReminderPlugin.getInstance());
-    mRoot.addProgram(item.getProgramItem());
-    mRoot.update();
+    if (!mRoot.contains(program, true)) {
+      ReminderListItem item = new ReminderListItem(program, minutes);
+      program.mark(ReminderPlugin.getInstance());
+      mRoot.addProgram(item.getProgramItem());
+      mRoot.update();
+    }
   }
   
  
