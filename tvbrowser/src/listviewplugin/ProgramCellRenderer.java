@@ -39,6 +39,8 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 
 import util.ui.ProgramPanel;
+
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -47,7 +49,7 @@ import devplugin.ProgramFieldType;
  * 
  * @author  Til Schneider, Bodo Tasche
  */
-public class ListViewProgramCellRenderer extends DefaultListCellRenderer {
+public class ProgramCellRenderer extends DefaultListCellRenderer {
 
   private static final Color SECOND_ROW_COLOR = new Color(250, 250, 220);
   
@@ -58,9 +60,9 @@ public class ListViewProgramCellRenderer extends DefaultListCellRenderer {
   
   /** The localizer used by this class. */  
   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(ListViewProgramCellRenderer.class );
+    = util.ui.Localizer.getLocalizerFor(ProgramCellRenderer.class );
   
-  public ListViewProgramCellRenderer() {
+  public ProgramCellRenderer() {
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setOpaque(true);
     
@@ -113,15 +115,14 @@ public class ListViewProgramCellRenderer extends DefaultListCellRenderer {
       Program program = (Program) value;
       
       mProgramPanel.setProgram(program);
-      mProgramPanel.setTextColor(label.getForeground());
-
+// TODO: Hier wieder aktivieren, wenn Icons vorhanden!!
+//      mChannelName.setIcon(program.getChannel().getIcon());
       mChannelName.setText(program.getChannel().getName()+":");
-      mChannelName.setForeground(label.getForeground());
 
       String time = program.getTimeFieldAsString(ProgramFieldType.END_TIME_TYPE);
       
       mRunTill.setText(mLocalizer.msg("till", "till") + " " + time + " " + mLocalizer.msg("oclock", "o'clock"));
-      mRunTill.setForeground(label.getForeground());
+      
       mMainPanel.setBackground(label.getBackground());
       mMainPanel.setForeground(label.getForeground());
       mMainPanel.setEnabled(label.isEnabled());
