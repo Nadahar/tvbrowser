@@ -70,7 +70,7 @@ public class Channel {
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone)
   {
-    this(dataService, name, id, timeZone, "??");
+    this(dataService, name, id, timeZone, "de");
   }
   
   /**
