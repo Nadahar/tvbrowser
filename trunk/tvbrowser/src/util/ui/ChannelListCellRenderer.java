@@ -33,27 +33,31 @@ import javax.swing.JList;
 
 import devplugin.Channel;
 
-
 /**
  * A ListCellRenderer for Channel-Lists
  */
 public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        
-        
-        if (value instanceof Channel) {
-            
-            ChannelLabel cLabel = new ChannelLabel();
-            cLabel.setChannel((Channel)value);
-            cLabel.setOpaque(label.isOpaque());
-            cLabel.setBackground(label.getBackground());
-            cLabel.setForeground(label.getForeground());
-            
-            return cLabel;
-        }
-        
-        return label;
+  ChannelLabel mChannel;
+
+  public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+      boolean cellHasFocus) {
+    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+    if (mChannel == null) {
+      mChannel = new ChannelLabel();
     }
+
+    if (value instanceof Channel) {
+
+      mChannel.setChannel((Channel) value);
+      mChannel.setOpaque(label.isOpaque());
+      mChannel.setBackground(label.getBackground());
+      mChannel.setForeground(label.getForeground());
+
+      return mChannel;
+    }
+
+    return label;
+  }
 }

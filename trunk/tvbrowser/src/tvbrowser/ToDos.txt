@@ -32,7 +32,6 @@ java.lang.NullPointerException
 Bugs (Achtung: es existieren weitere Bugs auf SF!!) :
 - Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert,
   das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
-- Wenn in der Sender-Konfiguration ziemlich oft mit Hoch/runter gearbeitet wird, kommt ein OutOfMemory
 
 
 Entfernte ToDos:
@@ -61,3 +60,4 @@ Erledigt:
 - (B) Settings - Kontextmenue zeigt den Eintrag des Erinnerers nicht an
 - (M) Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
 - (B) Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
+- (B) Wenn in der Sender-Konfiguration ziemlich oft mit Hoch/runter gearbeitet wird, kommt ein OutOfMemory
