@@ -75,7 +75,6 @@ import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
-import util.ui.view.SplitViewProperties;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -120,11 +119,17 @@ public class MainFrame extends JFrame implements DateListener {
   private MenuBar mMenuBar;
   private Component mCenterComponent;
   
- 
+  private boolean mIsVisible;
+
+private Node mMainframeNode;
+
+private Node mNavigationNode;
+
+private Node mDateChannelNode;
   
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
-		
+		mIsVisible = false;
     String msg;
     Icon icon;
 
@@ -183,37 +188,35 @@ public class MainFrame extends JFrame implements DateListener {
        
     /* create panels */
     
-    JPanel pluginPanel = new PluginView();
-    JPanel datechooser = new DateChooserPanel(this,FinderPanel.getInstance());
-    JPanel timechooser = new TimeChooserPanel(this);
+ //   JPanel pluginPanel = ;
+ //   JPanel datechooser = new DateChooserPanel(this,FinderPanel.getInstance());
+ //   JPanel timechooser = new TimeChooserPanel(this);
     
     /* create structure */    
     mRootNode = new Node(null);
     mPluginsNode = new Node(mRootNode);
-    Node mainframeNode = new Node(mRootNode);
-    Node programtableNode = new Node(mainframeNode);
-    Node navigationNode = new Node(mainframeNode);    
-    mTimebuttonsNode = new Node(navigationNode);
-    Node dateChannelNode = new Node(navigationNode);
-    mDateNode = new Node(dateChannelNode);
-    mChannelNode = new Node(dateChannelNode);
-    
-    
-    
-    // TODO: find a way to store these settings
-    mRootNode.setProperties(new SplitViewProperties(false, SplitViewProperties.LEFT, 150));
-    mainframeNode.setProperties(new SplitViewProperties(false, SplitViewProperties.RIGHT, 150));
-    navigationNode.setProperties(new SplitViewProperties(true, SplitViewProperties.LEFT, 100));
-    dateChannelNode.setProperties(new SplitViewProperties(true, SplitViewProperties.LEFT, 100));
-    
+    mMainframeNode = new Node(mRootNode);
+    Node programtableNode = new Node(mMainframeNode);
+    mNavigationNode = new Node(mMainframeNode);    
+    mTimebuttonsNode = new Node(mNavigationNode);
+    mDateChannelNode = new Node(mNavigationNode);
+    mDateNode = new Node(mDateChannelNode);
+    mChannelNode = new Node(mDateChannelNode);    
+   
+    mRootNode.setProperty(Settings.propViewRoot);
+    mMainframeNode.setProperty(Settings.propViewMainframe);
+    mNavigationNode.setProperty(Settings.propViewNavigation);
+    mDateChannelNode.setProperty(Settings.propViewDateChannel);
+ 
     
     /* create views */
-    mPluginsNode.setLeaf(pluginPanel);
     programtableNode.setLeaf(skinPanel);
-    mTimebuttonsNode.setLeaf(timechooser);
-    mDateNode.setLeaf(datechooser);
-    mChannelNode.setLeaf(mChannelChooser);    
+    this.setShowPluginOverview(Settings.propShowPluginView.getBoolean());
+    this.setShowTimeButtons(Settings.propShowTimeButtons.getBoolean());
+    this.setShowDatelist(Settings.propShowDatelist.getBoolean());
+    this.setShowChannellist(Settings.propShowChannels.getBoolean());
     
+        
     
     updateToolBar();
     
@@ -416,6 +419,8 @@ public class MainFrame extends JFrame implements DateListener {
   
   public void storeSettings() {
     mToolBar.storeSettings();
+    mRootNode.storeProperties();
+    
   }
 
   public void scrollToTime(int time) {
@@ -602,6 +607,13 @@ public class MainFrame extends JFrame implements DateListener {
     }
   
   }
+  
+  
+  public void show() {
+    super.show();
+    mIsVisible = true;
+    mRootNode.update();
+  }
 
 public void askForDataUpdate() {
   
@@ -666,11 +678,13 @@ public void showHelpDialog() {
   }
   
   private void updateViews() {
-    jcontentPane = (JPanel)getContentPane();
-    jcontentPane.remove(mCenterComponent);
-    mCenterComponent = mRootNode.getComponent();
-    jcontentPane.add(mCenterComponent,BorderLayout.CENTER);      
-    jcontentPane.validate();
+    if (mIsVisible) {
+      jcontentPane = (JPanel)getContentPane();
+      jcontentPane.remove(mCenterComponent);
+      mCenterComponent = mRootNode.getComponent();
+      jcontentPane.add(mCenterComponent,BorderLayout.CENTER);      
+      jcontentPane.validate();
+    }
   }
   
   public void setShowTimeButtons(boolean visible) {
@@ -679,9 +693,8 @@ public void showHelpDialog() {
     }
     else {
       mTimebuttonsNode.setLeaf(null);
-    }
-    
-   
+    }    
+    Settings.propShowTimeButtons.setBoolean(visible);
     updateViews();
     
     
@@ -694,6 +707,7 @@ public void showHelpDialog() {
     else {
       mDateNode.setLeaf(null);
     }
+    Settings.propShowDatelist.setBoolean(visible);
     updateViews();
   }
 
@@ -704,6 +718,7 @@ public void showHelpDialog() {
     else {
       mChannelNode.setLeaf(null);
     }
+    Settings.propShowChannels.setBoolean(visible);
     updateViews();
   }
 
@@ -714,7 +729,17 @@ public void showHelpDialog() {
     else {
       mPluginsNode.setLeaf(null);
     }
+    Settings.propShowPluginView.setBoolean(visible);    
     updateViews();
+  }
+  
+  
+  public void restoreViews() {
+    mRootNode.setProperty(Settings.propViewRoot.getDefault());
+    mMainframeNode.setProperty(Settings.propViewMainframe.getDefault());
+    mNavigationNode.setProperty(Settings.propViewNavigation.getDefault());
+    mDateChannelNode.setProperty(Settings.propViewDateChannel.getDefault());
+    mRootNode.update();
   }
 
 }

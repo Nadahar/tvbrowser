@@ -106,16 +106,16 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mToolbarMI.addActionListener(this);
     mToolbarMI.setSelected(!"hidden".equals(Settings.propToolbarLocation.getString()));
     mTimeBtnsMI = new JCheckBoxMenuItem("Zeitknoepfe");
-    mTimeBtnsMI.setSelected(true);
+    mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
     mTimeBtnsMI.addActionListener(this);
     mDatelistMI = new JCheckBoxMenuItem("Datum");
-    mDatelistMI.setSelected(true);
+    mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
     mDatelistMI.addActionListener(this);
     mChannellistMI = new JCheckBoxMenuItem("Sender");
-    mChannellistMI.setSelected(true);
+    mChannellistMI.setSelected(Settings.propShowChannels.getBoolean());
     mChannellistMI.addActionListener(this);
     mPluginOverviewMI = new JCheckBoxMenuItem("Plugin Uebersicht");
-    mPluginOverviewMI.setSelected(true);
+    mPluginOverviewMI.setSelected(Settings.propShowPluginView.getBoolean());
     mPluginOverviewMI.addActionListener(this);
     
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
@@ -267,6 +267,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      else if (source == mPluginOverviewMI) {
        mMainFrame.setShowPluginOverview(mPluginOverviewMI.isSelected());  
      }
+     else if (source == mRestoreMI) {
+       mMainFrame.restoreViews();
+     }
+     
      else if (source == mUpdateMI) {
        mMainFrame.updateTvData();
      }

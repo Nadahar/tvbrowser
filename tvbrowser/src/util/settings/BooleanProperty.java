@@ -92,7 +92,7 @@ public class BooleanProperty extends Property {
   }
   
   
-  void clearCache() {
+  protected void clearCache() {
     mIsCacheFilled = false;
   }
 

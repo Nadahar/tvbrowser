@@ -60,6 +60,6 @@ public abstract class Property {
   }
   
   
-  abstract void clearCache();
+  protected abstract void clearCache();
 
 }

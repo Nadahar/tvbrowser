@@ -38,6 +38,7 @@ import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import util.exc.TvBrowserException;
 import util.settings.*;
+import util.ui.view.SplitViewProperty;
 import devplugin.ProgramFieldType;
 
 /**
@@ -536,6 +537,30 @@ public class Settings {
   public static final StringArrayProperty propDataServicesForUpdate
     = new StringArrayProperty(mProp,"tvdataservices.update",null);
   
- 
   
+  public static final BooleanProperty propShowPluginView
+    = new BooleanProperty(mProp,"show.pluginview", true);
+  
+  public static final BooleanProperty propShowTimeButtons
+    = new BooleanProperty(mProp,"show.timebuttons", true);
+  
+  public static final BooleanProperty propShowChannels
+  = new BooleanProperty(mProp,"show.channels", true);
+
+  public static final BooleanProperty propShowDatelist
+  = new BooleanProperty(mProp,"show.datelist", true);
+
+  
+  public static final SplitViewProperty propViewRoot
+    = new SplitViewProperty(mProp,"view.root", false, true, 50);
+  
+  public static final SplitViewProperty propViewMainframe
+    = new SplitViewProperty(mProp,"view.mainframe", false, false, 50);
+  
+  public static final SplitViewProperty propViewNavigation
+  = new SplitViewProperty(mProp,"view.navigation", true, true, 30);
+
+  public static final SplitViewProperty propViewDateChannel
+  = new SplitViewProperty(mProp,"view.date_channel", true, true, 100);
+
 }
