@@ -27,6 +27,7 @@
 package tvbrowser.core;
 
 import java.util.*;
+import java.awt.Font;
 import java.io.*;
 import javax.swing.*;
 
@@ -64,6 +65,67 @@ class TVBrowserProperties extends java.util.Properties {
     }
     return result;
   }
+  
+  
+  public void setStringList(String key, String[] values) {
+	if (values==null || values.length==0) {
+				setProperty(key,"");
+				return;
+			}
+
+			String line="";
+
+			for (int i=0;i<values.length-1;i++) {
+				line+=values[i]+",";
+			}
+			line+=values[values.length-1];
+			setProperty(key,line);	
+  }
+  
+  
+  public String[] getStringList(String key) {
+	String s=getProperty(key);
+		 if (s==null) return new String[0];
+
+		 ArrayList list=new ArrayList();
+		 int cur=0, last=0;
+		 String a;
+		 while (cur<s.length()) {
+		   cur=s.indexOf(',',last);
+		   if (cur==-1) {
+			 cur=s.length();
+		   }
+		   list.add(s.substring(last,cur).trim());
+		   cur++;
+		   last=cur;
+		 }
+
+		 String[] result=new String[list.size()];
+		 for (int i=0;i<list.size();i++) {
+			 result[i]=(String)list.get(i);
+		 }
+		 return result;
+  }
+  
+	public void setFont(String key, Font f) {
+		String fStr[]=new String[3];
+		fStr[0]=f.getName();
+		fStr[1]=""+f.getStyle();
+		fStr[2]=""+f.getSize();		
+		setStringList(key,fStr);
+	}
+	
+	public Font getFont(String key) {
+		String fStr[];
+		fStr=getStringList(key);
+		if (fStr.length>=3) {
+			String fName=fStr[0];
+			int fStyle=Integer.parseInt(fStr[1]);
+			int fSize=Integer.parseInt(fStr[2]);
+			return new Font(fName,fStyle,fSize);			
+		}
+		return null;	
+	}
 
 }
 
@@ -181,12 +243,17 @@ public class Settings {
       String dsClassName = channels[i].getDataService().getClass().getName();
       entries[i] = dsClassName + ":" + ch.getId();
   	}
-  	setStringListProperty("subscribedchannels", entries);
+
+	settings.setStringList("subscribedchannels", entries);
+
   }
 
 
 
   private static void initSubscribedChannels() {
+//<<<<<<< Settings.java
+  	String[] entries = settings.getStringList("subscribedchannels");
+//=======
     if (settings.getProperty("subscribedchannels") == null) {
       // Install by default the first 9 channels of the XmlTvDataService
       TvDataServiceManager mng = TvDataServiceManager.getInstance();
@@ -199,7 +266,8 @@ public class Settings {
       }
     }
     
-  	String[] entries = getStringListProperty("subscribedchannels");
+  //	String[] entries = getStringListProperty("subscribedchannels");
+//>>>>>>> 1.26
 
     for (int i = 0; i < entries.length; i++) {
       String entry = entries[i];
@@ -350,7 +418,7 @@ public class Settings {
     return res;
   }
 
-
+/*
   private static Object[] getListProperty(String key, String defaultValue) {
     String s=settings.getProperty(key,defaultValue);
     ArrayList result=new ArrayList();
@@ -370,18 +438,18 @@ public class Settings {
     }
     return result.toArray();
   }
-
+*/
 
   public static String[] getButtonPlugins() {
 
-	 return getStringListProperty("buttonplugins");
+	 return settings.getStringList("buttonplugins");
    }
 
    public static void setButtonPlugins(String[] plugins) {
-   	 setStringListProperty("buttonplugins",plugins);
+   	 settings.setStringList("buttonplugins",plugins);
    }
 
-
+/*
    private static String[] getStringListProperty(String key) {
 
 	  String s=settings.getProperty(key);
@@ -406,8 +474,8 @@ public class Settings {
 	  }
 	  return result;
 
-	}
-
+	}*/
+/*
 	private static void setStringListProperty(String key, String[] strList) {
 		if (strList==null || strList.length==0) {
 			settings.setProperty(key,"");
@@ -422,12 +490,15 @@ public class Settings {
 		line+=strList[strList.length-1];
 		settings.setProperty(key,line);
 	}
-
+*/
 
   /**
    * Returns all installed plugins as an array of Strings
    */
   public static String[] getInstalledPlugins() {
+//<<<<<<< Settings.java
+//    return settings.getStringList("plugins");
+//=======
     if (settings.getProperty("plugins") == null) {
       // Install by default all plugins
       devplugin.Plugin[] availableArr = PluginManager.getAvailablePlugins();
@@ -438,13 +509,14 @@ public class Settings {
       setInstalledPlugins(classNameArr);
     }
     
-    return getStringListProperty("plugins");
+    return settings.getStringList("plugins");
+//>>>>>>> 1.26
   }
 
 
 
   public static void setInstalledPlugins(String[] plugins) {
-	setStringListProperty("plugins", plugins);
+	settings.setStringList("plugins", plugins);
   }
 
   public static void setDownloadPeriod(int period) {
@@ -509,6 +581,31 @@ public class Settings {
 	
 	public static void setAutomaticDownloadPeriod(int period) {
 		settings.setProperty("autodownloadperiod",""+period);
+	}
+	
+	public static java.awt.Font getProgramTitleFont() {
+		Font f=settings.getFont("programtitlefont");
+		if (f==null) {
+			f=new Font("Helvetica",Font.BOLD,12);
+		}
+		return f;
+	}
+	
+	public static void setProgramTitleFont(java.awt.Font f) {
+		settings.setFont("programtitlefont",f);
+		
+	}
+	
+	public static java.awt.Font getProgramInfoFont() {
+		Font f=settings.getFont("programinfofont");
+		if (f==null) {
+			f=new Font("Helvetica",Font.PLAIN,12);
+		}
+		return f;
+	}
+	
+	public static void setProgramInfoFont(java.awt.Font f) {
+		settings.setFont("programinfofont",f);
 	}
 	
 }
