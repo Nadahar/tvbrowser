@@ -76,18 +76,8 @@ public class ExcelPDS extends AbstractPrimaryDataService {
   private Channel[] getAvailableChannels(HSSFSheet[] sheetArr) {
     Channel[] channelArr = new Channel[sheetArr.length];
     for (int i = 0; i < channelArr.length; i++) {
-      String name            = getCellString(sheetArr[i], 0, 1);
       String id              = getCellString(sheetArr[i], 1, 1);
-      String groupId         = getCellString(sheetArr[i], 2, 1);
-      String timeZoneName    = getCellString(sheetArr[i], 3, 1);
-      TimeZone timeZone = TimeZone.getTimeZone(timeZoneName);
-      String country         = getCellString(sheetArr[i], 4, 1);
-      String copyrightNotice = getCellString(sheetArr[i], 5, 1);
-      String webpage         = getCellString(sheetArr[i], 6, 1);
-
-      ChannelGroup group = new ChannelGroupImpl(groupId, null, null);
-      channelArr[i] = new Channel(null, name, id, timeZone, country,
-                                  copyrightNotice, webpage, group);
+      channelArr[i] = new Channel(id);
     }
 
     return channelArr;

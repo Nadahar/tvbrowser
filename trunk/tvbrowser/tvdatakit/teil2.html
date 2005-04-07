@@ -29,7 +29,7 @@ Wie in Teil I ist auch hier keine Programmierarbeit erforderlich.
 <p>
 Im 1. Teil haben wir SimplePDS bereits kennengelernt.<br />
 PrimaryDataServices (PDS) sind kleine Java-Programme, die TV-Daten
-einsammeln und Informationen &uuml;ber Sender (Name, Zeitzone usw.) liefern.
+einsammeln.
 Um TV-Daten automatisch einzusammeln, m&uuml;ssen PrimaryDataServices vom
 Daten-Anbieter selber geschrieben (programmiert) werden.<br />
 Neben dem SimplePDS, das wir in Teil I des Tutorials verwendet haben, liegt
@@ -50,47 +50,18 @@ Je nachdem, ob wir beabsichtigen, mehr oder weniger Sender anzubieten, f&uuml;ge
 Die fett-gedruckten Zellen m&uuml;ssen bei jeder Tabelle an der gleichen Position sein.
 </p>
 <p>
-In die zweite Zeile jeder Sender-Tabelle f&uuml;gen wir nun die Informationen &uuml;ber den jeweiligen Sender ein:
+In die zweite Zeile jeder Sender-Tabelle f&uuml;gen wir nun Sender-ID des Senders ein:
 </p>
 <a name="channelTable"/>
 <table border="1">
-<tr>
-  <th>Channel Name</th>
-  <td>Das ist der Name des Senders, wie er in TV-Browser oben in der Senderspalte dargestellt wird</td>
-</tr>
 <tr>
   <th>Channel ID</th>
   <td>Unter diesem Namen behandelt TV-Browser den Sender. Einmal festgelegt, sollte man die ID nicht mehr &auml;ndern. &Auml;ndert man die ID, so entspricht das einem neuen Sender.<br />
       Als ID sind alphanumerische Zeichen erlaubt (d.h. Ziffern und Buchstaben, keine Sonderzeichen).<br />
       Innerhalb der Sendergruppe mu&szlig; die ID eindeutig sein (d.h. in der Sendergruppe darf es keinen anderen Sender mit dieser ID geben).<br />
+      <b>Hier mu&szlig; der selbe Name verwendet werden, wie in <em>gruppe_channellist.txt</em> im config-Verzeichnis.</b>
   </td>
 </tr>
-<tr>
-  <th>Channel Group ID</th>
-  <td>Die Gruppen-ID identifiziert die Sendergruppe.<br />
-      In Teil 1 des Tutorials war die Gruppen-ID auf <em>myfirstgroup</em> festgelegt. Hier k&ouml;nnen wir nun die Gruppen-ID &auml;ndern.<br />
-      F&uuml;r alle Sender sollte die selbe Gruppen-ID verwendet werden. Ein Anbieter kann aber auch mehrere Gruppen-IDs verwenden.<br />
-      Wie die Sender-ID darf auch die Gruppen-ID nur aus alphanumerischen Zeichen bestehen.<br />
-      Wichtig: Eine Gruppen-ID mu&szlig; eindeutig sein. Kein TV-Browser-Benutzer kann zwei verschiedene Gruppen mit der gleichen Gruppen-ID hinzuf&uuml;gen.<br />
-  </td>
-</tr>
-<tr>
-  <th>Time Zone</th>
-  <td>Da TV-Browser die Zeitzone ber&uuml;cksichtigt, aus der der Sender ausstrahlt, mu&szlig; die Zeitzone f&uuml;r den Sender angegeben werden.</td>
-</tr>
-<tr>
-  <th>Country Code</th>
-  <td>Zweistelliger L&auml;ndercode nach <a href="http://www.chemie.fu-berlin.de/diverse/doc/ISO_3166.html">ISO 3166</a>. F&uuml;r Deutschland ist das z.B. <em>de</em>.</td>
-</tr>
-<tr>
-  <th>Copyright Message</th>
-  <td>Der Text, der in der Senderspalte ganz unten erscheint.</td>
-</tr>
-<tr>
-  <th>Copyright Website</th>
-  <td>Klickt man auf den Sendernamen in der TV-Programm-Tabelle, so wird diese Website ge&ouml;ffnet</td>
-</tr>
-
 </table>
 
 <p>

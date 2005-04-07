@@ -121,17 +121,19 @@ Vorher m&uuml;ssen wir den DataManager aber noch konfigurieren.<br />
 </p>
 
 <p>
-Dazu wechseln wir in das Verzeichnis <em>prepared</em>. Das ist das Verzeichnis, mit
-dem der DataManager arbeitet.<br />
-Dort befinden sich 2 Dateien:
+Dazu wechseln wir in das Verzeichnis <em>config</em>.<br />
+Dort befinden sich 3 Dateien:
 </p>
 <ul>
 <li>myfirstgroup.txt</li>
 <li>myfirstgroup_mirrorlist.txt</li>
+<li>myfirstgroup_channellist.txt</li>
 </ul>
 
 <p>
-Beide Dateien lassen sich in einem Texteditor &ouml;ffnen und bearbeiten.
+Alle 3 Dateien lassen sich in einem Texteditor &ouml;ffnen und bearbeiten.
+</p>
+<p>
 Beginnen wir mit der Datei <em>myfirstgroup.txt</em>: Sie enth&auml;lt den Namen und eine
 Beschreibung unserer Gruppe - das Ganze sogar mehrsprachig. Wir k&ouml;nnen die
 Texte (rechts vom '='-Zeichen) nach Belieben editieren.
@@ -141,8 +143,11 @@ Texte (rechts vom '='-Zeichen) nach Belieben editieren.
 </p>
 
 <p>
-Wichtiger ist die zweite Datei: <em>myfirstgroup_mirrorlist.txt</em>: Diese Datei mu&szlig;
-unbedingt angepa&szlig;t werden. Sie enth&auml;lt eine Liste der Server, auf denen wir
+<em>myfirstgroup_channellist.txt</em> enth&auml;lt eine Liste aller Sender die angeboten werden sollen (genauer: die Sender, die zur Gruppe 'myfirstgroup' geh&ouml;ren). Diese Datei m&uuml;ssen wir nicht ver&auml;ndern. Sie enth&auml;lt bereits sinnvolle Testdaten.
+</p>
+
+<p>
+<em>myfirstgroup_mirrorlist.txt</em> m&uuml;ssen wir unbedingt &auml;ndern. Sie enth&auml;lt eine Liste der Server, auf denen wir
 die Daten unserer Sendergruppe ablegen. &Uuml;blicherweise sollte hier ein Eintrag
 gen&uuml;gen. Will man die Daten auf mehreren Servern spiegeln, so mu&szlig; man in diese
 Datei auch alle Mirror-Server eintragen. Wie gesagt, ein Eintrag gen&uuml;gt
@@ -174,8 +179,7 @@ Sender und Sendergruppen wir TV-Daten bearbeiten wollen.
 </p>
 
 <p>
-Ist der PrimaryDataManager fertig, so finden wir in unserem
-"prepared"-Verzeichnis viele neue Dateien. Das sind jene, die wir sp&auml;ter auf
+Ist der PrimaryDataManager fertig, so finden wir im Verzeichnis <em>prepared</em> viele neue Dateien. Das sind jene, die wir sp&auml;ter auf
 den Webserver laden werden. Um Bandbreite zu sparen, sind alle Dateien
 komprimiert.
 </p>
