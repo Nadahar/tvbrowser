@@ -169,7 +169,9 @@ public class Channel {
     this(dataService, name, name);
   }
 
-
+  public Channel(String id) {
+    this(null, null, id);
+  }
 
   public static Channel readData(ObjectInputStream in, boolean allowNull)
     throws IOException, ClassNotFoundException
