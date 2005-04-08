@@ -1,5 +1,5 @@
 /*
- * zap2it-Plugin
+ * mZap2it-Plugin
  * Copyright (C) 2004 gilson laurent pumpkin@gmx.de
  *
  * This program is free software; you can redistribute it and/or
@@ -24,6 +24,9 @@ package zap2itimporter;
 import devplugin.Date;
 import devplugin.Channel;
 import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
+
 import util.exc.TvBrowserException;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -44,32 +47,32 @@ public class zap2itimporter implements tvdataservice.TvDataService{
   protected static final String CHANNEL_ID = "channelid";
   protected static final String CHANNEL_NUMBER = "numberOfChannels";
   
-  protected String username;
-  protected String password;
-  private Channel[] channels = new Channel[0];
+  protected String mUsername;
+  protected String mPassword;
+  private Channel[] mChannels = new Channel[0];
   
   /** Creates a new instance of zap2itImporter */
   public zap2itimporter() {
   }
   
   public Channel[] checkForAvailableChannels(devplugin.ProgressMonitor monitor) throws TvBrowserException {
-    if (username!=null){
+    if (mUsername!=null){
       try {
-        saxHandler sh = new saxHandler(this,new Date(),0,monitor);
-        java.util.Hashtable result = sh.doWork();
-        java.util.Enumeration en = result.keys();
+        SaxHandler sh = new SaxHandler(this,new Date(),0,monitor);
+        Hashtable result = sh.doWork();
+        Enumeration en = result.keys();
         Vector v = new Vector();
         while (en.hasMoreElements()){
           v.add(en.nextElement());
         }
-        channels =  (Channel[])v.toArray(new Channel[v.size()]);
-        return channels;
-      } catch (Exception E){
-        E.printStackTrace();
-        throw new TvBrowserException(this.getClass(),"error",E.toString());
+        mChannels =  (Channel[])v.toArray(new Channel[v.size()]);
+        return mChannels;
+      } catch (Exception e){
+        e.printStackTrace();
+        throw new TvBrowserException(this.getClass(),"error",e.toString());
       }
     } else {
-      throw new TvBrowserException(this.getClass(),"no username found","no username found");
+      throw new TvBrowserException(this.getClass(),"no mUsername found","no mUsername found");
     }
   }
   
@@ -81,10 +84,10 @@ public class zap2itimporter implements tvdataservice.TvDataService{
   }
   
   
-  /** Gets the list of the channels that are available by this data service.
+  /** Gets the list of the mChannels that are available by this data service.
    */
   public Channel[] getAvailableChannels() {
-    return channels;
+    return mChannels;
   }
   
   /** Gets information about this TvDataService
@@ -95,7 +98,7 @@ public class zap2itimporter implements tvdataservice.TvDataService{
   }
   
   public tvdataservice.SettingsPanel getSettingsPanel() {
-    mySettingsPanel panel = new mySettingsPanel(this);
+    MySettingsPanel panel = new MySettingsPanel(this);
     return panel;
   }
   
@@ -107,23 +110,23 @@ public class zap2itimporter implements tvdataservice.TvDataService{
    * load your dataservices settings from the file system.
    */
   public void loadSettings(java.util.Properties settings) {
-    username = settings.getProperty(USER);
-    password = settings.getProperty(PASS);
+    mUsername = settings.getProperty(USER);
+    mPassword = settings.getProperty(PASS);
     String number = settings.getProperty(CHANNEL_NUMBER);
     try {
       int length = Integer.parseInt(number);
-      channels = new Channel[length];
+      mChannels = new Channel[length];
       for (int i =0;i<length;i++){
         String name = settings.getProperty(CHANNEL_NAME+i);
         String id = settings.getProperty(CHANNEL_ID+i);
         if ((id!=null) && (name!=null)){
-          channels[i] = new Channel(this, name, id, java.util.TimeZone.getDefault(), "us", "(c) zap2it-labs");
+          mChannels[i] = new Channel(this, name, id, java.util.TimeZone.getDefault(), "us", "(c) mZap2it-labs");
         } else {
           System.out.println("fehlende Daten");;
         }
       }
     } catch (Exception E){
-      Channel[] channels = new Channel[0];
+
     }
   }
   
@@ -138,12 +141,12 @@ public class zap2itimporter implements tvdataservice.TvDataService{
   public java.util.Properties storeSettings() {
     java.util.Properties settings = new java.util.Properties();
     try {
-      settings.setProperty(USER,username);
-      settings.setProperty(PASS,password);
-      settings.setProperty(CHANNEL_NUMBER,Integer.toString(channels.length));
-      for (int i =0;i<channels.length;i++){
-        settings.setProperty(CHANNEL_NAME+i,channels[i].getName());
-        settings.setProperty(CHANNEL_ID+i,channels[i].getId());
+      settings.setProperty(USER,mUsername);
+      settings.setProperty(PASS,mPassword);
+      settings.setProperty(CHANNEL_NUMBER,Integer.toString(mChannels.length));
+      for (int i =0;i<mChannels.length;i++){
+        settings.setProperty(CHANNEL_NAME+i,mChannels[i].getName());
+        settings.setProperty(CHANNEL_ID+i,mChannels[i].getId());
       }
     } catch (Exception E){
       E.printStackTrace();
@@ -161,7 +164,7 @@ public class zap2itimporter implements tvdataservice.TvDataService{
    */
   public void updateTvData(tvdataservice.TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, devplugin.ProgressMonitor monitor) throws TvBrowserException {
     try {
-      saxHandler sh = new saxHandler(this,new Date(startDate),dateCount,monitor);
+      SaxHandler sh = new SaxHandler(this,new Date(startDate),dateCount,monitor);
       java.util.Hashtable result = sh.doWork();
       monitor.setMessage ("transfering data to tvbrowser DB");
       java.util.Enumeration en = result.keys();
@@ -169,18 +172,16 @@ public class zap2itimporter implements tvdataservice.TvDataService{
       while (en.hasMoreElements()){
         v.add(en.nextElement());
       }
-      channels = (Channel[])v.toArray(new Channel[v.size()]);
-      for (int i=0;i<channels.length;i++){
-        int month = startDate.getMonth();
-        int day = startDate.getDayOfMonth();
-        Vector progs = (Vector) result.get(channels[i]);
+      mChannels = (Channel[])v.toArray(new Channel[v.size()]);
+      for (int i=0;i<mChannels.length;i++){
+        Vector progs = (Vector) result.get(mChannels[i]);
         if (progs!=null){
           tvdataservice.MutableProgram[] progsToImport = (tvdataservice.MutableProgram[])progs.toArray(new tvdataservice.MutableProgram[progs.size()]);
           for (int j=0;j<dateCount;j++){
             Date date = new Date(startDate);
             date = date.addDays(j);
-            System.out.println("importing data for "+date.getDateString()+" and "+channels[i].getName());
-            tvdataservice.MutableChannelDayProgram mdcp = new tvdataservice.MutableChannelDayProgram(date,channels[i]);
+            System.out.println("importing data for "+date.getDateString()+" and "+mChannels[i].getName());
+            tvdataservice.MutableChannelDayProgram mdcp = new tvdataservice.MutableChannelDayProgram(date,mChannels[i]);
             for (int k=0;k<progsToImport.length;k++){
               Date toTest = progsToImport[k].getDate();
               if ((toTest.getMonth() == date.getMonth()) && (toTest.getDayOfMonth() == date.getDayOfMonth())){
@@ -200,23 +201,23 @@ public class zap2itimporter implements tvdataservice.TvDataService{
           }
         }
       }
-    } catch (Exception E){
-      E.printStackTrace();
-      throw new TvBrowserException(this.getClass(),"error",E.toString());
+    } catch (Exception e){
+      e.printStackTrace();
+      throw new TvBrowserException(this.getClass(),"error",e.toString());
     }
   }
   
 }
 
 
-class mySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.event.ActionListener{
+class MySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.event.ActionListener{
   
-  zap2itimporter zap2it;
-  javax.swing.JTextField username;
-  javax.swing.JTextField password;
+  zap2itimporter mZap2it;
+  javax.swing.JTextField mUsername;
+  javax.swing.JTextField mPassword;
   
-  public mySettingsPanel(zap2itimporter zap){
-    zap2it = zap;
+  public MySettingsPanel(zap2itimporter zap){
+    mZap2it = zap;
     
     this.setLayout (new GridLayout (1,1));
     
@@ -227,27 +228,27 @@ class mySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.ev
     c.fill = GridBagConstraints.HORIZONTAL;
     c.anchor = GridBagConstraints.WEST;
     c.weightx = 1.0;
-    javax.swing.JLabel userNameLabel = new javax.swing.JLabel("username");
+    javax.swing.JLabel userNameLabel = new javax.swing.JLabel("mUsername");
     gridbag.setConstraints(userNameLabel, c);
     panel.add(userNameLabel);
     
-    username = new javax.swing.JTextField(zap2it.username);
+    mUsername = new javax.swing.JTextField(mZap2it.mUsername);
     c.anchor = GridBagConstraints.EAST;
     c.gridwidth = GridBagConstraints.REMAINDER;
-    gridbag.setConstraints(username, c);
-    panel.add(username);
+    gridbag.setConstraints(mUsername, c);
+    panel.add(mUsername);
     
     c.gridwidth = GridBagConstraints.RELATIVE;
     c.anchor = GridBagConstraints.WEST;
-    javax.swing.JLabel passwordLabel = new javax.swing.JLabel("password");
+    javax.swing.JLabel passwordLabel = new javax.swing.JLabel("mPassword");
     gridbag.setConstraints(passwordLabel, c);
     panel.add(passwordLabel);
     
-    password = new javax.swing.JTextField(zap2it.password);
+    mPassword = new javax.swing.JTextField(mZap2it.mPassword);
     c.anchor = GridBagConstraints.EAST;
     c.gridwidth = GridBagConstraints.REMAINDER;
-    gridbag.setConstraints(password, c);
-    panel.add(password);
+    gridbag.setConstraints(mPassword, c);
+    panel.add(mPassword);
     
     javax.swing.JButton update = new javax.swing.JButton("update channellist");
     c.anchor = GridBagConstraints.EAST;
@@ -259,16 +260,16 @@ class mySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.ev
   }
   
   public void ok() {
-    zap2it.username = username.getText();
-    zap2it.password = password.getText();
+    mZap2it.mUsername = mUsername.getText();
+    mZap2it.mPassword = mPassword.getText();
   }
   
   public void actionPerformed(java.awt.event.ActionEvent actionEvent) {
     ok();
     try {
-      zap2it.checkForAvailableChannels(null);
-    } catch (Exception E){
-      E.printStackTrace();
+      mZap2it.checkForAvailableChannels(null);
+    } catch (Exception e){
+      e.printStackTrace();
       javax.swing.JOptionPane.showMessageDialog(this,"update failed","error",javax.swing.JOptionPane.ERROR_MESSAGE);
     }
   }
