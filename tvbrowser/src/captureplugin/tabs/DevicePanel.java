@@ -142,6 +142,26 @@ public class DevicePanel extends JPanel {
         
         buttonPanel.add(removeDevice, c);
 
+        JButton exportDevice= new JButton(mLocalizer.msg("Export", "Export Device"));
+        
+        exportDevice.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            exportDevice();
+          }
+        });
+        
+        buttonPanel.add(exportDevice, c);
+        
+        JButton importDevice= new JButton(mLocalizer.msg("Import", "Import Device"));
+        
+        exportDevice.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            importDevice();
+          }
+        });
+
+        buttonPanel.add(importDevice, c);
+        
         
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
@@ -151,6 +171,9 @@ public class DevicePanel extends JPanel {
         add(buttonPanel, BorderLayout.EAST);
     }
     
+    /**
+     * Add a Device
+     */
     private void addDevice() {
         
         Window parent = UiUtilities.getLastModalChildOf(mOwner);
@@ -177,6 +200,9 @@ public class DevicePanel extends JPanel {
         
     }
 
+    /**
+     * Configure a selected Device
+     */
     private void configDevice() {
         DeviceIf device = (DeviceIf) mDeviceList.getSelectedValue();
         
@@ -186,6 +212,9 @@ public class DevicePanel extends JPanel {
         }
     }
 
+    /**
+     * Remove a selected Device
+     */
     private void removeDevice() {
         DeviceIf device = (DeviceIf) mDeviceList.getSelectedValue();
         
@@ -201,5 +230,20 @@ public class DevicePanel extends JPanel {
             }
         }
     }
+    
+    /**
+     * Imports a Device
+     */
+    private void importDevice() {
+      
+    }
 
+    /**
+     * Exports a Device to a File
+     *
+     */
+    private void exportDevice() {
+      
+    }
+    
 }
