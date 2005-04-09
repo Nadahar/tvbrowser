@@ -60,6 +60,10 @@ public class SettingsDialog {
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SettingsDialog.class);
 
+  public static final String TAB_ID_TOOLBAR = "#toolbar";
+  public static final String TAB_ID_TIMEBUTTONS = "#timebuttons";
+
+
   private JDialog mDialog;
 
   private JSplitPane mSplitPane;
@@ -226,13 +230,13 @@ public class SettingsDialog {
     new DefaultSettingsTab(mLocalizer.msg("appearance","appearance"),null));
     root.add(node);
 
-    node.add(new SettingNode(new ButtonsSettingsTab()));
+    node.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
     node.add(new SettingNode(new LookAndFeelSettingsTab()));
     node.add(new SettingNode(new FontsSettingsTab()));
     node.add(new SettingNode(new ProgramTableSettingsTab()));
     node.add(new SettingNode(new ProgramPanelSettingsTab()));
     node.add(new SettingNode(contextmenuSettingsTab));
-    node.add(new SettingNode(new ToolbarSettingsTab(),"#toolbar"));
+    node.add(new SettingNode(new ToolbarSettingsTab(),TAB_ID_TOOLBAR));
 
     // Plugins
     node = new SettingNode(pluginSettingsTab);

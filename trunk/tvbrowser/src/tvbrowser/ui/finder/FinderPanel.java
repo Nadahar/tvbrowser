@@ -46,17 +46,12 @@ import tvbrowser.core.*;
 
 class FinderItemRenderer extends DefaultListCellRenderer {
   
-  private devplugin.Date mChoosenDate;
-  private JProgressBar mProgressBar;
   private FinderItem mCurSelectedItem;
   
   public FinderItemRenderer() {
-    mProgressBar=new JProgressBar();
   }
   
-  public void chooseDate(devplugin.Date date) {
-    mChoosenDate=date;
-  }
+
  
   public void setSelectedItem(FinderItem item) {
     mCurSelectedItem=item;
@@ -93,7 +88,6 @@ class FinderItemRenderer extends DefaultListCellRenderer {
 
 public class FinderPanel extends JScrollPane implements MouseListener, MouseMotionListener, KeyListener {
   
-  private static FinderPanel mInstance;
   private DateListener mDateChangedListener;
   
   private JList mList;
@@ -103,7 +97,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   private int mCurMouseItemInx=-1;
   private Date mCurChoosenDate;
   
-  private FinderPanel() {
+  public FinderPanel() {
     
     mModel=new DefaultListModel();
     mList=new JList(mModel);
@@ -122,17 +116,9 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     mList.addMouseListener(this); 
     mList.addKeyListener(this);
     
-    markDate(Date.getCurrentDate());
-   
+    markDate(Date.getCurrentDate());   
   }
-  
-  public static FinderPanel getInstance() {
-    if (mInstance==null) {
-      mInstance=new FinderPanel();
-    } 
-    
-    return mInstance;
-  }
+
   
   public void setDateListener(DateListener dateChangedListener) {
     mDateChangedListener=dateChangedListener;
@@ -159,7 +145,15 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   public void markDate(Date d) {
     markDate(d, null);
   }
-  
+
+  public void markPreviousDate() {
+    markDate(mCurChoosenDate.addDays(-1));
+  }
+
+  public void markNextDate() {
+    markDate(mCurChoosenDate.addDays(1));
+  }
+
   /**
    * This is a non blocking method
    * @param d

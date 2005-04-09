@@ -32,7 +32,6 @@ import java.io.IOException;
 import javax.swing.UIManager;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
-import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
@@ -231,7 +230,7 @@ public class Settings {
     if (mProp.hasChanged(propArr)) {
       // Force a recreation of the table content
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
-      model.setDate(FinderPanel.getInstance().getSelectedDate(), null, null);
+      model.setDate(mainFrame.getCurrentSelectedDate(), null, null);
     }
     
     /*
