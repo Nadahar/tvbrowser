@@ -26,15 +26,19 @@
 
 package favoritesplugin;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-
-import tvbrowser.core.filters.FilterList;
 import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
-
-import devplugin.*;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 
 /**
  *
@@ -148,13 +152,29 @@ public class Favorite {
     
     if (version >=4) {
         mUseFilter = in.readBoolean();
-        mFilter = FilterList.getInstance().getFilterByName((String)in.readObject());
+        
+        mFilter = getFilterByName((String)in.readObject());
     } else {
         mUseFilter = false;
     }
   }
-  
-  
+
+  /**
+   * Returns a specific Filter 
+   * @param name Name of the Filter
+   * @return The Filter if found, otherwise null 
+   */
+  private ProgramFilter getFilterByName(String name ){
+    ProgramFilter[] flist = Plugin.getPluginManager().getAvailableFilters();
+    
+    for (int i=0; i<flist.length;i++) {
+      if (flist[i].getName().equals(name)) {
+        return flist[i];
+      }
+    }
+    
+    return null;
+  }
   
   /**
    * Serializes this Object.
