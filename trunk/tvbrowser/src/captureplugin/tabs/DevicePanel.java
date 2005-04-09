@@ -250,10 +250,11 @@ public class DevicePanel extends JPanel {
 
         DeviceImportAndExport importer = new DeviceImportAndExport();
         
-        if (!importer.importDevice(this, chooser.getSelectedFile())) {
+        if (!importer.importDevice(mData, this, chooser.getSelectedFile())) {
           ErrorHandler.handle(importer.getError(), importer.getException());
         }
-      
+
+        mDeviceList.setListData(new Vector(mData.getDevices()));
       }
     }
 
@@ -278,9 +279,11 @@ public class DevicePanel extends JPanel {
         
         DeviceImportAndExport export = new DeviceImportAndExport();
         
-        if (!export.exportDevice(this, file)) {
+        if (!export.exportDevice(mData, this, file)) {
           ErrorHandler.handle(export.getError(), export.getException());
         }
+
+        mDeviceList.setListData(new Vector(mData.getDevices()));
       }
     }
     
