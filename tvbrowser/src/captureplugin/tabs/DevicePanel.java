@@ -33,11 +33,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -46,11 +48,14 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
+import util.exc.ErrorHandler;
+import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceCreatorDialog;
 import captureplugin.drivers.DeviceIf;
+import captureplugin.utils.DeviceImportAndExport;
 
 
 /**
@@ -154,7 +159,7 @@ public class DevicePanel extends JPanel {
         
         JButton importDevice= new JButton(mLocalizer.msg("Import", "Import Device"));
         
-        exportDevice.addActionListener(new ActionListener() {
+        importDevice.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             importDevice();
           }
@@ -235,7 +240,21 @@ public class DevicePanel extends JPanel {
      * Imports a Device
      */
     private void importDevice() {
+      JFileChooser chooser = new JFileChooser();
       
+      ExtensionFileFilter filter = new ExtensionFileFilter("tcf", mLocalizer.msg("FileType", "TV-Browser Capture-Device File (*.tcf)"));
+
+      chooser.addChoosableFileFilter(filter);
+      if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        System.out.println("Import!");
+
+        DeviceImportAndExport importer = new DeviceImportAndExport();
+        
+        if (!importer.importDevice(this, chooser.getSelectedFile())) {
+          ErrorHandler.handle(importer.getError(), importer.getException());
+        }
+      
+      }
     }
 
     /**
@@ -243,7 +262,26 @@ public class DevicePanel extends JPanel {
      *
      */
     private void exportDevice() {
+      JFileChooser chooser = new JFileChooser();
       
+      ExtensionFileFilter filter = new ExtensionFileFilter("tcf", mLocalizer.msg("FileType", "TV-Browser Capture-Device File (*.tcf)"));
+
+      chooser.addChoosableFileFilter(filter);
+
+      if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        
+        File file = chooser.getSelectedFile();
+        
+        if (!file.getName().endsWith(".tcf")) {
+          file = new File(file.getAbsolutePath() + ".tcf");
+        }
+        
+        DeviceImportAndExport export = new DeviceImportAndExport();
+        
+        if (!export.exportDevice(this, file)) {
+          ErrorHandler.handle(export.getError(), export.getException());
+        }
+      }
     }
     
 }
