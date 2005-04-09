@@ -256,7 +256,14 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     HashSet groups = new HashSet();
     HashSet countries = new HashSet();
     for (int i=0; i<allChannels.length; i++) {
-      String name = allChannels[i].getGroup().getProviderName();
+      ChannelGroup group = allChannels[i].getGroup();
+      String name = null;
+      if (group != null) {
+        name = group.getProviderName();
+      } else {
+        name = allChannels[i].getDataService().getInfo().getName();
+      }
+
       String country = allChannels[i].getCountry();
       if (name != null) {
         groups.add(name);

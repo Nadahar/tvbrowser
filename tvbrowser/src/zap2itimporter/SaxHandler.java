@@ -193,7 +193,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
       
       
       String response = "Digest "+data+", response="+add
-      +", cnonce=\""+cnonce+"\", mUsername=\""+username+"\", nc="+nc+", uri=\""+uri+"\"";
+      +", cnonce=\""+cnonce+"\", username=\""+username+"\", nc="+nc+", uri=\""+uri+"\"";
       
       //System.out.println("auth  "+response);
       

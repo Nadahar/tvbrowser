@@ -192,7 +192,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
       mUserTF = new JTextField(10);
       p1.add(mUserTF);
 
-      mPasswordLb = new JLabel(mLocalizer.msg("mPassword", "Password"));
+      mPasswordLb = new JLabel(mLocalizer.msg("password", "Password"));
       p1.add(mPasswordLb);
       mPasswordPF = new JPasswordField(10);
       p1.add(mPasswordPF);
