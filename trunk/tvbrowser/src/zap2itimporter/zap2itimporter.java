@@ -23,6 +23,8 @@ package zap2itimporter;
 
 import devplugin.Date;
 import devplugin.Channel;
+import devplugin.ChannelGroup;
+
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -113,6 +115,7 @@ public class zap2itimporter implements tvdataservice.TvDataService{
     mUsername = settings.getProperty(USER);
     mPassword = settings.getProperty(PASS);
     String number = settings.getProperty(CHANNEL_NUMBER);
+    ChannelGroup group = new Zap2itChannelGroup();
     try {
       int length = Integer.parseInt(number);
       mChannels = new Channel[length];
@@ -120,7 +123,7 @@ public class zap2itimporter implements tvdataservice.TvDataService{
         String name = settings.getProperty(CHANNEL_NAME+i);
         String id = settings.getProperty(CHANNEL_ID+i);
         if ((id!=null) && (name!=null)){
-          mChannels[i] = new Channel(this, name, id, java.util.TimeZone.getDefault(), "us", "(c) mZap2it-labs");
+          mChannels[i] = new Channel(this, name, id, java.util.TimeZone.getDefault(), "us", "(c) mZap2it-labs","http://www.zap2it.com",group);
         } else {
           System.out.println("fehlende Daten");;
         }
@@ -206,8 +209,34 @@ public class zap2itimporter implements tvdataservice.TvDataService{
       throw new TvBrowserException(this.getClass(),"error",e.toString());
     }
   }
-  
+
+
+  class Zap2itChannelGroup implements ChannelGroup {
+
+    public Zap2itChannelGroup() {
+
+    }
+
+    public String getName() {
+      return "Zap2it";
+    }
+
+    public String getId() {
+      return "zap2it";
+    }
+
+    public String getDescription() {
+      return "www.zap2it.com";
+    }
+
+    public String getProviderName() {
+      return null;
+    }
+  }
+
 }
+
+
 
 
 class MySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.event.ActionListener{
@@ -240,7 +269,7 @@ class MySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.ev
     
     c.gridwidth = GridBagConstraints.RELATIVE;
     c.anchor = GridBagConstraints.WEST;
-    javax.swing.JLabel passwordLabel = new javax.swing.JLabel("mPassword");
+    javax.swing.JLabel passwordLabel = new javax.swing.JLabel("password");
     gridbag.setConstraints(passwordLabel, c);
     panel.add(passwordLabel);
     
@@ -273,4 +302,6 @@ class MySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.ev
       javax.swing.JOptionPane.showMessageDialog(this,"update failed","error",javax.swing.JOptionPane.ERROR_MESSAGE);
     }
   }
+
+
 }
