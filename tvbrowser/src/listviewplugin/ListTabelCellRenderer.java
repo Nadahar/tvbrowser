@@ -34,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import tvbrowser.core.Settings;
 import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
@@ -91,8 +90,8 @@ public class ListTabelCellRenderer extends DefaultTableCellRenderer {
                 panel.setHeight(table.getRowHeight(row));
             }
 
-            if (Settings.propColumnWidth.getInt() > table.getColumnModel().getColumn(column).getMinWidth()) {
-                int width = Settings.propColumnWidth.getInt();
+            if (ListViewPlugin.PROGRAMTABLEWIDTH > table.getColumnModel().getColumn(column).getMinWidth()) {
+                int width = ListViewPlugin.PROGRAMTABLEWIDTH;
                 table.getColumnModel().getColumn(column).setMinWidth(width);
             }
 
