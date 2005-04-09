@@ -50,8 +50,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import util.ui.BrowserLauncher;
 import util.ui.UiUtilities;
@@ -244,7 +242,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       closePara(buffer);
     }
 
-    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    PluginAccess[] plugins = Plugin.getPluginManager().getActivatedPlugins();
     ArrayList icons = new ArrayList();
     for (int i=0; i <plugins.length; i++) {
         Icon[] ico = plugins[i].getProgramTableIcons(prog); 
