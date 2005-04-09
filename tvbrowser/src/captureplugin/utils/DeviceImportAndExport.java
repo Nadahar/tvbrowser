@@ -28,6 +28,7 @@ import java.io.File;
 
 import javax.swing.JPanel;
 
+import captureplugin.CapturePluginData;
 import captureplugin.tabs.DevicePanel;
 
 /**
@@ -64,11 +65,12 @@ public class DeviceImportAndExport {
   /**
    * Import a Device
    * 
+   * @param data CapturePlugin-Data 
    * @param panel Panel is needed for JDialogs
    * @param selectedFile File to Import
    * @return true if successfully
    */
-  public boolean importDevice(JPanel panel, File selectedFile) {
+  public boolean importDevice(CapturePluginData data, JPanel panel, File selectedFile) {
     mError = "";
     mException = new Exception();
     
@@ -88,11 +90,12 @@ public class DeviceImportAndExport {
   /**
    * Export a Device
    * 
+   * @param data CapturePlugin-Data 
    * @param panel Panel is needed for JDialogs
    * @param file File to Export
    * @return true if successfully
    */
-  public boolean exportDevice(DevicePanel panel, File file) {
+  public boolean exportDevice(CapturePluginData data, DevicePanel panel, File file) {
     mError = "";
     mException = new Exception();
 
