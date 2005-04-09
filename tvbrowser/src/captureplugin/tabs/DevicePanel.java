@@ -191,13 +191,11 @@ public class DevicePanel extends JPanel {
             dialog = new DeviceCreatorDialog((JFrame) parent);
         }
         
-        
         UiUtilities.centerAndShow(dialog);
         
         DeviceIf device = dialog.createDevice();
         
         if (device != null) {
-            System.out.println(device.getDriver() + ":" + device);
             mData.getDevices().add(device);
             
             mDeviceList.setListData(new Vector(mData.getDevices()));
@@ -246,12 +244,14 @@ public class DevicePanel extends JPanel {
 
       chooser.addChoosableFileFilter(filter);
       if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-        System.out.println("Import!");
-
         DeviceImportAndExport importer = new DeviceImportAndExport();
         
-        if (!importer.importDevice(mData, this, chooser.getSelectedFile())) {
+        DeviceIf device = importer.importDevice(mData, this, chooser.getSelectedFile()); 
+        
+        if (device == null) {
           ErrorHandler.handle(importer.getError(), importer.getException());
+        } else {
+          mData.getDevices().add(device);
         }
 
         mDeviceList.setListData(new Vector(mData.getDevices()));
@@ -279,7 +279,9 @@ public class DevicePanel extends JPanel {
         
         DeviceImportAndExport export = new DeviceImportAndExport();
         
-        if (!export.exportDevice(mData, this, file)) {
+        DeviceIf device = (DeviceIf) mDeviceList.getSelectedValue();
+        
+        if (!export.exportDevice(this, device, file)) {
           ErrorHandler.handle(export.getError(), export.getException());
         }
 
