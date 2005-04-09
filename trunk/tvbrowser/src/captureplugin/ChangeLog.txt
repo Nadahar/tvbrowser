@@ -4,6 +4,7 @@ v2.03:
 - new ActionMenu-Handler added
 - TimeOut-Setting
 - Support for Plugin-Tree
+- Export/Import of Devices
 
 v2.02:
 - Changed to new Plugin-Interface

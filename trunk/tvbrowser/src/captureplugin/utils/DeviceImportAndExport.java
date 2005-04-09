@@ -25,10 +25,19 @@
 package captureplugin.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import util.ui.Localizer;
+
 import captureplugin.CapturePluginData;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverFactory;
 import captureplugin.tabs.DevicePanel;
 
 /**
@@ -38,6 +47,9 @@ import captureplugin.tabs.DevicePanel;
  */
 public class DeviceImportAndExport {
 
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceImportAndExport.class);
+  
   /** Error-String */
   private String mError = "";
 
@@ -67,24 +79,43 @@ public class DeviceImportAndExport {
    * 
    * @param data CapturePlugin-Data 
    * @param panel Panel is needed for JDialogs
-   * @param selectedFile File to Import
-   * @return true if successfully
+   * @param file File to Import
+   * @return Imported Device, null if an error occured
    */
-  public boolean importDevice(CapturePluginData data, JPanel panel, File selectedFile) {
+  public DeviceIf importDevice(CapturePluginData data, JPanel panel, File file) {
     mError = "";
     mException = new Exception();
     
-    if (!selectedFile.exists()) {
-      mError = "Selected File doesn't exist";
-      return false;
+    if (!file.exists()) {
+      mError = mLocalizer.msg("FileNotExists","Selected File doesn't exist");
+      return null;
     }
 
-    if (selectedFile.isDirectory()) {
-      mError = "Please select a File, not a Directory";
-      return false;
-    }
+    try {
+      ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+      
+      int version = in.readInt();
+      
+      in.readObject(); // Warning in File
+      
+      String classname = (String) in.readObject();
+      String devname = (String)in.readObject();
+      
+      DeviceIf dev = DriverFactory.getInstance().createDevice(classname, devname);
+      
+      if (dev == null) {
+          mError = mLocalizer.msg("ProblemsCreating","Problems while creating the Device");
+          return null;
+      }
 
-    return true;
+      dev.readData(in);
+      
+      return dev;
+    } catch (Exception e) {
+      mError = mLocalizer.msg("ProblemsReading","Problems while reading the File");
+      mException = e;
+      return null;
+    }
   }
 
   /**
@@ -92,18 +123,41 @@ public class DeviceImportAndExport {
    * 
    * @param data CapturePlugin-Data 
    * @param panel Panel is needed for JDialogs
+   * @param device the Device to Export
    * @param file File to Export
    * @return true if successfully
    */
-  public boolean exportDevice(CapturePluginData data, DevicePanel panel, File file) {
+  public boolean exportDevice(DevicePanel panel, DeviceIf device, File file) {
     mError = "";
     mException = new Exception();
 
-    if (file.isDirectory()) {
-      mError = "Please select a File, not a Directory";
+    if (file.exists()) {
+      if (JOptionPane.showConfirmDialog(panel, 
+          mLocalizer.msg("ReplaceFile","Do you want to replace the existing File?"), 
+          mLocalizer.msg("Replace","Replace?"), 
+          JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+        return true;
+      }
+    }
+    
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+      
+      out.writeInt(1);
+      out.writeObject(new String("\n\nDon't touch this ;)\n\n"));
+      
+      out.writeObject(device.getDriver().getClass().getName());
+      out.writeObject(device.getName());
+      
+      device.writeData(out);
+      
+      out.close();
+    } catch (Exception e) {
+      mError = mLocalizer.msg("ProblemsWriting","Problems while writing the File");
+      mException = e;
       return false;
     }
-
+    
     return true;
   }
 
