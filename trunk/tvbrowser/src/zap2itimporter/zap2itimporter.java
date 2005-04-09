@@ -230,7 +230,7 @@ public class zap2itimporter implements tvdataservice.TvDataService{
     }
 
     public String getProviderName() {
-      return null;
+      return "Zap2it";
     }
   }
 
