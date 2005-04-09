@@ -41,7 +41,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
-import tvbrowser.ui.customizableitems.SortableItemList;
+import util.ui.customizableitems.SortableItemList;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ActionMenu;
