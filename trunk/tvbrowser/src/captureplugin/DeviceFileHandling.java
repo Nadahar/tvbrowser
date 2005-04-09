@@ -33,8 +33,7 @@ import java.io.ObjectOutputStream;
 
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverFactory;
-
-import tvbrowser.core.Settings;
+import devplugin.Plugin;
 
 
 /**
@@ -52,7 +51,7 @@ public class DeviceFileHandling {
      */
     public void clearDirectory() throws IOException{
         
-        File dirname = new File(Settings.getUserDirectoryName() + File.separator + "CaptureDevices");
+        File dirname = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + File.separator + "CaptureDevices");
         
         if (!dirname.exists()) {
             dirname.mkdir();
@@ -81,7 +80,7 @@ public class DeviceFileHandling {
         }
         mCount++;
         
-        File data = new File(Settings.getUserDirectoryName() + File.separator + 
+        File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator + 
                 "CaptureDevices" + File.separator + mCount + ".dat");
         
         ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(data));
@@ -107,7 +106,7 @@ public class DeviceFileHandling {
             return null;
         }
         
-        File data = new File(Settings.getUserDirectoryName() + File.separator + 
+        File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator + 
                 "CaptureDevices" + File.separator + filename);
         
         ObjectInputStream stream = new ObjectInputStream(new FileInputStream(data));
