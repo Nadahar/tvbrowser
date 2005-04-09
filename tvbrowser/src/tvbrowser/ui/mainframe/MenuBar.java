@@ -29,30 +29,28 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
+import javax.swing.*;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.TvDataBase;
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
+import tvbrowser.ui.settings.SettingsDialog;
 import tvdataservice.TvDataService;
 import devplugin.ProgramFilter;
 import devplugin.ActionMenu;
+import devplugin.Date;
+import devplugin.Channel;
 
 
 public abstract class MenuBar extends JMenuBar implements ActionListener {
@@ -67,8 +65,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
                     mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
-                    mConfigAssistantMI, mAboutMI;
-  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu;  
+                    mConfigAssistantMI, mAboutMI,
+                    mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem;
+  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu;
   private JLabel mLabel;
   
   protected MenuBar(MainFrame mainFrame, JLabel label) {
@@ -110,23 +109,69 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mStatusbarMI.setSelected(Settings.propIsStatusbarVisible.getBoolean());
     mStatusbarMI.addActionListener(this);
     
-    mTimeBtnsMI = new JCheckBoxMenuItem("Zeitknoepfe");
+    mTimeBtnsMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.timebuttons","Time buttons"));
     mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
     mTimeBtnsMI.addActionListener(this);
-    mDatelistMI = new JCheckBoxMenuItem("Datum");
+    mDatelistMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.datelist","Date list"));
     mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
     mDatelistMI.addActionListener(this);
-    mChannellistMI = new JCheckBoxMenuItem("Sender");
+    mChannellistMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.channellist","channel list"));
     mChannellistMI.setSelected(Settings.propShowChannels.getBoolean());
     mChannellistMI.addActionListener(this);
-    mPluginOverviewMI = new JCheckBoxMenuItem("Plugin Uebersicht");
+    mPluginOverviewMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.pluginOverview","Plugin overview"));
     mPluginOverviewMI.setSelected(Settings.propShowPluginView.getBoolean());
     mPluginOverviewMI.addActionListener(this);
     
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
     updateFiltersMenu();
-    
-    mPluginsViewMenu = new JMenu("TODO: Plugins");    
+
+    mGoMenu = new JMenu(mLocalizer.msg("menuitem.go","Go"));
+    mGoMenu.setMnemonic(KeyEvent.VK_G);
+    add(mGoMenu);
+
+    mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
+    mPreviousDayMI.addActionListener(this);
+    mNextDayMI = new JMenuItem(mLocalizer.msg("menuitem.nextDay","next day"));
+    mNextDayMI.addActionListener(this);
+    mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
+    mGotoNowMenuItem.addActionListener(this);
+    JMenu gotoDateMenu = new JMenu(mLocalizer.msg("menuitem.date","date"));
+    JMenu gotoChannelMenu = new JMenu(mLocalizer.msg("menuitem.channel","channel"));
+    JMenu gotoTimeMenu = new JMenu(mLocalizer.msg("menuitem.time","time"));
+    mGoMenu.add(mPreviousDayMI);
+    mGoMenu.add(mNextDayMI);
+    mGoMenu.addSeparator();
+    mGoMenu.add(gotoDateMenu);
+    mGoMenu.add(gotoChannelMenu);
+    mGoMenu.add(gotoTimeMenu);
+    mGoMenu.addSeparator();
+    mGoMenu.add(mGotoNowMenuItem);
+
+    Date curDate = new Date();
+    for (int i=0; i<21; i++) {
+      if (!TvDataBase.getInstance().dataAvailable(curDate)) {
+        break;
+      }
+      gotoDateMenu.add(createDateMenuItem(curDate));
+      curDate = curDate.addDays(1);
+    }
+
+    Channel[] channels = ChannelList.getSubscribedChannels();
+    for (int i=0; i<channels.length; i++) {
+      gotoChannelMenu.add(createChannelMenuItem(channels[i]));
+    }
+
+
+    int[] times = Settings.propTimeButtons.getIntArray();
+    for (int i=0; i<times.length; i++) {
+      gotoTimeMenu.add(createTimeMenuItem(times[i]));
+    }
+    gotoTimeMenu.addSeparator();
+    mEditTimeButtonsMenuItem = new JMenuItem("Edit Items...");
+    mEditTimeButtonsMenuItem.addActionListener(this);
+    gotoTimeMenu.add(mEditTimeButtonsMenuItem);
+
+    mPluginsViewMenu = new JMenu("TODO: Plugins");
     mPluginsViewMenu.add(new JMenuItem("Plugin #1"));
     mPluginsViewMenu.add(new JMenuItem("Plugin #2"));
     mPluginsViewMenu.add(new JMenuItem("Plugin #3"));
@@ -167,7 +212,41 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/About16.gif"));
     mAboutMI.addActionListener(this);
   }
-  
+
+
+  private JMenuItem createDateMenuItem(final Date date) {
+    JMenuItem item = new JMenuItem(date.toString());
+    item.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mMainFrame.goTo(date);
+      }
+    });
+    return item;
+  }
+
+  private JMenuItem createChannelMenuItem(final Channel channel) {
+    JMenuItem item = new JMenuItem(channel.getName());
+    item.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mMainFrame.showChannel(channel);
+      }
+    });
+
+    return item;
+  }
+
+  private JMenuItem createTimeMenuItem(final int time) {
+    int h = time/60;
+    int min = time%60;
+    JMenuItem item = new JMenuItem(h+":"+(min<10?"0":"")+min);
+    item.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mMainFrame.scrollToTime(time);
+      }
+    });
+    return item;
+  }
+
   protected JMenuItem[] createFilterMenuItems() {
       ButtonGroup group = new ButtonGroup();
       FilterList filterList = FilterList.getInstance();
@@ -333,6 +412,18 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      else if (source == mAboutMI) {
        mMainFrame.showAboutBox();
      }
+     else if (source == mPreviousDayMI) {
+       mMainFrame.goToPreviousDay();
+     }
+     else if (source == mNextDayMI) {
+       mMainFrame.goToNextDay();
+     }
+     else if (source == mGotoNowMenuItem) {
+       mMainFrame.scrollToNow();
+     }
+     else if (source == mEditTimeButtonsMenuItem) {
+       mMainFrame.showSettingsDialog(SettingsDialog.TAB_ID_TIMEBUTTONS);
+     }
    }
    
    private void createMenuItemInfos() {
@@ -349,4 +440,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
      new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
    }
+
+
+
 }

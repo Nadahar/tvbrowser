@@ -54,7 +54,10 @@ public class DefaultMenuBar extends MenuBar {
     
     JMenu viewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
     add(viewMenu);
-    
+
+
+    add(mGoMenu);
+
     JMenu tvListingsMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
     tvListingsMenu.setMnemonic(KeyEvent.VK_D);
     add(tvListingsMenu);

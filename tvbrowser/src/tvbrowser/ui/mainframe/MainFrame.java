@@ -114,6 +114,8 @@ public class MainFrame extends JFrame implements DateListener {
 
   private StatusBar mStatusBar;
 
+  private FinderPanel mFinderPanel;
+
   private static MainFrame mSingleton;
 
   private ChannelChooserPanel mChannelChooser;
@@ -172,7 +174,9 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
 
-    FinderPanel.getInstance().setDateListener(this);
+    mFinderPanel = new FinderPanel();
+
+    mFinderPanel.setDateListener(this);
     dateChanged(new devplugin.Date(), null, null);
 
     skinPanel.add(centerPanel, BorderLayout.CENTER);
@@ -400,7 +404,7 @@ public class MainFrame extends JFrame implements DateListener {
     // Change to the shown day program to today if nessesary
     // and scroll to "now" afterwards
     final int fHour = hour;
-    FinderPanel.getInstance().markDate(day, new Runnable() {
+    mFinderPanel.markDate(day, new Runnable() {
       public void run() {
         // Scroll to now
         mProgramTableScrollPane.scrollToTime(fHour * 60);
@@ -451,7 +455,7 @@ public class MainFrame extends JFrame implements DateListener {
     mToolBarModel.showUpdateButton();
     mMenuBar.showUpdateMenuItem();
 
-    FinderPanel.getInstance().updateUI();
+    mFinderPanel.updateUI();
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
 
   }
@@ -466,7 +470,24 @@ public class MainFrame extends JFrame implements DateListener {
    * Called when new TV data was downloaded or when TV data was imported.
    */
   private void newTvDataAvailable() {
-    changeDate(FinderPanel.getInstance().getSelectedDate(), null, null);
+    changeDate(mFinderPanel.getSelectedDate(), null, null);
+  }
+
+  public void goTo(Date date) {
+    mFinderPanel.markDate(date);
+  }
+
+  public void goToNextDay() {
+    mFinderPanel.markNextDate();
+  }
+
+  public void goToPreviousDay() {
+    mFinderPanel.markPreviousDate();
+  }
+
+
+  public Date getCurrentSelectedDate() {
+    return mFinderPanel.getSelectedDate();
   }
 
   private void changeDate(final Date date, final ProgressMonitor monitor, final Runnable callback) {
@@ -664,7 +685,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void setShowDatelist(boolean visible) {
     if (visible) {
-      mDateNode.setLeaf(new DateChooserPanel(this, FinderPanel.getInstance()));
+      mDateNode.setLeaf(new DateChooserPanel(this, mFinderPanel));
     } else {
       mDateNode.setLeaf(null);
     }
