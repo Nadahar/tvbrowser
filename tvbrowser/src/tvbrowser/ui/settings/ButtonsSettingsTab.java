@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -59,10 +59,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     = util.ui.Localizer.getLocalizerFor(ButtonsSettingsTab.class);
   
   private JPanel mSettingsPn;
- 
-//  private JCheckBox updateCheck, settingsCheck;
-//  private JRadioButton textOnlyRadio, picOnlyRadio, textAndPicRadio;
-//  private OrderChooser mButtonList;
+
  
   private TimesListPanel mTimeButtonsPn;
 
@@ -74,8 +71,7 @@ public class ButtonsSettingsTab implements SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    String msg;
-    
+
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
@@ -86,140 +82,30 @@ public class ButtonsSettingsTab implements SettingsTab {
     toolBarPanel.setLayout(new BoxLayout(toolBarPanel,BoxLayout.Y_AXIS));
     main.add(toolBarPanel);
     
-    
-    /* visible buttons */
- /*   JPanel toolbarbuttonsPanel = new JPanel(new BorderLayout());
-    toolbarbuttonsPanel.setBorder(BorderFactory.createTitledBorder("Toolbar buttons"));
-    
-    ButtonItem[] availableButtons = getAvailableButtons();
-    ButtonItem[] toolbarButtons = getSelectedToolbarButtons(availableButtons);
-    mButtonList = new OrderChooser(toolbarButtons, availableButtons);
-    toolbarbuttonsPanel.add(mButtonList,BorderLayout.WEST);
- 
-*/
 
 
-  /* 'text and images' buttons */
-/*
-    JPanel labelBtnsPanel=new JPanel(new BorderLayout());
-    JPanel panel4=new JPanel(new BorderLayout());
-    msg = mLocalizer.msg("label", "Label");
-    panel4.setBorder(BorderFactory.createTitledBorder(msg));
-    panel4.setLayout(new BoxLayout(panel4,BoxLayout.Y_AXIS));
-    textOnlyRadio = new JRadioButton(mLocalizer.msg("textOnly", "Text only"));
-    picOnlyRadio = new JRadioButton(mLocalizer.msg("imagesOnly", "Images only"));
-    textAndPicRadio = new JRadioButton(mLocalizer.msg("textAndImages", "Text and images"));
-    ButtonGroup labelBtnsGroup=new ButtonGroup();
-    labelBtnsGroup.add(textOnlyRadio);
-    labelBtnsGroup.add(picOnlyRadio);
-    labelBtnsGroup.add(textAndPicRadio);
-
-    if (Settings.propToolbarButtonStyle.getString().equals("text")) {
-      textOnlyRadio.setSelected(true);
-    } else if (Settings.propToolbarButtonStyle.getString().equals("icon")) {
-      picOnlyRadio.setSelected(true);
-    } else {
-      textAndPicRadio.setSelected(true);
-    }
-
-    panel4.add(textOnlyRadio);
-    panel4.add(picOnlyRadio);
-    panel4.add(textAndPicRadio);
-    labelBtnsPanel.add(panel4,BorderLayout.NORTH);
-*/
-    mTimeButtonsPn = new TimesListPanel(Settings.propTimeButtons.getIntArray());  //createTimeButtonsPanel();
+    mTimeButtonsPn = new TimesListPanel(Settings.propTimeButtons.getIntArray());
     mTimeButtonsPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("buttons.time", "Time buttons")));
     
-    
- 
- //   JPanel buttonsPn = new JPanel(new GridLayout(1,2));
-//    buttonsPn.add(toolbarbuttonsPanel);
-//    buttonsPn.add(labelBtnsPanel);
- //   toolBarPanel.add(buttonsPn);
+
     
     toolBarPanel.add(mTimeButtonsPn);
     
     return mSettingsPn;
   }
   
-  /*
-  private ButtonItem[] getSelectedToolbarButtons(ButtonItem[] availableItems) {
-    
-    
-    String[] toolbarButtons = Settings.propToolbarButtons.getStringArray();
-    if (toolbarButtons == null) {
-      ButtonItem[] result = new ButtonItem[availableItems.length];
-      System.arraycopy(availableItems, 0, result, 0, availableItems.length);
-      return result;
-    }
-    ArrayList list = new ArrayList();
-    for (int i=0; i<toolbarButtons.length; i++) {
-      String itemName = toolbarButtons[i];
-      for (int j=0; j<availableItems.length; j++) {
-         if (availableItems[j].getId().equals(itemName)) {
-           list.add(availableItems[j]);
-         }
-        
-      }
-    }
-        
-    ButtonItem[] result = new ButtonItem[list.size()];
-    list.toArray(result);
-    return result;
-  }
-*/
-/*
-  private ButtonItem[] getAvailableButtons() {
-    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
-    
-    ArrayList buttonList = new ArrayList();
-    buttonList.add(new ButtonItem("#update","Update"));
-    buttonList.add(new ButtonItem("#settings","Settings"));
-    
-    for (int i = 0; i < pluginArr.length; i++) {
-      if (pluginArr[i].getButtonAction() != null) {
-        buttonList.add(new ButtonItem(pluginArr[i]));
-      }
-    }
-    
-    // Create an array from the list
-    ButtonItem[] buttonArr = new ButtonItem[buttonList.size()];
-    buttonList.toArray(buttonArr);
-    return buttonArr;
-  }
-*/
+
 
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-   // Settings.propShowTimeButtons.setBoolean(mTimeCheck.isSelected());
-  /*  
-    Object[] oItems = mButtonList.getOrder();
-    String[] items = new String[oItems.length];
-    for (int i=0; i<oItems.length; i++) {
-      items[i] = ((ButtonItem)oItems[i]).getId();
-    }
-    Settings.propToolbarButtons.setStringArray(items);
-    
-    if (textOnlyRadio.isSelected()) {
-      Settings.propToolbarButtonStyle.setString("text");
-    } else if (picOnlyRadio.isSelected()) {
-      Settings.propToolbarButtonStyle.setString("icon");
-    } else {
-      Settings.propToolbarButtonStyle.setString("text&icon");
-    }
-    */
+
     int[] x = mTimeButtonsPn.getTimes();
     Settings.propTimeButtons.setIntArray(mTimeButtonsPn.getTimes());
     for (int i=0; i<x.length; i++) {
       System.out.println(x[i]);
     }
-    
- /*   Settings.propEarlyTime.setInt(mEarlyTimePn.getTime());
-    Settings.propMiddayTime.setInt(mMiddayTimePn.getTime());
-    Settings.propAfternoonTime.setInt(mAfternoonTimePn.getTime());
-    Settings.propEveningTime.setInt(mEveningTimePn.getTime());*/
   }
 
   

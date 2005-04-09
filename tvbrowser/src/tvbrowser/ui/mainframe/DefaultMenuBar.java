@@ -30,6 +30,7 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -121,7 +122,9 @@ public class DefaultMenuBar extends MenuBar {
     mUpdateMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));    
     mHelpMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
     mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,0));
-        
+    mPreviousDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK));
+    mNextDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK));
+
   }
 
 
