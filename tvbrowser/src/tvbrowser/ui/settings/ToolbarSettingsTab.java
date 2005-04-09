@@ -35,12 +35,12 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
-import tvbrowser.ui.customizableitems.CustomizableItemsListener;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.*;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.core.Settings;
+import util.ui.customizableitems.CustomizableItemsListener;
+import util.ui.customizableitems.CustomizableItemsPanel;
 
 
 /**

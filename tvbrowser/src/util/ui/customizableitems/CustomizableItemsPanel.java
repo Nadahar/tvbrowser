@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package tvbrowser.ui.customizableitems;
+package util.ui.customizableitems;
 
 import javax.swing.*;
 import javax.swing.event.*;

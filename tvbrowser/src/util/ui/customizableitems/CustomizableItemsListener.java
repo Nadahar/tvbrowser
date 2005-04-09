@@ -30,7 +30,7 @@
   * @author Martin Oberhauser
   */
 
-package tvbrowser.ui.customizableitems;
+package util.ui.customizableitems;
 
 import javax.swing.event.*;
 

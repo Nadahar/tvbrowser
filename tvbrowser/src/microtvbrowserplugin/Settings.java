@@ -24,7 +24,7 @@ import devplugin.Channel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.Vector;
-import tvbrowser.ui.customizableitems.CustomizableItemsPanel;
+import util.ui.customizableitems.CustomizableItemsPanel;
 import util.ui.Localizer;
 
 

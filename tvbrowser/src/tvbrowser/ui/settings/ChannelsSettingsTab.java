@@ -50,12 +50,12 @@ import javax.swing.event.ListSelectionListener;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataServiceManager;
-import tvbrowser.ui.customizableitems.SortableItemList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
 import util.ui.LinkButton;
 import util.ui.UiUtilities;
+import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
