@@ -210,18 +210,11 @@ public interface PluginManager {
    */
   public void handleProgramDoubleClick(Program program, Plugin caller);
 
+
   /**
-   * In TV-Browser 1.1 a plugin can store its programs in a structure like
-   * a direktory. This method returns the root node of this structure for
-   * a plugin.
-   * 
-   * @param pluginId
-   * @return The root node
-   * @since 1.1
+   * Returns some settings a plugin may need.
+   * @return
    */
-  //public ProgramContainer getProgramContainer(String pluginId);
-  //public void storeProgramContainer(String pluginId);
-  
- // public MutableTreeNode getRootNode(String id);
-  
+  public TvBrowserSettings getTvBrowserSettings();
+
 }

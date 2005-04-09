@@ -116,7 +116,7 @@ public class FtpDataTarget implements DataTarget {
          }
        } catch (Exception exc) {
          throw new UpdateException("Login using user='" + mUser
-             + "' and password=(" + mPassword.length() + " characters) failed", exc);
+             + "' and mPassword=(" + mPassword.length() + " characters) failed", exc);
        }
     
        // Set the file type to binary

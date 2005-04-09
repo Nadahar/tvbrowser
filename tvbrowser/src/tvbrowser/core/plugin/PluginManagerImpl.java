@@ -30,24 +30,13 @@ import java.util.Iterator;
 import java.util.TimeZone;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
-import tvbrowser.core.ChannelList;
-import tvbrowser.core.TvDataBase;
-import tvbrowser.core.TvDataSearcher;
-import tvbrowser.core.TvDataServiceManager;
+
+import tvbrowser.core.*;
 import tvbrowser.core.filters.FilterList;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.ChannelDayProgram;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramFilter;
+import devplugin.*;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -379,5 +368,23 @@ public class PluginManagerImpl implements PluginManager {
   public PluginAccess getDefaultContextMenuPlugin() {
     return PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
   }
-   
+
+
+  
+  public TvBrowserSettings getTvBrowserSettings() {
+    return new TvBrowserSettings(){
+      public String getTvBrowserUserHome() {
+        return Settings.getUserDirectoryName();
+      }
+
+      public int[] getTimeButtonTimes() {
+        return Settings.propTimeButtons.getIntArray();
+      }
+
+      public Date getLastDownloadDate() {
+        return Settings.propLastDownloadDate.getDate();
+      }
+    };
+  }
+
 }
