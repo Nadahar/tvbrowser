@@ -86,8 +86,8 @@ public class Updater implements Progress {
 
         if ((_tvraterPlugin.getSettings().getProperty("name") == null)
                 || (_tvraterPlugin.getSettings().getProperty("name").length() == 0)
-                || (_tvraterPlugin.getSettings().getProperty("password") == null)
-                || (_tvraterPlugin.getSettings().getProperty("password").length() == 0)) {
+                || (_tvraterPlugin.getSettings().getProperty("mPassword") == null)
+                || (_tvraterPlugin.getSettings().getProperty("mPassword").length() == 0)) {
 
             JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), _mLocalizer.msg("noUser",
                     "Please Enter your Userdata in the\nconfiguration of this Plugin"), _mLocalizer.msg("error",
@@ -293,8 +293,8 @@ public class Updater implements Progress {
         Element name = createNodeWithTextValue(document, "name", _tvraterPlugin.getSettings().getProperty("name"));
         user.appendChild(name);
 
-        Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(_tvraterPlugin
-                .getSettings().getProperty("password"), 21));
+        Element password = createNodeWithTextValue(document, "mPassword", IOUtilities.xorEncode(_tvraterPlugin
+                .getSettings().getProperty("mPassword"), 21));
         user.appendChild(password);
 
         tvrater.appendChild(user);
