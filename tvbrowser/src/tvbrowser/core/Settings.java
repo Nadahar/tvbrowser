@@ -520,7 +520,7 @@ public class Settings {
     = new StringProperty(mProp, "proxy.http.user", "");
 
   public static final EncodedStringProperty propHttpProxyPassword
-    = new EncodedStringProperty(mProp, "proxy.http.mPassword", "", PROXY_PASSWORD_SEED);
+    = new EncodedStringProperty(mProp, "proxy.http.password", "", PROXY_PASSWORD_SEED);
 
   public static final BooleanProperty propFtpProxyUseProxy
     = new BooleanProperty(mProp, "proxy.ftp.useProxy", false);
@@ -538,7 +538,7 @@ public class Settings {
     = new StringProperty(mProp, "proxy.ftp.user", "");
 
   public static final EncodedStringProperty propFtpProxyPassword
-    = new EncodedStringProperty(mProp, "proxy.ftp.mPassword", "", PROXY_PASSWORD_SEED);
+    = new EncodedStringProperty(mProp, "proxy.ftp.password", "", PROXY_PASSWORD_SEED);
 	
   public static final StringArrayProperty propDataServicesForUpdate
     = new StringArrayProperty(mProp,"tvdataservices.update",null);
