@@ -108,12 +108,12 @@ public class TVRaterSettingsTab implements SettingsTab {
     c.weightx = 0;
     c.insets = new Insets(5, 0, 0, 5);
     c.gridwidth = GridBagConstraints.RELATIVE;
-    user.add(new JLabel(mLocalizer.msg("mPassword", "Password") + ":"), c);
+    user.add(new JLabel(mLocalizer.msg("password", "Password") + ":"), c);
 
     c.weightx = 1.0;
     c.gridwidth = GridBagConstraints.REMAINDER;
     c.insets = new Insets(0, 0, 0, 3);
-    _password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("mPassword", ""), 21));
+    _password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password", ""), 21));
     user.add(_password, c);
 
     c.gridwidth = GridBagConstraints.RELATIVE;
@@ -206,7 +206,7 @@ public class TVRaterSettingsTab implements SettingsTab {
    */
   public void saveSettings() {
     _settings.setProperty("name", _name.getText());
-    _settings.setProperty("mPassword", IOUtilities.xorEncode(new String(_password.getPassword()), 21));
+    _settings.setProperty("password", IOUtilities.xorEncode(new String(_password.getPassword()), 21));
     /*
      * if (_includeFav.isSelected()) { _settings.setProperty("includeFavorites",
      * "true"); } else { _settings.setProperty("includeFavorites", "false"); }
