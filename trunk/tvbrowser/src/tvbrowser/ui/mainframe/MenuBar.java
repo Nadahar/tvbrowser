@@ -167,7 +167,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
       gotoTimeMenu.add(createTimeMenuItem(times[i]));
     }
     gotoTimeMenu.addSeparator();
-    mEditTimeButtonsMenuItem = new JMenuItem("Edit Items...");
+    mEditTimeButtonsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.editTimeItems","Edit Items..."));
     mEditTimeButtonsMenuItem.addActionListener(this);
     gotoTimeMenu.add(mEditTimeButtonsMenuItem);
 
