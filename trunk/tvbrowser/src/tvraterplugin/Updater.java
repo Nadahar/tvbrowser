@@ -291,7 +291,7 @@ public class Updater implements Progress {
         user.appendChild(name);
 
         Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(_tvraterPlugin
-                .getSettings().getProperty("mPassword"), 21));
+                .getSettings().getProperty("password"), 21));
         user.appendChild(password);
 
         tvrater.appendChild(user);
