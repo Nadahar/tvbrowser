@@ -56,7 +56,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import tvbrowser.core.Settings;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.Channel;
@@ -100,7 +99,7 @@ public class ListViewDialog extends JDialog {
   private JComboBox mBox;
 
   /** Times */
-  private int[] mTimes = Settings.propTimeButtons.getIntArray();
+  private int[] mTimes;
 
   /** Plugin that created the Dialog */
   private Plugin mPlugin;
@@ -115,6 +114,8 @@ public class ListViewDialog extends JDialog {
     super(frame, true);
     setTitle(mLocalizer.msg("viewList", "View List:"));
     mPlugin = plugin;
+    mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
+    
     generateList(new Date(), getCurrentTime());
     createGUI();
   }
@@ -457,7 +458,7 @@ public class ListViewDialog extends JDialog {
     mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new ListTabelCellRenderer());
     mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ListTabelCellRenderer());
     mProgramTable.getColumnModel().getColumn(2).setCellRenderer(new ListTabelCellRenderer());
-    int width = Settings.propColumnWidth.getInt();
+    int width = 200;
     mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
     mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
     mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
