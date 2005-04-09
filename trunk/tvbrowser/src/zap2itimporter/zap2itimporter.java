@@ -72,7 +72,7 @@ public class zap2itimporter implements tvdataservice.TvDataService{
         throw new TvBrowserException(this.getClass(),"error",e.toString());
       }
     } else {
-      throw new TvBrowserException(this.getClass(),"no mUsername found","no mUsername found");
+      throw new TvBrowserException(this.getClass(),"no username found","no username found");
     }
   }
   
@@ -228,7 +228,7 @@ class MySettingsPanel extends tvdataservice.SettingsPanel implements java.awt.ev
     c.fill = GridBagConstraints.HORIZONTAL;
     c.anchor = GridBagConstraints.WEST;
     c.weightx = 1.0;
-    javax.swing.JLabel userNameLabel = new javax.swing.JLabel("mUsername");
+    javax.swing.JLabel userNameLabel = new javax.swing.JLabel("username");
     gridbag.setConstraints(userNameLabel, c);
     panel.add(userNameLabel);
     
