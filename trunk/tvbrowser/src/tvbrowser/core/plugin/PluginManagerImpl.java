@@ -346,7 +346,21 @@ public class PluginManagerImpl implements PluginManager {
     
     if (defaultContextMenuPlugin != null) {
       ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
+      while (menu != null && menu.hasSubItems()) {
+        ActionMenu[] subItems = menu.getSubItems();
+        if (subItems.length>0) {
+          menu = subItems[0];
+        }
+        else {
+          menu = null;
+        }
+      }
+      if (menu == null) {
+        return;
+      }
+
       Action action = menu.getAction();
+
       if (action != null) {
         ActionEvent evt = new ActionEvent(program, 0, null);
         action.actionPerformed(evt);
