@@ -49,7 +49,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import tvbrowser.core.plugin.PluginProxy;
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
 import util.ui.ImageUtilities;
@@ -207,7 +206,7 @@ public class ReminderSettingsTab implements SettingsTab {
       // get the installed plugins
       PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
       System.out.println(installedPluginArr.length+" plugins available");
-      PluginAccess[] copy = new PluginProxy[installedPluginArr.length];
+      PluginAccess[] copy = new PluginAccess[installedPluginArr.length];
       
       for (int i = 0; i < installedPluginArr.length;i++) {
           copy[i] = installedPluginArr[i];
