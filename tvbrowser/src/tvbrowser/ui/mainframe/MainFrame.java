@@ -471,6 +471,7 @@ public class MainFrame extends JFrame implements DateListener {
    */
   private void newTvDataAvailable() {
     changeDate(mFinderPanel.getSelectedDate(), null, null);
+    mMenuBar.updateDateItems();
   }
 
   public void goTo(Date date) {
@@ -527,9 +528,9 @@ public class MainFrame extends JFrame implements DateListener {
     downloadingThread.start();
   }
 
-  public void updateChannelChooser() {
+  public void updateChannellist() {
     mChannelChooser.updateChannelChooser();
-
+    mMenuBar.updateChannelItems();
   }
 
   /**
@@ -654,8 +655,10 @@ public class MainFrame extends JFrame implements DateListener {
    * Updates the TimeChooser-Buttons
    */
   public void updateButtons() {
-    // mTimeChooser.updateButtons();
+    mMenuBar.updateTimeItems();
   }
+
+
 
   public void setShowToolbar(boolean visible) {
     Settings.propIsTooolbarVisible.setBoolean(visible);
