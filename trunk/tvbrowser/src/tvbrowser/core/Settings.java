@@ -203,13 +203,10 @@ public class Settings {
     }
     
     if (mProp.hasChanged(propSubscribedChannels)) {
-      System.out.println("channels changed!");
       ChannelList.create();
-      System.out.println("# of channels: "+ChannelList.getSubscribedChannels().length);
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
       model.setChannels(ChannelList.getSubscribedChannels());
-      
-      mainFrame.updateChannelChooser();
+      mainFrame.updateChannellist();
     }
       
     propArr = new Property[] {

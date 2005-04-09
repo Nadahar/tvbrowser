@@ -173,7 +173,7 @@ class TimePanel extends JPanel {
     public TimesListPanel(int[] times) {
         
       mRows = new ArrayList();        
-      setLayout(new BorderLayout());
+      setLayout(new BorderLayout(3,8));
       
       mListPn = new JPanel();
       mListPn.setLayout(new BoxLayout(mListPn, BoxLayout.Y_AXIS));
@@ -181,6 +181,7 @@ class TimePanel extends JPanel {
        
       for (int i=0; i<times.length; i++) {
         final Row row = new Row(times[i]);
+        row.setBorder(BorderFactory.createEmptyBorder(2,0,2,0));
         mRows.add(row);
         row.getRemoveButton().addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent arg) {
@@ -192,7 +193,7 @@ class TimePanel extends JPanel {
       JButton newBtn = new JButton(new ImageIcon("imgs/New16.gif"));
       newBtn.setToolTipText(mLocalizer.msg("new","New"));
       JPanel southPn = new JPanel(new BorderLayout());
-      southPn.add(newBtn, BorderLayout.WEST);
+      southPn.add(newBtn, BorderLayout.EAST);
       
       add(southPn, BorderLayout.SOUTH);
       newBtn.addActionListener(new ActionListener(){
@@ -243,7 +244,7 @@ class TimePanel extends JPanel {
       setLayout(new BorderLayout());
       mRemoveBtn = new JButton(new ImageIcon("imgs/Delete16.gif"));
       mRemoveBtn.setToolTipText(mLocalizer.msg("delete","Delete"));
-      JPanel row = new JPanel(new TabLayout(2));
+      JPanel row = new JPanel(new TabLayout(2,14,0));
       
       row.add(mTimePn = new TimePanel(time));
       row.add(mRemoveBtn);

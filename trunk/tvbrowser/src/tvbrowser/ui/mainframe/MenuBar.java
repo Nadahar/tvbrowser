@@ -68,6 +68,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
                     mConfigAssistantMI, mAboutMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu;
+
+  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
   private JLabel mLabel;
   
   protected MenuBar(MainFrame mainFrame, JLabel label) {
@@ -135,41 +137,28 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mNextDayMI.addActionListener(this);
     mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
     mGotoNowMenuItem.addActionListener(this);
-    JMenu gotoDateMenu = new JMenu(mLocalizer.msg("menuitem.date","date"));
-    JMenu gotoChannelMenu = new JMenu(mLocalizer.msg("menuitem.channel","channel"));
-    JMenu gotoTimeMenu = new JMenu(mLocalizer.msg("menuitem.time","time"));
+    mGotoDateMenu = new JMenu(mLocalizer.msg("menuitem.date","date"));
+
+
+
+    mGotoChannelMenu = new JMenu(mLocalizer.msg("menuitem.channel","channel"));
+    mGotoTimeMenu = new JMenu(mLocalizer.msg("menuitem.time","time"));
     mGoMenu.add(mPreviousDayMI);
     mGoMenu.add(mNextDayMI);
     mGoMenu.addSeparator();
-    mGoMenu.add(gotoDateMenu);
-    mGoMenu.add(gotoChannelMenu);
-    mGoMenu.add(gotoTimeMenu);
+    mGoMenu.add(mGotoDateMenu);
+    mGoMenu.add(mGotoChannelMenu);
+    mGoMenu.add(mGotoTimeMenu);
     mGoMenu.addSeparator();
     mGoMenu.add(mGotoNowMenuItem);
 
-    Date curDate = new Date();
-    for (int i=0; i<21; i++) {
-      if (!TvDataBase.getInstance().dataAvailable(curDate)) {
-        break;
-      }
-      gotoDateMenu.add(createDateMenuItem(curDate));
-      curDate = curDate.addDays(1);
-    }
-
-    Channel[] channels = ChannelList.getSubscribedChannels();
-    for (int i=0; i<channels.length; i++) {
-      gotoChannelMenu.add(createChannelMenuItem(channels[i]));
-    }
+    updateDateItems();
+    updateChannelItems();
+    updateTimeItems();
 
 
-    int[] times = Settings.propTimeButtons.getIntArray();
-    for (int i=0; i<times.length; i++) {
-      gotoTimeMenu.add(createTimeMenuItem(times[i]));
-    }
-    gotoTimeMenu.addSeparator();
-    mEditTimeButtonsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.editTimeItems","Edit Items..."));
-    mEditTimeButtonsMenuItem.addActionListener(this);
-    gotoTimeMenu.add(mEditTimeButtonsMenuItem);
+
+
 
     mPluginsViewMenu = new JMenu("TODO: Plugins");
     mPluginsViewMenu.add(new JMenuItem("Plugin #1"));
@@ -291,7 +280,39 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      JMenuItem[] items = createPluginMenuItems();
      setPluginMenuItems(items);
    }
-   
+
+   public void updateTimeItems() {
+     mGotoTimeMenu.removeAll();
+     int[] times = Settings.propTimeButtons.getIntArray();
+    for (int i=0; i<times.length; i++) {
+      mGotoTimeMenu.add(createTimeMenuItem(times[i]));
+    }
+    mGotoTimeMenu.addSeparator();
+    mEditTimeButtonsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.editTimeItems","Edit Items..."));
+    mEditTimeButtonsMenuItem.addActionListener(this);
+    mGotoTimeMenu.add(mEditTimeButtonsMenuItem);
+   }
+
+   public void updateChannelItems() {
+     mGotoChannelMenu.removeAll();
+     Channel[] channels = ChannelList.getSubscribedChannels();
+     for (int i=0; i<channels.length; i++) {
+       mGotoChannelMenu.add(createChannelMenuItem(channels[i]));
+     }
+   }
+
+  public void updateDateItems() {
+    mGotoDateMenu.removeAll();
+    Date curDate = new Date();
+    for (int i=0; i<21; i++) {
+      if (!TvDataBase.getInstance().dataAvailable(curDate)) {
+        break;
+      }
+      mGotoDateMenu.add(createDateMenuItem(curDate));
+      curDate = curDate.addDays(1);
+    }
+  }
+
    public void updateFiltersMenu() {
        mFiltersMenu.removeAll();
        FilterButtons filterButtons = new FilterButtons(mMainFrame);
