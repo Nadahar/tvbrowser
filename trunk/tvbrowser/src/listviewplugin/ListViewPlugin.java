@@ -48,6 +48,8 @@ import devplugin.ActionMenu;
  */
 public class ListViewPlugin extends Plugin {
 
+    public static final int PROGRAMTABLEWIDTH = 200;
+  
     /** Translator */
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ListViewPlugin.class);
 
