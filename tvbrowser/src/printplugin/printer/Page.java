@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,35 +24,10 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.printer;
 
-import java.util.*;
-
-
-public abstract class AbstractPageModel implements PageModel {
+public interface Page {
   
-  private ArrayList mColumns;
-
-   public AbstractPageModel() {
-     mColumns = new ArrayList();
-   }
-  
-   public void addColumn(ColumnModel col) {
-     mColumns.add(col);
-   }
-  
-   public int getColumnCount() {
-     return mColumns.size();
-   }
-
-  
-   public ColumnModel getColumnAt(int inx) {
-     return (ColumnModel)mColumns.get(inx);
-   }
-
-   public String getFooter() {
-     return "Copyright (c) by TV-Browser - http://www.tvbrowser.org";
-   }
-  
+  public void printPage(java.awt.Graphics g); 
   
 }

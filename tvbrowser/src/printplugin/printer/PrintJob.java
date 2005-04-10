@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,14 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.printer;
 
-public interface PageRenderer {
-  
-  public Page[] createPages(PageModel model); 
-  
+import java.awt.print.Printable;
+
+public interface PrintJob {  
+
+  public int getNumOfPages();
+
+  public Printable getPrintable();
+
 }

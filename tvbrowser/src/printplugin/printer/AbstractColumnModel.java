@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,28 +24,44 @@
  * $Revision$
  */
 
-package printplugin;
 
-import devplugin.*;
+package printplugin.printer;
+
+import devplugin.Program;
 
 
-public class DefaultPageModel extends AbstractPageModel {
-
-  private Date mDate;
- 
-  public DefaultPageModel(Date date) {
-    super();
-    mDate = date;
-    
-  }
+public abstract class AbstractColumnModel implements ColumnModel {
   
-  public void addChannelDayProgram(Channel channel, Program[] programArr) {
-    ColumnModel col = new DefaultColumnModel(channel.getName(), programArr);
-    super.addColumn(col);
+  private String mTitle;
+  private Program[] mPrograms;
+
+
+  public AbstractColumnModel() {
+    mPrograms = new Program[]{};
   }
-	
-	public String getHeader() {
-		return mDate.toString();
-	}
+
+  public AbstractColumnModel(Program[] progs) {
+    mPrograms = progs;
+  }
+
+  public void setPrograms(Program[] progs) {
+    mPrograms = progs;
+  }
+
+  public Program getProgramAt(int inx) {
+    if (inx>=0 && inx<mPrograms.length) {
+      return mPrograms[inx];
+    }
+    return null;
+  }
+
+  
+  public int getProgramCount() {
+    if (mPrograms == null) {
+      return 0;
+    }
+    return mPrograms.length;
+  }
+
   
 }

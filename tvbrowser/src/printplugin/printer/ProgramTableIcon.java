@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,20 +24,24 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.printer;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 import javax.swing.Icon;
 
 import devplugin.Program;
+import printplugin.settings.ProgramIconSettings;
+
+
 
 
 public class ProgramTableIcon implements Icon {
+
+
+   public static int COLUMN_WIDTH = 180;
+   public static final Font COL_HEADER_FONT = new Font("Dialog",Font.BOLD,18);
+
 
    private ProgramItem[][] mProgramItems;
    private int mWidth, mColumnHeight;
@@ -59,11 +63,14 @@ public class ProgramTableIcon implements Icon {
     
      mWidth = width;
      mColumnHeight = height-HEADER_SPACE;
-     mZoom = (double)mWidth/(double)(ChannelPageRenderer.COLUMN_WIDTH * maxColsPerPage);
-    
+     mZoom = (double)mWidth/(double)(COLUMN_WIDTH * maxColsPerPage);
+
+
      mStartHour = startHour;
      mEndHour = endHour;
-      
+
+
+
      mColHeaders = new String[cols.length];
      for (int i=0;i<cols.length;i++) {
        mColHeaders[i] = cols[i].getTitle();
@@ -107,7 +114,7 @@ public class ProgramTableIcon implements Icon {
     
      int x = 0;
      int y = 0;
-     int curHour = -1;
+     //int curHour = -1;
     
      for (int col = 0; col < mProgramItems.length; col++) {  
        y=0;
@@ -165,7 +172,7 @@ public class ProgramTableIcon implements Icon {
       
        }      
       
-       x+=ChannelPageRenderer.COLUMN_WIDTH;
+       x+=COLUMN_WIDTH;
      }
     
    }
@@ -190,16 +197,16 @@ public class ProgramTableIcon implements Icon {
      
      
      
-     g.setFont(ChannelPageRenderer.COL_HEADER_FONT);
+     g.setFont(COL_HEADER_FONT);
      for (int i=0;i<mColHeaders.length;i++) {
        g.setColor(Color.lightGray);
-       g.fillRect(ChannelPageRenderer.COLUMN_WIDTH*i,-HEADER_SPACE,ChannelPageRenderer.COLUMN_WIDTH,HEADER_SPACE);  
+       g.fillRect(COLUMN_WIDTH*i,-HEADER_SPACE,COLUMN_WIDTH,HEADER_SPACE);
        g.setColor(Color.black);
-       g.drawLine(ChannelPageRenderer.COLUMN_WIDTH*i,-HEADER_SPACE,ChannelPageRenderer.COLUMN_WIDTH*i,0);
-       FontMetrics metrics = g.getFontMetrics(ChannelPageRenderer.COL_HEADER_FONT);
+       g.drawLine(COLUMN_WIDTH*i,-HEADER_SPACE,COLUMN_WIDTH*i,0);
+       FontMetrics metrics = g.getFontMetrics(COL_HEADER_FONT);
        int w = metrics.stringWidth(mColHeaders[i]);
-       int cw = ChannelPageRenderer.COLUMN_WIDTH;
-       g.drawString(mColHeaders[i],cw*i + (cw-w)/2,-(HEADER_SPACE-ChannelPageRenderer.COL_HEADER_FONT.getSize())/2);
+       int cw = COLUMN_WIDTH;
+       g.drawString(mColHeaders[i],cw*i + (cw-w)/2,-(HEADER_SPACE-COL_HEADER_FONT.getSize())/2);
      }
         
      g.drawRect(0,-HEADER_SPACE,(int)(mWidth/mZoom),(int)(mColumnHeight/mZoom)+HEADER_SPACE);    
@@ -208,7 +215,7 @@ public class ProgramTableIcon implements Icon {
      g.setColor(Color.lightGray);
      
      for (int i=1;i<mProgramItems.length;i++) {
-       g.drawLine(ChannelPageRenderer.COLUMN_WIDTH*i,0,ChannelPageRenderer.COLUMN_WIDTH*i,(int)(mColumnHeight/mZoom));   
+       g.drawLine(COLUMN_WIDTH*i,0,COLUMN_WIDTH*i,(int)(mColumnHeight/mZoom));
      }
       
      /*

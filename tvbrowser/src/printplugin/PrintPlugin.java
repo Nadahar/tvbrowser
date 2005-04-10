@@ -1,9 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
- *
- * PrintPlugin
- * Copyright (C) 08-2003 Robert Inzinger (yxterwd@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,86 +26,157 @@
 
 package printplugin;
 
-import printplugin.dlgs.PrintDialog;
-
-
-import java.awt.print.*;
-import java.util.Properties;
 import devplugin.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.print.PrinterJob;
+import java.awt.print.PrinterException;
+import java.awt.print.PageFormat;
+import java.util.Properties;
 
-/**
- * Provides a dialog for printing programs.
- *
- * @author Robert Inzinger
- * @author Martin Oberhauser
- */
-
-public class PrintPlugin extends devplugin.Plugin
-{
-   /** The localizer for this class. */
-   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(PrintPlugin.class);
-
-   
-   public PrintPlugin()
-   {
-   }
-
-   public String getButtonIconName()
-   {
-      return "printplugin/imgs/Print16.gif";
-   }
-   public String getMarkIconName()
-   {
-      return "printplugin/imgs/Print16.gif";
-   }
-
-   public String getButtonText()
-   {
-      return mLocalizer.msg("printProgram", "Print program");
-   }
-
-   public PluginInfo getInfo()
-   {
-       String name = mLocalizer.msg("printProgram" ,"Print program");
-       String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
-       String author = "Robert Inzinger, Martin Oberhauser";
-
-       return new PluginInfo(name, desc, author, new Version(0, 5));
-   }
+import javax.swing.*;
+import printplugin.dlgs.MainPrintDialog;
+import printplugin.dlgs.PrintDayProgramsDialog;
+import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.DayProgramScheme;
+import printplugin.printer.PrintJob;
+import util.ui.UiUtilities;
 
 
+public class PrintPlugin extends Plugin {
 
-  public void execute() {
-    
-    
-    
-    PrinterJob printJob = PrinterJob.getPrinterJob();
-    
-    PrintDialog dlg = new PrintDialog(getParentFrame(), printJob);
-    util.ui.UiUtilities.centerAndShow(dlg);
-    
-    Printer printer = dlg.getPrinter();
-    
-    if (printer!=null) {
-      printJob.setPrintable(printer, dlg.getPageFormat());    
-      try {
-        printJob.print();
-      } catch (PrinterException e) {
-        e.printStackTrace();
-      }
-    }
-    
+  /** The localizer for this class. */
+  private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(PrintPlugin.class);
+
+
+  public PrintPlugin() {
   }
 
 
- 
+  public String getMarkIconName() {
+    return "printplugin/imgs/Print16.gif";
+  }
 
-  
+  public PluginInfo getInfo() {
+    String name = mLocalizer.msg("printProgram" ,"Print program");
+    String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
+    String author = "Martin Oberhauser (martin@tvbrowser.org)";
 
-   public void loadSettings(Properties settings)
-   {
-      
-   }
+    return new PluginInfo(name, desc, author, new Version(0, 9));
+  }
+
+
+  public ActionMenu getContextMenuActions(final Program program) {
+    ContextMenuAction action = new ContextMenuAction();
+    action.setText(mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
+    action.setSmallIcon(createImageIcon("printplugin/imgs/Print16.gif"));
+    action.setActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event) {
+        getRootNode().addProgram(program);
+        getRootNode().update();
+      }
+    });
+    return new ActionMenu(action);
+  }
+
+
+  public ActionMenu getButtonAction() {
+    AbstractAction action = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        MainPrintDialog dlg = new MainPrintDialog(getParentFrame());
+        UiUtilities.centerAndShow(dlg);
+        int result = dlg.getResult();
+        if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {
+          PrinterJob printerJob = PrinterJob.getPrinterJob();
+          PrintDayProgramsDialog dlg2 = new PrintDayProgramsDialog(getParentFrame(), printerJob, getDayProgramSchemes());
+          UiUtilities.centerAndShow(dlg2);
+          if (dlg2.getResult() == PrintDayProgramsDialog.OK) {
+            PrintJob job = dlg2.getPrintJob();
+
+            try {
+              printerJob.setPrintable(job.getPrintable());
+              printerJob.print();
+            } catch (PrinterException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+        else if (result == MainPrintDialog.PRINT_QUEUE) {
+
+        }
+      }
+    };
+
+    action.putValue(Action.NAME, mLocalizer.msg("print","Print"));
+    action.putValue(Action.SMALL_ICON, createImageIcon("printplugin/imgs/Print16.gif"));
+    action.putValue(BIG_ICON, createImageIcon("printplugin/imgs/Print24.gif"));
+    action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
+
+    return new ActionMenu(action);
+  }
+
+
+  public void receivePrograms(Program[] programArr) {
+    PluginTreeNode rootNode = getRootNode();
+    for (int i=0; i<programArr.length; i++) {
+      rootNode.addProgram(programArr[i]);
+    }
+    rootNode.update();
+  }
+
+
+  public boolean canReceivePrograms() {
+    return true;
+  }
+
+  public boolean canUseProgramTree() {
+    return true;
+  }
+
+
+  private DayProgramScheme[] getDayProgramSchemes() {
+    DayProgramScheme scheme = new DayProgramScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
+    scheme.setSettings(new DayProgramPrinterSettings(){
+      public Date getFromDay() {
+        return new Date();
+      }
+
+      public int getNumberOfDays() {
+        return 7;
+      }
+
+      public Channel[] getChannelList() {
+        return null;
+      }
+
+      public int getDayStartHour() {
+        return 6;
+      }
+
+      public int getDayEndHour() {
+        return 24+3;
+      }
+
+      public PageFormat getPageFormat() {
+        return null;
+      }
+
+      public int getColumnCount() {
+        return 5;
+      }
+
+      public int getChannelsPerColumn() {
+        return 2;
+      }
+    });
+    return new DayProgramScheme[]{scheme};
+  }
+
+
+  public void loadSettings(Properties settings) {
+
+  }
+
 
 }

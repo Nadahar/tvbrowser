@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,29 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.settings;
+
+import devplugin.Date;
+import devplugin.Channel;
+
+import java.awt.print.PageFormat;
+
+public interface DayProgramPrinterSettings {
+
+  public int BREAK_TYPE_NEWPAGE = 1;
+  public int BREAK_TYPE_HALFPAGE = 2;
+  public int BREAK_TYPE_NONE = 3;
 
 
-public interface ColumnModel {
-  
-  public devplugin.Program getProgramAt(int inx);
-  public int getProgramCount();
-  public String getTitle();
-  
-  
+  public Date getFromDay();
+  public int getNumberOfDays();
+  public Channel[] getChannelList();
+  public int getDayStartHour();
+  public int getDayEndHour();
+
+  public PageFormat getPageFormat();
+
+  public int getColumnCount();
+  public int getChannelsPerColumn();
+
 }

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,32 +24,37 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.printer;
 
-import java.awt.*;
 
-import devplugin.ProgramFieldType;
 
-public interface ProgramIconSettings {
+import java.util.*;
+
+
+public abstract class AbstractPageModel implements PageModel {
   
-  public Font getTitleFont();
-  public Font getTextFont();
-  public Font getTimeFont();
+  private ArrayList mColumns;
+
+   public AbstractPageModel() {
+     mColumns = new ArrayList();
+   }
   
-  public int getTimeFieldWidth();
+   public void addColumn(ColumnModel col) {
+     mColumns.add(col);
+   }
   
+   public int getColumnCount() {
+     return mColumns.size();
+   }
+
   
-  public ProgramFieldType[] getProgramInfoFields();
+   public ColumnModel getColumnAt(int inx) {
+     return (ColumnModel)mColumns.get(inx);
+   }
+
+   public String getFooter() {
+     return "Copyright (c) by TV-Browser - http://www.tvbrowser.org";
+   }
   
-  public String[] getProgramTableIconPlugins();
-  
-  public Color getColorOnAir_dark();
-  public Color getColorOnAir_light();
-  public Color getColorMarked();
-  
-  public boolean getPaintExpiredProgramsPale();
-  
-  public boolean getPaintProgramOnAir();
-  public boolean getPaintPluginMarks();
   
 }
