@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,10 +24,32 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.settings;
 
-public interface Page {
+import java.awt.*;
+
+import devplugin.ProgramFieldType;
+
+public interface ProgramIconSettings {
   
-  public void printPage(java.awt.Graphics g); 
+  public Font getTitleFont();
+  public Font getTextFont();
+  public Font getTimeFont();
+  
+  public int getTimeFieldWidth();
+  
+  
+  public ProgramFieldType[] getProgramInfoFields();
+  
+  public String[] getProgramTableIconPlugins();
+  
+  public Color getColorOnAir_dark();
+  public Color getColorOnAir_light();
+  public Color getColorMarked();
+  
+  public boolean getPaintExpiredProgramsPale();
+  
+  public boolean getPaintProgramOnAir();
+  public boolean getPaintPluginMarks();
   
 }

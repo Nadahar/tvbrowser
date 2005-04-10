@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,28 +24,32 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.settings;
 
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
+public abstract class Scheme {
 
-public class TimeSortedPageModel extends AbstractPageModel {
+  private String mName;
 
-	
-  public TimeSortedPageModel() {
-    super();
-    
+  protected Scheme(String name) {
+    setName(name);
   }
-  
-  public void addDayProgram(devplugin.Date date, devplugin.Program[] programArr) {
-    ColumnModel col = new DefaultColumnModel(date.toString(), programArr);
-    super.addColumn(col);
-  }
-  
-	public String getHeader() {
-		return "";
-	}
 
- 
-  
-  
+  public String getName() {
+    return mName;
+  }
+
+  public void setName(String name) {
+    mName = name;
+  }
+
+  abstract void store(ObjectOutputStream out) throws IOException ;
+  abstract void read(ObjectInputStream in) throws IOException;
+
+  public String toString() {
+    return mName;
+  }
 }

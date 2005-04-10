@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,11 +24,13 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.printer;
 
 import java.awt.Graphics;
 
 import devplugin.Program;
+import printplugin.settings.ProgramIconSettings;
+
 
 
 
@@ -38,7 +40,7 @@ public class ProgramItem {
     private double mx, my;
     public ProgramItem(Program prog, ProgramIconSettings settings) {
       mProgram = prog;
-      mIcon = new ProgramIcon(prog, settings, ChannelPageRenderer.COLUMN_WIDTH);
+      mIcon = new ProgramIcon(prog, settings, ProgramTableIcon.COLUMN_WIDTH);
     }
     public void setPos(double x, double y) {
       mx=x;

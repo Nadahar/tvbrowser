@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,15 +24,16 @@
  * $Revision$
  */
 
-package printplugin;
+package printplugin.printer;
+
+import devplugin.Program;
 
 
-
-public interface PageModel {
+public interface ColumnModel {
   
-  public int getColumnCount();
-  public ColumnModel getColumnAt(int inx);
-  public String getHeader();
-  public String getFooter();
+  public Program getProgramAt(int inx);
+  public int getProgramCount();
+  public String getTitle();
+  
   
 }
