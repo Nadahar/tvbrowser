@@ -47,6 +47,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import util.exc.ErrorHandler;
 import util.ui.ExtensionFileFilter;
@@ -74,6 +76,8 @@ public class DevicePanel extends JPanel {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DevicePanel.class);
        
+    
+    private JButton mAddDevice, mRemoveDevice, mExportDevice, mImportDevice, mConfigDevice;
 
     /**
      * Creates the Panel
@@ -117,56 +121,55 @@ public class DevicePanel extends JPanel {
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(0, 0, 5, 0);
         
-        JButton addDevice = new JButton(mLocalizer.msg("Add", "Add Device"));
+        mAddDevice = new JButton(mLocalizer.msg("Add", "Add Device"));
 
-        addDevice.addActionListener(new ActionListener() {
+        mAddDevice.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addDevice();
             }
         });
         
-        buttonPanel.add(addDevice, c);
+        buttonPanel.add(mAddDevice, c);
         
-        JButton configDevice = new JButton(mLocalizer.msg("Config", "Configure Device"));
+        mConfigDevice = new JButton(mLocalizer.msg("Config", "Configure Device"));
         
-        configDevice.addActionListener(new ActionListener() {
+        mConfigDevice.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 configDevice();
             }
         });
         
-        buttonPanel.add(configDevice, c);
+        buttonPanel.add(mConfigDevice, c);
         
-        JButton removeDevice = new JButton(mLocalizer.msg("Remove", "Delete Device"));
+        mRemoveDevice = new JButton(mLocalizer.msg("Remove", "Delete Device"));
         
-        removeDevice.addActionListener(new ActionListener() {
+        mRemoveDevice.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 removeDevice();
             }
         });
         
-        buttonPanel.add(removeDevice, c);
+        buttonPanel.add(mRemoveDevice, c);
 
-        JButton exportDevice= new JButton(mLocalizer.msg("Export", "Export Device"));
+        mExportDevice= new JButton(mLocalizer.msg("Export", "Export Device"));
         
-        exportDevice.addActionListener(new ActionListener() {
+        mExportDevice.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             exportDevice();
           }
         });
         
-        buttonPanel.add(exportDevice, c);
+        buttonPanel.add(mExportDevice, c);
         
-        JButton importDevice= new JButton(mLocalizer.msg("Import", "Import Device"));
+        mImportDevice= new JButton(mLocalizer.msg("Import", "Import Device"));
         
-        importDevice.addActionListener(new ActionListener() {
+        mImportDevice.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             importDevice();
           }
         });
 
-        buttonPanel.add(importDevice, c);
-        
+        buttonPanel.add(mImportDevice, c);
         
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
@@ -174,6 +177,32 @@ public class DevicePanel extends JPanel {
         buttonPanel.add(new JPanel(), c);
         
         add(buttonPanel, BorderLayout.EAST);
+        
+        mDeviceList.addListSelectionListener(new ListSelectionListener() {
+
+          public void valueChanged(ListSelectionEvent e) {
+            setButtonState();
+          }
+          
+        });
+        
+        setButtonState();
+    }
+
+    /**
+     * Sets the Button-State.
+     * If no Device is selected, a few Buttons are disabled
+     */
+    private void setButtonState() {
+      boolean state = true;
+      
+      if (mDeviceList.getSelectedIndex() == -1) {
+        state = false;
+      }
+      
+      mRemoveDevice.setEnabled(state);
+      mExportDevice.setEnabled(state);
+      mConfigDevice.setEnabled(state);      
     }
     
     /**
