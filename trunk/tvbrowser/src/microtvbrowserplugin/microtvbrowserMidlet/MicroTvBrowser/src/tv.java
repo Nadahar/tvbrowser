@@ -95,7 +95,11 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   protected static String searchFor;
   protected static String channel;
   protected static String now;
-  
+
+  protected static String yesterday = "yesterday";
+  protected static String today_string = "today";
+  protected static String tomorrow = "tomorrow";
+
   //non-localized Strings:
   private static final String[] block_names = {"0-4h","4-8h","8-12h","12-16h","16-20h","20-24h"};
   protected static String OK = "OK";
@@ -176,8 +180,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       if (insideDetail){
         if (command == CMD_BACK){
           insideDetail = false;
-          Display.getDisplay(this).setCurrent(list);
           CMD_VAR_1 = list.SELECT_COMMAND;
+          Display.getDisplay(this).setCurrent(list);
           return;
         }
                                 /*
@@ -314,9 +318,9 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       }
       if (STATUS == STATUS_SEARCH_ENTER_TITLE){
         if (command == CMD_OK){
+          STATUS = STATUS_SEARCH_TITLE_DATE;
           searchTitle = searchTextField.getString();
           searchTextField = null;
-          STATUS = STATUS_SEARCH_TITLE_DATE;
           this.createDateList(search);
           return;
         }
@@ -334,10 +338,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           return;
         }
         if (command == CMD_VAR_1){
-          //fix me
           String toDo = list.getString(list.getSelectedIndex());
           if (toDo == title){
-            //title
             STATUS = STATUS_SEARCH_ENTER_TITLE;
             this.createEnterText();
             return;
@@ -365,8 +367,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       }
       if (STATUS == this.STATUS_MAIN_MENU){
         if (command == CMD_GO_PROG_LIST){
-          this.createChannelList(chan_list);
           STATUS = this.STATUS_CHAN_LIST;
+          this.createChannelList(chan_list);
           return;
         }
         if (command == CMD_SEARCH){
@@ -429,6 +431,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     try {
       if (insideDetail){
         if (command == CMD_VAR_1){
+          STATUS = STATUS_PROG_LIST;
           this.getRawData(detail_ID);
           int prog = (detail_ID  & 0xFF);
           this.actuel_day = (detail_ID & 0xFF00) >> 8;
@@ -440,7 +443,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
               break;
             }
           }
-          STATUS = STATUS_PROG_LIST;
           insideDetail = false;
           this.createProgList();
           return;
@@ -463,6 +465,32 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           }
         }
       }
+
+      if (STATUS == STATUS_NOW_LIST){
+        if (command == this.CMD_VAR_2){
+          long nowTime = System.currentTimeMillis() + (20l*60l*1000l);
+          long delta = nowTime - data_create_time;
+          actuel_day = (int)((delta) / (24*60*60*1000));
+          calendar.setTime(new Date(nowTime));
+          lastSearchData = this.searchTime(actuel_day,calendar.get(calendar.HOUR_OF_DAY),calendar.get(calendar.MINUTE));
+          String title = now+" ";
+          if (calendar.get(calendar.HOUR_OF_DAY) < 10){
+            title += "0"+calendar.get(calendar.HOUR_OF_DAY);
+          } else {
+            title += calendar.get(calendar.HOUR_OF_DAY);
+          }
+          title += ":";
+          if (calendar.get(calendar.MINUTE) < 10){
+            title += "0"+calendar.get(calendar.MINUTE);
+          } else {
+            title += calendar.get(calendar.MINUTE);
+          }
+          this.createProgList(title,nowNavi,null,lastSearchData);
+          return;
+        }
+      }
+      
+      
       //FAVO_SEARCH
       if (STATUS == STATUS_SEARCH_FAVO_1){
         if (command == CMD_VAR_1){
@@ -606,6 +634,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           return;
         }
       }
+      
+      
       if (STATUS == this.STATUS_MAIN_MENU){
         if (command == CMD_NOW){
           STATUS = STATUS_NOW_LIST;
@@ -626,7 +656,8 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           } else {
             title += calendar.get(calendar.MINUTE);
           }
-          this.createProgList(title,nowNavi,null,lastSearchData);
+          CMD_VAR_2 = new Command ("30 min", Command.ITEM, 0);
+          this.createProgList(title,nowNavi,CMD_VAR_2,lastSearchData);
           return;
         }
       }
@@ -716,56 +747,56 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   protected int[] searchTime(int day, int hour, int min) throws Exception {
     int[] toReturn = new int[channel_names.length];
     try {
-    int time = (hour*60) + min;
-    int counter = 0;
-    for (int i =0;i<channel_names.length;i++){
-      int ID = (i << 16) | (day << 8);
-      if (getRawData(ID)){
-        int toSearch = 0;
-        
-        int base = 6;
-        //System.out.println ("time2 "+raw_data_cache.length);
-        int time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
-        if (time2 > time){
-          //Es ist der letzte des Vortags.
-          if (day > data_min_day){
-            ID = (i << 16) | ((day-1) << 8);
-            if (!getRawData(ID)){
-              toReturn[i] = -1;
-              continue;
+      int time = (hour*60) + min;
+      int counter = 0;
+      for (int i =0;i<channel_names.length;i++){
+        int ID = (i << 16) | (day << 8);
+        if (getRawData(ID)){
+          int toSearch = 0;
+          
+          int base = 6;
+          //System.out.println ("time2 "+raw_data_cache.length);
+          int time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
+          if (time2 > time){
+            //Es ist der letzte des Vortags.
+            if (day > data_min_day){
+              ID = (i << 16) | ((day-1) << 8);
+              if (!getRawData(ID)){
+                toReturn[i] = (-i)-1;
+                continue;
+              }
+              toSearch = 0;
+              //System.out.println ("tosearch 2");
+              for (int j=0;j<6;j++){
+                toSearch += raw_data_cache[j];
+              }
+              toReturn[i] = ID | (toSearch-1);
+            } else {
+              toReturn[i] = (-i)-1;
             }
+          } else {
+            //Es ist einer aus diesem Tag.
+            //System.out.println ("tosearch");
             toSearch = 0;
-            //System.out.println ("tosearch 2");
             for (int j=0;j<6;j++){
               toSearch += raw_data_cache[j];
             }
-            toReturn[i] = ID | (toSearch-1);
-          } else {
-            toReturn[i] = -1;
+            int last = 0;
+            for (int j =1;j<toSearch;j++){
+              base = 6 + (6*j);
+              //System.out.println ("tosearch 12");
+              time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
+              if (time2 > time){
+                break;
+              }
+              last = j;
+            }
+            toReturn[i] = ID | last;
           }
         } else {
-          //Es ist einer aus diesem Tag.
-          //System.out.println ("tosearch");
-          toSearch = 0;
-          for (int j=0;j<6;j++){
-            toSearch += raw_data_cache[j];
-          }
-          int last = 0;
-          for (int j =1;j<toSearch;j++){
-            base = 6 + (6*j);
-            //System.out.println ("tosearch 12");
-            time2 = (raw_data_cache[base]*60) + raw_data_cache[base+1];
-            if (time2 > time){
-              break;
-            }
-            last = j;
-          }
-          toReturn[i] = ID | last;
+          toReturn[i] = (-i)-1;
         }
-      } else {
-        toReturn[i] = -1;
       }
-    }
     } catch (Exception E){
       E.printStackTrace();
     }
@@ -805,7 +836,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
           int lengthOfTitle = title_data_store.getRecord(titleID,titlebuffer,0);
           
           boolean found = false;
-          for (int ii = 0;(ii<(lengthOfTitle-searchFor.length)) && (!found);ii++){
+          for (int ii = 0;(ii<(lengthOfTitle-searchFor.length+1)) && (!found);ii++){
             found = true;
             for (int jj= 0;jj<searchFor.length;jj++){
               int diff = searchFor[jj] - titlebuffer[jj+ii];
@@ -919,7 +950,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     } else {
       gauge = null;
       form = new Form("MicroTvBrowser");
-      form.append("Version 0.83\n");
+      form.append("Version 0.84\n");
       form.append("www.tvBrowser.org\n");
       form.append("pumpkin@gmx.de\n");
       
@@ -942,9 +973,19 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   
   protected void createDateList(String title){
     list = new List(title,List.IMPLICIT);
+    calendar.setTime(new Date(System.currentTimeMillis()));
+    int day_of_month = calendar.get(calendar.DAY_OF_MONTH);
     for (int i=data_min_day;i<data_days;i++){
       calendar.setTime(new Date(data_create_time + ((i)*24l*60l*60l*1000l)));
-      list.append(calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),null);
+      if (calendar.get(calendar.DAY_OF_MONTH) == day_of_month){
+        list.append(today_string,null);
+      } else if (calendar.get(calendar.DAY_OF_MONTH) == (day_of_month-1)){
+        list.append(yesterday,null);
+      } else if (calendar.get(calendar.DAY_OF_MONTH) == (day_of_month+1)){
+        list.append(tomorrow,null);
+      } else {
+        list.append(calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1),null);
+      }
     }
     list.addCommand(CMD_BACK);
     list.setCommandListener(this);
@@ -960,38 +1001,6 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     Display.getDisplay(this).setCurrent(list);
   }
   
-  
-  /** zeigt den über actuel_channel/day/block selektierten Datenteil an*/
-  protected void createProgList() throws Exception {
-    synchronized (this.prog_data_store){
-      if (actuel_block < 0){
-        actuel_day --;
-        actuel_block = 5;
-      }
-      if (actuel_block > 5){
-        actuel_day ++;
-        actuel_block = 0;
-      }
-      actuel_channel = actuel_channel % channel_names.length;
-      if (this.getRawData((actuel_channel << 16) | (actuel_day << 8))){
-        int[] temp = getProgIDforBlock(actuel_block);
-        
-        calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
-        
-        this.createProgList(
-        channel_names[actuel_channel]+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1)
-        ,this.blockNavi
-        ,new Command(channel_names[(actuel_channel+1)%channel_names.length],Command.ITEM,0)
-        ,temp);
-      } else {
-        form = new Form("Error");
-        form.append("missing data");
-        form.addCommand(CMD_BACK);
-        form.setCommandListener(this);
-        Display.getDisplay(this).setCurrent(form);
-      }
-    }
-  }
   
   protected void createDetail(int ID, Command toAdd) throws Exception {
     
@@ -1104,6 +1113,31 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
   }
   
   
+  /** zeigt den über actuel_channel/day/block selektierten Datenteil an*/
+  protected void createProgList() throws Exception {
+    synchronized (this.prog_data_store){
+      if (actuel_block < 0){
+        actuel_day --;
+        actuel_block = 5;
+      }
+      if (actuel_block > 5){
+        actuel_day ++;
+        actuel_block = 0;
+      }
+      actuel_channel = actuel_channel % channel_names.length;
+      this.getRawData((actuel_channel << 16) | (actuel_day << 8));
+      int[] temp = getProgIDforBlock(actuel_block);
+      
+      calendar.setTime(new Date(data_create_time + ((actuel_day)*24l*60l*60l*1000l)));
+      
+      this.createProgList(
+      channel_names[actuel_channel]+" "+calendar.get(calendar.DAY_OF_MONTH)+"."+(calendar.get(calendar.MONTH)+1)
+      ,this.blockNavi
+      ,new Command(channel_names[(actuel_channel+1)%channel_names.length],Command.ITEM,0)
+      ,temp);
+    }
+  }
+  
   protected void createProgList(String title, int mode, Command to_use, int[] progID) throws Exception {
     insideProgList = true;
     String naviNext = null;
@@ -1131,6 +1165,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         naviNext = "";
       }
     }
+    //System.out.println("createProgList 3");
     boolean withChannel = false;
     if ((STATUS == this.STATUS_SEARCH_FAVO_2)
     || (STATUS == this.STATUS_SEARCH_REMINDER_2)
@@ -1140,13 +1175,18 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       withChannel = useChannelNameInNowList;
     }
     list = new List(title,List.IMPLICIT);
-    int counter = Math.max(1,progID.length);
+    
+    int counter = 1;
+    if (progID!= null){
+      counter = Math.max(1,progID.length);
+    }
     if (naviNext != null){
       counter++;
     }
     if (naviPrev != null){
       counter++;
     }
+    //System.out.println("createProgList 4 "+counter);
     progListMapping = new int[counter];
     counter = 0;
     if (naviPrev != null){
@@ -1161,9 +1201,11 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     } else {
       for (int i =0;i<progID.length;i++){
         //System.out.println ("createProgr: "+progID[i]);
-        if (progID[i] == -1){
+        if (progID[i] < 0){
           progListMapping[counter] = -3;
-          list.append(this.no_data,null);
+          //System.out.println ("acc: "+progID[i]);
+          //System.out.println ("acc2: "+((-progID[i])-1));
+          list.append(channel_names[(-progID[i])-1]+" "+this.no_data,null);
         } else {
           getRawData(progID[i]);
           progListMapping[counter] = progID[i];
@@ -1172,6 +1214,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
         counter++;
       }
     }
+    //System.out.println("createProgList 5");
     if (naviNext != null){
       progListMapping[counter] = -2;
       counter++;
@@ -1273,7 +1316,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     }
   }
   
-  protected void loadConfig() throws Exception {
+  protected boolean loadConfig() throws Exception {
     DataInputStream DIN = new DataInputStream(this.getClass().getResourceAsStream("config"));
     gauge.setValue(0);
     error =   DIN.readUTF();
@@ -1307,6 +1350,10 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     gauge.setValue(9);
     channel	= DIN.readUTF();
     now = DIN.readUTF();
+
+    yesterday = DIN.readUTF();
+    today_string = DIN.readUTF();
+    tomorrow = DIN.readUTF();
     
     
     CMD_GO_PROG_LIST = new Command(show,Command.OK,0);
@@ -1357,7 +1404,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
       F.addCommand(CMD_EXIT);
       F.setCommandListener(this);
       Display.getDisplay(this).setCurrent(F);
-      return;
+      return false;
     }
     data_number_of_channels = DIN.readUnsignedByte();
     extended_data = new String [DIN.readUnsignedByte()];
@@ -1376,6 +1423,7 @@ public class tv extends javax.microedition.midlet.MIDlet implements javax.microe
     useIconsInProglist = DIN.readBoolean();
     useChannelNameInNowList = true;//DIN.readBoolean();
     DIN.close();
+     return true;
   }
   
   protected void loadIcons(){

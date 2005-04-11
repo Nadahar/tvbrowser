@@ -110,7 +110,7 @@ public class MicroTvBrowserPlugin extends devplugin.Plugin{
     String name = "MicroTvBrowser";
     String desc = mLocalizer.msg( "Creates MIDlets" ,"Creates MIDlets" );
     String author = "Gilson Laurent";
-    return new devplugin.PluginInfo(name, desc, author, new devplugin.Version(0,83));
+    return new devplugin.PluginInfo(name, desc, author, new devplugin.Version(0,84));
   }
   
   /**
@@ -196,7 +196,7 @@ public class MicroTvBrowserPlugin extends devplugin.Plugin{
    * @see #getMarkIcon()
    */
   public String getMarkIconName(){
-    return null;
+    return "/microtvbrowserplugin/M16.png";
   }
   
   
