@@ -30,12 +30,13 @@ public class exec extends Thread {
   
   public void run(){
     try {
-      TV.loadConfig();
-      if (TV.firstStart()){
-        TV.copyData();
-        TV.endFirstStart();
+      if (TV.loadConfig()){
+        if (TV.firstStart()){
+          TV.copyData();
+          TV.endFirstStart();
+        }
+        TV.startApp();
       }
-      TV.startApp();
     } catch (Exception E){
       Form F = new Form("Error");
       F.append("Loading config failed\n"+E.toString());

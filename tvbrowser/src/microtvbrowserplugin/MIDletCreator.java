@@ -163,6 +163,11 @@ public class MIDletCreator implements Progress{
       
       basic.writeUTF(mLocalizer.msg("channel","channel"));
       basic.writeUTF(mLocalizer.msg("now","now"));
+
+      
+      basic.writeUTF(mLocalizer.msg("yesterday","yesterday"));
+      basic.writeUTF(mLocalizer.msg("today","today"));
+      basic.writeUTF(mLocalizer.msg("tomorrow","tomorrow"));
       
       
       java.util.Date now = new java.util.Date();
@@ -630,8 +635,8 @@ public class MIDletCreator implements Progress{
       +"MIDlet-Jar-Size: "+MicroTvBrowser.length()+"\n"
       +"MIDlet-Jar-URL: MicroTvBrowser.jar\n"
       +"MIDlet-Name: MicroTvBrowser\n"
-      +"MIDlet-Vendor: Unknown\n"
-      +"MIDlet-Version: 1.0\n"
+      +"MIDlet-Vendor: GilsonLaurent\n"
+      +"MIDlet-Version: 0.84\n"
       +"MicroEdition-Configuration: CLDC-1.0\n"
       +"MicroEdition-Profile: MIDP-1.0\n"
       );
