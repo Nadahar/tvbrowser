@@ -147,7 +147,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public void readData(ObjectInputStream in)
     throws IOException, ClassNotFoundException {
       
-    int version = in.readInt();
+    in.readInt(); // version
     
     mReminderList.setReminderTimerListener(null);
     
@@ -264,7 +264,20 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
    */
   
   public void receivePrograms(Program[] programArr) {
-    mReminderList.add(programArr, 10);
+    String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
+    int minutes = 10;
+    if (defaultReminderEntryStr != null) {
+      try {
+        int inx = Integer.parseInt(defaultReminderEntryStr);
+        if (inx < ReminderDialog.SMALL_REMIND_VALUE_ARR.length) {
+          minutes = ReminderDialog.SMALL_REMIND_VALUE_ARR[inx];
+        }
+      }catch(NumberFormatException e) {
+        // ignore
+      }
+    }
+
+    mReminderList.add(programArr, minutes);
   }
   
 

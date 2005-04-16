@@ -2,6 +2,7 @@ Changelog ReminderPlugin
 
 1.1.0
 - Added "Send to other Plugin"
+- Made default reminder time configurable
 
 1.0.9
 - Added Button for sending the Program-List
