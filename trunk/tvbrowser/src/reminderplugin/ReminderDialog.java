@@ -45,7 +45,7 @@ public class ReminderDialog extends JDialog {
   public static final String[] SMALL_REMIND_MSG_ARR
     = new String[ReminderFrame.REMIND_MSG_ARR.length - 1];
 
-  private static final int[] SMALL_REMIND_VALUE_ARR
+  public static final int[] SMALL_REMIND_VALUE_ARR
     = new int[ReminderFrame.REMIND_VALUE_ARR.length - 1];
   
   static {

@@ -51,24 +51,7 @@ public class ReminderList implements ActionListener {
   private javax.swing.Timer mTimer;
   private PluginTreeNode mRoot;
   
- // private ArrayList mPrograms;
- // private ProgramContainer mContainer;
 
- /* public ReminderList(ReminderListItem[] progs) {
-    mPrograms = new ArrayList();
-    for (int i=0; i<progs.length; i++) {
-      mPrograms.add(progs[i]);
-      progs[i].getProgram().mark(ReminderPlugin.getInstance());
-    }
-  }*/
-  
-  /*public ReminderList(ProgramItem[] progs) {
-    mPrograms = new ArrayList();
-    for (int i=0; i<progs.length; i++) {
-      mPrograms.add(new ReminderListItem(progs[i]));
-    }
-  }*/
-  
   
   public ReminderList(PluginTreeNode root) {
     mRoot = root;
@@ -81,16 +64,7 @@ public class ReminderList implements ActionListener {
       items[i].getProgram().mark(ReminderPlugin.getInstance());
     }
   }
-  
-  /*
-  public ReminderList(ProgramContainer container) {
-    mContainer = container;
-    ProgramItem[] items = mContainer.getPrograms();
-    for (int i=0; i<items.length; i++) {
-      items[i].getProgram().mark(ReminderPlugin.getInstance());
-    }
-  }
-  */
+
   
   public void read(ObjectInputStream in)
     throws IOException, ClassNotFoundException {
@@ -99,7 +73,7 @@ public class ReminderList implements ActionListener {
     if (version == 1) {      
       int size = in.readInt();    
       for (int i = 0; i < size; i++) {
-        int v = in.readInt();
+        in.readInt();   // read version
         int reminderMinutes = in.readInt();
         Date programDate = new Date(in);
         String programId = (String) in.readObject();
