@@ -481,7 +481,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     for (int i = 0; i < channels.length; i++) {
       Channel channel = channels[i];
-      if (!mChannelListModel.isSubscribed(channel) && filter.accept(channel)) {
+      if (!((DefaultListModel) mSubscribedChannels.getModel()).contains(channel) && filter.accept(channel)) {
         availableChannelList.add(channel);
       }
     }
