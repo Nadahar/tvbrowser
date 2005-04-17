@@ -66,7 +66,8 @@ public class PluginManagerImpl implements PluginManager {
   public Program getProgram(Date date, String progID) {
     TvDataBase db = TvDataBase.getInstance();
 
-    Channel[] channels = ChannelList.getAvailableChannels();
+    Channel[] channels = ChannelList.getSubscribedChannels();  /* 04-17-2005: changed from getAvailableChannels() to getSubscribedChannels */
+
     for (int i = 0; i < channels.length; i++) {
       ChannelDayProgram dayProg = db.getDayProgram(date, channels[i]);
       if (dayProg != null) {
