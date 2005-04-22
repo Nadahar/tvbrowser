@@ -30,12 +30,12 @@ import java.awt.BorderLayout;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import tvbrowser.core.plugin.PluginProxy;
-import devplugin.SettingsTab;
 import devplugin.ActionMenu;
+import devplugin.SettingsTab;
 
 public class ConfigPluginSettingsTab implements SettingsTab {
  
@@ -102,7 +102,15 @@ public class ConfigPluginSettingsTab implements SettingsTab {
       mSettingsTab = null;
 
       String msg = mLocalizer.msg("notactivated", "This Plugin is currently not activated.");
-      mPluginPanel.add(new JLabel(msg), BorderLayout.WEST);
+      
+      JTextArea msgArea =new JTextArea(3,40);
+      msgArea.setText(msg);
+      msgArea.setLineWrap(true);
+      msgArea.setWrapStyleWord(true);
+      msgArea.setEditable(false);
+      msgArea.setOpaque(false);
+      
+      mPluginPanel.add(msgArea, BorderLayout.WEST);
     }
     
     mPluginWasActivatedLastTime = mPlugin.isActivated();
