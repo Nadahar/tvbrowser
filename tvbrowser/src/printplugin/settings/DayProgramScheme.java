@@ -98,7 +98,7 @@ public class DayProgramScheme extends Scheme {
     ArrayList list = new ArrayList();
     for (int i=0; i<cnt; i++) {
       String channelId = (String)in.readObject();
-      for (int chInx = 0; chInx<subscribedChannels.length; i++) {
+      for (int chInx = 0; chInx<subscribedChannels.length; chInx++) {
         if (channelId.equals(subscribedChannels[chInx].getId())) {
           list.add(subscribedChannels[chInx]);
           break;
