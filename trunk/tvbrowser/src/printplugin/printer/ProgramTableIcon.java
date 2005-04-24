@@ -35,11 +35,14 @@ import printplugin.settings.ProgramIconSettings;
 
 
 
-
+/**
+ * ProgramTableIcon is a printable version of the programmtable for one page.
+ */
 public class ProgramTableIcon implements Icon {
 
 
    public static int COLUMN_WIDTH = 180;
+   private static final int HEADER_SPACE=22;
    public static final Font COL_HEADER_FONT = new Font("Dialog",Font.BOLD,18);
 
 
@@ -47,7 +50,7 @@ public class ProgramTableIcon implements Icon {
    private int mWidth, mColumnHeight;
   
    private int mStartHour, mEndHour;
-   private static final int HEADER_SPACE=22; 
+
    private double mZoom;
    private String[] mColHeaders;
    
@@ -108,15 +111,17 @@ public class ProgramTableIcon implements Icon {
      return (time * mColumnHeight / timerange);
     
    }
- 
-    
+
+
    private void doLayout() {
     
      int x = 0;
      int y = 0;
-     //int curHour = -1;
-    
-     for (int col = 0; col < mProgramItems.length; col++) {  
+
+     for (int col = 0; col < mProgramItems.length; col++) {   // for all columns
+
+       // step 1: Find the ideal position of the program item. This may
+       //         end up in overlapping programs.
        y=0;
        boolean nextDay = false;
        for (int i = 0; i < mProgramItems[col].length; i++) {
@@ -127,17 +132,19 @@ public class ProgramTableIcon implements Icon {
          y = (int)(getPreferredPosition(prog,nextDay)/mZoom);
          mProgramItems[col][i].setPos(x,y);  
        }
-      
-       int numberOfPrograms = mProgramItems[col].length;  
+
+       // step 2: The last program in the column is positioned at the bottom
+       //         of the page
+       int numberOfPrograms = mProgramItems[col].length;
        if (numberOfPrograms>1) {
          ProgramItem item = mProgramItems[col][numberOfPrograms-1];
          y = (int)((mColumnHeight-item.getHeight())/mZoom);
          item.setPos(x,y);
        }
-      
-      
-      
-       for (int i=1;i<mProgramItems[col].length/*-1*/; i++) {
+
+
+       // step 3: resolve overlaps; start from top
+       for (int i=1;i<mProgramItems[col].length; i++) {
          ProgramItem curItem = mProgramItems[col][i];
          ProgramItem prevItem = mProgramItems[col][i-1];
         
@@ -148,10 +155,11 @@ public class ProgramTableIcon implements Icon {
        }
       
        ProgramItem lastItem = mProgramItems[col][numberOfPrograms-1];
-      
-       if (lastItem.getY()*mZoom+lastItem.getHeight()>mColumnHeight*1.1) {
+
+       // step 4: go through programs from bottom and move them up if necessary
+       if (lastItem.getY() + lastItem.getHeight() > mColumnHeight) {
          lastItem.setPos(lastItem.getX(), mColumnHeight/mZoom - lastItem.getHeight());
-         for (int i=numberOfPrograms-2;i>0;i--) {
+         for (int i=numberOfPrograms-2;i>=0;i--) {
            ProgramItem curItem = mProgramItems[col][i];
            ProgramItem nextItem = mProgramItems[col][i+1];
            if (curItem.getY()+curItem.getHeight() > nextItem.getY()) {
@@ -162,16 +170,36 @@ public class ProgramTableIcon implements Icon {
            }
          }
        }
-    
-      
+
+       // step 5: set the maximum height of each program
        for (int i=0;i<mProgramItems[col].length-1; i++) {
          ProgramItem curItem = mProgramItems[col][i];
          ProgramItem nextItem = mProgramItems[col][i+1];
       
          curItem.setMaximumHeight((int)(nextItem.getY()-curItem.getY()));
-      
-       }      
-      
+       }
+
+       // step 6: Check, if the first program of the column is within the column space.
+       // If not, we remove all programs out of the column space.
+       if (mProgramItems[col].length > 0) {
+         int cnt = 0;
+         boolean done = false;
+         do {
+           if (mProgramItems[col][cnt].getY()<0) {
+             mProgramItems[col][cnt].setMaximumHeight(-1);
+           }
+           else {
+             done = true;
+           }
+           cnt++;
+         }while(!done);
+         ProgramItem[] oldColumn = mProgramItems[col];
+         mProgramItems[col]=new ProgramItem[oldColumn.length - cnt];
+         System.arraycopy(oldColumn, cnt, mProgramItems[col], 0, mProgramItems[col].length);
+       }
+
+
+
        x+=COLUMN_WIDTH;
      }
     
@@ -193,10 +221,7 @@ public class ProgramTableIcon implements Icon {
      Graphics2D g = (Graphics2D)graphics;
      g.scale(mZoom, mZoom);
      g.translate(x/mZoom,(y+HEADER_SPACE)/mZoom);
-      
-     
-     
-     
+
      g.setFont(COL_HEADER_FONT);
      for (int i=0;i<mColHeaders.length;i++) {
        g.setColor(Color.lightGray);
@@ -217,13 +242,7 @@ public class ProgramTableIcon implements Icon {
      for (int i=1;i<mProgramItems.length;i++) {
        g.drawLine(COLUMN_WIDTH*i,0,COLUMN_WIDTH*i,(int)(mColumnHeight/mZoom));
      }
-      
-     /*
-     for (int i=0;i<mColHeaders.length;i++) {
-             g.drawString(mColHeaders[i],ChannelPageRenderer.COLUMN_WIDTH*i, HEADER_SPACE);
-           }*/
-      
-         
+
      for (int i=0;i<mProgramItems.length;i++) {
        for (int j=0;j<mProgramItems[i].length;j++) {
          mProgramItems[i][j].paint(g);
@@ -231,13 +250,7 @@ public class ProgramTableIcon implements Icon {
      }
       
      g.translate(-x/mZoom,-(y+HEADER_SPACE)/mZoom);
-      
-      
-      
-      
-      
      g.scale(1/mZoom,1/mZoom);
-      
       
       
    }
