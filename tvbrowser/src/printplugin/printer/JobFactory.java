@@ -38,6 +38,11 @@ public class JobFactory {
 
   public static PrintJob createPrintJob(DayProgramPrinterSettings settings) {
 
+    /* We create the print job in two steps:
+       First we create page models where each page consists of a number of columns.
+       A page model is not a real page.
+       Then we have to split each page model in one or more real pages.
+    */
     PageModel[] pages = createPages(settings);
     PrintJob job = new DayProgramPrintJob(pages, settings);
     return job;

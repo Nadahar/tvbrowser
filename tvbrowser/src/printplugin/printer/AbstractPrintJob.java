@@ -32,7 +32,7 @@ import java.awt.print.PrinterException;
 import java.awt.*;
 import java.util.ArrayList;
 
-
+ 
 abstract class AbstractPrintJob implements PrintJob {
 
   private Page[] mPages;
@@ -41,15 +41,6 @@ abstract class AbstractPrintJob implements PrintJob {
 
   protected AbstractPrintJob(PageModel[] pageModelArr) {
     mPageModelArr = pageModelArr;
-  /*  ArrayList pages = new ArrayList();
-    for (int i=0;i<pageModelArr.length;i++) {
-      Page[] p = createPages(pageModelArr[i]);
-      for (int j=0;j<p.length;j++) {
-        pages.add(p[j]);
-      }
-    }
-    mPages = new Page[pages.size()];
-    pages.toArray(mPages);       */
   }
 
   private void prepare() {

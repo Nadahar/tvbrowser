@@ -98,11 +98,6 @@ public class ProgramIcon implements Icon {
   
   public void setMaximumHeight(int height) {
     setProgram(mProgram, height);
-    
-    //System.out.println(height+" <--> "+mHeight);
-    //if (mHeight > height) {
-    //  System.out.println("ALARM!");
-    //}
   }
   
   private Icon[] getPluginIcons(Program program) {
@@ -148,21 +143,22 @@ public class ProgramIcon implements Icon {
     int titleHeight = mTitleIcon.getIconHeight();
     int maxDescLines = 0; //3;
     if (maxHeight != -1) {
-      maxDescLines = (maxHeight - titleHeight /*- 10*/) / mSettings.getTextFont().getSize();
+      maxDescLines = (maxHeight - titleHeight) / mSettings.getTextFont().getSize();
     }
     
     if (programChanged || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       // (Re)set the description text
       mDescriptionIcon.setMaximumLineCount(maxDescLines);
-      ProgramFieldType[] infoFieldArr = mSettings.getProgramInfoFields();
-      Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
-      try {
-        mDescriptionIcon.setText(infoReader);
+      if (maxDescLines > 0) {
+        ProgramFieldType[] infoFieldArr = mSettings.getProgramInfoFields();
+        Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
+        try {
+          mDescriptionIcon.setText(infoReader);
+        }
+        catch (IOException exc) {
+          mLog.log(Level.WARNING, "Reading program info failed for " + program, exc);
+        }
       }
-      catch (IOException exc) {
-        mLog.log(Level.WARNING, "Reading program info failed for " + program, exc);
-      }
-
       // Calculate the height
       mHeight = mTitleIcon.getIconHeight() + /*10 +*/ mDescriptionIcon.getIconHeight();
       //setPreferredSize(new Dimension(WIDTH, mHeight));

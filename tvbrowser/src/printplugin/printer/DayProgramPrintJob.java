@@ -37,6 +37,10 @@ import java.awt.*;
 
 
 
+/**
+ * Creates a PrintJob out of a PageModel array.
+ * The resulting pages will look like a pages of a paper bases TV guide.
+ */
 public class DayProgramPrintJob extends AbstractPrintJob {
 
   private DayProgramPrinterSettings mSettings;
@@ -53,27 +57,29 @@ public class DayProgramPrintJob extends AbstractPrintJob {
 
     int colCnt = pageModel.getColumnCount();
 
+    int channelsPerPage = mSettings.getColumnCount() * mSettings.getChannelsPerColumn();
+
     int numberOfPages;
     if (colCnt==0) {
       numberOfPages=0;
     }
     else {
-      numberOfPages = (colCnt-1) / mSettings.getColumnCount() +1;
+      numberOfPages = (colCnt-1) / channelsPerPage +1;
     }
 
     Page[] result = new Page[numberOfPages];
 
     for (int i=0;i<result.length;i++) {
 
-      int fromInx = i * mSettings.getColumnCount();
-      int inxCnt = mSettings.getColumnCount();
+      int fromInx = i * channelsPerPage;
+      int inxCnt = channelsPerPage;
 
       if (fromInx+inxCnt >  colCnt) {
         inxCnt = colCnt-fromInx;
       }
 
       ColumnModel[] cols=getColumns(pageModel, fromInx, inxCnt);
-      result[i]=new ChannelPage(cols, mSettings.getPageFormat(), mSettings.getColumnCount(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), PrinterProgramIconSettings.create());
+      result[i]=new ChannelPage(cols, mSettings.getPageFormat(), mSettings.getColumnCount(), mSettings.getChannelsPerColumn(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), PrinterProgramIconSettings.create());
     }
 
     return result;
@@ -81,6 +87,13 @@ public class DayProgramPrintJob extends AbstractPrintJob {
 
 }
 
+  /**
+   *
+   * @param model
+   * @param fromInx
+   * @param cnt
+   * @return cnt columns of the page model.
+   */
   private ColumnModel[] getColumns(PageModel model, int fromInx, int cnt) {
     ColumnModel[] result = new ColumnModel[cnt];
     for (int i=fromInx;i<fromInx+cnt;i++) {
@@ -90,21 +103,41 @@ public class DayProgramPrintJob extends AbstractPrintJob {
   }
 
 
-
+  /**
+   * A Page with one column per channel
+   */
   class ChannelPage implements Page {
 
 
-    private ProgramTableIcon mProgramTableIcon;
+    private ProgramTableIcon[] mProgramTableIcons;
+
     private PageFormat mPageFormat;
     private static final int HEADER_SPACE=30;
     private static final int FOOTER_SPACE=10;
+    private static final int TABLE_SPACE=10;
     private String mHeader, mFooter;
 
 
 
-    public ChannelPage(ColumnModel[] cols, PageFormat pageFormat, int maxColsPerPage, String header, String footer, int startHour, int endHour, ProgramIconSettings settings) {
+    public ChannelPage(ColumnModel[] cols, PageFormat pageFormat, int maxColsPerPage, int channelsPerColumn, String header, String footer, int startHour, int endHour, ProgramIconSettings settings) {
 
-      mProgramTableIcon = new ProgramTableIcon(cols, (int)pageFormat.getImageableWidth(), (int)pageFormat.getImageableHeight() - HEADER_SPACE - FOOTER_SPACE, maxColsPerPage, startHour, endHour, settings);
+      int tableHeight = ((int)pageFormat.getImageableHeight() - HEADER_SPACE - FOOTER_SPACE - (channelsPerColumn-1)*TABLE_SPACE)/channelsPerColumn;
+      mProgramTableIcons = new ProgramTableIcon[channelsPerColumn];
+      for (int i=0; i<channelsPerColumn; i++) {
+        int fromInx = i*maxColsPerPage;
+        int toInx = (i+1)*maxColsPerPage-1;
+        if (fromInx >= cols.length) {
+          break;
+        }
+        if (toInx >= cols.length) {
+          toInx = cols.length-1;
+        }
+        ColumnModel[] columns = new ColumnModel[toInx-fromInx+1];
+
+        System.arraycopy(cols, fromInx, columns, 0, columns.length);
+        mProgramTableIcons[i] = new ProgramTableIcon(columns, (int)pageFormat.getImageableWidth(), tableHeight , maxColsPerPage, startHour, endHour, settings);
+      }
+
       mPageFormat = pageFormat;
       mHeader = header;
       mFooter = footer;
@@ -115,14 +148,19 @@ public class DayProgramPrintJob extends AbstractPrintJob {
 
       int x0 = (int)mPageFormat.getImageableX();
       int y0 = (int)mPageFormat.getImageableY();
-      
+
+
       graphics.setFont(HEADER_FONT);
       graphics.drawString(mHeader, x0, y0+HEADER_FONT.getSize());
 
       graphics.setFont(FOOTER_FONT);
       graphics.drawString(mFooter, x0, y0 + (int)mPageFormat.getImageableHeight());
 
-      mProgramTableIcon.paintIcon(null, graphics, x0 , y0 + HEADER_SPACE);
+      for (int i=0; i<mProgramTableIcons.length; i++) {
+        if (mProgramTableIcons[i] != null) {
+          mProgramTableIcons[i].paintIcon(null, graphics, x0, y0 + HEADER_SPACE + (mProgramTableIcons[i].getIconHeight()+TABLE_SPACE)*i);
+        }
+      }
 
     }
   }
