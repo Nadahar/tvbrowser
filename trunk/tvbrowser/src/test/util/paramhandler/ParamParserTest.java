@@ -1,0 +1,26 @@
+package test.util.paramhandler;
+
+import junit.framework.TestCase;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import util.paramhandler.ParamParser;
+import devplugin.PluginManager;
+
+public class ParamParserTest extends TestCase {
+
+  public void testAnalyse() {
+    PluginManager manager = new PluginManagerImpl();
+    ParamParser parser = new ParamParser();
+
+    String in = "oblda da \\{ {concat(urlencode(isset(original_title, \"hallo\"), \"utf8\"), \"HHHHH\")} {\"str}i()ng\"}test bla";
+    
+    System.out.println(in);
+    String result = parser.analyse(in, manager.getExampleProgram());
+    
+    System.out.println(result);
+    System.out.println(parser.getErrorString());
+    
+    assertEquals("oblda da { The+WaltonsHHHHH str}i()ngtest bla", result);
+    
+  }
+
+}
