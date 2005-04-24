@@ -31,6 +31,7 @@ import printplugin.dlgs.components.TimeRangePanel;
 import printplugin.dlgs.components.ChannelSelectionPanel;
 import printplugin.settings.DayProgramPrinterSettings;
 import printplugin.settings.DayProgramScheme;
+import printplugin.settings.DayProgramPrinterSettingsImpl;
 import printplugin.printer.JobFactory;
 import printplugin.printer.PrintJob;
 
@@ -70,6 +71,9 @@ public class PrintDayProgramsDialog extends JDialog {
   private int mResult;
 
   private LayoutTab mLayoutTab;
+  private DefaultComboBoxModel mSchemeCBModel;
+  private JComboBox mSchemeCB;
+  private JButton mDeleteSchemeBtn, mSaveSchemeBtn, mEditSchemeBtn;
 
 
   public PrintDayProgramsDialog(final Frame parent, final PrinterJob printerJob, DayProgramScheme[] schemes) {
@@ -173,17 +177,65 @@ public class PrintDayProgramsDialog extends JDialog {
 
 
     JButton newSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/New16.gif", getClass()));
-    JButton deleteSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Delete16.gif", getClass()));
+    mEditSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Edit16.gif", getClass()));
+    mDeleteSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Delete16.gif", getClass()));
+    mSaveSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Save16.gif", getClass()));
     newSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
-    deleteSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
+    mDeleteSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
+    mEditSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
+    mSaveSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
+    mDeleteSchemeBtn.setEnabled(false);
+    mEditSchemeBtn.setEnabled(false);
+    newSchemeBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        String newSchemeName = JOptionPane.showInputDialog(parent, "Enter new name for scheme:", "New Scheme", JOptionPane.PLAIN_MESSAGE);
+        if (newSchemeName != null) {
+          DayProgramScheme newScheme = new DayProgramScheme(newSchemeName);
+          newScheme.setSettings(getSettings());
+          mSchemeCBModel.addElement(newScheme);
+          mSchemeCB.setSelectedItem(newScheme);
+          setScheme(newScheme);
+        }
+      }
+    });
 
+    mSaveSchemeBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        DayProgramScheme scheme = (DayProgramScheme)mSchemeCB.getSelectedItem();
+        scheme.setSettings(getSettings());
 
+      }
+    });
+
+    mEditSchemeBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        DayProgramScheme scheme = (DayProgramScheme)mSchemeCB.getSelectedItem();
+        Object newSchemeName = JOptionPane.showInputDialog(parent, "Enter new name for scheme:", "New Scheme", JOptionPane.PLAIN_MESSAGE, null, null, scheme.getName());
+        if (newSchemeName != null) {
+          scheme.setName(newSchemeName.toString());
+          mSchemeCB.updateUI();
+        }
+      }
+    });
+
+    mSchemeCBModel = new DefaultComboBoxModel(schemes);
+    mSchemeCB = new JComboBox(mSchemeCBModel);
     JPanel schemePanel = new JPanel();
-    schemePanel.add(new JLabel(mLocalizer.msg("scheme","Vorlage:")));
-    schemePanel.add(new JComboBox(schemes));
+    //schemePanel.add(new JLabel(mLocalizer.msg("scheme","Vorlage:")));
+    schemePanel.add(mSchemeCB);
     schemePanel.add(newSchemeBtn);
-    schemePanel.add(deleteSchemeBtn);
+    schemePanel.add(mEditSchemeBtn);
+    schemePanel.add(mSaveSchemeBtn);
+    schemePanel.add(mDeleteSchemeBtn);
     southPanel.add(schemePanel, BorderLayout.WEST);
+    mSchemeCB.addItemListener(new ItemListener(){
+      public void itemStateChanged(ItemEvent e) {
+        mDeleteSchemeBtn.setEnabled(mSchemeCB.getSelectedIndex()!=0);
+        mEditSchemeBtn.setEnabled(mSchemeCB.getSelectedIndex()!=0);
+        DayProgramScheme scheme = (DayProgramScheme)mSchemeCB.getSelectedItem();
+        setScheme(scheme);
+      }
+    });
 
     contentPane.add(tab, BorderLayout.CENTER);
     contentPane.add(eastPanel, BorderLayout.EAST);
@@ -212,8 +264,10 @@ public class PrintDayProgramsDialog extends JDialog {
     mDatePanel.setFromDate(from);
     mDatePanel.setNumberOfDays(settings.getNumberOfDays());
     mLayoutTab.setColumnLayout(settings.getColumnCount(), settings.getChannelsPerColumn());
-
   }
+
+
+
 
   public int getResult() {
     return mResult;
@@ -223,40 +277,24 @@ public class PrintDayProgramsDialog extends JDialog {
     return JobFactory.createPrintJob(getSettings());
   }
 
+  public DayProgramScheme[] getSchemes() {
+    DayProgramScheme[] result = new DayProgramScheme[mSchemeCBModel.getSize()];
+    for (int i=0; i<result.length; i++) {
+      result[i] = (DayProgramScheme)mSchemeCBModel.getElementAt(i);
+    }
+    return result;
+  }
+
   private DayProgramPrinterSettings getSettings() {
-    return new DayProgramPrinterSettings(){
-      public Date getFromDay() {
-        return mDatePanel.getFromDate();
-      }
-
-      public int getNumberOfDays() {
-        return mDatePanel.getNumberOfDays();
-      }
-
-      public Channel[] getChannelList() {
-        return mChannelPanel.getChannels();
-      }
-
-      public int getDayStartHour() {
-        return mTimePanel.getFromTime();
-      }
-
-      public int getDayEndHour() {
-        return mTimePanel.getToTime();
-      }
-
-      public PageFormat getPageFormat() {
-        return mPageFormat;
-      }
-
-      public int getColumnCount() {
-        return mLayoutTab.getColumnsPerPage();
-      }
-
-      public int getChannelsPerColumn() {
-        return mLayoutTab.getChannelsPerColumn();
-      }
-    };
+    return new DayProgramPrinterSettingsImpl(mDatePanel.getFromDate(),
+        mDatePanel.getNumberOfDays(),
+        mChannelPanel.getChannels(),
+        mTimePanel.getFromTime(),
+        mTimePanel.getToTime(),
+        mPageFormat,
+        mLayoutTab.getColumnsPerPage(),
+        mLayoutTab.getChannelsPerColumn()
+        );
   }
 
 
@@ -302,7 +340,7 @@ public class PrintDayProgramsDialog extends JDialog {
       columnsPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channelsAndColumns","Channels and columns")));
       columnsPanel.add(new JLabel(mLocalizer.msg("channelsPerPage","Channels per page")+":"));
       columnsPanel.add(mChannelsPerPageCB);
-      columnsPanel.add(new JLabel(mLocalizer.msg("layout","Layout")+":"));
+      columnsPanel.add(new JLabel(mLocalizer.msg("columnsPerPage","columns")+":"));
       columnsPanel.add(mLayoutCB);
 
       mChannelsPerPageCB.addItemListener(new ItemListener(){

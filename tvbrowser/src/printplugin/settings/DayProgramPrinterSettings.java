@@ -43,9 +43,7 @@ public interface DayProgramPrinterSettings {
   public Channel[] getChannelList();
   public int getDayStartHour();
   public int getDayEndHour();
-
   public PageFormat getPageFormat();
-
   public int getColumnCount();
   public int getChannelsPerColumn();
 

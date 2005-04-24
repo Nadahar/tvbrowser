@@ -28,21 +28,17 @@ package printplugin.settings;
 
 import devplugin.Date;
 import devplugin.Channel;
+import devplugin.Plugin;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.awt.print.PageFormat;
+import java.util.ArrayList;
 
 public class DayProgramScheme extends Scheme {
 
- /* private int mFromDay;
-  private int mDayCount;
-  private Channel[] mChannels;
-  private int mDayStartHour;
-  private int mDayEndHour;
 
-  private PageFormat mPageFormat;  */
   private DayProgramPrinterSettings mSettings;
 
   public DayProgramScheme(String name) {
@@ -50,40 +46,70 @@ public class DayProgramScheme extends Scheme {
   }
 
   public void store(ObjectOutputStream out) throws IOException {
+    out.writeInt(1);  // version
+    Date today = new Date();
+    int day = mSettings.getFromDay().getNumberOfDaysSince(today);
+    out.writeInt(day);
+    out.writeInt(mSettings.getNumberOfDays());
+    writeChannels(out, mSettings.getChannelList());
+    out.writeInt(mSettings.getDayStartHour());
+    out.writeInt(mSettings.getDayEndHour());
+    out.writeInt(mSettings.getColumnCount());
+    out.writeInt(mSettings.getChannelsPerColumn());
 
   }
 
-  public void read(ObjectInputStream in) throws IOException {
+  public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.readInt();  // version
+    int day = in.readInt();
+    Date fromDay = new Date().addDays(day);
+    int numberOfDays = in.readInt();
+    Channel[] channelArr = readChannels(in);
+    int dayStartHour = in.readInt();
+    int dayEndHour = in.readInt();
+    PageFormat pageFormat = null;
+    int colCount = in.readInt();
+    int channelsPerColumn = in.readInt();
 
-  }
-      /*
-  public void setFromDay(int from) {
-    mFromDay = from;
-  }
-
-  public void setDayCount(int days) {
-    mDayCount = days;
-  }
-
-  public void setChannels(Channel[] channels) {
-    mChannels = channels;
-  }
-
-  public void setDayStartHour(int dayStartHour) {
-    mDayStartHour = dayStartHour;
+    DayProgramPrinterSettingsImpl settings = new DayProgramPrinterSettingsImpl(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, pageFormat, colCount, channelsPerColumn);
+    setSettings(settings);
   }
 
-  public void setDayEndHour(int dayEndHour) {
-    mDayEndHour = dayEndHour;
+
+  private void writeChannels(ObjectOutputStream out, Channel[] channels) throws IOException {
+    if (channels == null) {
+      out.writeInt(-1);
+    }
+    else {
+      out.writeInt(channels.length);
+      for (int i=0; i<channels.length; i++) {
+        out.writeObject(channels[i].getId());
+      }
+    }
   }
 
-  public void setPageFormat(PageFormat format) {
-    mPageFormat = format;
+  private Channel[] readChannels(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    int cnt = in.readInt();
+    if (cnt < 0) {
+      return null;
+    }
+    Channel[] subscribedChannels = Plugin.getPluginManager().getSubscribedChannels();
+
+    ArrayList list = new ArrayList();
+    for (int i=0; i<cnt; i++) {
+      String channelId = (String)in.readObject();
+      for (int chInx = 0; chInx<subscribedChannels.length; i++) {
+        if (channelId.equals(subscribedChannels[chInx].getId())) {
+          list.add(subscribedChannels[chInx]);
+          break;
+        }
+      }
+    }
+    Channel[] result = new Channel[list.size()];
+    list.toArray(result);
+    return result;
   }
 
-  public PageFormat getPageFormat() {
-    return mPageFormat;
-  }   */
 
   public void setSettings(DayProgramPrinterSettings settings) {
     mSettings = settings;
@@ -92,41 +118,5 @@ public class DayProgramScheme extends Scheme {
   public DayProgramPrinterSettings getSettings() {
     return mSettings;
   }
-                     /*
-  public DayProgramPrinterSettings getSettings() {
-    return new DayProgramPrinterSettings(){
-      public Date getFromDay() {
-        return new Date().addDays(mFromDay);
-      }
 
-      public int getNumberOfDays() {
-        return mDayCount;
-      }
-
-      public Channel[] getChannelList() {
-        return mChannels;
-      }
-
-      public int getDayStartHour() {
-        return mDayStartHour;
-      }
-
-      public int getDayEndHour() {
-        return mDayEndHour;
-      }
-
-      public int getColumnCount() {
-        return 5;
-      }
-
-      public int getChannelsPerColumn() {
-        return 2;
-      }
-
-      public PageFormat getPageFormat() {
-        return mPageFormat;
-      }
-
-    };
-  }   */
 }

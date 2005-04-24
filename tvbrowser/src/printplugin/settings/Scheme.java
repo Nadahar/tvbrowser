@@ -46,8 +46,8 @@ public abstract class Scheme {
     mName = name;
   }
 
-  abstract void store(ObjectOutputStream out) throws IOException ;
-  abstract void read(ObjectInputStream in) throws IOException;
+  abstract void store(ObjectOutputStream out) throws IOException;
+  abstract void read(ObjectInputStream in) throws IOException, ClassNotFoundException;
 
   public String toString() {
     return mName;
