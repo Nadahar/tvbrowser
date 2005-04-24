@@ -26,12 +26,42 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.ParserException;
+import tvbrowser.core.filters.UserFilter;
 import util.ui.UiUtilities;
-import tvbrowser.core.filters.*;
 
 public class EditFilterDlg
 	extends JDialog
@@ -179,6 +209,15 @@ public class EditFilterDlg
 
 		FilterComponent[] fc =
 			FilterComponentList.getInstance().getAvailableFilterComponents();
+    
+    Arrays.sort(fc, new Comparator() {
+
+      public int compare(Object arg0, Object arg1) {
+        return ((FilterComponent)arg0).getName().compareToIgnoreCase(((FilterComponent)arg1).getName());
+      }
+      
+    });
+    
 		for (int i = 0; i < fc.length; i++) {
 			mComponentListModel.addElement(fc[i]);
 		}
