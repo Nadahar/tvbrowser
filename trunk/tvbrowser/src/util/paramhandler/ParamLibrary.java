@@ -26,6 +26,7 @@
 package util.paramhandler;
 
 import java.net.URLEncoder;
+import java.util.Calendar;
 
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -82,7 +83,8 @@ public class ParamLibrary {
    * @return Array with possible Keys
    */
   public String[] getPossibleKeys() {
-    String[] str = {"title"};
+    String[] str = {"title", "original_title","start_day", "start_month", "start_year", "end_month", "end_year", "end_day", "start_hour",   
+        "start_minute", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info", "description", "episode", "original_episode"};
     return str;
   }
   
@@ -99,7 +101,7 @@ public class ParamLibrary {
    * @return List of possible Functions
    */
   public String[] getPossibleFunctions() {
-    String[] str = {"functions"};
+    String[] str = {"isset", "urlencode", "concat", "clean"};
     return str;
   }
   
@@ -118,17 +120,42 @@ public class ParamLibrary {
    * @return Value of key in prg
    */
   public String getStringForKey(Program prg, String key) {
-    
     if (key.equals("title")) {
       return prg.getTitle();
     } else if (key.equals("original_title")) {
-      String ret = prg.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
-      
-      if (ret == null) {
-        ret = "";
-      }
-      
-      return ret;
+      return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE));
+    } else if (key.equals("start_day")) {
+      return ""+prg.getDate().getDayOfMonth();
+    } else if (key.equals("start_month")) {
+      return ""+prg.getDate().getMonth();
+    } else if (key.equals("start_year")) {
+      return ""+prg.getDate().getYear();
+    } else if (key.equals("end_day")) {      
+      return ""+getEndTimeFieldInProgram(prg, Calendar.DAY_OF_MONTH);
+    } else if (key.equals("end_month")) {
+      return ""+(getEndTimeFieldInProgram(prg, Calendar.MONTH)+1);
+    } else if (key.equals("end_year")) {
+      return ""+getEndTimeFieldInProgram(prg, Calendar.YEAR);
+    } else if (key.equals("start_hour")) {
+      return ""+prg.getHours();
+    } else if (key.equals("start_minute")) {
+      return ""+prg.getMinutes();
+    } else if (key.equals("end_hour")) {
+      return ""+getEndTimeFieldInProgram(prg, Calendar.HOUR_OF_DAY);
+    } else if (key.equals("end_minute")) {
+      return ""+getEndTimeFieldInProgram(prg, Calendar.MINUTE);
+    } else if (key.equals("length_minutes")) {
+      return ""+prg.getLength();
+    } else if (key.equals("length_sec")) {
+      return ""+(prg.getLength()*60);
+    } else if (key.equals("short_info")) {
+      return prg.getShortInfo();
+    } else if (key.equals("description")) {
+      return prg.getDescription() + "\n" + prg.getChannel().getCopyrightNotice();
+    } else if (key.equals("episode")) {
+      return removeNull(prg.getTextField(ProgramFieldType.EPISODE_TYPE));
+    } else if (key.equals("original_episode")) {
+      return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE));
     }
 
     mError = true;
@@ -138,6 +165,34 @@ public class ParamLibrary {
   }
   
   /**
+   * If the string is null, it returns "".
+   * @param str String
+   * @return "" if str is null, otherwise str
+   */
+  private String removeNull(String str) {
+    if (str == null) {
+      str = "";
+    }
+    return str;
+  }
+  
+  /**
+   * Returns a Calendar-Field of the End-Time from a Program
+   * @param prg Program
+   * @param field Calendar-Field to return
+   * @return int-Value
+   */
+  private int getEndTimeFieldInProgram(Program prg, int field) {
+    Calendar c = (Calendar) prg.getDate().getCalendar().clone();
+
+    c.set(Calendar.HOUR_OF_DAY, prg.getHours());
+    c.set(Calendar.MINUTE, prg.getMinutes());
+    c.add(Calendar.MINUTE, prg.getLength());
+    c.set(Calendar.SECOND, 0);
+    return c.get(field);
+  }
+
+  /**
    * Returns the Value of a function
    * 
    * @param prg Program to use
@@ -146,11 +201,6 @@ public class ParamLibrary {
    * @return Return-Value of Function
    */
   public String getStringForFunction(Program prg, String function, String[] params) {
-    String bla = new String();
-    for (int i = 0; i < params.length;i++) {
-      bla = bla + params[i]+";";
-    }
-    
     if (function.equals("isset")) {
       if (params.length != 2) {
         mError = true;
@@ -178,11 +228,17 @@ public class ParamLibrary {
         return null;
       }
     } else if (function.equals("concat")) {
-      
       StringBuffer buffer = new StringBuffer();
       
       for (int i=0;i<params.length;i++) {
         buffer.append(params[i]);
+      }
+      return buffer.toString();
+    } else if (function.equals("clean")) {
+      StringBuffer buffer = new StringBuffer();
+      
+      for (int i=0;i<params.length;i++) {
+        buffer.append(clean(params[i]));
       }
       return buffer.toString();
     }
@@ -192,6 +248,30 @@ public class ParamLibrary {
     mErrorString = "Unkown function : " + function;
     
     return null;
+  }
+
+  /**
+   * Clean a String. Replace every non A-Za-z0-9 Char into a "_"
+   * @param clean String to clean
+   * @return cleaned String
+   */
+  private String clean(String clean) {
+    StringBuffer buffer = new StringBuffer();
+    char[] chars = clean.toCharArray();
+    
+    for (int i=0;i<chars.length;i++) {
+      if ((chars[i] >= 'A') && (chars[i] <= 'B')) {
+        buffer.append(chars[i]);
+      } else if ((chars[i] >= 'a') && (chars[i] <= 'z')) {
+        buffer.append(chars[i]);
+      } else if ((chars[i] >= '0') && (chars[i] <= '9')) {
+        buffer.append(chars[i]);
+      } else {
+        buffer.append('_');
+      }
+    }
+    
+    return buffer.toString();
   }
   
 }
