@@ -28,6 +28,8 @@ package util.paramhandler;
 import java.net.URLEncoder;
 import java.util.Calendar;
 
+import util.ui.Localizer;
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -42,6 +44,9 @@ import devplugin.ProgramFieldType;
  *  @author bodum
  */
 public class ParamLibrary {
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ParamLibrary.class);
+
   /** True if an Error occured*/
   private boolean mError = false;
   /** The Error */
@@ -83,8 +88,26 @@ public class ParamLibrary {
    * @return Array with possible Keys
    */
   public String[] getPossibleKeys() {
-    String[] str = {"title", "original_title","start_day", "start_month", "start_year", "end_month", "end_year", "end_day", "start_hour",   
-        "start_minute", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info", "description", "episode", "original_episode"};
+    String[] str = {"title", 
+         "original_title",
+         "start_day", 
+         "start_month", 
+         "start_year", 
+         "start_hour",   
+         "start_minute", 
+         "end_month", 
+         "end_year", 
+         "end_day", 
+         "end_hour", 
+         "end_minute", 
+         "length_minutes", 
+         "length_sec", 
+         "short_info", 
+         "description", 
+         "episode", 
+         "original_episode",
+         "channel_name", "test"
+         };
     return str;
   }
   
@@ -93,7 +116,11 @@ public class ParamLibrary {
    * @return description for one key
    */
   public String getDescriptionForKey(String key) {
-    return "no description";
+    String translation = mLocalizer.msg("parameter_"+key, "");
+    if (translation.startsWith("[ParamLibrary.parameter")) {
+      return mLocalizer.msg("noDescription", "No Description available");
+    }
+    return translation;
   }
 
   /**
@@ -110,7 +137,13 @@ public class ParamLibrary {
    * @return
    */
   public String getDescriptionForFunctions(String function) {
-    return "no description";
+    
+    String translation = mLocalizer.msg("function_"+function, "");
+    if (translation.startsWith("[ParamLibrary.function")) {
+      return mLocalizer.msg("noDescription", "No Description available");
+    }    
+    
+    return translation;
   }
   
   /**
@@ -156,10 +189,12 @@ public class ParamLibrary {
       return removeNull(prg.getTextField(ProgramFieldType.EPISODE_TYPE));
     } else if (key.equals("original_episode")) {
       return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE));
+    } else if (key.equals("channel_name")) {
+      return removeNull(prg.getChannel().getName());
     }
 
     mError = true;
-    mErrorString = "Unknown Param : " + key;
+    mErrorString = mLocalizer.msg("unkownParam", "Unknown Parameter") +": " + key;
     
     return null;
   }
@@ -204,7 +239,7 @@ public class ParamLibrary {
     if (function.equals("isset")) {
       if (params.length != 2) {
         mError = true;
-        mErrorString = "isset needs 2 Parameters";
+        mErrorString = mLocalizer.msg("isset2Params","isset needs 2 Parameters");
         return null;
       }
       
@@ -216,7 +251,7 @@ public class ParamLibrary {
     } else if (function.equals("urlencode")) {
       if (params.length != 2) {
         mError = true;
-        mErrorString = "urlencode needs 2 Parameters";
+        mErrorString = mLocalizer.msg("urlencode2Params", "urlencode needs 2 Parameters");
         return null;
       }
       
@@ -224,7 +259,7 @@ public class ParamLibrary {
         return URLEncoder.encode(params[0], params[1]);
       } catch (Exception e) {
         mError = true;
-        mErrorString = "Problems with encoding : " + e.toString();
+        mErrorString = mLocalizer.msg("urlencodeProblems", "Problems with encoding : ") + e.toString();
         return null;
       }
     } else if (function.equals("concat")) {
@@ -245,7 +280,7 @@ public class ParamLibrary {
     
 
     mError = true;
-    mErrorString = "Unkown function : " + function;
+    mErrorString = mLocalizer.msg("unknownFunction", "Unkown function : {0}", function);
     
     return null;
   }
