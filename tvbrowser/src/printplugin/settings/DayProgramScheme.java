@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class DayProgramScheme extends Scheme {
 
 
-  private DayProgramPrinterSettings mSettings;
+ // private DayProgramPrinterSettings mSettings;
 
   public DayProgramScheme(String name) {
     super(name);
@@ -48,14 +48,15 @@ public class DayProgramScheme extends Scheme {
   public void store(ObjectOutputStream out) throws IOException {
     out.writeInt(1);  // version
     Date today = new Date();
-    int day = mSettings.getFromDay().getNumberOfDaysSince(today);
+    DayProgramPrinterSettings settings = (DayProgramPrinterSettings)getSettings();
+    int day = settings.getFromDay().getNumberOfDaysSince(today);
     out.writeInt(day);
-    out.writeInt(mSettings.getNumberOfDays());
-    writeChannels(out, mSettings.getChannelList());
-    out.writeInt(mSettings.getDayStartHour());
-    out.writeInt(mSettings.getDayEndHour());
-    out.writeInt(mSettings.getColumnCount());
-    out.writeInt(mSettings.getChannelsPerColumn());
+    out.writeInt(settings.getNumberOfDays());
+    writeChannels(out, settings.getChannelList());
+    out.writeInt(settings.getDayStartHour());
+    out.writeInt(settings.getDayEndHour());
+    out.writeInt(settings.getColumnCount());
+    out.writeInt(settings.getChannelsPerColumn());
 
   }
 
@@ -67,11 +68,10 @@ public class DayProgramScheme extends Scheme {
     Channel[] channelArr = readChannels(in);
     int dayStartHour = in.readInt();
     int dayEndHour = in.readInt();
-    PageFormat pageFormat = null;
     int colCount = in.readInt();
     int channelsPerColumn = in.readInt();
 
-    DayProgramPrinterSettingsImpl settings = new DayProgramPrinterSettingsImpl(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, pageFormat, colCount, channelsPerColumn);
+    DayProgramPrinterSettingsImpl settings = new DayProgramPrinterSettingsImpl(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, colCount, channelsPerColumn);
     setSettings(settings);
   }
 
@@ -110,13 +110,13 @@ public class DayProgramScheme extends Scheme {
     return result;
   }
 
-
+   /*
   public void setSettings(DayProgramPrinterSettings settings) {
     mSettings = settings;
   }
 
   public DayProgramPrinterSettings getSettings() {
     return mSettings;
-  }
+  }   */
 
 }

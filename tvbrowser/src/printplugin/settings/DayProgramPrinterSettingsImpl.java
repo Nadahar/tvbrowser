@@ -43,7 +43,6 @@ public class DayProgramPrinterSettingsImpl implements DayProgramPrinterSettings 
   private Channel[] mChannelList;
   private int mDayStartHour;
   private int mDayEndHour;
-  private PageFormat mPageFormat;
   private int mColCount;
   private int mChannelsPerColum;
 
@@ -52,7 +51,6 @@ public class DayProgramPrinterSettingsImpl implements DayProgramPrinterSettings 
                                        Channel[] channelList,
                                        int dayStartHour,
                                        int dayEndHour,
-                                       PageFormat pageFormat,
                                        int colCount,
                                        int channelsPerColumn) {
     mFromDay = fromDay;
@@ -60,7 +58,6 @@ public class DayProgramPrinterSettingsImpl implements DayProgramPrinterSettings 
     mChannelList = channelList;
     mDayStartHour = dayStartHour;
     mDayEndHour = dayEndHour;
-    mPageFormat = pageFormat;
     mColCount = colCount;
     mChannelsPerColum = channelsPerColumn;    
   }
@@ -85,9 +82,8 @@ public class DayProgramPrinterSettingsImpl implements DayProgramPrinterSettings 
     return mDayEndHour;
   }
 
-  public PageFormat getPageFormat() {
-    return mPageFormat;
-  }
+
+
 
   public int getColumnCount() {
     return mColCount;

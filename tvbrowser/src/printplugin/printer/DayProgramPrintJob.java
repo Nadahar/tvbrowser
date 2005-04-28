@@ -44,13 +44,15 @@ import java.awt.*;
 public class DayProgramPrintJob extends AbstractPrintJob {
 
   private DayProgramPrinterSettings mSettings;
+  private PageFormat mPageFormat;
 
   private static final Font HEADER_FONT = new Font("Dialog",Font.BOLD,32);
   private static final Font FOOTER_FONT = new Font("Dialog",Font.ITALIC,6);
 
-  public DayProgramPrintJob(PageModel[] pageModelArr, DayProgramPrinterSettings settings) {
+  public DayProgramPrintJob(PageModel[] pageModelArr, DayProgramPrinterSettings settings, PageFormat pageFormat) {
     super(pageModelArr);
     mSettings = settings;
+    mPageFormat = pageFormat;
   }
 
   protected Page[] createPages(PageModel pageModel) {
@@ -79,7 +81,7 @@ public class DayProgramPrintJob extends AbstractPrintJob {
       }
 
       ColumnModel[] cols=getColumns(pageModel, fromInx, inxCnt);
-      result[i]=new ChannelPage(cols, mSettings.getPageFormat(), mSettings.getColumnCount(), mSettings.getChannelsPerColumn(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), PrinterProgramIconSettings.create());
+      result[i]=new ChannelPage(cols, mPageFormat, mSettings.getColumnCount(), mSettings.getChannelsPerColumn(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), PrinterProgramIconSettings.create());
     }
 
     return result;

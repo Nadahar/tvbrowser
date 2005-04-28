@@ -29,9 +29,8 @@ package printplugin.settings;
 import devplugin.Date;
 import devplugin.Channel;
 
-import java.awt.print.PageFormat;
 
-public interface DayProgramPrinterSettings {
+public interface DayProgramPrinterSettings extends Settings {
 
   public int BREAK_TYPE_NEWPAGE = 1;
   public int BREAK_TYPE_HALFPAGE = 2;
@@ -43,7 +42,6 @@ public interface DayProgramPrinterSettings {
   public Channel[] getChannelList();
   public int getDayStartHour();
   public int getDayEndHour();
-  public PageFormat getPageFormat();
   public int getColumnCount();
   public int getChannelsPerColumn();
 

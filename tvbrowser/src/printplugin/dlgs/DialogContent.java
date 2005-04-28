@@ -24,41 +24,31 @@
  * $Revision$
  */
 
-package printplugin.settings;
+package printplugin.dlgs;
 
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import printplugin.settings.Settings;
+import printplugin.printer.PrintJob;
 
-public abstract class Scheme {
 
-  private String mName;
-  private Settings mSettings;
+import java.awt.*;
+import java.awt.print.PageFormat;
 
-  protected Scheme(String name) {
-    setName(name);
-  }
+/**
+ * Created by: Martin Oberhauser (martin@tvbrowser.org)
+ * Date: 24.04.2005
+ * Time: 21:47:27
+ */
 
-  public String getName() {
-    return mName;
-  }
+public interface DialogContent {
 
-  public void setName(String name) {
-    mName = name;
-  }
+  public Component getContent();
 
-  abstract void store(ObjectOutputStream out) throws IOException;
-  abstract void read(ObjectInputStream in) throws IOException, ClassNotFoundException;
+  public String getDialogTitle();
 
-  public String toString() {
-    return mName;
-  }
+  public Settings getSettings();
+  
+  public void setSettings(Settings settings);
 
-  public void setSettings(Settings settings) {
-    mSettings = settings;
-  }
+  public PrintJob createPrintJob(PageFormat format);
 
-  public Settings getSettings() {
-    return mSettings;
-  }
 }

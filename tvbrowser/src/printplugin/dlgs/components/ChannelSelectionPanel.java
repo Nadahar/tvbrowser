@@ -93,6 +93,9 @@ public class ChannelSelectionPanel extends JPanel {
   }
 
   public Channel[] getChannels() {
+    if (mAllChannelsRb.isSelected()) {
+      return null;
+    }
     return mChannels;
   }
 
