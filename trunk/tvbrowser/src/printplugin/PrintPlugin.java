@@ -35,7 +35,8 @@ import java.util.Properties;
 import java.io.*;
 import javax.swing.*;
 import printplugin.dlgs.MainPrintDialog;
-import printplugin.dlgs.PrintDayProgramsDialog;
+import printplugin.dlgs.SettingsDialog;
+import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
 import printplugin.settings.DayProgramScheme;
 import printplugin.settings.DayProgramPrinterSettingsImpl;
 import printplugin.printer.PrintJob;
@@ -90,10 +91,10 @@ public class PrintPlugin extends Plugin {
         int result = dlg.getResult();
         if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {
           PrinterJob printerJob = PrinterJob.getPrinterJob();
-          PrintDayProgramsDialog dlg2 = new PrintDayProgramsDialog(getParentFrame(), printerJob, getDayProgramSchemes());
+          SettingsDialog dlg2 = new SettingsDialog(getParentFrame(), printerJob, loadDayProgramSchemes(), new PrintDayProgramsDialogContent(getParentFrame()));
           UiUtilities.centerAndShow(dlg2);
           storeSchemes(dlg2.getSchemes());
-          if (dlg2.getResult() == PrintDayProgramsDialog.OK) {
+          if (dlg2.getResult() == SettingsDialog.OK) {
             PrintJob job = dlg2.getPrintJob();
             try {
               printerJob.setPrintable(job.getPrintable());
@@ -166,7 +167,7 @@ public class PrintPlugin extends Plugin {
     return schemes;
   }
 
-  private DayProgramScheme[] getDayProgramSchemes() {
+  private DayProgramScheme[] loadDayProgramSchemes() {
     String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
     File schemeFile = new File(home,SCHEME_FILE);
     ObjectInputStream in=null;
@@ -180,7 +181,7 @@ public class PrintPlugin extends Plugin {
         try { in.close(); } catch(IOException exc) {}
       }
       DayProgramScheme scheme = new DayProgramScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
-      scheme.setSettings(new DayProgramPrinterSettingsImpl(new Date(), 3, null, 6, 24+3, null, 5, 2));
+      scheme.setSettings(new DayProgramPrinterSettingsImpl(new Date(), 3, null, 6, 24+3, 5, 2));
       return new DayProgramScheme[]{scheme};
     }
 

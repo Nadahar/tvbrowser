@@ -30,13 +30,14 @@ import printplugin.settings.DayProgramPrinterSettings;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.awt.print.PageFormat;
 
 import devplugin.*;
 
 
 public class JobFactory {
 
-  public static PrintJob createPrintJob(DayProgramPrinterSettings settings) {
+  public static PrintJob createPrintJob(DayProgramPrinterSettings settings, PageFormat pageFormat) {
 
     /* We create the print job in two steps:
        First we create page models where each page consists of a number of columns.
@@ -44,7 +45,7 @@ public class JobFactory {
        Then we have to split each page model in one or more real pages.
     */
     PageModel[] pages = createPages(settings);
-    PrintJob job = new DayProgramPrintJob(pages, settings);
+    PrintJob job = new DayProgramPrintJob(pages, settings, pageFormat);
     return job;
   }
 
