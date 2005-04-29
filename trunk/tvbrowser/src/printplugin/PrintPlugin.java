@@ -41,6 +41,8 @@ import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialogContent;
 import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
 import printplugin.settings.DayProgramScheme;
 import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.Scheme;
+import printplugin.settings.QueueScheme;
 import printplugin.printer.PrintJob;
 import util.ui.UiUtilities;
 
@@ -88,16 +90,17 @@ public class PrintPlugin extends Plugin {
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        MainPrintDialog dlg = new MainPrintDialog(getParentFrame());
-        UiUtilities.centerAndShow(dlg);
-        int result = dlg.getResult();
+        MainPrintDialog mainDialog = new MainPrintDialog(getParentFrame());
+        UiUtilities.centerAndShow(mainDialog);
+        int result = mainDialog.getResult();
 
         if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {
-          showPrintDialog(new PrintDayProgramsDialogContent(getParentFrame()));
-          //storeSchemes(settingsDialog.getSchemes());
+          SettingsDialog dlg = showPrintDialog(new PrintDayProgramsDialogContent(getParentFrame()), loadDayProgramSchemes());
+          storeDayProgramSchemes(dlg.getSchemes());
         }
         else if (result == MainPrintDialog.PRINT_QUEUE) {
-          showPrintDialog(new PrintFromQueueDialogContent());
+          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(), loadQueueSchemes());
+          storeQueueSchemes(dlg.getSchemes());
         }
       }
     };
@@ -111,9 +114,9 @@ public class PrintPlugin extends Plugin {
   }
 
 
-  private void showPrintDialog(DialogContent content) {
+  private SettingsDialog showPrintDialog(DialogContent content, Scheme[] schemes) {
     PrinterJob printerJob = PrinterJob.getPrinterJob();
-    SettingsDialog settingsDialog = new SettingsDialog(getParentFrame(), printerJob, loadDayProgramSchemes(), content);
+    SettingsDialog settingsDialog = new SettingsDialog(getParentFrame(), printerJob, schemes, content);
     UiUtilities.centerAndShow(settingsDialog);
 
     if (settingsDialog.getResult() == SettingsDialog.OK) {
@@ -125,10 +128,11 @@ public class PrintPlugin extends Plugin {
         util.exc.ErrorHandler.handle("Could not print pages: "+e.getLocalizedMessage(), e);
       }
     }
+    return settingsDialog;
   }
 
 
-  private void storeSchemes(DayProgramScheme[] schemes) {
+  private void storeDayProgramSchemes(Scheme[] schemes) {
     String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
     File schemeFile = new File(home,SCHEME_FILE);
     ObjectOutputStream out=null;
@@ -138,12 +142,16 @@ public class PrintPlugin extends Plugin {
       out.writeInt(schemes.length);
       for (int i=0; i<schemes.length; i++) {
         out.writeObject(schemes[i].getName());
-        schemes[i].store(out);
+        ((DayProgramScheme)schemes[i]).store(out);
       }
       out.close();
     }catch(IOException e) {
 
     }
+  }
+
+  private void storeQueueSchemes(Scheme[] schemes) {
+
   }
 
   public void receivePrograms(Program[] programArr) {
@@ -193,46 +201,14 @@ public class PrintPlugin extends Plugin {
       scheme.setSettings(new DayProgramPrinterSettings(new Date(), 3, null, 6, 24+3, 5, 2));
       return new DayProgramScheme[]{scheme};
     }
-
-    /*
-    DayProgramScheme scheme = new DayProgramScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
-
-    scheme.setSettings(new DayProgramPrinterSettingsOLD(){
-      public Date getFromDay() {
-        return new Date();
-      }
-
-      public int getNumberOfDays() {
-        return 7;
-      }
-
-      public Channel[] getChannelList() {
-        return null;
-      }
-
-      public int getDayStartHour() {
-        return 6;
-      }
-
-      public int getDayEndHour() {
-        return 24+3;
-      }
-
-      public PageFormat getPageFormat() {
-        return null;
-      }
-
-      public int getColumnCount() {
-        return 5;
-      }
-
-      public int getChannelsPerColumn() {
-        return 2;
-      }
-    });
-    return new DayProgramScheme[]{scheme};   */
   }
 
+
+
+  private QueueScheme[] loadQueueSchemes() {
+    QueueScheme[] result = new QueueScheme[]{ new QueueScheme("Default queue scheme")};
+    return result;
+  }
 
   public void loadSettings(Properties settings) {
 

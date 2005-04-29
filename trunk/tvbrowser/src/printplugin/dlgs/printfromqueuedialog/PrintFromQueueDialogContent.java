@@ -29,6 +29,8 @@ package printplugin.dlgs.printfromqueuedialog;
 import printplugin.dlgs.DialogContent;
 import printplugin.settings.Settings;
 import printplugin.settings.QueuePrinterSettings;
+import printplugin.settings.Scheme;
+import printplugin.settings.QueueScheme;
 import printplugin.printer.*;
 import printplugin.printer.PrintJob;
 
@@ -79,5 +81,9 @@ public class PrintFromQueueDialogContent implements DialogContent {
 
   public PrintJob createPrintJob(PageFormat format) {
     return null;
+  }
+
+  public Scheme createNewScheme(String schemeName) {
+    return new QueueScheme(schemeName);
   }
 }
