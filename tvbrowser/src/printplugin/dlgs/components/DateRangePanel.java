@@ -72,7 +72,6 @@ public class DateRangePanel extends JPanel {
     add(pn3);
 
     ButtonGroup group = new ButtonGroup();
-    mDateRb.setSelected(true);
     group.add(mAllRb);
     group.add(mDateRb);
 

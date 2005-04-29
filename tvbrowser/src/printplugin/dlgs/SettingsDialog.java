@@ -40,7 +40,7 @@ import java.awt.event.ItemEvent;
 
 import printplugin.printer.*;
 import printplugin.printer.PrintJob;
-import printplugin.settings.DayProgramScheme;
+import printplugin.settings.Scheme;
 
 
 /**
@@ -69,7 +69,7 @@ public class SettingsDialog extends JDialog {
 
   private DialogContent mDialogContent;
 
-  public SettingsDialog(final Frame parent, final PrinterJob printerJob, DayProgramScheme[] schemes, DialogContent content) {
+  public SettingsDialog(final Frame parent, final PrinterJob printerJob, Scheme[] schemes, DialogContent content) {
     super(parent, true);
 
     mDialogContent = content;
@@ -176,7 +176,7 @@ public class SettingsDialog extends JDialog {
       public void actionPerformed(ActionEvent e) {
         String newSchemeName = JOptionPane.showInputDialog(parent, "Enter new name for scheme:", "New Scheme", JOptionPane.PLAIN_MESSAGE);
         if (newSchemeName != null) {
-          DayProgramScheme newScheme = new DayProgramScheme(newSchemeName);
+          Scheme newScheme = mDialogContent.createNewScheme(newSchemeName);
           newScheme.setSettings(mDialogContent.getSettings());
           mSchemeCBModel.addElement(newScheme);
           mSchemeCB.setSelectedItem(newScheme);
@@ -187,7 +187,7 @@ public class SettingsDialog extends JDialog {
 
     mSaveSchemeBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        DayProgramScheme scheme = (DayProgramScheme)mSchemeCB.getSelectedItem();
+        Scheme scheme = (Scheme)mSchemeCB.getSelectedItem();
         scheme.setSettings(mDialogContent.getSettings());
 
       }
@@ -195,7 +195,7 @@ public class SettingsDialog extends JDialog {
 
     mEditSchemeBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        DayProgramScheme scheme = (DayProgramScheme)mSchemeCB.getSelectedItem();
+        Scheme scheme = (Scheme)mSchemeCB.getSelectedItem();
         Object newSchemeName = JOptionPane.showInputDialog(parent, "Enter new name for scheme:", "New Scheme", JOptionPane.PLAIN_MESSAGE, null, null, scheme.getName());
         if (newSchemeName != null) {
           scheme.setName(newSchemeName.toString());
@@ -217,7 +217,7 @@ public class SettingsDialog extends JDialog {
       public void itemStateChanged(ItemEvent e) {
         mDeleteSchemeBtn.setEnabled(mSchemeCB.getSelectedIndex()!=0);
         mEditSchemeBtn.setEnabled(mSchemeCB.getSelectedIndex()!=0);
-        DayProgramScheme scheme = (DayProgramScheme)mSchemeCB.getSelectedItem();
+        Scheme scheme = (Scheme)mSchemeCB.getSelectedItem();
         mDialogContent.setSettings(scheme.getSettings());
       }
     });
@@ -240,10 +240,10 @@ public class SettingsDialog extends JDialog {
 
 
 
-  public DayProgramScheme[] getSchemes() {
-    DayProgramScheme[] result = new DayProgramScheme[mSchemeCBModel.getSize()];
+  public Scheme[] getSchemes() {
+    Scheme[] result = new Scheme[mSchemeCBModel.getSize()];
     for (int i=0; i<result.length; i++) {
-      result[i] = (DayProgramScheme)mSchemeCBModel.getElementAt(i);
+      result[i] = (Scheme)mSchemeCBModel.getElementAt(i);
     }
     return result;
   }

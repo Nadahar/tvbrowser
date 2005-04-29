@@ -24,34 +24,28 @@
  * $Revision$
  */
 
-package printplugin.dlgs;
+package printplugin.settings;
 
-import printplugin.settings.Settings;
-import printplugin.settings.Scheme;
-import printplugin.printer.PrintJob;
+import devplugin.Date;
+
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 
-import java.awt.*;
-import java.awt.print.PageFormat;
+public class QueueScheme extends Scheme {
 
-/**
- * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 24.04.2005
- * Time: 21:47:27
- */
+  public QueueScheme(String name) {
+    super(name);
+    setSettings(new QueuePrinterSettings(true, Date.getCurrentDate(), 7));
+  }
 
-public interface DialogContent {
+  void store(ObjectOutputStream out) throws IOException {
 
-  public Component getContent();
+    
+  }
 
-  public String getDialogTitle();
+  void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
 
-  public Settings getSettings();
-  
-  public void setSettings(Settings settings);
-
-  public PrintJob createPrintJob(PageFormat format);
-
-  public Scheme createNewScheme(String schemeName);
-
+  }
 }

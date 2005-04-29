@@ -29,6 +29,8 @@ package printplugin.dlgs.printdayprogramsdialog;
 import printplugin.dlgs.DialogContent;
 import printplugin.settings.Settings;
 import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.Scheme;
+import printplugin.settings.DayProgramScheme;
 import printplugin.printer.PrintJob;
 import printplugin.printer.JobFactory;
 
@@ -105,6 +107,9 @@ public class PrintDayProgramsDialogContent implements DialogContent {
   }
 
 
+  public Scheme createNewScheme(String schemeName) {
+    return new DayProgramScheme(schemeName);
+  }
 
 
 }
