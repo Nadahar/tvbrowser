@@ -36,6 +36,8 @@ import java.io.*;
 import javax.swing.*;
 import printplugin.dlgs.MainPrintDialog;
 import printplugin.dlgs.SettingsDialog;
+import printplugin.dlgs.DialogContent;
+import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialog;
 import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
 import printplugin.settings.DayProgramScheme;
 import printplugin.settings.DayProgramPrinterSettingsImpl;
@@ -89,23 +91,13 @@ public class PrintPlugin extends Plugin {
         MainPrintDialog dlg = new MainPrintDialog(getParentFrame());
         UiUtilities.centerAndShow(dlg);
         int result = dlg.getResult();
+
         if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {
-          PrinterJob printerJob = PrinterJob.getPrinterJob();
-          SettingsDialog dlg2 = new SettingsDialog(getParentFrame(), printerJob, loadDayProgramSchemes(), new PrintDayProgramsDialogContent(getParentFrame()));
-          UiUtilities.centerAndShow(dlg2);
-          storeSchemes(dlg2.getSchemes());
-          if (dlg2.getResult() == SettingsDialog.OK) {
-            PrintJob job = dlg2.getPrintJob();
-            try {
-              printerJob.setPrintable(job.getPrintable());
-              printerJob.print();
-            } catch (PrinterException e) {
-              e.printStackTrace();
-            }
-          }
+          showPrintDialog(new PrintDayProgramsDialogContent(getParentFrame()));
+          //storeSchemes(settingsDialog.getSchemes());
         }
         else if (result == MainPrintDialog.PRINT_QUEUE) {
-
+          showPrintDialog(new PrintFromQueueDialog());
         }
       }
     };
@@ -116,6 +108,23 @@ public class PrintPlugin extends Plugin {
     action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
 
     return new ActionMenu(action);
+  }
+
+
+  private void showPrintDialog(DialogContent content) {
+    PrinterJob printerJob = PrinterJob.getPrinterJob();
+    SettingsDialog settingsDialog = new SettingsDialog(getParentFrame(), printerJob, loadDayProgramSchemes(), content);
+    UiUtilities.centerAndShow(settingsDialog);
+
+    if (settingsDialog.getResult() == SettingsDialog.OK) {
+      PrintJob job = settingsDialog.getPrintJob();
+      try {
+        printerJob.setPrintable(job.getPrintable());
+        printerJob.print();
+      } catch (PrinterException e) {
+        util.exc.ErrorHandler.handle("Could not print pages: "+e.getLocalizedMessage(), e);
+      }
+    }
   }
 
 

@@ -40,23 +40,41 @@ public class DateRangePanel extends JPanel {
 
   private JComboBox mDateCb;
   private JSpinner mDayCountSpinner;
+  private JRadioButton mAllRb, mDateRb;
 
-
-  public DateRangePanel() {
+  public DateRangePanel(boolean provideAllOption) {
 
     setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("period","Zeitraum")));
 
-    JPanel pn = new JPanel();
-    pn.setLayout(new BoxLayout(pn,BoxLayout.X_AXIS));
-    pn.add(new JLabel(mLocalizer.msg("from","Von")));
-    pn.add(mDateCb = new JComboBox(createDateObjects(21)));
-    pn.add(new JLabel(mLocalizer.msg("TVlistingsFor", "Programm fuer")));
-    pn.add(mDayCountSpinner = new JSpinner(new SpinnerNumberModel(5,1,28,1)));
-    pn.add(new JLabel(mLocalizer.msg("days","Tage")));
+    setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
+    JPanel pn1 = new JPanel(new BorderLayout());
+    mAllRb = new JRadioButton("Alles");
+    pn1.add(mAllRb, BorderLayout.WEST);
 
-    setLayout(new BorderLayout());
-    add(pn, BorderLayout.WEST);
+    JPanel pn2 = new JPanel();
+    pn2.setLayout(new BoxLayout(pn2,BoxLayout.X_AXIS));
+    if (provideAllOption) {
+      pn2.add(mDateRb = new JRadioButton());
+    }
+    pn2.add(new JLabel(mLocalizer.msg("from","Von")));
+    pn2.add(mDateCb = new JComboBox(createDateObjects(21)));
+    pn2.add(new JLabel(mLocalizer.msg("TVlistingsFor", "Programm fuer")));
+    pn2.add(mDayCountSpinner = new JSpinner(new SpinnerNumberModel(5,1,28,1)));
+    pn2.add(new JLabel(mLocalizer.msg("days","Tage")));
+
+    JPanel pn3 = new JPanel(new BorderLayout());
+    pn3.add(pn2, BorderLayout.WEST);
+
+    if (provideAllOption) {
+      add(pn1);
+    }
+    add(pn3);
+
+    ButtonGroup group = new ButtonGroup();
+    mDateRb.setSelected(true);
+    group.add(mAllRb);
+    group.add(mDateRb);
 
 
 
@@ -72,7 +90,12 @@ public class DateRangePanel extends JPanel {
   }
 
   public void setFromDate(Date date) {
-    mDateCb.setSelectedItem(date);
+    if (date == null) {
+      mAllRb.setSelected(true);
+    }
+    else {
+      mDateCb.setSelectedItem(date);
+    }
   }
 
   public void setNumberOfDays(int days) {
@@ -80,6 +103,9 @@ public class DateRangePanel extends JPanel {
   }
 
   public Date getFromDate() {
+    if (mAllRb.isSelected()) {
+      return null;
+    }
     return (Date)mDateCb.getSelectedItem();
   }
 
