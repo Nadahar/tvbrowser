@@ -29,7 +29,6 @@ package printplugin.dlgs.printdayprogramsdialog;
 import printplugin.dlgs.DialogContent;
 import printplugin.settings.Settings;
 import printplugin.settings.DayProgramPrinterSettings;
-import printplugin.settings.DayProgramPrinterSettingsImpl;
 import printplugin.printer.PrintJob;
 import printplugin.printer.JobFactory;
 
@@ -73,7 +72,7 @@ public class PrintDayProgramsDialogContent implements DialogContent {
   }
 
   public Settings getSettings() {
-    return new DayProgramPrinterSettingsImpl(mListingsTab.getDateFrom(),
+    return new DayProgramPrinterSettings(mListingsTab.getDateFrom(),
         mListingsTab.getNumberOfDays(),
         mListingsTab.getChannels(),
         mListingsTab.getFromTime(),

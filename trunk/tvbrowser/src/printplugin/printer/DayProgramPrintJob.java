@@ -26,9 +26,10 @@
 
 package printplugin.printer;
 
-import printplugin.settings.DayProgramPrinterSettings;
+
 import printplugin.settings.ProgramIconSettings;
 import printplugin.settings.PrinterProgramIconSettings;
+import printplugin.settings.DayProgramPrinterSettings;
 
 
 import java.awt.print.PageFormat;

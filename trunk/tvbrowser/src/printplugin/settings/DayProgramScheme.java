@@ -33,13 +33,10 @@ import devplugin.Plugin;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
-import java.awt.print.PageFormat;
 import java.util.ArrayList;
 
 public class DayProgramScheme extends Scheme {
 
-
- // private DayProgramPrinterSettings mSettings;
 
   public DayProgramScheme(String name) {
     super(name);
@@ -71,7 +68,7 @@ public class DayProgramScheme extends Scheme {
     int colCount = in.readInt();
     int channelsPerColumn = in.readInt();
 
-    DayProgramPrinterSettingsImpl settings = new DayProgramPrinterSettingsImpl(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, colCount, channelsPerColumn);
+    DayProgramPrinterSettings settings = new DayProgramPrinterSettings(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, colCount, channelsPerColumn);
     setSettings(settings);
   }
 
@@ -111,11 +108,11 @@ public class DayProgramScheme extends Scheme {
   }
 
    /*
-  public void setSettings(DayProgramPrinterSettings settings) {
+  public void setSettings(DayProgramPrinterSettingsOLD settings) {
     mSettings = settings;
   }
 
-  public DayProgramPrinterSettings getSettings() {
+  public DayProgramPrinterSettingsOLD getSettings() {
     return mSettings;
   }   */
 
