@@ -24,9 +24,33 @@
  * $Revision$
  */
 
-package printplugin.dlgs.printfromqueuedialog;
+package printplugin.settings;
 
-import javax.swing.*;
+import devplugin.Date;
 
-public class LayoutTab extends JPanel {
+
+public class QueuePrinterSettings implements Settings {
+
+  private boolean mEmptyQueueAfterPrinting;
+  private Date mFromDate;
+  private int mDayCount;
+
+  public QueuePrinterSettings(boolean emptyQueueAfterPrinting, Date fromDate, int dayCount) {
+    mEmptyQueueAfterPrinting = emptyQueueAfterPrinting;
+    mFromDate = fromDate;
+    mDayCount = dayCount;
+
+  }
+
+  public boolean emptyQueueAfterPrinting() {
+    return mEmptyQueueAfterPrinting;
+  }
+
+  public Date getFromDate() {
+    return mFromDate;
+  }
+
+  public int getDayCount() {
+    return mDayCount;
+  }
 }

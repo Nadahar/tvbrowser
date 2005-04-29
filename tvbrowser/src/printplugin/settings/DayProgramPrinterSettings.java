@@ -30,19 +30,69 @@ import devplugin.Date;
 import devplugin.Channel;
 
 
-public interface DayProgramPrinterSettings extends Settings {
+/**
+ * Created by: Martin Oberhauser (martin@tvbrowser.org)
+ * Date: 24.04.2005
+ * Time: 14:20:26
+ */
+public class DayProgramPrinterSettings implements Settings {
 
-  public int BREAK_TYPE_NEWPAGE = 1;
-  public int BREAK_TYPE_HALFPAGE = 2;
-  public int BREAK_TYPE_NONE = 3;
+  public static final int BREAK_TYPE_NEWPAGE = 1;
+  public static final int BREAK_TYPE_HALFPAGE = 2;
+  public static final int BREAK_TYPE_NONE = 3;
+
+  private Date mFromDay;
+  private int mNumberOfDays;
+  private Channel[] mChannelList;
+  private int mDayStartHour;
+  private int mDayEndHour;
+  private int mColCount;
+  private int mChannelsPerColum;
+
+  public DayProgramPrinterSettings(Date fromDay,
+                                       int numberOfDays,
+                                       Channel[] channelList,
+                                       int dayStartHour,
+                                       int dayEndHour,
+                                       int colCount,
+                                       int channelsPerColumn) {
+    mFromDay = fromDay;
+    mNumberOfDays = numberOfDays;
+    mChannelList = channelList;
+    mDayStartHour = dayStartHour;
+    mDayEndHour = dayEndHour;
+    mColCount = colCount;
+    mChannelsPerColum = channelsPerColumn;    
+  }
+  
+  public Date getFromDay() {
+    return mFromDay;
+  }
+
+  public int getNumberOfDays() {
+    return mNumberOfDays;
+  }
+
+  public Channel[] getChannelList() {
+    return mChannelList;
+  }
+
+  public int getDayStartHour() {
+    return mDayStartHour;
+  }
+
+  public int getDayEndHour() {
+    return mDayEndHour;
+  }
 
 
-  public Date getFromDay();
-  public int getNumberOfDays();
-  public Channel[] getChannelList();
-  public int getDayStartHour();
-  public int getDayEndHour();
-  public int getColumnCount();
-  public int getChannelsPerColumn();
 
+
+  public int getColumnCount() {
+    return mColCount;
+  }
+
+  public int getChannelsPerColumn() {
+    return mChannelsPerColum;
+  }
 }

@@ -37,10 +37,10 @@ import javax.swing.*;
 import printplugin.dlgs.MainPrintDialog;
 import printplugin.dlgs.SettingsDialog;
 import printplugin.dlgs.DialogContent;
-import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialog;
+import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialogContent;
 import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
 import printplugin.settings.DayProgramScheme;
-import printplugin.settings.DayProgramPrinterSettingsImpl;
+import printplugin.settings.DayProgramPrinterSettings;
 import printplugin.printer.PrintJob;
 import util.ui.UiUtilities;
 
@@ -97,7 +97,7 @@ public class PrintPlugin extends Plugin {
           //storeSchemes(settingsDialog.getSchemes());
         }
         else if (result == MainPrintDialog.PRINT_QUEUE) {
-          showPrintDialog(new PrintFromQueueDialog());
+          showPrintDialog(new PrintFromQueueDialogContent());
         }
       }
     };
@@ -190,14 +190,14 @@ public class PrintPlugin extends Plugin {
         try { in.close(); } catch(IOException exc) {}
       }
       DayProgramScheme scheme = new DayProgramScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
-      scheme.setSettings(new DayProgramPrinterSettingsImpl(new Date(), 3, null, 6, 24+3, 5, 2));
+      scheme.setSettings(new DayProgramPrinterSettings(new Date(), 3, null, 6, 24+3, 5, 2));
       return new DayProgramScheme[]{scheme};
     }
 
     /*
     DayProgramScheme scheme = new DayProgramScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
 
-    scheme.setSettings(new DayProgramPrinterSettings(){
+    scheme.setSettings(new DayProgramPrinterSettingsOLD(){
       public Date getFromDay() {
         return new Date();
       }
