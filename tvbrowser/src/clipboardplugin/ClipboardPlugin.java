@@ -95,7 +95,11 @@ public class ClipboardPlugin extends Plugin {
 		final PluginTreeNode node = getRootNode();
 		final boolean inList = node.contains(program);
 
-		AbstractAction action = new AbstractAction() {
+    ImageIcon img = new ImageIcon(ImageUtilities
+        .createImageFromJar("clipboardplugin/clipboard.png",
+            ClipboardPlugin.class));
+    
+		AbstractAction addRemoveAction = new AbstractAction() {
 
 			public void actionPerformed(ActionEvent evt) {
 				if (inList) {
@@ -110,18 +114,29 @@ public class ClipboardPlugin extends Plugin {
 		};
 
 		if (inList) {
-			action.putValue(Action.NAME, mLocalizer.msg(
+			addRemoveAction.putValue(Action.NAME, mLocalizer.msg(
 					"contextMenuRemoveText", "Remove from Clipboard"));
 		} else {
-			action.putValue(Action.NAME, mLocalizer.msg("contextMenuAddText",
+			addRemoveAction.putValue(Action.NAME, mLocalizer.msg("contextMenuAddText",
 					"Add to Clipboard"));
 		}
 
-		action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities
-				.createImageFromJar("clipboardplugin/clipboard.png",
-						ClipboardPlugin.class)));
+    AbstractAction copyToSystem = new AbstractAction(mLocalizer.msg("copyToSystem","Copy to System-Clipboard")) {
+      public void actionPerformed(ActionEvent evt) {
+        Program[] list = {program};
+        copyProgramsToSystem(list);
+      }
+    };
+    copyToSystem.putValue(Action.SMALL_ICON, img);
+    
+		addRemoveAction.putValue(Action.SMALL_ICON, img);
 
-		return new ActionMenu(action);
+    Action action = new devplugin.ContextMenuAction("Clipboard Plugin");
+    action.putValue(Action.SMALL_ICON, img);
+    
+    Action[] actionList = {addRemoveAction, copyToSystem};
+    
+		return new ActionMenu(action, actionList);
 	}
 
 	/*
