@@ -2,6 +2,7 @@ Changelog CalendarExportPlugin
 
 0.3:
 - Changed to new Plugin-Interface
+- Now Description uses new Parameter-System
 
 0.2:
 - Added new Settings for Categorie, Visibility and Transparent
