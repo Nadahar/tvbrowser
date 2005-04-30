@@ -1,6 +1,28 @@
 /*
-* Created on 11.04.2004
-*/
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
 package clipboardplugin;
 
 import java.awt.BorderLayout;
@@ -11,6 +33,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -24,6 +47,10 @@ import util.ui.ImageUtilities;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Plugin;
 import devplugin.Program;
 
@@ -49,18 +76,22 @@ public class ClipboardDialog extends JDialog {
   /** Plugin that called this Dialog */
   private Plugin mPlugin;
 
+  /** Settings for the Plugin */
+  private Properties mSettings;
+
   /**
    * Creates the Dialog
-   *
+   * 
    * @param frame Frame for modal
    * @param plugin Plugin for reference
    * @param programs
    */
-  public ClipboardDialog(Frame frame, Plugin plugin, Program[] programs) {
+  public ClipboardDialog(Frame frame, Plugin plugin, Properties settings, Program[] programs) {
     super(frame, true);
+    mSettings = settings;
     setTitle(mLocalizer.msg("viewList", "View List:"));
     mClipList = new Vector();
-    for (int i=0; i<programs.length; i++) {
+    for (int i = 0; i < programs.length; i++) {
       mClipList.add(programs[i]);
     }
     mFrame = frame;
@@ -70,7 +101,7 @@ public class ClipboardDialog extends JDialog {
 
   /**
    * Returns the current Time in minutes
-   *
+   * 
    * @return Time in minutes
    */
   private int getCurrentTime() {
@@ -88,8 +119,7 @@ public class ClipboardDialog extends JDialog {
 
     mProgramJList = new ProgramList(mClipList);
     mProgramJList.addMouseListeners(mPlugin);
-    
-    
+
     JScrollPane scroll = new JScrollPane(mProgramJList);
 
     content.add(scroll, BorderLayout.CENTER);
@@ -123,7 +153,8 @@ public class ClipboardDialog extends JDialog {
 
     c.weighty = 1.0;
 
-    JButton deleteButton = new JButton(ImageUtilities.createImageIconFromJar("clipboardplugin/Delete16.gif", getClass()));
+    JButton deleteButton = new JButton(ImageUtilities
+        .createImageIconFromJar("clipboardplugin/Delete16.gif", getClass()));
     deleteButton.setToolTipText(mLocalizer.msg("delete", "Deletes the selected program"));
 
     deleteButton.addActionListener(new ActionListener() {
@@ -149,12 +180,27 @@ public class ClipboardDialog extends JDialog {
 
     });
 
-    JPanel buttonPn = new JPanel(new BorderLayout());
+    CellConstraints cc = new CellConstraints();
+    JPanel buttonPn = new JPanel(new FormLayout("default, 3dlu, default, fill:default:grow, default", "fill:default"));
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
     content.add(buttonPn, BorderLayout.SOUTH);
 
-    buttonPn.add(sendButton, BorderLayout.WEST);
+    JButton copyToSystemBtn = new JButton();
+    copyToSystemBtn.setIcon(ImageUtilities
+        .createImageIconFromJar("clipboardplugin/clipboard.png", getClass()));
+    copyToSystemBtn.setToolTipText(mLocalizer.msg("toSystem", "To System-Clipbord"));
+    
+    copyToSystemBtn.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent arg0) {
+        ((ClipboardPlugin)mPlugin).copyProgramsToSystem((Program[])mClipList.toArray(new Program[0]));
+      }
+
+    });
+
+    buttonPn.add(sendButton, cc.xy(1,1));
+    buttonPn.add(copyToSystemBtn, cc.xy(3,1));
 
     JButton closeButton = new JButton(mLocalizer.msg("close", "Close"));
     closeButton.addActionListener(new ActionListener() {
@@ -164,9 +210,7 @@ public class ClipboardDialog extends JDialog {
       }
     });
 
-
-
-    buttonPn.add(closeButton, BorderLayout.EAST);
+    buttonPn.add(closeButton, cc.xy(5,1));
     getRootPane().setDefaultButton(closeButton);
 
   }
@@ -187,12 +231,13 @@ public class ClipboardDialog extends JDialog {
 
   /**
    * Moves the selected Items
-   *
+   * 
    * @param nrRows # Rows to Move
    */
   protected void moveSelectedItems(int nrRows) {
     int[] selection = mProgramJList.getSelectedIndices();
-    if (selection.length == 0) return;
+    if (selection.length == 0)
+      return;
 
     for (int i = 0; i < selection.length; i++) {
       if (selection[i] >= mClipList.size()) {
@@ -216,7 +261,7 @@ public class ClipboardDialog extends JDialog {
       mClipList.removeElementAt(selection[i]);
     }
 
-    // Zeilen wieder einf�gen
+    // Zeilen wieder einfï¿½gen
     for (int i = 0; i < selectedRows.length; i++) {
       mClipList.insertElementAt(selectedRows[i], insertPos + i);
     }
@@ -226,7 +271,8 @@ public class ClipboardDialog extends JDialog {
 
     // Scrollen
     int scrollPos = insertPos;
-    if (nrRows > 0) scrollPos += selection.length;
+    if (nrRows > 0)
+      scrollPos += selection.length;
     mProgramJList.ensureIndexIsVisible(scrollPos);
     mProgramJList.updateUI();
   }
@@ -235,7 +281,9 @@ public class ClipboardDialog extends JDialog {
    * Delete-Button was pressed.
    */
   protected void deleteItems() {
-    if ((mClipList.size() == 0) || (mProgramJList.getSelectedIndex() >= mClipList.size())) { return; }
+    if ((mClipList.size() == 0) || (mProgramJList.getSelectedIndex() >= mClipList.size())) {
+      return;
+    }
 
     Object[] obj = mProgramJList.getSelectedValues();
     for (int i = 0; i < obj.length; i++) {
@@ -253,7 +301,6 @@ public class ClipboardDialog extends JDialog {
 
   /**
    * Shows the Send-Dialog
-   *
    */
   private void showSendDialog() {
     Program[] prgList = new Program[mClipList.size()];
@@ -266,8 +313,5 @@ public class ClipboardDialog extends JDialog {
 
     send.show();
   }
-
-
-  
 
 }
