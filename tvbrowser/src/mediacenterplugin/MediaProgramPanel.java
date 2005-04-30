@@ -4,7 +4,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.io.StringReader;
 
-import util.ui.TextLineBreaker;
+import util.misc.TextLineBreakerFontWidth;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -18,10 +18,10 @@ public class MediaProgramPanel {
     if ((mProgram == null) || (!mProgram.equals(program))) {
       mProgram = program;
       
-      TextLineBreaker breaker = new TextLineBreaker();
+      TextLineBreakerFontWidth breaker = new TextLineBreakerFontWidth(font);
       
       try {
-        mSplittedText = breaker.breakLines(new StringReader(generateStringFromProgram(program)), font, width, Integer.MAX_VALUE); 
+        mSplittedText = breaker.breakLines(new StringReader(generateStringFromProgram(program)), width, Integer.MAX_VALUE); 
       } catch (Exception e) {
         mSplittedText = new String[0];
       }

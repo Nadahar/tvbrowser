@@ -23,13 +23,13 @@
  *   $Author$
  * $Revision$
  */
-package test.util.ui;
+package test.util.misc;
 
 import java.awt.Font;
 import java.io.IOException;
 import java.io.StringReader;
 
-import util.ui.TextLineBreaker;
+import util.misc.TextLineBreakerFontWidth;
 import junit.framework.TestCase;
 
 /**
@@ -42,25 +42,25 @@ public class TextLineBreakerTest extends TestCase {
   public void testLineBreak() throws IOException {
     Font font = new Font("Dialog", Font.PLAIN, 12);
     
-    TextLineBreaker breaker = new TextLineBreaker();
+    TextLineBreakerFontWidth breaker = new TextLineBreakerFontWidth(font);
 
     // A normal line break    
     String text = "Es ging der Stiefel und sein Knecht von Kniggeb\u00fchl "
       + "nach Entenbrecht.";
     StringReader reader = new StringReader(text);
-    String[] lineArr = breaker.breakLines(reader, font, 100, 3);
+    String[] lineArr = breaker.breakLines(reader, 100, 3);
     assertEquals(lineArr.length, 3);
     
     // A long word break with good breaking chars
     text = "Da ist die Teta-Graphen-Hypernations-Maschine";
     reader = new StringReader(text);
-    lineArr = breaker.breakLines(reader, font, 100, 4);
+    lineArr = breaker.breakLines(reader, 100, 4);
     assertEquals(lineArr.length, 4);
     
     // A long word break without good breaking chars
     text = "Parabailarlabambaparabailarlabambasenecesitaunacopadicracia";
     reader = new StringReader(text);
-    lineArr = breaker.breakLines(reader, font, 100, 4);
+    lineArr = breaker.breakLines(reader, 100, 4);
     assertEquals(lineArr.length, 4);
     
     /*
