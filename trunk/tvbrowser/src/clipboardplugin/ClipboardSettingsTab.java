@@ -62,7 +62,7 @@ public class ClipboardSettingsTab implements SettingsTab {
       .getLocalizerFor(ClipboardSettingsTab.class);
   
   /** Settings to use */
-	private Properties mSetttings;
+	private Properties mSettings;
   /** Text-Area for the Parameters */
 	private JTextArea mParamText;
 	
@@ -71,7 +71,7 @@ public class ClipboardSettingsTab implements SettingsTab {
    * @param setttings Settings to use
    */
 	public ClipboardSettingsTab(Properties setttings) {
-		mSetttings = setttings;
+		mSettings = setttings;
 	}
 
   /**
@@ -90,7 +90,7 @@ public class ClipboardSettingsTab implements SettingsTab {
 		
 		mParamText = new JTextArea();
 		
-		mParamText.setText(mSetttings.getProperty("ParamToUse"));
+		mParamText.setText(mSettings.getProperty("ParamToUse"));
 		
 		panel.add(new JScrollPane(mParamText), cc.xyw(1,1,5));
 		
@@ -141,7 +141,7 @@ public class ClipboardSettingsTab implements SettingsTab {
    * Save the Settings
    */
 	public void saveSettings() {
-		mSetttings.setProperty("ParamToUse", mParamText.getText());
+		mSettings.setProperty("ParamToUse", mParamText.getText());
 	}
 
   /**
