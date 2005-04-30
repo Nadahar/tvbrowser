@@ -131,7 +131,7 @@ public class ClipboardPlugin extends Plugin {
     
 		addRemoveAction.putValue(Action.SMALL_ICON, img);
 
-    Action action = new devplugin.ContextMenuAction("Clipboard Plugin");
+    Action action = new devplugin.ContextMenuAction(mLocalizer.msg("contextMenu", "Clipboard"));
     action.putValue(Action.SMALL_ICON, img);
     
     Action[] actionList = {addRemoveAction, copyToSystem};
