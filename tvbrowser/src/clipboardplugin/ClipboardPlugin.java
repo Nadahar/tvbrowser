@@ -195,7 +195,7 @@ public class ClipboardPlugin extends Plugin {
 
 	public void loadSettings(Properties settings) {
 		mSettings = settings;
-		mSettings.setProperty("ParamToUse", mSettings.getProperty("ParamToUse", "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}\n{splitAt(short_info,\"78\")}\n\n"));
+		mSettings.setProperty("ParamToUse", mSettings.getProperty("ParamToUse", "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n"));
 	}
 
 	public Properties storeSettings() {
