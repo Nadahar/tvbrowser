@@ -90,7 +90,7 @@ public class ClipboardSettingsTab implements SettingsTab {
 		
 		mParamText = new JTextArea();
 		
-		mParamText.setText(mSettings.getProperty("ParamToUse"));
+		mParamText.setText(mSettings.getProperty("ParamToUse", ClipboardPlugin.DEFAULT_PARAM));
 		
 		panel.add(new JScrollPane(mParamText), cc.xyw(1,1,5));
 		
