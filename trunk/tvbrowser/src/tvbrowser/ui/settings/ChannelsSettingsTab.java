@@ -151,9 +151,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     panel.add(createFilterPanel(), c.xy(1, 9));
 
     // Buttons in the Middle
-
     JButton rightBt = new JButton(new ImageIcon("imgs/Forward24.gif"));
-    rightBt.setToolTipText(mLocalizer.msg("tooltip.right", "Move selected rows in right list"));
     rightBt.setMargin(UiUtilities.ZERO_INSETS);
 
     rightBt.addActionListener(new ActionListener() {
@@ -163,7 +161,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     });
 
     JButton leftBt = new JButton(new ImageIcon("imgs/Back24.gif"));
-    leftBt.setToolTipText(mLocalizer.msg("tooltip.left", "Move selected rows in left list"));
     leftBt.setMargin(UiUtilities.ZERO_INSETS);
 
     leftBt.addActionListener(new ActionListener() {
