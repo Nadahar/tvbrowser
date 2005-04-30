@@ -23,41 +23,51 @@
  *   $Author$
  * $Revision$
  */
-package util.ui;
+package util.misc;
 
 import java.awt.Font;
-import java.io.IOException;
-import java.io.Reader;
+import java.awt.FontMetrics;
 
-import util.misc.TextLineBreakerFontWidth;
+import javax.swing.JLabel;
 
 /**
- * Breaks a text into lines.
+ * Breaks a text into lines using Font-Metrics.
  * 
- * This class is deprecated. Please use util.misc.TextLineBreakerFontWidth instead
- * 
- * @deprecated
  * @author Til Schneider, www.murfman.de
  */
-public class TextLineBreaker {
+public class TextLineBreakerFontWidth extends TextLineBreakerStringWidth{
+
+  /** The helper label. */  
+  private static final JLabel HELPER_LABEL = new JLabel();
+  /** Font-Metrics of current Font */
+  private FontMetrics mFontMetrics;
 
   /**
-   * Returns a splitted Version of the String. The String is splitted if a Line
-   * reaches width. Width is a Pixel-Value. The width of the current String is 
-   * calculated using the FontMetrics of the given Font
-   * 
-   * @param textReader String to break
+   * Create the LineBreaker
    * @param font Font to use for Width-Calculation
-   * @param width max. Widht
-   * @param maxLines Max. of Lines
-   * @return Splitted Text
-   * @throws IOException
    */
-  public String[] breakLines(Reader textReader, Font font, int width,
-    int maxLines)
-    throws IOException
-  {
-    return new TextLineBreakerFontWidth(font).breakLines(textReader, width, maxLines);
+  public TextLineBreakerFontWidth(Font font) {
+    super();
+    setFont(font);
   }
-
+  
+  /**
+   * Set the Font to use for Width-Calculation
+   * @param font Font to use
+   */
+  public void setFont(Font font) {
+    mFontMetrics = HELPER_LABEL.getFontMetrics(font);
+    setSpaceWidth(mFontMetrics.charWidth(' '));
+    setMinusWidth(mFontMetrics.charWidth('-'));
+  }
+  
+  /**
+   * Get the width of a String
+   * @param str Calculate Width of this String
+   * @return Width of String 
+   */
+  public int getStringWidth(String str) {
+    return mFontMetrics.stringWidth(str);
+  }
+  
 }

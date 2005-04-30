@@ -35,6 +35,8 @@ import java.util.logging.Level;
 
 import javax.swing.Icon;
 
+import util.misc.TextLineBreakerFontWidth;
+
 /**
  * An icon that displays multiline text.
  *
@@ -121,8 +123,8 @@ public class TextAreaIcon implements Icon {
     if (textReader == null) {
       mTextLineArr = null;
     } else {
-      TextLineBreaker breaker = new TextLineBreaker();
-      mTextLineArr = breaker.breakLines(textReader, mFont, mWidth, mMaxLineCount);
+      TextLineBreakerFontWidth breaker = new TextLineBreakerFontWidth(mFont);
+      mTextLineArr = breaker.breakLines(textReader, mWidth, mMaxLineCount);
     }
   }
   
