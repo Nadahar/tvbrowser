@@ -24,21 +24,34 @@
  */
 package emailplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import util.paramhandler.ParamCheckDialog;
+import util.paramhandler.ParamHelpDialog;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -66,9 +79,12 @@ public class EMailSettingsTab implements SettingsTab {
   /** Parameters */
   private JTextField mParameter;
 
-  /** The Settings-Panel */
-  private JPanel mPanel;
+  /** Text-Area for the Parameters in the EMail-Body*/
+  private JTextArea mParamText;  
 
+  /** Encoding of Mailto: */
+  private JComboBox mEncoding;
+  
   /**
    * Creates the SettingsTab
    * 
@@ -84,38 +100,38 @@ public class EMailSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#createSettingsPanel()
    */
   public JPanel createSettingsPanel() {
-    mPanel = new JPanel();
+    final JPanel configPanel = new JPanel();
 
-    mPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("configuration", "Configuration")));
+    configPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("configuration", "Configuration")));
 
     FormLayout layout = new FormLayout("3dlu, pref, 3dlu, pref:grow, 3dlu, pref, 3dlu",
-        "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu");
-    mPanel.setLayout(layout);
+        "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+    configPanel.setLayout(layout);
 
     CellConstraints cc = new CellConstraints();
 
-    mPanel.add(new JLabel(mLocalizer.msg("Application", "Application") + ":"), cc.xy(2, 2));
+    configPanel.add(new JLabel(mLocalizer.msg("Application", "Application") + ":"), cc.xy(2, 2));
 
     mApplication = new JTextField(mSettings.getProperty("application"));
 
-    mPanel.add(mApplication, cc.xy(4, 2));
+    configPanel.add(mApplication, cc.xy(4, 2));
 
     JButton appFinder = new JButton("...");
     appFinder.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        findApplictation();
+        findApplictation(configPanel);
       }
 
     });
 
-    mPanel.add(appFinder, cc.xy(6, 2));
+    configPanel.add(appFinder, cc.xy(6, 2));
 
-    mPanel.add(new JLabel(mLocalizer.msg("Parameter", "Parameter") + ":"), cc.xy(2, 4));
+    configPanel.add(new JLabel(mLocalizer.msg("Parameter", "Parameter") + ":"), cc.xy(2, 4));
 
     mParameter = new JTextField(mSettings.getProperty("parameter", "{0}"));
 
-    mPanel.add(mParameter, cc.xyw(4, 4, 3));
+    configPanel.add(mParameter, cc.xyw(4, 4, 3));
 
     JTextArea ta = new JTextArea(mLocalizer.msg("Desc", "Desc"));
     ta.setWrapStyleWord(true);
@@ -123,18 +139,101 @@ public class EMailSettingsTab implements SettingsTab {
     ta.setOpaque(false);
     ta.setEditable(false);
     ta.setFocusable(false);
+    configPanel.add(ta, cc.xyw(2,6,6));
 
-    mPanel.add(ta, cc.xyw(2, 6, 4));
+    configPanel.add(new JLabel(mLocalizer.msg("encoding", "Encoding") + ":"), cc.xy(2,8));
 
-    return mPanel;
+    Vector encodings = new Vector();
+    Map availcs = Charset.availableCharsets();
+    Set keys = availcs.keySet();
+    for (Iterator iter = keys.iterator();iter.hasNext();) {
+       encodings.add(iter.next());
+    }
+    
+    mEncoding = new JComboBox(encodings);
+
+    mEncoding.setSelectedItem(mSettings.getProperty("encoding", "UTF-8"));
+    
+    configPanel.add(mEncoding, cc.xyw(4, 8, 3));
+    
+    JPanel panel = new JPanel(new BorderLayout());
+    
+    panel.add(configPanel, BorderLayout.NORTH);
+    
+    panel.add(createParameterPanel(), BorderLayout.CENTER);
+    
+    return panel;
   }
 
   /**
+   * Creates the SettingsPanel
+   * @return Settings-Panel
+   */
+  public JPanel createParameterPanel() {
+    final JPanel panel = new JPanel(
+        new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default", 
+                 "fill:pref:grow, 3dlu, default"));
+    
+    panel.setBorder(BorderFactory.createTitledBorder(
+        mLocalizer.msg("createText", "Text to create for each Program")));
+    
+    CellConstraints cc = new CellConstraints();
+    
+    mParamText = new JTextArea();
+    
+    mParamText.setText(mSettings.getProperty("paramToUse", EMailPlugin.DEFAULT_PARAMETER));
+    
+    panel.add(new JScrollPane(mParamText), cc.xyw(1,1,5));
+    
+    JButton check = new JButton(mLocalizer.msg("check","Check"));
+    
+    check.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent arg0) {
+        Window bestparent = UiUtilities.getBestDialogParent(panel);
+        
+        ParamCheckDialog dialog;
+        if (bestparent instanceof JDialog) {
+          dialog = new ParamCheckDialog((JDialog)bestparent, mParamText.getText());
+        } else {
+          dialog = new ParamCheckDialog((JFrame)bestparent, mParamText.getText());
+        }
+        dialog.show();
+      }
+      
+    });
+    
+    panel.add(check, cc.xy(3,3));
+    
+    JButton help = new JButton(mLocalizer.msg("help","Help"));
+    
+    help.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent arg0) {
+        Window bestparent = UiUtilities.getBestDialogParent(panel);
+        
+        ParamHelpDialog dialog;
+        if (bestparent instanceof JDialog) {
+          dialog = new ParamHelpDialog((JDialog)bestparent);
+        } else {
+          dialog = new ParamHelpDialog((JFrame)bestparent);
+        }
+        dialog.show();
+      }
+      
+    });
+    
+    panel.add(help, cc.xy(5,3));
+    
+    return panel;
+  }  
+  
+  /**
    * Opens a FileChooser and let the User open a File
    */
-  public void findApplictation() {
+  private void findApplictation(JPanel panel) {
     JFileChooser chooser = new JFileChooser(new File(mSettings.getProperty("application", "")));
-    int returnVal = chooser.showOpenDialog(UiUtilities.getBestDialogParent(mPanel));
+    int returnVal = chooser.showOpenDialog(UiUtilities.getBestDialogParent(panel));
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       mApplication.setText(chooser.getSelectedFile().getAbsolutePath());
     }
@@ -148,6 +247,8 @@ public class EMailSettingsTab implements SettingsTab {
   public void saveSettings() {
     mSettings.put("application", mApplication.getText());
     mSettings.put("parameter", mParameter.getText());
+    mSettings.put("encoding", mEncoding.getSelectedItem());
+    mSettings.put("paramToUse", mParamText.getText());
   }
 
   /*
