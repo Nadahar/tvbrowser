@@ -174,7 +174,12 @@ public class ParamLibrary {
     } else if (key.equals("short_info")) {
       return removeNull(prg.getShortInfo());
     } else if (key.equals("description")) {
-      return removeNull(prg.getDescription() + "\n" + prg.getChannel().getCopyrightNotice());
+      String res = removeNull(prg.getDescription());
+      if (prg.getChannel().getCopyrightNotice() != null) {
+        res = res + "\n" + prg.getChannel().getCopyrightNotice();
+      }
+      
+      return res;
     } else if (key.equals("episode")) {
       return removeNull(prg.getTextField(ProgramFieldType.EPISODE_TYPE));
     } else if (key.equals("original_episode")) {
