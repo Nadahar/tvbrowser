@@ -71,8 +71,8 @@ public class ClipboardPlugin extends Plugin {
 	private Properties mSettings;
 
   /** The Default-Parameters */
-  public final static String DEFAULT_PARAM = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
-  
+  public static final String DEFAULT_PARAM = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
+
 	public ActionMenu getButtonAction() {
 		AbstractAction action = new AbstractAction() {
 
