@@ -1,0 +1,6 @@
+Changelog EMailPlugin
+
+0.01:
+- initial version
+
+
