@@ -328,7 +328,7 @@ public class ParamLibrary {
         return null;
       }
       
-      return result.toString();
+      return result.toString().trim();
     }
 
     mError = true;
