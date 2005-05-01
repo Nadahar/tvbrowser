@@ -23,26 +23,28 @@
  *   $Author$
  * $Revision$
  */
+
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.settings.util.ColorLabel;
+import tvbrowser.ui.settings.util.ColorButton;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
+import util.ui.TabLayout;
 import devplugin.ProgramFieldType;
 import devplugin.SettingsTab;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.CellConstraints;
 
 /**
  * A settings tab for the program panel.
@@ -58,8 +60,10 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   
   private OrderChooser mIconPluginOCh;
   private OrderChooser mInfoTextOCh;
-  
-  
+
+  private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemMarkedColorLb;
+
+
   /**
    * Creates a new instance of ProgramTableSettingsTab.
    */
@@ -78,10 +82,13 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     
     mSettingsPn = new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    
+
+    JPanel main = new JPanel(new TabLayout(1));
+    mSettingsPn.add(main, BorderLayout.NORTH);
     p1 = new JPanel(new GridLayout(1, 2));
-    mSettingsPn.add(p1, BorderLayout.NORTH);
-    
+   // mSettingsPn.add(p1, BorderLayout.NORTH);
+    main.add(p1);
+
     // icons
     p2 = new JPanel(new BorderLayout());
     msg = mLocalizer.msg("pluginIcons", "Plugin icons");
@@ -113,6 +120,35 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     helpTA = UiUtilities.createHelpTextArea(msg);
     helpTA.setBorder(helpTextBorder);
     p2.add(helpTA, BorderLayout.SOUTH);
+
+
+    JPanel colors = new JPanel();
+
+    Color programItemProgressColor = Settings.propProgramTableColorOnAirDark.getColor();
+    Color programItemOnAirColor = Settings.propProgramTableColorOnAirLight.getColor();
+    Color programItemMarkedColor = Settings.propProgramTableColorMarked.getColor();
+
+
+    colors.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Colors", "Colors")));
+    FormLayout formLayout = new FormLayout("default, 5dlu, default, 5dlu, default",
+            "default, 3dlu, default, 3dlu, default");
+    CellConstraints c = new CellConstraints();
+    colors.setLayout(formLayout);
+
+    colors.add(new JLabel(mLocalizer.msg("color.programOnAir","Hintergrundfarbe fuer laufende Sendung")), c.xy(1,1));
+    colors.add(mProgramItemOnAirColorLb = new ColorLabel(programItemOnAirColor), c.xy(3,1));
+    colors.add(new ColorButton(mProgramItemOnAirColorLb), c.xy(5,1));
+
+    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittanzeige fuer laufende Sendung")), c.xy(1,3));
+    colors.add(mProgramItemProgressColorLb = new ColorLabel(programItemProgressColor), c.xy(3,3));
+    colors.add(new ColorButton(mProgramItemProgressColorLb), c.xy(5,3));
+
+    colors.add(new JLabel(mLocalizer.msg("color.programMarked","Markierung durch Plugins")), c.xy(1,5));
+    colors.add(mProgramItemMarkedColorLb = new ColorLabel(programItemMarkedColor), c.xy(3,5));
+    colors.add(new ColorButton(mProgramItemMarkedColorLb), c.xy(5,5));
+
+    main.add(colors);
+
 
     return mSettingsPn;
   }
@@ -201,6 +237,11 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       typeArr[i] = (ProgramFieldType) infoFieldArr[i];
     }
     Settings.propProgramInfoFields.setProgramFieldTypeArray(typeArr);
+
+    Settings.propProgramTableColorMarked.setColor(mProgramItemMarkedColorLb.getColor());
+    Settings.propProgramTableColorOnAirDark.setColor(mProgramItemProgressColorLb.getColor());
+    Settings.propProgramTableColorOnAirLight.setColor(mProgramItemOnAirColorLb.getColor());
+
   }
   
   
