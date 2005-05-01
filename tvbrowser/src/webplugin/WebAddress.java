@@ -50,9 +50,6 @@ public class WebAddress implements Cloneable {
   /** Name */
   private String mName;
 
-  /** Encoding */
-  private String mEncoding;
-
   /** Entered by User ? */
   private boolean mUserEntry = false;
 
@@ -69,11 +66,10 @@ public class WebAddress implements Cloneable {
    * @param userEntry Is this Entry editable?
    * @param active Is this Entry active?
    */
-  public WebAddress(String name, String url, String iconFile, String encoding, boolean userEntry, boolean active) {
+  public WebAddress(String name, String url, String iconFile, boolean userEntry, boolean active) {
     mName = name;
     mIconFile = iconFile;
     mUrl = url;
-    mEncoding = encoding;
     mUserEntry = userEntry;
     mActive = active;
   }
@@ -87,7 +83,6 @@ public class WebAddress implements Cloneable {
     mName = address.getName();
     mIconFile = address.getIconFile();
     mUrl = address.getUrl();
-    mEncoding = address.getEncoding();
     mUserEntry = address.isUserEntry();
     mActive = address.isActive();
   }
@@ -140,18 +135,6 @@ public class WebAddress implements Cloneable {
 
   }
 
-  public void setEncoding(String encoding) {
-    mEncoding = encoding;
-  }
-
-  public String getEncoding() {
-    if (mEncoding == null) {
-      mEncoding = "UTF-8";
-    }
-
-    return mEncoding;
-  }
-
   public boolean isActive() {
 
     if ((mUrl == null) || (mUrl.trim().length() == 0)) { return false; }
@@ -187,18 +170,21 @@ public class WebAddress implements Cloneable {
     mName = (String) in.readObject();
     mIconFile = (String) in.readObject();
     mUrl = (String) in.readObject();
-    mEncoding = (String) in.readObject();
+    
+    if (version == 1) {
+      String encoding = (String) in.readObject();
+      mUrl = mUrl.replaceAll("\\{0\\}", "{urlencode(title, \""+encoding+"\")}");
+    }
     mUserEntry = in.readBoolean();
     mActive = in.readBoolean();
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1);
+    out.writeInt(2);
 
     out.writeObject(mName);
     out.writeObject(mIconFile);
     out.writeObject(mUrl);
-    out.writeObject(mEncoding);
     out.writeBoolean(mUserEntry);
     out.writeBoolean(mActive);
   }

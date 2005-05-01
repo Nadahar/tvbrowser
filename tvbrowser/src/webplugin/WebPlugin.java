@@ -29,17 +29,24 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
+import util.paramhandler.ParamParser;
 import util.ui.BrowserLauncher;
 import util.ui.Localizer;
-import devplugin.*;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 /**
  * This Plugin is a generic Web-Tool. 
@@ -51,11 +58,11 @@ public class WebPlugin extends Plugin {
       .getLocalizerFor(WebPlugin.class);
 
   /** Default-Addresses */
-  final static WebAddress WEB_OFDB        = new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={0}", "webplugin/ofdb.gif", "ISO-8859-1", false, true);
-  final static WebAddress WEB_IMDB        = new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={0}", "webplugin/imdb.gif", "UTF-8", false, true);
-  final static WebAddress WEB_ZELLULOID   = new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={0}", "webplugin/zelluloid.png", "ISO-8859-1", false, false);
-  final static WebAddress WEB_GOOGLE      = new WebAddress("Google", "http://www.google.com/search?q=%22{0}%22", "webplugin/google.gif", "UTF-8", false, true);
-  final static WebAddress WEB_ALTAVISTA   = new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{0}%22", "webplugin/altavista.gif", "UTF-8", false, false);
+  final static WebAddress WEB_OFDB        = new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={urlencode(title, \"ISO-8859-1\")}", "webplugin/ofdb.gif", false, true);
+  final static WebAddress WEB_IMDB        = new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", "webplugin/imdb.gif", false, true);
+  final static WebAddress WEB_ZELLULOID   = new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={urlencode(title, \"ISO-8859-1\")}", "webplugin/zelluloid.png", false, false);
+  final static WebAddress WEB_GOOGLE      = new WebAddress("Google", "http://www.google.com/search?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/google.gif", false, true);
+  final static WebAddress WEB_ALTAVISTA   = new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/altavista.gif", false, false);
 
   /** The WebAddresses */
   private Vector mAddresses;
@@ -157,7 +164,7 @@ public class WebPlugin extends Plugin {
   private void createDefaultSettings() {
     mAddresses = new Vector();
 
-    WebAddress test = new WebAddress("Test", "http://akas.imdb.com/Tsearch?title={0}", null, "ISO-8859-1", true, false);
+    WebAddress test = new WebAddress("Test", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", null, true, false);
 
     mAddresses.add(WEB_OFDB);
     mAddresses.add(WEB_IMDB);
@@ -213,9 +220,18 @@ public class WebPlugin extends Plugin {
    */
   protected void openUrl(Program program, WebAddress address) {
     try {
-      String search = URLEncoder.encode(program.getTitle(), address.getEncoding());
-      String url = address.getUrl().replaceAll("\\{0\\}", URLEncoder.encode(program.getTitle(), address.getEncoding()));
-      BrowserLauncher.openURL(url);
+      ParamParser parser = new ParamParser();
+      String result = parser.analyse(address.getUrl(), program);
+      
+      if (parser.hasErrors()) {
+        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), parser.getErrorString(), 
+            mLocalizer.msg("Error", "Error"),
+            JOptionPane.ERROR_MESSAGE);
+
+      } else {
+        BrowserLauncher.openURL(result);
+      }
+      
     } catch (Exception e) {
       e.printStackTrace();
     }

@@ -316,7 +316,7 @@ public class WebSettingsTab implements SettingsTab {
      * New was pressed
      */
     private void newPressed() {
-        WebAddress newadr = new WebAddress("", null, null, null, true, true);
+        WebAddress newadr = new WebAddress("", null, null, true, true);
 
         WebAddressEditDialog editor;
         
