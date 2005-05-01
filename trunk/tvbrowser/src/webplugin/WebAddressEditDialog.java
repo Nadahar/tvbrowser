@@ -34,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,8 +60,6 @@ public class WebAddressEditDialog extends JDialog {
     private JTextField mName;
     /** Url for the Address */
     private JTextField mUrl;
-    /** A Combobox */
-    private JComboBox mEncoding;
     
     /** The return-value for this Dialog */
     private int returnValue;
@@ -128,12 +125,6 @@ public class WebAddressEditDialog extends JDialog {
         
         panel.add(mUrl, cEdit);
     
-        panel.add(new JLabel(mLocalizer.msg("Encoding", "Encoding") + ":"), cLabel);
-
-        mEncoding = new JComboBox(new String[] {"UTF-8", "ISO-8859-1"});
-        mEncoding.setSelectedItem(mWebAddress.getEncoding());
-        panel.add(mEncoding, cEdit);
-        
         GridBagConstraints cSpacer = new GridBagConstraints();
         cSpacer.fill = GridBagConstraints.BOTH;
         cSpacer.weightx = 1.0;
@@ -198,7 +189,6 @@ public class WebAddressEditDialog extends JDialog {
     private void okPressed() {
         mWebAddress.setName(mName.getText());
         mWebAddress.setUrl(mUrl.getText());
-        mWebAddress.setEncoding((String)mEncoding.getSelectedItem());
         returnValue = JOptionPane.OK_OPTION;
         hide();
     }
