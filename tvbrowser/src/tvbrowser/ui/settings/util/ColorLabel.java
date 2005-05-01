@@ -24,48 +24,49 @@
 * $Revision$
 */
 
-package tvbrowser.ui.settings.tablebackgroundstyles;
+package tvbrowser.ui.settings.util;
 
 import javax.swing.*;
-
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 30.04.2005
- * Time: 17:47:39
+ * Date: 01.05.2005
+ * Time: 14:21:28
  */
-public class BlankBackgroundStyle implements TableBackgroundStyle {
 
-   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(BlankBackgroundStyle.class);
+public class ColorLabel extends JLabel {
 
-  public BlankBackgroundStyle() {
+  private Color mColor;
 
+  public ColorLabel(Color color) {
+    super();
+    setColor(color);
   }
 
-  public boolean hasContent() {
-    return false;
+  public void setColor(Color color) {
+    mColor = color;
+    setIcon(createIcon());
   }
 
-  public JPanel createSettingsContent() {
-    return null;
+  public Color getColor() {
+    return mColor;
   }
 
-  public void storeSettings() {
+  private Icon createIcon() {
+        BufferedImage img = new BufferedImage(25, 10, BufferedImage.TYPE_INT_RGB);
 
-  }
+        Graphics2D g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
 
-  public String getName() {
-    return mLocalizer.msg("style","White");
-  }
+        g.setColor(Color.WHITE);
+        g.fillRect(0,0,25,10);
+        g.setColor(mColor);
+        g.fillRect(0,0,25,10);
 
+        ImageIcon icon = new ImageIcon(img);
 
-  public String toString() {
-    return getName();
-  }
-
-  public String getSettingsString() {
-    return "white";
-  }
+        return icon;
+    }
 
 }

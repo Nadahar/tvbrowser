@@ -27,6 +27,7 @@
 package tvbrowser.ui.settings;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
@@ -42,10 +43,14 @@ import javax.swing.event.ChangeEvent;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.tablebackgroundstyles.*;
-import util.ui.ColorButton;
+import tvbrowser.ui.settings.util.ColorLabel;
+import tvbrowser.ui.settings.util.ColorButton;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
+import util.ui.AlphaColorChooser;
 import devplugin.SettingsTab;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.CellConstraints;
 
 
 /**
@@ -65,13 +70,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JSlider mColWidthSl;
   private JButton mDefaultBtn;
   private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
-  private JCheckBox mMouseOver;
+  private JCheckBox mMouseOverCb;
   private JCheckBox mTitelAlwaysVisible;
-  private ColorButton mProgramTableDarkColor;
-  private ColorButton mProgramTableLightColor;
-  private ColorButton mProgramTableMarkColor;
-  private ColorButton mMouseOverColor;
 
+  //private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemMarkedColorLb;
+  private ColorLabel mMouseOverColorLb;
 
   /**
    * Creates a new instance of ProgramTableSettingsTab.
@@ -103,8 +106,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.NORTH);
 
-    // program table arrangement
+    // program table layout
     p1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
+    p1.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("layout","Layout")));
     main.add(p1);
 
     p1.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")));
@@ -130,7 +134,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mColWidthSl=new JSlider(SwingConstants.HORIZONTAL, 50, 300, Settings.propColumnWidth.getInt());
 
     colWidthPn.add(sliderPn,BorderLayout.WEST);
-    mColWidthSl.setPreferredSize(new Dimension(250,25));
+    mColWidthSl.setPreferredSize(new Dimension(200,25));
 
     final JLabel colWidthLb = new JLabel(""+mColWidthSl.getValue());
 
@@ -194,7 +198,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     main.add(pn);
 
-
+    // table background style
 
     JPanel pn1 = new JPanel(new BorderLayout());
     pn1.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("tableBackground", "Table background")));
@@ -235,14 +239,39 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     pn1.add(pn2, BorderLayout.WEST);
     main.add(pn1);
 
+    // miscellaneous
+
     JPanel misc = new JPanel(new TabLayout(1));
 
     misc.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Miscellaneous", "Miscellaneous")));
 
-    mMouseOver = new JCheckBox(mLocalizer.msg("MouseOver","Mouse-Over-Effect"));
-    mMouseOver.setSelected(Settings.propMouseOver.getBoolean());
+    JPanel mouseOverPn = new JPanel(new BorderLayout());
+    mMouseOverCb = new JCheckBox(mLocalizer.msg("MouseOver","Mouse-Over-Effect"));
+    mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
 
-    misc.add(mMouseOver);
+    mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
+    mMouseOverColorLb.setEnabled(Settings.propMouseOver.getBoolean());
+    final ColorButton mouseOverColorChangeBtn = new ColorButton(mMouseOverColorLb);
+    final JLabel colorLb = new JLabel(mLocalizer.msg("color","Color:"));
+    mouseOverColorChangeBtn.setEnabled(Settings.propMouseOver.getBoolean());
+    colorLb.setEnabled(Settings.propMouseOver.getBoolean());
+    mMouseOverCb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        boolean enabled = mMouseOverCb.isSelected();
+        mMouseOverColorLb.setEnabled(enabled);
+        mouseOverColorChangeBtn.setEnabled(enabled);
+        colorLb.setEnabled(enabled);
+      }
+    });
+
+
+    mouseOverPn.add(mMouseOverCb, BorderLayout.WEST);
+    pn1 = new JPanel();
+    pn1.add(colorLb);
+    pn1.add(mMouseOverColorLb);
+    pn1.add(mouseOverColorChangeBtn);
+    mouseOverPn.add(pn1, BorderLayout.EAST);
+    misc.add(mouseOverPn);
 
     mTitelAlwaysVisible = new JCheckBox(mLocalizer.msg("TitleAlwaysVisible","Progam-Title always Visible"));
     mTitelAlwaysVisible.setSelected(Settings.propTitelAlwaysVisible.getBoolean());
@@ -251,26 +280,36 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     main.add(misc);
 
-    JPanel colors = new JPanel(new TabLayout(2));
+
+    // colors
+    /*
+    JPanel colors = new JPanel();
+
+    Color programItemProgressColor = Settings.propProgramTableColorOnAirDark.getColor();
+    Color programItemOnAirColor = Settings.propProgramTableColorOnAirLight.getColor();
+    Color programItemMarkedColor = Settings.propProgramTableColorMarked.getColor();
+
+
     colors.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Colors", "Colors")));
+    FormLayout formLayout = new FormLayout("default, 5dlu, default, 5dlu, default",
+            "default, 3dlu, default, 3dlu, default");
+    CellConstraints c = new CellConstraints();
+    colors.setLayout(formLayout);
 
-    colors.add(new JLabel(mLocalizer.msg("MouseOverColor","Mouse-Over Color")+":"));
-    mMouseOverColor = new ColorButton(Settings.propMouseOverColor.getColor());
-    colors.add(mMouseOverColor);
+    colors.add(new JLabel(mLocalizer.msg("color.programOnAir","Hintergrundfarbe fuer laufende Sendung")), c.xy(1,1));
+    colors.add(mProgramItemOnAirColorLb = new ColorLabel(programItemOnAirColor), c.xy(3,1));
+    colors.add(new ColorButton(mProgramItemOnAirColorLb), c.xy(5,1));
 
-    colors.add(new JLabel("#Program: percentage of shown#"));
-    mProgramTableDarkColor = new ColorButton(Settings.propProgramTableColorOnAirDark.getColor());
-    colors.add(mProgramTableDarkColor);
+    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittanzeige fuer laufende Sendung")), c.xy(1,3));
+    colors.add(mProgramItemProgressColorLb = new ColorLabel(programItemProgressColor), c.xy(3,3));
+    colors.add(new ColorButton(mProgramItemProgressColorLb), c.xy(5,3));
 
-    colors.add(new JLabel("#Program: percantage not shown#"));
-    mProgramTableLightColor = new ColorButton(Settings.propProgramTableColorOnAirLight.getColor());
-    colors.add(mProgramTableLightColor);
-
-    colors.add(new JLabel("#Program: marked color"));
-    mProgramTableMarkColor = new ColorButton(Settings.propProgramTableColorMarked.getColor());
-    colors.add(mProgramTableMarkColor);
+    colors.add(new JLabel(mLocalizer.msg("color.programMarked","Markierung durch Plugins")), c.xy(1,5));
+    colors.add(mProgramItemMarkedColorLb = new ColorLabel(programItemMarkedColor), c.xy(3,5));
+    colors.add(new ColorButton(mProgramItemProgressColorLb), c.xy(5,5));
 
     main.add(colors);
+     */
 
     updateBackgroundStyleConfigureButton();
 
@@ -334,13 +373,13 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     Settings.propProgramTableEndOfDay.setInt(minutes);
 
-    Settings.propMouseOver.setBoolean(mMouseOver.isSelected());
+    Settings.propMouseOver.setBoolean(mMouseOverCb.isSelected());
     Settings.propTitelAlwaysVisible.setBoolean(mTitelAlwaysVisible.isSelected());
 
-    Settings.propMouseOverColor.setColor(mMouseOverColor.getColor());
-    Settings.propProgramTableColorMarked.setColor(mProgramTableMarkColor.getColor());
-    Settings.propProgramTableColorOnAirDark.setColor(mProgramTableDarkColor.getColor());
-    Settings.propProgramTableColorOnAirLight.setColor(mProgramTableLightColor.getColor());
+    Settings.propMouseOverColor.setColor(mMouseOverColorLb.getColor());
+//    Settings.propProgramTableColorMarked.setColor(mProgramItemMarkedColorLb.getColor());
+//    Settings.propProgramTableColorOnAirDark.setColor(mProgramItemProgressColorLb.getColor());
+//    Settings.propProgramTableColorOnAirLight.setColor(mProgramItemOnAirColorLb.getColor());
   }
 
 
@@ -372,6 +411,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     };
 
   }
+
+
+
 
 
 

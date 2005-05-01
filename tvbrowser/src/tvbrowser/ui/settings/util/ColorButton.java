@@ -24,48 +24,41 @@
 * $Revision$
 */
 
-package tvbrowser.ui.settings.tablebackgroundstyles;
+package tvbrowser.ui.settings.util;
+
+import util.ui.AlphaColorChooser;
+import util.ui.UiUtilities;
 
 import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.*;
 
+import tvbrowser.ui.settings.ProgramTableSettingsTab;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 30.04.2005
- * Time: 17:47:39
+ * Date: 01.05.2005
+ * Time: 14:22:05
  */
-public class BlankBackgroundStyle implements TableBackgroundStyle {
+public
+class ColorButton extends JButton {
 
-   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(BlankBackgroundStyle.class);
+  private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(ProgramTableSettingsTab.class);
 
-  public BlankBackgroundStyle() {
+  public ColorButton(final ColorLabel lb) {
+    super(mLocalizer.msg("change","Change"));
+    addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        Color newColor = AlphaColorChooser.showDialog(UiUtilities.getBestDialogParent(getParent()),
+                mLocalizer.msg("ChooseColor", "Please choose the Color"), lb.getColor());
+        lb.setColor(newColor);
 
-  }
-
-  public boolean hasContent() {
-    return false;
-  }
-
-  public JPanel createSettingsContent() {
-    return null;
-  }
-
-  public void storeSettings() {
-
-  }
-
-  public String getName() {
-    return mLocalizer.msg("style","White");
+      }
+    });
   }
 
 
-  public String toString() {
-    return getName();
-  }
-
-  public String getSettingsString() {
-    return "white";
-  }
 
 }
