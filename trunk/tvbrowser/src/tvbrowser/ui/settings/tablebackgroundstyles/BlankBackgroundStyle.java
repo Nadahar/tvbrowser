@@ -1,7 +1,6 @@
 package tvbrowser.ui.settings.tablebackgroundstyles;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
