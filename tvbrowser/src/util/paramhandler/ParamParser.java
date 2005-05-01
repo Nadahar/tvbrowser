@@ -115,7 +115,7 @@ public class ParamParser {
       if (escapemode) {
         ret.append(chars[pos]);
         escapemode = false;
-      } else if (commandmode && (chars[pos] == '\\')){
+      } else if (chars[pos] == '\\'){
         escapemode = true;
       } else if (commandmode && (chars[pos] == '"')) {
         cmdBuffer.append(chars[pos]);
