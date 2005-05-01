@@ -98,12 +98,8 @@ public class ChannelConfigDlg implements ActionListener {
     else {
       mCorrectionCB.setSelectedIndex(1);
     }
-    JTextArea txt=new JTextArea(mLocalizer.msg("DLSTNote",""));
-    txt.setFocusable(false);
-    txt.setLineWrap(true);
-    txt.setWrapStyleWord(true);
-    txt.setOpaque(false);
-    txt.setEditable(false);
+
+    JTextArea txt = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote",""));
     txt.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
     
     pn.add(mCorrectionCB,BorderLayout.EAST);

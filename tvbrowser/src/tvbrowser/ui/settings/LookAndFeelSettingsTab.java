@@ -25,8 +25,7 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -35,18 +34,25 @@ import javax.swing.*;
 
 import tvbrowser.core.Settings;
 import devplugin.SettingsTab;
+import util.ui.TabLayout;
+import util.ui.LinkButton;
+import util.ui.UiUtilities;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.CellConstraints;
 
 public class LookAndFeelSettingsTab implements SettingsTab {
   
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(LookAndFeelSettingsTab.class);
 
-  private JCheckBox mUseSkinLFCb;
+
+  private JRadioButton mUseSkinLFRb;
+  private JRadioButton mUseJavaLFRb;
   private JComboBox mLfComboBox;
   private JPanel mSettingsPn;
-  private JLabel mLookAndFeelLb;
   private final JTextField mThemepackTf=new JTextField();
-  
+  private JButton mChooseBtn;
+
   class LookAndFeelObj {
       private UIManager.LookAndFeelInfo info;
       public LookAndFeelObj(UIManager.LookAndFeelInfo info) {
@@ -72,23 +78,19 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     }
   
   public JPanel createSettingsPanel() {
-    String msg;
-    
+
     mSettingsPn=new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     
     JPanel northPanel=new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel,BoxLayout.Y_AXIS));
-    
-  // Look and feel
-     JPanel lfPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-     northPanel.add(lfPanel);
-    
-     msg = mLocalizer.msg("lookAndFeel", "Aussehen");
-     mLookAndFeelLb=new JLabel(msg);
-     lfPanel.add(mLookAndFeelLb);
 
-     LookAndFeelObj[] obj=getLookAndFeelObjs();
+
+    JPanel main = new JPanel(new TabLayout(1));
+
+    mSettingsPn.add(main, BorderLayout.NORTH);
+
+    LookAndFeelObj[] obj=getLookAndFeelObjs();
      mLfComboBox=new JComboBox(obj);
      String lf = Settings.propLookAndFeel.getString();
      for (int i=0;i<obj.length;i++) {
@@ -96,73 +98,73 @@ public class LookAndFeelSettingsTab implements SettingsTab {
          mLfComboBox.setSelectedItem(obj[i]);
        }
      }
-     lfPanel.add(mLfComboBox);
 
-    
+
+    mChooseBtn=new JButton(mLocalizer.msg("change","change"));
+    mThemepackTf.setText(Settings.propSkinLFThemepack.getString());
+
+    JPanel lnfPanel = new JPanel(new TabLayout(1));
+    FormLayout formLayout = new FormLayout("default,5dlu,default,40dlu,5dlu,default","default,3dlu,default,3dlu,default");
+    lnfPanel.setLayout(formLayout);
+    CellConstraints c = new CellConstraints();
+    lnfPanel.setBorder(BorderFactory.createTitledBorder("Look&Feel"));
+    lnfPanel.add(mUseJavaLFRb = new JRadioButton("Java Look & Feel:"), c.xy(1,1));
+    lnfPanel.add(mLfComboBox, c.xy(3,1));
+    lnfPanel.add(mUseSkinLFRb = new JRadioButton("SkinLF themepack:"), c.xy(1,3));
+    lnfPanel.add(mThemepackTf, c.xyw(3,3,2));
+    lnfPanel.add(mChooseBtn, c.xy(6,3));
+    lnfPanel.add(new LinkButton(mLocalizer.msg("downloadThemepacks","Download more themepacks from tvbrowser.org"),"http://www.tvbrowser.org"), c.xyw(1,5,6));
+
+    ButtonGroup group = new ButtonGroup();
+    group.add(mUseJavaLFRb);
+    group.add(mUseSkinLFRb);
+
+    mUseJavaLFRb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        setUseSkinLF(!mUseJavaLFRb.isSelected());
+      }
+    });
+
+    mUseSkinLFRb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        setUseSkinLF(mUseSkinLFRb.isSelected());
+      }
+    });
+
+    setUseSkinLF(Settings.propIsSkinLFEnabled.getBoolean());
+    if (Settings.propIsSkinLFEnabled.getBoolean()) {
+      mUseSkinLFRb.setSelected(true);
+    }
+    else {
+      mUseJavaLFRb.setSelected(true);
+    }
+
+    main.add(lnfPanel);
+
+
+
     
     JTextArea licenseTA=new JTextArea();
     licenseTA.setText("TV-Browser includes software developed " +
                       "by L2FProd.com (http://www.L2FProd.com/).\n"+
                       "Skin Look And Feel 1.2.7\n"+
                       "Copyright (c) 2000-2002 L2FProd.com.  All rights reserved.");
-    
+    licenseTA.setFont(new JLabel().getFont());
     licenseTA.setWrapStyleWord(true);
     licenseTA.setLineWrap(true);
     licenseTA.setFocusable(false);
     licenseTA.setEditable(false);
     licenseTA.setOpaque(false);
     licenseTA.setBorder(BorderFactory.createLoweredBevelBorder());
-    
-    
-    JTextArea skinLFInfo=new JTextArea();
-    skinLFInfo.setText(mLocalizer.msg("skinLFInfo",""));
-    
-    skinLFInfo.setWrapStyleWord(true);
-    skinLFInfo.setLineWrap(true);
-    skinLFInfo.setFocusable(false);
-    skinLFInfo.setEditable(false);
-    skinLFInfo.setOpaque(false);
+
+
+    JTextArea skinLFInfo = UiUtilities.createHelpTextArea(mLocalizer.msg("skinLFInfo",""));
     skinLFInfo.setBorder(BorderFactory.createLoweredBevelBorder());
     
     northPanel.add(skinLFInfo);
     
-    mUseSkinLFCb=new JCheckBox(mLocalizer.msg("useSkinLF","use SkinLF"));
-    mUseSkinLFCb.setBorder(BorderFactory.createEmptyBorder(7,0,7,0));
-    JPanel useSkinLFPanel=new JPanel(new BorderLayout());
-    useSkinLFPanel.add(mUseSkinLFCb);
-    
-    
-    JPanel themepackPanel=new JPanel(new BorderLayout(7,0));
-    themepackPanel.setBorder(BorderFactory.createTitledBorder("Themepack"));
-    
-    final JButton chooseBtn=new JButton(mLocalizer.msg("change","change"));
-    mThemepackTf.setText(Settings.propSkinLFThemepack.getString());
-    themepackPanel.add(mThemepackTf,BorderLayout.CENTER);
-    themepackPanel.add(chooseBtn,BorderLayout.EAST);   
-    
-    //northPanel.add(licenseTA);
-    northPanel.add(useSkinLFPanel);
-    northPanel.add(themepackPanel);
-    mSettingsPn.add(northPanel,BorderLayout.NORTH);
-    
-    boolean enabled = Settings.propIsSkinLFEnabled.getBoolean();
-    mUseSkinLFCb.setSelected(enabled);
-    chooseBtn.setEnabled(enabled);
-    mThemepackTf.setEnabled(enabled); 
-    mLookAndFeelLb.setEnabled(!enabled);
-    mLfComboBox.setEnabled(!enabled);
-    
-    mUseSkinLFCb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        boolean btnEnabled= mUseSkinLFCb.isSelected();
-        chooseBtn.setEnabled(btnEnabled);
-        mThemepackTf.setEnabled(btnEnabled); 
-        mLookAndFeelLb.setEnabled(! btnEnabled);
-        mLfComboBox.setEnabled(! btnEnabled);
-      }
-    });
-    
-    chooseBtn.addActionListener(new ActionListener() {
+
+    mChooseBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         JFileChooser fileChooser=new JFileChooser(new File("themepacks"));
         fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(".zip","SkinLF themepacks (*.zip)"));
@@ -179,12 +181,19 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     return mSettingsPn;
   }
 
- 
+
+  private void setUseSkinLF(boolean b) {
+    mLfComboBox.setEnabled(!b);
+    mThemepackTf.setEnabled(b);
+    mChooseBtn.setEnabled(b);
+
+  }
+
   public void saveSettings() {
     LookAndFeelObj obj=(LookAndFeelObj)mLfComboBox.getSelectedItem();
     Settings.propLookAndFeel.setString(obj.getLFClassName());
  
-    Settings.propIsSkinLFEnabled.setBoolean(mUseSkinLFCb.isSelected());
+    Settings.propIsSkinLFEnabled.setBoolean(mUseSkinLFRb.isSelected());
     Settings.propSkinLFThemepack.setString(mThemepackTf.getText());    
   }
 

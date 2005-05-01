@@ -133,12 +133,7 @@ public class EMailSettingsTab implements SettingsTab {
 
     configPanel.add(mParameter, cc.xyw(4, 4, 3));
 
-    JTextArea ta = new JTextArea(mLocalizer.msg("Desc", "Desc"));
-    ta.setWrapStyleWord(true);
-    ta.setLineWrap(true);
-    ta.setOpaque(false);
-    ta.setEditable(false);
-    ta.setFocusable(false);
+    JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("Desc","Desc"));
     configPanel.add(ta, cc.xyw(2,6,6));
 
     configPanel.add(new JLabel(mLocalizer.msg("encoding", "Encoding") + ":"), cc.xy(2,8));

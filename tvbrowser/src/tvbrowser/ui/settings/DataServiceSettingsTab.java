@@ -26,6 +26,8 @@
 
 package tvbrowser.ui.settings;
 
+import util.ui.UiUtilities;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -41,14 +43,8 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     
     mainPanel.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
     
-    
-    JTextArea ta=new JTextArea(mLocalizer.msg("description", "tv data"));
-    ta.setWrapStyleWord(true);
-    ta.setLineWrap(true);
-    ta.setOpaque(false);
-    ta.setEditable(false);
-    ta.setFocusable(false);
-    
+    JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("description","description"));
+
     mainPanel.add(ta,BorderLayout.NORTH);
     
     return mainPanel;
