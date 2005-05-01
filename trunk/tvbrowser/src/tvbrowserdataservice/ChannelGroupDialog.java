@@ -169,6 +169,7 @@ public class ChannelGroupDialog extends JDialog {
      */
     private JTextArea createTextArea(String text) {
         JTextArea chArea =new JTextArea(3,40);
+        chArea.setFont(new JLabel().getFont());
         chArea.setLineWrap(true);
         chArea.setWrapStyleWord(true);
         chArea.setEditable(false);

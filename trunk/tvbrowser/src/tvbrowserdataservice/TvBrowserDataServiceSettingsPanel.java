@@ -125,12 +125,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         JPanel groupListPanel = new JPanel(new BorderLayout(0, 10));
         groupListPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JTextArea ta = new JTextArea(mLocalizer.msg("channelgroup.description", "Use this "));
-        ta.setWrapStyleWord(true);
-        ta.setLineWrap(true);
-        ta.setEditable(false);
-        ta.setFocusable(false);
-        ta.setOpaque(false);
+        JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("channelgroup.description","description"));
         groupListPanel.add(ta, BorderLayout.NORTH);
 
         JPanel panel2 = new JPanel(new BorderLayout(10, 0));
@@ -177,12 +172,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
         westPn.add(new JLabel(mLocalizer.msg("description", "Description:")), BorderLayout.NORTH);
         groupInfoPanel.add(westPn, BorderLayout.WEST);
-        mGroupDescriptionTA = new JTextArea();
-        mGroupDescriptionTA.setWrapStyleWord(true);
-        mGroupDescriptionTA.setLineWrap(true);
-        mGroupDescriptionTA.setEditable(false);
-        mGroupDescriptionTA.setFocusable(false);
-        mGroupDescriptionTA.setOpaque(false);
+
+        mGroupDescriptionTA = UiUtilities.createHelpTextArea("");     
         mGroupDescriptionTA.setPreferredSize(new Dimension(0, 30));
 
         groupInfoPanel.add(mGroupDescriptionTA, BorderLayout.CENTER);

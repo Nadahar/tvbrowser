@@ -42,6 +42,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import util.ui.customizableitems.SortableItemList;
+import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ActionMenu;
@@ -170,12 +171,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     
     contentPanel.add(panel1,BorderLayout.NORTH);
     
-    JTextArea descBox=new JTextArea(mLocalizer.msg("description",""));
-    descBox.setFocusable(false);
-    descBox.setOpaque(false);
-    descBox.setWrapStyleWord(true);
-    descBox.setLineWrap(true);
-    
+    JTextArea descBox = UiUtilities.createHelpTextArea(mLocalizer.msg("description",""));
     contentPanel.add(descBox,BorderLayout.CENTER); 
   
 		return contentPanel;

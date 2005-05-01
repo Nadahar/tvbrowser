@@ -269,11 +269,13 @@ public class UiUtilities {
    */
   public static JTextArea createHelpTextArea(String msg) {
     JTextArea descTA = new JTextArea(msg);
+    descTA.setFont(new JLabel().getFont());
     descTA.setEditable(false);
     descTA.setOpaque(false);
     descTA.setWrapStyleWord(true);
     descTA.setLineWrap(true);
-    
+    descTA.setFocusable(false);
+
     return descTA;
   }
   

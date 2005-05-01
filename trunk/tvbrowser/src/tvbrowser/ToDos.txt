@@ -8,7 +8,7 @@ TODOs:
 - News-Plugin:
     Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
     evtl. Option "News automatisch holen"
-- Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea)
+
 - kuerzere Texte fuer die Symbolbuttons
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden
@@ -24,7 +24,6 @@ java.lang.NullPointerException
 - Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
 - Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
 - Titel immer sichtbar-Option im ProgramPanel benutzen
-- Übersetzungen für die Farben im ProgramPanel-Settings-Dialog
 - (B) TimeOfDayBackPainter auf neues System anpassen
 
 
@@ -61,3 +60,6 @@ Erledigt:
 - (B) Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
 - (B) Wenn in der Sender-Konfiguration ziemlich oft mit Hoch/runter gearbeitet wird, kommt ein OutOfMemory
 - (B) Nachsehen, ob das auftrennen des Settings-System überall gemacht wurde. Es sind einige Warnungen im Code, das deprecated Settings benutzt werden! - War ein Fehler von Eclipse
+- (M) Uebersetzungen für die Farben im ProgramPanel-Settings-Dialog
+- (M) Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea) - (MS-Windows)
+
