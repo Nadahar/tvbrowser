@@ -604,4 +604,7 @@ public class Settings {
 
   public static final StringProperty propTimezone
   = new StringProperty(mProp, "timezone", TimeZone.getDefault().getID());
+
+  public static final BooleanProperty propMinimizeAfterStartup
+  = new BooleanProperty(mProp, "minimizeAfterStartup", false);
 }

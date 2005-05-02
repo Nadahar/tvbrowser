@@ -35,7 +35,6 @@ import java.io.StringWriter;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -118,11 +117,10 @@ public class TVBrowser {
     showUsage();
 
     // Read the command line parameters
-    boolean startMinimized = false;
     boolean showSplashScreen = true;
     for (int i = 0; i < args.length; i++) {
       if (args[i].equalsIgnoreCase("-minimized")) {
-        startMinimized = true;
+        Settings.propMinimizeAfterStartup.setBoolean(true);
       } else if (args[i].equalsIgnoreCase("-nosplash")) {
         showSplashScreen = false;
       } else if (args[i].startsWith("-D")) {
@@ -184,7 +182,7 @@ public class TVBrowser {
     Settings.loadSettings();
 
     Locale.setDefault(new Locale(Settings.propLanguage.getString()));
-    TimeZone.setDefault(TimeZone.getTimeZone(Settings.propTimezone.getString()));
+    //TimeZone.setDefault(TimeZone.getTimeZone(Settings.propTimezone.getString()));
 
     // Set the proxy settings
     updateProxySettings();
@@ -313,7 +311,7 @@ public class TVBrowser {
     splash.setMessage(msg);
    
     // Init the UI
-    final boolean fStartMinimized = startMinimized;
+    final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean();
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         initUi(splash, fStartMinimized);
