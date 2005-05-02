@@ -25,11 +25,12 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.swing.*;
 
@@ -37,6 +38,8 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.UpdateDlg;
 import util.ui.FileCheckBox;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.CellConstraints;
 
 /**
  * TV-Browser
@@ -66,7 +69,8 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JRadioButton mDonotAskBeforeDownloadRB;
   private JRadioButton mAskBeforeDownloadRB;
   private FileCheckBox mWebbrowserFCB;
-  
+  private JComboBox mLanguageCB, mTimezoneCB;
+
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB;
   
   
@@ -176,7 +180,45 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     }
     
     content.add(mWebbrowserFCB);
-    
+
+
+    JPanel localePn = new JPanel(new BorderLayout());
+    localePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("locale","Locale")));
+    FormLayout formLayout = new FormLayout("default, 6dlu, default","default,3dlu,default,3dlu,default");
+    JPanel formPn = new JPanel(formLayout);
+    localePn.add(formPn, BorderLayout.CENTER);
+    CellConstraints c = new CellConstraints();
+
+    Language[] languages = new Language[]{new Language("en"), new Language("de")};
+    formPn.add(new JLabel(mLocalizer.msg("language","Language:")), c.xy(1,1));
+    formPn.add(mLanguageCB = new JComboBox(languages), c.xy(3,1));
+
+    String lan = Settings.propLanguage.getString();
+    for (int i=0; i<languages.length; i++) {
+      if (languages[i].getId().equalsIgnoreCase(lan)) {
+        mLanguageCB.setSelectedIndex(i); break;
+      }
+    }
+
+
+    String[] zoneIds = TimeZone.getAvailableIDs();
+    mTimezoneCB = new JComboBox(zoneIds);
+    String zone = Settings.propTimezone.getString();
+    for (int i=0; i<zoneIds.length; i++) {
+      if (zoneIds[i].equals(zone)) {
+        mTimezoneCB.setSelectedIndex(i); break;
+      }
+    }
+
+
+    formPn.add(new JLabel(mLocalizer.msg("timezone","Timezone:")), c.xy(1,3));
+    formPn.add(mTimezoneCB, c.xy(3,3));
+    JLabel lb = new JLabel(mLocalizer.msg("restartNote","Diese Einstellungen werden erst nach dem Neustart von TV-Browser wirksam."));
+    lb.setFont(new Font("Dialog", Font.PLAIN, 9));
+    localePn.add(lb, BorderLayout.SOUTH);
+    content.add(localePn);
+
+
     if (TVBrowser.isUsingSystemTray()) {
       JPanel mainWindowPn = new JPanel(new BorderLayout());
       String msg = mLocalizer.msg("mainWindow", "Main window");
@@ -243,6 +285,10 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected();
       Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
     }
+
+    Language lan = (Language)mLanguageCB.getSelectedItem();
+    Settings.propLanguage.setString(lan.getId());
+    Settings.propTimezone.setString((String)mTimezoneCB.getSelectedItem());
   }
   
   
@@ -262,5 +308,23 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   public String getTitle() {
     return mLocalizer.msg("others", "others");
   }
-  
+
+
+
+
+
+  class Language {
+    private String mId;
+    public Language(String id) {
+      mId = id;
+    }
+    public String toString() {
+      return new Locale(mId).getDisplayLanguage();
+    }
+
+    public String getId() {
+      return mId;
+    }
+  }
+
 }

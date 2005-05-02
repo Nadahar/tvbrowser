@@ -35,6 +35,7 @@ import java.io.StringWriter;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -113,7 +114,7 @@ public class TVBrowser {
    * Entry point of the application
    */
   public static void main(String[] args) {
-    
+
     showUsage();
 
     // Read the command line parameters
@@ -181,6 +182,9 @@ public class TVBrowser {
     
     // Load the settings
     Settings.loadSettings();
+
+    Locale.setDefault(new Locale(Settings.propLanguage.getString()));
+    TimeZone.setDefault(TimeZone.getTimeZone(Settings.propTimezone.getString()));
 
     // Set the proxy settings
     updateProxySettings();

@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
 import javax.swing.UIManager;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
@@ -597,5 +598,10 @@ public class Settings {
    */
   public static final ColorProperty propSplashForegroundColor
   = new ColorProperty(mProp, "splash.ForegroundColor", Color.WHITE);
-  
+
+  public static final StringProperty propLanguage
+  = new StringProperty(mProp, "language", System.getProperty("user.language"));
+
+  public static final StringProperty propTimezone
+  = new StringProperty(mProp, "timezone", TimeZone.getDefault().getID());
 }

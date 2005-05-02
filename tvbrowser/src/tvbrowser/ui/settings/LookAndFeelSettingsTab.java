@@ -108,7 +108,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     lnfPanel.setLayout(formLayout);
     CellConstraints c = new CellConstraints();
     lnfPanel.setBorder(BorderFactory.createTitledBorder("Look&Feel"));
-    lnfPanel.add(mUseJavaLFRb = new JRadioButton("Java Look & Feel:"), c.xy(1,1));
+    lnfPanel.add(mUseJavaLFRb = new JRadioButton("Look & Feel:"), c.xy(1,1));
     lnfPanel.add(mLfComboBox, c.xy(3,1));
     lnfPanel.add(mUseSkinLFRb = new JRadioButton("SkinLF themepack:"), c.xy(1,3));
     lnfPanel.add(mThemepackTf, c.xyw(3,3,2));
