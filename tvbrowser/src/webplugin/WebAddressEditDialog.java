@@ -27,11 +27,11 @@ package webplugin;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -39,173 +39,217 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import util.paramhandler.ParamCheckDialog;
+import util.paramhandler.ParamHelpDialog;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A Dialog for editing the WebAddress
  */
 public class WebAddressEditDialog extends JDialog {
 
-    /** Localizer */
-    private static final Localizer mLocalizer = Localizer
-    .getLocalizerFor(WebAddressEditDialog.class);
-    
-    /** The Address to Edit */
-    private WebAddress mWebAddress;
-    
-    /** Name for the Address */
-    private JTextField mName;
-    /** Url for the Address */
-    private JTextField mUrl;
-    
-    /** The return-value for this Dialog */
-    private int returnValue;
-    
-    /**
-     * Creates the Dialog
-     * @param parent Parent 
-     * @param adr Address to edit
-     */
-    public WebAddressEditDialog(JFrame parent, WebAddress adr) {
-        super(parent, true);
-        mWebAddress = adr;
-        
-        createGui();
-    }
+  /** Localizer */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(WebAddressEditDialog.class);
 
-    /**
-     * Creates the Dialog
-     * @param parent Parent 
-     * @param adr Address to edit
-     */
-    public WebAddressEditDialog(JDialog parent, WebAddress adr) {
-        super(parent, true);
-        mWebAddress = adr;
-        
-        createGui();
-    }
+  /** The Address to Edit */
+  private WebAddress mWebAddress;
 
-    /**
-     * creates the Gui 
-     */
-    private void createGui() {
-        
-        setTitle(mLocalizer.msg("EditWebAddress", "Edit WebAddress"));
-        
-        JPanel panel = (JPanel) getContentPane();
-        
-        panel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints cLabel = new GridBagConstraints();
-        cLabel.anchor = GridBagConstraints.NORTHWEST;
-        cLabel.insets = new Insets(5, 5, 5, 5);
+  /** Name for the Address */
+  private JTextField mName;
 
-        GridBagConstraints cEdit = new GridBagConstraints();
-        
-        cEdit.gridwidth = GridBagConstraints.REMAINDER;
-        cEdit.fill = GridBagConstraints.HORIZONTAL;
-        cEdit.insets = new Insets(5, 0, 5, 5);
-        cEdit.weightx = 1.0;
-        
-        JLabel nameLabel = new JLabel(mLocalizer.msg("Name", "Name") + ":");
-        panel.add(nameLabel, cLabel);
-        
-        mName = new JTextField();
-        mName.setText(mWebAddress.getName());
+  /** Url for the Address */
+  private JTextArea mUrl;
 
-        panel.add(mName, cEdit);
+  /** The return-value for this Dialog */
+  private int returnValue;
 
-        panel.add(new JLabel(mLocalizer.msg("Url", "Url") + ":"), cLabel);
-        
-        mUrl = new JTextField();
-        mUrl.setText(mWebAddress.getUrl());
-        
-        panel.add(mUrl, cEdit);
-    
-        GridBagConstraints cSpacer = new GridBagConstraints();
-        cSpacer.fill = GridBagConstraints.BOTH;
-        cSpacer.weightx = 1.0;
-        cSpacer.weighty = 1.0;
-        cSpacer.gridwidth = GridBagConstraints.REMAINDER;
-        cSpacer.insets = new Insets(0, 5, 0, 5);
-        
-        panel.add(new JPanel(), cSpacer);
-        
-        JPanel buttonPanel = new JPanel();
+  /**
+   * Creates the Dialog
+   * 
+   * @param parent Parent
+   * @param adr Address to edit
+   */
+  public WebAddressEditDialog(JFrame parent, WebAddress adr) {
+    super(parent, true);
+    mWebAddress = adr;
 
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 0));        
-        
-        JButton okButton = new JButton(mLocalizer.msg("OK", "OK"));
-        
-        okButton.addActionListener(new ActionListener() {
+    createGui();
+  }
 
-            public void actionPerformed(ActionEvent e) {
-                okPressed();
-            }
-            
-        });
-        
-        JButton cancelButton = new JButton(mLocalizer.msg("Cancel", "Cancel"));
+  /**
+   * Creates the Dialog
+   * 
+   * @param parent Parent
+   * @param adr Address to edit
+   */
+  public WebAddressEditDialog(JDialog parent, WebAddress adr) {
+    super(parent, true);
+    mWebAddress = adr;
 
-        cancelButton.addActionListener(new ActionListener() {
+    createGui();
+  }
 
-            public void actionPerformed(ActionEvent e) {
-                cancelPressed();
-            }
-            
-        });
-        
-        buttonPanel.add(okButton);
-        buttonPanel.add(cancelButton);
-        
-        GridBagConstraints cButtons = new GridBagConstraints();
-        
-        cButtons.gridwidth = GridBagConstraints.REMAINDER;
-        cButtons.fill = GridBagConstraints.HORIZONTAL;
-        cButtons.insets = new Insets(5, 5, 5, 0);
-        cButtons.weightx = 1.0;
-        cButtons.anchor = GridBagConstraints.SOUTHEAST;
+  /**
+   * creates the Gui
+   */
+  private void createGui() {
 
-        panel.add(buttonPanel, cButtons);
+    setTitle(mLocalizer.msg("EditWebAddress", "Edit WebAddress"));
 
-        getRootPane().setDefaultButton(okButton);
-        
-        pack();
-        
-        if (getSize().width < 400) {
-            Dimension dim = getSize();
-            dim.width = 400;
-            setSize(dim);
+    final JPanel panel = (JPanel) getContentPane();
+
+    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setLayout(new FormLayout("default, 3dlu, default:grow, 3dlu, default",
+        "default, 3dlu, default, 3dlu, default, fill:default:grow, 3dlu, default"));
+
+    CellConstraints cc = new CellConstraints();
+
+    JLabel nameLabel = new JLabel(mLocalizer.msg("Name", "Name") + ":");
+    panel.add(nameLabel, cc.xy(1, 1));
+
+    mName = new JTextField();
+    mName.setText(mWebAddress.getName());
+
+    panel.add(mName, cc.xyw(3, 1, 3));
+
+    panel.add(new JLabel(mLocalizer.msg("Url", "Url") + ":"), cc.xy(1, 3));
+
+    mUrl = new JTextArea();
+    mUrl.addKeyListener(new KeyAdapter() {
+
+      public void keyPressed(KeyEvent ke) {
+        if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+          ke.consume();
         }
+      }
+    });
+
+    mUrl.setText(mWebAddress.getUrl());
+    mUrl.setLineWrap(true);
+    
+    JScrollPane scroll = new JScrollPane(mUrl, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    panel.add(scroll, cc.xywh(3, 3, 1, 4));
+
+    JButton test = new JButton(mLocalizer.msg("check", "Check"));
+    
+    test.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent arg0) {
+        Window bestparent = UiUtilities.getBestDialogParent(panel);
         
+        ParamCheckDialog dialog;
+        if (bestparent instanceof JDialog) {
+          dialog = new ParamCheckDialog((JDialog)bestparent, mUrl.getText());
+        } else {
+          dialog = new ParamCheckDialog((JFrame)bestparent, mUrl.getText());
+        }
+        dialog.show();
+      }
+      
+    });
+        
+    panel.add(test, cc.xy(5, 3));
+
+    JButton help = new JButton(mLocalizer.msg("help", "help"));
+    
+    help.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent arg0) {
+        Window bestparent = UiUtilities.getBestDialogParent(panel);
+        
+        ParamHelpDialog dialog;
+        if (bestparent instanceof JDialog) {
+          dialog = new ParamHelpDialog((JDialog)bestparent);
+        } else {
+          dialog = new ParamHelpDialog((JFrame)bestparent);
+        }
+        dialog.show();
+      }
+      
+    });    
+    
+    panel.add(help, cc.xy(5, 5));
+
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+
+    JButton okButton = new JButton(mLocalizer.msg("OK", "OK"));
+
+    okButton.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        okPressed();
+      }
+
+    });
+
+    JButton cancelButton = new JButton(mLocalizer.msg("Cancel", "Cancel"));
+
+    cancelButton.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        cancelPressed();
+      }
+
+    });
+
+    buttonPanel.add(okButton);
+    buttonPanel.add(cancelButton);
+
+    panel.add(buttonPanel, cc.xyw(1, 8, 5));
+
+    getRootPane().setDefaultButton(okButton);
+
+    pack();
+
+    if (getSize().width < 600) {
+      Dimension dim = getSize();
+      dim.width = 600;
+      setSize(dim);
     }
 
-    /**
-     * OK was pressed
-     */
-    private void okPressed() {
-        mWebAddress.setName(mName.getText());
-        mWebAddress.setUrl(mUrl.getText());
-        returnValue = JOptionPane.OK_OPTION;
-        hide();
+    if (getSize().height < 300) {
+      Dimension dim = getSize();
+      dim.height = 300;
+      setSize(dim);
     }
 
-    /**
-     * Cancel was pressed
-     */
-    private void cancelPressed() {
-        returnValue = JOptionPane.CANCEL_OPTION;
-        hide();
-    }
+  }
 
-    /**
-     * Returns the Button that was pressed (JOptionPane.OK_OPTION / JOptionPane.CANCEL_OPTION)
-     * @return Button that was pressed
-     */
-    public int getReturnValue() {
-        return returnValue;
-    }
+  /**
+   * OK was pressed
+   */
+  private void okPressed() {
+    mWebAddress.setName(mName.getText());
+    mWebAddress.setUrl(mUrl.getText());
+    returnValue = JOptionPane.OK_OPTION;
+    hide();
+  }
+
+  /**
+   * Cancel was pressed
+   */
+  private void cancelPressed() {
+    returnValue = JOptionPane.CANCEL_OPTION;
+    hide();
+  }
+
+  /**
+   * Returns the Button that was pressed (JOptionPane.OK_OPTION /
+   * JOptionPane.CANCEL_OPTION)
+   * 
+   * @return Button that was pressed
+   */
+  public int getReturnValue() {
+    return returnValue;
+  }
 }
