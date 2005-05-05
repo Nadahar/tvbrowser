@@ -37,8 +37,8 @@ import devplugin.Channel;
  * A ListCellRenderer for Channel-Lists
  */
 public class ChannelListCellRenderer extends DefaultListCellRenderer {
-
-  ChannelLabel mChannel;
+  /** Internal reused ChannelLabel */
+  private ChannelLabel mChannel;
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
       boolean cellHasFocus) {
