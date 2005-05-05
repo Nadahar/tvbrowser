@@ -26,6 +26,7 @@
 package util.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -65,8 +66,28 @@ public class ChannelLabel extends JLabel {
     public void setChannel(Channel ch) {
         setIcon(ch.getIcon());
         setText(ch.getName());
+        setMinimumSize(new Dimension(42,22));
     }
 
+    /**
+     * Set the minimum-Size.
+     * 
+     * Overridden to set the Size now
+     * @param x
+     * @param y
+     */
+    public void setMinimumSize(Dimension dim) {
+      super.setMinimumSize(dim);
+      Dimension current = getSize();
+      if (current.width < dim.width) {
+        current.width = dim.width;
+      }
+      if (current.height < dim.height) {
+        current.height = dim.height;
+      }
+      setSize(current);
+    }
+    
     /**
      * Sets the Icon
      * 
