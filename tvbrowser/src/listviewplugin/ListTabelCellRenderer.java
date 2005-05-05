@@ -44,62 +44,73 @@ import devplugin.Program;
  */
 public class ListTabelCellRenderer extends DefaultTableCellRenderer {
 
-    /**
-     * Creates the Component
-     */
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+  private ChannelLabel mChannelLabel;
 
-        JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+  private ProgramPanel mProgramPanel;
 
-        if (value instanceof Channel) {
+  /**
+   * Creates the Component
+   */
+  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+      int row, int column) {
 
-            Channel channel = (Channel) value;
+    JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-            ChannelLabel clabel = new ChannelLabel();
-            
-            clabel.setChannel(channel);
-            clabel.setOpaque(label.isOpaque());
-            clabel.setForeground(label.getForeground());
-            clabel.setBackground(label.getBackground());
+    if (value instanceof Channel) {
 
-            if (channel.getIcon() != null) {
-                if (getSize().height < channel.getIcon().getIconHeight()) {
+      Channel channel = (Channel) value;
 
-                    Dimension dim = getSize();
-                    setSize(dim.width, channel.getIcon().getIconHeight());
-                }
-            }
+      if (mChannelLabel == null) {
+        mChannelLabel = new ChannelLabel();
+      }
 
-            if (clabel.getHeight() > table.getRowHeight(row)) {
-                table.setRowHeight(row, clabel.getHeight());
-            }
-            
-            label = clabel;
-        } else if (value instanceof Program) {
+      mChannelLabel.setChannel(channel);
+      mChannelLabel.setOpaque(label.isOpaque());
+      mChannelLabel.setForeground(label.getForeground());
+      mChannelLabel.setBackground(label.getBackground());
 
-            ProgramPanel panel = new ProgramPanel((Program) value, ProgramPanel.X_AXIS);
+      if (channel.getIcon() != null) {
+        if (getSize().height < channel.getIcon().getIconHeight()) {
 
-            JPanel rpanel = new JPanel(new BorderLayout());
-            rpanel.add(panel, BorderLayout.CENTER);
-            rpanel.setBackground(label.getBackground());
-            panel.setTextColor(label.getForeground());
-
-            if (panel.getHeight() > table.getRowHeight(row)) {
-                table.setRowHeight(row, panel.getHeight());
-            } else if (panel.getHeight() < table.getRowHeight(row)) {
-                panel.setHeight(table.getRowHeight(row));
-            }
-
-            if (ListViewPlugin.PROGRAMTABLEWIDTH > table.getColumnModel().getColumn(column).getMinWidth()) {
-                int width = ListViewPlugin.PROGRAMTABLEWIDTH;
-                table.getColumnModel().getColumn(column).setMinWidth(width);
-            }
-
-            return rpanel;
-
+          Dimension dim = getSize();
+          setSize(dim.width, channel.getIcon().getIconHeight());
         }
+      }
 
-        return label;
+      if (mChannelLabel.getHeight() > table.getRowHeight(row)) {
+        table.setRowHeight(row, mChannelLabel.getHeight());
+      }
+
+      label = mChannelLabel;
+    } else if (value instanceof Program) {
+
+      if (mProgramPanel == null) {
+        mProgramPanel = new ProgramPanel((Program)value, ProgramPanel.X_AXIS);
+      }
+
+      JPanel rpanel = new JPanel(new BorderLayout());
+      rpanel.add(mProgramPanel, BorderLayout.CENTER);
+      rpanel.setBackground(label.getBackground());
+
+      mProgramPanel.setProgram((Program) value);
+      mProgramPanel.setTextColor(label.getForeground());
+
+      if (mProgramPanel.getHeight() > table.getRowHeight(row)) {
+        table.setRowHeight(row, mProgramPanel.getHeight());
+      } else if (mProgramPanel.getHeight() < table.getRowHeight(row)) {
+        mProgramPanel.setHeight(table.getRowHeight(row));
+      }
+
+      if (ListViewPlugin.PROGRAMTABLEWIDTH > table.getColumnModel().getColumn(column).getMinWidth()) {
+        int width = ListViewPlugin.PROGRAMTABLEWIDTH;
+        table.getColumnModel().getColumn(column).setMinWidth(width);
+      }
+
+      return rpanel;
+
     }
+
+    return label;
+  }
 
 }
