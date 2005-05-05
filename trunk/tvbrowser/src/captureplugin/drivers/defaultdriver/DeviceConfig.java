@@ -29,19 +29,27 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.TreeMap;
+
+import util.ui.Localizer;
+
+import captureplugin.utils.ChannelComperator;
+import devplugin.Channel;
 
 
 /**
  * The Configuration for this Device
  */
 public class DeviceConfig {
-
+    /** Translator */
+    private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceConfig.class);  
+  
     /** Device-Name */
     private String mName = "";
     
     /** Channels */
-    private TreeMap mChannels = new TreeMap();
+    private TreeMap mChannels = new TreeMap(new ChannelComperator());
 
     /** Programs that are marked */
     private ProgramTimeList mMarkedPrograms = new ProgramTimeList();
@@ -403,11 +411,11 @@ public class DeviceConfig {
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(3);
+        stream.writeInt(4);
         
         stream.writeObject(getName());
         
-        stream.writeObject(getChannels());
+        writeChannelMappings(stream);
         
         stream.writeObject(getUserName());
         stream.writeObject(getPassword());
@@ -444,9 +452,14 @@ public class DeviceConfig {
     public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         int version = stream.readInt();
         
-        setName((String) stream.readObject());     
+        if (version < 4) {
+          throw new IOException(
+              mLocalizer.msg("NoOlderVersionSupported",
+          "Sorry, older Versions of the CapturePlugin are not longer supported. Please create a new Device!"));
+        }
         
-        setChannels((TreeMap) stream.readObject());
+        setName((String) stream.readObject());     
+        readChannelsMappings(stream);
         setUserName((String) stream.readObject());
         setPassword((String) stream.readObject());
         setUseWebUrl(stream.readBoolean());
@@ -486,6 +499,45 @@ public class DeviceConfig {
         if (version > 2) {
             mMaxTimeout = stream.readInt();
         }
+    }
+
+    /**
+     * Write the Channel-Mappings to a Stream
+     * @param stream Write to this Stream
+     * @throws IOException
+     */
+    private void writeChannelMappings(ObjectOutputStream stream) throws IOException {
+      stream.writeInt(mChannels.keySet().size());
+      Iterator it = mChannels.keySet().iterator();
+
+      int i =0;
+      while (it.hasNext()) {
+        i++;
+        Channel channel = (Channel) it.next();
+        stream.writeObject(channel.getDataService().getClass().getName());
+        stream.writeObject(channel.getId());
+        stream.writeObject(mChannels.get(channel));
+      }
+    }
+    
+    /**
+     * Read the ChannelMappings from a Stream
+     * @param stream read from this Stream
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    private void readChannelsMappings(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+      int channelCnt = stream.readInt();
+      mChannels.clear();
+      for (int i=0; i<channelCnt; i++) {
+        String dataServiceClassName = (String)stream.readObject();
+        String channelId = (String)stream.readObject();
+        String value = (String)stream.readObject();
+        Channel ch = Channel.getChannel(dataServiceClassName, channelId); 
+        if (ch!=null) {
+          mChannels.put(ch, value);
+        }
+      }
     }
 
 }

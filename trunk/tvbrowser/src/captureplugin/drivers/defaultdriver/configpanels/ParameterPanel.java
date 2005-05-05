@@ -42,9 +42,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import util.paramhandler.ParamDescriptionPanel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.drivers.defaultdriver.AdditionalParams;
+import captureplugin.drivers.defaultdriver.CaptureParamLibrary;
 import captureplugin.drivers.defaultdriver.DefaultKonfigurator;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 
@@ -188,7 +190,7 @@ public class ParameterPanel extends JPanel {
 
         c.weighty = 1.0;
         
-        add(new ParamDescriptionPanel(), c);
+        add(new ParamDescriptionPanel(new CaptureParamLibrary(mData)), c);
     }
 
     /**

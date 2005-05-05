@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 
 import sun.misc.BASE64Encoder;
 import util.exc.ErrorHandler;
+import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.utils.CaptureUtilities;
@@ -87,12 +88,19 @@ public class CaptureExecute {
      * @return Success?
      */
     public boolean addProgram(ProgramTime programTime) {
-        if ((mData.getParameterFormatAdd().trim().length() == 0) || ((mData.getParameterFormatRem().trim().length() == 0))){
-            JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParams", "Please specify Parameters for the Program!"),
+        if (mData.getParameterFormatAdd().trim().length() == 0){
+            JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParamsAdd", "Please specify Parameters for adding of the Program!"),
                     mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
             mDialog.show(DefaultKonfigurator.TAB_PARAMETER);
             return false;
         }
+
+        if (mData.getParameterFormatRem().trim().length() == 0){
+          JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParamsRemove", "Please specify Parameters for removing of the Program!"),
+                  mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
+          mDialog.show(DefaultKonfigurator.TAB_PARAMETER);
+          return false;
+      }        
         
         return execute(programTime, mData.getParameterFormatAdd());
     }
@@ -127,11 +135,14 @@ public class CaptureExecute {
                 return false;
             }
             
-            CaptureParamAnalyser analyser = new CaptureParamAnalyser(mParent, mData, mDialog);
+            ParamParser parser = new ParamParser(new CaptureParamLibrary(mData, programTime));
+            
+            String params = parser.analyse(param, programTime.getProgram());
 
-            String params = analyser.getParamLine(programTime, param);
-
-            if (params == null) { return false; }
+            if (parser.hasErrors()) {
+              JOptionPane.showMessageDialog(mParent, parser.getErrorString(), mLocalizer.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+              return false;
+            }
             
             if (mData.getUseWebUrl()) {
                 output = executeUrl(params);

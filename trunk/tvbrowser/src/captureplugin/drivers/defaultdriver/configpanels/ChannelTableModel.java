@@ -24,15 +24,17 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeMap;
 
 import javax.swing.table.AbstractTableModel;
 
+import util.ui.Localizer;
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
-
-import util.ui.Localizer;
 import devplugin.Channel;
 import devplugin.PluginManager;
 
@@ -46,6 +48,9 @@ public class ChannelTableModel extends AbstractTableModel {
     /** Data */
     private DeviceConfig mData;
 
+    /** The Rows in the TableModel */
+    private ArrayList mChannelRows;
+    
     /**
      * creates a new ChannelTableModel
      */
@@ -65,11 +70,29 @@ public class ChannelTableModel extends AbstractTableModel {
         Channel[] c = pl.getSubscribedChannels();
         TreeMap channels = mData.getChannels();
         for (int i = 0; i < c.length; i++) {
-            if (!channels.containsKey(c[i].getName())) {
-                channels.put(c[i].getName(), "");
+            if (!channels.containsKey(c[i])) {
+                channels.put(c[i], "");
             }
         }
         mData.setChannels(channels);
+        
+        mChannelRows = new ArrayList();
+        
+        Iterator it = mData.getChannels().keySet().iterator();
+        Channel key = null;
+        int i = 0;
+        while (it.hasNext()) {
+            key = (Channel) it.next();
+            mChannelRows.add(key);
+        }
+        
+        Collections.sort(mChannelRows, new Comparator() {
+          public int compare(Object arg0, Object arg1) {
+            Channel a = (Channel) arg0;
+            Channel b = (Channel) arg1;
+            return a.getName().compareToIgnoreCase(b.getName());
+          }
+        });
     }
     
     /**
@@ -96,23 +119,49 @@ public class ChannelTableModel extends AbstractTableModel {
         return mData.getChannels().size();
     }
 
+    
+    /* (non-Javadoc)
+     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
+     */
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+      if (columnIndex == 1) {
+        return true;
+      }
+      return false;
+    }
+    
+    /* (non-Javadoc)
+     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
+     */
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+      
+      Channel key = getKeyForRow(rowIndex);
+      
+      if (key != null) {
+        mData.getChannels().put(key, aValue);
+      }
+      
+      super.setValueAt(aValue, rowIndex, columnIndex);
+    }
+
     /**
      * returns the value at Table-Position (row,col)
      */
     public Object getValueAt(int row, int col) {
-        Iterator it = mData.getChannels().keySet().iterator();
-        String key = "";
-
-        int i = 0;
-        while (it.hasNext()) {
-            key = (String) it.next();
-            if (i == row) break;
-            i++;
-        }
+        Channel key = getKeyForRow(row);
 
         if (col == 0)
             return key;
         else
             return (String) mData.getChannels().get(key);
+    }
+    
+    /**
+     * Get the Channel for a specific Row
+     * @param row Row to get Channel for
+     * @return Channel for Row
+     */
+    private Channel getKeyForRow(int row){
+      return (Channel) mChannelRows.get(row);
     }
 }
