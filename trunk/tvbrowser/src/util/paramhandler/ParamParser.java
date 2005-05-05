@@ -176,9 +176,13 @@ public class ParamParser {
     } else {
       String cmdRet = mLibrary.getStringForKey(prg, newCommand.trim());
       
-      if (cmdRet == null) {
+      if ((cmdRet == null) && (!mLibrary.hasErrors())) {
         mErrors = true;
         mErrorString = "Could not understand Param \""+newCommand+"\" at Position "+ (pos) + ".";
+        return null;
+      } else if (cmdRet == null) {
+        mErrors = mLibrary.hasErrors();
+        mErrorString = mLibrary.getErrorString();
         return null;
       }
       
