@@ -273,6 +273,11 @@ public class CapturePlugin extends devplugin.Plugin {
 
         if (actionList.size() == 1) {
           ActionMenu menu = (ActionMenu) actionList.get(0);
+          
+          if (menu.getSubItems().length==0) {
+            return null;
+          }
+          
           mainaction.putValue(Action.NAME, menu.getTitle());
           return new ActionMenu(mainaction, menu.getSubItems());
         }
@@ -280,6 +285,9 @@ public class CapturePlugin extends devplugin.Plugin {
         ActionMenu[] actions = new ActionMenu[actionList.size()];
         actionList.toArray(actions);
 
+        if (actions.length == 0) {
+          return null;
+        }
         
         return new ActionMenu(mainaction, actions);
     }

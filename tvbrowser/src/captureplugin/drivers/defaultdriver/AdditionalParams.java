@@ -50,10 +50,10 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import util.paramhandler.ParamDescriptionPanel;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import captureplugin.drivers.defaultdriver.configpanels.ParamDescriptionPanel;
 
 /**
  * A DialogBox for the additional Parameters
@@ -61,7 +61,6 @@ import captureplugin.drivers.defaultdriver.configpanels.ParamDescriptionPanel;
 public class AdditionalParams extends JDialog {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(AdditionalParams.class);
-    
     
     /** List of ParamEntries */
     private JList mList;
@@ -294,7 +293,7 @@ public class AdditionalParams extends JDialog {
 
         panel.add(new JScrollPane(mParam), c);
 
-        panel.add(new JScrollPane(new ParamDescriptionPanel()), c);
+        panel.add(new JScrollPane(new ParamDescriptionPanel(new CaptureParamLibrary(mConfig))), c);
         return panel;
     }
     

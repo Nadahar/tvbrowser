@@ -30,8 +30,7 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
-
+import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import captureplugin.drivers.DeviceIf;
 
@@ -129,9 +128,7 @@ public class CapturePluginData implements Cloneable {
                     mDevices.add(dev);
                 }
             } catch (Throwable e) {
-                JOptionPane.showMessageDialog(null, 
-                        mLocalizer.msg("ProblemDevice", "Problems while loading Device {0}.", devname),
-                        mLocalizer.msg("Problems","Problems"), JOptionPane.ERROR_MESSAGE);
+                ErrorHandler.handle(mLocalizer.msg("ProblemDevice", "Problems while loading Device {0}.", devname),e);
             }
             
         }
