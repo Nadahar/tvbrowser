@@ -11,6 +11,7 @@ import devplugin.Date;
 import tvdataservice.MutableProgram;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.util.TimeZone;
 import javax.swing.JOptionPane;
 
 
@@ -121,10 +122,6 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
   }
   
   private java.io.InputStream getInputStream() throws Exception{
-        /*
-        System.out.println ("opening file");
-        return new FileInputStream ("/home/pumpkin/log2_bakup");
-         */
     
     java.net.URL connectTo = new java.net.URL(WEBSERVICE_URI);
     java.net.HttpURLConnection httpConnection = (java.net.HttpURLConnection) connectTo.openConnection();
@@ -136,9 +133,6 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
     httpConnection.disconnect();
     String auth = httpConnection.getHeaderField( "WWW-Authenticate" );
     
-    //String auth = "Digest realm=\"TMSWebServiceRealm\", nonce=\"PDExMDk5MzExNTU2MjkuNjVmZThlM2VjMDU1MjkxZmYyNGU2YWFhMTM2MTkzZTRAcHJpbWV0aW1lPg==\", opaque=\"dafed5f7ba22e232\", algorithm=MD5, qop=\"auth\"";
-    //System.out.println (httpConnection.getContentEncoding());
-    //System.out.println("auth: "+auth);
     auth = auth.trim();
     if (auth.toLowerCase().startsWith("digest")){
       String data = auth.substring(auth.indexOf(' ')).trim();
@@ -393,7 +387,17 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
                 if (day!=null){
                   try {
                     //2005-02-23T08:39:11Z
-                    MutableProgram prog = new MutableProgram(addTo,day,Integer.parseInt(date.substring(11,13)),Integer.parseInt(date.substring(14,16)));
+					
+					//als java.util.Date darstellen, die Zeit als long "exportieren", 
+					//den Offset draufrechnen und wieder importieren. Dann auslesen.
+					
+					java.util.Date d = new java.util.Date (2000,1,1,Integer.parseInt(date.substring(11,13)),Integer.parseInt(date.substring(14,16)));
+					
+					d = new java.util.Date (TimeZone.getDefault().getRawOffset()+d.getTime());
+					
+					
+                    MutableProgram prog = new MutableProgram(addTo,day, d.getHours(), d.getMinutes());
+					System.out.println ("changed "+Integer.parseInt(date.substring(11,13))+":"+Integer.parseInt(date.substring(14,16))+" to "+d.getHours()+":"+ d.getMinutes());
                     Vector save = (Vector)progs.get(programmID);
                     if (save==null){
                       save = new Vector();
@@ -469,7 +473,7 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
           break;
         }
         case (STATUS_CONSTRUCT_PROGRAM):{
-          System.out.println("STATUS_CONSTRUCT_PROGRAM : "+mLastStartedElement);
+          //System.out.println("STATUS_CONSTRUCT_PROGRAM : "+mLastStartedElement);
           ProgramFieldType field = (ProgramFieldType) mMapping.get(mLastStartedElement);
           if (field != null){
             if (field.getFormat() == ProgramFieldType.TEXT_FORMAT) {
@@ -511,7 +515,8 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
         case (STATUS_CONSTRUCT_CHANNEL):{
           if ("station".equals(qName)){
             status = STATUS_CHANNELS;
-            System.out.println("found channel: "+this.mChannelID+" name: "+mChannelName+" callSign: "+mChannelCallSign);
+            //System.out.println("found channel: "+this.mChannelID+" name: "+mChannelName+" callSign: "+mChannelCallSign);
+            
             devplugin.Channel ch = new devplugin.Channel(mDataService, mChannelCallSign, mChannelName, java.util.TimeZone.getDefault(), "us", "(c) mZap2it-labs");
             channels.put(mChannelID,ch);
             mChannelID = null;
@@ -586,10 +591,20 @@ public class SaxHandler extends org.xml.sax.helpers.DefaultHandler{
   
   private Date parseDay(String dctime){
     try {
+      //2005-02-23T08:39:11Z
       Integer I1 = new Integer(dctime.substring(0,4));
       Integer I2 = new Integer(dctime.substring(5,7));
       Integer I3 = new Integer(dctime.substring(8,10));
-      return new Date(I1.intValue(),I2.intValue(),I3.intValue());
+	  /*
+      java.util.Date d = new java.util.Date(I1.intValue(),I2.intValue(),I3.intValue());
+      TimeZone local = TimeZone.getDefault();
+      long offset = local.getRawOffset();
+      long time = d.getTime();
+      time = time + offset;
+      d = new java.util.Date(time);
+      return new Date (d.getYear(),d.getMonth()+1,d.getDay());
+	  */
+      return new Date (I1.intValue(),I2.intValue(),I3.intValue());
     } catch (Exception E1){
       System.out.println("invalid dctime: "+dctime);
       System.out.flush();

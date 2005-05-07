@@ -95,7 +95,7 @@ public class zap2itimporter implements tvdataservice.TvDataService{
   /** Gets information about this TvDataService
    */
   public devplugin.PluginInfo getInfo() {
-    devplugin.PluginInfo info = new devplugin.PluginInfo("Zap2It-Importer","Imports Zap2It-Data", "Gilson Laurent");
+    devplugin.PluginInfo info = new devplugin.PluginInfo("Zap2It-Importer","Imports Zap2It-Data", "Gilson Laurent", new devplugin.Version (0,2,false));
     return info;
   }
   
@@ -134,7 +134,6 @@ public class zap2itimporter implements tvdataservice.TvDataService{
   }
   
   public void setWorkingDirectory(java.io.File dataDir) {
-    System.out.println ("********************************** "+dataDir.toString()+" *******************");
   }
   
   /**
