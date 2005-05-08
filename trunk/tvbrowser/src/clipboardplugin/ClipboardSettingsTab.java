@@ -25,30 +25,16 @@
  */
 package clipboardplugin;
 
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
-import util.paramhandler.ParamCheckDialog;
-import util.paramhandler.ParamHelpDialog;
+import util.paramhandler.ParamInputField;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import devplugin.SettingsTab;
 
 /**
@@ -64,7 +50,7 @@ public class ClipboardSettingsTab implements SettingsTab {
   /** Settings to use */
 	private Properties mSettings;
   /** Text-Area for the Parameters */
-	private JTextArea mParamText;
+	private ParamInputField mParamText;
 	
   /**
    * Creates the SettingsTab
@@ -79,62 +65,11 @@ public class ClipboardSettingsTab implements SettingsTab {
    * @return Settings-Panel
    */
 	public JPanel createSettingsPanel() {
-		final JPanel panel = new JPanel(
-				new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default", 
-							   "fill:pref:grow, 3dlu, default"));
-		
-		panel.setBorder(BorderFactory.createTitledBorder(
+    mParamText = new ParamInputField(mSettings.getProperty("ParamToUse", ClipboardPlugin.DEFAULT_PARAM));
+    mParamText.setBorder(BorderFactory.createTitledBorder(
         mLocalizer.msg("createText", "Text to create for each Program") + ":"));
-		
-		CellConstraints cc = new CellConstraints();
-		
-		mParamText = new JTextArea();
-		
-		mParamText.setText(mSettings.getProperty("ParamToUse", ClipboardPlugin.DEFAULT_PARAM));
-		
-		panel.add(new JScrollPane(mParamText), cc.xyw(1,1,5));
-		
-		JButton check = new JButton(mLocalizer.msg("check","Check"));
-		
-		check.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				Window bestparent = UiUtilities.getBestDialogParent(panel);
-				
-				ParamCheckDialog dialog;
-				if (bestparent instanceof JDialog) {
-					dialog = new ParamCheckDialog((JDialog)bestparent, mParamText.getText());
-				} else {
-					dialog = new ParamCheckDialog((JFrame)bestparent, mParamText.getText());
-				}
-				dialog.show();
-			}
-			
-		});
-		
-		panel.add(check, cc.xy(3,3));
-		
-		JButton help = new JButton(mLocalizer.msg("help","Help"));
-		
-		help.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-				Window bestparent = UiUtilities.getBestDialogParent(panel);
-				
-				ParamHelpDialog dialog;
-				if (bestparent instanceof JDialog) {
-					dialog = new ParamHelpDialog((JDialog)bestparent);
-				} else {
-					dialog = new ParamHelpDialog((JFrame)bestparent);
-				}
-				dialog.show();
-			}
-			
-		});
-		
-		panel.add(help, cc.xy(5,3));
-		
-		return panel;
+    
+		return mParamText;
 	}
 
   /**
