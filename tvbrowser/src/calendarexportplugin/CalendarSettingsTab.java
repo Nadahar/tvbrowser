@@ -7,33 +7,19 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import util.paramhandler.ParamCheckDialog;
-import util.paramhandler.ParamHelpDialog;
+import util.paramhandler.ParamInputField;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import devplugin.SettingsTab;
 
 /**
@@ -53,7 +39,7 @@ public class CalendarSettingsTab implements SettingsTab {
 
   private JTextField mCategorie;
 
-  private JTextArea mParamText;
+  private ParamInputField mParamText;
 
   private JComboBox mClassification;
 
@@ -136,76 +122,17 @@ public class CalendarSettingsTab implements SettingsTab {
     JPanel panel = new JPanel(new BorderLayout());
     
     panel.add(toppanel, BorderLayout.NORTH);
+
+    mParamText = new ParamInputField(mSettings.getProperty("paramToUse", CalendarExportPlugin.DEFAULT_PARAMETER));
     
-    panel.add(createParameterPanel(), BorderLayout.CENTER);
+    mParamText.setBorder(BorderFactory.createTitledBorder(
+        mLocalizer.msg("description", "Description")));
+    
+    panel.add(mParamText, BorderLayout.CENTER);
     
     return panel;
   }
 
-  /**
-   * Creates the SettingsPanel
-   * @return Settings-Panel
-   */
-  public JPanel createParameterPanel() {
-    final JPanel panel = new JPanel(
-        new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default", 
-                 "fill:pref:grow, 3dlu, default"));
-    
-    panel.setBorder(BorderFactory.createTitledBorder(
-        mLocalizer.msg("description", "Description")));
-    
-    CellConstraints cc = new CellConstraints();
-    
-    mParamText = new JTextArea();
-    
-    mParamText.setText(mSettings.getProperty("paramToUse", CalendarExportPlugin.DEFAULT_PARAMETER));
-    
-    panel.add(new JScrollPane(mParamText), cc.xyw(1,1,5));
-    
-    JButton check = new JButton(mLocalizer.msg("check","Check"));
-    
-    check.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        Window bestparent = UiUtilities.getBestDialogParent(panel);
-        
-        ParamCheckDialog dialog;
-        if (bestparent instanceof JDialog) {
-          dialog = new ParamCheckDialog((JDialog)bestparent, mParamText.getText());
-        } else {
-          dialog = new ParamCheckDialog((JFrame)bestparent, mParamText.getText());
-        }
-        dialog.show();
-      }
-      
-    });
-    
-    panel.add(check, cc.xy(3,3));
-    
-    JButton help = new JButton(mLocalizer.msg("help","Help"));
-    
-    help.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        Window bestparent = UiUtilities.getBestDialogParent(panel);
-        
-        ParamHelpDialog dialog;
-        if (bestparent instanceof JDialog) {
-          dialog = new ParamHelpDialog((JDialog)bestparent);
-        } else {
-          dialog = new ParamHelpDialog((JFrame)bestparent);
-        }
-        dialog.show();
-      }
-      
-    });
-    
-    panel.add(help, cc.xy(5,3));
-    
-    return panel;
-  }  
-  
-  
   /*
    * (non-Javadoc)
    * 
