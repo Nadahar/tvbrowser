@@ -27,6 +27,8 @@ package tvbrowser.ui.programtable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.TimeZone;
+import java.util.HashMap;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,7 +61,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private ArrayList mListenerList;
   
   private Channel[] mChannelArr, mShownChannelArr;
-  private Date mMainDay, mNextDay;
+  private Date mMainDay;
   
   private ArrayList[] mProgramColumn, mShownProgramColumn;
   
@@ -68,7 +70,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   private ProgramFilter mProgramFilter=null;
 
-
+  private HashMap mDateRangeForChannel;
 
   /**
    * Creates a new instance of DefaultProgramTableModel.
@@ -76,15 +78,18 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   public DefaultProgramTableModel(Channel[] channelArr,
     int todayEarliestTime, int tomorrowLatestTime)
   {
+    mDateRangeForChannel = new HashMap();
+
     mListenerList = new ArrayList();
     mTodayEarliestTime=todayEarliestTime;
     mTomorrowLatestTime=tomorrowLatestTime;
 
+
     mMainDay = new Date();
-    mNextDay = mMainDay.addDays(1);
-    
+
 	  setChannels(channelArr);
-    
+
+
     mTimer = new Timer(10000, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         handleTimerEvent();
@@ -93,12 +98,63 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     mTimer.start();
   }
 
-  
+
+
+
+  private DateRange getDateRangeForChannel(Channel ch) {
+
+    int channelTime = ch.getTimeZone().getRawOffset()/1000/60/60;
+
+    if (ch.getTimeZone().useDaylightTime()) {
+      channelTime+=1;
+    }
+    int localTime = TimeZone.getDefault().getRawOffset()/1000/60/60;
+    if (ch.getTimeZone().useDaylightTime()) {
+      localTime+=1;
+    }
+    int timeDiff = channelTime - localTime;  // e.g -4h
+
+    int startTimeForChannelLocale = mTodayEarliestTime/60+timeDiff;
+    int endTimeForChannelLocale = (mTomorrowLatestTime+59)/60+timeDiff+24;
+
+
+    int fromDate;
+     if (startTimeForChannelLocale>=0) {
+      fromDate = startTimeForChannelLocale/24;
+    }
+    else {
+      fromDate = (startTimeForChannelLocale/24)-1;
+    }
+
+    int toDate;
+    if (endTimeForChannelLocale>0) {
+      toDate = endTimeForChannelLocale/24 +1;
+    }
+    else {
+      toDate = (endTimeForChannelLocale/24)-1+1;
+    }
+
+
+    return new DateRange(fromDate, toDate-fromDate);
+
+  }
+
+
   public void setTimeRange(int todayEarliestTime, int tomorrowLatestTime) {
     mTodayEarliestTime=todayEarliestTime;
     mTomorrowLatestTime=tomorrowLatestTime;
     fireTableDataChanged();
   }
+
+
+  private void updateDateRange() {
+    mDateRangeForChannel.clear();
+    for (int i=0; i<mChannelArr.length; i++) {
+      DateRange dateRange = getDateRangeForChannel(mChannelArr[i]);
+      mDateRangeForChannel.put(mChannelArr[i], dateRange);
+    }
+  }
+
 
 
   public void setChannels(Channel[] channelArr) {
@@ -113,7 +169,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     for (int i=0;i<mProgramColumn.length;i++) {
       mProgramColumn[i]=new ArrayList();
     }
-    
+
+    updateDateRange();
+
     updateTableContent();
   }
   
@@ -148,26 +206,32 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
           return 0;
       }
     }
-  } 
+  }
 
 
-  private void addChannelDayProgram(int col, ChannelDayProgram cdp,
-    int startMinutes, Date startDate, int endMinutes, Date endDate )
+
+  private void addChannelDayProgram(int col, ChannelDayProgram[] cdpArr, Date fromDate, int fromMinutes, Date toDate, int toMinutes)
   {
-    if (cdp == null) {
+    if (cdpArr == null) {
       return;
     }
     checkThread();
-    
-    Iterator it=cdp.getPrograms();  
-    if (it!=null) {
-      while (it.hasNext()) {
-        Program prog=(Program)it.next();
-        int time=prog.getHours()*60+prog.getMinutes();
-	    if (compareDateTime(prog.getDate(), time, startDate, startMinutes) >=0 && compareDateTime(prog.getDate(), time, endDate, endMinutes)<=0) {
-		  if (mProgramFilter==null || mProgramFilter.accept(prog)) {
-            ProgramPanel panel = new ProgramPanel(prog);
-            mProgramColumn[col].add(panel);
+
+    for (int i = 0; i<cdpArr.length; i++) {
+      ChannelDayProgram cdp = cdpArr[i];
+      if (cdp==null) {
+        break;
+      }
+      Iterator it=cdp.getPrograms();
+      if (it!=null) {
+        while (it.hasNext()) {
+          Program prog=(Program)it.next();
+          int time=prog.getHours()*60+prog.getMinutes();          
+	        if (compareDateTime(prog.getDate(), time, fromDate, fromMinutes) >=0 && compareDateTime(prog.getDate(), time, toDate, toMinutes)<=0) {
+		        if (mProgramFilter==null || mProgramFilter.accept(prog)) {
+              ProgramPanel panel = new ProgramPanel(prog);
+              mProgramColumn[col].add(panel);
+            }
           }
         }
       }
@@ -175,12 +239,13 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
 
 
+
+
   public void setDate(Date date, ProgressMonitor monitor,
     Runnable callback)
   {
     mMainDay = date;
-    mNextDay = date.addDays(1);
-    
+    updateDateRange();
     updateTableContent(monitor, callback);
   }
   
@@ -208,10 +273,46 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       monitor.setValue(0);
     }
 
+    Date nextDay = mMainDay.addDays(1);
     for (int i = 0; i < mChannelArr.length; i++) {
 
+      System.out.println("channel: "+mChannelArr[i]);
       mProgramColumn[i].clear();
-      ChannelDayProgram cdpThisDay = db.getDayProgram(mMainDay, mChannelArr[i]);
+      DateRange dateRange = (DateRange)mDateRangeForChannel.get(mChannelArr[i]);
+      ChannelDayProgram[] cdp = new ChannelDayProgram[dateRange.getCount()];
+
+      for (int d = 0; d<cdp.length; d++) {
+        cdp[d] = db.getDayProgram(mMainDay.addDays(dateRange.getBegin() + d), mChannelArr[i]);
+      }
+      addChannelDayProgram(i, cdp, mMainDay, mTodayEarliestTime, nextDay, mTomorrowLatestTime);
+
+
+    /*  Date[] dates = (Date[])mDateRangeForChannel.get(mChannelArr[i]);
+      for (int d = 0; d<dates.length; d++) {
+        ChannelDayProgram dayProgram = db.getDayProgram(dates[d], mChannelArr[i]);
+        if (dayProgram != null) {
+          int startMinutes = 0;
+          int endMinutes=24*60;
+          if (d==0) {
+            startMinutes = calculateMinutes(mTodayEarliestTime, mChannelArr[i]);
+            while (startMinutes < 0) {
+              startMinutes+=1440;
+            }
+          }
+          else if (d==dates.length-1) {
+            endMinutes = calculateMinutes(mTomorrowLatestTime, mChannelArr[i]);
+            endMinutes = endMinutes %(24*60);
+            while (endMinutes < 0) {
+              endMinutes+=1440;
+            }
+          }
+          System.out.println("add dayprogram of "+mChannelArr[i]+"; "+dates[d]+"; from: "+startMinutes+"; to: "+endMinutes);
+          addChannelDayProgram(i, dayProgram, startMinutes, dates[d], endMinutes, dates[d].addDays(1));
+        }
+      }     */
+      System.out.println();
+
+  /*    ChannelDayProgram cdpThisDay = db.getDayProgram(mMainDay, mChannelArr[i]);
 
       ChannelDayProgram cdpNextDay = db.getDayProgram(mNextDay, mChannelArr[i]);
 
@@ -223,7 +324,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       if (cdpNextDay != null) {
         addChannelDayProgram(i, cdpNextDay, mTodayEarliestTime, mMainDay,
             mTomorrowLatestTime, mNextDay);
-      }
+      }      */
 
       if (monitor != null) {
         monitor.setValue(i);
@@ -403,6 +504,15 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     for (int i = 0; i < mChannelArr.length; i++) {
       Channel channel = mChannelArr[i];
 
+      DateRange dateRange = (DateRange)mDateRangeForChannel.get(channel);
+      int cnt = dateRange.getCount();
+      for (int j=0; j<cnt; j++) {
+        ChannelDayProgram dayProg = db.getDayProgram(mMainDay.addDays(j), channel);
+        if (dayProg != null) {
+          dayProg.markProgramOnAir();
+        }
+      }
+           /*
       ChannelDayProgram dayProg = db.getDayProgram(mMainDay, channel);
       if (dayProg != null) {
         dayProg.markProgramOnAir();
@@ -411,7 +521,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       dayProg = db.getDayProgram(mNextDay, channel);
       if (dayProg != null) {
         dayProg.markProgramOnAir();
-      }
+      }  */
     }
   }
 
@@ -460,6 +570,28 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       throw new IllegalStateException("The table model must be used in the "
           + "Swing event thread (use SwingUtilities.invokeLater())");
     }
+  }
+
+
+
+  class DateRange {
+
+    private int mCnt;
+    private int mBegin;
+
+    public DateRange(int begin, int cnt) {
+      mBegin = begin;
+      mCnt = cnt;
+    }
+
+    public int getBegin() {
+      return mBegin;
+    }
+
+    public int getCount() {
+      return mCnt;
+    }
+
   }
 
 }
