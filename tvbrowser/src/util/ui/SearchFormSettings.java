@@ -27,7 +27,13 @@ package util.ui;
 
 import java.io.*;
 
+import tvbrowser.core.search.regexsearch.RegexSearcher;
+import util.exc.TvBrowserException;
+
+import devplugin.Plugin;
+import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramSearcher;
 
 /**
  * Settings for the SearchForm
@@ -37,13 +43,22 @@ import devplugin.ProgramFieldType;
  */
 public class SearchFormSettings {
 
-  /** Specifies, that the search term has to match exacly. */
-  public static final int MATCH_EXACTLY = 1;
-  /** Specifies, that the search term is a keyword (= substring). */
-  public static final int MATCH_KEYWORD = 2;
-  /** Specifies, that the search term is a regular expression. */
-  public static final int MATCH_REGULAR_EXPRESSION = 3;
-
+  /**
+   * Specifies, that the search term has to match exacly.
+   * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_EXACTLY} instead.
+   */
+  public static final int MATCH_EXACTLY = PluginManager.SEARCHER_TYPE_EXACTLY;
+  /**
+   * Specifies, that the search term is a keyword (= substring).
+   * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_KEYWORD} instead.
+   */
+  public static final int MATCH_KEYWORD = PluginManager.SEARCHER_TYPE_KEYWORD;
+  /**
+   * Specifies, that the search term is a regular expression.
+   * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_REGULAR_EXPRESSION} instead.
+   */
+  public static final int MATCH_REGULAR_EXPRESSION = PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION;
+  
   /** Specifies, that only titles should be searched. */
   public static final int SEARCH_IN_TITLE = 1;
   /** Specifies, that all fields should be searched. */
@@ -55,11 +70,24 @@ public class SearchFormSettings {
    */
   public static final int SEARCH_IN_USER_DEFINED = 3;
 
+  /** The search text the user provided. */
   private String mSearchText;
+  /**
+   * Specifies where to search. Either {@link #SEARCH_IN_TITLE} or
+   * {@link #SEARCH_IN_ALL}.
+   */
   private int mSearchIn;
+  /** The fields the user want to search in. */
   private ProgramFieldType[] mUserDefinedFieldTypes;
-  private int mMatch;
+  /**
+   * Specifies the searcher type.
+   *
+   * @see devplugin.PluginManager#createProgramSearcher(int, String, boolean) 
+   */
+  private int mSearcherType;
+  /** Specifies whether to search case sensitive. */
   private boolean mCaseSensitive;
+  /** Specifies how many days to search. */
   private int mNrDays;
 
 
@@ -71,7 +99,7 @@ public class SearchFormSettings {
   public SearchFormSettings(String searchText) {
     mSearchText = searchText;
     mSearchIn = SEARCH_IN_TITLE;
-    mMatch = MATCH_KEYWORD;
+    mSearcherType = PluginManager.SEARCHER_TYPE_KEYWORD;
     mCaseSensitive = false;
     mNrDays=14;
   }
@@ -92,7 +120,7 @@ public class SearchFormSettings {
     
     mSearchText = (String) in.readObject();
     mSearchIn = in.readInt();
-    mMatch = in.readInt();
+    mSearcherType = in.readInt();
     mCaseSensitive = in.readBoolean();
     
     int fieldTypeCount = in.readInt();
@@ -107,7 +135,7 @@ public class SearchFormSettings {
     }
     
     if (version == 2) {
-        mNrDays = in.readInt();
+      mNrDays = in.readInt();
     }
   }
 
@@ -124,7 +152,7 @@ public class SearchFormSettings {
 
     out.writeObject(mSearchText);
     out.writeInt(mSearchIn);
-    out.writeInt(mMatch);
+    out.writeInt(mSearcherType);
     out.writeBoolean(mCaseSensitive);
     
     if ((mSearchIn == SEARCH_IN_USER_DEFINED) && (mUserDefinedFieldTypes != null)) {
@@ -168,40 +196,37 @@ public class SearchFormSettings {
   public void setSearchText(String searchText) {
     mSearchText = searchText;
   }
+  
+  
+  /**
+   * Creates a searcher from this settings
+   * 
+   * @return A searcher that satisfies these settings.
+   * @throws TvBrowserException If creating the searcher failed.
+   */
+  public ProgramSearcher createSearcher()
+    throws TvBrowserException
+  {
+    return Plugin.getPluginManager().createProgramSearcher(mSearcherType,
+        mSearchText, mCaseSensitive);
+  }
 
 
   /**
    * Gets the search text as regular expression.
    * 
-   * @return The search text as regular expression
+   * @return The search text as regular expression.
+   * 
+   * @deprecated Since 1.1. Use {@link #createSearcher()} instead.
    */
   public String getSearchTextAsRegex() {
-    // TODO: To avoid that the a search pattern matches everything (which takes
-    //       a long time and may mess everything up), we return an empty String
-    //       if the search text is empty.
-    //       -> An empty pattern will cause that the TvDataSearcher returns an
-    //          empty result.
-    if (mSearchText.trim().length() == 0) {
-      return "";
-    }
+    boolean matchExactly = (mSearcherType == PluginManager.SEARCHER_TYPE_EXACTLY);
+    boolean matchKeyword = (mSearcherType == PluginManager.SEARCHER_TYPE_KEYWORD);
     
-    // Build the regex
-    if ((mMatch == MATCH_EXACTLY) || (mMatch == MATCH_KEYWORD)) {
-      // NOTE: We replace all whitespace with a regex that matches whitespace.
-      //       This way the search hits will contain "The film", when the user
-      //       entered "The    film"
-      // NOTE: All words are quoted with "\Q" and "\E". This way regex code will
-      //       be ignored within the search text. (A search for "C++" will not
-      //       result in an syntax error)
-      String regex = "\\Q" + mSearchText.replaceAll("\\s+", "\\\\E\\\\s+\\\\Q") + "\\E";
-      
-      // Add '.*' to beginning an end to match keywords
-      if (mMatch == MATCH_KEYWORD) {
-        regex = ".*" + regex + ".*";
-      }
-      
-      return regex;
+    if (matchExactly || matchKeyword) {
+      return RegexSearcher.searchTextToRegex(mSearchText, matchKeyword);
     } else {
+      // The search text already is a regex
       return mSearchText;
     }
   }
@@ -227,6 +252,11 @@ public class SearchFormSettings {
   }
 
 
+  /**
+   * Gets the field types defined by the user.
+   * 
+   * @return The field types defined by the user.
+   */
   ProgramFieldType[] getUserDefinedFieldTypes() {
     return mUserDefinedFieldTypes;
   }
@@ -263,27 +293,53 @@ public class SearchFormSettings {
     mSearchIn = searchIn;
   }
 
+  
+  /**
+   * Gets the searcher type to be used.
+   * 
+   * @return The searcher type to be used.
+   * 
+   * @see PluginManager#createProgramSearcher(int, String, boolean)
+   */
+  public int getSearcherType() {
+    return mSearcherType;
+  }
+
+  
+  /**
+   * Sets the searcher type to be used.
+   * 
+   * @param searcherType The searcher type to be used.
+   * 
+   * @see PluginManager#createProgramSearcher(int, String, boolean)
+   */
+  public void setSearcherType(int searcherType) {
+    mSearcherType = searcherType;
+  }
+
+  
 
   /**
-   * Gets what how the search text has to match. Either {@link #MATCH_EXACTLY},
-   * {@link #MATCH_KEYWORD} or {@link #MATCH_REGULAR_EXPRESSION}.
+   * Gets what how the search text has to match.
    * 
-   * @return How the search text has to match
+   * @return How the search text has to match.
+   * 
+   * @deprecated Since 1.1. Use {@link #getSearcherType()} instead.
    */
   public int getMatch() {
-    return mMatch;
+    return getSearcherType();
   }
 
 
   /**
-   * Sets what how the search text has to match. Must be Either
-   * {@link #MATCH_EXACTLY}, {@link #MATCH_KEYWORD} or
-   * {@link #MATCH_REGULAR_EXPRESSION}.
+   * Sets what how the search text has to match.
    * 
-   * @param match How the search text has to match
+   * @param match How the search text has to match.
+   * 
+   * @deprecated Since 1.1. Use {@link #getSearcherType()} instead.
    */
   public void setMatch(int match) {
-    mMatch = match;
+    setSearcherType(match);
   }
 
 

@@ -35,7 +35,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import tvbrowser.core.TvDataSearcher;
 import tvbrowser.core.filters.FilterComponent;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -44,6 +43,7 @@ import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramSearcher;
 
 public class KeywordFilterComponent implements FilterComponent {
 
@@ -52,7 +52,7 @@ public class KeywordFilterComponent implements FilterComponent {
 
   private SearchForm mSearchForm;
   
-  private Pattern mPattern;
+  private ProgramSearcher mSearcher;
   private ProgramFieldType[] mSearchFieldArr;
 
   private String mDescription, mName;
@@ -84,11 +84,8 @@ public class KeywordFilterComponent implements FilterComponent {
   
   private void setSearchFormSettings(SearchFormSettings settings) {
     mSearchFormSettings = settings;
-    
-    String regex = mSearchFormSettings.getSearchTextAsRegex();
-    boolean caseSensitive = mSearchFormSettings.getCaseSensitive();
     try {
-      mPattern = TvDataSearcher.getInstance().createSearchPattern(regex, caseSensitive);
+      mSearcher = mSearchFormSettings.createSearcher();
     } catch (TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
@@ -103,7 +100,7 @@ public class KeywordFilterComponent implements FilterComponent {
   }
 
   public boolean accept(Program program) {
-  	return TvDataSearcher.getInstance().matches(mPattern, program, mSearchFieldArr);
+    return mSearcher.matches(program, mSearchFieldArr);
   }
 
   public JPanel getPanel() {

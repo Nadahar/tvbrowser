@@ -40,6 +40,16 @@ import util.exc.TvBrowserException;
  * @author Martin Oberhauser
  */
 public interface PluginManager {
+  
+  /** Specifies, that the search term has to match exacly. */
+  public static final int SEARCHER_TYPE_EXACTLY = 1;
+  /** Specifies, that the search term is a keyword (= substring). */
+  public static final int SEARCHER_TYPE_KEYWORD = 2;
+  /** Specifies, that the search term is a regular expression. */
+  public static final int SEARCHER_TYPE_REGULAR_EXPRESSION = 3;
+  /** Specifies, that the search term is a boolean expression. */
+  public static final int SEARCHER_TYPE_BOOLEAN = 4;
+
 
   /**
    * Gets a program.
@@ -82,7 +92,7 @@ public interface PluginManager {
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    * @return The matching programs.
    * 
-   * @deprecated Use {@link #search(String, boolean, ProgramFieldType[], Date, int, Channel[], boolean)}
+   * @deprecated Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
    */
   public Program[] search(String regex, boolean inTitle, boolean inText,
@@ -106,11 +116,32 @@ public interface PluginManager {
    * @return The matching programs.
    * @throws TvBrowserException
    * @throws TvBrowserException If there is a syntax error in the regular expression.
+   * 
+   * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
+   *             instead.
    */
   public Program[] search(String regex, boolean caseSensitive,
     ProgramFieldType[] fieldArr, Date startDate, int nrDays, Channel[] channels,
     boolean sortByStartTime)
     throws TvBrowserException;
+  
+
+  /**
+   * Creates a ProgramSearcher.
+   * 
+   * @param type The searcher type to create. Must be one of
+   *        {@link #SEARCHER_TYPE_EXACTLY}, {@link #SEARCHER_TYPE_KEYWORD},
+   *        {@link #SEARCHER_TYPE_REGULAR_EXPRESSION} or
+   *        {@link #SEARCHER_TYPE_BOOLEAN}.
+   * @param searchTerm The search term the searcher should look for.
+   * @param caseSensitive Specifies whether the searcher should be case sensitive.
+   * @return A program searcher.
+   * @throws TvBrowserException If creating the program searcher failed.
+   */
+  public ProgramSearcher createProgramSearcher(int type, String searchTerm,
+      boolean caseSensitive)
+      throws TvBrowserException;
+
 
   /**
    * Returns all activated Plugins.
@@ -213,7 +244,8 @@ public interface PluginManager {
 
   /**
    * Returns some settings a plugin may need.
-   * @return
+   * 
+   * @return Some settings a plugin may need.
    */
   public TvBrowserSettings getTvBrowserSettings();
 

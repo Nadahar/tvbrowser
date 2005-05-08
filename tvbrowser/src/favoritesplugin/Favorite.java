@@ -36,9 +36,11 @@ import util.ui.SearchFormSettings;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
+import devplugin.ProgramSearcher;
 
 /**
  *
@@ -111,9 +113,9 @@ public class Favorite {
       }
       
       switch (searchMode) {
-        case 1: mSearchFormSettings.setMatch(SearchFormSettings.MATCH_EXACTLY); break;
-        case 2: mSearchFormSettings.setMatch(SearchFormSettings.MATCH_KEYWORD); break;
-        case 3: mSearchFormSettings.setMatch(SearchFormSettings.MATCH_REGULAR_EXPRESSION); break;
+        case 1: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY); break;
+        case 2: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD); break;
+        case 3: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION); break;
       }
     } else {
       mSearchFormSettings = new SearchFormSettings(in);
@@ -308,8 +310,6 @@ public class Favorite {
     unmarkPrograms();
     
     // Search for matching programs
-    String regex = mSearchFormSettings.getSearchTextAsRegex();
-    boolean caseSensitive = mSearchFormSettings.getCaseSensitive();
     ProgramFieldType[] fieldArr = mSearchFormSettings.getFieldTypes();
     devplugin.Date startDate = new devplugin.Date();
     int nrDays = 1000;
@@ -323,9 +323,10 @@ public class Favorite {
     } else {
       channels = Plugin.getPluginManager().getSubscribedChannels();
     }
-    
-    Program[] matchingProgArr = Plugin.getPluginManager().search(regex,
-      caseSensitive, fieldArr, startDate, nrDays, channels, true);
+
+    ProgramSearcher searcher = mSearchFormSettings.createSearcher();
+    Program[] matchingProgArr = searcher.search(fieldArr, startDate, nrDays,
+                                                channels, true);
     
     // Check whether the program is within the specified time of day
     if (mUseCertainTimeOfDay) {
