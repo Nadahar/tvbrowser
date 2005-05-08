@@ -38,6 +38,7 @@ import devplugin.ButtonAction;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -72,6 +73,7 @@ public class SearchPlugin extends Plugin {
       SearchFormSettings settings;
 
       if (version > 1) {
+        // version 2
         settings = new SearchFormSettings(in);
       } else {
         // version 1
@@ -80,7 +82,7 @@ public class SearchPlugin extends Plugin {
         boolean searchInInfoText = in.readBoolean();
         boolean caseSensitive = in.readBoolean();
         int option = in.readInt();
-
+        
         settings = new SearchFormSettings(searchText);
         if (searchInInfoText) {
           settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
@@ -90,13 +92,13 @@ public class SearchPlugin extends Plugin {
         settings.setCaseSensitive(caseSensitive);
         switch (option) {
         case 0:
-          settings.setMatch(SearchFormSettings.MATCH_EXACTLY);
+          settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
           break;
         case 1:
-          settings.setMatch(SearchFormSettings.MATCH_KEYWORD);
+          settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
           break;
         case 2:
-          settings.setMatch(SearchFormSettings.MATCH_REGULAR_EXPRESSION);
+          settings.setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION);
           break;
         }
       }

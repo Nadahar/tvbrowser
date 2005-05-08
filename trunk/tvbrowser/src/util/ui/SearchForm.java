@@ -33,6 +33,7 @@ import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
 
 /**
@@ -77,7 +78,10 @@ public class SearchForm extends JPanel {
   private JComboBox mTimeCB;
   private JRadioButton mSearchTitleRB, mSearchAllRB, mSearchUserDefinedRB;
   private JButton mChangeSearchFieldsBt;
-  private JRadioButton mMatchExactlyRB, mMatchKeywordRB, mMatchRegexRB;
+  private JRadioButton mSearcherTypeExactlyRB;
+  private JRadioButton mSearcherTypeKeywordRB;
+  private JRadioButton mSearcherTypeRegexRB;
+  private JRadioButton mSearcherTypeBooleanRB;
   private JCheckBox mCaseSensitiveChB;
   
   private ProgramFieldType[] mUserDefinedFieldTypeArr;
@@ -207,26 +211,31 @@ public class SearchForm extends JPanel {
     
     bg = new ButtonGroup();
     msg = mLocalizer.msg("matchExactly", "Match exactly");
-    mMatchExactlyRB = new JRadioButton(msg);
-    bg.add(mMatchExactlyRB);
-    p1.add(mMatchExactlyRB);
+    mSearcherTypeExactlyRB = new JRadioButton(msg);
+    bg.add(mSearcherTypeExactlyRB);
+    p1.add(mSearcherTypeExactlyRB);
     
     msg = mLocalizer.msg("matchSubstring", "Term is a keyword");
-    mMatchKeywordRB = new JRadioButton(msg);
-    mMatchKeywordRB.setSelected(true);
-    bg.add(mMatchKeywordRB);
-    p1.add(mMatchKeywordRB);
+    mSearcherTypeKeywordRB = new JRadioButton(msg);
+    mSearcherTypeKeywordRB.setSelected(true);
+    bg.add(mSearcherTypeKeywordRB);
+    p1.add(mSearcherTypeKeywordRB);
     
     msg = mLocalizer.msg("matchRegex", "Term is a regular expression");
-    mMatchRegexRB = new JRadioButton(msg);
-    bg.add(mMatchRegexRB);
-    p1.add(mMatchRegexRB);
+    mSearcherTypeRegexRB = new JRadioButton(msg);
+    bg.add(mSearcherTypeRegexRB);
+    p1.add(mSearcherTypeRegexRB);
     
     LinkButton b = new LinkButton(
             "("+mLocalizer.msg("regExHelp","Help for regular expressions")+")",
             mLocalizer.msg("regExUrl","http://wiki.tvbrowser.org/index.php/Regul%C3%A4re_Ausdr%C3%BCcke"));
     b.setHorizontalAlignment(LinkButton.CENTER);
     p1.add(b);
+
+    msg = mLocalizer.msg("matchBoolean", "Term is a boolean (with AND, OR, a.s.o.)");
+    mSearcherTypeBooleanRB = new JRadioButton(msg);
+    bg.add(mSearcherTypeBooleanRB);
+    p1.add(mSearcherTypeBooleanRB);
     
     msg = mLocalizer.msg("caseSensitive", "Case sensitive");
     mCaseSensitiveChB = new JCheckBox(msg);
@@ -291,13 +300,15 @@ public class SearchForm extends JPanel {
 
     mUserDefinedFieldTypeArr = settings.getUserDefinedFieldTypes();
     
-    switch (settings.getMatch()) {
-      case SearchFormSettings.MATCH_EXACTLY:
-        mMatchExactlyRB.setSelected(true); break;
-      case SearchFormSettings.MATCH_KEYWORD:
-        mMatchKeywordRB.setSelected(true); break;
-      case SearchFormSettings.MATCH_REGULAR_EXPRESSION:
-        mMatchRegexRB.setSelected(true); break;
+    switch (settings.getSearcherType()) {
+      case PluginManager.SEARCHER_TYPE_EXACTLY:
+        mSearcherTypeExactlyRB.setSelected(true); break;
+      case PluginManager.SEARCHER_TYPE_KEYWORD:
+        mSearcherTypeKeywordRB.setSelected(true); break;
+      case PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION:
+        mSearcherTypeRegexRB.setSelected(true); break;
+      case PluginManager.SEARCHER_TYPE_BOOLEAN:
+        mSearcherTypeBooleanRB.setSelected(true); break;
     }
 
     mCaseSensitiveChB.setSelected(settings.getCaseSensitive());
@@ -325,15 +336,17 @@ public class SearchForm extends JPanel {
     }
     settings.setSearchIn(searchIn);
     
-    int match;
-    if (mMatchExactlyRB.isSelected()) {
-      match = SearchFormSettings.MATCH_EXACTLY;
-    } else if (mMatchKeywordRB.isSelected()) {
-      match = SearchFormSettings.MATCH_KEYWORD;
+    int searcherType;
+    if (mSearcherTypeExactlyRB.isSelected()) {
+      searcherType = PluginManager.SEARCHER_TYPE_EXACTLY;
+    } else if (mSearcherTypeKeywordRB.isSelected()) {
+      searcherType = PluginManager.SEARCHER_TYPE_KEYWORD;
+    } else if (mSearcherTypeRegexRB.isSelected()) {
+      searcherType = PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION;
     } else {
-      match = SearchFormSettings.MATCH_REGULAR_EXPRESSION;
+      searcherType = PluginManager.SEARCHER_TYPE_BOOLEAN;
     }
-    settings.setMatch(match);
+    settings.setSearcherType(searcherType);
 
     settings.setCaseSensitive(mCaseSensitiveChB.isSelected());
     

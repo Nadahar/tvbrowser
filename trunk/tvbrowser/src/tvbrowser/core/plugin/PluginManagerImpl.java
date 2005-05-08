@@ -33,6 +33,8 @@ import javax.swing.JPopupMenu;
 
 import tvbrowser.core.*;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.search.booleansearch.BooleanSearcher;
+import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
@@ -52,10 +54,14 @@ public class PluginManagerImpl implements PluginManager {
   /** An example program. */
   private Program mExampleProgram;
 
-  public PluginManagerImpl() {
 
+  /**
+   * Creates a new instance of PluginManagerImpl.
+   */
+  public PluginManagerImpl() {
   }
-  
+
+
   /**
    * Gets a program.
    * 
@@ -125,15 +131,35 @@ public class PluginManagerImpl implements PluginManager {
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    * @return The matching programs.
    * 
-   * @deprecated Use {@link #search(String, boolean, ProgramFieldType[], Date, int, Channel[], boolean)}
+   * @deprecated Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
    */
   public Program[] search(String regex, boolean inTitle, boolean inText,
     boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
     int nrDays) throws TvBrowserException
   {
-    return TvDataSearcher.getInstance().search(regex, inTitle, inText,
-        caseSensitive, channels, startDate, nrDays);
+    ProgramFieldType[] fieldArr;
+    if (inTitle && inText) {
+      fieldArr = new ProgramFieldType[] {
+        ProgramFieldType.TITLE_TYPE,
+        ProgramFieldType.SHORT_DESCRIPTION_TYPE,
+        ProgramFieldType.DESCRIPTION_TYPE
+      };
+    }
+    else if (inTitle) {
+      fieldArr = new ProgramFieldType[] { ProgramFieldType.TITLE_TYPE };
+    }
+    else if (inText) {
+      fieldArr = new ProgramFieldType[] {
+        ProgramFieldType.SHORT_DESCRIPTION_TYPE,
+        ProgramFieldType.DESCRIPTION_TYPE
+      };
+    }
+    else {
+      fieldArr = new ProgramFieldType[0];
+    }
+    
+    return search(regex, caseSensitive, fieldArr, startDate, nrDays, channels, false);
   }
 
 
@@ -153,15 +179,54 @@ public class PluginManagerImpl implements PluginManager {
    * @return The matching programs.
    * @throws TvBrowserException
    * @throws TvBrowserException If there is a syntax error in the regular expression.
+   * 
+   * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
+   *             instead.
    */
   public Program[] search(String regex, boolean caseSensitive,
     ProgramFieldType[] fieldArr, devplugin.Date startDate, int nrDays,
     Channel[] channels, boolean sortByStartTime) throws TvBrowserException
   {
-    return TvDataSearcher.getInstance().search(regex, caseSensitive, fieldArr,
-        startDate, nrDays, channels, sortByStartTime);
+    ProgramSearcher searcher = createProgramSearcher(SEARCHER_TYPE_REGULAR_EXPRESSION,
+        regex, caseSensitive);
+    
+    return searcher.search(fieldArr, startDate, nrDays, channels, sortByStartTime);
   }
 
+  
+  /**
+   * Creates a ProgramSearcher.
+   * 
+   * @param type The searcher type to create. Must be one of
+   *        {@link #SEARCHER_TYPE_EXACTLY}, {@link #SEARCHER_TYPE_KEYWORD},
+   *        {@link #SEARCHER_TYPE_REGULAR_EXPRESSION} or
+   *        {@link #SEARCHER_TYPE_BOOLEAN}.
+   * @param searchTerm The search term the searcher should look for.
+   * @param caseSensitive Specifies whether the searcher should be case sensitive.
+   * @return A program searcher.
+   * @throws TvBrowserException If creating the program searcher failed.
+   */
+  public ProgramSearcher createProgramSearcher(int type, String searchTerm,
+      boolean caseSensitive)
+      throws TvBrowserException
+  {
+    switch(type) {
+      case SEARCHER_TYPE_EXACTLY: {
+        String regex = RegexSearcher.searchTextToRegex(searchTerm, false);
+        return new RegexSearcher(regex, caseSensitive);
+      }
+      case SEARCHER_TYPE_KEYWORD: {
+        String regex = RegexSearcher.searchTextToRegex(searchTerm, true);
+        return new RegexSearcher(regex, caseSensitive);
+      }
+      case SEARCHER_TYPE_REGULAR_EXPRESSION:
+        return new RegexSearcher(searchTerm, caseSensitive);
+      case SEARCHER_TYPE_BOOLEAN:
+        return new BooleanSearcher(searchTerm, caseSensitive);
+      default: throw new IllegalArgumentException("Unknown searcher type: " + type);
+    }
+  }
+  
 
   /**
    * Returns all activated Plugins.
@@ -371,7 +436,11 @@ public class PluginManagerImpl implements PluginManager {
   }
 
 
-  
+  /**
+   * Returns some settings a plugin may need.
+   * 
+   * @return Some settings a plugin may need.
+   */
   public TvBrowserSettings getTvBrowserSettings() {
     return new TvBrowserSettings(){
       public String getTvBrowserUserHome() {

@@ -51,8 +51,10 @@ import util.ui.SendToPluginDialog;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
+import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramSearcher;
 
 /**
  * A dialog for searching programs.
@@ -65,8 +67,12 @@ public class SearchDialog extends JDialog {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchDialog.class);
   
+  /** The search form to use for specifying the search criteria. */
   private SearchForm mSearchForm;
-  private JButton mSearchBt, mCloseBt;
+  /** The button that starts the search. */
+  private JButton mSearchBt;
+  /** The button that closes the dialog. */
+  private JButton mCloseBt;
 
   /** The Caller-Plugin */
   private Plugin mPlugin;
@@ -137,7 +143,7 @@ public class SearchDialog extends JDialog {
   public void setPatternText(String text) {
     SearchFormSettings settings = new SearchFormSettings(text);
     settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-    settings.setMatch(SearchFormSettings.MATCH_EXACTLY);
+    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
     settings.setCaseSensitive(true);
     
     mSearchForm.setSearchFormSettings(settings);
@@ -153,15 +159,13 @@ public class SearchDialog extends JDialog {
     
     SearchFormSettings settings = mSearchForm.getSearchFormSettings();
 
-    String regex = settings.getSearchTextAsRegex();
-    boolean caseSensitive = settings.getCaseSensitive();
     ProgramFieldType[] fieldArr = settings.getFieldTypes();
     devplugin.Date startDate = new devplugin.Date();
     int nrDays = mSearchForm.getNrDays();
     
     try {
-      Program[] programArr = Plugin.getPluginManager().search(regex,
-        caseSensitive, fieldArr, startDate, nrDays, null, true);
+      ProgramSearcher searcher = settings.createSearcher();
+      Program[] programArr = searcher.search(fieldArr, startDate, nrDays, null, true);
 	  
       if (programArr.length == 0) {
         String msg = mLocalizer.msg("nothingFound",
