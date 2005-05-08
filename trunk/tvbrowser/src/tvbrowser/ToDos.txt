@@ -1,7 +1,6 @@
 TODOs:
 
 - (B) Senderlisten direkt vom Server holen (Bodo, fast fertig)
-- Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
 - (M) Logos zu allen Sendern
 - Anpassbarkeit der GUI (wo welches Element ist) - nicht so wichtig
 - (M) Ordner in den Lieblingssendungen
@@ -62,4 +61,4 @@ Erledigt:
 - (B) Nachsehen, ob das auftrennen des Settings-System überall gemacht wurde. Es sind einige Warnungen im Code, das deprecated Settings benutzt werden! - War ein Fehler von Eclipse
 - (M) Uebersetzungen für die Farben im ProgramPanel-Settings-Dialog
 - (M) Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea) - (MS-Windows)
-
+- (M) Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
