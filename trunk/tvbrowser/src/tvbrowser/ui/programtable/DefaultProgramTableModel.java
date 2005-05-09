@@ -275,8 +275,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
     Date nextDay = mMainDay.addDays(1);
     for (int i = 0; i < mChannelArr.length; i++) {
-
-      System.out.println("channel: "+mChannelArr[i]);
       mProgramColumn[i].clear();
       DateRange dateRange = (DateRange)mDateRangeForChannel.get(mChannelArr[i]);
       ChannelDayProgram[] cdp = new ChannelDayProgram[dateRange.getCount()];
