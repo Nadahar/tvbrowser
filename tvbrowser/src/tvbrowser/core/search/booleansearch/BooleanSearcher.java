@@ -67,6 +67,9 @@ public class BooleanSearcher extends AbstractSearcher {
    * @return Whether the value matches.
    */
   protected boolean matches(String value) {
+    if (!caseSensitive){
+      value = value.toLowerCase();
+    }
     return root.test(value);
   }
 
