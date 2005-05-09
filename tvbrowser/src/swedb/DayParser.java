@@ -30,6 +30,8 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
   
   private MutableChannelDayProgram addTo;
   
+  private static int MAX_SHORT_DESCRIPTION_LENGTH = 150;
+  
   private devplugin.Date start;
   private String desc;
   private String title;
@@ -43,7 +45,7 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
   private final int STATUS_DESC = 3;
   private final int STATUS_GENRE = 4;
   private int state = 0;
-
+  
   
   /** Creates a new instance of DayParser */
   private DayParser(MutableChannelDayProgram prog) {
@@ -51,10 +53,10 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
   }
   
   public InputSource resolveEntity(String publicId, String systemId){
-    System.out.println ("testing");
+    System.out.println("testing");
     byte[] temp = new byte[0];
     //strib...
-    return new InputSource (new ByteArrayInputStream (temp));//this.getClass().getClassLoader().getResourceAsStream("xmltv.dtd"));
+    return new InputSource(new ByteArrayInputStream(temp));//this.getClass().getClassLoader().getResourceAsStream("xmltv.dtd"));
   }
   
   public void startElement(String uri, String localName, String qName, Attributes attributes){
@@ -88,10 +90,10 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
             String minString = time.substring(10,12);
             hour = Integer.parseInt(hourString);
             min = Integer.parseInt(minString);
-            start = new devplugin.Date (Integer.parseInt (year),Integer.parseInt (month),Integer.parseInt (day));
+            start = new devplugin.Date(Integer.parseInt(year),Integer.parseInt(month),Integer.parseInt(day));
             state = STATUS_PROG;
           } catch (Exception E){
-            System.out.println ("invalid format: "+attributes.getValue("start"));
+            System.out.println("invalid format: "+attributes.getValue("start"));
           }
         }
         break;
@@ -103,15 +105,15 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
   public void characters(char[] ch, int start, int length){
     switch (state){
       case (STATUS_TITLE):{
-        title = title + new String (ch,start,length);
+        title = title + new String(ch,start,length);
         break;
       }
       case (STATUS_DESC):{
-        desc = desc + new String (ch,start,length);
+        desc = desc + new String(ch,start,length);
         break;
       }
       case (STATUS_GENRE):{
-        genre = genre + new String (ch,start,length);
+        genre = genre + new String(ch,start,length);
         break;
       }
     }
@@ -140,9 +142,22 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
       case (STATUS_PROG):{
         if ("programme".equals(qName)){
           state = STATUS_WAITING;
-          MutableProgram prog = new MutableProgram (addTo.getChannel(),start,hour,min);
-          prog.setTitle (title);
-          prog.setDescription (desc);
+          MutableProgram prog = new MutableProgram(addTo.getChannel(),start,hour,min);
+          prog.setTitle(title);
+          prog.setDescription(desc);
+          // Es gibt keine short-Version, also erzeugen wir immer eine:
+          String shortDesc = desc;
+          if (shortDesc.length() > MAX_SHORT_DESCRIPTION_LENGTH) {
+            int lastSpacePos = shortDesc.lastIndexOf(' ', MAX_SHORT_DESCRIPTION_LENGTH);
+            if (lastSpacePos == -1) {
+              shortDesc = shortDesc.substring(0, MAX_SHORT_DESCRIPTION_LENGTH)
+              ;
+            } else {
+              shortDesc = shortDesc.substring(0, lastSpacePos);
+            }
+          }
+          
+          prog.setShortInfo(shortDesc);
           
           prog.setTextField(ProgramFieldType.GENRE_TYPE, genre);
           addTo.addProgram(prog);
@@ -154,10 +169,10 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
   
   public void fatalError(SAXParseException e){
   }
-
+  
   public void error(SAXParseException e){
   }
-
+  
   public void warning(SAXParseException e){
   }
   
@@ -166,7 +181,7 @@ public class DayParser extends org.xml.sax.helpers.DefaultHandler{
     SAXParserFactory fac = SAXParserFactory.newInstance();
     fac.setValidating(false);
     SAXParser sax = fac.newSAXParser();
-    InputSource input = new InputSource (in);
+    InputSource input = new InputSource(in);
     input.setSystemId(new File("/").toURL().toString());
     sax.parse(input, new DayParser(prog));
     return prog;
