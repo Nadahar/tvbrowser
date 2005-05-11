@@ -67,6 +67,7 @@ public class ChannelLabel extends JLabel {
         setIcon(ch.getIcon());
         setText(ch.getName());
         setMinimumSize(new Dimension(42,22));
+        setToolTipText(ch.getName());
     }
 
     /**
