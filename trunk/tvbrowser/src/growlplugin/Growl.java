@@ -3,11 +3,16 @@ package growlplugin;
 /**
  * Growl.java
  * 
+ * From the SDK of Growl
+ * 
  * Version:
  * $Id$
  *
  * Revisions:
  * $Log$
+ * Revision 1.2  2005/05/12 16:48:23  troggan
+ * Now uses Icon correctly
+ *
  * Revision 1.1  2005/05/12 16:29:48  troggan
  * First Version of Growl-Plugin
  *
