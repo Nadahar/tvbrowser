@@ -195,6 +195,7 @@
       </classpath>
       <exclude name="**/macosx/*"/>
       <exclude name="microtvbrowserplugin/**"/>
+      <exclude name="growlplugin/**"/>
     </javac>
 
     <copy todir="${classes.dir}">
@@ -220,6 +221,7 @@
       </src>
       <classpath>
         <path refid="classpath"/>
+      	<path location="/System/Library/Java"/>
       </classpath>
       <exclude name="microtvbrowserplugin/**"/>
     </javac>
@@ -607,8 +609,14 @@
            classpath="macosx/jarbundler-1.2.jar"
            classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
 
-  <target name="runtime-mac" depends="make-mac, runtime">
-    <delete dir="${tvbrowser-mac.runtime.dir}"/>
+	<target name="runtime-mac" depends="make-mac, runtime">
+
+	<jar jarfile="${tvbrowser.runtime.dir}/plugins/GrowlPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="growlplugin/**"/>
+    </jar>
+  	
+  	<delete dir="${tvbrowser-mac.runtime.dir}"/>
     <mkdir dir="${tvbrowser-mac.runtime.dir}" />
       <jarbundler dir="${tvbrowser-mac.runtime.dir}"
           verbose="false"
