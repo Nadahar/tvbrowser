@@ -606,7 +606,7 @@
   <!-- Creates the Mac OS X stuff
   -->
   <taskdef name="jarbundler" 
-           classpath="macosx/jarbundler-1.2.jar"
+           classpath="macosx/jarbundler-1.4.jar"
            classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
 
 	<target name="runtime-mac" depends="make-mac, runtime">
@@ -621,11 +621,11 @@
       <jarbundler dir="${tvbrowser-mac.runtime.dir}"
           verbose="false"
           name="TV-Browser"
-          mainclass="tvbrowser.TVBrowser" 
-      
-          jvmversion="1.4+"
-	       bundleid="org.tvbrowser"
-	       smalltabs="true"
+          mainclass="tvbrowser.TVBrowser"
+      	extraclasspath="/System/Library/Java"
+      	  jvmversion="1.4+"
+	      bundleid="org.tvbrowser"
+	      smalltabs="true"
           antialiasedgraphics="true"
           antialiasedtext="true"
           liveresize="true"
@@ -633,6 +633,7 @@
           screenmenu="true"
           workingdirectory="/Library/TV-Browser"
           jars="${tvbrowser.runtime.dir}/tvbrowser.jar">
+      	
      </jarbundler>
 
   </target>
