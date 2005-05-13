@@ -310,8 +310,8 @@ public class EditFilterDlg
 							);
 				}
 			} catch (Exception ex) {
-			    // Filter creation failed, asume the old one is correct
-				if (mFilter.containsRuleComponent(fc.getName())) {
+		    // Filter creation failed, asume the old one is correct
+				if ((mFilter != null) && (mFilter.containsRuleComponent(fc.getName()))) {
 				    allowRemove = false;
 					JOptionPane.showMessageDialog(
 							this,
