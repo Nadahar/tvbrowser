@@ -36,6 +36,7 @@ import javax.swing.*;
 import util.io.IOUtilities;
 import util.ui.MultipleFieldReader;
 import util.ui.TextAreaIcon;
+import util.ui.UiUtilities;
 
 import devplugin.*;
 import printplugin.settings.ProgramIconSettings;
@@ -70,16 +71,18 @@ public class ProgramIcon implements Icon {
   private Icon[] mIconArr;
   /** The program. */  
   private Program mProgram;
-  
+
+  private ChannelIcon mChannelIcon;
+
   private static final ProgramIconSettings DEFAULT_PROGRAM_ICON_SETTINGS = PrinterProgramIconSettings.create();
 
 
  
   public ProgramIcon(Program prog) {
-    this(prog, null, 100);
+    this(prog, null, 100, false);
   }
   
-  public ProgramIcon(Program prog, ProgramIconSettings settings, int width) {
+  public ProgramIcon(Program prog, ProgramIconSettings settings, int width, boolean showChannelName) {
     
     if (settings == null) {
       mSettings = DEFAULT_PROGRAM_ICON_SETTINGS;
@@ -88,11 +91,18 @@ public class ProgramIcon implements Icon {
       mSettings = settings;
     }
     mWidth = width;
-    
-    mTitleIcon = new TextAreaIcon(null, mSettings.getTitleFont(), width- mSettings.getTimeFieldWidth() - 5);
+
+    int titleWidth = width- mSettings.getTimeFieldWidth() - 5;
+    if (showChannelName) {
+      mChannelIcon = new ChannelIcon(prog.getChannel(), mSettings.getTitleFont());
+      titleWidth-=mChannelIcon.getIconWidth();
+    }
+
+    mTitleIcon = new TextAreaIcon(null, mSettings.getTitleFont(), titleWidth);
     mDescriptionIcon = new TextAreaIcon(null,mSettings.getTextFont(), width - mSettings.getTimeFieldWidth() - 5);
     mDescriptionIcon.setMaximumLineCount(3);
-    
+
+
     setProgram(prog, -1);
   }
   
@@ -198,7 +208,6 @@ public class ProgramIcon implements Icon {
     int height = mHeight;
     Graphics2D grp = (Graphics2D) g;
     
-   // grp.draw3DRect(0, 0, width - 1, height - 1, true);
 
     // Draw the background if this program is on air
     if (mSettings.getPaintProgramOnAir() && mProgram.isOnAir()) {
@@ -246,6 +255,11 @@ public class ProgramIcon implements Icon {
         mTitleIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth(), 0);
         mDescriptionIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth(), mTitleIcon.getIconHeight());
 
+        if (mChannelIcon != null) {
+          mChannelIcon.paintIcon(component, grp, getIconWidth()-mChannelIcon.getIconWidth(), 0);
+        }
+
+
         // Paint the icons pale if the program is expired
         if (mSettings.getPaintExpiredProgramsPale() && mProgram.isExpired()) {
           grp.setComposite(PALE_COMPOSITE);
@@ -287,6 +301,47 @@ public class ProgramIcon implements Icon {
     g.translate(-posX, -posY);
     
 	}
-  
-  
+
+
+  class ChannelIcon implements Icon {
+
+    private Channel mChannel;
+    private Font mFont;
+    private int mWidth;
+    private int mHeight;
+
+    public ChannelIcon(Channel channel, Font font) {
+      mChannel = channel;
+      mFont = font;
+
+      if (mChannel.hasIcon()) {
+        mWidth = mChannel.getIcon().getIconWidth();
+        mHeight = mChannel.getIcon().getIconHeight();
+      }
+      else {
+        mWidth = UiUtilities.getStringWidth(mFont, mChannel.getName());
+        mHeight = mFont.getSize();
+      }
+    }
+
+    public int getIconHeight() {
+      return mHeight;
+    }
+
+    public int getIconWidth() {
+      return mWidth;
+    }
+
+    public void paintIcon(Component c, Graphics g, int x, int y) {
+      if (mChannel.hasIcon()) {
+        mChannel.getIcon().paintIcon(c, g, x, y);
+      }
+      else {
+        g.drawString(mChannel.getName(), x, y+mFont.getSize());
+        g.drawRect(x,y,getIconWidth(), getIconHeight());
+      }
+    }
+  }
+
+
 }

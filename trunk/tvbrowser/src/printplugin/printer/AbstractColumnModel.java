@@ -29,38 +29,43 @@ package printplugin.printer;
 
 import devplugin.Program;
 
+import java.util.ArrayList;
+
 
 public abstract class AbstractColumnModel implements ColumnModel {
   
-  private String mTitle;
-  private Program[] mPrograms;
+  private ArrayList mPrograms;
 
-
-  public AbstractColumnModel() {
-    mPrograms = new Program[]{};
-  }
 
   public AbstractColumnModel(Program[] progs) {
-    mPrograms = progs;
+    mPrograms = new ArrayList();
+    setPrograms(progs);
+  }
+
+  public AbstractColumnModel() {
+    this(new Program[]{});
   }
 
   public void setPrograms(Program[] progs) {
-    mPrograms = progs;
+    for (int i=0; i<progs.length; i++) {
+      mPrograms.add(progs[i]);
+    }
   }
 
   public Program getProgramAt(int inx) {
-    if (inx>=0 && inx<mPrograms.length) {
-      return mPrograms[inx];
+    if (inx>=0 && inx<mPrograms.size()) {
+      return (Program)mPrograms.get(inx);
     }
     return null;
   }
 
-  
+  public void addProgram(Program prog) {
+    mPrograms.add(prog);
+  }
+
+
   public int getProgramCount() {
-    if (mPrograms == null) {
-      return 0;
-    }
-    return mPrograms.length;
+    return mPrograms.size();
   }
 
   

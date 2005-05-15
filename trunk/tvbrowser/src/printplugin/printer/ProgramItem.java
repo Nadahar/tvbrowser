@@ -30,6 +30,7 @@ import java.awt.Graphics;
 
 import devplugin.Program;
 import printplugin.settings.ProgramIconSettings;
+import printplugin.printer.dayprogramprinter.ProgramTableIcon;
 
 
 
@@ -38,9 +39,12 @@ public class ProgramItem {
     private Program mProgram;
     private ProgramIcon mIcon;
     private double mx, my;
-    public ProgramItem(Program prog, ProgramIconSettings settings) {
+
+
+
+    public ProgramItem(Program prog, ProgramIconSettings settings, int columnWidth, boolean showChannelName) {
       mProgram = prog;
-      mIcon = new ProgramIcon(prog, settings, ProgramTableIcon.COLUMN_WIDTH);
+      mIcon = new ProgramIcon(prog, settings, columnWidth, showChannelName);
     }
     public void setPos(double x, double y) {
       mx=x;

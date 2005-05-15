@@ -32,21 +32,29 @@ import devplugin.*;
 
 public class DefaultPageModel extends AbstractPageModel {
 
-  private Date mDate;
- 
-  public DefaultPageModel(Date date) {
+  //private Date mDate;
+
+  private String mHeader;
+
+  public DefaultPageModel(String header) {
     super();
-    mDate = date;
+    mHeader = header;
+    //mDate = date;
     
   }
   
-  public void addChannelDayProgram(Channel channel, Program[] programArr) {
-    ColumnModel col = new DefaultColumnModel(channel.getName(), programArr);
-    super.addColumn(col);
-  }
-	
+//  public void addChannelDayProgram(Channel channel, Program[] programArr) {
+//    ColumnModel col = new DefaultColumnModel(channel.getName(), programArr);
+//    super.addColumn(col);
+//  }
+//
+
+
+
+
 	public String getHeader() {
-		return mDate.toString();
+		//return mDate.toString();
+    return mHeader;
 	}
   
 }
