@@ -24,7 +24,10 @@
  */
 package growlplugin;
 
+import java.util.Properties;
+
 import util.exc.ErrorHandler;
+import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 
 import com.apple.cocoa.application.NSImage;
@@ -54,6 +57,9 @@ public class GrowlContainer {
   /** Image for Notification */
   private NSImage mNotifyImg;
   
+  /** Parser for Text */
+  private ParamParser mParser;
+  
   /**
    * Create the Growl-Container and register the NOTIFICATION
    * 
@@ -71,16 +77,22 @@ public class GrowlContainer {
     mGrowl.setDefaultNotifications(notes);
     mGrowl.register();
 
+    mParser = new ParamParser();
   }
   
   /**
    * Notifies Growl
    * 
+   * @param settings Settings to use
    * @param prg Program to use
    */
-  public void notifyGrowl(Program prg) {
+  public void notifyGrowl(Properties settings, Program prg) {
     try {
-      mGrowl.notifyGrowlOf(NOTIFICATION, mNotifyImg, prg.getTitle(), "bla desc", (NSDictionary)null);
+      
+      String title = mParser.analyse(settings.getProperty("title"), prg);
+      String desc = mParser.analyse(settings.getProperty("description"), prg);
+      
+      mGrowl.notifyGrowlOf(NOTIFICATION, mNotifyImg, title, desc, (NSDictionary)null);
     } catch (Exception e) {
       ErrorHandler.handle("Error while Sending Program to Growl", e);
     }
