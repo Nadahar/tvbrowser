@@ -24,10 +24,13 @@
  */
 package growlplugin;
 
+import java.util.Properties;
+
 import util.ui.Localizer;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.SettingsTab;
 import devplugin.Version;
 
 /**
@@ -45,6 +48,8 @@ public class GrowlPlugin extends Plugin {
   private GrowlContainer mContainer;
   /** Was the System initialized correctly ? */
   private boolean mInitialized = false;
+  /** Settings for this Plugin */
+  private Properties mSettings;
   
   /**
    * Checks the OS and inititializes the System accordingly.
@@ -92,9 +97,33 @@ public class GrowlPlugin extends Plugin {
     
     if (mInitialized) {
       for (int i = 0; i < programArr.length;i++)
-        mContainer.notifyGrowl(programArr[i]);
+        mContainer.notifyGrowl(mSettings, programArr[i]);
     }
      
   }
+
+  /**
+   * Create the Settings-Tab
+   */
+  public SettingsTab getSettingsTab() {
+    return new GrowlSettingsTab(mInitialized, mSettings);
+  }
   
+  /**
+   * Load the Settings for this Plugin and
+   * create Default-Values if nothing was set
+   */
+  public void loadSettings(Properties settings) {
+    mSettings = settings;
+    
+    mSettings.setProperty("title",       mSettings.getProperty("title", "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}"));
+    mSettings.setProperty("description", mSettings.getProperty("description", "{channel_name}\n{description}"));
+  }
+  
+  /**
+   * Store the Settings
+   */
+  public Properties storeSettings() {
+    return mSettings;
+  }
 }
