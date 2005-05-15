@@ -117,7 +117,7 @@ public class GrowlPlugin extends Plugin {
     mSettings = settings;
     
     mSettings.setProperty("title",       mSettings.getProperty("title", "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}"));
-    mSettings.setProperty("description", mSettings.getProperty("description", "{channel_name}\n{description}"));
+    mSettings.setProperty("description", mSettings.getProperty("description", "{channel_name}\n{short_info}"));
   }
   
   /**
