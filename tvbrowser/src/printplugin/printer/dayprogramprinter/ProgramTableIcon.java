@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package printplugin.printer;
+package printplugin.printer.dayprogramprinter;
 
 import java.awt.*;
 
@@ -32,11 +32,13 @@ import javax.swing.Icon;
 
 import devplugin.Program;
 import printplugin.settings.ProgramIconSettings;
+import printplugin.printer.ProgramItem;
+import printplugin.printer.ColumnModel;
 
 
 
 /**
- * ProgramTableIcon is a printable version of the programmtable for one page.
+ * ProgramTableIcon is a printable version of the programmtable.
  */
 public class ProgramTableIcon implements Icon {
 
@@ -89,7 +91,7 @@ public class ProgramTableIcon implements Icon {
      for (int i=0;i<items.length;i++) {
        items[i] = new ProgramItem[cols[i].getProgramCount()];
        for (int j=0;j<items[i].length;j++) {
-         items[i][j] = new ProgramItem(cols[i].getProgramAt(j), mProgramIconSettings);
+         items[i][j] = new ProgramItem(cols[i].getProgramAt(j), mProgramIconSettings, COLUMN_WIDTH, false);
        }
      }
     

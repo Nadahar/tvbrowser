@@ -38,7 +38,10 @@ public class ChannelChooserPanel extends JPanel {
         mList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent e) {
-                mParent.showChannel((Channel)mList.getSelectedValue());
+              Channel selectedChannel = (Channel)mList.getSelectedValue();
+              if (selectedChannel != null) {
+                mParent.showChannel(selectedChannel);
+              }
             }
             
         });

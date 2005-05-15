@@ -99,7 +99,7 @@ public class PrintPlugin extends Plugin {
           storeDayProgramSchemes(dlg.getSchemes());
         }
         else if (result == MainPrintDialog.PRINT_QUEUE) {
-          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(), loadQueueSchemes());
+          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode().getPrograms()), loadQueueSchemes());
           storeQueueSchemes(dlg.getSchemes());
         }
       }

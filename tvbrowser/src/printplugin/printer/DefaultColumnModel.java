@@ -29,17 +29,20 @@ package printplugin.printer;
 import devplugin.Program;
 
 
-
 public class DefaultColumnModel extends AbstractColumnModel {
  
-  private String mTitle;
+  private String mTitle;         
 
   public DefaultColumnModel(String title, Program[] progs) {
     super(progs);
     mTitle = title;
   }
 
-	
+  public DefaultColumnModel(String title) {
+    this(title, new Program[]{});
+  }
+
+
 	public String getTitle() {
 		return mTitle;
 	}

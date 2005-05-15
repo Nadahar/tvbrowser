@@ -27,15 +27,59 @@
 package printplugin.printer;
 
 import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.QueuePrinterSettings;
+import printplugin.printer.queueprinter.QueuePrintJob;
+import printplugin.printer.dayprogramprinter.DayProgramPrintJob;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.awt.print.PageFormat;
 
 import devplugin.*;
 
 
 public class JobFactory {
+
+
+  public static PrintJob createPrintJob(QueuePrinterSettings settings, PageFormat pageFormat, Program[] programs) {
+    PageModel pageModel = createPage(settings, programs);
+    PrintJob job = new QueuePrintJob(pageModel, settings, pageFormat);
+    return job;
+  }
+
+  private static PageModel createPage(QueuePrinterSettings settings, Program[] programs) {
+    Date from = settings.getFromDate();
+    Date to=null;
+    if (from != null) {
+      to = from.addDays(settings.getDayCount());
+    }
+    Arrays.sort(programs, new Comparator(){
+      public int compare(Object o1, Object o2) {
+        return ((Program)o1).getDate().compareTo(((Program)o2).getDate());
+      }
+    });
+
+    DefaultPageModel pageModel = new DefaultPageModel("Liste");
+    //Date curDate = null;
+    DefaultColumnModel colModel = new DefaultColumnModel("Spalte");
+    pageModel.addColumn(colModel);
+    for (int i=0; i<programs.length; i++) {
+      Date date = programs[i].getDate();
+      if (from != null && (date.compareTo(from)<0 || date.compareTo(to)>=0)) {
+        continue;  // hide programs out of date range
+      }
+//      if (!date.equals(curDate)  || colModel == null) {
+//        colModel = new DefaultColumnModel(date.toString());
+//        pageModel.addColumn(colModel);
+//      }
+      colModel.addProgram(programs[i]);
+    }
+
+    return pageModel;
+  }
+
 
   public static PrintJob createPrintJob(DayProgramPrinterSettings settings, PageFormat pageFormat) {
 
@@ -63,7 +107,7 @@ public class JobFactory {
     }
     for (int dateInx=0;dateInx<dayCount;dateInx++) {
       Date date=startDate.addDays(dateInx);
-      DefaultPageModel pageModel = new DefaultPageModel(date);
+      DefaultPageModel pageModel = new DefaultPageModel(date.toString());
       pageModelList.add(pageModel);
       for (int chInx=0;chInx<channelArr.length;chInx++) {
         ArrayList progList = new ArrayList();
@@ -72,7 +116,7 @@ public class JobFactory {
         progList.toArray(progArr);
 
         if (progArr.length>0) {
-          pageModel.addChannelDayProgram(channelArr[chInx],progArr);
+          pageModel.addColumn(new DefaultColumnModel(channelArr[chInx].getName(), progArr));
         }
       }
     }

@@ -33,7 +33,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
  
-abstract class AbstractPrintJob implements PrintJob {
+public abstract class AbstractPrintJob implements PrintJob {
 
   private Page[] mPages;
   private PageModel[] mPageModelArr;
@@ -56,7 +56,7 @@ abstract class AbstractPrintJob implements PrintJob {
 
   }
 
-  abstract Page[] createPages(PageModel pageModel);
+  protected abstract Page[] createPages(PageModel pageModel);
 
   public int getNumOfPages() {
     if (mPages == null) {

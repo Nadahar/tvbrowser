@@ -27,16 +27,15 @@
 package printplugin.dlgs.printfromqueuedialog;
 
 import printplugin.dlgs.DialogContent;
-import printplugin.settings.Settings;
-import printplugin.settings.QueuePrinterSettings;
-import printplugin.settings.Scheme;
-import printplugin.settings.QueueScheme;
+import printplugin.settings.*;
 import printplugin.printer.*;
 import printplugin.printer.PrintJob;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.print.PageFormat;
+
+import devplugin.Program;
 
 
 public class PrintFromQueueDialogContent implements DialogContent {
@@ -47,10 +46,10 @@ public class PrintFromQueueDialogContent implements DialogContent {
 
   private GeneralTab mGeneralTab;
   private LayoutTab mLayoutTab;
+  private Program[] mPrograms;
 
-  public PrintFromQueueDialogContent() {
-
-
+  public PrintFromQueueDialogContent(Program[] programs) {
+    mPrograms = programs;
   }
 
   public Component getContent() {
@@ -80,7 +79,7 @@ public class PrintFromQueueDialogContent implements DialogContent {
   }
 
   public PrintJob createPrintJob(PageFormat format) {
-    return null;
+    return JobFactory.createPrintJob((QueuePrinterSettings)getSettings(), format, mPrograms);
   }
 
   public Scheme createNewScheme(String schemeName) {

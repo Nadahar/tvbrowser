@@ -24,12 +24,13 @@
  * $Revision$
  */
 
-package printplugin.printer;
+package printplugin.printer.dayprogramprinter;
 
 
 import printplugin.settings.ProgramIconSettings;
 import printplugin.settings.PrinterProgramIconSettings;
 import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.printer.*;
 
 
 import java.awt.print.PageFormat;
