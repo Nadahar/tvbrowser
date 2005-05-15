@@ -227,7 +227,7 @@ public class TVRaterSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#getIcon()
    */
   public Icon getIcon() {
-    String iconName = "tvraterplugin/tvrater.gif";
+    String iconName = "tvraterplugin/imgs/tvrater.gif";
     return ImageUtilities.createImageIconFromJar(iconName, getClass());
   }
 
