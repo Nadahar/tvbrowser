@@ -46,7 +46,7 @@ public class DayProgramFile extends AbstractFile {
     = util.ui.Localizer.getLocalizerFor(DayProgramFile.class);
   
   public static final TvDataLevel[] LEVEL_ARR = new TvDataLevel[] {
-    new TvDataLevel("base","Basis TV-Daten",true),
+    new TvDataLevel("base", mLocalizer.msg("basicTVListings","Basic TV listings"),true),
     new TvDataLevel("more00-16",mLocalizer.msg("more00-16","")),
     new TvDataLevel("more16-00",mLocalizer.msg("more16-00","")),
     // new TvDataLevel("image00-16",""),
