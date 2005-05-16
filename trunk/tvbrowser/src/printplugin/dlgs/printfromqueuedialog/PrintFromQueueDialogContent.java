@@ -68,14 +68,14 @@ public class PrintFromQueueDialogContent implements DialogContent {
   }
 
   public Settings getSettings() {
-    return new QueuePrinterSettings(mGeneralTab.emptyQueueAfterPrinting(), mGeneralTab.getFromDate(), mGeneralTab.getDayCount());
+    return new QueuePrinterSettings(mGeneralTab.emptyQueueAfterPrinting(), mLayoutTab.getTitleFont(), mLayoutTab.getDescriptionFont());
   }
 
-  public void setSettings(Settings settings) {
-    QueuePrinterSettings s = (QueuePrinterSettings)settings;
-    mGeneralTab.setDayCount(s.getDayCount());
-    mGeneralTab.setFromDate(s.getFromDate());
-    mGeneralTab.setEmptyQueueAfterPrinting(s.emptyQueueAfterPrinting());
+  public void setSettings(Settings s) {
+    QueuePrinterSettings settings = (QueuePrinterSettings)s;
+    mGeneralTab.setEmptyQueueAfterPrinting(settings.emptyQueueAfterPrinting());
+    mLayoutTab.setTitleFont(settings.getTitleFont());
+    mLayoutTab.setDescriptionFont(settings.getDescriptionFont());
   }
 
   public PrintJob createPrintJob(PageFormat format) {

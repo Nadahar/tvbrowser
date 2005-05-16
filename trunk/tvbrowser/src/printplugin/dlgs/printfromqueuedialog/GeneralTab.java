@@ -26,16 +26,11 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
-import printplugin.dlgs.components.DateRangePanel;
-
 import javax.swing.*;
 import java.awt.*;
 
-import devplugin.Date;
-
 public class GeneralTab extends JPanel {
 
-  private DateRangePanel mDateRangePanel;
   private JCheckBox mEmptyQueueCb;
 
   public GeneralTab() {
@@ -46,14 +41,8 @@ public class GeneralTab extends JPanel {
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-    mDateRangePanel = new DateRangePanel(true);
-
-    content.add(mDateRangePanel);
-
     add(content, BorderLayout.NORTH);
     add(mEmptyQueueCb = new JCheckBox("Queue nach dem Drucken leeren"), BorderLayout.SOUTH);
-
-    mEmptyQueueCb.setSelected(true);
   }
 
   public void setEmptyQueueAfterPrinting(boolean b) {
@@ -62,21 +51,5 @@ public class GeneralTab extends JPanel {
 
   public boolean emptyQueueAfterPrinting() {
     return mEmptyQueueCb.isSelected();
-  }
-
-  public void setFromDate(Date d) {
-    mDateRangePanel.setFromDate(d);
-  }
-
-  public Date getFromDate() {
-    return mDateRangePanel.getFromDate();
-  }
-
-  public void setDayCount(int d) {
-    mDateRangePanel.setNumberOfDays(d);
-  }
-
-  public int getDayCount() {
-    return mDateRangePanel.getNumberOfDays();
   }
 }

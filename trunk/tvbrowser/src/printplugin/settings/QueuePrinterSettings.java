@@ -26,31 +26,29 @@
 
 package printplugin.settings;
 
-import devplugin.Date;
+import java.awt.*;
 
 
 public class QueuePrinterSettings implements Settings {
 
   private boolean mEmptyQueueAfterPrinting;
-  private Date mFromDate;
-  private int mDayCount;
+  private Font mTitleFont, mDescriptionFont;
 
-  public QueuePrinterSettings(boolean emptyQueueAfterPrinting, Date fromDate, int dayCount) {
+  public QueuePrinterSettings(boolean emptyQueueAfterPrinting, Font titleFont, Font descriptionFont) {
     mEmptyQueueAfterPrinting = emptyQueueAfterPrinting;
-    mFromDate = fromDate;
-    mDayCount = dayCount;
-
+    mTitleFont = titleFont;
+    mDescriptionFont = descriptionFont;
   }
 
   public boolean emptyQueueAfterPrinting() {
     return mEmptyQueueAfterPrinting;
   }
 
-  public Date getFromDate() {
-    return mFromDate;
+  public Font getTitleFont() {
+    return mTitleFont;
   }
 
-  public int getDayCount() {
-    return mDayCount;
+  public Font getDescriptionFont() {
+    return mDescriptionFont;
   }
 }

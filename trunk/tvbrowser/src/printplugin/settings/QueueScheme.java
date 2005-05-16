@@ -26,18 +26,20 @@
 
 package printplugin.settings;
 
-import devplugin.Date;
-
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.awt.*;
 
 
 public class QueueScheme extends Scheme {
 
   public QueueScheme(String name) {
     super(name);
-    setSettings(new QueuePrinterSettings(true, Date.getCurrentDate(), 7));
+    final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
+    final Font PROGRAMTEXTFONT=new Font("Dialog",Font.PLAIN,10);
+
+    setSettings(new QueuePrinterSettings(true, PROGRAMTITLEFONT, PROGRAMTEXTFONT));
   }
 
   void store(ObjectOutputStream out) throws IOException {
