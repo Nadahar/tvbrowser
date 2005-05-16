@@ -37,6 +37,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import util.exc.*;
+import util.paramhandler.ParamParser;
 import util.ui.UiUtilities;
 
 /**
@@ -100,9 +101,14 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     }
     if ("true" .equals(mSettings.getProperty( "useexec" ))) {
       String fName=mSettings.getProperty( "execfile" );
+      ParamParser parser = new ParamParser();
+      String fParam=parser.analyse(mSettings.getProperty("execparam"), item.getProgram());
+      
+      System.out.println(fName + " " +  fParam);
+      
       try {
-        Runtime.getRuntime().exec(fName);
-      } catch (IOException exc) {
+        Process proc = Runtime.getRuntime().exec(fName + " " +  fParam);
+      } catch (Exception exc) {
         String msg = mLocalizer.msg( "error.2" ,"Error executing reminder program!\n({0})" , fName, exc);
         ErrorHandler.handle(msg, exc);
       }
