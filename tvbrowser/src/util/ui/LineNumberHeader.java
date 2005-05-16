@@ -13,9 +13,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JComponent;
-import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 
 /**
  * Adds Line-Numbes to JTextAreas
@@ -38,7 +38,7 @@ public class LineNumberHeader extends JComponent {
   
   private boolean borderLine = false;
 
-  private JTextArea textArea;
+  private JTextComponent textComponent;
 
   private FontMetrics metrics;
 
@@ -49,7 +49,7 @@ public class LineNumberHeader extends JComponent {
    * @param borderWidth Width of the Border
    * @param borderLine Draw Border-Lines 
    */
-  public LineNumberHeader(JTextArea textArea, int borderWidth, boolean borderLine) {
+  public LineNumberHeader(JTextComponent textArea, int borderWidth, boolean borderLine) {
     this(textArea);
     this.borderWidth = Math.max(0, borderWidth);
     this.borderLine = borderLine;
@@ -60,13 +60,13 @@ public class LineNumberHeader extends JComponent {
    * 
    * @param textArea TextArea to use
    */
-  public LineNumberHeader(JTextArea textArea) {
-    this.textArea = textArea;
+  public LineNumberHeader(JTextComponent textArea) {
+    this.textComponent = textArea;
     register();
   }
 
   private void register() {
-    this.textArea.getDocument().addDocumentListener(new DocumentListener() {
+    this.textComponent.getDocument().addDocumentListener(new DocumentListener() {
       public void insertUpdate(DocumentEvent e) {
         setLines();
       }
@@ -80,7 +80,7 @@ public class LineNumberHeader extends JComponent {
       }
     });
 
-    this.textArea.addPropertyChangeListener("font", new PropertyChangeListener() {
+    this.textComponent.addPropertyChangeListener("font", new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
         setMetrics();
       }
@@ -95,7 +95,7 @@ public class LineNumberHeader extends JComponent {
    * Calls revalidate() and repaint()
    */
   private void setMetrics() {
-    metrics = this.textArea.getFontMetrics(this.textArea.getFont());
+    metrics = this.textComponent.getFontMetrics(this.textComponent.getFont());
     revalidate();
     repaint();
   }
@@ -105,7 +105,7 @@ public class LineNumberHeader extends JComponent {
    * repaint() aus.
    */
   private void setLines() {
-    final int newLines = this.textArea.getLineCount();
+    final int newLines = this.textComponent.getDocument().getDefaultRootElement().getElementCount()+1;
     if (newLines != this.maxLines) {
       if (newLines / 10 != this.maxLines / 10) {
         // Neuer 10er Schritt, Platz schaffen bzw. freigeben
@@ -125,8 +125,8 @@ public class LineNumberHeader extends JComponent {
 
     // Breite: 2 * Randbreite + max. Stringbreite
     // Höhe: max. Zeilenzahl * Höhe einer Zeile (Stringhöhe)
-    return new Dimension(w + 2 * this.borderWidth, maxLines * h + this.textArea.getMargin().top
-        + this.textArea.getMargin().bottom);
+    return new Dimension(w + 2 * this.borderWidth, maxLines * h + this.textComponent.getMargin().top
+        + this.textComponent.getMargin().bottom);
   }
 
   public Dimension getMinimumSize() {
@@ -148,7 +148,7 @@ public class LineNumberHeader extends JComponent {
     // Verschiebung nach links um Gesamtbreite (String) + ein Rand
     int x = getWidth() - this.borderWidth - w;
     // y = Absoluter Startpunkt für erste Textzeile
-    int y = this.textArea.getMargin().top + metrics.getAscent();
+    int y = this.textComponent.getMargin().top + metrics.getAscent();
 
     Rectangle rect = g.getClipBounds();
 
