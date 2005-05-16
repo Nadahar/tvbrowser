@@ -133,6 +133,11 @@ public class ConfigPluginSettingsTab implements SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
+    
+    if ((mSettingsTab != null) && (mSettingsTab.getIcon() != null)) {
+      return mSettingsTab.getIcon();
+    }
+    
     ActionMenu actionMenu = mPlugin.getButtonAction();
     Action action = null;
     if (actionMenu !=null) {
@@ -156,6 +161,10 @@ public class ConfigPluginSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
+    if ((mSettingsTab != null) && (mSettingsTab.getIcon() != null)) {
+      return mSettingsTab.getTitle();
+    }
+    
     return mPlugin.getInfo().getName();
   }
   
