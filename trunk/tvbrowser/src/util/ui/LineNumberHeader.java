@@ -13,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JComponent;
+import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -105,7 +106,14 @@ public class LineNumberHeader extends JComponent {
    * repaint() aus.
    */
   private void setLines() {
-    final int newLines = this.textComponent.getDocument().getDefaultRootElement().getElementCount()+1;
+    int newLines;
+    
+    if (textComponent instanceof JTextArea) {
+      newLines = ((JTextArea)textComponent).getLineCount();
+    } else {
+      newLines = textComponent.getDocument().getDefaultRootElement().getElementCount()+1;
+    }
+    
     if (newLines != this.maxLines) {
       if (newLines / 10 != this.maxLines / 10) {
         // Neuer 10er Schritt, Platz schaffen bzw. freigeben
