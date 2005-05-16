@@ -56,7 +56,7 @@ import java.awt.*;
      JPanel rightPanel=new JPanel(new BorderLayout());
       
      msg = mLocalizer.msg("name", "Name");
-     leftPanel.add(new JLabel(msg), BorderLayout.NORTH);
+     leftPanel.add(new PluginLabel(msg), BorderLayout.NORTH);
      rightPanel.add(nameLabel=new JLabel("-"),BorderLayout.NORTH);
      nameLabel.setFont(PLAIN);
       
@@ -64,7 +64,7 @@ import java.awt.*;
      JPanel panel2=new JPanel(new BorderLayout());
       
      msg = mLocalizer.msg("version", "Version");
-     panel1.add(new JLabel(msg), BorderLayout.NORTH);
+     panel1.add(new PluginLabel(msg), BorderLayout.NORTH);
      panel2.add(versionLabel=new JLabel("-"),BorderLayout.NORTH);
      versionLabel.setFont(PLAIN);
       
@@ -72,7 +72,7 @@ import java.awt.*;
      JPanel panel4=new JPanel(new BorderLayout());
       
      msg = mLocalizer.msg("author", "Author");
-     panel3.add(new JLabel(msg), BorderLayout.NORTH);
+     panel3.add(new PluginLabel(msg), BorderLayout.NORTH);
      panel4.add(authorLabel=new JLabel("-"),BorderLayout.NORTH);
      authorLabel.setFont(PLAIN); 
       
@@ -81,7 +81,7 @@ import java.awt.*;
       
      JPanel panel5=new JPanel(new BorderLayout());
      msg = mLocalizer.msg("description", "Description");
-     panel5.add(new JLabel(msg), BorderLayout.NORTH);
+     panel5.add(new PluginLabel(msg), BorderLayout.NORTH);
       
      descriptionArea=new JTextArea(3,40);
      descriptionArea.setLineWrap(true);
@@ -89,7 +89,7 @@ import java.awt.*;
      descriptionArea.setEditable(false);
      descriptionArea.setOpaque(false);
      descriptionArea.setFont(PLAIN);
-      
+     descriptionArea.setBorder(BorderFactory.createEmptyBorder());
      panel3.add(panel5,BorderLayout.CENTER);
      panel4.add(descriptionArea,BorderLayout.CENTER);
       
@@ -116,6 +116,13 @@ import java.awt.*;
      authorLabel.setText(info.getAuthor());
      descriptionArea.setText(info.getDescription());
    }
-    
+   
+   
+   class PluginLabel extends JLabel {
+     public PluginLabel(String name) {
+       super(name);
+       setFont(PLAIN);
+     }
+   }
  } 
   
