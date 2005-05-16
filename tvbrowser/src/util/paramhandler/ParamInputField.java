@@ -27,6 +27,8 @@ package util.paramhandler;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -66,8 +68,18 @@ public class ParamInputField extends JPanel {
    */
   public ParamInputField(String text) {
     mParamLibrary = new ParamLibrary();
-    createGui(text);
+    createGui(text, false);
   }
+  
+  /**
+   * Create the InputField
+   * @param text Text to show in the InputField
+   * @param singleLine set True, if Input-Field should be a Single-Line
+   */
+  public ParamInputField(String text, boolean singleLine) {
+    mParamLibrary = new ParamLibrary();
+    createGui(text, singleLine);
+  }  
   
   /**
    * Create the InputField
@@ -76,14 +88,25 @@ public class ParamInputField extends JPanel {
    */
   public ParamInputField(ParamLibrary library, String text) {
     mParamLibrary = library;
-    createGui(text);
+    createGui(text, false);
   }
   
   /**
+   * Create the InputField
+   * @param library Library to use in the Check/Help Diaogs
+   * @param text Text to show in the InputField
+   * @param singleLine set True, if Input-Field should be a Single-Line
+   */
+  public ParamInputField(ParamLibrary library, String text, boolean singleLine) {
+    mParamLibrary = library;
+    createGui(text, singleLine);
+  }  
+  /**
    * Create the GUI 
    * @param text Text to use in the InputField
+   * @param singleLine set True, if Input-Field should be a Single-Line
    */
-  private void createGui(String text) {
+  private void createGui(String text, boolean singleLine) {
     setLayout(new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default", 
                  "fill:pref:grow, 3dlu, default"));
     
@@ -93,7 +116,24 @@ public class ParamInputField extends JPanel {
     
     mParamText.setText(text);
     
-    add(new JScrollPane(mParamText), cc.xyw(1,1,5));
+    if (singleLine) {
+      mParamText.setLineWrap(true);
+      mParamText.addKeyListener(new KeyAdapter() {
+
+        public void keyPressed(KeyEvent ke) {
+            if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+                ke.consume();
+            }
+        }
+      });
+      
+      JScrollPane scroll = new JScrollPane(mParamText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      
+      add(scroll, cc.xyw(1,1,5));
+    } else {
+      add(new JScrollPane(mParamText), cc.xyw(1,1,5));
+    }
     
     JButton check = new JButton(mLocalizer.msg("check","Check"));
     
