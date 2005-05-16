@@ -72,7 +72,7 @@ public class CapturePluginSettingsTab implements SettingsTab {
      * @return Icon
      */
     public Icon getIcon() {
-        return ImageUtilities.createImageIconFromJar("capturePlugin/capturePlugin.png", getClass());
+        return ImageUtilities.createImageIconFromJar("captureplugin/capturePlugin.png", CapturePluginSettingsTab.class);
     }
 
     /**
