@@ -172,15 +172,22 @@ public class SettingsDialog extends JDialog {
     mSaveSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
     mDeleteSchemeBtn.setEnabled(false);
     mEditSchemeBtn.setEnabled(false);
+
+
     newSchemeBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        String newSchemeName = JOptionPane.showInputDialog(parent, "Enter new name for scheme:", "New Scheme", JOptionPane.PLAIN_MESSAGE);
+        String newSchemeName = JOptionPane.showInputDialog(parent, mLocalizer.msg("enterNewSchemeName","Enter new name for scheme:"), mLocalizer.msg("newScheme","New scheme"), JOptionPane.PLAIN_MESSAGE);
         if (newSchemeName != null) {
-          Scheme newScheme = mDialogContent.createNewScheme(newSchemeName);
-          newScheme.setSettings(mDialogContent.getSettings());
-          mSchemeCBModel.addElement(newScheme);
-          mSchemeCB.setSelectedItem(newScheme);
-          mDialogContent.setSettings(newScheme.getSettings());
+          if (newSchemeName.toString().trim().length()>0) {
+            Scheme newScheme = mDialogContent.createNewScheme(newSchemeName);
+            newScheme.setSettings(mDialogContent.getSettings());
+            mSchemeCBModel.addElement(newScheme);
+            mSchemeCB.setSelectedItem(newScheme);
+            mDialogContent.setSettings(newScheme.getSettings());
+          }
+          else {
+            JOptionPane.showMessageDialog(parent, mLocalizer.msg("invalidSchemeMsg","Invalid scheme name"), mLocalizer.msg("invalidInput","Invalid input"), JOptionPane.INFORMATION_MESSAGE);
+          }
         }
       }
     });
@@ -196,10 +203,27 @@ public class SettingsDialog extends JDialog {
     mEditSchemeBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Scheme scheme = (Scheme)mSchemeCB.getSelectedItem();
-        Object newSchemeName = JOptionPane.showInputDialog(parent, "Enter new name for scheme:", "New Scheme", JOptionPane.PLAIN_MESSAGE, null, null, scheme.getName());
+        Object newSchemeName = JOptionPane.showInputDialog(parent, mLocalizer.msg("enterNewSchemeName","Enter new name for scheme:"), mLocalizer.msg("editScheme","Edit scheme"), JOptionPane.PLAIN_MESSAGE, null, null, scheme.getName());
         if (newSchemeName != null) {
-          scheme.setName(newSchemeName.toString());
-          mSchemeCB.updateUI();
+          if (newSchemeName.toString().trim().length()>0) {
+            scheme.setName(newSchemeName.toString());
+            mSchemeCB.updateUI();
+          }
+          else {
+            JOptionPane.showMessageDialog(parent, mLocalizer.msg("invalidSchemeMsg","Invalid scheme name"), mLocalizer.msg("invalidInput","Invalid input"), JOptionPane.INFORMATION_MESSAGE);
+          }
+        }
+      }
+    });
+
+    mDeleteSchemeBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent event) {
+        Scheme scheme = (Scheme)mSchemeCB.getSelectedItem();
+        if (scheme != null) {
+          if (JOptionPane.showConfirmDialog(parent, mLocalizer.msg("deleteSchemeMsg","Do you want to delete the selected scheme?"), mLocalizer.msg("deleteScheme","Delete Scheme"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            mSchemeCBModel.removeElement(scheme);
+            mSchemeCB.setSelectedIndex(0);
+          }
         }
       }
     });
