@@ -58,6 +58,12 @@ public class ConfigPluginSettingsTab implements SettingsTab {
 
   public ConfigPluginSettingsTab(PluginProxy plugin) {
     mPlugin = plugin;
+    if (mPlugin.isActivated()) {
+      mSettingsTab = mPlugin.getSettingsTab();      
+    } else {
+      mSettingsTab = null;
+    }
+    
   }
   
   
@@ -93,14 +99,11 @@ public class ConfigPluginSettingsTab implements SettingsTab {
       mPluginPanel.removeAll();
     }
     if (mPlugin.isActivated()) {
-      mSettingsTab = mPlugin.getSettingsTab();
       if (mSettingsTab != null) {
         mPluginPanel.add(mSettingsTab.createSettingsPanel(), BorderLayout.CENTER);
       }
     } else {
       // The plugin is not activated -> Tell it the user
-      mSettingsTab = null;
-
       String msg = mLocalizer.msg("notactivated", "This Plugin is currently not activated.");
       
       JTextArea msgArea =new JTextArea(3,40);
@@ -133,10 +136,14 @@ public class ConfigPluginSettingsTab implements SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    
-    if ((mSettingsTab != null) && (mSettingsTab.getIcon() != null)) {
-      return mSettingsTab.getIcon();
+    try {
+      if ((mSettingsTab != null) && (mSettingsTab.getIcon() != null)) {
+        return mSettingsTab.getIcon();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
     
     ActionMenu actionMenu = mPlugin.getButtonAction();
     Action action = null;
@@ -161,10 +168,9 @@ public class ConfigPluginSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    if ((mSettingsTab != null) && (mSettingsTab.getIcon() != null)) {
+    if ((mSettingsTab != null) && (mSettingsTab.getTitle() != null)) {
       return mSettingsTab.getTitle();
     }
-    
     return mPlugin.getInfo().getName();
   }
   
