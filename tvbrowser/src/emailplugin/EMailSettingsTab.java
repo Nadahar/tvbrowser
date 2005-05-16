@@ -163,7 +163,7 @@ public class EMailSettingsTab implements SettingsTab {
    * Opens a FileChooser and let the User open a File
    */
   private void findApplictation(JPanel panel) {
-    JFileChooser chooser = new JFileChooser(new File(mSettings.getProperty("application", "")));
+    JFileChooser chooser = new JFileChooser(new File(mApplication.getText()));
     int returnVal = chooser.showOpenDialog(UiUtilities.getBestDialogParent(panel));
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       mApplication.setText(chooser.getSelectedFile().getAbsolutePath());
