@@ -95,6 +95,7 @@ public class LayoutTab extends JPanel {
     LayoutOption option = (LayoutOption)mLayoutCB.getSelectedItem();
     return option.getChannelsPerColumn();
   }
+
   private Integer[] createIntegerArray(int from, int cnt) {
     Integer[] result = new Integer[cnt];
     for (int i=0; i<result.length; i++) {

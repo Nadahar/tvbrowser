@@ -26,7 +26,72 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
+import util.ui.FontChooserPanel;
+
 import javax.swing.*;
+import java.awt.*;
 
 public class LayoutTab extends JPanel {
+  private Font mTitleFont, mDescriptionFont;
+  private FontChooserPanel mTitleFontPanel, mDescriptionFontPanel;
+  private JComboBox mColumnsPerPageCB;
+
+  public LayoutTab() {
+
+    super();
+    setLayout(new BorderLayout());
+
+    JPanel content = new JPanel();
+    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+
+    JPanel columnPanel = new JPanel(new BorderLayout());
+    columnPanel.setBorder(BorderFactory.createTitledBorder("Columns"));
+    JPanel pn1 = new JPanel();
+    pn1.setLayout(new BoxLayout(pn1, BoxLayout.X_AXIS));
+
+    JLabel columnLabel = new JLabel("Columns per page:");
+    mColumnsPerPageCB = new JComboBox(createIntegerArray(1,4));
+
+    pn1.add(columnLabel);
+    pn1.add(mColumnsPerPageCB);
+    columnPanel.add(pn1, BorderLayout.WEST);
+
+    JPanel fontPanel=new JPanel(new GridLayout(2,1));
+    fontPanel.setBorder(BorderFactory.createTitledBorder("Fonts"));
+
+    mTitleFontPanel=new FontChooserPanel("Title", getTitleFont());
+    mDescriptionFontPanel=new FontChooserPanel("Description", getDescriptionFont());
+
+    fontPanel.add(mTitleFontPanel);
+    fontPanel.add(mDescriptionFontPanel);
+
+    content.add(columnPanel);
+    content.add(fontPanel);
+
+    add(content, BorderLayout.NORTH);
+  }
+
+  public Font getTitleFont() {
+    return mTitleFont;
+  }
+
+  public void setTitleFont(Font newFont) {
+    mTitleFont = newFont;
+  }
+
+  public Font getDescriptionFont() {
+    return mDescriptionFont;
+  }
+
+  public void setDescriptionFont(Font newFont) {
+    mDescriptionFont = newFont;
+  }
+
+  private Integer[] createIntegerArray(int from, int cnt) {
+    Integer[] result = new Integer[cnt];
+    for (int i=0; i<result.length; i++) {
+      result[i] = new Integer(i+from);
+    }
+    return result;
+  }
 }

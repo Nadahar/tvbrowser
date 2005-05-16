@@ -44,17 +44,12 @@ public class JobFactory {
 
 
   public static PrintJob createPrintJob(QueuePrinterSettings settings, PageFormat pageFormat, Program[] programs) {
-    PageModel pageModel = createPage(settings, programs);
+    PageModel pageModel = createPage(programs);
     PrintJob job = new QueuePrintJob(pageModel, settings, pageFormat);
     return job;
   }
 
-  private static PageModel createPage(QueuePrinterSettings settings, Program[] programs) {
-    Date from = settings.getFromDate();
-    Date to=null;
-    if (from != null) {
-      to = from.addDays(settings.getDayCount());
-    }
+  private static PageModel createPage(Program[] programs) {
     Arrays.sort(programs, new Comparator(){
       public int compare(Object o1, Object o2) {
         return ((Program)o1).getDate().compareTo(((Program)o2).getDate());
@@ -66,10 +61,6 @@ public class JobFactory {
     DefaultColumnModel colModel = new DefaultColumnModel("Spalte");
     pageModel.addColumn(colModel);
     for (int i=0; i<programs.length; i++) {
-      Date date = programs[i].getDate();
-      if (from != null && (date.compareTo(from)<0 || date.compareTo(to)>=0)) {
-        continue;  // hide programs out of date range
-      }
 //      if (!date.equals(curDate)  || colModel == null) {
 //        colModel = new DefaultColumnModel(date.toString());
 //        pageModel.addColumn(colModel);
