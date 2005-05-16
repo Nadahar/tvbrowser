@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
+import java.awt.*;
 import java.util.Properties;
 import java.io.*;
 import javax.swing.*;
@@ -39,10 +40,7 @@ import printplugin.dlgs.SettingsDialog;
 import printplugin.dlgs.DialogContent;
 import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialogContent;
 import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
-import printplugin.settings.DayProgramScheme;
-import printplugin.settings.DayProgramPrinterSettings;
-import printplugin.settings.Scheme;
-import printplugin.settings.QueueScheme;
+import printplugin.settings.*;
 import printplugin.printer.PrintJob;
 import util.ui.UiUtilities;
 
@@ -54,7 +52,8 @@ public class PrintPlugin extends Plugin {
       = util.ui.Localizer.getLocalizerFor(PrintPlugin.class);
 
 
-  private static final String SCHEME_FILE = "printplugin.schemes";
+  private static final String SCHEME_FILE_DAYPROGRAM = "printplugin.dayprog.schemes";
+  private static final String SCHEME_FILE_QUEUE = "printplugin.queue.schemes";
 
   public PrintPlugin() {
   }
@@ -134,7 +133,7 @@ public class PrintPlugin extends Plugin {
 
   private void storeDayProgramSchemes(Scheme[] schemes) {
     String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
-    File schemeFile = new File(home,SCHEME_FILE);
+    File schemeFile = new File(home,SCHEME_FILE_DAYPROGRAM);
     ObjectOutputStream out=null;
     try {
       out = new ObjectOutputStream(new FileOutputStream(schemeFile));
@@ -146,12 +145,26 @@ public class PrintPlugin extends Plugin {
       }
       out.close();
     }catch(IOException e) {
-
+      util.exc.ErrorHandler.handle("Could not store settings.",e);
     }
   }
 
   private void storeQueueSchemes(Scheme[] schemes) {
-
+    String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
+    File schemeFile = new File(home,SCHEME_FILE_QUEUE);
+    ObjectOutputStream out=null;
+    try {
+      out = new ObjectOutputStream(new FileOutputStream(schemeFile));
+      out.writeInt(1);  // version
+      out.writeInt(schemes.length);
+      for (int i=0; i<schemes.length; i++) {
+        out.writeObject(schemes[i].getName());
+        ((QueueScheme)schemes[i]).store(out);
+      }
+      out.close();
+    }catch(IOException e) {
+      util.exc.ErrorHandler.handle("Could not store settings.",e);
+    }
   }
 
   public void receivePrograms(Program[] programArr) {
@@ -172,7 +185,7 @@ public class PrintPlugin extends Plugin {
   }
 
 
-  private DayProgramScheme[] readSchemes(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private DayProgramScheme[] readDayProgramSchemesFromStream(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt();  // read version
     int cnt = in.readInt();
     DayProgramScheme[] schemes = new DayProgramScheme[cnt];
@@ -186,11 +199,11 @@ public class PrintPlugin extends Plugin {
 
   private DayProgramScheme[] loadDayProgramSchemes() {
     String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
-    File schemeFile = new File(home,SCHEME_FILE);
+    File schemeFile = new File(home,SCHEME_FILE_DAYPROGRAM);
     ObjectInputStream in=null;
     try {
       in = new ObjectInputStream(new FileInputStream(schemeFile));
-      DayProgramScheme[] schemes = readSchemes(in);
+      DayProgramScheme[] schemes = readDayProgramSchemesFromStream(in);
       in.close();
       return schemes;
     }catch(Exception e) {
@@ -198,16 +211,54 @@ public class PrintPlugin extends Plugin {
         try { in.close(); } catch(IOException exc) {}
       }
       DayProgramScheme scheme = new DayProgramScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
-      scheme.setSettings(new DayProgramPrinterSettings(new Date(), 3, null, 6, 24+3, 5, 2));
+      scheme.setSettings(new DayProgramPrinterSettings(
+              new Date(),
+              3,
+              null,
+              6,
+              24+3,
+              5,
+              2));
       return new DayProgramScheme[]{scheme};
     }
   }
 
 
+  private QueueScheme[] readQueueSchemesFromStream(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.readInt();  // read version
+    int cnt = in.readInt();
+    QueueScheme[] schemes = new QueueScheme[cnt];
+    for (int i=0; i<cnt; i++) {
+      String name = (String)in.readObject();
+      schemes[i] = new QueueScheme(name);
+      schemes[i].read(in);
+    }
+    return schemes;
+  }
+
 
   private QueueScheme[] loadQueueSchemes() {
-    QueueScheme[] result = new QueueScheme[]{ new QueueScheme("Default queue scheme")};
-    return result;
+    String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
+    File schemeFile = new File(home,SCHEME_FILE_QUEUE);
+    ObjectInputStream in=null;
+    try {
+      in = new ObjectInputStream(new FileInputStream(schemeFile));
+      QueueScheme[] schemes = readQueueSchemesFromStream(in);
+      in.close();
+      return schemes;
+    }catch(Exception e) {
+      if (in != null) {
+        try { in.close(); } catch(IOException exc) {}
+      }
+      QueueScheme scheme = new QueueScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
+      scheme.setSettings(new QueuePrinterSettings(
+              true,
+              new Font("Dialog",Font.BOLD,12),
+              new Font("Dialog",Font.PLAIN, 10)
+      ));
+
+      return new QueueScheme[]{scheme};
+    }
   }
 
   public void loadSettings(Properties settings) {

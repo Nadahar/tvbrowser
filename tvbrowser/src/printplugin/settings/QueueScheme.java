@@ -36,18 +36,48 @@ public class QueueScheme extends Scheme {
 
   public QueueScheme(String name) {
     super(name);
-    final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
-    final Font PROGRAMTEXTFONT=new Font("Dialog",Font.PLAIN,10);
-
-    setSettings(new QueuePrinterSettings(true, PROGRAMTITLEFONT, PROGRAMTEXTFONT));
   }
 
-  void store(ObjectOutputStream out) throws IOException {
+  public void store(ObjectOutputStream out) throws IOException {
+    QueuePrinterSettings settings = (QueuePrinterSettings)getSettings();
 
-    
+    boolean emptyQueuAfterPrinting = settings.emptyQueueAfterPrinting();
+    Font titleFont = settings.getTitleFont();
+    Font descFont = settings.getDescriptionFont();
+
+    out.writeInt(1);  // Version
+    out.writeBoolean(emptyQueuAfterPrinting);
+    writeFont(titleFont, out);
+    writeFont(descFont, out);
+
   }
 
-  void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
 
+
+
+  public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.readInt();  // version
+
+    boolean emptyQueueAfterPrinting = in.readBoolean();
+    Font titleFont = readFont(in);
+    Font descFont = readFont(in);
+
+    QueuePrinterSettings settings = new QueuePrinterSettings(emptyQueueAfterPrinting, titleFont, descFont);
+    setSettings(settings);
+  }
+
+
+  private Font readFont(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    String name = (String)in.readObject();
+    int size = in.readInt();
+    int style = in.readInt();
+
+    return new Font(name, style, size);
+  }
+
+  private void writeFont(Font f, ObjectOutputStream out) throws IOException {
+    out.writeObject(f.getName());
+    out.writeInt(f.getSize());
+    out.writeInt(f.getStyle());
   }
 }
