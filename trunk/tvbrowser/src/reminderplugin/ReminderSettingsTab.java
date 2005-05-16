@@ -28,6 +28,7 @@ package reminderplugin;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -41,7 +42,9 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -53,6 +56,7 @@ import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
 import util.ui.ImageUtilities;
 import util.ui.TabLayout;
+import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.SettingsTab;
@@ -74,14 +78,16 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mReminderWindowChB;
   private FileCheckBox mSoundFileChB;
   private JButton mSoundTestBt;
-  private FileCheckBox mExecFileChB;
+  private JCheckBox mExecChB;
+  private JButton mExecFileDialogBtn;
   private JSpinner mAutoCloseReminderTimeSp;
 
   private JCheckBox mSendToPlugin;
   private JComboBox mAvailabePlugins;
   private JComboBox mDefaultReminderEntryList;
 
-
+  private String mExecFileStr, mExecParamStr;
+  
   public ReminderSettingsTab(Properties settings) {
     this.mSettings = settings;
   }
@@ -111,19 +117,34 @@ public class ReminderSettingsTab implements SettingsTab {
     reminderPn.add(mReminderWindowChB);
 
     String soundFName=mSettings.getProperty("soundfile","/");
-    String execFName=mSettings.getProperty("execfile","/");
 
     File soundFile=new File(soundFName);
-    File execFile=new File(execFName);
 
     msg = mLocalizer.msg("playlingSound", "Play sound");
     mSoundFileChB = new FileCheckBox(msg, soundFile, 0);
+
     msg = mLocalizer.msg("executeProgram", "Execute program");
-    mExecFileChB = new FileCheckBox(msg, execFile, 0);
+    mExecChB = new JCheckBox(msg);
+    
+    msg = mLocalizer.msg("executeConfig", "Configure");
+    mExecFileDialogBtn = new JButton(msg);
 
+    mExecFileDialogBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showFileSettingsDialog();
+      }
+    });
+    
+    mExecChB.addChangeListener(new ChangeListener() {
+
+      public void stateChanged(ChangeEvent e) {
+        mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
+      }
+     
+    });
+    
     JFileChooser soundChooser=new JFileChooser("sound/");
-    JFileChooser execChooser=new JFileChooser("/");
-
+    
     String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
     msg = mLocalizer.msg("soundFileFilter", "Sound file ({0})",
         "*.wav, *.aif, *.rmf, *.au, *.mid");
@@ -131,10 +152,13 @@ public class ReminderSettingsTab implements SettingsTab {
 
     mReminderWindowChB.setSelected(mSettings.getProperty("usemsgbox","false").equals("true"));
     mSoundFileChB.setSelected(mSettings.getProperty("usesound","false").equals("true"));
-    mExecFileChB.setSelected(mSettings.getProperty("useexec","false").equals("true"));
-
+    mExecChB.setSelected(mSettings.getProperty("useexec","false").equals("true"));
+    mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
+    
+    mExecFileStr = mSettings.getProperty("execfile", "");
+    mExecParamStr = mSettings.getProperty("execparam", "");
+    
     mSoundFileChB.setFileChooser(soundChooser);
-    mExecFileChB.setFileChooser(execChooser);
 
     JPanel soundPn = new JPanel(new BorderLayout(5, 0));
     soundPn.add(mSoundFileChB, BorderLayout.CENTER);
@@ -148,7 +172,15 @@ public class ReminderSettingsTab implements SettingsTab {
     soundPn.add(mSoundTestBt, BorderLayout.EAST);
 
     reminderPn.add(soundPn);
-    reminderPn.add(mExecFileChB);
+    
+    JPanel execPanel = new JPanel(new BorderLayout());
+  
+    msg = mLocalizer.msg("executeProgram", "Execute program");
+
+    execPanel.add(mExecChB, BorderLayout.WEST);
+    execPanel.add(mExecFileDialogBtn, BorderLayout.EAST);
+    
+    reminderPn.add(execPanel);
 
     JPanel pluginPn = new JPanel(new BorderLayout(5, 0));
 
@@ -247,6 +279,28 @@ public class ReminderSettingsTab implements SettingsTab {
     return selectablePluginList;
   }
 
+  /**
+   * Shows the Settings-Dialog for the Executable
+   */
+  private void showFileSettingsDialog() {
+    ExecuteSettingsDialog execSettingsDialog;
+    
+    Window wnd = UiUtilities.getBestDialogParent(mSettingsPn);
+    
+    if (wnd instanceof JDialog) {
+      execSettingsDialog = new ExecuteSettingsDialog((JDialog) wnd, mExecFileStr, mExecParamStr);
+    } else {
+      execSettingsDialog = new ExecuteSettingsDialog((JFrame) wnd, mExecFileStr, mExecParamStr);
+    }
+    
+    execSettingsDialog.setVisible(true);
+    
+    if (execSettingsDialog.wasOKPressed()) {
+      mExecFileStr = execSettingsDialog.getExecutable();
+      mExecParamStr = execSettingsDialog.getParameters();
+    }
+    
+  }
 
 
   /**
@@ -254,11 +308,12 @@ public class ReminderSettingsTab implements SettingsTab {
    */
   public void saveSettings() {
     mSettings.setProperty("soundfile",mSoundFileChB.getTextField().getText());
-    mSettings.setProperty("execfile",mExecFileChB.getTextField().getText());
-
+    mSettings.setProperty("execfile",mExecFileStr);
+    mSettings.setProperty("execparam",mExecParamStr);
+    
     mSettings.setProperty("usemsgbox",new Boolean(mReminderWindowChB.isSelected()).toString());
     mSettings.setProperty("usesound",new Boolean(mSoundFileChB.isSelected()).toString());
-    mSettings.setProperty("useexec",new Boolean(mExecFileChB.isSelected()).toString());
+    mSettings.setProperty("useexec",new Boolean(mExecChB.isSelected()).toString());
 
     mSettings.setProperty("usesendplugin",new Boolean(mSendToPlugin.isSelected()).toString());
     mSettings.setProperty("usethisplugin", ((PluginAccess)mAvailabePlugins.getSelectedItem()).getId());
