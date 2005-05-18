@@ -51,6 +51,7 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
+import tvbrowser.core.filters.filtercomponents.MassFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginIconFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
@@ -117,6 +118,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       mRuleCb.addItem(new ProgramLengthFilterComponent());
       mRuleCb.addItem(new ProgramRunningFilterComponent());
       mRuleCb.addItem(new BeanShellFilterComponent());
+      mRuleCb.addItem(new MassFilterComponent());
       
         typePanel.add(mRuleCb,BorderLayout.EAST);
         
@@ -190,7 +192,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
                 FilterComponent fItem=(FilterComponent)item;
                 mRulePanel=fItem.getPanel();
                 mRulePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-                mCenterPanel.add(mRulePanel,BorderLayout.NORTH);
+                mCenterPanel.add(mRulePanel,BorderLayout.CENTER);
             }
             mContentPane.updateUI();
             updateOkBtn();

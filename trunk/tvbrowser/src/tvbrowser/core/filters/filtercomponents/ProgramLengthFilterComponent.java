@@ -26,6 +26,7 @@
 
 package tvbrowser.core.filters.filtercomponents;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -164,7 +165,9 @@ public class ProgramLengthFilterComponent implements FilterComponent {
 		panel.add(_maxBox, b);    	
 		panel.add(_maxSpinner, a);    	
     
-        return panel;
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(panel, BorderLayout.NORTH);
+        return centerPanel;
     }
 
 

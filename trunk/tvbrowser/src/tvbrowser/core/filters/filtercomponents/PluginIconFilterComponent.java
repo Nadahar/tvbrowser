@@ -99,8 +99,10 @@ public class PluginIconFilterComponent implements FilterComponent {
             mBox.setSelectedItem(mPlugin);
         }
         content.add(mBox, BorderLayout.CENTER);
-
-        return content;
+        
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(content, BorderLayout.NORTH);
+        return centerPanel;
     }
 
     public String toString() {
