@@ -35,6 +35,8 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
+import printplugin.util.IO;
+
 public class DayProgramScheme extends Scheme {
 
 
@@ -54,6 +56,7 @@ public class DayProgramScheme extends Scheme {
     out.writeInt(settings.getDayEndHour());
     out.writeInt(settings.getColumnCount());
     out.writeInt(settings.getChannelsPerColumn());
+    IO.writeProgramIconSettings(settings.getProgramIconSettings(), out);
 
   }
 
@@ -67,8 +70,9 @@ public class DayProgramScheme extends Scheme {
     int dayEndHour = in.readInt();
     int colCount = in.readInt();
     int channelsPerColumn = in.readInt();
+    ProgramIconSettings programItemSettings = IO.readProgramIconSettings(in);
 
-    DayProgramPrinterSettings settings = new DayProgramPrinterSettings(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, colCount, channelsPerColumn);
+    DayProgramPrinterSettings settings = new DayProgramPrinterSettings(fromDay, numberOfDays, channelArr, dayStartHour, dayEndHour, colCount, channelsPerColumn, programItemSettings);
     setSettings(settings);
   }
 

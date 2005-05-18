@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package printplugin.dlgs.printfromqueuedialog;
+package printplugin.dlgs.printdayprogramsdialog;
 
 import printplugin.dlgs.components.ProgramPreviewPanel;
 import printplugin.settings.ProgramIconSettings;
@@ -37,18 +37,21 @@ import util.ui.TabLayout;
 public class ExtrasTab extends JPanel {
 
   /** The localizer for this class. */
-   private static final util.ui.Localizer mLocalizer
-       = util.ui.Localizer.getLocalizerFor(ExtrasTab.class);
+  private static final util.ui.Localizer mLocalizer
+      = util.ui.Localizer.getLocalizerFor(ExtrasTab.class);
 
 
   private ProgramPreviewPanel mProgramPreviewPanel;
 
-  public ExtrasTab(final Frame dlgParent) {
+  public ExtrasTab(Frame dlgParent) {
     super();
 
     setLayout(new BorderLayout());
+
     JPanel content = new JPanel(new TabLayout(1));
+
     JPanel previewPn = new JPanel(new BorderLayout());
+
     previewPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("programItem","Program item")));
     mProgramPreviewPanel = new ProgramPreviewPanel(dlgParent);
     previewPn.add(mProgramPreviewPanel, BorderLayout.CENTER);

@@ -35,6 +35,7 @@ import devplugin.Channel;
  * Date: 24.04.2005
  * Time: 14:20:26
  */
+
 public class DayProgramPrinterSettings implements Settings {
 
   public static final int BREAK_TYPE_NEWPAGE = 1;
@@ -48,6 +49,7 @@ public class DayProgramPrinterSettings implements Settings {
   private int mDayEndHour;
   private int mColCount;
   private int mChannelsPerColum;
+  private ProgramIconSettings mProgramIconSettings;
 
   public DayProgramPrinterSettings(Date fromDay,
                                        int numberOfDays,
@@ -55,14 +57,16 @@ public class DayProgramPrinterSettings implements Settings {
                                        int dayStartHour,
                                        int dayEndHour,
                                        int colCount,
-                                       int channelsPerColumn) {
+                                       int channelsPerColumn,
+                                       ProgramIconSettings programIconSettings) {
     mFromDay = fromDay;
     mNumberOfDays = numberOfDays;
     mChannelList = channelList;
     mDayStartHour = dayStartHour;
     mDayEndHour = dayEndHour;
     mColCount = colCount;
-    mChannelsPerColum = channelsPerColumn;    
+    mChannelsPerColum = channelsPerColumn;
+    mProgramIconSettings = programIconSettings;
   }
   
   public Date getFromDay() {
@@ -85,14 +89,16 @@ public class DayProgramPrinterSettings implements Settings {
     return mDayEndHour;
   }
 
-
-
-
   public int getColumnCount() {
     return mColCount;
   }
 
   public int getChannelsPerColumn() {
     return mChannelsPerColum;
+  }
+  
+  
+  public ProgramIconSettings getProgramIconSettings() {
+    return mProgramIconSettings;
   }
 }

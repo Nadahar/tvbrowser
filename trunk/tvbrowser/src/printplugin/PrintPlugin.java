@@ -54,10 +54,16 @@ public class PrintPlugin extends Plugin {
   private static final String SCHEME_FILE_DAYPROGRAM = "printplugin.dayprog.schemes";
   private static final String SCHEME_FILE_QUEUE = "printplugin.queue.schemes";
 
+  private static Plugin mInstance;
+
   public PrintPlugin() {
+    mInstance = this;
   }
 
-  
+  public static Plugin getInstance() {
+    return mInstance;
+  }
+
   public String getMarkIconName() {
     return "printplugin/imgs/Print16.gif";
   }
@@ -70,17 +76,39 @@ public class PrintPlugin extends Plugin {
     return new PluginInfo(name, desc, author, new Version(0, 9));
   }
 
+  public void onActivation() {
+    PluginTreeNode root = getRootNode();
+    Program[] progs = root.getPrograms();
+    for (int i=0; i<progs.length; i++) {
+      progs[i].mark(this);
+    }
+    root.update();
+  }
 
   public ActionMenu getContextMenuActions(final Program program) {
+    final Plugin thisPlugin = this;
     ContextMenuAction action = new ContextMenuAction();
-    action.setText(mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
     action.setSmallIcon(createImageIcon("printplugin/imgs/Print16.gif"));
-    action.setActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        getRootNode().addProgram(program);
-        getRootNode().update();
-      }
-    });
+    if (getRootNode().contains(program)) {
+      action.setText(mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
+      action.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          getRootNode().removeProgram(program);
+          getRootNode().update();
+          program.unmark(thisPlugin);
+        }
+      });
+    }
+    else {
+      action.setText(mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
+      action.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent event) {
+          getRootNode().addProgram(program);
+          getRootNode().update();
+          program.mark(thisPlugin);
+        }
+      });
+    }
     return new ActionMenu(action);
   }
 
@@ -97,7 +125,7 @@ public class PrintPlugin extends Plugin {
           storeDayProgramSchemes(dlg.getSchemes());
         }
         else if (result == MainPrintDialog.PRINT_QUEUE) {
-          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode().getPrograms(), getParentFrame()), loadQueueSchemes());
+          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode(), getParentFrame()), loadQueueSchemes());
           storeQueueSchemes(dlg.getSchemes());
         }
       }
@@ -170,6 +198,7 @@ public class PrintPlugin extends Plugin {
     PluginTreeNode rootNode = getRootNode();
     for (int i=0; i<programArr.length; i++) {
       rootNode.addProgram(programArr[i]);
+      programArr[i].mark(this);
     }
     rootNode.update();
   }
@@ -217,7 +246,14 @@ public class PrintPlugin extends Plugin {
               6,
               24+3,
               5,
-              2));
+              2,
+              PrinterProgramIconSettings.create(
+                  new ProgramFieldType[]{
+                    ProgramFieldType.EPISODE_TYPE,
+                    ProgramFieldType.ORIGIN_TYPE,
+                    ProgramFieldType.PRODUCTION_YEAR_TYPE,
+                    ProgramFieldType.SHORT_DESCRIPTION_TYPE
+                  }, false)));
       return new DayProgramScheme[]{scheme};
     }
   }
@@ -268,6 +304,10 @@ public class PrintPlugin extends Plugin {
 
   public void loadSettings(Properties settings) {
 
+  }
+
+  public void writeData(ObjectOutputStream out) throws IOException {
+    storeRootNode();
   }
 
 

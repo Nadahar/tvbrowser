@@ -27,6 +27,8 @@
 package printplugin.dlgs;
 
 
+import printplugin.PrintPlugin;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -50,7 +52,7 @@ public class MainPrintDialog extends JDialog implements ActionListener {
 
   public MainPrintDialog(Frame parent) {
     super(parent, true);
-    setTitle("Drucken");
+    setTitle(mLocalizer.msg("title","Drucken"));
     JPanel content = (JPanel)getContentPane();
     content.setLayout(new BorderLayout());
 
@@ -79,6 +81,8 @@ public class MainPrintDialog extends JDialog implements ActionListener {
     ButtonGroup group = new ButtonGroup();
     group.add(mPrintDayProgramsRb);
     group.add(mPrintQueueRb);
+
+    mPrintQueueRb.setEnabled(!PrintPlugin.getInstance().getRootNode().isEmpty());
 
     mOkBtn.addActionListener(this);
     mCancelBtn.addActionListener(this);
