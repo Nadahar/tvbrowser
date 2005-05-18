@@ -26,14 +26,15 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
-import util.ui.FontChooserPanel;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class LayoutTab extends JPanel {
-  private Font mTitleFont, mDescriptionFont;
-  private FontChooserPanel mTitleFontPanel, mDescriptionFontPanel;
+
+  /** The localizer for this class. */
+  private static final util.ui.Localizer mLocalizer
+       = util.ui.Localizer.getLocalizerFor(LayoutTab.class);
+
   private JComboBox mColumnsPerPageCB;
 
   public LayoutTab() {
@@ -45,46 +46,28 @@ public class LayoutTab extends JPanel {
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
     JPanel columnPanel = new JPanel(new BorderLayout());
-    columnPanel.setBorder(BorderFactory.createTitledBorder("Columns"));
+    columnPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columns","Columns")));
     JPanel pn1 = new JPanel();
     pn1.setLayout(new BoxLayout(pn1, BoxLayout.X_AXIS));
 
-    JLabel columnLabel = new JLabel("Columns per page:");
+    JLabel columnLabel = new JLabel(mLocalizer.msg("columnsPerPage","Columns per page:"));
     mColumnsPerPageCB = new JComboBox(createIntegerArray(1,4));
 
     pn1.add(columnLabel);
     pn1.add(mColumnsPerPageCB);
     columnPanel.add(pn1, BorderLayout.WEST);
 
-    JPanel fontPanel=new JPanel(new GridLayout(2,1));
-    fontPanel.setBorder(BorderFactory.createTitledBorder("Fonts"));
-
-    mTitleFontPanel=new FontChooserPanel("Title", getTitleFont());
-    mDescriptionFontPanel=new FontChooserPanel("Description", getDescriptionFont());
-
-    fontPanel.add(mTitleFontPanel);
-    fontPanel.add(mDescriptionFontPanel);
-
     content.add(columnPanel);
-    content.add(fontPanel);
 
     add(content, BorderLayout.NORTH);
   }
 
-  public Font getTitleFont() {
-    return mTitleFont;
+  public int getColumnsPerPage() {
+    return ((Integer) mColumnsPerPageCB.getSelectedItem()).intValue();
   }
 
-  public void setTitleFont(Font newFont) {
-    mTitleFont = newFont;
-  }
-
-  public Font getDescriptionFont() {
-    return mDescriptionFont;
-  }
-
-  public void setDescriptionFont(Font newFont) {
-    mDescriptionFont = newFont;
+  public void setColumnsPerPage(int columns) {
+    mColumnsPerPageCB.setSelectedItem(new Integer(columns));
   }
 
   private Integer[] createIntegerArray(int from, int cnt) {

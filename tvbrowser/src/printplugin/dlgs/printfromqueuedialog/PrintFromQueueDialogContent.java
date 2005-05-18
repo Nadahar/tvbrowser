@@ -46,19 +46,24 @@ public class PrintFromQueueDialogContent implements DialogContent {
 
   private GeneralTab mGeneralTab;
   private LayoutTab mLayoutTab;
+  private ExtrasTab mExtrasTab;
   private Program[] mPrograms;
 
-  public PrintFromQueueDialogContent(Program[] programs) {
+  private Frame mParentFrame;
+
+  public PrintFromQueueDialogContent(Program[] programs, Frame parentFrame) {
     mPrograms = programs;
+    mParentFrame = parentFrame;
   }
 
   public Component getContent() {
     JTabbedPane tab = new JTabbedPane();
     mGeneralTab = new GeneralTab();
     mLayoutTab = new LayoutTab();
+    mExtrasTab = new ExtrasTab(mParentFrame);
     tab.add(mLocalizer.msg("listingsTab", "Daten"), mGeneralTab);
     tab.add(mLocalizer.msg("layoutTab","Layout"), mLayoutTab);
-    tab.add(mLocalizer.msg("miscTab","Extras"), new JPanel());
+    tab.add(mLocalizer.msg("miscTab","Extras"), mExtrasTab);
     return tab;
 
   }
@@ -68,14 +73,14 @@ public class PrintFromQueueDialogContent implements DialogContent {
   }
 
   public Settings getSettings() {
-    return new QueuePrinterSettings(mGeneralTab.emptyQueueAfterPrinting(), mLayoutTab.getTitleFont(), mLayoutTab.getDescriptionFont());
+    return new QueuePrinterSettings(mGeneralTab.emptyQueueAfterPrinting(), mLayoutTab.getColumnsPerPage(), mExtrasTab.getProgramIconSettings());
   }
 
   public void setSettings(Settings s) {
     QueuePrinterSettings settings = (QueuePrinterSettings)s;
     mGeneralTab.setEmptyQueueAfterPrinting(settings.emptyQueueAfterPrinting());
-    mLayoutTab.setTitleFont(settings.getTitleFont());
-    mLayoutTab.setDescriptionFont(settings.getDescriptionFont());
+    mLayoutTab.setColumnsPerPage(settings.getColumnsPerPage());
+    mExtrasTab.setProgramIconSettings(settings.getProgramIconSettings());
   }
 
   public PrintJob createPrintJob(PageFormat format) {
