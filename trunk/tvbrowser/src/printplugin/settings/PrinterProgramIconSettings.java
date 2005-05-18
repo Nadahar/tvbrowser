@@ -27,6 +27,9 @@
 package printplugin.settings;
 
 import java.awt.*;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import devplugin.*;
 
@@ -44,7 +47,7 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
   private ProgramFieldType[] mProgramInfoFields;
   private boolean mShowPluginMark;
   
-  private PrinterProgramIconSettings() {
+  protected PrinterProgramIconSettings() {
     mProgramInfoFields = new ProgramFieldType[]{
       ProgramFieldType.SHORT_DESCRIPTION_TYPE,
       ProgramFieldType.ACTOR_LIST_TYPE,
@@ -85,9 +88,11 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
 		return 35;
 	}
 
-	
 
-	
+
+
+
+  
 	public ProgramFieldType[] getProgramInfoFields() {
     return mProgramInfoFields;
 	}

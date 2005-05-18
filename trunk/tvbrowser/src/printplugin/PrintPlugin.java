@@ -31,7 +31,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
-import java.awt.*;
 import java.util.Properties;
 import java.io.*;
 import javax.swing.*;
@@ -98,7 +97,7 @@ public class PrintPlugin extends Plugin {
           storeDayProgramSchemes(dlg.getSchemes());
         }
         else if (result == MainPrintDialog.PRINT_QUEUE) {
-          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode().getPrograms()), loadQueueSchemes());
+          SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode().getPrograms(), getParentFrame()), loadQueueSchemes());
           storeQueueSchemes(dlg.getSchemes());
         }
       }
@@ -253,8 +252,14 @@ public class PrintPlugin extends Plugin {
       QueueScheme scheme = new QueueScheme(mLocalizer.msg("defaultScheme","DefaultScheme"));
       scheme.setSettings(new QueuePrinterSettings(
               true,
-              new Font("Dialog",Font.BOLD,12),
-              new Font("Dialog",Font.PLAIN, 10)
+              1,
+              PrinterProgramIconSettings.create(
+                  new ProgramFieldType[]{
+                    ProgramFieldType.EPISODE_TYPE,
+                    ProgramFieldType.ORIGIN_TYPE,
+                    ProgramFieldType.PRODUCTION_YEAR_TYPE,
+                    ProgramFieldType.SHORT_DESCRIPTION_TYPE
+                  }, false)              
       ));
 
       return new QueueScheme[]{scheme};

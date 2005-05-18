@@ -130,10 +130,10 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
      * Called by the host-application, if the user wants to save the settings.
      */
     public void saveSettings() {
-      Settings.propProgramTitleFont.setFont(mTitleFontPanel.getChoosenFont());
-      Settings.propProgramInfoFont.setFont(mInfoFontPanel.getChoosenFont());  
-      Settings.propChannelNameFont.setFont(mChannelNameFontPanel.getChoosenFont());
-      Settings.propProgramTimeFont.setFont(mTimeFontPanel.getChoosenFont());
+      Settings.propProgramTitleFont.setFont(mTitleFontPanel.getChosenFont());
+      Settings.propProgramInfoFont.setFont(mInfoFontPanel.getChosenFont());
+      Settings.propChannelNameFont.setFont(mChannelNameFontPanel.getChosenFont());
+      Settings.propProgramTimeFont.setFont(mTimeFontPanel.getChosenFont());
       Settings.propUseDefaultFonts.setBoolean(mUseDefaultFontsCB.isSelected());
       Settings.propEnableAntialiasing.setBoolean(mEnableAntialiasingCB.isSelected());
     }

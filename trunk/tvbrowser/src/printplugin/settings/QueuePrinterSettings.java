@@ -26,29 +26,29 @@
 
 package printplugin.settings;
 
-import java.awt.*;
-
 
 public class QueuePrinterSettings implements Settings {
 
   private boolean mEmptyQueueAfterPrinting;
-  private Font mTitleFont, mDescriptionFont;
+  private int mColumnsPerPage;
+  private ProgramIconSettings mProgramIconSettings;
 
-  public QueuePrinterSettings(boolean emptyQueueAfterPrinting, Font titleFont, Font descriptionFont) {
+  public QueuePrinterSettings(boolean emptyQueueAfterPrinting, int columnsPerPage, ProgramIconSettings programIconSettings) {
     mEmptyQueueAfterPrinting = emptyQueueAfterPrinting;
-    mTitleFont = titleFont;
-    mDescriptionFont = descriptionFont;
+    mColumnsPerPage = columnsPerPage;
+    mProgramIconSettings = programIconSettings;
+
   }
 
   public boolean emptyQueueAfterPrinting() {
     return mEmptyQueueAfterPrinting;
   }
 
-  public Font getTitleFont() {
-    return mTitleFont;
+  public int getColumnsPerPage() {
+    return mColumnsPerPage;
   }
 
-  public Font getDescriptionFont() {
-    return mDescriptionFont;
+  public ProgramIconSettings getProgramIconSettings() {
+    return mProgramIconSettings;
   }
 }

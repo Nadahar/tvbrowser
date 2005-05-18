@@ -66,34 +66,45 @@ public class FontChooserPanel extends JPanel {
     mStyleCB=new JComboBox(FONTSTYLES);
     mSizeCB=new JComboBox(FONTSIZES);
 
-    if (font != null) {
-      for (int i=0;i<mFontCB.getItemCount();i++) {
-        String item=(String)mFontCB.getItemAt(i);
-        if (item.equals(font.getName())) {
-          mFontCB.setSelectedIndex(i);
-          break;
-        }
-      }
-
-      for (int i=0;i<mSizeCB.getItemCount();i++) {
-        Integer item=(Integer)mSizeCB.getItemAt(i);
-        if (item.intValue() == font.getSize()) {
-          mSizeCB.setSelectedIndex(i);
-        }
-      }
-
-      if (font.getStyle()==Font.BOLD) {
-        mStyleCB.setSelectedIndex(1);
-      }else if (font.getStyle()==Font.ITALIC) {
-        mStyleCB.setSelectedIndex(2);
-      }
-    }
-
     panel1.add(mFontCB);
     panel1.add(mStyleCB);
     panel1.add(mSizeCB);
 
     add(panel1,BorderLayout.CENTER);
+
+    if (font != null) {
+      selectFont(font);
+    }
+
+  }
+
+
+  public FontChooserPanel(String title) {
+    this (title, null);
+  }
+
+  public void selectFont(Font font) {
+    for (int i=0;i<mFontCB.getItemCount();i++) {
+      String item=(String)mFontCB.getItemAt(i);
+      if (item.equals(font.getName())) {
+        mFontCB.setSelectedIndex(i);
+        break;
+      }
+    }
+
+    for (int i=0;i<mSizeCB.getItemCount();i++) {
+      Integer item=(Integer)mSizeCB.getItemAt(i);
+      if (item.intValue() == font.getSize()) {
+        mSizeCB.setSelectedIndex(i);
+      }
+    }
+
+    if (font.getStyle()==Font.BOLD) {
+      mStyleCB.setSelectedIndex(1);
+    }else if (font.getStyle()==Font.ITALIC) {
+      mStyleCB.setSelectedIndex(2);
+    }
+
 
   }
 
@@ -106,7 +117,7 @@ public class FontChooserPanel extends JPanel {
 
   }
 
-  public Font getChoosenFont() {
+  public Font getChosenFont() {
     Font result;
     int style;
     int inx=mStyleCB.getSelectedIndex();
