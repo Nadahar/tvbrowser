@@ -41,7 +41,7 @@ import devplugin.Channel;
  */
 public class ChannelLabel extends JLabel {
 
-    static Icon DEFAULT_ICON = new ImageIcon("./imgs/TVBrowser16.gif"); 
+    static Icon DEFAULT_ICON = new ImageIcon("./imgs/tvbrowser16.png"); 
   
     /**
      * Creates the ChannelLabel

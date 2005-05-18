@@ -343,7 +343,7 @@ public class TVBrowser {
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
     
     // Set the program icon
-    Image iconImage = ImageUtilities.createImage("imgs/TVBrowser16.gif");
+    Image iconImage = ImageUtilities.createImage("imgs/tvbrowser16.png");
     mainFrame.setIconImage(iconImage);
 
     mTray = new SystemTray();

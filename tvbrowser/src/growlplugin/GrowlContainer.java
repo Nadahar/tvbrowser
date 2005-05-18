@@ -67,7 +67,7 @@ public class GrowlContainer {
    */
   public GrowlContainer() throws Exception {
     
-    mNotifyImg = new NSImage("./imgs/TVBrowser32.gif", false);
+    mNotifyImg = new NSImage("./imgs/tvbrowser32.png", false);
     
     mGrowl = new Growl("TV-Browser", mNotifyImg);
     
