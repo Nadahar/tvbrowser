@@ -114,7 +114,9 @@ public class TimeFilterComponent implements FilterComponent {
                 BorderLayout.NORTH);
         content.add(timePn, BorderLayout.CENTER);
 
-        return content;
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(content, BorderLayout.NORTH);
+        return centerPanel;
     }
     
     public Date setTimeToDate(int minutes) {

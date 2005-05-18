@@ -26,6 +26,7 @@
 
 package tvbrowser.core.filters.filtercomponents;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
@@ -142,8 +143,10 @@ public class ProgramInfoFilterComponent implements FilterComponent {
             panel.add(box,b);
             panel.add(label,c);
         }
-        
-        return panel;
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.add(panel, BorderLayout.NORTH);
+        return centerPanel;
     }
 
     /**

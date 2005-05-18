@@ -24,6 +24,7 @@
 package tvbrowser.core.filters.filtercomponents;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ import javax.swing.JScrollPane;
 
 import tvbrowser.core.filters.FilterComponent;
 import util.exc.ErrorHandler;
+import util.ui.LineNumberHeader;
 import util.ui.beanshell.BeanShellEditor;
 import bsh.Interpreter;
 import devplugin.Plugin;
@@ -120,7 +122,12 @@ public class BeanShellFilterComponent implements FilterComponent {
         mScriptEditor = new BeanShellEditor();
         mScriptEditor.setText(mScriptSource);
         
-        content.add(new JScrollPane(mScriptEditor), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(mScriptEditor);
+        scrollPane.setBackground(Color.WHITE);
+        LineNumberHeader header = new LineNumberHeader(mScriptEditor);
+        scrollPane.setRowHeaderView(header); 
+        
+        content.add(scrollPane, BorderLayout.CENTER);
         
         JPanel buttonp = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         

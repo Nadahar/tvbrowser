@@ -113,7 +113,10 @@ public class PluginFilterComponent implements FilterComponent {
     }
     content.add(mBox,BorderLayout.CENTER);
 
-    return content;
+    
+    JPanel centerPanel = new JPanel(new BorderLayout());
+    centerPanel.add(content, BorderLayout.NORTH);
+    return centerPanel;
   }
 
 
