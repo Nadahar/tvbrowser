@@ -26,8 +26,6 @@
 
 package printplugin.printer;
 
-
-
 import java.util.*;
 
 

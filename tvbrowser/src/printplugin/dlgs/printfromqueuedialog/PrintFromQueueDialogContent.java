@@ -35,7 +35,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.print.PageFormat;
 
-import devplugin.Program;
+import devplugin.PluginTreeNode;
 
 
 public class PrintFromQueueDialogContent implements DialogContent {
@@ -47,18 +47,18 @@ public class PrintFromQueueDialogContent implements DialogContent {
   private GeneralTab mGeneralTab;
   private LayoutTab mLayoutTab;
   private ExtrasTab mExtrasTab;
-  private Program[] mPrograms;
+  private PluginTreeNode mRootNode;
 
   private Frame mParentFrame;
 
-  public PrintFromQueueDialogContent(Program[] programs, Frame parentFrame) {
-    mPrograms = programs;
+  public PrintFromQueueDialogContent(PluginTreeNode rootNode, Frame parentFrame) {
+    mRootNode = rootNode;
     mParentFrame = parentFrame;
   }
 
   public Component getContent() {
     JTabbedPane tab = new JTabbedPane();
-    mGeneralTab = new GeneralTab();
+    mGeneralTab = new GeneralTab(mRootNode);
     mLayoutTab = new LayoutTab();
     mExtrasTab = new ExtrasTab(mParentFrame);
     tab.add(mLocalizer.msg("listingsTab", "Daten"), mGeneralTab);
@@ -84,7 +84,7 @@ public class PrintFromQueueDialogContent implements DialogContent {
   }
 
   public PrintJob createPrintJob(PageFormat format) {
-    return JobFactory.createPrintJob((QueuePrinterSettings)getSettings(), format, mPrograms);
+    return JobFactory.createPrintJob((QueuePrinterSettings)getSettings(), format, mRootNode.getPrograms());
   }
 
   public Scheme createNewScheme(String schemeName) {

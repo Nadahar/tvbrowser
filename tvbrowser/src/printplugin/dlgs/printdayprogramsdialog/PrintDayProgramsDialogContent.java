@@ -51,6 +51,7 @@ public class PrintDayProgramsDialogContent implements DialogContent {
 
   private LayoutTab mLayoutTab;
   private ListingsTab mListingsTab;
+  private ExtrasTab mExtrasTab;
 
   public PrintDayProgramsDialogContent(Frame parent) {
     mParentFrame = parent;
@@ -63,9 +64,10 @@ public class PrintDayProgramsDialogContent implements DialogContent {
 
     mListingsTab = new ListingsTab(mParentFrame);
     mLayoutTab = new LayoutTab();
+    mExtrasTab = new ExtrasTab(mParentFrame);
     tab.add(mLocalizer.msg("listingsTab", "Daten"), mListingsTab);
     tab.add(mLocalizer.msg("layoutTab","Layout"), mLayoutTab);
-    tab.add(mLocalizer.msg("miscTab","Extras"), new JPanel());
+    tab.add(mLocalizer.msg("miscTab","Extras"), mExtrasTab);
     return tab;
   }
 
@@ -80,7 +82,8 @@ public class PrintDayProgramsDialogContent implements DialogContent {
         mListingsTab.getFromTime(),
         mListingsTab.getToTime(),
         mLayoutTab.getColumnsPerPage(),
-        mLayoutTab.getChannelsPerColumn()
+        mLayoutTab.getChannelsPerColumn(),
+        mExtrasTab.getProgramIconSettings()
         );
   }
 
@@ -94,13 +97,10 @@ public class PrintDayProgramsDialogContent implements DialogContent {
     Date from = settings.getFromDay();
     mListingsTab.setDateFrom(from);
     mListingsTab.setDayCount(settings.getNumberOfDays());
-
     mLayoutTab.setColumnLayout(settings.getColumnCount(), settings.getChannelsPerColumn());
-
+    mExtrasTab.setProgramIconSettings(settings.getProgramIconSettings());
   }
 
-
-  
 
   public PrintJob createPrintJob(PageFormat format) {
     return JobFactory.createPrintJob((DayProgramPrinterSettings)getSettings(), format);

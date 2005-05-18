@@ -26,23 +26,92 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
+import devplugin.Program;
+import devplugin.Channel;
+import devplugin.PluginTreeNode;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import util.ui.ProgramPanel;
+import util.ui.ImageUtilities;
+import util.ui.UiUtilities;
+import printplugin.PrintPlugin;
 
 public class GeneralTab extends JPanel {
 
   private JCheckBox mEmptyQueueCb;
+  private PluginTreeNode mRootNode;
 
-  public GeneralTab() {
+  public GeneralTab(PluginTreeNode rootNode) {
 
     super();
+    mRootNode = rootNode;
     setLayout(new BorderLayout());
 
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
+    JPanel programList = createProgramListPanel();
+
+    add(new JScrollPane(programList), BorderLayout.CENTER);
     add(content, BorderLayout.NORTH);
     add(mEmptyQueueCb = new JCheckBox("Queue nach dem Drucken leeren"), BorderLayout.SOUTH);
+  }
+
+
+  private JPanel createProgramListPanel() {
+
+    final JPanel content = new JPanel();
+    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+
+    Program[] progs = mRootNode.getPrograms();
+
+        
+    for (int i=0; i<progs.length; i++) {
+      final Program program = progs[i];
+      final JPanel programPanel = new JPanel(new BorderLayout());
+      Channel ch = program.getChannel();
+      JLabel channelLb;
+      if (ch.hasIcon()) {
+        channelLb = new JLabel(ch.getIcon());
+      }
+      else {
+        channelLb = new JLabel(ch.getName());
+      }
+
+      channelLb.setHorizontalAlignment(SwingConstants.RIGHT);
+      channelLb.setBorder(BorderFactory.createLineBorder(Color.black));
+      JPanel channelPn = new JPanel(new BorderLayout());
+      channelPn.add(channelLb, BorderLayout.NORTH);
+
+
+      JPanel removePn = new JPanel(new BorderLayout());
+      Icon icon = ImageUtilities.createImageIconFromJar("printplugin/imgs/Delete16.gif", getClass());
+      JButton removeBtn = UiUtilities.createToolBarButton("Remove from queue", icon);
+      removeBtn.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent event) {
+          program.unmark(PrintPlugin.getInstance());
+          mRootNode.removeProgram(program);
+          mRootNode.update();
+          content.remove(programPanel);
+          content.updateUI();
+        }
+      });
+      removePn.add(removeBtn, BorderLayout.NORTH);
+
+      channelPn.setPreferredSize(new Dimension(60,10));
+
+      programPanel.add(channelPn, BorderLayout.WEST);
+      programPanel.add(new ProgramPanel(progs[i]), BorderLayout.CENTER);
+      programPanel.add(removePn, BorderLayout.EAST);
+
+      content.add(programPanel);
+    }
+
+    return content;
   }
 
   public void setEmptyQueueAfterPrinting(boolean b) {

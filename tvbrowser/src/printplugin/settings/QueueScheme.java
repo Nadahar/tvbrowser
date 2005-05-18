@@ -26,12 +26,12 @@
 
 package printplugin.settings;
 
-import devplugin.ProgramFieldType;
-
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.awt.*;
+
+
+import printplugin.util.IO;
 
 
 public class QueueScheme extends Scheme {
@@ -50,7 +50,7 @@ public class QueueScheme extends Scheme {
     out.writeBoolean(emptyQueuAfterPrinting);
     out.writeInt(columnsPerPage);
 
-    writeProgramIconSettings(settings.getProgramIconSettings(), out);
+    IO.writeProgramIconSettings(settings.getProgramIconSettings(), out);
 
   }
 
@@ -62,55 +62,15 @@ public class QueueScheme extends Scheme {
 
     boolean emptyQueueAfterPrinting = in.readBoolean();
     int columnsPerPage = in.readInt();
-    ProgramIconSettings programIconSettings = readProgramIconSettings(in);
+    ProgramIconSettings programIconSettings = IO.readProgramIconSettings(in);
 
     QueuePrinterSettings settings = new QueuePrinterSettings(emptyQueueAfterPrinting, columnsPerPage, programIconSettings);
     setSettings(settings);
   }
 
 
-  private ProgramIconSettings readProgramIconSettings(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.readInt(); // version
-    Font textFont = readFont(in);
-    Font titleFont = readFont(in);
-    int fieldCnt = in.readInt();
-    ProgramFieldType[] fields = new ProgramFieldType[fieldCnt];
-    for (int i=0; i<fields.length; i++) {
-      fields[i] = ProgramFieldType.getTypeForId(in.readInt());
-    }
 
-    MutableProgramIconSettings result = new MutableProgramIconSettings(PrinterProgramIconSettings.create());
-    result.setProgramInfoFields(fields);
-    result.setTextFont(textFont);
-    result.setTimeFont(titleFont);
-    result.setTitleFont(titleFont);
-    return result;
-  }
 
-  private void writeProgramIconSettings(ProgramIconSettings settings, ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
-    writeFont(settings.getTextFont(), out);
-    writeFont(settings.getTitleFont(), out);
 
-    ProgramFieldType[] fields = settings.getProgramInfoFields();
-    out.writeInt(fields.length);
-    for (int i=0; i<fields.length; i++) {
-      out.writeInt(fields[i].getTypeId());
-    }
-  }
-
-  private static Font readFont(ObjectInputStream in) throws IOException, ClassNotFoundException {
-      String name = (String)in.readObject();
-      int size = in.readInt();
-      int style = in.readInt();
-
-    return new Font(name, style, size);
-  }
-
-    private static void writeFont(Font f, ObjectOutputStream out) throws IOException {
-      out.writeObject(f.getName());
-      out.writeInt(f.getSize());
-      out.writeInt(f.getStyle());
-    }
 
 }
