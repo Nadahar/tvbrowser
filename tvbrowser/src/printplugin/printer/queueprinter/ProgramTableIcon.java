@@ -26,7 +26,6 @@
 
 package printplugin.printer.queueprinter;
 
-import printplugin.printer.ProgramIcon;
 import printplugin.printer.ProgramItem;
 import printplugin.settings.ProgramIconSettings;
 
@@ -39,33 +38,50 @@ import devplugin.Program;
 
 public class ProgramTableIcon implements Icon {
 
-  private static final int COLUMN_WIDTH = 400;
+
   private int mWidth;
   private int mHeight;
   private int mCurColumnInx;
   private int mCurY;
+  private int mNumOfCols;
   private ArrayList mPrograms;
   private ProgramIconSettings mProgramIconSettings;
 
 
-  public ProgramTableIcon(ProgramIconSettings settings, int width, int height) {
+  public ProgramTableIcon(ProgramIconSettings settings, int width, int height, int numOfCols) {
     mProgramIconSettings = settings;
     mWidth = width;
     mHeight = height;
+    mNumOfCols = numOfCols;
     mCurColumnInx = 0;
     mCurY = 0;
     mPrograms = new ArrayList();
   }
 
   public boolean add(Program prog, boolean forceAdding) {
-    ProgramItem item = new ProgramItem(prog, mProgramIconSettings, COLUMN_WIDTH, true);
+    ProgramItem item = new ProgramItem(prog, mProgramIconSettings, mWidth/mNumOfCols-10, true);
     item.setMaximumHeight(200);
-    if (forceAdding || mCurY + item.getHeight() < mHeight) {
+
+    boolean canAdd = false;
+    if (forceAdding) {
+      canAdd = true;
+    }
+    else if (mCurY + item.getHeight() < mHeight) {
+      canAdd = true;
+    }
+    else if (mCurColumnInx+1 < mNumOfCols) {
+      mCurColumnInx++;
+      mCurY = 0;
+      canAdd = true;
+    }
+
+    if (canAdd) {
       mPrograms.add(item);
-      item.setPos(COLUMN_WIDTH * mCurColumnInx, mCurY);
-      mCurY +=item.getHeight();
+      item.setPos(mWidth/mNumOfCols * mCurColumnInx, mCurY);
+      mCurY +=item.getHeight() + mProgramIconSettings.getTitleFont().getSize()/2;
       return true;
     }
+
     return false;
   }
 
@@ -82,6 +98,12 @@ public class ProgramTableIcon implements Icon {
       ProgramItem item = (ProgramItem)mPrograms.get(i);
       item.paint(graphics, (int)(x+item.getX()), (int)(y+item.getY()));
     }
+
+    for (int i=0; i<mNumOfCols-1; i++) {
+      int x0 = mWidth/mNumOfCols*(i+1)+x;
+      graphics.drawLine(x0, 0+y, x0, mHeight+y);
+    }
+
   }
 
 }

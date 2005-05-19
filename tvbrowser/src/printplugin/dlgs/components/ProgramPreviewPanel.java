@@ -138,7 +138,9 @@ public class ProgramPreviewPanel extends JPanel {
 
   private Icon createDemoProgramPanel() {
     devplugin.Program prog = Plugin.getPluginManager().getExampleProgram();
-
+    if (mProgramIconSettings != null) {
+      mProgramIconSettings.setTimeFieldWidth(util.ui.UiUtilities.getStringWidth(mProgramIconSettings.getTimeFont(),"55:55X"));
+    }
     ProgramIcon ico = new ProgramIcon(prog, mProgramIconSettings, 200, false);
     ico.setMaximumHeight(Integer.MAX_VALUE);
     return ico;

@@ -30,11 +30,10 @@ import printplugin.settings.DayProgramPrinterSettings;
 import printplugin.settings.QueuePrinterSettings;
 import printplugin.printer.queueprinter.QueuePrintJob;
 import printplugin.printer.dayprogramprinter.DayProgramPrintJob;
+import printplugin.util.Util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.awt.print.PageFormat;
 
 import devplugin.*;
@@ -50,21 +49,12 @@ public class JobFactory {
   }
 
   private static PageModel createPage(Program[] programs) {
-    Arrays.sort(programs, new Comparator(){
-      public int compare(Object o1, Object o2) {
-        return ((Program)o1).getDate().compareTo(((Program)o2).getDate());
-      }
-    });
+    Util.sortProgramsByDateAndChannel(programs);
 
     DefaultPageModel pageModel = new DefaultPageModel("Liste");
-    //Date curDate = null;
     DefaultColumnModel colModel = new DefaultColumnModel("Spalte");
     pageModel.addColumn(colModel);
     for (int i=0; i<programs.length; i++) {
-//      if (!date.equals(curDate)  || colModel == null) {
-//        colModel = new DefaultColumnModel(date.toString());
-//        pageModel.addColumn(colModel);
-//      }
       colModel.addProgram(programs[i]);
     }
 

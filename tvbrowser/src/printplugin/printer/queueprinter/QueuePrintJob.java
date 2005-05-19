@@ -27,8 +27,6 @@
 package printplugin.printer.queueprinter;
 
 import printplugin.settings.QueuePrinterSettings;
-import printplugin.settings.PrinterProgramIconSettings;
-import printplugin.settings.ProgramIconSettings;
 import printplugin.printer.*;
 
 import java.awt.print.PageFormat;
@@ -41,16 +39,11 @@ import devplugin.Program;
 
 public class QueuePrintJob extends AbstractPrintJob {
 
-  private static final int NUM_OF_BLOCKS = 3;
-  private static final int NUM_OF_COLUMNS_PER_BLOCK = 5;
-  private static final int COLUMN_WIDTH = 300;
-
   private static final Font HEADER_FONT = new Font("Dialog",Font.BOLD,32);
   private static final Font FOOTER_FONT = new Font("Dialog",Font.ITALIC,6);
 
   private static final int HEADER_SPACE=30;
   private static final int FOOTER_SPACE=10;
-  private static final int TABLE_SPACE=10;
 
   private QueuePrinterSettings mSettings;
   private PageFormat mPageFormat;
@@ -85,17 +78,15 @@ public class QueuePrintJob extends AbstractPrintJob {
 
   class QueuePage implements Page {
 
-    private QueuePrinterSettings mSettings;
     private PageFormat mPageFormat;
     private ProgramTableIcon mTableIcon;
-    private ProgramIconSettings mProgramIconSettings = PrinterProgramIconSettings.create();
 
     public QueuePage(QueuePrinterSettings settings, PageFormat pageFormat) {
       mSettings = settings;
       mPageFormat = pageFormat;
       int width = (int)pageFormat.getImageableWidth();
-      int height = (int)pageFormat.getImageableHeight();
-      mTableIcon = new ProgramTableIcon(mProgramIconSettings, width, height);
+      int height = (int)pageFormat.getImageableHeight()-HEADER_SPACE-FOOTER_SPACE;
+      mTableIcon = new ProgramTableIcon(settings.getProgramIconSettings(), width, height, settings.getColumnsPerPage());
     }
 
 
@@ -105,8 +96,6 @@ public class QueuePrintJob extends AbstractPrintJob {
     }
     
     public boolean addProgram(Program prog, boolean forceAdding) {
-      //ProgramIcon ico = new ProgramIcon(prog, mProgramIconSettings, COLUMN_WIDTH);
-      //ico.setMaximumHeight(300);
       return mTableIcon.add(prog, forceAdding);
     }
 
@@ -115,11 +104,11 @@ public class QueuePrintJob extends AbstractPrintJob {
       int y0 = (int)mPageFormat.getImageableY();
 
 
-    //  graphics.setFont(HEADER_FONT);
-    //  graphics.drawString(mHeader, x0, y0+HEADER_FONT.getSize());
+      graphics.setFont(HEADER_FONT);
+      graphics.drawString("Titel", x0, y0+HEADER_FONT.getSize());
 
-    //  graphics.setFont(FOOTER_FONT);
-    //  graphics.drawString(mFooter, x0, y0 + (int)mPageFormat.getImageableHeight());
+      graphics.setFont(FOOTER_FONT);
+      graphics.drawString("Copyright (c) by TV-Browser", x0, y0 + (int)mPageFormat.getImageableHeight());
 
 //      for (int i=0; i<mProgramTableIcons.length; i++) {
 //        if (mProgramTableIcons[i] != null) {
