@@ -197,8 +197,10 @@ public class PrintPlugin extends Plugin {
   public void receivePrograms(Program[] programArr) {
     PluginTreeNode rootNode = getRootNode();
     for (int i=0; i<programArr.length; i++) {
-      rootNode.addProgram(programArr[i]);
-      programArr[i].mark(this);
+      if (!rootNode.contains(programArr[i])) {
+        rootNode.addProgram(programArr[i]);
+        programArr[i].mark(this);
+      }
     }
     rootNode.update();
   }

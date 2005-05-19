@@ -99,7 +99,8 @@ public class ProgramIcon implements Icon {
     }
 
     mTitleIcon = new TextAreaIcon(null, mSettings.getTitleFont(), titleWidth);
-    mDescriptionIcon = new TextAreaIcon(null,mSettings.getTextFont(), width - mSettings.getTimeFieldWidth() - 5);
+    int timefieldWidth = mSettings.getTimeFieldWidth();
+    mDescriptionIcon = new TextAreaIcon(null,mSettings.getTextFont(), width - timefieldWidth - 5 + timefieldWidth/2);
     mDescriptionIcon.setMaximumLineCount(3);
 
 
@@ -253,7 +254,7 @@ public class ProgramIcon implements Icon {
         
         grp.drawString(mProgramTimeAsString, 1, mSettings.getTimeFont().getSize());
         mTitleIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth(), 0);
-        mDescriptionIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth(), mTitleIcon.getIconHeight());
+        mDescriptionIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth()/2, mTitleIcon.getIconHeight());
 
         if (mChannelIcon != null) {
           mChannelIcon.paintIcon(component, grp, getIconWidth()-mChannelIcon.getIconWidth(), 0);
