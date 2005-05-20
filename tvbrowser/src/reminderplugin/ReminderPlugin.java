@@ -104,8 +104,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       ParamParser parser = new ParamParser();
       String fParam=parser.analyse(mSettings.getProperty("execparam"), item.getProgram());
       
-      System.out.println(fName + " " +  fParam);
-      
       try {
         Process proc = Runtime.getRuntime().exec(fName + " " +  fParam);
       } catch (Exception exc) {
