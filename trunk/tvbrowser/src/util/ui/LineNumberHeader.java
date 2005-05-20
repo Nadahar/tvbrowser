@@ -6,6 +6,7 @@ package util.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -16,6 +17,8 @@ import javax.swing.JComponent;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -91,16 +94,28 @@ public class LineNumberHeader extends JComponent {
     setLines();
   }
 
+  
   /**
    * Set local FontMetrics from the <code>JTextArea</code> 
    * Calls revalidate() and repaint()
    */
   private void setMetrics() {
-    metrics = this.textComponent.getFontMetrics(this.textComponent.getFont());
+    Font refFont = null;
+   
+    Document doc = this.textComponent.getDocument();
+    if(doc instanceof DefaultStyledDocument) {
+        DefaultStyledDocument myDoc = (DefaultStyledDocument)doc;
+        refFont = myDoc.getFont(myDoc.getDefaultRootElement().getAttributes());
+    } else {
+        refFont = this.textComponent.getFont();
+    }
+
+    metrics = this.textComponent.getFontMetrics(refFont);     
+     
     revalidate();
     repaint();
   }
-
+  
   /**
    * Setzt lokal die max. Zeilenzahl. FÃ¼hrt falls nÃ¶tig revalidate() und
    * repaint() aus.
@@ -111,7 +126,7 @@ public class LineNumberHeader extends JComponent {
     if (textComponent instanceof JTextArea) {
       newLines = ((JTextArea)textComponent).getLineCount();
     } else {
-      newLines = textComponent.getDocument().getDefaultRootElement().getElementCount()+1;
+      newLines = textComponent.getDocument().getDefaultRootElement().getElementCount();
     }
     
     if (newLines != this.maxLines) {
@@ -128,11 +143,11 @@ public class LineNumberHeader extends JComponent {
     // Breite des Gesamtstrings ermitteln
     // Also: Maximale-Zeilenzahl als String, dessen Stringbreite
     final int w = metrics.stringWidth(Integer.toString(maxLines));
-    // HÃ¶he einer einzelnen Textzeile
+    // Höhe einer einzelnen Textzeile
     final int h = metrics.getHeight();
 
     // Breite: 2 * Randbreite + max. Stringbreite
-    // HÃ¶he: max. Zeilenzahl * HÃ¶he einer Zeile (StringhÃ¶he)
+    // Höhe: max. Zeilenzahl * Höhe einer Zeile (Stringhöhe)
     return new Dimension(w + 2 * this.borderWidth, maxLines * h + this.textComponent.getMargin().top
         + this.textComponent.getMargin().bottom);
   }
@@ -150,7 +165,7 @@ public class LineNumberHeader extends JComponent {
 
     // Maximale Stringbreite (wie in getPrefSize()
     final int w = metrics.stringWidth(Integer.toString(maxLines));
-    // SchrifthÃ¶he (wie in getPrefSize()
+    // Schrifthöhe (wie in getPrefSize()
     final int h = metrics.getHeight();
 
     // Verschiebung nach links um Gesamtbreite (String) + ein Rand
