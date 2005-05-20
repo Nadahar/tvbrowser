@@ -23,16 +23,15 @@
  *   $Author$
  * $Revision$
  */
-
-
 package tvbrowser.core.filters;
-import java.io.*;
 
-import javax.swing.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
+import javax.swing.JPanel;
 
-public interface FilterComponent /*implements devplugin.ProgramFilter*/ {
-  
+public interface FilterComponent {
   
   public int getVersion();
   public boolean accept(devplugin.Program program);  
@@ -45,61 +44,6 @@ public interface FilterComponent /*implements devplugin.ProgramFilter*/ {
   public void setName(String name);
   public void setDescription(String desc);
   
-  
- /*
-    private int mType;
-    protected String mName, mDescription;
-    
-    protected java.util.Properties mSettings;
-    protected JPanel mPanel;
-    
-    public FilterComponent() {
-    }
-    
-    public FilterComponent(String name, String description) {
-        mName=name;
-        mDescription=description;
-        mSettings=new java.util.Properties();
-    }
-    
-    public FilterComponent(java.io.ObjectInputStream in) {
-        
-    }
-    
-    public void setName(String name) {
-        mName=name.trim().replace(' ','_');
-    }
-    
-    public void setDescription(String desc) {
-        mDescription=desc;
-    }
-    
-    public void setType(int type) {
-        mType=type;
-    }
-    
-    public String getName() {
-        return mName;
-    }
-    
-    public String getDescription() {
-        return mDescription;
-    }
-    
-    public abstract String toString();
-    
-    public abstract void ok();
-    
-    public abstract void store(java.io.ObjectOutputStream out);
-    
-    //public abstract java.util.Properties getSettings();
-    
-    //public abstract void setSettings(java.util.Properties settings);
-    
-    public abstract JPanel getPanel();
-    
-    abstract public boolean accept(devplugin.Program program);  
-    */  
 }
 
 

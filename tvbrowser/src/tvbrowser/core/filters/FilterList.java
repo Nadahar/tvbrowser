@@ -64,22 +64,17 @@ public class FilterList {
     return mInstance;
   }
   
- // public void create() {
- /*   mFilterDirectory=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY);
-    if (!mFilterDirectory.exists()) {
-      mFilterDirectory.mkdirs();
-    } 
-    mFilterArr = createFilterList();*/
-  //}
-  
   private ProgramFilter[] createFilterList() {
-    ArrayList filterList = new ArrayList();
+    HashMap filterList = new HashMap();
     
     /* Add default filters. The user may not remove them. */
-    filterList.add(new ShowAllFilter());
-    filterList.add(new PluginFilter());
-    filterList.add(new SubtitleFilter());
     
+    ProgramFilter showAll = new ShowAllFilter(); 
+    filterList.put(showAll.getName(), showAll);
+    ProgramFilter pluginFilter = new PluginFilter(); 
+    filterList.put(pluginFilter.getName(), pluginFilter);
+    ProgramFilter subtitleFilter = new SubtitleFilter();    
+    filterList.put(subtitleFilter.getName(), subtitleFilter);
     
     /* Read the available filters from the file system and add them to the array */
     if (mFilterDirectory==null) {
@@ -99,14 +94,12 @@ public class FilterList {
           mLog.warning("error parsing filter from file "+fileList[i]+"; exception: "+e);
         }
         if (filter!=null) {
-          filterList.add(filter);
+          filterList.put(filter.getName(), filter);
         }
       }
     }
     
-    /* Create the array */
-    ProgramFilter[] filterArr = new ProgramFilter[filterList.size()];
-    filterList.toArray(filterArr);
+    ArrayList filterArr = new ArrayList();
     
     /* Sort the list*/
     File inxFile=new File(mFilterDirectory,FILTER_INDEX);
@@ -117,16 +110,17 @@ public class FilterList {
       String curFilterName=null;
       curFilterName=inxIn.readLine();
       while (curFilterName!=null){
-        for (int i=cnt;i<filterArr.length;i++) {
-          if (filterArr[i].getName().equalsIgnoreCase(curFilterName)) {
-            //swap i<-->cnt
-            ProgramFilter h = filterArr[cnt];
-            filterArr[cnt] = filterArr[i];
-            filterArr[i] = h;
-            cnt++;
-            break;
+        if (curFilterName.equals("[SEPARATOR]")) {
+          filterArr.add(new SeparatorFilter());
+        } else {
+          ProgramFilter filter = (ProgramFilter) filterList.get(curFilterName);
+          
+          if (filter != null) {
+            filterArr.add(filter);
+            filterList.remove(curFilterName);
           }
         }
+
         curFilterName=inxIn.readLine();
       }
     }catch (FileNotFoundException e) {
@@ -137,7 +131,15 @@ public class FilterList {
       try{ if (inxIn!=null) inxIn.close();}catch(IOException e){};
     }    
     
-    return filterArr;
+    
+    if (filterList.size() > 0) {
+      Iterator it = filterList.values().iterator();
+      while (it.hasNext()) {
+        filterArr.add(it.next());
+      }
+    }
+    
+    return (ProgramFilter[]) filterArr.toArray(new ProgramFilter[0]);
     
   }
   
@@ -169,7 +171,7 @@ public class FilterList {
 
   public boolean containsFilter(String filterName) {
     for (int i=0; i<mFilterArr.length;i++) {
-      if (mFilterArr[i].toString().equalsIgnoreCase(filterName)) {
+      if (mFilterArr[i].getName().equalsIgnoreCase(filterName)) {
         return true;
       }
     }
@@ -193,7 +195,6 @@ public class FilterList {
   }
   
   public void store() {
-    
     /* delete all filters*/
     File[] fileList=getFilterFiles();
     for (int i=0;i<fileList.length; i++) {
@@ -206,8 +207,6 @@ public class FilterList {
       }
     }
 
-    
-    
     File inxFile=new File(mFilterDirectory,FILTER_INDEX);
     BufferedWriter inxOut=null;
     

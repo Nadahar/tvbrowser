@@ -23,26 +23,27 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.core.filters;
 
-public class ShowAllFilter implements devplugin.ProgramFilter {
-    
-  private static final util.ui.Localizer mLocalizer
-         = util.ui.Localizer.getLocalizerFor(ShowAllFilter.class);
-  
-    
-  public boolean accept(devplugin.Program prog) {
-    return true;
-  }
-  
-  
-  public String getName() {
-      return toString();
-  }
+import devplugin.ProgramFilter;
 
-  public String toString() {
-    return mLocalizer.msg("ShowAll","Show all");
-  }
-   
+/**
+ * This Filter filters is not a real Filter, it only
+ * is used to mark seperators
+ */
+public class SeparatorFilter implements ProgramFilter {
+
+    public boolean accept(devplugin.Program prog) {
+      return false;
+    }
+    public String getName() {
+        return "[SEPARATOR]";
+    }
+
+    /**
+     * Name of Filter
+     */
+    public String toString() {
+        return "---------------";
+    }
 }

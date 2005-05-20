@@ -103,12 +103,7 @@ public class UserFilter implements devplugin.ProgramFilter {
            in.close();
          }catch(IOException e) {}
         
-       //  try {
-             createTokenTree();            
-       //  }catch (ParserException e) {
-       //      ErrorHandler.handle("Error parsing filter rule",e);
-       //  }
-        
+         createTokenTree();            
      }
     
   public void store() {
@@ -351,23 +346,6 @@ public class UserFilter implements devplugin.ProgramFilter {
          if (component!=null) {
            return new ItemNode(component);
          }
-         /*
-         FilterComponent[] components = FilterComponentList.getInstance().getAvailableFilterComponents();
-         for (int i=0; i<components.length; i++) {
-           if (tk.value.equalsIgnoreCase(components[i].toString())) {
-             return new ItemNode(components[i]);
-           }
-         }
-         */
-         
-     /*  Iterator it=FilterComponentList.iterator();
-         while (it.hasNext()) {
-           FilterComponent rule=(FilterComponent)it.next();
-           if (tk.value.equalsIgnoreCase(rule.getName())) {
-             return new ItemNode(rule);                                 
-           }            
-         }*/
-        // throw new ParserException(tk.value+" is not a valid filter component");
          throw new ParserException(mLocalizer.msg("invalidCompName","{0} is not a valid component name",tk.value));
      }    
   
