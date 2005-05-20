@@ -26,7 +26,6 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -47,7 +46,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import tvbrowser.core.filters.FilterComponent;
-import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
@@ -61,194 +60,180 @@ import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import util.ui.UiUtilities;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener {
-    
-    private static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(EditFilterComponentDlg.class);
-  
-    private tvbrowser.core.filters.FilterComponent mSelectedFilterComponent;
-    private JComboBox mRuleCb;
-    private JPanel mCenterPanel, mRulePanel=null, mContentPane;
-    private JButton mOkBtn, mCancelBtn;
-    private JTextField mDescTF, mNameTF;
-   
-    
-    public EditFilterComponentDlg(JFrame parent) {
-      this(parent, null);
-    }
-    
-    public EditFilterComponentDlg(JFrame parent, FilterComponent comp) {
-        super(parent,true);
-        
-        mContentPane=(JPanel)getContentPane();
-        mContentPane.setLayout(new BorderLayout(7,7));
-        mContentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        setTitle(mLocalizer.msg("title", "Edit filter component"));
-            
-        JPanel northPanel=new JPanel();
-        northPanel.setLayout(new BoxLayout(northPanel,BoxLayout.Y_AXIS));    
-            
-        JPanel namePanel=new JPanel(new BorderLayout());
-        namePanel.setBorder(BorderFactory.createEmptyBorder(0,0,7,0));
-        JPanel descPanel=new JPanel(new BorderLayout());
-        descPanel.setBorder(BorderFactory.createEmptyBorder(0,0,7,0));
-        
-        JPanel typePanel=new JPanel(new BorderLayout());
-        
-        namePanel.add(new JLabel(mLocalizer.msg("componentName", "Component name:")),BorderLayout.WEST);
-        mNameTF=new JTextField(20);
-        //mNameTF.addActionListener(this);
-        
-        mNameTF.getDocument().addDocumentListener(this);
-        
-        namePanel.add(mNameTF,BorderLayout.EAST);
-        mDescTF=new JTextField(20);
-        descPanel.add(new JLabel(mLocalizer.msg("componentDescription", "Description:")),BorderLayout.WEST);
-        descPanel.add(mDescTF,BorderLayout.EAST);
-        typePanel.add(new JLabel(mLocalizer.msg("componentType", "Type:")),BorderLayout.WEST);
-        
-      mRuleCb=new JComboBox();
-      mRuleCb.addActionListener(this);
-      mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
-      mRuleCb.addItem(new KeywordFilterComponent());
-      mRuleCb.addItem(new PluginFilterComponent());
-      mRuleCb.addItem(new PluginIconFilterComponent());
-      mRuleCb.addItem(new ChannelFilterComponent());   
-      mRuleCb.addItem(new TimeFilterComponent());
-      mRuleCb.addItem(new ProgramInfoFilterComponent());
-      mRuleCb.addItem(new ProgramLengthFilterComponent());
-      mRuleCb.addItem(new ProgramRunningFilterComponent());
-      mRuleCb.addItem(new BeanShellFilterComponent());
-      mRuleCb.addItem(new MassFilterComponent());
-      
-        typePanel.add(mRuleCb,BorderLayout.EAST);
-        
-        northPanel.add(namePanel);
-        northPanel.add(descPanel);
-        northPanel.add(typePanel);
-        
-        
-        JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
-          mOkBtn=new JButton(mLocalizer.msg("okButton", "OK"));
-          mOkBtn.addActionListener(this);
-          buttonPn.add(mOkBtn);
-       
-        getRootPane().setDefaultButton(mOkBtn);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFilterComponentDlg.class);
 
-        mCancelBtn=new JButton(mLocalizer.msg("cancelButton", "Cancel"));
-        mCancelBtn.addActionListener(this);
-        buttonPn.add(mCancelBtn);
-        
-       
-        JPanel panel=new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("componentSettings", "Component settings:")));
-       
-        mCenterPanel=new JPanel(new BorderLayout());
-        panel.add(mCenterPanel);
-        
-        mContentPane.add(northPanel,BorderLayout.NORTH);
-        mContentPane.add(buttonPn,BorderLayout.SOUTH);
-        mContentPane.add(panel,BorderLayout.CENTER);
-         
-        if (comp!=null) {
-          this.setFilterComponent(comp); 
-        }
-         
-        
-           
-        updateOkBtn();
-                    
-        setSize(500, 500);
-        UiUtilities.centerAndShow(this);
-        
+  private tvbrowser.core.filters.FilterComponent mSelectedFilterComponent;
+
+  private JComboBox mRuleCb;
+
+  private JPanel mCenterPanel, mRulePanel = null, mContentPane;
+
+  private JButton mOkBtn, mCancelBtn;
+
+  private JTextField mDescTF, mNameTF;
+
+  public EditFilterComponentDlg(JFrame parent) {
+    this(parent, null);
+  }
+
+  public EditFilterComponentDlg(JFrame parent, FilterComponent comp) {
+    super(parent, true);
+
+    mContentPane = (JPanel) getContentPane();
+    mContentPane.setLayout(new BorderLayout(7, 7));
+    mContentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    setTitle(mLocalizer.msg("title", "Edit filter component"));
+
+    JPanel northPanel = new JPanel();
+    northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+
+    JPanel namePanel = new JPanel(new BorderLayout());
+    namePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
+    JPanel descPanel = new JPanel(new BorderLayout());
+    descPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
+
+    JPanel typePanel = new JPanel(new BorderLayout());
+
+    namePanel.add(new JLabel(mLocalizer.msg("componentName", "Component name:")), BorderLayout.WEST);
+    mNameTF = new JTextField(20);
+
+    mNameTF.getDocument().addDocumentListener(this);
+
+    namePanel.add(mNameTF, BorderLayout.EAST);
+    mDescTF = new JTextField(20);
+    descPanel.add(new JLabel(mLocalizer.msg("componentDescription", "Description:")), BorderLayout.WEST);
+    descPanel.add(mDescTF, BorderLayout.EAST);
+    typePanel.add(new JLabel(mLocalizer.msg("componentType", "Type:")), BorderLayout.WEST);
+
+    mRuleCb = new JComboBox();
+    mRuleCb.addActionListener(this);
+    mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
+    mRuleCb.addItem(new KeywordFilterComponent());
+    mRuleCb.addItem(new PluginFilterComponent());
+    mRuleCb.addItem(new PluginIconFilterComponent());
+    mRuleCb.addItem(new ChannelFilterComponent());
+    mRuleCb.addItem(new TimeFilterComponent());
+    mRuleCb.addItem(new ProgramInfoFilterComponent());
+    mRuleCb.addItem(new ProgramLengthFilterComponent());
+    mRuleCb.addItem(new ProgramRunningFilterComponent());
+    mRuleCb.addItem(new BeanShellFilterComponent());
+    mRuleCb.addItem(new MassFilterComponent());
+
+    typePanel.add(mRuleCb, BorderLayout.EAST);
+
+    northPanel.add(namePanel);
+    northPanel.add(descPanel);
+    northPanel.add(typePanel);
+
+    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+
+    mOkBtn = new JButton(mLocalizer.msg("okButton", "OK"));
+    mOkBtn.addActionListener(this);
+    buttonPn.add(mOkBtn);
+
+    getRootPane().setDefaultButton(mOkBtn);
+
+    mCancelBtn = new JButton(mLocalizer.msg("cancelButton", "Cancel"));
+    mCancelBtn.addActionListener(this);
+    buttonPn.add(mCancelBtn);
+
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("componentSettings", "Component settings:")));
+
+    mCenterPanel = new JPanel(new BorderLayout());
+    panel.add(mCenterPanel);
+
+    mContentPane.add(northPanel, BorderLayout.NORTH);
+    mContentPane.add(buttonPn, BorderLayout.SOUTH);
+    mContentPane.add(panel, BorderLayout.CENTER);
+
+    if (comp != null) {
+      this.setFilterComponent(comp);
     }
-    
-    
-    private void setFilterComponent(FilterComponent comp) {
-      for (int i=1;  // index 0 does not contain a FilterComponent object
-           i<mRuleCb.getItemCount(); i++) {
-        FilterComponent c = (FilterComponent)mRuleCb.getItemAt(i);
-        if (c.toString().equals(comp.toString())) {
-          DefaultComboBoxModel model=(DefaultComboBoxModel)mRuleCb.getModel();
-          model.removeElementAt(i);
-          model.insertElementAt(comp,i);
-          mRuleCb.setSelectedIndex(i);
-          mNameTF.setText(comp.getName());
-          mDescTF.setText(comp.getDescription());
-          break;
-        }
+
+    updateOkBtn();
+
+    setSize(500, 500);
+    UiUtilities.centerAndShow(this);
+
+  }
+
+  private void setFilterComponent(FilterComponent comp) {
+    for (int i = 1; // index 0 does not contain a FilterComponent object
+    i < mRuleCb.getItemCount(); i++) {
+      FilterComponent c = (FilterComponent) mRuleCb.getItemAt(i);
+      if (c.toString().equals(comp.toString())) {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) mRuleCb.getModel();
+        model.removeElementAt(i);
+        model.insertElementAt(comp, i);
+        mRuleCb.setSelectedIndex(i);
+        mNameTF.setText(comp.getName());
+        mDescTF.setText(comp.getDescription());
+        break;
       }
-      
     }
-    
-    public void actionPerformed(ActionEvent e) {
-        Object o=e.getSource();
-        if (o==mRuleCb) {
-            if (mRulePanel!=null) {
-                mCenterPanel.remove(mRulePanel);
-            }
-            Object item=mRuleCb.getSelectedItem();
-            if (item instanceof FilterComponent) {                
-                FilterComponent fItem=(FilterComponent)item;
-                mRulePanel=fItem.getPanel();
-                mRulePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-                mCenterPanel.add(mRulePanel,BorderLayout.CENTER);
-            }
-            mContentPane.updateUI();
-            updateOkBtn();
-            
-        }
-        else if (o==mOkBtn) {
-          
-          String compName=mNameTF.getText();
-          
-          
-          
-          if (FilterComponentList.getInstance().exists(compName)) {           
-          
-            JOptionPane.showMessageDialog(this,"Component '"+compName+"' already exists");
-          }
-          else {
-            
-            FilterComponent c =(FilterComponent)mRuleCb.getSelectedItem();
-            c.ok();
-            mSelectedFilterComponent = c;
-            mSelectedFilterComponent.setName(compName);
-            mSelectedFilterComponent.setDescription(mDescTF.getText());
-            hide();
-          }
-        }  
-        else if (o==mCancelBtn) {
-          mSelectedFilterComponent = null;
-            hide();
-        }
-        
+
+  }
+
+  public void actionPerformed(ActionEvent e) {
+    Object o = e.getSource();
+    if (o == mRuleCb) {
+      if (mRulePanel != null) {
+        mCenterPanel.remove(mRulePanel);
+      }
+      Object item = mRuleCb.getSelectedItem();
+      if (item instanceof FilterComponent) {
+        FilterComponent fItem = (FilterComponent) item;
+        mRulePanel = fItem.getPanel();
+        mRulePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        mCenterPanel.add(mRulePanel, BorderLayout.CENTER);
+      }
+      mContentPane.updateUI();
+      updateOkBtn();
+
+    } else if (o == mOkBtn) {
+
+      String compName = mNameTF.getText();
+
+      if (FilterList.getInstance().containsFilter(compName)) {
+
+        JOptionPane.showMessageDialog(this, "Component '" + compName + "' already exists");
+      } else {
+
+        FilterComponent c = (FilterComponent) mRuleCb.getSelectedItem();
+        c.ok();
+        mSelectedFilterComponent = c;
+        mSelectedFilterComponent.setName(compName);
+        mSelectedFilterComponent.setDescription(mDescTF.getText());
+        hide();
+      }
+    } else if (o == mCancelBtn) {
+      mSelectedFilterComponent = null;
+      hide();
     }
-    
-    public FilterComponent getFilterComponent() {
-      return mSelectedFilterComponent;
-    }
-    
-    private void updateOkBtn() {
-        if (mOkBtn!=null)
-        mOkBtn.setEnabled(
-            !("".equals(mNameTF.getText()))
-            && mRuleCb.getSelectedItem() instanceof FilterComponent
-        );
-    }
-    
-    public void changedUpdate(DocumentEvent e) {
-        updateOkBtn();
-    }
-        
-    public void insertUpdate(DocumentEvent e) {
-        updateOkBtn();
-    }
-    
-    public void removeUpdate(DocumentEvent e) {
-        updateOkBtn();
-    }
-    
-    
-    
+
+  }
+
+  public FilterComponent getFilterComponent() {
+    return mSelectedFilterComponent;
+  }
+
+  private void updateOkBtn() {
+    if (mOkBtn != null)
+      mOkBtn.setEnabled(!("".equals(mNameTF.getText())) && mRuleCb.getSelectedItem() instanceof FilterComponent);
+  }
+
+  public void changedUpdate(DocumentEvent e) {
+    updateOkBtn();
+  }
+
+  public void insertUpdate(DocumentEvent e) {
+    updateOkBtn();
+  }
+
+  public void removeUpdate(DocumentEvent e) {
+    updateOkBtn();
+  }
+
 }

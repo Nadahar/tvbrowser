@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTableModel;
@@ -85,23 +86,33 @@ public class FilterButtons implements ActionListener {
         
         
         for (int i = 0; i < filterArr.length; i++) {
-            final ProgramFilter filter = filterArr[i];
-            
-            final JRadioButtonMenuItem item = new JRadioButtonMenuItem(filter.toString());
-            
-            result[i] = item;
-            
-            group.add(item);
-            result[i].addActionListener(new ActionListener() {
+          
+            if (filterArr[i] != null) {
+              final ProgramFilter filter = filterArr[i];
+              
+              if (filter instanceof SeparatorFilter) {
+                result[i] = null;
+              } else {
+                final JRadioButtonMenuItem item = new JRadioButtonMenuItem(filter.toString());
+                
+                result[i] = item;
+                
+                group.add(item);
+                result[i].addActionListener(new ActionListener() {
 
-                public void actionPerformed(ActionEvent event) {
-                    mMainFrame.setProgramFilter(filter);
-                    item.setSelected(true);
+                    public void actionPerformed(ActionEvent event) {
+                        mMainFrame.setProgramFilter(filter);
+                        item.setSelected(true);
+                    }
+                });
+
+                if (curFilter != null && filter != null && (curFilter.getName().equals(filter.getName()))) {
+                    result[i].setSelected(true);
                 }
-            });
-
-            if (curFilter != null && filter != null && (curFilter.getName().equals(filter.getName()))) {
-                result[i].setSelected(true);
+              }
+              
+            } else {
+              result[i] = null;
             }
         }
 

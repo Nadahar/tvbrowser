@@ -260,16 +260,12 @@ public class EditFilterDlg
 			EditFilterComponentDlg dlg = new EditFilterComponentDlg(mParent);
 			FilterComponent rule = dlg.getFilterComponent();
 			if (rule != null) {
-				//FilterComponentItem item = new FilterComponentItem(rule);
-				//item.setName(dlg.getName());
-				//item.setDescription(dlg.getDescription());
 				mComponentListModel.addElement(rule);
 				tvbrowser.core.filters.FilterComponentList.getInstance().add(rule);
 				String text = mFilterRuleTF.getText();
 				if (text.length() > 0) {
 					text += " "+mFilterLocalizer.msg("or", "or")+" ";
 				}
-				//text+=dlg.getName();
 				text += rule.getName();
 				mFilterRuleTF.setText(text);
 
