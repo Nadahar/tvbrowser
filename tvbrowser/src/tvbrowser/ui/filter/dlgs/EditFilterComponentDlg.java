@@ -46,7 +46,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import tvbrowser.core.filters.FilterComponent;
-import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
@@ -196,7 +196,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
       String compName = mNameTF.getText();
 
-      if (FilterList.getInstance().containsFilter(compName)) {
+      if (FilterComponentList.getInstance().exists(compName)) {
 
         JOptionPane.showMessageDialog(this, "Component '" + compName + "' already exists");
       } else {
