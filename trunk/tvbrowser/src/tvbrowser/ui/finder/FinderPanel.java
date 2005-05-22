@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,17 +40,12 @@ import devplugin.Date;
 import tvbrowser.core.*;
 
 
-
-
-
-
 class FinderItemRenderer extends DefaultListCellRenderer {
   
   private FinderItem mCurSelectedItem;
   
   public FinderItemRenderer() {
   }
-  
 
  
   public void setSelectedItem(FinderItem item) {
@@ -63,11 +58,10 @@ class FinderItemRenderer extends DefaultListCellRenderer {
     FinderItem comp = (FinderItem)value;
     
     if (cellHasFocus) {
-          comp.setBorder(BorderFactory.createLineBorder(Color.black));
-        }else{
-          comp.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
-        }
-    
+      comp.setBorder(BorderFactory.createLineBorder(Color.black));
+    }else{
+      comp.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
+    }     
     
     if (value==mCurSelectedItem) {
       comp.setChoosen();  
@@ -96,7 +90,10 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   
   private int mCurMouseItemInx=-1;
   private Date mCurChoosenDate;
-  
+
+  private Timer mTimer;
+  private Date mToday;
+
   public FinderPanel() {
     
     mModel=new DefaultListModel();
@@ -107,19 +104,47 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     mList.setCellRenderer(mRenderer);
     
     setViewportView(mList);
-    Date date=Date.getCurrentDate();
+
+    mToday=Date.getCurrentDate();
+    mModel.removeAllElements();
     for (int i=-1;i<28;i++) {
-      mModel.addElement(new FinderItem(mList,date.addDays(i)));
+      mModel.addElement(new FinderItem(mList,mToday.addDays(i), mToday));
     }
     
     mList.addMouseMotionListener(this);
     mList.addMouseListener(this); 
     mList.addKeyListener(this);
     
-    markDate(Date.getCurrentDate());   
+    markDate(mToday);
+
+    mTimer = new Timer(10000, new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        handleTimerEvent();
+      }
+    });
+    mTimer.start();
   }
 
-  
+  private void handleTimerEvent() {
+    Date date=Date.getCurrentDate();
+    if (date.equals(mToday)) {
+      return;
+    }
+
+    mToday = date;
+    mModel.removeAllElements();
+    for (int i=-1;i<28;i++) {
+      Date d = mToday.addDays(i);
+      FinderItem fi = new FinderItem(mList,d, mToday);
+      mModel.addElement(fi);
+      if (d.equals(mCurChoosenDate)) {
+        mRenderer.setSelectedItem(fi);
+        mList.setSelectedValue(fi, false);
+      }
+    }
+    mList.updateUI();
+  }
+
   public void setDateListener(DateListener dateChangedListener) {
     mDateChangedListener=dateChangedListener;
   }

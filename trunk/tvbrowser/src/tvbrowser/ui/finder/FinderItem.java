@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,6 @@ class FinderItem extends JComponent implements ProgressMonitor {
   
   
   private devplugin.Date mDate;
-  private static Date TODAY=Date.getCurrentDate();
   private JProgressBar mProgressBar;
   private JLabel mLabel;
   private JList mList;
@@ -52,7 +51,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
   private static Color mColorChoosen=new Color(170,154,228);
   private static Color mColorSelected= new Color(236,236,212);
   
-  public FinderItem(JList list, Date date) {
+  public FinderItem(JList list, Date date, Date today) {
     mDate=date;
     mList=list;
     
@@ -61,7 +60,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
     mProgressBar.setBorder(null);
     
     mLabel=new JLabel();
-    if (date.equals(TODAY)) {
+    if (date.equals(today)) {
       mLabel.setText(mLocalizer.msg("today","today"));
     }
     else {
