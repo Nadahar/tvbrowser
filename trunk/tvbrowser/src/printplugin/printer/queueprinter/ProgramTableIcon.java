@@ -99,6 +99,7 @@ public class ProgramTableIcon implements Icon {
       item.paint(graphics, (int)(x+item.getX()), (int)(y+item.getY()));
     }
 
+    graphics.setColor(Color.lightGray);
     for (int i=0; i<mNumOfCols-1; i++) {
       int x0 = mWidth/mNumOfCols*(i+1)+x;
       graphics.drawLine(x0, 0+y, x0, mHeight+y);

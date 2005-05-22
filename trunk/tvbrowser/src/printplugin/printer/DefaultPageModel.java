@@ -26,35 +26,23 @@
 
 package printplugin.printer;
 
-import devplugin.*;
-
-
 
 public class DefaultPageModel extends AbstractPageModel {
-
-  //private Date mDate;
 
   private String mHeader;
 
   public DefaultPageModel(String header) {
     super();
     mHeader = header;
-    //mDate = date;
-    
   }
-  
-//  public void addChannelDayProgram(Channel channel, Program[] programArr) {
-//    ColumnModel col = new DefaultColumnModel(channel.getName(), programArr);
-//    super.addColumn(col);
-//  }
-//
 
-
+  public DefaultPageModel() {
+    this(null);
+  }
 
 
 	public String getHeader() {
-		//return mDate.toString();
-    return mHeader;
+		return mHeader;
 	}
   
 }

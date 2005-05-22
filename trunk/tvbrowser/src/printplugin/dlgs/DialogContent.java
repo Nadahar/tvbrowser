@@ -54,4 +54,6 @@ public interface DialogContent {
 
   public Scheme createNewScheme(String schemeName);
 
+  public void printingDone();
+
 }

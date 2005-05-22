@@ -39,19 +39,19 @@ import devplugin.Program;
 
 public class QueuePrintJob extends AbstractPrintJob {
 
-  private static final Font HEADER_FONT = new Font("Dialog",Font.BOLD,32);
   private static final Font FOOTER_FONT = new Font("Dialog",Font.ITALIC,6);
 
-  private static final int HEADER_SPACE=30;
   private static final int FOOTER_SPACE=10;
 
   private QueuePrinterSettings mSettings;
   private PageFormat mPageFormat;
+  private String mFooterString;
 
   public QueuePrintJob(PageModel pageModel, QueuePrinterSettings settings, PageFormat pageFormat) {
     super(new PageModel[]{pageModel});
     mSettings = settings;
     mPageFormat = pageFormat;
+    mFooterString = pageModel.getFooter();
   }
 
   protected Page[] createPages(PageModel pageModel) {
@@ -85,11 +85,14 @@ public class QueuePrintJob extends AbstractPrintJob {
       mSettings = settings;
       mPageFormat = pageFormat;
       int width = (int)pageFormat.getImageableWidth();
-      int height = (int)pageFormat.getImageableHeight()-HEADER_SPACE-FOOTER_SPACE;
+      int height = (int)pageFormat.getImageableHeight()-FOOTER_SPACE;
       mTableIcon = new ProgramTableIcon(settings.getProgramIconSettings(), width, height, settings.getColumnsPerPage());
     }
 
 
+    public PageFormat getPageFormat() {
+      return mPageFormat;
+    }
 
     public boolean addProgram(Program prog) {
       return addProgram(prog, false);
@@ -103,19 +106,10 @@ public class QueuePrintJob extends AbstractPrintJob {
       int x0 = (int)mPageFormat.getImageableX();
       int y0 = (int)mPageFormat.getImageableY();
 
-
-      graphics.setFont(HEADER_FONT);
-      graphics.drawString("Titel", x0, y0+HEADER_FONT.getSize());
-
       graphics.setFont(FOOTER_FONT);
-      graphics.drawString("Copyright (c) by TV-Browser", x0, y0 + (int)mPageFormat.getImageableHeight());
+      graphics.drawString(mFooterString, x0, y0 + (int)mPageFormat.getImageableHeight()-3);
 
-//      for (int i=0; i<mProgramTableIcons.length; i++) {
-//        if (mProgramTableIcons[i] != null) {
-//          mProgramTableIcons[i].paintIcon(null, graphics, x0, y0 + HEADER_SPACE + (mProgramTableIcons[i].getIconHeight()+TABLE_SPACE)*i);
-//        }
-//      }
-      mTableIcon.paintIcon(null, graphics, x0, y0 + HEADER_SPACE);
+      mTableIcon.paintIcon(null, graphics, x0, y0);
     }
   }
 

@@ -30,12 +30,14 @@ import printplugin.dlgs.DialogContent;
 import printplugin.settings.*;
 import printplugin.printer.*;
 import printplugin.printer.PrintJob;
+import printplugin.PrintPlugin;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.print.PageFormat;
 
 import devplugin.PluginTreeNode;
+import devplugin.Program;
 
 
 public class PrintFromQueueDialogContent implements DialogContent {
@@ -54,6 +56,16 @@ public class PrintFromQueueDialogContent implements DialogContent {
   public PrintFromQueueDialogContent(PluginTreeNode rootNode, Frame parentFrame) {
     mRootNode = rootNode;
     mParentFrame = parentFrame;
+  }
+
+  public void printingDone() {
+    if (mGeneralTab.emptyQueueAfterPrinting()) {
+      Program[] progs = mRootNode.getPrograms();
+      for (int i=0; i<progs.length; i++) {
+        progs[i].unmark(PrintPlugin.getInstance());
+      }
+      mRootNode.removeAllChildren();
+    }
   }
 
   public Component getContent() {

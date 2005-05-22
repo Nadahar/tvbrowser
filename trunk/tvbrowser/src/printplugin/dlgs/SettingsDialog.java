@@ -43,11 +43,6 @@ import printplugin.printer.PrintJob;
 import printplugin.settings.Scheme;
 
 
-/**
- * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 24.04.2005
- * Time: 21:41:41
- */
 public class SettingsDialog extends JDialog {
 
   /** The localizer for this class. */
@@ -278,6 +273,10 @@ public class SettingsDialog extends JDialog {
 
   public PrintJob getPrintJob() {
     return mDialogContent.createPrintJob(mPageFormat);
+  }
+
+  public void printingDone() {
+    mDialogContent.printingDone();
   }
 
 }

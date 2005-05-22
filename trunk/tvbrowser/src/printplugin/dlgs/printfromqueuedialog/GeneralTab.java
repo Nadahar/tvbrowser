@@ -36,7 +36,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import util.ui.ProgramPanel;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import printplugin.PrintPlugin;
@@ -44,6 +43,10 @@ import printplugin.util.Util;
 
 
 public class GeneralTab extends JPanel {
+
+  private static final util.ui.Localizer mLocalizer
+        = util.ui.Localizer.getLocalizerFor(GeneralTab.class);
+
 
   private JCheckBox mEmptyQueueCb;
   private PluginTreeNode mRootNode;
@@ -61,7 +64,7 @@ public class GeneralTab extends JPanel {
 
     add(new JScrollPane(programList), BorderLayout.CENTER);
     add(content, BorderLayout.NORTH);
-    add(mEmptyQueueCb = new JCheckBox("Queue nach dem Drucken leeren"), BorderLayout.SOUTH);
+    add(mEmptyQueueCb = new JCheckBox(mLocalizer.msg("emptyQueue","empty queue after pringing")), BorderLayout.SOUTH);
   }
 
 
@@ -79,7 +82,9 @@ public class GeneralTab extends JPanel {
       if (!progs[i].getDate().equals(curDate)) {
         curDate = progs[i].getDate();
         JPanel datePanel = new JPanel(new BorderLayout());
-        datePanel.add(new JLabel(curDate.toString()), BorderLayout.EAST);
+        JLabel dateLb = new JLabel(curDate.getLongDateString());
+        dateLb.setFont(new Font("Dialog", Font.ITALIC, 14));
+        datePanel.add(dateLb, BorderLayout.WEST);
         content.add(datePanel);
       }
       addProgramPanel(content, progs[i]);
@@ -94,23 +99,8 @@ public class GeneralTab extends JPanel {
 
 
   private void addProgramPanel(final JPanel content, final Program program) {
-    final JPanel programPanel = new JPanel(new BorderLayout(3,3));
-    Channel ch = program.getChannel();
-    JLabel channelLb;
-    if (ch.hasIcon()) {
-      channelLb = new JLabel(ch.getIcon());
-    }
-    else {
-      channelLb = new JLabel(ch.getName());
-    }
+    final JPanel progPn = new JPanel(new BorderLayout());
 
-    channelLb.setHorizontalAlignment(SwingConstants.RIGHT);
-    channelLb.setBorder(BorderFactory.createLineBorder(Color.black));
-    JPanel channelPn = new JPanel(new BorderLayout());
-    channelPn.add(channelLb, BorderLayout.NORTH);
-
-
-    JPanel removePn = new JPanel(new BorderLayout());
     Icon icon = ImageUtilities.createImageIconFromJar("printplugin/imgs/Delete16.gif", getClass());
     JButton removeBtn = UiUtilities.createToolBarButton("Remove from queue", icon);
     removeBtn.addActionListener(new ActionListener(){
@@ -118,19 +108,32 @@ public class GeneralTab extends JPanel {
         program.unmark(PrintPlugin.getInstance());
         mRootNode.removeProgram(program);
         mRootNode.update();
-        content.remove(programPanel);
+        content.remove(progPn);
         content.updateUI();
       }
     });
-    removePn.add(removeBtn, BorderLayout.NORTH);
 
-    channelPn.setPreferredSize(new Dimension(60,10));
+    progPn.add(removeBtn, BorderLayout.WEST);
 
-    programPanel.add(channelPn, BorderLayout.WEST);
-    programPanel.add(new ProgramPanel(program), BorderLayout.CENTER);
-    programPanel.add(removePn, BorderLayout.EAST);
+    JPanel pn1 = new JPanel(new BorderLayout());
+    progPn.add(pn1, BorderLayout.CENTER);
+    Channel ch = program.getChannel();
+    JLabel channelLb;
+    if (ch.hasIcon()) {
+      channelLb = new JLabel(ch.getIcon());
+    }
+    else {
+      channelLb = new JLabel(ch.getName()+": ");
+      channelLb.setFont(new Font("Dialog", Font.BOLD, 12));
+      channelLb.setHorizontalAlignment(SwingConstants.RIGHT);
+    }
+    channelLb.setPreferredSize(new Dimension(60,10));
+    pn1.add(channelLb, BorderLayout.WEST);
 
-    content.add(programPanel);
+    JLabel progLb = new JLabel(program.getTimeString()+": "+program.getTitle());
+    pn1.add(progLb, BorderLayout.CENTER);
+    content.add(progPn);
+
   }
 
 

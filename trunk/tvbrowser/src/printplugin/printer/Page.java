@@ -26,8 +26,10 @@
 
 package printplugin.printer;
 
+import java.awt.print.PageFormat;
+
 public interface Page {
   
   public void printPage(java.awt.Graphics g); 
-  
+  public PageFormat getPageFormat();
 }

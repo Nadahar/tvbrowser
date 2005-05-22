@@ -48,7 +48,7 @@ public class DayProgramPrintJob extends AbstractPrintJob {
   private DayProgramPrinterSettings mSettings;
   private PageFormat mPageFormat;
 
-  private static final Font HEADER_FONT = new Font("Dialog",Font.BOLD,32);
+  private static final Font HEADER_FONT = new Font("Dialog",Font.BOLD,24);
   private static final Font FOOTER_FONT = new Font("Dialog",Font.ITALIC,6);
 
   public DayProgramPrintJob(PageModel[] pageModelArr, DayProgramPrinterSettings settings, PageFormat pageFormat) {
@@ -148,6 +148,10 @@ public class DayProgramPrintJob extends AbstractPrintJob {
     }
 
 
+    public PageFormat getPageFormat() {
+      return mPageFormat;
+    }
+
     public void printPage(Graphics graphics) {
 
       int x0 = (int)mPageFormat.getImageableX();
@@ -158,7 +162,7 @@ public class DayProgramPrintJob extends AbstractPrintJob {
       graphics.drawString(mHeader, x0, y0+HEADER_FONT.getSize());
 
       graphics.setFont(FOOTER_FONT);
-      graphics.drawString(mFooter, x0, y0 + (int)mPageFormat.getImageableHeight());
+      graphics.drawString(mFooter, x0, y0 + (int)mPageFormat.getImageableHeight()-3);
 
       for (int i=0; i<mProgramTableIcons.length; i++) {
         if (mProgramTableIcons[i] != null) {

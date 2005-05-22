@@ -58,6 +58,10 @@ public class PrintDayProgramsDialogContent implements DialogContent {
 
   }
 
+  public void printingDone() {
+
+  }
+
   public Component getContent() {
 
     JTabbedPane tab = new JTabbedPane();
