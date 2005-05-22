@@ -339,7 +339,6 @@ public class ProgramIcon implements Icon {
       }
       else {
         g.drawString(mChannel.getName(), x, y+mFont.getSize());
-        g.drawRect(x,y,getIconWidth(), getIconHeight());
       }
     }
   }

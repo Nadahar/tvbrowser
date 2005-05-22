@@ -504,7 +504,7 @@ public class MainFrame extends JFrame implements DateListener {
    */
   public void dateChanged(final devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback) {
     changeDate(date, monitor, callback);
-    super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - " + date.toString());
+    super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - " + date.getLongDateString());
   }
 
   public void runUpdateThread(final int daysToDownload, final TvDataService[] services) {

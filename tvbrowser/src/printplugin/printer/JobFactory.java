@@ -51,12 +51,14 @@ public class JobFactory {
   private static PageModel createPage(Program[] programs) {
     Util.sortProgramsByDateAndChannel(programs);
 
-    DefaultPageModel pageModel = new DefaultPageModel("Liste");
+    DefaultPageModel pageModel = new DefaultPageModel();
     DefaultColumnModel colModel = new DefaultColumnModel("Spalte");
     pageModel.addColumn(colModel);
     for (int i=0; i<programs.length; i++) {
       colModel.addProgram(programs[i]);
     }
+
+
 
     return pageModel;
   }
@@ -88,7 +90,7 @@ public class JobFactory {
     }
     for (int dateInx=0;dateInx<dayCount;dateInx++) {
       Date date=startDate.addDays(dateInx);
-      DefaultPageModel pageModel = new DefaultPageModel(date.toString());
+      DefaultPageModel pageModel = new DefaultPageModel(date.getLongDateString());
       pageModelList.add(pageModel);
       for (int chInx=0;chInx<channelArr.length;chInx++) {
         ArrayList progList = new ArrayList();

@@ -26,14 +26,17 @@
 
 package printplugin.printer;
 
+import printplugin.dlgs.PreviewDlg;
+
 import java.awt.print.Printable;
 import java.awt.print.PageFormat;
-import java.awt.print.PrinterException;
 import java.awt.*;
 import java.util.ArrayList;
 
  
 public abstract class AbstractPrintJob implements PrintJob {
+
+  private static final Font FOOTER_FONT = new Font("Dialog",Font.ITALIC,6);
 
   private Page[] mPages;
   private PageModel[] mPageModelArr;
@@ -67,7 +70,7 @@ public abstract class AbstractPrintJob implements PrintJob {
 
   public Printable getPrintable() {
     return new Printable() {
-      public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+      public int print(Graphics graphics, PageFormat f, int pageIndex)  {
         if (mPages == null) {
           prepare();
         }
@@ -75,6 +78,16 @@ public abstract class AbstractPrintJob implements PrintJob {
           return NO_SUCH_PAGE;
         }
         mPages[pageIndex].printPage(graphics);
+
+
+
+        String pageInfo = util.ui.Localizer.getLocalizerFor(PreviewDlg.class).msg("pageInfo","page {0} of {1}",""+(pageIndex+1), ""+mPages.length);
+        int w = util.ui.UiUtilities.getStringWidth(FOOTER_FONT, pageInfo);
+        graphics.setFont(FOOTER_FONT);
+        graphics.setColor(Color.black);
+        PageFormat pageFormat = mPages[pageIndex].getPageFormat();
+        graphics.drawString(pageInfo, (int)pageFormat.getImageableX() + (int)pageFormat.getImageableWidth()- w-5, (int)pageFormat.getImageableY() + (int)pageFormat.getImageableHeight()-3);
+
         return PAGE_EXISTS;
       }
     };

@@ -150,6 +150,7 @@ public class PrintPlugin extends Plugin {
       try {
         printerJob.setPrintable(job.getPrintable());
         printerJob.print();
+        settingsDialog.printingDone();
       } catch (PrinterException e) {
         util.exc.ErrorHandler.handle("Could not print pages: "+e.getLocalizedMessage(), e);
       }

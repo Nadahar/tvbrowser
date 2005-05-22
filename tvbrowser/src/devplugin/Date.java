@@ -49,6 +49,16 @@ public class Date implements Comparable {
       mLocalizer.msg("month.9", "Sep"), mLocalizer.msg("month.10", "Oct"), mLocalizer.msg("month.11", "Nov"),
       mLocalizer.msg("month.12", "Dec") };
 
+  private static final String[] LONG_DAY_MSG_ARR = { mLocalizer.msg("day.0_long", "So"), mLocalizer.msg("day.1_long", "Mo"),
+      mLocalizer.msg("day.2_long", "Tu"), mLocalizer.msg("day.3_long", "We"), mLocalizer.msg("day.4_long", "Th"),
+      mLocalizer.msg("day.5_long", "Fr"), mLocalizer.msg("day.6_long", "Sa") };
+
+  private static final String[] LONG_MONTH_MSG_ARR = { mLocalizer.msg("month.1_long", "Jan"), mLocalizer.msg("month.2_long", "Feb"),
+      mLocalizer.msg("month.3_long", "Mar"), mLocalizer.msg("month.4_long", "Apr"), mLocalizer.msg("month.5_long", "May"),
+      mLocalizer.msg("month.6_long", "Jun"), mLocalizer.msg("month.7_long", "Jul"), mLocalizer.msg("month.8_long", "Aug"),
+      mLocalizer.msg("month.9_long", "Sep"), mLocalizer.msg("month.10_long", "Oct"), mLocalizer.msg("month.11_long", "Nov"),
+      mLocalizer.msg("month.12_long", "Dec") };
+
   private final int mYear;
 
   private final int mMonth;
@@ -209,6 +219,16 @@ public class Date implements Comparable {
 
   public String getDateString() {
     return "" + getValue();
+  }
+
+  public String getLongDateString() {
+    Calendar cal = getCalendar();
+    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK) - 1;
+    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+    int month = cal.get(Calendar.MONTH);
+
+    return mLocalizer.msg("datePattern", "{0}, {1} {2}", LONG_DAY_MSG_ARR[dayOfWeek], LONG_MONTH_MSG_ARR[month], Integer
+        .toString(dayOfMonth));
   }
 
   public long getValue() {
