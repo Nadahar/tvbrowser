@@ -28,21 +28,14 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.logging.Level;
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -74,6 +67,7 @@ import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
 import devplugin.*;
+import devplugin.ProgressMonitor;
 
 import java.lang.reflect.Constructor;
 
@@ -132,6 +126,9 @@ public class MainFrame extends JFrame implements DateListener {
 
   private Node mDateChannelNode;
 
+  private Timer mTimer;
+
+  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
@@ -155,6 +152,8 @@ public class MainFrame extends JFrame implements DateListener {
     } else {
       mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
     }
+
+
 
     // create content
     jcontentPane = (JPanel) getContentPane();
@@ -657,6 +656,7 @@ public class MainFrame extends JFrame implements DateListener {
   public void updateButtons() {
     mMenuBar.updateTimeItems();
   }
+
 
 
 

@@ -21,7 +21,6 @@ java.lang.NullPointerException
   Meldung passst nicht zum Problem
 - Button Lieblingssendungen ist zu klein
 - Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
-- Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
 - Titel immer sichtbar-Option im ProgramPanel benutzen
 - (B) TimeOfDayBackPainter auf neues System anpassen
 
@@ -62,3 +61,4 @@ Erledigt:
 - (M) Uebersetzungen für die Farben im ProgramPanel-Settings-Dialog
 - (M) Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea) - (MS-Windows)
 - (M) Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
+- (M) Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
