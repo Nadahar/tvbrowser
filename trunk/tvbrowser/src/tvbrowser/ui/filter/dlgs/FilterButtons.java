@@ -108,6 +108,8 @@ public class FilterButtons implements ActionListener {
 
                 if (curFilter != null && filter != null && (curFilter.getName().equals(filter.getName()))) {
                     result[i].setSelected(true);
+                } else if ((curFilter == null) && (filter instanceof ShowAllFilter)) {
+                    result[i].setSelected(true);
                 }
               }
               
@@ -121,9 +123,7 @@ public class FilterButtons implements ActionListener {
 
         result[filterArr.length] = null;
 
-        if (curFilter == null) {
-            result[0].setSelected(true);
-        } else if (!(curFilter instanceof ShowAllFilter)){
+        if ((curFilter != null) && !(curFilter instanceof ShowAllFilter)){
             mSendFilterMI = new JMenuItem(mLocalizer.msg("sendPrograms", "Send visible Programs to another Plugin"));
             mSendFilterMI.addActionListener(this);
             result[filterArr.length + 1] = mSendFilterMI;
