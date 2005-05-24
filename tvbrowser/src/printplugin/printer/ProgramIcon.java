@@ -180,14 +180,6 @@ public class ProgramIcon implements Icon {
         mPreferredHeight = mHeight;
       }
     }
-/*
-      if (isShowing()) {
-        oldProgram.removeChangeListener(this);
-        mProgram.addChangeListener(this);
-        revalidate();
-        repaint();
-      }
-      */
   }
   
   
@@ -314,15 +306,8 @@ public class ProgramIcon implements Icon {
     public ChannelIcon(Channel channel, Font font) {
       mChannel = channel;
       mFont = font;
-
-      if (mChannel.hasIcon()) {
-        mWidth = mChannel.getIcon().getIconWidth();
-        mHeight = mChannel.getIcon().getIconHeight();
-      }
-      else {
-        mWidth = UiUtilities.getStringWidth(mFont, mChannel.getName());
-        mHeight = mFont.getSize();
-      }
+      mWidth = UiUtilities.getStringWidth(mFont, mChannel.getName());
+      mHeight = mFont.getSize();
     }
 
     public int getIconHeight() {
@@ -334,12 +319,7 @@ public class ProgramIcon implements Icon {
     }
 
     public void paintIcon(Component c, Graphics g, int x, int y) {
-      if (mChannel.hasIcon()) {
-        mChannel.getIcon().paintIcon(c, g, x, y);
-      }
-      else {
-        g.drawString(mChannel.getName(), x, y+mFont.getSize());
-      }
+      g.drawString(mChannel.getName(), x, y+mFont.getSize());
     }
   }
 

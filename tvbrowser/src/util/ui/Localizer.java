@@ -147,8 +147,11 @@ public class Localizer {
     return localizer;
   }
 
-  
-  
+
+  public static void emptyLocalizerCache() {
+    mLocalizerCache.clear();
+  }
+
   /**
    * Gets a localized message.
    *

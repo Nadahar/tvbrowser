@@ -85,7 +85,7 @@ public class PrintFromQueueDialogContent implements DialogContent {
   }
 
   public Settings getSettings() {
-    return new QueuePrinterSettings(mGeneralTab.emptyQueueAfterPrinting(), mLayoutTab.getColumnsPerPage(), mExtrasTab.getProgramIconSettings());
+    return new QueuePrinterSettings(mGeneralTab.emptyQueueAfterPrinting(), mLayoutTab.getColumnsPerPage(), mExtrasTab.getProgramIconSettings(), mExtrasTab.getDateFont());
   }
 
   public void setSettings(Settings s) {
@@ -93,6 +93,7 @@ public class PrintFromQueueDialogContent implements DialogContent {
     mGeneralTab.setEmptyQueueAfterPrinting(settings.emptyQueueAfterPrinting());
     mLayoutTab.setColumnsPerPage(settings.getColumnsPerPage());
     mExtrasTab.setProgramIconSettings(settings.getProgramIconSettings());
+    mExtrasTab.setDateFont(settings.getDateFont());
   }
 
   public PrintJob createPrintJob(PageFormat format) {

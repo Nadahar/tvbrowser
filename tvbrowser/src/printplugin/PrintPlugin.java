@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.print.PrinterJob;
 import java.awt.print.PrinterException;
+import java.awt.*;
 import java.util.Properties;
 import java.io.*;
 import javax.swing.*;
@@ -298,7 +299,8 @@ public class PrintPlugin extends Plugin {
                     ProgramFieldType.ORIGIN_TYPE,
                     ProgramFieldType.PRODUCTION_YEAR_TYPE,
                     ProgramFieldType.SHORT_DESCRIPTION_TYPE
-                  }, false)              
+                  }, false),
+              new Font("Dialog", Font.ITALIC, 12)
       ));
 
       return new QueueScheme[]{scheme};

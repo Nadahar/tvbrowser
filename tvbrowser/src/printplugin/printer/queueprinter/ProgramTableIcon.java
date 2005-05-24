@@ -27,6 +27,7 @@
 package printplugin.printer.queueprinter;
 
 import printplugin.printer.ProgramItem;
+import printplugin.printer.PositionedIcon;
 import printplugin.settings.ProgramIconSettings;
 
 import javax.swing.*;
@@ -34,6 +35,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 import devplugin.Program;
+import devplugin.Date;
+import util.ui.TextAreaIcon;
 
 
 public class ProgramTableIcon implements Icon {
@@ -46,10 +49,12 @@ public class ProgramTableIcon implements Icon {
   private int mNumOfCols;
   private ArrayList mPrograms;
   private ProgramIconSettings mProgramIconSettings;
+  private Date mCurDate;
+  private Font mDateFont;
 
-
-  public ProgramTableIcon(ProgramIconSettings settings, int width, int height, int numOfCols) {
+  public ProgramTableIcon(ProgramIconSettings settings, Font dateFont, int width, int height, int numOfCols) {
     mProgramIconSettings = settings;
+    mDateFont = dateFont;
     mWidth = width;
     mHeight = height;
     mNumOfCols = numOfCols;
@@ -61,12 +66,16 @@ public class ProgramTableIcon implements Icon {
   public boolean add(Program prog, boolean forceAdding) {
     ProgramItem item = new ProgramItem(prog, mProgramIconSettings, mWidth/mNumOfCols-10, true);
     item.setMaximumHeight(200);
-
+    int spaceForDatestring = 0;
+    if (!prog.getDate().equals(mCurDate)) {
+      mCurDate = prog.getDate();
+      spaceForDatestring = mDateFont.getSize();
+    }
     boolean canAdd = false;
     if (forceAdding) {
       canAdd = true;
     }
-    else if (mCurY + item.getHeight() < mHeight) {
+    else if (mCurY + item.getHeight() + spaceForDatestring < mHeight) {
       canAdd = true;
     }
     else if (mCurColumnInx+1 < mNumOfCols) {
@@ -76,9 +85,16 @@ public class ProgramTableIcon implements Icon {
     }
 
     if (canAdd) {
+      int x = mWidth/mNumOfCols * mCurColumnInx;
+      if (spaceForDatestring > 0) {
+        mCurY += spaceForDatestring;
+        mPrograms.add(new DateItem(new TextAreaIcon(mCurDate.getLongDateString(), mDateFont, mWidth/mNumOfCols), x, mCurY));
+        mCurY += mDateFont.getSize()*1.3;
+      }
       mPrograms.add(item);
-      item.setPos(mWidth/mNumOfCols * mCurColumnInx, mCurY);
-      mCurY +=item.getHeight() + mProgramIconSettings.getTitleFont().getSize()/2;
+      item.setPos(x, mCurY);
+      mCurY = mCurY + item.getHeight() + mProgramIconSettings.getTitleFont().getSize()/3;
+
       return true;
     }
 
@@ -95,7 +111,7 @@ public class ProgramTableIcon implements Icon {
 
   public void paintIcon(Component c, Graphics graphics, int x, int y) {
     for (int i=0; i<mPrograms.size(); i++) {
-      ProgramItem item = (ProgramItem)mPrograms.get(i);
+      PositionedIcon item = (PositionedIcon)mPrograms.get(i);
       item.paint(graphics, (int)(x+item.getX()), (int)(y+item.getY()));
     }
 
@@ -105,6 +121,29 @@ public class ProgramTableIcon implements Icon {
       graphics.drawLine(x0, 0+y, x0, mHeight+y);
     }
 
+  }
+
+
+  class DateItem implements PositionedIcon {
+    private int mX, mY;
+    private TextAreaIcon mIcon;
+    public DateItem(TextAreaIcon icon, int x, int y) {
+      mX = x;
+      mY = y;
+      mIcon = icon;
+    }
+
+    public double getX() {
+      return mX;
+    }
+
+    public double getY() {
+      return mY;
+    }
+
+    public void paint(Graphics g, int x, int y) {
+      mIcon.paintIcon(null, g, x, y);
+    }
   }
 
 }

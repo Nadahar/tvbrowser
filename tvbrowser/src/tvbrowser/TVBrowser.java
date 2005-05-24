@@ -65,6 +65,7 @@ import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 import util.ui.NotBoldMetalTheme;
 import util.ui.UiUtilities;
+import util.ui.Localizer;
 
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
@@ -183,6 +184,10 @@ public class TVBrowser {
 
     Locale.setDefault(new Locale(Settings.propLanguage.getString()));
     //TimeZone.setDefault(TimeZone.getTimeZone(Settings.propTimezone.getString()));
+
+    // refresh the localizer because we know the language now
+    Localizer.emptyLocalizerCache();
+    mLocalizer = Localizer.getLocalizerFor(TVBrowser.class);
 
     // Set the proxy settings
     updateProxySettings();
