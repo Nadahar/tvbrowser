@@ -67,7 +67,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
                     mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem;
-  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu;
+  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
   private JLabel mLabel;
@@ -129,7 +129,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
     mGoMenu = new JMenu(mLocalizer.msg("menuitem.go","Go"));
     mGoMenu.setMnemonic(KeyEvent.VK_G);
-    add(mGoMenu);
 
     mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
     mPreviousDayMI.addActionListener(this);
@@ -152,6 +151,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mGoMenu.addSeparator();
     mGoMenu.add(mGotoNowMenuItem);
 
+
+    mViewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
+
+
+
+
     updateDateItems();
     updateChannelItems();
     updateTimeItems();
@@ -160,11 +165,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 
 
-    mPluginsViewMenu = new JMenu("TODO: Plugins");
-    mPluginsViewMenu.add(new JMenuItem("Plugin #1"));
-    mPluginsViewMenu.add(new JMenuItem("Plugin #2"));
-    mPluginsViewMenu.add(new JMenuItem("Plugin #3"));
-        
     mRestoreMI = new JMenuItem("Wiederherstellen");
     mRestoreMI.addActionListener(this);
     
@@ -200,6 +200,19 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
     mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/About16.gif"));
     mAboutMI.addActionListener(this);
+
+
+
+    mViewMenu.add(mToolbarMI);
+    mViewMenu.add(mStatusbarMI);
+    mViewMenu.add(mTimeBtnsMI);
+    mViewMenu.add(mDatelistMI);
+    mViewMenu.add(mChannellistMI);
+    mViewMenu.add(mPluginOverviewMI);
+    mViewMenu.addSeparator();
+    mViewMenu.add(mFiltersMenu);
+    mViewMenu.addSeparator();
+    mViewMenu.add(mRestoreMI);
   }
 
 
