@@ -87,6 +87,8 @@ public class ClipboardPlugin extends Plugin {
 		action.putValue(BIG_ICON, new ImageIcon(ImageUtilities
 				.createImageFromJar("clipboardplugin/clipboard24.png",
 						ClipboardPlugin.class)));
+    action.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("pluginName", "Clipboard"));
+
 
 		return new ActionMenu(action);
 	}

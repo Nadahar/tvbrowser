@@ -35,6 +35,8 @@ import printplugin.util.Util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.*;
 
 import devplugin.*;
 
@@ -43,6 +45,9 @@ public class JobFactory {
 
 
   public static PrintJob createPrintJob(QueuePrinterSettings settings, PageFormat pageFormat, Program[] programs) {
+    if (programs.length == 0) {
+      return createEmptyJob();
+    }
     PageModel pageModel = createPage(programs);
     PrintJob job = new QueuePrintJob(pageModel, settings, pageFormat);
     return job;
@@ -138,6 +143,21 @@ public class JobFactory {
         }
       }
     }
+  }
+
+  private static PrintJob createEmptyJob() {
+    return new PrintJob() {
+      public Printable getPrintable() {
+        return new Printable(){
+          public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)  {
+            return NO_SUCH_PAGE;
+          }
+        };
+      }
+      public int getNumOfPages() {
+        return 0;
+      }
+    };
   }
 
 }
