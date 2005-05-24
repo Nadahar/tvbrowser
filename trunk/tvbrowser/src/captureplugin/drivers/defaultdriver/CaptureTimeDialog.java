@@ -36,11 +36,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import captureplugin.CapturePlugin;
+import javax.swing.JTextField;
 
 import util.ui.Localizer;
 import util.ui.ProgramPanel;
+import captureplugin.CapturePlugin;
 
 
 /**
@@ -58,6 +58,8 @@ public class CaptureTimeDialog extends JDialog {
     private TimeDateChooserPanel mStart;
     /** End-Time */
     private TimeDateChooserPanel mEnd;
+    /** Title-Input */
+    private JTextField mTitle;
     
     /**
      * Crate the Dialog
@@ -112,7 +114,7 @@ public class CaptureTimeDialog extends JDialog {
         c.weighty = 0.5;
         
         JPanel namePanel = new JPanel();
-        namePanel.setBorder(BorderFactory.createTitledBorder("Sendung:"));
+        namePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Program", "Program")));
         namePanel.setLayout(new BorderLayout());
 
         ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
@@ -121,13 +123,20 @@ public class CaptureTimeDialog extends JDialog {
         namePanel.add(p);
         
         center.add(namePanel, c);
-        center.add(mStart, c);
+        
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        
+        mTitle = new JTextField(mPrgTime.getTitle());
+
+        titlePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Title", "Title")));
+        titlePanel.add(mTitle, BorderLayout.CENTER);
+        
+        center.add(titlePanel, c);
         
         center.add(mStart, c);
         center.add(mEnd, c);
         
         panel.add(center, BorderLayout.CENTER);
-        
         
         JPanel btPanel = new JPanel();
         
@@ -139,6 +148,7 @@ public class CaptureTimeDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 mPrgTime.setStart(mStart.getDate());
                 mPrgTime.setEnd(mEnd.getDate());
+                mPrgTime.setTitle(mTitle.getText());
                 hide();
             }
         });

@@ -114,7 +114,9 @@ public class CaptureParamLibrary extends ParamLibrary {
    */
   public String getStringForKey(Program prg, String key) {
     
-    if (key.equals("start_day")) {
+    if (key.equals("title")) {
+      return ""+mPrgTime.getTitle();
+    } else if (key.equals("start_day")) {
       return ""+mStartTime.get(Calendar.DAY_OF_MONTH);
     } else if (key.equals("start_month")) {
       return ""+(mStartTime.get(Calendar.MONTH)+1);

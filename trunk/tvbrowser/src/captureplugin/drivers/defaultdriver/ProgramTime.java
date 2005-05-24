@@ -45,12 +45,16 @@ public class ProgramTime implements Cloneable {
     /** Program to record */
     private Program mProgram;
     
+    /** Title of the Program */
+    private String mTitle;
+    
     /**
      * Create ProgramTime
      */
     public ProgramTime() {
         mStart = Calendar.getInstance();
         mEnd = Calendar.getInstance();
+        mTitle = "";
     }
     
     /**
@@ -58,24 +62,7 @@ public class ProgramTime implements Cloneable {
      * @param prg Program
      */
     public ProgramTime(Program prg) {
-        mProgram = prg;
-
-        Calendar c = (Calendar) prg.getDate().getCalendar().clone();
-
-        c.set(Calendar.HOUR_OF_DAY, prg.getHours());
-        c.set(Calendar.MINUTE, prg.getMinutes());
-        c.set(Calendar.SECOND, 0);
-        
-        mStart = c;
-        
-        c = (Calendar) prg.getDate().getCalendar().clone();
-
-        c.set(Calendar.HOUR_OF_DAY, prg.getHours());
-        c.set(Calendar.MINUTE, prg.getMinutes());
-        c.add(Calendar.MINUTE, prg.getLength());
-        c.set(Calendar.SECOND, 0);
-        
-        mEnd = c;
+        setProgram(prg);
     }
     
     /**
@@ -90,6 +77,7 @@ public class ProgramTime implements Cloneable {
         mStart.setTime((Date)start.clone());
         mEnd = Calendar.getInstance();
         mEnd.setTime((Date)end.clone());
+        mTitle = prg.getTitle();
     }
     
     /**
@@ -102,6 +90,7 @@ public class ProgramTime implements Cloneable {
         mStart.setTime((Date)time.getStart().clone());
         mEnd = Calendar.getInstance();
         mEnd.setTime((Date)time.getEnd().clone());
+        mTitle = time.getTitle();
     }
 
     /**
@@ -109,7 +98,26 @@ public class ProgramTime implements Cloneable {
      * @param prg Program
      */
     public void setProgram(Program prg) {
-        mProgram = prg;
+      mProgram = prg;
+
+      Calendar c = (Calendar) prg.getDate().getCalendar().clone();
+
+      c.set(Calendar.HOUR_OF_DAY, prg.getHours());
+      c.set(Calendar.MINUTE, prg.getMinutes());
+      c.set(Calendar.SECOND, 0);
+      
+      mStart = c;
+      
+      c = (Calendar) prg.getDate().getCalendar().clone();
+
+      c.set(Calendar.HOUR_OF_DAY, prg.getHours());
+      c.set(Calendar.MINUTE, prg.getMinutes());
+      c.add(Calendar.MINUTE, prg.getLength());
+      c.set(Calendar.SECOND, 0);
+      
+      mEnd = c;
+      
+      mTitle = prg.getTitle();
     }
     
     /**
@@ -171,6 +179,22 @@ public class ProgramTime implements Cloneable {
     }
 
     /**
+     * Get the Title
+     * @return Title
+     */
+    public String getTitle() {
+      return mTitle;
+    }
+    
+    /**
+     * Seth the Title
+     * @param title new Title
+     */
+    public void setTitle(String title) {
+      mTitle = title;
+    }
+    
+    /**
      * Clone
      */
     public Object clone() {
@@ -183,11 +207,12 @@ public class ProgramTime implements Cloneable {
      * @throws IOException
      */
     public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(1);
+        out.writeInt(2);
         out.writeObject(mStart.getTime());
         out.writeObject(mEnd.getTime());
         out.writeObject(mProgram.getID());
         mProgram.getDate().writeData(out);
+        out.writeObject(mTitle);
     }
     
     /**
@@ -200,15 +225,22 @@ public class ProgramTime implements Cloneable {
     
         int version = in.readInt();
         
-        setStart((Date) in.readObject());
-        setEnd((Date) in.readObject());
+        Date start = (Date) in.readObject();
+        Date end = (Date) in.readObject();
         
         String id = (String) in.readObject();
         devplugin.Date date = new devplugin.Date(in);
         
         Program aktP = Plugin.getPluginManager().getProgram(date, id);
         if (aktP != null) {
-            setProgram(aktP);
+            mProgram = aktP;
+        }
+
+        setStart(start);
+        setEnd(end);
+        
+        if (version > 1) {
+          setTitle((String) in.readObject());
         }
     }
 }
