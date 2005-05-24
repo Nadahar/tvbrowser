@@ -61,8 +61,10 @@ public class GeneralTab extends JPanel {
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
     JPanel programList = createProgramListPanel();
+    JPanel pn1 = new JPanel(new BorderLayout());
+    pn1.add(programList, BorderLayout.NORTH);
 
-    add(new JScrollPane(programList), BorderLayout.CENTER);
+    add(new JScrollPane(pn1), BorderLayout.CENTER);
     add(content, BorderLayout.NORTH);
     add(mEmptyQueueCb = new JCheckBox(mLocalizer.msg("emptyQueue","empty queue after pringing")), BorderLayout.SOUTH);
   }

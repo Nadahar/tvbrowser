@@ -120,6 +120,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
           Action action = actionMenu.getAction();
           action.putValue(ToolBar.ACTION_ID_KEY, pluginProxys[i].getId());
           mAvailableActions.put(pluginProxys[i].getId(), action);
+          String tooltip = (String)action.getValue(Action.SHORT_DESCRIPTION);
+          if (tooltip == null) {
+            action.putValue(Action.SHORT_DESCRIPTION, pluginProxys[i].getInfo().getDescription());
+          }
         }
         else {
           //TODO: create drop down list button
