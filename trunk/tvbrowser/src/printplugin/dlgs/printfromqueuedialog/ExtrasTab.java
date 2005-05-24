@@ -66,4 +66,12 @@ public class ExtrasTab extends JPanel {
     return mProgramPreviewPanel.getProgramIconSettings();
   }
 
+  public void setDateFont(Font f) {
+    mProgramPreviewPanel.setDateFont(f);
+  }
+
+  public Font getDateFont() {
+    return mProgramPreviewPanel.getDateFont();
+  }
+
 }

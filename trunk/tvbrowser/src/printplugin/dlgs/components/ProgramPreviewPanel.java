@@ -28,6 +28,7 @@ package printplugin.dlgs.components;
 
 import devplugin.Plugin;
 import devplugin.ProgramFieldType;
+import devplugin.Date;
 
 import javax.swing.*;
 
@@ -52,9 +53,13 @@ public class ProgramPreviewPanel extends JPanel {
   private MutableProgramIconSettings mProgramIconSettings;
   private JLabel mProgramIconLabel;
   private JButton mFieldsButton, mFontsButton;
+  private Font mDateFont;
+  private JLabel mDateLabel;
+  private JPanel mIconPanel;
 
-  public ProgramPreviewPanel(final Frame dlgParent, ProgramIconSettings programIconSettings) {
+  public ProgramPreviewPanel(final Frame dlgParent, ProgramIconSettings programIconSettings, Font dateFont) {
     super();
+    mDateFont = dateFont;
     if (programIconSettings != null) {
       setProgramIconSettings(programIconSettings);
     }
@@ -63,11 +68,14 @@ public class ProgramPreviewPanel extends JPanel {
     mFontsButton = new JButton(mLocalizer.msg("fonts","Fonts.."));
     mFieldsButton = new JButton(mLocalizer.msg("fields","Fields.."));
 
-
+    mDateLabel = new JLabel(new Date().getLongDateString());
     mProgramIconLabel = new JLabel(createDemoProgramPanel());
 
-    JPanel iconPanel = new JPanel();
-    iconPanel.add(mProgramIconLabel);
+    mIconPanel = new JPanel(new BorderLayout());
+    if (mDateFont != null) {
+      mIconPanel.add(mDateLabel, BorderLayout.NORTH);
+    }
+    mIconPanel.add(mProgramIconLabel, BorderLayout.CENTER);
 
     JPanel eastPn = new JPanel(new BorderLayout());
     JPanel buttonPn = new JPanel(new GridLayout(-1, 1,3,3));
@@ -75,7 +83,7 @@ public class ProgramPreviewPanel extends JPanel {
     buttonPn.add(mFontsButton);
     buttonPn.add(mFieldsButton);
 
-    JScrollPane scrollPane = new JScrollPane(iconPanel);
+    JScrollPane scrollPane = new JScrollPane(mIconPanel);
     scrollPane.setPreferredSize(new Dimension(0,90));
     add(scrollPane, BorderLayout.CENTER);
     add(eastPn, BorderLayout.EAST);
@@ -86,11 +94,12 @@ public class ProgramPreviewPanel extends JPanel {
         if (mProgramIconSettings == null) {
           return;
         }
-        FontsDialog dlg = new FontsDialog(dlgParent, mProgramIconSettings.getTitleFont(), mProgramIconSettings.getTextFont());
+        FontsDialog dlg = new FontsDialog(dlgParent, mProgramIconSettings.getTitleFont(), mProgramIconSettings.getTextFont(), mDateFont);
         util.ui.UiUtilities.centerAndShow(dlg);
         if (dlg.getResult() == FontsDialog.OK) {
           Font titleFont = dlg.getTitleFont();
           Font descFont = dlg.getDescriptionFont();
+          mDateFont = dlg.getDateFont();
           mProgramIconSettings.setTextFont(descFont);
           mProgramIconSettings.setTimeFont(titleFont);
           mProgramIconSettings.setTitleFont(titleFont);
@@ -120,11 +129,15 @@ public class ProgramPreviewPanel extends JPanel {
 
 
   public ProgramPreviewPanel(Frame dlgParent) {
-    this(dlgParent, null);
+    this(dlgParent, null, null);
   }
 
   private void updatePreviewPanel() {
     mProgramIconLabel.setIcon(createDemoProgramPanel());
+    mDateLabel.setFont(mDateFont);
+    if (mDateFont != null) {
+      mIconPanel.add(mDateLabel, BorderLayout.NORTH);
+    }
   }
 
   public void setProgramIconSettings(ProgramIconSettings settings) {
@@ -132,8 +145,17 @@ public class ProgramPreviewPanel extends JPanel {
     updatePreviewPanel();
   }
 
+  public void setDateFont(Font f) {
+    mDateFont = f;
+    updatePreviewPanel();
+  }
+
   public ProgramIconSettings getProgramIconSettings() {
     return mProgramIconSettings;
+  }
+
+  public Font getDateFont() {
+    return mDateFont;
   }
 
   private Icon createDemoProgramPanel() {
@@ -157,23 +179,29 @@ class FontsDialog extends JDialog {
 
   private FontChooserPanel mTitleFontPanel;
   private FontChooserPanel mDescriptionFontPanel;
+  private FontChooserPanel mDateFontPanel;
   private int mResult;
 
-  public FontsDialog(Frame parent, Font titleFont, Font descriptionFont) {
+  public FontsDialog(Frame parent, Font titleFont, Font descriptionFont, Font dateFont) {
     super(parent, true);
     setTitle("Fonts");
     JPanel content = (JPanel)getContentPane();
 
     mTitleFontPanel=new FontChooserPanel("Title", titleFont);
     mDescriptionFontPanel=new FontChooserPanel("Description", descriptionFont);
-
+    if (dateFont != null) {
+      mDateFontPanel = new FontChooserPanel("Date", dateFont);
+    }
     content.setLayout(new BorderLayout());
 
-    JPanel fontPanel=new JPanel(new GridLayout(2,1));
+    JPanel fontPanel=new JPanel(new GridLayout(-1,1));
     fontPanel.setBorder(BorderFactory.createTitledBorder("Fonts"));
 
     fontPanel.add(mTitleFontPanel);
     fontPanel.add(mDescriptionFontPanel);
+    if (dateFont != null) {
+      fontPanel.add(mDateFontPanel);
+    }
 
     JPanel btnPn = new JPanel(new FlowLayout());
 
@@ -214,6 +242,10 @@ class FontsDialog extends JDialog {
 
   public Font getDescriptionFont() {
     return mDescriptionFontPanel.getChosenFont();
+  }
+
+  public Font getDateFont() {
+    return mDateFontPanel.getChosenFont();
   }
 
 }

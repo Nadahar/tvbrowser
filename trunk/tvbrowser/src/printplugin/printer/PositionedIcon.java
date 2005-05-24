@@ -24,38 +24,14 @@
  * $Revision$
  */
 
-package printplugin.settings;
+package printplugin.printer;
 
 import java.awt.*;
 
+public interface PositionedIcon {
 
-public class QueuePrinterSettings implements Settings {
+  public double getX();
+  public double getY();
+  public void paint(Graphics g, int x, int y);
 
-  private boolean mEmptyQueueAfterPrinting;
-  private int mColumnsPerPage;
-  private ProgramIconSettings mProgramIconSettings;
-  private Font mDateFont;
-
-  public QueuePrinterSettings(boolean emptyQueueAfterPrinting, int columnsPerPage, ProgramIconSettings programIconSettings, Font dateFont) {
-    mEmptyQueueAfterPrinting = emptyQueueAfterPrinting;
-    mColumnsPerPage = columnsPerPage;
-    mProgramIconSettings = programIconSettings;
-    mDateFont = dateFont;
-  }
-
-  public boolean emptyQueueAfterPrinting() {
-    return mEmptyQueueAfterPrinting;
-  }
-
-  public int getColumnsPerPage() {
-    return mColumnsPerPage;
-  }
-
-  public ProgramIconSettings getProgramIconSettings() {
-    return mProgramIconSettings;
-  }
-
-  public Font getDateFont() {
-    return mDateFont;
-  }
 }

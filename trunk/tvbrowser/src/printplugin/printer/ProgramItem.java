@@ -35,7 +35,7 @@ import printplugin.printer.dayprogramprinter.ProgramTableIcon;
 
 
 
-public class ProgramItem {
+public class ProgramItem implements PositionedIcon {
     private Program mProgram;
     private ProgramIcon mIcon;
     private double mx, my;

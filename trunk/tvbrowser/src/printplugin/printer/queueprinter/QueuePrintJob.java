@@ -86,7 +86,7 @@ public class QueuePrintJob extends AbstractPrintJob {
       mPageFormat = pageFormat;
       int width = (int)pageFormat.getImageableWidth();
       int height = (int)pageFormat.getImageableHeight()-FOOTER_SPACE;
-      mTableIcon = new ProgramTableIcon(settings.getProgramIconSettings(), width, height, settings.getColumnsPerPage());
+      mTableIcon = new ProgramTableIcon(settings.getProgramIconSettings(), settings.getDateFont(), width, height, settings.getColumnsPerPage());
     }
 
 

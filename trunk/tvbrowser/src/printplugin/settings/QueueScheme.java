@@ -29,6 +29,7 @@ package printplugin.settings;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.awt.*;
 
 
 import printplugin.util.IO;
@@ -49,9 +50,8 @@ public class QueueScheme extends Scheme {
     out.writeInt(1);  // Version
     out.writeBoolean(emptyQueuAfterPrinting);
     out.writeInt(columnsPerPage);
-
     IO.writeProgramIconSettings(settings.getProgramIconSettings(), out);
-
+    IO.writeFont(settings.getDateFont(), out);
   }
 
 
@@ -63,8 +63,8 @@ public class QueueScheme extends Scheme {
     boolean emptyQueueAfterPrinting = in.readBoolean();
     int columnsPerPage = in.readInt();
     ProgramIconSettings programIconSettings = IO.readProgramIconSettings(in);
-
-    QueuePrinterSettings settings = new QueuePrinterSettings(emptyQueueAfterPrinting, columnsPerPage, programIconSettings);
+    Font dateFont = IO.readFont(in);
+    QueuePrinterSettings settings = new QueuePrinterSettings(emptyQueueAfterPrinting, columnsPerPage, programIconSettings, dateFont);
     setSettings(settings);
   }
 

@@ -88,8 +88,6 @@ public class GeneralTab extends JPanel {
         content.add(datePanel);
       }
       addProgramPanel(content, progs[i]);
-
-
     }
 
     return content;
@@ -119,14 +117,9 @@ public class GeneralTab extends JPanel {
     progPn.add(pn1, BorderLayout.CENTER);
     Channel ch = program.getChannel();
     JLabel channelLb;
-    if (ch.hasIcon()) {
-      channelLb = new JLabel(ch.getIcon());
-    }
-    else {
-      channelLb = new JLabel(ch.getName()+": ");
-      channelLb.setFont(new Font("Dialog", Font.BOLD, 12));
-      channelLb.setHorizontalAlignment(SwingConstants.RIGHT);
-    }
+    channelLb = new JLabel(ch.getName()+": ");
+    channelLb.setFont(new Font("Dialog", Font.BOLD, 12));
+    channelLb.setHorizontalAlignment(SwingConstants.RIGHT);
     channelLb.setPreferredSize(new Dimension(60,10));
     pn1.add(channelLb, BorderLayout.WEST);
 
