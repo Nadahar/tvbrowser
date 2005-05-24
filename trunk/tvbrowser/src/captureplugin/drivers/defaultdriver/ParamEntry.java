@@ -37,6 +37,8 @@ public class ParamEntry {
     private String mName;
     /** The Param */
     private String mParam;
+    /** Is the Param enabled ? */
+    private boolean mEnabled;
     
     /**
      * Createa a empty Param
@@ -44,6 +46,7 @@ public class ParamEntry {
     public ParamEntry() {
         mName = "";
         mParam = "";
+        mEnabled = true;
     }
     
     /**
@@ -51,9 +54,10 @@ public class ParamEntry {
      * @param name Name
      * @param param Param
      */
-    public ParamEntry(String name, String param) {
+    public ParamEntry(String name, String param, boolean enabled) {
         mName = name;
         mParam = param;
+        mEnabled = enabled;
     }
     
     /**
@@ -62,9 +66,10 @@ public class ParamEntry {
      * @throws IOException
      */
     public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(1);
+        out.writeInt(2);
         out.writeObject(mName);
         out.writeObject(mParam);
+        out.writeBoolean(mEnabled);
     }
     
     /**
@@ -77,6 +82,12 @@ public class ParamEntry {
         int version = in.readInt();
         mName = (String)in.readObject();
         mParam = (String)in.readObject();
+        
+        if (version >= 2) {
+          mEnabled = in.readBoolean();
+        } else {
+          mEnabled = true;
+        }
     }
     
     /**
@@ -119,5 +130,20 @@ public class ParamEntry {
             return " ";
         }
         return mName;
+    }
+
+    /**
+     * @return is Enabled ?
+     */
+    public boolean isEnabled() {
+      return mEnabled;
+    }
+
+    /**
+     * Enable/Disable Param
+     * @param enabled
+     */
+    public void setEnabled(boolean enabled) {
+      mEnabled = enabled;
     }
 }

@@ -38,6 +38,7 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -71,11 +72,19 @@ public class AdditionalParams extends JDialog {
     /** Current Params */
     private JTextArea mParam;
     /** Current ParamEnty */
-    private ParamEntry selectedEntry;
+    private ParamEntry mSelectedEntry;
     /** Config */
     private DeviceConfig mConfig;
     /** currently deleting */
     private boolean mDeleting = false;
+    /** Button for aktivation/deaktivation of the Param */ 
+    private JButton mStartStop;
+    
+    /** Start-Icon */
+    private final ImageIcon mStartIcon = ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Refresh16.gif",this.getClass());
+
+    /** Stop-Icon */
+    private final ImageIcon mStopIcon = ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Stop16.gif",this.getClass());
     
     /**
      * Create Dialog
@@ -149,6 +158,8 @@ public class AdditionalParams extends JDialog {
 
         mList.setSelectedIndex(0);
         
+        mList.setCellRenderer(new ParamEntryCellRenderer());
+        
         setSize(550, 450);
     }
 
@@ -218,13 +229,23 @@ public class AdditionalParams extends JDialog {
           
         });
         
+        mStartStop = new JButton(mStartIcon);
+        mStartStop.setToolTipText(mLocalizer.msg("startstop","Activate or Deactivate Parameter"));
+        
+        mStartStop.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            startStopPressed();
+          }
+        });
+        
+        buttons.add(mStartStop);
+        
         panel.add(buttons, BorderLayout.SOUTH);
 
         mList.addListSelectionListener(new ListSelectionListener() {
 
           public void valueChanged(ListSelectionEvent e) {
               selectionChanged();
-              System.out.println(mList.getSelectedIndex());
               if (mList.getSelectedIndex() == 0) {
                 up.setEnabled(false);
                 down.setEnabled(true);
@@ -239,9 +260,20 @@ public class AdditionalParams extends JDialog {
 
         });
 
+        selectionChanged();
         return panel;
     }
 
+    private void startStopPressed() {
+      mSelectedEntry.setEnabled(!mSelectedEntry.isEnabled());
+      
+      if (mSelectedEntry.isEnabled()) {
+        mStartStop.setIcon(mStopIcon);
+      } else {
+        mStartStop.setIcon(mStartIcon);
+      }
+    }
+    
     private void upPressed() {
       UiUtilities.moveSelectedItems(mList, -1);
     }
@@ -333,7 +365,7 @@ public class AdditionalParams extends JDialog {
 
         if (result == JOptionPane.YES_OPTION) {
 
-            selectedEntry = null;
+            mSelectedEntry = null;
 
             int num = mList.getSelectedIndex();
 
@@ -361,9 +393,9 @@ public class AdditionalParams extends JDialog {
      * Save data
      */
     private void saveSelected() {
-        if ((selectedEntry != null)){
-            selectedEntry.setName(mName.getText());
-            selectedEntry.setParam(mParam.getText());
+        if ((mSelectedEntry != null)){
+            mSelectedEntry.setName(mName.getText());
+            mSelectedEntry.setParam(mParam.getText());
         }
     }
 
@@ -379,10 +411,16 @@ public class AdditionalParams extends JDialog {
         saveSelected();
 
         if ((ParamEntry) mList.getSelectedValue() != null) {
-            selectedEntry = (ParamEntry) mList.getSelectedValue();
-            mName.setText(selectedEntry.getName());
-            mParam.setText(selectedEntry.getParam());
+            mSelectedEntry = (ParamEntry) mList.getSelectedValue();
+            mName.setText(mSelectedEntry.getName());
+            mParam.setText(mSelectedEntry.getParam());
+
+            if (mSelectedEntry.isEnabled()) {
+              mStartStop.setIcon(mStopIcon);
+            } else {
+              mStartStop.setIcon(mStartIcon);
+            }
         }
-    }
+   }
 
 }
