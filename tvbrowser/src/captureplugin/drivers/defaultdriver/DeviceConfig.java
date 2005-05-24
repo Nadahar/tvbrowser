@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 import util.ui.Localizer;
-
 import captureplugin.utils.ChannelComperator;
 import devplugin.Channel;
 
@@ -145,6 +144,23 @@ public class DeviceConfig {
         return mParamEntries;
     }
 
+    /**
+     * Get a Collection of all enabled Params
+     * @return all enabled Params
+     */
+    public Collection getEnabledParamList() {
+      ArrayList params = new ArrayList();
+      
+      for (int i=0;i< mParamEntries.size();i++) {
+        ParamEntry entry = (ParamEntry)mParamEntries.get(i);
+        if (entry.isEnabled()) {
+          params.add(entry);
+        }
+      }
+      
+      return params;
+    }    
+    
     /**
      * @param onlyFuturePrograms
      */
@@ -539,5 +555,6 @@ public class DeviceConfig {
         }
       }
     }
+
 
 }

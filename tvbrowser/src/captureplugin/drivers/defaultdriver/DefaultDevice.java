@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.JDialog;
@@ -288,10 +289,10 @@ public class DefaultDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#getAdditionalCommands(devplugin.Program)
      */
     public String[] getAdditionalCommands() {
+        Collection commands = mConfig.getEnabledParamList();
+        String[] values = new String[commands.size()];
         
-        String[] values = new String[mConfig.getParamList().size()];
-        
-        Iterator it = mConfig.getParamList().iterator();
+        Iterator it = commands.iterator();
 
         int i = 0;
         while (it.hasNext()) {
@@ -310,7 +311,7 @@ public class DefaultDevice implements DeviceIf {
         
         CaptureExecute exec = new CaptureExecute(parent, mConfig);
         
-        ArrayList list = new ArrayList(mConfig.getParamList());
+        ArrayList list = new ArrayList(mConfig.getEnabledParamList());
         
         if (num <= list.size()) {
             
