@@ -211,6 +211,21 @@ public class SearchFormSettings {
         mSearchText, mCaseSensitive);
   }
 
+  /**
+   * Creates a searcher from this settings
+   * 
+   * @param text Search for this Text
+   * 
+   * @return A searcher that satisfies these settings.
+   * @throws TvBrowserException If creating the searcher failed.
+   */
+  public ProgramSearcher createSearcher(String text)
+    throws TvBrowserException
+  {
+    return Plugin.getPluginManager().createProgramSearcher(mSearcherType,
+        text, mCaseSensitive);
+  }
+
 
   /**
    * Gets the search text as regular expression.
