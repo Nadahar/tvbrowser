@@ -49,8 +49,10 @@ public class MacOSXMenuBar extends MenuBar {
   }
 
 	private void createMenuBar() {
-		JMenu viewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
-    add(viewMenu);
+
+    add(mViewMenu);
+
+    add(mGoMenu);
 
     JMenu tvListingsMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
     add(tvListingsMenu);
@@ -60,19 +62,7 @@ public class MacOSXMenuBar extends MenuBar {
     JMenu helpMenu = new JMenu(mLocalizer.msg("menu.help", "Help"));
     add(helpMenu);
 
-		  // "View" menu
-		viewMenu.add(mToolbarMI);
-    viewMenu.add(mStatusbarMI);
-    viewMenu.add(mTimeBtnsMI);
-    viewMenu.add(mDatelistMI);
-    viewMenu.add(mChannellistMI);
-    viewMenu.add(mPluginOverviewMI);
-    viewMenu.addSeparator();
-    viewMenu.add(mFiltersMenu);
-    viewMenu.add(mPluginsViewMenu);
-    viewMenu.addSeparator();
-    viewMenu.add(mRestoreMI);
-   
+
     // "TV Listings" menu
     tvListingsMenu.add(mUpdateMI);
     tvListingsMenu.addSeparator();
