@@ -85,7 +85,6 @@ public class SearchForm extends JPanel {
   private JCheckBox mCaseSensitiveChB;
   
   private ProgramFieldType[] mUserDefinedFieldTypeArr;
-  
 
   /**
    * Creates a new search form.
@@ -95,6 +94,18 @@ public class SearchForm extends JPanel {
    *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], Date, int, Channel[], boolean)}.
    */
   public SearchForm(boolean showHistory, boolean showTimeSelection) {
+    this(true, showHistory, showTimeSelection);
+  }
+
+  /**
+   * Creates a new search form.
+   * 
+   * @param showInputfield Should there be a Input-Field? 
+   * @param showHistory Should there be a history?
+   * @param showTimeSelection Should the search time (number of days) be selectable?
+   *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], Date, int, Channel[], boolean)}.
+   */
+  public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection) {
     super(new TabLayout(1));
     
     String msg;
@@ -144,7 +155,7 @@ public class SearchForm extends JPanel {
 
       mTimeCB = new JComboBox(TIME_STRING_ARR);
       p2.add(mTimeCB);
-    } else {
+    } else if (showInputfield){
       p1 = new JPanel(new BorderLayout());
       this.add(p1);
 
