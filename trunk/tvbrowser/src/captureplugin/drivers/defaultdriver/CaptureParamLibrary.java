@@ -88,6 +88,59 @@ public class CaptureParamLibrary extends ParamLibrary {
   }
   
   /* (non-Javadoc)
+   * @see util.paramhandler.ParamLibrary#getDescriptionForFunctions(java.lang.String)
+   */
+  public String getDescriptionForFunctions(String function) {
+    String translation = mLocalizer.msg("function_" + function, "");
+    if (translation.startsWith("[CaptureParamLibrary.function")) {
+      return super.getDescriptionForFunctions(function);
+    }
+    
+    return translation;
+  }
+
+  /* (non-Javadoc)
+   * @see util.paramhandler.ParamLibrary#getPossibleFunctions()
+   */
+  public String[] getPossibleFunctions() {
+    String[] additionalKeys = {"variable"};
+    
+    return concat(super.getPossibleFunctions(), additionalKeys);
+  }
+
+  /* (non-Javadoc)
+   * @see util.paramhandler.ParamLibrary#getStringForFunction(devplugin.Program, java.lang.String, java.lang.String[])
+   */
+  public String getStringForFunction(Program prg, String function, String[] params) {
+    
+    if (function.equals("variable")) {
+      if (params.length != 1) {
+        setErrors(true);
+        setErrorString(mLocalizer.msg("variable_Wrong_Usage", "Wrong usage of command variable. Only one Param is allowed"));
+        return null;
+      }
+      
+      try {
+        int i = Integer.parseInt(params[0]);
+        Variable[] varArray = (Variable[]) mConfig.getVariables().toArray(new Variable[0]);
+        
+        if (varArray.length < i) {
+          return "";
+        }
+        
+        return varArray[i-1].getValue();
+      } catch (Exception e) {
+        setErrors(true);
+        setErrorString(mLocalizer.msg("variable_Not_A_Number", "The variable-Command needs a Number."));
+        return null;
+      }
+      
+    }
+    
+    return super.getStringForFunction(prg, function, params);
+  }
+
+  /* (non-Javadoc)
    * @see util.paramhandler.ParamLibrary#getDescriptionForKey(java.lang.String)
    */
   public String getDescriptionForKey(String key) {
