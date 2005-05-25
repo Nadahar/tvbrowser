@@ -39,13 +39,13 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import captureplugin.drivers.defaultdriver.configpanels.ApplicationPanel;
 import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
 import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
 import captureplugin.drivers.defaultdriver.configpanels.SettingsPanel;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
+import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
 
 /**
  * The Configuration-Dialog for this Device
@@ -122,6 +122,7 @@ public class DefaultKonfigurator extends JDialog {
         mTab.add(mLocalizer.msg("Parameter", "Parameter"), new ParameterPanel(this, mConfig));
         mTab.add(mLocalizer.msg("Settings", "Settings"), new SettingsPanel(mConfig));
         mTab.add(mLocalizer.msg("Channels", "Channels"), new ChannelPanel(mConfig));
+        mTab.add(mLocalizer.msg("Variables", "Variables"), new VariablePanel(mConfig));
         
         panel.add(mTab, BorderLayout.CENTER);
      
