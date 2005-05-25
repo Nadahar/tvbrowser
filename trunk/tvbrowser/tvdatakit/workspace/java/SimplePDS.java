@@ -30,12 +30,9 @@ public class SimplePDS extends AbstractPrimaryDataService {
     TimeZone timeZone = TimeZone.getTimeZone("MET"); // middle european time
     devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(CHANNEL_GROUP_NAME, null, null);
     mChannelList = new Channel[] {
-        new Channel(null, "Kanal12", "kanal12", timeZone, "de", "[copyright notice]",
-                    "http://www.tvbrowser.org", group),
-        new Channel(null, "Quiz 44", "quiz44", timeZone, "de", "[copyright notice]",
-                    "http://www.tvbrowser.org", group),
-        new Channel(null, "Einkauf 1-2-3", "einkauf", timeZone, "de", "[copyright notice]",
-                    "http://www.tvbrowser.org", group),
+        new Channel("kanal12"),
+        new Channel("quiz44"),
+        new Channel("einkauf"),
     };
 
   }

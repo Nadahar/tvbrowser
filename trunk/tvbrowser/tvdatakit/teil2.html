@@ -99,9 +99,10 @@ Statt <em>GRUPPENID</em> ist nat&uuml;rlich die ID der Gruppe einzusetzen. Der I
 Damit ist der DataManager konfiguriert. Starten wir ihn also:
 </p>
 <pre>
-datamanager ExcelPDS
+datamanager [GRUPPENID]
 </pre>
 <p>
+Dem DataManager mu&szlig; - wie in Teil 1 - die Gruppen-ID &uuml;bergeben werden.<br />
 Damit fehlt uns nur noch der MirrorUpdater. Die Konfigurationsdatei f&uuml;r den MirrorUpdater ist <em>MirrorUpdater.ini</em>. &Ouml;ffnen wir also diese Datei und passen wir die Zeile</p>
 <pre>
   groups=GRUPPENID
