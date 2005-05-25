@@ -10,7 +10,7 @@ TODOs:
 
 - kuerzere Texte fuer die Symbolbuttons
 - (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
-- Groessen der Views aendern sich nach Aus- und Wiedereinblenden
+- Groessen der Views aendern sich nach Aus- und Wiedereinblenden (auch bei Start des TV-Browsers stimmen die Größen nicht 100%-ig)
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
 - (M) F2 (plugin-view ein-ausblenden) funktioniert nicht, wenn die plugin-view den focus hat
 - SCHWERWIEGEND: Das Programm konnte nicht fuer den gesamten Zeitraum heruntergeladen werden!
