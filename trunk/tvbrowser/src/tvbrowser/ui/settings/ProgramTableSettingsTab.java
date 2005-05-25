@@ -26,31 +26,48 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.settings.tablebackgroundstyles.*;
-import tvbrowser.ui.settings.util.ColorLabel;
+import tvbrowser.ui.settings.tablebackgroundstyles.BlankBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.DayTimeBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.SingleImageBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.TableBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.TimeBlockBackgroundStyle;
 import tvbrowser.ui.settings.util.ColorButton;
+import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
-import util.ui.AlphaColorChooser;
 import devplugin.SettingsTab;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
 
 
 /**

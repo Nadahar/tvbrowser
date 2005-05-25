@@ -28,8 +28,6 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
