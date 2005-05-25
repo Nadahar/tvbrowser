@@ -163,8 +163,24 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
 
 
-  public String getProvider() {
-    return null;
+  public String getProviderName() {
+    String providerName = mSettings.getProperty(mID + "_provider");
+    if (providerName != null) {
+      return providerName;
+    }
+    File file = new File(mDataDir, mID + "_info");
+    if (!file.exists()) { return ""; }
+    Properties prop = new Properties();
+    try {
+      prop.load(new FileInputStream(file));
+      providerName = (String)prop.get("provider");
+      if (providerName != null) {
+        mSettings.setProperty(mID + "_provider", providerName);
+      }
+      return providerName;
+    } catch (IOException e) {
+      return "";
+    }
   }
 
     public String toString() {
@@ -475,9 +491,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
      * Get the Name of the Provider
      * @return name of the Provider
      */
-    public String getProviderName() {
-        return mSettings.getProperty(mID + "_provider");
-    }
+//    public String getProviderName() {
+//        return mSettings.getProperty(mID + "_provider");
+//    }
     
     /**
      * Set the Id of the Provider in the TvBrowser-Database

@@ -257,9 +257,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       String name = null;
       if (group != null) {
         name = group.getProviderName();
-      } else {
-        name = allChannels[i].getDataService().getInfo().getName();
-      }
+        if (name == null) {
+          name = group.getName();
+        }
+      }// else {
+//        name = allChannels[i].getDataService().getInfo().getName();
+//      }
 
       String country = allChannels[i].getCountry();
       if (name != null) {
@@ -291,7 +294,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     mCategoryCB = new JComboBox();
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPublic","Oeffentlich rechtliche"), new Integer(Channel.CATEGORY_PUBLIC)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
+
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
@@ -577,6 +582,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     fillAvailableChannelsListBox();
   }
 
+  private boolean isProviderOfGroup(ChannelGroup group, String provider) {
+    return provider.equals(group.getProviderName())
+    || provider.equals(group.getName());
+  }
 
   private class ChannelFilter {
     private TimeZone mTimezone;
@@ -611,8 +620,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
       if (mProvider != null) {
         ChannelGroup group = channel.getGroup();
-        if (group != null && group.getProviderName()!=null) {
-          if (!mProvider.equals(group.getProviderName())) {
+        if (group != null) {
+          if (!isProviderOfGroup(group, mProvider)) {
             return false;
           }
         }else{
@@ -655,6 +664,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
 
   }
+
+
 
 
 
