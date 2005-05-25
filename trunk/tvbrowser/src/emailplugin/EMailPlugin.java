@@ -114,7 +114,7 @@ public class EMailPlugin extends Plugin {
   /**
    * This method is invoked for multiple program execution.
    * 
-   * @see #supportMultipleProgramExecution()
+   * @see #canReceivePrograms()
    */
   public void receivePrograms(Program[] programArr) {
     createMail(programArr);
