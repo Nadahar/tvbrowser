@@ -95,13 +95,16 @@ public class DeviceConfig {
     /** MaximTime to Timeout */
     private int mMaxTimeout = 5;
     
+    /** Param-Entries */
     private ArrayList mParamEntries = new ArrayList();
+    
+    /** Variables */
+    private ArrayList mVariables = new ArrayList();
     
     /**
      * Create a empty Config
      */
     public DeviceConfig() {
-        
     }
     
     /**
@@ -127,8 +130,8 @@ public class DeviceConfig {
         setOnlyFuturePrograms(data.getOnlyFuturePrograms());
         setParamList(data.getParamList());
         setTimeOut(data.getTimeOut());
+        setVariables(data.getVariables());
     }
-
 
     /**
      * @param paramList
@@ -422,12 +425,28 @@ public class DeviceConfig {
     }
     
     /**
+     * Get the Variables
+     * @return Variables
+     */
+    public Collection getVariables() {
+      return mVariables;
+    }
+    
+    /**
+     * Set the Variables
+     * @param variables Variables
+     */
+    public void setVariables(Collection variables) {
+      mVariables = new ArrayList(variables);
+    }
+    
+    /**
      * Write the Config into a Stream
      * @param stream
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(4);
+        stream.writeInt(5);
         
         stream.writeObject(getName());
         
@@ -459,6 +478,12 @@ public class DeviceConfig {
         
         stream.writeInt(mMaxTimeout);
 
+        stream.writeInt(mVariables.size());
+        
+        for (int i = 0; i < mVariables.size(); i++) {
+            ((Variable)mVariables.get(i)).writeData(stream);
+        }
+        
     }
 
     /**
@@ -492,10 +517,6 @@ public class DeviceConfig {
         
         setMarkedPrograms(list);
         
-        if (version == 1) {
-            return;
-        }
-        
         mUseReturnValue = stream.readBoolean();
         mMaxSimultanious = stream.readInt();
         mResultDialogOnlyOnError = stream.readBoolean();
@@ -511,9 +532,18 @@ public class DeviceConfig {
             mParamEntries.add(entry);
         }
         
+        mMaxTimeout = stream.readInt();
         
-        if (version > 2) {
-            mMaxTimeout = stream.readInt();
+        mVariables = new ArrayList();
+        
+        if (version > 4) {
+          size = stream.readInt();
+          
+          for (int i = 0; i < size; i++) {
+            Variable var = new Variable();
+            var.readData(stream);
+            mVariables.add(var);
+          }
         }
     }
 
