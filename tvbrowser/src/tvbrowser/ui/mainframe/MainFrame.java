@@ -335,31 +335,6 @@ public class MainFrame extends JFrame implements DateListener {
 
   }
 
-  /**
-   * @deprecated TODO: check, if we can remove this method
-   * @param pluginsMenu
-   * @param plugins
-   */
-  public static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
-    pluginsMenu.removeAll();
-
-    Arrays.sort(plugins, new Comparator() {
-
-      public int compare(Object o1, Object o2) {
-        return o1.toString().compareTo(o2.toString());
-      }
-
-    });
-
-    for (int i = 0; i < plugins.length; i++) {
-      ActionMenu action = plugins[i].getButtonAction();
-      if (action != null) {
-        pluginsMenu.add(createMenuItem(action));
-
-      }
-    }
-  }
-
   public void scrollToProgram(Program program) {
     scrollTo(program.getDate(), program.getHours());
     mProgramTableScrollPane.scrollToChannel(program.getChannel());
