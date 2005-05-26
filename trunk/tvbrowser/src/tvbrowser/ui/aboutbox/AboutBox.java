@@ -128,13 +128,13 @@ public class AboutBox extends JDialog {
     
     contentPane.add(right, BorderLayout.CENTER);
     
-    Image image = ImageUtilities.createImage("imgs/tvabout.jpg");
+    Image image = ImageUtilities.createImage("imgs/tvabout.png");
     if (image != null) {
       ImageUtilities.waitForImageData(image, null);
       JLabel gfx = new JLabel(new ImageIcon(image));
       
       JPanel gfxPanel = new JPanel(new BorderLayout());
-      gfxPanel.setBackground(Color.WHITE);
+      gfxPanel.setBackground(new Color(80,170,233));
       gfxPanel.add(gfx, BorderLayout.SOUTH);
       
       contentPane.add(gfxPanel, BorderLayout.WEST);
