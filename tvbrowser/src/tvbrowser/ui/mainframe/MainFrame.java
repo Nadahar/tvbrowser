@@ -28,12 +28,22 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.util.Arrays;
+import java.lang.reflect.Constructor;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Locale;
 import java.util.logging.Level;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -44,14 +54,13 @@ import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
-import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
-import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
-import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
+import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
+import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
@@ -64,10 +73,13 @@ import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
-
-import java.lang.reflect.Constructor;
 
 /**
  * TV-Browser
