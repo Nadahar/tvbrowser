@@ -29,6 +29,8 @@ import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -43,6 +45,8 @@ import tvbrowser.ui.mainframe.MainFrame;
 
 import com.gc.systray.SystemTrayIconListener;
 import com.gc.systray.SystemTrayIconManager;
+
+import devplugin.ActionMenu;
 
 /**
  * This Class creates a SystemTray
@@ -206,11 +210,38 @@ public class SystemTray {
       JMenu pluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
       
       PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-      MainFrame.updatePluginsMenu(pluginsMenu, plugins);
+      updatePluginsMenu(pluginsMenu, plugins);
       
       return pluginsMenu;
     }
         
+    
+    /**
+     * @deprecated TODO: check, if we can remove this method
+     * @param pluginsMenu
+     * @param plugins
+     */
+    private static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
+      pluginsMenu.removeAll();
+
+      Arrays.sort(plugins, new Comparator() {
+
+        public int compare(Object o1, Object o2) {
+          return o1.toString().compareTo(o2.toString());
+        }
+
+      });
+
+      for (int i = 0; i < plugins.length; i++) {
+        ActionMenu action = plugins[i].getButtonAction();
+        if (action != null) {
+          pluginsMenu.add(new JMenuItem(action.getAction()));
+
+        }
+      }
+    }
+
+
     
     /**
      * Is the Tray activated and used?
