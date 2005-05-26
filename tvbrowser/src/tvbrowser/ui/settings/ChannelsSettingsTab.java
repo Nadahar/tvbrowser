@@ -294,9 +294,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     mCategoryCB = new JComboBox();
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTV","TV"), new Integer(Channel.CATEGORY_CINEMA)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
-
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
@@ -304,6 +304,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers","Sonstige Sparten"), new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone","Not categorized"), new Integer(Channel.CATEGORY_NONE)));
 
 
     mProviderCB = new JComboBox();
