@@ -41,14 +41,16 @@ import util.ui.ImageUtilities;
 public class Channel {
 
   public static final int CATEGORY_NONE = 0;
-  public static final int CATEGORY_RADIO = 1;
-  public static final int CATEGORY_CINEMA = 1 << 1;
-  public static final int CATEGORY_DIGITAL = 1 << 2;
-  public static final int CATEGORY_SPECIAL_MUSIC = 1 << 3;
-  public static final int CATEGORY_SPECIAL_SPORT = 1 << 4;
-  public static final int CATEGORY_SPECIAL_NEWS = 1 << 5;
-  public static final int CATEGORY_SPECIAL_OTHER = 1 << 6;
-  public static final int CATEGORY_EVENTS = 1 << 7;
+  public static final int CATEGORY_TV = 1;
+  public static final int CATEGORY_RADIO = 1 << 1;
+  public static final int CATEGORY_CINEMA = 1 << 2;
+  public static final int CATEGORY_EVENTS = 1 << 3;
+  public static final int CATEGORY_DIGITAL = 1 << 4;
+  public static final int CATEGORY_SPECIAL_MUSIC = 1 << 5;
+  public static final int CATEGORY_SPECIAL_SPORT = 1 << 6;
+  public static final int CATEGORY_SPECIAL_NEWS = 1 << 7;
+  public static final int CATEGORY_SPECIAL_OTHER = 1 << 8;
+
 
 
   private TvDataService mDataService;
