@@ -353,6 +353,7 @@
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${txt.dir}" includes="website.url"/>
       <fileset dir="${txt.dir}" includes="default.properties"/>
+      <fileset dir="${txt.dir}" includes="tvbrowser.sh"/>
     </copy>
 
     <mkdir dir="${tvbrowser.runtime.dir}/themepacks"/>
