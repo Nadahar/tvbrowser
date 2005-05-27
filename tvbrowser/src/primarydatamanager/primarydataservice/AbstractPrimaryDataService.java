@@ -147,7 +147,6 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
 
     int weekOfYear = cal.get(Calendar.WEEK_OF_YEAR);
 
-    int diff;
     if (firstDayOfWeek!=beginOfWeek) {
       if (dayOfWeek>=firstDayOfWeek && dayOfWeek<beginOfWeek) {
         weekOfYear--;

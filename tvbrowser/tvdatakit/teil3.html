@@ -40,46 +40,11 @@ Da wir mit einer bereits fertigen XML-Datei arbeiten und uns nur auf die zweite 
 Wie die XML-Datei erzeugt wird, ist allein Sache des Programmierers des Datensammlers. Zur Not kann die Datei auch von Hand erstellt werden. Aber wie gesagt: Es gibt bereits eine fertige Datei, die wir nutzen k&ouml;nnen.
 </p>
 
-<h3>Das eingesetzte XML-Format</h3>
-<p>
-Wenn ich bisher von <i>einer</i> XML-Datei gesprochen habe, so ist das nicht ganz richtig: Eigentlich handelt es sich um zwei XML-Dateien. In der einen, der <em>TvChannels.xml</em>, werden die Daten zu den Sendern abgelegt. In der zweiten, der <em>TvData.xml</em>, stehen dann die eigentlichen TV-Daten.
-</p>
+
+<h3>Die Datei <em>TvData.xml</em></h3>
 <p>
 Als XML-Format wird <a href="http://membled.com/work/apps/xmltv" target="_blank">XMLTV</a> eingesetzt. An manchen Stellen, wo TV-Browser Informationen unterst&uuml;tzt, die in XMLTV kein &Auml;quivalent haben, wurde das Format etwas aufgebohrt. Diese Zusatzm&ouml;glichkeiten m&uuml;ssen jedoch nicht genutzt werden, so dass f&uuml;r die TV-Daten auch g&uuml;ltiges XMLTV genutzt werden kann.
 </p>
-<p>
-Bei XMLTV werden die Daten &uuml;ber die Sender normalerweise in der selben Datei gespeichert, wie die eigentlichen TV-Daten. Dass die Daten bei uns getrennt werden, hat folgende Gr&uuml;nde:
-<ul>
-  <li>F&uuml;r die Senderdaten ben&ouml;tigt TV-Browser zwingend Informationen, die man mit XMLTV nicht darstellen kann (Copyright, Sendergruppe, usw.). Wenn man diese Daten in die <em>TvData.xml</em> packen w&uuml;rde, dann k&ouml;nnte man diese nicht mehr in g&uuml;ltigem XMLTV erstellen.</li>
-  <li>Die Senderdaten sind statisch, die TV-Daten sind dynamisch. D.h. man kann die <em>TvChannels.xml</em> einmal von Hand erstellen, so dass man nur noch die <em>TvData.xml</em> automatisch erstellen muss. Da der Datensammler keine Senderdaten mehr generieren muss, ist er einfacher zu schreiben.</li>
-  <li>Da das Auslesen in zwei Schritten getrennt passiert, ist die Aufbereitung schneller, wenn die Daten in getrennten Dateien sind.</li>
-</ul>
-</p>
-
-<h3>Die Datei <em>TvChannels.xml</em></h3>
-<p>
-Wie bereits gesagt, ben&ouml;tigt TV-Browser bei den Senderdaten Informationen, die man mit XMLTV nicht darstellen kann. Das Format der <em>TvChannels.xml</em> ist daher zwar an XMLTV angeleht, jedoch kein g&uuml;ltiges XMLTV mehr.
-</p>
-<p>
-Jetzt aber mal genug von diesem theoretischen Geschwafel! Jetzt wollen wir mal zur Tat schreiten. Wir &ouml;ffnen zun&auml;chst einmal die Datei <em>TvChannels.xml</em> in einem Texteditor wie z.B. Notepad. Dort tragen wir alle Sender ein, die mit Hilfe unseres Datensammlers versorgt werden.
-</p>
-<p>
-Die Eintr&auml;ge dieser Datei entsprechen der Zeile 2 in der Excel-Datei aus Teil II. Damit man sich leichter zurecht findet, sind hier schon zwei Beispielsender zu sehen. Beim ersten Sender steht vor jedem Tag ein Beschreibungskommentar.
-</p>
-<p>
-Die einzelnen Eintr&auml;ge (Details siehe <a href="teil2.html#channelTable" target="_blank">Tabelle aus Teil II</a>):
-<ul>
-  <li><b>Attribut <em>id</em></b> (Channel ID): Diese ID wird sowohl von TV-Browser, als auch sp&auml;ter in der <em>TvData.xml</em> verwendet und darf nur alphanumerische Zeichen enthalten. Es ist wichtig, das diese ID innerhalb des TV-Browsers eindeutig ist. Also bitte keine schon vorhandene ID benutzen.</li>
-  <li><b>Tag <em>&lt;name&gt;</em></b> (Channel Name): Der Name des Senders, wie er in TV-Browser angezeigt wird.</li>
-  <li><b>Tag <em>&lt;group&gt;</em></b> (Channel Group ID): Die ID der Sendergruppe, zu der dieser Sender geh&ouml;ren soll.</li>
-  <li><b>Tag <em>&lt;time-zone&gt;</em></b> (Time Zone): Die Zeitzone, auf die sich die Zeiten der Programmdaten beziehen.</li>
-  <li><b>Tag <em>&lt;country&gt;</em></b> (Country Code): Das Land in dem der Sender sendet.</li>
-  <li><b>Tag <em>&lt;copyright&gt;</em></b> (Copyright Message): Der Text, der in der Senderspalte ganz unten erscheint.</li>
-  <li><b>Tag <em>&lt;url&gt;</em></b> (Copyright Website): Die Webseite des Senders.</li>
-</ul>
-</p>
-
-<h3>Die Datei <em>TvData.xml</em></h3>
 <p>
 Das ist die Datei, die vom Datensammler automatisch erstellt werden soll. Hier werden alle Programmdaten abgelegt.
 </p>
@@ -111,7 +76,7 @@ Alle Zeiten werden in XMLTV nach dem folgenden Schema angegeben:
 <em>200407101100</em> bedeutet daher: 10. Juli 2004 um 11:00 Uhr.
 </p>
 <p>
-Momentan sind noch sehr wenige Sendungen eingetragen. Also ruhig noch ein paar mehr dazuschreiben, damit nachher ein Bi&szlig;chen mehr zu sehen ist. Dabei muss darauf geachtet werden, dass die verwendeten Channel-IDs auch in der <em>TvChannels.xml</em> definiert wurden!
+Momentan sind noch sehr wenige Sendungen eingetragen. Also ruhig noch ein paar mehr dazuschreiben, damit nachher ein Bi&szlig;chen mehr zu sehen ist. Dabei muss darauf geachtet werden, dass die verwendeten Channel-IDs auch in der <em>[gruppenID]_channels.txt</em> (im config-Verzeichnis) definiert wurden!
 </p>
 <p>
 Wenn genug Datenmaterial zusammen ist, speichern wir die Datei ab. Auch die &Auml;nderungen in der <em>TvChannels.xml</em> m&uuml;ssen gespeichert werden.
@@ -132,7 +97,7 @@ Wie immer m&uuml;ssen die Daten auf dem Server regelm&auml;&szlig;ig aktualisier
 </p>
 <pre>
 pdsrunner XmlTvPDS
-datamanager XmlTvPDS
+datamanager [mychannelgroupID]
 mirrorupdater mirrorupdater.ini
 </pre>
 <p class="note">
