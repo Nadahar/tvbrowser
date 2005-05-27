@@ -47,13 +47,6 @@ public interface PrimaryDataService {
   public boolean execute(String dir, PrintStream err);
 
   /**
-   * Gets the list of the channels that are available by this data service.
-   * 
-   * @return The list of available channels
-   */
-  public Channel[] getAvailableChannels();
-
-  /**
    * Gets the number of bytes read (= downloaded) by this data service.
    * 
    * @return The number of bytes read.

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,10 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TimeZone;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.Attributes;
@@ -42,8 +40,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import devplugin.*;
 import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.ChannelGroupImpl;
 import devplugin.ProgramFieldType;
 
 import primarydatamanager.primarydataservice.AbstractPrimaryDataService;
@@ -58,9 +54,6 @@ import tvbrowserdataservice.file.ProgramFrame;
  * @author Til Schneider, www.murfman.de
  */
 public class XmlTvPDS extends AbstractPrimaryDataService {
-  
-  /** The file where the channel data is stored. */
-  private static final String CHANNEL_FILE_NAME = "TvChannels.xml";
 
   /** The file where the TV data is stored. */
   private static final String TV_DATA_FILE_NAME = "TvData.xml";
@@ -71,35 +64,6 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
    *
    * @return The list of available channels
    */
-  public Channel[] getAvailableChannels() {
-    // Get the channel file
-    File channelFile = new File(CHANNEL_FILE_NAME);
-    if (! channelFile.exists()) {
-      logException(new IOException("Channel data file not found: "
-          + channelFile.getAbsolutePath()));
-    }
-
-    // parse the channel file
-    ChannelHandler handler = new ChannelHandler();
-    
-    FileInputStream stream = null;
-    try {
-      stream = new FileInputStream(channelFile);
-      parse(stream, handler);
-      stream.close();
-    }
-    catch (Exception exc) {
-      logException(exc);
-    }
-    finally {
-      if (stream != null) {
-        try { stream.close(); } catch (Exception exc) {}
-      }
-    }
-    
-    return handler.getChannels();
-  }
-
 
   /**
    * Gets the raw TV data and writes it to a directory
@@ -115,10 +79,10 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
     }
     
     // Get the channels
-    Channel[] channelArr = getAvailableChannels();
+  //  Channel[] channelArr = getAvailableChannels();
 
     // parse the TV data file
-    TvDataHandler handler = new TvDataHandler(channelArr);
+    TvDataHandler handler = new TvDataHandler();
     
     FileInputStream stream = null;
     try {
@@ -188,122 +152,6 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
   
 
   /**
-   * A handler that parses channels from XML.
-   */
-  private class ChannelHandler extends DefaultHandler {
-    
-    /** The parsed channels. */
-    private ArrayList mChannelList;
-    
-    /** Holds the text of the current tag. */
-    private StringBuffer mText;
-    
-    /** The channel data */
-    private String mName, mId, mGroupId, mTimeZoneName, mCountry,
-      mCopyrightNotice, mWebpage;
-
-    
-    
-    /**
-     * Creates a new instance of ChannelHandler.
-     */
-    public ChannelHandler() {
-      mChannelList = new ArrayList();
-      mText = new StringBuffer();
-    }
-
-    
-    /**
-     * Handles the occurence of tag text.
-     */
-    public void characters (char ch[], int start, int length)
-      throws SAXException
-    {
-      // There is some text -> Add it to the text buffer
-      mText.append(ch, start, length);
-    }
-
-
-    /**
-     * Handles the occurence of a start tag.
-     */
-    public void startElement (String uri, String localName, String qName,
-      Attributes attributes)
-      throws SAXException
-    {
-      // A new tag begins -> Clear the text buffer
-      clear(mText);
-
-      if (qName.equals("channel")) {
-        mId = attributes.getValue("id");
-      }
-    }
-    
-    
-    /**
-     * Handles the occurence of an end tag.
-     */
-    public void endElement (String uri, String localName, String qName)
-      throws SAXException
-    {
-      String text = mText.toString();
-
-      if (qName.equals("name")) {
-        mName = text;
-      }
-      else if (qName.equals("group")) {
-        mGroupId = text;
-      }
-      else if (qName.equals("time-zone")) {
-        mTimeZoneName = text;
-      }
-      else if (qName.equals("country")) {
-        mCountry = text;
-      }
-      else if (qName.equals("copyright")) {
-        mCopyrightNotice = text;
-      }
-      else if (qName.equals("url")) {
-        mWebpage = text;
-      }
-      else if (qName.equals("channel")) {
-        // Check the data
-        if ((mName == null) || (mId == null) || (mGroupId == null)
-          || (mTimeZoneName == null) || (mCountry == null)
-          || (mCopyrightNotice == null) || (mWebpage == null))
-        {
-          logException(new IOException("Channel data of '" + mName + "' not complete!"));
-        } else {
-          // Create the channel
-          ChannelGroup group = new ChannelGroupImpl(mGroupId, null, null);
-          TimeZone timeZone = TimeZone.getTimeZone(mTimeZoneName);
-          Channel channel = new Channel(null, mName, mId, timeZone, mCountry,
-                                        mCopyrightNotice, mWebpage, group);
-          mChannelList.add(channel);
-        }
-
-        // Reset fields for the next channel
-        mName = mId = mGroupId = mTimeZoneName = mCountry = mCopyrightNotice
-          = mWebpage = null;
-      }
-    }
-    
-    
-    /**
-     * Gets the parsed channels
-     * 
-     * @return
-     */
-    public Channel[] getChannels() {
-      Channel[] arr = new Channel[mChannelList.size()];
-      mChannelList.toArray(arr);
-      return arr;
-    }
-
-  } // inner class ChannelHandler
-
-  
-  /**
    * A handler that parses TV data from XML.
    */
   private class TvDataHandler extends DefaultHandler {
@@ -332,16 +180,15 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
     
     /**
      * Creates a new instance of TvDataHandler.
-     * 
-     * @param channelArr The channels to extract the programs for.
+     *
      */
-    public TvDataHandler(Channel[] channelArr) {
+    public TvDataHandler() {
       mDispatcherHash = new HashMap();
-      for (int i = 0; i < channelArr.length; i++) {
+    /*  for (int i = 0; i < channelArr.length; i++) {
         String channelId = channelArr[i].getId();
         ProgramFrameDispatcher dis = new ProgramFrameDispatcher(channelArr[i]);
         mDispatcherHash.put(channelId, dis);
-      }
+      }   */
 
       mText = new StringBuffer();
     }
@@ -355,6 +202,15 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
     {
       // There is some text -> Add it to the text buffer
       mText.append(ch, start, length);
+    }
+
+    private ProgramFrameDispatcher getProgramDispatcher(String channelId) {
+      ProgramFrameDispatcher dispatcher = (ProgramFrameDispatcher) mDispatcherHash.get(channelId);
+      if (dispatcher == null) {
+        dispatcher = new ProgramFrameDispatcher(new Channel(channelId));
+        mDispatcherHash.put(channelId, dispatcher);
+      }
+      return dispatcher;
     }
 
 
@@ -382,38 +238,32 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
           logException(new IOException("Channel missing in programme tag"));
         }
         else {
-          ProgramFrameDispatcher dispatcher
-            = (ProgramFrameDispatcher) mDispatcherHash.get(mChannelId);
-          if (dispatcher == null) {
-            logMessage("WARNING: programme tag uses unknown channel id: '"
-                + mChannelId + "'. It will be ignored");
-          } else {
-            mChannelCountry = dispatcher.getChannel().getCountry();
-            try {
-              mDate = extractDate(start);
-    
-              mFrame = new ProgramFrame();
-              addField(ProgramField.create(ProgramFieldType.START_TIME_TYPE,
-                  extractTime(start)));
-              addField(ProgramField.create(ProgramFieldType.SHOWVIEW_NR_TYPE,
-                  attributes.getValue("showview")));
-              
-              String vps = attributes.getValue("vps-start");
-              if (vps != null) {
-                int time = extractTime(vps);
-                addField(ProgramField.create(ProgramFieldType.VPS_TYPE, time));
-              }
-              
-              String stop = attributes.getValue("stop");
-              if (stop != null) {
-                mFrame.addProgramField(ProgramField.create(ProgramFieldType.END_TIME_TYPE,
-                    extractTime(stop)));
-              }
+          ProgramFrameDispatcher dispatcher = getProgramDispatcher(mChannelId);
+          mChannelCountry = dispatcher.getChannel().getCountry();
+          try {
+            mDate = extractDate(start);
+
+            mFrame = new ProgramFrame();
+            addField(ProgramField.create(ProgramFieldType.START_TIME_TYPE,
+                extractTime(start)));
+            addField(ProgramField.create(ProgramFieldType.SHOWVIEW_NR_TYPE,
+                attributes.getValue("showview")));
+
+            String vps = attributes.getValue("vps-start");
+            if (vps != null) {
+              int time = extractTime(vps);
+              addField(ProgramField.create(ProgramFieldType.VPS_TYPE, time));
             }
-            catch (IOException exc) {
-              logException(exc);
-              mFrame = null; // This frame is invalid
+
+            String stop = attributes.getValue("stop");
+            if (stop != null) {
+              mFrame.addProgramField(ProgramField.create(ProgramFieldType.END_TIME_TYPE,
+                  extractTime(stop)));
             }
+          }
+          catch (IOException exc) {
+            logException(exc);
+            mFrame = null; // This frame is invalid
           }
         }
       }
