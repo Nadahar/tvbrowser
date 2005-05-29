@@ -353,6 +353,7 @@
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${txt.dir}" includes="website.url"/>
       <fileset dir="${txt.dir}" includes="default.properties"/>
+      <fileset dir="${txt.dir}" includes="osx.properties"/>
       <fileset dir="${txt.dir}" includes="tvbrowser.sh"/>
     </copy>
 
@@ -612,9 +613,12 @@
 
 	<target name="runtime-mac" depends="make-mac, runtime">
 
+   
+
+
 	<jar jarfile="${tvbrowser.runtime.dir}/plugins/GrowlPlugin.jar"
          compress="false">
-      <fileset dir="${classes.dir}" includes="growlplugin/**"/>
+      <fileset dir="${classes.dir}" includes="growlplugin/**" />
     </jar>
   	
   	<delete dir="${tvbrowser-mac.runtime.dir}"/>
@@ -624,8 +628,9 @@
           name="TV-Browser"
           icon="./src/imgs/tvbrowser.icns"
           mainclass="tvbrowser.TVBrowser"
-      	extraclasspath="/System/Library/Java"
-      	  jvmversion="1.4+"
+      	   extraclasspath="/System/Library/Java"
+      	   jvmversion="1.4+"
+           vmoptions="-Dpropertiesfile=osx.properties"
 	      bundleid="org.tvbrowser"
 	      smalltabs="true"
           antialiasedgraphics="true"
@@ -633,7 +638,7 @@
           liveresize="true"
           growboxintrudes="false"
           screenmenu="true"
-          workingdirectory="/Library/TV-Browser"
+          workingdirectory="/Library/Application Support/TV-Browser"
           jars="${tvbrowser.runtime.dir}/tvbrowser.jar">
       	
      </jarbundler>

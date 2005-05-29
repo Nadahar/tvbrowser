@@ -39,7 +39,7 @@ import java.io.IOException;
  */
 public class DefaultSettings {
 
-  private static final String FILENAME = "default.properties";
+  private static final String FILENAME = System.getProperty("propertiesfile","default.properties");
 
   private Properties mProperties;
 
