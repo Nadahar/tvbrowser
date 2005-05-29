@@ -7,67 +7,89 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 
+/**
+ * This is the Wrapper for the Windows SystemTray
+ * 
+ * @author bodum
+ */
 public class WinSystemTray implements SystemTrayIf {
-    /** Logger */
-    private static java.util.logging.Logger mLog
-      = java.util.logging.Logger.getLogger(WinSystemTray.class.getName());
-	
-    int mSystrayImageHandle;
-	boolean mUseSystemTray = false;
-	
-	SystemTrayIconManager mManager;
-	
-	public boolean init(JFrame parent, String image, String tooltip) {
-		mSystrayImageHandle = -1;
-		File iconTrayLib = new File("DesktopIndicator.dll");
+  /** Logger */
+  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(WinSystemTray.class.getName());
 
-		if (iconTrayLib.exists()) {
-			mUseSystemTray = SystemTrayIconManager.initializeSystemDependent();
-			if (!mUseSystemTray) {
-				mLog.info("could not load library "
-						+ iconTrayLib.getAbsolutePath());
-			} else {
-				
-				mSystrayImageHandle = SystemTrayIconManager.loadImage(image);
-				if (mSystrayImageHandle == -1) {
-					mLog.info("Could not load system tray icon");
-					mUseSystemTray = false;
-				}
-			}
-		}
+  /** The Image-Handle */
+  private int mSystrayImageHandle;
 
-		if (mUseSystemTray) {
-			mManager = new SystemTrayIconManager(mSystrayImageHandle, tooltip);
-		}
-		return mUseSystemTray;
-	}
+  /** Use Systemtray ? */
+  private boolean mUseSystemTray = false;
 
-	public void setVisible(boolean b) {
-		if (mUseSystemTray) {
-			// ATTENTION ! THIS IS FUCKING SLOW!
-			mManager.setVisible(b);
-		}
-	}
+  /** The Tray-Manager */
+  private SystemTrayIconManager mManager;
 
-	public void addLeftDoubleClickAction(final ActionListener listener) {
-		mManager.addSystemTrayIconListener(new SystemTrayIconListener() {
+  /**
+   * Create the SytemTray
+   * 
+   * @return true, if succesfull
+   */
+  public boolean init(JFrame parent, String image, String tooltip) {
+    mSystrayImageHandle = -1;
+    File iconTrayLib = new File("DesktopIndicator.dll");
 
-            public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
-            }
+    if (iconTrayLib.exists()) {
+      mUseSystemTray = SystemTrayIconManager.initializeSystemDependent();
+      if (!mUseSystemTray) {
+        mLog.info("could not load library " + iconTrayLib.getAbsolutePath());
+      } else {
 
-            public void mouseClickedRightButton(Point pos, SystemTrayIconManager ssource) {
-            }
+        mSystrayImageHandle = SystemTrayIconManager.loadImage(image);
+        if (mSystrayImageHandle == -1) {
+          mLog.info("Could not load system tray icon");
+          mUseSystemTray = false;
+        }
+      }
+    }
 
-            public void mouseLeftDoubleClicked(Point pos, SystemTrayIconManager source) {
-            	listener.actionPerformed(null);
-            }
+    if (mUseSystemTray) {
+      mManager = new SystemTrayIconManager(mSystrayImageHandle, tooltip);
+    }
+    return mUseSystemTray;
+  }
 
-            public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
-            }
-        });	
-	}
+  /**
+   * Visibility of the Icon
+   * @param b 
+   */
+  public void setVisible(boolean b) {
+    if (mUseSystemTray) {
+      // ATTENTION ! THIS IS FUCKING SLOW!
+      mManager.setVisible(b);
+    }
+  }
 
-	public void setTrayPopUp(JPopupMenu trayMenu) {
-		mManager.setRightClickView(trayMenu);
-	}
+  /**
+   * Add a Left-DoubleClick-Action
+   */
+  public void addLeftDoubleClickAction(final ActionListener listener) {
+    mManager.addSystemTrayIconListener(new SystemTrayIconListener() {
+
+      public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
+      }
+
+      public void mouseClickedRightButton(Point pos, SystemTrayIconManager ssource) {
+      }
+
+      public void mouseLeftDoubleClicked(Point pos, SystemTrayIconManager source) {
+        listener.actionPerformed(null);
+      }
+
+      public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
+      }
+    });
+  }
+
+  /**
+   * Set the JPopupMenu
+   */
+  public void setTrayPopUp(JPopupMenu trayMenu) {
+    mManager.setRightClickView(trayMenu);
+  }
 }
