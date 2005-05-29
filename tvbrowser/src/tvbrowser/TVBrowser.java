@@ -354,7 +354,7 @@ public class TVBrowser {
     mTray = new SystemTray();
     
     if (mTray.initSystemTray()) {
-        mTray.createMenus(mainFrame);
+        mTray.createMenus();
     } else {
       mLog.info("platform independent mode is ON");    
       

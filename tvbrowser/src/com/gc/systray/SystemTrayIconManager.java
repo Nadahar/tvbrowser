@@ -71,7 +71,7 @@ public class SystemTrayIconManager {
 
         w.setSize(0, 0);
         w.setLocation(-DISTANCE, -DISTANCE); // place the dialog/invoker out of visible area
-        w.setVisible(true);
+        w.setVisible(false);
     }
 
     /**
