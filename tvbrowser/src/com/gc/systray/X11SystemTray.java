@@ -15,25 +15,39 @@ import javax.swing.event.PopupMenuListener;
 
 import util.misc.JavaVersion;
 
+/**
+ * This is the Wrapper for the Windows SystemTray
+ * 
+ * @author bodum
+ */
 public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
+  /** Logger */
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(X11SystemTray.class.getName());
 
+  /** Tray-Manager */
   private X11SystrayManager mManager;
-
+  /** Left-Mouseclick-Actions */
   private ArrayList mLeftAction = new ArrayList();
-
+  /** The Popup-Menu */
   private JPopupMenu mPopupMenu;
-
+  /** Tray-Parent */
   private JDialog mTrayParent;
 
+  /**
+   * Init the SystemTray
+   */
   public boolean init(JFrame parent, String image, String tooltip) {
     
     if (JavaVersion.getVersion() < JavaVersion.VERSION_1_5) {
+      mLog.info("Tray needs Java 1.5 or higher.");
       return false;
     }
     
     mManager = new X11SystrayManager(image, tooltip);
     
     if (!mManager.isLoaded()) {
+      mLog.info("Could not load Tray-Library.");
       return false;
     }
     
@@ -60,6 +74,10 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
     return mManager.isLoaded();
   }
 
+  /**
+   * Set the visibility of the Icon
+   * @param b true to make the TrayIcon visible
+   */
   public void setVisible(boolean b) {
     if (mManager.isLoaded()) {
       if (b) {
@@ -70,10 +88,16 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
     }
   }
 
+  /**
+   * Add a Left-DoubleClick-Action
+   */
   public void addLeftDoubleClickAction(ActionListener listener) {
     mLeftAction.add(listener);
   }
 
+  /**
+   * Set the Popup
+   */
   public void setTrayPopUp(JPopupMenu popupMenu) {
     mPopupMenu = popupMenu;
     
@@ -94,6 +118,9 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
     popupMenu.setVisible(false);
   }
 
+  /**
+   * If a Mouse was pressed
+   */
   public void mousePressed(MouseEvent e) {
     if (e.isPopupTrigger() && mPopupMenu != null) {
       // we have to calculate th leftTopX and Y value of the popupmenu
