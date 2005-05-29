@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import util.misc.JavaVersion;
 
@@ -74,6 +76,20 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
 
   public void setTrayPopUp(JPopupMenu popupMenu) {
     mPopupMenu = popupMenu;
+    
+    mPopupMenu.addPopupMenuListener(new PopupMenuListener() {
+
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+      }
+
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        mTrayParent.setVisible(false);
+      }
+
+      public void popupMenuCanceled(PopupMenuEvent e) {
+      }
+      
+    });
     popupMenu.setVisible(true);
     popupMenu.setVisible(false);
   }
