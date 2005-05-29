@@ -25,10 +25,10 @@
  */
 package tvbrowser.ui;
 
-import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -37,14 +37,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 
-import com.gc.systray.SystemTrayIconListener;
-import com.gc.systray.SystemTrayIconManager;
+import com.gc.systray.SystemTrayFactory;
+import com.gc.systray.SystemTrayIf;
+import com.gc.systray.WinSystemTray;
 
 import devplugin.ActionMenu;
 
@@ -68,12 +68,14 @@ public class SystemTray {
     /** State of the Window (max/normal) */
     private static int mState;    
     
+    private SystemTrayIf mSystemTray;
+
+    
     /**
      * Creates the SystemTray
      *
      */
     public SystemTray() {
-
     }
 
     /**
@@ -81,35 +83,35 @@ public class SystemTray {
      * @return true if successfull
      */
     public boolean initSystemTray() {
+      
+      mUseSystemTray = false;
+      
+      mSystemTray = SystemTrayFactory.createSystemTray();
+      
+      if (mSystemTray != null) {
+    	  
+    	  if (mSystemTray instanceof WinSystemTray) {
+   	        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/tvbrowser.ico", MainFrame.getInstance().getTitle());
+    	  } else {
+   	        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/tvbrowser16.png", MainFrame.getInstance().getTitle());
+    	  }
+      } else {
         mUseSystemTray = false;
-        mSystrayImageHandle = -1;
-        File iconTrayLib = new File("DesktopIndicator.dll");
-
-        if (iconTrayLib.exists()) {
-            mUseSystemTray = SystemTrayIconManager.initializeSystemDependent();
-            if (!mUseSystemTray) {
-                mLog.info("could not load library " + iconTrayLib.getAbsolutePath());
-            } else {
-                mSystrayImageHandle = SystemTrayIconManager.loadImage("imgs/TVBrowser.ico");
-                if (mSystrayImageHandle == -1) {
-                    mLog.info("Could not load system tray icon");
-                    mUseSystemTray = false;
-                }
-            }
-        }
-        
-        return mUseSystemTray;
+      }
+      return mUseSystemTray;
     }
 
     /**
      * Creates the Menus
      * @param mainFrame MainFrame to use for hide/show
      */
-    public void createMenus(final MainFrame mainFrame) {
+    public void createMenus() {
+        if (!mUseSystemTray) {
+          return;
+        }
+        
         mLog.info("platform independent mode is OFF");
 
-        final SystemTrayIconManager mgr = new SystemTrayIconManager(mSystrayImageHandle, TVBrowser.MAINWINDOW_TITLE);
-        mgr.setVisible(true);
         JPopupMenu trayMenu = new JPopupMenu();
         final JMenuItem openMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
         JMenuItem quitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
@@ -124,46 +126,36 @@ public class SystemTray {
         openMenuItem.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                mainFrame.show();
-                mainFrame.toFront();
-                mainFrame.setExtendedState(mState);
+                MainFrame.getInstance().show();
+                MainFrame.getInstance().toFront();
+                MainFrame.getInstance().setExtendedState(mState);
             }
         });
 
         quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                mgr.setVisible(false);
-                mainFrame.quit();
+                mSystemTray.setVisible(false);
+                MainFrame.getInstance().quit();
             }
         });
-
-        mgr.addSystemTrayIconListener(new SystemTrayIconListener() {
-
-            public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
+        
+        mSystemTray.addLeftDoubleClickAction(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            if (!MainFrame.getInstance().isVisible()) {
+              MainFrame.getInstance().show();
             }
-
-            public void mouseClickedRightButton(Point pos, SystemTrayIconManager ssource) {
-            }
-
-            public void mouseLeftDoubleClicked(Point pos, SystemTrayIconManager source) {
-                if (!mainFrame.isVisible()) {
-                    mainFrame.show();
-                }
-                mainFrame.toFront();
-                mainFrame.setExtendedState(mState);
-            }
-
-            public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
-            }
+            MainFrame.getInstance().toFront();
+            MainFrame.getInstance().setExtendedState(mState);
+          }
         });
+        
+        mSystemTray.setTrayPopUp(trayMenu);
 
-        mgr.setRightClickView(trayMenu);
-
-        mainFrame.addComponentListener(new ComponentListener() {
+        MainFrame.getInstance().addComponentListener(new ComponentListener() {
 
             public void componentResized(ComponentEvent e) {
-                int state = mainFrame.getExtendedState();
+                int state = MainFrame.getInstance().getExtendedState();
                 if ((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
                     mState = JFrame.MAXIMIZED_BOTH;
                 } else {
@@ -181,24 +173,26 @@ public class SystemTray {
             }
         });
 
-        mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+        MainFrame.getInstance() .addWindowListener(new java.awt.event.WindowAdapter() {
 
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
                     // Only minimize the main window, don't quit
-                    mainFrame.hide();
+                    MainFrame.getInstance().setVisible(false);
                     openMenuItem.setEnabled(true);
                 } else {
-                    mgr.setVisible(false);
-                    mainFrame.quit();
+                    mSystemTray.setVisible(false);
+                    MainFrame.getInstance().quit();
                 }
             }
 
             public void windowIconified(java.awt.event.WindowEvent evt) {
-                mainFrame.hide();
+                MainFrame.getInstance().setVisible(false);
                 openMenuItem.setEnabled(true);
             }
         });
+
+        mSystemTray.setVisible(true);
     }
 
 
@@ -241,8 +235,6 @@ public class SystemTray {
       }
     }
 
-
-    
     /**
      * Is the Tray activated and used?
      * @return is Tray used?
