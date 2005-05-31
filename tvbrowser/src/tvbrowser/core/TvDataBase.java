@@ -29,9 +29,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
+
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvdataservice.MutableChannelDayProgram;
@@ -55,7 +55,7 @@ public class TvDataBase {
   private static TvDataBase mSingleton;
 
   /** The TV data cache. */  
-  private HashMap mTvDataHash;
+  private ValueCache mTvDataHash;
   
   private ArrayList mListenerList;
   
@@ -66,7 +66,7 @@ public class TvDataBase {
 
 
   private TvDataBase() {
-    mTvDataHash = new HashMap();
+    mTvDataHash = new ValueCache();
     mListenerList = new ArrayList();
     mAvailableDateSet = new HashSet();
     updateAvailableDateSet();
@@ -184,7 +184,7 @@ public class TvDataBase {
         }
       }
     }
-    
+
     // fire update finished
     if (somethingChanged) {
       TvDataUpdater.getInstance().fireTvDataUpdateFinished();
@@ -213,6 +213,7 @@ public class TvDataBase {
   
   
   public ChannelDayProgram getDayProgram(Date date, Channel channel) {
+
     OnDemandDayProgramFile progFile = getCacheEntry(date, channel, true);
     
     if (progFile != null) {
@@ -314,7 +315,7 @@ public class TvDataBase {
 
     // Try to get the program from the cache
     OnDemandDayProgramFile progFile = (OnDemandDayProgramFile) mTvDataHash.get(key);
-    
+
     // Try to load the program from disk
     if (loadFromDisk && (progFile == null)) {
       progFile = loadDayProgram(date, channel);
@@ -327,9 +328,7 @@ public class TvDataBase {
   }
   
   
-  private synchronized void addCacheEntry(String key,
-    OnDemandDayProgramFile progFile)
-  {
+  private synchronized void addCacheEntry(String key, OnDemandDayProgramFile progFile) {
     mTvDataHash.put(key, progFile);
   }
   
@@ -611,12 +610,14 @@ public class TvDataBase {
           = new MutableChannelDayProgram(date, channel);
         fireDayProgramDeleted(dayProg);
       }
-    
+
+       // Set the day program to 'known'
+      mTvDataInventory.setKnown(date, channel, version);
+
       // The day program is new -> fire an added event
       fireDayProgramAdded(newDayProg);
       
-      // Set the day program to 'known'
-      mTvDataInventory.setKnown(date, channel, version);
+
     }
   }
 
