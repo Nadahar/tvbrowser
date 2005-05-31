@@ -42,7 +42,7 @@ public class SplashScreen extends JWindow implements Splash {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
   
-  private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 12);
+  private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 14);
   
   private Image mImage;
   private String mMessage;
@@ -110,7 +110,13 @@ public class SplashScreen extends JWindow implements Splash {
     });
   }
 
-	
+  public void setMaximum(int maximum) {
+  }
+
+  public void setValue(int value) {
+  }
+
+
 	public void hideSplash() {
 		hide();		
 	}

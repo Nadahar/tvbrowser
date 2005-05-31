@@ -242,7 +242,7 @@ public class TvDataUpdater {
    * Checks whether all programs have a length. If not the length will be
    * calculated.
    * 
-   * @param prog The program to correct
+   * @param channelProg The program to correct
    */
   private void correctChannelDayProgram(MutableChannelDayProgram channelProg,
     boolean updateOnChange)
