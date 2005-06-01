@@ -91,7 +91,8 @@ public class PrimaryDataManagerTest extends TestCase {
     prepProg3.writeToFile(new File(prepDir, "2010-01-03_de_test_base_full.gz"));
     
     // Start the update
-    manager.updateRawDataDir();
+    //manager.setGroupNames(new String[]{"testgroup"});
+    //manager.updateRawDataDir();
     // TODO: Check the result
   }
 
