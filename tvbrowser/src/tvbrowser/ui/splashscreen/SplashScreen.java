@@ -36,17 +36,26 @@ import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
+import tvbrowser.TVBrowser;
 
 public class SplashScreen extends JWindow implements Splash {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
   
-  private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 14);
-  
+  private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 16);
+  private static final Font VERSION_FONT = new Font("Dialog", Font.BOLD, 16);
+  private static final Font DOMAIN_FONT = new Font("Dialog", Font.PLAIN, 10);
+
+  private static final String DOMAIN = "tvbrowser.org";
+  private static final String VERSION = TVBrowser.VERSION.toString();
+
   private Image mImage;
   private String mMessage;
   private int mMsgX, mMsgY;
+  private int mVersionX, mVersionY;
+  private int mDomainX, mDomainY;
+
   private Color mBackground, mForeground;
   
   
@@ -56,7 +65,7 @@ public class SplashScreen extends JWindow implements Splash {
   {
     super();
     
-    setFont(MESSAGE_FONT);
+
     
     mImage = ImageUtilities.createImage(imgFileName);
     if (mImage != null) {
@@ -69,8 +78,14 @@ public class SplashScreen extends JWindow implements Splash {
     mMessage = mLocalizer.msg("loading", "Loading...");
     
     mMsgX = msgX;
-    mMsgY = msgY;
-    
+    mMsgY = getHeight()-9;
+
+    mDomainX = getWidth()-UiUtilities.getStringWidth(DOMAIN_FONT, DOMAIN)-10;
+    mDomainY = getHeight()-7;
+
+    mVersionX = getWidth()-UiUtilities.getStringWidth(VERSION_FONT, VERSION)-10;
+    mVersionY = getHeight()-20;
+
     mBackground = background;
     mForeground = foreground;
   }
@@ -85,16 +100,26 @@ public class SplashScreen extends JWindow implements Splash {
     }
     
     // Draw the message border
-    grp.setColor(mBackground);
-    for (int x = -1; x <= 1; x++) {
-      for (int y = -1; y <= 1; y++) {
-        grp.drawString(mMessage, mMsgX + x, mMsgY + y);
-      }
-    }
+//    grp.setColor(mBackground);
+    grp.setFont(MESSAGE_FONT);
+//    for (int x = -1; x <= 1; x++) {
+//      for (int y = -1; y <= 1; y++) {
+//        grp.drawString(mMessage, mMsgX + x, mMsgY + y);
+//      }
+//    }
+
+
 
     // Draw the message itself
     grp.setColor(mForeground);
     grp.drawString(mMessage, mMsgX, mMsgY);
+
+    grp.setFont(VERSION_FONT);
+    grp.drawString(VERSION, mVersionX, mVersionY);
+
+    grp.setFont(DOMAIN_FONT);
+    grp.drawString(DOMAIN, mDomainX, mDomainY);
+
   }
   
 
