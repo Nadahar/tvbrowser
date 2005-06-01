@@ -380,7 +380,7 @@ public class TVBrowser {
     }
 		ErrorHandler.setFrame(mainFrame);
     
- //   splash.hideSplash();
+    splash.hideSplash();
     
     // maximize the frame if wanted
     if (Settings.propIsWindowMaximized.getBoolean()) {
