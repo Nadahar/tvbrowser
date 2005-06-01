@@ -11,7 +11,7 @@ public class ParamParserTest extends TestCase {
     PluginManager manager = new PluginManagerImpl();
     ParamParser parser = new ParamParser();
 
-    String in = "oblda {clean(\"hallöchen du da ?!\")} da \\{ {concat(urlencode(isset(original_title, \"hallo\"), \"utf8\"), \"HHHHH\")} {\"str}i()ng\"}test bla";
+    String in = "oblda {clean(\"halloechen du da ?!\")} da \\{ {concat(urlencode(isset(original_title, \"hallo\"), \"utf8\"), \"HHHHH\")} {\"str}i()ng\"}test bla";
     
     System.out.println(in);
     String result = parser.analyse(in, manager.getExampleProgram());
@@ -19,7 +19,7 @@ public class ParamParserTest extends TestCase {
     System.out.println(result);
     System.out.println(parser.getErrorString());
     
-    assertEquals("oblda hall_chen_du_da___ da { The+WaltonsHHHHH str}i()ngtest bla", result);
+    assertEquals("oblda halloechen_du_da___ da { The+WaltonsHHHHH str}i()ngtest bla", result);
   }
 
 }

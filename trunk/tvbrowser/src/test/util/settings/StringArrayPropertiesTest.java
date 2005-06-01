@@ -32,7 +32,7 @@ public class StringArrayPropertiesTest extends TestCase {
     
     assertEquals(2,       secondProp.getStringArray().length);
     assertEquals("Hallo,zwei,drei,vier", secondProp.getStringArray()[0]);
-    assertEquals("fünf", secondProp.getStringArray()[1]);
+    assertEquals("f\u00FCnf", secondProp.getStringArray()[1]);
     
     assertEquals(5,       thirdProp.getStringArray().length);
     assertEquals("Hallo\\", thirdProp.getStringArray()[0]);
