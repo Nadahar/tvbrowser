@@ -85,7 +85,7 @@ public class TVBrowser {
   public static util.ui.Localizer mLocalizer;
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(1,10,true,"1.1 (CVS)");
+  public static final devplugin.Version VERSION=new devplugin.Version(1,10,true,"1.1 alpha");
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
   
   private static SystemTray mTray;
@@ -380,7 +380,7 @@ public class TVBrowser {
     }
 		ErrorHandler.setFrame(mainFrame);
     
-    splash.hideSplash();
+ //   splash.hideSplash();
     
     // maximize the frame if wanted
     if (Settings.propIsWindowMaximized.getBoolean()) {
