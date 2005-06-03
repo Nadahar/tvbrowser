@@ -231,9 +231,36 @@ public class IOUtilities {
       writer.write(buffer, 0, len);
     }
   }
-  
-  
-  
+
+
+  private static void copyFile(File src, File targetDir) throws IOException {
+    File destFile = new File(targetDir, src.getName());
+    copy(src, destFile);
+  }
+
+  private static File createDirectory(File targetDir, String dirName) throws IOException {
+    File f = new File(targetDir.getAbsolutePath()+"/"+dirName);
+    if (!f.exists()) {
+      if (!f.mkdir()) {
+        throw new IOException("Could not create directory '"+f.getAbsolutePath()+"'");
+      }
+    }
+    return f;
+  }
+
+  public static void copy(File[] src, File targetDir) throws IOException {
+    for (int i=0; i<src.length; i++) {
+      if (src[i].isDirectory()) {
+        File newDir = createDirectory(targetDir, src[i].getName());
+        copy(src[i].listFiles(), newDir);
+      }
+      else {
+        copyFile(src[i], targetDir);
+      }
+    }
+  }
+
+
   /**
    * Copies a file.
    * 

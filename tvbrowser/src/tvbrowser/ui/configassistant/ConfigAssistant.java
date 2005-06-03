@@ -69,13 +69,15 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     CardPanel welcomePanel=new WelcomeCardPanel(this);
     CardPanel proxyPanel=new ProxyCardPanel(this);
     CardPanel proxyQuestionPanel=new ProxyQuestionCardPanel(this,proxyPanel);
-    CardPanel subscribeChannelPanel=new SubscribeChannelCardPanel(this);        
+    CardPanel tvDataCardPanel = new TvDataCardPanel(this);
+    CardPanel subscribeChannelPanel=new SubscribeChannelCardPanel(this);
     CardPanel downloadChannelListPanel=new DownloadChannelListCardPanel(this);
     mFinishedPanel=new FinishCardPanel(this);
     
     mCardPn.add(welcomePanel.getPanel(),welcomePanel.toString());
     mCardPn.add(proxyQuestionPanel.getPanel(),proxyQuestionPanel.toString());
     mCardPn.add(proxyPanel.getPanel(),proxyPanel.toString());
+    mCardPn.add(tvDataCardPanel.getPanel(),tvDataCardPanel.toString());
     mCardPn.add(mFinishedPanel.getPanel(),mFinishedPanel.toString());
     mCardPn.add(subscribeChannelPanel.getPanel(),subscribeChannelPanel.toString());
    
@@ -86,17 +88,18 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     if (dynamicChannelList) {
       mCardPn.add(downloadChannelListPanel.getPanel(),downloadChannelListPanel.toString());
    
-      proxyQuestionPanel.setNext(downloadChannelListPanel);
-      proxyPanel.setNext(downloadChannelListPanel);
+      proxyQuestionPanel.setNext(tvDataCardPanel);
+      proxyPanel.setNext(tvDataCardPanel);
+      tvDataCardPanel.setNext(downloadChannelListPanel);
+      tvDataCardPanel.setPrev(proxyQuestionPanel);
       downloadChannelListPanel.setNext(subscribeChannelPanel);
-      downloadChannelListPanel.setPrev(proxyQuestionPanel);
       subscribeChannelPanel.setNext(mFinishedPanel);
     }
     else {
-      proxyQuestionPanel.setNext(subscribeChannelPanel);
-      proxyPanel.setNext(subscribeChannelPanel);
+      proxyQuestionPanel.setNext(tvDataCardPanel);
+      proxyPanel.setNext(tvDataCardPanel);
       subscribeChannelPanel.setNext(mFinishedPanel);
-      subscribeChannelPanel.setPrev(proxyQuestionPanel);
+      tvDataCardPanel.setPrev(proxyQuestionPanel);
     }
     
      
