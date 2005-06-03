@@ -130,9 +130,29 @@ public class TvDataServiceManager {
       		}
     	}
 	}
+
+    String tvdataRoot=Settings.propTVDataDirectory.getString();
+    File rootDir=new File(tvdataRoot);
+    if (rootDir.exists()) {
+      setTvDataDir(rootDir);
+    }
+
   }
 
 
+
+  public void setTvDataDir(File tvdatadir) {
+    Settings.propTVDataDirectory.setString(tvdatadir.getAbsolutePath());
+
+    TvDataService[] services = getDataServices();
+    for (int i=0; i<services.length; i++) {
+      File dataServiceDir=new File(tvdatadir,services[i].getClass().getName());
+      if (!dataServiceDir.exists()) {
+        dataServiceDir.mkdirs();
+      }
+      services[i].setWorkingDirectory(dataServiceDir);
+    }
+  }
 
   private TvDataService loadDataService(String name) {
     TvDataService result=null;
@@ -154,32 +174,7 @@ public class TvDataServiceManager {
       ErrorHandler.handle(msg, exc);
       return null;  
     }
-    
-    try {
-      devplugin.Version v=result.getAPIVersion();
-      // version must be at least 1.0
-      if ((new devplugin.Version(1,0).compareTo(v)<0)) throw new AbstractMethodError();
-      
-      String root=Settings.propTVDataDirectory.getString();
-      File rootDir=new File(root);
-      if (!rootDir.exists()) {
-        rootDir.mkdirs();
-      }
-      File tvDataDir=new File(rootDir,result.getClass().getName());
-      if (!tvDataDir.exists()) {
-        tvDataDir.mkdirs();
-      } 
-      result.setWorkingDirectory(tvDataDir);    
-      
-    }catch(Throwable t) {
-      String msg = mLocalizer.msg("error.6", "Tv data service {0} is not compatible to this version of TV-Browser",
-      name, t);
-      ErrorHandler.handle(msg, t);
-      return null;
-    }
-    
-    
-    
+
     return result;
   }
 
@@ -197,10 +192,9 @@ public class TvDataServiceManager {
         in.close();
         service.loadSettings(p);
       } catch (IOException exc) {
-        exc.printStackTrace();
-        //String msg = mLocalizer.msg("error.3", "Loading settings for plugin {0} failed!\n({1})",
-        //plugin.getButtonText(), f.getAbsolutePath(), exc);
-        //ErrorHandler.handle(msg, exc);
+        String msg = mLocalizer.msg("error.3", "Loading settings for plugin {0} failed!\n({1})",
+        service.getInfo().getName(), f.getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }else{
       service.loadSettings(new Properties());
@@ -223,10 +217,9 @@ public class TvDataServiceManager {
         prop.store(out,"settings");
         out.close();
       } catch (IOException exc) {
-        exc.printStackTrace();
-        //String msg = mLocalizer.msg("error.4", "Saving settings for plugin {0} failed!\n({1})",
-        //  service.getButtonText(), f.getAbsolutePath(), exc);
-        //ErrorHandler.handle(msg, exc);
+        String msg = mLocalizer.msg("error.4", "Saving settings for plugin {0} failed!\n({1})",
+        service.getInfo().getName(), f.getAbsolutePath(), exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
   }

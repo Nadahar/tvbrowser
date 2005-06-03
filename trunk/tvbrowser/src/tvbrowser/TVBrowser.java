@@ -52,8 +52,6 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.SystemTray;
-import tvbrowser.ui.configassistant.TvdataAssistantDlg;
-import tvbrowser.ui.configassistant.TvdataImportDlg;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.UpdateDlg;
 import tvbrowser.ui.splashscreen.DummySplash;
@@ -85,7 +83,7 @@ public class TVBrowser {
   public static util.ui.Localizer mLocalizer;
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(1,10,true,"1.1 alpha");
+  public static final devplugin.Version VERSION=new devplugin.Version(1,10,false,"1.1 Alpha");
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
   
   private static SystemTray mTray;
@@ -193,67 +191,77 @@ public class TVBrowser {
     updateProxySettings();
 
     // Set the String to use for indicating the user agent in http requests
-    System.setProperty("http.agent", MAINWINDOW_TITLE); 
-    
-    // Check whether TV-Browser is started the first time
+    System.setProperty("http.agent", MAINWINDOW_TITLE);
+
+
+    /* If the tvdata directory already exists, we can assume that the user has installed tvbrowser
+       correctly. Else, we show the install assistant.*/
     File f=new File(Settings.propTVDataDirectory.getString());
-    if (!f.exists()) {        
-      
-      devplugin.Version prevVersion = Settings.propTVBrowserVersion.getVersion();  
-      
-      /* if we have got no tvdata and no assistant will be loaded there must exist an older
-       * tv-browser. so ask the user for importing existing tv data. 
-       */
-      if (! Settings.propShowAssistant.getBoolean()) {
-      
-        /* update from 0.9.7, 0.9.7.1 to 0.9.7.2 */
-        if (prevVersion==null) {    
-          boolean showTvdataAssistant=true;
-          while (showTvdataAssistant) {
-            showTvdataAssistant=false;          
-            TvdataAssistantDlg dlg=new TvdataAssistantDlg();
-            UiUtilities.centerAndShow(dlg);
-            int result=dlg.getSelection();
-            if (result==TvdataAssistantDlg.IMPORT_DATA) {
-              msg = mLocalizer.msg("importtvdata.step1","step 1: ..");
-              String toDir = Settings.propTVDataDirectory.getString();
-              TvdataImportDlg importDlg = new TvdataImportDlg(msg, "tvdata", toDir);
-              UiUtilities.centerAndShow(importDlg);
-              if (importDlg.getResult()==TvdataImportDlg.OK) {
-                msg = mLocalizer.msg("importtvdata.step1","step 2: ..");
-                toDir = Settings.propTVDataDirectory.getString()
-                        + "/tvbrowserdataservice.TvBrowserDataService";
-                importDlg = new TvdataImportDlg(msg, "tvbrowsertvdata", toDir);
-                UiUtilities.centerAndShow(importDlg);
-              }
-              showTvdataAssistant=importDlg.getResult()!=TvdataImportDlg.OK;
-                          
-            } else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
-              Settings.propShowAssistant.setBoolean(true);
-            }
-          }
-        }
-        else { /* update from 0.9.7.2 to 0.9.7.3 and higher */
-          TvdataAssistantDlg dlg=new TvdataAssistantDlg();
-          UiUtilities.centerAndShow(dlg);
-          int result=dlg.getSelection();
-          if (result==TvdataAssistantDlg.IMPORT_DATA) {
-            msg = mLocalizer.msg("importtvdata","import tv data");
-            String toDir = Settings.propTVDataDirectory.getString();
-            TvdataImportDlg importDlg=new TvdataImportDlg(msg, "tvdata", toDir);
-            UiUtilities.centerAndShow(importDlg);  
-          }
-          Settings.propShowAssistant.setBoolean(result == TvdataAssistantDlg.RUN_ASSISTANT);         
-        }
-      }
-        
-      mLog.info("Creating tv data directory...");
-      
-      if (!f.mkdirs()) {
-        mLog.info("Could not create directory + "+f.getAbsolutePath());
-      }
-      
+    if (!f.exists()) {
+      Settings.propShowAssistant.setBoolean(true);
     }
+
+    // Check whether TV-Browser is started the first time
+//    File f=new File(Settings.propTVDataDirectory.getString());
+//    if (!f.exists()) {
+//
+
+
+//      devplugin.Version prevVersion = Settings.propTVBrowserVersion.getVersion();
+//
+//      /* if we have got no tvdata and no assistant will be loaded there must exist an older
+//       * tv-browser. so ask the user for importing existing tv data.
+//       */
+//      if (! Settings.propShowAssistant.getBoolean()) {
+//
+//        /* update from 0.9.7, 0.9.7.1 to 0.9.7.2 */
+//        if (prevVersion==null) {
+//          boolean showTvdataAssistant=true;
+//          while (showTvdataAssistant) {
+//            showTvdataAssistant=false;
+//            TvdataAssistantDlg dlg=new TvdataAssistantDlg();
+//            UiUtilities.centerAndShow(dlg);
+//            int result=dlg.getSelection();
+//            if (result==TvdataAssistantDlg.IMPORT_DATA) {
+//              msg = mLocalizer.msg("importtvdata.step1","step 1: ..");
+//              String toDir = Settings.propTVDataDirectory.getString();
+//              TvdataImportDlg importDlg = new TvdataImportDlg(msg, "tvdata", toDir);
+//              UiUtilities.centerAndShow(importDlg);
+//              if (importDlg.getResult()==TvdataImportDlg.OK) {
+//                msg = mLocalizer.msg("importtvdata.step1","step 2: ..");
+//                toDir = Settings.propTVDataDirectory.getString()
+//                        + "/tvbrowserdataservice.TvBrowserDataService";
+//                importDlg = new TvdataImportDlg(msg, "tvbrowsertvdata", toDir);
+//                UiUtilities.centerAndShow(importDlg);
+//              }
+//              showTvdataAssistant=importDlg.getResult()!=TvdataImportDlg.OK;
+//
+//            } else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
+//              Settings.propShowAssistant.setBoolean(true);
+//            }
+//          }
+//        }
+//        else { /* update from 0.9.7.2 to 0.9.7.3 and higher */
+//          TvdataAssistantDlg dlg=new TvdataAssistantDlg();
+//          UiUtilities.centerAndShow(dlg);
+//          int result=dlg.getSelection();
+//          if (result==TvdataAssistantDlg.IMPORT_DATA) {
+//            msg = mLocalizer.msg("importtvdata","import tv data");
+//            String toDir = Settings.propTVDataDirectory.getString();
+//            TvdataImportDlg importDlg=new TvdataImportDlg(msg, "tvdata", toDir);
+//            UiUtilities.centerAndShow(importDlg);
+//          }
+//          Settings.propShowAssistant.setBoolean(result == TvdataAssistantDlg.RUN_ASSISTANT);
+//        }
+//      }
+        
+//      mLog.info("Creating tv data directory...");
+//
+//      if (!f.mkdirs()) {
+//        mLog.info("Could not create directory + "+f.getAbsolutePath());
+//      }
+      
+//    }
     
     final Splash splash;
     

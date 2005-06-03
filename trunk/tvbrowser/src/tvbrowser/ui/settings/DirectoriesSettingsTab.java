@@ -26,9 +26,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.*;
 import tvbrowser.core.Settings;
 import devplugin.SettingsTab;
@@ -39,8 +36,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
     private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DirectoriesSettingsTab.class);
  
-  
-  private JCheckBox mUseDefaultFolderCB;
+
   private util.ui.DirectoryChooserPanel mTVDataFolderPanel; 
     
   public DirectoriesSettingsTab() {
@@ -59,12 +55,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
     
     JPanel checkBoxPanel=new JPanel(new BorderLayout());
     checkBoxPanel.setBorder(BorderFactory.createEmptyBorder(0,0,3,0));
-    
-    mUseDefaultFolderCB=new JCheckBox(mLocalizer.msg("defaultfolders", "Use default folders"));
-    mUseDefaultFolderCB.setSelected(Settings.propUseDefaultDirectories.getBoolean());
-    
-    checkBoxPanel.add(mUseDefaultFolderCB);
-    
+
     content.add(checkBoxPanel);
     
     final tvbrowser.ui.settings.DirectoryChooser directoriesPanel=new tvbrowser.ui.settings.DirectoryChooser();
@@ -73,20 +64,9 @@ public class DirectoriesSettingsTab implements SettingsTab {
     String tvDataDir = Settings.propTVDataDirectory.getString();    
     mTVDataFolderPanel=new util.ui.DirectoryChooserPanel(msg, tvDataDir);
     directoriesPanel.addDirectoryChooserPanel(mTVDataFolderPanel);
-    //directoriesPanel.add(mTVDataFolderPanel);
-    directoriesPanel.setEnabled(!mUseDefaultFolderCB.isSelected());
 
     content.add(directoriesPanel);
     mainPanel.add(content,BorderLayout.NORTH);
-    
-    
-    
-    mUseDefaultFolderCB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        directoriesPanel.setEnabled(!mUseDefaultFolderCB.isSelected());
-      }
-    });
-    
     
     return mainPanel;
   }
@@ -95,14 +75,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
      * Called by the host-application, if the user wants to save the settings.
      */
   public void saveSettings() {
-    if (mUseDefaultFolderCB.isSelected()) {
-      String defaultDir = Settings.propTVDataDirectory.getDefault();
-      Settings.propTVDataDirectory.setString(defaultDir);
-    }
-    else {  
-      Settings.propTVDataDirectory.setString(mTVDataFolderPanel.getText());
-    }
-    Settings.propUseDefaultDirectories.setBoolean(mUseDefaultFolderCB.isSelected());
+    Settings.propTVDataDirectory.setString(mTVDataFolderPanel.getText());
   }
 
   

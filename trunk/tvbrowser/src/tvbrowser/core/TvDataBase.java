@@ -538,8 +538,14 @@ public class TvDataBase {
     return mAvailableDateSet.contains(date);
   }
   
-  private void updateAvailableDateSet() {    
-    
+  private void updateAvailableDateSet() {
+
+    String tvDataDirStr = Settings.propTVDataDirectory.getString();
+    File tvDataDir = new File(tvDataDirStr);
+    if (!tvDataDir.exists()) {
+      return;
+    }
+
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
         if (name.length()<8) return false;
@@ -555,8 +561,8 @@ public class TvDataBase {
       }
     }; 
 
-    String tvDataDir = Settings.propTVDataDirectory.getString();
-    String fList[] = new File(tvDataDir).list(filter);
+
+    String fList[] = tvDataDir.list(filter);
     for (int i=0;i<fList.length;i++) {
       if (fList[i].length()>8) {
         String dateStr = fList[i].substring(fList[i].length()-8);
