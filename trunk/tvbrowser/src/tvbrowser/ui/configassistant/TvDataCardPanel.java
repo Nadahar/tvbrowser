@@ -85,7 +85,11 @@ class TvDataCardPanel extends AbstractCardPanel {
     JPanel result = new JPanel(new BorderLayout());
     result.add(new JLabel(mLocalizer.msg("tvlistingsDir","TV-Daten-Verzeichnis")+":"), BorderLayout.WEST);
 
-    mDirectoryTF = new JTextField(Settings.propTVDataDirectory.getString());
+    String dir = Settings.propTVDataDirectory.getString();
+    if (dir == null || dir.trim().length()==0) {
+      dir = new File("tvdata").getAbsolutePath();
+    }
+    mDirectoryTF = new JTextField(dir);
     result.add(mDirectoryTF, BorderLayout.CENTER);
 
     JButton chooseBtn = new JButton(mLocalizer.msg("browse","Browse...")+"...");
@@ -128,7 +132,9 @@ class TvDataCardPanel extends AbstractCardPanel {
     pn.add(gridPn, BorderLayout.SOUTH);
 
     importPn.add(pn, BorderLayout.EAST);
-    importPn.add(new JLabel(mLocalizer.msg("infotext.2","<HTML>Bitte nutzen Sie die M&ouml;glichkeit, die vorhandenen TV-Daten zu importieren, um unn&ouml;tigen Netzwerkverkehr zu vermeiden.</HTML>")));
+    JLabel lb = new JLabel(mLocalizer.msg("infotext.2","<HTML>Bitte nutzen Sie die M&ouml;glichkeit, die vorhandenen TV-Daten zu importieren, um unn&ouml;tigen Netzwerkverkehr zu vermeiden.</HTML>"));
+    lb.setFont(new Font("SansSerif", Font.PLAIN, 10));
+    importPn.add(lb);
     return importPn;
   }
 
