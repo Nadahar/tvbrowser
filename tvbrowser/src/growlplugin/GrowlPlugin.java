@@ -91,7 +91,7 @@ public class GrowlPlugin extends Plugin {
   /**
    * This method is invoked for multiple program execution.
    * 
-   * @see #supportMultipleProgramExecution()
+   * @see #canReceivePrograms()
    */
   public void receivePrograms(Program[] programArr) {
     
