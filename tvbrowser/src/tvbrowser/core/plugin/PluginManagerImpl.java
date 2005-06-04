@@ -395,6 +395,10 @@ public class PluginManagerImpl implements PluginManager {
     PluginAccess defaultContextMenuPlugin
       = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
     
+    if (defaultContextMenuPlugin == null) {
+      return;
+    }
+    
     if ((caller != null)  && (defaultContextMenuPlugin.getId().equals(caller.getId()))) {
       return;
     }
