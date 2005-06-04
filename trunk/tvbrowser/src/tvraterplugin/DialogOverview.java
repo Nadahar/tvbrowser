@@ -164,7 +164,7 @@ public class DialogOverview extends JDialog {
     c4.weightx = 1;
     c4.anchor = GridBagConstraints.CENTER;
 
-    LinkButton linkButton = new LinkButton("http://tvaddicted.wannawork.de");
+    LinkButton linkButton = new LinkButton("http://tvaddicted.de");
     buttonpanel.add(linkButton, c4);
 
     GridBagConstraints c = new GridBagConstraints();
