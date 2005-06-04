@@ -129,6 +129,7 @@ public class Settings {
     File settingsFile = new File(getUserDirectoryName(), SETTINGS_FILE);
     try {
       mProp.readFromFile(settingsFile);
+      mLog.info("Using settings from file "+settingsFile.getAbsolutePath());
     }
     catch (IOException evt) {
       mLog.info("No user settings found. using default user settings");

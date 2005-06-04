@@ -57,11 +57,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     private SummaryFile mSummary;
 
-    private TvDataBaseUpdater mUpdater;
-
     private String mGroupName = null;
-
-    private String mDescription;
 
     private int mDirectlyLoadedBytes;
 
@@ -126,7 +122,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
 
     public String getDescription() {
-        if (mDescription != null) { return mDescription; }
         File file = new File(mDataDir, mID + "_info");
         if (!file.exists()) { return ""; }
         Properties prop = new Properties();
@@ -241,7 +236,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         }
     }
 
-    private Mirror[] loadMirrorList() throws TvBrowserException {
+    private Mirror[] loadMirrorList() {
         File file = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
         try {
             return Mirror.readMirrorListFromFile(file);
@@ -301,7 +296,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
             buf.append(mMirrorUrlArr[i]).append("\n");
         }
 
-        throw new TvBrowserException(getClass(), "error.2", "No mirror found\ntried following mirrors: ", buf.toString());
+        throw new TvBrowserException(getClass(), "error.2", "No mirror found\ntried following mirrors: ", getName(), buf.toString());
 
   
 
@@ -446,7 +441,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
             File channelFile = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
             if (channelFile.exists()) {
                 try {
-                    devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(mID, getName(), mDescription, getProviderName());
+                    devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(mID, getName(), null, getProviderName());
                     ChannelList channelList = new ChannelList(group);
                     channelList.readFromFile(channelFile, mDataService);
                     mAvailableChannelArr = channelList.createChannelArray();

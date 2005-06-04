@@ -104,8 +104,15 @@ public class ChannelGroupDialog extends JDialog {
         panel.add(new JLabel(mGroup.getProviderName()));
 
         panel.add(new JLabel(mLocalizer.msg("url", "Url")+":"));
-        
-        panel.add(new JLabel(mGroup.getMirrorArr()[0] + "/" + mGroup.getId()));
+
+        String[] mirrors = mGroup.getMirrorArr();
+        if (mirrors.length == 0) {
+          panel.add(new JLabel("-"));
+        }
+        else {
+          panel.add(new JLabel(mirrors[0] + "/" + mGroup.getId()));
+        }
+
         
         panel.add(new JLabel(mLocalizer.msg("webpage","WebPage") + ":"));
         if (mGroup.getProviderWebPage() == null) {

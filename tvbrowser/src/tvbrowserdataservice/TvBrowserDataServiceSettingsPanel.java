@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourcceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -284,9 +284,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     }
 
     private void addGroupUrl(final String url) {
-        URL page = null;
         try {
-            page = new URL(url);
+            new URL(url);
         } catch (MalformedURLException e) {
             JOptionPane.showMessageDialog(this, mLocalizer.msg("invalidUrl", "'{0}' is not a valid URL", url));
             return;
@@ -298,7 +297,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
             public void run() {
                 try {
-                    mGroup = getChannelGroupByURL(url, progressWindow);
+                    mGroup = getChannelGroupByURL(url.trim(), progressWindow);
                 } catch (TvBrowserException exc) {
                     ErrorHandler.handle(exc);
                 }

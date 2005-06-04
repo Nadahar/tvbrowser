@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 package tvbrowserdataservice;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -117,14 +118,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
         return mDataDir;
     }
 
-    private void readIcons() {
-        File iconsDir = new File(mDataDir + "/icons");
-        if (!iconsDir.exists()) {
-            iconsDir.mkdirs();
-        }
-
-    }
-
     public ChannelGroup[] getChannelGroups() {
         ChannelGroup[] result = new ChannelGroup[mChannelGroupSet.size()];
         mChannelGroupSet.toArray(result);
@@ -132,7 +125,6 @@ public class TvBrowserDataService extends AbstractTvDataService {
     }
 
     public void setChannelGroups(ChannelGroup[] groups) {
-        // mChannelGroupArr=groups;
         mChannelGroupSet = new HashSet();
         for (int i = 0; i < groups.length; i++) {
             mChannelGroupSet.add(groups[i]);
@@ -417,7 +409,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
         mChannelGroupSet = new HashSet();
 
-        String groupNames = settings.getProperty("groupname");
+        String groupNames = settings.getProperty("defaultgroupname");    // groupname or defaultgroupname????
         String[] groupNamesArr;
 
         if (groupNames == null) {
@@ -429,15 +421,13 @@ public class TvBrowserDataService extends AbstractTvDataService {
         } else {
             groupNamesArr = groupNames.split(":");
             for (int i = 0; i < groupNamesArr.length; i++) {
-                String groupUrls = settings.getProperty("group_" + groupNamesArr[i], "");
-                String[] groupUrlArr = groupUrls.split(";");
-                mChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr, mSettings));
+              String groupUrls = mSettings.getProperty("group_" + groupNamesArr[i],"");
+              String[] groupUrlArr = groupUrls.split(";");
+              mChannelGroupSet.add(new ChannelGroup(this, groupNamesArr[i], groupUrlArr, mSettings));
             }
-
         }
 
         loadDefaultChannelGroup();
-        
         setWorkingDirectory(mDataDir);
 
     }
@@ -520,30 +510,34 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
     }
 
-    public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
+  public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
 
-        monitor.setMessage("Checking for new ChannelGroups");
-        
-        checkForNewGroups();        
-        
-        ArrayList channelList = new ArrayList();
-        Iterator it = mChannelGroupSet.iterator();
-        int i = 0;
-        while (it.hasNext()) {
-            i++;
-            ChannelGroup group = (ChannelGroup) it.next();
-            monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels", "Checking group {0} - ({1} of {2})", group.getName(), "" + i,
-                    "" + mChannelGroupSet.size()));
-            Channel[] ch = group.checkForAvailableChannels(null);
-            for (int j = 0; j < ch.length; j++) {
-                channelList.add(ch[j]);
-            }
-        }
+    monitor.setMessage("Checking for new ChannelGroups");
 
-        Channel[] result = new Channel[channelList.size()];
-        channelList.toArray(result);
-        return result;
+    try {
+      checkForNewGroups();
+    }catch(IOException e) {
+      throw new TvBrowserException(TvBrowserDataService.class, "checkForNewGroups.failed","Checking for new groups failed.");
     }
+
+    ArrayList channelList = new ArrayList();
+    Iterator it = mChannelGroupSet.iterator();
+    int i = 0;
+    while (it.hasNext()) {
+      i++;
+      ChannelGroup group = (ChannelGroup) it.next();
+      monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels", "Checking group {0} - ({1} of {2})", group.getName(), "" + i,
+          "" + mChannelGroupSet.size()));
+      Channel[] ch = group.checkForAvailableChannels(null);
+      for (int j = 0; j < ch.length; j++) {
+        channelList.add(ch[j]);
+      }
+    }
+
+    Channel[] result = new Channel[channelList.size()];
+    channelList.toArray(result);
+    return result;
+  }
 
     
     /**
@@ -553,7 +547,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
      * 
      * If a group was removed, it will be removed in the Default and the User-Group
      */
-    private void checkForNewGroups() {
+    private void checkForNewGroups() throws IOException {
         GroupFetcher fetcher = new GroupFetcher();
         
         ArrayList groups = fetcher.getChannelGroups(mSettings);
@@ -662,6 +656,8 @@ public class TvBrowserDataService extends AbstractTvDataService {
         }
         
         mSettings.setProperty("defaultgroupname", grplist);
+
+
     }
     
     public boolean supportsDynamicChannelList() {
