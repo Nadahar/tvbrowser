@@ -81,7 +81,7 @@ public class ShowDetailsAction extends AbstractAction {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-        BrowserLauncher.openURL("http://tvaddicted.wannawork.de/index.php?showId=" + _id);
+        BrowserLauncher.openURL("http://tvaddicted.de/index.php?showId=" + _id);
     }
 
 }

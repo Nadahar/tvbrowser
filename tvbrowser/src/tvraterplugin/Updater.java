@@ -60,7 +60,7 @@ public class Updater implements Progress {
 
     /** Location of Update-Skript */
     //private static String LOCATION = "http://localhost/~bodum/wannawork3/tvaddicted/updater.php";
-    private static String LOCATION = "http://tvaddicted.wannawork.de/updater.php";
+    private static String LOCATION = "http://tvaddicted.de/updater.php";
 
     /** The Plugin */
     private TVRaterPlugin _tvraterPlugin;
