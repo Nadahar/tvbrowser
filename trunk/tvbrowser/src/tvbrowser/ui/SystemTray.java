@@ -144,9 +144,11 @@ public class SystemTray {
           public void actionPerformed(ActionEvent e) {
             if (!MainFrame.getInstance().isVisible()) {
               MainFrame.getInstance().show();
+              MainFrame.getInstance().toFront();
+              MainFrame.getInstance().setExtendedState(mState);
+            } else {
+              MainFrame.getInstance().setVisible(false);
             }
-            MainFrame.getInstance().toFront();
-            MainFrame.getInstance().setExtendedState(mState);
           }
         });
         
