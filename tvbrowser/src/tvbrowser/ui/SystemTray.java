@@ -142,7 +142,7 @@ public class SystemTray {
         
         mSystemTray.addLeftDoubleClickAction(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            if (!MainFrame.getInstance().isVisible()) {
+            if (!MainFrame.getInstance().isVisible() || (MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED)) {
               MainFrame.getInstance().show();
               MainFrame.getInstance().toFront();
               MainFrame.getInstance().setExtendedState(mState);
