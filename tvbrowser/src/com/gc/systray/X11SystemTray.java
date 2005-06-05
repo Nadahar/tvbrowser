@@ -27,8 +27,10 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
 
   /** Tray-Manager */
   private X11SystrayManager mManager;
-  /** Left-Mouseclick-Actions */
+  /** Left-Click-Mouseclick-Actions */
   private ArrayList mLeftAction = new ArrayList();
+  /** Left-DoubleClick-Mouseclick-Actions */
+  private ArrayList mLeftDoubleAction = new ArrayList();
   /** The Popup-Menu */
   private JPopupMenu mPopupMenu;
   /** Tray-Parent */
@@ -91,8 +93,15 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   /**
    * Add a Left-DoubleClick-Action
    */
-  public void addLeftDoubleClickAction(ActionListener listener) {
+  public void addLeftClickAction(ActionListener listener) {
     mLeftAction.add(listener);
+  }
+  
+  /**
+   * Add a Left-DoubleClick-Action
+   */
+  public void addLeftDoubleClickAction(ActionListener listener) {
+    mLeftDoubleAction.add(listener);
   }
 
   /**
@@ -132,6 +141,10 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
       mTrayParent.setVisible(true);
       mPopupMenu.show(mManager.getSystemTray(), leftTopX, leftTopY);
     } else if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
+      for (int i = 0; i < mLeftDoubleAction.size(); i++) {
+        ((ActionListener) mLeftDoubleAction.get(i)).actionPerformed(null);
+      }
+    } else if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 1)) {
       for (int i = 0; i < mLeftAction.size(); i++) {
         ((ActionListener) mLeftAction.get(i)).actionPerformed(null);
       }

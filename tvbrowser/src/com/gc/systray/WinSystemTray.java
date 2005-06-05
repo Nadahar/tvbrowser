@@ -66,6 +66,27 @@ public class WinSystemTray implements SystemTrayIf {
   }
 
   /**
+   * Add a Left-Click-Action
+   */
+  public void addLeftClickAction(final ActionListener listener) {
+    mManager.addSystemTrayIconListener(new SystemTrayIconListener() {
+
+      public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
+        listener.actionPerformed(null);
+      }
+
+      public void mouseClickedRightButton(Point pos, SystemTrayIconManager ssource) {
+      }
+
+      public void mouseLeftDoubleClicked(Point pos, SystemTrayIconManager source) {
+      }
+
+      public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
+      }
+    });
+  }  
+  
+  /**
    * Add a Left-DoubleClick-Action
    */
   public void addLeftDoubleClickAction(final ActionListener listener) {

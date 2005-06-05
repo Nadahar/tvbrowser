@@ -29,6 +29,12 @@ public interface SystemTrayIf {
   public void setVisible(boolean b);
 
   /**
+   * Add a Left-Click-Action
+   * @param listener Action that is triggered on left click
+   */
+  public void addLeftClickAction(ActionListener listener);  
+  
+  /**
    * Add a Left-DoubleClick-Action
    * @param listener Action that is triggered on left doubleclick
    */
