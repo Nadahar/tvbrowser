@@ -140,9 +140,19 @@ public class SystemTray {
       }
     });
 
+    mSystemTray.addLeftClickAction(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (Settings.propUseSingeClickInTray.getBoolean()) {
+          toggleShowHide();
+        }
+      }
+    });
+    
     mSystemTray.addLeftDoubleClickAction(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        toggleShowHide();
+        if (!Settings.propUseSingeClickInTray.getBoolean()) {
+          toggleShowHide();
+        }
       }
     });
 

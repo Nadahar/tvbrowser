@@ -73,7 +73,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JComboBox mLanguageCB, mTimezoneCB;
 
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb;
-  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB;
+  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB, mSingeClickTrayChb;
 
 
   public TVDataSettingsTab() {
@@ -234,6 +234,11 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean();
       mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked);
       trayPn.add(mOnlyMinimizeWhenWindowClosingChB);
+
+      checked = Settings.propUseSingeClickInTray.getBoolean();
+      mSingeClickTrayChb = new JCheckBox(mLocalizer.msg("useSingleClick","Use single Click in Tray to hide and show window"), checked);
+      trayPn.add(mSingeClickTrayChb);
+    
     }
     
     JPanel morePn = new JPanel(new TabLayout(1));
@@ -307,6 +312,12 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       boolean checked = mMinimizeToTrayChb.isSelected();
       Settings.propMinimizeToTray.setBoolean(checked);
     }
+
+    if (mSingeClickTrayChb != null) {
+      boolean checked = mSingeClickTrayChb.isSelected();
+      Settings.propUseSingeClickInTray.setBoolean(checked);
+    }
+
     
     Language lan = (Language)mLanguageCB.getSelectedItem();
     Settings.propLanguage.setString(lan.getId());
