@@ -144,7 +144,7 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
       for (int i = 0; i < mLeftDoubleAction.size(); i++) {
         ((ActionListener) mLeftDoubleAction.get(i)).actionPerformed(null);
       }
-    } else if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 1)) {
+    } else if ((e.getButton() == MouseEvent.BUTTON1)) {
       for (int i = 0; i < mLeftAction.size(); i++) {
         ((ActionListener) mLeftAction.get(i)).actionPerformed(null);
       }
