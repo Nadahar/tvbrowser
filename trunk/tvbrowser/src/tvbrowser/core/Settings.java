@@ -344,7 +344,10 @@ public class Settings {
 
   public static final BooleanProperty propMinimizeToTray
   = new BooleanProperty(mProp, "MinimizeToTray", true);
-  
+
+  public static final BooleanProperty propUseSingeClickInTray
+  = new BooleanProperty(mProp, "SingeClickInTray", false);
+
   
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "text&icon",
