@@ -72,7 +72,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private FileCheckBox mWebbrowserFCB;
   private JComboBox mLanguageCB, mTimezoneCB;
 
-  private JCheckBox mOnlyMinimizeWhenWindowClosingChB;
+  private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb;
   private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB;
 
 
@@ -220,7 +220,22 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     localePn.add(lb, BorderLayout.SOUTH);
     content.add(localePn);
 
+    if (TVBrowser.isUsingSystemTray()) {
+      JPanel trayPn = new JPanel(new TabLayout(1));
+      trayPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("tray","Tray")));
+      content.add(trayPn);
 
+      String msg = mLocalizer.msg("minimizeToTray", "Minimize to Tray");
+      boolean checked = Settings.propMinimizeToTray.getBoolean();
+      mMinimizeToTrayChb = new JCheckBox(msg, checked);
+      trayPn.add(mMinimizeToTrayChb);
+      
+      msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing", "When closing the main window only minimize TV-Browser, don't quit.");
+      checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean();
+      mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked);
+      trayPn.add(mOnlyMinimizeWhenWindowClosingChB);
+    }
+    
     JPanel morePn = new JPanel(new TabLayout(1));
     morePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("more","More")));
     content.add(morePn);
@@ -233,13 +248,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     mMinimizeAfterStartUpChB = new JCheckBox(mLocalizer.msg("minimizeAfterStartup","Minimize main window after start up"), checked);
     morePn.add(mMinimizeAfterStartUpChB);
 
-    if (TVBrowser.isUsingSystemTray()) {
-      String msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing", "When closing the main window only minimize TV-Browser, don't quit.");
-      checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean();
-      mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked);
-      morePn.add(mOnlyMinimizeWhenWindowClosingChB);
-    }
-    
     return mSettingsPn;
   }
   
@@ -295,6 +303,11 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
     }
 
+    if (mMinimizeToTrayChb != null) {
+      boolean checked = mMinimizeToTrayChb.isSelected();
+      Settings.propMinimizeToTray.setBoolean(checked);
+    }
+    
     Language lan = (Language)mLanguageCB.getSelectedItem();
     Settings.propLanguage.setString(lan.getId());
     Settings.propTimezone.setString((String)mTimezoneCB.getSelectedItem());

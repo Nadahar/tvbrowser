@@ -187,8 +187,10 @@ public class SystemTray {
             }
 
             public void windowIconified(java.awt.event.WindowEvent evt) {
-                MainFrame.getInstance().setVisible(false);
-                openMenuItem.setEnabled(true);
+                if (Settings.propMinimizeToTray.getBoolean()) {
+                  MainFrame.getInstance().setVisible(false);
+                  openMenuItem.setEnabled(true);
+                }
             }
         });
 
