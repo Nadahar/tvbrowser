@@ -26,19 +26,36 @@
 package tvbrowser.core.plugin;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TimeZone;
+
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 
-import tvbrowser.core.*;
+import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
+import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.search.booleansearch.BooleanSearcher;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
+import devplugin.ProgramSearcher;
+import devplugin.TvBrowserSettings;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -47,9 +64,6 @@ import devplugin.*;
  * @author Til Schneider, www.murfman.de
  */
 public class PluginManagerImpl implements PluginManager {
-  
-  /** The available filters. */
-  private ProgramFilter[] mAvailableFilters;
   
   /** An example program. */
   private Program mExampleProgram;
@@ -308,12 +322,20 @@ public class PluginManagerImpl implements PluginManager {
    * @since 0.9.7.4
    */
   public ProgramFilter[] getAvailableFilters() {
-    if (mAvailableFilters == null) {
-      FilterList filterList = FilterList.getInstance();
-      mAvailableFilters = filterList.getFilterArr();
+    
+    ArrayList filters = new ArrayList();
+    
+    FilterList filterList = FilterList.getInstance();
+    
+    ProgramFilter[] filter = filterList.getFilterArr();
+    
+    for (int i=0;i<filter.length;i++) {
+      if (!(filter[i] instanceof SeparatorFilter)) {
+        filters.add(filter[i]);
+      }
     }
     
-    return mAvailableFilters;
+    return (ProgramFilter[]) filters.toArray(new ProgramFilter[0]);
   }
 
 
