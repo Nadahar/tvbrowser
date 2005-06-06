@@ -196,6 +196,10 @@ public class SystemTray {
         }
       }
 
+      public void windowDeiconified(WindowEvent e) {
+        toggleOpenCloseMenuItem(false);
+      }
+      
       public void windowIconified(java.awt.event.WindowEvent evt) {
         if (Settings.propMinimizeToTray.getBoolean()) {
           MainFrame.getInstance().setVisible(false);
