@@ -293,8 +293,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mTitelAlwaysVisible = new JCheckBox(mLocalizer.msg("TitleAlwaysVisible","Progam-Title always Visible"));
     mTitelAlwaysVisible.setSelected(Settings.propTitelAlwaysVisible.getBoolean());
 
+   /*
+    Hide this because the ProgramPanel is not ready for it
     misc.add(mTitelAlwaysVisible);
-
+    */
+    
     main.add(misc);
 
 
