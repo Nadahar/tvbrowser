@@ -31,6 +31,7 @@ import java.io.*;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.logging.*;
 
 import javax.swing.JOptionPane;
@@ -169,7 +170,12 @@ public class TVBrowser {
     
     
     Locale.setDefault(new Locale(Settings.propLanguage.getString()));
-    //TimeZone.setDefault(TimeZone.getTimeZone(Settings.propTimezone.getString()));
+
+    String timezone = Settings.propTimezone.getString();
+    if (timezone != null) {
+      TimeZone.setDefault(TimeZone.getTimeZone(timezone));
+    }
+    mLog.info("Using timezone "+TimeZone.getDefault().getDisplayName());
 
     // refresh the localizer because we know the language now
     Localizer.emptyLocalizerCache();

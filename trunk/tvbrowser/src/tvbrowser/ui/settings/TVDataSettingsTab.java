@@ -71,6 +71,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JRadioButton mAskBeforeDownloadRB;
   private FileCheckBox mWebbrowserFCB;
   private JComboBox mLanguageCB, mTimezoneCB;
+  private JCheckBox mOSTimezoneCb;
 
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb;
   private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB, mSingeClickTrayChb;
@@ -186,7 +187,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
 
     JPanel localePn = new JPanel(new BorderLayout());
     localePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("locale","Locale")));
-    FormLayout formLayout = new FormLayout("default, 6dlu, default","default,3dlu,default,3dlu,default");
+    FormLayout formLayout = new FormLayout("default, 6dlu, default","default,3dlu,default,3dlu,default,1dlu,default");
     JPanel formPn = new JPanel(formLayout);
     localePn.add(formPn, BorderLayout.CENTER);
     CellConstraints c = new CellConstraints();
@@ -212,9 +213,19 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
       }
     }
 
+    mOSTimezoneCb = new JCheckBox(mLocalizer.msg("useSystemTimezone","use timezone provided by OS"));
+    mOSTimezoneCb.setSelected(Settings.propTimezone.getString()==null);
+    mTimezoneCB.setEnabled(!mOSTimezoneCb.isSelected());
 
-    formPn.add(new JLabel(mLocalizer.msg("timezone","Timezone:")), c.xy(1,3));
-    formPn.add(mTimezoneCB, c.xy(3,3));
+    mOSTimezoneCb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mTimezoneCB.setEnabled(!mOSTimezoneCb.isSelected());
+      }
+    });
+
+    formPn.add(mOSTimezoneCb, c.xyw(1,3,3));
+    formPn.add(new JLabel(mLocalizer.msg("timezone","Timezone:")), c.xy(1,5));
+    formPn.add(mTimezoneCB, c.xy(3,5));
     JLabel lb = new JLabel(mLocalizer.msg("restartNote","Diese Einstellungen werden erst nach dem Neustart von TV-Browser wirksam."));
     lb.setFont(new Font("Dialog", Font.PLAIN, 9));
     localePn.add(lb, BorderLayout.SOUTH);
@@ -321,7 +332,13 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     
     Language lan = (Language)mLanguageCB.getSelectedItem();
     Settings.propLanguage.setString(lan.getId());
-    Settings.propTimezone.setString((String)mTimezoneCB.getSelectedItem());
+
+    if (mOSTimezoneCb.isSelected()) {
+      Settings.propTimezone.setString(null);
+    }
+    else {
+      Settings.propTimezone.setString((String)mTimezoneCB.getSelectedItem());
+    }
 
     Settings.propMinimizeAfterStartup.setBoolean(mMinimizeAfterStartUpChB.isSelected());
     Settings.propSplashShow.setBoolean(mShowSplashChB.isSelected());
