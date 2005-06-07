@@ -106,7 +106,7 @@ public class GrowlPlugin extends Plugin {
    * Create the Settings-Tab
    */
   public SettingsTab getSettingsTab() {
-    return new GrowlSettingsTab(mInitialized, mSettings);
+    return new GrowlSettingsTab(this, mInitialized, mSettings);
   }
   
   /**
@@ -118,6 +118,14 @@ public class GrowlPlugin extends Plugin {
     
     mSettings.setProperty("title",       mSettings.getProperty("title", "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}"));
     mSettings.setProperty("description", mSettings.getProperty("description", "{channel_name}\n{short_info}"));
+  }
+  
+  /**
+   * Return the GrowlContainer that is currently used
+   * @return GrowlContainer that is used
+   */
+  public GrowlContainer getContainer() {
+    return mContainer;
   }
   
   /**
