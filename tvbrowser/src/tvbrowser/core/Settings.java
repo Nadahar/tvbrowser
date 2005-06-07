@@ -29,7 +29,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
-import java.util.TimeZone;
 import javax.swing.UIManager;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
@@ -608,7 +607,7 @@ public class Settings {
   = new StringProperty(mProp, "language", System.getProperty("user.language"));
 
   public static final StringProperty propTimezone
-  = new StringProperty(mProp, "timezone", TimeZone.getDefault().getID());
+  = new StringProperty(mProp, "timeZone", null);
 
   public static final BooleanProperty propMinimizeAfterStartup
   = new BooleanProperty(mProp, "minimizeAfterStartup", false);
