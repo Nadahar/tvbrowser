@@ -25,20 +25,25 @@
 package growlplugin;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import util.paramhandler.ParamInputField;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Plugin;
 import devplugin.SettingsTab;
 
 /**
@@ -55,13 +60,17 @@ public class GrowlSettingsTab implements SettingsTab {
   private ParamInputField mTitle, mDescription;
   /** Was the Plugin initialized correctly ? */
   private boolean mInitialized;
+  /** Instance of Growl-Plugin */
+  private GrowlPlugin mGrowlPlugin;
   
   /**
    * Create the Settings-Tab
+   * @param plugin The Growl-Plugin
    * @param initialized True, if the OS is Mac and the Plugin was initialized correctly
    * @param settings Settings-Tab
    */
-  public GrowlSettingsTab(boolean initialized, Properties settings) {
+  public GrowlSettingsTab(GrowlPlugin plugin, boolean initialized, Properties settings) {
+    mGrowlPlugin = plugin;
     mSettings = settings;
     mInitialized = initialized;
   }
@@ -81,25 +90,38 @@ public class GrowlSettingsTab implements SettingsTab {
       return panel;
     }
     
-    
-    JPanel panel = new JPanel(new FormLayout("default:grow", "default, 3dlu, fill:default:grow, 3dlu, fill:default:grow"));
+    JPanel panel = new JPanel(new FormLayout("default:grow, 3dlu, default", "default, 3dlu, fill:default:grow, 3dlu, fill:default:grow, 3dlu, default"));
     
     CellConstraints cc = new CellConstraints();
     
     panel.add(UiUtilities.createHelpTextArea(
-        mLocalizer.msg("help", "Help Text")), cc.xy(1,1));
+        mLocalizer.msg("help", "Help Text")), cc.xyw(1,1, 3));
     
     mTitle = new ParamInputField(mSettings.getProperty("title"));
     mTitle.setBorder(BorderFactory.createTitledBorder(
         mLocalizer.msg("title", "Title")));
     
-    panel.add(mTitle, cc.xy(1,3));
+    panel.add(mTitle, cc.xyw(1,3,3));
     
     mDescription = new ParamInputField(mSettings.getProperty("description"));
     mDescription.setBorder(BorderFactory.createTitledBorder(
         mLocalizer.msg("description", "Description")));
     
-    panel.add(mDescription, cc.xy(1,5));
+    panel.add(mDescription, cc.xyw(1,5,3));
+    
+    JButton testGrowl = new JButton(mLocalizer.msg("testGrowl", "Test Growl"));
+    testGrowl.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        Properties prop = (Properties)mSettings.clone();
+        prop.setProperty("title", mTitle.getText());
+        prop.setProperty("description", mDescription.getText());      
+        mGrowlPlugin.getContainer().notifyGrowl(prop, Plugin.getPluginManager().getExampleProgram());
+      }
+      
+    });
+    
+    panel.add(testGrowl, cc.xy(3,7));
     
     return panel;
   }
