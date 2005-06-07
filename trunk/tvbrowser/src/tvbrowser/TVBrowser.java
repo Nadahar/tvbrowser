@@ -27,20 +27,11 @@ package tvbrowser;
 
 import java.awt.Frame;
 import java.awt.Image;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Locale;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -143,8 +134,7 @@ public class TVBrowser {
     String msg;
     
     // Check whether the TV-Browser was started in the right directory
-    //if (    ! new File("tvbrowser.jar").exists() && ! new File("tvbrowser.exe").exists()) {
-		if ( !new File("imgs").exists()) {
+    if ( !new File("imgs").exists()) {
       msg = mLocalizer.msg("error.2",
         "Please start TV-Browser in the TV-Browser directory!");
       JOptionPane.showMessageDialog(null, msg);
@@ -159,27 +149,25 @@ public class TVBrowser {
 		// Use a even simpler Formatter for console logging
 		mainLogger.getHandlers()[0].setFormatter(createFormatter());
 
-		if (!VERSION.isStable()) { 
-		  try {  
-        // Add a file handler
-        new File("log").mkdir();
-        Handler fileHandler = new FileHandler("log/tvbrowser.log", 50000, 2, true);
-        fileHandler.setLevel(Level.WARNING);
-        mainLogger.addHandler(fileHandler);
-      }
-      catch (IOException exc) {
+    // Load the settings
+    Settings.loadSettings();
+
+    String logDirectory = Settings.propLogdirectory.getString();
+    if (logDirectory != null) {
+      try {
+        File logDir = new File(logDirectory);
+        logDir.mkdirs();
+        mainLogger.addHandler(new FileLoggingHandler(logDir.getAbsolutePath()+"/tvbrowser.log", createFormatter()));
+      } catch (IOException exc) {
         msg = mLocalizer.msg("error.4", "Can't create log file.");
         ErrorHandler.handle(msg, exc);
       }
-		}
+    }
     
     // Capture unhandled exceptions
     System.setErr(new PrintStream(new MonitoringErrorStream()));
     
     
-    // Load the settings
-    Settings.loadSettings();
-
     Locale.setDefault(new Locale(Settings.propLanguage.getString()));
     //TimeZone.setDefault(TimeZone.getTimeZone(Settings.propTimezone.getString()));
 
@@ -201,68 +189,6 @@ public class TVBrowser {
       Settings.propShowAssistant.setBoolean(true);
     }
 
-    // Check whether TV-Browser is started the first time
-//    File f=new File(Settings.propTVDataDirectory.getString());
-//    if (!f.exists()) {
-//
-
-
-//      devplugin.Version prevVersion = Settings.propTVBrowserVersion.getVersion();
-//
-//      /* if we have got no tvdata and no assistant will be loaded there must exist an older
-//       * tv-browser. so ask the user for importing existing tv data.
-//       */
-//      if (! Settings.propShowAssistant.getBoolean()) {
-//
-//        /* update from 0.9.7, 0.9.7.1 to 0.9.7.2 */
-//        if (prevVersion==null) {
-//          boolean showTvdataAssistant=true;
-//          while (showTvdataAssistant) {
-//            showTvdataAssistant=false;
-//            TvdataAssistantDlg dlg=new TvdataAssistantDlg();
-//            UiUtilities.centerAndShow(dlg);
-//            int result=dlg.getSelection();
-//            if (result==TvdataAssistantDlg.IMPORT_DATA) {
-//              msg = mLocalizer.msg("importtvdata.step1","step 1: ..");
-//              String toDir = Settings.propTVDataDirectory.getString();
-//              TvdataImportDlg importDlg = new TvdataImportDlg(msg, "tvdata", toDir);
-//              UiUtilities.centerAndShow(importDlg);
-//              if (importDlg.getResult()==TvdataImportDlg.OK) {
-//                msg = mLocalizer.msg("importtvdata.step1","step 2: ..");
-//                toDir = Settings.propTVDataDirectory.getString()
-//                        + "/tvbrowserdataservice.TvBrowserDataService";
-//                importDlg = new TvdataImportDlg(msg, "tvbrowsertvdata", toDir);
-//                UiUtilities.centerAndShow(importDlg);
-//              }
-//              showTvdataAssistant=importDlg.getResult()!=TvdataImportDlg.OK;
-//
-//            } else if (result==TvdataAssistantDlg.RUN_ASSISTANT) {
-//              Settings.propShowAssistant.setBoolean(true);
-//            }
-//          }
-//        }
-//        else { /* update from 0.9.7.2 to 0.9.7.3 and higher */
-//          TvdataAssistantDlg dlg=new TvdataAssistantDlg();
-//          UiUtilities.centerAndShow(dlg);
-//          int result=dlg.getSelection();
-//          if (result==TvdataAssistantDlg.IMPORT_DATA) {
-//            msg = mLocalizer.msg("importtvdata","import tv data");
-//            String toDir = Settings.propTVDataDirectory.getString();
-//            TvdataImportDlg importDlg=new TvdataImportDlg(msg, "tvdata", toDir);
-//            UiUtilities.centerAndShow(importDlg);
-//          }
-//          Settings.propShowAssistant.setBoolean(result == TvdataAssistantDlg.RUN_ASSISTANT);
-//        }
-//      }
-        
-//      mLog.info("Creating tv data directory...");
-//
-//      if (!f.mkdirs()) {
-//        mLog.info("Could not create directory + "+f.getAbsolutePath());
-//      }
-      
-//    }
-    
     final Splash splash;
     
     if (showSplashScreen && Settings.propSplashShow.getBoolean()) {
@@ -622,3 +548,28 @@ public class TVBrowser {
   }
 
 }
+  class FileLoggingHandler extends Handler {
+
+    private Formatter mFormatter;
+    private PrintWriter mWriter;
+
+    public FileLoggingHandler(String fName, Formatter formatter) throws IOException {
+      mFormatter = formatter;
+      File f = new File(fName);
+      mWriter = new PrintWriter(new FileOutputStream(f));
+    }
+
+
+    public void close() throws SecurityException {
+      mWriter.close();
+    }
+
+    public void flush() {
+      mWriter.flush();
+    }
+
+    public void publish(LogRecord record) {
+      mWriter.println(mFormatter.format(record));
+      flush();
+    }
+  }
