@@ -612,4 +612,8 @@ public class Settings {
 
   public static final BooleanProperty propMinimizeAfterStartup
   = new BooleanProperty(mProp, "minimizeAfterStartup", false);
+
+  public static final StringProperty propLogdirectory
+  = new StringProperty(mProp, "logdirectory", mDefaultSettings.getProperty("logdirectory", null));
+
 }
