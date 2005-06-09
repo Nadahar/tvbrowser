@@ -38,7 +38,7 @@
 
   <property name="tvbrowser.version.file" value="${tvbrowser.version}"/>
   <property name="programname" value="TV-Browser"/>
-  <property name="programname.file" value="TvBrowser"/>
+  <property name="programname.file" value="tvbrowser"/>
 
   <property name="doc.header" value="${programname} ${tvbrowser.version} API"/>
   <property name="doc.title" value="API documentation for ${programname} ${tvbrowser.version}"/>
@@ -354,6 +354,7 @@
       <fileset dir="${txt.dir}" includes="website.url"/>
       <fileset dir="${txt.dir}" includes="default.properties"/>
       <fileset dir="${txt.dir}" includes="osx.properties"/>
+      <fileset dir="${txt.dir}" includes="windows.properties"/>
       <fileset dir="${txt.dir}" includes="tvbrowser.sh"/>
     </copy>
 
