@@ -128,7 +128,7 @@ FunctionEnd
 
 Function un.UninstallSettingsPage
   !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
-    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
+    "Bestimmen Sie, ob Ihre Einstellungen geloescht werden sollen"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 FunctionEnd
 
