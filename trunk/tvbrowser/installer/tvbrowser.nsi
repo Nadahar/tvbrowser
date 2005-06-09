@@ -1,9 +1,9 @@
-#
+﻿#
 # NSIS script for creating the Windows installer.
 #
 #
 # TV-Browser
-# Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+# Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -121,14 +121,14 @@ Function un.onInit
 FunctionEnd
 
 Function un.UninstallTvDataPage
-  !insertmacro MUI_HEADER_TEXT "TV-Daten l�schen" \
-    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gel�scht werden sollen"
+  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
+    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 FunctionEnd
 
 Function un.UninstallSettingsPage
-  !insertmacro MUI_HEADER_TEXT "Einstellungen l�schen" \
-    "Bestimmen Sie, ob Ihre Einstellungen gel�scht werden sollen"
+  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
+    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 FunctionEnd
 
@@ -247,7 +247,7 @@ Section "${PROG_NAME} (erforderlich)"
 SectionEnd # end the section
 
 
-Section "Verkn�pfung auf dem Desktop"
+Section "Verkn�pfung auf dem Desktop"
   SectionIn 1 2
 
   # Set the directory where the shortcuts should be executed in
@@ -267,21 +267,6 @@ SubSection "Daten-Services"
     SetOutPath "$INSTDIR\tvdataservice"
     File "${RUNTIME_DIR}\tvdataservice\TvBrowserDataService.jar"
   SectionEnd
-
-  #Section "Premiere-Datenservice"
-  #  SectionIn 1 2
-  #
-  #  SetOutPath "$INSTDIR\tvdataservice"
-  #  File "${RUNTIME_DIR}\tvdataservice\PremiereDataService.jar"
-  #SectionEnd
-
-  #Section "WDR-Datenservice"
-  #  SectionIn 1 2
-  #
-  #  SetOutPath "$INSTDIR\tvdataservice"
-  #  File "${RUNTIME_DIR}\tvdataservice\WdrDataService.jar"
-  #SectionEnd
-
 SubSectionEnd
 
 
@@ -329,18 +314,12 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
   SectionEnd
 
-  Section "Google-Suche"
+
+  Section "Web Plugin"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\GoogleSearchPlugin.jar"
-  SectionEnd
-
-  Section "IMDB-Suche"
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\ImdbSearchPlugin.jar"
+    File "${RUNTIME_DIR}\plugins\WebPlugin.jar"
   SectionEnd
 
   Section "TV-Bewertungen"
@@ -350,7 +329,7 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
   SectionEnd
 
-  Section "Was l�uft gerade"
+  Section "Was läuft gerade"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"

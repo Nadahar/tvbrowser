@@ -10,8 +10,12 @@
 <classPath>..\runtime\tvbrowser_win\tvbrowser.jar</classPath>
 <embeddedJar>false</embeddedJar>
 <executableName>..\runtime\tvbrowser_win\tvbrowser.exe</executableName>
-<iconLocation>..\runtime\tvbrowser_win\imgs\TVBrowser16.gif</iconLocation>
+<iconLocation>..\runtime\tvbrowser_win\imgs\TVBrowser.ico</iconLocation>
 <initialMemoryHeap>-1</initialMemoryHeap>
+<javaProperties>
+<name>propertiesfile</name>
+<value>windows.properties</value>
+</javaProperties>
 <mainClassName>tvbrowser.TVBrowser</mainClassName>
 <maximumMemoryHeap>-1</maximumMemoryHeap>
 <maximumVersion></maximumVersion>
