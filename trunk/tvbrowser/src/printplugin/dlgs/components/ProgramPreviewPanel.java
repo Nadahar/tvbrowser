@@ -40,8 +40,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import util.ui.FontChooserPanel;
-
 
 public class ProgramPreviewPanel extends JPanel {
 
@@ -172,80 +170,3 @@ public class ProgramPreviewPanel extends JPanel {
 }
 
 
-class FontsDialog extends JDialog {
-
-  public static int CANCEL = 0;
-  public static int OK = 1;
-
-  private FontChooserPanel mTitleFontPanel;
-  private FontChooserPanel mDescriptionFontPanel;
-  private FontChooserPanel mDateFontPanel;
-  private int mResult;
-
-  public FontsDialog(Frame parent, Font titleFont, Font descriptionFont, Font dateFont) {
-    super(parent, true);
-    setTitle("Fonts");
-    JPanel content = (JPanel)getContentPane();
-
-    mTitleFontPanel=new FontChooserPanel("Title", titleFont);
-    mDescriptionFontPanel=new FontChooserPanel("Description", descriptionFont);
-    if (dateFont != null) {
-      mDateFontPanel = new FontChooserPanel("Date", dateFont);
-    }
-    content.setLayout(new BorderLayout());
-
-    JPanel fontPanel=new JPanel(new GridLayout(-1,1));
-    fontPanel.setBorder(BorderFactory.createTitledBorder("Fonts"));
-
-    fontPanel.add(mTitleFontPanel);
-    fontPanel.add(mDescriptionFontPanel);
-    if (dateFont != null) {
-      fontPanel.add(mDateFontPanel);
-    }
-
-    JPanel btnPn = new JPanel(new FlowLayout());
-
-    JButton okBt = new JButton("OK");
-    JButton cancelBt = new JButton("Cancel");
-
-    btnPn.add(okBt);
-    btnPn.add(cancelBt);
-
-    okBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        mResult = OK;
-        hide();
-      }
-    });
-
-    cancelBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        mResult = CANCEL;
-        hide();
-      }
-    });
-
-    content.add(fontPanel, BorderLayout.CENTER);
-    content.add(btnPn, BorderLayout.SOUTH);
-
-    mResult = CANCEL;
-    pack();
-  }
-
-  public int getResult() {
-    return mResult;
-  }
-
-  public Font getTitleFont() {
-    return mTitleFontPanel.getChosenFont();
-  }
-
-  public Font getDescriptionFont() {
-    return mDescriptionFontPanel.getChosenFont();
-  }
-
-  public Font getDateFont() {
-    return mDateFontPanel.getChosenFont();
-  }
-
-}

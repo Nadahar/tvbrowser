@@ -349,7 +349,7 @@ public class Settings {
 
   
   public static final ChoiceProperty propToolbarButtonStyle
-    = new ChoiceProperty(mProp, "buttontype", "text&icon",
+    = new ChoiceProperty(mProp, "buttontype", "icon",
                          new String[] { "text&icon", "text", "icon" });
 
   public static final BooleanProperty propIsTooolbarVisible
@@ -546,7 +546,7 @@ public class Settings {
   
   
   public static final BooleanProperty propShowPluginView
-    = new BooleanProperty(mProp,"show.pluginview", true);
+    = new BooleanProperty(mProp,"show.pluginview", false);
   
   public static final BooleanProperty propShowTimeButtons
     = new BooleanProperty(mProp,"show.timebuttons", true);
