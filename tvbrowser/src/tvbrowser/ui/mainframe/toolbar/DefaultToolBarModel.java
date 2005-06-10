@@ -151,7 +151,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private void createDefaultVisibleActions() {
     mVisibleActions = new ArrayList();
     mVisibleActions.add(mUpdateAction);
-
+    mVisibleActions.add(mPluginViewAction);
+    mVisibleActions.add(mFilterAction);
     mVisibleActions.add(getSeparatorAction());
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();

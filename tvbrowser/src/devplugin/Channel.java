@@ -173,6 +173,10 @@ public class Channel {
     this(dataService, name, name);
   }
 
+  public Channel(String id, String country) {
+    this(null, id, id, null, country);
+  }
+
   public Channel(String id) {
     this(null, null, id);
   }

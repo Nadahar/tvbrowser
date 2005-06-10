@@ -26,7 +26,7 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -58,8 +58,6 @@ import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
-
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -128,27 +126,30 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    * @return the SettingsPanel
    */
   public JPanel createSettingsPanel() {
-    JPanel panel = new JPanel();
-
-    FormLayout layout = new FormLayout("default:grow(0.5), 3dlu, default, 3dlu, default:grow(0.5), 3dlu, default",
-        "default, 3dlu, default:grow, default, 3dlu, default, default:grow, 3dlu, top:default, 3dlu, default, 3dlu, default, default");
-
-    panel.setLayout(layout);
-    panel.setBorder(Borders.DLU4_BORDER);
-    CellConstraints c = new CellConstraints();
+    JPanel panel = new JPanel(new BorderLayout());
 
 
+    JPanel northPn = new JPanel(new GridLayout(1,2));
+    JPanel centerPn = new JPanel(new GridLayout(1,2));
+    JPanel southPn = new JPanel(new BorderLayout());
+
+    panel.add(northPn, BorderLayout.NORTH);
+    panel.add(centerPn, BorderLayout.CENTER);
+    panel.add(southPn, BorderLayout.SOUTH);
+
+    northPn.add(new JLabel(mLocalizer.msg("availableChannels", "Available channels")), BorderLayout.NORTH);
+    northPn.add(new JLabel(mLocalizer.msg("subscribedChannels", "Subscribed channels")), BorderLayout.NORTH);
 
 
-    // Left Box
-    panel.add(new JLabel(mLocalizer.msg("availableChannels", "Available channels")), c.xy(1, 1));
+    // left list box
 
+    JPanel listBoxPnLeft = new JPanel(new BorderLayout());
     mAllChannels = new JList(new DefaultListModel());
     mAllChannels.setCellRenderer(new ChannelListCellRenderer());
 
-    panel.add(new JScrollPane(mAllChannels), c.xywh(1, 3, 1, 5));
+    listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
 
-    panel.add(createFilterPanel(), c.xy(1, 9));
+    centerPn.add(listBoxPnLeft);
 
     // Buttons in the Middle
     JButton rightBt = new JButton(new ImageIcon("imgs/Forward24.gif"));
@@ -169,19 +170,20 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       }
     });
 
-    panel.add(rightBt, c.xy(3, 4));
-    panel.add(leftBt, c.xy(3, 6));
 
-    // Right Box
+    listBoxPnLeft.add(createButtonPn(rightBt, leftBt), BorderLayout.EAST);
 
-    panel.add(new JLabel(mLocalizer.msg("subscribedChannels", "Subscribed channels")), c.xy(5, 1));
 
+
+    // right list box
+    JPanel listBoxPnRight = new JPanel(new BorderLayout());
     SortableItemList channelList = new SortableItemList();
 
     mSubscribedChannels = channelList.getList();
     mSubscribedChannels.setCellRenderer(new ChannelListCellRenderer());
 
-    panel.add(new JScrollPane(mSubscribedChannels), c.xywh(5, 3, 1, 5));
+    listBoxPnRight.add(new JScrollPane(mSubscribedChannels), BorderLayout.CENTER);
+
 
     final JButton configureChannels = new JButton(mLocalizer.msg("configSelectedChannels","Configure selected channels"));
     configureChannels.setEnabled(false);
@@ -198,13 +200,25 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     });
 
-    panel.add(createDetailsPanel(), c.xyw(5, 9, 3));
 
-    panel.add(channelList.getUpButton(), c.xy(7, 4));
-    panel.add(channelList.getDownButton(), c.xy(7, 6));
+    listBoxPnRight.add(createButtonPn(channelList.getUpButton(), channelList.getDownButton()), BorderLayout.EAST);
+
+    centerPn.add(listBoxPnRight);
 
 
-    // Bottom Buttons
+    // south panel (filter, channel details, buttons)
+
+    JPanel pn1 = new JPanel(new GridLayout(1,2));
+    pn1.add(createFilterPanel());
+    pn1.add(createDetailsPanel());
+
+    southPn.add(pn1, BorderLayout.CENTER);
+
+    fillSubscribedChannelsListBox();
+    fillAvailableChannelsListBox();
+
+    JPanel result = new JPanel(new BorderLayout());
+    result.add(panel, BorderLayout.CENTER);
 
     if (mShowAllButtons) {
       JButton refreshList = new JButton(mLocalizer.msg("updateChannelList","Update channel list"),new ImageIcon("imgs/Refresh16.gif"));
@@ -221,23 +235,35 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         }
       });
 
-      panel.add(refreshList, c.xy(1, 13));
-      panel.add(configureChannels, c.xyw(5, 13, 3));
+      JPanel pn2 = new JPanel(new GridLayout(1,2));
+      pn2.setBorder(BorderFactory.createEmptyBorder(3,0,2,0));
+      pn2.add(refreshList);
+      pn2.add(configureChannels);
+      southPn.add(pn2, BorderLayout.SOUTH);
 
       LinkButton urlLabel = new LinkButton(
-          mLocalizer.msg("addOwnChannels","Wollen Sie eigene Sender anbieten? Dann klicken Sie hier!"),
-          mLocalizer.msg("addOwnChannelsUrl", "http://tvbrowser.org/provide_tv_data.php"));
+         mLocalizer.msg("addOwnChannels","Wollen Sie eigene Sender anbieten? Dann klicken Sie hier!"),
+         mLocalizer.msg("addOwnChannelsUrl", "http://tvbrowser.org/provide_tv_data.php"));
 
-      urlLabel.setBorder(BorderFactory.createEmptyBorder(5,0,3,0));
-
-      panel.add(urlLabel, c.xyw(1,14,7));
+      result.add(urlLabel, BorderLayout.SOUTH);
     }
 
-    fillSubscribedChannelsListBox();
-    fillAvailableChannelsListBox();
+    result.setBorder(BorderFactory.createEmptyBorder(9,9,9,4));
+    return result;
+  }
 
 
-    return panel;
+  private JPanel createButtonPn(JButton btn1, JButton btn2) {
+    JPanel result = new JPanel(new GridLayout(2,1));
+    JPanel topPn = new JPanel(new BorderLayout());
+    JPanel bottomPn = new JPanel(new BorderLayout());
+    topPn.add(btn1, BorderLayout.SOUTH);
+    bottomPn.add(btn2, BorderLayout.NORTH);
+    result.add(topPn);
+    result.add(bottomPn);
+    result.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
+    return result;
+
   }
 
   /**
@@ -355,22 +381,22 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     panel.add(new JLabel(mLocalizer.msg("details","Details")+":"), c.xyw(1, 1, 3));
 
-    panel.add(new JLabel(mLocalizer.msg("channel","Kanal")+":"), c.xy(1, 3));
+    panel.add(new BoldLabel(mLocalizer.msg("channel","Kanal")+":"), c.xy(1, 3));
 
     mChannelName = new JLabel();
     panel.add(mChannelName, c.xy(3, 3));
 
-    panel.add(new JLabel(mLocalizer.msg("country","Land")+":"), c.xy(1, 5));
+    panel.add(new BoldLabel(mLocalizer.msg("country","Land")+":"), c.xy(1, 5));
 
     mChannelCountry = new JLabel();
     panel.add(mChannelCountry, c.xy(3, 5));
 
-    panel.add(new JLabel(mLocalizer.msg("timezone","Zeitzone")+":"), c.xy(1, 7));
+    panel.add(new BoldLabel(mLocalizer.msg("timezone","Zeitzone")+":"), c.xy(1, 7));
 
     mChannelTimeZone = new JLabel();
     panel.add(mChannelTimeZone, c.xy(3, 7));
 
-    panel.add(new JLabel(mLocalizer.msg("provider","Betreiber")+":"), c.xy(1, 9));
+    panel.add(new BoldLabel(mLocalizer.msg("provider","Betreiber")+":"), c.xy(1, 9));
 
     mChannelProvider = new JLabel();
     panel.add(mChannelProvider, c.xy(3, 9));
@@ -712,3 +738,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
   }
 
 }
+
+class BoldLabel extends JLabel {
+
+    public BoldLabel(String text) {
+      super(text);
+      setFont(getFont().deriveFont(Font.BOLD));
+    }
+
+  }
