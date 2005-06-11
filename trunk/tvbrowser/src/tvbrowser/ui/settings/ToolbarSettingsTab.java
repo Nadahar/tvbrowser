@@ -258,7 +258,7 @@ public class ToolbarSettingsTab implements devplugin.SettingsTab {
   }
 
   public String getTitle() {
-    return "Toolbar";
+    return mLocalizer.msg("title","toolbar");
   }
 
 

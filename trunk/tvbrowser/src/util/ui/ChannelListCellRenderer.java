@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,13 +39,22 @@ import devplugin.Channel;
 public class ChannelListCellRenderer extends DefaultListCellRenderer {
   /** Internal reused ChannelLabel */
   private ChannelLabel mChannel;
+  private boolean mChannelIconsVisible;
+
+  public ChannelListCellRenderer() {
+    this(true);
+  }
+
+  public ChannelListCellRenderer(boolean channelIconsVisible) {
+    mChannelIconsVisible = channelIconsVisible;
+  }
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
       boolean cellHasFocus) {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel();
+      mChannel = new ChannelLabel(mChannelIconsVisible);
     }
 
     if (value instanceof Channel) {
