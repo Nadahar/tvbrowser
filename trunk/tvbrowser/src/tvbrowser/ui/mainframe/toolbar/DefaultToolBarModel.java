@@ -240,10 +240,17 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     }
 
     public void showStopButton() {
-
+      mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.stop", "Stop"));
+      mUpdateAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/Stop16.gif"));
+      mUpdateAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Stop24.gif"));
+      mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg("menuinfo.stop",""));
     }
 
     public void showUpdateButton() {
+      mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.update", "Update"));
+      mUpdateAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/Refresh16.gif"));
+      mUpdateAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Refresh24.gif"));
+      mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg("menuinfo.update",""));
 
     }
 
