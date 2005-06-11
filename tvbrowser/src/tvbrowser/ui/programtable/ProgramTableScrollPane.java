@@ -120,14 +120,14 @@ public class ProgramTableScrollPane extends JScrollPane
     if (mChannelPanel!=null) mChannelPanel.repaint(); 
   }
 
- 
+          
   public void updateChannelPanel() {
     mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),
       mProgramTable.getModel().getShownChannels()); 
     setColumnHeaderView(mChannelPanel);
     this.updateUI();
   }
-  
+
   public void setColumnWidth(int columnWidth) {
     mProgramTable.setColumnWidth(columnWidth);
     mChannelPanel.setColumnWidth(columnWidth);

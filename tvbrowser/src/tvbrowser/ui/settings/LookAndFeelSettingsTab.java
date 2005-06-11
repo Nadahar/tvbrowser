@@ -52,6 +52,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   private JPanel mSettingsPn;
   private final JTextField mThemepackTf=new JTextField();
   private JButton mChooseBtn;
+  private JCheckBox mShowChannelIconsCb, mProgramtableChIconsCb, mChannellistChIconsCb;
 
   class LookAndFeelObj {
       private UIManager.LookAndFeelInfo info;
@@ -143,7 +144,43 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
 
 
-    
+    JPanel channelIconPanel = new JPanel(new TabLayout(1));
+    channelIconPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("channelIcons.title","Senderlogos")));
+
+    mShowChannelIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.show","Senderlogso anzeigen"));
+    mProgramtableChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.programtable","Programmtabelle"));
+    mChannellistChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.channellist","Kanalliste"));
+
+    mShowChannelIconsCb.setSelected(Settings.propEnableChannelIcons.getBoolean());
+    mProgramtableChIconsCb.setSelected(Settings.propShowChannelIconsInProgramTable.getBoolean());
+    mChannellistChIconsCb.setSelected(Settings.propShowChannelIconsInChannellist.getBoolean());
+
+    mShowChannelIconsCb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        boolean enabled = mShowChannelIconsCb.isSelected();
+        mProgramtableChIconsCb.setEnabled(enabled);
+        mChannellistChIconsCb.setEnabled(enabled);
+        mProgramtableChIconsCb.setSelected(enabled);
+        mChannellistChIconsCb.setSelected(enabled);
+      }
+    });
+
+    boolean enabled = mShowChannelIconsCb.isSelected();
+    mProgramtableChIconsCb.setEnabled(enabled);
+    mChannellistChIconsCb.setEnabled(enabled);
+
+    mProgramtableChIconsCb.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+    mChannellistChIconsCb.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+
+    channelIconPanel.add(mShowChannelIconsCb);
+    channelIconPanel.add(mProgramtableChIconsCb);
+    channelIconPanel.add(mChannellistChIconsCb);
+
+    main.add(channelIconPanel);
+
+
+
+
     JTextArea licenseTA=new JTextArea();
     licenseTA.setText("TV-Browser includes software developed " +
                       "by L2FProd.com (http://www.L2FProd.com/).\n"+
@@ -182,6 +219,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   }
 
 
+
   private void setUseSkinLF(boolean b) {
     mLfComboBox.setEnabled(!b);
     mThemepackTf.setEnabled(b);
@@ -194,7 +232,12 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     Settings.propLookAndFeel.setString(obj.getLFClassName());
  
     Settings.propIsSkinLFEnabled.setBoolean(mUseSkinLFRb.isSelected());
-    Settings.propSkinLFThemepack.setString(mThemepackTf.getText());    
+    Settings.propSkinLFThemepack.setString(mThemepackTf.getText());
+
+    boolean enableChannelIcons = mShowChannelIconsCb.isSelected();
+    Settings.propEnableChannelIcons.setBoolean(enableChannelIcons);
+    Settings.propShowChannelIconsInChannellist.setBoolean(mChannellistChIconsCb.isSelected());
+    Settings.propShowChannelIconsInProgramTable.setBoolean(mProgramtableChIconsCb.isSelected());
   }
 
  

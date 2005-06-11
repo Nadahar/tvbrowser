@@ -37,13 +37,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -73,7 +70,6 @@ import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
-import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -136,9 +132,6 @@ public class MainFrame extends JFrame implements DateListener {
 
   private Node mDateChannelNode;
 
-  private Timer mTimer;
-
-  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
@@ -332,21 +325,6 @@ public class MainFrame extends JFrame implements DateListener {
     mMenuBar.updatePluginsMenu();
   }
 
-  private static JMenuItem createMenuItem(ActionMenu menu) {
-    JMenuItem result;
-    if (menu.hasSubItems()) {
-      result = new JMenu(menu.getAction());
-      ActionMenu[] subItems = menu.getSubItems();
-      for (int i = 0; i < subItems.length; i++) {
-        result.add(createMenuItem(subItems[i]));
-      }
-    } else {
-      result = new JMenuItem(menu.getAction());
-    }
-    return result;
-
-  }
-
   public void scrollToProgram(Program program) {
     scrollTo(program.getDate(), program.getHours());
     mProgramTableScrollPane.scrollToChannel(program.getChannel());
@@ -513,8 +491,12 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void updateChannellist() {
-    mChannelChooser.updateChannelChooser();
+    updateChannelChooser();
     mMenuBar.updateChannelItems();
+  }
+
+  public void updateChannelChooser() {
+    mChannelChooser.updateChannelChooser();
   }
 
   /**
@@ -731,11 +713,9 @@ public class MainFrame extends JFrame implements DateListener {
     Settings.propIsStatusbarVisible.setBoolean(visible);
 
     if (visible && !contentPane.isAncestorOf(mStatusBar)) {
-      System.out.println("Added");
       jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
     }
     else if (contentPane.isAncestorOf(mStatusBar)) {
-      System.out.println("Removed");
       jcontentPane.remove(mStatusBar);
     }
 

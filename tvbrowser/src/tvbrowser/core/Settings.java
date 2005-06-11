@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -230,14 +230,17 @@ public class Settings {
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
       model.setDate(mainFrame.getCurrentSelectedDate(), null, null);
     }
-    
-    /*
-    if (mProp.hasChanged(propHiddenPluginButtons)) {
-      mainFrame.getHorizontalToolBar().updateButtons();
+
+    propArr = new Property[] {
+      propEnableChannelIcons, propShowChannelIconsInProgramTable, propShowChannelIconsInChannellist
+    };
+    if (mProp.hasChanged(propArr)) {
+      mainFrame.getProgramTableScrollPane().updateChannelPanel();
+      mainFrame.updateChannelChooser();
     }
-    */
-    
-    
+
+
+
     mProp.clearChanges();
   }
   
@@ -614,5 +617,14 @@ public class Settings {
 
   public static final StringProperty propLogdirectory
   = new StringProperty(mProp, "logdirectory", mDefaultSettings.getProperty("logdirectory", null));
+
+  public static final BooleanProperty propEnableChannelIcons
+  = new BooleanProperty(mProp, "enableChannelIcons", true);
+
+  public static final BooleanProperty propShowChannelIconsInProgramTable
+  = new BooleanProperty(mProp, "showChannelIconsInProgramtable", true);
+
+  public static final BooleanProperty propShowChannelIconsInChannellist
+    = new BooleanProperty(mProp, "showChannelIconsInChannellist", true);
 
 }

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -108,12 +108,12 @@ public class ChannelPanel extends JPanel {
     }
     
     public ChannelLabel(final Channel ch) {
-      // Set Icon if it's available
-      if (ch.getIcon() != null) {
-          setIcon(ch.getIcon());
-      }        
-        
-        
+      super();
+
+      if (ch.getIcon()!=null) {
+        setIcon(ch.getIcon());
+      }
+
       // Set the channel name as text
       String channelName = ch.getName();
       if (channelName == null) {
@@ -149,6 +149,15 @@ public class ChannelPanel extends JPanel {
           e.getComponent().setForeground(Color.black);
         }        
       });
+    }
+
+    public void setIcon(Icon icon) {
+      if (Settings.propEnableChannelIcons.getBoolean()) {
+        // Set Icon if it's available
+        if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+          super.setIcon(icon);
+        }
+      }
     }
 
   } // inner class ChannelLabel
