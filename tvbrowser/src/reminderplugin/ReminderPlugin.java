@@ -54,8 +54,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   
   private ReminderList mReminderList;
   private Properties mSettings;
-  private HashSet mReminderItemsTrash;
-  
+
   
   /**
    * Creates a new instance of ReminderPlugin.
@@ -70,7 +69,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
     PluginTreeNode root = getRootNode();
     mReminderList = new ReminderList(root);
     mReminderList.setReminderTimerListener(this);
-    mReminderItemsTrash = new HashSet();
   }
   
   public static ReminderPlugin getInstance() {
@@ -105,7 +103,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
       String fParam=parser.analyse(mSettings.getProperty("execparam"), item.getProgram());
       
       try {
-        Process proc = Runtime.getRuntime().exec(fName + " " +  fParam);
+        Runtime.getRuntime().exec(fName + " " +  fParam);
       } catch (Exception exc) {
         String msg = mLocalizer.msg( "error.2" ,"Error executing reminder program!\n({0})" , fName, exc);
         ErrorHandler.handle(msg, exc);

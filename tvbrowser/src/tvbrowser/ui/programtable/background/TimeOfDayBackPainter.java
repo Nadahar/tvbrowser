@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,8 +41,11 @@ import util.ui.ImageUtilities;
  */
 public class TimeOfDayBackPainter extends AbstractCellBasedBackPainter {
   
-  private int mEarlyTime, mMiddayTime, mAfternoonTime, mEveningTime;
-  
+  private static final int mEarlyTime = 6 * 60;
+  private static final int mMiddayTime    = 12 * 60;
+  private static final int mAfternoonTime = 16 * 60;
+  private static final int mEveningTime   = 20 * 60;
+
   private Image mBackgroundImageEdge, mBackgroundImageEarly,
     mBackgroundImageMidday, mBackgroundImageAfternoon, mBackgroundImageEvening;
 
@@ -51,10 +54,7 @@ public class TimeOfDayBackPainter extends AbstractCellBasedBackPainter {
    * Is called when the table's layout has changed.
    */
   public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model) {
-    mEarlyTime     = Settings.propEarlyTime.getInt();
-    mMiddayTime    = Settings.propMiddayTime.getInt();
-    mAfternoonTime = Settings.propAfternoonTime.getInt();
-    mEveningTime   = Settings.propEveningTime.getInt();
+
 
     mBackgroundImageEdge      = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEdge.getString());
     mBackgroundImageEarly     = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEarly.getString());

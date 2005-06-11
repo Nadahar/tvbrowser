@@ -295,7 +295,7 @@ public class Settings {
                          new String[] { "timeSynchronous", "compact" });
 
   public static final ChoiceProperty propTableBackgroundStyle
-    = new ChoiceProperty(mProp, "tablebackground.style", "oneImage",
+    = new ChoiceProperty(mProp, "tablebackground.style", "timeOfDay",
                 new String[] { "white", "oneImage", "timeBlock", "timeOfDay" });
 
   public static final StringProperty propOneImageBackground
