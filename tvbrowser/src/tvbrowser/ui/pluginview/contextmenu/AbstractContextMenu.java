@@ -99,7 +99,8 @@ public abstract class AbstractContextMenu implements ContextMenu {
     final Node node = (Node) paths.getLastPathComponent();
     
     JMenu menu = new JMenu(mLocalizer.msg("export","Export"));
-
+    menu.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+    
     if ((node.getChildCount() == 0) && (node.getType() != Node.PROGRAM)) {
       menu.setEnabled(false);
       return menu;
