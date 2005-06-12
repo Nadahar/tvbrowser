@@ -22,7 +22,7 @@ public class ProgramItem {
   public ProgramItem() {
     this(null);
   }
-  
+
   public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
     Date date = new Date(in);

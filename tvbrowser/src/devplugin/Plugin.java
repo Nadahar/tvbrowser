@@ -43,7 +43,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 
-import tvbrowser.core.Settings;
+import tvbrowser.core.*;
 import util.exc.TvBrowserException;
 import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
@@ -79,6 +79,9 @@ abstract public class Plugin {
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
+
+   private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(Plugin.class.getName());
 
   /** The jar file of this plugin. May be used to load ressources. */
   private JarFile mJarFile;
@@ -715,17 +718,27 @@ abstract public class Plugin {
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
       mRootNode = new PluginTreeNode(this);
+
+      TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      public void tvDataUpdateStarted() {
+      }
+
+      public void tvDataUpdateFinished() {
+        mRootNode.refreshAllPrograms();
+        mRootNode.update();
+      }
+    });
+
       ObjectInputStream in;
+      File f = new File(Settings.getUserDirectoryName(),getId()+".node");
       try {
-        in = new ObjectInputStream(new FileInputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
+        in = new ObjectInputStream(new FileInputStream(f));
         mRootNode.load(in);
         in.close();
       } catch (FileNotFoundException e) {
-
-      } catch (IOException e) {
-        e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
+        // ignore
+      } catch (Exception e) {
+        util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotReadFile","Reading file '{0}' failed.", f.getAbsolutePath()), e);
       }
     }
 
@@ -734,12 +747,13 @@ abstract public class Plugin {
 
   public void storeRootNode() {
     ObjectOutputStream out;
+    File f = new File(Settings.getUserDirectoryName(),getId()+".node");
     try {
-      out = new ObjectOutputStream(new FileOutputStream(new File(Settings.getUserDirectoryName(),getId()+".node")));
+      out = new ObjectOutputStream(new FileOutputStream(f));
       mRootNode.store(out);
       out.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotWriteFile","Storing file '{0}' failed.", f.getAbsolutePath()), e);
     }
   }
 

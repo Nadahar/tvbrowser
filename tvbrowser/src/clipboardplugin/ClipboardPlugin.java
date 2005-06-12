@@ -105,10 +105,8 @@ public class ClipboardPlugin extends Plugin {
 
 			public void actionPerformed(ActionEvent evt) {
 				if (inList) {
-					program.unmark(ClipboardPlugin.this);
 					node.removeProgram(program);
 				} else {
-					program.mark(ClipboardPlugin.this);
 					node.addProgram(program);
 				}
 				node.update();
@@ -206,7 +204,6 @@ public class ClipboardPlugin extends Plugin {
 		PluginTreeNode node = getRootNode();
 		for (int i = 0; i < programArr.length; i++) {
 			if (!node.contains(programArr[i])) {
-				programArr[i].mark(this);
 				node.addProgram(programArr[i]);
 			}
 		}
