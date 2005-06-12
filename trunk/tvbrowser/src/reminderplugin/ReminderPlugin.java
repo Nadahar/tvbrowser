@@ -55,7 +55,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
   private ReminderList mReminderList;
   private Properties mSettings;
 
-  
+
+
   /**
    * Creates a new instance of ReminderPlugin.
    */
@@ -314,16 +315,24 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
   }
 
 
-
+  public void programsRemoved(Program[] progArr) {
+    if (progArr.length > 0) {
+      RemovedProgramsDialog dlg = new RemovedProgramsDialog(getParentFrame(), progArr);
+      util.ui.UiUtilities.centerAndShow(dlg);
+    }
+  }
+             /*
   public void programRemoved(Program prog) {
     // todo: implement this method
     System.out.println("removed from: "+prog);
+    mRemovedProgramsHandler.addRemovedProgram(prog);
   }
 
   public void handleTvDataUpdateFinished() {
     // todo: show dialog containing all removed programs
     System.out.println("update finished");
-  }
+    mRemovedProgramsHandler.showRemovedPrograms(getParentFrame());
+  }    */
 
   /**
    * Removes the deleted programs from the reminder list.

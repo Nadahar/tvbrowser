@@ -29,6 +29,7 @@ package devplugin;
 
 public interface PluginTreeListener {
 
-  public void programRemoved(Program removedProgram);
+
+  public void programsRemoved(Program[] progArr);
 
 }

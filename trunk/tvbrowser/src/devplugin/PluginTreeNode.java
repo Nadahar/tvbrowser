@@ -42,6 +42,8 @@ import javax.swing.Action;
 
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTreeModel;
+import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.TvDataUpdateListener;
 
 
 
@@ -71,6 +73,21 @@ private Node mDefaultNode;
   public PluginTreeNode(Plugin plugin) {
     this(Node.PLUGIN_ROOT, plugin);
     mPlugin = plugin;
+    final RemovedProgramsHandler removedProgramsHandler = new RemovedProgramsHandler();
+
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      public void tvDataUpdateStarted() {
+        removedProgramsHandler.clear();
+      }
+
+      public void tvDataUpdateFinished() {
+        refreshAllPrograms(removedProgramsHandler);
+        update();
+        Program[] removedPrograms = removedProgramsHandler.getRemovedPrograms();
+        fireProgramsRemoved(removedPrograms);
+      }
+    });
+
   }
 
   public PluginTreeNode(ProgramItem item) {
@@ -94,7 +111,7 @@ private Node mDefaultNode;
   /**
    * Remove all programs from this node which are not available any more
    */
-  public void refreshAllPrograms() {
+  private void refreshAllPrograms(RemovedProgramsHandler handler) {
 
     for (int i=0; i<mChildNodes.size(); i++) {
       PluginTreeNode node = (PluginTreeNode)mChildNodes.get(i);
@@ -104,7 +121,7 @@ private Node mDefaultNode;
         Program testProg = Plugin.getPluginManager().getProgram(progInTree.getDate(), progInTree.getID());
         if (testProg == null) {
           removeProgram(progInTree);
-          fireProgramRemoved(progInTree);
+          handler.addRemovedProgram(progInTree);
         }
         else {
           progItemInTree.setProgram(testProg);
@@ -113,15 +130,15 @@ private Node mDefaultNode;
         }
       }
       else {
-        node.refreshAllPrograms();
+        node.refreshAllPrograms(handler);
       }
     }
   }
 
-  private void fireProgramRemoved(Program prog) {
+  private void fireProgramsRemoved(Program[] progArr) {
     for (int i=0; i<mNodeListeners.size(); i++) {
       PluginTreeListener listener = (PluginTreeListener)mNodeListeners.get(i);
-      listener.programRemoved(prog);
+      listener.programsRemoved(progArr);
     }
   }
 
@@ -391,6 +408,27 @@ private Node mDefaultNode;
 
   public boolean isLeaf() {
     return (mDefaultNode.getType() == Node.PROGRAM);
+  }
+
+
+  class RemovedProgramsHandler {
+    private ArrayList mProgArr;
+    public RemovedProgramsHandler() {
+      mProgArr = new ArrayList();
+    }
+    public void clear() {
+      mProgArr.clear();
+    }
+
+    public void addRemovedProgram(Program prog) {
+      mProgArr.add(prog);
+    }
+
+    public Program[] getRemovedPrograms() {
+      Program[] progArr = new Program[mProgArr.size()];
+      mProgArr.toArray(progArr);
+      return progArr;
+    }
   }
 
 }
