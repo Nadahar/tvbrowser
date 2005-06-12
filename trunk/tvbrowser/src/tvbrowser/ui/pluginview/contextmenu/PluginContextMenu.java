@@ -57,11 +57,13 @@ public class PluginContextMenu extends AbstractContextMenu {
   private ActionMenu[] mActionMenus;
   private Action mDefaultAction;
   private Plugin mPlugin;
+  private TreePath mPath;
 
   public PluginContextMenu(JTree tree, TreePath path, Plugin plugin, ActionMenu[] menus) {
     super(tree);
     mDefaultAction = getCollapseExpandAction(path);
     mPlugin = plugin;
+    mPath = path;
     mActionMenus = menus;
     if (mActionMenus == null) {
       mActionMenus = new ActionMenu[]{};
@@ -74,6 +76,8 @@ public class PluginContextMenu extends AbstractContextMenu {
     menu.add(defaultMI);
     defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
 
+    menu.add(getExportMenu( mPath));
+    
     ActionMenu pluginAction = mPlugin.getButtonAction();
     if (pluginAction != null) {
       menu.addSeparator();
