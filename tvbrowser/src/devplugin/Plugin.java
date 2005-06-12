@@ -719,16 +719,6 @@ abstract public class Plugin {
     if (mRootNode == null) {
       mRootNode = new PluginTreeNode(this);
 
-      TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      public void tvDataUpdateStarted() {
-      }
-
-      public void tvDataUpdateFinished() {
-        mRootNode.refreshAllPrograms();
-        mRootNode.update();
-      }
-    });
-
       ObjectInputStream in;
       File f = new File(Settings.getUserDirectoryName(),getId()+".node");
       try {
