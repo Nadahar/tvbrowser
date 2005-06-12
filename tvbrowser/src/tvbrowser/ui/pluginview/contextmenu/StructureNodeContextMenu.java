@@ -41,10 +41,12 @@ import javax.swing.tree.TreePath;
 public class StructureNodeContextMenu extends AbstractContextMenu {
 
   private Action mDefaultAction;
-
+  private TreePath mPath;
+  
   public StructureNodeContextMenu(JTree tree, TreePath path) {
     super(tree);
     mDefaultAction = getCollapseExpandAction(path);
+    mPath = path;
   }
 
   public JPopupMenu getPopupMenu() {
@@ -52,6 +54,7 @@ public class StructureNodeContextMenu extends AbstractContextMenu {
     JMenuItem item = new JMenuItem(mDefaultAction);
     item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
     menu.add(item);
+    menu.add(getExportMenu( mPath));
     return menu;
   }
 

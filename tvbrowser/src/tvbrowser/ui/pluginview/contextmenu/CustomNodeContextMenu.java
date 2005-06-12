@@ -44,11 +44,13 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
 
   private Action mDefaultAction;
   private ActionMenu[] mActionMenus;
-
+  private TreePath mPath;
+  
   public CustomNodeContextMenu(JTree tree, TreePath path, ActionMenu[] menus) {
     super(tree);
     mDefaultAction = getCollapseExpandAction(path);
     mActionMenus = menus;
+    mPath = path;
     if (mActionMenus == null) {
       mActionMenus = new ActionMenu[]{};
     }
@@ -59,6 +61,8 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
     JMenuItem defaultMI = new JMenuItem(mDefaultAction);
     menu.add(defaultMI);
     defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+
+    menu.add(getExportMenu( mPath));
 
     if (mActionMenus.length>0) {
       menu.addSeparator();

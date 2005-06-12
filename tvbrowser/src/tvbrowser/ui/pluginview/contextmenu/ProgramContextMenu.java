@@ -28,20 +28,22 @@
 
 package tvbrowser.ui.pluginview.contextmenu;
 
-import tvbrowser.ui.pluginview.Node;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
-
-import javax.swing.tree.TreePath;
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import devplugin.ProgramItem;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.tree.TreePath;
+
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.pluginview.Node;
+import util.ui.menu.MenuUtil;
 import devplugin.Plugin;
 import devplugin.Program;
-import util.ui.menu.MenuUtil;
+import devplugin.ProgramItem;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -84,28 +86,8 @@ public class ProgramContextMenu extends AbstractContextMenu {
     showMI.setEnabled(mPaths.length == 1);
     menu.add(showMI);
 
-    JMenu exportMI = new JMenu(mLocalizer.msg("export","export"));
-    exportMI.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-    menu.add(exportMI);
-
-    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    for (int i=0; i<plugins.length; i++) {
-      if (plugins[i].canReceivePrograms()) {
-        final PluginProxy plugin = plugins[i];
-        if (!mPlugin.getId().equals(plugin.getId())) {
-          JMenuItem item = new JMenuItem(plugins[i].getInfo().getName());
-          item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-          item.setIcon(plugins[i].getMarkIcon());
-          exportMI.add(item);
-          item.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-              plugin.receivePrograms(mPrograms);
-            }
-          });
-        }
-      }
-    }
-
+    menu.add(getExportMenu( mPaths[0]));
+    
     menu.addSeparator();
 
     JMenuItem[] pluginMenuItems = PluginProxyManager.createPluginContextMenuItems(null, mPrograms[0], false);
