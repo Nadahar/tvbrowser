@@ -98,7 +98,7 @@ public class PropertiesConfiguration implements Configuration {
         String path = getProperty(prop, "dataTarget.path", "tvdata");
         int port = getIntProperty(prop, "dataTarget.port", 21);
         String user = getProperty(prop, "dataTarget.user");
-        String password = getProperty(prop, "dataTarget.mPassword");
+        String password = getProperty(prop, "dataTarget.password");
         mDataTarget = new FtpDataTarget(url, path, port, user, password);
       } else if (type.equals("file")) {
         String dir = getProperty(prop, "dataTarget.dir");

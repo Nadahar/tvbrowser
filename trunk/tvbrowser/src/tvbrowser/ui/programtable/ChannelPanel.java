@@ -109,10 +109,7 @@ public class ChannelPanel extends JPanel {
     
     public ChannelLabel(final Channel ch) {
       super();
-
-      if (ch.getIcon()!=null) {
-        setIcon(ch.getIcon());
-      }
+      setIcon(ch.getIcon());
 
       // Set the channel name as text
       String channelName = ch.getName();
