@@ -51,9 +51,6 @@ import devplugin.Program;
 import devplugin.ProgramItem;
 
 
-
-
-
 public class PluginView extends JPanel implements MouseListener {
     
   private PluginTree mTree;

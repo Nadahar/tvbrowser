@@ -61,7 +61,7 @@ public class ReminderList implements ActionListener {
       if (prog == null) {
         throw new NullPointerException("ups");
       }
-      items[i].getProgram().mark(ReminderPlugin.getInstance());
+  //    items[i].getProgram().mark(ReminderPlugin.getInstance());
     }
   }
 
@@ -142,7 +142,7 @@ public class ReminderList implements ActionListener {
     for (int i=0; i<programs.length; i++) {
       if (!mRoot.contains(programs[i], true)) {
         ReminderListItem item = new ReminderListItem(programs[i], minutes);
-        programs[i].mark(ReminderPlugin.getInstance());
+ //       programs[i].mark(ReminderPlugin.getInstance());
         mRoot.addProgram(item.getProgramItem());
       }
       
@@ -153,7 +153,7 @@ public class ReminderList implements ActionListener {
   public void add(Program program, int minutes) {
     if (!mRoot.contains(program, true)) {
       ReminderListItem item = new ReminderListItem(program, minutes);
-      program.mark(ReminderPlugin.getInstance());
+ //     program.mark(ReminderPlugin.getInstance());
       mRoot.addProgram(item.getProgramItem());
       mRoot.update();
     }
@@ -202,7 +202,7 @@ public class ReminderList implements ActionListener {
   
   public void remove(ProgramItem item) {
     mRoot.removeProgram(item);
-    item.getProgram().unmark(ReminderPlugin.getInstance());
+//    item.getProgram().unmark(ReminderPlugin.getInstance());
     mRoot.update();
   }
   

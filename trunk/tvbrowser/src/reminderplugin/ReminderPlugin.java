@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceoforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ import util.ui.UiUtilities;
  *
  * @author Martin Oberhauser
  */
-public class ReminderPlugin extends Plugin implements ReminderTimerListener {
+public class ReminderPlugin extends Plugin implements ReminderTimerListener, PluginTreeListener {
   
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderPlugin. class );
@@ -67,8 +67,10 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
 
   public void onActivation() {
     PluginTreeNode root = getRootNode();
+    root.addNodeListener(this);
     mReminderList = new ReminderList(root);
     mReminderList.setReminderTimerListener(this);
+
   }
   
   public static ReminderPlugin getInstance() {
@@ -310,9 +312,18 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener {
   public boolean canUseProgramTree() {
     return true;
   }
-  
- 
-  
+
+
+
+  public void programRemoved(Program prog) {
+    // todo: implement this method
+    System.out.println("removed from: "+prog);
+  }
+
+  public void handleTvDataUpdateFinished() {
+    // todo: show dialog containing all removed programs
+    System.out.println("update finished");
+  }
 
   /**
    * Removes the deleted programs from the reminder list.

@@ -50,6 +50,8 @@ public class PluginTreeNode {
   private int mNodeType;
   private ArrayList mChildNodes;
   private Object mObject;
+  private ArrayList mNodeListeners;
+  private Plugin mPlugin;
 
 
 private Node mDefaultNode;
@@ -59,6 +61,7 @@ private Node mDefaultNode;
     mNodeType = type;
     mObject = o;
     mDefaultNode = new Node(type, mObject);
+    mNodeListeners = new ArrayList();
   }
 
   public PluginTreeNode(String title) {
@@ -67,12 +70,59 @@ private Node mDefaultNode;
 
   public PluginTreeNode(Plugin plugin) {
     this(Node.PLUGIN_ROOT, plugin);
+    mPlugin = plugin;
   }
 
   public PluginTreeNode(ProgramItem item) {
     this(Node.PROGRAM, item);
     mDefaultNode.setAllowsChildren(false);
+  }
 
+
+  public void addNodeListener(PluginTreeListener listener) {
+    mNodeListeners.add(listener);
+  }
+
+  public boolean removeNodeListener(PluginTreeListener listener) {
+    return mNodeListeners.remove(listener);
+  }
+
+  public void removeAllNodeListeners() {
+    mNodeListeners.clear();
+  }
+
+  /**
+   * Remove all programs from this node which are not available any more
+   */
+  public void refreshAllPrograms() {
+
+    for (int i=0; i<mChildNodes.size(); i++) {
+      PluginTreeNode node = (PluginTreeNode)mChildNodes.get(i);
+      if (node.isLeaf()) {
+        ProgramItem progItemInTree = (ProgramItem)node.getUserObject();
+        Program progInTree = progItemInTree.getProgram();
+        Program testProg = Plugin.getPluginManager().getProgram(progInTree.getDate(), progInTree.getID());
+        if (testProg == null) {
+          removeProgram(progInTree);
+          fireProgramRemoved(progInTree);
+        }
+        else {
+          progItemInTree.setProgram(testProg);
+          progInTree.unmark(mPlugin);
+          testProg.mark(mPlugin);
+        }
+      }
+      else {
+        node.refreshAllPrograms();
+      }
+    }
+  }
+
+  private void fireProgramRemoved(Program prog) {
+    for (int i=0; i<mNodeListeners.size(); i++) {
+      PluginTreeListener listener = (PluginTreeListener)mNodeListeners.get(i);
+      listener.programRemoved(prog);
+    }
   }
 
   public Node getMutableTreeNode() {
@@ -168,6 +218,7 @@ private Node mDefaultNode;
 
   public void add(PluginTreeNode node) {
     mChildNodes.add(node);
+    node.mPlugin = mPlugin;
   }
 
   public boolean contains(Program prog, boolean recursive) {
@@ -192,6 +243,9 @@ private Node mDefaultNode;
   }
   
   public PluginTreeNode addProgram(ProgramItem item) {
+    if (mPlugin != null) {
+      item.getProgram().mark(mPlugin);
+    }
     PluginTreeNode node = new PluginTreeNode(item);
     add(node);
     return node;
@@ -233,6 +287,9 @@ private Node mDefaultNode;
     PluginTreeNode node = findProgramTreeNode(program, false);
     if (node != null) {
       mChildNodes.remove(node);
+      if (mPlugin != null) {
+        program.unmark(mPlugin);
+    }
     }
   }
 
@@ -304,6 +361,9 @@ private Node mDefaultNode;
         n = new PluginTreeNode(item);
         if (item.getProgram() != null) {
           add(n);
+          if (mPlugin != null) {
+            item.getProgram().mark(mPlugin);
+          }
         }
       }
       else {
