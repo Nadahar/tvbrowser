@@ -52,6 +52,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Plugin;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
 
 /**
@@ -79,17 +80,24 @@ public class ClipboardDialog extends JDialog {
   /** Settings for the Plugin */
   private Properties mSettings;
 
+  /** The Tree-Node */
+  private PluginTreeNode mNode;
+  
   /**
    * Creates the Dialog
    * 
    * @param frame Frame for modal
    * @param plugin Plugin for reference
-   * @param programs
+   * @param node PluginTreeNode that contains all Programs
    */
-  public ClipboardDialog(Frame frame, Plugin plugin, Properties settings, Program[] programs) {
+  public ClipboardDialog(Frame frame, Plugin plugin, Properties settings, PluginTreeNode node) {
     super(frame, true);
     mSettings = settings;
+    mNode = node;
     setTitle(mLocalizer.msg("viewList", "View List:"));
+    
+    Program[] programs = node.getPrograms();
+    
     mClipList = new Vector();
     for (int i = 0; i < programs.length; i++) {
       mClipList.add(programs[i]);
@@ -288,6 +296,7 @@ public class ClipboardDialog extends JDialog {
     Object[] obj = mProgramJList.getSelectedValues();
     for (int i = 0; i < obj.length; i++) {
       mClipList.remove(obj[i]);
+      mNode.removeProgram((Program) obj[i]);
       Program prg = (Program) obj[i];
       prg.unmark(mPlugin);
     }
@@ -296,6 +305,7 @@ public class ClipboardDialog extends JDialog {
       hide();
     }
 
+    mNode.update();
     mProgramJList.updateUI();
   }
 
