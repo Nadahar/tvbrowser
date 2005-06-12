@@ -30,13 +30,7 @@ package devplugin;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.Action;
 
@@ -48,6 +42,10 @@ import tvbrowser.core.TvDataUpdateListener;
 
 
 public class PluginTreeNode {
+
+  private static final util.ui.Localizer mLocalizer =
+      util.ui.Localizer.getLocalizerFor(PluginTreeNode.class);
+
 
   private int mNodeType;
   private ArrayList mChildNodes;
@@ -164,11 +162,6 @@ private Node mDefaultNode;
   }
 
 
-
-  private Date getDate(Program prog) {
-    return prog.getDate();         // todo: find a smarter implementation
-  }
-
   private void switchToSortByDateView() {
     Map dateMap = new HashMap();
     mDefaultNode.removeAllChildren();
@@ -182,7 +175,7 @@ private Node mDefaultNode;
       }
       else {
         ProgramItem progItem = (ProgramItem)n.getUserObject();
-        Date date = getDate(progItem.getProgram());
+        Date date = progItem.getProgram().getDate();
         ArrayList list = (ArrayList)dateMap.get(date);
         if (list == null) {
           list = new ArrayList();
@@ -202,10 +195,10 @@ private Node mDefaultNode;
     for (int i=0; i<dates.length; i++) {
       String dateStr;
       if (today.equals(dates[i])) {
-        dateStr = "heute";
+        dateStr = mLocalizer.msg("today","today");
       }
       else if (nextDay.equals(dates[i])) {
-        dateStr = "morgen";
+        dateStr = mLocalizer.msg("tomorrow","tomorrow");
       }
       else {
         dateStr = dates[i].toString();
@@ -214,13 +207,37 @@ private Node mDefaultNode;
       Node node = new Node(Node.STRUCTURE_NODE, dateStr);
       mDefaultNode.add(node);
       List list = (List)dateMap.get(dates[i]);
-      Iterator iterator = list.iterator();
-      while (iterator.hasNext()) {
-        ProgramItem progItem = (ProgramItem)iterator.next();
-        node.add(new Node(progItem));
+      ProgramItem[] itemArr = new ProgramItem[list.size()];
+      list.toArray(itemArr);
+      Arrays.sort(itemArr, sProgramItemComparator);
+      for (int k=0; k<itemArr.length; k++) {
+        node.add(new Node(itemArr[k]));
       }
     }
   }
+
+
+  private static Comparator sProgramItemComparator = new Comparator(){
+    public int compare(Object o1, Object o2) {
+      if (o1 instanceof ProgramItem && o2 instanceof ProgramItem) {
+        Program p1 = ((ProgramItem)o1).getProgram();
+        Program p2 = ((ProgramItem)o2).getProgram();
+        int result = p1.getDate().compareTo(p2.getDate());
+        if (result != 0) {
+          return result;
+        }
+        int t1 = p1.getHours()*60 + p1.getMinutes();
+        int t2 = p2.getHours()*60 + p2.getMinutes();
+        if (t1 < t2) {
+          return -1;
+        }
+        else if (t1 > t2) {
+          return 1;
+        }
+      }
+      return 0;
+    }
+  };
 
 
   public Object getUserObject() {
