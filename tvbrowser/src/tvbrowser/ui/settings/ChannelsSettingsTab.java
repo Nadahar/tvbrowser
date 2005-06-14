@@ -1,6 +1,6 @@
 /*
 * TV-Browser
-* Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+* Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -276,24 +276,22 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     JPanel panel = new JPanel();
 
     Channel[] allChannels = ChannelList.getAvailableChannels();
-    HashSet groups = new HashSet();
+    HashMap groups = new HashMap();
     HashSet countries = new HashSet();
     for (int i=0; i<allChannels.length; i++) {
       ChannelGroup group = allChannels[i].getGroup();
-      String name = null;
+      String groupKey;
       if (group != null) {
-        name = group.getProviderName();
-        if (name == null) {
-          name = group.getName();
+        groupKey = group.getProviderName();
+        if (groupKey == null) {
+          groupKey = allChannels[i].getDataService().getClass().getName()+"_"+group.getId();
         }
-      }// else {
-//        name = allChannels[i].getDataService().getInfo().getName();
-//      }
+      } else {
+        groupKey = allChannels[i].getDataService().getClass().getName();
+      }
+      groups.put(groupKey, getProviderName(allChannels[i]));
 
       String country = allChannels[i].getCountry();
-      if (name != null) {
-        groups.add(name);
-      }
       if (country != null) {
         countries.add(country);
       }
@@ -336,9 +334,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mProviderCB = new JComboBox();
 
     mProviderCB.addItem(new FilterItem(mLocalizer.msg("allProviders","All Providers"), null));
-    Object[] providers = groups.toArray();
-    for (int i=0; i<providers.length; i++) {
-      mProviderCB.addItem(new FilterItem((String)providers[i], providers[i]));
+    Object[] providerNames = groups.values().toArray();
+    for (int i=0; i<providerNames.length; i++) {
+      mProviderCB.addItem(new FilterItem((String)providerNames[i], (String)providerNames[i]));
     }
 
     mCountryCB.addItemListener(mFilterItemListener);
@@ -494,14 +492,14 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
   private void fillAvailableChannelsListBox() {
     TimeZone timeZone = (TimeZone)((FilterItem)mTimezoneCB.getSelectedItem()).getValue();
     String country = (String)((FilterItem)mCountryCB.getSelectedItem()).getValue();
-    String provider = (String)((FilterItem)mProviderCB.getSelectedItem()).getValue();
+    String providerName = (String)((FilterItem)mProviderCB.getSelectedItem()).getValue();
     Integer categoryInt = (Integer)((FilterItem)mCategoryCB.getSelectedItem()).getValue();
     int categories = 0;
     if (categoryInt != null) {
       categories = categoryInt.intValue();
     }
 
-    ChannelFilter filter = new ChannelFilter(timeZone, country, provider, categories);
+    ChannelFilter filter = new ChannelFilter(timeZone, country, providerName, categories);
     ((DefaultListModel) mAllChannels.getModel()).removeAllElements();
 
     // Split the channels in subscribed and available
@@ -609,20 +607,26 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     fillAvailableChannelsListBox();
   }
 
-  private boolean isProviderOfGroup(ChannelGroup group, String provider) {
-    return provider.equals(group.getProviderName())
-    || provider.equals(group.getName());
+  private String getProviderName(Channel ch) {
+    ChannelGroup group = ch.getGroup();
+    if (group == null) {
+      return ch.getDataService().getInfo().getName();
+    }
+
+    return group.getProviderName();
   }
+
+
 
   private class ChannelFilter {
     private TimeZone mTimezone;
     private String mCountry;
-    private String mProvider;
+    private String mProviderName;
     private int mCategories;
-    public ChannelFilter(TimeZone timeZone, String country, String provider, int categories) {
+    public ChannelFilter(TimeZone timeZone, String country, String providerName, int categories) {
       mTimezone = timeZone;
       mCountry = country;
-      mProvider = provider;
+      mProviderName = providerName;
       mCategories = categories;
     }
 
@@ -645,13 +649,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         }
       }
 
-      if (mProvider != null) {
-        ChannelGroup group = channel.getGroup();
-        if (group != null) {
-          if (!isProviderOfGroup(group, mProvider)) {
-            return false;
-          }
-        }else{
+      if (mProviderName != null) {
+        if (!getProviderName(channel).equals(mProviderName)) {
           return false;
         }
       }
