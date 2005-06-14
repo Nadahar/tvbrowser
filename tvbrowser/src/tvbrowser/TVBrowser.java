@@ -153,6 +153,10 @@ public class TVBrowser {
     // Load the settings
     Settings.loadSettings();
 
+    if (!createLockFile()) {
+      showTVBrowserIsAlreadyRunningMessageBox();
+    }
+
     String logDirectory = Settings.propLogdirectory.getString();
     if (logDirectory != null) {
       try {
@@ -281,8 +285,49 @@ public class TVBrowser {
     saveThread.setPriority(Thread.MIN_PRIORITY);
     saveThread.start();
   }
-    
-    
+
+
+  /**
+   * Create the .lock file in the user home directory
+   * @return false, if the .lock file already exists.
+   */
+  private static boolean createLockFile() {
+    String dir = Settings.getUserDirectoryName();
+    File lockFile = new File(dir, ".lock");
+    if (lockFile.exists()) {
+      return false;
+    }
+    try {
+      lockFile.createNewFile();
+      lockFile.deleteOnExit();
+    } catch (IOException e) {
+      mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
+    }
+    return true;
+  }
+
+  private static void deleteLockFile() {
+    String dir = Settings.getUserDirectoryName();
+    File lockFile = new File(dir, ".lock");
+    lockFile.delete();
+  }
+
+
+  private static void showTVBrowserIsAlreadyRunningMessageBox() {
+
+    Object[] options = {mLocalizer.msg("close","Close"),
+                    mLocalizer.msg("startAnyway","start anyway")};
+    if (JOptionPane.showOptionDialog(null,
+    mLocalizer.msg("alreadyRunning","TV-Browser is already running"),
+    mLocalizer.msg("alreadyRunning","TV-Browser is already running"),
+    JOptionPane.DEFAULT_OPTION,
+    JOptionPane.WARNING_MESSAGE,
+    null, options, options[0])==0) {
+      System.exit(-1);
+    }
+
+  }
+
   private static void initUi(Splash splash, boolean startMinimized) {
     mainFrame=MainFrame.getInstance();
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
@@ -503,6 +548,7 @@ public class TVBrowser {
   public static void shutdown() {
     mSaveThreadShouldStop = true;
     flushSettings();
+    deleteLockFile();
   }
   
 
