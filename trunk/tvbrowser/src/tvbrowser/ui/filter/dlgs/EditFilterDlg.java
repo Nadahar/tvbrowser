@@ -23,12 +23,10 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -36,25 +34,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
@@ -63,352 +62,391 @@ import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
 import util.ui.UiUtilities;
 
-public class EditFilterDlg
-	extends JDialog
-	implements ActionListener, DocumentListener, CaretListener {
+public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener {
 
-	private static final util.ui.Localizer mLocalizer =
-		util.ui.Localizer.getLocalizerFor(EditFilterDlg.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFilterDlg.class);
 
-	private static final util.ui.Localizer mFilterLocalizer =
-		util.ui.Localizer.getLocalizerFor(UserFilter.class);	
-	
-	private JButton mNewBtn, mEditBtn, mRemoveBtn, mOkBtn, mCancelBtn;
-	private JFrame mParent;
-	private JList mRuleListBox;
-	private JTextField mFilterNameTF, mFilterRuleTF;
-	private DefaultListModel mComponentListModel;
-	private UserFilter mFilter = null;
-	private JLabel mFilterRuleErrorLb, mColLb;
-	private String mFilterName = null;
-	private FilterList mFilterList;
+  private static final util.ui.Localizer mFilterLocalizer = util.ui.Localizer.getLocalizerFor(UserFilter.class);
 
-	public EditFilterDlg(
-		JFrame parent,
-		FilterList filterList,
-		UserFilter filter) {
+  private JButton mNewBtn, mEditBtn, mRemoveBtn, mOkBtn, mCancelBtn;
 
-		super(parent, true);
-		mFilterList = filterList;
-		mParent = parent;
-		mFilter = filter;
+  private JFrame mParent;
 
-		JPanel contentPane = (JPanel) getContentPane();
-		contentPane.setLayout(new BorderLayout(7, 7));
-		contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+  private JTable mRuleTableBox;
 
-		if (filter == null) {
-			setTitle(mLocalizer.msg("titleNew", "Create filter"));
-		} else {
-			setTitle(
-				mLocalizer.msg("titleEdit", "Edit filter {0}", filter.toString()));
-			mFilterName = filter.toString();
-		}
+  private JTextField mFilterNameTF, mFilterRuleTF;
 
-		JPanel northPanel = new JPanel();
-		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+  private FilterTableModel mComponentTableModel;
 
-		mFilterNameTF = new JTextField(30);
-		mFilterNameTF.getDocument().addDocumentListener(this);
-		JPanel panel = new JPanel(new BorderLayout(7, 7));
-		panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
-		panel.add(
-			new JLabel(mLocalizer.msg("filterName", "Filter name:")),
-			BorderLayout.WEST);
-		JPanel panel1 = new JPanel(new BorderLayout());
-		panel1.add(mFilterNameTF, BorderLayout.WEST);
-		panel.add(panel1, BorderLayout.CENTER);
-		northPanel.add(panel);
+  private UserFilter mFilter = null;
 
-		mFilterRuleTF = new JTextField();
-		mFilterRuleTF.getDocument().addDocumentListener(this);
-		mFilterRuleTF.addCaretListener(this);
-		panel = new JPanel(new BorderLayout(7, 7));
-		panel1 = new JPanel(new BorderLayout());
-		panel.add(
-			new JLabel(mLocalizer.msg("ruleString", "Filter rule:")),
-			BorderLayout.WEST);
-		JLabel exampleLb =
-			new JLabel(
-				mLocalizer.msg(
-					"ruleExample",
-					"example: component1 or (component2 and not component3)"));
-		Font f = exampleLb.getFont();
-		exampleLb.setFont(
-			new Font(f.getName(), Font.ITALIC | Font.PLAIN, f.getSize()));
-		panel1.add(exampleLb, BorderLayout.WEST);
-		panel.add(panel1, BorderLayout.CENTER);
-		northPanel.add(panel);
-		northPanel.add(mFilterRuleTF);
-		mFilterRuleErrorLb = new JLabel();
-		mFilterRuleErrorLb.setForeground(Color.red);
-		panel = new JPanel(new BorderLayout(7, 7));
-		panel.add(mFilterRuleErrorLb, BorderLayout.WEST);
-		mColLb = new JLabel("0");
-		panel.add(mColLb, BorderLayout.EAST);
-		northPanel.add(panel);
+  private JLabel mFilterRuleErrorLb, mColLb;
 
-		JPanel filterComponentsPanel = new JPanel(new BorderLayout(7, 7));
-		filterComponentsPanel.setBorder(
-			BorderFactory.createTitledBorder(
-				mLocalizer.msg("componentsTitle", "Available filter components:")));
-		JPanel btnPanel = new JPanel(new BorderLayout());
-		panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
+  private String mFilterName = null;
 
-		mNewBtn = new JButton(mLocalizer.msg("newButton", "new"));
-		mEditBtn = new JButton(mLocalizer.msg("editButton", "edit"));
-		mRemoveBtn = new JButton(mLocalizer.msg("removeButton", "remove"));
+  private FilterList mFilterList;
 
-		mNewBtn.addActionListener(this);
-		mEditBtn.addActionListener(this);
-		mRemoveBtn.addActionListener(this);
+  public EditFilterDlg(JFrame parent, FilterList filterList, UserFilter filter) {
 
-		panel1.add(mNewBtn);
-		panel1.add(mEditBtn);
-		panel1.add(mRemoveBtn);
+    super(parent, true);
+    mFilterList = filterList;
+    mParent = parent;
+    mFilter = filter;
 
-		btnPanel.add(panel1, BorderLayout.NORTH);
+    JPanel contentPane = (JPanel) getContentPane();
+    contentPane.setLayout(new BorderLayout(7, 7));
+    contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		mComponentListModel = new DefaultListModel();
+    if (filter == null) {
+      setTitle(mLocalizer.msg("titleNew", "Create filter"));
+    } else {
+      setTitle(mLocalizer.msg("titleEdit", "Edit filter {0}", filter.toString()));
+      mFilterName = filter.toString();
+    }
 
-		mRuleListBox = new JList(mComponentListModel);
-		mRuleListBox.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				updateBtns();
-			}
-		});
+    JPanel northPanel = new JPanel();
+    northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
 
-		mRuleListBox.setCellRenderer(new FilterRuleListCellRenderer());
+    mFilterNameTF = new JTextField(30);
+    mFilterNameTF.getDocument().addDocumentListener(this);
+    JPanel panel = new JPanel(new BorderLayout(7, 7));
+    panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
+    panel.add(new JLabel(mLocalizer.msg("filterName", "Filter name:")), BorderLayout.WEST);
+    JPanel panel1 = new JPanel(new BorderLayout());
+    panel1.add(mFilterNameTF, BorderLayout.WEST);
+    panel.add(panel1, BorderLayout.CENTER);
+    northPanel.add(panel);
 
-		JPanel ruleListBoxPanel = new JPanel(new BorderLayout());
-		ruleListBoxPanel.setBorder(BorderFactory.createEmptyBorder(0, 13, 7, 0));
-		ruleListBoxPanel.add(new JScrollPane(mRuleListBox), BorderLayout.CENTER);
+    mFilterRuleTF = new JTextField();
+    mFilterRuleTF.getDocument().addDocumentListener(this);
+    mFilterRuleTF.addCaretListener(this);
+    panel = new JPanel(new BorderLayout(7, 7));
+    panel1 = new JPanel(new BorderLayout());
+    panel.add(new JLabel(mLocalizer.msg("ruleString", "Filter rule:")), BorderLayout.WEST);
+    JLabel exampleLb = new JLabel(mLocalizer.msg("ruleExample",
+        "example: component1 or (component2 and not component3)"));
+    Font f = exampleLb.getFont();
+    exampleLb.setFont(new Font(f.getName(), Font.ITALIC | Font.PLAIN, f.getSize()));
+    panel1.add(exampleLb, BorderLayout.WEST);
+    panel.add(panel1, BorderLayout.CENTER);
+    northPanel.add(panel);
+    northPanel.add(mFilterRuleTF);
+    mFilterRuleErrorLb = new JLabel();
+    mFilterRuleErrorLb.setForeground(Color.red);
+    panel = new JPanel(new BorderLayout(7, 7));
+    panel.add(mFilterRuleErrorLb, BorderLayout.WEST);
+    mColLb = new JLabel("0");
+    panel.add(mColLb, BorderLayout.EAST);
+    northPanel.add(panel);
 
-		filterComponentsPanel.add(btnPanel, BorderLayout.EAST);
-		filterComponentsPanel.add(ruleListBoxPanel, BorderLayout.CENTER);
+    JPanel filterComponentsPanel = new JPanel(new BorderLayout(7, 7));
+    filterComponentsPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("componentsTitle",
+        "Available filter components:")));
+    JPanel btnPanel = new JPanel(new BorderLayout());
+    panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
 
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    mNewBtn = new JButton(mLocalizer.msg("newButton", "new"));
+    mEditBtn = new JButton(mLocalizer.msg("editButton", "edit"));
+    mRemoveBtn = new JButton(mLocalizer.msg("removeButton", "remove"));
 
-		mOkBtn = new JButton(mLocalizer.msg("okButton", "OK"));
-		buttonPanel.add(mOkBtn);
-		mOkBtn.addActionListener(this);
-		getRootPane().setDefaultButton(mOkBtn);
+    mNewBtn.addActionListener(this);
+    mEditBtn.addActionListener(this);
+    mRemoveBtn.addActionListener(this);
 
-		mCancelBtn = new JButton(mLocalizer.msg("cancelButton", "Cancel"));
-		mCancelBtn.addActionListener(this);
-		buttonPanel.add(mCancelBtn);
+    panel1.add(mNewBtn);
+    panel1.add(mEditBtn);
+    panel1.add(mRemoveBtn);
 
-		contentPane.add(northPanel, BorderLayout.NORTH);
-		contentPane.add(filterComponentsPanel, BorderLayout.CENTER);
-		contentPane.add(buttonPanel, BorderLayout.SOUTH);
+    btnPanel.add(panel1, BorderLayout.NORTH);
 
-		if (mFilter != null) {
-			mFilterNameTF.setText(mFilter.toString());
-			mFilterRuleTF.setText(mFilter.getRule());
-		}
+    mComponentTableModel = new FilterTableModel();
 
-		FilterComponent[] fc =
-			FilterComponentList.getInstance().getAvailableFilterComponents();
+    mRuleTableBox = new JTable(mComponentTableModel);
+    mRuleTableBox.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        updateBtns();
+      }
+    });
+
+    mRuleTableBox.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
+    mRuleTableBox.setShowGrid(false);
+    mRuleTableBox.setShowVerticalLines(true);
+    mRuleTableBox.getColumnModel().getColumn(0).setPreferredWidth(125);
+    mRuleTableBox.getColumnModel().getColumn(1).setPreferredWidth(320);
+//    mRuleTableBox.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    
+    JPanel ruleListBoxPanel = new JPanel(new BorderLayout());
+    ruleListBoxPanel.setBorder(BorderFactory.createEmptyBorder(0, 13, 7, 0));
+    ruleListBoxPanel.add(new JScrollPane(mRuleTableBox), BorderLayout.CENTER);
+
+    filterComponentsPanel.add(btnPanel, BorderLayout.EAST);
+    filterComponentsPanel.add(ruleListBoxPanel, BorderLayout.CENTER);
+
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+
+    mOkBtn = new JButton(mLocalizer.msg("okButton", "OK"));
+    buttonPanel.add(mOkBtn);
+    mOkBtn.addActionListener(this);
+    getRootPane().setDefaultButton(mOkBtn);
+
+    mCancelBtn = new JButton(mLocalizer.msg("cancelButton", "Cancel"));
+    mCancelBtn.addActionListener(this);
+    buttonPanel.add(mCancelBtn);
+
+    contentPane.add(northPanel, BorderLayout.NORTH);
+    contentPane.add(filterComponentsPanel, BorderLayout.CENTER);
+    contentPane.add(buttonPanel, BorderLayout.SOUTH);
+
+    if (mFilter != null) {
+      mFilterNameTF.setText(mFilter.toString());
+      mFilterRuleTF.setText(mFilter.getRule());
+    }
+
+    FilterComponent[] fc = FilterComponentList.getInstance().getAvailableFilterComponents();
+
     Arrays.sort(fc, new Comparator() {
 
       public int compare(Object arg0, Object arg1) {
-        return ((FilterComponent)arg0).getName().compareToIgnoreCase(((FilterComponent)arg1).getName());
+        return ((FilterComponent) arg0).getName().compareToIgnoreCase(((FilterComponent) arg1).getName());
       }
-      
+
     });
-    
-		for (int i = 0; i < fc.length; i++) {
-			mComponentListModel.addElement(fc[i]);
-		}
 
-		updateBtns();
-		setSize(600, 300);
-		UiUtilities.centerAndShow(this);
+    for (int i = 0; i < fc.length; i++) {
+      mComponentTableModel.addElement(fc[i]);
+    }
 
-	}
+    updateBtns();
+    setSize(600, 300);
+    UiUtilities.centerAndShow(this);
 
-	private void updateBtns() {
-		if (mRuleListBox == null) {
-			return;
-		}
-		Object item = mRuleListBox.getSelectedValue();
-		mEditBtn.setEnabled(item != null);
-		mRemoveBtn.setEnabled(item != null);
+  }
 
-		boolean validRule = true;
-		try {
-			UserFilter.testTokenTree(mFilterRuleTF.getText());
-			mFilterRuleErrorLb.setText("");
-		} catch (ParserException e) {
-			mFilterRuleErrorLb.setText(e.getMessage());
-			validRule = false;
-		}
+  private void updateBtns() {
+    if (mRuleTableBox == null) {
+      return;
+    }
+    Object item = mRuleTableBox.getSelectedRows();
+    mEditBtn.setEnabled(item != null);
+    mRemoveBtn.setEnabled(item != null);
 
-		mOkBtn.setEnabled(
-			!("".equals(mFilterNameTF.getText()))
-				&& !("".equals(mFilterRuleTF.getText()))
-				&& mComponentListModel.getSize() > 0
-				&& validRule);
+    boolean validRule = true;
+    try {
+      UserFilter.testTokenTree(mFilterRuleTF.getText());
+      mFilterRuleErrorLb.setText("");
+    } catch (ParserException e) {
+      mFilterRuleErrorLb.setText(e.getMessage());
+      validRule = false;
+    }
 
-	}
+    mOkBtn.setEnabled(!("".equals(mFilterNameTF.getText())) && !("".equals(mFilterRuleTF.getText()))
+        && mComponentTableModel.getRowCount() > 0 && validRule);
 
-	public void actionPerformed(ActionEvent e) {
+  }
 
-		Object o = e.getSource();
-		if (o == mNewBtn) {
-			EditFilterComponentDlg dlg = new EditFilterComponentDlg(mParent);
-			FilterComponent rule = dlg.getFilterComponent();
-			if (rule != null) {
-				mComponentListModel.addElement(rule);
-				tvbrowser.core.filters.FilterComponentList.getInstance().add(rule);
-				String text = mFilterRuleTF.getText();
-				if (text.length() > 0) {
-					text += " "+mFilterLocalizer.msg("or", "or")+" ";
-				}
-				text += rule.getName();
-				mFilterRuleTF.setText(text);
+  public void actionPerformed(ActionEvent e) {
 
-			}
-		} else if (o == mEditBtn) {
-			int inx = mRuleListBox.getSelectedIndex();
-			FilterComponent rule = (FilterComponent) mRuleListBox.getSelectedValue();
-			FilterComponentList.getInstance().remove(rule.getName());
-			mComponentListModel.removeElement(rule);
-			EditFilterComponentDlg dlg = new EditFilterComponentDlg(mParent, rule);
-			FilterComponent newRule = dlg.getFilterComponent();
-			if (newRule == null) {
-				newRule = rule;
-			}
-			FilterComponentList.getInstance().add(newRule);
-			mComponentListModel.addElement(newRule);
-			mRuleListBox.repaint();
-			updateBtns();
+    Object o = e.getSource();
+    if (o == mNewBtn) {
+      EditFilterComponentDlg dlg = new EditFilterComponentDlg(mParent);
+      FilterComponent rule = dlg.getFilterComponent();
+      if (rule != null) {
+        mComponentTableModel.addElement(rule);
+        tvbrowser.core.filters.FilterComponentList.getInstance().add(rule);
+        String text = mFilterRuleTF.getText();
+        if (text.length() > 0) {
+          text += " " + mFilterLocalizer.msg("or", "or") + " ";
+        }
+        text += rule.getName();
+        mFilterRuleTF.setText(text);
 
-		} else if (o == mRuleListBox) {
-			updateBtns();
-		} else if (o == mRemoveBtn) {
-			boolean allowRemove = true;
-			UserFilter[] userFilterArr = mFilterList.getUserFilterArr();
-			FilterComponent fc = (FilterComponent) mRuleListBox.getSelectedValue();
+      }
+    } else if (o == mEditBtn) {
+      int inx = mRuleTableBox.getSelectedRow();
+      FilterComponent rule = mComponentTableModel.getElement(mRuleTableBox.getSelectedRow());
+      FilterComponentList.getInstance().remove(rule.getName());
+      mComponentTableModel.removeElement(rule);
+      EditFilterComponentDlg dlg = new EditFilterComponentDlg(mParent, rule);
+      FilterComponent newRule = dlg.getFilterComponent();
+      if (newRule == null) {
+        newRule = rule;
+      }
+      FilterComponentList.getInstance().add(newRule);
+      mComponentTableModel.addElement(newRule);
+      // mRuleListBox.repaint();
+      updateBtns();
 
-			// Create the Filter based on the new Rule and check if the FC exists there
-			UserFilter testFilter = new UserFilter("test");
-			
-			try {
-				testFilter.setRule(mFilterRuleTF.getText());
-				
-				if (testFilter.containsRuleComponent(fc.getName())) {
-				    allowRemove = false;
-					JOptionPane.showMessageDialog(
-							this,
-							mLocalizer.msg("usedByAnotherFilter","This filter component is used by filter '{0}'\nRemove the filter first.",mFilterNameTF.getText())
-							);
-				}
-			} catch (Exception ex) {
-		    // Filter creation failed, asume the old one is correct
-				if ((mFilter != null) && (mFilter.containsRuleComponent(fc.getName()))) {
-				    allowRemove = false;
-					JOptionPane.showMessageDialog(
-							this,
-							mLocalizer.msg("usedByAnotherFilter","This filter component is used by filter '{0}'\nRemove the filter first.",mFilterNameTF.getText())
-							);
-				}
-			}
-			
-			for (int i = 0; i < userFilterArr.length && allowRemove; i++) {
-				if ((userFilterArr[i] != mFilter) && userFilterArr[i].containsRuleComponent(fc.getName())) {
-					allowRemove = false;
-					JOptionPane.showMessageDialog(
-						this,
-						mLocalizer.msg("usedByAnotherFilter","This filter component is used by filter '{0}'\nRemove the filter first.",userFilterArr[i].toString())
-						);
-				}
-			}
-			if (allowRemove) {
-				FilterComponentList.getInstance().remove(fc.getName());
-				mComponentListModel.remove(mRuleListBox.getSelectedIndex());
-				updateBtns();
-			}
+    } else if (o == mRuleTableBox) {
+      updateBtns();
+    } else if (o == mRemoveBtn) {
+      boolean allowRemove = true;
+      UserFilter[] userFilterArr = mFilterList.getUserFilterArr();
+      FilterComponent fc = mComponentTableModel.getElement(mRuleTableBox.getSelectedRow());
 
-		} else if (o == mOkBtn) {
-			String filterName = mFilterNameTF.getText();
-			if (!filterName.equalsIgnoreCase(mFilterName)
-				&& mFilterList.containsFilter(filterName)) {
-				JOptionPane.showMessageDialog(
-					this,
-					mLocalizer.msg("alreadyExists", "Filter '{0}' already exists.", filterName)
-					);
-			} else {
-				if (mFilter == null) {
-					mFilter = new UserFilter(mFilterNameTF.getText());
-				} else {
-					mFilter.setName(mFilterNameTF.getText());
-				}
+      // Create the Filter based on the new Rule and check if the FC exists
+      // there
+      UserFilter testFilter = new UserFilter("test");
 
-				try {
-					mFilter.setRule(mFilterRuleTF.getText());
-					FilterComponentList.getInstance().store();
-					hide();
-				} catch (ParserException exc) {
-					JOptionPane.showMessageDialog(
-						this,
-						mLocalizer.msg("invalidRule", "Invalid rule: ") + exc.getMessage());
-				}
-			}
+      try {
+        testFilter.setRule(mFilterRuleTF.getText());
 
-		} else if (o == mCancelBtn) {
-			hide();
-		}
+        if (testFilter.containsRuleComponent(fc.getName())) {
+          allowRemove = false;
+          JOptionPane.showMessageDialog(this, mLocalizer.msg("usedByAnotherFilter",
+              "This filter component is used by filter '{0}'\nRemove the filter first.", mFilterNameTF.getText()));
+        }
+      } catch (Exception ex) {
+        // Filter creation failed, asume the old one is correct
+        if ((mFilter != null) && (mFilter.containsRuleComponent(fc.getName()))) {
+          allowRemove = false;
+          JOptionPane.showMessageDialog(this, mLocalizer.msg("usedByAnotherFilter",
+              "This filter component is used by filter '{0}'\nRemove the filter first.", mFilterNameTF.getText()));
+        }
+      }
 
-	}
+      for (int i = 0; i < userFilterArr.length && allowRemove; i++) {
+        if ((userFilterArr[i] != mFilter) && userFilterArr[i].containsRuleComponent(fc.getName())) {
+          allowRemove = false;
+          JOptionPane.showMessageDialog(this, mLocalizer.msg("usedByAnotherFilter",
+              "This filter component is used by filter '{0}'\nRemove the filter first.", userFilterArr[i].toString()));
+        }
+      }
+      if (allowRemove) {
+        FilterComponentList.getInstance().remove(fc.getName());
+        mComponentTableModel.removeElement(mRuleTableBox.getSelectedRow());
+        updateBtns();
+      }
 
-	public UserFilter getUserFilter() {
-		return mFilter;
-	}
+    } else if (o == mOkBtn) {
+      String filterName = mFilterNameTF.getText();
+      if (!filterName.equalsIgnoreCase(mFilterName) && mFilterList.containsFilter(filterName)) {
+        JOptionPane
+            .showMessageDialog(this, mLocalizer.msg("alreadyExists", "Filter '{0}' already exists.", filterName));
+      } else {
+        if (mFilter == null) {
+          mFilter = new UserFilter(mFilterNameTF.getText());
+        } else {
+          mFilter.setName(mFilterNameTF.getText());
+        }
 
-	public void changedUpdate(DocumentEvent e) {
-		updateBtns();
+        try {
+          mFilter.setRule(mFilterRuleTF.getText());
+          FilterComponentList.getInstance().store();
+          hide();
+        } catch (ParserException exc) {
+          JOptionPane.showMessageDialog(this, mLocalizer.msg("invalidRule", "Invalid rule: ") + exc.getMessage());
+        }
+      }
 
-	}
+    } else if (o == mCancelBtn) {
+      hide();
+    }
 
-	public void insertUpdate(DocumentEvent e) {
-		updateBtns();
-	}
+  }
 
-	public void removeUpdate(DocumentEvent e) {
-		updateBtns();
-	}
+  public UserFilter getUserFilter() {
+    return mFilter;
+  }
 
-	public void caretUpdate(javax.swing.event.CaretEvent e) {
-		mColLb.setText("pos: " + mFilterRuleTF.getCaretPosition());
-	}
+  public void changedUpdate(DocumentEvent e) {
+    updateBtns();
 
-	public class FilterRuleListCellRenderer extends DefaultListCellRenderer {
+  }
 
-		public Component getListCellRendererComponent(
-			JList list,
-			Object value,
-			int index,
-			boolean isSelected,
-			boolean cellHasFocus) {
-			JLabel label =
-				(JLabel) super.getListCellRendererComponent(
-					list,
-					value,
-					index,
-					isSelected,
-					cellHasFocus);
+  public void insertUpdate(DocumentEvent e) {
+    updateBtns();
+  }
 
-			if (value instanceof FilterComponent) {
-				FilterComponent comp = (FilterComponent) value;
-        label.setText(mLocalizer.msg("componentString","Name: <{0}> Description: {1}", comp.getName(), comp.getDescription()));
-        
-				
-			}
+  public void removeUpdate(DocumentEvent e) {
+    updateBtns();
+  }
 
-			return label;
-		}
-	}
+  public void caretUpdate(javax.swing.event.CaretEvent e) {
+    mColLb.setText("pos: " + mFilterRuleTF.getCaretPosition());
+  }
+
+  private class FilterTableModel extends AbstractTableModel {
+
+    private Vector dataVector;
+
+    public FilterTableModel() {
+      dataVector = new Vector();
+    }
+
+    public int getRowCount() {
+      return dataVector.size();
+    }
+
+    public int getColumnCount() {
+      return 2;
+    }
+
+    public String getColumnName(int columnIndex) {
+      if (columnIndex == 0) {
+        return mLocalizer.msg("filtername", "Filtername");
+      } else if (columnIndex == 1) {
+        return mLocalizer.msg("description", "Description");
+      }
+      return "?";
+    }
+
+    public Class getColumnClass(int columnIndex) {
+      return String.class;
+    }
+
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+      return false;
+    }
+
+    public Object getValueAt(int rowIndex, int columnIndex) {
+      Object row = dataVector.get(rowIndex);
+      if (row instanceof FilterComponent) {
+        FilterComponent comp = (FilterComponent) row;
+
+        if (columnIndex == 0) {
+          return comp.getName();
+        } else if (columnIndex == 1) {
+          return comp.getDescription();
+        }
+
+      }
+      return "?";
+    }
+
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+    }
+
+    public void addElement(FilterComponent fComp) {
+      dataVector.add(fComp);
+      fireTableRowsInserted(getRowCount(), getRowCount());
+    }
+
+    public FilterComponent getElement(int row) {
+      if (row < 0 || row >= getRowCount()) {
+        return null;
+      }
+      return (FilterComponent) dataVector.get(row);
+    }
+
+    public void removeElement(int row) {
+      if (row < 0 || row >= getRowCount()) {
+        return;
+      }
+      dataVector.remove(row);
+      fireTableRowsDeleted(row, row);
+    }
+
+    public void removeElement(FilterComponent fComp) {
+      if (fComp == null) {
+        return;
+      }
+      if (dataVector.remove(fComp)) {
+        fireTableDataChanged();
+      }
+    }
+
+  }
 
 }
