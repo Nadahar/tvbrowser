@@ -74,7 +74,8 @@ public class ExcelPDS extends AbstractPrimaryDataService {
     Channel[] channelArr = new Channel[sheetArr.length];
     for (int i = 0; i < channelArr.length; i++) {
       String id              = getCellString(sheetArr[i], 1, 1);
-      channelArr[i] = new Channel(id);
+      String country         = getCellString(sheetArr[i], 4, 1);
+      channelArr[i] = new Channel(id, country);
     }
 
     return channelArr;
@@ -239,13 +240,8 @@ public class ExcelPDS extends AbstractPrimaryDataService {
    * @return Whether the given sheet is valid.
    */
   private boolean checkSheet(HSSFSheet sheet, int sheetNr) {
-    if (! checkCell(sheet, sheetNr, 0, 0, "Channel Name")) return false;
     if (! checkCell(sheet, sheetNr, 1, 0, "Channel ID")) return false;
-    if (! checkCell(sheet, sheetNr, 2, 0, "Channel Group ID")) return false;
-    if (! checkCell(sheet, sheetNr, 3, 0, "Time Zone")) return false;
     if (! checkCell(sheet, sheetNr, 4, 0, "Country Code")) return false;
-    if (! checkCell(sheet, sheetNr, 5, 0, "Copyright Message")) return false;
-    if (! checkCell(sheet, sheetNr, 6, 0, "Copyright Website")) return false;
     if (! checkCell(sheet, sheetNr, 0, 5, "Date")) return false;
     if (! checkCell(sheet, sheetNr, 1, 5, "Start Time")) return false;
     if (! checkCell(sheet, sheetNr, 2, 5, "Title")) return false;

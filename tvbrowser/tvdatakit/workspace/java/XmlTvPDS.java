@@ -207,7 +207,15 @@ public class XmlTvPDS extends AbstractPrimaryDataService {
     private ProgramFrameDispatcher getProgramDispatcher(String channelId) {
       ProgramFrameDispatcher dispatcher = (ProgramFrameDispatcher) mDispatcherHash.get(channelId);
       if (dispatcher == null) {
-        dispatcher = new ProgramFrameDispatcher(new Channel(channelId));
+        String[] s = channelId.split("_");
+        Channel channel;
+        if (s.length == 2) {
+          channel = new Channel(s[0], s[1]);
+        }
+        else {
+          channel = new Channel(s[0]);
+        }
+        dispatcher = new ProgramFrameDispatcher(channel);
         mDispatcherHash.put(channelId, dispatcher);
       }
       return dispatcher;
