@@ -109,14 +109,19 @@ mygroup ist dabei der Name der Gruppe, die wir anbieten.
 <h3>Das neue ExcelPDS</h3>
 <p>
 Die &Auml;nderungen der TV-Daten-Tools erforderte auch eine &Auml;nderung des ExcelPDS. Wer mit ExcelPDS arbeitet, mu&szlig; unbedingt die neue Version des ExcelPDS verwenden.<br />
-Die Excelsheets (*.xls) hingegen k&ouml;nnen trotzdem wie gewohnt verwendet werden. Allerdings ist zu beachten, da&szlig; die Informationen im oberen Bereich jetzt nicht mehr ben&ouml;tigt werden, da diese nun aus der Datei xxx_channellist.txt gelesen werden.<br />
-Es ist nun nur noch das Feld "Sender-ID" notwendig. Die restlichen Felder werden von ExcelPDS ignoriert. 
+Die Excelsheets (*.xls) hingegen k&ouml;nnen trotzdem (mit einer Ausnahme) wie gewohnt verwendet werden. Allerdings ist zu beachten, da&szlig; die Informationen im oberen Bereich jetzt nicht mehr ben&ouml;tigt werden, da diese nun aus der Datei xxx_channellist.txt gelesen werden.<br />
+Es ist nun nur noch das Feld <em>"Sender-ID"</em> und <em>Country Code</em> notwendig. Die restlichen Felder werden von ExcelPDS ignoriert.<br />
+</p>
+
 </p>
 
 <h3>Das neue XmlTvPDS</h3>
 <p>
-Da die Informationen zu den Sendern jetzt in der Datei [gruppenID]_channels.txt gespeichert werden, ist die Datei <em>TvChannels.xml</em> nicht mehr notwendig. Diese kann daher gel&ouml;scht werden. <em>XmlTvPDS</em> ignoriert sie nun.
+Da die Informationen zu den Sendern jetzt in der Datei [gruppenID]_channels.txt gespeichert werden, ist die Datei <em>TvChannels.xml</em> nicht mehr notwendig. Diese kann daher gel&ouml;scht werden. <em>XmlTvPDS</em> ignoriert sie nun.<br />
+Neu ist aber, da&szlig; die Channel-ID nun aus zwei Teilen besteht: der eigentlichen ID (wie bisherig) und (neu) einem <a href="http://www.chemie.fu-berlin.de/diverse/doc/ISO_3166.html">zweistellen L&auml;nderk&uuml;rzel</a>. Ein Beispiel einer Sender-ID k&ouml;nnte z.B. so aussehen: mychannel_ch
 </p>
+
+
 
 <h3>Noch Fragen?</h3>
 <p>
