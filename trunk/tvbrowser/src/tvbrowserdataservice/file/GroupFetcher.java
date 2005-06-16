@@ -48,8 +48,7 @@ public class GroupFetcher {
 
 
   /** URL to load */
-//    private static String PROVIDERURL="http://www.tvbrowser.org/listings/provider.txt";
-  private static String PROVIDERURL="http://www.wannawork.de/provider.txt";
+    private static String PROVIDERURL="http://www.tvbrowser.org/listings/provider.txt";
 
   /**
    * Loads the Default-Groups

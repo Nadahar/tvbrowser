@@ -275,7 +275,51 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     JPanel panel = new JPanel();
 
+    mCountryCB = new JComboBox();
+    mTimezoneCB = new JComboBox();
+    mCategoryCB = new JComboBox();
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTV","TV"), new Integer(Channel.CATEGORY_CINEMA)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers","Sonstige Sparten"), new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone","Not categorized"), new Integer(Channel.CATEGORY_NONE)));
+
+
+    mProviderCB = new JComboBox();
+
+    mCountryCB.addItemListener(mFilterItemListener);
+    mTimezoneCB.addItemListener(mFilterItemListener);
+    mCategoryCB.addItemListener(mFilterItemListener);
+    mProviderCB.addItemListener(mFilterItemListener);
+
+    panel.setLayout(new FormLayout("default, 3dlu, default:grow",
+        "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
+
+    CellConstraints c = new CellConstraints();
+
+    panel.add(new JLabel("Filter:"), c.xyw(1, 1, 3));
+    panel.add(mCountryCB, c.xy(1, 3));
+    panel.add(mTimezoneCB, c.xy(1, 5));
+    panel.add(mProviderCB, c.xy(1, 7));
+    panel.add(mCategoryCB, c.xy(1, 9));
+
+    updateFilterPanel();
+
+    return panel;
+  }
+
+
+
+  private void updateFilterPanel() {
     Channel[] allChannels = ChannelList.getAvailableChannels();
+
     HashMap groups = new HashMap();
     HashSet countries = new HashSet();
     for (int i=0; i<allChannels.length; i++) {
@@ -297,7 +341,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       }
     }
 
-    mCountryCB = new JComboBox();
+    mCountryCB.removeAllItems();
     mCountryCB.addItem(new FilterItem(mLocalizer.msg("allCountries","All Countries"), null));
     Iterator it = countries.iterator();
     while (it.hasNext()) {
@@ -306,8 +350,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       mCountryCB.addItem(new FilterItem(locale.getDisplayCountry(), country));
     }
 
-
-    mTimezoneCB = new JComboBox();
+    mTimezoneCB.removeAllItems();
     mTimezoneCB.addItem(new FilterItem(mLocalizer.msg("allTimezones","All Timezones"), null));
     TimeZone zone = TimeZone.getDefault();
     mTimezoneCB.addItem(new FilterItem(zone.getDisplayName(), zone));
@@ -316,46 +359,15 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       mTimezoneCB.addItem(new FilterItem(zone.getDisplayName(), zone));
     }
 
-    mCategoryCB = new JComboBox();
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTV","TV"), new Integer(Channel.CATEGORY_CINEMA)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers","Sonstige Sparten"), new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone","Not categorized"), new Integer(Channel.CATEGORY_NONE)));
-
-
-    mProviderCB = new JComboBox();
-
+    mProviderCB.removeAllItems();
     mProviderCB.addItem(new FilterItem(mLocalizer.msg("allProviders","All Providers"), null));
     Object[] providerNames = groups.values().toArray();
     for (int i=0; i<providerNames.length; i++) {
       mProviderCB.addItem(new FilterItem((String)providerNames[i], (String)providerNames[i]));
     }
 
-    mCountryCB.addItemListener(mFilterItemListener);
-    mTimezoneCB.addItemListener(mFilterItemListener);
-    mCategoryCB.addItemListener(mFilterItemListener);
-    mProviderCB.addItemListener(mFilterItemListener);
 
-    panel.setLayout(new FormLayout("default, 3dlu, default:grow",
-        "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
 
-    CellConstraints c = new CellConstraints();
-
-    panel.add(new JLabel("Filter:"), c.xyw(1, 1, 3));
-    panel.add(mCountryCB, c.xy(1, 3));
-    panel.add(mTimezoneCB, c.xy(1, 5));
-    panel.add(mProviderCB, c.xy(1, 7));
-    panel.add(mCategoryCB, c.xy(1, 9));
-
-    return panel;
   }
 
   private ItemListener mFilterItemListener = new ItemListener(){
@@ -490,10 +502,19 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
 
   private void fillAvailableChannelsListBox() {
-    TimeZone timeZone = (TimeZone)((FilterItem)mTimezoneCB.getSelectedItem()).getValue();
-    String country = (String)((FilterItem)mCountryCB.getSelectedItem()).getValue();
-    String providerName = (String)((FilterItem)mProviderCB.getSelectedItem()).getValue();
-    Integer categoryInt = (Integer)((FilterItem)mCategoryCB.getSelectedItem()).getValue();
+    FilterItem selectedTimeZone = (FilterItem)mTimezoneCB.getSelectedItem();
+    FilterItem selectedCountry = (FilterItem)mCountryCB.getSelectedItem();
+    FilterItem selectedProvider = (FilterItem)mProviderCB.getSelectedItem();
+    FilterItem selectedCategory = (FilterItem)mCategoryCB.getSelectedItem();
+
+    if (selectedTimeZone == null || selectedCountry == null || selectedProvider == null || selectedCategory == null) {
+      return;
+    }
+
+    TimeZone timeZone = (TimeZone)(selectedTimeZone).getValue();
+    String country = (String)(selectedCountry).getValue();
+    String providerName = (String)(selectedProvider).getValue();
+    Integer categoryInt = (Integer)(selectedCategory).getValue();
     int categories = 0;
     if (categoryInt != null) {
       categories = categoryInt.intValue();
@@ -558,6 +579,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             mChannelListModel.refresh();
+            updateFilterPanel();
             fillSubscribedChannelsListBox();
             fillAvailableChannelsListBox();
 
