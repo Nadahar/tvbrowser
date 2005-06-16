@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 import javax.swing.UIManager;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
@@ -38,6 +39,7 @@ import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import util.exc.TvBrowserException;
 import util.settings.*;
 import util.ui.view.SplitViewProperty;
+import util.io.IOUtilities;
 import devplugin.ProgramFieldType;
 
 /**
@@ -70,8 +72,6 @@ public class Settings {
   
 
   private static PropertyManager mProp = new PropertyManager();
-
-
 
 
   /**
@@ -125,14 +125,52 @@ public class Settings {
    * settings are used.
    */
   public static void loadSettings() {
-    File settingsFile = new File(getUserDirectoryName(), SETTINGS_FILE);
-    try {
-      mProp.readFromFile(settingsFile);
-      mLog.info("Using settings from file "+settingsFile.getAbsolutePath());
+
+    String oldDirectoryName = System.getProperty("user.home", "") + File.separator + ".tvbrowser";
+    String newDirectoryName = getUserDirectoryName();
+    File settingsFile = new File(newDirectoryName, SETTINGS_FILE);
+
+    if (settingsFile.exists()) {
+      try {
+        mProp.readFromFile(settingsFile);
+        mLog.info("Using settings from file "+settingsFile.getAbsolutePath());
+      }
+      catch (IOException evt) {
+        mLog.info("Could not read settings - using default user settings");
+      }
     }
-    catch (IOException evt) {
-      mLog.info("No user settings found. using default user settings");
+    /* If the settings file doesn't exist, we try to import the settings created
+       by a previous version of TV-Browser */
+    else if (!oldDirectoryName.equals(newDirectoryName)) {
+      mLog.info("Try to load settings from a previous version of TV-Browser");
+      File oldDir = new File(oldDirectoryName);
+      if (oldDir.isDirectory() && oldDir.exists()) {
+        File newDir = new File(getUserDirectoryName());
+        if (newDir.mkdirs()) {
+          try {
+            IOUtilities.copy(oldDir.listFiles(), newDir);
+            mLog.info("settings form previous version copied successfully");
+            File newSettingsFile = new File(newDir, SETTINGS_FILE);
+            mProp.readFromFile(newSettingsFile);
+            mLog.info("settings form previous version read succesfully");
+            oldDir.renameTo(new File(System.getProperty("user.home", "") + File.separator + "tvbrowser_BACKUP"));
+          } catch(IOException e) {
+            mLog.log(Level.WARNING, "Could not import user settings from '" + oldDir.getAbsolutePath()+ "' to '"+newDir.getAbsolutePath()+"'", e);
+          }
+        }
+        else {
+          mLog.info("Could not create directory '"+newDir.getAbsolutePath()+"' - using default user settings");
+        }
+      }
+      else {
+        mLog.info("No previous version of TV-Browser found - using default user settings");
+      }
+
     }
+
+
+
+
   }
 
 
