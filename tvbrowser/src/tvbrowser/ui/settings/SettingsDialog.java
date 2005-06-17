@@ -151,6 +151,7 @@ public class SettingsDialog {
         saveSettings();
         invalidateTree();
         Settings.handleChangedSettings();
+        showSettingsPanelForSelectedNode();
       }
     });
     buttonPn.add(mApplyBt);
@@ -418,7 +419,7 @@ public class SettingsDialog {
       while (e.hasMoreElements()) {
         SettingNode node = (SettingNode)e.nextElement();
         node.invalidate();
-        }
+      }
     }
 
     public void saveSettings() {
