@@ -424,15 +424,17 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     if ((ch != null) && (ch.length == 1)) {
       Channel channel = (Channel) ch[0];
-      mChannelName.setText(channel.getName());
-      Locale loc = new Locale(Locale.getDefault().getLanguage(), channel.getCountry());
-      mChannelCountry.setText(loc.getDisplayCountry());
-      mChannelTimeZone.setText(channel.getTimeZone().getDisplayName());
-      if (channel.getGroup() != null) {
-        mChannelProvider.setText(channel.getGroup().getProviderName());
-      }
-      else {
-        mChannelProvider.setText("-");
+      if (channel != null) {
+        mChannelName.setText(channel.getName());
+        Locale loc = new Locale(Locale.getDefault().getLanguage(), channel.getCountry());
+        mChannelCountry.setText(loc.getDisplayCountry());
+        mChannelTimeZone.setText(channel.getTimeZone().getDisplayName());
+        if (channel.getGroup() != null) {
+          mChannelProvider.setText(channel.getGroup().getProviderName());
+        }
+        else {
+          mChannelProvider.setText("-");
+        }
       }
     } else {
       mChannelName.setText("");
