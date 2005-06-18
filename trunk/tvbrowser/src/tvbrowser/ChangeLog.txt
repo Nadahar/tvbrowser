@@ -1,9 +1,11 @@
 Changelog TVBrowser
 
-1.1
+1.1 alpha
 - New mainframe layout
-- Menu bar for MacOS X added
-- New toolbar added (drag&drop)
+- Mac OS X:
+     - menu bar
+     - installer (package, .dmg)
+- New toolbar added
 - Plugin-View (tree) added
 - Added Channel-Logos
 - Added new Filter to select if the Program is running, was running or will be running
@@ -18,9 +20,11 @@ Changelog TVBrowser
 - Filtersorting is saved now
 - Last used Filter is loaded at start
 - Filter for Time now can save minutes, not only hours
-- ChannelGroups are fetched from the Server
+- ChannelGroups are fetched from the Server: NOT IN ALPHA! WE WILL EXTEND THIS FEATURE IN BETA RELEASE
 - Search now remembers selected Nr of Days
-- New Menu Items: View, Go
+- new structure in the menu bar
+- plugin tree view
+
 
 1.0.1
  - bugfix: removed "import searchplugin..."

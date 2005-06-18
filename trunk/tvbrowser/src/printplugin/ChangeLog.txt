@@ -1,6 +1,8 @@
+
 Version 0.5
 
-Redesign
+- Redesign
+- remember settings
 
 
 Version 0.4

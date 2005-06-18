@@ -4,6 +4,8 @@ Changelog ReminderPlugin
 - Added "Send to other Plugin"
 - Made default reminder time configurable
 - Added Parameter-System
+- use plugin tree view
+- show dialog if programs were removed after download
 
 1.0.9
 - Added Button for sending the Program-List
