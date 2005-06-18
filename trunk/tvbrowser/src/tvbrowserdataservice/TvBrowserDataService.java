@@ -414,7 +414,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     /* Load data level settings */
     String tvDataLevel=settings.getProperty("level");
     if (tvDataLevel==null) {
-      settings.setProperty("level","base:::more16-00");
+      settings.setProperty("level","base:::more00-16:::base:::more16-00");
     }
     
     String[] levelIds=settings.getProperty("level").split(":::");
