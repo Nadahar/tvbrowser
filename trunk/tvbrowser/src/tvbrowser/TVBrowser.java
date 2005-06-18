@@ -171,8 +171,7 @@ public class TVBrowser {
     
     // Capture unhandled exceptions
     System.setErr(new PrintStream(new MonitoringErrorStream()));
-    
-    
+
     Locale.setDefault(new Locale(Settings.propLanguage.getString()));
 
     String timezone = Settings.propTimezone.getString();
@@ -494,6 +493,7 @@ public class TVBrowser {
         try {
           curLookAndFeel = Settings.propLookAndFeel.getString();
           UIManager.setLookAndFeel(curLookAndFeel);
+          mLog.info("setting look and feel to "+curLookAndFeel);
         } catch (Exception exc) {
           String msg =
             mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
