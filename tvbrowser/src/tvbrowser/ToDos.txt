@@ -13,25 +13,15 @@ TODOs:
 - Groessen der Views aendern sich nach Aus- und Wiedereinblenden (auch bei Start des TV-Browsers stimmen die Größen nicht 100%-ig)
 - (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
 - (M) F2 (plugin-view ein-ausblenden) funktioniert nicht, wenn die plugin-view den focus hat
-- SCHWERWIEGEND: Das Programm konnte nicht fuer den gesamten Zeitraum heruntergeladen werden!
-java.lang.NullPointerException
-	at tvbrowserdataservice.TvBrowserDataService.updateTvData(TvBrowserDataService.java:246)
-	at tvbrowser.core.TvDataUpdater.downloadTvData(TvDataUpdater.java:165)
-	at tvbrowser.ui.mainframe.MainFrame$6.run(MainFrame.java:556)
-  Meldung passst nicht zum Problem
+
+
 - Button Lieblingssendungen ist zu klein
 - Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
 - Titel immer sichtbar-Option im ProgramPanel benutzen
 - (B) TimeOfDayBackPainter auf neues System anpassen
 
 
-Bugs (Achtung: es existieren weitere Bugs auf SF!!) :
-- Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert,
-  das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
-
-
-Entfernte ToDos:
-- Filter: Die beiden Standard-Filter (Markierte, Untertitelt) koennen nicht bearbeitet werden (den Tester stoerte dies)
+Bugs (Achtung: es existieren weitere Bugs auf SF!!)
 
 
 Erledigt:
@@ -62,3 +52,6 @@ Erledigt:
 - (M) Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea) - (MS-Windows)
 - (M) Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
 - (M) Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
+- SCHWERWIEGEND: Das Programm konnte nicht fuer den gesamten Zeitraum heruntergeladen werden!
+- (M) Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert,
+      das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
