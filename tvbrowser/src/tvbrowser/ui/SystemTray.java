@@ -93,11 +93,13 @@ public class SystemTray {
     if (mSystemTray != null) {
 
       if (mSystemTray instanceof WinSystemTray) {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/tvbrowser.ico", MainFrame.getInstance()
+        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/TVBrowser.ico", MainFrame.getInstance()
             .getTitle());
+        mLog.info("using windows system tray");
       } else {
         mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/tvbrowser16.png", MainFrame.getInstance()
             .getTitle());
+        mLog.info("using default system tray");
       }
     } else {
       mUseSystemTray = false;
@@ -107,8 +109,7 @@ public class SystemTray {
 
   /**
    * Creates the Menus
-   * 
-   * @param mainFrame MainFrame to use for hide/show
+   *
    */
   public void createMenus() {
     if (!mUseSystemTray) {

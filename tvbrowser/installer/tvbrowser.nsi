@@ -1,4 +1,3 @@
-﻿#
 # NSIS script for creating the Windows installer.
 #
 #
@@ -98,7 +97,7 @@ Var INI_VALUE
 
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
-UninstPage custom un.UninstallTvDataPage
+# UninstPage custom un.UninstallTvDataPage
 UninstPage custom un.UninstallSettingsPage
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
@@ -106,7 +105,7 @@ UninstPage custom un.UninstallSettingsPage
 
 #--------------------------------
 # Custom pages (InstallOptions)
-ReserveFile "${NSISDIR}\UninstallTvData.ini"
+#ReserveFile "${NSISDIR}\UninstallTvData.ini"
 ReserveFile "${NSISDIR}\UninstallSettings.ini"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
@@ -116,15 +115,15 @@ ReserveFile "${NSISDIR}\UninstallSettings.ini"
 
 Function un.onInit
   # Extract InstallOptions INI files
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallTvData.ini"   "UninstallTvData.ini"
+  # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallTvData.ini"   "UninstallTvData.ini"
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallSettings.ini" "UninstallSettings.ini"
 FunctionEnd
 
-Function un.UninstallTvDataPage
-  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
-    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
-FunctionEnd
+# Function un.UninstallTvDataPage
+#  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
+#    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
+#  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
+# FunctionEnd
 
 Function un.UninstallSettingsPage
   !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
@@ -159,6 +158,7 @@ Section "${PROG_NAME} (erforderlich)"
   File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\website.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
+  File "${RUNTIME_DIR}\windows.properties"      
   File "${RUNTIME_DIR}\..\..\win\DesktopIndicator.dll"
 
   WriteUninstaller "Uninstall.exe"
@@ -349,18 +349,18 @@ SubSectionEnd
 # special uninstall section.
 Section "Uninstall"
   # Read whether "Remove TV data" was seleted in the "UninstallTvData.ini"
-  !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallTvData.ini" "Field 2" "State"
+  #!insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallTvData.ini" "Field 2" "State"
 
   # Remove TV data if "Remove TV data" was seleted in the "UninstallTvData.ini"
-  StrCmp $INI_VALUE "1" "" +2
-    RMDir /r "$INSTDIR\tvdata"
+ # StrCmp $INI_VALUE "1" "" +2
+ #   RMDir /r "$INSTDIR\tvdata"
 
   # Read whether "Remove settings" was seleted in the "UninstallSettings.ini"
   !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallSettings.ini" "Field 2" "State"
 
   # Remove settings if "Remove settings" was seleted in the "UninstallSettings.ini"
-  StrCmp $INI_VALUE "1" "" +2
-    RMDir /r "$PROFILE\.tvbrowser"
+ # StrCmp $INI_VALUE "1" "" +2
+ #   RMDir /r "$PROFILE\TV-Browser"
 
   # remove program directories used.
   RMDir /r "$INSTDIR\help"
