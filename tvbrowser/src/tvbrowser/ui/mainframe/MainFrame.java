@@ -694,6 +694,9 @@ public class MainFrame extends JFrame implements DateListener {
     } else {
       mPluginsNode.setLeaf(null);
     }
+    
+    Settings.propShowPluginView.setBoolean(visible);
+    
     updateViews();
   }
 
