@@ -741,6 +741,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       ChannelList.create();
       Channel[] channels = ChannelList.getSubscribedChannels();
       mAvailableChannels = ChannelList.getAvailableChannels();
+      mSubscribedChannels.clear();
       for (int i=0; i<channels.length; i++) {
         subscribeChannel(channels[i]);
       }

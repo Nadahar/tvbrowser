@@ -110,11 +110,10 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
       public void run() {
         mDownloadStarted=true;
         tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
-        int channelCount=0;
         for (int i=0;i<services.length;i++) {
           if (services[i].supportsDynamicChannelList()) {
             try {
-              devplugin.Channel channelList[]=services[i].checkForAvailableChannels(win);
+              services[i].checkForAvailableChannels(win);
             }catch (TvBrowserException e) {
               ErrorHandler.handle(e);
             }

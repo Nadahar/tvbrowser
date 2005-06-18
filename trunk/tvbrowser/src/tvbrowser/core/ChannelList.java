@@ -26,6 +26,7 @@ import java.io.*;
 import devplugin.Channel;
 import tvdataservice.TvDataService;
 
+
 /**
  * ChannelList contains a list of all available mAvailableChannels in the system.
  * Use this class to subscribe mAvailableChannels.
@@ -34,6 +35,9 @@ import tvdataservice.TvDataService;
  * @author Martin Oberhauser
  */
 public class ChannelList {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(ChannelList.class.getName());
 
   private static ArrayList mAvailableChannels = new ArrayList();
 
@@ -153,6 +157,17 @@ public class ChannelList {
     for (int i=0;i<dataServiceArr.length;i++) {
       addDataServiceChannels(dataServiceArr[i]);
     }
+
+    /* remove all subscribed channels which are not available any more */
+    Object[] currentSubscribedChannels = mSubscribedChannels.toArray();
+    for (int i=0; i<currentSubscribedChannels.length; i++) {
+      Channel ch = (Channel)currentSubscribedChannels[i];
+      if (!mAvailableChannels.contains(ch)) {
+        System.out.println(ch+" is not available any more");
+        mSubscribedChannels.remove(ch);
+      }
+    }
+
   }
 
   /**
@@ -174,9 +189,11 @@ public class ChannelList {
     mSubscribedChannels = new ArrayList(channelArr.length);
     for (int i = 0; i < channelArr.length; i++) {
       if (channelArr[i] == null) {
-        throw new NullPointerException("channel #" + i + " is null!");
+        mLog.warning("cannot subscribe channel #" + i + " - is null");
       }
-      mSubscribedChannels.add(channelArr[i]);
+      else {
+        mSubscribedChannels.add(channelArr[i]);
+      }
     }
   }
 
