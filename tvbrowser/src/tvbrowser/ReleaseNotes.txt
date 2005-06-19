@@ -1,0 +1,10 @@
+Release Notes 1.1 Alpha
+
+- 1.1 Alpha ist eine Test-Version. Fuer den taeglichen Einsatz wird nach wie vor TV-Browser 1.0 empfohlen!
+- Vor der Installation von TV-Browser 1.1 Alpha sollten die Verzeichnisse ".tvbrowser" (im Home-Verzeichnis) sowie "tvdata" (im Programm-Verzeichnis) gesichert werden.
+- Die Benutzer-Einstellungen werden nun je nach Betriebssystem in einem anderen Verzeichnis innerhalb des Home-Verzeichnisses gespeichert:
+  Auf Windows-Systemen heisst das Verzeichnis nun "TV-Browser", auf Mac OS X "Library/TV-Browser". Ansonsten wird ".tvbrowser" verwendet.
+  Beim ersten Start wird versucht die Einstellungen von ".tvbrowser" zu importieren.
+- Manche Plugin-Einstellungen aelterer Versionen werden u.U. nicht uebernommen (zB. Capture-Plugin)
+- Es wurde angekuendigt, daﬂ TV-Browser 1.1 selbstaendig nach Sendern anderer TV-Daten-Anbieter suchen kann.
+  Dieses Feature ist in 1.1 Alpha noch nicht enthalten 

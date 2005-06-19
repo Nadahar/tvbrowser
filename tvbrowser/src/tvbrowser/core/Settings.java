@@ -434,7 +434,7 @@ public class Settings {
     = new StringProperty(mProp, "toolbarLocation", "north");
   
   public static final StringProperty propDefaultContextMenuPlugin
-    = new StringProperty(mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");
+    = new StringProperty(mProp, "contextmenudefaultplugin", "java.programinfo.ProgramInfo");
 
   public static final StringProperty propLastUsedFilter
   = new StringProperty(mProp, "lastusedfilter", null);
