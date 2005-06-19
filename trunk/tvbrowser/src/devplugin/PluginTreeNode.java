@@ -23,8 +23,6 @@
  *   $Author$
  * $Revision$
  */
-
-
 package devplugin;
 
 import java.io.IOException;
@@ -46,15 +44,12 @@ public class PluginTreeNode {
   private static final util.ui.Localizer mLocalizer =
       util.ui.Localizer.getLocalizerFor(PluginTreeNode.class);
 
-
   private int mNodeType;
   private ArrayList mChildNodes;
   private Object mObject;
   private ArrayList mNodeListeners;
   private Plugin mPlugin;
-
-
-private Node mDefaultNode;
+  private Node mDefaultNode;
 
   private PluginTreeNode(int type, Object o) {
     mChildNodes = new ArrayList();
@@ -69,23 +64,31 @@ private Node mDefaultNode;
   }
 
   public PluginTreeNode(Plugin plugin) {
+    this(plugin, true);
+  }
+
+  public PluginTreeNode(Plugin plugin, boolean handleTvDataUpdate) {
     this(Node.PLUGIN_ROOT, plugin);
     mPlugin = plugin;
-    final RemovedProgramsHandler removedProgramsHandler = new RemovedProgramsHandler();
+    
+    if (handleTvDataUpdate) {
+      final RemovedProgramsHandler removedProgramsHandler = new RemovedProgramsHandler();
 
-    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      public void tvDataUpdateStarted() {
-        removedProgramsHandler.clear();
-      }
+      TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+        public void tvDataUpdateStarted() {
+          removedProgramsHandler.clear();
+        }
 
-      public void tvDataUpdateFinished() {
-        refreshAllPrograms(removedProgramsHandler);
-        update();
-        Program[] removedPrograms = removedProgramsHandler.getRemovedPrograms();
-        fireProgramsRemoved(removedPrograms);
-      }
-    });
-
+        public void tvDataUpdateFinished() {
+          refreshAllPrograms(removedProgramsHandler);
+          update();
+          Program[] removedPrograms = removedProgramsHandler.getRemovedPrograms();
+          fireProgramsRemoved(removedPrograms);
+        }
+      });
+      
+    }
+    
   }
 
   public PluginTreeNode(ProgramItem item) {
