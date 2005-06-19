@@ -72,7 +72,7 @@ public class CapturePlugin extends devplugin.Plugin {
     private static CapturePlugin mInstance = null;
 
     /** Root-Node for the Program-Tree */
-    private PluginTreeNode mRootNode = new PluginTreeNode(this);
+    private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
     
     /**
      * Creates the Plugin
