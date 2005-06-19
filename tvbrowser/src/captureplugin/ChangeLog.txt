@@ -6,6 +6,7 @@ v2.03:
 - Support for Plugin-Tree
 - Export/Import of Devices
 - Additional Params can be deactivated
+- New Parameter-System implemented
 
 v2.02:
 - Changed to new Plugin-Interface
