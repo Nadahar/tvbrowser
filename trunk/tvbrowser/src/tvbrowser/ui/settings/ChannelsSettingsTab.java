@@ -242,8 +242,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       southPn.add(pn2, BorderLayout.SOUTH);
 
       LinkButton urlLabel = new LinkButton(
-         mLocalizer.msg("addOwnChannels","Wollen Sie eigene Sender anbieten? Dann klicken Sie hier!"),
-         mLocalizer.msg("addOwnChannelsUrl", "http://tvbrowser.org/provide_tv_data.php"));
+         mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier für eine Liste weiterer Sender."),
+         mLocalizer.msg("addMoreChannelsUrl", "http://wiki.tvbrowser.org/index.php/Senderliste"));
 
       result.add(urlLabel, BorderLayout.SOUTH);
     }
