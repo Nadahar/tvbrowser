@@ -116,7 +116,7 @@ public class ParamLibrary {
    * @return List of possible Functions
    */
   public String[] getPossibleFunctions() {
-    String[] str = { "isset", "urlencode", "concat", "clean", "leadingZero", "splitAt" };
+    String[] str = { "isset", "urlencode", "concat", "clean", "leadingZero", "splitAt", "testparam" };
     return str;
   }
 
@@ -245,6 +245,22 @@ public class ParamLibrary {
       }
 
       return params[1];
+    } else if (function.equals("testparam")) {
+      if ((params.length < 2) || ((params.length > 3))) {
+        mError = true;
+        mErrorString = mLocalizer.msg("testparam2Params", "testparam needs 2-3 Parameters");
+        return null;
+      }
+
+      if ((params[0] != null) && (params[0].length() > 0)) {
+        return params[1];
+      }
+
+      if (params.length == 3) {
+        return params[2];
+      }
+      
+      return "";
     } else if (function.equals("urlencode")) {
       if (params.length != 2) {
         mError = true;
