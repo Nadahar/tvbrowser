@@ -6,5 +6,6 @@ Release Notes 1.1 Alpha
   Auf Windows-Systemen heisst das Verzeichnis nun "TV-Browser", auf Mac OS X "Library/TV-Browser". Ansonsten wird ".tvbrowser" verwendet.
   Beim ersten Start wird versucht die Einstellungen von ".tvbrowser" zu importieren.
 - Manche Plugin-Einstellungen aelterer Versionen werden u.U. nicht uebernommen (zB. Capture-Plugin)
+- 
 - Es wurde angekuendigt, daﬂ TV-Browser 1.1 selbstaendig nach Sendern anderer TV-Daten-Anbieter suchen kann.
   Dieses Feature ist in 1.1 Alpha noch nicht enthalten 

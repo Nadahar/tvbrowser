@@ -1,4 +1,4 @@
-# NSIS script for creating the Windows installer.
+﻿# NSIS script for creating the Windows installer.
 #
 #
 # TV-Browser
@@ -45,6 +45,7 @@ InstallDir "$PROGRAMFILES\${PROG_NAME}"
 
 # Get installation folder from registry if available
 InstallDirRegKey HKCU "Software\${PROG_NAME}" "Install directory"
+
 
 # Use LZMA compression
 SetCompressor lzma
@@ -152,6 +153,9 @@ Section "${PROG_NAME} (erforderlich)"
   # make the section requiered
   SectionIn 1 2 RO
 
+  # Sets the context of $SMPROGRAMS and other shell folders. If set to 'all', the 'all users' shell folder is used.
+  SetShellVarContext all
+
   # Set output path to the installation directory.
   SetOutPath "$INSTDIR"
   File "${RUNTIME_DIR}\LICENSE.txt"
@@ -247,7 +251,7 @@ Section "${PROG_NAME} (erforderlich)"
 SectionEnd # end the section
 
 
-Section "Verkn�pfung auf dem Desktop"
+Section "Verknüpfung auf dem Desktop"
   SectionIn 1 2
 
   # Set the directory where the shortcuts should be executed in
