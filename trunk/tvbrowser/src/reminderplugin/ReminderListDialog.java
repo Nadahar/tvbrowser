@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -94,14 +95,10 @@ public class ReminderListDialog extends JDialog {
     
     if (list!=null) {
       ReminderListItem[] items = list.getReminderItems();
+      Arrays.sort(items);
       for (int i=0; i<items.length; i++) {
         mListPanel.add(createListItemPanel(items[i]));
       }
-    /*  Iterator it=list.getReminderItems();
-      while (it.hasNext()) {
-        ReminderListItem item=(ReminderListItem)it.next();
-        mListPanel.add(createListItemPanel(item));
-      }*/
     }
     
     mScrollPane = new JScrollPane(mListPanel);
@@ -146,15 +143,8 @@ public class ReminderListDialog extends JDialog {
       for (int i=0; i<items.length; i++) {
         programArr[i] = items[i].getProgram();
       }
-   /*   Iterator it = reminderList.getReminderItems();      
-      while (it.hasNext()) {
-          ReminderListItem item = (ReminderListItem)it.next();
-          programArr[i] = item.getProgram();
-          i++;
-      }*/
       
       SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, programArr);
-
       send.show();
   }  
   

@@ -30,10 +30,9 @@ package reminderplugin;
 import devplugin.*;
 
 
-public class ReminderListItem /*extends ProgramItem*/ implements Comparable {
+public class ReminderListItem implements Comparable {
     
- // private ProgramItem mProgramItem;
-    
+
   private ProgramItem mProgramItem;
     
   public ReminderListItem(ProgramItem item) {
