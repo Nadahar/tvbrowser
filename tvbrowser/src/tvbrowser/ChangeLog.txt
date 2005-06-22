@@ -1,5 +1,13 @@
 Changelog TVBrowser
 
+
+1.1 alpha2
+- Mac OS X: Store settings in ~/Library/Preferences/TV-Browser
+- Windows: add CapturePlugin to Windows-Installer
+- Bugfix #1225459 (NullPointer beim Aktualisieren)
+- Erinnerer-Dialog sortiert nun die Sendungen nach Beginnzeit
+
+
 1.1 alpha
 - New mainframe layout
 - Mac OS X:
