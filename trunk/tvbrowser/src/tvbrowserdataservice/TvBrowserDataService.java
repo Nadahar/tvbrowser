@@ -442,7 +442,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
     
     mChannelGroupSet=new HashSet();
     
-    String groupNames = settings.getProperty("defaultgroupname");    // groupname or defaultgroupname????
+    String groupNames = settings.getProperty("groupname");
     String[] groupNamesArr;
     
     if (groupNames==null) {
