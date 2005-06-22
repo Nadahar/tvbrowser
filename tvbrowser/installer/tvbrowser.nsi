@@ -1,4 +1,4 @@
-﻿# NSIS script for creating the Windows installer.
+# NSIS script for creating the Windows installer.
 #
 #
 # TV-Browser
@@ -345,6 +345,13 @@ SubSection "Plugins"
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\NewsPlugin.jar"
+  SectionEnd
+
+  Section "Capture-Plugin"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\CapturePlugin.jar"
   SectionEnd
 
 SubSectionEnd
