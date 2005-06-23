@@ -378,7 +378,7 @@ public class ParamLibrary {
    */
   private String clean(String clean) {
     StringBuffer buffer = new StringBuffer();
-    char[] chars = clean.toCharArray();
+    char[] chars = clean.trim().toCharArray();
 
     for (int i = 0; i < chars.length; i++) {
       if ((chars[i] >= 'A') && (chars[i] <= 'Z')) {
@@ -392,7 +392,13 @@ public class ParamLibrary {
       }
     }
 
-    return buffer.toString();
+    String retStr = buffer.toString();
+    
+    while (retStr.indexOf("__") >= 0) {
+      retStr = retStr.replaceAll("__", "_");
+    }
+    
+    return retStr;
   }
 
 }
