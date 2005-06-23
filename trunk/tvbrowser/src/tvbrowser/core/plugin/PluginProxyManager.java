@@ -221,7 +221,14 @@ public class PluginProxyManager {
 
     // Get the default context menu plugin
     String id = Settings.propDefaultContextMenuPlugin.getString();
-    setDefaultContextMenuPlugin(getPluginForId(id));
+    PluginProxy plugin = getPluginForId(id);
+    if (plugin == null) {
+      plugin = getPluginForId(Settings.propDefaultContextMenuPlugin.getDefault());
+      if (plugin != null) {
+        Settings.propDefaultContextMenuPlugin.setString(plugin.getId());
+      }
+    }
+    setDefaultContextMenuPlugin(plugin);
   }
   
   
