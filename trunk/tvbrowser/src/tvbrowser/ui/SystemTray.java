@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -120,6 +121,8 @@ public class SystemTray {
 
     JPopupMenu trayMenu = new JPopupMenu();
     mOpenCloseMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
+    Font f = mOpenCloseMenuItem.getFont();
+    mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
     JMenuItem quitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
     trayMenu.add(mOpenCloseMenuItem);
     trayMenu.addSeparator();
