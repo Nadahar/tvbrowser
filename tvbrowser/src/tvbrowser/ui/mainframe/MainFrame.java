@@ -682,7 +682,6 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void setPluginViewButton(boolean selected) {
     if (mToolBarModel != null) {
-      System.out.println("set button to " + selected);
       mToolBarModel.setPluginViewButtonSelected(selected);
       mToolBar.update();
     }
@@ -694,7 +693,7 @@ public class MainFrame extends JFrame implements DateListener {
     } else {
       mPluginsNode.setLeaf(null);
     }
-    
+    mMenuBar.setPluginViewItemChecked(visible);
     Settings.propShowPluginView.setBoolean(visible);
     
     updateViews();

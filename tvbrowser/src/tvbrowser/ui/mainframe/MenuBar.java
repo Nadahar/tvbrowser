@@ -384,7 +384,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      
      return result;
    }
-   
+
+
+  public void setPluginViewItemChecked(boolean selected) {
+    mPluginOverviewMI.setSelected(selected);
+  }
+
    public void actionPerformed(ActionEvent event) {
      Object source = event.getSource();
      if (source == mSettingsMI) {
