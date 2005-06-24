@@ -112,7 +112,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     JPanel panel2=new JPanel();
     panel2.add(mCancelBt);
     
-    centerPanel.add(mCardPn,BorderLayout.NORTH);
+    centerPanel.add(mCardPn,BorderLayout.CENTER);
     
     btnPanel.add(panel1,BorderLayout.CENTER);
     btnPanel.add(panel2,BorderLayout.EAST);
