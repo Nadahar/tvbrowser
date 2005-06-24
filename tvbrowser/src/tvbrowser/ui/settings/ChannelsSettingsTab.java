@@ -333,7 +333,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       } else {
         groupKey = allChannels[i].getDataService().getClass().getName();
       }
-      groups.put(groupKey, getProviderName(allChannels[i]));
+      String s = getProviderName(allChannels[i]);
+      if (s != null) {
+        groups.put(groupKey, s);
+      }
 
       String country = allChannels[i].getCountry();
       if (country != null) {
@@ -674,7 +677,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       }
 
       if (mProviderName != null) {
-        if (!getProviderName(channel).equals(mProviderName)) {
+        String provName = getProviderName(channel);
+        if (provName == null || !provName.equals(mProviderName)) {
           return false;
         }
       }
