@@ -207,7 +207,7 @@ public class DialogRating extends JDialog {
         cancel.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                hide();
+              setVisible(false);
             }
         });
 
@@ -285,7 +285,7 @@ public class DialogRating extends JDialog {
         _personalrating.setValue(Rating.GENRE, Integer.parseInt(_genre.getSelectedItem().toString()));
         
         _rater.getDatabase().setPersonalRating(_personalrating);
-        hide();
+        setVisible(false);
 
         if (Integer.parseInt(_rater.getSettings().getProperty("updateIntervall", "0")) == 1) {
 
