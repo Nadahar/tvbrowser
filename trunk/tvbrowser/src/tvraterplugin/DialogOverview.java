@@ -201,7 +201,7 @@ public class DialogOverview extends JDialog {
     close.addActionListener(new java.awt.event.ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        hide();
+        setVisible(false);
       }
     });
 

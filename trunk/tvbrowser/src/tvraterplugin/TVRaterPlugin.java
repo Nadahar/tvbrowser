@@ -121,7 +121,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                 && (_dimensionOverviewDialog != null)) {
             dlg.setLocation(_locationOverviewDialog);
             dlg.setSize(_dimensionOverviewDialog);
-            dlg.show();
+            dlg.setVisible(true);
         } else {
             dlg.setSize(350, 250);
             UiUtilities.centerAndShow(dlg);
@@ -161,7 +161,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
         if (_locationRaterDialog != null) {
             dlg.setLocation(_locationRaterDialog);
-            dlg.show();
+            dlg.setVisible(true);
         } else {
             UiUtilities.centerAndShow(dlg);
             _locationRaterDialog = dlg.getLocation();
