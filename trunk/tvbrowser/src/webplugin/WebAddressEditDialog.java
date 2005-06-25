@@ -153,7 +153,7 @@ public class WebAddressEditDialog extends JDialog {
         } else {
           dialog = new ParamCheckDialog((JFrame)bestparent, mUrl.getText());
         }
-        dialog.show();
+        dialog.setVisible(true);
       }
       
     });
@@ -173,7 +173,7 @@ public class WebAddressEditDialog extends JDialog {
         } else {
           dialog = new ParamHelpDialog((JFrame)bestparent);
         }
-        dialog.show();
+        dialog.setVisible(true);
       }
       
     });    
@@ -232,7 +232,7 @@ public class WebAddressEditDialog extends JDialog {
     mWebAddress.setName(mName.getText());
     mWebAddress.setUrl(mUrl.getText());
     returnValue = JOptionPane.OK_OPTION;
-    hide();
+    setVisible(false);
   }
 
   /**
@@ -240,7 +240,7 @@ public class WebAddressEditDialog extends JDialog {
    */
   private void cancelPressed() {
     returnValue = JOptionPane.CANCEL_OPTION;
-    hide();
+    setVisible(false);
   }
 
   /**
