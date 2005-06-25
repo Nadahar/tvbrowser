@@ -114,7 +114,7 @@ public class CapturePluginDialog extends JDialog {
      */
     public void show(int tab) {
         mPanel.setSelectedTab(tab);
-        super.show();
+        super.setVisible(true);
     }
 
     /**

@@ -302,7 +302,7 @@ public class ClipboardDialog extends JDialog {
     }
 
     if (mClipList.size() == 0) {
-      hide();
+      setVisible(false);
     }
 
     mNode.update();
@@ -321,7 +321,7 @@ public class ClipboardDialog extends JDialog {
 
     SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, prgList);
 
-    send.show();
+    send.setVisible(true);
   }
 
 }

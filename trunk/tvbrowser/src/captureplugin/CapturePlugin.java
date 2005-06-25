@@ -196,7 +196,7 @@ public class CapturePlugin extends devplugin.Plugin {
         int x = comp.getWidth() / 2;
         int y = comp.getHeight() / 2;
 
-        select.show();
+        select.setVisible(true);
     }
 
     /*
