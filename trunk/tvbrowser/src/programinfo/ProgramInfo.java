@@ -143,7 +143,7 @@ public class ProgramInfo extends devplugin.Plugin {
     
     if (mSize != null) {
         mSettings.setProperty("DialogSize.Width", Integer.toString(mSize.width));
-        mSettings.setProperty("DialogSize.Heigth", Integer.toString(mSize.height));
+        mSettings.setProperty("DialogSize.Height", Integer.toString(mSize.height));
     }
 
     return mSettings;
