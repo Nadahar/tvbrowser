@@ -137,7 +137,7 @@ public class DefaultKonfigurator extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 mConfig.setName(mName.getText());
                 mButtonPressed = JOptionPane.OK_OPTION;
-                hide();
+                setVisible(false);
             }
         });
         
@@ -145,7 +145,7 @@ public class DefaultKonfigurator extends JDialog {
         
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                hide();
+              setVisible(false);
             }
         });
         

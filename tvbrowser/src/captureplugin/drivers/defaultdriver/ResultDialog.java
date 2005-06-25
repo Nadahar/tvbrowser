@@ -89,7 +89,7 @@ public class ResultDialog extends JDialog {
         
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                hide();
+              setVisible(false);
             }
         });
         

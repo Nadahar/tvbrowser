@@ -182,7 +182,7 @@ public class ClipboardPlugin extends Plugin {
 		if ((mLocationListDialog != null) && (mDimensionListDialog != null)) {
 			dlg.setLocation(mLocationListDialog);
 			dlg.setSize(mDimensionListDialog);
-			dlg.show();
+			dlg.setVisible(true);
 		} else {
 			dlg.setSize(400, 300);
 			UiUtilities.centerAndShow(dlg);

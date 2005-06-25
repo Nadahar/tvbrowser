@@ -166,7 +166,7 @@ public class DeviceCreatorDialog extends JDialog {
         cancel.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                hide();
+              setVisible(false);
             }
         });
 
@@ -193,7 +193,7 @@ public class DeviceCreatorDialog extends JDialog {
 
         } else {
             mRetmode = JOptionPane.OK_OPTION;
-            hide();
+            setVisible(false);
         }
     }
 

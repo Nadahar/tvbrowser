@@ -149,7 +149,7 @@ public class CaptureTimeDialog extends JDialog {
                 mPrgTime.setStart(mStart.getDate());
                 mPrgTime.setEnd(mEnd.getDate());
                 mPrgTime.setTitle(mTitle.getText());
-                hide();
+                setVisible(false);
             }
         });
         
@@ -160,7 +160,7 @@ public class CaptureTimeDialog extends JDialog {
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 mPrgTime = null;
-                hide();
+                setVisible(false);
             }
             
         });

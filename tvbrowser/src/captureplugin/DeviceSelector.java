@@ -175,7 +175,7 @@ public class DeviceSelector extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
                 okPressed();
-                hide();
+                setVisible(false);
             }
             
         });
@@ -185,7 +185,7 @@ public class DeviceSelector extends JDialog {
         cancel.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-               hide(); 
+              setVisible(false); 
             }
             
         });

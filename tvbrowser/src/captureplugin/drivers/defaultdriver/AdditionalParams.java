@@ -146,7 +146,7 @@ public class AdditionalParams extends JDialog {
         cancel.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                hide();
+                setVisible(false);
             }
 
         });
@@ -351,7 +351,7 @@ public class AdditionalParams extends JDialog {
         }
         
         mConfig.setParamList(l);
-        hide();
+        setVisible(false);
     }
     
     /**
