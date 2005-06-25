@@ -216,7 +216,7 @@ public class ProgramInfo extends devplugin.Plugin {
     }
     if (mLocation != null) {
       dlg.setLocation(mLocation);
-      dlg.show();
+      dlg.setVisible(true);
     } else {
       UiUtilities.centerAndShow(dlg);
       mSize = dlg.getSize();
