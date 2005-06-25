@@ -207,7 +207,7 @@ public class ProgramInfo extends devplugin.Plugin {
       }
 
       public void componentResized(ComponentEvent e) {
-        e.getComponent().getSize(mSize);
+        mSize = e.getComponent().getSize(mSize);
       }
     });
 
