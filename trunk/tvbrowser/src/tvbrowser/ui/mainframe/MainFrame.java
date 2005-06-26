@@ -238,6 +238,15 @@ public class MainFrame extends JFrame implements DateListener {
     }
 
     setProgramFilter(filter);
+
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        scrollToNow();
+      }
+
+    });
+  
+  
   }
 
   public JLabel getStatusBarLabel() {
