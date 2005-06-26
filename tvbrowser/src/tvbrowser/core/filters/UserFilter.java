@@ -205,7 +205,7 @@ public class UserFilter implements devplugin.ProgramFilter {
       result.value=new String(ruleLine,i,curInx-i);
       if ("or".equalsIgnoreCase(result.value) || mLocalizer.msg("or", "or").equalsIgnoreCase(result.value)) {
         result.type=Token.OR;
-      }else if ("und".equalsIgnoreCase(result.value)  || mLocalizer.msg("and", "and").equalsIgnoreCase(result.value)) {
+      }else if ("and".equalsIgnoreCase(result.value)  || mLocalizer.msg("and", "and").equalsIgnoreCase(result.value)) {
         result.type=Token.AND;
       }else if ("not".equalsIgnoreCase(result.value) || mLocalizer.msg("not", "not").equalsIgnoreCase(result.value)) {
         result.type=Token.NOT;
