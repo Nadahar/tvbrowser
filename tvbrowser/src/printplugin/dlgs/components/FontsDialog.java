@@ -111,7 +111,10 @@ public class FontsDialog extends JDialog {
   }
 
   public Font getDateFont() {
-    return mDateFontPanel.getChosenFont();
+    if (mDateFontPanel != null) {
+      return mDateFontPanel.getChosenFont();
+    }
+    return null;
   }
 
 }
