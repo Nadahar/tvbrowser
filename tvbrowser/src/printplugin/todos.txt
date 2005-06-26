@@ -1,0 +1,2 @@
+- Filter beim Drucken verwenden
+- Druckerwarteschlange loeschen
