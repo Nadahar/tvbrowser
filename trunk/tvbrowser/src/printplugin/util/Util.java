@@ -27,8 +27,6 @@
 package printplugin.util;
 
 import devplugin.Program;
-import devplugin.Channel;
-
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -47,6 +45,16 @@ public class Util {
           if (result != 0) {
             return result;
           }
+
+          int minutes1 = p1.getHours()*60+p1.getMinutes();
+          int minutes2 = p2.getHours()*60+p2.getMinutes();
+          if (minutes1<minutes2) {
+            return -1;
+          }
+          else if (minutes1>minutes2) {
+            return 1;
+          }
+
           int pos1 = ChannelList.getPos(p1.getChannel());
           int pos2 = ChannelList.getPos(p2.getChannel());
           if (pos1 < pos2) {
