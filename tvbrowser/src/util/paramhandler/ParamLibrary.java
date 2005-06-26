@@ -116,7 +116,7 @@ public class ParamLibrary {
    * @return List of possible Functions
    */
   public String[] getPossibleFunctions() {
-    String[] str = { "isset", "urlencode", "concat", "clean", "leadingZero", "splitAt", "testparam" };
+    String[] str = { "isset", "urlencode", "concat", "clean", "cleanLess", "leadingZero", "splitAt", "testparam" };
     return str;
   }
 
@@ -289,6 +289,13 @@ public class ParamLibrary {
         buffer.append(clean(params[i]));
       }
       return buffer.toString();
+    } else if (function.equals("cleanLess")) {
+      StringBuffer buffer = new StringBuffer();
+
+      for (int i = 0; i < params.length; i++) {
+        buffer.append(cleanLess(params[i]));
+      }
+      return buffer.toString();
     } else if (function.equals("leadingZero")) {
       if (params.length > 2) {
         mError = true;
@@ -401,4 +408,32 @@ public class ParamLibrary {
     return retStr;
   }
 
+  /**
+   * Clean a String. Replace every non non Char/Digit into "_". ÄÖÜ and
+   * other Locale Letters will remain.
+   * 
+   * @param clean String to clean
+   * @return cleaned String
+   */
+  private String cleanLess(String clean) {
+    StringBuffer buffer = new StringBuffer();
+    char[] chars = clean.trim().toCharArray();
+
+    for (int i = 0; i < chars.length; i++) {
+      if (Character.isDigit(chars[i]) || Character.isLetter(chars[i])) {
+        buffer.append(chars[i]);
+      } else {
+        buffer.append('_');
+      }
+    }
+
+    String retStr = buffer.toString();
+    
+    while (retStr.indexOf("__") >= 0) {
+      retStr = retStr.replaceAll("__", "_");
+    }
+    
+    return retStr;
+  }  
+  
 }
