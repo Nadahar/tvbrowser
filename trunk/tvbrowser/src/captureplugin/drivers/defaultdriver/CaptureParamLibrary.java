@@ -157,7 +157,7 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @see util.paramhandler.ParamLibrary#getPossibleKeys()
    */
   public String[] getPossibleKeys() {
-    String[] additionalKeys = {"channel_name_external", "device_username", "device_password"};
+    String[] additionalKeys = {"channel_name_external","channel_name_external_quiet" , "device_username", "device_password"};
     
     return concat(super.getPossibleKeys(), additionalKeys);
   }
@@ -190,7 +190,9 @@ public class CaptureParamLibrary extends ParamLibrary {
     } else if (key.equals("end_minute")) {
       return ""+mEndTime.get(Calendar.MINUTE);
     } else if (key.equals("channel_name_external")) {
-      return getExternalChannelName(prg);
+      return getExternalChannelName(prg, true);
+    } else if (key.equals("channel_name_external_quiet")) {
+      return getExternalChannelName(prg, false);
     } else if (key.equals("device_username")) {
       return getUserName();
     } else if (key.equals("device_password")) {
@@ -237,14 +239,20 @@ public class CaptureParamLibrary extends ParamLibrary {
   /**
    * Get the external ChannelName 
    * @param prg Program to get the external ChannelName for
+   * @param showError If true it returns an Error if the ChannelName is not set, otherwise it returns a empty String
    * @return external ChannelName
    */
-  private String getExternalChannelName(Program prg) {
+  private String getExternalChannelName(Program prg, boolean showError) {
     
     if ((mConfig.getChannels().get(prg.getChannel()) == null) || (((String)mConfig.getChannels().get(prg.getChannel())).length() == 0)) {
-      setErrors(true);
-      setErrorString(mLocalizer.msg("NoExternal", "No external Name exists for channel {0}.", prg.getChannel().getName()));      
-      return null;
+
+      if (showError) {
+        setErrors(true);
+        setErrorString(mLocalizer.msg("NoExternal", "No external Name exists for channel {0}.", prg.getChannel().getName()));      
+        return null;
+      } else {
+        return "";
+      }
     }
     
     return (String) mConfig.getChannels().get(prg.getChannel());
