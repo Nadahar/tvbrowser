@@ -284,7 +284,7 @@ public class ManageFavoritesDialog extends JDialog {
 
       SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, programArr);
 
-      send.show();
+      send.setVisible(true);
   }
   
 
