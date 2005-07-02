@@ -57,7 +57,7 @@ $project = 'tvbrowser';
 $from_email = 'bodo@tvbrowser.org';
 
 # Mail all reports to this address.
-$dest_email = 'cia@cia.navi.cx';
+$dest_email = 'cia@cia.navi.cx, tvbrowsercvs@wannawork.de';
 
 # If using XML-RPC, connect to this URI.
 $rpc_uri = 'http://cia.navi.cx/RPC2';
