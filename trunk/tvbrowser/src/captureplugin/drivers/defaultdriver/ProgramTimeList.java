@@ -201,12 +201,16 @@ public class ProgramTimeList {
         Calendar cal = Calendar.getInstance();
         cal.setTime(prgTime.getStart());
         
+        
+        Calendar end = Calendar.getInstance();
+        end.setTime(prgTime.getEnd());
+        
+        cal.add(Calendar.MINUTE, 1);
+        end.add(Calendar.MINUTE, -1);
+        
         int max = 0;
         
-        while (cal.getTime().before(prgTime.getEnd())) {
-         
-            cal.add(Calendar.MINUTE, 1);
-            
+        while (cal.getTime().before(end.getTime())) {
             int cur = 0;
             
             for (int i = 0; i < mPrgTimeList.size(); i++) {
@@ -224,6 +228,7 @@ public class ProgramTimeList {
                 max = cur;
             }
             
+            cal.add(Calendar.MINUTE, 1);
         }
         return max;
     }
