@@ -28,13 +28,17 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import tvbrowser.core.Settings;
 import util.ui.ChannelListCellRenderer;
 import devplugin.Channel;
-import tvbrowser.core.Settings;
 
 
 /**
@@ -60,15 +64,13 @@ public class ChannelChooserPanel extends JPanel {
     setLayout(new BorderLayout());
     add(new JScrollPane(mList));
 
-    mList.addListSelectionListener(new ListSelectionListener() {
-
-      public void valueChanged(ListSelectionEvent e) {
+    mList.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
         Channel selectedChannel = (Channel)mList.getSelectedValue();
         if (selectedChannel != null) {
           mParent.showChannel(selectedChannel);
         }
       }
-
     });
   }
 
