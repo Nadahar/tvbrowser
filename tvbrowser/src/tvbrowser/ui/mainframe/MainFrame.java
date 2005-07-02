@@ -394,7 +394,7 @@ public class MainFrame extends JFrame implements DateListener {
     });
 
     util.ui.UiUtilities.centerAndShow(mConfigAssistantDialog);
-    mConfigAssistantDialog.hide();
+    mConfigAssistantDialog.setVisible(false);
     mConfigAssistantDialog.dispose();
     mConfigAssistantDialog = null;
 
@@ -633,6 +633,9 @@ public class MainFrame extends JFrame implements DateListener {
    */
   public void updateButtons() {
     mMenuBar.updateTimeItems();
+    if (mTimebuttonsNode.getLeaf() != null) {
+      ((TimeChooserPanel)mTimebuttonsNode.getLeaf()).updateButtons();
+    }
   }
 
 
