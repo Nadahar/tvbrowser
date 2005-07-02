@@ -55,7 +55,7 @@ public class IntArrayProperty extends Property {
   public int[] getIntArray() {
     if (mCachedValue == null) {
       String asString = getProperty();
-      if (asString != null) {
+      if ((asString != null) && (asString.length() > 0)) {
         String[] splits = asString.split(",");
         try {
           int[] intArr = new int[splits.length];
@@ -70,6 +70,8 @@ public class IntArrayProperty extends Property {
           // We use the default value
           exc.printStackTrace();
         }
+      } else if ((asString != null) && (asString.length() == 0)){
+        mCachedValue = new int[0];
       }
   
       if (mCachedValue == null) {
