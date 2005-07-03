@@ -213,7 +213,7 @@ public class SearchDialog extends JDialog {
     sendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
           SendToPluginDialog send = new SendToPluginDialog(mPlugin, SearchDialog.this, programArr);
-          send.show();
+          send.setVisible(true);
       }
     });
     buttonPn.add(sendBt, BorderLayout.WEST);
