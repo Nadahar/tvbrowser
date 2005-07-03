@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -95,11 +96,13 @@ public class ScrollableMenu extends JMenu {
 
     ActionMap map = (ActionMap) UIManager.getLookAndFeelDefaults().get("PopupMenu.actionMap");
 
-    Action downAction = (Action) map.get("selectNext");
-    Action upAction = (Action) map.get("selectPrevious");
+    if (map != null) {
+      Action downAction = (Action) map.get("selectNext");
+      Action upAction = (Action) map.get("selectPrevious");
 
-    map.put("selectNext", new SelectNextItemAction(DOWN, downAction));
-    map.put("selectPrevious", new SelectNextItemAction(UP, upAction));
+      map.put("selectNext", new SelectNextItemAction(DOWN, downAction));
+      map.put("selectPrevious", new SelectNextItemAction(UP, upAction));
+    }
   }
 
   private static class SelectNextItemAction extends AbstractAction {
@@ -217,7 +220,7 @@ public class ScrollableMenu extends JMenu {
   /**
    * Constructs a new <code>JMenu</code> with the supplied string as its text.
    * 
-   * @param s the text for the menu label
+   * @param menuTitle the text for the menu label
    */
   public ScrollableMenu(String menuTitle) {
     super(menuTitle);
