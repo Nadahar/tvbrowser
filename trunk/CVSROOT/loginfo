@@ -25,3 +25,4 @@
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 ALL /usr/bin/perl $CVSROOT/CVSROOT/ciabot_cvs.pl %{,,,s} $USER
+ALL /usr/bin/perl $CVSROOT/CVSROOT/cvsnewsbot_cvs.pl %{,,,s-V-v} $USER

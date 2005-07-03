@@ -13,3 +13,4 @@
 # comment lines begin with '#'
 avail
 ciabot_cvs.pl
+cvsnewsbot_cvs.pl
