@@ -152,7 +152,7 @@ public class SendToPluginDialog extends JDialog {
 
       public void actionPerformed(ActionEvent evt) {
         send();
-        hide();
+        setVisible(false);
       }
     });
 
@@ -163,7 +163,7 @@ public class SendToPluginDialog extends JDialog {
     cancelButton.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent evt) {
-        hide();
+        setVisible(false);
       }
     });
 
