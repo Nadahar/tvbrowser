@@ -283,6 +283,14 @@ public class TVBrowser {
     };
     saveThread.setPriority(Thread.MIN_PRIORITY);
     saveThread.start();
+
+     // register the shutdown hook
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      public void run() {
+        deleteLockFile();
+      }
+     });;
+
   }
 
 
@@ -394,8 +402,7 @@ public class TVBrowser {
   
   
   public static synchronized void flushSettings() {    
-    //PluginProgramsManager.getInstance().storeTrees();
-      
+     
     mLog.info("Channel Settings (day light saving time corrections/icons)");
     ChannelList.storeAllSettings();  
     
@@ -548,7 +555,6 @@ public class TVBrowser {
   public static void shutdown() {
     mSaveThreadShouldStop = true;
     flushSettings();
-    deleteLockFile();
   }
   
 
