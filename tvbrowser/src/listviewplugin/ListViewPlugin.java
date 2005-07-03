@@ -90,7 +90,7 @@ public class ListViewPlugin extends Plugin {
         if ((_locationListDialog != null) && (_dimensionListDialog != null)) {
             dlg.setLocation(_locationListDialog);
             dlg.setSize(_dimensionListDialog);
-            dlg.show();
+            dlg.setVisible(true);
         } else {
             dlg.setSize(600, 600);
             UiUtilities.centerAndShow(dlg);
