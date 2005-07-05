@@ -53,6 +53,7 @@ import javax.swing.event.HyperlinkListener;
 import util.io.IOUtilities;
 import util.ui.BrowserLauncher;
 import util.ui.UiUtilities;
+import util.ui.findasyoutype.FindAsYouType;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import devplugin.Plugin;
@@ -126,6 +127,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
         handleMouseClicked(e, program);
       }
     });
+    
+    new FindAsYouType(mInfoEP);
     
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
     main.add(scrollPane, BorderLayout.CENTER);
