@@ -1,5 +1,8 @@
 Changelog PrograminfoPlugin
 
+1.0.10
+- Find-As-You-Type added
+
 1.0.9
 - Icons from Plugins shown
 
