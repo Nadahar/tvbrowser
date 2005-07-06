@@ -653,6 +653,7 @@ public class MainFrame extends JFrame implements DateListener {
       mCenterComponent = mRootNode.getComponent();
       jcontentPane.add(mCenterComponent, BorderLayout.CENTER);
       jcontentPane.validate();
+      jcontentPane.requestFocus();
     }
   }
 
