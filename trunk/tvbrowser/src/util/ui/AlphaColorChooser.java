@@ -193,7 +193,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
                 stopEditing();
                 updateColorPanel();
                 mReturnValue = JOptionPane.OK_OPTION;
-                hide();
+                setVisible(false);
             }
 
         });
@@ -204,7 +204,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
                 mCurrentColor = mDefaultColor;
                 updateColorPanel();
                 mReturnValue = JOptionPane.CANCEL_OPTION;
-                hide();
+                setVisible(false);
             }
 
         });
