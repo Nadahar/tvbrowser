@@ -32,6 +32,7 @@ import devplugin.Program;
 import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -42,6 +43,12 @@ public class PluginTree extends JTree {
 
   public PluginTree(TreeModel model) {
     super(model);
+
+    /* remove the F2 key from the keyboard bindings of the JTree */
+    InputMap inputMap = getInputMap();
+    KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
+    inputMap.put(keyStroke,"none");
+
   }
 
   public String convertValueToText(Object value, boolean selected,
