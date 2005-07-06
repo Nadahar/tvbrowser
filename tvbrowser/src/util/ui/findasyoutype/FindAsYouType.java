@@ -62,12 +62,7 @@ public class FindAsYouType {
     mTextComp.addKeyListener(new KeyAdapter() {
       public void keyTyped(KeyEvent e) {
         if ((e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) && ((int)e.getKeyChar() > 27)){
-          if (mFindWindow == null) {
-            mFindWindow = new FindWindow(FindAsYouType.this);
-          }
-          mFindWindow.reset();
-          mFindWindow.setText(""+e.getKeyChar());
-          mFindWindow.setVisible(true);
+          showFindWindow(""+e.getKeyChar());
           e.consume();
         }
       }
@@ -145,4 +140,24 @@ public class FindAsYouType {
     return mTextComp;
   }
 
+  /**
+   * Show the Find-Window
+   */
+  public void showFindWindow() {
+    showFindWindow("");
+  }
+
+  /**
+   * Show the Find-Window
+   * @param text Text to show
+   */
+  public void showFindWindow(String text) {
+    if (mFindWindow == null) {
+      mFindWindow = new FindWindow(FindAsYouType.this);
+    }
+    mFindWindow.reset();
+    mFindWindow.setText(text);
+    mFindWindow.setVisible(true);    
+  }
+  
 }
