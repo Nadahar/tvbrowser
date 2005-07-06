@@ -27,7 +27,6 @@ package programinfo;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +35,7 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,7 +52,7 @@ import javax.swing.event.HyperlinkListener;
 
 import util.io.IOUtilities;
 import util.ui.BrowserLauncher;
-import util.ui.UiUtilities;
+import util.ui.ImageUtilities;
 import util.ui.findasyoutype.FindAsYouType;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
@@ -85,10 +85,10 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     mStyleSheet=styleSheet;
 
     setTitle(mLocalizer.msg("title", "Program information"));
-    
+   
     JPanel main = new JPanel(new BorderLayout());
     main.setPreferredSize(new Dimension(500, 350));
-    main.setBorder(UiUtilities.DIALOG_BORDER);
+    main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     setContentPane(main);
     
     mInfoEP = new JEditorPane();
@@ -108,8 +108,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       }
     });
 
-
-
     mInfoEP.addMouseListener(new MouseAdapter(){
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
@@ -128,22 +126,38 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       }
     });
     
-    new FindAsYouType(mInfoEP);
+    final FindAsYouType findasyoutype = new FindAsYouType(mInfoEP);
     
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
     main.add(scrollPane, BorderLayout.CENTER);
     
     // buttons
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    JPanel buttonPn = new JPanel(new BorderLayout());
+    
+    buttonPn.setBorder(BorderFactory.createEmptyBorder(5,0,0,0));
+    
     main.add(buttonPn, BorderLayout.SOUTH);
 
+    JButton findBtn = new JButton(ImageUtilities
+        .createImageIconFromJar("programinfo/Find16.gif", getClass()));
+    findBtn.setToolTipText(mLocalizer.msg("search", "Search Text"));
+    findBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        findasyoutype.showFindWindow();
+      }
+    });
+    
+    buttonPn.add(findBtn, BorderLayout.WEST);
+    
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dispose();
       }
     });
-    buttonPn.add(closeBtn);
+    
+    buttonPn.add(closeBtn, BorderLayout.EAST);
+    
     getRootPane().setDefaultButton(closeBtn);
     
     // Scroll to the beginning
