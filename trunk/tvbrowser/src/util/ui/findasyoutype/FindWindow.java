@@ -28,6 +28,7 @@ package util.ui.findasyoutype;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -38,6 +39,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
@@ -112,10 +114,10 @@ class FindWindow extends JFrame {
    * @param b true, if visible
    */
   public void setVisible(boolean b) {
-    super.setVisible(b);
     if (b) {
       resizeWindow();
     }
+    super.setVisible(b);
   }
   
   /**
@@ -125,10 +127,15 @@ class FindWindow extends JFrame {
     JTextComponent comp = mFinder.getTextComponent();
     
     Point pos = comp.getLocationOnScreen();
+
+    if (comp.getParent() instanceof JViewport) {
+      pos = comp.getParent().getLocationOnScreen();
+    }
     
-    setSize((int)(comp.getWidth() * 0.8), mField.getPreferredSize().height+10);
-    int posx = (comp.getWidth()-getSize().width) / 2;
+    Rectangle rect = comp.getVisibleRect();
     
+    setSize((int)(rect.width * 0.8), mField.getPreferredSize().height+10);
+    int posx = (rect.width-getSize().width) / 2;
     setLocation(pos.x+posx, pos.y+comp.getVisibleRect().height);
   }
 
