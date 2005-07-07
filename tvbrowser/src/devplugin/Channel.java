@@ -26,16 +26,15 @@
 
 package devplugin;
 
-import java.awt.Image;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.TimeZone;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import java.awt.*;
+import javax.swing.*;
 
 import tvdataservice.TvDataService;
+import tvbrowser.core.ChannelUserSettings;
 import util.ui.ImageUtilities;
 
 public class Channel {
@@ -60,19 +59,14 @@ public class Channel {
   private String mCountry;
   private String mCopyrightNotice;
   private String mWebpage;
-  private int mDayLightSavingTimeCorrection;
   private ChannelGroup mGroup;
   private int mCategories;
-
-  /** FileName for the Icon */
-  private String mIconFileName;
   private Icon mIcon;
+
   /** The Default-Icon */
   private Icon mDefaultIcon;
-  /** Use the Icon defined by the User */
-  private boolean mUseUserIcon = false;
-  
-  
+
+
   public Channel(TvDataService dataService, String name, String id,
     TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories)
   {
@@ -89,7 +83,6 @@ public class Channel {
     mCountry = country;
     mCopyrightNotice=copyrightNotice;
     mWebpage=webpage;
-    mDayLightSavingTimeCorrection=0;
     mGroup=group;
     mIcon=icon;
     mCategories = categories;
@@ -190,7 +183,6 @@ public class Channel {
     
     String channelId;
     
-    
     if (version==1) {
     	channelId=""+in.readInt();
     }
@@ -213,11 +205,9 @@ public class Channel {
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
-
     out.writeObject(mDataService.getClass().getName());
     out.writeObject(mId);
   }
-
   
   public String getCopyrightNotice() {
     return mCopyrightNotice!=null?mCopyrightNotice:"";
@@ -230,7 +220,6 @@ public class Channel {
   public ChannelGroup getGroup() {
     return mGroup;
   }
-
 
   public int getCategories() {
     return mCategories;
@@ -263,11 +252,11 @@ public class Channel {
   }
   
   public void setDayLightSavingTimeCorrection(int correction) {
-    mDayLightSavingTimeCorrection=correction;
+    ChannelUserSettings.getSettings(this).setDaylightSavingTimeCorrection(correction);
   }
   
   public int getDayLightSavingTimeCorrection() {
-    return mDayLightSavingTimeCorrection;
+    return ChannelUserSettings.getSettings(this).getDaylightSavingTimeCorrection();
   }
 
   public TvDataService getDataService() {
@@ -281,67 +270,57 @@ public class Channel {
   public void setDefaultIcon(Icon icon) {
       mDefaultIcon = icon;
   }
-  
+
+  /**
+   *
+   * @param icon The new icon or null to remove the current icon
+   */
   public void setIcon(Icon icon) {
     mIcon = icon;
   }
 
 
   public String toString() {
-    //if (mDataService!=null) {
-    //  return mName + " (" + mDataService.getInfo().getName() + ")";
-    //}
     return mName;
   }
-
-
 
   public String getName() {
     return mName;
   }
 
-
-
   public String getId() {
     return mId;
   }
-
 
   /**
    * Copies the Settins in this Channel (DaylightSaving etc..) into
    * another Channel
    * @param to to this Channel
+   * @deprecated not needed since we use the ChannelUserSettings class for storing channel user settings
    */
   public void copySettingsToChannel(Channel to) {
-      to.setDayLightSavingTimeCorrection(mDayLightSavingTimeCorrection);
-      to.setIconFileName(mIconFileName);
   }
   
   /**
-   * Returns the Icon for this Channel
-   * @return
+   * @return the Icon for this Channel
    */
   public Icon getIcon() {
-      if ((mUseUserIcon) && (mIcon == null) && (getIconFileName() != null)){
-          Image img = ImageUtilities.createImage(getIconFileName());
-          if (img != null) {
-              mIcon = new ImageIcon(img);
-          }
+    if ((isUsingUserIcon()) && (mIcon == null) && (getUserIconFileName() != null)){
+      Image img = ImageUtilities.createImage(getUserIconFileName());
+      if (img != null) {
+        mIcon = new ImageIcon(img);
       }
+    }
       
-      if (mIcon == null) {
-          return mDefaultIcon;
-      }
+    if (mIcon == null) {
+      return mDefaultIcon;
+    }
       
-      return mIcon;
+    return mIcon;
   }
-  
-  /**
-   * Returns true, if the 
-   * @return
-   */
+
   public boolean hasIcon() {
-    if ((mUseUserIcon) && (mIcon == null) && (getIconFileName() != null)) {
+    if ((isUsingUserIcon()) && (mIcon == null) && (getUserIconFileName() != null)) {
       getIcon();
     }
     
@@ -355,18 +334,31 @@ public class Channel {
   /**
    * Gets the Filename for an Icon
    * @return Filename of the Icon
+   * @deprecated use getUserIconFileName()
    */
   public String getIconFileName() {
-      return mIconFileName;
+      return getUserIconFileName();
   }
   
   /**
    * Sets the Filename for an Icon
    * @param filename Filename for Icon
+   * @deprecated user setUserIconFileName
    */
   public void setIconFileName(String filename) {
-      mIconFileName = filename;
-      mIcon = null;
+    setUserIconFileName(filename);
+  }
+
+  public void setUserIconFileName(String filename) {
+    ChannelUserSettings.getSettings(this).setIconFileName(filename);
+  }
+
+  /**
+   *
+   * @return null, if no user icon filename is specified
+   */
+  public String getUserIconFileName() {
+    return ChannelUserSettings.getSettings(this).getIconFileName();
   }
 
   /**
@@ -374,15 +366,16 @@ public class Channel {
    * @param use true for using User-Icon
    */
   public void useUserIcon(boolean use) {
-      mUseUserIcon = use;
+    ChannelUserSettings.getSettings(this).useUserIconFile(use);
   }
-  
+
+
   /**
    * Is using the User-Icon if availabe?
    * @return Using User-Icon if available?
    */
   public boolean isUsingUserIcon() {
-      return mUseUserIcon;
+    return ChannelUserSettings.getSettings(this).useUserIconFile();
   }
 
 

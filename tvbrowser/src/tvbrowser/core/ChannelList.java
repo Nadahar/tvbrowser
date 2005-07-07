@@ -16,15 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ *
  */
 
 package tvbrowser.core;
 
 import java.util.*;
 import java.io.*;
-
 import devplugin.Channel;
 import tvdataservice.TvDataService;
+
 
 
 /**
@@ -42,7 +49,10 @@ public class ChannelList {
   private static ArrayList mAvailableChannels = new ArrayList();
 
   private static ArrayList mSubscribedChannels = new ArrayList();
-  
+
+
+
+
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray(true);
     
@@ -163,11 +173,12 @@ public class ChannelList {
     for (int i=0; i<currentSubscribedChannels.length; i++) {
       Channel ch = (Channel)currentSubscribedChannels[i];
       if (!mAvailableChannels.contains(ch)) {
-        System.out.println(ch+" is not available any more");
+        mLog.warning(ch+" is not available any more");
         mSubscribedChannels.remove(ch);
       }
     }
 
+    loadChannelIcons();
   }
 
   /**
@@ -317,17 +328,14 @@ public class ChannelList {
                 String[] settings = val.split(";");
                 
                 if (settings.length == 2) {
-                    if (settings[0].equals("true")) {
-                        ch.useUserIcon(true);
-                    } else {
-                        ch.useUserIcon(false);
-                    }
-                    
-                    ch.setIconFileName(settings[1]);
+                  ch.setUserIconFileName(settings[1]);
+                  if (settings[0].equals("true")) {
+                    ch.useUserIcon(true);
+                  } else {
+                    ch.useUserIcon(false);
+                  }
                 }
-                
               }
-              
             }
           }catch(IndexOutOfBoundsException e) {
             // ignore
@@ -357,7 +365,7 @@ public class ChannelList {
         out=new PrintWriter(fw);
         Channel[] channels=getSubscribedChannels();
           for (int i=0;i<channels.length;i++) {
-            String filename = channels[i].getIconFileName();
+            String filename = channels[i].getUserIconFileName();
             if ((filename != null) && (filename.trim().length() > 0)){
               out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + channels[i].isUsingUserIcon() +";"+filename.trim());  
             }

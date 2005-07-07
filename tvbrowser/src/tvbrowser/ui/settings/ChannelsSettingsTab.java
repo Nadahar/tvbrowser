@@ -242,7 +242,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       southPn.add(pn2, BorderLayout.SOUTH);
 
       LinkButton urlLabel = new LinkButton(
-         mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier für eine Liste weiterer Sender."),
+         mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier fï¿½r eine Liste weiterer Sender."),
          mLocalizer.msg("addMoreChannelsUrl", "http://wiki.tvbrowser.org/index.php/Senderliste"));
 
       result.add(urlLabel, BorderLayout.SOUTH);
@@ -494,7 +494,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       Channel channel = channels[i];
       if (ChannelList.isSubscribedChannel(channel)) {
         int pos = ChannelList.getPos(channel);
-        ChannelList.getSubscribedChannels()[pos].copySettingsToChannel(channel);
         subscribedChannelArr[pos] = channel;
       }
     }
