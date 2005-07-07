@@ -27,25 +27,12 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -164,7 +151,7 @@ public class ChannelConfigDlg implements ActionListener {
         mIconFileName.setEnabled(mUseUserIcon.isSelected());
         mChangeIcon.setEnabled(mUseUserIcon.isSelected());
         
-        mIconFileName.setText(channelList[0].getIconFileName());
+        mIconFileName.setText(channelList[0].getUserIconFileName());
         content.add(iconPanel, c);
     }
     
@@ -209,8 +196,9 @@ public class ChannelConfigDlg implements ActionListener {
       }
       
       if (mChannelList.length == 1) {
-          mChannelList[0].useUserIcon(mUseUserIcon.isSelected());
-          mChannelList[0].setIconFileName(mIconFileName.getText());
+        mChannelList[0].useUserIcon(mUseUserIcon.isSelected());
+        mChannelList[0].setUserIconFileName(mIconFileName.getText());
+        mChannelList[0].setIcon(null);
       }
       mDialog.hide();
     }
