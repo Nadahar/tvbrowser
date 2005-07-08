@@ -110,14 +110,18 @@ public class ChannelPanel extends JPanel {
     public ChannelLabel(final Channel ch) {
       super();
       setIcon(ch.getIcon());
-
-      // Set the channel name as text
-      String channelName = ch.getName();
-      if (channelName == null) {
-        channelName = mLocalizer.msg("unknown", "Unknown");
+          /*Settings.propEnableChannelIcons.getBoolean()) {
+        // Set Icon if it's available
+        if (Settings.propShowChannelIconsInProgramTable.getBoolean()*/
+      if ( !(Settings.propEnableChannelIcons.getBoolean() && Settings.propShowChannelIconsInProgramTable.getBoolean()) || Settings.propShowChannelNames.getBoolean()) {
+        // Set the channel name as text
+        String channelName = ch.getName();
+        if (channelName == null) {
+          channelName = mLocalizer.msg("unknown", "Unknown");
+        }
+        setText(channelName);
       }
-      setText(channelName);
-      
+
       // Check whether the font was set
       if (channelNameFont == null) {
         fontChanged();

@@ -52,7 +52,8 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   private JPanel mSettingsPn;
   private final JTextField mThemepackTf=new JTextField();
   private JButton mChooseBtn;
-  private JCheckBox mShowChannelIconsCb, mProgramtableChIconsCb, mChannellistChIconsCb;
+  private JCheckBox mShowChannelIconsCb, mProgramtableChIconsCb, mChannellistChIconsCb,
+                    mShowChannelNamesCb;
 
   class LookAndFeelObj {
       private UIManager.LookAndFeelInfo info;
@@ -151,9 +152,12 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mProgramtableChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.programtable","Programmtabelle"));
     mChannellistChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.channellist","Kanalliste"));
 
+    mShowChannelNamesCb = new JCheckBox("Show channel name");
+
     mShowChannelIconsCb.setSelected(Settings.propEnableChannelIcons.getBoolean());
     mProgramtableChIconsCb.setSelected(Settings.propShowChannelIconsInProgramTable.getBoolean());
     mChannellistChIconsCb.setSelected(Settings.propShowChannelIconsInChannellist.getBoolean());
+    mShowChannelNamesCb.setSelected(Settings.propShowChannelNames.getBoolean());
 
     mShowChannelIconsCb.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -162,19 +166,27 @@ public class LookAndFeelSettingsTab implements SettingsTab {
         mChannellistChIconsCb.setEnabled(enabled);
         mProgramtableChIconsCb.setSelected(enabled);
         mChannellistChIconsCb.setSelected(enabled);
+        mShowChannelNamesCb.setEnabled(enabled);
+        if (!enabled) {
+          mShowChannelNamesCb.setSelected(true);
+        }
       }
     });
 
     boolean enabled = mShowChannelIconsCb.isSelected();
     mProgramtableChIconsCb.setEnabled(enabled);
     mChannellistChIconsCb.setEnabled(enabled);
-
+    mShowChannelNamesCb.setEnabled(enabled);
+    if (!enabled) {
+      mShowChannelNamesCb.setSelected(true);
+    }
     mProgramtableChIconsCb.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
     mChannellistChIconsCb.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
 
     channelIconPanel.add(mShowChannelIconsCb);
     channelIconPanel.add(mProgramtableChIconsCb);
     channelIconPanel.add(mChannellistChIconsCb);
+    channelIconPanel.add(mShowChannelNamesCb);
 
     main.add(channelIconPanel);
 
@@ -238,6 +250,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     Settings.propEnableChannelIcons.setBoolean(enableChannelIcons);
     Settings.propShowChannelIconsInChannellist.setBoolean(mChannellistChIconsCb.isSelected());
     Settings.propShowChannelIconsInProgramTable.setBoolean(mProgramtableChIconsCb.isSelected());
+    Settings.propShowChannelNames.setBoolean(mShowChannelNamesCb.isSelected());
   }
 
  
