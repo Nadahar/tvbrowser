@@ -41,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.pluginview.PluginTree;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -59,7 +60,7 @@ public class PluginContextMenu extends AbstractContextMenu {
   private Plugin mPlugin;
   private TreePath mPath;
 
-  public PluginContextMenu(JTree tree, TreePath path, Plugin plugin, ActionMenu[] menus) {
+  public PluginContextMenu(PluginTree tree, TreePath path, Plugin plugin, ActionMenu[] menus) {
     super(tree);
     mDefaultAction = getCollapseExpandAction(path);
     mPlugin = plugin;
@@ -75,7 +76,7 @@ public class PluginContextMenu extends AbstractContextMenu {
     JMenuItem defaultMI = new JMenuItem(mDefaultAction);
     menu.add(defaultMI);
     defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
-
+    menu.add(getExpandAllMenuItem(mPath));
     menu.add(getExportMenu( mPath));
     
     ActionMenu pluginAction = mPlugin.getButtonAction();

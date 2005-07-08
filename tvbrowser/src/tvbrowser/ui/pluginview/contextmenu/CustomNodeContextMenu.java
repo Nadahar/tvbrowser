@@ -34,6 +34,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.*;
 
 import util.ui.menu.MenuUtil;
+import tvbrowser.ui.pluginview.PluginTree;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -46,7 +47,7 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
   private ActionMenu[] mActionMenus;
   private TreePath mPath;
   
-  public CustomNodeContextMenu(JTree tree, TreePath path, ActionMenu[] menus) {
+  public CustomNodeContextMenu(PluginTree tree, TreePath path, ActionMenu[] menus) {
     super(tree);
     mDefaultAction = getCollapseExpandAction(path);
     mActionMenus = menus;
@@ -62,6 +63,7 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
     menu.add(defaultMI);
     defaultMI.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
 
+    menu.add(getExpandAllMenuItem(mPath));
     menu.add(getExportMenu( mPath));
 
     if (mActionMenus.length>0) {
