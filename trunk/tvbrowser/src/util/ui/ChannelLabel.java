@@ -72,7 +72,9 @@ public class ChannelLabel extends JLabel {
     if (Settings.propEnableChannelIcons.getBoolean()) {
       setIcon(ch.getIcon());
     }
-    setText(ch.getName());
+    if (!mChannelIconsVisible || !Settings.propEnableChannelIcons.getBoolean() || Settings.propShowChannelNames.getBoolean()) {
+      setText(ch.getName());
+    }
     setMinimumSize(new Dimension(42,22));
     setToolTipText(ch.getName());
   }
@@ -135,12 +137,5 @@ public class ChannelLabel extends JLabel {
     return DEFAULT_ICON;
   }
 
-  /**
-   * Sets the Text
-   *
-   * @param text Text
-   */
-  public void setText(String text) {
-    super.setText(text);
-  }
+
 }

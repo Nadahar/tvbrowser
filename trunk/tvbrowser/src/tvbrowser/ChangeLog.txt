@@ -1,5 +1,26 @@
 Changelog TVBrowser
 
+1.1 alpha3
+- features:
+    - option to hide channel names if channel icons are enabled
+    - plugin tree: new context menu item 'expand all'
+- bugfixes:
+    - 1232387 Shortcuts funktionieren nicht zuverlaessig
+    - 1231598 Eigene Senderlogos werden vergessen
+    - 1230922 Fehler, wenn keine Zeitknoepfe definiert sind
+    - 1229938 CapturePlugin: Sendungen zur selben Zeit
+    - 1229699 Aktualisierung der rechten Leiste
+    - 1229464 CapturePlugin: channel_name_external
+    - 1227875 Exception in PrintPlugin (Fonts-Einstellungen)
+    - 1227770 PrintPlugin: Sortierung der Sendungen
+    - 1227634 "Eine Instanz laeuft schon"-Meldung
+    - 1226755 Filter muß and / or noch akzeptieren
+    - 1226503 Menue Ansicht > Plugin-Uebersicht wird nicht aktualisiert
+    - 1226286 Doppelklick in Programmtabelle
+    - 1225706 CapturePlugin nicht im Windows-Installer
+    - 1225660 Sprung zu "jetzt" beim Start
+    - 1225652 Fehler in ScrollableMenu
+    - 1225539 Sortierung der Erinnerungen
 
 1.1 alpha2
 - Mac OS X: Store settings in ~/Library/Preferences/TV-Browser

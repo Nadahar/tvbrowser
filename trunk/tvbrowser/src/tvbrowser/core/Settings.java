@@ -270,7 +270,7 @@ public class Settings {
     }
 
     propArr = new Property[] {
-      propEnableChannelIcons, propShowChannelIconsInProgramTable, propShowChannelIconsInChannellist
+      propEnableChannelIcons, propShowChannelIconsInProgramTable, propShowChannelIconsInChannellist, propShowChannelNames
     };
     if (mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().updateChannelPanel();
@@ -658,6 +658,9 @@ public class Settings {
 
   public static final BooleanProperty propEnableChannelIcons
   = new BooleanProperty(mProp, "enableChannelIcons", true);
+
+  public static final BooleanProperty propShowChannelNames
+  = new BooleanProperty(mProp, "showChannelNames", true);
 
   public static final BooleanProperty propShowChannelIconsInProgramTable
   = new BooleanProperty(mProp, "showChannelIconsInProgramtable", true);
