@@ -33,6 +33,8 @@ import util.ui.menu.MenuUtil;
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.ui.pluginview.PluginTree;
+
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
  * Date: 06.01.2005
@@ -43,7 +45,7 @@ public class StructureNodeContextMenu extends AbstractContextMenu {
   private Action mDefaultAction;
   private TreePath mPath;
   
-  public StructureNodeContextMenu(JTree tree, TreePath path) {
+  public StructureNodeContextMenu(PluginTree tree, TreePath path) {
     super(tree);
     mDefaultAction = getCollapseExpandAction(path);
     mPath = path;
@@ -54,6 +56,7 @@ public class StructureNodeContextMenu extends AbstractContextMenu {
     JMenuItem item = new JMenuItem(mDefaultAction);
     item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
     menu.add(item);
+    menu.add(getExpandAllMenuItem(mPath));
     menu.add(getExportMenu( mPath));
     return menu;
   }

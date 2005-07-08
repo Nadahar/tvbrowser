@@ -40,6 +40,7 @@ import javax.swing.tree.TreePath;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.Node;
+import tvbrowser.ui.pluginview.PluginTree;
 import util.ui.menu.MenuUtil;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -63,7 +64,7 @@ public class ProgramContextMenu extends AbstractContextMenu {
   private Plugin mPlugin;
   private Program[] mPrograms;
 
-  public ProgramContextMenu(JTree tree, TreePath[] paths, Plugin plugin, Program[] programs) {
+  public ProgramContextMenu(PluginTree tree, TreePath[] paths, Plugin plugin, Program[] programs) {
     super(tree);
     mPaths = paths;
     mPlugin = plugin;

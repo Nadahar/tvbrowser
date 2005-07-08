@@ -24,8 +24,6 @@
  * $Revision$
  */
 
-
-
 package tvbrowser.ui.pluginview.contextmenu;
 
 
@@ -37,12 +35,12 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.pluginview.Node;
+import tvbrowser.ui.pluginview.PluginTree;
 import util.ui.menu.MenuUtil;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -60,10 +58,26 @@ public abstract class AbstractContextMenu implements ContextMenu {
     private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(AbstractContextMenu.class);
 
-  private JTree mTree;
+  private PluginTree mTree;
 
-  protected AbstractContextMenu(JTree tree) {
+  protected AbstractContextMenu(PluginTree tree) {
     mTree = tree;
+  }
+
+
+  protected JMenuItem getExpandAllMenuItem(final TreePath treePath) {
+
+    Action action = new AbstractAction(){
+      public void actionPerformed(ActionEvent e) {
+        mTree.expandAll(treePath);
+      }
+    };
+
+    action.putValue(Action.NAME, mLocalizer.msg("expandAll","Expand All"));
+
+    JMenuItem item = new JMenuItem(action);
+    item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+    return item;
   }
 
   protected Action getCollapseExpandAction(final TreePath treePath) {
@@ -92,7 +106,6 @@ public abstract class AbstractContextMenu implements ContextMenu {
   
   /**
    * Create a Export-To-Other-Plugins Action
-   * @param node Node to use for Export-Action
    * @return Export-To-Other-Plugins Action
    */
   protected JMenu getExportMenu(TreePath paths) {
