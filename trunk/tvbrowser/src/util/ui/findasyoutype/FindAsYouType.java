@@ -155,9 +155,10 @@ public class FindAsYouType {
     if (mFindWindow == null) {
       mFindWindow = new FindWindow(FindAsYouType.this);
     }
+    mTextComp.grabFocus();
     mFindWindow.reset();
     mFindWindow.setText(text);
-    mFindWindow.setVisible(true);    
+    mFindWindow.setVisible(true);
   }
   
 }
