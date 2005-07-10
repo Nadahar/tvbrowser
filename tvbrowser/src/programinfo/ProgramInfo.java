@@ -198,8 +198,7 @@ public class ProgramInfo extends devplugin.Plugin {
     
     String styleSheet = mSettings.getProperty("stylesheet_v1",DEFAULT_STYLE_SHEET);
     
-    ProgramInfoDialog dlg = new ProgramInfoDialog(getParentFrame(), styleSheet, program, ProgramInfoHelper.mInfoBitArr,
-            ProgramInfoHelper.mInfoIconArr, ProgramInfoHelper.mInfoMsgArr);
+    ProgramInfoDialog dlg = new ProgramInfoDialog(getParentFrame(), styleSheet, program);
     dlg.pack();
     dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
       public void componentMoved(ComponentEvent e) {
