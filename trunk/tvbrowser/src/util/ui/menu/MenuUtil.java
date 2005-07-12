@@ -49,23 +49,31 @@ public class MenuUtil {
   }
 
   public static JMenuItem createMenuItem(ActionMenu menu) {
-    JMenuItem result;
+    JMenuItem result = null;
     if (menu.hasSubItems()) {
       result = new JMenu(menu.getAction());
       ActionMenu[] subItems = menu.getSubItems();
       for (int i=0; i<subItems.length; i++) {
-        result.add(createMenuItem(subItems[i]));
+        JMenuItem item = createMenuItem(subItems[i]);
+        if (item == null) {
+          ((JMenu)result).addSeparator();
+        }
+        else {
+          result.add(item);
+        }
       }
     }
     else {
       if (menu.isSelected()) {
         result = new JCheckBoxMenuItem(menu.getAction().getValue(Action.NAME).toString(), true);
       }
-      else {
+      else if (menu.getAction()!=null) {
         result = new JMenuItem(menu.getAction());
       }
     }
-    result.setFont(CONTEXT_MENU_PLAINFONT);
+    if (result != null) {
+      result.setFont(CONTEXT_MENU_PLAINFONT);
+    }
     return result;
   }
 

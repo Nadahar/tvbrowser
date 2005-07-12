@@ -151,6 +151,9 @@ public class FavoritesPlugin extends Plugin {
       PluginTreeNode curNode = node.addNode(mFavoriteArr[i].getTitle());
       curNode.addAction(new EditFavoriteAction(mFavoriteArr[i]));
       curNode.addAction(new DeleteFavoriteAction(mFavoriteArr[i]));
+      curNode.addAction(null);
+      curNode.addAction(new RenameFavoriteAction(mFavoriteArr[i]));
+
       Program[] progs = mFavoriteArr[i].getPrograms();
       for (int j=0; j<progs.length; j++) {
         curNode.addProgram(progs[j]);
@@ -289,7 +292,7 @@ public class FavoritesPlugin extends Plugin {
       "Automatically marks your favorite programs and passes them to other Plugins." );
     String author = "Til Schneider, www.murfman.de" ;
     
-    return new PluginInfo(name, desc, author, new Version(1, 7));
+    return new PluginInfo(name, desc, author, new Version(1, 8));
   }
 
 
@@ -362,15 +365,32 @@ public class FavoritesPlugin extends Plugin {
   }
 
 
+  class RenameFavoriteAction extends ButtonAction {
+    private Favorite mFavorite;
+
+    public RenameFavoriteAction(Favorite favorite) {
+      mFavorite = favorite;
+      //super.setSmallIcon(createImageIcon("favoritesplugin/Edit16.gif"));
+      super.setText(mLocalizer.msg("rename","rename"));
+    }
+
+    public void actionPerformed(ActionEvent e) {
+      String newName = (String)JOptionPane.showInputDialog(getParentFrame(), "Title:","Rename favorite", JOptionPane.PLAIN_MESSAGE, null, null, mFavorite.getTitle());
+      if (newName != null) {
+        mFavorite.setTitle(newName);
+        updateTree();
+      }
+    }
+  }
+
   class EditFavoriteAction extends ButtonAction {
 
     private Favorite mFavorite;
 
     public EditFavoriteAction(Favorite favorite) {
       mFavorite = favorite;
-      super.setSmallIcon(createImageIcon("favoritesplugin/Edit16.gif"));
+      //super.setSmallIcon(createImageIcon("favoritesplugin/Edit16.gif"));
       super.setText(mLocalizer.msg("edit","edit"));
-
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -388,7 +408,7 @@ public class FavoritesPlugin extends Plugin {
 
     public DeleteFavoriteAction(Favorite favorite) {
       mFavorite = favorite;
-      super.setSmallIcon(createImageIcon("favoritesplugin/Delete16.gif"));
+      //super.setSmallIcon(createImageIcon("favoritesplugin/Delete16.gif"));
       super.setText(mLocalizer.msg("delete","delete"));
     }
 

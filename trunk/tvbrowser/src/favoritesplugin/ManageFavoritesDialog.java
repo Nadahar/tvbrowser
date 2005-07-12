@@ -487,7 +487,7 @@ public class ManageFavoritesDialog extends JDialog {
     {
       if (value instanceof Favorite) {
         Favorite fav = (Favorite)value;
-        String info = fav.getSearchFormSettings().getSearchText();
+        String info = fav.getTitle();
         if (fav.getUseCertainChannel() || fav.getUseCertainTimeOfDay()) {
           info += " (";
           if (fav.getUseCertainChannel()) {

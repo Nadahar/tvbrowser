@@ -70,7 +70,12 @@ public class CustomNodeContextMenu extends AbstractContextMenu {
       menu.addSeparator();
       for (int i=0; i<mActionMenus.length; i++) {
         JMenuItem menuItem = MenuUtil.createMenuItem(mActionMenus[i]);
-        menu.add(menuItem);
+        if (menuItem == null) {
+          menu.addSeparator();
+        }
+        else {
+          menu.add(menuItem);
+        }
       }
     }
     return menu;

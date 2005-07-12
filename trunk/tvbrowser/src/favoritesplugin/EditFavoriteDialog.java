@@ -26,22 +26,13 @@
 
 package favoritesplugin;
 
-import java.awt.Component;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
+import javax.swing.*;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -67,9 +58,6 @@ public class EditFavoriteDialog {
   private Channel[] mSubscribedChannelArr;
 
   private JDialog mDialog;
-  // private JTextField mTermTF;
-  // private JCheckBox mSearchTitleChB, mSearchInTextChB;
-  // private JRadioButton mMatchExactlyRB, mMatchSubstringRB, mRegexRB;
   private SearchForm mSearchForm;
   private JCheckBox mCertainChannelChB, mCertainTimeOfDayChB, mCertainFilterChB;
   private JComboBox mCertainChannelCB, mCertainFilterCB;
@@ -97,7 +85,7 @@ public class EditFavoriteDialog {
     
     JPanel p1, p2;
     String msg;
-    
+
     // search form
     mSearchForm = new SearchForm(false, false);
     main.add(mSearchForm);
