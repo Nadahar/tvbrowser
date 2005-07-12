@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
@@ -44,18 +45,7 @@ import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.ChannelDayProgram;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramFilter;
-import devplugin.ProgramSearcher;
-import devplugin.TvBrowserSettings;
+import devplugin.*;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -68,6 +58,9 @@ public class PluginManagerImpl implements PluginManager {
   /** An example program. */
   private Program mExampleProgram;
 
+   /** The logger for this class */
+  private static java.util.logging.Logger mLog
+    = Logger.getLogger(PluginManagerImpl.class.getName());
 
   /**
    * Creates a new instance of PluginManagerImpl.
@@ -86,21 +79,35 @@ public class PluginManagerImpl implements PluginManager {
   public Program getProgram(Date date, String progID) {
     TvDataBase db = TvDataBase.getInstance();
 
-    Channel[] channels = ChannelList.getSubscribedChannels();  /* 04-17-2005: changed from getAvailableChannels() to getSubscribedChannels */
+  //  Channel[] channels = ChannelList.getSubscribedChannels();  /* 04-17-2005: changed from getAvailableChannels() to getSubscribedChannels */
 
-    for (int i = 0; i < channels.length; i++) {
-      ChannelDayProgram dayProg = db.getDayProgram(date, channels[i]);
+    Channel ch = getChannelFromProgId(progID);
+    if (ch != null) {
+      ChannelDayProgram dayProg = db.getDayProgram(date, ch);
       if (dayProg != null) {
         Program prog = dayProg.getProgram(progID);
         if (prog != null) {
           return prog;
         }
+        else {
+          mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
+        }
       }
+      else {
+        mLog.warning("day program not found: "+progID+"; "+date);
+      }
+    }else{
+      mLog.warning("channel for program '"+progID+"' not found");
     }
 
     return null;
   }
 
+
+  private Channel getChannelFromProgId(String progId) {
+    String[] s = progId.split("_");
+    return ChannelList.getChannel(s[0]);
+  }
 
   /**
    * Gets all channels the user has subscribed.

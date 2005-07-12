@@ -225,6 +225,18 @@ public class ChannelList {
   }
 
 
+  public static Channel getChannel(String id) {
+    Iterator iter = mAvailableChannels.iterator();
+	  while (iter.hasNext()) {
+	    Channel channel = (Channel) iter.next();
+      if (channel.getId().equals(id)) {
+		    return channel;
+	    }
+	  }
+    return null;
+  }
+
+
   public static int getPos(Channel channel) {
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = (Channel) mSubscribedChannels.get(i);
