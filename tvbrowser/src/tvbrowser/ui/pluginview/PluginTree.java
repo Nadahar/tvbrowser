@@ -64,8 +64,11 @@ public class PluginTree extends JTree {
         int m = program.getMinutes();
         return h+":"+(m<10?"0":"")+m+"  " + program.getTitle()+ " (" + program.getChannel().getName()+")";
       }
-      else {
+      else if (o != null) {
         return o.toString();
+      }
+      else {
+        return "null";
       }
     }
     else {

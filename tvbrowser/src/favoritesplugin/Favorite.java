@@ -57,7 +57,9 @@ public class Favorite {
   
   private boolean mUseFilter;
   private ProgramFilter mFilter;
-  
+
+  private String mTitle;
+
   private Program[] mProgramArr;
   
   
@@ -121,6 +123,12 @@ public class Favorite {
       mSearchFormSettings = new SearchFormSettings(in);
     }
 
+    if (version >=5) {
+      mTitle = (String)in.readObject();
+    }
+    else {
+      mTitle = mSearchFormSettings.getSearchText();
+    }
     mUseCertainChannel = in.readBoolean();
 
     String certainChannelServiceClassName = (String) in.readObject();
@@ -182,14 +190,15 @@ public class Favorite {
    * Serializes this Object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(4); // version
-    
+    out.writeInt(5); // version
+
     mSearchFormSettings.writeData(out);
-    
+
+    out.writeObject(mTitle);
+
     out.writeBoolean(mUseCertainChannel);
 
     String certainChannelServiceClassName = null;
-   // int certainChannelId = -1;
     String certainChannelId="";
     if (mCertainChannel != null) {
       certainChannelServiceClassName = mCertainChannel.getDataService().getClass().getName();
@@ -361,11 +370,12 @@ public class Favorite {
   }
   
   public void setTitle(String title) {
-      
+    mTitle = title;  
   }
   
   public String getTitle() {
-    return mSearchFormSettings.getSearchText(); 
+    //return mSearchFormSettings.getSearchText();
+    return mTitle;
   }
   
 }

@@ -1,5 +1,8 @@
 Changelog FavoritesPlugin
 
+1.0.8:
+- new Feature: rename favorite
+
 1.0.7:
 - Added Send to other Plugins
 - Added Icons for Channels
