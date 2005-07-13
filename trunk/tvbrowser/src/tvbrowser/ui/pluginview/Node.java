@@ -28,6 +28,8 @@ package tvbrowser.ui.pluginview;
 
 import devplugin.ProgramItem;
 import devplugin.ActionMenu;
+import devplugin.NodeFormatter;
+import devplugin.Program;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
@@ -50,6 +52,22 @@ public class Node extends DefaultMutableTreeNode {
 
   private ArrayList mActionMenuList;
 
+  private NodeFormatter mNodeFormatter;
+
+  private static NodeFormatter mDefaultNodeFormatter = new NodeFormatter(){
+    public String format(ProgramItem item) {
+      if (item == null) {
+        return "<null>";
+      }
+      Program program = item.getProgram();
+      if (program == null) {
+        return "<null>";
+      }
+      int h = program.getHours();
+      int m = program.getMinutes();
+      return h+":"+(m<10?"0":"")+m+"  " + program.getTitle()+ " (" + program.getChannel().getName()+")";
+    }
+  };
 
   public Node(int type, Object o) {
     super(o);
@@ -62,6 +80,20 @@ public class Node extends DefaultMutableTreeNode {
     setAllowsChildren(false);
   }
 
+  public void setNodeFormatter(NodeFormatter formatter) {
+    mNodeFormatter = formatter;
+  }
+
+  public NodeFormatter getNodeFormatter() {
+    if (mNodeFormatter != null) {
+      return mNodeFormatter;
+    }
+    Node parent = (Node)getParent();
+    if (parent != null) {
+      return parent.getNodeFormatter();
+    }
+    return mDefaultNodeFormatter;
+  }
 
   public void addActionMenu(ActionMenu menu) {
     mActionMenuList.add(menu);

@@ -164,6 +164,13 @@ public class PluginTreeNode {
     return mDefaultNode.getActionMenus();
   }
 
+  /**
+   * Sets the formatter for this node and all of the child nodes.
+   * @param formatter the formatter
+   */
+  public void setNodeFormatter(NodeFormatter formatter) {
+    mDefaultNode.setNodeFormatter(formatter);
+  }
 
   private void switchToSortByDateView() {
     Map dateMap = new HashMap();
@@ -275,7 +282,10 @@ public class PluginTreeNode {
 
   public void update() {
 
+
+
     switchToSortByDateView();
+
     PluginTreeModel.getInstance().reload(mDefaultNode);
 
   }
