@@ -43,6 +43,9 @@ import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
 import printplugin.settings.*;
 import printplugin.printer.PrintJob;
 import util.ui.UiUtilities;
+import util.ui.ImageUtilities;
+import favoritesplugin.Favorite;
+import favoritesplugin.EditFavoriteDialog;
 
 
 public class PrintPlugin extends Plugin {
@@ -55,13 +58,13 @@ public class PrintPlugin extends Plugin {
   private static final String SCHEME_FILE_DAYPROGRAM = "printplugin.dayprog.schemes";
   private static final String SCHEME_FILE_QUEUE = "printplugin.queue.schemes";
 
-  private static Plugin mInstance;
+  private static PrintPlugin mInstance;
 
   public PrintPlugin() {
     mInstance = this;
   }
 
-  public static Plugin getInstance() {
+  public static PrintPlugin getInstance() {
     return mInstance;
   }
 
@@ -84,7 +87,10 @@ public class PrintPlugin extends Plugin {
       progs[i].mark(this);
     }
     root.update();
+    root.addAction(new EmptyQueueAction());
   }
+
+
 
   public ActionMenu getContextMenuActions(final Program program) {
     final Plugin thisPlugin = this;
@@ -307,6 +313,11 @@ public class PrintPlugin extends Plugin {
     }
   }
 
+
+  public ImageIcon createIcon(String fileName) {
+    return super.createImageIcon(fileName);
+  }
+
   public void loadSettings(Properties settings) {
 
   }
@@ -314,6 +325,9 @@ public class PrintPlugin extends Plugin {
   public void writeData(ObjectOutputStream out) throws IOException {
     storeRootNode();
   }
+
+
+
 
 
 }

@@ -248,6 +248,12 @@ public class PluginTreeNode {
   }
 
   public void removeAllChildren() {
+    if (mPlugin != null) {
+      Program[] programs = getPrograms();
+      for (int i=0; i<programs.length; i++) {
+        programs[i].unmark(mPlugin);
+      }
+    }
     mChildNodes.clear();
     mDefaultNode.removeAllChildren();
   }

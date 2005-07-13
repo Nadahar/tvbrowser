@@ -38,7 +38,9 @@ import java.awt.event.ActionEvent;
 
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
+import util.ui.TabLayout;
 import printplugin.PrintPlugin;
+import printplugin.EmptyQueueAction;
 import printplugin.util.Util;
 
 
@@ -50,6 +52,8 @@ public class GeneralTab extends JPanel {
 
   private JCheckBox mEmptyQueueCb;
   private PluginTreeNode mRootNode;
+  private JButton mEmptyQueueBt;
+  private JPanel mProgramListPanel;
 
   public GeneralTab(PluginTreeNode rootNode) {
 
@@ -60,13 +64,28 @@ public class GeneralTab extends JPanel {
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-    JPanel programList = createProgramListPanel();
+    mProgramListPanel = createProgramListPanel();
     JPanel pn1 = new JPanel(new BorderLayout());
-    pn1.add(programList, BorderLayout.NORTH);
+    pn1.add(mProgramListPanel, BorderLayout.NORTH);
 
     add(new JScrollPane(pn1), BorderLayout.CENTER);
     add(content, BorderLayout.NORTH);
-    add(mEmptyQueueCb = new JCheckBox(mLocalizer.msg("emptyQueue","empty queue after pringing")), BorderLayout.SOUTH);
+
+    JPanel southPn = new JPanel(new TabLayout(1));
+    JPanel pn = new JPanel(new BorderLayout());
+    pn.add(mEmptyQueueBt = new JButton(new EmptyQueueAction()), BorderLayout.WEST);
+    southPn.add(pn);
+    southPn.add(mEmptyQueueCb = new JCheckBox(mLocalizer.msg("emptyQueue","empty queue after pringing")));
+    add(southPn, BorderLayout.SOUTH);
+
+    mEmptyQueueBt.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mProgramListPanel.removeAll();
+        mProgramListPanel.invalidate();
+        mProgramListPanel.updateUI();
+      }
+    });
+
   }
 
 
