@@ -71,7 +71,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     root.addNodeListener(this);
     mReminderList = new ReminderList(root);
     mReminderList.setReminderTimerListener(this);
-
   }
   
   public static ReminderPlugin getInstance() {

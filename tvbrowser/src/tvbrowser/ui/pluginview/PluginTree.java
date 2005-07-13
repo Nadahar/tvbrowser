@@ -60,14 +60,12 @@ public class PluginTree extends JTree {
   public String convertValueToText(Object value, boolean selected,
                                      boolean expanded, boolean leaf, int row,
                                      boolean hasFocus) {
-    if (value instanceof DefaultMutableTreeNode) {
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+    if (value instanceof Node) {
+      Node node = (Node)value;
       Object o = node.getUserObject();
       if (o instanceof ProgramItem) {
-        Program program = ((ProgramItem)o).getProgram();
-        int h = program.getHours();
-        int m = program.getMinutes();
-        return h+":"+(m<10?"0":"")+m+"  " + program.getTitle()+ " (" + program.getChannel().getName()+")";
+        ProgramItem programItem = (ProgramItem)o;
+        return node.getNodeFormatter().format(programItem);
       }
       else if (o != null) {
         return o.toString();
@@ -80,9 +78,6 @@ public class PluginTree extends JTree {
       return value.toString();
     }
   }
-
-
- 
 
   public void expandAll(TreePath path) {
     expandPath(path);
