@@ -26,14 +26,18 @@
 
 package tvbrowser.ui.pluginview;
 
-import devplugin.ProgramItem;
-import devplugin.Program;
-
-import javax.swing.*;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.awt.event.KeyEvent;
+
+import javax.swing.InputMap;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+
+import util.ui.OverlayListener;
+import devplugin.Program;
+import devplugin.ProgramItem;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -49,7 +53,8 @@ public class PluginTree extends JTree {
     InputMap inputMap = getInputMap();
     KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
     inputMap.put(keyStroke,"none");
-
+    
+    new OverlayListener(this);
   }
 
   public String convertValueToText(Object value, boolean selected,
