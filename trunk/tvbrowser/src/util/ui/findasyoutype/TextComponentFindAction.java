@@ -9,16 +9,24 @@ import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
+/**
+ * This TextComponentFindAction is based on the Implementation of Santosh
+ * 
+ * For Details look here:
+ * http://jroller.com/page/santhosh/20050707#incremental_search_jtextcomponent
+ * 
+ * @author Santosh
+ */
 public class TextComponentFindAction extends FindAction implements FocusListener {
 
   public TextComponentFindAction(JTextComponent comp) {
     super(comp);
   }
-  
+
   public TextComponentFindAction(JTextComponent comp, boolean startAtKeyType) {
     super(comp, startAtKeyType);
   }
-  
+
   // 1. inits searchField with selected text
   // 2. adds focus listener so that textselection gets painted
   // even if the textcomponent has no focus
@@ -34,10 +42,10 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     int offset = bias == Position.Bias.Forward ? textComp.getCaretPosition() : textComp.getCaret().getMark() - 1;
 
     int index = getNextMatch(textComp, str, offset, bias);
-    
+
     if (index != -1) {
       textComp.setSelectionStart(index);
-      textComp.setSelectionEnd(index+str.length());
+      textComp.setSelectionEnd(index + str.length());
       return true;
     } else {
       offset = bias == null || bias == Position.Bias.Forward ? 0 : textComp.getDocument().getLength();
@@ -54,7 +62,7 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     String text;
     try {
       text = textComp.getDocument().getText(0, textComp.getDocument().getLength());
-      if (ignoreCase) {
+      if (isIgnoreCase()) {
         str = str.toLowerCase();
         text = text.toLowerCase();
       }
@@ -82,7 +90,7 @@ public class TextComponentFindAction extends FindAction implements FocusListener
 
   public void focusLost(FocusEvent e) {
   }
-  
+
   public JTextComponent getTextComponent() {
     return (JTextComponent) getComponent();
   }

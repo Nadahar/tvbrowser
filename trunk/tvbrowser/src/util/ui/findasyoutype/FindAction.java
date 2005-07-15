@@ -23,11 +23,18 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Position;
 
+/**
+ * This TextComponentFindAction is based on the Implementation of Santosh
+ * 
+ * For Details look here:
+ * http://jroller.com/page/santhosh/20050707#incremental_search_the_framework
+ * 
+ * @author Santosh
+ */
 public abstract class FindAction extends AbstractAction implements DocumentListener, KeyListener {
-  
-  private static final util.ui.Localizer mLocalizer
-  = util.ui.Localizer.getLocalizerFor(FindAction.class);
-  
+
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FindAction.class);
+
   private JPanel mSearchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
   private JTextField mSearchField = new JTextField();
@@ -36,17 +43,19 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
 
   private JComponent mComponent;
 
+  private boolean mIgnoreCase;
+
   public FindAction(JComponent comp) {
     this(comp, false);
   }
-  
+
   public FindAction(JComponent comp, boolean startAtKeytype) {
-    super(mLocalizer.msg("incrementalSearch","Incremental Search")); // NOI18N
-    
+    super(mLocalizer.msg("incrementalSearch", "Incremental Search")); // NOI18N
+
     mComponent = comp;
     mSearchPanel.setBackground(UIManager.getColor("ToolTip.background"));
     mSearchField.setOpaque(false);
-    JLabel label = new JLabel(mLocalizer.msg("searchFor", "Search for")+":");
+    JLabel label = new JLabel(mLocalizer.msg("searchFor", "Search for") + ":");
     label.setFont(label.getFont().deriveFont(Font.BOLD)); // for readability
     mSearchPanel.add(label);
     mSearchPanel.add(mSearchField);
@@ -55,7 +64,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     mPopup.setBorder(BorderFactory.createLineBorder(Color.black));
     mPopup.add(mSearchPanel);
     mSearchField.setFont(label.getFont().deriveFont(Font.PLAIN)); // for
-                                                                  // readability
+    // readability
 
     // when the window containing the "comp" has registered Esc key
     // then on pressing Esc instead of search popup getting closed
@@ -66,26 +75,30 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
         mPopup.setVisible(false);
       }
     }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_FOCUSED);
-    
-    
+
     install(comp);
-    
+
     if (startAtKeytype) {
       installKeyListener(comp);
     }
-    
+
   }
 
-
-  protected boolean ignoreCase;
-
+  public boolean isIgnoreCase() {
+    return mIgnoreCase;
+  }
+  
+  public void setIgnoreCase(boolean ignoreCase) {
+    mIgnoreCase = ignoreCase;
+  }
+  
   /*-------------------------------------------------[ ActionListener ]---------------------------------------------------*/
 
   public void actionPerformed(ActionEvent ae) {
     if (ae.getSource() == mSearchField)
       mPopup.setVisible(false);
     else {
-      ignoreCase = (ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0;
+      setIgnoreCase((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0);
 
       mSearchField.removeActionListener(this);
       mSearchField.removeKeyListener(this);
@@ -163,11 +176,11 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
   protected JTextField getSearchField() {
     return mSearchField;
   }
-  
+
   public JComponent getComponent() {
     return mComponent;
   }
-  
+
   /*-------------------------------------------------[ Installation ]---------------------------------------------------*/
   private void install(JComponent comp) {
     comp.registerKeyboardAction(this, KeyStroke.getKeyStroke('I', KeyEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
@@ -175,18 +188,17 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
         JComponent.WHEN_FOCUSED);
   }
 
-
   private void installKeyListener(JComponent comp) {
     comp.addKeyListener(new KeyAdapter() {
 
       public void keyTyped(KeyEvent e) {
         if (Character.isLetterOrDigit(e.getKeyChar())) {
           actionPerformed(new ActionEvent(this, 0, "show"));
-          mSearchField.setText(""+e.getKeyChar());
+          mSearchField.setText("" + e.getKeyChar());
         }
       }
 
     });
-    
-  }  
+
+  }
 }
