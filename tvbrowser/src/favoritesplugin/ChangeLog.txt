@@ -1,7 +1,8 @@
 Changelog FavoritesPlugin
 
 1.0.8:
-- new Feature: rename favorite
+- new feature: rename favorite
+- new feature: select channels dialog
 
 1.0.7:
 - Added Send to other Plugins

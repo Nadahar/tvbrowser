@@ -51,7 +51,7 @@ public class Favorite {
   private SearchFormSettings mSearchFormSettings;
   
   private boolean mUseCertainChannel;
-  private Channel mCertainChannel;
+  private Channel[] mCertainChannels;
   private boolean mUseCertainTimeOfDay;
   private int mCertainFromTime, mCertainToTime;
   
@@ -71,7 +71,7 @@ public class Favorite {
     mSearchFormSettings = new SearchFormSettings("");
     
     mUseCertainChannel = false;
-    mCertainChannel = null;
+    mCertainChannels = null;
     mUseCertainTimeOfDay = false;
     mCertainFromTime = 0;
     mCertainToTime = 23 * 60 + 59; // 23:59
@@ -131,16 +131,40 @@ public class Favorite {
     }
     mUseCertainChannel = in.readBoolean();
 
-    String certainChannelServiceClassName = (String) in.readObject();
-    String certainChannelId;
-    if (version==1) {
-    	certainChannelId=""+in.readInt();
-    }else{
-    	certainChannelId=(String)in.readObject();
-    }
-    
-    mCertainChannel = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
+    if (version < 6) {
+      String certainChannelServiceClassName = (String) in.readObject();
+      String certainChannelId;
+      if (version==1) {
+        certainChannelId=""+in.readInt();
+      }else{
+        certainChannelId=(String)in.readObject();
+      }
+      Channel ch = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
+      mCertainChannels = new Channel[]{ch};
 
+    }
+    else {
+      if (mUseCertainChannel) {
+        int cnt = in.readInt();
+        ArrayList list = new ArrayList();
+        for (int i=0; i<cnt; i++) {
+          String certainChannelServiceClassName = (String) in.readObject();
+          String certainChannelId;
+          if (version==1) {
+            certainChannelId=""+in.readInt();
+          }else{
+            certainChannelId=(String)in.readObject();
+          }
+
+          Channel channel = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
+          if (channel != null) {
+            list.add(channel);
+          }
+        }
+        mCertainChannels = new Channel[list.size()];
+        list.toArray(mCertainChannels);
+      }
+    }
     mUseCertainTimeOfDay = in.readBoolean();
     mCertainFromTime = in.readInt();
     mCertainToTime = in.readInt();
@@ -190,7 +214,7 @@ public class Favorite {
    * Serializes this Object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(5); // version
+    out.writeInt(6); // version: 6
 
     mSearchFormSettings.writeData(out);
 
@@ -200,12 +224,15 @@ public class Favorite {
 
     String certainChannelServiceClassName = null;
     String certainChannelId="";
-    if (mCertainChannel != null) {
-      certainChannelServiceClassName = mCertainChannel.getDataService().getClass().getName();
-      certainChannelId = mCertainChannel.getId();
+    if (mCertainChannels != null) {
+      out.writeInt(mCertainChannels.length);
+      for (int i=0; i<mCertainChannels.length; i++) {
+        certainChannelServiceClassName = mCertainChannels[i].getDataService().getClass().getName();
+        certainChannelId = mCertainChannels[i].getId();
+        out.writeObject(certainChannelServiceClassName);
+        out.writeObject(certainChannelId);
+      }
     }
-    out.writeObject(certainChannelServiceClassName);
-    out.writeObject(certainChannelId);
     
     out.writeBoolean(mUseCertainTimeOfDay);
     out.writeInt(mCertainFromTime);
@@ -247,12 +274,12 @@ public class Favorite {
 
   
   
-  public Channel getCertainChannel() {
-    return mCertainChannel;
+  public Channel[] getCertainChannels() {
+    return mCertainChannels;
   }
   
-  public void setCertainChannel(Channel certainChannel) {
-    mCertainChannel = certainChannel;
+  public void setCertainChannels(Channel[] certainChannel) {
+    mCertainChannels = certainChannel;
   }
 
   
@@ -324,10 +351,10 @@ public class Favorite {
     int nrDays = 1000;
     Channel[] channels;
     if (mUseCertainChannel) {
-      if (mCertainChannel == null) {
+      if (mCertainChannels[0] == null) {
         channels = new Channel[0];
       } else {
-        channels = new Channel[] { mCertainChannel };
+        channels = new Channel[] { mCertainChannels[0] };
       }
     } else {
       channels = Plugin.getPluginManager().getSubscribedChannels();
