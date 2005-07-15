@@ -75,7 +75,7 @@ public class TVBrowser {
   public static util.ui.Localizer mLocalizer;
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(1,10,false,"1.1 Alpha2");
+  public static final devplugin.Version VERSION=new devplugin.Version(1,10,false,"1.1 Alpha3");
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
   
   private static SystemTray mTray;
