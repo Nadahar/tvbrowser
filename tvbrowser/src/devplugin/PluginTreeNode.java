@@ -50,6 +50,7 @@ public class PluginTreeNode {
   private ArrayList mNodeListeners;
   private Plugin mPlugin;
   private Node mDefaultNode;
+  private boolean mGroupingByDate;
 
   private PluginTreeNode(int type, Object o) {
     mChildNodes = new ArrayList();
@@ -57,6 +58,7 @@ public class PluginTreeNode {
     mObject = o;
     mDefaultNode = new Node(type, mObject);
     mNodeListeners = new ArrayList();
+    mGroupingByDate = true;
   }
 
   public PluginTreeNode(String title) {
@@ -172,7 +174,36 @@ public class PluginTreeNode {
     mDefaultNode.setNodeFormatter(formatter);
   }
 
-  private void switchToSortByDateView() {
+  /**
+   * Enables/Disabled the 'grouping by date'-feature.
+   * Default is 'enabled'
+   *
+   * @param enable
+   */
+  public void setGroupingByDateEnabled(boolean enable) {
+    mGroupingByDate = enable;
+  }
+
+
+  private void createDefaultNodes() {
+    mDefaultNode.removeAllChildren();
+
+    PluginTreeNode[] items = (PluginTreeNode[])mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
+    Arrays.sort(items, sPluginTreeNodeComparator);
+    for (int i=0; i<items.length; i++) {
+      PluginTreeNode n = items[i];
+      if (!n.isLeaf()) {
+        n.createDefaultNodes();
+        mDefaultNode.add(n.getMutableTreeNode());
+      }
+      else {
+        ProgramItem progItem = (ProgramItem)n.getUserObject();
+        mDefaultNode.add(new Node(progItem));
+      }
+    }
+  }
+
+  private void createDateNodes() {
     Map dateMap = new HashMap();
     mDefaultNode.removeAllChildren();
 
@@ -180,7 +211,7 @@ public class PluginTreeNode {
     while (it.hasNext()) {
       PluginTreeNode n = (PluginTreeNode)it.next();
       if (!n.isLeaf()) {
-        n.switchToSortByDateView();
+        n.createDateNodes();
         mDefaultNode.add(n.getMutableTreeNode());
       }
       else {
@@ -226,6 +257,28 @@ public class PluginTreeNode {
     }
   }
 
+  private static Comparator sPluginTreeNodeComparator = new Comparator() {
+    public int compare(Object o1, Object o2) {
+      if (o1 instanceof PluginTreeNode && o2 instanceof PluginTreeNode) {
+        PluginTreeNode n1 = (PluginTreeNode)o1;
+        PluginTreeNode n2 = (PluginTreeNode)o2;
+        Object u1 = n1.getUserObject();
+        Object u2 = n2.getUserObject();
+        if (u1 instanceof ProgramItem && u2 instanceof ProgramItem) {
+          return sProgramItemComparator.compare(u1, u2);
+        }
+        if (u1 instanceof String && u2 instanceof String) {
+          return ((String)u1).compareTo(u2);
+        }
+        if (u1 instanceof String) {
+          return 1;
+        }
+        return -1;
+      }
+      return 0;
+    }
+
+  };
 
   private static Comparator sProgramItemComparator = new Comparator(){
     public int compare(Object o1, Object o2) {
@@ -283,8 +336,12 @@ public class PluginTreeNode {
   public void update() {
 
 
-
-    switchToSortByDateView();
+    if (mGroupingByDate) {
+      createDateNodes();
+    }
+    else {
+      createDefaultNodes();
+    }
 
     PluginTreeModel.getInstance().reload(mDefaultNode);
 
