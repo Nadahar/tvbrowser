@@ -15,7 +15,7 @@ import javax.swing.text.Position;
  * For Details look here:
  * http://jroller.com/page/santhosh/20050707#incremental_search_jtextcomponent
  * 
- * @author Santosh
+ * @author Santhosh
  */
 public class TextComponentFindAction extends FindAction implements FocusListener {
 
