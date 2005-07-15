@@ -33,6 +33,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import util.ui.ChannelChooserDlg;
+
 
 
 /**
@@ -73,7 +75,7 @@ public class ChannelSelectionPanel extends JPanel {
 
     mChangeSelectedChannelsBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event){
-        ChannelChooserDlg dlg = new ChannelChooserDlg(dlgParent, mChannels);
+        ChannelChooserDlg dlg = new ChannelChooserDlg(dlgParent, mChannels,"<html>" + mLocalizer.msg("infotext.1","Waehlen Sie jene Sender aus, deren Programm ausgedruckt werden soll.")+"</html>");
         util.ui.UiUtilities.centerAndShow(dlg);
         mChannels = dlg.getChannels(mChannels);
         updateSelectedChannelsPanel();

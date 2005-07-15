@@ -24,64 +24,73 @@
  * $Revision$
  */
 
-package printplugin.dlgs.components;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-
-import util.ui.OrderChooser;
+package util.ui;
 
 import devplugin.Channel;
 import devplugin.Plugin;
 
+import javax.swing.*;
+
+
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
 public class ChannelChooserDlg extends JDialog {
-  
+
   private Channel[] mChannelArr;
   private OrderChooser mChannelChooser;
-  
+
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ChannelChooserDlg.class);
 
-  
-  public ChannelChooserDlg(Frame parent, Channel[] channelArr) {
-    
+  public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description) {
+    super(parent, true);
+    init(channelArr, description);
+  }
+
+
+  public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description) {
     super(parent,true);
+    init(channelArr, description);
+  }
+
+  private void init(Channel[] channelArr, String description) {
     setTitle(mLocalizer.msg("chooseChannels","choose channels"));
-    
+
     if (channelArr == null) {
       mChannelArr = new Channel[]{};
     }
     else {
       mChannelArr = channelArr;
     }
-    
+
     JPanel contentPane = (JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-    
+
     JPanel southPn = new JPanel(new BorderLayout());
     JPanel btnPn = new JPanel();
-    
-    JButton okBt = new JButton(mLocalizer.msg("ok","OK"));
-    JButton cancelBt = new JButton(mLocalizer.msg("cancel","Cancel"));
-    
+
+    JButton okBt = new JButton(mLocalizer.msg("OK","OK"));
+    JButton cancelBt = new JButton(mLocalizer.msg("Cancel","Cancel"));
+
     btnPn.add(okBt);
     btnPn.add(cancelBt);
     southPn.add(btnPn,BorderLayout.NORTH);
-    
+
     JPanel centerPn = new JPanel(new BorderLayout());
     centerPn.add(mChannelChooser = new OrderChooser(mChannelArr, Plugin.getPluginManager().getSubscribedChannels()), BorderLayout.NORTH);
-    JLabel lb = new JLabel("<html>" + mLocalizer.msg("infotext.1","Waehlen Sie jene Sender aus, deren Programm ausgedruckt werden soll.")+"</html>");
- 
-    centerPn.add(lb,BorderLayout.SOUTH);
-    
+
+    if (description != null) {
+      JLabel lb = new JLabel(description);
+      centerPn.add(lb,BorderLayout.SOUTH);
+    }
+
     contentPane.add(centerPn,BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
-    
-    
+
+
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         Object[] o = mChannelChooser.getOrder();
@@ -90,26 +99,26 @@ public class ChannelChooserDlg extends JDialog {
           mChannelArr[i]=(Channel)o[i];
         }
         hide();
-      }      
+      }
       });
-      
+
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         mChannelArr = null;
         hide();
-      }      
+      }
     });
-    
-    
+
+
     pack();
   }
-  
+
   public Channel[] getChannels(Channel[] channels) {
-    
+
     if (mChannelArr==null) {
       return channels;
     }
     return mChannelArr;
   }
-  
+
 }

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,10 +36,7 @@ import javax.swing.*;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.ui.ChannelListCellRenderer;
-import util.ui.SearchForm;
-import util.ui.TabLayout;
-import util.ui.UiUtilities;
+import util.ui.*;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.ProgramFilter;
@@ -55,16 +52,18 @@ public class EditFavoriteDialog {
     = util.ui.Localizer.getLocalizerFor(EditFavoriteDialog.class);
 
   private Favorite mFavorite;
-  private Channel[] mSubscribedChannelArr;
+  //private Channel[] mSubscribedChannelArr;
 
   private JDialog mDialog;
   private SearchForm mSearchForm;
   private JCheckBox mCertainChannelChB, mCertainTimeOfDayChB, mCertainFilterChB;
-  private JComboBox mCertainChannelCB, mCertainFilterCB;
+  private JComboBox /*mCertainChannelCB, */mCertainFilterCB;
   private JSpinner mCertainFromTimeSp, mCertainToTimeSp;
   private JLabel mCertainToTimeLabel;
-  private JButton mOkBt, mCancelBt;
-  
+  private JButton mOkBt, mCancelBt, mSelectChannelsBt;
+
+  private Channel[] mCertainChannelArr;
+
   private boolean mOkWasPressed = false;
   
   
@@ -72,9 +71,9 @@ public class EditFavoriteDialog {
   /** 
    * Creates a new instance of EditFavoriteDialog.
    */
-  public EditFavoriteDialog(Component parent, Favorite favorite) {
+  public EditFavoriteDialog(final Component parent, Favorite favorite) {
     mFavorite = favorite;
-    mSubscribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
+    //mSubscribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
 
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(mLocalizer.msg("dlgTitle", "Edit favorite program"));
@@ -104,10 +103,20 @@ public class EditFavoriteDialog {
       }
     });
     p1.add(mCertainChannelChB);
-    
-    mCertainChannelCB = new JComboBox(mSubscribedChannelArr);
-    mCertainChannelCB.setRenderer(new ChannelListCellRenderer());
-    p1.add(mCertainChannelCB);
+
+    mSelectChannelsBt = new JButton(mLocalizer.msg("chooseChannels","Choose channels"));
+    mSelectChannelsBt.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        ChannelChooserDlg dlg = new ChannelChooserDlg((Dialog)UiUtilities.getBestDialogParent(parent), mFavorite.getCertainChannels(), null);
+        UiUtilities.centerAndShow(dlg);
+        mCertainChannelArr = dlg.getChannels(mFavorite.getCertainChannels());
+      }
+    });
+    p1.add(mSelectChannelsBt);
+
+    //mCertainChannelCB = new JComboBox(mSubscribedChannelArr);
+    //mCertainChannelCB.setRenderer(new ChannelListCellRenderer());
+    //p1.add(mCertainChannelCB);
 
     msg = mLocalizer.msg("certainTimeOfDay", "Certain time of day");
     mCertainTimeOfDayChB = new JCheckBox(msg);
@@ -186,7 +195,7 @@ public class EditFavoriteDialog {
   
   private void updateEnabled() {
     boolean enabled = mCertainChannelChB.isSelected();
-    mCertainChannelCB.setEnabled(enabled);
+    mSelectChannelsBt.setEnabled(enabled);
 
     enabled = mCertainTimeOfDayChB.isSelected();
     mCertainFromTimeSp.setEnabled(enabled);
@@ -203,9 +212,7 @@ public class EditFavoriteDialog {
     mSearchForm.setSearchFormSettings(mFavorite.getSearchFormSettings());
 
     mCertainChannelChB.setSelected(mFavorite.getUseCertainChannel());
-    Channel certainChannel = mFavorite.getCertainChannel();
-    mCertainChannelCB.setSelectedItem(certainChannel);
-    
+
     mCertainTimeOfDayChB.setSelected(mFavorite.getUseCertainTimeOfDay());
     Calendar cal = Calendar.getInstance();
     
@@ -234,8 +241,7 @@ public class EditFavoriteDialog {
     mFavorite.setSearchFormSettings(mSearchForm.getSearchFormSettings());
 
     mFavorite.setUseCertainChannel(mCertainChannelChB.isSelected());
-    Channel certainChannel = (Channel)mCertainChannelCB.getSelectedItem();
-    mFavorite.setCertainChannel(certainChannel);
+    mFavorite.setCertainChannels(mCertainChannelArr);
     
     mFavorite.setUseCertainTimeOfDay(mCertainTimeOfDayChB.isSelected());
     Calendar cal = Calendar.getInstance();

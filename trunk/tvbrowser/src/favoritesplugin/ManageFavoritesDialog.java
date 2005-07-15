@@ -488,23 +488,11 @@ public class ManageFavoritesDialog extends JDialog {
       if (value instanceof Favorite) {
         Favorite fav = (Favorite)value;
         String info = fav.getTitle();
-        if (fav.getUseCertainChannel() || fav.getUseCertainTimeOfDay()) {
+        if (fav.getUseCertainTimeOfDay()) {
           info += " (";
-          if (fav.getUseCertainChannel()) {
-            Channel channel = fav.getCertainChannel();
-            if (channel != null) {
-              info += channel.getName();
-            }
-          }
-          if (fav.getUseCertainTimeOfDay()) {
-            if (fav.getUseCertainChannel()) {
-              info += ", ";
-            }
-            info += toTimeString(fav.getCertainFromTime());
-            info += " - ";
-            info += toTimeString(fav.getCertainToTime());
-          }
-          
+          info += toTimeString(fav.getCertainFromTime());
+          info += " - ";
+          info += toTimeString(fav.getCertainToTime());          
           info += ")";
         }
         info += " (" + fav.getPrograms().length + ")";
