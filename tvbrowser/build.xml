@@ -803,8 +803,7 @@
     <echo message="Generating the CVS statistics to ${statcvs.output.dir}..."/>
     <delete dir="${statcvs.output.dir}"/>
     <mkdir dir="${statcvs.output.dir}"/>
-    <statcvs projectName="TV-Browser"
-             projectDirectory="."
+    <statcvs projectDirectory="."
              cvsLogFile="${statcvs.dir}/cvslog.txt"
              outputDirectory="${statcvs.output.dir}"/>
   </target>
