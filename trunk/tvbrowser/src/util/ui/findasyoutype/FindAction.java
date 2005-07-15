@@ -24,12 +24,12 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Position;
 
 /**
- * This TextComponentFindAction is based on the Implementation of Santosh
+ * This TextComponentFindAction is based on the Implementation of Santhosh
  * 
  * For Details look here:
  * http://jroller.com/page/santhosh/20050707#incremental_search_the_framework
  * 
- * @author Santosh
+ * @author Santhosh
  */
 public abstract class FindAction extends AbstractAction implements DocumentListener, KeyListener {
 
