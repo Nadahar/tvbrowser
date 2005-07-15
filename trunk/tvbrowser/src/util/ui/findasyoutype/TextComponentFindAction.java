@@ -5,7 +5,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JComponent;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
@@ -35,8 +34,10 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     int offset = bias == Position.Bias.Forward ? textComp.getCaretPosition() : textComp.getCaret().getMark() - 1;
 
     int index = getNextMatch(textComp, str, offset, bias);
+    
     if (index != -1) {
-      textComp.select(index, index + str.length());
+      textComp.setSelectionStart(index);
+      textComp.setSelectionEnd(index+str.length());
       return true;
     } else {
       offset = bias == null || bias == Position.Bias.Forward ? 0 : textComp.getDocument().getLength();
@@ -53,15 +54,14 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     String text;
     try {
       text = textComp.getDocument().getText(0, textComp.getDocument().getLength());
-
       if (ignoreCase) {
-        str = str.toUpperCase();
-        text = text.toUpperCase();
+        str = str.toLowerCase();
+        text = text.toLowerCase();
       }
 
       return bias == null || bias == Position.Bias.Forward ? text.indexOf(str, startingOffset) : text.lastIndexOf(str,
           startingOffset);
-    } catch (BadLocationException e) {
+    } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
