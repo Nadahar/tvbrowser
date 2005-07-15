@@ -48,7 +48,7 @@ import javax.swing.event.HyperlinkListener;
 
 import util.ui.BrowserLauncher;
 import util.ui.ImageUtilities;
-import util.ui.findasyoutype.FindAsYouType;
+import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import devplugin.Plugin;
@@ -118,7 +118,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       }
     });
     
-    final FindAsYouType findasyoutype = new FindAsYouType(mInfoEP);
+    //final FindAsYouType findasyoutype = new FindAsYouType(mInfoEP);
+    final TextComponentFindAction findasyoutype = new TextComponentFindAction(mInfoEP, true);
     
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
     main.add(scrollPane, BorderLayout.CENTER);
@@ -130,14 +131,12 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     
     main.add(buttonPn, BorderLayout.SOUTH);
 
-    JButton findBtn = new JButton(ImageUtilities
+    JButton findBtn = new JButton(findasyoutype);
+    
+    findBtn.setIcon(ImageUtilities
         .createImageIconFromJar("programinfo/Find16.gif", getClass()));
+    findBtn.setText("");
     findBtn.setToolTipText(mLocalizer.msg("search", "Search Text"));
-    findBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        findasyoutype.showFindWindow();
-      }
-    });
     
     buttonPn.add(findBtn, BorderLayout.WEST);
     
