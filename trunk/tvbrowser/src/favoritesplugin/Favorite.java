@@ -140,7 +140,8 @@ public class Favorite {
         certainChannelId=(String)in.readObject();
       }
       Channel ch = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
-      mCertainChannels = new Channel[]{ch};
+      if (ch != null)
+        mCertainChannels = new Channel[]{ch};
 
     }
     else {
