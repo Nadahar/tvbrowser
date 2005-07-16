@@ -1,8 +1,13 @@
 
-Version 0.5
+Version 2.0
+- Redesign
+- remember Settings
+- printer queue
+    
+
+Version 1.0
 
 - Redesign
-- remember settings
 
 
 Version 0.4
