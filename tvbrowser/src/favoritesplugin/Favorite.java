@@ -140,9 +140,11 @@ public class Favorite {
         certainChannelId=(String)in.readObject();
       }
       Channel ch = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
-      if (ch != null)
+      if (ch != null) {
         mCertainChannels = new Channel[]{ch};
-
+      } else {
+        mUseCertainChannel = false;
+      }
     }
     else {
       if (mUseCertainChannel) {
@@ -225,7 +227,7 @@ public class Favorite {
 
     String certainChannelServiceClassName = null;
     String certainChannelId="";
-    if (mCertainChannels != null) {
+    if (mUseCertainChannel) {
       out.writeInt(mCertainChannels.length);
       for (int i=0; i<mCertainChannels.length; i++) {
         certainChannelServiceClassName = mCertainChannels[i].getDataService().getClass().getName();
