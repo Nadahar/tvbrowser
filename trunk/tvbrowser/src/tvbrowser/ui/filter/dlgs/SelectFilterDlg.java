@@ -40,6 +40,7 @@ import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.filters.PluginFilter;
+import util.ui.UiUtilities;
 
 public class SelectFilterDlg extends JDialog implements ActionListener {
 
@@ -120,13 +121,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     mCancelBtn.addActionListener(this);
     buttonPn.add(mCancelBtn);
 
-    String txt = "Choose a filter to edit or create a new one.";
-    JTextArea ta = new JTextArea(mLocalizer.msg("hint", txt));
-    ta.setLineWrap(true);
-    ta.setWrapStyleWord(true);
-    ta.setOpaque(false);
-    ta.setEditable(false);
-    ta.setFocusable(false);
+    JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("hint", "Choose a filter to edit or create a new one."));
 
     contentPane.add(new JScrollPane(mFilterListBox), BorderLayout.CENTER);
     contentPane.add(btnPanel, BorderLayout.EAST);
@@ -173,7 +168,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     } else if (e.getSource() == mEditBtn) {
       ProgramFilter filter = (ProgramFilter) mFilterListBox.getSelectedValue();
       if (filter instanceof UserFilter) {
-        EditFilterDlg dlg = new EditFilterDlg(mParent, mFilterList, (UserFilter) filter);
+        new EditFilterDlg(mParent, mFilterList, (UserFilter) filter);
       }
     } else if (e.getSource() == mRemoveBtn) {
       mFilterListModel.removeElement(mFilterListBox.getSelectedValue());

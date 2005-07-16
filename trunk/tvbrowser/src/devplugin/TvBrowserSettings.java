@@ -26,7 +26,10 @@
 
 package devplugin;
 
-
+/**
+ * Provides information of the current user settings.
+ *  
+ */
 public interface TvBrowserSettings {
 
   /**

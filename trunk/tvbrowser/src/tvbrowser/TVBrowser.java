@@ -218,8 +218,8 @@ public class TVBrowser {
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
     TvDataServiceManager.installPendingDataServices();
     
-    mLog.info("Loading tv data service...");
-    msg = mLocalizer.msg("splash.dataService", "Loading tv data service...");
+    mLog.info("Loading TV listings service...");
+    msg = mLocalizer.msg("splash.dataService", "Loading TV listings service...");
     splash.setMessage(msg);
     TvDataServiceManager.getInstance().initDataServices();
     ChannelList.create();
@@ -245,13 +245,13 @@ public class TVBrowser {
       ErrorHandler.handle(exc);      
     }
 
-    msg = mLocalizer.msg("splash.tvData", "Checking TV data base...");
+    msg = mLocalizer.msg("splash.tvData", "Checking TV database...");
     splash.setMessage(msg);
 
-    mLog.info("Deleting expired tv data...");
+    mLog.info("Deleting expired TV listings...");
     TvDataBase.getInstance().deleteExpiredFiles(1);
 
-    mLog.info("Checking tv data inventory...");
+    mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
     
     mLog.info("Starting up...");

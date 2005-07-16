@@ -26,9 +26,11 @@
 
 package devplugin;
 
-
+/**
+ * After reading the plugin tree from the file system instances of this listener
+ * are called, if some programs are lost through tv data changes.
+ */
 public interface PluginTreeListener {
-
 
   public void programsRemoved(Program[] progArr);
 

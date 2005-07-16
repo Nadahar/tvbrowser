@@ -78,7 +78,7 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
 
 
   /**
-   * Updates the TV data provided by this data service.
+   * Updates the TV listings provided by this data service.
    * 
    * @throws TvBrowserException
    */  
@@ -257,7 +257,6 @@ public abstract class AbstractOldTvDataServiceBridge implements TvDataService {
    * This method parses the file and extracts the programs for all channels at
    * once. The file is downloaded if nessasry.
    *
-   * @param programDispatcher The dispatcher where to put the programs.
    * @param date The date to get the programs for.
    * @param channel The channel to get the programs for. When the channel list
    *        is available, this parameter will get obsolete.

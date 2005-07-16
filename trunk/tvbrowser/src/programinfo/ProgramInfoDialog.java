@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,9 +64,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramInfoDialog.class);
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ProgramInfoDialog.class.getName());
-  
   private JEditorPane mInfoEP;
 
   public ProgramInfoDialog(Frame parent, String styleSheet, final Program program)

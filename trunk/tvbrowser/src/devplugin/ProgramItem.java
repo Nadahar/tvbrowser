@@ -34,6 +34,9 @@ import java.util.Properties;
 import java.util.Set;
 
 
+/**
+ * A wrapper class for programs to add properties to the program.
+ */
 public class ProgramItem {
    
   private Program mProgram;
@@ -50,7 +53,7 @@ public class ProgramItem {
   }
 
   public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    int version = in.readInt();
+    in.readInt();  // version
     Date date = new Date(in);
     String progId = (String)in.readObject();
     mProgram = Plugin.getPluginManager().getProgram(date, progId);

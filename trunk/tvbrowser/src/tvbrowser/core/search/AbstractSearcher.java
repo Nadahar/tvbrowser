@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -120,7 +120,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
   
   /**
-   * Searches the TV data base for programs that match the criteria of this
+   * Searches the TV database for programs that match the criteria of this
    * searcher.
    * 
    * @param fieldArr The fields to search in

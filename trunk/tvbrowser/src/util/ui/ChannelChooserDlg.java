@@ -36,20 +36,37 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * The ChannelChooserDlg class provides a Dialog for choosing channels. The user
+ * can choose from all subscribed channels.
+ */
 public class ChannelChooserDlg extends JDialog {
 
+  private Channel[] mResultChannelArr;
   private Channel[] mChannelArr;
   private OrderChooser mChannelChooser;
+
 
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ChannelChooserDlg.class);
 
+  /**
+   *
+   * @param parent
+   * @param channelArr The initially selected channels
+   * @param description A description text below the channel list.
+   */
   public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description) {
     super(parent, true);
     init(channelArr, description);
   }
 
-
+  /**
+   *
+   * @param parent
+   * @param channelArr The initially selected channels
+   * @param description A description text below the channel list.
+   */
   public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description) {
     super(parent,true);
     init(channelArr, description);
@@ -60,9 +77,11 @@ public class ChannelChooserDlg extends JDialog {
 
     if (channelArr == null) {
       mChannelArr = new Channel[]{};
+      mResultChannelArr = new Channel[]{};
     }
     else {
       mChannelArr = channelArr;
+      mResultChannelArr = channelArr;
     }
 
     JPanel contentPane = (JPanel)getContentPane();
@@ -80,7 +99,7 @@ public class ChannelChooserDlg extends JDialog {
     southPn.add(btnPn,BorderLayout.NORTH);
 
     JPanel centerPn = new JPanel(new BorderLayout());
-    centerPn.add(mChannelChooser = new OrderChooser(mChannelArr, Plugin.getPluginManager().getSubscribedChannels()), BorderLayout.NORTH);
+    centerPn.add(mChannelChooser = new OrderChooser(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels()), BorderLayout.NORTH);
 
     if (description != null) {
       JLabel lb = new JLabel(description);
@@ -94,9 +113,9 @@ public class ChannelChooserDlg extends JDialog {
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         Object[] o = mChannelChooser.getOrder();
-        mChannelArr = new Channel[o.length];
+        mResultChannelArr = new Channel[o.length];
         for (int i=0;i<o.length;i++) {
-          mChannelArr[i]=(Channel)o[i];
+          mResultChannelArr[i]=(Channel)o[i];
         }
         hide();
       }
@@ -104,21 +123,25 @@ public class ChannelChooserDlg extends JDialog {
 
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        mChannelArr = null;
+        mResultChannelArr = null;
         hide();
       }
     });
 
-
     pack();
   }
 
-  public Channel[] getChannels(Channel[] channels) {
+  /**
+   *
+   * @return an array of the selected channels. If the user cancelled the dialog,
+   * the array from the constructor call is returned.
+   */
+  public Channel[] getChannels() {
 
-    if (mChannelArr==null) {
-      return channels;
+    if (mResultChannelArr==null) {
+      return mChannelArr;
     }
-    return mChannelArr;
+    return mResultChannelArr;
   }
 
 }

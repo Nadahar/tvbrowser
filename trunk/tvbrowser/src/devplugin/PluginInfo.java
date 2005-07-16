@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,9 +33,8 @@
 package devplugin;
 
 /**
- * This class provides information about your plugin.
+ * This class provides information about a plugin.
  */
-
 public final class PluginInfo {
 
     private Version version=null;

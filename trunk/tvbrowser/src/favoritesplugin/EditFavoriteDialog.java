@@ -52,12 +52,10 @@ public class EditFavoriteDialog {
     = util.ui.Localizer.getLocalizerFor(EditFavoriteDialog.class);
 
   private Favorite mFavorite;
-  //private Channel[] mSubscribedChannelArr;
-
   private JDialog mDialog;
   private SearchForm mSearchForm;
   private JCheckBox mCertainChannelChB, mCertainTimeOfDayChB, mCertainFilterChB;
-  private JComboBox /*mCertainChannelCB, */mCertainFilterCB;
+  private JComboBox mCertainFilterCB;
   private JSpinner mCertainFromTimeSp, mCertainToTimeSp;
   private JLabel mCertainToTimeLabel;
   private JButton mOkBt, mCancelBt, mSelectChannelsBt;
@@ -73,8 +71,7 @@ public class EditFavoriteDialog {
    */
   public EditFavoriteDialog(final Component parent, Favorite favorite) {
     mFavorite = favorite;
-    //mSubscribedChannelArr = Plugin.getPluginManager().getSubscribedChannels();
-
+    
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(mLocalizer.msg("dlgTitle", "Edit favorite program"));
     
@@ -109,14 +106,10 @@ public class EditFavoriteDialog {
       public void actionPerformed(ActionEvent e) {
         ChannelChooserDlg dlg = new ChannelChooserDlg((Dialog)UiUtilities.getBestDialogParent(parent), mFavorite.getCertainChannels(), null);
         UiUtilities.centerAndShow(dlg);
-        mCertainChannelArr = dlg.getChannels(mFavorite.getCertainChannels());
+        mCertainChannelArr = dlg.getChannels();
       }
     });
     p1.add(mSelectChannelsBt);
-
-    //mCertainChannelCB = new JComboBox(mSubscribedChannelArr);
-    //mCertainChannelCB.setRenderer(new ChannelListCellRenderer());
-    //p1.add(mCertainChannelCB);
 
     msg = mLocalizer.msg("certainTimeOfDay", "Certain time of day");
     mCertainTimeOfDayChB = new JCheckBox(msg);

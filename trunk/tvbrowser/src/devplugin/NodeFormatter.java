@@ -26,7 +26,9 @@
 
 package devplugin;
 
-
+/**
+ * Using this formatter you can change the formatting of leaf nodes in the plugin tree view
+ */
 public interface NodeFormatter {
 
   public String format(ProgramItem item);

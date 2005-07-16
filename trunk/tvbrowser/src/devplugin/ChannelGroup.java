@@ -27,15 +27,32 @@
 
 package devplugin;
 
+/**
+ * Each channel should belong to exactly one channel group. The ChannelGroup interface
+ * represents a channel goup.
+ */
 public interface ChannelGroup {
-  
+
+  /**
+   * @return the title of this group
+   */
   public String getName();
-  public String getId(); 
+
+  /**
+   *
+   * @return unique identifier of this group
+   */
+  public String getId();
+
+  /**
+   *
+   * @return short description of this group
+   */
   public String getDescription();
 
   /**
    * @since 1.1
-   * @return
+   * @return the name of the provider
    */
   public String getProviderName();
 }

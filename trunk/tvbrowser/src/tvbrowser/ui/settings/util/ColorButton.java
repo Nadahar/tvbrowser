@@ -41,14 +41,13 @@ import tvbrowser.ui.settings.ProgramTableSettingsTab;
  * Date: 01.05.2005
  * Time: 14:22:05
  */
-public
-class ColorButton extends JButton {
+public class ColorButton extends JButton {
 
   private static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(ProgramTableSettingsTab.class);
+      = util.ui.Localizer.getLocalizerFor(ColorButton.class);
 
   public ColorButton(final ColorLabel lb) {
-    super(mLocalizer.msg("change","Change"));
+    super(mLocalizer.msg("Change","Change"));
     addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Color newColor = AlphaColorChooser.showDialog(UiUtilities.getBestDialogParent(getParent()),
