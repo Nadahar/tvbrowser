@@ -1,3 +1,1 @@
 - Filter beim Drucken verwenden
-- Druckerwarteschlange loeschen
-- beim Listendruck sollte auch die Endzeit ausgegeben werden

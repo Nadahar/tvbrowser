@@ -41,10 +41,16 @@ public class ProgramItem implements PositionedIcon {
 
 
 
-    public ProgramItem(Program prog, ProgramIconSettings settings, int columnWidth, boolean showChannelName) {
+    public ProgramItem(Program prog, ProgramIconSettings settings, int columnWidth, boolean showChannelName, boolean showEndtime) {
       mProgram = prog;
-      mIcon = new ProgramIcon(prog, settings, columnWidth, showChannelName);
+      mIcon = new ProgramIcon(prog, settings, columnWidth, showChannelName, showEndtime);
     }
+    public ProgramItem(Program prog, ProgramIconSettings settings, int columnWidth, boolean showChannelName) {
+      this(prog, settings, columnWidth, showChannelName, false);
+
+    }
+
+
     public void setPos(double x, double y) {
       mx=x;
       my=y;

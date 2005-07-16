@@ -64,7 +64,7 @@ public class ProgramTableIcon implements Icon {
   }
 
   public boolean add(Program prog, boolean forceAdding) {
-    ProgramItem item = new ProgramItem(prog, mProgramIconSettings, mWidth/mNumOfCols-10, true);
+    ProgramItem item = new ProgramItem(prog, mProgramIconSettings, mWidth/mNumOfCols-10, true, true);
     item.setMaximumHeight(200);
     int spaceForDatestring = 0;
     if (!prog.getDate().equals(mCurDate)) {

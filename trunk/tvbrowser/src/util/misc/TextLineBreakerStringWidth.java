@@ -123,7 +123,11 @@ public class TextLineBreakerStringWidth {
       lineList.add(line);
     }
     while ((lineList.size() < maxLines) && (! allProcessed));
-    
+    int lastInx = lineList.size()-1;
+    String lastLine = (String)lineList.get(lastInx);
+    if (lastLine.trim().length()==0) {
+      lineList.remove(lastInx);
+    }
     String[] lineArr = new String[lineList.size()];
     lineList.toArray(lineArr);
     return lineArr;

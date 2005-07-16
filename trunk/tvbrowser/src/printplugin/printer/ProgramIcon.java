@@ -37,6 +37,7 @@ import util.io.IOUtilities;
 import util.ui.MultipleFieldReader;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
+import util.ui.Localizer;
 
 import devplugin.*;
 import printplugin.settings.ProgramIconSettings;
@@ -65,7 +66,10 @@ public class ProgramIcon implements Icon {
   private String mProgramTimeAsString;
   /** The icon used to render the title. */  
   private TextAreaIcon mTitleIcon;
-  /** The icon used to render the description. */  
+
+  private TextAreaIcon mEndTimeIcon;
+
+  /** The icon used to render the description. */
   private TextAreaIcon mDescriptionIcon;
   /** The icons to show on the left side under the start time. */
   private Icon[] mIconArr;
@@ -82,7 +86,7 @@ public class ProgramIcon implements Icon {
     this(prog, null, 100, false);
   }
   
-  public ProgramIcon(Program prog, ProgramIconSettings settings, int width, boolean showChannelName) {
+  public ProgramIcon(Program prog, ProgramIconSettings settings, int width, boolean showChannelName, boolean showEndTime) {
     
     if (settings == null) {
       mSettings = DEFAULT_PROGRAM_ICON_SETTINGS;
@@ -98,15 +102,34 @@ public class ProgramIcon implements Icon {
       titleWidth-=mChannelIcon.getIconWidth();
     }
 
+
+
     mTitleIcon = new TextAreaIcon(null, mSettings.getTitleFont(), titleWidth);
     int timefieldWidth = mSettings.getTimeFieldWidth();
     mDescriptionIcon = new TextAreaIcon(null,mSettings.getTextFont(), width - timefieldWidth - 5 + timefieldWidth/2);
     mDescriptionIcon.setMaximumLineCount(3);
 
+    if (showEndTime) {
+      mEndTimeIcon = new TextAreaIcon(createTimeString(prog.getMinutes()+prog.getHours()*60+prog.getLength()), mSettings.getTextFont().deriveFont(Font.ITALIC), mDescriptionIcon.getIconWidth());
+    }
+
 
     setProgram(prog, -1);
   }
-  
+
+  private String createTimeString(int minutes) {
+    int time = minutes%(60*24);
+    int h = time/60;
+    int m = time%60;
+    String hString = ""+h;
+    String mString = (m<10?"0":"")+m;
+    return Localizer.getLocalizerFor(ProgramIcon.class).msg("timeString","",hString,mString);
+  }
+
+  public ProgramIcon(Program prog, ProgramIconSettings settings, int width, boolean showChannelName) {
+    this(prog, settings, width, showChannelName, false);
+  }
+
   public void setMaximumHeight(int height) {
     setProgram(mProgram, height);
   }
@@ -171,7 +194,10 @@ public class ProgramIcon implements Icon {
         }
       }
       // Calculate the height
-      mHeight = mTitleIcon.getIconHeight() + /*10 +*/ mDescriptionIcon.getIconHeight();
+      mHeight = mTitleIcon.getIconHeight() +  mDescriptionIcon.getIconHeight();
+      if (mEndTimeIcon!=null) {
+        mHeight+=mEndTimeIcon.getIconHeight();
+      }
       //setPreferredSize(new Dimension(WIDTH, mHeight));
 
       // Calculate the preferred height
@@ -243,10 +269,20 @@ public class ProgramIcon implements Icon {
           grp.setColor(Color.black);
         }
         grp.setFont(mSettings.getTimeFont());
-        
-        grp.drawString(mProgramTimeAsString, 1, mSettings.getTimeFont().getSize());
+
+        int timeStringY = mSettings.getTimeFont().getSize();
+        grp.drawString(mProgramTimeAsString, 1, timeStringY);
+
+//    if (mEndTimeIcon != null) {
+//        mEndTimeIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth()+mTitleIcon.getIconWidth()-mEndTimeIcon.getIconWidth(), 0);
+//    }
+
         mTitleIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth(), 0);
         mDescriptionIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth()/2, mTitleIcon.getIconHeight());
+
+        if (mEndTimeIcon != null) {
+          mEndTimeIcon.paintIcon(component, grp, mSettings.getTimeFieldWidth()/2, mTitleIcon.getIconHeight()+mDescriptionIcon.getIconHeight());
+        }
 
         if (mChannelIcon != null) {
           mChannelIcon.paintIcon(component, grp, getIconWidth()-mChannelIcon.getIconWidth(), 0);
