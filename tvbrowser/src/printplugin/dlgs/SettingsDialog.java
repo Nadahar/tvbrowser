@@ -26,21 +26,30 @@
 
 package printplugin.dlgs;
 
-import util.ui.ImageUtilities;
-import util.ui.UiUtilities;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterJob;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
-import printplugin.printer.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import printplugin.printer.PrintJob;
 import printplugin.settings.Scheme;
+import util.ui.ImageUtilities;
+import util.ui.UiUtilities;
 
 
 public class SettingsDialog extends JDialog {

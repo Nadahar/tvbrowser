@@ -28,9 +28,8 @@ package printplugin.printer;
 
 import java.awt.Graphics;
 
-import devplugin.Program;
 import printplugin.settings.ProgramIconSettings;
-import printplugin.printer.dayprogramprinter.ProgramTableIcon;
+import devplugin.Program;
 
 
 

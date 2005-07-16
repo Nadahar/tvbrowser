@@ -28,8 +28,6 @@ package primarydatamanager.primarydataservice;
 
 import java.io.PrintStream;
 
-import devplugin.Channel;
-
 /**
  * Gets the raw TV data for one or more TV channels.
  * 

@@ -64,7 +64,6 @@ import util.ui.ImageUtilities;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
-import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
 
