@@ -26,26 +26,45 @@
 
 package printplugin;
 
-import devplugin.*;
-import java.awt.event.ActionListener;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.print.PrinterJob;
+import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
-import java.awt.*;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Properties;
-import java.io.*;
-import javax.swing.*;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+
+import printplugin.dlgs.DialogContent;
 import printplugin.dlgs.MainPrintDialog;
 import printplugin.dlgs.SettingsDialog;
-import printplugin.dlgs.DialogContent;
-import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialogContent;
 import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
-import printplugin.settings.*;
+import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialogContent;
 import printplugin.printer.PrintJob;
+import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.DayProgramScheme;
+import printplugin.settings.PrinterProgramIconSettings;
+import printplugin.settings.QueuePrinterSettings;
+import printplugin.settings.QueueScheme;
+import printplugin.settings.Scheme;
 import util.ui.UiUtilities;
-import util.ui.ImageUtilities;
-import favoritesplugin.Favorite;
-import favoritesplugin.EditFavoriteDialog;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.Version;
 
 
 public class PrintPlugin extends Plugin {

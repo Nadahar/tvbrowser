@@ -26,12 +26,10 @@
 
 package printplugin.settings;
 
-import java.awt.*;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.awt.Color;
+import java.awt.Font;
 
-import devplugin.*;
+import devplugin.ProgramFieldType;
 
 
 public class PrinterProgramIconSettings implements ProgramIconSettings {
