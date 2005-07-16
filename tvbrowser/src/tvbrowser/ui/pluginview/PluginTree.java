@@ -31,12 +31,10 @@ import java.awt.event.KeyEvent;
 import javax.swing.InputMap;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import util.ui.OverlayListener;
-import devplugin.Program;
 import devplugin.ProgramItem;
 
 /**
