@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,7 +29,7 @@ package devplugin;
 import javax.swing.*;
 
 /**
- *
+ * Represents a page in the settings dialog.
  * @author Martin Oberhauser
  */
 public interface SettingsTab {

@@ -38,7 +38,10 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.TvDataUpdateListener;
 
 
-
+/**
+ * The PluginTreeNode class represents a single node of the plugin tree view.
+ *
+ */
 public class PluginTreeNode {
 
   private static final util.ui.Localizer mLocalizer =
@@ -61,14 +64,29 @@ public class PluginTreeNode {
     mGroupingByDate = true;
   }
 
+  /**
+   * Creates a new PluginTreeNode object with a specified title
+   * @param title
+   */
   public PluginTreeNode(String title) {
     this(Node.CUSTOM_NODE, title);
   }
 
+  /**
+   * Creates a new root PluginTreeNode
+   * On tv listings updates, the {@link PluginTreeListener} gets informed.
+   * @param plugin
+   */
   public PluginTreeNode(Plugin plugin) {
     this(plugin, true);
   }
 
+  /**
+   * Creates a new root PluginTreeNode
+   * @param plugin
+   * @param handleTvDataUpdate specifies, if the {@link PluginTreeListener}
+   * should get called on tv listings updates
+   */
   public PluginTreeNode(Plugin plugin, boolean handleTvDataUpdate) {
     this(Node.PLUGIN_ROOT, plugin);
     mPlugin = plugin;
@@ -93,6 +111,10 @@ public class PluginTreeNode {
     
   }
 
+  /**
+   * Creates a new Node containing a program item.
+   * @param item
+   */
   public PluginTreeNode(ProgramItem item) {
     this(Node.PROGRAM, item);
     mDefaultNode.setAllowsChildren(false);
@@ -149,6 +171,10 @@ public class PluginTreeNode {
     return mDefaultNode;
   }
 
+  /**
+   * Adds a an action menu to this node
+   * @param menu
+   */
   public void addActionMenu(ActionMenu menu) {
     mDefaultNode.addActionMenu(menu);
   }
@@ -333,8 +359,11 @@ public class PluginTreeNode {
     return contains(prog, false);
   }
 
+  /**
+   * Refreshs the tree. Call this method after you have added/removed/changed nodes
+   * of the (sub-)tree
+   */
   public void update() {
-
 
     if (mGroupingByDate) {
       createDateNodes();

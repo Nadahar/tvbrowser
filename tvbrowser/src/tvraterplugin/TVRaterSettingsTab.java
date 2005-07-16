@@ -158,9 +158,9 @@ public class TVRaterSettingsTab implements SettingsTab {
         "ownRating", "true").equals("true"));
     main.add(_ownRating);
 
-    String[] updateStrings = { mLocalizer.msg("update", "only when updating TV Data"),
+    String[] updateStrings = { mLocalizer.msg("update", "only when updating TV listings"),
         mLocalizer.msg("everyTime", "every Time a rating is made"),
-        mLocalizer.msg("eachStart", "at each start of TV Browser"), mLocalizer.msg("manual", "manual Update"), };
+        mLocalizer.msg("eachStart", "at each start of TV-Browser"), mLocalizer.msg("manual", "manual Update"), };
 
     _updateTime = new JComboBox(updateStrings);
 

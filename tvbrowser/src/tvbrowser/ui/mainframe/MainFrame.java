@@ -323,7 +323,7 @@ public class MainFrame extends JFrame implements DateListener {
     try {
       TvDataBase.getInstance().close();
     } catch (Exception exc) {
-      mLog.log(Level.WARNING, "Closing TV data base failed", exc);
+      mLog.log(Level.WARNING, "Closing database failed", exc);
     }
 
     mLog.info("Quitting");
@@ -440,7 +440,7 @@ public class MainFrame extends JFrame implements DateListener {
   /**
    * Updates the program table and the finder panel.
    * <p>
-   * Called when new TV data was downloaded or when TV data was imported.
+   * Called when new TV listings was downloaded or when TV data was imported.
    */
   private void newTvDataAvailable() {
     changeDate(mFinderPanel.getSelectedDate(), null, null);
@@ -511,7 +511,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   /**
-   * Starts the tv data update.
+   * Starts the TV listings update.
    */
   public void updateTvData() {
     if (TvDataUpdater.getInstance().isDownloading()) {

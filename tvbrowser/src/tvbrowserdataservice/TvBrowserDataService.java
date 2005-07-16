@@ -161,7 +161,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
 
 
   /**
-   * Updates the TV data provided by this data service.
+   * Updates the TV listings provided by this data service.
    * 
    * @throws TvBrowserException
    */  
@@ -247,7 +247,7 @@ public class TvBrowserDataService extends AbstractTvDataService {
       }
       finally {
         // Update the programs for which the update suceed in every case
-        mProgressMonitor.setMessage(mLocalizer.msg("info.2","Updating tv data base"));
+        mProgressMonitor.setMessage(mLocalizer.msg("info.2","Updating database"));
         mUpdater.updateTvDataBase(monitor);
         mProgressMonitor.setMessage("");
         

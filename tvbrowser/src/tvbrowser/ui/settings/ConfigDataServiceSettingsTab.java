@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,12 +35,7 @@ import tvdataservice.TvDataService;
 
 public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
  
-  private static final util.ui.Localizer mLocalizer
-     = util.ui.Localizer.getLocalizerFor(ConfigDataServiceSettingsTab.class);
-  
 
- 
- 
   private TvDataService mDataService;
   private SettingsPanel mSettingsPanel;
  
@@ -60,8 +55,6 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
     
     if (mSettingsPanel!=null) {
       mainPn.add(mSettingsPanel,BorderLayout.CENTER);
-    //} else {
-    //  mainPn.add(new JLabel(mLocalizer.msg("notsupported","No settings available for this tv data service")),BorderLayout.CENTER);
     }
     return mainPn;
   }

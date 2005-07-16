@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
 
 /**
- * A search form for searching TV data.
+ * A search form for searching TV listings.
  * 
  * @author Til Schneider, www.murfman.de
  */

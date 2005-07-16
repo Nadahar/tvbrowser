@@ -35,7 +35,7 @@ import devplugin.ProgressMonitor;
 import util.exc.TvBrowserException;
 
 /**
- * To write your own TV data service implement this interface.
+ * To write your own TV listings service implement this interface.
  *
  * @author Martin Oberhauser
  */
@@ -44,7 +44,7 @@ public interface TvDataService {
   public void setWorkingDirectory(java.io.File dataDir);
 
   /**
-   * Updates the TV data provided by this data service.
+   * Updates the TV listings provided by this data service.
    * 
    * @throws TvBrowserException
    */  

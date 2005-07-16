@@ -30,12 +30,10 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-/**
- * Created by: Martin Oberhauser (martin@tvbrowser.org)
- * Date: 01.01.2005
- * Time: 11:45:28
- */
 
+/**
+ * Action class for context menu entries (can be used in {@link ActionMenu} class).
+ */
 public class ContextMenuAction extends AbstractAction {
 
     private ActionListener mListener;

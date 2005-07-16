@@ -404,7 +404,9 @@ public class Favorite {
   }
   
   public String getTitle() {
-    //return mSearchFormSettings.getSearchText();
+    if (mTitle == null) {
+      return mSearchFormSettings.getSearchText();
+    }
     return mTitle;
   }
   

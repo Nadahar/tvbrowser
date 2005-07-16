@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,10 +26,24 @@
  
 package devplugin;
 
+/**
+ * Defines the filtering behaviour.
+ */
 public interface ProgramFilter {
-	
-	public boolean accept(devplugin.Program prog);
+
+  /**
+   *
+   * @param prog
+   * @return true, if the filter accepts the specified program
+   */
+	public boolean accept(Program prog);
+
 	public String toString();
+
+  /**
+   *
+   * @return the name of this filter
+   */
 	public String getName();
 	
 }

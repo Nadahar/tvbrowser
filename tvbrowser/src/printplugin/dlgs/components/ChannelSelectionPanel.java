@@ -77,7 +77,7 @@ public class ChannelSelectionPanel extends JPanel {
       public void actionPerformed(ActionEvent event){
         ChannelChooserDlg dlg = new ChannelChooserDlg(dlgParent, mChannels,"<html>" + mLocalizer.msg("infotext.1","Waehlen Sie jene Sender aus, deren Programm ausgedruckt werden soll.")+"</html>");
         util.ui.UiUtilities.centerAndShow(dlg);
-        mChannels = dlg.getChannels(mChannels);
+        mChannels = dlg.getChannels();
         updateSelectedChannelsPanel();
       }
     });
