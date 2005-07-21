@@ -52,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -133,6 +134,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         mGroupListModel = new DefaultListModel();
 
         mGroupList = new JList(mGroupListModel);
+        mGroupList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         panel2.add(new JScrollPane(mGroupList), BorderLayout.CENTER);
 
         JPanel panel3 = new JPanel(new BorderLayout());
