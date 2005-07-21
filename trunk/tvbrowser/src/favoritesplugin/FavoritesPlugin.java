@@ -337,6 +337,7 @@ public class FavoritesPlugin extends Plugin {
         ErrorHandler.handle(exc);
       }
     }
+    updateTree();    
   }
   
   
