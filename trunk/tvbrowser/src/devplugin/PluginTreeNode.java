@@ -90,7 +90,7 @@ public class PluginTreeNode {
   public PluginTreeNode(Plugin plugin, boolean handleTvDataUpdate) {
     this(Node.PLUGIN_ROOT, plugin);
     mPlugin = plugin;
-    
+
     if (handleTvDataUpdate) {
       final RemovedProgramsHandler removedProgramsHandler = new RemovedProgramsHandler();
 
@@ -106,9 +106,9 @@ public class PluginTreeNode {
           fireProgramsRemoved(removedPrograms);
         }
       });
-      
+
     }
-    
+
   }
 
   /**
@@ -210,6 +210,9 @@ public class PluginTreeNode {
     mGroupingByDate = enable;
   }
 
+  private NodeFormatter getNodeFormatter() {
+    return mDefaultNode.getNodeFormatter();
+  }
 
   private void createDefaultNodes() {
     mDefaultNode.removeAllChildren();
@@ -223,14 +226,19 @@ public class PluginTreeNode {
         mDefaultNode.add(n.getMutableTreeNode());
       }
       else {
-        ProgramItem progItem = (ProgramItem)n.getUserObject();
-        mDefaultNode.add(new Node(progItem));
+      	ProgramItem progItem = (ProgramItem)n.getUserObject();
+        Node node = new Node(progItem);
+        node.setNodeFormatter(n.getNodeFormatter());
+        mDefaultNode.add(node);
       }
     }
   }
 
   private void createDateNodes() {
-    Map dateMap = new HashMap();
+    /* We create new folders for each day and assign the program items
+       to the appropriate folder */
+
+    Map dateMap = new HashMap();  // key: date; value: ArrayList of ProgramItem objects
     mDefaultNode.removeAllChildren();
 
     Iterator it = mChildNodes.iterator();
@@ -241,14 +249,13 @@ public class PluginTreeNode {
         mDefaultNode.add(n.getMutableTreeNode());
       }
       else {
-        ProgramItem progItem = (ProgramItem)n.getUserObject();
-        Date date = progItem.getProgram().getDate();
+      	Date date = ((ProgramItem)n.getUserObject()).getProgram().getDate();
         ArrayList list = (ArrayList)dateMap.get(date);
         if (list == null) {
           list = new ArrayList();
           dateMap.put(date, list);
         }
-        list.add(progItem);
+        list.add(n);
       }
     }
 
@@ -274,11 +281,13 @@ public class PluginTreeNode {
       Node node = new Node(Node.STRUCTURE_NODE, dateStr);
       mDefaultNode.add(node);
       List list = (List)dateMap.get(dates[i]);
-      ProgramItem[] itemArr = new ProgramItem[list.size()];
-      list.toArray(itemArr);
-      Arrays.sort(itemArr, sProgramItemComparator);
-      for (int k=0; k<itemArr.length; k++) {
-        node.add(new Node(itemArr[k]));
+      PluginTreeNode[] nodeArr = new PluginTreeNode[list.size()];
+      list.toArray(nodeArr);
+      Arrays.sort(nodeArr, sPluginTreeNodeComparator);
+      for (int k=0; k<nodeArr.length; k++) {
+      	Node newNode = new Node((ProgramItem)nodeArr[k].getUserObject());
+        newNode.setNodeFormatter(nodeArr[k].getNodeFormatter());
+        node.add(newNode);
       }
     }
   }
@@ -294,7 +303,7 @@ public class PluginTreeNode {
           return sProgramItemComparator.compare(u1, u2);
         }
         if (u1 instanceof String && u2 instanceof String) {
-          return ((String)u1).compareTo(u2);
+          return ((String)u1).compareTo((String)u2);
         }
         if (u1 instanceof String) {
           return 1;
@@ -324,6 +333,7 @@ public class PluginTreeNode {
           return 1;
         }
       }
+
       return 0;
     }
   };
@@ -380,7 +390,7 @@ public class PluginTreeNode {
   public PluginTreeNode addProgram(Program program) {
     return addProgram(new ProgramItem(program));
   }
-  
+
   public PluginTreeNode addProgram(ProgramItem item) {
     if (mPlugin != null) {
       item.getProgram().mark(mPlugin);
@@ -417,7 +427,7 @@ public class PluginTreeNode {
     return findProgramTreeNode(this, prog, recursive);
   }
 
-  
+
   public void removeProgram(ProgramItem item) {
     removeProgram(item.getProgram());
   }
@@ -437,7 +447,7 @@ public class PluginTreeNode {
     add(node);
     return node;
   }
-  
+
   public ProgramItem[] getProgramItems() {
     ArrayList list = new ArrayList();
     Iterator it = mChildNodes.iterator();
@@ -450,7 +460,7 @@ public class PluginTreeNode {
 
     ProgramItem[] result = new ProgramItem[list.size()];
     list.toArray(result);
-    return result;    
+    return result;
   }
 
   public Program[] getPrograms() {
@@ -485,10 +495,10 @@ public class PluginTreeNode {
         ProgramItem item = (ProgramItem)n.getUserObject();
         item.write(out);
       }
-      n.store(out);            
+      n.store(out);
     }
   }
-  
+
   public void load(ObjectInputStream in) throws IOException, ClassNotFoundException {
     int cnt = in.readInt();
     for (int i=0; i<cnt; i++) {
