@@ -26,12 +26,26 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -58,6 +72,7 @@ import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -182,6 +197,26 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mSubscribedChannels = channelList.getList();
     mSubscribedChannels.setCellRenderer(new ChannelListCellRenderer());
 
+
+    mAllChannels.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                //int index = mAllChannels.locationToIndex(e.getPoint());
+                moveChannelsToRight();
+            }
+        }
+    });
+
+    mSubscribedChannels.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+              //int index = mSubscribedChannels.locationToIndex(e.getPoint());
+              moveChannelsToLeft();
+          }
+      }
+    });
+
+
     listBoxPnRight.add(new JScrollPane(mSubscribedChannels), BorderLayout.CENTER);
 
 
@@ -242,7 +277,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       southPn.add(pn2, BorderLayout.SOUTH);
 
       LinkButton urlLabel = new LinkButton(
-         mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier f�r eine Liste weiterer Sender."),
+         mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier fï¿½r eine Liste weiterer Sender."),
          mLocalizer.msg("addMoreChannelsUrl", "http://wiki.tvbrowser.org/index.php/Senderliste"));
 
       result.add(urlLabel, BorderLayout.SOUTH);
@@ -283,7 +318,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle SpartenkanÃ¤le"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
