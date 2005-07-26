@@ -175,6 +175,33 @@ public class CustomizableItemsPanel extends JPanel {
       }
     });
 
+
+      mLeftList.addMouseListener(new MouseAdapter() {
+          public void mouseClicked(MouseEvent e) {
+              if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                  //int index = mLeftList.locationToIndex(e.getPoint());
+                  Object[] items = UiUtilities.moveSelectedItems(mLeftList, mRightList);
+                  if (items != null && items.length>0) {
+                    fireItemTransferredToRightList(items);
+                  }
+              }
+          }
+      });
+
+      mRightList.addMouseListener(new MouseAdapter() {
+          public void mouseClicked(MouseEvent e) {
+              if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                  //int index = mRightList.locationToIndex(e.getPoint());
+                  Object[] items = UiUtilities.moveSelectedItems(mRightList, mLeftList);
+                  if (items != null && items.length > 0) {
+                    fireItemTransferredToLeftList(items);
+                  }
+            }
+        }
+      });
+
+
+
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         UiUtilities.moveSelectedItems(mRightList, -1);
