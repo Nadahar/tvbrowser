@@ -1,0 +1,85 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
+package tvbrowser.core.plugin;
+
+import devplugin.SettingsTab;
+
+import javax.swing.*;
+import java.util.logging.Level;
+
+
+/**
+ * This is a proxy class that catches exceptions originating in SettingsTab implementations.
+ * 
+ */
+public class SettingsTabProxy {
+
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+       .getLogger(SettingsTabProxy.class.getName());
+
+
+  private SettingsTab mSettingsTab;
+
+  public SettingsTabProxy(SettingsTab tab) {
+    mSettingsTab = tab;
+  }
+
+  public JPanel createSettingsPanel() {
+    try {
+      return mSettingsTab.createSettingsPanel();
+    }catch(Throwable t) {
+      mLog.log(Level.WARNING, "Could not get settings panel", t);
+      return null;
+    }
+  }
+
+  public void saveSettings() {
+    try {
+      mSettingsTab.saveSettings();
+    }catch(Throwable t) {
+      mLog.log(Level.WARNING, "Could not save settings", t);
+    }
+  }
+
+  public Icon getIcon() {
+    try {
+      return mSettingsTab.getIcon();
+    }catch(Throwable t) {
+      mLog.log(Level.WARNING, "Could not get settings icon", t);
+      return null;
+    }
+  }
+
+  public String getTitle() {
+    try {
+      return mSettingsTab.getTitle();
+    }catch(Throwable t) {
+      mLog.log(Level.WARNING, "Could not get settings panel titel", t);
+      return "";
+    }
+  }
+}

@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.SettingsTabProxy;
 import devplugin.ActionMenu;
 import devplugin.SettingsTab;
 
@@ -45,7 +46,7 @@ public class ConfigPluginSettingsTab implements SettingsTab {
  
   private PluginProxy mPlugin;
   
-  private SettingsTab mSettingsTab;
+  private SettingsTabProxy mSettingsTab;
   private JPanel mContentPanel;
   
   /**
@@ -136,12 +137,8 @@ public class ConfigPluginSettingsTab implements SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    try {
-      if ((mSettingsTab != null) && (mSettingsTab.getIcon() != null)) {
-        return mSettingsTab.getIcon();
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+    if ((mSettingsTab != null) && (mSettingsTab.getIcon() != null)) {
+      return mSettingsTab.getIcon();
     }
 
     

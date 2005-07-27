@@ -307,8 +307,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return the SettingsTab object or <code>null</code> if the plugin does not
    *         provide this feature.
    */
-  protected SettingsTab doGetSettingsTab() {
-    return mPlugin.getSettingsTab();
+  protected SettingsTabProxy doGetSettingsTab() {
+    SettingsTab tab = mPlugin.getSettingsTab();
+    if (tab == null) {
+      return null;
+    }
+    return new SettingsTabProxy(tab);
   }
 
   
@@ -428,22 +432,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   public boolean doCanUseProgramTree() {
     return mPlugin.canUseProgramTree();
   }
-  
-  /*public TreeNode[] getTreeNodes() {
-    return mPlugin.getTreeNodes();
-  }*/
-  
-  /*public Program[] getStoredPrograms() {
-    return mPlugin.getStoredPrograms();
-  }*/
-  
-  /*public TreeNode getPluginTreeRoot() {
-    return null;
-  }*/
-  
- /* public ProgramContainer getProgramContainer() {
-    return mPlugin.getProgramContainer();
-  }*/
+
   
   public PluginTreeNode getRootNode() {
     return mPlugin.getRootNode();
