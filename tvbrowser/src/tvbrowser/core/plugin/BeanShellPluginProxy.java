@@ -121,7 +121,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
      * 
      * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetSettingsTab()
      */
-    protected SettingsTab doGetSettingsTab() {
+    protected SettingsTabProxy doGetSettingsTab() {
         // TODO Auto-generated method stub
         return null;
     }

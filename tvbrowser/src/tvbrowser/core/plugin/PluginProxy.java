@@ -55,7 +55,7 @@ public interface PluginProxy extends PluginAccess {
    * @return the SettingsTab object or <code>null</code> if the plugin does not
    *         provide this feature.
    */
-  public SettingsTab getSettingsTab();
+  public SettingsTabProxy getSettingsTab();
 
   /**
    * Gets the action to use for the main menu and the toolbar.

@@ -36,7 +36,6 @@ import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginInfo;
 import devplugin.Program;
-import devplugin.SettingsTab;
 
 /**
  * An abstract implementation of a plugin proxy. Encapsulates all calls to the
@@ -259,13 +258,13 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @return the SettingsTab object or <code>null</code> if the plugin does not
    *         provide this feature.
    */
-  public final SettingsTab getSettingsTab() {
+  public final SettingsTabProxy getSettingsTab() {
     try {
       assertActivatedState();
       return doGetSettingsTab();
     }
-    catch (Exception exc) {
-      handlePluginException(exc);
+    catch (Throwable t) {
+      handlePluginException(t);
       return null;
     }
   }
@@ -277,7 +276,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @return the SettingsTab object or <code>null</code> if the plugin does not
    *         provide this feature.
    */
-  protected abstract SettingsTab doGetSettingsTab();
+  protected abstract SettingsTabProxy doGetSettingsTab();
 
   
   /**
@@ -582,13 +581,13 @@ public abstract class AbstractPluginProxy implements PluginProxy {
   /**
    * Hanles a runtime exception that was caused by the plugin.
    * 
-   * @param exc The exception to handle
+   * @param t The exception to handle
    */
-  protected void handlePluginException(Exception exc) {
+  protected void handlePluginException(Throwable t) {
     String msg = mLocalizer.msg("error.runtimeException",
       "The plugin {0} caused an error.",
       getInfo().getName());
-    ErrorHandler.handle(msg, exc);
+    ErrorHandler.handle(msg, t);
   }
 
 
