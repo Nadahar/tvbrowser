@@ -36,6 +36,8 @@ import tvbrowser.core.plugin.PluginProxy;
 import devplugin.PluginTreeNode;
 import devplugin.Plugin;
 
+import java.util.Enumeration;
+
 
 public class PluginTreeModel extends DefaultTreeModel {
 
@@ -46,8 +48,25 @@ public class PluginTreeModel extends DefaultTreeModel {
   private PluginTreeModel() {
     super(new Node(Node.ROOT, "Plugins"));
   }
-  
-  
+
+  /**
+   * Refresh all plugin nodes.
+   * This method sould be called continuously to remove expired programs from the
+   * tree. 
+   */
+  public void update() {
+    MutableTreeNode root = (MutableTreeNode)this.getRoot();
+    Enumeration e = root.children();
+    while (e.hasMoreElements()) {
+      DefaultMutableTreeNode n = (DefaultMutableTreeNode)e.nextElement();
+      Object o = n.getUserObject();
+      if (o instanceof Plugin) {
+        Plugin p = (Plugin)o;
+        p.getRootNode().update();
+      }
+    }
+  }
+
   public void addPluginTree(PluginProxy plugin) {
     PluginTreeNode pluginRoot = plugin.getRootNode();
     MutableTreeNode root = (MutableTreeNode)this.getRoot();

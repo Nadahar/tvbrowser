@@ -88,28 +88,6 @@ public class PluginTree extends JTree {
         expandAll(path.pathByAddingChild(node));
       }
     }
-
-
-   /* //expandPath(path);
-
-    // Only expand if not leaf!
-	  TreeModel          model = getModel();
-	  if (path != null && model != null) {
-      Object comp = path.getLastPathComponent();
-      path.
-      if (!model.isLeaf(comp)) {
-        setExpandedState(path, true);
-        int cnt = model.getChildCount(comp);
-        for (int i=0; i<cnt; i++) {
-          Object o = model.getChild(comp, i);
-          setExpandedState()
-        }
-      }
-   //   model.getChildCount()
-      //&& !model.isLeaf(path.getLastPathComponent())) {
-    //}
-	    //setExpandedState(path, true);
-	  } */
   }
 }
 

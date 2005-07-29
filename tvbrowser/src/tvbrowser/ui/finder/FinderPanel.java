@@ -91,7 +91,6 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   private int mCurMouseItemInx=-1;
   private Date mCurChoosenDate;
 
-  private Timer mTimer;
   private Date mToday;
 
   public FinderPanel() {
@@ -117,15 +116,14 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     
     markDate(mToday);
 
-    mTimer = new Timer(10000, new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        handleTimerEvent();
-      }
-    });
-    mTimer.start();
+
   }
 
-  private void handleTimerEvent() {
+  /**
+   * Refresh the content. This method sould be called after midnight to refresh
+   * the 'today' label.
+   */
+  public void updateContent() {
     Date date=Date.getCurrentDate();
     if (date.equals(mToday)) {
       return;

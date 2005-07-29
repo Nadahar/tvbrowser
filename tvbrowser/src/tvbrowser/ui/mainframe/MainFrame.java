@@ -28,19 +28,14 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.logging.Level;
 
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -131,6 +126,10 @@ public class MainFrame extends JFrame implements DateListener {
   private Node mNavigationNode;
 
   private Node mDateChannelNode;
+
+  private Date mCurrentDay;
+
+  private PluginView mPluginView;
 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -245,8 +244,15 @@ public class MainFrame extends JFrame implements DateListener {
       }
 
     });
-  
-  
+
+    Timer timer = new Timer(10000, new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        handleTimerEvent();
+      }
+    });
+    timer.start();
+
+
   }
 
   public JLabel getStatusBarLabel() {
@@ -328,6 +334,21 @@ public class MainFrame extends JFrame implements DateListener {
 
     mLog.info("Quitting");
     System.exit(0);
+  }
+
+
+  private void handleTimerEvent() {
+    Date date=Date.getCurrentDate();
+    if (date.equals(mCurrentDay)) {
+      return;
+    }
+    mCurrentDay = date;
+    if (mFinderPanel != null) {
+      mFinderPanel.updateContent();
+    }
+    if (mPluginView != null) {
+      mPluginView.update();
+    }
   }
 
   public void updatePluginsMenu() {
@@ -702,10 +723,11 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void setShowPluginOverview(boolean visible) {
     if (visible) {
-      mPluginsNode.setLeaf(new PluginView());
+      mPluginView = new PluginView();
     } else {
-      mPluginsNode.setLeaf(null);
+      mPluginView = null;
     }
+    mPluginsNode.setLeaf(mPluginView);
     mMenuBar.setPluginViewItemChecked(visible);
     Settings.propShowPluginView.setBoolean(visible);
     
