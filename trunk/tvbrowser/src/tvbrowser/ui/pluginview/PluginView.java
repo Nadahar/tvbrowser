@@ -79,6 +79,10 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
+  public void update() {
+    mModel.update();
+  }
+
   public void mousePressed(MouseEvent e) {
     if (e.isPopupTrigger()) {
       showPopup(e);
