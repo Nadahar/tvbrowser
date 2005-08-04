@@ -354,7 +354,7 @@ public class Favorite {
     int nrDays = 1000;
     Channel[] channels;
     if (mUseCertainChannel) {
-      if (mCertainChannels[0] == null) {
+      if ((mCertainChannels == null) || (mCertainChannels[0] == null)) {
         channels = new Channel[0];
       } else {
         channels = new Channel[] { mCertainChannels[0] };
