@@ -588,6 +588,7 @@
                   dir=".">
         <include name="Overview.txt"/>
         <include name="build.*"/>
+		<include name="macosx/**"/>
         <include name="${installer.dir}/**"/>
         <include name="${jsmooth.dir}/**"/>
         <include name="${lib.dir}/**"/>
@@ -605,16 +606,16 @@
   </target>
 
 
-
   <!-- Creates the Mac OS X stuff
-  -->
+       -->
   <taskdef name="jarbundler" 
-           classpath="macosx/jarbundler-1.4.jar"
-           classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
+	   classpath="macosx/jarbundler-1.4.jar"
+	   classname="com.loomcom.ant.tasks.jarbundler.JarBundler" />
+  
+  
 
-	<target name="runtime-mac" depends="make-mac, runtime">
+  <target name="runtime-mac" depends="make-mac, runtime">
 
-   
 
 
 	<jar jarfile="${tvbrowser.runtime.dir}/plugins/GrowlPlugin.jar"
