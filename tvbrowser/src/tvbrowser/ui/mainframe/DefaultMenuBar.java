@@ -89,8 +89,6 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.add(mFindPluginsMI);
     
     // "Help" menu
-    helpMenu.add(mHelpMI);
-    helpMenu.addSeparator();
     helpMenu.add(mDonorMI);
     helpMenu.add(mFaqMI);
     helpMenu.add(mForumMI);
@@ -106,7 +104,6 @@ public class DefaultMenuBar extends MenuBar {
     mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, keyModifier));
     
     mUpdateMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,0));
-    mHelpMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0));
     mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,0));
     mPreviousDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK));
     mNextDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK));

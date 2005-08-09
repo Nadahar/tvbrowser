@@ -65,7 +65,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
-                    mFindPluginsMI, mHelpMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
+                    mFindPluginsMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu;
@@ -176,9 +176,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
     mFindPluginsMI = new JMenuItem(mLocalizer.msg("menuitem.findPluginsOnWeb", "Find plugins on the web..."), new ImageIcon("imgs/Search16.gif"));
     mFindPluginsMI.addActionListener(this);
-    
-    mHelpMI = new JMenuItem(mLocalizer.msg("menuitem.help", "Help..."), new ImageIcon("imgs/Help16.gif"));
-    mHelpMI.addActionListener(this);
     
     Icon urlImg = new ImageIcon("imgs/WebComponent16.gif");
     mDonorMI=new JMenuItem(mLocalizer.msg("menuitem.donors","Donors"), urlImg);
@@ -428,9 +425,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      else if (source == mFindPluginsMI) {
        mMainFrame.showUpdatePluginsDlg();
      }
-     else if (source == mHelpMI) {
-       mMainFrame.showHelpDialog();
-     }
      else if (source == mDonorMI) {
        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.donors",""));
      }
@@ -471,7 +465,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
      new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update",""), mLabel);
      new MenuHelpTextAdapter(mFindPluginsMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel); 
-     new MenuHelpTextAdapter(mHelpMI, mLocalizer.msg("menuinfo.help",""), mLabel); 
      new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about",""), mLabel);
      new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
      new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 

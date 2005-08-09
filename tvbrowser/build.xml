@@ -356,7 +356,10 @@
       <fileset dir="${txt.dir}" includes="osx.properties"/>
       <fileset dir="${txt.dir}" includes="windows.properties"/>
       <fileset dir="${txt.dir}" includes="tvbrowser.sh"/>
+      <fileset dir="x11/src/" includes="libDesktopIndicator.so"/>
     </copy>
+
+
 
     <mkdir dir="${tvbrowser.runtime.dir}/themepacks"/>
     <copy todir="${tvbrowser.runtime.dir}/themepacks">

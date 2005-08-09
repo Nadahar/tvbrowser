@@ -314,7 +314,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mTimezoneCB = new JComboBox();
     mCategoryCB = new JComboBox();
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
-    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTV","TV"), new Integer(Channel.CATEGORY_CINEMA)));
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTV","TV"), new Integer(Channel.CATEGORY_TV)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
@@ -401,7 +401,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     mProviderCB.addItem(new FilterItem(mLocalizer.msg("allProviders","All Providers"), null));
     Object[] providerNames = groups.values().toArray();
     for (int i=0; i<providerNames.length; i++) {
-      mProviderCB.addItem(new FilterItem((String)providerNames[i], (String)providerNames[i]));
+      mProviderCB.addItem(new FilterItem((String)providerNames[i], providerNames[i]));
     }
 
 
@@ -458,7 +458,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
    * Update the Details-Panel with the current selected Channel
    */
   private void updateDetailPanel() {
-    Object[] ch = (Object[]) mSubscribedChannels.getSelectedValues();
+    Object[] ch = mSubscribedChannels.getSelectedValues();
 
     if ((ch != null) && (ch.length == 1)) {
       Channel channel = (Channel) ch[0];
