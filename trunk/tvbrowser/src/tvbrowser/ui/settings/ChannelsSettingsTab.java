@@ -799,9 +799,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
   }
 
-}
-
-class BoldLabel extends JLabel {
+  class BoldLabel extends JLabel {
 
     public BoldLabel(String text) {
       super(text);
@@ -809,3 +807,5 @@ class BoldLabel extends JLabel {
     }
 
   }
+
+}
