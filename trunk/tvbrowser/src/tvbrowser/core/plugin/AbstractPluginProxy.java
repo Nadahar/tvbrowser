@@ -150,11 +150,11 @@ public abstract class AbstractPluginProxy implements PluginProxy {
     try {
       doSaveSettings(userDirectory);
     }
-    catch (RuntimeException exc) {
+    catch (Throwable t) {
       throw new TvBrowserException(AbstractPluginProxy.class,
         "error.saving.runtimeException",
         "The plugin {0} caused an error when saving the plugin settings.",
-        getInfo().getName(), exc);
+        getInfo().getName(), t);
     }
   }
 
@@ -413,8 +413,8 @@ public abstract class AbstractPluginProxy implements PluginProxy {
       assertActivatedState();
       return doGetProgramTableIcons(program);
     }
-    catch (Exception exc) {
-      handlePluginException(exc);
+    catch (Throwable t) {
+      handlePluginException(t);
       return null;
     }
   }
@@ -445,8 +445,8 @@ public abstract class AbstractPluginProxy implements PluginProxy {
       assertActivatedState();
       doHandleTvDataUpdateFinished();
     }
-    catch (Exception exc) {
-      handlePluginException(exc);
+    catch (Throwable t) {
+      handlePluginException(t);
     }
   }
 
@@ -476,8 +476,8 @@ public abstract class AbstractPluginProxy implements PluginProxy {
       assertActivatedState();
       doHandleTvDataAdded(newProg);
     }
-    catch (Exception exc) {
-      handlePluginException(exc);
+    catch (Throwable t) {
+      handlePluginException(t);
     }
   }
 

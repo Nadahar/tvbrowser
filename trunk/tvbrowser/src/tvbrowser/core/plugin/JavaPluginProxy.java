@@ -175,7 +175,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       }
       finally {
         if (in != null) {
-          try { in.close(); } catch (IOException exc) {}
+          try { in.close(); } catch (IOException exc) {
+            // ignore
+          }
         }
       }
     }
@@ -200,7 +202,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     }
     finally {
       if (in != null) {
-        try { in.close(); } catch (IOException exc) {}
+        try { in.close(); } catch (IOException exc) {
+          // ignore
+        }
       }
     }
   }
@@ -235,7 +239,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     }
     finally {
       if (out != null) {
-        try { out.close(); } catch (IOException exc) {}
+        try { out.close(); } catch (IOException exc) {
+          // ignore
+        }
       }
     }
     
@@ -262,7 +268,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     }    
     finally {
       if (fOut != null) {
-        try { fOut.close(); } catch (IOException exc) {}
+        try { fOut.close(); } catch (IOException exc) {
+          // ignore
+        }
       }
     }
   }

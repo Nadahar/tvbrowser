@@ -134,7 +134,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         if(e.getClickCount() == 2) {
           int inx = mList.locationToIndex(e.getPoint());
           if (inx>=0) {
-            Object item = mListModel.getElementAt(inx);;
+            Object item = mListModel.getElementAt(inx);
             mList.ensureIndexIsVisible(inx);
             onStartStopBtnClicked((PluginProxy) item);
           }
