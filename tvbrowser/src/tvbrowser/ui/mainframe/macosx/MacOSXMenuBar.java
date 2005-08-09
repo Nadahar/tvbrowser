@@ -77,8 +77,6 @@ public class MacOSXMenuBar extends MenuBar {
     mPluginsMenu.add(mFindPluginsMI);
 
     // "Help" menu
-    helpMenu.add(mHelpMI);
-    helpMenu.addSeparator();
     helpMenu.add(mDonorMI);
     helpMenu.add(mFaqMI);
     helpMenu.add(mForumMI);
