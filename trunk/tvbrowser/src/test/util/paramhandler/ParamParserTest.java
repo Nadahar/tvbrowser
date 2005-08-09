@@ -18,8 +18,8 @@ public class ParamParserTest extends TestCase {
     
     System.out.println(result);
     System.out.println(parser.getErrorString());
-    
-    assertEquals("oblda halloechen_du_da___ da { The+WaltonsHHHHH str}i()ngtest bla", result);
+
+    assertEquals("oblda halloechen_du_da_ da { The+WaltonsHHHHH str}i()ngtest bla", result);
   }
 
 }
