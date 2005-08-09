@@ -275,7 +275,9 @@ public class TVBrowser {
           try {
             Thread.sleep(5 * 60 * 1000);
           }
-          catch (Exception exc) {}
+          catch (Exception exc) {
+            // ignore
+          }
           
           flushSettings();
         }
@@ -289,7 +291,7 @@ public class TVBrowser {
       public void run() {
         deleteLockFile();
       }
-     });;
+     });
 
   }
 
@@ -449,7 +451,7 @@ public class TVBrowser {
     devplugin.Date today=devplugin.Date.getCurrentDate();
     
     //int daysSinceLastDownload=today.getNumberOfDaysSince(lastDownload);
-    Date nextDownloadDate=null;
+    Date nextDownloadDate;
     
     if (autoDLType.equals("daily")) {
       nextDownloadDate=lastDownloadDate.addDays(1);
@@ -539,6 +541,7 @@ public class TVBrowser {
             pw.close();
             sb.append(sw.toString());
           } catch (Exception ex) {
+            // ignore
           }
         }
         return sb.toString();

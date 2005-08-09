@@ -540,7 +540,7 @@ public class PluginProxyManager {
    * Deactivates a plugin.
    * 
    * @param item The item of the plugin to deactivate
-   * @throws TvBrowserException If deactivating failed
+   * //@throws TvBrowserException If deactivating failed
    */
   private void deactivatePlugin(PluginListItem item) throws TvBrowserException {
     // Check the state
@@ -558,8 +558,12 @@ public class PluginProxyManager {
       userDirectory.mkdirs();
     }
     
-    // Save the plugin settings
-    item.getPlugin().saveSettings(userDirectory);
+    // Try to save the plugin settings. If saving fails, we continue deactivating the plugin.
+    try {
+      item.getPlugin().saveSettings(userDirectory);
+    }catch (TvBrowserException e) {
+      ErrorHandler.handle(e);
+    }
     
     // Tell the plugin that we deactivate it now
     item.getPlugin().onDeactivation();

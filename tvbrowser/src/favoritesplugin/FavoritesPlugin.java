@@ -203,6 +203,7 @@ public class FavoritesPlugin extends Plugin {
      try {
        res = Integer.parseInt(prop.getProperty(key,""+defaultValue));
      }catch (NumberFormatException e) {
+       // ignore
      }
       return res;
    }

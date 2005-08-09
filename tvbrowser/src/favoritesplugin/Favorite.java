@@ -225,9 +225,10 @@ public class Favorite {
 
     out.writeBoolean(mUseCertainChannel);
 
-    String certainChannelServiceClassName = null;
-    String certainChannelId="";
+    String certainChannelServiceClassName;
+
     if (mUseCertainChannel) {
+      String certainChannelId;
       out.writeInt(mCertainChannels.length);
       for (int i=0; i<mCertainChannels.length; i++) {
         certainChannelServiceClassName = mCertainChannels[i].getDataService().getClass().getName();
