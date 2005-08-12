@@ -163,6 +163,15 @@ public class BooleanSearcher extends AbstractSearcher {
           Not n = new Not((Block) O2);
           part.remove(i);
           part.remove(i);
+          
+          /*
+           * If the previous Element is not "AND" insert an "AND"-Element
+           */
+          if ((i>0) && !(part.get(i-1) instanceof And) && 
+              !((part.get(i-1) instanceof String) && ((String)part.get(i-1)).equals("AND"))) {
+            part.insertElementAt("AND", i);
+            i++;
+          }
           part.insertElementAt(n, i);
           found = true;
           break;
