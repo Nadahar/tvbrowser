@@ -183,13 +183,15 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     mDefaultPluginBt=new JButton(mLocalizer.msg("defaultPluginBtn",""));
     mDefaultPluginBt.addActionListener(this);
     JPanel panel2=new JPanel(new BorderLayout());
-    panel2.add(mDefaultPluginBt,BorderLayout.WEST);
+    panel2.setBorder(BorderFactory.createEmptyBorder(5, 0, 2, 0));
+    panel2.add(mDefaultPluginBt,BorderLayout.CENTER);
     panel1.add(panel2);
 
     mMiddleClickPluginBt=new JButton(mLocalizer.msg("middleClickPluginBtn",""));
     mMiddleClickPluginBt.addActionListener(this);
     JPanel panel3=new JPanel(new BorderLayout());
-    panel3.add(mMiddleClickPluginBt,BorderLayout.WEST);
+    panel3.add(mMiddleClickPluginBt,BorderLayout.CENTER);
+    panel3.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
     panel1.add(panel3);
 
     contentPanel.add(panel1,BorderLayout.NORTH);
