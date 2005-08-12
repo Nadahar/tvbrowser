@@ -65,6 +65,7 @@ public class PrintFromQueueDialogContent implements DialogContent {
         progs[i].unmark(PrintPlugin.getInstance());
       }
       mRootNode.removeAllChildren();
+      mRootNode.update();
     }
   }
 
