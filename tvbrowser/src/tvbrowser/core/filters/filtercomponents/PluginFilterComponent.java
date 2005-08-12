@@ -29,6 +29,8 @@ import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -70,7 +72,6 @@ public class PluginFilterComponent implements FilterComponent {
     } else {
       pluginId = (String) in.readObject();
     }
-    
     mPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
   }
     
@@ -107,6 +108,14 @@ public class PluginFilterComponent implements FilterComponent {
     content.add(ta,BorderLayout.NORTH);
 
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    Arrays.sort(plugins, new Comparator() {
+
+      public int compare(Object o1, Object o2) {
+          return o1.toString().compareTo(o2.toString());
+      }
+      
+    });
+    
     mBox=new JComboBox(plugins);
     if (mPlugin!=null) {
       mBox.setSelectedItem(mPlugin);
@@ -131,9 +140,9 @@ public class PluginFilterComponent implements FilterComponent {
   }
 
 		
-		public int getVersion() {
-			return 1;
-		}
+  public int getVersion() {
+	return 2;
+  }
 
 	
   public String getName() {
