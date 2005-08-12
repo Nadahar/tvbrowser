@@ -65,48 +65,48 @@ public class PluginProxyManager {
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginProxyManager.class);
-  
+
   /** The singleton. */
   private static PluginProxyManager mSingleton;
 
   /** The name of the directory where the plugins are located */
   private static String PLUGIN_DIRECTORY = "plugins";
-  
+
   /**
    * The plugin state 'shut down'.
    * <p>
    * An shut down plugin has been shut down and can't be used any more.
    */
   public static int SHUT_DOWN_STATE = 1;
-  
+
   /**
    * The plugin state 'loaded'.
    * <p>
    * A loaded plugin has an existing PluginProxy instance, but is not activated.
    */
   public static int LOADED_STATE = 2;
-  
+
   /**
    * The plugin state 'activated'.
    * <p>
    * An activated plugin has loaded its settings and is ready to be used.
    */
   public static int ACTIVATED_STATE = 3;
-  
+
   /**
    * The font to use in the context menu for normal plugins.
-   * 
-   * @see #createPluginContextMenu(Program) 
+   *
+   * @see #createPluginContextMenu(Program)
    */
  // private static Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
 
   /**
    * The font to use in the context menu for the default plugin.
-   * 
-   * @see #createPluginContextMenu(Program) 
+   *
+   * @see #createPluginContextMenu(Program)
    */
  // private static Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
-  
+
   /** The list containing all plugins (PluginListItem objects) in the right order. */
   private ArrayList mPluginList;
 
@@ -119,13 +119,19 @@ public class PluginProxyManager {
    * menu.
    */
   private PluginProxy mDefaultContextMenuPlugin;
-  
+
+  /**
+   * The plugin that should be executed by default when middle-clicking a
+   * program in the program table.
+   */
+  private PluginProxy mDefaultMiddleClickPlugin;
+
   /** The currently activated plugins. This is only a cache, it might be null. */
   private PluginProxy[] mActivatedPluginCache;
 
   /** All plugins. This is only a cache, it might be null. */
   private PluginProxy[] mAllPluginCache;
-  
+
 
   /**
    * Creates a new instance of PluginProxyManager.
@@ -133,7 +139,7 @@ public class PluginProxyManager {
   private PluginProxyManager() {
     mPluginList = new ArrayList();
     mPluginStateListenerList = new ArrayList();
-    
+
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramAdded(ChannelDayProgram prog) {
         fireTvDataAdded(prog);
@@ -143,7 +149,7 @@ public class PluginProxyManager {
         fireTvDataDeleted(prog);
       }
     });
-    
+
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
       public void tvDataUpdateStarted() {
       }
@@ -152,43 +158,43 @@ public class PluginProxyManager {
         fireTvDataUpdateFinished();
       }
     });
-    
+
     devplugin.Plugin.setPluginManager(new PluginManagerImpl());
   }
 
 
   /**
    * Gets the singleton.
-   * 
+   *
    * @return the singleton.
    */
   public static PluginProxyManager getInstance() {
     if (mSingleton == null) {
       mSingleton = new PluginProxyManager();
     }
-    
+
     return mSingleton;
   }
 
-  
+
   /**
    * This method must be called on start-up.
-   * 
+   *
    * @throws TvBrowserException If initialization failed.
    */
   public void init() throws TvBrowserException {
     // Install the pending plugins
     installPendingPlugins();
-    
+
     // Load all plugins
     loadAllPlugins();
-    
+
     // Get the plugin order
     String[] pluginOrderArr = Settings.propPluginOrder.getStringArray();
-    
+
     // Get the list of deactivated plugins
     String[] deactivatedPluginArr = Settings.propDeactivatedPlugins.getStringArray();
-    
+
     // Check whether the plugin order is the old setting using class names
     if ((pluginOrderArr != null) && (pluginOrderArr.length > 0)) {
       // Check whether the first entry is a class name and not an ID
@@ -196,23 +202,27 @@ public class PluginProxyManager {
       String asId = "java." + className;
       if ((getPluginForId(className) == null) && (getPluginForId(asId) != null)) {
         // It is the old array
-        
+
         // Create the list of deactivated plugins
         deactivatedPluginArr = installedClassNamesToDeactivatedIds(pluginOrderArr);
         Settings.propDeactivatedPlugins.setStringArray(deactivatedPluginArr);
-        
+
         // Convert the old array of class names into an array of IDs
         for (int i = 0; i < pluginOrderArr.length; i++) {
           pluginOrderArr[i] = "java." + pluginOrderArr[i];
         }
         Settings.propPluginOrder.setStringArray(pluginOrderArr);
-        
+
         // Convert the default context menu plugin from class name to ID
         String defaultPluginClassName = Settings.propDefaultContextMenuPlugin.getString();
         Settings.propDefaultContextMenuPlugin.setString("java." + defaultPluginClassName);
+
+        // Convert the middle click context menu plugin from class name to ID
+        String middleClickPluginClassName = Settings.propMiddleClickPlugin.getString();
+        Settings.propMiddleClickPlugin.setString("java." + middleClickPluginClassName);
       }
     }
-    
+
     // Set the plugin order
     setPluginOrder(pluginOrderArr);
 
@@ -229,12 +239,23 @@ public class PluginProxyManager {
       }
     }
     setDefaultContextMenuPlugin(plugin);
+
+    // Get the middle click context menu plugin
+    id = Settings.propMiddleClickPlugin.getString();
+    plugin = getPluginForId(id);
+    if (plugin == null) {
+      plugin = getPluginForId(Settings.propMiddleClickPlugin.getDefault());
+      if (plugin != null) {
+        Settings.propMiddleClickPlugin.setString(plugin.getId());
+      }
+    }
+    setMiddleClickPlugin(plugin);
   }
-  
-  
+
+
   /**
    * Sets the parent frame to all plugins.
-   * 
+   *
    * @param parent The parent frame to set.
    */
   public void setParentFrame(Frame parent) {
@@ -246,7 +267,7 @@ public class PluginProxyManager {
     }
   }
 
-  
+
   /**
    * Installs all plugins that could not be installed the last time, because an
    * old version was in use.
@@ -257,18 +278,18 @@ public class PluginProxyManager {
       // Nothing to do
       return;
     }
-    
+
     // Install all pending plugins
     for (int i = 0; i < fileArr.length; i++) {
       if (fileArr[i].getName().endsWith(".inst")) {
         // This plugin wants to be installed
         String fileName = fileArr[i].getAbsolutePath();
-        String oldFileName = fileName.substring(0, fileName.length() - 5); 
+        String oldFileName = fileName.substring(0, fileName.length() - 5);
         File oldFile = new File(oldFileName);
-        
+
         // Delete the old file
         oldFile.delete();
-        
+
         // Install the plugin
         if (! fileArr[i].renameTo(oldFile)) {
           mLog.warning("Installing pending plugin failed: " + fileName);
@@ -276,8 +297,8 @@ public class PluginProxyManager {
       }
     }
   }
-  
-  
+
+
   /**
    * Loads all plugins.
    */
@@ -287,7 +308,7 @@ public class PluginProxyManager {
       // Nothing to do
       return;
     }
-    
+
     // Load all plugins
     synchronized(mPluginList) {
       for (int i = 0; i < fileArr.length; i++) {
@@ -301,7 +322,7 @@ public class PluginProxyManager {
             + fileArr[i].getAbsolutePath(), thr);
           thr.printStackTrace();
         }
-        
+
         // Add the plugin to the list
         if (plugin != null) {
           // Log this event
@@ -310,7 +331,7 @@ public class PluginProxyManager {
           // Add it to the list
           mPluginList.add(new PluginListItem(plugin));
           firePluginLoaded(plugin);
-          
+
           // Clear the cache
           mAllPluginCache = null;
         }
@@ -318,10 +339,10 @@ public class PluginProxyManager {
     }
   }
 
-  
+
   /**
    * Loads a plugin.
-   * 
+   *
    * @param file The plugin to load.
    * @return The loaded plugin or <code>null</code> if this kind of plugin is
    *         not known (In this case a warning is logged).
@@ -329,7 +350,7 @@ public class PluginProxyManager {
    */
   private AbstractPluginProxy loadPlugin(File file) throws TvBrowserException {
     String lcFileName = file.getName().toLowerCase();
-    
+
     if (lcFileName.endsWith(".jar")) {
       return new JavaPluginProxy(file);
     } else if (lcFileName.endsWith(".bsh")) {
@@ -337,7 +358,7 @@ public class PluginProxyManager {
     }
     else if (lcFileName.endsWith(".inst")) {
       // This is a plugins with a pending installation
-      // -> When installing failed a warning will be generated elsewere 
+      // -> When installing failed a warning will be generated elsewere
       return null;
     } else {
       // This pugin type is unknown -> Generate a warning
@@ -345,13 +366,13 @@ public class PluginProxyManager {
       return null;
     }
   }
-  
-  
+
+
   /**
    * Converts an array of class names of installed (= activated) plugins
    * (that's the way plugins were saved in former times) into an array of IDs of
    * deactivated plugins (that's the way plugins are saved now).
-   * 
+   *
    * @param installedPluginClassNameArr The (old) array of class names of
    *        installed (= activated) plugins
    * @return The (new) array of IDs of deactivated plugins.
@@ -365,7 +386,7 @@ public class PluginProxyManager {
       for (int pluginIdx = 0; pluginIdx < mPluginList.size(); pluginIdx++) {
         PluginListItem item = (PluginListItem) mPluginList.get(pluginIdx);
         String pluginId = item.getPlugin().getId();
-        
+
         // Check whether this plugin is deactivated
         boolean activated = false;
         for (int i = 0; i < installedPluginClassNameArr.length; i++) {
@@ -376,27 +397,27 @@ public class PluginProxyManager {
             break;
           }
         }
-        
+
         // Add the plugin ID, if the plugin is not activated
         if (! activated) {
           deactivatedPluginList.add(pluginId);
         }
       }
     }
-    
+
     // Create an array from the list
     String[] deactivatedPluginIdArr = new String[deactivatedPluginList.size()];
     deactivatedPluginList.toArray(deactivatedPluginIdArr);
     return deactivatedPluginIdArr;
   }
 
-  
+
   /**
    * Sets the plugin order.
    * <p>
    * The order will not be saved to the settings. This must be done by the
    * caller.
-   * 
+   *
    * @param pluginOrderArr The IDs of the plugins in the wanted order. All
    *        missing plugins will be appended at the end.
    */
@@ -405,17 +426,17 @@ public class PluginProxyManager {
       // Nothing to do
       return;
     }
-    
+
     synchronized(mPluginList) {
-      // Move all plugin list items to a temporary list 
+      // Move all plugin list items to a temporary list
       ArrayList tempList = new ArrayList(mPluginList.size());
       tempList.addAll(mPluginList);
       mPluginList.clear();
-      
+
       // Now bring the items back in the wanted order
       for (int idIdx = 0; idIdx < pluginOrderArr.length; idIdx++) {
         String id = pluginOrderArr[idIdx];
-        
+
         // Find the item with this id and move it to the mPluginList
         for (int i = 0; i < tempList.size(); i++) {
           PluginListItem item = (PluginListItem) tempList.get(i);
@@ -426,20 +447,20 @@ public class PluginProxyManager {
           }
         }
       }
-      
+
       // Append all remaining items
       mPluginList.addAll(tempList);
     }
-    
+
     // Clear the caches
     mActivatedPluginCache = null;
     mAllPluginCache = null;
   }
-  
-  
+
+
   /**
    * Activates all plugins except for the given ones
-   * 
+   *
    * @param deactivatedPluginIdArr The IDs of the plugins that should NOT be
    *        activated.
    */
@@ -448,7 +469,7 @@ public class PluginProxyManager {
       for (int pluginIdx = 0; pluginIdx < mPluginList.size(); pluginIdx++) {
         PluginListItem item = (PluginListItem) mPluginList.get(pluginIdx);
         String pluginId = item.getPlugin().getId();
-        
+
         // Check whether this plugin is deactivated
         boolean activated = true;
         if (deactivatedPluginIdArr != null) {
@@ -459,7 +480,7 @@ public class PluginProxyManager {
             }
           }
         }
-        
+
         // Activate the plugin
         if (activated) {
           try {
@@ -473,10 +494,10 @@ public class PluginProxyManager {
     }
   }
 
-  
+
   /**
    * Activates a plugin.
-   * 
+   *
    * @param plugin The plugin to activate
    * @throws TvBrowserException If activating failed
    */
@@ -486,34 +507,34 @@ public class PluginProxyManager {
       activatePlugin(item);
     }
   }
-  
-  
+
+
   /**
    * Activates a plugin.
-   * 
+   *
    * @param item The item of the plugin to activate
    * @throws TvBrowserException If activating failed
    */
   private void activatePlugin(PluginListItem item) throws TvBrowserException {
     // Check the state
     checkStateChange(item, LOADED_STATE, ACTIVATED_STATE);
-    
+
     // Log this event
     mLog.info("Activating plugin " + item.getPlugin().getId());
-    
+
     // Tell the plugin that we activate it now
     item.getPlugin().onActivation();
-    
+
     // Get the user directory
     String userDirectoryName = Settings.getUserDirectoryName();
     File userDirectory = new File(userDirectoryName);
-    
+
     // Load the plugin settings
     item.getPlugin().loadSettings(userDirectory);
-    
+
     // Set the plugin active
     item.setState(ACTIVATED_STATE);
-    
+
     // Clear the activated plugins cache
     mActivatedPluginCache = null;
 
@@ -524,7 +545,7 @@ public class PluginProxyManager {
 
   /**
    * Deactivates a plugin.
-   * 
+   *
    * @param plugin The plugin to deactivate
    * @throws TvBrowserException If deactivating failed
    */
@@ -538,39 +559,39 @@ public class PluginProxyManager {
 
   /**
    * Deactivates a plugin.
-   * 
+   *
    * @param item The item of the plugin to deactivate
    * //@throws TvBrowserException If deactivating failed
    */
   private void deactivatePlugin(PluginListItem item) throws TvBrowserException {
     // Check the state
     checkStateChange(item, ACTIVATED_STATE, LOADED_STATE);
-    
+
     // Log this event
     mLog.info("Deactivating plugin " + item.getPlugin().getId());
-    
+
     // Get the user directory
     String userDirectoryName = Settings.getUserDirectoryName();
     File userDirectory = new File(userDirectoryName);
-    
+
     // Create the user directory if it does not exist
     if (! userDirectory.exists()) {
       userDirectory.mkdirs();
     }
-    
+
     // Try to save the plugin settings. If saving fails, we continue deactivating the plugin.
     try {
       item.getPlugin().saveSettings(userDirectory);
     }catch (TvBrowserException e) {
       ErrorHandler.handle(e);
     }
-    
+
     // Tell the plugin that we deactivate it now
     item.getPlugin().onDeactivation();
-    
+
     // Set the plugin active
     item.setState(LOADED_STATE);
-    
+
     // Clear the activated plugins cache
     mActivatedPluginCache = null;
 
@@ -578,7 +599,7 @@ public class PluginProxyManager {
     firePluginDeactivated(item.getPlugin());
   }
 
-  
+
   /**
    * Deactivates and shuts down all plugins.
    */
@@ -603,19 +624,19 @@ public class PluginProxyManager {
 
         // Log this event
         mLog.info("Shutting down plugin " + item.getPlugin().getId());
-        
+
         // Shut the plugin down
         item.setState(SHUT_DOWN_STATE);
         firePluginUnloaded(item.getPlugin());
       }
     }
-    
+
   }
-  
-  
+
+
   /**
    * Checks, whether a plugin state change is allowed.
-   * 
+   *
    * @param item The item of the plugin, whichs state should be changed.
    * @param requiredState The state the plugin should have at the moment.
    * @param newState The state the plugin will have after changing
@@ -646,8 +667,8 @@ public class PluginProxyManager {
 
   /**
    * Gets the localized name of a state.
-   * 
-   * @param state The state to get the localized name for. 
+   *
+   * @param state The state to get the localized name for.
    * @return The localized name for the given state.
    */
   public static String getLocalizedStateName(int state) {
@@ -668,15 +689,15 @@ public class PluginProxyManager {
 
   /**
    * Gets all plugins.
-   * 
+   *
    * @return All plugins.
    */
   public PluginProxy[] getAllPlugins() {
     // NOTE: To be thread-safe, we copy the cached plugin array in a local
     //       variable
     PluginProxy[] allPluginArr = mAllPluginCache;
-    
-    // Check whether the cache is already filled 
+
+    // Check whether the cache is already filled
     if (allPluginArr == null) {
       // The cache is empty -> We've got to fill it
       synchronized(mPluginList) {
@@ -686,11 +707,11 @@ public class PluginProxyManager {
           allPluginArr[i] = item.getPlugin();
         }
       }
-      
+
       // Cache the array
       mAllPluginCache = allPluginArr;
     }
-    
+
     // Return only a copy so the array may be changed by the caller
     return (PluginProxy[]) allPluginArr.clone();
   }
@@ -698,19 +719,19 @@ public class PluginProxyManager {
 
   /**
    * Gets all activated plugins.
-   * 
+   *
    * @return All activated plugins.
    */
   public PluginProxy[] getActivatedPlugins() {
     // NOTE: To be thread-safe, we copy the cached plugin array in a local
     //       variable
     PluginProxy[] activatedPluginArr = mActivatedPluginCache;
-    
+
     // Check whether the cache is already filled
 
     if (activatedPluginArr == null) {
       // The cache is empty -> We've got to fill it
-      
+
       // Create a list with all activated plugins
       ArrayList activatedPluginList = new ArrayList();
       synchronized(mPluginList) {
@@ -721,15 +742,15 @@ public class PluginProxyManager {
           }
         }
       }
-      
+
       // Create an array from the list
       activatedPluginArr = new PluginProxy[activatedPluginList.size()];
       activatedPluginList.toArray(activatedPluginArr);
-      
+
       // Cache the array
       mActivatedPluginCache = activatedPluginArr;
     }
-    
+
     // Return only a copy so the array may be changed by the caller
     return (PluginProxy[]) activatedPluginArr.clone();
   }
@@ -737,7 +758,7 @@ public class PluginProxyManager {
 
   /**
    * Gets the IDs of all deactivated plugins.
-   * 
+   *
    * @return the IDs of all deactivated plugins.
    */
   public String[] getDeactivatedPluginIds() {
@@ -751,20 +772,20 @@ public class PluginProxyManager {
         }
       }
     }
-    
+
     // Create an array from the list
     String[] deactivatedPluginIdArr = new String[deactivatedPluginIdList.size()];
     deactivatedPluginIdList.toArray(deactivatedPluginIdArr);
     return deactivatedPluginIdArr;
   }
 
-  
+
   /**
    * Gets the plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @param state The state the plugin must have. Pass <code>-1</code> if the
-   *        state does not matter. 
+   *        state does not matter.
    * @return The plugin with the given ID or <code>null</code> if no such plugin
    *         exists or has the wrong state.
    */
@@ -784,16 +805,16 @@ public class PluginProxyManager {
           }
         }
       }
-      
+
       // Nothing found
       return null;
     }
   }
-  
+
 
   /**
    * Gets the plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @return The plugin with the given ID or <code>null</code> if no such plugin
    *         exists.
@@ -802,10 +823,10 @@ public class PluginProxyManager {
     return getPluginForId(pluginId, -1);
   }
 
-  
+
   /**
    * Gets the activated plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @return The plugin with the given ID or <code>null</code> if no such plugin
    *         exists or if the plugin is not activated.
@@ -813,11 +834,11 @@ public class PluginProxyManager {
   public PluginAccess getActivatedPluginForId(String pluginId) {
     return getPluginForId(pluginId, ACTIVATED_STATE);
   }
-  
-  
+
+
   /**
    * Gets a list item for the given plugin proxy.
-   * 
+   *
    * @param plugin The plugin to get the list item for.
    * @return The list item for the given plugin proxy.
    */
@@ -825,22 +846,22 @@ public class PluginProxyManager {
     synchronized(mPluginList) {
       for (int i = 0; i < mPluginList.size(); i++) {
         PluginListItem item = (PluginListItem) mPluginList.get(i);
-        
+
         if (item.getPlugin() == plugin) {
           return item;
         }
       }
     }
-    
+
     // Nothing fonnd
     mLog.warning("Unkown plugin: " + plugin.getId());
     return null;
-  }  
+  }
 
 
   /**
    * Sets the default context menu plugin.
-   * 
+   *
    * @param plugin The plugin to set as default context menu plugin.
    */
   public void setDefaultContextMenuPlugin(PluginProxy plugin) {
@@ -854,12 +875,37 @@ public class PluginProxyManager {
    * This is the plugin that should be executed by default when double-clicking
    * a program in the program table. It is shown with a bold font in the context
    * menu.
-   * 
+   *
    * @return The default context menu plugin or <code>null</code> if there is no
    *         default context menu plugin defined.
    */
   public PluginProxy getDefaultContextMenuPlugin() {
     return mDefaultContextMenuPlugin;
+  }
+
+
+  /**
+   * Sets the middle click context menu plugin.
+   *
+   * @param plugin The plugin to set as middle click context menu plugin.
+   */
+  public void setMiddleClickPlugin(PluginProxy plugin) {
+    mDefaultMiddleClickPlugin = plugin;
+  }
+
+
+  /**
+   * Gets the middle click context menu plugin.
+   * <p>
+   * This is the plugin that should be executed by default when middle-clicking
+   * a program in the program table. It is shown with an italic font in the context
+   * menu.
+   *
+   * @return The middle click context menu plugin or <code>null</code> if there is no
+   *         middle click context menu plugin defined.
+   */
+  public PluginProxy getMiddleClickPlugin() {
+    return mDefaultMiddleClickPlugin;
   }
 
    /*
@@ -884,31 +930,42 @@ public class PluginProxyManager {
     return result;
   }
         */
-  
+
   /**
    * Creates the MenuItems for the ContextMenus
    */
   public static JMenuItem[] createPluginContextMenuItems(Plugin callerplugin, Program program, boolean markDefaultPlugin) {
     ArrayList items = new ArrayList();
     PluginProxy defaultPlugin = getInstance().getDefaultContextMenuPlugin();
+    PluginProxy middleClickPlugin = getInstance().getMiddleClickPlugin();
     PluginProxy[] pluginArr = getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       PluginProxy plugin = pluginArr[i];
-      
+
       boolean equalsPlugin = false;
-      
+
       if ((callerplugin != null) && (callerplugin.getId().equals(plugin.getId()))) {
         equalsPlugin = true;
       }
-      
+
       if (!equalsPlugin) {
         ActionMenu actionMenu = plugin.getContextMenuActions(program);
         if (actionMenu != null) {
           JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
           items.add(menuItem);
-          if (plugin == defaultPlugin && markDefaultPlugin) {
+          if (plugin == defaultPlugin && plugin == middleClickPlugin && markDefaultPlugin) {
+            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
+              menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDITALICFONT);
+            }
+          }
+          else if (plugin == defaultPlugin && markDefaultPlugin) {
             if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
               menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+            }
+          }
+          else if (plugin == middleClickPlugin && markDefaultPlugin) {
+            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
+              menuItem.setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
             }
           }
         }
@@ -944,7 +1001,7 @@ public class PluginProxyManager {
 
   /**
    * Creates a context menu for the given program containing all plugins.
-   * 
+   *
    * @param program The program to create the context menu for
    * @return a context menu for the given program.
    */
@@ -952,10 +1009,10 @@ public class PluginProxyManager {
   public static JPopupMenu createPluginContextMenu(Program program) {
     return createPluginContextMenu(program, null);
   }
-  
+
   /**
    * Creates a context menu for the given program containing all plugins.
-   * 
+   *
    * @param program The program to create the context menu for
    * @param plugin The Plugin that wants to create the ContextMenu
    * @return a context menu for the given program.
@@ -971,11 +1028,11 @@ public class PluginProxyManager {
   }
 
 
-               
-  
+
+
   /**
    * Registers a PluginStateListener.
-   * 
+   *
    * @param listener The PluginStateListener to register
    */
   public void addPluginStateListener(PluginStateListener listener) {
@@ -984,10 +1041,10 @@ public class PluginProxyManager {
     }
   }
 
-  
+
   /**
    * Deregisters a PluginStateListener.
-   * 
+   *
    * @param listener The PluginStateListener to deregister
    */
   public void removePluginStateListener(PluginStateListener listener) {
@@ -996,16 +1053,16 @@ public class PluginProxyManager {
     }
   }
 
-  
+
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginLoaded(PluginProxy plugin) {
     synchronized(mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i); 
+        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
         try {
           lst.pluginLoaded(plugin);
         } catch(Throwable thr) {
@@ -1014,17 +1071,17 @@ public class PluginProxyManager {
       }
     }
   }
-    
-  
+
+
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginUnloaded(PluginProxy plugin) {
     synchronized(mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i); 
+        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
         try {
           lst.pluginUnloaded(plugin);
         } catch(Throwable thr) {
@@ -1033,17 +1090,17 @@ public class PluginProxyManager {
       }
     }
   }
-  
+
 
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginActivated(PluginProxy plugin) {
     synchronized(mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i); 
+        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
         try {
           lst.pluginActivated(plugin);
         } catch(Throwable thr) {
@@ -1052,27 +1109,27 @@ public class PluginProxyManager {
       }
     }
   }
-  
-  
+
+
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginDeactivated(PluginProxy plugin) {
     synchronized(mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
-        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i); 
+        PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
         try {
           lst.pluginDeactivated(plugin);
         } catch(Throwable thr) {
           mLog.log(Level.WARNING, "Fireing event 'plugin deactivated' failed", thr);
         }
       }
-    }    
+    }
   }
 
-  
+
   /**
    * Calls for every active plugin the handleTvDataAdded(...) method, so the
    * plugin can react on the new data.
@@ -1127,44 +1184,44 @@ public class PluginProxyManager {
       }
     }
   }
-  
-  
+
+
   /**
    * A plugin in the plugin list
    */
   private class PluginListItem {
-    
+
     /** The plugin */
     private AbstractPluginProxy mPlugin;
-    
+
     /** The state of the plugin */
     private int mState;
 
 
     /**
      * Creates a new instance of PluginListItem.
-     * 
+     *
      * @param plugin The plugin of this list item
      */
     public PluginListItem(AbstractPluginProxy plugin) {
       mPlugin = plugin;
       mState = LOADED_STATE;
     }
-    
-    
+
+
     /**
      * Gets the plugin.
-     * 
+     *
      * @return the plugin.
      */
     public AbstractPluginProxy getPlugin() {
       return mPlugin;
     }
-    
-    
+
+
     /**
      * Sets the state of the plugin.
-     * 
+     *
      * @param state The new state.
      */
     public void setState(int state) {
@@ -1174,16 +1231,16 @@ public class PluginProxyManager {
       mPlugin.setActivated(state == ACTIVATED_STATE);
     }
 
-    
+
     /**
      * Gets the state of the plugin.
-     * 
+     *
      * @return The state of the plugin.
      */
     public int getState() {
       return mState;
     }
-    
+
   } // inner class PluginListItem
 
 }

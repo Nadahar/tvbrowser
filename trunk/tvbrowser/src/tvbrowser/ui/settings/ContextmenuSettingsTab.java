@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package tvbrowser.ui.settings; 
+package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -51,27 +51,35 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 
 
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
-    
+
     public Component getListCellRendererComponent(JList list, Object value,
          int index, boolean isSelected, boolean cellHasFocus) {
-           
+
          JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
            index, isSelected, cellHasFocus);
 
          if (value instanceof PluginProxy) {
            PluginProxy plugin = (PluginProxy) value;
            Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
-           
+
            JPopupMenu menu=new JPopupMenu();
            Font f;
-           if (plugin.equals(mDefaultPlugin)) {
+           /* If the Plugin is the Plugin for double and middle
+            * click make the text bold and italic.*/
+           if (plugin.equals(mDefaultPlugin) && plugin.equals(mMiddleClickPlugin)) {
+              f=new Font("Dialog",Font.BOLD + Font.ITALIC,12);
+           }
+           else if (plugin.equals(mDefaultPlugin)) {
               f=new Font("Dialog",Font.BOLD,12);
+           }
+           else if (plugin.equals(mMiddleClickPlugin)) {
+              f=new Font("Dialog",Font.ITALIC,12);
            }
            else {
              f=new Font("Dialog",Font.PLAIN,12);
            }
            label.setFont(f);
-           
+
            // Get the context menu item text
            String text = null;
            Icon icon = null;
@@ -90,7 +98,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
            }
 
            label.setText(text);
-           
+
            label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
            label.setOpaque(false);
            label.setBackground(menu.getBackground());
@@ -106,15 +114,14 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
          return label;
        }
 
-	
-    
+
+
   }
 
-
-  private JButton mDefaultPluginBt;
-  private PluginProxy mDefaultPlugin;
+  private JButton mDefaultPluginBt, mMiddleClickPluginBt;
+  private PluginProxy mDefaultPlugin, mMiddleClickPlugin;
   private SortableItemList mList;
-  
+
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
 
@@ -122,23 +129,32 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     mList=new SortableItemList(mLocalizer.msg("title","context menu"));
     mList.getList().setVisibleRowCount(10);
     mList.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    
+
        mList.getList().addMouseListener(new MouseAdapter(){
          public void mouseClicked(MouseEvent e){
-           if(e.getClickCount() == 2) {
+           if(SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
              int inx = mList.getList().locationToIndex(e.getPoint());
              if (inx>=0) {
                mList.getList().ensureIndexIsVisible(inx);
                mDefaultPlugin = (PluginProxy) mList.getList().getSelectedValue();
                mList.updateUI();
-             }          
+             }
+           }
+           if(SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+             int inx = mList.getList().locationToIndex(e.getPoint());
+             if (inx>=0) {
+               mList.getList().ensureIndexIsVisible(inx);
+               mList.getList().setSelectedIndex(inx);
+               mMiddleClickPlugin = (PluginProxy) mList.getList().getSelectedValue();
+               mList.updateUI();
+             }
            }
          }
        });
     mList.setCellRenderer(new ContextMenuCellRenderer());
         mList.getList().setOpaque(false);
     fillListbox();
-    
+
     PluginProxyManager.getInstance().addPluginStateListener(
       new PluginStateAdapter() {
         public void pluginActivated(Plugin p) {
@@ -148,41 +164,48 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         public void pluginDeactivated(Plugin p) {
           fillListbox();
         }
-      });    
+      });
   }
 
-  
+
   public JPanel createSettingsPanel() {
     mDefaultPlugin = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
-    
+    mMiddleClickPlugin = PluginProxyManager.getInstance().getMiddleClickPlugin();
+
     JPanel contentPanel=new JPanel(new BorderLayout(0,15));
     contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
-    
+
     JPanel panel1=new JPanel();
     panel1.setLayout(new BoxLayout(panel1,BoxLayout.Y_AXIS));
     panel1.add(mList);
-  
-    
+
+
     mDefaultPluginBt=new JButton(mLocalizer.msg("defaultPluginBtn",""));
     mDefaultPluginBt.addActionListener(this);
     JPanel panel2=new JPanel(new BorderLayout());
     panel2.add(mDefaultPluginBt,BorderLayout.WEST);
     panel1.add(panel2);
-    
+
+    mMiddleClickPluginBt=new JButton(mLocalizer.msg("middleClickPluginBtn",""));
+    mMiddleClickPluginBt.addActionListener(this);
+    JPanel panel3=new JPanel(new BorderLayout());
+    panel3.add(mMiddleClickPluginBt,BorderLayout.WEST);
+    panel1.add(panel3);
+
     contentPanel.add(panel1,BorderLayout.NORTH);
-    
+
     JTextArea descBox = UiUtilities.createHelpTextArea(mLocalizer.msg("description",""));
-    contentPanel.add(descBox,BorderLayout.CENTER); 
-  
-		return contentPanel;
-	}
-  
+    contentPanel.add(descBox,BorderLayout.CENTER);
+
+    return contentPanel;
+  }
+
   private void fillListbox() {
     if (mList==null) {
       return;
     }
     mList.removeAllElements();
-    
+
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getActivatedPlugins();
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
     for (int i = 0; i < pluginList.length; i++) {
@@ -200,10 +223,13 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
       mDefaultPlugin = (PluginProxy) mList.getList().getSelectedValue();
       mList.updateUI();
     }
-    
+    if(o==mMiddleClickPluginBt) {
+      mMiddleClickPlugin = (PluginProxy) mList.getList().getSelectedValue();
+      mList.updateUI();
+    }
   }
 
-	
+
   public void saveSettings() {
     Object o[] = mList.getItems();
 
@@ -220,12 +246,22 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     if (!mList.contains(mDefaultPlugin)) {
       mDefaultPlugin = null;
     }
+    if (!mList.contains(mMiddleClickPlugin)) {
+      mMiddleClickPlugin = null;
+    }
 
     PluginProxyManager.getInstance().setDefaultContextMenuPlugin(mDefaultPlugin);
     if (mDefaultPlugin != null) {
       Settings.propDefaultContextMenuPlugin.setString(mDefaultPlugin.getId());
     } else {
       Settings.propDefaultContextMenuPlugin.setString(null);
+    }
+
+    PluginProxyManager.getInstance().setMiddleClickPlugin(mMiddleClickPlugin);
+    if (mMiddleClickPlugin != null) {
+      Settings.propMiddleClickPlugin.setString(mMiddleClickPlugin.getId());
+    } else {
+      Settings.propMiddleClickPlugin.setString(null);
     }
   }
 
@@ -243,12 +279,12 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 	public void settingsChanged(SettingsTab tab, Object obj) {
     Object[] currentPlugins=mList.getItems();
     Plugin[] installedPlugins=(Plugin[])obj;
-    
+
     // remove all plugins which are not installed any more
     for (int i=0;i<currentPlugins.length;i++) {
       Plugin p=(Plugin)currentPlugins[i];
       boolean isInstalled=false;
-      for (int j=0;j<installedPlugins.length&&!isInstalled;j++) {        
+      for (int j=0;j<installedPlugins.length&&!isInstalled;j++) {
         if (p.equals(installedPlugins[j])) {
           isInstalled=true;
         }
@@ -257,19 +293,17 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         mList.removeElement(currentPlugins[i]);
       }
     }
-    
-    // add all other plugins 
+
+    // add all other plugins
     //Plugin[] pluginList=PluginManager.getInstance().getAvailablePlugins();
     for (int i=0;i<installedPlugins.length;i++) {
       if (installedPlugins[i].getContextMenuItemText()!=null && !mList.contains(installedPlugins[i])) {
         mList.addElement(installedPlugins[i]);
       }
     }
-    
-   	
+
+
 	}
   */
-  
+
 }
- 
- 

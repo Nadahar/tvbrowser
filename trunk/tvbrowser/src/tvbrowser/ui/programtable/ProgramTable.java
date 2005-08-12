@@ -60,40 +60,40 @@ import devplugin.Program;
  */
 public class ProgramTable extends JPanel
 implements ProgramTableModelListener {
-  
+
   private int mColumnWidth;
   private int mHeight;
-  
+
   private ProgramTableLayout mLayout;
   private ProgramTableModel mModel;
   private BackgroundPainter mBackgroundPainter;
-  
+
   private Point mDraggingPoint;
-  
+
   private Point mMouse;
-  
+
   private JPopupMenu mPopupMenu;
-  
+
   /**
    * Creates a new instance of ProgramTable.
    */
   public ProgramTable(ProgramTableModel model) {
     setProgramTableLayout(null);
-    
+
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
     setCursor(new Cursor(Cursor.HAND_CURSOR));
     updateBackground();
-    
+
     setBackground(Color.white);
     setOpaque(true);
-    
+
     // setFocusable(true);
     addMouseMotionListener(new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent evt) {
         handleMouseDragged(evt);
       }
-      
+
       public void mouseMoved(MouseEvent evt) {
         handleMouseMoved(evt);
       }
@@ -117,29 +117,29 @@ implements ProgramTableModelListener {
         handleMouseExited(evt);
       }
     });
-    
+
   }
-  
-  
-  
+
+
+
   protected void setModel(ProgramTableModel model) {
     mModel = model;
     mModel.addProgramTableModelListener(this);
-    
+
     updateLayout();
   }
-  
-  
-  
+
+
+
   public ProgramTableModel getModel() {
     return mModel;
   }
-  
+
   public ProgramTableLayout getProgramTableLayout() {
     return mLayout;
   }
-  
-  
+
+
   public void setProgramTableLayout(ProgramTableLayout layout) {
     if (layout == null) {
       // Use the default layout
@@ -149,30 +149,30 @@ implements ProgramTableModelListener {
         layout = new TimeSynchronousLayout();
       }
     }
-    
+
     mLayout = layout;
-    
+
     if (mModel != null) {
       updateLayout();
       revalidate();
     }
   }
-  
-  
+
+
   public void setColumnWidth(int columnWidth) {
     mColumnWidth = columnWidth;
   }
-  
-  
-  
+
+
+
   public int getColumnWidth() {
     return mColumnWidth;
   }
-  
-  
+
+
   public void updateBackground() {
     BackgroundPainter oldPainter = mBackgroundPainter;
-    
+
     String background = Settings.propTableBackgroundStyle.getString();
     if (background.equals("timeOfDay")) {
       mBackgroundPainter = new TimeOfDayBackPainter();
@@ -184,18 +184,18 @@ implements ProgramTableModelListener {
       mBackgroundPainter = new TimeBlockBackPainter();
     }
     mBackgroundPainter.layoutChanged(mLayout, mModel);
-    
+
     firePropertyChange("backgroundpainter", oldPainter, mBackgroundPainter);
-    
+
     repaint();
   }
-  
-  
+
+
   public BackgroundPainter getBackgroundPainter() {
     return mBackgroundPainter;
   }
-  
-  
+
+
   public void paintComponent(Graphics grp) {
     if (Settings.propEnableAntialiasing.getBoolean()) {
       final Graphics2D g2d = (Graphics2D) grp;
@@ -204,11 +204,11 @@ implements ProgramTableModelListener {
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       }
     }
-    
+
     // Using the information of the clip bounds, we can speed up painting
     // significantly
     Rectangle clipBounds = grp.getClipBounds();
-    
+
     // Paint the table cells
     int minCol = clipBounds.x / mColumnWidth;
     if (minCol < 0) minCol = 0;
@@ -216,31 +216,31 @@ implements ProgramTableModelListener {
     if (maxCol >= mModel.getColumnCount()) {
       maxCol = mModel.getColumnCount() - 1;
     }
-    
+
     // Paint the background
     super.paintComponent(grp);
     int tableHeight = Math.max(mHeight, clipBounds.y + clipBounds.height);
     mBackgroundPainter.paintBackground(grp, mColumnWidth, tableHeight,
     minCol, maxCol, clipBounds, mLayout, mModel);
-    
+
     boolean mouseOver = false;
-    
+
     int x = minCol * mColumnWidth;
     for (int col = minCol; col <= maxCol; col++) {
       int y = mLayout.getColumnStart(col);
-      
+
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         // Get the program
         ProgramPanel panel = mModel.getProgramPanel(col, row);
-        
+
         // Render the program
         if (panel != null) {
           int cellHeight = panel.getHeight();
-          
+
           // Check whether the cell is within the clipping area
           if (((y + cellHeight) > clipBounds.y)
           && (y < (clipBounds.y + clipBounds.height))) {
-            
+
             if (Settings.propMouseOver.getBoolean()) {
               Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
               if ((mMouse != null) && (rec.contains(mMouse))) {
@@ -249,44 +249,44 @@ implements ProgramTableModelListener {
                 mouseOver = false;
               }
             }
-            
+
             //          Paint the cell
             grp.translate(x, y);
-            
+
             panel.setSize(mColumnWidth, cellHeight);
             panel.paint(mouseOver, grp);
-            
+
             // grp.drawRect(0, 0, mColumnWidth, cellHeight);
             grp.translate(-x, -y);
           }
-          
+
           // Move to the next row in this column
           y += cellHeight;
         }
       }
-      
+
       // paint the timeY
       // int timeY = getTimeYOfColumn(col, util.io.IOUtilities.getMinutesAfterMidnight());
       // grp.drawLine(x, timeY, x + mColumnWidth, timeY);
-      
+
       // Move to the next column
       x += mColumnWidth;
     }
-    
-    
-    
+
+
+
     // Paint the copyright notices
     Channel[] channelArr = mModel.getShownChannels();
     for (int i = 0; i < channelArr.length; i++) {
       String msg = channelArr[i].getCopyrightNotice();
       grp.drawString(msg, i * mColumnWidth + 3, getHeight() - 5);
     }
-    
+
     if (clipBounds.width - x > 0) {
       grp.setColor(Color.WHITE);
       grp.fillRect(x, 0, clipBounds.width - x, clipBounds.height);
     }
-    
+
     /*
     // Paint the clipBounds
     System.out.println("Painting rect: " + clipBounds);
@@ -295,21 +295,21 @@ implements ProgramTableModelListener {
     grp.drawRect(clipBounds.x, clipBounds.y, clipBounds.width - 1, clipBounds.height - 1);
     /**/
   }
-  
-  
+
+
   public Dimension getPreferredSize() {
     return new Dimension(mModel.getColumnCount() * mColumnWidth, mHeight);
   }
-  
-  
-  
+
+
+
   public Program getProgramAt(int x, int y) {
     int col = x / mColumnWidth;
-    
+
     if ((col < 0) || (col >= mModel.getColumnCount())) {
       return null;
     }
-    
+
     int currY = mLayout.getColumnStart(col);
     if (y < currY) {
       return null;
@@ -321,11 +321,11 @@ implements ProgramTableModelListener {
         return panel.getProgram();
       }
     }
-    
+
     return null;
   }
-  
-  
+
+
   public void forceRepaintAll() {
     for (int col = 0; col < mModel.getColumnCount(); col++) {
       for (int row = 0; row < mModel.getRowCount(col); row++) {
@@ -334,11 +334,11 @@ implements ProgramTableModelListener {
       }
     }
   }
-  
-  
+
+
   public void updateLayout() {
     mLayout.updateLayout(mModel);
-    
+
     // Set the height equal to the highest column
     mHeight = 0;
     for (int col = 0; col < mModel.getColumnCount(); col++) {
@@ -347,52 +347,52 @@ implements ProgramTableModelListener {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
         colHeight += panel.getHeight();
       }
-      
+
       if (colHeight > mHeight) {
         mHeight = colHeight;
       }
     }
-    
+
     // Add 20 for the copyright notice
     mHeight += 20;
-    
+
     if (mBackgroundPainter != null) {
       mBackgroundPainter.layoutChanged(mLayout, mModel);
     }
-    
+
     repaint();
   }
-  
-  
-  
+
+
+
   public void scrollBy(int deltaX, int deltaY) {
     if (getParent() instanceof JViewport) {
       JViewport viewport = (JViewport) getParent();
       Point viewPos = viewport.getViewPosition();
-      
+
       if (deltaX!=0){
         viewPos.x += deltaX;
-        
+
         int maxX = getWidth() - viewport.getWidth();
-        
+
         viewPos.x = Math.min(viewPos.x, maxX);
         viewPos.x = Math.max(viewPos.x, 0);
-        
+
         viewport.setViewPosition(viewPos);
       }
-      
+
       if (deltaY !=0){
         viewPos.y += deltaY;
         int maxY = getHeight() - viewport.getHeight();
         viewPos.y = Math.min(viewPos.y, maxY);
         viewPos.y = Math.max(viewPos.y, 0);
-        
+
         viewport.setViewPosition(viewPos);
       }
     }
   }
-  
-  
+
+
   /**
    * Creates a context menu containg all subscribed plugins that support context
    * menues.
@@ -403,7 +403,7 @@ implements ProgramTableModelListener {
   private JPopupMenu createPluginContextMenu(Program program) {
     return PluginProxyManager.createPluginContextMenu(program);
   }
-  
+
   private void showPopup(MouseEvent evt) {
     mMouse = evt.getPoint();
     updateUI();
@@ -414,20 +414,20 @@ implements ProgramTableModelListener {
       mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
     }
   }
-  
+
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
-    
+
     mDraggingPoint = evt.getPoint();
   }
-  
-  
-  
+
+
+
   private void handleMouseClicked(MouseEvent evt) {
     mMouse = evt.getPoint();
     updateUI();
     Program program = getProgramAt(evt.getX(), evt.getY());
-    
+
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       if (program != null) {
         // This is a left double click
@@ -435,10 +435,17 @@ implements ProgramTableModelListener {
         Plugin.getPluginManager().handleProgramDoubleClick(program);
       }
     }
+    if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
+      if (program != null) {
+        // This is a middle click
+        // -> Execute the program using the user defined middle click plugin
+        Plugin.getPluginManager().handleProgramMiddleClick(program);
+      }
+    }
   }
-  
-  
-  
+
+
+
   private void handleMouseDragged(MouseEvent evt) {
     if (mDraggingPoint != null) {
       int deltaX = mDraggingPoint.x - evt.getX();
@@ -446,8 +453,8 @@ implements ProgramTableModelListener {
       scrollBy(deltaX, deltaY);
     }
   }
-  
-  
+
+
   private void handleMouseMoved(MouseEvent evt) {
     if (Settings.propMouseOver.getBoolean()) {
       if ((mPopupMenu == null) || (!mPopupMenu.isVisible())) {
@@ -456,7 +463,7 @@ implements ProgramTableModelListener {
       }
     }
   }
-  
+
   private void handleMouseExited(MouseEvent evt) {
     if (Settings.propMouseOver.getBoolean()) {
       JViewport viewport = (JViewport) getParent();
@@ -466,7 +473,7 @@ implements ProgramTableModelListener {
       }
     }
   }
-  
+
   public int getTimeY(int minutesAfterMidnight) {
     // Get the total time y
     int totalTimeY = 0;
@@ -478,7 +485,7 @@ implements ProgramTableModelListener {
         parts++;
       }
     }
-    
+
     // Return the avarage time y
     if (parts == 0) {
       // avoid division by zero
@@ -487,23 +494,23 @@ implements ProgramTableModelListener {
       return totalTimeY / parts;
     }
   }
-  
-  
-  
+
+
+
   private int getTimeYOfColumn(int col, int minutesAfterMidnight) {
     int timeY = mLayout.getColumnStart(col);
     Date mainDate = mModel.getDate();
-    
+
     // Walk to the program that starts before the specified time
     int lastCellHeight = 0;
     for (int row = 0; row < mModel.getRowCount(col); row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       Program program = panel.getProgram();
       int startTime = program.getHours() * 60 + program.getMinutes();
-      
+
       // Add 24 hours for every day different to the model's main date
       startTime += program.getDate().getNumberOfDaysSince(mainDate) * 24 * 60;
-      
+
       if (startTime > minutesAfterMidnight) {
         // It was the last program
         timeY += lastCellHeight / 2; // Hit the center of the program
@@ -511,20 +518,20 @@ implements ProgramTableModelListener {
       } else {
         timeY += lastCellHeight;
       }
-      
+
       // Remember the cell height
       lastCellHeight = panel.getHeight();
     }
-    
+
     return -1;
   }
-  
-  
-  
+
+
+
   private Rectangle getCellRect(int cellCol, int cellRow) {
     int x = cellCol * mColumnWidth;
     int width = mColumnWidth;
-    
+
     int y = mLayout.getColumnStart(cellCol);
     for (int row = 0; row < mModel.getRowCount(cellCol); row++) {
       ProgramPanel panel = mModel.getProgramPanel(cellCol, row);
@@ -534,29 +541,29 @@ implements ProgramTableModelListener {
       }
       y += height;
     }
-    
+
     // Invalid cell
     return null;
   }
-  
-  
+
+
   // implements ProgramTableModelListener
-  
-  
+
+
   public void tableDataChanged() {
     updateLayout();
     revalidate();
     repaint();
   }
-  
-  
-  
+
+
+
   public void tableCellUpdated(int col, int row) {
     Rectangle cellRect = getCellRect(col, row);
-    
+
     if (cellRect != null) {
       repaint(cellRect);
     }
   }
-  
+
 }

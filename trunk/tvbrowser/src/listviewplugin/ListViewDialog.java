@@ -65,7 +65,7 @@ import devplugin.Program;
 
 /**
  * Creates a Dialog with a List of Programs
- * 
+ *
  * @author bodo
  */
 public class ListViewDialog extends JDialog {
@@ -106,7 +106,7 @@ public class ListViewDialog extends JDialog {
 
   /**
    * Creates the Dialog
-   * 
+   *
    * @param frame Frame for modal
    * @param plugin Plugin for reference
    */
@@ -115,14 +115,14 @@ public class ListViewDialog extends JDialog {
     setTitle(mLocalizer.msg("viewList", "View List:"));
     mPlugin = plugin;
     mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
-    
+
     generateList(new Date(), getCurrentTime());
     createGUI();
   }
 
   /**
    * Returns the current Time in minutes
-   * 
+   *
    * @return Time in minutes
    */
   private int getCurrentTime() {
@@ -185,7 +185,7 @@ public class ListViewDialog extends JDialog {
 
   /**
    * Finds the program after the given Program
-   * 
+   *
    * @param prg Search Program after this
    * @return following Program
    */
@@ -221,7 +221,7 @@ public class ListViewDialog extends JDialog {
 
   /**
    * Finds a Program for a Date/time on a certain Channel
-   * 
+   *
    * @param date Date
    * @param time Time
    * @param channel Channel
@@ -244,7 +244,7 @@ public class ListViewDialog extends JDialog {
 
   /**
    * Calculates the Time based on the current selection
-   * 
+   *
    * @param selectedIndex # of selection
    * @return calculated Time
    */
@@ -264,7 +264,7 @@ public class ListViewDialog extends JDialog {
 
   /**
    * Creates the GUI
-   * 
+   *
    * @param plugin
    */
   private void createGUI() {
@@ -488,19 +488,22 @@ public class ListViewDialog extends JDialog {
 
   /**
    * Called when a Mouse-Event occurs
-   * 
+   *
    * @param e Event
    */
   private void mouseClickedOnTable(MouseEvent e) {
 
     Program prg = getProgramByClick(e);
-    
+
     if (prg == null) {
       return;
     }
-    
+
     if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
       devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg, mPlugin);
+    }
+    if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+      devplugin.Plugin.getPluginManager().handleProgramMiddleClick(prg, mPlugin);
     }
   }
 
@@ -531,11 +534,11 @@ public class ListViewDialog extends JDialog {
    */
   private void showPopup(MouseEvent e) {
     Program prg = getProgramByClick(e);
-    
+
     if (prg == null) {
       return;
     }
-    
+
     JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(prg, mPlugin);
     menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
   }
