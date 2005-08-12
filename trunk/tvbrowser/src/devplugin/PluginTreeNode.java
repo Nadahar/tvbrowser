@@ -222,7 +222,12 @@ public class PluginTreeNode {
     for (int i=0; i<items.length; i++) {
       PluginTreeNode n = items[i];
       if (!n.isLeaf()) {
-        n.createDefaultNodes();
+        if (n.mGroupingByDate) {
+          n.createDateNodes();
+        }
+        else {
+          n.createDefaultNodes();
+        }
         mDefaultNode.add(n.getMutableTreeNode());
       }
       else {
@@ -245,7 +250,12 @@ public class PluginTreeNode {
     while (it.hasNext()) {
       PluginTreeNode n = (PluginTreeNode)it.next();
       if (!n.isLeaf()) {
-        n.createDateNodes();
+        if (n.mGroupingByDate) {
+          n.createDateNodes();
+        }
+        else {
+          n.createDefaultNodes();
+        }
         mDefaultNode.add(n.getMutableTreeNode());
       }
       else {
@@ -503,7 +513,7 @@ public class PluginTreeNode {
     int cnt = in.readInt();
     for (int i=0; i<cnt; i++) {
       int type = in.readInt();
-      PluginTreeNode n = null;
+      PluginTreeNode n;
       if (type == Node.PROGRAM) {
         ProgramItem item = new ProgramItem();
         item.read(in);
