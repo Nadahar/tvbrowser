@@ -101,8 +101,6 @@ public class MainFrame extends JFrame implements DateListener {
 
   private JPanel jcontentPane;
 
-  private JPanel skinPanel;
-
   private DefaultToolBarModel mToolBarModel;
 
   private ToolBar mToolBar;
@@ -161,7 +159,7 @@ public class MainFrame extends JFrame implements DateListener {
     jcontentPane = (JPanel) getContentPane();
     jcontentPane.setLayout(new BorderLayout());
 
-    skinPanel = new JPanel();
+    JPanel skinPanel = new JPanel();
     skinPanel.setLayout(new BorderLayout());
 
     JPanel centerPanel = new JPanel(new BorderLayout());
@@ -586,8 +584,7 @@ public class MainFrame extends JFrame implements DateListener {
           try {
             java.net.URL url = null;
             url = new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");
-            SoftwareUpdater softwareUpdater = null;
-            softwareUpdater = new SoftwareUpdater(url);
+            SoftwareUpdater softwareUpdater = new SoftwareUpdater(url);
             mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
           } catch (java.io.IOException e) {
             e.printStackTrace();
