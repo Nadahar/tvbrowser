@@ -38,6 +38,14 @@ public class CaptureUtilities {
      * @return result
      */
     public static String replaceIgnoreCase(String inhere, String thisone, String withthis) {
+        if (inhere == null) {
+          return null;
+        } else if (thisone == null) {
+          return inhere;
+        } else if (withthis == null) {
+          withthis = "";
+        }
+        
         StringBuffer result = new StringBuffer();
         int pos = 0;
         
