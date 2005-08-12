@@ -34,13 +34,13 @@ import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
 
 /**
- * The PluginManager provides some usefull methods for a plugin. 
+ * The PluginManager provides some usefull methods for a plugin.
  * More methods may follow in future versions.
  *
  * @author Martin Oberhauser
  */
 public interface PluginManager {
-  
+
   /** Specifies, that the search term has to match exacly. */
   public static final int SEARCHER_TYPE_EXACTLY = 1;
   /** Specifies, that the search term is a keyword (= substring). */
@@ -53,7 +53,7 @@ public interface PluginManager {
 
   /**
    * Gets a program.
-   * 
+   *
    * @param date The date when the program is shown.
    * @param progID The ID of the program.
    * @return The program or <code>null</code> if there is no such program.
@@ -62,7 +62,7 @@ public interface PluginManager {
 
   /**
    * Gets all channels the user has subscribed.
-   * 
+   *
    * @return all channels the user has subscribed.
    */
   public Channel[] getSubscribedChannels();
@@ -70,7 +70,7 @@ public interface PluginManager {
   /**
    * Gets an iterator through all programs of the specified channel at the
    * specified date.
-   * 
+   *
    * @param date The date of the programs.
    * @param channel The channel of the programs.
    * @return an Iterator for all programs of one day and channel or
@@ -91,7 +91,7 @@ public interface PluginManager {
    *        negative the days before the start date are used.
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    * @return The matching programs.
-   * 
+   *
    * @deprecated Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
    */
@@ -102,7 +102,7 @@ public interface PluginManager {
 
   /**
    * Searches the TV data base for programs that match a regular expression.
-   * 
+   *
    * @param regex The regular expression programs must match to.
    * @param caseSensitive Should the search be case sensitive?
    * @param fieldArr The fields to search in
@@ -116,7 +116,7 @@ public interface PluginManager {
    * @return The matching programs.
    * @throws TvBrowserException
    * @throws TvBrowserException If there is a syntax error in the regular expression.
-   * 
+   *
    * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
    */
@@ -124,11 +124,11 @@ public interface PluginManager {
     ProgramFieldType[] fieldArr, Date startDate, int nrDays, Channel[] channels,
     boolean sortByStartTime)
     throws TvBrowserException;
-  
+
 
   /**
    * Creates a ProgramSearcher.
-   * 
+   *
    * @param type The searcher type to create. Must be one of
    *        {@link #SEARCHER_TYPE_EXACTLY}, {@link #SEARCHER_TYPE_KEYWORD},
    *        {@link #SEARCHER_TYPE_REGULAR_EXPRESSION} or
@@ -145,23 +145,23 @@ public interface PluginManager {
 
   /**
    * Returns all activated Plugins.
-   * 
+   *
    * @return all activated Plugins.
    * @since 1.1
    */
   public PluginAccess[] getActivatedPlugins();
-  
+
   /**
    * Gets the ID of the given Java plugin.
-   * 
+   *
    * @param javaPlugin The Java plugin to get the ID for.
    * @return The ID of the given Java plugin.
    */
   public String getJavaPluginId(Plugin javaPlugin);
-  
+
   /**
    * Gets the activated plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @return The plugin with the given ID or <code>null</code> if no such plugin
    *         exists or if the plugin is not activated.
@@ -173,25 +173,25 @@ public interface PluginManager {
    * <p>
    * This method always returns an empty array! Use
    * {@link #getActivatedPlugins()} instead!
-   * 
+   *
    * @return An empty array!
-   * 
+   *
    * @deprecated Since 1.1. Use {@link #getActivatedPlugins()} instead.
    */
   public Plugin[] getInstalledPlugins();
-  
+
   /**
    * Gets a TvDataService for a class name.
    *
    * @param dataServiceClassName the class name of the wanted TvDataService.
    * @return The TvDataService or <code>null</code> if there is no such
-   *         TvDataService. 
+   *         TvDataService.
    */
   public TvDataService getDataService(String dataServiceClassName);
 
   /**
    * Creates a context menu for the given program containing all plugins.
-   * 
+   *
    * @param program The program to create the context menu for
    * @param caller The calling plugin.
    * @return a context menu for the given program.
@@ -200,51 +200,78 @@ public interface PluginManager {
 
   /**
    * Returns an array of all available filters.
-   * 
+   *
    * @return An array of all available filters.
    * @since 0.9.7.4
    */
   public ProgramFilter[] getAvailableFilters();
-	
-  
+
+
   /**
    * Returns an example program. You can use it for preview stuff.
-   * 
+   *
    * @return an example program.
    * @since 0.9.7.4
    */
   public Program getExampleProgram();
-  
-  
+
+
   /**
    * Handles a double click on a program.
    * <p>
-   * Executes the default context menu plugin. Plugins should use 
-   * handleProgramDoubleClick(Program program, Plugin caller). It prevents the 
-   * Plugin to be activated a second time. 
-   * 
+   * Executes the default context menu plugin. Plugins should use
+   * handleProgramDoubleClick(Program program, Plugin caller). It prevents the
+   * Plugin to be activated a second time.
+   *
    * @param program The program to pass to the default context menu plugin.
-   * 
+   *
    * @since 1.1
    */
-  public void handleProgramDoubleClick(Program program);  
-  
+  public void handleProgramDoubleClick(Program program);
+
+
   /**
    * Handles a double click on a program.
    * <p>
    * Executes the default context menu plugin.
-   * 
+   *
    * @param program The program to pass to the default context menu plugin.
    * @param caller Plugin that calls this. Prevents the Plugin to be activated twice
-   * 
+   *
    * @since 1.1
    */
   public void handleProgramDoubleClick(Program program, Plugin caller);
 
 
   /**
+   * Handles a middle click on a program.
+   * <p>
+   * Executes the middle click context menu plugin. Plugins should use
+   * handleProgramMiddleClick(Program program, Plugin caller). It prevents the
+   * Plugin to be activated a second time.
+   *
+   * @param program The program to pass to the middle click context menu plugin.
+   *
+   * @since 1.1
+   */
+  public void handleProgramMiddleClick(Program program);
+
+
+  /**
+   * Handles a middle click on a program.
+   * <p>
+   * Executes the middle click context menu plugin.
+   *
+   * @param program The program to pass to the middle click context menu plugin.
+   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice.
+   *
+   * @since 1.1
+   */
+  public void handleProgramMiddleClick(Program program, Plugin caller);
+
+  /**
    * Returns some settings a plugin may need.
-   * 
+   *
    * @return Some settings a plugin may need.
    */
   public TvBrowserSettings getTvBrowserSettings();

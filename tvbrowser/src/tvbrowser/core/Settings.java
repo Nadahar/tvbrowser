@@ -60,16 +60,16 @@ public class Settings {
   public static final int GET_DATA_FROM_SERVER=0, GET_DATA_FROM_LOCAL_DISK=1;
 
   public static final int NEVER=0, DAILY=1, ONSTARTUP=DAILY, EVERY3DAYS=2, WEEKLY=3;
-  
+
   private static final String SETTINGS_FILE="settings.prop";
   private static final String OLD_USER_DIR = "tvbrowser";
   private static final String USER_DIR = mDefaultSettings.getProperty("userdir",".tvbrowser");
-  
+
   private static final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
   private static final Font PROGRAMINFOFONT=new Font("Dialog",Font.PLAIN,10);
   private static final Font CHANNELNAMEFONT=new Font("Dialog",Font.BOLD,12);
   private static final Font PROGRAMTIMEFONT=new Font("Dialog",Font.BOLD,12);
-  
+
 
   private static PropertyManager mProp = new PropertyManager();
 
@@ -80,7 +80,7 @@ public class Settings {
   public static String getUserDirectoryName() {
     String dir = mDefaultSettings.getProperty("userhome",System.getProperty("user.home", ""));
     String oldDir = dir;
-    
+
     if (dir.length() != 0) {
       dir += File.separator + USER_DIR;
       oldDir += File.separator + OLD_USER_DIR;
@@ -95,7 +95,7 @@ public class Settings {
     if (oldUserDir.exists()) {
       oldUserDir.renameTo(new File(dir));
     }
-    
+
     return dir;
   }
 
@@ -176,45 +176,45 @@ public class Settings {
 
   public static void handleChangedSettings() {
     Property[] propArr;
-    
+
     MainFrame mainFrame = MainFrame.getInstance();
-    
+
     propArr = new Property[] {
       propProgramTitleFont, propProgramInfoFont, propProgramTimeFont,
       propChannelNameFont, propUseDefaultFonts, propEnableAntialiasing
     };
-    
+
     if (mProp.hasChanged(propArr)) {
       util.ui.ProgramPanel.updateFonts();
-      tvbrowser.ui.programtable.ChannelPanel.fontChanged();      
+      tvbrowser.ui.programtable.ChannelPanel.fontChanged();
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
-      scrollPane.forceRepaintAll();      
+      scrollPane.forceRepaintAll();
     }
-    
+
     if (mProp.hasChanged(propColumnWidth)) {
       util.ui.ProgramPanel.updateColumnWidth();
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.setColumnWidth(propColumnWidth.getInt());
       scrollPane.forceRepaintAll();
     }
-    
+
     propArr = new Property[] {
       propLookAndFeel, propSkinLFThemepack, propIsSkinLFEnabled
     };
     if (mProp.hasChanged(propArr)) {
       TVBrowser.updateLookAndFeel();
     }
-    
+
     if (mProp.hasChanged(propTableLayout)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().setProgramTableLayout(null);
     }
-    
+
     if (mProp.hasChanged(propDeactivatedPlugins)) {
       mainFrame.updatePluginsMenu();
       mainFrame.updateToolbar();
     }
-    
+
     propArr = new Property[] {
       propTableBackgroundStyle, propOneImageBackground,
       propTimeBlockSize, propTimeBlockBackground1, propTimeBlockBackground2,
@@ -227,7 +227,7 @@ public class Settings {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().updateBackground();
     }
-      
+
     propArr = new Property[] {
       propToolbarButtonStyle,
       propToolbarButtons, propToolbarLocation, propIsTooolbarVisible,
@@ -236,18 +236,18 @@ public class Settings {
     if (mProp.hasChanged(propArr)) {
       mainFrame.updateToolbar();
     }
-    
+
     if (mProp.hasChanged(propTimeButtons)) {
       mainFrame.updateButtons();
     }
-    
+
     if (mProp.hasChanged(propSubscribedChannels)) {
       ChannelList.create();
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
       model.setChannels(ChannelList.getSubscribedChannels());
       mainFrame.updateChannellist();
     }
-      
+
     propArr = new Property[] {
       propProgramTableStartOfDay, propProgramTableEndOfDay
     };
@@ -257,9 +257,9 @@ public class Settings {
       int endOfDay   = propProgramTableEndOfDay.getInt();
       model.setTimeRange(startOfDay, endOfDay);
     }
-      
-    
-    
+
+
+
     propArr = new Property[] {
       propProgramTableIconPlugins, propProgramInfoFields
     };
@@ -281,11 +281,11 @@ public class Settings {
 
     mProp.clearChanges();
   }
-  
-  
+
+
   public static final VersionProperty propTVBrowserVersion
     = new VersionProperty(mProp, "version", null);
-  
+
   public static final BooleanProperty propUseDefaultFonts
     = new BooleanProperty(mProp, "usedefaultfonts", true);
 
@@ -294,11 +294,11 @@ public class Settings {
 
   public static final StringProperty propTVDataDirectory
     = new StringProperty(mProp, "directory.tvdata", mDefaultSettings.getProperty("tvdatadir",""));
-  
+
   public static final StringProperty propFilterDirectory
     = new StringProperty(mProp, "directory.filters",
                          getUserDirectoryName() + File.separator + "filters");
-                         
+
   public static final ChannelArrayProperty propSubscribedChannels
     = new ChannelArrayProperty(mProp, "subscribedchannels", new devplugin.Channel[]{});
 
@@ -326,8 +326,8 @@ public class Settings {
   public static final IntProperty propEveningTime
     = new IntProperty(mProp, "timebutton.evening", 20 * 60);
 
-  
-  
+
+
   public static final ChoiceProperty propTableLayout
     = new ChoiceProperty(mProp, "table.layout", "timeSynchronous",
                          new String[] { "timeSynchronous", "compact" });
@@ -388,7 +388,7 @@ public class Settings {
   public static final BooleanProperty propUseSingeClickInTray
   = new BooleanProperty(mProp, "SingeClickInTray", false);
 
-  
+
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "icon",
                          new String[] { "text&icon", "text", "icon" });
@@ -410,18 +410,18 @@ public class Settings {
 
   public static final IntProperty propColumnWidth
     = new IntProperty(mProp, "columnwidth", 200);
-  
+
   public static final IntArrayProperty propTimeButtons
   = new IntArrayProperty(mProp, "timeButtons", new int[]{6*60, 12*60, 18*60, 20*60});
-  
+
   /**
    * @deprecated
    */
   public static final StringArrayProperty propHiddenPluginButtons
     = new StringArrayProperty(mProp, "hiddenPluginButtons", new String[0]);
 
-  
- 
+
+
   public static final StringArrayProperty propToolbarButtons
     = new StringArrayProperty(mProp, "toolbarButtons",
             null  // we show all buttons, if this property is not set
@@ -429,16 +429,19 @@ public class Settings {
 
   public static final BooleanProperty propToolbarUseBigIcons
     = new BooleanProperty(mProp, "toolbarUseBigIcons", true);
-  
+
   public static final StringProperty propToolbarLocation
     = new StringProperty(mProp, "toolbarLocation", "north");
-  
+
   public static final StringProperty propDefaultContextMenuPlugin
     = new StringProperty(mProp, "contextmenudefaultplugin", "java.programinfo.ProgramInfo");
 
+  public static final StringProperty propMiddleClickPlugin
+    = new StringProperty(mProp, "middleclickplugin", "java.programinfo.ProgramInfo");
+
   public static final StringProperty propLastUsedFilter
   = new StringProperty(mProp, "lastusedfilter", null);
-  
+
   /**
    * The order of the plugin IDs.
    * <p>
@@ -457,7 +460,7 @@ public class Settings {
    */
   public static final StringArrayProperty propDeactivatedPlugins
     = new StringArrayProperty(mProp, "deactivatedPlugins", null);
-  
+
   public static final IntProperty propDownloadPeriod
     = new IntProperty(mProp, "downloadperiod", 0);
 
@@ -506,26 +509,26 @@ public class Settings {
 
 
   /** Color for Program on Air - This shows how much was shown til now */
-  public static final ColorProperty propProgramTableColorOnAirDark 
+  public static final ColorProperty propProgramTableColorOnAirDark
     = new ColorProperty(mProp, "programpanel.ColorOnAirDark", new Color(128, 128, 255, 80));
   /** Color for Program on Air - This shows how much is not shown til now */
-  public static final ColorProperty propProgramTableColorOnAirLight 
+  public static final ColorProperty propProgramTableColorOnAirLight
     = new ColorProperty(mProp, "programpanel.ColorOnAirLight", new Color(128, 128, 255, 40));
   /** Color for marked Program */
-  public static final ColorProperty propProgramTableColorMarked 
+  public static final ColorProperty propProgramTableColorMarked
     = new ColorProperty(mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 40));
 
-  
+
   public static final BooleanProperty propMouseOver
     = new BooleanProperty(mProp, "programpanel.MouseOver", false);
 
   /** Color for Mouse-Over */
-  public static final ColorProperty propMouseOverColor 
+  public static final ColorProperty propMouseOverColor
     = new ColorProperty(mProp, "programpanel.MouseOverColor", new Color(200, 200, 0, 40));
-  
+
   public static final BooleanProperty propTitelAlwaysVisible
-    = new BooleanProperty(mProp, "programpanel.TitelAlwaysVisible", false);  
-  
+    = new BooleanProperty(mProp, "programpanel.TitelAlwaysVisible", false);
+
   public static final BooleanProperty propIsWindowMaximized
     = new BooleanProperty(mProp, "window.isMaximized", false);
 
@@ -581,63 +584,63 @@ public class Settings {
 
   public static final EncodedStringProperty propFtpProxyPassword
     = new EncodedStringProperty(mProp, "proxy.ftp.password", "", PROXY_PASSWORD_SEED);
-	
+
   public static final StringArrayProperty propDataServicesForUpdate
     = new StringArrayProperty(mProp,"tvdataservices.update",null);
-  
-  
+
+
   public static final BooleanProperty propShowPluginView
     = new BooleanProperty(mProp,"show.pluginview", false);
-  
+
   public static final BooleanProperty propShowTimeButtons
     = new BooleanProperty(mProp,"show.timebuttons", true);
-  
+
   public static final BooleanProperty propShowChannels
   = new BooleanProperty(mProp,"show.channels", true);
 
   public static final BooleanProperty propShowDatelist
   = new BooleanProperty(mProp,"show.datelist", true);
 
-  
+
   public static final SplitViewProperty propViewRoot
     = new SplitViewProperty(mProp,"view.root", false, true, 50);
-  
+
   public static final SplitViewProperty propViewMainframe
     = new SplitViewProperty(mProp,"view.mainframe", false, false, 50);
-  
+
   public static final SplitViewProperty propViewNavigation
   = new SplitViewProperty(mProp,"view.navigation", true, true, 30);
 
   public static final SplitViewProperty propViewDateChannel
   = new SplitViewProperty(mProp,"view.date_channel", true, true, 100);
 
-  
-  public static final BooleanProperty propSplashShow 
+
+  public static final BooleanProperty propSplashShow
   = new BooleanProperty(mProp, "splash.show", true);
   /**
    * The Splash-Image
    */
   public static final StringProperty propSplashImage
   = new StringProperty(mProp,"splash.file", "imgs/splash.png");
-  
+
   /**
    * The X-Position of the Text in the Splash
    */
   public static final IntProperty propSplashTextPosX
   = new IntProperty(mProp, "splash.textPosX", 10);
-  
+
   /**
    * The Y-Position of the Text in the Splash
    */
   public static final IntProperty propSplashTextPosY
   = new IntProperty(mProp, "splash.textPosY", 262);
-  
+
   /**
    * Background-Color
    */
   public static final ColorProperty propSplashBackgroundColor
   = new ColorProperty(mProp, "splash.BackgroundColor", new Color(63, 114, 133));
-  
+
   /**
    * Foreground-Color
    */

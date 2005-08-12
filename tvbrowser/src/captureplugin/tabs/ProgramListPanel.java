@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -54,13 +54,13 @@ import devplugin.Program;
 
 /**
  * Panel with List of Recordings
- * 
+ *
  * @author bodum
  */
 public class ProgramListPanel extends JPanel {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPanel.class);
-  
+
     /** Config **/
     private CapturePluginData mData;
 
@@ -68,9 +68,9 @@ public class ProgramListPanel extends JPanel {
     private JTable mProgramTable;
     /** List of Programs */
     private DeviceTableModel mProgramTableModel;
-    
+
     private JFrame mParent;
-    
+
     /**
      * Creates the Panel
      * @param parent Parent-Frame
@@ -91,7 +91,7 @@ public class ProgramListPanel extends JPanel {
         mProgramTableModel.clearTable();
 
         Iterator it = mData.getDevices().iterator();
-        
+
         while (it.hasNext()) {
             DeviceIf dev = (DeviceIf) it.next();
             Program[] prgList = dev.getProgramList();
@@ -101,9 +101,9 @@ public class ProgramListPanel extends JPanel {
                 mProgramTableModel.addProgram(dev, prgList[v]);
             }
         }
-        
+
     }
-    
+
     /**
      * Creates the GUI
      */
@@ -111,7 +111,7 @@ public class ProgramListPanel extends JPanel {
         setLayout(new BorderLayout());
 
         mProgramTable = new JTable(mProgramTableModel);
-        
+
         mProgramTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new DeviceTableCellRenderer());
         mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer());
@@ -128,8 +128,8 @@ public class ProgramListPanel extends JPanel {
               if (evt.isPopupTrigger()) {
                 showPopup(evt);
               }
-            }          
-          
+            }
+
             public void mouseClicked(MouseEvent e) {
                 int column = mProgramTable.columnAtPoint(e.getPoint());
                 if (column != 1) {
@@ -142,23 +142,30 @@ public class ProgramListPanel extends JPanel {
 
                     devplugin.Plugin.getPluginManager().handleProgramDoubleClick(p, CapturePlugin.getInstance());
                 }
+                if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+                    int row = mProgramTable.rowAtPoint(e.getPoint());
+                    mProgramTable.changeSelection(row, 0, false, false);
+                    Program p = (Program) mProgramTableModel.getValueAt(row, 1);
+
+                    devplugin.Plugin.getPluginManager().handleProgramMiddleClick(p, CapturePlugin.getInstance());
+                }
             }
         });
 
         JScrollPane scroll = new JScrollPane(mProgramTable);
 
         add(scroll, BorderLayout.CENTER);
-        
+
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
+
         JButton delete = new JButton(new ImageIcon(ProgramListPanel.class.getResource("Delete16.gif")));
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePressed();
             }
-            
+
         });
-        
+
         btnPanel.add(delete);
 
         add(btnPanel, BorderLayout.SOUTH);
@@ -172,39 +179,39 @@ public class ProgramListPanel extends JPanel {
       int row = mProgramTable.rowAtPoint(e.getPoint());
 
       mProgramTable.changeSelection(row, 0, false, false);
-      
+
       Program p = (Program) mProgramTableModel.getValueAt(row, 1);
-      
+
       JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(p, CapturePlugin.getInstance());
       menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
     }
-    
+
     /**
      * Delete was pressed
      */
     private void deletePressed() {
        int row = mProgramTable.getSelectedRow();
-       
+
        if ((row > mProgramTableModel.getRowCount()) || (row < 0)) {
            return;
        }
-       
+
        DeviceIf dev = (DeviceIf) mProgramTableModel.getValueAt(row, 0);
        Program prg = (Program) mProgramTableModel.getValueAt(row, 1);
 
-       int ret = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(mParent), 
+       int ret = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(mParent),
                mLocalizer.msg("ReallyDelete","Really delete recording?"),
                mLocalizer.msg("Delete", "Delete?"),
                JOptionPane.YES_NO_OPTION);
-       
+
        if (ret == JOptionPane.YES_OPTION) {
            dev.remove(UiUtilities.getLastModalChildOf(mParent), prg);
-           
+
            mProgramTableModel.removeColumn(row);
-           
+
            createListData();
        }
-       
+
     }
-    
+
 }

@@ -54,7 +54,7 @@ import devplugin.*;
  * @author Til Schneider, www.murfman.de
  */
 public class PluginManagerImpl implements PluginManager {
-  
+
   /** An example program. */
   private Program mExampleProgram;
 
@@ -71,7 +71,7 @@ public class PluginManagerImpl implements PluginManager {
 
   /**
    * Gets a program.
-   * 
+   *
    * @param date The date when the program is shown.
    * @param progID The ID of the program.
    * @return The program or <code>null</code> if there is no such program.
@@ -111,7 +111,7 @@ public class PluginManagerImpl implements PluginManager {
 
   /**
    * Gets all channels the user has subscribed.
-   * 
+   *
    * @return all channels the user has subscribed.
    */
   public Channel[] getSubscribedChannels() {
@@ -122,7 +122,7 @@ public class PluginManagerImpl implements PluginManager {
   /**
    * Gets an iterator through all programs of the specified channel at the
    * specified date.
-   * 
+   *
    * @param date The date of the programs.
    * @param channel The channel of the programs.
    * @return an Iterator for all programs of one day and channel or
@@ -151,7 +151,7 @@ public class PluginManagerImpl implements PluginManager {
    *        negative the days before the start date are used.
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    * @return The matching programs.
-   * 
+   *
    * @deprecated Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
    */
@@ -179,14 +179,14 @@ public class PluginManagerImpl implements PluginManager {
     else {
       fieldArr = new ProgramFieldType[0];
     }
-    
+
     return search(regex, caseSensitive, fieldArr, startDate, nrDays, channels, false);
   }
 
 
   /**
    * Searches the TV data base for programs that match a regular expression.
-   * 
+   *
    * @param regex The regular expression programs must match to.
    * @param caseSensitive Should the search be case sensitive?
    * @param fieldArr The fields to search in
@@ -200,7 +200,7 @@ public class PluginManagerImpl implements PluginManager {
    * @return The matching programs.
    * @throws TvBrowserException
    * @throws TvBrowserException If there is a syntax error in the regular expression.
-   * 
+   *
    * @deprecated Since 1.1. Use {@link #createProgramSearcher(int, String, boolean)}
    *             instead.
    */
@@ -210,14 +210,14 @@ public class PluginManagerImpl implements PluginManager {
   {
     ProgramSearcher searcher = createProgramSearcher(SEARCHER_TYPE_REGULAR_EXPRESSION,
         regex, caseSensitive);
-    
+
     return searcher.search(fieldArr, startDate, nrDays, channels, sortByStartTime);
   }
 
-  
+
   /**
    * Creates a ProgramSearcher.
-   * 
+   *
    * @param type The searcher type to create. Must be one of
    *        {@link #SEARCHER_TYPE_EXACTLY}, {@link #SEARCHER_TYPE_KEYWORD},
    *        {@link #SEARCHER_TYPE_REGULAR_EXPRESSION} or
@@ -247,11 +247,11 @@ public class PluginManagerImpl implements PluginManager {
       default: throw new IllegalArgumentException("Unknown searcher type: " + type);
     }
   }
-  
+
 
   /**
    * Returns all activated Plugins.
-   * 
+   *
    * @return all activated Plugins.
    * @since 1.1
    */
@@ -262,7 +262,7 @@ public class PluginManagerImpl implements PluginManager {
 
   /**
    * Gets the ID of the given Java plugin.
-   * 
+   *
    * @param javaPlugin The Java plugin to get the ID for.
    * @return The ID of the given Java plugin.
    */
@@ -270,10 +270,10 @@ public class PluginManagerImpl implements PluginManager {
     return JavaPluginProxy.getJavaPluginId(javaPlugin);
   }
 
-  
+
   /**
    * Gets the activated plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @return The plugin with the given ID or <code>null</code> if no such plugin
    *         exists or if the plugin is not activated.
@@ -281,29 +281,29 @@ public class PluginManagerImpl implements PluginManager {
   public PluginAccess getActivatedPluginForId(String pluginId) {
     return PluginProxyManager.getInstance().getActivatedPluginForId(pluginId);
   }
-  
-  
+
+
   /**
    * Returns a list of all installed Plugins.
    * <p>
    * This method always returns an empty array! Use
    * {@link #getActivatedPlugins()} instead!
-   * 
+   *
    * @return An empty array!
-   * 
+   *
    * @deprecated Since 1.1. Use {@link #getActivatedPlugins()} instead.
    */
   public Plugin[] getInstalledPlugins() {
     return new Plugin[0];
   }
-  
+
 
   /**
    * Gets a TvDataService for a class name.
    *
    * @param dataServiceClassName the class name of the wanted TvDataService.
    * @return The TvDataService or <code>null</code> if there is no such
-   *         TvDataService. 
+   *         TvDataService.
    */
   public TvDataService getDataService(String dataServiceClassName) {
     return TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
@@ -312,43 +312,44 @@ public class PluginManagerImpl implements PluginManager {
 
   /**
    * Creates a context menu for the given program containing all plugins.
-   * 
+   *
    * @param program The program to create the context menu for
    * @param caller The calling plugin.
    * @return a context menu for the given program.
    */
   public JPopupMenu createPluginContextMenu(Program program, Plugin caller) {
+
     return PluginProxyManager.createPluginContextMenu(program, caller);
   }
 
 
   /**
    * Returns an array of all available filters.
-   * 
+   *
    * @return An array of all available filters.
    * @since 0.9.7.4
    */
   public ProgramFilter[] getAvailableFilters() {
-    
+
     ArrayList filters = new ArrayList();
-    
+
     FilterList filterList = FilterList.getInstance();
-    
+
     ProgramFilter[] filter = filterList.getFilterArr();
-    
+
     for (int i=0;i<filter.length;i++) {
       if (!(filter[i] instanceof SeparatorFilter)) {
         filters.add(filter[i]);
       }
     }
-    
+
     return (ProgramFilter[]) filters.toArray(new ProgramFilter[0]);
   }
 
 
   /**
    * Returns an example program. You can use it for preview stuff.
-   * 
+   *
    * @return an example program.
    * @since 0.9.7.4
    */
@@ -358,7 +359,7 @@ public class PluginManagerImpl implements PluginManager {
 
       Channel exampleChannel = new Channel(null, "Channel 1",
           TimeZone.getDefault(), "de", "");
-      
+
       MutableProgram prog = new MutableProgram(exampleChannel,
                                                Date.getCurrentDate(), 14, 45);
       prog.setTitle("Die Waltons");
@@ -382,37 +383,36 @@ public class PluginManagerImpl implements PluginManager {
       prog.setTimeField(ProgramFieldType.VPS_TYPE, 14 * 60 + 45);
       prog.setInfo(Program.INFO_AUDIO_TWO_CHANNEL_TONE
                    | Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
-      
+
       mExampleProgram = prog;
     }
 
     return mExampleProgram;
   }
 
-  
   /**
    * Handles a double click on a program.
    * <p>
-   * Executes the default context menu plugin. Plugins should use 
-   * handleProgramDoubleClick(Program program, Plugin caller). It prevetns the 
-   * Plugin to be activated a second time. 
-   * 
+   * Executes the default context menu plugin. Plugins should use
+   * handleProgramDoubleClick(Program program, Plugin caller). It prevetns the
+   * Plugin to be activated a second time.
+   *
    * @param program The program to pass to the default context menu plugin.
-   * 
+   *
    * @since 1.1
    */
   public void handleProgramDoubleClick(Program program) {
     handleProgramDoubleClick(program, null);
   }
-  
+
   /**
    * Handles a double click on a program.
    * <p>
    * Executes the default context menu plugin.
-   * 
+   *
    * @param program The program to pass to the default context menu plugin.
    * @param caller Plugin that calls this. Prevents the Plugin to be activated twice
-   * 
+   *
    * @since 1.1
    */
   public void handleProgramDoubleClick(Program program, Plugin caller) {
@@ -420,18 +420,18 @@ public class PluginManagerImpl implements PluginManager {
       // Nothing to do
       return;
     }
-    
+
     PluginAccess defaultContextMenuPlugin
       = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
-    
+
     if (defaultContextMenuPlugin == null) {
       return;
     }
-    
+
     if ((caller != null)  && (defaultContextMenuPlugin.getId().equals(caller.getId()))) {
       return;
     }
-    
+
     if (defaultContextMenuPlugin != null) {
       ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
       while (menu != null && menu.hasSubItems()) {
@@ -456,11 +456,80 @@ public class PluginManagerImpl implements PluginManager {
 
     }
   }
-  
+
+
+  /**
+   * Handles a middle click on a program.
+   * <p>
+   * Executes the middle click context menu plugin. Plugins should use
+   * handleProgramMiddleClick(Program program, Plugin caller). It prevents the
+   * Plugin to be activated a second time.
+   *
+   * @param program The program to pass to the middle click context menu plugin.
+   *
+   * @since 1.1
+   */
+  public void handleProgramMiddleClick(Program program) {
+    handleProgramMiddleClick(program, null);
+  }
+
+
+  /**
+   * Handles a middle click on a program.
+   * <p>
+   * Executes the middle click context menu plugin.
+   *
+   * @param program The program to pass to the middle click context menu plugin.
+   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice.
+   *
+   * @since 1.1
+   */
+  public void handleProgramMiddleClick(Program program, Plugin caller) {
+    if (program == null) {
+      // Nothing to do
+      return;
+    }
+
+    PluginAccess middleClickPlugin
+      = PluginProxyManager.getInstance().getMiddleClickPlugin();
+
+    if (middleClickPlugin == null) {
+      return;
+    }
+
+    if ((caller != null)  && (middleClickPlugin.getId().equals(caller.getId()))) {
+      return;
+    }
+
+    if (middleClickPlugin != null) {
+      ActionMenu menu = middleClickPlugin.getContextMenuActions(program);
+      while (menu != null && menu.hasSubItems()) {
+        ActionMenu[] subItems = menu.getSubItems();
+        if (subItems.length>0) {
+          menu = subItems[0];
+        }
+        else {
+          menu = null;
+        }
+      }
+      if (menu == null) {
+        return;
+      }
+
+      Action action = menu.getAction();
+
+      if (action != null) {
+        ActionEvent evt = new ActionEvent(program, 0, null);
+        action.actionPerformed(evt);
+      }
+
+    }
+  }
+
 
   /**
    * Gets the plugin that is used as default in the context menu.
-   * 
+   *
    * @return the default context menu plugin.
    * @since 1.1
    */
@@ -471,7 +540,7 @@ public class PluginManagerImpl implements PluginManager {
 
   /**
    * Returns some settings a plugin may need.
-   * 
+   *
    * @return Some settings a plugin may need.
    */
   public TvBrowserSettings getTvBrowserSettings() {

@@ -44,26 +44,26 @@ import devplugin.Program;
 
 
 /**
- * This Class extends a JList for showing Programs 
+ * This Class extends a JList for showing Programs
  */
 public class ProgramList extends JList implements ChangeListener, ListDataListener {
 
     private Vector mPrograms = new Vector();
-   
+
 
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
-     * 
+     *
      * @param programArr Array of Programs to show
      */
     public ProgramList(Vector programArr) {
         super(programArr);
         setCellRenderer(new ProgramListCellRenderer());
-    }    
-    
+    }
+
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
-     * 
+     *
      * @param programArr Array of Programs to show
      */
     public ProgramList(Program[] programArr) {
@@ -73,7 +73,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
 
     /**
      * Creates the JList and adds the default MouseListeners (PopUpBox)
-     * 
+     *
      * @param programs Model with Programs to show
      */
     public ProgramList(ListModel programs) {
@@ -81,7 +81,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         programs.addListDataListener(this);
         setCellRenderer(new ProgramListCellRenderer());
     }
-    
+
     /**
      * Add a ChangeListener to all Programs for repainting
      */
@@ -90,7 +90,7 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         removeFromPrograms();
         addToPrograms();
     }
-    
+
     /**
      * Remove a ChangeListener to all Programs
      */
@@ -98,17 +98,17 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         super.removeNotify();
         removeFromPrograms();
     }
-   
-    
+
+
     private void removeFromPrograms() {
         for (int i=0; i < mPrograms.size(); i++) {
             ((Program)mPrograms.get(i)).removeChangeListener(this);
         }
     }
-    
+
     private void addToPrograms() {
         ListModel list = getModel();
-        
+
         for (int i=0; i < list.getSize(); i++) {
             if (list.getElementAt(i) instanceof Program) {
                 Program prg = (Program)list.getElementAt(i);
@@ -117,13 +117,13 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
             }
         }
     }
-    
+
     /**
      * Add a Mouse-Listener for the Popup-Box
      */
     public void addMouseListeners(final Plugin caller) {
       addMouseListener(new MouseAdapter() {
-        
+
         public void mousePressed(MouseEvent e) {
           if (e.isPopupTrigger()) {
             showPopup(e, caller);
@@ -134,18 +134,26 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
           if (e.isPopupTrigger()) {
             showPopup(e, caller);
           }
-        }    
-        
+        }
+
         public void mouseClicked(MouseEvent e) {
           PluginManager mng = Plugin.getPluginManager();
-          
+
           if (SwingUtilities.isLeftMouseButton(e)
               && (e.getClickCount() == 2)) {
             int inx = locationToIndex(e.getPoint());
             Program prog = (Program) ProgramList.this.getModel()
                 .getElementAt(inx);
-  
+
             mng.handleProgramDoubleClick(prog, caller);
+          }
+          if (SwingUtilities.isMiddleMouseButton(e)
+              && (e.getClickCount() == 1)) {
+            int inx = locationToIndex(e.getPoint());
+            Program prog = (Program) ProgramList.this.getModel()
+                .getElementAt(inx);
+
+            mng.handleProgramMiddleClick(prog, caller);
           }
         }
       });
@@ -165,9 +173,9 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
       JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
 
       menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
-      
+
     }
-    
+
     /* (non-Javadoc)
      * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
      */

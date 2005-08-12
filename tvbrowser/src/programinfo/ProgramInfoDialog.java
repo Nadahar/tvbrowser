@@ -69,20 +69,20 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
   public ProgramInfoDialog(Frame parent, String styleSheet, final Program program)
   {
     super(parent, true);
-   
+
     setTitle(mLocalizer.msg("title", "Program information"));
-   
+
     JPanel main = new JPanel(new BorderLayout());
     main.setPreferredSize(new Dimension(500, 350));
     main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     setContentPane(main);
-    
+
     mInfoEP = new JEditorPane();
     mInfoEP.setEditorKit(new ExtendedHTMLEditorKit());
-    
+
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoEP.getDocument();
     ProgramTextCreator creator = new ProgramTextCreator();
-    
+
     String text = creator.createInfoText(program, doc, styleSheet);
     mInfoEP.setText(text);
     mInfoEP.setEditable(false);
@@ -108,46 +108,46 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
         if (evt.isPopupTrigger()) {
           showPopup(evt, program);
         }
-      }      
-      
+      }
+
       public void mouseClicked(MouseEvent e) {
         handleMouseClicked(e, program);
       }
     });
-    
+
     //final FindAsYouType findasyoutype = new FindAsYouType(mInfoEP);
     final TextComponentFindAction findasyoutype = new TextComponentFindAction(mInfoEP, true);
-    
+
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
     main.add(scrollPane, BorderLayout.CENTER);
-    
+
     // buttons
     JPanel buttonPn = new JPanel(new BorderLayout());
-    
+
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5,0,0,0));
-    
+
     main.add(buttonPn, BorderLayout.SOUTH);
 
     JButton findBtn = new JButton(findasyoutype);
-    
+
     findBtn.setIcon(ImageUtilities
         .createImageIconFromJar("programinfo/Find16.gif", getClass()));
     findBtn.setText("");
     findBtn.setToolTipText(mLocalizer.msg("search", "Search Text"));
-    
+
     buttonPn.add(findBtn, BorderLayout.WEST);
-    
+
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         dispose();
       }
     });
-    
+
     buttonPn.add(closeBtn, BorderLayout.EAST);
-    
+
     getRootPane().setDefaultButton(closeBtn);
-    
+
     // Scroll to the beginning
     Runnable runnable = new Runnable() {
       public void run() {
@@ -168,10 +168,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
     }
   }
-  
+
   private void handleMouseClicked(MouseEvent evt, Program program) {
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       Plugin.getPluginManager().handleProgramDoubleClick(program, ProgramInfo.getInstance());
+    }
+    if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
+      Plugin.getPluginManager().handleProgramMiddleClick(program, ProgramInfo.getInstance());
     }
   }
 }
