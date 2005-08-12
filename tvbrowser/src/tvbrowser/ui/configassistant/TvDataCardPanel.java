@@ -38,7 +38,7 @@ import java.io.File;
 import java.io.IOException;
 
 
-class TvDataCardPanel extends AbstractCardPanel {
+class TvDataCardPanel extends AbstractCardPanel implements ActionListener {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
@@ -93,8 +93,8 @@ class TvDataCardPanel extends AbstractCardPanel {
     result.add(mDirectoryTF, BorderLayout.CENTER);
 
     JButton chooseBtn = new JButton(mLocalizer.msg("browse","Browse...")+"...");
+    chooseBtn.addActionListener(this);
     result.add(chooseBtn, BorderLayout.EAST);
-
 
     return result;
   }
@@ -179,4 +179,27 @@ class TvDataCardPanel extends AbstractCardPanel {
     return mContent;
   }
 
+
+  public void actionPerformed(ActionEvent e) {
+    String dir = mDirectoryTF.getText();
+    if (dir == null || dir.trim().length()==0) {
+      dir = new File("tvdata").getAbsolutePath();
+    }
+    
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    fileChooser.setSelectedFile(new File(dir));
+    int retVal = fileChooser.showOpenDialog(util.ui.UiUtilities.getBestDialogParent(mContent));
+    if (retVal == JFileChooser.APPROVE_OPTION) {
+      File f = fileChooser.getSelectedFile();
+      if( f!=null) {
+	if (f.toString().endsWith("tvdata"))
+	  mDirectoryTF.setText(f.toString());
+        else if (f.toString().endsWith(File.separator))
+	  mDirectoryTF.setText(f + "tvdata");
+	else
+	  mDirectoryTF.setText(f + File.separator + "tvdata");
+      }
+    }
+  }
 }

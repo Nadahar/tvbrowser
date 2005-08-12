@@ -101,6 +101,8 @@ public class MainFrame extends JFrame implements DateListener {
 
   private JPanel jcontentPane;
 
+  private JPanel skinPanel;
+
   private DefaultToolBarModel mToolBarModel;
 
   private ToolBar mToolBar;
@@ -159,7 +161,7 @@ public class MainFrame extends JFrame implements DateListener {
     jcontentPane = (JPanel) getContentPane();
     jcontentPane.setLayout(new BorderLayout());
 
-    JPanel skinPanel = new JPanel();
+    skinPanel = new JPanel();
     skinPanel.setLayout(new BorderLayout());
 
     JPanel centerPanel = new JPanel(new BorderLayout());
@@ -582,8 +584,10 @@ public class MainFrame extends JFrame implements DateListener {
       progWin.run(new Progress() {
         public void run() {
           try {
-            java.net.URL url = new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");
-            SoftwareUpdater softwareUpdater = new SoftwareUpdater(url);
+            java.net.URL url = null;
+            url = new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");
+            SoftwareUpdater softwareUpdater = null;
+            softwareUpdater = new SoftwareUpdater(url);
             mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
           } catch (java.io.IOException e) {
             e.printStackTrace();
@@ -602,6 +606,11 @@ public class MainFrame extends JFrame implements DateListener {
       }
     }
 
+  }
+
+  public void showFromTray() {
+    super.show();
+    mIsVisible = true;
   }
 
   public void show() {
@@ -633,6 +642,17 @@ public class MainFrame extends JFrame implements DateListener {
     mMenuBar.updateFiltersMenu();
   }
 
+  public void showHelpDialog() {
+
+    Locale locale = Locale.getDefault();
+    String language = locale.getLanguage();
+
+    java.io.File indexFile = new java.io.File("help/" + language + "/index.html");
+    if (!indexFile.exists()) {
+      indexFile = new java.io.File("help/default/index.html");
+    }
+    util.ui.BrowserLauncher.openURL(indexFile.getAbsolutePath());
+  }
 
   /**
    * Updates the TimeChooser-Buttons
