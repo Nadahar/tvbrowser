@@ -233,7 +233,7 @@ public class SystemTray {
    */
   private void toggleShowHide() {
     if (!MainFrame.getInstance().isVisible() || (MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED)) {
-      MainFrame.getInstance().show();
+      MainFrame.getInstance().showFromTray();
       MainFrame.getInstance().toFront();
       MainFrame.getInstance().setExtendedState(mState);
       toggleOpenCloseMenuItem(false);
