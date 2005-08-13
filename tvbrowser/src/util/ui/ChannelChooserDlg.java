@@ -74,7 +74,7 @@ public class ChannelChooserDlg extends JDialog {
 
   private void init(Channel[] channelArr, String description) {
     setTitle(mLocalizer.msg("chooseChannels","choose channels"));
-
+    
     if (channelArr == null) {
       mChannelArr = new Channel[]{};
       mResultChannelArr = new Channel[]{};
@@ -117,14 +117,14 @@ public class ChannelChooserDlg extends JDialog {
         for (int i=0;i<o.length;i++) {
           mResultChannelArr[i]=(Channel)o[i];
         }
-        hide();
+        setVisible(false);
       }
       });
 
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         mResultChannelArr = null;
-        hide();
+        setVisible(false);
       }
     });
 
