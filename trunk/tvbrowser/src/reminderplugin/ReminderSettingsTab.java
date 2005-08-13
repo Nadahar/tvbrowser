@@ -77,7 +77,6 @@ public class ReminderSettingsTab implements SettingsTab {
 
   private JCheckBox mReminderWindowChB;
   private FileCheckBox mSoundFileChB;
-  private JButton mSoundTestBt;
   private JCheckBox mExecChB;
   private JButton mExecFileDialogBtn;
   private JSpinner mAutoCloseReminderTimeSp;
@@ -163,20 +162,18 @@ public class ReminderSettingsTab implements SettingsTab {
     JPanel soundPn = new JPanel(new BorderLayout(5, 0));
     soundPn.add(mSoundFileChB, BorderLayout.CENTER);
     msg = mLocalizer.msg("test", "Test");
-    mSoundTestBt = new JButton(msg);
-    mSoundTestBt.addActionListener(new ActionListener() {
+    final JButton soundTestBt = new JButton(msg);
+    soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
       }
     });
-    soundPn.add(mSoundTestBt, BorderLayout.EAST);
+    soundPn.add(soundTestBt, BorderLayout.EAST);
 
     reminderPn.add(soundPn);
     
     JPanel execPanel = new JPanel(new BorderLayout());
   
-    msg = mLocalizer.msg("executeProgram", "Execute program");
-
     execPanel.add(mExecChB, BorderLayout.WEST);
     execPanel.add(mExecFileDialogBtn, BorderLayout.EAST);
     
@@ -218,7 +215,9 @@ public class ReminderSettingsTab implements SettingsTab {
     try {
       String asString = mSettings.getProperty("autoCloseReminderTime", "0");
       autoCloseReminderTime = Integer.parseInt(asString);
-    } catch (Exception exc) {}
+    } catch (Exception exc) {
+      // ignore
+    }
     mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,0,600,1));
     mAutoCloseReminderTimeSp.setBorder(null);
     mAutoCloseReminderTimeSp.setPreferredSize(mAutoCloseReminderTimeSp.getPreferredSize());
@@ -261,10 +260,7 @@ public class ReminderSettingsTab implements SettingsTab {
     System.out.println(installedPluginArr.length+" plugins available");
     PluginAccess[] copy = new PluginAccess[installedPluginArr.length];
 
-    for (int i = 0; i < installedPluginArr.length;i++) {
-      copy[i] = installedPluginArr[i];
-    }
-
+    System.arraycopy(installedPluginArr, 0, copy, 0, installedPluginArr.length);
 
     Arrays.sort(copy, new ObjectComperator());
 
@@ -311,11 +307,11 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("execfile",mExecFileStr);
     mSettings.setProperty("execparam",mExecParamStr);
     
-    mSettings.setProperty("usemsgbox",new Boolean(mReminderWindowChB.isSelected()).toString());
-    mSettings.setProperty("usesound",new Boolean(mSoundFileChB.isSelected()).toString());
-    mSettings.setProperty("useexec",new Boolean(mExecChB.isSelected()).toString());
+    mSettings.setProperty("usemsgbox", Boolean.valueOf(mReminderWindowChB.isSelected()).toString());
+    mSettings.setProperty("usesound", Boolean.valueOf(mSoundFileChB.isSelected()).toString());
+    mSettings.setProperty("useexec", Boolean.valueOf(mExecChB.isSelected()).toString());
 
-    mSettings.setProperty("usesendplugin",new Boolean(mSendToPlugin.isSelected()).toString());
+    mSettings.setProperty("usesendplugin", Boolean.valueOf(mSendToPlugin.isSelected()).toString());
     mSettings.setProperty("usethisplugin", ((PluginAccess)mAvailabePlugins.getSelectedItem()).getId());
 
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());

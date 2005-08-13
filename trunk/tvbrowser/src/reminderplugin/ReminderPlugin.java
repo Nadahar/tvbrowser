@@ -46,12 +46,10 @@ import util.ui.UiUtilities;
  * @author Martin Oberhauser
  */
 public class ReminderPlugin extends Plugin implements ReminderTimerListener, PluginTreeListener {
-  
+
   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(ReminderPlugin. class );
-  
-  private static ReminderPlugin mInstance;
-  
+      = util.ui.Localizer.getLocalizerFor(ReminderPlugin. class );
+
   private ReminderList mReminderList;
   private Properties mSettings;
 
@@ -61,10 +59,10 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
    * Creates a new instance of ReminderPlugin.
    */
   public ReminderPlugin() {
-    mInstance = this;
+
   }
 
-  
+
 
   public void onActivation() {
     PluginTreeNode root = getRootNode();
@@ -72,10 +70,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     mReminderList = new ReminderList(root);
     mReminderList.setReminderTimerListener(this);
   }
-  
-  public static ReminderPlugin getInstance() {
-    return mInstance;
-  }
+
+
 
 
 
@@ -86,16 +82,16 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     if ("true" .equals(mSettings.getProperty( "usesound" ))) {
       playSound(mSettings.getProperty( "soundfile" ));
     }
-    
-    if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
-        Image iconImage = null;
-        
-        if (getParentFrame() != null) {
-            iconImage = getParentFrame().getIconImage();
-        }
 
-        new ReminderFrame(this, getParentFrame(), mReminderList, item,
-                        getAutoCloseReminderTime(), iconImage);
+    if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
+      Image iconImage = null;
+
+      if (getParentFrame() != null) {
+        iconImage = getParentFrame().getIconImage();
+      }
+
+      new ReminderFrame(this, getParentFrame(), mReminderList, item,
+          getAutoCloseReminderTime(), iconImage);
     } else {
       mReminderList.remove(item.getProgramItem());
     }
@@ -103,7 +99,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
       String fName=mSettings.getProperty( "execfile" );
       ParamParser parser = new ParamParser();
       String fParam=parser.analyse(mSettings.getProperty("execparam"), item.getProgram());
-      
+
       try {
         Runtime.getRuntime().exec(fName + " " +  fParam);
       } catch (Exception exc) {
@@ -111,13 +107,13 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
         ErrorHandler.handle(msg, exc);
       }
     }
-    
+
     if ("true".equals(mSettings.getProperty("usesendplugin"))) {
-        PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(mSettings.getProperty("usethisplugin"));
-        if (plugin.canReceivePrograms()) {
-            Program[] prArray = { item.getProgram()};
-            plugin.receivePrograms(prArray);
-        }
+      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(mSettings.getProperty("usethisplugin"));
+      if (plugin.canReceivePrograms()) {
+        Program[] prArray = { item.getProgram()};
+        plugin.receivePrograms(prArray);
+      }
     }
   }
 
@@ -134,7 +130,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
       clip.play();
     } catch (java.net.MalformedURLException exc) {
       String msg = mLocalizer.msg( "error.1",
-        "Error loading reminder sound file!\n({0})" , fileName, exc);
+          "Error loading reminder sound file!\n({0})" , fileName, exc);
       ErrorHandler.handle(msg, exc);
     }
   }
@@ -146,37 +142,37 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     String author = "Martin Oberhauser (martin@tvbrowser.org)" ;
     return new PluginInfo(name, desc, author, new Version(1, 10));
   }
-  
-  
+
+
   public void readData(ObjectInputStream in)
-    throws IOException, ClassNotFoundException {
-      
+      throws IOException, ClassNotFoundException {
+
     in.readInt(); // version
-    
+
     mReminderList.setReminderTimerListener(null);
-    
-    mReminderList.read(in);    
-     
+
+    mReminderList.read(in);
+
     mReminderList.removeExpiredItems();
-    mReminderList.setReminderTimerListener(this);   
+    mReminderList.setReminderTimerListener(this);
   }
 
-  
-  
+
+
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(2);
-    mReminderList.writeData(out);    
+    mReminderList.writeData(out);
     storeRootNode();
   }
-  
-  
-  
+
+
+
   public Properties storeSettings() {
     return mSettings;
   }
-  
-  
-  
+
+
+
   public void loadSettings(Properties settings) {
     if (settings == null ) {
       settings = new Properties();
@@ -185,11 +181,11 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
       settings.setProperty("usemsgbox","true");
     }
     mSettings = settings;
-    
+
   }
-  
-  
-  
+
+
+
   /**
    * Gets the time (in seconds) after which the reminder frame closes
    * automatically.
@@ -199,74 +195,75 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     try {
       String asString = mSettings.getProperty("autoCloseReminderTime", "0");
       autoCloseReminderTime = Integer.parseInt(asString);
-    } catch (Exception exc) {}
+    } catch (Exception exc) {
+      // ignore
+    }
     return autoCloseReminderTime;
   }
-  
+
   public devplugin.SettingsTab getSettingsTab() {
     return new ReminderSettingsTab(mSettings);
   }
 
   public String getMarkIconName() {
-		return "reminderplugin/TipOfTheDay16.gif";
+    return "reminderplugin/TipOfTheDay16.gif";
   }
-	
+
   public ActionMenu getContextMenuActions(final Program program) {
     if (mReminderList.contains(program)) {
       ContextMenuAction action = new ContextMenuAction();
       action.setText(mLocalizer.msg( "pluginName" ,"Reminder"));
       action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));
 
-
-        final ReminderListItem item = mReminderList.getReminderItem(program);
-        String[] entries = ReminderFrame.REMIND_MSG_ARR;
-        ActionMenu[] actions = new ActionMenu[entries.length];
-        for (int i=0; i<actions.length; i++) {
-          final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
-          ContextMenuAction a = new ContextMenuAction();
-          a.setText(entries[i]);
-          a.setActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-              if (minutes == -1) {
-                mReminderList.remove(program);
-              }
-              else {
-                item.setMinutes(minutes);
-              }
+      final ReminderListItem item = mReminderList.getReminderItem(program);
+      String[] entries = ReminderFrame.REMIND_MSG_ARR;
+      ActionMenu[] actions = new ActionMenu[entries.length];
+      for (int i=0; i<actions.length; i++) {
+        final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
+        ContextMenuAction a = new ContextMenuAction();
+        a.setText(entries[i]);
+        a.setActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent e) {
+            if (minutes == -1) {
+              mReminderList.remove(program);
             }
-          });
-          actions[i] = new ActionMenu(a, minutes == item.getMinutes());
-        }
+            else {
+              item.setMinutes(minutes);
+            }
+          }
+        });
+        actions[i] = new ActionMenu(a, minutes == item.getMinutes());
+      }
 
-        return new ActionMenu(action, actions);
+      return new ActionMenu(action, actions);
     }
     else if ((program.isExpired() || program.isOnAir()) && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {
       return null;
     }
     else {
       ContextMenuAction action = new ContextMenuAction();
-      action.setText(mLocalizer.msg( "contextMenuText" ,"Remind me" ));  
-      action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));  
+      action.setText(mLocalizer.msg( "contextMenuText" ,"Remind me" ));
+      action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent event) {
           ReminderDialog dlg = new ReminderDialog(getParentFrame(), program, mSettings);
           UiUtilities.centerAndShow(dlg);
           if (dlg.getOkPressed()) {
             int minutes = dlg.getReminderMinutes();
-            mReminderList.add(program, minutes);    
+            mReminderList.add(program, minutes);
           }
-          dlg.dispose();            
+          dlg.dispose();
         }
       });
       return new ActionMenu(action);
     }
   }
-      
-    
+
+
   /**
    * This method is invoked for multiple program execution.
    */
-  
+
   public void receivePrograms(Program[] programArr) {
     String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
     int minutes = 10;
@@ -283,7 +280,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
 
     mReminderList.add(programArr, minutes);
   }
-  
+
 
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
@@ -299,12 +296,12 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     action.putValue(Action.SMALL_ICON, createImageIcon("reminderplugin/TipOfTheDay16.gif"));
     action.putValue(BIG_ICON, createImageIcon("reminderplugin/TipOfTheDay24.gif"));
     action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
-    
+
     return new ActionMenu(action);
   }
- 
- 
- 
+
+
+
   public boolean canReceivePrograms() {
     return true;
   }
