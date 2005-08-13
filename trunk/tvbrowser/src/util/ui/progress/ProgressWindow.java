@@ -28,6 +28,7 @@ package util.ui.progress;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -54,6 +55,7 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
     content.add(mLabel,BorderLayout.CENTER);
     mDialog.setSize(500,70);
     mDialog.setUndecorated(true);    
+    mDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
   }
   
   public ProgressWindow(Component parent) {
@@ -67,7 +69,7 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
       public void run() {
         progress.run();
         while (!mDialog.isVisible()) {};
-        mDialog.hide();
+        mDialog.setVisible(false);
       }
     };
     thread.start();
