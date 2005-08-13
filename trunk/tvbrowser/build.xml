@@ -328,12 +328,12 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
-
+  <!--
     <jar jarfile="${tvbrowser.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
     </jar>
-
+   -->
   	
     <!-- Pack the TV data service jars -->    
     <mkdir dir="${tvbrowser.runtime.dir}/tvdataservice"/>
