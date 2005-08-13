@@ -170,12 +170,6 @@ Section "${PROG_NAME} (erforderlich)"
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
-  SetOutPath "$INSTDIR\help\de"
-  File "${RUNTIME_DIR}\help\de\*.*"
-
-  SetOutPath "$INSTDIR\help\default"
-  File "${RUNTIME_DIR}\help\default\*.*"
-
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
 
@@ -352,6 +346,13 @@ SubSection "Plugins"
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\CapturePlugin.jar"
+  SectionEnd
+
+  Section "Zwischenablage"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\ClipboardPlugin.jar"
   SectionEnd
 
 SubSectionEnd
