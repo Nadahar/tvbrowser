@@ -136,8 +136,7 @@ public class ReminderList implements ActionListener {
   }
   
   public boolean contains(Program program) {
-    mRoot.contains(program, true);
-    return false;
+    return mRoot.contains(program, true);
   }
   
  
