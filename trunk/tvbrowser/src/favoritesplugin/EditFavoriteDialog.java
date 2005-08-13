@@ -231,6 +231,7 @@ public class EditFavoriteDialog {
   
   
   private boolean saveValues() {
+    mDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     mFavorite.setSearchFormSettings(mSearchForm.getSearchFormSettings());
 
     mFavorite.setUseCertainChannel(mCertainChannelChB.isSelected());
@@ -252,14 +253,17 @@ public class EditFavoriteDialog {
     mFavorite.setUseFilter(mCertainFilterChB.isSelected());
     mFavorite.setFilter((ProgramFilter) mCertainFilterCB.getSelectedItem());
     
+    boolean ret = true;
     try {
       mFavorite.updatePrograms();
-      return true;
     }
     catch (TvBrowserException exc) {
       ErrorHandler.handle(exc);
-      return false;
+      ret = false;
+    } finally {
+      mDialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
+    return ret;
   }
   
   
