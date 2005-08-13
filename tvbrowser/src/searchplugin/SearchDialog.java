@@ -28,6 +28,7 @@ package searchplugin;
 
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -164,8 +165,10 @@ public class SearchDialog extends JDialog {
     int nrDays = mSearchForm.getNrDays();
     
     try {
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       ProgramSearcher searcher = settings.createSearcher();
       Program[] programArr = searcher.search(fieldArr, startDate, nrDays, null, true);
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	  
       if (programArr.length == 0) {
         String msg = mLocalizer.msg("nothingFound",
