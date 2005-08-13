@@ -71,6 +71,7 @@ public class EditFavoriteDialog {
    */
   public EditFavoriteDialog(final Component parent, Favorite favorite) {
     mFavorite = favorite;
+    mCertainChannelArr = favorite.getCertainChannels();
     
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(mLocalizer.msg("dlgTitle", "Edit favorite program"));
@@ -104,7 +105,7 @@ public class EditFavoriteDialog {
     mSelectChannelsBt = new JButton(mLocalizer.msg("chooseChannels","Choose channels"));
     mSelectChannelsBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        ChannelChooserDlg dlg = new ChannelChooserDlg((Dialog)UiUtilities.getBestDialogParent(parent), mFavorite.getCertainChannels(), null);
+        ChannelChooserDlg dlg = new ChannelChooserDlg((Dialog)UiUtilities.getBestDialogParent(parent), mCertainChannelArr, null);
         UiUtilities.centerAndShow(dlg);
         mCertainChannelArr = dlg.getChannels();
       }
