@@ -152,10 +152,13 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
 
   protected boolean controlDown = false;
 
+  protected boolean metaDown = false;
+  
   public void keyPressed(KeyEvent ke) {
     shiftDown = ke.isShiftDown();
     controlDown = ke.isControlDown();
-
+    metaDown = ke.isMetaDown();
+    
     switch (ke.getKeyCode()) {
     case KeyEvent.VK_UP:
       changed(Position.Bias.Backward);
@@ -192,7 +195,9 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     comp.addKeyListener(new KeyAdapter() {
 
       public void keyTyped(KeyEvent e) {
-        if (Character.isLetterOrDigit(e.getKeyChar())) {
+        
+        if (Character.isLetterOrDigit(e.getKeyChar()) && 
+            !(e.isControlDown()||e.isMetaDown())) {
           actionPerformed(new ActionEvent(this, 0, "show"));
           mSearchField.setText("" + e.getKeyChar());
         }
