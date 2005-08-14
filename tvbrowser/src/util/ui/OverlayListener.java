@@ -64,6 +64,11 @@ public class OverlayListener extends MouseInputAdapter{
       } 
   } 
 
+  public void mousePressed(MouseEvent e) {
+    resetGlassPane();
+    super.mousePressed(e);
+  }
+  
   public void mouseMoved(MouseEvent me){ 
       mPath = mTree.getPathForLocation(me.getX(), me.getY()); 
       if(mPath==null){ 
