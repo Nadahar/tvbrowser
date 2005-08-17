@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -31,9 +32,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -210,6 +215,39 @@ public class SettingsPanel extends JPanel {
         
         panel.add(mMaxTimeout,c);
         
+        final JCheckBox useTime = new JCheckBox(mLocalizer.msg("useSystemTimezone","Use timezone provided by OS"), mData.useTimeZone());
+        
+        panel.add(useTime, c);
+
+        String[] zoneIds = TimeZone.getAvailableIDs();
+        final JComboBox timeZones = new JComboBox(zoneIds);
+        for (int i=0; i<zoneIds.length; i++) {
+          if (zoneIds[i].equals(mData.getTimeZone().getID())) {
+            timeZones.setSelectedIndex(i); break;
+          }
+        }
+
+        useTime.setSelected(!mData.useTimeZone());
+        
+        useTime.addChangeListener(new ChangeListener() {
+          public void stateChanged(ChangeEvent e) {
+            mData.setUseTimeZone(!useTime.isSelected());
+            timeZones.setEnabled(!useTime.isSelected());
+          }
+        });
+        
+        timeZones.addItemListener(new ItemListener() {
+          public void itemStateChanged(ItemEvent e) {
+            mData.setTimeZone(TimeZone.getTimeZone((String)timeZones.getSelectedItem()));
+          }
+        });
+        
+        JPanel timeZonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
+        timeZonePanel.add(new JLabel(mLocalizer.msg("Timezone","Timezone")+": "));
+        timeZonePanel.add(timeZones);
+        
+        panel.add(timeZonePanel, c);
+        timeZones.setEnabled(mData.useTimeZone());
         
         return panel;
     }

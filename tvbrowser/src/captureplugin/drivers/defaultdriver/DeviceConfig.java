@@ -30,6 +30,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import util.ui.Localizer;
@@ -101,6 +102,12 @@ public class DeviceConfig {
     /** Variables */
     private ArrayList mVariables = new ArrayList();
     
+    /** Use TimeZone */
+    private boolean mUseTimeZone = false;
+    
+    /** The TimeZone used */
+    private TimeZone mTimeZone = TimeZone.getDefault();
+    
     /**
      * Create a empty Config
      */
@@ -131,6 +138,8 @@ public class DeviceConfig {
         setParamList(data.getParamList());
         setTimeOut(data.getTimeOut());
         setVariables(data.getVariables());
+        setUseTimeZone(data.useTimeZone());
+        setTimeZone(data.getTimeZone());
     }
 
     /**
@@ -439,6 +448,40 @@ public class DeviceConfig {
     public void setVariables(Collection variables) {
       mVariables = new ArrayList(variables);
     }
+
+    /**
+     * Use TimeZone Settings ?
+     * @return Use TimeZone Settings ?
+     */
+    public boolean useTimeZone() {
+      return mUseTimeZone;
+    }
+
+    /**
+     * Use TimeZone Settings ?
+     * @param timeZone true if User wants to overide the TimeZone
+     */
+    public void setUseTimeZone(boolean timeZone) {
+      mUseTimeZone = timeZone;
+    }
+    
+    /**
+     * Return the current TimeZone
+     * @return TimeZone
+     */
+    public TimeZone getTimeZone() {
+      return mTimeZone;
+    }
+
+    /**
+     * Set the TimeZone
+     * @param timeZone TimeZone
+     */
+    public void setTimeZone(TimeZone timeZone) {
+      mTimeZone = timeZone;
+    }
+    
+    
     
     /**
      * Write the Config into a Stream
@@ -446,7 +489,7 @@ public class DeviceConfig {
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(5);
+        stream.writeInt(6);
         
         stream.writeObject(getName());
         
@@ -484,6 +527,8 @@ public class DeviceConfig {
             ((Variable)mVariables.get(i)).writeData(stream);
         }
         
+        stream.writeBoolean(mUseTimeZone);
+        stream.writeObject(mTimeZone);
     }
 
     /**
@@ -545,6 +590,11 @@ public class DeviceConfig {
             mVariables.add(var);
           }
         }
+        
+        if (version > 5) {
+          mUseTimeZone = stream.readBoolean();
+          mTimeZone = (TimeZone) stream.readObject();
+        }
     }
 
     /**
@@ -585,6 +635,5 @@ public class DeviceConfig {
         }
       }
     }
-
 
 }

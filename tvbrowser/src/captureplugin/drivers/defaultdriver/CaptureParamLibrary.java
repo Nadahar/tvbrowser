@@ -77,6 +77,11 @@ public class CaptureParamLibrary extends ParamLibrary {
     mEndTime.setTime(prgTime.getEnd());
     mStartTime = Calendar.getInstance();
     mStartTime.setTime(prgTime.getStart());
+    
+    if (mConfig.useTimeZone()) {
+      mEndTime.setTimeZone(mConfig.getTimeZone());
+      mStartTime.setTimeZone(mConfig.getTimeZone());
+    }
   }
   
   /**
