@@ -120,9 +120,9 @@ public class DefaultKonfigurator extends JDialog {
         
         mTab.add(mLocalizer.msg("Application", "Application"), new ApplicationPanel(mConfig));
         mTab.add(mLocalizer.msg("Parameter", "Parameter"), new ParameterPanel(this, mConfig));
-        mTab.add(mLocalizer.msg("Settings", "Settings"), new SettingsPanel(mConfig));
         mTab.add(mLocalizer.msg("Channels", "Channels"), new ChannelPanel(mConfig));
         mTab.add(mLocalizer.msg("Variables", "Variables"), new VariablePanel(mConfig));
+        mTab.add(mLocalizer.msg("Settings", "Settings"), new SettingsPanel(mConfig));
         
         panel.add(mTab, BorderLayout.CENTER);
      
