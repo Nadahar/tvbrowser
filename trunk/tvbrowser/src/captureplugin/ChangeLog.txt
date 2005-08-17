@@ -1,5 +1,9 @@
 Changelog CapturePlugin
 
+v2.04:
+- Translations fixed
+- New TimeZone-Setting
+
 v2.03:
 - new ActionMenu-Handler added
 - TimeOut-Setting
