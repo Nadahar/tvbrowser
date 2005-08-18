@@ -119,6 +119,7 @@ public class TvDataUpdater {
     
     // Set the download flag
     mIsDownloading = true;
+    mStopDownloading = false;
 
     // Inform the listeners
     fireTvDataUpdateStarted();
