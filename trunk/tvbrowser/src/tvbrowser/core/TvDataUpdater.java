@@ -61,6 +61,9 @@ public class TvDataUpdater {
   
   private boolean mIsDownloading;
   
+  /** Set to true if Stop was forced */
+  private boolean mStopDownloading = false;
+  
   private ArrayList mListenerList;
   
   
@@ -140,7 +143,7 @@ public class TvDataUpdater {
       }
       
       public boolean cancelDownload() {
-        return ! mIsDownloading;
+        return mStopDownloading;
       }
     };
     
@@ -157,7 +160,7 @@ public class TvDataUpdater {
     
     // Work on the job list
     Throwable downloadException = null;
-    for (int i = 0; i < jobArr.length; i++) {
+    for (int i = 0; (i < jobArr.length) && (!mStopDownloading); i++) {
       TvDataService dataService = jobArr[i].getDataService();
       Channel[] channelArr = jobArr[i].getChannelList();
       ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(channelArr.length);
@@ -170,11 +173,6 @@ public class TvDataUpdater {
           + dataService.getInfo().getName() + " failed", thr);
         
         downloadException = thr;
-      }
-      
-      // Check whether the download was canceled
-      if (! mIsDownloading) {
-        break;
       }
     }
 
@@ -224,7 +222,7 @@ public class TvDataUpdater {
    * Stopps the current download.
    */
   public void stopDownload() {
-    mIsDownloading = false;
+    mStopDownloading = false;
   }
 
 
