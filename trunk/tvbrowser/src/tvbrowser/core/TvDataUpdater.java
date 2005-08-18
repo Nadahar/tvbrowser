@@ -222,7 +222,7 @@ public class TvDataUpdater {
    * Stopps the current download.
    */
   public void stopDownload() {
-    mStopDownloading = false;
+    mStopDownloading = true;
   }
 
 
