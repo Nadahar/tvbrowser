@@ -235,6 +235,9 @@ public class TVBrowser {
     javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
     
     updateLookAndFeel();
+
+    mLog.info("Deleting expired TV listings...");
+    TvDataBase.getInstance().deleteExpiredFiles(1);
     
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
@@ -247,9 +250,6 @@ public class TVBrowser {
 
     msg = mLocalizer.msg("splash.tvData", "Checking TV database...");
     splash.setMessage(msg);
-
-    mLog.info("Deleting expired TV listings...");
-    TvDataBase.getInstance().deleteExpiredFiles(1);
 
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
