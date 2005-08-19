@@ -402,6 +402,11 @@ public class PluginTreeNode {
   }
 
   public PluginTreeNode addProgram(ProgramItem item) {
+    
+    if (contains(item.getProgram(), false)) {
+      return findProgramTreeNode(item.getProgram(), false);
+    }
+    
     if (mPlugin != null) {
       item.getProgram().mark(mPlugin);
     }
@@ -517,13 +522,19 @@ public class PluginTreeNode {
       if (type == Node.PROGRAM) {
         ProgramItem item = new ProgramItem();
         item.read(in);
-        n = new PluginTreeNode(item);
-        if (item.getProgram() != null) {
-          add(n);
-          if (mPlugin != null) {
-            item.getProgram().mark(mPlugin);
+        
+        if (!contains(item.getProgram(), true)) {
+          n = new PluginTreeNode(item);
+          if (item.getProgram() != null) {
+            add(n);
+            if (mPlugin != null) {
+              item.getProgram().mark(mPlugin);
+            }
           }
+        } else {
+          n = findProgramTreeNode(item.getProgram(), false);
         }
+        
       }
       else {
         String title = (String)in.readObject();
