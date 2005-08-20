@@ -39,6 +39,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -94,12 +95,10 @@ public class SystemTray {
     if (mSystemTray != null) {
 
       if (mSystemTray instanceof WinSystemTray) {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/TVBrowser.ico", MainFrame.getInstance()
-            .getTitle());
+        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/TVBrowser.ico", TVBrowser.MAINWINDOW_TITLE);
         mLog.info("using windows system tray");
       } else {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/tvbrowser16.png", MainFrame.getInstance()
-            .getTitle());
+        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
         mLog.info("using default system tray");
       }
     } else {
