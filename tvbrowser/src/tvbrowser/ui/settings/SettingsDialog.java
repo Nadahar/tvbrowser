@@ -30,13 +30,27 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -45,9 +59,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
 import devplugin.SettingsTab;
 
@@ -74,8 +88,11 @@ public class SettingsDialog {
 
   private JButton mOkBt, mCancelBt, mApplyBt;
 
-
-
+  /** Location of this Dialog */
+  private Point mLocation = new Point();
+  /** Dimension of this Dialog */
+  private Dimension mSize = new Dimension();
+  
   /**
    * Creates a new instance of SettingsDialog.
    */
@@ -172,6 +189,20 @@ public class SettingsDialog {
         showSettingsPanelForSelectedNode();
       }
     }
+    
+    mDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
+      public void componentMoved(ComponentEvent e) {
+        e.getComponent().getLocation(mLocation);
+        Settings.propSettingsWindowX.setInt(mLocation.x);
+        Settings.propSettingsWindowY.setInt(mLocation.y);
+      }
+
+      public void componentResized(ComponentEvent e) {
+        e.getComponent().getSize(mSize);
+        Settings.propSettingsWindowWidth.setInt(mSize.width);
+        Settings.propSettingsWindowHeight.setInt(mSize.height);
+      }
+    });
   }
 
   void invalidateTree() {
@@ -203,7 +234,16 @@ public class SettingsDialog {
 
 
   public void centerAndShow() {
-    UiUtilities.centerAndShow(mDialog);
+    if ((Settings.propSettingsWindowX.getInt() == -1) && (Settings.propSettingsWindowY.getInt() == -1)) {
+      mDialog.pack();
+      UiUtilities.centerAndShow(mDialog);
+    } else {
+      mLocation = new Point(Settings.propSettingsWindowX.getInt(), Settings.propSettingsWindowY.getInt());
+      mSize = new Dimension(Settings.propSettingsWindowWidth.getInt(), Settings.propSettingsWindowHeight.getInt());
+      mDialog.setLocation(mLocation);
+      mDialog.setSize(mSize);
+      mDialog.setVisible(true);
+    }
   }
 
 
