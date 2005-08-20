@@ -168,8 +168,7 @@ public class SearchDialog extends JDialog {
       setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       ProgramSearcher searcher = settings.createSearcher();
       Program[] programArr = searcher.search(fieldArr, startDate, nrDays, null, true);
-      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-	  
+
       if (programArr.length == 0) {
         String msg = mLocalizer.msg("nothingFound",
           "No programs found with {0}!", settings.getSearchText());
@@ -182,6 +181,8 @@ public class SearchDialog extends JDialog {
     }
     catch (TvBrowserException exc) {
       ErrorHandler.handle(exc);
+    }finally{
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
   }
   
