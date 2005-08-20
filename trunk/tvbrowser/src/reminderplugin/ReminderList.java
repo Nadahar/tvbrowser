@@ -26,17 +26,20 @@
 
 package reminderplugin;
 
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.awt.event.*;
 
 import util.io.IOUtilities;
-
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
-import devplugin.Date;
 import devplugin.ProgramItem;
 
 
@@ -50,7 +53,9 @@ public class ReminderList implements ActionListener {
   private ReminderTimerListener mListener=null;
   private javax.swing.Timer mTimer;
   private PluginTreeNode mRoot;
-  
+
+  /** List of Blocked Programs. These Programs don't trigger a reminder anymore */
+  private ArrayList mBlockedPrograms = new ArrayList();
 
   
   public ReminderList(PluginTreeNode root) {
@@ -109,6 +114,24 @@ public class ReminderList implements ActionListener {
     }
   }
 
+  /**
+   * Only adds a Program if it's not blocked
+   * 
+   * @param programs Programs to add
+   * @param minutes remind x Minutes before start
+   */
+  public void addAndCheckBlocked(Program[] programs, int minutes) {
+    for (int i=0; i<programs.length; i++) {
+      if (!mRoot.contains(programs[i], true) && !mBlockedPrograms.contains(programs[i]) && (!programs[i].isExpired())) {
+        ReminderListItem item = new ReminderListItem(programs[i], minutes);
+        mRoot.addProgram(item.getProgramItem());
+      }
+      
+    }
+    mRoot.update();
+  }
+  
+  
   public void setReminderTimerListener(ReminderTimerListener listener) {
     this.mListener = listener;
     if (listener != null) {
@@ -210,6 +233,32 @@ public class ReminderList implements ActionListener {
     }
   }
   
+
+  /**
+   * Block a Program. This Program won't get reminded
+   * 
+   * @param prg Program to block
+   */
+  public void blockProgram(Program prg) {
+    mBlockedPrograms.add(prg);
+  }
   
+  /**
+   * Remove a Program from the Block-List
+   * @param prg Program to remove from Block-List
+   */
+  public void unblockProgram(Program prg) {
+    mBlockedPrograms.remove(prg);
+  }
+
+  /**
+   * Is Program Blocked?
+   * 
+   * @param prg Check if this Program is blocked
+   * @return true, if Program is blocked
+   */
+  public boolean isBlocked(Program prg) {
+    return mBlockedPrograms.contains(prg);
+  }
   
 }
