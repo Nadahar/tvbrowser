@@ -79,6 +79,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     if (item.getProgramItem().getProgram().isExpired()){
       return;
     }
+    
     if ("true" .equals(mSettings.getProperty( "usesound" ))) {
       playSound(mSettings.getProperty( "soundfile" ));
     }
@@ -94,6 +95,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
           getAutoCloseReminderTime(), iconImage);
     } else {
       mReminderList.remove(item.getProgramItem());
+      mReminderList.blockProgram(item.getProgram());
     }
     if ("true" .equals(mSettings.getProperty( "useexec" ))) {
       String fName=mSettings.getProperty( "execfile" );
@@ -251,6 +253,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
           if (dlg.getOkPressed()) {
             int minutes = dlg.getReminderMinutes();
             mReminderList.add(program, minutes);
+            mReminderList.unblockProgram(program);
           }
           dlg.dispose();
         }
@@ -278,7 +281,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
       }
     }
 
-    mReminderList.add(programArr, minutes);
+    mReminderList.addAndCheckBlocked(programArr, minutes);
   }
 
 

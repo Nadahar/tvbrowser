@@ -145,6 +145,7 @@ public class ReminderFrame {
     mReminderList = list;
     
     list.remove(item.getProgramItem());
+    list.blockProgram(item.getProgram());
     mProgram = item.getProgram();
     JPanel jcontentPane = new JPanel(new BorderLayout(0,10));
     if (mDialog != null) {
@@ -251,6 +252,7 @@ public class ReminderFrame {
     int minutes = REMIND_VALUE_ARR[inx];
     if (minutes != -1) {
       mReminderList.add(mProgram, minutes);
+      mReminderList.unblockProgram(mProgram);
     }
     
     if (mAutoCloseTimer != null) {
