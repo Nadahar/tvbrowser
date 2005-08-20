@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -55,6 +55,11 @@ import tvbrowser.core.search.AbstractSearcher;
  */
 public class BooleanSearcher extends AbstractSearcher {
 
+  /** The localizer of this class. */
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(BooleanSearcher.class);
+
+
   Block root;
 
   boolean caseSensitive;
@@ -85,9 +90,11 @@ public class BooleanSearcher extends AbstractSearcher {
    * immer nur ein KonstruktOr gleichzeitig laufen. Für Synchronization ist
    * gesOrgt.
    */
-  public BooleanSearcher(String pattern, boolean CaseSensitive) {
+  public BooleanSearcher(String pattern, boolean CaseSensitive) throws ParserException {
     Hashtable matcherTab = new Hashtable();
     caseSensitive = CaseSensitive;
+
+
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
@@ -96,6 +103,7 @@ public class BooleanSearcher extends AbstractSearcher {
     StringTokenizer ST = new StringTokenizer(pattern);
     Vector part = new Vector();
     while (ST.hasMoreElements()) {
+
       String S = ST.nextToken();
       if (S.equals("(")) {
         part.add(subPart(ST));
@@ -107,9 +115,18 @@ public class BooleanSearcher extends AbstractSearcher {
     root = root.finish();
   }
 
+  private static Object expect(Vector part, int index, Class expectedClass, String expectedName) throws ParserException {
+    Object o = part.get(index);
+    if (expectedClass.isInstance(o)) {
+      return o;
+    }
+    else {
+      throw new ParserException(mLocalizer.msg("expectFailed","Expected {0}, but found '{1}')", expectedName, o.toString()));
+    }
+  }
 
   private static Block getBlock(Vector part, boolean caseSensitive,
-      Hashtable matcherTable) {
+                                Hashtable matcherTable) throws ParserException {
     boolean lastWasMatch = false;
     for (int i = 0; i < part.size(); i++) {
       Object O = part.get(i);
@@ -159,15 +176,18 @@ public class BooleanSearcher extends AbstractSearcher {
       for (int i = 0; i < part.size(); i++) {
         Object O = part.get(i);
         if ((O instanceof String) && (O.toString().equals("NOT"))) {
-          Object O2 = part.get(i + 1);
+          if (i + 1 >= part.size()) {
+            throw new ParserException(mLocalizer.msg("unexpectedEndOfInput","Unexpected end of input"));
+          }
+          Object O2 = expect(part, i+1, Block.class, mLocalizer.msg("expression","expression"));
           Not n = new Not((Block) O2);
           part.remove(i);
           part.remove(i);
-          
+
           /*
-           * If the previous Element is not "AND" insert an "AND"-Element
-           */
-          if ((i>0) && !(part.get(i-1) instanceof And) && 
+          * If the previous Element is not "AND" insert an "AND"-Element
+          */
+          if ((i>0) && !(part.get(i-1) instanceof And) &&
               !((part.get(i-1) instanceof String) && ((String)part.get(i-1)).equals("AND"))) {
             part.insertElementAt("AND", i);
             i++;
@@ -187,8 +207,14 @@ public class BooleanSearcher extends AbstractSearcher {
         if ((O instanceof String)
             && ((O.toString().equals("AND")) || ((O.toString().equals("&&"))))) {
 
-          Block O2 = (Block) part.get(i - 1);
-          Block O1 = (Block) part.get(i + 1);
+          if (i <= 0) {
+            throw new ParserException(mLocalizer.msg("missingExprBeforeAND","Missing expression before 'AND'"));
+          }
+          if (i + 1 >= part.size()) {
+            throw new ParserException(mLocalizer.msg("unexpectedEndOfInput","Unexpected end of input"));
+          }
+          Block O2 = (Block) expect(part, i-1, Block.class, mLocalizer.msg("expression","expression"));
+          Block O1 = (Block) expect(part, i+1, Block.class, mLocalizer.msg("expression","expression"));
           And a = new And(O1, O2);
           part.remove(i - 1);
           part.remove(i - 1);
@@ -207,8 +233,14 @@ public class BooleanSearcher extends AbstractSearcher {
         Object O = part.get(i);
         if ((O instanceof String)
             && ((O.toString().equals("OR")) || (O.toString().equals("||")))) {
-          Block O2 = (Block) part.get(i - 1);
-          Block O1 = (Block) part.get(i + 1);
+          if (i <= 0) {
+            throw new ParserException("Missing expression before \"OR\"");
+          }
+          if (i + 1 >= part.size()) {
+            throw new ParserException("Unexpected end of input");
+          }
+          Block O2 = (Block) expect(part, i-1, Block.class, mLocalizer.msg("expression","expression"));
+          Block O1 = (Block) expect(part, i+1, Block.class, mLocalizer.msg("expression","expression"));
           Or a = new Or(O1, O2);
           part.remove(i - 1);
           part.remove(i - 1);
@@ -229,7 +261,7 @@ public class BooleanSearcher extends AbstractSearcher {
   }
 
 
-  private static Vector subPart(StringTokenizer ST) {
+  private static Vector subPart(StringTokenizer ST) throws ParserException {
     Vector v = new Vector();
     while (ST.hasMoreElements()) {
       String S = ST.nextToken();
@@ -243,7 +275,7 @@ public class BooleanSearcher extends AbstractSearcher {
         }
       }
     }
-    return v;
+    throw new ParserException(mLocalizer.msg("parenthesisExpected","'(' expected"));
   }
 
 }

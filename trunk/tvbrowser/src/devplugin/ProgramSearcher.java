@@ -59,5 +59,4 @@ public interface ProgramSearcher {
    */
   public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
       int nrDays, Channel[] channels, boolean sortByStartTime);
-
 }

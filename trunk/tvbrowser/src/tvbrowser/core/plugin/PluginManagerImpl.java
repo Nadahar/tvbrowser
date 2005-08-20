@@ -41,6 +41,7 @@ import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.search.booleansearch.BooleanSearcher;
+import tvbrowser.core.search.booleansearch.ParserException;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
@@ -243,7 +244,11 @@ public class PluginManagerImpl implements PluginManager {
       case SEARCHER_TYPE_REGULAR_EXPRESSION:
         return new RegexSearcher(searchTerm, caseSensitive);
       case SEARCHER_TYPE_BOOLEAN:
-        return new BooleanSearcher(searchTerm, caseSensitive);
+        try {
+          return new BooleanSearcher(searchTerm, caseSensitive);
+        }catch (ParserException e) {
+          throw new TvBrowserException(PluginManagerImpl.class, "parser.error","Invalid input: {0}", e.getLocalizedMessage());          
+        }
       default: throw new IllegalArgumentException("Unknown searcher type: " + type);
     }
   }

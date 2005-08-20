@@ -41,7 +41,7 @@ public class TvBrowserException extends Exception {
   private Class mMsgClass;
   /** The key of the error message. */  
   private String mMsgKey;
-  /** The deafault error message (english). */  
+  /** The default error message (english). */
   private String mDefaultMsg;
   /** The arguments to parse into the error message. */  
   private Object[] mMsgArgs;

@@ -31,12 +31,7 @@ import java.util.Comparator;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import devplugin.Channel;
-import devplugin.ChannelDayProgram;
-import devplugin.Date;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramSearcher;
+import devplugin.*;
 
 /**
  * An abstract searcher implementation that reduces the checks on String checks.
@@ -47,8 +42,8 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
   /** The comparator that compares two programs by their start time and date */
   private static Comparator mStartTimeComparator;
-  
-  
+
+
   /**
    * Gets or creates the start time comperator.
    * 
@@ -61,7 +56,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
         public int compare(Object o1, Object o2) {
           Program prog1 = (Program) o1;
           Program prog2 = (Program) o2;
-          
+
           int dateComp = prog1.getDate().compareTo(prog2.getDate());
           if (dateComp == 0) {
             // Both program are at the same date -> Check the start time
@@ -72,11 +67,11 @@ public abstract class AbstractSearcher implements ProgramSearcher {
         }
       };
     }
-    
+
     return mStartTimeComparator;
   }
-  
-  
+
+
   /**
    * Checks whether a field of a program matches to the criteria of this
    * searcher.
@@ -90,7 +85,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       // Search in nothing? This won't match...
       return false;
     }
-    
+
     for (int i = 0; i < fieldArr.length; i++) {
       // Get the field value as String
       String value = null;
@@ -105,7 +100,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
           value = prog.getTimeFieldAsString(fieldArr[i]);
         }
       }
-      
+
       if (value != null) {
         // Check whether the field matches
         if (matches(value)) {
@@ -113,12 +108,12 @@ public abstract class AbstractSearcher implements ProgramSearcher {
         }
       }
     }
-    
+
     // No match found
     return false;
   }
 
-  
+
   /**
    * Searches the TV database for programs that match the criteria of this
    * searcher.
@@ -134,13 +129,13 @@ public abstract class AbstractSearcher implements ProgramSearcher {
    * @return The matching programs.
    */
   public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
-      int nrDays, Channel[] channels, boolean sortByStartTime)
+                          int nrDays, Channel[] channels, boolean sortByStartTime)
   {
     // Should we search in all channels?
     if (channels == null) {
       channels = Settings.propSubscribedChannels.getChannelArray(false);
     }
-    
+
     if (nrDays < 0) {
       // Search in the past
       startDate = startDate.addDays(nrDays);
@@ -158,7 +153,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
             if (dayProg != null) {
               // This day has data -> Remember it
               lastDayWithData = day;
-              
+
               // Search this day program
               for (int i = 0; i < dayProg.getProgramCount(); i++) {
                 Program prog = dayProg.getProgramAt(i);
@@ -169,7 +164,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
             }
         }
       }
-      
+
       // Give up if we did not find data for the last 10 days
       if ((day - lastDayWithData) > 10) {
         break;
@@ -182,7 +177,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     // Convert the list into an array
     Program[] hitArr = new Program[hitList.size()];
     hitList.toArray(hitArr);
-    
+
     // Sort the array if wanted
     if (sortByStartTime) {
       Arrays.sort(hitArr, getStartTimeComparator());

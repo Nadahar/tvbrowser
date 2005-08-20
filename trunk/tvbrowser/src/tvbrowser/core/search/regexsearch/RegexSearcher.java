@@ -38,11 +38,11 @@ import util.exc.TvBrowserException;
  * @author Til Schneider, www.murfman.de
  */
 public class RegexSearcher extends AbstractSearcher {
-  
+
   /** The regex pattern. Is null if the pattern would match everything. */
   private Pattern mPattern;
 
-  
+
   /**
    * Creates a new instance of RegexSearcher.
    *
@@ -51,8 +51,8 @@ public class RegexSearcher extends AbstractSearcher {
   public RegexSearcher(Pattern pattern) {
     mPattern = pattern;
   }
-  
-  
+
+
   /**
    * Creates a new instance of RegexSearcher.
    * 
@@ -71,7 +71,6 @@ public class RegexSearcher extends AbstractSearcher {
       mPattern = createSearchPattern(regex, caseSensitive);
     }
   }
-
 
   /**
    * Creates a pattern for a regular expression.
@@ -99,11 +98,11 @@ public class RegexSearcher extends AbstractSearcher {
       throw new TvBrowserException(RegexSearcher.class, "error.1",
         "Syntax error in the regualar expression of the search pattern!", exc);
     }
-    
+
     return pattern;
   }
 
-  
+
   /**
    * Creates a regex from a search text.
    * <p>
@@ -126,7 +125,7 @@ public class RegexSearcher extends AbstractSearcher {
     if (searchText.trim().length() == 0) {
       return "";
     }
-    
+
     // NOTE: We replace all whitespace with a regex that matches whitespace.
     //       This way the search hits will contain "The film", when the user
     //       entered "The    film"
@@ -134,15 +133,15 @@ public class RegexSearcher extends AbstractSearcher {
     //       be ignored within the search text. (A search for "C++" will not
     //       result in an syntax error)
     String regex = "\\Q" + searchText.replaceAll("\\s+", "\\\\E\\\\s+\\\\Q") + "\\E";
-    
+
     // Add '.*' to beginning an end to match keywords
     if (matchKeyword) {
       regex = ".*" + regex + ".*";
     }
-    
+
     return regex;
   }
-  
+
 
   /**
    * Checks whether a value matches to the criteria of this searcher.
