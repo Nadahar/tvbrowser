@@ -544,6 +544,20 @@ public class Settings {
   public static final IntProperty propWindowY
     = new IntProperty(mProp, "window.y", -1);
 
+  /** Settings-Window Width  */
+  public static final IntProperty propSettingsWindowWidth
+    = new IntProperty(mProp, "settingsWindow.width", -1);
+  /** Settings-Window Height  */
+  public static final IntProperty propSettingsWindowHeight
+    = new IntProperty(mProp, "settingsWindow.height", -1);
+  /** Settings-Window X-Position  */
+  public static final IntProperty propSettingsWindowX
+    = new IntProperty(mProp, "settingsWindow.x", -1);
+  /** Settings-Window Y-Position  */
+  public static final IntProperty propSettingsWindowY
+    = new IntProperty(mProp, "settingsWindow.y", -1);
+  
+  
   public static final IntProperty propProgramTableStartOfDay
     = new IntProperty(mProp, "programtable.startofday", 0);
 
