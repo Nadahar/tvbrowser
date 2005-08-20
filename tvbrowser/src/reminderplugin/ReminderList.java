@@ -92,7 +92,7 @@ public class ReminderList implements ActionListener {
 
   public void add(Program[] programs, int minutes) {
     for (int i=0; i<programs.length; i++) {
-      if (!mRoot.contains(programs[i], true)) {
+      if (!mRoot.contains(programs[i], true) && (!programs[i].isExpired())) {
         ReminderListItem item = new ReminderListItem(programs[i], minutes);
         mRoot.addProgram(item.getProgramItem());
       }
@@ -102,7 +102,7 @@ public class ReminderList implements ActionListener {
   }
 
   public void add(Program program, int minutes) {
-    if (!mRoot.contains(program, true)) {
+    if (!mRoot.contains(program, true)&& (!program.isExpired())) {
       ReminderListItem item = new ReminderListItem(program, minutes);
       mRoot.addProgram(item.getProgramItem());
       mRoot.update();
