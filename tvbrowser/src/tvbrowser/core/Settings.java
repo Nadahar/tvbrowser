@@ -62,8 +62,7 @@ public class Settings {
   public static final int NEVER=0, DAILY=1, ONSTARTUP=DAILY, EVERY3DAYS=2, WEEKLY=3;
 
   private static final String SETTINGS_FILE="settings.prop";
-  private static final String OLD_USER_DIR = "tvbrowser";
-  private static final String USER_DIR = mDefaultSettings.getProperty("userdir",".tvbrowser");
+  private static final String DEFAULT_USER_DIR = ".tvbrowser";
 
   private static final Font PROGRAMTITLEFONT=new Font("Dialog",Font.BOLD,12);
   private static final Font PROGRAMINFOFONT=new Font("Dialog",Font.PLAIN,10);
@@ -78,25 +77,7 @@ public class Settings {
    * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
-    String dir = mDefaultSettings.getProperty("userhome",System.getProperty("user.home", ""));
-    String oldDir = dir;
-
-    if (dir.length() != 0) {
-      dir += File.separator + USER_DIR;
-      oldDir += File.separator + OLD_USER_DIR;
-    } else {
-      dir = USER_DIR;
-      oldDir = OLD_USER_DIR;
-    }
-
-    // The user directory used to be "tvbrowser". Now it is ".tvbrowser"
-    // (hidden on UNIX systems). -> Rename the old directory if it still exists.
-    File oldUserDir = new File(oldDir);
-    if (oldUserDir.exists()) {
-      oldUserDir.renameTo(new File(dir));
-    }
-
-    return dir;
+    return mDefaultSettings.getProperty("userdir", System.getProperty("user.home") + File.separator + DEFAULT_USER_DIR);
   }
 
 

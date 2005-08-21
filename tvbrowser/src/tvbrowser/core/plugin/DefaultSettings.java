@@ -28,6 +28,8 @@ package tvbrowser.core.plugin;
 
 
 import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +37,6 @@ import java.io.IOException;
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
  * Date: 07.03.2005
- * Time: 18:15:49
  */
 public class DefaultSettings {
 
@@ -53,7 +54,29 @@ public class DefaultSettings {
   }
 
   public String getProperty(String key, String defaultString) {
-    return mProperties.getProperty(key, defaultString);
+    String value = mProperties.getProperty(key, defaultString);
+    if (value == null) {
+      return null;
+    }
+    String pre = "\\$\\{";
+    String post = "\\}";
+    String regex = pre+"(.*?)"+post;
+    Pattern pattern = Pattern.compile(regex);
+
+    Matcher matcher = pattern.matcher(value);
+
+    while (matcher.find()) {
+      String sysKey = matcher.group(1);
+      String p = pre + sysKey + post;
+      String v = System.getProperty(sysKey,"UNKNOWN");
+
+      // We habe to replace '\' and '$' signs before replacement
+      // see: http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String)
+      v = v.replaceAll("\\\\","/");
+      v = v.replaceAll("\\$","**");
+      value = value.replaceAll(p, v);
+    }
+    return value;
   }
 
 }
