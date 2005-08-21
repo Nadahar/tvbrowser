@@ -359,8 +359,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     });
 
     Dimension size = bt.getPreferredSize();
-    size.height = tf.getPreferredSize().height;
-    bt.setPreferredSize(size);
+    
+    if (tf.getPreferredSize().height > size.height) {
+      size.height = tf.getPreferredSize().height;
+      bt.setPreferredSize(size);
+    }
 
     return bt;
   }
@@ -472,13 +475,13 @@ class ConfigureBackgroundStyleDialog {
     okBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mStyle.storeSettings();
-        mDialog.hide();
+        mDialog.setVisible(false);
       }
     });
 
     cancelBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        mDialog.hide();
+        mDialog.setVisible(false);
       }
     });
 
