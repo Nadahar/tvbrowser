@@ -159,22 +159,6 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>log</string>
-																<key>Path Type</key>
-																<integer>1</integer>
-																<key>Privileges</key>
-																<integer>511</integer>
-																<key>Type</key>
-																<integer>2</integer>
-																<key>UID</key>
-																<integer>0</integer>
-															</dict>
-															<dict>
-																<key>Children</key>
-																<array/>
-																<key>GID</key>
-																<integer>80</integer>
-																<key>Path</key>
 																<string>../txt/osx.properties</string>
 																<key>Path Type</key>
 																<integer>2</integer>
@@ -230,22 +214,6 @@
 																<integer>420</integer>
 																<key>Type</key>
 																<integer>3</integer>
-																<key>UID</key>
-																<integer>0</integer>
-															</dict>
-															<dict>
-																<key>Children</key>
-																<array/>
-																<key>GID</key>
-																<integer>80</integer>
-																<key>Path</key>
-																<string>tvdata</string>
-																<key>Path Type</key>
-																<integer>1</integer>
-																<key>Privileges</key>
-																<integer>511</integer>
-																<key>Type</key>
-																<integer>2</integer>
 																<key>UID</key>
 																<integer>0</integer>
 															</dict>
