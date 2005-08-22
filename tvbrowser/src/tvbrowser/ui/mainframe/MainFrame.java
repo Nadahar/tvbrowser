@@ -605,15 +605,11 @@ public class MainFrame extends JFrame implements DateListener {
 
   }
   
-  public void showFromTray(final int state) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        setVisible(true);
-        toFront();
-        setExtendedState(state);
-        mIsVisible = true;
-      }
-    });  
+  public void showFromTray(int state) {   
+    super.show();
+    toFront();
+    setExtendedState(state);
+    mIsVisible = true;
   }
 
   public void show() {
