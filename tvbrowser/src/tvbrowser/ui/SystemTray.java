@@ -38,6 +38,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -231,8 +232,12 @@ public class SystemTray {
    * Toggle Hide/Show of the MainFrame
    */
   private void toggleShowHide() {
-    if (!MainFrame.getInstance().isVisible() || (MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED)) {    
-      MainFrame.getInstance().showFromTray(mState);
+    if (!MainFrame.getInstance().isVisible() || (MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED)) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          MainFrame.getInstance().showFromTray(mState);
+        }
+      });
       toggleOpenCloseMenuItem(false);
     } else {
       MainFrame.getInstance().setVisible(false);
