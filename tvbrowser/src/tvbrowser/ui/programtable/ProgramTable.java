@@ -74,6 +74,7 @@ implements ProgramTableModelListener {
 
   private JPopupMenu mPopupMenu;
 
+  private Runnable mCallback;
   /**
    * Creates a new instance of ProgramTable.
    */
@@ -294,6 +295,9 @@ implements ProgramTableModelListener {
       (int)(Math.random() * 256)));
     grp.drawRect(clipBounds.x, clipBounds.y, clipBounds.width - 1, clipBounds.height - 1);
     /**/
+      //scroll to somewhere?
+    if(mCallback != null)
+      runCallback();
   }
 
 
@@ -549,8 +553,23 @@ implements ProgramTableModelListener {
 
   // implements ProgramTableModelListener
 
-
-  public void tableDataChanged() {
+  /**
+   * runs the Runnable callback that scrolls to the wanted place
+   * in the ProgramTable
+   */
+  public void runCallback() {    
+    SwingUtilities.invokeLater(new Runnable(){
+      public void run() {
+        if(mCallback != null)
+          mCallback.run();
+        mCallback = null;
+      }     
+    });
+  }
+  
+  
+  public void tableDataChanged(Runnable callback) {
+    mCallback = callback;
     updateLayout();
     revalidate();
     repaint();
