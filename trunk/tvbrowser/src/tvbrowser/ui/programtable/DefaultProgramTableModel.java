@@ -143,7 +143,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   public void setTimeRange(int todayEarliestTime, int tomorrowLatestTime) {
     mTodayEarliestTime=todayEarliestTime;
     mTomorrowLatestTime=tomorrowLatestTime;
-    fireTableDataChanged();
+    fireTableDataChanged(null);
   }
 
 
@@ -178,7 +178,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   public void setProgramFilter(ProgramFilter filter) {
     mProgramFilter=filter;
-    fireTableDataChanged();
+    fireTableDataChanged(null);
     updateTableContent();
   }
 
@@ -315,11 +315,11 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         // Update the programs on air
         updateProgramsOnAir();
 
-        fireTableDataChanged();
+        fireTableDataChanged(callback);
 
-        if (callback != null) {
+        /*if (callback != null) {
           callback.run();
-        }
+        }*/
       }
     });
   }
@@ -390,10 +390,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
  
 
-  protected void fireTableDataChanged() {
+  protected void fireTableDataChanged(Runnable callback) {
     for (int i = 0; i < mListenerList.size(); i++) {
       ProgramTableModelListener lst = (ProgramTableModelListener) mListenerList.get(i);
-      lst.tableDataChanged();
+      lst.tableDataChanged(callback);
     }
   }
 

@@ -110,8 +110,8 @@ public class ProgramTableScrollPane extends JScrollPane
 
   public void forceRepaintAll() {
     getProgramTable().forceRepaintAll();
-    tableDataChanged();
-    getProgramTable().tableDataChanged();   
+    tableDataChanged(null);
+    getProgramTable().tableDataChanged(null);   
   }
  
   public void repaint() {
@@ -184,7 +184,7 @@ public class ProgramTableScrollPane extends JScrollPane
   // implements ProgramTableModelListener
 
 
-  public void tableDataChanged() {
+  public void tableDataChanged(Runnable callback) {
     mChannelPanel.setShownChannels(mProgramTable.getModel().getShownChannels());
   }
 

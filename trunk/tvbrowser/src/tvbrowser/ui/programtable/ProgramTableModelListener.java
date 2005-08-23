@@ -12,7 +12,7 @@ package tvbrowser.ui.programtable;
  */
 public interface ProgramTableModelListener {
   
-  public void tableDataChanged();
+  public void tableDataChanged(Runnable callback);
   
   public void tableCellUpdated(int col, int row);
   
