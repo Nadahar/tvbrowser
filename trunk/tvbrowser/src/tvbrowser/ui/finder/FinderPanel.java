@@ -248,8 +248,11 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 	
 	public void keyPressed(KeyEvent event) {
 		if (event.getKeyCode()==KeyEvent.VK_SPACE) {
-      markDate(((FinderItem)mList.getSelectedValue()).getDate());
-		}		
+      FinderItem item = (FinderItem)mList.getSelectedValue();
+      if (item != null) {
+        markDate(item.getDate());
+      }
+    }
 	}
 
 	
