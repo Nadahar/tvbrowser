@@ -40,13 +40,6 @@ Name "${PROG_NAME} ${VERSION}"
 # The file to write
 OutFile "${PUBLIC_DIR}\${PROG_NAME_FILE}_${VERSION_FILE}.exe"
 
-# The default installation directory
-InstallDir "$PROGRAMFILES\${PROG_NAME}"
-
-# Get installation folder from registry if available
-InstallDirRegKey HKCU "Software\${PROG_NAME}" "Install directory"
-
-
 # Use LZMA compression
 SetCompressor lzma
 
@@ -62,11 +55,6 @@ SetCompressor lzma
 # Set the default start menu folder
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER ${PROG_NAME}
 
-# Remember the selected start menu folder in registry
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU"
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${PROG_NAME}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-
 # Use no descriptions in the components page
 !define MUI_COMPONENTSPAGE_NODESC
 
@@ -74,7 +62,6 @@ SetCompressor lzma
 #--------------------------------
 #Variables
 
-Var MUI_TEMP
 Var STARTMENU_FOLDER
 Var INI_VALUE
 
@@ -114,6 +101,34 @@ ReserveFile "${NSISDIR}\UninstallSettings.ini"
 #--------------------------------
 # Installer Functions
 
+Function .onInit
+  push $0
+  # Get Account Type of the current user
+  UserInfo::GetAccountType
+  pop $1
+  StrCmp $1 "Admin" isadmin isnotadmin
+  isnotadmin:
+  StrCmp $1 "Power" isadmin isnotpower
+  isadmin:
+  StrCpy $8 "HKLM"
+  # Get installation folder from registry if available
+  ReadRegStr $0 HKLM "Software\${PROG_NAME}" "Install directory"
+  goto goon
+  isnotpower:
+  StrCpy $8 "HKCU"
+  # Get installation folder from registry if available
+  ReadRegStr $0 HKCU "Software\${PROG_NAME}" "Install directory"
+  goon:
+  IfErrors errors
+  StrCpy $INSTDIR "$0"
+  goto end
+  errors:
+  # The default installation directory
+  StrCpy $INSTDIR "$PROGRAMFILES\${PROG_NAME}"
+  end:
+  pop $0
+FunctionEnd
+
 Function un.onInit
   # Extract InstallOptions INI files
   # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallTvData.ini"   "UninstallTvData.ini"
@@ -121,14 +136,14 @@ Function un.onInit
 FunctionEnd
 
 # Function un.UninstallTvDataPage
-#  !insertmacro MUI_HEADER_TEXT "TV-Daten lÃ¶schen" \
-#    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelÃ¶scht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" \
+#    "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 # FunctionEnd
 
 Function un.UninstallSettingsPage
-  !insertmacro MUI_HEADER_TEXT "Einstellungen lÃ¶schen" \
-    "Bestimmen Sie, ob Ihre Einstellungen geloescht werden sollen"
+  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
+    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 FunctionEnd
 
@@ -153,16 +168,14 @@ Section "${PROG_NAME} (erforderlich)"
   # make the section requiered
   SectionIn 1 2 RO
 
-  # Sets the context of $SMPROGRAMS and other shell folders. If set to 'all', the 'all users' shell folder is used.
-  SetShellVarContext all
-
   # Set output path to the installation directory.
   SetOutPath "$INSTDIR"
   File "${RUNTIME_DIR}\LICENSE.txt"
   File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\website.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
-  File "${RUNTIME_DIR}\windows.properties"      
+  File "${RUNTIME_DIR}\windows.properties"
+  File "${RUNTIME_DIR}\default.properties"
   File "${RUNTIME_DIR}\..\..\win\DesktopIndicator.dll"
 
   WriteUninstaller "Uninstall.exe"
@@ -176,43 +189,89 @@ Section "${PROG_NAME} (erforderlich)"
   # CreateDirectory "$INSTDIR\tvdata"
   CreateDirectory "$INSTDIR\plugins"
 
-  # Store installation folder in registry
-  WriteRegStr HKCU "Software\${PROG_NAME}" "Install directory" $INSTDIR
 
   # Register uninstaller at Windows (Add/Remove programs)
   !define UPDATE_INFO_URL "http://tvbrowser.sourceforge.net"
   !define REGISTER_ICON "$INSTDIR\tvbrowser.exe,0"
-  WriteRegExpandStr \
-    HKLM \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
-    "UninstallString" \
-    "$INSTDIR\Uninstall.exe"
-  WriteRegExpandStr \
-    HKLM \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
-    "InstallLocation" \
-    "$INSTDIR"
-  WriteRegStr \
-    HKLM \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
-    "DisplayName" \
-    "${PROG_NAME} ${VERSION}"
-  WriteRegStr \
-    HKLM \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
-    "DisplayIcon" \
-    ${REGISTER_ICON}
-  WriteRegStr \
-    HKLM \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
-    "DisplayVersion" \
-    "${VERSION}"
-  WriteRegStr \
-    HKLM \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
-    "URLUpdateInfo" \
-    ${UPDATE_INFO_URL}
 
+  StrCmp $8 "HKCU" user admin
+  user:
+    SetShellVarContext current
+    # Store installation folder in registry
+    WriteRegStr HKCU "Software\${PROG_NAME}" "Install directory" $INSTDIR
+    # Remember the selected start menu folder in registry
+    WriteRegStr HKCU "Software\${PROG_NAME}" "Start Menu Folder" $STARTMENU_FOLDER
+    WriteRegExpandStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "UninstallString" \
+      "$INSTDIR\Uninstall.exe"
+    WriteRegExpandStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "InstallLocation" \
+      "$INSTDIR"
+    WriteRegStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "DisplayName" \
+      "${PROG_NAME} ${VERSION}"
+    WriteRegStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "DisplayIcon" \
+      ${REGISTER_ICON}
+    WriteRegStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "DisplayVersion" \
+      "${VERSION}"
+    WriteRegStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "URLUpdateInfo" \
+      ${UPDATE_INFO_URL}
+    goto end
+    
+  admin:
+    # Sets the context of $SMPROGRAMS and other shell folders. If set to 'all', the 'all users' shell folder is used.
+    SetShellVarContext all
+    # Store installation folder in registry
+    WriteRegStr HKLM "Software\${PROG_NAME}" "Install directory" $INSTDIR
+    # Remember the selected start menu folder in registry
+    WriteRegStr HKLM "Software\${PROG_NAME}" "Start Menu Folder" $STARTMENU_FOLDER
+
+    WriteRegExpandStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "UninstallString" \
+      "$INSTDIR\Uninstall.exe"
+    WriteRegExpandStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "InstallLocation" \
+      "$INSTDIR"
+    WriteRegStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "DisplayName" \
+      "${PROG_NAME} ${VERSION}"
+    WriteRegStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "DisplayIcon" \
+      ${REGISTER_ICON}
+    WriteRegStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "DisplayVersion" \
+      "${VERSION}"
+    WriteRegStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "URLUpdateInfo" \
+      ${UPDATE_INFO_URL}
+  end:
   # Create start menu entry if wanted by the user
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
@@ -245,8 +304,15 @@ Section "${PROG_NAME} (erforderlich)"
 SectionEnd # end the section
 
 
-Section "VerknÃ¼pfung auf dem Desktop"
+Section "Verknüpfung auf dem Desktop"
   SectionIn 1 2
+  StrCmp $8 "HKCU" user admin
+  user:
+    SetShellVarContext current
+    goto goon
+  admin:
+    SetShellVarContext all
+  goon:
 
   # Set the directory where the shortcuts should be executed in
   SetOutPath "$INSTDIR"
@@ -327,7 +393,7 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
   SectionEnd
 
-  Section "Was lÃ¤uft gerade"
+  Section "Was läuft gerade"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
@@ -383,17 +449,40 @@ Section "Uninstall"
   Delete "$INSTDIR\*.*"
   RMDir "$INSTDIR"
 
-  # Remove start menu shortcuts
-  !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
-  RMDir /r "$SMPROGRAMS\$MUI_TEMP"
+
+  # Unregister uninstaller at Windows (Add/Remove programs)
+  push $8
+  UserInfo::GetAccountType
+  pop $1
+  StrCmp $1 "Admin" isadmin isnotadmin
+  isnotadmin:
+  StrCmp $1 "Power" isadmin isnotpower
+  isadmin:
+    ReadRegStr $8 HKLM "Software\${PROG_NAME}" "Start Menu Folder"
+    DeleteRegKey \
+    HKLM \
+    "Software\${PROG_NAME}"
+    DeleteRegKey \
+    HKLM \
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}"
+    SetShellVarContext all
+    goto end
+  isnotpower:
+    ReadRegStr $8 HKCU "Software\${PROG_NAME}" "Start Menu Folder"
+    DeleteRegKey \
+    HKCU \
+    "Software\${PROG_NAME}"
+    DeleteRegKey \
+    HKCU \
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}"
+    SetShellVarContext current
+  end:
+    # Remove start menu shortcuts
+  RMDir /r "$SMPROGRAMS\$8"
+  pop $8
 
   # remove desktop shortcut
   Delete "$DESKTOP\${PROG_NAME}.lnk"
-
-  # Unregister uninstaller at Windows (Add/Remove programs)
-  DeleteRegKey \
-    HKLM \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}"
 
 SectionEnd
 
