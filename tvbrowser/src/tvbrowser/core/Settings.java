@@ -274,7 +274,7 @@ public class Settings {
   = new BooleanProperty(mProp, "enableantialiasing", false);
 
   public static final StringProperty propTVDataDirectory
-    = new StringProperty(mProp, "directory.tvdata", mDefaultSettings.getProperty("tvdatadir",""));
+    = new StringProperty(mProp, "dir.tvdata", mDefaultSettings.getProperty("tvdatadir",""));
 
   public static final StringProperty propFilterDirectory
     = new StringProperty(mProp, "directory.filters",

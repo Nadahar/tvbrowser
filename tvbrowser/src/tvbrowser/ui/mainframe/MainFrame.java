@@ -60,6 +60,7 @@ import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
+import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvdataservice.TvDataService;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
@@ -425,6 +426,11 @@ public class MainFrame extends JFrame implements DateListener {
     Settings.handleChangedSettings();
 
   }
+
+//  public void runTvBrowserUpdateAssistant() {
+//    TvBrowserUpdateAssistant dlg = new TvBrowserUpdateAssistant(this);
+//    UiUtilities.centerAndShow(dlg);
+//  }
 
   public void storeSettings() {
     mToolBarModel.store();
