@@ -382,11 +382,13 @@ public class MainFrame extends JFrame implements DateListener {
     // Directly after the day end is also not a good choice, because a
     // minute before the old day program will not contain the coming programs.
     // So I think the best choice will be the middle, in this case 3:00.
+    // If the day start is later as the day end, then the table have to show the
+    // old date until the day end is reached.
 
     int dayStart = Settings.propProgramTableStartOfDay.getInt();
     int dayEnd = Settings.propProgramTableEndOfDay.getInt();
     int splitHour = (dayEnd - dayStart) / 60;
-    if (hour < splitHour) {
+    if (hour < (splitHour/2 + splitHour%2) || (splitHour <= 0 && hour < dayEnd/60)) {
       // It's early in the morning -> use the program table of yesterday
       day = day.addDays(-1);
       hour += 24;
