@@ -241,7 +241,7 @@ public class IOUtilities {
   private static File createDirectory(File targetDir, String dirName) throws IOException {
     File f = new File(targetDir.getAbsolutePath()+"/"+dirName);
     if (!f.exists()) {
-      if (!f.mkdir()) {
+      if (!f.mkdirs()) {
         throw new IOException("Could not create directory '"+f.getAbsolutePath()+"'");
       }
     }

@@ -52,7 +52,7 @@ public class ImportHandler {
     HashSet channelSet = new HashSet();
     String[] files = mSrcDirectory.list();
     for (int i=0; i<files.length; i++) {
-      System.out.println(files[i]);
+      //System.out.println(files[i]);
       matcher = pattern.matcher(files[i]);
       if (matcher.find()) {
         String country = matcher.group(1);
@@ -68,7 +68,10 @@ public class ImportHandler {
   }
 
   public void importTo(File destination) throws IOException {
-    System.out.println("importing...");
+    //System.out.println("importing...");
+    if (mSrcDirectory.equals(destination)) {
+      throw new IOException("source and destination are equal");
+    }
     IOUtilities.copy(mSrcDirectory.listFiles(), destination);
   }
 }

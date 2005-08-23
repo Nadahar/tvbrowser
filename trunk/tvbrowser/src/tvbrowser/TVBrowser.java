@@ -44,6 +44,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.SystemTray;
+import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.UpdateDlg;
 import tvbrowser.ui.splashscreen.DummySplash;
@@ -60,6 +61,7 @@ import util.ui.Localizer;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 import devplugin.Date;
+import devplugin.Version;
 
 /**
  * TV-Browser
@@ -75,15 +77,22 @@ public class TVBrowser {
   public static util.ui.Localizer mLocalizer;
 
   private static String curLookAndFeel;
-  public static final devplugin.Version VERSION=new devplugin.Version(1,10,false,"1.1 Beta1");
+
+  public static final devplugin.Version VERSION=new devplugin.Version(1,11,false,"1.1 Beta1");
+  // Note, that TV-Browser 1.1 (final) internally has the Version number "1.11" to go sure, that
+  //   beta users are presented the "import TV listings" dialog, too. So they don't lose their
+  //   channel settings.
+
+
+
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
-  
+
   private static SystemTray mTray;
-  
+
   private static MainFrame mainFrame;
 
 
-  
+
   /**
    * Specifies whether the save thread should stop. The save thread saves every
    * 5 minutes the settings.
@@ -92,14 +101,14 @@ public class TVBrowser {
 
 
   private static void showUsage() {
-    
+
     System.out.println("command line options:");
     System.out.println("    - minimized    The main window will be minimized after start up");
     System.out.println("    - nosplash     No splash screen during start up");
     System.out.println();
-    
+
   }
-  
+
   /**
    * Entry point of the application
    */
@@ -133,7 +142,7 @@ public class TVBrowser {
 
     mLocalizer = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
     String msg;
-    
+
     // Check whether the TV-Browser was started in the right directory
     if ( !new File("imgs").exists()) {
       msg = mLocalizer.msg("error.2",
@@ -141,19 +150,24 @@ public class TVBrowser {
       JOptionPane.showMessageDialog(null, msg);
       System.exit(1);
     }
-    
-    // setup logging
-    
-	  // Get the default Logger
-		Logger mainLogger = Logger.getLogger("");
 
-		// Use a even simpler Formatter for console logging
-		mainLogger.getHandlers()[0].setFormatter(createFormatter());
+    // setup logging
+
+    // Get the default Logger
+    Logger mainLogger = Logger.getLogger("");
+
+    // Use a even simpler Formatter for console logging
+    mainLogger.getHandlers()[0].setFormatter(createFormatter());
 
     // Load the settings
     Settings.loadSettings();
 
+    boolean lookAndFeelInitialized = false;
+
     if (!createLockFile()) {
+      javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
+      updateLookAndFeel();
+      lookAndFeelInitialized = true;
       showTVBrowserIsAlreadyRunningMessageBox();
     }
 
@@ -168,7 +182,7 @@ public class TVBrowser {
         ErrorHandler.handle(msg, exc);
       }
     }
-    
+
     // Capture unhandled exceptions
     System.setErr(new PrintStream(new MonitoringErrorStream()));
 
@@ -190,34 +204,37 @@ public class TVBrowser {
     // Set the String to use for indicating the user agent in http requests
     System.setProperty("http.agent", MAINWINDOW_TITLE);
 
-
-    /* If the tvdata directory already exists, we can assume that the user has installed tvbrowser
-       correctly. Else, we show the install assistant.*/
-    File f=new File(Settings.propTVDataDirectory.getString());
-    if (!f.exists()) {
-      Settings.propShowAssistant.setBoolean(true);
+    Version currentVersion = Settings.propTVBrowserVersion.getVersion();
+    Settings.propTVBrowserVersion.setVersion(VERSION);
+    if (currentVersion != null && currentVersion.compareTo(new Version(1,11))<0) {
+      mLog.info("Running tvbrowser update assistant");
+      javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
+      updateLookAndFeel();
+      lookAndFeelInitialized = true;
+      showUpdateAssistant();
     }
 
     final Splash splash;
-    
+
     if (showSplashScreen && Settings.propSplashShow.getBoolean()) {
       splash = new SplashScreen(
           Settings.propSplashImage.getString(),
           Settings.propSplashTextPosX.getInt(),
           Settings.propSplashTextPosY.getInt(),
           Settings.propSplashBackgroundColor.getColor(),
-          Settings.propSplashForegroundColor.getColor());      
+          Settings.propSplashForegroundColor.getColor());
     }
     else {
-      splash = new DummySplash(); 
-    }    
-    
+      splash = new DummySplash();
+    }
+
     splash.showSplash();
-    Settings.propTVBrowserVersion.setVersion(VERSION);  
-    
+
+
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
     TvDataServiceManager.installPendingDataServices();
-    
+
+
     mLog.info("Loading TV listings service...");
     msg = mLocalizer.msg("splash.dataService", "Loading TV listings service...");
     splash.setMessage(msg);
@@ -225,27 +242,32 @@ public class TVBrowser {
     ChannelList.create();
 
     ChannelList.initSubscribedChannels();
-    
-    mLog.info("Loading Look&Feel...");
-    msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
-    splash.setMessage(msg);
 
-    // Set the NotBoldMetalTheme for the metal look and feel
-    // (This won't effect other look and feels)
-    javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
-    
-    updateLookAndFeel();
+
+
+    if (!lookAndFeelInitialized) {
+      mLog.info("Loading Look&Feel...");
+      msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
+      splash.setMessage(msg);
+
+      // Set the NotBoldMetalTheme for the metal look and feel
+      // (This won't effect other look and feels)
+      javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new NotBoldMetalTheme());
+      updateLookAndFeel();
+    }
+
+
 
     mLog.info("Deleting expired TV listings...");
     TvDataBase.getInstance().deleteExpiredFiles(1);
-    
+
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);
     try {
-      PluginProxyManager.getInstance().init();      
+      PluginProxyManager.getInstance().init();
     } catch(TvBrowserException exc) {
-      ErrorHandler.handle(exc);      
+      ErrorHandler.handle(exc);
     }
 
     msg = mLocalizer.msg("splash.tvData", "Checking TV database...");
@@ -253,11 +275,11 @@ public class TVBrowser {
 
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
-    
+
     mLog.info("Starting up...");
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
-   
+
     // Init the UI
     final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean();
     SwingUtilities.invokeLater(new Runnable() {
@@ -278,7 +300,7 @@ public class TVBrowser {
           catch (Exception exc) {
             // ignore
           }
-          
+
           flushSettings();
         }
       }
@@ -322,6 +344,18 @@ public class TVBrowser {
   }
 
 
+  private static void showUpdateAssistant() {
+    TvBrowserUpdateAssistant dlg = new TvBrowserUpdateAssistant(null);
+    UiUtilities.centerAndShow(dlg);
+    if (dlg.getResult() == TvBrowserUpdateAssistant.CONFIGURE_TVBROWSER) {
+      Settings.propShowAssistant.setBoolean(true);
+    }
+    else if (dlg.getResult() == TvBrowserUpdateAssistant.CANCEL) {
+      System.exit(2);
+    }
+  }
+
+
   private static void showTVBrowserIsAlreadyRunningMessageBox() {
 
     Object[] options = {mLocalizer.msg("close","Close"),
@@ -340,25 +374,25 @@ public class TVBrowser {
   private static void initUi(Splash splash, boolean startMinimized) {
     mainFrame=MainFrame.getInstance();
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
-    
+
     // Set the program icon
     Image iconImage = ImageUtilities.createImage("imgs/tvbrowser16.png");
     mainFrame.setIconImage(iconImage);
 
     mTray = new SystemTray();
-    
+
     if (mTray.initSystemTray()) {
         mTray.createMenus();
     } else {
-      mLog.info("platform independent mode is ON");    
-      
+      mLog.info("platform independent mode is ON");
+
       mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
         public void windowClosing(java.awt.event.WindowEvent e) {
           mainFrame.quit();
         }
-      });  
+      });
     }
-    
+
     // Set the right size
     mLog.info("Setting frame size and location");
     int windowWidth = Settings.propWindowWidth.getInt();
@@ -366,16 +400,16 @@ public class TVBrowser {
     mainFrame.setSize(windowWidth, windowHeight);
     int windowX = Settings.propWindowX.getInt();
     int windowY = Settings.propWindowY.getInt();
-		if (windowX == -1) {
+    if (windowX == -1) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
       mainFrame.show();
     }
-		ErrorHandler.setFrame(mainFrame);
-    
+    ErrorHandler.setFrame(mainFrame);
+
     splash.hideSplash();
-    
+
     // maximize the frame if wanted
     if (Settings.propIsWindowMaximized.getBoolean()) {
       mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -385,14 +419,14 @@ public class TVBrowser {
     if (startMinimized) {
       mainFrame.setExtendedState(Frame.ICONIFIED);
     }
-    
+
     if (Settings.propShowAssistant.getBoolean()) {
-      mLog.info("Running setup assistant");    
-      mainFrame.runSetupAssistant();  
+      mLog.info("Running setup assistant");
+      mainFrame.runSetupAssistant();
     }
     else {
       handleAutomaticDownload();
-   
+
       boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
       if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
         mainFrame.askForDataUpdate();
@@ -401,15 +435,15 @@ public class TVBrowser {
       }
     }
   }
-  
-  
-  public static synchronized void flushSettings() {    
-     
+
+
+  public static synchronized void flushSettings() {
+
     mLog.info("Channel Settings (day light saving time corrections/icons)");
-    ChannelList.storeAllSettings();  
-    
+    ChannelList.storeAllSettings();
+
     mainFrame.storeSettings();
-    
+
     mLog.info("Storing window size and location");
     boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
     Settings.propIsWindowMaximized.setBoolean(maximized);
@@ -420,16 +454,16 @@ public class TVBrowser {
       Settings.propWindowX.setInt(mainFrame.getX());
       Settings.propWindowY.setInt(mainFrame.getY());
     }
-    
+
     mLog.info("Storing settings");
     try {
       Settings.storeSettings();
     } catch (TvBrowserException e) {
       ErrorHandler.handle(e);
     }
-    
+
   }
-  
+
   public static boolean isUsingSystemTray() {
     return mTray.isTrayUsed();
   }
@@ -442,17 +476,17 @@ public class TVBrowser {
     {
       // Nothing to do
       return;
-    }              
-    
+    }
+
     devplugin.Date lastDownloadDate=Settings.propLastDownloadDate.getDate();
     if (lastDownloadDate==null) {
       lastDownloadDate=devplugin.Date.getCurrentDate().addDays(-100);
     }
     devplugin.Date today=devplugin.Date.getCurrentDate();
-    
+
     //int daysSinceLastDownload=today.getNumberOfDaysSince(lastDownload);
     Date nextDownloadDate;
-    
+
     if (autoDLType.equals("daily")) {
       nextDownloadDate=lastDownloadDate.addDays(1);
     }
@@ -466,9 +500,9 @@ public class TVBrowser {
       nextDownloadDate=lastDownloadDate;
     }
 
-    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {	
+    if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
       if (Settings.propAskForAutoDownload.getBoolean()) {
-	       UpdateDlg dlg = new UpdateDlg(mainFrame, true);
+         UpdateDlg dlg = new UpdateDlg(mainFrame, true);
         dlg.pack();
         UiUtilities.centerAndShow(dlg);
         int daysToDownload = dlg.getResult();
@@ -477,7 +511,7 @@ public class TVBrowser {
         }
       }
       else {
-	       mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+         mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
       }
     }
   }
@@ -516,8 +550,8 @@ public class TVBrowser {
       mainFrame.validate();
     }
   }
-  
-  
+
+
   /**
    * Creates a very simple Formatter for log formatting
    * 
@@ -549,7 +583,7 @@ public class TVBrowser {
     };
   }
 
-  
+
   /**
    * Called when TV-Browser shuts down.
    * <p>
@@ -559,39 +593,39 @@ public class TVBrowser {
     mSaveThreadShouldStop = true;
     flushSettings();
   }
-  
+
 
   public static void updateProxySettings() {
     String httpHost = "", httpPort = "", httpUser = "", httpPassword = "";
     String ftpHost = "",  ftpPort = "",  ftpUser = "",  ftpPassword = "";
-    
+
     if (Settings.propHttpProxyUseProxy.getBoolean()) {
       httpHost = Settings.propHttpProxyHost.getString();
       httpPort = Settings.propHttpProxyPort.getString();
-      
+
       if (Settings.propHttpProxyAuthentifyAtProxy.getBoolean()) {
         httpUser     = Settings.propHttpProxyUser.getString();
         httpPassword = Settings.propHttpProxyPassword.getString();
         if (httpPassword == null) {
           httpPassword="";
-				}
+        }
 
-				final String user=httpUser;
-				final String pw=httpPassword;
-				Authenticator.setDefault(
-					new Authenticator() {
-					  public PasswordAuthentication getPasswordAuthentication() {
+        final String user=httpUser;
+        final String pw=httpPassword;
+        Authenticator.setDefault(
+          new Authenticator() {
+            public PasswordAuthentication getPasswordAuthentication() {
               return new PasswordAuthentication(user, pw.toCharArray());
-					  }
-				  }
-				);
+            }
+          }
+        );
       }
     }
-    
+
     if (Settings.propFtpProxyUseProxy.getBoolean()) {
       ftpHost = Settings.propFtpProxyHost.getString();
       ftpPort = Settings.propFtpProxyPort.getString();
-      
+
       if (Settings.propFtpProxyAuthentifyAtProxy.getBoolean()) {
         ftpUser     = Settings.propFtpProxyUser.getString();
         ftpPassword = Settings.propFtpProxyPassword.getString();
