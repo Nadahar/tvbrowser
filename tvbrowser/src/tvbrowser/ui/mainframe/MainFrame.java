@@ -388,7 +388,8 @@ public class MainFrame extends JFrame implements DateListener {
     int dayStart = Settings.propProgramTableStartOfDay.getInt();
     int dayEnd = Settings.propProgramTableEndOfDay.getInt();
     int splitHour = (dayEnd - dayStart) / 60;
-    if (hour < (splitHour/2 + splitHour%2) || (splitHour <= 0 && hour < dayEnd/60)) {
+    if (hour < (splitHour/2 + splitHour%2) || (splitHour <= 0 && hour < dayEnd/60)
+        || (hour < dayStart/60 && dayStart < dayEnd)) {
       // It's early in the morning -> use the program table of yesterday
       day = day.addDays(-1);
       hour += 24;
