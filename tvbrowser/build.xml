@@ -481,6 +481,7 @@
     <copy todir="${tvbrowser-win.runtime.dir}">
       <fileset dir="${tvbrowser.runtime.dir}"/>
       <fileset dir="${win.dir}" includes="DesktopIndicator.dll"/>
+      <fileset dir="${txt.dir}" includes="tvbrowser_noDD.txt"/>
     </copy>
   </target>
   
@@ -494,6 +495,7 @@
 
   <target name="exe" depends="runtime-win" description="Creates a Windows Executable with the help of JSmooth (http://jsmooth.sf.net)"> 
     <jsmoothgen project="${jsmooth.dir}/tvbrowser.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/> 
+    <jsmoothgen project="${jsmooth.dir}/tvbrowser_noDD.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/> 
   </target>  
 
 
