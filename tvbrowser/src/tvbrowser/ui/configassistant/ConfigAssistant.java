@@ -26,11 +26,13 @@
  
 package tvbrowser.ui.configassistant;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataServiceManager;
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 public class ConfigAssistant extends JDialog implements ActionListener, PrevNextButtons {  
   
@@ -41,9 +43,13 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
   private static final util.ui.Localizer mLocalizer
          = util.ui.Localizer.getLocalizerFor(ConfigAssistant.class); 
   
- 
   public ConfigAssistant(JFrame parent) {
     super(parent, true);
+        
+    File tvDataDir = new File(Settings.propTVDataDirectory.getString().trim());
+    Settings.propTVDataDirectory.setString(tvDataDir.toString());
+    TvDataServiceManager.getInstance().setTvDataDir(tvDataDir);
+    
     setTitle(mLocalizer.msg("title","Setup assistant"));
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
