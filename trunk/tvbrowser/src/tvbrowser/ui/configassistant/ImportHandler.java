@@ -42,17 +42,30 @@ public class ImportHandler {
   private int mNumOfChannels;
 
   public ImportHandler(File srcDirectory) {
-    mSrcDirectory = srcDirectory;
-    readContent();
+    int cnt;
+
+
+    cnt = readContent(srcDirectory);
+    if (cnt<=0) {
+      cnt = tryTheParentFolder(srcDirectory);
+      if (cnt <=0) {
+        cnt = tryOneLevelDepth(srcDirectory);
+      }
+
+    }
+    else {
+      mSrcDirectory = srcDirectory;
+    }
+
+    mNumOfChannels = cnt;
   }
 
-  private void readContent() {
+  private int readContent(File root) {
     Pattern pattern = Pattern.compile("^(\\p{Alpha}{2})_(\\p{Alnum}+)_\\p{Alnum}+\\.\\p{Digit}{8}$");
     Matcher matcher;
     HashSet channelSet = new HashSet();
-    String[] files = mSrcDirectory.list();
+    String[] files = root.list();
     for (int i=0; i<files.length; i++) {
-      //System.out.println(files[i]);
       matcher = pattern.matcher(files[i]);
       if (matcher.find()) {
         String country = matcher.group(1);
@@ -60,7 +73,32 @@ public class ImportHandler {
         channelSet.add(country+"_"+channelId);
       }
     }
-    mNumOfChannels = channelSet.size();
+    return channelSet.size();
+  }
+
+
+  private int tryTheParentFolder(File f) {
+    File parent = f.getParentFile();
+    if (parent != null) {
+      mSrcDirectory = f;
+      return readContent(parent);
+    }
+    return 0;
+  }
+
+  private int tryOneLevelDepth(File root) {
+    File[] files = root.listFiles();
+    for (int i=0; i<files.length; i++) {
+      File f = files[i];
+      if (f.isDirectory()) {
+        int cnt = readContent(f);
+        if (cnt >0) {
+          mSrcDirectory = f;
+          return cnt;
+        }
+      }
+    }
+    return 0;
   }
 
   public int getChannelCount() {
