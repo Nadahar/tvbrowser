@@ -53,6 +53,8 @@ public class Node extends DefaultMutableTreeNode {
   private ArrayList mActionMenuList;
 
   private NodeFormatter mNodeFormatter;
+  
+  private boolean mShowChildCount;
 
   private static NodeFormatter mDefaultNodeFormatter = new NodeFormatter(){
     public String format(ProgramItem item) {
@@ -73,6 +75,10 @@ public class Node extends DefaultMutableTreeNode {
     super(o);
     mType = type;
     mActionMenuList = new ArrayList();
+    if(type == ROOT)
+      mShowChildCount = false;
+    else
+      mShowChildCount = true;
   }
 
   public Node(ProgramItem programItem) {
@@ -82,6 +88,14 @@ public class Node extends DefaultMutableTreeNode {
 
   public void setNodeFormatter(NodeFormatter formatter) {
     mNodeFormatter = formatter;
+  }
+  
+  public void setShowChildCount(boolean enabled) {
+    mShowChildCount = enabled;
+  }
+  
+  public boolean isShowChildCount() {
+    return mShowChildCount;
   }
 
   public NodeFormatter getNodeFormatter() {
