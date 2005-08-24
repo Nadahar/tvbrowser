@@ -70,7 +70,10 @@ public class PluginTree extends JTree {
         if(!leaf) {
           int leafs = getLeafCount(node);
           String leafString = leafs > 0 ? " [" + leafs + "]" : "";
-          return o.toString() + leafString;
+          if(node.isShowChildCount())
+            return o.toString() + leafString;
+          else
+            return o.toString();
         }
         return o.toString(); 
       }
