@@ -32,6 +32,7 @@ import javax.swing.InputMap;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import util.ui.OverlayListener;
@@ -66,7 +67,12 @@ public class PluginTree extends JTree {
         return node.getNodeFormatter().format(programItem);
       }
       else if (o != null) {
-        return o.toString();
+        if(!leaf) {
+          int leafs = getLeafCount(node);
+          String leafString = leafs > 0 ? " [" + leafs + "]" : "";
+          return o.toString() + leafString;
+        }
+        return o.toString(); 
       }
       else {
         return "null";
@@ -77,6 +83,23 @@ public class PluginTree extends JTree {
     }
   }
 
+  /**
+   * Calculates the number of Childs
+   * @param node use this Node
+   * @return Number of Child-Nodes
+   */
+  private int getLeafCount(TreeNode node) {
+    int count = 0;
+    for(int i=0; i<node.getChildCount(); i++) {
+        if(node.getChildAt(i).isLeaf()) {
+            count++;
+        } else {
+            count += getLeafCount(node.getChildAt(i));
+        }
+    }
+    return count;
+  }
+  
   public void expandAll(TreePath path) {
     expandPath(path);
     TreeModel model = getModel();
