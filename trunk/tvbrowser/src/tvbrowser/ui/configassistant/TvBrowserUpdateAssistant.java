@@ -127,18 +127,18 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener 
                 options,
                 options[0]);
         if (n == JOptionPane.YES_OPTION) {
-          hide();
           mResult = CONFIGURE_TVBROWSER;
+          hide();
         }
       }
       else { // mListingsSuccessfullyImported == true
-        hide();
         mResult = IMPORT_SUCCESS;
+        hide();
       }
     }
     else if (source == mCancelBtn) {
-      hide();
       mResult = CANCEL;
+      hide();
     }
   }
 
