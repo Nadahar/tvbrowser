@@ -109,14 +109,7 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener 
                   options,
                   options[0]);
               if (n == JOptionPane.YES_OPTION) {
-//                try {
                   doTheImport(importHandler, destination);
-                  //importHandler.importTo(destination);
-//                  mInfoLb.setText(importHandler.getChannelCount()+" Sender importiert");
-//                  mListingsSuccessfullyImported = true;
-//                }catch(IOException e) {
-//                  util.exc.ErrorHandler.handle("Could not import TV listings", e);
-//                }
               }
             }
           }
