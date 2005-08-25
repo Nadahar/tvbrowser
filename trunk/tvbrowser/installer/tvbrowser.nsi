@@ -53,7 +53,7 @@ SetCompressor lzma
 !define MUI_UNFINISHPAGE_TITLE_3LINES
 
 # Set the default start menu folder
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER ${PROG_NAME}
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER $7
 
 # Use no descriptions in the components page
 !define MUI_COMPONENTSPAGE_NODESC
@@ -113,11 +113,15 @@ Function .onInit
   StrCpy $8 "HKLM"
   # Get installation folder from registry if available
   ReadRegStr $0 HKLM "Software\${PROG_NAME}" "Install directory"
+  # Get the default start menu folder from registry if available
+  ReadRegStr $7 HKLM "Software\${PROG_NAME}" "Start Menu Folder"
   goto goon
   isnotpower:
   StrCpy $8 "HKCU"
   # Get installation folder from registry if available
   ReadRegStr $0 HKCU "Software\${PROG_NAME}" "Install directory"
+  # Get the default start menu folder from registry if available
+  ReadRegStr $7 HKCU "Software\${PROG_NAME}" "Start Menu Folder"
   goon:
   IfErrors errors
   StrCpy $INSTDIR "$0"
@@ -125,6 +129,8 @@ Function .onInit
   errors:
   # The default installation directory
   StrCpy $INSTDIR "$PROGRAMFILES\${PROG_NAME}"
+  # The default start menu folder
+  StrCpy $7 "${PROG_NAME}"
   end:
   pop $0
 FunctionEnd
