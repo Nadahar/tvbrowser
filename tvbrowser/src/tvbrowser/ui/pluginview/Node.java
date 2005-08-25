@@ -54,7 +54,7 @@ public class Node extends DefaultMutableTreeNode {
 
   private NodeFormatter mNodeFormatter;
   
-  private boolean mShowChildCount;
+  private boolean mShowLeafCount;
 
   private static NodeFormatter mDefaultNodeFormatter = new NodeFormatter(){
     public String format(ProgramItem item) {
@@ -76,9 +76,9 @@ public class Node extends DefaultMutableTreeNode {
     mType = type;
     mActionMenuList = new ArrayList();
     if(type == ROOT)
-      mShowChildCount = false;
+      mShowLeafCount = false;
     else
-      mShowChildCount = true;
+      mShowLeafCount = true;
   }
 
   public Node(ProgramItem programItem) {
@@ -90,12 +90,12 @@ public class Node extends DefaultMutableTreeNode {
     mNodeFormatter = formatter;
   }
   
-  public void setShowChildCount(boolean enabled) {
-    mShowChildCount = enabled;
+  public void setShowLeafCount(boolean enabled) {
+    mShowLeafCount = enabled;
   }
   
-  public boolean isShowChildCount() {
-    return mShowChildCount;
+  public boolean isShowLeafCount() {
+    return mShowLeafCount;
   }
 
   public NodeFormatter getNodeFormatter() {
