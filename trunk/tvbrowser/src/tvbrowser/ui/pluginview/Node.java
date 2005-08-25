@@ -90,8 +90,8 @@ public class Node extends DefaultMutableTreeNode {
     mNodeFormatter = formatter;
   }
   
-  public void setShowLeafCount(boolean enabled) {
-    mShowLeafCount = enabled;
+  public void setShowLeafCountEnabled(boolean enable) {
+    mShowLeafCount = enable;
   }
   
   public boolean isShowLeafCount() {
