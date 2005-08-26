@@ -30,6 +30,7 @@ import util.io.IOUtilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FilenameFilter;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.HashSet;
@@ -106,10 +107,13 @@ public class ImportHandler {
   }
 
   public void importTo(File destination) throws IOException {
-    //System.out.println("importing...");
     if (mSrcDirectory.equals(destination)) {
       throw new IOException("source and destination are equal");
     }
-    IOUtilities.copy(mSrcDirectory.listFiles(), destination);
+    IOUtilities.copy(mSrcDirectory.listFiles(new FilenameFilter(){
+      public boolean accept(File dir, String name) {
+        return !".DS_Store".equals(dir.getName());       
+      }
+    }), destination);
   }
 }
