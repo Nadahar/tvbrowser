@@ -82,11 +82,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
 
   public void setPluginViewButtonSelected(boolean arg) {
-    mPluginViewAction.putValue(ToolBar.ACTION_IS_SELECTED, new Boolean(arg));
+    mPluginViewAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
   }
 
   public void setFilterButtonSelected(boolean arg) {
-    mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, new Boolean(arg));
+    mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
     
     if (arg) {
       mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/FilterSet16.png"));
@@ -144,6 +144,14 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       }
       else if ("#separator".equals(buttonNames[i])) {
         mVisibleActions.add(mSeparatorAction);
+      }
+      else {  // if the buttonName is not valid, we try to add the
+              // prefix '.java' - maybe it's a plugin from
+              // TV-Browser 1.0
+        action = (Action)mAvailableActions.get("java."+buttonNames[i]);
+        if (action !=null) {
+          mVisibleActions.add(action);
+        }
       }
     }
   }
