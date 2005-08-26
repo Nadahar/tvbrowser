@@ -273,8 +273,12 @@ public class Settings {
   public static final BooleanProperty propEnableAntialiasing
   = new BooleanProperty(mProp, "enableantialiasing", false);
 
+  private static String getDefaultTvDataDir() {
+    return getUserDirectoryName() + File.separator + "tvdata"; 
+  }
+
   public static final StringProperty propTVDataDirectory
-    = new StringProperty(mProp, "dir.tvdata", mDefaultSettings.getProperty("tvdatadir",""));
+    = new StringProperty(mProp, "dir.tvdata", mDefaultSettings.getProperty("tvdatadir",getDefaultTvDataDir()));
 
   public static final StringProperty propFilterDirectory
     = new StringProperty(mProp, "directory.filters",
