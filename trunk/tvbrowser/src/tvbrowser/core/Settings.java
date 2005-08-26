@@ -408,7 +408,7 @@ public class Settings {
 
 
   public static final StringArrayProperty propToolbarButtons
-    = new StringArrayProperty(mProp, "toolbarButtons",
+    = new StringArrayProperty(mProp, "toolbarButtons_2.0",
             null  // we show all buttons, if this property is not set
      );
 
