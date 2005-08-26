@@ -132,7 +132,7 @@ public class ProgramFieldType {
 
   public static final ProgramFieldType REPETITION_OF_TYPE
     = new ProgramFieldType(21, TEXT_FORMAT, true, "repition of",
-                           mLocalizer.msg("repitionOf", "Repition of"));
+                           mLocalizer.msg("repetitionOf", "Repetition of"));
    
   public static final ProgramFieldType MUSIC_TYPE
     = new ProgramFieldType(22, TEXT_FORMAT, true, "music",
