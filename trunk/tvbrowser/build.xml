@@ -366,12 +366,7 @@
       <fileset dir="themepacks"/>
     </copy>
 
-    <mkdir dir="${tvbrowser.runtime.dir}/help"/>
-    <copy todir="${tvbrowser.runtime.dir}/help">
-      <fileset dir="${src.dir}/help"/>
-    </copy>
 
-    
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
     <unjar src="${lib.dir}/commons-net.jar" dest="${unpacked.dir}/commons-net.jar"/>
@@ -661,7 +656,6 @@
       <zipfileset prefix="tvbrowser_v${tvbrowser.version}/src"
                   dir="${src.dir}">
         <include name="com/**"/>
-        <include name="help/**"/>
         <include name="imgs/**"/>
         <include name="test/**"/>
         <include name="tvbrowser/**"/>
