@@ -110,6 +110,11 @@ public class ImportHandler {
     if (mSrcDirectory.equals(destination)) {
       throw new IOException("source and destination are equal");
     }
+		if (!destination.exists()) {
+			if (!destination.mkdirs()) {
+        throw new IOException("Could not create directory '"+destination.getAbsolutePath()+"'");
+			}
+		}
     IOUtilities.copy(mSrcDirectory.listFiles(new FilenameFilter(){
       public boolean accept(File dir, String name) {
         return !".DS_Store".equals(name);
