@@ -240,8 +240,8 @@ public class IOUtilities {
 
   private static File createDirectory(File targetDir, String dirName) throws IOException {
     File f = new File(targetDir.getAbsolutePath()+"/"+dirName);
-    if (!f.exists()) {
-      if (!f.mkdirs()) {
+		if (!f.exists()) {
+			if (!f.mkdirs()) {
         throw new IOException("Could not create directory '"+f.getAbsolutePath()+"'");
       }
     }
@@ -249,8 +249,8 @@ public class IOUtilities {
   }
 
   public static void copy(File[] src, File targetDir) throws IOException {
-    for (int i=0; i<src.length; i++) {
-      if (src[i].isDirectory()) {
+		for (int i=0; i<src.length; i++) {
+			if (src[i].isDirectory()) {
         File newDir = createDirectory(targetDir, src[i].getName());
         copy(src[i].listFiles(), newDir);
       }
