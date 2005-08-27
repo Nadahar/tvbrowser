@@ -112,7 +112,7 @@ public class ImportHandler {
     }
     IOUtilities.copy(mSrcDirectory.listFiles(new FilenameFilter(){
       public boolean accept(File dir, String name) {
-        return !".DS_Store".equals(dir.getName());       
+        return !".DS_Store".equals(name);
       }
     }), destination);
   }
