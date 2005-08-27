@@ -448,8 +448,7 @@ Section "Uninstall"
  # StrCmp $INI_VALUE "1" "" +2
  #   RMDir /r "$PROFILE\TV-Browser"
 
-  # remove program directories used.
-  RMDir /r "$INSTDIR\help"
+
   RMDir /r "$INSTDIR\imgs"
   RMDir /r "$INSTDIR\plugins"
   RMDir /r "$INSTDIR\themepacks"
