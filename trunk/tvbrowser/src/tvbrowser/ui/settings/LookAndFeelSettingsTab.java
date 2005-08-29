@@ -152,7 +152,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mProgramtableChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.programtable","Programmtabelle"));
     mChannellistChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.channellist","Kanalliste"));
 
-    mShowChannelNamesCb = new JCheckBox("Show channel name");
+    mShowChannelNamesCb = new JCheckBox(mLocalizer.msg("showChannelName", "Show channel name"));
 
     mShowChannelIconsCb.setSelected(Settings.propEnableChannelIcons.getBoolean());
     mProgramtableChIconsCb.setSelected(Settings.propShowChannelIconsInProgramTable.getBoolean());
