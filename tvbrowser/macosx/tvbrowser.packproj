@@ -23,6 +23,8 @@
 								<integer>0</integer>
 								<key>Path</key>
 								<string></string>
+								<key>Path Type</key>
+								<integer>1</integer>
 							</dict>
 							<key>License</key>
 							<dict>
@@ -32,6 +34,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>ReadMe</key>
@@ -42,6 +46,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>Welcome</key>
@@ -52,6 +58,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 						</dict>
@@ -180,22 +188,6 @@
 																<integer>2</integer>
 																<key>Privileges</key>
 																<integer>493</integer>
-																<key>Type</key>
-																<integer>3</integer>
-																<key>UID</key>
-																<integer>0</integer>
-															</dict>
-															<dict>
-																<key>Children</key>
-																<array/>
-																<key>GID</key>
-																<integer>80</integer>
-																<key>Path</key>
-																<string>../runtime/tvbrowser/tvbrowser.jar</string>
-																<key>Path Type</key>
-																<integer>2</integer>
-																<key>Privileges</key>
-																<integer>420</integer>
 																<key>Type</key>
 																<integer>3</integer>
 																<key>UID</key>
@@ -544,7 +536,7 @@
 									<key>IFPkgDescriptionTitle</key>
 									<string>Core</string>
 									<key>IFPkgDescriptionVersion</key>
-									<string>1.1</string>
+									<string>2.0</string>
 								</dict>
 							</dict>
 							<key>Display Information</key>
@@ -553,12 +545,14 @@
 								<string></string>
 								<key>CFBundleIconFile</key>
 								<string></string>
+								<key>CFBundleIconFile Path Type</key>
+								<integer>1</integer>
 								<key>CFBundleIdentifier</key>
 								<string></string>
 								<key>CFBundleName</key>
 								<string>Core</string>
 								<key>CFBundleShortVersionString</key>
-								<string>1.1</string>
+								<string>2.0</string>
 							</dict>
 							<key>Options</key>
 							<dict>
@@ -595,7 +589,7 @@
 					<key>IFPkgFlagPackageSelection</key>
 					<integer>1</integer>
 					<key>Name</key>
-					<string>core</string>
+					<string>.core</string>
 					<key>Status</key>
 					<integer>1</integer>
 					<key>Type</key>
@@ -616,6 +610,8 @@
 								<integer>0</integer>
 								<key>Path</key>
 								<string></string>
+								<key>Path Type</key>
+								<integer>1</integer>
 							</dict>
 							<key>License</key>
 							<dict>
@@ -625,6 +621,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>ReadMe</key>
@@ -635,6 +633,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 							<key>Welcome</key>
@@ -645,6 +645,8 @@
 									<integer>0</integer>
 									<key>Path</key>
 									<string></string>
+									<key>Path Type</key>
+									<integer>1</integer>
 								</dict>
 							</dict>
 						</dict>
@@ -1005,7 +1007,7 @@
 									<key>IFPkgDescriptionDescription</key>
 									<string></string>
 									<key>IFPkgDescriptionTitle</key>
-									<string>app</string>
+									<string>.app</string>
 									<key>IFPkgDescriptionVersion</key>
 									<string>1.0</string>
 								</dict>
@@ -1016,6 +1018,8 @@
 								<string></string>
 								<key>CFBundleIconFile</key>
 								<string></string>
+								<key>CFBundleIconFile Path Type</key>
+								<integer>1</integer>
 								<key>CFBundleIdentifier</key>
 								<string></string>
 								<key>CFBundleName</key>
@@ -1058,7 +1062,7 @@
 					<key>IFPkgFlagPackageSelection</key>
 					<integer>1</integer>
 					<key>Name</key>
-					<string>app</string>
+					<string>.app</string>
 					<key>Status</key>
 					<integer>1</integer>
 					<key>Type</key>
@@ -1077,6 +1081,8 @@
 					<integer>0</integer>
 					<key>Path</key>
 					<string></string>
+					<key>Path Type</key>
+					<integer>1</integer>
 				</dict>
 				<key>License</key>
 				<dict>
@@ -1098,6 +1104,8 @@
 						<integer>0</integer>
 						<key>Path</key>
 						<string></string>
+						<key>Path Type</key>
+						<integer>1</integer>
 					</dict>
 				</dict>
 				<key>Welcome</key>
@@ -1108,6 +1116,8 @@
 						<integer>0</integer>
 						<key>Path</key>
 						<string></string>
+						<key>Path Type</key>
+						<integer>1</integer>
 					</dict>
 				</dict>
 			</dict>
@@ -1179,26 +1189,28 @@
 						<key>IFPkgDescriptionTitle</key>
 						<string>tvbrowser</string>
 						<key>IFPkgDescriptionVersion</key>
-						<string>1.0</string>
+						<string>2.0</string>
 					</dict>
 				</dict>
 				<key>Display Information</key>
 				<dict>
 					<key>CFBundleGetInfoString</key>
-					<string>TV-Browser 1.0 Copyrights © 2004 Martin Oberhauser</string>
+					<string>TV-Browser 2.0 Copyrights © 2004 Martin Oberhauser</string>
 					<key>CFBundleIconFile</key>
 					<string></string>
+					<key>CFBundleIconFile Path Type</key>
+					<integer>1</integer>
 					<key>CFBundleIdentifier</key>
 					<string>com.mygreatcompany.pkg.tvbrowser</string>
 					<key>CFBundleName</key>
 					<string>tvbrowser</string>
 					<key>CFBundleShortVersionString</key>
-					<string>1.0</string>
+					<string>2.0</string>
 				</dict>
 				<key>Version</key>
 				<dict>
 					<key>IFMajorVersion</key>
-					<integer>1</integer>
+					<integer>2</integer>
 					<key>IFMinorVersion</key>
 					<integer>0</integer>
 				</dict>
