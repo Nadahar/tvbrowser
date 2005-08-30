@@ -78,12 +78,8 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  public static final devplugin.Version VERSION=new devplugin.Version(1,11,false,"1.1 Beta2");
-  // Note, that TV-Browser 1.1 (final) internally has the Version number "1.11" to go sure, that
-  //   beta users are presented the "import TV listings" dialog, too. So they don't lose their
-  //   channel settings.
-
-
+  public static final devplugin.Version VERSION=new devplugin.Version(2,0,false,"2.0");
+  
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
 
