@@ -300,10 +300,15 @@ public class SystemTrayIconManager {
      * @deprecated replace by the new setVisible(true)
      */
     public void show() {
-        try	{
-                nativeEnable( image, tooltip );
+      Thread t = new Thread() {
+        public void run() {
+          try {
+            nativeEnable( image, tooltip );
+          }catch( UnsatisfiedLinkError x )  {}
         }
-        catch( UnsatisfiedLinkError x )	{}
+      };
+      t.setPriority(Thread.MIN_PRIORITY);
+      t.start();
     }
 
     /**
@@ -312,14 +317,19 @@ public class SystemTrayIconManager {
      * @param image the new image
      * @param tooltip thenew tooltip
      */
-    public void update(int image, String tooltip) {
-        this.image = image;
-        this.tooltip = tooltip;
+    public void update(final int image,final String tooltip) {
+      this.image = image;
+      this.tooltip = tooltip;
 
-        try	{
-                nativeEnable( image, tooltip );
+      Thread t = new Thread(){
+        public void run() {
+          try {
+            nativeEnable( image, tooltip );
+          } catch( UnsatisfiedLinkError x ) {}
         }
-        catch( UnsatisfiedLinkError x )	{}
+      };
+      t.setPriority(Thread.MIN_PRIORITY);
+      t.start();
     }
 
     /**
