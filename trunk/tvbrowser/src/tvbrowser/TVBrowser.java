@@ -78,8 +78,8 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  public static final devplugin.Version VERSION=new devplugin.Version(2,0,false,"2.0");
-  
+  public static final devplugin.Version VERSION=new devplugin.Version(2,1,true,"2.01");
+
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
 
@@ -411,7 +411,7 @@ public class TVBrowser {
       public void run() {
         if (Settings.propIsWindowMaximized.getBoolean()) {
           mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-        }        
+        }
       }
     });
 
