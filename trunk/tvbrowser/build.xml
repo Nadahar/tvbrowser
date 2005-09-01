@@ -351,7 +351,7 @@
     <copy todir="${tvbrowser.runtime.dir}">
       <fileset dir="${txt.dir}" includes="INSTALL.txt"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
-      <fileset dir="${txt.dir}" includes="website.url"/>
+      <fileset dir="${txt.dir}" includes="*.url"/>
       <fileset dir="${txt.dir}" includes="default.properties"/>
       <fileset dir="${txt.dir}" includes="osx.properties"/>
       <fileset dir="${txt.dir}" includes="windows.properties"/>
