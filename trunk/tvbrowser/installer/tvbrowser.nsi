@@ -86,7 +86,7 @@ Var INI_VALUE
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
 # UninstPage custom un.UninstallTvDataPage
-UninstPage custom un.UninstallSettingsPage
+#UninstPage custom un.UninstallSettingsPage
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
@@ -181,10 +181,53 @@ Section "${PROG_NAME} (erforderlich)"
   File "${RUNTIME_DIR}\tvbrowser_noDD.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.txt"
   File "${RUNTIME_DIR}\website.url"
+  File "${RUNTIME_DIR}\forum.url"
+  File "${RUNTIME_DIR}\wiki.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
   File "${RUNTIME_DIR}\windows.properties"
   File "${RUNTIME_DIR}\default.properties"
   File "${RUNTIME_DIR}\..\..\win\DesktopIndicator.dll"
+
+
+#  #set up the path to the user data in the windows.properties
+#  ReadEnvStr $1 "APPDATA"
+#  IfErrors error
+#  ReadEnvStr $2 "USERPROFILE"
+#  IfErrors error
+#
+#  #length of the USERPROFILE String to $3
+#  StrLen $3 "$2"
+#
+#  #check if APPDATE has the USERPROFILE as a parent directory
+#  StrCpy $6 $1 $3
+#  StrCmp $2 $6 weiter error
+#  weiter:
+#  #if APPDATA is in the USERPROFILE copy the sub-directory string to $4
+#  IntOp $3 $3 + 1
+#  StrCpy $4 $1 "" "$3"
+#  StrCpy $4 "/$4"
+#  IfFileExists "$2\TV-Browser" move goon
+#  move:
+#  Rename "$2\TV-Browser" "$1\TV-Browser"
+#  goto goon
+#  error:
+#  #if some error happened copy an empty string in $4 (fallback mode)
+#  StrCpy $4 ""
+#  goon:
+#  #complete the windows.properties
+#  FileOpen $5 "$INSTDIR\windows.properties" "a"
+#  FileSeek $5 0 END
+#
+#  FileWrite $5 "# In this folder TV-Browser stores the settings$\r$\n"
+#  FileWrite $5 "userdir=${user.home}$4/TV-Browser$\r$\n$\r$\n"
+#
+#  FileWrite $5 "# In this folder TV-Browser stores the TV listings$\r$\n"
+#  FileWrite $5 "tvdatadir=${user.home}$4/TV-Browser/tvdata$\r$\n$\r$\n"
+#
+#  FileWrite $5 "# The folder for logging$\r$\n"
+#  FileWrite $5 "#logdirectory=${user.home}$4/TV-Browser$\r$\n"
+#
+#  FileClose $5
 
   WriteUninstaller "Uninstall.exe"
 
@@ -286,22 +329,38 @@ Section "${PROG_NAME} (erforderlich)"
     # Set the directory where the shortcuts should be executed in
     SetOutPath "$INSTDIR"
 
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges"
 
     CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\${PROG_NAME}.lnk" \
-      "$INSTDIR\tvbrowser.exe"
+      "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Lizenz.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\${PROG_NAME} (ohne DirectX).lnk" \
+      "$INSTDIR\tvbrowser_noDD.exe" "" "$INSTDIR\imgs\desktop.ico"
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Lizenz.lnk" \
       "$INSTDIR\LICENSE.txt"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Website.lnk" \
-      ${UPDATE_INFO_URL}
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\TV-Browser (ohne DirectX) - Info.lnk" \
+      "$INSTDIR\tvbrowser_noDD.txt"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\${PROG_NAME} deinstallieren.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Website.lnk" \
+      "$INSTDIR\website.url"
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Forum.lnk" \
+      "$INSTDIR\forum.url"
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Handbuch.lnk" \
+      "$INSTDIR\wiki.url"
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\${PROG_NAME} deinstallieren.lnk" \
       "$INSTDIR\Uninstall.exe" \
       "" \
       "$INSTDIR\Uninstall.exe" \
@@ -327,7 +386,7 @@ Section "Verknüpfung auf dem Desktop"
 
   CreateShortCut \
     "$DESKTOP\${PROG_NAME}.lnk" \
-    "$INSTDIR\tvbrowser.exe"
+    "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
 SectionEnd
 
 
@@ -442,7 +501,7 @@ Section "Uninstall"
  #   RMDir /r "$INSTDIR\tvdata"
 
   # Read whether "Remove settings" was seleted in the "UninstallSettings.ini"
-  !insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallSettings.ini" "Field 2" "State"
+  #!insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallSettings.ini" "Field 2" "State"
 
   # Remove settings if "Remove settings" was seleted in the "UninstallSettings.ini"
  # StrCmp $INI_VALUE "1" "" +2
