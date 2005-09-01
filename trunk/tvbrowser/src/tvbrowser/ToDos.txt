@@ -1,57 +1,66 @@
-TODOs:
 
-- Senderlisten direkt vom Server holen (Bodo, fast fertig, nur Probleme beim entfernen von Sendern auf dem Server)
-- (M) Logos zu allen Sendern
-- Anpassbarkeit der GUI (wo welches Element ist) - nicht so wichtig
-- (M) Ordner in den Lieblingssendungen
-- News-Plugin:
-    Option "Fehlermeldung zeigen, wenn Nachrichtenseite nicht erreichbar"
-    evtl. Option "News automatisch holen"
-
-- kuerzere Texte fuer die Symbolbuttons
-- (M) Menuepunkt Wiederherstellen im Ansicht Menue tut nichts
-- Groessen der Views aendern sich nach Aus- und Wiedereinblenden (auch bei Start des TV-Browsers stimmen die Grˆﬂen nicht 100%-ig)
-- (M) Pluginbrowser: Die Datumseinteilung der Sendungen geht von 0-24 Uhr, stimmt also nicht unbedingt mit der sonstigen TV-Browser-Datumseinteilung ueberein
-- (M) F2 (plugin-view ein-ausblenden) funktioniert nicht, wenn die plugin-view den focus hat
+Diese Datei soll einen Überblick über die geplanten Änderungen in den nächsten Versionen liefern.
+Um die Release-Zyklen klein zu halten, werden pro Version möglichst wenige "große" Änderungen durchgeführt. Ist die "große" Erweiterung implementiert, wird die (Beta-)Version freigegeben.
 
 
-- Button Lieblingssendungen ist zu klein
-- Werkzeugleistenbefehle auch ins Ansicht-Menue aufnehmen
-- Titel immer sichtbar-Option im ProgramPanel benutzen
-- (B) TimeOfDayBackPainter auf neues System anpassen
+
+nächste geplante Release: 2.1 (Plugin-Schnittstelle)
+=============================
+- Verbesserungen der Plugin-Schnittstelle(n):
+    * Die TV-Dataservice-Schnittstelle soll nun Sendergruppen kennen,
+      damit der User die Sendergruppen-URL nicht mehr händisch eingeben muß
+    * TV-Dataservices und Plugins sollten in *einem* Verzeichnis abgelegt werden können
+    * Ein Plugin, das eine Exception wirft, soll gewaltsam beendet werden können und darf die
+      Stabilität von TV-Browser keinesfalls beeinträchtigen
+    Zugehörige Tracker-Items:
+      1280109 TvDataService-Schnittstelle erweitern
+      1277641 "Force Quit" für Plugins
+      1032014 Plugin-System überarbeiten
+
+- PrintPlugin:
+    * Es sollen Filter gedruckt werden können
+    * Markierte Sendungen sollen auch auf dem Papier markiert werden
+    Zugehörige Tracker-Items:
+      1265487 PrintPlugin: Drucken im Querformat nicht möglich
+      1280122 PrintPlugin: Sendungen markieren
+      1280121 PrintPlugin: Filter drucken
 
 
-Bugs (Achtung: es existieren weitere Bugs auf SF!!)
+Release 2.2 (Grafische Verbesserungen)
+===========
+- Grafische Verbesserungen
+    * Die Icons sollen austauschbar werden
+    * Farben sollten veränderbar sein - wenn auch nur über ein Config-File
+    * System mit nicht-Modalen Dialog bauen
+    * Usability-Überlegungen
+    Zugehörige Tracker-Items:
+      1280129 Nicht-modale Dialoge verwenden
+      1260108 Icon themes
+      1280070 Farben ändern
 
 
-Erledigt:
-- (B) Filter bearbeiten -> Abbrechen loescht die Markierung des aktuellen Filters
-- (B) Filterkomponente Typ Sendungslaenge: besser "<Checkbox> Minimum in Minuten: <Feld>" (statt "<Checkbox> minimum <Feld> Minuten")
-- (B) Filterkomponente erzeugen: Link zu Erklaerung der RegEx-Syntax fehlt
-- (B) Einstellungen --> Aussehen --> Look&Feel --> Hintergrund: hat praktisch keine Bedeutung
-- (B) Uebernehmen-Knopf in Einstellungen
-- (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
-- (M) Tooltips fuer Buttons fehlen
-- (B) Zeitknoepfe koennen nicht hinzugefuegt oder bearbeitet werden
-- (B) Default-Icon fur Sender, die kein Icon haben
-- (B) Hilfe - Einrichtungsassistent geht nicht
-- (B) Je Senderliste Infos zum "Provider" darstellen (Name, Website, E-Mail)
-- (M) Einstellungen fuer die Toolbar im Einstellungen-Dialog
-- (M) Button in Toolbar fuer die Menueoption Ansicht--> Plugin-Uebersicht
-- (M) "irgendwie" hervorheben, dass gerade ein Filter ausgewaehlt ist (und deshalb nicht alle Sendungen sichtbar sind).
-- (B) Erinnerer: Sendungen an ein anderes Plugin weitergeben sollte nicht fuer Erinnerer selbst gehen
-- (B) fuer Lieblingssendungen sollte im Kontextmenue der Eintrag "Zu Lieblingssendungen hinzufuegen" unterdrueckt werden
-- (B) Umlaute im Einrichtungsassistent
-- (B) Statusbar kann nicht ausgeblendet werden
-- (B) Settings - Kontextmenue zeigt den Eintrag des Erinnerers nicht an
-- (M) Sender gehoeren alphabetisch sortiert (unabhaengig von Gross-/Kleinschreibung)
-- (B) Senderansicht (rechts unten) wird nicht aktualisiert, wenn die Senderliste veraendert wird.
-- (B) Wenn in der Sender-Konfiguration ziemlich oft mit Hoch/runter gearbeitet wird, kommt ein OutOfMemory
-- (B) Nachsehen, ob das auftrennen des Settings-System √ºberall gemacht wurde. Es sind einige Warnungen im Code, das deprecated Settings benutzt werden! - War ein Fehler von Eclipse
-- (M) Uebersetzungen f√ºr die Farben im ProgramPanel-Settings-Dialog
-- (M) Schrift in Dialogen (z.B. Filterplugin) ist Courier (Textarea) - (MS-Windows)
-- (M) Gestern und Morgen reinladen fuer Sender in einer anderen Zeitzone
-- (M) Selbstaendig Tageswechsel durchfuehren (irgendwann nach Mitternacht), sodass TV-Browser nicht taeglich neu gestartet werden muss
-- SCHWERWIEGEND: Das Programm konnte nicht fuer den gesamten Zeitraum heruntergeladen werden!
-- (M) Wenn ein Sender auf dem Server entfernt wird, wird die Liste der Abonierten Sender nicht aktualisiert,
-      das fuehrt zu einer Nullpointer beim speichern der abon. Sender.
+
+Release 2.3 (Internationalisierung)
+============
+- Sprachpakete
+- Zap-Plugin
+- Internationales Forum
+
+
+
+
+Weitere RFEs:
+Kleine Änderungen, die jederzeit eingebaut werden können:
+
+    1280107 Default-Button für Farb-Einstellungen
+    1260793 Sender-URL editierbar
+    1258903 Drag'n'Drop
+    1254194 Einzelne Sendungen auf den Favoriten entfernen
+    1248116 weitere Toolbar-Buttons
+    1248062 Hilfe
+    1248061 Progressbar für FavoritesPlugin
+    1239686 Fehler Dialog bei keinen Daten mit entsp. Datum
+    1235660 Sendungsinfo-Layout-Änderung
+    1232411 "echte" zeitsynchrone Darstellung
+    1229812 Sender-Titel ändern
+    1009270 Trotzdem Daten holen, auch wenn es nur inaktuelle Server gibt
