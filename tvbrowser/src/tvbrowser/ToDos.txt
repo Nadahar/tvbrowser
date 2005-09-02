@@ -1,27 +1,27 @@
 
-Diese Datei soll einen Überblick über die geplanten Änderungen in den nächsten Versionen liefern.
-Um die Release-Zyklen klein zu halten, werden pro Version möglichst wenige "große" Änderungen durchgeführt. Ist die "große" Erweiterung implementiert, wird die (Beta-)Version freigegeben.
+Diese Datei soll einen √úberblick √ºber die geplanten √Ñnderungen in den n√§chsten Versionen liefern.
+Um die Release-Zyklen klein zu halten, werden pro Version m√∂glichst wenige "gro√üe" √Ñnderungen durchgef√ºhrt. Ist die "gro√üe" Erweiterung implementiert, wird die (Beta-)Version freigegeben.
 
 
 
-nächste geplante Release: 2.1 (Plugin-Schnittstelle)
+n√§chste geplante Release: 2.1 (Plugin-Schnittstelle)
 =============================
 - Verbesserungen der Plugin-Schnittstelle(n):
     * Die TV-Dataservice-Schnittstelle soll nun Sendergruppen kennen,
-      damit der User die Sendergruppen-URL nicht mehr händisch eingeben muß
-    * TV-Dataservices und Plugins sollten in *einem* Verzeichnis abgelegt werden können
-    * Ein Plugin, das eine Exception wirft, soll gewaltsam beendet werden können und darf die
-      Stabilität von TV-Browser keinesfalls beeinträchtigen
-    Zugehörige Tracker-Items:
+      damit der User die Sendergruppen-URL nicht mehr h√§ndisch eingeben mu√ü
+    * TV-Dataservices und Plugins sollten in *einem* Verzeichnis abgelegt werden k√∂nnen
+    * Ein Plugin, das eine Exception wirft, soll gewaltsam beendet werden k√∂nnen und darf die
+      Stabilit√§t von TV-Browser keinesfalls beeintr√§chtigen
+    Zugeh√∂rige Tracker-Items:
       1280109 TvDataService-Schnittstelle erweitern
-      1277641 "Force Quit" für Plugins
-      1032014 Plugin-System überarbeiten
+      1277641 "Force Quit" f√ºr Plugins
+      1032014 Plugin-System √ºberarbeiten
 
 - PrintPlugin:
-    * Es sollen Filter gedruckt werden können
+    * Es sollen Filter gedruckt werden k√∂nnen
     * Markierte Sendungen sollen auch auf dem Papier markiert werden
-    Zugehörige Tracker-Items:
-      1265487 PrintPlugin: Drucken im Querformat nicht möglich
+    Zugeh√∂rige Tracker-Items:
+      1265487 PrintPlugin: Drucken im Querformat nicht m√∂glich
       1280122 PrintPlugin: Sendungen markieren
       1280121 PrintPlugin: Filter drucken
 
@@ -30,13 +30,13 @@ Release 2.2 (Grafische Verbesserungen)
 ===========
 - Grafische Verbesserungen
     * Die Icons sollen austauschbar werden
-    * Farben sollten veränderbar sein - wenn auch nur über ein Config-File
+    * Farben sollten ver√§nderbar sein - wenn auch nur √ºber ein Config-File
     * System mit nicht-Modalen Dialog bauen
-    * Usability-Überlegungen
-    Zugehörige Tracker-Items:
+    * Usability-√úberlegungen
+    Zugeh√∂rige Tracker-Items:
       1280129 Nicht-modale Dialoge verwenden
       1260108 Icon themes
-      1280070 Farben ändern
+      1280070 Farben √§ndern
 
 
 
@@ -50,17 +50,17 @@ Release 2.3 (Internationalisierung)
 
 
 Weitere RFEs:
-Kleine Änderungen, die jederzeit eingebaut werden können:
+Kleine √Ñnderungen, die jederzeit eingebaut werden k√∂nnen:
 
-    1280107 Default-Button für Farb-Einstellungen
+    1280107 Default-Button f√ºr Farb-Einstellungen
     1260793 Sender-URL editierbar
     1258903 Drag'n'Drop
     1254194 Einzelne Sendungen auf den Favoriten entfernen
     1248116 weitere Toolbar-Buttons
     1248062 Hilfe
-    1248061 Progressbar für FavoritesPlugin
+    1248061 Progressbar f√ºr FavoritesPlugin
     1239686 Fehler Dialog bei keinen Daten mit entsp. Datum
-    1235660 Sendungsinfo-Layout-Änderung
+    1235660 Sendungsinfo-Layout-√Ñnderung
     1232411 "echte" zeitsynchrone Darstellung
-    1229812 Sender-Titel ändern
+    1229812 Sender-Titel √§ndern
     1009270 Trotzdem Daten holen, auch wenn es nur inaktuelle Server gibt
