@@ -28,14 +28,22 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.logging.Level;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -55,12 +63,12 @@ import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
+import tvbrowser.ui.programtable.FilterPanel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
-import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvdataservice.TvDataService;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
@@ -129,6 +137,8 @@ public class MainFrame extends JFrame implements DateListener {
   private Date mCurrentDay;
 
   private PluginView mPluginView;
+  
+  private FilterPanel mFilterPanel;
 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -167,12 +177,17 @@ public class MainFrame extends JFrame implements DateListener {
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+    mFilterPanel = new FilterPanel();
+    mFilterPanel.setVisible(false);
+    
+    centerPanel.add(mFilterPanel, BorderLayout.NORTH);
+    
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
     mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay, endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
-    centerPanel.add(mProgramTableScrollPane);
+    centerPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
 
     mFinderPanel = new FinderPanel();
 
@@ -304,6 +319,9 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
     mToolBarModel.setFilterButtonSelected(!isShowAllFilterActivated());
+    mFilterPanel.setCurrentFilter(filter);
+    mFilterPanel.setVisible(!isShowAllFilterActivated());
+    
     mToolBar.update();
   }
 

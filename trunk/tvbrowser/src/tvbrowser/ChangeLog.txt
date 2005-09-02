@@ -1,5 +1,10 @@
 Changelog TVBrowser
 
+2.1
+- Feature:
+	- 1280910 Filter-Anzeige
+
+
 1.1 alpha3
 - features:
     - option to hide channel names if channel icons are enabled
