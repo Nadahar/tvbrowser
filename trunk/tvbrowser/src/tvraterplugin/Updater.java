@@ -68,6 +68,10 @@ public class Updater implements Progress {
     /** Update Successfull ? */
     private boolean _wasSuccessfull = false;
 
+    private Hashtable _updateList;
+
+
+    
     /**
      * Creates the Updater
      * 
@@ -94,6 +98,13 @@ public class Updater implements Progress {
         }
 
         try {
+          
+            _updateList = createUpdateList();
+            if (_updateList.size() == 0) {
+              _wasSuccessfull = true;
+              return;
+            }
+          
             URL url = new URL(LOCATION);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -275,8 +286,6 @@ public class Updater implements Progress {
      * @throws IOException
      */
     private void writeData(OutputStream output) throws ParserConfigurationException, IOException {
-        Hashtable table = createUpdateList();
-
         Document document;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -333,7 +342,7 @@ public class Updater implements Progress {
         Element getratings = document.createElement("getratings");
         data.appendChild(getratings);
 
-        Enumeration en = table.elements();
+        Enumeration en = _updateList.elements();
         while (en.hasMoreElements()) {
             Element program = document.createElement("program");
             getratings.appendChild(program);
