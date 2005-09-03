@@ -83,7 +83,7 @@ public class PluginLoader {
    * old version was in use.
    */
   public void installPendingPlugins() {
-    File[] fileArr = new File(PLUGIN_DIRECTORY).listFiles();
+    File[] fileArr = new File(Settings.propPluginsDirectory.getString()).listFiles();
     if (fileArr == null) {
       // Nothing to do
       return;
