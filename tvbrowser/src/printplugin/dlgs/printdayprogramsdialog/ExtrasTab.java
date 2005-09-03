@@ -31,6 +31,8 @@ import printplugin.settings.ProgramIconSettings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import util.ui.TabLayout;
 
@@ -42,6 +44,7 @@ public class ExtrasTab extends JPanel {
 
 
   private ProgramPreviewPanel mProgramPreviewPanel;
+  private JCheckBox mShowPluginMarkingCb;
 
   public ExtrasTab(Frame dlgParent) {
     super();
@@ -56,13 +59,22 @@ public class ExtrasTab extends JPanel {
     mProgramPreviewPanel = new ProgramPreviewPanel(dlgParent);
     previewPn.add(mProgramPreviewPanel, BorderLayout.CENTER);
 
+    mShowPluginMarkingCb = new JCheckBox(mLocalizer.msg("showPluginMarkings","Show plugin markings"));
+    mShowPluginMarkingCb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        mProgramPreviewPanel.setShowPluginMarking(mShowPluginMarkingCb.isSelected());
+      }
+    });
+
     content.add(previewPn);
+    content.add(mShowPluginMarkingCb);
 
     add(content, BorderLayout.NORTH);
   }
 
   public void setProgramIconSettings(ProgramIconSettings programIconSettings) {
     mProgramPreviewPanel.setProgramIconSettings(programIconSettings);
+    mShowPluginMarkingCb.setSelected(programIconSettings.getPaintPluginMarks());
   }
 
   public ProgramIconSettings getProgramIconSettings() {

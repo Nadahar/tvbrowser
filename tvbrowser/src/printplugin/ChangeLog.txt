@@ -1,5 +1,8 @@
+Version 2.1
+- show plugin markings
 
-Version 2.0
+
+Version 2.0 (required TV-Browser 2.0)
 - Redesign
 - remember Settings
 - printer queue

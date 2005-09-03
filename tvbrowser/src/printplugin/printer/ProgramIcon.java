@@ -42,7 +42,7 @@ import util.ui.Localizer;
 import devplugin.*;
 import printplugin.settings.ProgramIconSettings;
 import printplugin.settings.PrinterProgramIconSettings;
-
+import printplugin.PrintPlugin;
 
 
 public class ProgramIcon implements Icon {
@@ -61,10 +61,9 @@ public class ProgramIcon implements Icon {
   private int mHeight = 0;
   private int mWidth;
 
-  private int mPreferredHeight = 0;
-  /** The start time as String. */  
+  /** The start time as String. */
   private String mProgramTimeAsString;
-  /** The icon used to render the title. */  
+  /** The icon used to render the title. */
   private TextAreaIcon mTitleIcon;
 
   private TextAreaIcon mEndTimeIcon;
@@ -73,7 +72,7 @@ public class ProgramIcon implements Icon {
   private TextAreaIcon mDescriptionIcon;
   /** The icons to show on the left side under the start time. */
   private Icon[] mIconArr;
-  /** The program. */  
+  /** The program. */
   private Program mProgram;
 
   private ChannelIcon mChannelIcon;
@@ -81,13 +80,13 @@ public class ProgramIcon implements Icon {
   private static final ProgramIconSettings DEFAULT_PROGRAM_ICON_SETTINGS = PrinterProgramIconSettings.create();
 
 
- 
+
   public ProgramIcon(Program prog) {
     this(prog, null, 100, false);
   }
-  
+
   public ProgramIcon(Program prog, ProgramIconSettings settings, int width, boolean showChannelName, boolean showEndTime) {
-    
+
     if (settings == null) {
       mSettings = DEFAULT_PROGRAM_ICON_SETTINGS;
     }
@@ -133,10 +132,10 @@ public class ProgramIcon implements Icon {
   public void setMaximumHeight(int height) {
     setProgram(mProgram, height);
   }
-  
+
   private Icon[] getPluginIcons(Program program) {
     ArrayList list = new ArrayList();
-    
+
     String[] iconPluginArr = mSettings.getProgramTableIconPlugins();
     for (int i = 0; i < iconPluginArr.length; i++) {
       // Add the icons of this plugin
@@ -151,16 +150,16 @@ public class ProgramIcon implements Icon {
         }
       }
     }
-    
+
     Icon[] asArr = new Icon[list.size()];
     list.toArray(asArr);
     return asArr;
   }
-  
+
   private void setProgram(Program program, int maxHeight) {
     Program oldProgram = mProgram;
     mProgram = program;
-    
+
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
       // Get the start time
@@ -172,14 +171,14 @@ public class ProgramIcon implements Icon {
       // Set the new title
       mTitleIcon.setText(program.getTitle());
     }
-    
+
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
     int maxDescLines = 0; //3;
     if (maxHeight != -1) {
       maxDescLines = (maxHeight - titleHeight) / mSettings.getTextFont().getSize();
     }
-    
+
     if (programChanged || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       // (Re)set the description text
       mDescriptionIcon.setMaximumLineCount(maxDescLines);
@@ -198,35 +197,29 @@ public class ProgramIcon implements Icon {
       if (mEndTimeIcon!=null) {
         mHeight+=mEndTimeIcon.getIconHeight();
       }
-      //setPreferredSize(new Dimension(WIDTH, mHeight));
 
-      // Calculate the preferred height
-      mPreferredHeight = titleHeight + (3 * mSettings.getTextFont().getSize()) + 10;
-      if (mHeight < mPreferredHeight) {
-        mPreferredHeight = mHeight;
-      }
     }
   }
-  
-  
-	public int getIconHeight() {
+
+
+  public int getIconHeight() {
     return mHeight;
-	}
+  }
 
-	
-	public int getIconWidth() {
-		return mWidth;
-	}
 
-	
-	public void paintIcon(Component component, Graphics g, int posX, int posY) {
-    
+  public int getIconWidth() {
+    return mWidth;
+  }
+
+
+  public void paintIcon(Component component, Graphics g, int posX, int posY) {
+
     g.translate(posX, posY);
-    
+
     int width = getIconWidth();
     int height = mHeight;
     Graphics2D grp = (Graphics2D) g;
-    
+
 
     // Draw the background if this program is on air
     if (mSettings.getPaintProgramOnAir() && mProgram.isOnAir()) {
@@ -256,11 +249,13 @@ public class ProgramIcon implements Icon {
         }
 
         // If there are plugins that have marked the program -> paint the background
-        PluginAccess[] markedByPluginArr = mProgram.getMarkedByPlugins();
+        PluginAccess[] markedByPluginArr = getMarkedByPlugins(mProgram);
+        System.out.print(mProgram.getTimeString()+": "+mProgram.getTitle()+" - "+mSettings.getPaintPluginMarks());
         if (mSettings.getPaintPluginMarks() && markedByPluginArr.length != 0) {
           grp.setColor(mSettings.getColorMarked());
-          grp.fill3DRect(0, 0, width, height, true);
+          grp.fill3DRect(0, 0, width, height+2, true);
         }
+
 
         // Draw all the text
         if (mSettings.getPaintExpiredProgramsPale() && mProgram.isExpired()) {
@@ -298,7 +293,7 @@ public class ProgramIcon implements Icon {
         int x = width - 1;
         int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight() + 18;
         y = Math.min(y, height - 1);
-        
+
         if (mSettings.getPaintPluginMarks()) {
           for (int i = 0; i < markedByPluginArr.length; i++) {
             Icon icon = markedByPluginArr[i].getMarkIcon();
@@ -307,8 +302,8 @@ public class ProgramIcon implements Icon {
               icon.paintIcon(component, grp, x, y - icon.getIconHeight());
             }
           }
-        }        
-    
+        }
+
         // Paint the icons on the left side
         if (mIconArr != null) {
           x = 2;
@@ -326,10 +321,22 @@ public class ProgramIcon implements Icon {
         if (mSettings.getPaintExpiredProgramsPale() && mProgram.isExpired()) {
           grp.setComposite(NORMAL_COMPOSITE);
         }
-        
+
     g.translate(-posX, -posY);
-    
-	}
+
+  }
+
+
+  private PluginAccess[] getMarkedByPlugins(Program prog) {
+    PluginAccess[] access = prog.getMarkedByPlugins();
+    ArrayList list = new ArrayList();
+    for (int i=0; i<access.length; i++) {
+      if (!access[i].getId().equals(PrintPlugin.getInstance().getId())) {
+        list.add(access[i]);
+      }
+    }
+    return (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
+  }
 
 
   class ChannelIcon implements Icon {

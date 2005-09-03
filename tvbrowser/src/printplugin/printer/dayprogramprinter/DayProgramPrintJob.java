@@ -83,7 +83,7 @@ public class DayProgramPrintJob extends AbstractPrintJob {
       }
 
       ColumnModel[] cols=getColumns(pageModel, fromInx, inxCnt);
-      result[i]=new ChannelPage(cols, mPageFormat, mSettings.getColumnCount(), mSettings.getChannelsPerColumn(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), PrinterProgramIconSettings.create());
+      result[i]=new ChannelPage(cols, mPageFormat, mSettings.getColumnCount(), mSettings.getChannelsPerColumn(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), mSettings.getProgramIconSettings()/*PrinterProgramIconSettings.create()*/);
     }
 
     return result;

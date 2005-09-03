@@ -41,9 +41,13 @@ import devplugin.ProgramFieldType;
 public class IO {
 
   public static ProgramIconSettings readProgramIconSettings(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.readInt(); // version
+    int version = in.readInt(); // version
     Font textFont = readFont(in);
     Font titleFont = readFont(in);
+    boolean showPluginMarks = false;
+    if (version > 1) {
+      showPluginMarks = in.readBoolean();
+    }
     int fieldCnt = in.readInt();
     ProgramFieldType[] fields = new ProgramFieldType[fieldCnt];
     for (int i=0; i<fields.length; i++) {
@@ -55,13 +59,15 @@ public class IO {
     result.setTextFont(textFont);
     result.setTimeFont(titleFont);
     result.setTitleFont(titleFont);
+    result.setPaintPluginMarks(showPluginMarks);
     return result;
   }
 
   public static void writeProgramIconSettings(ProgramIconSettings settings, ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
     writeFont(settings.getTextFont(), out);
     writeFont(settings.getTitleFont(), out);
+    out.writeBoolean(settings.getPaintPluginMarks());
 
     ProgramFieldType[] fields = settings.getProgramInfoFields();
     out.writeInt(fields.length);
