@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,9 +32,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -69,44 +66,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   private String mId;
   
 
-  /**
-   * Creates a new instance of JavaPluginProxy.
-   * 
-   * @param jarFile The jar file to load.
-   * @throws TvBrowserException If loading failed
-   */
-  public JavaPluginProxy(File jarFile) throws TvBrowserException {
-    // Create a class loader for the plugin
-    ClassLoader classLoader;
-    try {
-      URL[] urls = new URL[] { jarFile.toURL() };
-      classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
-    } catch (MalformedURLException exc) {
-      throw new TvBrowserException(getClass(), "error.1",
-        "Loading Jar file failed of a plugin failed: {0}.",
-        jarFile.getAbsolutePath(), exc);
-    }
-
-    // Get the plugin name
-    String pluginName = jarFile.getName();
-    if (pluginName.endsWith(".jar")) {
-      pluginName = pluginName.substring(0, pluginName.length() - 4); 
-    }
-  
-    // Create a plugin instance
-    try {
-      Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
-      mPlugin = (Plugin) pluginClass.newInstance();
-    }
-    catch (Throwable thr) {
-      throw new TvBrowserException(getClass(), "error.2",
-         "Could not load plugin {0}.", jarFile.getAbsolutePath(), thr);
-    }
-    
-    // Init the plugin
-    mPlugin.setJarFile(jarFile);
+  public JavaPluginProxy(Plugin plugin) {
+    mPlugin = plugin;
   }
-
 
   /**
    * Gets the ID of the given Java plugin.

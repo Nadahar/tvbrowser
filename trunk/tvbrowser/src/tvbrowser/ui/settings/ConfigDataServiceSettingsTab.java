@@ -31,35 +31,35 @@ import javax.swing.*;
 import java.awt.*;
 
 import tvdataservice.SettingsPanel;
-import tvdataservice.TvDataService;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 
 public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
- 
 
-  private TvDataService mDataService;
+
+  private TvDataServiceProxy mDataService;
   private SettingsPanel mSettingsPanel;
- 
-  public ConfigDataServiceSettingsTab(TvDataService dataService) {
+
+  public ConfigDataServiceSettingsTab(TvDataServiceProxy dataService) {
     mDataService=dataService;
     mSettingsPanel=mDataService.getSettingsPanel();
   }
- 
+
   public JPanel createSettingsPanel() {
-    
+
     JPanel mainPn=new JPanel(new BorderLayout());
     mainPn.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
     PluginInfoPanel infoPn=new PluginInfoPanel();
     infoPn.setDefaultBorder();
     infoPn.setPluginInfo(mDataService.getInfo());
     mainPn.add(infoPn,BorderLayout.NORTH);
-    
+
     if (mSettingsPanel!=null) {
       mainPn.add(mSettingsPanel,BorderLayout.CENTER);
     }
     return mainPn;
   }
 
-  
+
     /**
      * Called by the host-application, if the user wants to save the settings.
      */
@@ -69,20 +69,20 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
       }
     }
 
-  
+
     /**
      * Returns the name of the tab-sheet.
      */
     public Icon getIcon() {
       return new ImageIcon("imgs/Jar16.gif");
     }
-  
-  
+
+
     /**
      * Returns the title of the tab-sheet.
      */
     public String getTitle() {
       return mDataService.getInfo().getName();
     }
-  
+
 }

@@ -39,10 +39,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tvbrowser.TVBrowser;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvdataservice.TvDataService;
 import devplugin.Version;
 
 public class SoftwareUpdater {
@@ -123,7 +123,7 @@ public class SoftwareUpdater {
       }   
       
       // remove already installed dataservices
-      TvDataService service=TvDataServiceManager.getInstance().getDataService(name.toLowerCase()+"."+name);
+      TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(name.toLowerCase()+"."+name);
       if (service!=null && service.getInfo().getVersion().compareTo(item.getVersion())>=0) {
         it.remove();
         continue;

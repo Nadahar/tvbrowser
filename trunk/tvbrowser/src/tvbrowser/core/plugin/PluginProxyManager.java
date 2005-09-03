@@ -69,8 +69,8 @@ public class PluginProxyManager {
   /** The singleton. */
   private static PluginProxyManager mSingleton;
 
-  /** The name of the directory where the plugins are located */
-  private static String PLUGIN_DIRECTORY = "plugins";
+  /** The name of the directory where the plugins are located in TV-Browser 2.01 and before */
+  public static String PLUGIN_DIRECTORY = "plugins";
 
   /**
    * The plugin state 'shut down'.
@@ -177,6 +177,16 @@ public class PluginProxyManager {
   }
 
 
+
+  public void registerPlugin(AbstractPluginProxy plugin) {
+    // Add it to the list
+    mPluginList.add(new PluginListItem(plugin));
+    firePluginLoaded(plugin);
+
+          // Clear the cache
+    mAllPluginCache = null;
+  }
+
   /**
    * This method must be called on start-up.
    *
@@ -184,10 +194,10 @@ public class PluginProxyManager {
    */
   public void init() throws TvBrowserException {
     // Install the pending plugins
-    installPendingPlugins();
+  //  installPendingPlugins();
 
     // Load all plugins
-    loadAllPlugins();
+  //  loadAllPlugins();
 
     // Get the plugin order
     String[] pluginOrderArr = Settings.propPluginOrder.getStringArray();
@@ -264,106 +274,6 @@ public class PluginProxyManager {
         PluginListItem item = (PluginListItem) mPluginList.get(pluginIdx);
         item.getPlugin().setParentFrame(parent);
       }
-    }
-  }
-
-
-  /**
-   * Installs all plugins that could not be installed the last time, because an
-   * old version was in use.
-   */
-  private void installPendingPlugins() {
-    File[] fileArr = new File(PLUGIN_DIRECTORY).listFiles();
-    if (fileArr == null) {
-      // Nothing to do
-      return;
-    }
-
-    // Install all pending plugins
-    for (int i = 0; i < fileArr.length; i++) {
-      if (fileArr[i].getName().endsWith(".inst")) {
-        // This plugin wants to be installed
-        String fileName = fileArr[i].getAbsolutePath();
-        String oldFileName = fileName.substring(0, fileName.length() - 5);
-        File oldFile = new File(oldFileName);
-
-        // Delete the old file
-        oldFile.delete();
-
-        // Install the plugin
-        if (! fileArr[i].renameTo(oldFile)) {
-          mLog.warning("Installing pending plugin failed: " + fileName);
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Loads all plugins.
-   */
-  private void loadAllPlugins() {
-    File[] fileArr = new File(PLUGIN_DIRECTORY).listFiles();
-    if (fileArr == null) {
-      // Nothing to do
-      return;
-    }
-
-    // Load all plugins
-    synchronized(mPluginList) {
-      for (int i = 0; i < fileArr.length; i++) {
-        // Try to load this plugin
-        AbstractPluginProxy plugin = null;
-        try {
-          plugin = loadPlugin(fileArr[i]);
-        }
-        catch (Throwable thr) {
-          mLog.log(Level.WARNING, "Loading plugin file failed: "
-            + fileArr[i].getAbsolutePath(), thr);
-          thr.printStackTrace();
-        }
-
-        // Add the plugin to the list
-        if (plugin != null) {
-          // Log this event
-          mLog.info("Loaded plugin " + plugin.getId());
-
-          // Add it to the list
-          mPluginList.add(new PluginListItem(plugin));
-          firePluginLoaded(plugin);
-
-          // Clear the cache
-          mAllPluginCache = null;
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Loads a plugin.
-   *
-   * @param file The plugin to load.
-   * @return The loaded plugin or <code>null</code> if this kind of plugin is
-   *         not known (In this case a warning is logged).
-   * @throws TvBrowserException If loading the plugin failed.
-   */
-  private AbstractPluginProxy loadPlugin(File file) throws TvBrowserException {
-    String lcFileName = file.getName().toLowerCase();
-
-    if (lcFileName.endsWith(".jar")) {
-      return new JavaPluginProxy(file);
-    } else if (lcFileName.endsWith(".bsh")) {
-        return new BeanShellPluginProxy(file);
-    }
-    else if (lcFileName.endsWith(".inst")) {
-      // This is a plugins with a pending installation
-      // -> When installing failed a warning will be generated elsewere
-      return null;
-    } else {
-      // This pugin type is unknown -> Generate a warning
-      mLog.warning("Unknown plugin type: " + file.getAbsolutePath());
-      return null;
     }
   }
 

@@ -35,7 +35,10 @@ import devplugin.ProgressMonitor;
 import util.exc.TvBrowserException;
 
 /**
+ *
  * To write your own TV listings service implement this interface.
+ *
+ * @deprecated use {@link devplugin.TvDataService} instead.
  *
  * @author Martin Oberhauser
  */

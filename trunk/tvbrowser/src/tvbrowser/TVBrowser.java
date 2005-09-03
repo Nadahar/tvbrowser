@@ -41,7 +41,8 @@ import javax.swing.UIManager;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.PluginLoader;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
@@ -228,13 +229,15 @@ public class TVBrowser {
 
 
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
-    TvDataServiceManager.installPendingDataServices();
+    PluginLoader.getInstance().installPendingPlugins();
+
+    PluginLoader.getInstance().loadAllPlugins();
 
 
     mLog.info("Loading TV listings service...");
     msg = mLocalizer.msg("splash.dataService", "Loading TV listings service...");
     splash.setMessage(msg);
-    TvDataServiceManager.getInstance().initDataServices();
+    TvDataServiceProxyManager.getInstance().init();
     ChannelList.create();
 
     ChannelList.initSubscribedChannels();
@@ -507,11 +510,11 @@ public class TVBrowser {
         UiUtilities.centerAndShow(dlg);
         int daysToDownload = dlg.getResult();
         if (daysToDownload != UpdateDlg.CANCEL) {
-          mainFrame.runUpdateThread(daysToDownload, TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+          mainFrame.runUpdateThread(daysToDownload, TvDataServiceProxyManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
         }
       }
       else {
-         mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+         mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceProxyManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
       }
     }
   }

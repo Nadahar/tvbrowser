@@ -37,7 +37,8 @@ import java.util.Comparator;
 import javax.swing.*;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.filters.FilterList;
@@ -46,7 +47,6 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.settings.SettingsDialog;
-import tvdataservice.TvDataService;
 import util.ui.ScrollableMenu;
 import devplugin.ProgramFilter;
 import devplugin.ActionMenu;
@@ -270,7 +270,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   private JMenu createLicenseMenuItems() {
       
       JMenu licenseMenu = new JMenu(mLocalizer.msg("menuitem.license","Terms of Use"));
-      TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+      TvDataServiceProxy services[]= TvDataServiceProxyManager.getInstance().getDataServices();
       for (int i=0;i<services.length;i++) {
         final String license=services[i].getInfo().getLicense();
         if (license!=null) {

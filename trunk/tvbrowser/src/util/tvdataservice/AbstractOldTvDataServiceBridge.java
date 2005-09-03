@@ -30,9 +30,10 @@ import java.util.*;
 import java.io.File;
 
 import util.exc.TvBrowserException;
-
-import devplugin.*;
 import tvdataservice.*;
+import tvdataservice.TvDataService;
+import devplugin.*;
+
 
 /**
  * Works as a bridge between the old and the new TvDataService style.

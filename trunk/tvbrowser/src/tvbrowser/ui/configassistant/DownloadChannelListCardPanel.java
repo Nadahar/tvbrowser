@@ -29,7 +29,8 @@ package tvbrowser.ui.configassistant;
 import javax.swing.*;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -41,10 +42,7 @@ import java.awt.Font;
 
 class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionListener {
 
-  private CardPanel mNext, mPrev;
   private JPanel mContent;
-  private JButton mDownloadBtn;
-  private JLabel mChannelCntLabel;
   private JLabel mStatusLabel;
   private boolean mDownloadStarted;
   
@@ -70,9 +68,9 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
     */
      area.setText(mLocalizer.msg("description","Download channel list..."));
      mContent.add(area);
-     mDownloadBtn=new JButton(mLocalizer.msg("downloadChannelList","Download channellist now"));
-     mDownloadBtn.addActionListener(this);
-     mContent.add(mDownloadBtn); 
+     JButton downloadBtn = new JButton(mLocalizer.msg("downloadChannelList", "Download channellist now"));
+     downloadBtn.addActionListener(this);
+     mContent.add(downloadBtn);
      
      int cnt=getChannelCount();
      mStatusLabel=new JLabel();
@@ -90,10 +88,10 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
   }
   
   private int getChannelCount() {
-    tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+    TvDataServiceProxy services[]= TvDataServiceProxyManager.getInstance().getDataServices();
     int channelCount=0;
     for (int i=0;i<services.length;i++) {
-      devplugin.Channel channelList[]=services[i].getAvailableChannels();
+      devplugin.Channel channelList[]=services[i].getAvailableChannels(null);
       if (channelList!=null) {
         channelCount+=channelList.length;
       } 
@@ -109,11 +107,11 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
     win.run(new Progress(){
       public void run() {
         mDownloadStarted=true;
-        tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+        TvDataServiceProxy services[]=TvDataServiceProxyManager.getInstance().getDataServices();
         for (int i=0;i<services.length;i++) {
           if (services[i].supportsDynamicChannelList()) {
             try {
-              services[i].checkForAvailableChannels(win);
+              services[i].checkForAvailableChannels(null, win);
             }catch (TvBrowserException e) {
               ErrorHandler.handle(e);
             }

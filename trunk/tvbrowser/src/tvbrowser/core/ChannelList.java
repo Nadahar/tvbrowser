@@ -30,8 +30,8 @@ package tvbrowser.core;
 import java.util.*;
 import java.io.*;
 import devplugin.Channel;
-import tvdataservice.TvDataService;
-
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 
 
 /**
@@ -55,7 +55,7 @@ public class ChannelList {
 
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray(true);
-    
+
     for (int i = 0; i < channelArr.length; i++) {
       if (channelArr[i] != null) {
         subscribeChannel(channelArr[i]);
@@ -69,11 +69,11 @@ public class ChannelList {
   public static void loadDayLightSavingTimeCorrections() {
     File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
     if (!f.exists()) {
-      return; 
+      return;
     }
-    
+
     FileReader fr;
-    BufferedReader reader=null; 
+    BufferedReader reader=null;
     try {
       fr=new FileReader(f);
       reader=new BufferedReader(fr);
@@ -88,35 +88,37 @@ public class ChannelList {
           String key=line.substring(0,pos);
           String val=line.substring(pos+1);
           if (val!=null) {
-            int corr=Integer.parseInt(val);            
-            
+            int corr=Integer.parseInt(val);
+
             pos = key.indexOf(':');
             String dataServiceClassName = key.substring(0,pos);
             String id = key.substring(pos + 1);
 
-            TvDataService dataService
-              = TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+            TvDataServiceProxy dataService
+              = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
 
             Channel ch=ChannelList.getChannel(dataService,id);
             if (ch!=null) {
               ch.setDayLightSavingTimeCorrection(corr);
             }
-            
+
           }
-          
-          
-          
-          
+
+
+
+
         }catch(IndexOutOfBoundsException e) {
           // ignore
         }
       }
-      
+
     }catch(IOException e) {
       // ignore
     }
     if (reader!=null) {
-      try { reader.close(); }catch(IOException exc){}
+      try { reader.close(); }catch(IOException exc){
+        // ignore
+      }
     }
   }
 
@@ -126,11 +128,11 @@ public class ChannelList {
   public static void storeAllSettings() {
       storeDayLightSavingTimeCorrections();
       storeChannelIcons();
-  }  
-  
+  }
+
   public static void storeDayLightSavingTimeCorrections() {
     File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
-    
+
     FileWriter fw;
     PrintWriter out=null;
     try {
@@ -140,7 +142,7 @@ public class ChannelList {
         for (int i=0;i<channels.length;i++) {
           int corr=channels[i].getDayLightSavingTimeCorrection();
           if (corr!=0) {
-            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+corr);  
+            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+corr);
           }
         }
     }catch(IOException e) {
@@ -149,11 +151,11 @@ public class ChannelList {
     if (out!=null) {
       out.close();
     }
-    
+
   }
 
-  private static void addDataServiceChannels(TvDataService dataService) {
-    Channel[] channelArr = dataService.getAvailableChannels();
+  private static void addDataServiceChannels(TvDataServiceProxy dataService) {
+    Channel[] channelArr = dataService.getAvailableChannels(null);
     for (int i = 0; i < channelArr.length; i++) {
       mAvailableChannels.add(channelArr[i]);
     }
@@ -161,8 +163,8 @@ public class ChannelList {
 
   public static void create() {
     mAvailableChannels.clear();
-    TvDataService[] dataServiceArr
-            = TvDataServiceManager.getInstance().getDataServices();
+    TvDataServiceProxy[] dataServiceArr
+            = TvDataServiceProxyManager.getInstance().getDataServices();
 
     for (int i=0;i<dataServiceArr.length;i++) {
       addDataServiceChannels(dataServiceArr[i]);
@@ -213,26 +215,27 @@ public class ChannelList {
    * Returns a new Channel object with the specified ID or null, if the
    * given ID does not exist.
    */
-  public static Channel getChannel(TvDataService dataService, String id) {
+  public static Channel getChannel(TvDataServiceProxy dataService, String id) {
     Iterator iter = mAvailableChannels.iterator();
-	  while (iter.hasNext()) {
-	    Channel channel = (Channel) iter.next();
-      if (channel.getDataService().equals(dataService) && channel.getId().equals(id)) {
-		    return channel;
-	    }
-	  }
+    while (iter.hasNext()) {
+      Channel channel = (Channel) iter.next();
+
+      if (channel.getDataServiceProxy().getId().equals(dataService.getId()) && channel.getId().equals(id)) {
+        return channel;
+      }
+    }
     return null;
   }
 
 
   public static Channel getChannel(String id) {
     Iterator iter = mAvailableChannels.iterator();
-	  while (iter.hasNext()) {
-	    Channel channel = (Channel) iter.next();
+    while (iter.hasNext()) {
+      Channel channel = (Channel) iter.next();
       if (channel.getId().equals(id)) {
-		    return channel;
-	    }
-	  }
+        return channel;
+      }
+    }
     return null;
   }
 
@@ -255,7 +258,7 @@ public class ChannelList {
    * @deprecated Use getAvailableChannels
    */
   public static Iterator getChannels() {
-	return mAvailableChannels.iterator();
+  return mAvailableChannels.iterator();
   }
 
 
@@ -270,14 +273,14 @@ public class ChannelList {
    * Returns true, if the specified channel is currently subscribed.
    */
   public static boolean isSubscribedChannel(Channel channel) {
-	  if (channel==null) return false;
-	  for (int i=0;i<mSubscribedChannels.size();i++) {
-	    Channel ch=(Channel)mSubscribedChannels.get(i);
-	    if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataService().equals(channel.getDataService())) {
-		    return true;
-	    }
-	  }
-	  return false;
+    if (channel==null) return false;
+    for (int i=0;i<mSubscribedChannels.size();i++) {
+      Channel ch=(Channel)mSubscribedChannels.get(i);
+      if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataService().equals(channel.getDataService())) {
+        return true;
+      }
+    }
+    return false;
   }
 
 
@@ -286,7 +289,7 @@ public class ChannelList {
    * Returns the number of subscribed mAvailableChannels.
    */
   public static int getNumberOfSubscribedChannels() {
-	return mSubscribedChannels.size();
+  return mSubscribedChannels.size();
   }
 
 
@@ -295,11 +298,11 @@ public class ChannelList {
    * Returns all subscribed mAvailableChannels.
    */
   public static Channel[] getSubscribedChannels() {
-	Channel[] result=new Channel[mSubscribedChannels.size()];
-	for (int i=0;i<mSubscribedChannels.size();i++) {
-	  result[i]=(Channel)mSubscribedChannels.get(i);
-	}
-	return result;
+  Channel[] result=new Channel[mSubscribedChannels.size()];
+  for (int i=0;i<mSubscribedChannels.size();i++) {
+    result[i]=(Channel)mSubscribedChannels.get(i);
+  }
+  return result;
   }
 
   /**
@@ -308,11 +311,11 @@ public class ChannelList {
   private static void loadChannelIcons() {
       File f=new File(Settings.getUserDirectoryName(),"channel_icons.txt");
       if (!f.exists()) {
-        return; 
+        return;
       }
-      
+
       FileReader fr;
-      BufferedReader reader=null; 
+      BufferedReader reader=null;
       try {
         fr=new FileReader(f);
         reader=new BufferedReader(fr);
@@ -331,14 +334,14 @@ public class ChannelList {
               String dataServiceClassName = key.substring(0,pos);
               String id = key.substring(pos + 1);
 
-              TvDataService dataService
-                = TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+              TvDataServiceProxy dataService
+                = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
 
               Channel ch=ChannelList.getChannel(dataService,id);
               if (ch!=null) {
-                  
+
                 String[] settings = val.split(";");
-                
+
                 if (settings.length == 2) {
                   ch.setUserIconFileName(settings[1]);
                   if (settings[0].equals("true")) {
@@ -353,23 +356,25 @@ public class ChannelList {
             // ignore
           }
         }
-        
+
       }catch(IOException e) {
         // ignore
       }
       if (reader!=null) {
-        try { reader.close(); }catch(IOException exc){}
+        try { reader.close(); }catch(IOException exc){
+          // ignore
+        }
       }
   }
 
 
-  
+
   /**
    * Stores all Icons 
    */
   private static void storeChannelIcons() {
       File f=new File(Settings.getUserDirectoryName(),"channel_icons.txt");
-      
+
       FileWriter fw;
       PrintWriter out=null;
       try {
@@ -379,7 +384,7 @@ public class ChannelList {
           for (int i=0;i<channels.length;i++) {
             String filename = channels[i].getUserIconFileName();
             if ((filename != null) && (filename.trim().length() > 0)){
-              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + channels[i].isUsingUserIcon() +";"+filename.trim());  
+              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + channels[i].isUsingUserIcon() +";"+filename.trim());
             }
           }
       }catch(IOException e) {

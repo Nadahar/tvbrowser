@@ -3,7 +3,12 @@ Changelog TVBrowser
 2.1
 - Feature:
 	- 1280910 Filter-Anzeige
-
+	- Plugin-System
+	     - Plugins-Verzeichnis nach $HOME verschoben
+	     - Plugin-Suchreihenfolge: $HOME/.tvbrowser/plugins, $PROGDIR/plugins, $PROGDIR/tvdataservice
+       - neuer Key in .properties: 'pluginsdir'
+       - neues TvDataService interface: devplugin.TvDataService
+        
 
 1.1 alpha3
 - features:

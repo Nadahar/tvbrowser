@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,7 +27,9 @@
 package tvbrowser.ui.configassistant;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -48,7 +50,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
         
     File tvDataDir = new File(Settings.propTVDataDirectory.getString().trim());
     Settings.propTVDataDirectory.setString(tvDataDir.toString());
-    TvDataServiceManager.getInstance().setTvDataDir(tvDataDir);
+    TvDataServiceProxyManager.getInstance().setTvDataDir(tvDataDir);
     
     setTitle(mLocalizer.msg("title","Setup assistant"));
     JPanel contentPane=(JPanel)getContentPane();
@@ -128,7 +130,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
   }
   
   private boolean isDynamicChannelListSupported() {
-    tvdataservice.TvDataService services[]=TvDataServiceManager.getInstance().getDataServices();
+    TvDataServiceProxy services[]=TvDataServiceProxyManager.getInstance().getDataServices();
     for (int i=0;i<services.length;i++) {
       if (services[i].supportsDynamicChannelList()) return true;       
     }

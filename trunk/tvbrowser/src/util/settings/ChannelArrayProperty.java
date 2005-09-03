@@ -26,8 +26,8 @@
 package util.settings;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.TvDataServiceManager;
-import tvdataservice.TvDataService;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import devplugin.Channel;
 
 /**
@@ -71,8 +71,8 @@ public class ChannelArrayProperty extends Property {
             String dataServiceClassName = splits[i].substring(0, pos);
             String id = splits[i].substring(pos + 1);
   
-            TvDataService dataService
-              = TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+            TvDataServiceProxy dataService
+              = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
               
             mCachedValue[i] = ChannelList.getChannel(dataService, id);
           }

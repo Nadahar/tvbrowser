@@ -34,8 +34,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -60,6 +58,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.ui.UiUtilities;
@@ -80,13 +79,10 @@ public class SettingsDialog {
 
   private JDialog mDialog;
 
-  private JSplitPane mSplitPane;
   private JTree mSelectionTree;
   private JPanel mSettingsPn;
   private JScrollPane mSettingsPane;
   private TreeNode mRootNode;
-
-  private JButton mOkBt, mCancelBt, mApplyBt;
 
   /** Location of this Dialog */
   private Point mLocation = new Point();
@@ -104,8 +100,8 @@ public class SettingsDialog {
     main.setBorder(UiUtilities.DIALOG_BORDER);
     mDialog.setContentPane(main);
 
-    mSplitPane = new JSplitPane();
-    main.add(mSplitPane, BorderLayout.CENTER);
+    JSplitPane splitPane = new JSplitPane();
+    main.add(splitPane, BorderLayout.CENTER);
 
     mRootNode = createSelectionTree();
     mSelectionTree = new JTree(mRootNode);
@@ -121,7 +117,7 @@ public class SettingsDialog {
     JScrollPane scrollPane = new JScrollPane(mSelectionTree);
     scrollPane.setMinimumSize(new Dimension(150,0));
     scrollPane.setBorder(null);
-    mSplitPane.setLeftComponent(scrollPane);
+    splitPane.setLeftComponent(scrollPane);
 
     // Make the viewport as big as the tree when all nodes are expanded
     int categoryCount = mRootNode.getChildCount();
@@ -138,32 +134,32 @@ public class SettingsDialog {
 
     mSettingsPane = new JScrollPane(mSettingsPn);
     mSettingsPane.setPreferredSize(new Dimension(410, 300));
-    mSplitPane.setRightComponent(mSettingsPane);
+    splitPane.setRightComponent(mSettingsPane);
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
 
-    mOkBt = new JButton(mLocalizer.msg("ok", "OK"));
-    mOkBt.addActionListener(new ActionListener() {
+    JButton okBt = new JButton(mLocalizer.msg("ok", "OK"));
+    okBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         saveSettings();
         invalidateTree();
         mDialog.dispose();
       }
     });
-    mDialog.getRootPane().setDefaultButton(mOkBt);
-    buttonPn.add(mOkBt);
+    mDialog.getRootPane().setDefaultButton(okBt);
+    buttonPn.add(okBt);
 
-    mCancelBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
-    mCancelBt.addActionListener(new ActionListener() {
+    JButton cancelBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    cancelBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mDialog.dispose();
       }
     });
-    buttonPn.add(mCancelBt);
+    buttonPn.add(cancelBt);
 
-    mApplyBt = new JButton(mLocalizer.msg("apply", "Apply"));
-    mApplyBt.addActionListener(new ActionListener() {
+    JButton applyBt = new JButton(mLocalizer.msg("apply", "Apply"));
+    applyBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         saveSettings();
         invalidateTree();
@@ -171,7 +167,7 @@ public class SettingsDialog {
         showSettingsPanelForSelectedNode();
       }
     });
-    buttonPn.add(mApplyBt);
+    buttonPn.add(applyBt);
 
     mDialog.pack();
     
@@ -307,7 +303,7 @@ public class SettingsDialog {
     // TVDataServices
     node = new SettingNode(new DataServiceSettingsTab());
     root.add(node);
-    tvdataservice.TvDataService[] services=tvbrowser.core.TvDataServiceManager.getInstance().getDataServices();
+    TvDataServiceProxy[] services=tvbrowser.core.tvdataservice.TvDataServiceProxyManager.getInstance().getDataServices();
     for (int i=0;i<services.length;i++) {
       node.add(new SettingNode(new ConfigDataServiceSettingsTab(services[i])));
     }

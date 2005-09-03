@@ -63,7 +63,8 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
@@ -604,11 +605,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     win.run(new Progress() {
       public void run() {
-        tvdataservice.TvDataService services[] = TvDataServiceManager.getInstance().getDataServices();
+        TvDataServiceProxy services[] = TvDataServiceProxyManager.getInstance().getDataServices();
         for (int i = 0; i < services.length; i++) {
           if (services[i].supportsDynamicChannelList()) {
             try {
-              services[i].checkForAvailableChannels(win);
+              services[i].checkForAvailableChannels(null, win);
             } catch (TvBrowserException exc) {
               ErrorHandler.handle(exc);
             }
