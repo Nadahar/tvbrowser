@@ -100,7 +100,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     if ("true" .equals(mSettings.getProperty( "useexec" ))) {
       String fName=mSettings.getProperty( "execfile" );
       ParamParser parser = new ParamParser();
-      String fParam=parser.analyse(mSettings.getProperty("execparam"), item.getProgram());
+      String fParam=parser.analyse(mSettings.getProperty("execparam",""), item.getProgram());
 
       try {
         Runtime.getRuntime().exec(fName + " " +  fParam);
@@ -142,7 +142,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     String name = mLocalizer.msg( "pluginName" ,"Reminder" );
     String desc = mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion." );
     String author = "Martin Oberhauser (martin@tvbrowser.org)" ;
-    return new PluginInfo(name, desc, author, new Version(1, 10));
+    return new PluginInfo(name, desc, author, new Version(1, 11));
   }
 
 

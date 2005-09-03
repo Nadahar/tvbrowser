@@ -1,5 +1,8 @@
 Changelog ReminderPlugin
 
+1.1.1
+- Bugfix #1281348: Nullpointer if no Exec-Setting is available
+
 1.1.0
 - Added "Send to other Plugin"
 - Made default reminder time configurable
