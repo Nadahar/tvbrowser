@@ -26,15 +26,9 @@
 
 package tvbrowser.core.tvdataservice;
 
-import tvdataservice.TvDataService;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.net.URL;
-import java.net.URLClassLoader;
 import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
 
@@ -49,9 +43,6 @@ public class TvDataServiceProxyManager {
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(TvDataServiceProxyManager.class);
-
-  private static java.util.logging.Logger mLog
-      = Logger.getLogger(TvDataServiceProxyManager.class.getName());
 
   private static TvDataServiceProxyManager mInstance;
 
@@ -71,85 +62,10 @@ public class TvDataServiceProxyManager {
     return mInstance;
   }
 
-  /**
-   * If a TvDataService is downloaded and installed by the TV-Browser's
-   * online updater, the TvDataService is stored as a ".jar.inst" files.
-   * During start up, befor loading the plugins, we rename the files to ".jar"
 
-  private void installPendingDataServices() {
-    File file=new File(TV_DATA_SERVICE_DIRECTORY);
-    if (!file.exists()) {
-      return;
-    }
-    File[] fileList=file.listFiles(new FileFilter() {
-      public boolean accept(File f) {
-        return f.getName().endsWith(".jar.inst");
-      }
-    });
-
-    for (int i=0;i<fileList.length;i++) {
-      String fName=fileList[i].getAbsolutePath();
-      fileList[i].renameTo(new File(fName.substring(0,fName.length()-5)));
-    }
-  }
-
-         */
   public void registerTvDataService(TvDataServiceProxy service) {
      mProxyList.add(service);
   }
-
-  /**
-   * @param file
-   * @return TvDataServiceProxy object
-   */
-  private TvDataServiceProxy loadTvDataService(File file) {
-    String fileName = file.getName();
-    if (fileName.length()>4) {
-      String className = fileName.substring(0,fileName.length()-4);
-      className = className.toLowerCase()+"."+className;
-      try {
-        URL[] urls= new URL[] { file.toURL() };
-        ClassLoader dataserviceClassLoader=new URLClassLoader(urls,ClassLoader.getSystemClassLoader());
-        Class c=dataserviceClassLoader.loadClass(className);
-        Object dataservice = c.newInstance();
-        if (dataservice instanceof TvDataService) {
-          return new DeprecatedTvDataServiceProxy((TvDataService)dataservice);
-        }
-      } catch (Exception exc) {
-        mLog.log(Level.SEVERE, "File '+file.getAbsolutePath()+' is not a valid TvDataService", exc);
-      }
-    }
-    else {
-      mLog.warning("File '"+file.getAbsolutePath()+"' is not a valid TvDataService");
-    }
-    return null;
-  }
-
-                /*
-  private void loadAllTvDataServices() {
-    if (mProxyList != null) {
-      throw new IllegalArgumentException("The data services are already loaded!");
-    }
-
-    mProxyList = new ArrayList();
-
-    // Get the tv data service jar file
-    File[] fList=new File(TV_DATA_SERVICE_DIRECTORY).listFiles(new FilenameFilter() {
-      public boolean accept(File dir, String fName) {
-        return fName.endsWith(".jar");
-      }
-    });
-
-    if (fList!=null) {
-      for (int i=0; i<fList.length; i++) {
-        TvDataServiceProxy proxy = loadTvDataService(fList[i]);
-        if (proxy != null) {
-          mProxyList.add(proxy);
-        }
-      }
-    }
-  }
-                  */
 
   private void loadServiceSettings(TvDataServiceProxy service) {
     Class c=service.getClass();
@@ -199,9 +115,13 @@ public class TvDataServiceProxyManager {
    * @param dir
    */
   public void setTvDataDir(File dir) {
-    TvDataServiceProxy[] proxies = getDataServices();
-    for (int i=0; i<proxies.length; i++) {
-      proxies[i].setWorkingDirectory(dir);
+    TvDataServiceProxy[] services = getDataServices();
+    for (int i=0; i<services.length; i++) {
+      File dataServiceDir=new File(dir,services[i].getId());
+      if (!dataServiceDir.exists()) {
+        dataServiceDir.mkdirs();
+      }
+      services[i].setWorkingDirectory(dataServiceDir);
     }
   }
 
@@ -209,9 +129,6 @@ public class TvDataServiceProxyManager {
    * Loads and initializes all available TvDataServices
    */
   public void init() {
-   // installPendingDataServices();
-
-   // loadAllTvDataServices();
 
     String tvdataRoot= Settings.propTVDataDirectory.getString();
     File rootDir=new File(tvdataRoot);
