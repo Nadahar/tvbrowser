@@ -28,14 +28,22 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.logging.Level;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -43,12 +51,12 @@ import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
@@ -56,6 +64,7 @@ import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
+import tvbrowser.ui.programtable.FilterPanel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
@@ -129,6 +138,9 @@ public class MainFrame extends JFrame implements DateListener {
 
   private PluginView mPluginView;
 
+  /** Panel that Displays current Filter-Name */
+  private FilterPanel mFilterPanel;
+  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
@@ -166,6 +178,11 @@ public class MainFrame extends JFrame implements DateListener {
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+    mFilterPanel = new FilterPanel();    
+    mFilterPanel.setVisible(false);      
+     
+    centerPanel.add(mFilterPanel, BorderLayout.NORTH);    
+    
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
@@ -303,6 +320,10 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
     mToolBarModel.setFilterButtonSelected(!isShowAllFilterActivated());
+    
+    mFilterPanel.setCurrentFilter(filter);   
+    mFilterPanel.setVisible(!isShowAllFilterActivated());
+    
     mToolBar.update();
   }
 
