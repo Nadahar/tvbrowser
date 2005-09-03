@@ -63,7 +63,7 @@ SetCompressor lzma
 #Variables
 
 Var STARTMENU_FOLDER
-Var INI_VALUE
+#Var INI_VALUE
 
 
 #--------------------------------
@@ -94,9 +94,8 @@ Var INI_VALUE
 #--------------------------------
 # Custom pages (InstallOptions)
 #ReserveFile "${NSISDIR}\UninstallTvData.ini"
-ReserveFile "${NSISDIR}\UninstallSettings.ini"
+#ReserveFile "${NSISDIR}\UninstallSettings.ini"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-
 
 #--------------------------------
 # Installer Functions
@@ -138,7 +137,7 @@ FunctionEnd
 Function un.onInit
   # Extract InstallOptions INI files
   # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallTvData.ini"   "UninstallTvData.ini"
-  !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallSettings.ini" "UninstallSettings.ini"
+ # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallSettings.ini" "UninstallSettings.ini"
 FunctionEnd
 
 # Function un.UninstallTvDataPage
@@ -147,30 +146,104 @@ FunctionEnd
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 # FunctionEnd
 
-Function un.UninstallSettingsPage
-  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
-    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
-  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
-FunctionEnd
+#Function un.UninstallSettingsPage
+#  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" \
+#    "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
+#  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
+#FunctionEnd
 
 
 #--------------------------------
 #Languages
 
+!insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "German"
 
+#--------------------------------
+#Language Strings
+
+  ;Description
+ LangString INST_TYPE_1 ${LANG_German} "Normal (mit allen Plugins)"
+ LangString INST_TYPE_1 ${LANG_ENGLISH} "Normal (with all Plugins)"
+
+ LangString INST_TYPE_2 ${LANG_German} "Minimal (ohne Plugins)"
+ LangString INST_TYPE_2 ${LANG_ENGLISH} "Minimal (without Plugins)"
+
+ LangString STD_SECTION_NAME ${LANG_German} "${PROG_NAME} (erforderlich)"
+ LangString STD_SECTION_NAME ${LANG_ENGLISH} "${PROG_NAME} (necessary)"
+
+ LangString LINK_SECTION_NAME ${LANG_German} "Verknüpfung auf dem Desktop"
+ LangString LINK_SECTION_NAME ${LANG_ENGLISH} "Link on the desktop"
+
+ LangString DATA_SECTION_NAME ${LANG_German} "Daten-Services"
+   LangString DATA_TVB_SUBSECTION_NAME ${LANG_German} "TV-Browser-Datenservice"
+ LangString DATA_SECTION_NAME ${LANG_ENGLISH} "Data service"
+   LangString DATA_TVB_SUBSECTION_NAME ${LANG_ENGLISH} "TV-Browser data service"
+ 
+ LangString MISC_DIR ${LANG_GERMAN} "Sonstiges"
+ LangString MISC_DIR ${LANG_ENGLISH} "Misc"
+
+ LangString WIKI ${LANG_GERMAN} "Handuch"
+ LangString WIKI ${LANG_ENGLISH} "Manual"
+
+ LangString LICENSE_TXT ${LANG_GERMAN} "Lizenz"
+ LangString LICENSE_TXT ${LANG_ENGLISH} "License"
+ 
+ LangString WITHOUT_DIRECTX ${LANG_GERMAN} "${PROG_NAME} (ohne DirectX)"
+ LangString WITHOUT_DIRECTX ${LANG_ENGLISH} "${PROG_NAME} (without DirectX)"
+
+ LangString UNINSTALL_TXT ${LANG_GERMAN} "${PROG_NAME} deinstallieren"
+ LangString UNINSTALL_TXT ${LANG_ENGLISH} "Uninstall ${PROG_NAME}"
+ 
+ LangString PROGRAM_INFO ${LANG_GERMAN} "Sendungsinfo-Betrachter"
+ LangString PROGRAM_INFO ${LANG_ENGLISH} "Programinfo viewer"
+ 
+ LangString REMINDER ${LANG_GERMAN} "Erinnerer"
+ LangString REMINDER ${LANG_ENGLISH} "Reminder"
+ 
+ LangString SEARCH ${LANG_GERMAN} "Sendungen suchen"
+ LangString SEARCH ${LANG_ENGLISH} "Program search"
+ 
+ LangString PRINT ${LANG_GERMAN} "Drucken"
+ LangString PRINT ${LANG_ENGLISH} "Print"
+ 
+ LangString FAVORITES ${LANG_GERMAN} "Lieblingssendungen verwalten"
+ LangString FAVORITES ${LANG_ENGLISH} "Manage favorite programs"
+ 
+ LangString SHOWVIEW ${LANG_GERMAN} "Showviewnummern berechnen"
+ LangString SHOWVIEW ${LANG_ENGLISH} "Calculate Showview numbers"
+ 
+ LangString TVRATER ${LANG_GERMAN} "TV-Bewertungen"
+ LangString TVRATER ${LANG_ENGLISH} "TV rates"
+ 
+ LangString LISTVIEW ${LANG_GERMAN} "Was läuft gerade"
+ LangString LISTVIEW ${LANG_ENGLISH} "What runs now"
+ 
+ LangString NEWS ${LANG_GERMAN} "Nachrichten"
+ LangString NEWS ${LANG_ENGLISH} "News"
+ 
+ LangString CLIPBOARD ${LANG_GERMAN} "Zwischenablage"
+ LangString CLIPBOARD ${LANG_ENGLISH} "Clipboard-Plugin"
+
+ LangString CALENDAR ${LANG_GERMAN} "Kalender Export"
+ LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
+ 
+ LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
+ LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the setting and TV data files?"
+
+ LangString un.CONFIRM ${LANG_GERMAN} "Sind Sie sicher?"
+ LangString un.CONFIRM ${LANG_ENGLISH} "Are you sure?"
 
 #--------------------------------
 # The installation types
 
-InstType "Normal (mit allen Plugins)"
-InstType "Minimal (ohne Plugins)"
-
+InstType "$(INST_TYPE_1)" #"Normal (mit allen Plugins)"
+InstType "$(INST_TYPE_2)" #"Minimal (ohne Plugins)"
 
 #--------------------------------
 #Installer Sections
 
-Section "${PROG_NAME} (erforderlich)"
+Section "$(STD_SECTION_NAME)"
   # make the section requiered
   SectionIn 1 2 RO
 
@@ -329,38 +402,38 @@ Section "${PROG_NAME} (erforderlich)"
     # Set the directory where the shortcuts should be executed in
     SetOutPath "$INSTDIR"
 
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges"
+    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)"
 
     CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\${PROG_NAME}.lnk" \
       "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\${PROG_NAME} (ohne DirectX).lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(WITHOUT_DIRECTX).lnk" \
       "$INSTDIR\tvbrowser_noDD.exe" "" "$INSTDIR\imgs\desktop.ico"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Lizenz.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(LICENSE_TXT).lnk" \
       "$INSTDIR\LICENSE.txt"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\TV-Browser (ohne DirectX) - Info.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(WITHOUT_DIRECTX) - Info.lnk" \
       "$INSTDIR\tvbrowser_noDD.txt"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Website.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Website.lnk" \
       "$INSTDIR\website.url"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Forum.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Forum.lnk" \
       "$INSTDIR\forum.url"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\Handbuch.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(WIKI).lnk" \
       "$INSTDIR\wiki.url"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\Sonstiges\${PROG_NAME} deinstallieren.lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(UNINSTALL_TXT).lnk" \
       "$INSTDIR\Uninstall.exe" \
       "" \
       "$INSTDIR\Uninstall.exe" \
@@ -371,7 +444,7 @@ Section "${PROG_NAME} (erforderlich)"
 SectionEnd # end the section
 
 
-Section "Verknüpfung auf dem Desktop"
+Section "$(LINK_SECTION_NAME)"
   SectionIn 1 2
   StrCmp $8 "HKCU" user admin
   user:
@@ -390,9 +463,9 @@ Section "Verknüpfung auf dem Desktop"
 SectionEnd
 
 
-SubSection "Daten-Services"
+SubSection "$(DATA_SECTION_NAME)"
 
-  Section "TV-Browser-Datenservice"
+  Section "$(DATA_TVB_SUBSECTION_NAME)"
     SectionIn 1 2 RO
 
     SetOutPath "$INSTDIR\tvdataservice"
@@ -402,49 +475,48 @@ SubSectionEnd
 
 
 SubSection "Plugins"
-
-  Section "Sendungsinfo-Betrachter"
+ 
+  Section "$(PROGRAM_INFO)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ProgramInfo.jar"
   SectionEnd
 
-  Section "Erinnerer"
+  Section "$(REMINDER)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ReminderPlugin.jar"
   SectionEnd
 
-  Section "Sendungen suchen"
+  Section "$(SEARCH)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\SearchPlugin.jar"
   SectionEnd
 
-  Section "Drucken"
+  Section "$(PRINT)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
   SectionEnd
 
-  Section "Lieblingssendungen verwalten"
+  Section "$(FAVORITES)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\FavoritesPlugin.jar"
   SectionEnd
 
-  Section "Showviewnummern berechnen"
+  Section "$(SHOWVIEW)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
   SectionEnd
-
 
   Section "Web Plugin"
     SectionIn 1
@@ -453,21 +525,28 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\WebPlugin.jar"
   SectionEnd
 
-  Section "TV-Bewertungen"
+  Section "E-Mail Plugin"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\EMailPlugin.jar"
+  SectionEnd
+
+  Section "$(TVRATER)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
   SectionEnd
 
-  Section "Was läuft gerade"
+  Section "$(LISTVIEW)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ListViewPlugin.jar"
   SectionEnd
 
-  Section "Nachrichten"
+  Section "$(NEWS)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
@@ -481,11 +560,18 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\CapturePlugin.jar"
   SectionEnd
 
-  Section "Zwischenablage"
+  Section "$(CLIPBOARD)"
     SectionIn 1
 
     SetOutPath "$INSTDIR\plugins"
     File "${RUNTIME_DIR}\plugins\ClipboardPlugin.jar"
+  SectionEnd
+
+  Section "$(CALENDAR)"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\CalendarExportPlugin.jar"
   SectionEnd
 
 SubSectionEnd
@@ -515,6 +601,18 @@ Section "Uninstall"
   Delete "$INSTDIR\*.*"
   RMDir "$INSTDIR"
 
+  ReadEnvStr $1 "WINDIR"
+  IfErrors no
+  IfFileExists "$1\TV-Browser" noerror
+  ClearErrors
+  ReadEnvStr $1 "USERPROFILE"
+  IfErrors no
+  IfFileExists "$1\TV-Browser" noerror no
+  noerror:
+  MessageBox MB_YESNO $(un.QUESTION) IDNO no
+  MessageBox MB_YESNO $(un.CONFIRM) IDNO no
+    RMDir /r "$1\TV-Browser"
+  no:
 
   # Unregister uninstaller at Windows (Add/Remove programs)
   push $8
