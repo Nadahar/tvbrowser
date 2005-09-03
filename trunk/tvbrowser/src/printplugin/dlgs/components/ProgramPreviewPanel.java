@@ -50,7 +50,6 @@ public class ProgramPreviewPanel extends JPanel {
 
   private MutableProgramIconSettings mProgramIconSettings;
   private JLabel mProgramIconLabel;
-  private JButton mFieldsButton, mFontsButton;
   private Font mDateFont;
   private JLabel mDateLabel;
   private JPanel mIconPanel;
@@ -63,8 +62,8 @@ public class ProgramPreviewPanel extends JPanel {
     }
     setLayout(new BorderLayout(3,3));
 
-    mFontsButton = new JButton(mLocalizer.msg("fonts","Fonts.."));
-    mFieldsButton = new JButton(mLocalizer.msg("fields","Fields.."));
+    JButton fontsButton = new JButton(mLocalizer.msg("fonts", "Fonts.."));
+    JButton fieldsButton = new JButton(mLocalizer.msg("fields", "Fields.."));
 
     mDateLabel = new JLabel(new Date().getLongDateString());
     mProgramIconLabel = new JLabel(createDemoProgramPanel());
@@ -78,8 +77,8 @@ public class ProgramPreviewPanel extends JPanel {
     JPanel eastPn = new JPanel(new BorderLayout());
     JPanel buttonPn = new JPanel(new GridLayout(-1, 1,3,3));
     eastPn.add(buttonPn, BorderLayout.NORTH);
-    buttonPn.add(mFontsButton);
-    buttonPn.add(mFieldsButton);
+    buttonPn.add(fontsButton);
+    buttonPn.add(fieldsButton);
 
     JScrollPane scrollPane = new JScrollPane(mIconPanel);
     scrollPane.setPreferredSize(new Dimension(0,90));
@@ -87,7 +86,7 @@ public class ProgramPreviewPanel extends JPanel {
     add(eastPn, BorderLayout.EAST);
 
 
-    mFontsButton.addActionListener(new ActionListener() {
+    fontsButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (mProgramIconSettings == null) {
           return;
@@ -106,7 +105,7 @@ public class ProgramPreviewPanel extends JPanel {
       }
     });
 
-    mFieldsButton.addActionListener(new ActionListener(){
+    fieldsButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event){
         if (mProgramIconSettings == null) {
           return;
@@ -130,7 +129,7 @@ public class ProgramPreviewPanel extends JPanel {
     this(dlgParent, null, null);
   }
 
-  private void updatePreviewPanel() {
+  public void updatePreviewPanel() {
     mProgramIconLabel.setIcon(createDemoProgramPanel());
     mDateLabel.setFont(mDateFont);
     if (mDateFont != null) {
@@ -146,6 +145,14 @@ public class ProgramPreviewPanel extends JPanel {
   public void setDateFont(Font f) {
     mDateFont = f;
     updatePreviewPanel();
+  }
+
+  public void setShowPluginMarking(boolean show) {
+    mProgramIconSettings.setPaintPluginMarks(show);
+  }
+
+  public boolean getShowPluginMarking() {
+    return mProgramIconSettings.getPaintPluginMarks();
   }
 
   public ProgramIconSettings getProgramIconSettings() {
