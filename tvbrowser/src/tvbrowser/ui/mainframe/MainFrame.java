@@ -28,30 +28,23 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.logging.Level;
 
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
+import javax.swing.*;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.TvDataServiceManager;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -63,13 +56,11 @@ import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
-import tvbrowser.ui.programtable.FilterPanel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
-import tvdataservice.TvDataService;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -83,7 +74,7 @@ import devplugin.ProgressMonitor;
 
 /**
  * TV-Browser
- * 
+ *
  * @author Martin Oberhauser
  */
 public class MainFrame extends JFrame implements DateListener {
@@ -137,8 +128,6 @@ public class MainFrame extends JFrame implements DateListener {
   private Date mCurrentDay;
 
   private PluginView mPluginView;
-  
-  private FilterPanel mFilterPanel;
 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -177,17 +166,12 @@ public class MainFrame extends JFrame implements DateListener {
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-    mFilterPanel = new FilterPanel();
-    mFilterPanel.setVisible(false);
-    
-    centerPanel.add(mFilterPanel, BorderLayout.NORTH);
-    
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
     mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay, endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
-    centerPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
+    centerPanel.add(mProgramTableScrollPane);
 
     mFinderPanel = new FinderPanel();
 
@@ -319,9 +303,6 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
     mToolBarModel.setFilterButtonSelected(!isShowAllFilterActivated());
-    mFilterPanel.setCurrentFilter(filter);
-    mFilterPanel.setVisible(!isShowAllFilterActivated());
-    
     mToolBar.update();
   }
 
@@ -338,7 +319,7 @@ public class MainFrame extends JFrame implements DateListener {
     PluginProxyManager.getInstance().shutdownAllPlugins();
 
     mLog.info("Storing dataservice settings");
-    TvDataServiceManager.getInstance().finalizeDataServices();
+    TvDataServiceProxyManager.getInstance().shutDown();
 
     TVBrowser.shutdown();
 
@@ -461,7 +442,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   private void onDownloadStart() {
-    mToolBarModel.showStopButton();    
+    mToolBarModel.showStopButton();
     mToolBar.update();
     mMenuBar.showStopMenuItem();
   }
@@ -526,7 +507,7 @@ public class MainFrame extends JFrame implements DateListener {
     super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - " + date.getLongDateString());
   }
 
-  public void runUpdateThread(final int daysToDownload, final TvDataService[] services) {
+  public void runUpdateThread(final int daysToDownload, final TvDataServiceProxy[] services) {
 
     downloadingThread = new Thread() {
       public void run() {

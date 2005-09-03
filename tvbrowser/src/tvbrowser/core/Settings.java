@@ -277,8 +277,16 @@ public class Settings {
     return getUserDirectoryName() + File.separator + "tvdata"; 
   }
 
+  private static String getDefaultPluginsDir() {
+    return getUserDirectoryName() + File.separator + "plugins";
+  }
+
   public static final StringProperty propTVDataDirectory
     = new StringProperty(mProp, "dir.tvdata", mDefaultSettings.getProperty("tvdatadir",getDefaultTvDataDir()));
+
+  public static final StringProperty propPluginsDirectory
+      = new StringProperty(mProp, "dir.plugins", mDefaultSettings.getProperty("pluginsdir",getDefaultPluginsDir()));
+
 
   public static final StringProperty propFilterDirectory
     = new StringProperty(mProp, "directory.filters",

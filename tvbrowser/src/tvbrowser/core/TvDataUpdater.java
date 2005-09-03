@@ -33,13 +33,14 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.TvDataService;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
 import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 
 /**
  * Updates the TV data.
@@ -55,18 +56,18 @@ public class TvDataUpdater {
   /** The logger for this class. */
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(TvDataUpdater.class.getName());
-  
+
   /** The singleton. */
   private static TvDataUpdater mSingleton;
-  
+
   private boolean mIsDownloading;
-  
+
   /** Set to true if Stop was forced */
   private boolean mStopDownloading = false;
-  
+
   private ArrayList mListenerList;
-  
-  
+
+
   private TvDataUpdater() {
     mListenerList = new ArrayList();
   }
@@ -76,11 +77,11 @@ public class TvDataUpdater {
     if (mSingleton == null) {
       mSingleton = new TvDataUpdater();
     }
-    
+
     return mSingleton;
   }
-  
-  
+
+
   public void addTvDataUpdateListener(TvDataUpdateListener listener) {
     synchronized(mListenerList) {
       mListenerList.add(listener);
@@ -93,8 +94,8 @@ public class TvDataUpdater {
       mListenerList.remove(listener);
     }
   }
-  
-  
+
+
   /**
    * Gets whether the TV data updater is currently downloading data.
    *
@@ -112,11 +113,11 @@ public class TvDataUpdater {
    * @param daysToDownload The number of days until today to download the
    *        program for.
    */
-  public void downloadTvData(int daysToDownload, TvDataService[] services, JProgressBar progressBar, JLabel label) {
-    if (! TvDataServiceManager.getInstance().licensesAccepted(services)) {
+  public void downloadTvData(int daysToDownload, TvDataServiceProxy[] services, JProgressBar progressBar, JLabel label) {
+    if (! TvDataServiceProxyManager.getInstance().licensesAccepted(services)) {
       return;
     }
-    
+
     // Set the download flag
     mIsDownloading = true;
     mStopDownloading = false;
@@ -126,7 +127,7 @@ public class TvDataUpdater {
 
     // Add a day to the daysToDownload for today
     daysToDownload ++;
-    
+
     // Ensure that the tvdata directory exists
     File tvdataDir = new File(Settings.propTVDataDirectory.getString());
     if (! tvdataDir.exists()) {
@@ -138,41 +139,41 @@ public class TvDataUpdater {
       public void updateDayProgram(MutableChannelDayProgram program) {
         doUpdateDayProgram(program);
       }
-  
+
       public boolean isDayProgramAvailable(Date date, Channel channel) {
         return TvDataBase.getInstance().isDayProgramAvailable(date, channel);
       }
-      
+
       public boolean cancelDownload() {
         return mStopDownloading;
       }
     };
-    
+
     // Get the start date
     devplugin.Date startDate = new Date();
-    
+
     // Split the subsribed channels by data service
     Channel[] subscribedChannels = ChannelList.getSubscribedChannels();
     UpdateJob[] jobArr = toUpdateJobArr(subscribedChannels, services);
-    
+
     // Create the ProgressMonitorGroup
     ProgressMonitorGroup monitorGroup
       = new ProgressMonitorGroup(progressBar, label, subscribedChannels.length);
-    
+
     // Work on the job list
     Throwable downloadException = null;
     for (int i = 0; (i < jobArr.length) && (!mStopDownloading); i++) {
-      TvDataService dataService = jobArr[i].getDataService();
+      TvDataServiceProxy dataService = jobArr[i].getDataService();
       Channel[] channelArr = jobArr[i].getChannelList();
       ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(channelArr.length);
       try {
-        dataService.updateTvData(updateManager, channelArr, startDate,
+        dataService.updateTvData(null, updateManager, channelArr, startDate,
                                  daysToDownload, monitor);
       }
       catch (Throwable thr) {
         mLog.log(Level.WARNING, "Updating the TV data for TV data service "
           + dataService.getInfo().getName() + " failed", thr);
-        
+
         downloadException = thr;
       }
     }
@@ -182,15 +183,15 @@ public class TvDataUpdater {
       String msg = mLocalizer.msg("error.1", "Couldn't download the whole program!");
       ErrorHandler.handle(msg, downloadException);
     }
-    
+
     // Reset the download flag
     mIsDownloading = false;
 
     // Inform the listeners
     fireTvDataUpdateFinished();
   }
-  
-  
+
+
   void fireTvDataUpdateStarted() {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
@@ -244,7 +245,7 @@ public class TvDataUpdater {
    * @param channelProg The program to correct
    */
   private void correctChannelDayProgram(MutableChannelDayProgram channelProg,
-    boolean updateOnChange)
+                                        boolean updateOnChange)
   {
     boolean somethingChanged = TvDataBase.calculateMissingLengths(channelProg);
 
@@ -255,45 +256,45 @@ public class TvDataUpdater {
   }
 
 
-  private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels, TvDataService[] services) {
-    
+  private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels, TvDataServiceProxy[] services) {
+
     ArrayList jobList = new ArrayList();
     for (int channelIdx = 0; channelIdx < subscribedChannels.length; channelIdx++) {
       Channel channel = subscribedChannels[channelIdx];
-      
+
       // Get the UpdateJob for this channel
       UpdateJob job = null;
       for (int i = 0; i < jobList.size(); i++) {
         UpdateJob currJob = (UpdateJob) jobList.get(i);
-        if (currJob.getDataService().equals(channel.getDataService())) {
+        if (currJob.getDataService().getId().equals(channel.getDataServiceProxy().getId())) {
           job = currJob;
           break;
         }
       }
       if (job == null) {
         // There is no job fo this channel -> create one
-         
+
           // check, if we can use this dataservice
-          TvDataService service = channel.getDataService();
+          TvDataServiceProxy service = channel.getDataServiceProxy();
           boolean useService = false;
           for (int k = 0; k<services.length; k++) {
-            if (services[k].equals(service)) {
+            if (services[k].getId().equals(service.getId())) {
               useService = true;
               break;
-            }            
+            }
           }
           if (!useService) {
             continue;
           }
-          
-        job = new UpdateJob(channel.getDataService());
+
+        job = new UpdateJob(channel.getDataServiceProxy());
         jobList.add(job);
       }
-      
+
       // Add the channel to the UpdateJob
       job.addChannel(channel);
     }
-    
+
     // Convert the list into an array and return it
     UpdateJob[] jobArr = new UpdateJob[jobList.size()];
     jobList.toArray(jobArr);
@@ -305,27 +306,27 @@ public class TvDataUpdater {
 
 
   private class UpdateJob {
-    
-    private TvDataService mTvDataService;
+
+    private TvDataServiceProxy mTvDataServiceProxy;
     private ArrayList mChannelList;
-    
-    
-    public UpdateJob(TvDataService dataService) {
-      mTvDataService = dataService;
+
+
+    public UpdateJob(TvDataServiceProxy dataService) {
+      mTvDataServiceProxy = dataService;
       mChannelList = new ArrayList();
     }
-    
-    
+
+
     public void addChannel(Channel channel) {
       mChannelList.add(channel);
     }
-    
-    
-    public TvDataService getDataService() {
-      return mTvDataService;
+
+
+    public TvDataServiceProxy getDataService() {
+      return mTvDataServiceProxy;
     }
-    
-    
+
+
     public Channel[] getChannelList() {
       Channel[] channelArr = new Channel[mChannelList.size()];
       mChannelList.toArray(channelArr);

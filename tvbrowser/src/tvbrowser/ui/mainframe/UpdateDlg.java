@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,8 +32,10 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataServiceManager;
-import tvdataservice.TvDataService;
+
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+
 
 /**
  * TV-Browser
@@ -64,9 +66,8 @@ public class UpdateDlg extends JDialog implements ActionListener {
   private JComboBox comboBox;
   private JCheckBox checkBox;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
-  private TvDataService[] mSelectedTvDataServiceArr;
-  //private TvDataService[] mAvailableTvDataServiceArr;
-  
+  private TvDataServiceProxy[] mSelectedTvDataServiceArr;
+
   
   
   public UpdateDlg(JFrame parent, boolean modal) {
@@ -106,7 +107,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
     northPanel.add(panel1);
     
     
-    TvDataService[] serviceArr = TvDataServiceManager.getInstance().getDataServices();
+    TvDataServiceProxy[] serviceArr = TvDataServiceProxyManager.getInstance().getDataServices();
     if (serviceArr.length>1) {
       panel1.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
       JPanel dataServicePanel = new JPanel();
@@ -148,7 +149,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
   }
 
 
-  private boolean tvDataServiceIsChecked(TvDataService service, String[] serviceNames) {
+  private boolean tvDataServiceIsChecked(TvDataServiceProxy service, String[] serviceNames) {
     if (serviceNames == null) {
       return true;
     }
@@ -162,9 +163,9 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
   public int getResult() { return result; }
 
-  public TvDataService[] getSelectedTvDataServices() {
+  public TvDataServiceProxy[] getSelectedTvDataServices() {
     if (mSelectedTvDataServiceArr == null) {
-      mSelectedTvDataServiceArr = TvDataServiceManager.getInstance().getDataServices();
+      mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
     }
     
     return mSelectedTvDataServiceArr;
@@ -183,7 +184,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
       }
       
       if (mDataServiceCbArr == null) {  // there is only one tvdataservice available
-        mSelectedTvDataServiceArr = TvDataServiceManager.getInstance().getDataServices();
+        mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
       }
       else {
         ArrayList dataServiceList = new ArrayList();   
@@ -192,7 +193,7 @@ public class UpdateDlg extends JDialog implements ActionListener {
             dataServiceList.add(mDataServiceCbArr[i].getTvDataService());
           }
         }
-        mSelectedTvDataServiceArr = new TvDataService[dataServiceList.size()];
+        mSelectedTvDataServiceArr = new TvDataServiceProxy[dataServiceList.size()];
         dataServiceList.toArray(mSelectedTvDataServiceArr);
       }
       
@@ -213,14 +214,14 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
 class TvDataServiceCheckBox extends JCheckBox {
  
-  private TvDataService mService;
+  private TvDataServiceProxy mService;
   
-  public TvDataServiceCheckBox(TvDataService service) {
+  public TvDataServiceCheckBox(TvDataServiceProxy service) {
     super(service.getInfo().getName());
     mService = service; 
   }
   
-  public TvDataService getTvDataService() {
+  public TvDataServiceProxy getTvDataService() {
     return mService;
   }
 }

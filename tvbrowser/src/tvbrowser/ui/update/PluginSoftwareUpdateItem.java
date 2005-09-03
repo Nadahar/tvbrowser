@@ -32,34 +32,37 @@ import util.io.IOUtilities;
 import java.net.*;
 import java.io.*;
 
+import tvbrowser.core.Settings;
+
 
 public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {
-	
-  
-  
-  
+
+
+
+
     private static java.util.logging.Logger mLog
      = java.util.logging.Logger.getLogger(PluginSoftwareUpdateItem.class.getName());
 
-  
+
     private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(PluginSoftwareUpdateItem.class);
-  
-  
-	public PluginSoftwareUpdateItem(String name) {
-		super(name);
-	}
-	
-	protected void download(final String url) throws TvBrowserException {
-    
-    final File toFile=new File("plugins",mName+".jar.inst");
-    try {        
-        IOUtilities.download(new URL(url),toFile);        
+
+
+  public PluginSoftwareUpdateItem(String name) {
+    super(name);
+  }
+
+  protected void download(final String url) throws TvBrowserException {
+
+
+    final File toFile=new File(Settings.propPluginsDirectory.getString(),mName+".jar.inst");
+    try {
+        IOUtilities.download(new URL(url),toFile);
     }catch (Exception exc) {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.1",
                 "Download failed", url,toFile.getAbsolutePath(),exc);
     }
   }
-	
-	
+
+
 }

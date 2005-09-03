@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,8 @@ import javax.swing.JPopupMenu;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.TvDataServiceManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.search.booleansearch.BooleanSearcher;
@@ -306,14 +307,20 @@ public class PluginManagerImpl implements PluginManager {
   /**
    * Gets a TvDataService for a class name.
    *
+   * @deprecated
+   *
    * @param dataServiceClassName the class name of the wanted TvDataService.
    * @return The TvDataService or <code>null</code> if there is no such
    *         TvDataService.
    */
   public TvDataService getDataService(String dataServiceClassName) {
-    return TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+  //  return TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
+    return null; // todo: find a smarter implementation
   }
 
+  public TvDataServiceProxy getDataServiceProxy(String id) {
+    return TvDataServiceProxyManager.getInstance().findDataServiceById(id);
+  }
 
   /**
    * Creates a context menu for the given program containing all plugins.
@@ -437,29 +444,29 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
 
-    if (defaultContextMenuPlugin != null) {
-      ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
-      while (menu != null && menu.hasSubItems()) {
-        ActionMenu[] subItems = menu.getSubItems();
-        if (subItems.length>0) {
-          menu = subItems[0];
-        }
-        else {
-          menu = null;
-        }
-      }
-      if (menu == null) {
-        return;
-      }
 
-      Action action = menu.getAction();
-
-      if (action != null) {
-        ActionEvent evt = new ActionEvent(program, 0, null);
-        action.actionPerformed(evt);
+    ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
+    while (menu != null && menu.hasSubItems()) {
+      ActionMenu[] subItems = menu.getSubItems();
+      if (subItems.length>0) {
+        menu = subItems[0];
       }
-
+      else {
+        menu = null;
+      }
     }
+    if (menu == null) {
+      return;
+    }
+
+    Action action = menu.getAction();
+
+    if (action != null) {
+      ActionEvent evt = new ActionEvent(program, 0, null);
+      action.actionPerformed(evt);
+    }
+
+
   }
 
 
@@ -506,29 +513,27 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
 
-    if (middleClickPlugin != null) {
-      ActionMenu menu = middleClickPlugin.getContextMenuActions(program);
-      while (menu != null && menu.hasSubItems()) {
-        ActionMenu[] subItems = menu.getSubItems();
-        if (subItems.length>0) {
-          menu = subItems[0];
-        }
-        else {
-          menu = null;
-        }
+    ActionMenu menu = middleClickPlugin.getContextMenuActions(program);
+    while (menu != null && menu.hasSubItems()) {
+      ActionMenu[] subItems = menu.getSubItems();
+      if (subItems.length>0) {
+        menu = subItems[0];
       }
-      if (menu == null) {
-        return;
+      else {
+        menu = null;
       }
-
-      Action action = menu.getAction();
-
-      if (action != null) {
-        ActionEvent evt = new ActionEvent(program, 0, null);
-        action.actionPerformed(evt);
-      }
-
     }
+    if (menu == null) {
+      return;
+    }
+
+    Action action = menu.getAction();
+
+    if (action != null) {
+      ActionEvent evt = new ActionEvent(program, 0, null);
+      action.actionPerformed(evt);
+    }
+
   }
 
 

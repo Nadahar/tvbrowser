@@ -32,6 +32,7 @@ import javax.swing.JPopupMenu;
 
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 
 /**
  * The PluginManager provides some usefull methods for a plugin.
@@ -96,8 +97,8 @@ public interface PluginManager {
    *             instead.
    */
   public Program[] search(String regex, boolean inTitle, boolean inText,
-    boolean caseSensitive, Channel[] channels, Date startDate,
-    int nrDays)
+                          boolean caseSensitive, Channel[] channels, Date startDate,
+                          int nrDays)
     throws TvBrowserException;
 
   /**
@@ -121,8 +122,8 @@ public interface PluginManager {
    *             instead.
    */
   public Program[] search(String regex, boolean caseSensitive,
-    ProgramFieldType[] fieldArr, Date startDate, int nrDays, Channel[] channels,
-    boolean sortByStartTime)
+                          ProgramFieldType[] fieldArr, Date startDate, int nrDays, Channel[] channels,
+                          boolean sortByStartTime)
     throws TvBrowserException;
 
 
@@ -139,7 +140,7 @@ public interface PluginManager {
    * @throws TvBrowserException If creating the program searcher failed.
    */
   public ProgramSearcher createProgramSearcher(int type, String searchTerm,
-      boolean caseSensitive)
+                                               boolean caseSensitive)
       throws TvBrowserException;
 
 
@@ -183,11 +184,15 @@ public interface PluginManager {
   /**
    * Gets a TvDataService for a class name.
    *
+   * @deprecated
+   *
    * @param dataServiceClassName the class name of the wanted TvDataService.
    * @return The TvDataService or <code>null</code> if there is no such
    *         TvDataService.
    */
   public TvDataService getDataService(String dataServiceClassName);
+
+  public TvDataServiceProxy getDataServiceProxy(String id);
 
   /**
    * Creates a context menu for the given program containing all plugins.

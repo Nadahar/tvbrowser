@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,8 @@ import javax.swing.*;
 
 import tvdataservice.TvDataService;
 import tvbrowser.core.ChannelUserSettings;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
 import util.ui.ImageUtilities;
 
 public class Channel {
@@ -51,8 +53,11 @@ public class Channel {
   public static final int CATEGORY_SPECIAL_OTHER = 1 << 8;
 
 
-
+  /**
+   * @deprecated
+   */
   private TvDataService mDataService;
+
   private String mName;
   private String mId;
   private TimeZone mTimeZone;
@@ -116,11 +121,11 @@ public class Channel {
   {
     this(dataService, name, name, timeZone, country, copyrightNotice, null);
   }
-  
+
+
   /**
-       * @deprecated
-       */  
-  
+   * @deprecated
+   */
   public Channel(TvDataService dataService, String name, String id,
      TimeZone timeZone, String country)
    {
@@ -128,8 +133,8 @@ public class Channel {
    }
   
   /**
-     * @deprecated
-     */  
+    * @deprecated
+    */
   public Channel(TvDataService dataService, String name, TimeZone timeZone,
       String country)
     {
@@ -259,8 +264,15 @@ public class Channel {
     return ChannelUserSettings.getSettings(this).getDaylightSavingTimeCorrection();
   }
 
+  /**
+   * @deprecated
+   */
   public TvDataService getDataService() {
     return mDataService;
+  }
+
+  public TvDataServiceProxy getDataServiceProxy() {
+    return new DeprecatedTvDataServiceProxy(mDataService);
   }
 
   /**
@@ -323,12 +335,9 @@ public class Channel {
     if ((isUsingUserIcon()) && (mIcon == null) && (getUserIconFileName() != null)) {
       getIcon();
     }
-    
-    if ((mIcon != null) || (mDefaultIcon != null)) {
-      return true;
-    }
-    
-    return false;
+
+    return (mIcon != null) || (mDefaultIcon != null);
+
   }
   
   /**
@@ -384,12 +393,9 @@ public class Channel {
       Channel cmp = (Channel) obj;
       
       if ((cmp.mDataService == null) || (mDataService == null)) {
-        
-          if ((cmp.mDataService == mDataService) && (mId.equals(cmp.mId))) {
-            return true;
-          }
-        
-          return false;
+
+        return (cmp.mDataService == mDataService) && (mId.equals(cmp.mId));
+
       }
       return (mDataService.equals(cmp.mDataService)) && (mId.equals(cmp.mId));
     }
