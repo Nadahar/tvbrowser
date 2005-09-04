@@ -166,7 +166,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 
 
-    mRestoreMI = new JMenuItem("Wiederherstellen");
+    mRestoreMI = new JMenuItem(mLocalizer.msg("menuitem.restore", "Restore"));
     mRestoreMI.addActionListener(this);
     
     mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), new ImageIcon("imgs/Refresh16.gif"));
