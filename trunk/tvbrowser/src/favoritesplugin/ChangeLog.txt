@@ -1,6 +1,10 @@
 Changelog FavoritesPlugin
 
 1.0.8:
+- Bug #1280055: Use certain Channels only used the first Channel
+
+
+1.0.8:
 - new feature: rename favorite
 - new feature: select channels dialog
 
