@@ -119,23 +119,7 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>../runtime/tvbrowser/imgs</string>
-																<key>Path Type</key>
-																<integer>2</integer>
-																<key>Privileges</key>
-																<integer>493</integer>
-																<key>Type</key>
-																<integer>3</integer>
-																<key>UID</key>
-																<integer>0</integer>
-															</dict>
-															<dict>
-																<key>Children</key>
-																<array/>
-																<key>GID</key>
-																<integer>80</integer>
-																<key>Path</key>
-																<string>../runtime/tvbrowser/LICENSE.txt</string>
+																<string>../../runtime/tvbrowser_mac/forum.url</string>
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
@@ -151,7 +135,23 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>../txt/osx.properties</string>
+																<string>../../runtime/tvbrowser_mac/imgs</string>
+																<key>Path Type</key>
+																<integer>2</integer>
+																<key>Privileges</key>
+																<integer>493</integer>
+																<key>Type</key>
+																<integer>3</integer>
+																<key>UID</key>
+																<integer>0</integer>
+															</dict>
+															<dict>
+																<key>Children</key>
+																<array/>
+																<key>GID</key>
+																<integer>80</integer>
+																<key>Path</key>
+																<string>../../runtime/tvbrowser_mac/LICENSE.txt</string>
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
@@ -167,7 +167,23 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>../runtime/tvbrowser/plugins</string>
+																<string>../../runtime/tvbrowser_mac/osx.properties</string>
+																<key>Path Type</key>
+																<integer>2</integer>
+																<key>Privileges</key>
+																<integer>420</integer>
+																<key>Type</key>
+																<integer>3</integer>
+																<key>UID</key>
+																<integer>0</integer>
+															</dict>
+															<dict>
+																<key>Children</key>
+																<array/>
+																<key>GID</key>
+																<integer>80</integer>
+																<key>Path</key>
+																<string>../../runtime/tvbrowser_mac/plugins</string>
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
@@ -183,7 +199,7 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>../runtime/tvbrowser/themepacks</string>
+																<string>../../runtime/tvbrowser_mac/themepacks</string>
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
@@ -199,11 +215,11 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>../runtime/tvbrowser/tvdataservice</string>
+																<string>../../runtime/tvbrowser_mac/website.url</string>
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
-																<integer>493</integer>
+																<integer>420</integer>
 																<key>Type</key>
 																<integer>3</integer>
 																<key>UID</key>
@@ -215,7 +231,7 @@
 																<key>GID</key>
 																<integer>80</integer>
 																<key>Path</key>
-																<string>../runtime/tvbrowser/website.url</string>
+																<string>../../runtime/tvbrowser_mac/wiki.url</string>
 																<key>Path Type</key>
 																<integer>2</integer>
 																<key>Privileges</key>
@@ -667,7 +683,7 @@
 												<key>GID</key>
 												<integer>80</integer>
 												<key>Path</key>
-												<string>../runtime/tvbrowser_mac/TV-Browser.app</string>
+												<string>../../runtime/tvbrowser_mac/TV-Browser.app</string>
 												<key>Path Type</key>
 												<integer>2</integer>
 												<key>Privileges</key>
@@ -1007,9 +1023,9 @@
 									<key>IFPkgDescriptionDescription</key>
 									<string></string>
 									<key>IFPkgDescriptionTitle</key>
-									<string>.app</string>
+									<string>Application</string>
 									<key>IFPkgDescriptionVersion</key>
-									<string>1.0</string>
+									<string>2.0</string>
 								</dict>
 							</dict>
 							<key>Display Information</key>
@@ -1025,7 +1041,7 @@
 								<key>CFBundleName</key>
 								<string>app</string>
 								<key>CFBundleShortVersionString</key>
-								<string>1.0</string>
+								<string>2.0</string>
 							</dict>
 							<key>Options</key>
 							<dict>
@@ -1091,7 +1107,7 @@
 						<key>Mode</key>
 						<integer>1</integer>
 						<key>Path</key>
-						<string>../txt/LICENSE.txt</string>
+						<string>txt/LICENSE.txt</string>
 						<key>Path Type</key>
 						<integer>2</integer>
 					</dict>
