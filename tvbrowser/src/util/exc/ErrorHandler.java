@@ -159,7 +159,7 @@ public class ErrorHandler {
       boolean useFrame = (root == null) || (! root.isVisible());
       if (useFrame) {
         mFrame = new JFrame();
-        Image iconImage = ImageUtilities.createImage("imgs/tvbrowser16.gif");
+        Image iconImage = ImageUtilities.createImage("imgs/tvbrowser16.png");
         mFrame.setIconImage(iconImage);
       } else {
         mDialog = UiUtilities.createDialog(mParent, true);
