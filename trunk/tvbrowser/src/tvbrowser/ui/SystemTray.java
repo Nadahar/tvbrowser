@@ -96,7 +96,7 @@ public class SystemTray {
     if (mSystemTray != null) {
 
       if (mSystemTray instanceof WinSystemTray) {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/TVBrowser.ico", TVBrowser.MAINWINDOW_TITLE);
+        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/systray.ico", TVBrowser.MAINWINDOW_TITLE);
         mLog.info("using windows system tray");
       } else {
         mUseSystemTray = mSystemTray.init(MainFrame.getInstance(), "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
