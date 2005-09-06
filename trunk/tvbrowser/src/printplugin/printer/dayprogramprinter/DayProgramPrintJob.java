@@ -28,7 +28,6 @@ package printplugin.printer.dayprogramprinter;
 
 
 import printplugin.settings.ProgramIconSettings;
-import printplugin.settings.PrinterProgramIconSettings;
 import printplugin.settings.DayProgramPrinterSettings;
 import printplugin.printer.*;
 
@@ -46,15 +45,13 @@ import java.awt.*;
 public class DayProgramPrintJob extends AbstractPrintJob {
 
   private DayProgramPrinterSettings mSettings;
-  private PageFormat mPageFormat;
 
   private static final Font HEADER_FONT = new Font("Dialog",Font.BOLD,24);
   private static final Font FOOTER_FONT = new Font("Dialog",Font.ITALIC,6);
 
   public DayProgramPrintJob(PageModel[] pageModelArr, DayProgramPrinterSettings settings, PageFormat pageFormat) {
-    super(pageModelArr);
+    super(pageModelArr, pageFormat);
     mSettings = settings;
-    mPageFormat = pageFormat;
   }
 
   protected Page[] createPages(PageModel pageModel) {
@@ -83,7 +80,7 @@ public class DayProgramPrintJob extends AbstractPrintJob {
       }
 
       ColumnModel[] cols=getColumns(pageModel, fromInx, inxCnt);
-      result[i]=new ChannelPage(cols, mPageFormat, mSettings.getColumnCount(), mSettings.getChannelsPerColumn(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), mSettings.getProgramIconSettings()/*PrinterProgramIconSettings.create()*/);
+      result[i]=new ChannelPage(cols, getPageFormat(), mSettings.getColumnCount(), mSettings.getChannelsPerColumn(), pageModel.getHeader(), pageModel.getFooter(), mSettings.getDayStartHour(), mSettings.getDayEndHour(), mSettings.getProgramIconSettings()/*PrinterProgramIconSettings.create()*/);
     }
 
     return result;

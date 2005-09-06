@@ -40,10 +40,15 @@ public abstract class AbstractPrintJob implements PrintJob {
 
   private Page[] mPages;
   private PageModel[] mPageModelArr;
+  private PageFormat mPageFormat;
 
-
-  protected AbstractPrintJob(PageModel[] pageModelArr) {
+  protected AbstractPrintJob(PageModel[] pageModelArr, PageFormat pageFormat) {
     mPageModelArr = pageModelArr;
+    mPageFormat = pageFormat;
+  }
+
+  public PageFormat getPageFormat() {
+    return mPageFormat;
   }
 
   private void prepare() {

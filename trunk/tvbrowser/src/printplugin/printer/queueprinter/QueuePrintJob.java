@@ -44,26 +44,24 @@ public class QueuePrintJob extends AbstractPrintJob {
   private static final int FOOTER_SPACE=10;
 
   private QueuePrinterSettings mSettings;
-  private PageFormat mPageFormat;
   private String mFooterString;
 
   public QueuePrintJob(PageModel pageModel, QueuePrinterSettings settings, PageFormat pageFormat) {
-    super(new PageModel[]{pageModel});
+    super(new PageModel[]{pageModel}, pageFormat);
     mSettings = settings;
-    mPageFormat = pageFormat;
     mFooterString = pageModel.getFooter();
   }
 
   protected Page[] createPages(PageModel pageModel) {
     ArrayList pages = new ArrayList();
-    QueuePage currentPage=new QueuePage(mSettings, mPageFormat);
+    QueuePage currentPage=new QueuePage(mSettings, getPageFormat());
     pages.add(currentPage);
     for (int i=0; i<pageModel.getColumnCount(); i++) {
       ColumnModel column = pageModel.getColumnAt(i);
       for (int k=0; k<column.getProgramCount();k++) {
         Program program = column.getProgramAt(k);
         if (!currentPage.addProgram(program)) {
-          currentPage = new QueuePage(mSettings, mPageFormat);
+          currentPage = new QueuePage(mSettings, getPageFormat());
           pages.add(currentPage);
           currentPage.addProgram(program, true);
         }

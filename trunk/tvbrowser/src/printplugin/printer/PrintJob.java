@@ -27,11 +27,14 @@
 package printplugin.printer;
 
 import java.awt.print.Printable;
+import java.awt.print.PageFormat;
 
-public interface PrintJob {  
+public interface PrintJob {
 
   public int getNumOfPages();
 
   public Printable getPrintable();
+
+  public PageFormat getPageFormat();
 
 }
