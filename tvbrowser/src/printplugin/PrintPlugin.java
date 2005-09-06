@@ -174,7 +174,7 @@ public class PrintPlugin extends Plugin {
     if (settingsDialog.getResult() == SettingsDialog.OK) {
       PrintJob job = settingsDialog.getPrintJob();
       try {
-        printerJob.setPrintable(job.getPrintable());
+        printerJob.setPrintable(job.getPrintable(), job.getPageFormat());
         printerJob.print();
         settingsDialog.printingDone();
       } catch (PrinterException e) {

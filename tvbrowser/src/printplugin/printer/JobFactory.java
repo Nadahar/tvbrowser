@@ -46,7 +46,7 @@ public class JobFactory {
 
   public static PrintJob createPrintJob(QueuePrinterSettings settings, PageFormat pageFormat, Program[] programs) {
     if (programs.length == 0) {
-      return createEmptyJob();
+      return createEmptyJob(pageFormat);
     }
     PageModel pageModel = createPage(programs);
     PrintJob job = new QueuePrintJob(pageModel, settings, pageFormat);
@@ -145,7 +145,7 @@ public class JobFactory {
     }
   }
 
-  private static PrintJob createEmptyJob() {
+  private static PrintJob createEmptyJob(final PageFormat format) {
     return new PrintJob() {
       public Printable getPrintable() {
         return new Printable(){
@@ -156,6 +156,10 @@ public class JobFactory {
       }
       public int getNumOfPages() {
         return 0;
+      }
+
+      public PageFormat getPageFormat() {
+        return format;
       }
     };
   }
