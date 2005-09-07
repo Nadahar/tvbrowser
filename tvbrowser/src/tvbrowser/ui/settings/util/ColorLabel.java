@@ -27,6 +27,9 @@
 package tvbrowser.ui.settings.util;
 
 import javax.swing.*;
+
+import util.settings.ColorProperty;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -38,11 +41,12 @@ import java.awt.image.BufferedImage;
 
 public class ColorLabel extends JLabel {
 
-  private Color mColor;
+  private Color mColor,mStandardColor;
 
   public ColorLabel(Color color) {
     super();
-    setColor(color);
+    mStandardColor = null;
+    setColor(color);    
   }
 
   public void setColor(Color color) {
@@ -52,6 +56,22 @@ public class ColorLabel extends JLabel {
 
   public Color getColor() {
     return mColor;
+  }
+  
+  /**
+   * Returns the standard color of this label
+   * @return Color
+   */
+  public Color getStandardColor() {
+    return mStandardColor;
+  }
+  
+  /**
+   * Sets the standard color of this label
+   * @param color Standard color
+   */
+  public void setStandardColor(Color color) {
+    mStandardColor = color;
   }
 
   private Icon createIcon() {

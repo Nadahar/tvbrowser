@@ -53,6 +53,14 @@ public final class ColorProperty extends Property {
     }
 
     /**
+     * Returns the standard color in this Property
+     * @return Color
+     */
+    public Color getDefaultColor() {
+      return mDefaultColor;
+    }
+    
+    /**
      * Returns the Color in this Property
      * @return Color
      */
