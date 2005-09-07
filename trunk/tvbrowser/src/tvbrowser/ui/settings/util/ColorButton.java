@@ -51,7 +51,7 @@ public class ColorButton extends JButton {
     addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Color newColor = AlphaColorChooser.showDialog(UiUtilities.getBestDialogParent(getParent()),
-                mLocalizer.msg("ChooseColor", "Please choose the Color"), lb.getColor());
+                mLocalizer.msg("ChooseColor", "Please choose the Color"), lb.getColor(), lb.getStandardColor());
         lb.setColor(newColor);
 
       }

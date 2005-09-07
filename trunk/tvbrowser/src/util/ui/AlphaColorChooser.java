@@ -30,7 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,6 +38,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -84,11 +85,18 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
      * The default color
      */
     private Color mDefaultColor;
+    
+    /**
+     * The standard color
+     */
+    private Color mStandardColor;
 
     /**
      * Return-Value (JOptionPane.CANCEL_OPTION / OK_OPTION)
      */
     private int mReturnValue = JOptionPane.CANCEL_OPTION;
+    
+
 
     /**
      * Creates the Dialog
@@ -96,9 +104,11 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
      * @param parent Parent-Dialog
      * @param title Title
      * @param color Color to start with
+     * @param stdColor The standard color
      */
-    public AlphaColorChooser(JDialog parent, String title, Color color) {
+    public AlphaColorChooser(JDialog parent, String title, Color color, Color stdColor) {
         super(parent, title, true);
+        mStandardColor = stdColor;
         createGui();
         mDefaultColor = color;
         setColor(color);
@@ -110,14 +120,16 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
      * @param parent Parent-Frame
      * @param title Title
      * @param color Color to start with
+     * @param stdColor The standard color
      */
-    public AlphaColorChooser(JFrame parent, String title, Color color) {
+    public AlphaColorChooser(JFrame parent, String title, Color color, Color stdColor) {
         super(parent, title, true);
+        mStandardColor = stdColor;
         createGui();
-        mDefaultColor = color;
+        mDefaultColor = color;        
         setColor(color);
     }
-
+    
     /**
      * Create the GUI
      */
@@ -182,14 +194,15 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         c.insets = new Insets(5, 0, 0, 0);
         c.gridwidth = GridBagConstraints.REMAINDER;
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.X_AXIS));
         JButton ok = new JButton(mLocalizer.msg("OK","OK"));
         JButton cancel = new JButton(mLocalizer.msg("Cancel","Cancel"));
-
+        cancel.setPreferredSize(new Dimension(color.getPreferredSize().width-3,0));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0,3,0,5));
         ok.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
+          public void actionPerformed(ActionEvent e) {
                 stopEditing();
                 updateColorPanel();
                 mReturnValue = JOptionPane.OK_OPTION;
@@ -208,7 +221,22 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
             }
 
         });
+        
+        if(mStandardColor != null) {
+          JButton def = new JButton("Default");
+          def.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              setColor(mStandardColor);
+              mCurrentColor = mStandardColor;
+            }        
+          });        
+          buttonPanel.add(def);         
+        }
+        
+        buttonPanel.add(Box.createHorizontalGlue());
+        
         buttonPanel.add(ok);
+        buttonPanel.add(Box.createRigidArea(new Dimension(3,0)));
         buttonPanel.add(cancel);
 
         panel.add(buttonPanel, c);
@@ -250,18 +278,19 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
      * @param parent Parent-Dialog or Frame
      * @param title Title of the Dialog
      * @param color Color to start with
+     * @param stdColor The standard color.
      * @return Selected Color
      */
-    public static Color showDialog(Component parent, String title, Color color) {
+    public static Color showDialog(Component parent, String title, Color color, Color stdColor) {
 
-        AlphaColorChooser chooser;
+        AlphaColorChooser chooser;        
 
         if (parent instanceof JFrame) {
-            chooser = new AlphaColorChooser((JFrame) parent, title, color);
+            chooser = new AlphaColorChooser((JFrame) parent, title, color, stdColor);
         } else if (parent instanceof JDialog) {
-            chooser = new AlphaColorChooser((JDialog) parent, title, color);
+            chooser = new AlphaColorChooser((JDialog) parent, title, color, stdColor);
         } else {
-            chooser = new AlphaColorChooser((JFrame) null, title, color);
+            chooser = new AlphaColorChooser((JFrame) null, title, color, stdColor);
         }
 
         UiUtilities.centerAndShow(chooser);

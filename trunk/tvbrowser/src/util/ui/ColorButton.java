@@ -36,6 +36,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import util.settings.ColorProperty;
+
 /**
  * This is a Button that allows the selection of a Color
  */
@@ -47,6 +49,9 @@ public class ColorButton extends JButton implements ActionListener{
     /** Color */
     private Color mColor;
     
+    /** Standard color*/
+    private Color mStandardColor;
+    
     /**
      * Creates the Button.
      * Default Color is BLACK
@@ -54,10 +59,10 @@ public class ColorButton extends JButton implements ActionListener{
     public ColorButton() {
         super();
         mColor = Color.BLACK;
+        mStandardColor = null;
         updateIcon();
         addActionListener(this);
     }
-
 
     /**
      * Creates the Button with a certain color
@@ -66,6 +71,7 @@ public class ColorButton extends JButton implements ActionListener{
     public ColorButton(Color color) {
         super();
         mColor = color;
+        mStandardColor = null;
         updateIcon();
         addActionListener(this);
     }
@@ -95,13 +101,22 @@ public class ColorButton extends JButton implements ActionListener{
         
         return icon;
     }
+    
+    /**
+     * Sets the standard color.
+     * @param color The standard color.
+     */
+    public void setStandardColor(Color color) {
+      mStandardColor = color;
+    }
 
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
         mColor = AlphaColorChooser.showDialog(UiUtilities.getBestDialogParent(getParent()),
-                mLocalizer.msg("ChooseColor", "Please choose the Color"), mColor);
+                mLocalizer.msg("ChooseColor", "Please choose the Color"), mColor, mStandardColor);
+        
         updateIcon();
     }
     

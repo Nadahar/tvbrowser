@@ -267,8 +267,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
 
     mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
+    mMouseOverColorLb.setStandardColor(Settings.propMouseOverColor.getDefaultColor());
     mMouseOverColorLb.setEnabled(Settings.propMouseOver.getBoolean());
-    final ColorButton mouseOverColorChangeBtn = new ColorButton(mMouseOverColorLb);
+    final ColorButton mouseOverColorChangeBtn = new ColorButton(mMouseOverColorLb);    
     final JLabel colorLb = new JLabel(mLocalizer.msg("color","Color:"));
     mouseOverColorChangeBtn.setEnabled(Settings.propMouseOver.getBoolean());
     colorLb.setEnabled(Settings.propMouseOver.getBoolean());
