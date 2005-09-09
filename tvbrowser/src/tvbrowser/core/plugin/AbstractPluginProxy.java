@@ -30,6 +30,7 @@ import java.io.File;
 
 import javax.swing.Icon;
 
+import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ActionMenu;
@@ -45,27 +46,25 @@ import devplugin.Program;
  * <ul>
  * <li>All RuntimeExceptions thrown by the plugin are catched</li>
  * <li>An error message will be shown, if an operation is called on an inactive
- *     plugin that is only allowed with active plugins.</li>
+ * plugin that is only allowed with active plugins.</li>
  * </ul>
- *
+ * 
  * @author Til Schneider, www.murfman.de
  */
 public abstract class AbstractPluginProxy implements PluginProxy {
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(AbstractPluginProxy.class);
-  
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(AbstractPluginProxy.class);
+
   /**
    * Holds whether the plugin is currently activated.
    * <p>
-   * The {@link PluginProxyManager} holds the real state of each plugin.
-   * This variable is only for speeding up the activated test.
+   * The {@link PluginProxyManager} holds the real state of each plugin. This
+   * variable is only for speeding up the activated test.
    * 
    * @see #assertActivatedState()
    */
   private boolean mIsActivated = false;
-
 
   /**
    * Gets whether the plugin is currently activated.
@@ -78,11 +77,10 @@ public abstract class AbstractPluginProxy implements PluginProxy {
     return mIsActivated;
   }
 
-
   /**
    * Sets whether the plugin is currently activated.
    * <p>
-   * This method may only be called by the {@link PluginProxyManager} (that's 
+   * This method may only be called by the {@link PluginProxyManager} (that's
    * why it is package private).
    * 
    * @param activated Whether the plugin is currently activated.
@@ -92,16 +90,14 @@ public abstract class AbstractPluginProxy implements PluginProxy {
   final void setActivated(boolean activated) {
     mIsActivated = activated;
   }
-  
-  
+
   /**
    * Sets the parent frame to the plugin.
    * 
    * @param parent The parent frame to set.
    */
   abstract void setParentFrame(Frame parent);
-  
-  
+
   /**
    * Loads the settings for this plugin.
    * 
@@ -111,15 +107,13 @@ public abstract class AbstractPluginProxy implements PluginProxy {
   final void loadSettings(File userDirectory) throws TvBrowserException {
     try {
       doLoadSettings(userDirectory);
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
       throw new TvBrowserException(AbstractPluginProxy.class,
-        "error.loading.runtimeException",
-        "The plugin {0} caused an error when loading the plugin settings.",
-        getInfo().getName(), exc);
+
+      "error.loading.runtimeException", "The plugin {0} caused an error when loading the plugin settings.", getInfo()
+          .getName(), exc);
     }
   }
-
 
   /**
    * Really loads the settings for this plugin.
@@ -127,9 +121,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If loading failed.
    */
-  protected abstract void doLoadSettings(File userDirectory)
-    throws TvBrowserException;
-
+  protected abstract void doLoadSettings(File userDirectory) throws TvBrowserException;
 
   /**
    * Saves the settings for this plugin.
@@ -139,25 +131,19 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    */
   final void saveSettings(File userDirectory) throws TvBrowserException {
     // Check whether the plugin is activated
-    if (! mIsActivated) {
-      throw new TvBrowserException(AbstractPluginProxy.class,
-        "error.saving.notActivated",
-        "The plugin {0} can't save its settings, because it is not activated.",
-        getInfo().getName());
+    if (!mIsActivated) {
+      throw new TvBrowserException(AbstractPluginProxy.class, "error.saving.notActivated",
+          "The plugin {0} can't save its settings, because it is not activated.", getInfo().getName());
     }
-    
+
     // Try to save the settings
     try {
       doSaveSettings(userDirectory);
-    }
-    catch (Throwable t) {
-      throw new TvBrowserException(AbstractPluginProxy.class,
-        "error.saving.runtimeException",
-        "The plugin {0} caused an error when saving the plugin settings.",
-        getInfo().getName(), t);
+    } catch (Throwable t) {
+      throw new TvBrowserException(AbstractPluginProxy.class, "error.saving.runtimeException",
+          "The plugin {0} caused an error when saving the plugin settings.", getInfo().getName(), t);
     }
   }
-
 
   /**
    * Really saves the settings for this plugin.
@@ -165,9 +151,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
-  protected abstract void doSaveSettings(File userDirectory)
-    throws TvBrowserException;
-  
+  protected abstract void doSaveSettings(File userDirectory) throws TvBrowserException;
 
   /**
    * Gets the meta information about the plugin.
@@ -177,19 +161,17 @@ public abstract class AbstractPluginProxy implements PluginProxy {
   public final PluginInfo getInfo() {
     try {
       return doGetInfo();
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
       // NOTE: In this case we can't use the handleError method because this
-      //       would cause a cyclic calling.
-      
-      String msg = mLocalizer.msg("error.getInfo", "The plugin {0} caused an " +
-          "error when getting the plugin information.", getClass().getName());
+      // would cause a cyclic calling.
+
+      String msg = mLocalizer.msg("error.getInfo", "The plugin {0} caused an "
+          + "error when getting the plugin information.", getClass().getName());
       ErrorHandler.handle(msg, exc);
-      
+
       return new PluginInfo();
     }
   }
-
 
   /**
    * Really gets the meta information about the plugin.
@@ -197,7 +179,6 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @return The meta information about the plugin.
    */
   protected abstract PluginInfo doGetInfo();
-
 
   /**
    * Gets whether the plugin supports receiving programs from other plugins.
@@ -208,13 +189,11 @@ public abstract class AbstractPluginProxy implements PluginProxy {
   public final boolean canReceivePrograms() {
     try {
       return doCanReceivePrograms();
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
       handlePluginException(exc);
       return false;
     }
   }
-
 
   /**
    * Really gets whether the plugin supports receiving programs from other
@@ -224,7 +203,6 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @see #receivePrograms(Program[])
    */
   protected abstract boolean doCanReceivePrograms();
-
 
   /**
    * Receives a list of programs from another plugin.
@@ -236,12 +214,10 @@ public abstract class AbstractPluginProxy implements PluginProxy {
     try {
       assertActivatedState();
       doReceivePrograms(programArr);
-    }
-    catch (Exception exc) {
+    } catch (Exception exc) {
       handlePluginException(exc);
     }
   }
-
 
   /**
    * Really receives a list of programs from another plugin.
@@ -251,34 +227,30 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    */
   protected abstract void doReceivePrograms(Program[] programArr);
 
-
   /**
    * Gets the SettingsTab object, which is added to the settings-window.
    * 
-   * @return the SettingsTab object or <code>null</code> if the plugin does not
-   *         provide this feature.
+   * @return the SettingsTab object or <code>null</code> if the plugin does
+   *         not provide this feature.
    */
   public final SettingsTabProxy getSettingsTab() {
     try {
       assertActivatedState();
       return doGetSettingsTab();
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       handlePluginException(t);
       return null;
     }
   }
 
-
   /**
    * Rally gets the SettingsTab object, which is added to the settings-window.
    * 
-   * @return the SettingsTab object or <code>null</code> if the plugin does not
-   *         provide this feature.
+   * @return the SettingsTab object or <code>null</code> if the plugin does
+   *         not provide this feature.
    */
   protected abstract SettingsTabProxy doGetSettingsTab();
 
-  
   /**
    * Gets the actions for the context menu of a program.
    * 
@@ -288,15 +260,19 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    */
   public final ActionMenu getContextMenuActions(Program program) {
     try {
-      return goGetContextMenuActions(program);
-    }
-    catch (RuntimeException exc) {
+      ActionMenu menu = goGetContextMenuActions(program);
+
+      if (menu != null) {
+        return new ActionMenuProxy(this, menu);
+      } else {
+        return null;
+      }
+    } catch (RuntimeException exc) {
       handlePluginException(exc);
       return null;
     }
   }
 
-  
   /**
    * Really gets the actions for the context menu of a program.
    * 
@@ -308,35 +284,37 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    */
   protected abstract ActionMenu goGetContextMenuActions(Program program);
 
-  
   /**
    * Gets the action to use for the main menu and the toolbar.
-   *
+   * 
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
    */
   public final ActionMenu getButtonAction() {
     try {
-      return doGetButtonAction();
-    }
-    catch (RuntimeException exc) {
+      ActionMenu menu = doGetButtonAction();
+
+      if (menu != null) {
+        return new ActionMenuProxy(this, menu);
+      } else {
+        return null;
+      }
+    } catch (RuntimeException exc) {
       handlePluginException(exc);
       return null;
     }
   }
 
-  
   /**
    * Really gets the action to use for the main menu and the toolbar.
-   *
+   * 
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
    * 
    * @see #getButtonAction()
    */
   protected abstract ActionMenu doGetButtonAction();
-  
-  
+
   /**
    * Gets the icon to use for marking programs in the program table.
    * 
@@ -345,22 +323,19 @@ public abstract class AbstractPluginProxy implements PluginProxy {
   public final Icon getMarkIcon() {
     try {
       return doGetMarkIcon();
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
       handlePluginException(exc);
       return null;
     }
   }
 
-  
   /**
    * Really gets the icon to use for marking programs in the program table.
    * 
    * @return the icon to use for marking programs in the program table.
    */
   protected abstract Icon doGetMarkIcon();
-  
-  
+
   /**
    * Gets the description text for the program table icons provided by this
    * Plugin.
@@ -369,20 +344,18 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * 
    * @return The description text for the program table icons or
    *         <code>null</code> if the plugin does not provide this feature.
-   *
+   * 
    * @see #getProgramTableIcons(Program)
    */
   public final String getProgramTableIconText() {
     try {
       return doGetProgramTableIconText();
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
       handlePluginException(exc);
       return null;
     }
   }
 
-  
   /**
    * Gets the description text for the program table icons provided by this
    * Plugin.
@@ -391,11 +364,10 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * 
    * @return The description text for the program table icons or
    *         <code>null</code> if the plugin does not provide this feature.
-   *
+   * 
    * @see #getProgramTableIcons(Program)
    */
   protected abstract String doGetProgramTableIconText();
-
 
   /**
    * Gets the icons this Plugin provides for the given program. These icons will
@@ -405,20 +377,18 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * 
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
-   *
+   * 
    * @see #getProgramTableIconText()
    */
   public final Icon[] getProgramTableIcons(Program program) {
     try {
       assertActivatedState();
       return doGetProgramTableIcons(program);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       handlePluginException(t);
       return null;
     }
   }
-
 
   /**
    * Really gets the icons this Plugin provides for the given program. These
@@ -428,11 +398,10 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * 
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
-   *
+   * 
    * @see #getProgramTableIconText()
    */
   protected abstract Icon[] doGetProgramTableIcons(Program program);
-
 
   /**
    * This method is automatically called, when the TV data update is finished.
@@ -444,13 +413,11 @@ public abstract class AbstractPluginProxy implements PluginProxy {
     try {
       assertActivatedState();
       doHandleTvDataUpdateFinished();
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       handlePluginException(t);
     }
   }
 
-  
   /**
    * This method is automatically called, when the TV data update is finished.
    * 
@@ -459,10 +426,9 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    */
   protected abstract void doHandleTvDataUpdateFinished();
 
-
   /**
-   * This method is automatically called, when TV data was added.
-   * (E.g. after an update).
+   * This method is automatically called, when TV data was added. (E.g. after an
+   * update).
    * <p>
    * The TV data may be modified by the plugin! So this method must be called
    * before new TV data is saved.
@@ -475,16 +441,14 @@ public abstract class AbstractPluginProxy implements PluginProxy {
     try {
       assertActivatedState();
       doHandleTvDataAdded(newProg);
-    }
-    catch (Throwable t) {
+    } catch (Throwable t) {
       handlePluginException(t);
     }
   }
 
-  
   /**
-   * This method is automatically called, when TV data was added.
-   * (E.g. after an update).
+   * This method is automatically called, when TV data was added. (E.g. after an
+   * update).
    * <p>
    * The TV data may be modified by the plugin! So this method must be called
    * before new TV data is saved.
@@ -494,11 +458,10 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @see #handleTvDataUpdateFinished()
    */
   protected abstract void doHandleTvDataAdded(ChannelDayProgram newProg);
-  
-  
+
   /**
-   * This method is automatically called, when TV data was deleted.
-   * (E.g. after an update).
+   * This method is automatically called, when TV data was deleted. (E.g. after
+   * an update).
    * 
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
@@ -508,16 +471,14 @@ public abstract class AbstractPluginProxy implements PluginProxy {
     try {
       assertActivatedState();
       doHandleTvDataDeleted(oldProg);
-    }
-    catch (Exception exc) {
+    } catch (Exception exc) {
       handlePluginException(exc);
     }
   }
 
-  
   /**
-   * This method is automatically called, when TV data was deleted.
-   * (E.g. after an update).
+   * This method is automatically called, when TV data was deleted. (E.g. after
+   * an update).
    * 
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
@@ -525,71 +486,70 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    */
   protected abstract void doHandleTvDataDeleted(ChannelDayProgram oldProg);
 
-  
   public void onActivation() {
     try {
       doOnActivation();
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
       handlePluginException(exc);
     }
   }
-  
-  
+
   protected abstract void doOnActivation();
-  
 
   public void onDeactivation() {
     try {
       doOnDeactivation();
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
+      System.out.println("ON DEACTIVATOIN");
       handlePluginException(exc);
     }
   }
 
-  
   protected abstract void doOnDeactivation();
 
-  
   public boolean canUseProgramTree() {
     try {
       return doCanUseProgramTree();
-    }
-    catch (RuntimeException exc) {
+    } catch (RuntimeException exc) {
       handlePluginException(exc);
       return false;
     }
   }
 
-  
   protected abstract boolean doCanUseProgramTree();
-  
 
   /**
    * Gets the name of the plugin.
    * <p>
    * This way Plugin objects may be used directly in GUI components like JLists.
-   *
+   * 
    * @return the name of the plugin.
    */
   final public String toString() {
     return getInfo().getName();
   }
 
-
   /**
-   * Hanles a runtime exception that was caused by the plugin.
+   * Handles a runtime exception that was caused by the plugin.
    * 
    * @param t The exception to handle
    */
-  protected void handlePluginException(Throwable t) {
-    String msg = mLocalizer.msg("error.runtimeException",
-      "The plugin {0} caused an error.",
-      getInfo().getName());
-    ErrorHandler.handle(msg, t);
-  }
+  public void handlePluginException(Throwable t) {
+    String msg = mLocalizer.msg("error.runtimeExceptionAskDeactivation",
+        "The plugin {0} caused an error. Should it be deactivaded?", getInfo().getName());
 
+    if (ErrorHandler.handle(msg, t, ErrorHandler.SHOW_YES_NO) == ErrorHandler.YES_PRESSED) {
+      try {
+        // Deactivate Plugin
+        PluginProxyManager.getInstance().deactivatePlugin(this);
+      } catch (Throwable e) {
+      }
+
+      // Update the settings
+      String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
+      Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
+    }
+  }
 
   /**
    * Checks whether the plugin is activated. If it is not an error message is
@@ -598,11 +558,11 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @throws TvBrowserException If the plugin is not activated
    */
   protected void assertActivatedState() throws TvBrowserException {
-    if (! isActivated()) {
+    if (!isActivated()) {
       throw new TvBrowserException(AbstractPluginProxy.class, "error.notActive",
-        "It was attempted to call an operation of the inactive plugin {0} that "
-        + "may only be called on activated plugins.", getInfo().getName());
+          "It was attempted to call an operation of the inactive plugin {0} that "
+              + "may only be called on activated plugins.", getInfo().getName());
     }
   }
-  
+
 }

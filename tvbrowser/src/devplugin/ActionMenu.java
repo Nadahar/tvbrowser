@@ -83,6 +83,15 @@ public class ActionMenu {
     this(action, false);
   }
 
+  /**
+   * Clone an existing ActionMenu
+   * @param actionMenu clone this ActionMenu
+   */
+  public ActionMenu(ActionMenu actionMenu) {
+    this(actionMenu.getAction(), actionMenu.getSubItems());
+    mIsSelected = actionMenu.isSelected();
+  }
+
   public String getTitle() {
     return mAction.getValue(Action.NAME).toString();
   }
