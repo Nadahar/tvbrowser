@@ -29,6 +29,7 @@ package tvbrowser.ui.mainframe.toolbar;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
+import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import tvbrowser.core.Settings;
 
 import java.awt.event.ActionEvent;
@@ -58,11 +59,12 @@ public class ContextMenu {
 
   private void update() {
     mMenu.removeAll();
-    mMenu.add(createButtonSizeMenuItem());
+  /*  mMenu.add(createButtonSizeMenuItem());
     mMenu.add(createViewMenu());
     mMenu.add(createLocationMenu());
-    mMenu.addSeparator();
-    mMenu.add(createConfigureItem());
+    mMenu.addSeparator();*/
+    if(ToolBarDragAndDropSettings.getInstance() == null)
+      mMenu.add(createConfigureItem());
   }
 
 
@@ -166,7 +168,8 @@ public class ContextMenu {
     JMenuItem item = new JMenuItem(mLocalizer.msg("configure","Configure")+"...");
     item.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_TOOLBAR);
+        //MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_TOOLBAR);
+        new ToolBarDragAndDropSettings();
       }
     });
     return item;

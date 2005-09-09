@@ -27,29 +27,35 @@
 package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.border.CompoundBorder;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 
 public class ToolBar extends JToolBar {
-
-
-
 
   public static final String ACTION_VALUE = "ActionValue";
   public static final String ACTION_TYPE_KEY = "ActionType";
@@ -65,7 +71,6 @@ public class ToolBar extends JToolBar {
 
   private static Insets NULL_INSETS = new Insets(0, 0, 0, 0);
   private static Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
-
 
 
   private ToolBarModel mModel;
@@ -96,6 +101,7 @@ public class ToolBar extends JToolBar {
       }  
       
     });
+    
   }
 
 
@@ -122,11 +128,47 @@ public class ToolBar extends JToolBar {
 
     }
 
-
     updateUI();
   }
 
+    /**
+     * Set up the ToolBar for Drag'n'Drop.
+     * @param s The Drag'n'Drop Class.
+     * @param west The toolbar is shown in the west.
+     */     
+  public void disableForDragAndDrop(ToolBarDragAndDropSettings s,
+      boolean west) {
+    
+      /* If the ToolBar is empty set the size for
+       * better dopping the first ActionButton */
+    if(this.getComponentCount() == 0)
+      if(!west)
+        this.setPreferredSize(new Dimension(this.getWidth(),15));
+      else
+        this.setPreferredSize(new Dimension(15,this.getHeight()));
 
+    this.updateUI();
+    
+    int x = this.getComponentCount();
+    
+      /* Prepare all ToolBar buttons for Drag'n'Drop*/
+    for(int i = 0; i < x; i++) {
+      this.getComponent(i).addMouseMotionListener(s);
+      (new DragSource()).createDefaultDragGestureRecognizer(this.getComponent(i),DnDConstants.ACTION_MOVE,s);
+      if(this.getComponent(i) instanceof AbstractButton) {
+        AbstractButton b = (AbstractButton)this.getComponent(i);
+        b.setDisabledIcon(b.getIcon());      
+
+        if(west)
+          b.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(1,0,0,0),BorderFactory.createEmptyBorder(1,1,1,1)));
+        else
+          b.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(0,1,0,0),BorderFactory.createEmptyBorder(1,1,1,1)));
+ 
+        b.setToolTipText("");
+       b.setEnabled(false);
+      }
+    }    
+  }
 
   private void addToggleButton(Action action) {
     final JToggleButton button = new JToggleButton(action);
