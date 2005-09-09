@@ -136,7 +136,6 @@ public class ToolBarDragAndDropSettings extends JFrame implements
     pane.setAlignmentX(JScrollPane.LEFT_ALIGNMENT);
     pane.getVerticalScrollBar().setUnitIncrement(73);
     pane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     
       // Initialize the Panel for selecting toolBars visibility
     JPanel tVisPanel = new JPanel();
@@ -225,7 +224,6 @@ public class ToolBarDragAndDropSettings extends JFrame implements
 
       // Set up the windows attributes
     this.setSize(630, 400);
-    this.setResizable(false);
     this.addWindowListener(this);
     this.setTitle("Werkzeugleiste anpassen");
     this.setLocationRelativeTo(MainFrame.getInstance());
@@ -249,7 +247,7 @@ public class ToolBarDragAndDropSettings extends JFrame implements
     int n = this.mAvailableActions.size() / 4;
     if (this.mAvailableActions.size() % 4 != 0)
       n++;
-    mButtonPanel.setPreferredSize(new Dimension(0, n * 73));
+    mButtonPanel.setPreferredSize(new Dimension(570, n * 73));
 
      // Add all availableActions to the buttonPanel
     for (int i = 0; i < this.mAvailableActions.size(); i++) {
