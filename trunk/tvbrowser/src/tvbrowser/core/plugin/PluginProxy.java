@@ -29,7 +29,6 @@ import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
 import devplugin.PluginTreeNode;
-import devplugin.SettingsTab;
 
 /**
  * Encapsulates a plugin and manages the access to it.
@@ -125,4 +124,11 @@ public interface PluginProxy extends PluginAccess {
 
   public PluginTreeNode getRootNode();
   
+  /**
+   * Handles a runtime exception that was caused by the plugin.
+   * 
+   * @param t The exception to handle
+   * @since 2.1
+   */
+  public void handlePluginException(Throwable t);
 }
