@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -53,6 +54,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -641,8 +644,30 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     for (int i=0;i<o.length;i++) {
       channelList[i]=(Channel)o[i];
     }
-    ChannelConfigDlg dlg=new ChannelConfigDlg(mSubscribedChannels,mLocalizer.msg("configSelectedChannels","Configure selected channels"),channelList);
-    dlg.centerAndShow();
+    
+    if (channelList.length == 1) {
+      ChannelConfigDlg dialog;
+      
+      Window w = UiUtilities.getBestDialogParent(mAllChannels);
+      if (w instanceof JDialog) {
+        dialog = new ChannelConfigDlg((JDialog)w, channelList[0]);
+      } else {
+        dialog = new ChannelConfigDlg((JFrame)w, channelList[0]);
+      }
+      dialog.centerAndShow();
+    } else if (channelList.length > 1) {
+      MultiChannelConfigDlg dialog;
+      
+      Window w = UiUtilities.getBestDialogParent(mAllChannels);
+      if (w instanceof JDialog) {
+        dialog = new MultiChannelConfigDlg((JDialog)w, channelList);
+      } else {
+        dialog = new MultiChannelConfigDlg((JFrame)w, channelList);
+      }
+      dialog.centerAndShow();
+    }
+    
+
     mSubscribedChannels.updateUI();
   }
 

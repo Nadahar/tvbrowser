@@ -26,17 +26,19 @@
 
 package devplugin;
 
+import java.awt.Image;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.TimeZone;
-import java.awt.*;
-import javax.swing.*;
 
-import tvdataservice.TvDataService;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import tvbrowser.core.ChannelUserSettings;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvdataservice.TvDataService;
 import util.ui.ImageUtilities;
 
 public class Channel {
@@ -219,6 +221,9 @@ public class Channel {
   }
   
   public String getWebpage() {
+    if (getUserWebPage() != null) {
+      return getUserWebPage();
+    }
     return mWebpage;
   }
   
@@ -293,10 +298,13 @@ public class Channel {
 
 
   public String toString() {
-    return mName;
+    return getName();
   }
 
   public String getName() {
+    if (getUserChannelName() != null) {
+      return getUserChannelName();
+    } 
     return mName;
   }
 
@@ -360,6 +368,7 @@ public class Channel {
 
   public void setUserIconFileName(String filename) {
     ChannelUserSettings.getSettings(this).setIconFileName(filename);
+    mIcon = null;
   }
 
   /**
@@ -387,7 +396,68 @@ public class Channel {
     return ChannelUserSettings.getSettings(this).useUserIconFile();
   }
 
-
+  /**
+   * Return the Default-Icon
+   * @return Default-Icon
+   */
+  public Icon getDefaultIcon() {
+    return mDefaultIcon;
+  }
+  
+  /**
+   * Set the ChannelName used by the User 
+   * @param name new ChannelName
+   * @since 2.1
+   */
+  public void setUserChannelName(String name) {
+    ChannelUserSettings.getSettings(this).setChannelName(name);
+  }
+  
+  /**
+   * Get the ChannelName used by the User 
+   * @return ChannelName
+   * @since 2.1
+   */
+  public String getUserChannelName() {
+    return ChannelUserSettings.getSettings(this).getChannelName();
+  }
+  
+  /**
+   * Get the default ChannelName
+   * @return default ChannelName
+   * @since 2.1
+   */
+  public String getDefaultName() {
+    return mName;
+  }
+  
+  /**
+   * Seth the WebPage used by the User
+   * @param url WebPage
+   * @since 2.1
+   */
+  public void setUserWebPage(String url) {
+    ChannelUserSettings.getSettings(this).setWebPage(url);
+  }
+  
+  /**
+   * Get the WebPage used by the User
+   * @return WebPage
+   * @since 2.1 
+   */
+  public String getUserWebPage() {
+    return ChannelUserSettings.getSettings(this).getWebPage();
+  }
+  
+  /**
+   * Get the Default WebPage
+   * @return WebPage
+   * @since 2.1
+   */
+  public String getDefaultWebPage() {
+    return mWebpage;
+  }
+  
   public boolean equals(Object obj) {
     if (obj instanceof Channel) {
       Channel cmp = (Channel) obj;
@@ -402,7 +472,6 @@ public class Channel {
 
     return false;
   }
-
 
 
 }

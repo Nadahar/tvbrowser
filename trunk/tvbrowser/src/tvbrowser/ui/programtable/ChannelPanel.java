@@ -26,12 +26,11 @@
 
 package tvbrowser.ui.programtable;
 
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 
-import tvbrowser.core.Settings;
-
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import devplugin.Channel;
 
@@ -91,76 +90,5 @@ public class ChannelPanel extends JPanel {
       mLabelArr[i].setPreferredSize(new Dimension(mColumnWidth, mColumnHeight));
     }
   }  
-
-  
-  static class ChannelLabel extends util.ui.ChannelLabel {
-   
-    private static Cursor linkCursor=new Cursor(Cursor.HAND_CURSOR);
-    private static Font channelNameFont;
-  
-    public static void fontChanged() {
-      boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();
-      if (useDefaults) {
-        channelNameFont = Settings.propChannelNameFont.getDefault();
-      } else {
-        channelNameFont = Settings.propChannelNameFont.getFont();
-      }
-    }
-    
-    public ChannelLabel(final Channel ch) {
-      super();
-      setIcon(ch.getIcon());
-          /*Settings.propEnableChannelIcons.getBoolean()) {
-        // Set Icon if it's available
-        if (Settings.propShowChannelIconsInProgramTable.getBoolean()*/
-      if ( !(Settings.propEnableChannelIcons.getBoolean() && Settings.propShowChannelIconsInProgramTable.getBoolean()) || Settings.propShowChannelNames.getBoolean()) {
-        // Set the channel name as text
-        String channelName = ch.getName();
-        if (channelName == null) {
-          channelName = mLocalizer.msg("unknown", "Unknown");
-        }
-        setText(channelName);
-      }
-
-      // Check whether the font was set
-      if (channelNameFont == null) {
-        fontChanged();
-      }
-
-      // Avoid that a null-font is set
-      // (Happens when the font from the config is null)
-      if (channelNameFont != null) {
-        setFont(channelNameFont);
-      }
-      
-      setOpaque(false);
-      setHorizontalAlignment(SwingConstants.CENTER);
-            
-      setCursor(linkCursor);
-      addMouseListener(new MouseAdapter(){
-        public void  mouseClicked(MouseEvent e) { 
-          util.ui.BrowserLauncher.openURL(ch.getWebpage());
-        }
-        
-        public void mouseEntered(MouseEvent e) {
-          e.getComponent().setForeground(Color.blue);
-        }
-        
-        public void mouseExited(MouseEvent e) {
-          e.getComponent().setForeground(Color.black);
-        }        
-      });
-    }
-
-    public void setIcon(Icon icon) {
-      if (Settings.propEnableChannelIcons.getBoolean()) {
-        // Set Icon if it's available
-        if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
-          super.setIcon(icon);
-        }
-      }
-    }
-
-  } // inner class ChannelLabel
 
 }
