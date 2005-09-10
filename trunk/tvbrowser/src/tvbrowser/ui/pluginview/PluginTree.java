@@ -26,6 +26,8 @@
 
 package tvbrowser.ui.pluginview;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -40,6 +42,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
@@ -64,6 +67,8 @@ import devplugin.ProgramItem;
  */
 public class PluginTree extends JTree implements DragGestureListener,DropTargetListener{
 
+  private Rectangle2D mCueLine = new Rectangle2D.Float();
+  
   public PluginTree(TreeModel model) {
     super(model);
 
@@ -177,15 +182,17 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
     
   }
 
-  public void dragOver(DropTargetDragEvent e) {
+  public void dragOver(DropTargetDragEvent e) {    
     try {      
       DataFlavor[] flavors = e.getCurrentDataFlavors(); 
       
       if(flavors != null && flavors.length == 1 && 
-          flavors[0].getHumanPresentableName().equals("NodeExport")) {
+          flavors[0].getHumanPresentableName().equals("NodeExport")) {       
+        this.paintImmediately(mCueLine.getBounds());
+        
         TreePath targetPath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathForLocation(e.getLocation().x,e.getLocation().y);
         Node target = (Node)targetPath.getPathComponent(1);
-  
+        
         TreePath sourcePath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getSelectionPath();
         Node plugin = (Node)sourcePath.getPathComponent(1);    
 
@@ -197,8 +204,14 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
           
           for(int i = 0; i < pa.length; i++) {
             if(pa[i].getRootNode().getMutableTreeNode().equals(target)) {
-              if(pa[i].canReceivePrograms())
-                e.acceptDrag(e.getDropAction());
+              if(pa[i].canReceivePrograms()) {
+                e.acceptDrag(e.getDropAction());                
+                mCueLine.setRect(((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathBounds(targetPath));
+                Graphics2D g2 = (Graphics2D) this.getGraphics();
+                Color c = new Color(255,0,0,40);
+                g2.setColor(c);
+                g2.fill(mCueLine);
+              }
               else {
                 e.rejectDrag();
                 break;
@@ -207,8 +220,9 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
           }
         }
       }
-      else
+      else {
         e.rejectDrag();
+      }
     }catch(Exception ee){}
   }
 
@@ -218,8 +232,7 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
   }
 
   public void dragExit(DropTargetEvent e) {
-   
-    
+    this.paintImmediately(mCueLine.getBounds());
   }
 
   public void drop(DropTargetDropEvent e) {
@@ -269,7 +282,7 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
       }
       }catch(Exception ee){}
     }
-    
+    this.paintImmediately(mCueLine.getBounds());
   }
   
   /**

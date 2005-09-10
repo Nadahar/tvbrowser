@@ -27,8 +27,10 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -54,6 +56,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,6 +144,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
 
   /** Model of the list boxes */
   private ChannelListModel mChannelListModel;
+  
+  
+  private Rectangle2D mCueLine = new Rectangle2D.Float();
+  private int mOldIndex = -1;
+  private boolean mSwitched = false;
   
   /**
    * Creates the SettingsTab
@@ -267,10 +275,19 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
             mAllChannels.setSelectedIndex(index);
             lastSelectedIndex = index;
           }
-          if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+          else if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
             int index = mAllChannels.locationToIndex(e.getPoint());
             mAllChannels.setSelectionInterval(index,lastSelectedIndex);
           } 
+          else if(!e.isControlDown() &&
+              !e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+            DefaultListSelectionModel model = (DefaultListSelectionModel)mAllChannels.getSelectionModel();
+            int index = mAllChannels.locationToIndex(e.getPoint());
+            if(!model.isSelectedIndex(index)) {
+              mAllChannels.setSelectedIndex(index);
+              lastSelectedIndex = index;
+            }
+          }
         }
  
         // Rebuild the selection of the JList with the needed
@@ -316,11 +333,21 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
           int index = mSubscribedChannels.locationToIndex(e.getPoint());
           mSubscribedChannels.setSelectedIndex(index);
           lastSelectedIndex = index;
-        }
-        if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+        }        
+        else if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
           int index = mSubscribedChannels.locationToIndex(e.getPoint());
           mSubscribedChannels.setSelectionInterval(index,lastSelectedIndex);
-        } 
+        }
+        else if(!e.isControlDown() &&
+            !e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+          DefaultListSelectionModel model = (DefaultListSelectionModel)mSubscribedChannels.getSelectionModel();
+          int index = mSubscribedChannels.locationToIndex(e.getPoint());
+          if(!model.isSelectedIndex(index)) {
+            mSubscribedChannels.setSelectedIndex(index);
+            lastSelectedIndex = index;
+          }
+        }
+        
       }
       
       // Rebuild the selection of the JList with the needed
@@ -976,7 +1003,54 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     if(((DropTarget)e.getSource()).getComponent().equals(mSubscribedChannels)) {
       Point p = e.getLocation();
       Rectangle rect = mSubscribedChannels.getVisibleRect();
-
+      int i = mSubscribedChannels.locationToIndex(p);
+      
+      if(i != -1) {      
+        Rectangle listRect = mSubscribedChannels.getCellBounds(mSubscribedChannels.locationToIndex(p),
+                                                               mSubscribedChannels.locationToIndex(p));   
+        Graphics2D g2 = (Graphics2D) mSubscribedChannels.getGraphics(); 
+        boolean paint = false;
+        
+        if(listRect != null) {
+          listRect.setSize(listRect.width,listRect.height/2);
+          if(!listRect.contains(e.getLocation()) && !mSwitched && i == mOldIndex) {
+            mSubscribedChannels.paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y + (listRect.height * 2) - 1,listRect.width,2);
+            mSwitched = true;
+            paint = true;
+          }
+          else if(listRect.contains(e.getLocation()) && i == mOldIndex && mSwitched) {
+            mSubscribedChannels.paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y - 1,listRect.width,2);
+            mSwitched = false;
+            paint = true;
+          }
+          else if(i != mOldIndex && listRect.contains(e.getLocation())) {
+            mSubscribedChannels.paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y - 1,listRect.width,2);
+            mSwitched = false;
+            mOldIndex = i;
+            paint = true;
+          }
+          else if(i != mOldIndex && !listRect.contains(e.getLocation())) {
+            mSubscribedChannels.paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y + (listRect.height * 2) - 1,listRect.width,2);
+            mSwitched = true;
+            mOldIndex = i;
+            paint = true;
+          }
+          if(paint) {
+            Color c = new Color(255,0,0,120);
+            g2.setColor(c);
+            g2.fill(mCueLine);
+          }
+        }        
+      }
+      else {
+        mOldIndex = -1;
+        mSubscribedChannels.paintImmediately(mCueLine.getBounds());
+      } 
+      
       if(p.y + 20 > rect.y + rect.height)
         mSubscribedChannels.scrollRectToVisible(new Rectangle(p.x,p.y + 15,1,1));
       if(p.y - 20 < rect.y)
@@ -990,8 +1064,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
   }
 
   public void dragExit(DropTargetEvent e) {
-
-    
+    if(((DropTarget)e.getSource()).getComponent().equals(mSubscribedChannels)) {
+      mOldIndex = -1;
+      mSubscribedChannels.paintImmediately(mCueLine.getBounds());
+    }
   }
 
   public void drop(DropTargetDropEvent e) { 
