@@ -49,7 +49,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private Map mAvailableActions;
   private ArrayList mVisibleActions;
   private Action mUpdateAction, mSettingsAction, mFilterAction, mPluginViewAction,
-                 mSeparatorAction;
+                 mSeparatorAction, mScrollToNowAction, mScrollToTodayAction, mScrollToTomorrowAction;
+  private Action[] mTimeButtonActions;
 
   private static DefaultToolBarModel sInstance;
 
@@ -103,14 +104,45 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mSettingsAction = createAction(TVBrowser.mLocalizer.msg("button.settings", "Settings"),"#settings",MainFrame.mLocalizer.msg("menuinfo.settings",""), new ImageIcon("imgs/Preferences16.gif"), new ImageIcon("imgs/Preferences24.gif"), ToolBar.BUTTON_ACTION, this);
     mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"),"#filter",MainFrame.mLocalizer.msg("menuinfo.filter",""), new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter24.png"), ToolBar.TOOGLE_BUTTON_ACTION, this);
     mPluginViewAction = createAction(TVBrowser.mLocalizer.msg("button.pluginView","Plugin View"),"#pluginView",MainFrame.mLocalizer.msg("menuinfo.pluginView",""), new ImageIcon("imgs/Bookmarks16.gif"), new ImageIcon("imgs/Bookmarks24.gif"), ToolBar.TOOGLE_BUTTON_ACTION, this);
-
+    String scrollTo = MainFrame.mLocalizer.msg("menuinfo.scrollTo","Scroll to") + ": ";
+    mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now","Now"),"#scrollToNow",scrollTo + TVBrowser.mLocalizer.msg("button.now","Now"), new ImageIcon("imgs/play16.gif"), new ImageIcon("imgs/play24.gif") , ToolBar.BUTTON_ACTION, this);
+    mScrollToTodayAction = createAction(TVBrowser.mLocalizer.msg("button.today","Today"),"#scrollToToday",scrollTo + TVBrowser.mLocalizer.msg("button.today","Today"), new ImageIcon("imgs/Import16.gif"), new ImageIcon("imgs/Import24.gif") , ToolBar.BUTTON_ACTION, this);    
+    mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg("button.tomorrow","Tomorrow"),"#scrollToTomorrow",scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow","Tomorrow"), new ImageIcon("imgs/Forward16.gif"), new ImageIcon("imgs/StepForward24.gif") , ToolBar.BUTTON_ACTION, this);
+    
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
 
     mAvailableActions.put("#update",mUpdateAction);
     mAvailableActions.put("#settings", mSettingsAction);
     mAvailableActions.put("#filter", mFilterAction);
     mAvailableActions.put("#pluginView", mPluginViewAction);
-
+    mAvailableActions.put("#scrollToNow", mScrollToNowAction);
+    mAvailableActions.put("#scrollToToday", mScrollToTodayAction);
+    mAvailableActions.put("#scrollToTomorrow", mScrollToTomorrowAction);
+    
+    //create Time Buttons
+    int[] array = Settings.propTimeButtons.getIntArray();
+    mTimeButtonActions = new Action[array.length];
+    
+    for(int i = 0; i < array.length; i++) {
+      int hour = array[i] / 60;
+      final int scrollTime = array[i];
+      String time = String.valueOf(array[i] % 60);
+      
+      if(time.length() == 1)
+        time = hour + ":0" + time;
+      else
+        time = hour + ":" + time;
+      
+      mTimeButtonActions[i] = createAction(time,"#scrollTo" + time,scrollTo + time, new ImageIcon("imgs/down16.gif"), new ImageIcon("imgs/down24.gif") , ToolBar.BUTTON_ACTION, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          MainFrame.getInstance().scrollToTime(scrollTime);
+        }
+      });
+      
+      mAvailableActions.put("#scrollTo" + time,mTimeButtonActions[i]);
+    }
+    
+    
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
     for (int i=0; i<pluginProxys.length; i++) {
@@ -225,6 +257,18 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     else if (source == mPluginViewAction) {
       AbstractButton button = (AbstractButton)source.getValue(ToolBar.ACTION_VALUE);
       MainFrame.getInstance().setShowPluginOverview(button.isSelected());
+    }
+    else if (source == mScrollToNowAction) {
+      MainFrame.getInstance().scrollToNow();
+    }
+    else if (source == mScrollToTodayAction) {
+      devplugin.Date d = devplugin.Date.getCurrentDate();
+      MainFrame.getInstance().scrollToDate(d);
+    }    
+    else if (source == mScrollToTomorrowAction) {
+      devplugin.Date d = devplugin.Date.getCurrentDate();
+      d = d.addDays(1);
+      MainFrame.getInstance().scrollToDate(d);
     }
     else {
 
