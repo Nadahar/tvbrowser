@@ -63,62 +63,20 @@ public class ChannelList {
     }
     loadDayLightSavingTimeCorrections();
     loadChannelIcons();
+    loadChannelNames();
+    loadChannelWebPages();
   }
 
 
   public static void loadDayLightSavingTimeCorrections() {
-    File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
-    if (!f.exists()) {
-      return;
-    }
-
-    FileReader fr;
-    BufferedReader reader=null;
-    try {
-      fr=new FileReader(f);
-      reader=new BufferedReader(fr);
-      String line;
-      for (;;){
-        line=reader.readLine();
-        if (line==null) {
-          break;
-        }
-        int pos=line.indexOf('=');
-        try {
-          String key=line.substring(0,pos);
-          String val=line.substring(pos+1);
-          if (val!=null) {
-            int corr=Integer.parseInt(val);
-
-            pos = key.indexOf(':');
-            String dataServiceClassName = key.substring(0,pos);
-            String id = key.substring(pos + 1);
-
-            TvDataServiceProxy dataService
-              = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
-
-            Channel ch=ChannelList.getChannel(dataService,id);
-            if (ch!=null) {
-              ch.setDayLightSavingTimeCorrection(corr);
-            }
-
-          }
-
-
-
-
-        }catch(IndexOutOfBoundsException e) {
-          // ignore
-        }
-      }
-
-    }catch(IOException e) {
-      // ignore
-    }
-    if (reader!=null) {
-      try { reader.close(); }catch(IOException exc){
-        // ignore
-      }
+    Map map = createMap(new File(Settings.getUserDirectoryName(),"daylight_correction.txt"));
+    
+    Iterator keyIt = map.keySet().iterator();
+    
+    while (keyIt.hasNext()) {
+      Channel ch = (Channel)keyIt.next();
+      int corr=Integer.parseInt((String)map.get(ch));
+      ch.setDayLightSavingTimeCorrection(corr);
     }
   }
 
@@ -128,6 +86,8 @@ public class ChannelList {
   public static void storeAllSettings() {
       storeDayLightSavingTimeCorrections();
       storeChannelIcons();
+      storeChannelNames();
+      storeChannelWebPages();
   }
 
   public static void storeDayLightSavingTimeCorrections() {
@@ -309,64 +269,26 @@ public class ChannelList {
    * Loads the Icon-Filenames 
    */
   private static void loadChannelIcons() {
-      File f=new File(Settings.getUserDirectoryName(),"channel_icons.txt");
-      if (!f.exists()) {
-        return;
-      }
+    Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_icons.txt"));
+    
+    Iterator keyIt = map.keySet().iterator();
+    
+    while (keyIt.hasNext()) {
+      Channel ch = (Channel)keyIt.next();
+      String val = (String)map.get(ch);
 
-      FileReader fr;
-      BufferedReader reader=null;
-      try {
-        fr=new FileReader(f);
-        reader=new BufferedReader(fr);
-        String line;
-        for (;;){
-          line=reader.readLine();
-          if (line==null) {
-            break;
-          }
-          int pos=line.indexOf('=');
-          try {
-            String key=line.substring(0,pos);
-            String val=line.substring(pos+1);
-            if (val!=null) {
-              pos = key.indexOf(':');
-              String dataServiceClassName = key.substring(0,pos);
-              String id = key.substring(pos + 1);
+      String[] settings = val.split(";");
 
-              TvDataServiceProxy dataService
-                = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
-
-              Channel ch=ChannelList.getChannel(dataService,id);
-              if (ch!=null) {
-
-                String[] settings = val.split(";");
-
-                if (settings.length == 2) {
-                  ch.setUserIconFileName(settings[1]);
-                  if (settings[0].equals("true")) {
-                    ch.useUserIcon(true);
-                  } else {
-                    ch.useUserIcon(false);
-                  }
-                }
-              }
-            }
-          }catch(IndexOutOfBoundsException e) {
-            // ignore
-          }
-        }
-
-      }catch(IOException e) {
-        // ignore
-      }
-      if (reader!=null) {
-        try { reader.close(); }catch(IOException exc){
-          // ignore
+      if (settings.length == 2) {
+        ch.setUserIconFileName(settings[1]);
+        if (settings[0].equals("true")) {
+          ch.useUserIcon(true);
+        } else {
+          ch.useUserIcon(false);
         }
       }
+    }
   }
-
 
 
   /**
@@ -394,4 +316,133 @@ public class ChannelList {
         out.close();
       }
   }
+  
+  public static void loadChannelNames() {
+    Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_names.txt"));
+    
+    Iterator keyIt = map.keySet().iterator();
+    
+    while (keyIt.hasNext()) {
+      Channel ch = (Channel)keyIt.next();
+      ch.setUserChannelName((String)map.get(ch));
+    }    
+  }
+
+  public static void storeChannelNames() {
+    File f=new File(Settings.getUserDirectoryName(),"channel_names.txt");
+
+    FileWriter fw;
+    PrintWriter out=null;
+    try {
+      fw=new FileWriter(f);
+      out=new PrintWriter(fw);
+      Channel[] channels=getSubscribedChannels();
+        for (int i=0;i<channels.length;i++) {
+          String userChannelName = channels[i].getUserChannelName();
+          if ((userChannelName != null) && (userChannelName.trim().length() > 0)){
+            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + userChannelName.trim());
+          }
+        }
+    }catch(IOException e) {
+      // ignore  
+    }
+    if (out!=null) {
+      out.close();
+    }
+  }
+  
+  public static void loadChannelWebPages() {
+    Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_webpages.txt"));
+    
+    Iterator keyIt = map.keySet().iterator();
+    
+    while (keyIt.hasNext()) {
+      Channel ch = (Channel)keyIt.next();
+      ch.setUserWebPage((String)map.get(ch));
+    }  
+  }
+  
+  public static void storeChannelWebPages() {
+    File f=new File(Settings.getUserDirectoryName(),"channel_webpages.txt");
+
+    FileWriter fw;
+    PrintWriter out=null;
+    try {
+      fw=new FileWriter(f);
+      out=new PrintWriter(fw);
+      Channel[] channels=getSubscribedChannels();
+        for (int i=0;i<channels.length;i++) {
+          String userWebPage = channels[i].getUserWebPage();
+          if ((userWebPage != null) && (userWebPage.trim().length() > 0)){
+            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + userWebPage.trim());
+          }
+        }
+    }catch(IOException e) {
+      // ignore  
+    }
+    if (out!=null) {
+      out.close();
+    }
+  }
+  
+  /**
+   * Create a HashMap from a Settings-File
+   * @param f File to Load
+   * @return HashMap filled with Channel, Value
+   */
+  private static HashMap createMap(File f) {
+    HashMap map = new HashMap();
+    
+    if (!f.exists()) {
+      return map;
+    }
+    
+    FileReader fr;
+    BufferedReader reader=null;
+    try {
+      fr=new FileReader(f);
+      reader=new BufferedReader(fr);
+      String line;
+      for (;;){
+        line=reader.readLine();
+        if (line==null) {
+          break;
+        }
+        int pos=line.indexOf('=');
+        try {
+          String key=line.substring(0,pos);
+          String val=line.substring(pos+1);
+          if (val!=null) {
+            pos = key.indexOf(':');
+            String dataServiceClassName = key.substring(0,pos);
+            String id = key.substring(pos + 1);
+
+            TvDataServiceProxy dataService
+              = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
+
+            Channel ch=ChannelList.getChannel(dataService,id);
+            if (ch!=null) {
+              map.put(ch, val);
+            }
+
+          }
+
+        }catch(IndexOutOfBoundsException e) {
+          // ignore
+        }
+      }
+
+    }catch(IOException e) {
+      // ignore
+    }
+    if (reader!=null) {
+      try { reader.close(); }catch(IOException exc){
+        // ignore
+      }
+    }
+    return map;
+  }
+
+
+
 }
