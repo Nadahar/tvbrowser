@@ -27,27 +27,17 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
@@ -137,6 +127,8 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener {
 
     mOKBt = new JButton(mLocalizer.msg("ok", "OK"));
     mOKBt.addActionListener(this);
+    getRootPane().setDefaultButton(mOKBt);
+    
     mCloseBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
     mCloseBt.addActionListener(this);
 

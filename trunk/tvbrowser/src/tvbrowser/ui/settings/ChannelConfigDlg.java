@@ -192,6 +192,9 @@ public class ChannelConfigDlg extends JDialog implements ActionListener {
 
     mOKBt = new JButton(mLocalizer.msg("ok", "OK"));
     mOKBt.addActionListener(this);
+    
+    getRootPane().setDefaultButton(mOKBt);
+    
     mCloseBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
     mCloseBt.addActionListener(this);
 
