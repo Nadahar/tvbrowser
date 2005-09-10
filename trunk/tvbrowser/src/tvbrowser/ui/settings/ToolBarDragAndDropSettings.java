@@ -21,6 +21,7 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -45,6 +46,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import devplugin.Plugin;
 
@@ -61,7 +63,8 @@ import tvbrowser.ui.mainframe.toolbar.ToolBar;
  */
 public class ToolBarDragAndDropSettings extends JFrame implements
     WindowListener, MouseMotionListener,
-    DragGestureListener, DropTargetListener, ActionListener {
+    DragGestureListener, DropTargetListener, ActionListener,
+    MouseListener{
 
   private static final long serialVersionUID = 1L;
   /**Actions that are visible in the ToolBar*/
@@ -265,6 +268,7 @@ public class ToolBarDragAndDropSettings extends JFrame implements
       b.setVerticalTextPosition(JButton.BOTTOM);
       b.setHorizontalTextPosition(JButton.CENTER);
       b.setFont(new Font("Dialog", Font.PLAIN, 10));
+      b.addMouseListener(this);
       
         // Set up the available ActionButtons for dragging
       DragSource d = new DragSource();
@@ -692,4 +696,38 @@ public class ToolBarDragAndDropSettings extends JFrame implements
   public void windowDeactivated(WindowEvent e) {}
   public void dropActionChanged(DropTargetDragEvent e) {}
   public void dragExit(DropTargetEvent e) {}
+
+  public void mouseClicked(MouseEvent e) {   
+    if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+      int index = MainFrame.getInstance().getToolbar().getComponentIndex(e.getComponent());
+      int n = MainFrame.getInstance().getToolbar().getComponentCount();
+      Action s = DefaultToolBarModel.getInstance().getSeparatorAction();
+    
+      if(index != -1) {
+        Action a = (Action) mCurrentActions.elementAt(index);
+        mCurrentActions.removeElementAt(index);
+        if (!a.equals(s))
+          mAvailableActions.addElement(a);
+      }
+      else {
+        String name = ((AbstractButton) e.getComponent()).getText().substring(6,
+                  ((AbstractButton) e.getComponent()).getText().length() - 7);
+            
+        for (int i = 0; i < mAvailableActions.size(); i++) {
+          Action a = (Action) mAvailableActions.elementAt(i);
+          if (a.getValue(Action.NAME).equals(name)) {
+            if (!s.getValue(Action.NAME).equals(name))
+              mAvailableActions.removeElement(a);
+            mCurrentActions.insertElementAt(a, n);
+          }
+        }
+      }
+      saveSettings();
+    }
+  }  
+
+  public void mousePressed(MouseEvent e) {}
+  public void mouseReleased(MouseEvent e) {}
+  public void mouseEntered(MouseEvent e) {}
+  public void mouseExited(MouseEvent e) {}
 }
