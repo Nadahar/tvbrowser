@@ -339,6 +339,94 @@ public class UiUtilities {
   }
   
   /**
+   * Moves Selected Items from one List to another 
+   * @param fromList Move from this List
+   * @param toList Move into this List
+   * @param row The target row where to insert
+   * @return Moved Elements
+   */
+  public static Object[] moveSelectedItems(JList fromList, JList toList, int row) {
+    DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
+    DefaultListModel toModel = (DefaultListModel) toList.getModel();
+    
+    // get the selection
+    int[] selection = fromList.getSelectedIndices();
+
+    if (selection.length == 0) {
+      return new Object[]{};
+    }
+
+    Object[] objects = new Object[selection.length];
+    for (int i=0; i<selection.length; i++) {
+      objects[i] = fromModel.getElementAt(selection[i]);
+    }
+
+    // move the elements
+    for (int i = selection.length - 1; i >= 0; i--) {
+      Object value = fromModel.remove(selection[i]);
+      toModel.insertElementAt(value,row);
+    }
+    
+    // change selection of the fromList
+    if (fromModel.getSize() > 0) {
+      int newSelection = selection[0];
+      if (newSelection >= fromModel.getSize()) {
+        newSelection = fromModel.getSize() - 1;
+      }
+      //fromList.setSelectedIndex(-1);
+    }
+
+    // change selection of the toList
+    toList.setSelectionInterval(row, row + selection.length - 1);
+    
+    // ensure the selection is visible
+    toList.ensureIndexIsVisible(toList.getMaxSelectionIndex());
+    toList.ensureIndexIsVisible(toList.getMinSelectionIndex());
+
+
+    return objects;
+  }
+  
+  
+  /**
+   * Move selected Items in the JList
+   * @param list Move Items in this List
+   * @param nrRows Move Items nrRows up/down
+   * @param row The target row where to insert
+   * @param sort Dummy parameter, does nothing
+   */
+  public static void moveSelectedItems(JList list, int row, boolean sort) {
+    DefaultListModel model = (DefaultListModel) list.getModel();
+    
+    // get the selection
+    int[] selection = list.getSelectedIndices();
+    if (selection.length == 0) {
+      return;
+    }
+    
+    boolean lower = false;
+    // Remove the selected items
+    Object[] items = new Object[selection.length];
+    for (int i = selection.length - 1; i >= 0; i--) {
+      if(selection[i] < row && !lower) {
+        row = row - i - 1;
+        lower = true;
+      }      
+      items[i] = model.remove(selection[i]);
+    }
+
+    for (int i = items.length - 1; i >= 0; i--)      
+      model.insertElementAt(items[i],row);
+    
+    // change selection of the toList
+    list.setSelectionInterval(row, row + selection.length - 1);
+    
+    // ensure the selection is visible
+    list.ensureIndexIsVisible(list.getMaxSelectionIndex());
+    list.ensureIndexIsVisible(list.getMinSelectionIndex()); 
+  }
+  
+  /**
    * Move selected Items in the JList
    * @param list Move Items in this List
    * @param nrRows Move Items nrRows up/down
@@ -351,8 +439,6 @@ public class UiUtilities {
     if (selection.length == 0) {
       return;
     }
-    
-    System.out.println(selection.length);
     
     // Remove the selected items
     Object[] items = new Object[selection.length];
