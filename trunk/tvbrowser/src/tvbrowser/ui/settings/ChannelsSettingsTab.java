@@ -30,13 +30,31 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.Window;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,6 +68,7 @@ import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -72,6 +91,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
 import util.ui.LinkButton;
+import util.ui.TransferEntries;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
@@ -88,12 +108,12 @@ import devplugin.ChannelGroup;
  * 
  * @author Bodo Tasche
  */
-public class ChannelsSettingsTab implements devplugin.SettingsTab {
+public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureListener,DropTargetListener {
 
 
 
   /** Translation */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelsSettingsTab.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelsSettingsTab.class);
 
   /** Show all Buttons ?*/
   private boolean mShowAllButtons;
@@ -121,8 +141,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
   /** Model of the list boxes */
   private ChannelListModel mChannelListModel;
-
-
+  
   /**
    * Creates the SettingsTab
    */
@@ -138,7 +157,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
   public ChannelsSettingsTab(boolean showAllButtons) {
     mShowAllButtons = showAllButtons;
     mChannelListModel = new ChannelListModel();
-  }
+  }  
 
   /**
    * Create the SettingsPanel
@@ -161,10 +180,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
 
     // left list box
-
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
     mAllChannels = new JList(new DefaultListModel());
     mAllChannels.setCellRenderer(new ChannelListCellRenderer());
+    
+    // DropTarget for dropping the channels
+    new DropTarget(mAllChannels, this);    
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
 
@@ -184,45 +205,147 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     leftBt.setMargin(UiUtilities.ZERO_INSETS);
 
     leftBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(ActionEvent e) { 
         moveChannelsToLeft();
       }
     });
 
-
     listBoxPnLeft.add(createButtonPn(rightBt, leftBt), BorderLayout.EAST);
-
-
 
     // right list box
     JPanel listBoxPnRight = new JPanel(new BorderLayout());
     SortableItemList channelList = new SortableItemList();
 
-    mSubscribedChannels = channelList.getList();
+    mSubscribedChannels = channelList.getList();    
     mSubscribedChannels.setCellRenderer(new ChannelListCellRenderer());
+    
+    // DropTarget for dropping the channels
+    new DropTarget(mSubscribedChannels, this);
+        
+    
+      // Remove the MouseListeners and the MouseMotionListeners
+      // of the lists.
+    MouseListener[] ml = mAllChannels.getMouseListeners();
+    for(int i = 0; i < ml.length; i++)
+      mAllChannels.removeMouseListener(ml[i]);
+    
+    MouseMotionListener[] m2 =  mAllChannels.getMouseMotionListeners();
+    for(int i = 0; i < m2.length; i++)
+      mAllChannels.removeMouseMotionListener(m2[i]);
 
+    ml = mSubscribedChannels.getMouseListeners();
+    for(int i = 0; i < ml.length; i++)
+      mSubscribedChannels.removeMouseListener(ml[i]);
+    
+    m2 =  mSubscribedChannels.getMouseMotionListeners();
+    for(int i = 0; i < m2.length; i++)
+      mSubscribedChannels.removeMouseMotionListener(m2[i]);
 
+      // Set up the DragSources
+    (new DragSource()).createDefaultDragGestureRecognizer(mSubscribedChannels,DnDConstants.ACTION_MOVE,this);    
+    (new DragSource()).createDefaultDragGestureRecognizer(mAllChannels,DnDConstants.ACTION_MOVE,this);
+    
     mAllChannels.addMouseListener(new MouseAdapter() {
+        private int lastSelectedIndex = 0;
+        
         public void mouseClicked(MouseEvent e) {
             if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-                //int index = mAllChannels.locationToIndex(e.getPoint());
-                moveChannelsToRight();
+              int index = mAllChannels.locationToIndex(e.getPoint());
+              mAllChannels.setSelectedIndex(index);
+              moveChannelsToRight();
+              lastSelectedIndex = index;
             }
+        }
+        
+         // Rebuild the selection of the JList with the needed
+         // functions.
+        public void mousePressed(MouseEvent e) {          
+          if(mAllChannels.getSelectedIndices().length <= 1 
+              && !e.isShiftDown() &&
+              !e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
+            int index = mAllChannels.locationToIndex(e.getPoint());
+            mAllChannels.setSelectedIndex(index);
+            lastSelectedIndex = index;
+          }
+          if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+            int index = mAllChannels.locationToIndex(e.getPoint());
+            mAllChannels.setSelectionInterval(index,lastSelectedIndex);
+          } 
+        }
+ 
+        // Rebuild the selection of the JList with the needed
+        // functions.
+        public void mouseReleased(MouseEvent e) {
+          int index = mAllChannels.locationToIndex(e.getPoint());
+          
+          if(e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {          
+            DefaultListSelectionModel model = (DefaultListSelectionModel)mAllChannels.getSelectionModel();
+            
+            if(model.isSelectedIndex(index))
+              model.removeSelectionInterval(index,index);
+            else
+              model.addSelectionInterval(index,index);
+            
+            lastSelectedIndex = index;
+          }
+          else if(!e.isShiftDown() && !e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
+            mAllChannels.setSelectedIndex(index);
+            lastSelectedIndex = index;
+          }
         }
     });
 
     mSubscribedChannels.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-              //int index = mSubscribedChannels.locationToIndex(e.getPoint());
-              moveChannelsToLeft();
+      private int lastSelectedIndex = 0;
+      
+      public void mouseClicked(MouseEvent e) {
+          if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+            int index = mSubscribedChannels.locationToIndex(e.getPoint());
+            mSubscribedChannels.setSelectedIndex(index);
+            moveChannelsToLeft();
+            lastSelectedIndex = index;
           }
       }
+ 
+      // Rebuild the selection of the JList with the needed
+      // functions.
+      public void mousePressed(MouseEvent e) {          
+        if(mSubscribedChannels.getSelectedIndices().length <= 1 
+            && !e.isControlDown() &&
+            !e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+          int index = mSubscribedChannels.locationToIndex(e.getPoint());
+          mSubscribedChannels.setSelectedIndex(index);
+          lastSelectedIndex = index;
+        }
+        if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+          int index = mSubscribedChannels.locationToIndex(e.getPoint());
+          mSubscribedChannels.setSelectionInterval(index,lastSelectedIndex);
+        } 
+      }
+      
+      // Rebuild the selection of the JList with the needed
+      // functions.     
+      public void mouseReleased(MouseEvent e) {
+        int index = mSubscribedChannels.locationToIndex(e.getPoint());
+        
+        if(e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {          
+          DefaultListSelectionModel model = (DefaultListSelectionModel)mSubscribedChannels.getSelectionModel();
+          
+          if(model.isSelectedIndex(index))
+            model.removeSelectionInterval(index,index);
+          else
+            model.addSelectionInterval(index,index);
+          
+          lastSelectedIndex = index;
+        }
+        else if(!e.isShiftDown() && !e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
+          mSubscribedChannels.setSelectedIndex(index);
+          lastSelectedIndex = index;
+        }
+      }
     });
-
-
+    
     listBoxPnRight.add(new JScrollPane(mSubscribedChannels), BorderLayout.CENTER);
-
 
     final JButton configureChannels = new JButton(mLocalizer.msg("configSelectedChannels","Configure selected channels"));
     configureChannels.setEnabled(false);
@@ -244,9 +367,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
     centerPn.add(listBoxPnRight);
 
-
     // south panel (filter, channel details, buttons)
-
     JPanel pn1 = new JPanel(new GridLayout(1,2));
     pn1.add(createFilterPanel());
     pn1.add(createDetailsPanel());
@@ -407,9 +528,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
     for (int i=0; i<providerNames.length; i++) {
       mProviderCB.addItem(new FilterItem((String)providerNames[i], providerNames[i]));
     }
-
-
-
   }
 
   private ItemListener mFilterItemListener = new ItemListener(){
@@ -518,9 +636,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
   public String getTitle() {
     return mLocalizer.msg("channels","Channels");
   }
-
-
-
 
   private void fillSubscribedChannelsListBox() {
     ((DefaultListModel) mSubscribedChannels.getModel()).removeAllElements();
@@ -792,7 +907,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
       mSubscribedChannels = new HashSet();
       refresh();
     }
-
+    
     public void subscribeChannel(Channel ch) {
       mSubscribedChannels.add(ch);
     }
@@ -834,4 +949,93 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab {
 
   }
 
+  public void dragGestureRecognized(DragGestureEvent e) {    
+    if(e.getComponent().equals(mAllChannels))
+      e.startDrag(null,new TransferEntries(mAllChannels.getSelectedIndices(),"mAllChannels","Channel"));
+    if(e.getComponent().equals(mSubscribedChannels))    
+      e.startDrag(null,new TransferEntries(mSubscribedChannels.getSelectedIndices(),"mSubscribedChannels","Channel"));
+  }
+  
+
+  public void dragEnter(DropTargetDragEvent e) {
+
+    
+  }
+
+  public void dragOver(DropTargetDragEvent e) {
+    DataFlavor[] flavors = e.getCurrentDataFlavors();
+    if(flavors != null && flavors.length == 2 &&
+        flavors[0].getHumanPresentableName().equals("Channel") &&
+        flavors[1].getHumanPresentableName().equals("Source")) {
+      e.acceptDrag(e.getDropAction());
+    }
+    else {
+      e.rejectDrag();
+      return;
+    }
+    if(((DropTarget)e.getSource()).getComponent().equals(mSubscribedChannels)) {
+      Point p = e.getLocation();
+      Rectangle rect = mSubscribedChannels.getVisibleRect();
+
+      if(p.y + 20 > rect.y + rect.height)
+        mSubscribedChannels.scrollRectToVisible(new Rectangle(p.x,p.y + 15,1,1));
+      if(p.y - 20 < rect.y)
+        mSubscribedChannels.scrollRectToVisible(new Rectangle(p.x,p.y - 15,1,1));
+    }
+  }
+
+  public void dropActionChanged(DropTargetDragEvent e) {
+   
+    
+  }
+
+  public void dragExit(DropTargetEvent e) {
+
+    
+  }
+
+  public void drop(DropTargetDropEvent e) { 
+    e.acceptDrop(e.getDropAction());
+    Transferable tr = e.getTransferable();
+      
+    DataFlavor[] flavors = tr.getTransferDataFlavors(); 
+    
+    // If theTransferable is a TransferEntries drop it
+    if(flavors != null && flavors.length == 2 &&
+        flavors[0].getHumanPresentableName().equals("Channel") &&
+        flavors[1].getHumanPresentableName().equals("Source")) {
+      try {
+        JList target = (JList)((DropTarget)e.getSource()).getComponent();
+        int x = target.locationToIndex(e.getLocation());        
+        
+        Rectangle rect = target.getCellBounds(x,x);
+        if(rect != null) {
+          rect.setSize(rect.width,rect.height/2);
+        
+          if(!rect.contains(e.getLocation()))
+            x++;
+        }
+        else
+          x = 0;
+        
+        if(target.equals(mSubscribedChannels) && tr.getTransferData(flavors[1]).equals("mAllChannels")) {
+            moveChannels(x);
+        }
+        else if(target.equals(mAllChannels) && tr.getTransferData(flavors[1]).equals("mSubscribedChannels")) {
+          moveChannelsToLeft();
+        }
+        else if(target.equals(mSubscribedChannels) && tr.getTransferData(flavors[1]).equals("mSubscribedChannels")) {
+            UiUtilities.moveSelectedItems(target,x,true);
+        }
+      }catch(Exception ee) {ee.printStackTrace();}
+    }  
+  }
+    
+  //Move the channels to the row where the dropping was.
+  private void moveChannels(int row) {
+      Object[] objects = UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels, row);
+      for (int i=0; i<objects.length; i++) {
+        mChannelListModel.subscribeChannel((Channel)objects[i]);
+      }
+  }
 }

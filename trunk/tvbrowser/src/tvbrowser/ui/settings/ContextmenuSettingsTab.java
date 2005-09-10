@@ -30,6 +30,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -42,12 +59,14 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import util.ui.customizableitems.SortableItemList;
+import util.ui.TransferEntries;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ActionMenu;
 
-public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener {
+public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener,
+                                            DragGestureListener,DropTargetListener{
 
 
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
@@ -133,9 +152,10 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
       = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
 
   public ContextmenuSettingsTab() {
-    mList=new SortableItemList(mLocalizer.msg("title","context menu"));
+    mList=new SortableItemList(mLocalizer.msg("title","context menu"));    
     mList.getList().setVisibleRowCount(10);
     mList.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 
     mList.getList().addMouseListener(new MouseAdapter(){
       public void mouseClicked(MouseEvent e){
@@ -161,7 +181,11 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     mList.setCellRenderer(new ContextMenuCellRenderer());
     mList.getList().setOpaque(false);
     fillListbox();
-
+    
+    new DropTarget(mList.getList(),this);
+   (new DragSource()).createDefaultDragGestureRecognizer(mList.getList(),DnDConstants.ACTION_COPY_OR_MOVE,this);
+    
+    
     PluginProxyManager.getInstance().addPluginStateListener(
         new PluginStateAdapter() {
           public void pluginActivated(Plugin p) {
@@ -283,6 +307,59 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
   public String getTitle() {
     return mLocalizer.msg("title", "context menu");
   }
+
+  public void dragEnter(DropTargetDragEvent e) {}
+  public void dropActionChanged(DropTargetDragEvent e) {}
+  public void dragExit(DropTargetEvent e) {}
+
+  public void dragOver(DropTargetDragEvent e) {
+    DataFlavor[] flavors = e.getCurrentDataFlavors();
+    if(flavors != null && flavors.length == 2 &&
+        flavors[0].getHumanPresentableName().equals("JList") &&
+        flavors[1].getHumanPresentableName().equals("Source")
+        ) {
+      e.acceptDrag(e.getDropAction());
+    }
+    else {
+      e.rejectDrag();
+      return;
+    }
+      
+    if(((DropTarget)e.getSource()).getComponent().equals(mList.getList())) {
+      Point p = e.getLocation();
+      Rectangle rect = mList.getList().getVisibleRect();
+
+      if(p.y + 20 > rect.y + rect.height)
+        mList.getList().scrollRectToVisible(new Rectangle(p.x,p.y + 15,1,1));
+      if(p.y - 20 < rect.y)
+        mList.getList().scrollRectToVisible(new Rectangle(p.x,p.y - 15,1,1));
+    }
+  }
+  
+  public void drop(DropTargetDropEvent e) {
+    Component c = ((DropTarget)e.getSource()).getComponent();
+    if(c.equals(mList.getList())) {
+      JList target = (JList)((DropTarget)e.getSource()).getComponent();
+      int x = target.locationToIndex(e.getLocation());
+    
+      Rectangle rect = target.getCellBounds(x,x);
+      if(rect != null) {
+        rect.setSize(rect.width,rect.height/2);
+    
+        if(!rect.contains(e.getLocation()))
+          x++;
+      }
+      else
+        x = 0;
+    
+      UiUtilities.moveSelectedItems(target,x,true);
+    }
+  }
+
+  public void dragGestureRecognized(DragGestureEvent e) {    
+    e.startDrag(null,new TransferEntries(mList.getList().getSelectedIndices(),"mList","JList"));
+  }
+
 
   /*
 	public void settingsChanged(SettingsTab tab, Object obj) {

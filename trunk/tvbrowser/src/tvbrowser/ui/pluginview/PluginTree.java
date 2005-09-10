@@ -26,7 +26,23 @@
 
 package tvbrowser.ui.pluginview;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetContext;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Vector;
 
 import javax.swing.InputMap;
 import javax.swing.JTree;
@@ -36,6 +52,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import util.ui.OverlayListener;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.Program;
 import devplugin.ProgramItem;
 
 /**
@@ -43,7 +62,7 @@ import devplugin.ProgramItem;
  * Date: 01.01.2005
  * Time: 20:25:18
  */
-public class PluginTree extends JTree {
+public class PluginTree extends JTree implements DragGestureListener,DropTargetListener{
 
   public PluginTree(TreeModel model) {
     super(model);
@@ -54,6 +73,8 @@ public class PluginTree extends JTree {
     inputMap.put(keyStroke,"none");
     
     new OverlayListener(this);
+    (new DragSource()).createDefaultDragGestureRecognizer(this,DnDConstants.ACTION_MOVE,this);
+    new DropTarget(this,this);
   }
 
   public String convertValueToText(Object value, boolean selected,
@@ -114,6 +135,162 @@ public class PluginTree extends JTree {
         expandAll(path.pathByAddingChild(node));
       }
     }
+  }
+
+  class TransferNode implements Transferable {
+    private DataFlavor mDF;
+    
+    public TransferNode() {
+      mDF = new DataFlavor(TreePath.class,"NodeExport");
+    }
+    
+    public DataFlavor[] getTransferDataFlavors() {
+      DataFlavor[] f = {mDF};
+      return f;
+    }
+
+    public boolean isDataFlavorSupported(DataFlavor e) {
+      if(e.equals(mDF))
+        return true;
+      return false;
+    }
+
+    public Object getTransferData(DataFlavor e) throws UnsupportedFlavorException, IOException {
+      return null;
+    }
+    
+  }
+  
+  public void dragGestureRecognized(DragGestureEvent e) {
+    PluginTree tree = (PluginTree)e.getComponent();
+    if(tree.getLastSelectedPathComponent() == null)
+      return;
+    
+    Node node = (Node)tree.getSelectionPath().getLastPathComponent();
+    if(node.getType() != Node.ROOT && (getLeafCount(node) > 0 || node.isLeaf()))
+      e.startDrag(null,new TransferNode());
+  }
+  
+
+  public void dragEnter(DropTargetDragEvent e) {
+
+    
+  }
+
+  public void dragOver(DropTargetDragEvent e) {
+    try {      
+      DataFlavor[] flavors = e.getCurrentDataFlavors(); 
+      
+      if(flavors != null && flavors.length == 1 && 
+          flavors[0].getHumanPresentableName().equals("NodeExport")) {
+        TreePath targetPath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathForLocation(e.getLocation().x,e.getLocation().y);
+        Node target = (Node)targetPath.getPathComponent(1);
+  
+        TreePath sourcePath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getSelectionPath();
+        Node plugin = (Node)sourcePath.getPathComponent(1);    
+
+        if(target.equals(plugin) || targetPath.getPathCount() > 2) {
+          e.rejectDrag();
+        }      
+        else {
+          PluginAccess[] pa = Plugin.getPluginManager().getActivatedPlugins();
+          
+          for(int i = 0; i < pa.length; i++) {
+            if(pa[i].getRootNode().getMutableTreeNode().equals(target)) {
+              if(pa[i].canReceivePrograms())
+                e.acceptDrag(e.getDropAction());
+              else {
+                e.rejectDrag();
+                break;
+              }
+            }
+          }
+        }
+      }
+      else
+        e.rejectDrag();
+    }catch(Exception ee){}
+  }
+
+  public void dropActionChanged(DropTargetDragEvent e) {
+
+    
+  }
+
+  public void dragExit(DropTargetEvent e) {
+   
+    
+  }
+
+  public void drop(DropTargetDropEvent e) {
+    e.acceptDrop(e.getDropAction());
+    Transferable tr = e.getTransferable();
+    
+    DataFlavor[] flavors = tr.getTransferDataFlavors(); 
+    
+    if(flavors != null && flavors.length == 1 && 
+        flavors[0].getHumanPresentableName().equals("NodeExport")) {
+      try {
+      TreePath targetPath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathForLocation(e.getLocation().x,e.getLocation().y);
+      Node target = (Node)targetPath.getPathComponent(1);
+      
+      TreePath sourcePath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getSelectionPath();
+      Node plugin = (Node)sourcePath.getPathComponent(1);
+      Node source = (Node)sourcePath.getLastPathComponent();
+      
+      if(target.equals(plugin) || targetPath.getPathCount() > 2) {
+        return;
+      }
+      else {
+        PluginAccess[] pa = Plugin.getPluginManager().getActivatedPlugins();
+        
+        for(int i = 0; i < pa.length; i++) {
+          if(pa[i].getRootNode().getMutableTreeNode().equals(target)) {
+            if(pa[i].canReceivePrograms()) {
+              Vector vec;
+              if(source.isLeaf()) {
+                vec = new Vector();
+                if(source.getUserObject() instanceof ProgramItem)
+                  vec.addElement(((ProgramItem)source.getUserObject()).getProgram());
+              }
+              else
+                vec = this.getLeafElements(source,new Vector());
+              Program[] p = new Program[vec.size()];
+              if(p.length > 0) {
+                vec.toArray(p);
+                pa[i].receivePrograms(p);
+              }
+            }
+            else {
+              break;
+            }
+          }
+        }
+      }
+      }catch(Exception ee){}
+    }
+    
+  }
+  
+  /**
+   * Get the Programs of a node and it's child nodes
+   * @param node Node to start the search
+   * @param entries A Vector to store the Programs in
+   * @return A vector with the Programs
+   */
+  private Vector getLeafElements(Node node, Vector entries) {    
+    for(int i=0; i<node.getChildCount(); i++) {
+        if(node.getChildAt(i).isLeaf()) {
+          Node childnode = (Node)node.getChildAt(i);
+          if(childnode.getUserObject() instanceof ProgramItem) {            
+            if(!entries.contains(((ProgramItem)childnode.getUserObject()).getProgram()))
+              entries.addElement(((ProgramItem)childnode.getUserObject()).getProgram());
+          }
+        } else {
+            entries = getLeafElements((Node)node.getChildAt(i),entries);
+        }
+    }   
+    return entries;
   }
 }
 
