@@ -263,12 +263,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     }
     else if (source == mScrollToTodayAction) {
       devplugin.Date d = devplugin.Date.getCurrentDate();
-      MainFrame.getInstance().scrollToDate(d);
+      MainFrame.getInstance().goTo(d);
     }    
     else if (source == mScrollToTomorrowAction) {
       devplugin.Date d = devplugin.Date.getCurrentDate();
       d = d.addDays(1);
-      MainFrame.getInstance().scrollToDate(d);
+      MainFrame.getInstance().goTo(d);
     }
     else {
 
