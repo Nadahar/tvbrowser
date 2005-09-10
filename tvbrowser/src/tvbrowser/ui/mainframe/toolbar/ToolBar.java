@@ -167,6 +167,7 @@ public class ToolBar extends JToolBar {
         b.setToolTipText("");
        b.setEnabled(false);
       }
+      this.getComponent(i).addMouseListener(s);
     }    
   }
 
