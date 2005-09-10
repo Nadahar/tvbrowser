@@ -41,6 +41,7 @@ public class ChannelUserSettings {
   private String mChannelName;
   private String mIconFileName;
   private boolean mUseUserIconFile;
+  private String mWebPage;
 
   private static HashMap mChannelUserSettings = new HashMap();
 
@@ -91,4 +92,12 @@ public class ChannelUserSettings {
   }
 
 
+  public String getWebPage() {
+    return mWebPage;
+  }
+  
+  public void setWebPage(String webpage) {
+    mWebPage = webpage;
+  }
+  
 }

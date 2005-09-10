@@ -25,24 +25,27 @@
 */
 package util.ui;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Dimension;
+import java.util.WeakHashMap;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import devplugin.Channel;
 import tvbrowser.core.Settings;
+import devplugin.Channel;
 
 /**
  * A Label for Channels. It shows the Icon and/or the Channel-Name
  */
 public class ChannelLabel extends JLabel {
 
+  /** A Icon-Cache for Perfomance-Reasons*/
+  static private WeakHashMap ICONCACHE = new WeakHashMap();
+  
   static Icon DEFAULT_ICON =  new ImageIcon("./imgs/tvbrowser16.png");
   private boolean mChannelIconsVisible;
-
+  
   /**
    * Creates the ChannelLabel
    */
@@ -104,29 +107,20 @@ public class ChannelLabel extends JLabel {
    * @param ic Icon
    */
   public void setIcon(Icon ic) {
-    if (!mChannelIconsVisible) {
-      return;
+    Icon cached = (Icon)ICONCACHE.get(ic); 
+    if (cached != null) {
+      super.setIcon(cached);
+    } else {
+      if (!mChannelIconsVisible) {
+        return;
+      }
+      if (ic == null) {
+        ic = getDefaultIcon();
+      }
+      Icon icon =UiUtilities.createChannelIcon(ic); 
+      ICONCACHE.put(ic, icon);
+      super.setIcon(icon);
     }
-    if (ic == null) {
-      ic = getDefaultIcon();
-    }
-    BufferedImage img = new BufferedImage(42, 22, BufferedImage.TYPE_INT_RGB);
-
-    Graphics2D g = img.createGraphics();
-
-    g.setColor(Color.WHITE);
-    g.fillRect(1, 1, 40, 20);
-
-    int x = 1 + 20 - ic.getIconWidth() / 2;
-    int y = 1 + 10 - ic.getIconHeight() / 2;
-
-    ic.paintIcon(this, g, x, y);
-
-    g.setColor(Color.BLACK);
-    g.drawRect(0, 0, 42, 22);
-
-    ImageIcon imgIcon = new ImageIcon(img);
-    super.setIcon(imgIcon);
   }
 
   /**

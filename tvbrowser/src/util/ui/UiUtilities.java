@@ -26,6 +26,7 @@
 
 package util.ui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -411,5 +412,37 @@ public class UiUtilities {
     }
     
     return icon;
+  }
+  
+  /**
+   * Creates a scaled Version of the Icon.
+   * 
+   * The scaled Version will have a Background and a Border.
+   * 
+   * @param ic
+   * @return ImageIcon
+   * @since 2.1
+   */
+  public static ImageIcon createChannelIcon(Icon ic) {
+    BufferedImage img = new BufferedImage(42, 22, BufferedImage.TYPE_INT_RGB);
+
+    if ((ic.getIconHeight() > 40) || (ic.getIconHeight() > 20)) {
+      ic = scaleIcon(ic, 40, 20);
+    }
+    
+    Graphics2D g = img.createGraphics();
+
+    g.setColor(Color.WHITE);
+    g.fillRect(1, 1, 40, 20);
+
+    int x = 1 + 20 - ic.getIconWidth() / 2;
+    int y = 1 + 10 - ic.getIconHeight() / 2;
+
+    ic.paintIcon(null, g, x, y);
+
+    g.setColor(Color.BLACK);
+    g.drawRect(0, 0, 42, 22);
+
+    return new ImageIcon(img);
   }
 }
