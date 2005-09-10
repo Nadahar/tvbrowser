@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -51,6 +52,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.*;
 
@@ -67,7 +69,9 @@ import devplugin.ActionMenu;
 
 public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener,
                                             DragGestureListener,DropTargetListener{
-
+  private Rectangle2D mCueLine = new Rectangle2D.Float();
+  private int mOldIndex = -1;
+  private boolean mSwitched = false;
 
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
 
@@ -310,9 +314,13 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 
   public void dragEnter(DropTargetDragEvent e) {}
   public void dropActionChanged(DropTargetDragEvent e) {}
-  public void dragExit(DropTargetEvent e) {}
+  
+  public void dragExit(DropTargetEvent e) {
+    mList.getList().paintImmediately(mCueLine.getBounds());
+  }
 
   public void dragOver(DropTargetDragEvent e) {
+    
     DataFlavor[] flavors = e.getCurrentDataFlavors();
     if(flavors != null && flavors.length == 2 &&
         flavors[0].getHumanPresentableName().equals("JList") &&
@@ -327,7 +335,54 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
       
     if(((DropTarget)e.getSource()).getComponent().equals(mList.getList())) {
       Point p = e.getLocation();
+      int i = mList.getList().locationToIndex(p);
       Rectangle rect = mList.getList().getVisibleRect();
+      
+      if(i != -1) {      
+        Rectangle listRect = mList.getList().getCellBounds(mList.getList().locationToIndex(p),
+                                                           mList.getList().locationToIndex(p));   
+        Graphics2D g2 = (Graphics2D) mList.getList().getGraphics(); 
+        boolean paint = false;
+        
+        if(listRect != null) {
+          listRect.setSize(listRect.width,listRect.height/2);
+          if(!listRect.contains(e.getLocation()) && !mSwitched && i == mOldIndex) {
+            mList.getList().paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y + (listRect.height * 2) -1,listRect.width,2);
+            mSwitched = true;
+            paint = true;
+          }
+          else if(listRect.contains(e.getLocation()) && i == mOldIndex && mSwitched) {
+            mList.getList().paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y -1,listRect.width,2);
+            mSwitched = false;
+            paint = true;
+          }
+          else if(i != mOldIndex && listRect.contains(e.getLocation())) {
+            mList.getList().paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y -1,listRect.width,2);
+            mSwitched = false;
+            mOldIndex = i;
+            paint = true;
+          }
+          else if(i != mOldIndex && !listRect.contains(e.getLocation())) {
+            mList.getList().paintImmediately(mCueLine.getBounds());
+            mCueLine.setRect(0,listRect.y + (listRect.height * 2) -1,listRect.width,2);
+            mSwitched = true;
+            mOldIndex = i;
+            paint = true;
+          }
+          if(paint) {
+            Color c = new Color(255,0,0,120);
+            g2.setColor(c);
+            g2.fill(mCueLine);
+          }
+        }        
+      }
+      else {
+        mOldIndex = -1;
+        mList.getList().paintImmediately(mCueLine.getBounds());
+      }
 
       if(p.y + 20 > rect.y + rect.height)
         mList.getList().scrollRectToVisible(new Rectangle(p.x,p.y + 15,1,1));
