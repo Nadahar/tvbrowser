@@ -389,6 +389,10 @@ public class MainFrame extends JFrame implements DateListener {
     devplugin.Date day = new devplugin.Date();
     scrollTo(day, hour);
   }
+  
+  public void scrollToDate(Date date) {
+    mFinderPanel.markDate(date);
+  }
 
   private void scrollTo(Date day, int hour) {
 
