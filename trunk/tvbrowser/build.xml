@@ -305,7 +305,8 @@
         <attribute name="Main-Class" value="tvbrowser.TVBrowser"/>
       </manifest>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${classes.dir}" includes="devplugin/**"/>
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>      
+      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="com/**"/>
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
