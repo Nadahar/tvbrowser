@@ -192,7 +192,7 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
       if(flavors != null && flavors.length == 1 && 
           flavors[0].getHumanPresentableName().equals("NodeExport")) {
         
-        TreePath targetPath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathForLocation(e.getLocation().x,e.getLocation().y);
+        TreePath targetPath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathForLocation(e.getLocation().x,e.getLocation().y);        
         Node target = (Node)targetPath.getPathComponent(1);
         
         TreePath sourcePath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getSelectionPath();
@@ -225,12 +225,13 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
           mPlugin = temp;
         }
       }
-      if(reject) {
-        e.rejectDrag();
-        this.paintImmediately(mCueLine.getBounds());
-        mPlugin = null;
-      }
     }catch(Exception ee){}
+    
+    if(reject) {
+      e.rejectDrag();
+      this.paintImmediately(mCueLine.getBounds());
+      mPlugin = null;
+    }
   }
 
   public void dropActionChanged(DropTargetDragEvent e) {
@@ -253,6 +254,7 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
         flavors[0].getHumanPresentableName().equals("NodeExport")) {
       try {
       TreePath targetPath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathForLocation(e.getLocation().x,e.getLocation().y);
+      System.out.println(targetPath);
       Node target = (Node)targetPath.getPathComponent(1);
       
       TreePath sourcePath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getSelectionPath();
