@@ -36,7 +36,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
@@ -57,7 +56,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1040,7 +1038,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
             paint = true;
           }
           if(paint) {
-            Color c = new Color(255,0,0,120);
+            Color c = new Color(255,0,0,180);
             g2.setColor(c);
             g2.fill(mCueLine);
           }
