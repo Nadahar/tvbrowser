@@ -68,6 +68,7 @@ import devplugin.ProgramItem;
 public class PluginTree extends JTree implements DragGestureListener,DropTargetListener{
 
   private Rectangle2D mCueLine = new Rectangle2D.Float();
+  private PluginAccess mPlugin = null;
   
   public PluginTree(TreeModel model) {
     super(model);
@@ -182,13 +183,14 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
     
   }
 
-  public void dragOver(DropTargetDragEvent e) {    
+  public void dragOver(DropTargetDragEvent e) {
+    boolean reject = true;
+    PluginAccess temp = null;
     try {      
       DataFlavor[] flavors = e.getCurrentDataFlavors(); 
       
       if(flavors != null && flavors.length == 1 && 
-          flavors[0].getHumanPresentableName().equals("NodeExport")) {       
-        this.paintImmediately(mCueLine.getBounds());
+          flavors[0].getHumanPresentableName().equals("NodeExport")) {
         
         TreePath targetPath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathForLocation(e.getLocation().x,e.getLocation().y);
         Node target = (Node)targetPath.getPathComponent(1);
@@ -196,32 +198,37 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
         TreePath sourcePath = ((PluginTree)((DropTarget)e.getSource()).getComponent()).getSelectionPath();
         Node plugin = (Node)sourcePath.getPathComponent(1);    
 
-        if(target.equals(plugin) || targetPath.getPathCount() > 2) {
-          e.rejectDrag();
-        }      
-        else {
+        if(!target.equals(plugin) && targetPath.getPathCount() <= 2) {
           PluginAccess[] pa = Plugin.getPluginManager().getActivatedPlugins();
           
           for(int i = 0; i < pa.length; i++) {
             if(pa[i].getRootNode().getMutableTreeNode().equals(target)) {
               if(pa[i].canReceivePrograms()) {
-                e.acceptDrag(e.getDropAction());                
-                mCueLine.setRect(((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathBounds(targetPath));
-                Graphics2D g2 = (Graphics2D) this.getGraphics();
-                Color c = new Color(255,0,0,40);
-                g2.setColor(c);
-                g2.fill(mCueLine);
+                e.acceptDrag(e.getDropAction());
+                reject = false;
+                temp = pa[i];
               }
               else {
-                e.rejectDrag();
+                mPlugin = null;
                 break;
               }
             }
           }
         }
+        if(!reject && (mPlugin == null || temp != mPlugin)) {
+          this.paintImmediately(mCueLine.getBounds());
+          mCueLine.setRect(((PluginTree)((DropTarget)e.getSource()).getComponent()).getPathBounds(targetPath));
+          Graphics2D g2 = (Graphics2D) this.getGraphics();
+          Color c = new Color(255,0,0,40);
+          g2.setColor(c);
+          g2.fill(mCueLine);
+          mPlugin = temp;
+        }
       }
-      else {
+      if(reject) {
         e.rejectDrag();
+        this.paintImmediately(mCueLine.getBounds());
+        mPlugin = null;
       }
     }catch(Exception ee){}
   }
@@ -233,6 +240,7 @@ public class PluginTree extends JTree implements DragGestureListener,DropTargetL
 
   public void dragExit(DropTargetEvent e) {
     this.paintImmediately(mCueLine.getBounds());
+    mPlugin = null;
   }
 
   public void drop(DropTargetDropEvent e) {
