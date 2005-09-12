@@ -75,6 +75,7 @@ public class SettingsDialog {
 
   public static final String TAB_ID_TOOLBAR = "#toolbar";
   public static final String TAB_ID_TIMEBUTTONS = "#timebuttons";
+  public static final String TAB_ID_PLUGINS = "#plugins";
 
 
   private JDialog mDialog;
@@ -282,7 +283,7 @@ public class SettingsDialog {
     node.add(new SettingNode(new ToolbarSettingsTab(),TAB_ID_TOOLBAR));
 
     // Plugins
-    node = new SettingNode(pluginSettingsTab);
+    node = new SettingNode(pluginSettingsTab, TAB_ID_PLUGINS);
     root.add(node);
 
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
