@@ -86,7 +86,7 @@ public class DefaultMenuBar extends MenuBar {
       mPluginsMenu.add(pluginItems[i]);  
     }
     mPluginsMenu.addSeparator();
-    mPluginsMenu.add(mFindPluginsMI);
+    mPluginsMenu.add(mPluginManagerMI);
     
     // "Help" menu
     helpMenu.add(mDonorMI);
@@ -118,7 +118,7 @@ public class DefaultMenuBar extends MenuBar {
       mPluginsMenu.add(pluginItems[i]);  
     }
     mPluginsMenu.addSeparator();
-    mPluginsMenu.add(mFindPluginsMI);
+    mPluginsMenu.add(mPluginManagerMI);
   }
 
 

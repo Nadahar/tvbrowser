@@ -65,7 +65,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
-                    mFindPluginsMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
+                    mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu;
@@ -174,8 +174,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
     mLicenseMenu = createLicenseMenuItems();
     
-    mFindPluginsMI = new JMenuItem(mLocalizer.msg("menuitem.findPluginsOnWeb", "Find plugins on the web..."), new ImageIcon("imgs/Search16.gif"));
-    mFindPluginsMI.addActionListener(this);
+    mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
+    mPluginManagerMI.addActionListener(this);
     
     Icon urlImg = new ImageIcon("imgs/WebComponent16.gif");
     mDonorMI=new JMenuItem(mLocalizer.msg("menuitem.donors","Donors"), urlImg);
@@ -422,8 +422,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      else if (source == mUpdateMI) {
        mMainFrame.updateTvData();
      }
-     else if (source == mFindPluginsMI) {
-       mMainFrame.showUpdatePluginsDlg();
+     else if (source == mPluginManagerMI) {
+//       mMainFrame.showUpdatePluginsDlg();
+       mMainFrame.showSettingsDialog(SettingsDialog.TAB_ID_PLUGINS);
      }
      else if (source == mDonorMI) {
        util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.donors",""));
@@ -464,7 +465,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
      new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
      new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update",""), mLabel);
-     new MenuHelpTextAdapter(mFindPluginsMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel); 
+     new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel); 
      new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about",""), mLabel);
      new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
      new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 

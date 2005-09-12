@@ -26,183 +26,211 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Comparator;
-import javax.swing.*;
+
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 /**
- * TV-Browser
- *
+ * This Tab shows the Plugin-Manager.
+ * 
  * @author Martin Oberhauser
  */
 
-
 public class PluginSettingsTab implements devplugin.SettingsTab {
-  
-  class ContextMenuCellRenderer extends DefaultListCellRenderer {
-    
-     public Component getListCellRendererComponent(JList list, Object value,
-          int index, boolean isSelected, boolean cellHasFocus) {
-           
-          JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
-            index, isSelected, cellHasFocus);
-
-          if (value instanceof PluginProxy) {
-            PluginProxy plugin = (PluginProxy) value;
-            JPopupMenu menu=new JPopupMenu();
-            
-            label.setEnabled(plugin.isActivated());
-            label.setText(plugin.getInfo().getName());
-           
-            label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
-            label.setOpaque(false);
-            label.setBackground(menu.getBackground());
-            JPanel panel=new JPanel(new BorderLayout());
-            panel.add(label,BorderLayout.CENTER);
-            Icon ico=plugin.getMarkIcon();
-            if (ico==null) {
-              ico=new ImageIcon("imgs/Jar16.gif");
-            }
-            panel.add(new JLabel(ico),BorderLayout.WEST);
-            if (isSelected) {
-              panel.setBackground(Color.gray);
-            }
-            return panel;
-          }
-
-          return label;
-        }
-
-  
-    
-   }
-  
-  
-  private static final util.ui.Localizer mLocalizer
-     = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
-  
+  /** Localizer */
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
+  /** List of Plugins */
   private JList mList;
-  private JButton mStartStopBtn;
+  /** Buttons of Panel */
+  private JButton mStartStopBtn, mInfo, mRemove;
+  /** ListModel with Plugins */
   private DefaultListModel mListModel;
-  private PluginInfoPanel mPluginInfoPanel;
+  /** SettingsDialog */
   private SettingsDialog mSettingsDialog;
 
   public PluginSettingsTab(SettingsDialog settingsDialog) {
     mSettingsDialog = settingsDialog;
   }
 
-	public JPanel createSettingsPanel() {
+  public JPanel createSettingsPanel() {
+
+    JPanel contentPanel = new JPanel(new FormLayout("default:grow, default", "default, 3dlu, fill:default:grow, 3dlu, default"));
+    contentPanel.setBorder(Borders.DLU4_BORDER);
     
-    JPanel contentPanel=new JPanel(new BorderLayout());
-    contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
+    CellConstraints cc = new CellConstraints();
     
-    JPanel pluginListPanel=new JPanel(new BorderLayout(5,5));
+    JButton update = new JButton(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), new ImageIcon("imgs/Search16.gif"));
     
-    mListModel=new DefaultListModel();
-    mList=new JList(mListModel);
-    mList.setCellRenderer(new ContextMenuCellRenderer());
-    mList.setVisibleRowCount(10);
-    mList.setOpaque(false);
+    update.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().showUpdatePluginsDlg();
+      }
+    });
+
+    contentPanel.add(update, cc.xy(2,1));
+    
+    contentPanel.add(new JLabel(mLocalizer.msg("installedPlugins","Installed Plugins")+":"), cc.xy(1,1));
+    
+    mListModel = new DefaultListModel();
+    mList = new JList(mListModel);
+    mList.setCellRenderer(new PluginListCellRenderer());
     mList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    mList.addListSelectionListener(new ListSelectionListener(){
+    mList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent evt) {
         updateBtns();
-        PluginProxy plugin = (PluginProxy) mList.getSelectedValue();
-        if (plugin != null) {
-          mPluginInfoPanel.setPluginInfo(plugin.getInfo());
-        }
       }
     });
-    
-    mList.addMouseListener(new MouseAdapter(){
-      public void mouseClicked(MouseEvent e){
-        if(e.getClickCount() == 2) {
-          int inx = mList.locationToIndex(e.getPoint());
-          if (inx>=0) {
-            Object item = mListModel.getElementAt(inx);
-            mList.ensureIndexIsVisible(inx);
-            onStartStopBtnClicked((PluginProxy) item);
-          }
-        }
-      }
-    });
-    
-    PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
-    
-    
-    Arrays.sort(pluginList, new Comparator() {
 
-        public int compare(Object o1, Object o2) {
-            return o1.toString().compareTo(o2.toString());
+    mList.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            showInfoDialog();
         }
-        
-    });    
+      }
+    });
+
+    populatePluginList();
     
-    for (int i=0;i<pluginList.length;i++) {
-      mListModel.addElement(pluginList[i]);
-    }
+    contentPanel.add(new JScrollPane(mList), cc.xyw(1,3,2));
     
-    pluginListPanel.add(new JScrollPane(mList),BorderLayout.CENTER);
-    pluginListPanel.add(new JLabel(mLocalizer.msg("availablePlugins", "Available plugins")),BorderLayout.NORTH);
-    
-    JPanel btnPanel=new JPanel(new BorderLayout());
-    mStartStopBtn=new JButton();
-    mStartStopBtn.setPreferredSize(new Dimension(140,30));
-    mStartStopBtn.addActionListener(new ActionListener(){
+    mStartStopBtn = new JButton(mLocalizer.msg("activate", ""), new ImageIcon("imgs/Refresh16.gif"));
+    mStartStopBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         PluginProxy plugin = (PluginProxy) mList.getSelectedValue();
         onStartStopBtnClicked(plugin);
       }
     });
-    btnPanel.add(mStartStopBtn,BorderLayout.NORTH);
-    pluginListPanel.add(btnPanel,BorderLayout.EAST);
     
-    contentPanel.add(pluginListPanel,BorderLayout.NORTH); 
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+
+    mInfo = new JButton(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
+    mInfo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showInfoDialog();
+      }
+    });
     
+    builder.addGridded(mInfo);
+    builder.addRelatedGap();
+    builder.addGlue();
+    builder.addFixed(mStartStopBtn);
+    builder.addRelatedGap();
     
-    JPanel infoPanel=new JPanel(new BorderLayout());
-    contentPanel.add(infoPanel,BorderLayout.CENTER);
+    mRemove = new JButton(mLocalizer.msg("remove","Remove"),  new ImageIcon("imgs/Delete16.gif"));
+    mRemove.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        removePlugin();
+      }
+    });
     
-    mPluginInfoPanel=new PluginInfoPanel();
-    infoPanel.add(mPluginInfoPanel,BorderLayout.NORTH);
+    builder.addGridded(mRemove);
+    
+    contentPanel.add(builder.getPanel(), cc.xyw(1,5,2));
     
     updateBtns();
-    
-		return contentPanel;
-	}
 
+    return contentPanel;
+  }
 
-  private void updateBtns() {
-    PluginProxy plugin = (PluginProxy) mList.getSelectedValue();
-    mStartStopBtn.setEnabled(plugin!=null);
-    
-    if ((plugin != null) && plugin.isActivated()) {
-      mStartStopBtn.setEnabled(true);
-      mStartStopBtn.setIcon(new ImageIcon("imgs/Stop24.gif"));
-      mStartStopBtn.setText(mLocalizer.msg("deactivate",""));
-    } else {
-      mStartStopBtn.setEnabled(plugin != null);
-      mStartStopBtn.setIcon(new ImageIcon("imgs/Refresh24.gif"));
-      mStartStopBtn.setText(mLocalizer.msg("activate",""));
+  /**
+   * Remove a selected Plugin
+   */
+  private void removePlugin() {
+    int inx = mList.getSelectedIndex();//mList.locationToIndex(e.getPoint());
+    if (inx >= 0) {
+      Object item = mListModel.getElementAt(inx);
+      mList.ensureIndexIsVisible(inx);
+      System.out.println(item);
     }
   }
 
+  /**
+   * Show the Info-Dialog
+   *
+   */
+  private void showInfoDialog() {
+    int inx = mList.getSelectedIndex();//mList.locationToIndex(e.getPoint());
+    if (inx >= 0) {
+      Object item = mListModel.getElementAt(inx);
+      mList.ensureIndexIsVisible(inx);
+      System.out.println(item);
+    }
+  }
+  
+  /**
+   * Populate the Plugin-List
+   */
+  private void populatePluginList() {
+    PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
 
+    Arrays.sort(pluginList, new Comparator() {
+
+      public int compare(Object o1, Object o2) {
+        return o1.toString().compareTo(o2.toString());
+      }
+
+    });
+
+    for (int i = 0; i < pluginList.length; i++) {
+      mListModel.addElement(pluginList[i]);
+    }
+
+  }
+
+  /**
+   * Updates the State of the Buttons
+   *
+   */
+  private void updateBtns() {
+    PluginProxy plugin = (PluginProxy) mList.getSelectedValue();
+
+    if ((plugin != null) && plugin.isActivated()) {
+      mStartStopBtn.setEnabled(true);
+      mInfo.setEnabled(true);
+      mRemove.setEnabled(true);
+      mStartStopBtn.setIcon(new ImageIcon("imgs/Stop16.gif"));
+      mStartStopBtn.setText(mLocalizer.msg("deactivate", ""));
+    } else {
+      mStartStopBtn.setEnabled(plugin != null);
+      mInfo.setEnabled(plugin != null);
+      mRemove.setEnabled(plugin != null);
+      mStartStopBtn.setIcon(new ImageIcon("imgs/Refresh16.gif"));
+      mStartStopBtn.setText(mLocalizer.msg("activate", ""));
+    }
+  }
+
+  /**
+   * Start/Stop was clicked
+   * 
+   * @param plugin Plugin that is started/stopped
+   */
   private void onStartStopBtnClicked(PluginProxy plugin) {
     if (plugin != null) {
       try {
@@ -211,36 +239,30 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         } else {
           PluginProxyManager.getInstance().activatePlugin(plugin);
         }
-      }
-      catch (TvBrowserException exc) {
+      } catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
       }
-      
+
       mList.updateUI();
       updateBtns();
       mSettingsDialog.invalidateTree();
     }
-    
+
     // Update the settings
     String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
-    Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);    
+    Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
   }
-  
 
-	public void saveSettings() {
-    
-	}
+  public void saveSettings() {
 
-	
-	public Icon getIcon() {
-		return null;
-	}
+  }
 
-	
-	public String getTitle() {
+  public Icon getIcon() {
+    return null;
+  }
+
+  public String getTitle() {
     return mLocalizer.msg("plugins", "Plugins");
-	}
-  
-  
-}
+  }
 
+}
