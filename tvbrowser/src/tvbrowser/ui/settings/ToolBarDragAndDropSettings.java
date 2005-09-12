@@ -41,6 +41,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -61,7 +62,7 @@ import tvbrowser.ui.mainframe.toolbar.ToolBar;
  * 
  * @author René Mach
  */
-public class ToolBarDragAndDropSettings extends JFrame implements
+public class ToolBarDragAndDropSettings extends JDialog implements
     WindowListener, MouseMotionListener,
     DragGestureListener, DropTargetListener, ActionListener,
     MouseListener{
@@ -83,24 +84,8 @@ public class ToolBarDragAndDropSettings extends JFrame implements
    * 
    */
   public ToolBarDragAndDropSettings() {
+    super(MainFrame.getInstance());
     mInstance = this;
-    
-    // Set this window to AlwaysOnTop if
-    // the JVM has the needed method.
-    Class c = this.getClass();
-    Method[] m = c.getMethods();
-    for(int i = 0; i < m.length; i++) {
-      if(m[i].getName().equals("setAlwaysOnTop")) {
-        boolean bb = true;
-        Boolean B = new Boolean(bb);
-        
-        Object[] b = {B}; 
-        try {
-        m[i].invoke(this,b);
-        }catch(Exception ee){}
-        break;
-      }
-    }
 
     this.getContentPane().setLayout(
         new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
