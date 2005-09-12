@@ -40,21 +40,27 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   /** Internal reused ChannelLabel */
   private ChannelLabel mChannel;
   private boolean mChannelIconsVisible;
+  private boolean mAllIsVisible;
 
   public ChannelListCellRenderer() {
-    this(true);
+    this(true,false);
   }
 
   public ChannelListCellRenderer(boolean channelIconsVisible) {
-    mChannelIconsVisible = channelIconsVisible;
+    this(channelIconsVisible,false);
   }
 
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean allIsVisible) {
+    mChannelIconsVisible = channelIconsVisible;
+    mAllIsVisible = allIsVisible;
+  }
+  
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
       boolean cellHasFocus) {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel(mChannelIconsVisible);
+      mChannel = new ChannelLabel(mChannelIconsVisible,mAllIsVisible);
     }
 
     if (value instanceof Channel) {
@@ -68,5 +74,9 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     }
 
     return label;
+  }
+  
+  public Component getListComponent() {
+   return mChannel; 
   }
 }

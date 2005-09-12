@@ -188,7 +188,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     // left list box
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
     mAllChannels = new JList(new DefaultListModel());
-    mAllChannels.setCellRenderer(new ChannelListCellRenderer());
+    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true,true));
     
     // DropTarget for dropping the channels
     new DropTarget(mAllChannels, this);    
@@ -223,7 +223,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     SortableItemList channelList = new SortableItemList();
 
     mSubscribedChannels = channelList.getList();    
-    mSubscribedChannels.setCellRenderer(new ChannelListCellRenderer());
+    mSubscribedChannels.setCellRenderer(new ChannelListCellRenderer(true,true));
     
     // DropTarget for dropping the channels
     new DropTarget(mSubscribedChannels, this);
@@ -266,14 +266,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
          // Rebuild the selection of the JList with the needed
          // functions.
         public void mousePressed(MouseEvent e) {          
-          if(mAllChannels.getSelectedIndices().length <= 1 
-              && !e.isShiftDown() &&
-              !e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
-            int index = mAllChannels.locationToIndex(e.getPoint());
-            mAllChannels.setSelectedIndex(index);
-            lastSelectedIndex = index;
-          }
-          else if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+          if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
             int index = mAllChannels.locationToIndex(e.getPoint());
             mAllChannels.setSelectionInterval(index,lastSelectedIndex);
           } 
@@ -325,14 +318,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
       // Rebuild the selection of the JList with the needed
       // functions.
       public void mousePressed(MouseEvent e) {          
-        if(mSubscribedChannels.getSelectedIndices().length <= 1 
-            && !e.isControlDown() &&
-            !e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
-          int index = mSubscribedChannels.locationToIndex(e.getPoint());
-          mSubscribedChannels.setSelectedIndex(index);
-          lastSelectedIndex = index;
-        }        
-        else if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+        if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
           int index = mSubscribedChannels.locationToIndex(e.getPoint());
           mSubscribedChannels.setSelectionInterval(index,lastSelectedIndex);
         }
@@ -345,7 +331,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
             lastSelectedIndex = index;
           }
         }
-        
       }
       
       // Rebuild the selection of the JList with the needed
