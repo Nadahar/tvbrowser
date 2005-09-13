@@ -74,7 +74,7 @@ public class MacOSXMenuBar extends MenuBar {
       mPluginsMenu.add(pluginItems[i]);  
     }
     mPluginsMenu.addSeparator();
-    mPluginsMenu.add(mFindPluginsMI);
+    mPluginsMenu.add(mPluginManagerMI);
 
     // "Help" menu
     helpMenu.add(mDonorMI);
@@ -129,7 +129,7 @@ public class MacOSXMenuBar extends MenuBar {
         mPluginsMenu.add(pluginItems[i]);  
       }
       mPluginsMenu.addSeparator();
-      mPluginsMenu.add(mFindPluginsMI);
+      mPluginsMenu.add(mPluginManagerMI);
   }
 
 	
