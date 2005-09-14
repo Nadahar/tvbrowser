@@ -112,6 +112,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /** Panel under a Mouse ? */
   private boolean mMouseOver = false;
+  
+  private boolean mIsSelected = false;
 
   /** Orientation Progressbar in X_AXIS */
   final public static int X_AXIS = 0;
@@ -409,8 +411,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       grp.fill3DRect(0, 0, width, height, true);
     }
 
-    if (mMouseOver) {
-        Color test       = Settings.propMouseOverColor.getColor();
+    if (mMouseOver || mIsSelected) {
+        Color test = Settings.propMouseOverColor.getColor();
+        if(mIsSelected)
+          test = Settings.propKeyboardSelectedColor.getColor();
         grp.setColor(test);
         grp.fillRect(0, 0, width-1, height-1);
 
@@ -610,10 +614,13 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /**
    * Paints the ProgramPanel
    * @param mouse under a Mouse and needs highlight?
+   * @param isSelected IsSelected program?
    * @param g Graphics-Object
+   * 
    */
-  public void paint(boolean mouse, Graphics g) {
+  public void paint(boolean mouse, boolean isSelected, Graphics g) {
       mMouseOver = mouse;
+      mIsSelected = isSelected;
       super.paint(g);
   }
 

@@ -61,7 +61,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private OrderChooser mIconPluginOCh;
   private OrderChooser mInfoTextOCh;
 
-  private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemMarkedColorLb;
+  private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemMarkedColorLb, mProgramItemKeyboardSelectedLb;
 
 
   /**
@@ -123,18 +123,20 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
 
     JPanel colors = new JPanel();
-
+    
     Color programItemProgressColor = Settings.propProgramTableColorOnAirDark.getColor();
     Color programItemOnAirColor = Settings.propProgramTableColorOnAirLight.getColor();
     Color programItemMarkedColor = Settings.propProgramTableColorMarked.getColor();
+    Color programItemKeyboardSelectedColor = Settings.propKeyboardSelectedColor.getColor();
 
     Color programItemDefaultProgressColor = Settings.propProgramTableColorOnAirDark.getDefaultColor();
     Color programItemDefaultOnAirColor = Settings.propProgramTableColorOnAirLight.getDefaultColor();
     Color programItemDefaultMarkedColor = Settings.propProgramTableColorMarked.getDefaultColor();
+    Color programItemDefaultKeyboardSelectedColor = Settings.propKeyboardSelectedColor.getDefaultColor();
 
     colors.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Colors", "Colors")));
-    FormLayout formLayout = new FormLayout("default, 5dlu, default, 5dlu, default",
-            "default, 3dlu, default, 3dlu, default");
+    FormLayout formLayout = new FormLayout("default, 5dlu, default, 5dlu, default, 5dlu, default",
+            "default, 3dlu, default, 3dlu, default, 3dlu, default");
     CellConstraints c = new CellConstraints();
     colors.setLayout(formLayout);
 
@@ -152,6 +154,11 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     colors.add(mProgramItemMarkedColorLb = new ColorLabel(programItemMarkedColor), c.xy(3,5));
     mProgramItemMarkedColorLb.setStandardColor(programItemDefaultMarkedColor);
     colors.add(new ColorButton(mProgramItemMarkedColorLb), c.xy(5,5));
+
+    colors.add(new JLabel(mLocalizer.msg("color.keyboardSelected","Markierung durch Plugins")), c.xy(1,7));
+    colors.add(mProgramItemKeyboardSelectedLb = new ColorLabel(programItemKeyboardSelectedColor), c.xy(3,7));
+    mProgramItemKeyboardSelectedLb.setStandardColor(programItemDefaultKeyboardSelectedColor);
+    colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), c.xy(5,7));
 
     main.add(colors);
 
@@ -247,7 +254,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     Settings.propProgramTableColorMarked.setColor(mProgramItemMarkedColorLb.getColor());
     Settings.propProgramTableColorOnAirDark.setColor(mProgramItemProgressColorLb.getColor());
     Settings.propProgramTableColorOnAirLight.setColor(mProgramItemOnAirColorLb.getColor());
-
+    Settings.propKeyboardSelectedColor.setColor(mProgramItemKeyboardSelectedLb.getColor());
   }
   
   

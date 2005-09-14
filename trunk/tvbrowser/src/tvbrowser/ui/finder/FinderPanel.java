@@ -38,6 +38,7 @@ import java.awt.event.*;
 
 import devplugin.Date;
 import tvbrowser.core.*;
+import tvbrowser.ui.mainframe.MainFrame;
 
 
 class FinderItemRenderer extends DefaultListCellRenderer {
@@ -213,6 +214,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 	public void mouseClicked(MouseEvent event) {
     int index=mList.locationToIndex(event.getPoint());    
 		markDate(((FinderItem)mModel.getElementAt(index)).getDate());
+    MainFrame.getInstance().addKeyboardAction();
 	}
 
 

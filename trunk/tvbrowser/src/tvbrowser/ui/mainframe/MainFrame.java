@@ -30,18 +30,22 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -65,6 +69,7 @@ import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.FilterPanel;
+import tvbrowser.ui.programtable.KeyboardAction;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
@@ -165,8 +170,6 @@ public class MainFrame extends JFrame implements DateListener {
       mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
     }
 
-
-
     // create content
     jcontentPane = (JPanel) getContentPane();
     jcontentPane.setLayout(new BorderLayout());
@@ -252,7 +255,8 @@ public class MainFrame extends JFrame implements DateListener {
     }
 
     setProgramFilter(filter);
-
+    addKeyboardAction();
+    
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         scrollToNow();
@@ -269,6 +273,58 @@ public class MainFrame extends JFrame implements DateListener {
 
 
   }
+  
+  /**
+   * Adds the keyboard actions for going to the program table with the keyboard.
+   *
+   */
+  public void addKeyboardAction() {
+    JRootPane rootPane = this.getRootPane();
+    
+    mProgramTableScrollPane.deSelectItem();
+
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,true,false,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,true,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,true,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,true,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    stroke = KeyStroke.getKeyStroke(525, 0);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,true,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,true,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,false,true), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new ActionListener(){
+
+      public void actionPerformed(ActionEvent e) {
+        goToNextDay();
+      }
+      
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new ActionListener(){
+
+      public void actionPerformed(ActionEvent e) {
+        goToPreviousDay();
+      }
+      
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    this.setRootPane(rootPane);
+  }
+  
 
   public JLabel getStatusBarLabel() {
     return mStatusBar.getLabel();
@@ -374,12 +430,13 @@ public class MainFrame extends JFrame implements DateListener {
     mMenuBar.updatePluginsMenu();
   }
 
-  public void scrollToProgram(Program program) {
+  public void scrollToProgram(Program program) {    
     scrollTo(program.getDate(), program.getHours());
-    mProgramTableScrollPane.scrollToChannel(program.getChannel());
+    mProgramTableScrollPane.scrollToChannel(program.getChannel());    
   }
 
   public void scrollToTime(int time) {
+    mProgramTableScrollPane.deSelectItem();
     mProgramTableScrollPane.scrollToTime(time);
   }
 
@@ -391,7 +448,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   private void scrollTo(Date day, int hour) {
-
+    mProgramTableScrollPane.deSelectItem();
     // Choose the day.
     // NOTE: If its early in the morning before the setted "day start" we should
     // stay at the last day - otherwise the user won't see the current
@@ -496,14 +553,17 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void goTo(Date date) {
+    mProgramTableScrollPane.deSelectItem();    
     mFinderPanel.markDate(date);
   }
 
   public void goToNextDay() {
+    mProgramTableScrollPane.deSelectItem();
     mFinderPanel.markNextDate();
   }
 
   public void goToPreviousDay() {
+    mProgramTableScrollPane.deSelectItem();
     mFinderPanel.markPreviousDate();
   }
 
@@ -515,6 +575,7 @@ public class MainFrame extends JFrame implements DateListener {
   private void changeDate(final Date date, final ProgressMonitor monitor, final Runnable callback) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
+        mProgramTableScrollPane.deSelectItem();
         mProgramTableModel.setDate(date, monitor, callback);
       }
     });
@@ -795,5 +856,4 @@ public class MainFrame extends JFrame implements DateListener {
     contentPane.updateUI();
   
   }
-
 }

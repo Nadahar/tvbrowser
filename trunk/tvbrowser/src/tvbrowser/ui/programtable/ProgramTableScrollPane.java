@@ -236,7 +236,53 @@ public class ProgramTableScrollPane extends JScrollPane
         }
     }
 
+    /**
+     * Go to the right program of the current program. 
+     *
+     */
+    public void right() {
+      mProgramTable.right();
+    }
 
+    /**
+     * Go to the program on top of the current program.
+     *
+     */
+    public void up() {
+      mProgramTable.up();
+    }
+
+    /**
+     * Go to the program under the current program.
+     *
+     */
+    public void down() {
+      mProgramTable.down();
+    }
+    
+    /**
+     * Go to the left program of the current program.
+     *
+     */
+    public void left() {
+      mProgramTable.left();
+    }
+    
+    /**
+     * Opens the PopupMenu for the selected program.
+     *
+     */ 
+    public void showPopupMenu() {
+      mProgramTable.showPopoupFromKeyboard();
+    }
+    
+    /**
+     * Deselect the selected program.
+     *
+     */
+    public void deSelectItem() {
+      mProgramTable.deSelectItem();
+    }
 
 }
 
