@@ -511,7 +511,6 @@ public class Settings {
   public static final ColorProperty propProgramTableColorMarked
     = new ColorProperty(mProp, "programpanel.ColorMarked", new Color(255, 0, 0, 40));
 
-
   public static final BooleanProperty propMouseOver
     = new BooleanProperty(mProp, "programpanel.MouseOver", false);
 
@@ -519,6 +518,11 @@ public class Settings {
   public static final ColorProperty propMouseOverColor
     = new ColorProperty(mProp, "programpanel.MouseOverColor", new Color(200, 200, 0, 40));
 
+  /** Color for selected Program*/
+  public static final ColorProperty propKeyboardSelectedColor
+    = new ColorProperty(mProp, "programpanel.KeyboardSelectedColor", new Color(130, 255, 0, 100));
+
+  
   public static final BooleanProperty propTitelAlwaysVisible
     = new BooleanProperty(mProp, "programpanel.TitelAlwaysVisible", false);
 

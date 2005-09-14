@@ -63,7 +63,10 @@ implements ProgramTableModelListener {
 
   private int mColumnWidth;
   private int mHeight;
-
+  
+  private int mCurrentCol;
+  private int mCurrentRow; 
+  
   private ProgramTableLayout mLayout;
   private ProgramTableModel mModel;
   private BackgroundPainter mBackgroundPainter;
@@ -80,6 +83,9 @@ implements ProgramTableModelListener {
    */
   public ProgramTable(ProgramTableModel model) {
     setProgramTableLayout(null);
+    
+    mCurrentCol = -1;
+    mCurrentRow = -1;
 
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
@@ -233,7 +239,7 @@ implements ProgramTableModelListener {
       for (int row = 0; row < mModel.getRowCount(col); row++) {
         // Get the program
         ProgramPanel panel = mModel.getProgramPanel(col, row);
-
+        
         // Render the program
         if (panel != null) {
           int cellHeight = panel.getHeight();
@@ -255,7 +261,7 @@ implements ProgramTableModelListener {
             grp.translate(x, y);
 
             panel.setSize(mColumnWidth, cellHeight);
-            panel.paint(mouseOver, grp);
+            panel.paint(mouseOver,(row == mCurrentRow && col == mCurrentCol), grp);
 
             // grp.drawRect(0, 0, mColumnWidth, cellHeight);
             grp.translate(-x, -y);
@@ -431,16 +437,35 @@ implements ProgramTableModelListener {
     mMouse = evt.getPoint();
     updateUI();
     Program program = getProgramAt(evt.getX(), evt.getY());
-
+    
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       if (program != null) {
         // This is a left double click
         // -> Execute the program using the user defined default plugin
+        if(!isSelectedItemAt(evt.getX(),evt.getY()))
+          selectItemAt(evt.getX(),evt.getY());
+
         Plugin.getPluginManager().handleProgramDoubleClick(program);
       }
     }
-    if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
+    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1)) {      
       if (program != null) {
+        if(!isSelectedItemAt(evt.getX(),evt.getY())) {
+          selectItemAt(evt.getX(),evt.getY());          
+        }
+        else {
+          deSelectItem();          
+        }
+      }
+      else {
+        deSelectItem();        
+      }
+    }
+    else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
+      if (program != null) {
+        if(!isSelectedItemAt(evt.getX(),evt.getY()))
+          selectItemAt(evt.getX(),evt.getY());
+
         // This is a middle click
         // -> Execute the program using the user defined middle click plugin
         Plugin.getPluginManager().handleProgramMiddleClick(program);
@@ -579,10 +604,283 @@ implements ProgramTableModelListener {
 
   public void tableCellUpdated(int col, int row) {
     Rectangle cellRect = getCellRect(col, row);
-
     if (cellRect != null) {
       repaint(cellRect);
     }
   }
+  
+  /**
+   * Opens the PopupMenu for the selected program.
+   *
+   */  
+  public void showPopoupFromKeyboard() {
+    if(mCurrentCol == -1 || mCurrentRow == -1)
+      return;
+    
+    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
+    Rectangle rect = this.getCellRect(mCurrentCol,mCurrentRow);
+    
+    mPopupMenu = createPluginContextMenu(program);
+    mPopupMenu.show(this, rect.x + (rect.width / 3), rect.y + ((rect.height * 3) / 4));
 
+  }
+  
+  /**
+   * Go to the right program of the current program. 
+   *
+   */
+  public void right() {
+    int cols = mModel.getColumnCount();
+    int previousCol = mCurrentCol;
+    
+    if(cols == 0)
+      return;    
+    
+    if(mCurrentCol != -1) {
+      if(mCurrentCol < cols -1)
+        mCurrentCol++;
+      else
+        mCurrentCol = 0;
+    }
+    else
+      mCurrentCol = 0;
+    
+    boolean found = false, find = true;
+    int colCount = 0;
+    
+    do {
+      int rows = mModel.getRowCount(mCurrentCol);
+  
+      if(previousCol != -1 && rows > 0) {
+        Rectangle rectPrev = getCellRect(previousCol,mCurrentRow);
+        Rectangle rectCur = getCellRect(mCurrentCol,1);
+        
+        if(rectCur != null && rectPrev != null) {          
+          int[] matrix = getMatrix(rectCur.x, rectPrev.y);
+          if(matrix[0] != -1) {
+            ProgramPanel panel = mModel.getProgramPanel(matrix[1], matrix[0]);
+            if(panel != null && !panel.getProgram().isExpired()) {
+              find = false;
+              found = true;
+              mCurrentRow = matrix[0];              
+            }
+          }
+        }
+      }
+      
+      if(find)
+        for(int i = 0; i < rows; i++) {
+          ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, i);
+          if(panel.getProgram().isOnAir() || !panel.getProgram().isExpired()) {
+            found = true;
+            mCurrentRow = i;
+            break;
+          }
+        }
+      
+      if(!found) {
+        colCount++;
+        if(mCurrentCol < cols - 1)
+          mCurrentCol++;
+        else
+          mCurrentCol = 0;
+      }
+      if(colCount >= cols) {
+        mCurrentCol = -1;
+        mCurrentRow = -1;
+        updateUI();
+        return;
+      }
+    }while(!found);
+    
+    this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
+    updateUI();
+    
+  /*  ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
+    Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
+  }
+  
+  /**
+   * Go to the program on top of the current program.
+   *
+   */
+  public void up() {
+    if(mCurrentCol == -1)
+      right();
+    else {
+      int rows = mModel.getRowCount(mCurrentCol);
+      ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);
+      
+      if(panel.getProgram().isOnAir())
+        mCurrentRow = rows - 1;
+      else
+        mCurrentRow--;
+      
+      if(mCurrentRow < 0)
+        mCurrentRow = rows - 1;
+      
+      this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
+      updateUI();
+      
+  /*    panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
+      Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
+    }    
+  }
+  
+  /**
+   * Go to the program under the current program.
+   *
+   */
+  public void down() {
+    if(mCurrentCol == -1)
+      right();
+    else {
+      int rows = mModel.getRowCount(mCurrentCol);
+      if(mCurrentRow >= rows -1) {
+        for(int i = 0; i < rows; i++) {
+          ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, i);
+          if(panel.getProgram().isOnAir() || !panel.getProgram().isExpired()) {
+            mCurrentRow = i;
+            break;
+          }
+        }
+      }
+      else
+        mCurrentRow++;
+      
+      this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
+      updateUI();
+      
+  /*    ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
+      Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
+    }
+  }
+  
+  /**
+   * Go to the left program of the current program.
+   *
+   */
+  public void left() {
+    if(mCurrentCol == -1)
+      right();
+    else {      
+      int previousCol = mCurrentCol;
+      boolean found = false, find = true;
+      
+      do {       
+        if(mCurrentCol == 0)
+          mCurrentCol = mModel.getColumnCount() - 1;
+        else
+          mCurrentCol--;
+        
+        int rows = mModel.getRowCount(mCurrentCol);       
+        
+        if(previousCol != -1 && rows > 0) {
+          Rectangle rectPrev = getCellRect(previousCol,mCurrentRow);
+          Rectangle rectCur = getCellRect(mCurrentCol,1);
+          
+          if(rectCur != null && rectPrev != null) {          
+            int[] matrix = getMatrix(rectCur.x, rectPrev.y);
+            if(matrix[0] != -1) {
+              ProgramPanel panel = mModel.getProgramPanel(matrix[1], matrix[0]);
+              if(panel != null && !panel.getProgram().isExpired()) {
+                find = false;
+                found = true;
+                mCurrentRow = matrix[0];              
+              } 
+            }
+          }
+        }
+        
+        if(find)
+          for(int i = 0; i < rows; i++) {
+            ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, i);
+            if(panel.getProgram().isOnAir() || !panel.getProgram().isExpired()) {
+              found = true;
+              mCurrentRow = i;
+              break;
+            }
+          }
+      }while(!found);
+      
+      this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
+      updateUI();
+      
+   /*   ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
+      Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
+    }
+  }
+  
+  /**
+   * Deselect the selected program.
+   *
+   */
+  public void deSelectItem() {
+    mCurrentRow = -1;
+    mCurrentCol = -1;
+    updateUI();
+  //  Plugin.getPluginManager().handleProgramDeSelected();
+  }
+  
+  /**
+   * Returns an array of the indices [0] = row
+   * 
+   * @param x X position of the point.
+   * @param y Y position of the point.
+   * @return An array of the indices at the point that was given.
+   */
+  private int[] getMatrix(int x, int y) {
+    int col = x / mColumnWidth;
+    int[] matrix = new int[2];
+
+    if ((col < 0) || (col >= mModel.getColumnCount())) {
+      matrix[0] = -1;
+      matrix[1] = -1;      
+      return matrix;
+    }
+
+    int currY = mLayout.getColumnStart(col);
+    if (y < currY) {
+      matrix[0] = -1;
+      matrix[1] = -1;      
+      return matrix;
+    }  
+
+    for (int row = 0; row < mModel.getRowCount(col); row++) {
+      ProgramPanel panel = mModel.getProgramPanel(col, row);
+      currY += panel.getHeight();
+      if (y < currY) {
+        matrix[0] = row;
+        matrix[1] = col;
+        break;
+      }
+    }
+    
+    return matrix;
+  }
+  
+  /**
+   * Selects the program at the point(x,y)
+   * @param x X position of the point
+   * @param y Y position of the point
+   */
+  public void selectItemAt(int x, int y) {
+    int[] matrix = getMatrix(x,y);
+    mCurrentRow = matrix[0];
+    mCurrentCol = matrix[1];
+    updateUI();
+ /*   ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
+    Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
+  }
+  
+  /**
+   * 
+   * @param x X position of the point
+   * @param y Y position of the point
+   * @return Is the point at a selected program?
+   */
+  private boolean isSelectedItemAt(int x, int y) {
+    int[] matrix = getMatrix(x,y);
+    return (mCurrentRow == matrix[0] && mCurrentCol == matrix[1]);
+  }
 }
