@@ -74,7 +74,7 @@ public class PluginListCellRenderer extends DefaultListCellRenderer {
         name = new JLabel();
         name.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
         
-        panel = new JPanel(new FormLayout("default, 2dlu, fill:default:grow","default, 2dlu, default"));
+        panel = new JPanel(new FormLayout("default, 2dlu, fill:pref:grow","default, 2dlu, default"));
         panel.setBorder(Borders.DLU2_BORDER);
         
         panel.add(icon, cc.xy(1,1));
@@ -93,7 +93,7 @@ public class PluginListCellRenderer extends DefaultListCellRenderer {
       if (desc != null)
         panel.remove(desc);
       desc = UiUtilities.createHelpTextArea(plugin.getInfo().getDescription());
-      desc.setMinimumSize(new Dimension(100, 5));
+      desc.setMinimumSize(new Dimension(100, 10));
       desc.setOpaque(label.isOpaque());
       desc.setBackground(label.getBackground());
       desc.setEnabled(plugin.isActivated());

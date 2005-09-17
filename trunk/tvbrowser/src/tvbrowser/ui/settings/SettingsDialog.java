@@ -320,7 +320,14 @@ public class SettingsDialog {
     return root;
   }
 
-
+  /**
+   * Returns the current Dialog
+   * @return Dialog
+   */
+  public JDialog getDialog() {
+    return mDialog;
+  }
+  
 
   private void saveSettings() {
     saveSettings((SettingNode) mSelectionTree.getModel().getRoot());

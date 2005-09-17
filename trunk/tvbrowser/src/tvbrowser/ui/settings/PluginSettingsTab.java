@@ -51,6 +51,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -178,9 +179,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   private void showInfoDialog() {
     int inx = mList.getSelectedIndex();//mList.locationToIndex(e.getPoint());
     if (inx >= 0) {
-      Object item = mListModel.getElementAt(inx);
+      PluginProxy item = (PluginProxy)mListModel.getElementAt(inx);
       mList.ensureIndexIsVisible(inx);
-      System.out.println(item);
+      
+      PluginInfoDialog dialog = new PluginInfoDialog(mSettingsDialog.getDialog(), item.getMarkIcon(), item.getInfo());
+      UiUtilities.centerAndShow(dialog);
     }
   }
   
