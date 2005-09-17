@@ -6,8 +6,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import util.io.IOUtilities;
 import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.HTMLTextHelper;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
@@ -238,18 +238,8 @@ public class ProgramTextCreator {
       return;
     }
 
-    // Disarm html entities
-    text = IOUtilities.replace(text.trim(), "<", "&lt;");
-    text = IOUtilities.replace(text.trim(), ">", "&gt;");
-
-    // Translate line breaks to html breaks
-    text = IOUtilities.replace(text.trim(), "\n", "<br>");
-
-    // Create links for URLs
-    if (createLinks) {
-      text = text.replaceAll("(http://|www.)[^\\s<]*", "<a href=\"$0\">$0</a>");
-    }
-
+    text = HTMLTextHelper.convertTextToHtml(text, createLinks);
+    
     openPara(buffer, style);
     if (label != null) {
       buffer.append("<b>" + label + ":</b> ");
