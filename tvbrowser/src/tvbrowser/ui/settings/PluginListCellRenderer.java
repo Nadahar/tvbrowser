@@ -50,6 +50,9 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author bodum
  */
 public class PluginListCellRenderer extends DefaultListCellRenderer {
+  /** Translation */
+  private static final util.ui.Localizer mLocalizer
+  = util.ui.Localizer.getLocalizerFor(PluginListCellRenderer.class);
   /** Panel that shows the Informations*/
   private JPanel panel;
   /** Description */
@@ -106,7 +109,7 @@ public class PluginListCellRenderer extends DefaultListCellRenderer {
         name.setText(plugin.getInfo().getName() + " " + plugin.getInfo().getVersion());
         name.setEnabled(true);
       } else {
-        name.setText(plugin.getInfo().getName() + " " + plugin.getInfo().getVersion() + " [Deactivated]");
+        name.setText(plugin.getInfo().getName() + " " + plugin.getInfo().getVersion() + " ["+mLocalizer.msg("deactivated", "Deactivated")+"]");
         name.setEnabled(false);
       }
 
