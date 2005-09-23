@@ -28,6 +28,7 @@ package tvbrowser.ui.mainframe.toolbar;
 
 
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.MenuBar;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import tvbrowser.core.Settings;
@@ -44,31 +45,31 @@ public class ContextMenu {
        = util.ui.Localizer.getLocalizerFor(ContextMenu.class);
 
 
-  private ToolBar mToolBar;
+  private JComponent mComponent;
   private JPopupMenu mMenu;
 
-  public ContextMenu(ToolBar toolBar) {
-    mToolBar = toolBar;
+  public ContextMenu(JComponent component) {
+    mComponent = component;
     mMenu = new JPopupMenu();
   }
 
   public void show(int x, int y) {
     update();
-    mMenu.show(mToolBar, x,y);
+    mMenu.show(mComponent, x,y);
   }
 
   private void update() {
     mMenu.removeAll();
-  /*  mMenu.add(createButtonSizeMenuItem());
+  /*  mMenu.add(createButtonSizeMenuItem());*/
     mMenu.add(createViewMenu());
-    mMenu.add(createLocationMenu());
-    mMenu.addSeparator();*/
+    /*mMenu.add(createLocationMenu());*/
+    mMenu.addSeparator();
     if(ToolBarDragAndDropSettings.getInstance() == null)
       mMenu.add(createConfigureItem());
   }
 
 
-  private JMenu createLocationMenu() {
+ /* private JMenu createLocationMenu() {
     JMenu menu = new JMenu(mLocalizer.msg("location", "Location"));
     JRadioButtonMenuItem topMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("top","Top"));
     JRadioButtonMenuItem leftMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("left","Left"));
@@ -100,10 +101,20 @@ public class ContextMenu {
       }
     });
     return menu;
-  }
+  }*/
 
-  private JMenu createViewMenu() {
-    JMenu menu = new JMenu(mLocalizer.msg("view","view"));
+  private JCheckBoxMenuItem createViewMenu() {    
+    final JCheckBoxMenuItem show = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer.msg(
+        "showToolbar", "Show toolbar"));
+    show.setSelected(Settings.propIsTooolbarVisible.getBoolean());
+    show.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        Settings.propIsTooolbarVisible.setBoolean(show.isSelected());
+        MainFrame.getInstance().updateToolbar();
+      }      
+    });
+    
+    /*JMenu menu = new JMenu(mLocalizer.msg("view","view"));
     JRadioButtonMenuItem allMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("text.and.icon","text and icon"));
     JRadioButtonMenuItem textonlyMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("text","text"));
     JRadioButtonMenuItem icononlyMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("icon","icon"));
@@ -114,7 +125,9 @@ public class ContextMenu {
     group.add(allMenuItem);
     group.add(textonlyMenuItem);
     group.add(icononlyMenuItem);
-    int style = mToolBar.getStyle();
+    final ToolBar toolbar = MainFrame.getInstance().getToolbar();
+    
+    int style = toolbar.getStyle();
     if (style == ToolBar.STYLE_TEXT) {
       textonlyMenuItem.setSelected(true);
     }
@@ -126,32 +139,32 @@ public class ContextMenu {
     }
     allMenuItem.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        mToolBar.setStyle(ToolBar.STYLE_TEXT | ToolBar.STYLE_ICON);
-        mToolBar.storeSettings();
-        mToolBar.update();
+        toolbar.setStyle(ToolBar.STYLE_TEXT | ToolBar.STYLE_ICON);
+        toolbar.storeSettings();
+        toolbar.update();
       }
     });
 
     textonlyMenuItem.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        mToolBar.setStyle(ToolBar.STYLE_TEXT);
-        mToolBar.storeSettings();
-        mToolBar.update();
+        toolbar.setStyle(ToolBar.STYLE_TEXT);
+        toolbar.storeSettings();
+        toolbar.update();
       }
     });
 
     icononlyMenuItem.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        mToolBar.setStyle(ToolBar.STYLE_ICON);
-        mToolBar.storeSettings();
-        mToolBar.update();
+        toolbar.setStyle(ToolBar.STYLE_ICON);
+        toolbar.storeSettings();
+        toolbar.update();
       }
-    });
+    });*/
 
-    return menu;
+    return show;
   }
 
-  private JMenuItem createButtonSizeMenuItem() {
+ /* private JMenuItem createButtonSizeMenuItem() {
     JCheckBoxMenuItem item = new JCheckBoxMenuItem(mLocalizer.msg("bigIcons","Use big icons"), mToolBar.useBigIcons());
     item.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -163,7 +176,7 @@ public class ContextMenu {
 
     return item;
   }
-
+*/
   private JMenuItem createConfigureItem() {
     JMenuItem item = new JMenuItem(mLocalizer.msg("configure","Configure")+"...");
     item.addActionListener(new ActionListener(){
