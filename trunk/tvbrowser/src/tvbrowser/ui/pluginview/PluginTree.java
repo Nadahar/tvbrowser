@@ -56,6 +56,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.ui.programtable.ProgramTable;
 import util.ui.OverlayListener;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -230,10 +231,13 @@ public class PluginTree extends JTree implements DragGestureListener,
 
             for (int i = 0; i < pa.length; i++) {
               if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
-                Transferable tr = e.getTransferable();
-                Program program = (Program) tr.getTransferData(flavors[0]);
 
-                ActionMenu menu = pa[i].getContextMenuActions(program);
+/*  This would onky work with Java 1.5
+ * 
+ *  Transferable tr = e.getTransferable();
+ *  Program program = (Program) tr.getTransferData(flavors[0]);*/
+
+                ActionMenu menu = pa[i].getContextMenuActions(Plugin.getPluginManager().getExampleProgram());
                 while (menu != null && menu.hasSubItems()) {
                   ActionMenu[] subItems = menu.getSubItems();
                   if (subItems.length > 0) {
