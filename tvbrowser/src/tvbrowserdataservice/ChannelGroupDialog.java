@@ -114,14 +114,14 @@ public class ChannelGroupDialog extends JDialog {
         }
 
         
-        panel.add(new JLabel(mLocalizer.msg("webpage","WebPage") + ":"));
-        if (mGroup.getProviderWebPage() == null) {
-            panel.add(new JLabel(mLocalizer.msg("nowebpage", "Not availabe")));
-        } else {
-            LinkButton b = new LinkButton(mGroup.getProviderWebPage());
-            b.setHorizontalAlignment(LinkButton.LEFT);
-            panel.add(b);
-        }
+//        panel.add(new JLabel(mLocalizer.msg("webpage","WebPage") + ":"));
+//        if (mGroup.getProviderWebPage() == null) {
+//            panel.add(new JLabel(mLocalizer.msg("nowebpage", "Not availabe")));
+//        } else {
+//            LinkButton b = new LinkButton(mGroup.getProviderWebPage());
+//            b.setHorizontalAlignment(LinkButton.LEFT);
+//            panel.add(b);
+//        }
 
         JPanel descPanel = new JPanel(new BorderLayout());
         descPanel.add(new JLabel(mLocalizer.msg("description","Description") + ":"), BorderLayout.NORTH);

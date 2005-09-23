@@ -140,14 +140,15 @@ public class PluginLoader {
         else if (plugin instanceof AbstractPluginProxy) {
           PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
         }
-        else if (plugin instanceof TvDataService) {
-          TvDataServiceProxy proxy = new DeprecatedTvDataServiceProxy((TvDataService)plugin);
-          TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
-        }
         else if (plugin instanceof devplugin.TvDataService) {
           TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.TvDataService)plugin);
           TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
         }
+        else if (plugin instanceof TvDataService) {
+          TvDataServiceProxy proxy = new DeprecatedTvDataServiceProxy((TvDataService)plugin);
+          TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
+        }
+
 
         mLog.info("Loaded plugin "+pluginFile.getAbsolutePath());
 

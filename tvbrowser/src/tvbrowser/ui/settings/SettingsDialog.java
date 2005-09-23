@@ -264,6 +264,9 @@ public class SettingsDialog {
     node = new SettingNode(new ChannelsSettingsTab());
     root.add(node);
 
+    node = new SettingNode(new ChannelGroupSettingsTab());
+    root.add(node);
+
     
 
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();

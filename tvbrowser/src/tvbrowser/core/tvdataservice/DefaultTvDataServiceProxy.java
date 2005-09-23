@@ -37,7 +37,7 @@ import tvdataservice.SettingsPanel;
 import util.exc.TvBrowserException;
 
 
-public class DefaultTvDataServiceProxy implements TvDataServiceProxy {
+public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   public TvDataService mTvDataService;
 
@@ -53,8 +53,8 @@ public class DefaultTvDataServiceProxy implements TvDataServiceProxy {
     return mTvDataService.getAvailableGroups();
   }
 
-  public void updateTvData(ChannelGroup group, TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor) throws TvBrowserException {
-    mTvDataService.updateTvData(group, updateManager,  channelArr, startDate, dateCount, monitor);
+  public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor) throws TvBrowserException {
+    mTvDataService.updateTvData(updateManager,  channelArr, startDate, dateCount, monitor);
   }
 
   public void loadSettings(Properties settings) {
@@ -62,34 +62,42 @@ public class DefaultTvDataServiceProxy implements TvDataServiceProxy {
   }
 
   public Properties storeSettings() {
-    return null;
+    return mTvDataService.storeSettings();
   }
 
   public boolean hasSettingsPanel() {
-    return false;
+    return mTvDataService.hasSettingsPanel();
   }
 
   public SettingsPanel getSettingsPanel() {
-    return null;
+    return mTvDataService.getSettingsPanel();
   }
 
   public Channel[] getAvailableChannels(ChannelGroup group) {
-    return new Channel[0];
+    return mTvDataService.getAvailableChannels(group);
   }
 
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
-    return new Channel[0];
+    return mTvDataService.checkForAvailableChannels(group, monitor);
+  }
+
+  public ChannelGroup[] checkForAvailableGroups(ProgressMonitor monitor) throws TvBrowserException {
+    return mTvDataService.checkForAvailableChannelGroups(monitor);
   }
 
   public boolean supportsDynamicChannelList() {
-    return false;
+    return mTvDataService.supportsDynamicChannelList();
+  }
+
+  public boolean supportsDynamicChannelGroups() {
+    return mTvDataService.supportsDynamicChannelGroups();
   }
 
   public PluginInfo getInfo() {
-    return null;
+    return mTvDataService.getInfo();
   }
 
   public String getId() {
-    return null;
+    return mTvDataService.getClass().getName();
   }
 }

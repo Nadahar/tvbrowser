@@ -737,7 +737,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
         for (int i = 0; i < services.length; i++) {
           if (services[i].supportsDynamicChannelList()) {
             try {
-              services[i].checkForAvailableChannels(null, win);
+              services[i].checkForAvailableChannels(win);
             } catch (TvBrowserException exc) {
               ErrorHandler.handle(exc);
             }

@@ -40,70 +40,72 @@ import util.ui.progress.ProgressWindow;
 import java.awt.event.*;
 import java.awt.Font;
 
+import devplugin.ChannelGroup;
+
 class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionListener {
 
   private JPanel mContent;
   private JLabel mStatusLabel;
   private boolean mDownloadStarted;
-  
+
   private static final util.ui.Localizer mLocalizer
-        = util.ui.Localizer.getLocalizerFor(DownloadChannelListCardPanel.class); 
-  
+        = util.ui.Localizer.getLocalizerFor(DownloadChannelListCardPanel.class);
+
 
   public DownloadChannelListCardPanel(PrevNextButtons btns) {
     super(btns);
     mDownloadStarted=false;
     mContent=new JPanel();
     mContent.setLayout(new BoxLayout(mContent,BoxLayout.Y_AXIS));
-    
+
     JLabel area=new JLabel();
-    area.setFont(new Font("SansSerif", Font.PLAIN, 12)); 
+    area.setFont(new Font("SansSerif", Font.PLAIN, 12));
    /* area.setText("<HTML>" +
-              "<h2>Senderliste herunterladen</h2><br>" +
-              "TV-Browser wird nun eine Liste der verfuegbaren Sender herunterladen.<br><br>" +
-              "Stellen Sie sicher, dass eine Verbindung ins Internet besteht und klicken Sie auf " +
-              "<i><u>Senderliste jetzt herunterladen</u></i>.<br><br>" +
-              ""+ 
-              "</HTML>");
-    */
+             "<h2>Senderliste herunterladen</h2><br>" +
+             "TV-Browser wird nun eine Liste der verfuegbaren Sender herunterladen.<br><br>" +
+             "Stellen Sie sicher, dass eine Verbindung ins Internet besteht und klicken Sie auf " +
+             "<i><u>Senderliste jetzt herunterladen</u></i>.<br><br>" +
+             ""+
+             "</HTML>");
+   */
      area.setText(mLocalizer.msg("description","Download channel list..."));
      mContent.add(area);
      JButton downloadBtn = new JButton(mLocalizer.msg("downloadChannelList", "Download channellist now"));
      downloadBtn.addActionListener(this);
      mContent.add(downloadBtn);
-     
+
      int cnt=getChannelCount();
      mStatusLabel=new JLabel();
      mStatusLabel.setBorder(BorderFactory.createEmptyBorder(15,0,0,0));
      if (cnt>0) {
        mStatusLabel.setText(mLocalizer.msg("availableChannels","{0} channels available.",""+cnt));
      }
-     
+
      mContent.add(mStatusLabel);
-       
+
   }
- 
+
   public JPanel getPanel() {
     return mContent;
   }
-  
+
   private int getChannelCount() {
     TvDataServiceProxy services[]= TvDataServiceProxyManager.getInstance().getDataServices();
     int channelCount=0;
     for (int i=0;i<services.length;i++) {
-      devplugin.Channel channelList[]=services[i].getAvailableChannels(null);
+      devplugin.Channel channelList[]=services[i].getAvailableChannels();
       if (channelList!=null) {
         channelCount+=channelList.length;
-      } 
+      }
     }
     return channelCount;
   }
-  
+
   public void actionPerformed(ActionEvent event) {
-    
-    
+
+
     final ProgressWindow win=new ProgressWindow(MainFrame.getInstance());
-        
+
     win.run(new Progress(){
       public void run() {
         mDownloadStarted=true;
@@ -111,7 +113,7 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
         for (int i=0;i<services.length;i++) {
           if (services[i].supportsDynamicChannelList()) {
             try {
-              services[i].checkForAvailableChannels(null, win);
+              services[i].checkForAvailableChannels(win);
             }catch (TvBrowserException e) {
               ErrorHandler.handle(e);
             }
@@ -119,21 +121,21 @@ class DownloadChannelListCardPanel extends AbstractCardPanel implements ActionLi
         }
       }
     });
-    
+
     int cnt=getChannelCount();
     if (cnt>0) {
       mStatusLabel.setText(mLocalizer.msg("availableChannels","({0}) channels available.",""+cnt));
     }
-    else {      
+    else {
       mStatusLabel.setText(mLocalizer.msg("noChannelAvailable","no channel available"));
     }
     ChannelList.create();
     mBtns.enableNextButton();
-    
-    
+
+
   }
 
-  
+
   public void onShow() {
     super.onShow();
     if (!mDownloadStarted || getChannelCount()==0) {

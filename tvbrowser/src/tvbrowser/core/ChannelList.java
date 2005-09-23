@@ -30,6 +30,7 @@ package tvbrowser.core;
 import java.util.*;
 import java.io.*;
 import devplugin.Channel;
+import devplugin.ChannelGroup;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 
@@ -70,9 +71,9 @@ public class ChannelList {
 
   public static void loadDayLightSavingTimeCorrections() {
     Map map = createMap(new File(Settings.getUserDirectoryName(),"daylight_correction.txt"));
-    
+
     Iterator keyIt = map.keySet().iterator();
-    
+
     while (keyIt.hasNext()) {
       Channel ch = (Channel)keyIt.next();
       int corr=Integer.parseInt((String)map.get(ch));
@@ -81,7 +82,7 @@ public class ChannelList {
   }
 
   /**
-   * Stores all settings used for the Channels 
+   * Stores all settings used for the Channels
    */
   public static void storeAllSettings() {
       storeDayLightSavingTimeCorrections();
@@ -106,7 +107,7 @@ public class ChannelList {
           }
         }
     }catch(IOException e) {
-      // ignore  
+      // ignore
     }
     if (out!=null) {
       out.close();
@@ -115,7 +116,7 @@ public class ChannelList {
   }
 
   private static void addDataServiceChannels(TvDataServiceProxy dataService) {
-    Channel[] channelArr = dataService.getAvailableChannels(null);
+    Channel[] channelArr = dataService.getAvailableChannels();
     for (int i = 0; i < channelArr.length; i++) {
       mAvailableChannels.add(channelArr[i]);
     }
@@ -266,13 +267,13 @@ public class ChannelList {
   }
 
   /**
-   * Loads the Icon-Filenames 
+   * Loads the Icon-Filenames
    */
   private static void loadChannelIcons() {
     Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_icons.txt"));
-    
+
     Iterator keyIt = map.keySet().iterator();
-    
+
     while (keyIt.hasNext()) {
       Channel ch = (Channel)keyIt.next();
       String val = (String)map.get(ch);
@@ -292,7 +293,7 @@ public class ChannelList {
 
 
   /**
-   * Stores all Icons 
+   * Stores all Icons
    */
   private static void storeChannelIcons() {
       File f=new File(Settings.getUserDirectoryName(),"channel_icons.txt");
@@ -310,22 +311,22 @@ public class ChannelList {
             }
           }
       }catch(IOException e) {
-        // ignore  
+        // ignore
       }
       if (out!=null) {
         out.close();
       }
   }
-  
+
   public static void loadChannelNames() {
     Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_names.txt"));
-    
+
     Iterator keyIt = map.keySet().iterator();
-    
+
     while (keyIt.hasNext()) {
       Channel ch = (Channel)keyIt.next();
       ch.setUserChannelName((String)map.get(ch));
-    }    
+    }
   }
 
   public static void storeChannelNames() {
@@ -344,24 +345,24 @@ public class ChannelList {
           }
         }
     }catch(IOException e) {
-      // ignore  
+      // ignore
     }
     if (out!=null) {
       out.close();
     }
   }
-  
+
   public static void loadChannelWebPages() {
     Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_webpages.txt"));
-    
+
     Iterator keyIt = map.keySet().iterator();
-    
+
     while (keyIt.hasNext()) {
       Channel ch = (Channel)keyIt.next();
       ch.setUserWebPage((String)map.get(ch));
-    }  
+    }
   }
-  
+
   public static void storeChannelWebPages() {
     File f=new File(Settings.getUserDirectoryName(),"channel_webpages.txt");
 
@@ -378,13 +379,13 @@ public class ChannelList {
           }
         }
     }catch(IOException e) {
-      // ignore  
+      // ignore
     }
     if (out!=null) {
       out.close();
     }
   }
-  
+
   /**
    * Create a HashMap from a Settings-File
    * @param f File to Load
@@ -392,11 +393,11 @@ public class ChannelList {
    */
   private static HashMap createMap(File f) {
     HashMap map = new HashMap();
-    
+
     if (!f.exists()) {
       return map;
     }
-    
+
     FileReader fr;
     BufferedReader reader=null;
     try {
