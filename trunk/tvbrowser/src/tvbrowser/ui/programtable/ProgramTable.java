@@ -26,12 +26,10 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.*;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -49,6 +47,7 @@ import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
 import tvbrowser.ui.programtable.background.TimeOfDayBackPainter;
 import tvbrowser.ui.programtable.background.WhiteBackPainter;
 import util.ui.ProgramPanel;
+import util.ui.TransferProgram;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -59,7 +58,7 @@ import devplugin.Program;
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramTable extends JPanel
-implements ProgramTableModelListener {
+implements ProgramTableModelListener, DragGestureListener {
 
   private int mColumnWidth;
   private int mHeight;
@@ -125,6 +124,8 @@ implements ProgramTableModelListener {
       }
     });
 
+    (new DragSource()).createDefaultDragGestureRecognizer(this,
+        DnDConstants.ACTION_MOVE, this);
   }
 
 
@@ -420,6 +421,8 @@ implements ProgramTableModelListener {
 
     Program program = getProgramAt(evt.getX(), evt.getY());
     if (program != null) {
+      if(!isSelectedItemAt(evt.getX(),evt.getY()))
+        selectItemAt(evt.getX(),evt.getY());
       mPopupMenu = createPluginContextMenu(program);
       mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
     }
@@ -448,7 +451,8 @@ implements ProgramTableModelListener {
         Plugin.getPluginManager().handleProgramDoubleClick(program);
       }
     }
-    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1)) {      
+    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
+        (evt.isShiftDown())) {      
       if (program != null) {
         if(!isSelectedItemAt(evt.getX(),evt.getY())) {
           selectItemAt(evt.getX(),evt.getY());          
@@ -456,9 +460,6 @@ implements ProgramTableModelListener {
         else {
           deSelectItem();          
         }
-      }
-      else {
-        deSelectItem();        
       }
     }
     else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
@@ -476,7 +477,7 @@ implements ProgramTableModelListener {
 
 
   private void handleMouseDragged(MouseEvent evt) {
-    if (mDraggingPoint != null) {
+    if (mDraggingPoint != null && !evt.isShiftDown()) {
       int deltaX = mDraggingPoint.x - evt.getX();
       int deltaY = mDraggingPoint.y - evt.getY();
       scrollBy(deltaX, deltaY);
@@ -619,12 +620,37 @@ implements ProgramTableModelListener {
     
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
     Rectangle rect = this.getCellRect(mCurrentCol,mCurrentRow);
+    scrollRectToVisible(rect);
     
     mPopupMenu = createPluginContextMenu(program);
     mPopupMenu.show(this, rect.x + (rect.width / 3), rect.y + ((rect.height * 3) / 4));
 
   }
   
+  /**
+   * Starts the middle click Plugin.
+   */
+  public void startMiddleClickPluginFromKeyboard() {
+    if(mCurrentCol == -1 || mCurrentRow == -1)
+      return;   
+
+    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
+    
+    Plugin.getPluginManager().handleProgramMiddleClick(program);
+  }
+
+  /**
+   * Starts the double click Plugin.
+   */
+  public void startDoubleClickPluginFromKeyboard() {
+    if(mCurrentCol == -1 || mCurrentRow == -1)
+      return;   
+
+    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
+    
+    Plugin.getPluginManager().handleProgramDoubleClick(program);   
+  }
+
   /**
    * Go to the right program of the current program. 
    *
@@ -882,5 +908,18 @@ implements ProgramTableModelListener {
   private boolean isSelectedItemAt(int x, int y) {
     int[] matrix = getMatrix(x,y);
     return (mCurrentRow == matrix[0] && mCurrentCol == matrix[1]);
+  }
+
+  public void dragGestureRecognized(DragGestureEvent evt) {
+    if(!evt.getTriggerEvent().isShiftDown())
+      return;
+    mMouse = evt.getDragOrigin();    
+
+    Program program = getProgramAt(mMouse.x, mMouse.y);
+    if (program != null) {
+      if(!isSelectedItemAt(mMouse.x,mMouse.y))
+        selectItemAt(mMouse.x,mMouse.y);
+      evt.startDrag(null,new TransferProgram(program));
+    }
   }
 }

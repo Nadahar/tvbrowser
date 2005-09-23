@@ -15,5 +15,4 @@ public interface ProgramTableModelListener {
   public void tableDataChanged(Runnable callback);
   
   public void tableCellUpdated(int col, int row);
-  
 }
