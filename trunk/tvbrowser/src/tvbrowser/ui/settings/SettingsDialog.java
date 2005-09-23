@@ -283,7 +283,7 @@ public class SettingsDialog {
     node.add(new SettingNode(new ProgramTableSettingsTab()));
     node.add(new SettingNode(new ProgramPanelSettingsTab()));
     node.add(new SettingNode(contextmenuSettingsTab));
-    node.add(new SettingNode(new ToolbarSettingsTab(),TAB_ID_TOOLBAR));
+ //   node.add(new SettingNode(new ToolbarSettingsTab(),TAB_ID_TOOLBAR));
 
     // Plugins
     node = new SettingNode(pluginSettingsTab, TAB_ID_PLUGINS);
