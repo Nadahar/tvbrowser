@@ -58,7 +58,7 @@ public interface TvDataService {
    *
    * @throws util.exc.TvBrowserException
    */
-  public void updateTvData(ChannelGroup group, TvDataUpdateManager updateManager,
+  public void updateTvData(TvDataUpdateManager updateManager,
                            Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException;
 
@@ -104,11 +104,19 @@ public interface TvDataService {
    */
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
 
+  public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException;
+
   /**
    *
    * @return true, if this TvDataService can dynamically load other channels
    */
   public boolean supportsDynamicChannelList();
+
+  /**
+   *
+   * @return true, if this TvDataService can dynamically load other groups
+   */
+  public boolean supportsDynamicChannelGroups();
 
   /**
    * Gets information about this TvDataService

@@ -39,7 +39,7 @@ import java.io.File;
 /**
  * This is a wrapper class for the old TvDataService interface.
  */
-public class DeprecatedTvDataServiceProxy implements TvDataServiceProxy {
+public class DeprecatedTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   private TvDataService mDataService;
   private String mId;
@@ -64,7 +64,7 @@ public class DeprecatedTvDataServiceProxy implements TvDataServiceProxy {
    *
    * @throws util.exc.TvBrowserException
    */
-  public void updateTvData(ChannelGroup group, TvDataUpdateManager updateManager,
+  public void updateTvData(TvDataUpdateManager updateManager,
                            Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException {
 
@@ -102,12 +102,26 @@ public class DeprecatedTvDataServiceProxy implements TvDataServiceProxy {
     return mDataService.getAvailableChannels();
   }
 
+  /**
+   * method not supported
+   * @param monitor
+   * @return
+   * @throws TvBrowserException
+   */
+  public ChannelGroup[] checkForAvailableGroups(ProgressMonitor monitor) throws TvBrowserException {
+    return null;
+  }
+
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
     return mDataService.checkForAvailableChannels(monitor);
   }
 
   public boolean supportsDynamicChannelList() {
     return mDataService.supportsDynamicChannelList();
+  }
+
+  public boolean supportsDynamicChannelGroups() {
+    return false;
   }
 
   /**

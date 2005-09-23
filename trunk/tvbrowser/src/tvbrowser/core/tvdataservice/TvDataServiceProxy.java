@@ -38,6 +38,9 @@ import util.exc.TvBrowserException;
 
 public interface TvDataServiceProxy {
 
+
+  public ChannelGroup[] getSubscribedGroups();
+
   /**
    * This method is called by the host application to set the working folder.
    * If required, TvDataService implementations should store their data
@@ -57,7 +60,7 @@ public interface TvDataServiceProxy {
    *
    * @throws util.exc.TvBrowserException
    */
-  public void updateTvData(ChannelGroup group, TvDataUpdateManager updateManager,
+  public void updateTvData(TvDataUpdateManager updateManager,
                            Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor)
     throws TvBrowserException;
 
@@ -90,24 +93,27 @@ public interface TvDataServiceProxy {
   /**
    * Gets the list of the channels that are available for the given channel group.
    */
-  public Channel[] getAvailableChannels(ChannelGroup group);
+  public Channel[] getAvailableChannels();
 
   /**
    * Some TvDataServices may need to connect to the internet to know their
    * channels. If supportsDanymicChannelList() returns true, this method is
    * called to check for availabel channels.
-   * @param group
    * @param monitor
    * @return
    * @throws TvBrowserException
    */
-  public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
+  public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException;
+
+  public ChannelGroup[] checkForAvailableGroups(ProgressMonitor monitor) throws TvBrowserException;
 
   /**
    *
    * @return true, if this TvDataService can dynamically load other channels
    */
   public boolean supportsDynamicChannelList();
+
+  public boolean supportsDynamicChannelGroups();
 
   /**
    * Gets information about this TvDataService

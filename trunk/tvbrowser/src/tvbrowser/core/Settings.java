@@ -682,4 +682,7 @@ public class Settings {
   public static final BooleanProperty propShowChannelIconsInChannellist
     = new BooleanProperty(mProp, "showChannelIconsInChannellist", true);
 
+  public static final StringArrayProperty propSubscribedChannelGroups
+    = new StringArrayProperty(mProp, "subscribedChannelGroups", null/*new String[]{"tvbrowserdataservice.TvBrowserDataService.main","tvbrowserdataservice.TvBrowserDataService.austria"}*/);
+
 }

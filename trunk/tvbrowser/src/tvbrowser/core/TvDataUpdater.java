@@ -39,6 +39,7 @@ import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
+import devplugin.ChannelGroup;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 
@@ -167,7 +168,7 @@ public class TvDataUpdater {
       Channel[] channelArr = jobArr[i].getChannelList();
       ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(channelArr.length);
       try {
-        dataService.updateTvData(null, updateManager, channelArr, startDate,
+        dataService.updateTvData(updateManager, channelArr, startDate,
                                  daysToDownload, monitor);
       }
       catch (Throwable thr) {
