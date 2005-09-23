@@ -43,6 +43,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
@@ -428,10 +429,10 @@ public class TVBrowser {
       mainFrame.runSetupAssistant();
     }
     else {
-      handleAutomaticDownload();
+      boolean automaticDownloadStarted = handleAutomaticDownload();
 
       boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-      if ((! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
+      if (!automaticDownloadStarted && (! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
         mainFrame.askForDataUpdate();
       } else {
         mainFrame.scrollToNow();
@@ -471,14 +472,18 @@ public class TVBrowser {
     return mTray.isTrayUsed();
   }
 
-  private static void handleAutomaticDownload() {
+  /**
+   * Starts an automatic download if required
+   * @return false, if no download got started
+   */
+  private static boolean handleAutomaticDownload() {
     String autoDLType = Settings.propAutoDownloadType.getString();
 
     if ((ChannelList.getNumberOfSubscribedChannels() == 0)
       || autoDLType.equals("never"))
     {
       // Nothing to do
-      return;
+      return false;
     }
 
     devplugin.Date lastDownloadDate=Settings.propLastDownloadDate.getDate();
@@ -487,7 +492,6 @@ public class TVBrowser {
     }
     devplugin.Date today=devplugin.Date.getCurrentDate();
 
-    //int daysSinceLastDownload=today.getNumberOfDaysSince(lastDownload);
     Date nextDownloadDate;
 
     if (autoDLType.equals("daily")) {
@@ -496,7 +500,7 @@ public class TVBrowser {
     else if (autoDLType.equals("every3days")) {
       nextDownloadDate=lastDownloadDate.addDays(3);
     }
-    else if (autoDLType.equals("WEEKLY")) {
+    else if (autoDLType.equals("weekly")) {
       nextDownloadDate=lastDownloadDate.addDays(7);
     }
     else { // "daily"
@@ -505,7 +509,7 @@ public class TVBrowser {
 
     if (nextDownloadDate.getNumberOfDaysSince(today)<=0) {
       if (Settings.propAskForAutoDownload.getBoolean()) {
-         UpdateDlg dlg = new UpdateDlg(mainFrame, true);
+        UpdateDlg dlg = new UpdateDlg(mainFrame, true);
         dlg.pack();
         UiUtilities.centerAndShow(dlg);
         int daysToDownload = dlg.getResult();
@@ -514,8 +518,20 @@ public class TVBrowser {
         }
       }
       else {
-         mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), TvDataServiceProxyManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+        String[] dataServiceIDs = Settings.propDataServicesForUpdate.getStringArray();
+        TvDataServiceProxy[] proxies;
+        if (dataServiceIDs == null) {
+          proxies = TvDataServiceProxyManager.getInstance().getDataServices();
+        }
+        else {
+          proxies = TvDataServiceProxyManager.getInstance().getTvDataServices(dataServiceIDs);
+        }
+        mainFrame.runUpdateThread(Settings.propAutoDownloadPeriod.getInt(), proxies);
       }
+      return true;
+    }
+    else {
+      return false;
     }
   }
 
