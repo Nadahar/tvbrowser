@@ -31,6 +31,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
@@ -64,6 +66,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
+import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
@@ -245,6 +248,21 @@ public class MainFrame extends JFrame implements DateListener {
     });
 
     setJMenuBar(mMenuBar);
+    
+    mMenuBar.addMouseListener(new MouseAdapter(){
+      public void mousePressed(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          ContextMenu menu = new ContextMenu(mMenuBar);
+          menu.show(e.getX(),e.getY());
+        }
+      }
+      public void mouseReleased(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          ContextMenu menu = new ContextMenu(mMenuBar);
+          menu.show(e.getX(),e.getY());
+        }
+      }
+    });
 
     FilterList filterList = FilterList.getInstance();
 
@@ -284,25 +302,31 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableScrollPane.deSelectItem();
 
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,true,false,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,true,false,false,false,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,true,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,true,false,false,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,true,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,true,false,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,true,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,true,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
     stroke = KeyStroke.getKeyStroke(525, 0);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,true,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,true,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,true,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,true,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,false,true,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,false,true), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,false,false,false,true), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_M, 0);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,false,false,true,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener(){
@@ -758,6 +782,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void setShowToolbar(boolean visible) {
     Settings.propIsTooolbarVisible.setBoolean(visible);
+    mMenuBar.updateViewToolbarItem();
     updateToolbar();
   }
 
@@ -780,7 +805,7 @@ public class MainFrame extends JFrame implements DateListener {
     }
     Settings.propShowTimeButtons.setBoolean(visible);
     updateViews();
-
+    
   }
 
   public void setShowDatelist(boolean visible) {
