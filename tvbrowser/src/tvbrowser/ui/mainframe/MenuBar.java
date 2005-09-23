@@ -46,7 +46,9 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
+import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.settings.SettingsDialog;
+import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.ScrollableMenu;
 import devplugin.ProgramFilter;
 import devplugin.ActionMenu;
@@ -67,8 +69,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
                     mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
                     mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI,
-                    mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem;
-  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu;
+                    mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
+                    mToolbarCustomizeMI;
+  protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
   private JLabel mLabel;
@@ -104,17 +107,29 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mSettingsMI.addActionListener(this);
     mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
     mQuitMI.addActionListener(this);
-    mToolbarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewToolbar","Toolbar"));
+    
+    mToolbarMenu = new JMenu(mLocalizer.msg("menuitem.viewToolbar","Toolbar"));
+    
+    mToolbarMI = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer.msg(
+        "showToolbar", "Show toolbar"));
     mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
     mToolbarMI.addActionListener(this);
+    
+    mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.msg("configure","Configure")+"...");
+    mToolbarCustomizeMI.addActionListener(this);
+    
+    mToolbarMenu.add(mToolbarMI);
+    mToolbarMenu.addSeparator();
+    mToolbarMenu.add(mToolbarCustomizeMI);
     
     mStatusbarMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.viewStatusbar","Statusbar"));
     mStatusbarMI.setSelected(Settings.propIsStatusbarVisible.getBoolean());
     mStatusbarMI.addActionListener(this);
     
-    mTimeBtnsMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.timebuttons","Time buttons"));
+    mTimeBtnsMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.timebuttons", "Time buttons"));
     mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
-    mTimeBtnsMI.addActionListener(this);
+    mTimeBtnsMI.addActionListener(this);    
+    
     mDatelistMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.datelist","Date list"));
     mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
     mDatelistMI.addActionListener(this);
@@ -156,14 +171,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mViewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
 
 
-
-
     updateDateItems();
     updateChannelItems();
     updateTimeItems();
-
-
-
 
 
     mRestoreMI = new JMenuItem(mLocalizer.msg("menuitem.restore", "Restore"));
@@ -199,9 +209,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/About16.gif"));
     mAboutMI.addActionListener(this);
 
-
-
-    mViewMenu.add(mToolbarMI);
+    mViewMenu.add(mToolbarMenu);
     mViewMenu.add(mStatusbarMI);
     mViewMenu.add(mTimeBtnsMI);
     mViewMenu.add(mDatelistMI);
@@ -302,6 +310,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mEditTimeButtonsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.editTimeItems","Edit Items..."));
     mEditTimeButtonsMenuItem.addActionListener(this);
     mGotoTimeMenu.add(mEditTimeButtonsMenuItem);
+   }
+   
+   public void updateViewToolbarItem() {
+     mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
    }
 
    public void updateChannelItems() {
@@ -458,6 +470,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      }
      else if (source == mEditTimeButtonsMenuItem) {
        mMainFrame.showSettingsDialog(SettingsDialog.TAB_ID_TIMEBUTTONS);
+     }
+     else if (source == mToolbarCustomizeMI) {
+       new ToolBarDragAndDropSettings();
      }
    }
    
