@@ -109,8 +109,7 @@ public class ContextMenu {
     show.setSelected(Settings.propIsTooolbarVisible.getBoolean());
     show.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        Settings.propIsTooolbarVisible.setBoolean(show.isSelected());
-        MainFrame.getInstance().updateToolbar();
+        MainFrame.getInstance().setShowToolbar(show.isSelected());
       }      
     });
     
