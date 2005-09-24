@@ -105,9 +105,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"),"#filter",MainFrame.mLocalizer.msg("menuinfo.filter",""), new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter24.png"), ToolBar.TOOGLE_BUTTON_ACTION, this);
     mPluginViewAction = createAction(TVBrowser.mLocalizer.msg("button.pluginView","Plugin View"),"#pluginView",MainFrame.mLocalizer.msg("menuinfo.pluginView",""), new ImageIcon("imgs/Bookmarks16.gif"), new ImageIcon("imgs/Bookmarks24.gif"), ToolBar.TOOGLE_BUTTON_ACTION, this);
     String scrollTo = MainFrame.mLocalizer.msg("menuinfo.scrollTo","Scroll to") + ": ";
-    mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now","Now"),"#scrollToNow",scrollTo + TVBrowser.mLocalizer.msg("button.now","Now"), new ImageIcon("imgs/play16.gif"), new ImageIcon("imgs/play24.gif") , ToolBar.BUTTON_ACTION, this);
+    mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now","Now"),"#scrollToNow",scrollTo + TVBrowser.mLocalizer.msg("button.now","Now"), new ImageIcon("imgs/Play16.gif"), new ImageIcon("imgs/Play24.gif") , ToolBar.BUTTON_ACTION, this);
     mScrollToTodayAction = createAction(TVBrowser.mLocalizer.msg("button.today","Today"),"#scrollToToday",scrollTo + TVBrowser.mLocalizer.msg("button.today","Today"), new ImageIcon("imgs/Import16.gif"), new ImageIcon("imgs/Import24.gif") , ToolBar.BUTTON_ACTION, this);    
-    mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg("button.tomorrow","Tomorrow"),"#scrollToTomorrow",scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow","Tomorrow"), new ImageIcon("imgs/Forward16.gif"), new ImageIcon("imgs/StepForward24.gif") , ToolBar.BUTTON_ACTION, this);
+    mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg("button.tomorrow","Tomorrow"),"#scrollToTomorrow",scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow","Tomorrow"), new ImageIcon("imgs/StepForward16.gif"), new ImageIcon("imgs/StepForward24.gif") , ToolBar.BUTTON_ACTION, this);
     
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
 
@@ -133,7 +133,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       else
         time = hour + ":" + time;
       
-      mTimeButtonActions[i] = createAction(time,"#scrollTo" + time,scrollTo + time, new ImageIcon("imgs/down16.gif"), new ImageIcon("imgs/down24.gif") , ToolBar.BUTTON_ACTION, new ActionListener() {
+      mTimeButtonActions[i] = createAction(time,"#scrollTo" + time,scrollTo + time, new ImageIcon("imgs/down16.gif"), new ImageIcon("imgs/Down24.gif") , ToolBar.BUTTON_ACTION, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance().scrollToTime(scrollTime);
         }
@@ -162,8 +162,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         }
       }
     }
-
-
   }
 
 
