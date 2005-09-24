@@ -455,9 +455,9 @@ public class ListViewDialog extends JDialog {
    * Sets teh Table-Properties
    */
   private void setTableColumProperties() {
-    mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new ListTabelCellRenderer());
-    mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ListTabelCellRenderer());
-    mProgramTable.getColumnModel().getColumn(2).setCellRenderer(new ListTabelCellRenderer());
+    mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new ListTableCellRenderer());
+    mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ListTableCellRenderer());
+    mProgramTable.getColumnModel().getColumn(2).setCellRenderer(new ListTableCellRenderer());
     int width = ListViewPlugin.PROGRAMTABLEWIDTH;
     mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
     mProgramTable.getColumnModel().getColumn(2).setMinWidth(width);
