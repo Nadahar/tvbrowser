@@ -29,15 +29,18 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.SettingsTab;
 import devplugin.Version;
 import devplugin.ActionMenu;
 
@@ -53,6 +56,16 @@ public class ListViewPlugin extends Plugin {
     /** Translator */
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ListViewPlugin.class);
 
+    /** Location of Dialog */
+    private Point mLocation = null;
+    /** Size of Dialog */
+    private Dimension mSize = null;
+    /** Settings */
+    private Properties mSettings;
+    
+    /** Show at Startup */
+    private boolean mShowAtStartup = false;
+    
     /**
      * Creates the Plugin
      */
@@ -66,7 +79,7 @@ public class ListViewPlugin extends Plugin {
         String name = mLocalizer.msg("pluginName", "View List Plugin");
         String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(1, 30));
+        return new PluginInfo(name, desc, author, new Version(1, 40));
     }
 
     /**
@@ -79,23 +92,23 @@ public class ListViewPlugin extends Plugin {
         dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
 
             public void componentResized(ComponentEvent e) {
-                _dimensionListDialog = e.getComponent().getSize();
+                mSize = e.getComponent().getSize();
             }
 
             public void componentMoved(ComponentEvent e) {
-                e.getComponent().getLocation(_locationListDialog);
+                e.getComponent().getLocation(mLocation);
             }
         });
 
-        if ((_locationListDialog != null) && (_dimensionListDialog != null)) {
-            dlg.setLocation(_locationListDialog);
-            dlg.setSize(_dimensionListDialog);
+        if ((mLocation != null) && (mSize != null)) {
+            dlg.setLocation(mLocation);
+            dlg.setSize(mSize);
             dlg.setVisible(true);
         } else {
             dlg.setSize(600, 600);
             UiUtilities.centerAndShow(dlg);
-            _locationListDialog = dlg.getLocation();
-            _dimensionListDialog = dlg.getSize();
+            mLocation = dlg.getLocation();
+            mSize = dlg.getSize();
         }
 
     }
@@ -127,11 +140,83 @@ public class ListViewPlugin extends Plugin {
         return new ActionMenu(action);
     }
     
-    
-    /** Needed for Position */
-    private Point _locationListDialog = null;
+    /**
+     * Load the Settings
+     */
+    public void loadSettings(Properties settings) {
+      
+      if (settings == null ) {
+        settings = new Properties();
+      }
+      
+      String width = settings.getProperty("DialogSize.Width");
+      String height = settings.getProperty("DialogSize.Height");
+      
+      if ((width != null) && (height != null)) {
+          int w = parseNumber(width);
+          int h = parseNumber(height);
+          mSize = new Dimension(w, h);
+      }
 
-    /** Needed for Position */
-    private Dimension _dimensionListDialog = null;
+      String x = settings.getProperty("DialogLocation.X");
+      String y = settings.getProperty("DialogLocation.Y");
+      
+      if ((x != null) && (y != null)) {
+          int xv = parseNumber(x);
+          int yv = parseNumber(y);
+          mLocation = new Point(xv, yv);
+      }
+      
+      mSettings = settings;
+
+      mShowAtStartup = mSettings.getProperty("showAtStartup", "false").equals("true");
+      
+      if (mShowAtStartup) {
+        SwingUtilities.invokeLater(new Runnable(){
+          public void run() {
+            showDialog();
+          }
+        });
+      }
+      
+    }
     
+    /**
+     * Store the Settings
+     */
+    public Properties storeSettings() {
+      
+      if (mLocation != null) {
+          mSettings.setProperty("DialogLocation.X", Integer.toString(mLocation.x));
+          mSettings.setProperty("DialogLocation.Y", Integer.toString(mLocation.y));
+      }
+      
+      if (mSize != null) {
+          mSettings.setProperty("DialogSize.Width", Integer.toString(mSize.width));
+          mSettings.setProperty("DialogSize.Height", Integer.toString(mSize.height));
+      }
+
+      return mSettings;
+    }
+    
+    /**
+     * Parses a Number from a String.
+     * @param str Number in String to Parse
+     * @return Number if successfull. Default is 0
+     */
+    public int parseNumber(String str) {
+        
+        try {
+            int i = Integer.parseInt(str);
+            return i;
+        } catch (Exception e) {
+            
+        }
+        
+        return 0;
+    }    
+    
+    public SettingsTab getSettingsTab() {
+      return new ListViewSettings(mSettings);
+    }
 }

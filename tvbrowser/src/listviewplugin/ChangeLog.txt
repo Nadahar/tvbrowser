@@ -1,5 +1,10 @@
 Changelog ListViewPlugin
 
+1.4:
+- Fixed Line-Height Calculation
+- Start if TV-Browser starts
+- Remember Size and Position
+
 1.3:
 - New Layout: A JTable instead of a JList. Now it displays the current and
 the following Program

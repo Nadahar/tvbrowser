@@ -42,7 +42,7 @@ import devplugin.Program;
 /**
  * The CellRenderer for the Table
  */
-public class ListTabelCellRenderer extends DefaultTableCellRenderer {
+public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
   private ChannelLabel mChannelLabel;
 
@@ -70,10 +70,10 @@ public class ListTabelCellRenderer extends DefaultTableCellRenderer {
       mChannelLabel.setBackground(label.getBackground());
 
       if (channel.getIcon() != null) {
-        if (getSize().height < channel.getIcon().getIconHeight()) {
+        if (getSize().height < channel.getIcon().getIconHeight()+2) {
 
           Dimension dim = getSize();
-          setSize(dim.width, channel.getIcon().getIconHeight());
+          setSize(dim.width, channel.getIcon().getIconHeight()+2);
         }
       }
 
