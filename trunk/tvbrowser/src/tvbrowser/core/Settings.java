@@ -683,6 +683,6 @@ public class Settings {
     = new BooleanProperty(mProp, "showChannelIconsInChannellist", true);
 
   public static final StringArrayProperty propSubscribedChannelGroups
-    = new StringArrayProperty(mProp, "subscribedChannelGroups", null/*new String[]{"tvbrowserdataservice.TvBrowserDataService.main","tvbrowserdataservice.TvBrowserDataService.austria"}*/);
+    = new StringArrayProperty(mProp, "subscribedChannelGroups", null);
 
 }
