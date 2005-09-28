@@ -70,15 +70,15 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       mChannelLabel.setBackground(label.getBackground());
 
       if (channel.getIcon() != null) {
-        if (getSize().height < channel.getIcon().getIconHeight()+2) {
+        if (getSize().height < channel.getIcon().getIconHeight()) {
 
           Dimension dim = getSize();
-          setSize(dim.width, channel.getIcon().getIconHeight()+2);
+          setSize(dim.width, channel.getIcon().getIconHeight());
         }
       }
 
-      if (mChannelLabel.getHeight() > table.getRowHeight(row)) {
-        table.setRowHeight(row, mChannelLabel.getHeight());
+      if (mChannelLabel.getHeight()+2 > table.getRowHeight(row)) {
+        table.setRowHeight(row, mChannelLabel.getHeight()+2);
       }
 
       label = mChannelLabel;
