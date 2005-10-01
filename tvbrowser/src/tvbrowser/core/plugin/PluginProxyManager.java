@@ -509,6 +509,22 @@ public class PluginProxyManager {
     firePluginDeactivated(item.getPlugin());
   }
 
+  
+  /**
+   * Deactivates a plugin and removes it from the PluginList
+   *
+   * @param plugin The plugin to deactivate
+   * @throws TvBrowserException If deactivating failed
+   */
+  public void removePlugin(PluginProxy plugin) throws TvBrowserException {
+    PluginListItem item = getItemForPlugin(plugin);
+    if (item != null) {
+      deactivatePlugin(item);
+      mPluginList.remove(item);
+      mActivatedPluginCache = null;
+      mAllPluginCache = null;
+    }
+  }
 
   /**
    * Deactivates and shuts down all plugins.

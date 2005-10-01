@@ -25,26 +25,29 @@
  */
 package tvbrowser.core;
 
-import tvbrowser.core.plugin.AbstractPluginProxy;
-import tvbrowser.core.plugin.JavaPluginProxy;
-import tvbrowser.core.plugin.BeanShellPluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
-import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
-
 import java.io.File;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.HashSet;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import tvbrowser.core.plugin.AbstractPluginProxy;
+import tvbrowser.core.plugin.BeanShellPluginProxy;
+import tvbrowser.core.plugin.JavaPluginProxy;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
+import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvdataservice.TvDataService;
+import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.Plugin;
-import tvdataservice.TvDataService;
 
 /**
  * The PluginLoader loads all plugins and assigns each plugin to
@@ -67,8 +70,11 @@ public class PluginLoader {
 
   private HashSet mSuccessfullyLoadedPluginFiles;
 
+  private HashMap mDeleteablePlugin;
+  
   private PluginLoader() {
     mSuccessfullyLoadedPluginFiles = new HashSet();
+    mDeleteablePlugin = new HashMap();
   }
 
   public static PluginLoader getInstance() {
@@ -111,9 +117,10 @@ public class PluginLoader {
 
   /**
    * Loads the plugin from the file system
-   * @param pluginFile
+   * @param pluginFile File to load
+   * @param deleteable is the Plugin deleteable
    */
-  private void loadPlugin(File pluginFile) {
+  private void loadPlugin(File pluginFile, boolean deleteable) {
     Object plugin = null;
     String lcFileName = pluginFile.getName().toLowerCase();
     if (mSuccessfullyLoadedPluginFiles.contains(lcFileName)) {
@@ -135,10 +142,17 @@ public class PluginLoader {
 
         if (plugin instanceof Plugin) {
           ((Plugin)plugin).setJarFile(pluginFile);
-          PluginProxyManager.getInstance().registerPlugin(new JavaPluginProxy((Plugin)plugin));
+          
+          JavaPluginProxy javaplugin = new JavaPluginProxy((Plugin)plugin);
+          PluginProxyManager.getInstance().registerPlugin(javaplugin);
+
+          if (deleteable)
+            mDeleteablePlugin.put(javaplugin, pluginFile);
         }
         else if (plugin instanceof AbstractPluginProxy) {
           PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
+          if (deleteable)
+            mDeleteablePlugin.put(plugin, pluginFile);
         }
         else if (plugin instanceof devplugin.TvDataService) {
           TvDataServiceProxy proxy = new DefaultTvDataServiceProxy((devplugin.TvDataService)plugin);
@@ -163,9 +177,10 @@ public class PluginLoader {
 
   /**
    * Loads all plugins within the specified folder
-   * @param folder
+   * @param folder specific Folder
+   * @param deleteable True if the Plugins in this Folder are deleteable
    */
-  private void loadPlugins(File folder) {
+  private void loadPlugins(File folder, boolean deleteable) {
 
     File[] fileArr = folder.listFiles();
     if (fileArr == null) {
@@ -175,7 +190,7 @@ public class PluginLoader {
 
     for (int i = 0; i < fileArr.length; i++) {
       // Try to load this plugin
-      loadPlugin(fileArr[i]);
+      loadPlugin(fileArr[i], deleteable);
     }
   }
 
@@ -192,14 +207,14 @@ public class PluginLoader {
       }
     }
     if (success) {
-      loadPlugins(f);
+      loadPlugins(f, true);
     }
 
     /* 2) load the plugins from the plugins folder */
-    loadPlugins(new File(PluginProxyManager.PLUGIN_DIRECTORY));
+    loadPlugins(new File(PluginProxyManager.PLUGIN_DIRECTORY), false);
 
     /* 3) load the plugins from the tvdataservice folder */
-    loadPlugins(new File(TvDataServiceProxyManager.PLUGIN_DIRECTORY));
+    loadPlugins(new File(TvDataServiceProxyManager.PLUGIN_DIRECTORY), false);
 
   }
 
@@ -241,6 +256,39 @@ public class PluginLoader {
 
   private Object loadBeanShellPlugin(File file) {
     return new BeanShellPluginProxy(file);
+  }
+
+  /**
+   * Delete a Plugin
+   * @param proxy Proxy for the Plugin that should be deleted
+   * @return true if successful
+   */
+  public boolean deletePlugin(PluginProxy proxy) {
+    File file = (File)mDeleteablePlugin.get(proxy);
+    
+    boolean deletion = file.delete();
+    
+    if (deletion) {
+      try {
+        PluginProxyManager.getInstance().removePlugin(proxy);
+      } catch (TvBrowserException exc) {
+        ErrorHandler.handle(exc);
+        return false;
+      }
+
+      mDeleteablePlugin.remove(proxy);
+    }
+    
+    return deletion;
+  }
+
+  /**
+   * Is a Plugin deleteable ?
+   * @param plugin Plugin that should be deleted
+   * @return true if deleteable
+   */
+  public boolean isPluginDeletable(PluginProxy plugin) {
+    return mDeleteablePlugin.containsKey(plugin);
   }
 
 

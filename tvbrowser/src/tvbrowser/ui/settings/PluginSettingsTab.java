@@ -39,12 +39,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -164,11 +166,28 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
    * Remove a selected Plugin
    */
   private void removePlugin() {
-    int inx = mList.getSelectedIndex();//mList.locationToIndex(e.getPoint());
+    int inx = mList.getSelectedIndex();
     if (inx >= 0) {
       Object item = mListModel.getElementAt(inx);
       mList.ensureIndexIsVisible(inx);
-      System.out.println(item);
+      
+      String text = mLocalizer.msg("deletePlugin","Really delete the Plugin \"{0}\" ?",item.toString());
+      
+      int result = JOptionPane.showConfirmDialog(mSettingsDialog.getDialog(), text, mLocalizer.msg("delete", "Delete?"), JOptionPane.YES_NO_OPTION);
+      
+      if (result == JOptionPane.YES_OPTION) {
+        
+        boolean del = PluginLoader.getInstance().deletePlugin((PluginProxy)item);
+        
+        if (del) {
+          JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("successfully","Deletion was sucesfully"));
+        } else {
+          JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("failed","Deletion failed"));
+        }
+        
+        populatePluginList();
+        mList.setSelectedIndex(0);
+      }
     }
   }
 
@@ -193,6 +212,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
   private void populatePluginList() {
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
 
+    mListModel.removeAllElements();
+    
     Arrays.sort(pluginList, new Comparator() {
 
       public int compare(Object o1, Object o2) {
@@ -217,13 +238,13 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     if ((plugin != null) && plugin.isActivated()) {
       mStartStopBtn.setEnabled(true);
       mInfo.setEnabled(true);
-      mRemove.setEnabled(true);
+      mRemove.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
       mStartStopBtn.setIcon(new ImageIcon("imgs/Stop16.gif"));
       mStartStopBtn.setText(mLocalizer.msg("deactivate", ""));
     } else {
       mStartStopBtn.setEnabled(plugin != null);
       mInfo.setEnabled(plugin != null);
-      mRemove.setEnabled(plugin != null);
+      mRemove.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
       mStartStopBtn.setIcon(new ImageIcon("imgs/Refresh16.gif"));
       mStartStopBtn.setText(mLocalizer.msg("activate", ""));
     }
