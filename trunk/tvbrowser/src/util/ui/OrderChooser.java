@@ -139,7 +139,7 @@ public class OrderChooser extends JPanel {
 
   private boolean contains(Object[] array, Object obj) {
     for (int i = 0; i < array.length; i++) {
-      if (array[i] == obj) {
+      if (array[i].equals(obj)) {
         return true;
       }
     }
