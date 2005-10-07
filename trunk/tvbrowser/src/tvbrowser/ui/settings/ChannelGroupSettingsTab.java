@@ -34,13 +34,15 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.Enumeration;
 import java.util.ArrayList;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.Settings;
 import util.exc.TvBrowserException;
 import util.exc.ErrorHandler;
@@ -48,7 +50,6 @@ import util.ui.UiUtilities;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.Borders;
-
 
 public class ChannelGroupSettingsTab implements SettingsTab {
 
@@ -61,24 +62,29 @@ public class ChannelGroupSettingsTab implements SettingsTab {
           = util.ui.Localizer.getLocalizerFor(ChannelGroupSettingsTab.class);
 
   public ChannelGroupSettingsTab() {
-    mContent = new JPanel(new BorderLayout());
 
-    mGroupList = new JList();
+    mContent = new JPanel(new FormLayout("default:grow, default", "default, 3dlu, fill:default:grow, 3dlu, default"));
+    mContent.setBorder(Borders.DLU4_BORDER);
+
+    mListModel = new DefaultListModel();
+    mGroupList = new JList(mListModel);
     mGroupList.setCellRenderer(new ChannelGroupListCellRenderer());
     mGroupList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    mListModel = new DefaultListModel();
-    mGroupList.setModel(mListModel);
 
-    JPanel btnPn = new JPanel(new BorderLayout());
-    JButton mRefreshBtn = new JButton(mLocalizer.msg("update","Update"));
-    btnPn.add(mRefreshBtn, BorderLayout.WEST);
+    JButton mRefreshBtn = new JButton(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Refresh16.gif"));
 
     mEnableBtn = new JButton(mLocalizer.msg("disable","Disable"));
-    btnPn.add(mEnableBtn, BorderLayout.EAST);
 
-    mContent.add(new JScrollPane(mGroupList), BorderLayout.CENTER);
-    mContent.add(btnPn, BorderLayout.SOUTH);
 
+    CellConstraints cc = new CellConstraints();
+
+    mContent.add(mRefreshBtn, cc.xy(2,1));
+    mContent.add(new JLabel(mLocalizer.msg("availableGroups","Available channel groups:")), cc.xy(1,1));
+    mContent.add(new JScrollPane(mGroupList), cc.xyw(1,3,2));
+
+
+
+    mContent.add(mEnableBtn, cc.xy(2,5));
 
     TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
     for (int i=0; i<services.length; i++) {
@@ -111,9 +117,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
       public void actionPerformed(ActionEvent e) {
         Object value = mGroupList.getSelectedValue();
         ChannelGroupWrapper w = (ChannelGroupWrapper)value;
-        w.setEnabled(!w.isEnabled());
-        updateEnableButton();
-        mGroupList.updateUI();
+        subscribeGroup(w, !w.isEnabled());
       }
     });
 
@@ -124,7 +128,20 @@ public class ChannelGroupSettingsTab implements SettingsTab {
         }
       }
     });
+
+    mGroupList.addMouseListener(new MouseAdapter(){
+
+      public void mouseClicked(MouseEvent e) {
+        if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+          int index = mGroupList.locationToIndex(e.getPoint());
+          Object value = mGroupList.getModel().getElementAt(index);
+          ChannelGroupWrapper w = (ChannelGroupWrapper)value;
+          subscribeGroup(w, !w.isEnabled());
+        }
+      }
+    });
   }
+
 
   private void updateEnableButton() {
     Object value = mGroupList.getSelectedValue();
@@ -136,20 +153,17 @@ public class ChannelGroupSettingsTab implements SettingsTab {
       ChannelGroupWrapper w = (ChannelGroupWrapper)value;
       if (w.isEnabled()) {
         mEnableBtn.setText(mLocalizer.msg("disable","Disable"));
+        mEnableBtn.setIcon(new ImageIcon("imgs/Stop16.gif"));
       }
       else {
         mEnableBtn.setText(mLocalizer.msg("enable","Enable"));
+        mEnableBtn.setIcon(new ImageIcon("imgs/Refresh16.gif"));
       }
     }
   }
 
   private void updateGroupStatus() {
-    String[] groupIdArr = Settings.propSubscribedChannelGroups.getStringArray();
-    if (groupIdArr != null) {
-      setEnabledGroups(groupIdArr);
-    }else{
-      enableAllGroups();
-    }
+    setEnabledGroups(ChannelGroupManager.getInstance().getSubscribedGroups());
   }
 
   private void addToListBox(TvDataServiceProxy service, ChannelGroup[] groupArr) {
@@ -158,30 +172,31 @@ public class ChannelGroupSettingsTab implements SettingsTab {
     }
   }
 
-  private void enableAllGroups() {
+  private void setEnabledGroups(ChannelGroup[] groupArr) {
     Enumeration e = mListModel.elements();
     while (e.hasMoreElements()) {
       ChannelGroupWrapper elem = (ChannelGroupWrapper)e.nextElement();
       elem.setEnabled(false);
-    }
-  }
-
-  private void setEnabledGroups(String[] groupIdArr) {
-    HashMap map = new HashMap();
-    Enumeration e = mListModel.elements();
-    while (e.hasMoreElements()) {
-      ChannelGroupWrapper elem = (ChannelGroupWrapper)e.nextElement();
-      elem.setEnabled(false);
-      map.put(getId(elem.getService(), elem.getGroup()), elem);
-    }
-
-    for (int i=0; i<groupIdArr.length; i++) {
-      ChannelGroupWrapper wrapper = (ChannelGroupWrapper)map.get(groupIdArr[i]);
-      if (wrapper != null) {
-        wrapper.setEnabled(true);
+      for (int i=0; i<groupArr.length; i++) {
+        if (groupArr[i].equals(elem.getGroup())) {
+          elem.setEnabled(true);
+          break;
+        }
       }
     }
 
+  }
+
+  private void subscribeGroup(ChannelGroupWrapper group, boolean subscribe) {
+    if (subscribe) {
+      ChannelGroupManager.getInstance().subscribeGroup(group.getGroup());
+    }
+    else {
+      ChannelGroupManager.getInstance().unsubscribeGroup(group.getGroup());
+    }
+    group.setEnabled(subscribe);
+    updateEnableButton();
+    mGroupList.updateUI();
   }
 
   public JPanel createSettingsPanel() {
@@ -206,7 +221,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
-    return "Channel groups";
+    return mLocalizer.msg("title","Channel groups");
   }
 
 
@@ -257,6 +272,7 @@ class ChannelGroupListCellRenderer extends DefaultListCellRenderer {
   private JTextArea mDescTa;
   private CellConstraints cc = new CellConstraints();
 
+
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
     JLabel defaultLabel = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
@@ -273,12 +289,14 @@ class ChannelGroupListCellRenderer extends DefaultListCellRenderer {
         mPanel.setBorder(Borders.DLU2_BORDER);
 
         mPanel.add(mNameLb, cc.xy(1,1));
+
       }
+
 
       if (mDescTa != null) {
         mPanel.remove(mDescTa);
       }
-      mDescTa = UiUtilities.createHelpTextArea(group.getDescription());
+      mDescTa = UiUtilities.createHelpTextArea(group.getDescription()+"\n");
       mDescTa.setMinimumSize(new Dimension(100, 10));
       mDescTa.setOpaque(defaultLabel.isOpaque());
       mDescTa.setBackground(defaultLabel.getBackground());

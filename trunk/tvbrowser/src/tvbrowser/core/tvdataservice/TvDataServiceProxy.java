@@ -39,8 +39,6 @@ import util.exc.TvBrowserException;
 public interface TvDataServiceProxy {
 
 
-  public ChannelGroup[] getSubscribedGroups();
-
   /**
    * This method is called by the host application to set the working folder.
    * If required, TvDataService implementations should store their data

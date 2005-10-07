@@ -62,7 +62,6 @@ public class MirrorUpdater {
     = java.util.logging.Logger.getLogger(MirrorUpdater.class.getName());
   
   private static final int MAX_DAYS_WITHOUT_DATA = 7;
-  private static final Date TODAY = Date.getCurrentDate();
 
   private DataSource mDataSource;
   private DataTarget mDataTarget;

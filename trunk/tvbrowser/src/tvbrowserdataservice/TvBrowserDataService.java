@@ -77,6 +77,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
+          new String[] {"http://sender.wannawork.de"},
+
   };
 
   private static final String[] DEFAULT_CHANNEL_GROUP_NAMES = new String[] {
@@ -85,7 +87,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           "main",
           "local",
           "others",
-          "radio"
+          "radio",
+          "bodostv"
   };
 
 
@@ -320,7 +323,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
         // Check whether the mirror has a newer version
-        boolean needsUpdate = true;
+        boolean needsUpdate;
         int mirrorVersion = summary.getDayProgramVersion(date, country,
                 channel.getId(), levelIdx);
         needsUpdate = (mirrorVersion > localVersion);
@@ -576,8 +579,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     ArrayList channelList=new ArrayList();
     ChannelGroup group = getChannelGroupById(g.getId());
-    monitor.setMessage("Checking for froup "+g.getName());
-    //monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking group {0} - ({1} of {2})",group.getName(),""+i,""+mAvailableChannelGroupsSet.size()));
+    monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking for froup {0}", g.getName()));
     Channel[] ch=group.checkForAvailableChannels(null);
     for (int j=0;j<ch.length;j++) {
       channelList.add(ch[j]);
