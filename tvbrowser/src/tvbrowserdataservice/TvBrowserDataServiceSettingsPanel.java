@@ -219,13 +219,6 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     }
   }
 
-  /**
-   * Refresh the Group-List
-   */
-//  public void refreshGroupList() {
-//    ((TvBrowserDataServiceSettingsPanel)mInstance).fillGroupList(TvBrowserDataService.getInstance().getUserDefinedChannelGroups());
-//  }
-
   public static SettingsPanel getInstance(Properties settings) {
     if (mInstance == null) {
       mInstance = new TvBrowserDataServiceSettingsPanel(settings);

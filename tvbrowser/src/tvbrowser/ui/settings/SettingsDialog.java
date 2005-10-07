@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -82,7 +82,7 @@ public class SettingsDialog {
 
   private JTree mSelectionTree;
   private JPanel mSettingsPn;
-  private JScrollPane mSettingsPane;
+  //private JScrollPane mSettingsPane;
   private TreeNode mRootNode;
 
   /** Location of this Dialog */
@@ -133,9 +133,7 @@ public class SettingsDialog {
 
     mSettingsPn = new JPanel(new BorderLayout());
 
-    mSettingsPane = new JScrollPane(mSettingsPn);
-    mSettingsPane.setPreferredSize(new Dimension(410, 300));
-    splitPane.setRightComponent(mSettingsPane);
+    splitPane.setRightComponent(mSettingsPn);
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
@@ -349,14 +347,6 @@ public class SettingsDialog {
   private void showSettingsPanelForNode(SettingNode node) {
       JPanel pn = node.getSettingsPanel();
       if (pn != null) {
-        // Make the panel as wide as the scrollpane viewport
-        Dimension viewportSize = mSettingsPane.getViewport().getSize();
-        Dimension pnSize = pn.getPreferredSize();
-        if (pnSize.width > viewportSize.width) {
-          pnSize.width = viewportSize.width;
-          pn.setPreferredSize(pnSize);
-        }
-
         mSettingsPn.add(pn);
       }
     }
