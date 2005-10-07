@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,7 +36,7 @@ import javax.swing.*;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.UpdateDlg;
+import tvbrowser.ui.mainframe.PeriodItem;
 import util.ui.FileCheckBox;
 import util.ui.TabLayout;
 import com.jgoodies.forms.layout.FormLayout;
@@ -54,8 +54,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   = util.ui.Localizer.getLocalizerFor(TVDataSettingsTab.class);
   
   private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
-  //  mLocalizer.msg("autoDownload.never", "Never"),
-  //  mLocalizer.msg("autoDownload.startUp", "When TV-Browser starts up"),
     mLocalizer.msg("autoDownload.daily", "Once a day"),
     mLocalizer.msg("autoDownload.every3days","Every three days"),
     mLocalizer.msg("autoDownload.weekly","Weekly")
@@ -146,16 +144,12 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     
     pn2.add(mDonotAskBeforeDownloadRB,BorderLayout.WEST);
     pn2.add(pn3,BorderLayout.CENTER);
-    mAutoDownloadPeriodCB=new JComboBox(UpdateDlg.PERIOD_MSG_ARR);
+    mAutoDownloadPeriodCB=new JComboBox(PeriodItem.PERIOD_ARR);
     pn3.add(mAutoDownloadPeriodCB,BorderLayout.WEST);
     
     int autoDLPeriod = Settings.propAutoDownloadPeriod.getInt();
-    if (autoDLPeriod == UpdateDlg.GETALL) {
-      mAutoDownloadPeriodCB.setSelectedIndex(mAutoDownloadPeriodCB.getItemCount()-1);
-    }
-    else {
-      mAutoDownloadPeriodCB.setSelectedIndex(autoDLPeriod);
-    }
+    PeriodItem pi = new PeriodItem(autoDLPeriod);
+    mAutoDownloadPeriodCB.setSelectedItem(pi);
     
     askBeforeDLPanel.add(pn1);
     askBeforeDLPanel.add(pn2);
@@ -297,14 +291,9 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     }
     
     Settings.propAskForAutoDownload.setBoolean(mAskBeforeDownloadRB.isSelected());
-    
-    inx=mAutoDownloadPeriodCB.getSelectedIndex();
-    if (inx==mAutoDownloadPeriodCB.getItemCount()-1) {
-      Settings.propAutoDownloadPeriod.setInt(UpdateDlg.GETALL);
-    }
-    else {
-      Settings.propAutoDownloadPeriod.setInt(inx);
-    }
+
+    PeriodItem periodItem = (PeriodItem)mAutoDownloadPeriodCB.getSelectedItem();
+    Settings.propAutoDownloadPeriod.setInt(periodItem.getDays());
     
     String webbrowser;
     if (mWebbrowserFCB.isSelected()) {
