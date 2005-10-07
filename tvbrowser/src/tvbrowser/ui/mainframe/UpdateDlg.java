@@ -46,37 +46,26 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(UpdateDlg.class);
-  
+
   public static final int CANCEL=-1, GETALL=99;
 
-  public static final String[] PERIOD_MSG_ARR = {
-    mLocalizer.msg("period.0", "Today"),
-    mLocalizer.msg("period.1", "Up to tomorrow"),
-    mLocalizer.msg("period.2", "Next 2 days"),
-    mLocalizer.msg("period.3", "Next 3 days"),
-    mLocalizer.msg("period.4", "Next 4 days"),
-    mLocalizer.msg("period.5", "Next 5 days"),
-    mLocalizer.msg("period.6", "Next 6 days"),
-    mLocalizer.msg("period.7", "Next week"),
-    mLocalizer.msg("period.1000", "Get all")
-  };
-  
-  private JButton cancelBtn, updateBtn;
-  private int result=0;
-  private JComboBox comboBox;
-  private JCheckBox checkBox;
+
+  private JButton mCancelBtn, mUpdateBtn;
+  private int mResult =0;
+  private JComboBox mComboBox;
+  private JCheckBox mCheckBox;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
 
-  
-  
+
+
   public UpdateDlg(JFrame parent, boolean modal) {
     super(parent,modal);
-    
+
     String msg;
-    
-    result=CANCEL;
-    
+
+    mResult =CANCEL;
+
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -85,14 +74,14 @@ public class UpdateDlg extends JDialog implements ActionListener {
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
-    updateBtn=new JButton(mLocalizer.msg("updateNow", "Update now"));
-    updateBtn.addActionListener(this);
-    buttonPanel.add(updateBtn);
-    getRootPane().setDefaultButton(updateBtn);
+    mUpdateBtn =new JButton(mLocalizer.msg("updateNow", "Update now"));
+    mUpdateBtn.addActionListener(this);
+    buttonPanel.add(mUpdateBtn);
+    getRootPane().setDefaultButton(mUpdateBtn);
 
-    cancelBtn=new JButton(mLocalizer.msg("cancel", "Cancel"));
-    cancelBtn.addActionListener(this);
-    buttonPanel.add(cancelBtn);
+    mCancelBtn =new JButton(mLocalizer.msg("cancel", "Cancel"));
+    mCancelBtn.addActionListener(this);
+    buttonPanel.add(mCancelBtn);
 
     contentPane.add(buttonPanel,BorderLayout.SOUTH);
 
@@ -102,11 +91,11 @@ public class UpdateDlg extends JDialog implements ActionListener {
     JPanel panel1=new JPanel(new BorderLayout(7,0));
     msg = mLocalizer.msg("period", "Update program for");
     panel1.add(new JLabel(msg), BorderLayout.WEST);
-    comboBox = new JComboBox(PERIOD_MSG_ARR);
-    panel1.add(comboBox,BorderLayout.EAST);
+    mComboBox = new JComboBox(PeriodItem.PERIOD_ARR);
+    panel1.add(mComboBox,BorderLayout.EAST);
     northPanel.add(panel1);
-    
-    
+
+
     TvDataServiceProxy[] serviceArr = TvDataServiceProxyManager.getInstance().getDataServices();
     if (serviceArr.length>1) {
       panel1.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
@@ -114,34 +103,30 @@ public class UpdateDlg extends JDialog implements ActionListener {
       dataServicePanel.setLayout(new BoxLayout(dataServicePanel, BoxLayout.Y_AXIS));
       dataServicePanel.setBorder(BorderFactory.createTitledBorder("Diese Datenquellen verwenden:"));
       mDataServiceCbArr = new TvDataServiceCheckBox[serviceArr.length];
-      
+
       String[] checkedServiceNames = Settings.propDataServicesForUpdate.getStringArray();
-      
+
       for (int i=0; i<serviceArr.length; i++) {
         mDataServiceCbArr[i] = new TvDataServiceCheckBox(serviceArr[i]);
         mDataServiceCbArr[i].setSelected(tvDataServiceIsChecked(serviceArr[i], checkedServiceNames));
-        dataServicePanel.add(mDataServiceCbArr[i]);        
+        dataServicePanel.add(mDataServiceCbArr[i]);
       }
       JPanel p = new JPanel(new BorderLayout());
       p.add(dataServicePanel,BorderLayout.CENTER);
       northPanel.add(p);
     }
-    
+
     msg = mLocalizer.msg("rememberSettings", "Remember settings");
-    checkBox=new JCheckBox(msg);
+    mCheckBox =new JCheckBox(msg);
     JPanel panel2=new JPanel(new BorderLayout());
     panel2.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-    
-    try {
-      int inx = Settings.propDownloadPeriod.getInt();
-      if (inx==GETALL) {
-        inx=comboBox.getItemCount()-1;
-      }
-    	comboBox.setSelectedIndex(inx);
-     }catch(IllegalArgumentException e) {
-     	comboBox.setSelectedIndex(0);
-    }
-    panel2.add(checkBox,BorderLayout.WEST);
+
+    int period = Settings.propDownloadPeriod.getInt();
+    PeriodItem pi = new PeriodItem(period);
+    mComboBox.setSelectedItem(pi);
+    System.out.println("selected: "+mComboBox.getSelectedIndex());
+
+    panel2.add(mCheckBox,BorderLayout.WEST);
 
     northPanel.add(panel2);
 
@@ -161,33 +146,33 @@ public class UpdateDlg extends JDialog implements ActionListener {
     return false;
   }
 
-  public int getResult() { return result; }
+  public int getResult() {
+    return mResult;
+  }
 
   public TvDataServiceProxy[] getSelectedTvDataServices() {
     if (mSelectedTvDataServiceArr == null) {
       mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
     }
-    
+
     return mSelectedTvDataServiceArr;
   }
-  
+
   public void actionPerformed(ActionEvent event) {
     Object source=event.getSource();
-    if (source==cancelBtn) {
-      result=CANCEL;
+    if (source==mCancelBtn) {
+      mResult =CANCEL;
       setVisible(false);
     }
-    else if (source==updateBtn) {
-      result=comboBox.getSelectedIndex();
-      if (result==comboBox.getItemCount()-1) {
-      	result=GETALL;
-      }
-      
+    else if (source==mUpdateBtn) {
+      PeriodItem pi = (PeriodItem)mComboBox.getSelectedItem();
+      mResult = pi.getDays();
+
       if (mDataServiceCbArr == null) {  // there is only one tvdataservice available
         mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
       }
       else {
-        ArrayList dataServiceList = new ArrayList();   
+        ArrayList dataServiceList = new ArrayList();
         for (int i=0; i<mDataServiceCbArr.length; i++) {
           if (mDataServiceCbArr[i].isSelected()) {
             dataServiceList.add(mDataServiceCbArr[i].getTvDataService());
@@ -196,21 +181,23 @@ public class UpdateDlg extends JDialog implements ActionListener {
         mSelectedTvDataServiceArr = new TvDataServiceProxy[dataServiceList.size()];
         dataServiceList.toArray(mSelectedTvDataServiceArr);
       }
-      
-      if (checkBox.isSelected()) {
-        Settings.propDownloadPeriod.setInt(result);
-        
+
+      if (mCheckBox.isSelected()) {
+        Settings.propDownloadPeriod.setInt(mResult);
+
         String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
         for (int i=0; i<dataServiceArr.length; i++) {
-          dataServiceArr[i] = mSelectedTvDataServiceArr[i].getClass().getName();        
+          dataServiceArr[i] = mSelectedTvDataServiceArr[i].getClass().getName();
         }
-        Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);        
+        Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
       }
       setVisible(false);
     }
   }
-
 }
+
+
+
 
 class TvDataServiceCheckBox extends JCheckBox {
  
