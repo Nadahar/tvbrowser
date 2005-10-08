@@ -37,7 +37,6 @@ import java.util.logging.Logger;
 import tvbrowser.core.plugin.AbstractPluginProxy;
 import tvbrowser.core.plugin.BeanShellPluginProxy;
 import tvbrowser.core.plugin.JavaPluginProxy;
-import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
@@ -196,6 +195,23 @@ public class PluginLoader {
 
   public void loadAllPlugins() {
 
+    /* 0) delete all plugins the user doesn't want anymore */
+    
+    String[] files = Settings.propDeleteFilesAtStart.getStringArray();
+    
+    if ((files != null) && (files.length > 0)) {
+      for (int i=0;i<files.length;i++) {
+        try {
+          new File(files[i]).delete();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      
+      Settings.propDeleteFilesAtStart.setStringArray(new String[0]);
+    }
+    
+    
     /* 1) load all plugins from the plugins folder in the user's home directory */
     String pluginsFolderName = Settings.propPluginsDirectory.getString();
     File f = new File(pluginsFolderName);
@@ -266,20 +282,17 @@ public class PluginLoader {
   public boolean deletePlugin(PluginProxy proxy) {
     File file = (File)mDeleteablePlugin.get(proxy);
     
-    boolean deletion = file.delete();
+    Settings.propDeleteFilesAtStart.addItem(file.toString());
     
-    if (deletion) {
-      try {
+    try {
         PluginProxyManager.getInstance().removePlugin(proxy);
-      } catch (TvBrowserException exc) {
+    } catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
         return false;
-      }
-
-      mDeleteablePlugin.remove(proxy);
     }
-    
-    return deletion;
+
+    mDeleteablePlugin.remove(proxy);
+    return true;
   }
 
   /**
