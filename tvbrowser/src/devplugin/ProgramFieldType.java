@@ -148,7 +148,7 @@ public class ProgramFieldType {
 
   public static final ProgramFieldType REPETITION_ON_TYPE
       = new ProgramFieldType(25, TEXT_FORMAT, true, "repition on",
-                           mLocalizer.msg("repitionOn", "Repition on"));
+                           mLocalizer.msg("repetitionOn", "Repetition on"));
 
   private int mTypeId;
 
