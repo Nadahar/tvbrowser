@@ -148,9 +148,13 @@ public class ProgramTextCreator {
 
     byte[] image = prog.getBinaryField(ProgramFieldType.IMAGE_TYPE);
     if (image != null) {
-      Icon icon = new ImageIcon(image);
-      JLabel iconLabel = new JLabel(icon);
-      buffer.append(doc.createCompTag(iconLabel));
+      try {
+        Icon icon = new ImageIcon(image);
+        JLabel iconLabel = new JLabel(icon);
+        buffer.append(doc.createCompTag(iconLabel));
+      } catch(Exception e) {
+        // Picture was wrong;
+      }
     }
 
     // Add short info, if short info isn't only the short version of the
