@@ -100,6 +100,7 @@ public class StringArrayProperty  extends Property {
     String[] newArr;
     if (arr == null) {
       newArr = new String[] { str };
+      setStringArray(newArr);
     } else {
       newArr = new String[arr.length + 1];
       System.arraycopy(arr, 0, newArr, 0, arr.length);
