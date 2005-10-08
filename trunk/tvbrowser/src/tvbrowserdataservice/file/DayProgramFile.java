@@ -49,8 +49,8 @@ public class DayProgramFile extends AbstractFile {
     new TvDataLevel("base", mLocalizer.msg("basicTVListings","Basic TV listings"),true),
     new TvDataLevel("more00-16",mLocalizer.msg("more00-16","")),
     new TvDataLevel("more16-00",mLocalizer.msg("more16-00","")),
-    // new TvDataLevel("image00-16",""),
-    // new TvDataLevel("image16-00",""),
+     new TvDataLevel("image00-16", mLocalizer.msg("image00-16","")),
+     new TvDataLevel("image16-00", mLocalizer.msg("image16-00","")),
   };
 
   private static final int FILE_VERSION = 1;
