@@ -73,6 +73,18 @@ public class PluginTreeModel extends DefaultTreeModel {
     root.insert(pluginRoot.getMutableTreeNode(), 0);
   }
 
+  /**
+   * Removes all ChildNodes from this Tree
+   */
+  public void removeAllChildNodes() {
+    MutableTreeNode root = (MutableTreeNode)this.getRoot();
+    int size = root.getChildCount();
+    
+    while (root.getChildCount() > 0) {
+      root.remove(0);
+    }
+  }
+  
   public static Plugin getPlugin(TreePath path) {
     if (path.getPathCount()>1) {
       Object o = path.getPathComponent(1);

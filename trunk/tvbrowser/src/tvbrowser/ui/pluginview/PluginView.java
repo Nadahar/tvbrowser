@@ -37,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.plugin.PluginProxy;
@@ -79,6 +80,22 @@ public class PluginView extends JPanel implements MouseListener {
 
   }
 
+  /**
+   * Refreshes the Tree
+   */
+  public void refreshTree() {
+    mModel.removeAllChildNodes();
+    
+    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    for (int i=0; i<plugins.length; i++) {
+      if (plugins[i].canUseProgramTree()) {
+        mModel.addPluginTree(plugins[i]);
+      }
+    }
+    
+    mModel.reload();
+  }
+  
   public void update() {
     mModel.update();
   }

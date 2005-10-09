@@ -671,6 +671,7 @@ public class MainFrame extends JFrame implements DateListener {
     SettingsDialog dlg = new SettingsDialog(this, visibleTabId);
     dlg.centerAndShow();
     Settings.handleChangedSettings();
+    mPluginView.refreshTree();
   }
 
   /**
