@@ -172,12 +172,34 @@ public class ListViewPlugin extends Plugin {
       mShowAtStartup = mSettings.getProperty("showAtStartup", "false").equals("true");
       
       if (mShowAtStartup) {
-        SwingUtilities.invokeLater(new Runnable(){
-          public void run() {
-            showDialog();
-          }
-        });
+        waitForTVBrowserAndShowDialog();
       }
+      
+    }
+    
+    /**
+     * Waits for the Main-Dialog and then shows the List
+     */
+    private void waitForTVBrowserAndShowDialog() {
+      
+      new Thread() {
+        public void run() {
+          while (getParentFrame() == null){
+            try {
+              sleep(200); 
+            } catch (Exception e) {
+              // TODO: handle exception
+            }
+          }
+          
+          SwingUtilities.invokeLater(new Runnable(){
+            public void run() {
+              showDialog();
+            }
+          });
+        };
+      }.start();
+      
       
     }
     
