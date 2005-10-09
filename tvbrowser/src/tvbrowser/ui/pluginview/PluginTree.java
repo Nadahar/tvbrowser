@@ -56,7 +56,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import tvbrowser.ui.programtable.ProgramTable;
 import util.ui.OverlayListener;
 import devplugin.ActionMenu;
 import devplugin.Plugin;

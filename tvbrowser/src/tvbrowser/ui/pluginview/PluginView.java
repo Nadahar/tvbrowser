@@ -37,7 +37,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.plugin.PluginProxy;
