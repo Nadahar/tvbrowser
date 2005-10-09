@@ -26,7 +26,6 @@
 
 package tvbrowser.ui.pluginview;
 
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
@@ -38,38 +37,42 @@ import devplugin.Plugin;
 
 import java.util.Enumeration;
 
-
 public class PluginTreeModel extends DefaultTreeModel {
 
   private static PluginTreeModel sInstance;
 
-  
+  private boolean mDisableUpdate;
 
   private PluginTreeModel() {
     super(new Node(Node.ROOT, "Plugins"));
   }
 
   /**
-   * Refresh all plugin nodes.
-   * This method sould be called continuously to remove expired programs from the
-   * tree. 
+   * Refresh all plugin nodes. This method sould be called continuously to
+   * remove expired programs from the tree.
    */
   public void update() {
-    MutableTreeNode root = (MutableTreeNode)this.getRoot();
-    Enumeration e = root.children();
-    while (e.hasMoreElements()) {
-      DefaultMutableTreeNode n = (DefaultMutableTreeNode)e.nextElement();
-      Object o = n.getUserObject();
-      if (o instanceof Plugin) {
-        Plugin p = (Plugin)o;
-        p.getRootNode().update();
+    if (!mDisableUpdate) {
+      MutableTreeNode root = (MutableTreeNode) this.getRoot();
+      Enumeration e = root.children();
+      while (e.hasMoreElements()) {
+        DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
+        Object o = n.getUserObject();
+        if (o instanceof Plugin) {
+          Plugin p = (Plugin) o;
+          p.getRootNode().update();
+        }
       }
     }
   }
 
+  public void setDisableUpdate(boolean disabled) {
+    mDisableUpdate = disabled;
+  }
+
   public void addPluginTree(PluginProxy plugin) {
     PluginTreeNode pluginRoot = plugin.getRootNode();
-    MutableTreeNode root = (MutableTreeNode)this.getRoot();
+    MutableTreeNode root = (MutableTreeNode) this.getRoot();
     root.insert(pluginRoot.getMutableTreeNode(), 0);
   }
 
@@ -86,12 +89,12 @@ public class PluginTreeModel extends DefaultTreeModel {
   }
   
   public static Plugin getPlugin(TreePath path) {
-    if (path.getPathCount()>1) {
+    if (path.getPathCount() > 1) {
       Object o = path.getPathComponent(1);
-      DefaultMutableTreeNode node = (DefaultMutableTreeNode)o;
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
       o = node.getUserObject();
       if (o instanceof Plugin) {
-        Plugin plugin = (Plugin)o;
+        Plugin plugin = (Plugin) o;
         return plugin;
       }
 
@@ -105,7 +108,5 @@ public class PluginTreeModel extends DefaultTreeModel {
     }
     return sInstance;
   }
-    
-    
-}
 
+}

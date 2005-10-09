@@ -55,6 +55,8 @@ public class Node extends DefaultMutableTreeNode {
   private NodeFormatter mNodeFormatter;
   
   private boolean mShowLeafCount;
+  
+  private int mLeafCount = 0;
 
   private static NodeFormatter mDefaultNodeFormatter = new NodeFormatter(){
     public String format(ProgramItem item) {
@@ -133,6 +135,14 @@ public class Node extends DefaultMutableTreeNode {
 
   public boolean isLeaf() {
     return !getAllowsChildren();
+  }
+  
+  public void setLeafCount(int leafs) {
+    mLeafCount = leafs;
+  }
+  
+  public int getLeafCount() {
+    return mLeafCount;
   }
 
 }

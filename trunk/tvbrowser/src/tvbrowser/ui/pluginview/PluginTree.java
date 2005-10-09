@@ -26,10 +26,14 @@
 
 package tvbrowser.ui.pluginview;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -37,6 +41,10 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
@@ -44,14 +52,18 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.Action;
 import javax.swing.InputMap;
+import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -68,15 +80,19 @@ import devplugin.ProgramItem;
  * 20:25:18
  */
 public class PluginTree extends JTree implements DragGestureListener,
-    DropTargetListener {
+    DropTargetListener, DragSourceListener {
 
   private Rectangle2D mCueLine = new Rectangle2D.Float();
   private PluginAccess mPlugin = null;
   private Thread mDropThread = null;
+  private String mDragNode = null;
+  private Point mCurrentPoint = null;
+  private Rectangle2D mGhostRect = new Rectangle2D.Float();
+  private BufferedImage mGhostImage, mTreeImage;
+  private boolean rejected = false;
 
   public PluginTree(TreeModel model) {
-    super(model);
-
+    super(model);  
     /* remove the F2 key from the keyboard bindings of the JTree */
     InputMap inputMap = getInputMap();
     KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
@@ -85,6 +101,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     new OverlayListener(this);
     (new DragSource()).createDefaultDragGestureRecognizer(this,
         DnDConstants.ACTION_MOVE, this);
+
     new DropTarget(this, this);
   }
 
@@ -99,6 +116,7 @@ public class PluginTree extends JTree implements DragGestureListener,
       } else if (o != null) {
         if (!leaf) {
           int leafs = getLeafCount(node);
+          node.setLeafCount(leafs);
           String leafString = leafs > 0 ? " [" + leafs + "]" : "";
           if (node.isShowLeafCount())
             return o.toString() + leafString;
@@ -172,119 +190,286 @@ public class PluginTree extends JTree implements DragGestureListener,
   }
 
   public void dragGestureRecognized(DragGestureEvent e) {
-    if (mDropThread != null && mDropThread.isAlive()) {
-      this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      return;
-    }
-    PluginTree tree = (PluginTree) e.getComponent();
-    if (tree.getLastSelectedPathComponent() == null)
-      return;
+    try {
+      if (mDropThread != null && mDropThread.isAlive()) {
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        return;
+      }
+      PluginTree tree = (PluginTree) e.getComponent();
+      if (tree.getLastSelectedPathComponent() == null)
+        return;
 
-    Node node = (Node) tree.getSelectionPath().getLastPathComponent();
-    if (node.getType() != Node.ROOT
-        && (getLeafCount(node) > 0 || node.isLeaf()))
-      e.startDrag(null, new TransferNode());
+      Node node = (Node) tree.getSelectionPath().getLastPathComponent();
+      if (node.getType() != Node.ROOT
+          && (node.getLeafCount() > 0 || node.isLeaf())) {
+        
+        ((PluginTreeModel)this.getModel()).setDisableUpdate(true);
+
+        Vector vec = this.getLeafElements(node, new Vector());
+
+        if (vec.size() == 1) {
+          mDragNode = ((Program) vec.firstElement()).getTitle();
+        } else if (node.isLeaf())
+          mDragNode = ((ProgramItem) node.getUserObject()).getProgram()
+              .getTitle();
+        else
+          mDragNode = vec.size() + " Sendungen";
+
+        JLabel lbl2 = new JLabel(mDragNode);
+        lbl2.setForeground(new Color(255,255,255,255)/*Color.white*/);
+        lbl2.setVisible(true);
+        lbl2.setFont(this.getFont());
+
+        Point ptDragOrigin = e.getDragOrigin();
+
+        Point ptOffset = new Point();
+
+        TreePath path = getPathForLocation(ptDragOrigin.x, ptDragOrigin.y);
+        Point raPath = getPathBounds(path).getLocation();
+        
+        ptOffset.setLocation(ptDragOrigin.x - raPath.x, ptDragOrigin.y
+            - raPath.y);
+        mGhostRect.setRect(ptOffset.x, ptOffset.y,
+            lbl2.getPreferredSize().width, lbl2.getPreferredSize().height);
+
+        lbl2.setSize(lbl2.getPreferredSize());
+        mGhostImage = new BufferedImage((int) lbl2.getWidth(), (int) lbl2
+            .getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+
+        mTreeImage = new BufferedImage(this.getWidth(), this.getHeight(),
+            BufferedImage.TYPE_INT_ARGB_PRE);
+        Graphics2D g2t = mTreeImage.createGraphics();
+        this.paint(g2t);
+        g2t.dispose();
+
+        // Get a graphics context for this image
+        Graphics2D g2 = mGhostImage.createGraphics();
+
+        // Make the image ghostlike
+       // g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f));
+
+        // Ask the cell renderer to paint itself into the BufferedImage
+        lbl2.paint(g2);
+
+        // Use DST_OVER to cause under-painting to occur
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OVER,
+            0.5f));
+        
+        Color c1 = new Color(UIManager.getDefaults().getColor("Tree.selectionBackground").getRGB());     
+        c1 = c1.darker();        
+        
+        g2.setPaint(new GradientPaint(0, 0, c1,getWidth(), 0, new Color(255, 255, 255, 0)));
+
+        // Paint under the JLabel's text
+        g2.fillRect(0, 0, getWidth(), mGhostImage.getHeight());
+
+        // Finished with the graphics context now
+        g2.dispose();
+
+        mCurrentPoint = (Point) e.getDragOrigin();
+
+        e.startDrag(null, (Image) mGhostImage, new Point(15, 5),
+            new TransferNode(), this);
+      }
+    } catch (Exception ee) {
+
+      ((PluginTreeModel)this.getModel()).setDisableUpdate(false);
+    }
   }
 
   public void dragEnter(DropTargetDragEvent e) {
-
   }
 
   public void dragOver(DropTargetDragEvent e) {
     boolean reject = true;
+    boolean changed = false;
     PluginAccess temp = null;
+
     try {
       DataFlavor[] flavors = e.getCurrentDataFlavors();
 
       if (flavors != null && flavors.length == 1) {
-        TreePath targetPath = ((PluginTree) ((DropTarget) e.getSource())
-            .getComponent()).getPathForLocation(e.getLocation().x, e
-            .getLocation().y);
 
-        Node target = (Node) targetPath.getPathComponent(1);
-        
-        if (flavors[0].getHumanPresentableName().equals("NodeExport")) {
-          TreePath sourcePath = ((PluginTree) ((DropTarget) e.getSource())
-              .getComponent()).getSelectionPath();
-          Node plugin = (Node) sourcePath.getPathComponent(1);
-          
-          if (!target.equals(plugin) && targetPath.getPathCount() <= 2) {
-            PluginAccess[] pa = Plugin.getPluginManager().getActivatedPlugins();
+        try {
+          TreePath targetPath = ((PluginTree) ((DropTarget) e.getSource())
+              .getComponent()).getPathForLocation(e.getLocation().x, e
+              .getLocation().y);
 
-            for (int i = 0; i < pa.length; i++) {
-              if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
-                if (pa[i].canReceivePrograms()) {
-                  e.acceptDrag(e.getDropAction());
-                  reject = false;
-                  temp = pa[i];
-                } else {
-                  mPlugin = null;
-                  break;
-                }
-              }
-            }
-          }
-        } else if (flavors[0].getHumanPresentableName().equals("Program")) {
-          if (targetPath.getPathCount() <= 2) {
-            PluginAccess[] pa = Plugin.getPluginManager().getActivatedPlugins();
+          Node target = (Node) targetPath.getPathComponent(1);
 
-            for (int i = 0; i < pa.length; i++) {
-              if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
+          if (flavors[0].getHumanPresentableName().equals("NodeExport")) {
+            TreePath sourcePath = ((PluginTree) ((DropTarget) e.getSource())
+                .getComponent()).getSelectionPath();
+            Node plugin = (Node) sourcePath.getPathComponent(1);
 
-/*  This would onky work with Java 1.5
- * 
- *  Transferable tr = e.getTransferable();
- *  Program program = (Program) tr.getTransferData(flavors[0]);*/
+            if (!target.equals(plugin) && targetPath.getPathCount() <= 2) {
+              PluginAccess[] pa = Plugin.getPluginManager()
+                  .getActivatedPlugins();
 
-                ActionMenu menu = pa[i].getContextMenuActions(Plugin.getPluginManager().getExampleProgram());
-                while (menu != null && menu.hasSubItems()) {
-                  ActionMenu[] subItems = menu.getSubItems();
-                  if (subItems.length > 0) {
-                    menu = subItems[0];
+              for (int i = 0; i < pa.length; i++) {
+                if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
+                  if (pa[i].canReceivePrograms()) {
+                    e.acceptDrag(e.getDropAction());
+                    reject = false;
+                    temp = pa[i];
+                    rejected = false;
                   } else {
-                    menu = null;
+                    mPlugin = null;
+                    break;
                   }
                 }
-                if (menu == null) {
-                  mPlugin = null;
-                  break;
-                }
+              }
 
-                e.acceptDrag(e.getDropAction());
-                reject = false;
-                temp = pa[i];
+            }
+          } else if (flavors[0].getHumanPresentableName().equals("Program")) {
+            if (targetPath.getPathCount() <= 2) {
+              PluginAccess[] pa = Plugin.getPluginManager()
+                  .getActivatedPlugins();
+
+              for (int i = 0; i < pa.length; i++) {
+                if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
+
+                  /*
+                   * This would only work with Java 1.5
+                   * 
+                   * Transferable tr = e.getTransferable(); Program program =
+                   * (Program) tr.getTransferData(flavors[0]);
+                   */
+
+                  ActionMenu menu = pa[i].getContextMenuActions(Plugin
+                      .getPluginManager().getExampleProgram());
+                  while (menu != null && menu.hasSubItems()) {
+                    ActionMenu[] subItems = menu.getSubItems();
+                    if (subItems.length > 0) {
+                      menu = subItems[0];
+                    } else {
+                      menu = null;
+                    }
+                  }
+                  if (menu == null) {
+                    mPlugin = null;
+                    break;
+                  }
+
+                  e.acceptDrag(e.getDropAction());
+                  reject = false;
+                  rejected = false;
+                  temp = pa[i];
+                }
               }
             }
           }
+
+          if (!reject && (mPlugin == null || temp != mPlugin)) {
+            changed = true;
+            this.paintImmediately(mCueLine.getBounds());
+
+            mCueLine.setRect(((PluginTree) ((DropTarget) e.getSource())
+                .getComponent()).getPathBounds(targetPath));
+            
+            Graphics2D g2 = (Graphics2D) getGraphics();
+            Color c = new Color(255, 0, 0, 40);
+            g2.setColor(c);
+            g2.fill(mCueLine);
+            mPlugin = temp;
+          }
+        } catch (Exception e2) {
+          e.rejectDrag();
         }
 
-        if (!reject && (mPlugin == null || temp != mPlugin)) {
+        if (reject && !rejected) {
+          e.rejectDrag();
           this.paintImmediately(mCueLine.getBounds());
-          mCueLine.setRect(((PluginTree) ((DropTarget) e.getSource())
-              .getComponent()).getPathBounds(targetPath));
-          Graphics2D g2 = (Graphics2D) this.getGraphics();
-          Color c = new Color(255, 0, 0, 40);
-          g2.setColor(c);
-          g2.fill(mCueLine);
-          mPlugin = temp;
+          mPlugin = null;
+          rejected = true;
+        }
+
+        Point location = (Point) e.getLocation().clone();
+
+        if (flavors[0].getHumanPresentableName().equals("NodeExport")
+            && ((mCurrentPoint.x != location.x) || (mCurrentPoint.y != location.y))) {
+
+          if (!DragSource.isDragImageSupported()) {
+            Graphics2D g2 = (Graphics2D) getGraphics();
+
+            Rectangle2D old = (Rectangle2D) mGhostRect.clone();
+
+            // Remember where you are about to draw the new ghost image
+            mGhostRect.setRect(location.x + 20, location.y, mGhostImage
+                .getWidth(), mGhostImage.getHeight());
+
+            Rectangle2D target = (Rectangle2D) old.clone();
+            target.add(mGhostRect);
+
+            BufferedImage bf = new BufferedImage((int) target.getWidth(),
+                (int) target.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+            Graphics2D g2b = (Graphics2D) bf.createGraphics();
+
+            int width = ((int) (mTreeImage.getWidth() - (target.getX() + target
+                .getWidth()))) > 0 ? (int) target.getWidth()
+                : (int) (mTreeImage.getWidth() - (target.getX()));
+            int height = ((int) (mTreeImage.getHeight() - (target.getY() + target
+                .getHeight()))) > 0 ? (int) target.getHeight()
+                : (int) (mTreeImage.getHeight() - (target.getY()));
+
+            if (width > 0 && height > 0)
+              g2b.drawImage(mTreeImage.getSubimage((int) target.getX(),
+                  (int) target.getY(), width, height), 0, 0, null);
+
+            if (mCueLine.contains(location) && !reject) {
+              Rectangle2D temp1 = mCueLine.createIntersection(target);
+              double y = 0;
+
+              if (changed) {
+                y = mCueLine.getY() - target.getY();
+                changed = false;
+              }
+              temp1.setRect(0, y, temp1.getWidth(), temp1.getHeight());
+
+              Color c = new Color(255, 0, 0, 40);
+              g2b.setColor(c);
+              if (mCueLine.contains(mCueLine.createIntersection(target)))
+                g2b.fill(temp1);
+            }
+
+            g2b.drawImage(mGhostImage, AffineTransform.getTranslateInstance(
+                mGhostRect.getX() - target.getX(), mGhostRect.getY()
+                    - target.getY()), null);
+            g2b.dispose();
+
+            g2.drawImage(bf, AffineTransform.getTranslateInstance(
+                target.getX(), target.getY()), null);
+          }
+          mCurrentPoint = location;
         }
       }
     } catch (Exception ee) {
     }
 
-    if (reject) {
-      e.rejectDrag();
-      this.paintImmediately(mCueLine.getBounds());
-      mPlugin = null;
+    if (this.getVisibleRect().width < this.getSize().width
+        || this.getVisibleRect().height < this.getSize().height) {
+      int scroll = 20;
+      if (e.getLocation().y + scroll + 5 > getVisibleRect().height)
+        scrollRectToVisible(new Rectangle(e.getLocation().x, e.getLocation().y
+            + scroll + 5, 1, 1));
+      if (e.getLocation().y - scroll < getVisibleRect().y)
+        scrollRectToVisible(new Rectangle(e.getLocation().x, e.getLocation().y
+            - scroll, 1, 1));
+      if (e.getLocation().x - scroll < getVisibleRect().x)
+        scrollRectToVisible(new Rectangle(e.getLocation().x - scroll, e
+            .getLocation().y, 1, 1));
+      if (e.getLocation().x + scroll + 5 > getVisibleRect().width)
+        scrollRectToVisible(new Rectangle(e.getLocation().x + scroll + 5, e
+            .getLocation().y, 1, 1));
     }
   }
 
   public void dropActionChanged(DropTargetDragEvent e) {
-
   }
 
   public void dragExit(DropTargetEvent e) {
-    this.paintImmediately(mCueLine.getBounds());
+    paintImmediately(mCueLine.getBounds());
+    paintImmediately(mGhostRect.getBounds());
     mPlugin = null;
   }
 
@@ -377,6 +562,9 @@ public class PluginTree extends JTree implements DragGestureListener,
           }
         }
         paintImmediately(mCueLine.getBounds());
+        paintImmediately(mGhostRect.getBounds());
+
+        mPlugin = null;
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
     };
@@ -408,5 +596,21 @@ public class PluginTree extends JTree implements DragGestureListener,
       }
     }
     return entries;
+  }
+
+  public void dragEnter(DragSourceDragEvent dsde) {
+  }
+
+  public void dragOver(DragSourceDragEvent dsde) {
+  }
+
+  public void dropActionChanged(DragSourceDragEvent dsde) {
+  }
+
+  public void dragDropEnd(DragSourceDropEvent dsde) {
+    ((PluginTreeModel)this.getModel()).setDisableUpdate(false);
+  }
+
+  public void dragExit(DragSourceEvent dse) {
   }
 }
