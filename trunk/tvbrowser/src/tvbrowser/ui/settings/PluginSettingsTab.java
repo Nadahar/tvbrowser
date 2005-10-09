@@ -186,6 +186,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         }
         
         populatePluginList();
+        mSettingsDialog.createPluginTreeItems();
         mList.setSelectedIndex(0);
       }
     }

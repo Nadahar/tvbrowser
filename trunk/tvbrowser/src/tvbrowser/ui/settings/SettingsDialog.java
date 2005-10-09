@@ -53,14 +53,15 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.ui.UiUtilities;
 import devplugin.SettingsTab;
 
@@ -89,6 +90,9 @@ public class SettingsDialog {
   private Point mLocation = new Point();
   /** Dimension of this Dialog */
   private Dimension mSize = new Dimension();
+  
+  /** Node for PluginSettings */
+  private SettingNode mPluginSettingsNode;
   
   /**
    * Creates a new instance of SettingsDialog.
@@ -284,24 +288,11 @@ public class SettingsDialog {
  //   node.add(new SettingNode(new ToolbarSettingsTab(),TAB_ID_TOOLBAR));
 
     // Plugins
-    node = new SettingNode(pluginSettingsTab, TAB_ID_PLUGINS);
-    root.add(node);
+    mPluginSettingsNode = new SettingNode(pluginSettingsTab, TAB_ID_PLUGINS);
+    root.add(mPluginSettingsNode);
 
-    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
-
-    Arrays.sort(pluginArr, new Comparator() {
-
-        public int compare(Object o1, Object o2) {
-            return o1.toString().compareTo(o2.toString());
-        }
-
-    });
-
-    for (int i = 0; i < pluginArr.length; i++) {
-      ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
-      node.add(new SettingNode(tab, pluginArr[i].getId()));
-    }
-
+    createPluginTreeItems(false);
+    
     // TVDataServices
     node = new SettingNode(new DataServiceSettingsTab());
     root.add(node);
@@ -319,6 +310,43 @@ public class SettingsDialog {
     node.add(new SettingNode(new TVDataSettingsTab()));
 
     return root;
+  }
+
+  
+  /**
+   * Removes all Items from the PluginSettingsNode and recreates
+   * the Child Nodes
+   * 
+   * @param refresh If true, the Tree will be refreshed
+   */
+  private void createPluginTreeItems(boolean refresh) {
+    mPluginSettingsNode.removeAllChildren();
+    
+    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
+
+    Arrays.sort(pluginArr, new Comparator() {
+
+        public int compare(Object o1, Object o2) {
+            return o1.toString().compareTo(o2.toString());
+        }
+
+    });
+
+    for (int i = 0; i < pluginArr.length; i++) {
+      ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(pluginArr[i]);
+      mPluginSettingsNode.add(new SettingNode(tab, pluginArr[i].getId()));
+    }
+    if (mSelectionTree != null)
+      ((DefaultTreeModel)mSelectionTree.getModel()).reload(mPluginSettingsNode);
+  }
+
+  
+  /**
+   * Removes all Items from the PluginSettingsNode and recreates
+   * the Child Nodes
+   */
+  public void createPluginTreeItems() {
+    createPluginTreeItems(true);
   }
 
   /**
