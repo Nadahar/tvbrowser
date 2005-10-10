@@ -93,7 +93,7 @@ public class ParamLibrary {
   public String[] getPossibleKeys() {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
-        "description", "episode", "original_episode", "channel_name" };
+        "description", "episode", "original_episode", "channel_name", "url" };
     return str;
   }
 
@@ -186,6 +186,8 @@ public class ParamLibrary {
       return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE));
     } else if (key.equals("channel_name")) {
       return removeNull(prg.getChannel().getName());
+    } else if (key.equals("url")) {
+      return removeNull(prg.getTextField(ProgramFieldType.URL_TYPE));
     }
 
     mError = true;
