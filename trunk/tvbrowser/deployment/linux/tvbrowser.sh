@@ -82,7 +82,14 @@ fi
 
 # get the app dir if not already defined
 if [ -z "$PROGRAM_DIR" ]; then
-    PROGRAM_DIR=`dirname "$0"`
+    if [ -L $0 ] 
+    then
+        SL= `file $0 | sed -e 's/.*to..\(.*\)./\1/'`
+        PROGRAM_DIR=`dirname $SL`
+    else
+        PROGRAM_DIR=`dirname $0`
+    fi
+    
     PROGRAM_DIR=`cd "$PROGRAM_DIR"; pwd`
 else
     if [ "$(echo ${PROGRAM_DIR}/*.jar)" = "${PROGRAM_DIR}/*.jar" ]; then
