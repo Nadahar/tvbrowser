@@ -77,6 +77,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
      * @see tvbrowser.core.plugin.AbstractPluginProxy#doSaveSettings(java.io.File)
      */
     protected void doSaveSettings(File userDirectory) throws TvBrowserException {
+      doSaveSettings(userDirectory, true);
+    }
+
+    protected void doSaveSettings(File userDirectory, boolean log) throws TvBrowserException {
     }
 
     /*
@@ -277,6 +281,16 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
        
     public PluginTreeNode getRootNode() {
       return null;
+    }
+    
+    public boolean canReceiveSelectedProgram() {
+      return false;
+    }
+    
+    public void receiveSelectedProgram(Program program) {
+    }
+
+    public void selectionRemoved() {
     }
     
  }

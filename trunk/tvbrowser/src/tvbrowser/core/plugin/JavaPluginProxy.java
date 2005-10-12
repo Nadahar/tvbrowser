@@ -178,8 +178,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
-  protected void doSaveSettings(File userDirectory) throws TvBrowserException {
-    mLog.info("Storing plugin settings for " + getId() + "...");
+  protected void doSaveSettings(File userDirectory, boolean log) throws TvBrowserException {
+    if(log)
+      mLog.info("Storing plugin settings for " + getId() + "...");
 
     // save the plugin data in a temp file
     File tmpDatFile = new File(userDirectory, getId() + ".dat.temp");
@@ -408,4 +409,15 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return mPlugin.getRootNode();
   }
   
+  public boolean canReceiveSelectedProgram() {
+   return mPlugin.canReceiveSelectedProgram(); 
+  }
+  
+  public void receiveSelectedProgram(Program program) {
+    mPlugin.receiveSelectedProgram(program);
+  }
+
+  public void selectionRemoved() {
+    mPlugin.selectionRemoved();
+  }
 }
