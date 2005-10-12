@@ -231,6 +231,7 @@ abstract public class Plugin {
    * Counterpart to loadData. Called when the application shuts down.
    * <p>
    * Override this method to store any objects to the file system.
+   * ATTENTION: Don't use any logger, thread or access to Frames in this method.
    * 
    * @param out The stream to write the objects to
    * @throws IOException If writing failed.
@@ -256,6 +257,7 @@ abstract public class Plugin {
    * Called by the host-application during shut-down.
    * <p>
    * Override this method to store your plugins settings to the file system.
+   * ATTENTION: Don't use any logger, thread or access to Frames in this method.
    *
    * @return The settings for this plugin or <code>null</code> if this plugin
    *         does not need to save any settings.
@@ -699,6 +701,7 @@ abstract public class Plugin {
   /**
    * This method is automatically called immediatly after deactivating
    * the plugin.
+   * ATTENTION: Don't use any logger, thread or access to Frames in this method.
    *
    * @since 1.1
    */
@@ -751,5 +754,15 @@ abstract public class Plugin {
   public String toString() {
     return getInfo().getName();
   }
+  
+  public boolean canReceiveSelectedProgram() {
+    return false;
+  }
+  
+  public void receiveSelectedProgram(Program program) {
+  }
 
+  public void selectionRemoved() {
+    
+  }
 }
