@@ -250,7 +250,6 @@ public class ProgramIcon implements Icon {
 
         // If there are plugins that have marked the program -> paint the background
         PluginAccess[] markedByPluginArr = getMarkedByPlugins(mProgram);
-        System.out.print(mProgram.getTimeString()+": "+mProgram.getTitle()+" - "+mSettings.getPaintPluginMarks());
         if (mSettings.getPaintPluginMarks() && markedByPluginArr.length != 0) {
           grp.setColor(mSettings.getColorMarked());
           grp.fill3DRect(0, 0, width, height+2, true);

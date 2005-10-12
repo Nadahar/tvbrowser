@@ -685,7 +685,9 @@ public class MainFrame extends JFrame implements DateListener {
     SettingsDialog dlg = new SettingsDialog(this, visibleTabId);
     dlg.centerAndShow();
     Settings.handleChangedSettings();
-    mPluginView.refreshTree();
+    if (mPluginView != null) {
+      mPluginView.refreshTree();
+    }
   }
 
   /**
@@ -711,8 +713,7 @@ public class MainFrame extends JFrame implements DateListener {
       progWin.run(new Progress() {
         public void run() {
           try {
-            java.net.URL url = null;
-            url = new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");
+            java.net.URL url = new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");
             SoftwareUpdater softwareUpdater = new SoftwareUpdater(url);
             mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
           } catch (java.io.IOException e) {
