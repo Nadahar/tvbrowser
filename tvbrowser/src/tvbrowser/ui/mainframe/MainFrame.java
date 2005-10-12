@@ -134,7 +134,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   private Component mCenterComponent;
 
-  private boolean mIsVisible;
+  private boolean mIsVisible, mShuttingDown = false;
 
   private Node mMainframeNode;
 
@@ -416,22 +416,36 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void quit() {
-    mLog.info("Finishing plugins");
-    PluginProxyManager.getInstance().shutdownAllPlugins();
+    quit(true);
+  }
+  
+  public void quit(boolean log) {
+    if(mShuttingDown)
+      return;
+    mShuttingDown = true;
+    
+    if(log)
+      mLog.info("Finishing plugins");    
+    PluginProxyManager.getInstance().shutdownAllPlugins(log);
 
-    mLog.info("Storing dataservice settings");
+    if(log)
+      mLog.info("Storing dataservice settings");
     TvDataServiceProxyManager.getInstance().shutDown();
 
-    TVBrowser.shutdown();
-
-    mLog.info("Closing tv data base");
+    TVBrowser.shutdown(log);
+    
+    if(log)
+      mLog.info("Closing tv data base");
+    
     try {
       TvDataBase.getInstance().close();
     } catch (Exception exc) {
-      mLog.log(Level.WARNING, "Closing database failed", exc);
+      if(log)
+        mLog.log(Level.WARNING, "Closing database failed", exc);
     }
-
-    mLog.info("Quitting");
+    
+    if(log)
+      mLog.info("Quitting");
     System.exit(0);
   }
 

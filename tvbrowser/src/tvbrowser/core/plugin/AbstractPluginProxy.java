@@ -129,7 +129,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
-  final void saveSettings(File userDirectory) throws TvBrowserException {
+  final void saveSettings(File userDirectory, boolean log) throws TvBrowserException {
     // Check whether the plugin is activated
     if (!mIsActivated) {
       throw new TvBrowserException(AbstractPluginProxy.class, "error.saving.notActivated",
@@ -138,7 +138,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
 
     // Try to save the settings
     try {
-      doSaveSettings(userDirectory);
+      doSaveSettings(userDirectory, log);
     } catch (Throwable t) {
       throw new TvBrowserException(AbstractPluginProxy.class, "error.saving.runtimeException",
           "The plugin {0} caused an error when saving the plugin settings.", getInfo().getName(), t);
@@ -151,7 +151,7 @@ public abstract class AbstractPluginProxy implements PluginProxy {
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
-  protected abstract void doSaveSettings(File userDirectory) throws TvBrowserException;
+  protected abstract void doSaveSettings(File userDirectory, boolean log) throws TvBrowserException;
 
   /**
    * Gets the meta information about the plugin.

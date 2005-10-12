@@ -301,7 +301,8 @@ public class TVBrowser {
             // ignore
           }
 
-          flushSettings();
+          if(!mSaveThreadShouldStop)
+            flushSettings(true);
         }
       }
     };
@@ -312,9 +313,9 @@ public class TVBrowser {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       public void run() {
         deleteLockFile();
+        MainFrame.getInstance().quit(false);
       }
      });
-
   }
 
 
@@ -441,31 +442,35 @@ public class TVBrowser {
   }
 
 
-  public static synchronized void flushSettings() {
-
-    mLog.info("Channel Settings (day light saving time corrections/icons)");
+  public static synchronized void flushSettings(boolean log) {
+    if(log)
+      mLog.info("Channel Settings (day light saving time corrections/icons)");
     ChannelList.storeAllSettings();
 
     mainFrame.storeSettings();
 
-    mLog.info("Storing window size and location");
-    boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
-    Settings.propIsWindowMaximized.setBoolean(maximized);
-    if (! maximized) {
-      // Save the window size and location only when not maximized
-      Settings.propWindowWidth.setInt(mainFrame.getWidth());
-      Settings.propWindowHeight.setInt(mainFrame.getHeight());
-      Settings.propWindowX.setInt(mainFrame.getX());
-      Settings.propWindowY.setInt(mainFrame.getY());
+    if(log) {
+      mLog.info("Storing window size and location");
+      
+      boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
+
+      Settings.propIsWindowMaximized.setBoolean(maximized);
+      if (! maximized) {
+        // Save the window size and location only when not maximized
+        Settings.propWindowWidth.setInt(mainFrame.getWidth());
+        Settings.propWindowHeight.setInt(mainFrame.getHeight());
+        Settings.propWindowX.setInt(mainFrame.getX());
+        Settings.propWindowY.setInt(mainFrame.getY());
+      }
     }
 
-    mLog.info("Storing settings");
+    if(log)
+      mLog.info("Storing settings");
     try {
       Settings.storeSettings();
     } catch (TvBrowserException e) {
       ErrorHandler.handle(e);
     }
-
   }
 
   public static boolean isUsingSystemTray() {
@@ -601,16 +606,15 @@ public class TVBrowser {
       }
     };
   }
-
-
+  
   /**
    * Called when TV-Browser shuts down.
    * <p>
    * Stops the save thread and saves the settings.
    */
-  public static void shutdown() {
+  public static void shutdown(boolean log) {
     mSaveThreadShouldStop = true;
-    flushSettings();
+    flushSettings(log);
   }
 
 

@@ -462,7 +462,7 @@ public class PluginProxyManager {
   public void deactivatePlugin(PluginProxy plugin) throws TvBrowserException {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
-      deactivatePlugin(item);
+      deactivatePlugin(item, true);
     }
   }
 
@@ -473,12 +473,13 @@ public class PluginProxyManager {
    * @param item The item of the plugin to deactivate
    * //@throws TvBrowserException If deactivating failed
    */
-  private void deactivatePlugin(PluginListItem item) throws TvBrowserException {
+  private void deactivatePlugin(PluginListItem item, boolean log) throws TvBrowserException {
     // Check the state
     checkStateChange(item, ACTIVATED_STATE, LOADED_STATE);
 
     // Log this event
-    mLog.info("Deactivating plugin " + item.getPlugin().getId());
+    if(log)
+      mLog.info("Deactivating plugin " + item.getPlugin().getId());
 
     // Get the user directory
     String userDirectoryName = Settings.getUserDirectoryName();
@@ -491,7 +492,7 @@ public class PluginProxyManager {
 
     // Try to save the plugin settings. If saving fails, we continue deactivating the plugin.
     try {
-      item.getPlugin().saveSettings(userDirectory);
+      item.getPlugin().saveSettings(userDirectory, log);
     }catch (TvBrowserException e) {
       ErrorHandler.handle(e);
     }
@@ -506,7 +507,7 @@ public class PluginProxyManager {
     mActivatedPluginCache = null;
 
     // Inform the listeners
-    firePluginDeactivated(item.getPlugin());
+    firePluginDeactivated(item.getPlugin(), log);
   }
 
   
@@ -519,7 +520,7 @@ public class PluginProxyManager {
   public void removePlugin(PluginProxy plugin) throws TvBrowserException {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
-      deactivatePlugin(item);
+      deactivatePlugin(item, true);
       mPluginList.remove(item);
       mActivatedPluginCache = null;
       mAllPluginCache = null;
@@ -529,14 +530,14 @@ public class PluginProxyManager {
   /**
    * Deactivates and shuts down all plugins.
    */
-  public void shutdownAllPlugins() {
+  public void shutdownAllPlugins(boolean log) {
     synchronized(mPluginList) {
       // Deactivate all active plugins
       for (int i = 0; i < mPluginList.size(); i++) {
         PluginListItem item = (PluginListItem) mPluginList.get(i);
         if (item.getPlugin().isActivated()) {
           try {
-            deactivatePlugin(item);
+            deactivatePlugin(item, log);
           }
           catch (TvBrowserException exc) {
             ErrorHandler.handle(exc);
@@ -549,7 +550,8 @@ public class PluginProxyManager {
         PluginListItem item = (PluginListItem) mPluginList.get(i);
 
         // Log this event
-        mLog.info("Shutting down plugin " + item.getPlugin().getId());
+        if(log)
+          mLog.info("Shutting down plugin " + item.getPlugin().getId());
 
         // Shut the plugin down
         item.setState(SHUT_DOWN_STATE);
@@ -1042,14 +1044,15 @@ public class PluginProxyManager {
    *
    * @param plugin The deactivated plugin
    */
-  private void firePluginDeactivated(PluginProxy plugin) {
+  private void firePluginDeactivated(PluginProxy plugin, boolean log) {
     synchronized(mPluginStateListenerList) {
       for (int i = 0; i < mPluginStateListenerList.size(); i++) {
         PluginStateListener lst = (PluginStateListener) mPluginStateListenerList.get(i);
         try {
           lst.pluginDeactivated(plugin);
         } catch(Throwable thr) {
-          mLog.log(Level.WARNING, "Fireing event 'plugin deactivated' failed", thr);
+          if(log)
+            mLog.log(Level.WARNING, "Fireing event 'plugin deactivated' failed", thr);
         }
       }
     }
