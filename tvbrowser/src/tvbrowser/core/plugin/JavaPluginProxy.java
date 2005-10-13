@@ -409,15 +409,4 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return mPlugin.getRootNode();
   }
   
-  public boolean canReceiveSelectedProgram() {
-   return mPlugin.canReceiveSelectedProgram(); 
-  }
-  
-  public void receiveSelectedProgram(Program program) {
-    mPlugin.receiveSelectedProgram(program);
-  }
-
-  public void selectionRemoved() {
-    mPlugin.selectionRemoved();
-  }
 }

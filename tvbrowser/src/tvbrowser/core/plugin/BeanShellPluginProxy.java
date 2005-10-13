@@ -283,14 +283,4 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       return null;
     }
     
-    public boolean canReceiveSelectedProgram() {
-      return false;
-    }
-    
-    public void receiveSelectedProgram(Program program) {
-    }
-
-    public void selectionRemoved() {
-    }
-    
  }
