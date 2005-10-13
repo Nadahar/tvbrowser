@@ -63,6 +63,7 @@ import javax.swing.InputMap;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
@@ -479,7 +480,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     final Object src = e.getSource();
     final Point loc = e.getLocation();
     final PluginTree tree = this;
-
+    final DropTargetDropEvent devent = e;
     mDropThread = new Thread() {
       public void run() {
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -561,11 +562,16 @@ public class PluginTree extends JTree implements DragGestureListener,
           } catch (Exception ee) {
           }
         }
-        paintImmediately(mCueLine.getBounds());
-        paintImmediately(mGhostRect.getBounds());
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            paintImmediately(mCueLine.getBounds());
+            paintImmediately(mGhostRect.getBounds());
+          };
+        });
 
         mPlugin = null;
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        devent.dropComplete(true);
       }
     };
     mDropThread.setPriority(Thread.MIN_PRIORITY);
