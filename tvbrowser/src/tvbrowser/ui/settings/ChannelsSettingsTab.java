@@ -1088,6 +1088,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
         }
       }catch(Exception ee) {ee.printStackTrace();}
     }  
+    e.dropComplete(true);
   }
     
   //Move the channels to the row where the dropping was.
