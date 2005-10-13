@@ -754,15 +754,4 @@ abstract public class Plugin {
   public String toString() {
     return getInfo().getName();
   }
-  
-  public boolean canReceiveSelectedProgram() {
-    return false;
-  }
-  
-  public void receiveSelectedProgram(Program program) {
-  }
-
-  public void selectionRemoved() {
-    
-  }
 }
