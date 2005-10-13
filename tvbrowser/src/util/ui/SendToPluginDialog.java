@@ -53,7 +53,7 @@ public class SendToPluginDialog extends JDialog {
   /**
    * Create the Dialog
    * 
-   * @param plug Sender-Plugin
+   * @param caller Sender-Plugin
    * @param owner Owner Frame
    * @param prg List of Programs to send
    */
@@ -68,7 +68,7 @@ public class SendToPluginDialog extends JDialog {
   /**
    * Create the Dialog
    * 
-   * @param plug Sender-Plugin
+   * @param caller Sender-Plugin
    * @param owner Owner Frame
    * @param prg List of Programs to send
    */
@@ -95,9 +95,7 @@ public class SendToPluginDialog extends JDialog {
 
     PluginAccess[] copy = new PluginProxy[installedPluginArr.length];
 
-    for (int i = 0; i < installedPluginArr.length; i++) {
-      copy[i] = installedPluginArr[i];
-    }
+    System.arraycopy(installedPluginArr, 0, copy, 0, installedPluginArr.length);
 
     Arrays.sort(copy, new ObjectComperator());
 
