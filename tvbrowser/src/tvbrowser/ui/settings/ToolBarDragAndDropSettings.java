@@ -474,8 +474,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
           }
         saveSettings();
       }
+      e.dropComplete(true);
     } catch (Exception ee) {
-      ee.printStackTrace();
+      e.dropComplete(false);
     }
   }
 
