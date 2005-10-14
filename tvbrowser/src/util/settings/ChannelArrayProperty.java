@@ -103,7 +103,7 @@ public class ChannelArrayProperty extends Property {
     if ((mDefaultValue != null) && (value.length == mDefaultValue.length)) {
       equalsDefault = true;
       for (int i = 0; i < value.length; i++) {
-        if (! value[i].equals(mDefaultValue[i])) {
+        if (value[i] == null || ! value[i].equals(mDefaultValue[i])) {
           equalsDefault = false;
           break;
         }
@@ -116,10 +116,11 @@ public class ChannelArrayProperty extends Property {
       StringBuffer buffer = new StringBuffer();
     
       for (int i = 0; i < value.length; i++) {
+        if (value[i] == null)
+          continue;
         if (i != 0) {
           buffer.append(',');
         }
-
         String dsClassName = value[i].getDataService().getClass().getName();
         String asString = dsClassName + ":" + value[i].getId();
 
