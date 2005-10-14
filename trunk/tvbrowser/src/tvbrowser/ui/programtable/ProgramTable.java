@@ -537,13 +537,16 @@ implements ProgramTableModelListener, DragGestureListener {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       Program program = panel.getProgram();
       int startTime = program.getHours() * 60 + program.getMinutes();
-
+      
       // Add 24 hours for every day different to the model's main date
       startTime += program.getDate().getNumberOfDaysSince(mainDate) * 24 * 60;
 
       if (startTime > minutesAfterMidnight) {
         // It was the last program
-        timeY += lastCellHeight / 2; // Hit the center of the program
+        if(lastCellHeight != 0)
+          timeY += lastCellHeight / 2; // Hit the center of the program
+        else // If the lastCellHeight is zero, exclude thes column from the calculation
+          timeY = -1;
         return timeY;
       } else {
         timeY += lastCellHeight;
