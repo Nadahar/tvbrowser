@@ -93,6 +93,7 @@ public class DefaultMenuBar extends MenuBar {
     helpMenu.add(mFaqMI);
     helpMenu.add(mForumMI);
     helpMenu.add(mHandbookMI);
+    helpMenu.add(mKeyboardShortcutsMI);
     helpMenu.add(mWebsiteMI);
     helpMenu.addSeparator();
     helpMenu.add(mConfigAssistantMI);
