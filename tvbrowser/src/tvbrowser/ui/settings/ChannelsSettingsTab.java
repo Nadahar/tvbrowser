@@ -238,17 +238,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     MouseMotionListener[] m2 =  mAllChannels.getMouseMotionListeners();
     for(int i = 0; i < m2.length; i++)
       mAllChannels.removeMouseMotionListener(m2[i]);
-
-    ml = mSubscribedChannels.getMouseListeners();
-    for(int i = 0; i < ml.length; i++)
-      mSubscribedChannels.removeMouseListener(ml[i]);
     
-    m2 =  mSubscribedChannels.getMouseMotionListeners();
-    for(int i = 0; i < m2.length; i++)
-      mSubscribedChannels.removeMouseMotionListener(m2[i]);
-
-      // Set up the DragSources
-    (new DragSource()).createDefaultDragGestureRecognizer(mSubscribedChannels,DnDConstants.ACTION_MOVE,this);    
+     //Set up the drag source
     (new DragSource()).createDefaultDragGestureRecognizer(mAllChannels,DnDConstants.ACTION_MOVE,this);
     
     mAllChannels.addMouseListener(new MouseAdapter() {
@@ -302,58 +293,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
           }
         }
     });
-
-    mSubscribedChannels.addMouseListener(new MouseAdapter() {
-      private int lastSelectedIndex = 0;
-      
-      public void mouseClicked(MouseEvent e) {
-          if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-            int index = mSubscribedChannels.locationToIndex(e.getPoint());
-            mSubscribedChannels.setSelectedIndex(index);
-            moveChannelsToLeft();
-            lastSelectedIndex = index;
-          }
-      }
- 
-      // Rebuild the selection of the JList with the needed
-      // functions.
-      public void mousePressed(MouseEvent e) {          
-        if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
-          int index = mSubscribedChannels.locationToIndex(e.getPoint());
-          mSubscribedChannels.setSelectionInterval(index,lastSelectedIndex);
-        }
-        else if(!e.isControlDown() &&
-            !e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
-          DefaultListSelectionModel model = (DefaultListSelectionModel)mSubscribedChannels.getSelectionModel();
-          int index = mSubscribedChannels.locationToIndex(e.getPoint());
-          if(!model.isSelectedIndex(index)) {
-            mSubscribedChannels.setSelectedIndex(index);
-            lastSelectedIndex = index;
-          }
-        }
-      }
-      
-      // Rebuild the selection of the JList with the needed
-      // functions.     
-      public void mouseReleased(MouseEvent e) {
-        int index = mSubscribedChannels.locationToIndex(e.getPoint());
-        
-        if(e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {          
-          DefaultListSelectionModel model = (DefaultListSelectionModel)mSubscribedChannels.getSelectionModel();
-          
-          if(model.isSelectedIndex(index))
-            model.removeSelectionInterval(index,index);
-          else
-            model.addSelectionInterval(index,index);
-          
-          lastSelectedIndex = index;
-        }
-        else if(!e.isShiftDown() && !e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
-          mSubscribedChannels.setSelectedIndex(index);
-          lastSelectedIndex = index;
-        }
-      }
-    });
+    
+    restoreCorrectMouseListener();
     
     listBoxPnRight.add(new JScrollPane(mSubscribedChannels), BorderLayout.CENTER);
 
@@ -422,6 +363,70 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     return result;
   }
 
+  private void restoreCorrectMouseListener() {
+    MouseMotionListener[] m2 =  mSubscribedChannels.getMouseMotionListeners();
+    for(int i = 0; i < m2.length; i++)
+      mSubscribedChannels.removeMouseMotionListener(m2[i]);
+
+    MouseListener[] ml = mSubscribedChannels.getMouseListeners();
+    for(int i = 0; i < ml.length; i++)
+      mSubscribedChannels.removeMouseListener(ml[i]);
+
+    // Set up the DragSources
+    (new DragSource()).createDefaultDragGestureRecognizer(mSubscribedChannels,DnDConstants.ACTION_MOVE,this);
+    
+    mSubscribedChannels.addMouseListener(new MouseAdapter() {
+      private int lastSelectedIndex = 0;
+      
+      public void mouseClicked(MouseEvent e) {
+          if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+            int index = mSubscribedChannels.locationToIndex(e.getPoint());
+            mSubscribedChannels.setSelectedIndex(index);
+            moveChannelsToLeft();
+            lastSelectedIndex = index;
+          }
+      }
+ 
+      // Rebuild the selection of the JList with the needed
+      // functions.
+      public void mousePressed(MouseEvent e) {          
+        if(e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+          int index = mSubscribedChannels.locationToIndex(e.getPoint());
+          mSubscribedChannels.setSelectionInterval(index,lastSelectedIndex);
+        }
+        else if(!e.isControlDown() &&
+            !e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+          DefaultListSelectionModel model = (DefaultListSelectionModel)mSubscribedChannels.getSelectionModel();
+          int index = mSubscribedChannels.locationToIndex(e.getPoint());
+          if(!model.isSelectedIndex(index)) {
+            mSubscribedChannels.setSelectedIndex(index);
+            lastSelectedIndex = index;
+          }
+        }
+      }
+      
+      // Rebuild the selection of the JList with the needed
+      // functions.     
+      public void mouseReleased(MouseEvent e) {
+        int index = mSubscribedChannels.locationToIndex(e.getPoint());
+        
+        if(e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {          
+          DefaultListSelectionModel model = (DefaultListSelectionModel)mSubscribedChannels.getSelectionModel();
+          
+          if(model.isSelectedIndex(index))
+            model.removeSelectionInterval(index,index);
+          else
+            model.addSelectionInterval(index,index);
+          
+          lastSelectedIndex = index;
+        }
+        else if(!e.isShiftDown() && !e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
+          mSubscribedChannels.setSelectedIndex(index);
+          lastSelectedIndex = index;
+        }
+      }
+    });
+  }
 
   private JPanel createButtonPn(JButton btn1, JButton btn2) {
     JPanel result = new JPanel(new GridLayout(2,1));
@@ -794,6 +799,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     
 
     mSubscribedChannels.updateUI();
+    restoreCorrectMouseListener();
   }
 
   /**
