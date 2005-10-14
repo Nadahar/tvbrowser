@@ -68,7 +68,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
                     mChannellistMI, mPluginOverviewMI, mRestoreMI, mUpdateMI,
                     mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
-                    mConfigAssistantMI, mAboutMI,
+                    mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
                     mToolbarCustomizeMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu;
@@ -208,7 +208,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
     mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/About16.gif"));
     mAboutMI.addActionListener(this);
-
+    
+    mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlImg);
+    mKeyboardShortcutsMI.addActionListener(this);
+    
     mViewMenu.add(mToolbarMenu);
     mViewMenu.add(mStatusbarMI);
     mViewMenu.add(mTimeBtnsMI);
@@ -453,6 +456,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      else if (source == mHandbookMI) {
          util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.handbook",""));
      }
+     else if (source == mKeyboardShortcutsMI) {
+       util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.keyboardshortcuts",""));
+     }
      else if (source == mConfigAssistantMI) {
          mMainFrame.runSetupAssistant();
      }
@@ -486,6 +492,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
      new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.forum",""),mLabel); 
      new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
+     new MenuHelpTextAdapter(mKeyboardShortcutsMI,mLocalizer.msg("website.keyboardshortcuts",""),mLabel);
      new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
      new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
    }
