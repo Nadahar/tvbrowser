@@ -480,7 +480,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     final Object src = e.getSource();
     final Point loc = e.getLocation();
     final PluginTree tree = this;
-    final DropTargetDropEvent devent = e;
+    e.dropComplete(true);
     mDropThread = new Thread() {
       public void run() {
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -571,7 +571,6 @@ public class PluginTree extends JTree implements DragGestureListener,
 
         mPlugin = null;
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        devent.dropComplete(true);
       }
     };
     mDropThread.setPriority(Thread.MIN_PRIORITY);
