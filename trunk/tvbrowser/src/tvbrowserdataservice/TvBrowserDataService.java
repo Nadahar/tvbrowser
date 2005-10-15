@@ -483,7 +483,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     BufferedReader in;
     ArrayList list = new ArrayList();
     try {
-          in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mDataDir, CHANNEL_GROUPS_FILENAME))));
+          in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mDataDir, CHANNEL_GROUPS_FILENAME)), "utf-8"));
           String line = in.readLine();
           while (line != null) {
             String[] s = line.split(";");
