@@ -442,12 +442,12 @@ public class MIDletCreator implements Progress{
                   used_rating[temp] = true;
                 }
                 
-                if (markedBy(toSave,"favo")){
+                if (markedBy(toSave,"java.favoritesplugin")){
                   info_short = info_short | (0x01 << 3);
                   favorites_flag[part] = true;
                   usedFav = true;
                 }
-                if (markedBy(toSave,"remin")){
+                if (markedBy(toSave,"java.reminderplugin")){
                   info_short = info_short | (0x01 << 4);
                   reminder_flag[part] = true;
                   usedRem = true;
@@ -718,19 +718,20 @@ public class MIDletCreator implements Progress{
     return 6;
   }
   
-  private boolean markedBy(Program p, String name){
-    return (getPlugin(p,name) !=null);
+  private boolean markedBy(Program p, String id){
+    return (getPlugin(p,id) != null);
   }
   
-  private Plugin getPlugin(Program p, String name){
+  private PluginAccess getPlugin(Program p, String id){
     //LOG.append (" starting search for "+name+" in "+p.getTitle()+"\n");
-    Plugin[] Ps = p.getMarkedByPlugins();
+    PluginAccess[] plugin = p.getMarkedByPlugins();
     //LOG.append (" starting search for "+name+"\n");
-    for (int i=0;i<Ps.length;i++){
+    for (int i=0;i<plugin.length;i++){
+      System.out.println(plugin[i].getId());
       //LOG.append (" Got: "+Ps[i].getClass().toString()+"\n");
-      if (Ps[i].getClass().toString().toLowerCase().indexOf(name) != -1){
+      if (plugin[i].getId().equals(id)){
         //LOG.append ("OK \n");
-        return Ps[i];
+        return plugin[i];
       }
     }
     //LOG.append ("NOK \n");
