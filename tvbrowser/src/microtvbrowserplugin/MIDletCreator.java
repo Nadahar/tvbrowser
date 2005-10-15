@@ -19,22 +19,40 @@
  */
 package microtvbrowserplugin;
 
-import java.io.*;
-import java.util.*;
-import java.util.jar.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.Calendar;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.event.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
-import javax.swing.*;
-
-import util.exc.TvBrowserException;
-import util.ui.ImageUtilities;
-import util.ui.progress.*;
 import util.ui.Localizer;
-
-import devplugin.*;
+import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
+import devplugin.Channel;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 public class MIDletCreator implements Progress{
   
@@ -442,12 +460,12 @@ public class MIDletCreator implements Progress{
                   used_rating[temp] = true;
                 }
                 
-                if (markedBy(toSave,"java.favoritesplugin")){
+                if (markedBy(toSave,"java.favoritesplugin.FavoritesPlugin")){
                   info_short = info_short | (0x01 << 3);
                   favorites_flag[part] = true;
                   usedFav = true;
                 }
-                if (markedBy(toSave,"java.reminderplugin")){
+                if (markedBy(toSave,"java.reminderplugin.ReminderPlugin")){
                   info_short = info_short | (0x01 << 4);
                   reminder_flag[part] = true;
                   usedRem = true;
@@ -727,7 +745,6 @@ public class MIDletCreator implements Progress{
     PluginAccess[] plugin = p.getMarkedByPlugins();
     //LOG.append (" starting search for "+name+"\n");
     for (int i=0;i<plugin.length;i++){
-      System.out.println(plugin[i].getId());
       //LOG.append (" Got: "+Ps[i].getClass().toString()+"\n");
       if (plugin[i].getId().equals(id)){
         //LOG.append ("OK \n");
