@@ -20,19 +20,20 @@
 
 package microtvbrowserplugin;
 
-import devplugin.Program;
-import devplugin.Channel;
-import java.util.Vector;
-import java.util.Date;
-import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import javax.swing.JOptionPane;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import javax.swing.JOptionPane;
+
 import util.ui.Localizer;
+import devplugin.Channel;
+import devplugin.Program;
 
 
 
