@@ -119,7 +119,7 @@ public class Settings implements SettingsTab, ActionListener{
   }
   
   public Icon getIcon(){
-    return belongs.getButtonIcon();
+    return belongs.getMarkIcon();
   }
   
   public String getTitle(){
