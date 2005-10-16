@@ -25,8 +25,8 @@ Changelog TVBrowser
 		Konfigurations-Dialog programmiert. Man kann nun die Knöpfe per Drag'n'Drop in die 
 		Werkzeugleiste "schieben"
 	- 1258903 Drag'n'Drop
-		In der Kanal-Auswahl, in der Plugin-Übersicht und in der Program-Tabelle kann man nun 
-		mit Drag'n'Drop arbeiten
+		In der Kanal-Auswahl, dem Kontext-Menü-Setup, in der Plugin-Übersicht und in der 
+		Program-Tabelle kann man nun mit Drag'n'Drop arbeiten
 	- 1281587 Settings-Kanalliste zeigt immer Logo+Text an
 	- 1281406 ListViewPlugin - Dialoggröße usw. speichern
 	- 1303240 ListViewPlugin: Beim start aktivieren
