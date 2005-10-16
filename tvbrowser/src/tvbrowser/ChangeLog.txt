@@ -58,6 +58,9 @@ Changelog TVBrowser
 		Siehe auch im Handbuch http://wiki.tvbrowser.org/index.php/Tastaturbedienung
 	- 1254194 Einzelne Sendungen auf den Favoriten entfernen		
 		Man kann nun einzelne Sendungen, die zwar in den Favoriten ist, aber nicht passt, entfernen
+	- 1317783 Bilder im TV-Browser laden
+		Das Bidler-System für Sendungen wurde aktiviert
+
 - Bugs:      
 	- 1280942 Bewertungen: Aktualisieren Fehler
 		Falls keine Sendungen vorlagen, gab es einen Fehler im Bewertungs-Plugin
@@ -83,8 +86,7 @@ Changelog TVBrowser
 	- 1279580 Zeit-Knöpfe springen nur fast richtig		
 	- 1280392 Favoriten-Plugin/Erinnerer
 		Nach einer veränderung der Favoriten wurden immer alle Favoriten neu berechnet
-	- 1317783 Bilder im TV-Browser laden
-		Das Bidler-System für Sendungen wurde aktiviert
+
 		
 1.1 alpha3
 - features:
