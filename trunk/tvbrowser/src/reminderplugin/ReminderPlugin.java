@@ -62,8 +62,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
 
   }
 
-
-
   public void onActivation() {
     PluginTreeNode root = getRootNode();
     root.addNodeListener(this);
@@ -71,9 +69,9 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     mReminderList.setReminderTimerListener(this);
   }
 
-
-
-
+  public void onDeactivation() {
+    mReminderList.stopTimer();
+  }
 
   public void timeEvent(ReminderListItem item) {
     if (item.getProgramItem().getProgram().isExpired()){

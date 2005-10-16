@@ -137,6 +137,8 @@ public class ReminderList implements ActionListener {
     if (listener != null) {
       mTimer = new javax.swing.Timer(10000, this);
       mTimer.start();
+    } else if (!mTimer.isRunning()) {
+      mTimer.start();
     }
   }
 
@@ -259,6 +261,14 @@ public class ReminderList implements ActionListener {
    */
   public boolean isBlocked(Program prg) {
     return mBlockedPrograms.contains(prg);
+  }
+
+
+  /**
+   * Stop the Timer
+   */
+  public void stopTimer() {
+    mTimer.stop();
   }
   
 }
