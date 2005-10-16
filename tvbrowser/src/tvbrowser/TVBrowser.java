@@ -27,24 +27,34 @@ package tvbrowser;
 
 import java.awt.Frame;
 import java.awt.Image;
-import java.io.*;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.logging.*;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.PluginLoader;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -56,9 +66,10 @@ import util.exc.ErrorHandler;
 import util.exc.MonitoringErrorStream;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
+import util.ui.Localizer;
 import util.ui.NotBoldMetalTheme;
 import util.ui.UiUtilities;
-import util.ui.Localizer;
+import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
@@ -280,6 +291,8 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
 
+    Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue()); 
+    
     // Init the UI
     final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean();
     SwingUtilities.invokeLater(new Runnable() {
