@@ -284,7 +284,7 @@
     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <!-- Creates the platform independent runtime folder -->
-  <target name="runtime" depends="clean-default">
+  <target name="runtime" depends="clean-default, make-default">
     <echo message="Creating the jars ..."/>
 
     <!-- Make the TV-Browser runtime -->
@@ -510,6 +510,8 @@
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${classes.dir}" includes="tvbrowser/core/tvdataservice/**"/>
+      <fileset dir="${classes.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
       <fileset dir="${unpacked.dir}/commons-net.jar" includes="org/**"/>
     </jar>
 
