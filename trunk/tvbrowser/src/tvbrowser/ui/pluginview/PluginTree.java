@@ -69,6 +69,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.OverlayListener;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -83,6 +84,10 @@ import devplugin.ProgramItem;
 public class PluginTree extends JTree implements DragGestureListener,
     DropTargetListener, DragSourceListener {
 
+  /** The localizer for this class. */
+  private static final util.ui.Localizer mLocalizer
+  = util.ui.Localizer.getLocalizerFor(PluginTree.class);
+  
   private Rectangle2D mCueLine = new Rectangle2D.Float();
   private PluginAccess mPlugin = null;
   private Thread mDropThread = null;
@@ -214,10 +219,10 @@ public class PluginTree extends JTree implements DragGestureListener,
           mDragNode = ((ProgramItem) node.getUserObject()).getProgram()
               .getTitle();
         else
-          mDragNode = vec.size() + " Sendungen";
+          mDragNode = vec.size() + " " + mLocalizer.msg("programs","Programs");
 
         JLabel lbl2 = new JLabel(mDragNode);
-        lbl2.setForeground(new Color(255,255,255,255)/*Color.white*/);
+        lbl2.setForeground(Color.white);
         lbl2.setVisible(true);
         lbl2.setFont(this.getFont());
 
@@ -245,9 +250,6 @@ public class PluginTree extends JTree implements DragGestureListener,
 
         // Get a graphics context for this image
         Graphics2D g2 = mGhostImage.createGraphics();
-
-        // Make the image ghostlike
-       // g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, 1.0f));
 
         // Ask the cell renderer to paint itself into the BufferedImage
         lbl2.paint(g2);
