@@ -408,6 +408,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         x = 0;
     
       UiUtilities.moveSelectedItems(target,x,true);
+      e.dropComplete(true);
     }
   }
 
