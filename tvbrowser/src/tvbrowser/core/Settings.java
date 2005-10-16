@@ -149,8 +149,14 @@ public class Settings {
 
     }
 
-
-
+    File settingsDir = new File(newDirectoryName);
+    
+    if (!settingsDir.exists()) {
+      mLog.info("Creating " + newDirectoryName);
+      settingsDir.mkdir();
+    } else {
+      mLog.info("Exists!");
+    }
 
   }
 
