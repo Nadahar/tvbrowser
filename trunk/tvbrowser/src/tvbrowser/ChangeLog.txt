@@ -8,7 +8,9 @@ Changelog TVBrowser
 	   - Plugins-Verzeichnis nach $HOME verschoben
 	   - Plugin-Suchreihenfolge: $HOME/.tvbrowser/plugins, $PROGDIR/plugins, $PROGDIR/tvdataservice
        - neuer Key in .properties: 'pluginsdir'
+	- 1280109 TvDataService-Schnittstelle erweitern       
        - neues TvDataService interface: devplugin.TvDataService
+       - Sendergruppen müssen nicht mehr per Hand eingetippt werden
 	- 1280122 PrintPlugin: Sendungen markieren
 		Nun werden markierte Sendungen (optional) auf dem Papier auch markiert
  	- 1280929 Windows Installer - Internationalisierung
@@ -81,7 +83,8 @@ Changelog TVBrowser
 	- 1279580 Zeit-Knöpfe springen nur fast richtig		
 	- 1280392 Favoriten-Plugin/Erinnerer
 		Nach einer veränderung der Favoriten wurden immer alle Favoriten neu berechnet
-		
+	- 1317783 Bilder im TV-Browser laden
+		Das Bidler-System für Sendungen wurde aktiviert
 		
 1.1 alpha3
 - features:
