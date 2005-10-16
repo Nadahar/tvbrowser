@@ -76,18 +76,22 @@ public class MicroTvBrowserPlugin extends devplugin.Plugin{
   }
   
   public Properties storeSettings() {
-    Properties P = new Properties();
-    P.setProperty(PROP_CHANNEL_NAME_IN_NOW_LIST, Boolean.toString(channelNameInNowList));
-    P.setProperty(PROP_USE_ICONS_IN_PROG_LIST,Boolean.toString(useIconsInProgList));
-    P.setProperty(PROP_EXPORT_LEVEL,Integer.toString(exportLevel));
-    P.setProperty(PROP_USE_NANO,Boolean.toString(useNanoEdition));
-    P.setProperty(PROP_DAYS_TO_EXPORT,Integer.toString(daysToExport));
-    P.setProperty(PROP_CHANNELS_TO_EXPORT,Integer.toString(channelList.length));
+    Properties prop = new Properties();
+    prop.setProperty(PROP_CHANNEL_NAME_IN_NOW_LIST, Boolean.toString(channelNameInNowList));
+    prop.setProperty(PROP_USE_ICONS_IN_PROG_LIST,Boolean.toString(useIconsInProgList));
+    prop.setProperty(PROP_EXPORT_LEVEL,Integer.toString(exportLevel));
+    prop.setProperty(PROP_USE_NANO,Boolean.toString(useNanoEdition));
+    prop.setProperty(PROP_DAYS_TO_EXPORT,Integer.toString(daysToExport));
+    prop.setProperty(PROP_CHANNELS_TO_EXPORT,Integer.toString(channelList.length));
     for (int i=0;i<channelList.length;i++){
-      P.setProperty(PROP_CHANNEL+i,channelList[i]);
+      prop.setProperty(PROP_CHANNEL+i,channelList[i]);
     }
-    P.setProperty(PROP_STANDART_DIR,lastUsedDir);
-    return P;
+    
+    if (lastUsedDir != null)
+      prop.setProperty(PROP_STANDART_DIR,lastUsedDir);
+    else
+      prop.setProperty(PROP_STANDART_DIR,"");
+    return prop;
   }
   
   public String[] getChannelList(){
