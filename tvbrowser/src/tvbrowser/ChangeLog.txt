@@ -52,7 +52,7 @@ Changelog TVBrowser
     - 1032014 Plugin-System überarbeiten
     	Die Anzeige der Plugins ist überarbeitet worden. Zusätzlich kann man nun Plugins, die man 
     	durch das Menü installiert hat, wieder löschen.
-	- 1265323 Keyboard Navigation und Sendung auswXhlen
+	- 1265323 Keyboard Navigation und Sendung auswählen
 		Siehe auch im Handbuch http://wiki.tvbrowser.org/index.php/Tastaturbedienung
 	- 1254194 Einzelne Sendungen auf den Favoriten entfernen		
 		Man kann nun einzelne Sendungen, die zwar in den Favoriten ist, aber nicht passt, entfernen
