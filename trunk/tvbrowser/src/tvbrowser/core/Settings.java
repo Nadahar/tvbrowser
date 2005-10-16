@@ -154,8 +154,6 @@ public class Settings {
     if (!settingsDir.exists()) {
       mLog.info("Creating " + newDirectoryName);
       settingsDir.mkdir();
-    } else {
-      mLog.info("Exists!");
     }
 
   }
