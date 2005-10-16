@@ -62,6 +62,8 @@ public class Favorite {
 
   private Program[] mProgramArr;
   
+  private ArrayList mBlackList = new ArrayList();
+  
   
   
   /**
@@ -194,6 +196,20 @@ public class Favorite {
     } else {
         mUseFilter = false;
     }
+    
+    if (version >= 7) {
+      size = in.readInt();
+      for (int i = 0; i < size; i++) {
+        Date programDate = new Date(in);
+        String programId = (String) in.readObject();
+        Program program = Plugin.getPluginManager().getProgram(programDate,
+            programId);
+
+        // Only add items that were able to load their program
+        if (program != null)
+          mBlackList.add(program);
+      }
+    }
   }
 
   /**
@@ -217,7 +233,7 @@ public class Favorite {
    * Serializes this Object.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(6); // version: 6
+    out.writeInt(7); // version: 7
 
     mSearchFormSettings.writeData(out);
 
@@ -255,6 +271,13 @@ public class Favorite {
     } else {
         out.writeBoolean(false);
         out.writeObject("NULL");
+    }
+    
+    out.writeInt(mBlackList.size());
+    for (int i = 0; i < mBlackList.size(); i++) {
+      Program p = (Program) mBlackList.get(i);
+      p.getDate().writeData(out);
+      out.writeObject(p.getID());
     }
   }
 
@@ -334,7 +357,7 @@ public class Favorite {
   }
   
   public Program[] getPrograms() {
-    return mProgramArr;
+    return getWhiteList();
   }
 
   
@@ -397,7 +420,26 @@ public class Favorite {
     }
     
     // mark these programs
-    FavoritesPlugin.getInstance().mark(mProgramArr);
+    FavoritesPlugin.getInstance().mark(getWhiteList());
+  }
+  
+  public Program[] getWhiteList() {
+    ArrayList tempProgramArr = new ArrayList();
+    ArrayList blackList = mBlackList;
+    
+    for(int i = 0; i < mProgramArr.length; i++) {
+      if(!blackList.contains(mProgramArr[i]))
+        tempProgramArr.add(mProgramArr[i]);
+    }
+    
+    Program[] programs = new Program[tempProgramArr.size()];
+    tempProgramArr.toArray(programs);
+    
+    return programs;
+  }
+  
+  public ArrayList getBlackList() {
+    return mBlackList;
   }
   
   public void setTitle(String title) {
@@ -411,4 +453,10 @@ public class Favorite {
     return mTitle;
   }
   
+  public void handleContainingPrograms(Program[] program) {    
+    for(int i = 0; i < mProgramArr.length; i++)
+      for(int j = 0; j < program.length; j++)
+        if(mProgramArr[i].equals(program[j]) && !mBlackList.contains(program[j]))
+          program[j].mark(FavoritesPlugin.getInstance());
+  }
 }

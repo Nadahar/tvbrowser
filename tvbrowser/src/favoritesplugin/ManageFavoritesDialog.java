@@ -32,6 +32,11 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -53,6 +58,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -90,15 +96,26 @@ public class ManageFavoritesDialog extends JDialog {
   /** The FavoritesPlugin */
   private Plugin mPlugin;
   
+  private static ManageFavoritesDialog mInstance = null;
+  
   /**
    * Creates a new instance of ManageFavoritesDialog.
    */
   public ManageFavoritesDialog(Plugin plugin, Frame parent, Favorite[] favoriteArr, int splitPanePosition) {
     super(parent, true);
+    mInstance = this;
     mPlugin = plugin;
     String msg;
     Icon icon;
 
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        mInstance = null;
+      }
+    });
+    
+    
+    
     setTitle(mLocalizer.msg("title", "Manage favorite programs"));
     
     JPanel main = new JPanel(new BorderLayout(5, 5));
@@ -197,6 +214,7 @@ public class ManageFavoritesDialog extends JDialog {
     for (int i = 0; i < favoriteArr.length; i++) {
       mFavoritesListModel.addElement(favoriteArr[i]);
     }
+    
     mFavoritesList = new JList(mFavoritesListModel);
     mFavoritesList.setCellRenderer(new FavoriteListCellRenderer());
     ListSelectionModel selModel = mFavoritesList.getSelectionModel();
@@ -206,13 +224,20 @@ public class ManageFavoritesDialog extends JDialog {
         favoriteSelectionChanged();
       }
     });
+    mFavoritesList.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
+          editSelectedFavorite();
+      }
+    });
+    
     JScrollPane scrollPane = new JScrollPane(mFavoritesList);
     scrollPane.setBorder(null);
     mSplitPane.setLeftComponent(scrollPane);
 
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel);
-    mProgramList.addMouseListeners(mPlugin);
+    mProgramList.addMouseListeners(null);
     scrollPane = new JScrollPane(mProgramList);
     scrollPane.setBorder(null);
     mSplitPane.setRightComponent(scrollPane);
@@ -224,6 +249,7 @@ public class ManageFavoritesDialog extends JDialog {
     mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mOkWasPressed = true;
+        mInstance = null;
         dispose();
       }
     });
@@ -233,6 +259,9 @@ public class ManageFavoritesDialog extends JDialog {
     favoriteSelectionChanged();
   }
   
+  public static ManageFavoritesDialog getInstance() {
+    return mInstance;
+  }
   
   public int getSplitpanePosition() {
     return mSplitPane.getDividerLocation();
@@ -241,7 +270,7 @@ public class ManageFavoritesDialog extends JDialog {
   public void setSplitpanePosition(int val) {
     mSplitPane.setDividerLocation(val);
   }
-  
+    
   protected void favoriteSelectionChanged() {
     int selection = mFavoritesList.getSelectedIndex();
     int size = mFavoritesListModel.getSize();
@@ -279,7 +308,7 @@ public class ManageFavoritesDialog extends JDialog {
       }
       
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      Program[] programArr = fav.getPrograms();
+      Program[] programArr = fav.getWhiteList();
 
       SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, programArr);
 
@@ -326,16 +355,18 @@ public class ManageFavoritesDialog extends JDialog {
       if (JOptionPane.showConfirmDialog(this, 
       msg, msg = mLocalizer.msg("delete", "Delete selected favorite..."), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
         Favorite fav = (Favorite) mFavoritesListModel.get(selection);
+        Program[] delFavPrograms = fav.getPrograms();
         fav.unmarkPrograms();
+        
         mFavoritesListModel.remove(selection);
         Object[] o = mFavoritesListModel.toArray();
         for (int i=0; i<o.length; i++) {
           Favorite f = (Favorite)o[i];
-          try {
-            f.updatePrograms();
-          } catch (TvBrowserException e) {
+          //try {            
+          f.handleContainingPrograms(delFavPrograms);
+          /*} catch (TvBrowserException e) {
             ErrorHandler.handle(e);
-          }
+          }*/
         }
       }
     }
