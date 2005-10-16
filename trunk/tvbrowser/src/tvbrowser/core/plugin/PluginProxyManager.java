@@ -28,6 +28,7 @@ package tvbrowser.core.plugin;
 import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +44,9 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
@@ -506,6 +509,41 @@ public class PluginProxyManager {
     // Clear the activated plugins cache
     mActivatedPluginCache = null;
 
+    final PluginProxy plugin = item.getPlugin();
+    
+    // Run through all Programs and umark this Plugin
+    new Thread(){
+      public void run() {
+        setPriority(Thread.MIN_PRIORITY);
+
+        Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
+
+        Date date = new Date();
+        
+        int daysWithoutData = 0;
+        
+        while (daysWithoutData < 10) {
+            for (int i = 0; i < channels.length; i++) {
+                Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
+                
+                if ((it == null) || (!it.hasNext())) {
+                  daysWithoutData++;
+                } else {
+                  daysWithoutData = 0;
+                  while ((it != null) && (it.hasNext())) {
+                    Program program = (Program) it.next();
+                    program.unmark(plugin);
+                  }
+                }
+                
+            }
+
+            date = date.addDays(1);
+        }
+      };
+    }.start();
+    
+    
     // Inform the listeners
     firePluginDeactivated(item.getPlugin(), log);
   }
