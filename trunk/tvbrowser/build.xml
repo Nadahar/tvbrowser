@@ -605,11 +605,9 @@
   <target name="public-linux" depends="runtime-linux">
     <mkdir dir="${public.dir}"/>
 
-    <tar tarfile="tvbrowser-temp~.tar" basedir="${tvbrowser-linux.runtime.dir}"/>
-
-    <gzip src="tvbrowser-temp~.tar" zipfile="${public.dir}/tvbrowser-${tvbrowser.version}.tar.gz"/>
-
-    <delete file="tvbrowser-temp~.tar"/>
+    <tar tarfile="${public.dir}/tvbrowser-${tvbrowser.version}.tar.gz" compression="gzip">
+       <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="tvbrowser-${tvbrowser.version}" />
+    </tar>
 
   </target>
 
