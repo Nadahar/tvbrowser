@@ -552,7 +552,7 @@
 									<key>IFPkgDescriptionTitle</key>
 									<string>Core</string>
 									<key>IFPkgDescriptionVersion</key>
-									<string>2.0</string>
+									<string>2.1</string>
 								</dict>
 							</dict>
 							<key>Display Information</key>
@@ -568,7 +568,7 @@
 								<key>CFBundleName</key>
 								<string>Core</string>
 								<key>CFBundleShortVersionString</key>
-								<string>2.0</string>
+								<string>2.1</string>
 							</dict>
 							<key>Options</key>
 							<dict>
@@ -1025,7 +1025,7 @@
 									<key>IFPkgDescriptionTitle</key>
 									<string>Application</string>
 									<key>IFPkgDescriptionVersion</key>
-									<string>2.0</string>
+									<string>2.1</string>
 								</dict>
 							</dict>
 							<key>Display Information</key>
