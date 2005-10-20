@@ -193,7 +193,7 @@ public class TVBrowser {
     }
 
     // Capture unhandled exceptions
-    System.setErr(new PrintStream(new MonitoringErrorStream()));
+    //System.setErr(new PrintStream(new MonitoringErrorStream()));
 
     Locale.setDefault(new Locale(Settings.propLanguage.getString()));
 

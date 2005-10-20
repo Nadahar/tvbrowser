@@ -132,21 +132,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
 
-
-
-//  public devplugin.ChannelGroup[] getChannelGroups() {
-//    ChannelGroup[] result=new ChannelGroup[mAvailableChannelGroupsSet.size()];
-//    mAvailableChannelGroupsSet.toArray(result);
-//    return result;
-//  }
-
-//  public void setChannelGroups(ChannelGroup[] groups) {
-//    mAvailableChannelGroupsSet =new HashSet();
-//    for (int i=0;i<groups.length;i++) {
-//      mAvailableChannelGroupsSet.add(groups[i]);
-//    }
-//  }
-
   private ChannelGroup getChannelGroupById(String id) {
     Iterator it=mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
@@ -169,8 +154,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     mTvDataBase=dataBase;
     mProgressMonitor = monitor;
-
-    this.downloadChannelGroupFile();
 
     HashSet groups=new HashSet();
     for (int i=0;i<channelArr.length;i++) {
@@ -529,8 +512,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public devplugin.ChannelGroup[] getAvailableGroups() {
 
     Collection serverDefinedGroups = getServerDefinedChannelGroupsCollection();
-
-
+   
     mAvailableChannelGroupsSet.clear();
     mAvailableChannelGroupsSet.addAll(serverDefinedGroups);
     mAvailableChannelGroupsSet.addAll(getUserDefinedChannelGroupsCollection());
