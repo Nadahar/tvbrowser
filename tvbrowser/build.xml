@@ -372,10 +372,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
+ <!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
-    </jar>
+    </jar>  -->
 
 
     <!-- Pack the TV data service jars -->
@@ -466,6 +466,7 @@
                 liveresize="true"
                 growboxintrudes="false"
                 screenmenu="true"
+                developmentregion="Global"
                 workingdirectory="/Library/Application Support/TV-Browser"
                 jars="${tvbrowser-mac.runtime.dir}/tvbrowser.jar">
     </jarbundler>
@@ -666,6 +667,8 @@
       <arg value="${deployment.dir}/macosx/build"/>
       <arg value="-ov"/>
       <arg value="${public.dir}/tvbrowser-${tvbrowser.version}.dmg"/>
+      <arg value="-volname" />
+      <arg value="tvbrowser-${tvbrowser.version}" />
     </exec>
 
     <delete dir="${deployment.dir}/macosx/build" /> 
