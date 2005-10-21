@@ -511,6 +511,9 @@ public class UiUtilities {
    */
   public static ImageIcon createChannelIcon(Icon ic) {
     BufferedImage img = new BufferedImage(42, 22, BufferedImage.TYPE_INT_RGB);
+    
+    if(ic == null)
+      ic = new ImageIcon("./imgs/tvbrowser16.png");
 
     if ((ic.getIconHeight() > 40) || (ic.getIconHeight() > 20)) {
       ic = scaleIcon(ic, 40, 20);
