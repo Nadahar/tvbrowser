@@ -397,6 +397,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void setProgramFilter(ProgramFilter filter) {
+    mProgramTableScrollPane.deSelectItem();
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
     mToolBarModel.setFilterButtonSelected(!isShowAllFilterActivated());
