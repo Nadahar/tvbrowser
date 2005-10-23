@@ -406,6 +406,7 @@ public class MainFrame extends JFrame implements DateListener {
     mFilterPanel.setVisible(!isShowAllFilterActivated());
     
     mToolBar.update();
+    addKeyboardAction();
   }
 
   public ProgramFilter getProgramFilter() {
