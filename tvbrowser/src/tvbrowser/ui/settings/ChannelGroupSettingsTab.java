@@ -43,6 +43,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
+import util.ui.LinkButton;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.Borders;
@@ -64,7 +65,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     mSettingsDialog = settingsDialog;
 
-    mContent = new JPanel(new FormLayout("default:grow, default", "default, 3dlu, fill:default:grow, 3dlu, default"));
+    mContent = new JPanel(new FormLayout("default:grow, default", "default, 3dlu, fill:default:grow, 3dlu, default,3dlu,default"));
     mContent.setBorder(Borders.DLU4_BORDER);
 
     mListModel = new DefaultListModel();
@@ -94,6 +95,12 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
 
     mContent.add(builder.getPanel(), cc.xyw(1,5,2));
+
+    LinkButton urlLabel = new LinkButton(
+           mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier fï¿½r eine Liste weiterer Sender."),
+           mLocalizer.msg("addMoreChannelsUrl", "http://wiki.tvbrowser.org/index.php/Senderliste"));
+
+    mContent.add(urlLabel, cc.xyw(1,7,2));
 
     fillListBox();
 
