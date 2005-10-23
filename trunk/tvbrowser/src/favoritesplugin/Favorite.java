@@ -425,10 +425,9 @@ public class Favorite {
   
   public Program[] getWhiteList() {
     ArrayList tempProgramArr = new ArrayList();
-    ArrayList blackList = mBlackList;
     
     for(int i = 0; i < mProgramArr.length; i++) {
-      if(!blackList.contains(mProgramArr[i]))
+      if(!mBlackList.contains(mProgramArr[i]))
         tempProgramArr.add(mProgramArr[i]);
     }
     
@@ -436,6 +435,17 @@ public class Favorite {
     tempProgramArr.toArray(programs);
     
     return programs;
+  }
+  
+  public boolean contains(Program program) {
+    if(mBlackList.contains(program))
+      return false;
+    
+    for(int i = 0; i < mProgramArr.length; i++)
+      if(mProgramArr[i].equals(program))
+        return true;
+    
+    return false;
   }
   
   public ArrayList getBlackList() {
