@@ -30,6 +30,10 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceDragEvent;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DragSourceEvent;
+import java.awt.dnd.DragSourceListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -38,6 +42,8 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -58,7 +64,7 @@ import devplugin.Program;
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramTable extends JPanel
-implements ProgramTableModelListener, DragGestureListener {
+implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   private int mColumnWidth;
   private int mHeight;
@@ -421,8 +427,7 @@ implements ProgramTableModelListener, DragGestureListener {
 
     Program program = getProgramAt(evt.getX(), evt.getY());
     if (program != null) {
-      if(!isSelectedItemAt(evt.getX(),evt.getY()))
-        selectItemAt(evt.getX(),evt.getY());
+      deSelectItem();
       mPopupMenu = createPluginContextMenu(program);
       mPopupMenu.show(this, evt.getX() - 15, evt.getY() - 15);
     }
@@ -443,11 +448,10 @@ implements ProgramTableModelListener, DragGestureListener {
     
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
       if (program != null) {
+        deSelectItem();
+        
         // This is a left double click
         // -> Execute the program using the user defined default plugin
-        if(!isSelectedItemAt(evt.getX(),evt.getY()))
-          selectItemAt(evt.getX(),evt.getY());
-
         Plugin.getPluginManager().handleProgramDoubleClick(program);
       }
     }
@@ -464,9 +468,8 @@ implements ProgramTableModelListener, DragGestureListener {
     }
     else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
       if (program != null) {
-        if(!isSelectedItemAt(evt.getX(),evt.getY()))
-          selectItemAt(evt.getX(),evt.getY());
-
+        deSelectItem();
+        
         // This is a middle click
         // -> Execute the program using the user defined middle click plugin
         Plugin.getPluginManager().handleProgramMiddleClick(program);
@@ -724,9 +727,6 @@ implements ProgramTableModelListener, DragGestureListener {
     
     this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
     updateUI();
-    
-  /*  ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
-    Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
   }
   
   /**
@@ -750,9 +750,6 @@ implements ProgramTableModelListener, DragGestureListener {
       
       this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
       updateUI();
-      
-  /*    panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
-      Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
     }    
   }
   
@@ -779,9 +776,6 @@ implements ProgramTableModelListener, DragGestureListener {
       
       this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
       updateUI();
-      
-  /*    ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
-      Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
     }
   }
   
@@ -834,9 +828,6 @@ implements ProgramTableModelListener, DragGestureListener {
       
       this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
       updateUI();
-      
-   /*   ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
-      Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
     }
   }
   
@@ -848,7 +839,6 @@ implements ProgramTableModelListener, DragGestureListener {
     mCurrentRow = -1;
     mCurrentCol = -1;
     updateUI();
-  //  Plugin.getPluginManager().handleProgramDeSelected();
   }
   
   /**
@@ -898,8 +888,6 @@ implements ProgramTableModelListener, DragGestureListener {
     mCurrentRow = matrix[0];
     mCurrentCol = matrix[1];
     updateUI();
- /*   ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);      
-    Plugin.getPluginManager().handleProgramSelected(panel.getProgram());*/
   }
   
   /**
@@ -922,7 +910,16 @@ implements ProgramTableModelListener, DragGestureListener {
     if (program != null) {
       if(!isSelectedItemAt(mMouse.x,mMouse.y))
         selectItemAt(mMouse.x,mMouse.y);
-      evt.startDrag(null,new TransferProgram(program));
+      evt.startDrag(null,new TransferProgram(program), this);
     }
+  }
+
+  public void dragEnter(DragSourceDragEvent dsde) {}
+  public void dragOver(DragSourceDragEvent dsde) {}
+  public void dropActionChanged(DragSourceDragEvent dsde) {}
+  public void dragExit(DragSourceEvent dse) {}
+
+  public void dragDropEnd(DragSourceDropEvent dsde) {
+    deSelectItem();
   }
 }
