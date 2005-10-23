@@ -46,6 +46,7 @@ import util.ui.UiUtilities;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 
 public class ChannelGroupSettingsTab implements SettingsTab {
 
@@ -54,10 +55,14 @@ public class ChannelGroupSettingsTab implements SettingsTab {
   private JList mGroupList;
   private JButton mEnableBtn;
 
+  private SettingsDialog mSettingsDialog;
+
   private static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(ChannelGroupSettingsTab.class);
 
-  public ChannelGroupSettingsTab() {
+  public ChannelGroupSettingsTab(SettingsDialog settingsDialog) {
+
+    mSettingsDialog = settingsDialog;
 
     mContent = new JPanel(new FormLayout("default:grow, default", "default, 3dlu, fill:default:grow, 3dlu, default"));
     mContent.setBorder(Borders.DLU4_BORDER);
@@ -67,31 +72,48 @@ public class ChannelGroupSettingsTab implements SettingsTab {
     mGroupList.setCellRenderer(new ChannelGroupListCellRenderer());
     mGroupList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    JButton mRefreshBtn = new JButton(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Refresh16.gif"));
+    JButton refreshBtn = new JButton(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Refresh16.gif"));
+
+    JButton infoBtn = new JButton(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
 
     mEnableBtn = new JButton(mLocalizer.msg("disable","Disable"));
 
-
     CellConstraints cc = new CellConstraints();
 
-    mContent.add(mRefreshBtn, cc.xy(2,1));
+    mContent.add(refreshBtn, cc.xy(2,1));
     mContent.add(new JLabel(mLocalizer.msg("availableGroups","Available channel groups:")), cc.xy(1,1));
     mContent.add(new JScrollPane(mGroupList), cc.xyw(1,3,2));
 
 
 
-    mContent.add(mEnableBtn, cc.xy(2,5));
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.addGridded(infoBtn);
+    builder.addRelatedGap();
+    builder.addGlue();
+    builder.addFixed(mEnableBtn);
+
+
+    mContent.add(builder.getPanel(), cc.xyw(1,5,2));
 
     fillListBox();
 
     updateEnableButton();
     updateGroupStatus();
 
-    mRefreshBtn.addActionListener(new ActionListener(){
+    refreshBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         ChannelGroupManager.getInstance().checkForAvailableGroups();
         fillListBox();
         updateGroupStatus();
+      }
+    });
+
+    infoBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        Object value = mGroupList.getSelectedValue();
+        ChannelGroupWrapper w = (ChannelGroupWrapper)value;
+        ChannelGroupInfoDialog dlg = new ChannelGroupInfoDialog(mSettingsDialog.getDialog(), w.getGroup());
+        UiUtilities.centerAndShow(dlg);
       }
     });
 
@@ -118,7 +140,8 @@ public class ChannelGroupSettingsTab implements SettingsTab {
           int index = mGroupList.locationToIndex(e.getPoint());
           Object value = mGroupList.getModel().getElementAt(index);
           ChannelGroupWrapper w = (ChannelGroupWrapper)value;
-          subscribeGroup(w, !w.isEnabled());
+          ChannelGroupInfoDialog dlg = new ChannelGroupInfoDialog(mSettingsDialog.getDialog(), w.getGroup());
+          UiUtilities.centerAndShow(dlg);
         }
       }
     });

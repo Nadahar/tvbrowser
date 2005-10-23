@@ -105,6 +105,8 @@ public interface TvDataServiceProxy {
 
   public ChannelGroup[] checkForAvailableGroups(ProgressMonitor monitor) throws TvBrowserException;
 
+  public Channel[] getAvailableChannels(ChannelGroup group);
+
   /**
    *
    * @return true, if this TvDataService can dynamically load other channels

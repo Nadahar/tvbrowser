@@ -266,7 +266,7 @@ public class SettingsDialog {
     node = new SettingNode(new ChannelsSettingsTab());
     root.add(node);
 
-    node = new SettingNode(new ChannelGroupSettingsTab());
+    node = new SettingNode(new ChannelGroupSettingsTab(this));
     root.add(node);
 
     

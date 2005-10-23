@@ -27,6 +27,7 @@
 package tvbrowser.core.tvdataservice;
 
 import devplugin.ChannelGroup;
+import devplugin.Channel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,10 @@ public class ChannelGroupManager {
           "tvbrowserdataservice.TvBrowserDataService.digital",
           "tvbrowserdataservice.TvBrowserDataService.radio",
   };
+
+  private static java.util.logging.Logger mLog
+           = java.util.logging.Logger.getLogger(ChannelGroupManager.class.getName());
+
 
   private static ChannelGroupManager mInstance;
 
@@ -190,6 +195,17 @@ public class ChannelGroupManager {
       if (groupArr != null) {
         for (int j=0; j<groupArr.length; j++) {
           addGroup(services[i], groupArr[j]);
+        }
+      }
+    }
+
+    TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
+    for (int i=0; i<proxies.length; i++) {
+      if (proxies[i].supportsDynamicChannelList()) {
+        try {
+          proxies[i].checkForAvailableChannels(null);
+        } catch (TvBrowserException e) {
+          ErrorHandler.handle(e);
         }
       }
     }
