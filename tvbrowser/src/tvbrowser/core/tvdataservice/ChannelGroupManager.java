@@ -31,8 +31,11 @@ import devplugin.ChannelGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
+import java.util.Collection;
 
 import tvbrowser.core.Settings;
+import util.exc.TvBrowserException;
+import util.exc.ErrorHandler;
 
 
 public class ChannelGroupManager {
@@ -66,15 +69,31 @@ public class ChannelGroupManager {
     mServiceToGroupsMap = new HashMap();
     mGroupToService = new HashMap();
     TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
+
     for (int i=0; i<proxies.length; i++) {
       ChannelGroup[] groups = proxies[i].getAvailableGroups();
-      mServiceToGroupsMap.put(proxies[i], groups);
       for (int j=0; j<groups.length; j++) {
-        mGroups.put(createId(proxies[i], groups[j]), groups[j]);
-        mGroupToService.put(groups[j], proxies[i]);
+        addGroup(proxies[i], groups[j]);
       }
     }
+  }
 
+
+  private void removeAllGroups() {
+    mGroups.clear();
+    mGroupToService.clear();
+    mServiceToGroupsMap.clear();
+  }
+
+  private void addGroup(TvDataServiceProxy service, ChannelGroup group) {
+    mGroups.put(createId(service, group), group);
+    mGroupToService.put(group, service);
+    ArrayList groups = (ArrayList)mServiceToGroupsMap.get(service);
+    if (groups == null) {
+      groups = new ArrayList();
+      mServiceToGroupsMap.put(service, groups);
+    }
+    groups.add(group);
   }
 
   public static ChannelGroupManager getInstance() {
@@ -86,7 +105,7 @@ public class ChannelGroupManager {
 
 
 
-  private TvDataServiceProxy getTvDataService(ChannelGroup group) {
+  public TvDataServiceProxy getTvDataService(ChannelGroup group) {
     return (TvDataServiceProxy)mGroupToService.get(group);
   }
 
@@ -150,6 +169,37 @@ public class ChannelGroupManager {
     }
 
     return (ChannelGroup[])list.toArray(new ChannelGroup[list.size()]);
+  }
+
+
+  public void checkForAvailableGroups() {
+    removeAllGroups();
+    TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
+    for (int i=0; i<services.length; i++) {
+      ChannelGroup[] groupArr = null;
+      if (services[i].supportsDynamicChannelGroups()) {
+        try {
+          groupArr = services[i].checkForAvailableGroups(null);
+        } catch (TvBrowserException e) {
+          ErrorHandler.handle(e);
+       }
+      }
+      else {
+        groupArr = services[i].getAvailableGroups();
+      }
+      if (groupArr != null) {
+        for (int j=0; j<groupArr.length; j++) {
+          addGroup(services[i], groupArr[j]);
+        }
+      }
+    }
+  }
+
+  public ChannelGroup[] getAvailableGroups() {
+    Collection col = mGroups.values();
+
+    return (ChannelGroup[])col.toArray(new ChannelGroup[col.size()]);
+
   }
 
   private String createId(TvDataServiceProxy service, ChannelGroup group) {
