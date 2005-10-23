@@ -39,10 +39,9 @@ import util.exc.*;
 import devplugin.*;
 import javax.swing.*;
 
-
 /**
  * Plugin for managing the favorite programs.
- *
+ * 
  * @author Til Schneider, www.murfman.de
  */
 public class FavoritesPlugin extends Plugin {
@@ -59,7 +58,7 @@ public class FavoritesPlugin extends Plugin {
 
   private Properties mSettings;
 
-  //private ArrayList mBlackList = new ArrayList();
+  // private ArrayList mBlackList = new ArrayList();
 
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -126,7 +125,7 @@ public class FavoritesPlugin extends Plugin {
         list.add(mFavoriteArr[i]);
         try {
           mFavoriteArr[i].updatePrograms(); // due to overlapping favorites we
-                                            // refresh all of our favorites
+          // refresh all of our favorites
         } catch (TvBrowserException e) {
           ErrorHandler.handle(e);
         }
@@ -142,14 +141,15 @@ public class FavoritesPlugin extends Plugin {
     node.removeAllActions();
     node.addAction(new CreateFavoriteAction());
     node.removeAllChildren();
-    ArrayList programs = new ArrayList();
-    
+    // ArrayList programs = new ArrayList();
+
     for (int i = 0; i < mFavoriteArr.length; i++) {
-      ArrayList blackList = mFavoriteArr[i].getBlackList();
-      if(!blackList.isEmpty())
-        for (int j = 0; j < blackList.size(); j++)
-          if(!programs.contains(blackList.get(j)))
-            programs.add(blackList.get(j));
+      /*
+       * ArrayList blackList = mFavoriteArr[i].getBlackList();
+       * if(!blackList.isEmpty()) for (int j = 0; j < blackList.size(); j++)
+       * if(!programs.contains(blackList.get(j)))
+       * programs.add(blackList.get(j));
+       */
       PluginTreeNode curNode = node.addNode(mFavoriteArr[i].getTitle());
       curNode.addAction(new EditFavoriteAction(mFavoriteArr[i]));
       curNode.addAction(new DeleteFavoriteAction(mFavoriteArr[i]));
@@ -164,20 +164,17 @@ public class FavoritesPlugin extends Plugin {
           progs[j].unmark(this);
       }
     }
-    
-    if(!programs.isEmpty()) {
-      PluginTreeNode curNode = node.addNode("Blacklist");
-      for(int i = 0; i < programs.size(); i++) {
-        if(!((Program)programs.get(i)).isExpired()) {
-        curNode.addProgram((Program)programs.get(i));
-        Program[] p = {((Program)programs.get(i))};
-        ((Program)programs.get(i)).unmark(this);
-        for(int j = 0; j < mFavoriteArr.length; j++)
-          mFavoriteArr[j].handleContainingPrograms(p);
-        }
-      }
-    }   
-    
+
+    /*
+     * if(!programs.isEmpty()) { PluginTreeNode curNode =
+     * node.addNode("Blacklist"); for(int i = 0; i < programs.size(); i++) {
+     * if(!((Program)programs.get(i)).isExpired()) {
+     * curNode.addProgram((Program)programs.get(i)); Program[] p =
+     * {((Program)programs.get(i))}; ((Program)programs.get(i)).unmark(this);
+     * for(int j = 0; j < mFavoriteArr.length; j++)
+     * mFavoriteArr[j].handleContainingPrograms(p); } } }
+     */
+
     node.update();
   }
 
@@ -242,150 +239,139 @@ public class FavoritesPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-
     ContextMenuAction menu = new ContextMenuAction();
-
-    PluginAccess[] plugin = program.getMarkedByPlugins();
-
-    boolean marked = false;
 
     ArrayList favorites = new ArrayList();
     ArrayList blackFavorites = new ArrayList();
-    
-    for(int i = 0; i < mFavoriteArr.length; i++) {
+
+    for (int i = 0; i < mFavoriteArr.length; i++) {
       Program[] programs = mFavoriteArr[i].getPrograms();
-      for(int j = 0; j < programs.length; j++)
-        if(programs[j].equals(program) && !mFavoriteArr[i].getBlackList().contains(program)) {
-          favorites.add(mFavoriteArr[i]);          
+      for (int j = 0; j < programs.length; j++)
+        if (programs[j].equals(program)
+            && !mFavoriteArr[i].getBlackList().contains(program)) {
+          favorites.add(mFavoriteArr[i]);
           break;
         }
-      if(mFavoriteArr[i].getBlackList().contains(program))
+      if (mFavoriteArr[i].getBlackList().contains(program))
         blackFavorites.add(mFavoriteArr[i]);
     }
 
-
     if (favorites.isEmpty() && blackFavorites.isEmpty()) {
-      menu.setText(mLocalizer.msg("contextMenuText",
-          "Add to favorite programs"));
+      menu.setText(mLocalizer
+          .msg("contextMenuText", "Add to favorite programs"));
       menu.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
           showEditFavoriteDialog(program);
         }
       });
-    }
-    else {
-      
-      
-      
-      menu.setText(mLocalizer.msg("manageFavorites","Favorites"));
-      
+    } else {
+      menu.setText(mLocalizer.msg("manageFavorites", "Favorites"));
+
       ActionMenu[] submenu = new ActionMenu[2];
-      
+
       ContextMenuAction add = new ContextMenuAction();
       add.setText(mLocalizer.msg("contextMenuRemove",
           "Remove program from favorite programs"));
-      
-      ContextMenuAction del = new ContextMenuAction();
-      del.setText(mLocalizer.msg("contextMenuAdd",
-            "Reactivate as favorite"));
-      Action[] addAction = new AbstractAction[favorites.size() + ((favorites.size() > 1) ? 1 : 0)];
-      Action[] delAction = new AbstractAction[blackFavorites.size() + ((blackFavorites.size() > 1) ? 1 : 0)];
-      
-      for (int i = 0; i < favorites.size(); i++) {
-        final Favorite fav = (Favorite)favorites.get(i);
-        addAction[i] = new AbstractAction() {
-          public void actionPerformed(ActionEvent e) {
-            fav.getBlackList().add(program);
-            Program[] p = {program};
-            program.unmark(FavoritesPlugin.getInstance());
-            
-            for (int i = 0; i < mFavoriteArr.length; i++)
-              mFavoriteArr[i].handleContainingPrograms(p);
-            
-            if(ManageFavoritesDialog.getInstance() != null)
-              ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
-            
-            updateTree();
-          }
-        };
-        addAction[i].putValue(Action.NAME,fav.getTitle());
-      }
-      
-      if(favorites.size() > 1) {
-        addAction[favorites.size()] = new AbstractAction() {
-          public void actionPerformed(ActionEvent e) {
-            for (int i = 0; i < mFavoriteArr.length; i++)
-              mFavoriteArr[i].getBlackList().add(program);
-            program.unmark(FavoritesPlugin.getInstance());
-            
-            if(ManageFavoritesDialog.getInstance() != null)
-              ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
-            
-            updateTree();
-          }
-        };
-        addAction[favorites.size()].putValue(Action.NAME,mLocalizer.msg("ActionFromAll","From All"));
-      }
-      
-      for (int i = 0; i < blackFavorites.size(); i++) {
-        final Favorite fav = (Favorite)blackFavorites.get(i);
-        delAction[i] = new AbstractAction() {
-          public void actionPerformed(ActionEvent e) {
-            fav.getBlackList().remove(program);
-            
-            program.mark(FavoritesPlugin.getInstance());
-            
-            if(ManageFavoritesDialog.getInstance() != null)
-              ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
 
-            updateTree();
-          }
-        };
-        delAction[i].putValue(Action.NAME,fav.getTitle());
+      ContextMenuAction del = new ContextMenuAction();
+      del.setText(mLocalizer.msg("contextMenuAdd", "Reactivate as favorite"));
+      Action[] addAction = new AbstractAction[favorites.size()
+          + ((favorites.size() > 1) ? 1 : 0)];
+      Action[] delAction = new AbstractAction[blackFavorites.size()
+          + ((blackFavorites.size() > 1) ? 1 : 0)];
+
+      for (int i = 0; i < favorites.size(); i++) {
+        Favorite fav = (Favorite) favorites.get(i);
+        addAction[i] = new ContextMenuActionHandler(program, "add", fav, fav
+            .getTitle());
       }
-      
-      if(blackFavorites.size() > 1) {
-        delAction[blackFavorites.size()] = new AbstractAction() {
-          public void actionPerformed(ActionEvent e) {
-            for (int i = 0; i < mFavoriteArr.length; i++) {
-              if(mFavoriteArr[i].getBlackList().contains(program))
-                mFavoriteArr[i].getBlackList().remove(program);
-            }
-            
-            program.mark(FavoritesPlugin.getInstance());
-            
-            if(ManageFavoritesDialog.getInstance() != null)
-              ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
-            
-            updateTree();
-          }
-        };
-        delAction[blackFavorites.size()].putValue(Action.NAME,mLocalizer.msg("ActionInAll","For all"));
+
+      if (favorites.size() > 1)
+        addAction[favorites.size()] = new ContextMenuActionHandler(program,
+            "addtoall", null, mLocalizer.msg("ActionFromAll", "From All"));
+
+      for (int i = 0; i < blackFavorites.size(); i++) {
+        Favorite fav = (Favorite) blackFavorites.get(i);
+        delAction[i] = new ContextMenuActionHandler(program, "remove", fav, fav
+            .getTitle());
       }
-      
-      if(!favorites.isEmpty() && !blackFavorites.isEmpty()) {
+
+      if (blackFavorites.size() > 1)
+        delAction[blackFavorites.size()] = new ContextMenuActionHandler(
+            program, "removefromall", null, mLocalizer.msg("ActionInAll",
+                "For all"));
+
+      if (!favorites.isEmpty() && !blackFavorites.isEmpty()) {
         menu.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
-        
-        submenu[0] = new ActionMenu(add,addAction);
-        submenu[1] = new ActionMenu(del,delAction);
-        
-        return new ActionMenu(menu,submenu);
-      }
-      else if (!favorites.isEmpty() && blackFavorites.isEmpty()) {
+
+        submenu[0] = new ActionMenu(add, addAction);
+        submenu[1] = new ActionMenu(del, delAction);
+
+        return new ActionMenu(menu, submenu);
+      } else if (!favorites.isEmpty() && blackFavorites.isEmpty()) {
         add.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
-        
-        return new ActionMenu(add,addAction);
-      }
-      else if (favorites.isEmpty() && !blackFavorites.isEmpty()){
+
+        return new ActionMenu(add, addAction);
+      } else if (favorites.isEmpty() && !blackFavorites.isEmpty()) {
         del.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
-        
-        return new ActionMenu(del,delAction);
+
+        return new ActionMenu(del, delAction);
       }
-    }      
-    
+    }
+
     menu.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
     return new ActionMenu(menu);
+  }
 
+  protected void addToBlackList(Program program, Favorite fav) {
+    fav.getBlackList().add(program);
+    Program[] p = { program };
+    program.unmark(FavoritesPlugin.getInstance());
+
+    for (int i = 0; i < mFavoriteArr.length; i++)
+      mFavoriteArr[i].handleContainingPrograms(p);
+
+    if (ManageFavoritesDialog.getInstance() != null)
+      ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+
+    updateTree();
+  }
+
+  protected void addToAllBlackLists(Program program) {
+    for (int i = 0; i < mFavoriteArr.length; i++)
+      if (mFavoriteArr[i].contains(program))
+        mFavoriteArr[i].getBlackList().add(program);
+    program.unmark(FavoritesPlugin.getInstance());
+
+    if (ManageFavoritesDialog.getInstance() != null)
+      ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+
+    updateTree();
+  }
+
+  protected void removeFromBlackList(Program program, Favorite fav) {
+    fav.getBlackList().remove(program);
+
+    program.mark(FavoritesPlugin.getInstance());
+
+    if (ManageFavoritesDialog.getInstance() != null)
+      ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+
+    updateTree();
+  }
+
+  protected void removeFromAllBlackLists(Program program) {
+    for (int i = 0; i < mFavoriteArr.length; i++) {
+      if (mFavoriteArr[i].getBlackList().contains(program))
+        mFavoriteArr[i].getBlackList().remove(program);
+    }
+
+    program.mark(FavoritesPlugin.getInstance());
+
+    if (ManageFavoritesDialog.getInstance() != null)
+      ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+
+    updateTree();
   }
 
   private void showManageFavoritesDialog() {
@@ -483,9 +469,9 @@ public class FavoritesPlugin extends Plugin {
     updateTree();
   }
 
-  /*public ArrayList getBlackList() {
-    return mBlackList;
-  }*/
+  /*
+   * public ArrayList getBlackList() { return mBlackList; }
+   */
 
   public String[] getClientPluginIds() {
     return mClientPluginIdArr;
