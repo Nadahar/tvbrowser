@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +63,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   private TvBrowserDataService mDataService;
 
-  private String mDescription, mProvider;
+  private String mDescription, mProviderName;
 
   private HashSet mChannels;
 
@@ -91,7 +91,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     mID = id;
     mName = name;
     mDescription = description;
-    mProvider = provider;
+    mProviderName = provider;
     mDataService = dataservice;
     mMirrorUrlArr = mirrorUrls;
     mChannels = new HashSet();
@@ -177,8 +177,12 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
 
   public String getProviderName() {
+    if (mProviderName != null) {
+      return mProviderName;
+    }
     String providerName = mSettings.getProperty(mID + "_provider");
     if (providerName != null) {
+      mProviderName = providerName;
       return providerName;
     }
     File file = new File(mDataDir, mID + "_info");
@@ -186,13 +190,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     Properties prop = new Properties();
     try {
       prop.load(new FileInputStream(file));
-      providerName = (String)prop.get("provider");
-      if (providerName != null) {
-        mSettings.setProperty(mID + "_provider", providerName);
-      }
+      providerName = prop.getProperty("provider",mLocalizer.msg("unknownProvider","unknown"));
+      mSettings.setProperty(mID + "_provider", providerName);
+      mProviderName = providerName;
       return providerName;
     } catch (IOException e) {
-      return "";
+      mLog.log(Level.SEVERE, "Could not read provider name",e);
+      return mLocalizer.msg("unknownProvider","unknown");
     }
   }
 

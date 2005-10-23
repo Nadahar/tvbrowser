@@ -61,9 +61,6 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
   }
 
 
-  protected abstract Channel[] getAvailableChannels(ChannelGroup group);
-
-
   public Channel[] getAvailableChannels() {
     ChannelGroup[] groups = ChannelGroupManager.getInstance().getSubscribedGroups();
     ArrayList list = new ArrayList();

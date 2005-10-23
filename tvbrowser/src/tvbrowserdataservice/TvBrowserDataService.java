@@ -28,6 +28,7 @@ package tvbrowserdataservice;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -466,25 +467,25 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     BufferedReader in;
     ArrayList list = new ArrayList();
     try {
-          in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mDataDir, CHANNEL_GROUPS_FILENAME)), "utf-8"));
-          String line = in.readLine();
-          while (line != null) {
-            String[] s = line.split(";");
-            if (s.length>=4) {
-              String id = s[0];
-              String name = s[1];
-              String providername = s[2];
-              String description = s[3];
-              String url = s[4];
-              ChannelGroup group = new ChannelGroup(this, id, name, description, providername, new String[]{url}, mSettings);
-              group.setWorkingDirectory(mDataDir);
-              list.add(group);
-            }
-            line = in.readLine();
+        in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mDataDir, CHANNEL_GROUPS_FILENAME)), "utf-8"));
+        String line = in.readLine();
+        while (line != null) {
+          String[] s = line.split(";");
+          if (s.length>=5) {
+            String id = s[0];
+            String name = s[1];
+            String providername = s[2];
+            String description = s[3];
+            String url = s[4];
+            ChannelGroup group = new ChannelGroup(this, id, name, description, providername, new String[]{url}, mSettings);
+            group.setWorkingDirectory(mDataDir);
+            list.add(group);
           }
-        } catch (IOException e) {
-          // ignore
+          line = in.readLine();
         }
+      } catch (IOException e) {
+        mLog.log(Level.SEVERE, "Could not read group list "+CHANNEL_GROUPS_FILENAME, e);
+      }
   return list;
 
   }
