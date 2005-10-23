@@ -539,14 +539,14 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
 
-  private void downloadChannelGroupFile() {
+  private void downloadChannelGroupFile() throws TvBrowserException {
 
     try {
       IOUtilities.download(new URL(CHANNEL_GROUPS_URL), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
     } catch (MalformedURLException e) {
-      e.printStackTrace();
+      throw new TvBrowserException(TvBrowserDataService.class, "invalidURL", "Invalid URL: {0}", CHANNEL_GROUPS_URL, e);
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", CHANNEL_GROUPS_URL, e);
     }
 
   }
@@ -558,9 +558,13 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
   public Channel[] checkForAvailableChannels(devplugin.ChannelGroup g, ProgressMonitor monitor) throws TvBrowserException {
 
+    ChannelGroup group = getChannelGroupById(g.getId());
+    if (group == null) {
+      mLog.warning("Unknown group: "+g.getId());
+      return new Channel[]{};
+    }
 
     ArrayList channelList=new ArrayList();
-    ChannelGroup group = getChannelGroupById(g.getId());
     monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking for froup {0}", g.getName()));
     Channel[] ch=group.checkForAvailableChannels(null);
     for (int j=0;j<ch.length;j++) {

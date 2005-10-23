@@ -39,13 +39,9 @@ import java.awt.event.MouseEvent;
 import java.awt.*;
 import java.util.Enumeration;
 import java.util.ArrayList;
-
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.Settings;
-import util.exc.TvBrowserException;
-import util.exc.ErrorHandler;
 import util.ui.UiUtilities;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -86,29 +82,15 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     mContent.add(mEnableBtn, cc.xy(2,5));
 
-    TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
-    for (int i=0; i<services.length; i++) {
-      ChannelGroup[] groupArr = services[i].getAvailableGroups();
-      addToListBox(services[i], groupArr);
-    }
+    fillListBox();
 
     updateEnableButton();
     updateGroupStatus();
 
     mRefreshBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
-        mListModel.clear();
-        for (int i=0; i<services.length; i++) {
-          if (services[i].supportsDynamicChannelGroups()) {
-            try {
-              ChannelGroup[] groupArr = services[i].checkForAvailableGroups(null);
-              addToListBox(services[i], groupArr);
-            } catch (TvBrowserException e) {
-              ErrorHandler.handle(mLocalizer.msg("error.1","Could not receive grouplist for service '{0}'", services[i].getInfo().getName()), e);
-            }
-          }
-        }
+        ChannelGroupManager.getInstance().checkForAvailableGroups();
+        fillListBox();
         updateGroupStatus();
       }
     });
@@ -166,10 +148,16 @@ public class ChannelGroupSettingsTab implements SettingsTab {
     setEnabledGroups(ChannelGroupManager.getInstance().getSubscribedGroups());
   }
 
-  private void addToListBox(TvDataServiceProxy service, ChannelGroup[] groupArr) {
-    for (int i=0; i<groupArr.length; i++) {
-      mListModel.addElement(new ChannelGroupWrapper(service, groupArr[i]));
+
+  private void fillListBox() {
+    mListModel.clear();
+
+    ChannelGroup[] groups = ChannelGroupManager.getInstance().getAvailableGroups();
+    for (int i=0; i<groups.length; i++) {
+      TvDataServiceProxy service = ChannelGroupManager.getInstance().getTvDataService(groups[i]);
+      mListModel.addElement(new ChannelGroupWrapper(service, groups[i]));
     }
+
   }
 
   private void setEnabledGroups(ChannelGroup[] groupArr) {
