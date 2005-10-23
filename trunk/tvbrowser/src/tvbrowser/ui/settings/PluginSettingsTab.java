@@ -30,19 +30,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -112,9 +104,26 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     });
 
     mList.addMouseListener(new MouseAdapter() {
+
+       public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          int index = mList.locationToIndex(e.getPoint());
+          if (index >=0) {
+            mList.setSelectedIndex(index);
+            PluginProxy plugin = (PluginProxy)mList.getModel().getElementAt(index);
+            JPopupMenu menu = createContextMenu(plugin);
+            menu.show(mList, e.getX(),  e.getY());
+          }
+        }
+      }
+
       public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            showInfoDialog();
+        if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+           int inx = mList.getSelectedIndex();
+           if (inx >= 0) {
+             PluginProxy item = (PluginProxy)mListModel.getElementAt(inx);
+             showInfoDialog(item);
+           }
         }
       }
     });
@@ -136,7 +145,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     mInfo = new JButton(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
     mInfo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        showInfoDialog();
+        int inx = mList.getSelectedIndex();
+        if (inx >= 0) {
+          PluginProxy item = (PluginProxy)mListModel.getElementAt(inx);
+          mList.ensureIndexIsVisible(inx);
+          showInfoDialog(item);
+        }
       }
     });
     
@@ -149,7 +163,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     mRemove = new JButton(mLocalizer.msg("remove","Remove"),  new ImageIcon("imgs/Delete16.gif"));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        removePlugin();
+        int inx = mList.getSelectedIndex();
+        if (inx >= 0) {
+          Object item = mListModel.getElementAt(inx);
+          mList.ensureIndexIsVisible(inx);
+          removePlugin((PluginProxy)item);
+        }
       }
     });
     
@@ -162,33 +181,76 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     return contentPanel;
   }
 
+
+  private JPopupMenu createContextMenu(final PluginProxy plugin) {
+    JPopupMenu menu = new JPopupMenu();
+    JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
+    infoMI.setFont(infoMI.getFont().deriveFont(Font.BOLD));
+    infoMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        showInfoDialog(plugin);
+      }
+    });
+    menu.add(infoMI);
+
+    JMenuItem enableMI;
+    if (plugin.isActivated()) {
+      enableMI = new JMenuItem(mLocalizer.msg("deactivate", ""), new ImageIcon("imgs/Stop16.gif"));
+    }
+    else {
+      enableMI = new JMenuItem(mLocalizer.msg("activate", ""), new ImageIcon("imgs/Refresh16.gif"));
+
+    }
+    enableMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          onStartStopBtnClicked(plugin);
+        }
+      });
+    menu.add(enableMI);
+
+    JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  new ImageIcon("imgs/Delete16.gif"));
+    deleteMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        removePlugin(plugin);
+      }
+    });
+    deleteMI.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
+    menu.add(deleteMI);
+
+    menu.addSeparator();
+
+    JMenuItem refreshMI = new JMenuItem(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), new ImageIcon("imgs/Search16.gif"));
+    refreshMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().showUpdatePluginsDlg();
+      }
+    });
+    menu.add(refreshMI);
+
+    return menu;
+  }
+
   /**
    * Remove a selected Plugin
    */
-  private void removePlugin() {
-    int inx = mList.getSelectedIndex();
-    if (inx >= 0) {
-      Object item = mListModel.getElementAt(inx);
-      mList.ensureIndexIsVisible(inx);
+  private void removePlugin(PluginProxy plugin) {
+    String text = mLocalizer.msg("deletePlugin","Really delete the Plugin \"{0}\" ?",plugin.toString());
       
-      String text = mLocalizer.msg("deletePlugin","Really delete the Plugin \"{0}\" ?",item.toString());
+    int result = JOptionPane.showConfirmDialog(mSettingsDialog.getDialog(), text, mLocalizer.msg("delete", "Delete?"), JOptionPane.YES_NO_OPTION);
       
-      int result = JOptionPane.showConfirmDialog(mSettingsDialog.getDialog(), text, mLocalizer.msg("delete", "Delete?"), JOptionPane.YES_NO_OPTION);
-      
-      if (result == JOptionPane.YES_OPTION) {
+    if (result == JOptionPane.YES_OPTION) {
         
-        boolean del = PluginLoader.getInstance().deletePlugin((PluginProxy)item);
+      boolean del = PluginLoader.getInstance().deletePlugin(plugin);
         
-        if (del) {
-          JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("successfully","Deletion was sucesfully"));
-        } else {
-          JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("failed","Deletion failed"));
-        }
-        
-        populatePluginList();
-        mSettingsDialog.createPluginTreeItems();
-        mList.setSelectedIndex(0);
+      if (del) {
+        JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("successfully","Deletion was sucesfully"));
+      } else {
+        JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("failed","Deletion failed"));
       }
+        
+      populatePluginList();
+      mSettingsDialog.createPluginTreeItems();
+      mList.setSelectedIndex(0);
     }
   }
 
@@ -196,15 +258,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
    * Show the Info-Dialog
    *
    */
-  private void showInfoDialog() {
-    int inx = mList.getSelectedIndex();//mList.locationToIndex(e.getPoint());
-    if (inx >= 0) {
-      PluginProxy item = (PluginProxy)mListModel.getElementAt(inx);
-      mList.ensureIndexIsVisible(inx);
-      
-      PluginInfoDialog dialog = new PluginInfoDialog(mSettingsDialog.getDialog(), item.getMarkIcon(), item.getInfo());
-      UiUtilities.centerAndShow(dialog);
-    }
+  private void showInfoDialog(PluginProxy plugin) {
+    PluginInfoDialog dialog = new PluginInfoDialog(mSettingsDialog.getDialog(), plugin.getMarkIcon(), plugin.getInfo());
+    UiUtilities.centerAndShow(dialog);
   }
   
   /**

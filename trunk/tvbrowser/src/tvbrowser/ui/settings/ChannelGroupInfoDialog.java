@@ -44,6 +44,7 @@ import util.ui.BrowserLauncher;
 import java.net.URL;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.*;
 
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -78,7 +79,7 @@ public class ChannelGroupInfoDialog extends JDialog {
 
     CellConstraints cc = new CellConstraints();
 
-    JEditorPane infoPanel = new JEditorPane();
+    final JEditorPane infoPanel = new JEditorPane();
 
     infoPanel.setEditorKit(new ExtendedHTMLEditorKit());
 
@@ -98,13 +99,20 @@ public class ChannelGroupInfoDialog extends JDialog {
       }
     });
 
-    panel.add(new JScrollPane(infoPanel), cc.xyw(1,1,2));
+    final JScrollPane scrollPane = new JScrollPane(infoPanel);
+    panel.add(scrollPane, cc.xyw(1,1,2));
 
     JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
 
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
+      }
+    });
+
+    SwingUtilities.invokeLater(new Runnable(){
+      public void run() {
+        infoPanel.scrollRectToVisible(new Rectangle(0,0));
       }
     });
 

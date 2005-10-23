@@ -2,86 +2,88 @@ Changelog TVBrowser
 
 2.1 Beta 2
 - Features
-  - Infodialog bei Sendergruppen-Übesicht
+  - Infodialog bei Sendergruppen-Übersicht
+  - Contextmenü in Plugin-Settings und Sendergruppen-Settings
+   
 
 - Bugfixes
 
 2.1 Beta 1
 - Features:
 	- 1280910 Filter-Anzeige
-		Es wird nun gut sichtbar �ber der Program-Tabelle angezeigt, ob und welcher Filter aktiv ist
+		Es wird nun gut sichtbar über der Program-Tabelle angezeigt, ob und welcher Filter aktiv ist
 	- Plugin-System
 	   - Plugins-Verzeichnis nach $HOME verschoben
 	   - Plugin-Suchreihenfolge: $HOME/.tvbrowser/plugins, $PROGDIR/plugins, $PROGDIR/tvdataservice
        - neuer Key in .properties: 'pluginsdir'
 	- 1280109 TvDataService-Schnittstelle erweitern       
        - neues TvDataService interface: devplugin.TvDataService
-       - Sendergruppen m�ssen nicht mehr per Hand eingetippt werden
+       - Sendergruppen müssen nicht mehr per Hand eingetippt werden
 	- 1280122 PrintPlugin: Sendungen markieren
 		Nun werden markierte Sendungen (optional) auf dem Papier auch markiert
  	- 1280929 Windows Installer - Internationalisierung
  		Wenn Deutsch nicht Default ist auf dem Windows-System wird nun Englisch als Sprache verwendet
-	- 1280934 Windows - Verkn�pfungsicons verbessern
-		Die Verkn�pfung hat nun ein hochaufl�senderes Icon
+	- 1280934 Windows - Verknüpfungsicons verbessern
+		Die Verknüpfung hat nun ein hochauflösenderes Icon
 	- 1280932 Windows Tray Icon anpassen
-		Bestm�gliche Darstellung der jeweiligen Windows Versionen (256 Farben etc)
-	- 1280107 Default-Button f�r Farb-Einstellungen
+		Bestmögliche Darstellung der jeweiligen Windows Versionen (256 Farben etc)
+	- 1280107 Default-Button für Farb-Einstellungen
 	- 1260793 Sender-URL editierbar
-	- 1229812 Sender-Titel �ndern
+	- 1229812 Sender-Titel ändern
 	- 1248116 weitere Toolbar-Buttons
-		Zus�tzliche Buttons wie Jetzt, Heute, Uhrzeiten. Zus�tzlich wurde auch noch ein neuer 
-		Konfigurations-Dialog programmiert. Man kann nun die Kn�pfe per Drag'n'Drop in die 
+		Zusätzliche Buttons wie Jetzt, Heute, Uhrzeiten. Zusätzlich wurde auch noch ein neuer 
+		Konfigurations-Dialog programmiert. Man kann nun die Knöpfe per Drag'n'Drop in die 
 		Werkzeugleiste "schieben"
 	- 1258903 Drag'n'Drop
-		In der Kanal-Auswahl, dem Kontext-Men�-Setup, in der Plugin-�bersicht und in der 
+		In der Kanal-Auswahl, dem Kontext-Menü-Setup, in der Plugin-Übersicht und in der 
 		Program-Tabelle kann man nun mit Drag'n'Drop arbeiten
 	- 1281587 Settings-Kanalliste zeigt immer Logo+Text an
-	- 1281406 ListViewPlugin - Dialoggr��e usw. speichern
+	- 1281406 ListViewPlugin - Dialoggröße usw. speichern
 	- 1303240 ListViewPlugin: Beim start aktivieren
 		Neue Option. Nun kann man das Plugin direkt beim start des TVBrowser aktivieren
 	- 1281586 Aktualisierungs-Zeitspanne kleinschrittiger
 		Es gibt nun folgende Optionen:
 			- Heute
 			- bis Morgen
-			- die n�chsten 2 Tage
-			- die n�chsten 3 Tage
-			- die n�chste Woche
-			- die n�chsten 2 Wochen
-			- die n�chsten 3 Wochen
+			- die nächsten 2 Tage
+			- die nächsten 3 Tage
+			- die nächste Woche
+			- die nächsten 2 Wochen
+			- die nächsten 3 Wochen
 			- Alles
 	- 1321086 Firefox statt Netscape
 		Unter *nix-Betriebs-Systemen ist nun der Firefox Standard und nicht Netscape
 	- 1323213 Url als Parameter-Feld
 		Im Parameter-System kann man die Url der Sendung nun benutzen
 	- 1328107 Copy'n'Paste Dialog in jedem Textfeld
-		In jedem Textfeld kann man nun per Kontext-Men� Texte kopieren und einf�gen
-	- 1277641 "Force Quit" f�r Plugins
+		In jedem Textfeld kann man nun per Kontext-Menü Texte kopieren und einfügen
+	- 1277641 "Force Quit" für Plugins
 		Falls ein Plugin einen Fehler erzeugt, wird nun gefragt, ob dieses Plugin deaktiviert werden soll
-    - 1032014 Plugin-System �berarbeiten
-    	Die Anzeige der Plugins ist �berarbeitet worden. Zus�tzlich kann man nun Plugins, die man 
-    	durch das Men� installiert hat, wieder l�schen.
-	- 1265323 Keyboard Navigation und Sendung ausw�hlen
+    - 1032014 Plugin-System überarbeiten
+    	Die Anzeige der Plugins ist überarbeitet worden. Zusätzlich kann man nun Plugins, die man 
+    	durch das Menü installiert hat, wieder löschen.
+	- 1265323 Keyboard Navigation und Sendung auswählen
 		Siehe auch im Handbuch http://wiki.tvbrowser.org/index.php/Tastaturbedienung
 	- 1254194 Einzelne Sendungen auf den Favoriten entfernen		
 		Man kann nun einzelne Sendungen, die zwar in den Favoriten ist, aber nicht passt, entfernen
 	- 1317783 Bilder im TV-Browser laden
-		Das Bidler-System f�r Sendungen wurde aktiviert
+		Das Bidler-System für Sendungen wurde aktiviert
 
 - Bugs:      
 	- 1280942 Bewertungen: Aktualisieren Fehler
 		Falls keine Sendungen vorlagen, gab es einen Fehler im Bewertungs-Plugin
     - 1281348 NullPointerException		
     	Exception im Reminder-Plugin wg. fehlerhaftem laden der Settings
-    - 1280055 Favoriten-Plugin: "Sender ausw�hlen" fehlerhaft
-    	Nun kann man auch mehrere Sender ausw�hlen
+    - 1280055 Favoriten-Plugin: "Sender auswählen" fehlerhaft
+    	Nun kann man auch mehrere Sender auswählen
 	- 1281388 Exception im ErrorHandler: Icon fehlt   	
 		Der TV-Browser hat versucht ein Bild zu laden, das nicht existiert, wenn er nicht starten konnte
-	- 1265487 PrintPlugin: Drucken im Querformat nicht m�glich
+	- 1265487 PrintPlugin: Drucken im Querformat nicht möglich
 	- 1292322 Automatic data refreshing >> crash
-		Wenn automatische Aktualisierung aktiviert ist und keine Daten f�r den Start-Tag vorliegen, st�rtze
+		Wenn automatische Aktualisierung aktiviert ist und keine Daten für den Start-Tag vorliegen, stürtze
 		der TV-Browser ab
 	- 1296233 Filter: Channel
-		Im FilterPlugin wurden die Sender nicht nach ID, sondern die Objekte verglichen. Dies f�hrte nach
+		Im FilterPlugin wurden die Sender nicht nach ID, sondern die Objekte verglichen. Dies führte nach
 		einem Daten-Update dazu, das die Sender-Filter nicht mehr funktionierten
 	- 1318375 StringArrayProperty speichert nicht korrekt
 	- 1324036 Linux-Startscript: Verzeichniss falsch geholt, wenn verlinkt
@@ -89,9 +91,9 @@ Changelog TVBrowser
 		geholt (Dank an Michael Ostermeier)
 	- 1325132 Daten werden beim Shutdown nicht abgespeichert
 	- 1279442 Exception bei der Senderauswahl
-	- 1279580 Zeit-Kn�pfe springen nur fast richtig		
+	- 1279580 Zeit-Knöpfe springen nur fast richtig		
 	- 1280392 Favoriten-Plugin/Erinnerer
-		Nach einer ver�nderung der Favoriten wurden immer alle Favoriten neu berechnet
+		Nach einer veränderung der Favoriten wurden immer alle Favoriten neu berechnet
 
 		
 1.1 alpha3
@@ -108,7 +110,7 @@ Changelog TVBrowser
     - 1227875 Exception in PrintPlugin (Fonts-Einstellungen)
     - 1227770 PrintPlugin: Sortierung der Sendungen
     - 1227634 "Eine Instanz laeuft schon"-Meldung
-    - 1226755 Filter mu� and / or noch akzeptieren
+    - 1226755 Filter muß and / or noch akzeptieren
     - 1226503 Menue Ansicht > Plugin-Uebersicht wird nicht aktualisiert
     - 1226286 Doppelklick in Programmtabelle
     - 1225706 CapturePlugin nicht im Windows-Installer
