@@ -73,7 +73,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
     mGroupList.setCellRenderer(new ChannelGroupListCellRenderer());
     mGroupList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    JButton refreshBtn = new JButton(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Refresh16.gif"));
+    JButton refreshBtn = new JButton(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Search16.gif"));
 
     JButton infoBtn = new JButton(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
 
@@ -109,9 +109,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     refreshBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        ChannelGroupManager.getInstance().checkForAvailableGroups();
-        fillListBox();
-        updateGroupStatus();
+        refreshList();
       }
     });
 
@@ -142,6 +140,19 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     mGroupList.addMouseListener(new MouseAdapter(){
 
+      public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          int index = mGroupList.locationToIndex(e.getPoint());
+          if (index >=0) {
+            mGroupList.setSelectedIndex(index);
+            Object value = mGroupList.getModel().getElementAt(index);
+            ChannelGroupWrapper w = (ChannelGroupWrapper)value;
+            JPopupMenu menu = createContextMenu(w);
+            menu.show(mGroupList, e.getX(),  e.getY());
+          }
+        }
+      }
+
       public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
           int index = mGroupList.locationToIndex(e.getPoint());
@@ -154,6 +165,58 @@ public class ChannelGroupSettingsTab implements SettingsTab {
     });
   }
 
+
+  private JPopupMenu createContextMenu(final ChannelGroupWrapper groupWrapper) {
+    JPopupMenu menu = new JPopupMenu();
+
+    JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
+    infoMI.setFont(infoMI.getFont().deriveFont(Font.BOLD));
+    infoMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        ChannelGroupInfoDialog dlg = new ChannelGroupInfoDialog(mSettingsDialog.getDialog(), groupWrapper.getGroup());
+        UiUtilities.centerAndShow(dlg);
+      }
+    });
+    menu.add(infoMI);
+
+    JMenuItem enableMI;
+    if (groupWrapper.isEnabled()) {
+      enableMI = new JMenuItem(mLocalizer.msg("disable","Disable"), new ImageIcon("imgs/Stop16.gif"));
+      enableMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          subscribeGroup(groupWrapper, false);
+        }
+      });
+    }
+    else {
+      enableMI = new JMenuItem(mLocalizer.msg("enable","Enable"), new ImageIcon("imgs/Refresh16.gif"));
+      enableMI.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          subscribeGroup(groupWrapper, true);
+        }
+      });
+    }
+    menu.add(enableMI);
+
+    menu.addSeparator();
+
+    JMenuItem updateMI = new JMenuItem(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Search16.gif"));
+    updateMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        refreshList();
+      }
+    });
+    menu.add(updateMI);
+
+    return menu;
+
+  }
+
+  private void refreshList() {
+    ChannelGroupManager.getInstance().checkForAvailableGroups();
+    fillListBox();
+    updateGroupStatus();
+  }
 
   private void updateEnableButton() {
     Object value = mGroupList.getSelectedValue();
