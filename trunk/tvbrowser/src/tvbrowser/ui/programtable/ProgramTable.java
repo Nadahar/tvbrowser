@@ -725,8 +725,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       }
     }while(!found);
     
-    this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
-    updateUI();
+    scrollToSelection();
   }
   
   /**
@@ -748,8 +747,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       if(mCurrentRow < 0)
         mCurrentRow = rows - 1;
       
-      this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
-      updateUI();
+      scrollToSelection();
     }    
   }
   
@@ -774,10 +772,9 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
       else
         mCurrentRow++;
       
-      this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
-      updateUI();
+      scrollToSelection();
     }
-  }
+  }  
   
   /**
    * Go to the left program of the current program.
@@ -826,9 +823,22 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
           }
       }while(!found);
       
-      this.scrollRectToVisible(this.getCellRect(mCurrentCol,mCurrentRow));
-      updateUI();
+      scrollToSelection();
     }
+  }
+  
+  private void scrollToSelection() {
+    int height = getVisibleRect().height;
+    int width = getVisibleRect().width;
+    Rectangle cell = getCellRect(mCurrentCol,mCurrentRow);
+    
+    if(cell.height > height)
+      cell.setSize(cell.width,height);
+    if(cell.width > width)
+      cell.setSize(width,cell.height);
+    
+    this.scrollRectToVisible(cell);
+    updateUI();
   }
   
   /**
