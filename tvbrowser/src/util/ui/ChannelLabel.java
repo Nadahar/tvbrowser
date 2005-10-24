@@ -78,7 +78,8 @@ public class ChannelLabel extends JLabel {
    * @param ch Channel to display
    */
   public void setChannel(Channel ch) {
-    if (Settings.propEnableChannelIcons.getBoolean() || mAllIsVisible) {
+    if (Settings.propEnableChannelIcons.getBoolean() && mChannelIconsVisible
+        || mAllIsVisible) {
       setIcon(ch.getIcon());
     }
     if (!mChannelIconsVisible || !Settings.propEnableChannelIcons.getBoolean() 
