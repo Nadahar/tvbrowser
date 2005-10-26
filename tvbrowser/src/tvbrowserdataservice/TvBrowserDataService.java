@@ -419,10 +419,12 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       }
     }
 
-    mSubscribedLevelArr=new TvDataLevel[levelList.size()];
-    for (int i=0;i<levelList.size();i++) {
-      mSubscribedLevelArr[i]=(TvDataLevel)levelList.get(i);
-    }
+    setTvDataLevel((TvDataLevel[])levelList.toArray(new TvDataLevel[levelList.size()]));
+
+//    mSubscribedLevelArr=new TvDataLevel[levelList.size()];
+//    for (int i=0;i<levelList.size();i++) {
+//      mSubscribedLevelArr[i]=(TvDataLevel)levelList.get(i);
+//    }
 
 
     /* load channel groups settings */
@@ -432,6 +434,11 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     setWorkingDirectory(mDataDir);
 
+  }
+
+
+  public void setTvDataLevel(TvDataLevel[] levelArr) {
+    mSubscribedLevelArr = levelArr;
   }
 
   public ChannelGroup[] getUserDefinedChannelGroups() {

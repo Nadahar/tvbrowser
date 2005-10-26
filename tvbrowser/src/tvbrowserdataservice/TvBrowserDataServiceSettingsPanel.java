@@ -37,6 +37,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Properties;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -228,11 +229,16 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   public void ok() {
     String setting = "";
+    ArrayList levelList = new ArrayList();
+
     for (int i = 0; i < mLevelCheckboxes.length; i++) {
       if (mLevelCheckboxes[i].isSelected()) {
         setting += ":::" + DayProgramFile.LEVEL_ARR[i].getId();
+        levelList.add(DayProgramFile.LEVEL_ARR[i]);
       }
     }
+    TvBrowserDataService.getInstance().setTvDataLevel((TvDataLevel[])levelList.toArray(new TvDataLevel[levelList.size()]));
+
     if (setting.length() > 3) {
       setting = setting.substring(3);
     }
