@@ -475,6 +475,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       if (mAvailableChannelArr == null) {
         // There is no channel file or loading failed
         // -> create a list without any channels
+        mLog.warning("No channels available for group '"+mID+"' no channellist available?");
         mAvailableChannelArr = new Channel[] {};
       }
     }

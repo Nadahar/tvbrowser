@@ -33,6 +33,7 @@ import devplugin.Channel;
 import devplugin.ChannelGroup;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
 
 
 /**
@@ -185,6 +186,28 @@ public class ChannelList {
         return channel;
       }
     }
+
+    /* If we haven't found the channel within the 'available channels', we try to find it
+       in an unsubscribed group.
+       If we find it there, we subscribe the affected group and add all channels of this group to
+       the 'available channels' list
+    */
+    ChannelGroup[] groupArr = dataService.getAvailableGroups();
+    for (int i=0; i<groupArr.length; i++) {
+      if (!ChannelGroupManager.getInstance().isSubscribedGroup(groupArr[i])) {
+        Channel[] channelArr = dataService.getAvailableChannels(groupArr[i]);
+        for (int j=0; j<channelArr.length; j++) {
+          if (id.equals(channelArr[j].getId())) {
+            ChannelGroupManager.getInstance().subscribeGroup(groupArr[i]);
+            for (int k=0; k<channelArr.length; k++) {
+              mAvailableChannels.add(channelArr[k]);
+            }
+            return channelArr[j];
+          }
+        }
+      }
+    }
+
     return null;
   }
 

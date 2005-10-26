@@ -46,7 +46,7 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
 
 
 
-  protected abstract Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
+  public abstract Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
 
   public final Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
     ChannelGroup[] groups = ChannelGroupManager.getInstance().getSubscribedGroups();

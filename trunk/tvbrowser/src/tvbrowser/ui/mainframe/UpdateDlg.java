@@ -124,7 +124,6 @@ public class UpdateDlg extends JDialog implements ActionListener {
     int period = Settings.propDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(period);
     mComboBox.setSelectedItem(pi);
-    System.out.println("selected: "+mComboBox.getSelectedIndex());
 
     panel2.add(mCheckBox,BorderLayout.WEST);
 

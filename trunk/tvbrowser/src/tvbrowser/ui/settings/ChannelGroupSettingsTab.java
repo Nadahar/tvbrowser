@@ -44,6 +44,8 @@ import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
 import util.ui.LinkButton;
+import util.ui.progress.ProgressWindow;
+import util.ui.progress.Progress;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.Borders;
@@ -213,9 +215,15 @@ public class ChannelGroupSettingsTab implements SettingsTab {
   }
 
   private void refreshList() {
-    ChannelGroupManager.getInstance().checkForAvailableGroups();
-    fillListBox();
-    updateGroupStatus();
+    final ProgressWindow progressWindow = new ProgressWindow(mSettingsDialog.getDialog());
+    progressWindow.run(new Progress(){
+      public void run() {
+       ChannelGroupManager.getInstance().checkForAvailableGroups(progressWindow);
+       fillListBox();
+       updateGroupStatus();
+      }
+    });
+
   }
 
   private void updateEnableButton() {

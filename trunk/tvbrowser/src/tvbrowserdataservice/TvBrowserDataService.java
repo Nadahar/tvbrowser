@@ -464,29 +464,35 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   }
 
   private Collection getServerDefinedChannelGroupsCollection() {
+    File groupFile = new File(mDataDir, CHANNEL_GROUPS_FILENAME);
+    if (!groupFile.exists()) {
+      mLog.info("Group file '"+CHANNEL_GROUPS_FILENAME+"' does not exist");
+      return new ArrayList();
+    }
     BufferedReader in;
     ArrayList list = new ArrayList();
+
     try {
-        in = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mDataDir, CHANNEL_GROUPS_FILENAME)), "utf-8"));
-        String line = in.readLine();
-        while (line != null) {
-          String[] s = line.split(";");
-          if (s.length>=5) {
-            String id = s[0];
-            String name = s[1];
-            String providername = s[2];
-            String description = s[3];
-            String url = s[4];
-            ChannelGroup group = new ChannelGroup(this, id, name, description, providername, new String[]{url}, mSettings);
-            group.setWorkingDirectory(mDataDir);
-            list.add(group);
-          }
-          line = in.readLine();
+      in = new BufferedReader(new InputStreamReader(new FileInputStream(groupFile), "utf-8"));
+      String line = in.readLine();
+      while (line != null) {
+        String[] s = line.split(";");
+        if (s.length>=5) {
+          String id = s[0];
+          String name = s[1];
+          String providername = s[2];
+          String description = s[3];
+          String url = s[4];
+          ChannelGroup group = new ChannelGroup(this, id, name, description, providername, new String[]{url}, mSettings);
+          group.setWorkingDirectory(mDataDir);
+          list.add(group);
         }
-      } catch (IOException e) {
-        mLog.log(Level.SEVERE, "Could not read group list "+CHANNEL_GROUPS_FILENAME, e);
+        line = in.readLine();
       }
-  return list;
+    } catch (IOException e) {
+      mLog.log(Level.SEVERE, "Could not read group list "+CHANNEL_GROUPS_FILENAME, e);
+    }
+    return list;
 
   }
 
@@ -536,6 +542,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public Channel[] getAvailableChannels(devplugin.ChannelGroup g) {
 
     ChannelGroup group = getChannelGroupById(g.getId());
+    if (group == null) {
+      mLog.warning("Invalid group: "+g.getId() +" - returning empty channel array");
+      return new Channel[]{};
+    }
     return group.getAvailableChannels();
   }
 
@@ -566,7 +576,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     }
 
     ArrayList channelList=new ArrayList();
-    monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking for froup {0}", g.getName()));
+    if (monitor != null) {
+      monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking for group {0}", g.getName()));
+    }
     Channel[] ch=group.checkForAvailableChannels(null);
     for (int j=0;j<ch.length;j++) {
       channelList.add(ch[j]);
