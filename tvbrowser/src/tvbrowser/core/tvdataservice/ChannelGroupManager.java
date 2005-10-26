@@ -28,6 +28,7 @@ package tvbrowser.core.tvdataservice;
 
 import devplugin.ChannelGroup;
 import devplugin.Channel;
+import devplugin.ProgressMonitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,6 +157,12 @@ public class ChannelGroupManager {
     return (ChannelGroup[])list.toArray(new ChannelGroup[list.size()]);
   }
 
+  public boolean isSubscribedGroup(ChannelGroup group) {
+    TvDataServiceProxy service = getTvDataService(group);
+    String id = createId(service, group);
+    return Settings.propSubscribedChannelGroups.containsItem(id);
+  }
+
 
   public ChannelGroup[] getSubscribedGroups(TvDataServiceProxy proxy) {
     String[] subscribedGroupIds = getSubscribedGroupIds();
@@ -177,7 +184,10 @@ public class ChannelGroupManager {
   }
 
 
-  public void checkForAvailableGroups() {
+  /**
+   * Refresh the list of available groups and refresh the lists of available channels
+   */
+  public void checkForAvailableGroups(ProgressMonitor monitor) {
     removeAllGroups();
     TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
     for (int i=0; i<services.length; i++) {
@@ -199,13 +209,17 @@ public class ChannelGroupManager {
       }
     }
 
+    /* Call 'checkForAvailableChannels' for all groups to fetch the most recent channel lists */
     TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
     for (int i=0; i<proxies.length; i++) {
       if (proxies[i].supportsDynamicChannelList()) {
-        try {
-          proxies[i].checkForAvailableChannels(null);
-        } catch (TvBrowserException e) {
-          ErrorHandler.handle(e);
+        ChannelGroup[] groups = proxies[i].getAvailableGroups();
+        for (int j=0; j<groups.length; j++) {
+          try {
+            proxies[i].checkForAvailableChannels(groups[j], monitor);
+          }catch(TvBrowserException e) {
+            ErrorHandler.handle(e);
+          }
         }
       }
     }

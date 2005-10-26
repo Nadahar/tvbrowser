@@ -114,10 +114,10 @@ public class ChannelList {
   {
     GZIPInputStream gIn = new GZIPInputStream(stream);
     BufferedReader reader = new BufferedReader(new InputStreamReader(gIn));
-    
+
     String line;
     int lineCount = 1;
-    
+
     /**
      * ChannelList.readFromStream is called by both MirrorUpdater
      * and TvBrowserDataService. The MirrorUpdater calls this method
@@ -128,7 +128,7 @@ public class ChannelList {
       File dataDir = ((TvBrowserDataService)dataService).getWorkingDirectory();
       iconLoader = new IconLoader(mGroup.getId(), dataDir);
     }
-    
+
     while ((line = reader.readLine()) != null) {
       line = line.trim();
       if (line.length() > 0) {
@@ -170,27 +170,27 @@ public class ChannelList {
           Icon icon = iconLoader.getIcon(id, iconUrl);
           if (icon != null) {
             channel.setDefaultIcon(icon);
-          }        
+          }
         }
         addChannel(channel);
       }
       lineCount++;
     }
-    
+
     gIn.close();
     if (iconLoader != null) {
       iconLoader.close();
     }
   }
 
-  
+
   public void readFromFile(File file, TvDataService dataService)
     throws IOException, FileFormatException
   {
     FileInputStream stream = null;
     try {
       stream = new FileInputStream(file);
-      
+
       readFromStream(stream, dataService);
     }
     finally {
@@ -221,7 +221,7 @@ public class ChannelList {
         + ";" + (channel.getCategories()));
     }
     writer.close();
-    
+
     gOut.close();
   }
 
@@ -229,12 +229,12 @@ public class ChannelList {
   public void writeToFile(File file) throws IOException, FileFormatException {
     // NOTE: We need two try blocks to ensure that the file is closed in the
     //       outer block.
-    
+
     try {
       FileOutputStream stream = null;
       try {
         stream = new FileOutputStream(file);
-        
+
         writeToStream(stream);
       }
       finally {
@@ -256,13 +256,13 @@ public class ChannelList {
   }
 
 
-  
+
   class IconLoader {
     private File mIconDir;
     private File mIconIndexFile;
     private String mGroup;
     private Properties mProperties;
-    
+
     public IconLoader(String group, File dir) throws IOException {
       mGroup = group;
       mIconDir = new File(dir+"/icons_"+mGroup);
@@ -272,10 +272,14 @@ public class ChannelList {
       mIconIndexFile = new File(mIconDir,"index.txt");
       mProperties = new Properties();
       if (mIconIndexFile.exists()) {
-        mProperties.load(new FileInputStream(mIconIndexFile)); 
-      }      
+        mProperties.load(new FileInputStream(mIconIndexFile));
+      }
+      else {
+        mLog.severe("index.txt not found");
+        //System.exit(-1);
+      }
     }
-    
+
     public Icon getIcon(String channelId, String url) throws IOException {
       String key = new StringBuffer("icons_").append(mGroup)
                                              .append("_")
@@ -285,17 +289,19 @@ public class ChannelList {
       Icon icon = null;
       File iconFile = new File(mIconDir,channelId);
       if (url.equals(prevUrl)) {
-        //the url hasn't changed; we should have the icon locally 
+        //the url hasn't changed; we should have the icon locally
         icon = getIconFromFile(iconFile);
       }
       if (icon == null) {
         //download the icon
 				try {
           util.io.IOUtilities.download(new URL(url), iconFile);
-					icon = getIconFromFile(iconFile); 
+					icon = getIconFromFile(iconFile);
         }catch(IOException e) {
           mLog.warning("channel "+channelId+": could not download icon from "+url);
-				}				 
+				}catch(Exception e) {
+          mLog.severe("Could not extract icon file");
+        }
       }
       if (icon != null) {
         mProperties.setProperty(key, url);
