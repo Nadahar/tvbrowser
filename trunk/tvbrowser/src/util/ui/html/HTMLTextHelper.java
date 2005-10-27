@@ -1,5 +1,9 @@
 package util.ui.html;
 
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import util.io.IOUtilities;
 
 /**
@@ -30,7 +34,33 @@ public class HTMLTextHelper {
 
     // Create links for URLs
     if (createLinks) {
-      text = text.replaceAll("(http://|www.)[^\\s<]*", "<a href=\"$0\">$0</a>");
+      
+      Matcher matcher = Pattern.compile("(http://|www.)[^\\s<]*").matcher(text);
+      
+      StringBuffer result = new StringBuffer();
+      
+      int end = 0;
+      
+      while (matcher.find()) {
+        result.append(text.substring(end, matcher.start()));
+        result.append("<a href=\"");
+        
+        String linkText = text.substring(matcher.start(), matcher.end());
+      
+        if (!linkText.startsWith("http://")) {
+          result.append("http://");
+        }
+        
+        result.append(linkText);
+        result.append("\">");
+        result.append(linkText);
+        result.append("</a>");
+        end = matcher.end();
+      }
+
+      result.append(text.substring(end));
+      
+      text = result.toString();
     }
 
     return text;
