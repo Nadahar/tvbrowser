@@ -1,5 +1,6 @@
 package com.gc.systray;
 
+import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -138,8 +139,10 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
       leftTopX = e.getPoint().x - mPopupMenu.getWidth();
       leftTopY = e.getPoint().y - mPopupMenu.getHeight();
 
+      Point location = mManager.getSystemTray().getLocationOnScreen();
+      
       mTrayParent.setVisible(true);
-      mPopupMenu.show(mManager.getSystemTray(), leftTopX, leftTopY);
+      mPopupMenu.show(mTrayParent, location.x+leftTopX, location.y+leftTopY);
     } else if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
       for (int i = 0; i < mLeftDoubleAction.size(); i++) {
         ((ActionListener) mLeftDoubleAction.get(i)).actionPerformed(null);
