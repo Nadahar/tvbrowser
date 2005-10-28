@@ -168,11 +168,13 @@ public class PluginTreeSelectionModel implements TreeSelectionModel {
   }
 
   public void setSelectionPaths(TreePath[] paths) {
-    if (paths != null && paths.length > 0) {
+    if (paths != null && paths.length > 0) {      
       ArrayList list = new ArrayList();
       for (int i=0; i<paths.length; i++) {
         Plugin plugin = PluginTreeModel.getPlugin(paths[i]);
-        if (mCurrentSelectedPlugin.equals(plugin) && isPathToProgram(paths[i])) {
+        if (plugin != null && 
+            mCurrentSelectedPlugin != null &&
+            mCurrentSelectedPlugin.equals(plugin) && isPathToProgram(paths[i])) {
           list.add(paths[i]);
         }
       }
@@ -184,6 +186,4 @@ public class PluginTreeSelectionModel implements TreeSelectionModel {
       mModel.setSelectionPaths(paths);
     }
   }
-
-
 }
