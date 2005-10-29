@@ -33,9 +33,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.io.StringWriter;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.nio.channels.FileLock;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Formatter;
@@ -99,6 +101,10 @@ public class TVBrowser {
   private static SystemTray mTray;
 
   private static MainFrame mainFrame;
+  
+  private static RandomAccessFile mLockFile;
+  
+  private static FileLock mLock;
 
 
 
@@ -334,12 +340,35 @@ public class TVBrowser {
 
   /**
    * Create the .lock file in the user home directory
-   * @return false, if the .lock file already exists.
+   * @return false, if the .lock file exist and is locked or cannot be locked.
    */
   private static boolean createLockFile() {
     String dir = Settings.getUserDirectoryName();
-    File lockFile = new File(dir, ".lock");
-    if (lockFile.exists()) {
+    File lockFile = new File(dir, ".lock");    
+    
+    if(lockFile.exists()) {
+      try {
+        mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
+        mLock = mLockFile.getChannel().tryLock();
+        
+        if(mLock == null)
+          return false;
+      }catch(Exception e) {
+        return false;
+      }
+    }
+    else {
+      try {
+        lockFile.createNewFile();
+        mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
+        mLock = mLockFile.getChannel().tryLock();        
+      }catch(Exception e){
+        if(e instanceof IOException)
+          mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
+      }
+    }
+    
+ /*   if (lockFile.exists()) {
       return false;
     }
     try {
@@ -347,13 +376,21 @@ public class TVBrowser {
       lockFile.deleteOnExit();
     } catch (IOException e) {
       mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
-    }
+    }*/
     return true;
   }
 
   private static void deleteLockFile() {
     String dir = Settings.getUserDirectoryName();
     File lockFile = new File(dir, ".lock");
+    
+    try {
+      mLock.release();
+    }catch(Exception e) {};
+    try {
+      mLockFile.close();
+    }catch(Exception e) {};
+
     lockFile.delete();
   }
 
