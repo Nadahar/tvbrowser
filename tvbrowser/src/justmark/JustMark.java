@@ -217,7 +217,7 @@ public class JustMark extends Plugin implements ActionListener {
       // Create context menu entry
       menu = new GroupUnmarkAction(curNode);
       menu.setSmallIcon(createImageIcon("justmark/kaddressbook2.png"));
-      menu.setText("Just Unmark All");
+      menu.setText(mLocalizer.msg("unmarkall", "Just Unmark All"));
 
       curNode.addAction(menu);
       curNode.setGroupingByDateEnabled(false);
