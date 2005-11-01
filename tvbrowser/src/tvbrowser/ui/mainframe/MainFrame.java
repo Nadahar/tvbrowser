@@ -446,9 +446,10 @@ public class MainFrame extends JFrame implements DateListener {
         mLog.log(Level.WARNING, "Closing database failed", exc);
     }
     
-    if(log)
+    if(log) {
       mLog.info("Quitting");
-    System.exit(0);
+      System.exit(0);
+    }
   }
 
 
