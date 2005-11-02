@@ -118,6 +118,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
         }
       }
       public void mouseReleased(MouseEvent evt) {
+        mDraggingPoint = null;
         if (evt.isPopupTrigger()) {
           showPopup(evt);
         }
@@ -435,7 +436,7 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
 
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
-
+    
     mDraggingPoint = evt.getPoint();
   }
 
