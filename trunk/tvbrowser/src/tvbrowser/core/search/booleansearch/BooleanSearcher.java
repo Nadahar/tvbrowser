@@ -32,21 +32,21 @@ import java.util.Vector;
 import tvbrowser.core.search.AbstractSearcher;
 
 /**
- * Zentrale Kontrollklasse für boolsche Suchen.
+ * Zentrale Kontrollklasse fï¿½r boolsche Suchen.
  * 
  * Muster: WOrt AND WOrt OR NOT (WOrt AND WOrt). Jedes Wort kann alle
  * Zeichenfolgen inklusive " " enthalten.
  * 
  * Ausnahmen (casesensitive): "AND", "OR", "&&", "||", "NOT", "(", ")" und
- * regex-Ausdrücke. " "-Zeichen werden durch den regex-Ausdrück "\s" ersetzt.
+ * regex-Ausdrï¿½cke. " "-Zeichen werden durch den regex-Ausdrï¿½ck "\s" ersetzt.
  * 
- * regex-Ausdrück in den Wörtern führen zu unvOrhersagbarem Verhalten
+ * regex-Ausdrï¿½ck in den Wï¿½rtern fï¿½hren zu unvOrhersagbarem Verhalten
  * 
- * PriOritätsreihenfolge: NOT, AND, OR. Beispiele: WOrt AND WOrt OR WOrt =>
+ * PriOritï¿½tsreihenfolge: NOT, AND, OR. Beispiele: WOrt AND WOrt OR WOrt =>
  * (WOrt AND WOrt) OR WOrt WOrt AND NOT WOrt OR WOrt => (WOrt AND (NOT WOrt)) OR
  * WOrt
  * 
- * Klammern müssen nicht geschlossen werden.
+ * Klammern mï¿½ssen nicht geschlossen werden.
  * 
  * Die Klammerung kann beliebig verschaltet werden. (was aber schwer auf die
  * Performance der Kompilierung schlagen kann)
@@ -79,7 +79,7 @@ public class BooleanSearcher extends AbstractSearcher {
   }
 
 
-  /** Debug-Methode: Gibt den Suchbaum als String zurück. */
+  /** Debug-Methode: Gibt den Suchbaum als String zurueck. */
   public String toString() {
     return root.toString();
   }
@@ -87,8 +87,8 @@ public class BooleanSearcher extends AbstractSearcher {
 
   /**
    * Erzeugt einen neuen Suchbaum. Der Baum wird automatisch optimiert. Es kann
-   * immer nur ein KonstruktOr gleichzeitig laufen. Für Synchronization ist
-   * gesOrgt.
+   * immer nur ein Konstruktor gleichzeitig laufen. Fuer Synchronization ist
+   * gesorgt.
    */
   public BooleanSearcher(String pattern, boolean CaseSensitive) throws ParserException {
     Hashtable matcherTab = new Hashtable();
@@ -98,8 +98,8 @@ public class BooleanSearcher extends AbstractSearcher {
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
-    pattern = pattern.replaceAll("\\.", " ");
-    pattern = pattern.replaceAll("\\,", " ");
+    pattern = pattern.replaceAll("\\.", "");
+    pattern = pattern.replaceAll("\\,", "");
     StringTokenizer ST = new StringTokenizer(pattern);
     Vector part = new Vector();
     while (ST.hasMoreElements()) {
