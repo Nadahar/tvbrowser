@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import javax.swing.Action;
+
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Date;
@@ -83,9 +85,10 @@ public class JustMark extends Plugin implements ActionListener {
     menu.setText(mLocalizer.msg("mark", "Just Mark"));
     if (mPrograms.contains(p))
       menu.setText(mLocalizer.msg("unmark", "Just Unmark"));
+    menu.putValue(Action.ACTION_COMMAND_KEY,menu.getValue(Action.NAME));
     menu.setSmallIcon(createImageIcon("justmark/kaddressbook2.png"));
     menu.setActionListener(this);
-
+    
     return new ActionMenu(menu);
   }
 
