@@ -462,7 +462,8 @@ public class PluginManagerImpl implements PluginManager {
     Action action = menu.getAction();
 
     if (action != null) {
-      ActionEvent evt = new ActionEvent(program, 0, null);
+      ActionEvent evt = new ActionEvent(program, 0, (String)action.
+          getValue(Action.ACTION_COMMAND_KEY));
       action.actionPerformed(evt);
     }
 
@@ -530,7 +531,8 @@ public class PluginManagerImpl implements PluginManager {
     Action action = menu.getAction();
 
     if (action != null) {
-      ActionEvent evt = new ActionEvent(program, 0, null);
+      ActionEvent evt = new ActionEvent(program, 0, (String)action.
+          getValue(Action.ACTION_COMMAND_KEY));
       action.actionPerformed(evt);
     }
 
