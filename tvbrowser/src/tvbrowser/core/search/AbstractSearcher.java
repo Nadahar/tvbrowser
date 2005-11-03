@@ -86,6 +86,9 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       return false;
     }
 
+    /* Concatenate all all fields into one string and do the match */
+    StringBuffer buf = new StringBuffer();
+
     for (int i = 0; i < fieldArr.length; i++) {
       // Get the field value as String
       String value = null;
@@ -102,15 +105,17 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       }
 
       if (value != null) {
-        // Check whether the field matches
-        if (matches(value)) {
-          return true;
-        }
+        buf.append(value).append(" ");
       }
     }
 
-    // No match found
-    return false;
+    /* Remove special characters */
+    String s = buf.toString();
+    s = s.replaceAll("\\p{Punct}", "");
+    s = s.replaceAll("\n", " ");
+
+    return matches(s);
+    
   }
 
 
