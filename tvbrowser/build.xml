@@ -305,7 +305,7 @@
         <attribute name="Main-Class" value="tvbrowser.TVBrowser"/>
       </manifest>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${classes.dir}" includes="devplugin/**"/>      
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="com/**"/>
@@ -372,7 +372,13 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
- <!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/JustMark.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="justmark/**"/>
+      <fileset dir="${src.dir}" includes="justmark/*.txt"/>
+    </jar>
+
+  	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
     </jar>  -->
@@ -671,7 +677,7 @@
       <arg value="tvbrowser-${tvbrowser.version}" />
     </exec>
 
-    <delete dir="${deployment.dir}/macosx/build" /> 
+    <delete dir="${deployment.dir}/macosx/build" />
 
   </target>
 
