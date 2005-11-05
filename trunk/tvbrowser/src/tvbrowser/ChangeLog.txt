@@ -4,6 +4,9 @@ Changelog TVBrowser
 - Features
   - Infodialog bei Sendergruppen-Übersicht
   - Contextmenü in Plugin-Settings und Sendergruppen-Settings
+  - 1341645 .lock Überprüfung verändern
+  - 1335742 Sendungshervorhebung bei Mausereignissen ändern
+  - 1335739 Anzeige der Blacklist Favoriten im PluginBaum entfernen
    
 - Bugfixes
 	- 1334400 Kanalkonfigurations-Dialog Fehler wenn Kanal kein Logo
