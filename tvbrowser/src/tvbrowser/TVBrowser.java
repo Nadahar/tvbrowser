@@ -31,7 +31,6 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.StringWriter;
@@ -65,7 +64,6 @@ import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
-import util.exc.MonitoringErrorStream;
 import util.exc.TvBrowserException;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -93,7 +91,7 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  public static final devplugin.Version VERSION=new devplugin.Version(2,9,true,"2.1 Beta 1");
+  public static final devplugin.Version VERSION=new devplugin.Version(2,9,true,"2.1 Beta 2");
 
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -367,16 +365,7 @@ public class TVBrowser {
           mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
       }
     }
-    
- /*   if (lockFile.exists()) {
-      return false;
-    }
-    try {
-      lockFile.createNewFile();
-      lockFile.deleteOnExit();
-    } catch (IOException e) {
-      mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
-    }*/
+
     return true;
   }
 
@@ -386,10 +375,15 @@ public class TVBrowser {
     
     try {
       mLock.release();
-    }catch(Exception e) {};
+    }catch(Exception e) {
+      // ignore
+    }
+
     try {
       mLockFile.close();
-    }catch(Exception e) {};
+    }catch(Exception e) {
+      // ignore
+    }
 
     lockFile.delete();
   }
