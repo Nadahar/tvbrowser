@@ -372,12 +372,6 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/JustMark.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="justmark/**"/>
-      <fileset dir="${src.dir}" includes="justmark/*.txt"/>
-    </jar>
-
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>

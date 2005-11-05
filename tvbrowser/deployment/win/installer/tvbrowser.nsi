@@ -573,13 +573,6 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\CalendarExportPlugin.jar"
   SectionEnd
 
-  Section "JustMark"
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\JustMark.jar"
-  SectionEnd
-
 SubSectionEnd
 
 
