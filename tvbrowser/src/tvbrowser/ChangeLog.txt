@@ -5,8 +5,25 @@ Changelog TVBrowser
   - Infodialog bei Sendergruppen-Übersicht
   - Contextmenü in Plugin-Settings und Sendergruppen-Settings
    
-
 - Bugfixes
+	- 1334400 Kanalkonfigurations-Dialog Fehler wenn Kanal kein Logo
+		Kanäle ohne Logo konnten nicht konfiguriert werden
+	- 1334785 Sendungsauswahl bleibt bei Filterwechsel erhalten
+	- 1333729 Sender-Gruppen werden nach aktualisieren deaktiviert
+	- 1335737 Tastaturbedienung funktioniert nach Filterwechsel nicht
+	- 1335738 FavoritesPlugin: Entfernen auf allen Favoriten Fehler
+	- 1336295 Tastaturbedienung: Fehlerhaftes Scrollen zur Sendung, Titel ist nun immer sichtbar
+	- 1336659 Senderlogos lassen sich in Kanalliste nicht ausblenden
+	- 1336574 Sendergruppen-Einstellungen beim Update auf 2.1
+	- 1333526 TV-Datenservice Einstellungen erst nach neustart aktiv
+	- 1277870 Linux: Tray-Popup-Menü verschwindet wenn das Tray-Icon unsichtbar wird
+	- 1318001 Link-Behandlung bei fehlendem http://
+	- 1338751 Exception bei Klick in den Plugin-Tree
+	- 1344918 TV-Browser blockiert Windows Shutdown
+	- 1345798 Unbeabsichtigtes Srollen beim Plugin-Fenster schließen
+	- 1345824 ActionCommand-String null bei Doppel-/Mittelklick
+	- 1308939 Lieblingssendung Plugin - String mit Komma werden nun auch gefunden
+	- 1261226 Boolsche Suche Fehler
 
 2.1 Beta 1
 - Features:
