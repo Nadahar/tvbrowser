@@ -114,7 +114,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     s = s.replaceAll("\\p{Punct}", "");
     s = s.replaceAll("\n", " ");
 
-    return matches(s);
+    return matches(s.trim());
     
   }
 
