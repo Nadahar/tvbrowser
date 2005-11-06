@@ -117,6 +117,18 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
         }
       }
 
+      public void mouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          int index = mList.locationToIndex(e.getPoint());
+          if (index >=0) {
+            mList.setSelectedIndex(index);
+            PluginProxy plugin = (PluginProxy)mList.getModel().getElementAt(index);
+            JPopupMenu menu = createContextMenu(plugin);
+            menu.show(mList, e.getX(),  e.getY());
+          }
+        }
+      }
+       
       public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
            int inx = mList.getSelectedIndex();

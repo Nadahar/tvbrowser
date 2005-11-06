@@ -155,6 +155,19 @@ public class ChannelGroupSettingsTab implements SettingsTab {
         }
       }
 
+      public void mouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          int index = mGroupList.locationToIndex(e.getPoint());
+          if (index >=0) {
+            mGroupList.setSelectedIndex(index);
+            Object value = mGroupList.getModel().getElementAt(index);
+            ChannelGroupWrapper w = (ChannelGroupWrapper)value;
+            JPopupMenu menu = createContextMenu(w);
+            menu.show(mGroupList, e.getX(),  e.getY());
+          }
+        }
+      }
+      
       public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
           int index = mGroupList.locationToIndex(e.getPoint());
