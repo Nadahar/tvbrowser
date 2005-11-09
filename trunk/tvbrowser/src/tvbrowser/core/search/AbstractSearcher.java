@@ -42,7 +42,9 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
   /** The comparator that compares two programs by their start time and date */
   private static Comparator mStartTimeComparator;
-
+  
+  /** Indicates if the special characters should be replaced.*/
+  protected boolean mReplaceSpCh = false;
 
   /**
    * Gets or creates the start time comperator.
@@ -111,14 +113,18 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
     /* Remove special characters */
     String s = buf.toString();
-    s = s.replaceAll("\\p{Punct}", "");
-    s = s.replaceAll("\n", " ");
-
-    return matches(s.trim());
     
+    if(mReplaceSpCh)
+      s = s.replaceAll("\\p{Punct}", ";");
+    s = s.replaceAll("\n", " ");
+    s = s.trim();
+    
+    if(s.length() == 0)
+      return false;
+    else
+      return matches(s);
   }
-
-
+  
   /**
    * Searches the TV database for programs that match the criteria of this
    * searcher.
