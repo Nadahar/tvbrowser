@@ -42,7 +42,6 @@ public class RegexSearcher extends AbstractSearcher {
   /** The regex pattern. Is null if the pattern would match everything. */
   private Pattern mPattern;
 
-
   /**
    * Creates a new instance of RegexSearcher.
    *
@@ -68,7 +67,7 @@ public class RegexSearcher extends AbstractSearcher {
       // It does -> Use a null pattern
       mPattern = null;
     } else {
-      mPattern = createSearchPattern(regex, caseSensitive);
+      mPattern = createSearchPattern(regex, caseSensitive);      
     }
   }
 
@@ -124,17 +123,15 @@ public class RegexSearcher extends AbstractSearcher {
     //          (See RegexSearcher(String, boolean))
     if (searchText.trim().length() == 0) {
       return "";
-    }
+    }    
     
-    // Replace all special characters.
-    String regex = searchText.replaceAll("\\p{Punct}", "");
     // NOTE: We replace all whitespace with a regex that matches whitespace.
     //       This way the search hits will contain "The film", when the user
     //       entered "The    film"
     // NOTE: All words are quoted with "\Q" and "\E". This way regex code will
     //       be ignored within the search text. (A search for "C++" will not
     //       result in an syntax error)
-    regex = "\\Q" + regex.replaceAll("\\s+", "\\\\E\\\\s+\\\\Q") + "\\E";
+    String regex = "\\Q" + searchText.replaceAll("\\s+", "\\\\E\\\\s+\\\\Q") + "\\E";
 
     // Add '.*' to beginning an end to match keywords
     if (matchKeyword) {
@@ -143,7 +140,6 @@ public class RegexSearcher extends AbstractSearcher {
 
     return regex;
   }
-
 
   /**
    * Checks whether a value matches to the criteria of this searcher.
