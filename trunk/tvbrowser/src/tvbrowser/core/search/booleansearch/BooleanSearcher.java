@@ -93,12 +93,12 @@ public class BooleanSearcher extends AbstractSearcher {
   public BooleanSearcher(String pattern, boolean CaseSensitive) throws ParserException {
     Hashtable matcherTab = new Hashtable();
     caseSensitive = CaseSensitive;
-
-
+    mReplaceSpCh = true;
+    
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
-    pattern = pattern.replaceAll("\\p{Punct}", "");
+    pattern = pattern.replaceAll("\\p{Punct}", ";");
     
     StringTokenizer ST = new StringTokenizer(pattern);
     Vector part = new Vector();
