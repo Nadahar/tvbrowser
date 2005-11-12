@@ -107,6 +107,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public TvBrowserDataService() {
     mSettings = new Properties();
     mInstance=this;
+    mAvailableChannelGroupsSet =new HashSet();
   }
 
 
@@ -369,17 +370,15 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   Channel getChannel(String country, String channelName) {
-    devplugin.ChannelGroup[] groups = getAvailableGroups();
-    for (int i=0; i<groups.length; i++) {
-      Channel[] ch = getAvailableChannels(groups[i]);
-      for (int k=0; k<ch.length; k++) {
-        if (ch[k].getCountry().equals(country)
-                && ch[k].getId().equals(channelName)) {
-          return ch[k];
+    Iterator it = mAvailableChannelGroupsSet.iterator();
+    while (it.hasNext()) {
+      Channel[] chArr = getAvailableChannels((ChannelGroup)it.next());
+      for (int i=0; i<chArr.length; i++) {
+        if (chArr[i].getCountry().equals(country) && chArr[i].getId().equals(channelName)) {
+          return chArr[i];
         }
       }
     }
-
     return null;
   }
 
@@ -421,16 +420,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     setTvDataLevel((TvDataLevel[])levelList.toArray(new TvDataLevel[levelList.size()]));
 
-//    mSubscribedLevelArr=new TvDataLevel[levelList.size()];
-//    for (int i=0;i<levelList.size();i++) {
-//      mSubscribedLevelArr[i]=(TvDataLevel)levelList.get(i);
-//    }
-
 
     /* load channel groups settings */
-
-    mAvailableChannelGroupsSet =new HashSet();
-    mAvailableChannelGroupsSet.addAll(getUserDefinedChannelGroupsCollection());
+    refreshAvailableChannelGroups();
 
     setWorkingDirectory(mDataDir);
 
@@ -456,7 +448,14 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     String groupNames = mSettings.getProperty("groupname");
     String[] groupNamesArr;
 
-    if (groupNames!=null) {
+    /* If there are no groups defined in the settings file, we return all default groups */
+    if (groupNames == null) {
+      for (int i=0;i<DEFAULT_CHANNEL_GROUP_NAMES.length;i++) {
+        result.add(new ChannelGroup(this, DEFAULT_CHANNEL_GROUP_NAMES[i], DEFAULT_CHANNEL_GROUP_MIRRORS[i], mSettings));
+      }
+    }
+    else {
+
       groupNamesArr=groupNames.split(":");
       for (int i=0;i<groupNamesArr.length;i++) {
         if (groupNamesArr[i].trim().length()>0) {
@@ -465,8 +464,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           result.add(new ChannelGroup(this, groupNamesArr[i],groupUrlArr,mSettings));
         }
       }
-    }
 
+    }
     return result;
   }
 
@@ -524,23 +523,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   public devplugin.ChannelGroup[] getAvailableGroups() {
-
-    Collection serverDefinedGroups = getServerDefinedChannelGroupsCollection();
-   
-    mAvailableChannelGroupsSet.clear();
-    mAvailableChannelGroupsSet.addAll(serverDefinedGroups);
-    mAvailableChannelGroupsSet.addAll(getUserDefinedChannelGroupsCollection());
-
-    for (int i=0;i<DEFAULT_CHANNEL_GROUP_NAMES.length;i++) {
-      ChannelGroup g =new ChannelGroup(this, DEFAULT_CHANNEL_GROUP_NAMES[i], DEFAULT_CHANNEL_GROUP_MIRRORS[i], mSettings);
-      if (!mAvailableChannelGroupsSet.contains(g)) {
-        mAvailableChannelGroupsSet.add(g);
-      }
-    }
-
     return (ChannelGroup[])mAvailableChannelGroupsSet.toArray(new ChannelGroup[mAvailableChannelGroupsSet.size()]);
-
-
   }
 
   /**
@@ -567,10 +550,34 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", CHANNEL_GROUPS_URL, e);
     }
 
+
+
+
+
+  }
+
+
+  /**
+   * Read the available channel groups from the file system
+   */
+  private void refreshAvailableChannelGroups() {
+    Collection serverDefinedGroups = getServerDefinedChannelGroupsCollection();
+
+    mAvailableChannelGroupsSet.clear();
+    mAvailableChannelGroupsSet.addAll(serverDefinedGroups);
+    mAvailableChannelGroupsSet.addAll(getUserDefinedChannelGroupsCollection());
+
+    for (int i=0;i<DEFAULT_CHANNEL_GROUP_NAMES.length;i++) {
+      ChannelGroup g =new ChannelGroup(this, DEFAULT_CHANNEL_GROUP_NAMES[i], DEFAULT_CHANNEL_GROUP_MIRRORS[i], mSettings);
+      if (!mAvailableChannelGroupsSet.contains(g)) {
+        mAvailableChannelGroupsSet.add(g);
+      }
+    }
   }
 
   public devplugin.ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException {
     downloadChannelGroupFile();
+    refreshAvailableChannelGroups();
     return getAvailableGroups();
   }
 
