@@ -1,5 +1,9 @@
 Changelog TVBrowser
 
+2.1 Beta 4
+-Features
+  - Swedish Translations (Thanks to Joakim Arborelius)
+
 2.1 Beta 3
 -Bugfixes
   - 1349483 Suche nach "ARD-Ratgeber: Technik" funktioniert nicht

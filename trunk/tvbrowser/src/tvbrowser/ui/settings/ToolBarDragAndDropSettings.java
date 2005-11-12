@@ -215,7 +215,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       // Set up the windows attributes
     this.setSize(630, 400);
     this.addWindowListener(this);
-    this.setTitle("Werkzeugleiste anpassen");
+    this.setTitle(mLocalizer.msg("modifyToolbar", "Modify Toolbar"));
     this.setLocationRelativeTo(MainFrame.getInstance());
     this.setVisible(true);
     
