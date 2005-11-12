@@ -186,7 +186,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     localePn.add(formPn, BorderLayout.CENTER);
     CellConstraints c = new CellConstraints();
 
-    Language[] languages = new Language[]{new Language("en"), new Language("de")};
+    Language[] languages = new Language[]{new Language("en"), new Language("de"),  new Language("sv")};
     formPn.add(new JLabel(mLocalizer.msg("language","Language:")), c.xy(1,1));
     formPn.add(mLanguageCB = new JComboBox(languages), c.xy(3,1));
 
