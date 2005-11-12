@@ -26,15 +26,21 @@
 package tvbrowserdataservice.file;
 
 import java.awt.Image;
-import java.io.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.WeakHashMap;
+import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -44,7 +50,6 @@ import javax.swing.ImageIcon;
 import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
 import util.ui.ImageUtilities;
-
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
@@ -66,6 +71,10 @@ public class ChannelList {
   
   private ChannelGroup mGroup;
   
+  /**
+   * Icon Cache
+   */
+  private static WeakHashMap ICON_CACHE = new WeakHashMap(); 
   
   public ChannelList(final String groupName) {
     mChannelList = new ArrayList();
@@ -255,8 +264,6 @@ public class ChannelList {
     }
   }
 
-
-
   class IconLoader {
     private File mIconDir;
     private File mIconIndexFile;
@@ -288,15 +295,33 @@ public class ChannelList {
       String prevUrl = (String)mProperties.get(key);
       Icon icon = null;
       File iconFile = new File(mIconDir,channelId);
+      
       if (url.equals(prevUrl)) {
         //the url hasn't changed; we should have the icon locally
         icon = getIconFromFile(iconFile);
+        return icon;
+      } 
+      
+      if (icon == null) {
+        if (ICON_CACHE.containsKey(url)) {
+          try {
+            if (!ICON_CACHE.get(url).equals(iconFile)) {
+              util.io.IOUtilities.download( ((File)ICON_CACHE.get(url)).toURL(), iconFile);
+              icon = getIconFromFile(iconFile);
+            }
+          } catch (Exception e) {
+            mLog.log(Level.SEVERE, "Problem while copying File from Cache", e);
+          } 
+           
+        }
       }
+      
       if (icon == null) {
         //download the icon
-				try {
+        try {
           util.io.IOUtilities.download(new URL(url), iconFile);
-					icon = getIconFromFile(iconFile);
+          icon = getIconFromFile(iconFile);
+          ICON_CACHE.put(url, iconFile);
         }catch(IOException e) {
           mLog.warning("channel "+channelId+": could not download icon from "+url);
 				}catch(Exception e) {
