@@ -91,7 +91,7 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  public static final devplugin.Version VERSION=new devplugin.Version(2,9,true,"2.1 Beta 3");
+  public static final devplugin.Version VERSION=new devplugin.Version(2,9,true,"2.1 Beta 4");
 
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
