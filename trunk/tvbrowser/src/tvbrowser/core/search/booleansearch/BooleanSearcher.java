@@ -98,7 +98,7 @@ public class BooleanSearcher extends AbstractSearcher {
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
-    pattern = pattern.replaceAll("\\p{Punct}", ";");
+    pattern = pattern.replaceAll("[\\p{Punct}&&[^()]]", ";");
     
     StringTokenizer ST = new StringTokenizer(pattern);
     Vector part = new Vector();
