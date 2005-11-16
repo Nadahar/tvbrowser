@@ -563,7 +563,7 @@ public class TVBrowser {
         UiUtilities.centerAndShow(dlg);
         int daysToDownload = dlg.getResult();
         if (daysToDownload != UpdateDlg.CANCEL) {
-          mainFrame.runUpdateThread(daysToDownload, TvDataServiceProxyManager.getInstance().getTvDataServices(Settings.propDataServicesForUpdate.getStringArray()));
+          mainFrame.runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices());
         }
       }
       else {
