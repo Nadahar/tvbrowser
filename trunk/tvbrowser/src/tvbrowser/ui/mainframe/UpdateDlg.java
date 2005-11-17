@@ -36,108 +36,109 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 
-
 /**
  * TV-Browser
- *
+ * 
  * @author Martin Oberhauser
  */
 public class UpdateDlg extends JDialog implements ActionListener {
 
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(UpdateDlg.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(UpdateDlg.class);
 
-  public static final int CANCEL=-1, GETALL=99;
-
+  public static final int CANCEL = -1, GETALL = 99;
 
   private JButton mCancelBtn, mUpdateBtn;
-  private int mResult =0;
+  private int mResult = 0;
   private JComboBox mComboBox;
   private JCheckBox mCheckBox;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
 
-
-
   public UpdateDlg(JFrame parent, boolean modal) {
-    super(parent,modal);
+    super(parent, modal);
 
     String msg;
 
-    mResult =CANCEL;
+    mResult = CANCEL;
 
-    JPanel contentPane=(JPanel)getContentPane();
+    JPanel contentPane = (JPanel) getContentPane();
     contentPane.setLayout(new BorderLayout());
-    contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     this.setTitle(mLocalizer.msg("dlgTitle", "TV data update"));
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-    buttonPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+    buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
-    mUpdateBtn =new JButton(mLocalizer.msg("updateNow", "Update now"));
+    mUpdateBtn = new JButton(mLocalizer.msg("updateNow", "Update now"));
     mUpdateBtn.addActionListener(this);
     buttonPanel.add(mUpdateBtn);
     getRootPane().setDefaultButton(mUpdateBtn);
 
-    mCancelBtn =new JButton(mLocalizer.msg("cancel", "Cancel"));
+    mCancelBtn = new JButton(mLocalizer.msg("cancel", "Cancel"));
     mCancelBtn.addActionListener(this);
     buttonPanel.add(mCancelBtn);
 
-    contentPane.add(buttonPanel,BorderLayout.SOUTH);
+    contentPane.add(buttonPanel, BorderLayout.SOUTH);
 
-    JPanel northPanel=new JPanel();
-    northPanel.setLayout(new BoxLayout(northPanel,BoxLayout.Y_AXIS));
+    JPanel northPanel = new JPanel();
+    northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
 
-    JPanel panel1=new JPanel(new BorderLayout(7,0));
+    JPanel panel1 = new JPanel(new BorderLayout(7, 0));
     msg = mLocalizer.msg("period", "Update program for");
     panel1.add(new JLabel(msg), BorderLayout.WEST);
     mComboBox = new JComboBox(PeriodItem.PERIOD_ARR);
-    panel1.add(mComboBox,BorderLayout.EAST);
+    panel1.add(mComboBox, BorderLayout.EAST);
     northPanel.add(panel1);
 
+    TvDataServiceProxy[] serviceArr = TvDataServiceProxyManager.getInstance()
+        .getDataServices();
 
-    TvDataServiceProxy[] serviceArr = TvDataServiceProxyManager.getInstance().getDataServices();
-    if (serviceArr.length>1) {
-      panel1.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+    if (serviceArr.length > 1) {
+      panel1.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
       JPanel dataServicePanel = new JPanel();
-      dataServicePanel.setLayout(new BoxLayout(dataServicePanel, BoxLayout.Y_AXIS));
-      dataServicePanel.setBorder(BorderFactory.createTitledBorder("Diese Datenquellen verwenden:"));
+      dataServicePanel.setLayout(new BoxLayout(dataServicePanel,
+          BoxLayout.Y_AXIS));
+      dataServicePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer
+          .msg("useDataSources", "Use this data sources:")));
       mDataServiceCbArr = new TvDataServiceCheckBox[serviceArr.length];
 
-      String[] checkedServiceNames = Settings.propDataServicesForUpdate.getStringArray();
+      String[] checkedServiceNames = Settings.propDataServicesForUpdate
+          .getStringArray();
 
-      for (int i=0; i<serviceArr.length; i++) {
+      for (int i = 0; i < serviceArr.length; i++) {
         mDataServiceCbArr[i] = new TvDataServiceCheckBox(serviceArr[i]);
-        mDataServiceCbArr[i].setSelected(tvDataServiceIsChecked(serviceArr[i], checkedServiceNames));
+        mDataServiceCbArr[i].setSelected(tvDataServiceIsChecked(serviceArr[i],
+            checkedServiceNames));
         dataServicePanel.add(mDataServiceCbArr[i]);
       }
       JPanel p = new JPanel(new BorderLayout());
-      p.add(dataServicePanel,BorderLayout.CENTER);
+      p.add(dataServicePanel, BorderLayout.CENTER);
       northPanel.add(p);
     }
 
     msg = mLocalizer.msg("rememberSettings", "Remember settings");
-    mCheckBox =new JCheckBox(msg);
-    JPanel panel2=new JPanel(new BorderLayout());
-    panel2.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+    mCheckBox = new JCheckBox(msg);
+    JPanel panel2 = new JPanel(new BorderLayout());
+    panel2.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
     int period = Settings.propDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(period);
     mComboBox.setSelectedItem(pi);
 
-    panel2.add(mCheckBox,BorderLayout.WEST);
+    panel2.add(mCheckBox, BorderLayout.WEST);
 
     northPanel.add(panel2);
 
-    contentPane.add(northPanel,BorderLayout.NORTH);
+    contentPane.add(northPanel, BorderLayout.NORTH);
   }
 
-
-  private boolean tvDataServiceIsChecked(TvDataServiceProxy service, String[] serviceNames) {
+  private boolean tvDataServiceIsChecked(TvDataServiceProxy service,
+      String[] serviceNames) {
     if (serviceNames == null) {
       return true;
     }
-    for (int i=0; i<serviceNames.length; i++) {
+    for (int i = 0; i < serviceNames.length; i++) {
       if (service.getClass().getName().equals(serviceNames[i])) {
         return true;
       }
@@ -151,33 +152,35 @@ public class UpdateDlg extends JDialog implements ActionListener {
 
   public TvDataServiceProxy[] getSelectedTvDataServices() {
     if (mSelectedTvDataServiceArr == null) {
-      mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
+      mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance()
+          .getDataServices();
     }
 
     return mSelectedTvDataServiceArr;
   }
 
   public void actionPerformed(ActionEvent event) {
-    Object source=event.getSource();
-    if (source==mCancelBtn) {
-      mResult =CANCEL;
+    Object source = event.getSource();
+    if (source == mCancelBtn) {
+      mResult = CANCEL;
       setVisible(false);
-    }
-    else if (source==mUpdateBtn) {
-      PeriodItem pi = (PeriodItem)mComboBox.getSelectedItem();
+    } else if (source == mUpdateBtn) {
+      PeriodItem pi = (PeriodItem) mComboBox.getSelectedItem();
       mResult = pi.getDays();
 
-      if (mDataServiceCbArr == null) {  // there is only one tvdataservice available
-        mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
-      }
-      else {
+      if (mDataServiceCbArr == null) { // there is only one tvdataservice
+                                        // available
+        mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance()
+            .getDataServices();
+      } else {
         ArrayList dataServiceList = new ArrayList();
-        for (int i=0; i<mDataServiceCbArr.length; i++) {
+        for (int i = 0; i < mDataServiceCbArr.length; i++) {
           if (mDataServiceCbArr[i].isSelected()) {
             dataServiceList.add(mDataServiceCbArr[i].getTvDataService());
           }
         }
-        mSelectedTvDataServiceArr = new TvDataServiceProxy[dataServiceList.size()];
+        mSelectedTvDataServiceArr = new TvDataServiceProxy[dataServiceList
+            .size()];
         dataServiceList.toArray(mSelectedTvDataServiceArr);
       }
 
@@ -185,8 +188,8 @@ public class UpdateDlg extends JDialog implements ActionListener {
         Settings.propDownloadPeriod.setInt(mResult);
 
         String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
-        for (int i=0; i<dataServiceArr.length; i++) {
-          dataServiceArr[i] = mSelectedTvDataServiceArr[i].getClass().getName();
+        for (int i = 0; i < dataServiceArr.length; i++) {
+          dataServiceArr[i] = mSelectedTvDataServiceArr[i].getId();
         }
         Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
       }
@@ -195,18 +198,15 @@ public class UpdateDlg extends JDialog implements ActionListener {
   }
 }
 
-
-
-
 class TvDataServiceCheckBox extends JCheckBox {
- 
+
   private TvDataServiceProxy mService;
-  
+
   public TvDataServiceCheckBox(TvDataServiceProxy service) {
     super(service.getInfo().getName());
-    mService = service; 
+    mService = service;
   }
-  
+
   public TvDataServiceProxy getTvDataService() {
     return mService;
   }
