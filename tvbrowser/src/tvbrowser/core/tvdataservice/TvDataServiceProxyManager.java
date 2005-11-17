@@ -176,7 +176,10 @@ public class TvDataServiceProxyManager {
         list.add(p);
       }
     }
-    return (TvDataServiceProxy[])list.toArray(new TvDataServiceProxy[list.size()]);
+    if(list.size() > 0)
+      return (TvDataServiceProxy[])list.toArray(new TvDataServiceProxy[list.size()]);
+    else
+      return getDataServices();
   }
 
 
