@@ -91,7 +91,7 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  public static final devplugin.Version VERSION=new devplugin.Version(2,9,true,"2.1 Beta 4");
+  public static final devplugin.Version VERSION=new devplugin.Version(2,10,true,"2.1");
 
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -99,9 +99,9 @@ public class TVBrowser {
   private static SystemTray mTray;
 
   private static MainFrame mainFrame;
-  
+
   private static RandomAccessFile mLockFile;
-  
+
   private static FileLock mLock;
 
 
@@ -295,8 +295,8 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.ui", "Starting up...");
     splash.setMessage(msg);
 
-    Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue()); 
-    
+    Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
+
     // Init the UI
     final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean();
     SwingUtilities.invokeLater(new Runnable() {
@@ -342,13 +342,13 @@ public class TVBrowser {
    */
   private static boolean createLockFile() {
     String dir = Settings.getUserDirectoryName();
-    File lockFile = new File(dir, ".lock");    
-    
+    File lockFile = new File(dir, ".lock");
+
     if(lockFile.exists()) {
       try {
         mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
         mLock = mLockFile.getChannel().tryLock();
-        
+
         if(mLock == null)
           return false;
       }catch(Exception e) {
@@ -359,7 +359,7 @@ public class TVBrowser {
       try {
         lockFile.createNewFile();
         mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
-        mLock = mLockFile.getChannel().tryLock();        
+        mLock = mLockFile.getChannel().tryLock();
       }catch(Exception e){
         if(e instanceof IOException)
           mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
@@ -372,7 +372,7 @@ public class TVBrowser {
   private static void deleteLockFile() {
     String dir = Settings.getUserDirectoryName();
     File lockFile = new File(dir, ".lock");
-    
+
     try {
       mLock.release();
     }catch(Exception e) {
@@ -495,7 +495,7 @@ public class TVBrowser {
 
     if(log) {
       mLog.info("Storing window size and location");
-      
+
       boolean maximized = mainFrame.getExtendedState() == Frame.MAXIMIZED_BOTH;
 
       Settings.propIsWindowMaximized.setBoolean(maximized);
