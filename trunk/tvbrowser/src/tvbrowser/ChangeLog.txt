@@ -1,11 +1,20 @@
 Changelog TVBrowser
 
+2.1
+- Bugfixes
+  - 1355929 Replace of ( and ) in BooleanSearcher
+      The characters ( and ) are needed in the BooleanSearcher
+  - 1358066 Automatically Download at Start broken
+  
 2.1 Beta 4
--Features
+- Features
   - Swedish Translations (Thanks to Joakim Arborelius)
 
+- Bugfixes
+  - 1351760 Fehler in Suche mit gegebenen Regulären Ausdruck
+
 2.1 Beta 3
--Bugfixes
+- Bugfixes
   - 1349483 Suche nach "ARD-Ratgeber: Technik" funktioniert nicht
   - 1349704 Kein Kontextmenü unter Windows in Plugin- und Sendergruppen
 
