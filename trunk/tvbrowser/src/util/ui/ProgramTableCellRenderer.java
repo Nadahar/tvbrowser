@@ -22,7 +22,7 @@
  *   $Author$
  * $Revision$
  */
-package captureplugin.tabs;
+package util.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -32,11 +32,12 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import util.ui.ProgramPanel;
 import devplugin.Program;
 
 /**
  * CellRenderer for Program in Table
+ * 
+ * @since 2.2
  */
 public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
 
