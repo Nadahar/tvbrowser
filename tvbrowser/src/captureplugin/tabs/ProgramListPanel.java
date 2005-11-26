@@ -45,6 +45,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
+import util.ui.ProgramTableCellRenderer;
 import util.ui.UiUtilities;
 import captureplugin.CapturePlugin;
 import captureplugin.CapturePluginData;
@@ -96,9 +97,11 @@ public class ProgramListPanel extends JPanel {
             DeviceIf dev = (DeviceIf) it.next();
             Program[] prgList = dev.getProgramList();
 
-            Arrays.sort(prgList,new ProgramTimeComparator());
-            for (int v = 0; v < prgList.length; v++) {
-                mProgramTableModel.addProgram(dev, prgList[v]);
+            if (prgList != null) {
+              Arrays.sort(prgList,new ProgramTimeComparator());
+              for (int v = 0; v < prgList.length; v++) {
+                  mProgramTableModel.addProgram(dev, prgList[v]);
+              }
             }
         }
 

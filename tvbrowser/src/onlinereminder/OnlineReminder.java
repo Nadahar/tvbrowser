@@ -30,7 +30,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -38,12 +37,12 @@ import javax.swing.ImageIcon;
 
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import captureplugin.CapturePlugin;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
-import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.Version;
 
@@ -59,11 +58,14 @@ public class OnlineReminder extends Plugin {
   /** Configuration */
   private Configuration mConfig;
   
+  private static OnlineReminder INSTANCE;
+  
   /**
    * Creates the Plugin
    */
   public OnlineReminder() {
-    mConfig = new Configuration();
+    mConfig = new Configuration(getRootNode());
+    INSTANCE = this;
   }
 
   public PluginInfo getInfo() {
@@ -86,14 +88,12 @@ public class OnlineReminder extends Plugin {
 
     final Program prog = program;
 
-    if (!mConfig.getProgramList().contains(prog)) {
+    if (!getRootNode().contains(prog)) {
       menu.setSmallIcon(createImageIcon("onlinereminder/icons/bell16.png"));
       menu.setText(mLocalizer.msg("contextMenuRemind","Add to Online-Reminder"));
       menu.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           mConfig.addProgram(prog);
-          getRootNode().addProgram(prog);
-          getRootNode().update();
         }
       });
     } else {
@@ -102,8 +102,6 @@ public class OnlineReminder extends Plugin {
       menu.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           mConfig.removeProgram(prog);
-          getRootNode().removeProgram(prog);
-          getRootNode().update();
         }
       });
     }
@@ -115,7 +113,9 @@ public class OnlineReminder extends Plugin {
     AbstractAction action = new AbstractAction() {
 
       public void actionPerformed(ActionEvent evt) {
+        showDialog();
       }
+      
     };
     action.putValue(Action.NAME, mLocalizer.msg("pluginName", "Online Reminder"));
     action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar(
@@ -126,6 +126,15 @@ public class OnlineReminder extends Plugin {
     return new ActionMenu(action);
   }
 
+  /**
+   * Show the Dialog with the Program-List
+   * 
+   */
+  public void showDialog() {
+    ReminderDialog dlg = new ReminderDialog(getParentFrame(), mConfig);
+    UiUtilities.centerAndShow(dlg);
+  }
+  
   public boolean canUseProgramTree() {
     return true;
   }
@@ -139,25 +148,17 @@ public class OnlineReminder extends Plugin {
   }
   
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    mConfig = new Configuration(in);
-    
-    Iterator it = mConfig.getProgramList().iterator();
-
-    PluginTreeNode root = getRootNode();
-    
-    while (it.hasNext()) {
-      root.addProgram((Program)it.next());    
-    }
-    
-    root.update();
+    mConfig = new Configuration(getRootNode(), in);
   }
   
   public void receivePrograms(Program[] programArr) {
     for (int i = 0; i < programArr.length; i++) {
-      if (mConfig.addProgram(programArr[i])) {
-          getRootNode().addProgram(programArr[i]);
-      }
+      mConfig.addProgram(programArr[i], false);
     }
     getRootNode().update();
+  }
+
+  public static Plugin getInstance() {
+    return INSTANCE;
   }
 }

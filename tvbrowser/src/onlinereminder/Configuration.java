@@ -29,10 +29,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import devplugin.Plugin;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramItem;
 
 /**
  * Configuration of the OnlineReminder
@@ -40,41 +41,38 @@ import devplugin.Program;
  * @author bodum
  */
 public class Configuration {
-  /** List of Programs to remind */
-  private ArrayList mProgramList;
   /** List of added Programs that must be stored on the Server */
   private ArrayList mAddedPrograms;
   /** List of removed Programs that must be deleted on the Server*/
   private ArrayList mRemovedPrograms;
 
+  /** Root-Node */
+  private PluginTreeNode mRoot;
+  
+  private int mDefaultTime = 5;
+  
   /**
    * Creates a empty Configuration
+   * @param root Root-Node of this Plugin
    */
-  public Configuration() {
-    mProgramList = new ArrayList();
+  public Configuration(PluginTreeNode root) {
+    mRoot = root;
     mAddedPrograms = new ArrayList();
     mRemovedPrograms = new ArrayList();
   }
 
   /**
    * Reads a Configuration from an InputStream
+   * @param root Root-Node of this Plugin
    * @param in InputStream with Configuration
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public Configuration(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    mProgramList = new ArrayList();
+  public Configuration(PluginTreeNode root, ObjectInputStream in) throws IOException, ClassNotFoundException {
     mAddedPrograms = new ArrayList();
     mRemovedPrograms = new ArrayList();
+    mRoot = root;
     readData(in);
-  }
-
-  /**
-   * Get List of Programs
-   * @return List of Programs
-   */
-  public List getProgramList() {
-    return mProgramList;
   }
 
   /**
@@ -83,12 +81,26 @@ public class Configuration {
    * @return true, if Program was added
    */
   public boolean addProgram(Program prog) {
+    return addProgram(prog, mDefaultTime, true);
+  }
+
+  public boolean addProgram(Program prog, boolean updateTree) {
+    return addProgram(prog, mDefaultTime, updateTree);
+  }
+
+  public boolean addProgram(Program prog, int reminderTime, boolean updateTree) {
     boolean val = false;
-    if (!mProgramList.contains(prog)) {
+    if (!mRoot.contains(prog, true)) {
+      ReminderProgramItem item = new ReminderProgramItem(prog, reminderTime);
+      mRoot.addProgram(item);
       mAddedPrograms.add(prog);
-      mProgramList.add(prog);
       val = true;
     }
+    
+    if (updateTree) {
+      mRoot.update();
+    }
+    
     return val;
   }
 
@@ -101,12 +113,12 @@ public class Configuration {
     
     if (mAddedPrograms.contains(prog)) {
       mAddedPrograms.remove(prog);
-      mProgramList.remove(prog);
+      mRoot.removeProgram(prog);
     } else {
-      mProgramList.remove(prog);
+      mRoot.removeProgram(prog);
       mRemovedPrograms.add(prog);
     }
-    
+    mRoot.update();
   }
   
   /**
@@ -117,22 +129,31 @@ public class Configuration {
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1);
 
-    out.writeInt(mProgramList.size());
+    Object[] obj = mRoot.getProgramItems();
+    
+    for (int i = 0;i<obj.length;i++) {
+      System.out.println(obj[i].getClass().getName());
+    }
+    
+    ProgramItem[] prgList = (ProgramItem[])mRoot.getProgramItems();
+    
+    out.writeInt(prgList.length);
 
-    for (int i = 0; i < mProgramList.size(); i++) {
-      writeProgram(out, (Program) mProgramList.get(i));
+    for (int i = 0; i < prgList.length; i++) {
+      writeProgram(out, ((ReminderProgramItem) prgList[i]).getProgram());
+      out.writeInt(((ReminderProgramItem)prgList[i]).getMinutes());
     }
 
     out.writeInt(mRemovedPrograms.size());
 
     for (int i = 0; i < mRemovedPrograms.size(); i++) {
-      writeProgram(out, (Program) mProgramList.get(i));
+      writeProgram(out, (Program) mRemovedPrograms.get(i));
     }
 
     out.writeInt(mAddedPrograms.size());
 
     for (int i = 0; i < mAddedPrograms.size(); i++) {
-      writeProgram(out, (Program) mProgramList.get(i));
+      writeProgram(out, (Program) mAddedPrograms.get(i));
     }
 
   }
@@ -151,8 +172,11 @@ public class Configuration {
     for (int i = 0; i < size; i++) {
       Program program = readProgram(in);
 
+      int minutes = in.readInt();
+      
       if ((program != null) && (!program.isExpired()) && (!program.isOnAir())) {
-        mProgramList.add(program);
+        ReminderProgramItem item = new ReminderProgramItem(program, minutes);
+        mRoot.addProgram(item);
       }
     }
 
@@ -175,6 +199,8 @@ public class Configuration {
         mAddedPrograms.add(program);
       }
     }
+    
+    mRoot.update();
   }
 
   /**
@@ -201,4 +227,11 @@ public class Configuration {
     return Plugin.getPluginManager().getProgram(progDate, progId);
   }
 
+  public ProgramItem[] getProgramItems() {
+    return mRoot.getProgramItems();
+  }
+  
+  public Program[] getPrograms() {
+    return mRoot.getPrograms();
+  }
 }

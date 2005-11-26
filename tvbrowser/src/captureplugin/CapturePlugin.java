@@ -251,7 +251,8 @@ public class CapturePlugin extends devplugin.Plugin {
             
             String[] commands = devices[i].getAdditionalCommands();
 
-            for (int y = 0; y < commands.length; y++) {
+            if (commands != null)
+              for (int y = 0; y < commands.length; y++) {
                 
                 final int num = y;
                 
@@ -263,7 +264,7 @@ public class CapturePlugin extends devplugin.Plugin {
                 };
                 caction.putValue(Action.NAME, commands[y]);
                 commandList.add(caction);
-            }
+              }
 
             Action[] commandActions = new Action[commandList.size()];
             commandList.toArray(commandActions);
@@ -278,8 +279,16 @@ public class CapturePlugin extends devplugin.Plugin {
             return null;
           }
           
-          mainaction.putValue(Action.NAME, menu.getTitle());
-          return new ActionMenu(mainaction, menu.getSubItems());
+          if (menu.getSubItems().length == 1) {
+            Action action = menu.getSubItems()[0].getAction();
+            action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png",
+                CapturePlugin.class)));
+            return new ActionMenu(action);
+          } else {
+            mainaction.putValue(Action.NAME, menu.getTitle());
+            return new ActionMenu(mainaction, menu.getSubItems());
+          }
+          
         }
         
         ActionMenu[] actions = new ActionMenu[actionList.size()];
@@ -332,11 +341,12 @@ public class CapturePlugin extends devplugin.Plugin {
 
             Program[] programs = device.getProgramList();
 
-            for (int i = 0; i < programs.length; i++) {
+            if (programs != null) {
+              for (int i = 0; i < programs.length; i++) {
                 if (!v.contains(programs[i])) {
                     v.add(programs[i]);
                 }
-
+              }
             }
         }
 
@@ -415,9 +425,10 @@ public class CapturePlugin extends devplugin.Plugin {
           
           Program[] programs = device.getProgramList();
 
-          for (int i = 0; i < programs.length; i++) {
-            node.addProgram(programs[i]);
-          }
+          if (programs != null)
+            for (int i = 0; i < programs.length; i++) {
+              node.addProgram(programs[i]);
+            }
           
           mRootNode.add(node);
       }

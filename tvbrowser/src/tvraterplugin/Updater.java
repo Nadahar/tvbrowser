@@ -41,6 +41,7 @@ import org.w3c.dom.Node;
 
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
+import util.io.XMLWriter;
 import util.ui.Localizer;
 import util.ui.progress.Progress;
 import devplugin.Channel;
