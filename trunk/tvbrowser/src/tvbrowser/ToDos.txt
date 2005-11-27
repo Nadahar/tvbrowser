@@ -12,11 +12,11 @@ Release 2.2 (Grafische Verbesserungen)
       1280129 Nicht-modale Dialoge verwenden
       1260108 Icon themes
       1280070 Farben ändern
-      1265487 PrintPlugin: Drucken im Querformat nicht möglich
 
 - PrintPlugin:
     * Es sollen Filter gedruckt werden können
       1280121 PrintPlugin: Filter drucken
+      1265487 PrintPlugin: Drucken im Querformat nicht möglich
 
 Release 2.3 (Internationalisierung)
 ============
