@@ -140,9 +140,9 @@ public class TvDataInventory {
   public synchronized void readData(File file)
     throws IOException, ClassNotFoundException
   {
-    FileInputStream fIn = null;
+    BufferedInputStream fIn = null;
     try {
-      fIn = new FileInputStream(file);
+      fIn = new BufferedInputStream(new FileInputStream(file), 0x10000);
       ObjectInputStream in = new ObjectInputStream(fIn);
       
       in.readInt(); // version

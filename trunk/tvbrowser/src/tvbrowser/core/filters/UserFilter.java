@@ -87,7 +87,7 @@ public class UserFilter implements devplugin.ProgramFilter {
          mFile=file;
          ObjectInputStream in=null;
          try {
-             in=new ObjectInputStream(new FileInputStream(file));            
+             in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(file), 0x1000));            
              int version=in.readInt();
              mName=(String)in.readObject();
              mRule=(String)in.readObject();        

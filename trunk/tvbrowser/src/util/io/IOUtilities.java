@@ -62,7 +62,7 @@ public class IOUtilities {
     
     InputStream stream = null;
     try {
-      stream = getStream(url);
+      stream = new BufferedInputStream(getStream(url), 0x4000);
       if (stream == null) {
         throw new IOException("Can't connect to '" + url + "'!");
       }
@@ -88,9 +88,9 @@ public class IOUtilities {
   public static void saveStream(InputStream stream, File targetFile)
     throws IOException
   {
-    FileOutputStream out = null;
+    BufferedOutputStream out = null;
     try {
-      out = new FileOutputStream(targetFile);
+      out = new BufferedOutputStream(new FileOutputStream(targetFile), 0x4000);
       
       pipeStreams(stream, out);
     }
@@ -269,11 +269,11 @@ public class IOUtilities {
    * @throws IOException If copying failed
    */
   public static void copy(File src, File target) throws IOException {
-    FileInputStream in = null;
-    FileOutputStream out = null;
+    BufferedInputStream in = null;
+    BufferedOutputStream out = null;
     try {
-      in = new FileInputStream(src);
-      out = new FileOutputStream(target);
+      in = new BufferedInputStream(new FileInputStream(src), 0x4000);
+      out = new BufferedOutputStream(new FileOutputStream(target), 0x4000);
       
       pipeStreams(in, out);
       
@@ -437,7 +437,7 @@ public class IOUtilities {
     InputStream stream = null;
     GZIPInputStream gzipStream = null;
     try {
-      stream = new FileInputStream(srcFile);
+      stream = new BufferedInputStream(new FileInputStream(srcFile), 0x4000);
       gzipStream = new GZIPInputStream(stream);
       
       saveStream(gzipStream, targetFile);
@@ -544,7 +544,7 @@ public class IOUtilities {
   public static String timeToString(int minutesAfterMidnight) {
     int hours = minutesAfterMidnight / 60;
     int minutes = minutesAfterMidnight % 60;
-    return hours + ":" + ((minutes < 10) ? "0" : "") + minutes;
+    return new StringBuffer().append(hours).append(':').append((minutes < 10) ? "0" : "").append(minutes).toString();
   }
   
   

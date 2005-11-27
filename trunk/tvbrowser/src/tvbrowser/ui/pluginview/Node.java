@@ -69,7 +69,7 @@ public class Node extends DefaultMutableTreeNode {
       }
       int h = program.getHours();
       int m = program.getMinutes();
-      return h+":"+(m<10?"0":"")+m+"  " + program.getTitle()+ " (" + program.getChannel().getName()+")";
+      return new StringBuffer().append(h).append(':').append(m < 10 ? "0" : "").append(m).append("  ").append(program.getTitle()).append(" (").append(program.getChannel().getName()).append(')').toString();
     }
   };
 

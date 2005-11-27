@@ -74,7 +74,7 @@ public class TvDataServiceProxyManager {
     if (f.exists()) {
       try {
         Properties p=new Properties();
-        FileInputStream in=new FileInputStream(f);
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(f), 0x1000);
         p.load(in);
         in.close();
         service.loadSettings(p);

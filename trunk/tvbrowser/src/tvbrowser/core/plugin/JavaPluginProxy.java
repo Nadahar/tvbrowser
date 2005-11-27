@@ -26,6 +26,7 @@
 package tvbrowser.core.plugin;
 
 import java.awt.Frame;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -127,7 +128,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     if (datFile.exists()) {
       ObjectInputStream in = null;
       try {
-        in = new ObjectInputStream(new FileInputStream(datFile));
+        in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(datFile), 0x4000));
         mPlugin.readData(in);
       }
       catch (Throwable thr) {
@@ -145,11 +146,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     }
     
     // load plugin settings
-    FileInputStream in = null;
+    BufferedInputStream in = null;
     try {
       if (propFile.exists()) {
         Properties prop = new Properties();
-        in = new FileInputStream(propFile);
+        in = new BufferedInputStream(new FileInputStream(propFile), 0x4000);
         prop.load(in);
         in.close();
         mPlugin.loadSettings(prop);

@@ -24,6 +24,7 @@
  */
 package captureplugin.utils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -92,7 +93,7 @@ public class DeviceImportAndExport {
     }
 
     try {
-      ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+      ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file), 0x4000));
       
       int version = in.readInt();
       

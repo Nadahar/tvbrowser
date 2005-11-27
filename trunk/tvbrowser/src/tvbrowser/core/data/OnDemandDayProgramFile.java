@@ -26,17 +26,11 @@
 package tvbrowser.core.data;
 
 import java.io.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Iterator;
 
 import tvdataservice.MutableChannelDayProgram;
 
 import devplugin.*;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Program;
 
 /**
  * An encapsulated access on a file containing TV data that allows an access
@@ -92,9 +86,9 @@ public class OnDemandDayProgramFile {
   {
     checkValid();
     
-    FileInputStream stream = null;
+    BufferedInputStream stream = null;
     try {
-      stream = new FileInputStream(mFile);
+      stream = new BufferedInputStream(new FileInputStream(mFile), 0x10000);
       CountingInputStream countIn = new CountingInputStream(stream);
       ObjectInputStream objIn = new ObjectInputStream(countIn);
       

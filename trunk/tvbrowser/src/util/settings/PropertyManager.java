@@ -68,9 +68,9 @@ public class PropertyManager {
 
 
   public void readFromFile(File settingsFile) throws IOException {
-    FileInputStream in = null;
+    BufferedInputStream in = null;
     try {
-      in = new FileInputStream(settingsFile);
+      in = new BufferedInputStream(new FileInputStream(settingsFile), 0x4000);
       mProperties.load(in);
       
       clearCaches();

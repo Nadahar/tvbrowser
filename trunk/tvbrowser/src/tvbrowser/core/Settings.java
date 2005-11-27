@@ -77,7 +77,8 @@ public class Settings {
    * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
-    return mDefaultSettings.getProperty("userdir", System.getProperty("user.home") + File.separator + DEFAULT_USER_DIR);
+    String dir = new StringBuffer(System.getProperty("user.home")).append(File.separator).append(DEFAULT_USER_DIR).toString();
+	return mDefaultSettings.getProperty("userdir", dir);
   }
 
 

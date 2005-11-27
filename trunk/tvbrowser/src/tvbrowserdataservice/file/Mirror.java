@@ -135,9 +135,9 @@ public class Mirror {
   public static Mirror[] readMirrorListFromFile(File file)
     throws IOException, FileFormatException
   {
-    FileInputStream stream = null;
+    BufferedInputStream stream = null;
     try {
-      stream = new FileInputStream(file);
+      stream = new BufferedInputStream(new FileInputStream(file), 0x2000);
       
       return readMirrorListFromStream(stream);
     }
@@ -158,7 +158,9 @@ public class Mirror {
 
     PrintWriter writer = new PrintWriter(gOut);
     for (int i = 0; i < mirrorArr.length; i++) {
-      writer.println(mirrorArr[i].getUrl() + ";" + mirrorArr[i].getWeight());
+    	  writer.print(mirrorArr[i].getUrl());
+      writer.print(";");
+      writer.println(String.valueOf(mirrorArr[i].getWeight()));
     }
     writer.close();
     

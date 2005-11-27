@@ -344,7 +344,7 @@ public class TvDataBase {
       throw new NullPointerException("date is null");
     }
 
-    return getChannelKey(channel) + "." + date.getDateString();   
+    return new StringBuffer(getChannelKey(channel)).append('.').append(date.getDateString()).toString();   
   }
 
 
@@ -354,8 +354,7 @@ public class TvDataBase {
       throw new NullPointerException("channel is null");
     }
 
-    return channel.getCountry() + "_" + channel.getId()
-           + "_" + channel.getDataService().getClass().getPackage().getName();
+    return new StringBuffer(channel.getCountry()).append('_').append(channel.getId()).append('_').append(channel.getDataService().getClass().getPackage().getName()).toString();
   }
 
 
