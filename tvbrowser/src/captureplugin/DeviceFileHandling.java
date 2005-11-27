@@ -24,6 +24,7 @@
  */
 package captureplugin;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -109,7 +110,7 @@ public class DeviceFileHandling {
         File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator + 
                 "CaptureDevices" + File.separator + filename);
         
-        ObjectInputStream stream = new ObjectInputStream(new FileInputStream(data));
+        ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(data), 0x2000));
         
         dev.readData(stream);
         

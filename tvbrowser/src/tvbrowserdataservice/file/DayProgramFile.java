@@ -345,9 +345,9 @@ public class DayProgramFile extends AbstractFile {
   public static int readVersionFromFile(File file)
     throws IOException, FileFormatException
   {
-    FileInputStream stream = null;
+    BufferedInputStream stream = null;
     try {
-      stream = new FileInputStream(file);
+      stream = new BufferedInputStream(new FileInputStream(file), 0x4000);
       
       return readVersionFromStream(stream);
     }

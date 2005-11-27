@@ -26,6 +26,7 @@
 package tvbrowserdataservice.file;
 
 import java.awt.Image;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -196,10 +197,10 @@ public class ChannelList {
   public void readFromFile(File file, TvDataService dataService)
     throws IOException, FileFormatException
   {
-    FileInputStream stream = null;
+    BufferedInputStream stream = null;
     try {
-      stream = new FileInputStream(file);
-
+      stream = new BufferedInputStream(new FileInputStream(file), 0x2000);
+      
       readFromStream(stream, dataService);
     }
     finally {
@@ -220,14 +221,15 @@ public class ChannelList {
     for (int i = 0; i < getChannelCount(); i++) {
       ChannelItem channelItem = (ChannelItem)mChannelList.get(i);
       Channel channel = channelItem.getChannel();
-      writer.println(channel.getCountry()
-        + ";" + channel.getTimeZone().getID()
-        + ";" + channel.getId()
-        + ";" + channel.getName()
-        + ";" + channel.getCopyrightNotice()
-        + ";" + (channel.getWebpage()==null?"http://tvbrowser.org":channel.getWebpage())
-        + ";" + (channelItem.getIconUrl()==null?"":channelItem.getIconUrl())
-        + ";" + (channel.getCategories()));
+      StringBuffer line = new StringBuffer();
+      line.append(channel.getCountry()).append(";").append(channel.getTimeZone().getID());
+      line.append(";").append(channel.getId());
+      line.append(";").append(channel.getName());
+      line.append(";").append(channel.getCopyrightNotice());
+      line.append(";").append(channel.getWebpage() == null ? "http://tvbrowser.org" : channel.getWebpage());
+      line.append(";").append(channelItem.getIconUrl() == null ? "" : channelItem.getIconUrl());
+      line.append(";").append(channel.getCategories());
+      writer.println(line.toString());
     }
     writer.close();
 
@@ -279,7 +281,7 @@ public class ChannelList {
       mIconIndexFile = new File(mIconDir,"index.txt");
       mProperties = new Properties();
       if (mIconIndexFile.exists()) {
-        mProperties.load(new FileInputStream(mIconIndexFile));
+        mProperties.load(new BufferedInputStream(new FileInputStream(mIconIndexFile), 0x1000)); 
       }
       else {
         mLog.severe("index.txt not found");

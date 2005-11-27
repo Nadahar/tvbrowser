@@ -259,7 +259,7 @@ public class ProgramField implements Cloneable {
    */
   public String getDataAsString() {
     if (mDataFormat == ProgramFieldType.TEXT_FORMAT) {
-      return "'" + getTextData() + "'";
+      return new StringBuffer("'").append(getTextData()).append("'").toString();
     }
     else if (mDataFormat == ProgramFieldType.INT_FORMAT) {
       return Integer.toString(getIntData());
@@ -268,7 +268,7 @@ public class ProgramField implements Cloneable {
       int time = getTimeData();
       int hours = time / 60;
       int minutes = time % 60;
-      return hours + ":" + ((minutes < 10) ? "0" : "") + minutes;
+      return new StringBuffer().append(hours).append(':').append((minutes < 10) ? "0" : "").append(minutes).toString();
     }
     else if (mDataFormat == ProgramFieldType.BINARY_FORMAT) {
       return "(binary)";

@@ -126,9 +126,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private String getLocaleProperty(Properties prop, String key, String defaultValue) {
     Locale locale = Locale.getDefault();
     String language = locale.getLanguage();
-    String result = prop.getProperty(key + "_" + language);
+    String result = prop.getProperty(new StringBuffer(key).append('_').append(language).toString());
     if (result == null) {
-      result = prop.getProperty(key + "_default", defaultValue);
+      result = prop.getProperty(new StringBuffer(key).append("_default").toString(), defaultValue);
     }
     return result;
 
@@ -143,7 +143,8 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     if (!file.exists()) { return ""; }
     Properties prop = new Properties();
     try {
-      prop.load(new FileInputStream(file));
+    	  // TODO init all props at once
+      prop.load(new BufferedInputStream(new FileInputStream(file), 0x400));
       mDescription = getLocaleProperty(prop, "description", "");
       return mDescription;
     } catch (IOException e) {
@@ -160,7 +161,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     Properties prop = new Properties();
     try {
-      prop.load(new FileInputStream(file));
+      prop.load(new BufferedInputStream(new FileInputStream(file), 0x400));
       Locale locale = Locale.getDefault();
       String language = locale.getLanguage();
       String result = prop.getProperty(language);
@@ -189,7 +190,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     if (!file.exists()) { return ""; }
     Properties prop = new Properties();
     try {
-      prop.load(new FileInputStream(file));
+      prop.load(new BufferedInputStream(new FileInputStream(file), 0x400));
       providerName = prop.getProperty("provider",mLocalizer.msg("unknownProvider","unknown"));
       mSettings.setProperty(mID + "_provider", providerName);
       mProviderName = providerName;

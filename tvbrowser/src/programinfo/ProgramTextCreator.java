@@ -24,8 +24,8 @@ public class ProgramTextCreator {
 
     StringBuffer buffer = new StringBuffer();
 
-    buffer.append("<html><head>" + "<style type=\"text/css\" media=\"screen\">"
-        + "<!--" + styleSheet + "-->" + "</style>" + "</head>" + "<body>");
+    buffer.append("<html><head>").append("<style type=\"text/css\" media=\"screen\">");
+    buffer.append("<!--").append(styleSheet).append("--></style></head><body>");
 
     buffer.append("<table width=\"100%\"><tr><td valign=\"top\">");
 
@@ -35,21 +35,20 @@ public class ProgramTextCreator {
     int length = prog.getLength();
     if (length > 0) {
       String msg = mLocalizer.msg("minutes", "{0} min", new Integer(length));
-      buffer.append(msg + " (");
+      buffer.append(msg).append(" (");
 
       int hours = prog.getHours();
       int minutes = prog.getMinutes();
       int endTime = (hours * 60 + minutes + length) % (24 * 60);
       minutes = endTime % 60;
       hours = endTime / 60;
-      String until = hours + ":" + (minutes < 10 ? "0" : "") + minutes;
+      String until = new StringBuffer().append(hours).append(':').append(minutes < 10 ? "0" : "").append(minutes).toString();
       buffer.append(mLocalizer.msg("until", "until {0}", until));
 
       int netLength = prog.getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
       if (netLength != -1) {
-        msg = mLocalizer.msg("netMinuted", "{0} min net",
-            new Integer(netLength));
-        buffer.append(" - " + msg);
+        msg = mLocalizer.msg("netMinuted", "{0} min net", new Integer(netLength));
+        buffer.append(" - ").append(msg);
       }
       buffer.append(")");
     }
@@ -199,7 +198,7 @@ public class ProgramTextCreator {
   }
 
   private void openPara(StringBuffer buffer, String style) {
-    buffer.append("<div id=\"" + style + "\">");
+    buffer.append("<div id=\"").append(style).append("\">");
   }
 
   private void closePara(StringBuffer buffer) {
@@ -246,7 +245,7 @@ public class ProgramTextCreator {
     
     openPara(buffer, style);
     if (label != null) {
-      buffer.append("<b>" + label + ":</b> ");
+      buffer.append("<b>").append(label).append(":</b> ");
     }
     buffer.append(text);
     closePara(buffer);

@@ -438,7 +438,7 @@ public class MutableProgram implements Program {
     } else {
       int hours = value / 60;
       int minutes = value % 60;
-      return hours + ":" + ((minutes < 10) ? "0" : "") + minutes;
+      return new StringBuffer().append(hours).append(":").append((minutes < 10) ? "0" : "").append(minutes).toString();
     }
   }
 

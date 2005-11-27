@@ -327,9 +327,9 @@ public class PrimaryDataManager {
     ChannelList result = new ChannelList((ChannelGroup)null);
       
     File fromFile = new File(mConfigDir, fileName);
-    FileInputStream stream = null;
+    BufferedInputStream stream = null;
     try {
-      stream = new FileInputStream(fromFile);
+      stream = new BufferedInputStream(new FileInputStream(fromFile), 0x4000);
       BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             
       String line;
@@ -385,9 +385,9 @@ public class PrimaryDataManager {
     ArrayList mirrorList = new ArrayList();
 
     File fromFile = new File(mConfigDir, fileName);
-    FileInputStream stream = null;
+    BufferedInputStream stream = null;
     try {
-      stream = new FileInputStream(fromFile);
+      stream = new BufferedInputStream(new FileInputStream(fromFile), 0x4000);
       BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             
       String line;

@@ -39,9 +39,9 @@ public abstract class AbstractFile {
 
 
   public void readFromFile(File file) throws IOException, FileFormatException {
-    FileInputStream stream = null;
+    BufferedInputStream stream = null;
     try {
-      stream = new FileInputStream(file);
+      stream = new BufferedInputStream(new FileInputStream(file), 0x4000);
       
       readFromStream(stream);
     }

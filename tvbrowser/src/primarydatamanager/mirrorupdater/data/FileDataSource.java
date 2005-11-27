@@ -25,6 +25,7 @@
  */
 package primarydatamanager.mirrorupdater.data;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,9 +74,9 @@ public class FileDataSource implements DataSource {
   public byte[] loadFile(String fileName) throws UpdateException {
     File file = new File(mDir, fileName);
     
-    FileInputStream in = null;
+    BufferedInputStream in = null;
     try {
-      in = new FileInputStream(file);
+      in = new BufferedInputStream(new FileInputStream(file), 0x4000);
       ByteArrayOutputStream out = new ByteArrayOutputStream((int) file.length());
       IOUtilities.pipeStreams(in, out);
       out.close();

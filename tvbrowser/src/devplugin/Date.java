@@ -218,7 +218,7 @@ public class Date implements Comparable {
   }
 
   public String getDateString() {
-    return "" + getValue();
+    return String.valueOf(getValue());
   }
 
   public String getLongDateString() {

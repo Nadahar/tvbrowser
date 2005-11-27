@@ -26,6 +26,7 @@
 
 package tvbrowser.core.filters;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -68,7 +69,7 @@ public class FilterComponentList {
       
       if (filterCompFile.exists() && filterCompFile.isFile()) {
       
-        in=new ObjectInputStream(new FileInputStream(filterCompFile));        
+        in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(filterCompFile), 0x1000));        
         int version=in.readInt();
         int compCnt=in.readInt();
         for (int i=0; i<compCnt; i++) {

@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -259,7 +260,7 @@ public class PrintPlugin extends Plugin {
     File schemeFile = new File(home,SCHEME_FILE_DAYPROGRAM);
     ObjectInputStream in=null;
     try {
-      in = new ObjectInputStream(new FileInputStream(schemeFile));
+      in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(schemeFile), 0x4000));
       DayProgramScheme[] schemes = readDayProgramSchemesFromStream(in);
       in.close();
       return schemes;
@@ -306,7 +307,7 @@ public class PrintPlugin extends Plugin {
     File schemeFile = new File(home,SCHEME_FILE_QUEUE);
     ObjectInputStream in=null;
     try {
-      in = new ObjectInputStream(new FileInputStream(schemeFile));
+      in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(schemeFile), 0x4000));
       QueueScheme[] schemes = readQueueSchemesFromStream(in);
       in.close();
       return schemes;

@@ -30,6 +30,7 @@ package tvbrowser.core.plugin;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class DefaultSettings {
   public DefaultSettings() {
     mProperties = new Properties();
     try {
-      mProperties.load(new FileInputStream(new File(FILENAME)));
+      mProperties.load(new BufferedInputStream(new FileInputStream(new File(FILENAME)), 0x4000));
     } catch (IOException e) {
       //ignore
     }

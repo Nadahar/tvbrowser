@@ -122,9 +122,7 @@ public class ChannelArrayProperty extends Property {
           buffer.append(',');
         }
         String dsClassName = value[i].getDataService().getClass().getName();
-        String asString = dsClassName + ":" + value[i].getId();
-
-        buffer.append(asString);
+        buffer.append(dsClassName).append(':').append(value[i].getId());
       }
       
       setProperty(buffer.toString());

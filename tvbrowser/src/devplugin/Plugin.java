@@ -27,6 +27,7 @@ package devplugin;
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -725,7 +726,7 @@ abstract public class Plugin {
       ObjectInputStream in;
       File f = new File(Settings.getUserDirectoryName(),getId()+".node");
       try {
-        in = new ObjectInputStream(new FileInputStream(f));
+        in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f), 0x2000));
         mRootNode.load(in);
         in.close();
       } catch (FileNotFoundException e) {

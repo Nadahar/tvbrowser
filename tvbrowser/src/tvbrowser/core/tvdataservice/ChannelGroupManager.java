@@ -233,7 +233,7 @@ public class ChannelGroupManager {
   }
 
   private String createId(TvDataServiceProxy service, ChannelGroup group) {
-    return service.getId()+"."+group.getId();
+    return new StringBuffer(service.getId()).append('.').append(group.getId()).toString();
   }
 
   private String[] getSubscribedGroupIds() {

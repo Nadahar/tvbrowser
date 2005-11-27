@@ -148,37 +148,37 @@ public class ParamLibrary {
     } else if (key.equals("original_title")) {
       return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE));
     } else if (key.equals("start_day")) {
-      return "" + prg.getDate().getDayOfMonth();
+      return String.valueOf(prg.getDate().getDayOfMonth());
     } else if (key.equals("start_month")) {
-      return "" + prg.getDate().getMonth();
+      return String.valueOf(prg.getDate().getMonth());
     } else if (key.equals("start_year")) {
-      return "" + prg.getDate().getYear();
+      return String.valueOf(prg.getDate().getYear());
     } else if (key.equals("end_day")) {
-      return "" + getEndTimeFieldInProgram(prg, Calendar.DAY_OF_MONTH);
+      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.DAY_OF_MONTH));
     } else if (key.equals("end_month")) {
-      return "" + (getEndTimeFieldInProgram(prg, Calendar.MONTH) + 1);
+      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.MONTH) + 1);
     } else if (key.equals("end_year")) {
-      return "" + getEndTimeFieldInProgram(prg, Calendar.YEAR);
+      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.YEAR));
     } else if (key.equals("start_hour")) {
-      return "" + prg.getHours();
+      return String.valueOf(prg.getHours());
     } else if (key.equals("start_minute")) {
-      return "" + prg.getMinutes();
+      return String.valueOf(prg.getMinutes());
     } else if (key.equals("end_hour")) {
-      return "" + getEndTimeFieldInProgram(prg, Calendar.HOUR_OF_DAY);
+      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.HOUR_OF_DAY));
     } else if (key.equals("end_minute")) {
-      return "" + getEndTimeFieldInProgram(prg, Calendar.MINUTE);
+      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.MINUTE));
     } else if (key.equals("length_minutes")) {
-      return "" + prg.getLength();
+      return String.valueOf(prg.getLength());
     } else if (key.equals("length_sec")) {
-      return "" + (prg.getLength() * 60);
+      return String.valueOf(prg.getLength() * 60);
     } else if (key.equals("short_info")) {
       return removeNull(prg.getShortInfo());
     } else if (key.equals("description")) {
       String res = removeNull(prg.getDescription());
-      if (prg.getChannel().getCopyrightNotice() != null) {
-        res = res + "\n" + prg.getChannel().getCopyrightNotice();
+      String copyright = prg.getChannel().getCopyrightNotice();
+	  if (copyright != null) {
+        return new StringBuffer(res).append('\n').append(copyright).toString();
       }
-      
       return res;
     } else if (key.equals("episode")) {
       return removeNull(prg.getTextField(ProgramFieldType.EPISODE_TYPE));
