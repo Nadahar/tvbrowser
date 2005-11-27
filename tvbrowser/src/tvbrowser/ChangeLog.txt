@@ -1,5 +1,8 @@
 Changelog TVBrowser
 
+2.2
+- Minor speed improvements (Thanks to Frank M. Caputo)
+
 2.1
 - Bugfixes
   - 1355929 Replace of ( and ) in BooleanSearcher
