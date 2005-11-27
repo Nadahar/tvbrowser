@@ -25,22 +25,32 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
-import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.PeriodItem;
 import util.ui.FileCheckBox;
 import util.ui.TabLayout;
-import com.jgoodies.forms.layout.FormLayout;
+
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * TV-Browser
@@ -71,8 +81,7 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
   private JComboBox mLanguageCB, mTimezoneCB;
   private JCheckBox mOSTimezoneCb;
 
-  private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb;
-  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB, mSingeClickTrayChb;
+  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB;
 
 
   public TVDataSettingsTab() {
@@ -225,27 +234,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     localePn.add(lb, BorderLayout.SOUTH);
     content.add(localePn);
 
-    if (TVBrowser.isUsingSystemTray()) {
-      JPanel trayPn = new JPanel(new TabLayout(1));
-      trayPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("tray","Tray")));
-      content.add(trayPn);
-
-      String msg = mLocalizer.msg("minimizeToTray", "Minimize to Tray");
-      boolean checked = Settings.propMinimizeToTray.getBoolean();
-      mMinimizeToTrayChb = new JCheckBox(msg, checked);
-      trayPn.add(mMinimizeToTrayChb);
-      
-      msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing", "When closing the main window only minimize TV-Browser, don't quit.");
-      checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean();
-      mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked);
-      trayPn.add(mOnlyMinimizeWhenWindowClosingChB);
-
-      checked = Settings.propUseSingeClickInTray.getBoolean();
-      mSingeClickTrayChb = new JCheckBox(mLocalizer.msg("useSingleClick","Use single Click in Tray to hide and show window"), checked);
-      trayPn.add(mSingeClickTrayChb);
-    
-    }
-    
     JPanel morePn = new JPanel(new TabLayout(1));
     morePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("more","More")));
     content.add(morePn);
@@ -303,22 +291,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     }
     Settings.propUserDefinedWebbrowser.setString(webbrowser);
 
-    if (mOnlyMinimizeWhenWindowClosingChB != null) {
-      boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected();
-      Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
-    }
-
-    if (mMinimizeToTrayChb != null) {
-      boolean checked = mMinimizeToTrayChb.isSelected();
-      Settings.propMinimizeToTray.setBoolean(checked);
-    }
-
-    if (mSingeClickTrayChb != null) {
-      boolean checked = mSingeClickTrayChb.isSelected();
-      Settings.propUseSingeClickInTray.setBoolean(checked);
-    }
-
-    
     Language lan = (Language)mLanguageCB.getSelectedItem();
     Settings.propLanguage.setString(lan.getId());
 
