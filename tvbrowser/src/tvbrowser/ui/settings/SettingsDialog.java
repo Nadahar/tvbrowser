@@ -58,6 +58,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -305,10 +306,14 @@ public class SettingsDialog {
     node = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("advanced","advanced"),null));
     root.add(node);
 
+    if (TVBrowser.isUsingSystemTray()) {
+      node.add(new SettingNode(new TraySettingsTab()));
+    }
     node.add(new SettingNode(new ProxySettingsTab()));
     node.add(new SettingNode(new DirectoriesSettingsTab()));
     node.add(new SettingNode(new TVDataSettingsTab()));
 
+    
     return root;
   }
 
