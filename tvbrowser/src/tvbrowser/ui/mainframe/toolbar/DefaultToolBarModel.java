@@ -27,6 +27,7 @@
 package tvbrowser.ui.mainframe.toolbar;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.Settings;
@@ -133,7 +134,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       else
         time = hour + ":" + time;
       
-      mTimeButtonActions[i] = createAction(time,"#scrollTo" + time,scrollTo + time, new ImageIcon("imgs/down16.gif"), new ImageIcon("imgs/Down24.gif") , ToolBar.BUTTON_ACTION, new ActionListener() {
+      mTimeButtonActions[i] = createAction(time,"#scrollTo" + time,scrollTo + time, 
+          IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16),
+          IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22),
+          ToolBar.BUTTON_ACTION, new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance().scrollToTime(scrollTime);
         }
