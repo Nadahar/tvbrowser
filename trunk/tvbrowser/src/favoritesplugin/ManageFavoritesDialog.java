@@ -34,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -64,7 +63,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
 import util.ui.ExtensionFileFilter;
 import util.ui.ImageUtilities;
 import util.ui.ProgramList;
@@ -156,7 +154,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mDeleteBt);
 
     msg = mLocalizer.msg("up", "Move the selected favorite up");
-    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Up24.gif", getClass());
+    icon = FavoritesPlugin.getPluginManager().getIconFromTheme(FavoritesPlugin.getInstance(), "actions", "go-up", 22);
     mUpBt = UiUtilities.createToolBarButton(msg, icon);
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -166,7 +164,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mUpBt);
     
     msg = mLocalizer.msg("down", "Move the selected favorite down");
-    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Down24.gif", getClass());
+    icon = FavoritesPlugin.getPluginManager().getIconFromTheme(FavoritesPlugin.getInstance(), "actions", "go-down", 22);
     mDownBt = UiUtilities.createToolBarButton(msg, icon);
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
