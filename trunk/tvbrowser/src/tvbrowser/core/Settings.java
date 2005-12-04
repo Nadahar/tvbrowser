@@ -74,6 +74,16 @@ public class Settings {
 
 
   /**
+   * Returns the Default-Settings. These Settings are stored in the
+   * mac, windows and linux.properties-Files
+   * 
+   * @return Default-Settings
+   */
+  public static DefaultSettings getDefaultSettings() {
+    return mDefaultSettings;
+  }
+  
+  /**
    * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
@@ -693,4 +703,9 @@ public class Settings {
   public static final StringArrayProperty propDeleteFilesAtStart
     = new StringArrayProperty(mProp, "deleteFilesAtStart", new String[0]);
     
+  /**
+   * The IconTheme
+   */
+  public static final StringProperty propIcontheme
+    = new StringProperty(mProp, "icontheme", mDefaultSettings.getProperty("icontheme", null));
 }

@@ -28,11 +28,12 @@ package devplugin;
 
 import java.util.Iterator;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 
 /**
  * The PluginManager provides some usefull methods for a plugin.
@@ -281,4 +282,25 @@ public interface PluginManager {
    */
   public TvBrowserSettings getTvBrowserSettings();
 
+  /**
+   * Returns an Icon from the Icon-Theme-System
+   *  
+   * If your Plugin has Icons that are not available as Icons within an Theme, you can add
+   * your Icons into your Jar-File.
+   * 
+   * The Directory-Structure must be like this:
+   * 
+   * [PackageOfYourPlugin]/icons/[Size]x[Size]/[category]/[icon].png
+   * 
+   * Please try to use the FreeDesktop-Icon Naming Conventions
+   * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
+   * (please remove the [ ])
+   *  
+   * @param plugin Plugin that wants to load an Icon
+   * @param category Category of the Icon (Action, etc...) 
+   * @param icon Icon-Name without File-Extension
+   * @param size Size of the Icon
+   * @return Icon if found, null if not
+   */
+  public ImageIcon getIconFromTheme(Plugin plugin, String category, String icon, int size);
 }

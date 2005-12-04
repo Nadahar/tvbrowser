@@ -32,6 +32,7 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
@@ -41,6 +42,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.SeparatorFilter;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.search.booleansearch.BooleanSearcher;
 import tvbrowser.core.search.booleansearch.ParserException;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
@@ -569,6 +571,30 @@ public class PluginManagerImpl implements PluginManager {
         return Settings.propLastDownloadDate.getDate();
       }
     };
+  }
+
+  /**
+   * Returns an Icon from the Icon-Theme-System
+   *  
+   * If your Plugin has Icons that are not available as Icons within an Theme, you can add
+   * your Icons into your Jar-File.
+   * 
+   * The Directory-Structure must be like this:
+   * 
+   * [PackageOfYourPlugin]/icons/[Size]x[Size]/[category]/[icon].png
+   * 
+   * Please try to use the FreeDesktop-Icon Naming Conventions
+   * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
+   * (please remove the [ ])
+   *  
+   * @param plugin Plugin that wants to load an Icon
+   * @param category Category of the Icon (Action, etc...) 
+   * @param icon Icon-Name without File-Extension
+   * @param size Size of the Icon
+   * @return Icon if found, null if not
+   */
+  public ImageIcon getIconFromTheme(Plugin plugin, String category, String Icon, int size) {
+    return IconLoader.getInstance().getIconFromTheme(plugin, category, Icon, size);
   }
 
 }
