@@ -31,12 +31,10 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -96,9 +94,7 @@ public class EMailPlugin extends Plugin {
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Send via EMail"));
-    action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("emailplugin/email.gif",
-        EMailPlugin.class)));
-
+    action.putValue(Action.SMALL_ICON, getPluginManager().getIconFromTheme(this, "actions", "mail-message-new", 16)); 
     return new ActionMenu(action);
   }
 

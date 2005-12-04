@@ -220,7 +220,7 @@ public class WebSettingsTab implements SettingsTab {
             
         });
         
-        mUp = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Up16.gif", WebSettingsTab.class));
+        mUp = new JButton(WebPlugin.getPluginManager().getIconFromTheme(WebPlugin.getInstance(), "actions", "go-up", 16));
         mUp.setToolTipText(mLocalizer.msg("Up", "Move selected Site up"));
 
         mUp.addActionListener(new ActionListener() {
@@ -232,7 +232,7 @@ public class WebSettingsTab implements SettingsTab {
         });
         
         
-        mDown = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Down16.gif", WebSettingsTab.class));
+        mDown = new JButton(WebPlugin.getPluginManager().getIconFromTheme(WebPlugin.getInstance(), "actions", "go-down", 16));
         mDown.setToolTipText(mLocalizer.msg("Down", "Move selected Site down"));
 
         mDown.addActionListener(new ActionListener() {

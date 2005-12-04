@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
 
 import java.awt.*;
@@ -35,13 +36,13 @@ public class SortableItemList extends JPanel implements ActionListener {
   
   public SortableItemList(String title, Object[] objects) {
     
-    mUpBt = new JButton(new ImageIcon("imgs/Up24.gif"));
+    mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
     String msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
     mUpBt.setToolTipText(msg);
     mUpBt.setMargin(UiUtilities.ZERO_INSETS);
     mUpBt.addActionListener(this);
 
-    mDownBt = new JButton(new ImageIcon("imgs/Down24.gif"));
+    mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
     msg = mLocalizer.msg("tooltip.down", "Move selected rows down");
     mDownBt.setToolTipText(msg);
     mDownBt.setMargin(UiUtilities.ZERO_INSETS);

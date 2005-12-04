@@ -40,7 +40,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -53,6 +52,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
@@ -376,14 +376,14 @@ class ErrorWindow {
           mMainPn.add(mDetailPn, BorderLayout.CENTER);
         }
         mDetailPn.setVisible(true);
-
-        mDetailBt.setIcon(new ImageIcon("imgs/up16.gif"));
+        
+        mDetailBt.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 16));
       } else {
         if (mDetailPn != null) {
           mDetailPn.setVisible(false);
         }
 
-        mDetailBt.setIcon(new ImageIcon("imgs/down16.gif"));
+        mDetailBt.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
       }
 
       getWindow().pack();
