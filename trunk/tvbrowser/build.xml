@@ -221,7 +221,6 @@
       <fileset dir="${src.dir}" includes="**/*.gif"/>
       <fileset dir="${src.dir}" includes="**/*.jpg"/>
       <fileset dir="${src.dir}" includes="**/*.png"/>
-      <fileset dir="${src.dir}" includes="**/*.ico"/>
       <fileset dir="${src.dir}" includes="**/*.dtd"/>
       <fileset dir="${src.dir}" includes="**/*.properties"/>
     </copy>
@@ -372,6 +371,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/OnlineReminder.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="onlinereminder/**"/>
+    </jar>
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
@@ -390,6 +393,13 @@
     <copy todir="${tvbrowser-default.runtime.dir}/imgs">
       <fileset dir="${classes.dir}/imgs"/>
     </copy>
+    
+    <copy todir="${tvbrowser-default.runtime.dir}/imgs">
+	    <fileset dir="./images/additional">
+		    <include name="*.ico"/>
+	    </fileset>
+    </copy>
+
     <copy todir="${tvbrowser-default.runtime.dir}">
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${deployment.dir}/common" includes="*.url" />
@@ -401,12 +411,18 @@
       <!--    <fileset dir="x11/src/" includes="libDesktopIndicator.so"/> -->
     </copy>
 
-
+    <!-- Themepacks -->
     <mkdir dir="${tvbrowser-default.runtime.dir}/themepacks"/>
     <copy todir="${tvbrowser-default.runtime.dir}/themepacks">
       <fileset dir="themepacks"/>
     </copy>
 
+    <!-- Icon-Themes -->
+    <mkdir dir="${tvbrowser-default.runtime.dir}/icons"/>
+
+    <copy todir="${tvbrowser-default.runtime.dir}/icons">
+	    <fileset dir="images/themes" includes="**/*"/>
+    </copy>
 
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/commons-net.jar"/>
@@ -454,7 +470,7 @@
     <jarbundler dir="${tvbrowser-mac.runtime.dir}"
                 verbose="false"
                 name="TV-Browser"
-                icon="./src/imgs/tvbrowser.icns"
+		icon="./images/aditional/tvbrowser.icns"
                 mainclass="tvbrowser.TVBrowser"
                 extraclasspath="/System/Library/Java"
                 jvmversion="1.4+"
