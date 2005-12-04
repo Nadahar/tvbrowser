@@ -40,6 +40,7 @@ import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.filters.PluginFilter;
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
 
 public class SelectFilterDlg extends JDialog implements ActionListener {
@@ -101,8 +102,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
     btnPanel.add(panel1, BorderLayout.NORTH);
 
     JPanel panel2 = new JPanel(new GridLayout(0, 1, 0, 7));
-    mUpBtn = new JButton(new ImageIcon("imgs/up16.gif"));
-    mDownBtn = new JButton(new ImageIcon("imgs/down16.gif"));
+    mUpBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 16));
+    mDownBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
     mUpBtn.addActionListener(this);
     mDownBtn.addActionListener(this);
     panel2.add(mUpBtn);

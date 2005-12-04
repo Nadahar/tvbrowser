@@ -33,6 +33,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
 
 /**
@@ -126,12 +127,12 @@ public class CustomizableItemsPanel extends JPanel {
     mLeftBt.setToolTipText(msg);
     mLeftBt.setMargin(UiUtilities.ZERO_INSETS);
 
-    mUpBt = new JButton(new ImageIcon("imgs/Up24.gif"));
+    mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
     msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
     mUpBt.setToolTipText(msg);
     mUpBt.setMargin(UiUtilities.ZERO_INSETS);
 
-    mDownBt = new JButton(new ImageIcon("imgs/Down24.gif"));
+    mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
     msg = mLocalizer.msg("tooltip.down", "Move selected rows down");
     mDownBt.setToolTipText(msg);
     mDownBt.setMargin(UiUtilities.ZERO_INSETS);

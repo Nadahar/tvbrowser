@@ -67,13 +67,23 @@ public class WebPlugin extends Plugin {
   /** The WebAddresses */
   private Vector mAddresses;
 
+  private static WebPlugin INSTANCE;
+  
   /**
    * Creates the Plugin
    */
   public WebPlugin() {
-
+    INSTANCE = this;
   }
 
+  /**
+   * Returns the Instance of the Plugin
+   * @return Plugin-Instance
+   */
+  public static WebPlugin getInstance() {
+    return INSTANCE;
+  }
+  
   /**
    * Returns the Plugin-Info
    */

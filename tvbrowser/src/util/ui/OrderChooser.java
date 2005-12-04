@@ -31,6 +31,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import tvbrowser.core.icontheme.IconLoader;
+
 /**
  *
  * @author Til Schneider, www.murfman.de
@@ -107,7 +109,7 @@ public class OrderChooser extends JPanel {
     p2 = new JPanel(new GridLayout(0, 1));
     p1.add(p2);
 
-    mUpBt = new JButton(new ImageIcon("imgs/Up24.gif"));
+    mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
     mUpBt.setToolTipText(mLocalizer.msg("tooltip.up", "Move selected rows up"));
     mUpBt.setMargin(UiUtilities.ZERO_INSETS);
     mUpBt.addActionListener(new ActionListener() {
@@ -117,7 +119,7 @@ public class OrderChooser extends JPanel {
     });
     p2.add(mUpBt);
 
-    mDownBt = new JButton(new ImageIcon("imgs/Down24.gif"));
+    mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
     mDownBt.setToolTipText(mLocalizer.msg("tooltip.down", "Move selected rows down"));
     mDownBt.setMargin(UiUtilities.ZERO_INSETS);
     mDownBt.addActionListener(new ActionListener() {

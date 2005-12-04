@@ -55,6 +55,7 @@ import util.paramhandler.ParamDescriptionPanel;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import captureplugin.CapturePlugin;
 
 /**
  * A DialogBox for the additional Parameters
@@ -205,7 +206,7 @@ public class AdditionalParams extends JDialog {
 
         buttons.add(remove);
 
-        final JButton up = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Up16.gif",this.getClass()));
+        final JButton up = new JButton(CapturePlugin.getPluginManager().getIconFromTheme(CapturePlugin.getInstance(), "action", "go-up", 16));
         up.setToolTipText(mLocalizer.msg("Up","Up"));
         buttons.add(up);
 
@@ -217,7 +218,7 @@ public class AdditionalParams extends JDialog {
           
         });
         
-        final JButton down = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Down16.gif",this.getClass()));
+        final JButton down = new JButton(CapturePlugin.getPluginManager().getIconFromTheme(CapturePlugin.getInstance(), "action", "go-down", 16));
         down.setToolTipText(mLocalizer.msg("Down","Down"));
         buttons.add(down);
 
