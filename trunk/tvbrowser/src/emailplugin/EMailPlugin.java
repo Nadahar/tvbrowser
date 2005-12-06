@@ -42,6 +42,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -74,13 +75,12 @@ public class EMailPlugin extends Plugin {
 
   /*
    * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getMarkIconName()
+   * @see devplugin.Plugin#getMarkIconFromTheme()
    */
-  public String getMarkIconName() {
-    return "emailplugin/email.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("actions", "mail-message-new");
   }
-
+  
   /*
    * (non-Javadoc)
    * 
@@ -123,7 +123,7 @@ public class EMailPlugin extends Plugin {
    */
   public SettingsTab getSettingsTab() {
 
-    EMailSettingsTab tab = new EMailSettingsTab(mSettings);
+    EMailSettingsTab tab = new EMailSettingsTab(this, mSettings);
 
     return tab;
   }

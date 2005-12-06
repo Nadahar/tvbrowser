@@ -43,8 +43,8 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-
-import tvbrowser.core.*;
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import util.exc.TvBrowserException;
 import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
@@ -474,7 +474,6 @@ abstract public class Plugin {
     return null;
   }
 
-
   /**
    * Gets the icon used for marking programs in the program table.
    * 
@@ -484,14 +483,33 @@ abstract public class Plugin {
    */
   public final Icon getMarkIcon() {
     if (mMarkIcon== null ) {
-      String iconFileName = getMarkIconName();
-      if (iconFileName != null) {
-        mMarkIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
+      ThemeIcon icon = getMarkIconFromTheme();
+      
+      if (icon != null) {
+        mMarkIcon = IconLoader.getInstance().getIconFromTheme(icon, 16);
       }
+      
+      if (mMarkIcon != null) {
+        String iconFileName = getMarkIconName();
+        if (iconFileName != null) {
+          mMarkIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
+        }
+      }
+      
     }
     return mMarkIcon;
   }
 
+  /**
+   * This gets the ThemeIcon containg your mark icon.
+   * 
+   * This Function uses the Icon-Theme-Function of the TV-Browser. For details see {@link PluginManager.getIconFromTheme()}
+   * 
+   * @return ThemeIcon that identifies the Icon in the Theme
+   */
+  public ThemeIcon getMarkIconFromTheme() {
+    return null;
+  }
 
   /**
    * Gets the name of the file, containing your mark icon (in the jar-File).
@@ -500,6 +518,8 @@ abstract public class Plugin {
    * This icon is used for marking programs in the program table.
    * <p>
    * Override this method if your plugin is able to mark programs
+   *
+   * As an alternative you can use an Icon from the Icon-Theme using {@link #getMarkIconFromTheme()}
    *
    * @return the name of the file, containing your icon for the toolbar or
    *         <code>null</code> if the plugin does not provide this feature.

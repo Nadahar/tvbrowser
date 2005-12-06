@@ -34,6 +34,7 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
@@ -45,8 +46,6 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.Window;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -86,8 +85,9 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelListCellRenderer;
@@ -198,7 +198,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     centerPn.add(listBoxPnLeft);
 
     // Buttons in the Middle
-    JButton rightBt = new JButton(new ImageIcon("imgs/Forward24.gif"));
+    JButton rightBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-next", 24));
     rightBt.setMargin(UiUtilities.ZERO_INSETS);
 
     rightBt.addActionListener(new ActionListener() {
@@ -207,7 +207,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
       }
     });
 
-    JButton leftBt = new JButton(new ImageIcon("imgs/Back24.gif"));
+    JButton leftBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-previous", 24));
     leftBt.setMargin(UiUtilities.ZERO_INSETS);
 
     leftBt.addActionListener(new ActionListener() {
