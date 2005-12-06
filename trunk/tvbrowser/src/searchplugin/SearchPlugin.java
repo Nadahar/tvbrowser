@@ -41,6 +41,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -129,8 +130,8 @@ public class SearchPlugin extends Plugin {
       }
     });
 
-    action.setBigIcon(createImageIcon("searchplugin/Find24.gif"));
-    action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
+    action.setBigIcon(createImageIcon("actions", "system-search", 22));
+    action.setSmallIcon(createImageIcon("actions", "system-search", 16));
     action.setShortDescription(mLocalizer.msg("description", "Allows searching programs containing a certain text."));
     action.setText(mLocalizer.msg("searchPrograms", "Search programs"));
 
@@ -140,7 +141,7 @@ public class SearchPlugin extends Plugin {
   public ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
-    action.setSmallIcon(createImageIcon("searchplugin/Find16.gif"));
+    action.setSmallIcon(createImageIcon("actions", "system-search", 16));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         SearchDialog dlg = new SearchDialog(SearchPlugin.this, getParentFrame());
@@ -151,10 +152,10 @@ public class SearchPlugin extends Plugin {
     return new ActionMenu(action);
   }
 
-  public String getMarkIconName() {
-    return "searchplugin/Find16.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("actions", "system-search");
   }
-
+  
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("searchPrograms", "Search programs");
     String desc = mLocalizer.msg("description", "Allows searching programs containing a certain text.");

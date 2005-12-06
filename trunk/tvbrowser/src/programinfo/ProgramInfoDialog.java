@@ -47,7 +47,6 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import util.ui.BrowserLauncher;
-import util.ui.ImageUtilities;
 import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
@@ -130,8 +129,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
     JButton findBtn = new JButton(findasyoutype);
 
-    findBtn.setIcon(ImageUtilities
-        .createImageIconFromJar("programinfo/Find16.gif", getClass()));
+    findBtn.setIcon(ProgramInfo.getInstance().createImageIcon("actions", "edit-search", 16));
+        
     findBtn.setText("");
     findBtn.setToolTipText(mLocalizer.msg("search", "Search Text"));
 

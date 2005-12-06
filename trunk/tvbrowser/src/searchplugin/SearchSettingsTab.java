@@ -32,9 +32,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import util.ui.ImageUtilities;
 import util.ui.SearchFormSettings;
-
 import devplugin.SettingsTab;
 
 /**
@@ -80,7 +78,7 @@ public class SearchSettingsTab implements SettingsTab {
    * @return the Icon for this SettingsTab
    */
   public Icon getIcon() {
-    return ImageUtilities.createImageIconFromJar("searchplugin/Find16.gif", getClass());
+    return SearchPlugin.getInstance().createImageIcon("actions", "system-search", 16);
   }
 
   /**

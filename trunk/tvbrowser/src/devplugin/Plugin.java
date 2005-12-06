@@ -210,6 +210,28 @@ abstract public class Plugin {
     return ImageUtilities.createImageIconFromJar(fileName, getClass());
   }
 
+  /**
+   * Helper method that Loads an ImageIcon from the IconTheme
+   * 
+   * @param category Category the Icon resists in
+   * @param icon Icon to load (without extension)
+   * @param size Size of the Icon
+   * @return The Icon
+   */
+  final public ImageIcon createImageIcon(String category, String icon, int size) {
+    return getPluginManager().getIconFromTheme(this, category, icon, size);
+  }  
+  
+  /**
+   * Helper method that Loads an ImageIcon from the IconTheme
+   * 
+   * @param icon Icon to load
+   * @param size Size of the Icon
+   * @return The Icon
+   */
+  final public ImageIcon createImageIcon(ThemeIcon icon, int size) {
+    return getPluginManager().getIconFromTheme(this, icon, size);
+  }
 
   /**
    * Called by the host-application during start-up. 

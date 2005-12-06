@@ -191,7 +191,7 @@ public class EMailSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#getIcon()
    */
   public Icon getIcon() {
-    return EMailPlugin.getPluginManager().getIconFromTheme(mPlugin, "action", "mail-message-new", 16);
+    return mPlugin.createImageIcon("action", "mail-message-new", 16);
   }
 
   /*
