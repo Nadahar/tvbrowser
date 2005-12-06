@@ -117,12 +117,12 @@ public class CustomizableItemsPanel extends JPanel {
     JPanel panel4=new JPanel(new BorderLayout());
     JPanel panel5=new JPanel(new BorderLayout());
 
-    mRightBt = new JButton(new ImageIcon("imgs/Forward24.gif"));
+    mRightBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-next", 24));
     msg = mLocalizer.msg("tooltip.right", "Move selected rows in right list");
     mRightBt.setToolTipText(msg);
     mRightBt.setMargin(UiUtilities.ZERO_INSETS);
 
-    mLeftBt = new JButton(new ImageIcon("imgs/Back24.gif"));
+    mLeftBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-previous", 24));
     msg = mLocalizer.msg("tooltip.left", "Move selected rows in left list");
     mLeftBt.setToolTipText(msg);
     mLeftBt.setMargin(UiUtilities.ZERO_INSETS);

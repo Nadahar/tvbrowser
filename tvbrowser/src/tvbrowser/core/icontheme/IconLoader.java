@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import tvbrowser.core.Settings;
 import util.ui.ImageUtilities;
 import devplugin.Plugin;
+import devplugin.ThemeIcon;
 
 /**
  * The IconLoader manages the IconThemes and loads an Icon.
@@ -93,6 +94,31 @@ public class IconLoader {
     return mInstance;
   }
 
+  /**
+   * Load a specific Icon
+   * 
+   * @param category Category of the Icon
+   * @param icon Name of the Icon without File-Extension
+   * @param size Size in Pixel
+   * @return Icon if found, null if no Icon was found
+   */
+  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon, int size) {
+    return getIconFromTheme(plugin, icon.getCategory(), icon.getName(), size);
+  }  
+    
+  
+  /**
+   * Load a specific Icon
+   * 
+   * @param category Category of the Icon
+   * @param icon Name of the Icon without File-Extension
+   * @param size Size in Pixel
+   * @return Icon if found, null if no Icon was found
+   */
+  public ImageIcon getIconFromTheme(ThemeIcon icon, int size) {
+    return getIconFromTheme(null, icon.getCategory(), icon.getName(), size);
+  }  
+  
   /**
    * Load a specific Icon
    * 

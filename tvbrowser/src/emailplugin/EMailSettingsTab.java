@@ -37,7 +37,6 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -47,7 +46,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import util.paramhandler.ParamInputField;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -80,12 +78,17 @@ public class EMailSettingsTab implements SettingsTab {
   /** Encoding of Mailto: */
   private JComboBox mEncoding;
   
+  /** Plugin */
+  private EMailPlugin mPlugin;
+  
   /**
    * Creates the SettingsTab
    * 
+   * @param plugin Plugin
    * @param settings Settings to use
    */
-  public EMailSettingsTab(Properties settings) {
+  public EMailSettingsTab(EMailPlugin plugin, Properties settings) {
+    mPlugin = plugin;
     mSettings = settings;
   }
 
@@ -188,7 +191,7 @@ public class EMailSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#getIcon()
    */
   public Icon getIcon() {
-    return new ImageIcon(ImageUtilities.createImageFromJar("emailplugin/email.gif", EMailSettingsTab.class));
+    return EMailPlugin.getPluginManager().getIconFromTheme(mPlugin, "action", "mail-message-new", 16);
   }
 
   /*

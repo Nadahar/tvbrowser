@@ -38,18 +38,30 @@ import javax.swing.JPopupMenu;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.search.booleansearch.BooleanSearcher;
 import tvbrowser.core.search.booleansearch.ParserException;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
+import devplugin.ProgramSearcher;
+import devplugin.ThemeIcon;
+import devplugin.TvBrowserSettings;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -597,4 +609,27 @@ public class PluginManagerImpl implements PluginManager {
     return IconLoader.getInstance().getIconFromTheme(plugin, category, Icon, size);
   }
 
+
+  /**
+   * Returns an Icon from the Icon-Theme-System
+   *  
+   * If your Plugin has Icons that are not available as Icons within an Theme, you can add
+   * your Icons into your Jar-File.
+   * 
+   * The Directory-Structure must be like this:
+   * 
+   * [PackageOfYourPlugin]/icons/[Size]x[Size]/[category]/[icon].png
+   * 
+   * Please try to use the FreeDesktop-Icon Naming Conventions
+   * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
+   * (please remove the [ ])
+   *  
+   * @param plugin Plugin that wants to load an Icon
+   * @param icon ThemeIcon that represents the Icon
+   * @param size Size of the Icon
+   * @return Icon if found, null if not
+   */
+  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon, int size) {
+    return IconLoader.getInstance().getIconFromTheme(plugin, icon, size);
+  }  
 }
