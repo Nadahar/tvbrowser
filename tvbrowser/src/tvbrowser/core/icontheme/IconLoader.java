@@ -141,6 +141,7 @@ public class IconLoader {
    * @return Icon if found, null if no Icon was found
    */
   public ImageIcon getIconFromTheme(Plugin plugin, String category, String icon, int size) {
+
     // First Try: Current Icon Theme
     ImageIcon imageIcon = mIconTheme.getIcon(category, icon, size);
     

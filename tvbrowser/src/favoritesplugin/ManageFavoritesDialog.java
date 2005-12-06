@@ -154,7 +154,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mDeleteBt);
 
     msg = mLocalizer.msg("up", "Move the selected favorite up");
-    icon = FavoritesPlugin.getPluginManager().getIconFromTheme(FavoritesPlugin.getInstance(), "actions", "go-up", 22);
+    icon = FavoritesPlugin.getInstance().createImageIcon("actions", "go-up", 22);
     mUpBt = UiUtilities.createToolBarButton(msg, icon);
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -164,7 +164,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mUpBt);
     
     msg = mLocalizer.msg("down", "Move the selected favorite down");
-    icon = FavoritesPlugin.getPluginManager().getIconFromTheme(FavoritesPlugin.getInstance(), "actions", "go-down", 22);
+    icon = FavoritesPlugin.getInstance().createImageIcon("actions", "go-down", 22);
     mDownBt = UiUtilities.createToolBarButton(msg, icon);
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {

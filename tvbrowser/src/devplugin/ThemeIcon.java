@@ -47,6 +47,7 @@ public class ThemeIcon {
    */
   public ThemeIcon(String category, String name) {
     mCategory = category;
+    mName = name;
   }
   
   /**

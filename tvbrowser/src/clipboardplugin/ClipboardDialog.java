@@ -139,7 +139,7 @@ public class ClipboardDialog extends JDialog {
     c.anchor = GridBagConstraints.NORTH;
     c.gridwidth = GridBagConstraints.REMAINDER;
 
-    JButton upButton = new JButton(ClipboardPlugin.getPluginManager().getIconFromTheme(mPlugin, "actions", "go-up", 16));
+    JButton upButton = new JButton(mPlugin.createImageIcon("actions", "go-up", 16));
     upButton.setToolTipText(mLocalizer.msg("up", "Moves the selected program up"));
     upButton.addActionListener(new ActionListener() {
 
@@ -149,7 +149,7 @@ public class ClipboardDialog extends JDialog {
     });
     buttonRight.add(upButton, c);
 
-    JButton downButton = new JButton(ClipboardPlugin.getPluginManager().getIconFromTheme(mPlugin, "actions", "go-down", 16));
+    JButton downButton = new JButton(mPlugin.createImageIcon("actions", "go-down", 16));
     downButton.setToolTipText(mLocalizer.msg("down", "Moves the selected program down"));
     downButton.addActionListener(new ActionListener() {
 

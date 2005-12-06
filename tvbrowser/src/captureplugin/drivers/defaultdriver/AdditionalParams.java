@@ -206,7 +206,7 @@ public class AdditionalParams extends JDialog {
 
         buttons.add(remove);
 
-        final JButton up = new JButton(CapturePlugin.getPluginManager().getIconFromTheme(CapturePlugin.getInstance(), "action", "go-up", 16));
+        final JButton up = new JButton(CapturePlugin.getInstance().createImageIcon("action", "go-up", 16));
         up.setToolTipText(mLocalizer.msg("Up","Up"));
         buttons.add(up);
 
@@ -218,7 +218,7 @@ public class AdditionalParams extends JDialog {
           
         });
         
-        final JButton down = new JButton(CapturePlugin.getPluginManager().getIconFromTheme(CapturePlugin.getInstance(), "action", "go-down", 16));
+        final JButton down = new JButton(CapturePlugin.getInstance().createImageIcon("action", "go-down", 16));
         down.setToolTipText(mLocalizer.msg("Down","Down"));
         buttons.add(down);
 
