@@ -748,6 +748,9 @@ public class MainFrame extends JFrame implements DateListener {
   public void show() {
     super.show();
     mIsVisible = true;
+  }
+  
+  public void updateUI() {
     mRootNode.update();
   }
 

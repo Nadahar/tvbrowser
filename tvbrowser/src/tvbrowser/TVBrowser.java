@@ -305,6 +305,11 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         initUi(splash, fStartMinimized);
+        SwingUtilities.invokeLater(new Runnable(){
+          public void run() {
+            mainFrame.updateUI();
+          }
+        });
       }
     });
 
@@ -463,6 +468,11 @@ public class TVBrowser {
       public void run() {
         if (Settings.propIsWindowMaximized.getBoolean()) {
           mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+          SwingUtilities.invokeLater(new Runnable(){
+            public void run() {
+              mainFrame.updateUI();
+            }
+          });
         }
       }
     });
