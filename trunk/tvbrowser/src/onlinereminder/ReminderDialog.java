@@ -21,6 +21,8 @@ import util.ui.Localizer;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
 
+import captureplugin.CapturePlugin;
+
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -110,7 +112,7 @@ public class ReminderDialog extends JDialog {
     builder.addFixed(send);
     builder.addRelatedGap();
 
-    JButton delete = new JButton(new ImageIcon("imgs/Delete16.gif"));
+    JButton delete = new JButton(OnlineReminder.getInstance().createImageIcon("actions", "edit-delete", 16));
     delete.setToolTipText("Delete selected Reminders");
 
     delete.addActionListener(new ActionListener() {
@@ -122,7 +124,7 @@ public class ReminderDialog extends JDialog {
     builder.addFixed(delete);
     builder.addRelatedGap();
 
-    JButton update = new JButton(new ImageIcon("imgs/Refresh16.gif"));
+    JButton update = new JButton(OnlineReminder.getInstance().createImageIcon("actions", "view-refresh", 16));
     update.setToolTipText("Send changes to Server");
 
     update.addActionListener(new ActionListener() {

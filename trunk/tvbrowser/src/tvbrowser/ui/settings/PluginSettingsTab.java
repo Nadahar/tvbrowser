@@ -40,6 +40,7 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -144,7 +145,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     
     contentPanel.add(new JScrollPane(mList), cc.xyw(1,3,2));
     
-    mStartStopBtn = new JButton(mLocalizer.msg("activate", ""), new ImageIcon("imgs/Refresh16.gif"));
+    mStartStopBtn = new JButton(mLocalizer.msg("activate", ""), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
     mStartStopBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         PluginProxy plugin = (PluginProxy) mList.getSelectedValue();
@@ -172,7 +173,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     builder.addFixed(mStartStopBtn);
     builder.addRelatedGap();
     
-    mRemove = new JButton(mLocalizer.msg("remove","Remove"),  new ImageIcon("imgs/Delete16.gif"));
+    mRemove = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int inx = mList.getSelectedIndex();
@@ -207,10 +208,10 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
     JMenuItem enableMI;
     if (plugin.isActivated()) {
-      enableMI = new JMenuItem(mLocalizer.msg("deactivate", ""), new ImageIcon("imgs/Stop16.gif"));
+      enableMI = new JMenuItem(mLocalizer.msg("deactivate", ""),IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
     }
     else {
-      enableMI = new JMenuItem(mLocalizer.msg("activate", ""), new ImageIcon("imgs/Refresh16.gif"));
+      enableMI = new JMenuItem(mLocalizer.msg("activate", ""), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
 
     }
     enableMI.addActionListener(new ActionListener(){
@@ -220,7 +221,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       });
     menu.add(enableMI);
 
-    JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  new ImageIcon("imgs/Delete16.gif"));
+    JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
     deleteMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         removePlugin(plugin);
@@ -308,13 +309,13 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
       mStartStopBtn.setEnabled(true);
       mInfo.setEnabled(true);
       mRemove.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
-      mStartStopBtn.setIcon(new ImageIcon("imgs/Stop16.gif"));
+      mStartStopBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
       mStartStopBtn.setText(mLocalizer.msg("deactivate", ""));
     } else {
       mStartStopBtn.setEnabled(plugin != null);
       mInfo.setEnabled(plugin != null);
       mRemove.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
-      mStartStopBtn.setIcon(new ImageIcon("imgs/Refresh16.gif"));
+      mStartStopBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
       mStartStopBtn.setText(mLocalizer.msg("activate", ""));
     }
   }

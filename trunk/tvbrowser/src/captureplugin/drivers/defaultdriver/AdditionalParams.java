@@ -82,10 +82,10 @@ public class AdditionalParams extends JDialog {
     private JButton mStartStop;
     
     /** Start-Icon */
-    private final ImageIcon mStartIcon = ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Refresh16.gif",this.getClass());
+    private final ImageIcon mStartIcon = CapturePlugin.getInstance().createImageIcon("actions", "view-refresh", 16);
 
     /** Stop-Icon */
-    private final ImageIcon mStopIcon = ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Stop16.gif",this.getClass());
+    private final ImageIcon mStopIcon = CapturePlugin.getInstance().createImageIcon("actions", "process-stop", 16);
     
     /**
      * Create Dialog
@@ -179,7 +179,7 @@ public class AdditionalParams extends JDialog {
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JButton add = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/New16.gif",this.getClass()));
+        JButton add = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "document-new", 16));
         
         add.setToolTipText(mLocalizer.msg("Add","Add"));
 
@@ -193,7 +193,7 @@ public class AdditionalParams extends JDialog {
 
         buttons.add(add);
 
-        JButton remove = new JButton(ImageUtilities.createImageIconFromJar("captureplugin/drivers/defaultdriver/imgs/Delete16.gif",this.getClass()));
+        JButton remove = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
         remove.setToolTipText(mLocalizer.msg("Remove","Remove"));
 
         remove.addActionListener(new ActionListener() {

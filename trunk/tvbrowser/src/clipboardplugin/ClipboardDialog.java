@@ -48,6 +48,8 @@ import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 
+import captureplugin.CapturePlugin;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -161,8 +163,7 @@ public class ClipboardDialog extends JDialog {
 
     c.weighty = 1.0;
 
-    JButton deleteButton = new JButton(ImageUtilities
-        .createImageIconFromJar("clipboardplugin/Delete16.gif", getClass()));
+    JButton deleteButton = new JButton(mPlugin.createImageIcon("actions", "edit-delete", 16));
     deleteButton.setToolTipText(mLocalizer.msg("delete", "Deletes the selected program"));
 
     deleteButton.addActionListener(new ActionListener() {

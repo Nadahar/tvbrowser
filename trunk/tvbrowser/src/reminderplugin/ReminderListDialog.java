@@ -31,10 +31,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import util.ui.ChannelLabel;
-import util.ui.ImageUtilities;
 import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
@@ -202,7 +211,7 @@ public class ReminderListDialog extends JDialog {
     JPanel panel5=new JPanel(new BorderLayout());
     panel4.add(box1);
     panel4.add(panel5);
-    Icon icon = ImageUtilities.createImageIconFromJar("reminderplugin/Delete24.gif", getClass());
+    Icon icon = mPlugin.createImageIcon("actions", "edit-delete", 22);
     String msg = mLocalizer.msg("delete", "Delete this program from reminder list");
     JButton deleteBtn = UiUtilities.createToolBarButton(msg, icon);
     deleteBtn.addActionListener(new ActionListener(){

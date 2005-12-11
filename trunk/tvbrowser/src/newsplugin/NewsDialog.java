@@ -49,7 +49,6 @@ import javax.swing.event.HyperlinkListener;
 
 import util.io.IOUtilities;
 import util.ui.BrowserLauncher;
-import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
@@ -202,7 +201,7 @@ public class NewsDialog {
       buf.append("</p>");
     } else {
       if (mNewIcon == null) {
-        mNewIcon = ImageUtilities.createImageIconFromJar("newsplugin/New24.gif", getClass());
+        mNewIcon = NewsPlugin.getInstance().createImageIcon("actions", "document-new", 22);
       }
       
       // Show the news - backwards (newest first)

@@ -70,7 +70,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -332,7 +331,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
     result.add(panel, BorderLayout.CENTER);
 
     if (mShowAllButtons) {
-      JButton refreshList = new JButton(mLocalizer.msg("updateChannelList","Update channel list"),new ImageIcon("imgs/Refresh16.gif"));
+      JButton refreshList = new JButton(mLocalizer.msg("updateChannelList","Update channel list"), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
 
       refreshList.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -353,7 +352,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab,DragGestureLis
       southPn.add(pn2, BorderLayout.SOUTH);
 
       LinkButton urlLabel = new LinkButton(
-         mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier fï¿½r eine Liste weiterer Sender."),
+         mLocalizer.msg("addMoreChannels","Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier f�r eine Liste weiterer Sender."),
          mLocalizer.msg("addMoreChannelsUrl", "http://wiki.tvbrowser.org/index.php/Senderliste"));
 
       result.add(urlLabel, BorderLayout.SOUTH);

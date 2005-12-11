@@ -79,9 +79,9 @@ public class WebSettingsTab implements SettingsTab {
     private JButton mDown;
 
     /** Start-Icon */
-    private Icon mStartIcon = ImageUtilities.createImageIconFromJar("webplugin/Refresh16.gif", WebSettingsTab.class);
+    private Icon mStartIcon = WebPlugin.getInstance().createImageIcon("actions", "view-refresh", 16);
     /** Stop-Icon */
-    private Icon mStopIcon = ImageUtilities.createImageIconFromJar("webplugin/Stop16.gif", WebSettingsTab.class);
+    private Icon mStopIcon = WebPlugin.getInstance().createImageIcon("actions", "process-stop", 16);
     
     /** Parent */
     private JFrame mParent;
@@ -192,7 +192,7 @@ public class WebSettingsTab implements SettingsTab {
             
         });
         
-        mNew = new JButton(ImageUtilities.createImageIconFromJar("webplugin/New16.gif", WebSettingsTab.class));
+        mNew = new JButton(WebPlugin.getInstance().createImageIcon("actions", "document-new", 16));
         mNew.setToolTipText(mLocalizer.msg("New", "Add a new Site"));
         mNew.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -209,7 +209,7 @@ public class WebSettingsTab implements SettingsTab {
             }
         });
         
-        mDelete = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Delete16.gif", WebSettingsTab.class));
+        mDelete = new JButton(WebPlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
         mDelete.setToolTipText(mLocalizer.msg("DeleteSite", "Delete Site"));
         
         mDelete.addActionListener(new ActionListener() {

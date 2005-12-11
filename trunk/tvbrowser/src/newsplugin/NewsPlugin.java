@@ -71,16 +71,28 @@ public class NewsPlugin extends Plugin {
   
   /** The news. */
   private ArrayList mNewsList;
-  
+
+  /** Instance of this Plugin */
+  private static NewsPlugin mInstance;
   
   /**
    * Creates a new instance of NewsPlugin.
    */
   public NewsPlugin() {
     mNewsList = new ArrayList();
+    mInstance = this;
   }
   
+  /**
+   * Returns an Instance of this Plugin
+   * @return Instance
+   */
+  public static Plugin getInstance() {
+    return mInstance;
+  }
 
+  
+  
   /**
    * Gets the mark icon.
    * 
@@ -281,5 +293,6 @@ public class NewsPlugin extends Plugin {
       }
     }
   }
+
   
 }

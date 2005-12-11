@@ -26,25 +26,30 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
-import tvbrowser.TVBrowser;
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.icontheme.IconTheme;
-import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
-
-import javax.swing.*;
-import javax.swing.event.PopupMenuListener;
-import javax.swing.event.PopupMenuEvent;
-import java.util.*;
-import java.awt.event.ActionListener;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import devplugin.Plugin;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+
+import tvbrowser.TVBrowser;
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
+import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.ActionMenu;
+import devplugin.Plugin;
 
 public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
@@ -101,11 +106,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private void createAvailableActions() {
     mAvailableActions = new HashMap();
     mUpdateAction = createAction(TVBrowser.mLocalizer.msg("button.update", "Update"), "#update", MainFrame.mLocalizer
-        .msg("menuinfo.update", ""), new ImageIcon("imgs/Refresh16.gif"), new ImageIcon("imgs/Refresh24.gif"),
+        .msg("menuinfo.update", ""), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 22),
         ToolBar.BUTTON_ACTION, this);
     mSettingsAction = createAction(TVBrowser.mLocalizer.msg("button.settings", "Settings"), "#settings",
-        MainFrame.mLocalizer.msg("menuinfo.settings", ""), new ImageIcon("imgs/Preferences16.gif"), new ImageIcon(
-            "imgs/Preferences24.gif"), ToolBar.BUTTON_ACTION, this);
+        MainFrame.mLocalizer.msg("menuinfo.settings", ""), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 22), 
+        ToolBar.BUTTON_ACTION, this);
     mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"), "#filter", MainFrame.mLocalizer
         .msg("menuinfo.filter", ""), new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter24.png"),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
@@ -293,15 +298,15 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   public void showStopButton() {
     mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.stop", "Stop"));
-    mUpdateAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/Stop16.gif"));
-    mUpdateAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Stop24.gif"));
+    mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
+    mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 22));
     mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg("menuinfo.stop", ""));
   }
 
   public void showUpdateButton() {
     mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.update", "Update"));
-    mUpdateAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/Refresh16.gif"));
-    mUpdateAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Refresh24.gif"));
+    mUpdateAction.putValue(Action.SMALL_ICON,IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
+    mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 22));
     mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg("menuinfo.update", ""));
 
   }

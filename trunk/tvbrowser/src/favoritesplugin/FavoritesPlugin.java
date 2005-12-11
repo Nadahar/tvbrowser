@@ -538,7 +538,6 @@ public class FavoritesPlugin extends Plugin {
 
     public DeleteFavoriteAction(Favorite favorite) {
       mFavorite = favorite;
-      // super.setSmallIcon(createImageIcon("favoritesplugin/Delete16.gif"));
       super.setText(mLocalizer.msg("delete", "delete"));
     }
 
@@ -550,7 +549,7 @@ public class FavoritesPlugin extends Plugin {
   class CreateFavoriteAction extends ButtonAction {
 
     public CreateFavoriteAction() {
-      super.setSmallIcon(createImageIcon("favoritesplugin/New16.gif"));
+      super.setSmallIcon(createImageIcon("actions", "document-new", 16));
       super.setText(mLocalizer.msg("new", "Create new favorite"));
     }
 
