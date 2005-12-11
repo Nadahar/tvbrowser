@@ -15,6 +15,9 @@ public class Updater implements Runnable{
     
     
     System.out.println("1. Added:");
+    
+    
+    
     System.out.println("2. Removed:");
     
     System.out.println("Send XML");

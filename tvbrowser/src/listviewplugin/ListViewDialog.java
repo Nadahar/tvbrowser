@@ -41,7 +41,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -56,7 +55,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Date;
@@ -300,7 +298,7 @@ public class ListViewDialog extends JDialog {
     group.add(mRuns);
     group.add(mOn);
 
-    JButton refreshButton = new JButton(new ImageIcon(ImageUtilities.createImage("imgs/Refresh16.gif")));
+    JButton refreshButton = new JButton(mPlugin.createImageIcon("actions", "view-refresh", 22));
 
     JPanel datetimeselect = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 

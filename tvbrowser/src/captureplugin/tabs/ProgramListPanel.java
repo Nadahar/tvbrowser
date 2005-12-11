@@ -161,7 +161,7 @@ public class ProgramListPanel extends JPanel {
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        JButton delete = new JButton(new ImageIcon(ProgramListPanel.class.getResource("Delete16.gif")));
+        JButton delete = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePressed();

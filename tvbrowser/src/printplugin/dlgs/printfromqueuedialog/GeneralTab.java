@@ -26,22 +26,30 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
-import devplugin.Program;
-import devplugin.Channel;
-import devplugin.PluginTreeNode;
-import devplugin.Date;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import util.ui.ImageUtilities;
-import util.ui.UiUtilities;
-import util.ui.TabLayout;
-import printplugin.PrintPlugin;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+
 import printplugin.EmptyQueueAction;
+import printplugin.PrintPlugin;
 import printplugin.util.Util;
+import util.ui.TabLayout;
+import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
 
 
 public class GeneralTab extends JPanel {
@@ -120,7 +128,7 @@ public class GeneralTab extends JPanel {
   private void addProgramPanel(final JPanel content, final Program program) {
     final JPanel progPn = new JPanel(new BorderLayout());
 
-    Icon icon = ImageUtilities.createImageIconFromJar("printplugin/imgs/Delete16.gif", getClass());
+    Icon icon = PrintPlugin.getInstance().createImageIcon("actions", "edit-delete", 16);
     JButton removeBtn = UiUtilities.createToolBarButton("Remove from queue", icon);
     removeBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {

@@ -62,6 +62,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.exc.ErrorHandler;
 import util.ui.ExtensionFileFilter;
 import util.ui.ImageUtilities;
@@ -124,7 +125,7 @@ public class ManageFavoritesDialog extends JDialog {
     main.add(toolbarPn, BorderLayout.NORTH);
     
     msg = mLocalizer.msg("new", "Create a new favorite...");
-    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/New24.gif", getClass());
+    icon = FavoritesPlugin.getInstance().createImageIcon("actions", "document-new", 22);
     mNewBt = UiUtilities.createToolBarButton(msg, icon);
     mNewBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -144,7 +145,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mEditBt);
 
     msg = mLocalizer.msg("delete", "Delete selected favorite...");
-    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Delete24.gif", getClass());
+    icon = FavoritesPlugin.getInstance().createImageIcon("actions", "edit-delete", 22);
     mDeleteBt = UiUtilities.createToolBarButton(msg, icon);
     mDeleteBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {

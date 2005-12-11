@@ -1,16 +1,16 @@
 package printplugin;
 
+import java.awt.event.ActionEvent;
+
 import devplugin.ButtonAction;
 import devplugin.PluginTreeNode;
-
-import java.awt.event.ActionEvent;
 
 
 public class EmptyQueueAction extends ButtonAction {
 
     public EmptyQueueAction() {
       super.setText("Druckerwarteschlange leeren");
-      super.setSmallIcon(PrintPlugin.getInstance().createIcon("printplugin/imgs/Delete16.gif"));
+      super.setSmallIcon(PrintPlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
     }
 
     public void actionPerformed(ActionEvent e) {

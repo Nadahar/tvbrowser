@@ -42,6 +42,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
@@ -93,17 +94,17 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
   public void showUpdateMenuItem() {
     mUpdateMI.setText(mLocalizer.msg("menuitem.update","Update"));
-    mUpdateMI.setIcon(new ImageIcon("imgs/Refresh16.gif"));
+    mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
   }
   
   public void showStopMenuItem() {
       mUpdateMI.setText(mLocalizer.msg("menuitem.stopUpdate","Stop"));
-      mUpdateMI.setIcon(new ImageIcon("imgs/Stop16.gif"));
+      mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
   }
   
   private void createMenuItems() {
       
-    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), new ImageIcon("imgs/Preferences16.gif"));
+    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
     mSettingsMI.addActionListener(this);
     mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."));
     mQuitMI.addActionListener(this);
@@ -179,7 +180,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mRestoreMI = new JMenuItem(mLocalizer.msg("menuitem.restore", "Restore"));
     mRestoreMI.addActionListener(this);
     
-    mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), new ImageIcon("imgs/Refresh16.gif"));
+    mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
     mUpdateMI.addActionListener(this);
     
     mLicenseMenu = createLicenseMenuItems();
@@ -203,7 +204,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mWebsiteMI=new JMenuItem("Website",urlImg);
     mWebsiteMI.addActionListener(this);
     
-    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),new ImageIcon("imgs/Preferences16.gif"));
+    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
     mConfigAssistantMI.addActionListener(this);
     
     mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/About16.gif"));

@@ -46,6 +46,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import captureplugin.CapturePlugin;
+
+import printplugin.PrintPlugin;
 import printplugin.printer.PrintJob;
 import printplugin.settings.Scheme;
 import util.ui.ImageUtilities;
@@ -166,9 +169,9 @@ public class SettingsDialog extends JDialog {
 
 
 
-    JButton newSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/New16.gif", getClass()));
+    JButton newSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-new", 16));
     mEditSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Edit16.gif", getClass()));
-    mDeleteSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Delete16.gif", getClass()));
+    mDeleteSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
     mSaveSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Save16.gif", getClass()));
     newSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
     mDeleteSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);

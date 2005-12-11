@@ -43,7 +43,10 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
+import captureplugin.CapturePlugin;
+
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import util.ui.TabLayout;
 import devplugin.SettingsTab;
@@ -190,7 +193,7 @@ class TimePanel extends JPanel {
           }
         });
       }
-      JButton newBtn = new JButton(new ImageIcon("imgs/New16.gif"));
+      JButton newBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16));
       newBtn.setToolTipText(mLocalizer.msg("new","New"));
       JPanel southPn = new JPanel(new BorderLayout());
       southPn.add(newBtn, BorderLayout.EAST);
@@ -242,7 +245,7 @@ class TimePanel extends JPanel {
     
     public Row(int time) {
       setLayout(new BorderLayout());
-      mRemoveBtn = new JButton(new ImageIcon("imgs/Delete16.gif"));
+      mRemoveBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
       mRemoveBtn.setToolTipText(mLocalizer.msg("delete","Delete"));
       JPanel row = new JPanel(new TabLayout(2,14,0));
       

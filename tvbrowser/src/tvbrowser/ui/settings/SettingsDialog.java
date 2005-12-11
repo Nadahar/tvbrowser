@@ -41,7 +41,6 @@ import java.util.Enumeration;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -60,6 +59,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -259,7 +259,7 @@ public class SettingsDialog {
     String msg;
     SettingNode node;
 
-    icon = new ImageIcon("imgs/Preferences16.gif");
+    icon = IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16);
     msg = mLocalizer.msg("settings", "Settings");
     SettingNode root = new SettingNode(new DefaultSettingsTab(msg,icon));
 

@@ -39,6 +39,8 @@ import java.awt.event.MouseEvent;
 import java.awt.*;
 import java.util.Enumeration;
 import java.util.ArrayList;
+
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.Settings;
@@ -196,7 +198,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     JMenuItem enableMI;
     if (groupWrapper.isEnabled()) {
-      enableMI = new JMenuItem(mLocalizer.msg("disable","Disable"), new ImageIcon("imgs/Stop16.gif"));
+      enableMI = new JMenuItem(mLocalizer.msg("disable","Disable"), IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
       enableMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           subscribeGroup(groupWrapper, false);
@@ -204,7 +206,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
       });
     }
     else {
-      enableMI = new JMenuItem(mLocalizer.msg("enable","Enable"), new ImageIcon("imgs/Refresh16.gif"));
+      enableMI = new JMenuItem(mLocalizer.msg("enable","Enable"), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
       enableMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           subscribeGroup(groupWrapper, true);
@@ -249,11 +251,11 @@ public class ChannelGroupSettingsTab implements SettingsTab {
       ChannelGroupWrapper w = (ChannelGroupWrapper)value;
       if (w.isEnabled()) {
         mEnableBtn.setText(mLocalizer.msg("disable","Disable"));
-        mEnableBtn.setIcon(new ImageIcon("imgs/Stop16.gif"));
+        mEnableBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
       }
       else {
         mEnableBtn.setText(mLocalizer.msg("enable","Enable"));
-        mEnableBtn.setIcon(new ImageIcon("imgs/Refresh16.gif"));
+        mEnableBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
       }
     }
   }
