@@ -28,6 +28,7 @@ package util.ui;
 import java.util.*;
 
 import java.awt.*;
+import java.awt.dnd.DragGestureListener;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -37,7 +38,7 @@ import tvbrowser.core.icontheme.IconLoader;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class OrderChooser extends JPanel {
+public class OrderChooser extends JPanel implements ListDropAction{
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(OrderChooser.class);
@@ -87,6 +88,10 @@ public class OrderChooser extends JPanel {
     mList = new JList(mListModel);
     mList.setCellRenderer(new SelectableItemRenderer());
 
+    // Register DnD on the List.
+    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);    
+    new DragAndDropMouseListener(mList,mList,this,dnDHandler);
+    
     // MouseListener hinzuf�gen, der das Selektieren/Deselektieren �bernimmt
     mList.addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent evt) {
@@ -114,7 +119,7 @@ public class OrderChooser extends JPanel {
     mUpBt.setMargin(UiUtilities.ZERO_INSETS);
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        moveSelectedItems(-1);
+        UiUtilities.moveSelectedItems(mList,-1);
       }
     });
     p2.add(mUpBt);
@@ -124,7 +129,7 @@ public class OrderChooser extends JPanel {
     mDownBt.setMargin(UiUtilities.ZERO_INSETS);
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        moveSelectedItems(1);
+        UiUtilities.moveSelectedItems(mList,1);
       }
     });
     p2.add(mDownBt);
@@ -179,7 +184,7 @@ public class OrderChooser extends JPanel {
     }
   }
 
-  protected void moveSelectedItems(int nrRows) {
+ /* protected void moveSelectedItems(int nrRows) {
     int[] selection = mList.getSelectedIndices();
     if (selection.length == 0) return;
 
@@ -210,7 +215,7 @@ public class OrderChooser extends JPanel {
     int scrollPos = insertPos;
     if (nrRows > 0) scrollPos += selection.length;
     mList.ensureIndexIsVisible(scrollPos);
-  }
+  }*/
 
 
   class SelectableItem {
@@ -265,5 +270,10 @@ public class OrderChooser extends JPanel {
     }
 
   } // class SelectableItemRenderer
+
+
+  public void drop(JList source, JList target, int rows, boolean move) {
+    UiUtilities.moveSelectedItems(target,rows,true);
+  }
 
 }

@@ -8,12 +8,17 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.icontheme.IconLoader;
+import util.ui.DragAndDropMouseListener;
+import util.ui.ListDragAndDropHandler;
+import util.ui.ListDropAction;
 import util.ui.UiUtilities;
 
 import java.awt.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragSource;
 import java.awt.event.*;
 
-public class SortableItemList extends JPanel implements ActionListener {
+public class SortableItemList extends JPanel implements ActionListener, ListDropAction {
   
   protected JButton mUpBt;
   protected JButton mDownBt;
@@ -56,6 +61,10 @@ public class SortableItemList extends JPanel implements ActionListener {
         updateBtns();
       }
     });
+ 
+    //Register DnD on the List.
+    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList, mList, this);
+    new DragAndDropMouseListener(mList,mList,this,dnDHandler);
     
     mTitleLb=new JLabel(title);
     
@@ -150,6 +159,10 @@ public class SortableItemList extends JPanel implements ActionListener {
    */
   public JButton getDownButton() {
     return mDownBt;
+  }
+
+  public void drop(JList source, JList target, int rows, boolean move) {
+    UiUtilities.moveSelectedItems(target,rows,true);
   }
   
 }
