@@ -61,17 +61,15 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import util.ui.customizableitems.SortableItemList;
+import util.ui.ListDragAndDropHandler;
+import util.ui.ListDropAction;
 import util.ui.TransferEntries;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ActionMenu;
 
-public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener,
-                                            DragGestureListener,DropTargetListener{
-  private Rectangle2D mCueLine = new Rectangle2D.Float();
-  private int mOldIndex = -1;
-  private boolean mSwitched = false;
+public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener {
 
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
 
@@ -160,7 +158,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     mList.getList().setVisibleRowCount(10);
     mList.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-
     mList.getList().addMouseListener(new MouseAdapter(){
       public void mouseClicked(MouseEvent e){
         if(SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
@@ -184,11 +181,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     });
     mList.setCellRenderer(new ContextMenuCellRenderer());
     mList.getList().setOpaque(false);
-    fillListbox();
-    
-    new DropTarget(mList.getList(),this);
-   (new DragSource()).createDefaultDragGestureRecognizer(mList.getList(),DnDConstants.ACTION_COPY_OR_MOVE,this);
-    
+    fillListbox(); 
     
     PluginProxyManager.getInstance().addPluginStateListener(
         new PluginStateAdapter() {
@@ -302,150 +295,13 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     }
   }
 
-
+  
   public Icon getIcon() {
     return null;
   }
 
-
+  
   public String getTitle() {
     return mLocalizer.msg("title", "context menu");
   }
-
-  public void dragEnter(DropTargetDragEvent e) {}
-  public void dropActionChanged(DropTargetDragEvent e) {}
-  
-  public void dragExit(DropTargetEvent e) {
-    mList.getList().paintImmediately(mCueLine.getBounds());
-  }
-
-  public void dragOver(DropTargetDragEvent e) {
-    
-    DataFlavor[] flavors = e.getCurrentDataFlavors();
-    if(flavors != null && flavors.length == 2 &&
-        flavors[0].getHumanPresentableName().equals("JList") &&
-        flavors[1].getHumanPresentableName().equals("Source")
-        ) {
-      e.acceptDrag(e.getDropAction());
-    }
-    else {
-      e.rejectDrag();
-      return;
-    }
-      
-    if(((DropTarget)e.getSource()).getComponent().equals(mList.getList())) {
-      Point p = e.getLocation();
-      int i = mList.getList().locationToIndex(p);
-      Rectangle rect = mList.getList().getVisibleRect();
-      
-      if(i != -1) {      
-        Rectangle listRect = mList.getList().getCellBounds(mList.getList().locationToIndex(p),
-                                                           mList.getList().locationToIndex(p));   
-        Graphics2D g2 = (Graphics2D) mList.getList().getGraphics(); 
-        boolean paint = false;
-        
-        if(listRect != null) {
-          listRect.setSize(listRect.width,listRect.height/2);
-          if(!listRect.contains(e.getLocation()) && !mSwitched && i == mOldIndex) {
-            mList.getList().paintImmediately(mCueLine.getBounds());
-            mCueLine.setRect(0,listRect.y + (listRect.height * 2) -1,listRect.width,2);
-            mSwitched = true;
-            paint = true;
-          }
-          else if(listRect.contains(e.getLocation()) && i == mOldIndex && mSwitched) {
-            mList.getList().paintImmediately(mCueLine.getBounds());
-            mCueLine.setRect(0,listRect.y -1,listRect.width,2);
-            mSwitched = false;
-            paint = true;
-          }
-          else if(i != mOldIndex && listRect.contains(e.getLocation())) {
-            mList.getList().paintImmediately(mCueLine.getBounds());
-            mCueLine.setRect(0,listRect.y -1,listRect.width,2);
-            mSwitched = false;
-            mOldIndex = i;
-            paint = true;
-          }
-          else if(i != mOldIndex && !listRect.contains(e.getLocation())) {
-            mList.getList().paintImmediately(mCueLine.getBounds());
-            mCueLine.setRect(0,listRect.y + (listRect.height * 2) -1,listRect.width,2);
-            mSwitched = true;
-            mOldIndex = i;
-            paint = true;
-          }
-          if(paint) {
-            Color c = new Color(255,0,0,120);
-            g2.setColor(c);
-            g2.fill(mCueLine);
-          }
-        }        
-      }
-      else {
-        mOldIndex = -1;
-        mList.getList().paintImmediately(mCueLine.getBounds());
-      }
-
-      if(p.y + 20 > rect.y + rect.height)
-        mList.getList().scrollRectToVisible(new Rectangle(p.x,p.y + 15,1,1));
-      if(p.y - 20 < rect.y)
-        mList.getList().scrollRectToVisible(new Rectangle(p.x,p.y - 15,1,1));
-    }
-  }
-  
-  public void drop(DropTargetDropEvent e) {
-    Component c = ((DropTarget)e.getSource()).getComponent();
-    if(c.equals(mList.getList())) {
-      JList target = (JList)((DropTarget)e.getSource()).getComponent();
-      int x = target.locationToIndex(e.getLocation());
-    
-      Rectangle rect = target.getCellBounds(x,x);
-      if(rect != null) {
-        rect.setSize(rect.width,rect.height/2);
-    
-        if(!rect.contains(e.getLocation()))
-          x++;
-      }
-      else
-        x = 0;
-    
-      UiUtilities.moveSelectedItems(target,x,true);
-      e.dropComplete(true);
-    }
-  }
-
-  public void dragGestureRecognized(DragGestureEvent e) {    
-    e.startDrag(null,new TransferEntries(mList.getList().getSelectedIndices(),"mList","JList"));
-  }
-
-
-  /*
-	public void settingsChanged(SettingsTab tab, Object obj) {
-    Object[] currentPlugins=mList.getItems();
-    Plugin[] installedPlugins=(Plugin[])obj;
-
-    // remove all plugins which are not installed any more
-    for (int i=0;i<currentPlugins.length;i++) {
-      Plugin p=(Plugin)currentPlugins[i];
-      boolean isInstalled=false;
-      for (int j=0;j<installedPlugins.length&&!isInstalled;j++) {
-        if (p.equals(installedPlugins[j])) {
-          isInstalled=true;
-        }
-      }
-      if (!isInstalled) {
-        mList.removeElement(currentPlugins[i]);
-      }
-    }
-
-    // add all other plugins
-    //Plugin[] pluginList=PluginManager.getInstance().getAvailablePlugins();
-    for (int i=0;i<installedPlugins.length;i++) {
-      if (installedPlugins[i].getContextMenuItemText()!=null && !mList.contains(installedPlugins[i])) {
-        mList.addElement(installedPlugins[i]);
-      }
-    }
-
-
-	}
-  */
-
 }
