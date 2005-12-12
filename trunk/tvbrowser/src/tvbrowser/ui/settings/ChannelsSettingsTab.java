@@ -89,6 +89,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.ChannelContextMenu;
 import util.ui.ChannelListCellRenderer;
 import util.ui.DragAndDropMouseListener;
 import util.ui.LinkButton;
@@ -233,6 +234,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
     mAllChannelListener = new DragAndDropMouseListener(mAllChannels,mSubscribedChannels,this,mDnDHandler);
     mSubscribedChannelListener = new DragAndDropMouseListener(mSubscribedChannels,mAllChannels,this,mDnDHandler);
     
+    restoreForPopup();
+    
     listBoxPnRight.add(new JScrollPane(mSubscribedChannels), BorderLayout.CENTER);
 
     final JButton configureChannels = new JButton(mLocalizer.msg("configSelectedChannels","Configure selected channels"));
@@ -299,6 +302,23 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
     return result;
   }
 
+  private void restoreForPopup() {
+    mSubscribedChannels.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        mSubscribedChannels.setSelectedIndex(mSubscribedChannels.locationToIndex(e.getPoint()));
+        showPopup(e);
+      }
+      public void mouseReleased(MouseEvent e) {
+        showPopup(e);
+      }
+    });
+  }
+  
+  private void showPopup(MouseEvent e) {
+    if(e.isPopupTrigger())  
+      new ChannelContextMenu(e,(Channel)mSubscribedChannels.getModel().getElementAt(mSubscribedChannels.locationToIndex(e.getPoint())),this);
+  }
+  
   private JPanel createButtonPn(JButton btn1, JButton btn2) {
     JPanel result = new JPanel(new GridLayout(2,1));
     JPanel topPn = new JPanel(new BorderLayout());
@@ -671,6 +691,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
 
     mSubscribedChannels.updateUI();
     mSubscribedChannelListener.restore();
+    restoreForPopup();
   }
 
   /**

@@ -18,6 +18,7 @@ import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.ChannelConfigDlg;
+import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 
@@ -80,31 +81,6 @@ public class ChannelLabel extends util.ui.ChannelLabel {
         super.mouseReleased(e);
       }
       
-      public void showPopUp(MouseEvent e) {
-        JPopupMenu channelPopup = new JPopupMenu();
-        
-        JMenuItem item = new JMenuItem("Konfigurieren");
-        
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            ChannelConfigDlg dialog;
-            
-            Window w = UiUtilities.getBestDialogParent(ChannelLabel.this);
-            if (w instanceof JDialog) {
-              dialog = new ChannelConfigDlg((JDialog)w, mChannel);
-            } else {
-              dialog = new ChannelConfigDlg((JFrame)w, mChannel);
-            }
-            dialog.centerAndShow();
-            setChannel(mChannel);
-          }
-        });
-        
-        channelPopup.add(item);
-        
-        channelPopup.show(ChannelLabel.this, e.getPoint().x, e.getPoint().y);
-      }
-      
       public void mouseEntered(MouseEvent e) {
         e.getComponent().setForeground(Color.blue);
       }
@@ -113,6 +89,10 @@ public class ChannelLabel extends util.ui.ChannelLabel {
         e.getComponent().setForeground(Color.black);
       }        
     });
+  }
+  
+  private void showPopUp(MouseEvent e) {
+    new ChannelContextMenu(e,mChannel,this);
   }
 
   public void setIcon(Icon icon) {
