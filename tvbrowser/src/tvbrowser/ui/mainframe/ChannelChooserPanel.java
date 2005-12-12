@@ -38,9 +38,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
+import util.ui.ChannelContextMenu;
 import util.ui.ChannelListCellRenderer;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
@@ -51,7 +54,7 @@ import devplugin.Channel;
 /**
  * @author bodum
  */
-public class ChannelChooserPanel extends JPanel implements ListDropAction, ActionListener {
+public class ChannelChooserPanel extends JPanel implements ListDropAction {
 
   private DefaultListModel mChannelChooserModel;
   private JList mList;
@@ -77,12 +80,13 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction, Actio
     mList.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         Channel selectedChannel = (Channel) mList.getSelectedValue();
-        if (selectedChannel != null) {
+        if (selectedChannel != null && SwingUtilities.isLeftMouseButton(e)) {
           mParent.showChannel(selectedChannel);
         }
       }
       
       public void mousePressed(MouseEvent e) {
+        mList.setSelectedIndex(mList.locationToIndex(e.getPoint()));
         showPopupMenu(e);
       }
       
@@ -92,14 +96,8 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction, Actio
   }
 
   private void showPopupMenu(MouseEvent e) {
-    if(e.isPopupTrigger()) {
-      JPopupMenu menu = new JPopupMenu();
-      JMenuItem item = new JMenuItem(MainFrame.mLocalizer.msg("context.channels","Cutomize channel list"));
-      item.addActionListener(this);
-      menu.add(item);
-      
-      menu.show(mList,e.getX(),e.getY());
-    }
+    if(e.isPopupTrigger())     
+      new ChannelContextMenu(e,(Channel)mList.getModel().getElementAt(mList.locationToIndex(e.getPoint())),this);
   }
   
   public void updateChannelChooser() {
@@ -130,9 +128,5 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction, Actio
     DefaultProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
     model.setChannels(ChannelList.getSubscribedChannels());
     MainFrame.getInstance().updateChannellist();
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    MainFrame.getInstance().showSettingsDialog();   
   }
 }
