@@ -17,6 +17,12 @@ import tvbrowser.ui.settings.ChannelsSettingsTab;
 
 import devplugin.Channel;
 
+/**
+ * A class that builds a PopupMenu for a Channel.
+ * 
+ * @author René Mach
+ *
+ */
 public class ChannelContextMenu implements ActionListener{
   
   private static Localizer mLocalizer = Localizer.getLocalizerFor(ChannelContextMenu.class);
@@ -27,6 +33,13 @@ public class ChannelContextMenu implements ActionListener{
   private Channel mChannel;
   private Component mComponent;
   
+  /**
+   * Constructs the PopupMenu.
+   * 
+   * @param e The event that requested the PopupMenu.
+   * @param ch The Channel on which the event was.
+   * @param src The source Object.
+   */
   public ChannelContextMenu(MouseEvent e, Channel ch, Object src) {
     mSource = src;
     mChannel = ch;
@@ -66,9 +79,11 @@ public class ChannelContextMenu implements ActionListener{
      }
      dialog.centerAndShow();
      
+     //If from a ChannelLabel update it
      if(mSource instanceof tvbrowser.ui.programtable.ChannelLabel)
        ((tvbrowser.ui.programtable.ChannelLabel)mSource).setChannel(mChannel);
      
+     //If not from Settings update the ChannelChooser
      if(!(mSource instanceof ChannelsSettingsTab))
        MainFrame.getInstance().updateChannelChooser();
    }
