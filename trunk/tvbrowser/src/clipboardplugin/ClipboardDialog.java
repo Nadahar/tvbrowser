@@ -43,12 +43,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import util.ui.ImageUtilities;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
-
-import captureplugin.CapturePlugin;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -196,8 +193,7 @@ public class ClipboardDialog extends JDialog {
     content.add(buttonPn, BorderLayout.SOUTH);
 
     JButton copyToSystemBtn = new JButton();
-    copyToSystemBtn.setIcon(ImageUtilities
-        .createImageIconFromJar("clipboardplugin/clipboard.png", getClass()));
+    copyToSystemBtn.setIcon(mPlugin.createImageIcon("actions", "edit-paste", 16));
     copyToSystemBtn.setToolTipText(mLocalizer.msg("toSystem", "To System-Clipbord"));
     
     copyToSystemBtn.addActionListener(new ActionListener() {
