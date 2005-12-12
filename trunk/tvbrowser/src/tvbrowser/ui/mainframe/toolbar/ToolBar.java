@@ -249,15 +249,15 @@ public class ToolBar extends JToolBar {
       if (mIconSize == ICON_BIG) {
         icon = (Icon)action.getValue(Plugin.BIG_ICON);
         
-        if ((icon != null) && ((icon.getIconHeight() < 24) || (icon.getIconWidth() < 24))) {
-          icon = UiUtilities.scaleIcon(icon, 24, 24);
+        if ((icon != null) && ((icon.getIconHeight() != 22) || (icon.getIconWidth() != 22))) {
+          icon = UiUtilities.scaleIcon(icon, 22, 22);
         }
         
       }
       else {
         icon = (Icon)action.getValue(Action.SMALL_ICON);
 
-        if ((icon != null) && ((icon.getIconHeight() < 16) || (icon.getIconWidth() < 16))) {
+        if ((icon != null) && ((icon.getIconHeight() != 16) || (icon.getIconWidth() != 16))) {
           icon = UiUtilities.scaleIcon(icon, 16, 16);
         }
       
