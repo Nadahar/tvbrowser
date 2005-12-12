@@ -305,7 +305,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
   private void restoreForPopup() {
     mSubscribedChannels.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        mSubscribedChannels.setSelectedIndex(mSubscribedChannels.locationToIndex(e.getPoint()));
+        if(SwingUtilities.isRightMouseButton(e))
+          mSubscribedChannels.setSelectedIndex(mSubscribedChannels.locationToIndex(e.getPoint()));
         showPopup(e);
       }
       public void mouseReleased(MouseEvent e) {
