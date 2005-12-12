@@ -3,23 +3,14 @@ package tvbrowser.ui.programtable;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.settings.ChannelConfigDlg;
 import util.ui.ChannelContextMenu;
-import util.ui.UiUtilities;
 import devplugin.Channel;
 
 public class ChannelLabel extends util.ui.ChannelLabel {
