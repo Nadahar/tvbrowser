@@ -29,11 +29,9 @@ import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import util.paramhandler.ParamInputField;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import devplugin.SettingsTab;
 
@@ -44,56 +42,63 @@ import devplugin.SettingsTab;
  */
 public class ClipboardSettingsTab implements SettingsTab {
   /** Translator */
-  private static final Localizer mLocalizer = Localizer
-      .getLocalizerFor(ClipboardSettingsTab.class);
-  
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardSettingsTab.class);
+
   /** Settings to use */
-	private Properties mSettings;
+  private Properties mSettings;
+
   /** Text-Area for the Parameters */
-	private ParamInputField mParamText;
-	
+  private ParamInputField mParamText;
+
+  /** Plugin */
+  private ClipboardPlugin mPlugin;
+  
   /**
    * Creates the SettingsTab
+   * 
    * @param setttings Settings to use
    */
-	public ClipboardSettingsTab(Properties setttings) {
-		mSettings = setttings;
-	}
+  public ClipboardSettingsTab(ClipboardPlugin plugin, Properties setttings) {
+    mSettings = setttings;
+    mPlugin = plugin;
+  }
 
   /**
    * Creates the SettingsPanel
+   * 
    * @return Settings-Panel
    */
-	public JPanel createSettingsPanel() {
+  public JPanel createSettingsPanel() {
     mParamText = new ParamInputField(mSettings.getProperty("ParamToUse", ClipboardPlugin.DEFAULT_PARAM));
-    mParamText.setBorder(BorderFactory.createTitledBorder(
-        mLocalizer.msg("createText", "Text to create for each Program") + ":"));
-    
-		return mParamText;
-	}
+    mParamText.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("createText",
+        "Text to create for each Program")
+        + ":"));
+
+    return mParamText;
+  }
 
   /**
    * Save the Settings
    */
-	public void saveSettings() {
-		mSettings.setProperty("ParamToUse", mParamText.getText());
-	}
+  public void saveSettings() {
+    mSettings.setProperty("ParamToUse", mParamText.getText());
+  }
 
   /**
    * Get the Tab-Icon
+   * 
    * @return Icon
    */
-	public Icon getIcon() {
-		return new ImageIcon(ImageUtilities
-        .createImageFromJar("clipboardplugin/clipboard.png",
-            ClipboardSettingsTab.class));
-	}
+  public Icon getIcon() {
+    return mPlugin.createImageIcon("actions", "edit-paste", 16);
+  }
 
   /**
    * Get the Title for this Tab
+   * 
    * @return Tab-Title
    */
-	public String getTitle() {
-		return mLocalizer.msg("title","Clipboard Settings");
-	}
+  public String getTitle() {
+    return mLocalizer.msg("title", "Clipboard Settings");
+  }
 }
