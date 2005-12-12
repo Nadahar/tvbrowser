@@ -82,7 +82,8 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
       }
       
       public void mousePressed(MouseEvent e) {
-        mList.setSelectedIndex(mList.locationToIndex(e.getPoint()));
+        if(SwingUtilities.isRightMouseButton(e))
+          mList.setSelectedIndex(mList.locationToIndex(e.getPoint()));
         showPopupMenu(e);
       }
       
