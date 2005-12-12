@@ -31,6 +31,8 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.factories.Borders;
+
 import tvbrowser.core.Settings;
 import util.ui.TabLayout;
 import devplugin.SettingsTab;
@@ -53,6 +55,8 @@ public class TraySettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     JPanel trayPn = new JPanel(new TabLayout(1));
 
+    trayPn.setBorder(Borders.DLU4_BORDER);
+    
     String msg = mLocalizer.msg("minimizeToTray", "Minimize to Tray");
     boolean checked = Settings.propMinimizeToTray.getBoolean();
     mMinimizeToTrayChb = new JCheckBox(msg, checked);
