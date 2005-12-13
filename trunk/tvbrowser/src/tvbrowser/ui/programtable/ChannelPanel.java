@@ -46,7 +46,7 @@ public class ChannelPanel extends JPanel {
     = util.ui.Localizer.getLocalizerFor(ChannelPanel.class);
   
   private int mColumnWidth;
-  private JLabel[] mLabelArr;
+  private ChannelLabel[] mLabelArr;
   /** Height of Panel, if an Icon is > 15, it get adjusted to it's needs */
   private int mColumnHeight = 15;  
   
@@ -91,4 +91,13 @@ public class ChannelPanel extends JPanel {
     }
   }  
 
+  protected void updateChannelLabelForChannel(Channel ch) {
+    if(ch == null)
+      return;
+    for (int i = 0; i < mLabelArr.length; i++)
+      if(mLabelArr[i].getChannel().equals(ch)) {
+        mLabelArr[i].setChannel(ch);
+        break;
+      }
+  }
 }

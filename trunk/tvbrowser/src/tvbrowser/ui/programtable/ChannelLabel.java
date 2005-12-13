@@ -104,5 +104,9 @@ public class ChannelLabel extends util.ui.ChannelLabel {
       channelNameFont = Settings.propChannelNameFont.getFont();
     }
   }
+  
+  protected Channel getChannel() {
+    return mChannel;
+  }
 
 }
