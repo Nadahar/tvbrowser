@@ -4,13 +4,12 @@ import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -62,18 +61,7 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
     mTrayParent.setSize(0, 0);
     mTrayParent.setUndecorated(true);
     mTrayParent.setVisible(false);
-    mTrayParent.addWindowFocusListener(new WindowFocusListener() {
-
-      public void windowGainedFocus(WindowEvent e) {
-      }
-
-      public void windowLostFocus(WindowEvent e) {
-        if ((mPopupMenu != null) && (mPopupMenu.isVisible()))
-          mPopupMenu.setVisible(false);
-      }
-
-    });
-
+   
     return mManager.isLoaded();
   }
 
@@ -131,18 +119,21 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   /**
    * If a Mouse was pressed
    */
-  public void mousePressed(MouseEvent e) {
+  public void mousePressed(final MouseEvent e) {
     if (e.isPopupTrigger() && mPopupMenu != null) {
       // we have to calculate th leftTopX and Y value of the popupmenu
-      int leftTopX, leftTopY;
 
-      leftTopX = e.getPoint().x - mPopupMenu.getWidth();
-      leftTopY = e.getPoint().y - mPopupMenu.getHeight();
-
-      Point location = mManager.getSystemTray().getLocationOnScreen();
-      
       mTrayParent.setVisible(true);
-      mPopupMenu.show(mTrayParent, location.x+leftTopX, location.y+leftTopY);
+      mTrayParent.toFront();
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          int leftTopX = e.getPoint().x - mPopupMenu.getWidth();
+          int leftTopY = e.getPoint().y - mPopupMenu.getHeight();
+          Point location = mManager.getSystemTray().getLocationOnScreen();
+          mPopupMenu.show(mTrayParent, location.x+leftTopX, location.y+leftTopY);
+        };
+      });
+      
     } else if ((e.getButton() == MouseEvent.BUTTON1) && (e.getClickCount() == 2)) {
       for (int i = 0; i < mLeftDoubleAction.size(); i++) {
         ((ActionListener) mLeftDoubleAction.get(i)).actionPerformed(null);
