@@ -27,34 +27,16 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,7 +50,6 @@ import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -87,6 +68,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelContextMenu;
@@ -95,7 +77,6 @@ import util.ui.DragAndDropMouseListener;
 import util.ui.LinkButton;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
-import util.ui.TransferEntries;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
@@ -526,6 +507,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
     }
 
     ChannelList.setSubscribeChannels(channelArr);
+    ChannelList.storeAllSettings();
     Settings.propSubscribedChannels.setChannelArray(channelArr);
 
   }
@@ -659,7 +641,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
   /**
    * Display the Config-Channel
    */
-  private void configChannels() {
+  public void configChannels() {
     Object[] o=mSubscribedChannels.getSelectedValues();
 
     Channel[] channelList=new Channel[o.length];
@@ -677,6 +659,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
         dialog = new ChannelConfigDlg((JFrame)w, channelList[0]);
       }
       dialog.centerAndShow();
+      MainFrame.getInstance().getProgramTableScrollPane().updateChannelLabelForChannel(channelList[0]);
     } else if (channelList.length > 1) {
       MultiChannelConfigDlg dialog;
       
