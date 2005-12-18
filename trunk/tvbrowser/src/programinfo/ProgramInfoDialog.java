@@ -129,7 +129,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
     JButton findBtn = new JButton(findasyoutype);
 
-    findBtn.setIcon(ProgramInfo.getInstance().createImageIcon("actions", "edit-find", 16));
+    findBtn.setIcon(ProgramInfo.getInstance().createImageIcon("actions", "system-search", 16));
         
     findBtn.setText("");
     findBtn.setToolTipText(mLocalizer.msg("search", "Search Text"));
