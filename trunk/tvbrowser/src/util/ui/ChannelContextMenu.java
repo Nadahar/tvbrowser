@@ -13,10 +13,8 @@ import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.settings.ChannelConfigDlg;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
-
 import devplugin.Channel;
 
 /**
@@ -60,12 +58,12 @@ public class ChannelContextMenu implements ActionListener {
     mChConf.addActionListener(this);
     mChGoToURL.addActionListener(this);
 
-    if (!(mSource instanceof ChannelsSettingsTab))
-      mMenu.add(mChAdd);
-
-    mMenu.add(mChConf);
-    mMenu.addSeparator();
     mMenu.add(mChGoToURL);
+    mMenu.add(mChConf);
+    if (!(mSource instanceof ChannelsSettingsTab)) {
+      mMenu.addSeparator();
+      mMenu.add(mChAdd);
+    }
 
     mMenu.show(e.getComponent(), e.getX(), e.getY());
   }
