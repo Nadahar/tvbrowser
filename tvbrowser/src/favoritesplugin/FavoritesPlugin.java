@@ -37,6 +37,7 @@ import util.ui.UiUtilities;
 import util.exc.*;
 
 import devplugin.*;
+
 import javax.swing.*;
 
 /**
@@ -229,8 +230,8 @@ public class FavoritesPlugin extends Plugin {
       }
     });
 
-    action.setBigIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
-    action.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+    action.setBigIcon(createImageIcon("apps", "bookmark", 22));
+    action.setSmallIcon(createImageIcon("apps", "bookmark", 16));
     action.setShortDescription(mLocalizer.msg("favoritesManager",
         "Manage favorite programs"));
     action.setText(mLocalizer.msg("buttonText", "Manage Favorites"));
@@ -302,24 +303,24 @@ public class FavoritesPlugin extends Plugin {
                 "For all"));
 
       if (!favorites.isEmpty() && !blackFavorites.isEmpty()) {
-        menu.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+        menu.setSmallIcon(createImageIcon("apps", "bookmark", 16));
 
         submenu[0] = new ActionMenu(add, addAction);
         submenu[1] = new ActionMenu(del, delAction);
 
         return new ActionMenu(menu, submenu);
       } else if (!favorites.isEmpty() && blackFavorites.isEmpty()) {
-        add.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+        add.setSmallIcon(createImageIcon("apps", "bookmark", 16));
 
         return new ActionMenu(add, addAction);
       } else if (favorites.isEmpty() && !blackFavorites.isEmpty()) {
-        del.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+        del.setSmallIcon(createImageIcon("apps", "bookmark", 16));
 
         return new ActionMenu(del, delAction);
       }
     }
 
-    menu.setSmallIcon(createImageIcon("favoritesplugin/ThumbUp16.gif"));
+    menu.setSmallIcon(createImageIcon("action", "bookmark-new", 16));
     return new ActionMenu(menu);
   }
 
@@ -430,10 +431,10 @@ public class FavoritesPlugin extends Plugin {
     return new PluginInfo(name, desc, author, new Version(1, 11));
   }
 
-  public String getMarkIconName() {
-    return "favoritesplugin/ThumbUp16.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("apps", "bookmark");
   }
-
+  
   void unmark(Program[] programArr) {
     // unmark all programs with this plugin
     for (int i = 0; i < programArr.length; i++) {

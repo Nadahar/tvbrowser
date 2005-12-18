@@ -62,7 +62,6 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.icontheme.IconLoader;
 import util.exc.ErrorHandler;
 import util.ui.ExtensionFileFilter;
 import util.ui.ImageUtilities;
@@ -135,7 +134,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mNewBt);
 
     msg = mLocalizer.msg("edit", "Edit the selected favorite...");
-    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Edit24.gif", getClass());
+    icon = mPlugin.createImageIcon("actions", "document-edit", 22);
     mEditBt = UiUtilities.createToolBarButton(msg, icon);
     mEditBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
