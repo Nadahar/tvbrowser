@@ -45,6 +45,7 @@ import util.io.IOUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -92,19 +93,10 @@ public class NewsPlugin extends Plugin {
   }
 
   
-  
-  /**
-   * Gets the mark icon.
-   * 
-   * @return The mark icon.
-   */
-  public String getMarkIconName() {
-    return "newsplugin/Information16.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("apps", "internet-news-reader");
   }
-
-
-
-
+  
    public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
@@ -114,8 +106,8 @@ public class NewsPlugin extends Plugin {
     };
 
     action.putValue(Action.NAME, mLocalizer.msg( "news" ,"News" ));
-    action.putValue(Action.SMALL_ICON, createImageIcon("newsplugin/Information16.gif"));
-    action.putValue(BIG_ICON, createImageIcon("newsplugin/Information24.gif"));
+    action.putValue(Action.SMALL_ICON, createImageIcon("apps", "internet-news-reader", 16));
+    action.putValue(BIG_ICON, createImageIcon("apps", "internet-news-reader", 22));
     action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
 
     return new ActionMenu(action);
