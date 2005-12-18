@@ -97,7 +97,7 @@ public class ProgramInfo extends devplugin.Plugin {
   public ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("contextMenuText", "Program information"));
-    action.setSmallIcon(createImageIcon("programinfo/Information16.gif"));
+    action.setSmallIcon(createImageIcon("actions", "edit-find", 16));
     action.setActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         showProgramInformation(program);
@@ -223,14 +223,9 @@ public class ProgramInfo extends devplugin.Plugin {
     }
   }
 
-
-  public String getMarkIconName() {
-    return "programinfo/Information16.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("actions", "edit-find");
   }
-
-
-
-
 
   /**
    * Gets the description text for the program table icons provided by this
