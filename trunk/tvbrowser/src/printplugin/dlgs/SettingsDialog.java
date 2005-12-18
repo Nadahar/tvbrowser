@@ -170,9 +170,9 @@ public class SettingsDialog extends JDialog {
 
 
     JButton newSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-new", 16));
-    mEditSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Edit16.gif", getClass()));
+    mEditSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-edit", 16));
     mDeleteSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
-    mSaveSchemeBtn = new JButton(ImageUtilities.createImageIconFromJar("printplugin/imgs/Save16.gif", getClass()));
+    mSaveSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-save", 16));
     newSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
     mDeleteSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
     mEditSchemeBtn.setMargin(UiUtilities.ZERO_INSETS);
