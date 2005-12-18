@@ -188,29 +188,31 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
     mPluginManagerMI.addActionListener(this);
     
-    Icon urlImg = new ImageIcon("imgs/WebComponent16.gif");
-    mDonorMI=new JMenuItem(mLocalizer.msg("menuitem.donors","Donors"), urlImg);
+    Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
+    Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
+    
+    mDonorMI=new JMenuItem(mLocalizer.msg("menuitem.donors","Donors"), urlBrowserImg);
     mDonorMI.addActionListener(this);
     
-    mFaqMI=new JMenuItem("FAQ",urlImg);   
+    mFaqMI=new JMenuItem("FAQ",urlHelpImg);   
     mFaqMI.addActionListener(this);
     
-    mForumMI=new JMenuItem("Forum",urlImg); 
+    mForumMI=new JMenuItem("Forum",urlBrowserImg); 
     mForumMI.addActionListener(this);
     
-    mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlImg); 
+    mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlHelpImg); 
     mHandbookMI.addActionListener(this);
     
-    mWebsiteMI=new JMenuItem("Website",urlImg);
+    mWebsiteMI=new JMenuItem("Website",urlBrowserImg);
     mWebsiteMI.addActionListener(this);
     
     mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16));
     mConfigAssistantMI.addActionListener(this);
     
-    mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/About16.gif"));
+    mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/tvbrowser16.png"));
     mAboutMI.addActionListener(this);
     
-    mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlImg);
+    mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlHelpImg);
     mKeyboardShortcutsMI.addActionListener(this);
     
     mViewMenu.add(mToolbarMenu);
