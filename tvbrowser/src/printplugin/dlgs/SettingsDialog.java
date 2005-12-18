@@ -91,9 +91,9 @@ public class SettingsDialog extends JDialog {
     eastBtnPanel.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 0));
     eastBtnPanel.setLayout(new GridLayout(-1, 1));
 
-    JButton printerSetupBtn = new JButton(mLocalizer.msg("printer","Drucker")+"...",ImageUtilities.createImageIconFromJar("printplugin/imgs/PageSetup16.gif", getClass()));
-    JButton pageBtn = new JButton(mLocalizer.msg("page","Seite")+"...", ImageUtilities.createImageIconFromJar("printplugin/imgs/Properties16.gif", getClass()));
-    JButton previewBtn = new JButton(mLocalizer.msg("preview","Vorschau")+"...", ImageUtilities.createImageIconFromJar("printplugin/imgs/PrintPreview16.gif", getClass()));
+    JButton printerSetupBtn = new JButton(mLocalizer.msg("printer","Drucker")+"...",PrintPlugin.getInstance().createImageIcon("devices", "printer", 16));
+    JButton pageBtn = new JButton(mLocalizer.msg("page","Seite")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-properties", 16));
+    JButton previewBtn = new JButton(mLocalizer.msg("preview","Vorschau")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-print-preview", 16));
 
     printerSetupBtn.setHorizontalAlignment(SwingConstants.LEFT);
     pageBtn.setHorizontalAlignment(SwingConstants.LEFT);
