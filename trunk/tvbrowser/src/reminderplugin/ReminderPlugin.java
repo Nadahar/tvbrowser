@@ -205,15 +205,15 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     return new ReminderSettingsTab(mSettings);
   }
 
-  public String getMarkIconName() {
-    return "reminderplugin/TipOfTheDay16.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("apps", "appointment");
   }
-
+  
   public ActionMenu getContextMenuActions(final Program program) {
     if (mReminderList.contains(program)) {
       ContextMenuAction action = new ContextMenuAction();
       action.setText(mLocalizer.msg( "pluginName" ,"Reminder"));
-      action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));
+      action.setSmallIcon(createImageIcon("apps", "appointment", 16));
 
       final ReminderListItem item = mReminderList.getReminderItem(program);
       String[] entries = ReminderFrame.REMIND_MSG_ARR;
@@ -243,7 +243,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     else {
       ContextMenuAction action = new ContextMenuAction();
       action.setText(mLocalizer.msg( "contextMenuText" ,"Remind me" ));
-      action.setSmallIcon(createImageIcon("reminderplugin/TipOfTheDay16.gif"));
+      action.setSmallIcon(createImageIcon("actions", "appointment-new", 16));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent event) {
           ReminderDialog dlg = new ReminderDialog(getParentFrame(), program, mSettings);
@@ -294,8 +294,8 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     };
 
     action.putValue(Action.NAME, mLocalizer.msg( "buttonText" ,"Reminder list" ));
-    action.putValue(Action.SMALL_ICON, createImageIcon("reminderplugin/TipOfTheDay16.gif"));
-    action.putValue(BIG_ICON, createImageIcon("reminderplugin/TipOfTheDay24.gif"));
+    action.putValue(Action.SMALL_ICON, createImageIcon("apps", "appointment", 16));
+    action.putValue(BIG_ICON, createImageIcon("apps", "appointment", 22));
     action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
 
     return new ActionMenu(action);
