@@ -36,12 +36,10 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
@@ -50,6 +48,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -212,8 +211,7 @@ public class CapturePlugin extends devplugin.Plugin {
         
         Action mainaction = new devplugin.ContextMenuAction();
         mainaction.putValue(Action.NAME, mLocalizer.msg("record", "record Program"));
-        mainaction.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png",
-                CapturePlugin.class)));
+        mainaction.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
 
         ArrayList actionList = new ArrayList();
 
@@ -281,8 +279,7 @@ public class CapturePlugin extends devplugin.Plugin {
           
           if (menu.getSubItems().length == 1) {
             Action action = menu.getSubItems()[0].getAction();
-            action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png",
-                CapturePlugin.class)));
+            action.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
             return new ActionMenu(action);
           } else {
             mainaction.putValue(Action.NAME, menu.getTitle());
@@ -366,10 +363,8 @@ public class CapturePlugin extends devplugin.Plugin {
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("CapturePlugin", "Capture Plugin"));
-        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin.png",
-                CapturePlugin.class)));
-        action.putValue(BIG_ICON,
-                new ImageIcon(ImageUtilities.createImageFromJar("captureplugin/capturePlugin24.png", CapturePlugin.class)));
+        action.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
+        action.putValue(BIG_ICON, createImageIcon("mimetypes", "video-x-generic", 22));
 
         return new ActionMenu(action);
     }
@@ -384,14 +379,10 @@ public class CapturePlugin extends devplugin.Plugin {
         updateMarkedPrograms();
     }
 
-    /**
-     * Returns the name of the file, containing your plugin icon (in the
-     * jar-File).
-     */
-    public String getMarkIconName() {
-        return "captureplugin/capturePlugin.png";
+    public ThemeIcon getMarkIconFromTheme() {
+      return new ThemeIcon("mimetypes", "video-x-generic");
     }
-
+    
     /**
      * Sets the CaputePluginData
      * 

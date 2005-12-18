@@ -65,6 +65,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 
@@ -88,10 +89,10 @@ public class PrintPlugin extends Plugin {
     return mInstance;
   }
 
-  public String getMarkIconName() {
-    return "printplugin/imgs/Print16.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("devices", "printer");
   }
-
+  
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("printProgram" ,"Print program");
     String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
@@ -115,7 +116,7 @@ public class PrintPlugin extends Plugin {
   public ActionMenu getContextMenuActions(final Program program) {
     final Plugin thisPlugin = this;
     ContextMenuAction action = new ContextMenuAction();
-    action.setSmallIcon(createImageIcon("printplugin/imgs/Print16.gif"));
+    action.setSmallIcon(createImageIcon("devices", "printer", 16));
     if (getRootNode().contains(program)) {
       action.setText(mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
       action.setActionListener(new ActionListener(){
@@ -159,8 +160,8 @@ public class PrintPlugin extends Plugin {
     };
 
     action.putValue(Action.NAME, mLocalizer.msg("print","Print"));
-    action.putValue(Action.SMALL_ICON, createImageIcon("printplugin/imgs/Print16.gif"));
-    action.putValue(BIG_ICON, createImageIcon("printplugin/imgs/Print24.gif"));
+    action.putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+    action.putValue(BIG_ICON, createImageIcon("devices", "printer", 22));
     action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
 
     return new ActionMenu(action);

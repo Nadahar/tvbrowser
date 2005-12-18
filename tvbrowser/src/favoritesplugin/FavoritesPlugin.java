@@ -498,7 +498,6 @@ public class FavoritesPlugin extends Plugin {
 
     public RenameFavoriteAction(Favorite favorite) {
       mFavorite = favorite;
-      // super.setSmallIcon(createImageIcon("favoritesplugin/Edit16.gif"));
       super.setText(mLocalizer.msg("rename", "rename"));
     }
 
@@ -519,7 +518,6 @@ public class FavoritesPlugin extends Plugin {
 
     public EditFavoriteAction(Favorite favorite) {
       mFavorite = favorite;
-      // super.setSmallIcon(createImageIcon("favoritesplugin/Edit16.gif"));
       super.setText(mLocalizer.msg("edit", "edit"));
     }
 

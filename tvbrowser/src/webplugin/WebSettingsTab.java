@@ -200,7 +200,7 @@ public class WebSettingsTab implements SettingsTab {
             }
         });
 
-        mEdit = new JButton(ImageUtilities.createImageIconFromJar("webplugin/Edit16.gif", WebSettingsTab.class));
+        mEdit = new JButton(WebPlugin.getInstance().createImageIcon("actions", "document-edit", 16));
         mEdit.setToolTipText(mLocalizer.msg("Edit", "Edit Site"));
         
         mEdit.addActionListener(new ActionListener() {
