@@ -46,6 +46,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -150,13 +151,10 @@ public class WebPlugin extends Plugin {
 
   }
 
-  /**
-   * Returns the Icon-Name
-   */
-  public String getMarkIconName() {
-    return "webplugin/Search16.gif";
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("actions", "web-search");
   }
-
+  
   /**
    * Creates the Settings-Tab
    */
@@ -195,7 +193,7 @@ public class WebPlugin extends Plugin {
 
     Action mainAction = new devplugin.ContextMenuAction();
     mainAction.putValue(Action.NAME, "Online-Suche");
-    mainAction.putValue(Action.SMALL_ICON, createImageIcon("webplugin/Search16.gif"));
+    mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
 
     ArrayList actionList = new ArrayList();
 
