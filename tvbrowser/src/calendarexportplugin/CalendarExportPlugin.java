@@ -12,14 +12,18 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import util.ui.ExtensionFileFilter;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
+import devplugin.Version;
 
 /**
  * This Plugin exports vCal and iCal Files
@@ -55,14 +59,8 @@ public class CalendarExportPlugin extends Plugin {
         return new PluginInfo(name, desc, author, new Version(0, 3));
     }
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getMarkIconName()
-     */
-    public String getMarkIconName() {
-        return "calendarexportplugin/calendar.png";
+    public ThemeIcon getMarkIconFromTheme() {
+      return new ThemeIcon("apps", "office-calendar");
     }
     
     /*
@@ -78,7 +76,7 @@ public class CalendarExportPlugin extends Plugin {
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("contextMenuText","Export to Calendar-File"));
-        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("calendarexportplugin/calendar.png", CalendarExportPlugin.class)));
+        action.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
         
         return new ActionMenu(action);
     }
