@@ -39,7 +39,7 @@ import util.ui.ImageUtilities;
  */
 public class WebAddress implements Cloneable {
   /** Default-Icon */
-  private final static ImageIcon DEFAULTICON = ImageUtilities.createImageIconFromJar("webplugin/Search16.gif", WebAddress.class);
+  private static ImageIcon DEFAULTICON = null;
 
   /** URL */
   private String mUrl;
@@ -85,6 +85,7 @@ public class WebAddress implements Cloneable {
     mUrl = address.getUrl();
     mUserEntry = address.isUserEntry();
     mActive = address.isActive();
+    
   }
 
   /**
@@ -121,6 +122,11 @@ public class WebAddress implements Cloneable {
 
   public Icon getIcon() {
 
+    if (DEFAULTICON == null) {
+      DEFAULTICON = WebPlugin.getInstance().createImageIcon("actions", "web-search", 16);
+      System.out.println(DEFAULTICON);
+    }
+
     if (mIconFile == null || mIconFile.length() == 0) { return DEFAULTICON; }
 
     try {
@@ -130,9 +136,8 @@ public class WebAddress implements Cloneable {
       }
     } catch (Exception e) {
     }
-
+    
     return DEFAULTICON;
-
   }
 
   public boolean isActive() {
