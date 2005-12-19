@@ -29,7 +29,6 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import devplugin.SettingsTab;
 
@@ -72,7 +71,7 @@ public class CapturePluginSettingsTab implements SettingsTab {
      * @return Icon
      */
     public Icon getIcon() {
-        return ImageUtilities.createImageIconFromJar("captureplugin/capturePlugin.png", CapturePluginSettingsTab.class);
+        return CapturePlugin.getInstance().createImageIcon("mimetypes", "video-x-generic", 16);
     }
 
     /**

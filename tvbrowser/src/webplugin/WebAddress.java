@@ -124,7 +124,6 @@ public class WebAddress implements Cloneable {
 
     if (DEFAULTICON == null) {
       DEFAULTICON = WebPlugin.getInstance().createImageIcon("actions", "web-search", 16);
-      System.out.println(DEFAULTICON);
     }
 
     if (mIconFile == null || mIconFile.length() == 0) { return DEFAULTICON; }
