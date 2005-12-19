@@ -54,7 +54,6 @@ import javax.swing.event.ChangeListener;
 
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
-import util.ui.ImageUtilities;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
@@ -87,11 +86,12 @@ public class ReminderSettingsTab implements SettingsTab {
 
   private String mExecFileStr, mExecParamStr;
   
-  public ReminderSettingsTab(Properties settings) {
-    this.mSettings = settings;
+  private ReminderPlugin mPlugin;
+  
+  public ReminderSettingsTab(ReminderPlugin plugin, Properties settings) {
+    mPlugin = plugin;
+    mSettings = settings;
   }
-
-
 
   /**
    * Creates the settings panel for this tab.
@@ -319,17 +319,12 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
   }
 
-
-
   /**
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    String iconName = "reminderplugin/TipOfTheDay16.gif";
-    return ImageUtilities.createImageIconFromJar(iconName, getClass());
+    return mPlugin.createImageIcon("apps", "appointment", 16);
   }
-
-
 
   /**
    * Returns the title of the tab-sheet.

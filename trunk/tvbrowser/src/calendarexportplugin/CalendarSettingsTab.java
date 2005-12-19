@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.paramhandler.ParamInputField;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import devplugin.SettingsTab;
 
@@ -45,12 +44,15 @@ public class CalendarSettingsTab implements SettingsTab {
 
   private JComboBox mShowTime;
 
+  private CalendarExportPlugin mPlugin;
+  
   /**
    * Creates the Tab
    * 
    * @param settings
    */
-  public CalendarSettingsTab(Properties settings) {
+  public CalendarSettingsTab(CalendarExportPlugin plugin, Properties settings) {
+    mPlugin = plugin;
     mSettings = settings;
   }
 
@@ -158,7 +160,7 @@ public class CalendarSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#getIcon()
    */
   public Icon getIcon() {
-    return ImageUtilities.createImageIconFromJar("calendarexportplugin/calendar.png", getClass());
+    return mPlugin.createImageIcon("apps", "office-calendar", 16);
   }
 
   /*

@@ -202,7 +202,7 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
   }
 
   public devplugin.SettingsTab getSettingsTab() {
-    return new ReminderSettingsTab(mSettings);
+    return new ReminderSettingsTab(this, mSettings);
   }
 
   public ThemeIcon getMarkIconFromTheme() {
@@ -301,8 +301,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
     return new ActionMenu(action);
   }
 
-
-
   public boolean canReceivePrograms() {
     return true;
   }
@@ -310,7 +308,6 @@ public class ReminderPlugin extends Plugin implements ReminderTimerListener, Plu
   public boolean canUseProgramTree() {
     return true;
   }
-
 
   public void programsRemoved(Program[] progArr) {
     if (progArr.length > 0) {

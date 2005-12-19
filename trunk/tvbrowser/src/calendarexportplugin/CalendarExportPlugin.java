@@ -104,7 +104,7 @@ public class CalendarExportPlugin extends Plugin {
      * @return SettingsTab
      */
     public SettingsTab getSettingsTab() {
-        return new CalendarSettingsTab(mSettings);
+        return new CalendarSettingsTab(this, mSettings);
     }    
     
     /**

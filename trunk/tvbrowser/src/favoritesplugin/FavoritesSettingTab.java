@@ -147,8 +147,7 @@ public class FavoritesSettingTab implements SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    String iconName = "favoritesplugin/ThumbUp16.gif";
-    return ImageUtilities.createImageIconFromJar(iconName, getClass());
+    return FavoritesPlugin.getInstance().createImageIcon("apps", "bookmark", 16);
   }
   
   
