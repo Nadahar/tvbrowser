@@ -375,7 +375,7 @@ public class WebSettingsTab implements SettingsTab {
      * @see devplugin.SettingsTab#getIcon()
      */
     public Icon getIcon() {
-        return ImageUtilities.createImageIconFromJar("webplugin/Search16.gif", WebSettingsTab.class);
+        return WebPlugin.getInstance().createImageIcon("actions", "web-search", 16);
     }
 
     /* (non-Javadoc)
