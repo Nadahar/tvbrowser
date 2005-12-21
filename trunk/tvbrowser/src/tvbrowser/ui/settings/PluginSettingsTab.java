@@ -82,7 +82,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     
     CellConstraints cc = new CellConstraints();
     
-    JButton update = new JButton(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), new ImageIcon("imgs/Search16.gif"));
+    JButton update = new JButton(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
     
     update.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -232,7 +232,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
     menu.addSeparator();
 
-    JMenuItem refreshMI = new JMenuItem(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), new ImageIcon("imgs/Search16.gif"));
+    JMenuItem refreshMI = new JMenuItem(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
     refreshMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().showUpdatePluginsDlg();
