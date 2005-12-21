@@ -77,7 +77,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
     mGroupList.setCellRenderer(new ChannelGroupListCellRenderer());
     mGroupList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    JButton refreshBtn = new JButton(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Search16.gif"));
+    JButton refreshBtn = new JButton(mLocalizer.msg("update","Update"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
 
     JButton infoBtn = new JButton(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
 
@@ -217,7 +217,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     menu.addSeparator();
 
-    JMenuItem updateMI = new JMenuItem(mLocalizer.msg("update","Update"), new ImageIcon("imgs/Search16.gif"));
+    JMenuItem updateMI = new JMenuItem(mLocalizer.msg("update","Update"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
     updateMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         refreshList();
