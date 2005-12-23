@@ -470,7 +470,7 @@
     <jarbundler dir="${tvbrowser-mac.runtime.dir}"
                 verbose="false"
                 name="TV-Browser"
-		icon="./images/aditional/tvbrowser.icns"
+		icon="./images/additional/tvbrowser.icns"
                 mainclass="tvbrowser.TVBrowser"
                 extraclasspath="/System/Library/Java"
                 jvmversion="1.4+"
