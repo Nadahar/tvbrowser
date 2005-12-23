@@ -30,20 +30,25 @@ package tvbrowser.ui.mainframe;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.settings.SettingsDialog;
 import util.ui.GridFlowLayout;
 
 
-public class TimeChooserPanel extends JPanel implements ChangeListener, AncestorListener {
+public class TimeChooserPanel extends JPanel implements ChangeListener, AncestorListener, MouseListener {
     
     /** The localizer for this class. */
     public static final util.ui.Localizer mLocalizer
@@ -76,7 +81,9 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
             mParent.scrollToNow();    
         }});      
       add(nowBt, BorderLayout.SOUTH);
- 
+      nowBt.addMouseListener(this);
+      
+      addMouseListener(this);
     }
     
     public void stateChanged(ChangeEvent e) {
@@ -105,6 +112,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
             mParent.scrollToTime(time);
           }
         });
+        btn.addMouseListener(this);
       }
     }
 
@@ -128,4 +136,44 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
     public void ancestorRemoved(AncestorEvent event) {
         Settings.propTimeButtons.removeChangeListener(this);        
     }
+    
+    public void mousePressed(MouseEvent e) {
+      if (e.isPopupTrigger()) {
+        showPopup(e);
+      }
+    }
+      
+    public void mouseReleased(MouseEvent e) {
+      if (e.isPopupTrigger()) {
+        showPopup(e);
+      }
+    }
+
+    public void mouseClicked(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
+    private void showPopup(MouseEvent e) {
+      JPopupMenu menu = new JPopupMenu();
+      
+      JMenuItem configure = new JMenuItem(mLocalizer.msg("configure","Configure"));
+      configure.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_TIMEBUTTONS);
+        }
+      });
+      
+      menu.add(configure);
+      
+      int x = e.getX();
+      int y = e.getY();
+      
+      if (e.getSource() != this) {
+        x += ((JButton)e.getSource()).getX();
+        y += ((JButton)e.getSource()).getY();
+      }
+      
+      menu.show(this, x, y);
+    }
+
 }
