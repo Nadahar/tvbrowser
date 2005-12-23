@@ -79,7 +79,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     JButton refreshBtn = new JButton(mLocalizer.msg("update","Update"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
 
-    JButton infoBtn = new JButton(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
+    JButton infoBtn = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
 
     mEnableBtn = new JButton(mLocalizer.msg("disable","Disable"));
 
@@ -186,7 +186,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
   private JPopupMenu createContextMenu(final ChannelGroupWrapper groupWrapper) {
     JPopupMenu menu = new JPopupMenu();
 
-    JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
+    JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     infoMI.setFont(infoMI.getFont().deriveFont(Font.BOLD));
     infoMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
