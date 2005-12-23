@@ -94,7 +94,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
   public void showUpdateMenuItem() {
     mUpdateMI.setText(mLocalizer.msg("menuitem.update","Update"));
-    mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
+    mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
   }
   
   public void showStopMenuItem() {
@@ -180,7 +180,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mRestoreMI = new JMenuItem(mLocalizer.msg("menuitem.restore", "Restore"));
     mRestoreMI.addActionListener(this);
     
-    mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
+    mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
     mUpdateMI.addActionListener(this);
     
     mLicenseMenu = createLicenseMenuItems();
