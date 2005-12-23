@@ -81,12 +81,12 @@ public class IconTheme {
   private boolean loadThemeFile() {
     try {
       File theme = new File(mIconBaseDirectory, "index.theme");
-
+      mDirectories = new ArrayList();
+      
       if (!theme.exists()) {
         return false;
       }
 
-      mDirectories = new ArrayList();
       IniFileReader iniReader = new IniFileReader(theme);
 
       HashMap iconSection = iniReader.getSection("Icon Theme");
