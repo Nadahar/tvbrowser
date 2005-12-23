@@ -47,7 +47,6 @@ import java.util.Enumeration;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -174,7 +173,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mDownBt);
 
     msg = mLocalizer.msg("send", "Send Programs to another Plugin");
-    icon = new ImageIcon("imgs/SendToPlugin24.png");
+    icon = FavoritesPlugin.getInstance().createImageIcon("actions", "edit-copy", 22);
     mSendBt = UiUtilities.createToolBarButton(msg, icon);
     mSendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -194,7 +193,7 @@ public class ManageFavoritesDialog extends JDialog {
     toolbarPn.add(mSortBt);
 
     msg = mLocalizer.msg("import", "Import favorites from TVgenial");
-    icon = ImageUtilities.createImageIconFromJar("favoritesplugin/Import24.gif", getClass());
+    icon = FavoritesPlugin.getInstance().createImageIcon("actions", "document-open", 22);
     mImportBt = UiUtilities.createToolBarButton(msg, icon);
     mImportBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {

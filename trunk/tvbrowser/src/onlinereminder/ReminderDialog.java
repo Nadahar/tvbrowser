@@ -100,7 +100,7 @@ public class ReminderDialog extends JDialog {
 
     ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
 
-    JButton send = new JButton(new ImageIcon("imgs/SendToPlugin.png"));
+    JButton send = new JButton(OnlineReminder.getInstance().createImageIcon("actions", "edit-copy", 16));
     send.setToolTipText("Send to other Plugins");
 
     send.addActionListener(new ActionListener() {

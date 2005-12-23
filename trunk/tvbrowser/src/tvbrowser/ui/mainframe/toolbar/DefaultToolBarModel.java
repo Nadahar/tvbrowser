@@ -119,14 +119,13 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
             "imgs/Bookmarks24.gif"), ToolBar.TOOGLE_BUTTON_ACTION, this);
     String scrollTo = MainFrame.mLocalizer.msg("menuinfo.scrollTo", "Scroll to") + ": ";
     mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now", "Now"), "#scrollToNow", scrollTo
-        + TVBrowser.mLocalizer.msg("button.now", "Now"), new ImageIcon("imgs/Play16.gif"), new ImageIcon(
-        "imgs/Play24.gif"), ToolBar.BUTTON_ACTION, this);
+        + TVBrowser.mLocalizer.msg("button.now", "Now"),IconLoader.getInstance().getIconFromTheme("actions", "media-playback-start", 16), IconLoader.getInstance().getIconFromTheme("actions", "media-playback-start", 22), ToolBar.BUTTON_ACTION, this);
     mScrollToTodayAction = createAction(TVBrowser.mLocalizer.msg("button.today", "Today"), "#scrollToToday", scrollTo
-        + TVBrowser.mLocalizer.msg("button.today", "Today"), new ImageIcon("imgs/Import16.gif"), new ImageIcon(
-        "imgs/Import24.gif"), ToolBar.BUTTON_ACTION, this);
+        + TVBrowser.mLocalizer.msg("button.today", "Today"), IconLoader.getInstance().getIconFromTheme("actions", "document-open", 16), IconLoader.getInstance().getIconFromTheme("actions", "document-open", 22),
+          ToolBar.BUTTON_ACTION, this);
     mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"),
-        "#scrollToTomorrow", scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), new ImageIcon(
-            "imgs/StepForward16.gif"), IconLoader.getInstance().getIconFromTheme("actions", "go-next", 24), ToolBar.BUTTON_ACTION, this);
+        "#scrollToTomorrow", scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), IconLoader.getInstance().getIconFromTheme("actions", "go-next", 16),
+        IconLoader.getInstance().getIconFromTheme("actions", "go-next", 24), ToolBar.BUTTON_ACTION, this);
 
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
 

@@ -28,6 +28,7 @@ package tvbrowser.ui.settings;
 import java.awt.BorderLayout;
 import javax.swing.*;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import devplugin.SettingsTab;
 
 public class DirectoriesSettingsTab implements SettingsTab {
@@ -83,7 +84,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
      * Returns the name of the tab-sheet.
      */
   public Icon getIcon() {
-    return new ImageIcon("imgs/Open16.gif");
+    return IconLoader.getInstance().getIconFromTheme("status", "folder-open", 16);
   }
   
   

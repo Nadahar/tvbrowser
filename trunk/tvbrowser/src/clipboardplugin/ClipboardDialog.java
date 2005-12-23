@@ -177,7 +177,7 @@ public class ClipboardDialog extends JDialog {
     JButton sendButton = new JButton();
 
     sendButton.setToolTipText(mLocalizer.msg("send", "Send Program to another Plugin"));
-    sendButton.setIcon(new ImageIcon("imgs/SendToPlugin.png"));
+    sendButton.setIcon(mPlugin.createImageIcon("actions", "edit-copy", 16));
     sendButton.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {

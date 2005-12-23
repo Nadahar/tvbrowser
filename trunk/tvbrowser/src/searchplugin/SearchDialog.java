@@ -36,7 +36,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -211,7 +210,7 @@ public class SearchDialog extends JDialog {
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     main.add(buttonPn, BorderLayout.SOUTH);
     
-    Icon icon = new ImageIcon("imgs/SendToPlugin.png");
+    Icon icon = mPlugin.createImageIcon("actions", "edit-copy", 16);
     JButton sendBt = new JButton(icon);
     sendBt.setToolTipText(mLocalizer.msg("send", "end Programs to another Plugin"));
     sendBt.addActionListener(new ActionListener() {
