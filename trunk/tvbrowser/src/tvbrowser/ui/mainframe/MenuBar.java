@@ -288,7 +288,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
       for (int i=0;i<services.length;i++) {
         final String license=services[i].getInfo().getLicense();
         if (license!=null) {
-          JMenuItem item=new JMenuItem(services[i].getInfo().getName(),new ImageIcon("imgs/About16.gif"));
+          JMenuItem item=new JMenuItem(services[i].getInfo().getName(),new ImageIcon("imgs/tvbrowser16.png"));
           item.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
               LicenseBox box=new LicenseBox(mMainFrame, license, false);

@@ -78,6 +78,7 @@ public class SettingsDialog {
   public static final String TAB_ID_TOOLBAR = "#toolbar";
   public static final String TAB_ID_TIMEBUTTONS = "#timebuttons";
   public static final String TAB_ID_PLUGINS = "#plugins";
+  public static final String TAB_ID_TRAY = "#tray";
 
 
   private JDialog mDialog;
@@ -307,7 +308,7 @@ public class SettingsDialog {
     root.add(node);
 
     if (TVBrowser.isUsingSystemTray()) {
-      node.add(new SettingNode(new TraySettingsTab()));
+      node.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
     }
     node.add(new SettingNode(new ProxySettingsTab()));
     node.add(new SettingNode(new DirectoriesSettingsTab()));
