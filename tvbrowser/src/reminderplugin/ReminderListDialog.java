@@ -120,7 +120,7 @@ public class ReminderListDialog extends JDialog {
 
     btnPanel.add(closeBtn,BorderLayout.EAST);
 
-    JButton sendBtn = new JButton(new ImageIcon("imgs/SendToPlugin.png"));
+    JButton sendBtn = new JButton(mPlugin.createImageIcon("actions", "edit-copy", 16));
 
     sendBtn.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
     sendBtn.addActionListener(new ActionListener() {
