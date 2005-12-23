@@ -25,12 +25,12 @@
  */
 package tvbrowser.ui;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -45,6 +45,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.SettingsDialog;
 
 import com.gc.systray.SystemTrayFactory;
 import com.gc.systray.SystemTrayIf;
@@ -127,6 +128,18 @@ public class SystemTray {
     trayMenu.add(mOpenCloseMenuItem);
     trayMenu.addSeparator();
     trayMenu.add(createPluginsMenu());
+    trayMenu.addSeparator();
+
+    JMenuItem configure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));
+    
+    configure.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_TRAY);
+      }
+    });
+    
+    trayMenu.add(configure);
+    
     trayMenu.addSeparator();
     trayMenu.add(quitMenuItem);
 
