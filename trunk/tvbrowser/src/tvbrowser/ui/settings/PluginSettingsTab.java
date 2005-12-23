@@ -155,7 +155,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
 
-    mInfo = new JButton(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
+    mInfo = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     mInfo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int inx = mList.getSelectedIndex();
@@ -197,7 +197,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
   private JPopupMenu createContextMenu(final PluginProxy plugin) {
     JPopupMenu menu = new JPopupMenu();
-    JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), new ImageIcon("imgs/About16.gif"));
+    JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     infoMI.setFont(infoMI.getFont().deriveFont(Font.BOLD));
     infoMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
