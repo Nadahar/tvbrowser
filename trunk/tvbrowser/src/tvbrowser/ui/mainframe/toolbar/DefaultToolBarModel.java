@@ -96,10 +96,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
     if (arg) {
       mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/FilterSet16.png"));
-      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/FilterSet24.png"));
+      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/FilterSet22.png"));
     } else {
       mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/Filter16.png"));
-      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Filter24.png"));
+      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Filter22.png"));
     }
   }
 
@@ -112,11 +112,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         MainFrame.mLocalizer.msg("menuinfo.settings", ""), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 22), 
         ToolBar.BUTTON_ACTION, this);
     mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"), "#filter", MainFrame.mLocalizer
-        .msg("menuinfo.filter", ""), new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter24.png"),
+        .msg("menuinfo.filter", ""), new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter22.png"),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
     mPluginViewAction = createAction(TVBrowser.mLocalizer.msg("button.pluginView", "Plugin View"), "#pluginView",
         MainFrame.mLocalizer.msg("menuinfo.pluginView", ""), new ImageIcon("imgs/Bookmarks16.gif"), new ImageIcon(
-            "imgs/Bookmarks24.gif"), ToolBar.TOOGLE_BUTTON_ACTION, this);
+            "imgs/Bookmarks22.gif"), ToolBar.TOOGLE_BUTTON_ACTION, this);
     String scrollTo = MainFrame.mLocalizer.msg("menuinfo.scrollTo", "Scroll to") + ": ";
     mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now", "Now"), "#scrollToNow", scrollTo
         + TVBrowser.mLocalizer.msg("button.now", "Now"),IconLoader.getInstance().getIconFromTheme("actions", "media-playback-start", 16), IconLoader.getInstance().getIconFromTheme("actions", "media-playback-start", 22), ToolBar.BUTTON_ACTION, this);
@@ -125,7 +125,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
           ToolBar.BUTTON_ACTION, this);
     mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"),
         "#scrollToTomorrow", scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), IconLoader.getInstance().getIconFromTheme("actions", "go-next", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "go-next", 24), ToolBar.BUTTON_ACTION, this);
+        IconLoader.getInstance().getIconFromTheme("actions", "go-next", 22), ToolBar.BUTTON_ACTION, this);
 
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
 
