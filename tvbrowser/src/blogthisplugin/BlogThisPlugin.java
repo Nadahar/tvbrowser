@@ -22,6 +22,11 @@ public class BlogThisPlugin extends Plugin {
   private static final String DEFAULT_TITLE = "{title} ({channel_name})";
   private static final String DEFAULT_CONTENT = "<blockquote><strong>{title}</strong>\n\n<em>{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")} {channel_name}</em>\n\n{short_info}</blockquote>\n";
   
+//  blogger.popupurl=http://www.blogger.com/blog_this.pyra?&n=%S&t=%S&u=%S&sourceid=%S
+//  b2evolution.popupurl=%S?post_title=%S&content=%S&post_url=%S&sourceid=%S
+//  wordpress.popupurl=%S?popuptitle=%S&text=%S&popupurl=%S&sourceid=%S
+
+  
   /*
    * (non-Javadoc)
    * 
