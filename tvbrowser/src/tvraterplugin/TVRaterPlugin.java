@@ -94,7 +94,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         };
         action.putValue(Action.NAME, mLocalizer.msg("pluginName", "TV Rater"));
         action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater.gif", TVRaterPlugin.class)));
-        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater.gif", TVRaterPlugin.class)));
+        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater22.png", TVRaterPlugin.class)));
         
         return new ActionMenu(action);
     }    
