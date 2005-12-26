@@ -212,9 +212,11 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   }
 
   public void mouseClicked(MouseEvent event) {
-    int index = mList.locationToIndex(event.getPoint());
-    markDate(((FinderItem) mModel.getElementAt(index)).getDate());
-    MainFrame.getInstance().addKeyboardAction();
+    if (event.getButton() == MouseEvent.BUTTON1) {
+      int index = mList.locationToIndex(event.getPoint());
+      markDate(((FinderItem) mModel.getElementAt(index)).getDate());
+      MainFrame.getInstance().addKeyboardAction();
+    }
   }
 
   public void mouseEntered(MouseEvent arg0) {
