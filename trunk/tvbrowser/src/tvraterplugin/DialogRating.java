@@ -64,9 +64,6 @@ public class DialogRating extends JDialog {
     /** Overall Rating */
     private Rating _overallrating;
 
-    /** Length of the Program */
-    private int _length;
-
     /** Title of teh Program */
     private String _title;
 
@@ -81,8 +78,6 @@ public class DialogRating extends JDialog {
 
     /** ParentFrame */
     private Frame _parent;
-    /** Size of the Dialog */
-    private static Dimension _dimensionDialog = null;
 
     /** The Genre */
     private GenreComboBox _genre;  
@@ -111,7 +106,6 @@ public class DialogRating extends JDialog {
             _personalrating = new Rating(programtitle);
         }
 
-        _length = TVRaterPlugin.MINLENGTH+1;
         _title = programtitle;
         _originaltitle = null;
         createGUI();
@@ -139,7 +133,6 @@ public class DialogRating extends JDialog {
             _personalrating = new Rating(program.getTitle());
         }
 
-        _length = program.getLength();
         _title = program.getTitle();
         _originaltitle = program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
         _program = program;
