@@ -22,6 +22,7 @@
  */
 package blogthisplugin;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
@@ -29,11 +30,14 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -81,7 +85,7 @@ public class BlogSettingsTab implements SettingsTab {
      * Create the SettingsPanel
      */
     public JPanel createSettingsPanel() {
-        JPanel settingsPanel = new JPanel(new FormLayout(
+        final JPanel settingsPanel = new JPanel(new FormLayout(
                 "pref, 3dlu, pref, fill:pref:grow, pref",
                 "pref, 3dlu, pref, 3dlu, pref"));
         settingsPanel.setBorder(Borders.DLU4_BORDER);
@@ -125,6 +129,13 @@ public class BlogSettingsTab implements SettingsTab {
         settingsPanel.add(mServiceUrlField, cc.xyw(3, 3, 3));
 
         JButton extended = new JButton(mLocalizer.msg("Extended", "Extended"));
+        
+        extended.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            showExtendedDialog(settingsPanel);
+          }
+        });
+        
         settingsPanel.add(extended, cc.xy(5, 5));
 
         return settingsPanel;
@@ -146,6 +157,24 @@ public class BlogSettingsTab implements SettingsTab {
         }
     }
 
+    /**
+     * Shows the Dialog with the extended Settings
+     * @param panel Parent-Panel
+     */
+    private void showExtendedDialog(JPanel panel) {
+      ExtendedDialog dialog;
+      
+      Window comp = UiUtilities.getBestDialogParent(panel);
+      
+      if (comp instanceof JFrame) {
+        dialog = new ExtendedDialog((JFrame) comp, mSettings);
+      } else {
+        dialog = new ExtendedDialog((JDialog) comp, mSettings);
+      }
+      
+      UiUtilities.centerAndShow(dialog);
+    }
+    
     /**
      * Saves the Settings
      */
