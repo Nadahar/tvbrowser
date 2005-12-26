@@ -24,13 +24,13 @@ public class RatingIconTextFactory {
 
     /** Icons used to show the Ratings */
     final static ImageIcon _icons[] = new ImageIcon[] {
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/0.gif")),
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/1.gif")),
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/2.gif")),
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/3.gif")),
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/4.gif")),
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/5.gif")),
-            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/-1.gif"))};
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/0.png")),
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/1.png")),
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/2.png")),
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/3.png")),
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/4.png")),
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/5.png")),
+            new ImageIcon(RatingIconTextFactory.class.getResource("imgs/-1.png"))};
 
     /** The Genres */
     static Properties _genre = null;
