@@ -51,9 +51,9 @@ public class BlogThisPlugin extends Plugin {
             .getLocalizerFor(BlogThisPlugin.class);
 
     /** Default Text */
-    private static final String DEFAULT_TITLE = "{title} ({channel_name})";
+    public static final String DEFAULT_TITLE = "{title} ({channel_name})";
 
-    private static final String DEFAULT_CONTENT = "<blockquote><strong>{title}</strong>\n\n<em>{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")} {channel_name}</em>\n\n{short_info}</blockquote>\n";
+    public static final String DEFAULT_CONTENT = "<blockquote><strong>{title}</strong>\n\n<em>{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")} {channel_name}</em>\n\n{short_info}</blockquote>\n";
 
     /** Default URLs */
     public static final String URL_WORDPRESS = "http://yoursite.com/wordpress/wp-admin/bookmarklet.php";
