@@ -23,7 +23,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import util.ui.BrowserLauncher;
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 
 
@@ -69,12 +68,13 @@ public class ShowDetailsAction extends AbstractAction {
         if (_id < 0) {
             setEnabled(false);
         }
+
+        putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("showDetailsOnWeb", "Show Details on the Web"));
         
         if (name)
             putValue(Action.NAME, mLocalizer.msg("showDetailsOnWeb", "Show Details on the Web"));
-        
         if (icon)
-            putValue(Action.SMALL_ICON, ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/details16.gif", getClass()));
+            putValue(Action.SMALL_ICON, TVRaterPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
     }    
     
     /* (non-Javadoc)

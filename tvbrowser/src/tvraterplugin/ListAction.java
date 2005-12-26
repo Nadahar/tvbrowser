@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -101,11 +100,13 @@ public class ListAction extends AbstractAction {
      * @param name show Name?
      */
     private void createGui(boolean icon, boolean name) {
+        putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("showList", "Show List"));
+
         if (name)
             putValue(Action.NAME, mLocalizer.msg("showList", "Show List"));
         
         if (icon)
-            putValue(Action.SMALL_ICON, ImageUtilities.createImageIconFromJar("tvraterplugin/imgs/listview16.gif", getClass()));
+            putValue(Action.SMALL_ICON, TVRaterPlugin.getInstance().createImageIcon("actions", "system-search", 16));
     }
 
     /* (non-Javadoc)
