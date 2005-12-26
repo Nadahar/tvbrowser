@@ -93,7 +93,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("pluginName", "TV Rater"));
-        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater.gif", TVRaterPlugin.class)));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater.png", TVRaterPlugin.class)));
         action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater22.png", TVRaterPlugin.class)));
         
         return new ActionMenu(action);
@@ -143,7 +143,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "View rating"));
-        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater.gif", TVRaterPlugin.class)));
+        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("tvraterplugin/imgs/tvrater.png", TVRaterPlugin.class)));
         
         return new ActionMenu(action);
     }
@@ -190,7 +190,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
 
     public String getMarkIconName() {
-        return "tvraterplugin/imgs/tvrater.gif";
+        return "tvraterplugin/imgs/tvrater.png";
     }
 
     /**
