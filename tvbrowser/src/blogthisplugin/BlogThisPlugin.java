@@ -23,6 +23,7 @@
 package blogthisplugin;
 
 import java.awt.event.ActionEvent;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Properties;
 
@@ -63,18 +64,12 @@ public class BlogThisPlugin extends Plugin {
     /** Service Names */
     public static final String BLOGGER = "BLOGGER";
 
-    public static final String BLOGG = "BLOGG";
-
     public static final String WORDPRESS = "WORDPRESS";
 
     public static final String B2EVOLUTION = "B2EVOLUTION";
 
     /** Settings */
     private Properties mSettings;
-
-    // blogger.popupurl=http://www.blogger.com/blog_this.pyra?&n=%S&t=%S&u=%S&sourceid=%S
-    // b2evolution.popupurl=%S?post_title=%S&content=%S&post_url=%S&sourceid=%S
-    // wordpress.popupurl=%S?popuptitle=%S&text=%S&popupurl=%S&sourceid=%S
 
     /*
      * (non-Javadoc)
@@ -115,9 +110,13 @@ public class BlogThisPlugin extends Plugin {
 
         if (mSettings.getProperty("BlogService") == null) {
             
-            int ret = JOptionPane.showConfirmDialog(getParentFrame(), "Plugin konfigurieren ?!");
+            int ret = JOptionPane.showConfirmDialog(getParentFrame(),
+                mLocalizer.msg("configure", "This Plugin must be configured before first use. Do you want to do this now?"), 
+                mLocalizer.msg("notConfigured", "Not configured yet"),
+                JOptionPane.YES_NO_OPTION);
             
             if (ret == JOptionPane.YES_NO_CANCEL_OPTION) {
+              // TODO: Show Config-Dialog
             }
             
             return;
@@ -128,24 +127,53 @@ public class BlogThisPlugin extends Plugin {
         String title = parser.analyse(DEFAULT_TITLE, program);
         String content = parser.analyse(DEFAULT_CONTENT, program);
         String url = program.getChannel().getWebpage();
-
+               
         try {
-            BrowserLauncher
-                    .openURL("http://blog.wannawork.de/admin/b2bookmarklet.php?"
-                            + "post_title="
-                            + URLEncoder.encode(title, "ISO-8859-1")
-                            + "&"
-                            + "content="
-                            + URLEncoder.encode(content, "ISO-8859-1")
-                            + "&"
-                            + "post_url="
-                            + URLEncoder.encode(url, "ISO-8859-1")
-                            + "&"
-                            + "sourceid="
-                            + URLEncoder.encode("BlogThis v0.1", "UTF-8"));
+            BrowserLauncher.openURL(urlFactory(title, content, url));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Creates the URL that should open in the Web-Browser 
+     * @param title Title to show
+     * @param content Content to show
+     * @param url URL of the Channel
+     * @return URL for the Web-Browser
+     * @throws UnsupportedEncodingException
+     */
+    private String urlFactory(String title, String content, String url) throws UnsupportedEncodingException{
+      if (mSettings.getProperty("BlogService", "").equals(BLOGGER)) {
+        StringBuilder toUrl = new StringBuilder("http://www.blogger.com/blog_this.pyra?");
+        
+        toUrl.append("n=").append(URLEncoder.encode(title, "UTF-8"));
+        toUrl.append("&t=").append(URLEncoder.encode(content.trim(), "UTF-8"));
+        toUrl.append("&u=").append(URLEncoder.encode(url, "UTF-8"));
+        toUrl.append("&sourceid=").append(URLEncoder.encode("TV-Browser", "UTF-8"));
+        
+        return toUrl.toString();
+      } else if (mSettings.getProperty("BlogService", "").equals(WORDPRESS)) {
+        StringBuilder toUrl = new StringBuilder(mSettings.getProperty("BlogUrl", URL_WORDPRESS));
+        
+        toUrl.append("?popuptitle=").append(URLEncoder.encode(title, "UTF-8"));
+        toUrl.append("&text=").append(URLEncoder.encode(content, "UTF-8"));
+        toUrl.append("&popupurl=").append(URLEncoder.encode(url, "UTF-8"));
+        toUrl.append("&sourceid=").append(URLEncoder.encode("TV-Browser", "UTF-8"));
+        
+        return toUrl.toString();
+      } else if (mSettings.getProperty("BlogService", "").equals(B2EVOLUTION)) {        
+        StringBuilder toUrl = new StringBuilder(mSettings.getProperty("BlogUrl", URL_B2EVOLUTION));
+        
+        toUrl.append("?post_title=").append(URLEncoder.encode(title, "ISO-8859-1"));
+        toUrl.append("&content=").append(URLEncoder.encode(content, "ISO-8859-1"));
+        toUrl.append("&post_url=").append(URLEncoder.encode(url, "ISO-8859-1"));
+        toUrl.append("&sourceid=").append(URLEncoder.encode("TV-Browser", "ISO-8859-1"));
+        
+        return toUrl.toString();
+      }
+      
+      return null;
     }
 
     /*

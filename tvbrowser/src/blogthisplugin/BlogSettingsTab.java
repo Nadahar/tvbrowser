@@ -90,16 +90,13 @@ public class BlogSettingsTab implements SettingsTab {
                 "pref, 3dlu, pref, 3dlu, pref"));
         settingsPanel.setBorder(Borders.DLU4_BORDER);
 
-        String[] services = { "Blogger.com", "Blogg.de", "Wordpress",
+        String[] services = { "", "Blogger.com", "Wordpress",
                 "b2evolution" };
 
         mServiceCombo = new JComboBox(services);
 
         if (mSettings.getProperty("BlogService", "").equals(
                 BlogThisPlugin.BLOGGER)) {
-            mServiceCombo.setSelectedIndex(0);
-        } else if (mSettings.getProperty("BlogService", "").equals(
-                BlogThisPlugin.BLOGG)) {
             mServiceCombo.setSelectedIndex(1);
         } else if (mSettings.getProperty("BlogService", "").equals(
                 BlogThisPlugin.WORDPRESS)) {
@@ -180,11 +177,8 @@ public class BlogSettingsTab implements SettingsTab {
      */
     public void saveSettings() {
         switch (mServiceCombo.getSelectedIndex()) {
-        case 0:
-            mSettings.setProperty("BlogService", BlogThisPlugin.BLOGGER);
-            break;
         case 1:
-            mSettings.setProperty("BlogService", BlogThisPlugin.BLOGG);
+            mSettings.setProperty("BlogService", BlogThisPlugin.BLOGGER);
             break;
         case 2:
             mSettings.setProperty("BlogService", BlogThisPlugin.WORDPRESS);
@@ -194,6 +188,7 @@ public class BlogSettingsTab implements SettingsTab {
             break;
 
         default:
+            mSettings.remove("BlogService");
             break;
         }
         mSettings.setProperty("BlogUrl", mServiceUrlField.getText());
