@@ -306,6 +306,9 @@ Section "$(STD_SECTION_NAME)"
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
+  SetOutPath "$INSTDIR\icons"
+  File "${RUNTIME_DIR}\icons\*.*"
+
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
 
