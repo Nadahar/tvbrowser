@@ -38,7 +38,6 @@ import javax.swing.ImageIcon;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import captureplugin.CapturePlugin;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
@@ -119,9 +118,9 @@ public class OnlineReminder extends Plugin {
     };
     action.putValue(Action.NAME, mLocalizer.msg("pluginName", "Online Reminder"));
     action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar(
-        "onlinereminder/icons/bell16.png", CapturePlugin.class)));
+        "onlinereminder/icons/bell16.png", OnlineReminder.class)));
     action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("onlinereminder/icons/bell22.png",
-        CapturePlugin.class)));
+        OnlineReminder.class)));
 
     return new ActionMenu(action);
   }
