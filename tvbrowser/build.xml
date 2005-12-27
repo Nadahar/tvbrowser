@@ -375,6 +375,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="onlinereminder/**"/>
     </jar>
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BlogThisPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="blogthisplugin/**"/>
+    </jar>
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
@@ -499,8 +503,8 @@
       <fileset dir="${x11.dir}/src" includes="libDesktopIndicator.so"/>
       <fileset dir="${deployment.dir}" includes="linux.properties"/>
       <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
-
     </copy>
+    	<chmod perm="u+x" file="${tvbrowser-linux.runtime.dir}/tvbrowser.sh"/>
   </target>
 
 
@@ -625,7 +629,10 @@
     <mkdir dir="${public.dir}"/>
 
     <tar tarfile="${public.dir}/tvbrowser-${tvbrowser.version}.tar.gz" compression="gzip">
-       <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="tvbrowser-${tvbrowser.version}" />
+      <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="tvbrowser-${tvbrowser.version}" excludes="**/tvbrowser.sh"/>
+   	  <tarfileset dir="${tvbrowser-linux.runtime.dir}"
+    	              prefix="tvbrowser-${tvbrowser.version}"
+				 mode="755" includes="**/tvbrowser.sh" />
     </tar>
 
   </target>
