@@ -119,19 +119,17 @@ public class FavoritesPlugin extends Plugin {
   }
 
   private void deleteFavorite(Favorite favorite) {
+    Program[] delFavPrograms = favorite.getPrograms();
     favorite.unmarkPrograms();
     ArrayList list = new ArrayList();
+    
     for (int i = 0; i < mFavoriteArr.length; i++) {
-      if (!mFavoriteArr[i].equals(favorite)) {
+      if(!mFavoriteArr[i].equals(favorite)) {
+        mFavoriteArr[i].handleContainingPrograms(delFavPrograms);
         list.add(mFavoriteArr[i]);
-        try {
-          mFavoriteArr[i].updatePrograms(); // due to overlapping favorites we
-          // refresh all of our favorites
-        } catch (TvBrowserException e) {
-          ErrorHandler.handle(e);
-        }
-      }
-    }
+      }      
+    }    
+    
     mFavoriteArr = new Favorite[list.size()];
     list.toArray(mFavoriteArr);
     updateTree();
@@ -428,7 +426,7 @@ public class FavoritesPlugin extends Plugin {
             "Automatically marks your favorite programs and passes them to other Plugins.");
     String author = "Til Schneider, www.murfman.de";
 
-    return new PluginInfo(name, desc, author, new Version(1, 11));
+    return new PluginInfo(name, desc, author, new Version(1, 12));
   }
 
   public ThemeIcon getMarkIconFromTheme() {
