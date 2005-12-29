@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -48,6 +49,7 @@ import captureplugin.CapturePlugin;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.TabLayout;
 import devplugin.SettingsTab;
 
@@ -102,13 +104,10 @@ public class ButtonsSettingsTab implements SettingsTab {
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  public void saveSettings() {
-
-    int[] x = mTimeButtonsPn.getTimes();
+  public void saveSettings() {    
     Settings.propTimeButtons.setIntArray(mTimeButtonsPn.getTimes());
-    for (int i=0; i<x.length; i++) {
-      System.out.println(x[i]);
-    }
+    
+    MainFrame.getInstance().getToolbar().updateTimeButtons();
   }
 
   
@@ -230,10 +229,20 @@ class TimePanel extends JPanel {
     
     
     public int[] getTimes() {
-      int[] result = new int[mRows.size()];
-      for (int i=0; i<result.length; i++) {
-        result[i] = ((Row)mRows.get(i)).getTime();
+      ArrayList list = new ArrayList();
+      
+      for (int i = 0; i < mRows.size(); i++) {
+        int value = ((Row)mRows.get(i)).getTime();
+        
+        if(!list.contains(new Integer(value)))
+          list.add(new Integer(value));
       }
+      
+      int[] result = new int[list.size()]; 
+      
+      for(int i = 0; i < result.length; i++)
+        result[i] = ((Integer)list.get(i)).intValue();
+
       return result;
     }
   }
