@@ -42,6 +42,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -219,10 +220,11 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     this.setLocationRelativeTo(MainFrame.getInstance());
     this.setVisible(true);
     
-    buildButtonPanel();    
+    buildButtonPanel();
+    setMainframeMenusEnabled(false);
     ini();
   }
-
+  
   /**
    * @return An Instance of this or null.
    */
@@ -275,6 +277,13 @@ public class ToolBarDragAndDropSettings extends JDialog implements
      // set up the ActionButtons in the ToolBar for dragging
     MainFrame.getInstance().getToolbar().disableForDragAndDrop(this,
         mWest);
+  }
+
+  private void setMainframeMenusEnabled(boolean enabled) {
+    JMenuBar bar = MainFrame.getInstance().getJMenuBar();
+    
+    for(int i = 0; i < bar.getMenuCount(); i++)
+      bar.getMenu(i).setEnabled(enabled);
   }
 
     /**
@@ -336,8 +345,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   }
 
   public void windowClosing(WindowEvent e) {
-    MainFrame.getInstance().updateToolbar();
     mInstance = null;
+    setMainframeMenusEnabled(true);
+    MainFrame.getInstance().updateToolbar();
     this.dispose();
   }
 
@@ -563,8 +573,10 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     if(e.getSource() instanceof JButton && e.getActionCommand().equals("OK")) {
       windowClosing(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
-    else if (e.getSource() == mShowToolbarCb)
+    else if (e.getSource() == mShowToolbarCb) {
       MainFrame.getInstance().setShowToolbar(mShowToolbarCb.isSelected());
+      ini();
+    }
     else
       saveSettings();
   }
