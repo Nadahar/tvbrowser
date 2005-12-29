@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -59,8 +60,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   private Action mUpdateAction, mSettingsAction, mFilterAction, mPluginViewAction, mSeparatorAction,
       mScrollToNowAction, mScrollToTodayAction, mScrollToTomorrowAction;
-
-  private Action[] mTimeButtonActions;
 
   private static DefaultToolBarModel sInstance;
 
@@ -127,6 +126,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         "#scrollToTomorrow", scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), IconLoader.getInstance().getIconFromTheme("actions", "go-next", 16),
         IconLoader.getInstance().getIconFromTheme("actions", "go-next", 22), ToolBar.BUTTON_ACTION, this);
 
+    updateTimeButtons();
+    
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
 
     mAvailableActions.put("#update", mUpdateAction);
@@ -137,30 +138,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mAvailableActions.put("#scrollToToday", mScrollToTodayAction);
     mAvailableActions.put("#scrollToTomorrow", mScrollToTomorrowAction);
 
-    // create Time Buttons
-    int[] array = Settings.propTimeButtons.getIntArray();
-    mTimeButtonActions = new Action[array.length];
-
-    for (int i = 0; i < array.length; i++) {
-      int hour = array[i] / 60;
-      final int scrollTime = array[i];
-      String time = String.valueOf(array[i] % 60);
-
-      if (time.length() == 1)
-        time = hour + ":0" + time;
-      else
-        time = hour + ":" + time;
-
-      mTimeButtonActions[i] = createAction(time, "#scrollTo" + time, scrollTo + time, IconLoader.getInstance()
-          .getIconFromTheme("actions", "go-down", 16), IconLoader.getInstance().getIconFromTheme("actions", "go-down",
-          22), ToolBar.BUTTON_ACTION, new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().scrollToTime(scrollTime);
-        }
-      });
-
-      mAvailableActions.put("#scrollTo" + time, mTimeButtonActions[i]);
-    }
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
@@ -179,6 +156,59 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
           // TODO: create drop down list button
         }
       }
+    }
+  }
+  
+  protected void updateTimeButtons() {
+    Object[] keys = mAvailableActions.keySet().toArray();
+    ArrayList availableTimeActions = new ArrayList();
+    
+    for(int i = 0; i < keys.length; i++) {
+      Action action = (Action)mAvailableActions.get(keys[i]); 
+      String test = action.getValue(Action.NAME).toString();
+      
+      if(test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5))
+        availableTimeActions.add(keys[i].toString());
+    }
+    
+    String scrollTo = MainFrame.mLocalizer.msg("menuinfo.scrollTo", "Scroll to") + ": ";
+    // create Time Buttons
+    int[] array = Settings.propTimeButtons.getIntArray();
+    Action timeButtonAction;
+
+    for (int i = 0; i < array.length; i++) {
+      int hour = array[i] / 60;
+      final int scrollTime = array[i];
+      String time = String.valueOf(array[i] % 60);
+
+      if (time.length() == 1)
+        time = hour + ":0" + time;
+      else
+        time = hour + ":" + time;      
+      
+      if(availableTimeActions.contains(new String("#scrollTo" + time))) {
+        availableTimeActions.remove(new String("#scrollTo" + time));
+        continue;
+      }
+      
+      timeButtonAction = createAction(time, "#scrollTo" + time, scrollTo + time, IconLoader.getInstance()
+          .getIconFromTheme("actions", "go-down", 16), IconLoader.getInstance().getIconFromTheme("actions", "go-down",
+          22), ToolBar.BUTTON_ACTION, new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          MainFrame.getInstance().scrollToTime(scrollTime);
+        }
+      });
+      
+      mAvailableActions.put("#scrollTo" + time, timeButtonAction);      
+    }
+    
+    Iterator it = availableTimeActions.iterator();
+    
+    while(it.hasNext()) {
+      Action action = (Action)mAvailableActions.remove(it.next());
+      
+      if(mVisibleActions.contains(action))
+        mVisibleActions.remove(action);
     }
   }
 
