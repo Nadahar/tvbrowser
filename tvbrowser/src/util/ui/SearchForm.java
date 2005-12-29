@@ -287,7 +287,13 @@ public class SearchForm extends JPanel {
       mPatternTF.addActionListener(listener);
     }
   }
-
+  
+  public boolean hasFocus() {
+    if(mPatternCB != null)
+      return mPatternCB.getEditor().getEditorComponent().hasFocus();
+    else
+      return mPatternTF.hasFocus();
+  }
 
   /**
    * Sets the settings. These settings will be assigned to the corresponding

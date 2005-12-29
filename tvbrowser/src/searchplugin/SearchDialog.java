@@ -115,6 +115,7 @@ public class SearchDialog extends JDialog {
     mSearchBt = new JButton(msg);
     mSearchBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
+      if(!mSearchForm.hasFocus())
         search();
       }
     });
