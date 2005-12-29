@@ -26,7 +26,6 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
-
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.MenuBar;
 import tvbrowser.ui.settings.SettingsDialog;
@@ -38,149 +37,64 @@ import java.awt.event.ActionListener;
 import java.awt.*;
 import javax.swing.*;
 
-
 public class ContextMenu {
 
-  public static final util.ui.Localizer mLocalizer
-       = util.ui.Localizer.getLocalizerFor(ContextMenu.class);
-
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ContextMenu.class);
 
   private JComponent mComponent;
   private JPopupMenu mMenu;
 
   public ContextMenu(JComponent component) {
-    mComponent = component;
+    if(ToolBarDragAndDropSettings.getInstance() != null)
+      return;
+    mComponent = component;    
     mMenu = new JPopupMenu();
   }
 
   public void show(int x, int y) {
+    if(ToolBarDragAndDropSettings.getInstance() != null)
+      return;
     update();
-    mMenu.show(mComponent, x,y);
+    mMenu.show(mComponent, x, y);
+  }
+
+  protected static JMenu getSubMenu() {
+    JMenu menu = new JMenu(mLocalizer.msg("toolbar", "Toolbar"));
+    menu.add(createViewMenu());
+    menu.addSeparator();
+    menu.add(createConfigureItem());
+
+    return menu;
   }
 
   private void update() {
     mMenu.removeAll();
-  /*  mMenu.add(createButtonSizeMenuItem());*/
     mMenu.add(createViewMenu());
-    /*mMenu.add(createLocationMenu());*/
     mMenu.addSeparator();
-    if(ToolBarDragAndDropSettings.getInstance() == null)
+    if (ToolBarDragAndDropSettings.getInstance() == null)
       mMenu.add(createConfigureItem());
   }
 
-
- /* private JMenu createLocationMenu() {
-    JMenu menu = new JMenu(mLocalizer.msg("location", "Location"));
-    JRadioButtonMenuItem topMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("top","Top"));
-    JRadioButtonMenuItem leftMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("left","Left"));
-    menu.add(topMenuItem);
-    menu.add(leftMenuItem);
-    ButtonGroup group = new ButtonGroup();
-    group.add(topMenuItem);
-    group.add(leftMenuItem);
-    String loc = Settings.propToolbarLocation.getString();
-   if ("west".equals(loc)) {
-      leftMenuItem.setSelected(true);
-    }
-    else {
-      topMenuItem.setSelected(true);
-    }
-    topMenuItem.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        mToolBar.setToolbarLocation(BorderLayout.NORTH);
-        mToolBar.storeSettings();
-        MainFrame.getInstance().updateToolbar();
-      }
-    });
-
-    leftMenuItem.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        mToolBar.setToolbarLocation(BorderLayout.WEST);
-        mToolBar.storeSettings();
-        MainFrame.getInstance().updateToolbar();
-      }
-    });
-    return menu;
-  }*/
-
-  private JCheckBoxMenuItem createViewMenu() {    
-    final JCheckBoxMenuItem show = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer.msg(
-        "showToolbar", "Show toolbar"));
+  private static JCheckBoxMenuItem createViewMenu() {
+    final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
+        ToolBarDragAndDropSettings.mLocalizer
+            .msg("showToolbar", "Show toolbar"));
     show.setSelected(Settings.propIsTooolbarVisible.getBoolean());
-    show.addActionListener(new ActionListener(){
+    show.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().setShowToolbar(show.isSelected());
-      }      
-    });
-    
-    /*JMenu menu = new JMenu(mLocalizer.msg("view","view"));
-    JRadioButtonMenuItem allMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("text.and.icon","text and icon"));
-    JRadioButtonMenuItem textonlyMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("text","text"));
-    JRadioButtonMenuItem icononlyMenuItem = new JRadioButtonMenuItem(mLocalizer.msg("icon","icon"));
-    menu.add(allMenuItem);
-    menu.add(textonlyMenuItem);
-    menu.add(icononlyMenuItem);
-    ButtonGroup group = new ButtonGroup();
-    group.add(allMenuItem);
-    group.add(textonlyMenuItem);
-    group.add(icononlyMenuItem);
-    final ToolBar toolbar = MainFrame.getInstance().getToolbar();
-    
-    int style = toolbar.getStyle();
-    if (style == ToolBar.STYLE_TEXT) {
-      textonlyMenuItem.setSelected(true);
-    }
-    else if (style == ToolBar.STYLE_ICON) {
-      icononlyMenuItem.setSelected(true);
-    }
-    else {
-      allMenuItem.setSelected(true);
-    }
-    allMenuItem.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        toolbar.setStyle(ToolBar.STYLE_TEXT | ToolBar.STYLE_ICON);
-        toolbar.storeSettings();
-        toolbar.update();
       }
     });
-
-    textonlyMenuItem.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        toolbar.setStyle(ToolBar.STYLE_TEXT);
-        toolbar.storeSettings();
-        toolbar.update();
-      }
-    });
-
-    icononlyMenuItem.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        toolbar.setStyle(ToolBar.STYLE_ICON);
-        toolbar.storeSettings();
-        toolbar.update();
-      }
-    });*/
 
     return show;
   }
 
- /* private JMenuItem createButtonSizeMenuItem() {
-    JCheckBoxMenuItem item = new JCheckBoxMenuItem(mLocalizer.msg("bigIcons","Use big icons"), mToolBar.useBigIcons());
-    item.addActionListener(new ActionListener(){
+  private static JMenuItem createConfigureItem() {
+    JMenuItem item = new JMenuItem(mLocalizer.msg("configure", "Configure")
+        + "...");
+    item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        mToolBar.setUseBigIcons(!mToolBar.useBigIcons());
-        mToolBar.storeSettings();
-        mToolBar.update();
-      }
-    });
-
-    return item;
-  }
-*/
-  private JMenuItem createConfigureItem() {
-    JMenuItem item = new JMenuItem(mLocalizer.msg("configure","Configure")+"...");
-    item.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        //MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_TOOLBAR);
         new ToolBarDragAndDropSettings();
       }
     });
