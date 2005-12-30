@@ -145,7 +145,7 @@ public class BlogThisPlugin extends Plugin {
      */
     private String urlFactory(String title, String content, String url) throws UnsupportedEncodingException{
       if (mSettings.getProperty("BlogService", "").equals(BLOGGER)) {
-        StringBuilder toUrl = new StringBuilder("http://www.blogger.com/blog_this.pyra?");
+        StringBuffer toUrl = new StringBuffer("http://www.blogger.com/blog_this.pyra?");
         
         toUrl.append("n=").append(URLEncoder.encode(title, "UTF-8"));
         toUrl.append("&t=").append(URLEncoder.encode(content.trim(), "UTF-8"));
