@@ -74,6 +74,7 @@ public class ListTableModel extends AbstractTableModel {
         data.mSecond = second;
         
         mData.add(data);
+        fireTableRowsInserted(mData.indexOf(data), mData.indexOf(data));
     }
     
     /**
