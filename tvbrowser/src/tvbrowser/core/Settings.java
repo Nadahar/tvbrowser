@@ -407,9 +407,6 @@ public class Settings {
   public static final BooleanProperty propIsStatusbarVisible
   = new BooleanProperty(mProp, "isStatusbarVisible", true);
 
-  /**
-   * @deprecated Deprecated with Version 2.2, now propLookAndFeel is used
-   */
   public static final BooleanProperty propIsSkinLFEnabled
     = new BooleanProperty(mProp, "skinLF.enabled", false);
 
