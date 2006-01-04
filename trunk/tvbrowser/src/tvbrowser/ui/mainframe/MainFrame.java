@@ -684,6 +684,10 @@ public class MainFrame extends JFrame implements DateListener {
     showSettingsDialog("#channels");
   }
 
+  /**
+   * Show Settings Dialog for a specific TabId
+   * @param visibleTabId Id of the specific Tab
+   */
   public void showSettingsDialog(String visibleTabId) {
     SettingsDialog dlg = new SettingsDialog(this, visibleTabId);
     dlg.centerAndShow();
@@ -693,6 +697,19 @@ public class MainFrame extends JFrame implements DateListener {
     }
   }
 
+  /***
+   * Show the Settings for a specific Plugin
+   * @param plugin Plugin to show
+   */
+  public void showSettingsDialog(Plugin plugin) {
+    SettingsDialog dlg = new SettingsDialog(this, plugin.getId());
+    dlg.centerAndShow();
+    Settings.handleChangedSettings();
+    if (mPluginView != null) {
+      mPluginView.refreshTree();
+    }
+  }
+  
   /**
    * Shows the about box
    */

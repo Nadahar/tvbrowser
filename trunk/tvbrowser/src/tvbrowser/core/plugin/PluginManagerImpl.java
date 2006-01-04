@@ -46,6 +46,7 @@ import tvbrowser.core.search.booleansearch.ParserException;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
@@ -631,5 +632,16 @@ public class PluginManagerImpl implements PluginManager {
    */
   public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon, int size) {
     return IconLoader.getInstance().getIconFromTheme(plugin, icon, size);
+  }
+
+
+  /**
+   * Show the Settings-Dialog for a Plugin
+   * 
+   * @param plugin Use this Plugin
+   * @since 2.2
+   */
+  public void showSettings(Plugin plugin) {
+    MainFrame.getInstance().showSettingsDialog(plugin);
   }  
 }
