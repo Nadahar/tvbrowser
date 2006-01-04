@@ -97,7 +97,7 @@ public class IconLoader {
   /**
    * Load a specific Icon
    * 
-   * @param category Category of the Icon
+   * @param plugin Plugin that wants to use the Icon
    * @param icon Name of the Icon without File-Extension
    * @param size Size in Pixel
    * @return Icon if found, null if no Icon was found
@@ -141,7 +141,7 @@ public class IconLoader {
    * @return Icon if found, null if no Icon was found
    */
   public ImageIcon getIconFromTheme(Plugin plugin, String category, String icon, int size) {
-
+    
     // First Try: Current Icon Theme
     ImageIcon imageIcon = mIconTheme.getIcon(category, icon, size);
     
@@ -160,8 +160,8 @@ public class IconLoader {
  
     // Third Try: Icon in Plugin-Jar
     if(plugin != null) {
-      StringBuffer buffer = new StringBuffer(plugin.getClass().getPackage().getName()).append("/icons/").append(size).append("x").append(size).append("/").append(category).append("/").append(icon).append(".png");
-      
+      StringBuffer buffer = new StringBuffer("/").append(plugin.getClass().getPackage().getName()).append("/icons/").append(size).append("x").append(size).append("/").append(category).append("/").append(icon).append(".png");
+            
       if (plugin.getClass().getResourceAsStream(buffer.toString()) != null) {
         try {
           imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), plugin.getClass()); 
