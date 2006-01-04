@@ -76,7 +76,48 @@ public class ListTableModel extends AbstractTableModel {
         mData.add(data);
     }
     
+    /**
+     * Updates a Row in the Table
+     * @param channel Channel in Row
+     * @param first First Program
+     * @param second Second Program
+     */
+    public void updateRow(Channel channel, Program first, Program second) {
+      ListTableModelData data= new ListTableModelData();
+      data.mChannel = channel;
+      data.mFirst = first;
+      data.mSecond = second;
+      
+      int pos = findRowWithChannel(channel);
+      if (pos > -1) {
+        ListTableModelData olddata = (ListTableModelData)mData.get(pos); 
+        if (!olddata.equals(data)) {
+          mData.remove(pos);
+          mData.add(pos, data);
+          fireTableRowsUpdated(pos, pos);
+        }
+      } else {
+        mData.add(data);
+        fireTableRowsInserted(mData.indexOf(data), mData.indexOf(data));
+      }
+    }
     
+    /**
+     * Trys to find a Row with a specific Channel and returns it's Index
+     * @param channel Find Row with this Channel
+     * @return Row with Channel, -1 if not found
+     */
+    private int findRowWithChannel(Channel channel) {
+      int size = mData.size();
+      for (int i = 0;i < size;i++) {
+        ListTableModelData data = (ListTableModelData)mData.get(i);
+        if (data.mChannel.equals(channel)) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
     /* (non-Javadoc)
      * @see javax.swing.table.TableModel#getColumnCount()
      */
@@ -165,6 +206,24 @@ public class ListTableModel extends AbstractTableModel {
     private class ListTableModelData {
         Channel mChannel;
         Program mFirst, mSecond;
+        
+        public boolean equals(Object obj) {
+          if (obj instanceof ListTableModelData) {
+            ListTableModelData data = (ListTableModelData) obj;
+            
+            if (mFirst == null && data.mFirst != null) {
+              return false;
+            }
+            
+            if (mSecond == null && data.mSecond != null) {
+              return false;
+            }
+            
+            return mFirst.equals(data.mFirst) && mSecond.equals(data.mSecond);
+          }
+          
+          return super.equals(obj);
+        }
     }
-    
+
 }

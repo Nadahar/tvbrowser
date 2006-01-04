@@ -79,14 +79,14 @@ public class ListViewPlugin extends Plugin {
         String name = mLocalizer.msg("pluginName", "View List Plugin");
         String desc = mLocalizer.msg("description", "Shows a List of current running Programs");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(1, 40));
+        return new PluginInfo(name, desc, author, new Version(1, 41));
     }
 
     /**
      * Creates the Dialog
      */
     public void showDialog() {
-        final ListViewDialog dlg = new ListViewDialog(getParentFrame(), this);
+        final ListViewDialog dlg = new ListViewDialog(getParentFrame(), this, mSettings);
 
         dlg.pack();
         dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
