@@ -30,15 +30,19 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
-import javax.swing.JWindow;
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import tvbrowser.TVBrowser;
 
-public class SplashScreen extends JWindow implements Splash {
+public class SplashScreen extends JDialog implements Splash {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
@@ -55,17 +59,15 @@ public class SplashScreen extends JWindow implements Splash {
   private int mMsgX, mMsgY;
   private int mVersionX, mVersionY;
   private int mDomainX, mDomainY;
+  private Point mDraggingPoint;
 
   private Color mBackground, mForeground;
-  
-  
   
   public SplashScreen(String imgFileName, int msgX, int msgY,
     Color background, Color foreground)
   {
     super();
-    
-
+    setUndecorated(true);
     
     mImage = ImageUtilities.createImage(imgFileName);
     if (mImage != null) {
@@ -88,6 +90,32 @@ public class SplashScreen extends JWindow implements Splash {
 
     mBackground = background;
     mForeground = foreground;
+    
+    this.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        mDraggingPoint = e.getPoint();      
+      }
+
+      public void mouseReleased(MouseEvent e) {
+        mDraggingPoint = null; 
+      }
+    });
+    this.addMouseMotionListener(new MouseMotionListener() {
+
+      public void mouseDragged(MouseEvent e) {
+        if (mDraggingPoint != null) {
+          int xP = e.getX();
+          int yP = e.getY();
+          int x = mDraggingPoint.x - xP;
+          int y = mDraggingPoint.y - yP;
+          
+          if(x != 0 || y != 0)
+            setLocation(getX() - x,getY() - y);
+        }        
+      }
+
+      public void mouseMoved(MouseEvent e) {}
+    });
   }
 
   public void showSplash() {
