@@ -78,7 +78,9 @@ public class ListTableModel extends AbstractTableModel {
     }
     
     /**
-     * Updates a Row in the Table
+     * Updates a Channel-Row in the Table. If the Row wasn't found, it will be added 
+     * to the Model
+     * 
      * @param channel Channel in Row
      * @param first First Program
      * @param second Second Program
