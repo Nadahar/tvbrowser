@@ -31,6 +31,8 @@ import java.util.Iterator;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
+import blogthisplugin.BlogThisPlugin;
+
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
@@ -326,5 +328,13 @@ public interface PluginManager {
    * @since 2.2
    */
   public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon, int size);
+
+  /**
+   * Show the Settings-Dialog for a Plugin
+   * 
+   * @param plugin Use this Plugin
+   * @since 2.2
+   */
+  public void showSettings(Plugin plugin);
   
 }

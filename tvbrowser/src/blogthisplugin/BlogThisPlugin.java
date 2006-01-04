@@ -116,7 +116,7 @@ public class BlogThisPlugin extends Plugin {
                 JOptionPane.YES_NO_OPTION);
             
             if (ret == JOptionPane.YES_OPTION) {
-              // TODO: Show Config-Dialog
+              getPluginManager().showSettings(this);
             }
             
             return;
