@@ -23,40 +23,57 @@
  *   $Author$
  * $Revision$
  */
- 
+
 package tvbrowser.ui.mainframe;
 
 import javax.swing.*;
+
 import java.awt.*;
 
+/**
+ * Statusbar
+ * @author bodum
+ */
 public class StatusBar extends JPanel {
-  
+  /** Progressbar for Download-Status etc */
   private JProgressBar mProgressBar;
-  private JLabel mInfoLabel;  
-  
- public StatusBar() {
-   setOpaque(false);
-   setLayout(new BorderLayout(10,0));
-   setBorder(BorderFactory.createEmptyBorder(0,2,2,2));
-   mInfoLabel=new JLabel();
-   mInfoLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-   mProgressBar = new JProgressBar();
-	 mProgressBar.setPreferredSize(new Dimension(200,10));
-	 mProgressBar.setOpaque(false);
-   mProgressBar.setBorder(BorderFactory.createLoweredBevelBorder());
-        
-   add(mProgressBar,BorderLayout.EAST);
-   add(mInfoLabel,BorderLayout.CENTER);
-   this.setPreferredSize(new Dimension(0,20));
- }
- 
- public JProgressBar getProgressBar() {
-   return mProgressBar;
- }
- 
- public JLabel getLabel() {
-   return mInfoLabel;
- }
-  
-}
+  /** Info-Text */
+  private JLabel mInfoLabel;
 
+  /**
+   * Create the Statusbar
+   */
+  public StatusBar() {
+    setOpaque(false);
+    setLayout(new BorderLayout(2, 0));
+    setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    setPreferredSize(new Dimension(0, 20));
+
+    mInfoLabel = new JLabel();
+    mInfoLabel.setBorder(BorderFactory.createEtchedBorder());
+
+    mProgressBar = new JProgressBar();
+    mProgressBar.setPreferredSize(new Dimension(200, 10));
+    mProgressBar.setBorder(BorderFactory.createEtchedBorder());
+
+    add(mInfoLabel, BorderLayout.CENTER);
+    add(mProgressBar, BorderLayout.EAST);
+  }
+
+  /**
+   * Gets the ProgressBar
+   * @return ProgressBar
+   */
+  public JProgressBar getProgressBar() {
+    return mProgressBar;
+  }
+
+  /**
+   * Gets the Label
+   * @return Label
+   */
+  public JLabel getLabel() {
+    return mInfoLabel;
+  }
+
+}
