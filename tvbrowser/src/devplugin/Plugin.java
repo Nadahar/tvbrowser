@@ -508,10 +508,10 @@ abstract public class Plugin {
       ThemeIcon icon = getMarkIconFromTheme();
       
       if (icon != null) {
-        mMarkIcon = IconLoader.getInstance().getIconFromTheme(icon, 16);
+        mMarkIcon = IconLoader.getInstance().getIconFromTheme(this, icon, 16);
       }
       
-      if (mMarkIcon != null) {
+      if (mMarkIcon == null) {
         String iconFileName = getMarkIconName();
         if (iconFileName != null) {
           mMarkIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
