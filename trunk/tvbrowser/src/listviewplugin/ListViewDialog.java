@@ -201,12 +201,6 @@ public class ListViewDialog extends JDialog {
 
       mModel.updateRow(channels[i], prg, nprg);
     }
-
-    if (mProgramTable != null) {
-      mProgramTable.setModel(mModel);
-      setTableColumProperties();
-    }
-
   }
 
   /**
