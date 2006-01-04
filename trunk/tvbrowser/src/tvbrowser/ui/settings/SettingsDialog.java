@@ -176,10 +176,7 @@ public class SettingsDialog {
 
     mDialog.pack();
     
-    if (selectedTabId == null) {
-
-    }
-    else {
+    if (selectedTabId != null) {
       SettingNode n = findSettingNode((SettingNode)mRootNode, selectedTabId);
       if (n!=null) {
         showSettingsPanelForNode(n);
