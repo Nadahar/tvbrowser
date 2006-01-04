@@ -1,5 +1,8 @@
 Changelog ListViewPlugin
 
+1.41:
+- Live-Refresh
+
 1.4:
 - Fixed Line-Height Calculation
 - Start if TV-Browser starts

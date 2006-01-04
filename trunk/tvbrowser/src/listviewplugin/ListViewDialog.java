@@ -26,22 +26,23 @@
 package listviewplugin;
 
 import java.awt.BorderLayout;
-import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -56,6 +57,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -102,20 +107,46 @@ public class ListViewDialog extends JDialog {
   /** Plugin that created the Dialog */
   private Plugin mPlugin;
 
+  /** Timer for Updates */
+  private Timer mTimer;
+  
+  /** Settings for this Plugin */
+  private Properties mSettings;
+  
   /**
    * Creates the Dialog
    *
    * @param frame Frame for modal
    * @param plugin Plugin for reference
    */
-  public ListViewDialog(Frame frame, Plugin plugin) {
+  public ListViewDialog(Frame frame, Plugin plugin, Properties settings) {
     super(frame, true);
     setTitle(mLocalizer.msg("viewList", "View List:"));
     mPlugin = plugin;
+    mSettings = settings;
     mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
+    mModel = new ListTableModel();
 
     generateList(new Date(), getCurrentTime());
     createGUI();
+    addChangeTimer();
+  }
+
+  /**
+   * Create Change-Thread that updates the Dialog every 10 seconds
+   */
+  private void addChangeTimer() {
+    int delay = 2000;   // delay for 2 sec.
+    int period = 2000;  // repeat every 2 secs.
+    mTimer = new Timer();
+    
+    mTimer.scheduleAtFixedRate(new TimerTask() {
+       public void run() {
+         if (mRuns.isSelected()) {
+           refreshView();
+         }
+       }
+    }, delay, period);
   }
 
   /**
@@ -132,8 +163,6 @@ public class ListViewDialog extends JDialog {
    * Genereates the List of Programs
    */
   private void generateList(Date date, int time) {
-    mModel = new ListTableModel();
-
     // If Time > 24 try next Day
     if (time > 60 * 24) {
       date = date.addDays(1);
@@ -170,8 +199,7 @@ public class ListViewDialog extends JDialog {
 
       }
 
-      mModel.addRow(channels[i], prg, nprg);
-
+      mModel.updateRow(channels[i], prg, nprg);
     }
 
     if (mProgramTable != null) {
@@ -298,8 +326,6 @@ public class ListViewDialog extends JDialog {
     group.add(mRuns);
     group.add(mOn);
 
-    JButton refreshButton = new JButton(mPlugin.createImageIcon("actions", "view-refresh", 22));
-
     JPanel datetimeselect = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
     Vector dates = new Vector();
@@ -353,53 +379,20 @@ public class ListViewDialog extends JDialog {
       }
     });
 
-    refreshButton.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        refreshView();
-
-      }
-    });
-
     mRuns.setSelected(true);
     mDate.setEnabled(false);
     mTimeSpinner.setEnabled(false);
 
     // Upper Panel
 
-    JPanel topPanel = new JPanel(new GridBagLayout());
-
-    topPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-
-    GridBagConstraints c = new GridBagConstraints();
-    c.anchor = GridBagConstraints.NORTHWEST;
-    c.gridheight = 2;
-    c.weighty = 1.0;
-
-    c.insets = new Insets(0, 0, 5, 0);
-
-    topPanel.add(refreshButton, c);
-
-    c.insets = new Insets(0, 5, 5, 0);
-    c.gridheight = 1;
-    c.weighty = 0;
-
-    topPanel.add(mBox, c);
-
-    c.gridwidth = GridBagConstraints.REMAINDER;
-
-    topPanel.add(mRuns, c);
-
-    c.gridwidth = 1;
-
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1.0;
-
-    topPanel.add(datetimeselect, c);
-
-    c.weightx = 0;
-    c.fill = GridBagConstraints.NONE;
-    topPanel.add(mOn, c);
+    JPanel topPanel = new JPanel(new FormLayout("pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 3dlu, pref", "pref, 3dlu"));
+    
+    CellConstraints cc = new CellConstraints();
+    
+    topPanel.add(mRuns, cc.xy(1, 1));
+    topPanel.add(mBox, cc.xy(3,1));
+    topPanel.add(mOn, cc.xy(5,1));
+    topPanel.add(datetimeselect, cc.xy(7,1));
 
     content.add(topPanel, BorderLayout.NORTH);
 
@@ -434,7 +427,8 @@ public class ListViewDialog extends JDialog {
 
     content.add(scroll, BorderLayout.CENTER);
 
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING, 0, 5));
+    JPanel buttonPn = new JPanel(new BorderLayout());
+    buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     content.add(buttonPn, BorderLayout.SOUTH);
 
     JButton closeButton = new JButton(mLocalizer.msg("close", "Close"));
@@ -444,13 +438,30 @@ public class ListViewDialog extends JDialog {
         dispose();
       }
     });
-    buttonPn.add(closeButton);
+
+    final JCheckBox showAtStartup = new JCheckBox(mLocalizer.msg("showAtStart", "Show at start")); 
+    
+    showAtStartup.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
+    
+    showAtStartup.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        if (showAtStartup.isSelected()) {
+          mSettings.setProperty("showAtStartup", "true");
+        } else {
+          mSettings.setProperty("showAtStartup", "false");
+        }
+      }
+    });
+    
+    buttonPn.add(showAtStartup, BorderLayout.WEST);
+
+    buttonPn.add(closeButton, BorderLayout.EAST);
     getRootPane().setDefaultButton(closeButton);
 
   }
 
   /**
-   * Sets teh Table-Properties
+   * Sets the Table-Properties
    */
   private void setTableColumProperties() {
     mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new ListTableCellRenderer());
@@ -467,7 +478,6 @@ public class ListViewDialog extends JDialog {
    * Refresh the List with current settings
    */
   private void refreshView() {
-
     mBox.setEnabled(mRuns.isSelected());
     mDate.setEnabled(mOn.isSelected());
     mTimeSpinner.setEnabled(mOn.isSelected());
@@ -539,5 +549,10 @@ public class ListViewDialog extends JDialog {
 
     JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(prg, mPlugin);
     menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
+  }
+  
+  public void setVisible(boolean b) {
+    super.setVisible(b);
+    mTimer.cancel();
   }
 }
