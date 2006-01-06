@@ -222,7 +222,13 @@ public class ListTableModel extends AbstractTableModel {
               return false;
             }
             
-            return mFirst.equals(data.mFirst) && mSecond.equals(data.mSecond);
+            if (mFirst != null && !mFirst.equals(data.mFirst)) {
+                return false;
+            }
+            
+            if (mSecond != null && !mSecond.equals(data.mSecond)) {
+                return false;
+            }
           }
           
           return super.equals(obj);
