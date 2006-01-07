@@ -51,6 +51,9 @@ public class MenuUtil {
   }
 
   public static JMenuItem createMenuItem(ActionMenu menu) {
+    if (menu == null) {
+      return null;
+    }
     JMenuItem result = null;
     if (menu.hasSubItems()) {
       result = new JMenu(menu.getAction());

@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,17 +24,27 @@
  * $Revision$
  */
 
+package tvbrowser.extras.common;
 
- /**
-  * TV-Browser
-  * @author Martin Oberhauser
-  */
+import javax.swing.*;
 
 
-package reminderplugin;
+public class DefaultMarker implements devplugin.Marker {
 
-public interface ReminderTimerListener {
+  private String mId;
+  private Icon mIcon;
 
-  public void timeEvent(ReminderListItem item);
+  public DefaultMarker(String id, Icon icon) {
+    mId = id;
+    mIcon = icon;
+  }
+
+  public String getId() {
+    return mId;
+  }
+
+  public Icon getMarkIcon() {
+    return mIcon;
+  }
 
 }

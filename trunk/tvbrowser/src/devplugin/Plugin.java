@@ -67,7 +67,7 @@ import util.ui.ImageUtilities;
  * @author Martin Oberhauser
  * @author Til Schneider, www.murfman.de
  */
-abstract public class Plugin {
+abstract public class Plugin implements Marker {
 
   /**
    * The name to use for the big icon (the 24x24 one for the toolbar) of the
@@ -525,7 +525,7 @@ abstract public class Plugin {
   /**
    * This gets the ThemeIcon containg your mark icon.
    * 
-   * This Function uses the Icon-Theme-Function of the TV-Browser. For details see {@link PluginManager.getIconFromTheme()}
+   * This Function uses the Icon-Theme-Function of the TV-Browser. For details see {@link PluginManager#getIconFromTheme(Plugin, String, String, int)}
    * 
    * @return ThemeIcon that identifies the Icon in the Theme
    */

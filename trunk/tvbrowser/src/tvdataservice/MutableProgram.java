@@ -63,7 +63,7 @@ public class MutableProgram implements Program {
 
   /** Containes all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
-  private PluginAccess[] mMarkedByPluginArr;
+  private Marker[] mMarkedByPluginArr;
 
   /** Contains whether this program is currently on air. */
   private boolean mOnAir;
@@ -259,12 +259,12 @@ public class MutableProgram implements Program {
     mark(plugin);
   }
 
-  
+
   /**
    * Removes the marks from the program for a Java plugin.
    * <p>
    * If the program wasn't marked for the plugin, nothing happens.
-   * 
+   *
    * @param javaPlugin The plugin to remove the mark for.
    */
   public final void unmark(Plugin javaPlugin) {
@@ -278,12 +278,12 @@ public class MutableProgram implements Program {
    * 
    * @param plugin The plugin to mark the program for.
    */
-  public final void mark(PluginAccess plugin) {
+  public final void mark(Marker plugin) {
     boolean alreadyMarked = getMarkedByPluginIndex(plugin) != -1;
     if (! alreadyMarked) {
       // Append the new plugin
       int oldCount = mMarkedByPluginArr.length;
-      PluginAccess[] newArr = new PluginAccess[oldCount + 1];
+      Marker[] newArr = new Marker[oldCount + 1];
       System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, oldCount);
       newArr[oldCount] = plugin;
       mMarkedByPluginArr = newArr;
@@ -300,7 +300,7 @@ public class MutableProgram implements Program {
    * 
    * @param plugin The plugin to remove the mark for.
    */
-  public final void unmark(PluginAccess plugin) {
+  public final void unmark(Marker plugin) {
     int idx = getMarkedByPluginIndex(plugin);
     if (idx != -1) {
       if (mMarkedByPluginArr.length == 1) {
@@ -308,7 +308,7 @@ public class MutableProgram implements Program {
         mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
       } else {
         int oldCount = mMarkedByPluginArr.length;
-        PluginAccess[] newArr = new PluginAccess[oldCount - 1];
+        Marker[] newArr = new Marker[oldCount - 1];
         System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, idx);
         System.arraycopy(mMarkedByPluginArr, idx + 1, newArr, idx, oldCount - idx - 1);
         mMarkedByPluginArr = newArr;
@@ -320,7 +320,7 @@ public class MutableProgram implements Program {
 
   
   
-  private int getMarkedByPluginIndex(PluginAccess plugin) {
+  private int getMarkedByPluginIndex(Marker plugin) {
     for (int i = 0; i < mMarkedByPluginArr.length; i++) {
       if (mMarkedByPluginArr[i] == plugin) {
         return i;
@@ -333,8 +333,21 @@ public class MutableProgram implements Program {
 
   /**
    * Gets all {@link devplugin.Plugin}s that have marked this program.
+   * @deprecated use {@link #getMarkerArr}
    */
   public PluginAccess[] getMarkedByPlugins() {
+    PluginAccess plugin;
+    ArrayList list = new ArrayList();
+    for (int i=0; i<mMarkedByPluginArr.length; i++) {
+      plugin = PluginProxyManager.getInstance().getPluginForId(mMarkedByPluginArr[i].getId());
+      if (plugin != null) {
+        list.add(plugin);
+      }
+    }
+    return (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
+  }
+
+  public Marker[] getMarkerArr() {
     return mMarkedByPluginArr;
   }
 

@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package reminderplugin;
+package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -116,8 +116,7 @@ public class ReminderFrame {
 
   /**
    * Creates a new instance of ReminderFrame.
-   * 
-   * @param plugin The ReminderPlugin
+   *
    * @param comp A component in the parent window.
    * @param list The list of all reminders.
    * @param item The reminder to show.
@@ -125,7 +124,7 @@ public class ReminderFrame {
    *                      window. -1 disables auto-closing.
    * @param iconImage The icon image to use for the reminder frame.
    */
-  public ReminderFrame(ReminderPlugin plugin, Component comp, ReminderList list,
+  public ReminderFrame(Component comp, ReminderList list,
     ReminderListItem item, int autoCloseSecs, Image iconImage)
   {
     // Check whether we have to use a frame or dialog
@@ -173,7 +172,7 @@ public class ReminderFrame {
     progPanel.add(channelLabel,BorderLayout.EAST);
     
     ProgramPanel panel = new ProgramPanel(mProgram);
-    panel.addPluginContextMenuMouseListener(plugin);
+ //   panel.addPluginContextMenuMouseListener(plugin);
     progPanel.add(panel, BorderLayout.CENTER);
     
     JPanel btnPanel = new JPanel(new BorderLayout(10,0));

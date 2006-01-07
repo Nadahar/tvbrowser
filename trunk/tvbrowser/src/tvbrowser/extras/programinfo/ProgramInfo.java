@@ -24,42 +24,49 @@
  * $Revision$
  */
 
-package programinfo;
+package tvbrowser.extras.programinfo;
 
-import java.awt.Dimension;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.io.*;
 
 import javax.swing.*;
 
 import util.ui.UiUtilities;
+import util.exc.ErrorHandler;
 import devplugin.*;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.ConfigurationHandler;
 
 /**
  * TV-Browser
  *
  * @author Martin Oberhauser
  */
-public class ProgramInfo extends devplugin.Plugin {
+public class ProgramInfo {
 
   private static final util.ui.Localizer mLocalizer =
     util.ui.Localizer.getLocalizerFor(ProgramInfo.class);
-  
-  private static java.util.logging.Logger mLog
-      = java.util.logging.Logger.getLogger(ProgramInfo.class.getName());
-  
-  
+
+  private static String DATAFILE_PREFIX = "programinfo.ProgramInfo";
+
+//  private static java.util.logging.Logger mLog
+//      = java.util.logging.Logger.getLogger(ProgramInfo.class.getName());
+
+
   private Point mLocation = null;
   private Dimension mSize = null;
-  
+
   private Properties mSettings;
 
-  private static devplugin.Plugin mInstance;
-  
+  private ConfigurationHandler mConfigurationHandler;
+
+  private static ProgramInfo mInstance;
+
   public static final String DEFAULT_STYLE_SHEET = "#title {\n" +
     "  font-size:15px;\n" +
     "  font-family:Dialog;\n" +
@@ -76,7 +83,7 @@ public class ProgramInfo extends devplugin.Plugin {
     "  font-family:Dialog;\n" +
     "  text-align:right;\n" +
     "  font-weight:bold;\n" +
-    "}\n\n" +  
+    "}\n\n" +
     "#info {\n" +
     "  font-size:9px;\n" +
     "  font-family:Dialog;\n" +
@@ -90,14 +97,15 @@ public class ProgramInfo extends devplugin.Plugin {
     "  font-family:Dialog;\n" +
     "}\n";
 
-  public ProgramInfo() {
-    mInstance = this;
+  private ProgramInfo() {
+    mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
+    loadSettings();
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("contextMenuText", "Program information"));
-    action.setSmallIcon(createImageIcon("actions", "edit-find", 16));
+    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "edit-find", 16));
     action.setActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         showProgramInformation(program);
@@ -109,38 +117,112 @@ public class ProgramInfo extends devplugin.Plugin {
 
 
 
-  public static devplugin.Plugin getInstance() {
+  public static ProgramInfo getInstance() {
     if (mInstance == null) {
-      // this should never happen
-      mLog.severe("mInstance is null");
       mInstance = new ProgramInfo();
     }
     return mInstance;
   }
-
+/*
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("pluginName", "Program information");
     String desc =
       mLocalizer.msg("description", "Show information about a program");
     String author = "Martin Oberhauser";
     return new PluginInfo(name, desc, author, new Version(1, 10));
+  } */
+
+
+  public Properties getSettings() {
+    return mSettings;
   }
 
+  private void loadSettings() {
+
+    try {
+      mConfigurationHandler.loadSettings();
+    } catch (IOException e) {
+      ErrorHandler.handle("Could not load programinfo settings.", e);
+    }
+   /*
+
+    String userDirectoryName = Settings.getUserDirectoryName();
+      File userDirectory = new File(userDirectoryName);
+      File propFile = new File(userDirectory, DATAFILE_PREFIX + ".prop");
+      // load plugin settings
+      BufferedInputStream in = null;
+      try {
+        if (propFile.exists()) {
+          Properties prop = new Properties();
+          in = new BufferedInputStream(new FileInputStream(propFile), 0x4000);
+          prop.load(in);
+          in.close();
+          loadSettings(prop);
+        } else {
+          loadSettings(new Properties());
+        }
+      }
+      catch (Throwable thr) {
+        ErrorHandler.handle("Could not load programinfo settings.", thr);
+      }
+      finally {
+        if (in != null) {
+          try { in.close(); } catch (IOException exc) {
+            // ignore
+          }
+        }
+      }   */
+
+    }
 
 
+  public void store() {
 
+    try {
+      mConfigurationHandler.storeSettings(mSettings);
+    } catch (IOException e) {
+      ErrorHandler.handle("Could not store settings for programinfo.", e);
+    }
 
-  public devplugin.SettingsTab getSettingsTab() {
-      return new ProgramInfoSettingsTab(mSettings);
+    /*  String userDirectoryName = Settings.getUserDirectoryName();
+ File userDirectory = new File(userDirectoryName);
+
+ // save the plugin settings in a temp file
+ FileOutputStream fOut = null;
+ File tmpPropFile = new File(userDirectory, DATAFILE_PREFIX + ".prop.temp");
+ try {
+   if (mSettings != null) {
+     fOut = new FileOutputStream(tmpPropFile);
+     mSettings.store(fOut, "Settings for ProgramInfo");
+     fOut.close();
+   }
+
+   // Saving suceed -> Delete the old file and rename the temp file
+   File propFile = new File(userDirectory, DATAFILE_PREFIX + ".prop");
+   propFile.delete();
+   tmpPropFile.renameTo(propFile);
+ }
+ catch (Throwable thr) {
+   ErrorHandler.handle("Could not store settings for programinfo.", thr);
+ }
+ finally {
+   if (fOut != null) {
+     try { fOut.close(); } catch (IOException exc) {
+       // ignore
+     }
+   }
+ }
+    */
+
   }
 
   public Properties storeSettings() {
-      
+
     if (mLocation != null) {
         mSettings.setProperty("DialogLocation.X", Integer.toString(mLocation.x));
         mSettings.setProperty("DialogLocation.Y", Integer.toString(mLocation.y));
     }
-    
+
     if (mSize != null) {
         mSettings.setProperty("DialogSize.Width", Integer.toString(mSize.width));
         mSettings.setProperty("DialogSize.Height", Integer.toString(mSize.height));
@@ -148,17 +230,17 @@ public class ProgramInfo extends devplugin.Plugin {
 
     return mSettings;
   }
-  
-  
-  
+
+
+
   public void loadSettings(Properties settings) {
     if (settings == null ) {
       settings = new Properties();
     }
-    
+
     String width = settings.getProperty("DialogSize.Width");
     String height = settings.getProperty("DialogSize.Height");
-    
+
     if ((width != null) && (height != null)) {
         int w = parseNumber(width);
         int h = parseNumber(height);
@@ -167,38 +249,44 @@ public class ProgramInfo extends devplugin.Plugin {
 
     String x = settings.getProperty("DialogLocation.X");
     String y = settings.getProperty("DialogLocation.Y");
-    
+
     if ((x != null) && (y != null)) {
         int xv = parseNumber(x);
         int yv = parseNumber(y);
         mLocation = new Point(xv, yv);
     }
-    
-    mSettings = settings;    
+
+    mSettings = settings;
   }
-  
+
   /**
    * Parses a Number from a String.
    * @param str Number in String to Parse
    * @return Number if successfull. Default is 0
    */
   public int parseNumber(String str) {
-      
+
       try {
-          int i = Integer.parseInt(str);
-          return i;
+          return Integer.parseInt(str);
       } catch (Exception e) {
-          
+          // ignore
       }
-      
+
       return 0;
   }
-  
+
   private void showProgramInformation(Program program) {
-    
+
     String styleSheet = mSettings.getProperty("stylesheet_v1",DEFAULT_STYLE_SHEET);
-    
-    ProgramInfoDialog dlg = new ProgramInfoDialog(getParentFrame(), styleSheet, program);
+
+    Window parent = UiUtilities.getBestDialogParent(null);
+    ProgramInfoDialog dlg;
+    if (parent instanceof Dialog) {
+      dlg = new ProgramInfoDialog((Dialog)parent, styleSheet, program);
+    } else {
+      dlg = new ProgramInfoDialog((Frame)parent, styleSheet, program);
+    }
+
     dlg.pack();
     dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
       public void componentMoved(ComponentEvent e) {
@@ -264,7 +352,7 @@ public class ProgramInfo extends devplugin.Plugin {
         if (iconList == null) {
           iconList = new ArrayList();
         }
-        
+
         // Add the icon to the list
         iconList.add(ProgramInfoHelper.mInfoIconArr[i]);
       }
@@ -276,7 +364,7 @@ public class ProgramInfo extends devplugin.Plugin {
     } else {
       Icon[] iconArr = new Icon[iconList.size()];
       iconList.toArray(iconArr);
-      
+
       return iconArr;
     }
   }

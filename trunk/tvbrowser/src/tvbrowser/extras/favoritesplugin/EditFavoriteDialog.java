@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package favoritesplugin;
+package tvbrowser.extras.favoritesplugin;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

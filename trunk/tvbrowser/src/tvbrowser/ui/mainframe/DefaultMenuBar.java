@@ -81,6 +81,10 @@ public class DefaultMenuBar extends MenuBar {
     tvListingsMenu.add(mLicenseMenu);
         
     // "Plugins" menu
+    mPluginsMenu.add(mFavoritesMI);
+    mPluginsMenu.add(mReminderMI);
+    mPluginsMenu.addSeparator();
+
     JMenuItem[] pluginItems = createPluginMenuItems();
     for (int i=0; i<pluginItems.length; i++) {
       mPluginsMenu.add(pluginItems[i]);  

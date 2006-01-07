@@ -391,7 +391,6 @@ public class UiUtilities {
   /**
    * Move selected Items in the JList
    * @param list Move Items in this List
-   * @param nrRows Move Items nrRows up/down
    * @param row The target row where to insert
    * @param sort Dummy parameter, does nothing
    */

@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package reminderplugin;
+package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -34,21 +34,18 @@ import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
-import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
-import devplugin.Plugin;
 import devplugin.Program;
+import tvbrowser.core.icontheme.IconLoader;
 
 /**
  * TV-Browser
@@ -70,13 +67,10 @@ public class ReminderListDialog extends JDialog {
   private JPanel mListPanel;
   private JScrollPane mScrollPane;
 
-  /** The Reminder-Plugin */
-  private Plugin mPlugin;
 
-  public ReminderListDialog(Plugin plugin, Frame parent, ReminderList list) {
+
+  public ReminderListDialog(Frame parent, ReminderList list) {
     super(parent,true);
-
-    mPlugin = plugin;
 
     String msg;
 
@@ -120,13 +114,13 @@ public class ReminderListDialog extends JDialog {
 
     btnPanel.add(closeBtn,BorderLayout.EAST);
 
-    JButton sendBtn = new JButton(mPlugin.createImageIcon("actions", "edit-copy", 16));
+    JButton sendBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16));
 
     sendBtn.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
     sendBtn.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        showSendDialog();
+      //  showSendDialog();
       }
 
     });
@@ -136,7 +130,7 @@ public class ReminderListDialog extends JDialog {
     contentpane.add(btnPanel,BorderLayout.SOUTH);
   }
 
-  private void showSendDialog() {
+/*  private void showSendDialog() {
 
     ReminderListItem[] items = reminderList.getReminderItems();
     Program[] programArr = new Program[items.length];
@@ -151,7 +145,7 @@ public class ReminderListDialog extends JDialog {
     else {
       JOptionPane.showMessageDialog(this, mLocalizer.msg("noProgramToExport","There are no programs to export."));
     }
-  }
+  }  */
 
   private void removeReminderListItem(ReminderListItem item, JPanel panel) {
     reminderList.remove(item.getProgramItem());
@@ -211,7 +205,7 @@ public class ReminderListDialog extends JDialog {
     JPanel panel5=new JPanel(new BorderLayout());
     panel4.add(box1);
     panel4.add(panel5);
-    Icon icon = mPlugin.createImageIcon("actions", "edit-delete", 22);
+    Icon icon = IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 22);
     String msg = mLocalizer.msg("delete", "Delete this program from reminder list");
     JButton deleteBtn = UiUtilities.createToolBarButton(msg, icon);
     deleteBtn.addActionListener(new ActionListener(){
@@ -225,7 +219,7 @@ public class ReminderListDialog extends JDialog {
     result.add(panel2,BorderLayout.EAST);
 
     ProgramPanel panel = new ProgramPanel(prog);
-    panel.addPluginContextMenuMouseListener(mPlugin);
+    //panel.addPluginContextMenuMouseListener(mPlugin);
     result.add(panel, BorderLayout.CENTER);
 
     return result;

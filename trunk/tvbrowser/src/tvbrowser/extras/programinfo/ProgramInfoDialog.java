@@ -23,11 +23,9 @@
  *   $Author$
  * $Revision$
  */
-package programinfo;
+package tvbrowser.extras.programinfo;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -52,6 +50,7 @@ import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import devplugin.Plugin;
 import devplugin.Program;
+import tvbrowser.core.icontheme.IconLoader;
 
 /**
  * TV-Browser
@@ -65,9 +64,18 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
   private JEditorPane mInfoEP;
 
-  public ProgramInfoDialog(Frame parent, String styleSheet, final Program program)
+  public ProgramInfoDialog(Dialog parent, String styleSheet, Program program) {
+    super(parent, true);
+    init(styleSheet, program);
+  }
+
+  public ProgramInfoDialog(Frame parent, String styleSheet, Program program)
   {
     super(parent, true);
+    init(styleSheet, program);
+  }
+
+  private void init(String styleSheet, final Program program) {
 
     setTitle(mLocalizer.msg("title", "Program information"));
 
@@ -129,8 +137,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
 
     JButton findBtn = new JButton(findasyoutype);
 
-    findBtn.setIcon(ProgramInfo.getInstance().createImageIcon("actions", "system-search", 16));
-        
+    findBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
+
     findBtn.setText("");
     findBtn.setToolTipText(mLocalizer.msg("search", "Search Text"));
 
@@ -163,17 +171,17 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
    */
   private void showPopup(MouseEvent evt, Program program) {
     if (program != null) {
-      JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, ProgramInfo.getInstance());
+      JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, null);
       menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
     }
   }
 
   private void handleMouseClicked(MouseEvent evt, Program program) {
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-      Plugin.getPluginManager().handleProgramDoubleClick(program, ProgramInfo.getInstance());
+      Plugin.getPluginManager().handleProgramDoubleClick(program, null);
     }
     if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
-      Plugin.getPluginManager().handleProgramMiddleClick(program, ProgramInfo.getInstance());
+      Plugin.getPluginManager().handleProgramMiddleClick(program, null);
     }
   }
 }

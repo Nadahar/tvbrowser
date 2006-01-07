@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package reminderplugin;
+package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

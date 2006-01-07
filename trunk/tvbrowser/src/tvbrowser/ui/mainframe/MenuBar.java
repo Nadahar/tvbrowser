@@ -50,6 +50,8 @@ import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.ui.ScrollableMenu;
 import devplugin.ProgramFilter;
 import devplugin.ActionMenu;
@@ -71,7 +73,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
                     mPluginManagerMI, mDonorMI, mFaqMI, mForumMI, mWebsiteMI, mHandbookMI,
                     mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
                     mPreviousDayMI, mNextDayMI, mGotoNowMenuItem, mEditTimeButtonsMenuItem,
-                    mToolbarCustomizeMI;
+                    mToolbarCustomizeMI,
+                    mFavoritesMI, mReminderMI;
   protected JMenu mFiltersMenu, mPluginsViewMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu;
 
   private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu;
@@ -214,6 +217,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     
     mKeyboardShortcutsMI = new JMenuItem(mLocalizer.msg("menuitem.keyboardshortcuts","Keyboard shortcuts"),urlHelpImg);
     mKeyboardShortcutsMI.addActionListener(this);
+
+    mFavoritesMI = new JMenuItem(FavoritesPlugin.getInstance().getButtonAction(mMainFrame).getAction());
+    mReminderMI = new JMenuItem(ReminderPlugin.getInstance().getButtonAction(mMainFrame).getAction());
     
     mViewMenu.add(mToolbarMenu);
     mViewMenu.add(mStatusbarMI);
@@ -483,6 +489,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      else if (source == mToolbarCustomizeMI) {
        new ToolBarDragAndDropSettings();
      }
+
    }
    
    private void createMenuItemInfos() {

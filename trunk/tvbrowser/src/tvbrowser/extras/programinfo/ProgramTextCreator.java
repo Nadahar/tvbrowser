@@ -1,4 +1,4 @@
-package programinfo;
+package tvbrowser.extras.programinfo;
 
 import java.util.ArrayList;
 

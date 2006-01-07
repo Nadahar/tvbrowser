@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package favoritesplugin;
+package tvbrowser.extras.favoritesplugin;
 
 import java.util.ArrayList;
 
@@ -147,7 +147,7 @@ public class FavoritesSettingTab implements SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return FavoritesPlugin.getInstance().createImageIcon("apps", "bookmark", 16);
+    return FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16);
   }
   
   

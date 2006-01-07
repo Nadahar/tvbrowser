@@ -79,12 +79,21 @@ public class PluginManagerImpl implements PluginManager {
   private static java.util.logging.Logger mLog
     = Logger.getLogger(PluginManagerImpl.class.getName());
 
+  private static PluginManagerImpl mInstance;
+
   /**
    * Creates a new instance of PluginManagerImpl.
    */
-  public PluginManagerImpl() {
+  private PluginManagerImpl() {
   }
 
+
+  public static PluginManager getInstance() {
+    if (mInstance == null) {
+      mInstance = new PluginManagerImpl();
+    }
+    return mInstance;
+  }
 
   /**
    * Gets a program.
@@ -602,12 +611,12 @@ public class PluginManagerImpl implements PluginManager {
    *  
    * @param plugin Plugin that wants to load an Icon
    * @param category Category of the Icon (Action, etc...) 
-   * @param icon Icon-Name without File-Extension
+   * @param iconName Icon-Name without File-Extension
    * @param size Size of the Icon
    * @return Icon if found, null if not
    */
-  public ImageIcon getIconFromTheme(Plugin plugin, String category, String Icon, int size) {
-    return IconLoader.getInstance().getIconFromTheme(plugin, category, Icon, size);
+  public ImageIcon getIconFromTheme(Plugin plugin, String category, String iconName, int size) {
+    return IconLoader.getInstance().getIconFromTheme(plugin, category, iconName, size);
   }
 
 
