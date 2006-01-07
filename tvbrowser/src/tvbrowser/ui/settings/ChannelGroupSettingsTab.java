@@ -58,7 +58,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
   private JPanel mContent;
   private DefaultListModel mListModel;
   private JList mGroupList;
-  private JButton mEnableBtn;
+  private JButton mEnableBtn, mInfoBtn;
 
   private SettingsDialog mSettingsDialog;
 
@@ -79,7 +79,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
     JButton refreshBtn = new JButton(mLocalizer.msg("update","Update"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
 
-    JButton infoBtn = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
+    mInfoBtn = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
 
     mEnableBtn = new JButton(mLocalizer.msg("disable","Disable"));
 
@@ -92,7 +92,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
 
 
     ButtonBarBuilder builder = new ButtonBarBuilder();
-    builder.addGridded(infoBtn);
+    builder.addGridded(mInfoBtn);
     builder.addRelatedGap();
     builder.addGlue();
     builder.addFixed(mEnableBtn);
@@ -117,7 +117,7 @@ public class ChannelGroupSettingsTab implements SettingsTab {
       }
     });
 
-    infoBtn.addActionListener(new ActionListener(){
+    mInfoBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         Object value = mGroupList.getSelectedValue();
         ChannelGroupWrapper w = (ChannelGroupWrapper)value;
@@ -245,8 +245,10 @@ public class ChannelGroupSettingsTab implements SettingsTab {
     Object value = mGroupList.getSelectedValue();
     if (value == null) {
       mEnableBtn.setEnabled(false);
+      mInfoBtn.setEnabled(false);
     }
     else {
+      mInfoBtn.setEnabled(true);
       mEnableBtn.setEnabled(true);
       ChannelGroupWrapper w = (ChannelGroupWrapper)value;
       if (w.isEnabled()) {
