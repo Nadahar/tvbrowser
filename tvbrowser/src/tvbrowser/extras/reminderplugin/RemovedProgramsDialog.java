@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package reminderplugin;
+package tvbrowser.extras.reminderplugin;
 
 import devplugin.Program;
 
@@ -42,8 +42,17 @@ public class RemovedProgramsDialog extends JDialog {
      = util.ui.Localizer.getLocalizerFor(RemovedProgramsDialog. class );
 
 
+  public RemovedProgramsDialog(Dialog parent, Program[] programs) {
+    super(parent, false);
+    init(programs);
+  }
+
   public RemovedProgramsDialog(Frame parent, Program[] programs) {
     super(parent, false);
+    init(programs);
+  }
+
+  private void init(Program[] programs) {
     setTitle(mLocalizer.msg("dialog.title","Removed Programs"));
     JPanel contentPane = (JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout(6,6));

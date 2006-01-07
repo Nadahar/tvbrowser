@@ -1,4 +1,4 @@
-package programinfo;
+package tvbrowser.extras.programinfo;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,8 +24,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   
   
 
-  public ProgramInfoSettingsTab(Properties settings) {
-    mSettings = settings;
+  public ProgramInfoSettingsTab() {
+    mSettings = ProgramInfo.getInstance().getSettings();
   }
 
 	public JPanel createSettingsPanel() {
@@ -94,7 +94,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
 	
 	public String getTitle() {
-		return null;
+		return "ProgramInfo";
 	}
 
 

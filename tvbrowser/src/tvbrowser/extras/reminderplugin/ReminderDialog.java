@@ -30,7 +30,7 @@
   * @author Martin Oberhauser
   */
 
-package reminderplugin;
+package tvbrowser.extras.reminderplugin;
 
 
 import javax.swing.*;

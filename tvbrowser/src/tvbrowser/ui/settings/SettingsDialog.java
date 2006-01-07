@@ -58,6 +58,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
+import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
+import tvbrowser.extras.programinfo.ProgramInfoSettingsTab;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -268,6 +271,9 @@ public class SettingsDialog {
     node = new SettingNode(new ChannelGroupSettingsTab(this));
     root.add(node);
 
+    root.add(new SettingNode(new ReminderSettingsTab()));
+    root.add(new SettingNode(new FavoritesSettingTab()));
+    root.add(new SettingNode(new ProgramInfoSettingsTab()));
     
 
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
@@ -284,7 +290,7 @@ public class SettingsDialog {
     node.add(new SettingNode(new ProgramTableSettingsTab()));
     node.add(new SettingNode(new ProgramPanelSettingsTab()));
     node.add(new SettingNode(contextmenuSettingsTab));
- //   node.add(new SettingNode(new ToolbarSettingsTab(),TAB_ID_TOOLBAR));
+
 
     // Plugins
     mPluginSettingsNode = new SettingNode(pluginSettingsTab, TAB_ID_PLUGINS);

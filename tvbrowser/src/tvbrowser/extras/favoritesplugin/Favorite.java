@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package favoritesplugin;
+package tvbrowser.extras.favoritesplugin;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -466,7 +466,8 @@ public class Favorite {
   public void handleContainingPrograms(Program[] program) {    
     for(int i = 0; i < mProgramArr.length; i++)
       for(int j = 0; j < program.length; j++)
-        if(mProgramArr[i].equals(program[j]) && !mBlackList.contains(program[j]))
-          program[j].mark(FavoritesPlugin.getInstance());
+        if(mProgramArr[i].equals(program[j]) && !mBlackList.contains(program[j])) {
+//          program[j].mark(FavoritesPlugin.getInstance());
+        }
   }
 }

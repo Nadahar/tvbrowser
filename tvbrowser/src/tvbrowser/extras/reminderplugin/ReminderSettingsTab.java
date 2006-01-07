@@ -24,7 +24,7 @@
 * $Revision$
 */
 
-package reminderplugin;
+package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -59,6 +59,7 @@ import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.SettingsTab;
+import tvbrowser.core.icontheme.IconLoader;
 
 
 /**
@@ -85,12 +86,11 @@ public class ReminderSettingsTab implements SettingsTab {
   private JComboBox mDefaultReminderEntryList;
 
   private String mExecFileStr, mExecParamStr;
-  
-  private ReminderPlugin mPlugin;
-  
-  public ReminderSettingsTab(ReminderPlugin plugin, Properties settings) {
-    mPlugin = plugin;
-    mSettings = settings;
+
+ // private ReminderPlugin mPlugin;
+
+  public ReminderSettingsTab() {
+    mSettings = ReminderPlugin.getInstance().getSettings();
   }
 
   /**
@@ -124,7 +124,7 @@ public class ReminderSettingsTab implements SettingsTab {
 
     msg = mLocalizer.msg("executeProgram", "Execute program");
     mExecChB = new JCheckBox(msg);
-    
+
     msg = mLocalizer.msg("executeConfig", "Configure");
     mExecFileDialogBtn = new JButton(msg);
 
@@ -133,17 +133,17 @@ public class ReminderSettingsTab implements SettingsTab {
         showFileSettingsDialog();
       }
     });
-    
+
     mExecChB.addChangeListener(new ChangeListener() {
 
       public void stateChanged(ChangeEvent e) {
         mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
       }
-     
+
     });
-    
+
     JFileChooser soundChooser=new JFileChooser("sound/");
-    
+
     String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
     msg = mLocalizer.msg("soundFileFilter", "Sound file ({0})",
         "*.wav, *.aif, *.rmf, *.au, *.mid");
@@ -153,10 +153,10 @@ public class ReminderSettingsTab implements SettingsTab {
     mSoundFileChB.setSelected(mSettings.getProperty("usesound","false").equals("true"));
     mExecChB.setSelected(mSettings.getProperty("useexec","false").equals("true"));
     mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
-    
+
     mExecFileStr = mSettings.getProperty("execfile", "");
     mExecParamStr = mSettings.getProperty("execparam", "");
-    
+
     mSoundFileChB.setFileChooser(soundChooser);
 
     JPanel soundPn = new JPanel(new BorderLayout(5, 0));
@@ -171,12 +171,12 @@ public class ReminderSettingsTab implements SettingsTab {
     soundPn.add(soundTestBt, BorderLayout.EAST);
 
     reminderPn.add(soundPn);
-    
+
     JPanel execPanel = new JPanel(new BorderLayout());
-  
+
     execPanel.add(mExecChB, BorderLayout.WEST);
     execPanel.add(mExecFileDialogBtn, BorderLayout.EAST);
-    
+
     reminderPn.add(execPanel);
 
     JPanel pluginPn = new JPanel(new BorderLayout(5, 0));
@@ -280,22 +280,22 @@ public class ReminderSettingsTab implements SettingsTab {
    */
   private void showFileSettingsDialog() {
     ExecuteSettingsDialog execSettingsDialog;
-    
+
     Window wnd = UiUtilities.getBestDialogParent(mSettingsPn);
-    
+
     if (wnd instanceof JDialog) {
       execSettingsDialog = new ExecuteSettingsDialog((JDialog) wnd, mExecFileStr, mExecParamStr);
     } else {
       execSettingsDialog = new ExecuteSettingsDialog((JFrame) wnd, mExecFileStr, mExecParamStr);
     }
-    
+
     execSettingsDialog.setVisible(true);
-    
+
     if (execSettingsDialog.wasOKPressed()) {
       mExecFileStr = execSettingsDialog.getExecutable();
       mExecParamStr = execSettingsDialog.getParameters();
     }
-    
+
   }
 
 
@@ -306,7 +306,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("soundfile",mSoundFileChB.getTextField().getText());
     mSettings.setProperty("execfile",mExecFileStr);
     mSettings.setProperty("execparam",mExecParamStr);
-    
+
     mSettings.setProperty("usemsgbox", Boolean.valueOf(mReminderWindowChB.isSelected()).toString());
     mSettings.setProperty("usesound", Boolean.valueOf(mSoundFileChB.isSelected()).toString());
     mSettings.setProperty("useexec", Boolean.valueOf(mExecChB.isSelected()).toString());
@@ -323,7 +323,7 @@ public class ReminderSettingsTab implements SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return mPlugin.createImageIcon("apps", "appointment", 16);
+    return IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);
   }
 
   /**

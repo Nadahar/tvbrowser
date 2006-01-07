@@ -35,7 +35,7 @@ import javax.swing.Icon;
  *
  * @author Til Schneider, www.murfman.de
  */
-public interface PluginAccess {
+public interface PluginAccess extends Marker {
   
   /**
    * Gets the ID of this plugin.

@@ -40,6 +40,9 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataBaseListener;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.menu.MenuUtil;
@@ -162,7 +165,7 @@ public class PluginProxyManager {
       }
     });
 
-    devplugin.Plugin.setPluginManager(new PluginManagerImpl());
+    devplugin.Plugin.setPluginManager(PluginManagerImpl.getInstance());
   }
 
 
@@ -905,6 +908,23 @@ public class PluginProxyManager {
     PluginProxy defaultPlugin = getInstance().getDefaultContextMenuPlugin();
     PluginProxy middleClickPlugin = getInstance().getMiddleClickPlugin();
     PluginProxy[] pluginArr = getInstance().getActivatedPlugins();
+
+    JMenuItem mi = MenuUtil.createMenuItem(ProgramInfo.getInstance().getContextMenuActions(program));
+    if (mi != null) {
+      items.add(mi);
+    }
+
+    mi = MenuUtil.createMenuItem(FavoritesPlugin.getInstance().getContextMenuActions(null, program));
+    if (mi != null) {
+      items.add(mi);
+    }
+
+    mi = MenuUtil.createMenuItem(ReminderPlugin.getInstance().getContextMenuActions(null, program));
+    if (mi != null) {
+      items.add(mi);
+    }
+
+
     for (int i = 0; i < pluginArr.length; i++) {
       PluginProxy plugin = pluginArr[i];
 

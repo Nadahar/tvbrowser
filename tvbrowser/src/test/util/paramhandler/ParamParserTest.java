@@ -8,7 +8,7 @@ import devplugin.PluginManager;
 public class ParamParserTest extends TestCase {
 
   public void testAnalyse() {
-    PluginManager manager = new PluginManagerImpl();
+    PluginManager manager = PluginManagerImpl.getInstance();
     ParamParser parser = new ParamParser();
 
     String in = "oblda {clean(\"halloechen du da ?!\")} da \\{ {concat(urlencode(isset(original_title, \"hallo\"), \"utf8\"), \"HHHHH\")} {\"str}i()ng\"}test bla";

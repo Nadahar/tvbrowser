@@ -52,6 +52,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
@@ -148,7 +151,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   /** Panel that Displays current Filter-Name */
   private FilterPanel mFilterPanel;
-  
+
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
@@ -184,11 +187,11 @@ public class MainFrame extends JFrame implements DateListener {
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-    mFilterPanel = new FilterPanel();    
-    mFilterPanel.setVisible(false);      
-     
-    centerPanel.add(mFilterPanel, BorderLayout.NORTH);    
-    
+    mFilterPanel = new FilterPanel();
+    mFilterPanel.setVisible(false);
+
+    centerPanel.add(mFilterPanel, BorderLayout.NORTH);
+
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
@@ -248,7 +251,7 @@ public class MainFrame extends JFrame implements DateListener {
     });
 
     setJMenuBar(mMenuBar);
-    
+
     mMenuBar.addMouseListener(new MouseAdapter(){
       public void mousePressed(MouseEvent e) {
         if(e.isPopupTrigger()) {
@@ -274,7 +277,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     setProgramFilter(filter);
     addKeyboardAction();
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         scrollToNow();
@@ -291,14 +294,14 @@ public class MainFrame extends JFrame implements DateListener {
 
 
   }
-  
+
   /**
    * Adds the keyboard actions for going to the program table with the keyboard.
    *
    */
   public void addKeyboardAction() {
     JRootPane rootPane = this.getRootPane();
-    
+
     mProgramTableScrollPane.deSelectItem();
 
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_MASK);
@@ -312,7 +315,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,true,false,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     stroke = KeyStroke.getKeyStroke(525, 0);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,true,false,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -321,7 +324,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,false,true,false,false), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,false,false,false,false,false,false,false,true), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -334,21 +337,21 @@ public class MainFrame extends JFrame implements DateListener {
       public void actionPerformed(ActionEvent e) {
         goToNextDay();
       }
-      
+
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener(){
 
       public void actionPerformed(ActionEvent e) {
         goToPreviousDay();
       }
-      
+
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     this.setRootPane(rootPane);
   }
-  
+
 
   public JLabel getStatusBarLabel() {
     return mStatusBar.getLabel();
@@ -401,10 +404,10 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
     mToolBarModel.setFilterButtonSelected(!isShowAllFilterActivated());
-    
-    mFilterPanel.setCurrentFilter(filter);   
+
+    mFilterPanel.setCurrentFilter(filter);
     mFilterPanel.setVisible(!isShowAllFilterActivated());
-    
+
     mToolBar.update();
     addKeyboardAction();
   }
@@ -420,32 +423,36 @@ public class MainFrame extends JFrame implements DateListener {
   public void quit() {
     quit(true);
   }
-  
+
   public void quit(boolean log) {
     if(mShuttingDown)
       return;
     mShuttingDown = true;
-    
+
     if(log)
-      mLog.info("Finishing plugins");    
+      mLog.info("Finishing plugins");
     PluginProxyManager.getInstance().shutdownAllPlugins(log);
 
     if(log)
       mLog.info("Storing dataservice settings");
     TvDataServiceProxyManager.getInstance().shutDown();
 
+    FavoritesPlugin.getInstance().store();
+    ReminderPlugin.getInstance().store();
+    ProgramInfo.getInstance().store();
+
     TVBrowser.shutdown(log);
-    
+
     if(log)
       mLog.info("Closing tv data base");
-    
+
     try {
       TvDataBase.getInstance().close();
     } catch (Exception exc) {
       if(log)
         mLog.log(Level.WARNING, "Closing database failed", exc);
     }
-    
+
     if(log) {
       mLog.info("Quitting");
       System.exit(0);
@@ -471,9 +478,9 @@ public class MainFrame extends JFrame implements DateListener {
     mMenuBar.updatePluginsMenu();
   }
 
-  public void scrollToProgram(Program program) {    
+  public void scrollToProgram(Program program) {
     scrollTo(program.getDate(), program.getHours());
-    mProgramTableScrollPane.scrollToChannel(program.getChannel());    
+    mProgramTableScrollPane.scrollToChannel(program.getChannel());
   }
 
   public void scrollToTime(int time) {
@@ -594,7 +601,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void goTo(Date date) {
-    mProgramTableScrollPane.deSelectItem();    
+    mProgramTableScrollPane.deSelectItem();
     mFinderPanel.markDate(date);
   }
 
@@ -709,7 +716,7 @@ public class MainFrame extends JFrame implements DateListener {
       mPluginView.refreshTree();
     }
   }
-  
+
   /**
    * Shows the about box
    */

@@ -51,10 +51,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
+import devplugin.*;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
@@ -112,7 +109,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /** Panel under a Mouse ? */
   private boolean mMouseOver = false;
-  
+
   private boolean mIsSelected = false;
 
   /** Orientation Progressbar in X_AXIS */
@@ -405,7 +402,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
 
     // If there are plugins that have marked the program -> paint the background
-    PluginAccess[] markedByPluginArr = mProgram.getMarkedByPlugins();
+    Marker[] markedByPluginArr = mProgram.getMarkerArr();
     if (markedByPluginArr.length != 0) {
       grp.setColor(Settings.propProgramTableColorMarked.getColor());
       grp.fill3DRect(0, 0, width, height, true);

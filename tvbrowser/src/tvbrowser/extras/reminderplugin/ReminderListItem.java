@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package reminderplugin;
+package tvbrowser.extras.reminderplugin;
 
 
 import devplugin.*;

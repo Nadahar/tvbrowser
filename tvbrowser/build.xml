@@ -319,10 +319,7 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="programinfo/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ReminderPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="reminderplugin/**"/>
-    </jar>
+
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SearchPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="searchplugin/**"/>
@@ -331,10 +328,7 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="printplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/FavoritesPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="favoritesplugin/**"/>
-    </jar>
+   
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ShowviewPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="showviewplugin/**"/>

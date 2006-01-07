@@ -219,7 +219,7 @@ public interface Program {
    * 
    * @param plugin The plugin to mark the program for.
    */
-  public void mark(PluginAccess plugin);
+  public void mark(Marker plugin);
 
   /**
    * Removes the marks from the program for a plugin.
@@ -228,7 +228,7 @@ public interface Program {
    * 
    * @param plugin The plugin to remove the mark for.
    */
-  public void unmark(PluginAccess plugin);
+  public void unmark(Marker plugin);
 
   /**
    * Sets whether this program is marked as "on air".
@@ -242,8 +242,14 @@ public interface Program {
 
   /**
    * Gets all {@link PluginAccess}s that have marked this program.
+   * @deprecated Use {@link #getMarkerArr}
    */
   public PluginAccess[] getMarkedByPlugins();
+
+  /**
+   * Gets all {@link Marker}s that have marked this program.
+   */
+  public Marker[] getMarkerArr();
 
   /**
    * Gets whether this program is expired.

@@ -26,6 +26,7 @@
 package tvbrowser.core;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -181,7 +182,13 @@ public class PluginLoader {
    */
   private void loadPlugins(File folder, boolean deleteable) {
 
-    File[] fileArr = folder.listFiles();
+    File[] fileArr = folder.listFiles(new FilenameFilter(){
+      public boolean accept(File dir, String name) {
+        return !("FavoritesPlugin.jar".equals(name)
+                || "ReminderPlugin.jar".equals(name)
+                || "ProgramInfo.jar".equals(name)); 
+      }
+    });
     if (fileArr == null) {
       // Nothing to do
       return;
