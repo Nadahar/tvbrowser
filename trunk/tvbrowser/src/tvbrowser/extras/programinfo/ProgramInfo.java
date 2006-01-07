@@ -123,14 +123,6 @@ public class ProgramInfo {
     }
     return mInstance;
   }
-/*
-  public PluginInfo getInfo() {
-    String name = mLocalizer.msg("pluginName", "Program information");
-    String desc =
-      mLocalizer.msg("description", "Show information about a program");
-    String author = "Martin Oberhauser";
-    return new PluginInfo(name, desc, author, new Version(1, 10));
-  } */
 
 
   public Properties getSettings() {
@@ -140,40 +132,12 @@ public class ProgramInfo {
   private void loadSettings() {
 
     try {
-      mConfigurationHandler.loadSettings();
+      mSettings = mConfigurationHandler.loadSettings();
     } catch (IOException e) {
       ErrorHandler.handle("Could not load programinfo settings.", e);
     }
-   /*
 
-    String userDirectoryName = Settings.getUserDirectoryName();
-      File userDirectory = new File(userDirectoryName);
-      File propFile = new File(userDirectory, DATAFILE_PREFIX + ".prop");
-      // load plugin settings
-      BufferedInputStream in = null;
-      try {
-        if (propFile.exists()) {
-          Properties prop = new Properties();
-          in = new BufferedInputStream(new FileInputStream(propFile), 0x4000);
-          prop.load(in);
-          in.close();
-          loadSettings(prop);
-        } else {
-          loadSettings(new Properties());
-        }
-      }
-      catch (Throwable thr) {
-        ErrorHandler.handle("Could not load programinfo settings.", thr);
-      }
-      finally {
-        if (in != null) {
-          try { in.close(); } catch (IOException exc) {
-            // ignore
-          }
-        }
-      }   */
-
-    }
+  }
 
 
   public void store() {
@@ -183,36 +147,6 @@ public class ProgramInfo {
     } catch (IOException e) {
       ErrorHandler.handle("Could not store settings for programinfo.", e);
     }
-
-    /*  String userDirectoryName = Settings.getUserDirectoryName();
- File userDirectory = new File(userDirectoryName);
-
- // save the plugin settings in a temp file
- FileOutputStream fOut = null;
- File tmpPropFile = new File(userDirectory, DATAFILE_PREFIX + ".prop.temp");
- try {
-   if (mSettings != null) {
-     fOut = new FileOutputStream(tmpPropFile);
-     mSettings.store(fOut, "Settings for ProgramInfo");
-     fOut.close();
-   }
-
-   // Saving suceed -> Delete the old file and rename the temp file
-   File propFile = new File(userDirectory, DATAFILE_PREFIX + ".prop");
-   propFile.delete();
-   tmpPropFile.renameTo(propFile);
- }
- catch (Throwable thr) {
-   ErrorHandler.handle("Could not store settings for programinfo.", thr);
- }
- finally {
-   if (fOut != null) {
-     try { fOut.close(); } catch (IOException exc) {
-       // ignore
-     }
-   }
- }
-    */
 
   }
 
