@@ -476,11 +476,22 @@ public class BrowserLauncher {
     try {
     
       if (browserExecutable !=null) {
-        Runtime.getRuntime().exec(new String[] { (String) browserExecutable, url});    
+        // Test if the JVM is a Mac-VM and the Application is an .app-File. These Files must be launched differently
+        if ((browserExecutable.trim().toLowerCase().endsWith(".app")) && ((jvm == MRJ_2_0 || jvm == MRJ_2_1 || jvm == MRJ_3_0 || jvm == MRJ_3_1))) {
+          Runtime.getRuntime().exec( new String[] {
+              "open",
+              "-a",
+              (String) browserExecutable,
+              url
+           });
+        } else {
+          Runtime.getRuntime().exec(new String[] { (String) browserExecutable, url});    
+        }
       }
       else {
         openURLusingDefaultBrowser(url);
       }
+      
     }catch(IOException exc) {
       ErrorHandler.handle(mLocalizer.msg("error.1","Could not open Webbrowser"),exc);
     }
