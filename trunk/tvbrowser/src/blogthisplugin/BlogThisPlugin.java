@@ -124,8 +124,8 @@ public class BlogThisPlugin extends Plugin {
     
         ParamParser parser = new ParamParser();
 
-        String title = parser.analyse(DEFAULT_TITLE, program);
-        String content = parser.analyse(DEFAULT_CONTENT, program);
+        String title = parser.analyse(mSettings.getProperty("Title", DEFAULT_TITLE), program);
+        String content = parser.analyse(mSettings.getProperty("Content", DEFAULT_CONTENT), program);
         String url = program.getChannel().getWebpage();
                
         try {
