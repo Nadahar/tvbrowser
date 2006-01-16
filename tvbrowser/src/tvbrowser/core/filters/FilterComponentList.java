@@ -39,6 +39,7 @@ import java.util.Iterator;
 
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.MassFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
@@ -166,6 +167,9 @@ public class FilterComponentList {
     }
     else if (className.endsWith(".MassFilterComponent")) {
       filterComponent = new MassFilterComponent(name, description);
+    } 
+    else if (className.endsWith(".DayFilterComponent")) {
+      filterComponent = new DayFilterComponent(name, description);
     }
     
     else {

@@ -30,6 +30,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -49,6 +52,7 @@ import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.MassFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
@@ -109,17 +113,31 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mRuleCb = new JComboBox();
     mRuleCb.addActionListener(this);
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
-    mRuleCb.addItem(new KeywordFilterComponent());
-    mRuleCb.addItem(new PluginFilterComponent());
-    mRuleCb.addItem(new PluginIconFilterComponent());
-    mRuleCb.addItem(new ChannelFilterComponent());
-    mRuleCb.addItem(new TimeFilterComponent());
-    mRuleCb.addItem(new ProgramInfoFilterComponent());
-    mRuleCb.addItem(new ProgramLengthFilterComponent());
-    mRuleCb.addItem(new ProgramRunningFilterComponent());
-    mRuleCb.addItem(new BeanShellFilterComponent());
-    mRuleCb.addItem(new MassFilterComponent());
+    
+    // The TreeSet sorts the Entries
+    TreeSet set = new TreeSet(new Comparator() {
+      public int compare(Object arg0, Object arg1) {
+        return arg0.toString().compareTo(arg1.toString());
+      }
+    });
+    set.add(new DayFilterComponent());
+    set.add(new KeywordFilterComponent());
+    set.add(new PluginFilterComponent());
+    set.add(new PluginIconFilterComponent());
+    set.add(new ChannelFilterComponent());
+    set.add(new TimeFilterComponent());
+    set.add(new ProgramInfoFilterComponent());
+    set.add(new ProgramLengthFilterComponent());
+    set.add(new ProgramRunningFilterComponent());
+    set.add(new BeanShellFilterComponent());
+    set.add(new MassFilterComponent());
 
+    Iterator it = set.iterator();
+    
+    while (it.hasNext()) {
+      mRuleCb.addItem(it.next());
+    }
+    
     typePanel.add(mRuleCb, BorderLayout.EAST);
 
     northPanel.add(namePanel);
