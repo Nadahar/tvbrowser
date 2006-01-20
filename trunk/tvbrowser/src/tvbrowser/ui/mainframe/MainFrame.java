@@ -52,9 +52,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import tvbrowser.TVBrowser;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
@@ -66,6 +63,9 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.programinfo.ProgramInfo;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
@@ -81,6 +81,7 @@ import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
+import util.browserlauncher.Launch;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -810,7 +811,7 @@ public class MainFrame extends JFrame implements DateListener {
     if (!indexFile.exists()) {
       indexFile = new java.io.File("help/default/index.html");
     }
-    util.ui.BrowserLauncher.openURL(indexFile.getAbsolutePath());
+    Launch.openURL(indexFile.getAbsolutePath());
   }
 
   /**

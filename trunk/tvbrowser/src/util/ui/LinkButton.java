@@ -11,6 +11,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.plaf.metal.MetalButtonUI;
 
+import util.browserlauncher.Launch;
+
 
 /**
  * A Button for Web-Links
@@ -76,7 +78,7 @@ public class LinkButton extends JButton implements ActionListener{
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-        BrowserLauncher.openURL(mUrl);        
+      Launch.openURL(mUrl);        
     }
    
 }

@@ -52,6 +52,7 @@ import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import util.browserlauncher.Launch;
 import util.ui.ScrollableMenu;
 import devplugin.ProgramFilter;
 import devplugin.ActionMenu;
@@ -451,22 +452,22 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
        mMainFrame.showSettingsDialog(SettingsDialog.TAB_ID_PLUGINS);
      }
      else if (source == mDonorMI) {
-       util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.donors",""));
+       Launch.openURL(mLocalizer.msg("website.donors",""));
      }
      else if (source == mFaqMI) {
-       util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.faq",""));
+       Launch.openURL(mLocalizer.msg("website.faq",""));
      }
      else if (source == mForumMI) {
-       util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.forum",""));
+       Launch.openURL(mLocalizer.msg("website.forum",""));
      }
      else if (source == mWebsiteMI) {
-       util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.tvbrowser",""));
+       Launch.openURL(mLocalizer.msg("website.tvbrowser",""));
      } 
      else if (source == mHandbookMI) {
-         util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.handbook",""));
+       Launch.openURL(mLocalizer.msg("website.handbook",""));
      }
      else if (source == mKeyboardShortcutsMI) {
-       util.ui.BrowserLauncher.openURL(mLocalizer.msg("website.keyboardshortcuts",""));
+       Launch.openURL(mLocalizer.msg("website.keyboardshortcuts",""));
      }
      else if (source == mConfigAssistantMI) {
          mMainFrame.runSetupAssistant();

@@ -15,6 +15,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ChannelConfigDlg;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
+import util.browserlauncher.Launch;
 import devplugin.Channel;
 
 /**
@@ -99,7 +100,7 @@ public class ChannelContextMenu implements ActionListener {
       ChannelList.storeAllSettings();
     }
     if (e.getSource().equals(mChGoToURL)) {
-      util.ui.BrowserLauncher.openURL(mChannel.getWebpage());
+      Launch.openURL(mChannel.getWebpage());
     }
   }
 }

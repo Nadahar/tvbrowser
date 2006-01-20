@@ -26,28 +26,33 @@
 
 package tvbrowser.ui.settings;
 
-import devplugin.ChannelGroup;
-import devplugin.Channel;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.event.HyperlinkEvent;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import util.ui.html.ExtendedHTMLEditorKit;
-import util.ui.html.ExtendedHTMLDocument;
-import util.ui.html.HTMLTextHelper;
-import util.ui.BrowserLauncher;
-
-import java.net.URL;
-import java.awt.event.ActionListener;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.*;
+import java.awt.event.ActionListener;
+import java.net.URL;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import util.browserlauncher.Launch;
+import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.ExtendedHTMLEditorKit;
+import util.ui.html.HTMLTextHelper;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
+import devplugin.ChannelGroup;
 
 
 public class ChannelGroupInfoDialog extends JDialog {
@@ -93,7 +98,7 @@ public class ChannelGroupInfoDialog extends JDialog {
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           URL url = evt.getURL();
           if (url != null) {
-            BrowserLauncher.openURL(url.toString());
+              Launch.openURL(url.toString());
           }
         }
       }

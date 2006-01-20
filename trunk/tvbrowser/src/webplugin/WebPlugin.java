@@ -37,8 +37,8 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import util.browserlauncher.Launch;
 import util.paramhandler.ParamParser;
-import util.ui.BrowserLauncher;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -237,7 +237,7 @@ public class WebPlugin extends Plugin {
             JOptionPane.ERROR_MESSAGE);
 
       } else {
-        BrowserLauncher.openURL(result);
+        Launch.openURL(result);
       }
       
     } catch (Exception e) {

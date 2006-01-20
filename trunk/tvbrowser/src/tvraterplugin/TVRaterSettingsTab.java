@@ -39,8 +39,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import util.browserlauncher.Launch;
 import util.io.IOUtilities;
-import util.ui.BrowserLauncher;
 import util.ui.ImageUtilities;
 import util.ui.LinkButton;
 import util.ui.Localizer;
@@ -127,7 +127,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 
     newAccount.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        BrowserLauncher.openURL("http://tvaddicted.de/index.php?Page=newuser");
+        Launch.openURL("http://tvaddicted.de/index.php?Page=newuser");
       }
     });
 
@@ -137,7 +137,7 @@ public class TVRaterSettingsTab implements SettingsTab {
 
     lostPassword.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        BrowserLauncher.openURL("http://tvaddicted.de/index.php?Page=lostpasswd");
+        Launch.openURL("http://tvaddicted.de/index.php?Page=lostpasswd");
       }
     });
 
