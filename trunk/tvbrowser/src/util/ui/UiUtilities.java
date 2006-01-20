@@ -270,6 +270,7 @@ public class UiUtilities {
    */
   public static JTextArea createHelpTextArea(String msg) {
     JTextArea descTA = new JTextArea(msg);
+    descTA.setBorder(BorderFactory.createEmptyBorder());
     descTA.setFont(new JLabel().getFont());
     descTA.setEditable(false);
     descTA.setOpaque(false);
