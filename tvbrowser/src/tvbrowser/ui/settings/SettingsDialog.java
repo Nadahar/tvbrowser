@@ -82,6 +82,7 @@ public class SettingsDialog {
   public static final String TAB_ID_TIMEBUTTONS = "#timebuttons";
   public static final String TAB_ID_PLUGINS = "#plugins";
   public static final String TAB_ID_TRAY = "#tray";
+  public static final String TAB_ADDITIONAL = "#additional";
 
 
   private JDialog mDialog;
@@ -315,7 +316,7 @@ public class SettingsDialog {
     }
     node.add(new SettingNode(new ProxySettingsTab()));
     node.add(new SettingNode(new DirectoriesSettingsTab()));
-    node.add(new SettingNode(new TVDataSettingsTab()));
+    node.add(new SettingNode(new TVDataSettingsTab(), TAB_ADDITIONAL));
 
     
     return root;
