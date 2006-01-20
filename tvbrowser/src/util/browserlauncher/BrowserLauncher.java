@@ -495,11 +495,11 @@ class BrowserLauncher {
                 // On systems other than Windows and the Mac, we try via a rather Unix-
                 // specific hack to read the BROWSER environment variable
                 // <http://tuxedo.org/~esr/BROWSER/>. If we can't read that variable or
-                // it isn't set, we use Netscape.
+                // it isn't set, we use Firefox.
                 // Note: This is commented out for now. It'll work soon.
 //              browser = getEnvironmentBrowser();
 //              if (browser == null) {
-                    browser = "netscape";
+                    browser = "firefox";
 //              }
                 break;
         }
