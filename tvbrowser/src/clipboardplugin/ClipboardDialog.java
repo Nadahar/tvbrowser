@@ -37,7 +37,6 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
