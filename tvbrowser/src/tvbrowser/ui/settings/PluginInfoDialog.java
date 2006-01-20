@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import util.ui.BrowserLauncher;
+import util.browserlauncher.Launch;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
@@ -94,7 +94,7 @@ public class PluginInfoDialog extends JDialog {
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           URL url = evt.getURL();
           if (url != null) {
-            BrowserLauncher.openURL(url.toString());
+              Launch.openURL(url.toString());
           }
         }
       }

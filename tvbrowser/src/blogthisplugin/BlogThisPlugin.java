@@ -31,8 +31,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
+import util.browserlauncher.Launch;
 import util.paramhandler.ParamParser;
-import util.ui.BrowserLauncher;
 import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -129,7 +129,7 @@ public class BlogThisPlugin extends Plugin {
         String url = program.getChannel().getWebpage();
                
         try {
-            BrowserLauncher.openURL(urlFactory(title, content, url));
+            Launch.openURL(urlFactory(title, content, url));
         } catch (Exception e) {
             e.printStackTrace();
         }

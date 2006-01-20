@@ -22,7 +22,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import util.ui.BrowserLauncher;
+import util.browserlauncher.Launch;
 import util.ui.Localizer;
 
 
@@ -81,7 +81,7 @@ public class ShowDetailsAction extends AbstractAction {
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-        BrowserLauncher.openURL("http://tvaddicted.de/index.php?showId=" + _id);
+      Launch.openURL("http://tvaddicted.de/index.php?showId=" + _id);
     }
 
 }

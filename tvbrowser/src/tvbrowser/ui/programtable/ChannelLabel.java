@@ -10,6 +10,7 @@ import javax.swing.Icon;
 import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
+import util.browserlauncher.Launch;
 import util.ui.ChannelContextMenu;
 import devplugin.Channel;
 
@@ -60,7 +61,7 @@ public class ChannelLabel extends util.ui.ChannelLabel {
         if (e.isPopupTrigger()) {
           showPopUp(e);
         } else if (e.getButton() == MouseEvent.BUTTON1){
-          util.ui.BrowserLauncher.openURL(mChannel.getWebpage());
+          Launch.openURL(mChannel.getWebpage());
         }
         super.mouseReleased(e);
       }

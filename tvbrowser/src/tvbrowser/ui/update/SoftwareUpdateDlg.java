@@ -27,20 +27,32 @@
 
 package tvbrowser.ui.update;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URL;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-
+import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
-import util.ui.BrowserLauncher;
 import util.ui.html.ExtendedHTMLEditorKit;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
 
 public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener {
 	
@@ -96,7 +108,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           URL url = evt.getURL();
           if (url != null) {
-            BrowserLauncher.openURL(url.toString());
+            Launch.openURL(url.toString());
           }
         }
       }

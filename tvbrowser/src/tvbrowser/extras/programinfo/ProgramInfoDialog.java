@@ -25,7 +25,10 @@
  */
 package tvbrowser.extras.programinfo;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -44,13 +47,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import util.ui.BrowserLauncher;
+import tvbrowser.core.icontheme.IconLoader;
+import util.browserlauncher.Launch;
 import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import devplugin.Plugin;
 import devplugin.Program;
-import tvbrowser.core.icontheme.IconLoader;
 
 /**
  * TV-Browser
@@ -98,7 +101,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           URL url = evt.getURL();
           if (url != null) {
-            BrowserLauncher.openURL(url.toString());
+            Launch.openURL(url.toString());
           }
         }
       }
