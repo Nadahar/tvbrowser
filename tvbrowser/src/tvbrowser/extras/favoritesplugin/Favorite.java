@@ -399,7 +399,10 @@ public class Favorite {
         int startTime = program.getHours() * 60 + program.getMinutes();
         if ((startTime >= mCertainFromTime) && (startTime <= mCertainToTime)) {
           passedList.add(program);
+        } else if ((mCertainFromTime > mCertainToTime) && (startTime >= mCertainFromTime) || (startTime <= mCertainToTime)){
+          passedList.add(program);
         }
+        
       }
       mProgramArr = new Program[passedList.size()];
       passedList.toArray(mProgramArr);
