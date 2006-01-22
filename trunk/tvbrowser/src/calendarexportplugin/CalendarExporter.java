@@ -307,7 +307,11 @@ public class CalendarExporter {
     Calendar cal = getStartAsCalendar(p);
 
     int leng = p.getLength();
-
+    
+    if (leng <= 0) {
+      leng = 0;
+    }
+    
     cal.add(Calendar.MINUTE, leng);
 
     return cal;
