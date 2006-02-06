@@ -40,7 +40,7 @@ import java.awt.event.ActionEvent;
  * The ChannelChooserDlg class provides a Dialog for choosing channels. The user
  * can choose from all subscribed channels.
  */
-public class ChannelChooserDlg extends JDialog {
+public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
 
   private Channel[] mResultChannelArr;
   private Channel[] mChannelArr;
@@ -57,7 +57,7 @@ public class ChannelChooserDlg extends JDialog {
    * @param description A description text below the channel list.
    */
   public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description) {
-    super(parent, true);
+    super(parent,true);
     init(channelArr, description);
   }
 
@@ -74,6 +74,7 @@ public class ChannelChooserDlg extends JDialog {
 
   private void init(Channel[] channelArr, String description) {
     setTitle(mLocalizer.msg("chooseChannels","choose channels"));
+    UiUtilities.registerForClosing(this);
     
     if (channelArr == null) {
       mChannelArr = new Channel[]{};
@@ -142,6 +143,10 @@ public class ChannelChooserDlg extends JDialog {
       return mChannelArr;
     }
     return mResultChannelArr;
+  }
+
+  public void close() {
+    setVisible(false);
   }
 
 }
