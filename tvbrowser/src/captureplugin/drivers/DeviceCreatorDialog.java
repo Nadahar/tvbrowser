@@ -45,11 +45,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * A Dialog for creating new Devices
  */
-public class DeviceCreatorDialog extends JDialog {
+public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceCreatorDialog.class);
  
@@ -91,7 +93,8 @@ public class DeviceCreatorDialog extends JDialog {
      * Create the GUI
      */
     private void createGUI() {
-
+        UiUtilities.registerForClosing(this);
+      
         DriverIf[] drivers = DriverFactory.getInstance().getDrivers();
 
         mDriverCombo = new JComboBox(drivers);
@@ -216,5 +219,9 @@ public class DeviceCreatorDialog extends JDialog {
      */
     public int getReturnValue() {
         return mRetmode;
+    }
+
+    public void close() {
+      setVisible(false);
     }
 }

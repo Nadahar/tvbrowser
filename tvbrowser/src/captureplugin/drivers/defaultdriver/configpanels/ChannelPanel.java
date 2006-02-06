@@ -26,6 +26,8 @@ package captureplugin.drivers.defaultdriver.configpanels;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -77,6 +79,15 @@ public class ChannelPanel extends JPanel {
         mChannelTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mChannelTable.getTableHeader().setReorderingAllowed(false);
         mChannelTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
+        
+        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+        // Needed for Java 1.4.
+        mChannelTable.addKeyListener(new KeyAdapter() {
+          public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+              mChannelTable.getRootPane().dispatchEvent(e);
+          }
+        });
         
         JScrollPane sp = new JScrollPane(mChannelTable);
 

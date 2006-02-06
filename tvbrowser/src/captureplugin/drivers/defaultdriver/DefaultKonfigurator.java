@@ -41,6 +41,7 @@ import javax.swing.JTextField;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import captureplugin.drivers.defaultdriver.configpanels.ApplicationPanel;
 import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
 import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
@@ -50,7 +51,7 @@ import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
 /**
  * The Configuration-Dialog for this Device
  */
-public class DefaultKonfigurator extends JDialog {
+public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DefaultKonfigurator.class);
  
@@ -95,6 +96,7 @@ public class DefaultKonfigurator extends JDialog {
      */
     private void createGui() {
         setTitle(mLocalizer.msg("Settings", "Settings"));
+        UiUtilities.registerForClosing(this);
         
         JPanel panel = (JPanel) getContentPane();
         
@@ -181,5 +183,9 @@ public class DefaultKonfigurator extends JDialog {
         
         mTab.setSelectedIndex(num);
         UiUtilities.centerAndShow(this);
+    }
+
+    public void close() {
+      setVisible(false);
     }
 }
