@@ -49,6 +49,8 @@ import javax.swing.text.Document;
 
 import tvbrowser.TVBrowser;
 import util.ui.ImageUtilities;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 
@@ -57,7 +59,7 @@ import util.ui.html.ExtendedHTMLEditorKit;
  * @author Martin Oberhauser (darras@users.sourceforge.net)
  *
  */
-public class AboutBox extends JDialog {
+public class AboutBox extends JDialog implements WindowClosingIf{
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(AboutBox.class);
@@ -70,7 +72,9 @@ public class AboutBox extends JDialog {
 
   public AboutBox(Frame parent) {
     super(parent,true);
-
+    
+    UiUtilities.registerForClosing(this);
+    
     setTitle(mLocalizer.msg("about", "About"));
     
     JPanel contentPane=(JPanel)getContentPane();
@@ -114,13 +118,14 @@ public class AboutBox extends JDialog {
     btnPanel.add(copyClipboard);
     
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
-    final JDialog parentFrame=this;
 
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        parentFrame.hide();
+        close();
       }
     });
+    
+    setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     
     getRootPane().setDefaultButton(closeBtn);
     btnPanel.add(closeBtn);
@@ -238,5 +243,9 @@ public class AboutBox extends JDialog {
     buf.append("  </body>" +
                "</html>");
     return buf.toString();
+  }
+
+  public void close() {
+    dispose();
   }
 }
