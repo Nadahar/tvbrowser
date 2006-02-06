@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -58,7 +59,7 @@ import devplugin.Program;
  * 
  * @author bodo
  */
-public class ClipboardDialog extends JDialog {
+public class ClipboardDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClipboardDialog.class);
@@ -93,6 +94,8 @@ public class ClipboardDialog extends JDialog {
     mSettings = settings;
     mNode = node;
     setTitle(mLocalizer.msg("viewList", "View List:"));
+    
+    UiUtilities.registerForClosing(this);
     
     Program[] programs = node.getPrograms();
     
@@ -318,6 +321,10 @@ public class ClipboardDialog extends JDialog {
     SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, prgList);
 
     send.setVisible(true);
+  }
+
+  public void close() {
+    dispose();
   }
 
 }

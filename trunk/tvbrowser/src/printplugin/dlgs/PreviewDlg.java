@@ -27,6 +27,10 @@
 package printplugin.dlgs;
 
 import javax.swing.*;
+
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +38,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 
-public class PreviewDlg extends JDialog implements ActionListener {
+public class PreviewDlg extends JDialog implements ActionListener, WindowClosingIf {
   
   private Printable mPrinter;
   private PageFormat mPageFormat;
@@ -53,6 +57,7 @@ public class PreviewDlg extends JDialog implements ActionListener {
     mPrinter = printer;
     mPageFormat = pageFormat;
     
+    UiUtilities.registerForClosing(this);
     
     JPanel content = (JPanel)getContentPane();
     
@@ -97,6 +102,10 @@ public class PreviewDlg extends JDialog implements ActionListener {
       mPreviewComponent.next();
       updateSiteLabelText();
     }
+  }
+
+  public void close() {
+    dispose();
   }
   
   

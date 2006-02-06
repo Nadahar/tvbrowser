@@ -28,6 +28,8 @@ package printplugin.dlgs;
 
 
 import printplugin.PrintPlugin;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 
-public class MainPrintDialog extends JDialog implements ActionListener {
+public class MainPrintDialog extends JDialog implements ActionListener, WindowClosingIf {
 
   /** The localizer for this class. */
    private static final util.ui.Localizer mLocalizer
@@ -53,6 +55,8 @@ public class MainPrintDialog extends JDialog implements ActionListener {
   public MainPrintDialog(Frame parent) {
     super(parent, true);
     setTitle(mLocalizer.msg("title","Drucken"));
+    UiUtilities.registerForClosing(this);
+    
     JPanel content = (JPanel)getContentPane();
     content.setLayout(new BorderLayout());
 
@@ -88,7 +92,6 @@ public class MainPrintDialog extends JDialog implements ActionListener {
     mCancelBtn.addActionListener(this);
 
     mPrintDayProgramsRb.setSelected(true);
-
   }
 
   public int getResult() {
@@ -107,9 +110,13 @@ public class MainPrintDialog extends JDialog implements ActionListener {
       hide();
     }
     else if (e.getSource() == mCancelBtn) {
-      mResult = CANCEL;
-      hide();
+      close();
     }
+  }
+
+  public void close() {
+    mResult = CANCEL;
+    setVisible(false);
   }
 
 }

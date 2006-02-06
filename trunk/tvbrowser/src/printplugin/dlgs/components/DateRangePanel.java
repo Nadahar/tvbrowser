@@ -30,6 +30,8 @@ import devplugin.Date;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 
@@ -63,6 +65,15 @@ public class DateRangePanel extends JPanel {
     pn2.add(mDayCountSpinner = new JSpinner(new SpinnerNumberModel(5,1,28,1)));
     pn2.add(new JLabel(mLocalizer.msg("days","Tage")));
 
+    // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+    // Needed for Java 1.4.
+    mDayCountSpinner.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+          mDayCountSpinner.getRootPane().dispatchEvent(e);
+      }
+    });
+    
     JPanel pn3 = new JPanel(new BorderLayout());
     pn3.add(pn2, BorderLayout.WEST);
 

@@ -27,13 +27,15 @@
 package printplugin.dlgs.components;
 
 import util.ui.FontChooserPanel;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class FontsDialog extends JDialog {
+public class FontsDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
@@ -52,6 +54,8 @@ public class FontsDialog extends JDialog {
     super(parent, true);
     setTitle(mLocalizer.msg("dialog.title","Fonts"));
     JPanel content = (JPanel)getContentPane();
+    
+    UiUtilities.registerForClosing(this);
 
     mTitleFontPanel=new FontChooserPanel(mLocalizer.msg("title","Title"), titleFont);
     mDescriptionFontPanel=new FontChooserPanel(mLocalizer.msg("description","Description"), descriptionFont);
@@ -86,8 +90,7 @@ public class FontsDialog extends JDialog {
 
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        mResult = CANCEL;
-        hide();
+        close();
       }
     });
 
@@ -115,6 +118,11 @@ public class FontsDialog extends JDialog {
       return mDateFontPanel.getChosenFont();
     }
     return null;
+  }
+
+  public void close() {
+    mResult = CANCEL;
+    setVisible(false);
   }
 
 }

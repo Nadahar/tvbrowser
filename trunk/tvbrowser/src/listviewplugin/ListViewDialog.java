@@ -30,6 +30,8 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Calendar;
@@ -57,6 +59,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -71,7 +74,7 @@ import devplugin.Program;
  *
  * @author bodo
  */
-public class ListViewDialog extends JDialog {
+public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ListViewDialog.class);
@@ -130,6 +133,7 @@ public class ListViewDialog extends JDialog {
     generateList(new Date(), getCurrentTime());
     createGUI();
     addChangeTimer();
+    UiUtilities.registerForClosing(this);
   }
 
   /**
@@ -338,6 +342,14 @@ public class ListViewDialog extends JDialog {
     mTimeSpinner.setEditor(new JSpinner.DateEditor(mTimeSpinner, timePattern));
 
     datetimeselect.add(mTimeSpinner);
+    
+    // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+    // Needed for Java 1.4.
+    mTimeSpinner.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        mTimeSpinner.getRootPane().dispatchEvent(e);
+      }
+    });
 
     // Event-Handler
 
@@ -412,6 +424,14 @@ public class ListViewDialog extends JDialog {
         mouseClickedOnTable(e);
       }
 
+    });
+    
+    // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+    // Needed for Java 1.4.
+    mProgramTable.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        mProgramTable.getRootPane().dispatchEvent(e);
+      }
     });
 
     setTableColumProperties();
@@ -548,5 +568,9 @@ public class ListViewDialog extends JDialog {
   public void setVisible(boolean b) {
     super.setVisible(b);
     mTimer.cancel();
+  }
+
+  public void close() {
+    dispose();
   }
 }

@@ -42,6 +42,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
@@ -50,6 +51,7 @@ import javax.swing.event.HyperlinkListener;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 
@@ -58,7 +60,7 @@ import util.ui.html.ExtendedHTMLEditorKit;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class NewsDialog {
+public class NewsDialog implements WindowClosingIf {
 
   /** The localizer used by this class. */  
   private static final util.ui.Localizer mLocalizer
@@ -102,6 +104,7 @@ public class NewsDialog {
     mNewNewsCount = newNewsCount;
     
     mDialog.setTitle(mLocalizer.msg("title", "News"));
+    UiUtilities.registerForClosing(this);
     
     JPanel main = new JPanel(new BorderLayout());
     main.setBorder(UiUtilities.DIALOG_BORDER);
@@ -248,6 +251,16 @@ public class NewsDialog {
     buf.append("</body></html>");
     
     return buf.toString();
+  }
+
+
+  public void close() {
+    mDialog.dispose();
+  }
+
+
+  public JRootPane getRootPane() {
+    return mDialog.getRootPane();
   }
 
 }
