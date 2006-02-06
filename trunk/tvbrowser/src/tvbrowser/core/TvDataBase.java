@@ -656,36 +656,52 @@ public class TvDataBase {
         } else {
           // This is the last program -> Try to get the first program of the
           // next ChannelDayProgram
-          Date nextDate = channelProg.getDate().addDays(1);
-          Channel channel = channelProg.getChannel();
-          TvDataBase db = TvDataBase.getInstance();
-          ChannelDayProgram nextDayProg = db.getDayProgram(nextDate, channel);
-            
-          if ((nextDayProg != null) && (nextDayProg.getProgramCount() > 0)) {
-            nextProgram = nextDayProg.getProgramAt(0);
-          }
+          nextProgram = getFirstNextDayProgram(channelProg);
         }
-          
-        // Calculate the Length
-        if (nextProgram != null) {
-          int startTime = prog.getHours() * 60 + prog.getMinutes();
-          int endTime = nextProgram.getHours() * 60 + nextProgram.getMinutes();
-          if (endTime < startTime) {
-            // The program ends the next day
-            endTime += 24 * 60;
-          }
-            
-          int length = endTime - startTime;
-          // Only allow a maximum length of 12 hours
-          if (length < 12 * 60) {
-            prog.setLength(length);
-            somethingChanged = true;
-          }
-        }
+        
+        somethingChanged = calculateLength(prog,nextProgram);
+      }
+      else if(progIdx + 1 == channelProg.getProgramCount()) {
+        //This is the last program that has a length but it could be wrong.
+        somethingChanged = calculateLength(prog,getFirstNextDayProgram(channelProg));
       }
     }
     
     return somethingChanged;
   }
-
+  
+  private static Program getFirstNextDayProgram(ChannelDayProgram channelProg) {
+    Date nextDate = channelProg.getDate().addDays(1);
+    Channel channel = channelProg.getChannel();
+    TvDataBase db = TvDataBase.getInstance();
+    ChannelDayProgram nextDayProg = db.getDayProgram(nextDate, channel);
+      
+    if ((nextDayProg != null) && (nextDayProg.getProgramCount() > 0)) {
+      return(nextDayProg.getProgramAt(0));
+    }
+    
+    return null;
+  }
+  
+  private static boolean calculateLength(MutableProgram first, Program second) {
+    // Calculate the Length
+    if (second != null) {
+      int startTime = first.getHours() * 60 + first.getMinutes();
+      int endTime = second.getHours() * 60 + second.getMinutes();
+      if (endTime < startTime) {
+        // The program ends the next day
+        endTime += 24 * 60;
+      }
+        
+      if((startTime + first.getLength()) != endTime) {
+        int length = endTime - startTime;
+        // Only allow a maximum length of 12 hours
+        if (length < 12 * 60) {
+          first.setLength(length);
+          return(true);
+        }
+      }
+    }
+    return false;
+  }
 }
