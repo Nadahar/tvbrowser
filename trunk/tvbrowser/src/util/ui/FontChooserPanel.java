@@ -42,7 +42,7 @@ public class FontChooserPanel extends JPanel {
       java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
     private static final String[] FONTNAMES = ge.getAvailableFontFamilyNames();
 
-    private static final Integer[] FONTSIZES=new Integer[12];
+    private static final Integer[] FONTSIZES=new Integer[17];
 
     private static final String[] FONTSTYLES={
                 mLocalizer.msg("plain", "plain"),
@@ -55,8 +55,7 @@ public class FontChooserPanel extends JPanel {
       }
     }
 
-  public FontChooserPanel(String title, Font font) {
-
+  public FontChooserPanel(String title, Font font, boolean style) {
     setLayout(new BorderLayout());
     mTitle=new JLabel(title);
     add(mTitle,BorderLayout.NORTH);
@@ -67,15 +66,21 @@ public class FontChooserPanel extends JPanel {
     mSizeCB=new JComboBox(FONTSIZES);
 
     panel1.add(mFontCB);
-    panel1.add(mStyleCB);
+    
+    if(style)
+      panel1.add(mStyleCB);
+    
     panel1.add(mSizeCB);
 
     add(panel1,BorderLayout.CENTER);
 
     if (font != null) {
       selectFont(font);
-    }
-
+    }      
+  }
+    
+  public FontChooserPanel(String title, Font font) {
+    this(title,font,true);
   }
 
 
