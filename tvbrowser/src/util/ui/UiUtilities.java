@@ -51,7 +51,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -547,7 +546,7 @@ public class UiUtilities {
    * 
    * @param component The component to close on pressing escape key.
    */
-  public static void registerForClosing(final WindowClosing component) {
+  public static void registerForClosing(final WindowClosingIf component) {
     Action a = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
