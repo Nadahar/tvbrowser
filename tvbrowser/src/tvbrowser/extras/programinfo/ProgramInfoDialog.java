@@ -26,33 +26,51 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import java.net.URL;
 
 import javax.swing.BorderFactory;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import com.l2fprod.common.swing.JTaskPane;
+import com.l2fprod.common.swing.JTaskPaneGroup;
+
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.browserlauncher.Launch;
+import util.ui.UiUtilities;
+import util.ui.WindowClosing;
 import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
+import devplugin.ActionMenu;
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.Program;
 
 /**
@@ -60,26 +78,33 @@ import devplugin.Program;
  *
  * @author Martin Oberhauser
  */
-public class ProgramInfoDialog extends JDialog implements SwingConstants {
+public class ProgramInfoDialog extends JDialog implements SwingConstants, WindowClosing {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramInfoDialog.class);
 
-  private JEditorPane mInfoEP;
-
-  public ProgramInfoDialog(Dialog parent, String styleSheet, Program program) {
-    super(parent, true);
-    init(styleSheet, program);
+  private JEditorPane mInfoEP;  
+  private JTaskPane plugins;
+  private JTaskPaneGroup web = new JTaskPaneGroup();
+  private Program mProgram;
+  private ExtendedHTMLDocument mDoc;
+  private JScrollPane actions;
+  
+  public ProgramInfoDialog(Dialog parent, Program program, Dimension d) {
+    super(parent);
+    init(program, d);
   }
 
-  public ProgramInfoDialog(Frame parent, String styleSheet, Program program)
+  public ProgramInfoDialog(Frame parent, Program program, Dimension d)
   {
-    super(parent, true);
-    init(styleSheet, program);
+    super(parent);
+    init(program, d);
   }
 
-  private void init(String styleSheet, final Program program) {
-
+  private void init(final Program program, Dimension d) {
+    UiUtilities.registerForClosing(this);
+    
+    mProgram = program;
     setTitle(mLocalizer.msg("title", "Program information"));
 
     JPanel main = new JPanel(new BorderLayout());
@@ -88,16 +113,21 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     setContentPane(main);
 
     mInfoEP = new JEditorPane();
+    
     mInfoEP.setEditorKit(new ExtendedHTMLEditorKit());
 
-    ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoEP.getDocument();
-    ProgramTextCreator creator = new ProgramTextCreator();
-
-    String text = creator.createInfoText(program, doc, styleSheet);
-    mInfoEP.setText(text);
+    mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
+    
+    mInfoEP.setText(ProgramTextCreator.createInfoText(program, mDoc));
     mInfoEP.setEditable(false);
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent evt) {
+        if(evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+          mInfoEP.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+        if(evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+          mInfoEP.setCursor(Cursor.getDefaultCursor());
+        }
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           URL url = evt.getURL();
           if (url != null) {
@@ -107,7 +137,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       }
     });
 
-    mInfoEP.addMouseListener(new MouseAdapter(){
+ /*   mInfoEP.addMouseListener(new MouseAdapter(){
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
           showPopup(evt, program);
@@ -123,14 +153,75 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
       public void mouseClicked(MouseEvent e) {
         handleMouseClicked(e, program);
       }
-    });
+    });*/
 
     //final FindAsYouType findasyoutype = new FindAsYouType(mInfoEP);
     final TextComponentFindAction findasyoutype = new TextComponentFindAction(mInfoEP, true);
 
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
-    main.add(scrollPane, BorderLayout.CENTER);
+    
+    scrollPane.getVerticalScrollBar().setUnitIncrement(30);
+    
+    Action up = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getValue() - scrollPane.getVerticalScrollBar().getUnitIncrement());        
+      }
+    };
+    
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP,0);
+    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_UP");
+    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_UP");
+    mInfoEP.getActionMap().put("SCROLL_UP", up);
 
+    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_UP");
+    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_UP");
+    getRootPane().getActionMap().put("SCROLL_UP", up);
+
+    Action down = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getValue() + scrollPane.getVerticalScrollBar().getUnitIncrement());        
+      }
+    };
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,0);
+    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_DOWN");
+    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_DOWN");
+    mInfoEP.getActionMap().put("SCROLL_DOWN", down);
+
+    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_DOWN");
+    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_DOWN");
+    getRootPane().getActionMap().put("SCROLL_DOWN", down);
+    
+    JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);    
+    split.setDividerSize(5);
+  
+    plugins = new JTaskPane();
+    
+    actions = new JScrollPane(plugins);
+    if(d == null)
+      actions.setPreferredSize(new Dimension(350,350));
+      
+    else
+      actions.setPreferredSize(d);
+  
+    split.setDividerLocation(actions.getPreferredSize().width + 1);
+    
+    web.setTitle(mLocalizer.msg("functions","Functions"));
+    
+    plugins.add(web);
+    
+    addPluginActions(false);
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        close();
+      }
+    });
+    
+    split.setLeftComponent(actions);
+    split.setRightComponent(scrollPane);
+    
+    main.add(split,BorderLayout.CENTER);
+        
     // buttons
     JPanel buttonPn = new JPanel(new BorderLayout());
 
@@ -150,7 +241,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        dispose();
+        close();
       }
     });
 
@@ -167,12 +258,51 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     SwingUtilities.invokeLater(runnable);
   }
 
+  
+  protected void addPluginActions(boolean rebuild) {
+    web.removeAll();    
+    
+    ActionMenu fav = FavoritesPlugin.getInstance().getContextMenuActions(null, mProgram);
+    ActionMenu rem = ReminderPlugin.getInstance().getContextMenuActions(null, mProgram);
+    
+    if(fav != null)
+      new TaskMenuButton(plugins, web, mProgram, fav, this, "id_favorite");
+    if(rem != null)
+      new TaskMenuButton(plugins, web, mProgram, rem, this, "id_reminder");
+    
+    PluginAccess[] p = Plugin.getPluginManager().getActivatedPlugins();
+    
+    for(int i = 0; i < p.length; i++) {
+      ActionMenu menu = p[i].getContextMenuActions(mProgram);
+      
+      if(menu != null)
+        new TaskMenuButton(plugins, web, mProgram, menu, this, p[i].getId());
+        
+    }
+    
+    if(rebuild) {
+      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc));
+      SwingUtilities.invokeLater(new Runnable(){
+        public void run() {
+          mInfoEP.setCaretPosition(0);
+        }
+      });
+    }
+    
+    plugins.revalidate();
+  }
+  
+  public void close() {
+    ProgramInfo.getInstance().setSettings(this,actions.getSize());
+    dispose();
+  }
+  
   /**
    * Shows the Popup
    * @param evt MouseEvent for Popup-Location
    * @param program Program to use for Popup
    */
-  private void showPopup(MouseEvent evt, Program program) {
+/*  private void showPopup(MouseEvent evt, Program program) {
     if (program != null) {
       JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, null);
       menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
@@ -186,5 +316,5 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants {
     if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
       Plugin.getPluginManager().handleProgramMiddleClick(program, null);
     }
-  }
+  }*/
 }
