@@ -10,11 +10,13 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import util.ui.progress.ProgressWindow;
 import util.ui.progress.Progress;
 
 
-public class TvBrowserUpdateAssistant extends JDialog implements ActionListener {
+public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,WindowClosingIf {
 
   private JButton mChooseBtn, mOkBtn, mCancelBtn;
   private JLabel mInfoLb;
@@ -37,6 +39,8 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener 
     super(parent, true);
     setTitle(mLocalizer.msg("updateTo", "Update to TV-Browser {0}",TVBrowser.VERSION));
 
+    UiUtilities.registerForClosing(this);
+    
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setBorder(BorderFactory.createEmptyBorder(15,20,11,11));
 
@@ -161,6 +165,12 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener 
 
   public int getResult() {
     return mResult;
+  }
+
+
+  public void close() {
+    mResult = CANCEL;
+    hide();
   }
 
 }
