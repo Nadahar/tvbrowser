@@ -22,6 +22,8 @@ import javax.swing.JScrollPane;
 
 import util.ui.Localizer;
 import util.ui.ProgramList;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -31,7 +33,7 @@ import devplugin.Program;
  * Shows a List when a specific rated program will air
  * @author Bodo
  */
-public class ProgramListDialog extends JDialog {
+public class ProgramListDialog extends JDialog implements WindowClosingIf {
 
     /**
      * Creates the Dialog
@@ -96,6 +98,8 @@ public class ProgramListDialog extends JDialog {
      * Creates the GUI
      */
     private void createGUI() {
+        UiUtilities.registerForClosing(this);
+      
         JPanel content = (JPanel) this.getContentPane();
         content.setLayout(new BorderLayout());
 
@@ -138,4 +142,8 @@ public class ProgramListDialog extends JDialog {
     private Vector _programList;
 
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListDialog.class);
+
+    public void close() {
+      dispose();
+    }
 }
