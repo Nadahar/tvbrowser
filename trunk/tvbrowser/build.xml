@@ -295,6 +295,7 @@
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/bsh-2.0b1.jar" dest="${unpacked.dir}/bsh-2.0b1.jar"/>
     <unjar src="${lib.dir}/forms-1.0.5.jar" dest="${unpacked.dir}/forms-1.0.5.jar"/>
+    <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
 
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
@@ -311,6 +312,7 @@
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
       <fileset dir="${unpacked.dir}/forms-1.0.5.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
     </jar>
 
     <!-- Pack the plugin jars -->
@@ -391,7 +393,7 @@
     <copy todir="${tvbrowser-default.runtime.dir}/imgs">
       <fileset dir="${classes.dir}/imgs"/>
     </copy>
-    
+
     <copy todir="${tvbrowser-default.runtime.dir}/imgs">
 	    <fileset dir="./images/additional">
 		    <include name="*.ico"/>
