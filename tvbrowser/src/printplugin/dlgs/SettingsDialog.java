@@ -53,9 +53,10 @@ import printplugin.printer.PrintJob;
 import printplugin.settings.Scheme;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 
-public class SettingsDialog extends JDialog {
+public class SettingsDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
@@ -77,8 +78,9 @@ public class SettingsDialog extends JDialog {
   private DialogContent mDialogContent;
 
   public SettingsDialog(final Frame parent, final PrinterJob printerJob, Scheme[] schemes, DialogContent content) {
-    super(parent, true);
-
+    super(parent,true);
+    UiUtilities.registerForClosing(this);
+    
     mDialogContent = content;
     mPageFormat = printerJob.defaultPage();
     setTitle(content.getDialogTitle());
@@ -162,8 +164,7 @@ public class SettingsDialog extends JDialog {
 
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        mResult = CANCEL;
-        hide();
+        close();
       }
     });
 
@@ -289,6 +290,11 @@ public class SettingsDialog extends JDialog {
 
   public void printingDone() {
     mDialogContent.printingDone();
+  }
+  
+  public void close() {
+    mResult = CANCEL;
+    setVisible(false);
   }
 
 }

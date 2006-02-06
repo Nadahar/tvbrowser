@@ -29,6 +29,8 @@ package printplugin.dlgs.components;
 import javax.swing.*;
 
 import util.ui.OrderChooser;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import devplugin.*;
 import java.awt.*;
@@ -36,7 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 
-public class ProgramItemFieldsConfigDlg extends JDialog {
+public class ProgramItemFieldsConfigDlg extends JDialog implements WindowClosingIf{
 
   static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ProgramItemFieldsConfigDlg.class);
@@ -48,8 +50,10 @@ public class ProgramItemFieldsConfigDlg extends JDialog {
   
   public ProgramItemFieldsConfigDlg(Frame parent, ProgramFieldType[] fieldTypes) {
     
-    super(parent,true);
+    super(parent, true);
     setTitle(mLocalizer.msg("configureProgram","Sendungen anpassen"));
+    
+    UiUtilities.registerForClosing(this);
     
     JPanel contentPane = (JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
@@ -86,8 +90,7 @@ public class ProgramItemFieldsConfigDlg extends JDialog {
     
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        mResult = CANCEL;
-        hide();
+        close();
       }      
     }); 
     mResult = CANCEL;
@@ -128,8 +131,10 @@ public class ProgramItemFieldsConfigDlg extends JDialog {
     typeList.toArray(typeArr);
     return typeArr;
   }
-  
-  
-  
+
+  public void close() {
+    mResult = CANCEL;
+    setVisible(false);
+  }
   
 }
