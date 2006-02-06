@@ -40,6 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 
 import util.exc.ErrorHandler;
@@ -50,6 +51,7 @@ import util.ui.SearchFormSettings;
 import util.ui.SendToPluginDialog;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
@@ -61,7 +63,7 @@ import devplugin.ProgramSearcher;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class SearchDialog extends JDialog {
+public class SearchDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer of this class. */  
   private static final util.ui.Localizer mLocalizer
@@ -84,7 +86,9 @@ public class SearchDialog extends JDialog {
    * @param parent The dialog's parent.
    */
   public SearchDialog(Plugin plugin, Frame parent) {
-    super(parent,true);
+    super(parent, true);
+    
+    UiUtilities.registerForClosing(this);
     
     mPlugin = plugin;
     
@@ -197,6 +201,18 @@ public class SearchDialog extends JDialog {
   private void showHitsDialog(final Program[] programArr, String title) {
     final JDialog dlg = new JDialog(this, title, true);
     
+    UiUtilities.registerForClosing(new WindowClosingIf() {
+
+      public void close() {
+        dlg.dispose();
+      }
+
+      public JRootPane getRootPane() {
+        return dlg.getRootPane();
+      }
+      
+    });
+    
     JPanel main = new JPanel(new BorderLayout());
     main.setBorder(UiUtilities.DIALOG_BORDER);
     dlg.setContentPane(main);
@@ -233,8 +249,11 @@ public class SearchDialog extends JDialog {
     dlg.getRootPane().setDefaultButton(closeBt);
     
     dlg.setSize(400, 400);
-	UiUtilities.centerAndShow(dlg);
-    
+	  UiUtilities.centerAndShow(dlg);
+  }
+
+  public void close() {
+    dispose();
   }
   
 }
