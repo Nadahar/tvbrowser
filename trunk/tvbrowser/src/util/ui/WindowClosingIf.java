@@ -16,6 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 
 package util.ui;
@@ -28,7 +34,7 @@ import javax.swing.JRootPane;
  * @author René Mach
  *
  */
-public interface WindowClosing {
+public interface WindowClosingIf {
   /**
    * The closing method.
    *
