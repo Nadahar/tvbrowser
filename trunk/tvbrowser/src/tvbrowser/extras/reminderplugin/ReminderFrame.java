@@ -33,6 +33,7 @@ import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -41,11 +42,13 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.Timer;
 
 import util.io.IOUtilities;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.Date;
 import devplugin.Program;
 
@@ -54,7 +57,7 @@ import devplugin.Program;
  *
  * @author Martin Oberhauser
  */
-public class ReminderFrame {
+public class ReminderFrame implements WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
@@ -141,6 +144,8 @@ public class ReminderFrame {
       mFrame.setIconImage(iconImage);
     }
     
+    UiUtilities.registerForClosing(this);
+    
     mReminderList = list;
     
     list.remove(item.getProgramItem());
@@ -215,6 +220,23 @@ public class ReminderFrame {
     }
 
     getWindow().pack();
+    
+    try {
+      Class[] bool = {boolean.class};
+      
+      Object[] setOnTop = {new Boolean(true)};
+      
+      if(mDialog != null) {
+        Method onTop = mDialog.getClass().getMethod("setAlwaysOnTop",bool);
+        onTop.invoke(mDialog, setOnTop);
+      }
+      else {
+        Method onTop = mFrame.getClass().getMethod("setAlwaysOnTop",bool);
+        onTop.invoke(mFrame, setOnTop);        
+      }
+
+    }catch(Throwable e) {}
+    
     UiUtilities.centerAndShow(getWindow());
   }
 
@@ -246,7 +268,7 @@ public class ReminderFrame {
   
   
   
-  private void close() {
+  public void close() {
     int inx = mReminderCB.getSelectedIndex();
     int minutes = REMIND_VALUE_ARR[inx];
     if (minutes != -1) {
@@ -259,6 +281,13 @@ public class ReminderFrame {
     }
 
     getWindow().dispose();
+  }
+
+  public JRootPane getRootPane() {
+    if(mDialog != null)
+      return mDialog.getRootPane();
+    else
+      return mFrame.getRootPane();
   }
 
 }
