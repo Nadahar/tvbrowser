@@ -54,6 +54,7 @@ import util.ui.ImageUtilities;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.Plugin;
 import devplugin.Program;
 import tvbrowser.core.icontheme.IconLoader;
@@ -63,7 +64,7 @@ import tvbrowser.core.icontheme.IconLoader;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class ManageFavoritesDialog extends JDialog {
+public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer
@@ -97,8 +98,8 @@ public class ManageFavoritesDialog extends JDialog {
       }
     });
 
-
-
+    UiUtilities.registerForClosing(this);
+    
     setTitle(mLocalizer.msg("title", "Manage favorite programs"));
 
     JPanel main = new JPanel(new BorderLayout(5, 5));
@@ -231,9 +232,7 @@ public class ManageFavoritesDialog extends JDialog {
     mCloseBt = new JButton(mLocalizer.msg("close", "Close"));
     mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        mOkWasPressed = true;
-        mInstance = null;
-        dispose();
+        close();
       }
     });
     buttonPn.add(mCloseBt);
@@ -525,6 +524,13 @@ public class ManageFavoritesDialog extends JDialog {
       return "" + hours + ":" + ((minutes < 10) ? ("0" + minutes) : "" + minutes);
     }
 
+  }
+
+
+  public void close() {
+    mOkWasPressed = true;
+    mInstance = null;
+    dispose();
   }
 
 }

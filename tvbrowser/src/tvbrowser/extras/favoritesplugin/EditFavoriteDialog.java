@@ -70,11 +70,24 @@ public class EditFavoriteDialog {
    * Creates a new instance of EditFavoriteDialog.
    */
   public EditFavoriteDialog(final Component parent, Favorite favorite) {
+    
     mFavorite = favorite;
     mCertainChannelArr = favorite.getCertainChannels();
     
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(mLocalizer.msg("dlgTitle", "Edit favorite program"));
+    
+    UiUtilities.registerForClosing(new WindowClosingIf() {
+
+      public void close() {
+        mDialog.dispose();
+      }
+
+      public JRootPane getRootPane() {
+        return mDialog.getRootPane();
+      }
+      
+    });
     
     JPanel main = new JPanel(new TabLayout(1));
     main.setBorder(UiUtilities.DIALOG_BORDER);
