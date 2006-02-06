@@ -45,6 +45,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
@@ -67,13 +68,14 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.SettingsTab;
 
 /**
  *
  * @author Til Schneider, www.murfman.de
  */
-public class SettingsDialog {
+public class SettingsDialog implements WindowClosingIf {
 
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SettingsDialog.class);
@@ -105,8 +107,10 @@ public class SettingsDialog {
    */
   public SettingsDialog(Component parent, String selectedTabId) {
     mDialog = UiUtilities.createDialog(parent, true);
-    mDialog.setTitle(mLocalizer.msg("settings", "Settings"));
-
+    mDialog.setTitle(mLocalizer.msg("settings", "Settings"));    
+    
+    UiUtilities.registerForClosing(this);
+    
     JPanel main = new JPanel(new BorderLayout());
     main.setBorder(UiUtilities.DIALOG_BORDER);
     mDialog.setContentPane(main);
@@ -141,8 +145,8 @@ public class SettingsDialog {
       mSelectionTree.collapseRow(i);
     }
 
-    mSettingsPn = new JPanel(new BorderLayout());
-
+    mSettingsPn = new JPanel(new BorderLayout());    
+    
     splitPane.setRightComponent(mSettingsPn);
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
@@ -204,7 +208,7 @@ public class SettingsDialog {
         Settings.propSettingsWindowWidth.setInt(mSize.width);
         Settings.propSettingsWindowHeight.setInt(mSize.height);
       }
-    });
+    });    
   }
 
   void invalidateTree() {
@@ -557,5 +561,14 @@ public class SettingsDialog {
     }
 
   } // class SettingNodeCellRenderer
+
+
+  public void close() {
+    mDialog.dispose();
+  }
+
+  public JRootPane getRootPane() {
+    return mDialog.getRootPane();
+  }
 
 }
