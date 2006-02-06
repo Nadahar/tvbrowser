@@ -35,13 +35,15 @@ import tvbrowser.core.Settings;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * TV-Browser
  * 
  * @author Martin Oberhauser
  */
-public class UpdateDlg extends JDialog implements ActionListener {
+public class UpdateDlg extends JDialog implements ActionListener, WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(UpdateDlg.class);
@@ -58,6 +60,8 @@ public class UpdateDlg extends JDialog implements ActionListener {
   public UpdateDlg(JFrame parent, boolean modal) {
     super(parent, modal);
 
+    UiUtilities.registerForClosing(this);
+    
     String msg;
 
     mResult = CANCEL;
@@ -195,6 +199,11 @@ public class UpdateDlg extends JDialog implements ActionListener {
       }
       setVisible(false);
     }
+  }
+
+  public void close() {
+    mResult = CANCEL;
+    setVisible(false);
   }
 }
 
