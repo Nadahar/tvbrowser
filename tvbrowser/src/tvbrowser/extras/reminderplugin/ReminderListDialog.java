@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
@@ -44,6 +45,7 @@ import javax.swing.JScrollPane;
 import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.Program;
 import tvbrowser.core.icontheme.IconLoader;
 
@@ -52,7 +54,7 @@ import tvbrowser.core.icontheme.IconLoader;
  *
  * @author Martin Oberhauser
  */
-public class ReminderListDialog extends JDialog {
+public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(ReminderListDialog.class);
@@ -71,7 +73,8 @@ public class ReminderListDialog extends JDialog {
 
   public ReminderListDialog(Frame parent, ReminderList list) {
     super(parent,true);
-
+    UiUtilities.registerForClosing(this);
+    
     String msg;
 
     reminderList=list;
@@ -127,7 +130,7 @@ public class ReminderListDialog extends JDialog {
 
     btnPanel.add(sendBtn, BorderLayout.WEST);
 
-    contentpane.add(btnPanel,BorderLayout.SOUTH);
+    contentpane.add(btnPanel,BorderLayout.SOUTH);   
   }
 
 /*  private void showSendDialog() {
@@ -223,6 +226,10 @@ public class ReminderListDialog extends JDialog {
     result.add(panel, BorderLayout.CENTER);
 
     return result;
+  }
+
+  public void close() {
+    setVisible(false);
   }
 
 }

@@ -40,13 +40,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.paramhandler.ParamInputField;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * The Dialog for the Settings of the executable
  * 
  * @author bodum
  */
-public class ExecuteSettingsDialog extends JDialog {
+public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
   /** Translation */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ExecuteSettingsDialog.class);
   
@@ -90,6 +92,8 @@ public class ExecuteSettingsDialog extends JDialog {
    */
   private void createGui() {
     setTitle(mLocalizer.msg("execSettings", "Executable Settings"));
+    
+    UiUtilities.registerForClosing(this);
     
     JPanel panel = (JPanel) getContentPane();
     
@@ -191,5 +195,9 @@ public class ExecuteSettingsDialog extends JDialog {
    */
   public String getExecutable() {
     return mExecFile;
+  }
+
+  public void close() {
+    setVisible(false);
   }
 }

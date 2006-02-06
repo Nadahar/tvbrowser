@@ -35,8 +35,10 @@ import java.awt.event.ActionEvent;
 
 import util.ui.TabLayout;
 import util.ui.ProgramPanel;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
-public class RemovedProgramsDialog extends JDialog {
+public class RemovedProgramsDialog extends JDialog implements WindowClosingIf{
 
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(RemovedProgramsDialog. class );
@@ -54,6 +56,9 @@ public class RemovedProgramsDialog extends JDialog {
 
   private void init(Program[] programs) {
     setTitle(mLocalizer.msg("dialog.title","Removed Programs"));
+    
+    UiUtilities.registerForClosing(this);
+    
     JPanel contentPane = (JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout(6,6));
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -90,6 +95,10 @@ public class RemovedProgramsDialog extends JDialog {
 
     result.add(btn, BorderLayout.EAST);
     return result;
+  }
+
+  public void close() {
+    setVisible(false);
   }
 
 }
