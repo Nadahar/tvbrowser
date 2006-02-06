@@ -552,6 +552,18 @@ public class SearchForm extends JPanel {
       mDlg = UiUtilities.createDialog(parent, true);
       msg = mLocalizer.msg("chooseSearchFields", "Choose search fields");
       mDlg.setTitle(msg);
+      
+      UiUtilities.registerForClosing(new WindowClosingIf() {
+
+        public void close() {
+          mDlg.dispose();
+        }
+
+        public JRootPane getRootPane() {
+          return mDlg.getRootPane();
+        }
+        
+      });
 
       JPanel main = new JPanel(new BorderLayout());
       main.setBorder(UiUtilities.DIALOG_BORDER);
