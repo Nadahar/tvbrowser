@@ -39,11 +39,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * The Dialog for the Settings. Uses the PluginPanel
  */
-public class CapturePluginDialog extends JDialog {
+public class CapturePluginDialog extends JDialog implements WindowClosingIf {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(CapturePluginDialog.class);
   
@@ -80,6 +82,8 @@ public class CapturePluginDialog extends JDialog {
      * @param parent Parent
      */
     public void createGui(Component parent) {
+        UiUtilities.registerForClosing(this);
+      
         this.getContentPane().setLayout(new BorderLayout());
         if (parent != null) {
             this.setLocation(parent.getLocation().x + (parent.getWidth() / 2) - 200, parent.getLocation().y + (parent.getHeight() / 2)
@@ -122,6 +126,10 @@ public class CapturePluginDialog extends JDialog {
      */
     public void okButtonPressed(ActionEvent e) {
         this.setVisible(false);
+    }
+
+    public void close() {
+      this.setVisible(false);
     }
 
 }

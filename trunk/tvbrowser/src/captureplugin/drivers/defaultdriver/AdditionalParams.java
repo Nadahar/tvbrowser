@@ -55,12 +55,13 @@ import util.paramhandler.ParamDescriptionPanel;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import captureplugin.CapturePlugin;
 
 /**
  * A DialogBox for the additional Parameters
  */
-public class AdditionalParams extends JDialog {
+public class AdditionalParams extends JDialog implements WindowClosingIf{
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(AdditionalParams.class);
     
@@ -121,6 +122,8 @@ public class AdditionalParams extends JDialog {
     private void createGUI() {
         setTitle(mLocalizer.msg("Additional","Additional Parameters"));
 
+        UiUtilities.registerForClosing(this);
+        
         JPanel content = (JPanel) getContentPane();
         content.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -423,5 +426,9 @@ public class AdditionalParams extends JDialog {
             }
         }
    }
+
+    public void close() {
+      setVisible(false);
+    }
 
 }

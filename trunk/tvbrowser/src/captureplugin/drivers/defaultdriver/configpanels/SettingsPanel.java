@@ -34,6 +34,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
@@ -194,6 +196,16 @@ public class SettingsPanel extends JPanel {
             }
             
         });
+        
+        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+        // Needed for Java 1.4.
+        mMaxSimult.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
+          public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+              mMaxSimult.getRootPane().dispatchEvent(e);
+          }
+        });
+
 
         panel.add(new JLabel(mLocalizer.msg("MaxSimult","Maximum simultaneous recordings")+ ":") , lc);
         
@@ -209,6 +221,15 @@ public class SettingsPanel extends JPanel {
                 mData.setTimeOut(((Integer)mMaxTimeout.getValue()).intValue());
             }
             
+        });
+        
+        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+        // Needed for Java 1.4.
+        mMaxTimeout.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
+          public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+              mMaxTimeout.getRootPane().dispatchEvent(e);
+          }
         });
         
         panel.add(new JLabel(mLocalizer.msg("Timeout","Wait sec. until Timeout (-1 = disabled)")+ ":") , lc);
@@ -337,6 +358,15 @@ public class SettingsPanel extends JPanel {
             
         });
         
+        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+        // Needed for Java 1.4.
+        mPreTimeTextField.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
+          public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+              mPreTimeTextField.getRootPane().dispatchEvent(e);
+          }
+        });
+        
         panel.add(mPreTimeTextField, fc);
 
         panel.add(new JLabel(mLocalizer.msg("Later", "Number of minutes to stop later")),lc);
@@ -352,6 +382,14 @@ public class SettingsPanel extends JPanel {
             
         });
 
+        // Dispache the KeyEvent to the RootPane for Closing the Dialog.
+        // Needed for Java 1.4.
+        mPostTimeTextField.getEditor().getComponent(0).addKeyListener(new KeyAdapter() {
+          public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+              mPostTimeTextField.getRootPane().dispatchEvent(e);
+          }
+        });
         
         panel.add(mPostTimeTextField, fc);
         
