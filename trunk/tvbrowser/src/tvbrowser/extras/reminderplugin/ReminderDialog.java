@@ -34,10 +34,14 @@ package tvbrowser.extras.reminderplugin;
 
 
 import javax.swing.*;
+
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
 import java.awt.*;
 import java.awt.event.*;
 
-public class ReminderDialog extends JDialog {
+public class ReminderDialog extends JDialog implements WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderDialog.class);
@@ -67,6 +71,8 @@ public class ReminderDialog extends JDialog {
 
     setTitle(mLocalizer.msg("title", "New reminder"));
 
+    UiUtilities.registerForClosing(this);
+    
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -160,6 +166,12 @@ public class ReminderDialog extends JDialog {
   
   public boolean getOkPressed() {
     return mOkPressed;
+  }
+
+
+
+  public void close() {
+    setVisible(false);
   }
 
 }
