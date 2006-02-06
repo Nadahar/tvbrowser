@@ -42,6 +42,8 @@ import javax.swing.JTextPane;
 
 import util.ui.Localizer;
 import util.ui.TabLayout;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -50,7 +52,7 @@ import devplugin.ProgramFieldType;
  * 
  * @author bodo tasche
  */
-public class DialogRating extends JDialog {
+public class DialogRating extends JDialog implements WindowClosingIf {
 
     /** Localizer */
     private static final Localizer _mLocalizer = Localizer.getLocalizerFor(DialogRating.class);
@@ -143,6 +145,8 @@ public class DialogRating extends JDialog {
      * Creates the GUI.
      */
     private void createGUI() {
+        UiUtilities.registerForClosing(this);
+        
         JPanel panel = (JPanel) this.getContentPane();
 
         panel.setLayout(new GridBagLayout());
@@ -493,6 +497,10 @@ public class DialogRating extends JDialog {
         _ratings[ratingbox] = valuebox;
 
         return valuebox;
+    }
+
+    public void close() {
+      setVisible(false);
     }
 
 }

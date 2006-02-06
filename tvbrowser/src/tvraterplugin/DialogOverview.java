@@ -45,13 +45,14 @@ import javax.swing.JTabbedPane;
 import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * This Dialog shows an overview of all Ratings in this Database
  * 
  * @author bodo tasche
  */
-public class DialogOverview extends JDialog {
+public class DialogOverview extends JDialog implements WindowClosingIf {
 
   /** Localizer */
   private static final Localizer _mLocalizer = Localizer.getLocalizerFor(DialogOverview.class);
@@ -90,6 +91,8 @@ public class DialogOverview extends JDialog {
    * Creates the GUI
    */
   private void createGUI() {
+    UiUtilities.registerForClosing(this);
+    
     JPanel panel = (JPanel) getContentPane();
     panel.setLayout(new BorderLayout());
 
@@ -305,5 +308,9 @@ public class DialogOverview extends JDialog {
       };
     };
     updateThread.start();
+  }
+
+  public void close() {
+    setVisible(false);
   }
 }
