@@ -39,20 +39,27 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
 /**
@@ -533,5 +540,24 @@ public class UiUtilities {
     g.drawRect(0, 0, 42, 22);
 
     return new ImageIcon(img);
+  }
+  
+  /**
+   * Registers the escape key as close key for a component.
+   * 
+   * @param component The component to close on pressing escape key.
+   */
+  public static void registerForClosing(final WindowClosing component) {
+    Action a = new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
+      public void actionPerformed(ActionEvent e) {
+        component.close();
+      }
+    };
+    
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+    component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_ESCAPE");
+    component.getRootPane().getActionMap().put("CLOSE_ON_ESCAPE", a);
   }
 }
