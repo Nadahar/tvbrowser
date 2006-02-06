@@ -1,90 +1,92 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Properties;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import util.ui.FontChooserPanel;
 
 import devplugin.SettingsTab;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ActionMenu;
 
+/**
+ * The SettingsTab for the ProgramInfo viewer. 
+ */
 public class ProgramInfoSettingsTab implements SettingsTab {
 
   private static final util.ui.Localizer mLocalizer =
       util.ui.Localizer.getLocalizerFor(ProgramInfoSettingsTab.class);
 
-
-
-  private JTextArea mStyleSheetTa;
+  private JCheckBox mUserFont;
+  private FontChooserPanel mTitleFont, mBodyFont;
+  
   private Properties mSettings;
   
-  
-
+  /**
+   * Constructor
+   *
+   */
   public ProgramInfoSettingsTab() {
     mSettings = ProgramInfo.getInstance().getSettings();
   }
 
 	public JPanel createSettingsPanel() {
+    JPanel content = new JPanel(new BorderLayout(0,4));    
+    content.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     
-    JPanel content = new JPanel(new BorderLayout(0,4));
-    content.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("stylesheet","Stylesheet for program information window")));
-       
-    mStyleSheetTa = new JTextArea();
-    String styleSheet = mSettings.getProperty("stylesheet_v1");
-    if (styleSheet == null) {
-      styleSheet = ProgramInfo.DEFAULT_STYLE_SHEET;
-    }
+    JPanel center = new JPanel();
+    center.setLayout(new BoxLayout(center,BoxLayout.Y_AXIS));
+    center.setBorder(BorderFactory.createEmptyBorder(5,10,5,5));
     
-    mStyleSheetTa.setText(styleSheet);
+    String temp = mSettings.getProperty("titlefont","Verdana");
+    int size = Integer.parseInt(mSettings.getProperty("title","18"));
     
-    mStyleSheetTa.setRows(10);
-    mStyleSheetTa.setFont(new Font("Monospaced",Font.PLAIN,12));
+    mTitleFont = new FontChooserPanel(mLocalizer.msg("title","Title font"),new Font(temp,Font.PLAIN,size),false);
+    mTitleFont.setMaximumSize(mTitleFont.getPreferredSize());
+    mTitleFont.setAlignmentX(FontChooserPanel.LEFT_ALIGNMENT);
+        
+    temp = mSettings.getProperty("bodyfont","Verdana");
+    size = Integer.parseInt(mSettings.getProperty("small","11"));
+
+    mBodyFont = new FontChooserPanel(mLocalizer.msg("body","Description font"),new Font(temp,Font.PLAIN,size),false);    
+    mBodyFont.setMaximumSize(mBodyFont.getPreferredSize());
+    mBodyFont.setAlignmentX(FontChooserPanel.LEFT_ALIGNMENT);
+
+    center.add(mTitleFont);
+    center.add(mBodyFont);
     
-    JButton previewBtn = new JButton(mLocalizer.msg("preview","Preview"));
-    JButton defaultBtn = new JButton(mLocalizer.msg("default","Default"));
+    mUserFont = new JCheckBox(mLocalizer.msg("userfont","Use user fonts"));
+    mUserFont.setSelected(mSettings.getProperty("userfont","false").equals("true"));
     
-    previewBtn.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent event) {
-			  saveSettings();
-        Program program = Plugin.getPluginManager().getExampleProgram();
-        ActionMenu actionMenu = ProgramInfo.getInstance().getContextMenuActions(program);
-        actionMenu.getAction().actionPerformed(event);
-        //Action[] action = ProgramInfo.getInstance().getContextMenuActions(program);
-        //action[0].actionPerformed(event);
-			}
-    });
+    mTitleFont.setEnabled(mUserFont.isSelected());
+    mBodyFont.setEnabled(mUserFont.isSelected());
     
-    defaultBtn.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        mStyleSheetTa.setText(ProgramInfo.DEFAULT_STYLE_SHEET);
+    mUserFont.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        mTitleFont.setEnabled(mUserFont.isSelected());
+        mBodyFont.setEnabled(mUserFont.isSelected());
       }
     });
     
+    content.add(mUserFont,BorderLayout.NORTH);
+    content.add(center,BorderLayout.CENTER);
     
-    JPanel eastPn = new JPanel(new BorderLayout());
-    eastPn.setBorder(BorderFactory.createEmptyBorder(0,3,0,0));
-    JPanel btnPn = new JPanel(new GridLayout(2,1,3,0));
-    btnPn.add(previewBtn);
-    btnPn.add(defaultBtn);
-    eastPn.add(btnPn,BorderLayout.NORTH);
-    
-    JScrollPane sp = new JScrollPane(mStyleSheetTa);
-    sp.getViewport().setViewPosition(new Point(0,0));
-    content.add(sp,BorderLayout.CENTER);
-    content.add(eastPn, BorderLayout.EAST);
-       
 		return content;
 	}
   
-  
-
 	
 	public void saveSettings() {
-    mSettings.setProperty("stylesheet_v1",mStyleSheetTa.getText());
+    mSettings.setProperty("userfont",String.valueOf(mUserFont.isSelected()));
+    
+    Font f = mTitleFont.getChosenFont();
+    mSettings.setProperty("titlefont",f.getFamily());
+    mSettings.setProperty("title",String.valueOf(f.getSize()));
+    
+    f = mBodyFont.getChosenFont();    
+    mSettings.setProperty("bodyfont",f.getFamily());
+    mSettings.setProperty("small",String.valueOf(f.getSize()));    
 	}
 
 
@@ -96,9 +98,4 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 	public String getTitle() {
 		return "ProgramInfo";
 	}
-
-
-	  
-  
-  
 }
