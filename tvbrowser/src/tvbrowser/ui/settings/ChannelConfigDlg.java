@@ -49,6 +49,7 @@ import javax.swing.event.ChangeListener;
 
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -63,7 +64,7 @@ import devplugin.Channel;
  * @author bodum
  * @since 2.1
  */
-public class ChannelConfigDlg extends JDialog implements ActionListener {
+public class ChannelConfigDlg extends JDialog implements ActionListener, WindowClosingIf {
   /** Localizer */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelConfigDlg.class);
   /** Current Channel */
@@ -115,6 +116,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener {
   private void createDialog() {
     JPanel panel = (JPanel) getContentPane();
 
+    UiUtilities.registerForClosing(this);
+    
     panel.setLayout(new FormLayout("default, 3dlu, fill:default:grow",
         "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu:grow, default"));
 
@@ -283,6 +286,10 @@ public class ChannelConfigDlg extends JDialog implements ActionListener {
       setVisible(false);
     }
 
+  }
+
+  public void close() {
+    setVisible(false);
   }
 
 }

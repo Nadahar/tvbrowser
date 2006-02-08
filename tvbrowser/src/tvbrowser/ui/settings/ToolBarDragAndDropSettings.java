@@ -55,6 +55,8 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * A class to support Drag'n'Drop in the toolbar.
@@ -64,7 +66,7 @@ import tvbrowser.ui.mainframe.toolbar.ToolBar;
 public class ToolBarDragAndDropSettings extends JDialog implements
     WindowListener, MouseMotionListener,
     DragGestureListener, DropTargetListener, ActionListener,
-    MouseListener{
+    MouseListener, WindowClosingIf {
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer
@@ -90,6 +92,8 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     super(MainFrame.getInstance());
     mInstance = this;
 
+    UiUtilities.registerForClosing(this);
+    
     this.getContentPane().setLayout(
         new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
     ((JPanel) this.getContentPane()).setBorder(BorderFactory.createEmptyBorder(
@@ -345,10 +349,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   }
 
   public void windowClosing(WindowEvent e) {
-    mInstance = null;
-    setMainframeMenusEnabled(true);
-    MainFrame.getInstance().updateToolbar();
-    this.dispose();
+    close();
   }
 
   public void mouseMoved(MouseEvent e) {
@@ -732,4 +733,11 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   public void mouseReleased(MouseEvent e) {}
   public void mouseEntered(MouseEvent e) {}
   public void mouseExited(MouseEvent e) {}
+
+  public void close() {
+    mInstance = null;
+    setMainframeMenusEnabled(true);
+    MainFrame.getInstance().updateToolbar();
+    dispose();
+  }
 }
