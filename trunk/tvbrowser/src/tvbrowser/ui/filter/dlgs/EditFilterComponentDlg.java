@@ -62,8 +62,9 @@ import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
-public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener {
+public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener, WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFilterComponentDlg.class);
 
@@ -83,6 +84,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   public EditFilterComponentDlg(JFrame parent, FilterComponent comp) {
     super(parent, true);
+    
+    UiUtilities.registerForClosing(this);
 
     mContentPane = (JPanel) getContentPane();
     mContentPane.setLayout(new BorderLayout(7, 7));
@@ -227,8 +230,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         hide();
       }
     } else if (o == mCancelBtn) {
-      mSelectedFilterComponent = null;
-      hide();
+      close();
     }
 
   }
@@ -252,6 +254,11 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   public void removeUpdate(DocumentEvent e) {
     updateOkBtn();
+  }
+
+  public void close() {
+    mSelectedFilterComponent = null;
+    setVisible(false);
   }
 
 }

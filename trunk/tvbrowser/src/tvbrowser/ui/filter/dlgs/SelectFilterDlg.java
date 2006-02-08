@@ -42,8 +42,9 @@ import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
-public class SelectFilterDlg extends JDialog implements ActionListener {
+public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SelectFilterDlg.class);
 
@@ -60,6 +61,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
   public SelectFilterDlg(JFrame parent) {
 
     super(parent, true);
+    
+    UiUtilities.registerForClosing(this);
 
     mFilterList = FilterList.getInstance();
     mParent = parent;
@@ -199,12 +202,16 @@ public class SelectFilterDlg extends JDialog implements ActionListener {
       mFilterList.store();
       hide();
     } else if (e.getSource() == mCancelBtn) {
-      mFilterList.create();
-      hide();
+      close();
     } else if (e.getSource() == mSeperator) {
       mFilterListModel.addElement(new SeparatorFilter());
     }
 
+  }
+
+  public void close() {
+    mFilterList.create();
+    setVisible(false);
   }
 
 }

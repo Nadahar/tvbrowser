@@ -32,6 +32,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Vector;
@@ -61,8 +63,9 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
-public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener {
+public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener, WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFilterDlg.class);
 
@@ -89,6 +92,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   public EditFilterDlg(JFrame parent, FilterList filterList, UserFilter filter) {
 
     super(parent, true);
+    
+    UiUtilities.registerForClosing(this);
+    
     mFilterList = filterList;
     mParent = parent;
     mFilter = filter;
@@ -175,6 +181,16 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mRuleTableBox.getColumnModel().getColumn(0).setPreferredWidth(125);
     mRuleTableBox.getColumnModel().getColumn(1).setPreferredWidth(320);
 //    mRuleTableBox.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    
+    // Dispatchs the KeyEvent to the RootPane for Closing the Dialog.
+    // Needed for Java 1.4.
+    mRuleTableBox.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+          mRuleTableBox.getRootPane().dispatchEvent(e);
+      }
+    });
+    
     
     JPanel ruleListBoxPanel = new JPanel(new BorderLayout());
     ruleListBoxPanel.setBorder(BorderFactory.createEmptyBorder(0, 13, 7, 0));
@@ -447,6 +463,10 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }
     }
 
+  }
+
+  public void close() {
+    setVisible(false);
   }
 
 }
