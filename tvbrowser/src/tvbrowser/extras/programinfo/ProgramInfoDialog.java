@@ -64,7 +64,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.browserlauncher.Launch;
 import util.ui.UiUtilities;
-import util.ui.WindowClosing;
+import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
@@ -78,7 +78,7 @@ import devplugin.Program;
  *
  * @author Martin Oberhauser
  */
-public class ProgramInfoDialog extends JDialog implements SwingConstants, WindowClosing {
+public class ProgramInfoDialog extends JDialog implements SwingConstants, WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramInfoDialog.class);
