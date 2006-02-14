@@ -1,6 +1,7 @@
 package util.ui.findasyoutype;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -191,7 +192,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
         JComponent.WHEN_FOCUSED);
   }
 
-  private void installKeyListener(JComponent comp) {
+  public void installKeyListener(Component comp) {
     comp.addKeyListener(new KeyAdapter() {
 
       public void keyTyped(KeyEvent e) {
