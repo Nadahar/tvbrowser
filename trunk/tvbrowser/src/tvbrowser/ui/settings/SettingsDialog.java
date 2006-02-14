@@ -85,6 +85,7 @@ public class SettingsDialog implements WindowClosingIf {
   public static final String TAB_ID_PLUGINS = "#plugins";
   public static final String TAB_ID_TRAY = "#tray";
   public static final String TAB_ADDITIONAL = "#additional";
+  public static final String TAB_ID_PROGRAMINFO = "#programinfo";
 
 
   private JDialog mDialog;
@@ -278,7 +279,7 @@ public class SettingsDialog implements WindowClosingIf {
 
     root.add(new SettingNode(new ReminderSettingsTab()));
     root.add(new SettingNode(new FavoritesSettingTab()));
-    root.add(new SettingNode(new ProgramInfoSettingsTab()));
+    root.add(new SettingNode(new ProgramInfoSettingsTab(), TAB_ID_PROGRAMINFO));
     
 
     ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
