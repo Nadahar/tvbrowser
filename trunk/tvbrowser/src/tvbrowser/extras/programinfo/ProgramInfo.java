@@ -36,11 +36,14 @@ import java.io.*;
 
 import javax.swing.*;
 
+import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
+
 import util.ui.UiUtilities;
 import util.exc.ErrorHandler;
 import devplugin.*;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
+import tvbrowser.ui.mainframe.MainFrame;
 
 /**
  * TV-Browser
@@ -72,6 +75,7 @@ public class ProgramInfo {
   private ProgramInfo() {
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     loadSettings();
+    LookAndFeelAddons.setTrackingLookAndFeelChanges(true);
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
@@ -81,7 +85,8 @@ public class ProgramInfo {
         "edit-find", 16));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        showProgramInformation(program);
+        setLook();
+        showProgramInformation(program, true);
       }
     });
 
@@ -210,14 +215,14 @@ public class ProgramInfo {
     return 0;
   }
 
-  private void showProgramInformation(Program program) {
-    Window parent = UiUtilities.getBestDialogParent(null);
+  protected void showProgramInformation(Program program, boolean showSettings) {
+    Window parent = UiUtilities.getBestDialogParent(MainFrame.getInstance());
     ProgramInfoDialog dlg;
     
     if (parent instanceof Dialog) {
-      dlg = new ProgramInfoDialog((Dialog) parent, program, mLeftSplit);
+      dlg = new ProgramInfoDialog((Dialog) parent, program, mLeftSplit, showSettings);
     } else {
-      dlg = new ProgramInfoDialog((Frame) parent, program, mLeftSplit);
+      dlg = new ProgramInfoDialog((Frame) parent, program, mLeftSplit, showSettings);
     }
 
     dlg.pack();
@@ -239,10 +244,6 @@ public class ProgramInfo {
       dlg.setVisible(true);
     } else
       UiUtilities.centerAndShow(dlg);
-  }
-
-  public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("actions", "edit-find");
   }
 
   /**
@@ -324,9 +325,29 @@ public class ProgramInfo {
     mSettings.setProperty(key,String.valueOf(value));
   }
   
-  protected String getProperty(String value, String def) {
+  protected String getProperty(String key, String def) {
+    return mSettings.getProperty(key,def);
+  }
+  
+  protected String getUserfont(String value, String def) {
     String tvalue = mSettings.getProperty(value);
-    boolean userfont = mSettings.getProperty("userfont","false").equals("true");
+    
+    boolean userfont = mSettings.getProperty("userfont","false").equals("true");    
     return tvalue != null && tvalue.trim().length() > 0 && userfont ? tvalue : def;
+  }
+  
+  protected void setLook() {
+    int n = Integer.parseInt(mSettings.getProperty("look","4"));
+    
+    String[] lnf = {"com.l2fprod.common.swing.plaf.aqua.AquaLookAndFeelAddons",
+                    "com.l2fprod.common.swing.plaf.basic.BasicLookAndFeelAddons",
+        "com.l2fprod.common.swing.plaf.metal.MetalLookAndFeelAddons",
+        "com.l2fprod.common.swing.plaf.motif.MotifLookAndFeelAddons",
+        "com.l2fprod.common.swing.plaf.windows.WindowsLookAndFeelAddons",
+        "com.l2fprod.common.swing.plaf.windows.WindowsClassicLookAndFeelAddons"};
+    
+    try{      
+      LookAndFeelAddons.setAddon(lnf[n]);
+    }catch(Exception e){}
   }
 }

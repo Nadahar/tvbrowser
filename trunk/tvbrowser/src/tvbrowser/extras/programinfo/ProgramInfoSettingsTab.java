@@ -1,101 +1,258 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
 package tvbrowser.extras.programinfo;
 
 import java.awt.*;
-import java.util.Properties;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import java.util.Properties;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import util.ui.FontChooserPanel;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
+import util.ui.FontChooserPanel;
+import util.ui.customizableitems.SortableItemList;
+
+import devplugin.Plugin;
+import devplugin.ProgramFieldType;
 import devplugin.SettingsTab;
 
 /**
- * The SettingsTab for the ProgramInfo viewer. 
+ * The SettingsTab for the ProgramInfo viewer.
  */
 public class ProgramInfoSettingsTab implements SettingsTab {
 
-  private static final util.ui.Localizer mLocalizer =
-      util.ui.Localizer.getLocalizerFor(ProgramInfoSettingsTab.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ProgramInfoSettingsTab.class);
 
-  private JCheckBox mUserFont;
+  private JCheckBox mUserFont, mAntiAliasing;
+
   private FontChooserPanel mTitleFont, mBodyFont;
-  
+
   private Properties mSettings;
-  
+
+  private JComboBox mLook;
+
+  private SortableItemList mList;
+
+  private String mOldOrder, mOldLook, mOldTitleFont, mOldBodyFont,
+      mOldTitleFontSize, mOldBodyFontSize, mOldUserFontSelected,
+      mOldAntiAliasingSelected;
+
   /**
    * Constructor
-   *
+   * 
    */
   public ProgramInfoSettingsTab() {
     mSettings = ProgramInfo.getInstance().getSettings();
   }
 
-	public JPanel createSettingsPanel() {
-    JPanel content = new JPanel(new BorderLayout(0,4));    
-    content.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    
-    JPanel center = new JPanel();
-    center.setLayout(new BoxLayout(center,BoxLayout.Y_AXIS));
-    center.setBorder(BorderFactory.createEmptyBorder(5,10,5,5));
-    
-    String temp = mSettings.getProperty("titlefont","Verdana");
-    int size = Integer.parseInt(mSettings.getProperty("title","18"));
-    
-    mTitleFont = new FontChooserPanel(mLocalizer.msg("title","Title font"),new Font(temp,Font.PLAIN,size),false);
+  public JPanel createSettingsPanel() {
+    mOldLook = mSettings.getProperty("look", "4");
+    mOldAntiAliasingSelected = mSettings.getProperty("antialiasing", "false");
+    mOldUserFontSelected = mSettings.getProperty("userfont", "false");
+    mOldTitleFontSize = mSettings.getProperty("title", "18");
+    mOldBodyFontSize = mSettings.getProperty("small", "11");
+    mOldTitleFont = mSettings.getProperty("titlefont", "Verdana");
+    mOldBodyFont = mSettings.getProperty("bodyfont", "Verdana");
+    mOldOrder = mSettings.getProperty("order", "");
+
+    String[] lf = { "Aqua", "Basic", "Metal", "Motif", "Windows XP",
+        "Windows Classic" };
+    mLook = new JComboBox(lf);
+    mLook.setSelectedIndex(Integer.parseInt(mOldLook));
+
+    mAntiAliasing = new JCheckBox(mLocalizer
+        .msg("antialiasing", "Antialiasing"));
+    mAntiAliasing.setSelected(mOldUserFontSelected.equals("true"));
+
+    mUserFont = new JCheckBox(mLocalizer.msg("userfont", "Use user fonts"));
+    mUserFont.setSelected(mOldUserFontSelected.equals("true"));
+
+    int size = Integer.parseInt(mOldTitleFontSize);
+
+    mTitleFont = new FontChooserPanel(mLocalizer.msg("title", "Title font"),
+        new Font(mOldTitleFont, Font.PLAIN, size), false);
     mTitleFont.setMaximumSize(mTitleFont.getPreferredSize());
     mTitleFont.setAlignmentX(FontChooserPanel.LEFT_ALIGNMENT);
-        
-    temp = mSettings.getProperty("bodyfont","Verdana");
-    size = Integer.parseInt(mSettings.getProperty("small","11"));
+    mTitleFont.setBorder(BorderFactory.createEmptyBorder(5, 20, 0, 0));
 
-    mBodyFont = new FontChooserPanel(mLocalizer.msg("body","Description font"),new Font(temp,Font.PLAIN,size),false);    
+    size = Integer.parseInt(mOldBodyFontSize);
+
+    mBodyFont = new FontChooserPanel(
+        mLocalizer.msg("body", "Description font"), new Font(mOldBodyFont,
+            Font.PLAIN, size), false);
     mBodyFont.setMaximumSize(mBodyFont.getPreferredSize());
     mBodyFont.setAlignmentX(FontChooserPanel.LEFT_ALIGNMENT);
+    mBodyFont.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 
-    center.add(mTitleFont);
-    center.add(mBodyFont);
-    
-    mUserFont = new JCheckBox(mLocalizer.msg("userfont","Use user fonts"));
-    mUserFont.setSelected(mSettings.getProperty("userfont","false").equals("true"));
-    
     mTitleFont.setEnabled(mUserFont.isSelected());
     mBodyFont.setEnabled(mUserFont.isSelected());
-    
+
     mUserFont.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
         mTitleFont.setEnabled(mUserFont.isSelected());
         mBodyFont.setEnabled(mUserFont.isSelected());
       }
     });
-    
-    content.add(mUserFont,BorderLayout.NORTH);
-    content.add(center,BorderLayout.CENTER);
-    
-		return content;
-	}
-  
-	
-	public void saveSettings() {
-    mSettings.setProperty("userfont",String.valueOf(mUserFont.isSelected()));
-    
+
+    Object[] o;
+    String[] id = mOldOrder.split(";");
+
+    if (id.length == 1)
+      o = ProgramTextCreator.getDefaultOrder();
+    else {
+      o = new Object[id.length];
+      for (int i = 0; i < o.length; i++)
+        try {
+          o[i] = ProgramFieldType
+              .getTypeForId(Integer.parseInt((String) id[i]));
+        } catch (Exception e) {
+          o[i] = id[i];
+        }
+    }
+
+    mList = new SortableItemList("", o);
+
+    JButton previewBtn = new JButton(mLocalizer.msg("preview", "Prewview"));
+    previewBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        saveSettings();
+        ProgramInfo.getInstance().showProgramInformation(
+            Plugin.getPluginManager().getExampleProgram(), false);
+        restoreSettings();
+      }
+    });
+
+    JButton defaultBtn = new JButton(mLocalizer.msg("default", "Default"));
+    defaultBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        resetSettings();
+      }
+    });
+
+    CellConstraints cc = new CellConstraints();
+
+    PanelBuilder panelBuilder = new PanelBuilder(
+        new FormLayout(
+            "5dlu, pref, pref:grow",
+            "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, pref, pref, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref"));
+    panelBuilder.setDefaultDialogBorder();
+    panelBuilder.addSeparator(mLocalizer.msg("design", "Design"), cc.xyw(1, 1,
+        3));
+    panelBuilder.add(mLook, cc.xy(2, 3));
+    panelBuilder.addSeparator(mLocalizer.msg("font", "Font"), cc.xyw(1, 5, 3));
+    panelBuilder.add(mAntiAliasing, cc.xy(2, 7));
+    panelBuilder.add(mUserFont, cc.xy(2, 8));
+    panelBuilder.add(mTitleFont, cc.xy(2, 9));
+    panelBuilder.add(mBodyFont, cc.xy(2, 10));
+    panelBuilder.addSeparator(mLocalizer.msg("order", "Order"), cc
+        .xyw(1, 12, 3));
+    panelBuilder.add(mList, cc.xyw(2, 14, 2));
+    panelBuilder.addSeparator("", cc.xyw(1, 16, 3));
+
+    JPanel buttonsPn = new JPanel(new BorderLayout());
+    buttonsPn.add(defaultBtn, BorderLayout.WEST);
+    buttonsPn.add(previewBtn, BorderLayout.EAST);
+    buttonsPn.setBorder(panelBuilder.getPanel().getBorder());
+
+    JPanel content = new JPanel(new BorderLayout());
+    content.add(panelBuilder.getPanel(), BorderLayout.CENTER);
+    content.add(buttonsPn, BorderLayout.SOUTH);
+
+    return content;
+  }
+
+  private void resetSettings() {
+    DefaultListModel model = (DefaultListModel) mList.getList().getModel();
+    model.clear();
+
+    Object[] o = ProgramTextCreator.getDefaultOrder();
+
+    for (int i = 0; i < o.length; i++)
+      model.addElement(o[i]);
+
+    mAntiAliasing.setSelected(false);
+    mUserFont.setSelected(false);
+    mLook.setSelectedIndex(4);
+  }
+
+  public void saveSettings() {
+    mSettings.setProperty("antialiasing", String.valueOf(mAntiAliasing
+        .isSelected()));
+    mSettings.setProperty("userfont", String.valueOf(mUserFont.isSelected()));
+
     Font f = mTitleFont.getChosenFont();
-    mSettings.setProperty("titlefont",f.getFamily());
-    mSettings.setProperty("title",String.valueOf(f.getSize()));
-    
-    f = mBodyFont.getChosenFont();    
-    mSettings.setProperty("bodyfont",f.getFamily());
-    mSettings.setProperty("small",String.valueOf(f.getSize()));    
-	}
+    mSettings.setProperty("titlefont", f.getFamily());
+    mSettings.setProperty("title", String.valueOf(f.getSize()));
 
+    f = mBodyFont.getChosenFont();
+    mSettings.setProperty("bodyfont", f.getFamily());
+    mSettings.setProperty("small", String.valueOf(f.getSize()));
 
-	public Icon getIcon() {
-		return null;
-	}
+    mSettings.setProperty("look", String.valueOf(mLook.getSelectedIndex()));
+    ProgramInfo.getInstance().setLook();
 
-	
-	public String getTitle() {
-		return "ProgramInfo";
-	}
+    Object[] o = new Object[mList.getList().getModel().getSize()];
+    ((DefaultListModel) mList.getList().getModel()).copyInto(o);
+
+    String temp = "";
+
+    for (int i = 0; i < o.length; i++)
+      if (o[i] instanceof String)
+        temp += o[i] + ";";
+      else
+        temp += ((ProgramFieldType) o[i]).getTypeId() + ";";
+
+    mSettings.setProperty("order", temp);
+  }
+
+  private void restoreSettings() {
+    mSettings.setProperty("antialiasing", mOldAntiAliasingSelected);
+    mSettings.setProperty("userfont", mOldUserFontSelected);
+    mSettings.setProperty("titlefont", mOldTitleFont);
+    mSettings.setProperty("title", mOldTitleFontSize);
+    mSettings.setProperty("bodyfont", mOldBodyFont);
+    mSettings.setProperty("small", mOldBodyFontSize);
+    mSettings.setProperty("look", mOldLook);
+    ProgramInfo.getInstance().setLook();
+    mSettings.setProperty("order", mOldOrder);
+  }
+
+  public Icon getIcon() {
+    return null;
+  }
+
+  public String getTitle() {
+    return "ProgramInfo";
+  }
 }
