@@ -62,6 +62,8 @@ import com.l2fprod.common.swing.JTaskPaneGroup;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.SettingsDialog;
 import util.browserlauncher.Launch;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -75,57 +77,86 @@ import devplugin.Program;
 
 /**
  * TV-Browser
- *
+ * 
  * @author Martin Oberhauser
  */
+
 public class ProgramInfoDialog extends JDialog implements SwingConstants, WindowClosingIf {
 
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(ProgramInfoDialog.class);
+  private static final long serialVersionUID = 1L;
 
-  private JEditorPane mInfoEP;  
-  private JTaskPane plugins;
-  private JTaskPaneGroup web = new JTaskPaneGroup();
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ProgramInfoDialog.class);
+
+  private JEditorPane mInfoEP;
+  private JTaskPane mPluginsPane;
+  private JTaskPaneGroup mFunctionGroup;
   private Program mProgram;
   private ExtendedHTMLDocument mDoc;
-  private JScrollPane actions;
-  
-  public ProgramInfoDialog(Dialog parent, Program program, Dimension d) {
-    super(parent);
-    init(program, d);
+  private JScrollPane mActionsPane;
+  private TextComponentFindAction mFindAsYouType;
+  private ActionMenu mSearchMenu;
+
+  /**
+   * @param parent
+   *          The parent dialog.
+   * @param program
+   *          The program to show the info for.
+   * @param pluginsSize
+   *          The size of the Functions Panel.
+   * @param showSettings
+   *          Show the settings button.
+   */
+  public ProgramInfoDialog(Dialog parent, Program program,
+      Dimension pluginsSize, boolean showSettings) {
+    super(parent, true);
+    init(program, pluginsSize, showSettings);
   }
 
-  public ProgramInfoDialog(Frame parent, Program program, Dimension d)
-  {
-    super(parent);
-    init(program, d);
+  /**
+   * @param parent
+   *          The parent frame.
+   * @param program
+   *          The program to show the info for.
+   * @param pluginsSize
+   *          The size of the Functions Panel.
+   * @param showSettings
+   *          Show the settings button.
+   */
+  public ProgramInfoDialog(Frame parent, Program program,
+      Dimension pluginsSize, boolean showSettings) {
+    super(parent, true);
+    init(program, pluginsSize, showSettings);
   }
 
-  private void init(final Program program, Dimension d) {
+  private void init(final Program program, Dimension pluginsSize,
+      boolean showSettings) {
     UiUtilities.registerForClosing(this);
-    
+
     mProgram = program;
+    mFunctionGroup = new JTaskPaneGroup();
+    mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
+
     setTitle(mLocalizer.msg("title", "Program information"));
 
     JPanel main = new JPanel(new BorderLayout());
-    main.setPreferredSize(new Dimension(500, 350));
+    main.setPreferredSize(new Dimension(600, 400));
     main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     setContentPane(main);
 
-    mInfoEP = new JEditorPane();
-    
+    mInfoEP = new ProgramEditorPane();
     mInfoEP.setEditorKit(new ExtendedHTMLEditorKit());
 
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
-    
+
     mInfoEP.setText(ProgramTextCreator.createInfoText(program, mDoc));
     mInfoEP.setEditable(false);
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent evt) {
-        if(evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+        if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
           mInfoEP.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
-        if(evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
           mInfoEP.setCursor(Cursor.getDefaultCursor());
         }
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -137,106 +168,108 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       }
     });
 
- /*   mInfoEP.addMouseListener(new MouseAdapter(){
-      public void mousePressed(MouseEvent evt) {
-        if (evt.isPopupTrigger()) {
-          showPopup(evt, program);
-        }
-      }
-
-      public void mouseReleased(MouseEvent evt) {
-        if (evt.isPopupTrigger()) {
-          showPopup(evt, program);
-        }
-      }
-
-      public void mouseClicked(MouseEvent e) {
-        handleMouseClicked(e, program);
-      }
-    });*/
-
-    //final FindAsYouType findasyoutype = new FindAsYouType(mInfoEP);
-    final TextComponentFindAction findasyoutype = new TextComponentFindAction(mInfoEP, true);
+    /*
+     * mInfoEP.addMouseListener(new MouseAdapter(){ public void
+     * mousePressed(MouseEvent evt) { if (evt.isPopupTrigger()) { showPopup(evt,
+     * program); } }
+     * 
+     * public void mouseReleased(MouseEvent evt) { if (evt.isPopupTrigger()) {
+     * showPopup(evt, program); } }
+     * 
+     * public void mouseClicked(MouseEvent e) { handleMouseClicked(e, program); }
+     * });
+     */
 
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
-    
     scrollPane.getVerticalScrollBar().setUnitIncrement(30);
-    
+
+    // ScrollActions
     Action up = new AbstractAction() {
+
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
-        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getValue() - scrollPane.getVerticalScrollBar().getUnitIncrement());        
+        scrollPane.getVerticalScrollBar().setValue(
+            scrollPane.getVerticalScrollBar().getValue()
+                - scrollPane.getVerticalScrollBar().getUnitIncrement());
       }
     };
-    
-    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP,0);
-    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_UP");
-    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_UP");
+
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
+    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+        "SCROLL_UP");
+    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
     mInfoEP.getActionMap().put("SCROLL_UP", up);
 
-    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_UP");
-    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_UP");
+    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+        "SCROLL_UP");
+    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_UP");
     getRootPane().getActionMap().put("SCROLL_UP", up);
 
     Action down = new AbstractAction() {
+
+      private static final long serialVersionUID = 1L;
+
       public void actionPerformed(ActionEvent e) {
-        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getValue() + scrollPane.getVerticalScrollBar().getUnitIncrement());        
+        scrollPane.getVerticalScrollBar().setValue(
+            scrollPane.getVerticalScrollBar().getValue()
+                + scrollPane.getVerticalScrollBar().getUnitIncrement());
       }
     };
-    
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN,0);
-    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_DOWN");
-    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_DOWN");
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+    mInfoEP.getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+        "SCROLL_DOWN");
+    mInfoEP.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "SCROLL_DOWN");
     mInfoEP.getActionMap().put("SCROLL_DOWN", down);
 
-    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"SCROLL_DOWN");
-    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,"SCROLL_DOWN");
+    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,
+        "SCROLL_DOWN");
+    getRootPane().getInputMap(JRootPane.WHEN_FOCUSED)
+        .put(stroke, "SCROLL_DOWN");
     getRootPane().getActionMap().put("SCROLL_DOWN", down);
-    
-    JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);    
-    split.setDividerSize(5);
-  
-    plugins = new JTaskPane();
-    
-    actions = new JScrollPane(plugins);
-    if(d == null)
-      actions.setPreferredSize(new Dimension(350,350));
-      
+
+    mPluginsPane = new JTaskPane();
+    mPluginsPane.add(mFunctionGroup);
+
+    mActionsPane = new JScrollPane(mPluginsPane);
+
+    if (pluginsSize == null)
+      mActionsPane.setPreferredSize(new Dimension(200, 400));
+
     else
-      actions.setPreferredSize(d);
-  
-    split.setDividerLocation(actions.getPreferredSize().width + 1);
-    
-    web.setTitle(mLocalizer.msg("functions","Functions"));
-    
-    plugins.add(web);
-    
-    addPluginActions(false);
-    addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        close();
-      }
-    });
-    
-    split.setLeftComponent(actions);
+      mActionsPane.setPreferredSize(pluginsSize);
+
+    JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    split.setDividerSize(5);
+    split.setContinuousLayout(true);
+    split.setDividerLocation(mActionsPane.getPreferredSize().width + 1);
+    split.setLeftComponent(mActionsPane);
     split.setRightComponent(scrollPane);
-    
-    main.add(split,BorderLayout.CENTER);
-        
+
+    main.add(split, BorderLayout.CENTER);
+
     // buttons
     JPanel buttonPn = new JPanel(new BorderLayout());
 
-    buttonPn.setBorder(BorderFactory.createEmptyBorder(5,0,0,0));
+    buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
     main.add(buttonPn, BorderLayout.SOUTH);
 
-    JButton findBtn = new JButton(findasyoutype);
+    JButton configBtn = new JButton(mLocalizer.msg("config","Configure view"));
+    configBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
+        "preferences-desktop", 16));
 
-    findBtn.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16));
+    configBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        close();
+        MainFrame.getInstance().showSettingsDialog(
+            SettingsDialog.TAB_ID_PROGRAMINFO);
+      }
+    });
 
-    findBtn.setText("");
-    findBtn.setToolTipText(mLocalizer.msg("search", "Search Text"));
-
-    buttonPn.add(findBtn, BorderLayout.WEST);
+    if (showSettings)
+      buttonPn.add(configBtn, BorderLayout.WEST);
 
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
@@ -249,6 +282,42 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     getRootPane().setDefaultButton(closeBtn);
 
+    Action searchAction = new AbstractAction() {
+
+      private static final long serialVersionUID = 1L;
+
+      public void actionPerformed(ActionEvent e) {
+        mFindAsYouType.actionPerformed(e);
+      }
+    };
+
+    searchAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
+        .getIconFromTheme("actions", "system-search", 16));
+    searchAction.putValue(Action.ACTION_COMMAND_KEY, "action");
+    searchAction.putValue(Action.NAME, mLocalizer.msg("search", "Search Text"));
+
+    mSearchMenu = new ActionMenu(searchAction);
+
+    mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
+    mFindAsYouType.installKeyListener(scrollPane);
+    mFindAsYouType.installKeyListener(split);
+    mFindAsYouType.installKeyListener(mPluginsPane);
+    mFindAsYouType.installKeyListener(mActionsPane);
+    mFindAsYouType.installKeyListener(mFunctionGroup);
+    mFindAsYouType.installKeyListener(main);
+    mFindAsYouType.installKeyListener(configBtn);
+    mFindAsYouType.installKeyListener(closeBtn);
+    mFindAsYouType.installKeyListener(buttonPn);
+    mFindAsYouType.installKeyListener(this.getRootPane());
+
+    addPluginActions(false);
+
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        close();
+      }
+    });
+
     // Scroll to the beginning
     Runnable runnable = new Runnable() {
       public void run() {
@@ -258,63 +327,70 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     SwingUtilities.invokeLater(runnable);
   }
 
-  
   protected void addPluginActions(boolean rebuild) {
-    web.removeAll();    
-    
-    ActionMenu fav = FavoritesPlugin.getInstance().getContextMenuActions(null, mProgram);
-    ActionMenu rem = ReminderPlugin.getInstance().getContextMenuActions(null, mProgram);
-    
-    if(fav != null)
-      new TaskMenuButton(plugins, web, mProgram, fav, this, "id_favorite");
-    if(rem != null)
-      new TaskMenuButton(plugins, web, mProgram, rem, this, "id_reminder");
-    
+    mFunctionGroup.removeAll();
+
+    new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
+        this, "id_sea", mFindAsYouType);
+
+    ActionMenu fav = FavoritesPlugin.getInstance().getContextMenuActions(null,
+        mProgram);
+    ActionMenu rem = ReminderPlugin.getInstance().getContextMenuActions(null,
+        mProgram);
+
+    if (fav != null)
+      new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, fav, this,
+          "id_favorite", mFindAsYouType);
+    if (rem != null)
+      new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, rem, this,
+          "id_reminder", mFindAsYouType);
+
     PluginAccess[] p = Plugin.getPluginManager().getActivatedPlugins();
-    
-    for(int i = 0; i < p.length; i++) {
+
+    for (int i = 0; i < p.length; i++) {
       ActionMenu menu = p[i].getContextMenuActions(mProgram);
-      
-      if(menu != null)
-        new TaskMenuButton(plugins, web, mProgram, menu, this, p[i].getId());
-        
+
+      if (menu != null)
+        new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, menu, this,
+            p[i].getId(), mFindAsYouType);
+
     }
-    
-    if(rebuild) {
+
+    if (rebuild) {
       mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc));
-      SwingUtilities.invokeLater(new Runnable(){
+      SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mInfoEP.setCaretPosition(0);
         }
       });
     }
-    
-    plugins.revalidate();
-  }
-  
-  public void close() {
-    ProgramInfo.getInstance().setSettings(this,actions.getSize());
-    dispose();
-  }
-  
-  /**
-   * Shows the Popup
-   * @param evt MouseEvent for Popup-Location
-   * @param program Program to use for Popup
-   */
-/*  private void showPopup(MouseEvent evt, Program program) {
-    if (program != null) {
-      JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(program, null);
-      menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15);
-    }
+
+    mPluginsPane.revalidate();
   }
 
-  private void handleMouseClicked(MouseEvent evt, Program program) {
-    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-      Plugin.getPluginManager().handleProgramDoubleClick(program, null);
-    }
-    if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
-      Plugin.getPluginManager().handleProgramMiddleClick(program, null);
-    }
-  }*/
+  public void close() {
+    ProgramInfo.getInstance().setSettings(this, mActionsPane.getSize());
+    dispose();
+  }
+
+  /**
+   * Shows the Popup
+   * 
+   * @param evt
+   *          MouseEvent for Popup-Location
+   * @param program
+   *          Program to use for Popup
+   */
+  /*
+   * private void showPopup(MouseEvent evt, Program program) { if (program !=
+   * null) { JPopupMenu menu =
+   * Plugin.getPluginManager().createPluginContextMenu(program, null);
+   * menu.show(mInfoEP, evt.getX() - 15, evt.getY() - 15); } }
+   * 
+   * private void handleMouseClicked(MouseEvent evt, Program program) { if
+   * (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+   * Plugin.getPluginManager().handleProgramDoubleClick(program, null); } if
+   * (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
+   * Plugin.getPluginManager().handleProgramMiddleClick(program, null); } }
+   */
 }
