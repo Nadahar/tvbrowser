@@ -53,7 +53,6 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private JButton mCancelBtn, mUpdateBtn;
   private int mResult = 0;
   private JComboBox mComboBox;
-  private JCheckBox mCheckBox;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
 
@@ -121,18 +120,9 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       northPanel.add(p);
     }
 
-    msg = mLocalizer.msg("rememberSettings", "Remember settings");
-    mCheckBox = new JCheckBox(msg);
-    JPanel panel2 = new JPanel(new BorderLayout());
-    panel2.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-
     int period = Settings.propDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(period);
     mComboBox.setSelectedItem(pi);
-
-    panel2.add(mCheckBox, BorderLayout.WEST);
-
-    northPanel.add(panel2);
 
     contentPane.add(northPanel, BorderLayout.NORTH);
   }
@@ -188,15 +178,13 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         dataServiceList.toArray(mSelectedTvDataServiceArr);
       }
 
-      if (mCheckBox.isSelected()) {
-        Settings.propDownloadPeriod.setInt(mResult);
+      Settings.propDownloadPeriod.setInt(mResult);
 
-        String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
-        for (int i = 0; i < dataServiceArr.length; i++) {
-          dataServiceArr[i] = mSelectedTvDataServiceArr[i].getId();
-        }
-        Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
+      String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
+      for (int i = 0; i < dataServiceArr.length; i++) {
+        dataServiceArr[i] = mSelectedTvDataServiceArr[i].getId();
       }
+      Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
       setVisible(false);
     }
   }
