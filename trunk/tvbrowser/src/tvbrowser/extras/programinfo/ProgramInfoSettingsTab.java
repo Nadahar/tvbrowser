@@ -127,11 +127,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     });
 
     Object[] o;
-    String[] id = mOldOrder.trim().split(";");
     
-    if (id.length == 1)
+    if (mOldOrder.indexOf(";") == -1)
       o = ProgramTextCreator.getDefaultOrder();
     else {
+      String[] id = mOldOrder.trim().split(";");
       o = new Object[id.length];
       for (int i = 0; i < o.length; i++)
         try {
