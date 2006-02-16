@@ -306,8 +306,8 @@ public class TextComponentFindAction extends FindAction implements FocusListener
       mFindPrev.setEnabled(false);
       mFindNext.setEnabled(false);
       reset();
-      setBlockAutoClosing(true);
     }
+    setBlockAutoClosing(true);
     //Stop the automatically closing
     interrupt();
     mSearchBar.setVisible(true);
