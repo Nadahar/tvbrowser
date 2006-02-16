@@ -128,7 +128,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     super(parent, true);
     init(program, pluginsSize, showSettings);
   }
-
+  
   private void init(final Program program, Dimension pluginsSize,
       boolean showSettings) {
     UiUtilities.registerForClosing(this);
@@ -231,12 +231,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     mPluginsPane = new JTaskPane();
     mPluginsPane.add(mFunctionGroup);
-
+    
     mActionsPane = new JScrollPane(mPluginsPane);
-
+    
     if (pluginsSize == null)
       mActionsPane.setPreferredSize(new Dimension(250, 500));
-
     else
       mActionsPane.setPreferredSize(pluginsSize);
 
@@ -246,7 +245,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     split.setDividerLocation(mActionsPane.getPreferredSize().width + 1);
     split.setLeftComponent(mActionsPane);
     split.setRightComponent(scrollPane);
-
+    
     main.add(split, BorderLayout.CENTER);
 
     mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
@@ -305,15 +304,17 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     mFindAsYouType.installKeyListener(scrollPane);
     mFindAsYouType.installKeyListener(split);
-    mFindAsYouType.installKeyListener(mPluginsPane);
-    mFindAsYouType.installKeyListener(mActionsPane);
-    mFindAsYouType.installKeyListener(mFunctionGroup);
     mFindAsYouType.installKeyListener(main);
     mFindAsYouType.installKeyListener(configBtn);
     mFindAsYouType.installKeyListener(closeBtn);
     mFindAsYouType.installKeyListener(buttonPn);
-    mFindAsYouType.installKeyListener(this.getRootPane());
-
+    mFindAsYouType.installKeyListener(mPluginsPane);
+    mFindAsYouType.installKeyListener(mActionsPane);
+    mFindAsYouType.installKeyListener(mFunctionGroup);
+    mFindAsYouType.installKeyListener(getRootPane());
+    mFindAsYouType.installKeyListener(mActionsPane.getVerticalScrollBar());
+    mFindAsYouType.installKeyListener(scrollPane.getVerticalScrollBar());
+    
     addPluginActions(false);
 
     addWindowListener(new WindowAdapter() {
@@ -333,7 +334,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     if(ProgramInfo.getInstance().getProperty("showSearch","false").equals("true"))
       mFindAsYouType.showSearchBar();
   }
-  
+    
   protected void addPluginActions(boolean rebuild) {
     mFunctionGroup.removeAll();
 
