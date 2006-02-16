@@ -377,7 +377,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
   public void close() {
     ProgramInfo.getInstance().setSettings(this, mActionsPane.getSize());
-    ProgramInfo.getInstance().setExpanded("showSearch",mFindAsYouType.isVisible());
+    ProgramInfo.getInstance().setExpanded("showSearch",mFindAsYouType.isAlwaysVisible());
     dispose();
   }
 
