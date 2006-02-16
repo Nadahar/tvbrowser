@@ -164,12 +164,14 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     button.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
         JButton b = (JButton)e.getSource();
-        b.setBorder(BorderFactory.createRaisedBevelBorder());
+        if(b.isEnabled())
+          b.setBorder(BorderFactory.createRaisedBevelBorder());
       }
       
       public void mouseExited(MouseEvent e) {
         JButton b = (JButton)e.getSource();
-        b.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        if(b.isEnabled())
+          b.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       }
     });
   }
