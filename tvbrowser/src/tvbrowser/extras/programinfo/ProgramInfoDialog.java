@@ -55,6 +55,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.Caret;
 
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
@@ -167,7 +168,10 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         }
       }
     });
-
+        
+    mInfoEP.getCaret().setBlinkRate(0);
+    mInfoEP.setCaretColor(mInfoEP.getBackground());
+    
     /*
      * mInfoEP.addMouseListener(new MouseAdapter(){ public void
      * mousePressed(MouseEvent evt) { if (evt.isPopupTrigger()) { showPopup(evt,
