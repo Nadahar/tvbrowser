@@ -38,90 +38,99 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Santhosh
  * 
- * Changed for support of a search bar instead of a search popup by René Mach:
+ * Changed for support of a search bar instead of a search popup by René Mach: 
  *   - added the needed components for the search bar
- *   - added ComponentListener to initialize the search when the search bar becomes visible
- *   - added Runnable to support closing the search bar automatically if the search was 
- *     started with a KeyType.
+ *   - added ComponentListener to initialize the search when the 
+ *     search bar becomes visible
+ *   - added Runnable to support closing the search bar automatically if the
+ *     search was started with a key type. 
  *   - added Localizer
+ *   - added MouseAdapter for the search bar buttons
  */
-public class TextComponentFindAction extends FindAction implements FocusListener, ComponentListener {
+public class TextComponentFindAction extends FindAction implements
+    FocusListener, ComponentListener {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TextComponentFindAction.class);
-  
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TextComponentFindAction.class);
+
   private JPanel mSearchBar;
-  private JButton mFindNext,mFindPrev;
-  
+  private JButton mFindNext, mFindPrev;
+
   public TextComponentFindAction(JTextComponent comp) {
-    super(comp, false);    
+    super(comp, false);
     ini();
   }
 
   public TextComponentFindAction(JTextComponent comp, boolean startAtKeyType) {
-    super(comp, startAtKeyType);    
+    super(comp, startAtKeyType);
     ini();
   }
-  
+
   // Added method for building up the search bar
   private void ini() {
     PanelBuilder b = new PanelBuilder(new FormLayout(
         "2dlu,pref,5dlu,pref,5dlu,100dlu,5dlu,pref,5dlu,pref,15dlu,pref",
         "pref"));
     CellConstraints cc = new CellConstraints();
-    
+
     mSearchBar = b.getPanel();
     mSearchBar.addComponentListener(this);
-        
-    JButton searchCloseBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions","process-stop",16));
-    searchCloseBtn.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-    searchCloseBtn.setToolTipText(mLocalizer.msg("closeToolTip","Close Find bar"));
-    searchCloseBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mSearchBar.setVisible(false);
-        setBlockAutoClosing(false);
-        interrupt();
-      }
-    });
-        
+
+    JButton searchCloseBtn = new JButton(IconLoader.getInstance()
+        .getIconFromTheme("actions", "process-stop", 16));
+    searchCloseBtn.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    searchCloseBtn.setPressedIcon(IconLoader.getInstance().getIconFromTheme(
+        "actions", "close-pressed", 16));
+    searchCloseBtn.setToolTipText(mLocalizer.msg("closeToolTip",
+        "Close Find bar"));
+    searchCloseBtn.setOpaque(false);
+    searchCloseBtn.setFocusable(false);
+    searchCloseBtn.removeMouseListener(searchCloseBtn.getMouseListeners()[0]);
+
     final JTextField searchField = getSearchField();
-    
-    mFindNext = new JButton(mLocalizer.msg("next","Find Next"));
-    mFindNext.setBackground(b.getPanel().getBackground());
-    mFindNext.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-    mFindNext.setIcon(IconLoader.getInstance().getIconFromTheme("actions","go-down",16));
+
+    mFindNext = new JButton(mLocalizer.msg("next", "Find Next"));
+    mFindNext.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    mFindNext.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+        "go-down", 16));
+    mFindNext.setOpaque(false);
+    mFindNext.setFocusable(false);
     mFindNext.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         next();
       }
     });
-    
-    mFindPrev = new JButton(mLocalizer.msg("prev","Find Previous"));
-    mFindPrev.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-    mFindPrev.setIcon(IconLoader.getInstance().getIconFromTheme("actions","go-up",16));
+
+    mFindPrev = new JButton(mLocalizer.msg("prev", "Find Previous"));
+    mFindPrev.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    mFindPrev.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+        "go-up", 16));
+    mFindPrev.setOpaque(false);
+    mFindPrev.setFocusable(false);
     mFindPrev.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         prev();
       }
     });
-    
+
     addMouseAdapter(mFindNext);
     addMouseAdapter(mFindPrev);
     addMouseAdapter(searchCloseBtn);
-        
+
     searchField.addKeyListener(new KeyAdapter() {
       public void keyReleased(KeyEvent e) {
         mFindNext.setEnabled(searchField.getText().length() > 0);
         mFindPrev.setEnabled(searchField.getText().length() > 0);
       }
     });
-    
-    b.add(searchCloseBtn, cc.xy(2,1));
-    b.addLabel(mLocalizer.msg("find","Find:"), cc.xy(4,1));
-    b.add(searchField, cc.xy(6,1));
-    b.add(mFindNext, cc.xy(8,1));
-    b.add(mFindPrev, cc.xy(10,1));
-    b.add(getMessageLabel(), cc.xy(12,1));
-    
+
+    b.add(searchCloseBtn, cc.xy(2, 1));
+    b.addLabel(mLocalizer.msg("find", "Find:"), cc.xy(4, 1));
+    b.add(searchField, cc.xy(6, 1));
+    b.add(mFindNext, cc.xy(8, 1));
+    b.add(mFindPrev, cc.xy(10, 1));
+    b.add(getMessageLabel(), cc.xy(12, 1));
+
     /*
      * Close action for the SearchPanel.
      */
@@ -136,66 +145,125 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     };
 
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-    searchField.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,
-        "CLOSE_SEARCH");
+    searchField.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
     searchField.getActionMap().put("CLOSE_SEARCH", close);
 
-    mFindNext.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,
-    "CLOSE_SEARCH");
+    mFindNext.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
     mFindNext.getActionMap().put("CLOSE_SEARCH", close);
 
-    mFindPrev.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,
-    "CLOSE_SEARCH");
+    mFindPrev.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
     mFindPrev.getActionMap().put("CLOSE_SEARCH", close);
-    
+
     searchCloseBtn.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,
-    "CLOSE_SEARCH");
+        "CLOSE_SEARCH");
     searchCloseBtn.getActionMap().put("CLOSE_SEARCH", close);
-    
+
     mSearchBar.setVisible(false);
   }
-  
+
   /**
-   * MouseAdapter for painting borders for a JButton if the mouse is over it.
+   * MouseAdapter for painting borders for a JButton if the mouse is over it 
+   * and handling actions of the closeButton.
    * 
-   * @param button The button to add the MouseAdapter
+   * @param button
+   *          The button to add the MouseAdapter
    */
   private void addMouseAdapter(JButton button) {
     button.addMouseListener(new MouseAdapter() {
+      boolean mOver;
+      boolean mPressed;
+
       public void mouseEntered(MouseEvent e) {
-        JButton b = (JButton)e.getSource();
-        if(b.isEnabled())
-          b.setBorder(BorderFactory.createRaisedBevelBorder());
+        mOver = true;
+        JButton b = (JButton) e.getSource();
+        if (b.isEnabled())
+          if (b.equals(mFindPrev) || b.equals(mFindNext))
+            setBorder(b, mPressed);
+          else if (mPressed)
+            b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+                "close-pressed", 16));
+          else
+            b.setIcon(IconLoader.getInstance().getIconFromTheme("status",
+                "close-over", 16));
       }
-      
+
       public void mouseExited(MouseEvent e) {
-        JButton b = (JButton)e.getSource();
-        if(b.isEnabled())
-          b.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        mOver = false;
+        JButton b = (JButton) e.getSource();
+        if (b.isEnabled())
+          if (b.equals(mFindPrev) || b.equals(mFindNext))
+            b.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+          else
+            b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+                "process-stop", 16));
       }
+
+      public void mousePressed(MouseEvent e) {
+        mPressed = true;
+        JButton b = (JButton) e.getSource();
+        if (b.isEnabled())
+          if (b.equals(mFindPrev) || b.equals(mFindNext))
+            setBorder(b, true);
+          else
+            b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+                "close-pressed", 16));
+      }
+
+      public void mouseReleased(MouseEvent e) {
+        mPressed = false;
+        JButton b = (JButton) e.getSource();
+        if (b.isEnabled())
+          if (b.equals(mFindPrev) || b.equals(mFindNext)) {
+            if (mOver)
+              setBorder(b, false);
+            else
+              b.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+          } else {
+            b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+                "process-stop", 16));
+
+            if (mOver) {
+              mSearchBar.setVisible(false);
+              setBlockAutoClosing(false);
+              interrupt();
+            }
+          }
+      }
+
     });
   }
-  
+
+  private void setBorder(JButton b, boolean pressed) {
+    b.setBorder(BorderFactory.createCompoundBorder(BorderFactory
+        .createCompoundBorder(BorderFactory.createMatteBorder(1, 1, 0, 0,
+            pressed ? mSearchBar.getBackground().darker() : mSearchBar
+                .getBackground().brighter()), BorderFactory.createEmptyBorder(
+            1, 1, 0, 0)), BorderFactory.createCompoundBorder(BorderFactory
+        .createMatteBorder(0, 0, 1, 1, pressed ? mSearchBar.getBackground()
+            .brighter() : mSearchBar.getBackground().darker()), BorderFactory
+        .createEmptyBorder(0, 0, 1, 1))));
+  }
 
   // 1. inits searchField with selected text
   // 2. adds focus listener so that textselection gets painted
   // even if the textcomponent has no focus
   protected void initSearch(ActionEvent ae) {
-    
+
     mSearchBar.removeComponentListener(this);
     mSearchBar.setVisible(true);
     mSearchBar.addComponentListener(this);
-    
+
     super.initSearch(ae);
     getSearchField().setText("");
     getSearchField().removeFocusListener(this);
     getSearchField().addFocusListener(this);
-    
+
   }
 
   protected boolean changed(JComponent comp, String str, Position.Bias bias) {
     JTextComponent textComp = (JTextComponent) comp;
-    int offset = bias == Position.Bias.Forward ? textComp.getCaretPosition() : textComp.getCaret().getMark() - 1;
+    int offset = bias == Position.Bias.Forward ? textComp.getCaretPosition()
+        : textComp.getCaret().getMark() - 1;
 
     int index = getNextMatch(textComp, str, offset, bias);
 
@@ -204,7 +272,8 @@ public class TextComponentFindAction extends FindAction implements FocusListener
       textComp.setSelectionEnd(index + str.length());
       return true;
     } else {
-      offset = bias == null || bias == Position.Bias.Forward ? 0 : textComp.getDocument().getLength();
+      offset = bias == null || bias == Position.Bias.Forward ? 0 : textComp
+          .getDocument().getLength();
       index = getNextMatch(textComp, str, offset, bias);
       if (index != -1) {
         textComp.select(index, index + str.length());
@@ -214,17 +283,19 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     }
   }
 
-  protected int getNextMatch(JTextComponent textComp, String str, int startingOffset, Position.Bias bias) {
+  protected int getNextMatch(JTextComponent textComp, String str,
+      int startingOffset, Position.Bias bias) {
     String text;
     try {
-      text = textComp.getDocument().getText(0, textComp.getDocument().getLength());
+      text = textComp.getDocument().getText(0,
+          textComp.getDocument().getLength());
       if (isIgnoreCase()) {
         str = str.toLowerCase();
         text = text.toLowerCase();
       }
 
-      return bias == null || bias == Position.Bias.Forward ? text.indexOf(str, startingOffset) : text.lastIndexOf(str,
-          startingOffset);
+      return bias == null || bias == Position.Bias.Forward ? text.indexOf(str,
+          startingOffset) : text.lastIndexOf(str, startingOffset);
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -244,14 +315,12 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     caret.setSelectionVisible(true);
   }
 
-  public void focusLost(FocusEvent e) {
-  }
+  public void focusLost(FocusEvent e) {}
 
   public JTextComponent getTextComponent() {
     return (JTextComponent) getComponent();
   }
-  
-  
+
   /*-------------------------------------------------[ ComponentListener ]---------------------------------------------------*/
 
   public void componentHidden(ComponentEvent e) {}
@@ -264,61 +333,59 @@ public class TextComponentFindAction extends FindAction implements FocusListener
     interrupt();
     actionPerformed(new ActionEvent(this, 0, "show"));
   }
-  
+
   /*-------------------------------------------------[ Runnable ]---------------------------------------------------*/
-  
+
   /**
    * Waits for closing of the panel.
    */
   public void run() {
     try {
-      while(getWaitTime() > 0) {
+      while (getWaitTime() > 0) {
         Thread.sleep(100);
-        setWaitTime(getWaitTime()-100);
+        setWaitTime(getWaitTime() - 100);
       }
       mSearchBar.setVisible(false);
       setWaitTime(5000);
-    }catch(Exception e) {}
+    } catch (Exception e) {}
   }
-  
-  
-  //Start of added methods
-  
+
+  // Start of added methods
+
   /**
    * Interrupts the closing Thread.
    */
   public void interrupt() {
-    if(getThread()!= null && getThread().isAlive())
+    if (getThread() != null && getThread().isAlive())
       getThread().interrupt();
     setWaitTime(5000);
   }
-  
+
   /**
    * @return The search bar
    */
   public JPanel getSearchBar() {
     return mSearchBar;
   }
-  
+
   /**
    * Shows the search bar
    */
   public void showSearchBar() {
-    if(!mSearchBar.isVisible()) {
+    if (!mSearchBar.isVisible()) {
       mFindPrev.setEnabled(false);
       mFindNext.setEnabled(false);
       reset();
     }
     setBlockAutoClosing(true);
-    //Stop the automatically closing
+    // Stop the automatically closing
     interrupt();
     mSearchBar.setVisible(true);
     getSearchField().requestFocus();
   }
-  
+
   /**
-   * @return If the search bar isVisible and will not
-   * be closed automatically.
+   * @return If the search bar isVisible and will not be closed automatically.
    */
   public boolean isAlwaysVisible() {
     return mSearchBar.isVisible() && isBlockAutoClosing();
