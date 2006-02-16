@@ -39,6 +39,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.FontChooserPanel;
 import util.ui.customizableitems.SortableItemList;
 
@@ -126,8 +127,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     });
 
     Object[] o;
-    String[] id = mOldOrder.split(";");
-
+    String[] id = mOldOrder.trim().split(";");
+    
     if (id.length == 1)
       o = ProgramTextCreator.getDefaultOrder();
     else {
@@ -249,7 +250,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("actions",
+        "edit-find", 16);
   }
 
   public String getTitle() {
