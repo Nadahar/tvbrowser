@@ -29,6 +29,8 @@ package tvbrowser.extras.programinfo;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -60,7 +62,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
   private Action mAction;
   private ProgramInfoDialog mInfo;
   private TextComponentFindAction mFind;
-
+  JTaskPane mRoot;
   /**
    * 
    * @param root
@@ -83,6 +85,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
       TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
+    mRoot = root;
 
     if (!menu.hasSubItems())
       addButton(parent, menu);
@@ -108,6 +111,17 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     mButton.addActionListener(this);
     mButton.addMouseListener(this);
     mButton.setOpaque(false);
+    mButton.addFocusListener(new FocusListener() {
+      
+      public void focusGained(FocusEvent e) {
+        paintFocus();
+      }
+
+      public void focusLost(FocusEvent e) {
+        unpaintFocus();
+      }
+    });
+    
     parent.add(mButton);
   }
 
@@ -125,7 +139,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     group.setExpanded(ProgramInfo.getInstance().getExpanded(
         id + "_" + (String) menu.getAction().getValue(Action.NAME)));
     mFind.installKeyListener(group);
-
+    
     /*
      * Listener to get expand state changes and store the state in the
      * Properties for the Plguins menu.
@@ -149,13 +163,21 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     parent.add(Box.createRigidArea(new Dimension(0, 5)));
 
   }
-
+  
   public void mouseEntered(MouseEvent e) {
+    paintFocus();
+  }
+
+  public void mouseExited(MouseEvent e) {
+    unpaintFocus();
+  }
+    
+  private void paintFocus() {
     mButton.setBorder(BorderFactory.createLineBorder(mButton.getForeground()
         .brighter()));
   }
 
-  public void mouseExited(MouseEvent e) {
+  private void unpaintFocus() {
     mButton.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
   }
 
