@@ -140,7 +140,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     setTitle(mLocalizer.msg("title", "Program information"));
 
     JPanel main = new JPanel(new BorderLayout());
-    main.setPreferredSize(new Dimension(600, 400));
+    main.setPreferredSize(new Dimension(750, 500));
     main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     setContentPane(main);
 
@@ -235,7 +235,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mActionsPane = new JScrollPane(mPluginsPane);
 
     if (pluginsSize == null)
-      mActionsPane.setPreferredSize(new Dimension(200, 400));
+      mActionsPane.setPreferredSize(new Dimension(250, 500));
 
     else
       mActionsPane.setPreferredSize(pluginsSize);
@@ -249,9 +249,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     main.add(split, BorderLayout.CENTER);
 
-    // buttons
-    JPanel buttonPn = new JPanel(new BorderLayout());
+    mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
 
+    // buttons
+    JPanel buttonPn = new JPanel(new BorderLayout(0,5));
+    buttonPn.add(mFindAsYouType.getSearchBar(),BorderLayout.NORTH);
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
     main.add(buttonPn, BorderLayout.SOUTH);
@@ -282,12 +284,15 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     getRootPane().setDefaultButton(closeBtn);
 
+    /*
+     * The action for the search button in the function panel.
+     */
     Action searchAction = new AbstractAction() {
-
       private static final long serialVersionUID = 1L;
 
       public void actionPerformed(ActionEvent e) {
-        mFindAsYouType.actionPerformed(e);
+        //Open the SearchPanel
+        mFindAsYouType.showSearchBar();
       }
     };
 
@@ -297,8 +302,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     searchAction.putValue(Action.NAME, mLocalizer.msg("search", "Search Text"));
 
     mSearchMenu = new ActionMenu(searchAction);
-
-    mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
+    
     mFindAsYouType.installKeyListener(scrollPane);
     mFindAsYouType.installKeyListener(split);
     mFindAsYouType.installKeyListener(mPluginsPane);
@@ -325,8 +329,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       }
     };
     SwingUtilities.invokeLater(runnable);
+    
+    if(ProgramInfo.getInstance().getProperty("showSearch","false").equals("true"))
+      mFindAsYouType.showSearchBar();
   }
-
+  
   protected void addPluginActions(boolean rebuild) {
     mFunctionGroup.removeAll();
 
@@ -370,6 +377,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
   public void close() {
     ProgramInfo.getInstance().setSettings(this, mActionsPane.getSize());
+    ProgramInfo.getInstance().setExpanded("showSearch",mFindAsYouType.isVisible());
     dispose();
   }
 

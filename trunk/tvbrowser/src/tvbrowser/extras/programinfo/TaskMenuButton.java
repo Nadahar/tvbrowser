@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,10 +75,12 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
    *          The ProgramInfoDialog.
    * @param id
    *          The id of the Plugin.
-   * @param comp The Text Component find action to register the keyListener on.
+   * @param comp
+   *          The Text Component find action to register the keyListener on.
    */
   public TaskMenuButton(JTaskPane root, JTaskPaneGroup parent, Program program,
-      ActionMenu menu, ProgramInfoDialog info, String id, TextComponentFindAction comp) {
+      ActionMenu menu, ProgramInfoDialog info, String id,
+      TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
 
@@ -87,16 +89,17 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     else
       addTaskPaneGroup(root, parent, program, menu, info, id);
   }
-  
-    // Adds the button to the TaskPaneGroup.
+
+  // Adds the button to the TaskPaneGroup.
   private void addButton(JTaskPaneGroup parent, ActionMenu menu) {
     mAction = menu.getAction();
 
-    mButton = new JButton("<html>" + (String) mAction.getValue(Action.NAME) + "</html>");
+    mButton = new JButton("<html>" + (String) mAction.getValue(Action.NAME)
+        + "</html>");
     mButton.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
     mButton.setHorizontalAlignment(JButton.LEFT);
     mButton.setVerticalTextPosition(JButton.TOP);
-    
+
     mFind.installKeyListener(mButton);
 
     if (mAction.getValue(Action.SMALL_ICON) != null)
@@ -108,24 +111,30 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     parent.add(mButton);
   }
 
-    /* Adds a new TaskPaneGroup to the parent TaskPaneGroup
-     * for an ActionMenu with submenus.
-     */ 
+  /*
+   * Adds a new TaskPaneGroup to the parent TaskPaneGroup for an ActionMenu with
+   * submenus.
+   */
   private void addTaskPaneGroup(JTaskPane root, JTaskPaneGroup parent,
-      Program program, ActionMenu menu, ProgramInfoDialog info, final String id) {
+      Program program, final ActionMenu menu, ProgramInfoDialog info,
+      final String id) {
     ActionMenu[] subs = menu.getSubItems();
 
     final JTaskPaneGroup group = new JTaskPaneGroup();
     group.setTitle((String) menu.getAction().getValue(Action.NAME));
-    group.setExpanded(ProgramInfo.getInstance().getExpanded(id));
+    group.setExpanded(ProgramInfo.getInstance().getExpanded(
+        id + "_" + (String) menu.getAction().getValue(Action.NAME)));
     mFind.installKeyListener(group);
-    
-     /* Listener to get expand state changes and store the
-      * state in the Properties for the Plguin.
-      */
+
+    /*
+     * Listener to get expand state changes and store the state in the
+     * Properties for the Plguins menu.
+     */
     group.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
-        ProgramInfo.getInstance().setExpanded(id, group.isExpanded());
+        ProgramInfo.getInstance().setExpanded(
+            id + "_" + (String) menu.getAction().getValue(Action.NAME),
+            group.isExpanded());
       }
     });
 
@@ -138,7 +147,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     parent.add(Box.createRigidArea(new Dimension(0, 10)));
     parent.add(group);
     parent.add(Box.createRigidArea(new Dimension(0, 5)));
-    
+
   }
 
   public void mouseEntered(MouseEvent e) {
@@ -154,7 +163,8 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     mAction.actionPerformed(new ActionEvent(new JButton(),
         ActionEvent.ACTION_PERFORMED, (String) mAction
             .getValue(Action.ACTION_COMMAND_KEY)));
-    if(mAction.getValue(Action.ACTION_COMMAND_KEY) == null || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action"))
+    if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
+        || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action"))
       mInfo.addPluginActions(true);
   }
 }
