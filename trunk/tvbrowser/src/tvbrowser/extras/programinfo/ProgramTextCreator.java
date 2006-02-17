@@ -145,7 +145,7 @@ public class ProgramTextCreator {
       }
     }
     
-    addSeperator(buffer);
+    addSeperator(doc, buffer);
     
     Object[] id = ProgramInfo.getInstance().getProperty("order","").split(";");    
     
@@ -199,7 +199,7 @@ public class ProgramTextCreator {
             closePara(buffer);
 
             buffer.append("</td></tr>");
-            addSeperator(buffer);
+            addSeperator(doc, buffer);
           }
           continue;
         }
@@ -209,9 +209,9 @@ public class ProgramTextCreator {
       if(type == ProgramFieldType.DESCRIPTION_TYPE) {
         if (prog.getTextField(ProgramFieldType.DESCRIPTION_TYPE) != null
             && prog.getTextField(ProgramFieldType.DESCRIPTION_TYPE).trim().length() > 0)
-          addEntry(buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true);
+          addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true);
         else
-          addEntry(buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE, true);        
+          addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE, true);        
       }
       else if (type == ProgramFieldType.INFO_TYPE) {
         int info = prog.getInfo();
@@ -248,13 +248,13 @@ public class ProgramTextCreator {
           closePara(buffer);
 
           buffer.append("</td></tr>");
-          addSeperator(buffer);
+          addSeperator(doc, buffer);
         }
       }
       else if(type == ProgramFieldType.URL_TYPE)
-        addEntry(buffer, prog, ProgramFieldType.URL_TYPE, true);
+        addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true);
       else
-        addEntry(buffer, prog, type);
+        addEntry(doc, buffer, prog, type);
     }
     
     buffer.append("</table></html>");
@@ -262,12 +262,12 @@ public class ProgramTextCreator {
     return buffer.toString();
   }
 
-  private static void addEntry(StringBuffer buffer, Program prog,
+  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer, Program prog,
       ProgramFieldType fieldType) {
-    addEntry(buffer, prog, fieldType, false);
+    addEntry(doc, buffer, prog, fieldType, false);
   }
 
-  private static void addEntry(StringBuffer buffer, Program prog,
+  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer, Program prog,
       ProgramFieldType fieldType, boolean createLinks) {
 
     String text = null;
@@ -313,12 +313,12 @@ public class ProgramTextCreator {
     buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
     buffer.append("</td></tr>");
     
-    addSeperator(buffer);
+    addSeperator(doc, buffer);
   }
 
-  private static void addSeperator(StringBuffer buffer) {
+  private static void addSeperator(ExtendedHTMLDocument doc, StringBuffer buffer) {
     buffer.append("<tr><td colspan=\"2\">");
-    buffer.append("<div style=\"font-size:0;\"><hr></div></td></tr>");
+    buffer.append("<div style=\"font-size:0;\">").append(doc.createCompTag(new HorizontalLine())).append("</div></td></tr>");
   }
 
   private static void openPara(StringBuffer buffer, String style) {
