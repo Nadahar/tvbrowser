@@ -26,6 +26,7 @@ package captureplugin.drivers.defaultdriver;
 
 import java.awt.Component;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -220,7 +221,9 @@ public class CaptureExecute {
         
         Process p = null;
         try {
-            p = Runtime.getRuntime().exec(mData.getProgramPath() + " " + params);
+            String path = mData.getProgramPath();            
+            path = path.substring(0,path.lastIndexOf(File.separator) + 1);
+            p = Runtime.getRuntime().exec(mData.getProgramPath() + " " + params, null, new File(path));
         } catch (Exception e) {
             ErrorHandler.handle(mLocalizer.msg("ProblemAtStart", "Problems while starting Application."), e);
             return null;
@@ -228,7 +231,12 @@ public class CaptureExecute {
 
         String output = "";
         int time = 0;
-        InputStreamReader is = new InputStreamReader(p.getInputStream());
+        
+        StreamReaderThread out = new StreamReaderThread(p.getInputStream(),true);
+        StreamReaderThread error = new StreamReaderThread(p.getErrorStream(),false);
+        out.start();
+        error.start();
+        
         // wait until the process has exited, max MaxTimouts
         
         if (mData.getTimeOut() > 0 ){
@@ -263,8 +271,9 @@ public class CaptureExecute {
         }
 
         // get the process output
-        while (is.ready())
-            output += (char) is.read();
+        
+        if(!out.isAlive())
+          output = out.getOutput();
 
         if (p.exitValue() != 0) {
             mError = true;
