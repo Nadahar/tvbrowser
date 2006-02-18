@@ -14,8 +14,6 @@ import util.ui.ListDropAction;
 import util.ui.UiUtilities;
 
 import java.awt.*;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragSource;
 import java.awt.event.*;
 
 public class SortableItemList extends JPanel implements ActionListener, ListDropAction {
