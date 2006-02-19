@@ -125,7 +125,7 @@ public class BlogSettingsTab implements SettingsTab {
         settingsPanel.add(mServiceUrlLabel, cc.xy(1, 3));
         settingsPanel.add(mServiceUrlField, cc.xyw(3, 3, 3));
 
-        JButton extended = new JButton(mLocalizer.msg("Extended", "Extended"));
+        JButton extended = new JButton(mLocalizer.msg("Extended", "Extended Settings"));
         
         extended.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
