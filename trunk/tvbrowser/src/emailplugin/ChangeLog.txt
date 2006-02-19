@@ -1,5 +1,8 @@
 Changelog EMailPlugin
 
+0.02:
+- Simplified Settings-Tab
+
 0.01:
 - initial version
 
