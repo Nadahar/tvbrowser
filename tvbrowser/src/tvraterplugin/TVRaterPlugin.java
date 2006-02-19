@@ -33,6 +33,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -150,22 +151,34 @@ public class TVRaterPlugin extends devplugin.Plugin {
     
     
     public void showRatingDialog(Program program) {
-        DialogRating dlg = new DialogRating(getParentFrame(), this, program);
-        dlg.pack();
-        dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-
-            public void componentMoved(ComponentEvent e) {
-                e.getComponent().getLocation(_locationRaterDialog);
-            }
-        });
-
-        if (_locationRaterDialog != null) {
-            dlg.setLocation(_locationRaterDialog);
-            dlg.setVisible(true);
+        if ((_settings.getProperty("name", "").length() == 0) || (_settings.getProperty("password", "").length() == 0)) {
+          int ret = JOptionPane.showConfirmDialog(getParentFrame(), 
+              mLocalizer.msg("noUserText", "No User specified. Do you want to do this now?"), 
+              mLocalizer.msg("noUserTitle", "No User specified"),
+              JOptionPane.YES_NO_OPTION);
+          
+          if (ret == JOptionPane.YES_OPTION) {
+            getPluginManager().showSettings(this);
+          }
         } else {
-            UiUtilities.centerAndShow(dlg);
-            _locationRaterDialog = dlg.getLocation();
+          DialogRating dlg = new DialogRating(getParentFrame(), this, program);
+          dlg.pack();
+          dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
+
+              public void componentMoved(ComponentEvent e) {
+                  e.getComponent().getLocation(_locationRaterDialog);
+              }
+          });
+
+          if (_locationRaterDialog != null) {
+              dlg.setLocation(_locationRaterDialog);
+              dlg.setVisible(true);
+          } else {
+              UiUtilities.centerAndShow(dlg);
+              _locationRaterDialog = dlg.getLocation();
+          }
         }
+      
     }
 
     public Properties storeSettings() {
