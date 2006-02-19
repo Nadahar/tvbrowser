@@ -40,6 +40,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -555,6 +556,13 @@ public class UiUtilities {
       }
     };
     
+    if (System.getProperty("mrj.version") != null) {
+        // Add MacOS Apple+W for Closing of Dialogs
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.META_DOWN_MASK);
+        component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_APPLE_W");
+        component.getRootPane().getActionMap().put("CLOSE_ON_APPLE_W", a);
+    }
+        
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
     component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_ESCAPE");
     component.getRootPane().getActionMap().put("CLOSE_ON_ESCAPE", a);
