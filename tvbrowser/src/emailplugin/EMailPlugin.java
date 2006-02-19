@@ -70,7 +70,7 @@ public class EMailPlugin extends Plugin {
     String name = mLocalizer.msg("pluginName", "EMail export");
     String desc = mLocalizer.msg("description", "Send a EMail with an external Program");
     String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, new Version(0, 1));
+    return new PluginInfo(name, desc, author, new Version(0, 2));
   }
 
   /*
