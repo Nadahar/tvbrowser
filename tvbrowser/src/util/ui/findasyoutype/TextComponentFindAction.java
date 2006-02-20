@@ -311,7 +311,7 @@ public class TextComponentFindAction extends FindAction implements
   // when they don't have focus
   public void focusGained(FocusEvent e) {
     Caret caret = getTextComponent().getCaret();
-    caret.setVisible(true);
+    caret.setVisible(false);
     caret.setSelectionVisible(true);
   }
 
