@@ -94,10 +94,10 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     mAntiAliasing = new JCheckBox(mLocalizer
         .msg("antialiasing", "Antialiasing"));
-    mAntiAliasing.setSelected(mOldUserFontSelected.equals("true"));
+    mAntiAliasing.setSelected(mOldAntiAliasingSelected.compareToIgnoreCase("true") == 0);
 
     mUserFont = new JCheckBox(mLocalizer.msg("userfont", "Use user fonts"));
-    mUserFont.setSelected(mOldUserFontSelected.equals("true"));
+    mUserFont.setSelected(mOldUserFontSelected.compareToIgnoreCase("true") == 0);
 
     int size = Integer.parseInt(mOldTitleFontSize);
 

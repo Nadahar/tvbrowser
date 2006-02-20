@@ -1,3 +1,29 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
 package tvbrowser.extras.programinfo;
 
 import java.util.ArrayList;
@@ -256,7 +282,14 @@ public class ProgramTextCreator {
       else
         addEntry(doc, buffer, prog, type);
     }
-    
+
+    buffer.append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:#808080; font-size:");
+    buffer.append(ProgramInfo.getInstance().getUserfont("small","11")).append("\">");
+    buffer.append("<a href=\"");
+    buffer.append(mLocalizer.msg("dataInfo","http://wiki.tvbrowser.org/index.php/Qualit%C3%A4t_der_Daten")).append("\">");
+    buffer.append(mLocalizer.msg("dataQuality","Details of the data quality"));
+    buffer.append("</a>");
+    buffer.append("</td></tr>");
     buffer.append("</table></html>");
 
     return buffer.toString();
@@ -294,15 +327,18 @@ public class ProgramTextCreator {
         }
       }
     }
-
+      
     if (text == null || text.trim().length() < 1)
-      return;
+      if(ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
+        text = mLocalizer.msg("noShowview","No Showview data ");
+      else
+        return;
 
     buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
     
     buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
     
-    buffer.append("\"><b>");    
+    buffer.append("\"><b>");
     buffer.append(name);
 
     buffer.append("</b></td><td style=\"font-size:");
@@ -311,6 +347,10 @@ public class ProgramTextCreator {
     
     buffer.append("\">");
     buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
+    
+    if(ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
+      buffer.append(" (<a href=\"" ).append(mLocalizer.msg("showviewInfo","http://wiki.tvbrowser.org/index.php/Showviewnummern")).append("\">?</a>)");
+    
     buffer.append("</td></tr>");
     
     addSeperator(doc, buffer);
