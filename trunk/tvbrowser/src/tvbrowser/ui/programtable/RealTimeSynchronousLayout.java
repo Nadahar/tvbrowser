@@ -53,7 +53,7 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
         
         if(panel.getProgram().getLength() > 0) {
           Program p = panel.getProgram();
-          float scale = ((float)panel.getPreferredHeight()) / p.getLength();
+          float scale = ((float)(panel.getMinimumHeight())) / p.getLength();
           
           if(scale > scaleValue && minLength >= p.getLength()) {
             scaleValue = scale;

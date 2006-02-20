@@ -437,7 +437,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     grp.drawString(mProgramTimeAsString, 1, mTimeFont.getSize());
 
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
-    mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
+    
+    if(mHeight >= mPreferredHeight)
+      mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
 
     // Paint the icons pale if the program is expired
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
@@ -621,4 +623,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       super.paint(g);
   }
 
+  /**
+   * @return The smallest height possible.
+   */
+  public int getMinimumHeight() {
+    return mTitleIcon.getIconHeight() + 3;
+  }
 }
