@@ -167,9 +167,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         }
       }
     });
-        
-    mInfoEP.getCaret().setBlinkRate(0);
-    mInfoEP.setCaretColor(mInfoEP.getBackground());
     
     /*
      * mInfoEP.addMouseListener(new MouseAdapter(){ public void
