@@ -163,11 +163,13 @@ implements ProgramTableModelListener, DragGestureListener, DragSourceListener {
   public void setProgramTableLayout(ProgramTableLayout layout) {
     if (layout == null) {
       // Use the default layout
-      if (Settings.propTableLayout.getString().equals("compact")) {
+      if (Settings.propTableLayout.getString().equals("compact"))
         layout = new CompactLayout();
-      } else {
+      else if(Settings.propTableLayout.getString().equals("timeSynchronous"))
         layout = new TimeSynchronousLayout();
-      }
+      else
+        layout = new RealTimeSynchronousLayout();
+      
     }
 
     mLayout = layout;
