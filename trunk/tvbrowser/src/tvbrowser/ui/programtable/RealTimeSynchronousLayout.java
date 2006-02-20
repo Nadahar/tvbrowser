@@ -42,7 +42,7 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
     int[] columnStartArr = new int[model.getColumnCount()];
 
     // the value to scale the length with
-    int scaleValue = 1;
+    float scaleValue = 1;
     
     // the minimum length of a program
     int minLength = 10000;
@@ -52,10 +52,12 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
         ProgramPanel panel = model.getProgramPanel(col, row);
         
         if(panel.getProgram().getLength() > 0) {
-          int scale = panel.getPreferredHeight() / panel.getProgram().getLength();
-          if(scale > scaleValue && minLength >= panel.getProgram().getLength()) {
+          Program p = panel.getProgram();
+          float scale = ((float)panel.getPreferredHeight()) / p.getLength();
+          
+          if(scale > scaleValue && minLength >= p.getLength()) {
             scaleValue = scale;
-            minLength = panel.getProgram().getLength();
+            minLength = p.getLength();
           }
         }
       }
@@ -67,7 +69,7 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
         Program program = panel.getProgram();
         
         if (row == 0)
-          columnStartArr[col] = program.getStartTime() * scaleValue;
+          columnStartArr[col] = (int)(program.getStartTime() * scaleValue);
         
         if(row != model.getRowCount(col) - 1) {
           Program next = model.getProgramPanel(col, row + 1).getProgram();
@@ -80,7 +82,7 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
           
           int length = endTime - startTime;
           
-          panel.setHeight(length * scaleValue);
+          panel.setHeight((int)(length * scaleValue));
         }
         else
           panel.setHeight(panel.getPreferredHeight());
