@@ -131,14 +131,17 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     p1.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")));
     String[] arrangementArr = {
       mLocalizer.msg("compact", "Compact"),
-      mLocalizer.msg("timeSynchronous", "Time synchronous")
+      mLocalizer.msg("timeSynchronous", "Time synchronous"),
+      mLocalizer.msg("realSynchronous", "Real time synchronous")
     };
     mProgramArrangementCB = new JComboBox(arrangementArr);
-    if (Settings.propTableLayout.getString().equals("compact")) {
+    if (Settings.propTableLayout.getString().equals("compact"))
       mProgramArrangementCB.setSelectedIndex(0);
-    } else {
+    else if (Settings.propTableLayout.getString().equals("timeSynchronous"))
       mProgramArrangementCB.setSelectedIndex(1);
-    }
+    else
+      mProgramArrangementCB.setSelectedIndex(2);
+    
     p1.add(mProgramArrangementCB);
 
 
@@ -374,11 +377,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    if (mProgramArrangementCB.getSelectedIndex() == 0) {
+    if (mProgramArrangementCB.getSelectedIndex() == 0)
       Settings.propTableLayout.setString("compact");
-    } else {
+    else if (mProgramArrangementCB.getSelectedIndex() == 1)
       Settings.propTableLayout.setString("timeSynchronous");
-    }
+    else
+      Settings.propTableLayout.setString("realSynchronous");
 
     String backgroundStyle = ((TableBackgroundStyle)mBackgroundStyleCB.getSelectedItem()).getSettingsString();
 
