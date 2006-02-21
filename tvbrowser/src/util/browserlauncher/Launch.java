@@ -83,7 +83,7 @@ public class Launch {
         content.setBorder(Borders.DIALOG_BORDER);
         
         FormLayout layout = new FormLayout("fill:150dlu:grow", "default, 3dlu, default, 3dlu, default");
-        dialog.setLayout(layout);
+        dialog.getContentPane().setLayout(layout);
         
         CellConstraints cc = new CellConstraints();
         
