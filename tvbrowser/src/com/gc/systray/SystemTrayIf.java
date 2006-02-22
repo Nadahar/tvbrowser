@@ -40,6 +40,13 @@ public interface SystemTrayIf {
    */
   public void addLeftDoubleClickAction(ActionListener listener);
 
+  
+  /**
+   * Add a Right-Click-Action
+   * @param listener Action that is triggered on right click
+   */
+  public void addRightClickAction(ActionListener listener);
+  
   /**
    * Add Popup to Tray-Icon
    * @param trayMenu Popup

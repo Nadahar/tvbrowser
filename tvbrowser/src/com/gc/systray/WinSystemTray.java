@@ -107,6 +107,24 @@ public class WinSystemTray implements SystemTrayIf {
     });
   }
 
+  public void addRightClickAction(final ActionListener listener) {
+    mManager.addSystemTrayIconListener(new SystemTrayIconListener() {
+
+      public void mouseClickedLeftButton(Point pos, SystemTrayIconManager source) {
+      }
+
+      public void mouseClickedRightButton(Point pos, SystemTrayIconManager ssource) {
+        listener.actionPerformed(null);
+      }
+
+      public void mouseLeftDoubleClicked(Point pos, SystemTrayIconManager source) {
+      }
+
+      public void mouseRightDoubleClicked(Point pos, SystemTrayIconManager source) {
+      }
+    });
+  }
+  
   /**
    * Set the JPopupMenu
    */

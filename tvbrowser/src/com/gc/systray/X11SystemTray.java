@@ -31,6 +31,8 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   private ArrayList mLeftAction = new ArrayList();
   /** Left-DoubleClick-Mouseclick-Actions */
   private ArrayList mLeftDoubleAction = new ArrayList();
+  /** The Right-MouseClick-ActionLisener */
+  private ActionListener mRightClick;
   /** The Popup-Menu */
   private JPopupMenu mPopupMenu;
   /** Tray-Parent */
@@ -92,6 +94,10 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   public void addLeftDoubleClickAction(ActionListener listener) {
     mLeftDoubleAction.add(listener);
   }
+  
+  public void addRightClickAction(ActionListener listener) {
+    mRightClick = listener;
+  }
 
   /**
    * Set the Popup
@@ -122,7 +128,8 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   public void mousePressed(final MouseEvent e) {
     if (e.isPopupTrigger() && mPopupMenu != null) {
       // we have to calculate th leftTopX and Y value of the popupmenu
-
+      mRightClick.actionPerformed(null);
+      
       mTrayParent.setVisible(true);
       mTrayParent.toFront();
       SwingUtilities.invokeLater(new Runnable() {
