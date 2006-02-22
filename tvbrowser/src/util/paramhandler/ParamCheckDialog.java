@@ -37,6 +37,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -49,7 +51,7 @@ import devplugin.Plugin;
  * 
  * @author bodum
  */
-public class ParamCheckDialog extends JDialog {
+public class ParamCheckDialog extends JDialog implements WindowClosingIf {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ParamCheckDialog.class);
   /** Use this ParamLib */
@@ -118,6 +120,8 @@ public class ParamCheckDialog extends JDialog {
 		setTitle(mLocalizer.msg("Title", "Result"));
 		JPanel panel = (JPanel)getContentPane();
 
+    UiUtilities.registerForClosing(this);
+    
 		CellConstraints cc = new CellConstraints();
 		FormLayout layout = new FormLayout("fill:default:grow, 3dlu, default", "default, 3dlu, fill:default:grow, 3dlu, default");
 		panel.setLayout(layout);
@@ -172,6 +176,10 @@ public class ParamCheckDialog extends JDialog {
     }
 
     return ret;
+  }
+
+  public void close() {
+    hide();
   }
   
 }

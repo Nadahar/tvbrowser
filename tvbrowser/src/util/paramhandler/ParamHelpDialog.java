@@ -33,6 +33,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -44,7 +46,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author bodum
  */
-public class ParamHelpDialog extends JDialog {
+public class ParamHelpDialog extends JDialog implements WindowClosingIf {
 	/** The ParamLibrary to use */
   private ParamLibrary mParamLib;
 	
@@ -105,6 +107,8 @@ public class ParamHelpDialog extends JDialog {
 	private void createGui() {
 		setTitle(mLocalizer.msg("Title", "Help"));
 		JPanel panel = (JPanel)getContentPane();
+    
+    UiUtilities.registerForClosing(this);
 
 		CellConstraints cc = new CellConstraints();
 		FormLayout layout = new FormLayout("fill:default:grow, 3dlu, default", "fill:default:grow, 3dlu, default");
@@ -129,5 +133,9 @@ public class ParamHelpDialog extends JDialog {
 		
 		setSize(500, 400);
 	}
+
+  public void close() {
+    hide();
+  }
 
 }

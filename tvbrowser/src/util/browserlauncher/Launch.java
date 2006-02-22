@@ -34,12 +34,14 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
 import util.exc.ErrorHandler;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -78,6 +80,16 @@ public class Launch {
       if (Settings.propShowBrowserOpenDialog.getBoolean()){
         final JDialog dialog = new JDialog(MainFrame.getInstance(), true);
         dialog.setTitle(mLocalizer.msg("okTitle", "okTitle"));
+        
+        UiUtilities.registerForClosing(new WindowClosingIf() {
+          public void close() {
+            dialog.setVisible(false);
+            Settings.propShowBrowserOpenDialog.setBoolean(true);
+          }
+          public JRootPane getRootPane() {
+            return dialog.getRootPane();
+          }
+        });
         
         JPanel content = (JPanel) dialog.getContentPane();
         content.setBorder(Borders.DIALOG_BORDER);
