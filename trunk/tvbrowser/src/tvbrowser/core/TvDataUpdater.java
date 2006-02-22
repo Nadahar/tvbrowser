@@ -39,7 +39,6 @@ import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
-import devplugin.ChannelGroup;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 
@@ -187,11 +186,12 @@ public class TvDataUpdater {
 
     // Reset the download flag
     mIsDownloading = false;
-
+    
+    TvDataBase.getInstance().reCalculateTvData(daysToDownload);
+    
     // Inform the listeners
     fireTvDataUpdateFinished();
   }
-
 
   void fireTvDataUpdateStarted() {
     synchronized(mListenerList) {
@@ -230,32 +230,10 @@ public class TvDataUpdater {
 
 
   private void doUpdateDayProgram(MutableChannelDayProgram program) {
-    correctChannelDayProgram(program, false);
-
+    
     // Pass the new ChannelDayProgram to the data base
     TvDataBase.getInstance().setDayProgram(program);
   }
-
-
-  /**
-   * Corrects the ChannelDayProgram.
-   * <p>
-   * Checks whether all programs have a length. If not the length will be
-   * calculated.
-   * 
-   * @param channelProg The program to correct
-   */
-  private void correctChannelDayProgram(MutableChannelDayProgram channelProg,
-                                        boolean updateOnChange)
-  {
-    boolean somethingChanged = TvDataBase.calculateMissingLengths(channelProg);
-
-    if (somethingChanged && updateOnChange) {
-      // Pass the new ChannelDayProgram to the data base
-      TvDataBase.getInstance().setDayProgram(channelProg);
-    }
-  }
-
 
   private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels, TvDataServiceProxy[] services) {
 

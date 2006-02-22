@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
 
-
 import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
@@ -46,63 +45,59 @@ import devplugin.*;
 public class TvDataBase {
 
   /** The logger for this class. */
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(TvDataBase.class.getName());
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+      .getLogger(TvDataBase.class.getName());
 
   private static final String INVENTORY_FILE = "tv-data-inventory.dat";
-    
+
   /** The singleton. */
   private static TvDataBase mSingleton;
 
-  /** The TV data cache. */  
+  /** The TV data cache. */
   private ValueCache mTvDataHash;
-  
+
   private ArrayList mListenerList;
-  
+
   /** Contains date objects for each date for which we have a tv listing */
   private HashSet mAvailableDateSet;
-  
-  private TvDataInventory mTvDataInventory;
 
+  private TvDataInventory mTvDataInventory;
 
   private TvDataBase() {
     mTvDataHash = new ValueCache();
     mListenerList = new ArrayList();
     mAvailableDateSet = new HashSet();
     updateAvailableDateSet();
-    
-    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      public void tvDataUpdateStarted() {
-      }
 
-      public void tvDataUpdateFinished() {
-        updateAvailableDateSet();
-      }
-    });
-  
+    TvDataUpdater.getInstance().addTvDataUpdateListener(
+        new TvDataUpdateListener() {
+          public void tvDataUpdateStarted() {}
+
+          public void tvDataUpdateFinished() {
+            updateAvailableDateSet();
+          }
+        });
+
     // Load inventory
     mTvDataInventory = new TvDataInventory();
     File file = new File(Settings.getUserDirectoryName(), INVENTORY_FILE);
     if (file.exists()) {
       try {
         mTvDataInventory.readData(file);
-      }
-      catch (Exception exc) {
-        mLog.log(Level.WARNING, "Loading tv data inventory failed", exc);      
+      } catch (Exception exc) {
+        mLog.log(Level.WARNING, "Loading tv data inventory failed", exc);
       }
     }
   }
-
 
   public static TvDataBase getInstance() {
     if (mSingleton == null) {
       mSingleton = new TvDataBase();
     }
-    
+
     return mSingleton;
   }
-  
-  
+
   public void checkTvDataInventory() {
     // Get the channel of the subscribed channels
     Channel[] channelArr = ChannelList.getSubscribedChannels();
@@ -110,21 +105,21 @@ public class TvDataBase {
     for (int i = 0; i < channelArr.length; i++) {
       channelIdArr[i] = getChannelKey(channelArr[i]);
     }
-    
+
     // Inventory prüfen
     boolean somethingChanged = false;
-    
+
     File tvDataDir = new File(Settings.propTVDataDirectory.getString());
     File[] tvDataArr = tvDataDir.listFiles();
     if (tvDataArr == null) {
       return;
     }
-    
+
     // Check whether day programs were removed
     String[] knownProgArr = mTvDataInventory.getKnownDayPrograms();
     for (int progIdx = 0; progIdx < knownProgArr.length; progIdx++) {
       String key = knownProgArr[progIdx];
-      
+
       // Check whether this file is still present
       // (The key is equal to the file name)
       boolean stillPresent = false;
@@ -134,52 +129,54 @@ public class TvDataBase {
           break;
         }
       }
-      
-      if (! stillPresent) {
+
+      if (!stillPresent) {
         // This day program was deleted -> Inform the listeners
 
         // Get the channel and date
         Channel channel = getChannelFromFileName(key, channelArr, channelIdArr);
         Date date = getDateFromFileName(key);
         if ((channel != null) && (date != null)) {
-          mLog.info("Day program was deleted by third party: " + date
-            + " on " + channel.getName());
-          ChannelDayProgram dummyProg = new MutableChannelDayProgram(date, channel);
+          mLog.info("Day program was deleted by third party: " + date + " on "
+              + channel.getName());
+          ChannelDayProgram dummyProg = new MutableChannelDayProgram(date,
+              channel);
           fireDayProgramDeleted(dummyProg);
-  
+
           mTvDataInventory.setUnknown(date, channel);
         }
       }
     }
-    
+
     // Check whether day programs were added or replaced
     for (int fileIdx = 0; fileIdx < tvDataArr.length; fileIdx++) {
       String fileName = tvDataArr[fileIdx].getName();
-      
+
       // Get the channel and date
-      Channel channel = getChannelFromFileName(fileName, channelArr, channelIdArr);
+      Channel channel = getChannelFromFileName(fileName, channelArr,
+          channelIdArr);
       Date date = getDateFromFileName(fileName);
       if ((channel != null) && (date != null)) {
         // Get the version
         int version = (int) tvDataArr[fileIdx].length();
-        
+
         // Check whether this day program is known
-        int knownStatus = mTvDataInventory.getKnownStatus(date, channel, version);
+        int knownStatus = mTvDataInventory.getKnownStatus(date, channel,
+            version);
 
         if ((knownStatus == TvDataInventory.UNKNOWN)
-          || (knownStatus == TvDataInventory.OTHER_VERSION))
-        {
-          if (! somethingChanged) {
+            || (knownStatus == TvDataInventory.OTHER_VERSION)) {
+          if (!somethingChanged) {
             // This is the first changed day program -> fire update start
             TvDataUpdater.getInstance().fireTvDataUpdateStarted();
           }
-          
+
           // Inform the listeners
-          mLog.info("Day program was changed by third party: " + date
-            + " on " + channel.getName());
+          mLog.info("Day program was changed by third party: " + date + " on "
+              + channel.getName());
           ChannelDayProgram newDayProg = getDayProgram(date, channel);
           handleKnownStatus(knownStatus, newDayProg, version);
-          
+
           somethingChanged = true;
         }
       }
@@ -190,52 +187,60 @@ public class TvDataBase {
       TvDataUpdater.getInstance().fireTvDataUpdateFinished();
     }
   }
-  
-  
+
   public void close() throws IOException {
     File file = new File(Settings.getUserDirectoryName(), INVENTORY_FILE);
     mTvDataInventory.writeData(file);
   }
-  
-  
+
   public void addTvDataListener(TvDataBaseListener listener) {
-    synchronized(mListenerList) {
+    synchronized (mListenerList) {
       mListenerList.add(listener);
     }
   }
 
-
   public void removeTvDataListener(TvDataBaseListener listener) {
-    synchronized(mListenerList) {
+    synchronized (mListenerList) {
       mListenerList.remove(listener);
     }
   }
-  
-  
+
   public ChannelDayProgram getDayProgram(Date date, Channel channel) {
 
     OnDemandDayProgramFile progFile = getCacheEntry(date, channel, true);
-    
+
     if (progFile != null) {
       return progFile.getDayProgram();
     } else {
       return null;
     }
   }
-  
-  
+
+  /**
+   * Checks all TV-Data for missing length.
+   * 
+   * @param days The number of days to recalculate
+   */
+  public synchronized void reCalculateTvData(int days) {
+    Channel[] ch = ChannelList.getSubscribedChannels();
+
+    for (int j = 0; j < ch.length; j++)
+      for (int i = 0; i < days; i++)
+        correctDayProgramFile(Date.getCurrentDate().addDays(i), ch[j]);
+  }
+
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
     Date date = prog.getDate();
     Channel channel = prog.getChannel();
     String key = getDayProgramKey(date, channel);
-    
+
     // Create a backup (Rename the old file if it exists)
     File file = getDayProgramFile(date, channel);
     File backupFile = null;
     ChannelDayProgram oldProg = getDayProgram(date, channel);
     if (file.exists()) {
       backupFile = new File(file.getAbsolutePath() + ".backup");
-      if (! file.renameTo(backupFile)) {
+      if (!file.renameTo(backupFile)) {
         // Renaming failed -> There will be no backup
         backupFile = null;
       }
@@ -251,17 +256,16 @@ public class TvDataBase {
     }
 
     // Create a new program file
-    OnDemandDayProgramFile newProgFile
-      = new OnDemandDayProgramFile(file, prog);
+    OnDemandDayProgramFile newProgFile = new OnDemandDayProgramFile(file, prog);
 
     // Put the new program file in the cache
     addCacheEntry(key, newProgFile);
 
     // Inform the listeners about adding the new program
     // NOTE: This must happen before saving to give the listeners the chance to
-    //       change the data and have those changes saved to disk.
+    // change the data and have those changes saved to disk.
     fireDayProgramAdded(prog);
-    
+
     // Save the new program
     try {
       // Save the day program
@@ -276,18 +280,17 @@ public class TvDataBase {
       if (oldProg != null) {
         fireDayProgramDeleted(oldProg);
       }
-      
+
       // Set the new program to 'known'
       int version = (int) file.length();
       mTvDataInventory.setKnown(date, channel, version);
-    }
-    catch (IOException exc) {
+    } catch (IOException exc) {
       // Remove the new program from the cache
       removeCacheEntry(key);
 
       // Inform the listeners about removing the new program
       fireDayProgramDeleted(prog);
-      
+
       // Try to restore the backup
       boolean restoredBackup = false;
       if (backupFile != null) {
@@ -299,7 +302,8 @@ public class TvDataBase {
       }
 
       // Log the error
-      String msg = "Saving program for " + channel + " from " + date + " failed.";
+      String msg = "Saving program for " + channel + " from " + date
+          + " failed.";
       if (restoredBackup) {
         msg += " The old version was restored.";
       }
@@ -307,14 +311,13 @@ public class TvDataBase {
     }
   }
 
-
   private synchronized OnDemandDayProgramFile getCacheEntry(Date date,
-    Channel channel, boolean loadFromDisk)
-  {
+      Channel channel, boolean loadFromDisk) {
     String key = getDayProgramKey(date, channel);
 
     // Try to get the program from the cache
-    OnDemandDayProgramFile progFile = (OnDemandDayProgramFile) mTvDataHash.get(key);
+    OnDemandDayProgramFile progFile = (OnDemandDayProgramFile) mTvDataHash
+        .get(key);
 
     // Try to load the program from disk
     if (loadFromDisk && (progFile == null)) {
@@ -323,20 +326,18 @@ public class TvDataBase {
         addCacheEntry(key, progFile);
       }
     }
-    
+
     return progFile;
   }
-  
-  
-  private synchronized void addCacheEntry(String key, OnDemandDayProgramFile progFile) {
+
+  private synchronized void addCacheEntry(String key,
+      OnDemandDayProgramFile progFile) {
     mTvDataHash.put(key, progFile);
   }
-  
-  
+
   private synchronized void removeCacheEntry(String key) {
     mTvDataHash.remove(key);
   }
-
 
   public static String getDayProgramKey(Date date, Channel channel) {
     // check the input
@@ -344,9 +345,9 @@ public class TvDataBase {
       throw new NullPointerException("date is null");
     }
 
-    return new StringBuffer(getChannelKey(channel)).append('.').append(date.getDateString()).toString();   
+    return new StringBuffer(getChannelKey(channel)).append('.').append(
+        date.getDateString()).toString();
   }
-
 
   public static String getChannelKey(Channel channel) {
     // check the input
@@ -354,20 +355,21 @@ public class TvDataBase {
       throw new NullPointerException("channel is null");
     }
 
-    return new StringBuffer(channel.getCountry()).append('_').append(channel.getId()).append('_').append(channel.getDataService().getClass().getPackage().getName()).toString();
+    return new StringBuffer(channel.getCountry()).append('_').append(
+        channel.getId()).append('_').append(
+        channel.getDataService().getClass().getPackage().getName()).toString();
   }
-
 
   public boolean isDayProgramAvailable(Date date, Channel channel) {
     File file = getDayProgramFile(date, channel);
     return file.exists();
   }
 
-
   /**
    * Deletes expired tvdata files older then lifespan days.
    * 
-   * @param lifespan The number of days to delete from the past
+   * @param lifespan
+   *          The number of days to delete from the past
    */
   public void deleteExpiredFiles(int lifespan) {
     if (lifespan < 0) {
@@ -375,7 +377,7 @@ public class TvDataBase {
     }
     devplugin.Date d1 = new devplugin.Date();
     final devplugin.Date d = d1.addDays(-lifespan);
-    
+
     FilenameFilter filter = new java.io.FilenameFilter() {
       public boolean accept(File dir, String name) {
         int p = name.lastIndexOf('.');
@@ -403,140 +405,133 @@ public class TvDataBase {
       }
     }
   }
-
-
-  private synchronized OnDemandDayProgramFile loadDayProgram(Date date,
-    Channel channel)
-  {
+  
+  private synchronized void correctDayProgramFile(Date date,
+      Channel channel) {
     File file = getDayProgramFile(date, channel);
-    if (! file.exists()) {
-      return null;
-    }
-    
+    if (!file.exists())
+      return;
+
     try {
       // Check whether this day program is known
       int version = (int) file.length();
       int knownStatus = mTvDataInventory.getKnownStatus(date, channel, version);
-      
-      // Load the program file
-      OnDemandDayProgramFile progFile
-        = new OnDemandDayProgramFile(file, date, channel);
-      progFile.loadDayProgram();
-      
-      boolean somethingChanged = calculateMissingLengths(progFile.getDayProgram());
-      if (somethingChanged) {
-        // Some missing lengths could now be calculated
-        // -> Try to save the changes
-        
-        // We use a temporary file. If saving suceeds we rename it
-        File tempFile = new File(file.getAbsolutePath() + ".changed");
-        try {
-          // Try to save the changed program
-          OnDemandDayProgramFile newProgFile
-            = new OnDemandDayProgramFile(tempFile, progFile.getDayProgram());
-          newProgFile.saveDayProgram();
-          
-          // Saving the changed version succeed -> Delete the original
-          file.delete();
-          
-          // Use the changed version now
-          tempFile.renameTo(file);
-          
-          // If the old version was known -> Set the new version to known too
-          if (knownStatus == TvDataInventory.KNOWN) {
-            version = (int) file.length();
-            mTvDataInventory.setKnown(date, channel, version);
-          }
-        } catch (Exception exc) {
-          // Saving the changes failed
-          // -> remove the temp file and keep the old one
-          tempFile.delete();
-        }
-        
-        // Now load the new version
-        progFile.loadDayProgram();
-        
-        // Check the known status and inform the listeners
-        if ((knownStatus == TvDataInventory.UNKNOWN)
-          || (knownStatus == TvDataInventory.OTHER_VERSION))
-        {
-          // The day program was really changed. This must have happend while
-          // this TV browser
-          mLog.info("Day program was changed by third party: " + date
-            + " on " + channel.getName());
-          
-          // fire update started
-          TvDataUpdater.getInstance().fireTvDataUpdateStarted();
-          
-          // Inform the listeners
-          handleKnownStatus(knownStatus, progFile.getDayProgram(), version);
 
-          // fire update finished
-          TvDataUpdater.getInstance().fireTvDataUpdateFinished();
+        boolean somethingChanged = calculateMissingLengths(getDayProgram(date,
+            channel));
+        if (somethingChanged) {
+          // Some missing lengths could now be calculated
+          // -> Try to save the changes
+
+          // We use a temporary file. If saving suceeds we rename it
+          File tempFile = new File(file.getAbsolutePath() + ".changed");
+          try {
+            // Try to save the changed program
+            OnDemandDayProgramFile newProgFile = new OnDemandDayProgramFile(
+                tempFile, (MutableChannelDayProgram) getDayProgram(date,
+                    channel));
+            newProgFile.saveDayProgram();
+            
+            // Saving the changed version succeed -> Delete the original
+            file.delete();
+
+            // Use the changed version now
+            tempFile.renameTo(file);
+            
+            // If the old version was known -> Set the new version to known too
+            if (knownStatus == TvDataInventory.KNOWN) {
+              version = (int) file.length();
+              mTvDataInventory.setKnown(date, channel, version);
+            }
+          } catch (Exception exc) {
+            // Saving the changes failed
+            // -> remove the temp file and keep the old one
+            tempFile.delete();
+          }
+
+          OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, (MutableChannelDayProgram) getDayProgram(date,
+              channel));
+          progFile.loadDayProgram();
+          
         }
-      }
-      
-      return progFile;
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
-        + date + " failed. The file will be deleted...", exc);
+          + date + " failed. The file will be deleted...", exc);
 
       file.delete();
-      
-      return null;
     }
   }
   
-  
+
+  private synchronized OnDemandDayProgramFile loadDayProgram(Date date,
+      Channel channel) {
+    File file = getDayProgramFile(date, channel);
+    if (!file.exists()) {
+      return null;
+    }
+
+    try {
+      // Load the program file
+      OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, date,
+          channel);
+      progFile.loadDayProgram();
+
+      return progFile;
+    } catch (Exception exc) {
+      mLog.log(Level.WARNING, "Loading program for " + channel + " from "
+          + date + " failed. The file will be deleted...", exc);
+
+      file.delete();
+
+      return null;
+    }
+  }
+
   private File getDayProgramFile(Date date, Channel channel) {
     String fileName = getDayProgramKey(date, channel);
-      
+
     String tvDataDir = Settings.propTVDataDirectory.getString();
     return new File(tvDataDir, fileName);
   }
 
-
   private Channel getChannelFromFileName(String fileName, Channel[] channelArr,
-    String[] channelIdArr)
-  {
+      String[] channelIdArr) {
     for (int i = 0; i < channelIdArr.length; i++) {
       if (fileName.startsWith(channelIdArr[i])) {
         return channelArr[i];
       }
     }
-    
+
     return null;
   }
-
 
   private Date getDateFromFileName(String fileName) {
     int dotIdx = fileName.lastIndexOf('.');
     if (dotIdx == -1) {
       return null;
     }
-    
+
     String valueAsString = fileName.substring(dotIdx + 1);
     try {
       long value = Long.parseLong(valueAsString);
       return Date.createDateFromValue(value);
-    }
-    catch (NumberFormatException exc) {
+    } catch (NumberFormatException exc) {
       return null;
     }
   }
 
-
   /**
    * Returns true, if tv data is available on disk for the given date.
-   *
-   * @param date The date to check.
+   * 
+   * @param date
+   *          The date to check.
    * @return if the data is available.
    */
   public boolean dataAvailable(Date date) {
-    
+
     return mAvailableDateSet.contains(date);
   }
-  
+
   private void updateAvailableDateSet() {
 
     String tvDataDirStr = Settings.propTVDataDirectory.getString();
@@ -547,40 +542,37 @@ public class TvDataBase {
 
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
-        if (name.length()<8) return false;
-        String dateStr = name.substring(name.length()-8);
-        try {
-          int year = Integer.parseInt(dateStr.substring(0,4));
-          int month = Integer.parseInt(dateStr.substring(4,6));
-          int day = Integer.parseInt(dateStr.substring(6,8));
-        }catch(NumberFormatException e) {
+        if (name.length() < 8)
           return false;
-        }        
+        String dateStr = name.substring(name.length() - 8);
+        try {
+          int year = Integer.parseInt(dateStr.substring(0, 4));
+          int month = Integer.parseInt(dateStr.substring(4, 6));
+          int day = Integer.parseInt(dateStr.substring(6, 8));
+        } catch (NumberFormatException e) {
+          return false;
+        }
         return true;
       }
-    }; 
-
+    };
 
     String fList[] = tvDataDir.list(filter);
-    for (int i=0;i<fList.length;i++) {
-      if (fList[i].length()>8) {
-        String dateStr = fList[i].substring(fList[i].length()-8);
+    for (int i = 0; i < fList.length; i++) {
+      if (fList[i].length() > 8) {
+        String dateStr = fList[i].substring(fList[i].length() - 8);
         try {
-          int year = Integer.parseInt(dateStr.substring(0,4));
-          int month = Integer.parseInt(dateStr.substring(4,6));
-          int day = Integer.parseInt(dateStr.substring(6,8));
-          mAvailableDateSet.add(new devplugin.Date(year,month,day));
-        }catch(NumberFormatException e) {                 
-        }
-      }      
+          int year = Integer.parseInt(dateStr.substring(0, 4));
+          int month = Integer.parseInt(dateStr.substring(4, 6));
+          int day = Integer.parseInt(dateStr.substring(6, 8));
+          mAvailableDateSet.add(new devplugin.Date(year, month, day));
+        } catch (NumberFormatException e) {}
+      }
     }
 
-   
   }
-  
-  
+
   private void fireDayProgramAdded(ChannelDayProgram prog) {
-    synchronized(mListenerList) {
+    synchronized (mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataBaseListener lst = (TvDataBaseListener) mListenerList.get(i);
         lst.dayProgramAdded(prog);
@@ -588,9 +580,8 @@ public class TvDataBase {
     }
   }
 
-
   private void fireDayProgramDeleted(ChannelDayProgram prog) {
-    synchronized(mListenerList) {
+    synchronized (mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataBaseListener lst = (TvDataBaseListener) mListenerList.get(i);
         lst.dayProgramDeleted(prog);
@@ -598,55 +589,51 @@ public class TvDataBase {
     }
   }
 
-
   private void handleKnownStatus(int knownStatus, ChannelDayProgram newDayProg,
-    int version)
-  {
+      int version) {
     if (knownStatus != TvDataInventory.KNOWN) {
       Date date = newDayProg.getDate();
       Channel channel = newDayProg.getChannel();
-      
+
       if (knownStatus == TvDataInventory.OTHER_VERSION) {
         // The day program was replaced -> fire a deleted event
         // (And later an added event)
-        
+
         // Since we don't have the old day program we use a dummy program
-        ChannelDayProgram dayProg
-          = new MutableChannelDayProgram(date, channel);
+        ChannelDayProgram dayProg = new MutableChannelDayProgram(date, channel);
         fireDayProgramDeleted(dayProg);
       }
 
-       // Set the day program to 'known'
+      // Set the day program to 'known'
       mTvDataInventory.setKnown(date, channel, version);
 
       // The day program is new -> fire an added event
       fireDayProgramAdded(newDayProg);
-      
 
     }
   }
-
 
   /**
    * Checks whether all programs have a length. If not, the length will be
    * calculated.
    * 
-   * @param channelProg The day program to calculate the lengths for.
+   * @param channelProg
+   *          The day program to calculate the lengths for.
    * @return <code>true</code> when at least one length was missing.
    */
-  static boolean calculateMissingLengths(ChannelDayProgram channelProg) {
+  private boolean calculateMissingLengths(ChannelDayProgram channelProg) {
     boolean somethingChanged = false;
-  
+
     // Go through all programs and correct them
     // (This is fast, if no correction is needed)
     for (int progIdx = 0; progIdx < channelProg.getProgramCount(); progIdx++) {
       Program program = channelProg.getProgramAt(progIdx);
-      if (! (program instanceof MutableProgram)) {
+      if (!(program instanceof MutableProgram)) {
         continue;
       }
-        
+
       MutableProgram prog = (MutableProgram) program;
-        
+
       if (prog.getLength() <= 0) {
         // Try to get the next program
         Program nextProgram = null;
@@ -658,32 +645,32 @@ public class TvDataBase {
           // next ChannelDayProgram
           nextProgram = getFirstNextDayProgram(channelProg);
         }
-        
-        somethingChanged = calculateLength(prog,nextProgram);
-      }
-      else if(progIdx + 1 == channelProg.getProgramCount()) {
-        //This is the last program that has a length but it could be wrong.
-        somethingChanged = calculateLength(prog,getFirstNextDayProgram(channelProg));
+
+        somethingChanged = calculateLength(prog, nextProgram) || somethingChanged;
+      } else if (progIdx + 1 == channelProg.getProgramCount()) {
+        // This is the last program that has a length but it could be wrong.
+        somethingChanged = calculateLength(prog,
+            getFirstNextDayProgram(channelProg)) || somethingChanged;
       }
     }
-    
+
     return somethingChanged;
   }
-  
-  private static Program getFirstNextDayProgram(ChannelDayProgram channelProg) {
+
+  private Program getFirstNextDayProgram(ChannelDayProgram channelProg) {
     Date nextDate = channelProg.getDate().addDays(1);
     Channel channel = channelProg.getChannel();
     TvDataBase db = TvDataBase.getInstance();
     ChannelDayProgram nextDayProg = db.getDayProgram(nextDate, channel);
-      
+
     if ((nextDayProg != null) && (nextDayProg.getProgramCount() > 0)) {
-      return(nextDayProg.getProgramAt(0));
+      return (nextDayProg.getProgramAt(0));
     }
-    
+
     return null;
   }
-  
-  private static boolean calculateLength(MutableProgram first, Program second) {
+
+  private boolean calculateLength(MutableProgram first, Program second) {
     // Calculate the Length
     if (second != null) {
       int startTime = first.getHours() * 60 + first.getMinutes();
@@ -692,13 +679,13 @@ public class TvDataBase {
         // The program ends the next day
         endTime += 24 * 60;
       }
-        
-      if((startTime + first.getLength()) != endTime) {
+
+      if ((startTime + first.getLength()) != endTime) {
         int length = endTime - startTime;
         // Only allow a maximum length of 12 hours
         if (length < 12 * 60) {
           first.setLength(length);
-          return(true);
+          return (true);
         }
       }
     }
