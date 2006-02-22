@@ -509,7 +509,14 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/*,DragGestureL
     ChannelList.setSubscribeChannels(channelArr);
     ChannelList.storeAllSettings();
     Settings.propSubscribedChannels.setChannelArray(channelArr);
-
+    
+    if(!Settings.propShowProgramsInTrayWasConfigured.getBoolean()) {
+      Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];
+      for(int i = 0; i < tempArr.length; i++)
+        tempArr[i] = channelArr[i];
+      
+      Settings.propNowRunningProgramsInTrayChannels.setChannelArray(tempArr);
+    }
   }
 
   /**
