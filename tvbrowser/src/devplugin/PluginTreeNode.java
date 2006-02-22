@@ -140,11 +140,14 @@ public class PluginTreeNode {
 
     for (int i=0; i<mChildNodes.size(); i++) {
       PluginTreeNode node = (PluginTreeNode)mChildNodes.get(i);
+      node.mPlugin = mPlugin;
+      
       if (node.isLeaf()) {
         ProgramItem progItemInTree = (ProgramItem)node.getUserObject();
         Program progInTree = progItemInTree.getProgram();
         Program testProg = Plugin.getPluginManager().getProgram(progInTree.getDate(), progInTree.getID());
-        if (testProg == null) {
+        
+        if (testProg == null || testProg.getTitle().compareTo(progInTree.getTitle()) != 0) {
           removeProgram(progInTree);
           handler.addRemovedProgram(progInTree);
         }
@@ -366,7 +369,7 @@ public class PluginTreeNode {
 
 
   public void add(PluginTreeNode node) {
-    mChildNodes.add(node);
+    mChildNodes.add(node);    
     node.mPlugin = mPlugin;
   }
 
