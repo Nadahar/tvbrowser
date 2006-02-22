@@ -25,6 +25,8 @@
  */
 package tvbrowser.ui.settings;
 
+import java.awt.Dimension;
+
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -70,7 +72,7 @@ public class TraySettingsTab implements SettingsTab {
         
         "pref, 5dlu, pref, pref, pref, 10dlu, pref, 5dlu, pref, 5dlu, " +
         "pref, pref, pref, 10dlu, pref, pref, pref, 2dlu, pref, pref, " +
-        "10dlu, pref, pref, pref, 5dlu, pref, 2dlu, top:default"
+        "10dlu, pref, pref, pref, 5dlu, pref, 2dlu, top:pref"
         ));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
@@ -127,7 +129,7 @@ public class TraySettingsTab implements SettingsTab {
     mShowNowRunningTimeChb = new JCheckBox(mLocalizer.msg("programShowing.showStartTime","Show start time"), checked);
     
     mChannelOCh = new OrderChooser(Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false),Settings.propSubscribedChannels.getChannelArray(false), true);
-    
+    mChannelOCh.setPreferredSize(new Dimension(0,100));
     
     builder.addSeparator(mLocalizer.msg("basics","Basic settings"),cc.xyw(1,1,8));
     builder.add(mMinimizeToTrayChb, cc.xyw(2,3,6));
@@ -238,6 +240,7 @@ public class TraySettingsTab implements SettingsTab {
     
     Settings.propImportantProgramsInTraySize.setInt(((Integer)mImportantSize.getValue()).intValue());
     Settings.propImportantProgramsInTrayHours.setInt(((Integer)mImportantHours.getValue()).intValue());
+    Settings.propShowProgramsInTrayWasConfigured.setBoolean(true);
   }
 
   public Icon getIcon() {

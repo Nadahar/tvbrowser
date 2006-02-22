@@ -395,42 +395,9 @@ public class Settings {
 
   public static final BooleanProperty propUseSingeClickInTray
   = new BooleanProperty(mProp, "SingeClickInTray", false);
-
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  //TODO mache irgendwas
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  public static final BooleanProperty propShowProgramsInTrayWasConfigured
+  = new BooleanProperty(mProp, "showProgramsInTrayWasConfigured", false);    
   
   public static final BooleanProperty propShowProgramsInTrayEnabled
   = new BooleanProperty(mProp, "showProgramsInTrayEnabled", true);  
@@ -467,21 +434,9 @@ public class Settings {
 
   public static final BooleanProperty propProgramsInTrayShowTooltip
   = new BooleanProperty(mProp, "programsInTrayShowTooltip", true);
-
-  public static final BooleanProperty propNowRunningProgramsInTrayChannelsSelected
-  = new BooleanProperty(mProp, "nowRunningProgramsInTrayChannelsSelected", false);
  
   public static final ChannelArrayProperty propNowRunningProgramsInTrayChannels
-  = new ChannelArrayProperty(mProp, "nowRunningProgramsInTrayChannels", propSubscribedChannels.getChannelArray(false));
-
-  
-  
-  
-  
-  
-  
-  
-  
+  = new ChannelArrayProperty(mProp, "nowRunningProgramsInTrayChannels", new devplugin.Channel[]{}); 
   
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "icon",
