@@ -212,7 +212,10 @@ public class SystemTray {
           public void windowClosing(java.awt.event.WindowEvent evt) {
             if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
               // Only minimize the main window, don't quit
-              MainFrame.getInstance().setVisible(false);
+              if(Settings.propMinimizeToTray.getBoolean())
+                MainFrame.getInstance().setVisible(false);
+              else
+                MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
               toggleOpenCloseMenuItem(true);
             } else {
               mSystemTray.setVisible(false);
@@ -246,7 +249,15 @@ public class SystemTray {
     mSystemTray.setTrayPopUp(mTrayMenu);
 
     mSystemTray.setVisible(true);
-
+    
+    if(!Settings.propShowProgramsInTrayWasConfigured.getBoolean() && Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false).length == 0) {
+      Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray(false);
+      Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];
+      for(int i = 0; i < tempArr.length; i++)
+        tempArr[i] = channelArr[i];
+      
+      Settings.propNowRunningProgramsInTrayChannels.setChannelArray(tempArr);
+    }
   }
 
   private void buildMenu() {
@@ -786,7 +797,10 @@ public class SystemTray {
       });
       toggleOpenCloseMenuItem(false);
     } else {
-      MainFrame.getInstance().setVisible(false);
+      if(Settings.propMinimizeToTray.getBoolean())
+        MainFrame.getInstance().setVisible(false);
+      else
+        MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
       toggleOpenCloseMenuItem(true);
     }
   }
