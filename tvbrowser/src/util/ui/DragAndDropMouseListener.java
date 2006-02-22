@@ -16,7 +16,7 @@ import javax.swing.SwingUtilities;
  * This class implements a MouseListener for DnD in JLists.
  * 
  * @author René Mach
- *
+ * 
  */
 public class DragAndDropMouseListener extends MouseAdapter {
   private int mLastSelectedIndex = 0;
@@ -26,10 +26,14 @@ public class DragAndDropMouseListener extends MouseAdapter {
 
   /**
    * 
-   * @param source The source list of DnD.
-   * @param target The target list of DnD.
-   * @param action The action of DnD.
-   * @param listener The GestureListener of DnD.
+   * @param source
+   *          The source list of DnD.
+   * @param target
+   *          The target list of DnD.
+   * @param action
+   *          The action of DnD.
+   * @param listener
+   *          The GestureListener of DnD.
    */
   public DragAndDropMouseListener(JList source, JList target,
       ListDropAction action, DragGestureListener listener) {
@@ -60,7 +64,9 @@ public class DragAndDropMouseListener extends MouseAdapter {
   }
 
   public void mouseClicked(MouseEvent e) {
-    if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2 && mSource != mTarget) {
+
+    if (mSource.isEnabled() && SwingUtilities.isLeftMouseButton(e)
+        && e.getClickCount() == 2 && mSource != mTarget) {
       int index = mSource.locationToIndex(e.getPoint());
       mSource.setSelectedIndex(index);
       mAction.drop(mSource, mTarget, 0, true);
@@ -71,19 +77,20 @@ public class DragAndDropMouseListener extends MouseAdapter {
   // Rebuild the selection of the JList with the needed
   // functions.
   public void mousePressed(MouseEvent e) {
-    if (e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
-      int index = mSource.locationToIndex(e.getPoint());
-      mSource.setSelectionInterval(index, mLastSelectedIndex);
-    } else if (!e.isControlDown() && !e.isShiftDown()
-        && SwingUtilities.isLeftMouseButton(e)) {
-      DefaultListSelectionModel model = (DefaultListSelectionModel) mSource
-          .getSelectionModel();
-      int index = mSource.locationToIndex(e.getPoint());
-      if (!model.isSelectedIndex(index)) {
-        mSource.setSelectedIndex(index);
-        mLastSelectedIndex = index;
+    if (mSource.isEnabled())
+      if (e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
+        int index = mSource.locationToIndex(e.getPoint());
+        mSource.setSelectionInterval(index, mLastSelectedIndex);
+      } else if (!e.isControlDown() && !e.isShiftDown()
+          && SwingUtilities.isLeftMouseButton(e)) {
+        DefaultListSelectionModel model = (DefaultListSelectionModel) mSource
+            .getSelectionModel();
+        int index = mSource.locationToIndex(e.getPoint());
+        if (!model.isSelectedIndex(index)) {
+          mSource.setSelectedIndex(index);
+          mLastSelectedIndex = index;
+        }
       }
-    }
   }
 
   // Rebuild the selection of the JList with the needed
@@ -91,20 +98,21 @@ public class DragAndDropMouseListener extends MouseAdapter {
   public void mouseReleased(MouseEvent e) {
     int index = mSource.locationToIndex(e.getPoint());
 
-    if (e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
-      DefaultListSelectionModel model = (DefaultListSelectionModel) mSource
-          .getSelectionModel();
+    if (mSource.isEnabled())
+      if (e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
+        DefaultListSelectionModel model = (DefaultListSelectionModel) mSource
+            .getSelectionModel();
 
-      if (model.isSelectedIndex(index))
-        model.removeSelectionInterval(index, index);
-      else
-        model.addSelectionInterval(index, index);
+        if (model.isSelectedIndex(index))
+          model.removeSelectionInterval(index, index);
+        else
+          model.addSelectionInterval(index, index);
 
-      mLastSelectedIndex = index;
-    } else if (!e.isShiftDown() && !e.isControlDown()
-        && SwingUtilities.isLeftMouseButton(e)) {
-      mSource.setSelectedIndex(index);
-      mLastSelectedIndex = index;
-    }
+        mLastSelectedIndex = index;
+      } else if (!e.isShiftDown() && !e.isControlDown()
+          && SwingUtilities.isLeftMouseButton(e)) {
+        mSource.setSelectedIndex(index);
+        mLastSelectedIndex = index;
+      }
   }
 }

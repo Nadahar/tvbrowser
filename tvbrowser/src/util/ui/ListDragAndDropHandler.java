@@ -75,7 +75,8 @@ public class ListDragAndDropHandler implements DropTargetListener,
       mSource = mList2;
       mTarget = mList1;
     }
-    e.startDrag(null,new TransferEntries(mSource.getSelectedIndices(),"JList","Indices"));
+    if(mSource.isEnabled())
+      e.startDrag(null,new TransferEntries(mSource.getSelectedIndices(),"JList","Indices"));
   }
   
   public void dragEnter(DropTargetDragEvent e) {

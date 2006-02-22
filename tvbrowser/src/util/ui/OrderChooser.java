@@ -28,9 +28,11 @@ package util.ui;
 import java.util.*;
 
 import java.awt.*;
-import java.awt.dnd.DragGestureListener;
 import java.awt.event.*;
+
 import javax.swing.*;
+
+import devplugin.Channel;
 
 import tvbrowser.core.icontheme.IconLoader;
 
@@ -53,9 +55,21 @@ public class OrderChooser extends JPanel implements ListDropAction{
   private DefaultListModel mListModel;
   private JButton mUpBt;
   private JButton mDownBt;
+  private JButton mSelectAllBt;
+  private JButton mDeSelectAllBt;  
+  private boolean mIsEnabled = true;
 
 
-
+  /**
+   * Construcst an OrderChooser without selection Buttons.
+   *  
+   * @param currOrder Die aktuelle Reihenfolge
+   * @param allItems Alle moeglichen Objekte (die Objekte der aktuellen Reihenfolge
+   *        eingeschlossen)
+   */
+  public OrderChooser(Object[] currOrder, Object[] allItems) {
+    this(currOrder, allItems, false);
+  }
   /**
    * Konstruiert einen OrderChooser.
    * <P>
@@ -66,11 +80,14 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * @param currOrder Die aktuelle Reihenfolge
    * @param allItems Alle moeglichen Objekte (die Objekte der aktuellen Reihenfolge
    *        eingeschlossen)
+   * @param showSelectionButtons Shows the selection buttons.
    */
-  public OrderChooser(Object[] currOrder, Object[] allItems) {
+  public OrderChooser(Object[] currOrder, Object[] allItems, boolean showSelectionButtons) {
     super(new BorderLayout());
 
-    JPanel p1, p2;
+    JPanel p1, p2, p3, main;
+    
+    main = new JPanel(new BorderLayout(0,3));
 
     mListModel = new DefaultListModel();
     for (int i = 0; i < currOrder.length; i++) {
@@ -95,7 +112,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     // MouseListener hinzuf�gen, der das Selektieren/Deselektieren �bernimmt
     mList.addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent evt) {
-        if (evt.getX() < mSelectionWidth) {
+        if (evt.getX() < mSelectionWidth && mIsEnabled) {
           int index = mList.locationToIndex(evt.getPoint());
           if (index != -1) {
             SelectableItem item = (SelectableItem) mListModel.elementAt(index);
@@ -106,8 +123,9 @@ public class OrderChooser extends JPanel implements ListDropAction{
       }
     });
 
-    add(new JScrollPane(mList), BorderLayout.CENTER);
-
+    main.add(new JScrollPane(mList), BorderLayout.CENTER);
+    add(main, BorderLayout.CENTER);
+    
     p1 = new JPanel();
     add(p1, BorderLayout.EAST);
 
@@ -133,6 +151,29 @@ public class OrderChooser extends JPanel implements ListDropAction{
       }
     });
     p2.add(mDownBt);
+    
+    p3 = new JPanel(new BorderLayout());
+    
+    mSelectAllBt = new JButton(mLocalizer.msg("addAll", "Select all items"));
+    mSelectAllBt.setToolTipText(mLocalizer.msg("tooltip.all", "Select all items in the list."));
+    mSelectAllBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        selectAll();
+      }      
+    });
+    p3.add(mSelectAllBt, BorderLayout.WEST);
+
+    mDeSelectAllBt = new JButton(mLocalizer.msg("delAll", "Deselect all items"));
+    mDeSelectAllBt.setToolTipText(mLocalizer.msg("tooltip.none", "Deselect all items in the list."));
+    mDeSelectAllBt.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        clearSelection();
+      }      
+    });
+    p3.add(mDeSelectAllBt, BorderLayout.EAST);
+    
+    if(showSelectionButtons)
+      main.add(p3, BorderLayout.SOUTH);
   }
 
 
@@ -171,16 +212,32 @@ public class OrderChooser extends JPanel implements ListDropAction{
   }
 
   public void invertSelection() {
-    for (int i = 0; i < mListModel.size(); i++) {
-      SelectableItem item = (SelectableItem) mListModel.elementAt(i);
-      item.setSelected(!item.isSelected());
+    if(mIsEnabled) {
+      for (int i = 0; i < mListModel.size(); i++) {
+        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+        item.setSelected(!item.isSelected());
+      }
+      mList.repaint();
     }
   }
 
   public void selectAll() {
-    for (int i = 0; i < mListModel.size(); i++) {
-      SelectableItem item = (SelectableItem) mListModel.elementAt(i);
-      item.setSelected(true);
+    if(mIsEnabled) {
+      for (int i = 0; i < mListModel.size(); i++) {
+        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+        item.setSelected(true);
+      }
+      mList.repaint();
+    }
+  }
+  
+  public void clearSelection() {
+    if(mIsEnabled) {
+      for (int i = 0; i < mListModel.size(); i++) {
+        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+        item.setSelected(false);
+      }
+      mList.repaint();
     }
   }
 
@@ -241,32 +298,58 @@ public class OrderChooser extends JPanel implements ListDropAction{
   } // class SelectableItem
 
 
-  class SelectableItemRenderer extends JCheckBox implements ListCellRenderer {
-    public SelectableItemRenderer() {
+  class SelectableItemRenderer implements ListCellRenderer {    
+    /*public SelectableItemRenderer() {
       super();
-
+      setLayout(new BorderLayout(0,5));
       mSelectionWidth = getPreferredSize().height;
-    }
+    }*/
 
     public Component getListCellRendererComponent(JList list, Object value,
-    int index, boolean isSelected, boolean cellHasFocus)
-    {
+    int index, boolean isSelected, boolean cellHasFocus) {
+      JPanel p = new JPanel(new BorderLayout(2,0));
+      p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+      
       SelectableItem selectableItem = (SelectableItem) value;
 
-      setSelected(selectableItem.mSelected);
-      setText(selectableItem.mItem.toString());
-
-      if (isSelected) {
-        setOpaque(true);
-        setBackground(list.getSelectionBackground());
-        setForeground(list.getSelectionForeground());
-      } else {
-        setOpaque(false);
-        setForeground(list.getForeground());
+      JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
+      mSelectionWidth = cb.getPreferredSize().height;
+      
+      cb.setOpaque(false);
+      
+      p.add(cb, BorderLayout.WEST);
+      
+      if(selectableItem.getItem() instanceof Channel) {
+        JLabel l = new JLabel(selectableItem.mItem.toString());
+        
+        if(!mIsEnabled)
+          l.setEnabled(false);
+        
+        l.setOpaque(false);
+        l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
+        p.add(l, BorderLayout.CENTER);
+        
+        if(isSelected && mIsEnabled)
+          l.setForeground(list.getSelectionForeground());
+        else
+          l.setForeground(list.getForeground());
       }
-      setEnabled(list.isEnabled());
+      else
+        cb.setText(selectableItem.mItem.toString());
+      
+      if (isSelected && mIsEnabled) {
+        p.setOpaque(true);
+        p.setBackground(list.getSelectionBackground());
+        cb.setForeground(list.getSelectionForeground());
+        
+      } else {
+        p.setOpaque(false);
+        p.setForeground(list.getForeground());
+        cb.setForeground(list.getForeground());
+      }
+      cb.setEnabled(list.isEnabled());
 
-      return this;
+      return p;
     }
 
   } // class SelectableItemRenderer
@@ -275,5 +358,13 @@ public class OrderChooser extends JPanel implements ListDropAction{
   public void drop(JList source, JList target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
   }
-
+  
+  public void setEnabled(boolean value) {
+    mIsEnabled = value;
+    mList.setEnabled(value);
+    mUpBt.setEnabled(value);
+    mDownBt.setEnabled(value);
+    mSelectAllBt.setEnabled(value);
+    mDeSelectAllBt.setEnabled(value);
+  }
 }
