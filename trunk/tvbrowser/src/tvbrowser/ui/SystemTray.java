@@ -212,7 +212,7 @@ public class SystemTray {
           public void windowClosing(java.awt.event.WindowEvent evt) {
             if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
               // Only minimize the main window, don't quit
-              if(Settings.propMinimizeToTray.getBoolean())
+              if (Settings.propMinimizeToTray.getBoolean())
                 MainFrame.getInstance().setVisible(false);
               else
                 MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
@@ -249,13 +249,16 @@ public class SystemTray {
     mSystemTray.setTrayPopUp(mTrayMenu);
 
     mSystemTray.setVisible(true);
-    
-    if(!Settings.propShowProgramsInTrayWasConfigured.getBoolean() && Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false).length == 0) {
-      Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray(false);
-      Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];
-      for(int i = 0; i < tempArr.length; i++)
+
+    if (!Settings.propShowProgramsInTrayWasConfigured.getBoolean()
+        && Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false).length == 0) {
+      Channel[] channelArr = Settings.propSubscribedChannels
+          .getChannelArray(false);
+      Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
+          : channelArr.length];
+      for (int i = 0; i < tempArr.length; i++)
         tempArr[i] = channelArr[i];
-      
+
       Settings.propNowRunningProgramsInTrayChannels.setChannelArray(tempArr);
     }
   }
@@ -333,8 +336,8 @@ public class SystemTray {
           Program p = (Program) it.next();
           // return true if the program was stored in a list
           found = addProgramToNowRunning(p, programs, additional);
-          
-          if (p.isOnAir() && it.hasNext()) {
+
+          if (isOnAir(p) && it.hasNext()) {
             p = (Program) it.next();
             /*
              * find the next program for the now list returns false if the
@@ -351,22 +354,24 @@ public class SystemTray {
           if (found || !findnext)
             break;
         }
+        Program p = null;
+        
         // if not found search the previous day.
         if (!found) {
           ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
               .getDayProgram(Date.getCurrentDate().addDays(-1), channels[i]);
-
-          if (channelDayProgram != null)
-            addProgramToNowRunning(channelDayProgram
-                .getProgramAt(channelDayProgram.getProgramCount() - 1),
-                programs, additional);
+          
+          if (channelDayProgram != null) {
+            p = channelDayProgram.getProgramAt(channelDayProgram.getProgramCount() - 1);
+            addProgramToNowRunning(p,programs, additional);
+          }
 
           /*
            * The last checked programs start time is in the time range off the
-           * important programs, so search on .
+           * important programs if it was found, so search on today.
            */
           if (!complete
-              && Settings.propShowImportantProgramsInTray.getBoolean()) {
+              && Settings.propShowImportantProgramsInTray.getBoolean() && p != null &&isOnAir(p)) {
             try {
               it = TvDataBase.getInstance().getDayProgram(
                   Date.getCurrentDate(), channels[i]).getPrograms();
@@ -379,26 +384,23 @@ public class SystemTray {
         // find the next program for the next list.
         if (findnext) {
           ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
-              .getDayProgram(Date.getCurrentDate().addDays(found ? 1 : 0),
+              .getDayProgram(Date.getCurrentDate().addDays(p != null && isOnAir(p) ? 0 : 1),
                   channels[i]);
 
           if (channelDayProgram != null
               && channelDayProgram.getProgramCount() > 0)
             addToNext(channelDayProgram.getProgramAt(0));
+        }
 
-          /*
-           * The last checked programs start time is in the time range off the
-           * important programs, so search on .
-           */
-          if (!complete
-              && Settings.propShowImportantProgramsInTray.getBoolean()) {
-            try {
-              it = channelDayProgram.getPrograms();
-            } catch (Exception e) {}
+        if (!complete && Settings.propShowImportantProgramsInTray.getBoolean()
+            && (p == null || !isOnAir(p))) {
+          try {
+            it = TvDataBase.getInstance().getDayProgram(
+                Date.getCurrentDate().addDays(1), channels[i]).getPrograms();
+          } catch (Exception e) {}
 
-            if (it != null && it.hasNext())
-              complete = searchForImportantPrograms((Program) it.next(), it);
-          }
+          if (it != null && it.hasNext())
+            complete = searchForImportantPrograms((Program) it.next(), it);
         }
       }
 
@@ -517,10 +519,10 @@ public class SystemTray {
    */
   private boolean putOnImportant(Hashtable src, ArrayList target, Channel c) {
     ArrayList list = (ArrayList) src.get(c);
-    
-    if(list == null)
+
+    if (list == null)
       return true;
-    
+
     if (!list.isEmpty())
       target.add((Program) list.remove(0));
 
@@ -556,8 +558,8 @@ public class SystemTray {
       target.put(p.getChannel(), toFill);
     }
 
-    int time = IOUtilities.getMinutesAfterMidnight() + 60
-        * Settings.propImportantProgramsInTrayHours.getInt();
+    int time = IOUtilities.getMinutesAfterMidnight()
+        + Settings.propImportantProgramsInTrayHours.getInt() * 60;
 
     boolean complete = checkAndPutOnImportantList(toFill, p, time);
 
@@ -581,6 +583,9 @@ public class SystemTray {
    */
   private boolean checkAndPutOnImportantList(ArrayList list, Program p, int time) {
     int start = p.getStartTime();
+    
+    if (Date.getCurrentDate().addDays(1).compareTo(p.getDate()) == 0)
+      start += 24 * 60;
 
     if (p.getMarkerArr().length > 0 && start <= time)
       list.add(p);
@@ -726,7 +731,7 @@ public class SystemTray {
    * @return False if the program was put on a list.
    */
   private boolean addToNext(Program p) {
-    if (!p.isExpired() && !p.isOnAir()) {
+    if (!p.isExpired() && !isOnAir(p)) {
       if (this.isOnChannelList(p.getChannel())) {
         mNextPrograms.set(getIndexOfChannel(p.getChannel()),
             new ProgramMenuItem(p, true));
@@ -754,7 +759,7 @@ public class SystemTray {
    */
   private boolean addProgramToNowRunning(Program p, ArrayList defaultList,
       ArrayList addList) {
-    if (p.isOnAir())
+    if (isOnAir(p))
       if (isOnChannelList(p.getChannel())) {
         defaultList.set(getIndexOfChannel(p.getChannel()), new ProgramMenuItem(
             p, Settings.propNowRunningProgramsInTrayContainsStartTime
@@ -768,6 +773,25 @@ public class SystemTray {
         return true;
       }
 
+    return false;
+  }
+
+  /**
+   * Helper method to check if a program runs.
+   * 
+   * @param p
+   *          The program to check.
+   * @return True if the program runs.
+   */
+  private boolean isOnAir(Program p) {
+
+    int time = IOUtilities.getMinutesAfterMidnight();
+
+    if (Date.getCurrentDate().addDays(-1).compareTo(p.getDate()) == 0)
+      time += 24 * 60;
+
+    if (p.getStartTime() <= time && (p.getStartTime() + p.getLength()) > time)
+      return true;
     return false;
   }
 
@@ -797,7 +821,7 @@ public class SystemTray {
       });
       toggleOpenCloseMenuItem(false);
     } else {
-      if(Settings.propMinimizeToTray.getBoolean())
+      if (Settings.propMinimizeToTray.getBoolean())
         MainFrame.getInstance().setVisible(false);
       else
         MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
