@@ -391,12 +391,98 @@ public class Settings {
     = new BooleanProperty(mProp, "onlyMinimizeWhenWindowClosing", false);
 
   public static final BooleanProperty propMinimizeToTray
-  = new BooleanProperty(mProp, "MinimizeToTray", true);
+  = new BooleanProperty(mProp, "MinimizeToTray", false);
 
   public static final BooleanProperty propUseSingeClickInTray
   = new BooleanProperty(mProp, "SingeClickInTray", false);
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  //TODO mache irgendwas
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  public static final BooleanProperty propShowProgramsInTrayEnabled
+  = new BooleanProperty(mProp, "showProgramsInTrayEnabled", true);  
+  
+  public static final BooleanProperty propShowNowRunningProgramsInTray
+  = new BooleanProperty(mProp, "showRunningProgramsInTray", true);
 
+  public static final BooleanProperty propShowNowRunningProgramsInTrayInSubMenu
+  = new BooleanProperty(mProp, "showRunningProgramsInTrayInSubMenus", false);
+  
+  public static final BooleanProperty propNowRunningProgramsInTrayContainsStartTime
+  = new BooleanProperty(mProp, "nowRunningProgramsInTrayContainsStartTime", false);
+  
+  public static final BooleanProperty propShowImportantProgramsInTray
+  = new BooleanProperty(mProp, "showImportantProgramsInTray", true);
+  
+  public static final BooleanProperty propShowImportantProgramsInTrayInSubMenu
+  = new BooleanProperty(mProp, "showImportantProgramsInTrayInSubMenu", false);  
+  
+  public static final BooleanProperty propImportantProgramsInTrayContainsStartTime
+  = new BooleanProperty(mProp, "importantProgramsInTrayContainsStartTime", true);
+
+  public static final IntProperty propImportantProgramsInTraySize
+  = new IntProperty(mProp, "importantProgramsInTraySize", 5);
+  
+  public static final IntProperty propImportantProgramsInTrayHours
+  = new IntProperty(mProp, "importantProgramsInTrayHours", 2);  
+  
+  public static final BooleanProperty propProgramsInTrayContainsChannel
+  = new BooleanProperty(mProp, "programsInTrayContainsChannel", true);
+
+  public static final BooleanProperty propProgramsInTrayContainsChannelIcon
+  = new BooleanProperty(mProp, "programsInTrayContainsChannelIcon", true);
+
+  public static final BooleanProperty propProgramsInTrayShowTooltip
+  = new BooleanProperty(mProp, "programsInTrayShowTooltip", true);
+
+  public static final BooleanProperty propNowRunningProgramsInTrayChannelsSelected
+  = new BooleanProperty(mProp, "nowRunningProgramsInTrayChannelsSelected", false);
+ 
+  public static final ChannelArrayProperty propNowRunningProgramsInTrayChannels
+  = new ChannelArrayProperty(mProp, "nowRunningProgramsInTrayChannels", propSubscribedChannels.getChannelArray(false));
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "icon",
                          new String[] { "text&icon", "text", "icon" });
