@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
@@ -47,6 +48,7 @@ import util.paramhandler.ParamLibrary;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -60,7 +62,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author bodum
  */
-public class ExtendedDialog extends JDialog {
+public class ExtendedDialog extends JDialog implements WindowClosingIf {
   /** Translator */
   private static final Localizer mLocalizer = Localizer
           .getLocalizerFor(ExtendedDialog.class);
@@ -99,6 +101,8 @@ public class ExtendedDialog extends JDialog {
    */
   private void createGui() {
     JPanel panel = (JPanel) getContentPane();
+    
+    UiUtilities.registerForClosing(this);
     
     panel.setLayout(new FormLayout("pref, 3dlu, pref, 3dlu, fill:pref:grow", "pref, 3dlu, fill:default:grow, 3dlu, pref, 3dlu, pref"));
     
@@ -193,6 +197,15 @@ public class ExtendedDialog extends JDialog {
     final JDialog dialog = new JDialog(this, mLocalizer.msg("preview", "Preview"), true);
     JPanel contentPanel = (JPanel) dialog.getContentPane();
     
+    UiUtilities.registerForClosing(new WindowClosingIf() {
+      public void close() {
+        dialog.setVisible(false);
+      }
+      public JRootPane getRootPane() {
+        return dialog.getRootPane();
+      }
+    });
+    
     contentPanel.setLayout(new FormLayout("fill:default:grow, pref", "fill:default:grow, 3dlu, pref"));
     contentPanel.setBorder(Borders.DLU4_BORDER);
     
@@ -249,6 +262,10 @@ public class ExtendedDialog extends JDialog {
     }
     mSettings.put("encoding", mEncoding.getSelectedItem());
     setVisible(false);
+  }
+
+  public void close() {
+    cancelPressed();
   }
  
 }
