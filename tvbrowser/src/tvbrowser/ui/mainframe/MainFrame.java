@@ -292,8 +292,8 @@ public class MainFrame extends JFrame implements DateListener {
       }
     });
     timer.start();
-
-
+    
+    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
   }
 
   /**
