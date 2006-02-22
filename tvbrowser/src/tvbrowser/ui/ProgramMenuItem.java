@@ -45,6 +45,7 @@ import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
+import devplugin.Date;
 import devplugin.Program;
 
 /**
@@ -174,7 +175,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
 
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-    if (mProgram.isOnAir()) {
+    if (isOnAir(mProgram)) {
       if (!mTimer.isRunning())
         mTimer.start();
 
@@ -221,5 +222,23 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       mForeground = Color.gray;
       setForeground(Color.gray);
     }
+  }
+  
+  /**
+   * Helper method to check if a program runs.
+   * 
+   * @param p The program to check.
+   * @return True if the program runs.
+   */
+  private boolean isOnAir(Program p) {
+    int time = IOUtilities.getMinutesAfterMidnight();
+    
+    if(Date.getCurrentDate().addDays(-1).compareTo(p.getDate()) == 0)
+      time += 24 * 60;
+    
+    if(p.getStartTime() <= time 
+        && (p.getStartTime() + p.getLength()) > time)
+      return true;
+    return false;
   }
 }
