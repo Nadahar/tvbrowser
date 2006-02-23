@@ -54,7 +54,7 @@ import tvbrowser.extras.common.DataSerializer;
  */
 public class ReminderPlugin {
 
-  private static final util.ui.Localizer mLocalizer
+  public static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ReminderPlugin. class );
 
   private ReminderList mReminderList;
