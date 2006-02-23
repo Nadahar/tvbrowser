@@ -26,10 +26,14 @@
 package tvbrowser.ui.licensebox;
 
 import javax.swing.*;
+
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
 import java.awt.*;
 import java.awt.event.*;
 
-public class LicenseBox extends JDialog implements ActionListener {
+public class LicenseBox extends JDialog implements ActionListener,WindowClosingIf {
   
   int mRemainingSecs;
   private JButton mAgreeBt, mDisagreeBt, mCloseBt;
@@ -45,6 +49,8 @@ public class LicenseBox extends JDialog implements ActionListener {
     super(parent, true);
     mMustAgree=mustAgree;
     setTitle(mLocalizer.msg("terms", "Terms of Use"));
+    
+    UiUtilities.registerForClosing(this);
     
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
@@ -123,6 +129,12 @@ public class LicenseBox extends JDialog implements ActionListener {
   
   public boolean agreed() {
     return mAgreed;    
+  }
+
+
+  public void close() {
+   if(!mMustAgree || agreed() )
+     dispose();
   }
   
 }
