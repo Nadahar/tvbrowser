@@ -321,87 +321,73 @@ public class SystemTray {
        * Search through all channels.
        */
       for (int i = 0; i < channels.length; i++) {
-        Iterator it = null;
-
-        try {
-          it = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate(),
-              channels[i]).getPrograms();
-        } catch (Exception e) {}
-
-        boolean found = false;
-        boolean findnext = true;
+        ChannelDayProgram today = TvDataBase.getInstance().getDayProgram(
+            Date.getCurrentDate(), channels[i]);
         boolean complete = false;
 
-        while (it != null && it.hasNext()) {
-          Program p = (Program) it.next();
-          // return true if the program was stored in a list
-          found = addProgramToNowRunning(p, programs, additional);
+        if (today != null && today.getProgramCount() > 0)
+          for (int j = 0; j < today.getProgramCount(); j++) {
+            if (j == 0
+                && today.getProgramAt(j).getStartTime() > IOUtilities
+                    .getMinutesAfterMidnight()) {
+              ChannelDayProgram yesterday = TvDataBase
+                  .getInstance()
+                  .getDayProgram(Date.getCurrentDate().addDays(-1), channels[i]);
 
-          if (isOnAir(p) && it.hasNext()) {
-            p = (Program) it.next();
-            /*
-             * find the next program for the now list returns false if the
-             * program was found, because there's no need to search again.
-             */
-            findnext = addToNext(p);
+              if (yesterday != null && yesterday.getProgramCount() > 0) {
+                Program p = yesterday
+                    .getProgramAt(yesterday.getProgramCount() - 1);
 
-            // Search for the important programs.
-            if (Settings.propShowImportantProgramsInTray.getBoolean())
-              complete = searchForImportantPrograms(p, it);
+                if (isOnAir(p)) {
+                  addProgramToNowRunning(p, programs, additional);
+                  Program p1 = today.getProgramAt(0);
+                  addToNext(p1);
+
+                  if (Settings.propShowImportantProgramsInTray.getBoolean())
+                    searchForImportantPrograms(p1, 1, today);
+                  break;
+                }
+              }
+            }
+
+            Program p = today.getProgramAt(j);
+
+            if (isOnAir(p)) {
+              addProgramToNowRunning(p, programs, additional);
+              if (j < today.getProgramCount() - 1) {
+                Program p1 = today.getProgramAt(j + 1);
+                addToNext(p1);
+
+                if (Settings.propShowImportantProgramsInTray.getBoolean())
+                  complete = searchForImportantPrograms(p1, j + 2, today);
+              } else {
+                ChannelDayProgram tomorrow = TvDataBase.getInstance()
+                    .getDayProgram(Date.getCurrentDate().addDays(1),
+                        channels[i]);
+
+                if (tomorrow != null && tomorrow.getProgramCount() > 0) {
+                  Program p1 = tomorrow.getProgramAt(0);
+                  addToNext(p1);
+
+                  if (Settings.propShowImportantProgramsInTray.getBoolean())
+                    searchForImportantPrograms(p1, 1, tomorrow);
+                  break;
+                }
+              }
+
+              if (!complete
+                  && Settings.propShowImportantProgramsInTray.getBoolean()) {
+                ChannelDayProgram tomorrow = TvDataBase.getInstance()
+                    .getDayProgram(Date.getCurrentDate().addDays(1),
+                        channels[i]);
+
+                if (tomorrow != null && tomorrow.getProgramCount() > 0)
+                  searchForImportantPrograms(tomorrow.getProgramAt(0), 1,
+                      tomorrow);
+              }
+              break;
+            }
           }
-
-          // if found stop the search for this channel
-          if (found || !findnext)
-            break;
-        }
-        Program p = null;
-        
-        // if not found search the previous day.
-        if (!found) {
-          ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
-              .getDayProgram(Date.getCurrentDate().addDays(-1), channels[i]);
-          
-          if (channelDayProgram != null) {
-            p = channelDayProgram.getProgramAt(channelDayProgram.getProgramCount() - 1);
-            addProgramToNowRunning(p,programs, additional);
-          }
-
-          /*
-           * The last checked programs start time is in the time range off the
-           * important programs if it was found, so search on today.
-           */
-          if (!complete
-              && Settings.propShowImportantProgramsInTray.getBoolean() && p != null &&isOnAir(p)) {
-            try {
-              it = TvDataBase.getInstance().getDayProgram(
-                  Date.getCurrentDate(), channels[i]).getPrograms();
-            } catch (Exception e) {}
-
-            if (it != null && it.hasNext())
-              complete = searchForImportantPrograms((Program) it.next(), it);
-          }
-        }
-        // find the next program for the next list.
-        if (findnext) {
-          ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
-              .getDayProgram(Date.getCurrentDate().addDays(p != null && isOnAir(p) ? 0 : 1),
-                  channels[i]);
-
-          if (channelDayProgram != null
-              && channelDayProgram.getProgramCount() > 0)
-            addToNext(channelDayProgram.getProgramAt(0));
-        }
-
-        if (!complete && Settings.propShowImportantProgramsInTray.getBoolean()
-            && (p == null || !isOnAir(p))) {
-          try {
-            it = TvDataBase.getInstance().getDayProgram(
-                Date.getCurrentDate().addDays(1), channels[i]).getPrograms();
-          } catch (Exception e) {}
-
-          if (it != null && it.hasNext())
-            complete = searchForImportantPrograms((Program) it.next(), it);
-        }
       }
 
       // Show important program?
@@ -541,7 +527,8 @@ public class SystemTray {
    *          The programs to check.
    * @return True if the maximum number of important programs was found
    */
-  private boolean searchForImportantPrograms(Program p, Iterator it) {
+  private boolean searchForImportantPrograms(Program p, int index,
+      ChannelDayProgram chDayPrg) {
     ArrayList toFill;
     Hashtable target;
 
@@ -564,8 +551,13 @@ public class SystemTray {
     boolean complete = checkAndPutOnImportantList(toFill, p, time);
 
     // check the programs if they are important
-    while (!complete && it.hasNext())
-      complete = checkAndPutOnImportantList(toFill, (Program) it.next(), time);
+    if (!complete)
+      for (int i = index; i < chDayPrg.getProgramCount(); i++) {
+        complete = checkAndPutOnImportantList(toFill, chDayPrg.getProgramAt(i),
+            time);
+        if (complete)
+          break;
+      }
 
     return complete;
   }
@@ -583,7 +575,7 @@ public class SystemTray {
    */
   private boolean checkAndPutOnImportantList(ArrayList list, Program p, int time) {
     int start = p.getStartTime();
-    
+
     if (Date.getCurrentDate().addDays(1).compareTo(p.getDate()) == 0)
       start += 24 * 60;
 
