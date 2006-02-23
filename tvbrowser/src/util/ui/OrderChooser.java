@@ -58,6 +58,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   private JButton mSelectAllBt;
   private JButton mDeSelectAllBt;  
   private boolean mIsEnabled = true;
+  private JScrollPane mScrollPane;
 
 
   /**
@@ -123,7 +124,8 @@ public class OrderChooser extends JPanel implements ListDropAction{
       }
     });
 
-    main.add(new JScrollPane(mList), BorderLayout.CENTER);
+    mScrollPane = new JScrollPane(mList);
+    main.add(mScrollPane, BorderLayout.CENTER);
     add(main, BorderLayout.CENTER);
     
     p1 = new JPanel();
@@ -366,5 +368,6 @@ public class OrderChooser extends JPanel implements ListDropAction{
     mDownBt.setEnabled(value);
     mSelectAllBt.setEnabled(value);
     mDeSelectAllBt.setEnabled(value);
+    mScrollPane.getVerticalScrollBar().setEnabled(value);
   }
 }
