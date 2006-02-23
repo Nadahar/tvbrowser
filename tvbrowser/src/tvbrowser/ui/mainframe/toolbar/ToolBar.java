@@ -56,6 +56,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
@@ -255,7 +256,15 @@ public class ToolBar extends JToolBar {
         showall = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
       }
-
+      if(name.startsWith(SettingsDialog.TAB_ID_REMINDER)) {
+        showall = true;
+        label = mLocalizer.msg("configureReminder", "Configure Reminder");
+      }
+      if(name.startsWith(SettingsDialog.TAB_ID_FAVORITE)) {
+        showall = true;
+        label = mLocalizer.msg("configureFavorite", "Configure Favorites");
+      }
+      
       if ((PluginProxyManager.getInstance().getPluginForId(name) != null))
         showall = true;
     } else

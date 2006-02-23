@@ -86,7 +86,8 @@ public class SettingsDialog implements WindowClosingIf {
   public static final String TAB_ID_TRAY = "#tray";
   public static final String TAB_ADDITIONAL = "#additional";
   public static final String TAB_ID_PROGRAMINFO = "#programinfo";
-
+  public static final String TAB_ID_REMINDER = "#reminder";
+  public static final String TAB_ID_FAVORITE = "#favorite";
 
   private JDialog mDialog;
 
@@ -278,8 +279,8 @@ public class SettingsDialog implements WindowClosingIf {
     node = new SettingNode(new ChannelGroupSettingsTab(this));
     root.add(node);
 
-    root.add(new SettingNode(new ReminderSettingsTab()));
-    root.add(new SettingNode(new FavoritesSettingTab()));
+    root.add(new SettingNode(new ReminderSettingsTab(), TAB_ID_REMINDER));
+    root.add(new SettingNode(new FavoritesSettingTab(), TAB_ID_FAVORITE));
     root.add(new SettingNode(new ProgramInfoSettingsTab(), TAB_ID_PROGRAMINFO));
     
 

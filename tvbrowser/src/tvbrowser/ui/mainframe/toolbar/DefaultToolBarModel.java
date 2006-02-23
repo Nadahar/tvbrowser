@@ -47,8 +47,11 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.SettingsDialog;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 
@@ -59,7 +62,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private ArrayList mVisibleActions;
 
   private Action mUpdateAction, mSettingsAction, mFilterAction, mPluginViewAction, mSeparatorAction,
-      mScrollToNowAction, mScrollToTodayAction, mScrollToTomorrowAction;
+      mScrollToNowAction, mScrollToTodayAction, mScrollToTomorrowAction, mFavoriteAction, mReminderAction;
 
   private static DefaultToolBarModel sInstance;
 
@@ -125,7 +128,15 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"),
         "#scrollToTomorrow", scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), IconLoader.getInstance().getIconFromTheme("actions", "go-next", 16),
         IconLoader.getInstance().getIconFromTheme("actions", "go-next", 22), ToolBar.BUTTON_ACTION, this);
+    mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("buttonText" ,"Reminder list"), SettingsDialog.TAB_ID_REMINDER, ReminderPlugin.mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion."), IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16), IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22),
+        ToolBar.BUTTON_ACTION, this);
+    mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("buttonText", "Manage Favorites"), SettingsDialog.TAB_ID_FAVORITE, FavoritesPlugin.mLocalizer.msg("favoritesManager",
+    "Manage favorite programs"), IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 22),
+        ToolBar.BUTTON_ACTION, this);
 
+    
+    
+    
     updateTimeButtons();
     
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
@@ -137,6 +148,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mAvailableActions.put("#scrollToNow", mScrollToNowAction);
     mAvailableActions.put("#scrollToToday", mScrollToTodayAction);
     mAvailableActions.put("#scrollToTomorrow", mScrollToTomorrowAction);
+    mAvailableActions.put(SettingsDialog.TAB_ID_REMINDER, mReminderAction);
+    mAvailableActions.put(SettingsDialog.TAB_ID_FAVORITE, mFavoriteAction);
 
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
@@ -304,6 +317,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       devplugin.Date d = devplugin.Date.getCurrentDate();
       d = d.addDays(1);
       MainFrame.getInstance().goTo(d);
+    } else if(source == mReminderAction) {
+      ReminderPlugin.getInstance().getButtonAction(MainFrame.getInstance()).getAction().actionPerformed(null);
+    } else if(source == mFavoriteAction) {
+      FavoritesPlugin.getInstance().getButtonAction(MainFrame.getInstance()).getAction().actionPerformed(null);
     } else {
 
     }
