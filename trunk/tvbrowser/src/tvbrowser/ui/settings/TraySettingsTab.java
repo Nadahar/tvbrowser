@@ -158,12 +158,15 @@ public class TraySettingsTab implements SettingsTab {
     builder.add(mShowNowRunningSubChb, cc.xyw(3,23,5));
     builder.add(mShowNowRunningTimeChb, cc.xyw(3,24,5));
     
-    builder.addSeparator(mLocalizer.msg("programShowing.runningChannels",
+    final JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("programShowing.runningChannels",
         "Which channels should be used for showing now running programs?"), cc.xyw(2,26,6));
     builder.add(mChannelOCh, cc.xyw(2,28,6));
     
     mShowProgramsChb.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
+        for(int i = 0; i < c.getComponentCount(); i++)
+          c.getComponent(i).setEnabled(mShowProgramsChb.isSelected());
+        
         mShowChannelNameChb.setEnabled(mShowProgramsChb.isSelected());
         mShowChannelIconChb.setEnabled(mShowProgramsChb.isSelected());
         mShowChannelTooltipChb.setEnabled(mShowProgramsChb.isSelected());
