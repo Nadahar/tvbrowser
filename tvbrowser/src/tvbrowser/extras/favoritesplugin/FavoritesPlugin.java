@@ -56,7 +56,7 @@ import tvbrowser.extras.common.DataDeserializer;
 public class FavoritesPlugin  {
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
           .getLocalizerFor(FavoritesPlugin.class);
 
   private static FavoritesPlugin mInstance;
