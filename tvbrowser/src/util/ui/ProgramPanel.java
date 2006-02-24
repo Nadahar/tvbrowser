@@ -50,26 +50,27 @@ import javax.swing.event.ChangeListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import util.io.IOUtilities;
 import devplugin.*;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
- *
+ * 
  * @author Martin Oberhauser
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramPanel extends JComponent implements ChangeListener {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(TextAreaIcon.class.getName());
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+      .getLogger(TextAreaIcon.class.getName());
 
   private static final boolean USE_FULL_HEIGHT = true;
   private static final boolean PAINT_EXPIRED_PROGRAMS_PALE = true;
 
   private static final Composite NORMAL_COMPOSITE = AlphaComposite.SrcOver;
-  private static final Composite PALE_COMPOSITE
-    = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F);
+  private static final Composite PALE_COMPOSITE = AlphaComposite.getInstance(
+      AlphaComposite.SRC_OVER, 0.5F);
 
   /** The title font. */
   private static Font mTitleFont;
@@ -81,7 +82,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /** The width of the left part (the time). */
   private static final int WIDTH_LEFT = 40;
   /** The width of the left part (the title and short info). */
-  private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
+  private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt()
+      - WIDTH_LEFT;
   /** The total width. */
   private static int WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
 
@@ -132,11 +134,11 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mDescriptionIcon.setMaximumLineCount(3);
   }
 
-
   /**
    * Creates a new instance of ProgramPanel.
-   *
-   * @param prog The program to show in this panel.
+   * 
+   * @param prog
+   *          The program to show in this panel.
    */
   public ProgramPanel(Program prog) {
     this();
@@ -145,16 +147,17 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /**
    * Creates a new instance of ProgramPanel.
-   *
-   * @param prog The program to show in this panel.
-   * @param axis Orientation of ProgressBar (X_AXIS/Y_AXIS)
+   * 
+   * @param prog
+   *          The program to show in this panel.
+   * @param axis
+   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
    */
   public ProgramPanel(Program prog, int axis) {
     this();
     mAxis = axis;
     setProgram(prog);
   }
-
 
   /**
    * (Re)Loads the font settings.
@@ -170,7 +173,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       mTimeFont = Settings.propProgramTimeFont.getFont();
       mNormalFont = Settings.propProgramInfoFont.getFont();
     }
-
 
   }
 
@@ -191,22 +193,20 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
   }
 
-
   /**
    * Gets the preferred height.
    * <p>
    * It's the height the panel has with a maximum of 3 information rows.
-   *
+   * 
    * @return The preferred height.
    */
   public int getPreferredHeight() {
     return mPreferredHeight;
   }
 
-
   /**
    * Sets the height of this panel
-   *
+   * 
    * @param height
    */
   public void setHeight(int height) {
@@ -216,32 +216,32 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
   }
 
-
   /**
    * Gets the height.
-   *
+   * 
    * @return The height.
    */
   public int getHeight() {
     return mHeight;
   }
 
-
   /**
    * Sets the program this panel shows.
-   *
-   * @param program The program to show in this panel.
+   * 
+   * @param program
+   *          The program to show in this panel.
    */
   public void setProgram(devplugin.Program program) {
     setProgram(program, -1);
   }
 
-
   /**
    * Sets the program this panel shows.
-   *
-   * @param program The program to show in this panel.
-   * @param maxHeight The maximum height the program should have (in pixels).
+   * 
+   * @param program
+   *          The program to show in this panel.
+   * @param maxHeight
+   *          The maximum height the program should have (in pixels).
    */
   public void setProgram(devplugin.Program program, int maxHeight) {
 
@@ -266,20 +266,23 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       maxDescLines = (maxHeight - titleHeight - 10) / mNormalFont.getSize();
     }
 
-    if (programChanged || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
+    if (programChanged
+        || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       // (Re)set the description text
       mDescriptionIcon.setMaximumLineCount(maxDescLines);
-      ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields.getProgramFieldTypeArray();
+      ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
+          .getProgramFieldTypeArray();
       Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
       try {
         mDescriptionIcon.setText(infoReader);
-      }
-      catch (IOException exc) {
-        mLog.log(Level.WARNING, "Reading program info failed for " + program, exc);
+      } catch (IOException exc) {
+        mLog.log(Level.WARNING, "Reading program info failed for " + program,
+            exc);
       }
 
       // Calculate the height
-      mHeight = mTitleIcon.getIconHeight() + 10 + mDescriptionIcon.getIconHeight();
+      mHeight = mTitleIcon.getIconHeight() + 10
+          + mDescriptionIcon.getIconHeight();
       setPreferredSize(new Dimension(WIDTH, mHeight));
 
       // Calculate the preferred height
@@ -297,23 +300,35 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
   }
 
-
   /**
    * Gets the plugin icons for a program.
-   *
-   * @param program The program to get the icons for.
+   * 
+   * @param program
+   *          The program to get the icons for.
    * @return The icons for the program.
    */
   private Icon[] getPluginIcons(Program program) {
-    String[] iconPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
+    String[] iconPluginArr = Settings.propProgramTableIconPlugins
+        .getStringArray();
 
     PluginProxyManager mng = PluginProxyManager.getInstance();
 
-    if ((iconPluginArr == null) || (iconPluginArr.length == 0)) {
-      return new Icon[0];
-    } else {
+    ArrayList iconList = new ArrayList();
+
+    int info = program.getInfo();
+
+    if ((info != -1) && (info != 0)) {
+      for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) {
+        if (ProgramInfoHelper.bitSet(info, ProgramInfoHelper.mInfoBitArr[i])
+            && (ProgramInfoHelper.mInfoIconArr[i] != null)) {
+          // Add the icon to the list
+          iconList.add(ProgramInfoHelper.mInfoIconArr[i]);
+        }
+      }
+    }
+
+    if ((iconPluginArr != null) && (iconPluginArr.length != 0)) {
       // Add the icons for each plugin
-      ArrayList list = new ArrayList();
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
         PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
 
@@ -336,24 +351,27 @@ public class ProgramPanel extends JComponent implements ChangeListener {
           if (iconArr != null) {
             // Add the icons
             for (int i = 0; i < iconArr.length; i++) {
-              list.add(iconArr[i]);
+              iconList.add(iconArr[i]);
             }
           }
         }
       }
-
-      // Convert the list to an array
-      Icon[] asArr = new Icon[list.size()];
-      list.toArray(asArr);
-      return asArr;
     }
-  }
 
+    if (iconList.size() == 0)
+      return new Icon[0];
+
+    // Convert the list to an array
+    Icon[] asArr = new Icon[iconList.size()];
+    iconList.toArray(asArr);
+    return asArr;
+  }
 
   /**
    * Paints the component.
-   *
-   * @param g The graphics context to paint to.
+   * 
+   * @param g
+   *          The graphics context to paint to.
    */
   public void paintComponent(Graphics g) {
     int width = getWidth();
@@ -369,35 +387,35 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       if (minutesAfterMidnight < startTime) {
         // The next day has begun -> we have to add 24 * 60 minutes
         // Example: Start time was 23:50 = 1430 minutes after midnight
-        //          now it is       0:03 = 3 minutes after midnight
-        //          elapsedMinutes = (24 * 60) + 3 - 1430 = 13 minutes
+        // now it is 0:03 = 3 minutes after midnight
+        // elapsedMinutes = (24 * 60) + 3 - 1430 = 13 minutes
         elapsedMinutes = (24 * 60) + minutesAfterMidnight - startTime;
       } else {
         elapsedMinutes = minutesAfterMidnight - startTime;
       }
 
       if (mAxis == X_AXIS) {
-          int progressX = 0;
-          if (progLength > 0) {
-            progressX = elapsedMinutes * width / progLength;
-          }
+        int progressX = 0;
+        if (progLength > 0) {
+          progressX = elapsedMinutes * width / progLength;
+        }
 
-          grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-          grp.fillRect(1, 1, progressX - 1, height - 1);
-          grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-          grp.fillRect(progressX, 1, width - progressX - 2, height - 1);
-          grp.draw3DRect(0, 0, width - 1, height - 1, true);
+        grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+        grp.fillRect(1, 1, progressX - 1, height - 1);
+        grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
+        grp.fillRect(progressX, 1, width - progressX - 2, height - 1);
+        grp.draw3DRect(0, 0, width - 1, height - 1, true);
       } else {
-          int progressY = 0;
-          if (progLength > 0) {
-            progressY = elapsedMinutes * height / progLength;
-          }
+        int progressY = 0;
+        if (progLength > 0) {
+          progressY = elapsedMinutes * height / progLength;
+        }
 
-          grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-          grp.fillRect(1, 1, width - 2, progressY - 1);
-          grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-          grp.fillRect(1, progressY, width - 2, height - progressY - 1);
-          grp.draw3DRect(0, 0, width - 1, height - 1, true);
+        grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+        grp.fillRect(1, 1, width - 2, progressY - 1);
+        grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
+        grp.fillRect(1, progressY, width - 2, height - progressY - 1);
+        grp.draw3DRect(0, 0, width - 1, height - 1, true);
       }
     }
 
@@ -409,26 +427,23 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
 
     if (mMouseOver || mIsSelected) {
-        Color test = Settings.propMouseOverColor.getColor();
-        if(mIsSelected)
-          test = Settings.propKeyboardSelectedColor.getColor();
-        grp.setColor(test);
-        grp.fillRect(0, 0, width-1, height-1);
+      Color test = Settings.propMouseOverColor.getColor();
+      if (mIsSelected)
+        test = Settings.propKeyboardSelectedColor.getColor();
+      grp.setColor(test);
+      grp.fillRect(0, 0, width - 1, height - 1);
 
-        float dash[] = {10.0f};
-        BasicStroke dashed = new BasicStroke(1.0f,
-                                                          BasicStroke.CAP_BUTT,
-                                                          BasicStroke.JOIN_MITER,
-                                                          10.0f, dash, 0.0f);
-        grp.setColor(Color.BLACK);
-        grp.setStroke(dashed);
-        grp.drawRect(0, 0, width -1, height-1);
+      float dash[] = { 10.0f };
+      BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+          BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+      grp.setColor(Color.BLACK);
+      grp.setStroke(dashed);
+      grp.drawRect(0, 0, width - 1, height - 1);
     }
 
     // Draw all the text
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()
-      && mTextColor.equals(Color.BLACK))
-    {
+        && mTextColor.equals(Color.BLACK)) {
       grp.setColor(Color.gray);
     } else {
       grp.setColor(mTextColor);
@@ -437,9 +452,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     grp.drawString(mProgramTimeAsString, 1, mTimeFont.getSize());
 
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
-    
-    if(mHeight >= mPreferredHeight)
-      mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
+
+    if (mHeight >= mPreferredHeight)
+      mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon
+          .getIconHeight());
 
     // Paint the icons pale if the program is expired
     if (PAINT_EXPIRED_PROGRAMS_PALE && mProgram.isExpired()) {
@@ -477,8 +493,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     }
   }
 
-
-
   /**
    * Called when the panel is added to a container.
    * <p>
@@ -488,8 +502,6 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     super.addNotify();
     mProgram.addChangeListener(this);
   }
-
-
 
   /**
    * Called when the panel is added to a container.
@@ -501,11 +513,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mProgram.removeChangeListener(this);
   }
 
-
-
   /**
    * Gets the program object of this ProgramPanel.
-   *
+   * 
    * @return the program object of this ProgramPanel.
    */
   public Program getProgram() {
@@ -515,9 +525,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   /**
    * Adds a MouseListener that shows the plugin context menu when the user does
    * a right click on the program panel.
-   *
-   * @param caller The Plugin to exclude from the context menu. When
-   *        <code>null</code> no plugin is excluded.
+   * 
+   * @param caller
+   *          The Plugin to exclude from the context menu. When
+   *          <code>null</code> no plugin is excluded.
    */
   public void addPluginContextMenuMouseListener(final Plugin caller) {
     addMouseListener(new MouseAdapter() {
@@ -538,7 +549,8 @@ public class ProgramPanel extends JComponent implements ChangeListener {
         if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
           Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
         }
-        if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
+        if (SwingUtilities.isMiddleMouseButton(evt)
+            && (evt.getClickCount() == 1)) {
           Plugin.getPluginManager().handleProgramMiddleClick(mProgram, caller);
         }
       }
@@ -547,12 +559,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /**
    * Shows the Popup
-   * @param evt Event for X/Y-Coordinates
-   * @param caller Plugin that called this
+   * 
+   * @param evt
+   *          Event for X/Y-Coordinates
+   * @param caller
+   *          Plugin that called this
    */
   private void showPopup(MouseEvent evt, Plugin caller) {
     if (SwingUtilities.isRightMouseButton(evt)) {
-      JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram, caller);
+      JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram,
+          caller);
       menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
     }
   }
@@ -568,7 +584,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * register at the programs as ChangeListener and call this method when
    * {@link ChangeListener#stateChanged(javax.swing.event.ChangeEvent)} was
    * called.
-   *
+   * 
    * @see Program#addChangeListener(ChangeListener)
    */
   public void programHasChanged() {
@@ -576,16 +592,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     mIconArr = getPluginIcons(mProgram);
   }
 
-
   // implements ChangeListener
-
 
   /**
    * Called when the state of the program has changed.
    * <p>
    * repaints the panel.
-   *
-   * @param evt The event describing the change.
+   * 
+   * @param evt
+   *          The event describing the change.
    */
   public void stateChanged(ChangeEvent evt) {
     if (evt.getSource() == mProgram) {
@@ -596,31 +611,38 @@ public class ProgramPanel extends JComponent implements ChangeListener {
 
   /**
    * Sets the Color of the Text
-   * @param col Color of the Text
+   * 
+   * @param col
+   *          Color of the Text
    */
   public void setTextColor(Color col) {
-      mTextColor = col;
+    mTextColor = col;
   }
 
   /**
    * Returns the Color of the Text
+   * 
    * @return Color of the Text
    */
   public Color getTextColor() {
-      return mTextColor;
+    return mTextColor;
   }
 
   /**
    * Paints the ProgramPanel
-   * @param mouse under a Mouse and needs highlight?
-   * @param isSelected IsSelected program?
-   * @param g Graphics-Object
+   * 
+   * @param mouse
+   *          under a Mouse and needs highlight?
+   * @param isSelected
+   *          IsSelected program?
+   * @param g
+   *          Graphics-Object
    * 
    */
   public void paint(boolean mouse, boolean isSelected, Graphics g) {
-      mMouseOver = mouse;
-      mIsSelected = isSelected;
-      super.paint(g);
+    mMouseOver = mouse;
+    mIsSelected = isSelected;
+    super.paint(g);
   }
 
   /**

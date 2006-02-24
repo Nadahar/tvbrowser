@@ -82,5 +82,16 @@ public class ProgramInfoHelper {
     private static Icon createIcon(String fileName) {
         return new ImageIcon("imgs/" + fileName);
     }
+    
+    /**
+     * Returns whether a bit (or combination of bits) is set in the specified
+     * number.
+     * @param num 
+     * @param pattern 
+     * @return 
+     */
+    public static boolean bitSet(int num, int pattern) {
+      return (num & pattern) == pattern;
+    }
 
 }
