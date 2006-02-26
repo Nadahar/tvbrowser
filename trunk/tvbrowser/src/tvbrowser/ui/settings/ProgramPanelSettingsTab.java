@@ -170,6 +170,8 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private IconPlugin[] getAvailableIconPlugins() {
     ArrayList list = new ArrayList();
     
+    list.add(new IconPlugin("Infos"));
+    
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     for (int i = 0; i < pluginArr.length; i++) {
       String iconText = pluginArr[i].getProgramTableIconText();
@@ -191,7 +193,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     for (int i = 0; i < selPluginArr.length; i++) {
       // Find the corresponing IconPlugin and put it into the list
       for (int j = 0; j < allArr.length; j++) {
-        String pluginId = allArr[j].getPlugin().getId();
+        String pluginId = allArr[j].getId()/*.getPlugin().getId()*/;
         if (pluginId.equals(selPluginArr[i])) {
           list.add(allArr[j]);
           break;
@@ -239,7 +241,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     String[] pluginIdArr = new String[iconPluginArr.length];
     for (int i = 0; i < iconPluginArr.length; i++) {
       IconPlugin plugin = (IconPlugin) iconPluginArr[i];
-      pluginIdArr[i] = plugin.getPlugin().getId();
+      pluginIdArr[i] = plugin/*.getPlugin()*/.getId();
     }
     Settings.propProgramTableIconPlugins.setStringArray(pluginIdArr);
     
@@ -277,17 +279,29 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   class IconPlugin {
     
     private PluginProxy mPlugin;
+    private String mName;
     
     public IconPlugin(PluginProxy plugin) {
       mPlugin = plugin;
     }
     
-    public PluginProxy getPlugin() {
-      return mPlugin;
+    public IconPlugin(String name) {
+      mName = name;
+      mPlugin = null;
+    }
+    
+    public String getId() {
+      if(mPlugin != null)
+        return mPlugin.getId();
+      else
+        return "info.id";
     }
     
     public String toString() {
-      return mPlugin.getProgramTableIconText();
+      if(mPlugin != null)
+        return mPlugin.getProgramTableIconText();
+      else
+        return mName;
     }
     
   }
