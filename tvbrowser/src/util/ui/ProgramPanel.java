@@ -50,7 +50,6 @@ import javax.swing.event.ChangeListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import util.io.IOUtilities;
 import devplugin.*;
 
@@ -311,60 +310,61 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     String[] iconPluginArr = Settings.propProgramTableIconPlugins
         .getStringArray();
 
-    PluginProxyManager mng = PluginProxyManager.getInstance();
-
-    ArrayList iconList = new ArrayList();
-
-    int info = program.getInfo();
-
-    if ((info != -1) && (info != 0)) {
-      for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) {
-        if (ProgramInfoHelper.bitSet(info, ProgramInfoHelper.mInfoBitArr[i])
-            && (ProgramInfoHelper.mInfoIconArr[i] != null)) {
-          // Add the icon to the list
-          iconList.add(ProgramInfoHelper.mInfoIconArr[i]);
-        }
-      }
-    }
-
-    if ((iconPluginArr != null) && (iconPluginArr.length != 0)) {
+    if ((iconPluginArr == null) || (iconPluginArr.length == 0))
+      return new Icon[0];
+    else {
+      PluginProxyManager mng = PluginProxyManager.getInstance();
+      ArrayList iconList = new ArrayList();
       // Add the icons for each plugin
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
-        PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
+        if (iconPluginArr[pluginIdx].compareToIgnoreCase("info.id") == 0) {
+          int info = program.getInfo();
 
-        // Check whether this entry still uses the old class name
-        if (plugin == null) {
-          String asId = "java." + iconPluginArr[pluginIdx];
-          plugin = mng.getPluginForId(asId);
-
-          if (plugin != null) {
-            // It was the old class name, not an ID
-            // -> Change the class name to an ID and save it
-            iconPluginArr[pluginIdx] = asId;
-            Settings.propProgramTableIconPlugins.setStringArray(iconPluginArr);
+          if ((info != -1) && (info != 0)) {
+            for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) {
+              if (ProgramInfoHelper.bitSet(info,
+                  ProgramInfoHelper.mInfoBitArr[i])
+                  && (ProgramInfoHelper.mInfoIconArr[i] != null)) {
+                // Add the icon to the list
+                iconList.add(ProgramInfoHelper.mInfoIconArr[i]);
+              }
+            }
           }
-        }
+        } else {
+          PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
 
-        // Now add the icons
-        if ((plugin != null) && plugin.isActivated()) {
-          Icon[] iconArr = plugin.getProgramTableIcons(program);
-          if (iconArr != null) {
-            // Add the icons
-            for (int i = 0; i < iconArr.length; i++) {
-              iconList.add(iconArr[i]);
+          // Check whether this entry still uses the old class name
+          if (plugin == null) {
+            String asId = "java." + iconPluginArr[pluginIdx];
+            plugin = mng.getPluginForId(asId);
+
+            if (plugin != null) {
+              // It was the old class name, not an ID
+              // -> Change the class name to an ID and save it
+              iconPluginArr[pluginIdx] = asId;
+              Settings.propProgramTableIconPlugins
+                  .setStringArray(iconPluginArr);
+            }
+          }
+
+          // Now add the icons
+          if ((plugin != null) && plugin.isActivated()) {
+            Icon[] iconArr = plugin.getProgramTableIcons(program);
+            if (iconArr != null) {
+              // Add the icons
+              for (int i = 0; i < iconArr.length; i++) {
+                iconList.add(iconArr[i]);
+              }
             }
           }
         }
       }
+
+      // Convert the list to an array
+      Icon[] asArr = new Icon[iconList.size()];
+      iconList.toArray(asArr);
+      return asArr;
     }
-
-    if (iconList.size() == 0)
-      return new Icon[0];
-
-    // Convert the list to an array
-    Icon[] asArr = new Icon[iconList.size()];
-    iconList.toArray(asArr);
-    return asArr;
   }
 
   /**
