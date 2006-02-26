@@ -156,7 +156,12 @@ public class TextAreaIcon implements Icon {
     return mWidth;
   }
   
-  
+  /**
+   * @return The number of used lines.
+   */
+  public int getLineCount() {
+    return mTextLineArr.length;
+  }
   
   /**
    * Draw the icon at the specified location.  Icon implementations
