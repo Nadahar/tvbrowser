@@ -44,6 +44,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -90,6 +91,7 @@ public class SystemTray {
   private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure;
 
   private JPopupMenu mTrayMenu;
+  private Timer mClickTimer;
 
   private ArrayList mNextPrograms = new ArrayList();
   private ArrayList mNextAdditionalPrograms = new ArrayList();
@@ -170,15 +172,7 @@ public class SystemTray {
 
     mSystemTray.addLeftClickAction(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (Settings.propUseSingeClickInTray.getBoolean()) {
-          toggleShowHide();
-        }
-      }
-    });
-
-    mSystemTray.addLeftDoubleClickAction(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (!Settings.propUseSingeClickInTray.getBoolean()) {
+        if (mClickTimer == null || !mClickTimer.isRunning()) {
           toggleShowHide();
         }
       }
@@ -275,7 +269,8 @@ public class SystemTray {
       searchForToAddingPrograms();
 
     if (Settings.propShowProgramsInTrayEnabled.getBoolean()) {
-      mTrayMenu.addSeparator();
+      if (!Settings.propShowNowRunningProgramsInTrayInSubMenu.getBoolean())
+        mTrayMenu.addSeparator();
       addTimeInfoMenu();
     }
 
@@ -392,10 +387,11 @@ public class SystemTray {
 
       // Show important program?
       if (Settings.propShowImportantProgramsInTray.getBoolean())
-        if (Settings.propShowImportantProgramsInTrayInSubMenu.getBoolean())
+        if (Settings.propShowImportantProgramsInTrayInSubMenu.getBoolean()) {
+          mTrayMenu.addSeparator();
           mTrayMenu.add(addToImportantMenu(new JMenu(mLocalizer.msg(
               "menu.programsImportant", "Important programs"))));
-        else
+        } else
           addToImportantMenu(mTrayMenu);
 
       /*
@@ -403,7 +399,10 @@ public class SystemTray {
        * the menu.
        */
       if (add && (programs.size() > 0 || additional.size() > 0)) {
-        mTrayMenu.addSeparator();
+        if (!Settings.propShowNowRunningProgramsInTrayInSubMenu.getBoolean()
+            || !Settings.propShowImportantProgramsInTrayInSubMenu.getBoolean())
+          mTrayMenu.addSeparator();
+
         for (int i = 0; i < programs.size(); i++) {
           Object o = programs.get(i);
           if (o != null)
@@ -475,20 +474,21 @@ public class SystemTray {
       }
     }
 
-    if (!important.isEmpty())
+    if (!important.isEmpty()) {
       if (menu instanceof JPopupMenu)
         ((JPopupMenu) menu).addSeparator();
 
-    // fill the menu with the list entries.
-    for (int i = 0; i < Settings.propImportantProgramsInTraySize.getInt(); i++)
-      if (!important.isEmpty()) {
-        menu
-            .add(new ProgramMenuItem((Program) important.remove(0),
-                Settings.propImportantProgramsInTrayContainsStartTime
-                    .getBoolean()));
-      } else
-        break;
+      important = quicksort(0, important.size() - 1, important);
 
+      // fill the menu with the list entries.
+      for (int i = 0; i < Settings.propImportantProgramsInTraySize.getInt(); i++)
+        if (!important.isEmpty()) {
+          menu.add(new ProgramMenuItem((Program) important.remove(0),
+              Settings.propImportantProgramsInTrayContainsStartTime
+                  .getBoolean(), i));
+        } else
+          break;
+    }
     return menu;
   }
 
@@ -627,14 +627,23 @@ public class SystemTray {
     mTrayMenu.add(time);
 
     JMenu next = new JMenu(mLocalizer.msg("menu.programsSoon", "Soon"));
+    int j = 0;
 
     for (int i = 0; i < mNextPrograms.size(); i++) {
       Object o = mNextPrograms.get(i);
-      if (o != null)
-        next.add((ProgramMenuItem) o);
+      if (o != null) {
+        ProgramMenuItem pItem = (ProgramMenuItem) o;
+        pItem.setBackground(j);
+        next.add(pItem);
+        j++;
+      }
     }
-    for (int i = 0; i < mNextAdditionalPrograms.size(); i++)
-      next.add((ProgramMenuItem) mNextAdditionalPrograms.get(i));
+    for (int i = 0; i < mNextAdditionalPrograms.size(); i++) {
+      ProgramMenuItem pItem = (ProgramMenuItem) mNextAdditionalPrograms.get(i);
+      pItem.setBackground(j);
+      next.add(pItem);
+      j++;
+    }
 
     time.add(next);
 
@@ -642,12 +651,21 @@ public class SystemTray {
 
     for (int i = 0; i < times.length; i++) {
       String minutes = String.valueOf(times[i] % 60);
+      String hour = String.valueOf(times[i] / 60);
 
       if (minutes.length() == 1)
         minutes = "0" + minutes;
+      if (hour.length() == 1)
+        hour = "0" + hour;
 
       final int value = times[i];
-      final JMenu menu = new JMenu(value / 60 + ":" + minutes);
+
+      final JMenu menu = new JMenu(hour + ":" + minutes + " "
+          + mLocalizer.msg("menu.time", ""));
+
+      if (times[i] < IOUtilities.getMinutesAfterMidnight())
+        menu
+            .setText(menu.getText() + " " + mLocalizer.msg("menu.tomorrow", ""));
 
       menu.addMenuListener(new MenuListener() {
         public void menuSelected(MenuEvent e) {
@@ -686,8 +704,11 @@ public class SystemTray {
         Iterator it = null;
 
         try {
-          it = TvDataBase.getInstance().getDayProgram(Date.getCurrentDate(),
-              c[i]).getPrograms();
+          it = TvDataBase.getInstance()
+              .getDayProgram(
+                  Date.getCurrentDate().addDays(
+                      (time < IOUtilities.getMinutesAfterMidnight() ? 1 : 0)),
+                  c[i]).getPrograms();
         } catch (Exception ee) {}
 
         while (it != null && it.hasNext()) {
@@ -698,20 +719,29 @@ public class SystemTray {
 
           if (start <= time && time < end)
             if (isOnChannelList(c[i]))
-              programs.add(getIndexOfChannel(c[i]),
-                  new ProgramMenuItem(p, true));
+              programs.add(getIndexOfChannel(c[i]), new ProgramMenuItem(p,
+                  true, -1));
             else if (p.getMarkerArr().length > 0)
-              additional.add(new ProgramMenuItem(p, true));
+              additional.add(new ProgramMenuItem(p, true, -1));
         }
       }
 
+      int j = 0;
+
       for (int i = 0; i < programs.size(); i++) {
         Object o = programs.get(i);
-        if (o != null)
-          menu.add((ProgramMenuItem) o);
+        if (o != null) {
+          ProgramMenuItem pItem = (ProgramMenuItem) o;
+          pItem.setBackground(j);
+          menu.add(pItem);
+          j++;
+        }
       }
-      for (int i = 0; i < additional.size(); i++)
-        menu.add((ProgramMenuItem) additional.get(i));
+      for (int i = 0; i < additional.size(); i++) {
+        ProgramMenuItem pItem = (ProgramMenuItem) additional.get(i);
+        pItem.setBackground(j);
+        menu.add(pItem);
+      }
     }
   }
 
@@ -726,10 +756,10 @@ public class SystemTray {
     if (!p.isExpired() && !isOnAir(p)) {
       if (this.isOnChannelList(p.getChannel())) {
         mNextPrograms.set(getIndexOfChannel(p.getChannel()),
-            new ProgramMenuItem(p, true));
+            new ProgramMenuItem(p, true, -1));
         return false;
       } else if (p.getMarkerArr().length > 0) {
-        mNextAdditionalPrograms.add(new ProgramMenuItem(p, true));
+        mNextAdditionalPrograms.add(new ProgramMenuItem(p, true, -1));
         return false;
       }
     }
@@ -755,13 +785,13 @@ public class SystemTray {
       if (isOnChannelList(p.getChannel())) {
         defaultList.set(getIndexOfChannel(p.getChannel()), new ProgramMenuItem(
             p, Settings.propNowRunningProgramsInTrayContainsStartTime
-                .getBoolean()));
+                .getBoolean(), -1));
         return true;
       } else if (p.getMarkerArr().length > 0) {
         addList
             .add(new ProgramMenuItem(p,
                 Settings.propNowRunningProgramsInTrayContainsStartTime
-                    .getBoolean()));
+                    .getBoolean(), -1));
         return true;
       }
 
@@ -804,6 +834,13 @@ public class SystemTray {
    * Toggle Hide/Show of the MainFrame
    */
   private void toggleShowHide() {
+    mClickTimer = new Timer(200, new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mClickTimer.stop();
+      }
+    });
+    mClickTimer.start();
+
     if (!MainFrame.getInstance().isVisible()
         || (MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED)) {
       SwingUtilities.invokeLater(new Runnable() {
@@ -868,6 +905,68 @@ public class SystemTray {
    */
   public boolean isTrayUsed() {
     return mUseSystemTray;
+  }
+
+  /**
+   * 
+   * @param lo
+   *          The low index.
+   * @param hi
+   *          The high index.
+   * @param sort
+   *          The ArrayList to sort.
+   * @return The sorted ArrayList.
+   */
+  public ArrayList quicksort(int lo, int hi, ArrayList sort) {
+    int i = lo;
+    int j = hi;
+    Program p = (Program) sort.get((i + j) / 2);
+    int compareValue = p.getDate().compareTo(Date.getCurrentDate()) == 0 ? p
+        .getStartTime() : p.getStartTime() + 24 * 60;
+
+    while (i <= j) {
+      do {
+        Program p1 = (Program) sort.get(i);
+        int value1 = p1.getDate().compareTo(Date.getCurrentDate()) == 0 ? p1
+            .getStartTime() : p1.getStartTime() + 24 * 60;
+
+        if (compareValue > value1)
+          i++;
+        else
+          break;
+
+      } while (true);
+
+      do {
+        Program p2 = (Program) sort.get(j);
+        int value2 = p2.getDate().compareTo(Date.getCurrentDate()) == 0 ? p2
+            .getStartTime() : p2.getStartTime() + 24 * 60;
+
+        if (compareValue < value2)
+          j--;
+        else
+          break;
+
+      } while (true);
+
+      if (i <= j) {
+        replace(i, j, sort);
+        i++;
+        j--;
+      }
+
+      if (lo < j)
+        quicksort(lo, j, sort);
+      if (i < hi)
+        quicksort(i, hi, sort);
+    }
+    return sort;
+  }
+
+  private void replace(int i, int j, ArrayList sort) {
+    Object temp = sort.get(j);
+    sort.set(j, sort.get(i));
+    sort.set(i, temp);
   }
 
 }

@@ -26,26 +26,24 @@
 package tvbrowser.ui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.Timer;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.extras.programinfo.ProgramInfo;
-import util.io.IOUtilities;
 import util.ui.Localizer;
+import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
 
-import devplugin.Date;
 import devplugin.Program;
 
 /**
@@ -61,10 +59,18 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       .getLocalizerFor(ProgramMenuItem.class);
 
   private Program mProgram;
-  private Color mForeground;
-  private Insets mBorderInsets;
+  private Color mBackground, mFill = null;
+  private Insets mInsets;
   boolean mSelected;
   private Timer mTimer;
+  private Font mPlainFont, mBoldFont;
+  private int mIconHeight = 0;
+  private boolean mShowStartTime;
+  private Icon mIcon = null;
+  private TextAreaIcon mChannelName;
+  
+  protected final static int CHANNEL_WIDTH = 72;
+  protected final static int TIME_WIDTH = 42;
 
   /**
    * Creates the JMenuItem.
@@ -73,58 +79,38 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
    *          The program to show
    * @param showStartTime
    *          If the start time of the program should be shown.
+   * @param n 
    */
-  public ProgramMenuItem(Program p, boolean showStartTime) {
-    super();
+  public ProgramMenuItem(Program p, boolean showStartTime, int n) {
     mProgram = p;
+    mBackground = getBackground();
+    mShowStartTime = showStartTime;
+    mPlainFont = getFont();
+    mBoldFont = mPlainFont.deriveFont(Font.BOLD);
+    mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont,CHANNEL_WIDTH);
 
-    StringBuffer buffer = new StringBuffer(
-        "<html><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\"><tr>");
-
-    if (Settings.propProgramsInTrayContainsChannel.getBoolean())
-      buffer.append("<td width=\"90\"><b>").append(p.getChannel().getName())
-          .append("</b></td>");
-    if (showStartTime)
-      buffer.append("<td width=\"40\"><b>").append(p.getTimeString()).append(
-          "</b></td>");
-
-    buffer.append("<td>").append(p.getTitle()).append(
-        "</td></tr></table></html>");
-
-    setText(buffer.toString());
-
+    if(n % 2 == 1 && n != -1) {
+      Color temp = mBackground.darker();
+      mFill = new Color(temp.getRed(),temp.getGreen(),temp.getBlue(),145);
+      setBackground(mFill);
+    }
+   
     if (Settings.propProgramsInTrayContainsChannelIcon.getBoolean()) {
-      setIcon(UiUtilities.createChannelIcon(p.getChannel().getIcon()));
-      setVerticalTextPosition(ProgramMenuItem.TOP);
+      mIcon = UiUtilities.createChannelIcon(p.getChannel().getIcon());
+      mIconHeight = mIcon.getIconHeight();
+      setMargin(new Insets(1,getMargin().left,1,getMargin().right));
     }
 
     if (p.getMarkerArr().length > 0)
       setForeground(Color.red);
-
-    mForeground = getForeground();
+    
     mSelected = false;
 
     addActionListener(this);
-    this.addChangeListener(new ChangeListener() {
-
-      public void stateChanged(ChangeEvent e) {
-        if (!mSelected) {
-          setForeground(UIManager.getDefaults().getColor(
-              "MenuItem.selectionForeground") != null ? UIManager.getDefaults()
-              .getColor("MenuItem.selectionForeground") : UIManager
-              .getDefaults().getColor("Menu.selectionForeground"));
-          mSelected = true;
-        } else {
-          setForeground(mForeground);
-          mSelected = false;
-        }
-      }
-
-    });
-    mBorderInsets = (this.getBorder().getBorderInsets(this));
-    this.setBorder(BorderFactory.createEmptyBorder(1, mBorderInsets.left, 0,
-        mBorderInsets.right));
-
+      
+    mInsets = getMargin();
+    setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,showStartTime));
+    
     if (Settings.propProgramsInTrayShowTooltip.getBoolean()) {
       int end = p.getStartTime() + p.getLength();
 
@@ -158,7 +144,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
 
       setToolTipText("<html>" + toolTip + "</html>");
     }
-
+    
     mTimer = new Timer(10000, new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -172,73 +158,66 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
     ProgramInfo.getInstance().getContextMenuActions(mProgram).getAction()
         .actionPerformed(e);
   }
-
-  protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
-    if (isOnAir(mProgram)) {
-      if (!mTimer.isRunning())
-        mTimer.start();
-
-      Graphics2D g2d = (Graphics2D) g;
-
-      int x = Settings.propProgramsInTrayContainsChannelIcon.getBoolean() ? getIcon()
-          .getIconWidth()
-          + mBorderInsets.left
-          : mBorderInsets.left;
-      int width = getWidth() - x;
-      int height = getHeight();
-
-      Insets i = getInsets();
-
-      int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
-      int progLength = mProgram.getLength();
-      int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
-      int elapsedMinutes;
-      if (minutesAfterMidnight < startTime) {
-        // The next day has begun -> we have to add 24 * 60 minutes
-        // Example: Start time was 23:50 = 1430 minutes after midnight
-        // now it is 0:03 = 3 minutes after midnight
-        // elapsedMinutes = (24 * 60) + 3 - 1430 = 13 minutes
-        elapsedMinutes = (24 * 60) + minutesAfterMidnight - startTime;
-      } else {
-        elapsedMinutes = minutesAfterMidnight - startTime;
-      }
-
-      int progressX = 0;
-      if (progLength > 0) {
-        progressX = elapsedMinutes * (width - i.left - i.right) / progLength;
-      }
-
-      g2d.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-      g2d.fillRect(x + i.left + progressX - i.right - i.left, i.top + 1, width
-          - i.right - i.left, height - i.bottom - i.top - 3);
-      g2d.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-
-      g2d.fillRect(i.left + x, i.top + 1, progressX - i.right - i.left, height
-          - i.bottom - i.top - 3);
-    } else if (mProgram.isExpired()) {
-      if (mTimer.isRunning())
-        mTimer.stop();
-      mForeground = Color.gray;
-      setForeground(Color.gray);
+  
+  public Dimension getPreferredSize() {
+    FontMetrics fmBold = getFontMetrics(mBoldFont);
+    FontMetrics fmPlain = getFontMetrics(mPlainFont);
+    
+    int height = mIconHeight;
+    int width = fmPlain.stringWidth(mProgram.getTitle()) + mInsets.left + mInsets.right + 10;
+    
+    if(height != 0)
+      width += mIcon.getIconWidth() + getIconTextGap();
+    else
+      width += 30;
+    
+    if(Settings.propProgramsInTrayContainsChannel.getBoolean())
+      width += CHANNEL_WIDTH;
+    if(mShowStartTime)
+      width += TIME_WIDTH;
+    
+    if(height == 0) {
+      if(mShowStartTime)
+        height = fmBold.getHeight();
+      else
+        height = fmPlain.getHeight();
+      
+      height += mInsets.top + mInsets.bottom;
     }
-  }
+    else    
+      height += 2;
+
+    if(mChannelName.getIconHeight() > height && Settings.propProgramsInTrayContainsChannel.getBoolean())
+      height = mChannelName.getIconHeight() + mInsets.top + mInsets.bottom + 2;
+
+    return new Dimension(width,height);
+  }  
   
   /**
-   * Helper method to check if a program runs.
+   * Sets the backgound:
+   * n == -1 The default background
+   * n % 2 == 1 The default background a little brighter
    * 
-   * @param p The program to check.
-   * @return True if the program runs.
+   * @param n The Background color flag.
    */
-  private boolean isOnAir(Program p) {
-    int time = IOUtilities.getMinutesAfterMidnight();
-    
-    if(Date.getCurrentDate().addDays(-1).compareTo(p.getDate()) == 0)
-      time += 24 * 60;
-    
-    if(p.getStartTime() <= time 
-        && (p.getStartTime() + p.getLength()) > time)
-      return true;
-    return false;
+  public void setBackground(int n) {
+    if(n == -1)
+      setBackground(mBackground);
+    else if(n % 2 == 1) {
+        Color temp = mBackground.darker();
+        mFill = new Color(temp.getRed(),temp.getGreen(),temp.getBlue(),145);
+        setBackground(mFill);
+      }
+  }
+  
+  protected void startTimer() {
+    if(!mTimer.isRunning())
+      mTimer.start();
+  }
+  
+  protected void stopTimer() {
+    if(mTimer.isRunning())
+      mTimer.stop();
+    setForeground(Color.gray);
   }
 }
