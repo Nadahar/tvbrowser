@@ -26,9 +26,11 @@
 package tvbrowser.ui.settings;
 
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
@@ -53,24 +55,26 @@ public class TraySettingsTab implements SettingsTab {
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(TraySettingsTab.class);
   /** Checkboxes */
-  private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb, mSingeClickTrayChb,
+  private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb,
   mShowNowRunningChb, mShowImportantChb, mShowNowRunningSubChb, mShowImportantSubChb,
   mShowNowRunningTimeChb, mShowImportantTimeChb, mShowChannelNameChb, mShowChannelIconChb,
-  mShowChannelTooltipChb, mShowProgramsChb;
+  mShowChannelTooltipChb, mShowSoonChb;
 
+  private JButton mAdditional;
+  
   private JSpinner mImportantSize,mImportantHours;
   private JLabel mSizeLabel1,mSizeLabel2,mTimeLabel1,mTimeLabel2;
   private OrderChooser mChannelOCh;
+  
   /**
    * Create the Settings-Dialog
    */
   public JPanel createSettingsPanel() {
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "5dlu, 10dlu, pref, 5dlu, pref, 5dlu, pref:grow, 15dlu",
+        "5dlu, 10dlu, pref:grow, 25dlu, pref, 5dlu",
         
-        "pref, 5dlu, pref, pref, pref, 10dlu, pref, 5dlu, pref, 5dlu, " +
-        "pref, pref, pref, 10dlu, pref, pref, pref, 2dlu, pref, pref, " +
-        "10dlu, pref, pref, pref, 5dlu, pref, 2dlu, top:pref"
+        "pref, 5dlu, pref, pref, 10dlu, pref, 5dlu, pref, pref, pref, " +
+        "pref, pref, pref, 10dlu, pref, pref, 5dlu, pref, 10dlu, pref"
         ));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
@@ -82,12 +86,7 @@ public class TraySettingsTab implements SettingsTab {
     msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing", "When closing the main window only minimize TV-Browser, don't quit.");
     checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean();
     mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked);
-
-    checked = Settings.propUseSingeClickInTray.getBoolean();
-    mSingeClickTrayChb = new JCheckBox(mLocalizer.msg("useSingleClick","Use single Click in Tray to hide and show window"), checked);
     
-    checked = Settings.propShowProgramsInTrayEnabled.getBoolean();
-    mShowProgramsChb = new JCheckBox(mLocalizer.msg("programShowing.enabled","Program showing enabled"), checked);
     
     checked = Settings.propProgramsInTrayContainsChannel.getBoolean();
     mShowChannelNameChb = new JCheckBox(mLocalizer.msg("programShowing.showChannelName","Show channel name"), checked);
@@ -95,27 +94,53 @@ public class TraySettingsTab implements SettingsTab {
     checked = Settings.propProgramsInTrayContainsChannelIcon.getBoolean();
     mShowChannelIconChb = new JCheckBox(mLocalizer.msg("programShowing.showChannelIcons","Show channel icon"), checked);
     
-    checked = Settings.propProgramsInTrayShowTooltip.getBoolean();
-    mShowChannelTooltipChb = new JCheckBox(mLocalizer.msg("programShowing.showToolTip","Show additional information of the program in a tool tip"), checked);
-    mShowChannelTooltipChb.setToolTipText(mLocalizer.msg("programShowing.toolTipTip","Tool tips are small helper to something, like this one."));
+
     
     checked = Settings.propShowImportantProgramsInTray.getBoolean();
     mShowImportantChb = new JCheckBox(mLocalizer.msg("programShowing.showImportant","Show important programs"), checked);
     mShowImportantChb.setToolTipText(mLocalizer.msg("programShowing.toolTipImportant","<html>Important programs are all marked<br>programs in the time range.<html>"));
+
     
-    mSizeLabel1 = new JLabel(mLocalizer.msg("programShowing.importantMaxNumber","Show a maximum of"));
+    checked = Settings.propShowSoonProgramsInTray.getBoolean();
+    mShowSoonChb = new JCheckBox(mLocalizer.msg("programShowing.showSoon","Program showing enabled"), checked);
+
+
+    
+
+    
+    
+    
+    
     mSizeLabel2 = new JLabel(mLocalizer.msg("programShowing.importantMaxPrograms","important programs"));
     mImportantSize = new JSpinner(new SpinnerNumberModel(Settings.propImportantProgramsInTraySize.getInt(),1,10,1));
+    
+    PanelBuilder b2 = new PanelBuilder(new FormLayout("pref,3dlu,pref","pref"));
+    
+    b2.add(mImportantSize, cc.xy(1,1));
+    b2.add(mSizeLabel2, cc.xy(3,1));
+    mShowSoonChb.add(b2.getPanel());
+    
+    checked = Settings.propProgramsInTrayShowTooltip.getBoolean();
+    mShowChannelTooltipChb = new JCheckBox(mLocalizer.msg("programShowing.showToolTip","Show additional information of the program in a tool tip"), checked);
+    mShowChannelTooltipChb.setToolTipText(mLocalizer.msg("programShowing.toolTipTip","Tool tips are small helper to something, like this one."));
+    
+    
     
     mTimeLabel1 = new JLabel(mLocalizer.msg("programShowing.importantTimeRange","Search through the next"));
     mTimeLabel2 = new JLabel(mLocalizer.msg("programShowing.importantHours","hours for important programs"));
     mImportantHours = new JSpinner(new SpinnerNumberModel(Settings.propImportantProgramsInTrayHours.getInt(),1,6,1));
     
+    
+    
+    
     checked = Settings.propShowImportantProgramsInTrayInSubMenu.getBoolean();
-    mShowImportantSubChb = new JCheckBox(mLocalizer.msg("programShowing.importantSubMenu","Group the important programs in a submenu"), checked);
+    mShowImportantSubChb = new JCheckBox("<html>"+mLocalizer.msg("programShowing.importantSubMenu","Group the important programs in a submenu"+"<html>"), checked);
     
     checked = Settings.propImportantProgramsInTrayContainsStartTime.getBoolean();
     mShowImportantTimeChb = new JCheckBox(mLocalizer.msg("programShowing.showStartTime","Show start time"), checked);
+    mShowImportantSubChb.setVerticalTextPosition(JCheckBox.TOP);
+    mShowImportantSubChb.setVerticalAlignment(JCheckBox.TOP);
+    mShowImportantSubChb.setHorizontalTextPosition(JCheckBox.RIGHT);
     
     checked= Settings.propShowNowRunningProgramsInTray.getBoolean();
     mShowNowRunningChb = new JCheckBox(mLocalizer.msg("programShowing.showRunning","Show now running programs"), checked);
@@ -128,19 +153,38 @@ public class TraySettingsTab implements SettingsTab {
     
     mChannelOCh = new OrderChooser(Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false),Settings.propSubscribedChannels.getChannelArray(false), true);
     
-    builder.addSeparator(mLocalizer.msg("basics","Basic settings"),cc.xyw(1,1,8));
-    builder.add(mMinimizeToTrayChb, cc.xyw(2,3,6));
-    builder.add(mOnlyMinimizeWhenWindowClosingChB, cc.xyw(2,4,6));
-    builder.addSeparator(mLocalizer.msg("programShowing","Program showing"), cc.xyw(1,7,8));
-    builder.add(mSingeClickTrayChb, cc.xyw(2,5,6));
-    builder.add(mShowProgramsChb, cc.xyw(2,9,6));
-    builder.add(mShowChannelNameChb, cc.xyw(2,11,6));
-    builder.add(mShowChannelIconChb, cc.xyw(2,12,6));
-    builder.add(mShowChannelTooltipChb, cc.xyw(2,13,6));
-   
-    builder.add(mShowImportantChb, cc.xyw(2,15,6));
+    builder.addSeparator(mLocalizer.msg("basics","Basic settings"),cc.xyw(1,1,6));
+    builder.add(mMinimizeToTrayChb, cc.xyw(2,3,4));
+    builder.add(mOnlyMinimizeWhenWindowClosingChB, cc.xyw(2,4,4));
+    builder.addSeparator(mLocalizer.msg("programShowing","Program showing"), cc.xyw(1,6,6));
+    
+    builder.add(mShowChannelNameChb, cc.xyw(2,8,4));
+    builder.add(mShowChannelIconChb, cc.xyw(2,9,4));
+    
+    builder.add(mShowNowRunningChb, cc.xyw(2,10,4));
+    builder.add(mShowSoonChb, cc.xyw(2,11,5));
+    builder.add(mShowImportantChb, cc.xyw(2,12,2));
+    builder.add(b2.getPanel(), cc.xy(5,12));
+       
+    final JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("programShowing.runningChannels",
+    "Which channels should be used for showing now running programs?"), cc.xyw(2,15,4));
+    builder.add(mChannelOCh, cc.xyw(2,16,4));
 
-    builder.add(mSizeLabel1, cc.xy(3,16));
+    
+    mSizeLabel1 =(JLabel)c.getComponent(0);
+    
+    mAdditional = new JButton("Erweiterte Einstellungen");
+    
+    builder.add(new JSeparator(), cc.xyw(1,18,6));
+    builder.add(mAdditional, cc.xy(5,20));
+    
+    
+    
+    //builder.add(mShowChannelTooltipChb, cc.xyw(2,13,6));
+   
+    
+
+  /*  builder.add(mSizeLabel1, cc.xy(3,16));
     builder.add(mImportantSize, cc.xy(5,16));
     builder.add(mSizeLabel2, cc.xy(7,16));
     
@@ -148,67 +192,74 @@ public class TraySettingsTab implements SettingsTab {
     builder.add(mImportantHours, cc.xy(5,17));
     builder.add(mTimeLabel2, cc.xy(7,17));
     
-    builder.add(mShowImportantSubChb, cc.xyw(3,19,5));
+    builder.add(mShowImportantSubChb, cc.xyw(3,19,4));
     builder.add(mShowImportantTimeChb, cc.xyw(3,20,5));
     
-    builder.add(mShowNowRunningChb, cc.xyw(2,22,6));
+    
     builder.add(mShowNowRunningSubChb, cc.xyw(3,23,5));
     builder.add(mShowNowRunningTimeChb, cc.xyw(3,24,5));
+    builder.add(new JSeparator(JSeparator.VERTICAL), cc.xywh(8,9,1,14));*/
     
-    final JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("programShowing.runningChannels",
-        "Which channels should be used for showing now running programs?"), cc.xyw(2,26,6));
-    builder.add(mChannelOCh, cc.xyw(2,28,6));
     
     mShowImportantChb.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-        selectImportantState();
+        selectEnabled();
+        mImportantSize.setEnabled(mShowImportantChb.isSelected());
+        mSizeLabel2.setEnabled(mShowImportantChb.isSelected());
       }
     });
     
     mShowNowRunningChb.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-        selectNowRunningState();
+        selectEnabled();
       }
     });
     
-    mShowProgramsChb.addChangeListener(new ChangeListener() {
+    mShowSoonChb.addChangeListener(new ChangeListener() {      
       public void stateChanged(ChangeEvent e) {
-        for(int i = 0; i < c.getComponentCount(); i++)
-          c.getComponent(i).setEnabled(mShowProgramsChb.isSelected());
-        
-        mShowChannelNameChb.setEnabled(mShowProgramsChb.isSelected());
-        mShowChannelIconChb.setEnabled(mShowProgramsChb.isSelected());
-        mShowChannelTooltipChb.setEnabled(mShowProgramsChb.isSelected());
-        mShowImportantChb.setEnabled(mShowProgramsChb.isSelected());
-        selectImportantState();
-        mShowNowRunningChb.setEnabled(mShowProgramsChb.isSelected());
-        selectNowRunningState();
-        mChannelOCh.setEnabled(mShowProgramsChb.isSelected());
+        selectEnabled();
       }
     });
     
-    mShowProgramsChb.getChangeListeners()[0].stateChanged(new ChangeEvent(mShowProgramsChb));
+    mShowSoonChb.getChangeListeners()[0].stateChanged(new ChangeEvent(mShowSoonChb));
     mShowImportantChb.getChangeListeners()[0].stateChanged(new ChangeEvent(mShowImportantChb));
     mShowNowRunningChb.getChangeListeners()[0].stateChanged(new ChangeEvent(mShowNowRunningChb));
     
     return builder.getPanel();
   }
   
+  private void selectEnabled() {    
+      boolean enabled = mShowSoonChb.isSelected() ||
+      mShowNowRunningChb.isSelected() ||
+      mShowImportantChb.isSelected();
+      
+      mSizeLabel1.setEnabled(enabled);
+      mShowChannelNameChb.setEnabled(enabled);
+      mShowChannelIconChb.setEnabled(enabled);
+      //mShowChannelTooltipChb.setEnabled(mShowSoonChb.isSelected());
+      //mShowImportantChb.setEnabled(mShowSoonChb.isSelected());
+      //selectImportantState();
+      //mShowNowRunningChb.setEnabled(mShowSoonChb.isSelected());
+      //selectNowRunningState();
+      mChannelOCh.setEnabled(enabled);
+      mAdditional.setEnabled(enabled);
+  }
+  
   private void selectImportantState() {
-    mImportantSize.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
-    mImportantHours.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
-    mShowImportantSubChb.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
-    mShowImportantTimeChb.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
-    mSizeLabel1.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
-    mSizeLabel2.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
-    mTimeLabel1.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
-    mTimeLabel2.setEnabled(mShowProgramsChb.isSelected() && mShowImportantChb.isSelected());
+  /*  mImportantSize.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());
+    mImportantHours.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());
+    mShowImportantSubChb.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());
+    mShowImportantTimeChb.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());
+    mSizeLabel1.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());
+    mSizeLabel2.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());
+    mTimeLabel1.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());
+    mTimeLabel2.setEnabled(mShowSoonChb.isSelected() && mShowImportantChb.isSelected());*/
 
   }
   
   private void selectNowRunningState() {
-    mShowNowRunningSubChb.setEnabled(mShowProgramsChb.isSelected() && mShowNowRunningChb.isSelected());
-    mShowNowRunningTimeChb.setEnabled(mShowProgramsChb.isSelected() && mShowNowRunningChb.isSelected());
+   /* mShowNowRunningSubChb.setEnabled(mShowSoonChb.isSelected() && mShowNowRunningChb.isSelected());
+    mShowNowRunningTimeChb.setEnabled(mShowSoonChb.isSelected() && mShowNowRunningChb.isSelected());*/
   }
 
   /**
@@ -225,10 +276,6 @@ public class TraySettingsTab implements SettingsTab {
       Settings.propMinimizeToTray.setBoolean(checked);
     }
 
-    if (mSingeClickTrayChb != null) {
-      boolean checked = mSingeClickTrayChb.isSelected();
-      Settings.propUseSingeClickInTray.setBoolean(checked);
-    }
     
     if(mShowNowRunningChb != null)
       Settings.propShowNowRunningProgramsInTray.setBoolean(mShowNowRunningChb.isSelected());
@@ -248,8 +295,8 @@ public class TraySettingsTab implements SettingsTab {
       Settings.propProgramsInTrayContainsChannelIcon.setBoolean(mShowChannelIconChb.isSelected());
     if(mShowChannelTooltipChb != null)
       Settings.propProgramsInTrayShowTooltip.setBoolean(mShowChannelTooltipChb.isSelected());
-    if(mShowProgramsChb != null)
-      Settings.propShowProgramsInTrayEnabled.setBoolean(mShowProgramsChb.isSelected());
+    if(mShowSoonChb != null)
+      Settings.propShowSoonProgramsInTray.setBoolean(mShowSoonChb.isSelected());
     
     
     Object[] order = mChannelOCh.getOrder();
