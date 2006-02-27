@@ -117,13 +117,15 @@ public class ContextMenuManager {
     PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(id);
     if(plugin != null)
       return (ContextMenuIf)plugin;
-    else {
+    else if (id != null){
       if(id.compareTo(ProgramInfo.getInstance().getId()) == 0)
         return ProgramInfo.getInstance();
       else if(id.compareTo(FavoritesPlugin.getInstance().getId()) == 0)
         return FavoritesPlugin.getInstance();
       else if(id.compareTo(ReminderPlugin.getInstance().getId()) == 0)
         return ReminderPlugin.getInstance();      
+    } else {
+      return ProgramInfo.getInstance();
     }
     return null;
   }
