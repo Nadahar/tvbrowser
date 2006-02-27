@@ -147,10 +147,8 @@ public class SettingsDialog implements WindowClosingIf {
       mSelectionTree.collapseRow(i);
     }
 
-    mSettingsPn = new JPanel(new BorderLayout());    
-    JScrollPane rightScroll = new JScrollPane(mSettingsPn);
-    
-    splitPane.setRightComponent(rightScroll);
+    mSettingsPn = new JPanel(new BorderLayout());
+    splitPane.setRightComponent(mSettingsPn);
 
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
