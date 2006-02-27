@@ -34,15 +34,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
+import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.UiUtilities;
+import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ActionMenu;
@@ -57,8 +60,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
       JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
           index, isSelected, cellHasFocus);
 
-      if (value instanceof PluginProxy) {
-        PluginProxy plugin = (PluginProxy) value;
+      if (value instanceof ContextMenuIf) {
+        ContextMenuIf menuIf = (ContextMenuIf) value;
         Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
 
         JPopupMenu menu=new JPopupMenu();
@@ -67,16 +70,21 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         String text = null;
         Icon icon = null;
         //Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
-        ActionMenu actionMenu = plugin.getContextMenuActions(exampleProgram);
+        ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
         if (actionMenu != null) {
           Action action = actionMenu.getAction();
           if (action != null) {
             text = (String) action.getValue(Action.NAME);
             icon = (Icon) action.getValue(Action.SMALL_ICON);
           }
+          else if(menuIf instanceof PluginProxy) {
+            
+            text = ((PluginProxy)menuIf).getInfo().getName();
+            icon = ((PluginProxy)menuIf).getMarkIcon();
+          }
           else {
-            text = plugin.getInfo().getName();
-            icon = plugin.getMarkIcon();
+            text = "unknown";
+            icon = null;
           }
         }
 
@@ -84,14 +92,14 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         /* If the Plugin is the Plugin for double and middle
          * click make the text bold and italic.
          */
-        if (plugin.equals(mDefaultPlugin) && plugin.equals(mMiddleClickPlugin)) {
+        if (menuIf.equals(mDefaultIf) && menuIf.equals(mMiddleClickIf)) {
           f=new Font("Dialog",Font.BOLD + Font.ITALIC,12);
         }
-        else if (plugin.equals(mDefaultPlugin)) {
+        else if (menuIf.equals(mDefaultIf)) {
           f=new Font("Dialog",Font.BOLD,12);
           text += " - "+mLocalizer.msg("doubleClick","double-click");
         }
-        else if (plugin.equals(mMiddleClickPlugin)) {
+        else if (menuIf.equals(mMiddleClickIf)) {
           f=new Font("Dialog",Font.ITALIC,12);
           text += " - "+mLocalizer.msg("middleClick",",middle-click");
         }
@@ -125,7 +133,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
   }
 
   private JButton mDefaultPluginBt, mMiddleClickPluginBt;
-  private PluginProxy mDefaultPlugin, mMiddleClickPlugin;
+  private ContextMenuIf mDefaultIf, mMiddleClickIf;
   private SortableItemList mList;
 
   public static final util.ui.Localizer mLocalizer
@@ -142,7 +150,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
           int inx = mList.getList().locationToIndex(e.getPoint());
           if (inx>=0) {
             mList.getList().ensureIndexIsVisible(inx);
-            mDefaultPlugin = (PluginProxy) mList.getList().getSelectedValue();
+            mDefaultIf = (ContextMenuIf) mList.getList().getSelectedValue();
             mList.updateUI();
           }
         }
@@ -151,7 +159,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
           if (inx>=0) {
             mList.getList().ensureIndexIsVisible(inx);
             mList.getList().setSelectedIndex(inx);
-            mMiddleClickPlugin = (PluginProxy) mList.getList().getSelectedValue();
+            mMiddleClickIf = (ContextMenuIf) mList.getList().getSelectedValue();
             mList.updateUI();
           }
         }
@@ -175,8 +183,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
 
 
   public JPanel createSettingsPanel() {
-    mDefaultPlugin = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
-    mMiddleClickPlugin = PluginProxyManager.getInstance().getMiddleClickPlugin();
+    mDefaultIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
+    mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
 
     JPanel contentPanel=new JPanel(new BorderLayout(0,15));
     contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
@@ -214,12 +222,12 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     }
     mList.removeAllElements();
 
-    PluginProxy[] pluginList = PluginProxyManager.getInstance().getActivatedPlugins();
+    ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs();
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
-    for (int i = 0; i < pluginList.length; i++) {
-      ActionMenu actionMenu = pluginList[i].getContextMenuActions(exampleProgram);
+    for (int i = 0; i < menuIfList.length; i++) {
+      ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
       if (actionMenu != null) {
-        mList.addElement(pluginList[i]);
+        mList.addElement(menuIfList[i]);
       }
     }
   }
@@ -228,11 +236,11 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
   public void actionPerformed(ActionEvent event) {
     Object o=event.getSource();
     if (o==mDefaultPluginBt) {
-      mDefaultPlugin = (PluginProxy) mList.getList().getSelectedValue();
+      mDefaultIf = (ContextMenuIf) mList.getList().getSelectedValue();
       mList.updateUI();
     }
     if(o==mMiddleClickPluginBt) {
-      mMiddleClickPlugin = (PluginProxy) mList.getList().getSelectedValue();
+      mMiddleClickIf = (ContextMenuIf) mList.getList().getSelectedValue();
       mList.updateUI();
     }
   }
@@ -241,35 +249,42 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
   public void saveSettings() {
     Object o[] = mList.getItems();
 
-    String pluginIDs[] = new String[o.length];
+    ArrayList pluginIDsList = new ArrayList();
+    String[] orderIDs = new String[o.length];
     for (int i = 0; i < o.length; i++) {
-      PluginProxy plugin = (PluginProxy) o[i];
-      pluginIDs[i] = plugin.getId();
+      ContextMenuIf menuIf = (ContextMenuIf) o[i];
+      orderIDs[i] = menuIf.getId();
+      if(menuIf instanceof PluginProxy)
+        pluginIDsList.add(menuIf.getId());
     }
-
+    
+    String[] pluginIDs = new String[pluginIDsList.size()];
+    pluginIDsList.toArray(pluginIDs);
+           
+    Settings.propContextMenuOrder.setStringArray(orderIDs);
     Settings.propPluginOrder.setStringArray(pluginIDs);
 
     PluginProxyManager.getInstance().setPluginOrder(pluginIDs);
 
-    if (!mList.contains(mDefaultPlugin)) {
-      mDefaultPlugin = null;
+    if (!mList.contains(mDefaultIf)) {
+      mDefaultIf = null;
     }
-    if (!mList.contains(mMiddleClickPlugin)) {
-      mMiddleClickPlugin = null;
-    }
-
-    PluginProxyManager.getInstance().setDefaultContextMenuPlugin(mDefaultPlugin);
-    if (mDefaultPlugin != null) {
-      Settings.propDefaultContextMenuPlugin.setString(mDefaultPlugin.getId());
-    } else {
-      Settings.propDefaultContextMenuPlugin.setString(null);
+    if (!mList.contains(mMiddleClickIf)) {
+      mMiddleClickIf = null;
     }
 
-    PluginProxyManager.getInstance().setMiddleClickPlugin(mMiddleClickPlugin);
-    if (mMiddleClickPlugin != null) {
-      Settings.propMiddleClickPlugin.setString(mMiddleClickPlugin.getId());
+    ContextMenuManager.getInstance().setDefaultContextMenuIf(mDefaultIf);
+    if (mDefaultIf != null) {
+      Settings.propDefaultContextMenuIf.setString(mDefaultIf.getId());
     } else {
-      Settings.propMiddleClickPlugin.setString(null);
+      Settings.propDefaultContextMenuIf.setString(null);
+    }
+
+    ContextMenuManager.getInstance().setMiddleClickIf(mMiddleClickIf);
+    if (mMiddleClickIf != null) {
+      Settings.propMiddleClickIf.setString(mMiddleClickIf.getId());
+    } else {
+      Settings.propMiddleClickIf.setString(null);
     }
   }
 

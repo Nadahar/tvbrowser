@@ -50,7 +50,7 @@ import tvbrowser.ui.mainframe.MainFrame;
  * 
  * @author Martin Oberhauser
  */
-public class ProgramInfo {
+public class ProgramInfo implements ContextMenuIf {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfo.class);
@@ -73,6 +73,7 @@ public class ProgramInfo {
   private static ProgramInfo mInstance;
 
   private ProgramInfo() {
+    mInstance = this;
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     loadSettings();
     LookAndFeelAddons.setTrackingLookAndFeelChanges(true);
@@ -93,10 +94,9 @@ public class ProgramInfo {
     return new ActionMenu(action);
   }
 
-  public static ProgramInfo getInstance() {
-    if (mInstance == null) {
-      mInstance = new ProgramInfo();
-    }
+  public static synchronized ProgramInfo getInstance() {
+    if (mInstance == null)
+      new ProgramInfo();
     return mInstance;
   }
 
@@ -256,7 +256,7 @@ public class ProgramInfo {
    * @return The description text for the program table icons.
    * @see #getProgramTableIcons(Program)
    */
-  public String getProgramTableIconText() {
+/*  public String getProgramTableIconText() {
     return mLocalizer.msg("programTableIconText", "Movie format");
   }
 
@@ -271,7 +271,7 @@ public class ProgramInfo {
    *          The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
    */
-  public Icon[] getProgramTableIcons(Program program) {
+ /* public Icon[] getProgramTableIcons(Program program) {
     int info = program.getInfo();
     if ((info == -1) || (info == 0)) {
       return null;
@@ -291,7 +291,7 @@ public class ProgramInfo {
         iconList.add(ProgramInfoHelper.mInfoIconArr[i]);
       }
     }
-
+    
     // Convert the list into an array and return it
     if (iconList == null) {
       return null;
@@ -307,9 +307,9 @@ public class ProgramInfo {
    * Returns whether a bit (or combination of bits) is set in the specified
    * number.
    */
-  static boolean bitSet(int num, int pattern) {
+ /* static boolean bitSet(int num, int pattern) {
     return (num & pattern) == pattern;
-  }
+  }*/
   
   protected void setSettings(JDialog dialog, Dimension d) {
     mSize = dialog.getSize();
@@ -349,5 +349,9 @@ public class ProgramInfo {
     try{      
       LookAndFeelAddons.setAddon(lnf[n]);
     }catch(Exception e){}
+  }
+
+  public String getId() {
+    return DATAFILE_PREFIX;
   }
 }

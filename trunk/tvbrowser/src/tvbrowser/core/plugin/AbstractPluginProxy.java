@@ -35,6 +35,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
+import devplugin.ContextMenuIf;
 import devplugin.PluginInfo;
 import devplugin.Program;
 
@@ -51,7 +52,7 @@ import devplugin.Program;
  * 
  * @author Til Schneider, www.murfman.de
  */
-public abstract class AbstractPluginProxy implements PluginProxy {
+public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf {
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(AbstractPluginProxy.class);

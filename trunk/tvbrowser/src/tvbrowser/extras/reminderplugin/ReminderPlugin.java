@@ -52,7 +52,7 @@ import tvbrowser.extras.common.DataSerializer;
  *
  * @author Martin Oberhauser
  */
-public class ReminderPlugin {
+public class ReminderPlugin implements ContextMenuIf {
 
   public static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ReminderPlugin. class );
@@ -61,12 +61,14 @@ public class ReminderPlugin {
   private Properties mSettings;
 
   private static ReminderPlugin mInstance;
-
+  private static String DATAFILE_PREFIX = "reminderplugin.ReminderPlugin";
+  
   private ConfigurationHandler mConfigurationHandler;
 
 
   private ReminderPlugin() {
-    mConfigurationHandler = new ConfigurationHandler("reminderplugin.ReminderPlugin");
+    mInstance = this;
+    mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     loadSettings();
     mReminderList = new ReminderList();
     mReminderList.setReminderTimerListener(new ReminderTimerListener(null, mSettings, mReminderList));
@@ -94,10 +96,9 @@ public class ReminderPlugin {
 
   }
 
-  public static ReminderPlugin getInstance() {
-    if (mInstance == null) {
-      mInstance = new ReminderPlugin();
-    }
+  public static synchronized ReminderPlugin getInstance() {
+    if (mInstance == null)
+      new ReminderPlugin();
     return mInstance;
   }
 
@@ -286,6 +287,14 @@ public class ReminderPlugin {
           "Error loading reminder sound file!\n({0})" , fileName, exc);
       ErrorHandler.handle(msg, exc);
     }
+  }
+
+  public ActionMenu getContextMenuActions(Program program) {
+    return getContextMenuActions(null, program);
+  }
+
+  public String getId() {
+    return DATAFILE_PREFIX;
   }
 
 } 

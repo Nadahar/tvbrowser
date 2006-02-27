@@ -35,20 +35,17 @@ import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataBaseListener;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.ui.menu.MenuUtil;
-import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.ContextMenuIf;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -118,19 +115,6 @@ public class PluginProxyManager {
 
   /** The registered {@link PluginStateListener}s. */
   private ArrayList mPluginStateListenerList;
-
-  /**
-   * The plugin that should be executed by default when double-clicking a
-   * program in the program table. It is shown with a bold font in the context
-   * menu.
-   */
-  private PluginProxy mDefaultContextMenuPlugin;
-
-  /**
-   * The plugin that should be executed by default when middle-clicking a
-   * program in the program table.
-   */
-  private PluginProxy mDefaultMiddleClickPlugin;
 
   /** The currently activated plugins. This is only a cache, it might be null. */
   private PluginProxy[] mActivatedPluginCache;
@@ -230,12 +214,12 @@ public class PluginProxyManager {
         Settings.propPluginOrder.setStringArray(pluginOrderArr);
 
         // Convert the default context menu plugin from class name to ID
-        String defaultPluginClassName = Settings.propDefaultContextMenuPlugin.getString();
-        Settings.propDefaultContextMenuPlugin.setString("java." + defaultPluginClassName);
-
+        String defaultPluginClassName = Settings.propDefaultContextMenuIf.getString();
+        Settings.propDefaultContextMenuIf.setString("java." + defaultPluginClassName);
+        
         // Convert the middle click context menu plugin from class name to ID
-        String middleClickPluginClassName = Settings.propMiddleClickPlugin.getString();
-        Settings.propMiddleClickPlugin.setString("java." + middleClickPluginClassName);
+        String middleClickPluginClassName = Settings.propMiddleClickIf.getString();
+        Settings.propMiddleClickIf.setString("java." + middleClickPluginClassName);
       }
     }
 
@@ -245,27 +229,7 @@ public class PluginProxyManager {
     // Activate all plugins except the ones that are explicitely deactivated
     activateAllPluginsExcept(deactivatedPluginArr);
 
-    // Get the default context menu plugin
-    String id = Settings.propDefaultContextMenuPlugin.getString();
-    PluginProxy plugin = getPluginForId(id);
-    if (plugin == null) {
-      plugin = getPluginForId(Settings.propDefaultContextMenuPlugin.getDefault());
-      if (plugin != null) {
-        Settings.propDefaultContextMenuPlugin.setString(plugin.getId());
-      }
-    }
-    setDefaultContextMenuPlugin(plugin);
-
-    // Get the middle click context menu plugin
-    id = Settings.propMiddleClickPlugin.getString();
-    plugin = getPluginForId(id);
-    if (plugin == null) {
-      plugin = getPluginForId(Settings.propMiddleClickPlugin.getDefault());
-      if (plugin != null) {
-        Settings.propMiddleClickPlugin.setString(plugin.getId());
-      }
-    }
-    setMiddleClickPlugin(plugin);
+    ContextMenuManager.getInstance();
   }
 
 
@@ -570,6 +534,7 @@ public class PluginProxyManager {
 
   /**
    * Deactivates and shuts down all plugins.
+   * @param log If the logging is activated.
    */
   public void shutdownAllPlugins(boolean log) {
     synchronized(mPluginList) {
@@ -826,165 +791,8 @@ public class PluginProxyManager {
     mLog.warning("Unkown plugin: " + plugin.getId());
     return null;
   }
-
-
-  /**
-   * Sets the default context menu plugin.
-   *
-   * @param plugin The plugin to set as default context menu plugin.
-   */
-  public void setDefaultContextMenuPlugin(PluginProxy plugin) {
-    mDefaultContextMenuPlugin = plugin;
-  }
-
-
-  /**
-   * Gets the default context menu plugin.
-   * <p>
-   * This is the plugin that should be executed by default when double-clicking
-   * a program in the program table. It is shown with a bold font in the context
-   * menu.
-   *
-   * @return The default context menu plugin or <code>null</code> if there is no
-   *         default context menu plugin defined.
-   */
-  public PluginProxy getDefaultContextMenuPlugin() {
-    return mDefaultContextMenuPlugin;
-  }
-
-
-  /**
-   * Sets the middle click context menu plugin.
-   *
-   * @param plugin The plugin to set as middle click context menu plugin.
-   */
-  public void setMiddleClickPlugin(PluginProxy plugin) {
-    mDefaultMiddleClickPlugin = plugin;
-  }
-
-
-  /**
-   * Gets the middle click context menu plugin.
-   * <p>
-   * This is the plugin that should be executed by default when middle-clicking
-   * a program in the program table. It is shown with an italic font in the context
-   * menu.
-   *
-   * @return The middle click context menu plugin or <code>null</code> if there is no
-   *         middle click context menu plugin defined.
-   */
-  public PluginProxy getMiddleClickPlugin() {
-    return mDefaultMiddleClickPlugin;
-  }
-
-   /*
-  private static JMenuItem getMenuItem(ActionMenu menu) {
-    JMenuItem result;
-    if (menu.hasSubItems()) {
-      result = new JMenu(menu.getAction());
-      ActionMenu[] subItems = menu.getSubItems();
-      for (int i=0; i<subItems.length; i++) {
-        result.add(getMenuItem(subItems[i]));
-      }
-    }
-    else {
-      if (menu.isSelected()) {
-        result = new JCheckBoxMenuItem(menu.getAction().getValue(Action.NAME).toString(), true);
-      }
-      else {
-        result = new JMenuItem(menu.getAction());
-      }
-    }
-    result.setFont(CONTEXT_MENU_PLAINFONT);
-    return result;
-  }
-        */
-
-  /**
-   * Creates the MenuItems for the ContextMenus
-   */
-  public static JMenuItem[] createPluginContextMenuItems(Plugin callerplugin, Program program, boolean markDefaultPlugin) {
-    ArrayList items = new ArrayList();
-    PluginProxy defaultPlugin = getInstance().getDefaultContextMenuPlugin();
-    PluginProxy middleClickPlugin = getInstance().getMiddleClickPlugin();
-    PluginProxy[] pluginArr = getInstance().getActivatedPlugins();
-
-    JMenuItem mi = MenuUtil.createMenuItem(ProgramInfo.getInstance().getContextMenuActions(program));
-    if (mi != null) {
-      items.add(mi);
-    }
-
-    mi = MenuUtil.createMenuItem(FavoritesPlugin.getInstance().getContextMenuActions(null, program));
-    if (mi != null) {
-      items.add(mi);
-    }
-
-    mi = MenuUtil.createMenuItem(ReminderPlugin.getInstance().getContextMenuActions(null, program));
-    if (mi != null) {
-      items.add(mi);
-    }
-
-
-    for (int i = 0; i < pluginArr.length; i++) {
-      PluginProxy plugin = pluginArr[i];
-
-      boolean equalsPlugin = false;
-
-      if ((callerplugin != null) && (callerplugin.getId().equals(plugin.getId()))) {
-        equalsPlugin = true;
-      }
-
-      if (!equalsPlugin) {
-        ActionMenu actionMenu = plugin.getContextMenuActions(program);
-        if (actionMenu != null) {
-          JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
-          items.add(menuItem);
-          if (plugin == defaultPlugin && plugin == middleClickPlugin && markDefaultPlugin) {
-            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-              menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDITALICFONT);
-            }
-          }
-          else if (plugin == defaultPlugin && markDefaultPlugin) {
-            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-              menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
-            }
-          }
-          else if (plugin == middleClickPlugin && markDefaultPlugin) {
-            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-              menuItem.setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
-            }
-          }
-        }
-      }
-
-     /*
-      if (actionArr != null) {
-        for (int j = 0; j < actionArr.length; j++) {
-          Action action = actionArr[j];
-          try {
-            JMenuItem item = createPluginContextMenuItem(program, action);
-
-            if (plugin == defaultPlugin && markDefaultPlugin) {
-              item.setFont(CONTEXT_MENU_BOLDFONT);
-            } else {
-              item.setFont(CONTEXT_MENU_PLAINFONT);
-            }
-            items.add(item);
-          }
-          catch (Throwable thr) {
-            mLog.log(Level.WARNING, "Adding context menu item from plugin '"
-              + plugin + "' failed", thr);
-          }
-        }
-      }   */
-    }
-
-    JMenuItem[] result = new JMenuItem[items.size()];
-    items.toArray(result);
-    return result;
-
-  }
-
+  
+  
   /**
    * Creates a context menu for the given program containing all plugins.
    *
@@ -1000,13 +808,13 @@ public class PluginProxyManager {
    * Creates a context menu for the given program containing all plugins.
    *
    * @param program The program to create the context menu for
-   * @param plugin The Plugin that wants to create the ContextMenu
+   * @param menuIf The ContextMenuIf that wants to create the ContextMenu
    * @return a context menu for the given program.
    */
 
-  public static JPopupMenu createPluginContextMenu(Program program, Plugin plugin) {
+  public static JPopupMenu createPluginContextMenu(Program program, ContextMenuIf menuIf) {
     JPopupMenu menu = new JPopupMenu();
-    JMenuItem[] items = createPluginContextMenuItems(plugin, program, true);
+    JMenuItem[] items = ContextMenuManager.getInstance().createContextMenuItems(menuIf, program, true);
     for (int i=0; i<items.length; i++) {
       menu.add(items[i]);
     }

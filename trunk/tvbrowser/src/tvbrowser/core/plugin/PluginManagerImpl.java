@@ -36,6 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.filters.FilterList;
@@ -53,6 +54,7 @@ import util.exc.TvBrowserException;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.ContextMenuIf;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -456,20 +458,20 @@ public class PluginManagerImpl implements PluginManager {
       // Nothing to do
       return;
     }
+    
+    ContextMenuIf defaultContextMenuIf = 
+      ContextMenuManager.getInstance().getDefaultContextMenuIf();
 
-    PluginAccess defaultContextMenuPlugin
-      = PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
-
-    if (defaultContextMenuPlugin == null) {
+    if (defaultContextMenuIf == null) {
       return;
     }
 
-    if ((caller != null)  && (defaultContextMenuPlugin.getId().equals(caller.getId()))) {
+    if ((caller != null)  && (defaultContextMenuIf.getId().equals(caller.getId()))) {
       return;
     }
 
 
-    ActionMenu menu = defaultContextMenuPlugin.getContextMenuActions(program);
+    ActionMenu menu = defaultContextMenuIf.getContextMenuActions(program);
     while (menu != null && menu.hasSubItems()) {
       ActionMenu[] subItems = menu.getSubItems();
       if (subItems.length>0) {
@@ -527,18 +529,18 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
 
-    PluginAccess middleClickPlugin
-      = PluginProxyManager.getInstance().getMiddleClickPlugin();
+    ContextMenuIf middleClickIf
+      = ContextMenuManager.getInstance().getMiddleClickIf();
 
-    if (middleClickPlugin == null) {
+    if (middleClickIf == null) {
       return;
     }
 
-    if ((caller != null)  && (middleClickPlugin.getId().equals(caller.getId()))) {
+    if ((caller != null)  && (middleClickIf.getId().equals(caller.getId()))) {
       return;
     }
 
-    ActionMenu menu = middleClickPlugin.getContextMenuActions(program);
+    ActionMenu menu = middleClickIf.getContextMenuActions(program);
     while (menu != null && menu.hasSubItems()) {
       ActionMenu[] subItems = menu.getSubItems();
       if (subItems.length>0) {
@@ -570,7 +572,7 @@ public class PluginManagerImpl implements PluginManager {
    * @since 1.1
    */
   public PluginAccess getDefaultContextMenuPlugin() {
-    return PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
+    return null ;//PluginProxyManager.getInstance().getDefaultContextMenuPlugin();
   }
 
 
