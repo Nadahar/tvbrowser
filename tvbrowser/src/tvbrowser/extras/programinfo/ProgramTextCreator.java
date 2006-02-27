@@ -131,8 +131,7 @@ public class ProgramTextCreator {
     for (int i = 0; i < plugins.length; i++) {
       Icon[] ico = plugins[i].getProgramTableIcons(prog);
       
-      if (ico != null
-          && !plugins[i].getId().equals("programinfo.ProgramInfo")) {
+      if (ico != null) {
         for (int t = 0; t < ico.length; t++) {
           JLabel iconLabel = new JLabel(ico[t]);
           iconLabel.setToolTipText(plugins[i].getInfo().getName());
@@ -259,7 +258,7 @@ public class ProgramTextCreator {
           String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
 
           for (int i = 0; i < infoBitArr.length; i++) {
-            if (ProgramInfo.bitSet(info, infoBitArr[i])) {
+            if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
               if (infoIconArr[i] != null) {
                 JLabel iconLabel = new JLabel(infoIconArr[i]);
                 iconLabel.setToolTipText(infoMsgArr[i]);

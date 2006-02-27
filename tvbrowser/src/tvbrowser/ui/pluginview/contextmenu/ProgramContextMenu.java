@@ -34,10 +34,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
-import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.ContextMenuManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTree;
@@ -91,7 +90,7 @@ public class ProgramContextMenu extends AbstractContextMenu {
     
     menu.addSeparator();
 
-    JMenuItem[] pluginMenuItems = PluginProxyManager.createPluginContextMenuItems(null, mPrograms[0], false);
+    JMenuItem[] pluginMenuItems = ContextMenuManager.getInstance().createContextMenuItems(null, mPrograms[0], false);
     for (int i=0; i<pluginMenuItems.length; i++) {
       menu.add(pluginMenuItems[i]);
       pluginMenuItems[i].setEnabled(mPrograms.length == 1);

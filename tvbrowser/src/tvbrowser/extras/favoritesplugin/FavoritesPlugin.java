@@ -41,7 +41,8 @@ import devplugin.*;
 import javax.swing.*;
 
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataUpdateListener;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.common.DefaultMarker;
 import tvbrowser.extras.common.ConfigurationHandler;
@@ -53,7 +54,7 @@ import tvbrowser.extras.common.DataDeserializer;
  * 
  * @author Til Schneider, www.murfman.de
  */
-public class FavoritesPlugin  {
+public class FavoritesPlugin implements ContextMenuIf{
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -79,17 +80,25 @@ public class FavoritesPlugin  {
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
+    mInstance = this;
     mFavoriteArr = new Favorite[0];
     mClientPluginIdArr = new String[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
+    
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      public void tvDataUpdateStarted() {
+      }
 
+      public void tvDataUpdateFinished() {
+        handleTvDataUpdateFinished();
+      }
+    });
   }
 
-  public static FavoritesPlugin getInstance() {
-    if (mInstance == null) {
-      mInstance = new FavoritesPlugin();
-    }
+  public static synchronized FavoritesPlugin getInstance() {
+    if (mInstance == null)
+      new FavoritesPlugin();
     return mInstance;
   }
 
@@ -244,7 +253,7 @@ public class FavoritesPlugin  {
   private void readData(ObjectInputStream in) throws IOException,
           ClassNotFoundException {
     int version = in.readInt();
-
+System.out.println("read");
     // get the favorites
     int size = in.readInt();
     Favorite[] newFavoriteArr = new Favorite[size];
@@ -726,4 +735,11 @@ node.update();
     }
   }
 
+  public ActionMenu getContextMenuActions(Program program) {    
+    return getContextMenuActions(null, program);
+  }
+
+  public String getId() {
+    return DATAFILE_PREFIX;
+  }
 }

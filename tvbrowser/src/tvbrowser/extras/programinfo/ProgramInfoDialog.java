@@ -59,9 +59,8 @@ import javax.swing.event.HyperlinkListener;
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
+import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
 import util.browserlauncher.Launch;
@@ -71,8 +70,7 @@ import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import devplugin.ActionMenu;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
+import devplugin.ContextMenuIf;
 import devplugin.Program;
 
 /**
@@ -341,24 +339,12 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
 
-    ActionMenu fav = FavoritesPlugin.getInstance().getContextMenuActions(null,
-        mProgram);
-    ActionMenu rem = ReminderPlugin.getInstance().getContextMenuActions(null,
-        mProgram);
-
-    if (fav != null)
-      new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, fav, this,
-          "id_favorite", mFindAsYouType);
-    if (rem != null)
-      new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, rem, this,
-          "id_reminder", mFindAsYouType);
-
-    PluginAccess[] p = Plugin.getPluginManager().getActivatedPlugins();
+    ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs();
 
     for (int i = 0; i < p.length; i++) {
       ActionMenu menu = p[i].getContextMenuActions(mProgram);
 
-      if (menu != null)
+      if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
         new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, menu, this,
             p[i].getId(), mFindAsYouType);
 
