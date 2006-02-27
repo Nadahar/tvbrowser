@@ -220,4 +220,8 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       mTimer.stop();
     setForeground(Color.gray);
   }
+  
+  protected Color getDefaultBackground() {
+    return mBackground;
+  }
 }
