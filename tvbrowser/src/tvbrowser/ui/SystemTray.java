@@ -265,10 +265,12 @@ public class SystemTray {
     mTrayMenu.addSeparator();
     mTrayMenu.add(createPluginsMenu());
 
-    if (Settings.propShowProgramsInTrayEnabled.getBoolean())
+    if (Settings.propShowSoonProgramsInTray.getBoolean() ||
+        Settings.propShowNowRunningProgramsInTray.getBoolean() ||
+        Settings.propShowImportantProgramsInTray.getBoolean())
       searchForToAddingPrograms();
 
-    if (Settings.propShowProgramsInTrayEnabled.getBoolean()) {
+    if (Settings.propShowSoonProgramsInTray.getBoolean()) {
       if (!Settings.propShowNowRunningProgramsInTrayInSubMenu.getBoolean())
         mTrayMenu.addSeparator();
       addTimeInfoMenu();

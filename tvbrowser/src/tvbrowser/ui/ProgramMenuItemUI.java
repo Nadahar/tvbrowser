@@ -71,15 +71,20 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
   }
   
   protected void paintBackground(Graphics g,JMenuItem menuItem, Color bgColor) {
+    boolean isOnAir = isOnAir(mProgram);
+    
     g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
+    
     if(menuItem.isArmed())
       g.setColor(bgColor);
-    else
+    else if(!isOnAir)
       g.setColor(menuItem.getBackground());
+    else
+      g.setColor(((ProgramMenuItem)menuItem).getDefaultBackground());
     
     g.fillRect(0,0,menuItem.getWidth(),menuItem.getHeight());
     
-    if(isOnAir(mProgram)) {
+    if(isOnAir) {
       ((ProgramMenuItem)menuItem).startTimer();
       Insets i = menuItem.getMargin();
       int x = mIcon == null ? 0 : mIcon.getIconWidth() + i.left;
@@ -130,7 +135,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
   
   protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect, String text)  {
     if(menuItem.isArmed())
-      g.setColor(this.selectionForeground);
+      g.setColor(selectionForeground);
     else
       g.setColor(menuItem.getForeground());
     
@@ -166,6 +171,8 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     
     if(Date.getCurrentDate().addDays(-1).compareTo(p.getDate()) == 0)
       time += 24 * 60;
+    if(Date.getCurrentDate().compareTo(p.getDate()) < 0)
+      return false;
     
     if(p.getStartTime() <= time 
         && (p.getStartTime() + p.getLength()) > time)
