@@ -399,7 +399,7 @@ public class Settings {
   public static final BooleanProperty propShowProgramsInTrayWasConfigured
   = new BooleanProperty(mProp, "showProgramsInTrayWasConfigured", false);    
   
-  public static final BooleanProperty propShowProgramsInTrayEnabled
+  public static final BooleanProperty propShowSoonProgramsInTray
   = new BooleanProperty(mProp, "showProgramsInTrayEnabled", true);  
   
   public static final BooleanProperty propShowNowRunningProgramsInTray
@@ -485,11 +485,11 @@ public class Settings {
   public static final StringProperty propToolbarLocation
     = new StringProperty(mProp, "toolbarLocation", "north");
 
-  public static final StringProperty propDefaultContextMenuPlugin
-    = new StringProperty(mProp, "contextmenudefaultplugin", "java.programinfo.ProgramInfo");
+  public static final StringProperty propDefaultContextMenuIf
+    = new StringProperty(mProp, "contextmenudefaultplugin", "programinfo.ProgramInfo");
 
-  public static final StringProperty propMiddleClickPlugin
-    = new StringProperty(mProp, "middleclickplugin", "java.programinfo.ProgramInfo");
+  public static final StringProperty propMiddleClickIf
+    = new StringProperty(mProp, "middleclickplugin", "programinfo.ProgramInfo");
 
   public static final StringProperty propLastUsedFilter
   = new StringProperty(mProp, "lastusedfilter", null);
@@ -504,6 +504,10 @@ public class Settings {
   public static final StringArrayProperty propPluginOrder
     = new StringArrayProperty(mProp, "plugins", null);
 
+  public static final StringArrayProperty propContextMenuOrder
+  = new StringArrayProperty(mProp, "contextMenuOrder", null);
+
+  
   /**
    * The ID's of the plugins that have been deactivated.
    * <p>
@@ -555,7 +559,7 @@ public class Settings {
   public static final StringArrayProperty propProgramTableIconPlugins
     = new StringArrayProperty(mProp, "programpanel.iconPlugins",
                               new String[] {
-                                "programinfo.ProgramInfo",
+                                "info.id",
                                 "tvraterplugin.TVRaterPlugin",
                               });
 
