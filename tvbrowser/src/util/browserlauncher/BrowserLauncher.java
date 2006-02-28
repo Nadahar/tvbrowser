@@ -648,6 +648,14 @@ class BrowserLauncher {
         }
         return browser;
     }
+
+    /**
+     * Returns the JVM
+     * @return JVM
+     */
+    public static int getJvm() {
+      return jvm;
+    }
     
     /**
      * Methods required for Mac OS X 10.0.x. The presence of native methods does not cause
@@ -657,4 +665,5 @@ class BrowserLauncher {
     private native static int ICStop(int[] instance);
     private native static int ICLaunchURL(int instance, byte[] hint, byte[] data, int len,
                                             int[] selectionStart, int[] selectionEnd);
+
 }
