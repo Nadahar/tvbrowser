@@ -62,6 +62,8 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
+import util.misc.OperatingSystem;
+
 /**
  * Provides utilities for UI stuff.
  *
@@ -556,7 +558,7 @@ public class UiUtilities {
       }
     };
     
-    if (System.getProperty("mrj.version") != null) {
+    if (OperatingSystem.isMacOs()) {
         // Add MacOS Apple+W for Closing of Dialogs
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.META_DOWN_MASK);
         component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_APPLE_W");

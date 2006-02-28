@@ -58,6 +58,13 @@ public class Launch {
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Launch.class);
 
+  /** Mac OS JVM */
+  public static int OS_MAC = 0;
+  /** Windows JVM */
+  public static int OS_WINDOWS = 1;
+  /** Other OS JVM */
+  public static int OS_OTHER = 2;
+  
   /**
    * Opens an URL in a web-browser
    * @param url Url to open
@@ -143,4 +150,19 @@ public class Launch {
     }
   }
 
+  /**
+   * Returns the OS of the VM
+   * @return VM OS_MAC, OS_WINDOWS or OS_OTHER
+   */
+  public static int getOs() {
+    if (BrowserLauncher.getJvm() < 0) {
+      return OS_OTHER;
+    } else if (BrowserLauncher.getJvm() < 6) {
+      return OS_MAC;
+    } else if (BrowserLauncher.getJvm() <= 7) {
+      return OS_WINDOWS;
+    }
+    
+    return OS_OTHER;
+  }
 }
