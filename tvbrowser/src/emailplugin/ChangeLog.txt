@@ -1,5 +1,8 @@
 Changelog EMailPlugin
 
+0.5:
+- More Usabilty Changes, e.g. automatic program discovery
+
 0.02:
 - Simplified Settings-Tab
 

@@ -34,6 +34,7 @@ import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -42,6 +43,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -71,6 +73,19 @@ public class EMailSettingsTab implements SettingsTab {
   /** Plugin */
   private EMailPlugin mPlugin;
   
+  /** Use the default Application on that OS ? */
+  private JCheckBox mDefaultApplication;
+
+  /** Opens a File-Select Dialog for the App*/
+  private JButton mAppFinder;
+
+  /** The Help-Text */
+  private JTextArea mHelpText;
+  /** Parameter-Label */
+  private JLabel mParameterLabel;
+  /** Application-Label */
+  private JLabel mAppLabel;
+  
   /**
    * Creates the SettingsTab
    * 
@@ -93,19 +108,35 @@ public class EMailSettingsTab implements SettingsTab {
     configPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("configuration", "Configuration")));
 
     FormLayout layout = new FormLayout("3dlu, pref, 3dlu, pref:grow, fill:75dlu, 3dlu, pref, 3dlu",
-        "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu");
+        "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu");
     configPanel.setLayout(layout);
 
     CellConstraints cc = new CellConstraints();
 
-    configPanel.add(new JLabel(mLocalizer.msg("Application", "Application") + ":"), cc.xy(2, 2));
+    boolean osOk = OperatingSystem.isMacOs() || OperatingSystem.isWindows(); 
+
+    mDefaultApplication = new JCheckBox();
+    mDefaultApplication.setEnabled(osOk);
+
+    if (!osOk) {
+      mDefaultApplication.setText(mLocalizer.msg("defaultApp", "Default Application")
+                  + " (" +mLocalizer.msg("notOnYourOS", "Function only Available on Windows and Mac OS") + ")");
+    } else {
+      mDefaultApplication.setText(mLocalizer.msg("defaultApp", "Default Application"));
+      mDefaultApplication.setSelected(mSettings.getProperty("defaultapp", "true").equals("true"));
+    }
+    
+    configPanel.add(mDefaultApplication, cc.xyw(2,2, 6));
+    
+    mAppLabel = new JLabel(mLocalizer.msg("Application", "Application") + ":");
+    configPanel.add(mAppLabel, cc.xy(2, 4));
 
     mApplication = new JTextField(mSettings.getProperty("application"));
 
-    configPanel.add(mApplication, cc.xyw(4, 2, 2));
+    configPanel.add(mApplication, cc.xyw(4, 4, 2));
 
-    JButton appFinder = new JButton("...");
-    appFinder.addActionListener(new ActionListener() {
+    mAppFinder = new JButton("...");
+    mAppFinder.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
         findApplictation(configPanel);
@@ -113,21 +144,25 @@ public class EMailSettingsTab implements SettingsTab {
 
     });
 
-    configPanel.add(appFinder, cc.xy(7, 2));
+    configPanel.add(mAppFinder, cc.xy(7, 4));
 
-    configPanel.add(new JLabel(mLocalizer.msg("Parameter", "Parameter") + ":"), cc.xy(2, 4));
+    mParameterLabel = new JLabel(mLocalizer.msg("Parameter", "Parameter") + ":");
+    configPanel.add(mParameterLabel, cc.xy(2, 6));
 
     mParameter = new JTextField(mSettings.getProperty("parameter", "{0}"));
 
-    configPanel.add(mParameter, cc.xyw(4, 4, 4));
+    configPanel.add(mParameter, cc.xyw(4, 6, 4));
 
-    JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("Desc","Desc"));
-    configPanel.add(ta, cc.xyw(2,6,6));
+    mHelpText = UiUtilities.createHelpTextArea(mLocalizer.msg("Desc","Desc"));
+    configPanel.add(mHelpText, cc.xyw(2,8,6));
+
+    mDefaultApplication.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        setInputState();
+      }
+    });
     
-    
-//    mParamText = new ParamInputField(mSettings.getProperty("paramToUse", EMailPlugin.DEFAULT_PARAMETER));
-//    mParamText.setBorder(BorderFactory.createTitledBorder(
-//        mLocalizer.msg("createText", "Text to create for each Program")));
+    setInputState();
     
     JButton extended = new JButton(mLocalizer.msg("extended", "Extended Settings"));
     
@@ -137,13 +172,25 @@ public class EMailSettingsTab implements SettingsTab {
       }
     });
 
-    configPanel.add(extended, cc.xyw(5, 8, 3));
+    configPanel.add(extended, cc.xyw(5, 10, 3));
     
     JPanel panel = new JPanel(new BorderLayout());
     
     panel.add(configPanel, BorderLayout.NORTH);
     
     return panel;
+  }
+
+  /**
+   * Sets the Inputstates of the Dialogs
+   */
+  private void setInputState() {
+    mApplication.setEnabled(!mDefaultApplication.isSelected());
+    mParameter.setEnabled(!mDefaultApplication.isSelected());
+    mAppFinder.setEnabled(!mDefaultApplication.isSelected());
+    mHelpText.setEnabled(!mDefaultApplication.isSelected());
+    mParameterLabel.setEnabled(!mDefaultApplication.isSelected());
+    mAppLabel.setEnabled(!mDefaultApplication.isSelected());
   }
   
   /**
@@ -183,6 +230,11 @@ public class EMailSettingsTab implements SettingsTab {
   public void saveSettings() {
     mSettings.put("application", mApplication.getText());
     mSettings.put("parameter", mParameter.getText());
+    if (mDefaultApplication.isSelected()) {
+      mSettings.put("defaultapp", "true");
+    } else {
+      mSettings.put("defaultapp", "false");
+    }
   }
 
   /*
