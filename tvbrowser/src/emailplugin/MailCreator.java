@@ -109,7 +109,7 @@ public class MailCreator {
       String execparam;
 
       if ((OperatingSystem.isMacOs() || OperatingSystem.isWindows())
-          && mSettings.getProperty("defaultapp", "false").equals("true")) {
+          && mSettings.getProperty("defaultapp", "true").equals("true")) {
 
         if (OperatingSystem.isMacOs()) {
           application = "/usr/bin/open";
