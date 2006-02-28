@@ -25,18 +25,12 @@
 package emailplugin;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.net.URLEncoder;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JOptionPane;
 
-import util.exc.ErrorHandler;
-import util.paramhandler.ParamParser;
 import util.ui.Localizer;
-import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -70,7 +64,7 @@ public class EMailPlugin extends Plugin {
     String name = mLocalizer.msg("pluginName", "EMail export");
     String desc = mLocalizer.msg("description", "Send a EMail with an external Program");
     String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, new Version(0, 2));
+    return new PluginInfo(name, desc, author, new Version(0, 5));
   }
 
   /*
@@ -90,7 +84,7 @@ public class EMailPlugin extends Plugin {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         Program[] programArr = { program };
-        createMail(programArr);
+        new MailCreator(EMailPlugin.this, mSettings).createMail(getParentFrame(), programArr);
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Send via EMail"));
@@ -113,7 +107,7 @@ public class EMailPlugin extends Plugin {
    * @see #canReceivePrograms()
    */
   public void receivePrograms(Program[] programArr) {
-    createMail(programArr);
+    new MailCreator(this, mSettings).createMail(getParentFrame(), programArr);
   }
 
   /*
@@ -144,52 +138,5 @@ public class EMailPlugin extends Plugin {
    */
   public Properties storeSettings() {
     return mSettings;
-  }
-
-  /**
-   * Create the Mail
-   * 
-   * @param program Programs to show in the Mail
-   */
-  private void createMail(Program[] program) {
-    String param = mSettings.getProperty("paramToUse", DEFAULT_PARAMETER);
-    StringBuffer result = new StringBuffer();
-    ParamParser parser = new ParamParser();
-
-    int i = 0;
-
-    while (!parser.hasErrors() && (i < program.length)) {
-      String prgResult = parser.analyse(param, (Program) program[i]);
-      result.append(prgResult);
-      i++;
-    }
-
-    if (parser.hasErrors()) {
-      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), parser.getErrorString(), "Error", JOptionPane.ERROR_MESSAGE);
-      return;
-    }
-    
-    if (mSettings.getProperty("application", "").trim().equals("")) {
-      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), mLocalizer.msg("SpecifyApp",
-          "Please specify a Application in the Settings for this Plugin."));
-      return;
-    }
-
-    File f = new File(mSettings.getProperty("application"));
-
-    if (!f.exists() || f.isDirectory()) {
-      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), mLocalizer.msg("AppNotFound",
-          "Application wasn't found. Please specify a Application in the Settings for this Plugin."));
-      return;
-    }
-
-    try {
-      String execparam = mSettings.getProperty("parameter", "").replaceAll("\\{0\\}",
-          "mailto:?body=" + URLEncoder.encode(result.toString(), mSettings.getProperty("encoding", "UTF-8")).replaceAll("\\+", "%20"));
-      Runtime.getRuntime().exec(mSettings.getProperty("application") + " " + execparam);
-    } catch (Exception e) {
-      e.printStackTrace();
-      ErrorHandler.handle(mLocalizer.msg("ErrorWhileStarting", "Error while starting Mail-Application"), e);
-    }
   }
 }
