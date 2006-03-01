@@ -10,7 +10,10 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
+import javax.swing.plaf.basic.BasicListUI.MouseInputHandler;
 
 /**
  * This class implements a MouseListener for DnD in JLists.
@@ -51,15 +54,17 @@ public class DragAndDropMouseListener extends MouseAdapter {
   public void restore() {
     MouseListener[] listeners = mSource.getMouseListeners();
     for (int i = 0; i < listeners.length; i++)
-      mSource.removeMouseListener(listeners[i]);
-
+      if(!(listeners[i] instanceof ToolTipManager))        
+        mSource.removeMouseListener(listeners[i]);
+    
     MouseMotionListener[] mlisteners = mSource.getMouseMotionListeners();
     for (int i = 0; i < mlisteners.length; i++)
-      mSource.removeMouseMotionListener(mlisteners[i]);
-
+      if(!(mlisteners[i] instanceof ToolTipManager))
+        mSource.removeMouseMotionListener(mlisteners[i]);
+    
     (new DragSource()).createDefaultDragGestureRecognizer(mSource,
         DnDConstants.ACTION_MOVE, mListener);
-
+    
     mSource.addMouseListener(this);
   }
 
