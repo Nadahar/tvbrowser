@@ -54,10 +54,21 @@ public class ChannelLabel extends JLabel {
     this(true,false);
   }
 
+  /**
+   * Creates the ChannelLabel
+   * 
+   * @param channelIconsVisible Should the Icon be visible
+   */
   public ChannelLabel(boolean channelIconsVisible) {
     this(channelIconsVisible,false);
   }
   
+  /**
+   * Creates the ChanelLabel
+   * 
+   * @param channelIconsVisible Should the Icon be visible
+   * @param allIsVisible Should everything (text and Icon) be visible ?
+   */
   public ChannelLabel(boolean channelIconsVisible, boolean allIsVisible) {
     mChannelIconsVisible = channelIconsVisible;
     mAllIsVisible = allIsVisible;
@@ -69,6 +80,18 @@ public class ChannelLabel extends JLabel {
    * @param ch Channel to display
    */
   public ChannelLabel(Channel ch) {
+    setChannel(ch);
+  }
+
+  /**
+   * Creates the ChannelLabel
+   *
+   * @param ch Channel to display
+   * @param channelIconsVisible Should the Icon be visible
+   * @since 2.2
+   */
+  public ChannelLabel(Channel ch, boolean channelIconsVisible) {
+    mChannelIconsVisible = channelIconsVisible;
     setChannel(ch);
   }
 
