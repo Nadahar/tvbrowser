@@ -1,21 +1,57 @@
-
-
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
 package util.ui.customizableitems;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.settings.channel.ChannelJList;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.UiUtilities;
 
-import java.awt.*;
-import java.awt.event.*;
-
+/**
+ * A sortable List
+ */
 public class SortableItemList extends JPanel implements ActionListener, ListDropAction {
   
   protected JButton mUpBt;
@@ -36,9 +72,30 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
   public SortableItemList(String title) {
     this(title, new Object[]{});
   }
-  
+
   public SortableItemList(String title, Object[] objects) {
-    
+    this(title, objects, new JList());
+  }
+
+  /**
+   * Create a new SortableItemList
+   * 
+   * @param list List to use
+   * @since 2.2
+   */
+  public SortableItemList(ChannelJList list) {
+    this("", new Object[]{}, list);
+  }
+  
+  /**
+   * Create a new SortableItemList
+   * @param title Title of the List
+   * @param objects List-Items
+   * @param list List to use
+   * 
+   * @since 2.2
+   */
+  public SortableItemList(String title, Object[] objects, JList list) {
     mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
     String msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
     mUpBt.setToolTipText(msg);
@@ -51,7 +108,7 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mDownBt.setMargin(UiUtilities.ZERO_INSETS);
     mDownBt.addActionListener(this);
     
-    mList = new JList();
+    mList = list;
     mListModel = new DefaultListModel();
     mList.setModel(mListModel);
     
