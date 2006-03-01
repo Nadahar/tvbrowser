@@ -64,6 +64,7 @@ public class ChannelJList extends JList {
 
       Locale loc = new Locale(Locale.getDefault().getLanguage(), channel.getCountry());
       buf.append("<html>");
+      buf.append("<b>").append(mLocalizer.msg("channel", "Channel")).append(" :</b> ").append(channel.getName()).append("<br>");
       buf.append("<b>").append(mLocalizer.msg("country", "Country")).append(" :</b> ").append(loc.getDisplayCountry()).append("<br>");
       buf.append("<b>").append(mLocalizer.msg("timezone", "Timezone")).append(" :</b> ").append(channel.getTimeZone().getDisplayName()).append("<br>");
       buf.append("<b>").append(mLocalizer.msg("category", "Category")).append(" :</b> ").append(ChannelUtil.getNameForCategories(channel.getCategories())).append("<br><br>");
