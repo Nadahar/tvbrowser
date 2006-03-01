@@ -10,6 +10,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -20,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
 import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
@@ -85,7 +87,12 @@ public class TextComponentFindAction extends FindAction implements
         "Close Find bar"));
     mSearchCloseBtn.setOpaque(false);
     mSearchCloseBtn.setFocusable(false);
-    mSearchCloseBtn.removeMouseListener(mSearchCloseBtn.getMouseListeners()[0]);
+    
+    MouseListener[] ml = mSearchCloseBtn.getMouseListeners();
+    
+    for(int i = 0; i < ml.length; i++)
+      if(!(ml[i] instanceof ToolTipManager))      
+        mSearchCloseBtn.removeMouseListener(ml[i]);
 
     final JTextField searchField = getSearchField();
 
