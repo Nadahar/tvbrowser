@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package tvbrowser.ui.settings;
+package tvbrowser.ui.settings.channel;
 
 import java.awt.Dimension;
 import java.awt.Image;

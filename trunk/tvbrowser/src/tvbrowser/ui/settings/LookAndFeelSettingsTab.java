@@ -25,20 +25,30 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
-import devplugin.SettingsTab;
-import util.ui.TabLayout;
 import util.ui.LinkButton;
-import util.ui.UiUtilities;
-import com.jgoodies.forms.layout.FormLayout;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.SettingsTab;
 
 public class LookAndFeelSettingsTab implements SettingsTab {
   
@@ -80,13 +90,56 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     }
   
   public JPanel createSettingsPanel() {
+    FormLayout layout = new FormLayout("right:pref, 3dlu, fill:pref:grow, 3dlu, pref", 
+        "");
+    
+    CellConstraints cc = new CellConstraints();
+    mSettingsPn = new JPanel(layout);
+    mSettingsPn.setBorder(Borders.DLU4_BORDER);
 
+    layout.appendRow(new RowSpec("pref"));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator("Aussehen"), cc.xyw(1, 1, 5));
+   
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+
+    mSettingsPn.add(new JLabel("Theme:"), cc.xy(1, 3));
+
+    LookAndFeelObj[] obj=getLookAndFeelObjs();
+    mLfComboBox=new JComboBox(obj);
+    String lf = Settings.propLookAndFeel.getString();
+    for (int i=0;i<obj.length;i++) {
+      if (obj[i].getLFClassName().equals(lf)) {
+        mLfComboBox.setSelectedItem(obj[i]);
+      }
+    }
+    
+    mSettingsPn.add(mLfComboBox, cc.xy(3, 3));
+    mSettingsPn.add(new JButton("Config"), cc.xy(5, 3));
+
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+
+    mSettingsPn.add(new JLabel("Icons:"), cc.xy(1, 5));
+    mSettingsPn.add(new JComboBox(), cc.xy(3, 5));
+
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+
+    mSettingsPn.add(new LinkButton("You can find more Icons on our Web-Page.", "http://www.tvbrowser.org/iconthemes.php"), cc.xy(3, 7));
+
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator("Senderlogos"), cc.xyw(1, 9, 5));
+    
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+    
+    mSettingsPn.add(createChannelIconPanel(), cc.xyw(1, 11, 5));
+    
+    return mSettingsPn;    
+    /*
     mSettingsPn=new JPanel(new BorderLayout());
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     
     JPanel northPanel=new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel,BoxLayout.Y_AXIS));
-
 
     JPanel main = new JPanel(new TabLayout(1));
 
@@ -227,7 +280,65 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     mSettingsPn.add(licenseTA,BorderLayout.SOUTH);
     
+    
     return mSettingsPn;
+    */
+    
+  }
+
+  private JPanel createChannelIconPanel() {
+    FormLayout layout = new FormLayout("4dlu, fill:pref:grow", "");
+    JPanel channelIconPanel = new JPanel(layout);
+
+    mShowChannelIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.show","Senderlogso anzeigen"));
+    mProgramtableChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.programtable","Programmtabelle"));
+    mChannellistChIconsCb = new JCheckBox(mLocalizer.msg("channelIcons.channellist","Kanalliste"));
+
+    mShowChannelNamesCb = new JCheckBox(mLocalizer.msg("showChannelName", "Show channel name"));
+
+    mShowChannelIconsCb.setSelected(Settings.propEnableChannelIcons.getBoolean());
+    mProgramtableChIconsCb.setSelected(Settings.propShowChannelIconsInProgramTable.getBoolean());
+    mChannellistChIconsCb.setSelected(Settings.propShowChannelIconsInChannellist.getBoolean());
+    mShowChannelNamesCb.setSelected(Settings.propShowChannelNames.getBoolean());
+
+    mShowChannelIconsCb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        boolean enabled = mShowChannelIconsCb.isSelected();
+        mProgramtableChIconsCb.setEnabled(enabled);
+        mChannellistChIconsCb.setEnabled(enabled);
+        mProgramtableChIconsCb.setSelected(enabled);
+        mChannellistChIconsCb.setSelected(enabled);
+        mShowChannelNamesCb.setEnabled(enabled);
+        if (!enabled) {
+          mShowChannelNamesCb.setSelected(true);
+        }
+      }
+    });
+
+    boolean enabled = mShowChannelIconsCb.isSelected();
+    mProgramtableChIconsCb.setEnabled(enabled);
+    mChannellistChIconsCb.setEnabled(enabled);
+    mShowChannelNamesCb.setEnabled(enabled);
+    if (!enabled) {
+      mShowChannelNamesCb.setSelected(true);
+    }
+
+    mProgramtableChIconsCb.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+    mChannellistChIconsCb.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+    mShowChannelNamesCb.setBorder(BorderFactory.createEmptyBorder(0,15,0,0));
+
+    CellConstraints cc = new CellConstraints();
+    
+    layout.appendRow(new RowSpec("pref"));  
+    channelIconPanel.add(mShowChannelIconsCb, cc.xyw(1, 1, 2));
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+    channelIconPanel.add(mProgramtableChIconsCb, cc.xy(2, 3));
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+    channelIconPanel.add(mChannellistChIconsCb, cc.xy(2, 5));
+    layout.appendRow(new RowSpec("3dlu")); layout.appendRow(new RowSpec("pref"));
+    channelIconPanel.add(mShowChannelNamesCb, cc.xy(2, 7));
+    
+    return channelIconPanel;
   }
 
 
@@ -243,8 +354,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     LookAndFeelObj obj=(LookAndFeelObj)mLfComboBox.getSelectedItem();
     Settings.propLookAndFeel.setString(obj.getLFClassName());
  
-    Settings.propIsSkinLFEnabled.setBoolean(mUseSkinLFRb.isSelected());
-    Settings.propSkinLFThemepack.setString(mThemepackTf.getText());
+//    Settings.propSkinLFThemepack.setString(mThemepackTf.getText());
 
     boolean enableChannelIcons = mShowChannelIconsCb.isSelected();
     Settings.propEnableChannelIcons.setBoolean(enableChannelIcons);

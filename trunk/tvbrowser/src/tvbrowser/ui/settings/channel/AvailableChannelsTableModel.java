@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package tvbrowser.ui.settings;
+package tvbrowser.ui.settings.channel;
 
 import devplugin.Channel;
 import devplugin.ChannelGroup;

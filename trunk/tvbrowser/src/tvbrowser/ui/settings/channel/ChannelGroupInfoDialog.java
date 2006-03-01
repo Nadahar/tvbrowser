@@ -24,7 +24,7 @@
  * $Revision$
  */
 
-package tvbrowser.ui.settings;
+package tvbrowser.ui.settings.channel;
 
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -54,7 +54,9 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 
-
+/**
+ * Shows the ChannelGroup Information Dialog 
+ */
 public class ChannelGroupInfoDialog extends JDialog {
   /** Translation */
   private static final util.ui.Localizer mLocalizer
