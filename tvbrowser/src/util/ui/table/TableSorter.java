@@ -1,7 +1,7 @@
 package util.ui.table;
 
 
-import tvbrowser.ui.settings.AvailableChannelsTableModel;
+import tvbrowser.ui.settings.channel.AvailableChannelsTableModel;
 
 import java.awt.*;
 import java.awt.event.*;

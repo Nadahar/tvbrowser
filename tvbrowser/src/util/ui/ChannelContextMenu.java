@@ -13,7 +13,7 @@ import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.ChannelConfigDlg;
+import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import util.browserlauncher.Launch;
 import devplugin.Channel;
