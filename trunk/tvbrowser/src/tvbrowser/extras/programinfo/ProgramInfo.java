@@ -63,7 +63,7 @@ public class ProgramInfo implements ContextMenuIf {
   private Point mLocation = null;
 
   private Dimension mSize = null;
-  
+
   private Dimension mLeftSplit = null;
 
   private Properties mSettings;
@@ -129,7 +129,7 @@ public class ProgramInfo implements ContextMenuIf {
       int yv = parseNumber(y);
       mLocation = new Point(xv, yv);
     }
-    
+
     String splitWidht = mSettings.getProperty("LeftSplit.Width");
     String splitHeigt = mSettings.getProperty("LeftSplit.Height");
 
@@ -152,10 +152,12 @@ public class ProgramInfo implements ContextMenuIf {
       mSettings
           .setProperty("DialogSize.Height", Integer.toString(mSize.height));
     }
-    
-    if(mLeftSplit != null) {
-      mSettings.setProperty("LeftSplit.Width", Integer.toString(mLeftSplit.width));
-      mSettings.setProperty("LeftSplit.Height", Integer.toString(mLeftSplit.height));
+
+    if (mLeftSplit != null) {
+      mSettings.setProperty("LeftSplit.Width", Integer
+          .toString(mLeftSplit.width));
+      mSettings.setProperty("LeftSplit.Height", Integer
+          .toString(mLeftSplit.height));
     }
 
     try {
@@ -218,11 +220,13 @@ public class ProgramInfo implements ContextMenuIf {
   protected void showProgramInformation(Program program, boolean showSettings) {
     Window parent = UiUtilities.getBestDialogParent(MainFrame.getInstance());
     ProgramInfoDialog dlg;
-    
+
     if (parent instanceof Dialog) {
-      dlg = new ProgramInfoDialog((Dialog) parent, program, mLeftSplit, showSettings);
+      dlg = new ProgramInfoDialog((Dialog) parent, program, mLeftSplit,
+          showSettings);
     } else {
-      dlg = new ProgramInfoDialog((Frame) parent, program, mLeftSplit, showSettings);
+      dlg = new ProgramInfoDialog((Frame) parent, program, mLeftSplit,
+          showSettings);
     }
 
     dlg.pack();
@@ -256,99 +260,78 @@ public class ProgramInfo implements ContextMenuIf {
    * @return The description text for the program table icons.
    * @see #getProgramTableIcons(Program)
    */
-/*  public String getProgramTableIconText() {
-    return mLocalizer.msg("programTableIconText", "Movie format");
-  }
-
-  /**
-   * Gets the icons this Plugin provides for the given program. These icons will
-   * be shown in the program table.
-   * <p>
-   * If the plugin does not provide such icons <code>null</code> will be
-   * returned.
+  /*
+   * public String getProgramTableIconText() { return
+   * mLocalizer.msg("programTableIconText", "Movie format"); }
    * 
-   * @param program
-   *          The programs to get the icons for.
-   * @return The icons for the given program or <code>null</code>.
+   * /** Gets the icons this Plugin provides for the given program. These icons
+   * will be shown in the program table. <p> If the plugin does not provide such
+   * icons <code>null</code> will be returned.
+   * 
+   * @param program The programs to get the icons for. @return The icons for the
+   * given program or <code>null</code>.
    */
- /* public Icon[] getProgramTableIcons(Program program) {
-    int info = program.getInfo();
-    if ((info == -1) || (info == 0)) {
-      return null;
-    }
-
-    // Put the icons for this program into a list
-    ArrayList iconList = null;
-    for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) {
-      if (bitSet(info, ProgramInfoHelper.mInfoBitArr[i])
-          && (ProgramInfoHelper.mInfoIconArr[i] != null)) {
-        // Create the list if it doesn't already exist
-        if (iconList == null) {
-          iconList = new ArrayList();
-        }
-
-        // Add the icon to the list
-        iconList.add(ProgramInfoHelper.mInfoIconArr[i]);
-      }
-    }
-    
-    // Convert the list into an array and return it
-    if (iconList == null) {
-      return null;
-    } else {
-      Icon[] iconArr = new Icon[iconList.size()];
-      iconList.toArray(iconArr);
-
-      return iconArr;
-    }
-  }
-
-  /**
-   * Returns whether a bit (or combination of bits) is set in the specified
+  /*
+   * public Icon[] getProgramTableIcons(Program program) { int info =
+   * program.getInfo(); if ((info == -1) || (info == 0)) { return null; }
+   *  // Put the icons for this program into a list ArrayList iconList = null;
+   * for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) { if
+   * (bitSet(info, ProgramInfoHelper.mInfoBitArr[i]) &&
+   * (ProgramInfoHelper.mInfoIconArr[i] != null)) { // Create the list if it
+   * doesn't already exist if (iconList == null) { iconList = new ArrayList(); }
+   *  // Add the icon to the list
+   * iconList.add(ProgramInfoHelper.mInfoIconArr[i]); } }
+   *  // Convert the list into an array and return it if (iconList == null) {
+   * return null; } else { Icon[] iconArr = new Icon[iconList.size()];
+   * iconList.toArray(iconArr);
+   * 
+   * return iconArr; } }
+   * 
+   * /** Returns whether a bit (or combination of bits) is set in the specified
    * number.
    */
- /* static boolean bitSet(int num, int pattern) {
-    return (num & pattern) == pattern;
-  }*/
-  
+  /*
+   * static boolean bitSet(int num, int pattern) { return (num & pattern) ==
+   * pattern; }
+   */
+
   protected void setSettings(JDialog dialog, Dimension d) {
     mSize = dialog.getSize();
     mLocation = dialog.getLocation();
     mLeftSplit = d;
   }
-  
+
   protected boolean getExpanded(String key) {
-    return (mSettings.getProperty(key,"true").compareTo("true") == 0);
+    return (mSettings.getProperty(key, "true").compareTo("true") == 0);
   }
-  
+
   protected void setExpanded(String key, boolean value) {
-    mSettings.setProperty(key,String.valueOf(value));
+    mSettings.setProperty(key, String.valueOf(value));
   }
-  
+
   protected String getProperty(String key, String def) {
-    return mSettings.getProperty(key,def);
+    return mSettings.getProperty(key, def);
   }
-  
+
   protected String getUserfont(String value, String def) {
     String tvalue = mSettings.getProperty(value);
-    
-    boolean userfont = mSettings.getProperty("userfont","false").equals("true");    
-    return tvalue != null && tvalue.trim().length() > 0 && userfont ? tvalue : def;
+
+    boolean userfont = mSettings.getProperty("userfont", "false")
+        .equals("true");
+    return tvalue != null && tvalue.trim().length() > 0 && userfont ? tvalue
+        : def;
   }
-  
+
   protected void setLook() {
-    int n = Integer.parseInt(mSettings.getProperty("look","4"));
-    
-    String[] lnf = {"com.l2fprod.common.swing.plaf.aqua.AquaLookAndFeelAddons",
-                    "com.l2fprod.common.swing.plaf.basic.BasicLookAndFeelAddons",
-        "com.l2fprod.common.swing.plaf.metal.MetalLookAndFeelAddons",
-        "com.l2fprod.common.swing.plaf.motif.MotifLookAndFeelAddons",
-        "com.l2fprod.common.swing.plaf.windows.WindowsLookAndFeelAddons",
-        "com.l2fprod.common.swing.plaf.windows.WindowsClassicLookAndFeelAddons"};
-    
-    try{      
-      LookAndFeelAddons.setAddon(lnf[n]);
-    }catch(Exception e){}
+    try {
+      String lf = mSettings.getProperty("look", LookAndFeelAddons.getBestMatchAddonClassName());
+      
+      if (lf.length() > 0)
+        LookAndFeelAddons.setAddon(lf);
+      else
+        LookAndFeelAddons.setAddon(LookAndFeelAddons
+            .getBestMatchAddonClassName());
+    } catch (Exception e) {}
   }
 
   public String getId() {

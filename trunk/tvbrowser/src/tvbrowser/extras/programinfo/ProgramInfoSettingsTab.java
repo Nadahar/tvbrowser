@@ -38,6 +38,7 @@ import javax.swing.event.ChangeListener;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.FontChooserPanel;
@@ -68,6 +69,14 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   private String mOldOrder, mOldLook, mOldTitleFont, mOldBodyFont,
       mOldTitleFontSize, mOldBodyFontSize, mOldUserFontSelected,
       mOldAntiAliasingSelected;
+  
+  private String[] mLf = {
+      "com.l2fprod.common.swing.plaf.aqua.AquaLookAndFeelAddons",
+      "com.l2fprod.common.swing.plaf.metal.MetalLookAndFeelAddons",
+      "com.l2fprod.common.swing.plaf.motif.MotifLookAndFeelAddons",
+      "com.l2fprod.common.swing.plaf.windows.WindowsLookAndFeelAddons",
+      "com.l2fprod.common.swing.plaf.windows.WindowsClassicLookAndFeelAddons"
+};
 
   /**
    * Constructor
@@ -78,7 +87,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    mOldLook = mSettings.getProperty("look", "4");
+    mOldLook = mSettings.getProperty("look", "");
     mOldAntiAliasingSelected = mSettings.getProperty("antialiasing", "false");
     mOldUserFontSelected = mSettings.getProperty("userfont", "false");
     mOldTitleFontSize = mSettings.getProperty("title", "18");
@@ -87,10 +96,18 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mOldBodyFont = mSettings.getProperty("bodyfont", "Verdana");
     mOldOrder = mSettings.getProperty("order", "");
 
-    String[] lf = { "Aqua", "Basic", "Metal", "Motif", "Windows XP",
-        "Windows Classic" };
+    String[] lf = {"Aqua", "Metal", "Motif", "Windows XP",
+    "Windows Classic"};
+    
     mLook = new JComboBox(lf);
-    mLook.setSelectedIndex(Integer.parseInt(mOldLook));
+    
+    String look = mOldLook.length() > 0 ? mOldLook : LookAndFeelAddons.getBestMatchAddonClassName();
+    
+    for(int i = 0; i < mLf.length; i++)
+      if(look.toLowerCase().indexOf(mLf[i].toLowerCase()) != -1) {
+        mLook.setSelectedIndex(i);
+        break;
+      }
 
     mAntiAliasing = new JCheckBox(mLocalizer
         .msg("antialiasing", "Antialiasing"));
@@ -220,7 +237,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mSettings.setProperty("bodyfont", f.getFamily());
     mSettings.setProperty("small", String.valueOf(f.getSize()));
 
-    mSettings.setProperty("look", String.valueOf(mLook.getSelectedIndex()));
+    mSettings.setProperty("look", mLf[mLook.getSelectedIndex()]);
     ProgramInfo.getInstance().setLook();
 
     Object[] o = new Object[mList.getList().getModel().getSize()];
@@ -243,8 +260,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mSettings.setProperty("titlefont", mOldTitleFont);
     mSettings.setProperty("title", mOldTitleFontSize);
     mSettings.setProperty("bodyfont", mOldBodyFont);
-    mSettings.setProperty("small", mOldBodyFontSize);
+    mSettings.setProperty("small", mOldBodyFontSize);    
     mSettings.setProperty("look", mOldLook);
+    
     ProgramInfo.getInstance().setLook();
     mSettings.setProperty("order", mOldOrder);
   }
