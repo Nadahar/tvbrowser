@@ -54,7 +54,7 @@ public class TextComponentFindAction extends FindAction implements
       .getLocalizerFor(TextComponentFindAction.class);
 
   private JPanel mSearchBar;
-  private JButton mFindNext, mFindPrev;
+  private JButton mFindNext, mFindPrev, mSearchCloseBtn;
 
   public TextComponentFindAction(JTextComponent comp) {
     super(comp, false);
@@ -76,16 +76,16 @@ public class TextComponentFindAction extends FindAction implements
     mSearchBar = b.getPanel();
     mSearchBar.addComponentListener(this);
 
-    JButton searchCloseBtn = new JButton(IconLoader.getInstance()
+    mSearchCloseBtn = new JButton(IconLoader.getInstance()
         .getIconFromTheme("actions", "process-stop", 16));
-    searchCloseBtn.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-    searchCloseBtn.setPressedIcon(IconLoader.getInstance().getIconFromTheme(
+    mSearchCloseBtn.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    mSearchCloseBtn.setPressedIcon(IconLoader.getInstance().getIconFromTheme(
         "actions", "close-pressed", 16));
-    searchCloseBtn.setToolTipText(mLocalizer.msg("closeToolTip",
+    mSearchCloseBtn.setToolTipText(mLocalizer.msg("closeToolTip",
         "Close Find bar"));
-    searchCloseBtn.setOpaque(false);
-    searchCloseBtn.setFocusable(false);
-    searchCloseBtn.removeMouseListener(searchCloseBtn.getMouseListeners()[0]);
+    mSearchCloseBtn.setOpaque(false);
+    mSearchCloseBtn.setFocusable(false);
+    mSearchCloseBtn.removeMouseListener(mSearchCloseBtn.getMouseListeners()[0]);
 
     final JTextField searchField = getSearchField();
 
@@ -115,7 +115,7 @@ public class TextComponentFindAction extends FindAction implements
 
     addMouseAdapter(mFindNext);
     addMouseAdapter(mFindPrev);
-    addMouseAdapter(searchCloseBtn);
+    addMouseAdapter(mSearchCloseBtn);
 
     searchField.addKeyListener(new KeyAdapter() {
       public void keyReleased(KeyEvent e) {
@@ -124,7 +124,7 @@ public class TextComponentFindAction extends FindAction implements
       }
     });
 
-    b.add(searchCloseBtn, cc.xy(2, 1));
+    b.add(mSearchCloseBtn, cc.xy(2, 1));
     b.addLabel(mLocalizer.msg("find", "Find:"), cc.xy(4, 1));
     b.add(searchField, cc.xy(6, 1));
     b.add(mFindNext, cc.xy(8, 1));
@@ -154,11 +154,12 @@ public class TextComponentFindAction extends FindAction implements
     mFindPrev.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
     mFindPrev.getActionMap().put("CLOSE_SEARCH", close);
 
-    searchCloseBtn.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,
+    mSearchCloseBtn.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,
         "CLOSE_SEARCH");
-    searchCloseBtn.getActionMap().put("CLOSE_SEARCH", close);
+    mSearchCloseBtn.getActionMap().put("CLOSE_SEARCH", close);
 
     mSearchBar.setVisible(false);
+    mSearchCloseBtn.setVisible(false);
   }
 
   /**
@@ -224,6 +225,7 @@ public class TextComponentFindAction extends FindAction implements
 
             if (mOver) {
               mSearchBar.setVisible(false);
+              mSearchCloseBtn.setVisible(false);
               setBlockAutoClosing(false);
               interrupt();
             }
@@ -248,9 +250,10 @@ public class TextComponentFindAction extends FindAction implements
   // 2. adds focus listener so that textselection gets painted
   // even if the textcomponent has no focus
   protected void initSearch(ActionEvent ae) {
-
     mSearchBar.removeComponentListener(this);
+    
     mSearchBar.setVisible(true);
+    mSearchCloseBtn.setVisible(true);
     mSearchBar.addComponentListener(this);
 
     super.initSearch(ae);
@@ -323,7 +326,9 @@ public class TextComponentFindAction extends FindAction implements
 
   /*-------------------------------------------------[ ComponentListener ]---------------------------------------------------*/
 
-  public void componentHidden(ComponentEvent e) {}
+  public void componentHidden(ComponentEvent e) {
+    mSearchCloseBtn.setVisible(false);
+  }
 
   public void componentMoved(ComponentEvent e) {}
 
@@ -346,6 +351,7 @@ public class TextComponentFindAction extends FindAction implements
         setWaitTime(getWaitTime() - 100);
       }
       mSearchBar.setVisible(false);
+      mSearchCloseBtn.setVisible(false);
       setWaitTime(5000);
     } catch (Exception e) {}
   }
@@ -381,6 +387,7 @@ public class TextComponentFindAction extends FindAction implements
     // Stop the automatically closing
     interrupt();
     mSearchBar.setVisible(true);
+    mSearchCloseBtn.setVisible(true);
     getSearchField().requestFocus();
   }
 
@@ -389,5 +396,12 @@ public class TextComponentFindAction extends FindAction implements
    */
   public boolean isAlwaysVisible() {
     return mSearchBar.isVisible() && isBlockAutoClosing();
+  }
+  
+  /** 
+   * @return The close button of the search bar.
+   */
+  public JButton getCloseButton() {
+    return mSearchCloseBtn;
   }
 }

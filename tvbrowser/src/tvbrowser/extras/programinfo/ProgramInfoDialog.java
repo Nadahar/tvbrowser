@@ -32,6 +32,8 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -83,7 +85,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
   private static final long serialVersionUID = 1L;
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfoDialog.class);
 
   private JEditorPane mInfoEP;
@@ -94,6 +96,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   private JScrollPane mActionsPane;
   private TextComponentFindAction mFindAsYouType;
   private ActionMenu mSearchMenu;
+  private TaskMenuButton mTextSearch;
 
   /**
    * @param parent
@@ -289,7 +292,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
       public void actionPerformed(ActionEvent e) {
         //Open the SearchPanel
-        mFindAsYouType.showSearchBar();
+        if(mFindAsYouType.getCloseButton().isVisible()) {
+          mFindAsYouType.interrupt();
+          mFindAsYouType.getSearchBar().setVisible(false);
+          mFindAsYouType.getCloseButton().setVisible(false);
+        }
+        else
+          mFindAsYouType.showSearchBar();
       }
     };
 
@@ -314,7 +323,16 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mFindAsYouType.installKeyListener(scrollPane.getVerticalScrollBar());
     
     addPluginActions(false);
-
+    
+    mFindAsYouType.getCloseButton().addComponentListener(new ComponentAdapter() {
+      public void componentHidden(ComponentEvent e) {
+        mTextSearch.setText(mLocalizer.msg("search", "Search Text"));
+      }
+      public void componentShown(ComponentEvent e) {
+        mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
+      }
+    });
+    
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         close();
@@ -329,14 +347,16 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     };
     SwingUtilities.invokeLater(runnable);
     
-    if(ProgramInfo.getInstance().getProperty("showSearch","false").equals("true"))
+    if(ProgramInfo.getInstance().getProperty("showSearch","false").equals("true")) {
       mFindAsYouType.showSearchBar();
+      mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
+    }
   }
     
   protected void addPluginActions(boolean rebuild) {
     mFunctionGroup.removeAll();
 
-    new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
+    mTextSearch = new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
 
     ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs();
