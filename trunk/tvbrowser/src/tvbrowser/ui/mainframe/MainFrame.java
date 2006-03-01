@@ -82,6 +82,7 @@ import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
 import util.browserlauncher.Launch;
+import util.misc.OperatingSystem;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -159,7 +160,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     mStatusBar = new StatusBar();
 
-    if (System.getProperty("mrj.version") != null) {
+    if (OperatingSystem.isMacOs()) {
       /* create the menu bar for MacOS X */
       try {
         Class impl = Class.forName("tvbrowser.ui.mainframe.macosx.MacOSXMenuBar");
