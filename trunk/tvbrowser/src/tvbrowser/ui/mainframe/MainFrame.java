@@ -318,19 +318,19 @@ public class MainFrame extends JFrame implements DateListener {
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(525, 0); // This is the Value for Contextmenu in Java 1.5
+    stroke = KeyStroke.getKeyStroke(525, 0,true); // This is the Value for Contextmenu in Java 1.5
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_CONTEXTMENU), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0, true);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_CONTEXTMENU), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_DESELECT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_DOUBLECLICK), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_M, 0);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_M, 0, true);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_MIDDLECLICK), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK);
