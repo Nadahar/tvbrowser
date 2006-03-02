@@ -28,28 +28,32 @@ package tvbrowser.ui.settings.channel;
 import devplugin.Channel;
 
 /**
- * Filters for a specific Country, Category and/or Channelname 
+ * Filters for a specific Country, Category and/or Channelname
  */
 public class ChannelFilter {
   private String mCountry;
+
   private int mCategories;
-  private String mChannelName;
+
+  private String[] mChannelName;
 
   public ChannelFilter(String country, int categories, String name) {
     mCountry = country;
     mCategories = categories;
-    mChannelName = name.toLowerCase();
+    mChannelName = name.split("\\s");
+    for (int i = 0; i < mChannelName.length; i++) {
+      mChannelName[i] = normalizeCharacters(mChannelName[i]);
+    }
   }
 
   public boolean accept(Channel channel) {
     if (mCountry != null) {
       String country = channel.getCountry();
-      if (country!=null) {
+      if (country != null) {
         if (!country.equals(mCountry)) {
           return false;
         }
-      }
-      else {
+      } else {
         return false;
       }
     }
@@ -58,16 +62,34 @@ public class ChannelFilter {
       if ((channel.getCategories() & mCategories) == 0) {
         return false;
       }
-    } else if ((mCategories == 0) && (channel.getCategories() != 0)){
+    } else if ((mCategories == 0) && (channel.getCategories() != 0)) {
       return false;
     }
 
-    if (mChannelName.length() > 0) {
-      if (!(channel.getName().toLowerCase().indexOf(mChannelName) >= 0)) {
-        return false;
+    if (mChannelName.length > 0) {
+      String channelName = normalizeCharacters(channel.getName());
+      for (int i = mChannelName.length - 1; i >= 0; i--) {
+        if (!(channelName.indexOf(mChannelName[i]) >= 0)) {
+          return false;
+        }
       }
     }
-    
+
     return true;
+  }
+
+  /**
+   * Normalizes the Text for better Search results
+   * 
+   * @param text Text to normalize
+   * @return normalized Text
+   */
+  private String normalizeCharacters(String text) {
+    text = text.toLowerCase().trim();
+
+    text = text.replaceAll("ö", "o").replaceAll("ä", "a").replaceAll("ü", "u").replaceAll("ß", "s").replaceAll("oe",
+        "o").replaceAll("ae", "a").replaceAll("ue", "u").replaceAll("ss", "s");
+
+    return text;
   }
 }
