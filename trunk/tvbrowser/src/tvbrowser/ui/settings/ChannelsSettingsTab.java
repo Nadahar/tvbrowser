@@ -129,6 +129,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
   /** Filter for Channels */
   private ChannelFilter mFilter;
   
+  /** True, if currently updateing Lists*/
+  private boolean mListUpdating = false;
+  
   /**
    * Create the SettingsTab
    */
@@ -275,9 +278,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     southPn.add(refreshList, BorderLayout.WEST);
     southPn.add(configureChannels, BorderLayout.EAST);
 
+    mListUpdating = true;
     updateFilterPanel();
     fillSubscribedChannelsListBox();
     fillAvailableChannelsListBox();
+    mListUpdating = false;
 
     result.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
     return result;
@@ -302,19 +307,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     JPanel filterPanel = new JPanel(new FormLayout("pref, 3dlu, pref:grow, fill:60dlu, 3dlu, pref, 3dlu, pref:grow, pref",
         "pref, 3dlu, pref"));
 
-    ItemListener filterItemListener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        fillAvailableChannelsListBox();
-      }
-    };
-
     mCountryCB = new JComboBox();
-    mCountryCB.addItemListener(filterItemListener);
     filterPanel.add(new JLabel(mLocalizer.msg("country", "Country") + ":"), cc.xy(1, 1));
     filterPanel.add(mCountryCB, cc.xyw(3, 1, 2));
 
     mCategoryCB = new JComboBox();
-    mCategoryCB.addItemListener(filterItemListener);
+
     filterPanel.add(new JLabel(mLocalizer.msg("category", "Category") + ":"), cc.xy(6, 1));
     filterPanel.add(mCategoryCB, cc.xyw(8, 1, 2));
 
@@ -323,20 +321,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     namePanel.add(new JLabel(mLocalizer.msg("filterText", "With the following Text") + ": "), BorderLayout.WEST);
 
     mChannelName = new JTextField();
-    mChannelName.getDocument().addDocumentListener(new DocumentListener() {
-      public void changedUpdate(DocumentEvent e) {
-        fillAvailableChannelsListBox();
-      }
-
-      public void insertUpdate(DocumentEvent e) {
-        fillAvailableChannelsListBox();
-      }
-
-      public void removeUpdate(DocumentEvent e) {
-        fillAvailableChannelsListBox();
-      }
-    });
-
     namePanel.add(mChannelName, BorderLayout.CENTER);
 
     filterPanel.add(namePanel, cc.xyw(1,3,4));
@@ -353,6 +337,35 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     filterPanel.add(reset, cc.xy(9, 3));
 
     filter.add(filterPanel, cc.xy(1, 3));
+
+    final ItemListener filterItemListener = new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if ((e==null)||(e.getStateChange() == ItemEvent.SELECTED)) {
+          if (!mListUpdating) {
+            mListUpdating = true;
+            fillAvailableChannelsListBox();
+            mListUpdating = false;
+          }
+        }
+      }
+    };
+
+    mCountryCB.addItemListener(filterItemListener);
+    mCategoryCB.addItemListener(filterItemListener);
+    
+    mChannelName.getDocument().addDocumentListener(new DocumentListener() {
+      public void changedUpdate(DocumentEvent e) {
+        filterItemListener.itemStateChanged(null);
+      }
+
+      public void insertUpdate(DocumentEvent e) {
+        filterItemListener.itemStateChanged(null);
+      }
+
+      public void removeUpdate(DocumentEvent e) {
+        filterItemListener.itemStateChanged(null);
+      }
+    });
 
     return filter;
   }
@@ -573,9 +586,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     availableChannelList.toArray(availableChannelArr);
     Arrays.sort(availableChannelArr, createChannelComparator());
 
+    DefaultListModel model =((DefaultListModel) mAllChannels.getModel()); 
     // Add the available channels
     for (int i = 0; i < availableChannelArr.length; i++) {
-      ((DefaultListModel) mAllChannels.getModel()).addElement(availableChannelArr[i]);
+      model.addElement(availableChannelArr[i]);
     }
     
     if (mAllChannels.getModel().getSize() == 0) {
