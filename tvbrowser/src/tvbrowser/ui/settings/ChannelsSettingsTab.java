@@ -359,9 +359,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTVAll","TV"), new Integer(Channel.CATEGORY_TV)));
     if (channelListContains(allChannels, Channel.CATEGORY_TV))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNotSpecial","TV"), new Integer(Channel.CATEGORY_TV * -1)));
-    
-    if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySpecial","Alle Spartenkanäle"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC | Channel.CATEGORY_SPECIAL_NEWS | Channel.CATEGORY_SPECIAL_OTHER | Channel.CATEGORY_SPECIAL_SPORT)));
     if (channelListContains(allChannels, Channel.CATEGORY_DIGITAL))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
     if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_MUSIC))
