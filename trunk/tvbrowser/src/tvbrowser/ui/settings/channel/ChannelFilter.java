@@ -69,9 +69,10 @@ public class ChannelFilter {
         if (!(channel.getCategories() == (mCategories * -1))) {
           return false;
         }
+      } else if (mCategories == 0) {
+        if (channel.getCategories() != 0)
+          return false;
       } else if ((channel.getCategories() & mCategories) == 0) {
-        return false;
-      } else if ((mCategories == 0) && (channel.getCategories() != 0)) {
         return false;
       }
     }
