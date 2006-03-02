@@ -27,7 +27,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -49,6 +48,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -88,6 +88,7 @@ import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -152,14 +153,16 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     panel.add(centerPn, BorderLayout.CENTER);
     panel.add(southPn, BorderLayout.SOUTH);
 
-    JLabel available = new JLabel(mLocalizer.msg("availableChannels", "Available channels") + ":");
-    JLabel subscribed = new JLabel(mLocalizer.msg("subscribedChannels", "Subscribed channels") + ":");
+    JComponent availableSeparator =
+      DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("availableChannels", "Available channels") + ":");
+    availableSeparator.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
+    
+    JComponent subscribedSeparator =
+      DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("subscribedChannels", "Subscribed channels") + ":");
+    subscribedSeparator.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 5));
 
-    available.setFont(available.getFont().deriveFont(Font.BOLD));
-    subscribed.setFont(subscribed.getFont().deriveFont(Font.BOLD));
-
-    northPn.add(available, BorderLayout.NORTH);
-    northPn.add(subscribed, BorderLayout.NORTH);
+    northPn.add(availableSeparator, BorderLayout.NORTH);
+    northPn.add(subscribedSeparator, BorderLayout.NORTH);
 
     // left list box
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
@@ -276,7 +279,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     fillSubscribedChannelsListBox();
     fillAvailableChannelsListBox();
 
-    result.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 4));
+    result.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
     return result;
   }
 
@@ -290,10 +293,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     CellConstraints cc = new CellConstraints();
 
-    JLabel header = new JLabel(mLocalizer.msg("channelFilter", "Channel Filter")+":");
-    header.setFont(header.getFont().deriveFont(Font.BOLD));
-
-    filter.add(header, cc.xy(1, 1));
+    JComponent filterSeparator =
+      DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelFilter", "Channel Filter")+":");
+    filterSeparator.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0));
+    
+    filter.add(filterSeparator, cc.xy(1, 1));
 
     JPanel filterPanel = new JPanel(new FormLayout("pref, 3dlu, pref:grow, fill:60dlu, 3dlu, pref, 3dlu, pref:grow, pref",
         "pref, 3dlu, pref"));
@@ -362,15 +366,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     mCategoryCB.removeAllItems();
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
 
-    if (channelListContains(allChannels, Channel.CATEGORY_RADIO))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
-
-    if (channelListContains(allChannels, Channel.CATEGORY_EVENTS))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
-
-    if (channelListContains(allChannels, Channel.CATEGORY_CINEMA))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
-
     if (channelListContains(allChannels, Channel.CATEGORY_TV))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTVAll","TV"), new Integer(Channel.CATEGORY_TV)));
     if (channelListContains(allChannels, Channel.CATEGORY_TV))
@@ -385,6 +380,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
     if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers","Sonstige Sparten"), new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
+    if (channelListContains(allChannels, Channel.CATEGORY_RADIO))
+      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
+    if (channelListContains(allChannels, Channel.CATEGORY_CINEMA))
+      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
+    if (channelListContains(allChannels, Channel.CATEGORY_EVENTS))
+      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents","Events"), new Integer(Channel.CATEGORY_EVENTS)));
     if (channelListContains(allChannels, Channel.CATEGORY_NONE))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone","Not categorized"), new Integer(Channel.CATEGORY_NONE)));
 
