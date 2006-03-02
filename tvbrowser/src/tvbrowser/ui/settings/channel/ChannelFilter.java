@@ -38,20 +38,39 @@ public class ChannelFilter {
   private String[] mChannelName;
 
   /**
+   * Creates an empty Filter
+   */
+  public ChannelFilter() {
+    setFilter(null, Integer.MAX_VALUE, null);
+  }
+  
+  /**
    * Creates the Filter
    * @param country Country to use or NULL
    * @param categories Category to use, if &lt; 0 use exact category, if MAX_INT don't use category 
    * @param name Name to search for. This is an "and" Search. Search-Terms are separated by Whitespace
    */
   public ChannelFilter(String country, int categories, String name) {
-    mCountry = country;
-    mCategories = categories;
-    mChannelName = name.split("\\s");
-    for (int i = 0; i < mChannelName.length; i++) {
-      mChannelName[i] = normalizeCharacters(mChannelName[i]);
-    }
+    setFilter(country, categories, name);
   }
 
+  public void setFilter(String country, int categories, String name) {
+    mCountry = country;
+    mCategories = categories;
+    if (mChannelName != null) {
+      mChannelName = name.trim().split("\\s");
+      for (int i = 0; i < mChannelName.length; i++) {
+        mChannelName[i] = normalizeCharacters(mChannelName[i]);
+      }
+    } else {
+      mChannelName = new String[]{};
+    }
+  }
+  
+  /**
+   * @param channel Channel to check
+   * @return True if Channel is accepted by this Filter
+   */
   public boolean accept(Channel channel) {
     if (mCountry != null) {
       String country = channel.getCountry();
