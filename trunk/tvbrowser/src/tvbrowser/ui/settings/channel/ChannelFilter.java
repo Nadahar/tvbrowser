@@ -63,7 +63,7 @@ public class ChannelFilter {
     }
 
     if (mChannelName.length() > 0) {
-      if (!channel.getName().toLowerCase().contains(mChannelName)) {
+      if (!(channel.getName().toLowerCase().indexOf(mChannelName) >= 0)) {
         return false;
       }
     }
