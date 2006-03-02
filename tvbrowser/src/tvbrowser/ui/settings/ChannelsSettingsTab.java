@@ -277,14 +277,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     CellConstraints cc = new CellConstraints();
 
-    JPanel topPanel = new JPanel(new BorderLayout());
-
     JLabel header = new JLabel(mLocalizer.msg("channelFilter", "Channel Filter")+":");
     header.setFont(header.getFont().deriveFont(Font.BOLD));
 
     filter.add(header, cc.xy(1, 1));
 
-    JPanel filterPanel = new JPanel(new FormLayout("pref, 3dlu, pref:grow, 100dlu, 3dlu, pref, 3dlu, pref:grow, pref",
+    JPanel filterPanel = new JPanel(new FormLayout("pref, 3dlu, pref:grow, fill:60dlu, 3dlu, pref, 3dlu, pref:grow, pref",
         "pref, 3dlu, pref"));
 
     ItemListener filterItemListener = new ItemListener() {
