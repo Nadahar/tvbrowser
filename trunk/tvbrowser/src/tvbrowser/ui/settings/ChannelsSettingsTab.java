@@ -73,6 +73,7 @@ import tvbrowser.ui.settings.channel.ChannelFilter;
 import tvbrowser.ui.settings.channel.ChannelJList;
 import tvbrowser.ui.settings.channel.ChannelListModel;
 import tvbrowser.ui.settings.channel.FilterItem;
+import tvbrowser.ui.settings.channel.FilteredChannelListCellRenderer;
 import tvbrowser.ui.settings.channel.MultiChannelConfigDlg;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -124,6 +125,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
   /** Filter for Channelname */
   private JTextField mChannelName;
 
+  /** Filter for Channels */
+  private ChannelFilter mFilter;
+  
   /**
    * Create the SettingsTab
    */
@@ -164,6 +168,14 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
 
+    mAllChannels.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        if ((mAllChannels.getModel().getSize() == 1) && (mAllChannels.getSelectedIndex() >= 0) && (mAllChannels.getSelectedValue() instanceof String)) {
+          mAllChannels.setSelectedIndices(new int[]{});
+        }
+      }
+    });
+    
     centerPn.add(listBoxPnLeft);
 
     // Buttons in the Middle
@@ -192,7 +204,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     SortableItemList channelList = new SortableItemList(new ChannelJList());
 
     mSubscribedChannels = channelList.getList();
-    mSubscribedChannels.setCellRenderer(new ChannelListCellRenderer(true, true));
+    mFilter = new ChannelFilter();
+    mSubscribedChannels.setCellRenderer(new FilteredChannelListCellRenderer(mFilter));
 
     // Register DnD on the lists.
     mDnDHandler = new ListDragAndDropHandler(mAllChannels, mSubscribedChannels, this);
@@ -301,7 +314,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     filterPanel.add(new JLabel(mLocalizer.msg("category", "Category") + ":"), cc.xy(6, 1));
     filterPanel.add(mCategoryCB, cc.xyw(8, 1, 2));
 
-    filterPanel.add(new JLabel(mLocalizer.msg("filterText", "With the following Text") + ":"), cc.xyw(1, 3, 3));
+    JPanel namePanel = new JPanel(new BorderLayout());
+    
+    namePanel.add(new JLabel(mLocalizer.msg("filterText", "With the following Text") + ": "), BorderLayout.WEST);
 
     mChannelName = new JTextField();
     mChannelName.getDocument().addDocumentListener(new DocumentListener() {
@@ -318,8 +333,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
       }
     });
 
-    filterPanel.add(mChannelName, cc.xy(4, 3));
+    namePanel.add(mChannelName, BorderLayout.CENTER);
 
+    filterPanel.add(namePanel, cc.xyw(1,3,4));
     JButton reset = new JButton(mLocalizer.msg("reset","Reset"));
 
     reset.addActionListener(new ActionListener() {
@@ -537,7 +553,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     if (categoryInt != null) {
       categories = categoryInt.intValue();
     }
-    ChannelFilter filter = new ChannelFilter(country, categories, mChannelName.getText());
+    mFilter.setFilter(country, categories, mChannelName.getText());
     ((DefaultListModel) mAllChannels.getModel()).removeAllElements();
 
     // Split the channels in subscribed and available
@@ -546,7 +562,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     for (int i = 0; i < channels.length; i++) {
       Channel channel = channels[i];
-      if (!((DefaultListModel) mSubscribedChannels.getModel()).contains(channel) && filter.accept(channel)) {
+      if (!((DefaultListModel) mSubscribedChannels.getModel()).contains(channel) && mFilter.accept(channel)) {
         availableChannelList.add(channel);
       }
     }
@@ -560,6 +576,11 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     for (int i = 0; i < availableChannelArr.length; i++) {
       ((DefaultListModel) mAllChannels.getModel()).addElement(availableChannelArr[i]);
     }
+    
+    if (mAllChannels.getModel().getSize() == 0) {
+      ((DefaultListModel) mAllChannels.getModel()).addElement(mLocalizer.msg("noChannelFound", "No Channel Found"));
+    }
+    mSubscribedChannels.updateUI();
   }
 
   /**
