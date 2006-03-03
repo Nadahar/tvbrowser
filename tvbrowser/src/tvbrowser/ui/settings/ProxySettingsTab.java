@@ -26,14 +26,25 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
 
-import util.ui.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import tvbrowser.core.Settings;
+import util.ui.TabLayout;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  *
@@ -68,7 +79,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     
     JPanel main = new JPanel(new TabLayout(1));
-    mSettingsPn.add(main, BorderLayout.NORTH);
+    mSettingsPn.add(main, BorderLayout.CENTER);
     
     // HTTP proxy
     String msgProxy = mLocalizer.msg("httpProxy", "HTTP Proxy");
@@ -81,18 +92,6 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     mHttpProxySettingsPanel.setUser(Settings.propHttpProxyUser.getString());
     mHttpProxySettingsPanel.setPassword(Settings.propHttpProxyPassword.getString());
     main.add(mHttpProxySettingsPanel);
-    
-    // FTP proxy
-    msgProxy = mLocalizer.msg("ftpProxy", "FTP Proxy");
-    msgUseProxy = mLocalizer.msg("useFtpProxy", "Use proxy for FTP");
-    mFtpProxySettingsPanel = new ProxySettingsPanel(msgProxy, msgUseProxy);
-    mFtpProxySettingsPanel.setUseProxy(Settings.propFtpProxyUseProxy.getBoolean());
-    mFtpProxySettingsPanel.setHost(Settings.propFtpProxyHost.getString());
-    mFtpProxySettingsPanel.setPort(Settings.propFtpProxyPort.getString());
-    mFtpProxySettingsPanel.setAuthentifyAtProxy(Settings.propFtpProxyAuthentifyAtProxy.getBoolean());
-    mFtpProxySettingsPanel.setUser(Settings.propFtpProxyUser.getString());
-    mFtpProxySettingsPanel.setPassword(Settings.propFtpProxyPassword.getString());
-    main.add(mFtpProxySettingsPanel);
     
     return mSettingsPn;
   }
@@ -109,13 +108,6 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     Settings.propHttpProxyAuthentifyAtProxy.setBoolean(mHttpProxySettingsPanel.getAuthentifyAtProxy());
     Settings.propHttpProxyUser.setString(mHttpProxySettingsPanel.getUser());
     Settings.propHttpProxyPassword.setString(mHttpProxySettingsPanel.getPassword());
-    
-    Settings.propFtpProxyUseProxy.setBoolean(mFtpProxySettingsPanel.getUseProxy());
-    Settings.propFtpProxyHost.setString(mFtpProxySettingsPanel.getHost());
-    Settings.propFtpProxyPort.setString(mFtpProxySettingsPanel.getPort());
-    Settings.propFtpProxyAuthentifyAtProxy.setBoolean(mFtpProxySettingsPanel.getAuthentifyAtProxy());
-    Settings.propFtpProxyUser.setString(mFtpProxySettingsPanel.getUser());
-    Settings.propFtpProxyPassword.setString(mFtpProxySettingsPanel.getPassword());
   }
 
   
@@ -149,7 +141,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     
     
     public ProxySettingsPanel(String msgProxy, String msgUseProxy) {
-      super(new TabLayout(1));
+      super(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
       ActionListener updateEnabledListener = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
@@ -158,44 +150,42 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
       };
 
       String msg;
-      JPanel p1;
       
-      setBorder(BorderFactory.createTitledBorder(msgProxy));
+      CellConstraints cc = new CellConstraints();
+      
+      add(DefaultComponentFactory.getInstance().createSeparator(msgProxy), cc.xyw(1,1, 10));
 
       mUseProxyChB = new JCheckBox(msgUseProxy);
       mUseProxyChB.addActionListener(updateEnabledListener);
-      add(mUseProxyChB);
-
-      p1 = new JPanel(new TabLayout(4));
-      add(p1);
+      add(mUseProxyChB, cc.xyw(2,3,6));
 
       mHostLb = new JLabel(mLocalizer.msg("host", "Host"));
-      p1.add(mHostLb);
+      add(mHostLb, cc.xyw(3,5,1));
       mHostTF = new JTextField(20);
-      p1.add(mHostTF);
+      add(mHostTF, cc.xy(5,5));
 
       mPortLb = new JLabel(mLocalizer.msg("port", "Port"));
-      p1.add(mPortLb);
+      add(mPortLb, cc.xy(7,5));
       mPortTF = new JTextField(4);
-      p1.add(mPortTF);
+      add(mPortTF, cc.xy(9,5));
 
       msg = mLocalizer.msg("authentifyAtProxy", "Authentify at proxy");
       mAuthentifyAtProxyChB = new JCheckBox(msg);
       mAuthentifyAtProxyChB.addActionListener(updateEnabledListener);
-      add(mAuthentifyAtProxyChB);
+      add(mAuthentifyAtProxyChB, cc.xyw(3,7,5));
 
-      p1 = new JPanel(new TabLayout(4));
-      add(p1);
-
+      JPanel panel = new JPanel(new FormLayout("10dlu, pref, 3dlu, fill:pref:grow", "pref, 3dlu, pref"));
+      
       mUserLb = new JLabel(mLocalizer.msg("user", "User"));
-      p1.add(mUserLb);
+      panel.add(mUserLb, cc.xy(2,1));
       mUserTF = new JTextField(10);
-      p1.add(mUserTF);
-
+      panel.add(mUserTF, cc.xy(4,1));
       mPasswordLb = new JLabel(mLocalizer.msg("password", "Password"));
-      p1.add(mPasswordLb);
+      panel.add(mPasswordLb, cc.xy(2,3));
       mPasswordPF = new JPasswordField(10);
-      p1.add(mPasswordPF);
+      panel.add(mPasswordPF, cc.xy(4,3));
+      
+      add(panel, cc.xyw(3,9,7));
     }
     
 
