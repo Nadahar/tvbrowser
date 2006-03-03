@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import util.ui.TabLayout;
 
@@ -108,6 +109,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     Settings.propHttpProxyAuthentifyAtProxy.setBoolean(mHttpProxySettingsPanel.getAuthentifyAtProxy());
     Settings.propHttpProxyUser.setString(mHttpProxySettingsPanel.getUser());
     Settings.propHttpProxyPassword.setString(mHttpProxySettingsPanel.getPassword());
+    TVBrowser.updateProxySettings();
   }
 
   
