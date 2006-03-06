@@ -93,6 +93,9 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     String[] zoneIds = TimeZone.getAvailableIDs();
     mTimezoneCB = new JComboBox(zoneIds);
     String zone = Settings.propTimezone.getString();
+    if (zone == null) {
+      zone = TimeZone.getDefault().getID();
+    }
     for (int i = 0; i < zoneIds.length; i++) {
       if (zoneIds[i].equals(zone)) {
         mTimezoneCB.setSelectedIndex(i);
