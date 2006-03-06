@@ -75,12 +75,9 @@ class CheckNetworkConnection {
           URL url = new URL("http://tvbrowser.org");
 
           HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-          connection.setConnectTimeout(15000);
-
           mResult = (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
               || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER);
-        } catch (IOException e1) {
-          e1.printStackTrace();
+        } catch (IOException e) {
         }
 
         mCheckRunning = false;
@@ -88,8 +85,8 @@ class CheckNetworkConnection {
     }).start();
 
     int num = 0;
-    // Wait till second Thread is finished
-    while (mCheckRunning) {
+    // Wait till second Thread is finished or 15000 ms reached
+    while ((mCheckRunning) && (num < 150)) {
       num++;
       if (num == 7) {
         // Show the Dialog after 700 MS
