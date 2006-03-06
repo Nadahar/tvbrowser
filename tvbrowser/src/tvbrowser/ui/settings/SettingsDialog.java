@@ -93,6 +93,7 @@ public class SettingsDialog implements WindowClosingIf {
   public static final String TAB_ID_REMINDER = "#reminder";
   public static final String TAB_ID_FAVORITE = "#favorite";
   public static final String TAB_ID_CHANNELS = "#channels";
+  public static final String TAB_ID_WEBBROWSER = "#webbrowser";
 
   private JDialog mDialog;
 
@@ -308,6 +309,7 @@ public class SettingsDialog implements WindowClosingIf {
 
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
+    technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), TAB_ID_WEBBROWSER));
     
     root.add(new SettingNode(new ProgramInfoSettingsTab(), TAB_ID_PROGRAMINFO));
     root.add(new SettingNode(new FavoritesSettingTab(), TAB_ID_FAVORITE));

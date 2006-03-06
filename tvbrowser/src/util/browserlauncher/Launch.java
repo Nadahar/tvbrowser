@@ -127,7 +127,7 @@ public class Launch {
         configure.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             dialog.setVisible(false);
-            MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ADDITIONAL);
+            MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_WEBBROWSER);
           }
         });
         
@@ -145,7 +145,7 @@ public class Launch {
       int ret = ErrorHandler.handle(mLocalizer.msg("error", "An error occured"), e, ErrorHandler.SHOW_YES_NO);
       
       if (ret == ErrorHandler.YES_PRESSED) {
-        MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ADDITIONAL);
+        MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_WEBBROWSER);
       }
     }
   }
