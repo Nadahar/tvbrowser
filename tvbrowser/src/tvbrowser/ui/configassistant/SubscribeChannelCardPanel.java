@@ -37,43 +37,44 @@ import tvbrowser.ui.settings.ChannelsSettingsTab;
 class SubscribeChannelCardPanel extends AbstractCardPanel {
 
   private ChannelsSettingsTab mChannelsSettingsTab;
+
   private JPanel mContent;
-  
-  private static final util.ui.Localizer mLocalizer
-          = util.ui.Localizer.getLocalizerFor(SubscribeChannelCardPanel.class); 
-  
-  
-    public SubscribeChannelCardPanel(PrevNextButtons btns) {
-      super(btns);
-      mContent=new JPanel(new BorderLayout());
-    }
- 
+
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(SubscribeChannelCardPanel.class);
+
+  public SubscribeChannelCardPanel(PrevNextButtons btns) {
+    super(btns);
+    mContent = new JPanel(new BorderLayout());
+  }
+
   public JPanel getPanel() {
-   return mContent;
- }
- 
+    return mContent;
+  }
+
   public boolean onNext() {
     mChannelsSettingsTab.saveSettings();
-    if (ChannelList.getNumberOfSubscribedChannels()==0) {
-      JOptionPane.showMessageDialog(
-              mContent,mLocalizer.msg("noChannelsSelected","There are no channels selected..."),
-              mLocalizer.msg("noChannelsSelected.Title","no selected channels"),
-              JOptionPane.INFORMATION_MESSAGE); 
+    if (ChannelList.getNumberOfSubscribedChannels() == 0) {
+      JOptionPane.showMessageDialog(mContent,
+          mLocalizer.msg("noChannelsSelected", "There are no channels selected..."), mLocalizer.msg(
+              "noChannelsSelected.Title", "no selected channels"), JOptionPane.INFORMATION_MESSAGE);
       return false;
     }
-    
+
     return true;
   }
-  
-   public boolean onPrev() {
-     mChannelsSettingsTab.saveSettings();
-     return true;
-   }
+
+  public boolean onPrev() {
+    mChannelsSettingsTab.saveSettings();
+    return true;
+  }
+
   public void onShow() {
     super.onShow();
-    mChannelsSettingsTab=new ChannelsSettingsTab();
+    mChannelsSettingsTab = new ChannelsSettingsTab();
     mContent.removeAll();
-    mContent.add(mChannelsSettingsTab.createSettingsPanel(),BorderLayout.CENTER);
-    }
-  
+    mContent.add(new StatusPanel(StatusPanel.CHANNELS), BorderLayout.NORTH);
+    mContent.add(mChannelsSettingsTab.createSettingsPanel(), BorderLayout.CENTER);
+  }
+
 }

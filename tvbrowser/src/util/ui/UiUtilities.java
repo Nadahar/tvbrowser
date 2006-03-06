@@ -28,6 +28,7 @@ package util.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -45,6 +46,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -54,6 +56,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -61,7 +64,10 @@ import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
+import util.browserlauncher.Launch;
 import util.misc.OperatingSystem;
 
 /**
@@ -288,6 +294,53 @@ public class UiUtilities {
     descTA.setFocusable(false);
 
     return descTA;
+  }
+  
+  /**
+   * Creates a Html EditorPane that holds a HTML-Help Text
+   * 
+   * Links will be displayed and are clickable
+   * 
+   * @param html HTML-Text to display
+   * @return EditorPane that holds a Help Text
+   * @since 2.2
+   */
+  public static JEditorPane createHtmlHelpTextArea(String html) {
+    // Quick "hack". Remove HTML-Code and replace it with Code that includes the correct Font
+    if (html.indexOf("<html>") >= 0) {
+      html = html.substring(html.indexOf("<html>")+6, html.indexOf("</html>"));
+    }
+    Font font = new JLabel().getFont();
+    html = "<html><div style=\"color:#000000;font-family:"+ font.getName() +"; font-size:"+font.getSize()+";\">"+html+"</div></html>";
+
+    final JEditorPane pane = new JEditorPane("text/html", html);
+    pane.setBorder(BorderFactory.createEmptyBorder());
+    pane.setEditable(false);
+    pane.setFont(font);
+    pane.setOpaque(false);
+    pane.setFocusable(false);
+    
+    pane.addHyperlinkListener(new HyperlinkListener() {
+      private String mTooltip;
+      public void hyperlinkUpdate(HyperlinkEvent evt) {
+        if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+          mTooltip = pane.getToolTipText();
+          pane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+          pane.setToolTipText(evt.getURL().toExternalForm());
+        }
+        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+          pane.setCursor(Cursor.getDefaultCursor());
+          pane.setToolTipText(mTooltip);
+        }
+        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          URL url = evt.getURL();
+          if (url != null) {
+            Launch.openURL(url.toString());
+          }
+        }
+      }
+    });
+    return pane;
   }
   
   /**
@@ -569,4 +622,5 @@ public class UiUtilities {
     component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_ESCAPE");
     component.getRootPane().getActionMap().put("CLOSE_ON_ESCAPE", a);
   }
+
 }

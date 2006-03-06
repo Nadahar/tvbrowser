@@ -23,34 +23,49 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.configassistant;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 
+import javax.swing.JPanel;
+
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+/**
+ * The Finish-Card 
+ */
 class FinishCardPanel extends AbstractCardPanel {
 
-   private JPanel mContent;
-   private CardPanel mPrev;
-   
-  private static final util.ui.Localizer mLocalizer
-            = util.ui.Localizer.getLocalizerFor(FinishCardPanel.class); 
- 
-   
-   public FinishCardPanel(PrevNextButtons btns) {
-     super(btns);
-     mContent=new JPanel(new BorderLayout());
-     JLabel area=new JLabel();
-     area.setFont(new Font("SansSerif", Font.PLAIN, 12)); 
-     area.setText(mLocalizer.msg("description","description"));
-    
-     mContent.add(area,BorderLayout.CENTER);
-   }
-  
+  private JPanel mContent;
+
+  private CardPanel mPrev;
+
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FinishCardPanel.class);
+
+  public FinishCardPanel(PrevNextButtons btns) {
+    super(btns);
+  }
+
   public JPanel getPanel() {
+    mContent = new JPanel(new BorderLayout());
+
+    mContent.add(new StatusPanel(StatusPanel.READY), BorderLayout.NORTH);
+
+    JPanel content = new JPanel(new FormLayout("fill:pref:grow, fill:300dlu:grow, fill:pref:grow",
+        "fill:pref:grow, pref, fill:pref:grow"));
+    content.setBorder(Borders.DLU4_BORDER);
+
+    CellConstraints cc = new CellConstraints();
+
+    content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("description", "description")), cc.xy(2, 2));
+
+    mContent.add(content, BorderLayout.CENTER);
+
     return mContent;
   }
 
- 
 }

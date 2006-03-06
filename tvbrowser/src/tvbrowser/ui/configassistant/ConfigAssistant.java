@@ -26,20 +26,35 @@
 
 package tvbrowser.ui.configassistant;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import tvbrowser.core.Settings;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import javax.swing.*;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-
-public class ConfigAssistant extends JDialog implements ActionListener,
-    PrevNextButtons, WindowClosingIf {
+/**
+ * This is the Main-Class for the Config Assistent
+ */
+public class ConfigAssistant extends JDialog implements ActionListener, PrevNextButtons, WindowClosingIf {
 
   private JButton mNextBt, mBackBt, mCancelBt;
 
@@ -47,8 +62,7 @@ public class ConfigAssistant extends JDialog implements ActionListener,
 
   private JPanel mCardPn;
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(ConfigAssistant.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ConfigAssistant.class);
 
   public ConfigAssistant(JFrame parent) {
     super(parent, true);
@@ -68,15 +82,11 @@ public class ConfigAssistant extends JDialog implements ActionListener,
 
     setTitle(mLocalizer.msg("title", "Setup assistant"));
     JPanel contentPane = (JPanel) getContentPane();
-    contentPane.setLayout(new BorderLayout());
+    contentPane.setLayout(new FormLayout("fill:250px:grow", "fill:pref:grow, 1px, pref"));
 
     JPanel centerPanel = new JPanel(new BorderLayout());
 
     mCardPn = new JPanel(new CardLayout());
-    mCardPn.setBorder(BorderFactory.createEmptyBorder(3, 100, 10, 20));
-
-    JPanel btnPanel = new JPanel(new BorderLayout());
-    JPanel panel1 = new JPanel();
 
     mBackBt = new JButton("<< " + mLocalizer.msg("back", "back"));
     mNextBt = new JButton(mLocalizer.msg("next", "next") + " >>");
@@ -89,61 +99,64 @@ public class ConfigAssistant extends JDialog implements ActionListener,
     mCancelBt.addActionListener(this);
 
     CardPanel welcomePanel = new WelcomeCardPanel(this);
-    CardPanel proxyPanel = new ProxyCardPanel(this);
-    CardPanel proxyQuestionPanel = new ProxyQuestionCardPanel(this, proxyPanel);
+    CardPanel networkPanel = new NetworkCardPanel(this);
+    CardPanel networkSuccessPanel = new NetworkSuccessPanel(this);
 
     CardPanel subscribeChannelPanel = new SubscribeChannelCardPanel(this);
-    CardPanel downloadChannelListPanel = new DownloadChannelListCardPanel(this);
     mFinishedPanel = new FinishCardPanel(this);
 
     mCardPn.add(welcomePanel.getPanel(), welcomePanel.toString());
-    mCardPn.add(proxyQuestionPanel.getPanel(), proxyQuestionPanel.toString());
-    mCardPn.add(proxyPanel.getPanel(), proxyPanel.toString());
+    mCardPn.add(networkPanel.getPanel(), networkPanel.toString());
+    mCardPn.add(networkSuccessPanel.getPanel(), networkSuccessPanel.toString());
     mCardPn.add(mFinishedPanel.getPanel(), mFinishedPanel.toString());
-    mCardPn.add(subscribeChannelPanel.getPanel(), subscribeChannelPanel
-        .toString());
+    mCardPn.add(subscribeChannelPanel.getPanel(), subscribeChannelPanel.toString());
 
     boolean dynamicChannelList = isDynamicChannelListSupported();
 
-    welcomePanel.setNext(proxyQuestionPanel);
+    welcomePanel.setNext(networkPanel);
     if (dynamicChannelList) {
-      mCardPn.add(downloadChannelListPanel.getPanel(), downloadChannelListPanel
-          .toString());
-
-      proxyQuestionPanel.setNext(downloadChannelListPanel);
-      proxyPanel.setNext(downloadChannelListPanel);
-      downloadChannelListPanel.setNext(subscribeChannelPanel);
-      downloadChannelListPanel.setPrev(proxyQuestionPanel);
+      networkPanel.setNext(networkSuccessPanel);
+      networkSuccessPanel.setNext(subscribeChannelPanel);
+      subscribeChannelPanel.setPrev(networkSuccessPanel);
       subscribeChannelPanel.setNext(mFinishedPanel);
+      mFinishedPanel.setPrev(subscribeChannelPanel);
     } else {
-      proxyQuestionPanel.setNext(subscribeChannelPanel);
-      proxyPanel.setNext(subscribeChannelPanel);
+      networkPanel.setNext(networkSuccessPanel);
+      networkSuccessPanel.setNext(subscribeChannelPanel);
+      subscribeChannelPanel.setPrev(networkSuccessPanel);
       subscribeChannelPanel.setNext(mFinishedPanel);
-      subscribeChannelPanel.setPrev(proxyQuestionPanel);
+      mFinishedPanel.setPrev(subscribeChannelPanel);
     }
 
     mCurCardPanel = welcomePanel;
 
-    panel1.add(mBackBt);
-    panel1.add(mNextBt);
+    FormLayout layout = new FormLayout("fill:pref:grow, pref, 3dlu, pref, 3dlu, pref", "pref");
+    layout.setColumnGroups(new int[][] { { 2, 4, 6 } });
+    JPanel buttonPanel = new JPanel(layout);
 
-    JPanel panel2 = new JPanel();
-    panel2.add(mCancelBt);
+    buttonPanel.setBorder(Borders.DLU4_BORDER);
+
+    CellConstraints cc = new CellConstraints();
+    buttonPanel.add(mBackBt, cc.xy(2, 1));
+    buttonPanel.add(mNextBt, cc.xy(4, 1));
+    buttonPanel.add(mCancelBt, cc.xy(6, 1));
 
     centerPanel.add(mCardPn, BorderLayout.CENTER);
 
-    btnPanel.add(panel1, BorderLayout.CENTER);
-    btnPanel.add(panel2, BorderLayout.EAST);
-    contentPane.add(btnPanel, BorderLayout.SOUTH);
-    contentPane.add(centerPanel, BorderLayout.CENTER);
+    contentPane.add(centerPanel, cc.xy(1, 1));
+
+    JPanel black = new JPanel();
+    black.setBackground(mCancelBt.getForeground());
+    contentPane.add(black, cc.xy(1, 2));
+
+    contentPane.add(buttonPanel, cc.xy(1, 3));
 
     setSize(700, 500);
 
   }
 
   private boolean isDynamicChannelListSupported() {
-    TvDataServiceProxy services[] = TvDataServiceProxyManager.getInstance()
-        .getDataServices();
+    TvDataServiceProxy services[] = TvDataServiceProxyManager.getInstance().getDataServices();
     for (int i = 0; i < services.length; i++) {
       if (services[i].supportsDynamicChannelList())
         return true;
@@ -151,53 +164,62 @@ public class ConfigAssistant extends JDialog implements ActionListener,
     return false;
   }
 
-  public void actionPerformed(ActionEvent e) {
-    Object o = e.getSource();
-    if (o == mBackBt) {
-      if (!mCurCardPanel.onPrev())
-        return;
-      mCurCardPanel = mCurCardPanel.getPrev();
-      CardLayout cl = (CardLayout) mCardPn.getLayout();
-      mCurCardPanel.onShow();
-      cl.show(mCardPn, mCurCardPanel.toString());
-    } else if (o == mNextBt) {
-      if (!mCurCardPanel.onNext())
-        return;
-      mCurCardPanel = mCurCardPanel.getNext();
-      CardLayout cl = (CardLayout) mCardPn.getLayout();
-      mCurCardPanel.onShow();
-
-      cl.show(mCardPn, mCurCardPanel.toString());
-
-      if (mCurCardPanel == mFinishedPanel) {
-        mCancelBt.setText(mLocalizer.msg("finish", "Finish"));
+  public void actionPerformed(final ActionEvent e) {
+    new Thread(new Runnable() {
+      public void run() {
         mNextBt.setEnabled(false);
         mBackBt.setEnabled(false);
-      }
+        mCancelBt.setEnabled(false);
+        
+        Object o = e.getSource();
+        if (o == mBackBt) {
+          if (!mCurCardPanel.onPrev())
+            return;
+          mCurCardPanel = mCurCardPanel.getPrev();
+          CardLayout cl = (CardLayout) mCardPn.getLayout();
 
-    } else if (o == mCancelBt) {
-      close();
-    }
+          mCurCardPanel.onShow();
+          cl.show(mCardPn, mCurCardPanel.toString());
+          mCancelBt.setEnabled(true);
+        } else if (o == mNextBt) {
+          if (!mCurCardPanel.onNext())
+            return;
+          mCurCardPanel = mCurCardPanel.getNext();
+          CardLayout cl = (CardLayout) mCardPn.getLayout();
+
+          mCurCardPanel.onShow();
+
+          cl.show(mCardPn, mCurCardPanel.toString());
+
+          mCancelBt.setEnabled(true);
+          if (mCurCardPanel == mFinishedPanel) {
+            mCancelBt.setText(mLocalizer.msg("finish", "Finish"));
+            mNextBt.setEnabled(false);
+            mBackBt.setEnabled(false);
+          }
+        } else if (o == mCancelBt) {
+          close();
+        }
+        
+      }
+    }).start();
 
   }
 
   private void cancel() {
-    JCheckBox notShowAgain = new JCheckBox(mLocalizer.msg("notShowAgain",
-        "Don't show assistant again."));
+    JCheckBox notShowAgain = new JCheckBox(mLocalizer.msg("notShowAgain", "Don't show assistant again."));
     notShowAgain.setSelected(!tvbrowser.core.Settings.propShowAssistant.getBoolean());
-    
+
     Object[] values = { mLocalizer.msg("cancelDlg", "message"), notShowAgain };
     Object[] buttons = { mLocalizer.msg("button.1", "Close assistant"),
         mLocalizer.msg("button.2", "Continue configuration") };
-    
-    int selectedValue = JOptionPane.showOptionDialog(this, values, mLocalizer
-        .msg("cancelDlg.title", "title"), JOptionPane.OK_CANCEL_OPTION,
-        JOptionPane.WARNING_MESSAGE, null, buttons, buttons[1]);
+
+    int selectedValue = JOptionPane.showOptionDialog(this, values, mLocalizer.msg("cancelDlg.title", "title"),
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, buttons, buttons[1]);
 
     if (selectedValue == 0) {
-      tvbrowser.core.Settings.propShowAssistant.setBoolean(!notShowAgain
-          .isSelected());
-      hide();
+      tvbrowser.core.Settings.propShowAssistant.setBoolean(!notShowAgain.isSelected());
+      setVisible(false);
     }
   }
 
@@ -220,7 +242,7 @@ public class ConfigAssistant extends JDialog implements ActionListener,
   public void close() {
     if (mCurCardPanel == mFinishedPanel) {
       tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
-      hide();
+      setVisible(false);
     } else
       cancel();
   }
