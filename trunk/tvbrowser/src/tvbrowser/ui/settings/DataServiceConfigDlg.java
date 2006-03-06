@@ -24,75 +24,76 @@
  * $Revision$
  */
 
-
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import util.ui.UiUtilities;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import tvdataservice.TvDataService;
 import tvdataservice.SettingsPanel;
+import util.ui.UiUtilities;
+import devplugin.AbstractTvDataService;
 
 public class DataServiceConfigDlg implements ActionListener {
-	
+
   private JDialog mDialog;
-	private TvDataService dataService;
-	private JButton cancelBtn, okBtn;
-	private SettingsPanel configPanel;
-	
-  
-  
-	public DataServiceConfigDlg(Component parent, TvDataService dataService) {
+
+  private AbstractTvDataService dataService;
+
+  private JButton cancelBtn, okBtn;
+
+  private SettingsPanel configPanel;
+
+  public DataServiceConfigDlg(Component parent, AbstractTvDataService dataService) {
     mDialog = UiUtilities.createDialog(parent, true);
-   	mDialog.setTitle("Configure " + dataService.getInfo().getName());
-    
-		JPanel contentPane = (JPanel) mDialog.getContentPane();
-		
-		contentPane.setLayout(new BorderLayout());
-		
-		this.dataService = dataService;
-		
+    mDialog.setTitle("Configure " + dataService.getInfo().getName());
+
+    JPanel contentPane = (JPanel) mDialog.getContentPane();
+
+    contentPane.setLayout(new BorderLayout());
+
+    this.dataService = dataService;
+
     configPanel = dataService.getSettingsPanel();
     if (configPanel != null) {
-      contentPane.add(configPanel,BorderLayout.NORTH);
+      contentPane.add(configPanel, BorderLayout.NORTH);
     } else {
-      contentPane.add(new JLabel("no config pane available"),BorderLayout.CENTER);
+      contentPane.add(new JLabel("no config pane available"), BorderLayout.CENTER);
     }
-		
-		JPanel pushButtonPanel=new JPanel();
 
-		if (configPanel!=null) {
-			okBtn=new JButton("OK");
-			okBtn.addActionListener(this);
-			pushButtonPanel.add(okBtn);
-			mDialog.getRootPane().setDefaultButton(okBtn);
-		}
-		cancelBtn=new JButton("Cancel");
-		cancelBtn.addActionListener(this);
-		pushButtonPanel.add(cancelBtn);
-		
-		contentPane.add(pushButtonPanel,BorderLayout.SOUTH);
-    
+    JPanel pushButtonPanel = new JPanel();
+
+    if (configPanel != null) {
+      okBtn = new JButton("OK");
+      okBtn.addActionListener(this);
+      pushButtonPanel.add(okBtn);
+      mDialog.getRootPane().setDefaultButton(okBtn);
+    }
+    cancelBtn = new JButton("Cancel");
+    cancelBtn.addActionListener(this);
+    pushButtonPanel.add(cancelBtn);
+
+    contentPane.add(pushButtonPanel, BorderLayout.SOUTH);
+
     mDialog.pack();
-	}
-  
-  
-  
+  }
+
   public void centerAndShow() {
     UiUtilities.centerAndShow(mDialog);
   }
-  
-	
-  
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource()==okBtn) {
-			configPanel.ok();
-		}else if (e.getSource()==cancelBtn) {
-			mDialog.dispose();
-		}
-		
-	}
+
+  public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == okBtn) {
+      configPanel.ok();
+    } else if (e.getSource() == cancelBtn) {
+      mDialog.dispose();
+    }
+
+  }
 }
