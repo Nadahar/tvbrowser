@@ -599,7 +599,13 @@ public class TVBrowser {
 
 
   public static void updateLookAndFeel() {
-    if (Settings.propIsSkinLFEnabled.getBoolean()) {
+    UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.ExtWindowsLookAndFeel");
+    UIManager.installLookAndFeel("Plastic Look And Feel",           "com.jgoodies.looks.plastic.PlasticLookAndFeel");
+    UIManager.installLookAndFeel("Plastic 3D Look And Feel",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+    UIManager.installLookAndFeel("Plastic XP Look And Feel",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");    
+    UIManager.installLookAndFeel("Skin Look And Feel",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");    
+
+    if (Settings.propIsSkinLFEnabled.getBoolean() || Settings.propLookAndFeel.getString().equals("com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
       String themepack = Settings.propSkinLFThemepack.getString();
       try {
         SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
@@ -608,7 +614,7 @@ public class TVBrowser {
         ErrorHandler.handle(
           "Could not load themepack.\nSkinLF is disabled now",
           exc);
-        Settings.propIsSkinLFEnabled.setBoolean(false);
+        Settings.propLookAndFeel.setString(Settings.propLookAndFeel.getDefault());
       }
     } else {
       if (curLookAndFeel == null
