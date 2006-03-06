@@ -115,7 +115,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
   private ChannelListModel mChannelListModel;
 
   /** Drag n Drop Support */
-  private DragAndDropMouseListener mAllChannelListener, mSubscribedChannelListener;
+  private DragAndDropMouseListener mSubscribedChannelListener;
 
   /** Drag n Drop Support */
   private ListDragAndDropHandler mDnDHandler;
@@ -218,7 +218,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     mDnDHandler.setPaintCueLine(false, true);
 
     // Register the listener for DnD on the lists.
-    mAllChannelListener = new DragAndDropMouseListener(mAllChannels, mSubscribedChannels, this, mDnDHandler);
+    new DragAndDropMouseListener(mAllChannels, mSubscribedChannels, this, mDnDHandler);
     mSubscribedChannelListener = new DragAndDropMouseListener(mSubscribedChannels, mAllChannels, this, mDnDHandler);
 
     restoreForPopup();
@@ -598,6 +598,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     }
     mSubscribedChannels.updateUI();
     mSubscribedChannelListener.restore();
+    restoreForPopup();
   }
 
   /**
