@@ -597,6 +597,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
       ((DefaultListModel) mAllChannels.getModel()).addElement(mLocalizer.msg("noChannelFound", "No Channel Found"));
     }
     mSubscribedChannels.updateUI();
+    mSubscribedChannelListener.restore();
   }
 
   /**
