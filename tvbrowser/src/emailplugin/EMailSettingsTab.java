@@ -36,11 +36,11 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import util.misc.OperatingSystem;
@@ -80,8 +80,7 @@ public class EMailSettingsTab implements SettingsTab {
   private JButton mAppFinder;
 
   /** The Help-Text */
-  private JTextArea mHelpText;
-  /** Parameter-Label */
+  private JEditorPane mHelpText;  /** Parameter-Label */
   private JLabel mParameterLabel;
   /** Application-Label */
   private JLabel mAppLabel;
@@ -153,7 +152,7 @@ public class EMailSettingsTab implements SettingsTab {
 
     configPanel.add(mParameter, cc.xyw(4, 6, 4));
 
-    mHelpText = UiUtilities.createHelpTextArea(mLocalizer.msg("Desc","Desc"));
+    mHelpText = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("Desc","Desc"));
     configPanel.add(mHelpText, cc.xyw(2,8,6));
 
     mDefaultApplication.addActionListener(new ActionListener() {
