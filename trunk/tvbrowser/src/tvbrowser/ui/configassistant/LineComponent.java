@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,33 +23,37 @@
  *   $Author$
  * $Revision$
  */
-
 package tvbrowser.ui.configassistant;
 
-import javax.swing.*;
-import tvbrowser.ui.settings.ProxySettingsTab;
+import java.awt.Color;
+import java.awt.Graphics;
 
-class ProxyCardPanel extends AbstractCardPanel {
+import javax.swing.JComponent;
 
-  private ProxySettingsTab mProxySettingsTab;
-  private JPanel mContent;
-  private CardPanel mPrev, mNext;
+/**
+ * Draws a Line in
+ */
+public class LineComponent extends JComponent {
+  /** Line-Color */
+  private Color mColor;
   
-  public ProxyCardPanel(PrevNextButtons btns) {
-    super(btns);
-    mProxySettingsTab=new ProxySettingsTab();
-    mContent=mProxySettingsTab.createSettingsPanel();
+  /**
+   * Creates a Line-Drawing-Component
+   * @param color Color of the Line
+   */
+  public LineComponent(Color color) {
+    mColor = color;
   }
 
-  public JPanel getPanel() {
-    return mContent;
-  }
-
-  public boolean onNext() {
-    mProxySettingsTab.saveSettings();
-	tvbrowser.TVBrowser.updateProxySettings();
-    return true;
-  }
-  
-  
+  /*
+   * (non-Javadoc)
+   * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
+   */
+  protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    
+    int y = getHeight() / 2;
+    g.setColor(mColor);
+    g.drawLine(5, y, getWidth() - 10, y);
+  } 
 }

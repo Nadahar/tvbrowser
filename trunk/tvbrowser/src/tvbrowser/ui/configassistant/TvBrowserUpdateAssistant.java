@@ -1,19 +1,28 @@
 package tvbrowser.ui.configassistant;
 
-import tvbrowser.TVBrowser;
-import tvbrowser.core.Settings;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import tvbrowser.TVBrowser;
+import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-import util.ui.progress.ProgressWindow;
 import util.ui.progress.Progress;
+import util.ui.progress.ProgressWindow;
 
 
 public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,WindowClosingIf {
@@ -132,17 +141,17 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
                 options[0]);
         if (n == JOptionPane.YES_OPTION) {
           mResult = CONFIGURE_TVBROWSER;
-          hide();
+          setVisible(false);
         }
       }
       else { // mListingsSuccessfullyImported == true
         mResult = IMPORT_SUCCESS;
-        hide();
+        setVisible(false);
       }
     }
     else if (source == mCancelBtn) {
       mResult = CANCEL;
-      hide();
+      setVisible(false);
     }
   }
 
@@ -170,7 +179,7 @@ public class TvBrowserUpdateAssistant extends JDialog implements ActionListener,
 
   public void close() {
     mResult = CANCEL;
-    hide();
+    setVisible(false);
   }
 
 }

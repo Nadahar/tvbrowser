@@ -25,6 +25,7 @@
  */
 
 package util.ui.progress;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -34,6 +35,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
@@ -41,82 +43,65 @@ import util.ui.UiUtilities;
 
 public class ProgressWindow implements devplugin.ProgressMonitor {
 
-	private JLabel mLabel;
+  private JLabel mLabel;
+
   private JDialog mDialog;
+
+  private JProgressBar mBar;
   
   public ProgressWindow(Component parent, String msg) {
-    mDialog=UiUtilities.createDialog(parent,true);
-   
-    JPanel content=(JPanel)mDialog.getContentPane();
+    mDialog = UiUtilities.createDialog(parent, true);
+
+    JPanel content = (JPanel) mDialog.getContentPane();
     content.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     content.setLayout(new BorderLayout());
-    mLabel=new JLabel(msg);
+    mLabel = new JLabel(msg);
     mLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    content.add(mLabel,BorderLayout.CENTER);
-    mDialog.setSize(500,70);
-    mDialog.setUndecorated(true);    
+    content.add(mLabel, BorderLayout.CENTER);
+    
+    mBar = new JProgressBar();
+    mBar.setVisible(false);
+    
+    content.add(mBar, BorderLayout.SOUTH);
+    
+    mDialog.setSize(500, 70);
+    mDialog.setUndecorated(true);
     mDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
   }
-  
+
   public ProgressWindow(Component parent) {
-    this(parent,"");
+    this(parent, "");
   }
-  
-  
- 
-  public void run(final Progress progress) {   
-    Thread thread=new Thread() {
+
+  public void run(final Progress progress) {
+    Thread thread = new Thread() {
       public void run() {
         progress.run();
-        while (!mDialog.isVisible()) {};
+        while (!mDialog.isVisible()) {
+        }
+        ;
         mDialog.setVisible(false);
       }
     };
     thread.start();
-    UiUtilities.centerAndShow(mDialog);    
-  }
-  
- 
-  public void setMaximum(int maximum) {
-    
+    UiUtilities.centerAndShow(mDialog);
   }
 
- 
+  public void setMaximum(int maximum) {
+    mBar.setMaximum(maximum);
+    mBar.setVisible(true);
+  }
+
   public void setValue(int value) {
-    
+    mBar.setValue(value);
   }
 
   public void setMessage(final String msg) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-            mLabel.setText(msg);
-        }
-      });
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mLabel.setText(msg);
+      }
+    });
   }
-  
-  /*
-  public ProgressWindow() {
-    super("test");
-    JPanel contentPane=(JPanel)getContentPane();
-    mLabel=new JLabel();
-    contentPane.add(mLabel);
-    setSize(200,80);
-    util.ui.UiUtilities.centerAndShow(this);
-  }
-  
-	public ProgressWindow(Window parent) {
-		super("test");
-    JPanel contentPane=(JPanel)getContentPane();
-    mLabel=new JLabel();
-    contentPane.add(mLabel);
-    setSize(200,80);
-    util.ui.UiUtilities.centerAndShow(this);
-    
-	}
-	
-	public void setText(String txt) {
-		mLabel.setText(txt);
-	}
-	*/
-	
+
 }
