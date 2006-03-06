@@ -677,7 +677,6 @@ public class TVBrowser {
 
   public static void updateProxySettings() {
     String httpHost = "", httpPort = "", httpUser = "", httpPassword = "";
-    String ftpHost = "",  ftpPort = "",  ftpUser = "",  ftpPassword = "";
 
     if (Settings.propHttpProxyUseProxy.getBoolean()) {
       httpHost = Settings.propHttpProxyHost.getString();
@@ -702,24 +701,10 @@ public class TVBrowser {
       }
     }
 
-    if (Settings.propFtpProxyUseProxy.getBoolean()) {
-      ftpHost = Settings.propFtpProxyHost.getString();
-      ftpPort = Settings.propFtpProxyPort.getString();
-
-      if (Settings.propFtpProxyAuthentifyAtProxy.getBoolean()) {
-        ftpUser     = Settings.propFtpProxyUser.getString();
-        ftpPassword = Settings.propFtpProxyPassword.getString();
-      }
-    }
-
     System.setProperty("http.proxyHost",     httpHost);
     System.setProperty("http.proxyPort",     httpPort);
     System.setProperty("http.proxyUser",     httpUser);
     System.setProperty("http.proxyPassword", httpPassword);
-    System.setProperty("ftp.proxyHost",      ftpHost);
-    System.setProperty("ftp.proxyPort",      ftpPort);
-    System.setProperty("ftp.proxyUser",      ftpUser);
-    System.setProperty("ftp.proxyPassword",  ftpPassword);
   }
 
 }
