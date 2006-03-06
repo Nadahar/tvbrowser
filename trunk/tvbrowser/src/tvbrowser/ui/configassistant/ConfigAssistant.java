@@ -167,12 +167,20 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
   public void actionPerformed(final ActionEvent e) {
     new Thread(new Runnable() {
       public void run() {
+        boolean next = mNextBt.isEnabled();
+        boolean back = mBackBt.isEnabled();
+        boolean cancel = mCancelBt.isEnabled();
         mNextBt.setEnabled(false);
         mBackBt.setEnabled(false);
         mCancelBt.setEnabled(false);
         
         Object o = e.getSource();
         if (o == mBackBt) {
+          if (mCurCardPanel == mFinishedPanel) {
+            mCancelBt.setVisible(true);
+            mNextBt.setText(mLocalizer.msg("next", "next") + " >>");
+          }
+
           if (!mCurCardPanel.onPrev())
             return;
           mCurCardPanel = mCurCardPanel.getPrev();
@@ -182,23 +190,33 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
           cl.show(mCardPn, mCurCardPanel.toString());
           mCancelBt.setEnabled(true);
         } else if (o == mNextBt) {
-          if (!mCurCardPanel.onNext())
-            return;
-          mCurCardPanel = mCurCardPanel.getNext();
-          CardLayout cl = (CardLayout) mCardPn.getLayout();
-
-          mCurCardPanel.onShow();
-
-          cl.show(mCardPn, mCurCardPanel.toString());
-
-          mCancelBt.setEnabled(true);
           if (mCurCardPanel == mFinishedPanel) {
-            mCancelBt.setText(mLocalizer.msg("finish", "Finish"));
-            mNextBt.setEnabled(false);
-            mBackBt.setEnabled(false);
+            tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
+            setVisible(false);
+          } else {
+            if (!mCurCardPanel.onNext())
+              return;
+            mCurCardPanel = mCurCardPanel.getNext();
+            CardLayout cl = (CardLayout) mCardPn.getLayout();
+
+            mCurCardPanel.onShow();
+
+            cl.show(mCardPn, mCurCardPanel.toString());
+
+            mCancelBt.setEnabled(true);
+            if (mCurCardPanel == mFinishedPanel) {
+              mCancelBt.setVisible(false);
+              mNextBt.setText(mLocalizer.msg("finish", "Finish"));
+              mNextBt.setEnabled(true);
+              mBackBt.setEnabled(true);
+            }
           }
+          
         } else if (o == mCancelBt) {
-          close();
+          cancel();
+          mNextBt.setEnabled(next);
+          mBackBt.setEnabled(back);
+          mCancelBt.setEnabled(cancel);
         }
         
       }
