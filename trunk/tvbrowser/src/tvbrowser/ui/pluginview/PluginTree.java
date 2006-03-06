@@ -69,7 +69,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.OverlayListener;
 import devplugin.ActionMenu;
 import devplugin.Plugin;

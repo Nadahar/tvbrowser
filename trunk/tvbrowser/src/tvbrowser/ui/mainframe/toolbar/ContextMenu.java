@@ -26,16 +26,18 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.mainframe.MenuBar;
-import tvbrowser.ui.settings.SettingsDialog;
-import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
-import tvbrowser.core.Settings;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.*;
-import javax.swing.*;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+
+import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 
 public class ContextMenu {
 
