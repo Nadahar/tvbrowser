@@ -292,6 +292,15 @@ public class SettingsDialog implements WindowClosingIf {
     SettingNode apperanceNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("channelstable", "Channelstable"),null));
     root.add(apperanceNode);
     
+    generalSettings.add(new SettingNode(new LocaleSettingsTab()));
+    generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
+    generalSettings.add(new SettingNode(new ContextmenuSettingsTab()));
+    if (TVBrowser.isUsingSystemTray()) {
+      generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
+    }
+    generalSettings.add(new SettingNode(new StartupSettingsTab(), TAB_ADDITIONAL));
+
+
     apperanceNode.add(new SettingNode(new ChannelsSettingsTab(), TAB_ID_CHANNELS));
     apperanceNode.add(new SettingNode(new ChannelGroupSettingsTab(this)));
     apperanceNode.add(new SettingNode(new ProgramTableSettingsTab()));
@@ -299,13 +308,6 @@ public class SettingsDialog implements WindowClosingIf {
     apperanceNode.add(new SettingNode(new FontsSettingsTab()));
     apperanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
     apperanceNode.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
-
-    generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
-    generalSettings.add(new SettingNode(new ContextmenuSettingsTab()));
-    if (TVBrowser.isUsingSystemTray()) {
-      generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
-    }
-    generalSettings.add(new SettingNode(new TVDataSettingsTab(), TAB_ADDITIONAL));
 
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
