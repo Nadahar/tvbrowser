@@ -27,12 +27,11 @@ package tvbrowser.ui.programtable.background;
 
 import java.awt.Image;
 
-import devplugin.Program;
-
 import tvbrowser.core.Settings;
 import tvbrowser.ui.programtable.ProgramTableLayout;
 import tvbrowser.ui.programtable.ProgramTableModel;
 import util.ui.ImageUtilities;
+import devplugin.Program;
 
 /**
  * 

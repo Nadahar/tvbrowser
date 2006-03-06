@@ -36,19 +36,31 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
-import util.ui.customizableitems.SortableItemList;
 import util.ui.UiUtilities;
+import util.ui.customizableitems.SortableItemList;
+import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.Program;
-import devplugin.ActionMenu;
 
 public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener {
 

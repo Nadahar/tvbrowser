@@ -32,6 +32,8 @@ import java.util.logging.Level;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
@@ -39,8 +41,6 @@ import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 
 /**
  * Updates the TV data.

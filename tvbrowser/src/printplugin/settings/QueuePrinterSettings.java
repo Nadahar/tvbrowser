@@ -26,7 +26,7 @@
 
 package printplugin.settings;
 
-import java.awt.*;
+import java.awt.Font;
 
 
 public class QueuePrinterSettings implements Settings {

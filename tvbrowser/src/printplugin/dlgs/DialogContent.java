@@ -26,13 +26,12 @@
 
 package printplugin.dlgs;
 
-import printplugin.settings.Settings;
-import printplugin.settings.Scheme;
-import printplugin.printer.PrintJob;
-
-
-import java.awt.*;
+import java.awt.Component;
 import java.awt.print.PageFormat;
+
+import printplugin.printer.PrintJob;
+import printplugin.settings.Scheme;
+import printplugin.settings.Settings;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

@@ -31,10 +31,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import util.ui.Localizer;
 import captureplugin.tabs.DevicePanel;
 import captureplugin.tabs.ProgramListPanel;
-
-import util.ui.Localizer;
 
 /**
  * This is a Panel for changing the Settings in the Plugin

@@ -27,7 +27,9 @@ package primarydatamanager;
 
 import java.util.ArrayList;
 
-import tvbrowserdataservice.file.*;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.ProgramField;
+import tvbrowserdataservice.file.ProgramFrame;
 
 /**
  * 

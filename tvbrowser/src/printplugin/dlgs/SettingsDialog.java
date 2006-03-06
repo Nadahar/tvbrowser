@@ -46,12 +46,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import captureplugin.CapturePlugin;
-
 import printplugin.PrintPlugin;
 import printplugin.printer.PrintJob;
 import printplugin.settings.Scheme;
-import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 

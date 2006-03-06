@@ -26,17 +26,20 @@
 
 package printplugin.printer.queueprinter;
 
-import printplugin.printer.ProgramItem;
-import printplugin.printer.PositionedIcon;
-import printplugin.settings.ProgramIconSettings;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
-import devplugin.Program;
-import devplugin.Date;
+import javax.swing.Icon;
+
+import printplugin.printer.PositionedIcon;
+import printplugin.printer.ProgramItem;
+import printplugin.settings.ProgramIconSettings;
 import util.ui.TextAreaIcon;
+import devplugin.Date;
+import devplugin.Program;
 
 
 public class ProgramTableIcon implements Icon {

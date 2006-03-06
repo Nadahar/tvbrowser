@@ -26,10 +26,14 @@
 
 package tvbrowser.ui.settings;
 
-import util.ui.UiUtilities;
+import java.awt.BorderLayout;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import util.ui.UiUtilities;
 
 public class DataServiceSettingsTab implements devplugin.SettingsTab {
  

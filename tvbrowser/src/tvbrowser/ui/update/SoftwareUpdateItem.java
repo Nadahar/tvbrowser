@@ -26,9 +26,9 @@
 
 package tvbrowser.ui.update;
 
-import util.exc.TvBrowserException;
 import java.util.HashMap;
 
+import util.exc.TvBrowserException;
 import devplugin.Version;
 
 public abstract class SoftwareUpdateItem {

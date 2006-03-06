@@ -26,14 +26,19 @@
 
 package tvbrowser.core.tvdataservice;
 
+import java.io.File;
+import java.util.Properties;
+
+import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataService;
 import tvdataservice.TvDataUpdateManager;
-import tvdataservice.SettingsPanel;
-import devplugin.*;
 import util.exc.TvBrowserException;
-
-import java.util.Properties;
-import java.io.File;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
 
 
 /**

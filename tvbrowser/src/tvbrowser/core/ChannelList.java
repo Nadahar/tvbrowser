@@ -27,13 +27,22 @@
 
 package tvbrowser.core;
 
-import java.util.*;
-import java.io.*;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.core.tvdataservice.ChannelGroupManager;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
 
 
 /**

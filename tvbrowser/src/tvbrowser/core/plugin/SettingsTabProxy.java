@@ -26,10 +26,12 @@
 
 package tvbrowser.core.plugin;
 
-import devplugin.SettingsTab;
-
-import javax.swing.*;
 import java.util.logging.Level;
+
+import javax.swing.Icon;
+import javax.swing.JPanel;
+
+import devplugin.SettingsTab;
 
 
 /**

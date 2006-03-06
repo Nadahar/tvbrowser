@@ -27,12 +27,12 @@
 
 package tvbrowser.ui.update;
 
-import util.exc.TvBrowserException;
-import util.io.IOUtilities;
-import java.net.*;
-import java.io.*;
+import java.io.File;
+import java.net.URL;
 
 import tvbrowser.core.Settings;
+import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 
 
 public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {

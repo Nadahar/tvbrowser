@@ -26,25 +26,33 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.ui.settings.util.ColorLabel;
 import tvbrowser.ui.settings.util.ColorButton;
+import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.OrderChooser;
-import util.ui.UiUtilities;
 import util.ui.TabLayout;
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.ProgramFieldType;
 import devplugin.SettingsTab;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
 
 /**
  * A settings tab for the program panel.

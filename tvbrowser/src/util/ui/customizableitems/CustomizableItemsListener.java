@@ -32,7 +32,7 @@
 
 package util.ui.customizableitems;
 
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
 
 public interface CustomizableItemsListener {
 

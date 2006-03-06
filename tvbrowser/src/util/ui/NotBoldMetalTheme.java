@@ -25,9 +25,10 @@
  */
 package util.ui;
 
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.FontUIResource;
 import java.awt.Font;
+
+import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.metal.DefaultMetalTheme;
 
 /**
  * For using this theme, yust add the following line to your application:

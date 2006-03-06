@@ -25,11 +25,16 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 import util.ui.FontChooserPanel;

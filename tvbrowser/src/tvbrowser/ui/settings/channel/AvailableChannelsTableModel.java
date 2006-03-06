@@ -26,14 +26,14 @@
 
 package tvbrowser.ui.settings.channel;
 
-import devplugin.Channel;
-import devplugin.ChannelGroup;
+import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.Locale;
-import java.util.ArrayList;
 
 import tvbrowser.core.ChannelList;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

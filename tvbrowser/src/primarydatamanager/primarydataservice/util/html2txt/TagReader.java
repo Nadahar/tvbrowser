@@ -26,7 +26,9 @@
 
 package primarydatamanager.primarydataservice.util.html2txt;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 
 import primarydatamanager.primarydataservice.util.Entities;
 

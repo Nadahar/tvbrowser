@@ -34,30 +34,38 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 
-import tvbrowser.core.Settings;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.TvDataBase;
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.browserlauncher.Launch;
 import util.ui.ScrollableMenu;
-import devplugin.ProgramFilter;
 import devplugin.ActionMenu;
-import devplugin.Date;
 import devplugin.Channel;
+import devplugin.Date;
+import devplugin.ProgramFilter;
 
 
 public abstract class MenuBar extends JMenuBar implements ActionListener {

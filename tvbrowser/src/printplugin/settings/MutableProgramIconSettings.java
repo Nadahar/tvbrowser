@@ -26,9 +26,10 @@
 
 package printplugin.settings;
 
-import devplugin.ProgramFieldType;
+import java.awt.Color;
+import java.awt.Font;
 
-import java.awt.*;
+import devplugin.ProgramFieldType;
 
 
 public class MutableProgramIconSettings implements ProgramIconSettings {

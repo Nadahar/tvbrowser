@@ -33,14 +33,14 @@
 
 package tvbrowser.extras.reminderplugin;
 
-import util.paramhandler.ParamParser;
-import util.exc.ErrorHandler;
-
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Image;
 import java.util.Properties;
 
-import devplugin.PluginAccess;
+import util.exc.ErrorHandler;
+import util.paramhandler.ParamParser;
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.Program;
 
 public class ReminderTimerListener {

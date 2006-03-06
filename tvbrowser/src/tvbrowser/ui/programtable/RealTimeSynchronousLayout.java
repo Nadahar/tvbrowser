@@ -26,8 +26,8 @@
 
 package tvbrowser.ui.programtable;
 
-import devplugin.Program;
 import util.ui.ProgramPanel;
+import devplugin.Program;
 
 /**
  * Does a program panel layout that is real time synchronous.

@@ -25,13 +25,12 @@
  */
 package tvbrowser.ui.programtable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.TimeZone;
-import java.util.HashMap;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TimeZone;
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -41,13 +40,12 @@ import javax.swing.event.ChangeListener;
 import tvbrowser.core.TvDataBase;
 import util.io.IOUtilities;
 import util.ui.ProgramPanel;
-
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
-import devplugin.Program;
 import devplugin.Date;
-import devplugin.ProgressMonitor;
+import devplugin.Program;
 import devplugin.ProgramFilter;
+import devplugin.ProgressMonitor;
 
 /**
  *

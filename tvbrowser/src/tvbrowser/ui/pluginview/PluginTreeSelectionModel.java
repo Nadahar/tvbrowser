@@ -26,13 +26,18 @@
 
 package tvbrowser.ui.pluginview;
 
-import devplugin.Plugin;
-import devplugin.ProgramItem;
-
-import javax.swing.tree.*;
-import javax.swing.event.TreeSelectionListener;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeSelectionModel;
+import javax.swing.tree.RowMapper;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+
+import devplugin.Plugin;
+import devplugin.ProgramItem;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

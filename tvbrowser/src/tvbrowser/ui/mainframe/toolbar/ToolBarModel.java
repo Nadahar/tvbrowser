@@ -26,7 +26,7 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 
 public interface ToolBarModel {

@@ -27,14 +27,16 @@
 package printplugin.printer.dayprogramprinter;
 
 
-import printplugin.settings.ProgramIconSettings;
-import printplugin.settings.DayProgramPrinterSettings;
-import printplugin.printer.*;
-
-
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.print.PageFormat;
 
-import java.awt.*;
+import printplugin.printer.AbstractPrintJob;
+import printplugin.printer.ColumnModel;
+import printplugin.printer.Page;
+import printplugin.printer.PageModel;
+import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.ProgramIconSettings;
 
 
 

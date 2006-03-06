@@ -28,10 +28,10 @@ package test.tvbrowserdataservice;
 import java.io.File;
 import java.io.IOException;
 
-import devplugin.Date;
+import junit.framework.TestCase;
 import tvbrowserdataservice.file.FileFormatException;
 import tvbrowserdataservice.file.SummaryFile;
-import junit.framework.TestCase;
+import devplugin.Date;
 
 /**
  * 

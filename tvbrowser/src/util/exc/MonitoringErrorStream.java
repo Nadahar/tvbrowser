@@ -25,10 +25,10 @@
  */
 package util.exc;
 
-import java.io.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import util.io.IOUtilities;
 

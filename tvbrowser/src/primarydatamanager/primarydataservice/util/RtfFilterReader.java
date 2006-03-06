@@ -27,7 +27,9 @@
 package primarydatamanager.primarydataservice.util; 
 
 
-import java.io.*;
+import java.io.FilterReader;
+import java.io.IOException;
+import java.io.Reader;
 
 
 public class RtfFilterReader extends FilterReader {

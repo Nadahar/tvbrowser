@@ -26,18 +26,16 @@
 
 package tvbrowser.core.tvdataservice;
 
-import devplugin.ChannelGroup;
-import devplugin.Channel;
-import devplugin.ProgressMonitor;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 
 import tvbrowser.core.Settings;
-import util.exc.TvBrowserException;
 import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import devplugin.ChannelGroup;
+import devplugin.ProgressMonitor;
 
 
 public class ChannelGroupManager {

@@ -26,10 +26,12 @@
 
 package devplugin;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
-
 import java.awt.event.ActionListener;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
 
 /**
  * Action class for push buttons (can also be used in {@link ActionMenu} class).

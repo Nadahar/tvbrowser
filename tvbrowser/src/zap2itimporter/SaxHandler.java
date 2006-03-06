@@ -6,13 +6,15 @@
 
 package zap2itimporter;
 
-import devplugin.ProgramFieldType;
-import devplugin.Date;
-import tvdataservice.MutableProgram;
-import java.util.Vector;
 import java.util.Hashtable;
 import java.util.TimeZone;
+import java.util.Vector;
+
 import javax.swing.JOptionPane;
+
+import tvdataservice.MutableProgram;
+import devplugin.Date;
+import devplugin.ProgramFieldType;
 
 
 /**

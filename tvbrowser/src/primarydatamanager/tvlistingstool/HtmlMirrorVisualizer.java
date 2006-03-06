@@ -34,10 +34,10 @@ import java.io.PrintStream;
 import primarydatamanager.mirrorupdater.UpdateException;
 import primarydatamanager.mirrorupdater.data.DataSource;
 import primarydatamanager.mirrorupdater.data.DataTarget;
-import devplugin.Channel;
-import devplugin.Date;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.SummaryFile;
+import devplugin.Channel;
+import devplugin.Date;
 
 
 

@@ -36,8 +36,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import util.settings.ColorProperty;
-
 /**
  * This is a Button that allows the selection of a Color
  */

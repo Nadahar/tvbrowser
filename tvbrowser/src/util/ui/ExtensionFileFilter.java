@@ -26,7 +26,8 @@
 
 package util.ui;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.filechooser.FileFilter;
 

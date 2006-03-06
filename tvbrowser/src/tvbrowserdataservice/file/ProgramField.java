@@ -29,12 +29,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
 import java.util.logging.Level;
 
 import util.io.IOUtilities;
-
-import devplugin.*;
+import devplugin.ProgramFieldType;
 
 /**
  * 

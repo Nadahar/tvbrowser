@@ -26,17 +26,17 @@
 
 package tvbrowser.core.filters.filtercomponents;
 
-import java.io.*;
+import java.awt.BorderLayout;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import tvbrowser.core.filters.FilterComponent;
-import util.ui.*;
-
-
-import java.awt.*;
-
+import util.ui.OrderChooser;
 import devplugin.Channel;
 import devplugin.Program;
 

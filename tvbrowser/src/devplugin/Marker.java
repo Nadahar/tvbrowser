@@ -26,7 +26,7 @@
 
 package devplugin;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * Objects which wants to mark programs must implement this interface.

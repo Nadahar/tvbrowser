@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-import devplugin.*;
+import devplugin.ProgramFieldType;
 
 /**
  * 

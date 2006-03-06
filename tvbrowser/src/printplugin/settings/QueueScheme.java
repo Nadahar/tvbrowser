@@ -26,11 +26,10 @@
 
 package printplugin.settings;
 
-import java.io.ObjectOutputStream;
+import java.awt.Font;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.awt.*;
-
+import java.io.ObjectOutputStream;
 
 import printplugin.util.IO;
 

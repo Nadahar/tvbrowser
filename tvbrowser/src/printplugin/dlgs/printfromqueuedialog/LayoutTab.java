@@ -26,8 +26,13 @@
 
 package printplugin.dlgs.printfromqueuedialog;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class LayoutTab extends JPanel {
 

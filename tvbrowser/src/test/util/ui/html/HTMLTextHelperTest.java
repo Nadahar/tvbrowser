@@ -1,7 +1,7 @@
 package test.util.ui.html;
 
-import util.ui.html.HTMLTextHelper;
 import junit.framework.TestCase;
+import util.ui.html.HTMLTextHelper;
 
 public class HTMLTextHelperTest extends TestCase {
 

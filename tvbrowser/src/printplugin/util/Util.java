@@ -26,11 +26,11 @@
 
 package printplugin.util;
 
-import devplugin.Program;
 import java.util.Arrays;
 import java.util.Comparator;
 
 import tvbrowser.core.ChannelList;
+import devplugin.Program;
 
 
 public class Util {

@@ -26,14 +26,19 @@
 
 package printplugin.printer.dayprogramprinter;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.Icon;
 
-import devplugin.Program;
-import printplugin.settings.ProgramIconSettings;
-import printplugin.printer.ProgramItem;
 import printplugin.printer.ColumnModel;
+import printplugin.printer.ProgramItem;
+import printplugin.settings.ProgramIconSettings;
+import devplugin.Program;
 
 
 

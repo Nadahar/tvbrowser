@@ -26,17 +26,33 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.ui.*;
+import util.ui.ChannelChooserDlg;
+import util.ui.SearchForm;
+import util.ui.TabLayout;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.ProgramFilter;

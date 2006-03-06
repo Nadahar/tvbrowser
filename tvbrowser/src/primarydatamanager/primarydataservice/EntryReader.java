@@ -27,8 +27,8 @@
 
 package primarydatamanager.primarydataservice;
 
-import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.IOException;
 
 import primarydatamanager.primarydataservice.util.Entities;
 

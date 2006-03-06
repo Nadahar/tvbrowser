@@ -25,7 +25,7 @@
  */
 package tvbrowser.ui.programtable.background;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;

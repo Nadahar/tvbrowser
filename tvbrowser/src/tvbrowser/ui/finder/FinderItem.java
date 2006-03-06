@@ -27,14 +27,17 @@
 
 package tvbrowser.ui.finder;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JProgressBar;
 
 import tvbrowser.core.DateListener;
-
-import java.awt.*;
-
-import devplugin.ProgressMonitor;
 import devplugin.Date;
+import devplugin.ProgressMonitor;
 
 
 class FinderItem extends JComponent implements ProgressMonitor {

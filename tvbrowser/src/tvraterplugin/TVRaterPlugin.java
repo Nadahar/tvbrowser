@@ -38,7 +38,12 @@ import javax.swing.JOptionPane;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 /**
  * This Plugin gives the User the possibility to rate a Movie

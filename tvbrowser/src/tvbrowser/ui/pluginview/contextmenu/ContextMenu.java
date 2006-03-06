@@ -28,7 +28,8 @@
 
 package tvbrowser.ui.pluginview.contextmenu;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JPopupMenu;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

@@ -26,11 +26,14 @@
 
 package util.ui;
 
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
 import java.io.File;
 
-import java.awt.*;
-
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 import util.io.IOUtilities;
 

@@ -26,13 +26,19 @@
 
 package printplugin.dlgs.printdayprogramsdialog;
 
-import util.ui.TabLayout;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemListener;
+import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import util.ui.TabLayout;
 
 public class LayoutTab extends JPanel {
 

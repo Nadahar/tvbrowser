@@ -26,16 +26,16 @@
 
 package tvbrowser.ui.pluginview;
 
+import java.util.Enumeration;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.plugin.PluginProxy;
-import devplugin.PluginTreeNode;
 import devplugin.Plugin;
-
-import java.util.Enumeration;
+import devplugin.PluginTreeNode;
 
 public class PluginTreeModel extends DefaultTreeModel {
 

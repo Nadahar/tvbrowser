@@ -38,9 +38,9 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
+import tvbrowser.TVBrowser;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
-import tvbrowser.TVBrowser;
 
 public class SplashScreen extends JDialog implements Splash {
 

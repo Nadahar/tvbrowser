@@ -26,28 +26,40 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.io.*;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Properties;
 
-import util.ui.UiUtilities;
-import util.exc.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
-import devplugin.*;
-
-import javax.swing.*;
-
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.extras.common.DefaultMarker;
 import tvbrowser.extras.common.ConfigurationHandler;
-import tvbrowser.extras.common.DataSerializer;
 import tvbrowser.extras.common.DataDeserializer;
+import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.extras.common.DefaultMarker;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.ButtonAction;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuIf;
+import devplugin.PluginAccess;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 
 /**
  * Plugin for managing the favorite programs.

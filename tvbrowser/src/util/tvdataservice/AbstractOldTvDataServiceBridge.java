@@ -25,14 +25,18 @@
  */
 package util.tvdataservice;
 
-import java.util.*;
-
 import java.io.File;
+import java.util.HashSet;
+import java.util.Properties;
 
-import util.exc.TvBrowserException;
-import tvdataservice.*;
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataService;
-import devplugin.*;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
+import devplugin.Channel;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 
 
 /**

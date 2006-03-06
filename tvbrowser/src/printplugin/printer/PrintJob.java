@@ -26,8 +26,8 @@
 
 package printplugin.printer;
 
-import java.awt.print.Printable;
 import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 
 public interface PrintJob {
 

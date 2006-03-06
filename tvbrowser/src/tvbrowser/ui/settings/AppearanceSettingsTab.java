@@ -26,7 +26,8 @@
 
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JPanel;
 
 public class AppearanceSettingsTab implements devplugin.SettingsTab {
  

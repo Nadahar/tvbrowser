@@ -27,13 +27,13 @@
 package tvbrowser.core.plugin;
 
 
-import java.util.Properties;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

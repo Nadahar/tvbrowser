@@ -26,7 +26,7 @@
 
 package devplugin;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 
 /**

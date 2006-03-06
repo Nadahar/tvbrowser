@@ -26,13 +26,16 @@
 
 package printplugin.printer.queueprinter;
 
-import printplugin.settings.QueuePrinterSettings;
-import printplugin.printer.*;
-
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.print.PageFormat;
-import java.awt.*;
 import java.util.ArrayList;
 
+import printplugin.printer.AbstractPrintJob;
+import printplugin.printer.ColumnModel;
+import printplugin.printer.Page;
+import printplugin.printer.PageModel;
+import printplugin.settings.QueuePrinterSettings;
 import devplugin.Program;
 
 

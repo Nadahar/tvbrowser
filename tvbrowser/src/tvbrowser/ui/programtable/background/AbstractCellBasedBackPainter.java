@@ -29,11 +29,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 
-import devplugin.Program;
-
 import tvbrowser.ui.programtable.ProgramTableLayout;
 import tvbrowser.ui.programtable.ProgramTableModel;
 import util.ui.ProgramPanel;
+import devplugin.Program;
 
 /**
  * 

@@ -23,7 +23,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tvbrowser.core.plugin.PluginProxy;
-
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;

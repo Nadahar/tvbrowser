@@ -26,8 +26,11 @@
 
 package tvbrowserdataservice;
 
-import devplugin.Date;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,12 +39,15 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import devplugin.Channel;
-import devplugin.ProgressMonitor;
-
-import tvbrowserdataservice.file.*;
+import tvbrowserdataservice.file.ChannelList;
+import tvbrowserdataservice.file.FileFormatException;
+import tvbrowserdataservice.file.Mirror;
+import tvbrowserdataservice.file.SummaryFile;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.ProgressMonitor;
 
 public class ChannelGroup implements devplugin.ChannelGroup {
 

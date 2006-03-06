@@ -29,7 +29,6 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
@@ -42,12 +41,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.Program;
-import tvbrowser.core.icontheme.IconLoader;
 
 /**
  * TV-Browser

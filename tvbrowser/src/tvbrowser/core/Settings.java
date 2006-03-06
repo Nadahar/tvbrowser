@@ -30,16 +30,32 @@ import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
+
 import javax.swing.UIManager;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import util.exc.TvBrowserException;
-import util.settings.*;
-import util.ui.view.SplitViewProperty;
 import util.io.IOUtilities;
+import util.settings.BooleanProperty;
+import util.settings.ChannelArrayProperty;
+import util.settings.ChoiceProperty;
+import util.settings.ColorProperty;
+import util.settings.DateProperty;
+import util.settings.EncodedStringProperty;
+import util.settings.FontProperty;
+import util.settings.IntArrayProperty;
+import util.settings.IntProperty;
+import util.settings.ProgramFieldTypeArrayProperty;
+import util.settings.Property;
+import util.settings.PropertyManager;
+import util.settings.StringArrayProperty;
+import util.settings.StringProperty;
+import util.settings.VersionProperty;
+import util.ui.view.SplitViewProperty;
 import devplugin.ProgramFieldType;
 
 /**

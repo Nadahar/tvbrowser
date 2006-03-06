@@ -22,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
 import devplugin.Program;
 /**
  * This class holds the "Database" for the Ratings. Could be replaced by a real

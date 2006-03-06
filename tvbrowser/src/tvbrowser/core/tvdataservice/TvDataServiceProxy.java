@@ -26,14 +26,17 @@
 
 package tvbrowser.core.tvdataservice;
 
-import devplugin.*;
-
 import java.io.File;
 import java.util.Properties;
 
-import tvdataservice.TvDataUpdateManager;
 import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
 
 
 public interface TvDataServiceProxy {

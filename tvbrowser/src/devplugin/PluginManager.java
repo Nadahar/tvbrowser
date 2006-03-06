@@ -31,7 +31,6 @@ import java.util.Iterator;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
-
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;

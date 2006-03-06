@@ -25,13 +25,14 @@
  */
 package test.primarydatamanager;
 
-import devplugin.*;
 import junit.framework.TestCase;
-
 import primarydatamanager.DayProgramMapper;
 import primarydatamanager.PreparationException;
 import test.tvbrowserdataservice.DayProgramFileTest;
-import tvbrowserdataservice.file.*;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.ProgramField;
+import tvbrowserdataservice.file.ProgramFrame;
+import devplugin.ProgramFieldType;
 
 /**
  * 

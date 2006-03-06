@@ -27,7 +27,8 @@
 package tvbrowser.extras.reminderplugin;
 
 
-import devplugin.*;
+import devplugin.Program;
+import devplugin.ProgramItem;
 
 
 public class ReminderListItem implements Comparable {

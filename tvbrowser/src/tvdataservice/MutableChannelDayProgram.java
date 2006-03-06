@@ -25,10 +25,10 @@
  */
 package tvdataservice;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import util.io.IOUtilities;
-
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Program;

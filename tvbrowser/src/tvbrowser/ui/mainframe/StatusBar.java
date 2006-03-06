@@ -26,9 +26,13 @@
 
 package tvbrowser.ui.mainframe;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 /**
  * Statusbar
