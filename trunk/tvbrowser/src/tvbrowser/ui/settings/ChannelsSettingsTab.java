@@ -312,6 +312,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     filterPanel.add(mCountryCB, cc.xyw(3, 1, 2));
 
     mCategoryCB = new JComboBox();
+    mCategoryCB.setMaximumRowCount(20);
 
     filterPanel.add(new JLabel(mLocalizer.msg("category", "Category") + ":"), cc.xy(6, 1));
     filterPanel.add(mCategoryCB, cc.xyw(8, 1, 2));
