@@ -86,6 +86,7 @@ public class RegexSearcher extends AbstractSearcher {
     int flags = Pattern.DOTALL;
     if (! caseSensitive) {
       flags |= Pattern.CASE_INSENSITIVE;
+      flags |= Pattern.UNICODE_CASE;
     }
 
     // Compile the regular expression
