@@ -28,7 +28,6 @@ package tvbrowser.ui.settings;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -59,16 +58,21 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.TVBrowser;
-import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
-import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
-import tvbrowser.extras.programinfo.ProgramInfoSettingsTab;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
+import tvbrowser.extras.programinfo.ProgramInfoSettingsTab;
+import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.SettingsTab;
 
 /**
@@ -88,6 +92,7 @@ public class SettingsDialog implements WindowClosingIf {
   public static final String TAB_ID_PROGRAMINFO = "#programinfo";
   public static final String TAB_ID_REMINDER = "#reminder";
   public static final String TAB_ID_FAVORITE = "#favorite";
+  public static final String TAB_ID_CHANNELS = "#channels";
 
   private JDialog mDialog;
 
@@ -114,7 +119,7 @@ public class SettingsDialog implements WindowClosingIf {
     UiUtilities.registerForClosing(this);
     
     JPanel main = new JPanel(new BorderLayout());
-    main.setBorder(UiUtilities.DIALOG_BORDER);
+    main.setBorder(Borders.DLU4_BORDER);
     mDialog.setContentPane(main);
 
     JSplitPane splitPane = new JSplitPane();
@@ -150,7 +155,11 @@ public class SettingsDialog implements WindowClosingIf {
     mSettingsPn = new JPanel(new BorderLayout());
     splitPane.setRightComponent(mSettingsPn);
 
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    FormLayout layout = new FormLayout("fill:pref:grow, pref, 3dlu, pref, 3dlu, pref", "4dlu, pref");
+    layout.setColumnGroups(new int[][] {{2, 4, 6}});
+    CellConstraints cc = new CellConstraints();
+    
+    JPanel buttonPn = new JPanel(layout);
     main.add(buttonPn, BorderLayout.SOUTH);
 
     JButton okBt = new JButton(mLocalizer.msg("ok", "OK"));
@@ -162,7 +171,7 @@ public class SettingsDialog implements WindowClosingIf {
       }
     });
     mDialog.getRootPane().setDefaultButton(okBt);
-    buttonPn.add(okBt);
+    buttonPn.add(okBt, cc.xy(2,2));
 
     JButton cancelBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
     cancelBt.addActionListener(new ActionListener() {
@@ -170,7 +179,7 @@ public class SettingsDialog implements WindowClosingIf {
         mDialog.dispose();
       }
     });
-    buttonPn.add(cancelBt);
+    buttonPn.add(cancelBt, cc.xy(4,2));
 
     JButton applyBt = new JButton(mLocalizer.msg("apply", "Apply"));
     applyBt.addActionListener(new ActionListener() {
@@ -181,20 +190,22 @@ public class SettingsDialog implements WindowClosingIf {
         showSettingsPanelForSelectedNode();
       }
     });
-    buttonPn.add(applyBt);
+    buttonPn.add(applyBt, cc.xy(6,2));
 
     mDialog.pack();
     
-    if (selectedTabId != null) {
-      SettingNode n = findSettingNode((SettingNode)mRootNode, selectedTabId);
-      if (n!=null) {
-        showSettingsPanelForNode(n);
-        TreePath selectedPath = new TreePath(n.getPath());
-        mSelectionTree.setSelectionPath(selectedPath);
-      }
-      else {
-        showSettingsPanelForSelectedNode();
-      }
+    if (selectedTabId == null) {
+      selectedTabId = TAB_ID_CHANNELS;
+    }
+    
+    SettingNode n = findSettingNode((SettingNode)mRootNode, selectedTabId);
+    if (n!=null) {
+      showSettingsPanelForNode(n);
+      TreePath selectedPath = new TreePath(n.getPath());
+      mSelectionTree.setSelectionPath(selectedPath);
+    }
+    else {
+      showSettingsPanelForSelectedNode();
     }
     
     mDialog.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -210,6 +221,7 @@ public class SettingsDialog implements WindowClosingIf {
         Settings.propSettingsWindowHeight.setInt(mSize.height);
       }
     });    
+    
   }
 
   void invalidateTree() {
@@ -270,36 +282,38 @@ public class SettingsDialog implements WindowClosingIf {
     msg = mLocalizer.msg("settings", "Settings");
     SettingNode root = new SettingNode(new DefaultSettingsTab(msg,icon));
 
-    // Channels
-    node = new SettingNode(new ChannelsSettingsTab());
-    root.add(node);
+    SettingNode generalSettings = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("general", "General"), null));
+    root.add(generalSettings);
 
-    node = new SettingNode(new ChannelGroupSettingsTab(this));
-    root.add(node);
+    SettingNode technicalSettings = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("technical", "Technical"), null));
+    root.add(technicalSettings);
 
-    root.add(new SettingNode(new ReminderSettingsTab(), TAB_ID_REMINDER));
-    root.add(new SettingNode(new FavoritesSettingTab(), TAB_ID_FAVORITE));
-    root.add(new SettingNode(new ProgramInfoSettingsTab(), TAB_ID_PROGRAMINFO));
+    SettingNode apperanceNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("channelstable", "Channelstable"),null));
+    root.add(apperanceNode);
     
+    apperanceNode.add(new SettingNode(new ChannelsSettingsTab(), TAB_ID_CHANNELS));
+    apperanceNode.add(new SettingNode(new ChannelGroupSettingsTab(this)));
+    apperanceNode.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
+    apperanceNode.add(new SettingNode(new FontsSettingsTab()));
+    apperanceNode.add(new SettingNode(new ProgramTableSettingsTab()));
+    apperanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
 
-    ContextmenuSettingsTab contextmenuSettingsTab=new ContextmenuSettingsTab();
-    PluginSettingsTab pluginSettingsTab=new PluginSettingsTab(this);
+    generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
+    generalSettings.add(new SettingNode(new ContextmenuSettingsTab()));
+    if (TVBrowser.isUsingSystemTray()) {
+      generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
+    }
+    generalSettings.add(new SettingNode(new TVDataSettingsTab(), TAB_ADDITIONAL));
 
-    // Appearance
-    node = new SettingNode(
-    new DefaultSettingsTab(mLocalizer.msg("appearance","appearance"),null));
-    root.add(node);
-
-    node.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
-    node.add(new SettingNode(new LookAndFeelSettingsTab()));
-    node.add(new SettingNode(new FontsSettingsTab()));
-    node.add(new SettingNode(new ProgramTableSettingsTab()));
-    node.add(new SettingNode(new ProgramPanelSettingsTab()));
-    node.add(new SettingNode(contextmenuSettingsTab));
-
-
+    technicalSettings.add(new SettingNode(new ProxySettingsTab()));
+    technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
+    
+    root.add(new SettingNode(new ProgramInfoSettingsTab(), TAB_ID_PROGRAMINFO));
+    root.add(new SettingNode(new FavoritesSettingTab(), TAB_ID_FAVORITE));
+    root.add(new SettingNode(new ReminderSettingsTab(), TAB_ID_REMINDER));
+ 
     // Plugins
-    mPluginSettingsNode = new SettingNode(pluginSettingsTab, TAB_ID_PLUGINS);
+    mPluginSettingsNode = new SettingNode(new PluginSettingsTab(this), TAB_ID_PLUGINS);
     root.add(mPluginSettingsNode);
 
     createPluginTreeItems(false);
@@ -311,18 +325,6 @@ public class SettingsDialog implements WindowClosingIf {
     for (int i=0;i<services.length;i++) {
       node.add(new SettingNode(new ConfigDataServiceSettingsTab(services[i])));
     }
-
-    // Advanced
-    node = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("advanced","advanced"),null));
-    root.add(node);
-
-    if (TVBrowser.isUsingSystemTray()) {
-      node.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
-    }
-    node.add(new SettingNode(new ProxySettingsTab()));
-    node.add(new SettingNode(new DirectoriesSettingsTab()));
-    node.add(new SettingNode(new TVDataSettingsTab(), TAB_ADDITIONAL));
-
     
     return root;
   }
