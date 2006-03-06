@@ -30,7 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -43,6 +42,7 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import util.ui.TabLayout;
 
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -77,7 +77,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.CENTER);
@@ -143,7 +143,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     
     
     public ProxySettingsPanel(String msgProxy, String msgUseProxy) {
-      super(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+      super(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow", "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
       ActionListener updateEnabledListener = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
