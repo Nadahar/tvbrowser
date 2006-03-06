@@ -26,12 +26,9 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -39,7 +36,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -47,18 +43,15 @@ import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.PeriodItem;
 import util.ui.TabLayout;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 /**
  * TV-Browser
  * 
  * @author Martin Oberhauser
  */
-public class TVDataSettingsTab implements devplugin.SettingsTab {
+public class StartupSettingsTab implements devplugin.SettingsTab {
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVDataSettingsTab.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(StartupSettingsTab.class);
 
   private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
       mLocalizer.msg("autoDownload.daily", "Once a day"),
@@ -78,13 +71,9 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
 
   private JRadioButton mAskBeforeDownloadRB;
 
-  private JComboBox mLanguageCB, mTimezoneCB;
-
-  private JCheckBox mOSTimezoneCb;
-
   private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB;
 
-  public TVDataSettingsTab() {
+  public StartupSettingsTab() {
   }
 
   /**
@@ -172,54 +161,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
 
     content.add(onStartupPn);
 
-    JPanel localePn = new JPanel(new BorderLayout());
-    localePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("locale", "Locale")));
-    FormLayout formLayout = new FormLayout("default, 6dlu, default", "default,3dlu,default,3dlu,default,1dlu,default");
-    JPanel formPn = new JPanel(formLayout);
-    localePn.add(formPn, BorderLayout.CENTER);
-    CellConstraints c = new CellConstraints();
-
-    Language[] languages = new Language[] { new Language("en"), new Language("de"), new Language("sv") };
-    formPn.add(new JLabel(mLocalizer.msg("language", "Language:")), c.xy(1, 1));
-    formPn.add(mLanguageCB = new JComboBox(languages), c.xy(3, 1));
-
-    String lan = Settings.propLanguage.getString();
-    for (int i = 0; i < languages.length; i++) {
-      if (languages[i].getId().equalsIgnoreCase(lan)) {
-        mLanguageCB.setSelectedIndex(i);
-        break;
-      }
-    }
-
-    String[] zoneIds = TimeZone.getAvailableIDs();
-    mTimezoneCB = new JComboBox(zoneIds);
-    String zone = Settings.propTimezone.getString();
-    for (int i = 0; i < zoneIds.length; i++) {
-      if (zoneIds[i].equals(zone)) {
-        mTimezoneCB.setSelectedIndex(i);
-        break;
-      }
-    }
-
-    mOSTimezoneCb = new JCheckBox(mLocalizer.msg("useSystemTimezone", "use timezone provided by OS"));
-    mOSTimezoneCb.setSelected(Settings.propTimezone.getString() == null);
-    mTimezoneCB.setEnabled(!mOSTimezoneCb.isSelected());
-
-    mOSTimezoneCb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mTimezoneCB.setEnabled(!mOSTimezoneCb.isSelected());
-      }
-    });
-
-    formPn.add(mOSTimezoneCb, c.xyw(1, 3, 3));
-    formPn.add(new JLabel(mLocalizer.msg("timezone", "Timezone:")), c.xy(1, 5));
-    formPn.add(mTimezoneCB, c.xy(3, 5));
-    JLabel lb = new JLabel(mLocalizer.msg("restartNote",
-        "Diese Einstellungen werden erst nach dem Neustart von TV-Browser wirksam."));
-    lb.setFont(new Font("Dialog", Font.PLAIN, 9));
-    localePn.add(lb, BorderLayout.SOUTH);
-    content.add(localePn);
-
     JPanel morePn = new JPanel(new TabLayout(1));
     morePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("more", "More")));
     content.add(morePn);
@@ -265,15 +206,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
     PeriodItem periodItem = (PeriodItem) mAutoDownloadPeriodCB.getSelectedItem();
     Settings.propAutoDownloadPeriod.setInt(periodItem.getDays());
 
-    Language lan = (Language) mLanguageCB.getSelectedItem();
-    Settings.propLanguage.setString(lan.getId());
-
-    if (mOSTimezoneCb.isSelected()) {
-      Settings.propTimezone.setString(null);
-    } else {
-      Settings.propTimezone.setString((String) mTimezoneCB.getSelectedItem());
-    }
-
     Settings.propMinimizeAfterStartup.setBoolean(mMinimizeAfterStartUpChB.isSelected());
     Settings.propSplashShow.setBoolean(mShowSplashChB.isSelected());
   }
@@ -289,23 +221,6 @@ public class TVDataSettingsTab implements devplugin.SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-    return mLocalizer.msg("others", "others");
+    return mLocalizer.msg("startup", "Startup");
   }
-
-  class Language {
-    private String mId;
-
-    public Language(String id) {
-      mId = id;
-    }
-
-    public String toString() {
-      return new Locale(mId).getDisplayLanguage();
-    }
-
-    public String getId() {
-      return mId;
-    }
-  }
-
 }
