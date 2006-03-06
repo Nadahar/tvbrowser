@@ -34,7 +34,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.LinkButton;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -51,17 +51,9 @@ class WelcomeCardPanel extends AbstractCardPanel {
  
   public WelcomeCardPanel(PrevNextButtons btns) {
     super(btns);
-    mContent=new JPanel(new FormLayout("pref, 10dlu, fill:200dlu:grow", "fill:pref:grow, top:pref, 10dlu, pref, fill:pref:grow"));
+    mContent=new JPanel(new FormLayout("pref, 10dlu, fill:200dlu:grow", "fill:pref:grow, top:pref, fill:pref:grow"));
     
-    JLabel area=new JLabel();
-    area.setText(mLocalizer.msg("welcome","Welcome",tvbrowser.TVBrowser.VERSION.toString().replaceAll("\\s", "&nbsp;")));
-
     JEditorPane textfield = new JEditorPane();
-    
-    area.setBackground(textfield.getBackground());
-    area.setForeground(textfield.getForeground());
-    area.setOpaque(true);
-    area.setFont(textfield.getFont());
     
     JLabel icon = new JLabel(new ImageIcon("imgs/tvbrowser128.png"));
     icon.setOpaque(false);
@@ -76,14 +68,11 @@ class WelcomeCardPanel extends AbstractCardPanel {
     iconPanel.add(icon, BorderLayout.NORTH);
     iconPanel.setOpaque(false);
     
-    mContent.add(iconPanel, cc.xywh(1, 2, 1, 3));
-    mContent.add(area, cc.xy(3, 2));
-    mContent.add(new LinkButton(mLocalizer.msg("moreInfos", "more infos"), mLocalizer.msg("moreInfosUrl","http://wiki.tvbrowser.org"), JLabel.LEFT), cc.xy(3, 4));
+    mContent.add(iconPanel, cc.xywh(1, 2, 1, 2));
+    mContent.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("welcome","Welcome",tvbrowser.TVBrowser.VERSION.toString().replaceAll("\\s", "&nbsp;"))), cc.xy(3, 2));
   }
   
   public JPanel getPanel() {
     return mContent;    
   }  
-  
- 
 }
