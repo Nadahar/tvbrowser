@@ -293,10 +293,11 @@ public class SettingsDialog implements WindowClosingIf {
     
     apperanceNode.add(new SettingNode(new ChannelsSettingsTab(), TAB_ID_CHANNELS));
     apperanceNode.add(new SettingNode(new ChannelGroupSettingsTab(this)));
-    apperanceNode.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
-    apperanceNode.add(new SettingNode(new FontsSettingsTab()));
     apperanceNode.add(new SettingNode(new ProgramTableSettingsTab()));
+    apperanceNode.add(new SettingNode(new ChannellogosSettingsTab()));
+    apperanceNode.add(new SettingNode(new FontsSettingsTab()));
     apperanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
+    apperanceNode.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
 
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
     generalSettings.add(new SettingNode(new ContextmenuSettingsTab()));
