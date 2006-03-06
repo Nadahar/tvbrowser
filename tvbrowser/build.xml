@@ -313,7 +313,7 @@
       <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/bsh-2.0b1.jar" includes="bsh/**"/>
       <fileset dir="${unpacked.dir}/forms-1.0.6.jar" includes="com/**"/>
-        <unjar src="${unpacked.dir}/looks-2.0.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/looks-2.0.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
     </jar>
 
