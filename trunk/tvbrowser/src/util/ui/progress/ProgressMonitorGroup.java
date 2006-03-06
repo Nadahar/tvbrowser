@@ -25,8 +25,8 @@
  */
 package util.ui.progress;
 
-import javax.swing.JProgressBar;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 
 import devplugin.ProgressMonitor;
 

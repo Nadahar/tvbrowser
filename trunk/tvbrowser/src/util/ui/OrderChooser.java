@@ -25,16 +25,27 @@
  */
 package util.ui;
 
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-
-import devplugin.Channel;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 
 import tvbrowser.core.icontheme.IconLoader;
+import devplugin.Channel;
 
 /**
  *

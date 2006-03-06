@@ -48,7 +48,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
-import devplugin.Plugin;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -57,6 +56,7 @@ import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import devplugin.Plugin;
 
 /**
  * A class to support Drag'n'Drop in the toolbar.

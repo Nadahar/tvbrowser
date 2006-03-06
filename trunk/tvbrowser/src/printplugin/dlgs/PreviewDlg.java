@@ -26,17 +26,28 @@
 
 package printplugin.dlgs;
 
-import javax.swing.*;
-
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 public class PreviewDlg extends JDialog implements ActionListener, WindowClosingIf {
   

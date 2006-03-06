@@ -35,7 +35,10 @@ import java.util.logging.Level;
 import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
-import devplugin.*;
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Date;
+import devplugin.Program;
 
 /**
  * 

@@ -38,11 +38,11 @@ import javax.swing.SwingUtilities;
 
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
+import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 import devplugin.Version;
-import devplugin.ActionMenu;
 
 /**
  * This Plugin shows a List of current running Programs

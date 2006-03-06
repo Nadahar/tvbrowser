@@ -25,11 +25,12 @@
  */
 package util.ui;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import util.exc.TvBrowserException;
-
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;

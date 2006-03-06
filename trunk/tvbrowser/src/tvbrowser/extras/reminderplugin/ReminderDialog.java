@@ -33,13 +33,25 @@
 package tvbrowser.extras.reminderplugin;
 
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import java.awt.*;
-import java.awt.event.*;
 
 public class ReminderDialog extends JDialog implements WindowClosingIf {
 

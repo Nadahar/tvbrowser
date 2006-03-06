@@ -26,8 +26,6 @@
 
 package devplugin;
 
-import tvdataservice.TvDataUpdateManager;
-
 import util.exc.TvBrowserException;
 
 

@@ -31,7 +31,12 @@ import java.util.Comparator;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import devplugin.*;
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Date;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramSearcher;
 
 /**
  * An abstract searcher implementation that reduces the checks on String checks.

@@ -30,10 +30,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import devplugin.*;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.FileFormatException;
+import tvbrowserdataservice.file.ProgramField;
+import tvbrowserdataservice.file.ProgramFrame;
 import devplugin.Program;
-
-import tvbrowserdataservice.file.*;
+import devplugin.ProgramFieldType;
 
 /**
  * 

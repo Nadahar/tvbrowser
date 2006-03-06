@@ -30,18 +30,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-import tvbrowserdataservice.file.*;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.FileFormatException;
+import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
-import devplugin.*;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgressMonitor;
 
 /**
  * 

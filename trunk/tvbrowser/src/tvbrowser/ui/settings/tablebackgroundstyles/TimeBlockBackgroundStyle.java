@@ -1,14 +1,20 @@
 package tvbrowser.ui.settings.tablebackgroundstyles;
 
-import util.ui.TabLayout;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.ProgramTableSettingsTab;
+import util.ui.TabLayout;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

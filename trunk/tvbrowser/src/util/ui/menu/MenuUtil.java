@@ -26,10 +26,14 @@
 
 package util.ui.menu;
 
-import devplugin.ActionMenu;
+import java.awt.Font;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+import devplugin.ActionMenu;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

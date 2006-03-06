@@ -26,8 +26,8 @@
 
 package printplugin.settings;
 
-import devplugin.Date;
 import devplugin.Channel;
+import devplugin.Date;
 
 
 /**

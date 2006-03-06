@@ -26,14 +26,19 @@
 
 package tvbrowser.extras.favoritesplugin;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-import util.ui.*;
-
-import devplugin.*;
+import util.ui.TabLayout;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.SettingsTab;
 
 /**
  * The settings tab for the favorites plugin.

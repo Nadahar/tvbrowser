@@ -26,15 +26,14 @@
 
 package printplugin.util;
 
-import printplugin.settings.ProgramIconSettings;
+import java.awt.Font;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import printplugin.settings.MutableProgramIconSettings;
 import printplugin.settings.PrinterProgramIconSettings;
-
-import java.io.ObjectInputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.awt.*;
-
+import printplugin.settings.ProgramIconSettings;
 import devplugin.ProgramFieldType;
 
 

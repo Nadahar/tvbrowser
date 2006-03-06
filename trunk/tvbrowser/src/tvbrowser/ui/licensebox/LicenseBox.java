@@ -25,13 +25,21 @@
  */
 package tvbrowser.ui.licensebox;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.Timer;
 
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import java.awt.*;
-import java.awt.event.*;
 
 public class LicenseBox extends JDialog implements ActionListener,WindowClosingIf {
   

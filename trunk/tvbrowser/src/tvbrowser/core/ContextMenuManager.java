@@ -37,7 +37,6 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.ui.menu.MenuUtil;
-
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;

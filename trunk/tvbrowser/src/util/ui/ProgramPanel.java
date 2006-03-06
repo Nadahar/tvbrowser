@@ -51,7 +51,11 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
-import devplugin.*;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.

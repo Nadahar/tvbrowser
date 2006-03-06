@@ -26,7 +26,7 @@
 
 package printplugin.printer;
 
-import java.util.*;
+import java.util.ArrayList;
 
 
 public abstract class AbstractPageModel implements PageModel {

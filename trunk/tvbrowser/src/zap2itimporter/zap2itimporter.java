@@ -21,20 +21,19 @@
 
 package zap2itimporter;
 
-import devplugin.Date;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Enumeration;
-
-import util.exc.TvBrowserException;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.swing.JPanel;
+
+import util.exc.TvBrowserException;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
 
 
 /**

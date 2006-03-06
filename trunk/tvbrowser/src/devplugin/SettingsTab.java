@@ -26,7 +26,8 @@
 
 package devplugin;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JPanel;
 
 /**
  * Represents a page in the settings dialog.

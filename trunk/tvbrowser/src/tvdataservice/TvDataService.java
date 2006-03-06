@@ -28,11 +28,11 @@ package tvdataservice;
 
 import java.util.Properties;
 
+import util.exc.TvBrowserException;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
-import util.exc.TvBrowserException;
 
 /**
  *

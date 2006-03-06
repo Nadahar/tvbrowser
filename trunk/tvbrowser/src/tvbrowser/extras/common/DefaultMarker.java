@@ -26,7 +26,7 @@
 
 package tvbrowser.extras.common;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 
 public class DefaultMarker implements devplugin.Marker {

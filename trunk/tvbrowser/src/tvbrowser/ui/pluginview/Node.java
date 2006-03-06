@@ -26,13 +26,14 @@
 
 package tvbrowser.ui.pluginview;
 
-import devplugin.ProgramItem;
+import java.util.ArrayList;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import devplugin.ActionMenu;
 import devplugin.NodeFormatter;
 import devplugin.Program;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.util.ArrayList;
+import devplugin.ProgramItem;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

@@ -25,11 +25,17 @@
  */
 package primarydatamanager.primarydataservice;
 
-import tvbrowserdataservice.file.*;
-import devplugin.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import java.util.*;
-import java.io.*;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.FileFormatException;
+import tvbrowserdataservice.file.ProgramField;
+import tvbrowserdataservice.file.ProgramFrame;
+import devplugin.Channel;
+import devplugin.ProgramFieldType;
 
 public class ProgramFrameDispatcher {
   

@@ -27,9 +27,9 @@
 
 package tvbrowser.core;
 
-import devplugin.Channel;
-
 import java.util.HashMap;
+
+import devplugin.Channel;
 
 
 /**

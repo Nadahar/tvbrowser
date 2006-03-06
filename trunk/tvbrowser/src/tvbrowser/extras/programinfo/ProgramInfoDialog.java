@@ -37,17 +37,14 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import java.net.URL;
-
-import javax.swing.BorderFactory;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
@@ -57,9 +54,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-
-import com.l2fprod.common.swing.JTaskPane;
-import com.l2fprod.common.swing.JTaskPaneGroup;
 
 import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.icontheme.IconLoader;
@@ -71,6 +65,10 @@ import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
+
+import com.l2fprod.common.swing.JTaskPane;
+import com.l2fprod.common.swing.JTaskPaneGroup;
+
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;

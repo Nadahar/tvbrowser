@@ -10,10 +10,8 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.plaf.basic.BasicListUI.MouseInputHandler;
 
 /**
  * This class implements a MouseListener for DnD in JLists.

@@ -39,10 +39,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tvbrowser.TVBrowser;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import devplugin.Version;
 
 public class SoftwareUpdater {

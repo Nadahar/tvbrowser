@@ -26,7 +26,7 @@
 
 package tvbrowser.ui.settings.tablebackgroundstyles;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 
 /**

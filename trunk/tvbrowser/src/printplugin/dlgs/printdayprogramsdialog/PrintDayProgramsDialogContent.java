@@ -26,18 +26,19 @@
 
 package printplugin.dlgs.printdayprogramsdialog;
 
-import printplugin.dlgs.DialogContent;
-import printplugin.settings.Settings;
-import printplugin.settings.DayProgramPrinterSettings;
-import printplugin.settings.Scheme;
-import printplugin.settings.DayProgramScheme;
-import printplugin.printer.PrintJob;
-import printplugin.printer.JobFactory;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Frame;
 import java.awt.print.PageFormat;
 
+import javax.swing.JTabbedPane;
+
+import printplugin.dlgs.DialogContent;
+import printplugin.printer.JobFactory;
+import printplugin.printer.PrintJob;
+import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.DayProgramScheme;
+import printplugin.settings.Scheme;
+import printplugin.settings.Settings;
 import devplugin.Channel;
 import devplugin.Date;
 

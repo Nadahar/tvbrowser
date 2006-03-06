@@ -26,16 +26,12 @@
 
 package tvbrowser.core.tvdataservice;
 
-import devplugin.ChannelGroup;
-import devplugin.Channel;
-import devplugin.ProgressMonitor;
-import tvbrowser.core.Settings;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import util.exc.TvBrowserException;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.ProgressMonitor;
 
 
 public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {

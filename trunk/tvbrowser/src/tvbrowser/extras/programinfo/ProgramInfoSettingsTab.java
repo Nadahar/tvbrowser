@@ -26,23 +26,30 @@
 
 package tvbrowser.extras.programinfo;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Properties;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import tvbrowser.core.icontheme.IconLoader;
+import util.ui.FontChooserPanel;
+import util.ui.customizableitems.SortableItemList;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
-
-import tvbrowser.core.icontheme.IconLoader;
-import util.ui.FontChooserPanel;
-import util.ui.customizableitems.SortableItemList;
 
 import devplugin.Plugin;
 import devplugin.ProgramFieldType;

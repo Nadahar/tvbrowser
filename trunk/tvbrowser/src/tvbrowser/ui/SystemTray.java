@@ -34,7 +34,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -45,7 +44,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 

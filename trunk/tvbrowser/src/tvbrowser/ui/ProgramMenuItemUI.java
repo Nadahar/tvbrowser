@@ -38,7 +38,6 @@ import javax.swing.plaf.basic.BasicMenuItemUI;
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 import util.ui.TextAreaIcon;
-
 import devplugin.Date;
 import devplugin.Program;
 

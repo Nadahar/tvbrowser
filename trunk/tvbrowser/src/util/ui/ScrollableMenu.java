@@ -24,7 +24,6 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;

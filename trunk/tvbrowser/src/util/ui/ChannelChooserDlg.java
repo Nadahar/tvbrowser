@@ -26,15 +26,20 @@
 
 package util.ui;
 
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import devplugin.Channel;
 import devplugin.Plugin;
-
-import javax.swing.*;
-
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 /**
  * The ChannelChooserDlg class provides a Dialog for choosing channels. The user

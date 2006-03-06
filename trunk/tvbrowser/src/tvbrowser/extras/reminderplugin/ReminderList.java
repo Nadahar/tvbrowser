@@ -35,11 +35,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import util.io.IOUtilities;
-
-
-import tvbrowser.extras.common.DefaultMarker;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.DefaultMarker;
+import util.io.IOUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;

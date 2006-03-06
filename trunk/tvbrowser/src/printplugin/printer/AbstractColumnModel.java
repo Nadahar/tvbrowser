@@ -27,9 +27,9 @@
 
 package printplugin.printer;
 
-import devplugin.Program;
-
 import java.util.ArrayList;
+
+import devplugin.Program;
 
 
 public abstract class AbstractColumnModel implements ColumnModel {

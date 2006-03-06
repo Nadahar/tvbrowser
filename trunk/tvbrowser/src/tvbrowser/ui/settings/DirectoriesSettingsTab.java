@@ -26,7 +26,12 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.Icon;
+import javax.swing.JPanel;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import devplugin.SettingsTab;

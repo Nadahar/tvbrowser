@@ -28,10 +28,8 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import captureplugin.drivers.DeviceIf;
-
 import util.ui.Localizer;
-
+import captureplugin.drivers.DeviceIf;
 import devplugin.Program;
 
 

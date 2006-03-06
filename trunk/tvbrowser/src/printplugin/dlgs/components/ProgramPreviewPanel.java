@@ -26,19 +26,26 @@
 
 package printplugin.dlgs.components;
 
-import devplugin.Plugin;
-import devplugin.ProgramFieldType;
-import devplugin.Date;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import printplugin.printer.ProgramIcon;
-import printplugin.settings.ProgramIconSettings;
 import printplugin.settings.MutableProgramIconSettings;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import printplugin.settings.ProgramIconSettings;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.ProgramFieldType;
 
 
 public class ProgramPreviewPanel extends JPanel {

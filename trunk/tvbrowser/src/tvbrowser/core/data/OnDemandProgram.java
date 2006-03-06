@@ -28,9 +28,9 @@ package tvbrowser.core.data;
 import java.lang.ref.SoftReference;
 import java.util.logging.Level;
 
+import tvdataservice.MutableProgram;
 import devplugin.Channel;
 import devplugin.ProgramFieldType;
-import tvdataservice.MutableProgram;
 
 /**
  * 

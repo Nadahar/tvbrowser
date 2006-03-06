@@ -26,10 +26,15 @@
 
 package tvbrowser.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 
 
 /**

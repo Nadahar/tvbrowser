@@ -35,7 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
-
 import captureplugin.CapturePluginData;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverFactory;

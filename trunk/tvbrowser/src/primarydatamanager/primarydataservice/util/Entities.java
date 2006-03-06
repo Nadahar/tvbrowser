@@ -54,7 +54,7 @@ package primarydatamanager.primarydataservice.util;
  * <http://www.apache.org/>.
  */
 
-import java.util.*;
+import java.util.Hashtable;
 
 public class Entities {
   static final Hashtable decoder = new Hashtable(300);

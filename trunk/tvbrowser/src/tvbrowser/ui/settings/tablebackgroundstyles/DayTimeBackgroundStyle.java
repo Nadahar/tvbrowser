@@ -26,13 +26,13 @@
 
 package tvbrowser.ui.settings.tablebackgroundstyles;
 
-import util.ui.TabLayout;
-
-import javax.swing.*;
-
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.ProgramTableSettingsTab;
+import util.ui.TabLayout;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

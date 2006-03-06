@@ -28,10 +28,11 @@ package showviewplugin;
 import java.util.Iterator;
 
 import tvdataservice.MutableProgram;
-import devplugin.*;
+import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.ProgramFieldType;
+import devplugin.Version;
 
 
 /**

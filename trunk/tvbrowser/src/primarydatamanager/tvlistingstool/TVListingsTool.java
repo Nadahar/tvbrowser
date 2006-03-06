@@ -28,7 +28,6 @@ package primarydatamanager.tvlistingstool;
 
 import java.io.File;
 
-
 import primarydatamanager.mirrorupdater.data.DataSource;
 import primarydatamanager.mirrorupdater.data.DataTarget;
 import primarydatamanager.mirrorupdater.data.FileDataTarget;

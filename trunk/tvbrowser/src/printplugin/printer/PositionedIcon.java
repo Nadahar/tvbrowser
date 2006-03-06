@@ -26,7 +26,7 @@
 
 package printplugin.printer;
 
-import java.awt.*;
+import java.awt.Graphics;
 
 public interface PositionedIcon {
 

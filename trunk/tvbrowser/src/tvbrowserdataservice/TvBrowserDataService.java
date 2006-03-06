@@ -26,27 +26,36 @@
 package tvbrowserdataservice;
 
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.net.URL;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.logging.Level;
 
-
-import devplugin.*;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.PluginInfo;
-import devplugin.Version;
-
-
-import tvbrowserdataservice.file.*;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.Mirror;
+import tvbrowserdataservice.file.SummaryFile;
+import tvbrowserdataservice.file.TvDataLevel;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
 import util.io.IOUtilities;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 
 
 /**

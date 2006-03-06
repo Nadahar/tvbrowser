@@ -28,8 +28,10 @@ package util.tvdataservice;
 
 import java.util.HashMap;
 
-import devplugin.*;
-import tvdataservice.*;
+import tvdataservice.MutableChannelDayProgram;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Program;
 
 /**
  * You can pass Program objects to this dispatcher and it will put it in the

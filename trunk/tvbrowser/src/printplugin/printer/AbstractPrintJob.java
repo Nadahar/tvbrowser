@@ -26,12 +26,14 @@
 
 package printplugin.printer;
 
-import printplugin.dlgs.PreviewDlg;
-
-import java.awt.print.Printable;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.print.PageFormat;
-import java.awt.*;
+import java.awt.print.Printable;
 import java.util.ArrayList;
+
+import printplugin.dlgs.PreviewDlg;
 
  
 public abstract class AbstractPrintJob implements PrintJob {

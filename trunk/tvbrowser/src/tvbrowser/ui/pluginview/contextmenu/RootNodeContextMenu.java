@@ -26,12 +26,13 @@
 
 package tvbrowser.ui.pluginview.contextmenu;
 
-import util.ui.menu.MenuUtil;
-
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.ui.pluginview.PluginTree;
+import util.ui.menu.MenuUtil;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

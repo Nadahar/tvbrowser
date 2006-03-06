@@ -31,7 +31,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 import primarydatamanager.mirrorupdater.UpdateException;
-import primarydatamanager.mirrorupdater.data.*;
+import primarydatamanager.mirrorupdater.data.DataSource;
+import primarydatamanager.mirrorupdater.data.DataTarget;
+import primarydatamanager.mirrorupdater.data.FileDataSource;
+import primarydatamanager.mirrorupdater.data.FileDataTarget;
+import primarydatamanager.mirrorupdater.data.FtpDataTarget;
+import primarydatamanager.mirrorupdater.data.HttpDataSource;
 
 /**
  * 

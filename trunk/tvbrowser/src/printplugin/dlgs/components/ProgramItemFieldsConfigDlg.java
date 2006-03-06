@@ -26,17 +26,23 @@
 
 package printplugin.dlgs.components;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import devplugin.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
+import devplugin.ProgramFieldType;
 
 public class ProgramItemFieldsConfigDlg extends JDialog implements WindowClosingIf{
 

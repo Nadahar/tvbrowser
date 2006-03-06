@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -20,8 +19,6 @@ import javax.swing.SwingUtilities;
 import util.ui.Localizer;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
-
-import captureplugin.CapturePlugin;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;

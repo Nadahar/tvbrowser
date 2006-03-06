@@ -29,8 +29,8 @@ package tvbrowser.ui.mainframe;
 
 
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JMenu;

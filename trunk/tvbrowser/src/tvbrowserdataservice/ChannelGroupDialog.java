@@ -43,7 +43,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import util.ui.ChannelListCellRenderer;
-import util.ui.LinkButton;
 import util.ui.TabLayout;
 import devplugin.Channel;
 

@@ -27,7 +27,14 @@
 
 package primarydatamanager.primarydataservice.util.html2txt;
 
-import java.io.*;
+import java.io.FilterReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
 
 public class Html2TxtConverter extends FilterReader {

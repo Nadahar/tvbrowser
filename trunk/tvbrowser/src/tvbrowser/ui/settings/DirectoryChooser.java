@@ -26,11 +26,12 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.*;
+import java.awt.GridLayout;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 
 
 public class DirectoryChooser extends JPanel {

@@ -29,8 +29,8 @@ import java.awt.Font;
 import java.io.IOException;
 import java.io.StringReader;
 
-import util.misc.TextLineBreakerFontWidth;
 import junit.framework.TestCase;
+import util.misc.TextLineBreakerFontWidth;
 
 /**
  * 

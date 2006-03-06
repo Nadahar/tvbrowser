@@ -26,23 +26,35 @@
 
 package printplugin.printer;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.logging.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+import printplugin.PrintPlugin;
+import printplugin.settings.PrinterProgramIconSettings;
+import printplugin.settings.ProgramIconSettings;
 import util.io.IOUtilities;
+import util.ui.Localizer;
 import util.ui.MultipleFieldReader;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
-import util.ui.Localizer;
-
-import devplugin.*;
-import printplugin.settings.ProgramIconSettings;
-import printplugin.settings.PrinterProgramIconSettings;
-import printplugin.PrintPlugin;
+import devplugin.Channel;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 
 public class ProgramIcon implements Icon {

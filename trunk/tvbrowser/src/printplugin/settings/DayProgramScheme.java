@@ -26,16 +26,15 @@
 
 package printplugin.settings;
 
-import devplugin.Date;
-import devplugin.Channel;
-import devplugin.Plugin;
-
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import printplugin.util.IO;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
 
 public class DayProgramScheme extends Scheme {
 

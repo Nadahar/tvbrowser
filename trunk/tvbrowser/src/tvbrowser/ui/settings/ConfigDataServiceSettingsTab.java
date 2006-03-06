@@ -27,11 +27,15 @@
 
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 
-import tvdataservice.SettingsPanel;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvdataservice.SettingsPanel;
 
 public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
 

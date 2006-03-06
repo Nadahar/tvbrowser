@@ -26,23 +26,34 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import devplugin.ProgramFilter;
-
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
-import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import devplugin.ProgramFilter;
 
 public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf {
 

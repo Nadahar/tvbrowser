@@ -26,13 +26,15 @@
 
 package printplugin.dlgs.printdayprogramsdialog;
 
+import java.awt.BorderLayout;
+import java.awt.Frame;
+
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+
+import printplugin.dlgs.components.ChannelSelectionPanel;
 import printplugin.dlgs.components.DateRangePanel;
 import printplugin.dlgs.components.TimeRangePanel;
-import printplugin.dlgs.components.ChannelSelectionPanel;
-
-import javax.swing.*;
-import java.awt.*;
-
 import devplugin.Channel;
 import devplugin.Date;
 

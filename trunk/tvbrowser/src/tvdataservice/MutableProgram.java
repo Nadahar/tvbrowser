@@ -26,7 +26,10 @@
 
 package tvdataservice;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TimeZone;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -34,8 +37,13 @@ import javax.swing.event.EventListenerList;
 
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
-import devplugin.*;
+import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * One program. Consists of the Channel, the time, the title and some extra

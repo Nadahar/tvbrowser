@@ -26,8 +26,8 @@
 
 package tvbrowser.extras.common;
 
-import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 
 public interface DataDeserializer {

@@ -28,8 +28,8 @@
 package primarydatamanager.primarydataservice.util.htmlparser;
 
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class Tag {

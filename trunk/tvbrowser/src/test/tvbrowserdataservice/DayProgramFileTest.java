@@ -29,11 +29,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import devplugin.*;
-
 import junit.framework.TestCase;
-
-import tvbrowserdataservice.file.*;
+import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.FileFormatException;
+import tvbrowserdataservice.file.ProgramField;
+import tvbrowserdataservice.file.ProgramFrame;
+import devplugin.ProgramFieldType;
 
 /**
  * 

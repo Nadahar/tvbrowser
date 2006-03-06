@@ -52,6 +52,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
 import util.ui.TabLayout;
@@ -59,7 +60,6 @@ import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.SettingsTab;
-import tvbrowser.core.icontheme.IconLoader;
 
 
 /**

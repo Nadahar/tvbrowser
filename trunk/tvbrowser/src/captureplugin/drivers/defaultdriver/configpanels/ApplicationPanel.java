@@ -41,9 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import captureplugin.drivers.defaultdriver.DeviceConfig;
-
 import util.ui.Localizer;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
 
 
 /**

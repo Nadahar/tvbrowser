@@ -27,8 +27,15 @@
 package printplugin.dlgs.components;
 
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 
 public class TimeRangePanel extends JPanel {
 

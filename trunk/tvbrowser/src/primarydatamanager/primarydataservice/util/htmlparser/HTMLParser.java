@@ -26,8 +26,11 @@
 
 package primarydatamanager.primarydataservice.util.htmlparser;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class HTMLParser {
   

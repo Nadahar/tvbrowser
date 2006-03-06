@@ -26,14 +26,14 @@
 
 package tvbrowser.ui.configassistant;
 
-import util.io.IOUtilities;
-
 import java.io.File;
-import java.io.IOException;
 import java.io.FilenameFilter;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import util.io.IOUtilities;
 
 
 public class ImportHandler {

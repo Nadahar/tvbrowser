@@ -1,10 +1,10 @@
 package util.io;
 
-import java.util.LinkedList;
-import java.util.logging.Level;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.logging.Level;
 
 /**
  * @author Til Schneider, www.murfman.de

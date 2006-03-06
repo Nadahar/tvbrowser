@@ -26,8 +26,13 @@
 
 package tvbrowser.ui.settings;
 
-import javax.swing.*;
-import java.awt.*;  
+import java.awt.BorderLayout;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
   
  class PluginInfoPanel extends JPanel {
     

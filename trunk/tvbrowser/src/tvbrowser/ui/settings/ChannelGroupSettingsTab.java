@@ -26,33 +26,49 @@
 
 package tvbrowser.ui.settings;
 
-import devplugin.SettingsTab;
-import devplugin.ChannelGroup;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.*;
-import java.util.Enumeration;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.ChannelGroupManager;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.ui.settings.channel.ChannelGroupInfoDialog;
-import util.ui.UiUtilities;
 import util.ui.LinkButton;
-import util.ui.progress.ProgressWindow;
+import util.ui.UiUtilities;
 import util.ui.progress.Progress;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.factories.Borders;
+import util.ui.progress.ProgressWindow;
+
 import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ChannelGroup;
+import devplugin.SettingsTab;
 
 public class ChannelGroupSettingsTab implements SettingsTab {
 

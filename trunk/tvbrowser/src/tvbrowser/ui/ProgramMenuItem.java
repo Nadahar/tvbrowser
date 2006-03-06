@@ -29,7 +29,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,7 +42,6 @@ import tvbrowser.extras.programinfo.ProgramInfo;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
-
 import devplugin.Program;
 
 /**

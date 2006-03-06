@@ -26,24 +26,31 @@
 
 package tvbrowser.extras.programinfo;
 
-import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ActionListener;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.io.IOException;
 import java.util.Properties;
-import java.io.*;
 
-import javax.swing.*;
+import javax.swing.JDialog;
 
-import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
-
-import util.ui.UiUtilities;
-import util.exc.ErrorHandler;
-import devplugin.*;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.ErrorHandler;
+import util.ui.UiUtilities;
+
+import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
+
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuIf;
+import devplugin.Program;
 
 /**
  * TV-Browser

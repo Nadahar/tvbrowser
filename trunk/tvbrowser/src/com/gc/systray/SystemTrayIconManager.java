@@ -1,10 +1,25 @@
 package com.gc.systray;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Date;
+import java.util.LinkedList;
+
+import javax.swing.JDialog;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
+import javax.swing.JWindow;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 /**
  * This is the manager class. It may bee seen as a wrapper for the native code.

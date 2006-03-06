@@ -26,12 +26,11 @@
 
 package devplugin;
 
-import tvdataservice.TvDataUpdateManager;
-import tvdataservice.SettingsPanel;
-
 import java.io.File;
 import java.util.Properties;
 
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 
 /**

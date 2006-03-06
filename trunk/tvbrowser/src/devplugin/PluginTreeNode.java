@@ -28,14 +28,21 @@ package devplugin;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Action;
 
+import tvbrowser.core.TvDataUpdateListener;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTreeModel;
-import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.TvDataUpdateListener;
 
 
 /**

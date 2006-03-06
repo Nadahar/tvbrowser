@@ -26,19 +26,21 @@
 
 package printplugin.printer;
 
-import printplugin.settings.DayProgramPrinterSettings;
-import printplugin.settings.QueuePrinterSettings;
-import printplugin.printer.queueprinter.QueuePrintJob;
-import printplugin.printer.dayprogramprinter.DayProgramPrintJob;
-import printplugin.util.Util;
-
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.Graphics;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import devplugin.*;
+import printplugin.printer.dayprogramprinter.DayProgramPrintJob;
+import printplugin.printer.queueprinter.QueuePrintJob;
+import printplugin.settings.DayProgramPrinterSettings;
+import printplugin.settings.QueuePrinterSettings;
+import printplugin.util.Util;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
 
 
 public class JobFactory {
