@@ -28,6 +28,7 @@ package tvbrowser.ui.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -94,6 +95,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     }
 
     String[] zoneIds = TimeZone.getAvailableIDs();
+    Arrays.sort(zoneIds);
     mTimezoneCB = new JComboBox(zoneIds);
     String zone = Settings.propTimezone.getString();
     if (zone == null) {
