@@ -38,8 +38,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -52,6 +50,10 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A Colorchooser with Alpha-Selection
@@ -136,7 +138,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
     public void createGui() {
 
         JPanel panel = (JPanel) getContentPane();
-        panel.setBorder(BorderFactory.createEmptyBorder(7, 7, 7, 5));
+        panel.setBorder(Borders.DLU4_BORDER);
         panel.setLayout(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();
@@ -184,7 +186,6 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         color.setPreferredSize(new Dimension(100, 100));
 
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.insets = new Insets(0, 0, 0, 4);
         panel.add(color, c);
 
         c = new GridBagConstraints();
@@ -194,12 +195,13 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         c.insets = new Insets(5, 0, 0, 0);
         c.gridwidth = GridBagConstraints.REMAINDER;
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.X_AXIS));
+        
+        FormLayout layout = new FormLayout("pref, fill:pref:grow, pref, 3dlu, pref", "pref");
+        layout.setColumnGroups(new int[][]{{1,3,5}});
+        JPanel buttonPanel = new JPanel(layout);
+        
         JButton ok = new JButton(mLocalizer.msg("OK","OK"));
         JButton cancel = new JButton(mLocalizer.msg("Cancel","Cancel"));
-        cancel.setPreferredSize(new Dimension(color.getPreferredSize().width-3,0));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0,3,0,5));
         ok.addActionListener(new ActionListener() {
 
           public void actionPerformed(ActionEvent e) {
@@ -222,6 +224,8 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
 
         });
         
+        CellConstraints cc = new CellConstraints();
+        
         if(mStandardColor != null) {
           JButton def = new JButton("Default");
           def.addActionListener(new ActionListener() {
@@ -230,14 +234,11 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
               mCurrentColor = mStandardColor;
             }        
           });        
-          buttonPanel.add(def);         
+          buttonPanel.add(def, cc.xy(1,1));         
         }
         
-        buttonPanel.add(Box.createHorizontalGlue());
-        
-        buttonPanel.add(ok);
-        buttonPanel.add(Box.createRigidArea(new Dimension(3,0)));
-        buttonPanel.add(cancel);
+        buttonPanel.add(ok, cc.xy(3,1));
+        buttonPanel.add(cancel, cc.xy(5,1));
 
         panel.add(buttonPanel, c);
 
