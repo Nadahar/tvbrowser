@@ -70,18 +70,21 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, fill:3dlu:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
     
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Locale")), cc.xyw(1,1,5));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Locale")), cc.xyw(1,1,4));
     
     Language[] languages = new Language[] { new Language("en"), new Language("de"), new Language("sv") };
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2, 3));
-    mSettingsPn.add(mLanguageCB = new JComboBox(languages), cc.xy(4, 3));
+    JPanel panel = new JPanel(new FormLayout("pref, 3dlu, fill:pref:grow", "pref"));
+    panel.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(1, 1));
+    panel.add(mLanguageCB = new JComboBox(languages), cc.xy(3, 1));
 
+    mSettingsPn.add(panel, cc.xy(2,3));
+    
     String lan = Settings.propLanguage.getString();
     for (int i = 0; i < languages.length; i++) {
       if (languages[i].getId().equalsIgnoreCase(lan)) {
@@ -117,9 +120,15 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       }
     });
 
-    mSettingsPn.add(mOSTimezoneCb, cc.xyw(2, 5, 4));
-    mSettingsPn.add(mTimezoneLB, cc.xy(2, 7));
-    mSettingsPn.add(mTimezoneCB, cc.xy(4, 7));
+    mSettingsPn.add(mOSTimezoneCb, cc.xyw(2, 5,2));
+    
+    panel = new JPanel(new FormLayout("10dlu, pref, 3dlu, fill:pref:grow", "pref"));
+    panel.add(mTimezoneLB, cc.xy(2, 1));
+    panel.add(mTimezoneCB, cc.xy(4, 1));
+    
+    mSettingsPn.add(panel, cc.xy(2,7));
+    
+    mSettingsPn.add(new JLabel(mLocalizer.msg("restartNote", "Please Restart")), cc.xyw(2, 9,2));
     
     return mSettingsPn;
   }
