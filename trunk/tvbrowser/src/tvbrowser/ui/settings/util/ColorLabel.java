@@ -79,15 +79,17 @@ public class ColorLabel extends JLabel {
   }
 
   private Icon createIcon() {
-    BufferedImage img = new BufferedImage(25, 10, BufferedImage.TYPE_INT_RGB);
+    BufferedImage img = new BufferedImage(25, 15, BufferedImage.TYPE_INT_RGB);
 
     Graphics2D g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
 
     g.setColor(Color.WHITE);
-    g.fillRect(0, 0, 25, 10);
+    g.fillRect(1, 1, 23, 13);
     g.setColor(mColor);
-    g.fillRect(0, 0, 25, 10);
-
+    g.fillRect(1, 1, 23, 13);
+    g.setColor(Color.BLACK);
+    g.drawRect(0, 0, 24, 14);
+    
     ImageIcon icon = new ImageIcon(img);
 
     return icon;
