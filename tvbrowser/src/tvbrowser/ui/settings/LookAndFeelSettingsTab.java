@@ -35,6 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.LinkButton;
 
 import com.jgoodies.forms.factories.Borders;
@@ -142,7 +143,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-theme", 16);
   }
 
   public String getTitle() {

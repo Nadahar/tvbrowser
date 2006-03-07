@@ -31,7 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,6 +39,7 @@ import javax.swing.JTextField;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.TabLayout;
 
 import com.jgoodies.forms.factories.Borders;
@@ -111,17 +111,13 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     Settings.propHttpProxyPassword.setString(mHttpProxySettingsPanel.getPassword());
     TVBrowser.updateProxySettings();
   }
-
-  
   
   /**
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return new ImageIcon("imgs/Server16.gif");
+    return IconLoader.getInstance().getIconFromTheme("apps", "preferences-system-network-proxy", 16);
   }
-  
-  
   
   /**
    * Returns the title of the tab-sheet.
