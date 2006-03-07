@@ -181,8 +181,12 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
             mNextBt.setText(mLocalizer.msg("next", "next") + " >>");
           }
 
-          if (!mCurCardPanel.onPrev())
+          if (!mCurCardPanel.onPrev()) {
+            mNextBt.setEnabled(next);
+            mBackBt.setEnabled(back);
+            mCancelBt.setEnabled(cancel);
             return;
+          }
           mCurCardPanel = mCurCardPanel.getPrev();
           CardLayout cl = (CardLayout) mCardPn.getLayout();
 
@@ -194,8 +198,12 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
             tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
             setVisible(false);
           } else {
-            if (!mCurCardPanel.onNext())
+            if (!mCurCardPanel.onNext()) {
+              mNextBt.setEnabled(next);
+              mBackBt.setEnabled(back);
+              mCancelBt.setEnabled(cancel);
               return;
+            }
             mCurCardPanel = mCurCardPanel.getNext();
             CardLayout cl = (CardLayout) mCardPn.getLayout();
 
