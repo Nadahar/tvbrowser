@@ -257,7 +257,6 @@ public class ReminderSettingsTab implements SettingsTab {
   private Vector getAvailablePlugins() {
     // get the installed plugins
     PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
-    System.out.println(installedPluginArr.length+" plugins available");
     PluginAccess[] copy = new PluginAccess[installedPluginArr.length];
 
     System.arraycopy(installedPluginArr, 0, copy, 0, installedPluginArr.length);
