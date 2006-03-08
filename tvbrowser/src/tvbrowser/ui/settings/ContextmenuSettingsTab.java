@@ -26,10 +26,7 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -37,16 +34,12 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
@@ -55,120 +48,101 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
-import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.Program;
 
-public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionListener {
+public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
+    private boolean mShowUsage = false;
+    
+    public ContextMenuCellRenderer(boolean showUsage) {
+      mShowUsage = showUsage;
+    }
 
-    public Component getListCellRendererComponent(JList list, Object value,
-                                                  int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
 
-      JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
-          index, isSelected, cellHasFocus);
+      JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
       if (value instanceof ContextMenuIf) {
         ContextMenuIf menuIf = (ContextMenuIf) value;
         Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
 
-        JPopupMenu menu=new JPopupMenu();
-
         // Get the context menu item text
         String text = null;
         Icon icon = null;
-        //Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
+        // Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
         ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
         if (actionMenu != null) {
           Action action = actionMenu.getAction();
           if (action != null) {
             text = (String) action.getValue(Action.NAME);
             icon = (Icon) action.getValue(Action.SMALL_ICON);
-          }
-          else if(menuIf instanceof PluginProxy) {
-            
-            text = ((PluginProxy)menuIf).getInfo().getName();
-            icon = ((PluginProxy)menuIf).getMarkIcon();
-          }
-          else {
+          } else if (menuIf instanceof PluginProxy) {
+            text = ((PluginProxy) menuIf).getInfo().getName();
+            icon = ((PluginProxy) menuIf).getMarkIcon();
+          } else {
             text = "unknown";
             icon = null;
           }
         }
 
-        Font f;
-        /* If the Plugin is the Plugin for double and middle
-         * click make the text bold and italic.
-         */
-        if (menuIf.equals(mDefaultIf) && menuIf.equals(mMiddleClickIf)) {
-          f=new Font("Dialog",Font.BOLD + Font.ITALIC,12);
+        if (mShowUsage) {
+          /*
+           * If the Plugin is the Plugin for double and middle click make the text
+           * bold and italic.
+           */
+          if (menuIf.equals(mDefaultIf)) {
+            text += " - " + mLocalizer.msg("doubleClick", "double-click");
+          } else if (menuIf.equals(mMiddleClickIf)) {
+            text += " - " + mLocalizer.msg("middleClick", ",middle-click");
+          }
         }
-        else if (menuIf.equals(mDefaultIf)) {
-          f=new Font("Dialog",Font.BOLD,12);
-          text += " - "+mLocalizer.msg("doubleClick","double-click");
-        }
-        else if (menuIf.equals(mMiddleClickIf)) {
-          f=new Font("Dialog",Font.ITALIC,12);
-          text += " - "+mLocalizer.msg("middleClick",",middle-click");
-        }
-        else {
-          f=new Font("Dialog",Font.PLAIN,12);
-        }
-        label.setFont(f);
-
-
-
 
         label.setText(text);
-
-        label.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
-        label.setOpaque(false);
-        label.setBackground(menu.getBackground());
-        JPanel panel=new JPanel(new BorderLayout());
-        panel.add(label,BorderLayout.CENTER);
-        panel.add(new JLabel(icon),BorderLayout.WEST);
-        if (isSelected) {
-          panel.setBackground(Color.gray);
-        }
-        return panel;
+        label.setIcon(icon);
+        return label;
       }
 
       return label;
     }
 
-
-
   }
 
-  private JButton mDefaultPluginBt, mMiddleClickPluginBt;
   private ContextMenuIf mDefaultIf, mMiddleClickIf;
+
   private SortableItemList mList;
 
-  public static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
 
   public ContextmenuSettingsTab() {
-    mList=new SortableItemList(mLocalizer.msg("title","context menu"));    
-    mList.getList().setVisibleRowCount(10);
+    mList = new SortableItemList();
     mList.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    mList.getList().addMouseListener(new MouseAdapter(){
-      public void mouseClicked(MouseEvent e){
-        if(SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+    mList.getList().addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        mList.requestFocus();
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
           int inx = mList.getList().locationToIndex(e.getPoint());
-          if (inx>=0) {
+          if (inx >= 0) {
             mList.getList().ensureIndexIsVisible(inx);
             mDefaultIf = (ContextMenuIf) mList.getList().getSelectedValue();
             mList.updateUI();
           }
         }
-        if(SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+        if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
           int inx = mList.getList().locationToIndex(e.getPoint());
-          if (inx>=0) {
+          if (inx >= 0) {
             mList.getList().ensureIndexIsVisible(inx);
             mList.getList().setSelectedIndex(inx);
             mMiddleClickIf = (ContextMenuIf) mList.getList().getSelectedValue();
@@ -177,59 +151,70 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
         }
       }
     });
-    mList.setCellRenderer(new ContextMenuCellRenderer());
-    mList.getList().setOpaque(false);
-    fillListbox(); 
-    
-    PluginProxyManager.getInstance().addPluginStateListener(
-        new PluginStateAdapter() {
-          public void pluginActivated(Plugin p) {
-            fillListbox();
-          }
+    mList.setCellRenderer(new ContextMenuCellRenderer(true));
+    fillListbox();
+    int num = mList.getList().getModel().getSize();
+    if (num > 20)
+      num = 20;
+    mList.getList().setVisibleRowCount(num);
 
-          public void pluginDeactivated(Plugin p) {
-            fillListbox();
-          }
-        });
+    PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
+      public void pluginActivated(Plugin p) {
+        fillListbox();
+      }
+
+      public void pluginDeactivated(Plugin p) {
+        fillListbox();
+      }
+    });
   }
-
 
   public JPanel createSettingsPanel() {
     mDefaultIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
     mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
 
-    JPanel contentPanel=new JPanel(new BorderLayout(0,15));
-    contentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
+    JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
+        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref"));
+    contentPanel.setBorder(Borders.DIALOG_BORDER);
 
-    JPanel panel1=new JPanel();
-    panel1.setLayout(new BoxLayout(panel1,BoxLayout.Y_AXIS));
-    panel1.add(mList);
+    CellConstraints cc = new CellConstraints();
+    contentPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Title")), cc.xyw(1,
+        1, 6));
 
+    contentPanel.add(mList, cc.xyw(2, 3, 4));
 
-    mDefaultPluginBt=new JButton(mLocalizer.msg("defaultPluginBtn",""));
-    mDefaultPluginBt.addActionListener(this);
-    JPanel panel2=new JPanel(new BorderLayout());
-    panel2.setBorder(BorderFactory.createEmptyBorder(5, 0, 2, 0));
-    panel2.add(mDefaultPluginBt,BorderLayout.CENTER);
-    panel1.add(panel2);
+    contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double Click")), cc.xy(2, 5));
+    final JComboBox box = new JComboBox(mList.getItems());
+    box.setSelectedItem(mDefaultIf);
+    box.setMaximumRowCount(15);
+    box.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mDefaultIf = (ContextMenuIf) box.getSelectedItem();
+      }
+    });
+    
+    box.setRenderer(new ContextMenuCellRenderer(false));
+    contentPanel.add(box, cc.xy(4, 5));
 
-    mMiddleClickPluginBt=new JButton(mLocalizer.msg("middleClickPluginBtn",""));
-    mMiddleClickPluginBt.addActionListener(this);
-    JPanel panel3=new JPanel(new BorderLayout());
-    panel3.add(mMiddleClickPluginBt,BorderLayout.CENTER);
-    panel3.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
-    panel1.add(panel3);
+    contentPanel.add(new JLabel(mLocalizer.msg("middleClickLabel", "Middle Click")), cc.xy(2, 7));
+    final JComboBox box2 = new JComboBox(mList.getItems());
+    box2.setSelectedItem(mMiddleClickIf);
+    box2.setMaximumRowCount(15);
+    box2.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mMiddleClickIf = (ContextMenuIf) box2.getSelectedItem();
+      }
+    });
 
-    contentPanel.add(panel1,BorderLayout.NORTH);
-
-    JTextArea descBox = UiUtilities.createHelpTextArea(mLocalizer.msg("description",""));
-    contentPanel.add(descBox,BorderLayout.CENTER);
+    
+    box2.setRenderer(new ContextMenuCellRenderer(false));
+    contentPanel.add(box2, cc.xy(4, 7));
 
     return contentPanel;
   }
 
   private void fillListbox() {
-    if (mList==null) {
+    if (mList == null) {
       return;
     }
     mList.removeAllElements();
@@ -244,20 +229,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     }
   }
 
-
-  public void actionPerformed(ActionEvent event) {
-    Object o=event.getSource();
-    if (o==mDefaultPluginBt) {
-      mDefaultIf = (ContextMenuIf) mList.getList().getSelectedValue();
-      mList.updateUI();
-    }
-    if(o==mMiddleClickPluginBt) {
-      mMiddleClickIf = (ContextMenuIf) mList.getList().getSelectedValue();
-      mList.updateUI();
-    }
-  }
-
-
   public void saveSettings() {
     Object o[] = mList.getItems();
 
@@ -266,13 +237,13 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     for (int i = 0; i < o.length; i++) {
       ContextMenuIf menuIf = (ContextMenuIf) o[i];
       orderIDs[i] = menuIf.getId();
-      if(menuIf instanceof PluginProxy)
+      if (menuIf instanceof PluginProxy)
         pluginIDsList.add(menuIf.getId());
     }
-    
+
     String[] pluginIDs = new String[pluginIDsList.size()];
     pluginIDsList.toArray(pluginIDs);
-           
+
     Settings.propContextMenuOrder.setStringArray(orderIDs);
     Settings.propPluginOrder.setStringArray(pluginIDs);
 
@@ -300,12 +271,10 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab, ActionList
     }
   }
 
-  
   public Icon getIcon() {
     return null;
   }
 
-  
   public String getTitle() {
     return mLocalizer.msg("title", "context menu");
   }
