@@ -48,6 +48,7 @@ import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
@@ -654,5 +655,15 @@ public class PluginManagerImpl implements PluginManager {
    */
   public void showSettings(Plugin plugin) {
     MainFrame.getInstance().showSettingsDialog(plugin);
+  }
+
+  /**
+   * Return all marked programs.
+   * 
+   * @return The marked programs
+   * @since 2.2
+   */
+  public Program[] getMarkedPrograms() {
+    return MarkedProgramsList.getInstance().getMarkedPrograms();
   }  
 }
