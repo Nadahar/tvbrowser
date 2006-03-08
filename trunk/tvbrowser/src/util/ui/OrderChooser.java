@@ -380,5 +380,6 @@ public class OrderChooser extends JPanel implements ListDropAction{
     mSelectAllBt.setEnabled(value);
     mDeSelectAllBt.setEnabled(value);
     mScrollPane.getVerticalScrollBar().setEnabled(value);
+    mScrollPane.setWheelScrollingEnabled(value);
   }
 }
