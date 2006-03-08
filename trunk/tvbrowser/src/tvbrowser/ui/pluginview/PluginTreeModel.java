@@ -26,11 +26,14 @@
 
 package tvbrowser.ui.pluginview;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.plugin.PluginProxy;
@@ -80,14 +83,14 @@ public class PluginTreeModel extends DefaultTreeModel {
    * Removes all ChildNodes from this Tree
    */
   public void removeAllChildNodes() {
-    MutableTreeNode root = (MutableTreeNode)this.getRoot();
+    MutableTreeNode root = (MutableTreeNode) this.getRoot();
     int size = root.getChildCount();
-    
+
     while (root.getChildCount() > 0) {
       root.remove(0);
     }
   }
-  
+
   public static Plugin getPlugin(TreePath path) {
     if (path.getPathCount() > 1) {
       Object o = path.getPathComponent(1);
@@ -100,6 +103,47 @@ public class PluginTreeModel extends DefaultTreeModel {
 
     }
     return null;
+  }
+
+  public void reload(TreeNode node) {
+    TreePath treePath = new TreePath(getPathToRoot(node));
+    Enumeration e = null;
+
+    if (treePath != null) {
+      PluginTree t = PluginTree.getInstance();
+      if (t != null)
+        e = PluginTree.getInstance().getExpandedDescendants(treePath);
+    }
+
+    super.reload(node);
+
+    if (e != null) {
+      while (e.hasMoreElements()) {
+        TreePath tree = (TreePath) e.nextElement();
+
+        Object[] o = tree.getPath();
+
+        for (int i = 1; i < o.length; i++) {
+          TreeNode[] pathNodes = getPathToRoot((TreeNode) o[i]);
+
+          if (node == null || pathNodes[0].toString().compareTo("Plugins") != 0) {
+            TreeNode n1 = (TreeNode) o[i - 1];
+            Enumeration e1 = n1.children();
+
+            while (e1.hasMoreElements()) {
+              TreeNode n2 = (TreeNode) e1.nextElement();
+              if (n2.toString().compareTo(o[i].toString()) == 0) {
+                o[i] = n2;
+                break;
+              }
+            }
+          }
+        }
+
+        tree = new TreePath(o);
+        PluginTree.getInstance().expandPath(tree);
+      }
+    }
   }
 
   public static PluginTreeModel getInstance() {
