@@ -427,7 +427,8 @@ public class Updater implements Progress {
         Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 
         Date date = new Date();
-        for (int d = 0; d < 31; d++) {
+        date = date.addDays(-1);
+        for (int d = 0; d < 32; d++) {
             for (int i = 0; i < channels.length; i++) {
                 Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
                 while ((it != null) && (it.hasNext())) {
