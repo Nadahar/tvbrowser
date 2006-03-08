@@ -95,9 +95,11 @@ public class PluginTree extends JTree implements DragGestureListener,
   private Rectangle2D mGhostRect = new Rectangle2D.Float();
   private BufferedImage mGhostImage, mTreeImage;
   private boolean rejected = false;
+  private static PluginTree mInstance;
 
   public PluginTree(TreeModel model) {
     super(model);  
+    mInstance = this;
     /* remove the F2 key from the keyboard bindings of the JTree */
     InputMap inputMap = getInputMap();
     KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
@@ -108,6 +110,10 @@ public class PluginTree extends JTree implements DragGestureListener,
         DnDConstants.ACTION_MOVE, this);
 
     new DropTarget(this, this);
+  }
+  
+  public static PluginTree getInstance() {
+    return mInstance;
   }
 
   public String convertValueToText(Object value, boolean selected,
