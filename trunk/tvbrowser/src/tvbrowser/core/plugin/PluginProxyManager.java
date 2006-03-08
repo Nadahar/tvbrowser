@@ -41,6 +41,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataBaseListener;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
+import tvdataservice.MarkedProgramsList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.Channel;
@@ -483,7 +484,11 @@ public class PluginProxyManager {
       public void run() {
         setPriority(Thread.MIN_PRIORITY);
 
-        Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
+        Program[] programs = MarkedProgramsList.getInstance().getMarkedPrograms();
+        
+        for(int i = 0; i < programs.length; i++)
+          programs[i].unmark(plugin);
+  /*      Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 
         Date date = new Date();
         
@@ -506,7 +511,7 @@ public class PluginProxyManager {
             }
 
             date = date.addDays(1);
-        }
+        }*/
       };
     }.start();
     

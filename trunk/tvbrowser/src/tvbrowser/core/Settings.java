@@ -415,8 +415,14 @@ public class Settings {
   public static final BooleanProperty propShowProgramsInTrayWasConfigured
   = new BooleanProperty(mProp, "showProgramsInTrayWasConfigured", false);    
   
-  public static final BooleanProperty propShowSoonProgramsInTray
-  = new BooleanProperty(mProp, "showProgramsInTrayEnabled", true);  
+  public static final BooleanProperty propShowTimeProgramsInTray
+  = new BooleanProperty(mProp, "showTimeProgramsInTray", true); 
+    
+  public static final ColorProperty propTimeProgramsDarkBackground
+    = new ColorProperty(mProp, "timeProgramsDarkBackground", new Color(255, 150, 0, 80));
+  
+  public static final ColorProperty propTimeProgramsLightBackground
+    = new ColorProperty(mProp, "timeProgramsLightBackground", new Color(255, 150, 0, 40));  
   
   public static final BooleanProperty propShowNowRunningProgramsInTray
   = new BooleanProperty(mProp, "showRunningProgramsInTray", true);
@@ -435,6 +441,9 @@ public class Settings {
   
   public static final BooleanProperty propImportantProgramsInTrayContainsStartTime
   = new BooleanProperty(mProp, "importantProgramsInTrayContainsStartTime", true);
+
+  public static final BooleanProperty propImportantProgramsInTrayContainsDate
+  = new BooleanProperty(mProp, "importantProgramsInTrayContainsDate", true);
 
   public static final IntProperty propImportantProgramsInTraySize
   = new IntProperty(mProp, "importantProgramsInTraySize", 5);

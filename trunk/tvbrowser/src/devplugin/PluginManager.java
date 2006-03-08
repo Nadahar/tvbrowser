@@ -335,4 +335,12 @@ public interface PluginManager {
    */
   public void showSettings(Plugin plugin);
   
+  /**
+   * Return all marked programs.
+   * 
+   * @return The marked programs
+   * @since 2.2
+   */
+  public Program[] getMarkedPrograms();
+  
 }

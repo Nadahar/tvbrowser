@@ -37,6 +37,8 @@ import javax.swing.plaf.basic.BasicMenuItemUI;
 
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
+import util.program.ProgramUtilities;
+import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import devplugin.Date;
 import devplugin.Program;
@@ -45,60 +47,77 @@ import devplugin.Program;
  * A class that paint the ProgramMenuItem.
  * 
  * @author René Mach
- *
+ * 
  */
 public class ProgramMenuItemUI extends BasicMenuItemUI {
-  
+
+  private static Localizer mLocalizer = Localizer
+      .getLocalizerFor(ProgramMenuItemUI.class);
+
   private Program mProgram;
   private TextAreaIcon mChannelName;
   private Icon mIcon;
-  private boolean mShowStartTime;
-  
+  private boolean mShowStartTime, mShowDate;
+  private int mTime;
+
   /**
    * Constructs the UI.
    * 
-   * @param program The program that is to show in the ProgramMenuItem.
-   * @param channelName The TextAreaIcon that contains the channel name
-   * @param icon The channel icon.
-   * @param showStartTime The ProgramMenuItem should show the start time.
+   * @param program
+   *          The program that is to show in the ProgramMenuItem.
+   * @param channelName
+   *          The TextAreaIcon that contains the channel name
+   * @param icon
+   *          The channel icon.
+   * @param showStartTime
+   *          The ProgramMenuItem should show the start time.
+   * @param showDate
+   *          The ProgramMenuItem should show the date.
+   * @param time
+   *          The time of the time button.
    */
-  public ProgramMenuItemUI(Program program, TextAreaIcon channelName, Icon icon, boolean showStartTime) {
+  public ProgramMenuItemUI(Program program, TextAreaIcon channelName,
+      Icon icon, boolean showStartTime, boolean showDate, int time) {
     mProgram = program;
     mChannelName = channelName;
     mShowStartTime = showStartTime;
+    mShowDate = showDate;
     mIcon = icon;
+    mTime = time;
   }
-  
-  protected void paintBackground(Graphics g,JMenuItem menuItem, Color bgColor) {
-    boolean isOnAir = isOnAir(mProgram);
+
+  protected void paintBackground(Graphics g, JMenuItem menuItem, Color bgColor) {
+    boolean isOnAir = ProgramUtilities.isOnAir(mProgram);
+
+    g.clearRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
     
-    g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
-    
-    if(menuItem.isArmed())
+    if (menuItem.isArmed())
       g.setColor(bgColor);
-    else if(!isOnAir)
+    else if (!isOnAir && ((mTime != -1
+            && Settings.propTimeProgramsLightBackground.getColor().getAlpha() == 0 
+            && Settings.propTimeProgramsDarkBackground.getColor().getAlpha() == 0) || mTime == -1))
       g.setColor(menuItem.getBackground());
     else
-      g.setColor(((ProgramMenuItem)menuItem).getDefaultBackground());
-    
-    g.fillRect(0,0,menuItem.getWidth(),menuItem.getHeight());
-    
-    if(isOnAir) {
-      ((ProgramMenuItem)menuItem).startTimer();
+      g.setColor(((ProgramMenuItem) menuItem).getDefaultBackground());
+
+    g.fillRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
+
+    if (isOnAir || mTime != -1) {
       Insets i = menuItem.getMargin();
       int x = mIcon == null ? 0 : mIcon.getIconWidth() + i.left;
-      
+
       int width = menuItem.getWidth() - x;
       int height = menuItem.getHeight();
       int top = i.top + 1;
       int bottom = height - i.bottom - i.top - 1;
-      
-      if(mIcon != null) {
+
+      if (mIcon != null) {
         top += 1;
         bottom -= (i.bottom + i.top);
       }
-      
-      int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+
+      int minutesAfterMidnight = mTime != -1 ? mTime : IOUtilities
+          .getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
       int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
       int elapsedMinutes;
@@ -117,65 +136,63 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
         progressX = elapsedMinutes * (width - i.left - i.right) / progLength;
       }
 
-      g.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-      g.fillRect(x + progressX - i.right - i.left, top , width
-          - i.right - i.left, bottom);
-      g.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+      g.setColor(mTime == -1 ? Settings.propProgramTableColorOnAirLight
+          .getColor() : Settings.propTimeProgramsLightBackground.getColor());
+      g.fillRect(x + progressX - i.right - i.left, top, width - i.right
+          - i.left, bottom);
+      g.setColor(mTime == -1 ? Settings.propProgramTableColorOnAirDark
+          .getColor() : Settings.propTimeProgramsDarkBackground.getColor());
 
-      g.fillRect(x, top , progressX - i.right - i.left, bottom);
+      g.fillRect(x, top, progressX - i.right - i.left, bottom);
+    } else if (mProgram.isExpired()) {
+      ((ProgramMenuItem) menuItem).stopTimer();
     }
-    else if(mProgram.isExpired()) {
-      ((ProgramMenuItem)menuItem).stopTimer();
-    }
-    
-    if(mIcon != null)
-      mIcon.paintIcon(menuItem,g,menuItem.getMargin().left,menuItem.getMargin().top);
+
+    if (mIcon != null)
+      mIcon.paintIcon(menuItem, g, menuItem.getMargin().left, menuItem
+          .getMargin().top);
   }
-  
-  protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect, String text)  {
-    if(menuItem.isArmed())
+
+  protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect,
+      String text) {
+    if (menuItem.isArmed())
       g.setColor(selectionForeground);
     else
       g.setColor(menuItem.getForeground());
-    
-    int x = Settings.propProgramsInTrayContainsChannelIcon.getBoolean() ? mIcon.getIconWidth() + menuItem.getIconTextGap(): textRect.x;
-    int y = (menuItem.getHeight() - mChannelName.getIconHeight())/2 - 1;
-    
-    if(Settings.propProgramsInTrayContainsChannel.getBoolean()) {
-      mChannelName.paintIcon(menuItem,g,x,y);
+
+    int x = Settings.propProgramsInTrayContainsChannelIcon.getBoolean() ? mIcon
+        .getIconWidth()
+        + menuItem.getIconTextGap() : textRect.x;
+    int y = (menuItem.getHeight() - mChannelName.getIconHeight()) / 2 - 1;
+
+    if (Settings.propProgramsInTrayContainsChannel.getBoolean()) {
+      mChannelName.paintIcon(menuItem, g, x, y);
       x += ProgramMenuItem.CHANNEL_WIDTH;
     }
-    
-    int temp = y + (menuItem.getFont().getSize() * (mChannelName.getLineCount() / 2 + 1));
-        
-    y = Settings.propProgramsInTrayContainsChannel.getBoolean() && (mChannelName.getLineCount() % 2 == 1) ?   temp : 
-        (menuItem.getHeight() - menuItem.getFont().getSize())/2 - 1 + menuItem.getFont().getSize();
-    if(mShowStartTime) {
+
+    int temp = y
+        + (menuItem.getFont().getSize() * (mChannelName.getLineCount() / 2 + 1));
+
+    y = Settings.propProgramsInTrayContainsChannel.getBoolean()
+        && (mChannelName.getLineCount() % 2 == 1) ? temp : (menuItem
+        .getHeight() - menuItem.getFont().getSize())
+        / 2 - 1 + menuItem.getFont().getSize();
+    if (mShowDate) {
       g.setFont(menuItem.getFont().deriveFont(Font.BOLD));
-      g.drawString(mProgram.getTimeString(),x,y);
+      if (Date.getCurrentDate().equals(mProgram.getDate()))
+        g.drawString(mLocalizer.msg("today", "today"), x, y);
+      else if (Date.getCurrentDate().addDays(1).equals(mProgram.getDate()))
+        g.drawString(mLocalizer.msg("tomorrow", "tomorrow"), x, y);
+      else
+        g.drawString(mProgram.getDateString(), x, y);
+      x += ProgramMenuItem.DATE_WIDTH;
+    }
+    if (mShowStartTime) {
+      g.setFont(menuItem.getFont().deriveFont(Font.BOLD));
+      g.drawString(mProgram.getTimeString(), x, y);
       x += ProgramMenuItem.TIME_WIDTH;
     }
     g.setFont(menuItem.getFont());
-    g.drawString(mProgram.getTitle(),x,y);
-  }
-  
-  /**
-   * Helper method to check if a program runs.
-   * 
-   * @param p The program to check.
-   * @return True if the program runs.
-   */
-  private boolean isOnAir(Program p) {
-    int time = IOUtilities.getMinutesAfterMidnight();
-    
-    if(Date.getCurrentDate().addDays(-1).compareTo(p.getDate()) == 0)
-      time += 24 * 60;
-    if(Date.getCurrentDate().compareTo(p.getDate()) < 0)
-      return false;
-    
-    if(p.getStartTime() <= time 
-        && (p.getStartTime() + p.getLength()) > time)
-      return true;
-    return false;
+    g.drawString(mProgram.getTitle(), x, y);
   }
 }

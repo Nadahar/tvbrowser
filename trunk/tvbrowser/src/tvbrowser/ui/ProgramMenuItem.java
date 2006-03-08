@@ -63,12 +63,13 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
   private Timer mTimer;
   private Font mPlainFont, mBoldFont;
   private int mIconHeight = 0;
-  private boolean mShowStartTime;
+  private boolean mShowStartTime, mShowDate;
   private Icon mIcon = null;
   private TextAreaIcon mChannelName;
   
   protected final static int CHANNEL_WIDTH = 72;
   protected final static int TIME_WIDTH = 42;
+  protected final static int DATE_WIDTH = 70;
 
   /**
    * Creates the JMenuItem.
@@ -77,12 +78,15 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
    *          The program to show
    * @param showStartTime
    *          If the start time of the program should be shown.
-   * @param n 
+   * @param showDate If the date of the program should be shown.
+   * @param time The time of the time button.
+   * @param n A value represents the position of this MenuItem.
    */
-  public ProgramMenuItem(Program p, boolean showStartTime, int n) {
+  public ProgramMenuItem(Program p, boolean showStartTime, boolean showDate, int time, int n) {
     mProgram = p;
     mBackground = getBackground();
     mShowStartTime = showStartTime;
+    mShowDate = showDate;
     mPlainFont = getFont();
     mBoldFont = mPlainFont.deriveFont(Font.BOLD);
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont,CHANNEL_WIDTH);
@@ -107,7 +111,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
     addActionListener(this);
       
     mInsets = getMargin();
-    setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,showStartTime));
+    setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,showStartTime,showDate, time));
     
     if (Settings.propProgramsInTrayShowTooltip.getBoolean()) {
       int end = p.getStartTime() + p.getLength();
@@ -150,6 +154,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       }
 
     });
+    startTimer();
   }
 
   public void actionPerformed(ActionEvent e) {
@@ -173,9 +178,11 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       width += CHANNEL_WIDTH;
     if(mShowStartTime)
       width += TIME_WIDTH;
+    if(mShowDate)
+      width += DATE_WIDTH;
     
     if(height == 0) {
-      if(mShowStartTime)
+      if(mShowStartTime || mShowDate)
         height = fmBold.getHeight();
       else
         height = fmPlain.getHeight();
@@ -208,7 +215,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       }
   }
   
-  protected void startTimer() {
+  private void startTimer() {
     if(!mTimer.isRunning())
       mTimer.start();
   }

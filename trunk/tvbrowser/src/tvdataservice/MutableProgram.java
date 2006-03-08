@@ -297,6 +297,7 @@ public class MutableProgram implements Program {
       mMarkedByPluginArr = newArr;
       
       fireStateChanged();
+      MarkedProgramsList.getInstance().addProgram(this);
     }
   }
 
@@ -323,6 +324,7 @@ public class MutableProgram implements Program {
       }
       
       fireStateChanged();
+      MarkedProgramsList.getInstance().removeProgram(this);
     }
   }
 
