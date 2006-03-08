@@ -25,23 +25,22 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.PeriodItem;
-import util.ui.TabLayout;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * TV-Browser
@@ -61,17 +60,19 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
   private JPanel mSettingsPn;
 
-  private JComboBox mAutoDownloadCB;
+  private JComboBox mAutoDownloadCombo;
 
-  private JCheckBox mAutoDownloadCb;
+  private JCheckBox mAutoDownloadCheck;
 
   private JComboBox mAutoDownloadPeriodCB;
 
-  private JRadioButton mDonotAskBeforeDownloadRB;
-
-  private JRadioButton mAskBeforeDownloadRB;
+  private JCheckBox mAskBeforeDownloadCheck;
 
   private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB;
+
+  private JLabel mAskTime;
+
+  private JLabel mHowOften;
 
   public StartupSettingsTab() {
   }
@@ -80,107 +81,89 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
-    JPanel content = new JPanel();
-    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+    CellConstraints cc = new CellConstraints();
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Startup")), cc.xyw(1,1,5));
 
-    JPanel onStartupPn = new JPanel();
-    onStartupPn.setLayout(new BoxLayout(onStartupPn, BoxLayout.Y_AXIS));
-    onStartupPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("autoDownload", "Download automatically")));
+    mAutoDownloadCheck = new JCheckBox(mLocalizer.msg("onStartUp", "On startup"));
 
-    JPanel autoDownloadPn = new JPanel(new GridLayout(0, 2, 0, 7));
-
-    onStartupPn.add(autoDownloadPn);
-
-    mSettingsPn.add(content, BorderLayout.NORTH);
-
-    mAutoDownloadCb = new JCheckBox(mLocalizer.msg("onStartUp", "On startup"));
-    autoDownloadPn.add(mAutoDownloadCb);
-
-    mAutoDownloadCB = new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
+    mSettingsPn.add(mAutoDownloadCheck, cc.xy(2,3));
+    
+    mAutoDownloadCombo = new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
     String dlType = Settings.propAutoDownloadType.getString();
     if (dlType.equals("daily")) {
-      mAutoDownloadCB.setSelectedIndex(0);
+      mAutoDownloadCombo.setSelectedIndex(0);
     } else if (dlType.equals("every3days")) {
-      mAutoDownloadCB.setSelectedIndex(1);
+      mAutoDownloadCombo.setSelectedIndex(1);
     } else if (dlType.equals("weekly")) {
-      mAutoDownloadCB.setSelectedIndex(2);
+      mAutoDownloadCombo.setSelectedIndex(2);
     }
+    
+    JPanel panel = new JPanel(new FormLayout("10dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref"));
+    
+    mAutoDownloadCheck.setSelected(!dlType.equals("never"));
 
-    mAutoDownloadCb.setSelected(!dlType.equals("never"));
-
-    autoDownloadPn.add(mAutoDownloadCB);
-
-    JPanel askBeforeDLPanel = new JPanel();
-    askBeforeDLPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-
-    askBeforeDLPanel.setLayout(new BoxLayout(askBeforeDLPanel, BoxLayout.Y_AXIS));
-
-    mAskBeforeDownloadRB = new JRadioButton(mLocalizer.msg("autoDownload.ask", "Ask before downloading"));
-    mDonotAskBeforeDownloadRB = new JRadioButton(mLocalizer.msg("autoDownload.dontask", "Don't ask, download for"));
-
-    ButtonGroup buttonGroup = new ButtonGroup();
-    buttonGroup.add(mAskBeforeDownloadRB);
-    buttonGroup.add(mDonotAskBeforeDownloadRB);
+    mHowOften = new JLabel(mLocalizer.msg("autoDownload.howOften", "How often?"));
+    panel.add(mHowOften, cc.xy(2,1));
+    panel.add(mAutoDownloadCombo, cc.xy(4,1));
+    
+    mAskBeforeDownloadCheck = new JCheckBox(mLocalizer.msg("autoDownload.ask", "Ask before downloading"));
 
     if (Settings.propAskForAutoDownload.getBoolean()) {
-      mAskBeforeDownloadRB.setSelected(true);
-    } else {
-      mDonotAskBeforeDownloadRB.setSelected(true);
+      mAskBeforeDownloadCheck.setSelected(true);
     }
 
-    JPanel pn1 = new JPanel(new BorderLayout());
-    JPanel pn2 = new JPanel(new BorderLayout());
-    JPanel pn3 = new JPanel(new BorderLayout());
-
-    pn1.add(mAskBeforeDownloadRB, BorderLayout.WEST);
-
-    pn2.add(mDonotAskBeforeDownloadRB, BorderLayout.WEST);
-    pn2.add(pn3, BorderLayout.CENTER);
     mAutoDownloadPeriodCB = new JComboBox(PeriodItem.PERIOD_ARR);
-    pn3.add(mAutoDownloadPeriodCB, BorderLayout.WEST);
 
     int autoDLPeriod = Settings.propAutoDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(autoDLPeriod);
     mAutoDownloadPeriodCB.setSelectedItem(pi);
 
-    askBeforeDLPanel.add(pn1);
-    askBeforeDLPanel.add(pn2);
-
-    onStartupPn.add(askBeforeDLPanel);
-
-    mAutoDownloadCb.addActionListener(new ActionListener() {
+    mAutoDownloadCheck.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        setAutoDownloadEnabled(mAutoDownloadCb.isSelected());
+        setAutoDownloadEnabled(mAutoDownloadCheck.isSelected());
       }
     });
 
-    setAutoDownloadEnabled(mAutoDownloadCb.isSelected());
-
-    content.add(onStartupPn);
-
-    JPanel morePn = new JPanel(new TabLayout(1));
-    morePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("more", "More")));
-    content.add(morePn);
+    mAskBeforeDownloadCheck.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        setAutoDownloadEnabled(mAutoDownloadCheck.isSelected());
+      };
+    });
+    
+    panel.add(mAskBeforeDownloadCheck, cc.xyw(2,3, 3));
+    
+    mAskTime = new JLabel(mLocalizer.msg("autoDownload.duration", "Automatically refresh for"));
+    panel.add(mAskTime, cc.xy(2,5));
+    panel.add(mAutoDownloadPeriodCB, cc.xy(4,5));
+    
+    mSettingsPn.add(panel, cc.xy(2,5));
+    
+    setAutoDownloadEnabled(mAutoDownloadCheck.isSelected());
 
     boolean checked = Settings.propSplashShow.getBoolean();
     mShowSplashChB = new JCheckBox(mLocalizer.msg("showSplashScreen", "Show splash screen during start up"), checked);
-    morePn.add(mShowSplashChB);
-
+    mSettingsPn.add(mShowSplashChB, cc.xy(2,7));
+    
     checked = Settings.propMinimizeAfterStartup.getBoolean();
     mMinimizeAfterStartUpChB = new JCheckBox(mLocalizer.msg("minimizeAfterStartup",
         "Minimize main window after start up"), checked);
-    morePn.add(mMinimizeAfterStartUpChB);
-
+    mSettingsPn.add(mMinimizeAfterStartUpChB, cc.xy(2,9));
     return mSettingsPn;
   }
 
   public void setAutoDownloadEnabled(boolean enabled) {
-    mAskBeforeDownloadRB.setEnabled(enabled);
-    mDonotAskBeforeDownloadRB.setEnabled(enabled);
-    mAutoDownloadCB.setEnabled(enabled);
+    mAskBeforeDownloadCheck.setEnabled(enabled);
+
+    mHowOften.setEnabled(enabled);
+    mAutoDownloadCombo.setEnabled(enabled);
+    
+    enabled = !(mAskBeforeDownloadCheck.isSelected() || !enabled);
+    
+    mAskTime.setEnabled(enabled);
     mAutoDownloadPeriodCB.setEnabled(enabled);
   }
 
@@ -189,9 +172,9 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
    */
   public void saveSettings() {
 
-    int inx = mAutoDownloadCB.getSelectedIndex();
+    int inx = mAutoDownloadCombo.getSelectedIndex();
 
-    if (!mAutoDownloadCb.isSelected()) {
+    if (!mAutoDownloadCheck.isSelected()) {
       Settings.propAutoDownloadType.setString("never");
     } else if (inx == 0) {
       Settings.propAutoDownloadType.setString("daily");
@@ -201,7 +184,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       Settings.propAutoDownloadType.setString("weekly");
     }
 
-    Settings.propAskForAutoDownload.setBoolean(mAskBeforeDownloadRB.isSelected());
+    Settings.propAskForAutoDownload.setBoolean(mAskBeforeDownloadCheck.isSelected());
 
     PeriodItem periodItem = (PeriodItem) mAutoDownloadPeriodCB.getSelectedItem();
     Settings.propAutoDownloadPeriod.setInt(periodItem.getDays());
