@@ -35,9 +35,11 @@ import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -108,10 +110,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(mTimezoneLB, cc.xy(2,7));
     mSettingsPn.add(mTimezoneCB, cc.xy(4,7));
     
-    JLabel label = new JLabel(mLocalizer.msg("restartNote", "Please Restart"),JLabel.CENTER);
-    label.setForeground(Color.RED);
+    JTextArea area = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
+    area.setForeground(Color.RED);
     
-    mSettingsPn.add(label, cc.xyw(1, 9, 5));
+    mSettingsPn.add(area, cc.xyw(1, 9, 5));
     
     return mSettingsPn;
   }
