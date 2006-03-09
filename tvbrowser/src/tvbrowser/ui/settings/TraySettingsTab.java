@@ -74,7 +74,7 @@ public class TraySettingsTab implements SettingsTab {
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb,
       mShowNowRunningChb, mShowImportantChb, mShowNowRunningTimeChb,
       mShowImportantTimeChb, mShowImportantDateChb, mShowChannelNameChb, mShowChannelIconChb,
-      mShowChannelTooltipChb, mShowTimeProgramsChb;
+      mShowChannelTooltipChb, mShowTimeProgramsChb, mShowTimeProgramsTimeChb;
 
   private JRadioButton mShowNowRunningNotSubChb, mShowNowRunningSubChb,
       mShowImportantNotSubChb, mShowImportantSubChb;
@@ -193,6 +193,11 @@ public class TraySettingsTab implements SettingsTab {
     mShowNowRunningTimeChb = new JCheckBox(mLocalizer.msg(
         "programShowing.showStartTime", "Show start time"), checked);
 
+    checked = Settings.propTimeProgramsInTrayContainsTime
+    .getBoolean();
+    mShowTimeProgramsTimeChb = new JCheckBox(mLocalizer.msg(
+    "programShowing.showStartTime", "Show start time"), checked);
+    
     mChannelOCh = new OrderChooser(
         Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false),
         Settings.propSubscribedChannels.getChannelArray(false), true);
@@ -272,6 +277,7 @@ public class TraySettingsTab implements SettingsTab {
                   showNowRunningNotSub = mShowNowRunningNotSubChb.isSelected(),
                   showNowRunningSub = mShowNowRunningSubChb.isSelected(),
                   showImportantTime = mShowImportantTimeChb.isSelected(),
+                  showTimeProgramsTime = mShowTimeProgramsTimeChb.isSelected(),
                   showImportantDate = mShowImportantDateChb.isSelected(),
                   showImportantNotSub = mShowImportantNotSubChb.isSelected(),
                   showImportantSub = mShowImportantSubChb.isSelected();
@@ -285,6 +291,7 @@ public class TraySettingsTab implements SettingsTab {
         mShowChannelTooltipChb.setSelected(showTooltip);
         mShowNowRunningTimeChb.setSelected(showNowRunning);
         mShowNowRunningTimeChb.setSelected(showNowRunningTime);
+        mShowTimeProgramsTimeChb.setSelected(showTimeProgramsTime);
         mShowNowRunningNotSubChb.setSelected(showNowRunningNotSub);
         mShowNowRunningSubChb.setSelected(showNowRunningSub);
         mShowImportantTimeChb.setSelected(showImportantTime);
@@ -302,8 +309,9 @@ public class TraySettingsTab implements SettingsTab {
 
     PanelBuilder pb = new PanelBuilder(new FormLayout(
         "5dlu,pref:grow,default,5dlu,default,5dlu",
-        "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, pref, pref, 10dlu, "
-            + "pref, 5dlu, pref,pref,pref,pref, 10dlu,pref,5dlu,pref, 5dlu, pref ,10dlu, pref"));
+        "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, pref, pref, 10dlu, " +
+        "pref, 5dlu, pref, pref, pref, pref, 10dlu, pref, 5dlu, pref, " +
+        "pref, 5dlu, pref ,10dlu, pref"));
     CellConstraints cc = new CellConstraints();
 
     pb.setDefaultDialogBorder();
@@ -343,6 +351,7 @@ public class TraySettingsTab implements SettingsTab {
     dark.setEnabled(mShowTimeProgramsChb.isSelected());
     mTimeProgramLightColorLb.setEnabled(mShowTimeProgramsChb.isSelected());
     mTimeProgramDarkColorLb.setEnabled(mShowTimeProgramsChb.isSelected());
+    mShowTimeProgramsTimeChb.setEnabled(mShowTimeProgramsChb.isSelected());
     
     c = pb.addSeparator(mLocalizer.msg("programShowing.extendedTime",
     "Program showing - Programs at..."), cc.xyw(1, 18, 6));
@@ -365,10 +374,9 @@ public class TraySettingsTab implements SettingsTab {
     colors.add(mTimeProgramDarkColorLb, cc.xy(3, 3));
     colors.add(dark,cc.xy(5, 3));
 
-    pb.add(colors.getPanel(), cc.xyw(2, 20, 4));
-
-    
-    pb.add(new JSeparator(), cc.xyw(1, 22, 6));
+    pb.add(mShowTimeProgramsTimeChb, cc.xyw(2,20,4));
+    pb.add(colors.getPanel(), cc.xyw(2, 21, 4));
+    pb.add(new JSeparator(), cc.xyw(1, 23, 6));
 
     JButton ok = new JButton(mLocalizer.msg("programShowing.ok", "OK"));
 
@@ -389,6 +397,7 @@ public class TraySettingsTab implements SettingsTab {
         mShowNowRunningNotSubChb.setSelected(showNowRunningNotSub);
         mShowNowRunningSubChb.setSelected(showNowRunningSub);
         mShowImportantTimeChb.setSelected(showImportantTime);
+        mShowTimeProgramsTimeChb.setSelected(showTimeProgramsTime);
         mShowImportantNotSubChb.setSelected(showImportantNotSub);
         mShowImportantSubChb.setSelected(showImportantSub);
         mTimeProgramLightColorLb.setColor(timeTrayLight);
@@ -396,8 +405,8 @@ public class TraySettingsTab implements SettingsTab {
       }
     });
 
-    pb.add(ok, cc.xy(3, 24));
-    pb.add(cancel, cc.xy(5, 24));
+    pb.add(ok, cc.xy(3, 25));
+    pb.add(cancel, cc.xy(5, 25));
 
     dialog.getRootPane().setDefaultButton(ok);
     dialog.setContentPane(pb.getPanel());
@@ -466,6 +475,8 @@ public class TraySettingsTab implements SettingsTab {
           .isSelected());
     if (mShowTimeProgramsChb != null)
       Settings.propShowTimeProgramsInTray.setBoolean(mShowTimeProgramsChb.isSelected());
+    if (mShowTimeProgramsTimeChb != null)
+      Settings.propTimeProgramsInTrayContainsTime.setBoolean(mShowTimeProgramsTimeChb.isSelected());
     if (mTimeProgramLightColorLb != null)
       Settings.propTimeProgramsLightBackground.setColor(mTimeProgramLightColorLb.getColor());
     if (mTimeProgramDarkColorLb != null)

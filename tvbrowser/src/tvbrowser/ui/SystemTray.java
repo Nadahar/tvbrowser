@@ -258,9 +258,9 @@ public class SystemTray {
     mTrayMenu.addSeparator();
     mTrayMenu.add(createPluginsMenu());
 
-    if (Settings.propShowTimeProgramsInTray.getBoolean() ||
-        Settings.propShowNowRunningProgramsInTray.getBoolean() ||
-        Settings.propShowImportantProgramsInTray.getBoolean())
+    if (Settings.propShowTimeProgramsInTray.getBoolean()
+        || Settings.propShowNowRunningProgramsInTray.getBoolean()
+        || Settings.propShowImportantProgramsInTray.getBoolean())
       searchForToAddingPrograms();
 
     if (Settings.propShowTimeProgramsInTray.getBoolean()) {
@@ -332,7 +332,7 @@ public class SystemTray {
                 if (ProgramUtilities.isOnAir(p)) {
                   addProgramToNowRunning(p, programs, additional);
                   Program p1 = today.getProgramAt(0);
-                  addToNext(p1,nextPrograms,nextAdditionalPrograms);
+                  addToNext(p1, nextPrograms, nextAdditionalPrograms);
                   break;
                 }
               }
@@ -344,7 +344,7 @@ public class SystemTray {
               addProgramToNowRunning(p, programs, additional);
               if (j < today.getProgramCount() - 1) {
                 Program p1 = today.getProgramAt(j + 1);
-                addToNext(p1,nextPrograms,nextAdditionalPrograms);
+                addToNext(p1, nextPrograms, nextAdditionalPrograms);
               } else {
                 ChannelDayProgram tomorrow = TvDataBase.getInstance()
                     .getDayProgram(Date.getCurrentDate().addDays(1),
@@ -352,7 +352,7 @@ public class SystemTray {
 
                 if (tomorrow != null && tomorrow.getProgramCount() > 0) {
                   Program p1 = tomorrow.getProgramAt(0);
-                  addToNext(p1,nextPrograms,nextAdditionalPrograms);
+                  addToNext(p1, nextPrograms, nextAdditionalPrograms);
                   break;
                 }
               }
@@ -387,9 +387,10 @@ public class SystemTray {
         }
         for (int i = 0; i < additional.size(); i++)
           subMenu.add((ProgramMenuItem) additional.get(i));
-        
-        final JMenu next = new JMenu(mLocalizer.msg("menu.programsSoon", "Soon runs"));
-        
+
+        final JMenu next = new JMenu(mLocalizer.msg("menu.programsSoon",
+            "Soon runs"));
+
         int j = 0;
 
         for (int i = 0; i < nextPrograms.size(); i++) {
@@ -402,14 +403,15 @@ public class SystemTray {
           }
         }
         for (int i = 0; i < nextAdditionalPrograms.size(); i++) {
-          ProgramMenuItem pItem = (ProgramMenuItem) nextAdditionalPrograms.get(i);
+          ProgramMenuItem pItem = (ProgramMenuItem) nextAdditionalPrograms
+              .get(i);
           pItem.setBackground(j);
           next.add(pItem);
           j++;
         }
 
         subMenu.add(next);
-        
+
         /*
          * if the program sould be in a submenu add the menu to the propup menu
          */
@@ -428,27 +430,30 @@ public class SystemTray {
    *          The menu to on
    * @return The filled menu menu.
    */
-  private JComponent addToImportantMenu(JComponent menu) {    
-    Program[] p = MarkedProgramsList.getInstance().getTimeSortedProgramsForTray();  
-    
-      if (menu instanceof JPopupMenu)
-        ((JPopupMenu) menu).addSeparator();
-      if (p.length > 0) {
-    
-    for(int i = 0; i < p.length; i++)
+  private JComponent addToImportantMenu(JComponent menu) {
+    Program[] p = MarkedProgramsList.getInstance()
+        .getTimeSortedProgramsForTray();
+
+    if (menu instanceof JPopupMenu)
+      ((JPopupMenu) menu).addSeparator();
+    if (p.length > 0) {
+
+      for (int i = 0; i < p.length; i++)
         menu.add(new ProgramMenuItem(p[i],
-            Settings.propImportantProgramsInTrayContainsStartTime
-                .getBoolean(), Settings.propImportantProgramsInTrayContainsDate.getBoolean(), -1, i));
+            Settings.propImportantProgramsInTrayContainsStartTime.getBoolean(),
+            Settings.propImportantProgramsInTrayContainsDate.getBoolean(), -1,
+            i));
     }
-    
-    if(p.length == 0) {
-      JMenuItem item = new JMenuItem(mLocalizer.msg("menu.noImportantPrograms","No important programs found."));
-      
+
+    if (p.length == 0) {
+      JMenuItem item = new JMenuItem(mLocalizer.msg("menu.noImportantPrograms",
+          "No important programs found."));
+
       item.setEnabled(false);
       item.setForeground(Color.red);
       menu.add(item);
     }
-    
+
     return menu;
   }
 
@@ -564,9 +569,12 @@ public class SystemTray {
           if (start <= time && time < end)
             if (isOnChannelList(c[i]))
               programs.add(getIndexOfChannel(c[i]), new ProgramMenuItem(p,
-                  true, false, time, -1));
+                  Settings.propTimeProgramsInTrayContainsTime.getBoolean(),
+                  false, time, -1));
             else if (p.getMarkerArr().length > 0)
-              additional.add(new ProgramMenuItem(p, true, false, time, -1));
+              additional.add(new ProgramMenuItem(p,
+                  Settings.propTimeProgramsInTrayContainsTime.getBoolean(),
+                  false, time, -1));
         }
       }
 
@@ -597,7 +605,8 @@ public class SystemTray {
    *          The program to check and add.
    * @return False if the program was put on a list.
    */
-  private boolean addToNext(Program p, ArrayList nextPrograms, ArrayList nextAdditionalPrograms) {
+  private boolean addToNext(Program p, ArrayList nextPrograms,
+      ArrayList nextAdditionalPrograms) {
     if (!p.isExpired() && !ProgramUtilities.isOnAir(p)) {
       if (this.isOnChannelList(p.getChannel())) {
         nextPrograms.set(getIndexOfChannel(p.getChannel()),
@@ -732,5 +741,5 @@ public class SystemTray {
   public boolean isTrayUsed() {
     return mUseSystemTray;
   }
-  
+
 }
