@@ -417,7 +417,10 @@ public class Settings {
   
   public static final BooleanProperty propShowTimeProgramsInTray
   = new BooleanProperty(mProp, "showTimeProgramsInTray", true); 
-    
+
+  public static final BooleanProperty propTimeProgramsInTrayContainsTime
+  = new BooleanProperty(mProp, "timeProgramsInTrayContainsTime", false); 
+
   public static final ColorProperty propTimeProgramsDarkBackground
     = new ColorProperty(mProp, "timeProgramsDarkBackground", new Color(255, 150, 0, 80));
   
