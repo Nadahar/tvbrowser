@@ -91,13 +91,13 @@ public class MarkedProgramsList {
     int i = 0;
     
     while(i < n) {
+      if(k >= mList.size())
+        break;
+
       Program p = (Program)mList.get(k);
       if(ProgramUtilities.isOnAir(p) || p.isExpired()) {
         k++;
-        if(k > mList.size() - 1)
-          break;
-        else
-          continue;
+        continue;
       }
       long value1 = (p.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p.getStartTime();
       boolean found = false;
