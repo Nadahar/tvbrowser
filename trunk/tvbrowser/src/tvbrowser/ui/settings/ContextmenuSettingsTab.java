@@ -190,6 +190,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     box.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mDefaultIf = (ContextMenuIf) box.getSelectedItem();
+        mList.getList().updateUI();
       }
     });
     
@@ -203,6 +204,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     box2.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mMiddleClickIf = (ContextMenuIf) box2.getSelectedItem();
+        mList.getList().updateUI();
       }
     });
 
