@@ -45,14 +45,16 @@ import devplugin.ProgramInfoHelper;
  * Creates the String for the ProgramInfoDialog
  */
 public class ProgramTextCreator {
-  
+
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramTextCreator.class);
 
   /**
    * 
-   * @param prog  The Program to show
-   * @param doc The HTMLDocument.
+   * @param prog
+   *          The Program to show
+   * @param doc
+   *          The HTMLDocument.
    * @return The html String.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc) {
@@ -62,7 +64,7 @@ public class ProgramTextCreator {
     buffer.append("<html>");
     buffer.append("<table width=\"100%\" style=\"font-family:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("bodyfont","Verdana"));
+    buffer.append(ProgramInfo.getInstance().getUserfont("bodyfont", "Verdana"));
 
     buffer.append(";\"><tr>");
     buffer.append("<td width=\"60\">");
@@ -71,7 +73,7 @@ public class ProgramTextCreator {
     buffer.append("</p></td><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
+    buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
 
     buffer.append(";\"><b>");
     buffer.append(prog.getDateString());
@@ -82,10 +84,11 @@ public class ProgramTextCreator {
 
     buffer.append("</b></div><div style=\"color:#003366; font-size:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("title","18"));
-    
+    buffer.append(ProgramInfo.getInstance().getUserfont("title", "18"));
+
     buffer.append("; line-height:2.5em; font-family:");
-    buffer.append(ProgramInfo.getInstance().getUserfont("titlefont","Verdana"));
+    buffer
+        .append(ProgramInfo.getInstance().getUserfont("titlefont", "Verdana"));
     buffer.append("\"><b>");
     buffer.append(prog.getTitle());
     buffer.append("</b></div>");
@@ -95,7 +98,7 @@ public class ProgramTextCreator {
     if (episode != null && episode.trim().length() > 0) {
       buffer.append("<div style=\"color:#808080; font-size:");
 
-      buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
+      buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
 
       buffer.append("\">");
       buffer.append(episode);
@@ -130,7 +133,7 @@ public class ProgramTextCreator {
     ArrayList icons = new ArrayList();
     for (int i = 0; i < plugins.length; i++) {
       Icon[] ico = plugins[i].getProgramTableIcons(prog);
-      
+
       if (ico != null) {
         for (int t = 0; t < ico.length; t++) {
           JLabel iconLabel = new JLabel(ico[t]);
@@ -142,7 +145,7 @@ public class ProgramTextCreator {
 
     if (icons.size() > 0) {
       buffer.append("<tr><td></td><td>");
-      openPara(buffer, "info"); 
+      openPara(buffer, "info");
       // Workaround: Without the &nbsp; the component are not put in one line.
       buffer.append("&nbsp;");
 
@@ -155,7 +158,6 @@ public class ProgramTextCreator {
       buffer.append("</td></tr>");
     }
 
-    
     byte[] image = prog.getBinaryField(ProgramFieldType.IMAGE_TYPE);
     if (image != null) {
       buffer.append("<tr><td></td><td>");
@@ -164,44 +166,48 @@ public class ProgramTextCreator {
         JLabel iconLabel = new JLabel(icon);
         buffer.append(doc.createCompTag(iconLabel));
         buffer.append("</td></tr>");
-      } catch(Exception e) {
+      } catch (Exception e) {
         // Picture was wrong;
-        buffer.delete(buffer.length()-18,buffer.length());
+        buffer.delete(buffer.length() - 18, buffer.length());
       }
     }
-    
+
     addSeperator(doc, buffer);
-    
-    Object[] id = ProgramInfo.getInstance().getProperty("order","").split(";");    
-    
-    if(id.length == 1)
+
+    Object[] id = ProgramInfo.getInstance().getProperty("order", "").split(";");
+
+    if (id.length == 1)
       id = getDefaultOrder();
 
-    for(int j = 0; j < id.length ; j++) {
+    for (int j = 0; j < id.length; j++) {
       ProgramFieldType type = null;
-      
-      if(id[j] instanceof String)
+
+      if (id[j] instanceof String)
         try {
-          type = ProgramFieldType.getTypeForId(Integer.parseInt((String)id[j]));
-        }catch(Exception e) {
+          type = ProgramFieldType
+              .getTypeForId(Integer.parseInt((String) id[j]));
+        } catch (Exception e) {
           int length = prog.getLength();
           if (length > 0) {
 
-            buffer.append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
+            buffer
+                .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
 
-            buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
+            buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
 
             buffer.append("\"><b>");
-            buffer.append(mLocalizer.msg("duration", "Program duration/<br>-end"));
+            buffer.append(mLocalizer.msg("duration",
+                "Program duration/<br>-end"));
             buffer.append("</b></td><td style=\"font-size:");
 
-            buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
+            buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
 
             buffer.append("\">");
 
             openPara(buffer, "time");
 
-            String msg = mLocalizer.msg("minutes", "{0} min", new Integer(length));
+            String msg = mLocalizer.msg("minutes", "{0} min", new Integer(
+                length));
             buffer.append(msg).append(" (");
 
             int hours = prog.getHours();
@@ -213,10 +219,11 @@ public class ProgramTextCreator {
                 minutes < 10 ? "0" : "").append(minutes).toString();
             buffer.append(mLocalizer.msg("until", "until {0}", until));
 
-            int netLength = prog.getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
+            int netLength = prog
+                .getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
             if (netLength != -1) {
-              msg = mLocalizer.msg("netMinuted", "{0} min net",
-                  new Integer(netLength));
+              msg = mLocalizer.msg("netMinuted", "{0} min net", new Integer(
+                  netLength));
               buffer.append(" - ").append(msg);
             }
             buffer.append(")");
@@ -230,27 +237,29 @@ public class ProgramTextCreator {
         }
       else
         type = (ProgramFieldType) id[j];
-      
-      if(type == ProgramFieldType.DESCRIPTION_TYPE) {
-        if (prog.getTextField(ProgramFieldType.DESCRIPTION_TYPE) != null
-            && prog.getTextField(ProgramFieldType.DESCRIPTION_TYPE).trim().length() > 0)
+
+      if (type == ProgramFieldType.DESCRIPTION_TYPE) {
+        if (prog.getDescription() != null && prog.getDescription().trim()
+                .length() > 0)
           addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true);
         else
-          addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE, true);        
-      }
-      else if (type == ProgramFieldType.INFO_TYPE) {
+          addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
+              true);
+      } else if (type == ProgramFieldType.INFO_TYPE) {
         int info = prog.getInfo();
         if ((info != -1) && (info != 0)) {
-          buffer.append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
+          buffer
+              .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
 
-          buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
+          buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
 
           buffer.append("\"><b>");
           buffer.append(mLocalizer.msg("attributes", "Program attributes"));
           buffer.append("</b></td><td valign=\"top\">");
 
           openPara(buffer, "info");
-          // Workaround: Without the &nbsp; the component are not put in one line.
+          // Workaround: Without the &nbsp; the component are not put in one
+          // line.
           buffer.append("&nbsp;");
 
           int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
@@ -275,18 +284,22 @@ public class ProgramTextCreator {
           buffer.append("</td></tr>");
           addSeperator(doc, buffer);
         }
-      }
-      else if(type == ProgramFieldType.URL_TYPE)
+      } else if (type == ProgramFieldType.URL_TYPE)
         addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true);
       else
         addEntry(doc, buffer, prog, type);
     }
 
-    buffer.append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:#808080; font-size:");
-    buffer.append(ProgramInfo.getInstance().getUserfont("small","11")).append("\">");
+    buffer
+        .append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:#808080; font-size:");
+    buffer.append(ProgramInfo.getInstance().getUserfont("small", "11")).append(
+        "\">");
     buffer.append("<a href=\"");
-    buffer.append(mLocalizer.msg("dataInfo","http://wiki.tvbrowser.org/index.php/Qualit%C3%A4t_der_Daten")).append("\">");
-    buffer.append(mLocalizer.msg("dataQuality","Details of the data quality"));
+    buffer.append(
+        mLocalizer.msg("dataInfo",
+            "http://wiki.tvbrowser.org/index.php/Qualit%C3%A4t_der_Daten"))
+        .append("\">");
+    buffer.append(mLocalizer.msg("dataQuality", "Details of the data quality"));
     buffer.append("</a>");
     buffer.append("</td></tr>");
     buffer.append("</table></html>");
@@ -294,17 +307,32 @@ public class ProgramTextCreator {
     return buffer.toString();
   }
 
-  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer, Program prog,
-      ProgramFieldType fieldType) {
+  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
+      Program prog, ProgramFieldType fieldType) {
     addEntry(doc, buffer, prog, fieldType, false);
   }
 
-  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer, Program prog,
-      ProgramFieldType fieldType, boolean createLinks) {
+  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
+      Program prog, ProgramFieldType fieldType, boolean createLinks) {
 
     String text = null;
     String name = fieldType.getLocalizedName();
     if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+      if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
+        String description = prog.getDescription();
+        String shortInfo = prog.getShortInfo();
+        if (shortInfo != null) {
+          String shortInfoSubString = shortInfo;
+          if (shortInfo.endsWith("...")) {
+            shortInfoSubString = shortInfo.substring(0, shortInfo.length() - 3);
+          }
+          if (!description.startsWith(shortInfoSubString)) {
+            addEntry(doc, buffer, prog,
+                ProgramFieldType.SHORT_DESCRIPTION_TYPE, true);
+          }
+        }
+      }
+
       text = prog.getTextField(fieldType);
     } else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
       text = prog.getTimeFieldAsString(fieldType);
@@ -326,38 +354,42 @@ public class ProgramTextCreator {
         }
       }
     }
-      
+
     if (text == null || text.trim().length() < 1)
-      if(ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
-        text = mLocalizer.msg("noShowview","No Showview data ");
+      if (ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
+        text = mLocalizer.msg("noShowview", "No Showview data ");
       else
         return;
 
     buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
-    
-    buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
-    
+
+    buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+
     buffer.append("\"><b>");
     buffer.append(name);
 
     buffer.append("</b></td><td style=\"font-size:");
-    
-    buffer.append(ProgramInfo.getInstance().getUserfont("small","11"));
-    
+
+    buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+
     buffer.append("\">");
     buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
-    
-    if(ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
-      buffer.append(" (<a href=\"" ).append(mLocalizer.msg("showviewInfo","http://wiki.tvbrowser.org/index.php/Showviewnummern")).append("\">?</a>)");
-    
+
+    if (ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
+      buffer.append(" (<a href=\"").append(
+          mLocalizer.msg("showviewInfo",
+              "http://wiki.tvbrowser.org/index.php/Showviewnummern")).append(
+          "\">?</a>)");
+
     buffer.append("</td></tr>");
-    
+
     addSeperator(doc, buffer);
   }
 
   private static void addSeperator(ExtendedHTMLDocument doc, StringBuffer buffer) {
     buffer.append("<tr><td colspan=\"2\">");
-    buffer.append("<div style=\"font-size:0;\">").append(doc.createCompTag(new HorizontalLine())).append("</div></td></tr>");
+    buffer.append("<div style=\"font-size:0;\">").append(
+        doc.createCompTag(new HorizontalLine())).append("</div></td></tr>");
   }
 
   private static void openPara(StringBuffer buffer, String style) {
@@ -367,18 +399,30 @@ public class ProgramTextCreator {
   private static void closePara(StringBuffer buffer) {
     buffer.append("</div>\n");
   }
-  
+
   /**
    * 
    * @return The default order of the entries.
    */
   public static Object[] getDefaultOrder() {
-    return new Object[] {ProgramFieldType.GENRE_TYPE,ProgramFieldType.DESCRIPTION_TYPE,
-        ProgramFieldType.ORIGIN_TYPE, ProgramFieldType.DIRECTOR_TYPE,ProgramFieldType.SCRIPT_TYPE,
-        ProgramFieldType.ACTOR_LIST_TYPE,ProgramFieldType.MUSIC_TYPE,ProgramFieldType.URL_TYPE,
-        ProgramFieldType.ORIGINAL_TITLE_TYPE,ProgramFieldType.ORIGINAL_EPISODE_TYPE,
-        ProgramFieldType.REPETITION_OF_TYPE,ProgramFieldType.REPETITION_ON_TYPE,
-        ProgramFieldType.AGE_LIMIT_TYPE,ProgramFieldType.INFO_TYPE, ProgramFieldType.VPS_TYPE,
-        ProgramFieldType.SHOWVIEW_NR_TYPE,mLocalizer.msg("duration", "Program duration/<br>-end").replaceAll("<br>","")};
+    return new Object[] {
+        ProgramFieldType.GENRE_TYPE,
+        ProgramFieldType.DESCRIPTION_TYPE,
+        ProgramFieldType.ORIGIN_TYPE,
+        ProgramFieldType.DIRECTOR_TYPE,
+        ProgramFieldType.SCRIPT_TYPE,
+        ProgramFieldType.ACTOR_LIST_TYPE,
+        ProgramFieldType.MUSIC_TYPE,
+        ProgramFieldType.URL_TYPE,
+        ProgramFieldType.ORIGINAL_TITLE_TYPE,
+        ProgramFieldType.ORIGINAL_EPISODE_TYPE,
+        ProgramFieldType.REPETITION_OF_TYPE,
+        ProgramFieldType.REPETITION_ON_TYPE,
+        ProgramFieldType.AGE_LIMIT_TYPE,
+        ProgramFieldType.INFO_TYPE,
+        ProgramFieldType.VPS_TYPE,
+        ProgramFieldType.SHOWVIEW_NR_TYPE,
+        mLocalizer.msg("duration", "Program duration/<br>-end").replaceAll(
+            "<br>", "") };
   }
 }
