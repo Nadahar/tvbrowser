@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import util.ui.DirectoryChooserPanel;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -66,7 +67,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
     
     msg = mLocalizer.msg("tvdatadir", "tv data folder");
     String tvDataDir = Settings.propTVDataDirectory.getString();
-    mTVDataFolderPanel = new util.ui.DirectoryChooserPanel(msg, tvDataDir);
+    mTVDataFolderPanel = new DirectoryChooserPanel(msg, tvDataDir);
 
     mainPanel.add(mTVDataFolderPanel, cc.xy(1,3));
     
@@ -91,7 +92,6 @@ public class DirectoriesSettingsTab implements SettingsTab {
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
-
     return mLocalizer.msg("directories", "Directories");
   }
 
