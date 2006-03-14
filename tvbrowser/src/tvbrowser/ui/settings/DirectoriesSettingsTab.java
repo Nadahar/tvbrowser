@@ -27,84 +27,72 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.SettingsTab;
 
 public class DirectoriesSettingsTab implements SettingsTab {
-  
-  /** The localizer for this class. */
-    private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(DirectoriesSettingsTab.class);
- 
 
-  private util.ui.DirectoryChooserPanel mTVDataFolderPanel; 
-    
+  /** The localizer for this class. */
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(DirectoriesSettingsTab.class);
+
+  private util.ui.DirectoryChooserPanel mTVDataFolderPanel;
+
   public DirectoriesSettingsTab() {
-    
   }
-    /**
-     * Creates the settings panel for this tab.
-     */
+
+  /**
+   * Creates the settings panel for this tab.
+   */
   public JPanel createSettingsPanel() {
     String msg;
-    
-    JPanel mainPanel=new JPanel(new BorderLayout());
-    mainPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    JPanel content=new JPanel();
-    content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
-    
-    JPanel checkBoxPanel=new JPanel(new BorderLayout());
-    checkBoxPanel.setBorder(BorderFactory.createEmptyBorder(0,0,3,0));
 
-    content.add(checkBoxPanel);
+    JPanel mainPanel = new JPanel(new BorderLayout());
+    mainPanel.setLayout(new FormLayout("fill:150dlu:grow", "pref, 5dlu, pref"));
+    mainPanel.setBorder(Borders.DIALOG_BORDER);
     
-    final tvbrowser.ui.settings.DirectoryChooser directoriesPanel=new tvbrowser.ui.settings.DirectoryChooser();
-
+    CellConstraints cc = new CellConstraints();
+    
+    mainPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("UserDefinedFolders", "User defined folders")), cc.xy(1,1));
+    
     msg = mLocalizer.msg("tvdatadir", "tv data folder");
-    String tvDataDir = Settings.propTVDataDirectory.getString();    
-    mTVDataFolderPanel=new util.ui.DirectoryChooserPanel(msg, tvDataDir);
-    directoriesPanel.addDirectoryChooserPanel(mTVDataFolderPanel);
+    String tvDataDir = Settings.propTVDataDirectory.getString();
+    mTVDataFolderPanel = new util.ui.DirectoryChooserPanel(msg, tvDataDir);
 
-    content.add(directoriesPanel);
-    mainPanel.add(content,BorderLayout.NORTH);
+    mainPanel.add(mTVDataFolderPanel, cc.xy(1,3));
     
     return mainPanel;
   }
-  
-    /**
-     * Called by the host-application, if the user wants to save the settings.
-     */
+
+  /**
+   * Called by the host-application, if the user wants to save the settings.
+   */
   public void saveSettings() {
     Settings.propTVDataDirectory.setString(mTVDataFolderPanel.getText());
   }
 
-  
-    /**
-     * Returns the name of the tab-sheet.
-     */
+  /**
+   * Returns the name of the tab-sheet.
+   */
   public Icon getIcon() {
     return IconLoader.getInstance().getIconFromTheme("status", "folder-open", 16);
   }
-  
-  
-    /**
-     * Returns the title of the tab-sheet.
-     */
+
+  /**
+   * Returns the title of the tab-sheet.
+   */
   public String getTitle() {
 
-  return mLocalizer.msg("directories", "Directories");
- }
-
-  
-
-
-
+    return mLocalizer.msg("directories", "Directories");
+  }
 
 }
-  
