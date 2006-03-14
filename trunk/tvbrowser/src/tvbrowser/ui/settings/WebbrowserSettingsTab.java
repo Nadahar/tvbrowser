@@ -30,15 +30,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import util.browserlauncher.Launch;
+import util.ui.LinkButton;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -57,7 +60,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
   private JFileChooser mFileChooser;
   private JTextField mFileTextField;
 
-  private JCheckBox mUseWebbrowser;
+  private JRadioButton mUseWebbrowser;
 
   private JButton mChooseButton;
   
@@ -71,7 +74,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow", "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref"));
+    mSettingsPn = new JPanel(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow", "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
@@ -79,22 +82,35 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Webbrowser")), cc.xyw(1,1,6));
     
     mSettingsPn.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help", "Help")), cc.xyw(2,3,4));
+
+    JRadioButton useDefault = new JRadioButton(mLocalizer.msg("defaultWebbrowser", "Default Webbrowser"));
+    useDefault.setSelected(Settings.propUserDefinedWebbrowser.getString() == null);
+    useDefault.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        updateInputFields();
+      }
+    });
     
-    mUseWebbrowser = new JCheckBox(mLocalizer.msg("userDefinedWebbrowser","user defined webbrowser"));
+    mSettingsPn.add(useDefault, cc.xyw(2, 5, 2));
+    
+    mUseWebbrowser = new JRadioButton(mLocalizer.msg("userDefinedWebbrowser","user defined webbrowser"));
     mUseWebbrowser.setSelected(Settings.propUserDefinedWebbrowser.getString() != null);
 
     mUseWebbrowser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updateInputFields();
       }
-
     });
+
+    ButtonGroup group = new ButtonGroup();
+    group.add(useDefault);
+    group.add(mUseWebbrowser);
     
-    mSettingsPn.add(mUseWebbrowser, cc.xyw(2, 5, 2));
+    mSettingsPn.add(mUseWebbrowser, cc.xyw(2, 7, 5));
     
     mFileTextField = new JTextField(30);
     mFileTextField.setText(Settings.propUserDefinedWebbrowser.getString());
-    mSettingsPn.add(mFileTextField, cc.xy(3, 7));
+    mSettingsPn.add(mFileTextField, cc.xy(3, 9));
     
     mChooseButton = new JButton(mLocalizer.msg("choose", "Choose"));
     mChooseButton.addActionListener(new ActionListener() {
@@ -111,10 +127,22 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
         }
       }
     });
+    mSettingsPn.add(mChooseButton, cc.xy(5, 9));
 
+    JButton testButton = new LinkButton(mLocalizer.msg("testBrowser", "Test Webbrowser"), "http://www.tvbrowser.org", LinkButton.CENTER, false);
+    testButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String buffer = Settings.propUserDefinedWebbrowser.getString();
+        saveSettings();
+        Launch.openURL("http://www.tvbrowser.org");
+        Settings.propUserDefinedWebbrowser.setString(buffer);
+      };
+    });
+    
+    mSettingsPn.add(testButton, cc.xyw(1, 11, 6));
+    
     updateInputFields();
     
-    mSettingsPn.add(mChooseButton, cc.xy(5, 7));
     return mSettingsPn;
   }
 

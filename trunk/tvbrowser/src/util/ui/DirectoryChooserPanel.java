@@ -47,12 +47,31 @@ public class DirectoryChooserPanel extends JPanel {
   private JTextField mTextField;
   private JButton mBtn;
   private JLabel mLabel;
-  
+
+  /**
+   * Creates a Directory Chooser with a 13pixel Border on the Left
+   * 
+   * @param title Title of the Chooser
+   * @param text Text of the Chooser-Button
+   */
   public DirectoryChooserPanel(String title, String text) {
-    
+    this(title, text, true);
+  }
+  
+  /**
+   * Creates a Directory Chooser
+   * 
+   * @param title Title of the Chooser
+   * @param text Text of the Chooser-Button
+   * @param leftBorder create a Border on the Left ?
+   * @since 2.2
+   */
+  public DirectoryChooserPanel(String title, String text, boolean leftBorder) {
     setLayout(new BorderLayout(7,0));
     mLabel=new JLabel(title);
-    mLabel.setBorder(BorderFactory.createEmptyBorder(0,13,0,0));
+    if (leftBorder) {
+      mLabel.setBorder(BorderFactory.createEmptyBorder(0,13,0,0));
+    }
     add(mLabel,BorderLayout.WEST);
     
     mTextField=new JTextField(text);
@@ -74,7 +93,6 @@ public class DirectoryChooserPanel extends JPanel {
     });
     
     add(mBtn,BorderLayout.EAST); 
-     
   }
   
   public void setEnabled(boolean enabled) {

@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.DirectoryChooserPanel;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -58,18 +59,19 @@ public class DirectoriesSettingsTab implements SettingsTab {
     String msg;
 
     JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.setLayout(new FormLayout("fill:150dlu:grow", "pref, 5dlu, pref"));
+    mainPanel.setLayout(new FormLayout("5dlu, fill:150dlu:grow", "pref, 5dlu, pref, 3dlu, pref"));
     mainPanel.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
     
-    mainPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("UserDefinedFolders", "User defined folders")), cc.xy(1,1));
+    mainPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("UserDefinedFolders", "User defined folders")), cc.xyw(1,1, 2));
     
-    msg = mLocalizer.msg("tvdatadir", "tv data folder");
+    mainPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("chooseFolder", "choose folder")), cc.xy(2,3));
+    
+    msg = mLocalizer.msg("tvdatadir", "tv data folder")+":";
     String tvDataDir = Settings.propTVDataDirectory.getString();
-    mTVDataFolderPanel = new DirectoryChooserPanel(msg, tvDataDir);
-
-    mainPanel.add(mTVDataFolderPanel, cc.xy(1,3));
+    mTVDataFolderPanel = new DirectoryChooserPanel(msg, tvDataDir, false);
+    mainPanel.add(mTVDataFolderPanel, cc.xy(2,5));
     
     return mainPanel;
   }
