@@ -41,6 +41,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import javax.swing.JOptionPane;
+
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.Mirror;
 import tvbrowserdataservice.file.SummaryFile;
@@ -51,6 +53,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
 import util.io.IOUtilities;
+import util.io.NetworkUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.PluginInfo;
@@ -163,6 +166,15 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
                            Date startDate, int dateCount, ProgressMonitor monitor) {
 
+    if (!NetworkUtilities.checkConnection()) {
+      JOptionPane.showMessageDialog(null, 
+          mLocalizer.msg("noConnectionMessage", "No connection!"),
+          mLocalizer.msg("noConnectionTitle", "No connection!"),
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    
+    
     mTvDataBase=dataBase;
     mProgressMonitor = monitor;
 

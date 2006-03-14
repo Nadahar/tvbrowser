@@ -41,6 +41,7 @@ import org.w3c.dom.Node;
 
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
+import util.io.NetworkUtilities;
 import util.io.XMLWriter;
 import util.ui.Localizer;
 import util.ui.progress.Progress;
@@ -56,394 +57,394 @@ import devplugin.Program;
  */
 public class Updater implements Progress {
 
-    /** Localizer */
-    private static final Localizer _mLocalizer = Localizer.getLocalizerFor(Updater.class);
+  /** Localizer */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(Updater.class);
 
-    /** Location of Update-Skript */
-    //private static String LOCATION = "http://localhost/~bodum/wannawork3/tvaddicted/updater.php";
-    private static String LOCATION = "http://tvaddicted.de/updater.php";
+  /** Location of Update-Skript */
+  // private static String LOCATION =
+  // "http://localhost/~bodum/wannawork3/tvaddicted/updater.php";
+  private static String LOCATION = "http://tvaddicted.de/updater.php";
 
-    /** The Plugin */
-    private TVRaterPlugin _tvraterPlugin;
+  /** The Plugin */
+  private TVRaterPlugin _tvraterPlugin;
 
-    /** Update Successfull ? */
-    private boolean _wasSuccessfull = false;
+  /** Update Successfull ? */
+  private boolean _wasSuccessfull = false;
 
-    private Hashtable _updateList;
+  private Hashtable _updateList;
 
+  /**
+   * Creates the Updater
+   * 
+   * @param tvraterPlugin Plugin that uses the Updater
+   */
+  public Updater(TVRaterPlugin tvraterPlugin) {
+    _tvraterPlugin = tvraterPlugin;
+  }
 
-    
-    /**
-     * Creates the Updater
-     * 
-     * @param tvraterPlugin Plugin that uses the Updater
-     */
-    public Updater(TVRaterPlugin tvraterPlugin) {
-        _tvraterPlugin = tvraterPlugin;
+  /**
+   * Does the Update
+   */
+  public void run() {
+
+    if ((_tvraterPlugin.getSettings().getProperty("name") == null)
+        || (_tvraterPlugin.getSettings().getProperty("name").length() == 0)
+        || (_tvraterPlugin.getSettings().getProperty("password") == null)
+        || (_tvraterPlugin.getSettings().getProperty("password").length() == 0)) {
+
+      JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), mLocalizer.msg("noUser",
+          "Please Enter your Userdata in the\nconfiguration of this Plugin"), mLocalizer.msg("error",
+          "Error while updating TV Rater"), JOptionPane.ERROR_MESSAGE);
+      return;
     }
 
-    /**
-     * Does the Update
-     */
-    public void run() {
+    try {
+      if (!NetworkUtilities.checkConnection(new URL("http://www.tvaddicted.de"))) {
+        JOptionPane.showMessageDialog(null, 
+            mLocalizer.msg("noConnectionMessage", "No Connection!"),
+            mLocalizer.msg("noConnectionTitle", "No Connection!"),
+            JOptionPane.ERROR_MESSAGE);
+        return;
+      }
 
-        if ((_tvraterPlugin.getSettings().getProperty("name") == null)
-                || (_tvraterPlugin.getSettings().getProperty("name").length() == 0)
-                || (_tvraterPlugin.getSettings().getProperty("password") == null)
-                || (_tvraterPlugin.getSettings().getProperty("password").length() == 0)) {
+      _updateList = createUpdateList();
+      if (_updateList.size() == 0) {
+        _wasSuccessfull = true;
+        return;
+      }
 
-            JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), _mLocalizer.msg("noUser",
-                    "Please Enter your Userdata in the\nconfiguration of this Plugin"), _mLocalizer.msg("error",
-                    "Error while updating TV Rater"), JOptionPane.ERROR_MESSAGE);
-            return;
+      URL url = new URL(LOCATION);
+
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+
+      OutputStream out = connection.getOutputStream();
+
+      GZIPOutputStream outZipped = new GZIPOutputStream(out);
+      writeData(outZipped);
+      outZipped.close();
+
+      Node data = readURLConnection(connection);
+
+      if (data.getNodeName().equals("error")) {
+        String message = getTextFromNode(data);
+
+        JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), mLocalizer.msg("serverError",
+            "The Server has send the following error:")
+            + "\n" + message, mLocalizer.msg("error", "Error while updating TV Rater"), JOptionPane.ERROR_MESSAGE);
+      } else {
+        readData(data);
+        _wasSuccessfull = true;
+      }
+
+      out.close();
+    } catch (Exception e) {
+      ErrorHandler.handle(mLocalizer.msg("updateError", "An error occured while updateting the TVRater Database"), e);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Was the update successfull?
+   * 
+   * @return Successfully updated ?
+   */
+  public boolean wasSuccessfull() {
+    return _wasSuccessfull;
+  }
+
+  /**
+   * Gets the Text within a Node
+   * 
+   * @param data Node to rip the Text from
+   * @return Text in the Node
+   */
+  private String getTextFromNode(Node data) {
+    Node child = data.getFirstChild();
+    StringBuffer text = new StringBuffer();
+
+    while (child != null) {
+
+      if (child.getNodeType() == Node.TEXT_NODE) {
+        text.append(child.getNodeValue());
+      }
+
+      child = child.getNextSibling();
+    }
+
+    return text.toString();
+  }
+
+  /**
+   * Reads the String returned by the PHP-Skript and parses the DOM
+   * 
+   */
+  private void readData(Node node) {
+    Node child = node.getFirstChild();
+    while (child != null) {
+      if (child.getNodeName().equals("data")) {
+        readRatingData(child);
+      }
+      child = child.getNextSibling();
+    }
+  }
+
+  /**
+   * Reads the Data in this Node
+   * 
+   * @param node Node to analyse
+   */
+  private void readRatingData(Node node) {
+    _tvraterPlugin.getDatabase().clearOverall();
+    Node child = node.getFirstChild();
+    while (child != null) {
+      if (child.getNodeName().equals("rating")) {
+        readRating(child);
+      }
+      child = child.getNextSibling();
+    }
+  }
+
+  /**
+   * Reads a single Rating
+   * 
+   * @param node Rating as DOM-Node
+   */
+  private void readRating(Node node) {
+    Rating rating = new Rating();
+
+    Node child = node.getFirstChild();
+    while (child != null) {
+      String nodename = child.getNodeName();
+
+      if (nodename.equals("title")) {
+        rating.setTitle(getNodeValue(child));
+      } else if (nodename.equals("overall")) {
+        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setValue(Rating.OVERALL, value);
+      } else if (nodename.equals("action")) {
+        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setValue(Rating.ACTION, value);
+      } else if (nodename.equals("entitlement")) {
+        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setValue(Rating.ENTITLEMENT, value);
+      } else if (nodename.equals("fun")) {
+        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setValue(Rating.FUN, value);
+      } else if (nodename.equals("tension")) {
+        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setValue(Rating.TENSION, value);
+      } else if (nodename.equals("erotic")) {
+        int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
+        rating.setValue(Rating.EROTIC, value);
+      } else if (nodename.equals("count")) {
+        int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        rating.setValue(Rating.COUNT, value);
+      } else if (nodename.equals("genre")) {
+        int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        rating.setValue(Rating.GENRE, value);
+      } else if (nodename.equals("id")) {
+        int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
+        rating.setValue(Rating.ID, value);
+
+        if (rating.getTitle() != null) {
+          Rating personal = _tvraterPlugin.getDatabase().getPersonalRating(rating.getTitle());
+
+          if (personal != null) {
+            personal.setValue(Rating.ID, value);
+          }
+        } else {
+          System.out.println("No Title");
         }
+      }
 
-        try {
-          
-            _updateList = createUpdateList();
-            if (_updateList.size() == 0) {
-              _wasSuccessfull = true;
-              return;
+      child = child.getNextSibling();
+    }
+
+    _tvraterPlugin.getDatabase().setOverallRating(rating);
+  }
+
+  /**
+   * Returns the Text-Value in this Node
+   * 
+   * @param node get Text from this Node
+   * @return Text in this Node
+   */
+  private String getNodeValue(Node node) {
+    StringBuffer value = new StringBuffer();
+
+    Node child = node.getFirstChild();
+    while (child != null) {
+      if (child.getNodeType() == Node.TEXT_NODE) {
+        value.append(child.getNodeValue());
+      }
+      child = child.getNextSibling();
+    }
+
+    return value.toString();
+  }
+
+  /**
+   * Writes the Data into the Outputstream
+   * 
+   * @param output the Outputstream
+   * @throws ParserConfigurationException
+   * @throws IOException
+   */
+  private void writeData(OutputStream output) throws ParserConfigurationException, IOException {
+    Document document;
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    document = builder.newDocument();
+    Element tvrater = document.createElement("tvrater");
+    document.appendChild(tvrater);
+
+    // User
+    Element user = document.createElement("user");
+
+    Element name = createNodeWithTextValue(document, "name", _tvraterPlugin.getSettings().getProperty("name"));
+    user.appendChild(name);
+
+    Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(_tvraterPlugin.getSettings()
+        .getProperty("password"), 21));
+    user.appendChild(password);
+
+    tvrater.appendChild(user);
+
+    // Command
+    Element command = createNodeWithTextValue(document, "command", "Update");
+    tvrater.appendChild(command);
+
+    // Data
+    Element data = document.createElement("data");
+    tvrater.appendChild(data);
+
+    // Setratings
+    Element setratings = document.createElement("setratings");
+    data.appendChild(setratings);
+
+    ArrayList list = _tvraterPlugin.getDatabase().getChangedPersonal();
+    for (int i = 0; i < list.size(); i++) {
+      Element ratingElement = document.createElement("rating");
+      setratings.appendChild(ratingElement);
+
+      Rating rating = (Rating) list.get(i);
+      ratingElement.appendChild(createNodeWithTextValue(document, "title", rating.getTitle()));
+
+      ratingElement.appendChild(createNodeWithTextValue(document, "overall", rating.getIntValue(Rating.OVERALL)));
+      ratingElement.appendChild(createNodeWithTextValue(document, "action", rating.getIntValue(Rating.ACTION)));
+      ratingElement
+          .appendChild(createNodeWithTextValue(document, "entitlement", rating.getIntValue(Rating.ENTITLEMENT)));
+      ratingElement.appendChild(createNodeWithTextValue(document, "fun", rating.getIntValue(Rating.FUN)));
+      ratingElement.appendChild(createNodeWithTextValue(document, "tension", rating.getIntValue(Rating.TENSION)));
+      ratingElement.appendChild(createNodeWithTextValue(document, "erotic", rating.getIntValue(Rating.EROTIC)));
+
+      ratingElement.appendChild(createNodeWithTextValue(document, "genre", rating.getIntValue(Rating.GENRE)));
+
+    }
+    _tvraterPlugin.getDatabase().clearChangedPersonal();
+
+    // GetRatings
+    Element getratings = document.createElement("getratings");
+    data.appendChild(getratings);
+
+    Enumeration en = _updateList.elements();
+    while (en.hasMoreElements()) {
+      Element program = document.createElement("program");
+      getratings.appendChild(program);
+
+      Program prog = (Program) en.nextElement();
+
+      program.appendChild(createNodeWithTextValue(document, "title", prog.getTitle()));
+
+    }
+
+    XMLWriter writer = new XMLWriter();
+    writer.writeDocumentToOutputStream(document, output, "UTF-8");
+  }
+
+  /**
+   * Creates a Node with a filled TextNode
+   * 
+   * @param doc Create Node with this Document
+   * @param nodename Name of the Node to create
+   * @param value Text-Value in this Node
+   * @return Node with a filled TextNode
+   */
+  private Element createNodeWithTextValue(Document doc, String nodename, String value) {
+    Element el = doc.createElement(nodename);
+    el.appendChild(doc.createTextNode(value));
+    return el;
+  }
+
+  /**
+   * Creates a Node with a filled TextNode
+   * 
+   * @param doc Create Node with this Document
+   * @param nodename Name of the Node to create
+   * @param value Text-Value in this Node
+   * @return Node with a filled TextNode
+   */
+  private Element createNodeWithTextValue(Document doc, String nodename, int value) {
+    return createNodeWithTextValue(doc, nodename, Integer.toString(value));
+  }
+
+  /**
+   * Reads the Data in a URLConnection
+   * 
+   * @param uc Connection
+   * @return Data returned from the URL
+   * @throws Exception IOException etc...
+   */
+  private static Node readURLConnection(URLConnection uc) throws Exception {
+    Document document;
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = factory.newDocumentBuilder();
+
+      // System.out.println(new BufferedInputStream(uc.getInputStream()).);
+
+      /*
+       * DataInputStream dis = new DataInputStream (uc.getInputStream()); String
+       * line; try { do { line = dis.readLine(); System.out.println(line);
+       * }while (line != null); } catch (IOException e) { line = "0";}
+       */
+      document = builder.parse(new GZIPInputStream(uc.getInputStream()));
+    } catch (Exception e) {
+      throw e;
+    }
+    return document.getDocumentElement();
+  }
+
+  /**
+   * Runs thru all Days and Channels, creates a List of Programs that need to
+   * get a rating
+   * 
+   * @return Hashtable filled with Programs to rate
+   */
+  private Hashtable createUpdateList() {
+    Hashtable table = new Hashtable();
+
+    Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
+
+    Date date = new Date();
+    date = date.addDays(-1);
+    for (int d = 0; d < 32; d++) {
+      for (int i = 0; i < channels.length; i++) {
+        Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
+        while ((it != null) && (it.hasNext())) {
+          Program program = (Program) it.next();
+          if ((program != null) && _tvraterPlugin.isProgramRateable(program)) {
+            if (!table.containsKey(program.getTitle())) {
+              table.put(program.getTitle(), program);
             }
-          
-            URL url = new URL(LOCATION);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
-
-            OutputStream out = connection.getOutputStream();
-
-            GZIPOutputStream outZipped = new GZIPOutputStream(out);
-            writeData(outZipped);
-            outZipped.close();
-
-            Node data = readURLConnection(connection);
-
-            if (data.getNodeName().equals("error")) {
-                String message = getTextFromNode(data);
-
-                JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), _mLocalizer.msg("serverError",
-                        "The Server has send the following error:")
-                        + "\n" + message, _mLocalizer.msg("error", "Error while updating TV Rater"),
-                        JOptionPane.ERROR_MESSAGE);
-            } else {
-                readData(data);
-                _wasSuccessfull = true;
-            }
-
-            out.close();
-        } catch (Exception e) {
-            ErrorHandler.handle(_mLocalizer
-                    .msg("updateError", "An error occured while updateting the TVRater Database"), e);
-            e.printStackTrace();
+          }
         }
+      }
+
+      date = date.addDays(1);
     }
 
-    /**
-     * Was the update successfull?
-     * 
-     * @return Successfully updated ?
-     */
-    public boolean wasSuccessfull() {
-        return _wasSuccessfull;
-    }
-
-    /**
-     * Gets the Text within a Node
-     * 
-     * @param data Node to rip the Text from
-     * @return Text in the Node
-     */
-    private String getTextFromNode(Node data) {
-        Node child = data.getFirstChild();
-        StringBuffer text = new StringBuffer();
-
-        while (child != null) {
-
-            if (child.getNodeType() == Node.TEXT_NODE) {
-                text.append(child.getNodeValue());
-            }
-
-            child = child.getNextSibling();
-        }
-
-        return text.toString();
-    }
-
-    /**
-     * Reads the String returned by the PHP-Skript and parses the DOM
-     *
-     */
-    private void readData(Node node) {
-        Node child = node.getFirstChild();
-        while (child != null) {
-            if (child.getNodeName().equals("data")) {
-                readRatingData(child);
-            }
-            child = child.getNextSibling();
-        }
-    }
-
-    /**
-     * Reads the Data in this Node
-     * 
-     * @param node Node to analyse
-     */
-    private void readRatingData(Node node) {
-        _tvraterPlugin.getDatabase().clearOverall();
-        Node child = node.getFirstChild();
-        while (child != null) {
-            if (child.getNodeName().equals("rating")) {
-                readRating(child);
-            }
-            child = child.getNextSibling();
-        }
-    }
-
-    /**
-     * Reads a single Rating
-     * 
-     * @param node Rating as DOM-Node
-     */
-    private void readRating(Node node) {
-        Rating rating = new Rating();
-
-        Node child = node.getFirstChild();
-        while (child != null) {
-            String nodename = child.getNodeName();
-
-            if (nodename.equals("title")) {
-                rating.setTitle(getNodeValue(child));
-            } else if (nodename.equals("overall")) {
-                int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-                rating.setValue(Rating.OVERALL, value);
-            } else if (nodename.equals("action")) {
-                int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-                rating.setValue(Rating.ACTION, value);
-            } else if (nodename.equals("entitlement")) {
-                int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-                rating.setValue(Rating.ENTITLEMENT, value);
-            } else if (nodename.equals("fun")) {
-                int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-                rating.setValue(Rating.FUN, value);
-            } else if (nodename.equals("tension")) {
-                int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-                rating.setValue(Rating.TENSION, value);
-            } else if (nodename.equals("erotic")) {
-                int value = new Double(Double.parseDouble(getNodeValue(child))).intValue();
-                rating.setValue(Rating.EROTIC, value);
-            } else if (nodename.equals("count")) {
-                int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
-                rating.setValue(Rating.COUNT, value);
-            } else if (nodename.equals("genre")) {
-                int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
-                rating.setValue(Rating.GENRE, value);
-            } else if (nodename.equals("id")) {
-                int value = new Integer(Integer.parseInt(getNodeValue(child))).intValue();
-                rating.setValue(Rating.ID, value);
-                
-                if (rating.getTitle() != null) {
-                    Rating personal = _tvraterPlugin.getDatabase().getPersonalRating(rating.getTitle());
-                    
-                    if (personal != null) {
-                        personal.setValue(Rating.ID, value);
-                    }
-                } else {
-                    System.out.println("No Title");
-                }
-            }
-
-            child = child.getNextSibling();
-        }
-
-        _tvraterPlugin.getDatabase().setOverallRating(rating);
-    }
-
-    /**
-     * Returns the Text-Value in this Node
-     * 
-     * @param node get Text from this Node
-     * @return Text in this Node
-     */
-    private String getNodeValue(Node node) {
-        StringBuffer value = new StringBuffer();
-
-        Node child = node.getFirstChild();
-        while (child != null) {
-            if (child.getNodeType() == Node.TEXT_NODE) {
-                value.append(child.getNodeValue());
-            }
-            child = child.getNextSibling();
-        }
-
-        return value.toString();
-    }
-
-    /**
-     * Writes the Data into the Outputstream
-     * 
-     * @param output the Outputstream
-     * @throws ParserConfigurationException
-     * @throws IOException
-     */
-    private void writeData(OutputStream output) throws ParserConfigurationException, IOException {
-        Document document;
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        document = builder.newDocument();
-        Element tvrater = document.createElement("tvrater");
-        document.appendChild(tvrater);
-
-        // User
-        Element user = document.createElement("user");
-
-        Element name = createNodeWithTextValue(document, "name", _tvraterPlugin.getSettings().getProperty("name"));
-        user.appendChild(name);
-
-        Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(_tvraterPlugin
-                .getSettings().getProperty("password"), 21));
-        user.appendChild(password);
-
-        tvrater.appendChild(user);
-
-        // Command
-        Element command = createNodeWithTextValue(document, "command", "Update");
-        tvrater.appendChild(command);
-
-        // Data
-        Element data = document.createElement("data");
-        tvrater.appendChild(data);
-
-        // Setratings
-        Element setratings = document.createElement("setratings");
-        data.appendChild(setratings);
-
-        ArrayList list = _tvraterPlugin.getDatabase().getChangedPersonal();
-        for (int i = 0; i < list.size(); i++) {
-            Element ratingElement = document.createElement("rating");
-            setratings.appendChild(ratingElement);
-
-            Rating rating = (Rating) list.get(i);
-            ratingElement.appendChild(createNodeWithTextValue(document, "title", rating.getTitle()));
-
-            ratingElement.appendChild(createNodeWithTextValue(document, "overall", rating.getIntValue(Rating.OVERALL)));
-            ratingElement.appendChild(createNodeWithTextValue(document, "action", rating.getIntValue(Rating.ACTION)));
-            ratingElement.appendChild(createNodeWithTextValue(document, "entitlement", rating
-                    .getIntValue(Rating.ENTITLEMENT)));
-            ratingElement.appendChild(createNodeWithTextValue(document, "fun", rating.getIntValue(Rating.FUN)));
-            ratingElement.appendChild(createNodeWithTextValue(document, "tension", rating.getIntValue(Rating.TENSION)));
-            ratingElement.appendChild(createNodeWithTextValue(document, "erotic", rating.getIntValue(Rating.EROTIC)));
-
-            ratingElement.appendChild(createNodeWithTextValue(document, "genre", rating.getIntValue(Rating.GENRE)));
-
-        }
-        _tvraterPlugin.getDatabase().clearChangedPersonal();
-
-        // GetRatings
-        Element getratings = document.createElement("getratings");
-        data.appendChild(getratings);
-
-        Enumeration en = _updateList.elements();
-        while (en.hasMoreElements()) {
-            Element program = document.createElement("program");
-            getratings.appendChild(program);
-
-            Program prog = (Program) en.nextElement();
-
-            program.appendChild(createNodeWithTextValue(document, "title", prog.getTitle()));
-
-        }
-
-        XMLWriter writer = new XMLWriter();
-        writer.writeDocumentToOutputStream(document, output, "UTF-8");
-    }
-
-    /**
-     * Creates a Node with a filled TextNode
-     * 
-     * @param doc Create Node with this Document
-     * @param nodename Name of the Node to create
-     * @param value Text-Value in this Node
-     * @return Node with a filled TextNode
-     */
-    private Element createNodeWithTextValue(Document doc, String nodename, String value) {
-        Element el = doc.createElement(nodename);
-        el.appendChild(doc.createTextNode(value));
-        return el;
-    }
-
-    /**
-     * Creates a Node with a filled TextNode
-     * 
-     * @param doc Create Node with this Document
-     * @param nodename Name of the Node to create
-     * @param value Text-Value in this Node
-     * @return Node with a filled TextNode
-     */
-    private Element createNodeWithTextValue(Document doc, String nodename, int value) {
-        return createNodeWithTextValue(doc, nodename, Integer.toString(value));
-    }
-
-    /**
-     * Reads the Data in a URLConnection
-     * 
-     * @param uc Connection
-     * @return Data returned from the URL
-     * @throws Exception IOException etc...
-     */
-    private static Node readURLConnection(URLConnection uc) throws Exception {
-        Document document;
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-//            System.out.println(new BufferedInputStream(uc.getInputStream()).);
-            
-      /*      DataInputStream dis = new DataInputStream (uc.getInputStream());
-            String line;
-            try {
-                do {
-              line = dis.readLine();
-              System.out.println(line);
-                }while (line != null);
-            }
-            catch (IOException e) { line = "0";}*/
-            document = builder.parse(new GZIPInputStream(uc.getInputStream()));
-        } catch (Exception e) {
-            throw e;
-        }
-        return document.getDocumentElement();
-    }
-
-    /**
-     * Runs thru all Days and Channels, creates a List of Programs that need to
-     * get a rating
-     * 
-     * @return Hashtable filled with Programs to rate
-     */
-    private Hashtable createUpdateList() {
-        Hashtable table = new Hashtable();
-
-        Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
-
-        Date date = new Date();
-        date = date.addDays(-1);
-        for (int d = 0; d < 32; d++) {
-            for (int i = 0; i < channels.length; i++) {
-                Iterator it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
-                while ((it != null) && (it.hasNext())) {
-                    Program program = (Program) it.next();
-                    if ((program != null) && _tvraterPlugin.isProgramRateable(program)) {
-                        if (!table.containsKey(program.getTitle())) {
-                            table.put(program.getTitle(), program);
-                        }
-                    }
-                }
-            }
-
-            date = date.addDays(1);
-        }
-
-        return table;
-    }
+    return table;
+  }
 }

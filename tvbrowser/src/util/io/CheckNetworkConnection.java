@@ -33,6 +33,7 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -60,20 +61,34 @@ class CheckNetworkConnection {
 
   private JDialog mWaitingDialog;
 
+
   /**
    * Check the Network
    * 
    * @return true, if the connection is working
    */
   public boolean checkConnection() {
+    try {
+      return checkConnection(new URL("http://tvbrowser.org"));
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+
+  /**
+   * Checks if a internet connection to a specific Server can be established
+   * 
+   * @param url check this Server
+   * @return true, if a connection can be established
+   */
+  public boolean checkConnection(final URL url) {
     // Start Check in second Thread
     new Thread(new Runnable() {
       public void run() {
         mCheckRunning = true;
         mResult = false;
         try {
-          URL url = new URL("http://tvbrowser.org");
-
           HttpURLConnection connection = (HttpURLConnection) url.openConnection();
           mResult = (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
               || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER);
@@ -105,8 +120,9 @@ class CheckNetworkConnection {
 
     hideDialog();
     return mResult;
-  }
-
+  }  
+  
+  
   private void hideDialog() {
     mCheckRunning = false;
     if ((mWaitingDialog != null) && (mWaitingDialog.isVisible())) {
@@ -149,4 +165,5 @@ class CheckNetworkConnection {
       UiUtilities.centerAndShow(mWaitingDialog);
     }
   }
+
 }

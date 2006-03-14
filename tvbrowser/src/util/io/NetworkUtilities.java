@@ -25,6 +25,8 @@
  */
 package util.io;
 
+import java.net.URL;
+
 
 /**
  * Network Helper Class with some utility functions
@@ -41,6 +43,16 @@ public class NetworkUtilities {
    */
   public static boolean checkConnection() {
     return new CheckNetworkConnection().checkConnection();
+  }
+
+  /**
+   * Checks if a internet connection to a specific Server can be established
+   * 
+   * @param url check this Server
+   * @return true, if a connection can be established
+   */
+  public static boolean checkConnection(URL url) {
+    return new CheckNetworkConnection().checkConnection(url);
   }
 
 }
