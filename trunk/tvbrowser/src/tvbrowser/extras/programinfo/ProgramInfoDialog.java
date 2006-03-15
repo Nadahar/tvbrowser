@@ -367,13 +367,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
         mFunctionGroup.add(new JSeparator());
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
-        continue;
+      } else {
+        ActionMenu menu = p[i].getContextMenuActions(mProgram);
+        
+        if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
+          new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, menu, this,
+              p[i].getId(), mFindAsYouType);
       }
-      ActionMenu menu = p[i].getContextMenuActions(mProgram);
-      
-      if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
-        new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, menu, this,
-            p[i].getId(), mFindAsYouType);
     }
 
     if (rebuild) {
