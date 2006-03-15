@@ -42,12 +42,14 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
@@ -56,6 +58,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.ContextMenuManager;
+import tvbrowser.core.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
@@ -356,16 +359,21 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     mTextSearch = new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
-
+    
     ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs();
 
     for (int i = 0; i < p.length; i++) {
+      if(p[i].getId().compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
+        mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
+        mFunctionGroup.add(new JSeparator());
+        mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
+        continue;
+      }
       ActionMenu menu = p[i].getContextMenuActions(mProgram);
-
+      
       if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
         new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, menu, this,
             p[i].getId(), mFindAsYouType);
-
     }
 
     if (rebuild) {
