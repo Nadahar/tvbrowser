@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
-package tvbrowser.ui.configassistant;
+package util.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -31,18 +31,17 @@ import java.awt.Graphics;
 import javax.swing.JComponent;
 
 /**
- * Draws a Line in
+ * Draws a Line
+ * 
+ * @since 2.2
  */
 public class LineComponent extends JComponent {
-  /** Line-Color */
-  private Color mColor;
-  
   /**
    * Creates a Line-Drawing-Component
    * @param color Color of the Line
    */
   public LineComponent(Color color) {
-    mColor = color;
+    setForeground(color);
   }
 
   /*
@@ -52,8 +51,13 @@ public class LineComponent extends JComponent {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     
+    if (isOpaque()) {
+      g.setColor(getBackground());
+      g.fillRect(0, 0, getWidth(), getHeight());
+    }
+    
     int y = getHeight() / 2;
-    g.setColor(mColor);
+    g.setColor(getForeground());
     g.drawLine(5, y, getWidth() - 10, y);
   } 
 }

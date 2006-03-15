@@ -147,7 +147,6 @@ public class OrderChooser extends JPanel implements ListDropAction{
 
     mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
     mUpBt.setToolTipText(mLocalizer.msg("tooltip.up", "Move selected rows up"));
-    mUpBt.setMargin(UiUtilities.ZERO_INSETS);
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         UiUtilities.moveSelectedItems(mList,-1);
@@ -157,7 +156,6 @@ public class OrderChooser extends JPanel implements ListDropAction{
 
     mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
     mDownBt.setToolTipText(mLocalizer.msg("tooltip.down", "Move selected rows down"));
-    mDownBt.setMargin(UiUtilities.ZERO_INSETS);
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         UiUtilities.moveSelectedItems(mList,1);

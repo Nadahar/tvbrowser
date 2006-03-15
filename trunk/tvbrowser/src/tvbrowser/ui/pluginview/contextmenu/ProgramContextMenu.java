@@ -28,10 +28,12 @@
 
 package tvbrowser.ui.pluginview.contextmenu;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
@@ -90,10 +92,12 @@ public class ProgramContextMenu extends AbstractContextMenu {
     
     menu.addSeparator();
 
-    JMenuItem[] pluginMenuItems = ContextMenuManager.getInstance().createContextMenuItems(null, mPrograms[0], false);
-    for (int i=0; i<pluginMenuItems.length; i++) {
-      menu.add(pluginMenuItems[i]);
-      pluginMenuItems[i].setEnabled(mPrograms.length == 1);
+    JMenu menus = ContextMenuManager.getInstance().createContextMenuItems(null, mPrograms[0], false);
+
+    Component[] comps = menus.getMenuComponents();
+    for (int i = 0; i < comps.length; i++) {
+      menu.add(comps[i]);
+      comps[i].setEnabled(mPrograms.length == 1);
     }
 
     return menu;

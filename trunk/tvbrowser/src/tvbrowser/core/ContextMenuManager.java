@@ -29,6 +29,7 @@ package tvbrowser.core;
 
 import java.util.ArrayList;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import tvbrowser.core.plugin.PluginProxy;
@@ -198,24 +199,23 @@ public class ContextMenuManager {
     }
     else    
     for(int i = 0; i < order.length; i++) {
-      if (order[i].compareTo(info.getId()) == 0) {
+      if (order[i].compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
+        ifList.add(new SeparatorMenuItem());
+      } else if (order[i].compareTo(info.getId()) == 0) {
         ifList.add(info);
-        continue;
-      }
-      if (order[i].compareTo(favorite.getId()) == 0) {
+      } else if (order[i].compareTo(favorite.getId()) == 0) {
         ifList.add(favorite);
-        continue;
-      }
-      if (order[i].compareTo(reminder.getId()) == 0) {
+      } else if (order[i].compareTo(reminder.getId()) == 0) {
         ifList.add(reminder);
-        continue;
-      }
-      for(int j = 0; j < pluginArr.length; j++) {
-        if(order[i].compareTo(pluginArr[j].getId()) == 0) {
-          ifList.add((ContextMenuIf)pluginArr[j]);
-          break;
+      } else {
+        for(int j = 0; j < pluginArr.length; j++) {
+          if(order[i].compareTo(pluginArr[j].getId()) == 0) {
+            ifList.add((ContextMenuIf)pluginArr[j]);
+            break;
+          }
         }
       }
+      
     }
     
     if(pluginArr.length + 3 > ifList.size())
@@ -239,12 +239,14 @@ public class ContextMenuManager {
    * @param markDefaultIf True if the default context menu interfaces should be highlighted.
    * @return The menu items of the context menu.
    */
-  public JMenuItem[] createContextMenuItems(ContextMenuIf callerIf, Program program, boolean markDefaultIf) {
+  public JMenu createContextMenuItems(ContextMenuIf callerIf, Program program, boolean markDefaultIf) {
     ArrayList items = new ArrayList();
     ContextMenuIf defaultIf = getInstance().getDefaultContextMenuIf();
     ContextMenuIf middleClickIf = getInstance().getMiddleClickIf();
     ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs();
 
+    JMenu rootMenu = new JMenu();
+    
     for (int i = 0; i < menuIfArr.length; i++) {
       ContextMenuIf menuIf = menuIfArr[i];
 
@@ -254,7 +256,9 @@ public class ContextMenuManager {
         equalsPlugin = true;
       }
 
-      if (!equalsPlugin) {
+      if (menuIf instanceof SeparatorMenuItem) {
+        rootMenu.addSeparator();
+      } else if (!equalsPlugin) {
         ActionMenu actionMenu = menuIf.getContextMenuActions(program);
         if (actionMenu != null) {
           JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
@@ -274,12 +278,10 @@ public class ContextMenuManager {
               menuItem.setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
             }
           }
+          rootMenu.add(menuItem);
         }
       }
     }
-
-    JMenuItem[] result = new JMenuItem[items.size()];
-    items.toArray(result);
-    return result;
+    return rootMenu;
   }
 }

@@ -27,6 +27,7 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -36,18 +37,24 @@ import java.util.ArrayList;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ContextMenuManager;
+import tvbrowser.core.SeparatorMenuItem;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
+import tvbrowser.ui.settings.util.LineButton;
+import util.ui.LineComponent;
 import util.ui.customizableitems.SortableItemList;
 
 import com.jgoodies.forms.factories.Borders;
@@ -74,25 +81,31 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
       JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-      if (value instanceof ContextMenuIf) {
+      if (value instanceof SeparatorMenuItem) {
+        LineComponent comp = new LineComponent(label.getForeground());
+        comp.setBackground(label.getBackground());
+        comp.setOpaque(label.isOpaque());
+        comp.setPreferredSize(label.getPreferredSize());
+        return comp;
+      } else if (value instanceof ContextMenuIf) {
         ContextMenuIf menuIf = (ContextMenuIf) value;
         Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
 
         // Get the context menu item text
-        String text = null;
+        StringBuffer text = new StringBuffer();
         Icon icon = null;
         // Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
         ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
         if (actionMenu != null) {
           Action action = actionMenu.getAction();
           if (action != null) {
-            text = (String) action.getValue(Action.NAME);
+            text.append((String) action.getValue(Action.NAME));
             icon = (Icon) action.getValue(Action.SMALL_ICON);
           } else if (menuIf instanceof PluginProxy) {
-            text = ((PluginProxy) menuIf).getInfo().getName();
+            text.append(((PluginProxy) menuIf).getInfo().getName());
             icon = ((PluginProxy) menuIf).getMarkIcon();
           } else {
-            text = "unknown";
+            text.append("unknown");
             icon = null;
           }
         }
@@ -102,14 +115,19 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
            * If the Plugin is the Plugin for double and middle click make the text
            * bold and italic.
            */
-          if (menuIf.equals(mDefaultIf)) {
-            text += " - " + mLocalizer.msg("doubleClick", "double-click");
+          if (menuIf.equals(mDefaultIf) && menuIf.equals(mMiddleClickIf)) {
+            label.setFont(label.getFont().deriveFont(Font.BOLD));
+            text.append(" - ").append(mLocalizer.msg("doubleClick", "double-click")).append(" + ").append(mLocalizer.msg("middleClick", "middle-click"));
+          } else if (menuIf.equals(mDefaultIf)) {
+            label.setFont(label.getFont().deriveFont(Font.BOLD));
+            text.append(" - ").append(mLocalizer.msg("doubleClick", "double-click"));
           } else if (menuIf.equals(mMiddleClickIf)) {
-            text += " - " + mLocalizer.msg("middleClick", ",middle-click");
+            label.setFont(label.getFont().deriveFont(Font.BOLD));
+            text.append(" - ").append(mLocalizer.msg("middleClick", "middle-click"));
           }
         }
 
-        label.setText(text);
+        label.setText(text.toString());
         label.setIcon(icon);
         return label;
       }
@@ -127,7 +145,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   public ContextmenuSettingsTab() {
     mList = new SortableItemList();
-    mList.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
     mList.getList().addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
@@ -154,8 +171,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     mList.setCellRenderer(new ContextMenuCellRenderer(true));
     fillListbox();
     int num = mList.getList().getModel().getSize();
-    if (num > 20)
-      num = 20;
+    if (num > 15)
+      num = 15;
     mList.getList().setVisibleRowCount(num);
 
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
@@ -184,7 +201,16 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     contentPanel.add(mList, cc.xyw(2, 3, 4));
 
     contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double Click")), cc.xy(2, 5));
-    final JComboBox box = new JComboBox(mList.getItems());
+    
+    ArrayList items = new ArrayList();
+    Object[] objects = mList.getItems();
+    for (int i=0;i<objects.length;i++) {
+      if (!(objects[i] instanceof SeparatorMenuItem)) {
+        items.add(objects[i]);
+      }
+    }
+    
+    final JComboBox box = new JComboBox(items.toArray());
     box.setSelectedItem(mDefaultIf);
     box.setMaximumRowCount(15);
     box.addActionListener(new ActionListener() {
@@ -198,7 +224,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     contentPanel.add(box, cc.xy(4, 5));
 
     contentPanel.add(new JLabel(mLocalizer.msg("middleClickLabel", "Middle Click")), cc.xy(2, 7));
-    final JComboBox box2 = new JComboBox(mList.getItems());
+    final JComboBox box2 = new JComboBox(items.toArray());
     box2.setSelectedItem(mMiddleClickIf);
     box2.setMaximumRowCount(15);
     box2.addActionListener(new ActionListener() {
@@ -208,6 +234,54 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       }
     });
 
+    ImageIcon icon = new ImageIcon();
+    
+    JButton addSeparator = new LineButton();
+    addSeparator.setToolTipText(mLocalizer.msg("separator", "Add Separator"));
+    addSeparator.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        int pos = mList.getList().getSelectedIndex();
+        if (pos < 0)
+          pos = mList.getList().getModel().getSize();
+        mList.addElement(pos, new SeparatorMenuItem());
+        mList.getList().setSelectedIndex(pos);
+        mList.getList().ensureIndexIsVisible(pos);
+      }
+    });
+    
+    mList.addButton(addSeparator);
+    
+    final JButton garbage = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 22));
+    garbage.setToolTipText(mLocalizer.msg("garbage", "Remove Separator"));
+    garbage.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        Object[] items = mList.getList().getSelectedValues();
+        for (int i=0;i<items.length;i++) {
+          mList.removeElement(items[i]);
+        }
+      };
+    });
+    
+    mList.getList().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+        Object[] items = mList.getList().getSelectedValues();
+        if (items.length == 0) {
+          garbage.setEnabled(false);
+          return;
+        }
+        for (int i=0;i<items.length;i++) {
+          if (!(items[i] instanceof SeparatorMenuItem)) {
+            garbage.setEnabled(false);
+            return;
+          }
+        }
+        
+        garbage.setEnabled(true);
+      };
+    });
+
+    garbage.setEnabled(false);
+    mList.addButton(garbage);
     
     box2.setRenderer(new ContextMenuCellRenderer(false));
     contentPanel.add(box2, cc.xy(4, 7));
@@ -224,10 +298,15 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs();
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
     for (int i = 0; i < menuIfList.length; i++) {
-      ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
-      if (actionMenu != null) {
+      if (menuIfList[i] instanceof SeparatorMenuItem) {
         mList.addElement(menuIfList[i]);
+      } else {
+        ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
+        if (actionMenu != null) {
+          mList.addElement(menuIfList[i]);
+        }
       }
+        
     }
   }
 
