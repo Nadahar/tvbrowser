@@ -99,13 +99,11 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
     String msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
     mUpBt.setToolTipText(msg);
-    mUpBt.setMargin(UiUtilities.ZERO_INSETS);
     mUpBt.addActionListener(this);
 
     mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
     msg = mLocalizer.msg("tooltip.down", "Move selected rows down");
     mDownBt.setToolTipText(msg);
-    mDownBt.setMargin(UiUtilities.ZERO_INSETS);
     mDownBt.addActionListener(this);
     
     mList = list;

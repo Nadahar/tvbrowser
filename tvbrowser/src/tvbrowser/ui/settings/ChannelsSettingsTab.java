@@ -186,7 +186,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     // Buttons in the Middle
     JButton rightBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-next", 24));
-    rightBt.setMargin(UiUtilities.ZERO_INSETS);
 
     rightBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -195,7 +194,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     });
 
     JButton leftBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-previous", 24));
-    leftBt.setMargin(UiUtilities.ZERO_INSETS);
 
     leftBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
