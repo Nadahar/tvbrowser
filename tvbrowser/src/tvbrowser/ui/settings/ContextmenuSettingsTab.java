@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -184,6 +183,53 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         fillListbox();
       }
     });
+    
+    JButton addSeparator = new LineButton();
+    addSeparator.setToolTipText(mLocalizer.msg("separator", "Add Separator"));
+    addSeparator.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        int pos = mList.getList().getSelectedIndex();
+        if (pos < 0)
+          pos = mList.getList().getModel().getSize();
+        mList.addElement(pos, new SeparatorMenuItem());
+        mList.getList().setSelectedIndex(pos);
+        mList.getList().ensureIndexIsVisible(pos);
+      }
+    });
+    
+    mList.addButton(addSeparator);
+    
+    final JButton garbage = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 22));
+    garbage.setToolTipText(mLocalizer.msg("garbage", "Remove Separator"));
+    garbage.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        Object[] items = mList.getList().getSelectedValues();
+        for (int i=0;i<items.length;i++) {
+          mList.removeElement(items[i]);
+        }
+      };
+    });
+    
+    mList.getList().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+        Object[] items = mList.getList().getSelectedValues();
+        if (items.length == 0) {
+          garbage.setEnabled(false);
+          return;
+        }
+        for (int i=0;i<items.length;i++) {
+          if (!(items[i] instanceof SeparatorMenuItem)) {
+            garbage.setEnabled(false);
+            return;
+          }
+        }
+        
+        garbage.setEnabled(true);
+      };
+    });
+
+    garbage.setEnabled(false);
+    mList.addButton(garbage);    
   }
 
   public JPanel createSettingsPanel() {
@@ -233,55 +279,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         mList.getList().updateUI();
       }
     });
-
-    ImageIcon icon = new ImageIcon();
-    
-    JButton addSeparator = new LineButton();
-    addSeparator.setToolTipText(mLocalizer.msg("separator", "Add Separator"));
-    addSeparator.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        int pos = mList.getList().getSelectedIndex();
-        if (pos < 0)
-          pos = mList.getList().getModel().getSize();
-        mList.addElement(pos, new SeparatorMenuItem());
-        mList.getList().setSelectedIndex(pos);
-        mList.getList().ensureIndexIsVisible(pos);
-      }
-    });
-    
-    mList.addButton(addSeparator);
-    
-    final JButton garbage = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 22));
-    garbage.setToolTipText(mLocalizer.msg("garbage", "Remove Separator"));
-    garbage.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        Object[] items = mList.getList().getSelectedValues();
-        for (int i=0;i<items.length;i++) {
-          mList.removeElement(items[i]);
-        }
-      };
-    });
-    
-    mList.getList().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-        Object[] items = mList.getList().getSelectedValues();
-        if (items.length == 0) {
-          garbage.setEnabled(false);
-          return;
-        }
-        for (int i=0;i<items.length;i++) {
-          if (!(items[i] instanceof SeparatorMenuItem)) {
-            garbage.setEnabled(false);
-            return;
-          }
-        }
-        
-        garbage.setEnabled(true);
-      };
-    });
-
-    garbage.setEnabled(false);
-    mList.addButton(garbage);
     
     box2.setRenderer(new ContextMenuCellRenderer(false));
     contentPanel.add(box2, cc.xy(4, 7));
