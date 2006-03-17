@@ -28,6 +28,7 @@ package tvbrowser;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,6 +105,8 @@ public class TVBrowser {
   private static RandomAccessFile mLockFile;
 
   private static FileLock mLock;
+  
+  private static WindowAdapter mMainWindowAdapter;
 
 
 
@@ -438,12 +441,7 @@ public class TVBrowser {
         mTray.createMenus();
     } else {
       mLog.info("platform independent mode is ON");
-
-      mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-        public void windowClosing(java.awt.event.WindowEvent e) {
-          mainFrame.quit();
-        }
-      });
+      addTrayWindowListener();
     }
 
     // Set the right size
@@ -530,8 +528,42 @@ public class TVBrowser {
     }
   }
 
+  private static void addTrayWindowListener() {
+    if(mMainWindowAdapter == null) {
+      mMainWindowAdapter = new java.awt.event.WindowAdapter() {
+        public void windowClosing(java.awt.event.WindowEvent e) {
+          mainFrame.quit();
+        }
+      };
+    }
+    mainFrame.addWindowListener(mMainWindowAdapter);
+  }
+  
   public static boolean isUsingSystemTray() {
     return mTray.isTrayUsed();
+  }
+  
+  /**
+   * Loads the tray icon.
+   */
+  public static void loadTray() {
+    if(!mTray.isTrayUsed())
+      mTray.initSystemTray();
+    if(mTray.isTrayUsed()) {
+      mTray.createMenus();
+      if(mMainWindowAdapter != null)
+        mainFrame.removeWindowListener(mMainWindowAdapter);
+    }
+  }
+  
+  /**
+   * Remove the tray icon.
+   */
+  public static void removeTray() {
+    if(mTray.isTrayUsed()) {
+      mTray.setVisible(false);
+      addTrayWindowListener();
+    }
   }
 
   /**
