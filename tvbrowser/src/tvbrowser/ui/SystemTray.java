@@ -85,6 +85,7 @@ public class SystemTray {
 
   /** State of the Window (max/normal) */
   private static int mState;
+  private boolean mMenuCreated;
 
   private SystemTrayIf mSystemTray;
 
@@ -108,21 +109,24 @@ public class SystemTray {
 
     mUseSystemTray = false;
 
-    mSystemTray = SystemTrayFactory.createSystemTray();
+    if (Settings.propTrayIsEnabled.getBoolean()) {
+      mSystemTray = SystemTrayFactory.createSystemTray();
 
-    if (mSystemTray != null) {
+      if (mSystemTray != null) {
 
-      if (mSystemTray instanceof WinSystemTray) {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
-            "imgs/systray.ico", TVBrowser.MAINWINDOW_TITLE);
-        mLog.info("using windows system tray");
+        if (mSystemTray instanceof WinSystemTray) {
+          mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
+              "imgs/systray.ico", TVBrowser.MAINWINDOW_TITLE);
+          mLog.info("using windows system tray");
+        } else {
+          mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
+              "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
+          mLog.info("using default system tray");
+        }
       } else {
-        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
-            "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
-        mLog.info("using default system tray");
+        mUseSystemTray = false;
+        Settings.propTrayIsEnabled.setBoolean(false);
       }
-    } else {
-      mUseSystemTray = false;
     }
     return mUseSystemTray;
   }
@@ -135,121 +139,136 @@ public class SystemTray {
     if (!mUseSystemTray) {
       return;
     }
+    if (!mMenuCreated) {
+      mLog.info("platform independent mode is OFF");
 
-    mLog.info("platform independent mode is OFF");
+      mOpenCloseMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
+      Font f = mOpenCloseMenuItem.getFont();
+      mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
+      mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
 
-    mOpenCloseMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
-    Font f = mOpenCloseMenuItem.getFont();
-    mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
-    mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
+      mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));
 
-    mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));
+      mConfigure.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          MainFrame.getInstance()
+              .showSettingsDialog(SettingsDialog.TAB_ID_TRAY);
+        }
+      });
 
-    mConfigure.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_TRAY);
-      }
-    });
-
-    mOpenCloseMenuItem.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent e) {
-        toggleShowHide();
-      }
-    });
-
-    mQuitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-
-      public void actionPerformed(java.awt.event.ActionEvent e) {
-        mSystemTray.setVisible(false);
-        MainFrame.getInstance().quit();
-      }
-    });
-
-    mSystemTray.addLeftClickAction(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (mClickTimer == null || !mClickTimer.isRunning()) {
+      mOpenCloseMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent e) {
           toggleShowHide();
         }
-      }
-    });
+      });
 
-    MainFrame.getInstance().addComponentListener(new ComponentListener() {
+      mQuitMenuItem.addActionListener(new java.awt.event.ActionListener() {
 
-      public void componentResized(ComponentEvent e) {
-        int state = MainFrame.getInstance().getExtendedState();
-        if ((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
-          mState = JFrame.MAXIMIZED_BOTH;
-        } else {
-          mState = JFrame.NORMAL;
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          mSystemTray.setVisible(false);
+          MainFrame.getInstance().quit();
         }
-      }
+      });
 
-      public void componentHidden(ComponentEvent e) {}
-
-      public void componentMoved(ComponentEvent e) {}
-
-      public void componentShown(ComponentEvent e) {}
-    });
-
-    MainFrame.getInstance().addWindowListener(
-        new java.awt.event.WindowAdapter() {
-
-          public void windowOpened(WindowEvent e) {
-            toggleOpenCloseMenuItem(false);
+      mSystemTray.addLeftClickAction(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (mClickTimer == null || !mClickTimer.isRunning()) {
+            toggleShowHide();
           }
+        }
+      });
 
-          public void windowClosing(java.awt.event.WindowEvent evt) {
-            if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
-              // Only minimize the main window, don't quit
-              if (Settings.propMinimizeToTray.getBoolean())
+      MainFrame.getInstance().addComponentListener(new ComponentListener() {
+
+        public void componentResized(ComponentEvent e) {
+          int state = MainFrame.getInstance().getExtendedState();
+          if ((state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
+            mState = JFrame.MAXIMIZED_BOTH;
+          } else {
+            mState = JFrame.NORMAL;
+          }
+        }
+
+        public void componentHidden(ComponentEvent e) {}
+
+        public void componentMoved(ComponentEvent e) {}
+
+        public void componentShown(ComponentEvent e) {}
+      });
+
+      MainFrame.getInstance().addWindowListener(
+          new java.awt.event.WindowAdapter() {
+
+            public void windowOpened(WindowEvent e) {
+              toggleOpenCloseMenuItem(false);
+            }
+
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+              if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
+                // Only minimize the main window, don't quit
+                if (Settings.propMinimizeToTray.getBoolean())
+                  MainFrame.getInstance().setVisible(false);
+                else
+                  MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
+                toggleOpenCloseMenuItem(true);
+              } else {
+                mSystemTray.setVisible(false);
+                MainFrame.getInstance().quit();
+              }
+            }
+
+            public void windowDeiconified(WindowEvent e) {
+              toggleOpenCloseMenuItem(false);
+            }
+
+            public void windowIconified(java.awt.event.WindowEvent evt) {
+              if (Settings.propMinimizeToTray.getBoolean()) {
                 MainFrame.getInstance().setVisible(false);
-              else
-                MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
+              }
               toggleOpenCloseMenuItem(true);
-            } else {
-              mSystemTray.setVisible(false);
-              MainFrame.getInstance().quit();
             }
-          }
+          });
 
-          public void windowDeiconified(WindowEvent e) {
-            toggleOpenCloseMenuItem(false);
-          }
+      toggleOpenCloseMenuItem(false);
 
-          public void windowIconified(java.awt.event.WindowEvent evt) {
-            if (Settings.propMinimizeToTray.getBoolean()) {
-              MainFrame.getInstance().setVisible(false);
-            }
-            toggleOpenCloseMenuItem(true);
-          }
-        });
+      mTrayMenu = new JPopupMenu();
 
-    toggleOpenCloseMenuItem(false);
+      mSystemTray.addRightClickAction(new ActionListener() {
 
-    mTrayMenu = new JPopupMenu();
+        public void actionPerformed(ActionEvent e) {
+          buildMenu();
+        }
 
-    mSystemTray.addRightClickAction(new ActionListener() {
+      });
+      mSystemTray.setTrayPopUp(mTrayMenu);
 
-      public void actionPerformed(ActionEvent e) {
-        buildMenu();
+      mSystemTray.setVisible(true);
+
+      if (!Settings.propShowProgramsInTrayWasConfigured.getBoolean()
+          && Settings.propNowRunningProgramsInTrayChannels
+              .getChannelArray(false).length == 0) {
+        Channel[] channelArr = Settings.propSubscribedChannels
+            .getChannelArray(false);
+        Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
+            : channelArr.length];
+        for (int i = 0; i < tempArr.length; i++)
+          tempArr[i] = channelArr[i];
+
+        Settings.propNowRunningProgramsInTrayChannels.setChannelArray(tempArr);
       }
-
-    });
-    mSystemTray.setTrayPopUp(mTrayMenu);
-
-    mSystemTray.setVisible(true);
-
-    if (!Settings.propShowProgramsInTrayWasConfigured.getBoolean()
-        && Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false).length == 0) {
-      Channel[] channelArr = Settings.propSubscribedChannels
-          .getChannelArray(false);
-      Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
-          : channelArr.length];
-      for (int i = 0; i < tempArr.length; i++)
-        tempArr[i] = channelArr[i];
-
-      Settings.propNowRunningProgramsInTrayChannels.setChannelArray(tempArr);
+      mMenuCreated = true;
     }
+    else
+      mSystemTray.setVisible(true);
+  }
+  
+  /**
+   * Sets the visibility of the tray.
+   * 
+   * @param value True if visible.
+   */
+  public void setVisible(boolean value) {
+    mSystemTray.setVisible(value);
   }
 
   private void buildMenu() {

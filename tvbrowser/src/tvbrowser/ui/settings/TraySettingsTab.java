@@ -46,6 +46,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.util.ColorButton;
@@ -74,7 +75,7 @@ public class TraySettingsTab implements SettingsTab {
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB, mMinimizeToTrayChb,
       mShowNowRunningChb, mShowImportantChb, mShowNowRunningTimeChb,
       mShowImportantTimeChb, mShowImportantDateChb, mShowChannelNameChb, mShowChannelIconChb,
-      mShowChannelTooltipChb, mShowTimeProgramsChb, mShowTimeProgramsTimeChb;
+      mShowChannelTooltipChb, mShowTimeProgramsChb, mShowTimeProgramsTimeChb, mTrayIsEnabled;
 
   private JRadioButton mShowNowRunningNotSubChb, mShowNowRunningSubChb,
       mShowImportantNotSubChb, mShowImportantSubChb;
@@ -85,26 +86,33 @@ public class TraySettingsTab implements SettingsTab {
   private JLabel mChannelLabel, mSizeLabel;
   private OrderChooser mChannelOCh;
   private ColorLabel mTimeProgramLightColorLb,mTimeProgramDarkColorLb;
+  private boolean mOldTrayState;
 
   /**
    * Create the Settings-Dialog
    */
   public JPanel createSettingsPanel() {
+    
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu, 10dlu, pref:grow, 25dlu, pref, 5dlu",
 
-        "pref, 5dlu, pref, pref, 10dlu, pref, 5dlu, pref, pref, pref, "
-            + "pref, pref, pref, 10dlu, pref, pref, 5dlu, pref, 10dlu, pref"));
+        "pref,10dlu," +
+        "pref, 5dlu, pref, pref, 10dlu, pref, 5dlu, pref, pref, pref, " +
+        "pref, pref, pref, 10dlu, pref, pref, 5dlu, pref, 10dlu, pref"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
 
-    String msg = mLocalizer.msg("minimizeToTray", "Minimize to Tray");
+    String msg = mLocalizer.msg("trayIsEnabled", "Tray activated");
+    mOldTrayState = Settings.propTrayIsEnabled.getBoolean();
+    mTrayIsEnabled = new JCheckBox(msg, mOldTrayState);
+
+    msg = mLocalizer.msg("minimizeToTray", "Minimize to Tray");
     boolean checked = Settings.propMinimizeToTray.getBoolean();
-    mMinimizeToTrayChb = new JCheckBox(msg, checked);
+    mMinimizeToTrayChb = new JCheckBox(msg, checked && mOldTrayState);
 
     msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing",
         "When closing the main window only minimize TV-Browser, don't quit.");
-    checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean();
+    checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean() && mOldTrayState;
     mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked);
 
     checked = Settings.propProgramsInTrayContainsChannel.getBoolean();
@@ -136,7 +144,6 @@ public class TraySettingsTab implements SettingsTab {
 
     b2.add(mImportantSize, cc.xy(1, 1));
     b2.add(mSizeLabel, cc.xy(3, 1));
-    mShowTimeProgramsChb.add(b2.getPanel());
 
     checked = Settings.propProgramsInTrayShowTooltip.getBoolean();
     mShowChannelTooltipChb = new JCheckBox(mLocalizer.msg(
@@ -202,28 +209,30 @@ public class TraySettingsTab implements SettingsTab {
         Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false),
         Settings.propSubscribedChannels.getChannelArray(false), true);
 
-    builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,
-        1, 6));
-    builder.add(mMinimizeToTrayChb, cc.xyw(2, 3, 4));
-    builder.add(mOnlyMinimizeWhenWindowClosingChB, cc.xyw(2, 4, 4));
-    builder.addSeparator(mLocalizer.msg("programShowing", "Program showing"),
-        cc.xyw(1, 6, 6));
+    builder.add(mTrayIsEnabled, cc.xyw(1,1,6));
+    
+    final JPanel b = (JPanel)builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,
+        3, 6));
+    builder.add(mMinimizeToTrayChb, cc.xyw(2, 5, 4));
+    builder.add(mOnlyMinimizeWhenWindowClosingChB, cc.xyw(2, 6, 4));
+    final JPanel pS = (JPanel)builder.addSeparator(mLocalizer.msg("programShowing", "Program showing"),
+        cc.xyw(1, 8, 6));
 
-    builder.add(mShowChannelNameChb, cc.xyw(2, 8, 4));
-    builder.add(mShowChannelIconChb, cc.xyw(2, 9, 4));
+    builder.add(mShowChannelNameChb, cc.xyw(2, 10, 4));
+    builder.add(mShowChannelIconChb, cc.xyw(2, 11, 4));
 
-    builder.add(mShowNowRunningChb, cc.xyw(2, 10, 4));
-    builder.add(mShowTimeProgramsChb, cc.xyw(2, 11, 5));
-    builder.add(mShowImportantChb, cc.xyw(2, 12, 2));
-    builder.add(b2.getPanel(), cc.xy(5, 12));
+    builder.add(mShowNowRunningChb, cc.xyw(2, 12, 4));
+    builder.add(mShowTimeProgramsChb, cc.xyw(2, 13, 5));
+    builder.add(mShowImportantChb, cc.xyw(2, 14, 2));
+    builder.add(b2.getPanel(), cc.xy(5, 14));
 
     final JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg(
         "programShowing.runningChannels",
-        "Which channels should be used for these displays?"), cc.xyw(2, 15, 4));
-    builder.add(mChannelOCh, cc.xyw(2, 16, 4));
+        "Which channels should be used for these displays?"), cc.xyw(2, 17, 4));
+    builder.add(mChannelOCh, cc.xyw(2, 18, 4));
 
     mChannelLabel = (JLabel) c.getComponent(0);
-
+    
     mAdditional = new JButton(mLocalizer.msg("programShowing.extendedSettings",
         "Extended settings"));
     mAdditional.addActionListener(new ActionListener() {
@@ -232,14 +241,34 @@ public class TraySettingsTab implements SettingsTab {
       }
     });
 
-    builder.add(new JSeparator(), cc.xyw(1, 18, 6));
-    builder.add(mAdditional, cc.xy(5, 20));
+    builder.add(new JSeparator(), cc.xyw(1, 20, 6));
+    builder.add(mAdditional, cc.xy(5, 22));
 
+    mTrayIsEnabled.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        b.getComponent(0).setEnabled(mTrayIsEnabled.isSelected());
+        pS.getComponent(0).setEnabled(mTrayIsEnabled.isSelected());
+        c.getComponent(0).setEnabled(mTrayIsEnabled.isSelected());
+        mChannelLabel.setEnabled(mTrayIsEnabled.isSelected());
+        mImportantSize.setEnabled(mTrayIsEnabled.isSelected());
+        mSizeLabel.setEnabled(mTrayIsEnabled.isSelected());
+        mShowTimeProgramsChb.setEnabled(mTrayIsEnabled.isSelected());
+        mShowImportantChb.setEnabled(mTrayIsEnabled.isSelected());
+        mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
+        mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
+        mShowNowRunningChb.setEnabled(mTrayIsEnabled.isSelected());
+        mChannelOCh.setEnabled(mTrayIsEnabled.isSelected());
+        mAdditional.setEnabled(mTrayIsEnabled.isSelected());
+        mShowChannelNameChb.setEnabled(mTrayIsEnabled.isSelected());
+        mShowChannelIconChb.setEnabled(mTrayIsEnabled.isSelected());
+      }
+    });
+    
     mShowImportantChb.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
         selectEnabled();
-        mImportantSize.setEnabled(mShowImportantChb.isSelected());
-        mSizeLabel.setEnabled(mShowImportantChb.isSelected());
+        mImportantSize.setEnabled(mShowImportantChb.isSelected() && mTrayIsEnabled.isSelected());
+        mSizeLabel.setEnabled(mShowImportantChb.isSelected() && mTrayIsEnabled.isSelected());
       }
     });
 
@@ -261,7 +290,9 @@ public class TraySettingsTab implements SettingsTab {
         mShowImportantChb));
     mShowNowRunningChb.getChangeListeners()[0].stateChanged(new ChangeEvent(
         mShowNowRunningChb));
-
+    mTrayIsEnabled.getChangeListeners()[0].stateChanged(new ChangeEvent(
+        mTrayIsEnabled));
+    
     return builder.getPanel();
   }
 
@@ -420,13 +451,13 @@ public class TraySettingsTab implements SettingsTab {
     boolean enabled = mShowTimeProgramsChb.isSelected()
         || mShowNowRunningChb.isSelected() || mShowImportantChb.isSelected();
 
-    mChannelLabel.setEnabled(mShowTimeProgramsChb.isSelected()
-        || mShowNowRunningChb.isSelected());
-    mShowChannelNameChb.setEnabled(enabled);
-    mShowChannelIconChb.setEnabled(enabled);
-    mChannelOCh.setEnabled(mShowTimeProgramsChb.isSelected()
-        || mShowNowRunningChb.isSelected());
-    mAdditional.setEnabled(enabled);
+    mChannelLabel.setEnabled((mShowTimeProgramsChb.isSelected()
+        || mShowNowRunningChb.isSelected()) && mTrayIsEnabled.isSelected());
+    mShowChannelNameChb.setEnabled(enabled && mTrayIsEnabled.isSelected());
+    mShowChannelIconChb.setEnabled(enabled && mTrayIsEnabled.isSelected());
+    mChannelOCh.setEnabled((mShowTimeProgramsChb.isSelected()
+        || mShowNowRunningChb.isSelected()) && mTrayIsEnabled.isSelected());
+    mAdditional.setEnabled(enabled && mTrayIsEnabled.isSelected());
   }
 
   /**
@@ -434,15 +465,22 @@ public class TraySettingsTab implements SettingsTab {
    */
   public void saveSettings() {
     if (mOnlyMinimizeWhenWindowClosingChB != null) {
-      boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected();
+      boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected() && mTrayIsEnabled.isSelected();
       Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
     }
-
     if (mMinimizeToTrayChb != null) {
-      boolean checked = mMinimizeToTrayChb.isSelected();
+      boolean checked = mMinimizeToTrayChb.isSelected() && mTrayIsEnabled.isSelected();
       Settings.propMinimizeToTray.setBoolean(checked);
     }
 
+    if (mTrayIsEnabled != null) {
+      Settings.propTrayIsEnabled.setBoolean(mTrayIsEnabled.isSelected());
+      if(mTrayIsEnabled.isSelected() && !mOldTrayState)
+        TVBrowser.loadTray();
+      else if(!mTrayIsEnabled.isSelected() && mOldTrayState)
+        TVBrowser.removeTray();
+    }
+    
     if (mShowNowRunningChb != null)
       Settings.propShowNowRunningProgramsInTray.setBoolean(mShowNowRunningChb
           .isSelected());

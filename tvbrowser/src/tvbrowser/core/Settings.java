@@ -406,6 +406,9 @@ public class Settings {
   public static final BooleanProperty propOnlyMinimizeWhenWindowClosing
     = new BooleanProperty(mProp, "onlyMinimizeWhenWindowClosing", false);
 
+  public static final BooleanProperty propTrayIsEnabled
+  = new BooleanProperty(mProp, "trayIsEnabled", true);  
+  
   public static final BooleanProperty propMinimizeToTray
   = new BooleanProperty(mProp, "MinimizeToTray", false);
 
