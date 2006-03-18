@@ -1,10 +1,12 @@
 package tvbrowser.core.contextmenu;
 
+import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
 
 public class ConfigMenuItem implements ContextMenuIf {
+  public static final Localizer mLocalizer = Localizer.getLocalizerFor(ConfigMenuItem.class);
 
   public static String CONFIG = "######CONFIG######";
   
@@ -29,7 +31,7 @@ public class ConfigMenuItem implements ContextMenuIf {
   }
 
   public String toString() {
-    return "CONFIG";
+    return mLocalizer.msg("configureMenu", "Configure this Menu");
   }
   
 }
