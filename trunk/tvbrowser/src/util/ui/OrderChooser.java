@@ -326,12 +326,6 @@ public class OrderChooser extends JPanel implements ListDropAction{
 
 
   class SelectableItemRenderer implements ListCellRenderer {    
-    /*public SelectableItemRenderer() {
-      super();
-      setLayout(new BorderLayout(0,5));
-      mSelectionWidth = getPreferredSize().height;
-    }*/
-
     public Component getListCellRendererComponent(JList list, Object value,
     int index, boolean isSelected, boolean cellHasFocus) {
       JPanel p = new JPanel(new BorderLayout(2,0));
@@ -340,7 +334,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
       SelectableItem selectableItem = (SelectableItem) value;
 
       JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
-      mSelectionWidth = cb.getPreferredSize().height;
+      mSelectionWidth = cb.getPreferredSize().width;
       
       cb.setOpaque(false);
       
