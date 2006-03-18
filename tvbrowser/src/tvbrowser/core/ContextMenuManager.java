@@ -315,8 +315,11 @@ public class ContextMenuManager {
    */
   public List getDisabledContextMenuIfs() {
     String[] disabled = Settings.propContextMenuDisabledItems.getStringArray();
-
+    
     ArrayList list = new ArrayList();
+    if (disabled == null) {
+      return list;
+    }
     
     for (int i=0;i<disabled.length;i++) {
       ContextMenuIf item = getContextMenuIfForId(disabled[i]);
