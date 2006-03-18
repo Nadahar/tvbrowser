@@ -30,6 +30,8 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -121,7 +123,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);    
     new DragAndDropMouseListener(mList,mList,this,dnDHandler);
     
-    // MouseListener hinzufï¿½gen, der das Selektieren/Deselektieren ï¿½bernimmt
+    // MouseListener hinzufügen, der das Selektieren/Deselektieren übernimmt
     mList.addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent evt) {
         if (evt.getX() < mSelectionWidth && mIsEnabled) {
@@ -131,6 +133,20 @@ public class OrderChooser extends JPanel implements ListDropAction{
             item.setSelected(! item.isSelected());
             mList.repaint();
           }
+        }
+      }
+    });
+    mList.addKeyListener(new KeyAdapter(){
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+          Object[] objs = mList.getSelectedValues();
+          for (int i=0;i<objs.length;i++){
+            if (objs[i] instanceof SelectableItem) {
+              SelectableItem item = (SelectableItem) objs[i];
+              item.setSelected(!item.isSelected());
+            }
+          }
+          mList.repaint();
         }
       }
     });
