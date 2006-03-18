@@ -252,10 +252,6 @@ public class ContextMenuManager {
     }
     
     if (cleanSeparator) {
-      for (int i=0;i<ifList.size();i++)
-        System.out.println("CLASSs "+ifList.get(i).getClass().getName());
-      
-      System.out.println("CLASS"+ifList.get(ifList.size()-1).getClass().getName());
       // Wenn letztes Element Separator ist, diesen entfernen
       while (ifList.get(ifList.size()-1) instanceof SeparatorMenuItem) {
         ifList.remove(ifList.size()-1);
