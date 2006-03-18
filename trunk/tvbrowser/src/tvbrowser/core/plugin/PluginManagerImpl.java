@@ -36,9 +36,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.icontheme.IconLoader;

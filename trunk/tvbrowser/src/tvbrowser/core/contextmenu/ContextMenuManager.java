@@ -25,7 +25,7 @@
  *
  */
 
-package tvbrowser.core;
+package tvbrowser.core.contextmenu;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -33,7 +33,9 @@ import java.util.List;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -132,6 +134,8 @@ public class ContextMenuManager {
         return FavoritesPlugin.getInstance();
       else if(id.compareTo(ReminderPlugin.getInstance().getId()) == 0)
         return ReminderPlugin.getInstance();      
+      else if(id.compareTo(ConfigMenuItem.CONFIG) == 0) 
+        return ConfigMenuItem.getInstance();
     } else {
       return ProgramInfo.getInstance();
     }
@@ -218,6 +222,11 @@ public class ContextMenuManager {
         if ((!cleanSeparator) || (cleanSeparator && !lastWasSeparator))
           ifList.add(new SeparatorMenuItem());
         lastWasSeparator = true;
+      } else if (order[i].compareTo(ConfigMenuItem.CONFIG) == 0) {
+        if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
+          ifList.add(ConfigMenuItem.getInstance());
+          lastWasSeparator = false;
+        }
       } else {
         ContextMenuIf item = getContextMenuIfForId(order[i]);
         if ((includingDisabledItems) || ((item != null) && (!disabledList.contains(item)))) {
@@ -234,6 +243,14 @@ public class ContextMenuManager {
             ifList.add(pluginArr[i]);
           }
       }    
+    
+    if (!ifList.contains(ConfigMenuItem.getInstance())) {
+      if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
+        if (!lastWasSeparator)
+          ifList.add(new SeparatorMenuItem());
+        ifList.add(ConfigMenuItem.getInstance());
+      }
+    }
     
     ContextMenuIf[] menuIf = new ContextMenuIf[ifList.size()];
     ifList.toArray(menuIf);
@@ -268,7 +285,17 @@ public class ContextMenuManager {
       }
 
       if (menuIf instanceof SeparatorMenuItem) {
-        rootMenu.addSeparator();
+        if (rootMenu.getMenuComponentCount() > 0) // Only add Separator if Menu not Empty
+          rootMenu.addSeparator();
+      } else if (menuIf instanceof ConfigMenuItem) {
+        JMenuItem item = new JMenuItem(mLocalizer.msg("configureMenu", "Configure this Menu"));
+        item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+            MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_CONTEXTMENU);
+          };
+        });
+        rootMenu.add(item);
       } else if (!equalsPlugin) {
         ActionMenu actionMenu = menuIf.getContextMenuActions(program);
         if (actionMenu != null) {
@@ -294,16 +321,9 @@ public class ContextMenuManager {
       }
     }
     
-    if (Settings.propContextMenuShowConfigureItem.getBoolean()) {
-      JMenuItem item = new JMenuItem(mLocalizer.msg("configureMenu", "Configure this Menu"));
-      item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-          MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_CONTEXTMENU);
-        };
-      });
-      rootMenu.addSeparator();
-      rootMenu.add(item);
+    // Remove last Item if it's a Separator
+    while (rootMenu.getMenuComponent(rootMenu.getMenuComponentCount()-1) instanceof JPopupMenu.Separator) {
+      rootMenu.remove(rootMenu.getMenuComponentCount()-1);
     }
     
     return rootMenu;

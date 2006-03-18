@@ -35,12 +35,12 @@ import java.util.logging.Logger;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 
-import tvbrowser.core.ContextMenuManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataBaseListener;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvdataservice.MarkedProgramsList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
