@@ -57,7 +57,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -94,6 +93,7 @@ public class SettingsDialog implements WindowClosingIf {
   public static final String TAB_ID_FAVORITE = "#favorite";
   public static final String TAB_ID_CHANNELS = "#channels";
   public static final String TAB_ID_WEBBROWSER = "#webbrowser";
+  public static final String TAB_ID_CONTEXTMENU = "#contextmenu";
 
   private JDialog mDialog;
 
@@ -294,7 +294,7 @@ public class SettingsDialog implements WindowClosingIf {
     
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
-    generalSettings.add(new SettingNode(new ContextmenuSettingsTab()));
+    generalSettings.add(new SettingNode(new ContextmenuSettingsTab(), TAB_ID_CONTEXTMENU));
     generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
     generalSettings.add(new SettingNode(new StartupSettingsTab(), TAB_ADDITIONAL));
 

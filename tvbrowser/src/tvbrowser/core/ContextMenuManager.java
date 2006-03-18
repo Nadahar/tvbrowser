@@ -27,16 +27,22 @@
 
 package tvbrowser.core;
 
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.SettingsDialog;
+import util.ui.Localizer;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
@@ -51,6 +57,8 @@ import devplugin.Program;
 public class ContextMenuManager {
 
   private static ContextMenuManager mInstance;
+  
+  public static final Localizer mLocalizer = Localizer.getLocalizerFor(ContextMenuManager.class);
   
   /**
    * The context menu interface that should be executed by default when 
@@ -177,17 +185,24 @@ public class ContextMenuManager {
   }
   
   /**
+   * Returns all available ContextMenuItems
+   * 
+   * @param includingDisabledItems If true the List also contains all disabled Items
+   * @param cleanSeparator If true, all Separators that follow directly another Separator will be removed
    * @return The available context menu interfaces.
    */
-  public ContextMenuIf[] getAvailableContextMenuIfs() {
+  public ContextMenuIf[] getAvailableContextMenuIfs(boolean includingDisabledItems, boolean cleanSeparator) {
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     String[] order = Settings.propContextMenuOrder.getStringArray();    
+    List disabledList = getDisabledContextMenuIfs();
     
     ArrayList ifList = new ArrayList();
     
     ProgramInfo info = ProgramInfo.getInstance();
     FavoritesPlugin favorite = FavoritesPlugin.getInstance();
     ReminderPlugin reminder = ReminderPlugin.getInstance();
+    
+    boolean lastWasSeparator = false;
     
     if(order == null) {
       ifList.add(info);
@@ -200,28 +215,24 @@ public class ContextMenuManager {
     else    
     for(int i = 0; i < order.length; i++) {
       if (order[i].compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
-        ifList.add(new SeparatorMenuItem());
-      } else if (order[i].compareTo(info.getId()) == 0) {
-        ifList.add(info);
-      } else if (order[i].compareTo(favorite.getId()) == 0) {
-        ifList.add(favorite);
-      } else if (order[i].compareTo(reminder.getId()) == 0) {
-        ifList.add(reminder);
+        if ((!cleanSeparator) || (cleanSeparator && !lastWasSeparator))
+          ifList.add(new SeparatorMenuItem());
+        lastWasSeparator = true;
       } else {
-        for(int j = 0; j < pluginArr.length; j++) {
-          if(order[i].compareTo(pluginArr[j].getId()) == 0) {
-            ifList.add((ContextMenuIf)pluginArr[j]);
-            break;
-          }
+        ContextMenuIf item = getContextMenuIfForId(order[i]);
+        if ((includingDisabledItems) || ((item != null) && (!disabledList.contains(item)))) {
+          lastWasSeparator = false;
+          ifList.add(item);
         }
       }
-      
     }
     
     if(pluginArr.length + 3 > ifList.size())
       for(int i = 0; i < pluginArr.length; i++) {
         if(!ifList.contains(pluginArr[i]))
-          ifList.add(pluginArr[i]);
+          if ((includingDisabledItems) || ((pluginArr[i] != null) && (!disabledList.contains(pluginArr[i])))) {
+            ifList.add(pluginArr[i]);
+          }
       }    
     
     ContextMenuIf[] menuIf = new ContextMenuIf[ifList.size()];
@@ -243,7 +254,7 @@ public class ContextMenuManager {
     ArrayList items = new ArrayList();
     ContextMenuIf defaultIf = getInstance().getDefaultContextMenuIf();
     ContextMenuIf middleClickIf = getInstance().getMiddleClickIf();
-    ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs();
+    ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs(false, true);
 
     JMenu rootMenu = new JMenu();
     
@@ -282,6 +293,38 @@ public class ContextMenuManager {
         }
       }
     }
+    
+    if (Settings.propContextMenuShowConfigureItem.getBoolean()) {
+      JMenuItem item = new JMenuItem(mLocalizer.msg("configureMenu", "Configure this Menu"));
+      item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+          MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_CONTEXTMENU);
+        };
+      });
+      rootMenu.addSeparator();
+      rootMenu.add(item);
+    }
+    
     return rootMenu;
+  }
+
+  /**
+   * Returns a List with all disabled ContextMenuIfs
+   * @return disabled ContextMenuIfs
+   */
+  public List getDisabledContextMenuIfs() {
+    String[] disabled = Settings.propContextMenuDisabledItems.getStringArray();
+
+    ArrayList list = new ArrayList();
+    
+    for (int i=0;i<disabled.length;i++) {
+      ContextMenuIf item = getContextMenuIfForId(disabled[i]);
+      if (item != null) {
+        list.add(item);
+      }
+    }
+    
+    return list;
   }
 }

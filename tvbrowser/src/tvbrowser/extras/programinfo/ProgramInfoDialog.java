@@ -360,7 +360,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mTextSearch = new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
     
-    ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs();
+    ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs(false, true);
 
     for (int i = 0; i < p.length; i++) {
       if(p[i].getId().compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
