@@ -47,9 +47,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.ContextMenuManager;
-import tvbrowser.core.SeparatorMenuItem;
 import tvbrowser.core.Settings;
+import tvbrowser.core.contextmenu.ConfigMenuItem;
+import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -87,8 +88,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   private ArrayList mDeactivatedItems;
 
-  private JCheckBox mShowConfigure;
-  
   public JPanel createSettingsPanel() {
     createList();
     
@@ -96,7 +95,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
 
     JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
-        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     contentPanel.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
@@ -142,10 +141,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     mMiddleClickBox.setRenderer(new ContextMenuCellRenderer(false));
     contentPanel.add(mMiddleClickBox, cc.xy(4, 11));
 
-    mShowConfigure = new JCheckBox(mLocalizer.msg("showConfigureItem", "Show the Configure-Item"));
-    mShowConfigure.setSelected(Settings.propContextMenuShowConfigureItem.getBoolean());
-    contentPanel.add(mShowConfigure, cc.xyw(2, 13, 4));
-    
     fillListbox();
 
     return contentPanel;
@@ -276,6 +271,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     for (int i = 0; i < menuIfList.length; i++) {
       if (menuIfList[i] instanceof SeparatorMenuItem) {
         mList.addElement(menuIfList[i]);
+      } else if (menuIfList[i] instanceof ConfigMenuItem) {
+          mList.addElement(menuIfList[i]);
       } else {
         ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
         if (actionMenu != null) {
@@ -284,7 +281,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         }
       }
     }
-
+    
     mDeactivatedItems = new ArrayList(ContextMenuManager.getInstance().getDisabledContextMenuIfs());
     
     mDoubleClickBox.removeAllItems();
@@ -315,7 +312,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     Settings.propContextMenuOrder.setStringArray(orderIDs);
     Settings.propPluginOrder.setStringArray(pluginIDs);
-    Settings.propContextMenuShowConfigureItem.setBoolean(mShowConfigure.isSelected());
     
     PluginProxyManager.getInstance().setPluginOrder(pluginIDs);
 
@@ -386,6 +382,18 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         comp.setOpaque(label.isOpaque());
         comp.setPreferredSize(label.getPreferredSize());
         return comp;
+      } else if (value instanceof ConfigMenuItem) {
+        mItemSelected.setSelected(!mDeactivatedItems.contains(value));
+
+        mItemLabel.setFont(label.getFont());
+        mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+        mItemLabel.setText(mLocalizer.msg("configureMenu", "Configer Menu"));
+
+        mItemPanel.setForeground(label.getForeground());
+        mItemPanel.setBackground(label.getBackground());
+        mItemPanel.setOpaque(label.isOpaque());
+
+        return mItemPanel;
       } else if (value instanceof ContextMenuIf) {
         ContextMenuIf menuIf = (ContextMenuIf) value;
         Program exampleProgram = Plugin.getPluginManager().getExampleProgram();

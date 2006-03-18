@@ -548,12 +548,6 @@ public class Settings {
   = new StringArrayProperty(mProp, "contextMenuDisabledItems", null);
 
   /**
-   * Show the "Configure this Menu"-Item
-   */
-  public static final BooleanProperty propContextMenuShowConfigureItem
-  = new BooleanProperty(mProp, "contextMenuShowConfigureItem", true);
-  
-  /**
    * The ID's of the plugins that have been deactivated.
    * <p>
    * NOTE: By remembering the deactivated plugins rather the activated plugins

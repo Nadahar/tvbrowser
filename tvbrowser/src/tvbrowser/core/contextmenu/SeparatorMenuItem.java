@@ -1,4 +1,4 @@
-package tvbrowser.core;
+package tvbrowser.core.contextmenu;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
