@@ -156,30 +156,32 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     mList.getList().addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
-        mList.requestFocus();
-        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-          int inx = mList.getList().locationToIndex(e.getPoint());
-          if (inx >= 0) {
-            ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
-            if (!(item instanceof SeparatorMenuItem)) {
-              mList.getList().ensureIndexIsVisible(inx);
-              mList.getList().setSelectedIndex(inx);
-              mDefaultIf = item;
-              mDoubleClickBox.setSelectedItem(mDefaultIf);
-              mList.updateUI();
+        if (e.getX() > mSelectionWidth) {
+          mList.requestFocus();
+          if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+            int inx = mList.getList().locationToIndex(e.getPoint());
+            if (inx >= 0) {
+              ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
+              if (!(item instanceof SeparatorMenuItem)) {
+                mList.getList().ensureIndexIsVisible(inx);
+                mList.getList().setSelectedIndex(inx);
+                mDefaultIf = item;
+                mDoubleClickBox.setSelectedItem(mDefaultIf);
+                mList.updateUI();
+              }
             }
           }
-        }
-        if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-          int inx = mList.getList().locationToIndex(e.getPoint());
-          if (inx >= 0) {
-            ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
-            if (!(item instanceof SeparatorMenuItem)) {
-              mList.getList().ensureIndexIsVisible(inx);
-              mList.getList().setSelectedIndex(inx);
-              mMiddleClickIf = item;
-              mMiddleClickBox.setSelectedItem(mMiddleClickIf);
-              mList.updateUI();
+          if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+            int inx = mList.getList().locationToIndex(e.getPoint());
+            if (inx >= 0) {
+              ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
+              if (!(item instanceof SeparatorMenuItem)) {
+                mList.getList().ensureIndexIsVisible(inx);
+                mList.getList().setSelectedIndex(inx);
+                mMiddleClickIf = item;
+                mMiddleClickBox.setSelectedItem(mMiddleClickIf);
+                mList.updateUI();
+              }
             }
           }
         }
