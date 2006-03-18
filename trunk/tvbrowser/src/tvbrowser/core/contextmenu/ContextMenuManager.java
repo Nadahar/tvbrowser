@@ -44,7 +44,6 @@ import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
-import util.ui.Localizer;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
@@ -59,8 +58,6 @@ import devplugin.Program;
 public class ContextMenuManager {
 
   private static ContextMenuManager mInstance;
-  
-  public static final Localizer mLocalizer = Localizer.getLocalizerFor(ContextMenuManager.class);
   
   /**
    * The context menu interface that should be executed by default when 
@@ -219,9 +216,11 @@ public class ContextMenuManager {
     else    
     for(int i = 0; i < order.length; i++) {
       if (order[i].compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
-        if ((!cleanSeparator) || (cleanSeparator && !lastWasSeparator))
+        // Add Separator only when when one Entry exists
+        if (!cleanSeparator || (cleanSeparator && (ifList.size() > 0) && !lastWasSeparator)) {
           ifList.add(new SeparatorMenuItem());
-        lastWasSeparator = true;
+          lastWasSeparator = true;
+        }
       } else if (order[i].compareTo(ConfigMenuItem.CONFIG) == 0) {
         if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
           ifList.add(ConfigMenuItem.getInstance());
@@ -249,6 +248,17 @@ public class ContextMenuManager {
         if (!lastWasSeparator)
           ifList.add(new SeparatorMenuItem());
         ifList.add(ConfigMenuItem.getInstance());
+      }
+    }
+    
+    if (cleanSeparator) {
+      for (int i=0;i<ifList.size();i++)
+        System.out.println("CLASSs "+ifList.get(i).getClass().getName());
+      
+      System.out.println("CLASS"+ifList.get(ifList.size()-1).getClass().getName());
+      // Wenn letztes Element Separator ist, diesen entfernen
+      while (ifList.get(ifList.size()-1) instanceof SeparatorMenuItem) {
+        ifList.remove(ifList.size()-1);
       }
     }
     
@@ -286,9 +296,9 @@ public class ContextMenuManager {
 
       if (menuIf instanceof SeparatorMenuItem) {
         if (rootMenu.getMenuComponentCount() > 0) // Only add Separator if Menu not Empty
-          rootMenu.addSeparator();
+	        rootMenu.addSeparator();
       } else if (menuIf instanceof ConfigMenuItem) {
-        JMenuItem item = new JMenuItem(mLocalizer.msg("configureMenu", "Configure this Menu"));
+        JMenuItem item = new JMenuItem(menuIf.toString());
         item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -320,12 +330,11 @@ public class ContextMenuManager {
         }
       }
     }
-    
+
     // Remove last Item if it's a Separator
     while (rootMenu.getMenuComponent(rootMenu.getMenuComponentCount()-1) instanceof JPopupMenu.Separator) {
       rootMenu.remove(rootMenu.getMenuComponentCount()-1);
     }
-    
     return rootMenu;
   }
 

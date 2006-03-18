@@ -386,7 +386,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
         mItemLabel.setFont(label.getFont());
         mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
-        mItemLabel.setText(mLocalizer.msg("configureMenu", "Configer Menu"));
+        mItemLabel.setText(value.toString());
 
         mItemPanel.setForeground(label.getForeground());
         mItemPanel.setBackground(label.getBackground());

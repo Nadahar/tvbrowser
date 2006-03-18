@@ -57,6 +57,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
@@ -367,6 +368,21 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
         mFunctionGroup.add(new JSeparator());
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
+      } else if(p[i].getId().compareTo(ConfigMenuItem.CONFIG) == 0) {
+        Action action = new AbstractAction() {
+          private static final long serialVersionUID = 1L;
+
+          public void actionPerformed(ActionEvent e) {
+            MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_CONTEXTMENU);
+          }
+        };
+
+        action.putValue(Action.SMALL_ICON,IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+        action.putValue(Action.NAME, ConfigMenuItem.getInstance().toString());
+
+        ActionMenu configure = new ActionMenu(action);
+        new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, configure, this,
+            "id_configure", mFindAsYouType);
       } else {
         ActionMenu menu = p[i].getContextMenuActions(mProgram);
         
