@@ -535,9 +535,23 @@ public class Settings {
   public static final StringArrayProperty propPluginOrder
     = new StringArrayProperty(mProp, "plugins", null);
 
+  /**
+   * Order of the Plugins in the Context-Menu. 
+   */
   public static final StringArrayProperty propContextMenuOrder
   = new StringArrayProperty(mProp, "contextMenuOrder", null);
 
+  /**
+   * All disabled Items of the ContextMenu
+   */
+  public static final StringArrayProperty propContextMenuDisabledItems
+  = new StringArrayProperty(mProp, "contextMenuDisabledItems", null);
+
+  /**
+   * Show the "Configure this Menu"-Item
+   */
+  public static final BooleanProperty propContextMenuShowConfigureItem
+  = new BooleanProperty(mProp, "contextMenuShowConfigureItem", true);
   
   /**
    * The ID's of the plugins that have been deactivated.
