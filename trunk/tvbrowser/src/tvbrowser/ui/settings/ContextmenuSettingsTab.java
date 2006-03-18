@@ -157,7 +157,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
             int inx = mList.getList().locationToIndex(e.getPoint());
             if (inx >= 0) {
               ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
-              if (!(item instanceof SeparatorMenuItem)) {
+              if (!(item instanceof SeparatorMenuItem) && !(item instanceof ConfigMenuItem)) {
                 mList.getList().ensureIndexIsVisible(inx);
                 mList.getList().setSelectedIndex(inx);
                 mDefaultIf = item;
@@ -170,7 +170,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
             int inx = mList.getList().locationToIndex(e.getPoint());
             if (inx >= 0) {
               ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
-              if (!(item instanceof SeparatorMenuItem)) {
+              if (!(item instanceof SeparatorMenuItem) && !(item instanceof ConfigMenuItem)) {
                 mList.getList().ensureIndexIsVisible(inx);
                 mList.getList().setSelectedIndex(inx);
                 mMiddleClickIf = item;
