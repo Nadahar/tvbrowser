@@ -95,7 +95,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
 
     JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
-        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        "pref, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     contentPanel.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
@@ -197,7 +197,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     });
     
     mList.setCellRenderer(new ContextMenuCellRenderer(true));
-    mList.getList().setVisibleRowCount(15);
 
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
       public void pluginActivated(Plugin p) {
