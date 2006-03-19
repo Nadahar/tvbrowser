@@ -66,12 +66,6 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
   private JButton mChooseButton;
   
   /**
-   * Creates a new instance of ProxySettingsTab.
-   */
-  public WebbrowserSettingsTab() {
-  }
-
-  /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
