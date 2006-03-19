@@ -26,18 +26,13 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.Border;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
@@ -45,9 +40,10 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.OrderChooser;
-import util.ui.TabLayout;
 import util.ui.UiUtilities;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -71,67 +67,39 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
   private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemMarkedColorLb, mProgramItemKeyboardSelectedLb;
 
-
-  /**
-   * Creates a new instance of ProgramTableSettingsTab.
-   */
-  public ProgramPanelSettingsTab() {
-  }
-
-
   /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    String msg;
-    JPanel p1, p2;
+    mSettingsPn = new JPanel(new FormLayout("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu", 
+        "pref, 5dlu, fill:pref:grow, 3dlu, top:pref, 5dlu, pref, 5dlu, pref"));
+    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
-    Border helpTextBorder = BorderFactory.createEmptyBorder(10, 0, 0, 0);
-    
-    mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    JPanel main = new JPanel(new TabLayout(1));
-    mSettingsPn.add(main, BorderLayout.NORTH);
-    p1 = new JPanel(new GridLayout(1, 2));
-   // mSettingsPn.add(p1, BorderLayout.NORTH);
-    main.add(p1);
+    CellConstraints cc = new CellConstraints();
 
     // icons
-    p2 = new JPanel(new BorderLayout());
-    msg = mLocalizer.msg("pluginIcons", "Plugin icons");
-    p2.setBorder(BorderFactory.createTitledBorder(msg));
-    p1.add(p2);
-
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("pluginIcons", "Plugin icons")), cc.xyw(1,1,2));
+    
     IconPlugin[] allPluginArr = getAvailableIconPlugins();
     IconPlugin[] pluginOrderArr = getSelectedIconPlugins(allPluginArr);
     mIconPluginOCh = new OrderChooser(pluginOrderArr, allPluginArr);
-    p2.add(mIconPluginOCh, BorderLayout.CENTER);
-
-    msg = mLocalizer.msg("pluginIcons.description", "");
-    JTextArea helpTA = UiUtilities.createHelpTextArea(msg);
-    helpTA.setBorder(helpTextBorder);
-    p2.add(helpTA, BorderLayout.SOUTH);
+    
+    mSettingsPn.add(mIconPluginOCh, cc.xy(2,3));
+    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("pluginIcons.description", "")), cc.xy(2,5));
     
     // info text
-    p2 = new JPanel(new BorderLayout());
-    msg = mLocalizer.msg("infoText", "Info text");
-    p2.setBorder(BorderFactory.createTitledBorder(msg));
-    p1.add(p2);
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("infoText", "Info text")), cc.xyw(4,1,2));
 
     ProgramFieldType[] allTypeArr = getAvailableTypes();
     ProgramFieldType[] typeOrderArr = getSelectedTypes();
     mInfoTextOCh = new OrderChooser(typeOrderArr, allTypeArr);
-    p2.add(mInfoTextOCh, BorderLayout.CENTER);
 
-    msg = mLocalizer.msg("infoText.description", "");
-    helpTA = UiUtilities.createHelpTextArea(msg);
-    helpTA.setBorder(helpTextBorder);
-    p2.add(helpTA, BorderLayout.SOUTH);
-
+    mSettingsPn.add(mInfoTextOCh, cc.xy(4,3));
+    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("infoText.description", "")), cc.xy(4,5));
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Colors", "Colors")), cc.xyw(1,7,5));
 
     JPanel colors = new JPanel();
-    
     Color programItemProgressColor = Settings.propProgramTableColorOnAirDark.getColor();
     Color programItemOnAirColor = Settings.propProgramTableColorOnAirLight.getColor();
     Color programItemMarkedColor = Settings.propProgramTableColorMarked.getColor();
@@ -142,7 +110,6 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     Color programItemDefaultMarkedColor = Settings.propProgramTableColorMarked.getDefaultColor();
     Color programItemDefaultKeyboardSelectedColor = Settings.propKeyboardSelectedColor.getDefaultColor();
 
-    colors.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Colors", "Colors")));
     FormLayout formLayout = new FormLayout("default, 5dlu, default, 5dlu, default, 5dlu, default",
             "default, 3dlu, default, 3dlu, default, 3dlu, default");
     CellConstraints c = new CellConstraints();
@@ -168,8 +135,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     mProgramItemKeyboardSelectedLb.setStandardColor(programItemDefaultKeyboardSelectedColor);
     colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), c.xy(5,7));
 
-    main.add(colors);
-
+    mSettingsPn.add(colors, cc.xyw(2,9,4));
 
     return mSettingsPn;
   }
