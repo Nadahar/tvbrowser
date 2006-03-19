@@ -1,0 +1,206 @@
+/*
+ * TV-Browser
+ * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
+
+package tvbrowser.ui.settings;
+
+import java.awt.Component;
+import java.util.ArrayList;
+
+import javax.swing.Action;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+
+import tvbrowser.core.Settings;
+import tvbrowser.core.contextmenu.ConfigMenuItem;
+import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.SeparatorMenuItem;
+import tvbrowser.core.plugin.PluginProxy;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ActionMenu;
+import devplugin.ContextMenuIf;
+import devplugin.Plugin;
+import devplugin.Program;
+
+public class MausSettingsTab implements devplugin.SettingsTab {
+
+  private ContextMenuIf mDefaultIf, mMiddleClickIf;
+
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MausSettingsTab.class);
+
+  private JComboBox mDoubleClickBox;
+
+  private JComboBox mMiddleClickBox;
+
+  private boolean mFillingList;
+
+  public JPanel createSettingsPanel() {
+    mDefaultIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
+    mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
+
+    JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
+        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref"));
+    contentPanel.setBorder(Borders.DIALOG_BORDER);
+
+    CellConstraints cc = new CellConstraints();
+    contentPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Title")), cc.xyw(1,
+        1, 6));
+
+    contentPanel.add(new JLabel(mLocalizer.msg("MouseButtons", "Mouse Buttons:")), cc.xyw(2, 3, 4));
+
+    contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double Click")), cc.xy(2, 5));
+    
+    mDoubleClickBox = new JComboBox();
+    mDoubleClickBox.setSelectedItem(mDefaultIf);
+    mDoubleClickBox.setMaximumRowCount(15);
+    
+    mDoubleClickBox.setRenderer(new ContextMenuCellRenderer());
+    contentPanel.add(mDoubleClickBox, cc.xy(4, 5));
+
+    contentPanel.add(new JLabel(mLocalizer.msg("middleClickLabel", "Middle Click")), cc.xy(2, 7));
+    mMiddleClickBox = new JComboBox();
+    mMiddleClickBox.setSelectedItem(mMiddleClickIf);
+    mMiddleClickBox.setMaximumRowCount(15);
+    
+    mMiddleClickBox.setRenderer(new ContextMenuCellRenderer());
+    contentPanel.add(mMiddleClickBox, cc.xy(4, 7));
+
+    fillListbox();
+
+    return contentPanel;
+  }
+
+  private void fillListbox() {
+    mFillingList = true;
+    ArrayList items = new ArrayList();
+
+    mDoubleClickBox.removeAllItems();
+    mMiddleClickBox.removeAllItems();
+
+    ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true, false);
+    Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+    for (int i = 0; i < menuIfList.length; i++) {
+      if (menuIfList[i] instanceof SeparatorMenuItem) {
+      } else if (menuIfList[i] instanceof ConfigMenuItem) {
+      } else {
+        ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
+        if (actionMenu != null) {
+          mDoubleClickBox.addItem(menuIfList[i]);
+          mMiddleClickBox.addItem(menuIfList[i]);
+        }
+      }
+    }
+    
+    mDoubleClickBox.setSelectedItem(mDefaultIf);
+    mMiddleClickBox.setSelectedItem(mMiddleClickIf);
+    mFillingList = false;
+  }
+
+  public void saveSettings() {
+    mDefaultIf = (ContextMenuIf) mDoubleClickBox.getSelectedItem();
+    mMiddleClickIf = (ContextMenuIf) mMiddleClickBox.getSelectedItem();
+    
+    ContextMenuManager.getInstance().setDefaultContextMenuIf(mDefaultIf);
+    if (mDefaultIf != null) {
+      Settings.propDefaultContextMenuIf.setString(mDefaultIf.getId());
+    } else {
+      Settings.propDefaultContextMenuIf.setString(null);
+    }
+
+    ContextMenuManager.getInstance().setMiddleClickIf(mMiddleClickIf);
+    if (mMiddleClickIf != null) {
+      Settings.propMiddleClickIf.setString(mMiddleClickIf.getId());
+    } else {
+      Settings.propMiddleClickIf.setString(null);
+    }
+  }
+
+  public Icon getIcon() {
+    return null;
+  }
+
+  public String getTitle() {
+    return mLocalizer.msg("title", "context menu");
+  }
+  
+  class ContextMenuCellRenderer extends DefaultListCellRenderer {
+    private JLabel mItemLabel;
+    
+    public ContextMenuCellRenderer() {
+      mItemLabel = new JLabel();
+    }
+
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
+
+      JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+      if (value instanceof ContextMenuIf) {
+        ContextMenuIf menuIf = (ContextMenuIf) value;
+        Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+
+        // Get the context menu item text
+        StringBuffer text = new StringBuffer();
+        Icon icon = null;
+        // Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
+        ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
+        if (actionMenu != null) {
+          Action action = actionMenu.getAction();
+          if (action != null) {
+            text.append((String) action.getValue(Action.NAME));
+            icon = (Icon) action.getValue(Action.SMALL_ICON);
+          } else if (menuIf instanceof PluginProxy) {
+            text.append(((PluginProxy) menuIf).getInfo().getName());
+            icon = ((PluginProxy) menuIf).getMarkIcon();
+          } else {
+            text.append("unknown");
+            icon = null;
+          }
+        }
+
+        mItemLabel.setIcon(icon);
+        mItemLabel.setForeground(label.getForeground());
+        mItemLabel.setBackground(label.getBackground());
+        mItemLabel.setText(text.toString());
+        mItemLabel.setOpaque(label.isOpaque());
+
+        return mItemLabel;
+      }
+
+      return label;
+    }
+
+  }
+  
+}

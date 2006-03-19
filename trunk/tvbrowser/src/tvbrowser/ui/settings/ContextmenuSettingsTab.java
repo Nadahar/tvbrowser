@@ -28,7 +28,6 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -40,11 +39,9 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.Settings;
@@ -72,15 +69,9 @@ import devplugin.Program;
 
 public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
-  private ContextMenuIf mDefaultIf, mMiddleClickIf;
-
   private SortableItemList mList;
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
-
-  private JComboBox mDoubleClickBox;
-
-  private JComboBox mMiddleClickBox;
 
   private boolean mFillingList;
 
@@ -91,11 +82,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
     createList();
     
-    mDefaultIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
-    mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
-
     JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
-        "pref, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        "pref, 5dlu, pref, 3dlu, fill:pref:grow"));
     contentPanel.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
@@ -106,41 +94,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     
     contentPanel.add(mList, cc.xyw(2, 5, 4));
 
-    contentPanel.add(new JLabel(mLocalizer.msg("MouseButtons", "Mouse Buttons:")), cc.xyw(2, 7, 4));
-
-    contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double Click")), cc.xy(2, 9));
-    
-    mDoubleClickBox = new JComboBox();
-    mDoubleClickBox.setSelectedItem(mDefaultIf);
-    mDoubleClickBox.setMaximumRowCount(15);
-    mDoubleClickBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (!mFillingList) {
-          mDefaultIf = (ContextMenuIf) mDoubleClickBox.getSelectedItem();
-          mList.getList().updateUI();
-        }
-      }
-    });
-    
-    mDoubleClickBox.setRenderer(new ContextMenuCellRenderer(false));
-    contentPanel.add(mDoubleClickBox, cc.xy(4, 9));
-
-    contentPanel.add(new JLabel(mLocalizer.msg("middleClickLabel", "Middle Click")), cc.xy(2, 11));
-    mMiddleClickBox = new JComboBox();
-    mMiddleClickBox.setSelectedItem(mMiddleClickIf);
-    mMiddleClickBox.setMaximumRowCount(15);
-    mMiddleClickBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (!mFillingList) {
-          mMiddleClickIf = (ContextMenuIf) mMiddleClickBox.getSelectedItem();
-          mList.getList().updateUI();
-        }
-      }
-    });
-    
-    mMiddleClickBox.setRenderer(new ContextMenuCellRenderer(false));
-    contentPanel.add(mMiddleClickBox, cc.xy(4, 11));
-
     fillListbox();
 
     return contentPanel;
@@ -150,37 +103,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     mList = new SortableItemList();
 
     mList.getList().addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if (e.getX() > mSelectionWidth) {
-          mList.requestFocus();
-          if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
-            int inx = mList.getList().locationToIndex(e.getPoint());
-            if (inx >= 0) {
-              ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
-              if (!(item instanceof SeparatorMenuItem) && !(item instanceof ConfigMenuItem)) {
-                mList.getList().ensureIndexIsVisible(inx);
-                mList.getList().setSelectedIndex(inx);
-                mDefaultIf = item;
-                mDoubleClickBox.setSelectedItem(mDefaultIf);
-                mList.updateUI();
-              }
-            }
-          }
-          if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-            int inx = mList.getList().locationToIndex(e.getPoint());
-            if (inx >= 0) {
-              ContextMenuIf item = (ContextMenuIf) mList.getList().getModel().getElementAt(inx);
-              if (!(item instanceof SeparatorMenuItem) && !(item instanceof ConfigMenuItem)) {
-                mList.getList().ensureIndexIsVisible(inx);
-                mList.getList().setSelectedIndex(inx);
-                mMiddleClickIf = item;
-                mMiddleClickBox.setSelectedItem(mMiddleClickIf);
-                mList.updateUI();
-              }
-            }
-          }
-        }
-      }
       public void mouseReleased(MouseEvent evt) {
         if (evt.getX() < mSelectionWidth) {
           int index = mList.getList().locationToIndex(evt.getPoint());
@@ -196,7 +118,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       }
     });
     
-    mList.setCellRenderer(new ContextMenuCellRenderer(true));
+    mList.setCellRenderer(new ContextMenuCellRenderer());
 
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
       public void pluginActivated(Plugin p) {
@@ -282,15 +204,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     }
     
     mDeactivatedItems = new ArrayList(ContextMenuManager.getInstance().getDisabledContextMenuIfs());
-    
-    mDoubleClickBox.removeAllItems();
-    mMiddleClickBox.removeAllItems();
-    for (int i=0;i<items.size();i++) {
-      mDoubleClickBox.addItem(items.get(i));
-      mMiddleClickBox.addItem(items.get(i));
-    }
-    mDoubleClickBox.setSelectedItem(mDefaultIf);
-    mMiddleClickBox.setSelectedItem(mMiddleClickIf);
     mFillingList = false;
   }
 
@@ -314,28 +227,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     
     PluginProxyManager.getInstance().setPluginOrder(pluginIDs);
 
-    if (!mList.contains(mDefaultIf)) {
-      mDefaultIf = null;
-    }
-
-    if (!mList.contains(mMiddleClickIf)) {
-      mMiddleClickIf = null;
-    }
-
-    ContextMenuManager.getInstance().setDefaultContextMenuIf(mDefaultIf);
-    if (mDefaultIf != null) {
-      Settings.propDefaultContextMenuIf.setString(mDefaultIf.getId());
-    } else {
-      Settings.propDefaultContextMenuIf.setString(null);
-    }
-
-    ContextMenuManager.getInstance().setMiddleClickIf(mMiddleClickIf);
-    if (mMiddleClickIf != null) {
-      Settings.propMiddleClickIf.setString(mMiddleClickIf.getId());
-    } else {
-      Settings.propMiddleClickIf.setString(null);
-    }
-    
     String[] deactivated = new String[mDeactivatedItems.size()];
     for (int i=0;i<mDeactivatedItems.size();i++) {
       deactivated[i] = ((ContextMenuIf)mDeactivatedItems.get(i)).getId();
@@ -352,14 +243,11 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
   }
   
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
-    private boolean mUseInList = false;
     private JCheckBox mItemSelected;
     private JLabel mItemLabel;
     private JPanel mItemPanel;
     
-    public ContextMenuCellRenderer(boolean useInList) {
-      mUseInList = useInList;
-      
+    public ContextMenuCellRenderer() {
       mItemSelected = new JCheckBox();
       mItemSelected.setOpaque(false);
       mSelectionWidth = mItemSelected.getPreferredSize().width;
@@ -384,7 +272,6 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       } else if (value instanceof ConfigMenuItem) {
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
 
-        mItemLabel.setFont(label.getFont());
         mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
         mItemLabel.setText(value.toString());
 
@@ -416,37 +303,14 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
           }
         }
 
-        mItemLabel.setFont(label.getFont());
         mItemLabel.setIcon(icon);
-
-        if (mUseInList) {
-          mItemSelected.setSelected(!mDeactivatedItems.contains(value));
-          
-          if (menuIf.equals(mDefaultIf) && menuIf.equals(mMiddleClickIf)) {
-            mItemLabel.setFont(mItemLabel.getFont().deriveFont(Font.BOLD));
-            text.append(" - ").append(mLocalizer.msg("doubleClick", "double-click")).append(" + ").append(mLocalizer.msg("middleClick", "middle-click"));
-          } else if (menuIf.equals(mDefaultIf)) {
-            mItemLabel.setFont(mItemLabel.getFont().deriveFont(Font.BOLD));
-            text.append(" - ").append(mLocalizer.msg("doubleClick", "double-click"));
-          } else if (menuIf.equals(mMiddleClickIf)) {
-            mItemLabel.setFont(mItemLabel.getFont().deriveFont(Font.BOLD));
-            text.append(" - ").append(mLocalizer.msg("middleClick", "middle-click"));
-          }
-          mItemLabel.setText(text.toString());
-
-          mItemPanel.setForeground(label.getForeground());
-          mItemPanel.setBackground(label.getBackground());
-          mItemPanel.setOpaque(label.isOpaque());
-          
-          return mItemPanel;
-        }
-
-        mItemLabel.setForeground(label.getForeground());
-        mItemLabel.setBackground(label.getBackground());
         mItemLabel.setText(text.toString());
-        mItemLabel.setOpaque(label.isOpaque());
 
-        return mItemLabel;
+        mItemSelected.setSelected(!mDeactivatedItems.contains(value));
+        mItemPanel.setForeground(label.getForeground());
+        mItemPanel.setBackground(label.getBackground());
+        mItemPanel.setOpaque(label.isOpaque());
+        return mItemPanel;
       }
 
       return label;
