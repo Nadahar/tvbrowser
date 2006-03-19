@@ -30,7 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -39,7 +38,6 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -65,8 +63,15 @@ import tvbrowser.ui.settings.tablebackgroundstyles.TableBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.TimeBlockBackgroundStyle;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
-import util.ui.TabLayout;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+
 import devplugin.SettingsTab;
 
 /**
@@ -93,8 +98,6 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   private JCheckBox mMouseOverCb;
 
-  private JCheckBox mTitelAlwaysVisible;
-
   private ColorLabel mMouseOverColorLb;
 
   public void actionPerformed(ActionEvent event) {
@@ -108,20 +111,22 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    JPanel p1;
+    FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow 3dlu", "");
+    mSettingsPn = new JPanel(layout);
+    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
-    mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    CellConstraints cc = new CellConstraints();
 
-    JPanel main = new JPanel(new TabLayout(1));
-    mSettingsPn.add(main, BorderLayout.NORTH);
-
+    // Layout-Rows ****************************************
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("layout", "Layout")), cc.xyw(1,1,8));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")), cc.xy(2,3));
+    
     // program table layout
-    p1 = new JPanel(new FlowLayout(FlowLayout.LEADING, 5, 0));
-    p1.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("layout", "Layout")));
-    main.add(p1);
-
-    p1.add(new JLabel(mLocalizer.msg("programArrangement", "Program arrangement")));
     String[] arrangementArr = { mLocalizer.msg("compact", "Compact"),
         mLocalizer.msg("timeSynchronous", "Time synchronous"),
         mLocalizer.msg("realSynchronous", "Real time synchronous") };
@@ -133,66 +138,68 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     else
       mProgramArrangementCB.setSelectedIndex(2);
 
-    p1.add(mProgramArrangementCB);
+    mSettingsPn.add(mProgramArrangementCB, cc.xy(4, 3));
 
+    // Column Rows ***************************************
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("columnwidth", "column width")), cc.xyw(1,5,8));
+    
     // column width
-    JPanel colWidthPn = new JPanel(new BorderLayout());
-    JPanel sliderPn = new JPanel();
+    JPanel sliderPn = new JPanel(new BorderLayout());
 
-    colWidthPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("columnwidth", "column width")));
     mColWidthSl = new JSlider(SwingConstants.HORIZONTAL, 50, 300, Settings.propColumnWidth.getInt());
 
-    colWidthPn.add(sliderPn, BorderLayout.WEST);
     mColWidthSl.setPreferredSize(new Dimension(200, 25));
 
-    final JLabel colWidthLb = new JLabel("" + mColWidthSl.getValue());
-
+    final JLabel colWidthLb = new JLabel(Integer.toString(mColWidthSl.getValue()), JLabel.RIGHT);
+    Dimension dim = colWidthLb.getPreferredSize();
+    colWidthLb.setPreferredSize(new Dimension(Sizes.dialogUnitXAsPixel(20, mSettingsPn), dim.height));
+    
     mColWidthSl.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-        colWidthLb.setText("" + mColWidthSl.getValue());
+        colWidthLb.setText(Integer.toString(mColWidthSl.getValue()));
       }
     });
 
-    sliderPn.add(mColWidthSl);
-    sliderPn.add(colWidthLb);
+    sliderPn.add(mColWidthSl, BorderLayout.CENTER);
+    sliderPn.add(colWidthLb, BorderLayout.EAST);
 
+    mSettingsPn.add(sliderPn, cc.xyw(2,7,3));
+    
     mDefaultBtn = new JButton(mLocalizer.msg("reset", "reset"));
     mDefaultBtn.addActionListener(this);
 
-    JPanel pn4 = new JPanel(new BorderLayout());
-    pn4.add(mDefaultBtn, BorderLayout.NORTH);
-
-    colWidthPn.add(pn4, BorderLayout.EAST);
-
-    main.add(colWidthPn);
-
-    // day range
-
-    JPanel pn = new JPanel(new GridLayout(2, 2, 0, 3));
-    pn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("range", "Range")));
-
-    pn.add(new JLabel(mLocalizer.msg("startOfDay", "Start of day")));
-    JPanel panel1 = new JPanel(new BorderLayout(7, 0));
+    mSettingsPn.add(mDefaultBtn, cc.xy(6,7));
+    
+    // Column Rows ***************************************
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("3dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("range", "Range")), cc.xyw(1,9,8));
+    
+    mSettingsPn.add(new JLabel(mLocalizer.msg("startOfDay", "Start of day")), cc.xy(2, 11));
 
     String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
-
     mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
     mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, timePattern));
-
-    panel1.add(mStartOfDayTimeSp, BorderLayout.WEST);
-    panel1.add(new JLabel("(" + mLocalizer.msg("today", "today") + ")"));
-    pn.add(panel1);
-
-    pn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")));
-    panel1 = new JPanel(new BorderLayout(7, 0));
-
+    mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, 11));
+    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("today", "today") + ")"), cc.xy(6, 11));
+    
+    mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc.xy(2, 13));
+    
     mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
     mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, timePattern));
-
-    panel1.add(mEndOfDayTimeSp, BorderLayout.WEST);
-    panel1.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"));
-    pn.add(panel1);
-
+    mSettingsPn.add(mEndOfDayTimeSp, cc.xy(4, 13));
+    mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"), cc.xy(6, 13));
+    
     int minutes;
     Calendar cal = Calendar.getInstance();
     minutes = Settings.propProgramTableStartOfDay.getInt();
@@ -204,16 +211,17 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     cal.set(Calendar.HOUR_OF_DAY, minutes / 60);
     cal.set(Calendar.MINUTE, minutes % 60);
     mEndOfDayTimeSp.setValue(cal.getTime());
+    
+    // Table Background ***************************************
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
 
-    main.add(pn);
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("tableBackground", "Table background")), cc.xyw(1,15,8));
 
-    // table background style
-
-    JPanel pn1 = new JPanel(new BorderLayout());
-    pn1.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("tableBackground", "Table background")));
-    JPanel pn2 = new JPanel();
-    pn2.add(new JLabel(mLocalizer.msg("tableBackgroundStyle", "Table background style")));
-
+    mSettingsPn.add(new JLabel(mLocalizer.msg("tableBackgroundStyle", "Table background style")), cc.xy(2,17));
+    
     TableBackgroundStyle[] styles = getTableBackgroundStyles();
     mBackgroundStyleCB = new JComboBox(styles);
 
@@ -231,7 +239,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     });
 
-    pn2.add(mBackgroundStyleCB);
+    mSettingsPn.add(mBackgroundStyleCB, cc.xy(4, 17));
+    
     mConfigBackgroundStyleBt = new JButton(mLocalizer.msg("configure", "Configure..."));
 
     mConfigBackgroundStyleBt.addActionListener(new ActionListener() {
@@ -242,23 +251,21 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     });
 
-    JPanel pn3 = new JPanel(new BorderLayout());
-    pn3.add(mConfigBackgroundStyleBt, BorderLayout.NORTH);
-    pn1.add(pn3, BorderLayout.EAST);
+    mSettingsPn.add(mConfigBackgroundStyleBt, cc.xy(6, 17));
+    
+    // Miscellaneous *********************************************
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
 
-    pn1.add(pn2, BorderLayout.WEST);
-    main.add(pn1);
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,19,8));
 
-    // miscellaneous
-
-    JPanel misc = new JPanel(new TabLayout(1));
-
-    misc.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Miscellaneous", "Miscellaneous")));
-
-    JPanel mouseOverPn = new JPanel(new BorderLayout());
     mMouseOverCb = new JCheckBox(mLocalizer.msg("MouseOver", "Mouse-Over-Effect"));
     mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
 
+    mSettingsPn.add(mMouseOverCb, cc.xy(2,21));
+    
     mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
     mMouseOverColorLb.setStandardColor(Settings.propMouseOverColor.getDefaultColor());
     mMouseOverColorLb.setEnabled(Settings.propMouseOver.getBoolean());
@@ -275,19 +282,13 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     });
 
-    mouseOverPn.add(mMouseOverCb, BorderLayout.WEST);
-    pn1 = new JPanel();
+    JPanel pn1 = new JPanel();
     pn1.add(colorLb);
     pn1.add(mMouseOverColorLb);
     pn1.add(mouseOverColorChangeBtn);
-    mouseOverPn.add(pn1, BorderLayout.EAST);
-    misc.add(mouseOverPn);
 
-    mTitelAlwaysVisible = new JCheckBox(mLocalizer.msg("TitleAlwaysVisible", "Progam-Title always Visible"));
-    mTitelAlwaysVisible.setSelected(Settings.propTitelAlwaysVisible.getBoolean());
-
-    main.add(misc);
-
+    mSettingsPn.add(pn1, cc.xy(4, 21));
+    
     updateBackgroundStyleConfigureButton();
 
     return mSettingsPn;
@@ -353,7 +354,6 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propProgramTableEndOfDay.setInt(minutes);
 
     Settings.propMouseOver.setBoolean(mMouseOverCb.isSelected());
-    Settings.propTitelAlwaysVisible.setBoolean(mTitelAlwaysVisible.isSelected());
 
     Settings.propMouseOverColor.setColor(mMouseOverColorLb.getColor());
   }
