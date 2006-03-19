@@ -25,20 +25,22 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.FontChooserPanel;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class FontsSettingsTab implements devplugin.SettingsTab {
 
@@ -51,58 +53,76 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
 
   private FontChooserPanel mTitleFontPanel, mInfoFontPanel, mChannelNameFontPanel, mTimeFontPanel;
 
-  public FontsSettingsTab() {
+  private JLabel mTimeFontLabel;
 
-  }
+  private JLabel mChannelNameFontLabel;
+
+  private JLabel mInfoFontLabel;
+
+  private JLabel mTitleFontLabel;
 
   public JPanel createSettingsPanel() {
-    JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    JPanel content = new JPanel();
-    content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-
-    JPanel checkBoxPanel = new JPanel(new BorderLayout());
-    checkBoxPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 0));
-
-    mUseDefaultFontsCB = new JCheckBox(mLocalizer.msg("UseDefaultFonts", "Use default fonts"));
-    mUseDefaultFontsCB.setSelected(Settings.propUseDefaultFonts.getBoolean());
+    JPanel mainPanel = new JPanel(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow", 
+        "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+    mainPanel.setBorder(Borders.DIALOG_BORDER);
+    
+    CellConstraints cc = new CellConstraints();
+    
+    mainPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Fonts", "Fonts")), cc.xyw(1,1,6));
+    
     mEnableAntialiasingCB = new JCheckBox(mLocalizer.msg("EnableAntialiasing", "Enable antialiasing"));
     mEnableAntialiasingCB.setSelected(Settings.propEnableAntialiasing.getBoolean());
 
-    checkBoxPanel.add(mEnableAntialiasingCB, BorderLayout.NORTH);
-    checkBoxPanel.add(mUseDefaultFontsCB, BorderLayout.CENTER);
+    mainPanel.add(mEnableAntialiasingCB, cc.xyw(2,3, 4));
 
-    content.add(checkBoxPanel);
+    mainPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("UserDefinedFonts", "Userdefined Fonts")), cc.xyw(1,5,6));
 
-    final FontChooser fontPanel = new FontChooser();
+    mUseDefaultFontsCB = new JCheckBox(mLocalizer.msg("UseDefaultFonts", "Use default fonts"));
+    mUseDefaultFontsCB.setSelected(Settings.propUseDefaultFonts.getBoolean());
+    
+    mainPanel.add(mUseDefaultFontsCB, cc.xyw(2,7, 4));
+        
+    mTitleFontLabel = new JLabel(mLocalizer.msg("ProgramTitle", "Program title"));
+    mainPanel.add(mTitleFontLabel, cc.xy(3,9));
+    mTitleFontPanel = new FontChooserPanel(Settings.propProgramTitleFont.getFont());
+    mainPanel.add(mTitleFontPanel, cc.xy(5,9));
 
-    mTitleFontPanel = new FontChooserPanel(mLocalizer.msg("ProgramTitle", "Program title"),
-        Settings.propProgramTitleFont.getFont());
-    mInfoFontPanel = new FontChooserPanel(mLocalizer.msg("ProgramInfo", "Program information"),
-        Settings.propProgramInfoFont.getFont());
-    mChannelNameFontPanel = new FontChooserPanel(mLocalizer.msg("ChannelNames", "Channel names"),
-        Settings.propChannelNameFont.getFont());
-    mTimeFontPanel = new FontChooserPanel(mLocalizer.msg("Time", "Time"), Settings.propProgramTimeFont.getFont());
+    mInfoFontLabel = new JLabel(mLocalizer.msg("ProgramInfo", "Program information"));
+    mainPanel.add(mInfoFontLabel, cc.xy(3,11));
+    mInfoFontPanel = new FontChooserPanel(Settings.propProgramInfoFont.getFont());
+    mainPanel.add(mInfoFontPanel, cc.xy(5,11));
 
-    fontPanel.add(mTitleFontPanel);
-    fontPanel.add(mInfoFontPanel);
-    fontPanel.add(mChannelNameFontPanel);
-    fontPanel.add(mTimeFontPanel);
+    mChannelNameFontLabel = new JLabel(mLocalizer.msg("ChannelNames", "Channel name"));
+    mainPanel.add(mChannelNameFontLabel, cc.xy(3,13));
+    mChannelNameFontPanel = new FontChooserPanel(Settings.propChannelNameFont.getFont());
+    mainPanel.add(mChannelNameFontPanel, cc.xy(5,13));
 
-    content.add(fontPanel);
-    mainPanel.add(content, BorderLayout.NORTH);
+    mTimeFontLabel = new JLabel(mLocalizer.msg("Time", "Time"));
+    mainPanel.add(mTimeFontLabel, cc.xy(3,15));
+    mTimeFontPanel = new FontChooserPanel(Settings.propProgramTimeFont.getFont());
+    mainPanel.add(mTimeFontPanel, cc.xy(5,15));
 
     mUseDefaultFontsCB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        fontPanel.setEnabled(!mUseDefaultFontsCB.isSelected());
+        enableFontFields(!mUseDefaultFontsCB.isSelected());
       }
     });
-
-    fontPanel.setEnabled(!mUseDefaultFontsCB.isSelected());
-
+    
+    enableFontFields(!mUseDefaultFontsCB.isSelected());
     return mainPanel;
   }
 
+  private void enableFontFields(boolean enable) {
+    mTitleFontLabel.setEnabled(enable);
+    mTitleFontPanel.setEnabled(enable);
+    mInfoFontLabel.setEnabled(enable);
+    mInfoFontPanel.setEnabled(enable);
+    mChannelNameFontLabel.setEnabled(enable);
+    mChannelNameFontPanel.setEnabled(enable);
+    mTimeFontLabel.setEnabled(enable);
+    mTimeFontPanel.setEnabled(enable);
+  }
+  
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
@@ -124,36 +144,6 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
    */
   public String getTitle() {
     return mLocalizer.msg("Fonts", "Fonts");
-  }
-
-}
-
-class FontChooser extends JPanel {
-
-  /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FontChooser.class);
-
-  private java.util.HashSet mSet;
-
-  public FontChooser() {
-    setLayout(new GridLayout(0, 1, 0, 3));
-
-    setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("UserDefinedFonts", "User defined fonts")));
-    mSet = new java.util.HashSet();
-  }
-
-  public void add(FontChooserPanel panel) {
-    super.add(panel);
-    mSet.add(panel);
-  }
-
-  public void setEnabled(boolean enabled) {
-    super.setEnabled(enabled);
-    java.util.Iterator it = mSet.iterator();
-    while (it.hasNext()) {
-      ((JPanel) it.next()).setEnabled(enabled);
-    }
-
   }
 
 }
