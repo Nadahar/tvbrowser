@@ -46,12 +46,6 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(StartupSettingsTab.class);
 
-  private static final String[] AUTO_DOWNLOAD_MSG_ARR = new String[] {
-      mLocalizer.msg("autoDownload.daily", "Once a day"),
-      mLocalizer.msg("autoDownload.every3days", "Every three days"), mLocalizer.msg("autoDownload.weekly", "Weekly")
-
-  };
-
   private JPanel mSettingsPn;
 
   private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB;
