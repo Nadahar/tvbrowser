@@ -31,7 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -47,7 +46,10 @@ import tvbrowser.ui.settings.channel.ChannelJList;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
+import util.ui.TabLayout;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * A sortable List
@@ -126,8 +128,8 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mTitleLb=new JLabel(title);
     
     mBtnPanel=new JPanel();
-    mBtnPanel.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
-    mBtnPanel.setLayout(new BoxLayout(mBtnPanel,BoxLayout.Y_AXIS));
+    mBtnPanel.setBorder(BorderFactory.createEmptyBorder(0, Sizes.dialogUnitXAsPixel(3, mBtnPanel),0,0));
+    mBtnPanel.setLayout(new TabLayout(1));
     mBtnPanel.add(mUpBt);
     mBtnPanel.add(mDownBt);
     
@@ -135,7 +137,10 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     setLayout(new BorderLayout());
     add(mTitleLb,BorderLayout.NORTH);
     add(new JScrollPane(mList),BorderLayout.CENTER);
-    add(mBtnPanel,BorderLayout.EAST);
+    
+    JPanel p1 = new JPanel(new BorderLayout());
+    p1.add(mBtnPanel, BorderLayout.NORTH);
+    add(p1,BorderLayout.EAST);
     
     updateBtns();
         

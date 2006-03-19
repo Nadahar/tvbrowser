@@ -26,17 +26,21 @@
 
 package util.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Channel;
 import devplugin.Plugin;
@@ -91,30 +95,29 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
     }
 
     JPanel contentPane = (JPanel)getContentPane();
-    contentPane.setLayout(new BorderLayout());
-    contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    FormLayout layout = new FormLayout("fill:pref:grow", "");
+    contentPane.setLayout(layout);
+    contentPane.setBorder(Borders.DLU4_BORDER);
+    CellConstraints cc = new CellConstraints();
+    
+    mChannelChooser = new OrderChooser(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
 
-    JPanel southPn = new JPanel(new BorderLayout());
-    JPanel btnPn = new JPanel();
+    int pos = 1;
+    layout.appendRow(new RowSpec("fill:pref:grow"));
+    layout.appendRow(new RowSpec("3dlu"));
+    contentPane.add(mChannelChooser, cc.xy(1,pos));
+    pos += 2;
+    
+    if (description != null) {
+      JLabel lb = new JLabel(description);
+      layout.appendRow(new RowSpec("pref"));
+      layout.appendRow(new RowSpec("3dlu"));
+      contentPane.add(lb, cc.xy(1,pos));
+      pos += 2;
+    }
 
     JButton okBt = new JButton(mLocalizer.msg("OK","OK"));
     JButton cancelBt = new JButton(mLocalizer.msg("Cancel","Cancel"));
-
-    btnPn.add(okBt);
-    btnPn.add(cancelBt);
-    southPn.add(btnPn,BorderLayout.NORTH);
-
-    JPanel centerPn = new JPanel(new BorderLayout());
-    centerPn.add(mChannelChooser = new OrderChooser(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels()), BorderLayout.NORTH);
-
-    if (description != null) {
-      JLabel lb = new JLabel(description);
-      centerPn.add(lb,BorderLayout.SOUTH);
-    }
-
-    contentPane.add(centerPn,BorderLayout.CENTER);
-    contentPane.add(southPn, BorderLayout.SOUTH);
-
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
@@ -134,6 +137,13 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
       }
     });
 
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.addGlue();
+    builder.addGriddedButtons(new JButton[] {okBt, cancelBt});
+    
+    layout.appendRow(new RowSpec("pref"));
+    contentPane.add(builder.getPanel(), cc.xy(1,pos));
+    
     pack();
   }
 
