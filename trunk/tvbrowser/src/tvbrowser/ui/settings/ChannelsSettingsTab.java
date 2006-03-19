@@ -91,6 +91,7 @@ import util.ui.progress.ProgressWindow;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
 
@@ -201,7 +202,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
       }
     });
 
-    listBoxPnLeft.add(createButtonPn(rightBt, leftBt), BorderLayout.EAST);
+    JPanel btnPanel = createButtonPn(rightBt, leftBt);
+    btnPanel.setBorder(BorderFactory.createEmptyBorder(0, Sizes.dialogUnitXAsPixel(3, btnPanel), 0, Sizes.dialogUnitXAsPixel(3, btnPanel)));
+    listBoxPnLeft.add(btnPanel, BorderLayout.EAST);
 
     // right list box
     JPanel listBoxPnRight = new JPanel(new BorderLayout());
@@ -243,7 +246,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
       }
     });
 
-    listBoxPnRight.add(createButtonPn(channelList.getUpButton(), channelList.getDownButton()), BorderLayout.EAST);
+    JPanel btnPanel2 = createButtonPn(channelList.getUpButton(), channelList.getDownButton());
+    btnPanel2.setBorder(BorderFactory.createEmptyBorder(0, Sizes.dialogUnitXAsPixel(3, btnPanel2), 0, 0));
+    listBoxPnRight.add(btnPanel2, BorderLayout.EAST);
 
     centerPn.add(listBoxPnRight);
 
@@ -474,14 +479,13 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
    * @return ButtonPanel
    */
   private JPanel createButtonPn(JButton btn1, JButton btn2) {
-    JPanel result = new JPanel(new GridLayout(2, 1));
-    JPanel topPn = new JPanel(new BorderLayout());
-    JPanel bottomPn = new JPanel(new BorderLayout());
-    topPn.add(btn1, BorderLayout.SOUTH);
-    bottomPn.add(btn2, BorderLayout.NORTH);
-    result.add(topPn);
-    result.add(bottomPn);
-    result.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
+    JPanel result = new JPanel(new FormLayout("pref", "fill:pref:grow, pref, 3dlu, pref, fill:pref:grow"));
+    
+    CellConstraints cc = new CellConstraints();
+
+    result.add(btn1, cc.xy(1,2));
+    result.add(btn2, cc.xy(1,4));
+    
     return result;
   }
 
