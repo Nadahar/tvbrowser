@@ -27,7 +27,6 @@ package util.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -45,6 +44,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+
+import com.jgoodies.forms.layout.Sizes;
 
 import tvbrowser.core.icontheme.IconLoader;
 import devplugin.Channel;
@@ -155,11 +156,11 @@ public class OrderChooser extends JPanel implements ListDropAction{
     main.add(mScrollPane, BorderLayout.CENTER);
     add(main, BorderLayout.CENTER);
     
-    p1 = new JPanel();
+    p1 = new JPanel(new BorderLayout());
+    p1.setBorder(BorderFactory.createEmptyBorder(0, Sizes.dialogUnitXAsPixel(3, p1), 0, 0));
+    p2 = new JPanel(new TabLayout(1));
     add(p1, BorderLayout.EAST);
-
-    p2 = new JPanel(new GridLayout(0, 1));
-    p1.add(p2);
+    p1.add(p2, BorderLayout.NORTH);
 
     mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
     mUpBt.setToolTipText(mLocalizer.msg("tooltip.up", "Move selected rows up"));
