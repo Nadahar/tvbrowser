@@ -289,8 +289,11 @@ public class SettingsDialog implements WindowClosingIf {
     SettingNode technicalSettings = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("technical", "Technical"), null));
     root.add(technicalSettings);
 
-    SettingNode apperanceNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("channelstable", "Channelstable"),null));
-    root.add(apperanceNode);
+    SettingNode programtableNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("channelstable", "Channelstable"),null));
+    root.add(programtableNode);
+
+    SettingNode appearanceNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("appearance", "Appearance"),null));
+    programtableNode.add(appearanceNode);
     
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
@@ -299,15 +302,16 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
     generalSettings.add(new SettingNode(new StartupSettingsTab(), TAB_ADDITIONAL));
 
-    apperanceNode.add(new SettingNode(new ChannelsSettingsTab(), TAB_ID_CHANNELS));
-    apperanceNode.add(new SettingNode(new ChannelGroupSettingsTab(this)));
-    apperanceNode.add(new SettingNode(new RefreshDataSettingsTab()));
-    apperanceNode.add(new SettingNode(new ProgramTableSettingsTab()));
-    apperanceNode.add(new SettingNode(new ChannellogosSettingsTab()));
-    apperanceNode.add(new SettingNode(new FontsSettingsTab()));
-    apperanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
-    apperanceNode.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
+    programtableNode.add(new SettingNode(new ChannelsSettingsTab(), TAB_ID_CHANNELS));
+    programtableNode.add(new SettingNode(new ChannelGroupSettingsTab(this)));
+    programtableNode.add(new SettingNode(new RefreshDataSettingsTab()));
+    programtableNode.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
 
+    appearanceNode.add(new SettingNode(new ProgramTableSettingsTab()));
+    appearanceNode.add(new SettingNode(new ChannellogosSettingsTab()));
+    appearanceNode.add(new SettingNode(new FontsSettingsTab()));
+    appearanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
+    
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), TAB_ID_WEBBROWSER));
