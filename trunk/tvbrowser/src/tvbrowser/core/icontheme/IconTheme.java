@@ -26,6 +26,7 @@
 package tvbrowser.core.icontheme;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,7 +36,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import util.io.IniFileReader;
-import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.ThemeIcon;
 
@@ -45,9 +45,9 @@ import devplugin.ThemeIcon;
  * Most of the Code is based on the FreeDesktop Specs
  * http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
  */
-public class IconTheme {
+abstract public class IconTheme {
   /** Base-Directory of the IconTheme */
-  private File mIconBaseDirectory;
+  private File mIconBase;
   /** Logger */
   private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(IconTheme.class.getName());
   /** Name and Comment */
@@ -64,7 +64,7 @@ public class IconTheme {
    * @param iconDir Directory for this Theme
    */
   public IconTheme(File iconDir) {
-    mIconBaseDirectory = iconDir;
+    mIconBase = iconDir;
   }
 
   /**
@@ -81,14 +81,13 @@ public class IconTheme {
    */
   private boolean loadThemeFile() {
     try {
-      File theme = new File(mIconBaseDirectory, "index.theme");
       mDirectories = new ArrayList();
       
-      if (!theme.exists()) {
+      if (!entryExists("index.theme")) {
         return false;
       }
 
-      IniFileReader iniReader = new IniFileReader(theme);
+      IniFileReader iniReader = new IniFileReader(getInputStream("index.theme"));
 
       HashMap iconSection = iniReader.getSection("Icon Theme");
       
@@ -152,6 +151,14 @@ public class IconTheme {
   }
  
   /**
+   * Get the Icon-Base. This can be a File or a Directory
+   * @return Icon-Base
+   */
+  public File getBase() {
+    return mIconBase;
+  }
+  
+  /**
    * Get an Icon from this Theme.
    * This Method tries to find an exact size match, if it wasn't found
    * it tries to find another Version of the Icon and rescales it.
@@ -167,10 +174,8 @@ public class IconTheme {
       Directory dir = (Directory)it.next();
       if (sizeMatches(dir, icon.getSize())) {
         StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
-        File file = new File(mIconBaseDirectory, iconFile.toString());
-        
-        if (file.exists()) {
-          return new ImageIcon(ImageUtilities.createImage(file.getAbsolutePath()));
+        if (entryExists(iconFile.toString())) {
+          return getImageFromTheme(iconFile.toString());
         }
       }
     }
@@ -185,10 +190,8 @@ public class IconTheme {
       int distance = sizeDistance(dir, icon.getSize()); 
       if (distance < minSize) {
         StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
-        File file = new File(mIconBaseDirectory, iconFile.toString());
-
-        if (file.exists()) {
-          closestMatch = file.getAbsolutePath();
+        if (entryExists(iconFile.toString())) {
+          closestMatch = iconFile.toString();
           minSize = distance;
         }
         
@@ -197,7 +200,7 @@ public class IconTheme {
 
     // Found closest match, resize it
     if (closestMatch != null) {
-      Icon closestIcon = new ImageIcon(ImageUtilities.createImage(closestMatch));
+      Icon closestIcon = getImageFromTheme(closestMatch);
       return (ImageIcon) UiUtilities.scaleIcon(closestIcon, icon.getSize(), icon.getSize());
     }
     
@@ -260,5 +263,26 @@ public class IconTheme {
     
     return 0;
   }
- 
+
+  /**
+   * Get an InputStream from the Icon-Theme.
+   * @param string File/Entry to load
+   * @return InputStream of specific Entry
+   */
+  protected abstract InputStream getInputStream(String entry);
+
+  /**
+   * Tests if an Entry exists in the Icon-Theme
+   * @param entry check for this Entry
+   * @return True, if the Entry exists
+   */
+  protected abstract boolean entryExists(String entry);
+
+  /**
+   * Get an Image from the Icon-Theme
+   * @param image get this Image
+   * @return Image
+   */
+  protected abstract ImageIcon getImageFromTheme(String image);
+  
 }
