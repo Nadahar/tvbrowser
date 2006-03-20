@@ -26,8 +26,6 @@
 
 package tvbrowser.extras.reminderplugin;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -38,7 +36,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.util.Properties;
 
 import javax.sound.midi.MidiSystem;
@@ -46,9 +43,6 @@ import javax.sound.midi.Sequencer;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineEvent;
-import javax.sound.sampled.LineListener;
-import javax.sound.sampled.DataLine.Info;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
