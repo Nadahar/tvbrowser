@@ -607,7 +607,7 @@ node.update();
   }      */
 
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("apps", "bookmark");
+    return new ThemeIcon("apps", "bookmark", 16);
   }
 
   void unmark(Program[] programArr) {

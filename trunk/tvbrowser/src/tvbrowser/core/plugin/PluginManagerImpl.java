@@ -642,8 +642,8 @@ public class PluginManagerImpl implements PluginManager {
    * @param size Size of the Icon
    * @return Icon if found, null if not
    */
-  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon, int size) {
-    return IconLoader.getInstance().getIconFromTheme(plugin, icon, size);
+  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon) {
+    return IconLoader.getInstance().getIconFromTheme(plugin, icon);
   }
 
 

@@ -325,7 +325,7 @@ public interface PluginManager {
    * @return Icon if found, null if not
    * @since 2.2
    */
-  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon, int size);
+  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon);
 
   /**
    * Show the Settings-Dialog for a Plugin

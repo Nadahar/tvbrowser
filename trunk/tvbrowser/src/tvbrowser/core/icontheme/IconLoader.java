@@ -53,6 +53,7 @@ public class IconLoader {
   private static IconLoader mInstance;
   /** Icon Themes to Load Icons from*/
   private IconTheme mDefaultIconTheme, mIconTheme;
+  private File mDefaultIconDir;
   
   /**
    * Private Constructor
@@ -60,26 +61,31 @@ public class IconLoader {
    * It creates the IconThemes
    */
   private IconLoader() {
-    File defaultIconDir = new File(Settings.getDefaultSettings().getProperty("icontheme", "icons/tango"));
-    
-    File iconDir = new File(Settings.propIcontheme.toString());
-    
-    if (!iconDir.exists() || !iconDir.isFile()) {
-      iconDir = defaultIconDir;
+    mDefaultIconDir = new File(Settings.getDefaultSettings().getProperty("icontheme", "icons/tango"));
+    mDefaultIconTheme = new IconTheme(mDefaultIconDir);
+    mDefaultIconTheme.loadTheme();
+
+    loadIconTheme(new File(Settings.propIcontheme.toString()));
+  }
+
+  /**
+   * Load the IconTheme from a Directory
+   *  
+   * @param iconset Directory with IconTheme
+   */
+  public void loadIconTheme(File iconset) {
+    if (!iconset.exists() || !iconset.isFile()) {
+      iconset = mDefaultIconDir;
     }
     
-    mDefaultIconTheme = new IconTheme(defaultIconDir);
-    mDefaultIconTheme.loadTheme();
-    
-    if (defaultIconDir != iconDir) {
-      mIconTheme = new IconTheme(iconDir);
+    if (mDefaultIconDir != iconset) {
+      mIconTheme = new IconTheme(iconset);
       if (!mIconTheme.loadTheme()) {
         mIconTheme = mDefaultIconTheme;
       }
     } else {
       mIconTheme = mDefaultIconTheme;
     }
-    
   }
   
   /**
@@ -102,8 +108,8 @@ public class IconLoader {
    * @param size Size in Pixel
    * @return Icon if found, null if no Icon was found
    */
-  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon, int size) {
-    return getIconFromTheme(plugin, icon.getCategory(), icon.getName(), size);
+  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon) {
+    return getIconFromTheme(plugin, icon.getCategory(), icon.getName(), icon.getSize());
   }  
     
   

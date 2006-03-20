@@ -39,13 +39,16 @@ public class ThemeIcon {
   private String mCategory;
   /** Name of the Icon */
   private String mName;
-
+  /** Size of the Icon */
+  private int mSize;
+  
   /**
    * Create a ThemeIcon
    * @param category Category of the Icon (action, apps, devices etc)
    * @param name Name of the Icon without Extension (go-down, mail-message-new etc)
+   * @param size Size of the Icon
    */
-  public ThemeIcon(String category, String name) {
+  public ThemeIcon(String category, String name, int size) {
     mCategory = category;
     mName = name;
   }
@@ -62,6 +65,10 @@ public class ThemeIcon {
    */
   public String getName() {
     return mName;
+  }
+
+  public int getSize() {
+    return mSize;
   }
   
 }

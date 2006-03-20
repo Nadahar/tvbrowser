@@ -72,7 +72,7 @@ public class EMailPlugin extends Plugin {
    * @see devplugin.Plugin#getMarkIconFromTheme()
    */
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("actions", "mail-message-new");
+    return new ThemeIcon("actions", "mail-message-new", 16);
   }
   
   /*

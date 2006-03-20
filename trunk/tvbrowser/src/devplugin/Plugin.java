@@ -229,8 +229,8 @@ abstract public class Plugin implements Marker,ContextMenuIf {
    * @param size Size of the Icon
    * @return The Icon
    */
-  final public ImageIcon createImageIcon(ThemeIcon icon, int size) {
-    return getPluginManager().getIconFromTheme(this, icon, size);
+  final public ImageIcon createImageIcon(ThemeIcon icon) {
+    return getPluginManager().getIconFromTheme(this, icon);
   }
 
   /**
@@ -508,7 +508,7 @@ abstract public class Plugin implements Marker,ContextMenuIf {
       ThemeIcon icon = getMarkIconFromTheme();
       
       if (icon != null) {
-        mMarkIcon = IconLoader.getInstance().getIconFromTheme(this, icon, 16);
+        mMarkIcon = IconLoader.getInstance().getIconFromTheme(this, icon);
       }
       
       if (mMarkIcon == null) {

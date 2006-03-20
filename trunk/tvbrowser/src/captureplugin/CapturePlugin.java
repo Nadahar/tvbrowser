@@ -380,7 +380,7 @@ public class CapturePlugin extends devplugin.Plugin {
     }
 
     public ThemeIcon getMarkIconFromTheme() {
-      return new ThemeIcon("mimetypes", "video-x-generic");
+      return new ThemeIcon("mimetypes", "video-x-generic", 16);
     }
     
     /**

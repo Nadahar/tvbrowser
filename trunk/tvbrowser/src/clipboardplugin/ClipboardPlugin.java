@@ -184,7 +184,7 @@ public class ClipboardPlugin extends Plugin {
   }
 
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("actions", "edit-paste");
+    return new ThemeIcon("actions", "edit-paste", 16);
   }
 
   public void receivePrograms(Program[] programArr) {

@@ -94,7 +94,7 @@ public class NewsPlugin extends Plugin {
 
   
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("apps", "internet-news-reader");
+    return new ThemeIcon("apps", "internet-news-reader", 16);
   }
   
    public ActionMenu getButtonAction() {

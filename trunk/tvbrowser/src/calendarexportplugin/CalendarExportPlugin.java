@@ -60,7 +60,7 @@ public class CalendarExportPlugin extends Plugin {
     }
 
     public ThemeIcon getMarkIconFromTheme() {
-      return new ThemeIcon("apps", "office-calendar");
+      return new ThemeIcon("apps", "office-calendar", 16);
     }
     
     /*
