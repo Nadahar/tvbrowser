@@ -299,13 +299,13 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
     generalSettings.add(new SettingNode(new ContextmenuSettingsTab()));
+        
+    generalSettings.add(new SettingNode(new ContextmenuSettingsTab(), TAB_ID_CONTEXTMENU));
+    generalSettings.add(new SettingNode(new MausSettingsTab()));
     
     if(TVBrowser.isUsingSystemTray())
       generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
     
-    generalSettings.add(new SettingNode(new ContextmenuSettingsTab(), TAB_ID_CONTEXTMENU));
-    generalSettings.add(new SettingNode(new MausSettingsTab()));
-    generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
     generalSettings.add(new SettingNode(new StartupSettingsTab(), TAB_ADDITIONAL));
 
     programtableNode.add(new SettingNode(new ChannelsSettingsTab(), TAB_ID_CHANNELS));
