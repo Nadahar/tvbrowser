@@ -153,7 +153,7 @@ public class SearchPlugin extends Plugin {
   }
 
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("actions", "system-search");
+    return new ThemeIcon("actions", "system-search", 16);
   }
   
   public PluginInfo getInfo() {

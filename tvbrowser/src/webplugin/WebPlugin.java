@@ -152,7 +152,7 @@ public class WebPlugin extends Plugin {
   }
 
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("actions", "web-search");
+    return new ThemeIcon("actions", "web-search", 16);
   }
   
   /**

@@ -90,7 +90,7 @@ public class PrintPlugin extends Plugin {
   }
 
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("devices", "printer");
+    return new ThemeIcon("devices", "printer", 16);
   }
   
   public PluginInfo getInfo() {
