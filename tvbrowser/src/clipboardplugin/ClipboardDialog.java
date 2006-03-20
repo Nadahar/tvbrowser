@@ -62,7 +62,8 @@ import devplugin.Program;
 public class ClipboardDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer used by this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClipboardDialog.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ClipboardDialog.class);
 
   /** JList component */
   private ProgramList mProgramJList;
@@ -81,24 +82,28 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
 
   /** The Tree-Node */
   private PluginTreeNode mNode;
-  
+
   /**
    * Creates the Dialog
    * 
-   * @param frame Frame for modal
-   * @param plugin Plugin for reference
-   * @param node PluginTreeNode that contains all Programs
+   * @param frame
+   *          Frame for modal
+   * @param plugin
+   *          Plugin for reference
+   * @param node
+   *          PluginTreeNode that contains all Programs
    */
-  public ClipboardDialog(Frame frame, Plugin plugin, Properties settings, PluginTreeNode node) {
+  public ClipboardDialog(Frame frame, Plugin plugin, Properties settings,
+      PluginTreeNode node) {
     super(frame, true);
     mSettings = settings;
     mNode = node;
     setTitle(mLocalizer.msg("viewList", "View List:"));
-    
+
     UiUtilities.registerForClosing(this);
-    
+
     Program[] programs = node.getPrograms();
-    
+
     mClipList = new Vector();
     for (int i = 0; i < programs.length; i++) {
       mClipList.add(programs[i]);
@@ -140,8 +145,10 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
     c.anchor = GridBagConstraints.NORTH;
     c.gridwidth = GridBagConstraints.REMAINDER;
 
-    JButton upButton = new JButton(mPlugin.createImageIcon("actions", "go-up", 16));
-    upButton.setToolTipText(mLocalizer.msg("up", "Moves the selected program up"));
+    JButton upButton = new JButton(mPlugin.createImageIcon("actions", "go-up",
+        16));
+    upButton.setToolTipText(mLocalizer.msg("up",
+        "Moves the selected program up"));
     upButton.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent arg0) {
@@ -150,8 +157,10 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
     });
     buttonRight.add(upButton, c);
 
-    JButton downButton = new JButton(mPlugin.createImageIcon("actions", "go-down", 16));
-    downButton.setToolTipText(mLocalizer.msg("down", "Moves the selected program down"));
+    JButton downButton = new JButton(mPlugin.createImageIcon("actions",
+        "go-down", 16));
+    downButton.setToolTipText(mLocalizer.msg("down",
+        "Moves the selected program down"));
     downButton.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent arg0) {
@@ -162,8 +171,10 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
 
     c.weighty = 1.0;
 
-    JButton deleteButton = new JButton(mPlugin.createImageIcon("actions", "edit-delete", 16));
-    deleteButton.setToolTipText(mLocalizer.msg("delete", "Deletes the selected program"));
+    JButton deleteButton = new JButton(mPlugin.createImageIcon("actions",
+        "edit-delete", 16));
+    deleteButton.setToolTipText(mLocalizer.msg("delete",
+        "Deletes the selected program"));
 
     deleteButton.addActionListener(new ActionListener() {
 
@@ -178,7 +189,8 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
 
     JButton sendButton = new JButton();
 
-    sendButton.setToolTipText(mLocalizer.msg("send", "Send Program to another Plugin"));
+    sendButton.setToolTipText(mLocalizer.msg("send",
+        "Send Program to another Plugin"));
     sendButton.setIcon(mPlugin.createImageIcon("actions", "edit-copy", 16));
     sendButton.addActionListener(new ActionListener() {
 
@@ -189,25 +201,29 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
     });
 
     CellConstraints cc = new CellConstraints();
-    JPanel buttonPn = new JPanel(new FormLayout("default, 3dlu, default, fill:default:grow, default", "fill:default"));
+    JPanel buttonPn = new JPanel(new FormLayout(
+        "default, 3dlu, default, fill:default:grow, default", "fill:default"));
     buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
     content.add(buttonPn, BorderLayout.SOUTH);
 
     JButton copyToSystemBtn = new JButton();
-    copyToSystemBtn.setIcon(mPlugin.createImageIcon("actions", "edit-paste", 16));
-    copyToSystemBtn.setToolTipText(mLocalizer.msg("toSystem", "To System-Clipbord"));
-    
+    copyToSystemBtn.setIcon(mPlugin
+        .createImageIcon("actions", "edit-paste", 16));
+    copyToSystemBtn.setToolTipText(mLocalizer.msg("toSystem",
+        "To System-Clipbord"));
+
     copyToSystemBtn.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent arg0) {
-        ((ClipboardPlugin)mPlugin).copyProgramsToSystem((Program[])mClipList.toArray(new Program[0]));
+        ((ClipboardPlugin) mPlugin).copyProgramsToSystem((Program[]) mClipList
+            .toArray(new Program[0]));
       }
 
     });
 
-    buttonPn.add(sendButton, cc.xy(1,1));
-    buttonPn.add(copyToSystemBtn, cc.xy(3,1));
+    buttonPn.add(sendButton, cc.xy(1, 1));
+    buttonPn.add(copyToSystemBtn, cc.xy(3, 1));
 
     JButton closeButton = new JButton(mLocalizer.msg("close", "Close"));
     closeButton.addActionListener(new ActionListener() {
@@ -217,7 +233,7 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    buttonPn.add(closeButton, cc.xy(5,1));
+    buttonPn.add(closeButton, cc.xy(5, 1));
     getRootPane().setDefaultButton(closeButton);
 
   }
@@ -239,7 +255,8 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
   /**
    * Moves the selected Items
    * 
-   * @param nrRows # Rows to Move
+   * @param nrRows #
+   *          Rows to Move
    */
   protected void moveSelectedItems(int nrRows) {
     int[] selection = mProgramJList.getSelectedIndices();
@@ -274,7 +291,8 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
     }
 
     // Zeilen markieren
-    mProgramJList.getSelectionModel().setSelectionInterval(insertPos, insertPos + selection.length - 1);
+    mProgramJList.getSelectionModel().setSelectionInterval(insertPos,
+        insertPos + selection.length - 1);
 
     // Scrollen
     int scrollPos = insertPos;
@@ -288,7 +306,8 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
    * Delete-Button was pressed.
    */
   protected void deleteItems() {
-    if ((mClipList.size() == 0) || (mProgramJList.getSelectedIndex() >= mClipList.size())) {
+    if ((mClipList.size() == 0)
+        || (mProgramJList.getSelectedIndex() >= mClipList.size())) {
       return;
     }
 
@@ -312,10 +331,15 @@ public class ClipboardDialog extends JDialog implements WindowClosingIf {
    * Shows the Send-Dialog
    */
   private void showSendDialog() {
-    Program[] prgList = new Program[mClipList.size()];
+    Program[] prgList = mProgramJList.getSelectedPrograms();
 
-    for (int i = 0; i < mClipList.size(); i++) {
-      prgList[i] = (Program) mClipList.get(i);
+    if (prgList == null) {
+
+      prgList = new Program[mClipList.size()];
+
+      for (int i = 0; i < mClipList.size(); i++) {
+        prgList[i] = (Program) mClipList.get(i);
+      }
     }
 
     SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, prgList);
