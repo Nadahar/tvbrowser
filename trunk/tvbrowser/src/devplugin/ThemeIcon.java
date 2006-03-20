@@ -51,6 +51,7 @@ public class ThemeIcon {
   public ThemeIcon(String category, String name, int size) {
     mCategory = category;
     mName = name;
+    mSize = size;
   }
   
   /**
