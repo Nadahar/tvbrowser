@@ -262,7 +262,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         boolean cellHasFocus) {
 
       JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
+      
       if (value instanceof SeparatorMenuItem) {
         LineComponent comp = new LineComponent(label.getForeground());
         comp.setBackground(label.getBackground());
@@ -274,11 +274,11 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
         mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
         mItemLabel.setText(value.toString());
+        mItemLabel.setForeground(label.getForeground());
 
-        mItemPanel.setForeground(label.getForeground());
         mItemPanel.setBackground(label.getBackground());
         mItemPanel.setOpaque(label.isOpaque());
-
+        
         return mItemPanel;
       } else if (value instanceof ContextMenuIf) {
         ContextMenuIf menuIf = (ContextMenuIf) value;
@@ -305,14 +305,15 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
         mItemLabel.setIcon(icon);
         mItemLabel.setText(text.toString());
-
+        mItemLabel.setForeground(label.getForeground());
+        
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
-        mItemPanel.setForeground(label.getForeground());
+        
         mItemPanel.setBackground(label.getBackground());
         mItemPanel.setOpaque(label.isOpaque());
         return mItemPanel;
       }
-
+      
       return label;
     }
 
