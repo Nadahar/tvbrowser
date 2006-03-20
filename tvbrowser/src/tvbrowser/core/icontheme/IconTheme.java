@@ -37,6 +37,7 @@ import javax.swing.ImageIcon;
 import util.io.IniFileReader;
 import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
+import devplugin.ThemeIcon;
 
 /**
  * This class implements the IconTheme-Loading
@@ -156,17 +157,16 @@ public class IconTheme {
    * it tries to find another Version of the Icon and rescales it.
    * 
    * @param category Category of the Icon
-   * @param icon Name of the Icon without File-Extension
-   * @param size Size of the Icon
+   * @param icon Icon that should be loaded
    * @return Icon or Null if Icon was not found
    */
-  public ImageIcon getIcon(String category, String icon, int size) {
+  public ImageIcon getIcon(ThemeIcon icon) {
     // First Try, find exact size matching Icon
     Iterator it = mDirectories.iterator();
     while (it.hasNext()) {
       Directory dir = (Directory)it.next();
-      if (category.equalsIgnoreCase(category) && sizeMatches(dir, size)) {
-        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon).append(".png");
+      if (sizeMatches(dir, icon.getSize())) {
+        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
         File file = new File(mIconBaseDirectory, iconFile.toString());
         
         if (file.exists()) {
@@ -182,9 +182,9 @@ public class IconTheme {
     it = mDirectories.iterator();
     while (it.hasNext()) {
       Directory dir = (Directory)it.next();
-      int distance = sizeDistance(dir, size); 
-      if (category.equalsIgnoreCase(category) && distance < minSize) {
-        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon).append(".png");
+      int distance = sizeDistance(dir, icon.getSize()); 
+      if (distance < minSize) {
+        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
         File file = new File(mIconBaseDirectory, iconFile.toString());
 
         if (file.exists()) {
@@ -198,7 +198,7 @@ public class IconTheme {
     // Found closest match, resize it
     if (closestMatch != null) {
       Icon closestIcon = new ImageIcon(ImageUtilities.createImage(closestMatch));
-      return (ImageIcon) UiUtilities.scaleIcon(closestIcon, size, size);
+      return (ImageIcon) UiUtilities.scaleIcon(closestIcon, icon.getSize(), icon.getSize());
     }
     
     return null;
