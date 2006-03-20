@@ -26,6 +26,8 @@
 package tvbrowser.core.icontheme;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.WeakHashMap;
 
 import javax.swing.ImageIcon;
 
@@ -53,7 +55,12 @@ public class IconLoader {
   private static IconLoader mInstance;
   /** Icon Themes to Load Icons from*/
   private IconTheme mDefaultIconTheme, mIconTheme;
+  /** Default Directory */
   private File mDefaultIconDir;
+  /** Icon Cache */
+  private WeakHashMap mIconCache;
+  /** Icon Cache for Plugins */
+  private HashMap mPluginIconCache;
   
   /**
    * Private Constructor
@@ -74,6 +81,9 @@ public class IconLoader {
    * @param iconset Directory with IconTheme
    */
   public void loadIconTheme(File iconset) {
+    mIconCache = new WeakHashMap();
+    mPluginIconCache = new HashMap();
+    
     if (!iconset.exists() || !iconset.isFile()) {
       iconset = mDefaultIconDir;
     }
@@ -104,27 +114,15 @@ public class IconLoader {
    * Load a specific Icon
    * 
    * @param plugin Plugin that wants to use the Icon
-   * @param icon Name of the Icon without File-Extension
-   * @param size Size in Pixel
-   * @return Icon if found, null if no Icon was found
-   */
-  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon) {
-    return getIconFromTheme(plugin, icon.getCategory(), icon.getName(), icon.getSize());
-  }  
-    
-  
-  /**
-   * Load a specific Icon
-   * 
    * @param category Category of the Icon
    * @param icon Name of the Icon without File-Extension
    * @param size Size in Pixel
    * @return Icon if found, null if no Icon was found
    */
-  public ImageIcon getIconFromTheme(ThemeIcon icon, int size) {
-    return getIconFromTheme(null, icon.getCategory(), icon.getName(), size);
+  public ImageIcon getIconFromTheme(Plugin plugin, String category, String icon, int size) {
+    return getIconFromTheme(plugin, new ThemeIcon(category, icon, size));
   }  
-  
+ 
   /**
    * Load a specific Icon
    * 
@@ -134,53 +132,74 @@ public class IconLoader {
    * @return Icon if found, null if no Icon was found
    */
   public ImageIcon getIconFromTheme(String category, String icon, int size) {
-    return getIconFromTheme(null, category, icon, size);
+    return getIconFromTheme(null, new ThemeIcon(category, icon, size));
   }
   
   /**
    * Load a specific Icon
    *
    * @param plugin Plugin that wants to use the Icon
-   * @param category Category of the Icon
-   * @param icon Name of the Icon without File-Extension
-   * @param size Size in Pixel
+   * @param icon Icon that should be loaded
    * @return Icon if found, null if no Icon was found
    */
-  public ImageIcon getIconFromTheme(Plugin plugin, String category, String icon, int size) {
+  public ImageIcon getIconFromTheme(Plugin plugin, ThemeIcon icon) {
+    // Check the Cache
+    ImageIcon imageIcon = (ImageIcon) mIconCache.get(icon);
+    if (imageIcon != null) {
+      return imageIcon;
+    }
     
     // First Try: Current Icon Theme
-    ImageIcon imageIcon = mIconTheme.getIcon(category, icon, size);
+    imageIcon = mIconTheme.getIcon(icon);
     
     if (imageIcon != null) {
+      mIconCache.put(icon, imageIcon);
       return imageIcon;
     }
     
     // Second Try: Default Icon Theme
     if (mIconTheme != mDefaultIconTheme) {
-      imageIcon = mDefaultIconTheme.getIcon(category, icon, size);
+      imageIcon = mDefaultIconTheme.getIcon(icon);
       
       if (imageIcon != null) {
+        mIconCache.put(icon, imageIcon);
         return imageIcon;
       }
     }
  
-    // Third Try: Icon in Plugin-Jar
+    // Third Try: Plugin Icon Cache
+    WeakHashMap pluginCache = (WeakHashMap)mPluginIconCache.get(plugin); 
+    
+    if (pluginCache != null) {
+      imageIcon = (ImageIcon) pluginCache.get(icon);
+      if (imageIcon != null) {
+        return imageIcon;
+      }
+    }
+    
+    // Forth Try: Icon in Plugin-Jar
     if(plugin != null) {
-      StringBuffer buffer = new StringBuffer("/").append(plugin.getClass().getPackage().getName()).append("/icons/").append(size).append("x").append(size).append("/").append(category).append("/").append(icon).append(".png");
+      StringBuffer buffer = new StringBuffer("/").append(plugin.getClass().getPackage().getName()).append("/icons/").append(icon.getSize()).append("x").append(icon.getSize()).append("/").append(icon.getCategory()).append("/").append(icon.getCategory()).append(".png");
             
       if (plugin.getClass().getResourceAsStream(buffer.toString()) != null) {
         try {
           imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), plugin.getClass()); 
           
-          if (imageIcon != null)
+          if (imageIcon != null){
+            if (pluginCache == null) {
+              pluginCache = new WeakHashMap();
+              mPluginIconCache.put(plugin, pluginCache);
+            }
+            pluginCache.put(plugin, imageIcon);
             return imageIcon;
+          }
         } catch (Exception e) {
         }
       }
     }
     
     // Last Try: Icon in tvbrowser.jar
-    StringBuffer buffer = new StringBuffer("/icons/").append(size).append("x").append(size).append("/").append(category).append("/").append(icon).append(".png");
+    StringBuffer buffer = new StringBuffer("/icons/").append(icon.getSize()).append("x").append(icon.getSize()).append("/").append(icon.getCategory()).append("/").append(icon.getName()).append(".png");
      
     if (getClass().getResourceAsStream(buffer.toString()) != null) {
       imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), getClass()); 

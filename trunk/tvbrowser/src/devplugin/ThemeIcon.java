@@ -68,8 +68,49 @@ public class ThemeIcon {
     return mName;
   }
 
+  /**
+   * @return Size of the Icon
+   */
   public int getSize() {
     return mSize;
   }
-  
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
+  public int hashCode() {
+    final int PRIME = 31;
+    int result = 1;
+    result = PRIME * result + ((mCategory == null) ? 0 : mCategory.hashCode());
+    result = PRIME * result + ((mName == null) ? 0 : mName.hashCode());
+    result = PRIME * result + mSize;
+    return result;
+  }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final ThemeIcon other = (ThemeIcon) obj;
+    if (mCategory == null) {
+      if (other.mCategory != null)
+        return false;
+    } else if (!mCategory.equals(other.mCategory))
+      return false;
+    if (mName == null) {
+      if (other.mName != null)
+        return false;
+    } else if (!mName.equals(other.mName))
+      return false;
+    if (mSize != other.mSize)
+      return false;
+    return true;
+  }
+     
 }
