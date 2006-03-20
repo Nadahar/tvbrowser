@@ -109,7 +109,7 @@ public class SystemTray {
 
     mUseSystemTray = false;
 
-    if (Settings.propTrayIsEnabled.getBoolean()) {
+
       mSystemTray = SystemTrayFactory.createSystemTray();
 
       if (mSystemTray != null) {
@@ -127,7 +127,7 @@ public class SystemTray {
         mUseSystemTray = false;
         Settings.propTrayIsEnabled.setBoolean(false);
       }
-    }
+    
     return mUseSystemTray;
   }
 
@@ -242,7 +242,7 @@ public class SystemTray {
       });
       mSystemTray.setTrayPopUp(mTrayMenu);
 
-      mSystemTray.setVisible(true);
+      mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
 
       if (!Settings.propShowProgramsInTrayWasConfigured.getBoolean()
           && Settings.propNowRunningProgramsInTrayChannels
@@ -259,7 +259,7 @@ public class SystemTray {
       mMenuCreated = true;
     }
     else
-      mSystemTray.setVisible(true);
+      mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
   }
   
   /**
