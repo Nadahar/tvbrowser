@@ -37,6 +37,10 @@ import java.util.Comparator;
 import java.util.Properties;
 import java.util.Vector;
 
+import javax.sound.midi.Sequencer;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -86,6 +90,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private JComboBox mDefaultReminderEntryList;
 
   private String mExecFileStr, mExecParamStr;
+  private Object mTestSound;
 
  // private ReminderPlugin mPlugin;
 
@@ -165,7 +170,38 @@ public class ReminderSettingsTab implements SettingsTab {
     final JButton soundTestBt = new JButton(msg);
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
+        if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
+          soundTestBt.setText(mLocalizer.msg("stop", "Stop"));
+          mTestSound = ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
+          if(mTestSound != null)
+            if(mTestSound instanceof Clip) {
+            ((Clip)mTestSound).addLineListener(new LineListener() {
+              public void update(LineEvent event) {
+                if(mTestSound == null || !((Clip)mTestSound).isRunning())
+                  soundTestBt.setText(mLocalizer.msg("test", "Test"));
+              }
+            });
+            }
+            else if(mTestSound instanceof Sequencer) {
+              new Thread() {
+                public void run() {
+                  setPriority(Thread.MIN_PRIORITY);
+                  while(((Sequencer)mTestSound).isRunning()) {
+                    try {
+                      Thread.sleep(100);
+                    }catch(Exception ee) {}
+                  }
+                  
+                  soundTestBt.setText(mLocalizer.msg("test", "Test"));
+                }
+              }.start();
+            }
+        }
+        else if(mTestSound != null)
+          if(mTestSound instanceof Clip && ((Clip)mTestSound).isRunning())
+            ((Clip)mTestSound).stop();
+          else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning())
+            ((Sequencer)mTestSound).stop();
       }
     });
     soundPn.add(soundTestBt, BorderLayout.EAST);
