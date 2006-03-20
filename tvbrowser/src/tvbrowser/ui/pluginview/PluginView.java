@@ -62,7 +62,8 @@ public class PluginView extends JPanel implements MouseListener {
 
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     mModel = PluginTreeModel.getInstance();
-    for (int i=0; i<plugins.length; i++) {
+    
+    for (int i=plugins.length - 1; i>=0; i--) {
       if (plugins[i].canUseProgramTree()) {
         mModel.addPluginTree(plugins[i]);
       }
@@ -86,7 +87,8 @@ public class PluginView extends JPanel implements MouseListener {
     mModel.removeAllChildNodes();
     
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    for (int i=0; i<plugins.length; i++) {
+    
+    for (int i=plugins.length - 1; i>=0; i--) {
       if (plugins[i].canUseProgramTree()) {
         mModel.addPluginTree(plugins[i]);
       }
