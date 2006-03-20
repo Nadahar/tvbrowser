@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,11 +40,14 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -52,17 +56,25 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Plugin;
 
 public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  .getLocalizerFor(DefaultToolBarModel.class);
+  
   private Map mAvailableActions;
 
   private ArrayList mVisibleActions;
 
-  private Action mUpdateAction, mSettingsAction, mFilterAction, mPluginViewAction, mSeparatorAction,
-      mScrollToNowAction, mScrollToTodayAction, mScrollToTomorrowAction, mFavoriteAction, mReminderAction;
+  private Action mUpdateAction, mSettingsAction, mFilterAction,
+      mPluginViewAction, mSeparatorAction, mScrollToNowAction,
+      mScrollToTodayAction, mScrollToTomorrowAction, mFavoriteAction,
+      mReminderAction, mGoToDateAction, mGoToChannelAction,mGoToTimeAction;
 
   private static DefaultToolBarModel sInstance;
 
@@ -84,61 +96,108 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   public static DefaultToolBarModel getInstance() {
     if (sInstance == null) {
-      sInstance = new DefaultToolBarModel(Settings.propToolbarButtons.getStringArray());
+      sInstance = new DefaultToolBarModel(Settings.propToolbarButtons
+          .getStringArray());
     }
     return sInstance;
   }
 
   public void setPluginViewButtonSelected(boolean arg) {
-    mPluginViewAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
+    mPluginViewAction
+        .putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
   }
 
   public void setFilterButtonSelected(boolean arg) {
     mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
 
     if (arg) {
-      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/FilterSet16.png"));
-      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/FilterSet22.png"));
+      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon(
+          "imgs/FilterSet16.png"));
+      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon(
+          "imgs/FilterSet22.png"));
     } else {
-      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon("imgs/Filter16.png"));
-      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon("imgs/Filter22.png"));
+      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon(
+          "imgs/Filter16.png"));
+      mFilterAction.putValue(Plugin.BIG_ICON,
+          new ImageIcon("imgs/Filter22.png"));
     }
   }
 
   private void createAvailableActions() {
     mAvailableActions = new HashMap();
-    mUpdateAction = createAction(TVBrowser.mLocalizer.msg("button.update", "Update"), "#update", MainFrame.mLocalizer
-        .msg("menuinfo.update", ""), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 22),
+    mUpdateAction = createAction(TVBrowser.mLocalizer.msg("button.update",
+        "Update"), "#update", MainFrame.mLocalizer.msg("menuinfo.update", ""),
+        IconLoader.getInstance().getIconFromTheme("apps",
+            "system-software-update", 16), IconLoader.getInstance()
+            .getIconFromTheme("apps", "system-software-update", 22),
         ToolBar.BUTTON_ACTION, this);
-    mSettingsAction = createAction(TVBrowser.mLocalizer.msg("button.settings", "Settings"), "#settings",
-        MainFrame.mLocalizer.msg("menuinfo.settings", ""), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 16), IconLoader.getInstance().getIconFromTheme("category", "preferences-desktop", 22), 
-        ToolBar.BUTTON_ACTION, this);
-    mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"), "#filter", MainFrame.mLocalizer
-        .msg("menuinfo.filter", ""), new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter22.png"),
+    mSettingsAction = createAction(TVBrowser.mLocalizer.msg("button.settings",
+        "Settings"), "#settings", MainFrame.mLocalizer.msg("menuinfo.settings",
+        ""), IconLoader.getInstance().getIconFromTheme("category",
+        "preferences-desktop", 16), IconLoader.getInstance().getIconFromTheme(
+        "category", "preferences-desktop", 22), ToolBar.BUTTON_ACTION, this);
+    mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter",
+        "Filter"), "#filter", MainFrame.mLocalizer.msg("menuinfo.filter", ""),
+        new ImageIcon("imgs/Filter16.png"), new ImageIcon("imgs/Filter22.png"),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mPluginViewAction = createAction(TVBrowser.mLocalizer.msg("button.pluginView", "Plugin View"), "#pluginView",
-        MainFrame.mLocalizer.msg("menuinfo.pluginView", ""), new ImageIcon("imgs/Bookmarks16.gif"), new ImageIcon(
-            "imgs/Bookmarks22.gif"), ToolBar.TOOGLE_BUTTON_ACTION, this);
-    String scrollTo = MainFrame.mLocalizer.msg("menuinfo.scrollTo", "Scroll to") + ": ";
-    mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now", "Now"), "#scrollToNow", scrollTo
-        + TVBrowser.mLocalizer.msg("button.now", "Now"),IconLoader.getInstance().getIconFromTheme("actions", "media-playback-start", 16), IconLoader.getInstance().getIconFromTheme("actions", "media-playback-start", 22), ToolBar.BUTTON_ACTION, this);
-    mScrollToTodayAction = createAction(TVBrowser.mLocalizer.msg("button.today", "Today"), "#scrollToToday", scrollTo
-        + TVBrowser.mLocalizer.msg("button.today", "Today"), IconLoader.getInstance().getIconFromTheme("actions", "document-open", 16), IconLoader.getInstance().getIconFromTheme("actions", "document-open", 22),
-          ToolBar.BUTTON_ACTION, this);
-    mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"),
-        "#scrollToTomorrow", scrollTo + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), IconLoader.getInstance().getIconFromTheme("actions", "go-next", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "go-next", 22), ToolBar.BUTTON_ACTION, this);
-    mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("buttonText" ,"Reminder list"), SettingsDialog.TAB_ID_REMINDER, ReminderPlugin.mLocalizer.msg( "description" ,"Eine einfache Implementierung einer Erinnerungsfunktion."), IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16), IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22),
+    mPluginViewAction = createAction(TVBrowser.mLocalizer.msg(
+        "button.pluginView", "Plugin View"), "#pluginView",
+        MainFrame.mLocalizer.msg("menuinfo.pluginView", ""), new ImageIcon(
+            "imgs/Bookmarks16.gif"), new ImageIcon("imgs/Bookmarks22.gif"),
+        ToolBar.TOOGLE_BUTTON_ACTION, this);
+    String scrollTo = MainFrame.mLocalizer
+        .msg("menuinfo.scrollTo", "Scroll to")
+        + ": ";
+    mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now",
+        "Now"), "#scrollToNow", scrollTo
+        + TVBrowser.mLocalizer.msg("button.now", "Now"), IconLoader
+        .getInstance().getIconFromTheme("actions", "media-playback-start", 16),
+        IconLoader.getInstance().getIconFromTheme("actions",
+            "media-playback-start", 22), ToolBar.BUTTON_ACTION, this);
+    mScrollToTodayAction = createAction(TVBrowser.mLocalizer.msg(
+        "button.today", "Today"), "#scrollToToday", scrollTo
+        + TVBrowser.mLocalizer.msg("button.today", "Today"), IconLoader
+        .getInstance().getIconFromTheme("actions", "document-open", 16),
+        IconLoader.getInstance().getIconFromTheme("actions", "document-open",
+            22), ToolBar.BUTTON_ACTION, this);
+    mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg(
+        "button.tomorrow", "Tomorrow"), "#scrollToTomorrow", scrollTo
+        + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-next", 16), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-next", 22),
         ToolBar.BUTTON_ACTION, this);
-    mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("buttonText", "Manage Favorites"), SettingsDialog.TAB_ID_FAVORITE, FavoritesPlugin.mLocalizer.msg("favoritesManager",
-    "Manage favorite programs"), IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance().getIconFromTheme("apps", "bookmark", 22),
+    mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("buttonText",
+        "Reminder list"), SettingsDialog.TAB_ID_REMINDER,
+        ReminderPlugin.mLocalizer.msg("description",
+            "Eine einfache Implementierung einer Erinnerungsfunktion."),
+        IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16),
+        IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22),
         ToolBar.BUTTON_ACTION, this);
-
-    
-    
+    mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("buttonText",
+        "Manage Favorites"), SettingsDialog.TAB_ID_FAVORITE,
+        FavoritesPlugin.mLocalizer.msg("favoritesManager",
+            "Manage favorite programs"), IconLoader.getInstance()
+            .getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance()
+            .getIconFromTheme("apps", "bookmark", 22), ToolBar.BUTTON_ACTION,
+        this);
+    mGoToDateAction = createAction(mLocalizer.msg("goToDate","Go to date"), "#goToDate",
+        mLocalizer.msg("goToDateTooltip","Go to a date"), IconLoader.getInstance().getIconFromTheme(
+            "mimetypes", "x-office-calendar", 16), IconLoader.getInstance()
+            .getIconFromTheme("mimetypes", "x-office-calendar", 22),
+        ToolBar.TOOGLE_BUTTON_ACTION, this);
+    mGoToChannelAction = createAction(mLocalizer.msg("goToChannel","Go to channel"), "#goToChannel",
+        mLocalizer.msg("goToChannelTooltip","Go to a channel"), IconLoader.getInstance().getIconFromTheme(
+            "actions", "go-down", 16), IconLoader.getInstance()
+            .getIconFromTheme("actions", "go-down", 22),
+        ToolBar.TOOGLE_BUTTON_ACTION, this);
+    mGoToTimeAction = createAction(mLocalizer.msg("goToTime","Go to time"), "#goToTime",
+        mLocalizer.msg("goToTimeTooltip","Go to a time"), IconLoader.getInstance().getIconFromTheme(
+            "actions", "go-down", 16), IconLoader.getInstance()
+            .getIconFromTheme("actions", "go-down", 22),
+        ToolBar.TOOGLE_BUTTON_ACTION, this);
     
     updateTimeButtons();
-    
+
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
 
     mAvailableActions.put("#update", mUpdateAction);
@@ -150,7 +209,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mAvailableActions.put("#scrollToTomorrow", mScrollToTomorrowAction);
     mAvailableActions.put(SettingsDialog.TAB_ID_REMINDER, mReminderAction);
     mAvailableActions.put(SettingsDialog.TAB_ID_FAVORITE, mFavoriteAction);
-
+    mAvailableActions.put("#goToDate", mGoToDateAction);
+    mAvailableActions.put("#goToChannel", mGoToChannelAction);
+    mAvailableActions.put("#goToTime", mGoToTimeAction);
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
     PluginProxy[] pluginProxys = pluginMng.getActivatedPlugins();
@@ -163,7 +224,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
           mAvailableActions.put(pluginProxys[i].getId(), action);
           String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
           if (tooltip == null) {
-            action.putValue(Action.SHORT_DESCRIPTION, pluginProxys[i].getInfo().getDescription());
+            action.putValue(Action.SHORT_DESCRIPTION, pluginProxys[i].getInfo()
+                .getDescription());
           }
         } else {
           // TODO: create drop down list button
@@ -171,20 +233,22 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       }
     }
   }
-  
+
   protected void updateTimeButtons() {
     Object[] keys = mAvailableActions.keySet().toArray();
     ArrayList availableTimeActions = new ArrayList();
-    
-    for(int i = 0; i < keys.length; i++) {
-      Action action = (Action)mAvailableActions.get(keys[i]); 
+
+    for (int i = 0; i < keys.length; i++) {
+      Action action = (Action) mAvailableActions.get(keys[i]);
       String test = action.getValue(Action.NAME).toString();
-      
-      if(test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5))
+
+      if (test.indexOf(":") != -1 && (test.length() == 4 || test.length() == 5))
         availableTimeActions.add(keys[i].toString());
     }
-    
-    String scrollTo = MainFrame.mLocalizer.msg("menuinfo.scrollTo", "Scroll to") + ": ";
+
+    String scrollTo = MainFrame.mLocalizer
+        .msg("menuinfo.scrollTo", "Scroll to")
+        + ": ";
     // create Time Buttons
     int[] array = Settings.propTimeButtons.getIntArray();
     Action timeButtonAction;
@@ -197,30 +261,32 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       if (time.length() == 1)
         time = hour + ":0" + time;
       else
-        time = hour + ":" + time;      
-      
-      if(availableTimeActions.contains(new String("#scrollTo" + time))) {
+        time = hour + ":" + time;
+
+      if (availableTimeActions.contains(new String("#scrollTo" + time))) {
         availableTimeActions.remove(new String("#scrollTo" + time));
         continue;
       }
-      
-      timeButtonAction = createAction(time, "#scrollTo" + time, scrollTo + time, IconLoader.getInstance()
-          .getIconFromTheme("actions", "go-down", 16), IconLoader.getInstance().getIconFromTheme("actions", "go-down",
-          22), ToolBar.BUTTON_ACTION, new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().scrollToTime(scrollTime);
-        }
-      });
-      
-      mAvailableActions.put("#scrollTo" + time, timeButtonAction);      
+
+      timeButtonAction = createAction(time, "#scrollTo" + time,
+          scrollTo + time, IconLoader.getInstance().getIconFromTheme("actions",
+              "go-down", 16), IconLoader.getInstance().getIconFromTheme(
+              "actions", "go-down", 22), ToolBar.BUTTON_ACTION,
+          new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+              MainFrame.getInstance().scrollToTime(scrollTime);
+            }
+          });
+
+      mAvailableActions.put("#scrollTo" + time, timeButtonAction);
     }
-    
+
     Iterator it = availableTimeActions.iterator();
-    
-    while(it.hasNext()) {
-      Action action = (Action)mAvailableActions.remove(it.next());
-      
-      if(mVisibleActions.contains(action))
+
+    while (it.hasNext()) {
+      Action action = (Action) mAvailableActions.remove(it.next());
+
+      if (mVisibleActions.contains(action))
         mVisibleActions.remove(action);
     }
   }
@@ -257,7 +323,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       ActionMenu actionMenu = pluginProxys[i].getButtonAction();
       if (actionMenu != null) {
         if (!actionMenu.hasSubItems()) {
-          Action action = (Action) mAvailableActions.get(pluginProxys[i].getId());
+          Action action = (Action) mAvailableActions.get(pluginProxys[i]
+              .getId());
           if (action != null) {
             mVisibleActions.add(action);
           }
@@ -275,17 +342,19 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       };
 
       mSeparatorAction.putValue(ToolBar.ACTION_ID_KEY, "#separator");
-      mSeparatorAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(ToolBar.SEPARATOR));
+      mSeparatorAction.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(
+          ToolBar.SEPARATOR));
       mSeparatorAction.putValue(Action.NAME, "----SEPARATOR----");
     }
     return mSeparatorAction;
   }
 
-  private Action createAction(String name, String id, String description, Icon smallIcon, Icon bigIcon, int type,
-      final ActionListener listener) {
+  private Action createAction(String name, String id, String description,
+      Icon smallIcon, Icon bigIcon, int type, final ActionListener listener) {
     Action action = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
-        listener.actionPerformed(new ActionEvent(this, e.getID(), e.getActionCommand()));
+        listener.actionPerformed(new ActionEvent(this, e.getID(), e
+            .getActionCommand()));
       }
     };
     action.putValue(Action.NAME, name);
@@ -294,6 +363,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     action.putValue(Action.SHORT_DESCRIPTION, description);
     action.putValue(ToolBar.ACTION_TYPE_KEY, new Integer(type));
     action.putValue(ToolBar.ACTION_ID_KEY, id);
+
     return action;
   }
 
@@ -303,10 +373,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       MainFrame.getInstance().updateTvData();
     } else if (source == mSettingsAction) {
       MainFrame.getInstance().showSettingsDialog();
-    } else if (source == mFilterAction) {
-      showFilterPopup(source);
+    } else if (source == mFilterAction || source == mGoToDateAction || source == mGoToChannelAction || source == mGoToTimeAction) {
+      showPopupMenu(source);
     } else if (source == mPluginViewAction) {
-      AbstractButton button = (AbstractButton) source.getValue(ToolBar.ACTION_VALUE);
+      AbstractButton button = (AbstractButton) source
+          .getValue(ToolBar.ACTION_VALUE);
       MainFrame.getInstance().setShowPluginOverview(button.isSelected());
     } else if (source == mScrollToNowAction) {
       MainFrame.getInstance().scrollToNow();
@@ -317,10 +388,12 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       devplugin.Date d = devplugin.Date.getCurrentDate();
       d = d.addDays(1);
       MainFrame.getInstance().goTo(d);
-    } else if(source == mReminderAction) {
-      ReminderPlugin.getInstance().getButtonAction(MainFrame.getInstance()).getAction().actionPerformed(null);
-    } else if(source == mFavoriteAction) {
-      FavoritesPlugin.getInstance().getButtonAction(MainFrame.getInstance()).getAction().actionPerformed(null);
+    } else if (source == mReminderAction) {
+      ReminderPlugin.getInstance().getButtonAction(MainFrame.getInstance())
+          .getAction().actionPerformed(null);
+    } else if (source == mFavoriteAction) {
+      FavoritesPlugin.getInstance().getButtonAction(MainFrame.getInstance())
+          .getAction().actionPerformed(null);
     } else {
 
     }
@@ -343,32 +416,102 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   }
 
   public void showStopButton() {
-    mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.stop", "Stop"));
-    mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
-    mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 22));
-    mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg("menuinfo.stop", ""));
+    mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.stop",
+        "Stop"));
+    mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
+        .getIconFromTheme("actions", "process-stop", 16));
+    mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance()
+        .getIconFromTheme("actions", "process-stop", 22));
+    mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg(
+        "menuinfo.stop", ""));
   }
 
   public void showUpdateButton() {
-    mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.update", "Update"));
-    mUpdateAction.putValue(Action.SMALL_ICON,IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
-    mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 22));
-    mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg("menuinfo.update", ""));
+    mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg(
+        "button.update", "Update"));
+    mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
+        .getIconFromTheme("apps", "system-software-update", 16));
+    mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance()
+        .getIconFromTheme("apps", "system-software-update", 22));
+    mUpdateAction.putValue(Action.SHORT_DESCRIPTION, MainFrame.mLocalizer.msg(
+        "menuinfo.update", ""));
 
   }
 
-  private void showFilterPopup(final Action item) {
-    AbstractButton btn = (AbstractButton) item.getValue(ToolBar.ACTION_VALUE);
-    SelectFilterPopup popup = new SelectFilterPopup(MainFrame.getInstance());
+  private void showPopupMenu(final Action item) {
+    final AbstractButton btn = (AbstractButton) item.getValue(ToolBar.ACTION_VALUE);
+    
+    JPopupMenu popup = null;
+    
+    if (item == mFilterAction)
+      popup = new SelectFilterPopup(MainFrame.getInstance());
+    if (item == mGoToDateAction) {
+      popup = new JPopupMenu();
 
+      Date curDate = new Date();
+      for (int i = 0; i < 21; i++) {
+        if (!TvDataBase.getInstance().dataAvailable(curDate)) {
+          break;
+        }
+        popup.add(createDateMenuItem(curDate, btn));
+        curDate = curDate.addDays(1);
+      }
+    }
+    if (item == mGoToChannelAction) {
+      popup = new JPopupMenu();
+      
+      Channel[] channels = Settings.propSubscribedChannels.getChannelArray(false);
+      for(int i = 0; i < channels.length; i++)
+        popup.add(createChannelMenuItem(channels[i], btn));
+    }
+    if(item == mGoToTimeAction) {
+      popup = new JPopupMenu();
+      
+      int[] array = Settings.propTimeButtons.getIntArray();      
+
+      for (int i = 0; i < array.length; i++)
+        popup.add(createTimeMenuItem(array[i],btn));
+      
+      if(popup.getComponentCount() > 0)
+        popup.addSeparator();
+      
+      JMenuItem menuItem = new JMenuItem(TVBrowser.mLocalizer.msg("button.now",
+          "Now"));
+      menuItem.setHorizontalTextPosition(JMenuItem.CENTER);
+      
+      menuItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          MainFrame.getInstance().scrollToNow();
+          btn.setSelected(false);
+          MainFrame.getInstance().updateToolbar();
+        }
+      });
+      popup.add(menuItem);
+    }
+    
     popup.addPopupMenuListener(new PopupMenuListener() {
       public void popupMenuCanceled(PopupMenuEvent e) {
-        AbstractButton button = (AbstractButton) item.getValue(ToolBar.ACTION_VALUE);
-        button.setSelected(!MainFrame.getInstance().isShowAllFilterActivated());
-        MainFrame.getInstance().updateToolbar();
+        /*AbstractButton button = (AbstractButton) item
+            .getValue(ToolBar.ACTION_VALUE);
+        if (item == mFilterAction)
+          button.setSelected(!MainFrame.getInstance()
+              .isShowAllFilterActivated());
+        if (item == mGoToDateAction)
+          button.setSelected(false);
+      
+        MainFrame.getInstance().updateToolbar();*/
       }
 
       public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        AbstractButton button = (AbstractButton) item
+        .getValue(ToolBar.ACTION_VALUE);
+    if (item == mFilterAction)
+      button.setSelected(!MainFrame.getInstance()
+          .isShowAllFilterActivated());
+    if (item == mGoToDateAction)
+      button.setSelected(false);
+  
+    MainFrame.getInstance().updateToolbar();
       }
 
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -392,8 +535,59 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     // }
 
     p.y = btn.getHeight() + 1;
-
+    
     popup.show(btn, p.x, p.y);
   }
 
+  private JMenuItem createDateMenuItem(final Date date, final AbstractButton btn) {    
+    JMenuItem item = new JMenuItem(date.toString());
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().goTo(date);
+        btn.setSelected(false);
+        MainFrame.getInstance().updateToolbar();
+      }
+    });
+    return item;
+  }
+
+  private JMenuItem createChannelMenuItem(final Channel ch, final AbstractButton btn) {
+    JMenuItem item = new JMenuItem(ch.getName());
+    
+    if(Settings.propShowChannelIconsInChannellist.getBoolean()) {
+      item.setIcon(UiUtilities.createChannelIcon(ch.getIcon()));
+      item.setPreferredSize(new Dimension(item.getPreferredSize().width,item.getIcon().getIconHeight()));
+    }
+    
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().showChannel(ch);
+        btn.setSelected(false);
+        MainFrame.getInstance().updateToolbar();
+      }
+    });
+    return item;
+  }
+
+  private JMenuItem createTimeMenuItem(final int time, final AbstractButton btn) {
+    String minute = String.valueOf(time % 60);
+    String hour = String.valueOf(time / 60);
+    
+    if (minute.length() == 1)
+      minute = "0" + minute;
+    if(hour.length() == 1)
+      hour = "0" + hour;
+    
+    JMenuItem item = new JMenuItem(hour + ":" + minute);
+    item.setHorizontalTextPosition(JMenuItem.CENTER);
+    
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().scrollToTime(time);
+        btn.setSelected(false);
+        MainFrame.getInstance().updateToolbar();
+      }
+    });
+    return item;
+  }
 }
