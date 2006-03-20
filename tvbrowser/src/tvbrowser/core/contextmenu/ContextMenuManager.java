@@ -235,13 +235,12 @@ public class ContextMenuManager {
       }
     }
     
-    if(pluginArr.length + 3 > ifList.size())
-      for(int i = 0; i < pluginArr.length; i++) {
-        if(!ifList.contains(pluginArr[i]))
-          if ((includingDisabledItems) || ((pluginArr[i] != null) && (!disabledList.contains(pluginArr[i])))) {
-            ifList.add(pluginArr[i]);
-          }
-      }    
+    for(int i = 0; i < pluginArr.length; i++) {
+      if(!ifList.contains(pluginArr[i]))
+        if ((includingDisabledItems) || ((pluginArr[i] != null) && (!disabledList.contains(pluginArr[i])))) {
+          ifList.add(pluginArr[i]);
+        }
+    }    
     
     if (!ifList.contains(ConfigMenuItem.getInstance())) {
       if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
