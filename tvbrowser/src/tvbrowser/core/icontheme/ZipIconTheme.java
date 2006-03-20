@@ -40,7 +40,7 @@ import javax.swing.ImageIcon;
 import util.ui.ImageUtilities;
 
 /**
- * This Class implements the IconTheme for a Directory.
+ * This Class implements the IconTheme for a Zip-File.
  * 
  * @author bodum
  */
@@ -49,12 +49,12 @@ public class ZipIconTheme extends IconTheme {
   private HashMap mZipFileEnties;
 
   /**
-   * Create the Directory Icon Theme
+   * Create the Zip Icon Theme
    * 
-   * @param iconDir Directory with Theme
+   * @param iconZip Zip with Theme
    */
-  public ZipIconTheme(File iconDir) {
-    super(iconDir);
+  public ZipIconTheme(File iconZip) {
+    super(iconZip);
     loadEntries();
   }
 
