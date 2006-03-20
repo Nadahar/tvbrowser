@@ -51,9 +51,11 @@ import javax.swing.border.CompoundBorder;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
+import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 
@@ -185,8 +187,8 @@ public class ToolBar extends JToolBar {
     }
   }
 
-  private void addToggleButton(Action action) {
-    final JToggleButton button = new JToggleButton(action);
+  private void addToggleButton(final Action action) {
+    final JToggleButton button = new JToggleButton();
     action.putValue(ACTION_VALUE, button);
     addButtonProperties(button, action);
     Boolean isSelected = (Boolean) action.getValue(ACTION_IS_SELECTED);
@@ -205,6 +207,16 @@ public class ToolBar extends JToolBar {
         if (!button.isSelected()) {
           button.setBorderPainted(false);
         }
+      }
+
+      public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger() && !disabled)
+          showPopupMenu(e);
+      }
+
+      public void mouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger() && !disabled)
+          showPopupMenu(e);
       }
     });
 
@@ -244,11 +256,11 @@ public class ToolBar extends JToolBar {
     String label = mLocalizer.msg("configure", "Configure");
     String name = null;
     boolean showall = false;
+    
+    if (e.getSource() instanceof AbstractButton) {
+      name = ((AbstractButton) e.getSource()).getName();
 
-    if (e.getSource() instanceof JButton) {
-      name = ((JButton) e.getSource()).getName();
-
-      if (name.startsWith("#scrollTo")) {
+      if (name.startsWith("#scrollTo") || name.startsWith("#goToTime")) {
         showall = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
       }
@@ -259,6 +271,14 @@ public class ToolBar extends JToolBar {
       if(name.startsWith(SettingsDialog.TAB_ID_FAVORITE)) {
         showall = true;
         label = mLocalizer.msg("configureFavorite", "Configure Favorites");
+      }
+      if(name.startsWith("#filter")) {
+        showall = true;
+        label = FilterButtons.mLocalizer.msg("createFilter", "Create filter...");
+      }
+      if(name.startsWith("#goToChannel")) {
+        showall = true;
+        label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
       }
       
       if ((PluginProxyManager.getInstance().getPluginForId(name) != null))
@@ -272,8 +292,12 @@ public class ToolBar extends JToolBar {
 
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (e.getActionCommand().startsWith("#scrollTo"))
+          if (e.getActionCommand().startsWith("#scrollTo") || e.getActionCommand().startsWith("#goToTime"))
             MainFrame.getInstance().showSettingsDialog("#timebuttons");
+          else if (e.getActionCommand().startsWith("#filter"))
+            MainFrame.getInstance().showFilterDialog();
+          else if (e.getActionCommand().startsWith("#goToChannel"))
+            MainFrame.getInstance().showSettingsDialog();
           else
             MainFrame.getInstance().showSettingsDialog(e.getActionCommand());
         }
