@@ -69,7 +69,7 @@ public class IconLoader {
    */
   private IconLoader() {
     mDefaultIconDir = new File(Settings.getDefaultSettings().getProperty("icontheme", "icons/tango"));
-    mDefaultIconTheme = new IconTheme(mDefaultIconDir);
+    mDefaultIconTheme = themeFactory(mDefaultIconDir);
     mDefaultIconTheme.loadTheme();
 
     loadIconTheme(new File(Settings.propIcontheme.toString()));
@@ -89,13 +89,35 @@ public class IconLoader {
     }
     
     if (mDefaultIconDir != iconset) {
-      mIconTheme = new IconTheme(iconset);
+      mIconTheme = themeFactory(iconset);
       if (!mIconTheme.loadTheme()) {
         mIconTheme = mDefaultIconTheme;
       }
     } else {
       mIconTheme = mDefaultIconTheme;
     }
+  }
+
+  /**
+   * Creates the IconTheme
+   * 
+   * @param icon Theme-Location
+   * @return IconTheme
+   */
+  private IconTheme themeFactory(File icon) {
+    if (!icon.exists()) {
+      // Return Default Implementation if something goes wrong
+      return new DirectoryIconTheme(icon);
+    }
+    
+    if (icon.isDirectory()) {
+      return new DirectoryIconTheme(icon);
+    } else if (icon.getName().toLowerCase().endsWith(".zip")) {
+      return new ZipIconTheme(icon);
+    }
+    
+    // Return Default Implementation if something goes wrong
+    return new DirectoryIconTheme(icon);
   }
   
   /**
