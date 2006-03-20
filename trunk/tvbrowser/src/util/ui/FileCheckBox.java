@@ -105,6 +105,10 @@ public class FileCheckBox extends JComponent {
 
   public void setFileChooser(JFileChooser chooser) {
     mFileChooser=chooser;
+    String temp = mTextfield.getText();
+    
+    if(temp.indexOf(File.separator) != -1)
+      mFileChooser.setCurrentDirectory(new File(temp.substring(0,temp.lastIndexOf(File.separator))));
   }
 
 
