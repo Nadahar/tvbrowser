@@ -33,6 +33,7 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -232,7 +233,12 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     sendBt.setToolTipText(mLocalizer.msg("send", "end Programs to another Plugin"));
     sendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-          SendToPluginDialog send = new SendToPluginDialog(mPlugin, SearchDialog.this, programArr);
+          Program[] program = list.getSelectedPrograms();
+
+          if(program == null)
+            program = programArr;
+          
+          SendToPluginDialog send = new SendToPluginDialog(mPlugin, SearchDialog.this, program);
           send.setVisible(true);
       }
     });

@@ -206,4 +206,21 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
         removeFromPrograms();
         addToPrograms();
     }
+    
+    /**
+     * @return The selected programs;
+     * @since 2.2
+     */
+    public Program[] getSelectedPrograms() {
+      Object[] o = getSelectedValues();
+      
+      if(o == null || o.length == 0)
+        return null;
+      
+      Program[] p = new Program[o.length];
+      for(int i = 0; i < o.length; i++)
+        p[i] = (Program)o[i];
+      
+      return p;
+    }
 }
