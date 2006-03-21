@@ -171,8 +171,9 @@ public class ReminderSettingsTab implements SettingsTab {
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
-          soundTestBt.setText(mLocalizer.msg("stop", "Stop"));
           mTestSound = ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
+          if(mTestSound != null)
+            soundTestBt.setText(mLocalizer.msg("stop", "Stop"));
           if(mTestSound != null)
             if(mTestSound instanceof Clip) {
             ((Clip)mTestSound).addLineListener(new LineListener() {

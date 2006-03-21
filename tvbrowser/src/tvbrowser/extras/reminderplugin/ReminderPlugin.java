@@ -26,6 +26,8 @@
 
 package tvbrowser.extras.reminderplugin;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -36,13 +38,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.Properties;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
@@ -327,18 +333,55 @@ public class ReminderPlugin implements ContextMenuIf {
         AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
             fileName));
 
+        AudioFormat format = ais.getFormat();
+        // ALAW/ULAW samples in PCM konvertieren
+        if ((format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED)) {
+          AudioFormat tmp = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
+              format.getSampleRate(), format.getSampleSizeInBits() * 2, format
+                  .getChannels(), format.getFrameSize() * 2, format
+                  .getFrameRate(), true);
+          ais = AudioSystem.getAudioInputStream(tmp, ais);
+          format = tmp;
+        }
+        final AudioInputStream stream = ais;
+        
         javax.sound.sampled.DataLine.Info info = new javax.sound.sampled.DataLine.Info(
-            Clip.class, ais.getFormat(), ((int) ais.getFrameLength() * ais
-                .getFormat().getFrameSize()));
+            Clip.class, format);
 
-        final Clip clip = (Clip) AudioSystem.getLine(info);
-        clip.open(ais);
-        clip.start();
-        return clip;
+        if(AudioSystem.isLineSupported(info)) {
+          final Clip clip = (Clip) AudioSystem.getLine(info);
+          clip.open(ais);
+          clip.start();
+          
+          clip.addLineListener(new LineListener() {
+            public void update(LineEvent event) {
+              if(clip != null && !clip.isRunning()) {
+                clip.close();
+                try {
+                  stream.close();
+                }catch(Exception ee) {}
+              }
+            }
+          });
+          
+          return clip;
+        }else {
+          try {
+            URL url = new File(fileName).toURL();
+            AudioClip clip= Applet.newAudioClip(url);
+            clip.play();
+          } catch (java.net.MalformedURLException exc) {
+            String msg = mLocalizer.msg( "error.1",
+                "Error loading reminder sound file!\n({0})" , fileName, exc);
+            ErrorHandler.handle(msg, exc);
+          }
+        }
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
+      String msg = mLocalizer.msg( "error.1",
+        "Error loading reminder sound file!\n({0})" , fileName, e);
+      ErrorHandler.handle(msg, e);
     }
     return null;
   }
