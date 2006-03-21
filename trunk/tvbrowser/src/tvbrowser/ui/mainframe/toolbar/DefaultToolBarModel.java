@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -42,6 +43,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -65,8 +67,8 @@ import devplugin.Plugin;
 public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-  .getLocalizerFor(DefaultToolBarModel.class);
-  
+      .getLocalizerFor(DefaultToolBarModel.class);
+
   private Map mAvailableActions;
 
   private ArrayList mVisibleActions;
@@ -74,7 +76,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
       mScrollToTodayAction, mScrollToTomorrowAction, mFavoriteAction,
-      mReminderAction, mGoToDateAction, mGoToChannelAction,mGoToTimeAction;
+      mReminderAction, mGoToDateAction, mGoToChannelAction, mGoToTimeAction;
 
   private static DefaultToolBarModel sInstance;
 
@@ -180,22 +182,23 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
             .getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance()
             .getIconFromTheme("apps", "bookmark", 22), ToolBar.BUTTON_ACTION,
         this);
-    mGoToDateAction = createAction(mLocalizer.msg("goToDate","Go to date"), "#goToDate",
-        mLocalizer.msg("goToDateTooltip","Go to a date"), IconLoader.getInstance().getIconFromTheme(
-            "mimetypes", "x-office-calendar", 16), IconLoader.getInstance()
+    mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
+        "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
+        IconLoader.getInstance().getIconFromTheme("mimetypes",
+            "x-office-calendar", 16), IconLoader.getInstance()
             .getIconFromTheme("mimetypes", "x-office-calendar", 22),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mGoToChannelAction = createAction(mLocalizer.msg("goToChannel","Go to channel"), "#goToChannel",
-        mLocalizer.msg("goToChannelTooltip","Go to a channel"), IconLoader.getInstance().getIconFromTheme(
-            "actions", "go-down", 16), IconLoader.getInstance()
-            .getIconFromTheme("actions", "go-down", 22),
+    mGoToChannelAction = createAction(mLocalizer.msg("goToChannel",
+        "Go to channel"), "#goToChannel", mLocalizer.msg("goToChannelTooltip",
+        "Go to a channel"), IconLoader.getInstance().getIconFromTheme(
+        "actions", "go-down", 16), IconLoader.getInstance().getIconFromTheme(
+        "actions", "go-down", 22), ToolBar.TOOGLE_BUTTON_ACTION, this);
+    mGoToTimeAction = createAction(mLocalizer.msg("goToTime", "Go to time"),
+        "#goToTime", mLocalizer.msg("goToTimeTooltip", "Go to a time"),
+        IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16),
+        IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mGoToTimeAction = createAction(mLocalizer.msg("goToTime","Go to time"), "#goToTime",
-        mLocalizer.msg("goToTimeTooltip","Go to a time"), IconLoader.getInstance().getIconFromTheme(
-            "actions", "go-down", 16), IconLoader.getInstance()
-            .getIconFromTheme("actions", "go-down", 22),
-        ToolBar.TOOGLE_BUTTON_ACTION, this);
-    
+
     updateTimeButtons();
 
     setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
@@ -373,7 +376,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       MainFrame.getInstance().updateTvData();
     } else if (source == mSettingsAction) {
       MainFrame.getInstance().showSettingsDialog();
-    } else if (source == mFilterAction || source == mGoToDateAction || source == mGoToChannelAction || source == mGoToTimeAction) {
+    } else if (source == mFilterAction || source == mGoToDateAction
+        || source == mGoToChannelAction || source == mGoToTimeAction) {
       showPopupMenu(source);
     } else if (source == mPluginViewAction) {
       AbstractButton button = (AbstractButton) source
@@ -439,46 +443,55 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   }
 
   private void showPopupMenu(final Action item) {
-    final AbstractButton btn = (AbstractButton) item.getValue(ToolBar.ACTION_VALUE);
-    
+    final AbstractButton btn = (AbstractButton) item
+        .getValue(ToolBar.ACTION_VALUE);
+
     JPopupMenu popup = null;
-    
+
     if (item == mFilterAction)
       popup = new SelectFilterPopup(MainFrame.getInstance());
     if (item == mGoToDateAction) {
       popup = new JPopupMenu();
+      
+      Date curDate = Date.getCurrentDate().addDays(-1);
 
-      Date curDate = new Date();
+      if(TvDataBase.getInstance().dataAvailable(curDate))
+        popup.add(createDateMenuItem(curDate, btn));
+      
+      curDate = curDate.addDays(1);
+      
       for (int i = 0; i < 21; i++) {
-        if (!TvDataBase.getInstance().dataAvailable(curDate)) {
+        if(!TvDataBase.getInstance().dataAvailable(curDate))
           break;
-        }
+        
         popup.add(createDateMenuItem(curDate, btn));
         curDate = curDate.addDays(1);
+        
       }
     }
     if (item == mGoToChannelAction) {
       popup = new JPopupMenu();
-      
-      Channel[] channels = Settings.propSubscribedChannels.getChannelArray(false);
-      for(int i = 0; i < channels.length; i++)
+
+      Channel[] channels = Settings.propSubscribedChannels
+          .getChannelArray(false);
+      for (int i = 0; i < channels.length; i++)
         popup.add(createChannelMenuItem(channels[i], btn));
     }
-    if(item == mGoToTimeAction) {
+    if (item == mGoToTimeAction) {
       popup = new JPopupMenu();
-      
-      int[] array = Settings.propTimeButtons.getIntArray();      
+
+      int[] array = Settings.propTimeButtons.getIntArray();
 
       for (int i = 0; i < array.length; i++)
-        popup.add(createTimeMenuItem(array[i],btn));
-      
-      if(popup.getComponentCount() > 0)
+        popup.add(createTimeMenuItem(array[i], btn));
+
+      if (popup.getComponentCount() > 0)
         popup.addSeparator();
-      
+
       JMenuItem menuItem = new JMenuItem(TVBrowser.mLocalizer.msg("button.now",
           "Now"));
       menuItem.setHorizontalTextPosition(JMenuItem.CENTER);
-      
+
       menuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance().scrollToNow();
@@ -488,34 +501,33 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       });
       popup.add(menuItem);
     }
-    
+
     popup.addPopupMenuListener(new PopupMenuListener() {
       public void popupMenuCanceled(PopupMenuEvent e) {
-        /*AbstractButton button = (AbstractButton) item
+      /*
+       * AbstractButton button = (AbstractButton) item
+       * .getValue(ToolBar.ACTION_VALUE); if (item == mFilterAction)
+       * button.setSelected(!MainFrame.getInstance()
+       * .isShowAllFilterActivated()); if (item == mGoToDateAction)
+       * button.setSelected(false);
+       * 
+       * MainFrame.getInstance().updateToolbar();
+       */
+      }
+
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        AbstractButton button = (AbstractButton) item
             .getValue(ToolBar.ACTION_VALUE);
         if (item == mFilterAction)
           button.setSelected(!MainFrame.getInstance()
               .isShowAllFilterActivated());
         if (item == mGoToDateAction)
           button.setSelected(false);
-      
-        MainFrame.getInstance().updateToolbar();*/
+
+        MainFrame.getInstance().updateToolbar();
       }
 
-      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-        AbstractButton button = (AbstractButton) item
-        .getValue(ToolBar.ACTION_VALUE);
-    if (item == mFilterAction)
-      button.setSelected(!MainFrame.getInstance()
-          .isShowAllFilterActivated());
-    if (item == mGoToDateAction)
-      button.setSelected(false);
-  
-    MainFrame.getInstance().updateToolbar();
-      }
-
-      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-      }
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
     });
 
     Point p = new Point(0, 0);
@@ -535,12 +547,16 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     // }
 
     p.y = btn.getHeight() + 1;
-    
+
     popup.show(btn, p.x, p.y);
   }
 
-  private JMenuItem createDateMenuItem(final Date date, final AbstractButton btn) {    
-    JMenuItem item = new JMenuItem(date.toString());
+  private JMenuItem createDateMenuItem(final Date date, final AbstractButton btn) {
+    JRadioButtonMenuItem item = new JRadioButtonMenuItem(
+        date.compareTo(Date.getCurrentDate()) == 0 ? mLocalizer.msg("today",
+            "Today") : date.toString(),
+            date.compareTo(MainFrame.getInstance().getCurrentSelectedDate()) == 0);
+    
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().goTo(date);
@@ -551,14 +567,16 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     return item;
   }
 
-  private JMenuItem createChannelMenuItem(final Channel ch, final AbstractButton btn) {
+  private JMenuItem createChannelMenuItem(final Channel ch,
+      final AbstractButton btn) {
     JMenuItem item = new JMenuItem(ch.getName());
-    
-    if(Settings.propShowChannelIconsInChannellist.getBoolean()) {
+
+    if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
       item.setIcon(UiUtilities.createChannelIcon(ch.getIcon()));
-      item.setPreferredSize(new Dimension(item.getPreferredSize().width,item.getIcon().getIconHeight()));
+      item.setPreferredSize(new Dimension(item.getPreferredSize().width, item
+          .getIcon().getIconHeight()));
     }
-    
+
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().showChannel(ch);
@@ -572,15 +590,15 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
   private JMenuItem createTimeMenuItem(final int time, final AbstractButton btn) {
     String minute = String.valueOf(time % 60);
     String hour = String.valueOf(time / 60);
-    
+
     if (minute.length() == 1)
       minute = "0" + minute;
-    if(hour.length() == 1)
+    if (hour.length() == 1)
       hour = "0" + hour;
-    
+
     JMenuItem item = new JMenuItem(hour + ":" + minute);
     item.setHorizontalTextPosition(JMenuItem.CENTER);
-    
+
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().scrollToTime(time);
