@@ -33,7 +33,6 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -120,7 +119,6 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     mSearchBt = new JButton(msg);
     mSearchBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-      if(!mSearchForm.hasFocus())
         search();
       }
     });
@@ -161,34 +159,39 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
    * Starts the search.
    */  
   private void search() {
-    SearchPlugin.setSearchHistory(mSearchForm.getHistory());
-    
-    SearchFormSettings settings = mSearchForm.getSearchFormSettings();
+    new Thread(new Runnable() {
+      public void run() {
+        SearchPlugin.setSearchHistory(mSearchForm.getHistory());
+        
+        SearchFormSettings settings = mSearchForm.getSearchFormSettings();
 
-    ProgramFieldType[] fieldArr = settings.getFieldTypes();
-    devplugin.Date startDate = new devplugin.Date();
-    int nrDays = mSearchForm.getNrDays();
-    
-    try {
-      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      ProgramSearcher searcher = settings.createSearcher();
-      Program[] programArr = searcher.search(fieldArr, startDate, nrDays, null, true);
+        ProgramFieldType[] fieldArr = settings.getFieldTypes();
+        devplugin.Date startDate = new devplugin.Date();
+        int nrDays = mSearchForm.getNrDays();
+        
+        try {
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          ProgramSearcher searcher = settings.createSearcher();
+          Program[] programArr = searcher.search(fieldArr, startDate, nrDays, null, true);
 
-      if (programArr.length == 0) {
-        String msg = mLocalizer.msg("nothingFound",
-          "No programs found with {0}!", settings.getSearchText());
-        JOptionPane.showMessageDialog(this, msg);
-      } else {
-        String title = mLocalizer.msg("hitsTitle",
-          "Sendungen mit {0}", settings.getSearchText());
-        showHitsDialog(programArr, title);
-      }
-    }
-    catch (TvBrowserException exc) {
-      ErrorHandler.handle(exc);
-    }finally{
-      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
+          if (programArr.length == 0) {
+            String msg = mLocalizer.msg("nothingFound",
+              "No programs found with {0}!", settings.getSearchText());
+            JOptionPane.showMessageDialog(SearchDialog.this, msg);
+          } else {
+            String title = mLocalizer.msg("hitsTitle",
+              "Sendungen mit {0}", settings.getSearchText());
+            showHitsDialog(programArr, title);
+          }
+        }
+        catch (TvBrowserException exc) {
+          ErrorHandler.handle(exc);
+        }finally{
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+      };
+    }).start();
+
   }
   
   

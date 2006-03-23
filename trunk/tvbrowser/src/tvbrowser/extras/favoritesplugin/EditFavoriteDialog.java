@@ -187,10 +187,14 @@ public class EditFavoriteDialog {
     mOkBt = new JButton(mLocalizer.msg("ok", "OK"));
     mOkBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        if (saveValues()) {
-          mOkWasPressed = true;
-          mDialog.dispose();
-        }
+        new Thread(new Runnable() {
+          public void run() {
+            if (saveValues()) {
+              mOkWasPressed = true;
+              mDialog.dispose();
+            }
+          }
+        }).start();
       }
     });
     buttonPn.add(mOkBt);
