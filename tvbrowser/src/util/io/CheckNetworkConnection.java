@@ -51,6 +51,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Checks the Network and creates a Waiting-Dialog if neccesarry
+ * @since 2.2
  */
 class CheckNetworkConnection {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(CheckNetworkConnection.class);
@@ -156,10 +157,9 @@ class CheckNetworkConnection {
           new JLabel(mLocalizer.msg("pleaseWait", "Please Wait")), cc
               .xy(2, 4));
 
-      JProgressBar bar = new JProgressBar();
-      bar.setIndeterminate(true);
-
-      panel.add(bar, cc.xy(2, 6));
+//      JProgressBar bar = new JProgressBar();
+//      bar.setIndeterminate(true);
+//      panel.add(bar, cc.xy(2, 6));
 
       mWaitingDialog.pack();
       UiUtilities.centerAndShow(mWaitingDialog);
