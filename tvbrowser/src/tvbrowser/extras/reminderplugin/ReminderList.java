@@ -211,7 +211,7 @@ public class ReminderList implements ActionListener {
     for (int i=0; i<items.length; i++) {
       items[i].getProgram().unmark(mMarker);
       Program testProg = Plugin.getPluginManager().getProgram(items[i].getProgram().getDate(), items[i].getProgram().getID());
-      if (testProg == null) {
+      if (testProg == null || testProg.getTitle().toLowerCase().compareTo(items[i].getProgram().getTitle().toLowerCase()) != 0) {
         removedPrograms.add(items[i]);
       }
       else {
