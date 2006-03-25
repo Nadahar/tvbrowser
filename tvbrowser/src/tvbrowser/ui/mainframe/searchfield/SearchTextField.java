@@ -78,7 +78,7 @@ public class SearchTextField extends JTextField implements FocusListener{
   public void focusLost(FocusEvent e) {
     if (getText().length() == 0) {
       mHasText = false;
-      setText("Kein Text !");
+      setText("Suche...");
       setForeground(mNoTextColor);
     } else {
       mHasText = true;
