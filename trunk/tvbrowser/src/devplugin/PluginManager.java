@@ -334,6 +334,15 @@ public interface PluginManager {
    * @since 2.2
    */
   public void showSettings(Plugin plugin);
+
+  /**
+   * Show the Settings-Dialog with a Specific SettingsItem
+   * 
+   * @param settingsItem SettingsItem to show (e.g. SettingsItem.CHANNELS)
+   * @since 2.2
+   */
+  public void showSettings(String settingsItem);
+  
   
   /**
    * Return all marked programs.

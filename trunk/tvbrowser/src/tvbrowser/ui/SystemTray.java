@@ -53,7 +53,6 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.SettingsDialog;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
@@ -67,6 +66,7 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
+import devplugin.SettingsItem;
 
 /**
  * This Class creates a SystemTray
@@ -152,7 +152,7 @@ public class SystemTray {
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance()
-              .showSettingsDialog(SettingsDialog.TAB_ID_TRAY);
+              .showSettingsDialog(SettingsItem.TRAY);
         }
       });
 

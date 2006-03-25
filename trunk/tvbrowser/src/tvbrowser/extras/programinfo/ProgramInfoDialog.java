@@ -62,7 +62,6 @@ import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.SettingsDialog;
 import util.browserlauncher.Launch;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -76,6 +75,7 @@ import com.l2fprod.common.swing.JTaskPaneGroup;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
+import devplugin.SettingsItem;
 
 /**
  * TV-Browser
@@ -268,7 +268,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       public void actionPerformed(ActionEvent e) {
         close();
         MainFrame.getInstance().showSettingsDialog(
-            SettingsDialog.TAB_ID_PROGRAMINFO);
+            SettingsItem.PROGRAMINFO);
       }
     });
 
@@ -373,7 +373,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
           private static final long serialVersionUID = 1L;
 
           public void actionPerformed(ActionEvent e) {
-            MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_CONTEXTMENU);
+            MainFrame.getInstance().showSettingsDialog(SettingsItem.CONTEXTMENU);
           }
         };
 

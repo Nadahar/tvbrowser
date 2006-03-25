@@ -44,8 +44,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.settings.SettingsDialog;
 import util.ui.GridFlowLayout;
+import devplugin.SettingsItem;
 
 
 public class TimeChooserPanel extends JPanel implements ChangeListener, AncestorListener, MouseListener {
@@ -159,7 +159,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
       JMenuItem configure = new JMenuItem(mLocalizer.msg("configure","Configure"));
       configure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_TIMEBUTTONS);
+          MainFrame.getInstance().showSettingsDialog(SettingsItem.TIMEBUTTONS);
         }
       });
       

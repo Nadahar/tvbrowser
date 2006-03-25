@@ -68,6 +68,7 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.SettingsItem;
 
 /**
  * Creates a Dialog with a List of Programs
@@ -309,13 +310,22 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       data.add(title);
     }
 
+  data.add(mLocalizer.msg("configureTimes","Configure Times"));
+
     mBox = new JComboBox(data);
 
     mBox.addActionListener(new ActionListener() {
 
+      int lastSelected = 0;
       public void actionPerformed(ActionEvent e) {
-        int time = calcTimeForSelection(mBox.getSelectedIndex());
-        generateList(new Date(), time);
+        if (mBox.getSelectedIndex() == mBox.getItemCount()-1) {
+          mBox.setSelectedIndex(lastSelected);
+          ListViewPlugin.getPluginManager().showSettings(SettingsItem.TIMEBUTTONS);
+        } else {
+          lastSelected = mDate.getSelectedIndex();
+          int time = calcTimeForSelection(mBox.getSelectedIndex());
+          generateList(new Date(), time);
+        }
       }
 
     });
@@ -331,6 +341,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     for (int i = 0; i < 14; i++) {
       dates.add(Date.getCurrentDate().addDays(i));
     }
+    
     mDate = new JComboBox(dates);
 
     datetimeselect.add(mDate);
@@ -370,10 +381,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     });
 
     mDate.addActionListener(new ActionListener() {
-
       public void actionPerformed(ActionEvent e) {
         refreshView();
-
       }
     });
 

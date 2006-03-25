@@ -38,7 +38,6 @@ import javax.swing.JRootPane;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.SettingsDialog;
 import util.exc.ErrorHandler;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -47,6 +46,8 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.SettingsItem;
 
 /**
  * This Class opens an Url in a Web-Browser. 
@@ -127,7 +128,7 @@ public class Launch {
         configure.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             dialog.setVisible(false);
-            MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_WEBBROWSER);
+            MainFrame.getInstance().showSettingsDialog(SettingsItem.WEBBROWSER);
           }
         });
         
@@ -145,7 +146,7 @@ public class Launch {
       int ret = ErrorHandler.handle(mLocalizer.msg("error", "An error occured"), e, ErrorHandler.SHOW_YES_NO);
       
       if (ret == ErrorHandler.YES_PRESSED) {
-        MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_WEBBROWSER);
+        MainFrame.getInstance().showSettingsDialog(SettingsItem.WEBBROWSER);
       }
     }
   }
