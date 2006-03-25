@@ -28,6 +28,9 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -102,7 +105,7 @@ public class SearchHelper {
             JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
           } else {
             String title = mLocalizer.msg("hitsTitle", "Sendungen mit {0}", searcherSettings.getSearchText());
-            showHitsDialog(programArr, title);
+            showHitsDialog(comp, programArr, title);
           }
         } catch (TvBrowserException exc) {
           comp.setCursor(cursor);
@@ -119,8 +122,15 @@ public class SearchHelper {
    * @param programArr The hits.
    * @param title The dialog's title.
    */
-  private void showHitsDialog(final Program[] programArr, String title) {
-    final JDialog dlg = new JDialog(MainFrame.getInstance(), title, true);
+  private void showHitsDialog(Component comp, final Program[] programArr, String title) {
+    final JDialog dlg;
+    
+    Window w = UiUtilities.getBestDialogParent(comp);
+    
+    if (w instanceof Frame)
+      dlg = new JDialog((Frame)w, title, true);
+    else
+      dlg = new JDialog((Dialog)w, title, true);
 
     UiUtilities.registerForClosing(new WindowClosingIf() {
 
