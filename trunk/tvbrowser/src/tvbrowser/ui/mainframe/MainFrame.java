@@ -28,6 +28,7 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -50,6 +51,9 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.plaf.metal.MetalBorders;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -69,6 +73,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
+import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
@@ -96,7 +101,7 @@ import devplugin.ProgressMonitor;
 
 /**
  * TV-Browser
- *
+ * 
  * @author Martin Oberhauser
  */
 public class MainFrame extends JFrame implements DateListener {
@@ -105,7 +110,8 @@ public class MainFrame extends JFrame implements DateListener {
       .getLogger(tvbrowser.TVBrowser.class.getName());
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MainFrame.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(MainFrame.class);
 
   private Node mTimebuttonsNode, mDateNode, mRootNode, mChannelNode;
 
@@ -126,6 +132,8 @@ public class MainFrame extends JFrame implements DateListener {
   private DefaultToolBarModel mToolBarModel;
 
   private ToolBar mToolBar;
+  private JPanel mToolBarPanel;
+  private SearchField mSearchField;
 
   private StatusBar mStatusBar;
 
@@ -163,11 +171,14 @@ public class MainFrame extends JFrame implements DateListener {
     if (OperatingSystem.isMacOs()) {
       /* create the menu bar for MacOS X */
       try {
-        Class impl = Class.forName("tvbrowser.ui.mainframe.macosx.MacOSXMenuBar");
+        Class impl = Class
+            .forName("tvbrowser.ui.mainframe.macosx.MacOSXMenuBar");
         Class mainFrameClass = this.getClass();
         Class jlabelClass = Class.forName("javax.swing.JLabel");
-        Constructor cons = impl.getConstructor(new Class[] { mainFrameClass, jlabelClass });
-        mMenuBar = (MenuBar) cons.newInstance(new Object[] { this, mStatusBar.getLabel() });
+        Constructor cons = impl.getConstructor(new Class[] { mainFrameClass,
+            jlabelClass });
+        mMenuBar = (MenuBar) cons.newInstance(new Object[] { this,
+            mStatusBar.getLabel() });
       } catch (Exception e) {
         mLog.warning("Could not instantiate MacOSXMenuBar\n" + e.toString());
         mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
@@ -197,7 +208,8 @@ public class MainFrame extends JFrame implements DateListener {
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
-    mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay, endOfDay);
+    mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay,
+        endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
 
@@ -242,36 +254,24 @@ public class MainFrame extends JFrame implements DateListener {
 
     if (Settings.propIsStatusbarVisible.getBoolean())
       jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
-    PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
-      public void pluginActivated(Plugin p) {
-        updatePluginsMenu();
-      }
+    PluginProxyManager.getInstance().addPluginStateListener(
+        new PluginStateAdapter() {
+          public void pluginActivated(Plugin p) {
+            updatePluginsMenu();
+          }
 
-      public void pluginDeactivated(Plugin p) {
-        updatePluginsMenu();
-      }
-    });
+          public void pluginDeactivated(Plugin p) {
+            updatePluginsMenu();
+          }
+        });
 
     setJMenuBar(mMenuBar);
-
-    mMenuBar.addMouseListener(new MouseAdapter(){
-      public void mousePressed(MouseEvent e) {
-        if(e.isPopupTrigger()) {
-          ContextMenu menu = new ContextMenu(mMenuBar);
-          menu.show(e.getX(),e.getY());
-        }
-      }
-      public void mouseReleased(MouseEvent e) {
-        if(e.isPopupTrigger()) {
-          ContextMenu menu = new ContextMenu(mMenuBar);
-          menu.show(e.getX(),e.getY());
-        }
-      }
-    });
+    addContextMenuMouseListener(mMenuBar);
 
     FilterList filterList = FilterList.getInstance();
 
-    ProgramFilter filter = filterList.getFilterByName(Settings.propLastUsedFilter.getString());
+    ProgramFilter filter = filterList
+        .getFilterByName(Settings.propLastUsedFilter.getString());
 
     if (filter == null) {
       filter = filterList.getDefaultFilter();
@@ -293,48 +293,65 @@ public class MainFrame extends JFrame implements DateListener {
       }
     });
     timer.start();
-    
+
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
   }
 
   /**
    * Adds the keyboard actions for going to the program table with the keyboard.
-   *
+   * 
    */
   public void addKeyboardAction() {
     JRootPane rootPane = this.getRootPane();
 
     mProgramTableScrollPane.deSelectItem();
 
-    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP,
+        KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_MASK); 
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_DOWN), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_DOWN), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    stroke = KeyStroke.getKeyStroke(525, 0,true); // This is the Value for Contextmenu in Java 1.5
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_CONTEXTMENU), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    stroke = KeyStroke.getKeyStroke(525, 0, true); // This is the Value for
+                                                    // Contextmenu in Java 1.5
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_CONTEXTMENU), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_CONTEXTMENU), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_CONTEXTMENU), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_DESELECT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane
+        .registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+            KeyboardAction.KEY_DESELECT), stroke,
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_DOUBLECLICK), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_DOUBLECLICK), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_M, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_MIDDLECLICK), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_MIDDLECLICK), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener(){
+    rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
         goToNextDay();
@@ -343,7 +360,7 @@ public class MainFrame extends JFrame implements DateListener {
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener(){
+    rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
         goToPreviousDay();
@@ -354,7 +371,6 @@ public class MainFrame extends JFrame implements DateListener {
     this.setRootPane(rootPane);
   }
 
-
   public JLabel getStatusBarLabel() {
     return mStatusBar.getLabel();
   }
@@ -362,20 +378,62 @@ public class MainFrame extends JFrame implements DateListener {
   public void updateToolbar() {
     JPanel contentPane = (JPanel) getContentPane();
 
-    if (mToolBar != null) {
-      contentPane.remove(mToolBar);
+    if (mToolBarPanel != null) {
+      contentPane.remove(mToolBarPanel);
     }
 
     mToolBarModel = DefaultToolBarModel.getInstance();
     mToolBar = new ToolBar(mToolBarModel);
     String location = mToolBar.getToolbarLocation();
+
     if (Settings.propIsTooolbarVisible.getBoolean()) {
-      contentPane.add(mToolBar, location);
+      if (mToolBarPanel == null) {
+        mToolBarPanel = new JPanel(new BorderLayout()) {
+          public void updateUI() {
+            super.updateUI();
+            setBorder(BorderFactory.createBevelBorder(0, getBackground()
+                .brighter(), getBackground(), getBackground().darker(),
+                getBackground()));
+          }
+        };
+        addContextMenuMouseListener(mToolBarPanel);
+        mSearchField = new SearchField();
+      } else
+        mToolBarPanel.removeAll();
+
+      if (location.compareTo(BorderLayout.NORTH) == 0) {
+        mToolBarPanel.add(mToolBar, BorderLayout.CENTER);
+        if(Settings.propIsSearchFieldVisible.getBoolean())
+          mToolBarPanel.add(mSearchField, BorderLayout.EAST);
+      } else {
+        mToolBarPanel.add(mToolBar, BorderLayout.CENTER);
+        if(Settings.propIsSearchFieldVisible.getBoolean())
+          mToolBarPanel.add(mSearchField, BorderLayout.SOUTH);
+      }
+
+      contentPane.add(mToolBarPanel, location);
     }
 
     contentPane.invalidate();
     contentPane.updateUI();
+  }
 
+  private void addContextMenuMouseListener(final JComponent c) {
+    c.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          ContextMenu menu = new ContextMenu(c);
+          menu.show(e.getX(), e.getY());
+        }
+      }
+
+      public void mouseReleased(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          ContextMenu menu = new ContextMenu(c);
+          menu.show(e.getX(), e.getY());
+        }
+      }
+    });
   }
 
   public ProgramTableScrollPane getProgramTableScrollPane() {
@@ -384,6 +442,10 @@ public class MainFrame extends JFrame implements DateListener {
 
   public ToolBar getToolbar() {
     return mToolBar;
+  }
+
+  public JPanel getToolBarPanel() {
+    return mToolBarPanel;
   }
 
   public DefaultProgramTableModel getProgramTableModel() {
@@ -427,15 +489,15 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void quit(boolean log) {
-    if(mShuttingDown)
+    if (mShuttingDown)
       return;
     mShuttingDown = true;
 
-    if(log)
+    if (log)
       mLog.info("Finishing plugins");
     PluginProxyManager.getInstance().shutdownAllPlugins(log);
 
-    if(log)
+    if (log)
       mLog.info("Storing dataservice settings");
     TvDataServiceProxyManager.getInstance().shutDown();
 
@@ -445,25 +507,24 @@ public class MainFrame extends JFrame implements DateListener {
 
     TVBrowser.shutdown(log);
 
-    if(log)
+    if (log)
       mLog.info("Closing tv data base");
 
     try {
       TvDataBase.getInstance().close();
     } catch (Exception exc) {
-      if(log)
+      if (log)
         mLog.log(Level.WARNING, "Closing database failed", exc);
     }
 
-    if(log) {
+    if (log) {
       mLog.info("Quitting");
       System.exit(0);
     }
   }
 
-
   private void handleTimerEvent() {
-    Date date=Date.getCurrentDate();
+    Date date = Date.getCurrentDate();
     if (date.equals(mCurrentDay)) {
       return;
     }
@@ -515,8 +576,9 @@ public class MainFrame extends JFrame implements DateListener {
     int dayStart = Settings.propProgramTableStartOfDay.getInt();
     int dayEnd = Settings.propProgramTableEndOfDay.getInt();
     int splitHour = (dayEnd - dayStart) / 60;
-    if (hour < (splitHour/2 + splitHour%2) || (splitHour <= 0 && hour < dayEnd/60)
-        || (hour < dayStart/60 && dayStart < dayEnd)) {
+    if (hour < (splitHour / 2 + splitHour % 2)
+        || (splitHour <= 0 && hour < dayEnd / 60)
+        || (hour < dayStart / 60 && dayStart < dayEnd)) {
       // It's early in the morning -> use the program table of yesterday
       day = day.addDays(-1);
       hour += 24;
@@ -535,11 +597,13 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void runSetupAssistant() {
 
-    ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg("loadingAssistant", ""));
+    ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg(
+        "loadingAssistant", ""));
     final JFrame parent = this;
     progWin.run(new Progress() {
       public void run() {
-        mConfigAssistantDialog = new tvbrowser.ui.configassistant.ConfigAssistant(parent);
+        mConfigAssistantDialog = new tvbrowser.ui.configassistant.ConfigAssistant(
+            parent);
       }
     });
 
@@ -557,10 +621,10 @@ public class MainFrame extends JFrame implements DateListener {
 
   }
 
-//  public void runTvBrowserUpdateAssistant() {
-//    TvBrowserUpdateAssistant dlg = new TvBrowserUpdateAssistant(this);
-//    UiUtilities.centerAndShow(dlg);
-//  }
+  // public void runTvBrowserUpdateAssistant() {
+  // TvBrowserUpdateAssistant dlg = new TvBrowserUpdateAssistant(this);
+  // UiUtilities.centerAndShow(dlg);
+  // }
 
   public void storeSettings() {
     mToolBarModel.store();
@@ -617,12 +681,12 @@ public class MainFrame extends JFrame implements DateListener {
     mFinderPanel.markPreviousDate();
   }
 
-
   public Date getCurrentSelectedDate() {
     return mFinderPanel.getSelectedDate();
   }
 
-  private void changeDate(final Date date, final ProgressMonitor monitor, final Runnable callback) {
+  private void changeDate(final Date date, final ProgressMonitor monitor,
+      final Runnable callback) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mProgramTableScrollPane.deSelectItem();
@@ -634,18 +698,22 @@ public class MainFrame extends JFrame implements DateListener {
   /**
    * Implementation of Interface DateListener
    */
-  public void dateChanged(final devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback) {
+  public void dateChanged(final devplugin.Date date,
+      devplugin.ProgressMonitor monitor, Runnable callback) {
     changeDate(date, monitor, callback);
-    super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - " + date.getLongDateString());
+    super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - "
+        + date.getLongDateString());
   }
 
-  public void runUpdateThread(final int daysToDownload, final TvDataServiceProxy[] services) {
+  public void runUpdateThread(final int daysToDownload,
+      final TvDataServiceProxy[] services) {
 
     downloadingThread = new Thread() {
       public void run() {
         onDownloadStart();
         JProgressBar progressBar = mStatusBar.getProgressBar();
-        TvDataUpdater.getInstance().downloadTvData(daysToDownload, services, progressBar, mStatusBar.getLabel());
+        TvDataUpdater.getInstance().downloadTvData(daysToDownload, services,
+            progressBar, mStatusBar.getLabel());
 
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
@@ -695,7 +763,9 @@ public class MainFrame extends JFrame implements DateListener {
 
   /**
    * Show Settings Dialog for a specific TabId
-   * @param visibleTabId Id of the specific Tab
+   * 
+   * @param visibleTabId
+   *          Id of the specific Tab
    */
   public void showSettingsDialog(String visibleTabId) {
     SettingsDialog dlg = new SettingsDialog(this, visibleTabId);
@@ -706,9 +776,11 @@ public class MainFrame extends JFrame implements DateListener {
     }
   }
 
-  /***
+  /*****************************************************************************
    * Show the Settings for a specific Plugin
-   * @param plugin Plugin to show
+   * 
+   * @param plugin
+   *          Plugin to show
    */
   public void showSettingsDialog(Plugin plugin) {
     SettingsDialog dlg = new SettingsDialog(this, plugin.getId());
@@ -730,21 +802,27 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void showUpdatePluginsDlg() {
-    Object[] options = { mLocalizer.msg("checknow", "Check now"), mLocalizer.msg("cancel", "Cancel") };
-    String msg = mLocalizer.msg("question.1", "do you want to check for new plugins");
-    int answer = JOptionPane.showOptionDialog(this, msg, mLocalizer.msg("title.1", "update plugins"),
-        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+    Object[] options = { mLocalizer.msg("checknow", "Check now"),
+        mLocalizer.msg("cancel", "Cancel") };
+    String msg = mLocalizer.msg("question.1",
+        "do you want to check for new plugins");
+    int answer = JOptionPane.showOptionDialog(this, msg, mLocalizer.msg(
+        "title.1", "update plugins"), JOptionPane.YES_NO_OPTION,
+        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
     if (answer == JOptionPane.YES_OPTION) {
 
-      ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg("title.2", "searching for new plugins..."));
+      ProgressWindow progWin = new ProgressWindow(this, mLocalizer.msg(
+          "title.2", "searching for new plugins..."));
 
       progWin.run(new Progress() {
         public void run() {
           try {
-            java.net.URL url = new java.net.URL("http://www.tvbrowser.org/plugins/plugins.txt");
+            java.net.URL url = new java.net.URL(
+                "http://www.tvbrowser.org/plugins/plugins.txt");
             SoftwareUpdater softwareUpdater = new SoftwareUpdater(url);
-            mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
+            mSoftwareUpdateItems = softwareUpdater
+                .getAvailableSoftwareUpdateItems();
           } catch (java.io.IOException e) {
             e.printStackTrace();
           }
@@ -752,9 +830,11 @@ public class MainFrame extends JFrame implements DateListener {
       });
 
       if (mSoftwareUpdateItems == null) {
-        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.1", "software check failed."));
+        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.1",
+            "software check failed."));
       } else if (mSoftwareUpdateItems.length == 0) {
-        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2", "No new items available"));
+        JOptionPane.showMessageDialog(this, mLocalizer.msg("error.2",
+            "No new items available"));
       } else {
         SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(this);
         dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
@@ -763,8 +843,8 @@ public class MainFrame extends JFrame implements DateListener {
     }
 
   }
-  
-  public void showFromTray(int state) {   
+
+  public void showFromTray(int state) {
     super.show();
     toFront();
     setExtendedState(state);
@@ -775,7 +855,7 @@ public class MainFrame extends JFrame implements DateListener {
     super.show();
     mIsVisible = true;
   }
-  
+
   public void updateUI() {
     mRootNode.update();
   }
@@ -784,13 +864,16 @@ public class MainFrame extends JFrame implements DateListener {
 
     String msg1 = mLocalizer.msg("askforupdatedlg.1", "update now");
     String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
-    String msg3 = mLocalizer.msg("askforupdatedlg.3", "No tv data for todays program available.");
-    String msg4 = mLocalizer.msg("askforupdatedlg.4", "Do you want to update now?");
+    String msg3 = mLocalizer.msg("askforupdatedlg.3",
+        "No tv data for todays program available.");
+    String msg4 = mLocalizer.msg("askforupdatedlg.4",
+        "Do you want to update now?");
     String msg5 = mLocalizer.msg("askforupdatedlg.5", "Update tv data");
 
     Object[] options = { msg1, msg2 };
-    int result = JOptionPane.showOptionDialog(this, msg3 + "\n\n" + msg4, msg5, JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+    int result = JOptionPane.showOptionDialog(this, msg3 + "\n\n" + msg4, msg5,
+        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+        options[0]);
 
     if (result == JOptionPane.YES_OPTION) {
       updateTvData();
@@ -808,7 +891,8 @@ public class MainFrame extends JFrame implements DateListener {
     Locale locale = Locale.getDefault();
     String language = locale.getLanguage();
 
-    java.io.File indexFile = new java.io.File("help/" + language + "/index.html");
+    java.io.File indexFile = new java.io.File("help/" + language
+        + "/index.html");
     if (!indexFile.exists()) {
       indexFile = new java.io.File("help/default/index.html");
     }
@@ -821,16 +905,18 @@ public class MainFrame extends JFrame implements DateListener {
   public void updateButtons() {
     mMenuBar.updateTimeItems();
     if (mTimebuttonsNode.getLeaf() != null) {
-      ((TimeChooserPanel)mTimebuttonsNode.getLeaf()).updateButtons();
+      ((TimeChooserPanel) mTimebuttonsNode.getLeaf()).updateButtons();
     }
   }
-
-
-
 
   public void setShowToolbar(boolean visible) {
     Settings.propIsTooolbarVisible.setBoolean(visible);
     mMenuBar.updateViewToolbarItem();
+    updateToolbar();
+  }
+  
+  public void setShowSearchField(boolean visible) {
+    Settings.propIsSearchFieldVisible.setBoolean(visible);
     updateToolbar();
   }
 
@@ -853,7 +939,7 @@ public class MainFrame extends JFrame implements DateListener {
     }
     Settings.propShowTimeButtons.setBoolean(visible);
     updateViews();
-    
+
   }
 
   public void setShowDatelist(boolean visible) {
@@ -897,7 +983,7 @@ public class MainFrame extends JFrame implements DateListener {
     mPluginsNode.setLeaf(mPluginView);
     mMenuBar.setPluginViewItemChecked(visible);
     Settings.propShowPluginView.setBoolean(visible);
-    
+
     updateViews();
   }
 
@@ -911,7 +997,9 @@ public class MainFrame extends JFrame implements DateListener {
 
   /**
    * Makes the StatusBar visible
-   * @param visible true if Statusbar should be visible
+   * 
+   * @param visible
+   *          true if Statusbar should be visible
    */
   public void setShowStatusbar(boolean visible) {
     JPanel contentPane = (JPanel) getContentPane();
@@ -920,13 +1008,12 @@ public class MainFrame extends JFrame implements DateListener {
 
     if (visible && !contentPane.isAncestorOf(mStatusBar)) {
       jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
-    }
-    else if (contentPane.isAncestorOf(mStatusBar)) {
+    } else if (contentPane.isAncestorOf(mStatusBar)) {
       jcontentPane.remove(mStatusBar);
     }
 
     contentPane.invalidate();
     contentPane.updateUI();
-  
+
   }
 }
