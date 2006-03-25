@@ -27,36 +27,23 @@
 package searchplugin;
 
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
 
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.ui.ProgramList;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
-import util.ui.SendToPluginDialog;
+import util.ui.SearchHelper;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.Plugin;
 import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramSearcher;
 
 /**
  * A dialog for searching programs.
@@ -157,106 +144,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
    * Starts the search.
    */  
   private void search() {
-    new Thread(new Runnable() {
-      public void run() {
-        SearchPlugin.setSearchHistory(mSearchForm.getHistory());
-        
-        SearchFormSettings settings = mSearchForm.getSearchFormSettings();
-
-        ProgramFieldType[] fieldArr = settings.getFieldTypes();
-        devplugin.Date startDate = new devplugin.Date();
-        int nrDays = mSearchForm.getNrDays();
-        
-        try {
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          ProgramSearcher searcher = settings.createSearcher();
-          Program[] programArr = searcher.search(fieldArr, startDate, nrDays, null, true);
-
-          if (programArr.length == 0) {
-            String msg = mLocalizer.msg("nothingFound",
-              "No programs found with {0}!", settings.getSearchText());
-            JOptionPane.showMessageDialog(SearchDialog.this, msg);
-          } else {
-            String title = mLocalizer.msg("hitsTitle",
-              "Sendungen mit {0}", settings.getSearchText());
-            showHitsDialog(programArr, title);
-          }
-        }
-        catch (TvBrowserException exc) {
-          ErrorHandler.handle(exc);
-        }finally{
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-      };
-    }).start();
-
-  }
-  
-  
-  
-  /**
-   * Shows a dialog containing the hits of the search.
-   *
-   * @param programArr The hits.
-   * @param title The dialog's title.
-   */  
-  private void showHitsDialog(final Program[] programArr, String title) {
-    final JDialog dlg = new JDialog(this, title, true);
-    
-    UiUtilities.registerForClosing(new WindowClosingIf() {
-
-      public void close() {
-        dlg.dispose();
-      }
-
-      public JRootPane getRootPane() {
-        return dlg.getRootPane();
-      }
-      
-    });
-    
-    JPanel main = new JPanel(new BorderLayout());
-    main.setBorder(UiUtilities.DIALOG_BORDER);
-    dlg.setContentPane(main);
-    
-    final ProgramList list = new ProgramList(programArr);
-    
-    list.addMouseListeners(mPlugin);
-    
-    main.add(new JScrollPane(list), BorderLayout.CENTER);
-    
-    JPanel buttonPn = new JPanel(new BorderLayout());
-    buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-    main.add(buttonPn, BorderLayout.SOUTH);
-    
-    Icon icon = mPlugin.createImageIcon("actions", "edit-copy", 16);
-    JButton sendBt = new JButton(icon);
-    sendBt.setToolTipText(mLocalizer.msg("send", "end Programs to another Plugin"));
-    sendBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-          Program[] program = list.getSelectedPrograms();
-
-          if(program == null)
-            program = programArr;
-          
-          SendToPluginDialog send = new SendToPluginDialog(mPlugin, SearchDialog.this, program);
-          send.setVisible(true);
-      }
-    });
-    buttonPn.add(sendBt, BorderLayout.WEST);
-    
-    JButton closeBt = new JButton(mLocalizer.msg("close", "Close"));
-    closeBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        dlg.dispose();
-      }
-    });
-    buttonPn.add(closeBt, BorderLayout.EAST);
-    
-    dlg.getRootPane().setDefaultButton(closeBt);
-    
-    dlg.setSize(400, 400);
-	  UiUtilities.centerAndShow(dlg);
+    SearchHelper.search(this, mSearchForm.getSearchFormSettings());
   }
 
   public void close() {
