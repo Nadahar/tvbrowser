@@ -25,7 +25,6 @@
  */
 package tvbrowser.ui.mainframe.searchfield;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -37,6 +36,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.UIManager;
 
 import tvbrowser.core.icontheme.IconLoader;
@@ -45,7 +45,9 @@ import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -55,6 +57,9 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author bodum
  */
 public class SearchField extends JPanel {
+  /** The localizer of this class. */  
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(SearchField.class);
   /** TextField */
   private SearchTextField mText;
   /** Settings for the Search */
@@ -118,13 +123,34 @@ public class SearchField extends JPanel {
     SearchForm form = new SearchForm(false, false, true);
     form.setSearchFormSettings(mSearchFormSettings);
     
-    JDialog configure = new JDialog(MainFrame.getInstance(), true);
+    final JDialog configure = new JDialog(MainFrame.getInstance(), mLocalizer.msg("settingsTitle","Search-Settings"), true);
+    
+    UiUtilities.registerForClosing(new WindowClosingIf() {
+      public void close() {
+        configure.setVisible(false);
+      }
+
+      public JRootPane getRootPane() {
+        return configure.getRootPane();
+      }
+    });
     
     JPanel panel = (JPanel)configure.getContentPane();
+    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref", "pref, 3dlu, pref"));
     
-    panel.setLayout(new BorderLayout());
+    CellConstraints cc = new CellConstraints();
     
-    panel.add(form);
+    panel.add(form, cc.xyw(1, 1, 3));
+    
+    JButton ok = new JButton(mLocalizer.msg("ok", "OK"));
+    ok.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        configure.setVisible(false);
+      }
+    });
+    
+    panel.add(ok, cc.xy(3,3));
     
     configure.pack();
     UiUtilities.centerAndShow(configure);
