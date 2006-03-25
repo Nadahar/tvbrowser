@@ -127,7 +127,7 @@ public class SearchField extends JPanel {
     
     JPanel panel = (JPanel)configure.getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
-    panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref", "pref, 3dlu, pref"));
+    panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref", "pref, fill:3dlu:grow, pref"));
     
     CellConstraints cc = new CellConstraints();
     

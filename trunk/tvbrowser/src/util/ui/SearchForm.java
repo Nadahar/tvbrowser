@@ -43,7 +43,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
@@ -51,6 +50,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
@@ -125,159 +128,118 @@ public class SearchForm extends JPanel {
    *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], devplugin.Date, int, devplugin.Channel[], boolean)}.
    */
   public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection) {
-    super(new TabLayout(1));
+    super();
     
-    String msg;
-    JPanel p1, p2;
+    FormLayout layout = new FormLayout("pref, 3dlu, fill:pref:grow", "");
+    
+    DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout, this);
+    
+    CellConstraints cc = new CellConstraints();
+    
     ButtonGroup bg;
     
-    // Search term and time selection
-    if (showHistory) {
-      mPatternCBModel = new DefaultComboBoxModel();
-      mPatternCB = new JComboBox(mPatternCBModel);
-      mPatternCB.setEditable(true);
-      mPatternCB.addItemListener(new ItemListener() {
-        public void itemStateChanged (ItemEvent evt) {
-          if (evt.getStateChange() == ItemEvent.SELECTED) {
-            Object selection = mPatternCB.getSelectedItem();
-            if (selection instanceof SearchFormSettings) {
-              setSearchFormSettings((SearchFormSettings) selection);
+    if (showInputfield) {
+      if (showHistory) {
+        mPatternCBModel = new DefaultComboBoxModel();
+        mPatternCB = new JComboBox(mPatternCBModel);
+        mPatternCB.setEditable(true);
+        mPatternCB.addItemListener(new ItemListener() {
+          public void itemStateChanged (ItemEvent evt) {
+            if (evt.getStateChange() == ItemEvent.SELECTED) {
+              Object selection = mPatternCB.getSelectedItem();
+              if (selection instanceof SearchFormSettings) {
+                setSearchFormSettings((SearchFormSettings) selection);
+              }
             }
           }
-        }
-      });
-    } else {
-      mPatternTF = new JTextField(20);
-    }
-    
-    if (showTimeSelection) {
-      p1 = new JPanel(new BorderLayout());
-      this.add(p1);
-
-
-      if (showInputfield) {
-        p2 = new JPanel(new TabLayout(1));
-        p1.add(p2, BorderLayout.CENTER);
-        msg = mLocalizer.msg("searchTerm", "Search term");
-        p2.add(new JLabel(msg));
-        
-        if (mPatternCB != null) {
-          p2.add(mPatternCB);
-        } else {
-          p2.add(mPatternTF);
-        }
-
-      }
-
-      p2 = new JPanel(new TabLayout(1));
-      p1.add(p2, BorderLayout.EAST);
-      
-      msg = mLocalizer.msg("period", "Period");
-      p2.add(new JLabel(msg));
-
-      mTimeCB = new JComboBox(TIME_STRING_ARR);
-      p2.add(mTimeCB);
-    } else if (showInputfield){
-      p1 = new JPanel(new BorderLayout());
-      this.add(p1);
-
-      msg = mLocalizer.msg("searchTerm", "Search term");
-      p1.add(new JLabel(msg + "  "), BorderLayout.WEST);
-      
-      if (mPatternCB != null) {
-        p1.add(mPatternCB, BorderLayout.CENTER);
+        });
+        formBuilder.append(mLocalizer.msg("searchTerm", "Search term"), mPatternCB);
       } else {
-        p1.add(mPatternTF, BorderLayout.CENTER);
+        mPatternTF = new JTextField(20);
+        formBuilder.append(mLocalizer.msg("searchTerm", "Search term"), mPatternTF);
       }
+    }
+
+    if (showTimeSelection) {
+      mTimeCB = new JComboBox(TIME_STRING_ARR);
+      formBuilder.append(mLocalizer.msg("period", "Period"), mTimeCB);
     }
     
     // Search in
     bg = new ButtonGroup();
+    String msg;
     
-    p1 = new JPanel(new TabLayout(1, 2, 0));
-    msg = mLocalizer.msg("searchIn", "Search in");
-    p1.setBorder(BorderFactory.createTitledBorder(msg));
-    this.add(p1);
-    
+    formBuilder.appendSeparator(mLocalizer.msg("searchIn", "Search in"));
+
     ActionListener updateEnabledListener = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         updateEnabled();
       }
     };
 
-    msg = mLocalizer.msg("onlyTitle", "Only in title");
-    mSearchTitleRB = new JRadioButton(msg);
+    mSearchTitleRB = new JRadioButton(mLocalizer.msg("onlyTitle", "Only in title"));
     mSearchTitleRB.setSelected(true);
     mSearchTitleRB.addActionListener(updateEnabledListener);
-    p1.add(mSearchTitleRB);
     bg.add(mSearchTitleRB);
-
+    formBuilder.append(mSearchTitleRB, 3);
+    
     msg = mLocalizer.msg("allFields", "All fields");
     mSearchAllRB = new JRadioButton(msg);
     mSearchAllRB.addActionListener(updateEnabledListener);
-    p1.add(mSearchAllRB);
     bg.add(mSearchAllRB);
-    
-    p2 = new JPanel(new BorderLayout());
-    p1.add(p2);
-    
-    msg = mLocalizer.msg("certainFields", "Certain Fields");
-    mSearchUserDefinedRB = new JRadioButton(msg);
+    formBuilder.append(mSearchAllRB, 3);
+
+    mSearchUserDefinedRB = new JRadioButton(mLocalizer.msg("certainFields", "Certain Fields"));
     mSearchUserDefinedRB.addActionListener(updateEnabledListener);
-    p2.add(mSearchUserDefinedRB, BorderLayout.CENTER);
     bg.add(mSearchUserDefinedRB);
 
-    msg = mLocalizer.msg("select", "Select");
-    mChangeSearchFieldsBt = new JButton(msg);
+    mChangeSearchFieldsBt = new JButton(mLocalizer.msg("select", "Select"));
     mChangeSearchFieldsBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         showSelectSearchFieldsDialog();
       }
     });
-    p2.add(mChangeSearchFieldsBt, BorderLayout.EAST);
+
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.add(mSearchUserDefinedRB, BorderLayout.CENTER);
+    panel.add(mChangeSearchFieldsBt, BorderLayout.EAST);
+    formBuilder.append(panel, 3);
     
-    // options
-    p1 = new JPanel(new TabLayout(1, 2, 0));
-    msg = mLocalizer.msg("options", "Options");
-    p1.setBorder(BorderFactory.createTitledBorder(msg));
-    this.add(p1);
-    
+    formBuilder.appendSeparator(mLocalizer.msg("options", "Options"));
+
+    mCaseSensitiveChB = new JCheckBox(mLocalizer.msg("caseSensitive", "Case sensitive"));
+    formBuilder.append(mCaseSensitiveChB, 3);
+
     bg = new ButtonGroup();
-    msg = mLocalizer.msg("matchExactly", "Match exactly");
-    mSearcherTypeExactlyRB = new JRadioButton(msg);
+    mSearcherTypeExactlyRB = new JRadioButton(mLocalizer.msg("matchExactly", "Match exactly"));
     bg.add(mSearcherTypeExactlyRB);
-    p1.add(mSearcherTypeExactlyRB);
+    formBuilder.append(mSearcherTypeExactlyRB, 3);
     
-    msg = mLocalizer.msg("matchSubstring", "Term is a keyword");
-    mSearcherTypeKeywordRB = new JRadioButton(msg);
+    mSearcherTypeKeywordRB = new JRadioButton(mLocalizer.msg("matchSubstring", "Term is a keyword"));
     mSearcherTypeKeywordRB.setSelected(true);
     bg.add(mSearcherTypeKeywordRB);
-    p1.add(mSearcherTypeKeywordRB);
+    formBuilder.append(mSearcherTypeKeywordRB, 3);
     
-    msg = mLocalizer.msg("matchRegex", "Term is a regular expression");
-    mSearcherTypeRegexRB = new JRadioButton(msg);
+    mSearcherTypeBooleanRB = new JRadioButton(mLocalizer.msg("matchBoolean", "Term is a boolean (with AND, OR, a.s.o.)"));
+    bg.add(mSearcherTypeBooleanRB);
+    formBuilder.append(mSearcherTypeBooleanRB, 3);
+
+    mSearcherTypeRegexRB = new JRadioButton(mLocalizer.msg("matchRegex", "Term is a regular expression"));
     bg.add(mSearcherTypeRegexRB);
-    p1.add(mSearcherTypeRegexRB);
+    formBuilder.append(mSearcherTypeRegexRB, 3);
     
     LinkButton b = new LinkButton(
             "("+mLocalizer.msg("regExHelp","Help for regular expressions")+")",
             mLocalizer.msg("regExUrl","http://wiki.tvbrowser.org/index.php/Regul%C3%A4re_Ausdr%C3%BCcke"));
     b.setHorizontalAlignment(LinkButton.CENTER);
-    p1.add(b);
+    formBuilder.append(b, 3);
 
-    msg = mLocalizer.msg("matchBoolean", "Term is a boolean (with AND, OR, a.s.o.)");
-    mSearcherTypeBooleanRB = new JRadioButton(msg);
-    bg.add(mSearcherTypeBooleanRB);
-    p1.add(mSearcherTypeBooleanRB);
-    
-    msg = mLocalizer.msg("caseSensitive", "Case sensitive");
-    mCaseSensitiveChB = new JCheckBox(msg);
-    p1.add(mCaseSensitiveChB);
+    formBuilder.appendUnrelatedComponentsGapRow();
     
     // Set the default settings
     setSearchFormSettings(new SearchFormSettings(""));
     
-    updateEnabled();
+    updateEnabled(); 
   }
   
   
@@ -504,16 +466,17 @@ public class SearchForm extends JPanel {
   private String getPattern() {
     if (mPatternCB != null) {
       return mPatternCB.getSelectedItem().toString();
-    } else {
+    } else if (mPatternTF != null){
       return mPatternTF.getText();
     }
+    return "";
   }
   
   
   private void setPattern(String pattern) {
     if (mPatternCB != null) {
       mPatternCB.setSelectedItem(pattern);
-    } else {
+    } else if (mPatternTF != null){
       mPatternTF.setText(pattern);
     }
   }

@@ -27,7 +27,7 @@
 package searchplugin;
 
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +42,10 @@ import util.ui.SearchHelper;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+
 import devplugin.Plugin;
 import devplugin.PluginManager;
 
@@ -85,7 +89,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     setTitle(msg);
     
     JPanel main = new JPanel(new TabLayout(1));
-    main.setBorder(UiUtilities.DIALOG_BORDER);
+    main.setBorder(Borders.DLU4_BORDER);
     setContentPane(main);
     
     // pattern
@@ -98,10 +102,6 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     });
     main.add(mSearchForm);
 
-    // the buttons
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-    main.add(buttonPn);
-    
     msg = mLocalizer.msg("search", "Search");
     mSearchBt = new JButton(msg);
     mSearchBt.addActionListener(new ActionListener() {
@@ -109,7 +109,6 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
         search();
       }
     });
-    buttonPn.add(mSearchBt);
     getRootPane().setDefaultButton(mSearchBt);
 
     msg = mLocalizer.msg("cancel", "Cancel");
@@ -119,8 +118,15 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
         dispose();
       }
     });
-    buttonPn.add(mCloseBt);
 
+    ButtonBarBuilder buttons = new ButtonBarBuilder();
+    buttons.addGriddedButtons(new JButton[]{mSearchBt, mCloseBt});
+    
+    JPanel buttonPanel = new JPanel(new BorderLayout());
+    buttonPanel.add(buttons.getPanel(), BorderLayout.EAST);
+    
+    main.add(buttonPanel);
+    
     pack();
   }
   
