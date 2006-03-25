@@ -64,6 +64,8 @@ public class ContextMenu {
   protected static JMenu getSubMenu() {
     JMenu menu = new JMenu(mLocalizer.msg("toolbar", "Toolbar"));
     menu.add(createViewMenu());
+    if(Settings.propIsTooolbarVisible.getBoolean())
+      menu.add(createViewSearchMenu());
     menu.addSeparator();
     menu.add(createConfigureItem());
 
@@ -73,11 +75,27 @@ public class ContextMenu {
   private void update() {
     mMenu.removeAll();
     mMenu.add(createViewMenu());
+    if(Settings.propIsTooolbarVisible.getBoolean())
+      mMenu.add(createViewSearchMenu());
     mMenu.addSeparator();
     if (ToolBarDragAndDropSettings.getInstance() == null)
       mMenu.add(createConfigureItem());
   }
 
+  private static JCheckBoxMenuItem createViewSearchMenu() {
+    final JCheckBoxMenuItem showSearch = new JCheckBoxMenuItem(
+        ToolBarDragAndDropSettings.mLocalizer
+            .msg("showSearchField", "Show search field"));
+    showSearch.setSelected(Settings.propIsSearchFieldVisible.getBoolean());
+    showSearch.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().setShowSearchField(showSearch.isSelected());
+      }
+    });    
+    
+    return showSearch;    
+  }
+  
   private static JCheckBoxMenuItem createViewMenu() {
     final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
         ToolBarDragAndDropSettings.mLocalizer
@@ -87,8 +105,8 @@ public class ContextMenu {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().setShowToolbar(show.isSelected());
       }
-    });
-
+    });    
+    
     return show;
   }
 

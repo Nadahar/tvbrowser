@@ -40,7 +40,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -54,7 +53,6 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
@@ -90,6 +88,7 @@ public class ToolBar extends JToolBar {
 
   public ToolBar(ToolBarModel model) {
     super();
+    setBorder(null);
     mModel = model;
     loadSettings();
     mContextMenu = new ContextMenu(this);
@@ -116,7 +115,7 @@ public class ToolBar extends JToolBar {
     ((DefaultToolBarModel) mModel).updateTimeButtons();
     update();
   }
-
+  
   public void update() {
     super.removeAll();
     Action[] actions = mModel.getActions();
@@ -137,13 +136,15 @@ public class ToolBar extends JToolBar {
       }
     }
 
-    add(Box.createHorizontalGlue());
-    add(new SearchField());
-    
     updateUI();
     disabled = false;
   }
-
+  
+  public void updateUI() {
+    super.updateUI();
+    setBorder(null);
+  }
+  
   /**
    * Set up the ToolBar for Drag'n'Drop.
    * 
