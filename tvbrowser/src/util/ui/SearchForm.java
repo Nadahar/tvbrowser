@@ -153,17 +153,20 @@ public class SearchForm extends JPanel {
     if (showTimeSelection) {
       p1 = new JPanel(new BorderLayout());
       this.add(p1);
-      
-      p2 = new JPanel(new TabLayout(1));
-      p1.add(p2, BorderLayout.CENTER);
-      
-      msg = mLocalizer.msg("searchTerm", "Search term");
-      p2.add(new JLabel(msg));
-      
-      if (mPatternCB != null) {
-        p2.add(mPatternCB);
-      } else {
-        p2.add(mPatternTF);
+
+
+      if (showInputfield) {
+        p2 = new JPanel(new TabLayout(1));
+        p1.add(p2, BorderLayout.CENTER);
+        msg = mLocalizer.msg("searchTerm", "Search term");
+        p2.add(new JLabel(msg));
+        
+        if (mPatternCB != null) {
+          p2.add(mPatternCB);
+        } else {
+          p2.add(mPatternTF);
+        }
+
       }
 
       p2 = new JPanel(new TabLayout(1));

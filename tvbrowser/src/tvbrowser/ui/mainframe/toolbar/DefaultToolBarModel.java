@@ -26,7 +26,6 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -63,6 +62,7 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.SettingsItem;
 
 public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
@@ -85,7 +85,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mSeparatorAction = getSeparatorAction();
 
     setButtonIds(buttonIds);
-
   }
 
   public void setButtonIds(String[] ids) {
@@ -169,14 +168,14 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         .getInstance().getIconFromTheme("actions", "go-next", 22),
         ToolBar.BUTTON_ACTION, this);
     mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("buttonText",
-        "Reminder list"), SettingsDialog.TAB_ID_REMINDER,
+        "Reminder list"), SettingsItem.REMINDER,
         ReminderPlugin.mLocalizer.msg("description",
             "Eine einfache Implementierung einer Erinnerungsfunktion."),
         IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16),
         IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22),
         ToolBar.BUTTON_ACTION, this);
     mFavoriteAction = createAction(FavoritesPlugin.mLocalizer.msg("buttonText",
-        "Manage Favorites"), SettingsDialog.TAB_ID_FAVORITE,
+        "Manage Favorites"), SettingsItem.FAVORITE,
         FavoritesPlugin.mLocalizer.msg("favoritesManager",
             "Manage favorite programs"), IconLoader.getInstance()
             .getIconFromTheme("apps", "bookmark", 16), IconLoader.getInstance()
@@ -210,8 +209,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mAvailableActions.put("#scrollToNow", mScrollToNowAction);
     mAvailableActions.put("#scrollToToday", mScrollToTodayAction);
     mAvailableActions.put("#scrollToTomorrow", mScrollToTomorrowAction);
-    mAvailableActions.put(SettingsDialog.TAB_ID_REMINDER, mReminderAction);
-    mAvailableActions.put(SettingsDialog.TAB_ID_FAVORITE, mFavoriteAction);
+    mAvailableActions.put(SettingsItem.REMINDER, mReminderAction);
+    mAvailableActions.put(SettingsItem.FAVORITE, mFavoriteAction);
     mAvailableActions.put("#goToDate", mGoToDateAction);
     mAvailableActions.put("#goToChannel", mGoToChannelAction);
     mAvailableActions.put("#goToTime", mGoToTimeAction);
@@ -448,9 +447,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
     JPopupMenu popup = null;
 
-    if (item == mFilterAction)
+    if (item == mFilterAction) {
       popup = new SelectFilterPopup(MainFrame.getInstance());
-    if (item == mGoToDateAction) {
+    } else if (item == mGoToDateAction) {
       popup = new JPopupMenu();
       
       Date curDate = Date.getCurrentDate().addDays(-1);
@@ -468,16 +467,14 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         curDate = curDate.addDays(1);
         
       }
-    }
-    if (item == mGoToChannelAction) {
+    } else if (item == mGoToChannelAction) {
       popup = new JPopupMenu();
 
       Channel[] channels = Settings.propSubscribedChannels
           .getChannelArray(false);
       for (int i = 0; i < channels.length; i++)
         popup.add(createChannelMenuItem(channels[i], btn));
-    }
-    if (item == mGoToTimeAction) {
+    } else if (item == mGoToTimeAction) {
       popup = new JPopupMenu();
 
       int[] array = Settings.propTimeButtons.getIntArray();
@@ -502,53 +499,30 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       popup.add(menuItem);
     }
 
-    popup.addPopupMenuListener(new PopupMenuListener() {
-      public void popupMenuCanceled(PopupMenuEvent e) {
-      /*
-       * AbstractButton button = (AbstractButton) item
-       * .getValue(ToolBar.ACTION_VALUE); if (item == mFilterAction)
-       * button.setSelected(!MainFrame.getInstance()
-       * .isShowAllFilterActivated()); if (item == mGoToDateAction)
-       * button.setSelected(false);
-       * 
-       * MainFrame.getInstance().updateToolbar();
-       */
-      }
+    if (popup != null) {
+      popup.addPopupMenuListener(new PopupMenuListener() {
+        public void popupMenuCanceled(PopupMenuEvent e) {  }
 
-      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-        AbstractButton button = (AbstractButton) item
-            .getValue(ToolBar.ACTION_VALUE);
-        if (item == mFilterAction)
-          button.setSelected(!MainFrame.getInstance()
-              .isShowAllFilterActivated());
-        if (item == mGoToDateAction)
-          button.setSelected(false);
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+          AbstractButton button = (AbstractButton) item
+              .getValue(ToolBar.ACTION_VALUE);
+          if (item == mFilterAction)
+            button.setSelected(!MainFrame.getInstance()
+                .isShowAllFilterActivated());
+          if (item == mGoToDateAction)
+            button.setSelected(false);
 
-        MainFrame.getInstance().updateToolbar();
-      }
+          MainFrame.getInstance().updateToolbar();
+        }
 
-      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-    });
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+      });
 
-    Point p = new Point(0, 0);
+      Point p = new Point(0, 0);
+      p.y = btn.getHeight() + 1;
 
-    // TODO: get Location of Toolbar
-    //
-    // String locationStr = Settings.propToolbarLocation.getString();
-    // System.out.println(locationStr);
-    // if ("east".equals(locationStr)) {
-    // p.x = -1 * btn.getWidth();
-    // }else if ("south".equals(locationStr)) {
-    // p.y = -1 * popup.getHeight();
-    // }else if ("west".equals(locationStr)) {
-    // p.x = btn.getWidth();
-    // }else {
-    // p.y = btn.getHeight();
-    // }
-
-    p.y = btn.getHeight() + 1;
-
-    popup.show(btn, p.x, p.y);
+      popup.show(btn, p.x, p.y);
+    }
   }
 
   private JMenuItem createDateMenuItem(final Date date, final AbstractButton btn) {

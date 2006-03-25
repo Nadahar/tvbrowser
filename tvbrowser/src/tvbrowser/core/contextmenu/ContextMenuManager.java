@@ -43,11 +43,11 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.SettingsDialog;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
+import devplugin.SettingsItem;
 
 /**
  * A class that handles the program context menu.
@@ -297,7 +297,7 @@ public class ContextMenuManager {
         item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(java.awt.event.ActionEvent e) {
-            MainFrame.getInstance().showSettingsDialog(SettingsDialog.TAB_ID_CONTEXTMENU);
+            MainFrame.getInstance().showSettingsDialog(SettingsItem.CONTEXTMENU);
           };
         });
         rootMenu.add(item);

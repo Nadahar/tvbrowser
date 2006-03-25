@@ -658,6 +658,16 @@ public class PluginManagerImpl implements PluginManager {
   }
 
   /**
+   * Show the Settings-Dialog with a Specific SettingsItem
+   * 
+   * @param settingsItem SettingsItem to show (e.g. SettingsItem.CHANNELS)
+   * @since 2.2
+   */
+  public void showSettings(String settingsItem) {
+    MainFrame.getInstance().showSettingsDialog(settingsItem);
+  }  
+  
+  /**
    * Return all marked programs.
    * 
    * @return The marked programs
@@ -665,5 +675,7 @@ public class PluginManagerImpl implements PluginManager {
    */
   public Program[] getMarkedPrograms() {
     return MarkedProgramsList.getInstance().getMarkedPrograms();
-  }  
+  }
+
+
 }

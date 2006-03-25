@@ -58,7 +58,6 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
-import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.browserlauncher.Launch;
 import util.ui.ScrollableMenu;
@@ -66,6 +65,7 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFilter;
+import devplugin.SettingsItem;
 
 
 public abstract class MenuBar extends JMenuBar implements ActionListener {
@@ -457,7 +457,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
      }
      else if (source == mPluginManagerMI) {
 //       mMainFrame.showUpdatePluginsDlg();
-       mMainFrame.showSettingsDialog(SettingsDialog.TAB_ID_PLUGINS);
+       mMainFrame.showSettingsDialog(SettingsItem.PLUGINS);
      }
      else if (source == mDonorMI) {
        Launch.openURL(mLocalizer.msg("website.donors",""));
@@ -493,7 +493,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
        mMainFrame.scrollToNow();
      }
      else if (source == mEditTimeButtonsMenuItem) {
-       mMainFrame.showSettingsDialog(SettingsDialog.TAB_ID_TIMEBUTTONS);
+       mMainFrame.showSettingsDialog(SettingsItem.TIMEBUTTONS);
      }
      else if (source == mToolbarCustomizeMI) {
        new ToolBarDragAndDropSettings();

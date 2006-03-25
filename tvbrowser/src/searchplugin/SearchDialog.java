@@ -153,8 +153,6 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     mSearchForm.setSearchFormSettings(settings);
   }
 
-  
-  
   /**
    * Starts the search.
    */  

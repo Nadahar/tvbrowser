@@ -40,6 +40,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -53,11 +54,12 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.SettingsDialog;
+import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
+import devplugin.SettingsItem;
 
 public class ToolBar extends JToolBar {
 
@@ -133,9 +135,11 @@ public class ToolBar extends JToolBar {
       } else {
         addButton(action);
       }
-
     }
 
+    add(Box.createHorizontalGlue());
+    add(new SearchField());
+    
     updateUI();
     disabled = false;
   }
@@ -264,11 +268,11 @@ public class ToolBar extends JToolBar {
         showall = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
       }
-      if(name.startsWith(SettingsDialog.TAB_ID_REMINDER)) {
+      if(name.startsWith(SettingsItem.REMINDER)) {
         showall = true;
         label = mLocalizer.msg("configureReminder", "Configure Reminder");
       }
-      if(name.startsWith(SettingsDialog.TAB_ID_FAVORITE)) {
+      if(name.startsWith(SettingsItem.FAVORITE)) {
         showall = true;
         label = mLocalizer.msg("configureFavorite", "Configure Favorites");
       }

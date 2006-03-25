@@ -73,6 +73,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 /**
@@ -83,18 +84,6 @@ public class SettingsDialog implements WindowClosingIf {
 
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SettingsDialog.class);
-
-  public static final String TAB_ID_TOOLBAR = "#toolbar";
-  public static final String TAB_ID_TIMEBUTTONS = "#timebuttons";
-  public static final String TAB_ID_PLUGINS = "#plugins";
-  public static final String TAB_ID_TRAY = "#tray";
-  public static final String TAB_ADDITIONAL = "#additional";
-  public static final String TAB_ID_PROGRAMINFO = "#programinfo";
-  public static final String TAB_ID_REMINDER = "#reminder";
-  public static final String TAB_ID_FAVORITE = "#favorite";
-  public static final String TAB_ID_CHANNELS = "#channels";
-  public static final String TAB_ID_WEBBROWSER = "#webbrowser";
-  public static final String TAB_ID_CONTEXTMENU = "#contextmenu";
 
   private JDialog mDialog;
 
@@ -197,7 +186,7 @@ public class SettingsDialog implements WindowClosingIf {
     mDialog.pack();
     
     if (selectedTabId == null) {
-      selectedTabId = TAB_ID_CHANNELS;
+      selectedTabId = SettingsItem.CHANNELS;
     }
     
     SettingNode n = findSettingNode((SettingNode)mRootNode, selectedTabId);
@@ -298,18 +287,18 @@ public class SettingsDialog implements WindowClosingIf {
     
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
-    generalSettings.add(new SettingNode(new ContextmenuSettingsTab(), TAB_ID_CONTEXTMENU));
+    generalSettings.add(new SettingNode(new ContextmenuSettingsTab(), SettingsItem.CONTEXTMENU));
     generalSettings.add(new SettingNode(new MausSettingsTab()));
     
     if(TVBrowser.isUsingSystemTray())
-      generalSettings.add(new SettingNode(new TraySettingsTab(), TAB_ID_TRAY));
+      generalSettings.add(new SettingNode(new TraySettingsTab(), SettingsItem.TRAY));
     
-    generalSettings.add(new SettingNode(new StartupSettingsTab(), TAB_ADDITIONAL));
+    generalSettings.add(new SettingNode(new StartupSettingsTab(), SettingsItem.STARTUP));
 
-    programtableNode.add(new SettingNode(new ChannelsSettingsTab(), TAB_ID_CHANNELS));
+    programtableNode.add(new SettingNode(new ChannelsSettingsTab(), SettingsItem.CHANNELS));
     programtableNode.add(new SettingNode(new ChannelGroupSettingsTab(this)));
     programtableNode.add(new SettingNode(new RefreshDataSettingsTab()));
-    programtableNode.add(new SettingNode(new ButtonsSettingsTab(), TAB_ID_TIMEBUTTONS));
+    programtableNode.add(new SettingNode(new ButtonsSettingsTab(), SettingsItem.TIMEBUTTONS));
 
     appearanceNode.add(new SettingNode(new ProgramTableSettingsTab()));
     appearanceNode.add(new SettingNode(new ChannellogosSettingsTab()));
@@ -318,14 +307,14 @@ public class SettingsDialog implements WindowClosingIf {
     
     technicalSettings.add(new SettingNode(new ProxySettingsTab()));
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
-    technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), TAB_ID_WEBBROWSER));
+    technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));
     
-    root.add(new SettingNode(new ProgramInfoSettingsTab(), TAB_ID_PROGRAMINFO));
-    root.add(new SettingNode(new FavoritesSettingTab(), TAB_ID_FAVORITE));
-    root.add(new SettingNode(new ReminderSettingsTab(), TAB_ID_REMINDER));
+    root.add(new SettingNode(new ProgramInfoSettingsTab(), SettingsItem.PROGRAMINFO));
+    root.add(new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE));
+    root.add(new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER));
  
     // Plugins
-    mPluginSettingsNode = new SettingNode(new PluginSettingsTab(this), TAB_ID_PLUGINS);
+    mPluginSettingsNode = new SettingNode(new PluginSettingsTab(this), SettingsItem.PLUGINS);
     root.add(mPluginSettingsNode);
 
     createPluginTreeItems(false);
