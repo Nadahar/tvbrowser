@@ -783,4 +783,10 @@ public class Settings {
    */
   public static final BooleanProperty propShowBrowserOpenDialog
     = new BooleanProperty(mProp, "showBrowserOpenDialog", true);
+
+  /**
+   * Show the SearchField in the Toolbar
+   */
+  public static final BooleanProperty propIsSearchFieldVisible
+  = new BooleanProperty(mProp, "isSearchFieldVisible", true);
 }
