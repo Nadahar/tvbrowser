@@ -27,7 +27,6 @@ package tvbrowser.ui.mainframe.searchfield;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,32 +34,20 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.ui.ProgramList;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
-import util.ui.SendToPluginDialog;
+import util.ui.SearchHelper;
 import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramSearcher;
 
 /**
  * A SearchField for the Toolbar
@@ -68,10 +55,6 @@ import devplugin.ProgramSearcher;
  * @author bodum
  */
 public class SearchField extends JPanel {
-  /** The localizer of this class. */  
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(SearchField.class);
-
   /** TextField */
   private SearchTextField mText;
   /** Settings for the Search */
@@ -101,8 +84,10 @@ public class SearchField extends JPanel {
     mText.setBorder(BorderFactory.createEmptyBorder());
     mText.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) 
-          doSearch();
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+          mSearchFormSettings.setSearchText(mText.getText());
+          SearchHelper.search(mText, mSearchFormSettings);
+        }
       }
     });
     
@@ -147,103 +132,5 @@ public class SearchField extends JPanel {
     mSearchFormSettings = form.getSearchFormSettings();
   }
 
-  /**
-   * Starts the search.
-   */  
-  private void doSearch() {
-    new Thread(new Runnable() {
-      public void run() {
-        mSearchFormSettings.setSearchText(mText.getText());
-        ProgramFieldType[] fieldArr = mSearchFormSettings.getFieldTypes();
-        devplugin.Date startDate = new devplugin.Date();
-        
-        try {
-          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          ProgramSearcher searcher = mSearchFormSettings.createSearcher();
-          Program[] programArr = searcher.search(fieldArr, startDate, mSearchFormSettings.getNrDays(), null, true);
-
-          if (programArr.length == 0) {
-            String msg = mLocalizer.msg("nothingFound",
-              "No programs found with {0}!", mSearchFormSettings.getSearchText());
-            JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
-          } else {
-            String title = mLocalizer.msg("hitsTitle",
-              "Sendungen mit {0}", mSearchFormSettings.getSearchText());
-            showHitsDialog(programArr, title);
-          }
-        }
-        catch (TvBrowserException exc) {
-          ErrorHandler.handle(exc);
-        }finally{
-          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        }
-      };
-    }).start();
-
-  }
-  
-  /**
-   * Shows a dialog containing the hits of the search.
-   *
-   * @param programArr The hits.
-   * @param title The dialog's title.
-   */  
-  private void showHitsDialog(final Program[] programArr, String title) {
-    final JDialog dlg = new JDialog(MainFrame.getInstance(), title, true);
-    
-    UiUtilities.registerForClosing(new WindowClosingIf() {
-
-      public void close() {
-        dlg.dispose();
-      }
-
-      public JRootPane getRootPane() {
-        return dlg.getRootPane();
-      }
-      
-    });
-    
-    JPanel main = new JPanel(new BorderLayout());
-    main.setBorder(UiUtilities.DIALOG_BORDER);
-    dlg.setContentPane(main);
-    
-    final ProgramList list = new ProgramList(programArr);
-    list.addMouseListeners(null);
-    
-    main.add(new JScrollPane(list), BorderLayout.CENTER);
-    
-    JPanel buttonPn = new JPanel(new BorderLayout());
-    buttonPn.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-    main.add(buttonPn, BorderLayout.SOUTH);
-    
-    Icon icon = IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16);
-    JButton sendBt = new JButton(icon);
-    sendBt.setToolTipText(mLocalizer.msg("send", "send Programs to another Plugin"));
-    sendBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-          Program[] program = list.getSelectedPrograms();
-
-          if(program == null)
-            program = programArr;
-          
-          SendToPluginDialog send = new SendToPluginDialog(null, MainFrame.getInstance(), program);
-          send.setVisible(true);
-      }
-    });
-    buttonPn.add(sendBt, BorderLayout.WEST);
-    
-    JButton closeBt = new JButton(mLocalizer.msg("close", "Close"));
-    closeBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        dlg.dispose();
-      }
-    });
-    buttonPn.add(closeBt, BorderLayout.EAST);
-    
-    dlg.getRootPane().setDefaultButton(closeBt);
-    
-    dlg.setSize(400, 400);
-      UiUtilities.centerAndShow(dlg);
-  }
   
 }
