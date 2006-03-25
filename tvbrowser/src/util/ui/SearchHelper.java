@@ -87,6 +87,7 @@ public class SearchHelper {
     new Thread(new Runnable() {
       public void run() {
         devplugin.Date startDate = new devplugin.Date();
+        Cursor cursor = comp.getCursor();
 
         try {
           comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -94,7 +95,7 @@ public class SearchHelper {
           Program[] programArr = searcher.search(searcherSettings.getFieldTypes(), startDate, searcherSettings
               .getNrDays(), null, true);
 
-          comp.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          comp.setCursor(cursor);
           if (programArr.length == 0) {
             String msg = mLocalizer
                 .msg("nothingFound", "No programs found with {0}!", searcherSettings.getSearchText());
@@ -104,7 +105,7 @@ public class SearchHelper {
             showHitsDialog(programArr, title);
           }
         } catch (TvBrowserException exc) {
-          comp.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          comp.setCursor(cursor);
           ErrorHandler.handle(exc);
         }
       };
