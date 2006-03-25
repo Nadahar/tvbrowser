@@ -125,16 +125,6 @@ public class SearchField extends JPanel {
     
     final JDialog configure = new JDialog(MainFrame.getInstance(), mLocalizer.msg("settingsTitle","Search-Settings"), true);
     
-    UiUtilities.registerForClosing(new WindowClosingIf() {
-      public void close() {
-        configure.setVisible(false);
-      }
-
-      public JRootPane getRootPane() {
-        return configure.getRootPane();
-      }
-    });
-    
     JPanel panel = (JPanel)configure.getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
     panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref", "pref, 3dlu, pref"));
@@ -151,7 +141,17 @@ public class SearchField extends JPanel {
     });
     
     panel.add(ok, cc.xy(3,3));
-    
+
+    UiUtilities.registerForClosing(new WindowClosingIf() {
+      public void close() {
+        configure.setVisible(false);
+      }
+
+      public JRootPane getRootPane() {
+        return configure.getRootPane();
+      }
+    });
+
     configure.pack();
     UiUtilities.centerAndShow(configure);
     
