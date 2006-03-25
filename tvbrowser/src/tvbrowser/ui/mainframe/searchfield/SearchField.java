@@ -28,7 +28,6 @@ package tvbrowser.ui.mainframe.searchfield;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,16 +38,11 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
 import javax.swing.UIManager;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -63,7 +57,6 @@ import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -84,7 +77,7 @@ public class SearchField extends JPanel {
   /** Settings for the Search */
   private SearchFormSettings mSearchFormSettings = new SearchFormSettings("");
   /** Button for the Settings-Popup*/
-  private JToggleButton mSearchButton;
+  private JButton mSearchButton;
   
   /**
    * Create SearchField
@@ -115,51 +108,22 @@ public class SearchField extends JPanel {
     
     CellConstraints cc = new CellConstraints();
 
-    mSearchButton = new JToggleButton(IconLoader.getInstance().getIconFromTheme("action", "system-search", 16)); 
+    mSearchButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "system-search", 16)); 
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
     mSearchButton.setOpaque(false);
     mSearchButton.setMargin(new Insets(0, 0, 0, 0));
     mSearchButton.setFocusPainted(false);    
     mSearchButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        showPopUp();
+        showConfigureDialog();
       };
     });
     
     panel.add(mSearchButton, cc.xy(2,1));
     panel.add(mText, cc.xy(4,1));
     
-    panel.setMaximumSize(new Dimension(Sizes.dialogUnitXAsPixel(55, this), 30));
-    
-    setLayout(new BorderLayout());
-    add(panel, BorderLayout.EAST);
-  }
-
-  /**
-   * Show Popup if Settings-Button is pressed
-   */
-  protected void showPopUp() {
-    JPopupMenu menu = new JPopupMenu();
-    JMenuItem item = new JMenuItem("Configure");
-    
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showConfigureDialog();
-      };
-    });
-    
-    menu.add(item);
-    
-    menu.addPopupMenuListener(new PopupMenuListener() {
-      public void popupMenuCanceled(PopupMenuEvent e) {}
-      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-
-      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-        mSearchButton.setSelected(false);
-      }
-    });
-    
-    menu.show(mSearchButton, 0, mSearchButton.getHeight());
+    setLayout(new FormLayout("fill:pref:grow, pref", "fill:pref:grow, pref, fill:pref:grow"));
+    add(panel, new CellConstraints().xy(2, 2));
   }
 
   /**
