@@ -96,6 +96,9 @@ public class FileCheckBox extends JComponent {
           File f=mFileChooser.getSelectedFile();
           if (f!=null) {
             mTextfield.setText(f.getAbsolutePath());
+            
+            if(mTextfield.getKeyListeners().length == 1)
+              mTextfield.getKeyListeners()[0].keyReleased(null);
           }
         }
       }
@@ -155,5 +158,7 @@ public class FileCheckBox extends JComponent {
   public JButton getButton() {
     return mChoosebtn;
   }
+  
+  
 
 }

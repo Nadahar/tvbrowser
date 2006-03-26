@@ -31,6 +31,8 @@ import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -139,17 +141,9 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     });
 
-    mExecChB.addChangeListener(new ChangeListener() {
-
-      public void stateChanged(ChangeEvent e) {
-        mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
-      }
-
-    });
-
     JFileChooser soundChooser=new JFileChooser("sound/");
 
-    String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
+    final String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
     msg = mLocalizer.msg("soundFileFilter", "Sound file ({0})",
         "*.wav, *.aif, *.rmf, *.au, *.mid");
     soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
@@ -206,6 +200,40 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     });
     soundPn.add(soundTestBt, BorderLayout.EAST);
+    
+    mSoundFileChB.getCheckBox().addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        soundTestBt.setEnabled(mSoundFileChB.isSelected());
+      }
+    });
+    
+    mSoundFileChB.getTextField().addKeyListener(new KeyAdapter() {
+      public void keyReleased(KeyEvent e) {
+        String text = mSoundFileChB.getTextField().getText();        
+        if((new File(text)).isFile()) {
+          boolean notFound = true;
+          for(int i = 0; i < extArr.length; i++)
+            if(text.toLowerCase().endsWith(extArr[i])) {
+              notFound = false;
+              break;
+            }
+          
+          if(notFound)
+            soundTestBt.setEnabled(false);
+          else
+            soundTestBt.setEnabled(true);
+        }
+        else
+          soundTestBt.setEnabled(false);
+      }
+    });
+    mSoundFileChB.getTextField().getKeyListeners()[0].keyReleased(null);
+    
+    mExecChB.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
+      }
+    });
 
     reminderPn.add(soundPn);
 
