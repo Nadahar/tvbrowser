@@ -53,6 +53,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
@@ -60,6 +61,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -365,23 +367,17 @@ public class ReminderPlugin implements ContextMenuIf {
           });
           
           return clip;
-        }else {
-          try {
-            URL url = new File(fileName).toURL();
-            AudioClip clip= Applet.newAudioClip(url);
-            clip.play();
-          } catch (java.net.MalformedURLException exc) {
-            String msg = mLocalizer.msg( "error.1",
-                "Error loading reminder sound file!\n({0})" , fileName, exc);
-            ErrorHandler.handle(msg, exc);
-          }
+        }else {         
+          URL url = new File(fileName).toURL();
+          AudioClip clip= Applet.newAudioClip(url);
+          clip.play();
         }
       }
 
     } catch (Exception e) {
       String msg = mLocalizer.msg( "error.1",
-        "Error loading reminder sound file!\n({0})" , fileName, e);
-      ErrorHandler.handle(msg, e);
+          "Error loading reminder sound file!\n({0})" , fileName);
+      JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(MainFrame.getInstance()),msg,mLocalizer.msg("error","Error"),JOptionPane.ERROR_MESSAGE);
     }
     return null;
   }
