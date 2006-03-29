@@ -77,7 +77,7 @@ public class ToolBar extends JToolBar {
   private static final int ICON_BIG = 1, ICON_SMALL = 2;
 
   private static Insets NULL_INSETS = new Insets(0, 0, 0, 0);
-  private static Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
+  protected static Font TEXT_FONT = new Font("Dialog", Font.PLAIN, 10);
 
   private ToolBarModel mModel;
   private ContextMenu mContextMenu;
@@ -321,13 +321,8 @@ public class ToolBar extends JToolBar {
     String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
     Icon icon = getIcon(action);
     String title = getTitle(action);
-
-    button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        action.actionPerformed(e);
-      }
-    });
-
+    
+    button.setAction(action);
     button.setText(title);
     button.setIcon(icon);
     button.setName(action.getValue(ToolBar.ACTION_ID_KEY).toString());
@@ -449,5 +444,4 @@ public class ToolBar extends JToolBar {
   public boolean useBigIcons() {
     return mIconSize == ICON_BIG;
   }
-
 }

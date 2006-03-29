@@ -27,6 +27,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
@@ -76,6 +77,7 @@ import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
+import tvbrowser.ui.mainframe.toolbar.MoreButton;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -400,13 +402,13 @@ public class MainFrame extends JFrame implements DateListener {
         mSearchField = new SearchField();
       } else
         mToolBarPanel.removeAll();
-
+      
       if (location.compareTo(BorderLayout.NORTH) == 0) {
-        mToolBarPanel.add(mToolBar, BorderLayout.CENTER);
+        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.CENTER);
         if(Settings.propIsSearchFieldVisible.getBoolean())
           mToolBarPanel.add(mSearchField, BorderLayout.EAST);
       } else {
-        mToolBarPanel.add(mToolBar, BorderLayout.CENTER);
+        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.CENTER);
         if(Settings.propIsSearchFieldVisible.getBoolean())
           mToolBarPanel.add(mSearchField, BorderLayout.SOUTH);
       }
