@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import devplugin.ProgramFilter;
 
 public class FilterList {
@@ -148,7 +149,6 @@ public class FilterList {
     }
     
     return (ProgramFilter[]) filterArr.toArray(new ProgramFilter[0]);
-    
   }
   
   private File[] getFilterFiles() {
@@ -161,6 +161,12 @@ public class FilterList {
   }
   
   public ProgramFilter[] getFilterArr() {
+    if (SearchFilter.getInstance().isActive()) {
+      ProgramFilter[] filter = new ProgramFilter[mFilterArr.length+1];
+      System.arraycopy(mFilterArr, 0, filter, 0, mFilterArr.length);
+      filter[mFilterArr.length] = SearchFilter.getInstance();
+      return filter;
+    }
     return mFilterArr;    
   }
   
@@ -171,6 +177,7 @@ public class FilterList {
         filterList.add(mFilterArr[i]);
       }
     }
+
     UserFilter[] result = new UserFilter[filterList.size()];
     filterList.toArray(result);
     return result;
