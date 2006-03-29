@@ -25,8 +25,10 @@
  */
 package tvbrowser.ui.mainframe.searchfield;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -79,11 +81,11 @@ public class SearchField extends JPanel {
    */
   private void createGui() {
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("1dlu,pref, 2dlu, 50dlu", "fill:pref:grow"));
+    panel.setLayout(new FormLayout("1dlu, pref, 2dlu, 50dlu", "fill:pref:grow"));
     Color background = new Color(UIManager.getColor("TextField.background").getRGB());
     
     panel.setBackground(background);
-    panel.setBorder(UIManager.getBorder("TextField.border"));
+    panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,0,1,0)));
     
     mText = new SearchTextField(15);
     mText.setBorder(BorderFactory.createEmptyBorder());
@@ -102,7 +104,7 @@ public class SearchField extends JPanel {
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
     mSearchButton.setOpaque(false);
     mSearchButton.setMargin(new Insets(0, 0, 0, 0));
-    mSearchButton.setFocusPainted(false);    
+    mSearchButton.setFocusPainted(false);
     mSearchButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         showConfigureDialog();
@@ -112,8 +114,8 @@ public class SearchField extends JPanel {
     panel.add(mSearchButton, cc.xy(2,1));
     panel.add(mText, cc.xy(4,1));
     
-    setLayout(new FormLayout("fill:pref:grow, pref", "fill:pref:grow, pref, fill:pref:grow"));
-    add(panel, new CellConstraints().xy(2, 2));
+    setLayout(new FormLayout("pref:grow, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
+    add(panel, new CellConstraints().xy(1, 2));
   }
 
   /**
@@ -124,9 +126,9 @@ public class SearchField extends JPanel {
     form.setSearchFormSettings(mSearchFormSettings);
     
     final JDialog configure = new JDialog(MainFrame.getInstance(), mLocalizer.msg("settingsTitle","Search-Settings"), true);
-    
+    configure.setUndecorated(true);
     JPanel panel = (JPanel)configure.getContentPane();
-    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),Borders.DLU4_BORDER));
     panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref", "pref, fill:3dlu:grow, pref"));
     
     CellConstraints cc = new CellConstraints();
@@ -150,10 +152,17 @@ public class SearchField extends JPanel {
       public JRootPane getRootPane() {
         return configure.getRootPane();
       }
-    });
-
+    });    
+    
     configure.pack();
-    UiUtilities.centerAndShow(configure);
+    
+    Point p = mSearchButton.getLocationOnScreen();
+    
+    if(MainFrame.getInstance().getToolbar().getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
+      configure.setLocation(p.x - configure.getWidth() + mSearchButton.getWidth(),p.y + mSearchButton.getHeight());
+    else
+      configure.setLocation(p.x ,p.y - configure.getHeight());
+    configure.setVisible(true);
     
     mSearchFormSettings = form.getSearchFormSettings();
   }
