@@ -27,9 +27,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -52,9 +50,6 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.plaf.metal.MetalBorders;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -75,6 +70,7 @@ import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.mainframe.searchfield.SearchField;
+import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.MoreButton;
@@ -632,7 +628,16 @@ public class MainFrame extends JFrame implements DateListener {
     mToolBarModel.store();
     mToolBar.storeSettings();
     mRootNode.storeProperties();
-    Settings.propLastUsedFilter.setString(getProgramFilter().getName());
+    
+    ProgramFilter filter = getProgramFilter();
+    if (filter != null) {
+      if (!(filter instanceof SearchFilter))
+        Settings.propLastUsedFilter.setString(getProgramFilter().getName());
+      else
+        Settings.propLastUsedFilter.setString(FilterList.getInstance().getDefaultFilter().getName());
+    } else {
+      Settings.propLastUsedFilter.setString(FilterList.getInstance().getDefaultFilter().getName());
+    }
   }
 
   private void onDownloadStart() {

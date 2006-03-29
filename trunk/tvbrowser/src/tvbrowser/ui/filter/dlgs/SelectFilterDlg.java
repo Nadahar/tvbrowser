@@ -51,6 +51,7 @@ import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.ProgramFilter;
@@ -86,7 +87,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
     ProgramFilter[] filterArr = mFilterList.getFilterArr();
     for (int i = 0; i < filterArr.length; i++) {
-      mFilterListModel.addElement(filterArr[i]);
+      if (!(filterArr[i] instanceof SearchFilter))
+        mFilterListModel.addElement(filterArr[i]);
     }
 
     mFilterListBox = new JList(mFilterListModel);

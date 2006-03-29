@@ -7,10 +7,15 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.ui.mainframe.MainFrame;
 
 import devplugin.ProgramFilter;
 
@@ -42,6 +47,16 @@ public class FilterPanel extends JPanel {
     
     mFilterLabel.setHorizontalAlignment(JLabel.LEFT);
     add(mFilterLabel, BorderLayout.CENTER);
+    
+    JButton deactivate = new JButton(mLocalizer.msg("deactivate", "Deactivate"));
+    
+    deactivate.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
+      };
+    });
+    
+    add(deactivate, BorderLayout.EAST);
   }
 
   /**

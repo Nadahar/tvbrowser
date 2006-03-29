@@ -41,8 +41,10 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.UIManager;
 
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.TvBrowserException;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
@@ -73,6 +75,7 @@ public class SearchField extends JPanel {
    * Create SearchField
    */
   public SearchField() {
+    mSearchFormSettings.setNrDays(0);
     createGui();
   }
 
@@ -93,7 +96,23 @@ public class SearchField extends JPanel {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
           mSearchFormSettings.setSearchText(mText.getText());
-          SearchHelper.search(mText, mSearchFormSettings);
+          
+          if (mSearchFormSettings.getNrDays() == 0) {
+            if (mText.getText().length() > 0) {
+              try {
+                SearchFilter filter = SearchFilter.getInstance();
+                filter.setSearch(mSearchFormSettings);
+                MainFrame.getInstance().setProgramFilter(filter);
+              } catch (TvBrowserException e1) {
+                e1.printStackTrace();
+              }
+            } else {
+              SearchFilter.getInstance().deactivateSearch();
+              MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
+            }
+          } else {
+            SearchHelper.search(mText, mSearchFormSettings);
+          }
         }
       }
     });
