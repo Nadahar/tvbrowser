@@ -107,6 +107,9 @@ public class SearchForm extends JPanel {
   private JCheckBox mCaseSensitiveChB;
   
   private ProgramFieldType[] mUserDefinedFieldTypeArr;
+  
+  private FieldSelectionDialog mFieldSelectionDlg;
+  private JDialog mParent;
 
   /**
    * Creates a new search form.
@@ -242,6 +245,9 @@ public class SearchForm extends JPanel {
     updateEnabled(); 
   }
   
+  public void setParentDialog(JDialog parent) {
+    mParent = parent;
+  }
   
   /**
    * Adds an ActionListener that will be called, when the user presses Enter
@@ -510,11 +516,22 @@ public class SearchForm extends JPanel {
 
 
   private void showSelectSearchFieldsDialog() {
-    FieldSelectionDialog dlg = new FieldSelectionDialog(this, mUserDefinedFieldTypeArr);
-    dlg.centerAndShow();
-    mUserDefinedFieldTypeArr = dlg.getSelectedTypes();
+    mFieldSelectionDlg = new FieldSelectionDialog(this, mUserDefinedFieldTypeArr);
+    mFieldSelectionDlg.centerAndShow(mParent);
+    
+    if(mParent != null)
+      mParent.requestFocus();
+    
+    mUserDefinedFieldTypeArr = mFieldSelectionDlg.getSelectedTypes();
   }
   
+  /**
+   * 
+   * @return If the SearchFields selection dialog is visible
+   */
+  public boolean isSearchFieldsSelectionDialogVisible() {
+    return mFieldSelectionDlg != null && mFieldSelectionDlg.isVisible();
+  }
   
   private class FieldSelectionDialog {
     
@@ -634,11 +651,22 @@ public class SearchForm extends JPanel {
       mDlg.dispose();
     }
     
+    public boolean isVisible() {
+      return mDlg.isVisible();
+    }
+    
+    public void centerAndShow(JDialog parent) {
+      if(parent != null) {
+        mDlg.setLocationRelativeTo(parent);
+        mDlg.setVisible(true);
+      }
+      else
+        centerAndShow();
+    }
     
     public void centerAndShow() {
       UiUtilities.centerAndShow(mDlg);
     }
-    
     
     public ProgramFieldType[] getSelectedTypes() {
       return mSelectedTypeArr;
