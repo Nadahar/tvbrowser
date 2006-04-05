@@ -114,22 +114,24 @@ public class PluginListCellRenderer extends DefaultListCellRenderer {
         panel.remove(desc);
       desc = UiUtilities.createHelpTextArea(plugin.getInfo().getDescription());
       desc.setMinimumSize(new Dimension(100, 10));
-      desc.setOpaque(label.isOpaque());
+      desc.setOpaque(false);
+      desc.setForeground(label.getForeground());
       desc.setBackground(label.getBackground());
       desc.setEnabled(plugin.isActivated());
       panel.add(desc, cc.xy(3,3));
 
-      name.setOpaque(label.isOpaque());
+      name.setOpaque(false);
+      name.setForeground(label.getForeground());
       name.setBackground(label.getBackground());
       
       if (plugin.isActivated()) {
         name.setText(plugin.getInfo().getName() + " " + plugin.getInfo().getVersion());
-        name.setEnabled(true);
+        name.setEnabled(true);        
       } else {
         name.setText(plugin.getInfo().getName() + " " + plugin.getInfo().getVersion() + " ["+mLocalizer.msg("deactivated", "Deactivated")+"]");
         name.setEnabled(false);
       }
-
+      
       panel.setOpaque(label.isOpaque());
       panel.setBackground(label.getBackground());
       
