@@ -33,6 +33,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -141,10 +143,10 @@ public class SearchField extends JPanel {
    * Show the Configuration-Dialog
    */
   protected void showConfigureDialog() {
-    SearchForm form = new SearchForm(false, false, true);
+    final SearchForm form = new SearchForm(false, false, true);
     form.setSearchFormSettings(mSearchFormSettings);
     
-    final JDialog configure = new JDialog(MainFrame.getInstance(), mLocalizer.msg("settingsTitle","Search-Settings"), true);
+    final JDialog configure = new JDialog(MainFrame.getInstance(), mLocalizer.msg("settingsTitle","Search-Settings"), false);
     configure.setUndecorated(true);
     JPanel panel = (JPanel)configure.getContentPane();
     panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),Borders.DLU4_BORDER));
@@ -158,6 +160,7 @@ public class SearchField extends JPanel {
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         configure.setVisible(false);
+        mSearchFormSettings = form.getSearchFormSettings();
       }
     });
     
@@ -175,6 +178,13 @@ public class SearchField extends JPanel {
     
     configure.pack();
     
+    configure.addWindowListener(new WindowAdapter() {
+      public void windowDeactivated(WindowEvent e) {
+        ((JDialog)e.getSource()).setVisible(false);
+        mSearchFormSettings = form.getSearchFormSettings();
+      }
+    });
+    
     Point p = mSearchButton.getLocationOnScreen();
     
     if(MainFrame.getInstance().getToolbar().getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
@@ -182,8 +192,6 @@ public class SearchField extends JPanel {
     else
       configure.setLocation(p.x ,p.y - configure.getHeight());
     configure.setVisible(true);
-    
-    mSearchFormSettings = form.getSearchFormSettings();
   }
 
   
