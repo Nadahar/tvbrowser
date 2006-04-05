@@ -47,6 +47,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -74,6 +75,8 @@ import util.ui.NotBoldMetalTheme;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
+import com.jgoodies.looks.LookUtils;
+import com.jgoodies.looks.Options;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 import devplugin.Date;
@@ -631,37 +634,46 @@ public class TVBrowser {
   }
 
   public static void updateLookAndFeel() {
-    if (OperatingSystem.isWindows())
+    if (OperatingSystem.isWindows()) {
       UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.ExtWindowsLookAndFeel");
+    }
     UIManager.installLookAndFeel("Plastic Look And Feel",           "com.jgoodies.looks.plastic.PlasticLookAndFeel");
     UIManager.installLookAndFeel("Plastic 3D Look And Feel",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
     UIManager.installLookAndFeel("Plastic XP Look And Feel",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");    
     UIManager.installLookAndFeel("Skin Look And Feel",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");    
 
     if (Settings.propIsSkinLFEnabled.getBoolean() || Settings.propLookAndFeel.getString().equals("com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
+      Settings.propLookAndFeel.setString("com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
       String themepack = Settings.propSkinLFThemepack.getString();
       try {
         SkinLookAndFeel.setSkin(SkinLookAndFeel.loadThemePack(themepack));
-        UIManager.setLookAndFeel(new SkinLookAndFeel());
       } catch (Exception exc) {
         ErrorHandler.handle(
           "Could not load themepack.\nSkinLF is disabled now",
           exc);
         Settings.propLookAndFeel.setString(Settings.propLookAndFeel.getDefault());
       }
-    } else {
-      if (curLookAndFeel == null
-        || !curLookAndFeel.equals(Settings.propLookAndFeel.getString()))
-      {
-        try {
-          curLookAndFeel = Settings.propLookAndFeel.getString();
-          UIManager.setLookAndFeel(curLookAndFeel);
-          mLog.info("setting look and feel to "+curLookAndFeel);
-        } catch (Exception exc) {
-          String msg =
-            mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
-          ErrorHandler.handle(msg, exc);
-        }
+    } else if (Settings.propLookAndFeel.getString().startsWith("com.jgoodies")) {
+      Options.setPopupDropShadowEnabled(Settings.propJGoodiesShadow.getBoolean());
+      UIManager.put("jgoodies.popupDropShadowEnabled", Boolean
+          .valueOf(Settings.propJGoodiesShadow.getBoolean()));
+      try {
+        LookUtils.setLookAndTheme((LookAndFeel) Class.forName(Settings.propLookAndFeel.getString()).newInstance(), Class.forName(Settings.propJGoodiesTheme.getString()).newInstance());
+      } catch (Exception e) {
+        ErrorHandler.handle("Could not load themepack.\nJGoodies is disabled now", e);
+        Settings.propLookAndFeel.setString(Settings.propLookAndFeel.getDefault());
+      }
+    }
+    
+    if (curLookAndFeel == null || !curLookAndFeel.equals(Settings.propLookAndFeel.getString())) {
+      try {
+        curLookAndFeel = Settings.propLookAndFeel.getString();
+        UIManager.setLookAndFeel(curLookAndFeel);
+        mLog.info("setting look and feel to "+curLookAndFeel);
+      } catch (Exception exc) {
+        String msg =
+          mLocalizer.msg("error.1", "Unable to set look and feel.", exc);
+        ErrorHandler.handle(msg, exc);
       }
     }
 

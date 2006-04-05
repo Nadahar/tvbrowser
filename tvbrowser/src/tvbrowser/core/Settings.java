@@ -33,7 +33,6 @@ import java.util.logging.Level;
 
 import javax.swing.UIManager;
 
-import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -481,6 +480,12 @@ public class Settings {
   public static final StringProperty propSkinLFThemepack
     = new StringProperty(mProp, "skinLF.themepack", "themepacks/themepack.zip");
 
+  public static final StringProperty propJGoodiesTheme
+  = new StringProperty(mProp, "jgoodies.theme", null);
+
+  public static final BooleanProperty propJGoodiesShadow
+  = new BooleanProperty(mProp, "jgoodies.dropshadow", false);
+  
   public static final StringProperty propLookAndFeel
     = new StringProperty(mProp, "lookandfeel1_1",mDefaultSettings.getProperty("lookandfeel",UIManager.getCrossPlatformLookAndFeelClassName()));
 
