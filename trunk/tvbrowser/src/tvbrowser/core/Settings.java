@@ -210,13 +210,6 @@ public class Settings {
       scrollPane.forceRepaintAll();
     }
 
-    propArr = new Property[] {
-      propLookAndFeel, propSkinLFThemepack, propIsSkinLFEnabled
-    };
-    if (mProp.hasChanged(propArr)) {
-      TVBrowser.updateLookAndFeel();
-    }
-
     if (mProp.hasChanged(propTableLayout)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().setProgramTableLayout(null);

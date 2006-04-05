@@ -25,18 +25,25 @@
  */
 package tvbrowser.ui.settings;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.settings.looksSettings.JGoodiesLNFSettings;
+import tvbrowser.ui.settings.looksSettings.SkinLNFSettings;
 import util.ui.LinkButton;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -50,17 +57,11 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LookAndFeelSettingsTab.class);
 
-  private JRadioButton mUseSkinLFRb;
-
-  private JRadioButton mUseJavaLFRb;
-
   private JComboBox mLfComboBox;
 
   private JPanel mSettingsPn;
 
-  private final JTextField mThemepackTf = new JTextField();
-
-  private JButton mChooseBtn;
+  private JButton mConfigBtn;
 
   class LookAndFeelObj {
     private UIManager.LookAndFeelInfo info;
@@ -89,52 +90,91 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    FormLayout layout = new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "");
+    FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "");
 
     CellConstraints cc = new CellConstraints();
     mSettingsPn = new JPanel(layout);
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
     layout.appendRow(new RowSpec("pref"));
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator("Aussehen"), cc.xyw(1, 1, 7));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("lookAndFeel", "Look and Feel")), cc.xyw(1, 1, 7));
 
     layout.appendRow(new RowSpec("5dlu"));
     layout.appendRow(new RowSpec("pref"));
 
-    mSettingsPn.add(new JLabel("Theme:"), cc.xy(2, 3));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("theme", "Theme") +":"), cc.xy(2, 3));
 
     LookAndFeelObj[] obj = getLookAndFeelObjs();
     mLfComboBox = new JComboBox(obj);
+
     String lf = Settings.propLookAndFeel.getString();
     for (int i = 0; i < obj.length; i++) {
       if (obj[i].getLFClassName().equals(lf)) {
         mLfComboBox.setSelectedItem(obj[i]);
       }
     }
-
+    
+    mLfComboBox.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        lookChanged();
+      };
+    });
+    
     mSettingsPn.add(mLfComboBox, cc.xy(4, 3));
-    mSettingsPn.add(new JButton("Config"), cc.xy(6, 3));
+    
+    mConfigBtn = new JButton(mLocalizer.msg("config", "Config"));
+    mConfigBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        configTheme();
+      }
+    });
+    
+    mSettingsPn.add(mConfigBtn, cc.xy(6, 3));
 
     layout.appendRow(new RowSpec("3dlu"));
     layout.appendRow(new RowSpec("pref"));
 
-    mSettingsPn.add(new JLabel("Icons:"), cc.xy(2, 5));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 5));
     mSettingsPn.add(new JComboBox(), cc.xy(4, 5));
 
     layout.appendRow(new RowSpec("3dlu"));
     layout.appendRow(new RowSpec("pref"));
 
-    mSettingsPn.add(new LinkButton("You can find more Icons on our Web-Page.",
+    mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
         "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 7));
 
+    layout.appendRow(new RowSpec("fill:3dlu:grow"));
+    layout.appendRow(new RowSpec("pref"));
+
+    JTextArea area = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
+    area.setForeground(Color.RED);
+
+    mSettingsPn.add(area, cc.xyw(1, 9, 6));
+
+    lookChanged();
     return mSettingsPn;
   }
 
-  private void setUseSkinLF(boolean b) {
-    mLfComboBox.setEnabled(!b);
-    mThemepackTf.setEnabled(b);
-    mChooseBtn.setEnabled(b);
+  protected void configTheme() {
+    String classname = ((LookAndFeelObj)mLfComboBox.getSelectedItem()).getLFClassName();
+    
+    if (classname.startsWith("com.jgoodies")) {
+      JGoodiesLNFSettings settings = new JGoodiesLNFSettings((JDialog) UiUtilities.getBestDialogParent(mSettingsPn));
+      UiUtilities.centerAndShow(settings);
+    } else if(classname.startsWith("com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
+      SkinLNFSettings settings = new SkinLNFSettings((JDialog) UiUtilities.getBestDialogParent(mSettingsPn));
+      UiUtilities.centerAndShow(settings);
+    }
+  }
 
+  protected void lookChanged() {
+    String classname = ((LookAndFeelObj)mLfComboBox.getSelectedItem()).getLFClassName();
+    
+    if (classname.startsWith("com.jgoodies") || classname.startsWith("com.l2fprod")) {
+      mConfigBtn.setEnabled(true);
+    } else {
+      mConfigBtn.setEnabled(false);
+    }
   }
 
   public void saveSettings() {
