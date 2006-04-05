@@ -150,6 +150,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
    * Starts the search.
    */  
   private void search() {
+    SearchPlugin.setSearchHistory(mSearchForm.getHistory());
     SearchHelper.search(this, mSearchForm.getSearchFormSettings());
   }
 
