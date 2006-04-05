@@ -56,7 +56,7 @@ import util.ui.WindowClosingIf;
 public class SettingsDialog extends JDialog implements WindowClosingIf {
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer
+  protected static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(SettingsDialog.class);
 
   public static final int OK = 1;

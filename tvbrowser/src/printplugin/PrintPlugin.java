@@ -27,6 +27,7 @@
 package printplugin;
 
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
@@ -43,9 +44,12 @@ import java.util.Properties;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 import printplugin.dlgs.DialogContent;
 import printplugin.dlgs.MainPrintDialog;
+import printplugin.dlgs.ProgramInfoPrintDialog;
 import printplugin.dlgs.SettingsDialog;
 import printplugin.dlgs.printdayprogramsdialog.PrintDayProgramsDialogContent;
 import printplugin.dlgs.printfromqueuedialog.PrintFromQueueDialogContent;
@@ -53,6 +57,7 @@ import printplugin.printer.PrintJob;
 import printplugin.settings.DayProgramPrinterSettings;
 import printplugin.settings.DayProgramScheme;
 import printplugin.settings.PrinterProgramIconSettings;
+import printplugin.settings.ProgramInfoPrintSettings;
 import printplugin.settings.QueuePrinterSettings;
 import printplugin.settings.QueueScheme;
 import printplugin.settings.Scheme;
@@ -111,35 +116,52 @@ public class PrintPlugin extends Plugin {
     root.addAction(new EmptyQueueAction());
   }
 
-
+  public void readData(ObjectInputStream in) throws IOException,
+  ClassNotFoundException {
+    ProgramInfoPrintSettings.getInstance().readData(in);
+  }
 
   public ActionMenu getContextMenuActions(final Program program) {
     final Plugin thisPlugin = this;
-    ContextMenuAction action = new ContextMenuAction();
-    action.setSmallIcon(createImageIcon("devices", "printer", 16));
+    ContextMenuAction menu = new ContextMenuAction();
+    menu.setSmallIcon(createImageIcon("devices", "printer", 16));
+    menu.setText(mLocalizer.msg("printProgram","Print"));
+    
+    Action[] action = new AbstractAction[2];
+    
     if (getRootNode().contains(program)) {
-      action.setText(mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
-      action.setActionListener(new ActionListener(){
+      action[0] = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
           getRootNode().removeProgram(program);
           getRootNode().update();
           program.unmark(thisPlugin);
         }
-      });
+      };
+      action[0].putValue(Action.NAME,mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
     }
     else {
-      action.setText(mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
-      action.setActionListener(new ActionListener(){
+      action[0] = new AbstractAction() {
         public void actionPerformed(ActionEvent event) {
           getRootNode().addProgram(program);
           getRootNode().update();
           program.mark(thisPlugin);
         }
-      });
+      };
+      action[0].putValue(Action.NAME,mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
     }
-    return new ActionMenu(action);
+    action[1] = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+        if(w instanceof JDialog)
+          new ProgramInfoPrintDialog((JDialog)w);
+        else if(w instanceof JFrame)
+          new ProgramInfoPrintDialog((JFrame)w);
+      }
+    };
+    action[1].putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));
+    
+    return new ActionMenu(menu,action);
   }
-
 
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
@@ -345,10 +367,6 @@ public class PrintPlugin extends Plugin {
 
   public void writeData(ObjectOutputStream out) throws IOException {
     storeRootNode();
+    ProgramInfoPrintSettings.getInstance().writeData(out);
   }
-
-
-
-
-
 }
