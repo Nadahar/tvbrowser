@@ -67,6 +67,7 @@ import tvbrowser.ui.splashscreen.SplashScreen;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.misc.JavaVersion;
+import util.misc.OperatingSystem;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.NotBoldMetalTheme;
@@ -630,7 +631,8 @@ public class TVBrowser {
   }
 
   public static void updateLookAndFeel() {
-    UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.ExtWindowsLookAndFeel");
+    if (OperatingSystem.isWindows())
+      UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.ExtWindowsLookAndFeel");
     UIManager.installLookAndFeel("Plastic Look And Feel",           "com.jgoodies.looks.plastic.PlasticLookAndFeel");
     UIManager.installLookAndFeel("Plastic 3D Look And Feel",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
     UIManager.installLookAndFeel("Plastic XP Look And Feel",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");    
