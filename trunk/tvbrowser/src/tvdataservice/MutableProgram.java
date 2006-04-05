@@ -461,6 +461,23 @@ public class MutableProgram implements Program {
     } else {
       int hours = value / 60;
       int minutes = value % 60;
+      
+      // Correct the TimeZone
+      TimeZone channelTimeZone=mChannel.getTimeZone();
+      TimeZone localTimeZone=TimeZone.getDefault();
+      
+      int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/3600000;
+      timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection();
+   
+      hours = hours + timeZoneOffset;
+      
+      if (hours >= 24) {
+        hours -= 24;
+      }
+      else if (hours < 0) {
+        hours += 24;
+      }
+      
       return new StringBuffer().append(hours).append(":").append((minutes < 10) ? "0" : "").append(minutes).toString();
     }
   }
