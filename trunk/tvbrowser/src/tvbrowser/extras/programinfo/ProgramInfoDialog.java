@@ -324,7 +324,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mFindAsYouType.installKeyListener(mActionsPane.getVerticalScrollBar());
     mFindAsYouType.installKeyListener(scrollPane.getVerticalScrollBar());
     
-    addPluginActions(false);
+    addPluginActions(false,showSettings);
     
     mFindAsYouType.getCloseButton().addComponentListener(new ComponentAdapter() {
       public void componentHidden(ComponentEvent e) {
@@ -355,7 +355,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     }
   }
     
-  protected void addPluginActions(boolean rebuild) {
+  protected void addPluginActions(boolean rebuild, boolean showSettings) {
     mFunctionGroup.removeAll();
 
     mTextSearch = new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
@@ -368,7 +368,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
         mFunctionGroup.add(new JSeparator());
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
-      } else if(p[i].getId().compareTo(ConfigMenuItem.CONFIG) == 0) {
+      } else if(p[i].getId().compareTo(ConfigMenuItem.CONFIG) == 0 && showSettings) {
         Action action = new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
