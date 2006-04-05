@@ -35,6 +35,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -57,6 +62,8 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Plugin;
+
 /**
  * A SearchField for the Toolbar
  * 
@@ -69,16 +76,56 @@ public class SearchField extends JPanel {
   /** TextField */
   private SearchTextField mText;
   /** Settings for the Search */
-  private SearchFormSettings mSearchFormSettings = new SearchFormSettings("");
+  private SearchFormSettings mSearchFormSettings;
   /** Button for the Settings-Popup*/
   private JButton mSearchButton;
+  
+  private static final String SETTINGS_FILE = "searchfield.SearchField.dat";
   
   /**
    * Create SearchField
    */
-  public SearchField() {
-    mSearchFormSettings.setNrDays(0);
+  public SearchField() { 
+    readSearchFormSettings();
     createGui();
+  }
+  
+  /**
+   * Read the search form settings from the settings file.
+   */
+  private void readSearchFormSettings() {
+    try {
+      String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
+      File settingsFile = new File(home,SETTINGS_FILE);
+      
+      ObjectInputStream stream = new ObjectInputStream(new FileInputStream(settingsFile));
+      mSearchFormSettings = new SearchFormSettings(stream);
+      stream.close();
+    }catch(Exception e) {
+      createDefaultSearchFormSettings();
+    }    
+  }
+  
+  /**
+   * Save the search form settings to the settings file.
+   */
+  private void saveSearchFormSettings() {
+    try {
+      String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
+      File settingsFile = new File(home,SETTINGS_FILE);
+      
+      ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(settingsFile));
+      mSearchFormSettings.writeData(stream);
+      stream.close();
+    }catch(Exception e) {} 
+  }
+  
+  /**
+   * Create the default search form settings.
+   */
+  private void createDefaultSearchFormSettings() {
+    mSearchFormSettings = new SearchFormSettings("");
+    mSearchFormSettings.setNrDays(0);
   }
 
   /**
@@ -163,6 +210,7 @@ public class SearchField extends JPanel {
       public void actionPerformed(ActionEvent e) {
         configure.setVisible(false);
         mSearchFormSettings = form.getSearchFormSettings();
+        saveSearchFormSettings();
       }
     });
     
@@ -185,6 +233,7 @@ public class SearchField extends JPanel {
         if(!form.isSearchFieldsSelectionDialogVisible()) {
           ((JDialog)e.getSource()).setVisible(false);
           mSearchFormSettings = form.getSearchFormSettings();
+          saveSearchFormSettings();
         }
       }
     });
