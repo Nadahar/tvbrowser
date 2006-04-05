@@ -28,6 +28,7 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -159,6 +160,9 @@ public class MainFrame extends JFrame implements DateListener {
 
   /** Panel that Displays current Filter-Name */
   private FilterPanel mFilterPanel;
+
+  /** Store the Viewposition if a Filter is selected*/
+  private Point mStoredViewPosition;
 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -462,16 +466,29 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void setProgramFilter(ProgramFilter filter) {
+    if (!(filter instanceof ShowAllFilter)) { // Store Position
+      mStoredViewPosition = mProgramTableScrollPane.getViewport().getViewPosition();
+    }
+    
     mProgramTableScrollPane.deSelectItem();
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
-    mToolBarModel.setFilterButtonSelected(!isShowAllFilterActivated());
+    mToolBarModel.setFilterButtonSelected(!(filter instanceof ShowAllFilter));
 
     mFilterPanel.setCurrentFilter(filter);
-    mFilterPanel.setVisible(!isShowAllFilterActivated());
+    mFilterPanel.setVisible(!(filter instanceof ShowAllFilter));
 
     mToolBar.update();
     addKeyboardAction();
+
+    if ((mStoredViewPosition != null) && (filter instanceof ShowAllFilter)) {
+      // Recreate last Position
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
+        };
+      });
+    }
   }
 
   public ProgramFilter getProgramFilter() {
