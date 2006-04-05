@@ -152,6 +152,8 @@ public class SearchField extends JPanel {
     panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),Borders.DLU4_BORDER));
     panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref", "pref, fill:3dlu:grow, pref"));
     
+    form.setParentDialog(configure);
+    
     CellConstraints cc = new CellConstraints();
     
     panel.add(form, cc.xyw(1, 1, 3));
@@ -180,8 +182,10 @@ public class SearchField extends JPanel {
     
     configure.addWindowListener(new WindowAdapter() {
       public void windowDeactivated(WindowEvent e) {
-        ((JDialog)e.getSource()).setVisible(false);
-        mSearchFormSettings = form.getSearchFormSettings();
+        if(!form.isSearchFieldsSelectionDialogVisible()) {
+          ((JDialog)e.getSource()).setVisible(false);
+          mSearchFormSettings = form.getSearchFormSettings();
+        }
       }
     });
     
