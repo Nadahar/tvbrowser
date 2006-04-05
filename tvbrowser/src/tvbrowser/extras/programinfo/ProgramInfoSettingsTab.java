@@ -33,7 +33,6 @@ import java.awt.event.ActionListener;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -44,7 +43,7 @@ import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.FontChooserPanel;
-import util.ui.customizableitems.SortableItemList;
+import util.ui.OrderChooser;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -64,14 +63,10 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       .getLocalizerFor(ProgramInfoSettingsTab.class);
 
   private JCheckBox mUserFont, mAntiAliasing;
-
   private FontChooserPanel mTitleFont, mBodyFont;
-
   private Properties mSettings;
-
   private JComboBox mLook;
-
-  private SortableItemList mList;
+  private OrderChooser mList;
 
   private String mOldOrder, mOldLook, mOldTitleFont, mOldBodyFont,
       mOldTitleFontSize, mOldBodyFontSize, mOldUserFontSelected,
@@ -83,7 +78,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       "com.l2fprod.common.swing.plaf.motif.MotifLookAndFeelAddons",
       "com.l2fprod.common.swing.plaf.windows.WindowsLookAndFeelAddons",
       "com.l2fprod.common.swing.plaf.windows.WindowsClassicLookAndFeelAddons"
-};
+  };
 
   /**
    * Constructor
@@ -150,23 +145,28 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       }
     });
 
-    Object[] o;
+    Object[] order;
     
-    if (mOldOrder.indexOf(";") == -1)
-      o = ProgramTextCreator.getDefaultOrder();
+    if (mOldOrder.indexOf(";") == -1) {
+      if(mSettings.getProperty("setupwasdone","false").compareTo("false") == 0)
+        order = ProgramTextCreator.getDefaultOrder();
+      else
+        order = new Object[0];
+      
+      mList = new OrderChooser(order,ProgramTextCreator.getDefaultOrder(),true);
+    }
     else {
       String[] id = mOldOrder.trim().split(";");
-      o = new Object[id.length];
-      for (int i = 0; i < o.length; i++)
+      order = new Object[id.length];
+      for (int i = 0; i < order.length; i++)
         try {
-          o[i] = ProgramFieldType
+          order[i] = ProgramFieldType
               .getTypeForId(Integer.parseInt((String) id[i]));
         } catch (Exception e) {
-          o[i] = id[i];
+          order[i] = id[i];
         }
+      mList = new OrderChooser(order,ProgramTextCreator.getDefaultOrder(),true);
     }
-
-    mList = new SortableItemList("", o);
 
     JButton previewBtn = new JButton(mLocalizer.msg("preview", "Prewview"));
     previewBtn.addActionListener(new ActionListener() {
@@ -190,7 +190,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     PanelBuilder panelBuilder = new PanelBuilder(
         new FormLayout(
             "5dlu, pref, pref:grow",
-            "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, pref, pref, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref"));
+            "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, pref, pref, pref, 10dlu, pref, 5dlu, pref, 5dlu, pref"));
     panelBuilder.setDefaultDialogBorder();
     panelBuilder.addSeparator(mLocalizer.msg("design", "Design"), cc.xyw(1, 1,
         3));
@@ -218,17 +218,17 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   }
 
   private void resetSettings() {
-    DefaultListModel model = (DefaultListModel) mList.getList().getModel();
-    model.clear();
-
-    Object[] o = ProgramTextCreator.getDefaultOrder();
-
-    for (int i = 0; i < o.length; i++)
-      model.addElement(o[i]);
-
+    mList.setOrder(ProgramTextCreator.getDefaultOrder(),ProgramTextCreator.getDefaultOrder());
     mAntiAliasing.setSelected(false);
     mUserFont.setSelected(false);
-    mLook.setSelectedIndex(4);
+    
+    String look = LookAndFeelAddons.getBestMatchAddonClassName();
+    
+    for(int i = 0; i < mLf.length; i++)
+      if(look.toLowerCase().indexOf(mLf[i].toLowerCase()) != -1) {
+        mLook.setSelectedIndex(i);
+        break;
+      }
   }
 
   public void saveSettings() {
@@ -247,8 +247,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mSettings.setProperty("look", mLf[mLook.getSelectedIndex()]);
     ProgramInfo.getInstance().setLook();
 
-    Object[] o = new Object[mList.getList().getModel().getSize()];
-    ((DefaultListModel) mList.getList().getModel()).copyInto(o);
+    Object[] o = mList.getOrder();
 
     String temp = "";
 
@@ -259,6 +258,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
         temp += ((ProgramFieldType) o[i]).getTypeId() + ";";
 
     mSettings.setProperty("order", temp);
+    mSettings.setProperty("setupwasdone", "true");
   }
 
   private void restoreSettings() {

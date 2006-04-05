@@ -105,18 +105,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     main = new JPanel(new BorderLayout(0,3));
 
     mListModel = new DefaultListModel();
-    for (int i = 0; i < currOrder.length; i++) {
-      if (contains(allItems, currOrder[i])) {
-        SelectableItem item = new SelectableItem(currOrder[i], true);
-        mListModel.addElement(item);
-      }
-    }
-    for (int i = 0; i < allItems.length; i++) {
-      if (! contains(currOrder, allItems[i])) {
-        SelectableItem item = new SelectableItem(allItems[i], false);
-        mListModel.addElement(item);
-      }
-    }
+    setEntries(currOrder,allItems);
     mList = new JList(mListModel);
     mList.setCellRenderer(new SelectableItemRenderer());
 
@@ -204,6 +193,21 @@ public class OrderChooser extends JPanel implements ListDropAction{
       main.add(p3, BorderLayout.SOUTH);
   }
 
+  private void setEntries(Object[] currOrder, Object[] allItems) {
+    mListModel.removeAllElements();
+    for (int i = 0; i < currOrder.length; i++) {
+      if (contains(allItems, currOrder[i])) {
+        SelectableItem item = new SelectableItem(currOrder[i], true);
+        mListModel.addElement(item);
+      }
+    }
+    for (int i = 0; i < allItems.length; i++) {
+      if (! contains(currOrder, allItems[i])) {
+        SelectableItem item = new SelectableItem(allItems[i], false);
+        mListModel.addElement(item);
+      }
+    }
+  }
 
   public JButton getUpButton() {
     return mUpBt;
@@ -257,6 +261,12 @@ public class OrderChooser extends JPanel implements ListDropAction{
       }
       mList.repaint();
     }
+  }
+  
+  public void setOrder(Object[] currOrder, Object[] allItems) {
+    setEntries(currOrder, allItems);
+    
+    mList.repaint();    
   }
   
   public void clearSelection() {

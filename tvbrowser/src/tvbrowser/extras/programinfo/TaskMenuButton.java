@@ -187,7 +187,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
             .getValue(Action.ACTION_COMMAND_KEY)));
     if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
         || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action"))
-      mInfo.addPluginActions(true);
+      mInfo.addPluginActions(true,false);
   }
   
   protected void setText(String value) {

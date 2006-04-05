@@ -176,7 +176,7 @@ public class ProgramTextCreator {
 
     Object[] id = ProgramInfo.getInstance().getProperty("order", "").split(";");
 
-    if (id.length == 1)
+    if (id.length == 1 && ProgramInfo.getInstance().getProperty("setupwasdone", "false").compareTo("false") == 0)
       id = getDefaultOrder();
 
     for (int j = 0; j < id.length; j++) {
@@ -188,7 +188,7 @@ public class ProgramTextCreator {
               .getTypeForId(Integer.parseInt((String) id[j]));
         } catch (Exception e) {
           int length = prog.getLength();
-          if (length > 0) {
+          if (length > 0 && ((String)id[j]).trim().length() > 0) {
 
             buffer
                 .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
