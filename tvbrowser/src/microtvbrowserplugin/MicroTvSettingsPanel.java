@@ -21,7 +21,7 @@
 package microtvbrowserplugin;
 
 import java.util.Hashtable;
-import javax.swing.JLabel;
+
 import util.ui.Localizer;
 
 /**
