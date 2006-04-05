@@ -19,18 +19,22 @@
   */
 package microtvbrowserplugin;
 
-import devplugin.SettingsTab;
-import devplugin.Channel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.util.Vector;
-import util.ui.customizableitems.CustomizableItemsPanel;
-import util.ui.Localizer;
-
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.util.Vector;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+
+import util.ui.Localizer;
+import util.ui.customizableitems.CustomizableItemsPanel;
+import devplugin.Channel;
+import devplugin.SettingsTab;
 
 public class Settings implements SettingsTab, ActionListener{
   

@@ -20,11 +20,15 @@
 package microtvbrowserplugin;
 
 import java.awt.BorderLayout;
-import java.util.Properties;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.util.Properties;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import util.ui.progress.ProgressWindow;
 
