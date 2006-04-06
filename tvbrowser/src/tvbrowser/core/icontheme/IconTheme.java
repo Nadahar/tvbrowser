@@ -264,6 +264,34 @@ abstract public class IconTheme {
     return 0;
   }
 
+  /*
+   * (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
+  public int hashCode() {
+    return getBase().hashCode();
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final IconTheme other = (IconTheme) obj;
+    if (getBase() == null) {
+      if (other.getBase() != null)
+        return false;
+    } else if (!getBase().getAbsolutePath().equals(other.getBase().getAbsolutePath()))
+      return false;
+    return true;
+  }
+
   /**
    * Get an InputStream from the Icon-Theme.
    * @param string File/Entry to load

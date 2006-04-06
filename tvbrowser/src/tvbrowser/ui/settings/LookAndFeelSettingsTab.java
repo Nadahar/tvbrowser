@@ -26,20 +26,25 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.icontheme.IconTheme;
 import tvbrowser.ui.settings.looksSettings.JGoodiesLNFSettings;
 import tvbrowser.ui.settings.looksSettings.SkinLNFSettings;
 import util.ui.LinkButton;
@@ -62,6 +67,8 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   private JPanel mSettingsPn;
 
   private JButton mConfigBtn;
+
+  private JComboBox mIconThemes;
 
   class LookAndFeelObj {
     private UIManager.LookAndFeelInfo info;
@@ -135,7 +142,31 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     layout.appendRow(new RowSpec("pref"));
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 5));
-    mSettingsPn.add(new JComboBox(), cc.xy(4, 5));
+    
+    mIconThemes = new JComboBox(IconLoader.getInstance().getAvailableThemes());
+    mIconThemes.setRenderer(new DefaultListCellRenderer() {
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        if (value != null) {
+          label.setText(((IconTheme)value).getName());
+          label.setToolTipText(((IconTheme)value).getComment());
+        }
+        return label;
+      }
+    });
+    
+    if (Settings.propIcontheme.getString() != null) {
+      IconTheme theme = IconLoader.getInstance().getIconTheme(new File(Settings.propIcontheme.getString()));
+      if (theme.loadTheme())
+        mIconThemes.setSelectedItem(theme);
+      else
+        mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
+    } else {
+      mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
+    }
+    
+    
+    mSettingsPn.add(mIconThemes, cc.xy(4, 5));
 
     layout.appendRow(new RowSpec("3dlu"));
     layout.appendRow(new RowSpec("pref"));
@@ -180,6 +211,9 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   public void saveSettings() {
     LookAndFeelObj obj = (LookAndFeelObj) mLfComboBox.getSelectedItem();
     Settings.propLookAndFeel.setString(obj.getLFClassName());
+    
+    IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
+    Settings.propIcontheme.setString(theme.getBase().getAbsolutePath());
   }
 
   public Icon getIcon() {
