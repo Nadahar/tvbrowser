@@ -29,7 +29,6 @@ package printplugin;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.BufferedInputStream;
@@ -138,6 +137,7 @@ public class PrintPlugin extends Plugin {
         }
       };
       action[0].putValue(Action.NAME,mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
+      action[0].putValue(AbstractAction.SMALL_ICON, createImageIcon("devices", "printer", 16));
     }
     else {
       action[0] = new AbstractAction() {
@@ -148,6 +148,7 @@ public class PrintPlugin extends Plugin {
         }
       };
       action[0].putValue(Action.NAME,mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
+      action[0].putValue(AbstractAction.SMALL_ICON, createImageIcon("devices", "printer", 16));
     }
     action[1] = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
@@ -159,6 +160,7 @@ public class PrintPlugin extends Plugin {
       }
     };
     action[1].putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));
+    action[1].putValue(AbstractAction.SMALL_ICON, createImageIcon("devices", "printer", 16));
     
     return new ActionMenu(menu,action);
   }
