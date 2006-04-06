@@ -34,6 +34,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.factories.Borders;
+
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.SettingsPanel;
 
@@ -51,9 +53,9 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
 
     JPanel mainPn=new JPanel(new BorderLayout());
-    mainPn.setBorder(BorderFactory.createEmptyBorder(7,7,7,7));
+    mainPn.setBorder(Borders.DIALOG_BORDER);//.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
     PluginInfoPanel infoPn=new PluginInfoPanel();
-    infoPn.setDefaultBorder();
+    infoPn.setDefaultBorder(false);
     infoPn.setPluginInfo(mDataService.getInfo());
     mainPn.add(infoPn,BorderLayout.NORTH);
 

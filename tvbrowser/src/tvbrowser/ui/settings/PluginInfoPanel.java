@@ -27,12 +27,20 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
   
  class PluginInfoPanel extends JPanel {
     
@@ -40,12 +48,11 @@ import javax.swing.JTextArea;
    
    private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(PluginInfoPanel.class);
-
     
    private JLabel nameLabel;
    private JLabel versionLabel;
    private JLabel authorLabel;
-   private JTextArea descriptionArea;
+   private JLabel descriptionLabel;
     
    public PluginInfoPanel(devplugin.PluginInfo info) {
       this();
@@ -53,73 +60,47 @@ import javax.swing.JTextArea;
    }
     
    public PluginInfoPanel() {
-     setLayout(new BorderLayout(10,0));
+     setLayout(new FormLayout("5dlu,pref,10dlu,default:grow,5dlu","pref,5dlu,top:pref,top:pref,top:pref,top:pref"));
+     CellConstraints cc = new CellConstraints();
       
-     String msg;
-      
-     JPanel leftPanel=new JPanel(new BorderLayout());
-     JPanel rightPanel=new JPanel(new BorderLayout());
-      
-     msg = mLocalizer.msg("name", "Name");
-     leftPanel.add(new PluginLabel(msg), BorderLayout.NORTH);
-     rightPanel.add(nameLabel=new JLabel("-"),BorderLayout.NORTH);
+     add(new PluginLabel(mLocalizer.msg("name", "Name")), cc.xy(2,3));
+     add(nameLabel=new JLabel("-"), cc.xy(4,3));
      nameLabel.setFont(PLAIN);
-      
-     JPanel panel1=new JPanel(new BorderLayout());
-     JPanel panel2=new JPanel(new BorderLayout());
-      
-     msg = mLocalizer.msg("version", "Version");
-     panel1.add(new PluginLabel(msg), BorderLayout.NORTH);
-     panel2.add(versionLabel=new JLabel("-"),BorderLayout.NORTH);
+     
+     add(new PluginLabel(mLocalizer.msg("version", "Version")), cc.xy(2,4));
+     add(versionLabel=new JLabel("-"), cc.xy(4,4));
      versionLabel.setFont(PLAIN);
-      
-     JPanel panel3=new JPanel(new BorderLayout());
-     JPanel panel4=new JPanel(new BorderLayout());
-      
-     msg = mLocalizer.msg("author", "Author");
-     panel3.add(new PluginLabel(msg), BorderLayout.NORTH);
-     panel4.add(authorLabel=new JLabel("-"),BorderLayout.NORTH);
+     
+     add(new PluginLabel(mLocalizer.msg("author", "Author")), cc.xy(2,5));
+     add(authorLabel=new JLabel("-"), cc.xy(4,5));
      authorLabel.setFont(PLAIN); 
       
-     panel1.add(panel3,BorderLayout.CENTER);
-     panel2.add(panel4,BorderLayout.CENTER);
-      
-     JPanel panel5=new JPanel(new BorderLayout());
-     msg = mLocalizer.msg("description", "Description");
-     panel5.add(new PluginLabel(msg), BorderLayout.NORTH);
-      
-     descriptionArea=new JTextArea(3,40);
-     descriptionArea.setLineWrap(true);
-     descriptionArea.setWrapStyleWord(true);
-     descriptionArea.setEditable(false);
-     descriptionArea.setOpaque(false);
-     descriptionArea.setFont(PLAIN);
-     descriptionArea.setBorder(BorderFactory.createEmptyBorder());
-     panel3.add(panel5,BorderLayout.CENTER);
-     panel4.add(descriptionArea,BorderLayout.CENTER);
-      
-     leftPanel.add(panel1,BorderLayout.CENTER);
-     rightPanel.add(panel2,BorderLayout.CENTER);
-      
-     add(leftPanel,BorderLayout.WEST);
-     add(rightPanel,BorderLayout.CENTER);
+     add(new PluginLabel(mLocalizer.msg("description", "Description")), cc.xy(2,6));
+     add(descriptionLabel=new JLabel(), cc.xy(4,6));
+     descriptionLabel.setFont(PLAIN);
    }
     
-   public void setDefaultBorder() {
-     setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("about","About this DataService:")));
-       
+   public void setDefaultBorder(boolean plugin) {
+     CellConstraints cc = new CellConstraints();
+     
+     setBorder(Borders.createEmptyBorder(Sizes.dluY(0),Sizes.dluY(0),Sizes.DLUY11,Sizes.dluY(0)));
+     
+     if(plugin)
+       add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("about","About this Plugin:")), cc.xyw(1,1,5));
+     else
+       add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("aboutDataService","About this DataService:")), cc.xyw(1,1,5));
    }
     
    public void setPluginInfo(devplugin.PluginInfo info) {
      nameLabel.setText(info.getName());
      
-     if (info.getVersion() == null) {
-         versionLabel.setText("");
-     } else {
-         versionLabel.setText(info.getVersion().toString());
-     }
-     authorLabel.setText(info.getAuthor());
-     descriptionArea.setText(info.getDescription());
+     if (info.getVersion() == null)
+       versionLabel.setText("");
+     else
+       versionLabel.setText("<html>" + info.getVersion().toString() + "</html>");
+     
+     authorLabel.setText("<html>" + info.getAuthor() + "</html>");
+     descriptionLabel.setText("<html>" + info.getDescription() + "</html>");
    }
    
    
