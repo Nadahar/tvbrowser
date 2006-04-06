@@ -97,7 +97,7 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  public static final devplugin.Version VERSION=new devplugin.Version(2,10,true,"2.1");
+  public static final devplugin.Version VERSION=new devplugin.Version(2,20,true,"2.2 (CVS)");
 
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -315,6 +315,7 @@ public class TVBrowser {
         SwingUtilities.invokeLater(new Runnable(){
           public void run() {
             mainFrame.updateUI();
+            PluginProxyManager.getInstance().fireTvBrowserStartFinished();
           }
         });
       }

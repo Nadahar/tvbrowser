@@ -248,6 +248,14 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         // TODO Auto-generated method stub
 
     }
+    
+    /* 
+     * (non-Javadoc)
+     * 
+     * @see  tvbrowser.core.plugin.AbstractPluginProxy#doHandleTvBrowserStartFinished()
+     */
+    protected void doHandleTvBrowserStartFinished() {
+    }
 
     /*
      * (non-Javadoc)
