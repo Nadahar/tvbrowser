@@ -421,13 +421,15 @@ class ChannelGroupListCellRenderer extends DefaultListCellRenderer {
       }
       mDescTa = UiUtilities.createHelpTextArea(group.getDescription()+"\n");
       mDescTa.setMinimumSize(new Dimension(100, 10));
-      mDescTa.setOpaque(defaultLabel.isOpaque());
+      mDescTa.setOpaque(false);
       mDescTa.setBackground(defaultLabel.getBackground());
+      mDescTa.setForeground(defaultLabel.getForeground());
       mDescTa.setEnabled(wrapper.isEnabled());
       mPanel.add(mDescTa, cc.xy(1,3));
 
-      mNameLb.setOpaque(defaultLabel.isOpaque());
+      mNameLb.setOpaque(false);
       mNameLb.setBackground(defaultLabel.getBackground());
+      mNameLb.setForeground(defaultLabel.getForeground());
 
       if (wrapper.isEnabled()) {
         mNameLb.setText(group.getName());
