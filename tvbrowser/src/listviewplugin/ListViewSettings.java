@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 
 import util.ui.ImageUtilities;
 
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -66,7 +67,7 @@ public class ListViewSettings implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("default:grow", "default"));
+    panel.setLayout(new FormLayout("5dlu,default:grow", "pref,5dlu,default"));
     
     CellConstraints cc = new CellConstraints();
     
@@ -74,7 +75,8 @@ public class ListViewSettings implements SettingsTab {
     
     mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
     
-    panel.add(mShowAtStart, cc.xy(1,1));
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("settings","Settings")), cc.xyw(1,1,2));
+    panel.add(mShowAtStart, cc.xy(2,3));
     
     return panel;
   }
