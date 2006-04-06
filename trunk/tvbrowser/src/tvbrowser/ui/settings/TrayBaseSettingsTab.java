@@ -99,7 +99,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mShowImportantChb
         .setToolTipText(mLocalizer
             .msg("programShowing.toolTipImportant",
-                "<html>Important programs are all marked<br>programs in the time range.<html>"));  
+                "Important programs are all marked programs."));  
 
     mSizeLabel = new JLabel(mLocalizer.msg(
         "programShowing.importantMaxPrograms", "important programs to show"));

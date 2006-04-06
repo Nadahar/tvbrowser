@@ -33,6 +33,8 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import com.jgoodies.forms.factories.Borders;
+
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.SettingsTabProxy;
 import devplugin.ActionMenu;
@@ -70,9 +72,9 @@ public class ConfigPluginSettingsTab implements SettingsTab {
   
   public JPanel createSettingsPanel() {
     mContentPanel=new JPanel(new BorderLayout());
-    mContentPanel.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
+    mContentPanel.setBorder(Borders.DIALOG_BORDER);//.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
     PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo());
-    pluginInfoPanel.setDefaultBorder();
+    pluginInfoPanel.setDefaultBorder(true);
     mContentPanel.add(pluginInfoPanel,BorderLayout.NORTH);
     
     updatePluginPanel();
