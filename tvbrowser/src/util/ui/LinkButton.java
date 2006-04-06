@@ -121,7 +121,9 @@ public class LinkButton extends JButton implements ActionListener{
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-      Launch.openURL(mUrl);        
+      if (mUrl != null) {
+        Launch.openURL(mUrl);
+      }
     }
    
 }

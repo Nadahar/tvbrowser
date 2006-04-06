@@ -46,7 +46,7 @@ import devplugin.ProgramSearcher;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class Favorite {
+public class ClassicFavorite {
   
   private SearchFormSettings mSearchFormSettings;
   
@@ -64,12 +64,11 @@ public class Favorite {
   
   private ArrayList mBlackList = new ArrayList();
   
-  
-  
+
   /**
    * Creates a new instance of Favorite.
    */
-  public Favorite() {
+  public ClassicFavorite() {
     mSearchFormSettings = new SearchFormSettings("");
     
     mUseCertainChannel = false;
@@ -88,7 +87,7 @@ public class Favorite {
   /**
    * Creates a new instance of Favorite.
    */
-  public Favorite(String searchText) {
+  public ClassicFavorite(String searchText) {
     this();
     
     mSearchFormSettings.setSearchText(searchText);
@@ -98,11 +97,11 @@ public class Favorite {
   /**
    * Deserializes this Object.
    */
-  public Favorite(ObjectInputStream in)
+  public ClassicFavorite(ObjectInputStream in)
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
-    
+
     if (version <= 2) {
       String term = (String) in.readObject();
       in.readBoolean(); // searchInTitle
@@ -360,14 +359,15 @@ public class Favorite {
     return getWhiteList();
   }
 
-  
-  
+
+  /**
+   * @deprecated
+   */
   public void unmarkPrograms() {
     FavoritesPlugin.getInstance().unmark(mProgramArr);
   }
-  
 
-  
+
   public void updatePrograms() throws TvBrowserException {
     // Unmark all programs in the old list
     unmarkPrograms();
@@ -424,9 +424,10 @@ public class Favorite {
     
     // mark these programs
     FavoritesPlugin.getInstance().mark(getWhiteList());
+
   }
   
-  public Program[] getWhiteList() {
+  private Program[] getWhiteList() {
     ArrayList tempProgramArr = new ArrayList();
     
     for(int i = 0; i < mProgramArr.length; i++) {
@@ -440,7 +441,7 @@ public class Favorite {
     return programs;
   }
   
-  public boolean contains(Program program) {
+ /* public boolean contains(Program program) {
     if(mBlackList.contains(program))
       return false;
     
@@ -449,8 +450,12 @@ public class Favorite {
         return true;
     
     return false;
-  }
-  
+  } */
+
+  /**
+   * @deprecated
+   * @return blacklist
+   */
   public ArrayList getBlackList() {
     return mBlackList;
   }
@@ -465,12 +470,13 @@ public class Favorite {
     }
     return mTitle;
   }
-  
+
+  /*
   public void handleContainingPrograms(Program[] program) {    
     for(int i = 0; i < mProgramArr.length; i++)
       for(int j = 0; j < program.length; j++)
         if(mProgramArr[i].equals(program[j]) && !mBlackList.contains(program[j])) {
 //          program[j].mark(FavoritesPlugin.getInstance());
         }
-  }
+  } */
 }

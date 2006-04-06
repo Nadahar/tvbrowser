@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+ * Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,35 +26,35 @@
 
 package tvbrowser.core.filters;
 
-import devplugin.PluginAccess;
 import devplugin.ProgramFilter;
+import devplugin.Marker;
 
 public class PluginFilter implements ProgramFilter {
-    
- 
+
+
   private static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(PluginFilter.class);
- 
-    
+
+
   public boolean accept(devplugin.Program prog) {
-    PluginAccess[] p = prog.getMarkedByPlugins();
-    return (p!=null && p.length>0);
-    
+    Marker[] markerArr = prog.getMarkerArr();
+    return (markerArr!=null && markerArr.length>0);
+
   }
-  
+
   public String getName() {
       return toString();
   }
-  
+
   public String toString() {
     return mLocalizer.msg("pluginfFilterName","Marked programs");
   }
 
-  
+
   public boolean containsRuleComponent(String comp) {
     return false;
   }
 
-  
-    
+
+
 }

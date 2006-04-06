@@ -53,7 +53,7 @@ public class ConfigurationHandler {
   public void loadData(DataDeserializer deserializer) throws IOException {
     String userDirectoryName = Settings.getUserDirectoryName();
      File userDirectory = new File(userDirectoryName);
-     File datFile = new File(userDirectory, mFilePrefix + ".dat");
+     File datFile = new File(userDirectory, "java."+mFilePrefix + ".dat");
 
      if (datFile.exists()) {
        ObjectInputStream in = null;
@@ -61,7 +61,7 @@ public class ConfigurationHandler {
          in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(datFile), 0x4000));
          deserializer.read(in);
        }
-       catch (Throwable thr) {
+       catch (ClassNotFoundException e) {
          throw new IOException("Could not read file "+datFile.getAbsolutePath());
        }
        finally {
@@ -81,7 +81,7 @@ public class ConfigurationHandler {
 
 
     File tmpDatFile = new File(userDirectory, mFilePrefix + ".dat.temp");
-    File datFile = new File(userDirectory, mFilePrefix + ".dat");
+    File datFile = new File(userDirectory, "java." + mFilePrefix + ".dat");
     ObjectOutputStream out = null;
     try {
       out = new ObjectOutputStream(new FileOutputStream(tmpDatFile));
@@ -92,9 +92,9 @@ public class ConfigurationHandler {
       datFile.delete();
       tmpDatFile.renameTo(datFile);
     }
-    catch(Throwable thr) {
-      throw new IOException("Could not write file "+datFile.getAbsolutePath());
-    }
+//    catch(Throwable thr) {
+//      throw new IOException("Could not write file "+datFile.getAbsolutePath());
+//    }
     finally {
       if (out != null) {
         try { out.close(); } catch (IOException exc) {

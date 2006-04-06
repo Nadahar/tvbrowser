@@ -353,6 +353,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   }
 
   private Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor) throws TvBrowserException {
+
     // Choose a random Mirror
     Mirror mirror = chooseMirror(mirrorArr, null);
     if (monitor != null) {
@@ -386,7 +387,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
 
     // Return the mirror
-    return mirror;
+    return mirror;   
   }
 
   private boolean needsUpdate(File file) {

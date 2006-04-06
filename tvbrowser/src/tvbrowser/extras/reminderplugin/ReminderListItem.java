@@ -29,34 +29,56 @@ package tvbrowser.extras.reminderplugin;
 
 import devplugin.Program;
 import devplugin.ProgramItem;
+import util.program.ProgramUtilities;
 
 
 public class ReminderListItem implements Comparable {
-    
+
 
   private ProgramItem mProgramItem;
-    
+
   public ReminderListItem(ProgramItem item) {
     mProgramItem = item;
   }
-  
+
   public ReminderListItem(Program prog, int minutes) {
     mProgramItem = new ProgramItem(prog);
     setMinutes(minutes);
   }
-  
- /* public ReminderListItem(ProgramItem item) {
-    mProgramItem = item;  
-  }*/
-    
- /* public Program getProgram() {
-   return mProgramItem.getProgram();
-  }*/
-  
+
+  public void setReferenceCount(int refCnt) {
+    mProgramItem.setProperty("refCnt",""+ refCnt);
+  }
+
   public ProgramItem getProgramItem() {
     return mProgramItem;
   }
-  
+
+
+  public int getReferenceCount() {
+    String cnt = mProgramItem.getProperty("refCnt");
+    if (cnt != null) {
+      try {
+        return Integer.parseInt(cnt);
+      }catch(NumberFormatException e) {
+        return 1;
+      }
+    }
+    return 1;
+  }
+
+  public void incReferenceCount() {
+    int cnt = getReferenceCount() + 1;
+    mProgramItem.setProperty("refCnt",""+ cnt);
+  }
+
+  public void decReferenceCount() {
+    int cnt = getReferenceCount() - 1;
+    if (cnt >= 0) {
+      mProgramItem.setProperty("refCnt",""+ cnt);
+    }
+  }
+
   public int getMinutes() {
     String m = mProgramItem.getProperty("minutes");
     if (m!=null) {
@@ -68,30 +90,17 @@ public class ReminderListItem implements Comparable {
     }
     return 10;
   }
-  
+
   public void setMinutes(int minutes) {
       mProgramItem.setProperty("minutes",""+minutes);
   }
- 
+
   public Program getProgram() {
     return mProgramItem.getProgram();
   }
-  
+
   public int compareTo(Object obj) {
     ReminderListItem item=(ReminderListItem)obj;
-
-    int res=getProgram().getDate().compareTo(item.getProgram().getDate());
-    if (res!=0) return res;
-
-    int minThis=getProgram().getHours()*60+getProgram().getMinutes();
-    int minOther=item.getProgram().getHours()*60+item.getProgram().getMinutes();
-
-    if (minThis<minOther) {
-      return -1;
-    }else if (minThis>minOther) {
-      return 1;
-    }
-
-    return 0;
+    return ProgramUtilities.getProgramComparator().compare(getProgram(), item.getProgram());
   }
 }

@@ -24,51 +24,40 @@
  * $Revision$
  */
 
-package tvbrowser.extras.favoritesplugin;
+package tvbrowser.extras.favoritesplugin.dlgs;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Frame;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.icontheme.IconLoader;
+import util.ui.*;
+import util.exc.TvBrowserException;
 import util.exc.ErrorHandler;
-import util.ui.ExtensionFileFilter;
-import util.ui.ProgramList;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 import devplugin.Program;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
+import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
+import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.EditClassicFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.ClassicFavorite;
+
 
 /**
  * A dialog for managing the favorite programs.
@@ -94,11 +83,19 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
   private static ManageFavoritesDialog mInstance = null;
 
-  /**
-   * Creates a new instance of ManageFavoritesDialog.
-   */
+
+  public ManageFavoritesDialog(Dialog parent, Favorite[] favoriteArr, int splitPanePosition) {
+    super(parent, true);
+    init(favoriteArr, splitPanePosition);
+  }
+
   public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr, int splitPanePosition) {
     super(parent, true);
+    init(favoriteArr, splitPanePosition);
+  }
+
+
+  private void init(Favorite[] favoriteArr, int splitPanePosition) {
     mInstance = this;
     String msg;
     Icon icon;
@@ -110,7 +107,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     });
 
     UiUtilities.registerForClosing(this);
-    
+
     setTitle(mLocalizer.msg("title", "Manage favorite programs"));
 
     JPanel main = new JPanel(new BorderLayout(5, 5));
@@ -175,7 +172,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     mSendBt = UiUtilities.createToolBarButton(msg, icon);
     mSendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        //  showSendDialog();
+         showSendDialog();
       }
     });
     toolbarPn.add(mSendBt);
@@ -293,33 +290,36 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     }
   }
 
- /* public void showSendDialog() {
+  public void showSendDialog() {
       int selection = mFavoritesList.getSelectedIndex();
 
       if(selection == -1) {
           return;
       }
-      
-      Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      Program[] programArr = fav.getWhiteList();
 
-      SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, programArr);
+      Favorite fav = (Favorite) mFavoritesListModel.get(selection);
+      Program[] programArr = fav.getPrograms();
+
+      SendToPluginDialog send = new SendToPluginDialog(null, this, programArr);
 
       send.setVisible(true);
-  }*/
+  }
 
 
   protected void newFavorite() {
-    Favorite fav = new Favorite();
 
-    EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
-    dlg.centerAndShow();
-
-    if (dlg.getOkWasPressed()) {
-      mFavoritesListModel.addElement(fav);
-      int idx = mFavoritesListModel.size() - 1;
-      mFavoritesList.setSelectedIndex(idx);
-      mFavoritesList.ensureIndexIsVisible(idx);
+    WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new TypeWizardStep());
+    tvbrowser.extras.favoritesplugin.core.Favorite fav = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
+    if (fav != null) {
+      try {
+        fav.updatePrograms();
+        mFavoritesListModel.addElement(fav);
+        int idx = mFavoritesListModel.size() - 1;
+        mFavoritesList.setSelectedIndex(idx);
+        mFavoritesList.ensureIndexIsVisible(idx);       
+      } catch (TvBrowserException e) {
+        ErrorHandler.handle("Creating favorites failed.", e);
+      }
     }
   }
 
@@ -327,15 +327,26 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
   protected void editSelectedFavorite() {
     Favorite fav = (Favorite) mFavoritesList.getSelectedValue();
-    if (fav != null) {
-      EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
+    if (fav instanceof AdvancedFavorite) {
+      EditClassicFavoriteDialog dlg = new EditClassicFavoriteDialog(this, ((AdvancedFavorite)fav).getClassicFavorite());
       dlg.centerAndShow();
 
       if (dlg.getOkWasPressed()) {
         mFavoritesList.repaint();
         favoriteSelectionChanged();
+        FavoritesPlugin.getInstance().updateRootNode();
       }
     }
+    else {
+      EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
+      UiUtilities.centerAndShow(dlg);
+      if (dlg.getOkWasPressed()) {
+        mFavoritesList.repaint();
+        favoriteSelectionChanged();
+        FavoritesPlugin.getInstance().updateRootNode();
+      }
+    }
+
   }
 
 
@@ -343,24 +354,13 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
   protected void deleteSelectedFavorite() {
     int selection = mFavoritesList.getSelectedIndex();
     if (selection != -1) {
-      String msg = mLocalizer.msg("reallyDelete", "Really delete favorite?");
-
       if (JOptionPane.showConfirmDialog(this,
-      msg, msg = mLocalizer.msg("delete", "Delete selected favorite..."), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+              mLocalizer.msg("reallyDelete", "Really delete favorite?"),
+              mLocalizer.msg("delete", "Delete selected favorite..."),
+              JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
         Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-        Program[] delFavPrograms = fav.getPrograms();
-        fav.unmarkPrograms();
-
         mFavoritesListModel.remove(selection);
-        Object[] o = mFavoritesListModel.toArray();
-        for (int i=0; i<o.length; i++) {
-          Favorite f = (Favorite)o[i];
-          //try {            
-          f.handleContainingPrograms(delFavPrograms);
-          /*} catch (TvBrowserException e) {
-            ErrorHandler.handle(e);
-          }*/
-        }
+        FavoritesPlugin.getInstance().deleteFavorite(fav);
       }
     }
   }
@@ -391,8 +391,8 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
       // Create a comparator for Favorites
       Comparator comp = new Comparator() {
         public int compare(Object o1, Object o2) {
-          String text1 = ((Favorite) o1).getSearchFormSettings().getSearchText();
-          String text2 = ((Favorite) o2).getSearchFormSettings().getSearchText();
+          String text1 = ((Favorite) o1).getName();
+          String text2 = ((Favorite) o2).getName();
           text1 = text1.toLowerCase();
           text2 = text2.toLowerCase();
           return text1.compareTo(text2);
@@ -445,8 +445,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
             // Import the favorite if it is new
             if (! alreadyKnown) {
-              Favorite fav = new Favorite();
-              fav.getSearchFormSettings().setSearchText(line);
+              Favorite fav = new AdvancedFavorite(new ClassicFavorite(line));
               fav.updatePrograms();
 
               mFavoritesListModel.addElement(fav);
@@ -462,7 +461,9 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
       }
       finally {
         if (reader != null) {
-          try { reader.close(); } catch (IOException exc) {}
+          try { reader.close(); } catch (IOException exc) {
+            // ignore
+          }
         }
       }
 
@@ -510,29 +511,10 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     {
       if (value instanceof Favorite) {
         Favorite fav = (Favorite)value;
-        String info = fav.getTitle();
-        if (fav.getUseCertainTimeOfDay()) {
-          info += " (";
-          info += toTimeString(fav.getCertainFromTime());
-          info += " - ";
-          info += toTimeString(fav.getCertainToTime());
-          info += ")";
-        }
-        info += " (" + fav.getPrograms().length + ")";
-
-        value = info;
+        value = fav.getName() + " (" + fav.getPrograms().length + ")";
       }
       return super.getListCellRendererComponent(list, value, index, isSelected,
         cellHasFocus);
-    }
-
-
-
-    private String toTimeString(int time) {
-      int hours = time / 60;
-      int minutes = time % 60;
-
-      return "" + hours + ":" + ((minutes < 10) ? ("0" + minutes) : "" + minutes);
     }
 
   }

@@ -46,8 +46,12 @@ public class PluginTreeModel extends DefaultTreeModel {
 
   private boolean mDisableUpdate;
 
+
+
+
   private PluginTreeModel() {
     super(new Node(Node.ROOT, "Plugins"));
+
   }
 
   /**
@@ -73,11 +77,23 @@ public class PluginTreeModel extends DefaultTreeModel {
     mDisableUpdate = disabled;
   }
 
+
+  public void addCustomNode(PluginTreeNode n) {
+
+    MutableTreeNode root = (MutableTreeNode) this.getRoot();
+    root.insert(n.getMutableTreeNode(), 0);
+  }
+
+
   public void addPluginTree(PluginProxy plugin) {
     PluginTreeNode pluginRoot = plugin.getRootNode();
     MutableTreeNode root = (MutableTreeNode) this.getRoot();
     root.insert(pluginRoot.getMutableTreeNode(), 0);
+
   }
+
+
+
 
   /**
    * Removes all ChildNodes from this Tree

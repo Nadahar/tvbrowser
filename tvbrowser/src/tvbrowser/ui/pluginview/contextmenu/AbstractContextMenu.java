@@ -155,7 +155,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
     
     Node parent = node;
     
-    while ((parent.getType() != Node.PLUGIN_ROOT) || (parent == null)) {
+    while (parent != null && parent.getType() != Node.PLUGIN_ROOT) {
       parent = (Node) parent.getParent();
     }
     
@@ -175,9 +175,8 @@ public abstract class AbstractContextMenu implements ContextMenu {
   public Program[] collectProgramsFromNode(Node node) {
     
     if (node.getType() == Node.PROGRAM) {
-      Program[] prg = { ((ProgramItem) node.getUserObject()).getProgram()};
-      return prg;
-    } 
+      return new Program[]{ ((ProgramItem) node.getUserObject()).getProgram() };
+    }
     
     if (node.getChildCount() == 0) {
       return null;

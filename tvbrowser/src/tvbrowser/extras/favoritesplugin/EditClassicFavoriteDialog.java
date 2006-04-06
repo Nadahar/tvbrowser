@@ -26,33 +26,17 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dialog;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
+import javax.swing.*;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import util.ui.ChannelChooserDlg;
-import util.ui.SearchForm;
-import util.ui.TabLayout;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import util.ui.*;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.ProgramFilter;
@@ -61,13 +45,13 @@ import devplugin.ProgramFilter;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class EditFavoriteDialog {
+public class EditClassicFavoriteDialog {
 
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(EditFavoriteDialog.class);
+    = util.ui.Localizer.getLocalizerFor(EditClassicFavoriteDialog.class);
 
-  private Favorite mFavorite;
+  private ClassicFavorite mFavorite;
   private JDialog mDialog;
   private SearchForm mSearchForm;
   private JCheckBox mCertainChannelChB, mCertainTimeOfDayChB, mCertainFilterChB;
@@ -85,7 +69,7 @@ public class EditFavoriteDialog {
   /** 
    * Creates a new instance of EditFavoriteDialog.
    */
-  public EditFavoriteDialog(final Component parent, Favorite favorite) {
+  public EditClassicFavoriteDialog(final Component parent, ClassicFavorite favorite) {
     
     mFavorite = favorite;
     mCertainChannelArr = favorite.getCertainChannels();
@@ -187,14 +171,10 @@ public class EditFavoriteDialog {
     mOkBt = new JButton(mLocalizer.msg("ok", "OK"));
     mOkBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        new Thread(new Runnable() {
-          public void run() {
-            if (saveValues()) {
-              mOkWasPressed = true;
-              mDialog.dispose();
-            }
-          }
-        }).start();
+        if (saveValues()) {
+          mOkWasPressed = true;
+          mDialog.dispose();
+        }
       }
     });
     buttonPn.add(mOkBt);
