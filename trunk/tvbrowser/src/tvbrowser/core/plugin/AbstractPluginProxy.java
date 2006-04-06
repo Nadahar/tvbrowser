@@ -516,7 +516,17 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       return false;
     }
   }
+  
+  /**
+   * This method is called when the TV-Browser start is complete.
+   * @since 2.2
+   */
+  public void handleTvBrowserStartFinished() {
+    doHandleTvBrowserStartFinished();
+  }
 
+  protected abstract void doHandleTvBrowserStartFinished();
+  
   protected abstract boolean doCanUseProgramTree();
 
   /**

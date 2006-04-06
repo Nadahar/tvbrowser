@@ -125,6 +125,12 @@ public interface PluginProxy extends PluginAccess {
   public PluginTreeNode getRootNode();
   
   /**
+   * This method is called when the TV-Browser start is finished.
+   * @since 2.2
+   */
+  public void handleTvBrowserStartFinished();
+  
+  /**
    * Handles a runtime exception that was caused by the plugin.
    * 
    * @param t The exception to handle

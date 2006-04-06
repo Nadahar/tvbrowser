@@ -937,6 +937,23 @@ public class PluginProxyManager {
       }
     }
   }
+  
+  /**
+   * Calls for every subscribed plugin the handleTvBrowserStartComplete() method,
+   * so the plugin knows when the TV-Browser start is finished.
+   *
+   * @see PluginProxy#fireTvBrowserStartFinished()
+   */
+  public void fireTvBrowserStartFinished() {
+    synchronized(mPluginList) {
+      for (int i = 0; i < mPluginList.size(); i++) {
+        PluginListItem item = (PluginListItem) mPluginList.get(i);
+        if (item.getPlugin().isActivated()) {
+          item.getPlugin().handleTvBrowserStartFinished();
+        }
+      }
+    }
+  }
 
   /**
    * A plugin in the plugin list

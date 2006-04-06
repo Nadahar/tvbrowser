@@ -391,7 +391,13 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected void doHandleTvDataDeleted(ChannelDayProgram oldProg) {
     mPlugin.handleTvDataDeleted(oldProg);
   }
-
+  
+  /**
+   * This method is automatically called, when the TV-Browser start is complete.
+   */
+  protected void doHandleTvBrowserStartFinished() {
+    mPlugin.handleTvBrowserStartFinished();
+  }
 
   public void doOnActivation() {
     mPlugin.onActivation();
@@ -408,6 +414,5 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   
   public PluginTreeNode getRootNode() {
     return mPlugin.getRootNode();
-  }
-  
+  }  
 }

@@ -761,6 +761,13 @@ abstract public class Plugin implements Marker,ContextMenuIf {
     return false;
   }
 
+  /**
+   * This method is called when the TV-Browser start is finished.
+   * @since 2.2
+   */
+  public void handleTvBrowserStartFinished() { 
+  }
+  
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
       mRootNode = new PluginTreeNode(this);
