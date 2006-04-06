@@ -249,7 +249,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mSendToPlugin = new JCheckBox(mLocalizer.msg("sendToPlugin", "Send to Plugin:"));
     mAvailabePlugins = new JComboBox(getAvailablePlugins());
     mSendToPlugin.setSelected(mSettings.getProperty("usesendplugin","false").equals("true"));
-    mAvailabePlugins.setEnabled(mSendToPlugin.isSelected());
+    mAvailabePlugins.setEnabled(mSendToPlugin.isSelected() && mAvailabePlugins.getItemCount() > 0);
 
     for (int i = 0; i < mAvailabePlugins.getItemCount(); i++) {
       PluginAccess plugin = (PluginAccess) mAvailabePlugins.getItemAt(i);
@@ -262,7 +262,7 @@ public class ReminderSettingsTab implements SettingsTab {
 
     mSendToPlugin.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-        mAvailabePlugins.setEnabled(mSendToPlugin.isSelected());
+        mAvailabePlugins.setEnabled(mSendToPlugin.isSelected()  && mAvailabePlugins.getItemCount() > 0);
       }
     });
 
@@ -376,8 +376,11 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("useexec", Boolean.valueOf(mExecChB.isSelected()).toString());
 
     mSettings.setProperty("usesendplugin", Boolean.valueOf(mSendToPlugin.isSelected()).toString());
-    mSettings.setProperty("usethisplugin", ((PluginAccess)mAvailabePlugins.getSelectedItem()).getId());
 
+    PluginAccess sendToPlugin = (PluginAccess)mAvailabePlugins.getSelectedItem();
+    if (sendToPlugin != null && mSendToPlugin.isSelected()) {
+      mSettings.setProperty("usethisplugin", sendToPlugin.getId());
+    }
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
 
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());

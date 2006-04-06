@@ -47,6 +47,8 @@ import tvbrowser.ui.pluginview.contextmenu.PluginContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.ProgramContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.RootNodeContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
@@ -62,12 +64,17 @@ public class PluginView extends JPanel implements MouseListener {
 
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     mModel = PluginTreeModel.getInstance();
-    
-    for (int i=plugins.length - 1; i>=0; i--) {
+
+   for (int i=plugins.length - 1; i>=0; i--) {
       if (plugins[i].canUseProgramTree()) {
         mModel.addPluginTree(plugins[i]);
       }
     }
+
+
+    mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
+    mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
+
 
     DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
     renderer.setLeafIcon(null);

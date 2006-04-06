@@ -109,7 +109,7 @@ public class TVBrowser {
   private static RandomAccessFile mLockFile;
 
   private static FileLock mLock;
-  
+
   private static WindowAdapter mMainWindowAdapter;
 
 

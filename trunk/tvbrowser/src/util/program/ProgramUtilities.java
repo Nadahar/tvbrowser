@@ -4,10 +4,14 @@ import util.io.IOUtilities;
 import devplugin.Date;
 import devplugin.Program;
 
+import java.util.Comparator;
+
+import tvbrowser.core.ChannelList;
+
 /**
  * Provides utilities for program stuff.
  * 
- * @author René Mach
+ * @author Renï¿½ Mach
  *
  */
 public class ProgramUtilities {
@@ -31,4 +35,43 @@ public class ProgramUtilities {
       return true;
     return false;
   }
+
+  public static Comparator getProgramComparator() {
+    return sProgramComparator;
+  }
+
+  /**
+   * Comparator to sort programs by date, time and channel 
+   */
+  private static Comparator sProgramComparator = new Comparator(){
+    public int compare(Object o1, Object o2) {
+      Program p1 = (Program)o1;
+      Program p2 = (Program)o2;
+
+      int res=p1.getDate().compareTo(p2.getDate());
+      if (res!=0) return res;
+
+      int minThis=p1.getHours()*60+p1.getMinutes();
+      int minOther=p2.getHours()*60+p2.getMinutes();
+
+      if (minThis<minOther) {
+        return -1;
+      }else if (minThis>minOther) {
+        return 1;
+      }
+
+      int pos1 = ChannelList.getPos(p1.getChannel());
+      int pos2 = ChannelList.getPos(p2.getChannel());
+      if (pos1 < pos2) {
+        return -1;
+      }
+      else if (pos1 > pos2) {
+        return 1;
+      }
+
+      return 0;
+
+    }
+  };
+
 }

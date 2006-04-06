@@ -41,6 +41,7 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.Properties;
 
+
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.AudioFormat;
@@ -61,14 +62,11 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
+
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
-import devplugin.ContextMenuIf;
-import devplugin.Plugin;
-import devplugin.Program;
+import devplugin.*;
 
 /**
  * TV-Browser
@@ -88,6 +86,9 @@ public class ReminderPlugin implements ContextMenuIf {
 
   private ConfigurationHandler mConfigurationHandler;
 
+  private PluginTreeNode mRootNode;
+
+
   private ReminderPlugin() {
     mInstance = this;
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
@@ -95,7 +96,10 @@ public class ReminderPlugin implements ContextMenuIf {
     mReminderList = new ReminderList();
     mReminderList.setReminderTimerListener(new ReminderTimerListener(null,
         mSettings, mReminderList));
-    loadFavorites();
+    loadReminderData();
+
+    mRootNode = new PluginTreeNode("Reminderlist");
+    updateRootNode();
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
         new TvDataUpdateListener() {
@@ -138,7 +142,7 @@ public class ReminderPlugin implements ContextMenuIf {
     }
   }
 
-  private void loadFavorites() {
+  private void loadReminderData() {
     try {
       mConfigurationHandler.loadData(new DataDeserializer() {
         public void read(ObjectInputStream in) throws IOException,
@@ -203,7 +207,7 @@ public class ReminderPlugin implements ContextMenuIf {
   }
 
   public ActionMenu getContextMenuActions(final Frame parentFrame,
-      final Program program) {
+                                          final Program program) {
     if (mReminderList.contains(program)) {
       ContextMenuAction action = new ContextMenuAction();
       action.setText(mLocalizer.msg("pluginName", "Reminder"));
@@ -221,6 +225,7 @@ public class ReminderPlugin implements ContextMenuIf {
           public void actionPerformed(ActionEvent e) {
             if (minutes == -1) {
               mReminderList.remove(program);
+              updateRootNode();
             } else {
               item.setMinutes(minutes);
             }
@@ -255,10 +260,7 @@ public class ReminderPlugin implements ContextMenuIf {
     }
   }
 
-  /**
-   * This method is invoked for multiple program execution.
-   */
-  public void receivePrograms(Program[] programArr) {
+  private int getDefaultReminderTime() {
     String defaultReminderEntryStr = (String) mSettings
         .get("defaultReminderEntry");
     int minutes = 10;
@@ -272,9 +274,50 @@ public class ReminderPlugin implements ContextMenuIf {
         // ignore
       }
     }
-
-    mReminderList.addAndCheckBlocked(programArr, minutes);
+    return minutes;
   }
+
+
+  public void addPrograms(Program[] programArr) {
+    mReminderList.addAndCheckBlocked(programArr, getDefaultReminderTime());
+    updateRootNode();
+  }
+
+
+
+  public void removeProgram(Program prog) {
+    mReminderList.remove(prog);
+  }
+
+  public void removePrograms(Program[] progArr) {
+    for (int i=0; i<progArr.length; i++) {
+      removeProgram(progArr[i]);
+    }
+
+  }
+
+  public void addProgram(Program prog) {
+    mReminderList.add(prog, getDefaultReminderTime());
+  }
+
+
+   public PluginTreeNode getRootNode() {
+    return mRootNode;
+  }
+
+  public void updateRootNode() {
+
+    mRootNode.removeAllChildren();
+
+    ReminderListItem[] items = mReminderList.getReminderItems();
+    for (int i=0; i<items.length; i++) {
+      mRootNode.addProgram(items[i].getProgram());
+    }
+
+    mRootNode.update();
+
+  }
+
 
   public ActionMenu getButtonAction(final Frame parentFrame) {
     AbstractAction action = new AbstractAction() {
@@ -320,13 +363,17 @@ public class ReminderPlugin implements ContextMenuIf {
             while (sequencer.isRunning()) {
               try {
                 Thread.sleep(100);
-              } catch (Exception ee) {}
+              } catch (Exception ee) {
+                // ignore
+              }
             }
 
             try {
               sequencer.close();
               midiFile.close();
-            } catch (Exception ee) {}
+            } catch (Exception ee) {
+              // ignore
+            }
           }
         }.start();
 
@@ -346,7 +393,7 @@ public class ReminderPlugin implements ContextMenuIf {
           format = tmp;
         }
         final AudioInputStream stream = ais;
-        
+
         javax.sound.sampled.DataLine.Info info = new javax.sound.sampled.DataLine.Info(
             Clip.class, format);
 
@@ -354,20 +401,22 @@ public class ReminderPlugin implements ContextMenuIf {
           final Clip clip = (Clip) AudioSystem.getLine(info);
           clip.open(ais);
           clip.start();
-          
+
           clip.addLineListener(new LineListener() {
             public void update(LineEvent event) {
               if(clip != null && !clip.isRunning()) {
                 clip.close();
                 try {
                   stream.close();
-                }catch(Exception ee) {}
+                }catch(Exception ee) {
+                  // ignore
+                }
               }
             }
           });
-          
+
           return clip;
-        }else {         
+        }else {
           URL url = new File(fileName).toURL();
           AudioClip clip= Applet.newAudioClip(url);
           clip.play();

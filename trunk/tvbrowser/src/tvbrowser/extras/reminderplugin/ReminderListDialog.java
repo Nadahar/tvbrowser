@@ -153,6 +153,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     reminderList.remove(item.getProgramItem());
     mListPanel.remove(panel);
     mScrollPane.updateUI();
+    ReminderPlugin.getInstance().updateRootNode();
   }
 
   private JPanel createListItemPanel(final ReminderListItem item) {
