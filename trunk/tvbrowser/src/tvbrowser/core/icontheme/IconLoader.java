@@ -26,6 +26,7 @@
 package tvbrowser.core.icontheme;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
@@ -69,10 +70,30 @@ public class IconLoader {
    */
   private IconLoader() {
     mDefaultIconDir = new File(Settings.getDefaultSettings().getProperty("icontheme", "icons/tango"));
-    mDefaultIconTheme = themeFactory(mDefaultIconDir);
+    mDefaultIconTheme = getIconTheme(mDefaultIconDir);
     mDefaultIconTheme.loadTheme();
 
-    loadIconTheme(new File(Settings.propIcontheme.toString()));
+    loadIconTheme(new File(Settings.propIcontheme.getString()));
+  }
+  
+  /**
+   * Return all available Themes
+   * @return all available themes
+   */
+  public IconTheme[] getAvailableThemes() {
+    ArrayList list = new ArrayList(); 
+    
+    File root = new File("icons");
+    
+    File[] files = root.listFiles();
+    for (int i=0;i<files.length;i++) {
+      IconTheme theme = getIconTheme(files[i]);
+      if (theme.loadTheme()) {
+        list.add(theme);
+      }
+    }
+    
+    return (IconTheme[])list.toArray(new IconTheme[0]);
   }
 
   /**
@@ -80,7 +101,7 @@ public class IconLoader {
    *  
    * @param iconset Directory with IconTheme
    */
-  public void loadIconTheme(File iconset) {
+  private void loadIconTheme(File iconset) {
     mIconCache = new WeakHashMap();
     mPluginIconCache = new HashMap();
     
@@ -89,7 +110,7 @@ public class IconLoader {
     }
     
     if (mDefaultIconDir != iconset) {
-      mIconTheme = themeFactory(iconset);
+      mIconTheme = getIconTheme(iconset);
       if (!mIconTheme.loadTheme()) {
         mIconTheme = mDefaultIconTheme;
       }
@@ -104,7 +125,7 @@ public class IconLoader {
    * @param icon Theme-Location
    * @return IconTheme
    */
-  private IconTheme themeFactory(File icon) {
+  public IconTheme getIconTheme(File icon) {
     if (!icon.exists()) {
       // Return Default Implementation if something goes wrong
       return new DirectoryIconTheme(icon);
@@ -230,5 +251,12 @@ public class IconLoader {
 
     // Failed, return null
     return null;
+  }
+
+  /**
+   * @return Default Icon Theme
+   */
+  public IconTheme getDefaultTheme() {
+    return mDefaultIconTheme;
   }
 }
