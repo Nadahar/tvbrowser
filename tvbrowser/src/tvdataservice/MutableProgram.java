@@ -287,6 +287,7 @@ public class MutableProgram implements Program {
    * @param plugin The plugin to mark the program for.
    */
   public final void mark(Marker plugin) {
+    
     boolean alreadyMarked = getMarkedByPluginIndex(plugin) != -1;
     if (! alreadyMarked) {
       // Append the new plugin
@@ -310,6 +311,7 @@ public class MutableProgram implements Program {
    * @param plugin The plugin to remove the mark for.
    */
   public final void unmark(Marker plugin) {
+    
     int idx = getMarkedByPluginIndex(plugin);
     if (idx != -1) {
       if (mMarkedByPluginArr.length == 1) {
@@ -332,7 +334,7 @@ public class MutableProgram implements Program {
   
   private int getMarkedByPluginIndex(Marker plugin) {
     for (int i = 0; i < mMarkedByPluginArr.length; i++) {
-      if (mMarkedByPluginArr[i] == plugin) {
+      if (mMarkedByPluginArr[i].getId().compareTo(plugin.getId()) == 0) {
         return i;
       }
     }
