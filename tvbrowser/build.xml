@@ -365,10 +365,6 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/OnlineReminder.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="onlinereminder/**"/>
-    </jar>
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BlogThisPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="blogthisplugin/**"/>
