@@ -356,7 +356,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param caller The calling plugin.
    * @return a context menu for the given program.
    */
-  public JPopupMenu createPluginContextMenu(Program program, Plugin caller) {
+  public JPopupMenu createPluginContextMenu(Program program, ContextMenuIf caller) {
 
     return PluginProxyManager.createPluginContextMenu(program, caller);
   }
@@ -450,11 +450,11 @@ public class PluginManagerImpl implements PluginManager {
    * Executes the default context menu plugin.
    *
    * @param program The program to pass to the default context menu plugin.
-   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice
+   * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice
    *
    * @since 1.1
    */
-  public void handleProgramDoubleClick(Program program, Plugin caller) {
+  public void handleProgramDoubleClick(Program program, ContextMenuIf caller) {
     if (program == null) {
       // Nothing to do
       return;
@@ -493,8 +493,6 @@ public class PluginManagerImpl implements PluginManager {
           getValue(Action.ACTION_COMMAND_KEY));
       action.actionPerformed(evt);
     }
-
-
   }
 
 
@@ -520,11 +518,11 @@ public class PluginManagerImpl implements PluginManager {
    * Executes the middle click context menu plugin.
    *
    * @param program The program to pass to the middle click context menu plugin.
-   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice.
+   * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice.
    *
    * @since 1.1
    */
-  public void handleProgramMiddleClick(Program program, Plugin caller) {
+  public void handleProgramMiddleClick(Program program, ContextMenuIf caller) {
     if (program == null) {
       // Nothing to do
       return;
