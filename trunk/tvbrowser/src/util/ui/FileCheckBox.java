@@ -159,6 +159,9 @@ public class FileCheckBox extends JComponent {
     return mChoosebtn;
   }
   
-  
+  public JButton removeButton() {
+    remove(mChoosebtn);
+    return mChoosebtn;
+  }
 
 }
