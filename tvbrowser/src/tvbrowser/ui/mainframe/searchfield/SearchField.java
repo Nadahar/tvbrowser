@@ -218,6 +218,7 @@ public class SearchField extends JPanel {
 
     UiUtilities.registerForClosing(new WindowClosingIf() {
       public void close() {
+        configure.removeWindowListener(configure.getWindowListeners()[0]);
         configure.setVisible(false);
       }
 
