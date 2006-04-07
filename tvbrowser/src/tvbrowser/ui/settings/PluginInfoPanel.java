@@ -53,14 +53,17 @@ import com.jgoodies.forms.layout.Sizes;
    private JLabel versionLabel;
    private JLabel authorLabel;
    private JLabel descriptionLabel;
-    
-   public PluginInfoPanel(devplugin.PluginInfo info) {
-      this();
-      setPluginInfo(info);
+   private boolean mShowSettingsSeparator;
+
+   public PluginInfoPanel(devplugin.PluginInfo info, boolean showSettingsSeparator) {
+     this(showSettingsSeparator);
+     setPluginInfo(info);
    }
-    
-   public PluginInfoPanel() {
-     setLayout(new FormLayout("5dlu,pref,10dlu,default:grow,5dlu","pref,5dlu,top:pref,top:pref,top:pref,top:pref"));
+   
+   public PluginInfoPanel(boolean showSettingsSeparator) {
+     mShowSettingsSeparator = showSettingsSeparator;
+     setLayout(new FormLayout("5dlu,pref,10dlu,default:grow,5dlu",
+         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,10dlu,pref"));
      CellConstraints cc = new CellConstraints();
       
      add(new PluginLabel(mLocalizer.msg("name", "Name")), cc.xy(2,3));
@@ -83,12 +86,13 @@ import com.jgoodies.forms.layout.Sizes;
    public void setDefaultBorder(boolean plugin) {
      CellConstraints cc = new CellConstraints();
      
-     setBorder(Borders.createEmptyBorder(Sizes.dluY(0),Sizes.dluY(0),Sizes.DLUY11,Sizes.dluY(0)));
-     
      if(plugin)
        add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("about","About this Plugin:")), cc.xyw(1,1,5));
      else
-       add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("aboutDataService","About this DataService:")), cc.xyw(1,1,5));
+       add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("aboutDataService","About this DataService:")), cc.xyw(1,1,5));     
+     
+     if(mShowSettingsSeparator)
+       add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("settings","Settings")), cc.xyw(1,8,5));
    }
     
    public void setPluginInfo(devplugin.PluginInfo info) {

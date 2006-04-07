@@ -72,8 +72,8 @@ public class ConfigPluginSettingsTab implements SettingsTab {
   
   public JPanel createSettingsPanel() {
     mContentPanel=new JPanel(new BorderLayout());
-    mContentPanel.setBorder(Borders.DIALOG_BORDER);//.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
-    PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo());
+    mContentPanel.setBorder(Borders.DIALOG_BORDER);
+    PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo(), mSettingsTab != null);
     pluginInfoPanel.setDefaultBorder(true);
     mContentPanel.add(pluginInfoPanel,BorderLayout.NORTH);
     
