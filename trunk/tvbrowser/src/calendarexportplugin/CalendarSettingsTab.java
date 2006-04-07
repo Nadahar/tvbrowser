@@ -3,19 +3,17 @@
  */
 package calendarexportplugin;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.Properties;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.paramhandler.ParamInputField;
 import util.ui.Localizer;
@@ -62,32 +60,12 @@ public class CalendarSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#createSettingsPanel()
    */
   public JPanel createSettingsPanel() {
-    final JPanel toppanel = new JPanel(new GridBagLayout());
-
-    toppanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Settings", "Settings")));
-
-    GridBagConstraints c = new GridBagConstraints();
-
-    c.weightx = 1.0;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    c.insets = new Insets(5, 0, 0, 5);
-
-    GridBagConstraints l = new GridBagConstraints();
-
-    l.insets = new Insets(5, 0, 0, 5);
-    l.anchor = GridBagConstraints.NORTHWEST;
-
-    toppanel.add(new JLabel(mLocalizer.msg("Categorie", "Categorie") + ":"), l);
-
-    mCategorie = new JTextField();
-
-    mCategorie.setText(mSettings.getProperty("Categorie", ""));
-
-    toppanel.add(mCategorie, c);
-
-    toppanel.add(new JLabel(mLocalizer.msg("ShowTime", "Show Time as") + ":"), l);
-
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref:grow,5dlu",
+        "5dlu,pref,2dlu,pref,2dlu,pref,2dlu,pref,15dlu,pref,fill:default:grow,5dlu"));
+    CellConstraints cc = new CellConstraints();
+    
+    mCategorie = new JTextField(mSettings.getProperty("Categorie", ""));
+    
     String[] values = { mLocalizer.msg("Busy", "Busy"), mLocalizer.msg("Free", "Free") };
 
     mShowTime = new JComboBox(values);
@@ -96,11 +74,7 @@ public class CalendarSettingsTab implements SettingsTab {
       mShowTime.setSelectedIndex(Integer.parseInt(mSettings.getProperty("ShowTime", "0")));
     } catch (Exception e) {
     }
-
-    toppanel.add(mShowTime, c);
-
-    toppanel.add(new JLabel(mLocalizer.msg("Classification", "Classification") + ":"), l);
-
+    
     String[] val2 = { mLocalizer.msg("Public", "Public"), mLocalizer.msg("Private", "Private"),
         mLocalizer.msg("Confidential", "Confidential") };
 
@@ -110,29 +84,27 @@ public class CalendarSettingsTab implements SettingsTab {
       mClassification.setSelectedIndex(Integer.parseInt(mSettings.getProperty("Classification", "0")));
     } catch (Exception e) {
     }
-
-    toppanel.add(mClassification, c);
-
+    
     mNulltime = new JCheckBox(mLocalizer.msg("nullTime", "Set length to 0 Minutes"));
 
     if (mSettings.getProperty("nulltime", "false").equals("true")) {
       mNulltime.setSelected(true);
     }
-
-    toppanel.add(mNulltime, c);
-
-    JPanel panel = new JPanel(new BorderLayout());
     
-    panel.add(toppanel, BorderLayout.NORTH);
-
     mParamText = new ParamInputField(mSettings.getProperty("paramToUse", CalendarExportPlugin.DEFAULT_PARAMETER));
     
-    mParamText.setBorder(BorderFactory.createTitledBorder(
-        mLocalizer.msg("description", "Description")));
-    
-    panel.add(mParamText, BorderLayout.CENTER);
-    
-    return panel;
+    pb.add(mNulltime, cc.xyw(2,2,3));
+    pb.addLabel(mLocalizer.msg("Categorie", "Categorie") + ":", cc.xy(2,4));
+    pb.add(mCategorie, cc.xy(4,4));
+    pb.addLabel(mLocalizer.msg("ShowTime", "Show Time as") + ":", cc.xy(2,6));
+    pb.add(mShowTime, cc.xy(4,6));
+    pb.addLabel(mLocalizer.msg("Classification", "Classification") + ":", cc.xy(2,8));
+    pb.add(mClassification, cc.xy(4,8));
+        
+    pb.addLabel(mLocalizer.msg("createDescription", "Description to create for each Program") + ":", cc.xyw(2,10,3));
+    pb.add(mParamText, cc.xyw(2,11,3));
+        
+    return pb.getPanel();
   }
 
   /*

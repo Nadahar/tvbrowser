@@ -27,9 +27,12 @@ package clipboardplugin;
 
 import java.util.Properties;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.paramhandler.ParamInputField;
 import util.ui.Localizer;
@@ -69,12 +72,15 @@ public class ClipboardSettingsTab implements SettingsTab {
    * @return Settings-Panel
    */
   public JPanel createSettingsPanel() {
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow,5dlu","5dlu,pref,fill:default:grow,5dlu"));
+    CellConstraints cc = new CellConstraints();
+    
+    pb.addLabel(mLocalizer.msg("createText","Text to create for each Program") + ":", cc.xy(2,2));
+    
     mParamText = new ParamInputField(mSettings.getProperty("ParamToUse", ClipboardPlugin.DEFAULT_PARAM));
-    mParamText.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("createText",
-        "Text to create for each Program")
-        + ":"));
+    pb.add(mParamText, cc.xy(2,3));
 
-    return mParamText;
+    return pb.getPanel();
   }
 
   /**

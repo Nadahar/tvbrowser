@@ -104,10 +104,8 @@ public class EMailSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     final JPanel configPanel = new JPanel();
 
-    configPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("configuration", "Configuration")));
-
-    FormLayout layout = new FormLayout("3dlu, pref, 3dlu, pref:grow, fill:75dlu, 3dlu, pref, 3dlu",
-        "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu");
+    FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref:grow, fill:75dlu, 3dlu, pref, 5dlu",
+        "5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu");
     configPanel.setLayout(layout);
 
     CellConstraints cc = new CellConstraints();

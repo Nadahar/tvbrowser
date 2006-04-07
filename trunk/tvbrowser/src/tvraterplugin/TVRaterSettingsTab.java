@@ -20,10 +20,6 @@
 package tvraterplugin;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.Locale;
 import java.util.Properties;
@@ -39,12 +35,15 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
 import util.ui.LinkButton;
 import util.ui.Localizer;
-import util.ui.TabLayout;
 import devplugin.SettingsTab;
 
 /**
@@ -79,111 +78,48 @@ public class TVRaterSettingsTab implements SettingsTab {
    * @see devplugin.SettingsTab#createSettingsPanel()
    */
   public JPanel createSettingsPanel() {
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    JPanel main = new JPanel(new TabLayout(1));
-
-    JPanel user = new JPanel(new GridBagLayout());
-
-    // Account Settings
-    user.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("accountsetting", "Account settings")));
-
-    GridBagConstraints c = new GridBagConstraints();
-    c.anchor = GridBagConstraints.WEST;
-    c.fill = GridBagConstraints.HORIZONTAL;
-
-    c.weightx = 0;
-    c.insets = new Insets(5, 0, 0, 5);
-    c.gridwidth = GridBagConstraints.RELATIVE;
-    JLabel name = new JLabel(mLocalizer.msg("name", "Name") + ":");
-    user.add(name, c);
-
-    c.weightx = 1.0;
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    c.insets = new Insets(0, 0, 0, 3);
-    _name = new JTextField(_settings.getProperty("name", "noname"));
-    user.add(_name, c);
-
-    c.weightx = 0;
-    c.insets = new Insets(5, 0, 0, 5);
-    c.gridwidth = GridBagConstraints.RELATIVE;
-    user.add(new JLabel(mLocalizer.msg("password", "Password") + ":"), c);
-
-    c.weightx = 1.0;
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    c.insets = new Insets(0, 0, 0, 3);
-    _password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password", ""), 21));
-    user.add(_password, c);
-
-    c.gridwidth = GridBagConstraints.RELATIVE;
-    c.weightx = 0;
-    c.insets = new Insets(0, 0, 0, 0);
-    user.add(new JPanel(), c);
-
-    JPanel buttonpanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 3, 0));
-
-    JButton newAccount = new JButton(mLocalizer.msg("newAccount", "Create new Account"));
-
-    newAccount.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Launch.openURL("http://tvaddicted.de/index.php?Page=newuser");
-      }
-    });
-
-    buttonpanel.add(newAccount);
-
-    JButton lostPassword = new JButton(mLocalizer.msg("lostPassword", "Lost Password?"));
-
-    lostPassword.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Launch.openURL("http://tvaddicted.de/index.php?Page=lostpasswd");
-      }
-    });
-
-    buttonpanel.add(lostPassword);
-
-    c.weightx = 1.0;
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    user.add(buttonpanel, c);
-
-    main.add(user);
-
-    /*
-     * _includeFav = new JCheckBox( mLocalizer.msg("includeFavorites", "Include
-     * Favorites into rating"), _settings.getProperty("includeFavorites",
-     * "true").equals("true")); main.add(_includeFav);
-     */
+    FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref:grow,pref,3dlu,pref,5dlu",
+        "5dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref,1dlu,pref,2dlu,pref,default:grow,pref");
+    layout.setColumnGroups(new int[][] {{5,7}});
+    
+    PanelBuilder pb = new PanelBuilder(layout);
+    CellConstraints cc = new CellConstraints();
+    
     _ownRating = new JCheckBox(mLocalizer.msg("ownRating", "Use own rating if available"), _settings.getProperty(
         "ownRating", "true").equals("true"));
-    main.add(_ownRating);
 
     String[] updateStrings = { mLocalizer.msg("update", "only when updating TV listings"),
         mLocalizer.msg("everyTime", "every Time a rating is made"),
         mLocalizer.msg("eachStart", "at each start of TV-Browser"), mLocalizer.msg("manual", "manual Update"), };
-
+    
     _updateTime = new JComboBox(updateStrings);
-
     _updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "3")));
-
-    JPanel updatePanel = new JPanel(new BorderLayout(5, 0));
-    updatePanel.add(new JLabel(mLocalizer.msg("transmit", "Transmit data")), BorderLayout.WEST);
-    updatePanel.add(_updateTime, BorderLayout.CENTER);
-
-    main.add(updatePanel);
-
-    panel.add(main, BorderLayout.NORTH);
-
+    
+    _name = new JTextField(_settings.getProperty("name", "noname"));    
+    _password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password", ""), 21));
+    
+    JButton newAccount = new JButton(mLocalizer.msg("newAccount", "Create new Account"));
+    JButton lostPassword = new JButton(mLocalizer.msg("lostPassword", "Lost Password?"));
+    
+    pb.add(_ownRating, cc.xyw(2,2,6));
+    pb.addLabel(mLocalizer.msg("transmit", "Transmit data") + ":", cc.xy(2,4));
+    pb.add(_updateTime, cc.xyw(4,4,4));
+    pb.addSeparator(mLocalizer.msg("accountsetting", "Account settings"), cc.xyw(1,6,8));
+    JLabel name = pb.addLabel(mLocalizer.msg("name", "Name") + ":", cc.xy(2,8));
+    pb.add(_name, cc.xyw(4,8,4));
+    pb.addLabel(mLocalizer.msg("password", "Password") + ":", cc.xy(2,10));
+    pb.add(_password, cc.xyw(4,10,4));
+    pb.add(newAccount, cc.xy(5,12));
+    pb.add(lostPassword, cc.xy(7,12));
+    
     LinkButton urlLabel = new LinkButton("http://tvaddicted.de", "http://tvaddicted.de");
-
     urlLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
-    JPanel urlPanel = new JPanel(new BorderLayout());
+    JPanel urlPanel = new JPanel(new BorderLayout(0,0));
 
     if (!Locale.getDefault().equals(Locale.GERMANY)) {
       JTextArea help = new JTextArea(
           "Hi!\nThis plugin is not 100% translated.\nIf you want to help, please contact me via the HP.\nThanks!");
-      help.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
       help.setEditable(false);
       help.setForeground(name.getForeground());
       help.setBackground(name.getBackground());
@@ -192,11 +128,22 @@ public class TVRaterSettingsTab implements SettingsTab {
     } else {
       urlPanel.add(urlLabel, BorderLayout.CENTER);
     }
+    
+    pb.add(urlPanel, cc.xyw(2,14,6));
 
-    panel.add(new JPanel(), BorderLayout.CENTER);
-    panel.add(urlPanel, BorderLayout.SOUTH);
+    newAccount.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL("http://tvaddicted.de/index.php?Page=newuser");
+      }
+    });
 
-    return panel;
+    lostPassword.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL("http://tvaddicted.de/index.php?Page=lostpasswd");
+      }
+    });
+
+    return pb.getPanel();
   }
 
   /*

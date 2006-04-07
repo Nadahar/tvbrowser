@@ -32,6 +32,9 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import util.ui.SearchFormSettings;
 import devplugin.SettingsTab;
 
@@ -52,7 +55,8 @@ public class SearchSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     
-    JPanel panel = new JPanel();
+    JPanel panel = new JPanel(new FormLayout("5dlu,pref","5dlu,pref"));
+    CellConstraints cc = new CellConstraints();
     
     JButton clearHistory = new JButton(mLocalizer.msg("clearHistory", "Clear Search History"));
 
@@ -62,7 +66,7 @@ public class SearchSettingsTab implements SettingsTab {
       }
     });
     
-    panel.add(clearHistory);
+    panel.add(clearHistory, cc.xy(2,2));
     
     return panel;
   }

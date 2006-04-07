@@ -34,7 +34,6 @@ import javax.swing.JPanel;
 
 import util.ui.ImageUtilities;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -67,16 +66,15 @@ public class ListViewSettings implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("5dlu,default:grow", "pref,5dlu,default"));
+    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default"));
     
     CellConstraints cc = new CellConstraints();
     
     mShowAtStart = new JCheckBox(mLocalizer.msg("showAtStart", "Show at startup"));
     
     mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
-    
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("settings","Settings")), cc.xyw(1,1,2));
-    panel.add(mShowAtStart, cc.xy(2,3));
+        
+    panel.add(mShowAtStart, cc.xy(2,2));
     
     return panel;
   }

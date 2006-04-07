@@ -35,7 +35,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -47,6 +46,10 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -108,9 +111,10 @@ public class WebSettingsTab implements SettingsTab {
      */
     public JPanel createSettingsPanel() {
 
+      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow","5dlu,pref,fill:default:grow"));
+      CellConstraints cc = new CellConstraints();
+      
         JPanel panel = new JPanel(new GridBagLayout());
-        
-        panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("WebPages", "Web Pages")));
         
         mAddressList = new JList(mCloned);
         mAddressList.setSelectedIndex(0);
@@ -138,12 +142,12 @@ public class WebSettingsTab implements SettingsTab {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        c.insets = new Insets(5, 5, 5, 5);
+        c.insets = new Insets(0, 0, 5, 5);
         
         panel.add(new JScrollPane(mAddressList), c);
         
         c = new GridBagConstraints();
-        c.insets = new Insets(5, 5, 5, 0);
+        c.insets = new Insets(5, 0, 5, 0);
         c.weightx = 0;
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
@@ -172,7 +176,10 @@ public class WebSettingsTab implements SettingsTab {
 
         listSelectionChanged();
         
-        return panel;
+      pb.addLabel(mLocalizer.msg("WebPages", "Web Pages") + ":", cc.xy(2,2));
+      pb.add(panel, cc.xy(2,3));
+      
+      return pb.getPanel();
     }
 
     /**
