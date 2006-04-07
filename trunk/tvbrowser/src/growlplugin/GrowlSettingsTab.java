@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,6 +39,7 @@ import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -90,24 +90,25 @@ public class GrowlSettingsTab implements SettingsTab {
       return panel;
     }
     
-    JPanel panel = new JPanel(new FormLayout("default:grow, 3dlu, default", "default, 3dlu, fill:default:grow, 3dlu, fill:default:grow, 3dlu, default"));
+    JPanel panel = new JPanel(new FormLayout("5dlu, pref:grow, 3dlu, pref, 5dlu", 
+            "5dlu, pref, 3dlu, pref, 5dlu, fill:pref:grow, 3dlu, pref, 5dlu, fill:pref:grow, 3dlu, pref, 3dlu"));
     
     CellConstraints cc = new CellConstraints();
     
     panel.add(UiUtilities.createHelpTextArea(
-        mLocalizer.msg("help", "Help Text")), cc.xyw(1,1, 3));
+        mLocalizer.msg("help", "Help Text")), cc.xyw(2,2, 3));
+    
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Title")), cc.xyw(1,4,5));
     
     mTitle = new ParamInputField(mSettings.getProperty("title"));
-    mTitle.setBorder(BorderFactory.createTitledBorder(
-        mLocalizer.msg("title", "Title")));
     
-    panel.add(mTitle, cc.xyw(1,3,3));
+    panel.add(mTitle, cc.xyw(2,6,3));
+    
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("description", "Description")), cc.xyw(1,8,5));
     
     mDescription = new ParamInputField(mSettings.getProperty("description"));
-    mDescription.setBorder(BorderFactory.createTitledBorder(
-        mLocalizer.msg("description", "Description")));
     
-    panel.add(mDescription, cc.xyw(1,5,3));
+    panel.add(mDescription, cc.xyw(2,10,3));
     
     JButton testGrowl = new JButton(mLocalizer.msg("testGrowl", "Test Growl"));
     testGrowl.addActionListener(new ActionListener() {
@@ -121,7 +122,7 @@ public class GrowlSettingsTab implements SettingsTab {
       
     });
     
-    panel.add(testGrowl, cc.xy(3,7));
+    panel.add(testGrowl, cc.xy(4,12));
     
     return panel;
   }

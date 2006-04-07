@@ -31,7 +31,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Properties;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
