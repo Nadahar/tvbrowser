@@ -133,9 +133,8 @@ public class ContextMenuManager {
         return ReminderPlugin.getInstance();      
       else if(id.compareTo(ConfigMenuItem.CONFIG) == 0) 
         return ConfigMenuItem.getInstance();
-    } else {
-      return ProgramInfo.getInstance();
     }
+    
     return null;
   }
   
@@ -228,7 +227,7 @@ public class ContextMenuManager {
         }
       } else {
         ContextMenuIf item = getContextMenuIfForId(order[i]);
-        if ((includingDisabledItems) || ((item != null) && (!disabledList.contains(item)))) {
+        if ((item != null) && (includingDisabledItems || !disabledList.contains(item))) {
           lastWasSeparator = false;
           ifList.add(item);
         }
