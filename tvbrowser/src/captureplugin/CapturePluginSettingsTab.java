@@ -29,6 +29,9 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.Sizes;
+
 import util.ui.Localizer;
 import devplugin.SettingsTab;
 
@@ -63,7 +66,9 @@ public class CapturePluginSettingsTab implements SettingsTab {
      * @return Panel
      */
     public JPanel createSettingsPanel() {
-        return new CapturePluginPanel(mOwner, mCloneData);
+        CapturePluginPanel panel = new CapturePluginPanel(mOwner, mCloneData);
+        panel.setBorder(Borders.createEmptyBorder(Sizes.DLUY5,Sizes.DLUX5,Sizes.DLUY5,Sizes.DLUX5));
+        return panel;
     }
 
     /**

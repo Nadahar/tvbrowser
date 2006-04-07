@@ -57,6 +57,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.Sizes;
+
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.TvDataLevel;
 import tvdataservice.SettingsPanel;
@@ -92,6 +95,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
     mSettings = settings;
     setLayout(new BorderLayout());
+    setBorder(Borders.createEmptyBorder(Sizes.DLUY5,Sizes.DLUX5,Sizes.DLUY5,Sizes.DLUX5));
 
     JTabbedPane tabbedPane = new JTabbedPane();
 
