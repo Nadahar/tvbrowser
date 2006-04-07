@@ -34,6 +34,8 @@ package tvbrowser.extras.reminderplugin;
 
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
@@ -42,6 +44,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -76,11 +79,19 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
 
   private JComboBox mList;
 
-  private JCheckBox mRememberSettingsCb;
+  private JCheckBox mRememberSettingsCb, mDontShowDialog;
   
   public ReminderDialog(Frame parent, devplugin.Program program, final java.util.Properties settings) {
     super(parent,true);
-
+    createGui(program, settings);
+  }
+  
+  public ReminderDialog(Dialog parent, devplugin.Program program, final java.util.Properties settings) {
+    super(parent,true);
+    createGui(program, settings);
+  }
+  
+  private void createGui(devplugin.Program program, final java.util.Properties settings) {
     setTitle(mLocalizer.msg("title", "New reminder"));
 
     UiUtilities.registerForClosing(this);
@@ -130,13 +141,19 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     }
     
     northPn.add(mList);
-
+    northPn.add(Box.createRigidArea(new Dimension(0,3)));
 
     mRememberSettingsCb = new JCheckBox(mLocalizer.msg("rememberSetting","Remember setting"));
     JPanel pn1 = new JPanel(new BorderLayout());
-    pn1.add(mRememberSettingsCb, BorderLayout.WEST);
+    pn1.add(mRememberSettingsCb, BorderLayout.NORTH);
+    
+    mDontShowDialog = new JCheckBox(mLocalizer.msg("dontShow","Don't show this dialog anymore"));
+    pn1.add(mDontShowDialog, BorderLayout.CENTER);    
+    
+    pn1.add(new JLabel(mLocalizer.msg("howToChange","You can change the behavior under Settings -> Reminder")), BorderLayout.SOUTH);
+    
     northPn.add(pn1);
-
+    
     JPanel btnPn=new JPanel(new FlowLayout(FlowLayout.TRAILING));
     btnPn.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
     
@@ -147,6 +164,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
         if (mRememberSettingsCb.isSelected()) {
           settings.setProperty("defaultReminderEntry",""+mList.getSelectedIndex());
         }
+        settings.setProperty("showTimeSelectionDialog",String.valueOf(!mDontShowDialog.isSelected()));
         hide();
       }
     });

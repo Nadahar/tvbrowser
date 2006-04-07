@@ -193,7 +193,6 @@ public class ReminderList implements ActionListener {
         remove(items[i]);
       }
     }
-
   }
 
 

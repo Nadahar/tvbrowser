@@ -289,5 +289,24 @@ public class ReminderFrame implements WindowClosingIf {
     else
       return mFrame.getRootPane();
   }
+  
+  public static String getStringForMinutes(int minutes) {
+    for (int i = 0; i < REMIND_VALUE_ARR.length; i++)
+      if(REMIND_VALUE_ARR[i] == minutes)
+        return REMIND_MSG_ARR[i];
+    
+    return null;
+  }
+  
+  public static int getValueForMinutes(int minutes) {
+    for(int i = 0; i < REMIND_VALUE_ARR.length; i++)
+      if(REMIND_VALUE_ARR[i] == minutes)
+        return i - 1;
+    
+    return -1;
+  }
 
+  public static int getMinutesForValue(int index) {
+    return REMIND_VALUE_ARR[index + 1];
+  }
 }
