@@ -26,7 +26,6 @@
 
 package tvbrowser.extras.reminderplugin;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -43,7 +42,6 @@ import javax.sound.midi.Sequencer;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -51,17 +49,20 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
-import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -79,11 +80,10 @@ public class ReminderSettingsTab implements SettingsTab {
 
   private Properties mSettings;
 
-  private JPanel mSettingsPn;
-
   private JCheckBox mReminderWindowChB;
   private FileCheckBox mSoundFileChB;
   private JCheckBox mExecChB;
+  private JCheckBox mShowTimeSlectionDlg;
   private JButton mExecFileDialogBtn;
   private JSpinner mAutoCloseReminderTimeSp;
 
@@ -94,8 +94,9 @@ public class ReminderSettingsTab implements SettingsTab {
   private String mExecFileStr, mExecParamStr;
   private Object mTestSound;
 
- // private ReminderPlugin mPlugin;
-
+  /**
+   * Constructor.
+   */
   public ReminderSettingsTab() {
     mSettings = ReminderPlugin.getInstance().getSettings();
   }
@@ -104,64 +105,105 @@ public class ReminderSettingsTab implements SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    String msg;
-    JPanel p1;
-
-    mSettingsPn = new JPanel(new BorderLayout());
-
-    JPanel main = new JPanel(new TabLayout(1));
-    mSettingsPn.add(main, BorderLayout.NORTH);
-
-    JPanel reminderPn = new JPanel(new TabLayout(1));
-    main.add(reminderPn);
-
-    msg = mLocalizer.msg("remindBy", "Remind me by");
-    reminderPn.setBorder(BorderFactory.createTitledBorder(msg));
-
-    msg = mLocalizer.msg("reminderWindow", "Reminder window");
-    mReminderWindowChB = new JCheckBox(msg);
-    reminderPn.add(mReminderWindowChB);
-
-    String soundFName=mSettings.getProperty("soundfile","/");
-
-    File soundFile=new File(soundFName);
-
-    msg = mLocalizer.msg("playlingSound", "Play sound");
-    mSoundFileChB = new FileCheckBox(msg, soundFile, 0);
-
-    msg = mLocalizer.msg("executeProgram", "Execute program");
-    mExecChB = new JCheckBox(msg);
-
-    msg = mLocalizer.msg("executeConfig", "Configure");
-    mExecFileDialogBtn = new JButton(msg);
-
-    mExecFileDialogBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showFileSettingsDialog();
-      }
-    });
-
-    JFileChooser soundChooser=new JFileChooser("sound/");
-
+    FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
+        "pref,5dlu,pref,1dlu,pref,1dlu,pref,1dlu,pref,10dlu," +
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref");
+    layout.setColumnGroups(new int[][] {{7,9}});
+    PanelBuilder pb = new PanelBuilder(layout);
+    pb.setDefaultDialogBorder();    
+    
+    CellConstraints cc = new CellConstraints();
+    
     final String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
-    msg = mLocalizer.msg("soundFileFilter", "Sound file ({0})",
+    String soundFName=mSettings.getProperty("soundfile","/");
+    String msg = mLocalizer.msg("soundFileFilter", "Sound file ({0})",
         "*.wav, *.aif, *.rmf, *.au, *.mid");
+    
+    
+    mReminderWindowChB = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window"));
+    mSoundFileChB = new FileCheckBox(mLocalizer.msg("playlingSound", "Play sound"), new File(soundFName), 0);
+    
+    JFileChooser soundChooser=new JFileChooser("sound/");
     soundChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
 
+    mSoundFileChB.setFileChooser(soundChooser);
+    
     mReminderWindowChB.setSelected(mSettings.getProperty("usemsgbox","false").equals("true"));
     mSoundFileChB.setSelected(mSettings.getProperty("usesound","false").equals("true"));
-    mExecChB.setSelected(mSettings.getProperty("useexec","false").equals("true"));
-    mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
 
     mExecFileStr = mSettings.getProperty("execfile", "");
-    mExecParamStr = mSettings.getProperty("execparam", "");
+    mExecParamStr = mSettings.getProperty("execparam", "");    
+    
+    final JButton soundTestBt = new JButton(mLocalizer.msg("test", "Test"));
+    
+    mExecChB = new JCheckBox(mLocalizer.msg("executeProgram", "Execute program"));
+    mExecChB.setSelected(mSettings.getProperty("useexec","false").equals("true"));
+    
+    mExecFileDialogBtn = new JButton(mLocalizer.msg("executeConfig", "Configure"));
+    mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
+    
+    mSendToPlugin = new JCheckBox(mLocalizer.msg("sendToPlugin", "Send to Plugin:"));
+    mSendToPlugin.setSelected(mSettings.getProperty("usesendplugin","false").equals("true"));
+    
+    mAvailabePlugins = new JComboBox(getAvailablePlugins());
+    mAvailabePlugins.setEnabled(mSendToPlugin.isSelected() && mAvailabePlugins.getItemCount() > 0);
 
-    mSoundFileChB.setFileChooser(soundChooser);
-
-    JPanel soundPn = new JPanel(new BorderLayout(5, 0));
-    soundPn.add(mSoundFileChB, BorderLayout.CENTER);
-    msg = mLocalizer.msg("test", "Test");
-    final JButton soundTestBt = new JButton(msg);
+    for (int i = 0; i < mAvailabePlugins.getItemCount(); i++) {
+      PluginAccess plugin = (PluginAccess) mAvailabePlugins.getItemAt(i);
+      if (plugin.getId().equals(mSettings.getProperty("usethisplugin", ""))) {
+        mAvailabePlugins.setSelectedIndex(i);
+      }
+    }
+    
+    int autoCloseReminderTime = 0;
+    try {
+      String asString = mSettings.getProperty("autoCloseReminderTime", "0");
+      autoCloseReminderTime = Integer.parseInt(asString);
+    } catch (Exception exc) {
+      // ignore
+    }
+    
+    mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,0,600,1));
+    
+    String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
+    mDefaultReminderEntryList =new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
+    if (defaultReminderEntryStr != null) {
+      try {
+        int inx = Integer.parseInt(defaultReminderEntryStr);
+        if (inx < ReminderDialog.SMALL_REMIND_MSG_ARR.length) {
+          mDefaultReminderEntryList.setSelectedIndex(inx);
+        }
+      }catch(NumberFormatException e) {
+        // ignore
+      }
+    }
+    
+    mShowTimeSlectionDlg = new JCheckBox(mLocalizer.msg("showTimeSelectionDialog","Show time selection dialog"));    
+    mShowTimeSlectionDlg.setSelected(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0);
+    
+    pb.addSeparator(mLocalizer.msg("remindBy", "Remind me by"), cc.xyw(1,1,10));
+    pb.add(mReminderWindowChB, cc.xyw(2,3,4));
+    pb.add(mSoundFileChB, cc.xyw(2,5,4));
+    pb.add(mSoundFileChB.removeButton(), cc.xy(7,5));
+    pb.add(soundTestBt, cc.xy(9,5));
+    pb.add(mExecChB, cc.xyw(2,7,4));
+    pb.add(mExecFileDialogBtn, cc.xyw(7,7,3));
+    pb.add(mSendToPlugin, cc.xyw(2,9,4));
+    pb.add(mAvailabePlugins, cc.xyw(7,9,3));
+    
+    pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder after"), cc.xyw(1,11,10));
+    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,13));
+    pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,13));
+    
+    JPanel reminderEntry = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
+    reminderEntry.add(mDefaultReminderEntryList);
+    
+    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,15,10));
+    pb.add(reminderEntry, cc.xyw(2,17,4));
+    
+    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,19,10));    
+    pb.add(mShowTimeSlectionDlg, cc.xyw(2,21,4));
+    
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
@@ -199,7 +241,6 @@ public class ReminderSettingsTab implements SettingsTab {
             ((Sequencer)mTestSound).stop();
       }
     });
-    soundPn.add(soundTestBt, BorderLayout.EAST);
     
     mSoundFileChB.getCheckBox().addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -234,83 +275,20 @@ public class ReminderSettingsTab implements SettingsTab {
         mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
       }
     });
-
-    reminderPn.add(soundPn);
-
-    JPanel execPanel = new JPanel(new BorderLayout());
-
-    execPanel.add(mExecChB, BorderLayout.WEST);
-    execPanel.add(mExecFileDialogBtn, BorderLayout.EAST);
-
-    reminderPn.add(execPanel);
-
-    JPanel pluginPn = new JPanel(new BorderLayout(5, 0));
-
-    mSendToPlugin = new JCheckBox(mLocalizer.msg("sendToPlugin", "Send to Plugin:"));
-    mAvailabePlugins = new JComboBox(getAvailablePlugins());
-    mSendToPlugin.setSelected(mSettings.getProperty("usesendplugin","false").equals("true"));
-    mAvailabePlugins.setEnabled(mSendToPlugin.isSelected() && mAvailabePlugins.getItemCount() > 0);
-
-    for (int i = 0; i < mAvailabePlugins.getItemCount(); i++) {
-      PluginAccess plugin = (PluginAccess) mAvailabePlugins.getItemAt(i);
-      if (plugin.getId().equals(mSettings.getProperty("usethisplugin", ""))) {
-        mAvailabePlugins.setSelectedIndex(i);
+    
+    mExecFileDialogBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showFileSettingsDialog();
       }
-    }
-
-    pluginPn.add(mSendToPlugin, BorderLayout.WEST);
-
+    });
+    
     mSendToPlugin.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
         mAvailabePlugins.setEnabled(mSendToPlugin.isSelected()  && mAvailabePlugins.getItemCount() > 0);
       }
     });
 
-    pluginPn.add(mAvailabePlugins, BorderLayout.CENTER);
-
-    reminderPn.add(pluginPn);
-
-    // Auto close time of the reminder frame
-    p1 = new JPanel(new FlowLayout(FlowLayout.LEADING));
-    msg = mLocalizer.msg("autoCloseReminder", "Automatically close reminder after");
-    p1.setBorder(BorderFactory.createTitledBorder(msg));
-    main.add(p1);
-
-    int autoCloseReminderTime = 0;
-    try {
-      String asString = mSettings.getProperty("autoCloseReminderTime", "0");
-      autoCloseReminderTime = Integer.parseInt(asString);
-    } catch (Exception exc) {
-      // ignore
-    }
-    mAutoCloseReminderTimeSp = new JSpinner(new SpinnerNumberModel(autoCloseReminderTime,0,600,1));
-    mAutoCloseReminderTimeSp.setBorder(null);
-    mAutoCloseReminderTimeSp.setPreferredSize(mAutoCloseReminderTimeSp.getPreferredSize());
-    p1.add(mAutoCloseReminderTimeSp);
-
-    p1.add(new JLabel(mLocalizer.msg("seconds", "seconds (0 = off)")));
-
-
-    JPanel reminderMinutesPn = new JPanel(new FlowLayout(FlowLayout.LEADING));
-    reminderMinutesPn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("defaltReminderEntry","Default reminder time")));
-
-    String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
-    mDefaultReminderEntryList =new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
-    if (defaultReminderEntryStr != null) {
-      try {
-        int inx = Integer.parseInt(defaultReminderEntryStr);
-        if (inx < ReminderDialog.SMALL_REMIND_MSG_ARR.length) {
-          mDefaultReminderEntryList.setSelectedIndex(inx);
-        }
-      }catch(NumberFormatException e) {
-        // ignore
-      }
-    }
-    reminderMinutesPn.add(mDefaultReminderEntryList);
-
-    main.add(reminderMinutesPn);
-
-    return mSettingsPn;
+    return pb.getPanel();
   }
 
 
@@ -345,8 +323,8 @@ public class ReminderSettingsTab implements SettingsTab {
   private void showFileSettingsDialog() {
     ExecuteSettingsDialog execSettingsDialog;
 
-    Window wnd = UiUtilities.getBestDialogParent(mSettingsPn);
-
+    Window wnd = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    
     if (wnd instanceof JDialog) {
       execSettingsDialog = new ExecuteSettingsDialog((JDialog) wnd, mExecFileStr, mExecParamStr);
     } else {
@@ -384,6 +362,8 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
 
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
+    
+    mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSlectionDlg.isSelected()));
   }
 
   /**

@@ -216,8 +216,10 @@ public class ReminderPlugin implements ContextMenuIf {
 
       final ReminderListItem item = mReminderList.getReminderItem(program);
       String[] entries = ReminderFrame.REMIND_MSG_ARR;
-      ActionMenu[] actions = new ActionMenu[entries.length];
-      for (int i = 0; i < actions.length; i++) {
+      ActionMenu[] actions = new ActionMenu[entries.length - 1];
+      ActionMenu[] sub = new ActionMenu[2];
+      
+      for (int i = 0; i < entries.length; i++) {
         final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
         ContextMenuAction a = new ContextMenuAction();
         a.setText(entries[i]);
@@ -231,10 +233,19 @@ public class ReminderPlugin implements ContextMenuIf {
             }
           }
         });
-        actions[i] = new ActionMenu(a, minutes == item.getMinutes());
+        
+        if(i == 0)
+          sub[0] = new ActionMenu(a);
+        else
+          actions[i - 1] = new ActionMenu(a, minutes == item.getMinutes());
       }
+      
+      ContextMenuAction times = new ContextMenuAction();
+      times.setText(mLocalizer.msg("timeMenu", "Reminder time"));
+      
+      sub[1] = new ActionMenu(times,actions);
 
-      return new ActionMenu(action, actions);
+      return new ActionMenu(action, sub);
     } else if ((program.isExpired() || program.isOnAir())
         && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {
       return null;
@@ -245,15 +256,31 @@ public class ReminderPlugin implements ContextMenuIf {
           "appointment-new", 16));
       action.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
-          ReminderDialog dlg = new ReminderDialog(parentFrame, program,
+          Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+          ReminderDialog dlg;
+          
+          if(w instanceof JFrame)
+            dlg = new ReminderDialog((JFrame) w, program,
               mSettings);
-          UiUtilities.centerAndShow(dlg);
-          if (dlg.getOkPressed()) {
+          else
+            dlg = new ReminderDialog((JDialog) w, program,
+                mSettings);
+          
+          if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
+            UiUtilities.centerAndShow(dlg);
+            
+            if (dlg.getOkPressed()) {
+              int minutes = dlg.getReminderMinutes();
+              mReminderList.add(program, minutes);
+              mReminderList.unblockProgram(program);
+            }
+            dlg.dispose();
+          }
+          else {
             int minutes = dlg.getReminderMinutes();
             mReminderList.add(program, minutes);
-            mReminderList.unblockProgram(program);
+            mReminderList.unblockProgram(program);            
           }
-          dlg.dispose();
         }
       });
       return new ActionMenu(action);
@@ -322,10 +349,8 @@ public class ReminderPlugin implements ContextMenuIf {
   public ActionMenu getButtonAction(final Frame parentFrame) {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        JDialog dlg = new ReminderListDialog(parentFrame, mReminderList);
-        dlg.setSize(600, 350);
+        ReminderListDialog dlg = new ReminderListDialog(parentFrame, mReminderList);
         UiUtilities.centerAndShow(dlg);
-        dlg.dispose();
       }
     };
 

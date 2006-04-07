@@ -25,25 +25,35 @@
  */
 package tvbrowser.extras.reminderplugin;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.icontheme.IconLoader;
-import util.ui.ChannelLabel;
-import util.ui.ProgramPanel;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import util.ui.ProgramTableCellRenderer;
+import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.Program;
@@ -58,178 +68,215 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(ReminderListDialog.class);
 
-  private static final String[] REMIND_MSG_ARR = ReminderFrame.REMIND_MSG_ARR;
-  private static final int[] REMIND_VALUE_ARR = ReminderFrame.REMIND_VALUE_ARR;
-
-  private static final int DONT_REMEMBER = 0;
-
   private ReminderList reminderList;
-
-  private JPanel mListPanel;
-  private JScrollPane mScrollPane;
-
-
+  private JTable mTable;
 
   public ReminderListDialog(Frame parent, ReminderList list) {
     super(parent,true);
     UiUtilities.registerForClosing(this);
     
-    String msg;
-
     reminderList=list;
     setTitle(mLocalizer.msg("title", "Reminder"));
+    createGui();
+  }
+  
+  private void createGui() {
+    JPanel panel = (JPanel) getContentPane();
 
-    JPanel contentpane=(JPanel)getContentPane();
-    contentpane.setLayout(new BorderLayout(0,12));
-    contentpane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-    msg = mLocalizer.msg("labelText", "You will be reminded for the following programs:");
-    JLabel label = new JLabel(msg);
-    contentpane.add(label,BorderLayout.NORTH);
+    panel.setLayout(new FormLayout("fill:default:grow", "fill:default:grow, 3dlu, default"));
 
-    mListPanel=new JPanel();
-    mListPanel.setLayout(new BoxLayout(mListPanel,BoxLayout.Y_AXIS));
+    panel.setBorder(Borders.DLU4_BORDER);
 
-    if (list!=null) {
-      ReminderListItem[] items = list.getReminderItems();
-      Arrays.sort(items);
-      for (int i=0; i<items.length; i++) {
-        mListPanel.add(createListItemPanel(items[i]));
-      }
-    }
+    CellConstraints cc = new CellConstraints();
 
-    mScrollPane = new JScrollPane(mListPanel);
-    mScrollPane.getVerticalScrollBar().setUnitIncrement(30);
-    mScrollPane.getHorizontalScrollBar().setUnitIncrement(30);
-    contentpane.add(mScrollPane, BorderLayout.CENTER);
+    ReminderTableModel model = new ReminderTableModel(reminderList);
 
-    JPanel btnPanel=new JPanel(new BorderLayout());
-
-    JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
-    getRootPane().setDefaultButton(closeBtn);
-
-    closeBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        hide();
+    mTable = new JTable();
+    mTable.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_ENTER)
+          mTable.getRootPane().dispatchEvent(e);
       }
     });
+    
+    mTable.addMouseListener(new MouseAdapter() {
 
-
-    btnPanel.add(closeBtn,BorderLayout.EAST);
-
-    JButton sendBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16));
-
-    sendBtn.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
-    sendBtn.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-      //  showSendDialog();
-      }
-
-    });
-
-    btnPanel.add(sendBtn, BorderLayout.WEST);
-
-    contentpane.add(btnPanel,BorderLayout.SOUTH);   
-  }
-
-/*  private void showSendDialog() {
-
-    ReminderListItem[] items = reminderList.getReminderItems();
-    Program[] programArr = new Program[items.length];
-    for (int i=0; i<items.length; i++) {
-      programArr[i] = items[i].getProgram();
-    }
-
-    if (programArr.length > 0) {
-      SendToPluginDialog send = new SendToPluginDialog(mPlugin, this, programArr);
-      send.show();
-    }
-    else {
-      JOptionPane.showMessageDialog(this, mLocalizer.msg("noProgramToExport","There are no programs to export."));
-    }
-  }  */
-
-  private void removeReminderListItem(ReminderListItem item, JPanel panel) {
-    reminderList.remove(item.getProgramItem());
-    mListPanel.remove(panel);
-    mScrollPane.updateUI();
-    ReminderPlugin.getInstance().updateRootNode();
-  }
-
-  private JPanel createListItemPanel(final ReminderListItem item) {
-
-    final Program prog=item.getProgram();
-
-    final JPanel result=new JPanel(new BorderLayout());
-    result.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-    JPanel panel1=new JPanel(new BorderLayout());
-    JPanel panel2=new JPanel(new BorderLayout());
-
-
-    final JComboBox box1=new JComboBox(REMIND_MSG_ARR);
-
-    box1.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        int inx = box1.getSelectedIndex();
-        if (inx == DONT_REMEMBER) {
-          removeReminderListItem(item,result);
-        } else {
-          item.setMinutes(REMIND_VALUE_ARR[inx]);
+      public void mousePressed(MouseEvent evt) {
+        if (evt.isPopupTrigger()) {
+          showPopup(evt);
         }
       }
+
+      public void mouseReleased(MouseEvent evt) {
+        if (evt.isPopupTrigger()) {
+          showPopup(evt);
+        }
+      }
+
+      public void mouseClicked(MouseEvent e) {
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
+          int column = mTable.columnAtPoint(e.getPoint());
+          
+          if (column == 1)
+            return;
+          
+          int row = mTable.rowAtPoint(e.getPoint());
+          
+          mTable.changeSelection(row, 0, false, false);
+          Program p = (Program) mTable.getModel().getValueAt(row, 0);
+          
+          PluginManagerImpl.getInstance().handleProgramDoubleClick(p, ReminderPlugin.getInstance());
+        }
+        if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+          int row = mTable.rowAtPoint(e.getPoint());
+          mTable.changeSelection(row, 0, false, false);
+          Program p = (Program) mTable.getModel().getValueAt(row, 0);
+          
+          PluginManagerImpl.getInstance().handleProgramMiddleClick(p, ReminderPlugin.getInstance());
+        }
+        mTable.updateUI();
+      }
     });
 
-    // select the right item
-    int minutes = item.getMinutes();
-    int idx = 0;
-    for (int i = 0; i < REMIND_VALUE_ARR.length; i++) {
-      if (minutes == REMIND_VALUE_ARR[i]) {
-        idx = i;
-        break;
+    installTableModel(model);
+
+    panel.add(new JScrollPane(mTable), cc.xy(1, 1));
+
+    ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
+
+    JButton send = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16));
+    send.setToolTipText(mLocalizer.msg("send","Send to other Plugins"));
+
+    send.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showSendDialog();
+      }
+    });
+    
+    builder.addFixed(send);
+    builder.addRelatedGap();
+
+    JButton delete = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+    delete.setToolTipText(mLocalizer.msg("delete","Remove selected programs from reminder list"));
+
+    delete.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        deleteItems();
+      }
+    });
+
+    builder.addFixed(delete);
+    builder.addRelatedGap();
+
+
+    JButton ok = new JButton(mLocalizer.msg("close","Close"));
+
+    ok.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (mTable.isEditing()) {
+          mTable.getCellEditor().stopCellEditing();
+        }
+        dispose();
+      }
+    });
+
+    builder.addGlue();
+    builder.addFixed(ok);
+
+    panel.add(builder.getPanel(), cc.xy(1, 3));
+    pack();
+
+    getRootPane().setDefaultButton(ok);
+    
+    setSize(new Dimension(550, 350));
+  }
+  
+  private void installTableModel(ReminderTableModel model) {
+    mTable.setModel(model);
+    mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer());
+    mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
+    mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
+  }
+  
+  private void deleteItems() {
+    int[] selected = mTable.getSelectedRows();
+    
+    if (selected.length < 1) {
+      int i = JOptionPane.showConfirmDialog(this,mLocalizer.msg("deleteQuestion",
+          "Should all Reminders be deleted?"),mLocalizer.msg("delTitle","Delete Reminder"),
+          JOptionPane.YES_NO_CANCEL_OPTION);
+      
+      if(i == 0) {
+        mTable.getSelectionModel().setSelectionInterval(0, mTable.getRowCount() - 1);
+        selected = mTable.getSelectedRows();
       }
     }
-    box1.setSelectedIndex(idx);
+    
+    if (selected.length > 0) {
+      Arrays.sort(selected);
 
-    JLabel dateLabel=new JLabel(prog.getDate().toString());
-    ChannelLabel channelLabel=new ChannelLabel(prog.getChannel());
+      for (int i = 0; i < selected.length; i++) {
+        Program prog = (Program) mTable.getValueAt(selected[i], 0);
 
-    dateLabel.setPreferredSize(new java.awt.Dimension(100,(int)dateLabel.getPreferredSize().getHeight()));
-
-    JPanel panel3=new JPanel(new BorderLayout());
-    panel3.add(channelLabel,BorderLayout.NORTH);
-    panel1.add(dateLabel,BorderLayout.NORTH);
-    panel1.add(panel3,BorderLayout.CENTER);
-
-    JPanel panel4=new JPanel();
-    panel4.setLayout(new BoxLayout(panel4,BoxLayout.Y_AXIS));
-    panel2.add(panel4,BorderLayout.NORTH);
-
-
-    JPanel panel5=new JPanel(new BorderLayout());
-    panel4.add(box1);
-    panel4.add(panel5);
-    Icon icon = IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 22);
-    String msg = mLocalizer.msg("delete", "Delete this program from reminder list");
-    JButton deleteBtn = UiUtilities.createToolBarButton(msg, icon);
-    deleteBtn.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        removeReminderListItem(item,result);
+        reminderList.remove(prog);
       }
-    });
-    panel5.add(deleteBtn,BorderLayout.EAST);
 
-    result.add(panel1,BorderLayout.WEST);
-    result.add(panel2,BorderLayout.EAST);
+      final int row = selected[0] - 1;
 
-    ProgramPanel panel = new ProgramPanel(prog);
-    //panel.addPluginContextMenuMouseListener(mPlugin);
-    result.add(panel, BorderLayout.CENTER);
+      installTableModel(new ReminderTableModel(reminderList));
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mTable.scrollRectToVisible(mTable.getCellRect(row, 0, true));
+        };
+      });
+    }
 
-    return result;
+  }
+
+  private void showSendDialog() {
+    int[] rows = mTable.getSelectedRows();
+    Program[] programArr;
+    
+    if(rows == null || rows.length == 0) {
+      ReminderListItem[] items = reminderList.getReminderItems();
+      programArr = new Program[items.length];
+      
+      for (int i=0; i<items.length; i++)
+        programArr[i] = items[i].getProgram();
+    }
+    else {
+      ArrayList programs = new ArrayList();
+      
+      for (int i = 0; i < rows.length; i++)
+        programs.add((Program)mTable.getValueAt(rows[i],0));
+      
+      programArr = new Program[programs.size()];
+      programs.toArray(programArr);
+    }
+      
+    if (programArr.length > 0) {
+      SendToPluginDialog send = new SendToPluginDialog(null, this, programArr);
+      send.setVisible(true);
+    }
+  }
+  
+  /**
+   * Shows the Popup
+   * @param e Mouse-Event
+   */
+  private void showPopup(MouseEvent e) {
+    int row = mTable.rowAtPoint(e.getPoint());
+
+    mTable.changeSelection(row, 0, false, false);
+
+    Program p = (Program) mTable.getModel().getValueAt(row, 0);
+
+    JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPlugin.getInstance());
+    menu.show(mTable, e.getX() - 15, e.getY() - 15);
   }
 
   public void close() {
-    setVisible(false);
+    dispose();
   }
 
 }
