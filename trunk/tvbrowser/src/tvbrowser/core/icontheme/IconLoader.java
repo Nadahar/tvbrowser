@@ -228,7 +228,7 @@ public class IconLoader {
     
     // Forth Try: Icon in Plugin-Jar
     if(plugin != null) {
-      StringBuffer buffer = new StringBuffer("/").append(plugin.getClass().getPackage().getName()).append("/icons/").append(icon.getSize()).append("x").append(icon.getSize()).append("/").append(icon.getCategory()).append("/").append(icon.getCategory()).append(".png");
+      StringBuffer buffer = new StringBuffer("/").append(plugin.getClass().getPackage().getName()).append("/icons/").append(icon.getSize()).append("x").append(icon.getSize()).append("/").append(icon.getCategory()).append("/").append(icon.getName()).append(".png");
             
       if (plugin.getClass().getResourceAsStream(buffer.toString()) != null) {
         try {
