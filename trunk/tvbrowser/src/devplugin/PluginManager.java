@@ -202,8 +202,8 @@ public interface PluginManager {
    * @param caller The calling plugin.
    * @return a context menu for the given program.
    */
-  public JPopupMenu createPluginContextMenu(Program program, Plugin caller);
-
+  public JPopupMenu createPluginContextMenu(Program program, ContextMenuIf caller);
+  
   /**
    * Returns an array of all available filters.
    *
@@ -242,13 +242,14 @@ public interface PluginManager {
    * Executes the default context menu plugin.
    *
    * @param program The program to pass to the default context menu plugin.
-   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice
+   * @param caller The ContextMenuIf that calls this. Prevents the ContextMenuIf
+   *        to be activated twice
    *
    * @since 1.1
    */
-  public void handleProgramDoubleClick(Program program, Plugin caller);
+  public void handleProgramDoubleClick(Program program, ContextMenuIf caller);
 
-
+  
   /**
    * Handles a middle click on a program.
    * <p>
@@ -269,12 +270,13 @@ public interface PluginManager {
    * Executes the middle click context menu plugin.
    *
    * @param program The program to pass to the middle click context menu plugin.
-   * @param caller Plugin that calls this. Prevents the Plugin to be activated twice.
+   * @param caller The ContextMenuIf that calls this. Prevents the ContextMenuIf
+   *        to be activated twice.
    *
    * @since 1.1
    */
-  public void handleProgramMiddleClick(Program program, Plugin caller);
-
+  public void handleProgramMiddleClick(Program program, ContextMenuIf caller);
+  
   /**
    * Returns some settings a plugin may need.
    *
