@@ -289,6 +289,7 @@
     <!-- Make the TV-Browser runtime -->
     <delete dir="${tvbrowser-default.runtime.dir}"/>
     <mkdir dir="${tvbrowser-default.runtime.dir}"/>
+	<mkdir dir="${tvbrowser-default.runtime.dir}/plugins"/>
 
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <mkdir dir="${unpacked.dir}/skinlf.jar"/>
