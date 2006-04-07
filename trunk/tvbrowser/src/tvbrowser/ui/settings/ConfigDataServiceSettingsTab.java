@@ -53,8 +53,8 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
 
     JPanel mainPn=new JPanel(new BorderLayout());
-    mainPn.setBorder(Borders.DIALOG_BORDER);//.setBorder(BorderFactory.createEmptyBorder(5,8,5,8));
-    PluginInfoPanel infoPn=new PluginInfoPanel();
+    mainPn.setBorder(Borders.DIALOG_BORDER);
+    PluginInfoPanel infoPn=new PluginInfoPanel(true);
     infoPn.setDefaultBorder(false);
     infoPn.setPluginInfo(mDataService.getInfo());
     mainPn.add(infoPn,BorderLayout.NORTH);
