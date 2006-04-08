@@ -43,6 +43,7 @@ import java.awt.event.ActionEvent;
 import tvbrowser.extras.favoritesplugin.core.*;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.core.icontheme.IconLoader;
 import devplugin.Channel;
@@ -68,7 +69,7 @@ public class EditFavoriteDialog extends JDialog {
   private JLabel mChannelLabel;
 
   private Channel[] mChannelArr;
-  private JTextField mSearchTextTf;
+ // private JTextField mSearchTextTf;
 
   private JButton mNewExclusionBtn;
   private JButton mEditExclusionBtn;
@@ -78,6 +79,7 @@ public class EditFavoriteDialog extends JDialog {
   private TimePeriodChooser mTimePeriodChooser;
 
   private boolean mOkWasPressed;
+  private FavoriteConfigurator mFavoriteConfigurator;
 
 
   public EditFavoriteDialog(Frame parent, Favorite fav) {
@@ -95,6 +97,7 @@ public class EditFavoriteDialog extends JDialog {
 
     mOkWasPressed = false;
     mFavorite = fav;
+    mFavoriteConfigurator = mFavorite.createConfigurator();
 
     setTitle(mLocalizer.msg("title","Edit Favorite"));
     Container rootPn = getContentPane();
@@ -106,7 +109,7 @@ public class EditFavoriteDialog extends JDialog {
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.head","Favorite")));
 
-    content.add(createHeaderPanel());
+    content.add(mFavoriteConfigurator.createConfigurationPanel());
 
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.details","Details")));
@@ -148,30 +151,39 @@ public class EditFavoriteDialog extends JDialog {
   }
 
 
-  private JPanel createHeaderPanel() {
+  //private JPanel createHeaderPanel() {
 
-    String searchText = mFavorite.getSearchFormSettings().getSearchText();
-    mSearchTextTf = new JTextField(searchText);
-    if (mFavorite instanceof TitleFavorite) {
-      JPanel panel = new JPanel(new GridLayout(-1, 1));
-      panel.add(new JLabel(mLocalizer.msg("title-favorite.term","Any program whose title contains this term will be marked as a favorite:")));
 
-      panel.add(mSearchTextTf);
-      return panel;
+
+   /* if (mFavorite instanceof AdvancedFavorite) {
+      return new JPanel();
     }
-    else if (mFavorite instanceof TopicFavorite) {
-      JPanel panel = new JPanel(new GridLayout(-1, 1));
-      panel.add(new JLabel(mLocalizer.msg("topic-favorite.term","Any program containing this term will be marked as a favorite:")));
-      panel.add(mSearchTextTf);
-      return panel;
-    }
-    else if (mFavorite instanceof ActorsFavorite) {
-      JPanel panel = new JPanel();
-      panel.add(new JLabel("Sendungen werden als Favorite markiert, falls einer dieser Schauspieler vorkommt:"));
-      return panel;
-    }
-    return new JPanel();
-  }
+    else {
+
+      String searchText = mFavorite.getSearchFormSettings().getSearchText();
+      mSearchTextTf = new JTextField(searchText);
+      if (mFavorite instanceof TitleFavorite) {
+        JPanel panel = new JPanel(new GridLayout(-1, 1));
+        panel.add(new JLabel(mLocalizer.msg("title-favorite.term","Any program whose title contains this term will be marked as a favorite:")));
+
+        panel.add(mSearchTextTf);
+        return panel;
+      }
+      else if (mFavorite instanceof TopicFavorite) {
+        JPanel panel = new JPanel(new GridLayout(-1, 1));
+        panel.add(new JLabel(mLocalizer.msg("topic-favorite.term","Any program containing this term will be marked as a favorite:")));
+        panel.add(mSearchTextTf);
+        return panel;
+      }
+      else if (mFavorite instanceof ActorsFavorite) {
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Sendungen werden als Favorite markiert, falls einer dieser Schauspieler vorkommt:"));
+        return panel;
+      }
+      return new JPanel();
+    }  */
+   // return null;
+  //}
 
 
   private String getChannelString(Channel[] channelArr) {
@@ -407,8 +419,9 @@ public class EditFavoriteDialog extends JDialog {
   private void saveAndClose() {
 
 
-    String searchText = mSearchTextTf.getText();
-    mFavorite.getSearchFormSettings().setSearchText(searchText);
+//    String searchText = mSearchTextTf.getText();
+//    mFavorite.getSearchFormSettings().setSearchText(searchText);
+    mFavoriteConfigurator.save();
 
     if (mLimitTimeCb.isSelected()) {
       mFavorite.getLimitationConfiguration().setTime(mTimePeriodChooser.getFromTime(), mTimePeriodChooser.getToTime());

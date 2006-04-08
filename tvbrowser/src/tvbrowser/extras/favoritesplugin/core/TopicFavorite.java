@@ -26,16 +26,21 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import devplugin.Program;
 
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.awt.*;
 
-import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+
+import javax.swing.*;
 
 public class TopicFavorite extends Favorite {
+
+  public static final util.ui.Localizer mLocalizer
+     = util.ui.Localizer.getLocalizerFor(TopicFavorite.class);
 
   public static final String TYPE_ID = "topic";
 
@@ -69,25 +74,36 @@ public class TopicFavorite extends Favorite {
     return mSearchFormSettings;
   }
 
-  public void _writeData(ObjectOutputStream out) throws IOException {
+  protected void _writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1);  // version
     out.writeObject(mTopic);
   }
 
-  public void _handleContainingPrograms(Program[] progs) {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
 
-  public void _unmarkPrograms() {
-    //To change body of implemented methods use File | Settings | File Templates.
+  public FavoriteConfigurator createConfigurator() {
+    return new Configurator();
   }
 
 
-  public boolean _contains(Program prog) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+  class Configurator implements FavoriteConfigurator {
+
+    private JTextField mSearchTextTf;
+
+    public Configurator() {
+      mSearchTextTf = new JTextField();
+    }
+
+    public JPanel createConfigurationPanel() {
+      JPanel panel = new JPanel(new GridLayout(-1, 1));
+      panel.add(new JLabel(mLocalizer.msg("topic-favorite.term","Any program containing this term will be marked as a favorite:")));
+      panel.add(mSearchTextTf);
+      return panel;
+    }
+
+    public void save() {
+      String searchText = mSearchTextTf.getText();
+      getSearchFormSettings().setSearchText(searchText);
+    }
   }
 
-  public void _updatePrograms() throws TvBrowserException {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
 }

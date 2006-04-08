@@ -27,14 +27,14 @@
 package tvbrowser.extras.favoritesplugin.core;
 
 import tvbrowser.extras.favoritesplugin.ClassicFavorite;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import devplugin.Program;
-
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-
-import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
+import util.ui.SearchForm;
+import javax.swing.*;
 
 public class AdvancedFavorite extends Favorite {
 
@@ -55,20 +55,16 @@ public class AdvancedFavorite extends Favorite {
     setName(mClassicFavorite.getTitle());
   }
 
-  public AdvancedFavorite() {
+  public AdvancedFavorite(String searchText) {
     super();
-    mClassicFavorite = new ClassicFavorite();
+    mClassicFavorite = new ClassicFavorite(searchText);
   }
 
+ 
   public String getTypeID() {
     return TYPE_ID;
   }
 
-//  public AdvancedFavorite(ClassicFavorite fav) {
-//    super();
-//    mClassidFavorite = fav;
-//    setName(mClassidFavorite.getTitle());
-//  }
 
   public ClassicFavorite getClassicFavorite() {
     return mClassicFavorite;
@@ -87,24 +83,41 @@ public class AdvancedFavorite extends Favorite {
   }
 
 
+  public FavoriteConfigurator createConfigurator() {
+    return new Configurator();
+  }
 
-
-
- 
-
-
-  public void _writeData(ObjectOutputStream out) throws IOException {
+  protected void _writeData(ObjectOutputStream out) throws IOException {
     mClassicFavorite.writeData(out);
   }
 
 
 
-  public boolean _contains(Program prog) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+  class Configurator implements FavoriteConfigurator {
+
+    private SearchForm mSearchForm;
+
+    public Configurator() {
+
+    }
+
+    public JPanel createConfigurationPanel() {
+      mSearchForm = new SearchForm(true, false, false, SearchForm.LAYOUT_HORIZONTAL);
+      mSearchForm.setSearchFormSettings(getSearchFormSettings());
+      return mSearchForm;
+    }
+
+    public void save() {
+      SearchFormSettings settings = mSearchForm.getSearchFormSettings();
+      getSearchFormSettings().setCaseSensitive(settings.getCaseSensitive());
+      getSearchFormSettings().setNrDays(settings.getNrDays());
+      getSearchFormSettings().setSearcherType(settings.getSearcherType());
+      getSearchFormSettings().setSearchIn(settings.getSearchIn());
+      getSearchFormSettings().setSearchText(settings.getSearchText());
+      getSearchFormSettings().setUserDefinedFieldTypes(settings.getUserDefinedFieldTypes());
+
+    }
   }
 
-  public void _updatePrograms() throws TvBrowserException {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
 
 }

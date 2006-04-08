@@ -368,14 +368,14 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   private void editFavorite(Favorite favorite) {
 
-    if (favorite instanceof AdvancedFavorite) {
+ /*   if (favorite instanceof AdvancedFavorite) {
       EditClassicFavoriteDialog dlg = new EditClassicFavoriteDialog(UiUtilities.getBestDialogParent(null), ((AdvancedFavorite)favorite).getClassicFavorite());
       dlg.centerAndShow();
       if (dlg.getOkWasPressed()) {
         updateRootNode();
       }
     }
-    else {
+    else { */
       Component parent = UiUtilities.getBestDialogParent(null);
       EditFavoriteDialog dlg;
       if (parent instanceof Dialog) {
@@ -388,7 +388,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       if (dlg.getOkWasPressed()) {
         updateRootNode();
       }
-    }
+  //  }
 
   }
 
