@@ -42,6 +42,7 @@ import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
 import util.program.ProgramUtilities;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
@@ -292,15 +293,10 @@ public abstract class Favorite {
     mPrograms = (Program[])resultList.toArray(new Program[list.size()]);
   }
 
+  public abstract FavoriteConfigurator createConfigurator();
 
+  protected abstract void _writeData(ObjectOutputStream out) throws IOException;
 
-  public abstract void _writeData(ObjectOutputStream out) throws IOException;
-//
-//  public abstract ArrayList _getBlackList();
-//
-//  public abstract boolean _contains(Program prog);
-//
-//  public abstract void _updatePrograms() throws TvBrowserException;
 
 
 }

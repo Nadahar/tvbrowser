@@ -273,7 +273,7 @@ public class SearchFormSettings {
    * 
    * @return The field types defined by the user.
    */
-  ProgramFieldType[] getUserDefinedFieldTypes() {
+  public ProgramFieldType[] getUserDefinedFieldTypes() {
     return mUserDefinedFieldTypes;
   }
 

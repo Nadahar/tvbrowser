@@ -35,6 +35,7 @@ import java.util.ArrayList;
 
 import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 
 public class ActorsFavorite extends Favorite {
 
@@ -65,10 +66,14 @@ public class ActorsFavorite extends Favorite {
     //To change body of implemented methods use File | Settings | File Templates.
   }
 
-  public void _writeData(ObjectOutputStream out) throws IOException {
+  protected void _writeData(ObjectOutputStream out) throws IOException {
     //To change body of implemented methods use File | Settings | File Templates.
   }
 
+
+  public FavoriteConfigurator createConfigurator() {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  }
 
 
   public boolean _contains(Program prog) {

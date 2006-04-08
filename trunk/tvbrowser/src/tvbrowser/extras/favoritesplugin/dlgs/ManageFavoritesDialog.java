@@ -327,17 +327,17 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
   protected void editSelectedFavorite() {
     Favorite fav = (Favorite) mFavoritesList.getSelectedValue();
-    if (fav instanceof AdvancedFavorite) {
-      EditClassicFavoriteDialog dlg = new EditClassicFavoriteDialog(this, ((AdvancedFavorite)fav).getClassicFavorite());
-      dlg.centerAndShow();
-
-      if (dlg.getOkWasPressed()) {
-        mFavoritesList.repaint();
-        favoriteSelectionChanged();
-        FavoritesPlugin.getInstance().updateRootNode();
-      }
-    }
-    else {
+//    if (fav instanceof AdvancedFavorite) {
+//      EditClassicFavoriteDialog dlg = new EditClassicFavoriteDialog(this, ((AdvancedFavorite)fav).getClassicFavorite());
+//      dlg.centerAndShow();
+//
+//      if (dlg.getOkWasPressed()) {
+//        mFavoritesList.repaint();
+//        favoriteSelectionChanged();
+//        FavoritesPlugin.getInstance().updateRootNode();
+//      }
+//    }
+//    else {
       EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
       UiUtilities.centerAndShow(dlg);
       if (dlg.getOkWasPressed()) {
@@ -345,7 +345,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         favoriteSelectionChanged();
         FavoritesPlugin.getInstance().updateRootNode();
       }
-    }
+ //   }
 
   }
 
@@ -445,7 +445,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
             // Import the favorite if it is new
             if (! alreadyKnown) {
-              Favorite fav = new AdvancedFavorite(new ClassicFavorite(line));
+              AdvancedFavorite fav = new AdvancedFavorite(line);
               fav.updatePrograms();
 
               mFavoritesListModel.addElement(fav);

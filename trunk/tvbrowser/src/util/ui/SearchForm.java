@@ -36,24 +36,13 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
@@ -87,6 +76,10 @@ public class SearchForm extends JPanel {
 
   /** The maximum length of the history */
   private static final int MAX_HISTORY_LENGTH = 15;
+
+  public static final int LAYOUT_HORIZONTAL = 1;
+  public static final int LAYOUT_VERTICAL = 2;
+
   
   /**
    * The fields that can be used for searching. Is null until the first call of
@@ -122,6 +115,10 @@ public class SearchForm extends JPanel {
     this(true, showHistory, showTimeSelection);
   }
 
+  public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection) {
+    this(showInputfield, showHistory, showTimeSelection, LAYOUT_VERTICAL);
+  }
+
   /**
    * Creates a new search form.
    * 
@@ -130,14 +127,21 @@ public class SearchForm extends JPanel {
    * @param showTimeSelection Should the search time (number of days) be selectable?
    *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], devplugin.Date, int, devplugin.Channel[], boolean)}.
    */
-  public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection) {
+  public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection, int layout) {
     super();
-    
-    FormLayout layout = new FormLayout("pref, 3dlu, fill:pref:grow", "");
-    
-    DefaultFormBuilder formBuilder = new DefaultFormBuilder(layout, this);
-    
+
+    FormLayout layoutTop = new FormLayout("pref, 3dlu, fill:pref:grow", "");
+    FormLayout layoutSearchIn = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+    FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, 3dlu, pref,3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+
+    JPanel topPanel = new JPanel(layoutTop);
+    JPanel searchInPanel = new JPanel(layoutSearchIn);
+    JPanel optionsPanel = new JPanel(layoutOptions);
+
+    DefaultFormBuilder topBuilder = new DefaultFormBuilder(layoutTop, topPanel);
+
     CellConstraints cc = new CellConstraints();
+
     
     ButtonGroup bg;
     
@@ -156,23 +160,24 @@ public class SearchForm extends JPanel {
             }
           }
         });
-        formBuilder.append(mLocalizer.msg("searchTerm", "Search term"), mPatternCB);
+        topBuilder.append(mLocalizer.msg("searchTerm", "Search term"), mPatternCB);
+
       } else {
         mPatternTF = new JTextField(20);
-        formBuilder.append(mLocalizer.msg("searchTerm", "Search term"), mPatternTF);
+        topBuilder.append(mLocalizer.msg("searchTerm", "Search term"), mPatternTF);
       }
     }
 
     if (showTimeSelection) {
       mTimeCB = new JComboBox(TIME_STRING_ARR);
-      formBuilder.append(mLocalizer.msg("period", "Period"), mTimeCB);
+      topBuilder.append(mLocalizer.msg("period", "Period"), mTimeCB);
     }
     
     // Search in
     bg = new ButtonGroup();
     String msg;
     
-    formBuilder.appendSeparator(mLocalizer.msg("searchIn", "Search in"));
+    searchInPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("searchIn", "Search in")), cc.xyw(1,1,3));
 
     ActionListener updateEnabledListener = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -184,13 +189,13 @@ public class SearchForm extends JPanel {
     mSearchTitleRB.setSelected(true);
     mSearchTitleRB.addActionListener(updateEnabledListener);
     bg.add(mSearchTitleRB);
-    formBuilder.append(mSearchTitleRB, 3);
+    searchInPanel.add(mSearchTitleRB, cc.xy(2,3));
     
     msg = mLocalizer.msg("allFields", "All fields");
     mSearchAllRB = new JRadioButton(msg);
     mSearchAllRB.addActionListener(updateEnabledListener);
     bg.add(mSearchAllRB);
-    formBuilder.append(mSearchAllRB, 3);
+    searchInPanel.add(mSearchAllRB, cc.xy(2,5));
 
     mSearchUserDefinedRB = new JRadioButton(mLocalizer.msg("certainFields", "Certain Fields"));
     mSearchUserDefinedRB.addActionListener(updateEnabledListener);
@@ -206,43 +211,59 @@ public class SearchForm extends JPanel {
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(mSearchUserDefinedRB, BorderLayout.CENTER);
     panel.add(mChangeSearchFieldsBt, BorderLayout.EAST);
-    formBuilder.append(panel, 3);
-    
-    formBuilder.appendSeparator(mLocalizer.msg("options", "Options"));
+    searchInPanel.add(panel, cc.xy(2,7));
+
+    optionsPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("options", "Options")), cc.xyw(1,1,3));
 
     mCaseSensitiveChB = new JCheckBox(mLocalizer.msg("caseSensitive", "Case sensitive"));
-    formBuilder.append(mCaseSensitiveChB, 3);
+    optionsPanel.add(mCaseSensitiveChB, cc.xy(2,3));
 
     bg = new ButtonGroup();
     mSearcherTypeExactlyRB = new JRadioButton(mLocalizer.msg("matchExactly", "Match exactly"));
     bg.add(mSearcherTypeExactlyRB);
-    formBuilder.append(mSearcherTypeExactlyRB, 3);
+    optionsPanel.add(mSearcherTypeExactlyRB, cc.xy(2,5));
     
     mSearcherTypeKeywordRB = new JRadioButton(mLocalizer.msg("matchSubstring", "Term is a keyword"));
     mSearcherTypeKeywordRB.setSelected(true);
     bg.add(mSearcherTypeKeywordRB);
-    formBuilder.append(mSearcherTypeKeywordRB, 3);
+    optionsPanel.add(mSearcherTypeKeywordRB, cc.xy(2,7));
     
     mSearcherTypeBooleanRB = new JRadioButton(mLocalizer.msg("matchBoolean", "Term is a boolean (with AND, OR, a.s.o.)"));
     bg.add(mSearcherTypeBooleanRB);
-    formBuilder.append(mSearcherTypeBooleanRB, 3);
+    optionsPanel.add(mSearcherTypeBooleanRB, cc.xy(2,9));
 
     mSearcherTypeRegexRB = new JRadioButton(mLocalizer.msg("matchRegex", "Term is a regular expression"));
     bg.add(mSearcherTypeRegexRB);
-    formBuilder.append(mSearcherTypeRegexRB, 3);
+    optionsPanel.add(mSearcherTypeRegexRB, cc.xy(2,11));
     
     LinkButton b = new LinkButton(
             "("+mLocalizer.msg("regExHelp","Help for regular expressions")+")",
             mLocalizer.msg("regExUrl","http://wiki.tvbrowser.org/index.php/Regul%C3%A4re_Ausdr%C3%BCcke"));
     b.setHorizontalAlignment(LinkButton.CENTER);
-    formBuilder.append(b, 3);
+    optionsPanel.add(b, cc.xy(2,13));
 
-    formBuilder.appendUnrelatedComponentsGapRow();
     
     // Set the default settings
     setSearchFormSettings(new SearchFormSettings(""));
     
-    updateEnabled(); 
+    updateEnabled();
+
+    if (layout == LAYOUT_HORIZONTAL) {
+      setLayout(new FormLayout("pref, 3dlu, pref","pref, 3dlu, pref"));
+      add(topPanel, cc.xyw(1,1, 3));
+      add(searchInPanel, cc.xy(1,3));
+      add(optionsPanel, cc.xy(3,3));
+    }
+    else if (layout == LAYOUT_VERTICAL) {
+      setLayout(new FormLayout("pref:grow", "pref, 3dlu, pref, 3dlu, pref"));
+      add(topPanel, cc.xy(1,1));
+      add(searchInPanel, cc.xy(1,3));
+      add(optionsPanel, cc.xy(1,5));
+    }
+    else {
+      throw new IllegalArgumentException("invalid layout type: "+layout);
+    }
+
   }
   
   public void setParentDialog(JDialog parent) {
@@ -279,10 +300,15 @@ public class SearchForm extends JPanel {
   }
   
   public boolean hasFocus() {
-    if(mPatternCB != null)
+    if(mPatternCB != null) {
       return mPatternCB.getEditor().getEditorComponent().hasFocus();
-    else
+    }
+    else if (mPatternTF != null) {
       return mPatternTF.hasFocus();
+    }
+    else {
+      return false;
+    }
   }
 
   /**
