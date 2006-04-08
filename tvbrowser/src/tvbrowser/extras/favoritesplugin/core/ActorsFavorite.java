@@ -26,14 +26,12 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import devplugin.Program;
+
 
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
 
-import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 
@@ -51,36 +49,18 @@ public class ActorsFavorite extends Favorite {
   }
 
   public SearchFormSettings getSearchFormSettings() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null; 
   }
 
-  public Program[] _getPrograms() {
-    return new Program[0];  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  public void _handleContainingPrograms(Program[] progs) {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  public void _unmarkPrograms() {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
 
   protected void _writeData(ObjectOutputStream out) throws IOException {
-    //To change body of implemented methods use File | Settings | File Templates.
+
   }
 
 
   public FavoriteConfigurator createConfigurator() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
   }
 
 
-  public boolean _contains(Program prog) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  public void _updatePrograms() throws TvBrowserException {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
 }
