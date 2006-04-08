@@ -245,7 +245,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     mFavoriteArr = new Favorite[list.size()];
     list.toArray(mFavoriteArr);
 
-    ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());;
+    ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
     updateRootNode();
 
   }

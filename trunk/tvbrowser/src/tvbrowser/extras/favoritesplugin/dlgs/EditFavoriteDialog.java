@@ -45,6 +45,7 @@ import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.core.icontheme.IconLoader;
 import devplugin.Channel;
 import util.ui.TabLayout;
@@ -419,8 +420,7 @@ public class EditFavoriteDialog extends JDialog {
   private void saveAndClose() {
 
 
-//    String searchText = mSearchTextTf.getText();
-//    mFavorite.getSearchFormSettings().setSearchText(searchText);
+
     mFavoriteConfigurator.save();
 
     if (mLimitTimeCb.isSelected()) {
@@ -445,11 +445,26 @@ public class EditFavoriteDialog extends JDialog {
 
     mFavorite.setRemindAfterDownload(mReminderAfterDownloadCb.isSelected());
 
+    boolean wasReminderEnabled = mFavorite.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT);
+
     if (mUseReminderCb.isSelected()) {
+      if (!wasReminderEnabled) {
+        ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
+      }
       mFavorite.getReminderConfiguration().setReminderServices(new String[]{ReminderConfiguration.REMINDER_DEFAULT});
     }
     else {
+      if (wasReminderEnabled) {
+        ReminderPlugin.getInstance().removePrograms(mFavorite.getPrograms());
+      }
       mFavorite.getReminderConfiguration().setReminderServices(new String[]{});
+    }
+
+
+
+
+    if (mUseReminderCb.isSelected() != wasReminderEnabled) {
+      ReminderPlugin.getInstance().updateRootNode();
     }
 
     try {
