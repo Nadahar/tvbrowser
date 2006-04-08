@@ -178,7 +178,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     Favorite[] newFavoriteArr = new Favorite[size];
     for (int i = 0; i < size; i++) {
       if (version <= 2) {
-        newFavoriteArr[i] = new AdvancedFavorite(new ClassicFavorite(in));
+        newFavoriteArr[i] = new AdvancedFavorite(null, in);
       }
       else {
         String typeID = (String)in.readObject();

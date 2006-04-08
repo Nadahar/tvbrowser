@@ -26,60 +26,68 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import tvbrowser.extras.favoritesplugin.ClassicFavorite;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
-import devplugin.Program;
+import devplugin.*;
+
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
+
 import util.ui.SearchFormSettings;
 import util.ui.SearchForm;
+import util.exc.TvBrowserException;
+import util.exc.ErrorHandler;
+
 import javax.swing.*;
 
 public class AdvancedFavorite extends Favorite {
 
-  private ClassicFavorite mClassicFavorite;
+  private SearchFormSettings mSearchFormSettings;
+  private String mTitle;
 
   public static final String TYPE_ID = "advanced";
 
 
   public AdvancedFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
-    mClassicFavorite = new ClassicFavorite(in);
-    setName(mClassicFavorite.getTitle());
+    int version = in.readInt();
+    mSearchFormSettings = new SearchFormSettings(in);
+
   }
 
-  public AdvancedFavorite(ClassicFavorite fav) {
+
+  /**
+   * @deprecated
+   * @param obj
+   * @param in
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  public AdvancedFavorite(Object obj, ObjectInputStream in) throws IOException, ClassNotFoundException {
     super();
-    mClassicFavorite = fav;
-    setName(mClassicFavorite.getTitle());
+    readOldFavorite(in);
   }
 
   public AdvancedFavorite(String searchText) {
     super();
-    mClassicFavorite = new ClassicFavorite(searchText);
+    mSearchFormSettings = new SearchFormSettings(searchText);
   }
 
- 
+
   public String getTypeID() {
     return TYPE_ID;
   }
 
-
-  public ClassicFavorite getClassicFavorite() {
-    return mClassicFavorite;
-  }
-
   public SearchFormSettings getSearchFormSettings() {
-    return mClassicFavorite.getSearchFormSettings();
+    return mSearchFormSettings;
   }
 
   public String getName() {
-    return mClassicFavorite.getTitle();
-  }
-
-  public Program[] getPrograms() {
-    return mClassicFavorite.getPrograms();
+    if (mTitle != null) {
+      return mTitle;
+    }
+    return mSearchFormSettings.getSearchText();
   }
 
 
@@ -88,9 +96,136 @@ public class AdvancedFavorite extends Favorite {
   }
 
   protected void _writeData(ObjectOutputStream out) throws IOException {
-    mClassicFavorite.writeData(out);
+    out.writeInt(1); // version
+    mSearchFormSettings.writeData(out);
   }
 
+
+
+  private void readOldFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    int version = in.readInt();
+
+    if (version <= 2) {
+      String term = (String) in.readObject();
+      in.readBoolean(); // searchInTitle
+      boolean searchInText = in.readBoolean();
+      int searchMode = in.readInt();
+
+      //mSearchFormSettings = new SearchFormSettings(term);
+      mSearchFormSettings.setSearchText(term);
+      if (searchInText) {
+        mSearchFormSettings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
+      } else {
+        mSearchFormSettings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+      }
+
+      switch (searchMode) {
+        case 1: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY); break;
+        case 2: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD); break;
+        case 3: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION); break;
+      }
+    } else {
+      mSearchFormSettings = new SearchFormSettings(in);
+    }
+
+    if (version >=5) {
+      mTitle = (String)in.readObject();
+    }
+    else {
+      mTitle = mSearchFormSettings.getSearchText();
+    }
+
+    boolean useCertainChannel = in.readBoolean();
+
+    if (version < 6) {
+      String certainChannelServiceClassName = (String) in.readObject();
+      String certainChannelId;
+      if (version==1) {
+        certainChannelId=""+in.readInt();
+      }else{
+        certainChannelId=(String)in.readObject();
+      }
+      Channel ch = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
+      if (ch != null) {
+        getLimitationConfiguration().setChannels(new Channel[]{ch});
+      }
+    }
+    else {
+      if (useCertainChannel) {
+        int cnt = in.readInt();
+        ArrayList list = new ArrayList();
+        for (int i=0; i<cnt; i++) {
+          String certainChannelServiceClassName = (String) in.readObject();
+          String certainChannelId;
+          if (version==1) {
+            certainChannelId=""+in.readInt();
+          }else{
+            certainChannelId=(String)in.readObject();
+          }
+
+          Channel channel = Channel.getChannel(certainChannelServiceClassName, certainChannelId);
+          if (channel != null) {
+            list.add(channel);
+          }
+        }
+
+        getLimitationConfiguration().setChannels((Channel[])list.toArray(new Channel[list.size()]));
+      }
+    }
+
+
+
+    boolean useCertainTimeOfDay = in.readBoolean();
+    int certainFromTime = in.readInt();
+    int certainToTime = in.readInt();
+
+    if (useCertainTimeOfDay) {
+      getLimitationConfiguration().setTime(certainFromTime, certainToTime);
+    }
+
+
+    // Don't save the programs but only their date and id
+    int size = in.readInt();
+    ArrayList programList = new ArrayList(size);
+    for (int i = 0; i < size; i++) {
+      Date date = new Date(in);
+      String progID = (String) in.readObject();
+      Program program = Plugin.getPluginManager().getProgram(date, progID);
+      if (program != null) {
+        programList.add(program);
+      }
+    }
+
+    Program[] mProgramArr = new Program[programList.size()];
+    programList.toArray(mProgramArr);
+
+    if (version >=4) {
+        boolean useFilter = in.readBoolean();
+        String filterName = (String)in.readObject();
+        //ProgramFilter filter = getFilterByName(filterName);
+    } else {
+        //mUseFilter = false;
+    }
+
+    if (version >= 7) {
+      size = in.readInt();
+      for (int i = 0; i < size; i++) {
+        /* For compatibility reasons we read the programs here.
+           Later we perform an complete refresh.
+         */
+        Date programDate = new Date(in);
+        String programId = (String) in.readObject();
+      }
+    }
+
+    try {
+      this.updatePrograms();
+    } catch (TvBrowserException exc) {
+      ErrorHandler.handle("Could not update favorites.", exc);
+
+    }
+
+  }
 
 
   class Configurator implements FavoriteConfigurator {

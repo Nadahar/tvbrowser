@@ -117,7 +117,7 @@ public class WizardDialog extends JDialog implements WindowClosingIf {
     close(CANCEL);
   }
 
-  private void close(int val) {
+  public void close(int val) {
     mResult = val;
     hide();
   }
