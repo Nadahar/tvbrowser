@@ -29,7 +29,6 @@ public class TypeWizardStep implements WizardStep {
 
   private JRadioButton mTitleRb;
   private JRadioButton mTopicRb;
-  private JRadioButton mActorRb;
 
   private Favorite mFavorite;
 
@@ -78,9 +77,22 @@ public class TypeWizardStep implements WizardStep {
     ButtonGroup group = new ButtonGroup();
     group.add(mTitleRb);
     group.add(mTopicRb);
-    group.add(mActorRb);
 
     mTitleRb.setSelected(true);
+
+    updateTextfields();
+
+    mTitleRb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        updateTextfields();
+      }
+    });
+
+    mTopicRb.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        updateTextfields();
+      }
+    });
 
     expertBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -118,6 +130,11 @@ public class TypeWizardStep implements WizardStep {
     return mContent;
   }
 
+
+  private void updateTextfields() {
+    mProgramNameTf.setEnabled(mTitleRb.isSelected());
+    mTopicTf.setEnabled(mTopicRb.isSelected());
+  }
 
   private Favorite createFavorite() {
     if (mTitleRb.isSelected()) {
