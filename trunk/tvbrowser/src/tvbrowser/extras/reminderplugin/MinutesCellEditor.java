@@ -12,7 +12,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 public class MinutesCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-  JComboBox mComboBox;
+  private JComboBox mComboBox;
   
   protected static final String EDIT = "edit";
 
@@ -49,9 +49,13 @@ public class MinutesCellEditor extends AbstractCellEditor implements TableCellEd
     return true;
   }
   
-  // Implement the one method defined by TableCellEditor.
-  public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-    setValue(value);
+  public JComboBox getComboBox() {
     return mComboBox;
   }
+  
+  // Implement the one method defined by TableCellEditor.
+  public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) { 
+    setValue(value);
+    return mComboBox;
+  }  
 }

@@ -114,6 +114,16 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
       }
 
       public void mouseClicked(MouseEvent e) {
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1)) {
+          int column = mTable.columnAtPoint(e.getPoint());
+          
+          if(column == 1) {
+            int row = mTable.rowAtPoint(e.getPoint());
+            int height = mTable.getRowHeight(row);
+            
+            ((MinutesCellRenderer)mTable.getCellRenderer(row,column)).trackSingleClick(e.getPoint(),mTable,height,row,column);
+          }
+        }
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2)) {
           int column = mTable.columnAtPoint(e.getPoint());
           
