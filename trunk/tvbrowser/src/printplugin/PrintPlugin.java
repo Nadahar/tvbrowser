@@ -154,9 +154,9 @@ public class PrintPlugin extends Plugin {
       public void actionPerformed(ActionEvent e) {
         Window w = UiUtilities.getLastModalChildOf(getParentFrame());
         if(w instanceof JDialog)
-          new ProgramInfoPrintDialog((JDialog)w);
+          new ProgramInfoPrintDialog((JDialog)w, program);
         else if(w instanceof JFrame)
-          new ProgramInfoPrintDialog((JFrame)w);
+          new ProgramInfoPrintDialog((JFrame)w, program);
       }
     };
     action[1].putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));
