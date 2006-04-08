@@ -1,8 +1,8 @@
 package tvbrowser.extras.favoritesplugin.wizards;
 
 import tvbrowser.extras.favoritesplugin.core.*;
-import tvbrowser.extras.favoritesplugin.EditClassicFavoriteDialog;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
 
 import javax.swing.*;
 
@@ -10,9 +10,11 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.builder.PanelBuilder;
 import util.ui.LinkButton;
+import util.ui.UiUtilities;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.*;
 
 import devplugin.Program;
 
@@ -83,10 +85,19 @@ public class TypeWizardStep implements WizardStep {
     expertBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         handler.closeCurrentStep();
-        AdvancedFavorite fav = new AdvancedFavorite(mProgram.getTitle());
-        EditClassicFavoriteDialog dlg = new EditClassicFavoriteDialog(mContent, fav.getClassicFavorite());
-        FavoritesPlugin.getInstance().addFavorite(fav);
-        dlg.centerAndShow();
+        AdvancedFavorite favorite = new AdvancedFavorite(mProgram.getTitle());
+        Component parent = UiUtilities.getBestDialogParent(null);
+        EditFavoriteDialog dlg;
+        if (parent instanceof Dialog) {
+          dlg = new EditFavoriteDialog((Dialog)parent, favorite);
+        }
+        else {
+          dlg = new EditFavoriteDialog((Frame)parent, favorite);
+        }
+        UiUtilities.centerAndShow(dlg);
+        if (dlg.getOkWasPressed()) {
+          FavoritesPlugin.getInstance().updateRootNode();
+        }
       }
     });
 
