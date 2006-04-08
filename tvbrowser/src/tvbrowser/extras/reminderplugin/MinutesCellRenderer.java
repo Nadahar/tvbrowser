@@ -1,6 +1,9 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.Component;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,6 +48,19 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
     }
     
     return def;
+  }
+  
+  public void  trackSingleClick(Point p, JTable table, int y, int row,int column) {
+    for(int i = 0; i < row; i++)
+      p.move(p.x,p.y - table.getRowHeight(i));      
+    
+    Rectangle rect = new Rectangle(table.getColumnModel().getColumn(0).getWidth() + mIconLabel.getLocation().x
+        ,y/2-8,16,16);
+    
+    if(rect.contains(p)) {
+      table.editCellAt(row,column);
+      ((MinutesCellEditor)table.getCellEditor()).getComboBox().processKeyEvent(new KeyEvent(mIconLabel,KeyEvent.KEY_PRESSED,0,0,KeyEvent.VK_DOWN,KeyEvent.CHAR_UNDEFINED)); 
+    }
   }
   
 }
