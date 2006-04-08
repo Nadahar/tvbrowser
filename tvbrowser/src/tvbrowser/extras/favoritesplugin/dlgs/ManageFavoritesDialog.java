@@ -26,37 +26,57 @@
 
 package tvbrowser.extras.favoritesplugin.dlgs;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 
-import javax.swing.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import util.ui.*;
-import util.exc.TvBrowserException;
-import util.exc.ErrorHandler;
-import devplugin.Program;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
-import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
-import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.EditClassicFavoriteDialog;
-import tvbrowser.extras.favoritesplugin.ClassicFavorite;
+import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
+import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.ui.ExtensionFileFilter;
+import util.ui.ProgramList;
+import util.ui.SendToPluginDialog;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import devplugin.Program;
 
 
 /**
