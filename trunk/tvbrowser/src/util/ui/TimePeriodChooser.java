@@ -7,6 +7,9 @@ import java.awt.*;
 
 public class TimePeriodChooser extends JPanel {
 
+   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TimePeriodChooser.class);
+
   public static final int ALIGN_LEFT = 0;
   public static final int ALIGN_RIGHT = 1;
   public static final int ALGIN_CENTER = 2;
@@ -23,7 +26,7 @@ public class TimePeriodChooser extends JPanel {
   public TimePeriodChooser(int from, int to, int alignment) {
     super(new BorderLayout());
 
-    String timePattern = "HH:mm";
+    String timePattern = mLocalizer.msg("timePattern","HH:mm");
 
     JPanel content = new JPanel();
 
@@ -33,9 +36,9 @@ public class TimePeriodChooser extends JPanel {
     mTimeToSp = new JSpinner(new SpinnerDateModel());
     mTimeToSp.setEditor(new JSpinner.DateEditor(mTimeToSp, timePattern));
 
-    content.add(mLabel1 = new JLabel("between"));
+    content.add(mLabel1 = new JLabel(mLocalizer.msg("between","between")));
     content.add(mTimeFromSp);
-    content.add(mLabel2 = new JLabel("and"));
+    content.add(mLabel2 = new JLabel(mLocalizer.msg("and","and")));
     content.add(mTimeToSp);
 
 
