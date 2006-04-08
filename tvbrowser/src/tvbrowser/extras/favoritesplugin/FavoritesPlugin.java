@@ -368,27 +368,18 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   private void editFavorite(Favorite favorite) {
 
- /*   if (favorite instanceof AdvancedFavorite) {
-      EditClassicFavoriteDialog dlg = new EditClassicFavoriteDialog(UiUtilities.getBestDialogParent(null), ((AdvancedFavorite)favorite).getClassicFavorite());
-      dlg.centerAndShow();
-      if (dlg.getOkWasPressed()) {
-        updateRootNode();
-      }
+    Component parent = UiUtilities.getBestDialogParent(null);
+    EditFavoriteDialog dlg;
+    if (parent instanceof Dialog) {
+      dlg = new EditFavoriteDialog((Dialog)parent, favorite);
     }
-    else { */
-      Component parent = UiUtilities.getBestDialogParent(null);
-      EditFavoriteDialog dlg;
-      if (parent instanceof Dialog) {
-        dlg = new EditFavoriteDialog((Dialog)parent, favorite);
-      }
-      else {
-        dlg = new EditFavoriteDialog((Frame)parent, favorite);
-      }
-      UiUtilities.centerAndShow(dlg);
-      if (dlg.getOkWasPressed()) {
-        updateRootNode();
-      }
-  //  }
+    else {
+      dlg = new EditFavoriteDialog((Frame)parent, favorite);
+    }
+    UiUtilities.centerAndShow(dlg);
+    if (dlg.getOkWasPressed()) {
+      updateRootNode();
+    }
 
   }
 

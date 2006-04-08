@@ -90,7 +90,7 @@ public class TopicFavorite extends Favorite {
     private JTextField mSearchTextTf;
 
     public Configurator() {
-      mSearchTextTf = new JTextField();
+      mSearchTextTf = new JTextField(mSearchFormSettings.getSearchText());
     }
 
     public JPanel createConfigurationPanel() {
