@@ -27,10 +27,13 @@
 package printplugin.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
 import javax.swing.JButton;
@@ -41,17 +44,20 @@ import javax.swing.JRootPane;
 import javax.swing.JSeparator;
 
 import printplugin.PrintPlugin;
+import printplugin.printer.singleprogramprinter.SingleProgramPrintable;
 import printplugin.settings.ProgramInfoPrintSettings;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * A class that creates a dialog for setting up the
@@ -71,23 +77,25 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
    * Creates a instance of this class
    * 
    * @param parent The parent frame.
+   * @param program Program to Print
    */
-  public ProgramInfoPrintDialog(JFrame parent) {
+  public ProgramInfoPrintDialog(JFrame parent, Program program) {
     mDialog = new JDialog(parent ,true);  
-    createGUI(parent);
+    createGUI(parent, program);
   }
 
   /**
    * Creates a instance of this class
    * 
    * @param parent The parent dialog.
+   * @param program Program to Print
    */
-  public ProgramInfoPrintDialog(JDialog parent) {
+  public ProgramInfoPrintDialog(JDialog parent, Program program) {
     mDialog = new JDialog(parent ,true);
-    createGUI(parent);
+    createGUI(parent, program);
   }
 
-  private void createGUI(Window parent) {
+  private void createGUI(final Window parent, final Program program) {
     UiUtilities.registerForClosing(this);
     mDialog.setTitle(mLocalizer.msg("title","Print program info"));
 
@@ -124,18 +132,36 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     JButton previewBtn = new JButton(SettingsDialog.mLocalizer.msg("preview","Vorschau")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-print-preview", 16));
     previewBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        // TODO Add print preview.
+        if (mPageFormat == null) {
+          mPageFormat = printerJob.defaultPage();
+        }
+        SingleProgramPrintable printJob = new SingleProgramPrintable(program, fontChooser.getChosenFont(), (ProgramFieldType[]) fieldChooser.getOrder());
+        PreviewDlg dlg;
+        if (parent instanceof Frame)
+          dlg = new PreviewDlg((Frame) parent, printJob, mPageFormat, printJob.getNumOfPages(mPageFormat));
+        else
+          dlg = new PreviewDlg((Dialog) parent, printJob, mPageFormat, printJob.getNumOfPages(mPageFormat));
         
+        util.ui.UiUtilities.centerAndShow(dlg);
       }
     });
     
     JButton print = new JButton(SettingsDialog.mLocalizer.msg("print","Drucken"));
     print.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        if (mPageFormat == null) {
+          mPageFormat = printerJob.defaultPage();
+        }
         ProgramInfoPrintSettings.getInstance().setFont(fontChooser.getChosenFont());
         ProgramInfoPrintSettings.getInstance().setFieldTypes(fieldChooser.getOrder());
         close();
-        //TODO Add print action.
+        SingleProgramPrintable printable = new SingleProgramPrintable(program, fontChooser.getChosenFont(), (ProgramFieldType[]) fieldChooser.getOrder());
+        printerJob.setPrintable(printable, mPageFormat);
+        try {
+          printerJob.print();
+        } catch (PrinterException pe) {
+          util.exc.ErrorHandler.handle("Could not print pages: "+pe.getLocalizedMessage(), pe);
+        }
         
       }
     });

@@ -29,6 +29,7 @@ package printplugin.dlgs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -73,8 +74,16 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
   private Point mMouseDragPoint;
   
   public PreviewDlg(Frame parent, Printable printer, PageFormat pageFormat, int numberOfPages) {
-  
     super(parent, true);
+    createGui(printer, pageFormat, numberOfPages);
+  }
+  
+  public PreviewDlg(Dialog parent, Printable printer, PageFormat pageFormat, int numberOfPages) {
+    super(parent, true);
+    createGui(printer, pageFormat, numberOfPages);
+  }
+  
+  private void createGui(Printable printer, PageFormat pageFormat, int numberOfPages) {
     setTitle(mLocalizer.msg("preview","preview"));
     mPrinter = printer;
     mPageFormat = pageFormat;
@@ -291,7 +300,7 @@ class PreviewComponent extends JComponent {
     g.setColor(Color.black);
     
     try {
-      mPrintable.print(g, null, mPageIndex);
+      mPrintable.print(g, mPageFormat, mPageIndex);
     } catch (PrinterException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
