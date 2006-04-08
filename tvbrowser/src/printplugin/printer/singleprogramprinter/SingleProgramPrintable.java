@@ -71,7 +71,6 @@ public class SingleProgramPrintable implements Printable {
   public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
    
     if (pageIndex < 3) {
-      System.out.println(pageFormat);
       int x0 = (int)pageFormat.getImageableX();
       int y0 = (int)pageFormat.getImageableY();
 

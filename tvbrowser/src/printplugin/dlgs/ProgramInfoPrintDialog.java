@@ -72,6 +72,8 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
   
   private JDialog mDialog;
   private PageFormat mPageFormat;
+
+  protected ProgramFieldType[] mFieldTypes;
   
   /**
    * Creates a instance of this class
@@ -135,7 +137,13 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         if (mPageFormat == null) {
           mPageFormat = printerJob.defaultPage();
         }
-        SingleProgramPrintable printJob = new SingleProgramPrintable(program, fontChooser.getChosenFont(), (ProgramFieldType[]) fieldChooser.getOrder());
+        Object[] order = fieldChooser.getOrder();
+        mFieldTypes = new ProgramFieldType[order.length];
+        
+        for(int i = 0; i < order.length; i++)
+          mFieldTypes[i] = (ProgramFieldType)order[i];
+        
+        SingleProgramPrintable printJob = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
         PreviewDlg dlg;
         if (parent instanceof Frame)
           dlg = new PreviewDlg((Frame) parent, printJob, mPageFormat, printJob.getNumOfPages(mPageFormat));
@@ -152,10 +160,17 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         if (mPageFormat == null) {
           mPageFormat = printerJob.defaultPage();
         }
+        Object[] order = fieldChooser.getOrder();
+        mFieldTypes = new ProgramFieldType[order.length];
+        
+        for(int i = 0; i < order.length; i++)
+          mFieldTypes[i] = (ProgramFieldType)order[i];
+        
         ProgramInfoPrintSettings.getInstance().setFont(fontChooser.getChosenFont());
-        ProgramInfoPrintSettings.getInstance().setFieldTypes(fieldChooser.getOrder());
+        ProgramInfoPrintSettings.getInstance().setFieldTypes(mFieldTypes);
         close();
-        SingleProgramPrintable printable = new SingleProgramPrintable(program, fontChooser.getChosenFont(), (ProgramFieldType[]) fieldChooser.getOrder());
+        
+        SingleProgramPrintable printable = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
         printerJob.setPrintable(printable, mPageFormat);
         try {
           printerJob.print();
