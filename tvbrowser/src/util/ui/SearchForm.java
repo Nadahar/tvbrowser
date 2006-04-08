@@ -249,7 +249,7 @@ public class SearchForm extends JPanel {
     updateEnabled();
 
     if (layout == LAYOUT_HORIZONTAL) {
-      setLayout(new FormLayout("pref, 3dlu, pref","pref, 3dlu, pref"));
+      setLayout(new FormLayout("pref, 3dlu, pref","pref, 3dlu, top:pref"));
       add(topPanel, cc.xyw(1,1, 3));
       add(searchInPanel, cc.xy(1,3));
       add(optionsPanel, cc.xy(3,3));
