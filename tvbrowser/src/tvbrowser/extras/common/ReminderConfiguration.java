@@ -71,4 +71,13 @@ public class ReminderConfiguration {
     mServiceIDs = ids;
   }
 
+  public boolean containsService(String service) {
+    for (int i=0; i<mServiceIDs.length; i++) {
+      if (service.equals(mServiceIDs[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }
