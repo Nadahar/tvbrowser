@@ -211,7 +211,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private void deleteItems() {
     int[] selected = mTable.getSelectedRows();
     
-    if (selected.length < 1) {
+    if (selected.length < 1 && mTable.getRowCount() > 0) {
       int i = JOptionPane.showConfirmDialog(this,mLocalizer.msg("deleteQuestion",
           "Should all Reminders be deleted?"),mLocalizer.msg("delTitle","Delete Reminder"),
           JOptionPane.YES_NO_CANCEL_OPTION);
