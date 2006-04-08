@@ -103,6 +103,7 @@ public class TypeWizardStep implements WizardStep {
         }
         UiUtilities.centerAndShow(dlg);
         if (dlg.getOkWasPressed()) {
+          FavoritesPlugin.getInstance().addFavorite(favorite);
           FavoritesPlugin.getInstance().updateRootNode();
         }
       }
