@@ -85,7 +85,14 @@ public class TypeWizardStep implements WizardStep {
     expertBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         handler.closeCurrentStep();
-        AdvancedFavorite favorite = new AdvancedFavorite(mProgram.getTitle());
+        String title;
+        if (mProgram != null) {
+          title = mProgram.getTitle();
+        }
+        else {
+          title = "";
+        }
+        AdvancedFavorite favorite = new AdvancedFavorite(title);
         Component parent = UiUtilities.getBestDialogParent(null);
         EditFavoriteDialog dlg;
         if (parent instanceof Dialog) {
