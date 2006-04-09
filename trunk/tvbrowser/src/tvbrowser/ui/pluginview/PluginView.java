@@ -62,19 +62,10 @@ public class PluginView extends JPanel implements MouseListener {
   public PluginView() {
     super(new BorderLayout());
 
-    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+
     mModel = PluginTreeModel.getInstance();
 
-   for (int i=plugins.length - 1; i>=0; i--) {
-      if (plugins[i].canUseProgramTree()) {
-        mModel.addPluginTree(plugins[i]);
-      }
-    }
-
-
-    mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
-    mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
-
+    insertPluginRootNodes();
 
     DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
     renderer.setLeafIcon(null);
@@ -92,16 +83,22 @@ public class PluginView extends JPanel implements MouseListener {
    */
   public void refreshTree() {
     mModel.removeAllChildNodes();
-    
-    PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    
-    for (int i=plugins.length - 1; i>=0; i--) {
+    insertPluginRootNodes();
+    mModel.reload();
+  }
+
+
+  private void insertPluginRootNodes() {
+     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+   for (int i=plugins.length - 1; i>=0; i--) {
       if (plugins[i].canUseProgramTree()) {
         mModel.addPluginTree(plugins[i]);
       }
     }
-    
-    mModel.reload();
+
+
+    mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
+    mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
   }
   
   public void update() {
@@ -181,8 +178,7 @@ public class PluginView extends JPanel implements MouseListener {
       Program[] selectedPrograms = new Program[selectedPath.length];
       for (int i=0; i<selectedPath.length; i++) {
         DefaultMutableTreeNode curNode = (DefaultMutableTreeNode) selectedPath[i].getLastPathComponent();
-        Program program = ((ProgramItem)curNode.getUserObject()).getProgram();
-        selectedPrograms[i] = program;
+        selectedPrograms[i] = ((ProgramItem)curNode.getUserObject()).getProgram();
       }
 
       return new ProgramContextMenu(mTree, selectedPath, PluginTreeModel.getPlugin(selectedPath[0]), selectedPrograms);

@@ -455,18 +455,6 @@ public class FavoritesPlugin implements ContextMenuIf{
   }
 
 
-  /**
-   * @deprecated currently used for old favorites
-   * @param programArr
-   */
-  public void unmark(Program[] programArr) {
-    // unmark all programs with this plugin
-    for (int i = 0; i < programArr.length; i++) {
-        programArr[i].unmark(MARKER);
-    }
-  }
-
-
   public PluginTreeNode getRootNode() {
     return mRootNode;
   }
@@ -488,39 +476,6 @@ public class FavoritesPlugin implements ContextMenuIf{
     ReminderPlugin.getInstance().updateRootNode();
   }
 
-  /**
-   * @deprecated
-   * @param programArr
-   */
-  public void mark(Program[] programArr) {
-    // mark all programs with this plugin
-    for (int i = 0; i < programArr.length; i++) {
-      programArr[i].mark(MARKER);
-    }
-
-    // Pass the program list to all client plugins
-    for (int i = 0; i < mClientPluginIdArr.length; i++) {
-      PluginAccess plugin = PluginManagerImpl.getInstance().getActivatedPluginForId(
-          mClientPluginIdArr[i]);
-      if (plugin != null) {
-        plugin.receivePrograms(programArr);
-      }
-    }
-
-    for (int i=0; i<mFavoriteArr.length; i++) {
-      String[] reminderServices = mFavoriteArr[i].getReminderConfiguration().getReminderServices();
-      for (int j=0; j<reminderServices.length; j++) {
-        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[j])) {
-          ReminderPlugin.getInstance().addPrograms(programArr);
-        }
-      }
-    }
-
-
-  }
-
-
-
 
   public String[] getClientPluginIds() {
     return mClientPluginIdArr;
@@ -530,6 +485,16 @@ public class FavoritesPlugin implements ContextMenuIf{
     mClientPluginIdArr = clientPluginArr;
   }
 
+  public PluginAccess[] getDefaultClientPlugins() {
+    ArrayList list = new ArrayList();
+    for (int i=0; i<mClientPluginIdArr.length; i++) {
+      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(mClientPluginIdArr[i]);
+      if (plugin != null && plugin.canReceivePrograms()) {
+        list.add(plugin);
+      }
+    }
+    return (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
+  }
 
   class DeleteFavoriteAction extends ButtonAction {
 

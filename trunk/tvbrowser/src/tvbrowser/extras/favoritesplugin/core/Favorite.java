@@ -26,10 +26,7 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import devplugin.Program;
-import devplugin.ProgramSearcher;
-import devplugin.Plugin;
-import devplugin.Date;
+import devplugin.*;
 
 import java.io.ObjectOutputStream;
 import java.io.IOException;
@@ -55,12 +52,15 @@ public abstract class Favorite {
   private LimitationConfiguration mLimitationConfiguration;
   private boolean mRemindAfterDownload;
   private ArrayList mExclusionList;
+  private PluginAccess[] mForwardPluginArr;
 
   public Favorite() {
     mReminderConfiguration = new ReminderConfiguration();
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new Program[]{};
     mExclusionList = new ArrayList();
+
+    mForwardPluginArr = FavoritesPlugin.getInstance().getDefaultClientPlugins();
   }
 
   public Favorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -75,6 +75,17 @@ public abstract class Favorite {
     for (int i=0; i<exclSize; i++) {
       mExclusionList.add(new Exclusion(in));
     }
+
+    ArrayList list = new ArrayList();
+    int cnt = in.readInt();
+    for (int i=0; i<cnt; i++) {
+      String id = (String)in.readObject();
+      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(id);
+      if (plugin != null) {
+        list.add(plugin);
+      }
+    }
+    mForwardPluginArr = (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
 
     // Don't save the programs but only their date and id
     int size = in.readInt();
@@ -122,6 +133,14 @@ public abstract class Favorite {
   }
 
 
+  public void setForwardPlugins(PluginAccess[] pluginArr) {
+    mForwardPluginArr = pluginArr;
+  }
+
+  public PluginAccess[] getForwardPlugins() {
+    return mForwardPluginArr;
+  }
+
   public Program[] getPrograms() {
     return mPrograms;
   }
@@ -154,6 +173,11 @@ public abstract class Favorite {
     out.writeInt(mExclusionList.size());
     for (int i=0; i<mExclusionList.size(); i++) {
       ((Exclusion)mExclusionList.get(i)).writeData(out);
+    }
+
+    out.writeInt(mForwardPluginArr.length);
+    for (int i=0; i<mForwardPluginArr.length; i++) {
+      out.writeObject(mForwardPluginArr[i].getId());
     }
 
     // Don't save the programs but only their date and id
@@ -249,20 +273,20 @@ public abstract class Favorite {
     Program[] p2 = newProgList;
 
     ArrayList resultList = new ArrayList();
+    ArrayList newPrograms = new ArrayList();
 
     int inx1 = 0;
     int inx2 = 0;
     while (inx1 < p1.length && inx2 < p2.length) {
       if (comparator.compare(p1[inx1], p2[inx2]) < 0) {
         // remove p1[inx1]
-        p1[inx1].unmark(FavoritesPlugin.MARKER);
-        ReminderPlugin.getInstance().removeProgram(p1[inx1]);
+        unmarkProgram(p1[inx1]);
         inx1++;
       }
       else if (comparator.compare(p1[inx1], p2[inx2]) > 0) {
         // add (p2[inx2]
-        p2[inx2].mark(FavoritesPlugin.MARKER);
-        ReminderPlugin.getInstance().addProgram(p2[inx2]);
+        markProgram(p2[inx2]);
+        newPrograms.add(p2[inx2]);
         resultList.add(p2[inx2]);
         inx2++;
       }
@@ -277,20 +301,39 @@ public abstract class Favorite {
     if (inx2 < p2.length) {
       // add (p2[inx2]..p2[p2.length-1])
       for (int i=inx2; i<p2.length; i++) {
-        p2[i].mark(FavoritesPlugin.MARKER);
-        ReminderPlugin.getInstance().addProgram(p2[i]);
+        markProgram(p2[i]);
+        newPrograms.add(p2[i]);
         resultList.add(p2[i]);
       }
     }
     if (inx1 < p1.length) {
       // remove (p1[inx1]..p1[p1.length-1])
       for (int i=inx1; i<p1.length; i++) {
-        p1[i].unmark(FavoritesPlugin.MARKER);
-        ReminderPlugin.getInstance().removeProgram(p1[i]);
+        unmarkProgram(p1[i]);
       }
     }
 
+    // pass programs to plugins
+    Program[] newProgramArr = (Program[])newPrograms.toArray(new Program[newPrograms.size()]);
+    PluginAccess[] pluginArr = getForwardPlugins();
+    for (int i=0; i<pluginArr.length; i++) {
+      pluginArr[i].receivePrograms(newProgramArr);
+    }
+
+
     mPrograms = (Program[])resultList.toArray(new Program[list.size()]);
+  }
+
+
+  private void markProgram(Program p) {
+    p.mark(FavoritesPlugin.MARKER);
+    ReminderPlugin.getInstance().addProgram(p);
+
+  }
+
+  private void unmarkProgram(Program p) {
+    p.unmark(FavoritesPlugin.MARKER);
+    ReminderPlugin.getInstance().removeProgram(p);
   }
 
   public abstract FavoriteConfigurator createConfigurator();
