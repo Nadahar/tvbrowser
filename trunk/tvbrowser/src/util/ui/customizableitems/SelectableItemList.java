@@ -221,4 +221,14 @@ public class SelectableItemList extends JPanel {
       mList.repaint();
     }
   }
+  
+  public void setEnabled(boolean value) {
+    mIsEnabled = value;
+    mItemRenderer.setEnabled(value);
+    mList.setEnabled(value);
+    mSelectAllBt.setEnabled(value);
+    mDeSelectAllBt.setEnabled(value);
+    mScrollPane.getVerticalScrollBar().setEnabled(value);
+    mScrollPane.setWheelScrollingEnabled(value);
+  }
 }
