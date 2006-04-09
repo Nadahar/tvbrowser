@@ -39,11 +39,14 @@ import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import util.ui.customizableitems.SelectableItemList;
+
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
+import devplugin.PluginAccess;
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
 
@@ -131,7 +134,7 @@ public class SearchForm extends JPanel {
     super();
 
     FormLayout layoutTop = new FormLayout("pref, 3dlu, fill:pref:grow", "");
-    FormLayout layoutSearchIn = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+    FormLayout layoutSearchIn = new FormLayout("3dlu, pref:grow","pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, 3dlu, pref,3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
 
     JPanel topPanel = new JPanel(layoutTop);
@@ -177,7 +180,7 @@ public class SearchForm extends JPanel {
     bg = new ButtonGroup();
     String msg;
     
-    searchInPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("searchIn", "Search in")), cc.xyw(1,1,3));
+    searchInPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("searchIn", "Search in")), cc.xyw(1,1,2));
 
     ActionListener updateEnabledListener = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -208,9 +211,9 @@ public class SearchForm extends JPanel {
       }
     });
 
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(mSearchUserDefinedRB, BorderLayout.CENTER);
-    panel.add(mChangeSearchFieldsBt, BorderLayout.EAST);
+    JPanel panel = new JPanel(new FormLayout("pref,1dlu:grow,pref","pref"));
+    panel.add(mSearchUserDefinedRB, cc.xy(1,1));
+    panel.add(mChangeSearchFieldsBt, cc.xy(3,1));
     searchInPanel.add(panel, cc.xy(2,7));
 
     optionsPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("options", "Options")), cc.xyw(1,1,3));
@@ -564,15 +567,15 @@ public class SearchForm extends JPanel {
     private JDialog mDlg;
     
     private ProgramFieldType[] mSelectedTypeArr;
-
-    private ProgramFieldType[] mTypeArr;
-
-    private JCheckBox[] mTypeChBArr;
     
+    private SelectableItemList mSelectableItemList;
     
     public FieldSelectionDialog(Component parent,
       ProgramFieldType[] selectedTypeArr)
     {
+      if(selectedTypeArr == null)
+        selectedTypeArr = new ProgramFieldType[0];
+      
       mSelectedTypeArr = selectedTypeArr;
       
       String msg;
@@ -601,24 +604,10 @@ public class SearchForm extends JPanel {
         "Please select the fields to search for");
       main.add(UiUtilities.createHelpTextArea(msg + "\n"), BorderLayout.NORTH);
       
-      JPanel checkBoxPn = new JPanel(new TabLayout(1));
-      checkBoxPn.setBackground(Color.WHITE); // For the JList-feeling
+      mSelectableItemList = new SelectableItemList(selectedTypeArr,getSearchableFieldTypes());
       
-      mTypeArr = getSearchableFieldTypes();
-      mTypeChBArr = new JCheckBox[mTypeArr.length];
-      Border border = BorderFactory.createEmptyBorder(0, 2, 0, 2);
-      for (int i = 0; i < mTypeArr.length; i++) {
-        mTypeChBArr[i] = new JCheckBox(mTypeArr[i].getLocalizedName());
-        mTypeChBArr[i].setOpaque(false);
-        mTypeChBArr[i].setFocusPainted(false);
-        mTypeChBArr[i].setBorder(border);
-        mTypeChBArr[i].setSelected(contains(selectedTypeArr, mTypeArr[i]));
-        
-        checkBoxPn.add(mTypeChBArr[i]);
-      }
-      
-      JScrollPane scrollPane = new JScrollPane(checkBoxPn);
-      scrollPane.getVerticalScrollBar().setUnitIncrement(30);
+      JScrollPane scrollPane = new JScrollPane(mSelectableItemList);
+      scrollPane.setBorder(null);
       main.add(scrollPane, BorderLayout.CENTER);
       
       JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
@@ -645,34 +634,13 @@ public class SearchForm extends JPanel {
       
       mDlg.setSize(250, 300);
     }
-    
-    
-    private boolean contains(ProgramFieldType[] typeArr, ProgramFieldType type) {
-      if (typeArr == null) {
-        // null means: Select none
-        return false;
-      } else {
-        for (int i = 0; i < typeArr.length; i++) {
-          if (typeArr[i] == type) {
-            return true;
-          }
-        }
-
-        return false;
-      }
-    }
-
 
     private void handleOk() {
-      ArrayList list = new ArrayList();
-      for (int i = 0; i < mTypeChBArr.length; i++) {
-        if (mTypeChBArr[i].isSelected()) {
-          list.add(mTypeArr[i]);
-        }
+      Object[] o = mSelectableItemList.getSelection();
+      mSelectedTypeArr = new ProgramFieldType[o.length];
+      for (int i=0;i<o.length;i++) {
+        mSelectedTypeArr[i]=(ProgramFieldType)o[i];
       }
-      
-      mSelectedTypeArr = new ProgramFieldType[list.size()];
-      list.toArray(mSelectedTypeArr);
       
       mDlg.dispose();
     }
