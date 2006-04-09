@@ -39,15 +39,21 @@ public class WizardHandler {
 
   
   public void allowNext(boolean allow) {
-    mWizardDialog.allowNext(allow);
+    if (mWizardDialog != null) {
+      mWizardDialog.allowNext(allow);
+    }
   }
 
   public void allowFinish(boolean allow) {
-    mWizardDialog.allowFinish(allow);
+    if (mWizardDialog != null) {
+      mWizardDialog.allowFinish(allow);
+    }
   }
 
   public void allowCancel(boolean allow) {
-    mWizardDialog.allowCancel(allow);
+    if (mWizardDialog !=null) {
+      mWizardDialog.allowCancel(allow);
+    }
   }
 
 
