@@ -28,8 +28,7 @@ package tvbrowser.extras.reminderplugin;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.Frame;
-import java.awt.Window;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -116,7 +115,7 @@ public class ReminderPlugin implements ContextMenuIf {
                 dlg = new RemovedProgramsDialog((JFrame) parent,
                     removedPrograms);
               } else {
-                dlg = new RemovedProgramsDialog((JDialog) parent,
+                dlg = new RemovedProgramsDialog((Dialog) parent,
                     removedPrograms);
               }
               util.ui.UiUtilities.centerAndShow(dlg);

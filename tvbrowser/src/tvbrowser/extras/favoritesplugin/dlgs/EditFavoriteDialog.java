@@ -48,6 +48,7 @@ import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.core.icontheme.IconLoader;
 import devplugin.Channel;
+import devplugin.PluginAccess;
 import util.ui.TabLayout;
 import util.ui.ChannelChooserDlg;
 import util.ui.UiUtilities;
@@ -77,6 +78,10 @@ public class EditFavoriteDialog extends JDialog {
   private JList mExclusionsList;
 
   private TimePeriodChooser mTimePeriodChooser;
+  private JCheckBox mPassProgramsCheckBox;
+  private PluginAccess[] mPassProgramPlugins;
+  private JLabel mPassProgramsLb;
+  private JButton mChangePassProgramsBtn;
 
   private boolean mOkWasPressed;
   private FavoriteConfigurator mFavoriteConfigurator;
@@ -149,41 +154,6 @@ public class EditFavoriteDialog extends JDialog {
 
     pack();
   }
-
-
-  //private JPanel createHeaderPanel() {
-
-
-
-   /* if (mFavorite instanceof AdvancedFavorite) {
-      return new JPanel();
-    }
-    else {
-
-      String searchText = mFavorite.getSearchFormSettings().getSearchText();
-      mSearchTextTf = new JTextField(searchText);
-      if (mFavorite instanceof TitleFavorite) {
-        JPanel panel = new JPanel(new GridLayout(-1, 1));
-        panel.add(new JLabel(mLocalizer.msg("title-favorite.term","Any program whose title contains this term will be marked as a favorite:")));
-
-        panel.add(mSearchTextTf);
-        return panel;
-      }
-      else if (mFavorite instanceof TopicFavorite) {
-        JPanel panel = new JPanel(new GridLayout(-1, 1));
-        panel.add(new JLabel(mLocalizer.msg("topic-favorite.term","Any program containing this term will be marked as a favorite:")));
-        panel.add(mSearchTextTf);
-        return panel;
-      }
-      else if (mFavorite instanceof ActorsFavorite) {
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Sendungen werden als Favorite markiert, falls einer dieser Schauspieler vorkommt:"));
-        return panel;
-      }
-      return new JPanel();
-    }  */
-   // return null;
-  //}
 
 
   private String getChannelString(Channel[] channelArr) {
@@ -264,7 +234,7 @@ public class EditFavoriteDialog extends JDialog {
 
     mChangeChannelsBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        ChannelChooserDlg dlg = new ChannelChooserDlg(EditFavoriteDialog.this, mChannelArr, "bla bla bla");
+        ChannelChooserDlg dlg = new ChannelChooserDlg(EditFavoriteDialog.this, mChannelArr, null, ChannelChooserDlg.SELECTABLE_ITEM_LIST);
         UiUtilities.centerAndShow(dlg);
         mChannelArr = dlg.getChannels();
         if (mChannelArr.length == 0) {
@@ -404,12 +374,85 @@ public class EditFavoriteDialog extends JDialog {
     mDeleteExclusionBtn.setEnabled(selectedItem!=null);
   }
 
+  private String getForwardPluginsLabelString(PluginAccess[] pluginArr) {
+    if (pluginArr != null && pluginArr.length > 0) {
+      StringBuffer buf = new StringBuffer();
+      if (pluginArr.length > 0) {
+        buf.append(pluginArr[0].getInfo().getName());
+      }
+     if (pluginArr.length > 1) {
+        buf.append(", ");
+        buf.append(pluginArr[1].getInfo().getName());
+     }
+     if (pluginArr.length > 2) {
+       buf.append(" (");
+       buf.append(pluginArr.length-2);
+       buf.append(" ");
+       buf.append(mLocalizer.msg("more","more"));
+       buf.append("...)");
+     }
+     return buf.toString();
+   }
+    else {
+      return "don't forward";
+    }
+  }
+
   private JPanel createExtrasPanel() {
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(mReminderAfterDownloadCb = new JCheckBox(
-            mLocalizer.msg("autoAlert","Alert me, whenever a matching program is discovered")), BorderLayout.WEST);
+
+    JPanel panel = new JPanel(new FormLayout("pref, pref:grow, pref", "pref,3dlu,pref"));
+    CellConstraints cc = new CellConstraints();
+
+
+    mPassProgramPlugins = mFavorite.getForwardPlugins();
+    mPassProgramsLb = new JLabel(getForwardPluginsLabelString(mPassProgramPlugins));
+    mChangePassProgramsBtn = new JButton(mLocalizer.msg("change","Change"));
+    mChangePassProgramsBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins);
+        UiUtilities.centerAndShow(dlg);
+        PluginAccess[] pluginArr = dlg.getPlugins();
+        if (pluginArr != null) {
+          mPassProgramPlugins = pluginArr;
+          mPassProgramsLb.setText(getForwardPluginsLabelString(mPassProgramPlugins));
+          if (pluginArr.length == 0) {
+            mPassProgramsCheckBox.setSelected(false);
+            updatePassProgramsPanel();
+          }
+        }
+
+
+      }
+    });
+
+
+
+    panel.add(mReminderAfterDownloadCb = new JCheckBox(mLocalizer.msg("autoAlert","Alert me, whenever a matching program is discovered")), cc.xyw(1,1,2));
+
+    panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo","Pass programs to")), cc.xy(1,3));
+    panel.add(mPassProgramsLb, cc.xy(2,3));
+    panel.add(mChangePassProgramsBtn, cc.xy(3,3));
     mReminderAfterDownloadCb.setSelected(mFavorite.isRemindAfterDownload());
+
+    mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length >0);
+
+
+    mPassProgramsCheckBox.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        updatePassProgramsPanel();
+      }
+    });
+
+
+    updatePassProgramsPanel();
+
     return panel;
+  }
+
+  private void updatePassProgramsPanel() {
+    mPassProgramsLb.setEnabled(mPassProgramsCheckBox.isSelected());
+    mChangePassProgramsBtn.setEnabled(mPassProgramsCheckBox.isSelected());
+
   }
 
   public boolean getOkWasPressed() {
@@ -417,8 +460,6 @@ public class EditFavoriteDialog extends JDialog {
   }
 
   private void saveAndClose() {
-
-
 
     mFavoriteConfigurator.save();
 
@@ -436,6 +477,8 @@ public class EditFavoriteDialog extends JDialog {
       mFavorite.getLimitationConfiguration().setIsLimitedByChannel(false);
     }
 
+    mFavorite.setForwardPlugins(mPassProgramPlugins);
+
     int exclCnt = ((DefaultListModel)mExclusionsList.getModel()).size();
     Exclusion[] exclArr = new Exclusion[exclCnt];
     ((DefaultListModel)mExclusionsList.getModel()).copyInto(exclArr);
@@ -447,9 +490,6 @@ public class EditFavoriteDialog extends JDialog {
     boolean wasReminderEnabled = mFavorite.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT);
 
     if (mUseReminderCb.isSelected()) {
-      if (!wasReminderEnabled) {
-        ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
-      }
       mFavorite.getReminderConfiguration().setReminderServices(new String[]{ReminderConfiguration.REMINDER_DEFAULT});
     }
     else {
@@ -459,17 +499,19 @@ public class EditFavoriteDialog extends JDialog {
       mFavorite.getReminderConfiguration().setReminderServices(new String[]{});
     }
 
-
-
-
-    if (mUseReminderCb.isSelected() != wasReminderEnabled) {
-      ReminderPlugin.getInstance().updateRootNode();
-    }
-
     try {
       mFavorite.updatePrograms();
     } catch (TvBrowserException exc) {
       ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed","Could not update favorite"), exc);
+    }
+
+    for (int i=0; i<mPassProgramPlugins.length; i++) {
+      mPassProgramPlugins[i].receivePrograms(mFavorite.getPrograms());
+    }
+
+    if (mUseReminderCb.isSelected()) {
+      ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
+      ReminderPlugin.getInstance().updateRootNode();
     }
 
     mOkWasPressed = true;
