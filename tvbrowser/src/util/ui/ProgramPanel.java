@@ -51,6 +51,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
+import util.program.ProgramUtilities;
 import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -383,7 +384,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     Graphics2D grp = (Graphics2D) g;
 
     // Draw the background if this program is on air
-    if (mProgram.isOnAir()) {
+    if (ProgramUtilities.isOnAir(mProgram)) {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
       int startTime = mProgram.getHours() * 60 + mProgram.getMinutes();
