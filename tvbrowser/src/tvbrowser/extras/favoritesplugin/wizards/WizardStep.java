@@ -18,10 +18,6 @@ public interface WizardStep {
 
   public Object createDataObject(Object obj);
 
-  //public boolean allowNext();
-
-  //public boolean allowFinish();
-
   public WizardStep next();
 
   public boolean isValid();
