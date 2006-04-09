@@ -75,6 +75,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
         // hide & seek 
         toolbar.addComponentListener(new ComponentAdapter(){ 
             public void componentResized(ComponentEvent e){
+              if (toolbar.getComponentCount() > 0)
                 setVisible(!isVisible(toolbar.getComponent(toolbar.getComponentCount()-1), null));
             } 
         });
