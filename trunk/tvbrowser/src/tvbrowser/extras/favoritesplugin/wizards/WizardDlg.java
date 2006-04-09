@@ -34,6 +34,8 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   private JPanel mButtonPanel;
   private WizardHandler mHandler;
 
+  private Object mDataObject;
+
   public WizardDlg(Dialog parent, WizardHandler handler, WizardStep step) {
     super(parent, true);
     init(step, handler);
@@ -89,6 +91,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     mDoneBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         if (mStep.isValid()) {
+          mDataObject = mStep.createDataObject(mDataObject);
           close(FINISH);
         }
       }
@@ -104,6 +107,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     mNextBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         if (mStep.isValid()) {
+          mDataObject = mStep.createDataObject(mDataObject);
           switchToStep(mStep.next());
         }
       }
@@ -134,6 +138,10 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
 
   public int getResult() {
     return mResult;
+  }
+
+  public Object getDataObject() {
+    return mDataObject;
   }
 
   public void close() {

@@ -70,7 +70,6 @@ public class EditFavoriteDialog extends JDialog {
   private JLabel mChannelLabel;
 
   private Channel[] mChannelArr;
- // private JTextField mSearchTextTf;
 
   private JButton mNewExclusionBtn;
   private JButton mEditExclusionBtn;
