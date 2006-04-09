@@ -47,6 +47,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 public abstract class Favorite {
 
   private Program[] mPrograms;
+  private Program[] mNewProgramsArr;
   private String mName;
   private ReminderConfiguration mReminderConfiguration;
   private LimitationConfiguration mLimitationConfiguration;
@@ -58,6 +59,7 @@ public abstract class Favorite {
     mReminderConfiguration = new ReminderConfiguration();
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new Program[]{};
+    mNewProgramsArr = new Program[]{};
     mExclusionList = new ArrayList();
 
     mForwardPluginArr = FavoritesPlugin.getInstance().getDefaultClientPlugins();
@@ -101,7 +103,7 @@ public abstract class Favorite {
 
     mPrograms = new Program[programList.size()];
     programList.toArray(mPrograms);
-
+    mNewProgramsArr = new Program[]{};
   }
 
 
@@ -145,6 +147,9 @@ public abstract class Favorite {
     return mPrograms;
   }
 
+  public Program[] getNewPrograms() {
+    return mNewProgramsArr;
+  }
 
 
   public abstract SearchFormSettings getSearchFormSettings();
@@ -231,10 +236,19 @@ public abstract class Favorite {
     SearchFormSettings searchForm = getSearchFormSettings();
 
     ProgramSearcher searcher = searchForm.createSearcher();
+
+    Channel[] channelArr;
+    if (getLimitationConfiguration().isLimitedByChannel()) {
+      channelArr = getLimitationConfiguration().getChannels();
+    }
+    else {
+      channelArr = Plugin.getPluginManager().getSubscribedChannels();
+    }
+
     Program[] progs = searcher.search(searchForm.getFieldTypes(),
                                                 new devplugin.Date(),
                                                 1000,
-                                                Plugin.getPluginManager().getSubscribedChannels(),
+                                                channelArr,
                                                 true
                                                 );
 
@@ -314,10 +328,10 @@ public abstract class Favorite {
     }
 
     // pass programs to plugins
-    Program[] newProgramArr = (Program[])newPrograms.toArray(new Program[newPrograms.size()]);
+    mNewProgramsArr = (Program[])newPrograms.toArray(new Program[newPrograms.size()]);
     PluginAccess[] pluginArr = getForwardPlugins();
     for (int i=0; i<pluginArr.length; i++) {
-      pluginArr[i].receivePrograms(newProgramArr);
+      pluginArr[i].receivePrograms(mNewProgramsArr);
     }
 
 

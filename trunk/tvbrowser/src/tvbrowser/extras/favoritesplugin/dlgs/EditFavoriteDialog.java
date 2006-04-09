@@ -394,7 +394,7 @@ public class EditFavoriteDialog extends JDialog {
      return buf.toString();
    }
     else {
-      return "don't forward";
+      return mLocalizer.msg("dontpass","don't pass programs");
     }
   }
 
@@ -452,6 +452,10 @@ public class EditFavoriteDialog extends JDialog {
   private void updatePassProgramsPanel() {
     mPassProgramsLb.setEnabled(mPassProgramsCheckBox.isSelected());
     mChangePassProgramsBtn.setEnabled(mPassProgramsCheckBox.isSelected());
+    if (!mPassProgramsCheckBox.isSelected()) {
+      mPassProgramPlugins = new PluginAccess[]{};
+    }
+
 
   }
 
