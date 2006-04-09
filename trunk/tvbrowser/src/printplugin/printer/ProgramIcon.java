@@ -50,6 +50,7 @@ import util.ui.MultipleFieldReader;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
 import devplugin.Channel;
+import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.PluginManager;
@@ -261,7 +262,7 @@ public class ProgramIcon implements Icon {
         }
 
         // If there are plugins that have marked the program -> paint the background
-        PluginAccess[] markedByPluginArr = getMarkedByPlugins(mProgram);
+        Marker[] markedByPluginArr = getMarkedByPlugins(mProgram);
         if (mSettings.getPaintPluginMarks() && markedByPluginArr.length != 0) {
           grp.setColor(mSettings.getColorMarked());
           grp.fill3DRect(0, 0, width, height+2, true);
@@ -338,15 +339,15 @@ public class ProgramIcon implements Icon {
   }
 
 
-  private PluginAccess[] getMarkedByPlugins(Program prog) {
-    PluginAccess[] access = prog.getMarkedByPlugins();
+  private Marker[] getMarkedByPlugins(Program prog) {
+    Marker[] access = prog.getMarkerArr();
     ArrayList list = new ArrayList();
     for (int i=0; i<access.length; i++) {
       if (!access[i].getId().equals(PrintPlugin.getInstance().getId())) {
         list.add(access[i]);
       }
     }
-    return (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
+    return (Marker[])list.toArray(new Marker[list.size()]);
   }
 
 
