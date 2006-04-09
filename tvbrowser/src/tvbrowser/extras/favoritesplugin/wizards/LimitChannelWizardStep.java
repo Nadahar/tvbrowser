@@ -19,6 +19,10 @@ public class LimitChannelWizardStep implements WizardStep {
   private OrderChooser mChannelChooser;
   private Program mProgram;
 
+  public LimitChannelWizardStep(Program program) {
+    this(null, program);
+  }
+
   public LimitChannelWizardStep(WizardStep nextStep, Program program) {
     mNextStep = nextStep;
     mProgram = program;
@@ -61,7 +65,7 @@ public class LimitChannelWizardStep implements WizardStep {
       return mNextStep;
     }
     else {
-      return new NotificationWizardStep(mProgram);
+      return new FinishWizardStep();
     }
   }
 

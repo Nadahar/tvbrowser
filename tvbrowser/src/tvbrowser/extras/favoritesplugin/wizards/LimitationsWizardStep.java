@@ -48,7 +48,12 @@ public class LimitationsWizardStep implements WizardStep {
 
   public WizardStep next() {
     if (mChannelCb.isSelected()) {
-      return new LimitChannelWizardStep(new LimitTimeWizardStep(mProgram), mProgram);
+      if (mTimeCb.isSelected()) {
+        return new LimitChannelWizardStep(new LimitTimeWizardStep(mProgram), mProgram);
+      }
+      else {
+        return new LimitChannelWizardStep(mProgram);
+      }
     }
     else if (mTimeCb.isSelected()) {
       return new LimitTimeWizardStep(mProgram);

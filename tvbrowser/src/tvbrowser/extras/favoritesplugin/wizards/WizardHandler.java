@@ -9,7 +9,7 @@ public class WizardHandler {
 
   private Container mParent;
   private WizardStep mStep;
-  private WizardDlg mCurrentDialog;
+  private WizardDlg mWizardDialog;
 
   public WizardHandler(Container parent, WizardStep initialStep) {
     mParent = parent;
@@ -23,66 +23,37 @@ public class WizardHandler {
     Object obj = null;
 
     if (mParent instanceof Frame) {
-      mCurrentDialog = new WizardDlg((Frame)mParent, this, currentStep);
+      mWizardDialog = new WizardDlg((Frame)mParent, this, currentStep);
     }
     else {
-      mCurrentDialog = new WizardDlg((Dialog)mParent, this, currentStep);
+      mWizardDialog = new WizardDlg((Dialog)mParent, this, currentStep);
     }
-    UiUtilities.centerAndShow(mCurrentDialog);
-    result = mCurrentDialog.getResult();
+    UiUtilities.centerAndShow(mWizardDialog);
+    result = mWizardDialog.getResult();
     if (result == WizardDlg.FINISH) {
-        obj = currentStep.createDataObject(obj);
+      obj = mWizardDialog.getDataObject();
     }
     return obj;
   }
 
- /* public Object showOLD() {
-    WizardStep currentStep = mStep;
-    int result;
-    Object obj = null;
-    do {
-      if (mParent instanceof Frame) {
-        mCurrentDialog = new WizardDialog((Frame)mParent, this, currentStep);
-      }
-      else {
-        mCurrentDialog = new WizardDialog((Dialog)mParent, this, currentStep);
-      }
-      UiUtilities.centerAndShow(mCurrentDialog);
-      result = mCurrentDialog.getResult();
 
-      if (result == WizardDialog.NEXT) {
-        obj = currentStep.createDataObject(obj);
-        currentStep = currentStep.next();
-      }
-      else if (result == WizardDialog.FINISH) {
-        obj = currentStep.createDataObject(obj);
-      }
-    }while (result == WizardDialog.NEXT);
-
-    if (result == WizardDialog.FINISH) {
-      return obj;
-    }
-    else {
-      return null;
-    }
-  }      */
   
   public void allowNext(boolean allow) {
-    mCurrentDialog.allowNext(allow);
+    mWizardDialog.allowNext(allow);
   }
 
   public void allowFinish(boolean allow) {
-    mCurrentDialog.allowFinish(allow);
+    mWizardDialog.allowFinish(allow);
   }
 
   public void allowCancel(boolean allow) {
-    mCurrentDialog.allowCancel(allow);
+    mWizardDialog.allowCancel(allow);
   }
 
 
   public void closeCurrentStep() {
-    if (mCurrentDialog != null) {
-      mCurrentDialog.close();
+    if (mWizardDialog != null) {
+      mWizardDialog.close();
     }
   }
 
