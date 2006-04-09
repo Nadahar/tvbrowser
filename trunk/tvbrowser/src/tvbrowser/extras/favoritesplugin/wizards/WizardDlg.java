@@ -13,10 +13,10 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.Borders;
 
 
-public class WizardDialog extends JDialog implements WindowClosingIf {
+public class WizardDlg extends JDialog implements WindowClosingIf {
 
   public static final util.ui.Localizer mLocalizer
-        = util.ui.Localizer.getLocalizerFor(WizardDialog.class);
+        = util.ui.Localizer.getLocalizerFor(WizardDlg.class);
 
 
   public static final int CANCEL = 0;
@@ -30,34 +30,35 @@ public class WizardDialog extends JDialog implements WindowClosingIf {
   private JButton mDoneBtn;
   private JButton mCancelBtn;
 
-  public WizardDialog(Frame parent, WizardHandler handler, WizardStep step) {
+  private JPanel mCurrentContentPanel;
+  private JPanel mButtonPanel;
+  private WizardHandler mHandler;
+
+  public WizardDlg(Dialog parent, WizardHandler handler, WizardStep step) {
     super(parent, true);
-    init(handler, step);
+    init(step, handler);
   }
 
-  public WizardDialog(Dialog parent, WizardHandler handler, WizardStep step) {
+  public WizardDlg(Frame parent, WizardHandler handler, WizardStep step) {
     super(parent, true);
-    init(handler, step);
+    init(step, handler);
   }
 
-  private void init(WizardHandler handler, WizardStep step) {
+  private void init(WizardStep step, WizardHandler handler) {
     setSize(500,200);
     UiUtilities.registerForClosing(this);
-    mStep = step;
     mResult = CANCEL;
-    setTitle(step.getTitle());
+    mHandler = handler;
 
     getContentPane().setLayout(new BorderLayout());
-    getContentPane().add(BorderLayout.SOUTH, getButtonPanel());
 
-    JPanel content = step.getContent(handler);
-    content.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-    getContentPane().add(BorderLayout.CENTER, content);
 
-   // pack();
+
+    switchToStep(step);
+
   }
 
-  private JPanel getButtonPanel() {
+   private JPanel createButtonPanel(int[] btns) {
 
     mDoneBtn = new JButton(mLocalizer.msg("done","Done"));
     mCancelBtn = new JButton(mLocalizer.msg("cancel","Cancel"));
@@ -71,7 +72,6 @@ public class WizardDialog extends JDialog implements WindowClosingIf {
 
     CellConstraints cc = new CellConstraints();
 
-    int[] btns = mStep.getButtons();
     for (int i=0; i<btns.length; i++) {
       int p = 8 - 2*btns.length  + i*2;
 
@@ -104,7 +104,7 @@ public class WizardDialog extends JDialog implements WindowClosingIf {
     mNextBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         if (mStep.isValid()) {
-          close(NEXT);
+          switchToStep(mStep.next());
         }
       }
     });
@@ -113,18 +113,36 @@ public class WizardDialog extends JDialog implements WindowClosingIf {
 
   }
 
+
+  private void switchToStep(WizardStep step) {
+    mStep = step;
+    setTitle(step.getTitle());
+    if (mCurrentContentPanel != null) {
+      getContentPane().remove(mCurrentContentPanel);
+    }
+    if (mButtonPanel != null) {
+      getContentPane().remove(mButtonPanel);
+    }
+    mCurrentContentPanel = mStep.getContent(mHandler);
+    mCurrentContentPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    getContentPane().add(mCurrentContentPanel, BorderLayout.CENTER);
+
+    mButtonPanel = createButtonPanel(step.getButtons());
+    getContentPane().add(BorderLayout.SOUTH, mButtonPanel);
+    getContentPane().validate();
+  }
+
+  public int getResult() {
+    return mResult;
+  }
+
   public void close() {
-    close(CANCEL);
+    hide();
   }
 
   public void close(int val) {
     mResult = val;
     hide();
-  }
-
-
-  public int getResult() {
-    return mResult;
   }
 
   public void allowNext(boolean allow) {

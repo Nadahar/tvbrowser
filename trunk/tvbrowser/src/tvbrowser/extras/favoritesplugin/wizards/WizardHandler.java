@@ -9,14 +9,34 @@ public class WizardHandler {
 
   private Container mParent;
   private WizardStep mStep;
-  private WizardDialog mCurrentDialog;
+  private WizardDlg mCurrentDialog;
 
   public WizardHandler(Container parent, WizardStep initialStep) {
     mParent = parent;
     mStep = initialStep;
   }
 
+
   public Object show() {
+    WizardStep currentStep = mStep;
+    int result;
+    Object obj = null;
+
+    if (mParent instanceof Frame) {
+      mCurrentDialog = new WizardDlg((Frame)mParent, this, currentStep);
+    }
+    else {
+      mCurrentDialog = new WizardDlg((Dialog)mParent, this, currentStep);
+    }
+    UiUtilities.centerAndShow(mCurrentDialog);
+    result = mCurrentDialog.getResult();
+    if (result == WizardDlg.FINISH) {
+        obj = currentStep.createDataObject(obj);
+    }
+    return obj;
+  }
+
+ /* public Object showOLD() {
     WizardStep currentStep = mStep;
     int result;
     Object obj = null;
@@ -45,7 +65,7 @@ public class WizardHandler {
     else {
       return null;
     }
-  }
+  }      */
   
   public void allowNext(boolean allow) {
     mCurrentDialog.allowNext(allow);
