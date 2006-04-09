@@ -36,6 +36,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import util.ui.customizableitems.SelectableItemList;
+
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -53,8 +55,18 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
 
   private Channel[] mResultChannelArr;
   private Channel[] mChannelArr;
-  private OrderChooser mChannelChooser;
-
+  private OrderChooser mChannelOrderChooser;
+  private SelectableItemList mChannelItemList;
+  
+  /**
+   * If this Dialog should contain an OrderChooser use this type.
+   */
+  public static int ORDER_CHOOSER = 0;
+  
+  /**
+   * If this Dialog should contain a SelectableItemList use this type.
+   */
+  public static int SELECTABLE_ITEM_LIST = 1;
 
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ChannelChooserDlg.class);
@@ -67,7 +79,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
    */
   public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description) {
     super(parent,true);
-    init(channelArr, description);
+    init(channelArr, description, ORDER_CHOOSER);
   }
 
   /**
@@ -78,10 +90,34 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
    */
   public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description) {
     super(parent,true);
-    init(channelArr, description);
+    init(channelArr, description, ORDER_CHOOSER);
   }
+  
+  /**
+  *
+  * @param parent
+  * @param channelArr The initially selected channels
+  * @param description A description text below the channel list.
+  * @param type The type of this ChannelChooser
+  */
+ public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description, int type) {
+   super(parent,true);
+   init(channelArr, description, type);
+ }
 
-  private void init(Channel[] channelArr, String description) {
+ /**
+  *
+  * @param parent
+  * @param channelArr The initially selected channels
+  * @param description A description text below the channel list.
+  * @param type The type of this ChannelChooser 
+  */
+ public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description, int type) {
+   super(parent,true);
+   init(channelArr, description, type);
+ }
+
+  private void init(Channel[] channelArr, String description, int type) {
     setTitle(mLocalizer.msg("chooseChannels","choose channels"));
     UiUtilities.registerForClosing(this);
     
@@ -100,12 +136,24 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
     contentPane.setBorder(Borders.DLU4_BORDER);
     CellConstraints cc = new CellConstraints();
     
-    mChannelChooser = new OrderChooser(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
+    if(type == ORDER_CHOOSER) {
+      mChannelOrderChooser = new OrderChooser(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
+      mChannelItemList = null;
+    }
+    else {
+      mChannelItemList = new SelectableItemList(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
+      mChannelOrderChooser = null;
+    }
 
     int pos = 1;
     layout.appendRow(new RowSpec("fill:pref:grow"));
     layout.appendRow(new RowSpec("3dlu"));
-    contentPane.add(mChannelChooser, cc.xy(1,pos));
+    
+    if(mChannelOrderChooser != null)
+      contentPane.add(mChannelOrderChooser, cc.xy(1,pos));
+    else
+      contentPane.add(mChannelItemList, cc.xy(1,pos));
+      
     pos += 2;
     
     if (description != null) {
@@ -121,7 +169,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        Object[] o = mChannelChooser.getOrder();
+        Object[] o = mChannelOrderChooser != null ? mChannelOrderChooser.getOrder() : mChannelItemList.getSelection();
         mResultChannelArr = new Channel[o.length];
         for (int i=0;i<o.length;i++) {
           mResultChannelArr[i]=(Channel)o[i];

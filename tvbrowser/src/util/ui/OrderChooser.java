@@ -26,7 +26,6 @@
 package util.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -38,17 +37,15 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
 
 import com.jgoodies.forms.layout.Sizes;
 
 import tvbrowser.core.icontheme.IconLoader;
-import devplugin.Channel;
+import util.ui.customizableitems.SelectableItem;
+import util.ui.customizableitems.SelectableItemRenderer;
 
 /**
  *
@@ -63,10 +60,10 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * Der Bereich, in dem ein Mausklick als Selektion/Deselektion und nicht als
    * Markierung aufgefasst wird.
    * (Wird vom Renderer gesetzt)
-   */
-  private int mSelectionWidth = 0;
+   */  
   private JList mList;
   private DefaultListModel mListModel;
+  private SelectableItemRenderer mItemRenderer;
   private JButton mUpBt;
   private JButton mDownBt;
   private JButton mSelectAllBt;
@@ -107,7 +104,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     mListModel = new DefaultListModel();
     setEntries(currOrder,allItems);
     mList = new JList(mListModel);
-    mList.setCellRenderer(new SelectableItemRenderer());
+    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
 
     // Register DnD on the List.
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);    
@@ -116,7 +113,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     // MouseListener hinzufügen, der das Selektieren/Deselektieren übernimmt
     mList.addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent evt) {
-        if (evt.getX() < mSelectionWidth && mIsEnabled) {
+        if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
           int index = mList.locationToIndex(evt.getPoint());
           if (index != -1) {
             SelectableItem item = (SelectableItem) mListModel.elementAt(index);
@@ -313,86 +310,13 @@ public class OrderChooser extends JPanel implements ListDropAction{
   }*/
 
 
-  class SelectableItem {
-    private Object mItem;
-    private boolean mSelected;
-
-    public SelectableItem(Object item, boolean selected) {
-      mItem = item;
-      mSelected = selected;
-    }
-    
-    void setSelected(boolean selected) {
-      mSelected = selected;
-    }
-
-    boolean isSelected() {
-      return mSelected;
-    }
-    
-    Object getItem() {
-      return mItem;
-    }
-  } // class SelectableItem
-
-
-  class SelectableItemRenderer implements ListCellRenderer {    
-    public Component getListCellRendererComponent(JList list, Object value,
-    int index, boolean isSelected, boolean cellHasFocus) {
-      JPanel p = new JPanel(new BorderLayout(2,0));
-      p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-      
-      SelectableItem selectableItem = (SelectableItem) value;
-
-      JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
-      mSelectionWidth = cb.getPreferredSize().width;
-      
-      cb.setOpaque(false);
-      
-      p.add(cb, BorderLayout.WEST);
-      
-      if(selectableItem.getItem() instanceof Channel) {
-        JLabel l = new JLabel(selectableItem.mItem.toString());
-        
-        if(!mIsEnabled)
-          l.setEnabled(false);
-        
-        l.setOpaque(false);
-        l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
-        p.add(l, BorderLayout.CENTER);
-        
-        if(isSelected && mIsEnabled)
-          l.setForeground(list.getSelectionForeground());
-        else
-          l.setForeground(list.getForeground());
-      }
-      else
-        cb.setText(selectableItem.mItem.toString());
-      
-      if (isSelected && mIsEnabled) {
-        p.setOpaque(true);
-        p.setBackground(list.getSelectionBackground());
-        cb.setForeground(list.getSelectionForeground());
-        
-      } else {
-        p.setOpaque(false);
-        p.setForeground(list.getForeground());
-        cb.setForeground(list.getForeground());
-      }
-      cb.setEnabled(list.isEnabled());
-
-      return p;
-    }
-
-  } // class SelectableItemRenderer
-
-
   public void drop(JList source, JList target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
   }
   
   public void setEnabled(boolean value) {
     mIsEnabled = value;
+    mItemRenderer.setEnabled(value);
     mList.setEnabled(value);
     mUpBt.setEnabled(value);
     mDownBt.setEnabled(value);
