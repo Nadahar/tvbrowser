@@ -178,7 +178,7 @@ public class ExcludeWizardStep implements WizardStep {
       }
     }
 
-
+    updateButtons(handler);
 
     mChannelCb.addItemListener(new ItemListener(){
       public void itemStateChanged(ItemEvent e) {
@@ -198,6 +198,12 @@ public class ExcludeWizardStep implements WizardStep {
       }
     });
 
+    mTimeCb.addItemListener(new ItemListener(){
+      public void itemStateChanged(ItemEvent e) {
+        updateButtons(handler);
+      }
+    });
+
 
 
 
@@ -210,6 +216,9 @@ public class ExcludeWizardStep implements WizardStep {
       allowNext = true;
     }
 
+
+
+
     if (mTopicCb.isSelected()) {
       allowNext = true;
     }
@@ -218,7 +227,13 @@ public class ExcludeWizardStep implements WizardStep {
       if (mTitleCb.isSelected()) {
         allowNext = true;
       }
+      mTitleTf.setEnabled(mTitleCb.isSelected());
     }
+
+    mChannelCB.setEnabled(mChannelCb.isSelected());
+    mTopicTf.setEnabled(mTopicCb.isSelected());
+    mTimePeriodChooser.setEnabled(mTimeCb.isSelected());
+
     handler.allowFinish(allowNext);
   }
 
