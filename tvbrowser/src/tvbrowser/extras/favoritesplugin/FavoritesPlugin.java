@@ -80,6 +80,8 @@ public class FavoritesPlugin implements ContextMenuIf{
   private ConfigurationHandler mConfigurationHandler;
 
   private PluginTreeNode mRootNode;
+  
+  private boolean mShowInfoOnNewProgramsFound = true;
 
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -106,14 +108,20 @@ public class FavoritesPlugin implements ContextMenuIf{
       }
     }
 
+    ArrayList showInfoFavorites = new ArrayList();
+    
     for (int i = 0; i < mFavoriteArr.length; i++) {
-      if (mFavoriteArr[i].isRemindAfterDownload()) {
-        Program[] progs = mFavoriteArr[i].getPrograms();
-        if (progs.length > 0) {
-          JOptionPane.showMessageDialog(null, "Found programs for favorite '" + mFavoriteArr[i].getName()+"'!");
-        }
-      }
+      if (mFavoriteArr[i].isRemindAfterDownload() && mFavoriteArr[i].getNewPrograms().length > 0)
+        showInfoFavorites.add(mFavoriteArr[i]);
     }
+    
+    if(!showInfoFavorites.isEmpty()) {
+      Favorite[] fav = new Favorite[showInfoFavorites.size()];
+      showInfoFavorites.toArray(fav);
+      
+      showManageFavoritesDialog(true, fav);
+    }
+    
       }
     });
   }
@@ -223,6 +231,9 @@ public class FavoritesPlugin implements ContextMenuIf{
         mClientPluginIdArr[i] = (String) in.readObject();
       }
     }
+    
+    if(version == 4)
+      this.mShowInfoOnNewProgramsFound = in.readBoolean();
 
   }
 
@@ -252,7 +263,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
 
   private void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
+    out.writeInt(4); // version
 
     out.writeInt(mFavoriteArr.length);
     for (int i = 0; i < mFavoriteArr.length; i++) {
@@ -264,6 +275,8 @@ public class FavoritesPlugin implements ContextMenuIf{
     for (int i = 0; i < mClientPluginIdArr.length; i++) {
       out.writeObject(mClientPluginIdArr[i]);
     }
+    
+    out.writeBoolean(mShowInfoOnNewProgramsFound);
   }
 
   /**
@@ -276,8 +289,6 @@ public class FavoritesPlugin implements ContextMenuIf{
       throw new IllegalArgumentException("settings is null");
     }
   }
-
-
 
   private int getIntegerSetting(Properties prop, String key, int defaultValue) {
     int res = defaultValue;
@@ -293,7 +304,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        showManageFavoritesDialog();
+        showManageFavoritesDialog(false, mFavoriteArr);
       }
     });
 
@@ -383,7 +394,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   }
 
-  private void showManageFavoritesDialog() {
+  private void showManageFavoritesDialog(final boolean showNew, Favorite[] favoriteArr) {
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",
             200);
     int width = getIntegerSetting(mSettings, "width", 500);
@@ -391,12 +402,36 @@ public class FavoritesPlugin implements ContextMenuIf{
     ManageFavoritesDialog dlg;
     Container parent = UiUtilities.getBestDialogParent(null);
     if (parent instanceof Frame) {
-      dlg = new ManageFavoritesDialog((Frame)parent, mFavoriteArr, splitPanePosition);
+      dlg = new ManageFavoritesDialog((Frame)parent, favoriteArr, splitPanePosition, showNew);
     }
     else {
-      dlg = new ManageFavoritesDialog((Dialog)parent, mFavoriteArr, splitPanePosition);
+      dlg = new ManageFavoritesDialog((Dialog)parent, favoriteArr, splitPanePosition, showNew);
     }
     dlg.setSize(new Dimension(width, height));
+    
+    if(mShowInfoOnNewProgramsFound) {
+      final ManageFavoritesDialog dialog = dlg;    
+    
+      new Thread() {
+        public void run() {
+          while(!dialog.isVisible())
+            try {
+              Thread.sleep(100);
+            }catch(Exception e){};
+          if(showNew) {
+            JCheckBox chb = new JCheckBox(mLocalizer.msg("dontShow","Don't show this description again."));
+            Object[] o = {mLocalizer.msg("description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
+                chb
+            };
+            
+            JOptionPane.showMessageDialog(dialog,o);
+          
+            if(chb.isSelected())
+              mShowInfoOnNewProgramsFound = false;
+        }
+      }
+    }.start();
+    }
     UiUtilities.centerAndShow(dlg);
 
     if (dlg.getOkWasPressed()) {

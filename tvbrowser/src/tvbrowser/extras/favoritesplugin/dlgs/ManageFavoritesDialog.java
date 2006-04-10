@@ -27,6 +27,7 @@
 package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -50,8 +51,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -98,25 +101,24 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
   private JButton mCloseBt;
 
   private boolean mOkWasPressed = false;
-
-
-
+  private boolean mShowNew = false;
   private static ManageFavoritesDialog mInstance = null;
-
-
-  public ManageFavoritesDialog(Dialog parent, Favorite[] favoriteArr, int splitPanePosition) {
+  
+  public ManageFavoritesDialog(Dialog parent, Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
     super(parent, true);
-    init(favoriteArr, splitPanePosition);
+    init(favoriteArr, splitPanePosition, showNew);
   }
 
-  public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr, int splitPanePosition) {
+  public ManageFavoritesDialog(Frame parent, Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
     super(parent, true);
-    init(favoriteArr, splitPanePosition);
+    init(favoriteArr, splitPanePosition, showNew);
   }
 
-
-  private void init(Favorite[] favoriteArr, int splitPanePosition) {
+  private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
     mInstance = this;
+    
+    mShowNew = showNew;
+    
     String msg;
     Icon icon;
 
@@ -128,7 +130,10 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
     UiUtilities.registerForClosing(this);
 
-    setTitle(mLocalizer.msg("title", "Manage favorite programs"));
+    if(mShowNew)
+      setTitle(mLocalizer.msg("newTitle", "New programs found"));
+    else
+      setTitle(mLocalizer.msg("title", "Manage favorite programs"));
 
     JPanel main = new JPanel(new BorderLayout(5, 5));
     main.setBorder(UiUtilities.DIALOG_BORDER);
@@ -145,7 +150,8 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         newFavorite();
       }
     });
-    toolbarPn.add(mNewBt);
+    if(!mShowNew)
+      toolbarPn.add(mNewBt);
 
     msg = mLocalizer.msg("edit", "Edit the selected favorite...");
     icon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 22);
@@ -175,7 +181,9 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         moveSelectedFavorite(-1);
       }
     });
-    toolbarPn.add(mUpBt);
+    
+    if(!mShowNew)
+      toolbarPn.add(mUpBt);
 
     msg = mLocalizer.msg("down", "Move the selected favorite down");
     icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-down", 22);
@@ -185,7 +193,9 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         moveSelectedFavorite(1);
       }
     });
-    toolbarPn.add(mDownBt);
+    
+    if(!mShowNew)
+      toolbarPn.add(mDownBt);
 
     msg = mLocalizer.msg("send", "Send Programs to another Plugin");
     icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 22);
@@ -205,7 +215,9 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         sortFavorites();
       }
     });
-    toolbarPn.add(mSortBt);
+    
+    if(!mShowNew)
+      toolbarPn.add(mSortBt);
 
     msg = mLocalizer.msg("import", "Import favorites from TVgenial");
     icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-open", 22);
@@ -215,7 +227,9 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         importFavorites();
       }
     });
-    toolbarPn.add(mImportBt);
+    
+    if(!mShowNew)
+      toolbarPn.add(mImportBt);
 
     mSplitPane = new JSplitPane();
     mSplitPane.setDividerLocation(splitPanePosition);
@@ -267,8 +281,8 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     getRootPane().setDefaultButton(mCloseBt);
 
     favoriteSelectionChanged();
-  }
-
+  }  
+  
   public static ManageFavoritesDialog getInstance() {
     return mInstance;
   }
@@ -298,7 +312,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
       mSendBt.setEnabled(false);
     } else {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      Program[] programArr = fav.getPrograms();
+      Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getPrograms();
 
       mSendBt.setEnabled(programArr.length > 0);
 
@@ -311,19 +325,24 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
   }
 
   public void showSendDialog() {
-      int selection = mFavoritesList.getSelectedIndex();
+    int selection = mFavoritesList.getSelectedIndex();
 
-      if(selection == -1) {
-          return;
-      }
-
+    if(selection == -1) {
+        return;
+    }
+    
+    Program[] programs = mProgramList.getSelectedPrograms();
+    
+    if(programs == null || programs.length == 0) {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      Program[] programArr = fav.getPrograms();
+      programs = mShowNew ? fav.getNewPrograms() : fav.getPrograms();
+    }
 
-      SendToPluginDialog send = new SendToPluginDialog(null, this, programArr);
-
-      send.setVisible(true);
-  }
+    SendToPluginDialog send = new SendToPluginDialog(null, this, programs);
+    
+    send.setVisible(true);
+    
+}
 
 
   protected void newFavorite() {
@@ -525,16 +544,21 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
 
   class FavoriteListCellRenderer extends DefaultListCellRenderer {
-
+    
     public Component getListCellRendererComponent(JList list, Object value,
                                                   int index, boolean isSelected, boolean cellHasFocus)
     {
-      if (value instanceof Favorite) {
+      Component c = super.getListCellRendererComponent(list, value, index, isSelected,
+          cellHasFocus);
+      
+      if (value instanceof Favorite && c instanceof JLabel) {
         Favorite fav = (Favorite)value;
-        value = fav.getName() + " (" + fav.getPrograms().length + ")";
+        ((JLabel)c).setText(fav.getName() + " (" + (mShowNew ? fav.getNewPrograms().length : fav.getPrograms().length) + ")");
+        
+        if(mShowNew && fav.getNewPrograms().length > 0 && !isSelected)
+          c.setForeground(Color.red);
       }
-      return super.getListCellRendererComponent(list, value, index, isSelected,
-        cellHasFocus);
+      return c;
     }
 
   }
