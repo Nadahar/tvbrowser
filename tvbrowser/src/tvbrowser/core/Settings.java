@@ -33,6 +33,8 @@ import java.util.logging.Level;
 
 import javax.swing.UIManager;
 
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -481,7 +483,7 @@ public class Settings {
     = new StringProperty(mProp, "skinLF.themepack", "themepacks/themepack.zip");
 
   public static final StringProperty propJGoodiesTheme
-  = new StringProperty(mProp, "jgoodies.theme", null);
+  = new StringProperty(mProp, "jgoodies.theme", PlasticLookAndFeel.createMyDefaultTheme().getClass().getName());
 
   public static final BooleanProperty propJGoodiesShadow
   = new BooleanProperty(mProp, "jgoodies.dropshadow", false);
