@@ -40,7 +40,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.ui.mainframe.MainFrame;
