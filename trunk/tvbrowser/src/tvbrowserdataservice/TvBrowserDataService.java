@@ -166,6 +166,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
                            Date startDate, int dateCount, ProgressMonitor monitor) {
 
+    // Check for Connection
     if (!NetworkUtilities.checkConnection()) {
       JOptionPane.showMessageDialog(null, 
           mLocalizer.msg("noConnectionMessage", "No connection!"),
@@ -174,6 +175,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       return;
     }
     
+    // Reset list of banned Servers
+    ChannelGroup.resetBannedServers();
     
     mTvDataBase=dataBase;
     mProgressMonitor = monitor;
