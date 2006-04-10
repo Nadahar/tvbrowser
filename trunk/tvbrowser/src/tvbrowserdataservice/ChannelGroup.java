@@ -361,7 +361,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     // Wait till second Thread is finished or 15000 ms reached
     while ((mMirrorDownloadRunning) && (num < 150)) {
       num++;
-      mLog.info("waiting");
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
@@ -370,6 +369,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     }
 
     if (mMirrorDownloadRunning || mMirrorDownloadData == null) {
+      mLog.info("Server " + url +" is down!");
       return false;
     }
     
@@ -403,9 +403,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
           // This one is not up to date -> choose another one
           Mirror oldMirror = mirror;
           mirror = chooseMirror(mirrorArr, mirror);
-          mLog.info("Mirror " + oldMirror.getUrl() + " is out of date. Choosing " + mirror.getUrl() + " instead.");
+          mLog.info("Mirror " + oldMirror.getUrl() + " is out of date or down. Choosing " + mirror.getUrl() + " instead.");
           if (monitor != null) {
-            monitor.setMessage(mLocalizer.msg("info.4", "Mirror {0} is out of date. Choosing {1}", oldMirror.getUrl(), mirror
+            monitor.setMessage(mLocalizer.msg("info.4", "Mirror {0} is out of date or down. Choosing {1}", oldMirror.getUrl(), mirror
                     .getUrl()));
           }
         }
