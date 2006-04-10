@@ -89,9 +89,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   private static final int MAX_LAST_UPDATE_DAYS = 5;
 
-
-
-
+  /** List of blocked Servers */
+  private static ArrayList BLOCKEDSERVERS = new ArrayList();
+  /** Mirror-Download Running?*/
+  private boolean mMirrorDownloadRunning = true;
+  /** Data of Mirror-Download*/
+  private byte[] mMirrorDownloadData = null;
+  
 
   public ChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, Properties settings) {
     mID = id;
@@ -273,7 +277,10 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
       Mirror[] mirrorList = new Mirror[mMirrorUrlArr.length];
       for (int i = 0; i < mMirrorUrlArr.length; i++) {
-        mirrorList[i] = new Mirror(mMirrorUrlArr[i]);
+        if (!BLOCKEDSERVERS.contains(getServerBase(mMirrorUrlArr[i]))) {
+          mirrorList[i] = new Mirror(mMirrorUrlArr[i]);
+        }
+        
       }
       return mirrorList;
 
@@ -309,8 +316,8 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       currWeight += mirrorArr[i].getWeight();
       if (currWeight > chosenWeight) {
         Mirror mirror = mirrorArr[i];
-        // Check whether this is the old mirror
-        if ((mirror == oldMirror) && (mirrorArr.length > 1)) {
+        // Check whether this is the old mirror or Mirror is Blocked
+        if (((mirror == oldMirror) || BLOCKEDSERVERS.contains(getServerBase(mirror.getUrl()))) && (mirrorArr.length > 1)) {
           // We chose the old mirror -> chose another one
           return chooseMirror(mirrorArr, oldMirror);
         } else {
@@ -333,21 +340,49 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   private boolean mirrorIsUpToDate(Mirror mirror) throws TvBrowserException {
     // Load the lastupdate file and parse it
-    String url = mirror.getUrl() + "/" + mID + "_lastupdate";
+    final String url = mirror.getUrl() + "/" + mID + "_lastupdate";
     Date lastupdated;
-    try {
-      byte[] data = IOUtilities.loadFileFromHttpServer(new URL(url));
-      mDirectlyLoadedBytes += data.length;
+    mMirrorDownloadRunning = true;
+    mMirrorDownloadData = null;
+    
+    mLog.info("Loading MirrorDate from " + url);
+    
+    new Thread(new Runnable() {
+      public void run() {
+        try {
+          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url));
+        } catch (Exception e) {
+        }
+        mMirrorDownloadRunning = false;
+      };
+    }).start();
 
-      // Parse is. E.g.: '2003-10-09 11:48:45'
-      String asString = new String(data);
-      int year = Integer.parseInt(asString.substring(0, 4));
-      int month = Integer.parseInt(asString.substring(5, 7));
-      int day = Integer.parseInt(asString.substring(8, 10));
-      lastupdated = new Date(year, month, day);
-    } catch (Exception exc) {
-      throw new TvBrowserException(getClass(), "error.3", "Loading lastupdate file failed: {0}", url, exc);
+    int num = 0;
+    // Wait till second Thread is finished or 15000 ms reached
+    while ((mMirrorDownloadRunning) && (num < 150)) {
+      num++;
+      mLog.info("waiting");
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
+
+    if (mMirrorDownloadRunning || mMirrorDownloadData == null) {
+      return false;
+    }
+    
+    mLog.info("Done !");
+    
+    mDirectlyLoadedBytes += mMirrorDownloadData.length;
+
+    // Parse is. E.g.: '2003-10-09 11:48:45'
+    String asString = new String(mMirrorDownloadData);
+    int year = Integer.parseInt(asString.substring(0, 4));
+    int month = Integer.parseInt(asString.substring(5, 7));
+    int day = Integer.parseInt(asString.substring(8, 10));
+    lastupdated = new Date(year, month, day);
 
     return lastupdated.compareTo(new Date().addDays(-MAX_LAST_UPDATE_DAYS)) >= 0;
   }
@@ -375,6 +410,9 @@ public class ChannelGroup implements devplugin.ChannelGroup {
           }
         }
       } catch (TvBrowserException exc) {
+        String blockedServer = getServerBase(mirror.getUrl()); 
+        BLOCKEDSERVERS.add(blockedServer);
+        mLog.info("Server blocked : " + blockedServer);
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
         mirror = chooseMirror(mirrorArr, mirror);
@@ -390,6 +428,20 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     return mirror;   
   }
 
+  /**
+   * Get the Server-Domain of the Url
+   * @param url Url to fetch the Server-Domain from
+   * @return Server-Domain 
+   */
+  private String getServerBase(String url) {
+    if (url.startsWith("http://"))
+      url = url.substring(7);
+    if (url.indexOf('/') >= 0)
+      url = url.substring(0, url.indexOf('/'));
+    
+    return url;
+  }
+  
   private boolean needsUpdate(File file) {
     if (!file.exists()) {
       return true;
@@ -508,6 +560,13 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   public int hashCode() {
     return mID.toLowerCase().hashCode();
+  }
+
+  /**
+   * Reset the List of banned Servers
+   */
+  public static void resetBannedServers() {
+    BLOCKEDSERVERS.clear();
   }
 
 
