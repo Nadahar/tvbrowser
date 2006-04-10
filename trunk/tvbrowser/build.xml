@@ -73,8 +73,6 @@
   <property name="x11.dir" value="${deployment.dir}/x11"/>
   <property name="jsmooth.dir" value="${win.dir}/jsmooth"/>
   <property name="installer.dir" value="${win.dir}/installer"/>
-  <property name="statcvs.dir" value="statcvs"/>
-  <property name="statcvs.output.dir" value="${statcvs.dir}/html"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
   <property name="public.dir" value="public"/>
 
@@ -111,14 +109,6 @@
            classname="net.charabia.jsmoothgen.ant.JSmoothGen"
            classpath="${deployment.dir}/win/jsmooth/lib/jsmoothgen-ant.jar" />
 
-    <!--
-  | Generates the CVS statistics.
-  +-->
-  <taskdef name="statcvs"
-           classname="net.sf.statcvs.ant.StatCvsTask"
-           classpath="${statcvs.dir}/statcvs.jar"/>
-
-
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 |
 |  Display all targets
@@ -154,7 +144,6 @@
     <echo message="  runtime-mac        Creates a runtime directory for Mac OS X" />
     <echo message="  runtime-win        Creates a runtime directory for MS Windows" />
     <echo message="  runtime-tvdatakit  Creates a runtime directory for the TV-Browser TV data kit" />
-    <echo message="  statcvs            Generates the CVS statistics."/>
     <echo message="  test               Does the JUnit tests."/>
 
 
@@ -706,22 +695,6 @@
     </zip>
   </target>
 
-
-  <target name="statcvs">
-    <echo message="Creating the CVS log file..."/>
-    <cvs command="log"
-         cvsRoot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/tvbrowser"
-         output="${statcvs.dir}/cvslog.txt"/>
-
-    <echo message="Generating the CVS statistics to ${statcvs.output.dir}..."/>
-    <delete dir="${statcvs.output.dir}"/>
-    <mkdir dir="${statcvs.output.dir}"/>
-    <statcvs projectDirectory="."
-             cvsLogFile="${statcvs.dir}/cvslog.txt"
-             outputDirectory="${statcvs.output.dir}"/>
-  </target>
-
-
   <!--
     | Does the JUnit tests.
     |
@@ -807,9 +780,6 @@
         <include name="${jsmooth.dir}/**"/>
         <include name="${lib.dir}/**"/>
         <include name="${src.dir}/**"/>
-        <include name="${statcvs.dir}/**"/>
-        <exclude name="${statcvs.dir}/cvslog.txt"/>
-        <exclude name="${statcvs.output.dir}/**"/>
         <include name="${themepacks.dir}/**"/>
         <include name="${txt.dir}/**"/>
         <include name="${deployment.dir}/**"/>
