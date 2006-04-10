@@ -3,6 +3,7 @@ package tvbrowser.extras.favoritesplugin.wizards;
 import tvbrowser.extras.favoritesplugin.core.*;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 
 import javax.swing.*;
 
@@ -117,6 +118,7 @@ public class TypeWizardStep implements WizardStep {
         if (dlg.getOkWasPressed()) {
           FavoritesPlugin.getInstance().addFavorite(favorite);
           FavoritesPlugin.getInstance().updateRootNode();
+          ManageFavoritesDialog.getInstance().addFavorite(favorite);
         }
       }
     });

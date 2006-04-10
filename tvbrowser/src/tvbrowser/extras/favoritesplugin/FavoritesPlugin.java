@@ -434,7 +434,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     }
     UiUtilities.centerAndShow(dlg);
 
-    if (dlg.getOkWasPressed()) {
+    if (!showNew) {
       mFavoriteArr = dlg.getFavorites();
       updateRootNode();
     }
@@ -510,6 +510,8 @@ public class FavoritesPlugin implements ContextMenuIf{
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode();
   }
+  
+  
 
 
   public String[] getClientPluginIds() {

@@ -51,7 +51,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -99,8 +98,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
   private JSplitPane mSplitPane;
   private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt, mSendBt;
   private JButton mCloseBt;
-
-  private boolean mOkWasPressed = false;
+  
   private boolean mShowNew = false;
   private static ManageFavoritesDialog mInstance = null;
   
@@ -349,16 +347,21 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
     WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new TypeWizardStep());
     tvbrowser.extras.favoritesplugin.core.Favorite fav = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
+    addFavorite(fav);
+  }
+  
+  public void addFavorite(Favorite fav) {
     if (fav != null) {
-      try {
-        fav.updatePrograms();
-        mFavoritesListModel.addElement(fav);
-        int idx = mFavoritesListModel.size() - 1;
-        mFavoritesList.setSelectedIndex(idx);
-        mFavoritesList.ensureIndexIsVisible(idx);       
-      } catch (TvBrowserException e) {
-        ErrorHandler.handle("Creating favorites failed.", e);
-      }
+    try {
+      fav.updatePrograms();
+      mFavoritesListModel.addElement(fav);
+      int idx = mFavoritesListModel.size() - 1;
+      mFavoritesList.setSelectedIndex(idx);
+      mFavoritesList.ensureIndexIsVisible(idx);
+      FavoritesPlugin.getInstance().addFavorite(fav);
+    } catch (TvBrowserException e) {
+      ErrorHandler.handle("Creating favorites failed.", e);
+    }    
     }
   }
 
@@ -526,13 +529,6 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     }
   }
 
-
-  public boolean getOkWasPressed() {
-    return mOkWasPressed;
-  }
-
-
-
   public Favorite[] getFavorites() {
     Favorite[] favoriteArr = new Favorite[mFavoritesListModel.size()];
     mFavoritesListModel.copyInto(favoriteArr);
@@ -565,7 +561,6 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
 
   public void close() {
-    mOkWasPressed = true;
     mInstance = null;
     dispose();
   }
