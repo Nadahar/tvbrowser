@@ -26,7 +26,6 @@
 package util.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -37,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import util.ui.customizableitems.SelectableItemList;
 
@@ -46,7 +44,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
-import devplugin.PluginAccess;
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
 
