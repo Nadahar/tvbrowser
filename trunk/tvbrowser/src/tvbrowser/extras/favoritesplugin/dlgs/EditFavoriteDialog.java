@@ -49,6 +49,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.core.icontheme.IconLoader;
 import devplugin.Channel;
 import devplugin.PluginAccess;
+import util.ui.PluginChooserDlg;
 import util.ui.TabLayout;
 import util.ui.ChannelChooserDlg;
 import util.ui.UiUtilities;
@@ -402,14 +403,13 @@ public class EditFavoriteDialog extends JDialog {
 
     JPanel panel = new JPanel(new FormLayout("pref, pref:grow, pref", "pref,3dlu,pref"));
     CellConstraints cc = new CellConstraints();
-
-
+    
     mPassProgramPlugins = mFavorite.getForwardPlugins();
     mPassProgramsLb = new JLabel(getForwardPluginsLabelString(mPassProgramPlugins));
     mChangePassProgramsBtn = new JButton(mLocalizer.msg("change","Change"));
     mChangePassProgramsBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins);
+        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins , null);
         UiUtilities.centerAndShow(dlg);
         PluginAccess[] pluginArr = dlg.getPlugins();
         if (pluginArr != null) {
