@@ -30,6 +30,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.TimeZone;
 
 import javax.swing.Icon;
@@ -182,11 +183,53 @@ public class Channel {
   }
 
   public static Channel readData(ObjectInputStream in, boolean allowNull)
+  throws IOException, ClassNotFoundException
+  {
+    int version = in.readInt();
+        
+    String dataServiceClassName = (String)in.readObject();    
+    
+    String channelId;
+    
+    if (version==1) {
+      channelId=""+in.readInt();
+    }
+    else {
+      channelId=(String)in.readObject();
+    }
+        
+    Channel channel = getChannel(dataServiceClassName, channelId);
+    if ((channel == null) && (! allowNull)) {
+      throw new IOException("Channel with id " + channelId + " of data service "
+        + dataServiceClassName + " not found!");
+    }
+    return channel;
+  }
+
+
+  /**
+   * Method for OnDemandDayProgramFile file format version 2.
+   * 
+   * @param in The file too read the Data from.
+   * @param allowNull
+   * @return
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  public static Channel readData(RandomAccessFile in, boolean allowNull)
     throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
     
-    String dataServiceClassName = (String) in.readObject();
+    if(version < 3)
+      throw new IOException();
+    
+    int length = in.readInt();
+    byte[] b = new byte[length];
+    
+    in.readFully(b);
+    
+    String dataServiceClassName = new String(b);    
     
     String channelId;
     
@@ -194,7 +237,10 @@ public class Channel {
     	channelId=""+in.readInt();
     }
     else {
-    	channelId=(String)in.readObject();
+      length = in.readInt();
+      b = new byte[length];
+      in.readFully(b);
+    	channelId=new String(b);
     }
         
     Channel channel = getChannel(dataServiceClassName, channelId);
@@ -205,8 +251,21 @@ public class Channel {
     return channel;
   }
   
-
-
+  /**
+   * Method for OnDemandDayProgramFile file format version 2.
+   * 
+   * @param out The file to write the Data in.
+   * @throws IOException
+   */
+  public void writeToDataFile(RandomAccessFile out) throws IOException {
+    out.writeInt(3); // version
+    String name = mDataService.getClass().getName();
+    out.writeInt(name.length());//.writeObject();
+    out.writeBytes(name);
+    out.writeInt(mId.length());
+    out.writeBytes(mId);
+  }
+  
   /**
    * Serialized this object.
    */
