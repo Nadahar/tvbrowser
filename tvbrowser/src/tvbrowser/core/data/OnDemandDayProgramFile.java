@@ -28,10 +28,9 @@ package tvbrowser.core.data;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.Iterator;
 
 import tvdataservice.MutableChannelDayProgram;
@@ -41,8 +40,8 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 /**
- * An encapsulated access on a file containing TV data that allows an access
- * of single data fields on demand.
+ * An encapsulated access on a file containing TV data that allows an access of
+ * single data fields on demand.
  * 
  * @author Til Schneider, www.murfman.de
  */
@@ -55,54 +54,96 @@ public class OnDemandDayProgramFile {
 
   /** The file to load the data from. */
   private File mFile;
-  
+
   /** The day program that holds the already loaded TV data. */
   private MutableChannelDayProgram mDayProgram;
-  
+
   /**
    * Holds, whether this file is valid. This is not the case, when it was
    * replaced by another one
    */
   private boolean mValid;
 
-
   public OnDemandDayProgramFile(File file, Date date, Channel channel) {
     this(file, new MutableChannelDayProgram(date, channel));
   }
 
-
   public OnDemandDayProgramFile(File file, MutableChannelDayProgram dayProgram) {
     mFile = file;
     mDayProgram = dayProgram;
-    
+
     mValid = true;
   }
-  
-  
+
   public synchronized void setValid(boolean valid) {
     mValid = valid;
   }
-  
-  
+
   public MutableChannelDayProgram getDayProgram() {
     return mDayProgram;
   }
 
-
-  public synchronized void loadDayProgram()
-    throws IOException, ClassNotFoundException
-  {
+  /**
+   * Loads the day program for on demand access.
+   * 
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  public synchronized void loadDayProgram() throws IOException,
+      ClassNotFoundException {
     checkValid();
-    
+
+    RandomAccessFile dataFile = null;
+    try {
+      dataFile = new RandomAccessFile(mFile, "rw");
+
+      int version = dataFile.readInt();
+
+      if (version < 2) {
+        dataFile.close();
+        updateToVersion2();
+        dataFile = new RandomAccessFile(mFile, "rw");
+        int ver2 = dataFile.readInt();
+
+        if (ver2 < 2) {
+          mValid = false;
+          checkValid();
+        }
+      }
+
+      Date date = new Date(dataFile);
+      Channel channel = Channel.readData(dataFile, false);
+
+      int size = dataFile.readInt();
+      mDayProgram.removeAllPrograms();
+      for (int i = 0; i < size; i++) {
+        Program prog = loadProgram(dataFile, date, channel);
+        mDayProgram.addProgram(prog);
+      }
+
+      dataFile.close();
+    } finally {
+      if (dataFile != null) {
+        try {
+          dataFile.close();
+        } catch (IOException exc) {}
+      }
+    }
+  }
+
+  /**
+   * Does an update of the version 1 on demand data file to version 2.
+   * 
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  private void updateToVersion2() throws IOException, ClassNotFoundException {
     BufferedInputStream stream = null;
     try {
       stream = new BufferedInputStream(new FileInputStream(mFile), 0x10000);
-      CountingInputStream countIn = new CountingInputStream(stream);
-      ObjectInputStream objIn = new ObjectInputStream(countIn);
-      
-      countIn.resetOffset();
+      ObjectInputStream objIn = new ObjectInputStream(stream);
 
-      int version = objIn.readInt();
+      objIn.readInt();
 
       Date date = new Date(objIn);
       Channel channel = Channel.readData(objIn, false);
@@ -110,63 +151,37 @@ public class OnDemandDayProgramFile {
       int size = objIn.readInt();
       mDayProgram.removeAllPrograms();
       for (int i = 0; i < size; i++) {
-        Program prog = loadProgram(countIn, objIn, date, channel);
+        Program prog = loadProgram(objIn, date, channel);
         mDayProgram.addProgram(prog);
       }
 
       stream.close();
-    }
-    finally {
-      if (stream != null) {
-        try {
-          stream.close();
-        } catch (IOException exc) {
-        }
-      }
-    }
-  }
-
-
-  public synchronized void saveDayProgram() throws IOException {
-    checkValid();
-    
-    Date date = mDayProgram.getDate();
-    Channel channel = mDayProgram.getChannel();
-
-    FileOutputStream stream = null;
-    try {
-      stream = new FileOutputStream(mFile);
-      ObjectOutputStream objOut = new ObjectOutputStream(stream);
-
-      objOut.writeInt(1); // version
-
-      date.writeData(objOut);
-      channel.writeData(objOut);
-
-      int programCount = mDayProgram.getProgramCount();
-      objOut.writeInt(programCount);
-      for (int i = 0; i < programCount; i++) {
-        Program program = mDayProgram.getProgramAt(i);
-        saveProgram(program, objOut, date, channel);
-      }
-
-      objOut.close();
-      stream.close();
+      saveDayProgram(true);
     } finally {
       if (stream != null) {
         try {
           stream.close();
-        } catch (IOException exc) {
-        }
+        } catch (IOException exc) {}
       }
+      File newFile = new File(mFile.getPath() + "_to_ver_2_update");
+      mFile.delete();
+      newFile.renameTo(mFile);
+      mValid = true;
     }
   }
 
-
-  private Program loadProgram(CountingInputStream countIn,
-    ObjectInputStream objIn, Date date, Channel channel)
-    throws IOException, ClassNotFoundException
-  {
+  /**
+   * Loads the data of the old on demand data file version.
+   * 
+   * @param objIn
+   * @param date
+   * @param channel
+   * @return
+   * @throws IOException
+   * @throws ClassNotFoundException
+   */
+  private Program loadProgram(ObjectInputStream objIn, Date date,
+      Channel channel) throws IOException, ClassNotFoundException {
     int version = objIn.readInt();
 
     OnDemandProgram prog = new OnDemandProgram(channel, date, this);
@@ -175,9 +190,8 @@ public class OnDemandDayProgramFile {
       prog.setTitle((String) objIn.readObject());
       prog.setShortInfo((String) objIn.readObject());
       prog.setDescription((String) objIn.readObject());
-      prog.setTextField(
-        ProgramFieldType.ACTOR_LIST_TYPE,
-        (String) objIn.readObject());
+      prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, (String) objIn
+          .readObject());
       prog.setTextField(ProgramFieldType.URL_TYPE, (String) objIn.readObject());
 
       int minutes = objIn.readInt();
@@ -188,36 +202,25 @@ public class OnDemandDayProgramFile {
       prog.setLength(objIn.readInt());
       prog.setInfo(objIn.readInt());
 
-      Channel unusedChannel = Channel.readData(objIn, false);
-      Date unusedDate = new devplugin.Date(objIn);
+      Channel.readData(objIn, false); // unused channel
+      new devplugin.Date(objIn); // unused date
 
-      prog.setBinaryField(
-        ProgramFieldType.IMAGE_TYPE,
-        (byte[]) objIn.readObject());
+      prog.setBinaryField(ProgramFieldType.IMAGE_TYPE, (byte[]) objIn
+          .readObject());
     } else {
-      Channel unusedChannel = Channel.readData(objIn, false);
-      Date unusedDate = new devplugin.Date(objIn);
+      Channel.readData(objIn, false); // unused channel
+      new devplugin.Date(objIn); // unused date
 
       int fieldCount = objIn.readInt();
       for (int i = 0; i < fieldCount; i++) {
         int typeId = objIn.readInt();
         ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
         if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
-          int offset = countIn.getOffset();
           byte[] value = (byte[]) objIn.readObject();
-          if ((value != null) && (value.length >= LARGE_FIELD_SIZE_LIMIT)) {
-            prog.setLargeField(type, offset);
-          } else {
-            prog.setBinaryField(type, value);
-          }
+          prog.setBinaryField(type, value);
         } else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-          int offset = countIn.getOffset();
           String value = (String) objIn.readObject();
-          if ((value != null) && (value.length() >= LARGE_FIELD_SIZE_LIMIT)) {
-            prog.setLargeField(type, offset);
-          } else {
-            prog.setTextField(type, value);
-          }
+          prog.setTextField(type, value);
         } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
           prog.setIntField(type, objIn.readInt());
         } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
@@ -225,77 +228,172 @@ public class OnDemandDayProgramFile {
         }
       }
     }
+    return prog;
+  }
+
+  /**
+   * Saves the day program to the on demand data file.
+   * 
+   * @throws IOException
+   */
+  public synchronized void saveDayProgram() throws IOException {
+    saveDayProgram(false);
+  }
+
+  private void saveDayProgram(boolean update) throws IOException {
+    checkValid();
+
+    Date date = mDayProgram.getDate();
+    Channel channel = mDayProgram.getChannel();
+
+    RandomAccessFile dataFile = null;
+    try {
+      if (update)
+        dataFile = new RandomAccessFile(mFile + "_to_ver_2_update", "rw");
+      else
+        dataFile = new RandomAccessFile(mFile, "rw");
+
+      dataFile.writeInt(2); // version
+
+      date.writeToDataFile(dataFile);
+      channel.writeToDataFile(dataFile);
+
+      int programCount = mDayProgram.getProgramCount();
+      dataFile.writeInt(programCount);
+      for (int i = 0; i < programCount; i++) {
+        Program program = mDayProgram.getProgramAt(i);
+        saveProgram(program, dataFile, date, channel);
+      }
+
+      dataFile.close();
+    } finally {
+      if (dataFile != null) {
+        try {
+          dataFile.close();
+        } catch (IOException exc) {}
+      }
+    }
+  }
+
+  private Program loadProgram(RandomAccessFile dataFile, Date date,
+      Channel channel) throws IOException, ClassNotFoundException {
+    int version = dataFile.readInt();
+    OnDemandProgram prog = new OnDemandProgram(channel, date, this);
+
+    if (version == 3) {
+      // Channel.readData(objIn, false); // unused channel
+      // new devplugin.Date(objIn); // unused date
+
+      int fieldCount = dataFile.readInt();
+      for (int i = 0; i < fieldCount; i++) {
+        int typeId = dataFile.readInt();
+        ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
+        if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+          long position = dataFile.getFilePointer();
+
+          int n = dataFile.readInt();
+
+          byte[] value = new byte[n];
+          dataFile.readFully(value);
+
+          if ((value != null) && (n >= LARGE_FIELD_SIZE_LIMIT)) {
+            prog.setLargeField(type, position);
+          } else {
+            prog.setBinaryField(type, value);
+          }
+        } else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+          long position = dataFile.getFilePointer();
+          String value = dataFile.readUTF();
+          if ((value != null) && (value.length() >= LARGE_FIELD_SIZE_LIMIT)) {
+            prog.setLargeField(type, position);
+          } else {
+            prog.setTextField(type, value);
+          }
+        } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
+          prog.setIntField(type, dataFile.readInt());
+        } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+          prog.setTimeField(type, dataFile.readInt());
+        }
+      }
+    }
 
     return prog;
   }
 
+  private void saveProgram(Program program, RandomAccessFile dataFile,
+      Date localDate, Channel channel) throws IOException {
+    dataFile.writeInt(3); // file version
 
-  private void saveProgram(Program program, ObjectOutputStream objOut,
-    Date localDate, Channel channel)
-    throws IOException
-  {
-    objOut.writeInt(2); // file version
-
-    channel.writeData(objOut);
-    localDate.writeData(objOut);
+    // channel.writeData(objOut);
+    // localDate.writeData(objOut);
 
     int fieldCount = program.getFieldCount();
-    objOut.writeInt(fieldCount);
+    dataFile.writeInt(fieldCount);
     Iterator iter = program.getFieldIterator();
     for (int i = 0; i < fieldCount; i++) {
       ProgramFieldType type = (ProgramFieldType) iter.next();
-      objOut.writeInt(type.getTypeId());
+      dataFile.writeInt(type.getTypeId());
 
       if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
-        objOut.writeObject(program.getBinaryField(type));
+        byte[] b = program.getBinaryField(type);
+        dataFile.writeInt(b.length);
+        dataFile.write(b);
       } else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-        objOut.writeObject(program.getTextField(type));
+        dataFile.writeUTF(program.getTextField(type));
       } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
-        objOut.writeInt(program.getIntField(type));
+        dataFile.writeInt(program.getIntField(type));
       } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
-        objOut.writeInt(program.getTimeField(type));
+        dataFile.writeInt(program.getTimeField(type));
       }
     }
   }
 
-
-  synchronized Object loadFieldValue(int offset) throws IOException, ClassNotFoundException {
+  synchronized Object loadFieldValue(long position, ProgramFieldType type)
+      throws IOException, ClassNotFoundException {
     checkValid();
-    
-    FileInputStream stream = null;
+
+    RandomAccessFile dataFile = null;
     try {
-      stream = new FileInputStream(mFile);
-      ObjectInputStream objIn = new ObjectInputStream(stream);
+      dataFile = new RandomAccessFile(mFile, "r");
+      dataFile.seek(position);
 
-      stream.skip(offset);
+      Object value;
 
-      Object value = objIn.readObject();
-       
-      stream.close();
+      if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        value = dataFile.readUTF();
+      } else {
+        int n = dataFile.readInt();
+
+        byte[] b = new byte[n];
+        dataFile.readFully(b);
+
+        value = b;
+      }
+
+      dataFile.close();
 
       return value;
     } finally {
-      if (stream != null) {
+      if (dataFile != null) {
         try {
-          stream.close();
-        } catch (IOException exc) {
-        }
+          dataFile.close();
+        } catch (IOException exc) {}
       }
     }
   }
-
 
   /**
    * Checks whether this day program is still valid.
    * <p>
    * This is not the case if it was replaced by another one.
    * 
-   * @throws IOException When the day program is not valid any more.
+   * @throws IOException
+   *           When the day program is not valid any more.
    */
   private void checkValid() throws IOException {
-    if (! mValid) {
-      throw new IOException("The day program file is invalid. Maybe it was " +
-        "replaced.");
+    if (!mValid) {
+      throw new IOException("The day program file is invalid. Maybe it was "
+          + "replaced.");
     }
   }
 }

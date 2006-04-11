@@ -34,6 +34,7 @@ package devplugin;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.Calendar;
 
 public class Date implements Comparable {
@@ -178,6 +179,28 @@ public class Date implements Comparable {
   }
 
   /**
+   * Creates a new instance from a RandomAccessFile.
+   */
+  public Date(RandomAccessFile in) throws IOException, ClassNotFoundException {
+    int version = in.readInt();
+    if (version == 1) { // currently, version==2 is used
+      int date = in.readInt();
+      long l = (long) date * 24 * 60 * 60 * 1000;
+      java.util.Date d = new java.util.Date(l);
+      Calendar mCalendar = Calendar.getInstance();
+      mCalendar.setTime(d);
+      mYear = mCalendar.get(Calendar.YEAR);
+      mMonth = mCalendar.get(Calendar.MONTH) + 1;
+      mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+    } else {
+      mYear = in.readInt();
+      mMonth = in.readInt();
+      mDay = in.readInt();
+    }
+
+  }
+  
+  /**
    * Creates a new instance from a stream.
    */
   public Date(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -200,6 +223,18 @@ public class Date implements Comparable {
   }
 
   /**
+   * Writes this instance to a RandomAccessFile.
+   * @param out 
+   * @throws IOException 
+   */
+  public void writeToDataFile(RandomAccessFile out) throws IOException {
+    out.writeInt(2); // version
+    out.writeInt(mYear);
+    out.writeInt(mMonth);
+    out.writeInt(mDay);
+  }
+
+  /**
    * Writes this instance to a stream.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
@@ -208,7 +243,6 @@ public class Date implements Comparable {
     out.writeInt(mMonth);
     out.writeInt(mDay);
   }
-
   /**
    * A hash code implementation that returns the same code for equal Dates.
    */
