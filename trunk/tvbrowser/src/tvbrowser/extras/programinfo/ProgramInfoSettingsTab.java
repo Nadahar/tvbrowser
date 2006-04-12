@@ -42,6 +42,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.icontheme.IconLoader;
+import util.program.ProgramTextCreator;
 import util.ui.FontChooserPanel;
 import util.ui.OrderChooser;
 
@@ -162,6 +163,10 @@ public class ProgramInfoSettingsTab implements SettingsTab {
         try {
           order[i] = ProgramFieldType
               .getTypeForId(Integer.parseInt((String) id[i]));
+          
+          if(((ProgramFieldType)order[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
+            order[i] = ProgramTextCreator.getDurationTypeString();
+          
         } catch (Exception e) {
           order[i] = id[i];
         }
@@ -243,7 +248,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     f = mBodyFont.getChosenFont();
     mSettings.setProperty("bodyfont", f.getFamily());
     mSettings.setProperty("small", String.valueOf(f.getSize()));
-
+    
     mSettings.setProperty("look", mLf[mLook.getSelectedIndex()]);
     ProgramInfo.getInstance().setLook();
 
@@ -253,12 +258,13 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     for (int i = 0; i < o.length; i++)
       if (o[i] instanceof String)
-        temp += o[i] + ";";
+        temp += ProgramFieldType.UNKOWN_FORMAT;
       else
         temp += ((ProgramFieldType) o[i]).getTypeId() + ";";
 
     mSettings.setProperty("order", temp);
     mSettings.setProperty("setupwasdone", "true");
+    ProgramInfo.getInstance().setOrder();
   }
 
   private void restoreSettings() {
@@ -272,6 +278,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     ProgramInfo.getInstance().setLook();
     mSettings.setProperty("order", mOldOrder);
+    ProgramInfo.getInstance().setOrder();
   }
 
   public Icon getIcon() {
