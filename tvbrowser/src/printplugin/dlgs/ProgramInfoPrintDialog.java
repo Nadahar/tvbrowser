@@ -48,7 +48,7 @@ import javax.swing.JSeparator;
 import printplugin.PrintPlugin;
 import printplugin.printer.singleprogramprinter.SingleProgramPrintable;
 import printplugin.settings.ProgramInfoPrintSettings;
-import tvbrowser.extras.programinfo.ProgramTextCreator;
+import util.program.ProgramTextCreator;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
@@ -149,7 +149,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         /* TODO
          * 
          * Use: ProgramTextCreator.createInfoText(program, ExtendedHTMLDocument, 
-         *       mFieldTypes, fontChooser.getChosenFont(), printImage.isSelected()) 
+         *       mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected()) 
          * 
          * to create the html-String.
          */
@@ -185,7 +185,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         /* TODO
          * 
          * Use: ProgramTextCreator.createInfoText(program, ExtendedHTMLDocument, 
-         *       mFieldTypes, fontChooser.getChosenFont(), printImage.isSelected()) 
+         *       mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected()) 
          * 
          * to create the html-String.
          */
