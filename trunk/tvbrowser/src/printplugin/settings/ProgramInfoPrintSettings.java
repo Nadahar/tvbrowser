@@ -29,10 +29,8 @@ import java.awt.Font;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-import tvbrowser.extras.programinfo.ProgramTextCreator;
+import util.program.ProgramTextCreator;
 
 import devplugin.ProgramFieldType;
 
@@ -93,8 +91,7 @@ public class ProgramInfoPrintSettings {
         mFieldTypes[i] = ProgramFieldType.getTypeForId(in.readInt());
         
         if(((ProgramFieldType)mFieldTypes[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
-          mFieldTypes[i] = ProgramTextCreator.mLocalizer.msg("duration", "Program duration/<br>-end").replaceAll(
-              "<br>", "");
+          mFieldTypes[i] = ProgramTextCreator.getDurationTypeString();
       }
       
       mPrintImage = in.readBoolean();
