@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.Action;
 import javax.swing.JPanel;
@@ -39,6 +40,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.pluginview.contextmenu.ContextMenu;
@@ -49,6 +51,7 @@ import tvbrowser.ui.pluginview.contextmenu.RootNodeContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import devplugin.ContextMenuIf;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
@@ -90,15 +93,29 @@ public class PluginView extends JPanel implements MouseListener {
 
   private void insertPluginRootNodes() {
      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-   for (int i=plugins.length - 1; i>=0; i--) {
-      if (plugins[i].canUseProgramTree()) {
-        mModel.addPluginTree(plugins[i]);
-      }
-    }
-
-
-    mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
-    mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
+     ContextMenuIf[] menuIfs = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true,true);
+     
+     ArrayList pluginList = new ArrayList();
+     
+     for(int i = 0; i < plugins.length; i++) {
+       if(plugins[i].canUseProgramTree())
+         pluginList.add(plugins[i].getId());
+     }
+     
+     for (int i = menuIfs.length - 1; i >= 0; i--) {
+       if(menuIfs[i].getId().compareTo(FavoritesPlugin.getInstance().getId()) == 0)
+         mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
+       else if(menuIfs[i].getId().compareTo(ReminderPlugin.getInstance().getId()) == 0)
+         mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
+       else if(pluginList.contains(menuIfs[i].getId())) {
+         PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(menuIfs[i].getId());
+         mModel.addPluginTree(plugin);
+         pluginList.remove(menuIfs[i].getId());
+       }
+     }
+     
+     for(int i = 0; i < pluginList.size(); i++)
+       mModel.addPluginTree(PluginProxyManager.getInstance().getPluginForId((String)pluginList.get(i)));
   }
   
   public void update() {
