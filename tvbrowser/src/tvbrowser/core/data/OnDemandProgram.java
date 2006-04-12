@@ -71,8 +71,8 @@ public class OnDemandProgram extends MutableProgram {
   }
 
 
-  public void setLargeField(ProgramFieldType type, long offset) {
-    OnDemandValue onDemandValue = new OnDemandValue(type, offset);
+  public void setLargeField(ProgramFieldType type, long position) {
+    OnDemandValue onDemandValue = new OnDemandValue(type, position);
     
     super.setField(type, type.getFormat(), onDemandValue);
   }
@@ -94,13 +94,13 @@ public class OnDemandProgram extends MutableProgram {
   private class OnDemandValue {
     
     private ProgramFieldType mType;
-    private long mOffset;
+    private long mPosition;
     private SoftReference mValue;
     
     
-    OnDemandValue(ProgramFieldType type, long offset) {
+    OnDemandValue(ProgramFieldType type, long position) {
       mType = type;
-      mOffset = offset;
+      mPosition = position;
     }
     
     
@@ -114,7 +114,7 @@ public class OnDemandProgram extends MutableProgram {
       // Load the value from disk if nessesary
       if (value == null) {
         try {
-          value = mOnDemandFile.loadFieldValue(mOffset, mType);
+          value = mOnDemandFile.loadFieldValue(mPosition, mType);
           
           if (value == null) {
             value = NULL_VALUE;

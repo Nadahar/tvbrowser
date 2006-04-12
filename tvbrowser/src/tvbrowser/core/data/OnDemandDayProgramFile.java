@@ -136,6 +136,8 @@ public class OnDemandDayProgramFile {
    * 
    * @throws IOException
    * @throws ClassNotFoundException
+   * 
+   * @since 2.2
    */
   private void updateToVersion2() throws IOException, ClassNotFoundException {
     BufferedInputStream stream = null;
@@ -275,6 +277,11 @@ public class OnDemandDayProgramFile {
     }
   }
 
+  /**
+   * Loads the data from a RandomAccessFile.
+   * 
+   * @since 2.2 
+   */
   private Program loadProgram(RandomAccessFile dataFile, Date date,
       Channel channel) throws IOException, ClassNotFoundException {
     int version = dataFile.readInt();
