@@ -272,13 +272,15 @@ public class ReminderPlugin implements ContextMenuIf {
               int minutes = dlg.getReminderMinutes();
               mReminderList.add(program, minutes);
               mReminderList.unblockProgram(program);
+              updateRootNode();
             }
             dlg.dispose();
           }
           else {
             int minutes = dlg.getReminderMinutes();
             mReminderList.add(program, minutes);
-            mReminderList.unblockProgram(program);            
+            mReminderList.unblockProgram(program);
+            updateRootNode();
           }
         }
       });
