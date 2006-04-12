@@ -26,6 +26,7 @@
 
 package tvbrowser.extras.programinfo;
 
+import java.awt.Font;
 import java.util.ArrayList;
 
 import javax.swing.Icon;
@@ -46,26 +47,48 @@ import devplugin.ProgramInfoHelper;
  */
 public class ProgramTextCreator {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  /**
+   * The Localizer for this class.
+   */
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramTextCreator.class);
-
+  
+  private static String mBodySize;
+  
   /**
    * 
    * @param prog
    *          The Program to show
    * @param doc
    *          The HTMLDocument.
+   * @param fieldArr The object array with the field types.
+   * @param font The Font to use.
+   * @param showImage Show the image.
    * @return The html String.
    */
-  public static String createInfoText(Program prog, ExtendedHTMLDocument doc) {
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
+      Object[] fieldArr, Font font, boolean showImage) {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
     StringBuffer buffer = new StringBuffer();
-
+    
+    String titleFont, titleSize, bodyFont;
+    
+    if(font != null) {
+      titleFont = bodyFont = font.getFamily();
+      titleSize = mBodySize = String.valueOf(font.getSize());
+    }
+    else {
+      titleFont = ProgramInfo.getInstance().getUserfont("titlefont", "Verdana");
+      bodyFont = ProgramInfo.getInstance().getUserfont("bodyfont", "Verdana");
+      titleSize = ProgramInfo.getInstance().getUserfont("title", "18");
+      mBodySize = ProgramInfo.getInstance().getUserfont("small", "11");
+    }
+    
     buffer.append("<html>");
     buffer.append("<table width=\"100%\" style=\"font-family:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("bodyfont", "Verdana"));
-
+    buffer.append(bodyFont);
+    
     buffer.append(";\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
@@ -73,7 +96,7 @@ public class ProgramTextCreator {
     buffer.append("</p></td><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+    buffer.append(mBodySize);
 
     buffer.append(";\"><b>");
     buffer.append(prog.getDateString());
@@ -84,11 +107,11 @@ public class ProgramTextCreator {
 
     buffer.append("</b></div><div style=\"color:#003366; font-size:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("title", "18"));
+    buffer.append(titleSize);
 
     buffer.append("; line-height:2.5em; font-family:");
     buffer
-        .append(ProgramInfo.getInstance().getUserfont("titlefont", "Verdana"));
+        .append(titleFont);
     buffer.append("\"><b>");
     buffer.append(prog.getTitle());
     buffer.append("</b></div>");
@@ -98,7 +121,7 @@ public class ProgramTextCreator {
     if (episode != null && episode.trim().length() > 0) {
       buffer.append("<div style=\"color:#808080; font-size:");
 
-      buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+      buffer.append(mBodySize);
 
       buffer.append("\">");
       buffer.append(episode);
@@ -158,23 +181,30 @@ public class ProgramTextCreator {
       buffer.append("</td></tr>");
     }
 
-    byte[] image = prog.getBinaryField(ProgramFieldType.IMAGE_TYPE);
-    if (image != null) {
-      buffer.append("<tr><td></td><td>");
-      try {
-        Icon icon = new ImageIcon(image);
-        JLabel iconLabel = new JLabel(icon);
-        buffer.append(doc.createCompTag(iconLabel));
-        buffer.append("</td></tr>");
-      } catch (Exception e) {
-        // Picture was wrong;
-        buffer.delete(buffer.length() - 18, buffer.length());
+    if(showImage) {
+      byte[] image = prog.getBinaryField(ProgramFieldType.IMAGE_TYPE);
+      if (image != null) {
+        buffer.append("<tr><td></td><td>");
+        try {
+          Icon icon = new ImageIcon(image);
+          JLabel iconLabel = new JLabel(icon);
+          buffer.append(doc.createCompTag(iconLabel));
+          buffer.append("</td></tr>");
+        } catch (Exception e) {
+          // Picture was wrong;
+          buffer.delete(buffer.length() - 18, buffer.length());
+        }
       }
     }
 
     addSeperator(doc, buffer);
 
-    Object[] id = ProgramInfo.getInstance().getProperty("order", "").split(";");
+    Object[] id;
+    
+    if(fieldArr != null)
+      id = fieldArr;
+    else
+      id = ProgramInfo.getInstance().getProperty("order", "").split(";");
 
     if (id.length == 1 && ProgramInfo.getInstance().getProperty("setupwasdone", "false").compareTo("false") == 0)
       id = getDefaultOrder();
@@ -193,14 +223,14 @@ public class ProgramTextCreator {
             buffer
                 .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
 
-            buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+            buffer.append(mBodySize);
 
             buffer.append("\"><b>");
             buffer.append(mLocalizer.msg("duration",
                 "Program duration/<br>-end"));
             buffer.append("</b></td><td style=\"font-size:");
 
-            buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+            buffer.append(mBodySize);
 
             buffer.append("\">");
 
@@ -251,7 +281,7 @@ public class ProgramTextCreator {
           buffer
               .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
 
-          buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+          buffer.append(mBodySize);
 
           buffer.append("\"><b>");
           buffer.append(mLocalizer.msg("attributes", "Program attributes"));
@@ -363,14 +393,14 @@ public class ProgramTextCreator {
 
     buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+    buffer.append(mBodySize);
 
     buffer.append("\"><b>");
     buffer.append(name);
 
     buffer.append("</b></td><td style=\"font-size:");
 
-    buffer.append(ProgramInfo.getInstance().getUserfont("small", "11"));
+    buffer.append(mBodySize);
 
     buffer.append("\">");
     buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));

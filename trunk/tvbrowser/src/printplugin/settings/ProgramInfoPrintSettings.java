@@ -32,6 +32,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import tvbrowser.extras.programinfo.ProgramTextCreator;
+
 import devplugin.ProgramFieldType;
 
 /**
@@ -43,26 +45,17 @@ import devplugin.ProgramFieldType;
 public class ProgramInfoPrintSettings {
 
   private Font mFont;
-  private ProgramFieldType[] mAllFields;
-  private ProgramFieldType[] mFieldTypes;
+  private Object[] mAllFields;
+  private Object[] mFieldTypes;
   private static ProgramInfoPrintSettings mInstance;
+  private boolean mPrintImage;
   
   private ProgramInfoPrintSettings() {
     mInstance = this;
     mFont = new Font("Dialog",Font.PLAIN,12);
+    mPrintImage = true;
     
-    Iterator it = ProgramFieldType.getTypeIterator();
-    
-    ArrayList programFields = new ArrayList();
-    
-    while(it.hasNext())
-      programFields.add(it.next());
-    
-    mFieldTypes = new ProgramFieldType[programFields.size()];
-    programFields.toArray(mFieldTypes);
-    
-    mAllFields = new ProgramFieldType[programFields.size()];
-    programFields.toArray(mAllFields);
+    mAllFields = mFieldTypes = ProgramTextCreator.getDefaultOrder();    
   }
   
   /**
@@ -94,10 +87,17 @@ public class ProgramInfoPrintSettings {
       mFont = (Font) in.readObject();
       
       int n = in.readInt();
-      mFieldTypes = new ProgramFieldType[n];
+      mFieldTypes = new Object[n];
       
-      for(int i = 0; i < n; i++)
+      for(int i = 0; i < n; i++) {
         mFieldTypes[i] = ProgramFieldType.getTypeForId(in.readInt());
+        
+        if(((ProgramFieldType)mFieldTypes[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
+          mFieldTypes[i] = ProgramTextCreator.mLocalizer.msg("duration", "Program duration/<br>-end").replaceAll(
+              "<br>", "");
+      }
+      
+      mPrintImage = in.readBoolean();
     }
   }
   
@@ -113,7 +113,12 @@ public class ProgramInfoPrintSettings {
     out.writeInt(mFieldTypes.length);
     
     for(int i = 0; i < mFieldTypes.length; i++)
-      out.writeInt(mFieldTypes[i].getTypeId());
+      if(mFieldTypes[i] instanceof ProgramFieldType)
+        out.writeInt(((ProgramFieldType)mFieldTypes[i]).getTypeId());
+      else
+        out.writeInt(ProgramFieldType.UNKOWN_FORMAT);
+    
+    out.writeBoolean(mPrintImage);
   }
 
   /**
@@ -126,14 +131,14 @@ public class ProgramInfoPrintSettings {
   /**
    * @return The field types to print.
    */
-  public ProgramFieldType[] getFieldTypes() {
+  public Object[] getFieldTypes() {
     return mFieldTypes;
   }
   
   /**
    * @return All possible field types.
    */
-  public ProgramFieldType[] getAllFieldTypes() {
+  public Object[] getAllFieldTypes() {
     return mAllFields;
   }
   
@@ -145,16 +150,29 @@ public class ProgramInfoPrintSettings {
   public void setFont(Font font) {
     mFont = font;
   }
-    
+  
+  /**
+   * Set the printImage state of this setting
+   * 
+   * @param printImage If the image should be printed.
+   */
+  public void setPrintImage(boolean printImage) {
+    mPrintImage = printImage;
+  }
+  
+  /**
+   * @return If the image should be printed.
+   */
+  public boolean isPrintImage() {
+    return mPrintImage;
+  }
+  
   /**
    * Set the program field types of this settings.
    * 
    * @param fieldTypes The field types to set.
    */
   public void setFieldTypes(Object[] fieldTypes) {
-    mFieldTypes = new ProgramFieldType[fieldTypes.length];
-    
-    for(int i = 0; i < fieldTypes.length; i++)
-      mFieldTypes[i] = (ProgramFieldType)fieldTypes[i];
+    mFieldTypes = fieldTypes;
   }
 }

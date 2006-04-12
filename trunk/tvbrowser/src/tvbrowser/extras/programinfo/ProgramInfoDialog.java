@@ -152,7 +152,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
-    mInfoEP.setText(ProgramTextCreator.createInfoText(program, mDoc));
+    mInfoEP.setText(ProgramTextCreator.createInfoText(program, mDoc, null, null, true));
     mInfoEP.setEditable(false);
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       private String mTooltip;
@@ -397,7 +397,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     }
 
     if (rebuild) {
-      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc));
+      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, null, null, true));
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mInfoEP.setCaretPosition(0);
