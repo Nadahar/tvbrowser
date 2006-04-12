@@ -121,7 +121,7 @@ public class ContextMenuManager {
    * @return The ContextMenuIf for the id or null if id wasn't found.
    */
   public ContextMenuIf getContextMenuIfForId(String id) {
-    PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(id);
+    PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(id);
     if(plugin != null)
       return (ContextMenuIf)plugin;
     else if (id != null){

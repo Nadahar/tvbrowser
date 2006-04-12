@@ -733,7 +733,7 @@ public class PluginProxyManager {
    * @return The plugin with the given ID or <code>null</code> if no such
    *         plugin exists or if the plugin is not activated.
    */
-  public PluginAccess getActivatedPluginForId(String pluginId) {
+  public PluginProxy getActivatedPluginForId(String pluginId) {
     return getPluginForId(pluginId, ACTIVATED_STATE);
   }
 
