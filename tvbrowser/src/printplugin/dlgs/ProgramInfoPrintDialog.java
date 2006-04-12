@@ -28,6 +28,7 @@ package printplugin.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -37,6 +38,7 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -46,11 +48,13 @@ import javax.swing.JSeparator;
 import printplugin.PrintPlugin;
 import printplugin.printer.singleprogramprinter.SingleProgramPrintable;
 import printplugin.settings.ProgramInfoPrintSettings;
+import tvbrowser.extras.programinfo.ProgramTextCreator;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.html.ExtendedHTMLDocument;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -73,7 +77,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
   private JDialog mDialog;
   private PageFormat mPageFormat;
 
-  protected ProgramFieldType[] mFieldTypes;
+  protected Object[] mFieldTypes;
   
   /**
    * Creates a instance of this class
@@ -101,8 +105,9 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     UiUtilities.registerForClosing(this);
     mDialog.setTitle(mLocalizer.msg("title","Print program info"));
 
-    final OrderChooser fieldChooser = new OrderChooser(ProgramInfoPrintSettings.getInstance().getFieldTypes(),ProgramInfoPrintSettings.getInstance().getAllFieldTypes(),true);
-    final FontChooserPanel fontChooser = new FontChooserPanel("",ProgramInfoPrintSettings.getInstance().getFont());
+    final OrderChooser fieldChooser = new OrderChooser(ProgramInfoPrintSettings.getInstance().getFieldTypes(),ProgramTextCreator.getDefaultOrder(),true);
+    final FontChooserPanel fontChooser = new FontChooserPanel("",ProgramInfoPrintSettings.getInstance().getFont(), false);    
+    final JCheckBox printImage = new JCheckBox(mLocalizer.msg("printImage","Print image"), ProgramInfoPrintSettings.getInstance().isPrintImage());
     final PrinterJob printerJob = PrinterJob.getPrinterJob();
     mPageFormat = printerJob.defaultPage();
     
@@ -137,20 +142,29 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         if (mPageFormat == null) {
           mPageFormat = printerJob.defaultPage();
         }
-        Object[] order = fieldChooser.getOrder();
-        mFieldTypes = new ProgramFieldType[order.length];
         
-        for(int i = 0; i < order.length; i++)
-          mFieldTypes[i] = (ProgramFieldType)order[i];
+        mFieldTypes = fieldChooser.getOrder();
         
-        SingleProgramPrintable printJob = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
+        
+        /* TODO
+         * 
+         * Use: ProgramTextCreator.createInfoText(program, ExtendedHTMLDocument, 
+         *       mFieldTypes, fontChooser.getChosenFont(), printImage.isSelected()) 
+         * 
+         * to create the html-String.
+         */
+        
+        /*for(int i = 0; i < order.length; i++)
+          mFieldTypes[i] = (ProgramFieldType)order[i];*/
+        
+      /*  SingleProgramPrintable printJob = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
         PreviewDlg dlg;
         if (parent instanceof Frame)
           dlg = new PreviewDlg((Frame) parent, printJob, mPageFormat, printJob.getNumOfPages(mPageFormat));
         else
           dlg = new PreviewDlg((Dialog) parent, printJob, mPageFormat, printJob.getNumOfPages(mPageFormat));
         
-        util.ui.UiUtilities.centerAndShow(dlg);
+        util.ui.UiUtilities.centerAndShow(dlg);*/
       }
     });
     
@@ -160,23 +174,29 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         if (mPageFormat == null) {
           mPageFormat = printerJob.defaultPage();
         }
-        Object[] order = fieldChooser.getOrder();
-        mFieldTypes = new ProgramFieldType[order.length];
         
-        for(int i = 0; i < order.length; i++)
-          mFieldTypes[i] = (ProgramFieldType)order[i];
+        mFieldTypes = fieldChooser.getOrder();
         
         ProgramInfoPrintSettings.getInstance().setFont(fontChooser.getChosenFont());
         ProgramInfoPrintSettings.getInstance().setFieldTypes(mFieldTypes);
+        ProgramInfoPrintSettings.getInstance().setPrintImage(printImage.isSelected());
         close();
         
-        SingleProgramPrintable printable = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
+        /* TODO
+         * 
+         * Use: ProgramTextCreator.createInfoText(program, ExtendedHTMLDocument, 
+         *       mFieldTypes, fontChooser.getChosenFont(), printImage.isSelected()) 
+         * 
+         * to create the html-String.
+         */
+        
+        /*SingleProgramPrintable printable = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
         printerJob.setPrintable(printable, mPageFormat);
         try {
           printerJob.print();
         } catch (PrinterException pe) {
           util.exc.ErrorHandler.handle("Could not print pages: "+pe.getLocalizedMessage(), pe);
-        }
+        }*/
         
       }
     });
@@ -188,18 +208,23 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
       }
     });
     
-    PanelBuilder b1 = new PanelBuilder(new FormLayout("pref:grow","pref,5dlu,pref,10dlu,pref,5dlu,fill:default:grow"));
+    boolean hasImage = program.getBinaryField(ProgramFieldType.IMAGE_TYPE) != null;
+    
+    PanelBuilder b1 = new PanelBuilder(new FormLayout("5dlu,pref:grow","pref,5dlu,pref,10dlu,pref,5dlu,fill:default:grow" + (hasImage ? ",3dlu,pref" : "")));
     b1.setDefaultDialogBorder();
 
-    PanelBuilder b2 = new PanelBuilder(new FormLayout("pref,10dlu,pref","pref,2dlu,pref,2dlu,pref,default:grow,pref,2dlu,pref"));
+    PanelBuilder b2 = new PanelBuilder(new FormLayout("pref,10dlu,pref","pref,2dlu,pref,2dlu,pref,default:grow,pref,5dlu,pref"));
     b2.setDefaultDialogBorder();
 
     CellConstraints cc = new CellConstraints();
     
-    b1.addSeparator(mLocalizer.msg("font","Font"),cc.xy(1,1));
-    b1.add(fieldChooser, cc.xy(1,7));
-    b1.addSeparator(mLocalizer.msg("order","Info fields and order"), cc.xy(1,5));
-    b1.add(fontChooser, cc.xy(1,3));
+    b1.addSeparator(mLocalizer.msg("font","Font"),cc.xyw(1,1,2));
+    b1.add(fontChooser, cc.xyw(1,3,2));
+    b1.addSeparator(mLocalizer.msg("order","Info fields and order"), cc.xyw(1,5,2));
+    b1.add(fieldChooser, cc.xyw(1,7,2));
+    
+    if(hasImage)
+      b1.add(printImage, cc.xy(2,9));
     
     b2.add(printerSetupBtn, cc.xy(3,1));
     b2.add(pageBtn, cc.xy(3,3));
