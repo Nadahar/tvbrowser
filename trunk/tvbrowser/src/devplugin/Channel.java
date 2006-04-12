@@ -215,6 +215,8 @@ public class Channel {
    * @return
    * @throws IOException
    * @throws ClassNotFoundException
+   * 
+   * @since 2.2
    */
   public static Channel readData(RandomAccessFile in, boolean allowNull)
     throws IOException, ClassNotFoundException
@@ -256,6 +258,8 @@ public class Channel {
    * 
    * @param out The file to write the Data in.
    * @throws IOException
+   * 
+   * @since 2.2
    */
   public void writeToDataFile(RandomAccessFile out) throws IOException {
     out.writeInt(3); // version

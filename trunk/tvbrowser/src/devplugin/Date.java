@@ -180,6 +180,8 @@ public class Date implements Comparable {
 
   /**
    * Creates a new instance from a RandomAccessFile.
+   * 
+   * @since 2.2
    */
   public Date(RandomAccessFile in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
@@ -226,6 +228,8 @@ public class Date implements Comparable {
    * Writes this instance to a RandomAccessFile.
    * @param out 
    * @throws IOException 
+   * 
+   * @since 2.2
    */
   public void writeToDataFile(RandomAccessFile out) throws IOException {
     out.writeInt(2); // version
