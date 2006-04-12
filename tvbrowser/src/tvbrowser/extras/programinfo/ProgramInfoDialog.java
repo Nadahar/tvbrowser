@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,6 +64,7 @@ import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
+import util.program.ProgramTextCreator;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
@@ -152,7 +154,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
-    mInfoEP.setText(ProgramTextCreator.createInfoText(program, mDoc, null, null, true));
+    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), true));
     mInfoEP.setEditable(false);
     mInfoEP.addHyperlinkListener(new HyperlinkListener() {
       private String mTooltip;
@@ -397,7 +399,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     }
 
     if (rebuild) {
-      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, null, null, true));
+      mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), true));
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mInfoEP.setCaretPosition(0);
@@ -406,6 +408,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     }
 
     mPluginsPane.revalidate();
+  }
+  
+  private Font getFont(boolean title) {
+    if(title)      
+      return new Font(ProgramInfo.getInstance().getUserfont("titlefont", "Verdana"), Font.BOLD, Integer.parseInt(ProgramInfo.getInstance().getUserfont("title", "18")));
+    else
+      return new Font(ProgramInfo.getInstance().getUserfont("bodyfont", "Verdana"), Font.PLAIN, Integer.parseInt(ProgramInfo.getInstance().getUserfont("small", "11")));
   }
 
   public void close() {

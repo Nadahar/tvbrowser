@@ -43,6 +43,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
+import util.program.ProgramTextCreator;
 import util.ui.UiUtilities;
 
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
@@ -51,6 +52,7 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * TV-Browser
@@ -78,6 +80,8 @@ public class ProgramInfo implements ContextMenuIf {
   private ConfigurationHandler mConfigurationHandler;
 
   private static ProgramInfo mInstance;
+  
+  private Object[] mOrder;
 
   private ProgramInfo() {
     mInstance = this;
@@ -101,12 +105,18 @@ public class ProgramInfo implements ContextMenuIf {
     return new ActionMenu(action);
   }
 
+  /**
+   * @return An instance of this class
+   */
   public static synchronized ProgramInfo getInstance() {
     if (mInstance == null)
       new ProgramInfo();
     return mInstance;
   }
 
+  /**
+   * @return Settings
+   */
   public Properties getSettings() {
     return mSettings;
   }
@@ -145,9 +155,11 @@ public class ProgramInfo implements ContextMenuIf {
       int sh = parseNumber(splitHeigt);
       mLeftSplit = new Dimension(sw, sh);
     }
-
   }
 
+  /**
+   * Save settings.
+   */
   public void store() {
     if (mLocation != null) {
       mSettings.setProperty("DialogLocation.X", Integer.toString(mLocation.x));
@@ -322,11 +334,36 @@ public class ProgramInfo implements ContextMenuIf {
 
   protected String getUserfont(String value, String def) {
     String tvalue = mSettings.getProperty(value);
-
     boolean userfont = mSettings.getProperty("userfont", "false")
         .equals("true");
     return tvalue != null && tvalue.trim().length() > 0 && userfont ? tvalue
         : def;
+  }
+
+  protected Object[] getOrder() {
+    if(mOrder == null)
+      setOrder();
+    
+    return mOrder;
+  }
+  
+  protected void setOrder() {
+    if(mSettings.getProperty("setupwasdone","false").compareTo("false") == 0)
+      mOrder = ProgramTextCreator.getDefaultOrder();
+    else {
+      String[] id = mSettings.getProperty("order", "").trim().split(";");
+      mOrder = new Object[id.length];
+      for (int i = 0; i < mOrder.length; i++)
+        try {
+          mOrder[i] = ProgramFieldType
+              .getTypeForId(Integer.parseInt((String) id[i]));
+          
+          if(((ProgramFieldType)mOrder[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
+            mOrder[i] = ProgramTextCreator.getDurationTypeString();
+        } catch (Exception e) {
+          mOrder[i] = id[i];
+        }
+    }
   }
 
   protected void setLook() {
