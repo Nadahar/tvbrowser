@@ -56,7 +56,7 @@ public class SelectableItemList extends JPanel {
   
   private static final long serialVersionUID = 1L;
 
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(SelectableItemList.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(SelectableItemList.class);
   
   private DefaultListModel mListModel;
   private SelectableItemRenderer mItemRenderer;
