@@ -32,7 +32,7 @@ import devplugin.Program;
  * 
  * @author bodum
  */
-public class SendToPluginDialog extends JDialog {
+public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SendToPluginDialog.class);
@@ -84,7 +84,8 @@ public class SendToPluginDialog extends JDialog {
    */
   private void createDialog() {
     setTitle(mLocalizer.msg("title", "Send to other Plugin"));
-
+    UiUtilities.registerForClosing(this);
+    
     JPanel panel = (JPanel) this.getContentPane();
 
     panel.setLayout(new GridBagLayout());
@@ -202,4 +203,12 @@ public class SendToPluginDialog extends JDialog {
     }
 
   }
+
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#close()
+   */
+  public void close() {
+    setVisible(false);
+  }  
 }
