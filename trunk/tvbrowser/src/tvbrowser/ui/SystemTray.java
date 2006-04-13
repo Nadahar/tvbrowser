@@ -109,25 +109,24 @@ public class SystemTray {
 
     mUseSystemTray = false;
 
+    mSystemTray = SystemTrayFactory.createSystemTray();
 
-      mSystemTray = SystemTrayFactory.createSystemTray();
+    if (mSystemTray != null) {
 
-      if (mSystemTray != null) {
-
-        if (mSystemTray instanceof WinSystemTray) {
-          mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
-              "imgs/systray.ico", TVBrowser.MAINWINDOW_TITLE);
-          mLog.info("using windows system tray");
-        } else {
-          mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
-              "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
-          mLog.info("using default system tray");
-        }
+      if (mSystemTray instanceof WinSystemTray) {
+        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
+            "imgs/systray.ico", TVBrowser.MAINWINDOW_TITLE);
+        mLog.info("using windows system tray");
       } else {
-        mUseSystemTray = false;
-        Settings.propTrayIsEnabled.setBoolean(false);
+        mUseSystemTray = mSystemTray.init(MainFrame.getInstance(),
+            "imgs/tvbrowser16.png", TVBrowser.MAINWINDOW_TITLE);
+        mLog.info("using default system tray");
       }
-    
+    } else {
+      mUseSystemTray = false;
+      Settings.propTrayIsEnabled.setBoolean(false);
+    }
+
     return mUseSystemTray;
   }
 
@@ -151,8 +150,7 @@ public class SystemTray {
 
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance()
-              .showSettingsDialog(SettingsItem.TRAY);
+          MainFrame.getInstance().showSettingsDialog(SettingsItem.TRAY);
         }
       });
 
@@ -206,7 +204,7 @@ public class SystemTray {
             public void windowClosing(java.awt.event.WindowEvent evt) {
               if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
                 // Only minimize the main window, don't quit
-                if (Settings.propMinimizeToTray.getBoolean())
+                if (Settings.propTrayMinimizeTo.getBoolean())
                   MainFrame.getInstance().setVisible(false);
                 else
                   MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
@@ -222,7 +220,7 @@ public class SystemTray {
             }
 
             public void windowIconified(java.awt.event.WindowEvent evt) {
-              if (Settings.propMinimizeToTray.getBoolean()) {
+              if (Settings.propTrayMinimizeTo.getBoolean()) {
                 MainFrame.getInstance().setVisible(false);
               }
               toggleOpenCloseMenuItem(true);
@@ -244,8 +242,8 @@ public class SystemTray {
 
       mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
 
-      if (!Settings.propShowProgramsInTrayWasConfigured.getBoolean()
-          && Settings.propNowRunningProgramsInTrayChannels
+      if (!Settings.propTrayUseSpecialChannels.getBoolean()
+          && Settings.propTraySpecialChannels
               .getChannelArray(false).length == 0) {
         Channel[] channelArr = Settings.propSubscribedChannels
             .getChannelArray(false);
@@ -254,18 +252,18 @@ public class SystemTray {
         for (int i = 0; i < tempArr.length; i++)
           tempArr[i] = channelArr[i];
 
-        Settings.propNowRunningProgramsInTrayChannels.setChannelArray(tempArr);
+        Settings.propTraySpecialChannels.setChannelArray(tempArr);
       }
       mMenuCreated = true;
-    }
-    else
+    } else
       mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
   }
-  
+
   /**
    * Sets the visibility of the tray.
    * 
-   * @param value True if visible.
+   * @param value
+   *          True if visible.
    */
   public void setVisible(boolean value) {
     mSystemTray.setVisible(value);
@@ -277,13 +275,14 @@ public class SystemTray {
     mTrayMenu.addSeparator();
     mTrayMenu.add(createPluginsMenu());
 
-    if (Settings.propShowTimeProgramsInTray.getBoolean()
-        || Settings.propShowNowRunningProgramsInTray.getBoolean()
-        || Settings.propShowImportantProgramsInTray.getBoolean())
+    if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()
+        || Settings.propTrayNowProgramsEnabled.getBoolean()
+        || Settings.propTraySoonProgramsEnabled.getBoolean()
+        || Settings.propTrayImportantProgramsEnabled.getBoolean())
       searchForToAddingPrograms();
 
-    if (Settings.propShowTimeProgramsInTray.getBoolean()) {
-      if (!Settings.propShowNowRunningProgramsInTrayInSubMenu.getBoolean())
+    if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()) {
+      if (!Settings.propTrayNowProgramsInSubMenu.getBoolean())
         mTrayMenu.addSeparator();
       addTimeInfoMenu();
     }
@@ -298,8 +297,7 @@ public class SystemTray {
    * Searches the programs to show in the Tray.
    */
   private void searchForToAddingPrograms() {
-    // show the now running programs
-    boolean add = Settings.propShowNowRunningProgramsInTray.getBoolean();
+    // show the now/soon running programs
     try {
       Channel[] channels = Settings.propSubscribedChannels
           .getChannelArray(false);
@@ -307,7 +305,7 @@ public class SystemTray {
       JComponent subMenu;
 
       // Put the programs in a submenu?
-      if (Settings.propShowNowRunningProgramsInTrayInSubMenu.getBoolean())
+      if (Settings.propTrayNowProgramsInSubMenu.getBoolean() && Settings.propTrayNowProgramsEnabled.getBoolean())
         subMenu = new JMenu(mLocalizer.msg("menu.programsNow",
             "Now running programs"));
       else
@@ -322,7 +320,7 @@ public class SystemTray {
        * Fill the ArrayList to support storing the programs on the correct
        * position in the list.
        */
-      for (int i = 0; i < Settings.propNowRunningProgramsInTrayChannels
+      for (int i = 0; i < Settings.propTraySpecialChannels
           .getChannelArray(false).length; i++) {
         programs.add(i, null);
         nextPrograms.add(i, null);
@@ -382,8 +380,8 @@ public class SystemTray {
       }
 
       // Show important program?
-      if (Settings.propShowImportantProgramsInTray.getBoolean())
-        if (Settings.propShowImportantProgramsInTrayInSubMenu.getBoolean()) {
+      if (Settings.propTrayImportantProgramsEnabled.getBoolean())
+        if (Settings.propTrayImportantProgramsInSubMenu.getBoolean()) {
           mTrayMenu.addSeparator();
           mTrayMenu.add(addToImportantMenu(new JMenu(mLocalizer.msg(
               "menu.programsImportant", "Important programs"))));
@@ -394,10 +392,17 @@ public class SystemTray {
        * if there are running programs and they should be displayed add them to
        * the menu.
        */
-      if (add && (programs.size() > 0 || additional.size() > 0)) {
-        if (!Settings.propShowNowRunningProgramsInTrayInSubMenu.getBoolean()
-            || !Settings.propShowImportantProgramsInTrayInSubMenu.getBoolean())
-          mTrayMenu.addSeparator();
+      
+      if (((Settings.propTraySoonProgramsEnabled.getBoolean() && (!nextPrograms.isEmpty() || !nextAdditionalPrograms.isEmpty())) ||
+          (Settings.propTrayNowProgramsEnabled.getBoolean() && (!programs.isEmpty() || !additional.isEmpty()))) &&
+          !Settings.propTrayNowProgramsInSubMenu.getBoolean()
+          || !Settings.propTrayImportantProgramsInSubMenu.getBoolean())
+        mTrayMenu.addSeparator();
+      
+      boolean now = false;
+      
+      if (Settings.propTrayNowProgramsEnabled.getBoolean()
+          && (programs.size() > 0 || additional.size() > 0)) {
 
         for (int i = 0; i < programs.size(); i++) {
           Object o = programs.get(i);
@@ -406,9 +411,19 @@ public class SystemTray {
         }
         for (int i = 0; i < additional.size(); i++)
           subMenu.add((ProgramMenuItem) additional.get(i));
-
-        final JMenu next = new JMenu(mLocalizer.msg("menu.programsSoon",
-            "Soon runs"));
+        
+        now = true;
+      }
+      
+      if (Settings.propTrayNowProgramsInSubMenu.getBoolean() && Settings.propTrayNowProgramsEnabled.getBoolean())
+        mTrayMenu.add(subMenu);
+      
+      if(Settings.propTraySoonProgramsEnabled.getBoolean()
+          && (!nextPrograms.isEmpty() || !nextAdditionalPrograms.isEmpty())) {        
+        
+      final JMenu next = new JMenu(now ? mLocalizer.msg("menu.programsSoon",
+      "Soon runs") : mLocalizer.msg("menu.programsSoonAlone",
+      "Soon runs"));
 
         int j = 0;
 
@@ -428,15 +443,11 @@ public class SystemTray {
           next.add(pItem);
           j++;
         }
-
-        subMenu.add(next);
-
-        /*
-         * if the program sould be in a submenu add the menu to the propup menu
-         */
-        if (Settings.propShowNowRunningProgramsInTrayInSubMenu.getBoolean())
-          mTrayMenu.add(subMenu);
+        
+        if(Settings.propTraySoonProgramsEnabled.getBoolean())
+          mTrayMenu.add(next);
       }
+
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -458,9 +469,7 @@ public class SystemTray {
     if (p.length > 0) {
 
       for (int i = 0; i < p.length; i++)
-        menu.add(new ProgramMenuItem(p[i],
-            Settings.propImportantProgramsInTrayContainsStartTime.getBoolean(),
-            Settings.propImportantProgramsInTrayContainsDate.getBoolean(), -1,
+        menu.add(new ProgramMenuItem(p[i], ProgramMenuItem.IMPORTANT_TYPE, -1,
             i));
     }
 
@@ -482,7 +491,7 @@ public class SystemTray {
    * @return True if the channel is on the tray channel list.
    */
   private boolean isOnChannelList(Channel ch) {
-    Channel[] channels = Settings.propNowRunningProgramsInTrayChannels
+    Channel[] channels = Settings.propTraySpecialChannels
         .getChannelArray(false);
 
     for (int i = 0; i < channels.length; i++)
@@ -497,7 +506,7 @@ public class SystemTray {
    * @return The index of the channel in the tray channel list.
    */
   private int getIndexOfChannel(Channel ch) {
-    Channel[] channels = Settings.propNowRunningProgramsInTrayChannels
+    Channel[] channels = Settings.propTraySpecialChannels
         .getChannelArray(false);
 
     for (int i = 0; i < channels.length; i++)
@@ -564,7 +573,7 @@ public class SystemTray {
       ArrayList programs = new ArrayList();
       ArrayList additional = new ArrayList();
 
-      for (int i = 0; i < Settings.propNowRunningProgramsInTrayChannels
+      for (int i = 0; i < Settings.propTraySpecialChannels
           .getChannelArray(false).length; i++)
         programs.add(i, null);
 
@@ -588,12 +597,10 @@ public class SystemTray {
           if (start <= time && time < end)
             if (isOnChannelList(c[i]))
               programs.add(getIndexOfChannel(c[i]), new ProgramMenuItem(p,
-                  Settings.propTimeProgramsInTrayContainsTime.getBoolean(),
-                  false, time, -1));
+                  ProgramMenuItem.ON_TIME_TYPE, time, -1));
             else if (p.getMarkerArr().length > 0)
               additional.add(new ProgramMenuItem(p,
-                  Settings.propTimeProgramsInTrayContainsTime.getBoolean(),
-                  false, time, -1));
+                  ProgramMenuItem.ON_TIME_TYPE, time, -1));
         }
       }
 
@@ -629,10 +636,11 @@ public class SystemTray {
     if (!p.isExpired() && !ProgramUtilities.isOnAir(p)) {
       if (this.isOnChannelList(p.getChannel())) {
         nextPrograms.set(getIndexOfChannel(p.getChannel()),
-            new ProgramMenuItem(p, true, false, -1, -1));
+            new ProgramMenuItem(p, ProgramMenuItem.SOON_TYPE, -1, -1));
         return false;
       } else if (p.getMarkerArr().length > 0) {
-        nextAdditionalPrograms.add(new ProgramMenuItem(p, true, false, -1, -1));
+        nextAdditionalPrograms.add(new ProgramMenuItem(p,
+            ProgramMenuItem.SOON_TYPE, -1, -1));
         return false;
       }
     }
@@ -657,14 +665,11 @@ public class SystemTray {
     if (ProgramUtilities.isOnAir(p))
       if (isOnChannelList(p.getChannel())) {
         defaultList.set(getIndexOfChannel(p.getChannel()), new ProgramMenuItem(
-            p, Settings.propNowRunningProgramsInTrayContainsStartTime
-                .getBoolean(), false, -1, -1));
+            p, ProgramMenuItem.NOW_TYPE, -1, -1));
         return true;
       } else if (p.getMarkerArr().length > 0) {
-        addList
-            .add(new ProgramMenuItem(p,
-                Settings.propNowRunningProgramsInTrayContainsStartTime
-                    .getBoolean(), false, -1, -1));
+        addList.add(new ProgramMenuItem(p, ProgramMenuItem.NOW_TYPE, -1,
+            -1));
         return true;
       }
 
@@ -704,7 +709,7 @@ public class SystemTray {
       });
       toggleOpenCloseMenuItem(false);
     } else {
-      if (Settings.propMinimizeToTray.getBoolean())
+      if (Settings.propTrayMinimizeTo.getBoolean())
         MainFrame.getInstance().setVisible(false);
       else
         MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);

@@ -25,7 +25,11 @@
  */
 package tvbrowser.ui.settings;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
@@ -46,48 +50,68 @@ import devplugin.SettingsTab;
  */
 public class TrayProgramsChannelsSettingsTab implements SettingsTab {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-  .getLocalizerFor(TrayProgramsChannelsSettingsTab.class);
-
+  private static final util.ui.Localizer mLocalizer = TrayBaseSettingsTab.mLocalizer;
+  
+  private JCheckBox mUseUserChannels;
   private OrderChooser mChannelOCh;
   
   public JPanel createSettingsPanel() {
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "fill:default:grow",
-        "pref,5dlu,fill:default:grow"));
+        "5dlu,fill:default:grow,5dlu",
+        "pref,5dlu,pref,10dlu,fill:default:grow"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     
+    mUseUserChannels = new JCheckBox(mLocalizer.msg("userChannels","Use user defined channels"),Settings.propTrayUseSpecialChannels.getBoolean());
+    mUseUserChannels.setToolTipText(mLocalizer.msg("userChannelsToolTip","<html>If you select this you can choose the channels that will be used for<br><b>Programs at...</b> and <b>Now/Soon running programs</b>.<br>If this isn't selected the first 10 channels in default order will be used.</html>"));
+    
     mChannelOCh = new OrderChooser(
-        Settings.propNowRunningProgramsInTrayChannels.getChannelArray(false),
+        Settings.propTraySpecialChannels.getChannelArray(false),
         Settings.propSubscribedChannels.getChannelArray(false), true);
 
-    final JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg(
-        "programShowing.runningChannels",
-        "Which channels should be used for these displays?"), cc.xy(1, 1));
-    builder.add(mChannelOCh, cc.xy(1, 3));
+    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg(
+        "channelsSeparator",
+        "Which channels should be used for these displays?"), cc.xyw(1, 1, 3));
+    builder.add(mUseUserChannels, cc.xy(2,3));
+    builder.add(mChannelOCh, cc.xy(2, 5));
     
     boolean enabled =  Settings.propTrayIsEnabled.getBoolean() && 
-      (Settings.propShowNowRunningProgramsInTray.getBoolean() || 
-        Settings.propShowTimeProgramsInTray.getBoolean());
+      (Settings.propTrayNowProgramsEnabled.getBoolean() || 
+       Settings.propTraySoonProgramsEnabled.getBoolean() ||
+        Settings.propTrayOnTimeProgramsEnabled.getBoolean());
     
     c.getComponent(0).setEnabled(enabled);
-    mChannelOCh.setEnabled(enabled);
+    mUseUserChannels.setEnabled(enabled);
+    mChannelOCh.setEnabled(enabled && mUseUserChannels.isSelected());
+    
+    mUseUserChannels.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mChannelOCh.setEnabled(mUseUserChannels.isSelected());
+      }
+    });
     
     return builder.getPanel();
   }
 
   public void saveSettings() {
+    if (mUseUserChannels != null)
+      Settings.propTrayUseSpecialChannels.setBoolean(mUseUserChannels.isSelected());
+    
     Object[] order = mChannelOCh.getOrder();
     Channel[] ch = new Channel[order.length];
 
+    if(!mUseUserChannels.isSelected()) {
+      order = Settings.propSubscribedChannels.getChannelArray(false);
+      ch = new Channel[order.length > 10 ? 10 : order.length];
+    }
+
     for (int i = 0; i < ch.length; i++)
       ch[i] = (Channel) order[i];
-
-    if (order != null)
-      Settings.propNowRunningProgramsInTrayChannels.setChannelArray(ch);
     
-    Settings.propShowProgramsInTrayWasConfigured.setBoolean(true);
+    if (order != null)
+      Settings.propTraySpecialChannels.setChannelArray(ch);
+    
+    
   }
 
   public Icon getIcon() {
@@ -95,7 +119,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
   }
 
   public String getTitle() {
-    return mLocalizer.msg("programShowing.channels","Channels");
+    return mLocalizer.msg("channels","Channels");
   }
 
 }

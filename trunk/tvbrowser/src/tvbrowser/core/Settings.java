@@ -397,71 +397,136 @@ public class Settings {
   public static final StringProperty propUserDefinedWebbrowser
     = new StringProperty(mProp, "webbrowser", null);
 
-  public static final BooleanProperty propOnlyMinimizeWhenWindowClosing
-    = new BooleanProperty(mProp, "onlyMinimizeWhenWindowClosing", false);
-
+  
+  /*
+   * Basic tray settings
+   */
+  
   public static final BooleanProperty propTrayIsEnabled
   = new BooleanProperty(mProp, "trayIsEnabled", true);  
   
-  public static final BooleanProperty propMinimizeToTray
+  public static final BooleanProperty propTrayMinimizeTo
   = new BooleanProperty(mProp, "MinimizeToTray", false);
+  
+  public static final BooleanProperty propOnlyMinimizeWhenWindowClosing
+  = new BooleanProperty(mProp, "onlyMinimizeWhenWindowClosing", false);
+  
+  
+  /*
+   * Channel settings for the tray.
+   */
+  
+  public static final BooleanProperty propTrayUseSpecialChannels
+  = new BooleanProperty(mProp, "trayUseSpecialChannels", false);  
+  
+  public static final ChannelArrayProperty propTraySpecialChannels
+  = new ChannelArrayProperty(mProp, "traySpecialChannels", new devplugin.Channel[]{}); 
 
-  public static final BooleanProperty propUseSingeClickInTray
-  = new BooleanProperty(mProp, "SingeClickInTray", false);
   
-  public static final BooleanProperty propShowProgramsInTrayWasConfigured
-  = new BooleanProperty(mProp, "showProgramsInTrayWasConfigured", false);    
+  /*
+   * Settings for the ON_TIME_TYPE of the ProgramMenuItem.
+   */    
   
-  public static final BooleanProperty propShowTimeProgramsInTray
-  = new BooleanProperty(mProp, "showTimeProgramsInTray", true); 
+  public static final BooleanProperty propTrayOnTimeProgramsEnabled
+  = new BooleanProperty(mProp, "trayOnTimeProgramsEnabled", true); 
+  
+  public static final BooleanProperty propTrayOnTimeProgramsContainsTime
+  = new BooleanProperty(mProp, "trayOnTimeProgramsContainsTime", false);
+  
+  public static final BooleanProperty propTrayOnTimeProgramsContainsIcon
+  = new BooleanProperty(mProp, "trayOnTimeProgramsContainsIcon", true);
+  
+  public static final BooleanProperty propTrayOnTimeProgramsContainsName
+  = new BooleanProperty(mProp, "trayOnTimeProgramsContainsName", true);
 
-  public static final BooleanProperty propTimeProgramsInTrayContainsTime
-  = new BooleanProperty(mProp, "timeProgramsInTrayContainsTime", false); 
+  public static final BooleanProperty propTrayOnTimeProgramsContainsToolTip
+  = new BooleanProperty(mProp, "trayOnTimeProgramsContainsToolTip", true);
 
-  public static final ColorProperty propTimeProgramsDarkBackground
-    = new ColorProperty(mProp, "timeProgramsDarkBackground", new Color(255, 150, 0, 80));
-  
-  public static final ColorProperty propTimeProgramsLightBackground
-    = new ColorProperty(mProp, "timeProgramsLightBackground", new Color(255, 150, 0, 40));  
-  
-  public static final BooleanProperty propShowNowRunningProgramsInTray
-  = new BooleanProperty(mProp, "showRunningProgramsInTray", true);
+  public static final BooleanProperty propTrayOnTimeProgramsShowProgress
+  = new BooleanProperty(mProp, "trayOnTimeProgramsShowProgress", true);
 
-  public static final BooleanProperty propShowNowRunningProgramsInTrayInSubMenu
-  = new BooleanProperty(mProp, "showRunningProgramsInTrayInSubMenus", false);
+  public static final ColorProperty propTrayOnTimeProgramsDarkBackground
+    = new ColorProperty(mProp, "trayOnTimeProgramsDarkBackground", new Color(255, 150, 0, 80));
   
-  public static final BooleanProperty propNowRunningProgramsInTrayContainsStartTime
-  = new BooleanProperty(mProp, "nowRunningProgramsInTrayContainsStartTime", false);
-  
-  public static final BooleanProperty propShowImportantProgramsInTray
-  = new BooleanProperty(mProp, "showImportantProgramsInTray", true);
-  
-  public static final BooleanProperty propShowImportantProgramsInTrayInSubMenu
-  = new BooleanProperty(mProp, "showImportantProgramsInTrayInSubMenu", false);  
-  
-  public static final BooleanProperty propImportantProgramsInTrayContainsStartTime
-  = new BooleanProperty(mProp, "importantProgramsInTrayContainsStartTime", true);
+  public static final ColorProperty propTrayOnTimeProgramsLightBackground
+    = new ColorProperty(mProp, "trayOnTimeProgramsLightBackground", new Color(255, 150, 0, 40));  
 
-  public static final BooleanProperty propImportantProgramsInTrayContainsDate
-  = new BooleanProperty(mProp, "importantProgramsInTrayContainsDate", true);
-
-  public static final IntProperty propImportantProgramsInTraySize
-  = new IntProperty(mProp, "importantProgramsInTraySize", 5);
   
-  public static final IntProperty propImportantProgramsInTrayHours
-  = new IntProperty(mProp, "importantProgramsInTrayHours", 2);  
+  /*
+   * Settings for the NOW_TYPE of the ProgramMenuItem.
+   */
   
-  public static final BooleanProperty propProgramsInTrayContainsChannel
-  = new BooleanProperty(mProp, "programsInTrayContainsChannel", true);
+  public static final BooleanProperty propTrayNowProgramsEnabled
+  = new BooleanProperty(mProp, "trayNowProgramsEnabled", true);
 
-  public static final BooleanProperty propProgramsInTrayContainsChannelIcon
-  = new BooleanProperty(mProp, "programsInTrayContainsChannelIcon", true);
+  public static final BooleanProperty propTrayNowProgramsInSubMenu
+  = new BooleanProperty(mProp, "trayNowProgramsInSubMenus", false);
+  
+  public static final BooleanProperty propTrayNowProgramsContainsTime
+  = new BooleanProperty(mProp, "trayNowProgramsContainsTime", false);
 
-  public static final BooleanProperty propProgramsInTrayShowTooltip
-  = new BooleanProperty(mProp, "programsInTrayShowTooltip", true);
- 
-  public static final ChannelArrayProperty propNowRunningProgramsInTrayChannels
-  = new ChannelArrayProperty(mProp, "nowRunningProgramsInTrayChannels", new devplugin.Channel[]{}); 
+  public static final BooleanProperty propTrayNowProgramsContainsIcon
+  = new BooleanProperty(mProp, "trayNowProgramsContainsIcon", true);
+  
+  public static final BooleanProperty propTrayNowProgramsContainsName
+  = new BooleanProperty(mProp, "trayNowProgramsContainsName", true);
+  
+  public static final BooleanProperty propTrayNowProgramsContainsToolTip
+  = new BooleanProperty(mProp, "trayNowProgramsContainsToolTip", true);  
+
+  
+  /*
+   * Settings for the SOON_TYPE of the ProgramMenuItem.
+   */
+  
+  public static final BooleanProperty propTraySoonProgramsEnabled
+  = new BooleanProperty(mProp, "traySoonProgramsEnabled", true);
+  
+  public static final BooleanProperty propTraySoonProgramsContainsTime
+  = new BooleanProperty(mProp, "traySoonProgramsContainsTime", true);
+
+  public static final BooleanProperty propTraySoonProgramsContainsIcon
+  = new BooleanProperty(mProp, "traySoonProgramsContainsIcon", true);
+  
+  public static final BooleanProperty propTraySoonProgramsContainsName
+  = new BooleanProperty(mProp, "traySoonProgramsContainsName", true);
+  
+  public static final BooleanProperty propTraySoonProgramsContainsToolTip
+  = new BooleanProperty(mProp, "traySoonProgramsContainsToolTip", true);  
+  
+  
+  /*
+   * Settings for the IMPORTANT_TYPE of the ProgramMenuItem.
+   */ 
+  
+  public static final BooleanProperty propTrayImportantProgramsEnabled
+  = new BooleanProperty(mProp, "trayImportantProgramsEnabled", true);
+  
+  public static final BooleanProperty propTrayImportantProgramsInSubMenu
+  = new BooleanProperty(mProp, "trayImportantProgramsInSubMenu", false);  
+
+  public static final IntProperty propTrayImportantProgramsSize
+  = new IntProperty(mProp, "trayImportantProgramsSize", 5);
+
+  public static final BooleanProperty propTrayImportantProgramsContainsIcon
+  = new BooleanProperty(mProp, "trayImportantProgramsContainsIcon", true);
+  
+  public static final BooleanProperty propTrayImportantProgramsContainsName
+  = new BooleanProperty(mProp, "trayImportantProgramsContainsName", true);
+    
+  public static final BooleanProperty propTrayImportantProgramsContainsDate
+  = new BooleanProperty(mProp, "trayImportantProgramsContainsDate", true);
+
+  public static final BooleanProperty propTrayImportantProgramsContainsTime
+  = new BooleanProperty(mProp, "trayImportantProgramsContainsTime", true);
+
+  public static final BooleanProperty propTrayImportantProgramsContainsToolTip
+  = new BooleanProperty(mProp, "trayImportantProgramsContainsToolTip", true); 
+  
+  
+  /*
+   * Toolbar settings
+   */
   
   public static final ChoiceProperty propToolbarButtonStyle
     = new ChoiceProperty(mProp, "buttontype", "icon",

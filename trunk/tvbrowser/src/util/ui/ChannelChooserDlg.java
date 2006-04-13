@@ -61,12 +61,12 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
   /**
    * If this Dialog should contain an OrderChooser use this type.
    */
-  public static int ORDER_CHOOSER = 0;
+  public static final int ORDER_CHOOSER = 0;
   
   /**
    * If this Dialog should contain a SelectableItemList use this type.
    */
-  public static int SELECTABLE_ITEM_LIST = 1;
+  public static final int SELECTABLE_ITEM_LIST = 1;
 
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ChannelChooserDlg.class);
