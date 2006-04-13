@@ -258,7 +258,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     for (int i = 0; i < o.length; i++)
       if (o[i] instanceof String)
-        temp += ProgramFieldType.UNKOWN_FORMAT;
+        temp += ProgramFieldType.UNKOWN_FORMAT + ";";        
       else
         temp += ((ProgramFieldType) o[i]).getTypeId() + ";";
 
