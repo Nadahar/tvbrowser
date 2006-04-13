@@ -83,7 +83,7 @@ public class MarkedProgramsList {
    * @return The time sorted programs for the tray.
    */
   public Program[] getTimeSortedProgramsForTray() {
-    int n = mList.size() > Settings.propImportantProgramsInTraySize.getInt() ? Settings.propImportantProgramsInTraySize.getInt() : mList.size();
+    int n = mList.size() > Settings.propTrayImportantProgramsSize.getInt() ? Settings.propTrayImportantProgramsSize.getInt() : mList.size();
     
     ArrayList programs = new ArrayList();
     
@@ -141,8 +141,8 @@ public class MarkedProgramsList {
           }
         }
       
-      if(programs.size() > Settings.propImportantProgramsInTraySize.getInt())
-        programs.remove(Settings.propImportantProgramsInTraySize.getInt());
+      if(programs.size() > Settings.propTrayImportantProgramsSize.getInt())
+        programs.remove(Settings.propTrayImportantProgramsSize.getInt());
     }
     
     Program[] trayPrograms = new Program[programs.size()];
