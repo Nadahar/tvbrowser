@@ -43,6 +43,8 @@ import javax.swing.event.HyperlinkListener;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.browserlauncher.Launch;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
@@ -57,7 +59,7 @@ import devplugin.ChannelGroup;
 /**
  * Shows the ChannelGroup Information Dialog 
  */
-public class ChannelGroupInfoDialog extends JDialog {
+public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
   /** Translation */
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(ChannelGroupInfoDialog.class);
@@ -79,7 +81,7 @@ public class ChannelGroupInfoDialog extends JDialog {
    * Create the GUI
    */
   private void initGui() {
-
+    UiUtilities.registerForClosing(this);
     JPanel panel = (JPanel) getContentPane();
     panel.setBorder(Borders.DLU4_BORDER);
     panel.setLayout(new FormLayout("fill:default:grow, default", "fill:default:grow, 3dlu, default"));
@@ -177,6 +179,14 @@ public class ChannelGroupInfoDialog extends JDialog {
     html.append("</body></html>");
 
     return html.toString();
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#close()
+   */
+  public void close() {
+    setVisible(false);
   }
 
 }
