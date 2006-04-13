@@ -110,6 +110,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * your plugin from the menu.
      */
     public void showDialog() {
+      if ((_settings.getProperty("name", "").length() == 0) || (_settings.getProperty("password", "").length() == 0)) {
+        showNotConfigured();
+      } else {
         DialogOverview dlg = new DialogOverview(getParentFrame(), this);
         dlg.pack();
         dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -134,7 +137,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
             _locationOverviewDialog = dlg.getLocation();
             _dimensionOverviewDialog = dlg.getSize();
         }
-
+      }
     }
 
     /*
@@ -157,14 +160,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     
     public void showRatingDialog(Program program) {
         if ((_settings.getProperty("name", "").length() == 0) || (_settings.getProperty("password", "").length() == 0)) {
-          int ret = JOptionPane.showConfirmDialog(getParentFrame(), 
-              mLocalizer.msg("noUserText", "No User specified. Do you want to do this now?"), 
-              mLocalizer.msg("noUserTitle", "No User specified"),
-              JOptionPane.YES_NO_OPTION);
-          
-          if (ret == JOptionPane.YES_OPTION) {
-            getPluginManager().showSettings(this);
-          }
+          showNotConfigured();
         } else {
           DialogRating dlg = new DialogRating(getParentFrame(), this, program);
           dlg.pack();
@@ -184,6 +180,20 @@ public class TVRaterPlugin extends devplugin.Plugin {
           }
         }
       
+    }
+
+    /**
+     * Show a Information-Dialog if the Plugin was not configured yet
+     */
+    private void showNotConfigured() {
+      int ret = JOptionPane.showConfirmDialog(getParentFrame(), 
+          mLocalizer.msg("noUserText", "No User specified. Do you want to do this now?"), 
+          mLocalizer.msg("noUserTitle", "No User specified"),
+          JOptionPane.YES_NO_OPTION);
+      
+      if (ret == JOptionPane.YES_OPTION) {
+        getPluginManager().showSettings(this);
+      }
     }
 
     public Properties storeSettings() {
@@ -317,7 +327,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * @see devplugin.Plugin#handleTvDataUpdateFinished()
      */
     public void handleTvDataUpdateFinished() {
-        if (Integer.parseInt(_settings.getProperty("updateIntervall", "3")) < 3) {
+        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3) {
             updateDB();
         }
     }
