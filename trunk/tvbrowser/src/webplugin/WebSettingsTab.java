@@ -33,7 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -47,12 +47,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import util.ui.Localizer;
-import util.ui.UiUtilities;
 import devplugin.SettingsTab;
 
 
@@ -65,9 +66,9 @@ public class WebSettingsTab implements SettingsTab {
     .getLocalizerFor(WebSettingsTab.class);
     
     /** The original List */
-    private Vector mOriginal;
+    private ArrayList mOriginal;
     /** Work-List */
-    private Vector mCloned;
+    private ArrayList mCloned;
 
     /** JList */
     private JList mAddressList;
@@ -94,11 +95,11 @@ public class WebSettingsTab implements SettingsTab {
      * @param frame Parent-Frame
      * @param addresses List of Addresses
      */
-    public WebSettingsTab(JFrame frame, Vector addresses) {
+    public WebSettingsTab(JFrame frame, ArrayList addresses) {
         mParent = frame;
         mOriginal = addresses;
 
-        mCloned = new Vector();
+        mCloned = new ArrayList();
         
         for (int i = 0; i < mOriginal.size();i++) {
             mCloned.add( ((WebAddress)mOriginal.get(i)).clone());
@@ -116,7 +117,7 @@ public class WebSettingsTab implements SettingsTab {
       
         JPanel panel = new JPanel(new GridBagLayout());
         
-        mAddressList = new JList(mCloned);
+        mAddressList = new JList(mCloned.toArray());
         mAddressList.setSelectedIndex(0);
         mAddressList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mAddressList.addListSelectionListener(new ListSelectionListener() {
@@ -285,7 +286,7 @@ public class WebSettingsTab implements SettingsTab {
         
         mCloned.remove(adr);
         
-        mCloned.insertElementAt(adr, selected + rows);
+        mCloned.add(selected + rows, adr);
         
         mAddressList.setSelectedValue(adr, true);
     }    
@@ -373,7 +374,7 @@ public class WebSettingsTab implements SettingsTab {
      * @see devplugin.SettingsTab#saveSettings()
      */
     public void saveSettings() {
-        mOriginal.removeAllElements();
+        mOriginal.clear();
         mOriginal.addAll(mCloned);
     }
 
