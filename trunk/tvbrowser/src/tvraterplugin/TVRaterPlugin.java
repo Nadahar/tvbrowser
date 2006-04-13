@@ -327,9 +327,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
      * @see devplugin.Plugin#handleTvDataUpdateFinished()
      */
     public void handleTvDataUpdateFinished() {
-        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3) {
-            updateDB();
-        }
+      if (!((_settings.getProperty("name", "").length() == 0) || (_settings.getProperty("password", "").length() == 0))) {
+        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3)
+          updateDB();
+      }
     }
 
 
