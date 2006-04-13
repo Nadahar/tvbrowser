@@ -78,7 +78,7 @@ public class SearchField extends JPanel {
   /** Settings for the Search */
   private SearchFormSettings mSearchFormSettings;
   /** Button for the Settings-Popup*/
-  private JButton mSearchButton;
+  private JButton mSearchButton, mCancelButton;
   
   private static final String SETTINGS_FILE = "searchfield.SearchField.dat";
   
@@ -133,7 +133,7 @@ public class SearchField extends JPanel {
    */
   private void createGui() {
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("1dlu, pref, 2dlu, 50dlu", "fill:pref:grow"));
+    panel.setLayout(new FormLayout("1dlu, pref, 2dlu, 50dlu, 2dlu, 20px", "fill:pref:grow"));
     Color background = new Color(UIManager.getColor("TextField.background").getRGB());
     
     panel.setBackground(background);
@@ -152,12 +152,14 @@ public class SearchField extends JPanel {
                 SearchFilter filter = SearchFilter.getInstance();
                 filter.setSearch(mSearchFormSettings);
                 MainFrame.getInstance().setProgramFilter(filter);
+                mCancelButton.setVisible(true);
               } catch (TvBrowserException e1) {
                 e1.printStackTrace();
               }
             } else {
               SearchFilter.getInstance().deactivateSearch();
               MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
+              mCancelButton.setVisible(false);
             }
           } else {
             SearchHelper.search(mText, mSearchFormSettings);
@@ -179,11 +181,34 @@ public class SearchField extends JPanel {
       };
     });
     
+    mCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "process-stop", 16)); 
+    mCancelButton.setBorder(BorderFactory.createEmptyBorder());
+    mCancelButton.setOpaque(false);
+    mCancelButton.setMargin(new Insets(0, 0, 0, 0));
+    mCancelButton.setFocusPainted(false);
+    mCancelButton.setVisible(false);
+    mCancelButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        cancelPressed();
+      };
+    });
+    
     panel.add(mSearchButton, cc.xy(2,1));
     panel.add(mText, cc.xy(4,1));
+    panel.add(mCancelButton, cc.xy(6,1));
     
     setLayout(new FormLayout("pref:grow, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
     add(panel, new CellConstraints().xy(1, 2));
+  }
+
+  /**
+   * Cancel the Search
+   */
+  protected void cancelPressed() {
+    mText.setText("");
+    SearchFilter.getInstance().deactivateSearch();
+    MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
+    mCancelButton.setVisible(false);
   }
 
   /**
