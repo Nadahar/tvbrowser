@@ -506,12 +506,12 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     ChannelList.storeAllSettings();
     Settings.propSubscribedChannels.setChannelArray(channelArr);
 
-    if (!Settings.propShowProgramsInTrayWasConfigured.getBoolean()) {
+    if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
       Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];
       for (int i = 0; i < tempArr.length; i++)
         tempArr[i] = channelArr[i];
 
-      Settings.propNowRunningProgramsInTrayChannels.setChannelArray(tempArr);
+      Settings.propTraySpecialChannels.setChannelArray(tempArr);
     }
   }
 
@@ -645,7 +645,6 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
         });
       }
-
     });
   }
 
@@ -684,6 +683,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     }
 
     mSubscribedChannels.updateUI();
+    mSubscribedChannelListener.restore();
+    restoreForPopup();
   }
 
   /**
