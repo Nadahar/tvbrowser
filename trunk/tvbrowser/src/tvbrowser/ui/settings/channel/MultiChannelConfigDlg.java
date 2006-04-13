@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -53,7 +54,7 @@ import devplugin.Channel;
  * @author bodum
  * @since 2.1
  */
-public class MultiChannelConfigDlg extends JDialog implements ActionListener {
+public class MultiChannelConfigDlg extends JDialog implements ActionListener, WindowClosingIf{
   /** Localizer */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelConfigDlg.class);
   /** Current Channel */
@@ -89,6 +90,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener {
    * Create the GUI
    */
   private void createDialog() {
+    UiUtilities.registerForClosing(this);
     JPanel panel = (JPanel) getContentPane();
 
     panel.setLayout(new FormLayout("default, 3dlu, fill:default:grow",
@@ -175,6 +177,14 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener {
       setVisible(false);
     }
 
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#close()
+   */
+  public void close() {
+    setVisible(false);
   }
 
 }
