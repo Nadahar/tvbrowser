@@ -30,7 +30,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Arrays;
+import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -59,14 +60,19 @@ public class WebPlugin extends Plugin {
       .getLocalizerFor(WebPlugin.class);
 
   /** Default-Addresses */
-  final static WebAddress WEB_OFDB        = new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={urlencode(title, \"ISO-8859-1\")}", "webplugin/ofdb.gif", false, true);
-  final static WebAddress WEB_IMDB        = new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", "webplugin/imdb.gif", false, true);
-  final static WebAddress WEB_ZELLULOID   = new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={urlencode(title, \"ISO-8859-1\")}", "webplugin/zelluloid.png", false, false);
-  final static WebAddress WEB_GOOGLE      = new WebAddress("Google", "http://www.google.com/search?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/google.gif", false, true);
-  final static WebAddress WEB_ALTAVISTA   = new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/altavista.gif", false, false);
+  final static WebAddress[] DEFAULT_ADRESSES = {
+      new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={urlencode(title, \"ISO-8859-1\")}", "webplugin/ofdb.gif", false, true),
+      new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", "webplugin/imdb.gif", false, true),
+      new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={urlencode(title, \"ISO-8859-1\")}", "webplugin/zelluloid.png", false, true),
+      new WebAddress("Google", "http://www.google.com/search?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/google.gif", false, true),
+      new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/altavista.gif", false, true),
+      new WebAddress("Yahoo", "http://search.yahoo.com/search?p={urlencode(title, \"ISO-8859-1\")}", null, false, true),
+      new WebAddress("Wikipedia (DE)", "http://de.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.GERMAN)),
+      new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH))
+  };
 
   /** The WebAddresses */
-  private Vector mAddresses;
+  private ArrayList mAddresses;
 
   private static WebPlugin INSTANCE;
   
@@ -98,19 +104,14 @@ public class WebPlugin extends Plugin {
    * Loads the Data
    */
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    mAddresses = new Vector();
+    mAddresses = new ArrayList();
 
     int version = in.readInt();
 
     int size = in.readInt();
 
-    Vector defaults = new Vector();
-    defaults.add(WEB_GOOGLE);
-    defaults.add(WEB_IMDB);
-    defaults.add(WEB_OFDB);
-    defaults.add(WEB_ZELLULOID);
-    defaults.add(WEB_ALTAVISTA);
-
+    ArrayList defaults = new ArrayList(Arrays.asList(DEFAULT_ADRESSES));
+    
     for (int i = 0; i < size;i++) {
       WebAddress newone = new WebAddress(in);
 
@@ -146,6 +147,7 @@ public class WebPlugin extends Plugin {
     out.writeInt(mAddresses.size());
 
     for (int i = 0; i < mAddresses.size(); i++) {
+      System.out.println(mAddresses.get(i).getClass().getName());
       ((WebAddress)mAddresses.get(i)).writeData(out);
     }
 
@@ -170,15 +172,9 @@ public class WebPlugin extends Plugin {
    * Create the Default-Settings
    */
   private void createDefaultSettings() {
-    mAddresses = new Vector();
-
+    mAddresses = new ArrayList();
     WebAddress test = new WebAddress("Test", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", null, true, false);
-
-    mAddresses.add(WEB_OFDB);
-    mAddresses.add(WEB_IMDB);
-    mAddresses.add(WEB_ZELLULOID);
-    mAddresses.add(WEB_GOOGLE);
-    mAddresses.add(WEB_ALTAVISTA);
+    mAddresses.addAll(Arrays.asList(DEFAULT_ADRESSES));
     mAddresses.add(test);
   }
 
