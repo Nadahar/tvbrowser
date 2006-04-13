@@ -470,6 +470,10 @@ public class MainFrame extends JFrame implements DateListener {
       mStoredViewPosition = mProgramTableScrollPane.getViewport().getViewPosition();
     }
     
+    if (mProgramTableModel.getProgramFilter() instanceof SearchFilter && !(filter instanceof SearchFilter)) {
+      mSearchField.deactivateSearch();
+    }
+    
     mProgramTableScrollPane.deSelectItem();
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();

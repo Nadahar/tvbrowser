@@ -273,5 +273,12 @@ public class SearchField extends JPanel {
     configure.setVisible(true);
   }
 
+  /**
+   * SearchFilter was deactivated
+   */
+  public void deactivateSearch() {
+    mCancelButton.setVisible(false);
+  }
+
   
 }
