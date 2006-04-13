@@ -57,7 +57,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
   private Program mProgram;
   private TextAreaIcon mChannelName;
   private Icon mIcon;
-  private boolean mShowStartTime, mShowDate;
+  private boolean mShowStartTime, mShowDate, mShowIcon, mShowName;
   private int mTime;
 
   /**
@@ -73,15 +73,22 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
    *          The ProgramMenuItem should show the start time.
    * @param showDate
    *          The ProgramMenuItem should show the date.
+   * @param showIcon
+   *          The ProgramMenuItem should show the channel icon.
+   * @param showName
+   *          The ProgramMenuItem should show the channel name.
    * @param time
    *          The time of the time button.
    */
   public ProgramMenuItemUI(Program program, TextAreaIcon channelName,
-      Icon icon, boolean showStartTime, boolean showDate, int time) {
+      Icon icon, boolean showStartTime, boolean showDate, boolean showIcon, 
+      boolean showName, int time) {
     mProgram = program;
     mChannelName = channelName;
     mShowStartTime = showStartTime;
     mShowDate = showDate;
+    mShowIcon = showIcon;
+    mShowName = showName;
     mIcon = icon;
     mTime = time;
   }
@@ -94,8 +101,8 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     if (menuItem.isArmed())
       g.setColor(bgColor);
     else if (!isOnAir && ((mTime != -1
-            && Settings.propTimeProgramsLightBackground.getColor().getAlpha() == 0 
-            && Settings.propTimeProgramsDarkBackground.getColor().getAlpha() == 0) || mTime == -1))
+            && Settings.propTrayOnTimeProgramsLightBackground.getColor().getAlpha() == 0 
+            && Settings.propTrayOnTimeProgramsDarkBackground.getColor().getAlpha() == 0) || mTime == -1))
       g.setColor(menuItem.getBackground());
     else
       g.setColor(((ProgramMenuItem) menuItem).getDefaultBackground());
@@ -137,11 +144,11 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
       }
 
       g.setColor(mTime == -1 ? Settings.propProgramTableColorOnAirLight
-          .getColor() : Settings.propTimeProgramsLightBackground.getColor());
+          .getColor() : Settings.propTrayOnTimeProgramsLightBackground.getColor());
       g.fillRect(x + progressX - i.right - i.left, top, width - i.right
           - i.left, bottom);
       g.setColor(mTime == -1 ? Settings.propProgramTableColorOnAirDark
-          .getColor() : Settings.propTimeProgramsDarkBackground.getColor());
+          .getColor() : Settings.propTrayOnTimeProgramsDarkBackground.getColor());
 
       g.fillRect(x, top, progressX - i.right - i.left, bottom);
     } else if (mProgram.isExpired()) {
@@ -160,12 +167,12 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     else
       g.setColor(menuItem.getForeground());
 
-    int x = Settings.propProgramsInTrayContainsChannelIcon.getBoolean() ? mIcon
+    int x = mShowIcon ? mIcon
         .getIconWidth()
         + menuItem.getIconTextGap() : textRect.x;
     int y = (menuItem.getHeight() - mChannelName.getIconHeight()) / 2 - 1;
 
-    if (Settings.propProgramsInTrayContainsChannel.getBoolean()) {
+    if (mShowName) {
       mChannelName.paintIcon(menuItem, g, x, y);
       x += ProgramMenuItem.CHANNEL_WIDTH;
     }
@@ -173,7 +180,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     int temp = y
         + (menuItem.getFont().getSize() * (mChannelName.getLineCount() / 2 + 1));
 
-    y = Settings.propProgramsInTrayContainsChannel.getBoolean()
+    y = mShowName
         && (mChannelName.getLineCount() % 2 == 1) ? temp : (menuItem
         .getHeight() - menuItem.getFont().getSize())
         / 2 - 1 + menuItem.getFont().getSize();

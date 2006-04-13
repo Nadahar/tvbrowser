@@ -279,6 +279,18 @@ public class SettingsDialog implements WindowClosingIf {
     SettingNode technicalSettings = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("technical", "Technical"), null));
     root.add(technicalSettings);
 
+    if(TVBrowser.isUsingSystemTray()) {
+      SettingNode traySettings = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("tray", "Tray Settings"),null));
+      root.add(traySettings);
+      
+      traySettings.add(new SettingNode(new TrayBaseSettingsTab(),SettingsItem.TRAY));
+      traySettings.add(new SettingNode(new TrayImportantSettingsTab()));
+      traySettings.add(new SettingNode(new TrayNowSettingsTab()));
+      traySettings.add(new SettingNode(new TraySoonSettingsTab()));
+      traySettings.add(new SettingNode(new TrayOnTimeSettingsTab()));
+      traySettings.add(new SettingNode(new TrayProgramsChannelsSettingsTab()));
+    }
+    
     SettingNode programtableNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("channelstable", "Channelstable"),null));
     root.add(programtableNode);
 
@@ -289,15 +301,6 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new LookAndFeelSettingsTab()));
     generalSettings.add(new SettingNode(new ContextmenuSettingsTab(), SettingsItem.CONTEXTMENU));
     generalSettings.add(new SettingNode(new MausSettingsTab()));
-    
-    if(TVBrowser.isUsingSystemTray()) {
-      SettingNode trayNode = new SettingNode(new DefaultSettingsTab(mLocalizer.msg("tray", "Tray Settings"),null));
-      generalSettings.add(trayNode);
-      
-      trayNode.add(new SettingNode(new TrayBaseSettingsTab(),SettingsItem.TRAY));
-      trayNode.add(new SettingNode(new TrayExtendedSettingsTab()));
-      trayNode.add(new SettingNode(new TrayProgramsChannelsSettingsTab()));
-    }
     
     generalSettings.add(new SettingNode(new StartupSettingsTab(), SettingsItem.STARTUP));
 
@@ -315,7 +318,7 @@ public class SettingsDialog implements WindowClosingIf {
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));
     
-    root.add(new SettingNode(new ProgramInfoSettingsTab(), SettingsItem.PROGRAMINFO));
+    root.add(new SettingNode(new ProgramInfoSettingsTab(), SettingsItem.PROGRAMINFO));    
     root.add(new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE));
     root.add(new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER));
  

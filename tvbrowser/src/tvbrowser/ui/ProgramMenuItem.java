@@ -63,30 +63,70 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
   private Timer mTimer;
   private Font mPlainFont, mBoldFont;
   private int mIconHeight = 0;
-  private boolean mShowStartTime, mShowDate;
+  private boolean mShowStartTime, mShowDate, mShowName;
   private Icon mIcon = null;
   private TextAreaIcon mChannelName;
   
-  protected final static int CHANNEL_WIDTH = 72;
-  protected final static int TIME_WIDTH = 42;
-  protected final static int DATE_WIDTH = 70;
+  protected static final int CHANNEL_WIDTH = 72;
+  protected static final int TIME_WIDTH = 42;
+  protected static final int DATE_WIDTH = 70;
+  
+  protected static final int NOW_TYPE = 0;
+  protected static final int SOON_TYPE = 1;
+  protected static final int ON_TIME_TYPE = 2;
+  protected static final int IMPORTANT_TYPE = 3;
 
   /**
    * Creates the JMenuItem.
    * 
    * @param p
    *          The program to show
-   * @param showStartTime
-   *          If the start time of the program should be shown.
-   * @param showDate If the date of the program should be shown.
-   * @param time The time of the time button.
+   * @param type The type of this program menu item.
+   * @param time The time after midnight of the menu entry for ON_TIME programs.
    * @param n A value represents the position of this MenuItem.
    */
-  public ProgramMenuItem(Program p, boolean showStartTime, boolean showDate, int time, int n) {
+  public ProgramMenuItem(Program p, int type, int time, int n) {
     mProgram = p;
     mBackground = getBackground();
-    mShowStartTime = showStartTime;
-    mShowDate = showDate;
+    boolean showToolTip = true, showIcon = true;
+    
+    if(type == NOW_TYPE) {
+      mShowStartTime = Settings.propTrayNowProgramsContainsTime.getBoolean();
+      mShowDate = false;
+      mShowName = Settings.propTrayNowProgramsContainsName.getBoolean();
+      showIcon = Settings.propTrayNowProgramsContainsIcon.getBoolean();
+      showToolTip = Settings.propTrayNowProgramsContainsToolTip.getBoolean();
+    }
+    else if(type == SOON_TYPE) {
+      mShowStartTime = Settings.propTraySoonProgramsContainsTime.getBoolean();
+      mShowDate = false;
+      mShowName = Settings.propTraySoonProgramsContainsName.getBoolean();
+      showIcon = Settings.propTraySoonProgramsContainsIcon.getBoolean();
+      showToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();      
+    }
+    else if(type == ON_TIME_TYPE) {
+      mShowStartTime = Settings.propTrayOnTimeProgramsContainsTime.getBoolean();
+      mShowDate = false;
+      mShowName = Settings.propTrayOnTimeProgramsContainsName.getBoolean();
+      showIcon = Settings.propTrayOnTimeProgramsContainsIcon.getBoolean();
+      showToolTip = Settings.propTrayOnTimeProgramsContainsToolTip.getBoolean();
+      
+      if(!Settings.propTrayOnTimeProgramsShowProgress.getBoolean())
+        time = -1;
+    }
+    else if (type == IMPORTANT_TYPE) {
+      mShowStartTime = Settings.propTrayImportantProgramsContainsTime.getBoolean();
+      mShowDate = Settings.propTrayImportantProgramsContainsDate.getBoolean();
+      mShowName = Settings.propTrayImportantProgramsContainsName.getBoolean();
+      showIcon = Settings.propTrayImportantProgramsContainsIcon.getBoolean();
+      showToolTip = Settings.propTrayImportantProgramsContainsToolTip.getBoolean();
+    }
+    else {
+      mShowStartTime = true;
+      mShowDate = false;
+      mShowName = true;
+    }
+    
     mPlainFont = getFont();
     mBoldFont = mPlainFont.deriveFont(Font.BOLD);
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont,CHANNEL_WIDTH);
@@ -97,7 +137,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       setBackground(mFill);
     }
    
-    if (Settings.propProgramsInTrayContainsChannelIcon.getBoolean()) {
+    if (showIcon) {
       mIcon = UiUtilities.createChannelIcon(p.getChannel().getIcon());
       mIconHeight = mIcon.getIconHeight();
       setMargin(new Insets(1,getMargin().left,1,getMargin().right));
@@ -111,9 +151,9 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
     addActionListener(this);
       
     mInsets = getMargin();
-    setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,showStartTime,showDate, time));
+    setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,mShowStartTime,mShowDate,showIcon,mShowName,time));
     
-    if (Settings.propProgramsInTrayShowTooltip.getBoolean()) {
+    if (showToolTip) {
       int end = p.getStartTime() + p.getLength();
 
       if (end > 1440)
@@ -174,7 +214,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
     else
       width += 30;
     
-    if(Settings.propProgramsInTrayContainsChannel.getBoolean())
+    if(mShowName)
       width += CHANNEL_WIDTH;
     if(mShowStartTime)
       width += TIME_WIDTH;
@@ -192,7 +232,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
     else    
       height += 2;
 
-    if(mChannelName.getIconHeight() > height && Settings.propProgramsInTrayContainsChannel.getBoolean())
+    if(mChannelName.getIconHeight() > height && mShowName)
       height = mChannelName.getIconHeight() + mInsets.top + mInsets.bottom + 2;
 
     return new Dimension(width,height);

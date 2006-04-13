@@ -25,14 +25,12 @@
  */
 package tvbrowser.ui.settings;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -51,25 +49,17 @@ import devplugin.SettingsTab;
  */
 public class TrayBaseSettingsTab implements SettingsTab {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
   .getLocalizerFor(TrayBaseSettingsTab.class);
   
-  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mOnlyMinimizeWhenWindowClosingChB,
-  mShowChannelNameChb, mShowChannelIconChb, mShowNowRunningChb, mShowTimeProgramsChb, 
-  
-  mShowImportantChb;
-  
-  private JSpinner mImportantSize;
-  private JLabel mSizeLabel;
-
+  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mOnlyMinimizeWhenWindowClosingChB;
   private boolean mOldState; 
     
   public JPanel createSettingsPanel() {
     
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "5dlu, pref:grow, 25dlu, pref, 5dlu",        
-        "pref, 5dlu, pref, pref, pref, 10dlu, pref, 5dlu, pref, pref," +
-        "pref, pref, pref"));
+        "5dlu, pref:grow, 5dlu",        
+        "pref, 5dlu, pref, pref, pref"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     
@@ -78,119 +68,32 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mTrayIsEnabled = new JCheckBox(msg, mOldState);
 
     msg = mLocalizer.msg("minimizeToTray", "Minimize to Tray");
-    boolean checked = Settings.propMinimizeToTray.getBoolean();
+    boolean checked = Settings.propTrayMinimizeTo.getBoolean();
     mMinimizeToTrayChb = new JCheckBox(msg, checked && mOldState);
+    mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
     
     msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing",
         "When closing the main window only minimize TV-Browser, don't quit.");
     checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean() && mOldState;
     mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked); 
+    mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
     
-    mShowChannelNameChb = new JCheckBox(mLocalizer.msg(
-        "programShowing.showChannelName", "Show channel name"), Settings.propProgramsInTrayContainsChannel.getBoolean());
-    mShowChannelIconChb = new JCheckBox(mLocalizer.msg(
-        "programShowing.showChannelIcons", "Show channel icon"), Settings.propProgramsInTrayContainsChannelIcon.getBoolean());
-    mShowNowRunningChb = new JCheckBox(mLocalizer.msg(
-        "programShowing.showRunning", "Show now running programs"), Settings.propShowNowRunningProgramsInTray.getBoolean());    
-    mShowTimeProgramsChb = new JCheckBox(mLocalizer.msg("programShowing.showProgramsAt",
-        "Show programs at..."), Settings.propShowTimeProgramsInTray.getBoolean());
-    mShowImportantChb = new JCheckBox(mLocalizer.msg(
-        "programShowing.showImportant", "Show important programs"), Settings.propShowImportantProgramsInTray.getBoolean());
-    mShowImportantChb
-        .setToolTipText(mLocalizer
-            .msg("programShowing.toolTipImportant",
-                "Important programs are all marked programs."));  
-
-    mSizeLabel = new JLabel(mLocalizer.msg(
-        "programShowing.importantMaxPrograms", "important programs to show"));
-    mImportantSize = new JSpinner(new SpinnerNumberModel(
-        Settings.propImportantProgramsInTraySize.getInt(), 1, 10, 1));
-
-    PanelBuilder b2 = new PanelBuilder(new FormLayout("pref,3dlu,pref", "pref"));
-
-    b2.add(mImportantSize, cc.xy(1, 1));
-    b2.add(mSizeLabel, cc.xy(3, 1));  
+    builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,1,3));    
+    builder.add(mTrayIsEnabled, cc.xy(2,3));
+    builder.add(mMinimizeToTrayChb, cc.xy(2,4));
+    builder.add(mOnlyMinimizeWhenWindowClosingChB, cc.xy(2,5));
     
-    builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,1,5));    
-    builder.add(mTrayIsEnabled, cc.xyw(2,3,3));
-    builder.add(mMinimizeToTrayChb, cc.xyw(2,4,3));
-    builder.add(mOnlyMinimizeWhenWindowClosingChB, cc.xyw(2,5,3));
-    
-    final JPanel pS = (JPanel)builder.addSeparator(mLocalizer.msg("programShowing", "Program showing"),
-        cc.xyw(1, 7, 5));
-
-    builder.add(mShowChannelNameChb, cc.xyw(2, 9, 3));
-    builder.add(mShowChannelIconChb, cc.xyw(2, 10, 3));
-
-    builder.add(mShowNowRunningChb, cc.xyw(2, 11, 3));
-    builder.add(mShowTimeProgramsChb, cc.xyw(2, 12, 3));
-    builder.add(mShowImportantChb, cc.xy(2, 13));
-    builder.add(b2.getPanel(), cc.xy(4, 13));
-
-    
-    mTrayIsEnabled.addChangeListener(new ChangeListener() {
-    public void stateChanged(ChangeEvent e) {  
-      pS.getComponent(0).setEnabled(mTrayIsEnabled.isSelected());
-      mImportantSize.setEnabled(mTrayIsEnabled.isSelected() && mShowImportantChb.isSelected());
-      mSizeLabel.setEnabled(mTrayIsEnabled.isSelected() && mShowImportantChb.isSelected());
-      mShowTimeProgramsChb.setEnabled(mTrayIsEnabled.isSelected());
-      mShowImportantChb.setEnabled(mTrayIsEnabled.isSelected());
-      mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
-      mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
-      mShowNowRunningChb.setEnabled(mTrayIsEnabled.isSelected());
-      mShowChannelNameChb.setEnabled(mTrayIsEnabled.isSelected());
-      mShowChannelIconChb.setEnabled(mTrayIsEnabled.isSelected());
-      selectEnabled();
-    }
-  });
-    
-    mShowImportantChb.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        selectEnabled();
-        mImportantSize.setEnabled(mShowImportantChb.isSelected() && mTrayIsEnabled.isSelected());
-        mSizeLabel.setEnabled(mShowImportantChb.isSelected() && mTrayIsEnabled.isSelected());
+    mTrayIsEnabled.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
+        mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
       }
     });
-
-    mShowNowRunningChb.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        selectEnabled();
-      }
-    });
-
-    mShowTimeProgramsChb.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        selectEnabled();
-      }
-    });
-    
-    mShowImportantChb.getChangeListeners()[0].stateChanged(null);
-    mTrayIsEnabled.getChangeListeners()[0].stateChanged(null);
-    mShowTimeProgramsChb.getChangeListeners()[0].stateChanged(null);
-    mShowNowRunningChb.getChangeListeners()[0].stateChanged(null);
-    
     
     return builder.getPanel();
   }
-  
-  private void selectEnabled() {
-      boolean enabled = mShowTimeProgramsChb.isSelected()
-          || mShowNowRunningChb.isSelected() || mShowImportantChb.isSelected();
-
-      mShowChannelNameChb.setEnabled(enabled && mTrayIsEnabled.isSelected());
-      mShowChannelIconChb.setEnabled(enabled && mTrayIsEnabled.isSelected());
-  }
 
   public void saveSettings() {
-    if (mOnlyMinimizeWhenWindowClosingChB != null) {
-      boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected() && mTrayIsEnabled.isSelected();
-      Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
-    }
-    if (mMinimizeToTrayChb != null) {
-      boolean checked = mMinimizeToTrayChb.isSelected() && mTrayIsEnabled.isSelected();
-      Settings.propMinimizeToTray.setBoolean(checked);
-    }
-
     if (mTrayIsEnabled != null) {
       Settings.propTrayIsEnabled.setBoolean(mTrayIsEnabled.isSelected());
       if(mTrayIsEnabled.isSelected() && !mOldState)
@@ -198,26 +101,14 @@ public class TrayBaseSettingsTab implements SettingsTab {
       else if(!mTrayIsEnabled.isSelected() && mOldState)
         TVBrowser.removeTray();
     }
-    
-    if (mShowNowRunningChb != null)
-      Settings.propShowNowRunningProgramsInTray.setBoolean(mShowNowRunningChb
-          .isSelected());
-    if (mShowImportantChb != null)
-      Settings.propShowImportantProgramsInTray.setBoolean(mShowImportantChb
-          .isSelected());
-    if (mShowChannelNameChb != null)
-      Settings.propProgramsInTrayContainsChannel.setBoolean(mShowChannelNameChb
-          .isSelected());
-    if (mShowChannelIconChb != null)
-      Settings.propProgramsInTrayContainsChannelIcon
-          .setBoolean(mShowChannelIconChb.isSelected());
-    
-    if (mShowTimeProgramsChb != null)
-      Settings.propShowTimeProgramsInTray.setBoolean(mShowTimeProgramsChb.isSelected());
-
-    Settings.propImportantProgramsInTraySize.setInt(((Integer) mImportantSize
-        .getValue()).intValue());
-    Settings.propShowProgramsInTrayWasConfigured.setBoolean(true);
+    if (mMinimizeToTrayChb != null) {
+      boolean checked = mMinimizeToTrayChb.isSelected() && mTrayIsEnabled.isSelected();
+      Settings.propTrayMinimizeTo.setBoolean(checked);
+    }
+    if (mOnlyMinimizeWhenWindowClosingChB != null) {
+      boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected() && mTrayIsEnabled.isSelected();
+      Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
+    }
   }
 
   public Icon getIcon() {
