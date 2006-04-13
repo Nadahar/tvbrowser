@@ -93,7 +93,7 @@ public class TVRaterSettingsTab implements SettingsTab {
         mLocalizer.msg("eachStart", "at each start of TV-Browser"), mLocalizer.msg("manual", "manual Update"), };
     
     _updateTime = new JComboBox(updateStrings);
-    _updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "3")));
+    _updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "0")));
     
     _name = new JTextField(_settings.getProperty("name", "noname"));    
     _password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password", ""), 21));
