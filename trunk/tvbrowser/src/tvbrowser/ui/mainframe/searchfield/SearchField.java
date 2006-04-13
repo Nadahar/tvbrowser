@@ -133,7 +133,7 @@ public class SearchField extends JPanel {
    */
   private void createGui() {
     JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("1dlu, pref, 2dlu, 50dlu, 2dlu, 20px", "fill:pref:grow"));
+    panel.setLayout(new FormLayout("1dlu, pref, 2dlu, fill:40dlu:grow, 2dlu, pref", "fill:pref:grow"));
     Color background = new Color(UIManager.getColor("TextField.background").getRGB());
     
     panel.setBackground(background);
@@ -197,7 +197,7 @@ public class SearchField extends JPanel {
     panel.add(mText, cc.xy(4,1));
     panel.add(mCancelButton, cc.xy(6,1));
     
-    setLayout(new FormLayout("pref:grow, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
+    setLayout(new FormLayout("65dlu, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
     add(panel, new CellConstraints().xy(1, 2));
   }
 
