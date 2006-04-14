@@ -190,7 +190,6 @@ public class DocumentRenderer implements Printable {
     if (pageIndex != mCurrentPage) {
       mCurrentPage = pageIndex;
       
-      System.out.println(pageIndex);
       if (pageIndex > mPageStarts.size()-1) {
         double lastSize = 0;
         if (mPageStarts.size() > 0)
@@ -216,7 +215,10 @@ public class DocumentRenderer implements Printable {
     // X
     if (printView(graphics2D, allocation, rootView)) {
       graphics2D.setClip(bounds);
-      mPageStarts.add(new Double(mPageStartY+mPageEndY));
+      // Add Position of next Page
+      if (pageIndex >= mPageStarts.size()-1) {
+        mPageStarts.add(new Double(mPageStartY+mPageEndY));
+      }
       return Printable.PAGE_EXISTS;
     } else {
       mPageStartY = 0;
