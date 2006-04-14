@@ -27,9 +27,6 @@
 package printplugin.dlgs;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,13 +37,14 @@ import java.awt.print.PrinterJob;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JSeparator;
 
 import printplugin.PrintPlugin;
-import printplugin.printer.singleprogramprinter.SingleProgramPrintable;
+import printplugin.printer.singleprogramprinter.DocumentRenderer;
 import printplugin.settings.ProgramInfoPrintSettings;
 import util.program.ProgramTextCreator;
 import util.ui.FontChooserPanel;
@@ -55,6 +53,7 @@ import util.ui.OrderChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
+import util.ui.html.ExtendedHTMLEditorKit;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -145,26 +144,10 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         
         mFieldTypes = fieldChooser.getOrder();
         
+        DocumentRenderer printJob = createPrintjob(program, fontChooser, printImage);
         
-        /* TODO
-         * 
-         * Use: ProgramTextCreator.createInfoText(program, ExtendedHTMLDocument, 
-         *       mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected()) 
-         * 
-         * to create the html-String.
-         */
-        
-        /*for(int i = 0; i < order.length; i++)
-          mFieldTypes[i] = (ProgramFieldType)order[i];*/
-        
-      /*  SingleProgramPrintable printJob = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
-        PreviewDlg dlg;
-        if (parent instanceof Frame)
-          dlg = new PreviewDlg((Frame) parent, printJob, mPageFormat, printJob.getNumOfPages(mPageFormat));
-        else
-          dlg = new PreviewDlg((Dialog) parent, printJob, mPageFormat, printJob.getNumOfPages(mPageFormat));
-        
-        util.ui.UiUtilities.centerAndShow(dlg);*/
+        PreviewDlg dlg = new PreviewDlg(mDialog, printJob, mPageFormat, printJob.getPageCount());
+        util.ui.UiUtilities.centerAndShow(dlg);
       }
     });
     
@@ -182,21 +165,14 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         ProgramInfoPrintSettings.getInstance().setPrintImage(printImage.isSelected());
         close();
         
-        /* TODO
-         * 
-         * Use: ProgramTextCreator.createInfoText(program, ExtendedHTMLDocument, 
-         *       mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected()) 
-         * 
-         * to create the html-String.
-         */
-        
-        /*SingleProgramPrintable printable = new SingleProgramPrintable(program, fontChooser.getChosenFont(), mFieldTypes);
+        DocumentRenderer printable = createPrintjob(program, fontChooser, printImage);
+
         printerJob.setPrintable(printable, mPageFormat);
         try {
           printerJob.print();
         } catch (PrinterException pe) {
           util.exc.ErrorHandler.handle("Could not print pages: "+pe.getLocalizedMessage(), pe);
-        }*/
+        }
         
       }
     });
@@ -244,11 +220,42 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     mDialog.setVisible(true);
   }
 
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#close()
+   */
   public void close() {
     mDialog.dispose();
   }
 
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#getRootPane()
+   */
   public JRootPane getRootPane() {
     return mDialog.getRootPane();
+  }
+
+  /**
+   * Create the PrintJob
+   * 
+   * @param program Program to Print
+   * @param fontChooser Font to use
+   * @param printImage Print Image, if available ?
+   * @return PrintJob
+   */
+  private DocumentRenderer createPrintjob(final Program program, final FontChooserPanel fontChooser, final JCheckBox printImage) {
+    JEditorPane pane = new JEditorPane();
+    pane.setEditorKit(new ExtendedHTMLEditorKit());
+    ExtendedHTMLDocument doc = (ExtendedHTMLDocument) pane.getDocument();
+    
+    String html = ProgramTextCreator.createInfoText(program, doc, 
+          mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected(), false); 
+    
+    pane.setText(html);
+    
+    DocumentRenderer printJob = new DocumentRenderer(mPageFormat);
+    printJob.setEditorPane(pane);
+    return printJob;
   }
 }
