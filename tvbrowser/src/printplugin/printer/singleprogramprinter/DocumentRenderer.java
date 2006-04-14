@@ -184,7 +184,39 @@ public class DocumentRenderer implements Printable {
     int height = (int) (pageFormat.getImageableHeight() / scale);
     
     Rectangle bounds = graphics2D.getClipBounds();
-    graphics2D.setClip(x, y, width, height);
+
+    int cx = x;
+    int cy = y;
+    int cheight = height;
+    int cwidth = width;
+
+    if (bounds != null) {
+      if (cy < bounds.y) {
+        cy = bounds.y;
+      }
+
+      if (cx < bounds.x) {
+        cx = bounds.x;
+      }
+      
+      if (height+cy > bounds.y + bounds.height) {
+        cheight = (bounds.y + bounds.height) - cy;
+      }
+      
+      if (cy + cheight > y+height) {
+        cheight = (y+height)-cy;
+      }
+
+      if (width+cx > bounds.x + bounds.width) {
+        cwidth = (bounds.x + bounds.width) - cx;
+      }
+      
+      if (cx + cwidth > y+width) {
+        cwidth = (x+width)-cx;
+      }
+    }
+    
+    graphics2D.setClip(cx, cy, cwidth, cheight);
     
     // VI
     if (pageIndex != mCurrentPage) {
