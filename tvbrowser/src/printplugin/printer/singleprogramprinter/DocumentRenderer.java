@@ -1,3 +1,7 @@
+/*
+ * This Class was found in the Sun Java-Forum. It was heavily modified to work with
+ * Images and the Preview-Dialog of the TV-Browser
+ */
 package printplugin.printer.singleprogramprinter;
 
 import java.awt.Component;
