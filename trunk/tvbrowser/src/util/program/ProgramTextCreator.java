@@ -66,10 +66,11 @@ public class ProgramTextCreator {
    * @param tFont The title Font.
    * @param bFont The body Font.
    * @param showImage Show the image.
+   * @param showHelpLinks Show the Help-Links (Quality of Data, ShowView)
    * @return The html String.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
-      Object[] fieldArr, Font tFont, Font bFont, boolean showImage) {
+      Object[] fieldArr, Font tFont, Font bFont, boolean showImage, boolean showHelpLinks) {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
     StringBuffer buffer = new StringBuffer();
     
@@ -270,10 +271,10 @@ public class ProgramTextCreator {
       if (type == ProgramFieldType.DESCRIPTION_TYPE) {
         if (prog.getDescription() != null && prog.getDescription().trim()
                 .length() > 0)
-          addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true);
+          addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true, showHelpLinks);
         else
           addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-              true);
+              true, showHelpLinks);
       } else if (type == ProgramFieldType.INFO_TYPE) {
         int info = prog.getInfo();
         if ((info != -1) && (info != 0)) {
@@ -314,35 +315,32 @@ public class ProgramTextCreator {
           addSeperator(doc, buffer);
         }
       } else if (type == ProgramFieldType.URL_TYPE)
-        addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true);
+        addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true, showHelpLinks);
       else
-        addEntry(doc, buffer, prog, type);
+        addEntry(doc, buffer, prog, type, showHelpLinks);
     }
 
-    buffer
-        .append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:#808080; font-size:");
-    buffer.append(mBodyFontSize).append(
-        "\">");
-    buffer.append("<a href=\"");
-    buffer.append(
-        mLocalizer.msg("dataInfo",
-            "http://wiki.tvbrowser.org/index.php/Qualit%C3%A4t_der_Daten"))
-        .append("\">");
-    buffer.append(mLocalizer.msg("dataQuality", "Details of the data quality"));
-    buffer.append("</a>");
-    buffer.append("</td></tr>");
+    if (showHelpLinks) {
+      buffer.append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:#808080; font-size:");
+      buffer.append(mBodyFontSize).append("\">");
+      buffer.append("<a href=\"");
+      buffer.append(mLocalizer.msg("dataInfo", "http://wiki.tvbrowser.org/index.php/Qualit%C3%A4t_der_Daten")).append("\">");
+      buffer.append(mLocalizer.msg("dataQuality", "Details of the data quality"));
+      buffer.append("</a>");
+      buffer.append("</td></tr>");
+    }
     buffer.append("</table></html>");
 
     return buffer.toString();
   }
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
-      Program prog, ProgramFieldType fieldType) {
-    addEntry(doc, buffer, prog, fieldType, false);
+      Program prog, ProgramFieldType fieldType, boolean showHelpLinks) {
+    addEntry(doc, buffer, prog, fieldType, false, showHelpLinks);
   }
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
-      Program prog, ProgramFieldType fieldType, boolean createLinks) {
+      Program prog, ProgramFieldType fieldType, boolean createLinks, boolean showHelpLinks) {
 
     String text = null;
     String name = fieldType.getLocalizedName();
@@ -357,7 +355,7 @@ public class ProgramTextCreator {
           }
           if (!description.startsWith(shortInfoSubString)) {
             addEntry(doc, buffer, prog,
-                ProgramFieldType.SHORT_DESCRIPTION_TYPE, true);
+                ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
           }
         }
       }
@@ -404,7 +402,7 @@ public class ProgramTextCreator {
     buffer.append("\">");
     buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
 
-    if (ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType)
+    if ((ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) && (showHelpLinks))
       buffer.append(" (<a href=\"").append(
           mLocalizer.msg("showviewInfo",
               "http://wiki.tvbrowser.org/index.php/Showviewnummern")).append(
