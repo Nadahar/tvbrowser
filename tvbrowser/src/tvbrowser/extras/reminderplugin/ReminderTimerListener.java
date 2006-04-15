@@ -93,9 +93,12 @@ public class ReminderTimerListener {
       }
     }
 
-    if ("true".equals(mSettings.getProperty("usesendplugin"))) {
-      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(mSettings.getProperty("usethisplugin"));
-      if (plugin.canReceivePrograms()) {
+    String[] pluginIds = ReminderPlugin.getInstance().getClientPluginIds();
+    
+    
+    for(int i = 0; i < pluginIds.length; i++) {
+      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(pluginIds[i]);
+      if (plugin != null && plugin.canReceivePrograms()) {
         Program[] prArray = { item.getProgram()};
         plugin.receivePrograms(prArray);
       }
