@@ -443,6 +443,14 @@ public class FavoritesPlugin implements ContextMenuIf{
     mSettings.setProperty("width", "" + dlg.getWidth());
     mSettings.setProperty("height", "" + dlg.getHeight());
   }
+  
+  public boolean isUsingExpertMode() {
+    return mSettings.getProperty("expertMode","false").compareTo("true") == 0;
+  }
+  
+  public void setIsUsingExpertMode(boolean value) {
+    mSettings.setProperty("expertMode",String.valueOf(value));
+  }
 
   public void addFavorite(Favorite fav) {
     Favorite[] newFavoritesArr = new Favorite[mFavoriteArr.length + 1];
