@@ -26,7 +26,11 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -35,24 +39,43 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.swing.*;
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.extras.common.*;
-import tvbrowser.extras.favoritesplugin.core.*;
-import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
-import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
-import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
+import tvbrowser.extras.common.ConfigurationHandler;
+import tvbrowser.extras.common.DataDeserializer;
+import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.extras.common.DefaultMarker;
+import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
+import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
+import tvbrowser.extras.favoritesplugin.core.Exclusion;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
+import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
+import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
+import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
-import devplugin.*;
+import devplugin.ActionMenu;
+import devplugin.ButtonAction;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuIf;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ThemeIcon;
 
 /**
  * Plugin for managing the favorite programs.
@@ -345,11 +368,13 @@ public class FavoritesPlugin implements ContextMenuIf{
     else {
       ContextMenuAction menu = new ContextMenuAction();
       menu.setText(mLocalizer.msg("manageFavorites", "Favorites"));
+      menu.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
 
       ArrayList actions = new ArrayList();
       for (int i=0; i<favorites.size(); i++) {
         final Favorite fav = (Favorite)favorites.get(i);
         ContextMenuAction action = new ContextMenuAction();
+        action.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
         action.setText(mLocalizer.msg("exclude","Exclude from '{0}'...", fav.getName()));
         action.setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
@@ -363,6 +388,7 @@ public class FavoritesPlugin implements ContextMenuIf{
         final Favorite fav = (Favorite)favorites.get(i);
         ContextMenuAction editAction = new ContextMenuAction();
         editAction.setText(mLocalizer.msg("edit","Edit '{0}'...", fav.getName()));
+        editAction.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
         editAction.setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
            editFavorite(fav);
