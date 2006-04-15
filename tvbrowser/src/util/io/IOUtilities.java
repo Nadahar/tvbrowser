@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -116,6 +117,9 @@ public class IOUtilities {
     }
   }
   
+  public static InputStream getStream(URL page, boolean followRedirects) throws IOException {
+    return getStream(page, followRedirects, 0);
+  }
   
   
   /**
@@ -138,10 +142,12 @@ public class IOUtilities {
    * URL's can be properly resolved.
    *
    * @param page the URL of the page
+   * @param followRedirects Follow redirects.
+   * @param timeout The read timeout.
    * @throws IOException if something went wrong.
    * @return a stream reading data from the specified URL.
    */
-  public static InputStream getStream(URL page, boolean followRedirects)
+  public static InputStream getStream(URL page, boolean followRedirects, int timeout)
     throws IOException
   {
     URLConnection conn = page.openConnection();
@@ -166,6 +172,18 @@ public class IOUtilities {
         }
         return getStream(page, followRedirects);
       }
+      else if (timeout > 0) {
+        try {
+          Method setReadTimeout = hconn.getClass().getMethod("setReadTimeout", new Class[] {int.class});
+          setReadTimeout.invoke(hconn, new Object[] {new Integer(timeout)});
+        }catch(Throwable e) {}
+      }
+    }
+    else if (timeout > 0) {
+      try {
+        Method setReadTimeout = conn.getClass().getMethod("setReadTimeout", new Class[] {int.class});
+        setReadTimeout.invoke(conn, new Object[] {new Integer(timeout)});
+      }catch(Throwable e) {}
     }
     
     InputStream in = conn.getInputStream();
@@ -176,7 +194,13 @@ public class IOUtilities {
   public static InputStream getStream(URL page)
     throws IOException
   {
-    return getStream(page, true);
+    return getStream(page, true, 0);
+  }
+
+  public static InputStream getStream(URL page, int timeout)
+  throws IOException
+  {
+    return getStream(page, true, timeout);
   }
 
 
