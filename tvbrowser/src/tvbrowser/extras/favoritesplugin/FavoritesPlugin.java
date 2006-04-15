@@ -27,7 +27,6 @@
 package tvbrowser.extras.favoritesplugin;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -63,6 +62,7 @@ import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
@@ -425,14 +425,7 @@ public class FavoritesPlugin implements ContextMenuIf{
             200);
     int width = getIntegerSetting(mSettings, "width", 500);
     int height = getIntegerSetting(mSettings, "height", 300);
-    ManageFavoritesDialog dlg;
-    Container parent = UiUtilities.getBestDialogParent(null);
-    if (parent instanceof Frame) {
-      dlg = new ManageFavoritesDialog((Frame)parent, favoriteArr, splitPanePosition, showNew);
-    }
-    else {
-      dlg = new ManageFavoritesDialog((Dialog)parent, favoriteArr, splitPanePosition, showNew);
-    }
+    ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew);
     dlg.setSize(new Dimension(width, height));
     
     if(mShowInfoOnNewProgramsFound) {
