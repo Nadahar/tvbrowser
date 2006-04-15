@@ -147,7 +147,6 @@ public class WebPlugin extends Plugin {
     out.writeInt(mAddresses.size());
 
     for (int i = 0; i < mAddresses.size(); i++) {
-      System.out.println(mAddresses.get(i).getClass().getName());
       ((WebAddress)mAddresses.get(i)).writeData(out);
     }
 
