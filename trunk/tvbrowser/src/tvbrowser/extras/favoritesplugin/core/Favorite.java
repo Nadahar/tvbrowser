@@ -254,7 +254,9 @@ public abstract class Favorite {
 
     Exclusion[] exclusions = getExclusions();
     ArrayList list = new ArrayList();
-
+    boolean isLimitedByTime = getLimitationConfiguration().isLimitedByTime();
+    int timeFrom = getLimitationConfiguration().getTimeFrom();
+    int timeTo = getLimitationConfiguration().getTimeTo();
     for (int i=0; i<progs.length; i++) {
       boolean isExcluded = false;
       for (int j=0; j<exclusions.length; j++) {
@@ -263,6 +265,12 @@ public abstract class Favorite {
           break;
         }
       }
+      if (!isExcluded && isLimitedByTime) {
+        if (progs[i].getStartTime() <timeFrom || progs[i].getStartTime() > timeTo) {
+          isExcluded = true;
+        }
+      }
+
       if (!isExcluded) {
         list.add(progs[i]);
       }
