@@ -217,6 +217,8 @@ public class ReminderPlugin implements ContextMenuIf {
       else
         mClientPluginIdArr = plugins.split(";");
     }
+    else
+      mClientPluginIdArr = new String[0];
   }
   
   public String[] getClientPluginIds() {
