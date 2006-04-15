@@ -32,14 +32,29 @@ import java.io.ObjectInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class LimitationConfiguration {
+
+  public static final int DAYLIMIT_DAILY = -1;
+  public static final int DAYLIMIT_WEEKEND = -2;
+  public static final int DAYLIMIT_WEEKDAY = -3;
+  public static final int DAYLIMIT_SUNDAY = Calendar.SUNDAY;  // 1
+  public static final int DAYLIMIT_MONDAY = Calendar.MONDAY;   // 2
+  public static final int DAYLIMIT_TUESDAY = Calendar.TUESDAY;
+  public static final int DAYLIMIT_WEDNESDAY = Calendar.WEDNESDAY;
+  public static final int DAYLIMIT_THURSDAY = Calendar.THURSDAY;
+  public static final int DAYLIMIT_FRIDAY = Calendar.FRIDAY;
+  public static final int DAYLIMIT_SATURDAY = Calendar.SATURDAY;
+
+
 
   private int mFrom, mTo;
   private Channel[] mChannelArr;
   private boolean mIsLimitedByChannel;
   private boolean mIsLimitedByTime;
+  private int mDayLimit;
 
 
 
@@ -66,10 +81,12 @@ public class LimitationConfiguration {
       }
       mChannelArr = (Channel[])list.toArray(new Channel[list.size()]);
     }
+
+    mDayLimit = in.readInt();
   }
 
   public LimitationConfiguration() {
-
+    mDayLimit = DAYLIMIT_DAILY;
   }
 
   public void store(ObjectOutputStream out) throws IOException {
@@ -89,6 +106,8 @@ public class LimitationConfiguration {
         out.writeObject(mChannelArr[i].getId());
       }
     }
+
+    out.writeInt(mDayLimit);
 
   }
 
@@ -131,7 +150,13 @@ public class LimitationConfiguration {
     mIsLimitedByTime = b;
   }
 
+  public void setDayLimit(int daylimit) {
+    mDayLimit = daylimit;
+  }
 
+  public int getDayLimit() {
+    return mDayLimit;
+  }
 
 
 }
