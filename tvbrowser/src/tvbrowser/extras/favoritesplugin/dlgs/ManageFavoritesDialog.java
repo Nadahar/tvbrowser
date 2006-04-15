@@ -77,7 +77,10 @@ import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.DragAndDropMouseListener;
 import util.ui.ExtensionFileFilter;
+import util.ui.ListDragAndDropHandler;
+import util.ui.ListDropAction;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
@@ -93,7 +96,7 @@ import devplugin.Program;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
+public class ManageFavoritesDialog extends JDialog implements ListDropAction, WindowClosingIf{
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer
@@ -260,6 +263,10 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         favoriteSelectionChanged();
       }
     });
+
+    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);    
+    new DragAndDropMouseListener(mFavoritesList,mFavoritesList,this,dnDHandler);
+    
     mFavoritesList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
@@ -276,7 +283,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
           editSelectedFavorite();
       }
     });
-
+    
     JScrollPane scrollPane = new JScrollPane(mFavoritesList);
     scrollPane.setBorder(null);
     mSplitPane.setLeftComponent(scrollPane);
@@ -383,7 +390,8 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         showSendDialog();
       }
     });
-    
+    sendPrograms.setEnabled(mProgramListModel.size() > 0);
+
     menu.add(sendPrograms);
     
     menu.show(mFavoritesList, x, y);
@@ -667,10 +675,20 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
   }
 
-
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#close()
+   */
   public void close() {
     mInstance = null;
     dispose();
   }
 
+  /*
+   * (non-Javadoc)
+   * @see util.ui.ListDropAction#drop(javax.swing.JList, javax.swing.JList, int, boolean)
+   */
+  public void drop(JList source, JList target, int rows, boolean move) {
+    UiUtilities.moveSelectedItems(target,rows,true);
+  }  
 }
