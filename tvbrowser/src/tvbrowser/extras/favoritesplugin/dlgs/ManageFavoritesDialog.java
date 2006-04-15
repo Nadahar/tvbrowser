@@ -274,11 +274,13 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         }
       }
       
-      public void mouseClicked(MouseEvent e) {
+      public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
           showFavoritesPopUp(e.getX(), e.getY());
-        }
-        
+        }        
+      }
+      
+      public void mouseClicked(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
           editSelectedFavorite();
       }
