@@ -93,7 +93,9 @@ public class DragAndDropMouseListener extends MouseAdapter {
   }
 
   public void mouseClicked(MouseEvent e) {
-
+    if (mSource.isEnabled() && !mSource.hasFocus())
+      mSource.requestFocus();
+    
     if (mSource.isEnabled() && SwingUtilities.isLeftMouseButton(e)
         && e.getClickCount() == 2 && mSource != mTarget) {
       int index = mSource.locationToIndex(e.getPoint());
