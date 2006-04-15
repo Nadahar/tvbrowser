@@ -32,6 +32,7 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -55,10 +56,13 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -78,6 +82,9 @@ import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.factories.Borders;
+
 import devplugin.Program;
 
 
@@ -134,10 +141,10 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
       setTitle(mLocalizer.msg("title", "Manage favorite programs"));
 
     JPanel main = new JPanel(new BorderLayout(5, 5));
-    main.setBorder(UiUtilities.DIALOG_BORDER);
+    main.setBorder(Borders.DLU4_BORDER);
     setContentPane(main);
 
-    JPanel toolbarPn = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+    JToolBar toolbarPn = new JToolBar();
     main.add(toolbarPn, BorderLayout.NORTH);
 
     msg = mLocalizer.msg("new", "Create a new favorite...");
@@ -148,8 +155,10 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
         newFavorite();
       }
     });
-    if(!mShowNew)
+    if(!mShowNew) {
       toolbarPn.add(mNewBt);
+      toolbarPn.addSeparator();
+    }
 
     msg = mLocalizer.msg("edit", "Edit the selected favorite...");
     icon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 22);
@@ -170,6 +179,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
       }
     });
     toolbarPn.add(mDeleteBt);
+    toolbarPn.addSeparator();
 
     msg = mLocalizer.msg("up", "Move the selected favorite up");
     icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-up", 22);
@@ -203,10 +213,12 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
          showSendDialog();
       }
     });
+    toolbarPn.addSeparator();
     toolbarPn.add(mSendBt);
+    toolbarPn.addSeparator();
 
     msg = mLocalizer.msg("sort", "Sort favorites alphabetically");
-    icon = new ImageIcon("favoritesplugin/Sort24.gif");
+    icon = new ImageIcon(this.getClass().getClassLoader().getResource("tvbrowser/extras/favoritesplugin/Sort24.gif"));
     mSortBt = UiUtilities.createToolBarButton(msg, icon);
     mSortBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -249,7 +261,17 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
       }
     });
     mFavoritesList.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          showFavoritesPopUp(e.getX(), e.getY());
+        }
+      }
+      
       public void mouseClicked(MouseEvent e) {
+        if (e.isPopupTrigger()) {
+          showFavoritesPopUp(e.getX(), e.getY());
+        }
+        
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
           editSelectedFavorite();
       }
@@ -266,7 +288,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     scrollPane.setBorder(null);
     mSplitPane.setRightComponent(scrollPane);
 
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0,0));
     main.add(buttonPn, BorderLayout.SOUTH);
 
     mCloseBt = new JButton(mLocalizer.msg("close", "Close"));
@@ -280,7 +302,93 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
 
     favoriteSelectionChanged();
   }  
-  
+
+  /**
+   * Show the Popup-Menu
+   */
+  protected void showFavoritesPopUp(int x, int y) {
+    JPopupMenu menu = new JPopupMenu();
+
+    mFavoritesList.setSelectedIndex(mFavoritesList.locationToIndex(new Point(x,y)));
+    
+    if (!mShowNew) {
+      JMenuItem createNew = new JMenuItem(mLocalizer.msg("new", "Create a new favorite..."), 
+          FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16)); 
+      
+      createNew.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          newFavorite();
+        }
+      });
+      
+      menu.add(createNew);
+      menu.addSeparator();
+    }
+    
+    JMenuItem edit = new JMenuItem(mLocalizer.msg("edit", "Edit the selected favorite..."), 
+        IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
+    
+    edit.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        editSelectedFavorite();
+      }
+    });
+    
+    menu.add(edit);
+    
+    JMenuItem delete = new JMenuItem(mLocalizer.msg("delete", "Delete selected favorite..."), 
+        IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+    
+    delete.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        deleteSelectedFavorite();
+      }
+    });
+    
+    menu.add(delete);
+    
+    if (!mShowNew) {
+      JMenuItem moveUp = new JMenuItem(mLocalizer.msg("up", "Move the selected favorite up"), 
+          FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-up", 16));
+      
+      moveUp.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          moveSelectedFavorite(-1);
+        }
+      });
+
+      moveUp.setEnabled(mFavoritesList.getSelectedIndex() > 0);
+      menu.add(moveUp);
+      
+      JMenuItem moveDown = new JMenuItem(mLocalizer.msg("down", "Move the selected favorite down"), 
+          FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-down", 16));
+      
+      moveDown.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          moveSelectedFavorite(1);
+        }
+      });
+      
+      moveDown.setEnabled((mFavoritesList.getSelectedIndex() != -1) && (mFavoritesList.getSelectedIndex() < (mFavoritesListModel.getSize() - 1)));
+      menu.add(moveDown);
+    }
+    
+    menu.addSeparator();
+    
+    JMenuItem sendPrograms = new JMenuItem(mLocalizer.msg("send", "Send Programs to another Plugin"), 
+        FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 16));
+    
+    sendPrograms.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showSendDialog();
+      }
+    });
+    
+    menu.add(sendPrograms);
+    
+    menu.show(mFavoritesList, x, y);
+  }
+
   public static ManageFavoritesDialog getInstance() {
     return mInstance;
   }

@@ -26,36 +26,53 @@
 
 package tvbrowser.extras.favoritesplugin.dlgs;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.extras.favoritesplugin.core.*;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.core.Exclusion;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
-import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
-import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.core.icontheme.IconLoader;
-import devplugin.Channel;
-import devplugin.PluginAccess;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.ui.ChannelChooserDlg;
 import util.ui.PluginChooserDlg;
 import util.ui.TabLayout;
-import util.ui.ChannelChooserDlg;
-import util.ui.UiUtilities;
 import util.ui.TimePeriodChooser;
-import util.exc.TvBrowserException;
-import util.exc.ErrorHandler;
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
+import devplugin.PluginAccess;
 
 
 public class EditFavoriteDialog extends JDialog {
@@ -106,12 +123,12 @@ public class EditFavoriteDialog extends JDialog {
     mFavoriteConfigurator = mFavorite.createConfigurator();
 
     setTitle(mLocalizer.msg("title","Edit Favorite"));
-    Container rootPn = getContentPane();
+    JPanel rootPn = (JPanel)getContentPane();
     rootPn.setLayout(new BorderLayout());
-
+    rootPn.setBorder(Borders.DLU4_BORDER);
+    
     JPanel content = new JPanel(new TabLayout(1));
     content.setBorder(new EmptyBorder(10,10,10,10));
-
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.head","Favorite")));
 
@@ -130,13 +147,8 @@ public class EditFavoriteDialog extends JDialog {
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.extras","Extras")));
     content.add(createExtrasPanel());
 
-
-    JPanel buttonPn = new JPanel();
     JButton cancelBtn = new JButton(mLocalizer.msg("cancel","Cancel"));
     JButton okBtn = new JButton(mLocalizer.msg("ok","OK"));
-
-    buttonPn.add(okBtn);
-    buttonPn.add(cancelBtn);
 
     cancelBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -150,8 +162,15 @@ public class EditFavoriteDialog extends JDialog {
       }
     });
 
+
+    ButtonBarBuilder buttons = new ButtonBarBuilder();
+    buttons.addGriddedButtons(new JButton[]{okBtn, cancelBtn});
+    
+    JPanel buttonPanel = new JPanel(new BorderLayout());
+    buttonPanel.add(buttons.getPanel(), BorderLayout.EAST);
+
     rootPn.add(BorderLayout.NORTH,  content);
-    rootPn.add(BorderLayout.SOUTH, buttonPn);
+    rootPn.add(BorderLayout.SOUTH, buttonPanel);
 
     pack();
   }
