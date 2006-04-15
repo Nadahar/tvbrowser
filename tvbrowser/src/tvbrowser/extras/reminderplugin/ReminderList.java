@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -207,13 +208,11 @@ public class ReminderList implements ActionListener {
     return null;
   }
 
-
   public ReminderListItem[] getReminderItems() {
-    return (ReminderListItem[])mList.toArray(new ReminderListItem[mList.size()]);
+    ReminderListItem[] items = (ReminderListItem[])mList.toArray(new ReminderListItem[mList.size()]);
+    Arrays.sort(items);
+    return items;
   }
-
-
-
 
   /**
    * Checks all programs, if they currently exists
