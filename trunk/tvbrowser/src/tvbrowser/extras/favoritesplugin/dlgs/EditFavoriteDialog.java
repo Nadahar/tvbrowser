@@ -34,19 +34,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.*;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ReminderConfiguration;
@@ -55,6 +47,7 @@ import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
+import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -74,7 +67,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Channel;
 import devplugin.PluginAccess;
 
-
 public class EditFavoriteDialog extends JDialog {
 
   public static final util.ui.Localizer mLocalizer
@@ -89,6 +81,7 @@ public class EditFavoriteDialog extends JDialog {
   private JLabel mChannelLabel;
 
   private Channel[] mChannelArr;
+  private JComboBox mLimitDaysCB;
 
   private JButton mNewExclusionBtn;
   private JButton mEditExclusionBtn;
@@ -126,7 +119,7 @@ public class EditFavoriteDialog extends JDialog {
     JPanel rootPn = (JPanel)getContentPane();
     rootPn.setLayout(new BorderLayout());
     rootPn.setBorder(Borders.DLU4_BORDER);
-    
+
     JPanel content = new JPanel(new TabLayout(1));
     content.setBorder(new EmptyBorder(10,10,10,10));
 
@@ -165,7 +158,7 @@ public class EditFavoriteDialog extends JDialog {
 
     ButtonBarBuilder buttons = new ButtonBarBuilder();
     buttons.addGriddedButtons(new JButton[]{okBtn, cancelBtn});
-    
+
     JPanel buttonPanel = new JPanel(new BorderLayout());
     buttonPanel.add(buttons.getPanel(), BorderLayout.EAST);
 
@@ -228,6 +221,21 @@ public class EditFavoriteDialog extends JDialog {
     mLimitChannelCb = new JCheckBox(mLocalizer.msg("channels","Channels:"));
     mLimitTimeCb = new JCheckBox(mLocalizer.msg("time","Time:"));
 
+    mLimitDaysCB = new JComboBox(new Object[]{
+            new Integer(LimitationConfiguration.DAYLIMIT_DAILY),
+            new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY),
+            new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND),
+            new Integer(LimitationConfiguration.DAYLIMIT_MONDAY),
+            new Integer(LimitationConfiguration.DAYLIMIT_TUESDAY),
+            new Integer(LimitationConfiguration.DAYLIMIT_WEDNESDAY),
+            new Integer(LimitationConfiguration.DAYLIMIT_THURSDAY),
+            new Integer(LimitationConfiguration.DAYLIMIT_FRIDAY),
+            new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY),
+            new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY),
+    });
+    mLimitDaysCB.setRenderer(new DayListCellRenderer());
+    mLimitDaysCB.setSelectedItem(new Integer((mFavorite.getLimitationConfiguration().getDayLimit())));
+
     boolean isLimitedByChannel = mFavorite.getLimitationConfiguration().isLimitedByChannel();
     boolean isLimitedByTime = mFavorite.getLimitationConfiguration().isLimitedByTime();
 
@@ -236,6 +244,7 @@ public class EditFavoriteDialog extends JDialog {
 
     setLimitChannelEnabled(isLimitedByChannel);
     mTimePeriodChooser.setEnabled(isLimitedByTime);
+    mLimitDaysCB.setEnabled(mLimitTimeCb.isSelected());
 
     mLimitChannelCb.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -246,6 +255,7 @@ public class EditFavoriteDialog extends JDialog {
     mLimitTimeCb.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         mTimePeriodChooser.setEnabled(mLimitTimeCb.isSelected());
+        mLimitDaysCB.setEnabled(mLimitTimeCb.isSelected());
       }
     });
 
@@ -256,13 +266,23 @@ public class EditFavoriteDialog extends JDialog {
       public void actionPerformed(ActionEvent e) {
         ChannelChooserDlg dlg = new ChannelChooserDlg(EditFavoriteDialog.this, mChannelArr, null, ChannelChooserDlg.SELECTABLE_ITEM_LIST);
         UiUtilities.centerAndShow(dlg);
-        mChannelArr = dlg.getChannels();
-        if (mChannelArr.length == 0) {
-          mLimitChannelCb.setSelected(false);
-          setLimitChannelEnabled(false);
+        Channel[] chArr = dlg.getChannels();
+        if (chArr != null) {
+          mChannelArr = dlg.getChannels();
+          if (mChannelArr.length == 0) {
+            mLimitChannelCb.setSelected(false);
+            setLimitChannelEnabled(false);
+          }
+          mChannelLabel.setText(getChannelString(mChannelArr));
         }
       }
     });
+
+    JPanel limitPn = new JPanel(new BorderLayout());
+    JPanel pn = new JPanel();
+    pn.add(mTimePeriodChooser);
+    pn.add(mLimitDaysCB);
+    limitPn.add(pn, BorderLayout.EAST);
 
 
     CellConstraints cc = new CellConstraints();
@@ -276,7 +296,7 @@ public class EditFavoriteDialog extends JDialog {
     panelBuilder.add(mChannelLabel, cc.xy(2,1));
     panelBuilder.add(mChangeChannelsBtn, cc.xy(3,1));
     panelBuilder.add(mLimitTimeCb, cc.xy(1,3));
-    panelBuilder.add(mTimePeriodChooser, cc.xyw(2,3,2));
+    panelBuilder.add(limitPn, cc.xyw(2,3,2));
 
     return panelBuilder.getPanel();
   }
@@ -422,7 +442,7 @@ public class EditFavoriteDialog extends JDialog {
 
     JPanel panel = new JPanel(new FormLayout("pref, pref:grow, pref", "pref,3dlu,pref"));
     CellConstraints cc = new CellConstraints();
-    
+
     mPassProgramPlugins = mFavorite.getForwardPlugins();
     mPassProgramsLb = new JLabel(getForwardPluginsLabelString(mPassProgramPlugins));
     mChangePassProgramsBtn = new JButton(mLocalizer.msg("change","Change"));
@@ -488,9 +508,11 @@ public class EditFavoriteDialog extends JDialog {
 
     if (mLimitTimeCb.isSelected()) {
       mFavorite.getLimitationConfiguration().setTime(mTimePeriodChooser.getFromTime(), mTimePeriodChooser.getToTime());
+      mFavorite.getLimitationConfiguration().setDayLimit(((Integer)mLimitDaysCB.getSelectedItem()).intValue());
     }
     else {
       mFavorite.getLimitationConfiguration().setIsLimitedByTime(false);
+      mFavorite.getLimitationConfiguration().setDayLimit(LimitationConfiguration.DAYLIMIT_DAILY);
     }
 
     if (mLimitChannelCb.isSelected() && mChannelArr.length > 0) {
@@ -667,5 +689,32 @@ public class EditFavoriteDialog extends JDialog {
   }
 
 
+  class DayListCellRenderer extends DefaultListCellRenderer {
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+      if (value instanceof Integer) {
+        int val = ((Integer)value).intValue();
+        String str;
+        switch (val) {
+          case LimitationConfiguration.DAYLIMIT_DAILY : str = mLocalizer.msg("day.daily","Daily"); break;
+          case LimitationConfiguration.DAYLIMIT_WEEKDAY : str = mLocalizer.msg("day.weekday","weekday"); break;
+          case LimitationConfiguration.DAYLIMIT_WEEKEND : str = mLocalizer.msg("day.weekend","weekend"); break;
+          case LimitationConfiguration.DAYLIMIT_MONDAY : str = mLocalizer.msg("day.monday","monday"); break;
+          case LimitationConfiguration.DAYLIMIT_TUESDAY : str = mLocalizer.msg("day.tuesday","tuesday"); break;
+          case LimitationConfiguration.DAYLIMIT_WEDNESDAY : str = mLocalizer.msg("day.wednesday","wednesday"); break;
+          case LimitationConfiguration.DAYLIMIT_THURSDAY : str = mLocalizer.msg("day.thursday","thursday"); break;
+          case LimitationConfiguration.DAYLIMIT_FRIDAY : str = mLocalizer.msg("day.friday","friday"); break;
+          case LimitationConfiguration.DAYLIMIT_SATURDAY : str = mLocalizer.msg("day.saturday","saturday"); break;
+          case LimitationConfiguration.DAYLIMIT_SUNDAY : str = mLocalizer.msg("day.sunday","sunday"); break;
+          default : str = "<unknown>";
+        }
+        label.setText(str);
+
+      }
+
+    return label;
+  }
+  }
 
 }

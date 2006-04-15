@@ -34,6 +34,7 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Calendar;
 
 import util.exc.TvBrowserException;
 import util.ui.SearchFormSettings;
@@ -227,6 +228,57 @@ public abstract class Favorite {
     return false;
   }
 
+
+  private Program[] filterByLimitations(Program[] progArr) {
+
+      Exclusion[] exclusions = getExclusions();
+    ArrayList list = new ArrayList();
+    boolean isLimitedByTime = getLimitationConfiguration().isLimitedByTime();
+    int timeFrom = getLimitationConfiguration().getTimeFrom();
+    int timeTo = getLimitationConfiguration().getTimeTo();
+    int allowedDayOfWeek = getLimitationConfiguration().getDayLimit();
+    for (int i=0; i<progArr.length; i++) {
+      boolean isExcluded = false;
+      for (int j=0; j<exclusions.length; j++) {
+        if (exclusions[j].isProgramExcluded(progArr[i])) {
+          isExcluded = true;
+          break;
+        }
+      }
+      if (!isExcluded && isLimitedByTime) {
+        if (progArr[i].getStartTime() <timeFrom || progArr[i].getStartTime() > timeTo) {
+          isExcluded = true;
+        }
+        else {
+          if (allowedDayOfWeek != LimitationConfiguration.DAYLIMIT_DAILY) {
+            Calendar cal = progArr[i].getDate().getCalendar();
+            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            if (allowedDayOfWeek == LimitationConfiguration.DAYLIMIT_WEEKEND) {
+              if (dayOfWeek != 1 && dayOfWeek != 7) {
+                isExcluded = true;
+              }
+            }
+            else if (allowedDayOfWeek == LimitationConfiguration.DAYLIMIT_WEEKDAY) {
+              if (dayOfWeek == 1 || dayOfWeek == 7) {
+                isExcluded = true;
+              }
+            }
+            else if (allowedDayOfWeek != dayOfWeek) {
+              isExcluded = true;
+            }
+          }
+        }
+      }
+
+      if (!isExcluded) {
+        list.add(progArr[i]);
+      }
+    }
+
+    return (Program[])list.toArray(new Program[list.size()]);
+
+  }
+
   /**
    * Performs a new search, and refreshes the program marks
    * @throws TvBrowserException
@@ -251,30 +303,9 @@ public abstract class Favorite {
                                                 channelArr,
                                                 true
                                                 );
+    
+    Program[] newProgList = filterByLimitations(progs);
 
-    Exclusion[] exclusions = getExclusions();
-    ArrayList list = new ArrayList();
-    boolean isLimitedByTime = getLimitationConfiguration().isLimitedByTime();
-    int timeFrom = getLimitationConfiguration().getTimeFrom();
-    int timeTo = getLimitationConfiguration().getTimeTo();
-    for (int i=0; i<progs.length; i++) {
-      boolean isExcluded = false;
-      for (int j=0; j<exclusions.length; j++) {
-        if (exclusions[j].isProgramExcluded(progs[i])) {
-          isExcluded = true;
-          break;
-        }
-      }
-      if (!isExcluded && isLimitedByTime) {
-        if (progs[i].getStartTime() <timeFrom || progs[i].getStartTime() > timeTo) {
-          isExcluded = true;
-        }
-      }
-
-      if (!isExcluded) {
-        list.add(progs[i]);
-      }
-    }
 
     /* Now we have to lists:
          - mPrograms:   previous favorite programs
@@ -285,9 +316,8 @@ public abstract class Favorite {
        For all programs from newProgList, that don't exist in mPrograms, we ADD it to mPrograms
 
      */
-
     Comparator comparator = ProgramUtilities.getProgramComparator();
-    Program[] newProgList = (Program[])list.toArray(new Program[list.size()]);
+  //  Program[] newProgList = (Program[])list.toArray(new Program[list.size()]);
     Arrays.sort(newProgList, comparator);
     Arrays.sort(mPrograms, comparator);
 
@@ -343,7 +373,7 @@ public abstract class Favorite {
     }
 
 
-    mPrograms = (Program[])resultList.toArray(new Program[list.size()]);
+    mPrograms = (Program[])resultList.toArray(new Program[resultList.size()]);
   }
 
 
