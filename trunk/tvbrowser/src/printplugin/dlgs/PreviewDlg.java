@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -53,6 +54,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -90,14 +92,15 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     
     UiUtilities.registerForClosing(this);
     
-    JPanel southPn = new JPanel(new BorderLayout());
+    JPanel southPn = new JPanel(new FormLayout("left:10dlu:grow, pref, right:10dlu:grow", "pref"));
+    CellConstraints cc = new CellConstraints();
     
     mSiteLb = new JLabel();
     mSiteLb.setHorizontalAlignment(SwingConstants.CENTER);
     
-    southPn.add(mPrevBt=new JButton("<"), BorderLayout.WEST);
-    southPn.add(mNextBt=new JButton(">"), BorderLayout.EAST);
-    southPn.add(mSiteLb, BorderLayout.CENTER);
+    southPn.add(mPrevBt=new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-previous", 16)), cc.xy(1,1));
+    southPn.add(mNextBt=new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-next", 16)), cc.xy(3,1));
+    southPn.add(mSiteLb, cc.xy(2,1));
     
     mPreviewComponent = new PreviewComponent(mPrinter, mPageFormat, numberOfPages);
     
@@ -129,8 +132,8 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     borderPn.add(scrollPane);
     
     // TODO: Add Zoom-Icons!!
-    final JButton zoomIn = new JButton("IN");
-    final JButton zoomOut = new JButton("OUT");
+    final JButton zoomIn = new JButton(mLocalizer.msg("zoomIn", "Zoom +"));
+    final JButton zoomOut = new JButton(mLocalizer.msg("zoomOut", "Zoom -"));
 
     zoomIn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -151,19 +154,31 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     zoomOut.setEnabled(false);
     
     JPanel panel = new JPanel(new FormLayout("pref, 3dlu, pref", "pref"));
-    CellConstraints cc = new CellConstraints();
     
     panel.add(zoomIn, cc.xy(1,1));
     panel.add(zoomOut, cc.xy(3,1));
     
     JPanel content = (JPanel)getContentPane();
     content.setBorder(Borders.DLU4_BORDER);
-    content.setLayout(new FormLayout("fill:default:grow", "pref, 3dlu, fill:default:grow, 3dlu, pref"));
+    content.setLayout(new FormLayout("fill:default:grow", "pref, 3dlu, fill:default:grow, 3dlu, pref, 3dlu, pref"));
     
     content.add(panel, cc.xy(1, 1));
     content.add(borderPn, cc.xy(1,3));
     content.add(southPn, cc.xy(1,5));
-    updateSiteLabelText();
+    
+    JPanel closePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+    
+    JButton close = new JButton(mLocalizer.msg("close", "Close"));
+    close.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        setVisible(false);
+      }
+    });
+    closePanel.add(close);
+    
+    content.add(closePanel, cc.xy(1,7));
+    
+    updateDialogState();
     
     pack();    
    
@@ -198,18 +213,20 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     }
   }
   
-  private void updateSiteLabelText() {    
+  private void updateDialogState() {    
     mSiteLb.setText(mLocalizer.msg("pageInfo","page {0} of {1}",""+(mPreviewComponent.getPageIndex()+1), ""+mPreviewComponent.getNumberOfPages()));
+    mPrevBt.setVisible(mPreviewComponent.getPageIndex() > 0);
+    mNextBt.setVisible(mPreviewComponent.getPageIndex()+1 < mPreviewComponent.getNumberOfPages());
   }
   
   public void actionPerformed(ActionEvent event) {
     if (event.getSource()==mPrevBt) {
       mPreviewComponent.previous();
-      updateSiteLabelText();
+      updateDialogState();
     }
     else if (event.getSource()==mNextBt) {
       mPreviewComponent.next();
-      updateSiteLabelText();
+      updateDialogState();
     }
   }
 
