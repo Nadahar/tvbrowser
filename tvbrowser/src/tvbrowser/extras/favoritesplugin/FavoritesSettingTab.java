@@ -26,16 +26,26 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.awt.BorderLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.TabLayout;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.PluginChooserDlg;
+import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.SettingsTab;
@@ -50,103 +60,98 @@ public class FavoritesSettingTab implements SettingsTab {
   /** The localizer for this class. */  
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
-  
-  private JPanel mSettingsPn;
-  private PluginAccess[] mSelectablePluginArr;
-  private JCheckBox[] mSelectablePluginChBArr;
 
-  
-  
-  /**
-   * Creates a new instance of FavoritesSettingTab.
-   */
-  public FavoritesSettingTab() {
-  }
-
-  
+  private PluginAccess[] mClientPlugins;
+  private JLabel mPluginLabel;
+  private JCheckBox mExpertMode;  
   
   /**
    * Creates the settings panel for this tab.
    */
-  public JPanel createSettingsPanel() {    
-    String msg;
-
-    mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(BorderFactory.createTitledBorder(""));
+  public JPanel createSettingsPanel() {
+    CellConstraints cc = new CellConstraints();
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+        "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref"));
+    builder.setDefaultDialogBorder();
     
-    JPanel main = new JPanel(new TabLayout(1));
-    mSettingsPn.add(main, BorderLayout.NORTH);
+    mPluginLabel = new JLabel();
+    JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));    
+    mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always use expert mode"),FavoritesPlugin.getInstance().isUsingExpertMode());    
     
-    // get the client plugins
     String[] clientPluginIdArr
-      = FavoritesPlugin.getInstance().getClientPluginIds();
+    = FavoritesPlugin.getInstance().getClientPluginIds();    
     
-    // get the installed plugins
-    PluginAccess[] activePluginArr = Plugin.getPluginManager().getActivatedPlugins();
+    ArrayList clientPlugins = new ArrayList();
     
-    // create a list of those who support multiple program execution
-    ArrayList selectablePluginList = new ArrayList();
-    for (int i=0; i<activePluginArr.length; i++) {
-      if (activePluginArr[i].canReceivePrograms()) {
-        selectablePluginList.add(activePluginArr[i]);
+    for(int i = 0; i < clientPluginIdArr.length; i++) {
+      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(clientPluginIdArr[i]);
+      if(plugin != null)
+        clientPlugins.add(plugin);
+    }
+    
+    mClientPlugins = new PluginAccess[clientPlugins.size()];
+    clientPlugins.toArray(mClientPlugins);
+    
+    handlePluginSelection();
+    
+    choose.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        PluginChooserDlg chooser = null;
+        if(w instanceof JDialog)
+          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null);
+        else
+          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null);
+        
+        chooser.setLocationRelativeTo(w);
+        chooser.setVisible(true);
+        
+        mClientPlugins = chooser.getPlugins();
+        
+        handlePluginSelection();
       }
-    }
-
-    if (selectablePluginList.size() == 0) {
-      msg = mLocalizer.msg("noPlugins", "There are no plugins that can receive multiple programs.");
-      main.add(new JLabel(msg));
-    } else {
-      msg = mLocalizer.msg("passTo", "Pass favorite programs to");
-      main.add(new JLabel(msg));
-    }
+    });
     
-    // put them into an array
-    mSelectablePluginArr = new PluginAccess[selectablePluginList.size()];
-    selectablePluginList.toArray(mSelectablePluginArr);
+    builder.addSeparator(mLocalizer.msg("passTo", "Pass favorite programs to"), cc.xyw(1,1,5));
+    builder.add(mPluginLabel, cc.xy(2,3));
+    builder.add(choose, cc.xy(4,3));
+    builder.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,5,5));
+    builder.add(mExpertMode, cc.xyw(2,7,3));
     
-    // create a check box for each
-    mSelectablePluginChBArr = new JCheckBox[mSelectablePluginArr.length];
-    for (int i = 0; i < mSelectablePluginArr.length; i++) {
-      String name = mSelectablePluginArr[i].getInfo().getName();
-      mSelectablePluginChBArr[i] = new JCheckBox(name);
-      main.add(mSelectablePluginChBArr[i]);
-      
-      // check wether the plugin is currently a client of the FavoritesPlugin
-      boolean isClient = false;
-      
-      for (int j = 0; j < clientPluginIdArr.length; j++) {
-        if (mSelectablePluginArr[i].getId().equals(clientPluginIdArr[j])) {
-          isClient = true;
-          break;
-        }
-      }
-      mSelectablePluginChBArr[i].setSelected(isClient);
-    }
-    
-    return mSettingsPn;
+    return builder.getPanel();
   }
 
-  
+  private void handlePluginSelection() {
+    if(mClientPlugins.length > 0) {
+      mPluginLabel.setText(mClientPlugins[0].toString());
+      mPluginLabel.setEnabled(true);
+    }
+    else {
+      mPluginLabel.setText(mLocalizer.msg("noPlugins","No Plugins choosen"));
+      mPluginLabel.setEnabled(false);
+    }
+    
+    for (int i = 1; i < (mClientPlugins.length > 4 ? 3 : mClientPlugins.length); i++) {
+      mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
+    }
+    
+    if(mClientPlugins.length > 4)
+      mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
+  }
   
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  public void saveSettings() {
-    // Find out the plugins that should be client
-    ArrayList clientPluginIdList = new ArrayList();
-    for (int i = 0; i < mSelectablePluginChBArr.length; i++) {
-      if (mSelectablePluginChBArr[i].isSelected()) {
-        clientPluginIdList.add(mSelectablePluginArr[i].getId());
-      }
-    }
+  public void saveSettings() {    
+    String[] clientPluginIdArr = new String[mClientPlugins.length];
     
-    // Put them into an array
-    String[] clientPluginIdArr = new String[clientPluginIdList.size()];
-    clientPluginIdList.toArray(clientPluginIdArr);
+    for (int i = 0; i < mClientPlugins.length; i++)
+      clientPluginIdArr[i] = mClientPlugins[i].getId();
+    
     FavoritesPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
+    FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());
   }
-
-  
   
   /**
    * Returns the name of the tab-sheet.
@@ -154,8 +159,6 @@ public class FavoritesSettingTab implements SettingsTab {
   public Icon getIcon() {
     return FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16);
   }
-  
-  
   
   /**
    * Returns the title of the tab-sheet.
