@@ -34,7 +34,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -56,6 +55,7 @@ import util.ui.PluginChooserDlg;
 import util.ui.TabLayout;
 import util.ui.TimePeriodChooser;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -67,36 +67,49 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Channel;
 import devplugin.PluginAccess;
 
-public class EditFavoriteDialog extends JDialog {
+public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
-  public static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(EditFavoriteDialog.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFavoriteDialog.class);
 
   private Favorite mFavorite;
+
   private JCheckBox mReminderAfterDownloadCb;
+
   private JCheckBox mUseReminderCb;
+
   private JCheckBox mLimitChannelCb;
+
   private JCheckBox mLimitTimeCb;
+
   private JButton mChangeChannelsBtn;
+
   private JLabel mChannelLabel;
 
   private Channel[] mChannelArr;
+
   private JComboBox mLimitDaysCB;
 
   private JButton mNewExclusionBtn;
+
   private JButton mEditExclusionBtn;
+
   private JButton mDeleteExclusionBtn;
+
   private JList mExclusionsList;
 
   private TimePeriodChooser mTimePeriodChooser;
+
   private JCheckBox mPassProgramsCheckBox;
+
   private PluginAccess[] mPassProgramPlugins;
+
   private JLabel mPassProgramsLb;
+
   private JButton mChangePassProgramsBtn;
 
   private boolean mOkWasPressed;
-  private FavoriteConfigurator mFavoriteConfigurator;
 
+  private FavoriteConfigurator mFavoriteConfigurator;
 
   public EditFavoriteDialog(Frame parent, Favorite fav) {
     super(parent, true);
@@ -108,86 +121,82 @@ public class EditFavoriteDialog extends JDialog {
     init(fav);
   }
 
-
   private void init(Favorite fav) {
-
+    UiUtilities.registerForClosing(this);
     mOkWasPressed = false;
     mFavorite = fav;
     mFavoriteConfigurator = mFavorite.createConfigurator();
 
-    setTitle(mLocalizer.msg("title","Edit Favorite"));
-    JPanel rootPn = (JPanel)getContentPane();
+    setTitle(mLocalizer.msg("title", "Edit Favorite"));
+    JPanel rootPn = (JPanel) getContentPane();
     rootPn.setLayout(new BorderLayout());
     rootPn.setBorder(Borders.DLU4_BORDER);
 
     JPanel content = new JPanel(new TabLayout(1));
-    content.setBorder(new EmptyBorder(10,10,10,10));
+    content.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.head","Favorite")));
+    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.head", "Favorite")));
 
     content.add(mFavoriteConfigurator.createConfigurationPanel());
 
-
-    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.details","Details")));
+    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.details", "Details")));
     content.add(createLimitPanel());
 
-    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.exclusions","Exclusion Criteria")));
+    content.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("section.exclusions", "Exclusion Criteria")));
     content.add(createExclusionPanel());
 
-    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.reminder","Reminder")));
+    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.reminder", "Reminder")));
     content.add(createReminderPanel());
 
-    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.extras","Extras")));
+    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.extras", "Extras")));
     content.add(createExtrasPanel());
 
-    JButton cancelBtn = new JButton(mLocalizer.msg("cancel","Cancel"));
-    JButton okBtn = new JButton(mLocalizer.msg("ok","OK"));
+    JButton cancelBtn = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    JButton okBtn = new JButton(mLocalizer.msg("ok", "OK"));
 
-    cancelBtn.addActionListener(new ActionListener(){
+    cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         hide();
       }
     });
 
-    okBtn.addActionListener(new ActionListener(){
+    okBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         saveAndClose();
       }
     });
 
-
     ButtonBarBuilder buttons = new ButtonBarBuilder();
-    buttons.addGriddedButtons(new JButton[]{okBtn, cancelBtn});
+    buttons.addGriddedButtons(new JButton[] { okBtn, cancelBtn });
 
     JPanel buttonPanel = new JPanel(new BorderLayout());
     buttonPanel.add(buttons.getPanel(), BorderLayout.EAST);
 
-    rootPn.add(BorderLayout.NORTH,  content);
+    rootPn.add(BorderLayout.NORTH, content);
     rootPn.add(BorderLayout.SOUTH, buttonPanel);
 
     pack();
   }
 
-
   private String getChannelString(Channel[] channelArr) {
     if (channelArr != null && channelArr.length > 0) {
       StringBuffer buf = new StringBuffer();
-      for (int i=0; i<channelArr.length-1; i++) {
+      for (int i = 0; i < channelArr.length - 1; i++) {
         buf.append(channelArr[i]).append(", ");
       }
       if (channelArr.length > 0) {
-        buf.append(channelArr[channelArr.length-1]);
+        buf.append(channelArr[channelArr.length - 1]);
       }
       String result = buf.toString();
       if (result.length() > 50) {
         result = result.substring(0, 50);
         int inx = result.lastIndexOf(",");
-        result = result.substring(0, inx) +", ...";
+        result = result.substring(0, inx) + ", ...";
       }
       return result;
-    }
-    else {
-      return mLocalizer.msg("allChannels","All channels");
+    } else {
+      return mLocalizer.msg("allChannels", "All channels");
     }
   }
 
@@ -197,42 +206,32 @@ public class EditFavoriteDialog extends JDialog {
     mChannelLabel.setText(getChannelString(mChannelArr));
   }
 
-
-
   private JPanel createLimitPanel() {
 
     int from, to;
     if (mFavorite.getLimitationConfiguration().isLimitedByTime()) {
       from = mFavorite.getLimitationConfiguration().getTimeFrom();
       to = mFavorite.getLimitationConfiguration().getTimeTo();
-    }
-    else {
+    } else {
       from = 0;
-      to = 24*60 - 1;
+      to = 24 * 60 - 1;
     }
 
     mTimePeriodChooser = new TimePeriodChooser(from, to, TimePeriodChooser.ALIGN_RIGHT);
 
-    mChangeChannelsBtn = new JButton(mLocalizer.msg("change","Change"));
+    mChangeChannelsBtn = new JButton(mLocalizer.msg("change", "Change"));
     mChannelArr = mFavorite.getLimitationConfiguration().getChannels();
     mChannelLabel = new JLabel(getChannelString(mChannelArr));
 
+    mLimitChannelCb = new JCheckBox(mLocalizer.msg("channels", "Channels:"));
+    mLimitTimeCb = new JCheckBox(mLocalizer.msg("time", "Time:"));
 
-    mLimitChannelCb = new JCheckBox(mLocalizer.msg("channels","Channels:"));
-    mLimitTimeCb = new JCheckBox(mLocalizer.msg("time","Time:"));
-
-    mLimitDaysCB = new JComboBox(new Object[]{
-            new Integer(LimitationConfiguration.DAYLIMIT_DAILY),
-            new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY),
-            new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND),
-            new Integer(LimitationConfiguration.DAYLIMIT_MONDAY),
-            new Integer(LimitationConfiguration.DAYLIMIT_TUESDAY),
-            new Integer(LimitationConfiguration.DAYLIMIT_WEDNESDAY),
-            new Integer(LimitationConfiguration.DAYLIMIT_THURSDAY),
-            new Integer(LimitationConfiguration.DAYLIMIT_FRIDAY),
-            new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY),
-            new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY),
-    });
+    mLimitDaysCB = new JComboBox(new Object[] { new Integer(LimitationConfiguration.DAYLIMIT_DAILY),
+        new Integer(LimitationConfiguration.DAYLIMIT_WEEKDAY), new Integer(LimitationConfiguration.DAYLIMIT_WEEKEND),
+        new Integer(LimitationConfiguration.DAYLIMIT_MONDAY), new Integer(LimitationConfiguration.DAYLIMIT_TUESDAY),
+        new Integer(LimitationConfiguration.DAYLIMIT_WEDNESDAY),
+        new Integer(LimitationConfiguration.DAYLIMIT_THURSDAY), new Integer(LimitationConfiguration.DAYLIMIT_FRIDAY),
+        new Integer(LimitationConfiguration.DAYLIMIT_SATURDAY), new Integer(LimitationConfiguration.DAYLIMIT_SUNDAY), });
     mLimitDaysCB.setRenderer(new DayListCellRenderer());
     mLimitDaysCB.setSelectedItem(new Integer((mFavorite.getLimitationConfiguration().getDayLimit())));
 
@@ -246,25 +245,23 @@ public class EditFavoriteDialog extends JDialog {
     mTimePeriodChooser.setEnabled(isLimitedByTime);
     mLimitDaysCB.setEnabled(mLimitTimeCb.isSelected());
 
-    mLimitChannelCb.addActionListener(new ActionListener(){
+    mLimitChannelCb.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setLimitChannelEnabled(mLimitChannelCb.isSelected());
       }
     });
 
-    mLimitTimeCb.addActionListener(new ActionListener(){
+    mLimitTimeCb.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mTimePeriodChooser.setEnabled(mLimitTimeCb.isSelected());
         mLimitDaysCB.setEnabled(mLimitTimeCb.isSelected());
       }
     });
 
-
-
-
-    mChangeChannelsBtn.addActionListener(new ActionListener(){
+    mChangeChannelsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        ChannelChooserDlg dlg = new ChannelChooserDlg(EditFavoriteDialog.this, mChannelArr, null, ChannelChooserDlg.SELECTABLE_ITEM_LIST);
+        ChannelChooserDlg dlg = new ChannelChooserDlg(EditFavoriteDialog.this, mChannelArr, null,
+            ChannelChooserDlg.SELECTABLE_ITEM_LIST);
         UiUtilities.centerAndShow(dlg);
         Channel[] chArr = dlg.getChannels();
         if (chArr != null) {
@@ -284,31 +281,26 @@ public class EditFavoriteDialog extends JDialog {
     pn.add(mLimitDaysCB);
     limitPn.add(pn, BorderLayout.EAST);
 
-
     CellConstraints cc = new CellConstraints();
-    PanelBuilder panelBuilder = new PanelBuilder(
-              new FormLayout(
-                  "pref, pref:grow, pref",
-                  "pref, 5dlu, pref"));
+    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, pref:grow, pref", "pref, 5dlu, pref"));
 
-
-    panelBuilder.add(mLimitChannelCb, cc.xy(1,1));
-    panelBuilder.add(mChannelLabel, cc.xy(2,1));
-    panelBuilder.add(mChangeChannelsBtn, cc.xy(3,1));
-    panelBuilder.add(mLimitTimeCb, cc.xy(1,3));
-    panelBuilder.add(limitPn, cc.xyw(2,3,2));
+    panelBuilder.add(mLimitChannelCb, cc.xy(1, 1));
+    panelBuilder.add(mChannelLabel, cc.xy(2, 1));
+    panelBuilder.add(mChangeChannelsBtn, cc.xy(3, 1));
+    panelBuilder.add(mLimitTimeCb, cc.xy(1, 3));
+    panelBuilder.add(limitPn, cc.xyw(2, 3, 2));
 
     return panelBuilder.getPanel();
   }
 
   private JPanel createReminderPanel() {
     JPanel panel = new JPanel(new GridLayout(-1, 1));
-    panel.add(mUseReminderCb = new JCheckBox(mLocalizer.msg("reminderWindow","Reminder window")));
+    panel.add(mUseReminderCb = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window")));
     panel.add(new JCheckBox("E-Mail"));
     panel.add(new JCheckBox("ICQ"));
 
     String[] s = mFavorite.getReminderConfiguration().getReminderServices();
-    for (int i=0; i<s.length; i++) {
+    for (int i = 0; i < s.length; i++) {
       if (ReminderConfiguration.REMINDER_DEFAULT.equals(s[i])) {
         mUseReminderCb.setSelected(true);
       }
@@ -319,23 +311,21 @@ public class EditFavoriteDialog extends JDialog {
 
   private JPanel createExclusionPanel() {
 
-
-     JPanel content = new JPanel(new FormLayout("5dlu, fill:pref:grow, 3dlu, pref",
+    JPanel content = new JPanel(new FormLayout("5dlu, fill:pref:grow, 3dlu, pref",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:pref:grow"));
 
     CellConstraints cc = new CellConstraints();
-
 
     Exclusion[] exclusions = mFavorite.getExclusions();
 
     DefaultListModel listModel = new DefaultListModel();
     mExclusionsList = new JList(listModel);
-    for (int i=0; i<exclusions.length; i++) {
+    for (int i = 0; i < exclusions.length; i++) {
       listModel.addElement(exclusions[i]);
     }
     mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
 
-    mExclusionsList.addListSelectionListener(new ListSelectionListener(){
+    mExclusionsList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
           updateExclusionListButtons();
@@ -343,13 +333,11 @@ public class EditFavoriteDialog extends JDialog {
       }
     });
 
-    content.add(new JScrollPane(mExclusionsList), cc.xywh(2,1,1,5));
-
+    content.add(new JScrollPane(mExclusionsList), cc.xywh(2, 1, 1, 5));
 
     Icon newIcon = IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16);
     Icon editIcon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16);
     Icon deleteIcon = IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16);
-
 
     mNewExclusionBtn = new JButton(newIcon);
     mEditExclusionBtn = new JButton(editIcon);
@@ -359,45 +347,43 @@ public class EditFavoriteDialog extends JDialog {
     mEditExclusionBtn.setMargin(UiUtilities.ZERO_INSETS);
     mDeleteExclusionBtn.setMargin(UiUtilities.ZERO_INSETS);
 
-    mNewExclusionBtn.setToolTipText(mLocalizer.msg("tooltip.newExclusion","New exclusion criteria"));
-    mEditExclusionBtn.setToolTipText(mLocalizer.msg("toolip.editExclusion","Edit exclusion criteria"));
-    mDeleteExclusionBtn.setToolTipText(mLocalizer.msg("tooltip.deleteExclusion","Delete exclusion criteria"));
+    mNewExclusionBtn.setToolTipText(mLocalizer.msg("tooltip.newExclusion", "New exclusion criteria"));
+    mEditExclusionBtn.setToolTipText(mLocalizer.msg("toolip.editExclusion", "Edit exclusion criteria"));
+    mDeleteExclusionBtn.setToolTipText(mLocalizer.msg("tooltip.deleteExclusion", "Delete exclusion criteria"));
 
-    content.add(mNewExclusionBtn, cc.xy(4,1));
-    content.add(mEditExclusionBtn, cc.xy(4,3));
-    content.add(mDeleteExclusionBtn, cc.xy(4,5));
+    content.add(mNewExclusionBtn, cc.xy(4, 1));
+    content.add(mEditExclusionBtn, cc.xy(4, 3));
+    content.add(mDeleteExclusionBtn, cc.xy(4, 5));
 
-
-
-    mNewExclusionBtn.addActionListener(new ActionListener(){
+    mNewExclusionBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
 
         WizardHandler handler = new WizardHandler(getParent(), new ExcludeWizardStep(mFavorite));
         Exclusion exclusion = (Exclusion) handler.show();
         if (exclusion != null) {
-          ((DefaultListModel)mExclusionsList.getModel()).addElement(exclusion);
+          ((DefaultListModel) mExclusionsList.getModel()).addElement(exclusion);
         }
 
       }
     });
 
-    mEditExclusionBtn.addActionListener(new ActionListener(){
+    mEditExclusionBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Exclusion oldExclusion = (Exclusion)mExclusionsList.getSelectedValue();
+        Exclusion oldExclusion = (Exclusion) mExclusionsList.getSelectedValue();
         WizardHandler handler = new WizardHandler(getParent(), new ExcludeWizardStep(mFavorite, oldExclusion));
         Exclusion newExclusion = (Exclusion) handler.show();
         if (newExclusion != null) {
           int inx = mExclusionsList.getSelectedIndex();
-          ((DefaultListModel)mExclusionsList.getModel()).setElementAt(newExclusion, inx);
+          ((DefaultListModel) mExclusionsList.getModel()).setElementAt(newExclusion, inx);
         }
       }
     });
 
-    mDeleteExclusionBtn.addActionListener(new ActionListener(){
+    mDeleteExclusionBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Exclusion exclusion = (Exclusion)mExclusionsList.getSelectedValue();
+        Exclusion exclusion = (Exclusion) mExclusionsList.getSelectedValue();
         if (exclusion != null) {
-          ((DefaultListModel)mExclusionsList.getModel()).removeElement(exclusion);
+          ((DefaultListModel) mExclusionsList.getModel()).removeElement(exclusion);
         }
       }
     });
@@ -407,11 +393,10 @@ public class EditFavoriteDialog extends JDialog {
     return content;
   }
 
-
   private void updateExclusionListButtons() {
     Object selectedItem = mExclusionsList.getSelectedValue();
-    mEditExclusionBtn.setEnabled(selectedItem!=null);
-    mDeleteExclusionBtn.setEnabled(selectedItem!=null);
+    mEditExclusionBtn.setEnabled(selectedItem != null);
+    mDeleteExclusionBtn.setEnabled(selectedItem != null);
   }
 
   private String getForwardPluginsLabelString(PluginAccess[] pluginArr) {
@@ -420,21 +405,20 @@ public class EditFavoriteDialog extends JDialog {
       if (pluginArr.length > 0) {
         buf.append(pluginArr[0].getInfo().getName());
       }
-     if (pluginArr.length > 1) {
+      if (pluginArr.length > 1) {
         buf.append(", ");
         buf.append(pluginArr[1].getInfo().getName());
-     }
-     if (pluginArr.length > 2) {
-       buf.append(" (");
-       buf.append(pluginArr.length-2);
-       buf.append(" ");
-       buf.append(mLocalizer.msg("more","more"));
-       buf.append("...)");
-     }
-     return buf.toString();
-   }
-    else {
-      return mLocalizer.msg("dontpass","don't pass programs");
+      }
+      if (pluginArr.length > 2) {
+        buf.append(" (");
+        buf.append(pluginArr.length - 2);
+        buf.append(" ");
+        buf.append(mLocalizer.msg("more", "more"));
+        buf.append("...)");
+      }
+      return buf.toString();
+    } else {
+      return mLocalizer.msg("dontpass", "don't pass programs");
     }
   }
 
@@ -445,10 +429,10 @@ public class EditFavoriteDialog extends JDialog {
 
     mPassProgramPlugins = mFavorite.getForwardPlugins();
     mPassProgramsLb = new JLabel(getForwardPluginsLabelString(mPassProgramPlugins));
-    mChangePassProgramsBtn = new JButton(mLocalizer.msg("change","Change"));
-    mChangePassProgramsBtn.addActionListener(new ActionListener(){
+    mChangePassProgramsBtn = new JButton(mLocalizer.msg("change", "Change"));
+    mChangePassProgramsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins , null);
+        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null);
         UiUtilities.centerAndShow(dlg);
         PluginAccess[] pluginArr = dlg.getPlugins();
         if (pluginArr != null) {
@@ -460,28 +444,24 @@ public class EditFavoriteDialog extends JDialog {
           }
         }
 
-
       }
     });
 
+    panel.add(mReminderAfterDownloadCb = new JCheckBox(mLocalizer.msg("autoAlert",
+        "Alert me, whenever a matching program is discovered")), cc.xyw(1, 1, 2));
 
-
-    panel.add(mReminderAfterDownloadCb = new JCheckBox(mLocalizer.msg("autoAlert","Alert me, whenever a matching program is discovered")), cc.xyw(1,1,2));
-
-    panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo","Pass programs to")), cc.xy(1,3));
-    panel.add(mPassProgramsLb, cc.xy(2,3));
-    panel.add(mChangePassProgramsBtn, cc.xy(3,3));
+    panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo", "Pass programs to")), cc.xy(1, 3));
+    panel.add(mPassProgramsLb, cc.xy(2, 3));
+    panel.add(mChangePassProgramsBtn, cc.xy(3, 3));
     mReminderAfterDownloadCb.setSelected(mFavorite.isRemindAfterDownload());
 
-    mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length >0);
+    mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0);
 
-
-    mPassProgramsCheckBox.addActionListener(new ActionListener(){
+    mPassProgramsCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updatePassProgramsPanel();
       }
     });
-
 
     updatePassProgramsPanel();
 
@@ -492,9 +472,8 @@ public class EditFavoriteDialog extends JDialog {
     mPassProgramsLb.setEnabled(mPassProgramsCheckBox.isSelected());
     mChangePassProgramsBtn.setEnabled(mPassProgramsCheckBox.isSelected());
     if (!mPassProgramsCheckBox.isSelected()) {
-      mPassProgramPlugins = new PluginAccess[]{};
+      mPassProgramPlugins = new PluginAccess[] {};
     }
-
 
   }
 
@@ -508,49 +487,46 @@ public class EditFavoriteDialog extends JDialog {
 
     if (mLimitTimeCb.isSelected()) {
       mFavorite.getLimitationConfiguration().setTime(mTimePeriodChooser.getFromTime(), mTimePeriodChooser.getToTime());
-      mFavorite.getLimitationConfiguration().setDayLimit(((Integer)mLimitDaysCB.getSelectedItem()).intValue());
-    }
-    else {
+      mFavorite.getLimitationConfiguration().setDayLimit(((Integer) mLimitDaysCB.getSelectedItem()).intValue());
+    } else {
       mFavorite.getLimitationConfiguration().setIsLimitedByTime(false);
       mFavorite.getLimitationConfiguration().setDayLimit(LimitationConfiguration.DAYLIMIT_DAILY);
     }
 
     if (mLimitChannelCb.isSelected() && mChannelArr.length > 0) {
       mFavorite.getLimitationConfiguration().setChannels(mChannelArr);
-    }
-    else {
+    } else {
       mFavorite.getLimitationConfiguration().setIsLimitedByChannel(false);
     }
 
     mFavorite.setForwardPlugins(mPassProgramPlugins);
 
-    int exclCnt = ((DefaultListModel)mExclusionsList.getModel()).size();
+    int exclCnt = ((DefaultListModel) mExclusionsList.getModel()).size();
     Exclusion[] exclArr = new Exclusion[exclCnt];
-    ((DefaultListModel)mExclusionsList.getModel()).copyInto(exclArr);
+    ((DefaultListModel) mExclusionsList.getModel()).copyInto(exclArr);
     mFavorite.setExclusions(exclArr);
-
 
     mFavorite.setRemindAfterDownload(mReminderAfterDownloadCb.isSelected());
 
-    boolean wasReminderEnabled = mFavorite.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT);
+    boolean wasReminderEnabled = mFavorite.getReminderConfiguration().containsService(
+        ReminderConfiguration.REMINDER_DEFAULT);
 
     if (mUseReminderCb.isSelected()) {
-      mFavorite.getReminderConfiguration().setReminderServices(new String[]{ReminderConfiguration.REMINDER_DEFAULT});
-    }
-    else {
+      mFavorite.getReminderConfiguration().setReminderServices(new String[] { ReminderConfiguration.REMINDER_DEFAULT });
+    } else {
       if (wasReminderEnabled) {
         ReminderPlugin.getInstance().removePrograms(mFavorite.getPrograms());
       }
-      mFavorite.getReminderConfiguration().setReminderServices(new String[]{});
+      mFavorite.getReminderConfiguration().setReminderServices(new String[] {});
     }
 
     try {
       mFavorite.updatePrograms();
     } catch (TvBrowserException exc) {
-      ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed","Could not update favorite"), exc);
+      ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed", "Could not update favorite"), exc);
     }
 
-    for (int i=0; i<mPassProgramPlugins.length; i++) {
+    for (int i = 0; i < mPassProgramPlugins.length; i++) {
       mPassProgramPlugins[i].receivePrograms(mFavorite.getPrograms());
     }
 
@@ -563,40 +539,35 @@ public class EditFavoriteDialog extends JDialog {
     hide();
   }
 
-
-
   class ExclusionListCellRenderer extends DefaultListCellRenderer {
 
-
     private String createTimeMessage(int lowBnd, int upBnd) {
-      int mLow = lowBnd%60;
-      int hLow = lowBnd/60;
-      int mUp = upBnd%60;
-      int hUp = upBnd/60;
+      int mLow = lowBnd % 60;
+      int hLow = lowBnd / 60;
+      int mUp = upBnd % 60;
+      int hUp = upBnd / 60;
 
-      String lowTime = hLow+":"+(mLow<10?"0":"")+mLow;
-      String upTime = hUp+":"+(mUp<10?"0":"")+mUp;
+      String lowTime = hLow + ":" + (mLow < 10 ? "0" : "") + mLow;
+      String upTime = hUp + ":" + (mUp < 10 ? "0" : "") + mUp;
 
-      if (lowBnd >=0 && upBnd >=0) {
-        return mLocalizer.msg("timestring.between","between {0} and {1}", lowTime, upTime);
-      }
-      else if (lowBnd >=0) {
-       return mLocalizer.msg("timestring.after","after {0}", lowTime);
-      }
-      else if (upBnd >=0) {
-        return mLocalizer.msg("timestring.before","after {0}", upTime);
-      }
-      else {
+      if (lowBnd >= 0 && upBnd >= 0) {
+        return mLocalizer.msg("timestring.between", "between {0} and {1}", lowTime, upTime);
+      } else if (lowBnd >= 0) {
+        return mLocalizer.msg("timestring.after", "after {0}", lowTime);
+      } else if (upBnd >= 0) {
+        return mLocalizer.msg("timestring.before", "after {0}", upTime);
+      } else {
         return null;
       }
     }
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
 
       JLabel defaultLabel = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
       if (value instanceof Exclusion) {
-        Exclusion excl = (Exclusion)value;
+        Exclusion excl = (Exclusion) value;
 
         String title = excl.getTitle();
         String topic = excl.getTopic();
@@ -609,74 +580,61 @@ public class EditFavoriteDialog extends JDialog {
             if (channel == null) {
               if (timeMsg == null) {
                 text = "<invalid>";
+              } else { // timeMsg != null
+                text = mLocalizer.msg("exclude.time", "", timeMsg);
               }
-              else { // timeMsg != null
-                text = mLocalizer.msg("exclude.time","", timeMsg);
-              }
-            }
-            else {  // channel != null
+            } else { // channel != null
               if (timeMsg == null) {
-                text = mLocalizer.msg("exclude.channel","", channel.getName());
-              }
-              else {  // timeMsg != null
-                text = mLocalizer.msg("exclude.channel-time","", channel.getName(), timeMsg);
+                text = mLocalizer.msg("exclude.channel", "", channel.getName());
+              } else { // timeMsg != null
+                text = mLocalizer.msg("exclude.channel-time", "", channel.getName(), timeMsg);
               }
             }
 
-          }
-          else {  // topic != null
+          } else { // topic != null
             if (channel == null) {
               if (timeMsg == null) {
-                text = mLocalizer.msg("exclude.topic","", topic);
+                text = mLocalizer.msg("exclude.topic", "", topic);
+              } else { // timeMsg != null
+                text = mLocalizer.msg("exclude.topic-time", "", topic, timeMsg);
               }
-              else { // timeMsg != null
-                text = mLocalizer.msg("exclude.topic-time","", topic, timeMsg);
-              }
-            }
-            else { // channel != null
+            } else { // channel != null
               if (timeMsg == null) {
-                text = mLocalizer.msg("exclude.topic-channel","", topic, channel.getName());
-              }
-              else {  // timeMsg != null
-                text = mLocalizer.msg("exclude.topic-channel-time","", topic, channel.getName(), timeMsg);
+                text = mLocalizer.msg("exclude.topic-channel", "", topic, channel.getName());
+              } else { // timeMsg != null
+                text = mLocalizer.msg("exclude.topic-channel-time", "", topic, channel.getName(), timeMsg);
               }
             }
           }
 
-        }else {  // title != null
+        } else { // title != null
           if (topic == null) {
             if (channel == null) {
               if (timeMsg == null) {
-                text = mLocalizer.msg("exclude.title","", title);
+                text = mLocalizer.msg("exclude.title", "", title);
+              } else { // timeMsg != null
+                text = mLocalizer.msg("exclude.title-time", "", title, timeMsg);
               }
-              else { // timeMsg != null
-                text = mLocalizer.msg("exclude.title-time","", title, timeMsg);
-              }
-            }
-            else {  // channel != null
+            } else { // channel != null
               if (timeMsg == null) {
-                text = mLocalizer.msg("exclude.title-channel","", title, channel.getName());
-              }
-              else {
-                text = mLocalizer.msg("exclude.title-channel-time","", title, channel.getName(), timeMsg);
+                text = mLocalizer.msg("exclude.title-channel", "", title, channel.getName());
+              } else {
+                text = mLocalizer.msg("exclude.title-channel-time", "", title, channel.getName(), timeMsg);
               }
             }
-          }
-          else {  // topic != null
+          } else { // topic != null
             if (channel == null) {
               if (timeMsg == null) {
-                text = mLocalizer.msg("exclude.title-topic","", title, topic);
+                text = mLocalizer.msg("exclude.title-topic", "", title, topic);
+              } else { // timeMsg != null
+                text = mLocalizer.msg("exclude.title-topic-time", "", title, topic, timeMsg);
               }
-              else { // timeMsg != null
-                text = mLocalizer.msg("exclude.title-topic-time","", title, topic, timeMsg);
-              }
-            }
-            else {  // channel != null
+            } else { // channel != null
               if (timeMsg == null) {
-                text = mLocalizer.msg("exclude.title-topic-channel","", title, topic, channel.getName());
-              }
-              else { // timeMsg != null
-                text = mLocalizer.msg("exclude.title-topic-channel-time","", new Object[]{title, topic, channel.getName(), timeMsg});
+                text = mLocalizer.msg("exclude.title-topic-channel", "", title, topic, channel.getName());
+              } else { // timeMsg != null
+                text = mLocalizer.msg("exclude.title-topic-channel-time", "", new Object[] { title, topic,
+                    channel.getName(), timeMsg });
               }
             }
           }
@@ -688,33 +646,63 @@ public class EditFavoriteDialog extends JDialog {
     }
   }
 
-
   class DayListCellRenderer extends DefaultListCellRenderer {
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+        boolean cellHasFocus) {
       JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
       if (value instanceof Integer) {
-        int val = ((Integer)value).intValue();
+        int val = ((Integer) value).intValue();
         String str;
         switch (val) {
-          case LimitationConfiguration.DAYLIMIT_DAILY : str = mLocalizer.msg("day.daily","Daily"); break;
-          case LimitationConfiguration.DAYLIMIT_WEEKDAY : str = mLocalizer.msg("day.weekday","weekday"); break;
-          case LimitationConfiguration.DAYLIMIT_WEEKEND : str = mLocalizer.msg("day.weekend","weekend"); break;
-          case LimitationConfiguration.DAYLIMIT_MONDAY : str = mLocalizer.msg("day.monday","monday"); break;
-          case LimitationConfiguration.DAYLIMIT_TUESDAY : str = mLocalizer.msg("day.tuesday","tuesday"); break;
-          case LimitationConfiguration.DAYLIMIT_WEDNESDAY : str = mLocalizer.msg("day.wednesday","wednesday"); break;
-          case LimitationConfiguration.DAYLIMIT_THURSDAY : str = mLocalizer.msg("day.thursday","thursday"); break;
-          case LimitationConfiguration.DAYLIMIT_FRIDAY : str = mLocalizer.msg("day.friday","friday"); break;
-          case LimitationConfiguration.DAYLIMIT_SATURDAY : str = mLocalizer.msg("day.saturday","saturday"); break;
-          case LimitationConfiguration.DAYLIMIT_SUNDAY : str = mLocalizer.msg("day.sunday","sunday"); break;
-          default : str = "<unknown>";
+        case LimitationConfiguration.DAYLIMIT_DAILY:
+          str = mLocalizer.msg("day.daily", "Daily");
+          break;
+        case LimitationConfiguration.DAYLIMIT_WEEKDAY:
+          str = mLocalizer.msg("day.weekday", "weekday");
+          break;
+        case LimitationConfiguration.DAYLIMIT_WEEKEND:
+          str = mLocalizer.msg("day.weekend", "weekend");
+          break;
+        case LimitationConfiguration.DAYLIMIT_MONDAY:
+          str = mLocalizer.msg("day.monday", "monday");
+          break;
+        case LimitationConfiguration.DAYLIMIT_TUESDAY:
+          str = mLocalizer.msg("day.tuesday", "tuesday");
+          break;
+        case LimitationConfiguration.DAYLIMIT_WEDNESDAY:
+          str = mLocalizer.msg("day.wednesday", "wednesday");
+          break;
+        case LimitationConfiguration.DAYLIMIT_THURSDAY:
+          str = mLocalizer.msg("day.thursday", "thursday");
+          break;
+        case LimitationConfiguration.DAYLIMIT_FRIDAY:
+          str = mLocalizer.msg("day.friday", "friday");
+          break;
+        case LimitationConfiguration.DAYLIMIT_SATURDAY:
+          str = mLocalizer.msg("day.saturday", "saturday");
+          break;
+        case LimitationConfiguration.DAYLIMIT_SUNDAY:
+          str = mLocalizer.msg("day.sunday", "sunday");
+          break;
+        default:
+          str = "<unknown>";
         }
         label.setText(str);
 
       }
 
-    return label;
+      return label;
+    }
   }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see util.ui.WindowClosingIf#close()
+   */
+  public void close() {
+    hide();
   }
 
 }
