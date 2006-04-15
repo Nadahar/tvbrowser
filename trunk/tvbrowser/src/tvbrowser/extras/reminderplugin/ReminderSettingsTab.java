@@ -33,10 +33,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.Clip;
@@ -49,11 +47,10 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -63,6 +60,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ExtensionFileFilter;
 import util.ui.FileCheckBox;
+import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -87,13 +85,13 @@ public class ReminderSettingsTab implements SettingsTab {
   private JButton mExecFileDialogBtn;
   private JSpinner mAutoCloseReminderTimeSp;
 
-  private JCheckBox mSendToPlugin;
-  private JComboBox mAvailabePlugins;
   private JComboBox mDefaultReminderEntryList;
 
   private String mExecFileStr, mExecParamStr;
   private Object mTestSound;
 
+  private JLabel mPluginLabel;
+  private PluginAccess[] mClientPlugins;
   /**
    * Constructor.
    */
@@ -106,8 +104,9 @@ public class ReminderSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
-        "pref,5dlu,pref,1dlu,pref,1dlu,pref,1dlu,pref,10dlu," +
-        "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref");
+        "pref,5dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
+        "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
+        "pref,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout);
     pb.setDefaultDialogBorder();    
@@ -142,18 +141,42 @@ public class ReminderSettingsTab implements SettingsTab {
     mExecFileDialogBtn = new JButton(mLocalizer.msg("executeConfig", "Configure"));
     mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
     
-    mSendToPlugin = new JCheckBox(mLocalizer.msg("sendToPlugin", "Send to Plugin:"));
-    mSendToPlugin.setSelected(mSettings.getProperty("usesendplugin","false").equals("true"));
+    mPluginLabel = new JLabel();
+    JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));
     
-    mAvailabePlugins = new JComboBox(getAvailablePlugins());
-    mAvailabePlugins.setEnabled(mSendToPlugin.isSelected() && mAvailabePlugins.getItemCount() > 0);
-
-    for (int i = 0; i < mAvailabePlugins.getItemCount(); i++) {
-      PluginAccess plugin = (PluginAccess) mAvailabePlugins.getItemAt(i);
-      if (plugin.getId().equals(mSettings.getProperty("usethisplugin", ""))) {
-        mAvailabePlugins.setSelectedIndex(i);
-      }
+    String[] clientPluginIdArr
+    = ReminderPlugin.getInstance().getClientPluginIds();    
+    
+    ArrayList clientPlugins = new ArrayList();
+    
+    for(int i = 0; i < clientPluginIdArr.length; i++) {
+      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(clientPluginIdArr[i]);
+      if(plugin != null)
+        clientPlugins.add(plugin);
     }
+    
+    mClientPlugins = new PluginAccess[clientPlugins.size()];
+    clientPlugins.toArray(mClientPlugins);
+    
+    handlePluginSelection();
+    
+    choose.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        PluginChooserDlg chooser = null;
+        if(w instanceof JDialog)
+          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null);
+        else
+          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null);
+        
+        chooser.setLocationRelativeTo(w);
+        chooser.setVisible(true);
+        
+        mClientPlugins = chooser.getPlugins();
+        
+        handlePluginSelection();
+      }
+    });
     
     int autoCloseReminderTime = 0;
     try {
@@ -188,21 +211,24 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.add(soundTestBt, cc.xy(9,5));
     pb.add(mExecChB, cc.xyw(2,7,4));
     pb.add(mExecFileDialogBtn, cc.xyw(7,7,3));
-    pb.add(mSendToPlugin, cc.xyw(2,9,4));
-    pb.add(mAvailabePlugins, cc.xyw(7,9,3));
     
-    pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder after"), cc.xyw(1,11,10));
-    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,13));
-    pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,13));
+    pb.addSeparator(mLocalizer.msg("sendToPlugin", "Send reminded program to"), cc.xyw(1,9,10));
+    
+    pb.add(mPluginLabel, cc.xyw(2,11,4));
+    pb.add(choose, cc.xyw(7,11,3));
+    
+    pb.addSeparator(mLocalizer.msg("autoCloseReminder", "Automatically close reminder after"), cc.xyw(1,13,10));
+    pb.add(mAutoCloseReminderTimeSp, cc.xy(2,15));
+    pb.addLabel(mLocalizer.msg("seconds", "seconds (0 = off)"), cc.xy(4,15));
     
     JPanel reminderEntry = new JPanel(new FlowLayout(FlowLayout.LEADING,0,0));
     reminderEntry.add(mDefaultReminderEntryList);
     
-    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,15,10));
-    pb.add(reminderEntry, cc.xyw(2,17,4));
+    pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,17,10));
+    pb.add(reminderEntry, cc.xyw(2,19,4));
     
-    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,19,10));    
-    pb.add(mShowTimeSlectionDlg, cc.xyw(2,21,4));
+    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,21,10));    
+    pb.add(mShowTimeSlectionDlg, cc.xyw(2,23,4));
     
     soundTestBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -242,8 +268,8 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     });
     
-    mSoundFileChB.getCheckBox().addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
+    mSoundFileChB.getCheckBox().addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
         soundTestBt.setEnabled(mSoundFileChB.isSelected());
       }
     });
@@ -270,8 +296,8 @@ public class ReminderSettingsTab implements SettingsTab {
     });
     mSoundFileChB.getTextField().getKeyListeners()[0].keyReleased(null);
     
-    mExecChB.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
+    mExecChB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
         mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
       }
     });
@@ -281,40 +307,26 @@ public class ReminderSettingsTab implements SettingsTab {
         showFileSettingsDialog();
       }
     });
-    
-    mSendToPlugin.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        mAvailabePlugins.setEnabled(mSendToPlugin.isSelected()  && mAvailabePlugins.getItemCount() > 0);
-      }
-    });
 
     return pb.getPanel();
   }
 
-
-
-  /**
-   * Gets the Availabe Plugins who can receive Programs
-   * @return available Plugins 
-   */
-  private Vector getAvailablePlugins() {
-    // get the installed plugins
-    PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
-    PluginAccess[] copy = new PluginAccess[installedPluginArr.length];
-
-    System.arraycopy(installedPluginArr, 0, copy, 0, installedPluginArr.length);
-
-    Arrays.sort(copy, new ObjectComperator());
-
-    // create a list of those who support multiple program execution
-    Vector selectablePluginList = new Vector();
-    for (int i = 0; i < copy.length; i++) {
-      if (copy[i].canReceivePrograms()) {
-        selectablePluginList.add(copy[i]);
-      }
+  private void handlePluginSelection() {
+    if(mClientPlugins.length > 0) {
+      mPluginLabel.setText(mClientPlugins[0].toString());
+      mPluginLabel.setEnabled(true);
     }
-
-    return selectablePluginList;
+    else {
+      mPluginLabel.setText(mLocalizer.msg("noPlugins","No Plugins choosen"));
+      mPluginLabel.setEnabled(false);
+    }
+    
+    for (int i = 1; i < (mClientPlugins.length > 4 ? 3 : mClientPlugins.length); i++) {
+      mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
+    }
+    
+    if(mClientPlugins.length > 4)
+      mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
   }
 
   /**
@@ -353,12 +365,13 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("usesound", Boolean.valueOf(mSoundFileChB.isSelected()).toString());
     mSettings.setProperty("useexec", Boolean.valueOf(mExecChB.isSelected()).toString());
 
-    mSettings.setProperty("usesendplugin", Boolean.valueOf(mSendToPlugin.isSelected()).toString());
-
-    PluginAccess sendToPlugin = (PluginAccess)mAvailabePlugins.getSelectedItem();
-    if (sendToPlugin != null && mSendToPlugin.isSelected()) {
-      mSettings.setProperty("usethisplugin", sendToPlugin.getId());
-    }
+    String[] clientPluginIdArr = new String[mClientPlugins.length];
+    
+    for (int i = 0; i < mClientPlugins.length; i++)
+      clientPluginIdArr[i] = mClientPlugins[i].getId();
+    
+    ReminderPlugin.getInstance().setClientPluginIds(clientPluginIdArr);
+    
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
 
     mSettings.setProperty("defaultReminderEntry",""+mDefaultReminderEntryList.getSelectedIndex());
@@ -378,16 +391,5 @@ public class ReminderSettingsTab implements SettingsTab {
    */
   public String getTitle() {
     return mLocalizer.msg("tabName", "Reminder");
-  }
-
-  /**
-   * Comperator needed to Sort List of Plugins
-   */
-  private class ObjectComperator implements Comparator {
-
-    public int compare(Object o1, Object o2) {
-      return o1.toString().compareTo(o2.toString());
-    }
-
   }
 }

@@ -86,7 +86,9 @@ public class ReminderPlugin implements ContextMenuIf {
   private ConfigurationHandler mConfigurationHandler;
 
   private PluginTreeNode mRootNode;
-
+  
+  /** The IDs of the plugins that should receive the favorites. */
+  private String[] mClientPluginIdArr;
 
   private ReminderPlugin() {
     mInstance = this;
@@ -139,6 +141,8 @@ public class ReminderPlugin implements ContextMenuIf {
     } catch (IOException e) {
       ErrorHandler.handle("Could not load reminder data.", e);
     }
+    
+    
   }
 
   private void loadReminderData() {
@@ -203,6 +207,34 @@ public class ReminderPlugin implements ContextMenuIf {
     }
     mSettings = settings;
 
+    String plugins = settings.getProperty("usethisplugin","");
+    
+    if(plugins.length() > 0) {
+      if(plugins.indexOf(";") == 1) {
+        mClientPluginIdArr = new String[1];
+        mClientPluginIdArr[0] = plugins;
+      }
+      else
+        mClientPluginIdArr = plugins.split(";");
+    }
+  }
+  
+  public String[] getClientPluginIds() {
+    return mClientPluginIdArr;
+  }
+  
+  public void setClientPluginIds(String[] clientPluginArr) {
+    mClientPluginIdArr = clientPluginArr;
+    
+    String property = "";
+    
+    if(clientPluginArr.length > 0)
+      property = clientPluginArr[0];
+    
+    for(int i = 1; i < clientPluginArr.length; i++)
+      property += ";" + clientPluginArr[i];
+    
+    mSettings.setProperty("usethisplugin",property);
   }
 
   public ActionMenu getContextMenuActions(final Frame parentFrame,
