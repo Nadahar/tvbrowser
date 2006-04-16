@@ -172,13 +172,11 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     });
 
     ButtonBarBuilder buttons = new ButtonBarBuilder();
+    buttons.addGlue();
     buttons.addGriddedButtons(new JButton[] { okBtn, cancelBtn });
 
-    JPanel buttonPanel = new JPanel(new BorderLayout());
-    buttonPanel.add(buttons.getPanel(), BorderLayout.EAST);
-
     rootPn.add(BorderLayout.NORTH, content);
-    rootPn.add(BorderLayout.SOUTH, buttonPanel);
+    rootPn.add(BorderLayout.SOUTH, buttons.getPanel());
         
     getRootPane().setDefaultButton(okBtn);
     
