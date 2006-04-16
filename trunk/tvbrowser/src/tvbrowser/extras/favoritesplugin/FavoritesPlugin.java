@@ -405,7 +405,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   private void editFavorite(Favorite favorite) {
 
-    Component parent = UiUtilities.getBestDialogParent(null);
+    Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     EditFavoriteDialog dlg;
     if (parent instanceof Dialog) {
       dlg = new EditFavoriteDialog((Dialog)parent, favorite);
@@ -485,7 +485,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   private void showCreateFavoriteWizard(Program program) {
 
-    Component parent = UiUtilities.getBestDialogParent(null);
+    Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
     if (isUsingExpertMode()) {
       favorite = new AdvancedFavorite(program.getTitle());
@@ -518,7 +518,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
 
   private void showExcludeProgramsDialog(Favorite fav, Program program) {
-    WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new ExcludeWizardStep(fav, program));
+    WizardHandler handler = new WizardHandler(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), new ExcludeWizardStep(fav, program));
     Exclusion exclusion = (Exclusion) handler.show();
     if (exclusion != null) {
       fav.addExclusion(exclusion);
