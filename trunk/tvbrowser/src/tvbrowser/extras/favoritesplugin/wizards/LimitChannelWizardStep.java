@@ -40,7 +40,7 @@ public class LimitChannelWizardStep extends AbstractWizardStep {
   }
 
   public JPanel createContent(WizardHandler handler) {
-    JPanel panel = new JPanel(new FormLayout("fill:pref:grow", "pref, 3dlu, fill:pref:grow"));
+    JPanel panel = new JPanel(new FormLayout("fill:pref:grow", "pref, 3dlu, fill:min:grow"));
     
     CellConstraints cc = new CellConstraints();
     
@@ -53,7 +53,6 @@ public class LimitChannelWizardStep extends AbstractWizardStep {
       chArr = new Channel[] {};
     }
     mChannelChooser = new OrderChooser(chArr, Plugin.getPluginManager().getSubscribedChannels());
-    
     panel.add(mChannelChooser, cc.xy(1,3));
     return panel;
   }

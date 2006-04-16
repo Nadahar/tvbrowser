@@ -26,4 +26,8 @@ public interface WizardStep {
 
   public boolean isValid();
 
+  /**
+   * @return true, if this Step is a Single Step and no Back/Forward is needed
+   */
+  public boolean isSingleStep();
 }

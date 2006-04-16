@@ -59,7 +59,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   }
 
   private void init(WizardStep step, WizardHandler handler) {
-    setSize(Sizes.dialogUnitXAsPixel(300, this), Sizes.dialogUnitYAsPixel(200, this));
+    setSize(Sizes.dialogUnitXAsPixel(300, this), Sizes.dialogUnitYAsPixel(150, this));
     UiUtilities.registerForClosing(this);
     mResult = CANCEL;
     mHandler = handler;
@@ -84,7 +84,11 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
 
-    builder.addGriddedButtons(new JButton[] { mBackBtn, mNextBtn, mDoneBtn, mCancelBtn });
+    if (mStep.isSingleStep()) {
+      builder.addGriddedButtons(new JButton[] { mDoneBtn, mCancelBtn });
+    } else {
+      builder.addGriddedButtons(new JButton[] { mBackBtn, mNextBtn, mDoneBtn, mCancelBtn });
+    }
 
     for (int i = 0; i < btns.length; i++) {
       if (btns[i] == WizardStep.BUTTON_DONE) {
