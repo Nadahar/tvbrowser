@@ -105,9 +105,6 @@ public class ExcludeWizardStep extends  AbstractWizardStep {
   }
 
   public JPanel createContent(final WizardHandler handler) {
-
-
-
     mTitleCb = new JCheckBox(mTitleQuestion);
     mTitleTf = new JTextField();
 
@@ -216,13 +213,14 @@ public class ExcludeWizardStep extends  AbstractWizardStep {
       allowNext = true;
     }
 
-
-
-
     if (mTopicCb.isSelected()) {
       allowNext = true;
     }
 
+    if (mTimeCb.isSelected()) {
+      allowNext = true;
+    }
+    
     if (!(mFavorite instanceof TitleFavorite)) {
       if (mTitleCb.isSelected()) {
         allowNext = true;
