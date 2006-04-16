@@ -1,23 +1,28 @@
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import tvbrowser.extras.favoritesplugin.core.Favorite;
 import util.ui.OrderChooser;
 
-import javax.swing.*;
-import java.awt.*;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
-import devplugin.Plugin;
 import devplugin.Channel;
+import devplugin.Plugin;
 import devplugin.Program;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
 
 public class LimitChannelWizardStep extends AbstractWizardStep {
 
-  public static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(LimitChannelWizardStep.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LimitChannelWizardStep.class);
 
   private WizardStep mNextStep;
+
   private OrderChooser mChannelChooser;
+
   private Program mProgram;
+
   private WizardStep mCaller;
 
   public LimitChannelWizardStep(WizardStep caller, Program program) {
@@ -31,32 +36,34 @@ public class LimitChannelWizardStep extends AbstractWizardStep {
   }
 
   public String getTitle() {
-    return mLocalizer.msg("title","Channel");
+    return mLocalizer.msg("title", "Channel");
   }
 
   public JPanel createContent(WizardHandler handler) {
-
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(BorderLayout.NORTH, new JLabel(mLocalizer.msg("selectChannels","Select channels:")));
+    JPanel panel = new JPanel(new FormLayout("fill:pref:grow", "pref, 3dlu, fill:pref:grow"));
+    
+    CellConstraints cc = new CellConstraints();
+    
+    panel.add(new JLabel(mLocalizer.msg("selectChannels", "Select channels:")), cc.xy(1,1));
 
     Channel[] chArr;
     if (mProgram != null) {
-      chArr = new Channel[] {mProgram.getChannel()};
-    }
-    else {
-      chArr = new Channel[]{};
+      chArr = new Channel[] { mProgram.getChannel() };
+    } else {
+      chArr = new Channel[] {};
     }
     mChannelChooser = new OrderChooser(chArr, Plugin.getPluginManager().getSubscribedChannels());
-    panel.add(BorderLayout.CENTER, mChannelChooser);
+    
+    panel.add(mChannelChooser, cc.xy(1,3));
     return panel;
   }
 
   public Object createDataObject(Object obj) {
     Object[] order = mChannelChooser.getOrder();
-    Favorite fav = (Favorite)obj;
+    Favorite fav = (Favorite) obj;
     Channel[] ch = new Channel[order.length];
-    for (int i=0; i<ch.length; i++) {
-      ch[i] = (Channel)order[i];
+    for (int i = 0; i < ch.length; i++) {
+      ch[i] = (Channel) order[i];
     }
     fav.getLimitationConfiguration().setChannels(ch);
     return fav;
@@ -65,8 +72,7 @@ public class LimitChannelWizardStep extends AbstractWizardStep {
   public WizardStep next() {
     if (mNextStep != null) {
       return mNextStep;
-    }
-    else {
+    } else {
       return new FinishWizardStep(this);
     }
   }
@@ -80,7 +86,7 @@ public class LimitChannelWizardStep extends AbstractWizardStep {
   }
 
   public int[] getButtons() {
-    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_BACK, WizardStep.BUTTON_NEXT};
+    return new int[] { WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_BACK, WizardStep.BUTTON_NEXT };
   }
 
 }

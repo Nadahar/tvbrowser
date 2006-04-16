@@ -1,13 +1,17 @@
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.builder.PanelBuilder;
 
-import javax.swing.*;
-
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.common.ReminderConfiguration;
 import devplugin.Program;
 
 public class NotificationWizardStep extends AbstractWizardStep {
@@ -35,7 +39,7 @@ public class NotificationWizardStep extends AbstractWizardStep {
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref",
                     "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
-    panelBuilder.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    panelBuilder.setBorder(Borders.DLU4_BORDER);
     panelBuilder.add(new JLabel(mLocalizer.msg("mainQuestion","Wollen Sie automatisch auf diese Sendung hingewiesen werden?")), cc.xy(1,1));
     panelBuilder.add(mReminderCb = new JCheckBox(mLocalizer.msg("option.remind","Automatisch an diese Sendung erinnern.")), cc.xy(1,3));
     panelBuilder.add(mCheckOnUpdateCb = new JCheckBox(mLocalizer.msg("option.checkAfterUpdate","Sofort alarmieren, wenn die Sendung nach einer Aktualisierung gefunden wird.")), cc.xy(1,5));

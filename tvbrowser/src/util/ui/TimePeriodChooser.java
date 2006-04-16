@@ -1,22 +1,31 @@
 package util.ui;
 
-import javax.swing.*;
-import java.util.Date;
+import java.awt.FlowLayout;
 import java.util.Calendar;
-import java.awt.*;
+import java.util.Date;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class TimePeriodChooser extends JPanel {
 
-   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(TimePeriodChooser.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TimePeriodChooser.class);
 
   public static final int ALIGN_LEFT = 0;
+
   public static final int ALIGN_RIGHT = 1;
+
   public static final int ALGIN_CENTER = 2;
 
-
   private JSpinner mTimeFromSp;
+
   private JSpinner mTimeToSp;
+
   private JLabel mLabel1, mLabel2;
 
   public TimePeriodChooser(int alignment) {
@@ -24,11 +33,11 @@ public class TimePeriodChooser extends JPanel {
   }
 
   public TimePeriodChooser(int from, int to, int alignment) {
-    super(new BorderLayout());
+    FlowLayout layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
+    
+    String timePattern = mLocalizer.msg("timePattern", "HH:mm");
 
-    String timePattern = mLocalizer.msg("timePattern","HH:mm");
-
-    JPanel content = new JPanel();
+    JPanel content = new JPanel(new FormLayout("pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", "pref"));
 
     mTimeFromSp = new JSpinner(new SpinnerDateModel());
     mTimeFromSp.setEditor(new JSpinner.DateEditor(mTimeFromSp, timePattern));
@@ -36,31 +45,30 @@ public class TimePeriodChooser extends JPanel {
     mTimeToSp = new JSpinner(new SpinnerDateModel());
     mTimeToSp.setEditor(new JSpinner.DateEditor(mTimeToSp, timePattern));
 
-    content.add(mLabel1 = new JLabel(mLocalizer.msg("between","between")));
-    content.add(mTimeFromSp);
-    content.add(mLabel2 = new JLabel(mLocalizer.msg("and","and")));
-    content.add(mTimeToSp);
+    CellConstraints cc = new CellConstraints();
 
+    content.add(mLabel1 = new JLabel(mLocalizer.msg("between", "between")), cc.xy(1, 1));
+    content.add(mTimeFromSp, cc.xy(3, 1));
+    content.add(mLabel2 = new JLabel(mLocalizer.msg("and", "and")), cc.xy(5, 1));
+    content.add(mTimeToSp, cc.xy(7, 1));
 
-    if (from >=0) {
+    if (from >= 0) {
       setFromTime(from);
     }
-    if (to >=0) {
+    if (to >= 0) {
       setToTime(to);
     }
 
     if (alignment == ALIGN_LEFT) {
-      add(content, BorderLayout.WEST);
+      layout.setAlignment(FlowLayout.LEFT);
+    } else if (alignment == ALIGN_RIGHT) {
+      layout.setAlignment(FlowLayout.RIGHT);
+    } else {
+      layout.setAlignment(FlowLayout.CENTER);
     }
-    else if (alignment == ALIGN_RIGHT) {
-      add(content, BorderLayout.EAST);
-    }
-    else {
-      add(content, BorderLayout.CENTER);
-    }
-
+    setLayout(layout);
+    add(content);
   }
-
 
   public void setEnabled(boolean enabled) {
     mTimeFromSp.setEnabled(enabled);
@@ -78,7 +86,7 @@ public class TimePeriodChooser extends JPanel {
 
   private void setTime(JSpinner spinner, int time) {
     Calendar cal = Calendar.getInstance();
-    cal.set(Calendar.HOUR_OF_DAY, time/60);
+    cal.set(Calendar.HOUR_OF_DAY, time / 60);
     cal.set(Calendar.MINUTE, time % 60);
     spinner.setValue(cal.getTime());
   }
@@ -90,7 +98,6 @@ public class TimePeriodChooser extends JPanel {
   public void setToTime(int minutes) {
     setTime(mTimeToSp, minutes);
   }
-
 
   public int getFromTime() {
     return getTime(mTimeFromSp);
