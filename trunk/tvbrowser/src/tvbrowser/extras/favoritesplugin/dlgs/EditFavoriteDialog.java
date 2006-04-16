@@ -322,13 +322,14 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       }
     });
 
+    CellConstraints cc = new CellConstraints();
+
     JPanel limitPn = new JPanel(new BorderLayout());
-    JPanel pn = new JPanel();
-    pn.add(mTimePeriodChooser);
-    pn.add(mLimitDaysCB);
+    JPanel pn = new JPanel(new FormLayout("pref, 3dlu, pref", "pref"));
+    pn.add(mTimePeriodChooser, cc.xy(1,1));
+    pn.add(mLimitDaysCB, cc.xy(3,1));
     limitPn.add(pn, BorderLayout.EAST);
 
-    CellConstraints cc = new CellConstraints();
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, pref:grow, pref", "pref, 5dlu, pref"));
 
     panelBuilder.add(mLimitChannelCb, cc.xy(1, 1));
