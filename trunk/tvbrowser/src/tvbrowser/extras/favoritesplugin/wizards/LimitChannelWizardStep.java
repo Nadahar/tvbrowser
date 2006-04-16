@@ -10,7 +10,7 @@ import devplugin.Channel;
 import devplugin.Program;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 
-public class LimitChannelWizardStep implements WizardStep {
+public class LimitChannelWizardStep extends AbstractWizardStep {
 
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(LimitChannelWizardStep.class);
@@ -18,21 +18,23 @@ public class LimitChannelWizardStep implements WizardStep {
   private WizardStep mNextStep;
   private OrderChooser mChannelChooser;
   private Program mProgram;
+  private WizardStep mCaller;
 
-  public LimitChannelWizardStep(Program program) {
-    this(null, program);
+  public LimitChannelWizardStep(WizardStep caller, Program program) {
+    this(caller, null, program);
   }
 
-  public LimitChannelWizardStep(WizardStep nextStep, Program program) {
+  public LimitChannelWizardStep(WizardStep caller, WizardStep nextStep, Program program) {
     mNextStep = nextStep;
     mProgram = program;
+    mCaller = caller;
   }
 
   public String getTitle() {
     return mLocalizer.msg("title","Channel");
   }
 
-  public JPanel getContent(WizardHandler handler) {
+  public JPanel createContent(WizardHandler handler) {
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(BorderLayout.NORTH, new JLabel(mLocalizer.msg("selectChannels","Select channels:")));
@@ -65,8 +67,12 @@ public class LimitChannelWizardStep implements WizardStep {
       return mNextStep;
     }
     else {
-      return new FinishWizardStep();
+      return new FinishWizardStep(this);
     }
+  }
+
+  public WizardStep back() {
+    return mCaller;
   }
 
   public boolean isValid() {
@@ -74,7 +80,7 @@ public class LimitChannelWizardStep implements WizardStep {
   }
 
   public int[] getButtons() {
-    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_NEXT};
+    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_BACK, WizardStep.BUTTON_NEXT};
   }
 
 }

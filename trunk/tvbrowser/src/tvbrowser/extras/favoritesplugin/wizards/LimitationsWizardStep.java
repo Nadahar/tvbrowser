@@ -8,7 +8,7 @@ import javax.swing.*;
 
 import devplugin.Program;
 
-public class LimitationsWizardStep implements WizardStep {
+public class LimitationsWizardStep extends AbstractWizardStep {
 
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(LimitationsWizardStep.class);
@@ -16,16 +16,18 @@ public class LimitationsWizardStep implements WizardStep {
   private JCheckBox mChannelCb;
   private JCheckBox mTimeCb;
   private Program mProgram;
+  private WizardStep mCaller;
 
-  public LimitationsWizardStep(Program program) {
+  public LimitationsWizardStep(WizardStep caller, Program program) {
     mProgram = program;
+    mCaller = caller;
   }
 
   public String getTitle() {
     return mLocalizer.msg("title","Limitations");
   }
 
-  public JPanel getContent(WizardHandler handler) {
+  public JPanel createContent(WizardHandler handler) {
     CellConstraints cc = new CellConstraints();
         PanelBuilder panelBuilder = new PanelBuilder(
                 new FormLayout(
@@ -49,16 +51,20 @@ public class LimitationsWizardStep implements WizardStep {
   public WizardStep next() {
     if (mChannelCb.isSelected()) {
       if (mTimeCb.isSelected()) {
-        return new LimitChannelWizardStep(new LimitTimeWizardStep(mProgram), mProgram);
+        return new LimitChannelWizardStep(this, new LimitTimeWizardStep(this, mProgram), mProgram);
       }
       else {
-        return new LimitChannelWizardStep(mProgram);
+        return new LimitChannelWizardStep(this, mProgram);
       }
     }
     else if (mTimeCb.isSelected()) {
-      return new LimitTimeWizardStep(mProgram);
+      return new LimitTimeWizardStep(this, mProgram);
     }
-    return new FinishWizardStep();
+    return new FinishWizardStep(this);
+  }
+
+  public WizardStep back() {
+    return mCaller;
   }
 
   public boolean isValid() {
@@ -66,7 +72,7 @@ public class LimitationsWizardStep implements WizardStep {
   }
 
   public int[] getButtons() {
-    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_NEXT};
+    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_BACK, WizardStep.BUTTON_NEXT};
   }
   
 

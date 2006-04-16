@@ -10,7 +10,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.common.ReminderConfiguration;
 import devplugin.Program;
 
-public class NotificationWizardStep implements WizardStep {
+public class NotificationWizardStep extends AbstractWizardStep {
 
   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(NotificationWizardStep.class);
@@ -18,17 +18,19 @@ public class NotificationWizardStep implements WizardStep {
   private JCheckBox mReminderCb;
   private JCheckBox mCheckOnUpdateCb;
   private Program mProgram;
+  private WizardStep mCaller;
 
+
+  public NotificationWizardStep(WizardStep caller, Program prog) {
+    mProgram = prog;
+    mCaller = caller;
+  }
 
   public String getTitle() {
     return mLocalizer.msg("title","Notification");
   }
 
-  public NotificationWizardStep(Program prog) {
-    mProgram = prog;
-  }
-
-  public JPanel getContent(WizardHandler handler) {
+  public JPanel createContent(WizardHandler handler) {
     CellConstraints cc = new CellConstraints();
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref",
                     "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
@@ -52,8 +54,12 @@ public class NotificationWizardStep implements WizardStep {
     return fav;
   }
 
-  public WizardStep next() {  
-    return new LimitationsWizardStep(mProgram);
+  public WizardStep next() {
+    return new LimitationsWizardStep(this, mProgram);
+  }
+
+  public WizardStep back() {
+    return mCaller;
   }
 
   public boolean isValid() {
@@ -61,7 +67,7 @@ public class NotificationWizardStep implements WizardStep {
   }
 
   public int[] getButtons() {
-    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_NEXT};
+    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_BACK, WizardStep.BUTTON_NEXT};
   }
   
 

@@ -27,6 +27,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   private WizardStep mStep;
 
   private JButton mNextBtn;
+  private JButton mBackBtn;
   private JButton mDoneBtn;
   private JButton mCancelBtn;
 
@@ -60,14 +61,15 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
 
   }
 
-   private JPanel createButtonPanel(int[] btns) {
+  private JPanel createButtonPanel(int[] btns) {
 
     mDoneBtn = new JButton(mLocalizer.msg("done","Done"));
     mCancelBtn = new JButton(mLocalizer.msg("cancel","Cancel"));
     mNextBtn = new JButton(mLocalizer.msg("next","Next")+" >>");
+    mBackBtn = new JButton("<< " + mLocalizer.msg("back","Back"));
 
-    FormLayout layout = new FormLayout("fill:pref:grow, pref, 3dlu, pref, 3dlu, pref", "pref");
-    layout.setColumnGroups(new int[][] { { 2, 4, 6 } });
+    FormLayout layout = new FormLayout("fill:pref:grow, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", "pref");
+    layout.setColumnGroups(new int[][] { { 2, 4, 6, 8} });
     JPanel buttonPanel = new JPanel(layout);
 
     buttonPanel.setBorder(Borders.DLU4_BORDER);
@@ -75,13 +77,16 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     CellConstraints cc = new CellConstraints();
 
     for (int i=0; i<btns.length; i++) {
-      int p = 8 - 2*btns.length  + i*2;
+      int p = 10 - 2*btns.length  + i*2;
 
       if (btns[i] == WizardStep.BUTTON_DONE) {
         buttonPanel.add(mDoneBtn, cc.xy(p, 1));
       }
       else if (btns[i] == WizardStep.BUTTON_CANCEL) {
         buttonPanel.add(mCancelBtn, cc.xy(p, 1));
+      }
+      else if (btns[i] == WizardStep.BUTTON_BACK) {
+        buttonPanel.add(mBackBtn, cc.xy(p, 1));
       }
       else if (btns[i] == WizardStep.BUTTON_NEXT) {
         buttonPanel.add(mNextBtn, cc.xy(p, 1));
@@ -113,6 +118,12 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     });
 
+    mBackBtn.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        switchToStep(mStep.back());
+      }
+    });
+
     return buttonPanel;
 
   }
@@ -130,6 +141,8 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     mCurrentContentPanel = mStep.getContent(mHandler);
     mCurrentContentPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
     getContentPane().add(mCurrentContentPanel, BorderLayout.CENTER);
+    mCurrentContentPanel.validate();
+    mCurrentContentPanel.updateUI();
 
     mButtonPanel = createButtonPanel(step.getButtons());
     getContentPane().add(BorderLayout.SOUTH, mButtonPanel);
@@ -159,6 +172,10 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
 
   public void allowFinish(boolean allow) {
     mDoneBtn.setEnabled(allow);
+  }
+
+  public void allowBack(boolean allow) {
+    mBackBtn.setEnabled(allow);
   }
 
   public void allowCancel(boolean allow) {

@@ -11,7 +11,7 @@ import tvbrowser.extras.common.ReminderConfiguration;
 import devplugin.Program;
 
 
-public class ReminderWizardStep implements WizardStep {
+public class ReminderWizardStep extends AbstractWizardStep {
 
   public static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ReminderWizardStep.class);
@@ -21,17 +21,20 @@ public class ReminderWizardStep implements WizardStep {
   private JCheckBox mEmailCb;
   private JCheckBox mICQCb;
   private Program mProgram;
+  private WizardStep mCaller;
 
 
-  public ReminderWizardStep(Program prog) {
+
+  public ReminderWizardStep(WizardStep caller, Program prog) {
     mProgram = prog;
+    mCaller = caller;
   }
 
   public String getTitle() {
     return mLocalizer.msg("title","Reminder");
   }
 
-  public JPanel getContent(WizardHandler handler) {
+  public JPanel createContent(WizardHandler handler) {
     CellConstraints cc = new CellConstraints();
     PanelBuilder panelBuilder = new PanelBuilder(
                 new FormLayout(
@@ -60,7 +63,11 @@ public class ReminderWizardStep implements WizardStep {
 
 
   public WizardStep next() {
-    return new LimitationsWizardStep(mProgram);
+    return new LimitationsWizardStep(this, mProgram);
+  }
+
+  public WizardStep back() {
+    return mCaller;
   }
 
   public boolean isValid() {
@@ -68,7 +75,7 @@ public class ReminderWizardStep implements WizardStep {
   }
 
   public int[] getButtons() {
-    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_NEXT};
+    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_BACK, WizardStep.BUTTON_NEXT};
   }
   
 }
