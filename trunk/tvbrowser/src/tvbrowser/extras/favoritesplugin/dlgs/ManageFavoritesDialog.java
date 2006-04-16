@@ -267,8 +267,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       }
     });
 
-    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);    
-    new DragAndDropMouseListener(mFavoritesList,mFavoritesList,this,dnDHandler);
+    if(!mShowNew) {
+      ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);    
+      new DragAndDropMouseListener(mFavoritesList,mFavoritesList,this,dnDHandler);
+    }
     
     mFavoritesList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {

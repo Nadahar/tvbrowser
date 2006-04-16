@@ -27,6 +27,7 @@
 package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -111,6 +112,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private boolean mOkWasPressed;
 
   private FavoriteConfigurator mFavoriteConfigurator;
+  
+  private JLabel mName;
+  private boolean mTitleWasUserSet;
 
   public EditFavoriteDialog(Frame parent, Favorite fav) {
     super(parent, true);
@@ -132,12 +136,13 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     JPanel rootPn = (JPanel) getContentPane();
     rootPn.setLayout(new BorderLayout());
     rootPn.setBorder(Borders.DLU4_BORDER);
-
+    
     JPanel content = new JPanel(new TabLayout(1));
     content.setBorder(new EmptyBorder(10, 10, 10, 10));
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.head", "Favorite")));
 
+    content.add(createTitleChangePanel());
     content.add(mFavoriteConfigurator.createConfigurationPanel());
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("section.details", "Details")));
@@ -178,6 +183,44 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     rootPn.add(BorderLayout.SOUTH, buttonPanel);
 
     pack();
+  }
+  
+  private JPanel createTitleChangePanel() {
+    CellConstraints cc = new CellConstraints();    
+    
+    if(mFavorite.getName().length() < 1) {
+      mName = new JLabel(mLocalizer.msg("defaultName","Is going to be created automatically"));
+      mName.setEnabled(false);
+    }
+    else
+      mName = new JLabel(mFavorite.getName());    
+    
+    JPanel panel = new JPanel(new FormLayout("pref,3dlu,pref:grow,3dlu,pref","pref"));
+    panel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1,1));
+    panel.add(mName, cc.xy(3,1));    
+    
+    JButton changeTitle = new JButton(mLocalizer.msg("changeName","Change name"));
+    changeTitle.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String newName = (String) JOptionPane.showInputDialog(new JDialog(),
+            mLocalizer.msg("name","Name:"), mLocalizer.msg("renameFav","Rename Favorite"), JOptionPane.PLAIN_MESSAGE, null, null,
+            mName.getText());
+        if (newName != null && newName.length() > 0) {
+          mName.setText(newName);
+          mName.setEnabled(true);
+          mTitleWasUserSet = mFavorite.getSearchFormSettings().getSearchText().compareTo(mName.getText()) != 0;
+        }
+        else {
+          if(mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) == 0)
+            mName.setEnabled(false);
+        }
+      }
+    });
+    
+    panel.add(changeTitle, cc.xy(5,1));
+    
+    
+    return panel;
   }
 
   private String getChannelString(Channel[] channelArr) {
@@ -481,7 +524,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   }
 
   private void saveAndClose() {
-
     mFavoriteConfigurator.save();
 
     if (mLimitTimeCb.isSelected()) {
@@ -533,7 +575,10 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
       ReminderPlugin.getInstance().updateRootNode();
     }
-
+    
+    if(mName.getText().length() > 0 && mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)
+      mFavorite.setName(mName.getText());
+    
     mOkWasPressed = true;
     hide();
   }
