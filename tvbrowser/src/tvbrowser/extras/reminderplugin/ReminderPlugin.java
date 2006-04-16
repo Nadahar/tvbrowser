@@ -99,7 +99,7 @@ public class ReminderPlugin implements ContextMenuIf {
         mSettings, mReminderList));
     loadReminderData();
 
-    mRootNode = new PluginTreeNode("Reminderlist");
+    mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminder"));
     updateRootNode();
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
@@ -369,6 +369,29 @@ public class ReminderPlugin implements ContextMenuIf {
 
   public void updateRootNode() {
 
+    mRootNode.removeAllActions();
+    
+    Action editReminders = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        ReminderListDialog dlg = new ReminderListDialog(MainFrame.getInstance(), mReminderList);
+        UiUtilities.centerAndShow(dlg);
+      }
+    };
+    editReminders.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("action", "appointment", 16));
+    editReminders.putValue(Action.NAME, mLocalizer.msg("buttonText", "Edit reminder list..."));
+
+    Action openSettings = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().showSettingsDialog(SettingsItem.REMINDER);
+      }
+    };
+    openSettings.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
+    openSettings.putValue(Action.NAME, mLocalizer.msg("settingsTree", "Settings"));
+    
+    mRootNode.addAction(editReminders);
+    mRootNode.addAction(null);
+    mRootNode.addAction(openSettings);
+    
     mRootNode.removeAllChildren();
 
     ReminderListItem[] items = mReminderList.getReminderItems();

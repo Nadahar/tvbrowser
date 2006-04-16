@@ -38,6 +38,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -75,6 +76,7 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.SettingsItem;
 import devplugin.ThemeIcon;
 
 /**
@@ -115,7 +117,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     mClientPluginIdArr = new String[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
-    mRootNode = new PluginTreeNode("Favorites");
+    mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
     updateRootNode();
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
@@ -488,7 +490,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
     if (isUsingExpertMode()) {
-      favorite = new AdvancedFavorite(program.getTitle());
+      favorite = new AdvancedFavorite(program != null ? program.getTitle() : "");
       EditFavoriteDialog dlg;
       if (parent instanceof Dialog) {
         dlg = new EditFavoriteDialog((Dialog)parent, favorite);
@@ -542,11 +544,64 @@ public class FavoritesPlugin implements ContextMenuIf{
   }
 
   public void updateRootNode() {
-
+    mRootNode.removeAllActions();
+    
+    Action manageFavorite = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        showManageFavoritesDialog(false, mFavoriteArr);
+      }
+    };
+    manageFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("action", "bookmark-new", 16));
+    manageFavorite.putValue(Action.NAME, mLocalizer.msg("favoritesManager", "Manage Favorites"));
+    
+    
+    Action addFavorite = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        showCreateFavoriteWizard(null);
+      }
+    };
+    addFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "document-new", 16));
+    addFavorite.putValue(Action.NAME, mLocalizer.msg("new", "Create new favorite"));
+    
+    Action openSettings = new AbstractAction() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().showSettingsDialog(SettingsItem.FAVORITE);
+      }
+    };
+    openSettings.putValue(Action.SMALL_ICON, getIconFromTheme("categories", "preferences-desktop", 16));
+    openSettings.putValue(Action.NAME, mLocalizer.msg("settingsTree", "Settings"));
+    
+    mRootNode.addAction(manageFavorite);
+    mRootNode.addAction(addFavorite);
+    mRootNode.addAction(null);
+    mRootNode.addAction(openSettings);
     mRootNode.removeAllChildren();
 
     for (int i=0; i<mFavoriteArr.length; i++) {
       PluginTreeNode n = new PluginTreeNode(mFavoriteArr[i].getName());
+      
+      final int x = i;
+      
+      Action editFavorite = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          editFavorite(mFavoriteArr[x]);
+        }
+      };
+      editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
+      editFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "document-edit", 16));
+      
+      
+      Action deleteFavorite = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          deleteFavorite(mFavoriteArr[x]);
+        }
+      };
+      deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
+      deleteFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "edit-delete", 16));
+
+      n.addAction(editFavorite);
+      n.addAction(deleteFavorite);
+      
       Program[] progArr = mFavoriteArr[i].getPrograms();
       for (int j=0; j<progArr.length; j++) {
         n.addProgram(progArr[j]);
@@ -579,23 +634,6 @@ public class FavoritesPlugin implements ContextMenuIf{
     }
     return (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
   }
-
-  class DeleteFavoriteAction extends ButtonAction {
-
-    private Favorite mFavorite;
-
-    public DeleteFavoriteAction(Favorite favorite) {
-      mFavorite = favorite;
-      super.setText(mLocalizer.msg("delete", "delete"));
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      deleteFavorite(mFavorite);
-    }
-  }
-
-
-
 
   public String getId() {
     return DATAFILE_PREFIX;
