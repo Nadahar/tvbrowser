@@ -1,38 +1,49 @@
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
-
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 public class WizardDlg extends JDialog implements WindowClosingIf {
 
-  public static final util.ui.Localizer mLocalizer
-        = util.ui.Localizer.getLocalizerFor(WizardDlg.class);
-
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(WizardDlg.class);
 
   public static final int CANCEL = 0;
+
   public static final int NEXT = 1;
+
   public static final int FINISH = 2;
 
   private int mResult;
+
   private WizardStep mStep;
 
   private JButton mNextBtn;
+
   private JButton mBackBtn;
+
   private JButton mDoneBtn;
+
   private JButton mCancelBtn;
 
   private JPanel mCurrentContentPanel;
+
   private JPanel mButtonPanel;
+
   private WizardHandler mHandler;
 
   private Object mDataObject;
@@ -48,52 +59,46 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   }
 
   private void init(WizardStep step, WizardHandler handler) {
-    setSize(500,200);
+    setSize(Sizes.dialogUnitXAsPixel(300, this), Sizes.dialogUnitYAsPixel(200, this));
     UiUtilities.registerForClosing(this);
     mResult = CANCEL;
     mHandler = handler;
 
-    getContentPane().setLayout(new BorderLayout());
-
-
+    JPanel panel = (JPanel) getContentPane();
+    panel.setLayout(new FormLayout("fill:pref:grow", "fill:pref:grow, 3dlu, bottom:pref"));
+    panel.setBorder(Borders.DLU4_BORDER);
 
     switchToStep(step);
-
   }
 
   private JPanel createButtonPanel(int[] btns) {
+    mDoneBtn = new JButton(mLocalizer.msg("done", "Done"));
+    mDoneBtn.setEnabled(false);
+    mCancelBtn = new JButton(mLocalizer.msg("cancel", "Cancel"));
+    mCancelBtn.setEnabled(false);
+    mNextBtn = new JButton(mLocalizer.msg("next", "Next") + " >>");
+    mNextBtn.setEnabled(false);
+    mBackBtn = new JButton("<< " + mLocalizer.msg("back", "Back"));
+    mBackBtn.setEnabled(false);
 
-    mDoneBtn = new JButton(mLocalizer.msg("done","Done"));
-    mCancelBtn = new JButton(mLocalizer.msg("cancel","Cancel"));
-    mNextBtn = new JButton(mLocalizer.msg("next","Next")+" >>");
-    mBackBtn = new JButton("<< " + mLocalizer.msg("back","Back"));
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.addGlue();
 
-    FormLayout layout = new FormLayout("fill:pref:grow, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", "pref");
-    layout.setColumnGroups(new int[][] { { 2, 4, 6, 8} });
-    JPanel buttonPanel = new JPanel(layout);
+    builder.addGriddedButtons(new JButton[] { mBackBtn, mNextBtn, mDoneBtn, mCancelBtn });
 
-    buttonPanel.setBorder(Borders.DLU4_BORDER);
-
-    CellConstraints cc = new CellConstraints();
-
-    for (int i=0; i<btns.length; i++) {
-      int p = 10 - 2*btns.length  + i*2;
-
+    for (int i = 0; i < btns.length; i++) {
       if (btns[i] == WizardStep.BUTTON_DONE) {
-        buttonPanel.add(mDoneBtn, cc.xy(p, 1));
-      }
-      else if (btns[i] == WizardStep.BUTTON_CANCEL) {
-        buttonPanel.add(mCancelBtn, cc.xy(p, 1));
-      }
-      else if (btns[i] == WizardStep.BUTTON_BACK) {
-        buttonPanel.add(mBackBtn, cc.xy(p, 1));
-      }
-      else if (btns[i] == WizardStep.BUTTON_NEXT) {
-        buttonPanel.add(mNextBtn, cc.xy(p, 1));
+        mDoneBtn.setEnabled(true);
+      } else if (btns[i] == WizardStep.BUTTON_BACK) {
+        mBackBtn.setEnabled(true);
+      } else if (btns[i] == WizardStep.BUTTON_NEXT) {
+        mNextBtn.setEnabled(true);
+      } else if (btns[i] == WizardStep.BUTTON_CANCEL) {
+        mCancelBtn.setEnabled(true);
       }
     }
 
-    mDoneBtn.addActionListener(new ActionListener(){
+    mDoneBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (mStep.isValid()) {
           mDataObject = mStep.createDataObject(mDataObject);
@@ -102,14 +107,13 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     });
 
-    mCancelBtn.addActionListener(new ActionListener(){
+    mCancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();
       }
     });
 
-
-    mNextBtn.addActionListener(new ActionListener(){
+    mNextBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (mStep.isValid()) {
           mDataObject = mStep.createDataObject(mDataObject);
@@ -118,35 +122,31 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     });
 
-    mBackBtn.addActionListener(new ActionListener(){
+    mBackBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         switchToStep(mStep.back());
       }
     });
 
-    return buttonPanel;
-
+    return builder.getPanel();
   }
-
 
   private void switchToStep(WizardStep step) {
     mStep = step;
     setTitle(step.getTitle());
-    if (mCurrentContentPanel != null) {
-      getContentPane().remove(mCurrentContentPanel);
-    }
-    if (mButtonPanel != null) {
-      getContentPane().remove(mButtonPanel);
-    }
+    getContentPane().removeAll();
+
+    CellConstraints cc = new CellConstraints();
+
     mCurrentContentPanel = mStep.getContent(mHandler);
-    mCurrentContentPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-    getContentPane().add(mCurrentContentPanel, BorderLayout.CENTER);
+    getContentPane().add(mCurrentContentPanel, cc.xy(1, 1));
     mCurrentContentPanel.validate();
     mCurrentContentPanel.updateUI();
 
     mButtonPanel = createButtonPanel(step.getButtons());
-    getContentPane().add(BorderLayout.SOUTH, mButtonPanel);
+    getContentPane().add(mButtonPanel, cc.xy(1, 3));
     getContentPane().validate();
+    ((JPanel)getContentPane()).updateUI();
   }
 
   public int getResult() {

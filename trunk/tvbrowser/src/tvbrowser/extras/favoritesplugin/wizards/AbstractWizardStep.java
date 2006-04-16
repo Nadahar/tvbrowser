@@ -1,9 +1,8 @@
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 public abstract class AbstractWizardStep implements WizardStep {
-
 
   private JPanel mContent;
 

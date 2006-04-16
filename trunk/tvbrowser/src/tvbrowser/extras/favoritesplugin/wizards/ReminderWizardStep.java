@@ -3,6 +3,7 @@ package tvbrowser.extras.favoritesplugin.wizards;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 
 import javax.swing.*;
 
@@ -42,7 +43,7 @@ public class ReminderWizardStep extends AbstractWizardStep {
                     "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
 
-    panelBuilder.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    panelBuilder.setBorder(Borders.DLU4_BORDER);
     panelBuilder.add(new JLabel(mLocalizer.msg("mainQuestion","Wie wollen Sie auf diese Sendung hingewiesen werden?")), cc.xy(1,1));
     panelBuilder.add(mReminderCb = new JCheckBox(mLocalizer.msg("option.reminderwindow","Erinnerungsfenster (TV-Browser muß geöffnet sein).")), cc.xy(1,3));
     panelBuilder.add(mEmailCb = new JCheckBox("Ich möchte eine E-Mail erhalten."), cc.xy(1,5));
