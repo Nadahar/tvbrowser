@@ -27,7 +27,6 @@
 package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -114,7 +113,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private FavoriteConfigurator mFavoriteConfigurator;
   
   private JLabel mName;
-  private boolean mTitleWasUserSet;
 
   public EditFavoriteDialog(Frame parent, Favorite fav) {
     super(parent, true);
@@ -181,12 +179,14 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     rootPn.add(BorderLayout.NORTH, content);
     rootPn.add(BorderLayout.SOUTH, buttonPanel);
-
+        
+    getRootPane().setDefaultButton(okBtn);
+    
     pack();
   }
   
   private JPanel createTitleChangePanel() {
-    CellConstraints cc = new CellConstraints();    
+    CellConstraints cc = new CellConstraints();
     
     if(mFavorite.getName().length() < 1) {
       mName = new JLabel(mLocalizer.msg("defaultName","Is going to be created automatically"));
@@ -200,20 +200,20 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     panel.add(mName, cc.xy(3,1));    
     
     JButton changeTitle = new JButton(mLocalizer.msg("changeName","Change name"));
+    changeTitle.setFocusable(false);
+    
     changeTitle.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         String newName = (String) JOptionPane.showInputDialog(new JDialog(),
             mLocalizer.msg("name","Name:"), mLocalizer.msg("renameFav","Rename Favorite"), JOptionPane.PLAIN_MESSAGE, null, null,
             mName.getText());
-        if (newName != null && newName.length() > 0) {
+        if (newName != null && newName.length() > 0 && 
+            (mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)) {
           mName.setText(newName);
-          mName.setEnabled(true);
-          mTitleWasUserSet = mFavorite.getSearchFormSettings().getSearchText().compareTo(mName.getText()) != 0;
+          mName.setEnabled(true);          
         }
-        else {
-          if(mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) == 0)
-            mName.setEnabled(false);
-        }
+        else          
+          mName.setEnabled(false);
       }
     });
     

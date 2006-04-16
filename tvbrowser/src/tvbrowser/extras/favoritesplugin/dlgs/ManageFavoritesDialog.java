@@ -313,7 +313,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     });
     buttonPn.add(mCloseBt);
     getRootPane().setDefaultButton(mCloseBt);
-
+    
     favoriteSelectionChanged();
   }  
 
