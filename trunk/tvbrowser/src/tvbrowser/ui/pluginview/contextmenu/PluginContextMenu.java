@@ -36,6 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.PluginTree;
 import util.ui.menu.MenuUtil;
@@ -100,6 +101,7 @@ public class PluginContextMenu extends AbstractContextMenu {
     if (settingsTab != null) {
       menu.addSeparator();
       JMenuItem menuItem = MenuUtil.createMenuItem(mLocalizer.msg("settings","settings"));
+      menuItem.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-desktop", 16));
       menu.add(menuItem);
       menuItem.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
