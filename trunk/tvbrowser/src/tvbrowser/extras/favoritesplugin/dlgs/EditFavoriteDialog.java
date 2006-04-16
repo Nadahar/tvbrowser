@@ -47,6 +47,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.common.LimitationConfiguration;
+import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -539,7 +540,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
   class ExclusionListCellRenderer extends DefaultListCellRenderer {
 
-    private String createTimeMessage(int lowBnd, int upBnd) {
+    private String createTimeMessage(int lowBnd, int upBnd, int dayOfWeek) {
       int mLow = lowBnd % 60;
       int hLow = lowBnd / 60;
       int mUp = upBnd % 60;
@@ -548,14 +549,27 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       String lowTime = hLow + ":" + (mLow < 10 ? "0" : "") + mLow;
       String upTime = hUp + ":" + (mUp < 10 ? "0" : "") + mUp;
 
-      if (lowBnd >= 0 && upBnd >= 0) {
-        return mLocalizer.msg("timestring.between", "between {0} and {1}", lowTime, upTime);
-      } else if (lowBnd >= 0) {
-        return mLocalizer.msg("timestring.after", "after {0}", lowTime);
-      } else if (upBnd >= 0) {
-        return mLocalizer.msg("timestring.before", "after {0}", upTime);
+      if (dayOfWeek != Exclusion.DAYLIMIT_DAILY) {
+        String dayStr = DayListCellRenderer.getDayString(dayOfWeek);
+        if (lowBnd >= 0 && upBnd >= 0) {
+          return mLocalizer.msg("datetimestring.between", "on {0} between {1} and {2}", dayStr, lowTime, upTime);
+        } else if (lowBnd >= 0) {
+          return mLocalizer.msg("datetimestring.after", "on {0} after {1}", dayStr, lowTime);
+        } else if (upBnd >= 0) {
+          return mLocalizer.msg("datetimestring.before", "on {0} after {1}", dayStr, upTime);
+        } else {
+          return mLocalizer.msg("datetimestring.on", "on {0}", dayStr);
+        }
       } else {
-        return null;
+        if (lowBnd >= 0 && upBnd >= 0) {
+          return mLocalizer.msg("timestring.between", "on {0} between {1} and {2}", lowTime, upTime);
+        } else if (lowBnd >= 0) {
+          return mLocalizer.msg("timestring.after", "on {0} after {1}", lowTime);
+        } else if (upBnd >= 0) {
+          return mLocalizer.msg("timestring.before", "on {0} after {1}", upTime);
+        } else {
+          return null;
+        }
       }
     }
 
@@ -570,7 +584,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
         String title = excl.getTitle();
         String topic = excl.getTopic();
         Channel channel = excl.getChannel();
-        String timeMsg = createTimeMessage(excl.getTimeLowerBound(), excl.getTimeUpperBound());
+        String timeMsg = createTimeMessage(excl.getTimeLowerBound(), excl.getTimeUpperBound(), excl.getDayOfWeek());
 
         String text;
         if (title == null) {
@@ -644,55 +658,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     }
   }
 
-  class DayListCellRenderer extends DefaultListCellRenderer {
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-        boolean cellHasFocus) {
-      JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-      if (value instanceof Integer) {
-        int val = ((Integer) value).intValue();
-        String str;
-        switch (val) {
-        case LimitationConfiguration.DAYLIMIT_DAILY:
-          str = mLocalizer.msg("day.daily", "Daily");
-          break;
-        case LimitationConfiguration.DAYLIMIT_WEEKDAY:
-          str = mLocalizer.msg("day.weekday", "weekday");
-          break;
-        case LimitationConfiguration.DAYLIMIT_WEEKEND:
-          str = mLocalizer.msg("day.weekend", "weekend");
-          break;
-        case LimitationConfiguration.DAYLIMIT_MONDAY:
-          str = mLocalizer.msg("day.monday", "monday");
-          break;
-        case LimitationConfiguration.DAYLIMIT_TUESDAY:
-          str = mLocalizer.msg("day.tuesday", "tuesday");
-          break;
-        case LimitationConfiguration.DAYLIMIT_WEDNESDAY:
-          str = mLocalizer.msg("day.wednesday", "wednesday");
-          break;
-        case LimitationConfiguration.DAYLIMIT_THURSDAY:
-          str = mLocalizer.msg("day.thursday", "thursday");
-          break;
-        case LimitationConfiguration.DAYLIMIT_FRIDAY:
-          str = mLocalizer.msg("day.friday", "friday");
-          break;
-        case LimitationConfiguration.DAYLIMIT_SATURDAY:
-          str = mLocalizer.msg("day.saturday", "saturday");
-          break;
-        case LimitationConfiguration.DAYLIMIT_SUNDAY:
-          str = mLocalizer.msg("day.sunday", "sunday");
-          break;
-        default:
-          str = "<unknown>";
-        }
-        label.setText(str);
-
-      }
-
-      return label;
-    }
-  }
 
   /*
    * (non-Javadoc)

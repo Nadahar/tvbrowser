@@ -32,14 +32,29 @@ import devplugin.Program;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+
+import tvbrowser.extras.common.LimitationConfiguration;
 
 public class Exclusion {
+
+  public static final int DAYLIMIT_DAILY = LimitationConfiguration.DAYLIMIT_DAILY;
+  public static final int DAYLIMIT_WEEKEND = LimitationConfiguration.DAYLIMIT_WEEKEND;
+  public static final int DAYLIMIT_WEEKDAY = LimitationConfiguration.DAYLIMIT_WEEKDAY;
+  public static final int DAYLIMIT_SUNDAY = LimitationConfiguration.DAYLIMIT_SUNDAY;
+  public static final int DAYLIMIT_MONDAY = LimitationConfiguration.DAYLIMIT_MONDAY;
+  public static final int DAYLIMIT_TUESDAY = LimitationConfiguration.DAYLIMIT_TUESDAY;
+  public static final int DAYLIMIT_WEDNESDAY = LimitationConfiguration.DAYLIMIT_WEDNESDAY;
+  public static final int DAYLIMIT_THURSDAY = LimitationConfiguration.DAYLIMIT_THURSDAY;
+  public static final int DAYLIMIT_FRIDAY = LimitationConfiguration.DAYLIMIT_FRIDAY;
+  public static final int DAYLIMIT_SATURDAY = LimitationConfiguration.DAYLIMIT_SATURDAY;
 
   private Channel mChannel;
   private String mTopic;
   private String mTitle;
   private int mTimeFrom;
   private int mTimeTo;
+  private int mDayOfWeek;
 
   /**
    * Creates a new exclusion criteria.
@@ -49,12 +64,13 @@ public class Exclusion {
    * @param timeFrom lower time limit (or -1, if no lower limit exists)
    * @param timeTo upper time limit (or -1, if no upper limit exists)
    */
-  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo) {
+  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek) {
     mTitle = title;
     mTopic = topic;
     mChannel =channel;
     mTimeFrom = timeFrom;
     mTimeTo = timeTo;
+    mDayOfWeek = dayOfWeek;
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
@@ -79,6 +95,7 @@ public class Exclusion {
 
     mTimeFrom = in.readInt();
     mTimeTo = in.readInt();
+    mDayOfWeek = in.readInt();
 
   }
 
@@ -96,13 +113,14 @@ public class Exclusion {
       out.writeObject(mTitle);
     }
 
-    out.writeBoolean(mTopic != null);     
+    out.writeBoolean(mTopic != null);
     if (mTopic != null) {
       out.writeObject(mTopic);
     }
 
     out.writeInt(mTimeFrom);
     out.writeInt(mTimeTo);
+    out.writeInt(mDayOfWeek);
 
   }
 
@@ -124,7 +142,11 @@ public class Exclusion {
   }
 
   public int getTimeUpperBound() {
-    return mTimeTo;    
+    return mTimeTo;
+  }
+
+  public int getDayOfWeek() {
+    return mDayOfWeek;
   }
 
 
@@ -133,6 +155,7 @@ public class Exclusion {
     boolean titleExcl = false;
     boolean topicExcl = false;
     boolean timeExcl = false;
+    boolean dayExcl = false;
 
     if (mChannel != null) {
       Channel ch = prog.getChannel();
@@ -183,7 +206,23 @@ public class Exclusion {
       timeExcl = true;
     }
 
-    return channelExcl && titleExcl && topicExcl && timeExcl;
+    if (mDayOfWeek != DAYLIMIT_DAILY) {
+      int dayOfWeek = prog.getDate().getCalendar().get(Calendar.DAY_OF_WEEK);
+      if (mDayOfWeek >=1 && mDayOfWeek <=7) {
+        if (dayOfWeek == mDayOfWeek) {
+          dayExcl = true;
+        }
+      } else if (mDayOfWeek == DAYLIMIT_WEEKEND) {
+        dayExcl = dayOfWeek == DAYLIMIT_SUNDAY || dayOfWeek == DAYLIMIT_SATURDAY;
+      } else /* (mDayOfWeek == DAYLIMIT_WEEKDAY) */ {
+        dayExcl = dayOfWeek > 1 && dayOfWeek <7;
+      }
+    }
+    else {
+      dayExcl = true;
+    }
+
+    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl;
   }
 
 }
