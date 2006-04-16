@@ -222,7 +222,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       mName.setText(newName);
       mName.setEnabled(true);          
     }
-    else          
+    else if(mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) == 0)
       mName.setEnabled(false);    
   }
 
