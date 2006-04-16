@@ -29,7 +29,6 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import tvbrowser.ui.finder.FinderPanel;
@@ -50,7 +49,6 @@ public class DateChooserPanel extends JPanel {
     setOpaque(false);
     mParent=parent;
     setLayout(new BorderLayout(0,7));
-    setBorder(BorderFactory.createEmptyBorder(5,3,5,3));
     mFinderPanel = finderPanel;
     
     add(mFinderPanel,BorderLayout.CENTER);

@@ -25,70 +25,57 @@
  */
 package tvbrowser.ui.programtable;
 
-import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import devplugin.Channel;
 
 /**
- *
+ * 
  * @author Til Schneider, www.murfman.de
  */
-public class ProgramTableScrollPane extends JScrollPane
-  implements ProgramTableModelListener, FocusListener, MouseWheelListener
-{
-  
-  private ProgramTable mProgramTable;
-  private ChannelPanel mChannelPanel;
-  
-  private boolean mBorderPainted;
-  
-  private Border mDefaultBorder = BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(1,1,1,1),BorderFactory.createLineBorder(Color.gray));
-  
-  private Border mFocusBorder = new LineBorder(Color.gray,2);
+public class ProgramTableScrollPane extends JScrollPane implements ProgramTableModelListener,
+    MouseWheelListener {
 
+  private ProgramTable mProgramTable;
+
+  private ChannelPanel mChannelPanel;
+
+  private boolean mBorderPainted;
 
   /**
    * Creates a new instance of ProgramTableScrollPane.
    */
   public ProgramTableScrollPane(ProgramTableModel model) {
-    setFocusable(true);    
-    addFocusListener(this);
-    
+    setFocusable(true);
+
     mProgramTable = new ProgramTable(model);
     setViewportView(mProgramTable);
 
     setWheelScrollingEnabled(false);
     addMouseWheelListener(this);
-    
+
     getHorizontalScrollBar().setUnitIncrement(30);
     getVerticalScrollBar().setUnitIncrement(30);
 
     getHorizontalScrollBar().setFocusable(false);
     getVerticalScrollBar().setFocusable(false);
-    
-    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),
-                                     model.getShownChannels());
+
+    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), model.getShownChannels());
     setColumnHeaderView(mChannelPanel);
-     
+
     setOpaque(false);
-    setBorder(mDefaultBorder);
+    // setBorder(mDefaultBorder);
 
     // NOTE: To avoid NullPointerExceptions the registration as listener must
-    //       happen after all member have been initialized.
-    //       (at the end of the constructor)
+    // happen after all member have been initialized.
+    // (at the end of the constructor)
     model.addProgramTableModelListener(this);
 
     mProgramTable.addPropertyChangeListener(new PropertyChangeListener() {
@@ -101,33 +88,31 @@ public class ProgramTableScrollPane extends JScrollPane
     });
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
   }
-  
-  
+
   public ProgramTable getProgramTable() {
     return mProgramTable;
   }
 
-
   public void forceRepaintAll() {
     getProgramTable().forceRepaintAll();
     tableDataChanged(null);
-    getProgramTable().tableDataChanged(null);   
-  }
- 
-  public void repaint() {
-    super.repaint();
-    if (mProgramTable!=null) mProgramTable.repaint();
-    if (mChannelPanel!=null) mChannelPanel.repaint(); 
+    getProgramTable().tableDataChanged(null);
   }
 
-          
+  public void repaint() {
+    super.repaint();
+    if (mProgramTable != null)
+      mProgramTable.repaint();
+    if (mChannelPanel != null)
+      mChannelPanel.repaint();
+  }
+
   public void updateChannelPanel() {
-    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(),
-      mProgramTable.getModel().getShownChannels()); 
+    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), mProgramTable.getModel().getShownChannels());
     setColumnHeaderView(mChannelPanel);
     this.updateUI();
   }
-  
+
   public void updateChannelLabelForChannel(Channel ch) {
     mChannelPanel.updateChannelLabelForChannel(ch);
   }
@@ -136,22 +121,21 @@ public class ProgramTableScrollPane extends JScrollPane
     mProgramTable.setColumnWidth(columnWidth);
     mChannelPanel.setColumnWidth(columnWidth);
   }
-  
-  
-  
+
   public void scrollToChannel(Channel channel) {
     Channel[] shownChannelArr = mProgramTable.getModel().getShownChannels();
     for (int col = 0; col < shownChannelArr.length; col++) {
       if (channel.equals(shownChannelArr[col])) {
         Point scrollPos = getViewport().getViewPosition();
         if (scrollPos != null) {
-          scrollPos.x = col * mProgramTable.getColumnWidth() -  getViewport().getWidth()/2 + mProgramTable.getColumnWidth()/2;
-          if (scrollPos.x<0) {
-            scrollPos.x=0;
+          scrollPos.x = col * mProgramTable.getColumnWidth() - getViewport().getWidth() / 2
+              + mProgramTable.getColumnWidth() / 2;
+          if (scrollPos.x < 0) {
+            scrollPos.x = 0;
           }
-          int max=mProgramTable.getWidth()-getViewport().getWidth();
-          if (scrollPos.x>max) {
-            scrollPos.x=max;
+          int max = mProgramTable.getWidth() - getViewport().getWidth();
+          if (scrollPos.x > max) {
+            scrollPos.x = max;
           }
           getViewport().setViewPosition(scrollPos);
         }
@@ -159,151 +143,116 @@ public class ProgramTableScrollPane extends JScrollPane
     }
   }
 
-
-
   public void scrollToTime(int minutesAfterMidnight) {
     Point scrollPos = getViewport().getViewPosition();
-    
-    scrollPos.y = mProgramTable.getTimeY(minutesAfterMidnight)
-      - (getViewport().getHeight() / 4);
-      
-    if (scrollPos.y<0) {
-      scrollPos.y=0;
+
+    scrollPos.y = mProgramTable.getTimeY(minutesAfterMidnight) - (getViewport().getHeight() / 4);
+
+    if (scrollPos.y < 0) {
+      scrollPos.y = 0;
     }
-    
-    int max=mProgramTable.getHeight()-getViewport().getHeight();
-    if (scrollPos.y>max) {
-      scrollPos.y=max;
+
+    int max = mProgramTable.getHeight() - getViewport().getHeight();
+    if (scrollPos.y > max) {
+      scrollPos.y = max;
     }
 
     getViewport().setViewPosition(scrollPos);
   }
 
-
   protected void handleBackgroundPainterChanged(BackgroundPainter painter) {
     setRowHeaderView(painter.getTableWest());
   }
-  
 
   // implements ProgramTableModelListener
-
 
   public void tableDataChanged(Runnable callback) {
     mChannelPanel.setShownChannels(mProgramTable.getModel().getShownChannels());
   }
 
-
-
   public void tableCellUpdated(int col, int row) {
   }
 
-  public void setBorderPainted(boolean borderPainted) {
-    if (borderPainted!=mBorderPainted) {
-      mBorderPainted=borderPainted;
-      if (mBorderPainted) {
-        setBorder(mFocusBorder);
-      }
-      else {
-        setBorder(mDefaultBorder);
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
+   */
+  public void mouseWheelMoved(MouseWheelEvent e) {
+
+    if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+      if ((e.getModifiersEx() & MouseWheelEvent.SHIFT_DOWN_MASK) != 0) {
+        int amount = e.getUnitsToScroll() * getHorizontalScrollBar().getUnitIncrement();
+        getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
+      } else {
+        int amount = e.getUnitsToScroll() * getVerticalScrollBar().getUnitIncrement();
+        getVerticalScrollBar().setValue(getVerticalScrollBar().getValue() + amount);
       }
     }
   }
 
-	
-	public void focusGained(FocusEvent arg0) {
-    setBorderPainted(true);
-	}
+  /**
+   * Go to the right program of the current program.
+   * 
+   */
+  public void right() {
+    mProgramTable.right();
+  }
 
+  /**
+   * Go to the program on top of the current program.
+   * 
+   */
+  public void up() {
+    mProgramTable.up();
+  }
 
+  /**
+   * Go to the program under the current program.
+   * 
+   */
+  public void down() {
+    mProgramTable.down();
+  }
 
-	
-	public void focusLost(FocusEvent arg0) {
-    setBorderPainted(false);
-	}
+  /**
+   * Go to the left program of the current program.
+   * 
+   */
+  public void left() {
+    mProgramTable.left();
+  }
 
+  /**
+   * Opens the PopupMenu for the selected program.
+   * 
+   */
+  public void showPopupMenu() {
+    mProgramTable.showPopoupFromKeyboard();
+  }
 
+  /**
+   * Starts the middle click Plugin.
+   */
+  public void handleMiddleClick() {
+    mProgramTable.startMiddleClickPluginFromKeyboard();
+  }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
-     */
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        
-        
-        if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-            if ((e.getModifiersEx() & MouseWheelEvent.SHIFT_DOWN_MASK) != 0) {
-                int amount = e.getUnitsToScroll() * getHorizontalScrollBar().getUnitIncrement();
-                getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
-            } else {
-                int amount = e.getUnitsToScroll() * getVerticalScrollBar().getUnitIncrement();
-                getVerticalScrollBar().setValue(getVerticalScrollBar().getValue() + amount);
-            }
-        }
-    }
+  /**
+   * Starts the double click Plugin.
+   */
+  public void handleDoubleClick() {
+    mProgramTable.startDoubleClickPluginFromKeyboard();
+  }
 
-    /**
-     * Go to the right program of the current program. 
-     *
-     */
-    public void right() {
-      mProgramTable.right();
-    }
-
-    /**
-     * Go to the program on top of the current program.
-     *
-     */
-    public void up() {
-      mProgramTable.up();
-    }
-
-    /**
-     * Go to the program under the current program.
-     *
-     */
-    public void down() {
-      mProgramTable.down();
-    }
-    
-    /**
-     * Go to the left program of the current program.
-     *
-     */
-    public void left() {
-      mProgramTable.left();
-    }
-    
-    /**
-     * Opens the PopupMenu for the selected program.
-     *
-     */ 
-    public void showPopupMenu() {
-      mProgramTable.showPopoupFromKeyboard();
-    }
-    
-    /**
-     * Starts the middle click Plugin.
-     */
-    public void handleMiddleClick() {
-      mProgramTable.startMiddleClickPluginFromKeyboard();
-    }
-
-    /**
-     * Starts the double click Plugin.
-     */
-    public void handleDoubleClick() {
-      mProgramTable.startDoubleClickPluginFromKeyboard();
-    }
-
-    /**
-     * Deselect the selected program.
-     *
-     */
-    public void deSelectItem() {
-      mProgramTable.deSelectItem();
-    }
+  /**
+   * Deselect the selected program.
+   * 
+   */
+  public void deSelectItem() {
+    mProgramTable.deSelectItem();
+  }
 
 }
 
-
-
-//class ProgramTableBorder 
+// class ProgramTableBorder
