@@ -103,7 +103,7 @@ public class FavoritesPlugin implements ContextMenuIf{
   private ConfigurationHandler mConfigurationHandler;
 
   private PluginTreeNode mRootNode;
-  
+
   private boolean mShowInfoOnNewProgramsFound = true;
 
   /**
@@ -132,19 +132,19 @@ public class FavoritesPlugin implements ContextMenuIf{
     }
 
     ArrayList showInfoFavorites = new ArrayList();
-    
+
     for (int i = 0; i < mFavoriteArr.length; i++) {
       if (mFavoriteArr[i].isRemindAfterDownload() && mFavoriteArr[i].getNewPrograms().length > 0)
         showInfoFavorites.add(mFavoriteArr[i]);
     }
-    
+
     if(!showInfoFavorites.isEmpty()) {
       Favorite[] fav = new Favorite[showInfoFavorites.size()];
       showInfoFavorites.toArray(fav);
-      
+
       showManageFavoritesDialog(true, fav);
     }
-    
+
       }
     });
   }
@@ -254,7 +254,7 @@ public class FavoritesPlugin implements ContextMenuIf{
         mClientPluginIdArr[i] = (String) in.readObject();
       }
     }
-    
+
     if(version == 4)
       this.mShowInfoOnNewProgramsFound = in.readBoolean();
 
@@ -298,7 +298,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     for (int i = 0; i < mClientPluginIdArr.length; i++) {
       out.writeObject(mClientPluginIdArr[i]);
     }
-    
+
     out.writeBoolean(mShowInfoOnNewProgramsFound);
   }
 
@@ -436,7 +436,9 @@ public class FavoritesPlugin implements ContextMenuIf{
           while(!dialog.isVisible())
             try {
               Thread.sleep(100);
-            }catch(Exception e){};
+            }catch(Exception e){
+              // ignore
+            }
           if(showNew) {
             JCheckBox chb = new JCheckBox(mLocalizer.msg("dontShow","Don't show this description again."));
             Object[] o = {mLocalizer.msg("description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
@@ -481,18 +483,36 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   }
 
-   private void showCreateFavoriteWizard(Program program) {
+  private void showCreateFavoriteWizard(Program program) {
 
-    WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new TypeWizardStep(program));
-    tvbrowser.extras.favoritesplugin.core.Favorite fav = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
-    if (fav != null) {
-      try {
-        fav.updatePrograms();
-        addFavorite(fav);
-      } catch (TvBrowserException exc) {
-        ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
+    Component parent = UiUtilities.getBestDialogParent(null);
+    Favorite favorite;
+    if (isUsingExpertMode()) {
+      favorite = new AdvancedFavorite(program.getTitle());
+      EditFavoriteDialog dlg;
+      if (parent instanceof Dialog) {
+        dlg = new EditFavoriteDialog((Dialog)parent, favorite);
+      }
+      else {
+        dlg = new EditFavoriteDialog((Frame)parent, favorite);
+      }
+      UiUtilities.centerAndShow(dlg);
+      if (!dlg.getOkWasPressed()) {
+        favorite = null;
       }
 
+    } else {
+      WizardHandler handler = new WizardHandler(parent, new TypeWizardStep(program));
+      favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
+    }
+
+    if (favorite != null) {
+      try {
+        favorite.updatePrograms();
+        addFavorite(favorite);
+      }catch (TvBrowserException exc) {
+        ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
+      }
     }
   }
 
