@@ -7,11 +7,11 @@ import java.awt.*;
 
 public class WizardHandler {
 
-  private Container mParent;
+  private Component mParent;
   private WizardStep mStep;
   private WizardDlg mWizardDialog;
 
-  public WizardHandler(Container parent, WizardStep initialStep) {
+  public WizardHandler(Component parent, WizardStep initialStep) {
     mParent = parent;
     mStep = initialStep;
   }
