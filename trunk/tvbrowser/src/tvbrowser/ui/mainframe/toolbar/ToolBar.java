@@ -269,24 +269,24 @@ public class ToolBar extends JToolBar {
         showall = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
       }
-      if(name.startsWith(SettingsItem.REMINDER)) {
+      else if(name.startsWith(SettingsItem.REMINDER)) {
         showall = true;
         label = mLocalizer.msg("configureReminder", "Configure Reminder");
       }
-      if(name.startsWith(SettingsItem.FAVORITE)) {
+      else if(name.startsWith(SettingsItem.FAVORITE)) {
         showall = true;
         label = mLocalizer.msg("configureFavorite", "Configure Favorites");
       }
-      if(name.startsWith("#filter")) {
+      else if(name.startsWith("#filter")) {
         showall = true;
         label = FilterButtons.mLocalizer.msg("createFilter", "Create filter...");
       }
-      if(name.startsWith("#goToChannel")) {
+      else if(name.startsWith("#goToChannel")) {
         showall = true;
         label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
       }
-      
-      if ((PluginProxyManager.getInstance().getPluginForId(name) != null))
+      else if (PluginProxyManager.getInstance().getActivatedPluginForId(name) != null && 
+          PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null)
         showall = true;
     } else
       return;
