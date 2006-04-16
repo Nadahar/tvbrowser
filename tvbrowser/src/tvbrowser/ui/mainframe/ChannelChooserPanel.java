@@ -121,6 +121,14 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     ChannelList.setSubscribeChannels(channelArr);
     Settings.propSubscribedChannels.setChannelArray(channelArr);
     
+    if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
+      Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];
+      for (int i = 0; i < tempArr.length; i++)
+        tempArr[i] = channelArr[i];
+
+      Settings.propTraySpecialChannels.setChannelArray(tempArr);
+    }
+    
     ChannelList.create();
     DefaultProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
     model.setChannels(ChannelList.getSubscribedChannels());
