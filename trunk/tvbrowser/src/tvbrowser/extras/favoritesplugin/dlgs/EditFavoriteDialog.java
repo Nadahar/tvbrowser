@@ -208,7 +208,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
             mLocalizer.msg("name","Name:"), mLocalizer.msg("renameFav","Rename Favorite"), JOptionPane.PLAIN_MESSAGE, null, null,
             mName.getText());
         if (newName != null && newName.length() > 0 && 
-            (mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)) {
+            (newName.compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)) {
           mName.setText(newName);
           mName.setEnabled(true);          
         }
