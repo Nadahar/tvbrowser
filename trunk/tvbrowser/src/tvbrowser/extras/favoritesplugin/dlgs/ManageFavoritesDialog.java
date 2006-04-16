@@ -466,11 +466,23 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 }
 
 
-  protected void newFavorite() {
+  protected void newFavorite() {    
+    Favorite favorite;
+    if (FavoritesPlugin.getInstance().isUsingExpertMode()) {
+      favorite = new AdvancedFavorite("");
+      EditFavoriteDialog dlg = new EditFavoriteDialog((Dialog)this, favorite);
+      UiUtilities.centerAndShow(dlg);
+      
+      if (!dlg.getOkWasPressed()) {
+        favorite = null;
+      }
 
-    WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new TypeWizardStep());
-    tvbrowser.extras.favoritesplugin.core.Favorite fav = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
-    addFavorite(fav);
+    } else {
+      WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new TypeWizardStep());
+      favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
+    }
+    
+    addFavorite(favorite);
   }
   
   public void addFavorite(Favorite fav) {
