@@ -341,4 +341,12 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     }
     return true;
   }
+  
+  /*
+   * (non-Javadoc)
+   * @see tvbrowser.extras.favoritesplugin.wizards.AbstractWizardStep#isSingleStep()
+   */
+  public boolean isSingleStep() {
+    return true;
+  }
 }
