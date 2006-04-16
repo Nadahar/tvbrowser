@@ -204,23 +204,26 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     changeTitle.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        String newName = (String) JOptionPane.showInputDialog(new JDialog(),
-            mLocalizer.msg("name","Name:"), mLocalizer.msg("renameFav","Rename Favorite"), JOptionPane.PLAIN_MESSAGE, null, null,
-            mName.getText());
-        if (newName != null && newName.length() > 0 && 
-            (newName.compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)) {
-          mName.setText(newName);
-          mName.setEnabled(true);          
-        }
-        else          
-          mName.setEnabled(false);
+        setFavoriteName();
       }
     });
     
     panel.add(changeTitle, cc.xy(5,1));
     
-    
     return panel;
+  }
+  
+  private void setFavoriteName() {
+    String newName = (String) JOptionPane.showInputDialog(this,
+        mLocalizer.msg("name","Name:"), mLocalizer.msg("renameFav","Rename Favorite"), JOptionPane.PLAIN_MESSAGE, null, null,
+        mName.getText());
+    if (newName != null && newName.length() > 0 && 
+        (newName.compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0)) {
+      mName.setText(newName);
+      mName.setEnabled(true);          
+    }
+    else          
+      mName.setEnabled(false);    
   }
 
   private String getChannelString(Channel[] channelArr) {
@@ -397,10 +400,12 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     content.add(mEditExclusionBtn, cc.xy(4, 3));
     content.add(mDeleteExclusionBtn, cc.xy(4, 5));
 
+    final EditFavoriteDialog parent = this;
+    
     mNewExclusionBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
 
-        WizardHandler handler = new WizardHandler(getParent(), new ExcludeWizardStep(mFavorite));
+        WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(mFavorite));
         Exclusion exclusion = (Exclusion) handler.show();
         if (exclusion != null) {
           ((DefaultListModel) mExclusionsList.getModel()).addElement(exclusion);
@@ -412,7 +417,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mEditExclusionBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Exclusion oldExclusion = (Exclusion) mExclusionsList.getSelectedValue();
-        WizardHandler handler = new WizardHandler(getParent(), new ExcludeWizardStep(mFavorite, oldExclusion));
+        WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(mFavorite, oldExclusion));
         Exclusion newExclusion = (Exclusion) handler.show();
         if (newExclusion != null) {
           int inx = mExclusionsList.getSelectedIndex();
