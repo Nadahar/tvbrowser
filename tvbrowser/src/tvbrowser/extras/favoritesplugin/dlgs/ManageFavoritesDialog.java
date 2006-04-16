@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
@@ -148,6 +149,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     setContentPane(main);
 
     JToolBar toolbarPn = new JToolBar();
+    toolbarPn.setFloatable(false);
+    toolbarPn.setBorder(BorderFactory.createEmptyBorder());
     main.add(toolbarPn, BorderLayout.NORTH);
 
     msg = mLocalizer.msg("new", "Create a new favorite...");
