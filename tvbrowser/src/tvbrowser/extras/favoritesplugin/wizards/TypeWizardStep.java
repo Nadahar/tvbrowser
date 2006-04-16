@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -176,10 +177,22 @@ public class TypeWizardStep extends AbstractWizardStep {
   public boolean isValid() {
     if (mTitleRb.isSelected()) {
       String title = mProgramNameTf.getText();
-      return title != null && title.length() > 0;
+      if (title != null && title.length() > 0) {
+        return true;
+      }
+      JOptionPane.showMessageDialog(mContent,
+          mLocalizer.msg("warningTitleMessage", "Enter Title!"), 
+          mLocalizer.msg("warningTitleTitle", "Enter Title"), 
+          JOptionPane.WARNING_MESSAGE);
     } else if (mTopicRb.isSelected()) {
       String topic = mTopicTf.getText();
-      return topic != null && topic.length() > 0;
+      if (topic != null && topic.length() > 0) {
+        return true;
+      }
+      JOptionPane.showMessageDialog(mContent,
+          mLocalizer.msg("warningTopicMessage", "Enter Topic!"), 
+          mLocalizer.msg("warningTopicTitle", "Enter Topic"), 
+          JOptionPane.WARNING_MESSAGE);
     }
 
     return false;
