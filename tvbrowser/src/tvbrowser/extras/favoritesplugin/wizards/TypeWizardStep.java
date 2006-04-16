@@ -19,7 +19,7 @@ import java.awt.*;
 
 import devplugin.Program;
 
-public class TypeWizardStep implements WizardStep {
+public class TypeWizardStep extends AbstractWizardStep {
 
   public static final util.ui.Localizer mLocalizer
        = util.ui.Localizer.getLocalizerFor(TypeWizardStep.class);
@@ -57,7 +57,7 @@ public class TypeWizardStep implements WizardStep {
     return mLocalizer.msg("title","Create new Favorite");
   }
 
-  public JPanel getContent(final WizardHandler handler) {
+  public JPanel createContent(final WizardHandler handler) {
 
     LinkButton expertBtn = new LinkButton(mLocalizer.msg("advancedView","Switch to Classic View"), null);
 
@@ -161,7 +161,11 @@ public class TypeWizardStep implements WizardStep {
   }
 
   public WizardStep next() {
-    return new NotificationWizardStep(mProgram);
+    return new NotificationWizardStep(this, mProgram);
+  }
+
+  public WizardStep back() {
+    return null;
   }
 
   public boolean isValid() {

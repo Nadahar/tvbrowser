@@ -19,7 +19,7 @@ import java.awt.event.ItemEvent;
 
 import util.ui.TimePeriodChooser;
 
-public class ExcludeWizardStep implements WizardStep {
+public class ExcludeWizardStep extends  AbstractWizardStep {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ExcludeWizardStep.class);
@@ -104,7 +104,7 @@ public class ExcludeWizardStep implements WizardStep {
     return mLocalizer.msg("title","Exclude Programs");
   }
 
-  public JPanel getContent(final WizardHandler handler) {
+  public JPanel createContent(final WizardHandler handler) {
 
 
 
@@ -272,6 +272,10 @@ public class ExcludeWizardStep implements WizardStep {
   }
 
   public WizardStep next() {
+    return null;
+  }
+
+  public WizardStep back() {
     return null;
   }
 

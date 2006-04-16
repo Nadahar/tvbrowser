@@ -8,23 +8,29 @@ import devplugin.Program;
 import util.ui.TimePeriodChooser;
 
 
-public class LimitTimeWizardStep implements WizardStep {
+public class LimitTimeWizardStep extends AbstractWizardStep {
 
    public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(LimitTimeWizardStep.class);
 
   private TimePeriodChooser mTimePeriodChooser;
   private Program mProgram;
+  private WizardStep mCaller;
 
   public LimitTimeWizardStep(Program program) {
+    this(null, program);
+  }
+
+  public LimitTimeWizardStep(WizardStep caller, Program program) {
     mProgram = program;
+    mCaller = caller;
   }
 
   public String getTitle() {
     return mLocalizer.msg("title","Time");
   }
 
-  public JPanel getContent(WizardHandler handler) {
+  public JPanel createContent(WizardHandler handler) {
 
 
 
@@ -57,7 +63,11 @@ public class LimitTimeWizardStep implements WizardStep {
   }
 
   public WizardStep next() {
-    return new FinishWizardStep();
+    return new FinishWizardStep(this);
+  }
+
+  public WizardStep back() {
+    return mCaller;
   }
 
   public boolean isValid() {
@@ -65,7 +75,7 @@ public class LimitTimeWizardStep implements WizardStep {
   }
 
   public int[] getButtons() {
-    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_NEXT};
+    return new int[]{ WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_BACK, WizardStep.BUTTON_NEXT};
   }
   
 }

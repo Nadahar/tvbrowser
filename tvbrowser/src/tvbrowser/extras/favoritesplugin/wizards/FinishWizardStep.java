@@ -2,13 +2,19 @@ package tvbrowser.extras.favoritesplugin.wizards;
 
 import javax.swing.*;
 
-public class FinishWizardStep implements WizardStep {
+public class FinishWizardStep extends AbstractWizardStep {
 
   public static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(FinishWizardStep.class);
 
 
-  public JPanel getContent(WizardHandler handler) {
+  private WizardStep mCaller;
+
+  public FinishWizardStep(WizardStep caller) {
+    mCaller = caller;
+  }
+
+  public JPanel createContent(WizardHandler handler) {
 
 
     JPanel pn = new JPanel();
@@ -27,11 +33,15 @@ public class FinishWizardStep implements WizardStep {
   }
 
   public int[] getButtons() {
-    return new int[]{ WizardStep.BUTTON_DONE};
+    return new int[]{ WizardStep.BUTTON_BACK, WizardStep.BUTTON_DONE};
   }
 
   public WizardStep next() {
     return null;
+  }
+
+  public WizardStep back() {
+    return mCaller;
   }
 
   public boolean isValid() {
