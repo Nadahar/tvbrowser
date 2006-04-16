@@ -296,8 +296,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private JPanel createReminderPanel() {
     JPanel panel = new JPanel(new GridLayout(-1, 1));
     panel.add(mUseReminderCb = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window")));
-    panel.add(new JCheckBox("E-Mail"));
-    panel.add(new JCheckBox("ICQ"));
 
     String[] s = mFavorite.getReminderConfiguration().getReminderServices();
     for (int i = 0; i < s.length; i++) {

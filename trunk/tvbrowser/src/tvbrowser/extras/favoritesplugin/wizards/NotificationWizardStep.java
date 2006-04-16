@@ -7,6 +7,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import javax.swing.*;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.common.ReminderConfiguration;
 import devplugin.Program;
 
 public class NotificationWizardStep implements WizardStep {
@@ -46,16 +47,12 @@ public class NotificationWizardStep implements WizardStep {
     Favorite fav = (Favorite)obj;
     fav.setRemindAfterDownload(mCheckOnUpdateCb.isSelected());
     if (mReminderCb.isSelected()) {
-      fav.getReminderConfiguration().setReminderServices(new String[]{"reminder"});
+      fav.getReminderConfiguration().setReminderServices(new String[]{ReminderConfiguration.REMINDER_DEFAULT});
     }
     return fav;
   }
 
-  public WizardStep next() {
-
-    if (mReminderCb.isSelected()) {
-      return new ReminderWizardStep(mProgram);
-    }
+  public WizardStep next() {  
     return new LimitationsWizardStep(mProgram);
   }
 
