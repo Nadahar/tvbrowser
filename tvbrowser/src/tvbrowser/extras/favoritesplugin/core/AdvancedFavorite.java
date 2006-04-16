@@ -44,7 +44,6 @@ import javax.swing.*;
 public class AdvancedFavorite extends Favorite {
 
   private SearchFormSettings mSearchFormSettings;
-  private String mTitle;
 
   public static final String TYPE_ID = "advanced";
 
@@ -53,7 +52,6 @@ public class AdvancedFavorite extends Favorite {
     super(in);
     int version = in.readInt();
     mSearchFormSettings = new SearchFormSettings(in);
-
   }
 
 
@@ -74,7 +72,6 @@ public class AdvancedFavorite extends Favorite {
     mSearchFormSettings = new SearchFormSettings(searchText);
   }
 
-
   public String getTypeID() {
     return TYPE_ID;
   }
@@ -84,12 +81,11 @@ public class AdvancedFavorite extends Favorite {
   }
 
   public String getName() {
-    if (mTitle != null) {
-      return mTitle;
+    if (super.getName() != null) {
+      return super.getName();
     }
     return mSearchFormSettings.getSearchText();
   }
-
 
   public FavoriteConfigurator createConfigurator() {
     return new Configurator();
@@ -129,10 +125,10 @@ public class AdvancedFavorite extends Favorite {
     }
 
     if (version >=5) {
-      mTitle = (String)in.readObject();
+      super.setName((String)in.readObject());
     }
     else {
-      mTitle = mSearchFormSettings.getSearchText();
+      super.setName(mSearchFormSettings.getSearchText());
     }
 
     boolean useCertainChannel = in.readBoolean();
