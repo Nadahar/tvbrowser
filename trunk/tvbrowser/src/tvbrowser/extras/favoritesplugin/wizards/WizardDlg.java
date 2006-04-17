@@ -85,10 +85,12 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     CellConstraints cc = new CellConstraints();
     
     if (!mStep.isSingleStep()) {
-      ButtonBarBuilder navigateBuilder = new ButtonBarBuilder();
-      navigateBuilder.setLeftToRight(true);
-      navigateBuilder.addGriddedButtons(new JButton[] { mBackBtn, mNextBtn});
-      panel.add(navigateBuilder.getPanel(), cc.xy(2, 1));
+      FormLayout layout = new FormLayout("pref, 3dlu, pref", "pref");
+      layout.setColumnGroups(new int[][] { { 1, 3 } });
+      JPanel nextpanel = new JPanel(layout);
+      nextpanel.add(mBackBtn, cc.xy(1,1));
+      nextpanel.add(mNextBtn, cc.xy(3,1));
+      panel.add(nextpanel, cc.xy(2, 1));
     }
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
