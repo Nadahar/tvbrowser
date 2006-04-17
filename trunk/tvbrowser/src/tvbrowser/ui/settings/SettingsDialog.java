@@ -69,6 +69,7 @@ import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -109,12 +110,14 @@ public class SettingsDialog implements WindowClosingIf {
     
     UiUtilities.registerForClosing(this);
     
-    JPanel main = new JPanel(new BorderLayout());
+    JPanel main = new JPanel(new FormLayout("fill:min:grow", "fill:min:grow, 3dlu, pref"));
+    CellConstraints cc = new CellConstraints();
+    
     main.setBorder(Borders.DLU4_BORDER);
     mDialog.setContentPane(main);
 
     JSplitPane splitPane = new JSplitPane();
-    main.add(splitPane, BorderLayout.CENTER);
+    main.add(splitPane, cc.xy(1,1));
 
     mRootNode = createSelectionTree();
     mSelectionTree = new JTree(mRootNode);
@@ -146,12 +149,8 @@ public class SettingsDialog implements WindowClosingIf {
     mSettingsPn = new JPanel(new BorderLayout());
     splitPane.setRightComponent(mSettingsPn);
 
-    FormLayout layout = new FormLayout("fill:pref:grow, pref, 3dlu, pref, 3dlu, pref", "4dlu, pref");
-    layout.setColumnGroups(new int[][] {{2, 4, 6}});
-    CellConstraints cc = new CellConstraints();
-    
-    JPanel buttonPn = new JPanel(layout);
-    main.add(buttonPn, BorderLayout.SOUTH);
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.addGlue();
 
     JButton okBt = new JButton(mLocalizer.msg("ok", "OK"));
     okBt.addActionListener(new ActionListener() {
@@ -162,7 +161,6 @@ public class SettingsDialog implements WindowClosingIf {
       }
     });
     mDialog.getRootPane().setDefaultButton(okBt);
-    buttonPn.add(okBt, cc.xy(2,2));
 
     JButton cancelBt = new JButton(mLocalizer.msg("cancel", "Cancel"));
     cancelBt.addActionListener(new ActionListener() {
@@ -170,7 +168,6 @@ public class SettingsDialog implements WindowClosingIf {
         mDialog.dispose();
       }
     });
-    buttonPn.add(cancelBt, cc.xy(4,2));
 
     JButton applyBt = new JButton(mLocalizer.msg("apply", "Apply"));
     applyBt.addActionListener(new ActionListener() {
@@ -181,7 +178,10 @@ public class SettingsDialog implements WindowClosingIf {
         showSettingsPanelForSelectedNode();
       }
     });
-    buttonPn.add(applyBt, cc.xy(6,2));
+    
+    builder.addGriddedButtons(new JButton[] {okBt, cancelBt, applyBt});
+    
+    main.add(builder.getPanel(), cc.xy(1,3));
 
     mDialog.pack();
     
