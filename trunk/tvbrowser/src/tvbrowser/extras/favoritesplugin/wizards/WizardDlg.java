@@ -81,15 +81,20 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     mBackBtn = new JButton("<< " + mLocalizer.msg("back", "Back"));
     mBackBtn.setEnabled(false);
 
-    ButtonBarBuilder builder = new ButtonBarBuilder();
-    builder.addGlue();
-
-    if (mStep.isSingleStep()) {
-      builder.addGriddedButtons(new JButton[] { mDoneBtn, mCancelBtn });
-    } else {
-      builder.addGriddedButtons(new JButton[] { mBackBtn, mNextBtn, mDoneBtn, mCancelBtn });
+    JPanel panel = new JPanel(new FormLayout("fill:pref:grow, pref, 3dlu, pref", "pref"));
+    CellConstraints cc = new CellConstraints();
+    
+    if (!mStep.isSingleStep()) {
+      ButtonBarBuilder navigateBuilder = new ButtonBarBuilder();
+      navigateBuilder.setLeftToRight(true);
+      navigateBuilder.addGriddedButtons(new JButton[] { mBackBtn, mNextBtn});
+      panel.add(navigateBuilder.getPanel(), cc.xy(2, 1));
     }
-
+    
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.addGriddedButtons(new JButton[] { mDoneBtn, mCancelBtn });
+    panel.add(builder.getPanel(), cc.xy(4, 1));
+    
     for (int i = 0; i < btns.length; i++) {
       if (btns[i] == WizardStep.BUTTON_DONE) {
         mDoneBtn.setEnabled(true);
@@ -132,7 +137,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     });
 
-    return builder.getPanel();
+    return panel;
   }
 
   private void switchToStep(WizardStep step) {
