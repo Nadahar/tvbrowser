@@ -255,6 +255,8 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           mTable.scrollRectToVisible(mTable.getCellRect(row, 0, true));
         };
       });
+      
+      ReminderPlugin.getInstance().updateRootNode();
     }
 
   }
