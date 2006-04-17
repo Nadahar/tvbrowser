@@ -579,28 +579,57 @@ public class SystemTray {
 
       for (int i = 0; i < c.length; i++) {
         Iterator it = null;
-
+        int day = 0;
+        
         try {
           it = TvDataBase.getInstance()
               .getDayProgram(
                   Date.getCurrentDate().addDays(
-                      (time < IOUtilities.getMinutesAfterMidnight() ? 1 : 0)),
+                      (time < IOUtilities.getMinutesAfterMidnight() ? ++day : day)),
                   c[i]).getPrograms();
         } catch (Exception ee) {}
-
+        
+        int count = 0;
+        
         while (it != null && it.hasNext()) {
           Program p = (Program) it.next();
 
           int start = p.getStartTime();
           int end = p.getStartTime() + p.getLength();
 
-          if (start <= time && time < end)
+          if (start <= time && time < end) {
             if (isOnChannelList(c[i]))
               programs.add(getIndexOfChannel(c[i]), new ProgramMenuItem(p,
                   ProgramMenuItem.ON_TIME_TYPE, time, -1));
             else if (p.getMarkerArr().length > 0)
               additional.add(new ProgramMenuItem(p,
                   ProgramMenuItem.ON_TIME_TYPE, time, -1));
+          } else if(start > time && day == 1 && count == 0) {
+
+            int temptime = time + 24 * 60;
+            try {
+              ChannelDayProgram dayProg = TvDataBase.getInstance()
+                  .getDayProgram(
+                      Date.getCurrentDate(),
+                      c[i]);
+              p = dayProg.getProgramAt(dayProg.getProgramCount() - 1);
+              
+              start = p.getStartTime();
+              end = p.getStartTime() + p.getLength();
+
+              if (start <= temptime && temptime < end) {
+                if (isOnChannelList(c[i]))
+                  programs.add(getIndexOfChannel(c[i]), new ProgramMenuItem(p,
+                      ProgramMenuItem.ON_TIME_TYPE, time, -1));
+                else if (p.getMarkerArr().length > 0)
+                  additional.add(new ProgramMenuItem(p,
+                      ProgramMenuItem.ON_TIME_TYPE, time, -1));
+              }
+            } catch (Exception ee) {}
+          } else if(start > time)
+            break;
+          
+          count++;
         }
       }
 
