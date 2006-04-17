@@ -76,6 +76,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
   private int mMode;
 
+  private JPanel mContentPanel;
+  
   /**
    * Creates a new Wizard Step instance to create a new exclusion
    * 
@@ -249,7 +251,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       }
     });
 
-    return panelBuilder.getPanel();
+    mContentPanel = panelBuilder.getPanel();
+    return mContentPanel;
   }
 
   private void updateButtons(WizardHandler handler) {
@@ -332,11 +335,17 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
   public boolean isValid() {
     if (mTitleCb.isSelected() && (mTitleTf.getText() == null || mTitleTf.getText().trim().length() == 0)) {
-      JOptionPane.showMessageDialog(null, mLocalizer.msg("invalidInput.noTitle", "Please enter a title."));
+      JOptionPane.showMessageDialog(mContentPanel,
+          mLocalizer.msg("invalidInput.noTitle", "Please enter a title."), 
+          mLocalizer.msg("invalidInput.noTitleTitle", "Enter Topic"), 
+          JOptionPane.WARNING_MESSAGE);
       return false;
     }
     if (mTopicCb.isSelected() && (mTopicTf.getText() == null || mTopicTf.getText().trim().length() == 0)) {
-      JOptionPane.showMessageDialog(null, mLocalizer.msg("invalidInput.noTopic", "Please enter a topic."));
+      JOptionPane.showMessageDialog(mContentPanel,
+          mLocalizer.msg("invalidInput.noTopic", "Please enter a topic."), 
+          mLocalizer.msg("invalidInput.noTopicTitle", "Enter Topic"), 
+          JOptionPane.WARNING_MESSAGE);
       return false;
     }
     return true;
