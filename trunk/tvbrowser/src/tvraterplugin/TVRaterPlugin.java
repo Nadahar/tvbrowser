@@ -69,6 +69,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
             .getLocalizerFor(TVRaterPlugin.class);
 
     private Database _tvraterDB = new Database();
+    
+    private boolean hasRightToDownload = false;
 
     /** Instance of this Plugin */
     private static TVRaterPlugin _tvRaterInstance;
@@ -84,7 +86,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
                         "description",
                         "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
         String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 70));
+        return new PluginInfo(name, desc, author, new Version(0, 71));
     }
 
     /*
@@ -322,12 +324,17 @@ public class TVRaterPlugin extends devplugin.Plugin {
         return getParentFrame();
     }
 
+    public void handleTvBrowserStartFinished() {
+      hasRightToDownload = true;
+    }
+    
     /*
      *  (non-Javadoc)
      * @see devplugin.Plugin#handleTvDataUpdateFinished()
      */
     public void handleTvDataUpdateFinished() {
-      if (!((_settings.getProperty("name", "").length() == 0) || (_settings.getProperty("password", "").length() == 0))) {
+      if (!((_settings.getProperty("name", "").length() == 0) || (_settings.getProperty("password", "").length() == 0)) 
+          && hasRightToDownload) {
         if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) < 3)
           updateDB();
       }
