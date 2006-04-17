@@ -560,6 +560,14 @@ abstract public class Plugin implements Marker,ContextMenuIf {
    * <p>
    * Override this method to react on this event.
    * 
+   * If you want to read data from the internet use this method to track if a
+   * connection was established. 
+   * ATTENTION: If you do so take care of the TV-Browser start, at the start this
+   * method mustn't use an internet connection. Use the method handleTvBrowserStartFinished()
+   * to track if the TV-Browser start was finished before allowing access to the
+   * internet in this method.
+   * 
+   * @see #handleTvBrowserStartFinished()
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see devplugin.Plugin#handleTvDataChanged()
