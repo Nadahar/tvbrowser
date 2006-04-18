@@ -116,7 +116,7 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.addSeparator(mLocalizer.msg("passTo", "Pass favorite programs to"), cc.xyw(1,1,5));
     builder.add(mPluginLabel, cc.xy(2,3));
     builder.add(choose, cc.xy(4,3));
-    builder.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,5,5));
+    builder.addSeparator(mLocalizer.msg("expertSettings","Expert mode"), cc.xyw(1,5,5));
     builder.add(mExpertMode, cc.xyw(2,7,3));
     
     return builder.getPanel();

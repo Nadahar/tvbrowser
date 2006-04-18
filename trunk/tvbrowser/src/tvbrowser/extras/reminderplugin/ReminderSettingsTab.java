@@ -227,7 +227,7 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,17,10));
     pb.add(reminderEntry, cc.xyw(2,19,4));
     
-    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,21,10));    
+    pb.addSeparator(mLocalizer.msg("timeChoosing","Time selection dialog"), cc.xyw(1,21,10));    
     pb.add(mShowTimeSlectionDlg, cc.xyw(2,23,4));
     
     soundTestBt.addActionListener(new ActionListener() {
