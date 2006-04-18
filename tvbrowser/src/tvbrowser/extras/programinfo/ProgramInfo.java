@@ -61,7 +61,7 @@ import devplugin.ProgramFieldType;
  */
 public class ProgramInfo implements ContextMenuIf {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfo.class);
 
   private static String DATAFILE_PREFIX = "programinfo.ProgramInfo";
@@ -378,6 +378,10 @@ public class ProgramInfo implements ContextMenuIf {
     } catch (Exception e) {}
   }
 
+  public String toString() {
+    return "ProgramInfo";
+  }
+  
   public String getId() {
     return DATAFILE_PREFIX;
   }
