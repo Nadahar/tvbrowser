@@ -51,14 +51,14 @@ public class LimitChannelWizardStep extends AbstractWizardStep {
 
   private WizardStep mCaller;
 
-  public LimitChannelWizardStep(WizardStep caller, Program program) {
-    this(caller, null, program);
-  }
 
-  public LimitChannelWizardStep(WizardStep caller, WizardStep nextStep, Program program) {
-    mNextStep = nextStep;
+  public LimitChannelWizardStep(WizardStep caller, Program program) {
     mProgram = program;
     mCaller = caller;
+  }
+
+  public void setNextStep(WizardStep nextStep) {
+    mNextStep = nextStep;
   }
 
   public String getTitle() {

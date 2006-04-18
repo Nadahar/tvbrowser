@@ -78,7 +78,10 @@ public class LimitationsWizardStep extends AbstractWizardStep {
   public WizardStep next() {
     if (mChannelCb.isSelected()) {
       if (mTimeCb.isSelected()) {
-        return new LimitChannelWizardStep(this, new LimitTimeWizardStep(this, mProgram), mProgram);
+        LimitChannelWizardStep nextStep = new LimitChannelWizardStep(this, mProgram);
+        LimitTimeWizardStep  timeStep = new LimitTimeWizardStep(nextStep, mProgram);
+        nextStep.setNextStep(timeStep);
+        return nextStep;       
       } else {
         return new LimitChannelWizardStep(this, mProgram);
       }
