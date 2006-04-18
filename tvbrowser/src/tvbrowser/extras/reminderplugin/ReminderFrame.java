@@ -45,6 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.Timer;
 
+import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
@@ -135,7 +136,7 @@ public class ReminderFrame implements WindowClosingIf {
     //             user interaction will be ignored.
     //             -> If there is a modal dialog open, we show this reminder as
     //                dialog, otherwise as frame.
-    Window parent = UiUtilities.getBestDialogParent(comp);
+    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     String title = mLocalizer.msg("title", "Reminder");
     if (parent instanceof Dialog) {
       mDialog = new JDialog((Dialog) parent, title);
