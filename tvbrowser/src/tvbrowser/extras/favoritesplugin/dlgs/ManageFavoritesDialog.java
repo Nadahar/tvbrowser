@@ -109,10 +109,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   private JSplitPane mSplitPane;
   private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt, mSendBt;
   private JButton mCloseBt;
-  
+
   private boolean mShowNew = false;
   private static ManageFavoritesDialog mInstance = null;
-  
+
   public ManageFavoritesDialog(Dialog parent, Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
     super(parent, true);
     init(favoriteArr, splitPanePosition, showNew);
@@ -125,9 +125,9 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
     mInstance = this;
-    
+
     mShowNew = showNew;
-    
+
     String msg;
     Icon icon;
 
@@ -195,7 +195,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         moveSelectedFavorite(-1);
       }
     });
-    
+
     if(!mShowNew)
       toolbarPn.add(mUpBt);
 
@@ -207,7 +207,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         moveSelectedFavorite(1);
       }
     });
-    
+
     if(!mShowNew)
       toolbarPn.add(mDownBt);
 
@@ -231,7 +231,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         sortFavorites();
       }
     });
-    
+
     if(!mShowNew)
       toolbarPn.add(mSortBt);
 
@@ -243,7 +243,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         importFavorites();
       }
     });
-    
+
     if(!mShowNew)
       toolbarPn.add(mImportBt);
 
@@ -268,29 +268,29 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     });
 
     if(!mShowNew) {
-      ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);    
+      ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);
       new DragAndDropMouseListener(mFavoritesList,mFavoritesList,this,dnDHandler);
     }
-    
+
     mFavoritesList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
           showFavoritesPopUp(e.getX(), e.getY());
         }
       }
-      
+
       public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
           showFavoritesPopUp(e.getX(), e.getY());
-        }        
+        }
       }
-      
+
       public void mouseClicked(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)
           editSelectedFavorite();
       }
     });
-    
+
     JScrollPane scrollPane = new JScrollPane(mFavoritesList);
     scrollPane.setBorder(null);
     mSplitPane.setLeftComponent(scrollPane);
@@ -313,9 +313,9 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     });
     buttonPn.add(mCloseBt);
     getRootPane().setDefaultButton(mCloseBt);
-    
+
     favoriteSelectionChanged();
-  }  
+  }
 
   /**
    * Show the Popup-Menu
@@ -324,47 +324,47 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     JPopupMenu menu = new JPopupMenu();
 
     mFavoritesList.setSelectedIndex(mFavoritesList.locationToIndex(new Point(x,y)));
-    
+
     if (!mShowNew) {
-      JMenuItem createNew = new JMenuItem(mLocalizer.msg("new", "Create a new favorite..."), 
-          FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16)); 
-      
+      JMenuItem createNew = new JMenuItem(mLocalizer.msg("new", "Create a new favorite..."),
+          FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16));
+
       createNew.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           newFavorite();
         }
       });
-      
+
       menu.add(createNew);
       menu.addSeparator();
     }
-    
-    JMenuItem edit = new JMenuItem(mLocalizer.msg("edit", "Edit the selected favorite..."), 
+
+    JMenuItem edit = new JMenuItem(mLocalizer.msg("edit", "Edit the selected favorite..."),
         IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
-    
+
     edit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         editSelectedFavorite();
       }
     });
-    
+
     menu.add(edit);
-    
-    JMenuItem delete = new JMenuItem(mLocalizer.msg("delete", "Delete selected favorite..."), 
+
+    JMenuItem delete = new JMenuItem(mLocalizer.msg("delete", "Delete selected favorite..."),
         IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
-    
+
     delete.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         deleteSelectedFavorite();
       }
     });
-    
+
     menu.add(delete);
-    
+
     if (!mShowNew) {
-      JMenuItem moveUp = new JMenuItem(mLocalizer.msg("up", "Move the selected favorite up"), 
+      JMenuItem moveUp = new JMenuItem(mLocalizer.msg("up", "Move the selected favorite up"),
           FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-up", 16));
-      
+
       moveUp.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           moveSelectedFavorite(-1);
@@ -373,25 +373,25 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
       moveUp.setEnabled(mFavoritesList.getSelectedIndex() > 0);
       menu.add(moveUp);
-      
-      JMenuItem moveDown = new JMenuItem(mLocalizer.msg("down", "Move the selected favorite down"), 
+
+      JMenuItem moveDown = new JMenuItem(mLocalizer.msg("down", "Move the selected favorite down"),
           FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-down", 16));
-      
+
       moveDown.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           moveSelectedFavorite(1);
         }
       });
-      
+
       moveDown.setEnabled((mFavoritesList.getSelectedIndex() != -1) && (mFavoritesList.getSelectedIndex() < (mFavoritesListModel.getSize() - 1)));
       menu.add(moveDown);
     }
-    
+
     menu.addSeparator();
-    
-    JMenuItem sendPrograms = new JMenuItem(mLocalizer.msg("send", "Send Programs to another Plugin"), 
+
+    JMenuItem sendPrograms = new JMenuItem(mLocalizer.msg("send", "Send Programs to another Plugin"),
         FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 16));
-    
+
     sendPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         showSendDialog();
@@ -400,7 +400,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     sendPrograms.setEnabled(mProgramListModel.size() > 0);
 
     menu.add(sendPrograms);
-    
+
     menu.show(mFavoritesList, x, y);
   }
 
@@ -451,28 +451,28 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     if(selection == -1) {
         return;
     }
-    
+
     Program[] programs = mProgramList.getSelectedPrograms();
-    
+
     if(programs == null || programs.length == 0) {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
       programs = mShowNew ? fav.getNewPrograms() : fav.getPrograms();
     }
 
     SendToPluginDialog send = new SendToPluginDialog(null, this, programs);
-    
+
     send.setVisible(true);
-    
+
 }
 
 
-  protected void newFavorite() {    
+  protected void newFavorite() {
     Favorite favorite;
     if (FavoritesPlugin.getInstance().isUsingExpertMode()) {
       favorite = new AdvancedFavorite("");
       EditFavoriteDialog dlg = new EditFavoriteDialog((Dialog)this, favorite);
       UiUtilities.centerAndShow(dlg);
-      
+
       if (!dlg.getOkWasPressed()) {
         favorite = null;
       }
@@ -481,10 +481,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new TypeWizardStep());
       favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
     }
-    
+
     addFavorite(favorite);
   }
-  
+
   public void addFavorite(Favorite fav) {
     if (fav != null) {
     try {
@@ -496,7 +496,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       FavoritesPlugin.getInstance().addFavorite(fav);
     } catch (TvBrowserException e) {
       ErrorHandler.handle("Creating favorites failed.", e);
-    }    
+    }
     }
   }
 
@@ -504,26 +504,13 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   protected void editSelectedFavorite() {
     Favorite fav = (Favorite) mFavoritesList.getSelectedValue();
-//    if (fav instanceof AdvancedFavorite) {
-//      EditClassicFavoriteDialog dlg = new EditClassicFavoriteDialog(this, ((AdvancedFavorite)fav).getClassicFavorite());
-//      dlg.centerAndShow();
-//
-//      if (dlg.getOkWasPressed()) {
-//        mFavoritesList.repaint();
-//        favoriteSelectionChanged();
-//        FavoritesPlugin.getInstance().updateRootNode();
-//      }
-//    }
-//    else {
-      EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
-      UiUtilities.centerAndShow(dlg);
-      if (dlg.getOkWasPressed()) {
-        mFavoritesList.repaint();
-        favoriteSelectionChanged();
-        FavoritesPlugin.getInstance().updateRootNode();
-      }
- //   }
-
+    EditFavoriteDialog dlg = new EditFavoriteDialog(this, fav);
+    UiUtilities.centerAndShow(dlg);
+    if (dlg.getOkWasPressed()) {
+      mFavoritesList.repaint();
+      favoriteSelectionChanged();
+      FavoritesPlugin.getInstance().updateRootNode();
+    }
   }
 
 
