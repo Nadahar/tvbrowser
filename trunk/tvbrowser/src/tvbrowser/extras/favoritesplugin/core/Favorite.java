@@ -317,7 +317,6 @@ public abstract class Favorite {
 
      */
     Comparator comparator = ProgramUtilities.getProgramComparator();
-  //  Program[] newProgList = (Program[])list.toArray(new Program[list.size()]);
     Arrays.sort(newProgList, comparator);
     Arrays.sort(mPrograms, comparator);
 
@@ -379,13 +378,25 @@ public abstract class Favorite {
 
   private void markProgram(Program p) {
     p.mark(FavoritesPlugin.MARKER);
-    ReminderPlugin.getInstance().addProgram(p);
+    String[] reminderServices = getReminderConfiguration().getReminderServices();
+    for (int i=0; i<reminderServices.length; i++) {
+      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {
+        ReminderPlugin.getInstance().addProgram(p);
+      }
+    }
+
 
   }
 
   private void unmarkProgram(Program p) {
     p.unmark(FavoritesPlugin.MARKER);
-    ReminderPlugin.getInstance().removeProgram(p);
+    String[] reminderServices = getReminderConfiguration().getReminderServices();
+    for (int i=0; i<reminderServices.length; i++) {
+      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {
+        ReminderPlugin.getInstance().removeProgram(p);
+      }
+    }
+
   }
 
   public abstract FavoriteConfigurator createConfigurator();

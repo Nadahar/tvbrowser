@@ -81,6 +81,9 @@ public class NotificationWizardStep extends AbstractWizardStep {
     if (mReminderCb.isSelected()) {
       fav.getReminderConfiguration().setReminderServices(new String[]{ReminderConfiguration.REMINDER_DEFAULT});
     }
+    else {
+      fav.getReminderConfiguration().setReminderServices(new String[]{});
+    }
     return fav;
   }
 
