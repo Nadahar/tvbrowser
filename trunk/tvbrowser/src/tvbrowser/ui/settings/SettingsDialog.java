@@ -64,7 +64,10 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
-import tvbrowser.extras.programinfo.ProgramInfoSettingsTab;
+import tvbrowser.extras.programinfo.ProgramInfo;
+import tvbrowser.extras.programinfo.ProgramInfoDesignSettingsTab;
+import tvbrowser.extras.programinfo.ProgramInfoFontSettingsTab;
+import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -318,7 +321,13 @@ public class SettingsDialog implements WindowClosingIf {
     technicalSettings.add(new SettingNode(new DirectoriesSettingsTab()));
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(), SettingsItem.WEBBROWSER));
     
-    root.add(new SettingNode(new ProgramInfoSettingsTab(), SettingsItem.PROGRAMINFO));    
+    SettingNode programInfo = new SettingNode(new DefaultSettingsTab(ProgramInfo.getInstance().toString(),null));
+    programInfo.add(new SettingNode(new ProgramInfoOrderSettingsTab(), SettingsItem.PROGRAMINFO));
+    programInfo.add(new SettingNode(new ProgramInfoFontSettingsTab()));
+    programInfo.add(new SettingNode(new ProgramInfoDesignSettingsTab()));
+    
+    root.add(programInfo);
+    
     root.add(new SettingNode(new FavoritesSettingTab(), SettingsItem.FAVORITE));
     root.add(new SettingNode(new ReminderSettingsTab(), SettingsItem.REMINDER));
  
