@@ -395,8 +395,7 @@ public class SystemTray {
       
       if (((Settings.propTraySoonProgramsEnabled.getBoolean() && (!nextPrograms.isEmpty() || !nextAdditionalPrograms.isEmpty())) ||
           (Settings.propTrayNowProgramsEnabled.getBoolean() && (!programs.isEmpty() || !additional.isEmpty()))) &&
-          !Settings.propTrayNowProgramsInSubMenu.getBoolean()
-          || !Settings.propTrayImportantProgramsInSubMenu.getBoolean())
+          !Settings.propTrayNowProgramsInSubMenu.getBoolean())
         mTrayMenu.addSeparator();
       
       boolean now = false;
