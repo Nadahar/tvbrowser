@@ -33,13 +33,15 @@ public class TrayImportantSettingsTab implements SettingsTab {
   private JCheckBox mIsEnabled, mShowName, mShowIcon, mShowDate, mShowTime, mShowToolTip;
   private JRadioButton mShowInSubMenu, mShowInTray;
   private JSpinner mSize;
-  
+  private JLabel mSeparator1, mSeparator2, mSizeLabel, mHelpLabel; 
+  private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
+  private static TrayImportantSettingsTab mInstance;
   
   public JPanel createSettingsPanel() {
-    
+    mInstance = this;
     CellConstraints cc = new CellConstraints();
-    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref,pref:grow,5dlu",
-        "pref,5dlu,pref,pref,pref,pref,10dlu,pref,pref,pref,pref,pref"));
+    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref,5dlu,pref,pref:grow,5dlu",
+        "pref,5dlu,pref,pref,pref,pref,10dlu,pref,5dlu,pref,pref,pref,pref,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("importantEnabled","Show important programs"),Settings.propTrayImportantProgramsEnabled.getBoolean());
@@ -61,47 +63,60 @@ public class TrayImportantSettingsTab implements SettingsTab {
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTrayImportantProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayImportantProgramsContainsToolTip.getBoolean());
     mShowToolTip.setToolTipText(mLocalizer.msg("toolTipTip","Tool tips are small helper to something, like this one."));
+    mHelpLabel = new JLabel();
         
-    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("important","Important programs"), cc.xyw(1,1,6));
-    builder.add(mIsEnabled, cc.xyw(2,3,4));
-    builder.add(mShowInTray, cc.xyw(2,4,4));
-    builder.add(mShowInSubMenu, cc.xyw(2,5,4));
-    final JLabel sizeLabel = builder.addLabel(mLocalizer.msg("importantSize","Number of shown programs:"), cc.xy(2,6));
-    builder.add(mSize, cc.xy(4,6));
+    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("important","Important programs"), cc.xyw(1,1,7));
+    builder.add(mIsEnabled, cc.xyw(2,3,5));
+    builder.add(mShowInTray, cc.xyw(3,4,4));
+    builder.add(mShowInSubMenu, cc.xyw(3,5,4));
+    mSizeLabel = builder.addLabel(mLocalizer.msg("importantSize","Number of shown programs:"), cc.xy(3,6));
+    builder.add(mSize, cc.xy(5,6));
     
-    builder.add(mShowName, cc.xyw(2,8,4));
-    builder.add(mShowIcon, cc.xyw(2,9,4));
-    builder.add(mShowDate, cc.xyw(2,10,4));
-    builder.add(mShowTime, cc.xyw(2,11,4));
-    builder.add(mShowToolTip, cc.xyw(2,12,4));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,8,7));
+    builder.add(mShowName, cc.xyw(2,10,5));
+    builder.add(mShowIcon, cc.xyw(2,11,5));
+    builder.add(mShowDate, cc.xyw(2,12,5));
+    builder.add(mShowTime, cc.xyw(2,13,5));
+    builder.add(mShowToolTip, cc.xyw(2,14,5));
+    builder.add(mHelpLabel, cc.xyw(1,16,7));
     
-    c.getComponent(0).setEnabled(Settings.propTrayIsEnabled.getBoolean());
-    mIsEnabled.setEnabled(Settings.propTrayIsEnabled.getBoolean());
-    mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
-    mShowInTray.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
-    mShowName.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
-    mShowIcon.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
-    mShowDate.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
-    mShowTime.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
-    mShowToolTip.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
-    sizeLabel.setEnabled(mIsEnabled.isSelected() && Settings.propTrayIsEnabled.getBoolean());
+    mSeparator1 = (JLabel)c.getComponent(0);
+    mSeparator2 = (JLabel)c1.getComponent(0);
+    
+    setEnabled(true);
     
     mIsEnabled.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        mShowInSubMenu.setEnabled(mIsEnabled.isSelected());
-        mShowInTray.setEnabled(mIsEnabled.isSelected());
-        mShowName.setEnabled(mIsEnabled.isSelected());
-        mShowIcon.setEnabled(mIsEnabled.isSelected());
-        mShowDate.setEnabled(mIsEnabled.isSelected());
-        mShowTime.setEnabled(mIsEnabled.isSelected());
-        mShowToolTip.setEnabled(mIsEnabled.isSelected());
-        sizeLabel.setEnabled(mIsEnabled.isSelected());
+        setEnabled(false);
       }
     });
     
     return builder.getPanel();
   }
 
+  private void setEnabled(boolean trayStateChange) {
+    if(mTrayIsEnabled)
+      mHelpLabel.setText("");
+    else
+      mHelpLabel.setText(mLocalizer.msg("help","<html>The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the Tray Base settings.</html>"));
+    
+    if(trayStateChange) {
+      mSeparator1.setEnabled(mTrayIsEnabled);
+      mIsEnabled.setEnabled(mTrayIsEnabled);
+    }
+    
+    mSeparator2.setEnabled(mTrayIsEnabled);    
+    mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowDate.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowToolTip.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mSizeLabel.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mSize.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+  }
+  
   public void saveSettings() {
     if(mIsEnabled != null)
       Settings.propTrayImportantProgramsEnabled.setBoolean(mIsEnabled.isSelected());
@@ -127,6 +142,12 @@ public class TrayImportantSettingsTab implements SettingsTab {
 
   public String getTitle() {
     return mLocalizer.msg("important","Important programs");
+  }
+  
+  protected static void setTrayIsEnabled(boolean value) {
+    mTrayIsEnabled = value;
+    if(mInstance != null)
+      mInstance.setEnabled(true);
   }
 
 }
