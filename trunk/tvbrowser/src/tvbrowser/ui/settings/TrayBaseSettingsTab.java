@@ -54,6 +54,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
   
   private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mOnlyMinimizeWhenWindowClosingChB;
   private boolean mOldState; 
+  private static boolean mIsEnabled = Settings.propTrayIsEnabled.getBoolean();
     
   public JPanel createSettingsPanel() {
     
@@ -85,6 +86,12 @@ public class TrayBaseSettingsTab implements SettingsTab {
     
     mTrayIsEnabled.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        mIsEnabled = mTrayIsEnabled.isSelected();
+        TrayImportantSettingsTab.setTrayIsEnabled(mIsEnabled);
+        TrayNowSettingsTab.setTrayIsEnabled(mIsEnabled);
+        TrayOnTimeSettingsTab.setTrayIsEnabled(mIsEnabled);
+        TraySoonSettingsTab.setTrayIsEnabled(mIsEnabled);
+        TrayProgramsChannelsSettingsTab.setTrayIsEnabled(mIsEnabled);
         mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
         mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
       }
@@ -117,5 +124,9 @@ public class TrayBaseSettingsTab implements SettingsTab {
 
   public String getTitle() {
     return mLocalizer.msg("basics","Basic settings");
+  }
+  
+  protected static boolean isTrayEnabled() {
+    return mIsEnabled;
   }
 }

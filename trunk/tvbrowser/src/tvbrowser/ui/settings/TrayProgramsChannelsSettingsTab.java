@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
@@ -54,11 +55,20 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
   
   private JCheckBox mUseUserChannels;
   private OrderChooser mChannelOCh;
+  private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
+  private JLabel mSeparator1, mHelpLabel;
+  
+  private static TrayProgramsChannelsSettingsTab mInstance;
+  private static boolean mNow = Settings.propTrayNowProgramsEnabled.getBoolean(),
+                         mSoon = Settings.propTraySoonProgramsEnabled.getBoolean(),
+                         mOnTime = Settings.propTrayOnTimeProgramsEnabled.getBoolean();
   
   public JPanel createSettingsPanel() {
+    mInstance = this;
+    
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu,fill:default:grow,5dlu",
-        "pref,5dlu,pref,10dlu,fill:default:grow"));
+        "pref,5dlu,pref,10dlu,fill:default:grow,5dlu,pref"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     
@@ -69,30 +79,43 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
         Settings.propTraySpecialChannels.getChannelArray(false),
         Settings.propSubscribedChannels.getChannelArray(false), true);
 
+    mHelpLabel = new JLabel();
+    
     JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg(
         "channelsSeparator",
         "Which channels should be used for these displays?"), cc.xyw(1, 1, 3));
     builder.add(mUseUserChannels, cc.xy(2,3));
     builder.add(mChannelOCh, cc.xy(2, 5));
+    builder.add(mHelpLabel, cc.xyw(1, 7, 3));
+        
+    mSeparator1 = (JLabel)c.getComponent(0);
     
-    boolean enabled =  Settings.propTrayIsEnabled.getBoolean() && 
-      (Settings.propTrayNowProgramsEnabled.getBoolean() || 
-       Settings.propTraySoonProgramsEnabled.getBoolean() ||
-        Settings.propTrayOnTimeProgramsEnabled.getBoolean());
-    
-    c.getComponent(0).setEnabled(enabled);
-    mUseUserChannels.setEnabled(enabled);
-    mChannelOCh.setEnabled(enabled && mUseUserChannels.isSelected());
+    setEnabled(true);
     
     mUseUserChannels.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        mChannelOCh.setEnabled(mUseUserChannels.isSelected());
+        setEnabled(false);
       }
     });
     
     return builder.getPanel();
   }
 
+  private void setEnabled(boolean trayStateChange) {
+    if(!mTrayIsEnabled)
+      mHelpLabel.setText(mLocalizer.msg("help","<html>The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the Tray Base settings.</html>"));      
+    else if(!mNow && !mSoon && !mOnTime)
+      mHelpLabel.setText(mLocalizer.msg("helpPrograms","<html>These settings are used only by the Now, Soon and At... programs. Enable at least one of that to enable these settings.</html>"));
+    else
+      mHelpLabel.setText("");     
+    
+    if(trayStateChange)
+      mSeparator1.setEnabled(mTrayIsEnabled);
+    
+    mUseUserChannels.setEnabled(mTrayIsEnabled && (mNow || mSoon || mOnTime));
+    mChannelOCh.setEnabled(mTrayIsEnabled && mUseUserChannels.isSelected() && (mNow || mSoon || mOnTime));
+  }
+  
   public void saveSettings() {
     if (mUseUserChannels != null)
       Settings.propTrayUseSpecialChannels.setBoolean(mUseUserChannels.isSelected());
@@ -122,4 +145,27 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     return mLocalizer.msg("channels","Channels");
   }
 
+  protected static void setTrayIsEnabled(boolean value) {
+    mTrayIsEnabled = value;
+    if(mInstance != null)
+      mInstance.setEnabled(true);
+  }
+  
+  protected static void setNowIsEnabled(boolean value) {
+    mNow = value;
+    if(mInstance != null)
+      mInstance.setEnabled(false);
+  }
+  
+  protected static void setSoonIsEnabled(boolean value) {
+    mSoon = value;
+    if(mInstance != null)
+      mInstance.setEnabled(false);
+  }
+
+  protected static void setOnTimeIsEnabled(boolean value) {
+    mOnTime = value;
+    if(mInstance != null)
+      mInstance.setEnabled(false);
+  }
 }
