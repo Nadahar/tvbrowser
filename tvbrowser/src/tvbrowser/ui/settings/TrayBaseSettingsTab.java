@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tvbrowser.TVBrowser;
@@ -58,7 +59,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     
   public JPanel createSettingsPanel() {
     
-    PanelBuilder builder = new PanelBuilder(new FormLayout(
+    final PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu, pref:grow, 5dlu",        
         "pref, 5dlu, pref, pref, pref"));
     builder.setDefaultDialogBorder();
@@ -73,12 +74,20 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mMinimizeToTrayChb = new JCheckBox(msg, checked && mOldState);
     mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
     
+    if(System.getProperty("os.name").toLowerCase().startsWith("linux"))
+      mMinimizeToTrayChb.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if(mMinimizeToTrayChb.isSelected())
+            JOptionPane.showMessageDialog(builder.getPanel(),mLocalizer.msg("minimizeToTrayWarning","This function could work not how expected on Unix systems like KDE or Gnome.\nSo it's recommended not to select this checkbox."),mLocalizer.msg("warning","Warning"), JOptionPane.WARNING_MESSAGE);        
+        }
+    });
+    
     msg = mLocalizer.msg("onlyMinimizeWhenWindowClosing",
         "When closing the main window only minimize TV-Browser, don't quit.");
     checked = Settings.propOnlyMinimizeWhenWindowClosing.getBoolean() && mOldState;
     mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, checked); 
     mOnlyMinimizeWhenWindowClosingChB.setEnabled(mTrayIsEnabled.isSelected());
-    
+        
     builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,1,3));    
     builder.add(mTrayIsEnabled, cc.xy(2,3));
     builder.add(mMinimizeToTrayChb, cc.xy(2,4));
