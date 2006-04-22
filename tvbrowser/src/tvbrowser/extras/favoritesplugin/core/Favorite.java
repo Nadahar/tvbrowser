@@ -235,7 +235,12 @@ public abstract class Favorite {
     ArrayList list = new ArrayList();
     boolean isLimitedByTime = getLimitationConfiguration().isLimitedByTime();
     int timeFrom = getLimitationConfiguration().getTimeFrom();
+    int timeFromParsed = timeFrom;
     int timeTo = getLimitationConfiguration().getTimeTo();
+
+    if(timeFrom > timeTo)
+      timeFromParsed -= 60*24;
+    
     int allowedDayOfWeek = getLimitationConfiguration().getDayLimit();
     for (int i=0; i<progArr.length; i++) {
       boolean isExcluded = false;
@@ -246,7 +251,12 @@ public abstract class Favorite {
         }
       }
       if (!isExcluded && isLimitedByTime) {
-        if (progArr[i].getStartTime() <timeFrom || progArr[i].getStartTime() > timeTo) {
+        int startTime = progArr[i].getHours() * 60 + progArr[i].getMinutes(); 
+          
+        if(timeFrom > timeTo && startTime >= timeFrom)
+          startTime -= 60*24;
+        
+        if (startTime < timeFromParsed || startTime > timeTo) {
           isExcluded = true;
         }
         else {
