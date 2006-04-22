@@ -133,6 +133,10 @@ public class ReminderPlugin implements ContextMenuIf {
     return mInstance;
   }
 
+  public String toString() {
+    return mLocalizer.msg("pluginName","Reminder");
+  }
+  
   private void loadSettings() {
 
     try {

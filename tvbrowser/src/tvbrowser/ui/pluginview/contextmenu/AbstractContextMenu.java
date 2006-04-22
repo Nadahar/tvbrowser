@@ -37,8 +37,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTree;
 import util.ui.menu.MenuUtil;
@@ -119,7 +121,25 @@ public abstract class AbstractContextMenu implements ContextMenu {
       return menu;
     }
     
-    Plugin currentPlugin = getPluginForNode(node);
+    Object o = getObjectForNode(node);
+    Plugin currentPlugin = null;
+    
+    if(o instanceof Plugin)
+      currentPlugin = (Plugin)o;
+    
+    if(o != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()) {
+      JMenuItem item = new JMenuItem(ReminderPlugin.getInstance().toString());
+      item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+      item.setIcon(IconLoader.getInstance().getIconFromTheme("apps","appointment",16));
+      menu.add(item);
+      item.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          Program[] programs = collectProgramsFromNode(node);
+          if ((programs != null) &&(programs.length > 0))
+            ReminderPlugin.getInstance().addPrograms(programs);
+        }
+      });      
+    }
     
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     for (int i=0; i<plugins.length; i++) {
@@ -151,16 +171,21 @@ public abstract class AbstractContextMenu implements ContextMenu {
    * @param node Node to use
    * @return Plugin-Parent of this Node
    */
-  public Plugin getPluginForNode(Node node) {
+  public Object getObjectForNode(Node node) {
     
     Node parent = node;
     
-    while (parent != null && parent.getType() != Node.PLUGIN_ROOT) {
+    while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()) {
       parent = (Node) parent.getParent();
     }
     
     if (parent != null){
-      return (Plugin) parent.getUserObject();
+      Object o = parent.getUserObject();
+      
+      if(o instanceof Plugin)
+        return o;
+      else
+        return parent;
     }
     
     return null;
