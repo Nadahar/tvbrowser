@@ -40,6 +40,7 @@ import java.util.Iterator;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
+import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.MassFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
@@ -47,6 +48,7 @@ import tvbrowser.core.filters.filtercomponents.PluginIconFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 
 public class FilterComponentList {
@@ -170,6 +172,12 @@ public class FilterComponentList {
     } 
     else if (className.endsWith(".DayFilterComponent")) {
       filterComponent = new DayFilterComponent(name, description);
+    }
+    else if (className.endsWith(".FavoritesFilterComponent")) {
+      filterComponent = new FavoritesFilterComponent(name, description);
+    }
+    else if (className.endsWith(".ReminderFilterComponent")) {
+      filterComponent = new ReminderFilterComponent(name, description);
     }
     
     else {

@@ -34,6 +34,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Vector;
@@ -50,12 +52,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
@@ -146,8 +151,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     northPanel.add(panel);
 
     JPanel filterComponentsPanel = new JPanel(new BorderLayout(7, 7));
-    filterComponentsPanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("componentsTitle",
-        "Available filter components:")));
+    filterComponentsPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("componentsTitle",
+        "Available filter components:")), BorderLayout.NORTH);
     JPanel btnPanel = new JPanel(new BorderLayout());
     panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
 
@@ -173,6 +178,17 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         updateBtns();
       }
     });
+    
+    mRuleTableBox.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
+          int row = mRuleTableBox.rowAtPoint(e.getPoint());
+          
+          if(mRuleTableBox.getSelectedRow() == row)
+            actionPerformed(new ActionEvent(mEditBtn,ActionEvent.ACTION_PERFORMED, mEditBtn.getActionCommand()));
+        }
+      }
+    });
 
     mRuleTableBox.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
@@ -193,7 +209,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     
     JPanel ruleListBoxPanel = new JPanel(new BorderLayout());
-    ruleListBoxPanel.setBorder(BorderFactory.createEmptyBorder(0, 13, 7, 0));
+    ruleListBoxPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
     ruleListBoxPanel.add(new JScrollPane(mRuleTableBox), BorderLayout.CENTER);
 
     filterComponentsPanel.add(btnPanel, BorderLayout.EAST);
@@ -280,7 +296,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }
     } else if (o == mEditBtn) {
       int inx = mRuleTableBox.getSelectedRow();
-      FilterComponent rule = mComponentTableModel.getElement(mRuleTableBox.getSelectedRow());
+      
+      if(inx == -1)
+        return;
+      
+      FilterComponent rule = mComponentTableModel.getElement(inx);
       FilterComponentList.getInstance().remove(rule.getName());
       mComponentTableModel.removeElement(rule);
       EditFilterComponentDlg dlg = new EditFilterComponentDlg(mParent, rule);

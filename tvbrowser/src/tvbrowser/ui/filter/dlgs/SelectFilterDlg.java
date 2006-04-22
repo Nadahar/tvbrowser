@@ -31,6 +31,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -41,6 +43,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -100,7 +103,16 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         updateBtns();
       }
     });
-
+    
+    mFilterListBox.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
+          if(mFilterListBox.getSelectedIndex() != -1 && mEditBtn.isEnabled())
+            actionPerformed(new ActionEvent(mEditBtn,ActionEvent.ACTION_PERFORMED, mEditBtn.getActionCommand()));
+        }
+      }
+    });
+    
     JPanel btnPanel = new JPanel(new BorderLayout());
     JPanel panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
     mNewBtn = new JButton(mLocalizer.msg("newButton", "new"));
