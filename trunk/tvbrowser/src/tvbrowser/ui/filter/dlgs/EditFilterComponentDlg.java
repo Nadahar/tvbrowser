@@ -48,11 +48,14 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.DayFilterComponent;
+import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.KeywordFilterComponent;
 import tvbrowser.core.filters.filtercomponents.MassFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
@@ -60,6 +63,7 @@ import tvbrowser.core.filters.filtercomponents.PluginIconFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -125,6 +129,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     });
     set.add(new DayFilterComponent());
     set.add(new KeywordFilterComponent());
+    set.add(new FavoritesFilterComponent());
+    set.add(new ReminderFilterComponent());
     set.add(new PluginFilterComponent());
     set.add(new PluginIconFilterComponent());
     set.add(new ChannelFilterComponent());
@@ -160,10 +166,10 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     buttonPn.add(mCancelBtn);
 
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("componentSettings", "Component settings:")));
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("componentSettings", "Component settings:")), BorderLayout.NORTH);    
 
     mCenterPanel = new JPanel(new BorderLayout());
-    panel.add(mCenterPanel);
+    panel.add(mCenterPanel, BorderLayout.CENTER);
 
     mContentPane.add(northPanel, BorderLayout.NORTH);
     mContentPane.add(buttonPn, BorderLayout.SOUTH);
