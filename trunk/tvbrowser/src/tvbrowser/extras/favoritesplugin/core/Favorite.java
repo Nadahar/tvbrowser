@@ -343,6 +343,10 @@ public abstract class Favorite {
       }
       else {
         // leave
+        // unmark the old instance of the program        
+        p1[inx1].unmark(FavoritesPlugin.MARKER);
+        // mark the new instance of the program
+        p2[inx2].mark(FavoritesPlugin.MARKER);
         resultList.add(p2[inx2]);
         inx1++;
         inx2++;
