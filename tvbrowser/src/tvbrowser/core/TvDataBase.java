@@ -412,6 +412,7 @@ public class TvDataBase {
   private synchronized void correctDayProgramFile(Date date,
       Channel channel) {
     File file = getDayProgramFile(date, channel);
+    String key = getDayProgramKey(date, channel);
     if (!file.exists())
       return;
 
@@ -426,6 +427,15 @@ public class TvDataBase {
           // Some missing lengths could now be calculated
           // -> Try to save the changes
 
+          // Invalidate the old program file from the cache
+          OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
+          if (oldProgFile != null) {
+            oldProgFile.setValid(false);
+
+            // Remove the old entry from the cache (if it exists)
+            removeCacheEntry(key);
+          }
+          
           // We use a temporary file. If saving suceeds we rename it
           File tempFile = new File(file.getAbsolutePath() + ".changed");
           try {
@@ -451,11 +461,13 @@ public class TvDataBase {
             // -> remove the temp file and keep the old one
             tempFile.delete();
           }
-
+                    
           OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, (MutableChannelDayProgram) getDayProgram(date,
               channel));
           progFile.loadDayProgram();
           
+          // Put the new program file in the cache
+          addCacheEntry(key, progFile);
         }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
