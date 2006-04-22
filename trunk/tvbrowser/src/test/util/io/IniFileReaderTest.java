@@ -37,7 +37,7 @@ import util.io.IniFileReader;
 public class IniFileReaderTest extends TestCase {
   
   public void testIniReader() throws IOException {
-    IniFileReader reader = new IniFileReader(this.getClass().getResource("index.theme").openStream());
+    IniFileReader reader = new IniFileReader(this.getClass().getResourceAsStream("index.theme"));
     
     assertEquals(81, reader.getAllSections().length);
     
