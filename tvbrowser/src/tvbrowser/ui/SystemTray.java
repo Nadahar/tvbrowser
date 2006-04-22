@@ -56,6 +56,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
+import util.ui.ScrollableMenu;
 
 import com.gc.systray.SystemTrayFactory;
 import com.gc.systray.SystemTrayIf;
@@ -91,7 +92,7 @@ public class SystemTray {
 
   private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure;
 
-  private JPopupMenu mTrayMenu;
+  private ScrollableMenu mTrayMenu;
   private Timer mClickTimer;
 
   /**
@@ -229,7 +230,8 @@ public class SystemTray {
 
       toggleOpenCloseMenuItem(false);
 
-      mTrayMenu = new JPopupMenu();
+      mTrayMenu = new ScrollableMenu();
+      
 
       mSystemTray.addRightClickAction(new ActionListener() {
 
@@ -238,7 +240,7 @@ public class SystemTray {
         }
 
       });
-      mSystemTray.setTrayPopUp(mTrayMenu);
+      mSystemTray.setTrayPopUp(mTrayMenu.getPopupMenu());
 
       mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
 
@@ -274,6 +276,7 @@ public class SystemTray {
     mTrayMenu.add(mOpenCloseMenuItem);
     mTrayMenu.addSeparator();
     mTrayMenu.add(createPluginsMenu());
+    mTrayMenu.addSeparator();
 
     if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()
         || Settings.propTrayNowProgramsEnabled.getBoolean()
