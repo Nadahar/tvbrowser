@@ -81,12 +81,11 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
     
     
     CellConstraints cc = new CellConstraints();
-    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu","pref,5dlu,fill:pref:grow,5dlu,pref,50dlu,pref,5dlu"));
+    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,pref:grow,5dlu","pref,5dlu,fill:pref:grow,10dlu,pref"));
     builder.setDefaultDialogBorder();
     
     builder.addSeparator(ProgramInfo.mLocalizer.msg("order","Info choosing/ordering"), cc.xyw(1,1,3));
-    builder.add(mList, cc.xy(2,3)); 
-    builder.addSeparator("", cc.xyw(1,5,3));
+    builder.add(mList, cc.xy(2,3));
     
     FormLayout layout = new FormLayout("pref,pref:grow,pref","pref");
     layout.setColumnGroups(new int[][] {{1,3}});
@@ -94,7 +93,7 @@ public class ProgramInfoOrderSettingsTab implements SettingsTab {
     buttonPn.add(previewBtn, cc.xy(3,1));
     buttonPn.add(defaultBtn, cc.xy(1,1));
     
-    builder.add(buttonPn, cc.xyw(1,7,3));
+    builder.add(buttonPn, cc.xyw(1,5,3));
     
     return builder.getPanel();
   }

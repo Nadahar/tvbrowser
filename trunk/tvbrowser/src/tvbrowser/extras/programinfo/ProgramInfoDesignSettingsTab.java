@@ -71,7 +71,7 @@ public class ProgramInfoDesignSettingsTab implements SettingsTab {
     
     
     CellConstraints cc = new CellConstraints();
-    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,pref,pref:grow","pref,5dlu,pref,fill:pref:grow,pref,5dlu"));
+    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,pref,pref:grow","pref,5dlu,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
     builder.addSeparator(ProgramInfo.mLocalizer.msg("design","Design"), cc.xyw(1,1,3));

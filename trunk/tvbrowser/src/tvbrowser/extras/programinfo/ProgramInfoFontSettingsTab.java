@@ -101,7 +101,7 @@ public class ProgramInfoFontSettingsTab implements SettingsTab {
     });
     
     CellConstraints cc = new CellConstraints();
-    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,pref:grow,5dlu","pref,5dlu,pref,pref,pref,pref,fill:pref:grow,pref,5dlu"));
+    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,pref:grow,5dlu","pref,5dlu,pref,pref,pref,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
     builder.addSeparator(ProgramInfo.mLocalizer.msg("font","Font settings"), cc.xyw(1,1,6));
