@@ -426,15 +426,6 @@ public class TvDataBase {
         if (somethingChanged) {
           // Some missing lengths could now be calculated
           // -> Try to save the changes
-
-          // Invalidate the old program file from the cache
-          OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
-          if (oldProgFile != null) {
-            oldProgFile.setValid(false);
-
-            // Remove the old entry from the cache (if it exists)
-            removeCacheEntry(key);
-          }
           
           // We use a temporary file. If saving suceeds we rename it
           File tempFile = new File(file.getAbsolutePath() + ".changed");
@@ -465,6 +456,15 @@ public class TvDataBase {
           OnDemandDayProgramFile progFile = new OnDemandDayProgramFile(file, (MutableChannelDayProgram) getDayProgram(date,
               channel));
           progFile.loadDayProgram();
+          
+          // Invalidate the old program file from the cache
+          OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false);
+          if (oldProgFile != null) {
+            oldProgFile.setValid(false);
+
+            // Remove the old entry from the cache (if it exists)
+            removeCacheEntry(key);
+          }
           
           // Put the new program file in the cache
           addCacheEntry(key, progFile);
