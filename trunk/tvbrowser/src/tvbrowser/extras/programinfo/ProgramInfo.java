@@ -150,7 +150,7 @@ public class ProgramInfo implements ContextMenuIf {
     String splitWidht = mSettings.getProperty("LeftSplit.Width");
     String splitHeigt = mSettings.getProperty("LeftSplit.Height");
 
-    if ((x != null) && (y != null)) {
+    if ((splitWidht != null) && (splitHeigt != null)) {
       int sw = parseNumber(splitWidht);
       int sh = parseNumber(splitHeigt);
       mLeftSplit = new Dimension(sw, sh);
