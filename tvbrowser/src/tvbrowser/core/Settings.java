@@ -165,7 +165,8 @@ public class Settings {
       mLog.info("Try to load settings from a previous version of TV-Browser");
       File oldDir = new File(oldDirectoryName);
 
-      if (!oldDir.exists() || !(new File(oldDirectoryName, SETTINGS_FILE)).exists()) {
+      if (!oldDir.exists()
+          || !(new File(oldDirectoryName, SETTINGS_FILE)).exists()) {
         oldDir = new File(getUserDirectoryName());
 
         if (oldDir.isDirectory() && !(new File(oldDir, SETTINGS_FILE)).isFile()) {
@@ -174,7 +175,7 @@ public class Settings {
               return pathname.isDirectory();
             }
           });
-          
+
           int thisMajor = TVBrowser.VERSION.getMajor();
           int thisMinor = TVBrowser.VERSION.getMinor();
 
@@ -187,7 +188,7 @@ public class Settings {
 
           for (int i = 0; i < dirs.length; i++) {
             String[] version = dirs[i].getName().split("\\.");
-            
+
             try {
               int tempMajor = Integer.parseInt(version[0].trim());
 
@@ -198,11 +199,13 @@ public class Settings {
               }
 
               int tempMinor = Integer.parseInt(version[1].trim());
-              
-              if(!version[1].trim().startsWith("0") && version[1].trim().length() == 1)
+
+              if (!version[1].trim().startsWith("0")
+                  && version[1].trim().length() == 1)
                 tempMinor *= 10;
 
-              if (tempMajor == major && tempMinor > minor && tempMinor < thisMinor) {
+              if (tempMajor == major && tempMinor > minor
+                  && tempMinor < thisMinor) {
                 minor = tempMinor;
                 index = i;
                 stable = true;
@@ -218,10 +221,12 @@ public class Settings {
                   int tempMajor = Integer.parseInt(version[0].trim());
                   int tempMinor = Integer.parseInt(ver2[0].trim());
 
-                  if(!ver2[0].trim().startsWith("0") && ver2[0].trim().length() == 1)
+                  if (!ver2[0].trim().startsWith("0")
+                      && ver2[0].trim().length() == 1)
                     tempMinor *= 10;
-                  
-                  if (tempMajor == major && tempMinor > minor && tempMinor <= thisMinor) {
+
+                  if (tempMajor == major && tempMinor > minor
+                      && tempMinor <= thisMinor) {
                     minor = tempMinor;
                     index = i;
                     stable = false;
@@ -230,8 +235,8 @@ public class Settings {
                   if (ver2.length >= 2 && ver2[1].trim().length() > 0) {
                     int tempBeta = Integer.parseInt(ver2[1].trim());
 
-                    if (tempMajor == major && tempMinor == minor && tempBeta > beta
-                        && !stable) {
+                    if (tempMajor == major && tempMinor == minor
+                        && tempBeta > beta && !stable) {
                       beta = tempBeta;
                       index = i;
                     }
@@ -246,15 +251,15 @@ public class Settings {
             oldDir = new File(oldDirectoryName);
           else {
             oldDir = dirs[index];
-          
-            if(thisMajor < major)
+
+            if (thisMajor < major)
               oldDir = new File("");
-            else if(thisMajor == major && thisMinor <= minor && stable)
+            else if (thisMajor == major && thisMinor <= minor && stable)
               oldDir = new File("");
           }
         }
       }
-      
+
       if (oldDir.isDirectory() && oldDir.exists()) {
         final File newDir = new File(getUserSettingsDirName());
         if (newDir.mkdirs()) {
@@ -280,9 +285,9 @@ public class Settings {
               File[] settings = newDir.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                   return (name.toLowerCase().endsWith(".prop") && name
-                      .toLowerCase().indexOf("settings") == -1)
-                      || (name.toLowerCase().endsWith(".dat") && name
-                          .toLowerCase().indexOf("tv-data-inventory") == -1);
+                           .toLowerCase().indexOf("settings") == -1)
+                         || (name.toLowerCase().endsWith(".dat") && name
+                           .toLowerCase().indexOf("tv-data-inventory") == -1);
                 }
               });
 
@@ -297,31 +302,31 @@ public class Settings {
                 }
               }
 
-              if (version1 && !(new File(oldDirectoryName, newDir.getName())).isDirectory())
+              if (version1
+                  && !(new File(oldDirectoryName, newDir.getName()))
+                      .isDirectory())
                 oldDir.renameTo(new File(System.getProperty("user.home", "")
                     + File.separator + "tvbrowser_BACKUP"));
             }
 
             /*
-             * Test if a settings file exist in the user directory, if so the
-             * previous version was 2.0 and higher. So move the settings to
-             * backup.
+             * Test if a settings file exist in the user directory, move the 
+             * settings to backup.
              */
             if ((new File(getUserDirectoryName(), SETTINGS_FILE)).isFile()) {
-              File backupDir = new File(getUserDirectoryName(), "BACKUP");
+              final File backupDir = new File(getUserDirectoryName(), "BACKUP");
               if (backupDir.mkdirs()) {
                 mLog.info("moving the settings of old settings dir to backup");
                 File[] files = oldDir.listFiles(new FileFilter() {
                   public boolean accept(File pathname) {
-                    return pathname.isFile()
-                        || pathname.getName().compareToIgnoreCase("filters") == 0
-                        || pathname.getName().compareToIgnoreCase("plugins") == 0;
+                    return pathname.compareTo(newDir) != 0
+                        && pathname.getName().compareToIgnoreCase("tvdata") != 0
+                        && pathname.compareTo(backupDir) != 0;
                   }
                 });
 
                 for (int i = 0; i < files.length; i++)
-                  files[i].renameTo(new File(backupDir.getAbsolutePath(),
-                      files[i].getName()));
+                  files[i].renameTo(new File(backupDir,files[i].getName()));
               }
             }
           } catch (IOException e) {
