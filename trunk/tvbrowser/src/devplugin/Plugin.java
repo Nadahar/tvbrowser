@@ -217,6 +217,7 @@ abstract public class Plugin implements Marker,ContextMenuIf {
    * @param icon Icon to load (without extension)
    * @param size Size of the Icon
    * @return The Icon
+   * @since 2.2
    */
   final public ImageIcon createImageIcon(String category, String icon, int size) {
     return getPluginManager().getIconFromTheme(this, category, icon, size);
@@ -228,6 +229,7 @@ abstract public class Plugin implements Marker,ContextMenuIf {
    * @param icon Icon to load
    * @param size Size of the Icon
    * @return The Icon
+   * @since 2.2
    */
   final public ImageIcon createImageIcon(ThemeIcon icon) {
     return getPluginManager().getIconFromTheme(this, icon);
@@ -528,6 +530,7 @@ abstract public class Plugin implements Marker,ContextMenuIf {
    * This Function uses the Icon-Theme-Function of the TV-Browser. For details see {@link PluginManager#getIconFromTheme(Plugin, String, String, int)}
    * 
    * @return ThemeIcon that identifies the Icon in the Theme
+   * @since 2.2
    */
   public ThemeIcon getMarkIconFromTheme() {
     return null;
