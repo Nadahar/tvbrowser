@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
@@ -165,12 +166,26 @@ public class ChannelGroupManager {
   public ChannelGroup[] getSubscribedGroups(TvDataServiceProxy proxy) {
     String[] subscribedGroupIds = getSubscribedGroupIds();
     ArrayList list = (ArrayList)mServiceToGroupsMap.get(proxy);
-        
+    
     if (list == null) {
       return new ChannelGroup[]{};
     }
+    
+    ArrayList list2 = new ArrayList();
+    Iterator it = list.iterator();
+    
+    while(it.hasNext()) {
+      ChannelGroup group = (ChannelGroup)it.next();
+      String id = createId(proxy, group);
+      for(int i = 0; i < subscribedGroupIds.length; i++) {
+        if(id.compareTo(subscribedGroupIds[i]) == 0) {
+          list2.add(group);
+          break;
+        }
+      }
+    }
 
-    return (ChannelGroup[])list.toArray(new ChannelGroup[list.size()]);
+    return (ChannelGroup[])list2.toArray(new ChannelGroup[list2.size()]);
   }
 
 
