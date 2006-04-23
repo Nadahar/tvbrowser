@@ -45,7 +45,7 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
   public abstract Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
 
   public final Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
-    ChannelGroup[] groups = ChannelGroupManager.getInstance().getSubscribedGroups();
+    ChannelGroup[] groups = ChannelGroupManager.getInstance().getSubscribedGroups(this);
     monitor.setMaximum(groups.length);
     ArrayList list = new ArrayList();
     for (int i=0; i<groups.length; i++) {
@@ -61,7 +61,7 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
 
 
   public Channel[] getAvailableChannels() {
-    ChannelGroup[] groups = ChannelGroupManager.getInstance().getSubscribedGroups();
+    ChannelGroup[] groups = ChannelGroupManager.getInstance().getSubscribedGroups(this);
     ArrayList list = new ArrayList();
     for (int i=0; i<groups.length; i++) {
       Channel[] ch = getAvailableChannels(groups[i]);

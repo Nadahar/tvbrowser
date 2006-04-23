@@ -164,18 +164,10 @@ public class ChannelGroupManager {
 
   public ChannelGroup[] getSubscribedGroups(TvDataServiceProxy proxy) {
     String[] subscribedGroupIds = getSubscribedGroupIds();
-    ChannelGroup[] availableGroups = (ChannelGroup[])mServiceToGroupsMap.get(proxy);
-    if (availableGroups == null) {
+    ArrayList list = (ArrayList)mServiceToGroupsMap.get(proxy);
+        
+    if (list == null) {
       return new ChannelGroup[]{};
-    }
-
-    ArrayList list = new ArrayList();
-    for (int i=0; i<subscribedGroupIds.length; i++) {
-      for (int k=0; k<availableGroups.length; k++) {
-        if (subscribedGroupIds[i].equals(availableGroups[k].getId())) {
-          list.add(availableGroups[k]);
-        }
-      }
     }
 
     return (ChannelGroup[])list.toArray(new ChannelGroup[list.size()]);
