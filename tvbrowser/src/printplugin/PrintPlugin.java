@@ -79,12 +79,14 @@ public class PrintPlugin extends Plugin {
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(PrintPlugin.class);
 
-
   private static final String SCHEME_FILE_DAYPROGRAM = "printplugin.dayprog.schemes";
   private static final String SCHEME_FILE_QUEUE = "printplugin.queue.schemes";
 
   private static PrintPlugin mInstance;
 
+  /** Global Settings for the PrintPlugin */
+  private Properties mSettings;
+  
   public PrintPlugin() {
     mInstance = this;
   }
@@ -113,11 +115,6 @@ public class PrintPlugin extends Plugin {
     }
     root.update();
     root.addAction(new EmptyQueueAction());
-  }
-
-  public void readData(ObjectInputStream in) throws IOException,
-  ClassNotFoundException {
-    ProgramInfoPrintSettings.getInstance().readData(in);
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
@@ -364,11 +361,24 @@ public class PrintPlugin extends Plugin {
   }
 
   public void loadSettings(Properties settings) {
+    mSettings = settings;
+  }
 
+  public Properties storeSettings() {
+    return mSettings;
+  }
+  
+  public void readData(ObjectInputStream in) throws IOException,
+  ClassNotFoundException {
+    ProgramInfoPrintSettings.getInstance().readData(in);
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
     storeRootNode();
     ProgramInfoPrintSettings.getInstance().writeData(out);
+  }
+
+  public Properties getSettings() {
+    return mSettings;
   }
 }

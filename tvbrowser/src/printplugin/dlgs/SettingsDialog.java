@@ -146,7 +146,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
         }
         else {
           PreviewDlg dlg = new PreviewDlg(parent, job.getPrintable(), mPageFormat, job.getNumOfPages());
-          util.ui.UiUtilities.centerAndShow(dlg);
+          dlg.setVisible(true);
         }
       }
     });

@@ -44,6 +44,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -54,6 +55,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
+import printplugin.PrintPlugin;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -171,7 +173,7 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     JButton close = new JButton(mLocalizer.msg("close", "Close"));
     close.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        setVisible(false);
+        close();
       }
     });
     closePanel.add(close);
@@ -181,6 +183,31 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     updateDialogState();
     
     pack();    
+    
+    Properties prop = PrintPlugin.getInstance().getSettings();
+
+    try {
+      if ((prop.getProperty("PreviewDlg.Width") != null) && (prop.getProperty("PreviewDlg.Height") != null)) {
+        int width = Integer.parseInt(prop.getProperty("PreviewDlg.Width"));
+        int height = Integer.parseInt(prop.getProperty("PreviewDlg.Height"));
+        setSize(width, height);
+      }
+          
+      if ((prop.getProperty("PreviewDlg.X") != null) && (prop.getProperty("PreviewDlg.Y") != null)){
+        int x = Integer.parseInt(prop.getProperty("PreviewDlg.X"));
+        int y = Integer.parseInt(prop.getProperty("PreviewDlg.Y"));
+        setLocation(x, y);
+      } else {
+        setLocationRelativeTo(getParent());
+      }
+      
+      if (prop.getProperty("PreviewDlg.Zoom") != null) {
+        double zoom = Double.parseDouble(prop.getProperty("PreviewDlg.Zoom"));
+        mPreviewComponent.setZoom(zoom);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
    
     mPrevBt.addActionListener(this);
     mNextBt.addActionListener(this); 
@@ -231,6 +258,14 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
   }
 
   public void close() {
+    Properties prop = PrintPlugin.getInstance().getSettings();
+    
+    prop.setProperty("PreviewDlg.X", Integer.toString(this.getLocationOnScreen().x));
+    prop.setProperty("PreviewDlg.Y", Integer.toString(this.getLocationOnScreen().y));
+    prop.setProperty("PreviewDlg.Width", Integer.toString(this.getWidth()));
+    prop.setProperty("PreviewDlg.Height", Integer.toString(this.getHeight()));
+    prop.setProperty("PreviewDlg.Zoom", Double.toString(mPreviewComponent.getZoom()));
+    
     dispose();
   }
   
@@ -253,6 +288,17 @@ class PreviewComponent extends JComponent {
     mPageIndex = 0;
   }
   
+  public double getZoom() {
+    return mZoom;
+  }
+  
+  public void setZoom(double zoom) {
+    mZoom = zoom;
+    setPreferredSize(new Dimension((int)(mPageFormat.getWidth()*mZoom), (int)(mPageFormat.getHeight()*mZoom)));
+    revalidate();
+    repaint();
+  }
+  
   public boolean minZoom() {
     return (mZoom <= 0.5);
   }
@@ -262,19 +308,17 @@ class PreviewComponent extends JComponent {
   }
 
   public void zoomIn() {
-    if (mZoom < 2.5)
+    if (mZoom < 2.5) {
       mZoom += 0.2;
-    setPreferredSize(new Dimension((int)(mPageFormat.getWidth()*mZoom), (int)(mPageFormat.getHeight()*mZoom)));
-    revalidate();
-    repaint();
+      setZoom(mZoom);
+    }
   }
 
   public void zoomOut() {
-    if (mZoom > 0.5)
+    if (mZoom > 0.5) {
       mZoom -= 0.2;
-    setPreferredSize(new Dimension((int)(mPageFormat.getWidth()*mZoom), (int)(mPageFormat.getHeight()*mZoom)));
-    revalidate();
-    repaint();
+      setZoom(mZoom);
+    }
   }
 
   public void next() {
