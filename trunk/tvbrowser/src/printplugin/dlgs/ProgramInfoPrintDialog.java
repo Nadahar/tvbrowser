@@ -147,7 +147,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
         DocumentRenderer printJob = createPrintjob(program, fontChooser, printImage);
         
         PreviewDlg dlg = new PreviewDlg(mDialog, printJob, mPageFormat, printJob.getPageCount());
-        util.ui.UiUtilities.centerAndShow(dlg);
+        dlg.setVisible(true);
       }
     });
     
