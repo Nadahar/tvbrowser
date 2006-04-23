@@ -83,7 +83,7 @@ public class TvDataBase {
 
     // Load inventory
     mTvDataInventory = new TvDataInventory();
-    File file = new File(Settings.getUserDirectoryName(), INVENTORY_FILE);
+    File file = new File(Settings.getUserSettingsDirName(), INVENTORY_FILE);
     if (file.exists()) {
       try {
         mTvDataInventory.readData(file);
@@ -192,7 +192,7 @@ public class TvDataBase {
   }
 
   public void close() throws IOException {
-    File file = new File(Settings.getUserDirectoryName(), INVENTORY_FILE);
+    File file = new File(Settings.getUserSettingsDirName(), INVENTORY_FILE);
     mTvDataInventory.writeData(file);
   }
 
