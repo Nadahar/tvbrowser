@@ -143,7 +143,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       return true;
     }
     for (int i = 0; i < serviceNames.length; i++) {
-      if (service.getClass().getName().equals(serviceNames[i])) {
+      if (service.getId().compareTo(serviceNames[i]) == 0) {
         return true;
       }
     }
@@ -195,6 +195,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         dataServiceArr[i] = mSelectedTvDataServiceArr[i].getId();
       }
       Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
+      
       setVisible(false);
     }
   }
