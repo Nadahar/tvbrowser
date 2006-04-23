@@ -80,7 +80,7 @@ public class ChannelList {
 
 
   public static void loadDayLightSavingTimeCorrections() {
-    Map map = createMap(new File(Settings.getUserDirectoryName(),"daylight_correction.txt"));
+    Map map = createMap(new File(Settings.getUserSettingsDirName(),"daylight_correction.txt"));
 
     Iterator keyIt = map.keySet().iterator();
 
@@ -102,7 +102,7 @@ public class ChannelList {
   }
 
   public static void storeDayLightSavingTimeCorrections() {
-    File f=new File(Settings.getUserDirectoryName(),"daylight_correction.txt");
+    File f=new File(Settings.getUserSettingsDirName(),"daylight_correction.txt");
 
     FileWriter fw;
     PrintWriter out=null;
@@ -302,7 +302,7 @@ public class ChannelList {
    * Loads the Icon-Filenames
    */
   private static void loadChannelIcons() {
-    Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_icons.txt"));
+    Map map = createMap(new File(Settings.getUserSettingsDirName(),"channel_icons.txt"));
 
     Iterator keyIt = map.keySet().iterator();
 
@@ -328,7 +328,7 @@ public class ChannelList {
    * Stores all Icons
    */
   private static void storeChannelIcons() {
-      File f=new File(Settings.getUserDirectoryName(),"channel_icons.txt");
+      File f=new File(Settings.getUserSettingsDirName(),"channel_icons.txt");
 
       FileWriter fw;
       PrintWriter out=null;
@@ -351,7 +351,7 @@ public class ChannelList {
   }
 
   public static void loadChannelNames() {
-    Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_names.txt"));
+    Map map = createMap(new File(Settings.getUserSettingsDirName(),"channel_names.txt"));
 
     Iterator keyIt = map.keySet().iterator();
 
@@ -362,7 +362,7 @@ public class ChannelList {
   }
 
   public static void storeChannelNames() {
-    File f=new File(Settings.getUserDirectoryName(),"channel_names.txt");
+    File f=new File(Settings.getUserSettingsDirName(),"channel_names.txt");
 
     FileWriter fw;
     PrintWriter out=null;
@@ -385,7 +385,7 @@ public class ChannelList {
   }
 
   public static void loadChannelWebPages() {
-    Map map = createMap(new File(Settings.getUserDirectoryName(),"channel_webpages.txt"));
+    Map map = createMap(new File(Settings.getUserSettingsDirName(),"channel_webpages.txt"));
 
     Iterator keyIt = map.keySet().iterator();
 
@@ -396,7 +396,7 @@ public class ChannelList {
   }
 
   public static void storeChannelWebPages() {
-    File f=new File(Settings.getUserDirectoryName(),"channel_webpages.txt");
+    File f=new File(Settings.getUserSettingsDirName(),"channel_webpages.txt");
 
     FileWriter fw;
     PrintWriter out=null;

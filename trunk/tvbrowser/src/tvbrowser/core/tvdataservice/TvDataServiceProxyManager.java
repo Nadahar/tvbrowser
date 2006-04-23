@@ -74,7 +74,7 @@ public class TvDataServiceProxyManager {
 
   private void loadServiceSettings(TvDataServiceProxy service) {
     Class c=service.getClass();
-    String dir=Settings.getUserDirectoryName();
+    String dir=Settings.getUserSettingsDirName();
     File f=new File(dir,service.getId()+".service");
     if (f.exists()) {
       try {
@@ -96,7 +96,7 @@ public class TvDataServiceProxyManager {
   private void storeServiceSettings(TvDataServiceProxy service) {
     Properties prop=service.storeSettings();
     if (prop!=null) {
-      String dir=Settings.getUserDirectoryName();
+      String dir=Settings.getUserSettingsDirName();
       File f=new File(dir);
       if (!f.exists()) {
         f.mkdir();

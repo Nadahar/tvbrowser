@@ -48,7 +48,7 @@ public class FilterList {
   private File mFilterDirectory;
   private ProgramFilter[] mFilterArr;
   private final String FILTER_INDEX="filter.index";
-  public static final String FILTER_DIRECTORY=Settings.getUserDirectoryName()+"/filters";
+  public static final String FILTER_DIRECTORY=Settings.getUserSettingsDirName()+"/filters";
 
 
   private static java.util.logging.Logger mLog

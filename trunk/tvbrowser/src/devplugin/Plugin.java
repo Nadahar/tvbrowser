@@ -784,7 +784,7 @@ abstract public class Plugin implements Marker,ContextMenuIf {
       mRootNode = new PluginTreeNode(this);
 
       ObjectInputStream in;
-      File f = new File(Settings.getUserDirectoryName(),getId()+".node");
+      File f = new File(Settings.getUserSettingsDirName(),getId()+".node");
       try {
         in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f), 0x2000));
         mRootNode.load(in);
@@ -801,7 +801,7 @@ abstract public class Plugin implements Marker,ContextMenuIf {
 
   public void storeRootNode() {
     ObjectOutputStream out;
-    File f = new File(Settings.getUserDirectoryName(),getId()+".node");
+    File f = new File(Settings.getUserSettingsDirName(),getId()+".node");
     try {
       out = new ObjectOutputStream(new FileOutputStream(f));
       mRootNode.store(out);

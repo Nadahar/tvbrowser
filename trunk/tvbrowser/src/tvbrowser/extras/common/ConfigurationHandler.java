@@ -51,7 +51,7 @@ public class ConfigurationHandler {
 
 
   public void loadData(DataDeserializer deserializer) throws IOException {
-    String userDirectoryName = Settings.getUserDirectoryName();
+    String userDirectoryName = Settings.getUserSettingsDirName();
      File userDirectory = new File(userDirectoryName);
      File datFile = new File(userDirectory, "java."+mFilePrefix + ".dat");
 
@@ -76,7 +76,7 @@ public class ConfigurationHandler {
   }
 
   public void storeData(DataSerializer serializer) throws IOException {
-    String userDirectoryName = Settings.getUserDirectoryName();
+    String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
 
 
@@ -105,8 +105,8 @@ public class ConfigurationHandler {
   }
 
   public Properties loadSettings() throws IOException {
-    String userDirectoryName = Settings.getUserDirectoryName();
-    File propFile = new File(userDirectoryName, mFilePrefix + ".prop");
+    String userDirectoryName = Settings.getUserSettingsDirName();
+    File propFile = new File(userDirectoryName, "java." + mFilePrefix + ".prop");
     BufferedInputStream in = null;
     try {
       if (propFile.exists()) {
@@ -133,7 +133,7 @@ public class ConfigurationHandler {
 
   public void storeSettings(Properties settings) throws IOException {
     // save settings in a temp file
-    String userDirectoryName = Settings.getUserDirectoryName();
+    String userDirectoryName = Settings.getUserSettingsDirName();
     FileOutputStream fOut = null;
     File tmpPropFile = new File(userDirectoryName, mFilePrefix + ".prop.temp");
     try {
@@ -144,7 +144,7 @@ public class ConfigurationHandler {
       }
 
       // Saving suceed -> Delete the old file and rename the temp file
-      File propFile = new File(userDirectoryName, mFilePrefix + ".prop");
+      File propFile = new File(userDirectoryName, "java." + mFilePrefix + ".prop");
       propFile.delete();
       tmpPropFile.renameTo(propFile);
     }

@@ -583,7 +583,7 @@ public class PluginManagerImpl implements PluginManager {
   public TvBrowserSettings getTvBrowserSettings() {
     return new TvBrowserSettings(){
       public String getTvBrowserUserHome() {
-        return Settings.getUserDirectoryName();
+        return Settings.getUserSettingsDirName();
       }
 
       public int[] getTimeButtonTimes() {

@@ -395,7 +395,7 @@ public class PluginProxyManager {
     item.getPlugin().onActivation();
 
     // Get the user directory
-    String userDirectoryName = Settings.getUserDirectoryName();
+    String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
 
     // Load the plugin settings
@@ -439,7 +439,7 @@ public class PluginProxyManager {
       mLog.info("Deactivating plugin " + item.getPlugin().getId());
 
     // Get the user directory
-    String userDirectoryName = Settings.getUserDirectoryName();
+    String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
 
     // Create the user directory if it does not exist

@@ -28,6 +28,9 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,55 +39,101 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.DefaultMarker;
+import tvbrowser.ui.pluginview.Node;
 import util.io.IOUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
-
 /**
  * TV-Browser
- *
+ * 
  * @author Martin Oberhauser
  */
 public class ReminderList implements ActionListener {
 
-  private ReminderTimerListener mListener=null;
+  private ReminderTimerListener mListener = null;
   private javax.swing.Timer mTimer;
-  private DefaultMarker mMarker = new DefaultMarker("reminderplugin.ReminderPlugin", IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
+  private DefaultMarker mMarker = new DefaultMarker(
+      "reminderplugin.ReminderPlugin", IconLoader.getInstance()
+          .getIconFromTheme("apps", "appointment", 16));
 
   private ArrayList mList;
 
   /** List of Blocked Programs. These Programs don't trigger a reminder anymore */
   private ArrayList mBlockedPrograms = new ArrayList();
 
-
-
   public ReminderList() {
     mList = new ArrayList();
   }
 
-
-  public void read(ObjectInputStream in)
-    throws IOException, ClassNotFoundException {
+  public void read(ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
 
     int version = in.readInt();
-    if (version == 1 || version == 3) {  // version == 3 ==> read from plugin tree
+    if (version == 1 || version == 3) { // version == 2 ==> read from plugin
+                                        // tree
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
-        in.readInt();   // read version                        
+        in.readInt(); // read version
         int reminderMinutes = in.readInt();
         Date programDate = new Date(in);
         String programId = (String) in.readObject();
-        Program program = Plugin.getPluginManager().getProgram(programDate, programId);
+        Program program = Plugin.getPluginManager().getProgram(programDate,
+            programId);
 
         // Only add items that were able to load their program
         if (program != null) {
           add(program, reminderMinutes);
         }
+      }
+    } else if (version == 2) {
+      File nodeFile = new File(Settings.getUserSettingsDirName(), "java."
+          + ReminderPlugin.getInstance().getId() + ".node");
+
+      if (nodeFile.isFile()) {
+        ObjectInputStream nodeIn;
+        PluginTreeNode rootNode = new PluginTreeNode("loadReminderPrograms");
+        nodeIn = new ObjectInputStream(new BufferedInputStream(
+            new FileInputStream(nodeFile), 0x2000));
+
+        rootNode.load(nodeIn);
+        rootNode.update();
+        loadPrograms(rootNode.getMutableTreeNode());
+
+        nodeIn.close();
+
+        // The programs were loaded, so delete the .node File.
+        // The loaded programs will be stored in the .dat in future.
+        nodeFile.delete();
+      }
+    }
+  }
+
+  /**
+   * An method to load the programs of a PluginTreeNode.
+   * 
+   * @param node
+   *          The root node to load the programs from
+   */
+  private void loadPrograms(Node node) {
+    for (int i = 0; i < node.getChildCount(); i++) {
+      if (node.getChildAt(i).isLeaf()) {
+        Node childnode = (Node) node.getChildAt(i);
+        if (childnode.getUserObject() instanceof ProgramItem) {
+          ProgramItem pItem = (ProgramItem) childnode.getUserObject();
+
+          ReminderListItem temp = new ReminderListItem(pItem);
+
+          add(temp.getProgram(), temp.getMinutes());
+        }
+      } else {
+        loadPrograms((Node) node.getChildAt(i));
       }
     }
   }
@@ -93,7 +142,7 @@ public class ReminderList implements ActionListener {
     out.writeInt(3); // version
     ReminderListItem[] items = getReminderItems();
     out.writeInt(items.length);
-    for (int i=0; i<items.length; i++) {
+    for (int i = 0; i < items.length; i++) {
       out.writeInt(3);
       out.writeInt(items[i].getMinutes());
       Date date = items[i].getProgram().getDate();
@@ -103,7 +152,7 @@ public class ReminderList implements ActionListener {
   }
 
   public void add(Program[] programs, int minutes) {
-    for (int i=0; i<programs.length; i++) {
+    for (int i = 0; i < programs.length; i++) {
       add(programs[i], minutes);
     }
   }
@@ -113,8 +162,7 @@ public class ReminderList implements ActionListener {
       ReminderListItem item = getReminderItem(program);
       if (item != null) {
         item.incReferenceCount();
-      }
-      else {
+      } else {
         item = new ReminderListItem(program, minutes);
         mList.add(item);
         item.setReferenceCount(1);
@@ -126,19 +174,21 @@ public class ReminderList implements ActionListener {
   /**
    * Only adds a Program if it's not blocked
    * 
-   * @param programs Programs to add
-   * @param minutes remind x Minutes before start
+   * @param programs
+   *          Programs to add
+   * @param minutes
+   *          remind x Minutes before start
    */
   public void addAndCheckBlocked(Program[] programs, int minutes) {
-    for (int i=0; i<programs.length; i++) {
-      if (!contains(programs[i]) && !mBlockedPrograms.contains(programs[i]) && (!programs[i].isExpired())) {
+    for (int i = 0; i < programs.length; i++) {
+      if (!contains(programs[i]) && !mBlockedPrograms.contains(programs[i])
+          && (!programs[i].isExpired())) {
         ReminderListItem item = new ReminderListItem(programs[i], minutes);
         mList.add(item);
         programs[i].mark(mMarker);
       }
     }
   }
-
 
   public void setReminderTimerListener(ReminderTimerListener listener) {
     this.mListener = listener;
@@ -150,21 +200,18 @@ public class ReminderList implements ActionListener {
     }
   }
 
-
-
   public void removeExpiredItems() {
     ReminderListItem[] items = getReminderItems();
-    for (int i=0; i<items.length; i++) {
+    for (int i = 0; i < items.length; i++) {
       if (items[i].getProgram().isExpired()) {
         remove(items[i]);
       }
     }
   }
 
-
   private void remove(ReminderListItem item) {
     item.decReferenceCount();
-    if (item.getReferenceCount()<1) {
+    if (item.getReferenceCount() < 1) {
       mList.remove(item);
       item.getProgram().unmark(mMarker);
     }
@@ -176,7 +223,7 @@ public class ReminderList implements ActionListener {
 
   public boolean contains(Program program) {
     ReminderListItem[] items = getReminderItems();
-    for (int i=0; i<items.length; i++) {
+    for (int i = 0; i < items.length; i++) {
       if (items[i].getProgram().equals(program)) {
         return true;
       }
@@ -184,22 +231,18 @@ public class ReminderList implements ActionListener {
     return false;
   }
 
-
-
-
   public void remove(Program program) {
     ReminderListItem[] items = getReminderItems();
-    for (int i=0; i<items.length; i++) {
+    for (int i = 0; i < items.length; i++) {
       if (items[i].getProgram().equals(program)) {
         remove(items[i]);
       }
     }
   }
 
-
   public ReminderListItem getReminderItem(Program program) {
     ReminderListItem[] items = getReminderItems();
-    for (int i=0; i<items.length; i++) {
+    for (int i = 0; i < items.length; i++) {
       if (items[i].getProgram().equals(program)) {
         return items[i];
       }
@@ -209,33 +252,37 @@ public class ReminderList implements ActionListener {
   }
 
   public ReminderListItem[] getReminderItems() {
-    ReminderListItem[] items = (ReminderListItem[])mList.toArray(new ReminderListItem[mList.size()]);
+    ReminderListItem[] items = (ReminderListItem[]) mList
+        .toArray(new ReminderListItem[mList.size()]);
     Arrays.sort(items);
     return items;
   }
 
   /**
    * Checks all programs, if they currently exists
+   * 
    * @return all remove programs
    */
   public Program[] updatePrograms() {
     ReminderListItem[] items = getReminderItems();
     mList.clear();
     ArrayList removedPrograms = new ArrayList();
-    for (int i=0; i<items.length; i++) {
+    for (int i = 0; i < items.length; i++) {
       items[i].getProgram().unmark(mMarker);
-      Program testProg = Plugin.getPluginManager().getProgram(items[i].getProgram().getDate(), items[i].getProgram().getID());
-      if (testProg == null || testProg.getTitle().toLowerCase().compareTo(items[i].getProgram().getTitle().toLowerCase()) != 0) {
+      Program testProg = Plugin.getPluginManager().getProgram(
+          items[i].getProgram().getDate(), items[i].getProgram().getID());
+      if (testProg == null
+          || testProg.getTitle().toLowerCase().compareTo(
+              items[i].getProgram().getTitle().toLowerCase()) != 0) {
         removedPrograms.add(items[i].getProgram());
-      }
-      else {
+      } else {
         add(testProg, items[i].getMinutes());
         testProg.mark(mMarker);
       }
     }
-    return (Program[])removedPrograms.toArray(new Program[removedPrograms.size()]);
+    return (Program[]) removedPrograms.toArray(new Program[removedPrograms
+        .size()]);
   }
-
 
   public void actionPerformed(ActionEvent event) {
     if (mListener == null) {
@@ -246,10 +293,8 @@ public class ReminderList implements ActionListener {
     Calendar cal = new GregorianCalendar();
     cal.setTime(new java.util.Date());
 
-
-
     ReminderListItem[] items = getReminderItems();
-    for (int i=0; i<items.length; i++) {
+    for (int i = 0; i < items.length; i++) {
       if (isRemindEventRequired(items[i].getProgram(), items[i].getMinutes())) {
         mListener.timeEvent(items[i]);
       }
@@ -267,25 +312,26 @@ public class ReminderList implements ActionListener {
     int m = prog.getMinutes();
     int h = prog.getHours();
 
-    int remindTime = h*60+m - remindMinutes;
-    if (remindTime<0) {
+    int remindTime = h * 60 + m - remindMinutes;
+    if (remindTime < 0) {
       remindTime = -remindTime;
-      int days = remindTime / 1440 +1;
+      int days = remindTime / 1440 + 1;
       remindTime = 1440 - (remindTime % 1440);
       remindDate = remindDate.addDays(-days);
     }
     devplugin.Date today = new devplugin.Date();
     int diff = today.compareTo(remindDate);
 
-    return diff > 0 || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime);
+    return diff > 0
+        || (diff == 0 && IOUtilities.getMinutesAfterMidnight() >= remindTime);
 
   }
-
 
   /**
    * Block a Program. This Program won't get reminded
    * 
-   * @param prg Program to block
+   * @param prg
+   *          Program to block
    */
   public void blockProgram(Program prg) {
     mBlockedPrograms.add(prg);
@@ -293,7 +339,9 @@ public class ReminderList implements ActionListener {
 
   /**
    * Remove a Program from the Block-List
-   * @param prg Program to remove from Block-List
+   * 
+   * @param prg
+   *          Program to remove from Block-List
    */
   public void unblockProgram(Program prg) {
     mBlockedPrograms.remove(prg);
@@ -302,13 +350,13 @@ public class ReminderList implements ActionListener {
   /**
    * Is Program Blocked?
    * 
-   * @param prg Check if this Program is blocked
+   * @param prg
+   *          Check if this Program is blocked
    * @return true, if Program is blocked
    */
   public boolean isBlocked(Program prg) {
     return mBlockedPrograms.contains(prg);
   }
-
 
   /**
    * Stop the Timer
@@ -316,9 +364,5 @@ public class ReminderList implements ActionListener {
   public void stopTimer() {
     mTimer.stop();
   }
-
-
-
-
 
 }
