@@ -51,6 +51,7 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
 import tvbrowser.extras.common.DefaultMarker;
+import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
@@ -168,14 +169,13 @@ public class FavoritesPlugin implements ContextMenuIf{
     }catch(IOException e) {
       ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavorites","Could not load favorites"), e);
     }
-
+    
     try {
       Properties prop = mConfigurationHandler.loadSettings();
       loadSettings(prop);
     }catch(IOException e) {
       ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavoritesSettings","Could not load settings for favorites"), e);
     }
-
   }
 
   public void store() {
@@ -242,6 +242,8 @@ public class FavoritesPlugin implements ContextMenuIf{
       }
     }
 
+    boolean reminderFound = false;
+    
     // Get the client plugins
     size = in.readInt();
     mClientPluginIdArr = new String[size];
@@ -254,6 +256,31 @@ public class FavoritesPlugin implements ContextMenuIf{
         mClientPluginIdArr[i] = "java." + className;
       } else {
         mClientPluginIdArr[i] = (String) in.readObject();
+      }
+      
+      if(version <= 2) {
+        if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") == 0)
+          reminderFound = true;
+      }
+    }
+    
+    if(version <= 2 && reminderFound) {
+      ArrayList clientPluginIdArr = new ArrayList();
+      
+      for(int i = 0; i < mClientPluginIdArr.length; i++)
+        if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") != 0)
+          clientPluginIdArr.add(mClientPluginIdArr[i]);
+      
+      mClientPluginIdArr = (String[])clientPluginIdArr.toArray(new String[clientPluginIdArr.size()]);
+      
+      for(int i = 0; i < mFavoriteArr.length; i++) {
+        mFavoriteArr[i].getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
+        
+        try {
+          mFavoriteArr[i].updatePrograms();
+        } catch (TvBrowserException exc) {
+          ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed", "Could not update favorite"), exc);
+        }
       }
     }
 

@@ -213,7 +213,9 @@ public class AdvancedFavorite extends Favorite {
         String programId = (String) in.readObject();
       }
     }
-
+    
+    getReminderConfiguration().setReminderServices(new String[] {});
+    
     try {
       this.updatePrograms();
     } catch (TvBrowserException exc) {
