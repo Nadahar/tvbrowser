@@ -185,6 +185,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
           createDialog();
         if (mSearchRunning && mWaitingDialog != null) {
           UiUtilities.centerAndShow(mWaitingDialog);
+          mWaitingDialog.setVisible(mSearchRunning);
         }
           
       }

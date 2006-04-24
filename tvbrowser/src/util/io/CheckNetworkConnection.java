@@ -161,7 +161,9 @@ class CheckNetworkConnection {
 //      panel.add(bar, cc.xy(2, 6));
 
       mWaitingDialog.pack();
-      UiUtilities.centerAndShow(mWaitingDialog);
+      if(mCheckRunning)
+        UiUtilities.centerAndShow(mWaitingDialog);
+      mWaitingDialog.setVisible(mCheckRunning);
     }
   }
 
