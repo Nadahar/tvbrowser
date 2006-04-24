@@ -285,12 +285,17 @@ public class SystemTray {
       searchForToAddingPrograms();
 
     if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()) {
-      if (!Settings.propTrayNowProgramsInSubMenu.getBoolean())
+      if (!Settings.propTrayNowProgramsInSubMenu.getBoolean() &&
+          Settings.propTrayNowProgramsEnabled.getBoolean() && 
+          Settings.propTraySoonProgramsEnabled.getBoolean())
         mTrayMenu.addSeparator();
       addTimeInfoMenu();
     }
 
-    mTrayMenu.addSeparator();
+    if( Settings.propTrayNowProgramsEnabled.getBoolean() ||
+        Settings.propTraySoonProgramsEnabled.getBoolean() ||
+        Settings.propTrayOnTimeProgramsEnabled.getBoolean())
+      mTrayMenu.addSeparator();
     mTrayMenu.add(mConfigure);
     mTrayMenu.addSeparator();
     mTrayMenu.add(mQuitMenuItem);
@@ -396,9 +401,7 @@ public class SystemTray {
        * the menu.
        */
       
-      if (((Settings.propTraySoonProgramsEnabled.getBoolean() && (!nextPrograms.isEmpty() || !nextAdditionalPrograms.isEmpty())) ||
-          (Settings.propTrayNowProgramsEnabled.getBoolean() && (!programs.isEmpty() || !additional.isEmpty()))) &&
-          !Settings.propTrayNowProgramsInSubMenu.getBoolean())
+      if (Settings.propTrayImportantProgramsEnabled.getBoolean())
         mTrayMenu.addSeparator();
       
       boolean now = false;
