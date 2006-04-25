@@ -211,10 +211,16 @@ public class ReminderPlugin implements ContextMenuIf {
     }
     mSettings = settings;
 
-    String plugins = settings.getProperty("usethisplugin","");
+    String plugins = settings.getProperty("usethisplugin","").trim();
+    boolean sendEnabled = true;
     
-    if(plugins.length() > 0) {
-      if(plugins.indexOf(";") == 1) {
+    if(settings.containsKey("usesendplugin")) {
+      sendEnabled = settings.getProperty("usesendplugin","true").compareToIgnoreCase("true") == 0;
+      settings.remove("usesendplugin");
+    }
+      
+    if(plugins.length() > 0 && sendEnabled) {
+      if(plugins.indexOf(";") == -1) {
         mClientPluginIdArr = new String[1];
         mClientPluginIdArr[0] = plugins;
       }
