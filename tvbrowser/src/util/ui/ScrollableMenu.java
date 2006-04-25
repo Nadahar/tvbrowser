@@ -74,7 +74,7 @@ import javax.swing.plaf.basic.BasicPopupMenuUI;
  */
 public class ScrollableMenu extends JMenu {
 
-  private static int maxItemsToDisplay = 25;
+  private static int maxItemsToDisplay = 35;
 
   private static boolean DOWN = true;
 
