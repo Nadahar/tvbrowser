@@ -213,7 +213,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     } else if (e.getSource() == mUpBtn) {
       UiUtilities.moveSelectedItems(mFilterListBox,mFilterListBox.getSelectedIndex()-1,true);
     } else if (e.getSource() == mDownBtn) {
-      UiUtilities.moveSelectedItems(mFilterListBox,mFilterListBox.getSelectedIndex()+2,true);
+      UiUtilities.moveSelectedItems(mFilterListBox,mFilterListBox.getSelectedIndex()+ mFilterListBox.getSelectedIndices().length + 1,true);
     } else if (e.getSource() == mOkBtn) {
       Object[] o = mFilterListModel.toArray();
       ProgramFilter[] filters = new ProgramFilter[o.length];
