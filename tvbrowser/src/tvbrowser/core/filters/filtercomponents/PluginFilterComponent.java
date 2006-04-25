@@ -54,6 +54,7 @@ public class PluginFilterComponent implements FilterComponent {
   private PluginProxy mPlugin;
   
   private String mDescription, mName;
+  private String mPluginId;
   
   public PluginFilterComponent(String name, String desc) {
     mName = name;
@@ -65,14 +66,13 @@ public class PluginFilterComponent implements FilterComponent {
   }
     
   public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-    String pluginId;
     if (version == 1) {
       String pluginClassName = (String) in.readObject();
-      pluginId = "java." + pluginClassName;
+      mPluginId = "java." + pluginClassName;
     } else {
-      pluginId = (String) in.readObject();
+      mPluginId = (String) in.readObject();
     }
-    mPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+    mPlugin = PluginProxyManager.getInstance().getPluginForId(mPluginId);
   }
     
   public void write(ObjectOutputStream out) throws IOException {
@@ -94,6 +94,13 @@ public class PluginFilterComponent implements FilterComponent {
     }        
         
     return false;
+  }
+  
+  /**
+   * @return The id of the used plugin.
+   */
+  public String getPluginId() {
+    return mPluginId;
   }
     
   public JPanel getPanel() {
