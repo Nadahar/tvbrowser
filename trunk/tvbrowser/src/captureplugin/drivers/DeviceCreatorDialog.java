@@ -126,6 +126,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         panel.add(mDriverCombo, input);
 
         mDesc = new JTextArea();
+        mDesc.setEditable(false);
         mDesc.setLineWrap(true);
         mDesc.setWrapStyleWord(true);
         
