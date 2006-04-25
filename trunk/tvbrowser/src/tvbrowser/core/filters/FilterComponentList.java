@@ -188,6 +188,20 @@ public class FilterComponentList {
    
     if (filterComponent!=null) {
       filterComponent.read(in, version);
+      
+      /*
+       * If the FilterComponent is for a Plugin we have to check
+       * if it was a Plugin that is in the core now. If it is so
+       * we have to change the FilterComponent to the right one.
+       */
+      if(filterComponent instanceof PluginFilterComponent) {
+        String pluginId = ((PluginFilterComponent)filterComponent).getPluginId();
+        
+        if(pluginId.compareTo("java.reminderplugin.ReminderPlugin") == 0)
+          filterComponent = new ReminderFilterComponent(name, description);
+        else if(pluginId.compareTo("java.favoritesplugin.FavoritesPlugin") == 0)
+          filterComponent = new FavoritesFilterComponent(name, description);
+      }
     } 
     return filterComponent; 
   }
