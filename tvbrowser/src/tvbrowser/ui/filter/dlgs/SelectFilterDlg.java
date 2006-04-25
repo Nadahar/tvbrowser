@@ -55,11 +55,14 @@ import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
+import util.ui.DragAndDropMouseListener;
+import util.ui.ListDragAndDropHandler;
+import util.ui.ListDropAction;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.ProgramFilter;
 
-public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf {
+public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf, ListDropAction {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SelectFilterDlg.class);
 
@@ -95,6 +98,10 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     }
 
     mFilterListBox = new JList(mFilterListModel);
+    
+    // Register DnD on the List.
+    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFilterListBox,mFilterListBox,this);    
+    new DragAndDropMouseListener(mFilterListBox,mFilterListBox,this,dnDHandler);
     
     mFilterListBox.setVisibleRowCount(5);
 
@@ -204,18 +211,9 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
       mFilterList.remove((ProgramFilter) mFilterListBox.getSelectedValue());
       updateBtns();
     } else if (e.getSource() == mUpBtn) {
-      int fromInx = mFilterListBox.getSelectedIndex();
-      Object o = mFilterListBox.getSelectedValue();
-      mFilterListModel.removeElementAt(fromInx);
-      mFilterListModel.insertElementAt(o, fromInx - 1);
-      mFilterListBox.setSelectedIndex(fromInx - 1);
-
+      UiUtilities.moveSelectedItems(mFilterListBox,mFilterListBox.getSelectedIndex()-1,true);
     } else if (e.getSource() == mDownBtn) {
-      int fromInx = mFilterListBox.getSelectedIndex();
-      Object o = mFilterListBox.getSelectedValue();
-      mFilterListModel.removeElementAt(fromInx);
-      mFilterListModel.insertElementAt(o, fromInx + 1);
-      mFilterListBox.setSelectedIndex(fromInx + 1);
+      UiUtilities.moveSelectedItems(mFilterListBox,mFilterListBox.getSelectedIndex()+2,true);
     } else if (e.getSource() == mOkBtn) {
       Object[] o = mFilterListModel.toArray();
       ProgramFilter[] filters = new ProgramFilter[o.length];
@@ -237,6 +235,10 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   public void close() {
     mFilterList.create();
     setVisible(false);
+  }
+
+  public void drop(JList source, JList target, int rows, boolean move) {
+    UiUtilities.moveSelectedItems(target,rows,true);
   }
 
 }
