@@ -179,7 +179,8 @@ public class MutableProgram implements Program {
    * @see #removeChangeListener
    */
   public void addChangeListener(ChangeListener listener) {
-    mListenerList.add(listener);
+    if (!mListenerList.contains(listener))
+      mListenerList.add(listener);
   }
 
 
