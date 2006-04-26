@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
+import java.util.Vector;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -67,7 +68,7 @@ public class MutableProgram implements Program {
   private static final PluginAccess[] EMPTY_PLUGIN_ARR = new PluginAccess[0];
 
   /** Contains all listeners that listen for events from this program. */
-  private EventListenerList mListenerList;
+  private Vector mListenerList;
 
   /** Containes all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
@@ -134,7 +135,7 @@ public class MutableProgram implements Program {
     }
     
     mFieldHash = new HashMap();
-    mListenerList = new EventListenerList();
+    mListenerList = new Vector();
     mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
     mOnAir = false;
 
@@ -178,7 +179,7 @@ public class MutableProgram implements Program {
    * @see #removeChangeListener
    */
   public void addChangeListener(ChangeListener listener) {
-    mListenerList.add(ChangeListener.class, listener);
+    mListenerList.add(listener);
   }
 
 
@@ -191,7 +192,7 @@ public class MutableProgram implements Program {
    * @see #addChangeListener
    */
   public void removeChangeListener(ChangeListener listener) {
-    mListenerList.remove(ChangeListener.class, listener);
+    mListenerList.remove(listener);
   }
 
 
@@ -203,14 +204,11 @@ public class MutableProgram implements Program {
    * @see EventListenerList
    */
   protected void fireStateChanged() {
-    Object[] listeners = mListenerList.getListenerList();
-    ChangeEvent changeEvent = null;
-    for (int i = listeners.length - 2; i >= 0; i -= 2) {
-      if (listeners[i]==ChangeListener.class) {
-        if (changeEvent == null) {
-          changeEvent = new ChangeEvent(this);
-        }
-        ((ChangeListener)listeners[i+1]).stateChanged(changeEvent);
+    Object[] listeners = mListenerList.toArray();
+    ChangeEvent changeEvent = new ChangeEvent(this);
+    for (int i = listeners.length-1; i >= 0;i--) {
+      if (listeners[i] instanceof ChangeListener) {
+        ((ChangeListener)listeners[i]).stateChanged(changeEvent);
       }
     }
   }
