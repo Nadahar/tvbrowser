@@ -48,6 +48,7 @@ public class SettingsItem {
   public static final String CHANNELS = "#channels";
   public static final String WEBBROWSER = "#webbrowser";
   public static final String CONTEXTMENU = "#contextmenu";
+  public static final String LOOKANDFEEL = "#lookandfeel";
   
   private SettingsItem () {}
 }
