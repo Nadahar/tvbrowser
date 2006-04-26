@@ -30,6 +30,8 @@ import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import devplugin.Program;
@@ -70,13 +72,20 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
      * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable,
      *      java.lang.Object, boolean, boolean, int, int)
      */
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
         if (value instanceof Program) {
             Program program = (Program) value;
 
             mProgramPanel.setProgram(program);
+            
+            program.addChangeListener(new ChangeListener() {
+              public void stateChanged(ChangeEvent e) {
+                table.updateUI();
+              }
+            });
+            
             mProgramPanel.setTextColor(label.getForeground());
             mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
             mHeaderLb.setForeground(label.getForeground());            

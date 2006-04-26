@@ -36,6 +36,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import devplugin.Program;
 
@@ -86,7 +88,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @see ListSelectionModel
    * @see ListModel
    */
-  public Component getListCellRendererComponent(JList list, Object value,
+  public Component getListCellRendererComponent(final JList list, Object value,
     int index, boolean isSelected, boolean cellHasFocus)
   {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
@@ -97,6 +99,12 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       
       mProgramPanel.setProgram(program);
       mProgramPanel.setTextColor(label.getForeground());
+      
+      program.addChangeListener(new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+          list.updateUI();
+        }
+      });
       mHeaderLb.setText(program.getDate() + " - " + program.getChannel().getName());
       mHeaderLb.setForeground(label.getForeground());
       mMainPanel.setBackground(label.getBackground());
