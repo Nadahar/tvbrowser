@@ -33,6 +33,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import tvbrowser.core.Settings;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.HTMLTextHelper;
 import util.ui.html.HorizontalLine;
@@ -100,7 +101,8 @@ public class ProgramTextCreator {
     buffer.append(";\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
-    buffer.append(doc.createCompTag(new JLabel(prog.getChannel().getIcon())));
+    if (Settings.propEnableChannelIcons.getBoolean())
+      buffer.append(doc.createCompTag(new JLabel(prog.getChannel().getIcon())));
     buffer.append("</p></td><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 
