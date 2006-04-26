@@ -38,14 +38,17 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -54,6 +57,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.tablebackgroundstyles.BlankBackgroundStyle;
@@ -72,6 +77,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
+import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 /**
@@ -99,6 +105,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JCheckBox mMouseOverCb;
 
   private ColorLabel mMouseOverColorLb;
+
+  private JRadioButton mShowNameAndIcon;
+
+  private JRadioButton mShowIcon;
+
+  private JRadioButton mShowName;
 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -252,6 +264,59 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     });
 
     mSettingsPn.add(mConfigBackgroundStyleBt, cc.xy(6, 17));
+
+    // Miscellaneous *********************************************
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("3dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("3dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("3dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    layout.appendRow(new RowSpec("5dlu"));
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelIcons.Title", "Channel Icons")), cc.xyw(1,19,8));
+    
+    mShowNameAndIcon = new JRadioButton(mLocalizer.msg("channelIcons.showNameAndIcon", "Show Channel Name and Icon"));
+    mShowIcon = new JRadioButton(mLocalizer.msg("channelIcons.showIcon", "Show only Channel Icon"));
+    mShowName = new JRadioButton(mLocalizer.msg("channelIcons.showName", "Show only Channel Name"));
+    
+    ButtonGroup group = new ButtonGroup();
+    group.add(mShowIcon);
+    group.add(mShowNameAndIcon);
+    group.add(mShowName);
+    
+    mSettingsPn.add(mShowNameAndIcon, cc.xyw(2,21,7));
+    mSettingsPn.add(mShowIcon, cc.xyw(2,23,7));
+    mSettingsPn.add(mShowName, cc.xyw(2,25,7));
+    
+    if (Settings.propShowChannelIconsInProgramTable.getBoolean() &&
+        Settings.propShowChannelNamesInProgramTable.getBoolean()) {
+      mShowNameAndIcon.setSelected(true);
+    } else if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+      mShowIcon.setSelected(true);
+    } else {
+      Settings.propShowChannelNamesInProgramTable.setBoolean(true);
+      mShowName.setSelected(true);
+    }
+    updateIconSelection();
+    Settings.propEnableChannelIcons.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+          updateIconSelection();
+      }
+    });
+    
+    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("channelIcons.help","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.LOOKANDFEEL);
+        }
+      }
+    });
+    
+    mSettingsPn.add(pane, cc.xyw(2,27,7));
     
     // Miscellaneous *********************************************
     layout.appendRow(new RowSpec("pref"));
@@ -259,12 +324,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(new RowSpec("pref"));
     layout.appendRow(new RowSpec("5dlu"));
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,19,8));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Miscellaneous", "Miscellaneous")), cc.xyw(1,29,8));
 
     mMouseOverCb = new JCheckBox(mLocalizer.msg("MouseOver", "Mouse-Over-Effect"));
     mMouseOverCb.setSelected(Settings.propMouseOver.getBoolean());
 
-    mSettingsPn.add(mMouseOverCb, cc.xy(2,21));
+    mSettingsPn.add(mMouseOverCb, cc.xy(2,31));
     
     mMouseOverColorLb = new ColorLabel(Settings.propMouseOverColor.getColor());
     mMouseOverColorLb.setStandardColor(Settings.propMouseOverColor.getDefaultColor());
@@ -287,13 +352,24 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     pn1.add(mMouseOverColorLb);
     pn1.add(mouseOverColorChangeBtn);
 
-    mSettingsPn.add(pn1, cc.xy(4, 21));
+    mSettingsPn.add(pn1, cc.xy(4, 31));
     
     updateBackgroundStyleConfigureButton();
 
     return mSettingsPn;
   }
 
+  private void updateIconSelection() {
+    if (!Settings.propEnableChannelIcons.getBoolean()) {
+      mShowNameAndIcon.setEnabled(false);
+      mShowIcon.setEnabled(false);
+      mShowName.setSelected(true);
+    } else {
+      mShowNameAndIcon.setEnabled(true);
+      mShowIcon.setEnabled(true);
+    }
+  }
+  
   private void updateBackgroundStyleConfigureButton() {
     TableBackgroundStyle style = (TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem();
     mConfigBackgroundStyleBt.setEnabled(style.hasContent());
@@ -356,6 +432,17 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propMouseOver.setBoolean(mMouseOverCb.isSelected());
 
     Settings.propMouseOverColor.setColor(mMouseOverColorLb.getColor());
+    
+    if (mShowNameAndIcon.isSelected()) {
+      Settings.propShowChannelIconsInProgramTable.setBoolean(true);
+      Settings.propShowChannelNamesInProgramTable.setBoolean(true);
+    } else if (mShowName.isSelected()) {
+      Settings.propShowChannelIconsInProgramTable.setBoolean(false);
+      Settings.propShowChannelNamesInProgramTable.setBoolean(true);
+    } else if (mShowIcon.isSelected()) {
+      Settings.propShowChannelIconsInProgramTable.setBoolean(true);
+      Settings.propShowChannelNamesInProgramTable.setBoolean(false);
+    }
   }
 
   /**

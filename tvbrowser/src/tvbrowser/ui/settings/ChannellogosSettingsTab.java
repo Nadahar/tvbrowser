@@ -32,7 +32,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
 
@@ -51,32 +50,6 @@ public class ChannellogosSettingsTab implements SettingsTab {
   private JPanel mSettingsPn;
 
   private JCheckBox mShowChannelIconsCb, mProgramtableChIconsCb, mChannellistChIconsCb, mShowChannelNamesCb;
-
-  class LookAndFeelObj {
-    private UIManager.LookAndFeelInfo info;
-
-    public LookAndFeelObj(UIManager.LookAndFeelInfo info) {
-      this.info = info;
-    }
-
-    public String toString() {
-      return info.getName();
-    }
-
-    public String getLFClassName() {
-      return info.getClassName();
-    }
-  }
-
-  private LookAndFeelObj[] getLookAndFeelObjs() {
-    UIManager.LookAndFeelInfo[] info = UIManager.getInstalledLookAndFeels();
-    LookAndFeelObj[] result = new LookAndFeelObj[info.length];
-    for (int i = 0; i < info.length; i++) {
-      result[i] = new LookAndFeelObj(info[i]);
-    }
-
-    return result;
-  }
 
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu, 4dlu, fill:pref:grow, 5dlu", "");
@@ -143,10 +116,10 @@ public class ChannellogosSettingsTab implements SettingsTab {
 
   public void saveSettings() {
     boolean enableChannelIcons = mShowChannelIconsCb.isSelected();
-    Settings.propEnableChannelIcons.setBoolean(enableChannelIcons);
-    Settings.propShowChannelIconsInChannellist.setBoolean(mChannellistChIconsCb.isSelected());
-    Settings.propShowChannelIconsInProgramTable.setBoolean(mProgramtableChIconsCb.isSelected());
-    Settings.propShowChannelNames.setBoolean(mShowChannelNamesCb.isSelected());
+//    Settings.propEnableChannelIcons.setBoolean(enableChannelIcons);
+//    Settings.propShowChannelIconsInChannellist.setBoolean(mChannellistChIconsCb.isSelected());
+//    Settings.propShowChannelIconsInProgramTable.setBoolean(mProgramtableChIconsCb.isSelected());
+//    Settings.propShowChannelNames.setBoolean(mShowChannelNamesCb.isSelected());
   }
 
   public Icon getIcon() {

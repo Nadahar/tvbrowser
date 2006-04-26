@@ -432,9 +432,9 @@ public class Settings {
       model.setDate(mainFrame.getCurrentSelectedDate(), null, null);
     }
 
-    propArr = new Property[] { propEnableChannelIcons,
+    propArr = new Property[] { propEnableChannelIcons, propShowChannelNames,
         propShowChannelIconsInProgramTable, propShowChannelIconsInChannellist,
-        propShowChannelNames };
+        propShowChannelNamesInProgramTable, propShowChannelNamesInChannellist };
     if (mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().updateChannelPanel();
       mainFrame.updateChannelChooser();
@@ -960,9 +960,15 @@ public class Settings {
   public static final BooleanProperty propShowChannelIconsInProgramTable = new BooleanProperty(
       mProp, "showChannelIconsInProgramtable", true);
 
+  public static final BooleanProperty propShowChannelNamesInProgramTable = new BooleanProperty(
+      mProp, "showChannelNamesInProgramtable", true);
+  
   public static final BooleanProperty propShowChannelIconsInChannellist = new BooleanProperty(
       mProp, "showChannelIconsInChannellist", true);
 
+  public static final BooleanProperty propShowChannelNamesInChannellist = new BooleanProperty(
+      mProp, "showChannelNamesInChannellist", true);
+  
   public static final StringArrayProperty propSubscribedChannelGroups = new StringArrayProperty(
       mProp, "subscribedChannelGroups", null);
 

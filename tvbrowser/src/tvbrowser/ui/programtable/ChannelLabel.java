@@ -28,11 +28,18 @@ public class ChannelLabel extends util.ui.ChannelLabel {
   public ChannelLabel(Channel ch) {
     super();
     mChannel = ch;
-    setIcon(ch.getIcon());
-        /*Settings.propEnableChannelIcons.getBoolean()) {
+
+    if (!Settings.propEnableChannelIcons.getBoolean()) {
+      Settings.propShowChannelIconsInProgramTable.setBoolean(false);
+      Settings.propShowChannelNamesInProgramTable.setBoolean(true);
+    }
+    
+    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
       // Set Icon if it's available
-      if (Settings.propShowChannelIconsInProgramTable.getBoolean()*/
-    if ( !(Settings.propEnableChannelIcons.getBoolean() && Settings.propShowChannelIconsInProgramTable.getBoolean()) || Settings.propShowChannelNames.getBoolean()) {
+      setIcon(ch.getIcon());
+    }
+    
+    if (Settings.propShowChannelNamesInProgramTable.getBoolean()) {
       // Set the channel name as text
       String channelName = ch.getName();
       if (channelName == null) {
@@ -88,14 +95,10 @@ public class ChannelLabel extends util.ui.ChannelLabel {
   }
 
   public void setIcon(Icon icon) {
-    if (Settings.propEnableChannelIcons.getBoolean()) {
-      // Set Icon if it's available
-      if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
-        super.setIcon(icon);
-      }
+    if (Settings.propShowChannelIconsInProgramTable.getBoolean()) {
+      super.setIcon(icon);
     }
   }
-
   
   public static void fontChanged() {
     boolean useDefaults = Settings.propUseDefaultFonts.getBoolean();

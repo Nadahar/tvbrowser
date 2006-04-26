@@ -34,6 +34,7 @@ import java.io.File;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -69,6 +70,8 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   private JButton mConfigBtn;
 
   private JComboBox mIconThemes;
+  
+  private JCheckBox mUseChannelLogos;
 
   class LookAndFeelObj {
     private UIManager.LookAndFeelInfo info;
@@ -174,13 +177,25 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
         "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 7));
 
+    layout.appendRow(new RowSpec("5dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelIcons", "Channel Logos")), cc.xyw(1, 9, 7));
+    layout.appendRow(new RowSpec("5dlu"));
+    
+    layout.appendRow(new RowSpec("pref"));
+    mUseChannelLogos = new JCheckBox(mLocalizer.msg("useChannelIcons", "Display Channel Icons"));
+    
+    mUseChannelLogos.setSelected(Settings.propEnableChannelIcons.getBoolean());
+    
+    mSettingsPn.add(mUseChannelLogos, cc.xyw(2, 11, 4));
+    
     layout.appendRow(new RowSpec("fill:3dlu:grow"));
     layout.appendRow(new RowSpec("pref"));
 
     JTextArea area = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
     area.setForeground(Color.RED);
 
-    mSettingsPn.add(area, cc.xyw(1, 9, 6));
+    mSettingsPn.add(area, cc.xyw(1, 13, 6));
 
     lookChanged();
     return mSettingsPn;
@@ -214,6 +229,8 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
     Settings.propIcontheme.setString(theme.getBase().getAbsolutePath());
+    
+    Settings.propEnableChannelIcons.setBoolean(mUseChannelLogos.isSelected());    
   }
 
   public Icon getIcon() {

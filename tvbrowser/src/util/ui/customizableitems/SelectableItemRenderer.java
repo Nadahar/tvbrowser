@@ -36,6 +36,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
+import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 
@@ -70,7 +71,10 @@ public class SelectableItemRenderer implements ListCellRenderer {
         l.setEnabled(false);
       
       l.setOpaque(false);
-      l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
+      
+      if (Settings.propEnableChannelIcons.getBoolean())
+        l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
+      
       p.add(l, BorderLayout.CENTER);
       
       if(isSelected && mIsEnabled)

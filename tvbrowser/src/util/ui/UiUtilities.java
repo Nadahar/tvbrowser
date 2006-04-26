@@ -306,6 +306,41 @@ public class UiUtilities {
    * @since 2.2
    */
   public static JEditorPane createHtmlHelpTextArea(String html) {
+    return createHtmlHelpTextArea(html, new HyperlinkListener() {
+      private String mTooltip;
+      public void hyperlinkUpdate(HyperlinkEvent evt) {
+        JEditorPane pane = (JEditorPane) evt.getSource();
+        if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+          mTooltip = pane.getToolTipText();
+          pane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+          if (evt.getURL() != null)
+            pane.setToolTipText(evt.getURL().toExternalForm());
+        }
+        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+          pane.setCursor(Cursor.getDefaultCursor());
+          pane.setToolTipText(mTooltip);
+        }
+        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          URL url = evt.getURL();
+          if (url != null) {
+            Launch.openURL(url.toString());
+          }
+        }
+      }
+    });
+  }
+
+  /**
+   * Creates a Html EditorPane that holds a HTML-Help Text.
+   * 
+   * Add a Listener if you want to have clickable Links
+   * 
+   * @param html HTML-Text to display
+   * @param listener Link-Listener for this HelpText
+   * @return EditorPane that holds a Help Text
+   * @since 2.2
+   */
+  public static JEditorPane createHtmlHelpTextArea(String html, HyperlinkListener listener) {
     // Quick "hack". Remove HTML-Code and replace it with Code that includes the correct Font
     if (html.indexOf("<html>") >= 0) {
       html = html.substring(html.indexOf("<html>")+6, html.indexOf("</html>"));
@@ -320,26 +355,8 @@ public class UiUtilities {
     pane.setOpaque(false);
     pane.setFocusable(false);
     
-    pane.addHyperlinkListener(new HyperlinkListener() {
-      private String mTooltip;
-      public void hyperlinkUpdate(HyperlinkEvent evt) {
-        if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
-          mTooltip = pane.getToolTipText();
-          pane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-          pane.setToolTipText(evt.getURL().toExternalForm());
-        }
-        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
-          pane.setCursor(Cursor.getDefaultCursor());
-          pane.setToolTipText(mTooltip);
-        }
-        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          URL url = evt.getURL();
-          if (url != null) {
-            Launch.openURL(url.toString());
-          }
-        }
-      }
-    });
+    if (listener != null)
+      pane.addHyperlinkListener(listener);
     return pane;
   }
   
@@ -622,5 +639,4 @@ public class UiUtilities {
     component.getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"CLOSE_ON_ESCAPE");
     component.getRootPane().getActionMap().put("CLOSE_ON_ESCAPE", a);
   }
-
 }
