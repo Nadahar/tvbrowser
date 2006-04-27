@@ -200,9 +200,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           String link = e.getDescription();
-          System.out.println(link);
           link = link.substring(1, link.length()-1);
-          System.out.println(link);
           SettingsDialog.getInstance().showSettingsTab(link);
         }
       }
