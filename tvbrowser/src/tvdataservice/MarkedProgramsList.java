@@ -28,9 +28,13 @@ package tvdataservice;
 import java.util.ArrayList;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataUpdateListener;
+import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.program.ProgramUtilities;
 
 import devplugin.Date;
+import devplugin.Marker;
 import devplugin.Program;
 
 /**
@@ -47,6 +51,14 @@ public class MarkedProgramsList {
   private MarkedProgramsList() {
     mList = new ArrayList();
     mInstance = this;
+    
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      public void tvDataUpdateStarted() {}
+
+      public void tvDataUpdateFinished() {
+        revalidatePrograms();
+      }
+    });
   }
   
   /**
@@ -150,5 +162,29 @@ public class MarkedProgramsList {
     
     
     return trayPrograms;
+  }
+  
+  private void revalidatePrograms() {
+    for(int i = mList.size() - 1; i >= 0; i--) {
+      MutableProgram programInList = (MutableProgram)mList.remove(i);
+      Marker[] marker = programInList.getMarkerArr();
+      
+      Program testProg = PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
+      
+      if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
+        programInList.setProgramState(Program.WAS_DELETED_STATE);
+        for(int j = 0; j < marker.length; j++)
+          programInList.unmark(marker[j]);
+      }
+      else if(testProg != programInList) {
+        for(int j = 0; j < marker.length; j++) {
+          programInList.unmark(marker[j]);
+          testProg.mark(marker[j]);
+        }
+        programInList.setProgramState(Program.WAS_UPDATED_STATE);
+      }
+      else
+        mList.add(programInList);
+    }
   }
 }

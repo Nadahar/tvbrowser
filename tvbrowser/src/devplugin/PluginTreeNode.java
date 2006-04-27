@@ -151,16 +151,14 @@ public class PluginTreeNode {
       if (node.isLeaf()) {
         ProgramItem progItemInTree = (ProgramItem)node.getUserObject();
         Program progInTree = progItemInTree.getProgram();
-        Program testProg = Plugin.getPluginManager().getProgram(progInTree.getDate(), progInTree.getID());
-
-        if (testProg == null || testProg.getTitle().compareTo(progInTree.getTitle()) != 0) {
+        
+        if(progInTree.getProgramState() == Program.WAS_DELETED_STATE) {
           removeProgram(progInTree);
           handler.addRemovedProgram(progInTree);
         }
-        else {
-          progItemInTree.setProgram(testProg);
-          progInTree.unmark(mMarker);
-          testProg.mark(mMarker);
+        else if(progInTree.getProgramState() == Program.WAS_UPDATED_STATE) {
+          Program updatedProg = Plugin.getPluginManager().getProgram(progInTree.getDate(), progInTree.getID());
+          progItemInTree.setProgram(updatedProg);
         }
       }
       else {

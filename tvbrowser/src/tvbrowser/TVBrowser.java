@@ -65,6 +65,7 @@ import tvbrowser.ui.mainframe.UpdateDlg;
 import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
+import tvdataservice.MarkedProgramsList;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.misc.JavaVersion;
@@ -251,12 +252,15 @@ public class TVBrowser {
 
     splash.showSplash();
 
-
+    /* Initialize the MarkedProgramsList to be the first
+     * that reacts on a tv data update.
+     */
+    MarkedProgramsList.getInstance();
+    
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
     PluginLoader.getInstance().installPendingPlugins();
 
     PluginLoader.getInstance().loadAllPlugins();
-
 
     mLog.info("Loading TV listings service...");
     msg = mLocalizer.msg("splash.dataService", "Loading TV listings service...");
@@ -265,8 +269,6 @@ public class TVBrowser {
     ChannelList.create();
 
     ChannelList.initSubscribedChannels();
-
-
 
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
@@ -281,11 +283,9 @@ public class TVBrowser {
       updateLookAndFeel();
     }
 
-
-
     mLog.info("Deleting expired TV listings...");
     TvDataBase.getInstance().deleteExpiredFiles(1);
-
+    
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);

@@ -95,7 +95,8 @@ public class MutableProgram implements Program {
   /** Contains for a {@link ProgramFieldType} (key) the field value. */
   private HashMap mFieldHash;
 
-
+  /** The state of this program */
+  private int mState;
   /**
    * Creates a new instance of MutableProgram.
    * <p>
@@ -147,6 +148,7 @@ public class MutableProgram implements Program {
     setTextField(ProgramFieldType.TITLE_TYPE, "");
     
     mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
+    mState = IS_VALID_STATE;
   }
 
 
@@ -818,6 +820,27 @@ public class MutableProgram implements Program {
     } else {
       return o1.equals(o2);
     }
+  }
+
+  /**
+   * Sets the state of this program to a
+   * program state.
+   * 
+   * @param state The state of this program.
+   * @since 2.2
+   */
+  protected void setProgramState(int state) {
+    mState = state;
+  }
+
+  /**
+   * Returns the state of this program.
+   * 
+   * @return The program state.
+   * @since 2.2
+   */
+  public int getProgramState() {
+    return mState;
   }
  
 }
