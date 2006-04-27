@@ -113,7 +113,6 @@ public class PluginTreeNode {
           fireProgramsRemoved(removedPrograms);
         }
       });
-
     }
 
   }
@@ -145,7 +144,7 @@ public class PluginTreeNode {
    */
   private void refreshAllPrograms(RemovedProgramsHandler handler) {
 
-    for (int i=0; i<mChildNodes.size(); i++) {
+    for (int i=mChildNodes.size()-1; i>=0; i--) {
       PluginTreeNode node = (PluginTreeNode)mChildNodes.get(i);
       node.mMarker = mMarker;
       
@@ -153,7 +152,7 @@ public class PluginTreeNode {
         ProgramItem progItemInTree = (ProgramItem)node.getUserObject();
         Program progInTree = progItemInTree.getProgram();
         Program testProg = Plugin.getPluginManager().getProgram(progInTree.getDate(), progInTree.getID());
-        
+
         if (testProg == null || testProg.getTitle().compareTo(progInTree.getTitle()) != 0) {
           removeProgram(progInTree);
           handler.addRemovedProgram(progInTree);
