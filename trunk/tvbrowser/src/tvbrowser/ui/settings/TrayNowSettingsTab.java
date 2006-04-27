@@ -101,7 +101,7 @@ public class TrayNowSettingsTab implements SettingsTab {
     mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowToolTip.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
   }
