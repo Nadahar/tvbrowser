@@ -3,20 +3,27 @@ package tvbrowser.ui.settings;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 /**
@@ -27,10 +34,12 @@ import devplugin.SettingsTab;
  */
 public class TrayOnTimeSettingsTab implements SettingsTab {
 
-  private JCheckBox mIsEnabled, mShowName, mShowIcon, mShowTime, mShowToolTip, mShowProgress;
+  private JCheckBox mIsEnabled, mShowTime, mShowToolTip, mShowProgress;
   private static final Localizer mLocalizer = TrayBaseSettingsTab.mLocalizer;
-  private JLabel mSeparator1, mSeparator2, mDarkLabel, mLightLabel, mHelpLabel; 
+  private JLabel mIconSeparator, mSeparator1, mSeparator2, mDarkLabel, mLightLabel, mHelpLabel; 
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
+  
+  private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
   private ColorLabel mLightColorLb,mDarkColorLb;
   private ColorButton mLight, mDark;
@@ -42,13 +51,23 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu",
-        "pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,pref,pref,3dlu,pref,fill:pref:grow,pref"));
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,3dlu," +
+        "pref,10dlu,pref,5dlu,pref,pref,pref,3dlu,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("onTimeEnabled","Show programs at..."),Settings.propTrayOnTimeProgramsEnabled.getBoolean());
-        
-    mShowName = new JCheckBox(mLocalizer.msg("showName","Show channel name"),Settings.propTrayOnTimeProgramsContainsName.getBoolean());
-    mShowIcon = new JCheckBox(mLocalizer.msg("showIcon","Show channel icon"),Settings.propTrayOnTimeProgramsContainsIcon.getBoolean());
+    
+    mShowIconAndName = new JRadioButton(mLocalizer.msg("showIconName","Show channel icon and channel name"),Settings.propTrayOnTimeProgramsContainsName.getBoolean() && Settings.propTrayOnTimeProgramsContainsIcon.getBoolean());
+    mShowIcon = new JRadioButton(mLocalizer.msg("showIcon","Show channel icon"),Settings.propTrayOnTimeProgramsContainsIcon.getBoolean() && !Settings.propTrayOnTimeProgramsContainsName.getBoolean());
+    mShowName = new JRadioButton(mLocalizer.msg("showName","Show channel name"),!Settings.propTrayOnTimeProgramsContainsIcon.getBoolean() && Settings.propTrayOnTimeProgramsContainsName.getBoolean());    
+    
+    ButtonGroup bg = new ButtonGroup();
+    bg.add(mShowIconAndName);
+    bg.add(mShowIcon);
+    bg.add(mShowName);
+    
+    mShowName.setSelected(!Settings.propEnableChannelIcons.getBoolean());
+    
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTrayOnTimeProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayOnTimeProgramsContainsToolTip.getBoolean());
     mShowToolTip.setToolTipText(mLocalizer.msg("toolTipTip","Tool tips are small helper to something, like this one."));
@@ -58,6 +77,14 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mLightColorLb.setStandardColor(Settings.propTrayOnTimeProgramsLightBackground.getDefaultColor());
     mDarkColorLb = new ColorLabel(Settings.propTrayOnTimeProgramsDarkBackground.getColor());
     mDarkColorLb.setStandardColor(Settings.propTrayOnTimeProgramsDarkBackground.getDefaultColor());
+    
+    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.LOOKANDFEEL);
+        }
+      }
+    });
     
     mHelpLabel = new JLabel();
     
@@ -82,18 +109,22 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("onTime","Programs at..."), cc.xyw(1,1,4));
     builder.add(mIsEnabled, cc.xyw(2,3,2));
 
-    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,5,4));
-    
-    builder.add(mShowName, cc.xyw(2,7,2));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,5,4));
+    builder.add(mShowIconAndName, cc.xyw(2,7,2));
     builder.add(mShowIcon, cc.xyw(2,8,2));
-    builder.add(mShowTime, cc.xyw(2,9,2));
-    builder.add(mShowToolTip, cc.xyw(2,10,2));
-    builder.add(mShowProgress, cc.xyw(2,11,2));
-    builder.add(colors.getPanel(), cc.xy(3,13));
-    builder.add(mHelpLabel, cc.xyw(1,15,4));
+    builder.add(mShowName, cc.xyw(2,9,2));
+    builder.add(pane, cc.xyw(2,11,2));
+    
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,13,4));
+    builder.add(mShowTime, cc.xyw(2,15,2));
+    builder.add(mShowToolTip, cc.xyw(2,16,2));
+    builder.add(mShowProgress, cc.xyw(2,17,2));
+    builder.add(colors.getPanel(), cc.xy(3,19));
+    builder.add(mHelpLabel, cc.xyw(1,21,4));
     
     mSeparator1 = (JLabel)c.getComponent(0);
-    mSeparator2 = (JLabel)c1.getComponent(0);
+    mIconSeparator = (JLabel)c1.getComponent(0);
+    mSeparator2 = (JLabel)c2.getComponent(0);
     
     setEnabled(true);
     
@@ -130,8 +161,10 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     
     TrayProgramsChannelsSettingsTab.setOnTimeIsEnabled(mIsEnabled.isSelected());
     mSeparator2.setEnabled(mTrayIsEnabled);
+    mIconSeparator.setEnabled(mTrayIsEnabled);
     mIsEnabled.setEnabled(mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowToolTip.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
@@ -147,10 +180,10 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
   public void saveSettings() {
     if(mIsEnabled != null)
       Settings.propTrayOnTimeProgramsEnabled.setBoolean(mIsEnabled.isSelected());
-    if(mShowName != null)
-      Settings.propTrayOnTimeProgramsContainsName.setBoolean(mShowName.isSelected());
-    if(mShowIcon != null)
-      Settings.propTrayOnTimeProgramsContainsIcon.setBoolean(mShowIcon.isSelected());
+    if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
+      Settings.propTrayOnTimeProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
+      Settings.propTrayOnTimeProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
+    }
     if(mShowTime != null)
       Settings.propTrayOnTimeProgramsContainsTime.setBoolean(mShowTime.isSelected());
     if(mShowToolTip != null)
