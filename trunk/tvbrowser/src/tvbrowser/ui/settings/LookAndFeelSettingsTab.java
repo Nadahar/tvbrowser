@@ -37,11 +37,14 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -57,6 +60,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 public class LookAndFeelSettingsTab implements SettingsTab {
@@ -189,13 +193,30 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     
     mSettingsPn.add(mUseChannelLogos, cc.xyw(2, 11, 4));
     
+    layout.appendRow(new RowSpec("3dlu"));
+    layout.appendRow(new RowSpec("pref"));
+    
+    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("iconsHelp","You can enable/disable Icons seperatly for the <a href=\"{0}\">Programtable</a> and the <a href=\"{1}\">Channellist</a>.", SettingsItem.PROGRAMTABLELOOK, SettingsItem.CHANNELLISTLOOK), new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          String link = e.getDescription();
+          System.out.println(link);
+          link = link.substring(1, link.length()-1);
+          System.out.println(link);
+          SettingsDialog.getInstance().showSettingsTab(link);
+        }
+      }
+    });
+    
+    mSettingsPn.add(pane, cc.xyw(2, 13, 5));
+    
     layout.appendRow(new RowSpec("fill:3dlu:grow"));
     layout.appendRow(new RowSpec("pref"));
 
     JTextArea area = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
     area.setForeground(Color.RED);
 
-    mSettingsPn.add(area, cc.xyw(1, 13, 6));
+    mSettingsPn.add(area, cc.xyw(1, 15, 6));
 
     lookChanged();
     return mSettingsPn;

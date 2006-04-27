@@ -315,8 +315,8 @@ public class SettingsDialog implements WindowClosingIf {
     programtableNode.add(new SettingNode(new RefreshDataSettingsTab()));
     programtableNode.add(new SettingNode(new ButtonsSettingsTab(), SettingsItem.TIMEBUTTONS));
 
-    appearanceNode.add(new SettingNode(new ProgramTableSettingsTab()));
-    appearanceNode.add(new SettingNode(new ChannellogosSettingsTab()));
+    appearanceNode.add(new SettingNode(new ProgramTableSettingsTab(), SettingsItem.PROGRAMTABLELOOK));
+    appearanceNode.add(new SettingNode(new ChannelListSettingsTab(), SettingsItem.CHANNELLISTLOOK));
     appearanceNode.add(new SettingNode(new FontsSettingsTab()));
     appearanceNode.add(new SettingNode(new ProgramPanelSettingsTab()));
 
