@@ -112,7 +112,7 @@ public class ReminderPlugin implements ContextMenuIf {
             Program[] removedPrograms = mReminderList.updatePrograms();
             if (removedPrograms.length > 0) {
               RemovedProgramsDialog dlg;
-              Window parent = UiUtilities.getBestDialogParent(null);
+              Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
               if (parent instanceof JFrame) {
                 dlg = new RemovedProgramsDialog((JFrame) parent,
                     removedPrograms);

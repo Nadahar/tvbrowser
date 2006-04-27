@@ -267,19 +267,18 @@ public class ReminderList implements ActionListener {
     ReminderListItem[] items = getReminderItems();
     mList.clear();
     ArrayList removedPrograms = new ArrayList();
+    
     for (int i = 0; i < items.length; i++) {
-      items[i].getProgram().unmark(mMarker);
-      Program testProg = Plugin.getPluginManager().getProgram(
-          items[i].getProgram().getDate(), items[i].getProgram().getID());
-      if (testProg == null
-          || testProg.getTitle().toLowerCase().compareTo(
-              items[i].getProgram().getTitle().toLowerCase()) != 0) {
+      if(items[i].getProgram().getProgramState() == Program.WAS_DELETED_STATE)
         removedPrograms.add(items[i].getProgram());
-      } else {
-        add(testProg, items[i].getMinutes());
-        testProg.mark(mMarker);
+      else if(items[i].getProgram().getProgramState() == Program.WAS_UPDATED_STATE) {
+        Program p = items[i].getProgram();
+        add(Plugin.getPluginManager().getProgram(p.getDate(), p.getID()),items[i].getMinutes());
       }
+      else
+        mList.add(items[i]);
     }
+    
     return (Program[]) removedPrograms.toArray(new Program[removedPrograms
         .size()]);
   }
