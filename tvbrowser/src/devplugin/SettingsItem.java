@@ -49,6 +49,9 @@ public class SettingsItem {
   public static final String WEBBROWSER = "#webbrowser";
   public static final String CONTEXTMENU = "#contextmenu";
   public static final String LOOKANDFEEL = "#lookandfeel";
-  
+
+  public static final String PROGRAMTABLELOOK = "#programtablelook";
+  public static final String CHANNELLISTLOOK = "#channellistllook";
+
   private SettingsItem () {}
 }
