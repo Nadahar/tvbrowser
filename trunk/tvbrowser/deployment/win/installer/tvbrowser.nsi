@@ -306,8 +306,8 @@ Section "$(STD_SECTION_NAME)"
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
-  SetOutPath "$INSTDIR\icons"
-  File "${RUNTIME_DIR}\icons\*.*"
+  SetOutPath "$INSTDIR\icons\tango"
+  File "${RUNTIME_DIR}\icons\tango\*.*"
 
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
@@ -478,20 +478,7 @@ SubSectionEnd
 
 SubSection "Plugins"
  
-  Section "$(PROGRAM_INFO)"
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\ProgramInfo.jar"
-  SectionEnd
-
-  Section "$(REMINDER)"
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\ReminderPlugin.jar"
-  SectionEnd
-
+ 
   Section "$(SEARCH)"
     SectionIn 1
 
@@ -506,13 +493,7 @@ SubSection "Plugins"
     File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
   SectionEnd
 
-  Section "$(FAVORITES)"
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\FavoritesPlugin.jar"
-  SectionEnd
-
+ 
   Section "$(SHOWVIEW)"
     SectionIn 1
 
