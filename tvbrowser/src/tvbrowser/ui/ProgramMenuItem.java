@@ -127,6 +127,8 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
       mShowName = true;
     }
     
+    showIcon = showIcon && Settings.propEnableChannelIcons.getBoolean();
+    
     mPlainFont = getFont();
     mBoldFont = mPlainFont.deriveFont(Font.BOLD);
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont,CHANNEL_WIDTH);

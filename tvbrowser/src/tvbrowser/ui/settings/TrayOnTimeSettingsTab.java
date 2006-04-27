@@ -132,7 +132,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mSeparator2.setEnabled(mTrayIsEnabled);
     mIsEnabled.setEnabled(mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowToolTip.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowProgress.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
