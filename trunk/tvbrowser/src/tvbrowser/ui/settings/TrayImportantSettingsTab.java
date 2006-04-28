@@ -38,8 +38,9 @@ public class TrayImportantSettingsTab implements SettingsTab {
   private JCheckBox mIsEnabled, mShowDate, mShowTime, mShowToolTip;
   private JRadioButton mShowInSubMenu, mShowInTray;
   private JSpinner mSize;
-  private JLabel mIconSeparator, mSeparator1, mSeparator2, mSizeLabel, mHelpLabel;
+  private JLabel mIconSeparator, mSeparator1, mSeparator2, mSizeLabel;
   
+  private JEditorPane mHelpLabel, mLookHelpLink;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
@@ -82,7 +83,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayImportantProgramsContainsToolTip.getBoolean());
     mShowToolTip.setToolTipText(mLocalizer.msg("toolTipTip","Tool tips are small helper to something, like this one."));
     
-    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
+    mLookHelpLink = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           SettingsDialog.getInstance().showSettingsTab(SettingsItem.LOOKANDFEEL);
@@ -90,7 +91,13 @@ public class TrayImportantSettingsTab implements SettingsTab {
       }
     });
     
-    mHelpLabel = new JLabel();
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."), new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.TRAY);
+        }
+      }
+    });
         
     JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("important","Important programs"), cc.xyw(1,1,7));
     builder.add(mIsEnabled, cc.xyw(2,3,5));
@@ -103,7 +110,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     builder.add(mShowIconAndName, cc.xyw(2,10,5));
     builder.add(mShowIcon, cc.xyw(2,11,5));
     builder.add(mShowName, cc.xyw(2,12,5));
-    builder.add(pane, cc.xyw(2,14,5));
+    builder.add(mLookHelpLink, cc.xyw(2,14,5));
     
     JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,16,7));
     builder.add(mShowDate, cc.xyw(2,18,5));
@@ -127,10 +134,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
   }
 
   private void setEnabled(boolean trayStateChange) {
-    if(mTrayIsEnabled)
-      mHelpLabel.setText("");
-    else
-      mHelpLabel.setText(mLocalizer.msg("help","<html>The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the Tray Base settings.</html>"));
+    mHelpLabel.setVisible(!mTrayIsEnabled);
     
     if(trayStateChange) {
       mSeparator1.setEnabled(mTrayIsEnabled);
@@ -141,6 +145,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     mSeparator2.setEnabled(mTrayIsEnabled);
     mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
