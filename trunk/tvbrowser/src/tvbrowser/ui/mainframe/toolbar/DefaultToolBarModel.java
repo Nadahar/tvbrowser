@@ -162,14 +162,14 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         IconLoader.getInstance().getIconFromTheme("actions", "document-open",
             22), ToolBar.BUTTON_ACTION, this);
     mScrollToNextDayAction = createAction(mLocalizer.msg(
-        "scrollToNextDay", "Next day"), "#scrollToNextDay", scrollTo
-        + mLocalizer.msg("scrollToNextToolTip", "Next day"), IconLoader
+        "scrollToNextDay", "Next day"), "#scrollToNextDay", 
+        mLocalizer.msg("scrollToNextToolTip", "Next day"), IconLoader
         .getInstance().getIconFromTheme("actions", "go-next", 16), IconLoader
         .getInstance().getIconFromTheme("actions", "go-next", 22),
         ToolBar.BUTTON_ACTION, this);
     mScrollToPreviousDayAction = createAction(mLocalizer.msg(
-        "scrollToPreviousDay", "Previous day"), "#scrollToPreviousDay", scrollTo
-        + mLocalizer.msg("scrollToPreviousToolTip", "Previous day"), IconLoader
+        "scrollToPreviousDay", "Previous day"), "#scrollToPreviousDay", 
+        mLocalizer.msg("scrollToPreviousToolTip", "Previous day"), IconLoader
         .getInstance().getIconFromTheme("actions", "go-previous", 16), IconLoader
         .getInstance().getIconFromTheme("actions", "go-previous", 22),
         ToolBar.BUTTON_ACTION, this);
