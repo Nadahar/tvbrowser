@@ -75,7 +75,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
 
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
-      mScrollToTodayAction, mScrollToTomorrowAction, mFavoriteAction,
+      mScrollToTodayAction, mScrollToPreviousDayAction, mScrollToNextDayAction, mFavoriteAction,
       mReminderAction, mGoToDateAction, mGoToChannelAction, mGoToTimeAction;
 
   private static DefaultToolBarModel sInstance;
@@ -161,11 +161,17 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         .getInstance().getIconFromTheme("actions", "document-open", 16),
         IconLoader.getInstance().getIconFromTheme("actions", "document-open",
             22), ToolBar.BUTTON_ACTION, this);
-    mScrollToTomorrowAction = createAction(TVBrowser.mLocalizer.msg(
-        "button.tomorrow", "Tomorrow"), "#scrollToTomorrow", scrollTo
-        + TVBrowser.mLocalizer.msg("button.tomorrow", "Tomorrow"), IconLoader
+    mScrollToNextDayAction = createAction(mLocalizer.msg(
+        "scrollToNextDay", "Next day"), "#scrollToNextDay", scrollTo
+        + mLocalizer.msg("scrollToNextToolTip", "Next day"), IconLoader
         .getInstance().getIconFromTheme("actions", "go-next", 16), IconLoader
         .getInstance().getIconFromTheme("actions", "go-next", 22),
+        ToolBar.BUTTON_ACTION, this);
+    mScrollToPreviousDayAction = createAction(mLocalizer.msg(
+        "scrollToPreviousDay", "Previous day"), "#scrollToPreviousDay", scrollTo
+        + mLocalizer.msg("scrollToPreviousToolTip", "Previous day"), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-previous", 16), IconLoader
+        .getInstance().getIconFromTheme("actions", "go-previous", 22),
         ToolBar.BUTTON_ACTION, this);
     mReminderAction = createAction(ReminderPlugin.mLocalizer.msg("buttonText",
         "Reminder list"), SettingsItem.REMINDER,
@@ -208,7 +214,8 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mAvailableActions.put("#pluginView", mPluginViewAction);
     mAvailableActions.put("#scrollToNow", mScrollToNowAction);
     mAvailableActions.put("#scrollToToday", mScrollToTodayAction);
-    mAvailableActions.put("#scrollToTomorrow", mScrollToTomorrowAction);
+    mAvailableActions.put("#scrollToNextDay", mScrollToNextDayAction);
+    mAvailableActions.put("#scrollToPreviousDay", mScrollToPreviousDayAction);
     mAvailableActions.put(SettingsItem.REMINDER, mReminderAction);
     mAvailableActions.put(SettingsItem.FAVORITE, mFavoriteAction);
     mAvailableActions.put("#goToDate", mGoToDateAction);
@@ -387,10 +394,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     } else if (source == mScrollToTodayAction) {
       devplugin.Date d = devplugin.Date.getCurrentDate();
       MainFrame.getInstance().goTo(d);
-    } else if (source == mScrollToTomorrowAction) {
-      devplugin.Date d = devplugin.Date.getCurrentDate();
-      d = d.addDays(1);
-      MainFrame.getInstance().goTo(d);
+    } else if (source == mScrollToNextDayAction) {
+      MainFrame.getInstance().goToNextDay();
+    } else if (source == mScrollToPreviousDayAction) {
+      MainFrame.getInstance().goToPreviousDay();
     } else if (source == mReminderAction) {
       ReminderPlugin.getInstance().getButtonAction(MainFrame.getInstance())
           .getAction().actionPerformed(null);
