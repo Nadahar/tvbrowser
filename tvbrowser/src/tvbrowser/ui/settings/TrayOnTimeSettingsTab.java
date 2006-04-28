@@ -36,9 +36,10 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
 
   private JCheckBox mIsEnabled, mShowTime, mShowToolTip, mShowProgress;
   private static final Localizer mLocalizer = TrayBaseSettingsTab.mLocalizer;
-  private JLabel mIconSeparator, mSeparator1, mSeparator2, mDarkLabel, mLightLabel, mHelpLabel; 
+  private JLabel mIconSeparator, mSeparator1, mSeparator2, mDarkLabel, mLightLabel; 
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   
+  private JEditorPane mHelpLabel, mLookHelpLink;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
   private ColorLabel mLightColorLb,mDarkColorLb;
@@ -78,7 +79,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mDarkColorLb = new ColorLabel(Settings.propTrayOnTimeProgramsDarkBackground.getColor());
     mDarkColorLb.setStandardColor(Settings.propTrayOnTimeProgramsDarkBackground.getDefaultColor());
     
-    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
+    mLookHelpLink = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           SettingsDialog.getInstance().showSettingsTab(SettingsItem.LOOKANDFEEL);
@@ -86,7 +87,13 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
       }
     });
     
-    mHelpLabel = new JLabel();
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."), new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.TRAY);
+        }
+      }
+    });
     
     mLight = new ColorButton(mLightColorLb);
     mDark = new ColorButton(mDarkColorLb);
@@ -113,7 +120,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     builder.add(mShowIconAndName, cc.xyw(2,7,2));
     builder.add(mShowIcon, cc.xyw(2,8,2));
     builder.add(mShowName, cc.xyw(2,9,2));
-    builder.add(pane, cc.xyw(2,11,2));
+    builder.add(mLookHelpLink, cc.xyw(2,11,2));
     
     JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,13,4));
     builder.add(mShowTime, cc.xyw(2,15,2));
@@ -148,11 +155,8 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     return builder.getPanel();
   }
   
-  private void setEnabled(boolean trayStateChange) {
-    if(mTrayIsEnabled)
-      mHelpLabel.setText("");
-    else
-      mHelpLabel.setText(mLocalizer.msg("help","<html>The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the Tray Base settings.</html>"));
+  private void setEnabled(boolean trayStateChange) {    
+    mHelpLabel.setVisible(!mTrayIsEnabled);
     
     if(trayStateChange) {
       mSeparator1.setEnabled(mTrayIsEnabled);
@@ -163,6 +167,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mSeparator2.setEnabled(mTrayIsEnabled);
     mIconSeparator.setEnabled(mTrayIsEnabled);
     mIsEnabled.setEnabled(mTrayIsEnabled);
+    mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());

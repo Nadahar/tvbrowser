@@ -25,22 +25,28 @@
  */
 package tvbrowser.ui.settings;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import util.ui.OrderChooser;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
+import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 /**
@@ -56,7 +62,11 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
   private JCheckBox mUseUserChannels;
   private OrderChooser mChannelOCh;
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
-  private JLabel mSeparator1, mHelpLabel;
+  private JLabel mSeparator1;
+  
+  private String mHelpLinkText;
+  
+  private JEditorPane mHelpLabel;
   
   private static TrayProgramsChannelsSettingsTab mInstance;
   private static boolean mNow = Settings.propTrayNowProgramsEnabled.getBoolean(),
@@ -78,8 +88,17 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     mChannelOCh = new OrderChooser(
         Settings.propTraySpecialChannels.getChannelArray(false),
         Settings.propSubscribedChannels.getChannelArray(false), true);
-
-    mHelpLabel = new JLabel();
+    
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."),new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.TRAY);
+        }
+      }
+    });
+    
+    mHelpLinkText = mHelpLabel.getText();
+    mHelpLabel.setFont(mUseUserChannels.getFont());
     
     JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg(
         "channelsSeparator",
@@ -100,14 +119,22 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     
     return builder.getPanel();
   }
+  
+  private String createHtml(Font font,String text) {
+    return "<html><div style=\"color:#000000;font-family:"+ font.getName() +"; font-size:"+font.getSize()+";\">"+text+"</div></html>";
+  }
 
   private void setEnabled(boolean trayStateChange) {
-    if(!mTrayIsEnabled)
-      mHelpLabel.setText(mLocalizer.msg("help","<html>The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the Tray Base settings.</html>"));      
-    else if(!mNow && !mSoon && !mOnTime)
-      mHelpLabel.setText(mLocalizer.msg("helpPrograms","<html>These settings are used only by the Now, Soon and At... programs. Enable at least one of that to enable these settings.</html>"));
+    if(!mTrayIsEnabled) {
+      mHelpLabel.setVisible(true);
+      mHelpLabel.setText(createHtml(mHelpLabel.getFont(),mHelpLinkText));
+    }
+    else if(!mNow && !mSoon && !mOnTime) {
+      mHelpLabel.setVisible(true);
+      mHelpLabel.setText(createHtml(mHelpLabel.getFont(),mLocalizer.msg("helpPrograms","<html>These settings are used only by the Now, Soon and At... programs. Enable at least one of that to enable these settings.</html>")));
+    }
     else
-      mHelpLabel.setText("");     
+      mHelpLabel.setVisible(false);     
     
     if(trayStateChange)
       mSeparator1.setEnabled(mTrayIsEnabled);
