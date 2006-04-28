@@ -568,6 +568,14 @@ public class TVBrowser {
     if(mTray.isTrayUsed()) {
       mTray.setVisible(false);
       addTrayWindowListener();
+      
+      if(!MainFrame.getInstance().isVisible()) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            MainFrame.getInstance().showFromTray(MainFrame.ICONIFIED);
+          }
+        });
+      }
     }
   }
 
