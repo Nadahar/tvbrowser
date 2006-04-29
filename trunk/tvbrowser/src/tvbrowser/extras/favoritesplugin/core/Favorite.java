@@ -37,7 +37,6 @@ import java.util.Comparator;
 import java.util.Calendar;
 
 import util.exc.TvBrowserException;
-import util.ui.SearchFormSettings;
 import util.program.ProgramUtilities;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
@@ -153,9 +152,6 @@ public abstract class Favorite {
   }
 
 
-  public abstract SearchFormSettings getSearchFormSettings();
-
-
   public void handleContainingPrograms(Program[] progs) {
     for(int i = 0; i < mPrograms.length; i++) {
       for(int j = 0; j < progs.length; j++) {
@@ -193,7 +189,7 @@ public abstract class Favorite {
       out.writeObject(mPrograms[i].getID());
     }
 
-    _writeData(out);
+    internalWriteData(out);
   }
 
 
@@ -295,9 +291,7 @@ public abstract class Favorite {
    */
   public void updatePrograms() throws TvBrowserException {
 
-    SearchFormSettings searchForm = getSearchFormSettings();
 
-    ProgramSearcher searcher = searchForm.createSearcher();
 
     Channel[] channelArr;
     if (getLimitationConfiguration().isLimitedByChannel()) {
@@ -307,12 +301,7 @@ public abstract class Favorite {
       channelArr = Plugin.getPluginManager().getSubscribedChannels();
     }
 
-    Program[] progs = searcher.search(searchForm.getFieldTypes(),
-                                                new devplugin.Date(),
-                                                1000,
-                                                channelArr,
-                                                true
-                                                );
+    Program[] progs = internalSearchForPrograms(channelArr);
     
     Program[] newProgList = filterByLimitations(progs);
 
@@ -415,8 +404,8 @@ public abstract class Favorite {
 
   public abstract FavoriteConfigurator createConfigurator();
 
-  protected abstract void _writeData(ObjectOutputStream out) throws IOException;
+  protected abstract void internalWriteData(ObjectOutputStream out) throws IOException;
 
-
+  protected abstract Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException;
 
 }

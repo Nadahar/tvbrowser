@@ -600,8 +600,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
             boolean alreadyKnown = false;
             while (en.hasMoreElements()) {
               Favorite fav = (Favorite) en.nextElement();
-              String searchText = fav.getSearchFormSettings().getSearchText();
-              if (line.equalsIgnoreCase(searchText)) {
+              String favName = fav.getName();
+              if (line.equalsIgnoreCase(favName)) {
                 alreadyKnown = true;
                 break;
               }

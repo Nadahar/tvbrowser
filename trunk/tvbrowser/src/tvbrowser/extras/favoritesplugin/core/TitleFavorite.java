@@ -34,9 +34,14 @@ import java.io.ObjectInputStream;
 import java.awt.*;
 
 import util.ui.SearchFormSettings;
+import util.exc.TvBrowserException;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 
 import javax.swing.*;
+
+import devplugin.Program;
+import devplugin.Channel;
+import devplugin.ProgramSearcher;
 
 public class TitleFavorite extends Favorite {
 
@@ -72,11 +77,6 @@ public class TitleFavorite extends Favorite {
   }
 
 
-  public SearchFormSettings getSearchFormSettings() {
-    return mSearchFormSettings;
-  }
-
-
   public FavoriteConfigurator createConfigurator() {
     return new Configurator();
   }
@@ -84,9 +84,23 @@ public class TitleFavorite extends Favorite {
 
 
 
-  protected void _writeData(ObjectOutputStream out) throws IOException {
+  protected void internalWriteData(ObjectOutputStream out) throws IOException {
     out.writeInt(1);  // version
     out.writeObject(mProgramTitle);
+  }
+
+
+  protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
+
+    SearchFormSettings searchForm = mSearchFormSettings;
+
+    ProgramSearcher searcher = searchForm.createSearcher();
+    return searcher.search(searchForm.getFieldTypes(),
+                                                new devplugin.Date(),
+                                                1000,
+                                                channelArr,
+                                                false
+                                                );
   }
 
 
@@ -108,7 +122,7 @@ public class TitleFavorite extends Favorite {
 
     public void save() {
       String searchText = mSearchTextTf.getText();
-      getSearchFormSettings().setSearchText(searchText);
+      mSearchFormSettings.setSearchText(searchText);
     }
   }
 

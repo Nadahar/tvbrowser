@@ -27,12 +27,15 @@
 package tvbrowser.extras.favoritesplugin.core;
 
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.core.filters.ShowAllFilter;
 import devplugin.*;
 
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 import util.ui.SearchFormSettings;
 import util.ui.SearchForm;
@@ -41,16 +44,26 @@ import util.exc.ErrorHandler;
 
 import javax.swing.*;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.builder.PanelBuilder;
+
 public class AdvancedFavorite extends Favorite {
+
+  public static final util.ui.Localizer mLocalizer
+        = util.ui.Localizer.getLocalizerFor(AdvancedFavorite.class);
+
 
   private SearchFormSettings mSearchFormSettings;
 
   public static final String TYPE_ID = "advanced";
 
+  private ProgramFilter mFilter;
+
 
   public AdvancedFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
-    int version = in.readInt();
+    in.readInt();   // version
     mSearchFormSettings = new SearchFormSettings(in);
   }
 
@@ -76,10 +89,6 @@ public class AdvancedFavorite extends Favorite {
     return TYPE_ID;
   }
 
-  public SearchFormSettings getSearchFormSettings() {
-    return mSearchFormSettings;
-  }
-
   public String getName() {
     if (super.getName() != null) {
       return super.getName();
@@ -91,7 +100,7 @@ public class AdvancedFavorite extends Favorite {
     return new Configurator();
   }
 
-  protected void _writeData(ObjectOutputStream out) throws IOException {
+  protected void internalWriteData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
     mSearchFormSettings.writeData(out);
   }
@@ -107,7 +116,6 @@ public class AdvancedFavorite extends Favorite {
       boolean searchInText = in.readBoolean();
       int searchMode = in.readInt();
 
-      //mSearchFormSettings = new SearchFormSettings(term);
       mSearchFormSettings.setSearchText(term);
       if (searchInText) {
         mSearchFormSettings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
@@ -196,11 +204,11 @@ public class AdvancedFavorite extends Favorite {
     programList.toArray(mProgramArr);
 
     if (version >=4) {
-        boolean useFilter = in.readBoolean();
-        String filterName = (String)in.readObject();
-        //ProgramFilter filter = getFilterByName(filterName);
+      in.readBoolean();  // useFilter
+      String filterName = (String)in.readObject();
+      mFilter = getFilterByName(filterName);
     } else {
-        //mUseFilter = false;
+        mFilter = null;
     }
 
     if (version >= 7) {
@@ -213,9 +221,9 @@ public class AdvancedFavorite extends Favorite {
         String programId = (String) in.readObject();
       }
     }
-    
+
     getReminderConfiguration().setReminderServices(new String[] {});
-    
+
     try {
       this.updatePrograms();
     } catch (TvBrowserException exc) {
@@ -226,29 +234,108 @@ public class AdvancedFavorite extends Favorite {
   }
 
 
+  /**
+   * Returns a specific Filter
+   * @param name Name of the Filter
+   * @return The Filter if found, otherwise null
+   */
+  private ProgramFilter getFilterByName(String name ){
+    ProgramFilter[] flist = Plugin.getPluginManager().getAvailableFilters();
+
+    for (int i=0; i<flist.length;i++) {
+      if (flist[i].getName().equals(name)) {
+        return flist[i];
+      }
+    }
+
+    return null;
+  }
+
+  protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
+
+    SearchFormSettings searchForm = mSearchFormSettings;
+
+    ProgramSearcher searcher = searchForm.createSearcher();
+    Program[] progArr = searcher.search(searchForm.getFieldTypes(),
+                                                new devplugin.Date(),
+                                                1000,
+                                                channelArr,
+                                                false
+                                                );
+
+    if (mFilter != null) {
+      ArrayList list = new ArrayList();
+      for (int i=0; i<progArr.length; i++) {
+        if (mFilter.accept(progArr[i])) {
+          list.add(progArr[i]);
+        }
+      }
+      return (Program[])list.toArray(new Program[list.size()]);
+    }
+    else {
+      return progArr;
+    }
+
+  }
+
+
   class Configurator implements FavoriteConfigurator {
 
     private SearchForm mSearchForm;
-
+    private JCheckBox mFilterCheckbox;
+    private JComboBox mFilterCombo;
     public Configurator() {
 
     }
 
     public JPanel createConfigurationPanel() {
       mSearchForm = new SearchForm(true, false, false, SearchForm.LAYOUT_HORIZONTAL);
-      mSearchForm.setSearchFormSettings(getSearchFormSettings());
-      return mSearchForm;
+      mSearchForm.setSearchFormSettings(mSearchFormSettings);
+
+
+      CellConstraints cc = new CellConstraints();
+      PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, 3dlu, pref, pref:grow", "pref, 5dlu, pref"));
+
+      panelBuilder.add(mSearchForm, cc.xyw(1, 1, 4));
+      panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
+      panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getAvailableFilters()), cc.xy(3, 3));
+
+      if (mFilter != null) {
+        mFilterCheckbox.setSelected(true);
+        mFilterCombo.setSelectedItem(mFilter);
+      }
+      else {
+        mFilterCombo.setEnabled(false);
+      }
+
+      mFilterCheckbox.addActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          mFilterCombo.setEnabled(mFilterCheckbox.isSelected());
+        }
+      });
+
+      return panelBuilder.getPanel();
+
+
     }
 
     public void save() {
       SearchFormSettings settings = mSearchForm.getSearchFormSettings();
-      getSearchFormSettings().setCaseSensitive(settings.getCaseSensitive());
-      getSearchFormSettings().setNrDays(settings.getNrDays());
-      getSearchFormSettings().setSearcherType(settings.getSearcherType());
-      getSearchFormSettings().setSearchIn(settings.getSearchIn());
-      getSearchFormSettings().setSearchText(settings.getSearchText());
-      getSearchFormSettings().setUserDefinedFieldTypes(settings.getUserDefinedFieldTypes());
-
+      mSearchFormSettings.setCaseSensitive(settings.getCaseSensitive());
+      mSearchFormSettings.setNrDays(settings.getNrDays());
+      mSearchFormSettings.setSearcherType(settings.getSearcherType());
+      mSearchFormSettings.setSearchIn(settings.getSearchIn());
+      mSearchFormSettings.setSearchText(settings.getSearchText());
+      mSearchFormSettings.setUserDefinedFieldTypes(settings.getUserDefinedFieldTypes());
+      if (mFilterCheckbox.isSelected()) {
+        mFilter = (ProgramFilter)mFilterCombo.getSelectedItem();
+        if (mFilter instanceof ShowAllFilter) {
+          mFilter = null;
+        }
+      }
+      else {
+        mFilter = null;
+      }
     }
   }
 
