@@ -90,6 +90,11 @@ public class Settings {
   private static final Font PROGRAMINFOFONT = new Font("Dialog", Font.PLAIN, 10);
   private static final Font CHANNELNAMEFONT = new Font("Dialog", Font.BOLD, 12);
   private static final Font PROGRAMTIMEFONT = new Font("Dialog", Font.BOLD, 12);
+  
+  // Contains the old setting dirs.
+  private static String[] OLD_VERSIONS_SETTINGS_DIRS = {
+    
+    };
 
   private static PropertyManager mProp = new PropertyManager();
 
@@ -163,104 +168,33 @@ public class Settings {
      */
     else if (!oldDirectoryName.equals(newDirectoryName)) {
       mLog.info("Try to load settings from a previous version of TV-Browser");
-      File oldDir = new File(oldDirectoryName);
-
-      if (!oldDir.exists()
-          || !(new File(oldDirectoryName, SETTINGS_FILE)).exists()) {
-        oldDir = new File(getUserDirectoryName());
-
-        if (oldDir.isDirectory() && !(new File(oldDir, SETTINGS_FILE)).isFile()) {
-          File[] dirs = oldDir.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-              return pathname.isDirectory();
-            }
-          });
-
-          int thisMajor = TVBrowser.VERSION.getMajor();
-          int thisMinor = TVBrowser.VERSION.getMinor();
-
-          int major = -1;
-          int minor = -1;
-          int beta = 0;
-          boolean stable = false;
-
-          int index = -1;
-
-          for (int i = 0; i < dirs.length; i++) {
-            String[] version = dirs[i].getName().split("\\.");
-
-            try {
-              int tempMajor = Integer.parseInt(version[0].trim());
-
-              if (tempMajor > major && tempMajor <= thisMajor) {
-                major = tempMajor;
-                index = i;
-                stable = false;
-              }
-
-              int tempMinor = Integer.parseInt(version[1].trim());
-
-              if (!version[1].trim().startsWith("0")
-                  && version[1].trim().length() == 1)
-                tempMinor *= 10;
-
-              if (tempMajor == major && tempMinor > minor
-                  && tempMinor < thisMinor) {
-                minor = tempMinor;
-                index = i;
-                stable = true;
-              }
-
-            } catch (Exception e) {
-              if (version != null && version.length > 1) {
-                String[] ver2 = null;
-                if (version[1].indexOf("beta") != 0)
-                  ver2 = version[1].split("beta");
-
-                try {
-                  int tempMajor = Integer.parseInt(version[0].trim());
-                  int tempMinor = Integer.parseInt(ver2[0].trim());
-
-                  if (!ver2[0].trim().startsWith("0")
-                      && ver2[0].trim().length() == 1)
-                    tempMinor *= 10;
-
-                  if (tempMajor == major && tempMinor > minor
-                      && tempMinor <= thisMinor) {
-                    minor = tempMinor;
-                    index = i;
-                    stable = false;
-                  }
-
-                  if (ver2.length >= 2 && ver2[1].trim().length() > 0) {
-                    int tempBeta = Integer.parseInt(ver2[1].trim());
-
-                    if (tempMajor == major && tempMinor == minor
-                        && tempBeta > beta && !stable) {
-                      beta = tempBeta;
-                      index = i;
-                    }
-                  }
-
-                } catch (Exception ee) {}
-              }
-            }
-          }
-
-          if (index == -1 || major == -1 || minor == -1)
-            oldDir = new File(oldDirectoryName);
-          else {
-            oldDir = dirs[index];
-
-            if (thisMajor < major)
-              oldDir = new File("");
-            else if (thisMajor == major && thisMinor <= minor && stable)
-              oldDir = new File("");
-          }
+            
+      File oldDir = null;
+      File testFile = null;
+            
+      for (int i = 0; i < OLD_VERSIONS_SETTINGS_DIRS.length; i++) {
+        testFile = new File(getUserDirectoryName() + File.separator + 
+            OLD_VERSIONS_SETTINGS_DIRS[i], SETTINGS_FILE);
+        if(testFile.isFile()) {
+          oldDir = new File(getUserDirectoryName(),OLD_VERSIONS_SETTINGS_DIRS[i]);
+          break;
         }
       }
+      
+      if(oldDir == null) {
+        testFile = new File(getUserDirectoryName(), SETTINGS_FILE);
+        
+        if(testFile.isFile())
+          oldDir = new File(getUserDirectoryName());
+        else {
+          testFile = new File(oldDirectoryName, SETTINGS_FILE);
+          
+          if(testFile.isFile())
+            oldDir = new File(oldDirectoryName);
+        }  
+      }
 
-      if (oldDir.isDirectory() && oldDir.exists()) {
+      if (oldDir != null && oldDir.isDirectory() && oldDir.exists()) {
         final File newDir = new File(getUserSettingsDirName());
         if (newDir.mkdirs()) {
           try {
