@@ -25,7 +25,6 @@
 package captureplugin.drivers.defaultdriver;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -47,6 +46,9 @@ import captureplugin.drivers.defaultdriver.configpanels.ChannelPanel;
 import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
 import captureplugin.drivers.defaultdriver.configpanels.SettingsPanel;
 import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
 
 /**
  * The Configuration-Dialog for this Device
@@ -128,11 +130,6 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
         
         panel.add(mTab, BorderLayout.CENTER);
      
-        
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        
-        
         JButton ok = new JButton(mLocalizer.msg("OK", "OK"));
 
         ok.addActionListener(new ActionListener() {
@@ -151,10 +148,12 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
             }
         });
         
-        buttonPanel.add(ok);
-        buttonPanel.add(cancel);
+        ButtonBarBuilder builder = new ButtonBarBuilder();
+        builder.addGlue();
+        builder.addGriddedButtons(new JButton[]{ok, cancel});
+        builder.setBorder(Borders.DLU4_BORDER);
         
-        panel.add(buttonPanel, BorderLayout.SOUTH);
+        panel.add(builder.getPanel(), BorderLayout.SOUTH);
         
         setSize(600, 550);
     }

@@ -24,7 +24,8 @@
  */
 package captureplugin.drivers;
 
-import java.awt.FlowLayout;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -33,20 +34,24 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 
 /**
  * A Dialog for creating new Devices
@@ -59,7 +64,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
     private JComboBox mDriverCombo;
 
     /** Description of Driver */
-    private JTextArea mDesc;
+    private JEditorPane mDesc;
 
     /** Name of Device */
     private JTextField mName;
@@ -98,7 +103,17 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         DriverIf[] drivers = DriverFactory.getInstance().getDrivers();
 
         mDriverCombo = new JComboBox(drivers);
-
+        mDriverCombo.setRenderer(new DefaultListCellRenderer() {
+          public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            
+            if (value instanceof DriverIf) {
+              value = ((DriverIf)value).getDriverName();
+            }
+            
+            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+          }
+        });
+        
         JPanel panel = (JPanel) getContentPane();
 
         panel.setLayout(new GridBagLayout());
@@ -125,10 +140,8 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
         panel.add(mDriverCombo, input);
 
-        mDesc = new JTextArea();
+        mDesc = UiUtilities.createHtmlHelpTextArea("");
         mDesc.setEditable(false);
-        mDesc.setLineWrap(true);
-        mDesc.setWrapStyleWord(true);
         
         panel.add(new JLabel(mLocalizer.msg("Description", "Description") +":"), input);
 
@@ -141,47 +154,49 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
         panel.add(new JScrollPane(mDesc,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), descC);
 
-        String desc = ((DriverIf) mDriverCombo.getSelectedItem()).getDriverDesc();
-        mDesc.setText(desc);
+        final Font font = new JLabel().getFont();
 
+        String desc = ((DriverIf) mDriverCombo.getSelectedItem()).getDriverDesc();
+        desc = "<html><div style=\"color:#000000;font-family:"+ font.getName() +"; font-size:"+font.getSize()+";\">"+desc+"</div></html>";
+        mDesc.setText(desc);
+        mDesc.setFont(font);
+        
         mDriverCombo.addItemListener(new ItemListener() {
 
             public void itemStateChanged(ItemEvent e) {
                 String desc = ((DriverIf) mDriverCombo.getSelectedItem()).getDriverDesc();
+                desc = "<html><div style=\"color:#000000;font-family:"+ font.getName() +"; font-size:"+font.getSize()+";\">"+desc+"</div></html>";
                 mDesc.setText(desc);
+                mDesc.setFont(font);
             }
 
         });
 
-        JPanel buttonPanel = new JPanel();
-
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-
         JButton ok = new JButton(mLocalizer.msg("OK", "OK"));
         JButton cancel = new JButton(mLocalizer.msg("Cancel", "Cancel"));
-
         ok.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                okPressed();
-            }
+          public void actionPerformed(ActionEvent e) {
+              okPressed();
+          }
         });
 
         cancel.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-              setVisible(false);
-            }
+          public void actionPerformed(ActionEvent e) {
+            setVisible(false);
+          }
         });
 
+        ButtonBarBuilder builder = new ButtonBarBuilder();
+        builder.addGlue();
+        builder.addGriddedButtons(new JButton[] {ok, cancel});
+        
         getRootPane().setDefaultButton(ok);
 
-        buttonPanel.add(ok);
-        buttonPanel.add(cancel);
+        input.insets = new Insets(5, 5, 5, 5);
 
-        input.insets = new Insets(0, 5, 5, 0);
-
-        panel.add(buttonPanel, input);
+        panel.add(builder.getPanel(), input);
 
         setSize(400, 300);
 

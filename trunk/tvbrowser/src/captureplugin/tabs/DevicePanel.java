@@ -125,7 +125,11 @@ public class DevicePanel extends JPanel {
 
         mAddDevice.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                addDevice();
+              SwingUtilities.invokeLater(new Runnable()  {
+                public void run() {
+                  addDevice();
+                };
+              });
             }
         });
         
@@ -226,7 +230,7 @@ public class DevicePanel extends JPanel {
         
         if (device != null) {
             mData.getDevices().add(device);
-            
+            device.configDevice(UiUtilities.getLastModalChildOf(mOwner));
             mDeviceList.setListData(new Vector(mData.getDevices()));
         }
         
