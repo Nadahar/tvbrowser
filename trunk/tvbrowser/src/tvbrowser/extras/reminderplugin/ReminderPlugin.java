@@ -57,6 +57,7 @@ import javax.swing.JOptionPane;
 
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
@@ -156,7 +157,7 @@ public class ReminderPlugin implements ContextMenuIf {
             ClassNotFoundException {
           readData(in);
         }
-      });
+      });  
     } catch (IOException e) {
       ErrorHandler.handle("Could not load reminder data", e);
     }
