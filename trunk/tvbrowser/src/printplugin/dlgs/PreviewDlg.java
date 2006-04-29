@@ -76,6 +76,8 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
       = util.ui.Localizer.getLocalizerFor(PreviewDlg.class);
 
   private Point mMouseDragPoint;
+  private JButton mZoomOut;
+  private JButton mZoomIn;
   
   public PreviewDlg(Frame parent, Printable printer, PageFormat pageFormat, int numberOfPages) {
     super(parent, true);
@@ -133,32 +135,31 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     scrollPane.getVerticalScrollBar().setUnitIncrement(20);
     borderPn.add(scrollPane);
     
-    // TODO: Add Zoom-Icons!!
-    final JButton zoomIn = new JButton(mLocalizer.msg("zoomIn", "Zoom +"));
-    final JButton zoomOut = new JButton(mLocalizer.msg("zoomOut", "Zoom -"));
-
-    zoomIn.addActionListener(new ActionListener() {
+    mZoomIn = new JButton(IconLoader.getInstance().getIconFromTheme("action", "zoom-in", 16));
+    mZoomIn.setToolTipText(mLocalizer.msg("zoomIn", "Zoom in"));
+    mZoomOut = new JButton(IconLoader.getInstance().getIconFromTheme("action", "zoom-out", 16));
+    mZoomOut.setToolTipText(mLocalizer.msg("zoomOut", "Zoom out"));
+    
+    mZoomIn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mPreviewComponent.zoomIn();
-        zoomIn.setEnabled(!mPreviewComponent.maxZoom());
-        zoomOut.setEnabled(true);
+        mZoomIn.setEnabled(!mPreviewComponent.maxZoom());
+        mZoomOut.setEnabled(true);
       }
     });
     
-    zoomOut.addActionListener(new ActionListener() {
+    mZoomOut.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mPreviewComponent.zoomOut();
-        zoomOut.setEnabled(!mPreviewComponent.minZoom());
-        zoomIn.setEnabled(true);
+        mZoomOut.setEnabled(!mPreviewComponent.minZoom());
+        mZoomIn.setEnabled(true);
       }
     });
 
-    zoomOut.setEnabled(false);
-    
     JPanel panel = new JPanel(new FormLayout("pref, 3dlu, pref", "pref"));
     
-    panel.add(zoomIn, cc.xy(1,1));
-    panel.add(zoomOut, cc.xy(3,1));
+    panel.add(mZoomIn, cc.xy(1,1));
+    panel.add(mZoomOut, cc.xy(3,1));
     
     JPanel content = (JPanel)getContentPane();
     content.setBorder(Borders.DLU4_BORDER);
@@ -209,6 +210,9 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
       e.printStackTrace();
     }
    
+    mZoomIn.setEnabled(!mPreviewComponent.maxZoom());
+    mZoomOut.setEnabled(!mPreviewComponent.minZoom());
+    
     mPrevBt.addActionListener(this);
     mNextBt.addActionListener(this); 
   }
