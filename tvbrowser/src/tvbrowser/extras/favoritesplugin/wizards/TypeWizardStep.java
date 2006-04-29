@@ -40,10 +40,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
-import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
+import tvbrowser.extras.favoritesplugin.core.*;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import util.ui.LinkButton;
@@ -64,9 +61,13 @@ public class TypeWizardStep extends AbstractWizardStep {
 
   private JTextField mTopicTf;
 
+  private JTextField mActorsTf;
+
   private JRadioButton mTitleRb;
 
   private JRadioButton mTopicRb;
+
+  private JRadioButton mActorsRb;
 
   private Favorite mFavorite;
 
@@ -87,7 +88,7 @@ public class TypeWizardStep extends AbstractWizardStep {
           "Waehlen Sie eine Bedingung die die Lieblingssendung erfüllen muß:");
     } else {
       mMainQuestion = mLocalizer.msg("mainQuestion.edit",
-          "Warum moechten Sie an diese Sendung als Lieblingssendung markieren?");
+          "Warum moechten Sie diese Sendung als Lieblingssendung markieren?");
     }
   }
 
@@ -101,20 +102,23 @@ public class TypeWizardStep extends AbstractWizardStep {
 
     CellConstraints cc = new CellConstraints();
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, pref:grow",
-        "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+        "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
     panelBuilder.add(new JLabel(mMainQuestion), cc.xyw(1, 1, 3));
     panelBuilder
         .add(mTitleRb = new JRadioButton(mLocalizer.msg("option.title", "Ich mag diese Sendung:")), cc.xy(2, 3));
     panelBuilder.add(mProgramNameTf = new JTextField(), cc.xy(3, 3));
-    panelBuilder.add(mTopicRb = new JRadioButton(mLocalizer.msg("option.topic", "Mich interessiert das Thema:")), cc
-        .xy(2, 5));
+    panelBuilder.add(mTopicRb = new JRadioButton(mLocalizer.msg("option.topic", "Mich interessiert das Thema:")), cc.xy(2, 5));
     panelBuilder.add(mTopicTf = new JTextField(), cc.xy(3, 5));
+
+    panelBuilder.add(mActorsRb = new JRadioButton(mLocalizer.msg("option.actors","I like these actors:")), cc.xy(2,7));
+    panelBuilder.add(mActorsTf = new JTextField(), cc.xy(3,7));
     panelBuilder.setBorder(Borders.DLU4_BORDER);
-    panelBuilder.add(expertBtn, cc.xyw(1, 7, 3));
+    panelBuilder.add(expertBtn, cc.xyw(1, 9, 3));
     ButtonGroup group = new ButtonGroup();
     group.add(mTitleRb);
     group.add(mTopicRb);
+    group.add(mActorsRb);
 
     mTitleRb.setSelected(true);
 
@@ -127,6 +131,12 @@ public class TypeWizardStep extends AbstractWizardStep {
     });
 
     mTopicRb.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        updateTextfields();
+      }
+    });
+
+    mActorsRb.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updateTextfields();
       }
@@ -171,18 +181,24 @@ public class TypeWizardStep extends AbstractWizardStep {
   private void updateTextfields() {
     mProgramNameTf.setEnabled(mTitleRb.isSelected());
     mTopicTf.setEnabled(mTopicRb.isSelected());
+    mActorsTf.setEnabled(mActorsRb.isSelected());
   }
 
   private Favorite createFavorite() {
     if (mTitleRb.isSelected()) {
       String title = mProgramNameTf.getText();
       if (title != null && title.length() > 0) {
-        return new TitleFavorite(mProgramNameTf.getText());
+        return new TitleFavorite(title);
       }
     } else if (mTopicRb.isSelected()) {
       String topic = mTopicTf.getText();
       if (topic != null && topic.length() > 0) {
-        return new TopicFavorite(mTopicTf.getText());
+        return new TopicFavorite(topic);
+      }
+    } else if (mActorsRb.isSelected()) {
+      String actors = mActorsTf.getText();
+      if (actors != null && actors.length() > 0) {
+        return new ActorsFavorite(actors);
       }
     }
 
@@ -205,7 +221,7 @@ public class TypeWizardStep extends AbstractWizardStep {
   public boolean isValid() {
     if (mTitleRb.isSelected()) {
       String title = mProgramNameTf.getText();
-      if (title != null && title.length() > 0) {
+      if (title != null && title.trim().length() > 0) {
         return true;
       }
       JOptionPane.showMessageDialog(mContent,
@@ -214,12 +230,21 @@ public class TypeWizardStep extends AbstractWizardStep {
           JOptionPane.WARNING_MESSAGE);
     } else if (mTopicRb.isSelected()) {
       String topic = mTopicTf.getText();
-      if (topic != null && topic.length() > 0) {
+      if (topic != null && topic.trim().length() > 0) {
         return true;
       }
       JOptionPane.showMessageDialog(mContent,
           mLocalizer.msg("warningTopicMessage", "Enter Topic!"), 
           mLocalizer.msg("warningTopicTitle", "Enter Topic"), 
+          JOptionPane.WARNING_MESSAGE);
+    } else if (mActorsRb.isSelected()) {
+      String actor = mActorsTf.getText();
+      if (actor != null && actor.trim().length() > 0) {
+        return true;
+      }
+      JOptionPane.showMessageDialog(mContent,
+          mLocalizer.msg("warningActorsMessage", "Enter Actors!"),
+          mLocalizer.msg("warningActorsTitle", "Enter Actors"),
           JOptionPane.WARNING_MESSAGE);
     }
 

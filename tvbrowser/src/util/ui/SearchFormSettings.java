@@ -59,7 +59,8 @@ public class SearchFormSettings {
    * @deprecated Since 1.1. Use {@link PluginManager#SEARCHER_TYPE_REGULAR_EXPRESSION} instead.
    */
   public static final int MATCH_REGULAR_EXPRESSION = PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION;
-  
+
+
   /** Specifies, that only titles should be searched. */
   public static final int SEARCH_IN_TITLE = 1;
   /** Specifies, that all fields should be searched. */
