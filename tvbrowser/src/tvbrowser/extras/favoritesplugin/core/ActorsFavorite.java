@@ -56,6 +56,7 @@ public class ActorsFavorite extends Favorite {
 
   public ActorsFavorite(String actors) {
     super();
+    setName(actors);
     mActors = actors;
     mSearchFormSettings = createSearchFormSettings();
   }
