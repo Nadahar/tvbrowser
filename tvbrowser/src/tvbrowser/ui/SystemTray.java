@@ -390,7 +390,6 @@ public class SystemTray {
       // Show important program?
       if (Settings.propTrayImportantProgramsEnabled.getBoolean())
         if (Settings.propTrayImportantProgramsInSubMenu.getBoolean()) {
-          mTrayMenu.addSeparator();
           mTrayMenu.add(addToImportantMenu(new JMenu(mLocalizer.msg(
               "menu.programsImportant", "Important programs"))));
         } else
