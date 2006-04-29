@@ -112,7 +112,11 @@ public class ProgramTime implements Cloneable {
 
       c.set(Calendar.HOUR_OF_DAY, prg.getHours());
       c.set(Calendar.MINUTE, prg.getMinutes());
-      c.add(Calendar.MINUTE, prg.getLength());
+      
+      if (prg.getLength() <= 0) 
+        c.add(Calendar.MINUTE, 1);
+      else
+        c.add(Calendar.MINUTE, prg.getLength());
       c.set(Calendar.SECOND, 0);
       
       mEnd = c;
