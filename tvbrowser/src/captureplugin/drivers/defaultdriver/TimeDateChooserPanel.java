@@ -24,41 +24,64 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import java.awt.Color;
 import java.util.Date;
 
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
-
 /**
- * A Panel that gives the possibility to choose date/time 
+ * A Panel that gives the possibility to choose date/time
  * 
  */
 public class TimeDateChooserPanel extends JPanel {
 
-    /** The Spinner-Model */
-    private SpinnerDateModel mDateModel;
-    
-    /**
-     * Create the Panel
-     * @param date Date
-     */
-    public TimeDateChooserPanel(Date date) {
-        mDateModel = new SpinnerDateModel();
-        mDateModel.setValue(date);
-        
-        JSpinner spinner = new JSpinner(mDateModel);
-        
-        add(spinner);
-    }
+  /** The Spinner-Model */
+  private SpinnerDateModel mDateModel;
 
-    /**
-     * Get the selected Date/Time
-     * @return Date
-     */
-    public Date getDate() {
-        return mDateModel.getDate();
+  private JSpinner mSpinner;
+
+  /**
+   * Create the Panel
+   * 
+   * @param date Date
+   */
+  public TimeDateChooserPanel(Date date) {
+    mDateModel = new SpinnerDateModel();
+    mDateModel.setValue(date);
+
+    mSpinner = new JSpinner(mDateModel);
+    add(mSpinner);
+  }
+
+  /**
+   * Set the Background Color of the Spinner
+   * 
+   * @param bg Color of Background
+   */
+  public void setSpinnerBackground(Color bg) {
+    if (mSpinner != null) {
+      JComponent editor = mSpinner.getEditor();
+      if (editor instanceof JSpinner.DefaultEditor) {
+        JSpinner.DefaultEditor defEditor = (JSpinner.DefaultEditor) editor;
+        JFormattedTextField tf = defEditor.getTextField();
+        if (tf != null) {
+          tf.setBackground(bg);
+        }
+      }
     }
+  }
+
+  /**
+   * Get the selected Date/Time
+   * 
+   * @return Date
+   */
+  public Date getDate() {
+    return mDateModel.getDate();
+  }
 
 }

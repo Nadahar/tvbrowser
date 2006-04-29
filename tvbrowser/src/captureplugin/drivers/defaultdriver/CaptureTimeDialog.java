@@ -25,6 +25,7 @@
 package captureplugin.drivers.defaultdriver;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -102,6 +103,11 @@ public class CaptureTimeDialog extends JDialog {
         mEnd.setBorder(BorderFactory.createTitledBorder(
                 mLocalizer.msg("EndTime","End-Time")));
         
+        System.out.println(mPrgTime.getProgram().getLength());
+        
+        if (mPrgTime.getProgram().getLength() <= 0) {
+          mEnd.setSpinnerBackground(new Color(255, 153, 153));
+        }
 
         JPanel center = new JPanel();
         center.setLayout(new GridBagLayout());
