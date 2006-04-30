@@ -54,10 +54,10 @@ public class ElgatoConnection {
     public ElgatoChannel[] getAvailableChannels() {
         ArrayList list = new ArrayList();
         
-        String[] bla = mAppleScript.executeScript(CHANNELLIST).split("¥");
+        String[] result = mAppleScript.executeScript(CHANNELLIST).split("¥");
         
-        for (int i =0;i<bla.length;i+=2) {
-            ElgatoChannel channel = new ElgatoChannel(Integer.parseInt(bla[i]), bla[i+1]);
+        for (int i =0;i<result.length;i+=2) {
+            ElgatoChannel channel = new ElgatoChannel(Integer.parseInt(result[i]), result[i+1]);
             list.add(channel);
         }
         
