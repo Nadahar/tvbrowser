@@ -28,9 +28,9 @@ import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 
 import util.ui.Localizer;
-
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
 import devplugin.Program;
@@ -41,82 +41,98 @@ import devplugin.Program;
  * @author bodum
  */
 public class ElgatoDevice implements DeviceIf {
-  /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ElgatoDevice.class);
+    /** Translator */
+    private static final Localizer mLocalizer = Localizer
+            .getLocalizerFor(ElgatoDevice.class);
 
-  private ElgatoDriver mDriver;
+    /** Driver */
+    private ElgatoDriver mDriver;
 
-  private String mName;
+    /** Connection */
+    private ElgatoConnection mConnection = new ElgatoConnection();
+    
+    /** Name of Device */
+    private String mName;
 
-  public ElgatoDevice(ElgatoDriver driver, String name) {
-    mDriver = driver;
-    mName = name;
-  }
+    /** List of Recordings */
+    private Program[] mListOfRecordings;
+    
+    public ElgatoDevice(ElgatoDriver driver, String name) {
+        mDriver = driver;
+        mName = name;
+    }
 
-  public ElgatoDevice(ElgatoDevice device) {
-    mDriver = (ElgatoDriver) device.getDriver();
-    mName = device.getName();
-  }
+    public ElgatoDevice(ElgatoDevice device) {
+        mDriver = (ElgatoDriver) device.getDriver();
+        mName = device.getName();
+    }
 
-  public DriverIf getDriver() {
-    return mDriver;
-  }
+    public DriverIf getDriver() {
+        return mDriver;
+    }
 
-  public String getName() {
-    return mName;
-  }
+    public String getName() {
+        return mName;
+    }
 
-  public String setName(String name) {
-      mName = name;
-      return mName;
-  }
+    public String setName(String name) {
+        mName = name;
+        return mName;
+    }
 
-  public void configDevice(Window parent) {
-    // TODO Auto-generated method stub
+    public void configDevice(Window parent) {
+        // TODO Auto-generated method stub
 
-  }
-  
-  public String[] getAdditionalCommands() {
-    return new String[] {
-        mLocalizer.msg("switchChannel", "Switch to Channel"),
-    };
-  }
+    }
 
-  public boolean executeAdditionalCommand(Window parent, int num, Program program) {
-    // TODO Auto-generated method stub
-    return false;
-  }
+    public String[] getAdditionalCommands() {
+        return new String[] { mLocalizer.msg("switchChannel",
+                "Switch to Channel"), };
+    }
 
-  public boolean isAbleToAddAndRemovePrograms() {
-    return true;
-  }
+    public boolean executeAdditionalCommand(Window parent, int num,
+            Program program) {
+        if (num == 0) {
+            mConnection.switchToChannel(program);
+        }
 
-  public Program[] getProgramList() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+        return false;
+    }
 
-  public boolean isInList(Program program) {
-    return false;
-  }
+    public boolean isAbleToAddAndRemovePrograms() {
+        return true;
+    }
 
-  public boolean add(Window parent, Program program) {
-    // TODO Auto-generated method stub
-    return false;
-  }
+    public Program[] getProgramList() {
+        mListOfRecordings = mConnection.getAllRecordings();
+        return mListOfRecordings;
+    }
 
-  public boolean remove(Window parent, Program program) {
-    return false;
-  }
+    public boolean isInList(Program program) {
+        if (mListOfRecordings == null) {
+            mListOfRecordings = mConnection.getAllRecordings();
+        }
+        return Arrays.asList(mListOfRecordings).contains(program);
+    }
 
-  public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-  }
+    public boolean add(Window parent, Program program) {
+        return mConnection.addToRecording(parent, program);
+    }
 
-  public void writeData(ObjectOutputStream stream) throws IOException {
-  }
-  
-  public Object clone() {
-    return new ElgatoDevice(this);
-  }
+    public boolean remove(Window parent, Program program) {
+        mConnection.removeRecording(program);
+        return true;
+    }
+
+    public void readData(ObjectInputStream stream) throws IOException,
+            ClassNotFoundException {
+    }
+
+    public void writeData(ObjectOutputStream stream) throws IOException {
+    }
+
+    public Object clone() {
+        return new ElgatoDevice(this);
+    }
 
 }

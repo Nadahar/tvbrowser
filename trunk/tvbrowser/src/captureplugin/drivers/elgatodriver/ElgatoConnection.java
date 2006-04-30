@@ -24,7 +24,10 @@
  */
 package captureplugin.drivers.elgatodriver;
 
+import java.awt.Window;
 import java.util.ArrayList;
+
+import devplugin.Program;
 
 /**
  * This Class represents the Connection to the Elgato EyeTV.
@@ -45,7 +48,7 @@ public class ElgatoConnection {
     "end tell\n" +
     "set text item delimiters to \"¥\"\n" +
     "set outString to chList as text\n"+
-    "outString";;
+    "outString";
     
     /**
      * Get the List of all available Channels
@@ -63,5 +66,39 @@ public class ElgatoConnection {
         
         return (ElgatoChannel[]) list.toArray(new ElgatoChannel[list.size()]);
     }
+  
+    /**
+     * @return List of all current Recordings
+     */
+    public Program[] getAllRecordings() {
+        System.out.println("Get all Recordings");
+        return new Program[0];
+    }
     
+    /**
+     * Record Program
+     * @param parent Parent-window
+     * @param prg Program to record
+     * @return true if successfull
+     */
+    public boolean addToRecording(Window parent, Program prg) {
+        System.out.println("Add to Recording");
+        return false;
+    }
+
+    /**
+     * Remove Recording
+     * @param prg Remove recording of this Program
+     */
+    public void removeRecording(Program prg) {
+        System.out.println("Remove Recording");
+    }
+    
+    /**
+     * Switch to Channel of Program
+     * @param prg Switch to Channel of Program
+     */
+    public void switchToChannel(Program prg) {
+       System.out.println("Switch to Channel"); 
+    }
 }
