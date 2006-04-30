@@ -28,9 +28,6 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -39,14 +36,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.DefaultMarker;
-import tvbrowser.ui.pluginview.Node;
 import util.io.IOUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
-import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
