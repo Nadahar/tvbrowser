@@ -97,6 +97,7 @@ public class ElgatoConfigDialog extends JDialog {
    * Create the Gui
    */
   private void createGui() {
+    mConfig.getAllElgatoChannels(mConnection);
     JPanel panel = (JPanel) getContentPane();
     
     setTitle(mLocalizer.msg("title","Elgato EyeTV Settings"));

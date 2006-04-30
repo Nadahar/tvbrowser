@@ -147,11 +147,21 @@ public class ElgatoConfig {
     }
 
   }
-  
+
   /**
    * @return get all available Elgato Channels
    */
   public ElgatoChannel[] getAllElgatoChannels() {
+      return getAllElgatoChannels(null);
+  }
+  
+  /**
+   * @return get all available Elgato Channels
+   */
+  public ElgatoChannel[] getAllElgatoChannels(ElgatoConnection con) {
+    if ((con != null) && (mElgatoChannels.size() == 0)) {
+       setElgatoChannels(con.getAvailableChannels());
+    }
     return (ElgatoChannel[])mElgatoChannels.toArray(new ElgatoChannel[mElgatoChannels.size()]);
   }
   
