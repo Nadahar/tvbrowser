@@ -390,7 +390,9 @@ public abstract class Favorite {
   }
 
   private void unmarkProgram(Program p) {
-    p.unmark(FavoritesPlugin.MARKER);
+    if(!FavoritesPlugin.getInstance().isContainedByOtherFavorites(this,p))
+      p.unmark(FavoritesPlugin.MARKER);    
+      
     String[] reminderServices = getReminderConfiguration().getReminderServices();
     for (int i=0; i<reminderServices.length; i++) {
       if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {

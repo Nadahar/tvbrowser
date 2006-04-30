@@ -186,14 +186,22 @@ public class Exclusion {
       topicExcl = true;
     }
 
+    int timeFromParsed = mTimeFrom;
     int progTime = prog.getHours()*60 + prog.getMinutes();
+
+    if(mTimeFrom > mTimeTo) {
+      timeFromParsed -= 60*24;
+      
+      if(progTime > mTimeTo)
+        progTime -= 24*60;
+    }
+        
     if (mTimeFrom >=0 && mTimeTo >=0) {
-      if (progTime >= mTimeFrom && progTime <=mTimeTo) {
+      if (progTime >= timeFromParsed && progTime <= mTimeTo)
         timeExcl = true;
-      }
     }
     else if (mTimeFrom >=0) {
-      if (progTime >= mTimeFrom) {
+      if (progTime >= timeFromParsed) {
         timeExcl = true;
       }
     }
