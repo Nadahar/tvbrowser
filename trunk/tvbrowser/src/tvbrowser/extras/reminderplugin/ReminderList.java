@@ -92,49 +92,6 @@ public class ReminderList implements ActionListener {
           add(program, reminderMinutes);
         }
       }
-    } else if (version == 2) {
-      File nodeFile = new File(Settings.getUserSettingsDirName(), "java."
-          + ReminderPlugin.getInstance().getId() + ".node");
-
-      if (nodeFile.isFile()) {
-        ObjectInputStream nodeIn;
-        PluginTreeNode rootNode = new PluginTreeNode("loadReminderPrograms");
-        nodeIn = new ObjectInputStream(new BufferedInputStream(
-            new FileInputStream(nodeFile), 0x2000));
-
-        rootNode.load(nodeIn);
-        rootNode.update();
-        loadPrograms(rootNode.getMutableTreeNode());
-
-        nodeIn.close();
-
-        // The programs were loaded, so delete the .node File.
-        // The loaded programs will be stored in the .dat in future.
-        nodeFile.delete();
-      }
-    }
-  }
-
-  /**
-   * An method to load the programs of a PluginTreeNode.
-   * 
-   * @param node
-   *          The root node to load the programs from
-   */
-  private void loadPrograms(Node node) {
-    for (int i = 0; i < node.getChildCount(); i++) {
-      if (node.getChildAt(i).isLeaf()) {
-        Node childnode = (Node) node.getChildAt(i);
-        if (childnode.getUserObject() instanceof ProgramItem) {
-          ProgramItem pItem = (ProgramItem) childnode.getUserObject();
-
-          ReminderListItem temp = new ReminderListItem(pItem);
-
-          add(temp.getProgram(), temp.getMinutes());
-        }
-      } else {
-        loadPrograms((Node) node.getChildAt(i));
-      }
     }
   }
 
