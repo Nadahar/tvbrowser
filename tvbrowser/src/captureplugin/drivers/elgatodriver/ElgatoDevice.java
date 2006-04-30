@@ -67,7 +67,8 @@ public class ElgatoDevice implements DeviceIf {
   }
 
   public String setName(String name) {
-    return mName;
+      mName = name;
+      return mName;
   }
 
   public void configDevice(Window parent) {

@@ -23,7 +23,7 @@
  * $Revision$
  */
 
-package captureplugin.drivers.defaultdriver;
+package captureplugin.drivers.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,7 +42,8 @@ public class StreamReaderThread extends Thread {
   private InputStream mInput;
   private boolean mSaveOutput;
   private StringBuffer mOutput;
-
+  private String mEncoding;
+  
   /**
    * @param stream
    *          The InputStream to read from.
@@ -50,15 +51,38 @@ public class StreamReaderThread extends Thread {
    *          Save the output of the stream.
    */
   public StreamReaderThread(InputStream stream, boolean save) {
+      mInput = stream;
+      mSaveOutput = save;
+      mOutput = new StringBuffer();
+      mEncoding = null;
+  }
+
+  /**
+   * @param stream
+   *          The InputStream to read from.
+   * @param save
+   *          Save the output of the stream.
+   * @param encoding
+   *          Encoding of the Stream
+   */
+  public StreamReaderThread(InputStream stream, boolean save, String encoding) {
     mInput = stream;
     mSaveOutput = save;
     mOutput = new StringBuffer();
+    mEncoding = encoding;
   }
-
+  
   public void run() {
     try {
       String line;
-      BufferedReader reader = new BufferedReader(new InputStreamReader(mInput));
+      
+      BufferedReader reader;
+      
+      if (mEncoding != null)
+          reader = new BufferedReader(new InputStreamReader(mInput, mEncoding));
+      else
+          reader = new BufferedReader(new InputStreamReader(mInput));
+      
       while ((line = reader.readLine()) != null)
         if (mSaveOutput)
           mOutput.append(line + (File.separatorChar == '\\' ? "\r\n" : "\n"));
