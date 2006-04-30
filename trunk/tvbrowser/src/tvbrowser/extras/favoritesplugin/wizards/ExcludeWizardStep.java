@@ -146,7 +146,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mTopicQuestion = mLocalizer.msg("topicQuestion.edit", "Sendungen mit diesem Stichwort:");
       mTimeQuestion = mLocalizer.msg("timeQuestion.edit", "Sendungen in diesem Zeitraum:");
       mTitleQuestion = mLocalizer.msg("titleQuestion.edit", "Sendungen mit diesem Titel:");
-      mDayQuestion = "Sendungen an diesem Tag:";
+      mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.edit","Sendungen an diesem Tag:");
     } else {
       mMainQuestion = mLocalizer.msg("mainQuestion.create",
           "Warum gehoert diese Sendung nicht zur Lieblingssendung '{0}'?", mFavorite.getName());
@@ -154,7 +154,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mTopicQuestion = mLocalizer.msg("topicQuestion.create", "Falsches Stichwort:");
       mTimeQuestion = mLocalizer.msg("timeQuestion.create", "Falsche Beginnzeit:");
       mTitleQuestion = mLocalizer.msg("titleQuestion.create", "Falscher Titel:");
-      mDayQuestion = "Falscher Tag:";
+      mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.create","Falscher Tag:");
     }
 
   }

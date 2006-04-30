@@ -127,11 +127,12 @@ public class FavoritesPlugin implements ContextMenuIf{
 
       public void tvDataUpdateFinished() {
         for (int i = 0; i < mFavoriteArr.length; i++) {
-      try {
-        mFavoriteArr[i].updatePrograms();
-      } catch (TvBrowserException exc) {
-        ErrorHandler.handle(exc);
-      }
+        try {
+          mFavoriteArr[i].updatePrograms();
+        } catch (TvBrowserException exc) {
+          ErrorHandler.handle(exc);
+        }
+        updateRootNode();
     }
 
     ArrayList showInfoFavorites = new ArrayList();
