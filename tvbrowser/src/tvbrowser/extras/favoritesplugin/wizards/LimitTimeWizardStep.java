@@ -107,7 +107,7 @@ public class LimitTimeWizardStep extends AbstractWizardStep {
   }
 
   public boolean isValid() {
-    return mTimePeriodChooser.getFromTime() < mTimePeriodChooser.getToTime();
+    return true;
   }
 
   public int[] getButtons() {

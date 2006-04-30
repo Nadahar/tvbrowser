@@ -227,7 +227,7 @@ public abstract class Favorite {
 
   private Program[] filterByLimitations(Program[] progArr) {
 
-      Exclusion[] exclusions = getExclusions();
+    Exclusion[] exclusions = getExclusions();
     ArrayList list = new ArrayList();
     boolean isLimitedByTime = getLimitationConfiguration().isLimitedByTime();
     int timeFrom = getLimitationConfiguration().getTimeFrom();
@@ -290,8 +290,6 @@ public abstract class Favorite {
    * @throws TvBrowserException
    */
   public void updatePrograms() throws TvBrowserException {
-
-
 
     Channel[] channelArr;
     if (getLimitationConfiguration().isLimitedByChannel()) {
