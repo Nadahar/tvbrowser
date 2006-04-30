@@ -31,14 +31,10 @@ import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
 
 
 import javax.sound.midi.MidiSystem;
@@ -60,7 +56,6 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
-import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
 
 import tvbrowser.ui.mainframe.MainFrame;
@@ -77,6 +72,9 @@ public class ReminderPlugin implements ContextMenuIf {
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
+
+   private java.util.logging.Logger mLog
+      = java.util.logging.Logger.getLogger(ReminderPlugin.class.getName());
 
   private ReminderList mReminderList;
   private Properties mSettings;
@@ -147,19 +145,58 @@ public class ReminderPlugin implements ContextMenuIf {
       ErrorHandler.handle("Could not load reminder data.", e);
     }
     
-    
+  }
+
+
+  private ObjectInputStream getObjectInputStream(File f) throws IOException {
+    return new ObjectInputStream(new BufferedInputStream(new FileInputStream(f), 0x4000));
   }
 
   private void loadReminderData() {
     try {
-      mConfigurationHandler.loadData(new DataDeserializer() {
-        public void read(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
-          readData(in);
-        }
-      });  
+
+
+      File newFile = new File(Settings.getUserSettingsDirName(), "reminder.dat");
+
+      if (newFile.exists()) {
+        readData(getObjectInputStream(newFile));
+      }
+      else {
+        tryToReadDataFromPreviousVersions();
+      }
+    mReminderList.removeExpiredItems();
+    mReminderList.setReminderTimerListener(new ReminderTimerListener(null,
+    mSettings, mReminderList));
+
+    } catch (ClassNotFoundException e) {
+      ErrorHandler.handle("Could not load reminder data", e);
     } catch (IOException e) {
       ErrorHandler.handle("Could not load reminder data", e);
+    }
+  }
+
+
+  private void tryToReadDataFromPreviousVersions() {
+    boolean oldDataRead = false;
+    try {
+      File nodeFile = new File(Settings.getUserSettingsDirName(), "java.reminderplugin.ReminderPlugin.node");
+
+      if (nodeFile.exists()) {
+        readReminderFromTVBrowser21and20(getObjectInputStream(nodeFile));
+        oldDataRead = true;
+        nodeFile.delete();
+      }
+      File datFile = new File(Settings.getUserSettingsDirName(), "java.reminderplugin.ReminderPlugin.dat");
+      if (datFile.exists()) {
+        if (!oldDataRead) {
+          readReminderFromBeforeTVBrowser20(getObjectInputStream(datFile));
+        }
+        datFile.delete();
+      }
+    }catch(IOException e) {
+      mLog.log(Level.WARNING, "Could not read data from previous version", e);
+    }catch(ClassNotFoundException e) {
+      mLog.log(Level.WARNING, "Could not read data from previous version", e);
     }
   }
 
@@ -193,9 +230,51 @@ public class ReminderPlugin implements ContextMenuIf {
 
     mReminderList.setReminderTimerListener(null);
     mReminderList.read(in);
-    mReminderList.removeExpiredItems();
-    mReminderList.setReminderTimerListener(new ReminderTimerListener(null,
-        mSettings, mReminderList));
+
+  }
+
+  private void readReminderFromTVBrowser21and20(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+    int cnt = in.readInt();
+    for (int i=0; i<cnt; i++) {
+      int type = in.readInt();
+      if (type == 2) {     // Node.PROGRAM
+        ProgramItem item = new ProgramItem();
+        item.read(in);
+        String m = item.getProperty("minutes");
+        int minutes;
+        try {
+          minutes = Integer.parseInt(m);
+        }catch(NumberFormatException e) {
+          minutes = 10;
+        }
+        Program program = item.getProgram();
+        mReminderList.add(program, minutes);
+
+        in.readInt();  // cnt (should be 0)
+
+      }
+    }
+    in.close();
+  }
+
+  private void readReminderFromBeforeTVBrowser20(ObjectInputStream in) throws IOException, ClassNotFoundException {
+     int version = in.readInt();
+    if (version == 1) {
+      int size = in.readInt();
+      for (int i = 0; i < size; i++) {
+        in.readInt();   // read version
+        int reminderMinutes = in.readInt();
+        Date programDate = new Date(in);
+        String programId = (String) in.readObject();
+        Program program = Plugin.getPluginManager().getProgram(programDate, programId);
+
+        // Only add items that were able to load their program
+        if (program != null) {
+          mReminderList.add(program, reminderMinutes);
+        }
+      }
+    }
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
