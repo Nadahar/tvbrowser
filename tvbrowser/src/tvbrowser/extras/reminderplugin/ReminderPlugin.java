@@ -310,7 +310,7 @@ public class ReminderPlugin implements ContextMenuIf {
     boolean sendEnabled = true;
     
     if(settings.containsKey("usesendplugin")) {
-      sendEnabled = settings.getProperty("usesendplugin","true").compareToIgnoreCase("true") == 0;
+      sendEnabled = settings.getProperty("usesendplugin","").compareToIgnoreCase("true") == 0;
       settings.remove("usesendplugin");
     }
       
