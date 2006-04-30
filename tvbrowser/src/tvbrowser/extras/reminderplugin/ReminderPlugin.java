@@ -213,7 +213,8 @@ public class ReminderPlugin implements ContextMenuIf {
       File datFile = new File(userDirectory, DATAFILE_NAME);
       out = new ObjectOutputStream(new FileOutputStream(tmpDatFile));
       writeData(out);
-
+      out.close();
+      
       datFile.delete();
       tmpDatFile.renameTo(datFile);
     } catch (IOException e) {
