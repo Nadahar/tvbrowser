@@ -50,6 +50,10 @@ public class ElgatoConnection {
     "set outString to chList as text\n"+
     "outString";
     
+    private static final String SWITCHCHANNEL = "tell application \"EyeTV\"\n" +
+    "set current channel to \"{0}\"\n" +
+    "end tell";
+    
     /**
      * Get the List of all available Channels
      * @return All available Channels
@@ -100,6 +104,6 @@ public class ElgatoConnection {
      * @param prg Switch to Channel of Program
      */
     public void switchToChannel(ElgatoConfig conf, Program prg) {
-       System.out.println("Switch to Channel"); 
+       mAppleScript.executeScript(SWITCHCHANNEL.replaceAll("\\{0\\}", Integer.toString(conf.getElgatoChannel(prg.getChannel()).getNumber())));
     }
 }
