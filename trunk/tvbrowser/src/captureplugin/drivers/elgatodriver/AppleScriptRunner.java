@@ -11,7 +11,7 @@ import captureplugin.drivers.utils.StreamReaderThread;
  * @author bodum
  */
 public class AppleScriptRunner {
-
+    /** Default TimeOut in Seconds */
     private int mTimeOut = 30;
     
     /**
@@ -36,8 +36,6 @@ public class AppleScriptRunner {
      */
     public String executeScript(String script) {
         try {
-            script = "set text item delimiters to \"---\"\n"+script;
-            
             File file = File.createTempFile("osascript", "temp");
             
             FileWriter writer = new FileWriter(file);

@@ -76,11 +76,6 @@ public class ElgatoDevice implements DeviceIf {
 
   }
   
-  public Program[] getProgramList() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
   public String[] getAdditionalCommands() {
     return new String[] {
         mLocalizer.msg("switchChannel", "Switch to Channel"),
@@ -94,6 +89,11 @@ public class ElgatoDevice implements DeviceIf {
 
   public boolean isAbleToAddAndRemovePrograms() {
     return true;
+  }
+
+  public Program[] getProgramList() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
   public boolean isInList(Program program) {
