@@ -26,6 +26,7 @@
 package tvbrowser.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -91,7 +92,8 @@ public class SystemTray {
   private SystemTrayIf mSystemTray;
 
   private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure;
-
+  private Dimension mOpenCloseMenuDim, mQuitMenuDim, mConfigureDim;
+  
   private ScrollableMenu mTrayMenu;
   private Timer mClickTimer;
 
@@ -145,9 +147,13 @@ public class SystemTray {
       mOpenCloseMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
       Font f = mOpenCloseMenuItem.getFont();
       mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
+      mOpenCloseMenuDim = mOpenCloseMenuItem.getPreferredSize();
+      
       mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
-
+      mQuitMenuDim = mQuitMenuItem.getPreferredSize();
+      
       mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));
+      mConfigureDim = mConfigure.getPreferredSize();
 
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -273,6 +279,7 @@ public class SystemTray {
 
   private void buildMenu() {
     mTrayMenu.removeAll();
+    mOpenCloseMenuItem.setPreferredSize(mOpenCloseMenuDim);
     mTrayMenu.add(mOpenCloseMenuItem);
     mTrayMenu.addSeparator();
     mTrayMenu.add(createPluginsMenu());
@@ -296,8 +303,10 @@ public class SystemTray {
         Settings.propTraySoonProgramsEnabled.getBoolean() ||
         Settings.propTrayOnTimeProgramsEnabled.getBoolean())
       mTrayMenu.addSeparator();
+    mConfigure.setPreferredSize(mConfigureDim);
     mTrayMenu.add(mConfigure);
     mTrayMenu.addSeparator();
+    mQuitMenuItem.setPreferredSize(mQuitMenuDim);
     mTrayMenu.add(mQuitMenuItem);
   }
 

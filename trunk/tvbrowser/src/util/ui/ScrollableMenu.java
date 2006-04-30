@@ -398,6 +398,7 @@ public class ScrollableMenu extends JMenu {
     while (getMenuComponentCount() > 0) {
       remove(0);
     }
+    maxWidth = 10;
   }
 
   /**
