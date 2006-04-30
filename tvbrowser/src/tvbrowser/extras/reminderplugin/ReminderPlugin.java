@@ -261,7 +261,9 @@ public class ReminderPlugin implements ContextMenuIf {
           minutes = 10;
         }
         Program program = item.getProgram();
-        mReminderList.add(program, minutes);
+        
+        if(program != null)
+          mReminderList.add(program, minutes);
 
         in.readInt();  // cnt (should be 0)
 
