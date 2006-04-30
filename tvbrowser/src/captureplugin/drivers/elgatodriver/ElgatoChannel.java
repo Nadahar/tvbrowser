@@ -24,6 +24,10 @@
  */
 package captureplugin.drivers.elgatodriver;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * This Class represents a Channel in the Elgato EyeTV
  * 
@@ -43,6 +47,16 @@ public class ElgatoChannel {
     public ElgatoChannel(int number, String name) {
         mNumber = number;
         mName = name;
+    }
+
+    /**
+     * Create the Channel from a Stream
+     * @param stream load Settings from this Stream
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public ElgatoChannel(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+      readData(stream);
     }
 
     /**
@@ -79,5 +93,62 @@ public class ElgatoChannel {
      */
     public String toString() {
         return mNumber + ". " + mName;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+      final int PRIME = 31;
+      int result = 1;
+      result = PRIME * result + ((mName == null) ? 0 : mName.hashCode());
+      result = PRIME * result + mNumber;
+      return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      final ElgatoChannel other = (ElgatoChannel) obj;
+      if (mName == null) {
+        if (other.mName != null)
+          return false;
+      } else if (!mName.equals(other.mName))
+        return false;
+      if (mNumber != other.mNumber)
+        return false;
+      return true;
+    }
+
+    /**
+     * Read Settings
+     * @param stream
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public void readData(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+      int version = stream.readInt();
+      mNumber = stream.readInt();
+      mName = stream.readUTF();
+    } 
+
+    /**
+     * Store Settings
+     * @param stream
+     * @throws IOException
+     */
+    public void writeData(ObjectOutputStream stream) throws IOException {
+      stream.writeInt(1);
+      stream.writeInt(mNumber);
+      stream.writeUTF(mName);
     }
 }
