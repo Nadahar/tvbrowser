@@ -56,7 +56,6 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
-import tvbrowser.extras.common.DataSerializer;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
@@ -81,6 +80,7 @@ public class ReminderPlugin implements ContextMenuIf {
 
   private static ReminderPlugin mInstance;
   private static String DATAFILE_PREFIX = "reminderplugin.ReminderPlugin";
+  private static String DATAFILE_NAME = "reminder.dat";
 
   private ConfigurationHandler mConfigurationHandler;
 
@@ -144,7 +144,7 @@ public class ReminderPlugin implements ContextMenuIf {
     } catch (IOException e) {
       ErrorHandler.handle("Could not load reminder data.", e);
     }
-    
+
   }
 
 
@@ -156,7 +156,7 @@ public class ReminderPlugin implements ContextMenuIf {
     try {
 
 
-      File newFile = new File(Settings.getUserSettingsDirName(), "reminder.dat");
+      File newFile = new File(Settings.getUserSettingsDirName(), DATAFILE_NAME);
 
       if (newFile.exists()) {
         readData(getObjectInputStream(newFile));
@@ -205,15 +205,27 @@ public class ReminderPlugin implements ContextMenuIf {
   }
 
   public void store() {
-
+    ObjectOutputStream out = null;
     try {
-      mConfigurationHandler.storeData(new DataSerializer() {
-        public void write(ObjectOutputStream out) throws IOException {
-          writeData(out);
-        }
-      });
+      String userDirectoryName = Settings.getUserSettingsDirName();
+      File userDirectory = new File(userDirectoryName);
+      File tmpDatFile = new File(userDirectory, DATAFILE_NAME + ".temp");
+      File datFile = new File(userDirectory, DATAFILE_NAME);
+      out = new ObjectOutputStream(new FileOutputStream(tmpDatFile));
+      writeData(out);
+
+      datFile.delete();
+      tmpDatFile.renameTo(datFile);
     } catch (IOException e) {
       ErrorHandler.handle("Could not store reminder data.", e);
+    } finally {
+      if (out != null) {
+        try {
+          out.close();
+        } catch(IOException e) {
+          // ignore
+        }
+      }
     }
 
     try {
