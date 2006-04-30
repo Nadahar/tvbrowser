@@ -313,6 +313,23 @@ public class FavoritesPlugin implements ContextMenuIf{
     updateRootNode();
 
   }
+  
+  /**
+   * Check if a program is marked by other Favorites to.
+   * 
+   * @param favorite The Favorite that wants to check this.
+   * @param p The program to check.
+   * @return True if the program was found in other Favorites than the given one.
+   */
+  public boolean isContainedByOtherFavorites(Favorite favorite, Program p) {    
+    for (int i = 0; i < mFavoriteArr.length; i++) {
+      if(!mFavoriteArr[i].equals(favorite)) {
+        if(mFavoriteArr[i].contains(p))
+          return true;
+      }
+    }
+    return false;
+  }
 
 
   private void writeData(ObjectOutputStream out) throws IOException {
