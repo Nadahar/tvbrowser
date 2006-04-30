@@ -204,9 +204,13 @@ public class AdvancedFavorite extends Favorite {
     programList.toArray(mProgramArr);
 
     if (version >=4) {
-      in.readBoolean();  // useFilter
-      String filterName = (String)in.readObject();
-      mFilter = getFilterByName(filterName);
+        boolean useFilter = in.readBoolean();  // useFilter
+        String filterName = (String)in.readObject();
+        
+        if(useFilter)
+          mFilter = getFilterByName(filterName);
+        else
+          mFilter = null;
     } else {
         mFilter = null;
     }
