@@ -91,11 +91,7 @@ public class Settings {
   private static final Font CHANNELNAMEFONT = new Font("Dialog", Font.BOLD, 12);
   private static final Font PROGRAMTIMEFONT = new Font("Dialog", Font.BOLD, 12);
   
-  // Contains the old setting dirs.
-  private static String[] OLD_VERSIONS_SETTINGS_DIRS = {
-    
-    };
-
+ 
   private static PropertyManager mProp = new PropertyManager();
 
   /**
@@ -172,11 +168,11 @@ public class Settings {
       File oldDir = null;
       File testFile = null;
             
-      for (int i = 0; i < OLD_VERSIONS_SETTINGS_DIRS.length; i++) {
+      for (int i = 1; i < TVBrowser.ALL_VERSIONS.length; i++) {
         testFile = new File(getUserDirectoryName() + File.separator + 
-            OLD_VERSIONS_SETTINGS_DIRS[i], SETTINGS_FILE);
+            TVBrowser.ALL_VERSIONS[i], SETTINGS_FILE);
         if(testFile.isFile()) {
-          oldDir = new File(getUserDirectoryName(),OLD_VERSIONS_SETTINGS_DIRS[i]);
+          oldDir = new File(getUserDirectoryName(),TVBrowser.ALL_VERSIONS[i]);
           break;
         }
       }

@@ -98,7 +98,15 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  public static final devplugin.Version VERSION=new devplugin.Version(2,20,true,"2.2 (SVN)");
+  /* If you want to change the version string, add it to the beginning of this array.
+     We need the old version strings to import the settings.
+  */
+  public static final String[] ALL_VERSIONS = new String[]{
+          "2.2beta1",
+          "2.2 (SVN)"
+  };
+
+  public static final devplugin.Version VERSION=new devplugin.Version(2,20,true,ALL_VERSIONS[0]);
 
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
