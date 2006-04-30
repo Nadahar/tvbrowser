@@ -33,6 +33,8 @@ import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -368,12 +370,20 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       listModel.addElement(exclusions[i]);
     }
     mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
-
+    
     mExclusionsList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
           updateExclusionListButtons();
         }
+      }
+    });
+
+    mExclusionsList.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2
+            && mEditExclusionBtn.isEnabled())
+          mEditExclusionBtn.getActionListeners()[0].actionPerformed(null);
       }
     });
 
