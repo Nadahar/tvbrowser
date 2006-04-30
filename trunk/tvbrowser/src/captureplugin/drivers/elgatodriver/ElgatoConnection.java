@@ -96,9 +96,10 @@ public class ElgatoConnection {
     
     /**
      * Switch to Channel of Program
+     * @param conf Config to use
      * @param prg Switch to Channel of Program
      */
-    public void switchToChannel(Program prg) {
+    public void switchToChannel(ElgatoConfig conf, Program prg) {
        System.out.println("Switch to Channel"); 
     }
 }

@@ -30,9 +30,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
+import captureplugin.drivers.elgatodriver.configdialog.ElgatoConfigDialog;
+import devplugin.Channel;
 import devplugin.Program;
 
 /**
@@ -54,17 +61,26 @@ public class ElgatoDevice implements DeviceIf {
     /** Name of Device */
     private String mName;
 
+    /** Configuration */
+    private ElgatoConfig mConfig = new ElgatoConfig();
+    
     /** List of Recordings */
     private Program[] mListOfRecordings;
     
     public ElgatoDevice(ElgatoDriver driver, String name) {
         mDriver = driver;
         mName = name;
+        mConfig.setElgatoChannels(mConnection.getAvailableChannels());
     }
 
     public ElgatoDevice(ElgatoDevice device) {
         mDriver = (ElgatoDriver) device.getDriver();
         mName = device.getName();
+        mConfig = (ElgatoConfig) device.getConfig().clone();
+    }
+
+    private ElgatoConfig getConfig() {
+      return mConfig;
     }
 
     public DriverIf getDriver() {
@@ -81,8 +97,19 @@ public class ElgatoDevice implements DeviceIf {
     }
 
     public void configDevice(Window parent) {
-        // TODO Auto-generated method stub
-
+      ElgatoConfigDialog dialog;
+      
+      if (parent instanceof JFrame) {
+        dialog = new ElgatoConfigDialog((JFrame) parent, mConnection, mConfig);
+      } else {
+        dialog = new ElgatoConfigDialog((JDialog) parent, mConnection, mConfig);
+      }
+      
+      UiUtilities.centerAndShow(dialog);
+      
+      if (dialog.wasOkPressed()) {
+        mConfig = dialog.getConfig();
+      }
     }
 
     public String[] getAdditionalCommands() {
@@ -93,7 +120,9 @@ public class ElgatoDevice implements DeviceIf {
     public boolean executeAdditionalCommand(Window parent, int num,
             Program program) {
         if (num == 0) {
-            mConnection.switchToChannel(program);
+          if (testConfig(parent, program.getChannel())) {
+            mConnection.switchToChannel(mConfig, program);
+          }
         }
 
         return false;
@@ -124,11 +153,45 @@ public class ElgatoDevice implements DeviceIf {
         return true;
     }
 
+    /**
+     * Test if the Channel is in the Configuration. If not a 
+     * Dialog is shown
+     * 
+     * @param parent Parent Dialog 
+     * @param ch Channel to check
+     * @return true if Channel is in Config
+     */
+    private boolean testConfig(Window parent, Channel ch) {
+      if (mConfig.getElgatoChannel(ch) == null) {
+        int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("channelAssign", "Please assign Channel first"), mLocalizer.msg("channelAssignTitle", "Assign Channel"), JOptionPane.YES_NO_OPTION);
+        
+        if (ret == JOptionPane.YES_OPTION) {
+          ElgatoConfigDialog dialog;
+          
+          if (parent instanceof JDialog) {
+            dialog = new ElgatoConfigDialog((JDialog)parent, mConnection, mConfig);
+          } else {
+            dialog = new ElgatoConfigDialog((JFrame)parent, mConnection, mConfig);
+          }
+          UiUtilities.centerAndShow(dialog);
+
+          if (dialog.wasOkPressed()) {
+            mConfig = dialog.getConfig();
+          }
+        }
+        return false;
+      } 
+      
+      return true;
+    }
+    
     public void readData(ObjectInputStream stream) throws IOException,
             ClassNotFoundException {
+      mConfig = new ElgatoConfig(stream);
     }
 
     public void writeData(ObjectOutputStream stream) throws IOException {
+      mConfig.writeData(stream);
     }
 
     public Object clone() {
