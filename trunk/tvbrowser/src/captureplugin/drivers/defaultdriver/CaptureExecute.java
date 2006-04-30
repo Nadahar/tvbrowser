@@ -42,6 +42,7 @@ import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import captureplugin.drivers.utils.StreamReaderThread;
 import captureplugin.utils.CaptureUtilities;
 
 /**
