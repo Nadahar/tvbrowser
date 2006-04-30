@@ -70,7 +70,6 @@ import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
-import devplugin.ContextMenuAction;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Plugin;
@@ -388,69 +387,13 @@ public class FavoritesPlugin implements ContextMenuIf{
   }
 
 
-  public ActionMenu getContextMenuActions(final Program program) {
-
-    ArrayList favorites = new ArrayList();
-    for (int i = 0; i < mFavoriteArr.length; i++) {
-      Program[] programs = mFavoriteArr[i].getPrograms();
-      for (int j = 0; j < programs.length; j++) {
-        if (programs[j].equals(program)) {
-          favorites.add(mFavoriteArr[i]);
-          break;
-        }
-      }
-    }
-
-    if (favorites.isEmpty()) {
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(getIconFromTheme("action", "bookmark-new", 16));
-      menu.setText(mLocalizer.msg("contextMenuText", "Add to favorite programs"));
-      menu.setActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent event) {
-          showCreateFavoriteWizard(program);
-        }
-      });
-      return new ActionMenu(menu);
-    }
-    else {
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setText(mLocalizer.msg("manageFavorites", "Favorites"));
-      menu.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
-
-      ArrayList actions = new ArrayList();
-      for (int i=0; i<favorites.size(); i++) {
-        final Favorite fav = (Favorite)favorites.get(i);
-        ContextMenuAction action = new ContextMenuAction();
-        action.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
-        action.setText(mLocalizer.msg("exclude","Exclude from '{0}'...", fav.getName()));
-        action.setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            showExcludeProgramsDialog(fav, program);
-          }
-        });
-        actions.add(action);
-      }
-
-      for (int i=0; i<favorites.size(); i++) {
-        final Favorite fav = (Favorite)favorites.get(i);
-        ContextMenuAction editAction = new ContextMenuAction();
-        editAction.setText(mLocalizer.msg("edit","Edit '{0}'...", fav.getName()));
-        editAction.setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
-        editAction.setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-           editFavorite(fav);
-          }
-        });
-        actions.add(editAction);
-      }
-      return new ActionMenu(menu, (Action[])actions.toArray(new Action[actions.size()]));
-    }
-
-
+  public ActionMenu getContextMenuActions(Program program) {
+    return new ContextMenuProvider(mFavoriteArr).getContextMenuActions(program);
   }
 
 
-  private void editFavorite(Favorite favorite) {
+
+  public void editFavorite(Favorite favorite) {
 
     Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     EditFavoriteDialog dlg;
@@ -530,7 +473,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   }
 
-  private void showCreateFavoriteWizard(Program program) {
+  public void showCreateFavoriteWizard(Program program) {
 
     Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
@@ -564,7 +507,7 @@ public class FavoritesPlugin implements ContextMenuIf{
   }
 
 
-  private void showExcludeProgramsDialog(Favorite fav, Program program) {
+  public void showExcludeProgramsDialog(Favorite fav, Program program) {
     WizardHandler handler = new WizardHandler(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), new ExcludeWizardStep(fav, program));
     Exclusion exclusion = (Exclusion) handler.show();
     if (exclusion != null) {
@@ -579,6 +522,15 @@ public class FavoritesPlugin implements ContextMenuIf{
   }
 
 
+  public void askAndDeleteFavorite(Favorite fav) {
+    if (JOptionPane.showConfirmDialog(null,
+              mLocalizer.msg("reallyDelete", "Really delete favorite?"),
+              mLocalizer.msg("delete", "Delete selected favorite..."),
+              JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      deleteFavorite(fav);
+    }
+  }
+  
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("apps", "bookmark", 16);
   }
