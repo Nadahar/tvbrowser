@@ -70,7 +70,6 @@ public class ElgatoDevice implements DeviceIf {
     public ElgatoDevice(ElgatoDriver driver, String name) {
         mDriver = driver;
         mName = name;
-        mConfig.setElgatoChannels(mConnection.getAvailableChannels());
     }
 
     public ElgatoDevice(ElgatoDevice device) {
