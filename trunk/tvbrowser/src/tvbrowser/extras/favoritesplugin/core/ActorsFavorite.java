@@ -32,6 +32,7 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.awt.*;
+import java.util.ArrayList;
 
 import util.ui.SearchFormSettings;
 import util.exc.TvBrowserException;
@@ -57,15 +58,14 @@ public class ActorsFavorite extends Favorite {
   public ActorsFavorite(String actors) {
     super();
     setName(actors);
-    mActors = actors;
-    mSearchFormSettings = createSearchFormSettings();
+    mSearchFormSettings = createSearchFormSettings(actors);
   }
 
   public ActorsFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
     in.readInt(); // version
-    mActors = (String)in.readObject();
-    mSearchFormSettings = createSearchFormSettings();
+    String actors = (String)in.readObject();
+    mSearchFormSettings = createSearchFormSettings(actors);
   }
 
 
@@ -79,8 +79,8 @@ public class ActorsFavorite extends Favorite {
     }
   }
 
-  private String createSearchString() {
-    String[] actorsArr = createActorsArr(mActors);
+  private String createSearchString(String actors) {
+    String[] actorsArr = createActorsArr(actors);
     StringBuffer buf = new StringBuffer();
     for (int i=0; i<actorsArr.length-1; i++) {
       buf.append("(");
@@ -95,8 +95,9 @@ public class ActorsFavorite extends Favorite {
     return buf.toString();
   }
 
-  private SearchFormSettings createSearchFormSettings() {
-    SearchFormSettings formSettings = new SearchFormSettings(createSearchString());
+  private SearchFormSettings createSearchFormSettings(String actors) {
+    mActors = actors;
+    SearchFormSettings formSettings = new SearchFormSettings(createSearchString(actors));
     formSettings.setSearchIn(SearchFormSettings.SEARCH_IN_USER_DEFINED);
     formSettings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
     formSettings.setUserDefinedFieldTypes(new ProgramFieldType[]{ProgramFieldType.ACTOR_LIST_TYPE, ProgramFieldType.DESCRIPTION_TYPE, ProgramFieldType.SHORT_DESCRIPTION_TYPE});
@@ -131,9 +132,9 @@ public class ActorsFavorite extends Favorite {
   protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
 
     SearchFormSettings searchForm = mSearchFormSettings;
-
+    ProgramFieldType[] fields = searchForm.getFieldTypes();
     ProgramSearcher searcher = searchForm.createSearcher();
-    return searcher.search(searchForm.getFieldTypes(),
+    return searcher.search(fields,
                                                 new devplugin.Date(),
                                                 1000,
                                                 channelArr,
@@ -141,6 +142,9 @@ public class ActorsFavorite extends Favorite {
                                                 );
 
   }
+
+
+
 
 
   public FavoriteConfigurator createConfigurator() {
@@ -163,8 +167,8 @@ public class ActorsFavorite extends Favorite {
     }
 
     public void save() {
-      String searchText = mSearchTextTf.getText();
-      mSearchFormSettings.setSearchText(searchText);
+      String actors = mSearchTextTf.getText();
+      mSearchFormSettings = createSearchFormSettings(actors);
     }
   }
 
