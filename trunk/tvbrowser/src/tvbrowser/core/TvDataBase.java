@@ -237,6 +237,8 @@ public class TvDataBase {
     Channel channel = prog.getChannel();
     String key = getDayProgramKey(date, channel);
 
+    prog.setLastProgramHadEndOnUpdate(prog.getProgramAt(prog.getProgramCount() - 1).getLength() > 0);
+    
     // Create a backup (Rename the old file if it exists)
     File file = getDayProgramFile(date, channel);
     File backupFile = null;
@@ -272,7 +274,7 @@ public class TvDataBase {
     // Save the new program
     try {
       // Save the day program
-      newProgFile.saveDayProgram(true);
+      newProgFile.saveDayProgram();
 
       // Delete the backup
       if (backupFile != null) {
@@ -637,8 +639,7 @@ public class TvDataBase {
    * @return <code>true</code> when at least one length was missing.
    */
   private boolean calculateMissingLengths(ChannelDayProgram channelProg) {
-    boolean somethingChanged = false;
-
+    boolean somethingChanged = false;    
     // Go through all programs and correct them
     // (This is fast, if no correction is needed)
     for (int progIdx = 0; progIdx < channelProg.getProgramCount(); progIdx++) {
