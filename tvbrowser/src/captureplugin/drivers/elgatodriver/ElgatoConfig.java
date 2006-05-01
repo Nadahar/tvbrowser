@@ -107,7 +107,8 @@ public class ElgatoConfig {
    * @param elgatoChannel Elgato Channel
    */
   public void setElgatoChannel(Channel channel, ElgatoChannel elgatoChannel) {
-    mChannels.put(channel, elgatoChannel);
+    if ((elgatoChannel != null) && (channel != null))
+      mChannels.put(channel, elgatoChannel);
   }
   
   /**

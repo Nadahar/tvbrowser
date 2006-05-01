@@ -115,7 +115,13 @@ public class ElgatoConnection {
   public ElgatoChannel[] getAvailableChannels() {
     ArrayList list = new ArrayList();
 
-    String[] result = mAppleScript.executeScript(CHANNELLIST).split("¥");
+    String res = mAppleScript.executeScript(CHANNELLIST);
+    
+    if (res == null) {
+      return new ElgatoChannel[0];
+    }
+      
+    String[] result = res.split("¥");
 
     for (int i = 0; i < result.length; i += 2) {
       ElgatoChannel channel = new ElgatoChannel(Integer.parseInt(result[i]), result[i + 1]);
@@ -133,7 +139,13 @@ public class ElgatoConnection {
 
     mProgramMapping = new HashMap();
 
-    String[] result = mAppleScript.executeScript(LISTRECORDINGS).split("¥");
+    String res = mAppleScript.executeScript(LISTRECORDINGS);
+    
+    if (res == null) {
+      return new Program[0];
+    }
+    
+    String[] result = res.split("¥");
 
     for (int i = 0; i < result.length; i += 6) {
       int channel = Integer.parseInt(result[i]);
