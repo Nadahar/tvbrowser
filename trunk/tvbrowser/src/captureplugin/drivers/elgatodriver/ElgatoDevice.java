@@ -132,13 +132,13 @@ public class ElgatoDevice implements DeviceIf {
     }
 
     public Program[] getProgramList() {
-        mListOfRecordings = mConnection.getAllRecordings();
+        mListOfRecordings = mConnection.getAllRecordings(mConfig);
         return mListOfRecordings;
     }
 
     public boolean isInList(Program program) {
         if (mListOfRecordings == null) {
-            mListOfRecordings = mConnection.getAllRecordings();
+            mListOfRecordings = mConnection.getAllRecordings(mConfig);
         }
         return Arrays.asList(mListOfRecordings).contains(program);
     }

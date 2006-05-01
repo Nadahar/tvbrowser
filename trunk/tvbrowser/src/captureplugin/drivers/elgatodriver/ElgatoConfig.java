@@ -220,4 +220,21 @@ public class ElgatoConfig {
       ((ElgatoChannel)mChannels.get(ch)).writeData(stream);
     }
   }
+
+  /**
+   * Returns TVB Channel for Elgato Chanel ID
+   * @param channel Elgato Channel ID
+   * @return TVB Channel, null if not found
+   */
+  public Channel getChannelForElgatoId(int channel) {
+      Iterator it = mChannels.keySet().iterator();
+      
+      while (it.hasNext()) {
+        Channel ch = (Channel) it.next();
+        if (((ElgatoChannel)mChannels.get(ch)).getNumber() == channel)
+            return ch;
+      }
+
+      return null;
+  }
 }
