@@ -257,6 +257,13 @@ public class NewsDialog implements WindowClosingIf {
   public void close() {
     mDialog.dispose();
   }
+  
+  /**
+   * @return If this dialog is visible.
+   */
+  public boolean isVisible() {
+    return mDialog != null && mDialog.isVisible();
+  }
 
 
   public JRootPane getRootPane() {
