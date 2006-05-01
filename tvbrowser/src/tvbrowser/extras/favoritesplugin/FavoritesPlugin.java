@@ -503,6 +503,36 @@ public class FavoritesPlugin implements ContextMenuIf{
       }catch (TvBrowserException exc) {
         ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
       }
+
+      if (favorite.getPrograms().length == 0 && !favorite.isRemindAfterDownload()) {
+        Object[] options = {mLocalizer.msg("btn.notifyMe","Notify Me"), mLocalizer.msg("btn.editFavorite","Edit Favorite"), mLocalizer.msg("btn.ignore","Ignore")};
+        int option = JOptionPane.showOptionDialog(parent, mLocalizer.msg("dlg.noMatchingPrograms","Currently no program matches the newly created favorite.\n\nDo you want TV-Browser to notify you when any program matches this favorite?"),
+                  mLocalizer.msg("dlg.title.information","Information"),
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.INFORMATION_MESSAGE,
+                  null,
+                  options,
+                  options[0]);
+        if (option == JOptionPane.YES_OPTION) {
+         favorite.setRemindAfterDownload(true);
+        }
+        else if (option == JOptionPane.NO_OPTION) {
+          editFavorite(favorite);
+        }
+      }
+
+      else if (!favorite.contains(program)) {
+       Object[] options = {mLocalizer.msg("btn.editFavorite","Edit Favorite"), mLocalizer.msg("btn.ignore","Ignore")};
+       if (JOptionPane.showOptionDialog(parent, mLocalizer.msg("dlg.programDoesntMatch","The currently selected program does not belong to the newly created favorite.\n\nDo you want to edit the favorite?"),
+                  mLocalizer.msg("dlg.title.warning","Warning"),
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.WARNING_MESSAGE,
+                  null,
+                  options,
+                  options[1]) == JOptionPane.YES_OPTION) {
+         editFavorite(favorite);
+       }
+      }
     }
   }
 
