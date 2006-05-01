@@ -42,6 +42,7 @@ import javax.swing.JTextField;
 import util.ui.Localizer;
 import util.ui.ProgramPanel;
 import captureplugin.CapturePlugin;
+import captureplugin.drivers.utils.TimeDateChooserPanel;
 
 
 /**

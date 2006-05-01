@@ -22,7 +22,7 @@
  *   $Author$
  * $Revision$
  */
-package captureplugin.drivers.defaultdriver;
+package captureplugin.drivers.utils;
 
 import java.awt.Color;
 import java.util.Date;
