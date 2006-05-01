@@ -99,14 +99,15 @@ public class ElgatoDevice implements DeviceIf {
       ElgatoConfigDialog dialog;
       
       if (parent instanceof JFrame) {
-        dialog = new ElgatoConfigDialog((JFrame) parent, mConnection, mConfig);
+        dialog = new ElgatoConfigDialog((JFrame) parent, this, mConnection, mConfig);
       } else {
-        dialog = new ElgatoConfigDialog((JDialog) parent, mConnection, mConfig);
+        dialog = new ElgatoConfigDialog((JDialog) parent, this, mConnection, mConfig);
       }
       
       UiUtilities.centerAndShow(dialog);
       
       if (dialog.wasOkPressed()) {
+        mName = dialog.getName();
         mConfig = dialog.getConfig();
       }
     }
@@ -173,14 +174,15 @@ public class ElgatoDevice implements DeviceIf {
           ElgatoConfigDialog dialog;
           
           if (parent instanceof JDialog) {
-            dialog = new ElgatoConfigDialog((JDialog)parent, mConnection, mConfig);
+            dialog = new ElgatoConfigDialog((JDialog)parent, this, mConnection, mConfig);
           } else {
-            dialog = new ElgatoConfigDialog((JFrame)parent, mConnection, mConfig);
+            dialog = new ElgatoConfigDialog((JFrame)parent, this, mConnection, mConfig);
           }
           UiUtilities.centerAndShow(dialog);
 
           if (dialog.wasOkPressed()) {
             mConfig = dialog.getConfig();
+            mName = dialog.getName();
           }
         }
         return false;

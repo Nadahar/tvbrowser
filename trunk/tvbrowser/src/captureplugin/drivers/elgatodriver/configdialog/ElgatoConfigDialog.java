@@ -30,17 +30,22 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 
 import util.ui.ChannelTableCellRenderer;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import captureplugin.drivers.elgatodriver.ElgatoConfig;
 import captureplugin.drivers.elgatodriver.ElgatoConnection;
+import captureplugin.drivers.elgatodriver.ElgatoDevice;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -54,10 +59,12 @@ import com.jgoodies.forms.layout.Sizes;
  *  
  * @author bodum
  */
-public class ElgatoConfigDialog extends JDialog {
+public class ElgatoConfigDialog extends JDialog implements WindowClosingIf {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ElgatoConfigDialog.class);
 
+  /** Device */
+  private ElgatoDevice mDevice;
   /** Connection */
   private ElgatoConnection mConnection;
   /** Configuration */
@@ -67,29 +74,35 @@ public class ElgatoConfigDialog extends JDialog {
   /** Table with mapping */
   private JTable mTable;
 
+  private JTextField mName;
+
   /**
    * Create Dialog
    * @param frame Parent
+   * @param dev Device
    * @param connection Connection
    * @param config Configuration
    */
-  public ElgatoConfigDialog(JFrame frame, ElgatoConnection connection, ElgatoConfig config) {
+  public ElgatoConfigDialog(JFrame frame, ElgatoDevice dev, ElgatoConnection connection, ElgatoConfig config) {
     super(frame, true);
     mConnection = connection;
     mConfig = (ElgatoConfig) config.clone();
+    mDevice = dev;
     createGui();
   }
 
   /**
    * Create Dialog
    * @param dialog Parent
+   * @param dev Device
    * @param connection Connection
    * @param config Configuration
    */
-  public ElgatoConfigDialog(JDialog dialog, ElgatoConnection connection, ElgatoConfig config) {
+  public ElgatoConfigDialog(JDialog dialog, ElgatoDevice dev, ElgatoConnection connection, ElgatoConfig config) {
     super(dialog, true);
     mConnection = connection;
     mConfig = (ElgatoConfig) config.clone();
+    mDevice = dev;
     createGui();
   }
 
@@ -102,18 +115,25 @@ public class ElgatoConfigDialog extends JDialog {
     
     setTitle(mLocalizer.msg("title","Elgato EyeTV Settings"));
     
-    panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref, 3dlu, pref", "pref, 5dlu, fill:min:grow, 3dlu, pref, 3dlu, pref"));
+    panel.setLayout(new FormLayout("3dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu", "pref, 5dlu, pref, 3dlu pref, 5dlu, fill:min:grow, 3dlu, pref, 3dlu, pref"));
     panel.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelAssignment","Channel assignment")), cc.xyw(1,1, 3));
+    
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("deviceName","Device name")), cc.xyw(1,1, 7));
+
+    panel.add(new JLabel(mLocalizer.msg("deviceNameInput", "Name")+ ":"), cc.xy(2,3));
+    mName = new JTextField(mDevice.getName());
+    panel.add(mName, cc.xyw(4,3,3));
+    
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channelAssignment","Channel assignment")), cc.xyw(1,5, 7));
     
     mTable = new JTable(new ConfigTableModel(mConfig));
     mTable.getTableHeader().setReorderingAllowed(false);
     mTable.getColumnModel().getColumn(0).setCellRenderer(new ChannelTableCellRenderer());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new ElgatoChannelRenderer());
     mTable.getColumnModel().getColumn(1).setCellEditor(new ElgatoChannelEditor(mConfig));
-    panel.add(new JScrollPane(mTable), cc.xyw(1,3,5));
+    panel.add(new JScrollPane(mTable), cc.xyw(2,7,5));
     
     JButton fetch = new JButton(mLocalizer.msg("fetchChannels","Fetch Channellist"));
     
@@ -128,7 +148,7 @@ public class ElgatoConfigDialog extends JDialog {
       }
     });
     
-    panel.add(fetch, cc.xy(3,5));
+    panel.add(fetch, cc.xy(6,9));
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
@@ -155,7 +175,10 @@ public class ElgatoConfigDialog extends JDialog {
     
     builder.addGriddedButtons(new JButton[] {ok, cancel});
     
-    panel.add(builder.getPanel(), cc.xyw(1,7, 3));
+    panel.add(builder.getPanel(), cc.xyw(1,11,7));
+    
+    getRootPane().setDefaultButton(ok);
+    UiUtilities.registerForClosing(this);
     
     setSize(Sizes.dialogUnitXAsPixel(250, this), Sizes.dialogUnitXAsPixel(200, this));
   }
@@ -173,6 +196,21 @@ public class ElgatoConfigDialog extends JDialog {
    */
   public ElgatoConfig getConfig() {
     return mConfig;
+  }
+
+  /**
+   * @return Modified Name
+   */
+  public String getName() {
+    return mName.getText();
+  }
+  
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#close()
+   */
+  public void close() {
+    setVisible(false);
   }
   
 }
