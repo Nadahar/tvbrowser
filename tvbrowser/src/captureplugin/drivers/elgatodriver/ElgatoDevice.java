@@ -144,7 +144,12 @@ public class ElgatoDevice implements DeviceIf {
     }
 
     public boolean add(Window parent, Program program) {
-        return mConnection.addToRecording(parent, program);
+        if (testConfig(parent, program.getChannel())) {
+          int length = program.getLength() * 60;
+            
+          return mConnection.addToRecording(mConfig, program, length);
+        }
+        return false;
     }
 
     public boolean remove(Window parent, Program program) {

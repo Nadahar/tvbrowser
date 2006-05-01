@@ -24,7 +24,6 @@
  */
 package captureplugin.drivers.elgatodriver;
 
-import java.awt.Window;
 import java.util.ArrayList;
 
 import devplugin.Program;
@@ -50,8 +49,46 @@ public class ElgatoConnection {
     "set outString to chList as text\n"+
     "outString";
     
+    /** Script for switching of Channels */
     private static final String SWITCHCHANNEL = "tell application \"EyeTV\"\n" +
     "set current channel to \"{0}\"\n" +
+    "end tell";
+    
+    private static final String CREATERECORDING = "on stringToList from theString for myDelimiters\n" +
+    "  tell AppleScript\n" +
+    "    set theSavedDelimiters to AppleScript's text item delimiters\n" +
+    "    set text item delimiters to myDelimiters\n" +
+    "    \n" +
+    "    set outList to text items of theString\n" +
+    "    set text item delimiters to theSavedDelimiters\n" +
+    "    \n" +
+    "    return outList\n" +
+    "  end tell\n" +
+    "end stringToList\n" +
+    "\n" +
+    "\n" +
+    "on getdateForISOdate(theISODate, theISOTime)\n" +
+    "  local myDate\n" +
+    "  -- converts an ISO format (YYYY-MM-DD) and time to a date object\n" +
+    "  set monthConstants to {January, February, March, April, May, June, July, August, September, October, November, December} \n" +
+    " \n" +
+    "  set theISODate to (stringToList from (theISODate) for \"-\")\n" +
+    "  \n" +
+    "  set myDate to date theISOTime\n" +
+    "  \n" +
+    "  tell theISODate\n" +
+    "    set year of myDate to item 1\n" +
+    "    set month of myDate to item (item 2) of monthConstants\n" +
+    "    set day of myDate to item 3\n" +
+    "  end tell\n" +
+    " \n" +
+    "  return myDate\n" +
+    "end getdateForISOdate\n" +
+    "\n" +
+    "set dateob to getdateForISOdate(\"{0}\", \"{1}\")\n" +
+    "\n" +
+    "tell application \"EyeTV\"\n" +
+    "  make new program with properties {start time:dateob, duration:{2}, title:\"{3}\", channel number:{4}}\n" +
     "end tell";
     
     /**
@@ -81,12 +118,31 @@ public class ElgatoConnection {
     
     /**
      * Record Program
-     * @param parent Parent-window
+     * 
+     * @param conf Config
      * @param prg Program to record
+     * @param length Length of Program
      * @return true if successfull
      */
-    public boolean addToRecording(Window parent, Program prg) {
-        System.out.println("Add to Recording");
+    public boolean addToRecording(ElgatoConfig conf, Program prg, int length) {
+        String date = prg.getDate().getYear() + "-" + prg.getDate().getMonth() + "-" + prg.getDate().getDayOfMonth();
+        
+        String time = prg.getHours() + ":" + prg.getMinutes();
+        
+        String call = CREATERECORDING.replaceAll("\\{0\\}", date);
+        call = call.replaceAll("\\{1\\}", time);
+        call = call.replaceAll("\\{2\\}", Integer.toString(length));
+        call = call.replaceAll("\\{3\\}", prg.getTitle());
+        call = call.replaceAll("\\{4\\}", Integer.toString(conf.getElgatoChannel(prg.getChannel()).getNumber()));
+        
+        String res = mAppleScript.executeScript(call);
+        
+        if (res == null)
+            return false;
+        
+        if (res.startsWith("program id"))
+            return true;
+        
         return false;
     }
 
