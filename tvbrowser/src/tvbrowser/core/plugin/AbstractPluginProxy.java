@@ -501,7 +501,6 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       doOnDeactivation();
     } catch (RuntimeException exc) {
-      System.out.println("ON DEACTIVATOIN");
       handlePluginException(exc);
     }
   }

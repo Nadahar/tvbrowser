@@ -42,7 +42,6 @@ import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import util.ui.TimePeriodChooser;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -180,18 +179,21 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     int rowInx = 3;
     panelBuilder.add(new JLabel(mMainQuestion), cc.xyw(1, 1, 3));
-    panelBuilder.add(mChannelCb = new JCheckBox(mChannelQuestion), cc.xy(2, rowInx));
-    panelBuilder.add(mChannelCB, cc.xy(3, rowInx));
+
+    panelBuilder.add(mTitleCb, cc.xy(2, rowInx));
+    panelBuilder.add(mTitleTf, cc.xy(3, rowInx));
     rowInx += 2;
-    if (!(mFavorite instanceof TitleFavorite)) {
-      panelBuilder.add(mTitleCb, cc.xy(2, rowInx));
-      panelBuilder.add(mTitleTf, cc.xy(3, rowInx));
-      rowInx += 2;
-    }
+
     panelBuilder.add(mTopicCb = new JCheckBox(mTopicQuestion), cc.xy(2, rowInx));
     panelBuilder.add(mTopicTf = new JTextField(), cc.xy(3, rowInx));
 
     rowInx += 2;
+
+    panelBuilder.add(mChannelCb = new JCheckBox(mChannelQuestion), cc.xy(2, rowInx));
+    panelBuilder.add(mChannelCB, cc.xy(3, rowInx));
+    rowInx += 2;
+
+
     panelBuilder.add(mDayCb = new JCheckBox(mDayQuestion), cc.xy(2, rowInx));
     panelBuilder.add(mDayChooser, cc.xy(3, rowInx));
 
@@ -200,7 +202,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     panelBuilder.add(mTimePeriodChooser = new TimePeriodChooser(TimePeriodChooser.ALIGN_LEFT), cc.xy(3, rowInx));
 
     if (mMode == MODE_CREATE_DERIVED_FROM_PROGRAM && mProgram != null) {
-      mChannelCb.setSelected(true);
+      mTitleCb.setSelected(true);
       mTitleTf.setText(mProgram.getTitle());
       mChannelCB.setSelectedItem(mProgram.getChannel());
       int timeFrom = (mProgram.getHours() - 1) * 60;
@@ -295,12 +297,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       allowNext = true;
     }
 
-    if (!(mFavorite instanceof TitleFavorite)) {
-      if (mTitleCb.isSelected()) {
-        allowNext = true;
-      }
-      mTitleTf.setEnabled(mTitleCb.isSelected());
+    if (mTitleCb.isSelected()) {
+      allowNext = true;
     }
+    mTitleTf.setEnabled(mTitleCb.isSelected());
 
     if (mDayCb.isSelected()) {
       allowNext = true;

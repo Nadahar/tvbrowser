@@ -431,7 +431,7 @@ public class FavoritesPlugin implements ContextMenuIf{
             }
           if(showNew) {
             JCheckBox chb = new JCheckBox(mLocalizer.msg("dontShow","Don't show this description again."));
-            Object[] o = {mLocalizer.msg("description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
+            Object[] o = {mLocalizer.msg("newPrograms-description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
                 chb
             };
             

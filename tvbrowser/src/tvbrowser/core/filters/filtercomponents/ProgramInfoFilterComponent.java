@@ -70,7 +70,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /** 
-     * Gibt die Version zurück
+     * Gibt die Version zurï¿½ck
      * @see tvbrowser.core.filters.FilterComponent#getVersion()
      */
     public int getVersion() {
@@ -89,7 +89,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Liest die Einstellungen für dieses Plugin aus dem Stream
+     * Liest die Einstellungen fï¿½r dieses Plugin aus dem Stream
      * @see tvbrowser.core.filters.FilterComponent#read(java.io.ObjectInputStream,
      *      int)
      */
@@ -107,7 +107,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt einen Panel zurück, der es ermöglicht, 
+     * Gibt einen Panel zurï¿½ck, der es ermï¿½glicht, 
      * den Filter einzustellen
      * @see tvbrowser.core.filters.FilterComponent#getPanel()
      */
@@ -150,8 +150,8 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Im Dialog wurde OK gedrückt, alle Einstellungen können
-     * nun übernommen werden
+     * Im Dialog wurde OK gedrï¿½ckt, alle Einstellungen kï¿½nnen
+     * nun ï¿½bernommen werden
      * @see tvbrowser.core.filters.FilterComponent#ok()
      */
     public void ok() {
@@ -159,7 +159,6 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     
     	for (int i = 0; i < _checkBox.length; i++) {
     		if (_checkBox[i].isSelected()) {
-    			System.out.println(ProgramInfoHelper.mInfoMsgArr[i]);
     			selectedBits = selectedBits | ProgramInfoHelper.mInfoBitArr[i];
     		}
         }
@@ -167,7 +166,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt den momentanen Namen des Filters zurück
+     * Gibt den momentanen Namen des Filters zurï¿½ck
      * @see tvbrowser.core.filters.FilterComponent#getName()
      */
     public String getName() {
@@ -175,7 +174,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt die momentane Beschreibung des Filters zurück
+     * Gibt die momentane Beschreibung des Filters zurï¿½ck
      * @see tvbrowser.core.filters.FilterComponent#getDescription()
      */
     public String getDescription() {
@@ -199,16 +198,16 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     }
 
     /**
-     * Gibt den Namen des Filters zurück 
+     * Gibt den Namen des Filters zurï¿½ck 
      */
     public String toString() {
         return mLocalizer.msg("ProgrammInfo", "Program-Info");
     }
 
     /**
-     * Überprüft, ob Bits gesetzt sind
-     * @param num hier prüfen
-     * @param pattern diese pattern prüfen
+     * ï¿½berprï¿½ft, ob Bits gesetzt sind
+     * @param num hier prï¿½fen
+     * @param pattern diese pattern prï¿½fen
      * @return Pattern gesetzt?
      */
     private boolean bitSet(int num, int pattern) {
@@ -230,7 +229,7 @@ public class ProgramInfoFilterComponent implements FilterComponent {
     private int selectedBits = 0;
     
     /**
-     * Die CheckBoxen für den Panel
+     * Die CheckBoxen fï¿½r den Panel
      */
     private JCheckBox[] _checkBox;
 

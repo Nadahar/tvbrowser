@@ -105,7 +105,6 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
       boolean same = false;
 
-      System.out.println(copy[i].getId());
       if (mCaller != null) {
         if (copy[i].getId().equals(mCaller.getId())) {
           same = true;

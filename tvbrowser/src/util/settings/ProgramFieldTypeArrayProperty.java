@@ -119,8 +119,6 @@ public class ProgramFieldTypeArrayProperty extends Property {
 				buffer.append(value[i].getTypeId());
 			}
 
-			System.out.println(buffer.toString());
-
 			setProperty(buffer.toString());
 		}
 
