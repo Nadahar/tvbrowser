@@ -270,8 +270,12 @@ public class OnDemandDayProgramFile {
 
       dataFile.writeInt(2); // version
 
-      if(dataUpdate)
-        dataFile.writeBoolean(mDayProgram.getProgramAt(mDayProgram.getProgramCount() - 1).getLength() > 0);
+      if(dataUpdate) {
+        boolean value = mDayProgram.getProgramAt(mDayProgram.getProgramCount() - 1).getLength() > 0;
+        
+        dataFile.writeBoolean(value);
+        mDayProgram.setLastProgramHadEndOnUpdate(value);
+      }
       else
         dataFile.writeBoolean(mDayProgram.getLastProgramHadEndOnUpdate());
       
