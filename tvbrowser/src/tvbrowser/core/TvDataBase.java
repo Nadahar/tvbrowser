@@ -272,7 +272,7 @@ public class TvDataBase {
     // Save the new program
     try {
       // Save the day program
-      newProgFile.saveDayProgram();
+      newProgFile.saveDayProgram(true);
 
       // Delete the backup
       if (backupFile != null) {
@@ -662,7 +662,7 @@ public class TvDataBase {
         }
 
         somethingChanged = calculateLength(prog, nextProgram) || somethingChanged;
-      } else if (progIdx + 1 == channelProg.getProgramCount()) {
+      } else if (progIdx + 1 == channelProg.getProgramCount() && !channelProg.getLastProgramHadEndOnUpdate()) {
         // This is the last program that has a length but it could be wrong.
         somethingChanged = calculateLength(prog,
             getFirstNextDayProgram(channelProg)) || somethingChanged;
