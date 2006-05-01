@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -148,6 +149,30 @@ public class ElgatoDevice implements DeviceIf {
         if (testConfig(parent, program.getChannel())) {
           int length = program.getLength() * 60;
             
+          if (program.getLength() <= 0) {
+            TimeChooserDialog dialog;
+            if (parent instanceof JDialog)
+              dialog = new TimeChooserDialog((JDialog)parent, program);
+            else
+              dialog = new TimeChooserDialog((JFrame)parent, program);
+            
+            UiUtilities.centerAndShow(dialog);
+            
+            if (dialog.wasOkPressed()) {
+              Calendar cal = program.getDate().getCalendar();
+              cal.set(Calendar.HOUR_OF_DAY, program.getHours());
+              cal.set(Calendar.MINUTE, program.getMinutes());
+              cal.set(Calendar.SECOND, 0);
+              cal.set(Calendar.MILLISECOND, 0);
+              
+              long millenght = dialog.getDate().getTime() - cal.getTime().getTime(); 
+              length = (int) (millenght / 1000);
+            } else {
+              return false;
+            }
+              
+          }
+          
           return mConnection.addToRecording(mConfig, program, length);
         }
         return false;
