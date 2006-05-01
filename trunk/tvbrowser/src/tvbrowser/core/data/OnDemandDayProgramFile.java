@@ -111,6 +111,8 @@ public class OnDemandDayProgramFile {
         }
       }
 
+      mDayProgram.setLastProgramHadEndOnUpdate(dataFile.readBoolean());
+      
       Date date = new Date(dataFile);
       Channel channel = Channel.readData(dataFile, false);
 
@@ -158,7 +160,7 @@ public class OnDemandDayProgramFile {
       }
 
       stream.close();
-      saveDayProgram(true);
+      saveDayProgram(true, false);
     } finally {
       if (stream != null) {
         try {
@@ -239,10 +241,21 @@ public class OnDemandDayProgramFile {
    * @throws IOException
    */
   public synchronized void saveDayProgram() throws IOException {
-    saveDayProgram(false);
+    saveDayProgram(false, false);
   }
 
-  private void saveDayProgram(boolean update) throws IOException {
+  /**
+   * Saves the day program to the on demand data file.
+   * 
+   * @param dataUpdate If the saving is started on a data update.
+   * 
+   * @throws IOException
+   */
+  public synchronized void saveDayProgram(boolean dataUpdate) throws IOException {
+    saveDayProgram(false, dataUpdate);
+  }
+
+  private void saveDayProgram(boolean update, boolean dataUpdate) throws IOException {
     checkValid();
 
     Date date = mDayProgram.getDate();
@@ -257,6 +270,11 @@ public class OnDemandDayProgramFile {
 
       dataFile.writeInt(2); // version
 
+      if(dataUpdate)
+        dataFile.writeBoolean(mDayProgram.getProgramAt(mDayProgram.getProgramCount() - 1).getLength() > 0);
+      else
+        dataFile.writeBoolean(mDayProgram.getLastProgramHadEndOnUpdate());
+      
       date.writeToDataFile(dataFile);
       channel.writeToDataFile(dataFile);
 
@@ -290,7 +308,7 @@ public class OnDemandDayProgramFile {
     if (version == 3) {
       // Channel.readData(objIn, false); // unused channel
       // new devplugin.Date(objIn); // unused date
-
+      
       int fieldCount = dataFile.readInt();
       for (int i = 0; i < fieldCount; i++) {
         int typeId = dataFile.readInt();

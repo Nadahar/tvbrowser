@@ -91,4 +91,12 @@ public interface ChannelDayProgram {
    */
   public void markProgramOnAir();
   
+  /**
+   * Gets the last program end time state on data update.
+   * 
+   * @return If the last program had ent time on data update
+   * @since 2.2
+   */
+  public boolean getLastProgramHadEndOnUpdate();
+  
 }

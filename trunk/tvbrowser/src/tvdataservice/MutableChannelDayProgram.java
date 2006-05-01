@@ -55,7 +55,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   /** The program list itself. */
   private ArrayList mProgramList;
 
-
+  private boolean mLastProgramHadEndOnUpdate;
 
   /**
    * Creates a new instance of MutableChannelDayProgram.
@@ -68,6 +68,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   {
     mDate = date;
     mChannel = channel;
+    mLastProgramHadEndOnUpdate = false;
 
     mProgramList = new ArrayList();
   }
@@ -311,4 +312,23 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     }
   }
 
+  /**
+   * Sets the last program end time state on data update.
+   * 
+   * @param value If the last program had end time on data update.
+   * @since 2.2
+   */
+  public void setLastProgramHadEndOnUpdate(boolean value) {
+    mLastProgramHadEndOnUpdate = value;
+  }
+  
+  /**
+   * Gets the last program end time state on data update.
+   * 
+   * @return If the last program had ent time on data update
+   * @since 2.2
+   */
+  public boolean getLastProgramHadEndOnUpdate() {
+    return mLastProgramHadEndOnUpdate;
+  }
 }
