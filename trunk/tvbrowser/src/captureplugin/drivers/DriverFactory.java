@@ -24,7 +24,12 @@
  */
 package captureplugin.drivers;
 
+import java.util.ArrayList;
+
+import util.misc.OperatingSystem;
+
 import captureplugin.drivers.defaultdriver.DefaultDriver;
+import captureplugin.drivers.elgatodriver.ElgatoDriver;
 
 
 /**
@@ -59,12 +64,13 @@ public class DriverFactory {
      * @return All available Drivers
      */
     public DriverIf[] getDrivers() {
+        ArrayList drivers = new ArrayList();
+        drivers.add(new DefaultDriver());
         
-        DriverIf[] drivers = { 
-                new DefaultDriver()//,       new PinnacleDriver()
-        };
+        if (OperatingSystem.isMacOs())
+          drivers.add(new ElgatoDriver());
         
-        return drivers;
+        return (DriverIf[])drivers.toArray(new DriverIf[0]);
     }
     
     /**
