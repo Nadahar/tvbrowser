@@ -76,6 +76,7 @@ public class NewsPlugin extends Plugin {
   private static NewsPlugin mInstance;
 
   private boolean hasRightToDownload = false;
+  private NewsDialog mNewsDialog;
 
   /**
    * Creates a new instance of NewsPlugin.
@@ -105,8 +106,10 @@ public class NewsPlugin extends Plugin {
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList, -1);
-        dlg.centerAndShow();
+        if(mNewsDialog == null || !mNewsDialog.isVisible()) {
+          mNewsDialog = new NewsDialog(getParentFrame(), mNewsList, -1);
+          mNewsDialog.centerAndShow();
+        }
       }
     };
 
