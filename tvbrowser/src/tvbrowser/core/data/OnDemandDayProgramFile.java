@@ -160,7 +160,7 @@ public class OnDemandDayProgramFile {
       }
 
       stream.close();
-      saveDayProgram(true, false);
+      saveDayProgram(true);
     } finally {
       if (stream != null) {
         try {
@@ -241,21 +241,10 @@ public class OnDemandDayProgramFile {
    * @throws IOException
    */
   public synchronized void saveDayProgram() throws IOException {
-    saveDayProgram(false, false);
+    saveDayProgram(false);
   }
 
-  /**
-   * Saves the day program to the on demand data file.
-   * 
-   * @param dataUpdate If the saving is started on a data update.
-   * 
-   * @throws IOException
-   */
-  public synchronized void saveDayProgram(boolean dataUpdate) throws IOException {
-    saveDayProgram(false, dataUpdate);
-  }
-
-  private void saveDayProgram(boolean update, boolean dataUpdate) throws IOException {
+  private void saveDayProgram(boolean update) throws IOException {
     checkValid();
 
     Date date = mDayProgram.getDate();
@@ -270,14 +259,7 @@ public class OnDemandDayProgramFile {
 
       dataFile.writeInt(2); // version
 
-      if(dataUpdate) {
-        boolean value = mDayProgram.getProgramAt(mDayProgram.getProgramCount() - 1).getLength() > 0;
-        
-        dataFile.writeBoolean(value);
-        mDayProgram.setLastProgramHadEndOnUpdate(value);
-      }
-      else
-        dataFile.writeBoolean(mDayProgram.getLastProgramHadEndOnUpdate());
+      dataFile.writeBoolean(mDayProgram.getLastProgramHadEndOnUpdate());
       
       date.writeToDataFile(dataFile);
       channel.writeToDataFile(dataFile);
