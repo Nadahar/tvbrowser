@@ -209,8 +209,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
         this._settings = settings;
 
-		System.out.println("Starte TVRaterPlugin");
-        if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
+		    if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
             updateDB();
         }
     }

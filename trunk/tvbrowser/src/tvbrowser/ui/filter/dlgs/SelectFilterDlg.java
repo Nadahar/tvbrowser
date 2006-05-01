@@ -172,13 +172,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   public void updateBtns() {
 
     Object item = mFilterListBox.getSelectedValue();
-    System.out.println("updateBtns()");
-    System.out.println("selected obj: " + item);
-    if (item instanceof ShowAllFilter) {
-      System.out.println("show all filter");
-    }
-    System.out.println("result: " + (item instanceof ShowAllFilter || item instanceof PluginFilter));
-
+    
     mEditBtn
         .setEnabled(item != null
             && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter || item instanceof SeparatorFilter));

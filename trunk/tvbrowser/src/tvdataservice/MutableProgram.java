@@ -225,7 +225,7 @@ public class MutableProgram implements Program {
   public final String getDateString() {
     Date d = getDate();
     if (d == null) {
-      System.out.println(mChannel.getName() + " at " + getHours() + ":" + getMinutes()
+      mLog.info(mChannel.getName() + " at " + getHours() + ":" + getMinutes()
         + ", NO DATE : '" + getTitle() + "'");
       return "";
     }
