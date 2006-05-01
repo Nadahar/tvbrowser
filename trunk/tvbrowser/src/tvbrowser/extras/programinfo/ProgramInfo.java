@@ -269,50 +269,6 @@ public class ProgramInfo implements ContextMenuIf {
       UiUtilities.centerAndShow(dlg);
   }
 
-  /**
-   * Gets the description text for the program table icons provided by this
-   * Plugin.
-   * <p>
-   * If the plugin does not provide such icons <code>null</code> will be
-   * returned.
-   * 
-   * @return The description text for the program table icons.
-   * @see #getProgramTableIcons(Program)
-   */
-  /*
-   * public String getProgramTableIconText() { return
-   * mLocalizer.msg("programTableIconText", "Movie format"); }
-   * 
-   * /** Gets the icons this Plugin provides for the given program. These icons
-   * will be shown in the program table. <p> If the plugin does not provide such
-   * icons <code>null</code> will be returned.
-   * 
-   * @param program The programs to get the icons for. @return The icons for the
-   * given program or <code>null</code>.
-   */
-  /*
-   * public Icon[] getProgramTableIcons(Program program) { int info =
-   * program.getInfo(); if ((info == -1) || (info == 0)) { return null; }
-   *  // Put the icons for this program into a list ArrayList iconList = null;
-   * for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) { if
-   * (bitSet(info, ProgramInfoHelper.mInfoBitArr[i]) &&
-   * (ProgramInfoHelper.mInfoIconArr[i] != null)) { // Create the list if it
-   * doesn't already exist if (iconList == null) { iconList = new ArrayList(); }
-   *  // Add the icon to the list
-   * iconList.add(ProgramInfoHelper.mInfoIconArr[i]); } }
-   *  // Convert the list into an array and return it if (iconList == null) {
-   * return null; } else { Icon[] iconArr = new Icon[iconList.size()];
-   * iconList.toArray(iconArr);
-   * 
-   * return iconArr; } }
-   * 
-   * /** Returns whether a bit (or combination of bits) is set in the specified
-   * number.
-   */
-  /*
-   * static boolean bitSet(int num, int pattern) { return (num & pattern) ==
-   * pattern; }
-   */
 
   protected void setSettings(JDialog dialog, Dimension d) {
     mSize = dialog.getSize();
@@ -356,7 +312,7 @@ public class ProgramInfo implements ContextMenuIf {
       for (int i = 0; i < mOrder.length; i++)
         try {
           mOrder[i] = ProgramFieldType
-              .getTypeForId(Integer.parseInt((String) id[i]));
+              .getTypeForId(Integer.parseInt(id[i]));
           
           if(((ProgramFieldType)mOrder[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
             mOrder[i] = ProgramTextCreator.getDurationTypeString();
@@ -375,11 +331,13 @@ public class ProgramInfo implements ContextMenuIf {
       else
         LookAndFeelAddons.setAddon(LookAndFeelAddons
             .getBestMatchAddonClassName());
-    } catch (Exception e) {}
+    } catch (Exception e) {
+      // ignore
+    }
   }
 
   public String toString() {
-    return "ProgramInfo";
+    return mLocalizer.msg("pluginName","Program details");
   }
   
   public String getId() {
