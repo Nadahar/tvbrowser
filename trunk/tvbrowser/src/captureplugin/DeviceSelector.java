@@ -51,7 +51,6 @@ import javax.swing.ListModel;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import captureplugin.drivers.DeviceIf;
-import captureplugin.drivers.DriverIf;
 import devplugin.Program;
 
 
@@ -140,8 +139,8 @@ public class DeviceSelector extends JDialog {
         mDeviceSelector.setRenderer(new DefaultListCellRenderer() {
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
               
-              if (value instanceof DriverIf) {
-                value = ((DriverIf)value).getDriverName();
+              if (value instanceof DeviceIf) {
+                value = ((DeviceIf)value).getName();
               }
               
               return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
