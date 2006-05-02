@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.l2fprod.util.StringUtils;
+
 import captureplugin.CapturePlugin;
 import devplugin.Channel;
 import devplugin.Date;
@@ -74,8 +76,9 @@ public class ElgatoConnection {
       + "  set myDate to date theISOTime\n" + "  \n" + "  tell theISODate\n" + "    set year of myDate to item 1\n"
       + "    set month of myDate to item (item 2) of monthConstants\n" + "    set day of myDate to item 3\n"
       + "  end tell\n" + " \n" + "  return myDate\n" + "end getdateForISOdate\n" + "\n"
-      + "set dateob to getdateForISOdate(\"{0}\", \"{1}\")\n" + "\n" + "tell application \"EyeTV\"\n"
-      + "  make new program with properties {start time:dateob, duration:{2}, title:\"{3}\", channel number:{4}}\n"
+      + "set dateob to getdateForISOdate(\"{0}\", \"{1}\")\n" + "\n" + 
+      "tell application \"EyeTV\"\n"
+      + "  make new program with properties {start time:dateob, duration:{2}, title:\"{3}\", channel number:{4}, description : \"{5}\"}\n"
       + "end tell";
 
   /** List all Recordings */
@@ -200,7 +203,8 @@ public class ElgatoConnection {
     call = call.replaceAll("\\{2\\}", Integer.toString(length));
     call = call.replaceAll("\\{3\\}", prg.getTitle());
     call = call.replaceAll("\\{4\\}", Integer.toString(conf.getElgatoChannel(prg.getChannel()).getNumber()));
-
+    call = call.replaceAll("\\{5\\}", prg.getShortInfo().replaceAll("\"", "\\\\\\\\\"").replace('\n', ' '));
+    
     String res = mAppleScript.executeScript(call);
 
     if (res == null)

@@ -36,11 +36,13 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -49,6 +51,7 @@ import javax.swing.ListModel;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import captureplugin.drivers.DeviceIf;
+import captureplugin.drivers.DriverIf;
 import devplugin.Program;
 
 
@@ -134,6 +137,16 @@ public class DeviceSelector extends JDialog {
         d.gridwidth = GridBagConstraints.REMAINDER;
 
         mDeviceSelector = new JComboBox(mDevices);
+        mDeviceSelector.setRenderer(new DefaultListCellRenderer() {
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+              
+              if (value instanceof DriverIf) {
+                value = ((DriverIf)value).getDriverName();
+              }
+              
+              return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            }
+          });
         
         mDeviceSelector.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
