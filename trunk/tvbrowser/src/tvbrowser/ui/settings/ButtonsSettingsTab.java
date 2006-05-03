@@ -162,7 +162,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     public TimesListPanel(int[] times) {
 
       mRows = new ArrayList();
-      setLayout(new FormLayout("right:pref", "pref, 3dlu, pref"));
+      setLayout(new FormLayout("right:pref, fill:pref:grow", "pref, 3dlu, pref"));
 
       CellConstraints cc = new CellConstraints();
 
@@ -181,12 +181,11 @@ public class ButtonsSettingsTab implements SettingsTab {
           }
         });
       }
-      JButton newBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16));
-      newBtn.setToolTipText(mLocalizer.msg("new", "New"));
+      JButton newBtn = new JButton(mLocalizer.msg("new", "New"), IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16));
       JPanel southPn = new JPanel(new BorderLayout());
-      southPn.add(newBtn, BorderLayout.EAST);
+      southPn.add(newBtn, BorderLayout.WEST);
 
-      add(southPn, cc.xy(1, 3));
+      add(southPn, cc.xyw(1, 3, 2));
       newBtn.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
 
