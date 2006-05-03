@@ -307,7 +307,7 @@ Section "$(STD_SECTION_NAME)"
   File "${RUNTIME_DIR}\imgs\*.*"
 
   SetOutPath "$INSTDIR\icons\tango"
-  File "${RUNTIME_DIR}\icons\tango\*.*"
+  File /r "${RUNTIME_DIR}\icons\tango\*.*"
 
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
