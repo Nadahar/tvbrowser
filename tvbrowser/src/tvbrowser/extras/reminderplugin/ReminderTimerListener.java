@@ -33,8 +33,6 @@
 
 package tvbrowser.extras.reminderplugin;
 
-import java.awt.Frame;
-import java.awt.Image;
 import java.util.Properties;
 
 import util.exc.ErrorHandler;
@@ -50,10 +48,8 @@ public class ReminderTimerListener {
 
   private Properties mSettings;
   private ReminderList mReminderList;
-  private Frame mParentFrame;
 
-  public ReminderTimerListener(Frame parentFrame, Properties settings, ReminderList reminderList) {
-    mParentFrame = parentFrame;
+  public ReminderTimerListener(Properties settings, ReminderList reminderList) {
     mSettings = settings;
     mReminderList = reminderList;
   }
@@ -68,14 +64,8 @@ public class ReminderTimerListener {
     }
 
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
-      Image iconImage = null;
-
-      if (mParentFrame != null) {
-        iconImage = mParentFrame.getIconImage();
-      }
-
-      new ReminderFrame(mParentFrame, mReminderList, item,
-          getAutoCloseReminderTime(), iconImage);
+      new ReminderFrame(mReminderList, item,
+          getAutoCloseReminderTime());
     } else {
       mReminderList.remove(item.getProgramItem());
       mReminderList.blockProgram(item.getProgram());

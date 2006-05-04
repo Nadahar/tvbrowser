@@ -27,12 +27,11 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.lang.reflect.Method;
 
 import javax.swing.BorderFactory;
@@ -121,15 +120,13 @@ public class ReminderFrame implements WindowClosingIf {
   /**
    * Creates a new instance of ReminderFrame.
    *
-   * @param comp A component in the parent window.
    * @param list The list of all reminders.
    * @param item The reminder to show.
    * @param autoCloseSecs The number seconds to wait before auto-closing the
    *                      window. -1 disables auto-closing.
-   * @param iconImage The icon image to use for the reminder frame.
    */
-  public ReminderFrame(Component comp, ReminderList list,
-    ReminderListItem item, int autoCloseSecs, Image iconImage)
+  public ReminderFrame(ReminderList list,
+    ReminderListItem item, int autoCloseSecs)
   {
     // Check whether we have to use a frame or dialog
     // Workaround: If there is a modal dialog open a frame is not usable. All
@@ -138,11 +135,13 @@ public class ReminderFrame implements WindowClosingIf {
     //                dialog, otherwise as frame.
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     String title = mLocalizer.msg("title", "Reminder");
-    if (parent instanceof Dialog) {
-      mDialog = new JDialog((Dialog) parent, title);
-    } else {
+    if (parent instanceof JDialog) {
+      mDialog = new JDialog((JDialog) parent, title);
+    } else if(!MainFrame.getInstance().isVisible()){
       mFrame = new JFrame(title);
-      mFrame.setIconImage(iconImage);
+    }
+    else {
+      mDialog = new JDialog((JFrame) parent, title);
     }
     
     UiUtilities.registerForClosing(this);
@@ -178,7 +177,7 @@ public class ReminderFrame implements WindowClosingIf {
     progPanel.add(channelLabel,BorderLayout.EAST);
     
     ProgramPanel panel = new ProgramPanel(mProgram);
- //   panel.addPluginContextMenuMouseListener(plugin);
+    panel.addPluginContextMenuMouseListener(ReminderPlugin.getInstance());
     progPanel.add(panel, BorderLayout.CENTER);
     
     JPanel btnPanel = new JPanel(new BorderLayout(10,0));
@@ -222,25 +221,27 @@ public class ReminderFrame implements WindowClosingIf {
 
     getWindow().pack();
     
-    try {
-      Class[] bool = {boolean.class};
-      
-      Object[] setOnTop = {new Boolean(true)};
-      
-      if(mDialog != null) {
-        Method onTop = mDialog.getClass().getMethod("setAlwaysOnTop",bool);
-        onTop.invoke(mDialog, setOnTop);
-      }
-      else {
-        Method onTop = mFrame.getClass().getMethod("setAlwaysOnTop",bool);
-        onTop.invoke(mFrame, setOnTop);        
-      }
-
-    }catch(Throwable e) {}
+    setAlwaysOnTop(true);
     
     UiUtilities.centerAndShow(getWindow());
+    getWindow().requestFocus();
+    getWindow().toFront();
+    
+    getWindow().addWindowFocusListener(new WindowFocusListener() {
+      public void windowGainedFocus(WindowEvent e) {}
+
+      public void windowLostFocus(WindowEvent e) {
+        setAlwaysOnTop(false);
+      }
+    });
   }
 
+  private void setAlwaysOnTop(boolean value) {
+    try {
+      Method onTop = getWindow().getClass().getMethod("setAlwaysOnTop",new Class[] {boolean.class});
+      onTop.invoke(mDialog, new Object[] {new Boolean(value)});
+    }catch(Throwable e) {}    
+  }
 
   private Window getWindow() {
     if (mDialog != null) {
