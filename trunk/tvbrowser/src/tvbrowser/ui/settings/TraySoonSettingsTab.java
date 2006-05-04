@@ -124,9 +124,8 @@ public class TraySoonSettingsTab implements SettingsTab {
     }
     
     TrayProgramsChannelsSettingsTab.setSoonIsEnabled(mIsEnabled.isSelected());
-    mIconSeparator.setEnabled(mTrayIsEnabled);
-    mSeparator2.setEnabled(mTrayIsEnabled);
-    mIsEnabled.setEnabled(mTrayIsEnabled);
+    mIconSeparator.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mSeparator2.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());

@@ -141,8 +141,8 @@ public class TrayImportantSettingsTab implements SettingsTab {
       mIsEnabled.setEnabled(mTrayIsEnabled);
     }
     
-    mIconSeparator.setEnabled(mTrayIsEnabled);
-    mSeparator2.setEnabled(mTrayIsEnabled);
+    mIconSeparator.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mSeparator2.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
