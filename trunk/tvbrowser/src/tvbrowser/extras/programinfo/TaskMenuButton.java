@@ -31,6 +31,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -41,10 +43,10 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import util.ui.findasyoutype.TextComponentFindAction;
 
-import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
 import devplugin.ActionMenu;
@@ -62,11 +64,8 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
   private Action mAction;
   private ProgramInfoDialog mInfo;
   private TextComponentFindAction mFind;
-  JTaskPane mRoot;
+  
   /**
-   * 
-   * @param root
-   *          The root JTaskPane.
    * @param parent
    *          The parent JTaskPaneGroup
    * @param program
@@ -80,17 +79,16 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
    * @param comp
    *          The Text Component find action to register the keyListener on.
    */
-  public TaskMenuButton(JTaskPane root, JTaskPaneGroup parent, Program program,
+  public TaskMenuButton(JTaskPaneGroup parent, Program program,
       ActionMenu menu, ProgramInfoDialog info, String id,
       TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
-    mRoot = root;
 
     if (!menu.hasSubItems())
       addButton(parent, menu);
     else
-      addTaskPaneGroup(root, parent, program, menu, info, id);
+      addTaskPaneGroup(parent, program, menu, info, id);
   }
 
   // Adds the button to the TaskPaneGroup.
@@ -99,18 +97,30 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
 
     mButton = new JButton("<html>" + (String) mAction.getValue(Action.NAME)
         + "</html>");
-    mButton.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
     mButton.setHorizontalAlignment(JButton.LEFT);
     mButton.setVerticalTextPosition(JButton.TOP);
-
+    mButton.setContentAreaFilled(false);
+    
     mFind.installKeyListener(mButton);
 
     if (mAction.getValue(Action.SMALL_ICON) != null)
       mButton.setIcon((Icon) mAction.getValue(Action.SMALL_ICON));
-
+    
+    mButton.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_SPACE)
+          pressed();
+      }
+      
+      public void keyReleased(KeyEvent e) {
+        mouseReleased(null);
+      }
+    });
+    
     mButton.addActionListener(this);
     mButton.addMouseListener(this);
-    mButton.setOpaque(false);
+    mButton.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+    
     mButton.addFocusListener(new FocusListener() {
       
       public void focusGained(FocusEvent e) {
@@ -129,7 +139,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
    * Adds a new TaskPaneGroup to the parent TaskPaneGroup for an ActionMenu with
    * submenus.
    */
-  private void addTaskPaneGroup(JTaskPane root, JTaskPaneGroup parent,
+  private void addTaskPaneGroup(JTaskPaneGroup parent,
       Program program, final ActionMenu menu, ProgramInfoDialog info,
       final String id) {
     ActionMenu[] subs = menu.getSubItems();
@@ -156,7 +166,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
       group.setIcon((Icon) menu.getAction().getValue(Action.SMALL_ICON));
 
     for (int i = 0; i < subs.length; i++)
-      new TaskMenuButton(root, group, program, subs[i], info, id, mFind);
+      new TaskMenuButton(group, program, subs[i], info, id, mFind);
 
     parent.add(Box.createRigidArea(new Dimension(0, 10)));
     parent.add(group);
@@ -168,6 +178,20 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     paintFocus();
   }
 
+  public void mousePressed(MouseEvent e) {
+    if(SwingUtilities.isLeftMouseButton(e))
+      pressed();
+  }
+  
+  public void mouseReleased(MouseEvent e) {
+    mButton.setContentAreaFilled(false);
+  }
+  
+  private void pressed() {
+    mButton.setContentAreaFilled(true);
+    mButton.setOpaque(false);
+  }
+  
   public void mouseExited(MouseEvent e) {
     unpaintFocus();
   }

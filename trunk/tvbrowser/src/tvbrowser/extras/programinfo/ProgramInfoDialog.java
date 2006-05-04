@@ -136,8 +136,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   
   private void init(final Program program, Dimension pluginsSize,
       boolean showSettings) {
-    UiUtilities.registerForClosing(this);
-
+    UiUtilities.registerForClosing(this);    
+    
     mProgram = program;
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
@@ -151,7 +151,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     mInfoEP = new ProgramEditorPane();
     mInfoEP.setEditorKit(new ExtendedHTMLEditorKit());
-
+    
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
     mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false), true, true));
@@ -176,6 +176,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         }
       }
     });
+    
+    mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
     
     /*
      * mInfoEP.addMouseListener(new MouseAdapter(){ public void
@@ -248,16 +250,18 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     else
       mActionsPane.setPreferredSize(pluginsSize);
 
-    JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    split.setDividerSize(5);
-    split.setContinuousLayout(true);
-    split.setDividerLocation(mActionsPane.getPreferredSize().width + 1);
-    split.setLeftComponent(mActionsPane);
-    split.setRightComponent(scrollPane);
-    
-    main.add(split, BorderLayout.CENTER);
-
-    mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
+    if(ProgramInfo.getInstance().isShowFunctions()) {
+      JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+      split.setDividerSize(5);
+      split.setContinuousLayout(true);
+      split.setDividerLocation(mActionsPane.getPreferredSize().width + 1);
+      split.setLeftComponent(mActionsPane);
+      split.setRightComponent(scrollPane);
+      main.add(split, BorderLayout.CENTER);
+      mFindAsYouType.installKeyListener(split);
+    }
+    else
+      main.add(scrollPane);
 
     // buttons
     JPanel buttonPn = new JPanel(new BorderLayout(0,5));
@@ -295,7 +299,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     /*
      * The action for the search button in the function panel.
      */
-    Action searchAction = new AbstractAction() {
+    final Action searchAction = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
       public void actionPerformed(ActionEvent e) {
@@ -318,7 +322,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mSearchMenu = new ActionMenu(searchAction);
     
     mFindAsYouType.installKeyListener(scrollPane);
-    mFindAsYouType.installKeyListener(split);
     mFindAsYouType.installKeyListener(main);
     mFindAsYouType.installKeyListener(configBtn);
     mFindAsYouType.installKeyListener(closeBtn);
@@ -335,9 +338,11 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mFindAsYouType.getCloseButton().addComponentListener(new ComponentAdapter() {
       public void componentHidden(ComponentEvent e) {
         mTextSearch.setText(mLocalizer.msg("search", "Search Text"));
+        searchAction.putValue(Action.NAME, mLocalizer.msg("search", "Search Text"));
       }
       public void componentShown(ComponentEvent e) {
         mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
+        searchAction.putValue(Action.NAME, mLocalizer.msg("closeSearch", "Close search bar"));
       }
     });
     
@@ -364,7 +369,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   protected void addPluginActions(boolean rebuild, boolean showSettings) {
     mFunctionGroup.removeAll();
 
-    mTextSearch = new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, mSearchMenu,
+    mTextSearch = new TaskMenuButton(mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
     
     ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs(false, true);
@@ -387,13 +392,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         action.putValue(Action.NAME, ConfigMenuItem.getInstance().toString());
 
         ActionMenu configure = new ActionMenu(action);
-        new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, configure, this,
+        new TaskMenuButton(mFunctionGroup, mProgram, configure, this,
             "id_configure", mFindAsYouType);
       } else {
         ActionMenu menu = p[i].getContextMenuActions(mProgram);
         
         if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
-          new TaskMenuButton(mPluginsPane, mFunctionGroup, mProgram, menu, this,
+          new TaskMenuButton(mFunctionGroup, mProgram, menu, this,
               p[i].getId(), mFindAsYouType);
       }
     }
