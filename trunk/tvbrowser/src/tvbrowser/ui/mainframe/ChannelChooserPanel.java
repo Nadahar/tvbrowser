@@ -27,6 +27,8 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -73,12 +75,17 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
         mList, this);
     new DragAndDropMouseListener(mList, mList, this, dnDHandler);    
     
+    mList.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_SPACE)
+          showChannel();
+      }
+    });
+    
     mList.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
-        Channel selectedChannel = (Channel) mList.getSelectedValue();
-        if (selectedChannel != null && SwingUtilities.isLeftMouseButton(e)) {
-          mParent.showChannel(selectedChannel);
-        }
+        if(SwingUtilities.isLeftMouseButton(e))
+          showChannel();
       }
       
       public void mousePressed(MouseEvent e) {
@@ -91,7 +98,13 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
         showPopupMenu(e);      }
     });
   }
-
+  
+  private void showChannel() {
+    Channel selectedChannel = (Channel) mList.getSelectedValue();
+    if (selectedChannel != null)
+      mParent.showChannel(selectedChannel);
+  }
+  
   private void showPopupMenu(MouseEvent e) {
     if(e.isPopupTrigger())     
       new ChannelContextMenu(e,(Channel)mList.getModel().getElementAt(mList.locationToIndex(e.getPoint())),this);
