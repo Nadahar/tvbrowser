@@ -67,6 +67,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesSettingTab;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.programinfo.ProgramInfoDesignSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoFontSettingsTab;
+import tvbrowser.extras.programinfo.ProgramInfoFunctionsSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
 import util.ui.UiUtilities;
@@ -328,6 +329,7 @@ public class SettingsDialog implements WindowClosingIf {
     programInfo.add(new SettingNode(new ProgramInfoOrderSettingsTab(), SettingsItem.PROGRAMINFO));
     programInfo.add(new SettingNode(new ProgramInfoFontSettingsTab()));
     programInfo.add(new SettingNode(new ProgramInfoDesignSettingsTab()));
+    programInfo.add(new SettingNode(new ProgramInfoFunctionsSettingsTab()));
 
     root.add(programInfo);
 
