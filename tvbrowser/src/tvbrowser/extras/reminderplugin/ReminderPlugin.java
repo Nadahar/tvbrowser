@@ -572,7 +572,8 @@ public class ReminderPlugin implements ContextMenuIf {
 
         AudioFormat format = ais.getFormat();
         // ALAW/ULAW samples in PCM konvertieren
-        if ((format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED)) {
+        if (format.getEncoding() == AudioFormat.Encoding.ALAW || 
+            format.getEncoding() == AudioFormat.Encoding.ULAW) {
           AudioFormat tmp = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
               format.getSampleRate(), format.getSampleSizeInBits() * 2, format
                   .getChannels(), format.getFrameSize() * 2, format
