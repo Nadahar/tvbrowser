@@ -82,6 +82,8 @@ public class ProgramInfo implements ContextMenuIf {
   private static ProgramInfo mInstance;
   
   private Object[] mOrder;
+  
+  private boolean mShowFunctions;
 
   private ProgramInfo() {
     mInstance = this;
@@ -155,6 +157,8 @@ public class ProgramInfo implements ContextMenuIf {
       int sh = parseNumber(splitHeigt);
       mLeftSplit = new Dimension(sw, sh);
     }
+    
+    mShowFunctions = mSettings.getProperty("showFunctions","true").compareTo("true") == 0;
   }
 
   /**
@@ -273,7 +277,9 @@ public class ProgramInfo implements ContextMenuIf {
   protected void setSettings(JDialog dialog, Dimension d) {
     mSize = dialog.getSize();
     mLocation = dialog.getLocation();
-    mLeftSplit = d;
+    
+    if(mShowFunctions)
+      mLeftSplit = d;
   }
 
   protected boolean getExpanded(String key) {
@@ -334,6 +340,15 @@ public class ProgramInfo implements ContextMenuIf {
     } catch (Exception e) {
       // ignore
     }
+  }
+  
+  protected void setShowFunctions(boolean value) {
+    mShowFunctions = value;
+    mSettings.setProperty("showFunctions", String.valueOf(value));
+  }
+  
+  protected boolean isShowFunctions() {
+    return mShowFunctions;
   }
 
   public String toString() {
