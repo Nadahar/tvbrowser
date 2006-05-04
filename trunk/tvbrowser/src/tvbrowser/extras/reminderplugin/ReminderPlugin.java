@@ -94,8 +94,7 @@ public class ReminderPlugin implements ContextMenuIf {
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     loadSettings();
     mReminderList = new ReminderList();
-    mReminderList.setReminderTimerListener(new ReminderTimerListener(null,
-        mSettings, mReminderList));
+    mReminderList.setReminderTimerListener(new ReminderTimerListener(mSettings, mReminderList));
     loadReminderData();
 
     mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminder"));
@@ -165,8 +164,8 @@ public class ReminderPlugin implements ContextMenuIf {
         tryToReadDataFromPreviousVersions();
       }
     mReminderList.removeExpiredItems();
-    mReminderList.setReminderTimerListener(new ReminderTimerListener(null,
-    mSettings, mReminderList));
+    mReminderList.setReminderTimerListener(new ReminderTimerListener(
+        mSettings, mReminderList));
 
     } catch (ClassNotFoundException e) {
       ErrorHandler.handle("Could not load reminder data", e);
