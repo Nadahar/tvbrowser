@@ -52,6 +52,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
+import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -532,10 +533,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * a right click on the program panel.
    * 
    * @param caller
-   *          The Plugin to exclude from the context menu. When
-   *          <code>null</code> no plugin is excluded.
+   *          The ContextMenuIf to exclude from the context menu. When
+   *          <code>null</code> no ContextMenuIf is excluded.
    */
-  public void addPluginContextMenuMouseListener(final Plugin caller) {
+  public void addPluginContextMenuMouseListener(final ContextMenuIf caller) {
     addMouseListener(new MouseAdapter() {
 
       public void mousePressed(MouseEvent e) {
@@ -568,9 +569,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
    * @param evt
    *          Event for X/Y-Coordinates
    * @param caller
-   *          Plugin that called this
+   *          ContextMenuIf that called this
    */
-  private void showPopup(MouseEvent evt, Plugin caller) {
+  private void showPopup(MouseEvent evt, ContextMenuIf caller) {
     if (SwingUtilities.isRightMouseButton(evt)) {
       JPopupMenu menu = PluginProxyManager.createPluginContextMenu(mProgram,
           caller);
