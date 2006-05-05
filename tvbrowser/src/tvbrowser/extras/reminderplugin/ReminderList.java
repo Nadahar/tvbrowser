@@ -143,12 +143,18 @@ public class ReminderList implements ActionListener {
 
   public void setReminderTimerListener(ReminderTimerListener listener) {
     this.mListener = listener;
-    if (listener != null) {
+    
+    if(ReminderPlugin.getInstance().isAllowedToStartTimer())
+      startTimer();
+  }
+  
+  protected void startTimer() {
+    if (mListener != null && mTimer == null) {
       mTimer = new javax.swing.Timer(10000, this);
       mTimer.start();
     } else if (!mTimer.isRunning()) {
       mTimer.start();
-    }
+    }    
   }
 
   public void removeExpiredItems() {

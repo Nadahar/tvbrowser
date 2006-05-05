@@ -58,6 +58,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -324,6 +325,7 @@ public class TVBrowser {
           public void run() {
             mainFrame.updateUI();
             PluginProxyManager.getInstance().fireTvBrowserStartFinished();
+            ReminderPlugin.getInstance().handleTvBrowserStartFinished();
           }
         });
       }

@@ -86,6 +86,8 @@ public class ReminderPlugin implements ContextMenuIf {
 
   private PluginTreeNode mRootNode;
   
+  private boolean mHasRightToStartTimer = false;
+  
   /** The IDs of the plugins that should receive the favorites. */
   private String[] mClientPluginIdArr;
 
@@ -133,6 +135,25 @@ public class ReminderPlugin implements ContextMenuIf {
 
   public String toString() {
     return mLocalizer.msg("pluginName","Reminder");
+  }
+  
+  /**
+   * Is been called by TVBrowser when the TV-Browser start is finished.
+   */
+  public void handleTvBrowserStartFinished() {
+    mHasRightToStartTimer = true;
+    mReminderList.startTimer();
+  }
+  
+  /**
+   * Is used by the ReminderList to track if
+   * the TV-Browser start was finished.
+   * (When it's finished then the Timer is allowed to start.)
+   * 
+   * @return If the Timer is allowed to start.
+   */
+  protected boolean isAllowedToStartTimer() {
+    return mHasRightToStartTimer; 
   }
   
   private void loadSettings() {
@@ -306,13 +327,8 @@ public class ReminderPlugin implements ContextMenuIf {
     mSettings = settings;
 
     String plugins = settings.getProperty("usethisplugin","").trim();
-    boolean sendEnabled = true;
+    boolean sendEnabled = settings.getProperty("usesendplugin","").compareToIgnoreCase("true") == 0;
     
-    if(settings.containsKey("usesendplugin")) {
-      sendEnabled = settings.getProperty("usesendplugin","").compareToIgnoreCase("true") == 0;
-      settings.remove("usesendplugin");
-    }
-      
     if(plugins.length() > 0 && sendEnabled) {
       if(plugins.indexOf(";") == -1) {
         mClientPluginIdArr = new String[1];
@@ -341,6 +357,7 @@ public class ReminderPlugin implements ContextMenuIf {
       property += ";" + clientPluginArr[i];
     
     mSettings.setProperty("usethisplugin",property);
+    mSettings.setProperty("usesendplugin",String.valueOf(clientPluginArr.length > 0));
   }
 
   public ActionMenu getContextMenuActions(final Frame parentFrame,
