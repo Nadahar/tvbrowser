@@ -1,0 +1,439 @@
+Changelog TVBrowser
+
+2.2 Beta 2
+=========
+
+2.2 Beta 1
+=========
+
+- Features
+
+ * 1392719 ContextMenu for all configurable components in the MainFrame
+ * 1392723 dynamic time buttons in the toolbar
+ * 1378810 Drag'n'Drop for all sort lists and the channel panel
+ * 1397135 Splash verschiebbar
+ * 1397234 Listview-Plugin Live-Refresh
+ * 1407645 Nach Tagen filtern können
+ * 1410865 Web-Browser - Dialog nach start des Web-Browser
+ * 1422336 Dialoge mit ESC schließen
+ * 1294043 ProgramInfo-Plugin
+ * 1232411 "echte" zeitsynchrone Darstellung
+ * 727887 Reminder-Fenster: Immer im Vordergrund
+ * 1440227 EMail-Plugin: Automatic discovery of Application
+ * 1235660 Sendungsinfo-Layout-Änderung
+ * 1446013 PluginTree should show expanded nodes after an update
+ * 1450262 Create Separator in Context-Menu
+ * 1454539 Toolbar Buttons with drop down for channel, date and time
+ * 1454876 Send only a part of a displayed ProgramList to other Plugins
+ * 1454884 Sound testing in the Reminder settings should be stopable
+ * 1248061 Progressbar für FavoritesPlugin
+ * 1458232 Search-Field in Toolbar
+ * 1460650 More button for the toolbar
+ * 1465129 Print-Preview with Zoom-Buttons
+ * Usability-Überlegungen
+ * 1280907 Tray-Icon-Menü verbessern
+ * 1465563 Add an event for finished TV-Browser start to Plugin
+ * 1260108 Die Icons sollen austauschbar werden
+ * 1466356 Reminder - Usability
+ * 1458654 Print single Programs
+ * 1475115 The settings should be used for one version only.
+ * 1479069 Elgato-Driver for CapturePlugin
+
+- Bugs
+
+ * 1361700 Breite der Zeitknöpfe unter Linux
+ * 1379802 X11-Tray Popup not showing correctly
+ * 1391988 Löschen eines Favoriten dauert lange
+ * 1392687 SearchPlugin - Doppeltes Suchergebnis
+ * 1392693 mehrfache gleiche Zeitbuttons
+ * 1391989 Toolbar DnD fehlerhaft
+ * 1412137 Kalender-Export falsches DTEnd
+ * 1412142 Lieblings-Sendungen bei Tageszeiten die 0:00 Überspannen
+ * 1264883 Endzeit der Sendungen nach Tageswechsel neu berechnen
+ * 1434229 CapturePlugin: Deadlock processes
+ * 1436694 Not marked programs after Update, wrong programs in Reminder
+ * 1444117 Case insensitive search matches only US-ASCII charset
+ * 1260779 Exceptions bei fehlender Internetverbindung vermeiden
+ * 1454399 The plugins order in the Plugin View is wrong
+ * 1454886 Sound in Reminder is not played complete
+ * 11367231 Start time and End time display not timezone corrected
+ * 1461381 New Favorites are not saved on dialog closing
+ * 1467957 Bann Server if down
+ * 1328168 Bilder werden nicht für alle Sendungen geladen
+ * 1475116 The channels from the zap2it importer are listed multiple
+ * 1477075 Repaint of Program-List and Table
+
+2.1
+=========
+- Bugfixes
+ * 1355929 Replace of ( and ) in BooleanSearcher
+      The characters ( and ) are needed in the BooleanSearcher
+ * 1358066 Automatically Download at Start broken
+  
+2.1 Beta 4
+=========
+- Features
+ * Swedish Translations (Thanks to Joakim Arborelius)
+
+- Bugfixes
+ * 1351760 Fehler in Suche mit gegebenen Regulären Ausdruck
+
+2.1 Beta 3
+=========
+- Bugfixes
+  * 1349483 Suche nach "ARD-Ratgeber: Technik" funktioniert nicht
+  * 1349704 Kein Kontextmenü unter Windows in Plugin- und Sendergruppen
+
+2.1 Beta 2
+=========
+- Features
+  * Infodialog bei Sendergruppen-Üœbersicht
+  * Contextmenü in Plugin-Settings und Sendergruppen-Settings
+  * 1341645 .lock Üœberprüfung verändern
+  * 1335742 Sendungshervorhebung bei Mausereignissen ändern
+  * 1335739 Anzeige der Blacklist Favoriten im PluginBaum entfernen
+   
+- Bugfixes 
+ * 1334400 Kanalkonfigurations-Dialog Fehler wenn Kanal kein Logo
+		Kanäle ohne Logo konnten nicht konfiguriert werden
+ * 1334785 Sendungsauswahl bleibt bei Filterwechsel erhalten
+ * 1333729 Sender-Gruppen werden nach aktualisieren deaktiviert
+ * 1335737 Tastaturbedienung funktioniert nach Filterwechsel nicht
+ * 1335738 FavoritesPlugin: Entfernen auf allen Favoriten Fehler
+ * 1336295 Tastaturbedienung: Fehlerhaftes Scrollen zur Sendung, Titel ist nun immer sichtbar
+ * 1336659 Senderlogos lassen sich in Kanalliste nicht ausblenden
+ * 1336574 Sendergruppen-Einstellungen beim Update auf 2.1
+ * 1333526 TV-Datenservice Einstellungen erst nach neustart aktiv
+ * 1277870 Linux: Tray-Popup-Menü verschwindet wenn das Tray-Icon unsichtbar wird
+ * 1318001 Link-Behandlung bei fehlendem http://
+ * 1338751 Exception bei Klick in den Plugin-Tree
+ * 1344918 TV-Browser blockiert Windows Shutdown
+ * 1345798 Unbeabsichtigtes Srollen beim Plugin-Fenster schließen
+ * 1345824 ActionCommand-String null bei Doppel-/Mittelklick
+ * 1308939 Lieblingssendung Plugin - String mit Komma werden nun auch gefunden
+ * 1261226 Boolsche Suche Fehler
+
+2.1 Beta 1
+=========
+- Features:
+
+ * 1280910 Filter-Anzeige
+		Es wird nun gut sichtbar über der Program-Tabelle angezeigt, ob und welcher Filter aktiv ist
+ * Plugin-System
+	   - Plugins-Verzeichnis nach $HOME verschoben
+	   - Plugin-Suchreihenfolge: $HOME/.tvbrowser/plugins, $PROGDIR/plugins, $PROGDIR/tvdataservice
+       - neuer Key in .properties: 'pluginsdir'
+ * 1280109 TvDataService-Schnittstelle erweitern       
+       - neues TvDataService interface: devplugin.TvDataService
+       - Sendergruppen müssen nicht mehr per Hand eingetippt werden
+ * 1280122 PrintPlugin: Sendungen markieren
+		Nun werden markierte Sendungen (optional) auf dem Papier auch markiert
+ * 1280929 Windows Installer - Internationalisierung
+ 		Wenn Deutsch nicht Default ist auf dem Windows-System wird nun Englisch als Sprache verwendet
+ * 1280934 Windows - Verknüpfungsicons verbessern
+		Die Verknüpfung hat nun ein hochauflösenderes Icon
+ * 1280932 Windows Tray Icon anpassen
+		Bestmögliche Darstellung der jeweiligen Windows Versionen (256 Farben etc)
+ * 1280107 Default-Button für Farb-Einstellungen
+ * 1260793 Sender-URL editierbar
+ * 1229812 Sender-Titel ändern
+ * 1248116 weitere Toolbar-Buttons
+		Zusätzliche Buttons wie Jetzt, Heute, Uhrzeiten. Zusätzlich wurde auch noch ein neuer 
+		Konfigurations-Dialog programmiert. Man kann nun die Knöpfe per Drag'n'Drop in die 
+		Werkzeugleiste "schieben"
+ * 1258903 Drag'n'Drop
+		In der Kanal-Auswahl, dem Kontext-Menü-Setup, in der Plugin-Ãœbersicht und in der 
+		Program-Tabelle kann man nun mit Drag'n'Drop arbeiten
+ * 1281587 Settings-Kanalliste zeigt immer Logo+Text an
+ * 1281406 ListViewPlugin - Dialoggröße usw. speichern
+ * 1303240 ListViewPlugin: Beim start aktivieren
+		Neue Option. Nun kann man das Plugin direkt beim start des TVBrowser aktivieren
+ * 1281586 Aktualisierungs-Zeitspanne kleinschrittiger
+		Es gibt nun folgende Optionen:
+			- Heute
+			- bis Morgen
+			- die nächsten 2 Tage
+			- die nächsten 3 Tage
+			- die nächste Woche
+			- die nächsten 2 Wochen
+			- die nächsten 3 Wochen
+			- Alles
+ * 1321086 Firefox statt Netscape
+		Unter  *nix-Betriebs-Systemen ist nun der Firefox Standard und nicht Netscape
+ * 1323213 Url als Parameter-Feld
+		Im Parameter-System kann man die Url der Sendung nun benutzen
+ * 1328107 Copy'n'Paste Dialog in jedem Textfeld
+		In jedem Textfeld kann man nun per Kontext-Menü Texte kopieren und einfügen
+ * 1277641 "Force Quit" für Plugins
+		Falls ein Plugin einen Fehler erzeugt, wird nun gefragt, ob dieses Plugin deaktiviert werden soll
+ * 1032014 Plugin-System überarbeiten
+    	Die Anzeige der Plugins ist überarbeitet worden. Zusätzlich kann man nun Plugins, die man 
+    	durch das Menü installiert hat, wieder löschen.
+ * 1265323 Keyboard Navigation und Sendung auswählen
+		Siehe auch im Handbuch http://wiki.tvbrowser.org/index.php/Tastaturbedienung
+ * 1254194 Einzelne Sendungen auf den Favoriten entfernen		
+		Man kann nun einzelne Sendungen, die zwar in den Favoriten ist, aber nicht passt, entfernen
+ * 1317783 Bilder im TV-Browser laden
+		Das Bidler-System für Sendungen wurde aktiviert
+
+- Bugs:      
+
+ * 1280942 Bewertungen: Aktualisieren Fehler
+		Falls keine Sendungen vorlagen, gab es einen Fehler im Bewertungs-Plugin
+ * 1281348 NullPointerException		
+    	Exception im Reminder-Plugin wg. fehlerhaftem laden der Settings
+ * 1280055 Favoriten-Plugin: "Sender auswählen" fehlerhaft
+    	Nun kann man auch mehrere Sender auswählen
+ * 1281388 Exception im ErrorHandler: Icon fehlt   	
+		Der TV-Browser hat versucht ein Bild zu laden, das nicht existiert, wenn er nicht starten konnte
+ * 1265487 PrintPlugin: Drucken im Querformat nicht möglich
+ * 1292322 Automatic data refreshing >> crash
+		Wenn automatische Aktualisierung aktiviert ist und keine Daten für den Start-Tag vorliegen, stürtze
+		der TV-Browser ab
+ * 1296233 Filter: Channel
+		Im FilterPlugin wurden die Sender nicht nach ID, sondern die Objekte verglichen. Dies führte nach
+		einem Daten-Update dazu, das die Sender-Filter nicht mehr funktionierten
+ * 1318375 StringArrayProperty speichert nicht korrekt
+ * 1324036 Linux-Startscript: Verzeichniss falsch geholt, wenn verlinkt
+		Nun wird bei einem (harten, (noch) nicht bei einem dynamischen) Link das Verzeichniss korrekt
+		geholt (Dank an Michael Ostermeier)
+ * 1325132 Daten werden beim Shutdown nicht abgespeichert
+ * 1279442 Exception bei der Senderauswahl
+ * 1279580 Zeit-Knöpfe springen nur fast richtig		
+ * 1280392 Favoriten-Plugin/Erinnerer
+		Nach einer veränderung der Favoriten wurden immer alle Favoriten neu berechnet
+		
+1.1 alpha3
+=========
+- features:
+
+ * option to hide channel names if channel icons are enabled
+ * plugin tree: new context menu item 'expand all'
+
+- bugfixes:
+
+ * 1232387 Shortcuts funktionieren nicht zuverlaessig
+ * 1231598 Eigene Senderlogos werden vergessen
+ * 1230922 Fehler, wenn keine Zeitknoepfe definiert sind
+ * 1229938 CapturePlugin: Sendungen zur selben Zeit
+ * 1229699 Aktualisierung der rechten Leiste
+ * 1229464 CapturePlugin: channel_name_external
+ * 1227875 Exception in PrintPlugin (Fonts-Einstellungen)
+ * 1227770 PrintPlugin: Sortierung der Sendungen
+ * 1227634 "Eine Instanz laeuft schon"-Meldung
+ * 1226755 Filter muß and / or noch akzeptieren
+ * 1226503 Menue Ansicht > Plugin-Uebersicht wird nicht aktualisiert
+ * 1226286 Doppelklick in Programmtabelle
+ * 1225706 CapturePlugin nicht im Windows-Installer
+ * 1225660 Sprung zu "jetzt" beim Start
+ * 1225652 Fehler in ScrollableMenu
+ * 1225539 Sortierung der Erinnerungen
+
+1.1 alpha2
+=========
+- Mac OS X: Store settings in ~/Library/Preferences/TV-Browser
+- Windows: add CapturePlugin to Windows-Installer
+- Bugfix #1225459 (NullPointer beim Aktualisieren)
+- Erinnerer-Dialog sortiert nun die Sendungen nach Beginnzeit
+
+
+1.1 alpha
+=========
+- New mainframe layout
+- Mac OS X:
+     - menu bar
+     - installer (package, .dmg)
+- New toolbar added
+- Plugin-View (tree) added
+- Added Channel-Logos
+- Added new Filter to select if the Program is running, was running or will be running
+- Added localisation for Filters. Now it is possible to write "Untertitelt und nicht Morgens"
+- Extended plugin system and introduced PluginProxies.
+  Warning: Old plugins will be compatible except when they access other plugins.
+           Because there is no direct access to plugins any more, these plugins
+           must be changed to access other plugins using their proxies.
+- Added new Filter:SubtitleFilter
+- Added new FilterComponent: PluginIcon
+- Added new Filtercomponent: BeanShellFilter, now you can write little Scripts that Filter certain Programs
+- Filtersorting is saved now
+- Last used Filter is loaded at start
+- Filter for Time now can save minutes, not only hours
+- ChannelGroups are fetched from the Server: NOT IN ALPHA! WE WILL EXTEND THIS FEATURE IN BETA RELEASE
+- Search now remembers selected Nr of Days
+- new structure in the menu bar
+- plugin tree view
+
+
+1.0.1
+=========
+ - bugfix: removed "import searchplugin..."
+
+1.0 final
+=========
+ - bugfix: ask before autodownload on startup
+ - bugfix: "timezone bug" (didn't show programs after 24:00)
+
+1.0 RC 05
+=========
+ - bugfix: merge dayprograms correctly
+ - bugfix: proxy authentication
+
+1.0 RC 04
+=========
+- store settings automatically
+
+1.0 RC 02
+=========
+- bugfix: ReminderPlugin: set property "showmsgbox" to true, if it's not initialized
+- bugfix: Program table: apply changed fonts immediately
+- bugfix: Program table: don't allow zero as program column width
+- bugfix: Program table: don't allow time blocks smaller than 1 hour
+- bugfix: util.ui.TextLineBreaker: don't attempt to draw lines shorter than one character
+- bugfix: util.ui.FileCheckBox: don't ignore cancel button
+
+
+0.9.8:
+=========
+- made webbrowser choosable
+- command line options added:
+      -minimized
+      -nosplash
+- The length of the last program of a day is now calculated when TV-Browser has
+  the data for the next day.
+- Plugin.handleTvDataChanged() is now called only once after a TV data download.
+- Program table now breaks long words
+- No more bold fonts are used in the menu and buttons
+- TV-Browser now recognizes changes in the TV data made by someone else.
+  This also fixes problems that come up when the TV-Browser process was killed
+  and therefore wasn't able to save the Plugin settings.
+- Program table now supports background styles:
+    - white
+    - one image
+    - time blocks
+    - time of day
+- Better settings management
+- Automatic tv listings update on start up
+- new version of PrintPlugin added
+- new filter components: channel, time
+- hide empty columns if a filter is used
+- Searching allowes now to search in all program fields (except for binaries)
+- Improved Error handling:
+    - Nicer error dialog that has a button for copying all nessesary information
+      to the clipboard
+    - Unhandled exceptions (such as NullPointerException) are detected now
+    - When the TV-Browser window is not yet up, the error is shown in a frame,
+      not in a dialog.
+- SystemTrayIcon improved
+    - Translated
+    - Added Plugin-Menu
+- Added 2 new Filters:
+    - Program-Length
+    - Additional Infomations (e.g. Stereo)
+
+0.9.7.3:
+=========
+- added downnload status info
+- Extended program table
+    - Support for plugin icons
+    - The info text is now freely configurable
+    - The table is much faster
+- Faster download of TV data (summary file, more simultanious download threads)
+- Support for channel groups
+
+0.9.7.1, 0.9.7.2:
+=========
+- Program now supports all new data fields
+- DataService class is now splitted into TvDataBase, TvDataUpdater and
+  TvDataSearcher. The TvDataBase has now a memory-sensitive cache and a
+  Listener functionality.
+
+
+0.9.7:
+=========
+- Bugfixes:
+    - Stopping updates works now
+- Changed the TvDataService-Interface
+- Settings: The list of the available channels is now sorted
+- Program icon
+
+0.9.6.1:
+=========
+- bugfixes:
+	- don't scroll to invalid time/channel positions
+	- remember download period "get all"
+	- mark "programs on air" with invalid length
+	- changed format of the time buttons to 24h format
+	- update finder panel after deleting tv data manually 
+- new layout in main frame
+- removed online mode
+- show plugin buttons by default
+- new layout in settings dialog
+- support time zones
+
+0.9.6:
+=========
+- bugfix in SkinPanel
+- new feature: filter
+- new devplugin.Date class
+- new settings dialog
+- new settings:
+       * -directories for tvdataservice caches
+       * -fonts
+       * -time space for day programms
+       * -time for time buttons
+       * -column width
+- use folder %HOME/.tvbrowser for personal settings
+- scrolling in ProgramTable optimized (big images)
+
+
+0.9.5.1:
+=========
+- bugfix in XmlTvDataService
+
+0.9.5:
+=========
+- New program table
+- Show also the next morning
+- Compact and Time synchronous program table layout
+- online update for plugins and dataservices
+- progressbar improved (for online mode)
+- download incomplete channel day programs
+- changed channel id from int to String
+
+0.9.4:
+=========
+- Better readable text in Splash Screen
+- Error message when TV-Browser starts in wrong directory
+- Install all plugins by default
+- Subscribe some channels by default
+- show timezone in about box
+- make fonts chooseable (in settings file)
+- remember window size
+- remember window location
+- Use more icons for menu items and buttons
+- shortcuts for menu items added
+- keyboard navigable
+- specifiying a proxy supported
+- dialog on startup, when no tvdata were found
+- helpsystem added
+- settings: tv data tab implemented
+- The order of the plugins is remembered. A double click with the left mouse
+  button in the program table opens the program with the first plugins that
+  is in the context menu
+
+
+0.9.3:
+=========
+- bugfixes
+
+0.9.2:
+=========
+- bugfixes
+
+0.9.1:
+=========
+- tv data available
+
+0.9.0:
+=========
+- initial version
