@@ -308,6 +308,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         mVisibleActions.add(action);
       } else if ("#separator".equals(buttonNames[i])) {
         mVisibleActions.add(mSeparatorAction);
+      } else if (buttonNames[i].compareTo("java.reminderplugin.ReminderPlugin") == 0) {
+        mVisibleActions.add(mReminderAction);
+      } else if (buttonNames[i].compareTo("java.favoritesplugin.FavoritesPlugin") == 0) {
+        mVisibleActions.add(mFavoriteAction);
       } else { // if the buttonName is not valid, we try to add the
         // prefix '.java' - maybe it's a plugin from
         // TV-Browser 1.0
@@ -324,6 +328,9 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mVisibleActions.add(mUpdateAction);
     mVisibleActions.add(mPluginViewAction);
     mVisibleActions.add(mFilterAction);
+    mVisibleActions.add(getSeparatorAction());
+    mVisibleActions.add(mFavoriteAction);
+    mVisibleActions.add(mReminderAction);
     mVisibleActions.add(getSeparatorAction());
 
     PluginProxyManager pluginMng = PluginProxyManager.getInstance();
