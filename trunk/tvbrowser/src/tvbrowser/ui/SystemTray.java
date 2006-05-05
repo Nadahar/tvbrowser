@@ -92,9 +92,8 @@ public class SystemTray {
   private SystemTrayIf mSystemTray;
 
   private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure;
-  private Dimension mOpenCloseMenuDim, mQuitMenuDim, mConfigureDim;
   
-  private ScrollableMenu mTrayMenu;
+  private JPopupMenu mTrayMenu;
   private Timer mClickTimer;
 
   /**
@@ -146,14 +145,10 @@ public class SystemTray {
 
       mOpenCloseMenuItem = new JMenuItem(mLocalizer.msg("menu.open", "Open"));
       Font f = mOpenCloseMenuItem.getFont();
+      
       mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
-      mOpenCloseMenuDim = mOpenCloseMenuItem.getPreferredSize();
-      
       mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
-      mQuitMenuDim = mQuitMenuItem.getPreferredSize();
-      
       mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));
-      mConfigureDim = mConfigure.getPreferredSize();
 
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -236,17 +231,18 @@ public class SystemTray {
 
       toggleOpenCloseMenuItem(false);
 
-      mTrayMenu = new ScrollableMenu();
+      mTrayMenu = new JPopupMenu();
       
 
       mSystemTray.addRightClickAction(new ActionListener() {
 
         public void actionPerformed(ActionEvent e) {
+          //mTrayMenu.getPopupMenu().setVisible(false);
           buildMenu();
         }
 
       });
-      mSystemTray.setTrayPopUp(mTrayMenu.getPopupMenu());
+      mSystemTray.setTrayPopUp(mTrayMenu);
 
       mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
 
@@ -279,7 +275,6 @@ public class SystemTray {
 
   private void buildMenu() {
     mTrayMenu.removeAll();
-    mOpenCloseMenuItem.setPreferredSize(mOpenCloseMenuDim);
     mTrayMenu.add(mOpenCloseMenuItem);
     mTrayMenu.addSeparator();
     mTrayMenu.add(createPluginsMenu());
@@ -303,10 +298,8 @@ public class SystemTray {
         Settings.propTraySoonProgramsEnabled.getBoolean() ||
         Settings.propTrayOnTimeProgramsEnabled.getBoolean())
       mTrayMenu.addSeparator();
-    mConfigure.setPreferredSize(mConfigureDim);
     mTrayMenu.add(mConfigure);
     mTrayMenu.addSeparator();
-    mQuitMenuItem.setPreferredSize(mQuitMenuDim);
     mTrayMenu.add(mQuitMenuItem);
   }
 
@@ -323,7 +316,7 @@ public class SystemTray {
 
       // Put the programs in a submenu?
       if (Settings.propTrayNowProgramsInSubMenu.getBoolean() && Settings.propTrayNowProgramsEnabled.getBoolean())
-        subMenu = new JMenu(mLocalizer.msg("menu.programsNow",
+        subMenu = new ScrollableMenu(mLocalizer.msg("menu.programsNow",
             "Now running programs"));
       else
         subMenu = mTrayMenu;
@@ -399,7 +392,7 @@ public class SystemTray {
       // Show important program?
       if (Settings.propTrayImportantProgramsEnabled.getBoolean())
         if (Settings.propTrayImportantProgramsInSubMenu.getBoolean()) {
-          mTrayMenu.add(addToImportantMenu(new JMenu(mLocalizer.msg(
+          mTrayMenu.add(addToImportantMenu(new ScrollableMenu(mLocalizer.msg(
               "menu.programsImportant", "Important programs"))));
         } else
           addToImportantMenu(mTrayMenu);
@@ -434,7 +427,7 @@ public class SystemTray {
       if(Settings.propTraySoonProgramsEnabled.getBoolean()
           && (!nextPrograms.isEmpty() || !nextAdditionalPrograms.isEmpty())) {        
         
-      final JMenu next = new JMenu(now ? mLocalizer.msg("menu.programsSoon",
+      final JMenu next = new ScrollableMenu(now ? mLocalizer.msg("menu.programsSoon",
       "Soon runs") : mLocalizer.msg("menu.programsSoonAlone",
       "Soon runs"));
 
@@ -476,9 +469,7 @@ public class SystemTray {
   private JComponent addToImportantMenu(JComponent menu) {
     Program[] p = MarkedProgramsList.getInstance()
         .getTimeSortedProgramsForTray();
-
-    if (menu instanceof JPopupMenu)
-      ((JPopupMenu) menu).addSeparator();
+    
     if (p.length > 0) {
 
       for (int i = 0; i < p.length; i++)
@@ -533,7 +524,7 @@ public class SystemTray {
    * Add the time info menu.
    */
   private void addTimeInfoMenu() {
-    JMenu time = new JMenu(mLocalizer.msg("menu.programsAtTime",
+    JMenu time = new ScrollableMenu(mLocalizer.msg("menu.programsAtTime",
         "Programs at time"));
     mTrayMenu.add(time);
 
@@ -550,7 +541,7 @@ public class SystemTray {
 
       final int value = times[i];
 
-      final JMenu menu = new JMenu(hour + ":" + minutes + " "
+      final JMenu menu = new ScrollableMenu(hour + ":" + minutes + " "
           + mLocalizer.msg("menu.time", ""));
 
       if (times[i] < IOUtilities.getMinutesAfterMidnight())
