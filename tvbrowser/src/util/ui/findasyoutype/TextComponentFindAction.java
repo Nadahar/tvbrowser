@@ -85,7 +85,7 @@ public class TextComponentFindAction extends FindAction implements
         "actions", "close-pressed", 16));
     mSearchCloseBtn.setToolTipText(mLocalizer.msg("closeToolTip",
         "Close Find bar"));
-    mSearchCloseBtn.setOpaque(false);
+    mSearchCloseBtn.setContentAreaFilled(false);
     mSearchCloseBtn.setFocusable(false);
     
     MouseListener[] ml = mSearchCloseBtn.getMouseListeners();
@@ -100,7 +100,7 @@ public class TextComponentFindAction extends FindAction implements
     mFindNext.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
     mFindNext.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
         "go-down", 16));
-    mFindNext.setOpaque(false);
+    mFindNext.setContentAreaFilled(false);
     mFindNext.setFocusable(false);
     mFindNext.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -112,7 +112,7 @@ public class TextComponentFindAction extends FindAction implements
     mFindPrev.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
     mFindPrev.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
         "go-up", 16));
-    mFindPrev.setOpaque(false);
+    mFindPrev.setContentAreaFilled(false);
     mFindPrev.setFocusable(false);
     mFindPrev.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
