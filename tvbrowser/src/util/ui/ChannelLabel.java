@@ -67,7 +67,7 @@ public class ChannelLabel extends JLabel {
    * Creates the ChanelLabel
    * 
    * @param channelIconsVisible Should the Icon be visible
-   * @param textIsVisible Should everything (text and Icon) be visible ?
+   * @param textIsVisible Should Text be visible ?
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible) {
     mChannelIconsVisible = channelIconsVisible;
@@ -80,9 +80,25 @@ public class ChannelLabel extends JLabel {
    * @param ch Channel to display
    */
   public ChannelLabel(Channel ch) {
+    mChannelIconsVisible = Settings.propEnableChannelIcons.getBoolean();
+    mTextIsVisible = Settings.propShowChannelNames.getBoolean();
     setChannel(ch);
   }
 
+  /**
+   * Creates the ChannelLabel
+   *
+   * @param ch Channel to display
+   * @param channelIconsVisible Should the Icon be visible
+   * @param textIsVisible Should Text be visible ?
+   * @since 2.2
+   */
+  public ChannelLabel(Channel ch, boolean channelIconsVisible, boolean textIsVisible) {
+    mChannelIconsVisible = channelIconsVisible;
+    mTextIsVisible = textIsVisible;
+    setChannel(ch);
+  }
+  
   /**
    * Creates the ChannelLabel
    *
@@ -92,8 +108,9 @@ public class ChannelLabel extends JLabel {
    */
   public ChannelLabel(Channel ch, boolean channelIconsVisible) {
     mChannelIconsVisible = channelIconsVisible;
+    mTextIsVisible = Settings.propShowChannelNames.getBoolean();
     setChannel(ch);
-  }
+  }  
 
   /**
    * Sets the Channel to display
