@@ -46,6 +46,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import tvbrowser.core.filters.FilterList;
@@ -132,12 +133,11 @@ public class SearchField extends JPanel {
    * Create the GUI
    */
   private void createGui() {
-    JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("1dlu, pref, 2dlu, fill:40dlu:grow, 2dlu, pref", "fill:pref:grow"));
+    JPanel panel = new JPanel(new BorderLayout(3,0));
     Color background = new Color(UIManager.getColor("TextField.background").getRGB());
     
     panel.setBackground(background);
-    panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,0,1,0)));
+    panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));
     
     mText = new SearchTextField(15);
     mText.setBorder(BorderFactory.createEmptyBorder());
@@ -153,6 +153,12 @@ public class SearchField extends JPanel {
                 filter.setSearch(mSearchFormSettings);
                 MainFrame.getInstance().setProgramFilter(filter);
                 mCancelButton.setVisible(true);
+                
+                SwingUtilities.invokeLater(new Runnable() {
+                  public void run() {
+                    mText.setCaretPosition(mText.getText().length());    
+                  }
+                });
               } catch (TvBrowserException e1) {
                 e1.printStackTrace();
               }
@@ -167,12 +173,10 @@ public class SearchField extends JPanel {
         }
       }
     });
-    
-    CellConstraints cc = new CellConstraints();
 
     mSearchButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "system-search", 16)); 
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
-    mSearchButton.setOpaque(false);
+    mSearchButton.setContentAreaFilled(false);
     mSearchButton.setMargin(new Insets(0, 0, 0, 0));
     mSearchButton.setFocusPainted(false);
     mSearchButton.addActionListener(new ActionListener() {
@@ -183,7 +187,7 @@ public class SearchField extends JPanel {
     
     mCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "process-stop", 16)); 
     mCancelButton.setBorder(BorderFactory.createEmptyBorder());
-    mCancelButton.setOpaque(false);
+    mCancelButton.setContentAreaFilled(false);
     mCancelButton.setMargin(new Insets(0, 0, 0, 0));
     mCancelButton.setFocusPainted(false);
     mCancelButton.setVisible(false);
@@ -193,11 +197,11 @@ public class SearchField extends JPanel {
       };
     });
     
-    panel.add(mSearchButton, cc.xy(2,1));
-    panel.add(mText, cc.xy(4,1));
-    panel.add(mCancelButton, cc.xy(6,1));
+    panel.add(mSearchButton, BorderLayout.WEST);
+    panel.add(mText, BorderLayout.CENTER);
+    panel.add(mCancelButton, BorderLayout.EAST);
     
-    setLayout(new FormLayout("65dlu, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
+    setLayout(new FormLayout("70dlu, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
     add(panel, new CellConstraints().xy(1, 2));
   }
 
@@ -209,6 +213,7 @@ public class SearchField extends JPanel {
     SearchFilter.getInstance().deactivateSearch();
     MainFrame.getInstance().setProgramFilter(FilterList.getInstance().getDefaultFilter());
     mCancelButton.setVisible(false);
+    mText.focusLost(null);
   }
 
   /**
