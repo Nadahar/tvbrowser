@@ -63,14 +63,21 @@ public class AdvancedFavorite extends Favorite {
 
   public AdvancedFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
-    in.readInt();   // version
+    int version = in.readInt();   // version
     mSearchFormSettings = new SearchFormSettings(in);
+    if (version > 1) {
+      boolean useFilter = in.readBoolean();
+      if (useFilter) {
+        String filtername = (String)in.readObject();
+        mFilter = getFilterByName(filtername);
+      }
+    }
   }
 
 
   /**
    * @deprecated
-   * @param obj
+   * @param obj ignored (used to have a unique method signature)
    * @param in
    * @throws IOException
    * @throws ClassNotFoundException
@@ -101,8 +108,12 @@ public class AdvancedFavorite extends Favorite {
   }
 
   protected void internalWriteData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
     mSearchFormSettings.writeData(out);
+    out.writeBoolean(mFilter != null);
+    if (mFilter != null) {
+      out.writeObject(mFilter.getName());
+    }
   }
 
 
