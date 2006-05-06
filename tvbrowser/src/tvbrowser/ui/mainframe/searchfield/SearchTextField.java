@@ -36,6 +36,9 @@ import javax.swing.JTextField;
  * @author bodum
  */
 public class SearchTextField extends JTextField implements FocusListener{
+  /** The localizer of this class. */  
+  private static final util.ui.Localizer mLocalizer
+    = util.ui.Localizer.getLocalizerFor(SearchTextField.class);
   /** Color */
   private Color mTextColor, mNoTextColor;
   /** Is Text available ?*/
@@ -56,7 +59,7 @@ public class SearchTextField extends JTextField implements FocusListener{
     mNoTextColor = new Color(r,g,b);
     mTextColor = getForeground();
     
-    setText("Suchen...");
+    setText(mLocalizer.msg("search","Search..."));
     setForeground(mNoTextColor);
   }
   
@@ -78,7 +81,7 @@ public class SearchTextField extends JTextField implements FocusListener{
   public void focusLost(FocusEvent e) {
     if (getText().length() == 0) {
       mHasText = false;
-      setText("Suche...");
+      setText(mLocalizer.msg("search","Search..."));
       setForeground(mNoTextColor);
     } else {
       mHasText = true;
