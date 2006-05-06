@@ -33,6 +33,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -61,6 +63,10 @@ public class ReminderFrame implements WindowClosingIf {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(ReminderFrame.class.getName());
+
 
   /**
    * The UI texts for the choosable options how long before a program start the
@@ -227,10 +233,20 @@ public class ReminderFrame implements WindowClosingIf {
   }
 
   private void setAlwaysOnTop(boolean value) {
+
+    Method onTop = null;
     try {
-      Method onTop = mDialog.getClass().getMethod("setAlwaysOnTop",new Class[] {boolean.class});
+      onTop = mDialog.getClass().getMethod("setAlwaysOnTop",new Class[] {boolean.class});
       onTop.invoke(mDialog, new Object[] {new Boolean(value)});
-    }catch(Throwable e) {e.printStackTrace();}
+    } catch (NoSuchMethodException e) {
+      mLog.log(Level.WARNING, "Method 'Dialog#setAlwaysOnTop' not found - please upgrade to Java 5 (http://java.com)");
+    } catch (IllegalAccessException e) {
+      mLog.log(Level.SEVERE, e.getLocalizedMessage(), e);
+    } catch (InvocationTargetException e) {
+      mLog.log(Level.SEVERE, e.getLocalizedMessage(), e);
+    }
+
+
   }  
   
   private void handleTimerEvent() {
