@@ -45,13 +45,13 @@ public class ChannelLabel extends JLabel {
   
   static Icon DEFAULT_ICON =  new ImageIcon("./imgs/tvbrowser16.png");
   private boolean mChannelIconsVisible;
-  private boolean mAllIsVisible;
+  private boolean mTextIsVisible;
   
   /**
    * Creates the ChannelLabel
    */
   public ChannelLabel() {
-    this(true,false);
+    this(Settings.propEnableChannelIcons.getBoolean(), Settings.propShowChannelNames.getBoolean());
   }
 
   /**
@@ -60,18 +60,18 @@ public class ChannelLabel extends JLabel {
    * @param channelIconsVisible Should the Icon be visible
    */
   public ChannelLabel(boolean channelIconsVisible) {
-    this(channelIconsVisible,false);
+    this(channelIconsVisible,Settings.propShowChannelNames.getBoolean());
   }
   
   /**
    * Creates the ChanelLabel
    * 
    * @param channelIconsVisible Should the Icon be visible
-   * @param allIsVisible Should everything (text and Icon) be visible ?
+   * @param textIsVisible Should everything (text and Icon) be visible ?
    */
-  public ChannelLabel(boolean channelIconsVisible, boolean allIsVisible) {
+  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible) {
     mChannelIconsVisible = channelIconsVisible;
-    mAllIsVisible = allIsVisible;
+    mTextIsVisible = textIsVisible;
   }
 
   /**
@@ -101,12 +101,10 @@ public class ChannelLabel extends JLabel {
    * @param ch Channel to display
    */
   public void setChannel(Channel ch) {
-    if (Settings.propEnableChannelIcons.getBoolean() && mChannelIconsVisible
-        || mAllIsVisible) {
+    if (mChannelIconsVisible) {
       setIcon(ch.getIcon());
     }
-    if (!mChannelIconsVisible || !Settings.propEnableChannelIcons.getBoolean() 
-        || Settings.propShowChannelNames.getBoolean() || mAllIsVisible) {
+    if (mTextIsVisible) {
       setText(ch.getName());
     }
     setMinimumSize(new Dimension(42,22));
