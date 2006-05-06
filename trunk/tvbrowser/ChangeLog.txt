@@ -8,6 +8,9 @@ Changelog TVBrowser
 
 - Features
 
+ * 1175353 Favoriten-Plugin muß Erinnerungen auch löschen können
+ * 1009333 Favoriten-Plugin erweitern (war automatische Suche)
+ * 950428 Abbrechen-Knöpfe an die richtige Position 
  * 1392719 ContextMenu for all configurable components in the MainFrame
  * 1392723 dynamic time buttons in the toolbar
  * 1378810 Drag'n'Drop for all sort lists and the channel panel
