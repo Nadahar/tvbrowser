@@ -34,6 +34,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
@@ -386,6 +388,7 @@ public class MainFrame extends JFrame implements DateListener {
 
     mToolBarModel = DefaultToolBarModel.getInstance();
     mToolBar = new ToolBar(mToolBarModel);
+    mToolBar.setOpaque(false);
     String location = mToolBar.getToolbarLocation();
 
     if (Settings.propIsTooolbarVisible.getBoolean()) {
@@ -504,6 +507,7 @@ public class MainFrame extends JFrame implements DateListener {
   }
 
   public void quit() {
+    TVBrowser.removeTray();
     quit(true);
   }
 
