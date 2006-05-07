@@ -35,6 +35,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -43,6 +44,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -256,9 +258,17 @@ public class WebSettingsTab implements SettingsTab {
      * The Selection was changed
      */
     private void listSelectionChanged() {
-        
         WebAddress adr = (WebAddress)mAddressList.getSelectedValue();
 
+        if (adr == null) {
+          mStartStop.setIcon(mStartIcon);
+          mEdit.setEnabled(false);
+          mDelete.setEnabled(false);
+          mUp.setEnabled(false);
+          mDown.setEnabled(false);
+          return;
+        }
+        
         if (!adr.isActive()) {
             mStartStop.setIcon(mStartIcon);
             mStartStop.setToolTipText(mLocalizer.msg("Enable", "Enable Site"));
@@ -315,6 +325,7 @@ public class WebSettingsTab implements SettingsTab {
             num = mCloned.size()-1;
         }
 
+        mAddressList.setModel(createNewListModel());
         mAddressList.setSelectedIndex(num);      
         mAddressList.updateUI();
     }
@@ -339,12 +350,28 @@ public class WebSettingsTab implements SettingsTab {
 
         if (editor.getReturnValue() == JOptionPane.OK_OPTION) {
             mCloned.add(newadr);
+            mAddressList.setModel(createNewListModel());
             mAddressList.setSelectedIndex(mCloned.size()-1);
             mAddressList.updateUI();
         }
         
     }
     
+    
+    /**
+     * Creates a new ListModel
+     * 
+     * @return ListModel to use
+     * @since 2.2
+     */
+    private ListModel createNewListModel() {
+      DefaultListModel model = new DefaultListModel();
+      int max = mCloned.size();
+      for (int i = 0;i<max;i++)
+        model.addElement(mCloned.get(i));
+      return model;
+    }
+
     /**
      * Edit was pressed
      */
