@@ -40,6 +40,8 @@ import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicPopupMenuUI;
 
 // This class implements a scrollable JMenu
@@ -228,6 +230,15 @@ public class ScrollableMenu extends JMenu {
     super.add(upSeperator);
     super.add(downSeperator);
     super.add(scrollDown);
+    
+    getPopupMenu().addPopupMenuListener(new PopupMenuListener() {
+      public void popupMenuCanceled(PopupMenuEvent e) {}
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        getPopupMenu().setPreferredSize(new Dimension(maxWidth, getPopupMenu().getPreferredSize().height));
+      }
+    });
   }
 
   /**
@@ -577,7 +588,8 @@ public class ScrollableMenu extends JMenu {
     }
 
     getPopupMenu().validate();
-    getPopupMenu().pack();
+   // getPopupMenu().pack();
+    getPopupMenu().repaint();
   }
 
   private void setPreferedSizeForMenuItems(Component component) {
@@ -639,18 +651,17 @@ public class ScrollableMenu extends JMenu {
     }
 
     super.remove(2);
-    Component component = (Component) scrollableItems.elementAt(beginIndex + maxItemsToDisplay);
 
-    super.add(component, maxItemsToDisplay + 1);
+    super.add((Component) scrollableItems.elementAt(beginIndex + maxItemsToDisplay), maxItemsToDisplay + 1);
     beginIndex++;
-
+    
     updateScrollingComponentsVisibility();
 
     if (getFirstVisibleComponent() instanceof JSeparator) {
       scrollDownClicked();
     }
   }
-
+  
   private class ScrollUpOrDownButtonItem extends JPanel {
 
     private boolean direction = UP;
@@ -764,10 +775,7 @@ public class ScrollableMenu extends JMenu {
       public void mouseEntered(MouseEvent me) {
         isMouseOver = true;
         repaint();
-        if ((me.getModifiers() & InputEvent.BUTTON1_MASK) != 0) {
-          // moved to this panel while left button is presses
-          startScrollTimer();
-        }
+        startScrollTimer();
       }
 
       public void mouseExited(MouseEvent me) {
