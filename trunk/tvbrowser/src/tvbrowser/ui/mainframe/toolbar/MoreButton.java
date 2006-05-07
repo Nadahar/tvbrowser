@@ -153,6 +153,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
  
     public static Component wrapToolBar(JToolBar toolbar, MainFrame mainFrame){
       JToolBar moreToolbar = new JToolBar();
+      moreToolbar.setOpaque(false);
       moreToolbar.setLayout(new GridLayout());
       moreToolbar.setRollover(true); 
       moreToolbar.setFloatable(false); 
