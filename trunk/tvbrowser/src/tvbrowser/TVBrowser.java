@@ -654,7 +654,7 @@ public class TVBrowser {
 
   public static void updateLookAndFeel() {
     if (OperatingSystem.isWindows()) {
-      UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.ExtWindowsLookAndFeel");
+      UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.WindowsLookAndFeel");
     }
     UIManager.installLookAndFeel("Plastic Look And Feel",           "com.jgoodies.looks.plastic.PlasticLookAndFeel");
     UIManager.installLookAndFeel("Plastic 3D Look And Feel",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
