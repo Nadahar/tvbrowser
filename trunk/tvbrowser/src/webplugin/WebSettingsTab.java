@@ -262,6 +262,8 @@ public class WebSettingsTab implements SettingsTab {
 
         if (adr == null) {
           mStartStop.setIcon(mStartIcon);
+          mStartStop.setToolTipText(mLocalizer.msg("Enable", "Enable Site"));
+          mStartStop.setEnabled(false);
           mEdit.setEnabled(false);
           mDelete.setEnabled(false);
           mUp.setEnabled(false);
@@ -269,6 +271,7 @@ public class WebSettingsTab implements SettingsTab {
           return;
         }
         
+        mStartStop.setEnabled(true);
         if (!adr.isActive()) {
             mStartStop.setIcon(mStartIcon);
             mStartStop.setToolTipText(mLocalizer.msg("Enable", "Enable Site"));
