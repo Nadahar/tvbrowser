@@ -26,6 +26,8 @@
 
 package tvbrowser.ui.mainframe;
 
+import devplugin.ProgressMonitor;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
@@ -78,6 +80,22 @@ public class StatusBar extends JPanel {
    */
   public JLabel getLabel() {
     return mInfoLabel;
+  }
+
+  public ProgressMonitor createProgressMonitor() {
+    return new ProgressMonitor(){
+      public void setMaximum(int maximum) {
+        mProgressBar.setMaximum(maximum);
+      }
+
+      public void setValue(int value) {
+        mProgressBar.setValue(value);
+      }
+
+      public void setMessage(String msg) {
+        mInfoLabel.setText(msg);
+      }
+    };
   }
 
 }

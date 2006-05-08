@@ -25,29 +25,13 @@
  */
 package tvbrowser.core.search;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dialog;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.UiUtilities;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -63,7 +47,6 @@ import devplugin.ProgramSearcher;
  */
 public abstract class AbstractSearcher implements ProgramSearcher {
   /** Translator */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(AbstractSearcher.class);
 
   /** The comparator that compares two programs by their start time and date */
   private static Comparator mStartTimeComparator;
@@ -71,11 +54,6 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   /** Indicates if the special characters should be replaced.*/
   protected boolean mReplaceSpCh = false;
 
-  /** Is the Search running ? */
-  private boolean mSearchRunning = false;
-
-  /** Waiting Dialog */
-  private JDialog mWaitingDialog;
 
   /**
    * Gets or creates the start time comperator.
@@ -173,24 +151,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
                           int nrDays, Channel[] channels, boolean sortByStartTime)
   {
-    mSearchRunning = true;
-    new Thread(new Runnable() {
-      public void run() {
-        try {
-          Thread.sleep(500);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        if (mSearchRunning)
-          createDialog();
-        if (mSearchRunning && mWaitingDialog != null) {
-          UiUtilities.centerAndShow(mWaitingDialog);
-          mWaitingDialog.setVisible(mSearchRunning);
-        }
-          
-      }
-    }).start();
-    
+
     // Should we search in all channels?
     if (channels == null) {
       channels = Settings.propSubscribedChannels.getChannelArray(false);
@@ -243,46 +204,10 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       Arrays.sort(hitArr, getStartTimeComparator());
     }
 
-    mSearchRunning = false;
-    if (mWaitingDialog != null)
-      mWaitingDialog.setVisible(false);
-    
     // return the result
     return hitArr;
   }
 
-
-  private void createDialog() {
-    Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-    if (comp instanceof Dialog) {
-      mWaitingDialog = new JDialog((Dialog) comp, false);
-    } else {
-      mWaitingDialog = new JDialog((Frame) comp, false);
-    }
-    mWaitingDialog.setUndecorated(true);
-    mWaitingDialog.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
-    JPanel panel = (JPanel) mWaitingDialog.getContentPane();
-    panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-    panel.setLayout(new FormLayout("fill:3dlu:grow, pref, fill:3dlu:grow", "fill:3dlu:grow, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow"));
-    CellConstraints cc = new CellConstraints();
-
-    JLabel header = new JLabel(mLocalizer.msg("searching", "Searching"));
-    header.setFont(header.getFont().deriveFont(Font.BOLD));
-
-    panel.add(header, cc.xy(2, 2));
-
-    panel.add(
-        new JLabel(mLocalizer.msg("pleaseWait", "Please Wait")), cc
-            .xy(2, 4));
-
-    JProgressBar bar = new JProgressBar();
-    bar.setIndeterminate(true);
-    panel.add(bar, cc.xy(2, 6));
-
-    mWaitingDialog.pack();
-  };
 
   /**
    * Checks whether a value matches to the criteria of this searcher.

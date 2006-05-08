@@ -68,16 +68,8 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.ButtonAction;
-import devplugin.ContextMenuIf;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.SettingsItem;
-import devplugin.ThemeIcon;
+import util.ui.NullProgressMonitor;
+import devplugin.*;
 
 /**
  * Plugin for managing the favorite programs.
@@ -125,14 +117,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       }
 
       public void tvDataUpdateFinished() {
-        for (int i = 0; i < mFavoriteArr.length; i++) {
-        try {
-          mFavoriteArr[i].updatePrograms();
-        } catch (TvBrowserException exc) {
-          ErrorHandler.handle(exc);
-        }
-        updateRootNode();
-    }
+        updateAllFavorites();
 
     ArrayList showInfoFavorites = new ArrayList();
 
@@ -169,7 +154,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     }catch(IOException e) {
       ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavorites","Could not load favorites"), e);
     }
-    
+
     try {
       Properties prop = mConfigurationHandler.loadSettings();
       loadSettings(prop);
@@ -243,7 +228,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     }
 
     boolean reminderFound = false;
-    
+
     // Get the client plugins
     size = in.readInt();
     mClientPluginIdArr = new String[size];
@@ -257,36 +242,59 @@ public class FavoritesPlugin implements ContextMenuIf{
       } else {
         mClientPluginIdArr[i] = (String) in.readObject();
       }
-      
+
       if(version <= 2) {
         if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") == 0)
           reminderFound = true;
       }
     }
-    
+
     if(version <= 2 && reminderFound) {
       ArrayList clientPluginIdArr = new ArrayList();
-      
-      for(int i = 0; i < mClientPluginIdArr.length; i++)
-        if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") != 0)
+
+      for(int i = 0; i < mClientPluginIdArr.length; i++) {
+        if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") != 0) {
           clientPluginIdArr.add(mClientPluginIdArr[i]);
-      
-      mClientPluginIdArr = (String[])clientPluginIdArr.toArray(new String[clientPluginIdArr.size()]);
-      
-      for(int i = 0; i < mFavoriteArr.length; i++) {
-        mFavoriteArr[i].getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
-        
-        try {
-          mFavoriteArr[i].updatePrograms();
-        } catch (TvBrowserException exc) {
-          ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed", "Could not update favorite"), exc);
         }
       }
+
+      mClientPluginIdArr = (String[])clientPluginIdArr.toArray(new String[clientPluginIdArr.size()]);
+
+      for(int i = 0; i < mFavoriteArr.length; i++) {
+        mFavoriteArr[i].getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
+      }
+      updateAllFavorites();
     }
 
     if(version == 4)
       this.mShowInfoOnNewProgramsFound = in.readBoolean();
 
+  }
+
+
+  private void updateAllFavorites() {
+
+    ProgressMonitor monitor;
+    if (mFavoriteArr.length > 5) {    // if we have more then 5 favorites, we show a progress bar
+      monitor = MainFrame.getInstance().createProgressMonitor();
+    }
+    else {
+      monitor = new NullProgressMonitor();
+    }
+    monitor.setMaximum(mFavoriteArr.length);
+    monitor.setMessage(mLocalizer.msg("updatingFavorites","Updating favorites"));
+
+    for (int i=0;i<mFavoriteArr.length; i++) {
+      monitor.setValue(i);
+
+      try {
+        mFavoriteArr[i].updatePrograms();
+      } catch (TvBrowserException e) {
+        ErrorHandler.handle(e);
+      }
+    }
+    monitor.setMessage("");
+    monitor.setValue(0);
   }
 
   public void deleteFavorite(Favorite favorite) {
@@ -312,15 +320,15 @@ public class FavoritesPlugin implements ContextMenuIf{
     updateRootNode();
 
   }
-  
+
   /**
    * Check if a program is marked by other Favorites to.
-   * 
+   *
    * @param favorite The Favorite that wants to check this.
    * @param p The program to check.
    * @return True if the program was found in other Favorites than the given one.
    */
-  public boolean isContainedByOtherFavorites(Favorite favorite, Program p) {    
+  public boolean isContainedByOtherFavorites(Favorite favorite, Program p) {
     for (int i = 0; i < mFavoriteArr.length; i++) {
       if(!mFavoriteArr[i].equals(favorite)) {
         if(mFavoriteArr[i].contains(p))
@@ -417,10 +425,10 @@ public class FavoritesPlugin implements ContextMenuIf{
     int height = getIntegerSetting(mSettings, "height", 300);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew);
     dlg.setSize(new Dimension(width, height));
-    
+
     if(mShowInfoOnNewProgramsFound) {
-      final ManageFavoritesDialog dialog = dlg;    
-    
+      final ManageFavoritesDialog dialog = dlg;
+
       new Thread() {
         public void run() {
           while(!dialog.isVisible())
@@ -434,9 +442,9 @@ public class FavoritesPlugin implements ContextMenuIf{
             Object[] o = {mLocalizer.msg("newPrograms-description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
                 chb
             };
-            
+
             JOptionPane.showMessageDialog(dialog,o);
-          
+
             if(chb.isSelected())
               mShowInfoOnNewProgramsFound = false;
         }
@@ -454,11 +462,11 @@ public class FavoritesPlugin implements ContextMenuIf{
     mSettings.setProperty("width", "" + dlg.getWidth());
     mSettings.setProperty("height", "" + dlg.getHeight());
   }
-  
+
   public boolean isUsingExpertMode() {
     return mSettings.getProperty("expertMode","false").compareTo("true") == 0;
   }
-  
+
   public void setIsUsingExpertMode(boolean value) {
     mSettings.setProperty("expertMode",String.valueOf(value));
   }
@@ -504,7 +512,7 @@ public class FavoritesPlugin implements ContextMenuIf{
         ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
       }
 
-      if (favorite.getPrograms().length == 0 && !favorite.isRemindAfterDownload()) {
+      if (program != null && favorite.getPrograms().length == 0 && !favorite.isRemindAfterDownload()) {
         Object[] options = {mLocalizer.msg("btn.notifyMe","Notify Me"), mLocalizer.msg("btn.editFavorite","Edit Favorite"), mLocalizer.msg("btn.ignore","Ignore")};
         int option = JOptionPane.showOptionDialog(parent, mLocalizer.msg("dlg.noMatchingPrograms","Currently no program matches the newly created favorite.\n\nDo you want TV-Browser to notify you when any program matches this favorite?"),
                   mLocalizer.msg("dlg.title.information","Information"),
@@ -521,7 +529,7 @@ public class FavoritesPlugin implements ContextMenuIf{
         }
       }
 
-      else if (!favorite.contains(program)) {
+      else if (program != null && !favorite.contains(program)) {
        Object[] options = {mLocalizer.msg("btn.editFavorite","Edit Favorite"), mLocalizer.msg("btn.ignore","Ignore")};
        if (JOptionPane.showOptionDialog(parent, mLocalizer.msg("dlg.programDoesntMatch","The currently selected program does not belong to the newly created favorite.\n\nDo you want to edit the favorite?"),
                   mLocalizer.msg("dlg.title.warning","Warning"),
@@ -560,7 +568,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       deleteFavorite(fav);
     }
   }
-  
+
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("apps", "bookmark", 16);
   }
@@ -572,7 +580,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   public void updateRootNode() {
     mRootNode.removeAllActions();
-    
+
     Action manageFavorite = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         showManageFavoritesDialog(false, mFavoriteArr);
@@ -580,8 +588,8 @@ public class FavoritesPlugin implements ContextMenuIf{
     };
     manageFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("action", "bookmark-new", 16));
     manageFavorite.putValue(Action.NAME, mLocalizer.msg("favoritesManager", "Manage Favorites"));
-    
-    
+
+
     Action addFavorite = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         showCreateFavoriteWizard(null);
@@ -589,7 +597,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     };
     addFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "document-new", 16));
     addFavorite.putValue(Action.NAME, mLocalizer.msg("new", "Create new favorite"));
-    
+
     Action openSettings = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().showSettingsDialog(SettingsItem.FAVORITE);
@@ -597,7 +605,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     };
     openSettings.putValue(Action.SMALL_ICON, getIconFromTheme("categories", "preferences-desktop", 16));
     openSettings.putValue(Action.NAME, mLocalizer.msg("settingsTree", "Settings"));
-    
+
     mRootNode.addAction(manageFavorite);
     mRootNode.addAction(addFavorite);
     mRootNode.addAction(null);
@@ -606,9 +614,9 @@ public class FavoritesPlugin implements ContextMenuIf{
 
     for (int i=0; i<mFavoriteArr.length; i++) {
       PluginTreeNode n = new PluginTreeNode(mFavoriteArr[i].getName());
-      
+
       final int x = i;
-      
+
       Action editFavorite = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
           editFavorite(mFavoriteArr[x]);
@@ -616,8 +624,8 @@ public class FavoritesPlugin implements ContextMenuIf{
       };
       editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
       editFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "document-edit", 16));
-      
-      
+
+
       Action deleteFavorite = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
           deleteFavorite(mFavoriteArr[x]);
@@ -628,7 +636,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
       n.addAction(editFavorite);
       n.addAction(deleteFavorite);
-      
+
       Program[] progArr = mFavoriteArr[i].getPrograms();
       for (int j=0; j<progArr.length; j++) {
         n.addProgram(progArr[j]);
@@ -639,8 +647,8 @@ public class FavoritesPlugin implements ContextMenuIf{
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode();
   }
-  
-  
+
+
 
 
   public String[] getClientPluginIds() {
