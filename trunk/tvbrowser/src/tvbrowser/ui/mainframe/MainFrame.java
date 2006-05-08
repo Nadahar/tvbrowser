@@ -34,8 +34,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 import java.util.Locale;
@@ -493,7 +491,7 @@ public class MainFrame extends JFrame implements DateListener {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
-        };
+        }
       });
     }
   }
@@ -1047,5 +1045,9 @@ public class MainFrame extends JFrame implements DateListener {
     contentPane.invalidate();
     contentPane.updateUI();
 
+  }
+
+  public ProgressMonitor createProgressMonitor() {
+    return mStatusBar.createProgressMonitor();
   }
 }
