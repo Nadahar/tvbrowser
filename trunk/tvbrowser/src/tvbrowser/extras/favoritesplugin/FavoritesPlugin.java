@@ -119,20 +119,21 @@ public class FavoritesPlugin implements ContextMenuIf{
       public void tvDataUpdateFinished() {
         updateAllFavorites();
 
-    ArrayList showInfoFavorites = new ArrayList();
+        updateRootNode();
+        
+        ArrayList showInfoFavorites = new ArrayList();
 
-    for (int i = 0; i < mFavoriteArr.length; i++) {
-      if (mFavoriteArr[i].isRemindAfterDownload() && mFavoriteArr[i].getNewPrograms().length > 0)
-        showInfoFavorites.add(mFavoriteArr[i]);
-    }
+        for (int i = 0; i < mFavoriteArr.length; i++) {
+          if (mFavoriteArr[i].isRemindAfterDownload() && mFavoriteArr[i].getNewPrograms().length > 0)
+            showInfoFavorites.add(mFavoriteArr[i]);
+        }
 
-    if(!showInfoFavorites.isEmpty()) {
-      Favorite[] fav = new Favorite[showInfoFavorites.size()];
-      showInfoFavorites.toArray(fav);
+        if(!showInfoFavorites.isEmpty()) {
+          Favorite[] fav = new Favorite[showInfoFavorites.size()];
+          showInfoFavorites.toArray(fav);
 
-      showManageFavoritesDialog(true, fav);
-    }
-
+          showManageFavoritesDialog(true, fav);
+        }
       }
     });
   }
