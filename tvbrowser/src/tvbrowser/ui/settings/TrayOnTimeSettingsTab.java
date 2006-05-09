@@ -39,7 +39,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
   private JLabel mIconSeparator, mSeparator1, mSeparator2, mDarkLabel, mLightLabel; 
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   
-  private JEditorPane mHelpLabel, mLookHelpLink;
+  private JEditorPane mHelpLabel, mLookHelpLink, mInfo;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
   private ColorLabel mLightColorLb,mDarkColorLb;
@@ -53,7 +53,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu",
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,3dlu," +
-        "pref,10dlu,pref,5dlu,pref,pref,pref,3dlu,pref,fill:pref:grow,pref"));
+        "pref,10dlu,pref,5dlu,pref,pref,pref,3dlu,pref,10dlu,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("onTimeEnabled","Show programs at..."),Settings.propTrayOnTimeProgramsEnabled.getBoolean());
@@ -95,6 +95,8 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
       }
     });
     
+    mInfo = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("trayProgressInfo","The progress bar simulates the progress of the program if the time would be reached."),null);
+    
     mLight = new ColorButton(mLightColorLb);
     mDark = new ColorButton(mDarkColorLb);
     
@@ -127,7 +129,8 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     builder.add(mShowToolTip, cc.xyw(2,16,2));
     builder.add(mShowProgress, cc.xyw(2,17,2));
     builder.add(colors.getPanel(), cc.xy(3,19));
-    builder.add(mHelpLabel, cc.xyw(1,21,4));
+    builder.add(mInfo, cc.xyw(2,21,2));
+    builder.add(mHelpLabel, cc.xyw(1,23,4));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -149,6 +152,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
         mDark.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
         mDarkLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
         mLightLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
+        mInfo.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
       }
     });
     
@@ -179,6 +183,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mDark.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
     mDarkLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
     mLightLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
+    mInfo.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
   }
 
   public void saveSettings() {
