@@ -77,7 +77,7 @@ public class ButtonsSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
 
-    mSettingsPn = new JPanel(new FormLayout("5dlu, 100dlu, fill:pref:grow", "pref, 5dlu, fill:pref:grow"));
+    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, fill:pref:grow", "pref, 5dlu, fill:pref:grow"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
