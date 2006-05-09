@@ -299,8 +299,19 @@ public abstract class Favorite {
       channelArr = Plugin.getPluginManager().getSubscribedChannels();
     }
 
-    Program[] progs = internalSearchForPrograms(channelArr);
-    
+    updatePrograms(internalSearchForPrograms(channelArr));
+  }
+  
+  /**
+   * Checks all current programs if the are not excluded,
+   * and refreshes the program marks.
+   * @throws TvBrowserException
+   */
+  public void refreshPrograms() throws TvBrowserException {
+    updatePrograms(mPrograms);
+  }
+  
+  private void updatePrograms(Program[] progs) throws TvBrowserException {
     Program[] newProgList = filterByLimitations(progs);
 
 
