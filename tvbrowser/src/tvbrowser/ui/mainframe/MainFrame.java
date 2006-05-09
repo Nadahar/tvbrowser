@@ -691,8 +691,16 @@ public class MainFrame extends JFrame implements DateListener {
    * <p>
    * Called when new TV listings was downloaded or when TV data was imported.
    */
-  private void newTvDataAvailable() {
-    changeDate(mFinderPanel.getSelectedDate(), null, null);
+  private void newTvDataAvailable(boolean scroll) {
+    if(scroll)
+      changeDate(mFinderPanel.getSelectedDate(), null, new Runnable() {
+        public void run() {
+          scrollToNow();
+        }
+      });
+    else
+      changeDate(mFinderPanel.getSelectedDate(), null, null);
+    
     mMenuBar.updateDateItems();
   }
 
@@ -737,10 +745,13 @@ public class MainFrame extends JFrame implements DateListener {
 
   public void runUpdateThread(final int daysToDownload,
       final TvDataServiceProxy[] services) {
-
     downloadingThread = new Thread() {
       public void run() {
         onDownloadStart();
+        
+        final boolean scroll = !TvDataBase.getInstance().dataAvailable(Date.getCurrentDate())
+        && getProgramTableModel().getDate().compareTo(Date.getCurrentDate()) == 0;
+        
         JProgressBar progressBar = mStatusBar.getProgressBar();
         TvDataUpdater.getInstance().downloadTvData(daysToDownload, services,
             progressBar, mStatusBar.getLabel());
@@ -748,9 +759,8 @@ public class MainFrame extends JFrame implements DateListener {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             onDownloadDone();
-            newTvDataAvailable();
-          }
-
+            newTvDataAvailable(scroll);
+          }          
         });
 
       }
