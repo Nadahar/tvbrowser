@@ -552,7 +552,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     if (exclusion != null) {
       fav.addExclusion(exclusion);
       try {
-        fav.updatePrograms();
+        fav.refreshPrograms();
         updateRootNode();
       } catch (TvBrowserException exc) {
         ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
