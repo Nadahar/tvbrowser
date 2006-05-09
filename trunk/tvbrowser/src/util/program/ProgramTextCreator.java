@@ -348,14 +348,15 @@ public class ProgramTextCreator {
     String name = fieldType.getLocalizedName();
     if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
       if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
-        String description = prog.getDescription();
-        String shortInfo = prog.getShortInfo();
-        if (shortInfo != null) {
-          String shortInfoSubString = shortInfo;
-          if (shortInfo.endsWith("...")) {
-            shortInfoSubString = shortInfo.substring(0, shortInfo.length() - 3);
-          }
-          if (!description.startsWith(shortInfoSubString)) {
+        String description = prog.getDescription().trim();
+        
+        if (prog.getShortInfo() != null) {
+          StringBuffer shortInfo = new StringBuffer(prog.getShortInfo().trim());  
+          
+          while(shortInfo.toString().endsWith("."))
+            shortInfo.deleteCharAt(shortInfo.length() - 1);
+           
+          if (!description.startsWith(shortInfo.toString())) {
             addEntry(doc, buffer, prog,
                 ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
           }
