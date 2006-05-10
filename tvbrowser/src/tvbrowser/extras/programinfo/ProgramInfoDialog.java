@@ -36,6 +36,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
@@ -48,6 +50,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -62,6 +65,7 @@ import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.program.ProgramTextCreator;
@@ -100,7 +104,9 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   private JScrollPane mActionsPane;
   private TextComponentFindAction mFindAsYouType;
   private ActionMenu mSearchMenu;
-  private TaskMenuButton mTextSearch;
+  private TaskMenuAction mTextSearch;
+  
+  private boolean mShowSettings;
 
   /**
    * @param parent
@@ -136,8 +142,9 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
   
   private void init(final Program program, Dimension pluginsSize,
       boolean showSettings) {
-    UiUtilities.registerForClosing(this);    
+    UiUtilities.registerForClosing(this);
     
+    mShowSettings = showSettings;
     mProgram = program;
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
@@ -223,8 +230,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
       public void actionPerformed(ActionEvent e) {
         scrollPane.getVerticalScrollBar().setValue(
-            scrollPane.getVerticalScrollBar().getValue()
-                + scrollPane.getVerticalScrollBar().getUnitIncrement());
+          scrollPane.getVerticalScrollBar().getValue()
+              + scrollPane.getVerticalScrollBar().getUnitIncrement());
       }
     };
 
@@ -260,8 +267,36 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       main.add(split, BorderLayout.CENTER);
       mFindAsYouType.installKeyListener(split);
     }
-    else
-      main.add(scrollPane);
+    else {
+      JPanel infoFunctionPanel = new JPanel(new BorderLayout());
+      infoFunctionPanel.add(scrollPane, BorderLayout.CENTER);
+      
+      String temp = mLocalizer.msg("functions","Functions");
+      StringBuffer text = new StringBuffer("<html>");
+       
+      for(int i = 0; i < temp.length() - 1; i++)
+        text.append(temp.charAt(i)).append("<br>");
+      
+      text.append(temp.charAt(temp.length() - 1)).append("</html>");
+      
+      final JButton functions = new JButton(text.toString());
+      functions.setContentAreaFilled(false);
+      functions.setFocusable(false);
+      
+      functions.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          if(e.getClickCount() == 1) {
+            JPopupMenu popupMenu = PluginProxyManager.createPluginContextMenu(mProgram,
+                ProgramInfo.getInstance());            
+            popupMenu.show(functions, e.getX(), e.getY());
+          }
+        }
+      });
+      
+      infoFunctionPanel.add(functions, BorderLayout.WEST);
+      
+      main.add(infoFunctionPanel);
+    }
 
     // buttons
     JPanel buttonPn = new JPanel(new BorderLayout(0,5));
@@ -333,15 +368,17 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     mFindAsYouType.installKeyListener(mActionsPane.getVerticalScrollBar());
     mFindAsYouType.installKeyListener(scrollPane.getVerticalScrollBar());
     
-    addPluginActions(false,showSettings);
+    addPluginActions(false);
     
     mFindAsYouType.getCloseButton().addComponentListener(new ComponentAdapter() {
       public void componentHidden(ComponentEvent e) {
-        mTextSearch.setText(mLocalizer.msg("search", "Search Text"));
+        if(mTextSearch != null)
+          mTextSearch.setText(mLocalizer.msg("search", "Search Text"));
         searchAction.putValue(Action.NAME, mLocalizer.msg("search", "Search Text"));
       }
       public void componentShown(ComponentEvent e) {
-        mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
+        if(mTextSearch != null)
+          mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
         searchAction.putValue(Action.NAME, mLocalizer.msg("closeSearch", "Close search bar"));
       }
     });
@@ -362,14 +399,16 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     if(ProgramInfo.getInstance().getProperty("showSearch","false").equals("true")) {
       mFindAsYouType.showSearchBar();
-      mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
+      if(mTextSearch != null)
+        mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
     }
   }
     
-  protected void addPluginActions(boolean rebuild, boolean showSettings) {
+  protected void addPluginActions(boolean rebuild) {
     mFunctionGroup.removeAll();
 
-    mTextSearch = new TaskMenuButton(mFunctionGroup, mProgram, mSearchMenu,
+    if(ProgramInfo.getInstance().isShowTextSearchButton())
+      mTextSearch = new TaskMenuAction(mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
     
     ContextMenuIf[] p = ContextMenuManager.getInstance().getAvailableContextMenuIfs(false, true);
@@ -379,7 +418,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
         mFunctionGroup.add(new JSeparator());
         mFunctionGroup.add(Box.createRigidArea(new Dimension(0,2)));
-      } else if(p[i].getId().compareTo(ConfigMenuItem.CONFIG) == 0 && showSettings) {
+      } else if(p[i].getId().compareTo(ConfigMenuItem.CONFIG) == 0 && mShowSettings) {
         Action action = new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
@@ -392,13 +431,13 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         action.putValue(Action.NAME, ConfigMenuItem.getInstance().toString());
 
         ActionMenu configure = new ActionMenu(action);
-        new TaskMenuButton(mFunctionGroup, mProgram, configure, this,
+        new TaskMenuAction(mFunctionGroup, mProgram, configure, this,
             "id_configure", mFindAsYouType);
       } else {
         ActionMenu menu = p[i].getContextMenuActions(mProgram);
         
         if (menu != null && !p[i].equals(ProgramInfo.getInstance()))
-          new TaskMenuButton(mFunctionGroup, mProgram, menu, this,
+          new TaskMenuAction(mFunctionGroup, mProgram, menu, this,
               p[i].getId(), mFindAsYouType);
       }
     }
