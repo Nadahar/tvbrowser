@@ -83,7 +83,7 @@ public class ProgramInfo implements ContextMenuIf {
   
   private Object[] mOrder;
   
-  private boolean mShowFunctions;
+  private boolean mShowFunctions, mShowTextSearchButton;
 
   private ProgramInfo() {
     mInstance = this;
@@ -159,6 +159,7 @@ public class ProgramInfo implements ContextMenuIf {
     }
     
     mShowFunctions = mSettings.getProperty("showFunctions","true").compareTo("true") == 0;
+    mShowTextSearchButton = mSettings.getProperty("showTextSearchButton","true").compareTo("true") == 0;
   }
 
   /**
@@ -349,6 +350,15 @@ public class ProgramInfo implements ContextMenuIf {
   
   protected boolean isShowFunctions() {
     return mShowFunctions;
+  }
+  
+  protected void setShowTextSearchButton(boolean value) {
+    mShowTextSearchButton = value;
+    mSettings.setProperty("showTextSearchButton", String.valueOf(value));    
+  }
+  
+  protected boolean isShowTextSearchButton() {
+    return mShowTextSearchButton;
   }
 
   public String toString() {

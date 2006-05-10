@@ -26,41 +26,36 @@
 
 package tvbrowser.extras.programinfo;
 
+
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
 
 import util.ui.findasyoutype.TextComponentFindAction;
 
+import com.l2fprod.common.swing.JLinkButton;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
 import devplugin.ActionMenu;
 import devplugin.Program;
 
 /**
- * A class that holds a ContextMenuAction of a Plugin in button.
+ * A class that holds a ContextMenuAction of a Plugin.
  * 
  * @author René Mach
  * 
  */
-public class TaskMenuButton extends MouseAdapter implements ActionListener {
+public class TaskMenuAction {
 
-  private JButton mButton;
   private Action mAction;
   private ProgramInfoDialog mInfo;
   private TextComponentFindAction mFind;
@@ -79,63 +74,49 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
    * @param comp
    *          The Text Component find action to register the keyListener on.
    */
-  public TaskMenuButton(JTaskPaneGroup parent, Program program,
+  public TaskMenuAction(JTaskPaneGroup parent, Program program,
       ActionMenu menu, ProgramInfoDialog info, String id,
       TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
 
     if (!menu.hasSubItems())
-      addButton(parent, menu);
+      addAction(parent, menu);
     else
       addTaskPaneGroup(parent, program, menu, info, id);
   }
 
-  // Adds the button to the TaskPaneGroup.
-  private void addButton(JTaskPaneGroup parent, ActionMenu menu) {
-    mAction = menu.getAction();
+  // Adds the action to the TaskPaneGroup.
+  private void addAction(JTaskPaneGroup parent, ActionMenu menu) {
+    final Action a = menu.getAction();
+    
+    mAction = new AbstractAction() {
+      private static final long serialVersionUID = 1L;
 
-    mButton = new JButton("<html>" + (String) mAction.getValue(Action.NAME)
-        + "</html>");
-    mButton.setHorizontalAlignment(JButton.LEFT);
-    mButton.setVerticalTextPosition(JButton.TOP);
-    mButton.setContentAreaFilled(false);
+      public void actionPerformed(ActionEvent e) {
+        a.actionPerformed(e);
+        
+        if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
+            || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action"))
+          mInfo.addPluginActions(true);
+      }      
+    };
     
-    mFind.installKeyListener(mButton);
-
-    if (mAction.getValue(Action.SMALL_ICON) != null)
-      mButton.setIcon((Icon) mAction.getValue(Action.SMALL_ICON));
+    mAction.putValue(Action.NAME,"<html>" + a.getValue(Action.NAME)+ "</html>");
+    mAction.putValue(Action.ACTION_COMMAND_KEY,a.getValue(Action.ACTION_COMMAND_KEY));
+    mAction.putValue(Action.SMALL_ICON,a.getValue(Action.SMALL_ICON));
     
-    mButton.addKeyListener(new KeyAdapter() {
-      public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_SPACE)
-          pressed();
-      }
-      
-      public void keyReleased(KeyEvent e) {
-        mouseReleased(null);
-      }
-    });
+    Component c = parent.add(mAction);
+    c.setForeground((new JButton()).getForeground());
+    mFind.installKeyListener(c);
     
-    mButton.addActionListener(this);
-    mButton.addMouseListener(this);
-    mButton.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-    
-    mButton.addFocusListener(new FocusListener() {
-      
-      public void focusGained(FocusEvent e) {
-        paintFocus();
-      }
-
-      public void focusLost(FocusEvent e) {
-        unpaintFocus();
-      }
-    });
-    
-    parent.add(mButton);
+    if(c instanceof JLinkButton) {
+      ((JLinkButton)c).setVerticalTextPosition(JLinkButton.TOP);
+      ((JLinkButton)c).setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
+    }
   }
 
-  /*
+  /**
    * Adds a new TaskPaneGroup to the parent TaskPaneGroup for an ActionMenu with
    * submenus.
    */
@@ -148,6 +129,7 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
     group.setTitle((String) menu.getAction().getValue(Action.NAME));
     group.setExpanded(ProgramInfo.getInstance().getExpanded(
         id + "_" + (String) menu.getAction().getValue(Action.NAME)));
+    group.setEnabled(true);
     mFind.installKeyListener(group);
     
     /*
@@ -166,55 +148,14 @@ public class TaskMenuButton extends MouseAdapter implements ActionListener {
       group.setIcon((Icon) menu.getAction().getValue(Action.SMALL_ICON));
 
     for (int i = 0; i < subs.length; i++)
-      new TaskMenuButton(group, program, subs[i], info, id, mFind);
+      new TaskMenuAction(group, program, subs[i], info, id, mFind);
 
     parent.add(Box.createRigidArea(new Dimension(0, 10)));
     parent.add(group);
     parent.add(Box.createRigidArea(new Dimension(0, 5)));
-
-  }
-  
-  public void mouseEntered(MouseEvent e) {
-    paintFocus();
-  }
-
-  public void mousePressed(MouseEvent e) {
-    if(SwingUtilities.isLeftMouseButton(e))
-      pressed();
-  }
-  
-  public void mouseReleased(MouseEvent e) {
-    mButton.setContentAreaFilled(false);
-  }
-  
-  private void pressed() {
-    mButton.setContentAreaFilled(true);
-    mButton.setOpaque(false);
-  }
-  
-  public void mouseExited(MouseEvent e) {
-    unpaintFocus();
-  }
-    
-  private void paintFocus() {
-    mButton.setBorder(BorderFactory.createLineBorder(mButton.getForeground()
-        .brighter()));
-  }
-
-  private void unpaintFocus() {
-    mButton.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    mAction.actionPerformed(new ActionEvent(new JButton(),
-        ActionEvent.ACTION_PERFORMED, (String) mAction
-            .getValue(Action.ACTION_COMMAND_KEY)));
-    if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
-        || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action"))
-      mInfo.addPluginActions(true,false);
   }
   
   protected void setText(String value) {
-    mButton.setText(value);
+    mAction.putValue(Action.NAME, "<html>" + value + "</html>");
   }
 }
