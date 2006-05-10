@@ -46,6 +46,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+
 import java.net.URL;
 
 import javax.swing.AbstractAction;
@@ -594,9 +595,19 @@ public class UiUtilities {
     if(ic == null)
       ic = new ImageIcon("./imgs/tvbrowser16.png");
 
-    if ((ic.getIconHeight() > 40) || (ic.getIconHeight() > 20)) {
-      ic = scaleIcon(ic, 40, 20);
+	int height	= 20;
+    int width	= 40;
+
+    if ((ic.getIconWidth() != 0) && (ic.getIconHeight() != 0)) {
+        double iWidth	= (double)ic.getIconWidth();
+        double iHeight = (double)ic.getIconHeight();
+        if (iWidth/iHeight<2.0){
+        	width=new Double(iWidth * (20.0 / iHeight)).intValue();
+    	} else {
+    		height = new Double(iHeight * (40.0 / iWidth)).intValue();
+    	}
     }
+    ic = scaleIcon(ic, width, height);
     
     Graphics2D g = img.createGraphics();
 
