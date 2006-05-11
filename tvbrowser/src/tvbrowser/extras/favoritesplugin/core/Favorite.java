@@ -467,6 +467,7 @@ public abstract class Favorite {
     if(!mBlackList.contains(program)) {
       mBlackList.add(program);
       unmarkProgram(program);
+      FavoritesPlugin.getInstance().updateRootNode();
     }
   }
   
@@ -477,8 +478,10 @@ public abstract class Favorite {
    * @param program The program to remove from the black list.
    */
   public void removeFromBlackList(Program program) {
-    mBlackList.remove(program);
-    markProgram(program);
+    if(mBlackList.remove(program)) {
+      markProgram(program);
+      FavoritesPlugin.getInstance().updateRootNode();
+    }
   }
   
   /**
