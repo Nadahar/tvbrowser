@@ -601,11 +601,8 @@ public class SearchForm extends JPanel {
         "Please select the fields to search for");
       main.add(UiUtilities.createHelpTextArea(msg + "\n"), BorderLayout.NORTH);
       
-      mSelectableItemList = new SelectableItemList(selectedTypeArr,getSearchableFieldTypes());
-      
-      JScrollPane scrollPane = new JScrollPane(mSelectableItemList);
-      scrollPane.setBorder(null);
-      main.add(scrollPane, BorderLayout.CENTER);
+      mSelectableItemList = new SelectableItemList(selectedTypeArr,getSearchableFieldTypes());      
+      main.add(mSelectableItemList, BorderLayout.CENTER);
       
       JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
       main.add(buttonPn, BorderLayout.SOUTH);

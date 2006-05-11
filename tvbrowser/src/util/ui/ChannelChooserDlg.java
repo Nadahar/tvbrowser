@@ -146,7 +146,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
     }
 
     int pos = 1;
-    layout.appendRow(new RowSpec("fill:pref:grow"));
+    layout.appendRow(new RowSpec("fill:default:grow"));
     layout.appendRow(new RowSpec("3dlu"));
     
     if(mChannelOrderChooser != null)

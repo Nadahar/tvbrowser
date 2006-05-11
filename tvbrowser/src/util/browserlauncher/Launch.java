@@ -45,7 +45,6 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.SettingsItem;
 
@@ -102,7 +101,7 @@ public class Launch {
         JPanel content = (JPanel) dialog.getContentPane();
         content.setBorder(Borders.DIALOG_BORDER);
         
-        FormLayout layout = new FormLayout("fill:150dlu:grow", "default, 3dlu, default, 3dlu, default");
+        FormLayout layout = new FormLayout("fill:235dlu:grow", "default, 3dlu, default, 3dlu, default");
         dialog.getContentPane().setLayout(layout);
         
         CellConstraints cc = new CellConstraints();
@@ -136,8 +135,8 @@ public class Launch {
         buttonPanel.add(configure);
         buttonPanel.add(ok);
         content.add(buttonPanel, cc.xy(1, 5));
-
-        dialog.setSize(Sizes.dialogUnitXAsPixel(235, dialog), Sizes.dialogUnitYAsPixel(130, dialog));
+        
+        dialog.pack();
         UiUtilities.centerAndShow(dialog);
       }
       

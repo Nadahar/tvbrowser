@@ -252,10 +252,10 @@ public class SettingsDialog implements WindowClosingIf {
 
   public void centerAndShow() {
     if ((Settings.propSettingsWindowX.getInt() == -1) && (Settings.propSettingsWindowY.getInt() == -1)) {
-      mDialog.pack();
+      mDialog.setSize(700,600);
       UiUtilities.centerAndShow(mDialog);
     } else if ((Settings.propSettingsWindowWidth.getInt() == -1) && (Settings.propSettingsWindowWidth.getInt() == -1)) {
-      mDialog.pack();
+      mDialog.setSize(700,600);
       mLocation = new Point(Settings.propSettingsWindowX.getInt(), Settings.propSettingsWindowY.getInt());
       mDialog.setLocation(mLocation);
       mDialog.setVisible(true);

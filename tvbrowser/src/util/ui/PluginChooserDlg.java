@@ -115,7 +115,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
 
     int pos = 1;
-    layout.appendRow(new RowSpec("fill:pref:grow"));
+    layout.appendRow(new RowSpec("fill:default:grow"));
     layout.appendRow(new RowSpec("3dlu"));
     contentPane.add(mPluginItemList, cc.xy(1,pos));   
 
