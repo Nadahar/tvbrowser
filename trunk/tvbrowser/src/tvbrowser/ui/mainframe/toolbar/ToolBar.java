@@ -47,7 +47,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.border.CompoundBorder;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -171,21 +170,12 @@ public class ToolBar extends JToolBar {
 
     /* Prepare all ToolBar buttons for Drag'n'Drop */
     for (int i = 0; i < x; i++) {
-      this.getComponent(i).addMouseMotionListener(s);
       (new DragSource()).createDefaultDragGestureRecognizer(this
           .getComponent(i), DnDConstants.ACTION_MOVE, s);
       if (this.getComponent(i) instanceof AbstractButton) {
         AbstractButton b = (AbstractButton) this.getComponent(i);
         b.setDisabledIcon(b.getIcon());
-
-        if (west)
-          b.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(1, 0,
-              0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-        else
-          b.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(0, 1,
-              0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-
-        b.setToolTipText("");
+        b.setBorder(BorderFactory.createEmptyBorder(b.getInsets().top,b.getInsets().left,b.getInsets().bottom,b.getInsets().right));
         b.setEnabled(false);
       }
       this.getComponent(i).addMouseListener(s);

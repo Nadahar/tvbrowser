@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -22,9 +24,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,8 +66,8 @@ import devplugin.Plugin;
  * @author René Mach
  */
 public class ToolBarDragAndDropSettings extends JDialog implements
-    WindowListener, MouseMotionListener, DragGestureListener,
-    DropTargetListener, ActionListener, MouseListener, WindowClosingIf {
+    WindowListener, DragGestureListener, DropTargetListener, ActionListener,
+    MouseListener, WindowClosingIf {
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -80,6 +82,8 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   private JCheckBox mShowToolbarCb, mUseBigIconsCb, mShowSearchFieldCb;
   private JPanel mButtonPanel;
   private boolean mWest;
+
+  private Rectangle2D mCueLine = new Rectangle2D.Float();
 
   private static ToolBarDragAndDropSettings mInstance = null;
 
@@ -144,11 +148,12 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     tVisPanel.add(mShowToolbarCb);
     tVisPanel.add(Box.createHorizontalGlue());
-    
-    mShowSearchFieldCb = new JCheckBox(mLocalizer
-        .msg("showSearchField", "Show Search field"));
-    mShowSearchFieldCb.setSelected(Settings.propIsSearchFieldVisible.getBoolean());
-    
+
+    mShowSearchFieldCb = new JCheckBox(mLocalizer.msg("showSearchField",
+        "Show Search field"));
+    mShowSearchFieldCb.setSelected(Settings.propIsSearchFieldVisible
+        .getBoolean());
+
     tVisPanel.add(mShowSearchFieldCb);
 
     // Initialize the panel for the ToolBar settings
@@ -279,7 +284,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     mButtonPanel.updateUI();
   }
 
-  private void ini() {    
+  private void ini() {
     // set the drop targets of the Actions
     new DropTarget(MainFrame.getInstance().getToolbar(), this);
     new DropTarget(MainFrame.getInstance().getToolBarPanel(), this);
@@ -287,8 +292,8 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     // set up the ActionButtons in the ToolBar for dragging
     MainFrame.getInstance().getToolbar().disableForDragAndDrop(this, mWest);
-    
-    if(mShowToolbarCb.isSelected())
+
+    if (mShowToolbarCb.isSelected())
       mShowSearchFieldCb.setEnabled(true);
     else
       mShowSearchFieldCb.setEnabled(false);
@@ -361,35 +366,6 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     close();
   }
 
-  public void mouseMoved(MouseEvent e) {
-    /*
-     * Paints the border of an ActionButton if the Mouse is over it.
-     */
-
-    int n = MainFrame.getInstance().getToolbar().getComponentIndex(
-        e.getComponent());
-
-    for (int i = 0; i < MainFrame.getInstance().getToolbar()
-        .getComponentCount(); i++) {
-      if (mWest)
-        ((JComponent) MainFrame.getInstance().getToolbar().getComponent(i))
-            .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(1, 0,
-                0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-      else
-        ((JComponent) MainFrame.getInstance().getToolbar().getComponent(i))
-            .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(0, 1,
-                0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-    }
-    if (!mWest)
-      ((JComponent) MainFrame.getInstance().getToolbar().getComponent(n))
-          .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(0, 1,
-              0, 0), BorderFactory.createLineBorder(Color.BLACK)));
-    else
-      ((JComponent) MainFrame.getInstance().getToolbar().getComponent(n))
-          .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(1, 0,
-              0, 0), BorderFactory.createLineBorder(Color.BLACK)));
-  }
-
   public void dragEnter(DropTargetDragEvent e) {
     /*
      * Start drag only if the drag source has the correct DataFlavors.
@@ -417,7 +393,10 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       int index = ((Integer) tr.getTransferData(flavors[1])).intValue();
       Action s = DefaultToolBarModel.getInstance().getSeparatorAction();
 
-      if (((DropTarget) e.getSource()).getComponent().equals(mButtonPanel)) {
+      JComponent target = (JComponent) ((DropTarget) e.getSource())
+          .getComponent();
+
+      if (target.equals(mButtonPanel)) {
         if (index == -1 && !s.getValue(Action.NAME).equals(name)) {
           for (int i = 0; i < mCurrentActions.size(); i++) {
             Action a = (Action) mCurrentActions.elementAt(i);
@@ -433,73 +412,67 @@ public class ToolBarDragAndDropSettings extends JDialog implements
             mAvailableActions.addElement(a);
         }
         saveSettings();
-      } else if (((DropTarget) e.getSource()).getComponent().equals(
-          MainFrame.getInstance().getToolbar()) || ((DropTarget) e.getSource()).getComponent().equals(
-              MainFrame.getInstance().getToolBarPanel())) {
-        Point p = e.getLocation();
-        if (!mWest)
-          p.setLocation(p.x,
-              MainFrame.getInstance().getToolbar().getHeight() / 2);
+      } else if (target.equals(MainFrame.getInstance().getToolbar())
+          || ((DropTarget) e.getSource()).getComponent().equals(
+              MainFrame.getInstance().getToolBarPanel())) {        
+        
+        Point location = e.getLocation();
+
+        if (mWest)
+          location.setLocation(5, location.y);
         else
-          p.setLocation(10, p.y);
+          location.setLocation(location.x, MainFrame.getInstance().getToolbar()
+              .getHeight() / 2);
 
-        int n = MainFrame.getInstance().getToolbar().getComponentIndex(
-            MainFrame.getInstance().getToolbar()
-                .getComponentAt(e.getLocation()));
+        JComponent c = (JComponent) MainFrame.getInstance().getToolbar()
+            .getComponentAt(location);
 
-        if (index < n && index != -1)
-          n--;
-        if (n == -1) {
-          if (!mWest) {
-            int width = MainFrame.getInstance().getToolbar().getWidth();
-            while (p.x < width) {
-              p.setLocation(p.x + 1, p.y);
-              n = MainFrame.getInstance().getToolbar().getComponentIndex(
-                  MainFrame.getInstance().getToolbar().getComponentAt(
-                      e.getLocation()));
-              if (n != -1)
-                break;
-            }
-            if (p.x >= width) {
-              n = MainFrame.getInstance().getToolbar().getComponentCount();
-            }
-          } else {
-            int height = MainFrame.getInstance().getToolbar().getHeight();
-            while (p.y < height) {
-              p.setLocation(p.x, p.y + 1);
-              n = MainFrame.getInstance().getToolbar().getComponentIndex(
-                  MainFrame.getInstance().getToolbar().getComponentAt(
-                      e.getLocation()));
-              if (n != -1)
-                break;
-            }
-            if (p.y >= height) {
-              n = MainFrame.getInstance().getToolbar().getComponentCount();
-            }
-          }
+        if (c == null || c instanceof JToolBar) {
+          c = (JComponent) MainFrame.getInstance().getToolbar().getComponent(
+              MainFrame.getInstance().getToolbar().getComponentCount() - 1);
+
+          if (c != null)
+            location.setLocation(c.getLocation().x + c.getWidth() - 1, c
+                .getLocation().y
+                + c.getHeight() - 1);
         }
-        if (index != -1) {
-          Action a = (Action) mCurrentActions.elementAt(index);
-          mCurrentActions.removeElementAt(index);
-          if (n > MainFrame.getInstance().getToolbar().getComponentCount() - 1)
-            mCurrentActions.insertElementAt(a, n - 1);
-          else
-            mCurrentActions.insertElementAt(a, n);
-        } else
-          for (int i = 0; i < mAvailableActions.size(); i++) {
-            Action a = (Action) mAvailableActions.elementAt(i);
-            if (a.getValue(Action.NAME).equals(name)) {
-              if (!s.getValue(Action.NAME).equals(name))
-                mAvailableActions.removeElement(a);
+
+        if (c != null) {
+          Point p = SwingUtilities.convertPoint(MainFrame.getInstance().getToolBarPanel(), location, c);
+
+          int n = MainFrame.getInstance().getToolbar().getComponentIndex(c);
+
+          if (!((mWest && (p.y < c.getHeight() / 2)) || (!mWest && (p.x < c
+              .getWidth() / 2))))
+            n++;
+
+          if (index != -1) {
+            Action a = (Action) mCurrentActions.remove(index);
+
+            if (index < n)
+              n--;
+
+            if (n > MainFrame.getInstance().getToolbar().getComponentCount() - 1)
+              mCurrentActions.insertElementAt(a, n - 1);
+            else
               mCurrentActions.insertElementAt(a, n);
+          } else
+            for (int i = 0; i < mAvailableActions.size(); i++) {
+              Action a = (Action) mAvailableActions.elementAt(i);
+              if (a.getValue(Action.NAME).equals(name)) {
+                if (!s.getValue(Action.NAME).equals(name))
+                  mAvailableActions.removeElement(a);
+                mCurrentActions.insertElementAt(a, n);
+              }
             }
-          }
+        }
         saveSettings();
       }
       e.dropComplete(true);
     } catch (Exception ee) {
       e.dropComplete(false);
     }
+    mCueLine.setRect(0,0,0,0);
   }
 
   public void dragGestureRecognized(DragGestureEvent e) {
@@ -507,32 +480,26 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     /* Start drag of an ActionButton */
     Action s = DefaultToolBarModel.getInstance().getSeparatorAction();
     Action[] a = DefaultToolBarModel.getInstance().getAvailableActions();
+
+    JComponent c = (JComponent) e.getComponent();
+
     for (int i = 0; i < a.length; i++) {
       String text;
-      if (e.getComponent() instanceof JToolBar.Separator)
+      if (c instanceof JToolBar.Separator)
         text = (String) s.getValue(Action.NAME);
       else {
-        if (((AbstractButton) e.getComponent()).getText() == null)
+        if (((AbstractButton) c).getText() == null)
           text = "notext";
-        else if (!((AbstractButton) e.getComponent()).getText().startsWith(
-            "<html>"))
-          text = ((AbstractButton) e.getComponent()).getText();
+        else if (!((AbstractButton) c).getText().startsWith("<html>"))
+          text = ((AbstractButton) c).getText();
         else
-          text = ((AbstractButton) e.getComponent()).getText().substring(6,
-              ((AbstractButton) e.getComponent()).getText().length() - 7);
+          text = ((AbstractButton) c).getText().substring(6,
+              ((AbstractButton) c).getText().length() - 7);
       }
       if (a[i].getValue(Action.NAME).equals(text)
           || s.getValue(Action.NAME).equals(text) || text.equals("notext")) {
-        ((JComponent) e.getComponent()).setBackground(Color.WHITE);
+        c.setBackground(Color.WHITE);
 
-        if (mWest)
-          ((JComponent) e.getComponent()).setBorder(new CompoundBorder(
-              BorderFactory.createEmptyBorder(1, 0, 0, 0), BorderFactory
-                  .createEmptyBorder(1, 1, 1, 1)));
-        else
-          ((JComponent) e.getComponent()).setBorder(new CompoundBorder(
-              BorderFactory.createEmptyBorder(0, 1, 0, 0), BorderFactory
-                  .createEmptyBorder(1, 1, 1, 1)));
         e.startDrag(null, new TransferAction(text, MainFrame.getInstance()
             .getToolbar().getComponentIndex(e.getComponent())));
         break;
@@ -586,7 +553,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     if (e.getSource() instanceof JButton && e.getActionCommand().equals("OK")) {
       windowClosing(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     } else if (e.getSource() == mShowToolbarCb) {
-      
+
       MainFrame.getInstance().setShowToolbar(mShowToolbarCb.isSelected());
       ini();
     } else
@@ -595,118 +562,64 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
   public void dragOver(DropTargetDragEvent e) {
     /*
-     * Paint the border to show the user where the ActionButton will be placed
+     * Paint the cue line to show the user where the ActionButton will be placed
      * in the ToolBar.
      */
-    Point p = e.getLocation();
+    JComponent target = (JComponent) ((DropTarget) e.getSource())
+        .getComponent();
 
-    if (((DropTarget) e.getSource()).getComponent() instanceof JPanel
-        && !((DropTarget) e.getSource()).getComponent().equals(
-            MainFrame.getInstance().getToolBarPanel())) {
-      for (int i = 0; i < MainFrame.getInstance().getToolbar()
-          .getComponentCount(); i++) {
-        if (mWest)
-          ((JComponent) MainFrame.getInstance().getToolbar().getComponent(i))
-              .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(1,
-                  0, 0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-        else
-          ((JComponent) MainFrame.getInstance().getToolbar().getComponent(i))
-              .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(0,
-                  1, 0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-      }
-      return;
-    }
+    if (!target.equals(mButtonPanel)) {
+      Point location = e.getLocation();
 
-    if (!mWest)
-      p.setLocation(p.x, MainFrame.getInstance().getToolbar().getHeight() / 2);
-    else
-      p.setLocation(10, p.y);
-
-    int n = MainFrame.getInstance().getToolbar().getComponentIndex(
-        MainFrame.getInstance().getToolbar().getComponentAt(e.getLocation()));
-    boolean greater = false;
-
-    if (n == -1) {
-      if (!mWest) {
-        int width = MainFrame.getInstance().getToolbar().getWidth();
-        while (p.x < width) {
-          p.setLocation(p.x + 1, p.y);
-          n = MainFrame.getInstance().getToolbar().getComponentIndex(
-              MainFrame.getInstance().getToolbar().getComponentAt(
-                  e.getLocation()));
-          if (n != -1)
-            break;
-        }
-        if (p.x >= width) {
-          n = MainFrame.getInstance().getToolbar().getComponentCount() - 1;
-          greater = true;
-        }
-      } else {
-        int height = MainFrame.getInstance().getToolbar().getHeight();
-        while (p.y < height) {
-          p.setLocation(p.x, p.y + 1);
-          n = MainFrame.getInstance().getToolbar().getComponentIndex(
-              MainFrame.getInstance().getToolbar().getComponentAt(
-                  e.getLocation()));
-          if (n != -1)
-            break;
-        }
-        if (p.y >= height) {
-          n = MainFrame.getInstance().getToolbar().getComponentCount() - 1;
-          greater = true;
-        }
-      }
-    }
-    
-    if (n == -1)
-      return;
-
-    JComponent c = (JComponent) MainFrame.getInstance().getToolbar()
-        .getComponent(n);
-
-    for (int i = 0; i < MainFrame.getInstance().getToolbar()
-        .getComponentCount(); i++) {
-      if (i == n && c instanceof JToolBar.Separator) {
-        if (mWest && !greater)
-          c.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(1, 0,
-              0, 0, Color.BLACK), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-        else if (!mWest && !greater)
-          c.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0, 1,
-              0, 0, Color.BLACK), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-        else if (mWest && greater)
-          c.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0, 0,
-              1, 0, Color.BLACK), BorderFactory.createEmptyBorder(2, 1, 1, 1)));
-        else
-          c.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0, 0,
-              0, 1, Color.BLACK), BorderFactory.createEmptyBorder(1, 2, 1, 1)));
-      } else if (i == n && c instanceof AbstractButton) {
-        AbstractButton b = (AbstractButton) c;
-        if (mWest && !greater)
-          b.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(1, 0,
-              0, 0, Color.BLACK), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-        else if (!mWest && !greater)
-          b.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0, 1,
-              0, 0, Color.BLACK), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
-        else if (mWest && greater)
-          b.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0, 0,
-              1, 0, Color.BLACK), BorderFactory.createEmptyBorder(2, 1, 1, 1)));
-        else
-          b.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0, 0,
-              0, 1, Color.BLACK), BorderFactory.createEmptyBorder(1, 2, 1, 1)));
-        b.setBorderPainted(true);
-      } else if (mWest)
-        ((JComponent) MainFrame.getInstance().getToolbar().getComponent(i))
-            .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(1, 0,
-                0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+      if (mWest)
+        location.setLocation(5,
+            location.y);
       else
-        ((JComponent) MainFrame.getInstance().getToolbar().getComponent(i))
-            .setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(0, 1,
-                0, 0), BorderFactory.createEmptyBorder(1, 1, 1, 1)));
+        location.setLocation(location.x, MainFrame.getInstance().getToolbar()
+            .getHeight() / 2);
+
+      JComponent c = (JComponent) MainFrame.getInstance().getToolbar()
+          .getComponentAt(location);
+      
+      if (c == null || c instanceof JToolBar) {
+        c = (JComponent) MainFrame.getInstance().getToolbar().getComponent(
+            MainFrame.getInstance().getToolbar().getComponentCount() - 1);
+
+        if (c != null)
+          location.setLocation(c.getLocation().x + c.getWidth() - 1, c
+              .getLocation().y
+              + c.getHeight() - 1);
+      }
+      
+      if (c != null) {
+        JPanel toolBarPanel = MainFrame.getInstance().getToolBarPanel();
+        
+        Point p = SwingUtilities.convertPoint(toolBarPanel, location, c);
+        
+        Rectangle oldCueLineBounds = mCueLine.getBounds();        
+        
+        if (mWest)
+          mCueLine.setRect(1,
+              (p.y < c.getHeight() / 2) ? (location.y - p.y) : (location.y
+                  + c.getHeight() - p.y), toolBarPanel.getWidth() - 1, 2);
+        else
+          mCueLine.setRect((p.x < c.getWidth() / 2) ? (location.x - p.x )
+              : (location.x + c.getWidth() - p.x ), 1, 2,
+              toolBarPanel.getHeight() - 1);
+
+        if (!oldCueLineBounds.equals(mCueLine.getBounds())) {
+          Graphics2D g2d = (Graphics2D) toolBarPanel.getGraphics();
+          toolBarPanel.paintImmediately(oldCueLineBounds);
+
+          Color color = new Color(255, 0, 0, 180);
+          g2d.setColor(color);
+          g2d.fill(mCueLine);
+
+          g2d.dispose();
+        }
+      }
     }
-
   }
-
-  public void mouseDragged(MouseEvent e) {}
 
   public void windowOpened(WindowEvent e) {}
 
@@ -722,7 +635,10 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
   public void dropActionChanged(DropTargetDragEvent e) {}
 
-  public void dragExit(DropTargetEvent e) {}
+  public void dragExit(DropTargetEvent e) {
+    MainFrame.getInstance().getToolBarPanel().paintImmediately(mCueLine.getBounds());
+    mCueLine.setRect(0, 0, 0, 0);
+  }
 
   public void mouseClicked(MouseEvent e) {
     if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
