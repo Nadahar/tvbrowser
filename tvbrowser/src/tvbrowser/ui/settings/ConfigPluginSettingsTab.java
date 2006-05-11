@@ -28,15 +28,15 @@ package tvbrowser.ui.settings;
 import java.awt.BorderLayout;
 
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import com.jgoodies.forms.factories.Borders;
-
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.SettingsTabProxy;
+
+import com.jgoodies.forms.factories.Borders;
+
 import devplugin.ActionMenu;
 import devplugin.SettingsTab;
 

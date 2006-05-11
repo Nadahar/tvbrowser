@@ -29,15 +29,14 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import com.jgoodies.forms.factories.Borders;
-
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.SettingsPanel;
+
+import com.jgoodies.forms.factories.Borders;
 
 public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
 
@@ -54,7 +53,7 @@ public class ConfigDataServiceSettingsTab implements devplugin.SettingsTab {
 
     JPanel mainPn=new JPanel(new BorderLayout());
     mainPn.setBorder(Borders.DIALOG_BORDER);
-    PluginInfoPanel infoPn=new PluginInfoPanel(true);
+    PluginInfoPanel infoPn=new PluginInfoPanel(mSettingsPanel != null);
     infoPn.setDefaultBorder(false);
     infoPn.setPluginInfo(mDataService.getInfo());
     mainPn.add(infoPn,BorderLayout.NORTH);
