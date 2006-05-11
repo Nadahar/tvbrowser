@@ -56,7 +56,6 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.SettingsDialog;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -396,6 +395,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       AbstractButton button = (AbstractButton) source
           .getValue(ToolBar.ACTION_VALUE);
       MainFrame.getInstance().setShowPluginOverview(button.isSelected());
+      setPluginViewButtonSelected(button.isSelected());
     } else if (source == mScrollToNowAction) {
       MainFrame.getInstance().scrollToNow();
     } else if (source == mScrollToTodayAction) {
@@ -512,7 +512,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       });
       popup.add(menuItem);
     }
-
+    
     if (popup != null) {
       popup.addPopupMenuListener(new PopupMenuListener() {
         public void popupMenuCanceled(PopupMenuEvent e) {  }
@@ -520,9 +520,11 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
           AbstractButton button = (AbstractButton) item
               .getValue(ToolBar.ACTION_VALUE);
-          if (item == mFilterAction)
+          if (item == mFilterAction) {
             button.setSelected(!MainFrame.getInstance()
                 .isShowAllFilterActivated());
+            setFilterButtonSelected(button.isSelected());
+          }
           if (item == mGoToDateAction)
             button.setSelected(false);
 

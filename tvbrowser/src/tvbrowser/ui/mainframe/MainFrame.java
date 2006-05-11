@@ -409,7 +409,7 @@ public class MainFrame extends JFrame implements DateListener {
         if(Settings.propIsSearchFieldVisible.getBoolean())
           mToolBarPanel.add(mSearchField, BorderLayout.EAST);
       } else {
-        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.CENTER);
+        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.WEST);
         if(Settings.propIsSearchFieldVisible.getBoolean())
           mToolBarPanel.add(mSearchField, BorderLayout.SOUTH);
       }
