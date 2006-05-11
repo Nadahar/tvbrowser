@@ -590,9 +590,11 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\plugins"
   RMDir /r "$INSTDIR\themepacks"
   RMDir /r "$INSTDIR\tvdataservice"
+  Delete "$SMPROGRAMS\Autostart\${PROG_NAME}.lnk"
   Delete "$INSTDIR\*.*"
   RMDir "$INSTDIR"
 
+  ClearErrors
   ReadEnvStr $1 "WINDIR"
   IfErrors no
   IfFileExists "$1\TV-Browser" noerror
