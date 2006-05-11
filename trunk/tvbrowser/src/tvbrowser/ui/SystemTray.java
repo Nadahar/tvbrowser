@@ -77,8 +77,8 @@ public class SystemTray {
   private boolean mUseSystemTray;
 
   /** Logger */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
-      .getLogger(SystemTray.class.getName());
+  private static java.util.logging.Logger mLog
+  = java.util.logging.Logger.getLogger(SystemTray.class.getName());
 
   /** The localizer for this class. */
   public static util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -523,13 +523,58 @@ public class SystemTray {
    * Add the time info menu.
    */
   private void addTimeInfoMenu() {
-    JMenu time = new ScrollableMenu(mLocalizer.msg("menu.programsAtTime",
+    JComponent time; 
+    
+    if(Settings.propTrayOnTimeProgramsInSubMenu.getBoolean()) {
+      time = new ScrollableMenu(mLocalizer.msg("menu.programsAtTime",
         "Programs at time"));
-    mTrayMenu.add(time);
+      mTrayMenu.add(time);
+    }
+    else
+      time = mTrayMenu;
 
-    int[] times = Settings.propTimeButtons.getIntArray();
+    int[] tempTimes = Settings.propTimeButtons.getIntArray();
+    
+    ArrayList today = new ArrayList();
+    ArrayList tomorrow = new ArrayList();
+    
+    for(int i = 0; i < tempTimes.length; i++)
+      if(tempTimes[i] < IOUtilities.getMinutesAfterMidnight())
+        tomorrow.add(new Integer(tempTimes[i]));
+      else
+        today.add(new Integer(tempTimes[i]));
+    
+    int[] times;
+    
+    if(tomorrow.isEmpty() || today.isEmpty())
+      times = tempTimes;
+    else {
+      times = new int[tempTimes.length + 1];
+      
+      int j = 0;
+      
+      for(int i = 0; i < today.size(); i++) {
+        times[j] = ((Integer)today.get(i)).intValue();
+        j++;
+      }
+      
+      times[j] = -1;
+      j++;
+      
+      for(int i = 0; i < tomorrow.size(); i++) {
+        times[j] = ((Integer)tomorrow.get(i)).intValue();
+        j++;
+      }        
+    }
 
     for (int i = 0; i < times.length; i++) {
+      if(times[i] == -1) {
+        if(time instanceof JMenu)
+          ((JMenu)time).addSeparator();
+        else
+          ((JPopupMenu)time).addSeparator();
+      }
+      else {
       String minutes = String.valueOf(times[i] % 60);
       String hour = String.valueOf(times[i] / 60);
 
@@ -557,6 +602,7 @@ public class SystemTray {
         public void menuDeselected(MenuEvent e) {}
       });
       time.add(menu);
+    }
     }
   }
 

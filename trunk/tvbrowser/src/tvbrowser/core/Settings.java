@@ -509,6 +509,9 @@ public class Settings {
 
   public static final BooleanProperty propTrayOnTimeProgramsEnabled = new BooleanProperty(
       mProp, "trayOnTimeProgramsEnabled", true);
+  
+  public static final BooleanProperty propTrayOnTimeProgramsInSubMenu = new BooleanProperty(
+      mProp, "trayOnTimeProgramsInSubMenus", true);
 
   public static final BooleanProperty propTrayOnTimeProgramsContainsTime = new BooleanProperty(
       mProp, "trayOnTimeProgramsContainsTime", false);

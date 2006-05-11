@@ -35,6 +35,7 @@ import devplugin.SettingsTab;
 public class TrayOnTimeSettingsTab implements SettingsTab {
 
   private JCheckBox mIsEnabled, mShowTime, mShowToolTip, mShowProgress;
+  private JRadioButton mShowInSubMenu, mShowInTray;
   private static final Localizer mLocalizer = TrayBaseSettingsTab.mLocalizer;
   private JLabel mIconSeparator, mSeparator1, mSeparator2, mDarkLabel, mLightLabel; 
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
@@ -52,20 +53,28 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu",
-        "pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,3dlu," +
+        "pref,5dlu,pref,pref,pref,10dlu,pref,5dlu,pref,pref,pref,3dlu," +
         "pref,10dlu,pref,5dlu,pref,pref,pref,3dlu,pref,10dlu,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("onTimeEnabled","Show programs at..."),Settings.propTrayOnTimeProgramsEnabled.getBoolean());
     
+    ButtonGroup bg = new ButtonGroup();
+    
+    mShowInSubMenu = new JRadioButton(mLocalizer.msg("inSubMenu","in a sub menu"),Settings.propTrayOnTimeProgramsInSubMenu.getBoolean());
+    mShowInTray = new JRadioButton(mLocalizer.msg("inTray","in the tray menu"), !mShowInSubMenu.isSelected());
+    
+    bg.add(mShowInSubMenu);
+    bg.add(mShowInTray);
+    
     mShowIconAndName = new JRadioButton(mLocalizer.msg("showIconName","Show channel icon and channel name"),Settings.propTrayOnTimeProgramsContainsName.getBoolean() && Settings.propTrayOnTimeProgramsContainsIcon.getBoolean());
     mShowIcon = new JRadioButton(mLocalizer.msg("showIcon","Show channel icon"),Settings.propTrayOnTimeProgramsContainsIcon.getBoolean() && !Settings.propTrayOnTimeProgramsContainsName.getBoolean());
     mShowName = new JRadioButton(mLocalizer.msg("showName","Show channel name"),!Settings.propTrayOnTimeProgramsContainsIcon.getBoolean() && Settings.propTrayOnTimeProgramsContainsName.getBoolean());    
     
-    ButtonGroup bg = new ButtonGroup();
-    bg.add(mShowIconAndName);
-    bg.add(mShowIcon);
-    bg.add(mShowName);
+    ButtonGroup bg1 = new ButtonGroup();
+    bg1.add(mShowIconAndName);
+    bg1.add(mShowIcon);
+    bg1.add(mShowName);
     
     mShowName.setSelected(!Settings.propEnableChannelIcons.getBoolean());
     
@@ -117,20 +126,22 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
         
     JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("onTime","Programs at..."), cc.xyw(1,1,4));
     builder.add(mIsEnabled, cc.xyw(2,3,2));
+    builder.add(mShowInTray, cc.xy(3,4));
+    builder.add(mShowInSubMenu, cc.xy(3,5));
 
-    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,5,4));
-    builder.add(mShowIconAndName, cc.xyw(2,7,2));
-    builder.add(mShowIcon, cc.xyw(2,8,2));
-    builder.add(mShowName, cc.xyw(2,9,2));
-    builder.add(mLookHelpLink, cc.xyw(2,11,2));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,7,4));
+    builder.add(mShowIconAndName, cc.xyw(2,9,2));
+    builder.add(mShowIcon, cc.xyw(2,10,2));
+    builder.add(mShowName, cc.xyw(2,11,2));
+    builder.add(mLookHelpLink, cc.xyw(2,13,2));
     
-    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,13,4));
-    builder.add(mShowTime, cc.xyw(2,15,2));
-    builder.add(mShowToolTip, cc.xyw(2,16,2));
-    builder.add(mShowProgress, cc.xyw(2,17,2));
-    builder.add(colors.getPanel(), cc.xy(3,19));
-    builder.add(mInfo, cc.xyw(2,21,2));
-    builder.add(mHelpLabel, cc.xyw(1,23,4));
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,15,4));
+    builder.add(mShowTime, cc.xyw(2,17,2));
+    builder.add(mShowToolTip, cc.xyw(2,18,2));
+    builder.add(mShowProgress, cc.xyw(2,19,2));
+    builder.add(colors.getPanel(), cc.xy(3,21));
+    builder.add(mInfo, cc.xyw(2,23,2));
+    builder.add(mHelpLabel, cc.xyw(1,25,4));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -169,6 +180,8 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     
     TrayProgramsChannelsSettingsTab.setOnTimeIsEnabled(mIsEnabled.isSelected());
     mSeparator2.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mIconSeparator.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
@@ -183,12 +196,14 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mDark.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
     mDarkLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
     mLightLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
-    mInfo.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
+    mInfo.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);    
   }
 
   public void saveSettings() {
     if(mIsEnabled != null)
       Settings.propTrayOnTimeProgramsEnabled.setBoolean(mIsEnabled.isSelected());
+    if(mShowInSubMenu != null)
+      Settings.propTrayOnTimeProgramsInSubMenu.setBoolean(mShowInSubMenu.isSelected());
     if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
       Settings.propTrayOnTimeProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTrayOnTimeProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
