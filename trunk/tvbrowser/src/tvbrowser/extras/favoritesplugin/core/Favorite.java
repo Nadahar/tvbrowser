@@ -38,6 +38,7 @@ import java.util.Calendar;
 
 import util.exc.TvBrowserException;
 import util.program.ProgramUtilities;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.common.ReminderConfiguration;
@@ -55,18 +56,21 @@ public abstract class Favorite {
   private ArrayList mExclusionList;
   private PluginAccess[] mForwardPluginArr;
 
+  private ArrayList mBlackList;
+  
   public Favorite() {
     mReminderConfiguration = new ReminderConfiguration();
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new Program[]{};
     mNewProgramsArr = new Program[]{};
     mExclusionList = new ArrayList();
+    mBlackList = new ArrayList();
 
     mForwardPluginArr = FavoritesPlugin.getInstance().getDefaultClientPlugins();
   }
 
   public Favorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.readInt();  // version
+    int version = in.readInt();  // version
     mName = (String)in.readObject();
     mReminderConfiguration = new ReminderConfiguration(in);
     mLimitationConfiguration = new LimitationConfiguration(in);
@@ -88,24 +92,35 @@ public abstract class Favorite {
       }
     }
     mForwardPluginArr = (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
-
+    
     // Don't save the programs but only their date and id
     int size = in.readInt();
     ArrayList programList = new ArrayList(size);
-    for (int i = 0; i < size; i++) {
-      Date date = new Date(in);
-      String progID = (String) in.readObject();
-      Program program = Plugin.getPluginManager().getProgram(date, progID);
-      if (program != null) {
-        programList.add(program);
-      }
+    readProgramsToList(programList, size, in);
+    
+    if(version >= 2) {
+      size = in.readInt();
+      mBlackList = new ArrayList(size);
+      readProgramsToList(mBlackList, size, in);
     }
-
+    else
+      mBlackList = new ArrayList();
+    
     mPrograms = new Program[programList.size()];
     programList.toArray(mPrograms);
     mNewProgramsArr = new Program[]{};
   }
 
+  private void readProgramsToList(ArrayList list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
+    for (int i = 0; i < size; i++) {
+      Date date = new Date(in);
+      String progID = (String) in.readObject();
+      Program program = Plugin.getPluginManager().getProgram(date, progID);
+      if (program != null) {
+        list.add(program);
+      }
+    }
+  }
 
   public abstract String getTypeID();
 
@@ -166,7 +181,7 @@ public abstract class Favorite {
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1);  // version
+    out.writeInt(2);  // version
     out.writeObject(mName);
     mReminderConfiguration.store(out);
     mLimitationConfiguration.store(out);
@@ -187,6 +202,14 @@ public abstract class Favorite {
     for (int i = 0; i < mPrograms.length; i++) {
       mPrograms[i].getDate().writeData(out);
       out.writeObject(mPrograms[i].getID());
+    }
+    
+    // Save the programs on BlackList
+    out.writeInt(mBlackList.size());
+    for(int i = 0; i < mBlackList.size(); i++) {
+      Program p = (Program)mBlackList.get(i);
+      p.getDate().writeData(out);
+      out.writeObject(p.getID());
     }
 
     internalWriteData(out);
@@ -215,6 +238,9 @@ public abstract class Favorite {
 
 
   public boolean contains(Program prog) {
+    if(mBlackList.contains(prog))
+      return false;
+    
     for(int i = 0; i < mPrograms.length; i++) {
       if(mPrograms[i].equals(prog)) {
         return true;
@@ -350,11 +376,7 @@ public abstract class Favorite {
         inx2++;
       }
       else {
-        // leave
-        // unmark the old instance of the program        
-        p1[inx1].unmark(FavoritesPlugin.MARKER);
-        // mark the new instance of the program
-        p2[inx2].mark(FavoritesPlugin.MARKER);
+        // leave        
         resultList.add(p2[inx2]);
         inx1++;
         inx2++;
@@ -383,21 +405,20 @@ public abstract class Favorite {
       pluginArr[i].receivePrograms(mNewProgramsArr);
     }
 
-
     mPrograms = (Program[])resultList.toArray(new Program[resultList.size()]);
   }
 
 
   private void markProgram(Program p) {
-    p.mark(FavoritesPlugin.MARKER);
-    String[] reminderServices = getReminderConfiguration().getReminderServices();
-    for (int i=0; i<reminderServices.length; i++) {
-      if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {
-        ReminderPlugin.getInstance().addProgram(p);
+    if(!mBlackList.contains(p)) {
+      p.mark(FavoritesPlugin.MARKER);
+      String[] reminderServices = getReminderConfiguration().getReminderServices();
+      for (int i=0; i<reminderServices.length; i++) {
+        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderServices[i])) {
+          ReminderPlugin.getInstance().addProgram(p);
+        }
       }
     }
-
-
   }
 
   private void unmarkProgram(Program p) {
@@ -412,6 +433,69 @@ public abstract class Favorite {
       }
     }
 
+  }
+  
+  /**
+   * Checks if all programs on the black are valid.
+   */
+  public void refreshBlackList() {
+    for(int i = mBlackList.size() - 1; i >= 0 ; i--) {
+      Program programInList = (Program)mBlackList.remove(i);
+      Program testProg = PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
+    
+      if(testProg != null && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) == 0) 
+        mBlackList.add(testProg);
+    }
+  }
+  
+  /**
+   * Checks if a program is on the black list.
+   * 
+   * @param program The program to check.
+   * @return If the program in on the black list.
+   */
+  public boolean isOnBlackList(Program program) {
+    return mBlackList.contains(program);
+  }
+  
+  /**
+   * Add a program to the black list
+   * 
+   * @param program The program to put on the black list.
+   */
+  public void addToBlackList(Program program) {
+    if(!mBlackList.contains(program)) {
+      mBlackList.add(program);
+      unmarkProgram(program);
+    }
+  }
+  
+  /**
+   * Removes the program from the black list,
+   * if it is in it.
+   * 
+   * @param program The program to remove from the black list.
+   */
+  public void removeFromBlackList(Program program) {
+    mBlackList.remove(program);
+    markProgram(program);
+  }
+  
+  /**
+   * @return The programs that are not on the black list.
+   */
+  public Program[] getWhiteList() {
+    ArrayList tempProgramArr = new ArrayList();
+    
+    for(int i = 0; i < mPrograms.length; i++) {
+      if(!mBlackList.contains(mPrograms[i]))
+        tempProgramArr.add(mPrograms[i]);
+    }
+    
+    Program[] programs = new Program[tempProgramArr.size()];
+    tempProgramArr.toArray(programs);
+    
+    return programs;
   }
 
   public abstract FavoriteConfigurator createConfigurator();
