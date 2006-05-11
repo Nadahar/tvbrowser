@@ -175,6 +175,9 @@ FunctionEnd
  LangString LINK_SECTION_NAME ${LANG_German} "Verknüpfung auf dem Desktop"
  LangString LINK_SECTION_NAME ${LANG_ENGLISH} "Link on the desktop"
 
+ LangString START_WITH_WINDOWS ${LANG_GERMAN} "TV-Browser mit Windows starten"
+ LangString START_WITH_WINDOWS ${LANG_ENGLISH} "Start TV-Browser at Windows startup"
+
  LangString DATA_SECTION_NAME ${LANG_German} "Daten-Services"
    LangString DATA_TVB_SUBSECTION_NAME ${LANG_German} "TV-Browser-Datenservice"
  LangString DATA_SECTION_NAME ${LANG_ENGLISH} "Data service"
@@ -461,6 +464,12 @@ Section "$(LINK_SECTION_NAME)"
 
   CreateShortCut \
     "$DESKTOP\${PROG_NAME}.lnk" \
+    "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
+SectionEnd
+
+Section "$(START_WITH_WINDOWS)"
+  CreateShortCut \
+    "$SMPROGRAMS\Autostart\${PROG_NAME}.lnk" \
     "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
 SectionEnd
 
