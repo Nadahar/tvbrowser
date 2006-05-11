@@ -166,7 +166,7 @@ public class ProgramTextCreator {
 
       buffer.append("\"><b>");
       buffer.append(mLocalizer.msg("markedBy","Marked by"));
-      buffer.append("</b></td><td valign=\"top\" style=\"font-size:0\">");
+      buffer.append("</b></td><td valign=\"middle\" style=\"font-size:0\">");
       openPara(buffer, "info");
 
       // Workaround: Without the &nbsp; the component are not put in one line.
@@ -203,7 +203,7 @@ public class ProgramTextCreator {
     if (icons.size() > 0) {
       addSeperator(doc, buffer);
       
-      buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
+      buffer.append("<tr><td valign=\"middle\" style=\"color:#808080; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -304,7 +304,7 @@ public class ProgramTextCreator {
 
           buffer.append("\"><b>");
           buffer.append(mLocalizer.msg("attributes", "Program attributes"));
-          buffer.append("</b></td><td valign=\"top\">");
+          buffer.append("</b></td><td valign=\"middle\" style=\"font-size:0\">");
 
           openPara(buffer, "info");
           // Workaround: Without the &nbsp; the component are not put in one
