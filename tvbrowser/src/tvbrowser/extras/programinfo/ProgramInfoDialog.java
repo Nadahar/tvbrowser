@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -266,6 +267,19 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       split.setRightComponent(scrollPane);
       main.add(split, BorderLayout.CENTER);
       mFindAsYouType.installKeyListener(split);
+      
+      addComponentListener(new ComponentListener() {
+        public void componentResized(ComponentEvent e) {
+          mActionsPane.getVerticalScrollBar().setBlockIncrement(mActionsPane.getVisibleRect().height);
+        }
+
+        public void componentShown(ComponentEvent e) {
+          mActionsPane.getVerticalScrollBar().setBlockIncrement(mActionsPane.getVisibleRect().height);
+        }
+
+        public void componentHidden(ComponentEvent e) {}
+        public void componentMoved(ComponentEvent e) {}
+      });
     }
     else {
       JPanel infoFunctionPanel = new JPanel(new BorderLayout());
