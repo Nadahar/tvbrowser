@@ -138,11 +138,35 @@ public class ProgramTextCreator {
       buffer.append("</div>");
     }
 
-    buffer.append("</td></tr>");
+    buffer.append("</td></tr>");    
 
+    if(showImage) {
+      byte[] image = prog.getBinaryField(ProgramFieldType.IMAGE_TYPE);
+      if (image != null) {
+        buffer.append("<tr><td></td><td>");
+        try {
+          Icon icon = new ImageIcon(image);
+          JLabel iconLabel = new JLabel(icon);
+          buffer.append(doc.createCompTag(iconLabel));
+          buffer.append("</td></tr>");
+        } catch (Exception e) {
+          // Picture was wrong;
+          buffer.delete(buffer.length() - 18, buffer.length());
+        }
+      }
+    }
+    
     Marker[] pluginArr = prog.getMarkerArr();
     if ((pluginArr != null) && (pluginArr.length != 0)) {
-      buffer.append("<tr><td></td><td>");
+      addSeperator(doc, buffer);
+      
+      buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
+
+      buffer.append(mBodyFontSize);
+
+      buffer.append("\"><b>");
+      buffer.append(mLocalizer.msg("markedBy","Marked by"));
+      buffer.append("</b></td><td valign=\"top\" style=\"font-size:0\">");
       openPara(buffer, "info");
 
       // Workaround: Without the &nbsp; the component are not put in one line.
@@ -177,7 +201,16 @@ public class ProgramTextCreator {
     }
 
     if (icons.size() > 0) {
-      buffer.append("<tr><td></td><td>");
+      addSeperator(doc, buffer);
+      
+      buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
+
+      buffer.append(mBodyFontSize);
+
+      buffer.append("\"><b>");
+      buffer.append("Plugin-Icons");
+      buffer.append("</b></td><td valign=\"top\" style=\"font-size:0\">");
+      
       openPara(buffer, "info");
       // Workaround: Without the &nbsp; the component are not put in one line.
       buffer.append("&nbsp;");
@@ -189,22 +222,6 @@ public class ProgramTextCreator {
 
       closePara(buffer);
       buffer.append("</td></tr>");
-    }
-
-    if(showImage) {
-      byte[] image = prog.getBinaryField(ProgramFieldType.IMAGE_TYPE);
-      if (image != null) {
-        buffer.append("<tr><td></td><td>");
-        try {
-          Icon icon = new ImageIcon(image);
-          JLabel iconLabel = new JLabel(icon);
-          buffer.append(doc.createCompTag(iconLabel));
-          buffer.append("</td></tr>");
-        } catch (Exception e) {
-          // Picture was wrong;
-          buffer.delete(buffer.length() - 18, buffer.length());
-        }
-      }
     }
 
     addSeperator(doc, buffer);
