@@ -26,7 +26,6 @@
 package captureplugin.drivers.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -85,7 +84,7 @@ public class StreamReaderThread extends Thread {
       
       while ((line = reader.readLine()) != null)
         if (mSaveOutput)
-          mOutput.append(line + (File.separatorChar == '\\' ? "\r\n" : "\n"));
+          mOutput.append(line + "\n");
 
     } catch (IOException e) {}
   }
