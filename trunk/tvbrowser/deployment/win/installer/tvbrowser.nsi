@@ -585,14 +585,8 @@ Section "Uninstall"
  # StrCmp $INI_VALUE "1" "" +2
  #   RMDir /r "$PROFILE\TV-Browser"
 
-
-  RMDir /r "$INSTDIR\imgs"
-  RMDir /r "$INSTDIR\plugins"
-  RMDir /r "$INSTDIR\themepacks"
-  RMDir /r "$INSTDIR\tvdataservice"
   Delete "$SMPROGRAMS\Autostart\${PROG_NAME}.lnk"
-  Delete "$INSTDIR\*.*"
-  RMDir "$INSTDIR"
+  RMDir /r "$INSTDIR"
 
   ClearErrors
   ReadEnvStr $1 "WINDIR"
