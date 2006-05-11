@@ -38,6 +38,7 @@ import java.io.StringWriter;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.nio.channels.FileLock;
+import java.text.DateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Formatter;
@@ -713,7 +714,11 @@ public class TVBrowser {
       public synchronized String format(LogRecord record) {
         StringBuffer sb = new StringBuffer();
 
+        DateFormat mTimeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
+        
         String message = formatMessage(record);
+        sb.append(mTimeFormat.format(new java.util.Date(System.currentTimeMillis())));
+        sb.append(" ");
         sb.append(record.getLevel().getLocalizedName());
         sb.append(": ");
         sb.append(message);
