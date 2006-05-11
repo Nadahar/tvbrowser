@@ -73,13 +73,26 @@ public class ContextMenuProvider {
         menu.setText(mLocalizer.msg("favorites", "Favorites"));
         menu.setSmallIcon(FavoritesPlugin.getInstance().getIconFromTheme("apps", "bookmark", 16));
 
-        return new ActionMenu(menu, new ActionMenu[]{
-          createExcludeFromFavoritesMenuAction(favArr, program),
-          createEditFavoriteMenuAction(favArr),
-          createDeleteFavoriteMenuAction(favArr)
-        });
+        ActionMenu[] blackListAction = createBlackListFavoriteMenuAction(favArr, program); 
+        
+        if(blackListAction.length == 1) {
+          return new ActionMenu(menu, new ActionMenu[]{
+              createExcludeFromFavoritesMenuAction(favArr, program),
+              blackListAction[0],
+              createEditFavoriteMenuAction(favArr),
+              createDeleteFavoriteMenuAction(favArr)
+          });
+        }
+        else {
+          return new ActionMenu(menu, new ActionMenu[]{
+              createExcludeFromFavoritesMenuAction(favArr, program),
+              blackListAction[0],
+              blackListAction[1],
+              createEditFavoriteMenuAction(favArr),
+              createDeleteFavoriteMenuAction(favArr)
+          });          
+        }
       }
-
     }
 
   public ImageIcon getIconFromTheme(String category, String icon, int size) {
@@ -200,5 +213,82 @@ public class ContextMenuProvider {
     }
 
 
+  private ActionMenu[] createBlackListFavoriteMenuAction(final Favorite[] favArr, final Program program) {
+    if (favArr.length == 1) {
+      ContextMenuAction action = new ContextMenuAction();
+      
+      if(!favArr[0].isOnBlackList(program)) {
+        action.setSmallIcon(getIconFromTheme("apps", "process-stop", 16));
+        action.setText(mLocalizer.msg("putFavoriteToBlackList","Remove this program from '{0}'", favArr[0].getName()));
+        action.setActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent e) {
+            favArr[0].addToBlackList(program);
+          }
+        });
+      }
+      else {
+        action.setSmallIcon(getIconFromTheme("apps", "view-refresh", 16));
+        action.setText(mLocalizer.msg("removeFavoriteFromBlackList","Put this program back into '{0}'", favArr[0].getName()));
+        action.setActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent e) {
+            favArr[0].removeFromBlackList(program);
+          }
+        });
+      }
+      return (new ActionMenu[] {new ActionMenu(action)});
+    }
+    else {
+      ArrayList toList = new ArrayList();
+      ArrayList fromList = new ArrayList();
+      
+      for(int i = 0; i < favArr.length; i++)
+        if(favArr[i].isOnBlackList(program))
+          fromList.add(favArr[i]);
+        else
+          toList.add(favArr[i]);
+      
+      ContextMenuAction remove = new ContextMenuAction(mLocalizer.msg("putToBlackList",
+      "Remove this program from..."));
+      remove.setSmallIcon(getIconFromTheme("actions","process-stop",16));
+      
+      ContextMenuAction reactivate = new ContextMenuAction(mLocalizer.msg("removeFromBlackList",
+          "Put this program back into..."));
+      reactivate.setSmallIcon(getIconFromTheme("actions","view-refresh",16));
+
+      ContextMenuAction[] removeAction = new ContextMenuAction[toList.size()];
+      ContextMenuAction[] reactivateAction = new ContextMenuAction[fromList.size()];
+      
+      for(int i = 0; i < toList.size(); i++) {
+        final Favorite fav = (Favorite)toList.get(i);
+        removeAction[i] = new ContextMenuAction(fav.getName());
+        removeAction[i].setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+        removeAction[i].setActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {            
+            fav.addToBlackList(program);
+          }
+        });
+      }
+      
+      for(int i = 0; i < fromList.size(); i++) {
+        final Favorite fav = (Favorite)fromList.get(i);
+        reactivateAction[i] = new ContextMenuAction(fav.getName());
+        reactivateAction[i].setSmallIcon(getIconFromTheme("apps", "bookmark", 16));
+        reactivateAction[i].setActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {            
+            fav.removeFromBlackList(program);
+          }
+        });
+      }
+      
+      if(!toList.isEmpty() && !fromList.isEmpty()) {
+        return new ActionMenu[] {new ActionMenu(remove,removeAction),
+                                new ActionMenu(reactivate,reactivateAction)};
+      }
+      else if(!toList.isEmpty())
+        return new ActionMenu[] {new ActionMenu(remove,removeAction)};
+      else
+        return new ActionMenu[] {new ActionMenu(reactivate,reactivateAction)};
+    }
+  }
 
 }

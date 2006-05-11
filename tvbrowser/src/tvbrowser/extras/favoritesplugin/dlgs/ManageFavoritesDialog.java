@@ -433,7 +433,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mSendBt.setEnabled(false);
     } else {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getPrograms();
+      Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getWhiteList();
 
       mSendBt.setEnabled(programArr.length > 0);
 
@@ -456,7 +456,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     if(programs == null || programs.length == 0) {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      programs = mShowNew ? fav.getNewPrograms() : fav.getPrograms();
+      programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteList();
     }
 
     SendToPluginDialog send = new SendToPluginDialog(null, this, programs);
@@ -671,7 +671,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       
       if (value instanceof Favorite && c instanceof JLabel) {
         Favorite fav = (Favorite)value;
-        ((JLabel)c).setText(fav.getName() + " (" + (mShowNew ? fav.getNewPrograms().length : fav.getPrograms().length) + ")");
+        ((JLabel)c).setText(fav.getName() + " (" + (mShowNew ? fav.getNewPrograms().length : fav.getWhiteList().length) + ")");
         
         if(mShowNew && fav.getNewPrograms().length > 0 && !isSelected)
           c.setForeground(Color.red);

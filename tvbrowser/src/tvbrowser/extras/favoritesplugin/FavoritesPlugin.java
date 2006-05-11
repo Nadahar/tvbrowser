@@ -222,7 +222,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
     // mark all the favorites
     for (int i = 0; i < mFavoriteArr.length; i++) {
-      Program[] programArr = mFavoriteArr[i].getPrograms();
+      Program[] programArr = mFavoriteArr[i].getWhiteList();
       for (int j = 0; j < programArr.length; j++) {
         programArr[j].mark(MARKER);
       }
@@ -289,6 +289,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       monitor.setValue(i);
 
       try {
+        mFavoriteArr[i].refreshBlackList();
         mFavoriteArr[i].updatePrograms();
       } catch (TvBrowserException e) {
         ErrorHandler.handle(e);
@@ -638,7 +639,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       n.addAction(editFavorite);
       n.addAction(deleteFavorite);
 
-      Program[] progArr = mFavoriteArr[i].getPrograms();
+      Program[] progArr = mFavoriteArr[i].getWhiteList();
       for (int j=0; j<progArr.length; j++) {
         n.addProgram(progArr[j]);
       }
