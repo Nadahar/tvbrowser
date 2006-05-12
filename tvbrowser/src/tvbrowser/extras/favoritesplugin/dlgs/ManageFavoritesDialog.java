@@ -30,7 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -53,6 +52,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -112,6 +112,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
   private boolean mShowNew = false;
   private static ManageFavoritesDialog mInstance = null;
+  private JCheckBox mBlackListChb;
 
   public ManageFavoritesDialog(Dialog parent, Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
     super(parent, true);
@@ -263,7 +264,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     selModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     selModel.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent evt) {
-        favoriteSelectionChanged();
+        if(!evt.getValueIsAdjusting())
+          favoriteSelectionChanged();
       }
     });
 
@@ -301,8 +303,23 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     scrollPane = new JScrollPane(mProgramList);
     scrollPane.setBorder(null);
     mSplitPane.setRightComponent(scrollPane);
+    
+    msg = mLocalizer.msg("showBlack", "Show Blacklist entries");
+    mBlackListChb = new JCheckBox(msg);
+    mBlackListChb.setSelected(FavoritesPlugin.getInstance().isShowingBlackListEntries());
+    mBlackListChb.setOpaque(false);
+    mBlackListChb.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        FavoritesPlugin.getInstance().setIsShowingBlackListEntries(mBlackListChb.isSelected());
+        favoriteSelectionChanged();
+      }
+    });
 
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0,0));
+    JPanel buttonPn = new JPanel(new BorderLayout());
+    
+    if(!mShowNew)
+      buttonPn.add(mBlackListChb, BorderLayout.WEST);
+    
     main.add(buttonPn, BorderLayout.SOUTH);
 
     mCloseBt = new JButton(mLocalizer.msg("close", "Close"));
@@ -311,9 +328,16 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
         close();
       }
     });
-    buttonPn.add(mCloseBt);
+    buttonPn.add(mCloseBt, BorderLayout.EAST);
     getRootPane().setDefaultButton(mCloseBt);
 
+    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        close();
+      }
+    });
+    
     favoriteSelectionChanged();
   }
 
@@ -415,8 +439,11 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   public void setSplitpanePosition(int val) {
     mSplitPane.setDividerLocation(val);
   }
-
-  protected void favoriteSelectionChanged() {
+  
+  /**
+   * Refresh the program list.
+   */
+  public void favoriteSelectionChanged() {
     int selection = mFavoritesList.getSelectedIndex();
     int size = mFavoritesListModel.getSize();
 
@@ -433,15 +460,21 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mSendBt.setEnabled(false);
     } else {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getWhiteList();
-
+      Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
+      Program[] blackListPrograms = fav.getBlackListPrograms();
+      
       mSendBt.setEnabled(programArr.length > 0);
-
+      
       mProgramListModel.clear();
-      mProgramListModel.ensureCapacity(programArr.length);
+      mProgramListModel.ensureCapacity(mShowNew ? programArr.length : programArr.length + blackListPrograms.length);
+      
       for (int i = 0; i < programArr.length; i++) {
         mProgramListModel.addElement(programArr[i]);
       }
+      
+      if(!mShowNew && mBlackListChb.isSelected())
+        for (int i = 0; i < blackListPrograms.length; i++)
+          mProgramListModel.addElement(blackListPrograms[i]);
     }
   }
 
@@ -456,7 +489,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     if(programs == null || programs.length == 0) {
       Favorite fav = (Favorite) mFavoritesListModel.get(selection);
-      programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteList();
+      programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     }
 
     SendToPluginDialog send = new SendToPluginDialog(null, this, programs);
@@ -671,7 +704,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       
       if (value instanceof Favorite && c instanceof JLabel) {
         Favorite fav = (Favorite)value;
-        ((JLabel)c).setText(fav.getName() + " (" + (mShowNew ? fav.getNewPrograms().length : fav.getWhiteList().length) + ")");
+        ((JLabel)c).setText(fav.getName() + " (" + (mShowNew ? fav.getNewPrograms().length : fav.getWhiteListPrograms().length) + ")");
         
         if(mShowNew && fav.getNewPrograms().length > 0 && !isSelected)
           c.setForeground(Color.red);

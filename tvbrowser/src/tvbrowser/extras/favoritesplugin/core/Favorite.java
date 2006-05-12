@@ -41,6 +41,7 @@ import util.program.ProgramUtilities;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
@@ -468,6 +469,9 @@ public abstract class Favorite {
       mBlackList.add(program);
       unmarkProgram(program);
       FavoritesPlugin.getInstance().updateRootNode();
+      
+      if(ManageFavoritesDialog.getInstance() != null)
+        ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
     }
   }
   
@@ -481,13 +485,16 @@ public abstract class Favorite {
     if(mBlackList.remove(program)) {
       markProgram(program);
       FavoritesPlugin.getInstance().updateRootNode();
+      
+      if(ManageFavoritesDialog.getInstance() != null)
+        ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
     }
   }
   
   /**
    * @return The programs that are not on the black list.
    */
-  public Program[] getWhiteList() {
+  public Program[] getWhiteListPrograms() {
     ArrayList tempProgramArr = new ArrayList();
     
     for(int i = 0; i < mPrograms.length; i++) {
@@ -499,6 +506,14 @@ public abstract class Favorite {
     tempProgramArr.toArray(programs);
     
     return programs;
+  }
+  
+  /**
+   * 
+   * @return The programs that are on the black list.
+   */
+  public Program[] getBlackListPrograms() {
+    return (Program[])mBlackList.toArray(new Program[mBlackList.size()]);
   }
 
   public abstract FavoriteConfigurator createConfigurator();
