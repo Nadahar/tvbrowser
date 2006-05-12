@@ -37,6 +37,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import devplugin.Plugin;
 import devplugin.PluginTreeNode;
 
@@ -64,11 +66,16 @@ public class PluginTreeModel extends DefaultTreeModel {
       Enumeration e = root.children();
       while (e.hasMoreElements()) {
         DefaultMutableTreeNode n = (DefaultMutableTreeNode) e.nextElement();
+        
         Object o = n.getUserObject();
         if (o instanceof Plugin) {
           Plugin p = (Plugin) o;
           p.getRootNode().update();
         }
+        else if(n.equals(FavoritesPlugin.getInstance().getRootNode().getMutableTreeNode()))
+          FavoritesPlugin.getInstance().getRootNode().update();
+        else if(n.equals(ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()))
+          ReminderPlugin.getInstance().getRootNode().update();
       }
     }
   }
