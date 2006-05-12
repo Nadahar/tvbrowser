@@ -101,8 +101,8 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
 
 
     private void removeFromPrograms() {
-        for (int i=0; i < mPrograms.size(); i++) {
-            ((Program)mPrograms.get(i)).removeChangeListener(this);
+        for (int i=mPrograms.size() - 1; i >= 0; i--) {
+          ((Program)mPrograms.remove(i)).removeChangeListener(this);
         }
     }
 
