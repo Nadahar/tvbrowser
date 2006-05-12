@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -69,9 +70,6 @@ public class ButtonsSettingsTab implements SettingsTab {
 
   private TimesListPanel mTimeButtonsPn;
 
-  public ButtonsSettingsTab() {
-  }
-
   /**
    * Creates the settings panel for this tab.
    */
@@ -97,8 +95,10 @@ public class ButtonsSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    Settings.propTimeButtons.setIntArray(mTimeButtonsPn.getTimes());
-
+    int[] times = mTimeButtonsPn.getTimes();
+    Arrays.sort(times);
+    
+    Settings.propTimeButtons.setIntArray(times);
     MainFrame.getInstance().getToolbar().updateTimeButtons();
   }
 
