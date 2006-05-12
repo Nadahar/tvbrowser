@@ -222,7 +222,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
     // mark all the favorites
     for (int i = 0; i < mFavoriteArr.length; i++) {
-      Program[] programArr = mFavoriteArr[i].getWhiteList();
+      Program[] programArr = mFavoriteArr[i].getWhiteListPrograms();
       for (int j = 0; j < programArr.length; j++) {
         programArr[j].mark(MARKER);
       }
@@ -340,6 +340,23 @@ public class FavoritesPlugin implements ContextMenuIf{
     return false;
   }
 
+  /**
+   * @return If the management dialog should show the 
+   * programs on the black list too.
+   */
+  public boolean isShowingBlackListEntries() {
+    return mSettings.getProperty("showBlackEntries","false").compareTo("true") == 0;
+  }
+  
+  /**
+   * Set the value for showing black list entries
+   * in the management dialog.
+   * 
+   * @param value If the programs are to show.
+   */
+  public void setIsShowingBlackListEntries(boolean value) {
+    mSettings.setProperty("showBlackEntries",String.valueOf(value));
+  }
 
   private void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(4); // version
@@ -639,7 +656,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       n.addAction(editFavorite);
       n.addAction(deleteFavorite);
 
-      Program[] progArr = mFavoriteArr[i].getWhiteList();
+      Program[] progArr = mFavoriteArr[i].getWhiteListPrograms();
       for (int j=0; j<progArr.length; j++) {
         n.addProgram(progArr[j]);
       }
