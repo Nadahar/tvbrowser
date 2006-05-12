@@ -647,7 +647,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
       Action deleteFavorite = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
-          deleteFavorite(mFavoriteArr[x]);
+          askAndDeleteFavorite(mFavoriteArr[x]);
         }
       };
       deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
