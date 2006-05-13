@@ -624,7 +624,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     };
     openSettings.putValue(Action.SMALL_ICON, getIconFromTheme("categories", "preferences-desktop", 16));
     openSettings.putValue(Action.NAME, mLocalizer.msg("settingsTree", "Settings"));
-
+    
     mRootNode.addAction(manageFavorite);
     mRootNode.addAction(addFavorite);
     mRootNode.addAction(null);
@@ -635,7 +635,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       PluginTreeNode n = new PluginTreeNode(mFavoriteArr[i].getName());
 
       final int x = i;
-
+      
       Action editFavorite = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
           editFavorite(mFavoriteArr[x]);
@@ -657,8 +657,34 @@ public class FavoritesPlugin implements ContextMenuIf{
       n.addAction(deleteFavorite);
 
       Program[] progArr = mFavoriteArr[i].getWhiteListPrograms();
+      
+      if(progArr.length <= 10)
+        n.setGroupingByDateEnabled(false);
+      
       for (int j=0; j<progArr.length; j++) {
-        n.addProgram(progArr[j]);
+        PluginTreeNode pNode = n.addProgram(progArr[j]);
+        
+        if(progArr.length <= 10)
+          pNode.setNodeFormatter(new NodeFormatter() {
+            public String format(ProgramItem pitem) {
+            Program p = pitem.getProgram();
+            Date d = p.getDate();
+            String progdate;
+
+            if (d.equals(Date.getCurrentDate()))
+              progdate = mLocalizer.msg("today", "today");
+            else if (d.equals(Date.getCurrentDate().addDays(1)))
+              progdate = mLocalizer.msg("tomorrow", "tomorrow");
+            else
+              progdate = p.getDateString();
+
+            if(mFavoriteArr[x].getName().compareTo(p.getTitle()) != 0)
+              return (progdate + "  " + p.getTimeString() + "  " + p.getTitle() + "  (" + p.getChannel() + ")");
+            else
+              return (progdate + "  " + p.getTimeString() + "  (" + p.getChannel()+")");
+          }
+        });
+
       }
       mRootNode.add(n);
     }
