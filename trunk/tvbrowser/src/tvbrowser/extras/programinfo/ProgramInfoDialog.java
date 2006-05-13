@@ -76,8 +76,6 @@ import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
@@ -259,11 +257,10 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     configBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
         "preferences-desktop", 16));
     
-    JPanel bottom = new JPanel(new FormLayout("pref,3dlu,pref,pref:grow,pref","pref"));
-    CellConstraints cc = new CellConstraints();
+    JPanel bottomLeft = new JPanel(new BorderLayout(3,0));    
     
     if (showSettings)
-      bottom.add(configBtn, cc.xy(1,1));
+      bottomLeft.add(configBtn, BorderLayout.WEST);
     
     if (pluginsSize == null)
       mActionsPane.setPreferredSize(new Dimension(250, 500));
@@ -308,9 +305,9 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       });
       
       if(showSettings)
-        bottom.add(functions, cc.xy(3,1));
+        bottomLeft.add(functions, BorderLayout.EAST);
       else
-        bottom.add(functions, cc.xy(1,1));
+        bottomLeft.add(functions, BorderLayout.WEST);
       
       main.add(scrollPane, BorderLayout.CENTER);
     }
@@ -330,7 +327,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       }
     });
     
-    buttonPn.add(bottom, BorderLayout.CENTER);
+    buttonPn.add(bottomLeft, BorderLayout.WEST);
 
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
@@ -339,7 +336,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       }
     });
 
-    bottom.add(closeBtn, cc.xy(5,1));
+    buttonPn.add(closeBtn, BorderLayout.EAST);
 
     getRootPane().setDefaultButton(closeBtn);
 
