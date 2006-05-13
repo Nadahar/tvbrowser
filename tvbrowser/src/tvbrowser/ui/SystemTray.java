@@ -50,8 +50,11 @@ import javax.swing.event.MenuListener;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
@@ -90,7 +93,7 @@ public class SystemTray {
 
   private SystemTrayIf mSystemTray;
 
-  private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure;
+  private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure, mReminderItem;
   
   private JPopupMenu mTrayMenu;
   private Timer mClickTimer;
@@ -147,8 +150,8 @@ public class SystemTray {
       
       mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
       mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"));
-      mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));
-
+      mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"));      
+      
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance().showSettingsDialog(SettingsItem.TRAY);
@@ -158,6 +161,15 @@ public class SystemTray {
       mOpenCloseMenuItem.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent e) {
           toggleShowHide();
+        }
+      });
+      
+      mReminderItem = new JMenuItem(mLocalizer.msg("menu.pauseReminder","Pause Reminder"));
+      mReminderItem.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
+          "appointment", 16));
+      mReminderItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          toggleReminderState(false);
         }
       });
 
@@ -276,7 +288,12 @@ public class SystemTray {
     mTrayMenu.removeAll();
     mTrayMenu.add(mOpenCloseMenuItem);
     mTrayMenu.addSeparator();
-    mTrayMenu.add(createPluginsMenu());
+    
+    JMenu pluginsMenu = createPluginsMenu();
+    pluginsMenu.addSeparator();
+    pluginsMenu.add(mReminderItem);
+
+    mTrayMenu.add(pluginsMenu);
     mTrayMenu.addSeparator();
 
     if (Settings.propTrayOnTimeProgramsEnabled.getBoolean()
@@ -783,6 +800,7 @@ public class SystemTray {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           MainFrame.getInstance().showFromTray(mState);
+          toggleReminderState(true);
         }
       });
       toggleOpenCloseMenuItem(false);
@@ -792,6 +810,17 @@ public class SystemTray {
       else
         MainFrame.getInstance().setExtendedState(JFrame.ICONIFIED);
       toggleOpenCloseMenuItem(true);
+    }
+  }
+  
+  private void toggleReminderState(boolean tvbShown) {
+    if(mReminderItem.getText().compareTo(mLocalizer.msg("menu.pauseReminder","Pause Reminder")) == 0 && !tvbShown) {
+      mReminderItem.setText(mLocalizer.msg("menu.continueReminder","Continue Reminder"));
+      ReminderPlugin.getInstance().pauseRemider();
+    }
+    else {
+      mReminderItem.setText(mLocalizer.msg("menu.pauseReminder","Pause Reminder"));
+      ReminderPlugin.getInstance().handleTvBrowserStartFinished();
     }
   }
 
@@ -806,7 +835,7 @@ public class SystemTray {
     PluginProxy[] plugins = PluginProxyManager.getInstance()
         .getActivatedPlugins();
     updatePluginsMenu(pluginsMenu, plugins);
-
+    
     return pluginsMenu;
   }
 
@@ -826,8 +855,14 @@ public class SystemTray {
 
     });
 
+    ActionMenu action = FavoritesPlugin.getInstance().getButtonAction(null);
+    pluginsMenu.add(new JMenuItem(action.getAction()));
+    action = ReminderPlugin.getInstance().getButtonAction(null);
+    pluginsMenu.add(new JMenuItem(action.getAction()));
+    pluginsMenu.addSeparator();
+    
     for (int i = 0; i < plugins.length; i++) {
-      ActionMenu action = plugins[i].getButtonAction();
+      action = plugins[i].getButtonAction();
       if (action != null) {
         pluginsMenu.add(new JMenuItem(action.getAction()));
 

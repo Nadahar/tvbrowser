@@ -142,6 +142,7 @@ public class ReminderPlugin implements ContextMenuIf {
    */
   public void handleTvBrowserStartFinished() {
     mHasRightToStartTimer = true;
+    mReminderList.removeExpiredItems();
     mReminderList.startTimer();
   }
   
@@ -222,6 +223,10 @@ public class ReminderPlugin implements ContextMenuIf {
 
   public Properties getSettings() {
     return mSettings;
+  }
+  
+  public void pauseRemider() {
+    mReminderList.stopTimer();
   }
 
   public void store() {
