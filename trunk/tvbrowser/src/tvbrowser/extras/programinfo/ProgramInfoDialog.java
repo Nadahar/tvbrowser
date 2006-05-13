@@ -76,6 +76,8 @@ import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
@@ -253,6 +255,16 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
     
     mActionsPane = new JScrollPane(mPluginsPane);
     
+    JButton configBtn = new JButton(mLocalizer.msg("config","Configure view"));
+    configBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
+        "preferences-desktop", 16));
+    
+    JPanel bottom = new JPanel(new FormLayout("pref,3dlu,pref,pref:grow,pref","pref"));
+    CellConstraints cc = new CellConstraints();
+    
+    if (showSettings)
+      bottom.add(configBtn, cc.xy(1,1));
+    
     if (pluginsSize == null)
       mActionsPane.setPreferredSize(new Dimension(250, 500));
     else
@@ -281,20 +293,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         public void componentMoved(ComponentEvent e) {}
       });
     }
-    else {
-      JPanel infoFunctionPanel = new JPanel(new BorderLayout());
-      infoFunctionPanel.add(scrollPane, BorderLayout.CENTER);
-      
-      String temp = mLocalizer.msg("functions","Functions");
-      StringBuffer text = new StringBuffer("<html>");
-       
-      for(int i = 0; i < temp.length() - 1; i++)
-        text.append(temp.charAt(i)).append("<br>");
-      
-      text.append(temp.charAt(temp.length() - 1)).append("</html>");
-      
-      final JButton functions = new JButton(text.toString());
-      functions.setContentAreaFilled(false);
+    else {      
+      final JButton functions = new JButton(mLocalizer.msg("functions","Functions"));
       functions.setFocusable(false);
       
       functions.addMouseListener(new MouseAdapter() {
@@ -302,14 +302,17 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
           if(e.getClickCount() == 1) {
             JPopupMenu popupMenu = PluginProxyManager.createPluginContextMenu(mProgram,
                 ProgramInfo.getInstance());            
-            popupMenu.show(functions, e.getX(), e.getY());
+            popupMenu.show(functions, e.getX(), e.getY() - popupMenu.getPreferredSize().height);
           }
         }
       });
       
-      infoFunctionPanel.add(functions, BorderLayout.WEST);
+      if(showSettings)
+        bottom.add(functions, cc.xy(3,1));
+      else
+        bottom.add(functions, cc.xy(1,1));
       
-      main.add(infoFunctionPanel);
+      main.add(scrollPane, BorderLayout.CENTER);
     }
 
     // buttons
@@ -319,10 +322,6 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
 
     main.add(buttonPn, BorderLayout.SOUTH);
 
-    JButton configBtn = new JButton(mLocalizer.msg("config","Configure view"));
-    configBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
-        "preferences-desktop", 16));
-
     configBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();
@@ -330,9 +329,8 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
             SettingsItem.PROGRAMINFO);
       }
     });
-
-    if (showSettings)
-      buttonPn.add(configBtn, BorderLayout.WEST);
+    
+    buttonPn.add(bottom, BorderLayout.CENTER);
 
     JButton closeBtn = new JButton(mLocalizer.msg("close", "Close"));
     closeBtn.addActionListener(new ActionListener() {
@@ -341,7 +339,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
       }
     });
 
-    buttonPn.add(closeBtn, BorderLayout.EAST);
+    bottom.add(closeBtn, cc.xy(5,1));
 
     getRootPane().setDefaultButton(closeBtn);
 

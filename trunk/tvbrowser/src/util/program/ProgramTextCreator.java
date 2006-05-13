@@ -303,7 +303,7 @@ public class ProgramTextCreator {
           buffer.append(mBodyFontSize);
 
           buffer.append("\"><b>");
-          buffer.append(mLocalizer.msg("attributes", "Program attributes"));
+          buffer.append(type.getLocalizedName()/*mLocalizer.msg("attributes", "Program attributes")*/);
           buffer.append("</b></td><td valign=\"middle\" style=\"font-size:0\">");
 
           openPara(buffer, "info");
