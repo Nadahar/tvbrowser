@@ -166,7 +166,7 @@ public class ProgramTextCreator {
 
       buffer.append("\"><b>");
       buffer.append(mLocalizer.msg("markedBy","Marked by"));
-      buffer.append("</b></td><td valign=\"middle\" style=\"font-size:0\">");
+      buffer.append("</b></td><td valign=\"middle\" style=\"font-size:4\">");
       openPara(buffer, "info");
 
       // Workaround: Without the &nbsp; the component are not put in one line.
@@ -181,6 +181,7 @@ public class ProgramTextCreator {
           iconLabel.setToolTipText(plugin.getInfo().getName());
 
         buffer.append(doc.createCompTag(iconLabel));
+        buffer.append("&nbsp;&nbsp;");
       }
       closePara(buffer);
       buffer.append("</td></tr>");
@@ -209,7 +210,7 @@ public class ProgramTextCreator {
 
       buffer.append("\"><b>");
       buffer.append("Plugin-Icons");
-      buffer.append("</b></td><td valign=\"top\" style=\"font-size:0\">");
+      buffer.append("</b></td><td valign=\"top\" style=\"font-size:4\">");
       
       openPara(buffer, "info");
       // Workaround: Without the &nbsp; the component are not put in one line.
@@ -217,7 +218,7 @@ public class ProgramTextCreator {
 
       for (int i = 0; i < icons.size(); i++) {
         buffer.append(doc.createCompTag((JLabel) icons.get(i)));
-        buffer.append("&nbsp;");
+        buffer.append("&nbsp;&nbsp;");
       }
 
       closePara(buffer);
@@ -304,7 +305,7 @@ public class ProgramTextCreator {
 
           buffer.append("\"><b>");
           buffer.append(type.getLocalizedName()/*mLocalizer.msg("attributes", "Program attributes")*/);
-          buffer.append("</b></td><td valign=\"middle\" style=\"font-size:0\">");
+          buffer.append("</b></td><td valign=\"middle\" style=\"font-size:5\">");
 
           openPara(buffer, "info");
           // Workaround: Without the &nbsp; the component are not put in one
@@ -324,7 +325,7 @@ public class ProgramTextCreator {
               } else {
                 buffer.append(infoMsgArr[i]);
               }
-              buffer.append("&nbsp;");
+              buffer.append("&nbsp;&nbsp;");
             }
           }
 
