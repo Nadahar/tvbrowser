@@ -25,6 +25,8 @@
  */
 package tvbrowser.extras.favoritesplugin.core;
 
+import java.util.regex.Pattern;
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -44,14 +46,27 @@ import devplugin.ProgramFieldType;
  * @author bodum
  */
 public class ActorStringSearcher {
-  private String mActor;
+  private Pattern[] mPattern;
   
   /**
    * Actor to seach for
    * @param actor Actor
    */
   public ActorStringSearcher(String actor) {
-    mActor = actor;
+    mPattern = new Pattern[4];
+    
+    String[] actorStr = actor.split("\\s");
+    
+    mPattern[0] = Pattern.compile(actor);
+    
+    int actorMax = actorStr.length-1;
+    
+    if (actorStr.length > 1) {
+      mPattern[1] = Pattern.compile("\\b" + actorStr[0] + "\\s*\\w*.?\\s*"+ actorStr[actorMax]+"\\b");
+      mPattern[2] = Pattern.compile("\\b" + actorStr[actorMax] + "\\s*,\\s*"+ actorStr[0]+"\\b");
+      mPattern[3] = Pattern.compile("\\b" + actorStr[0].substring(0,1) + ".\\w*.?"+ actorStr[actorMax]+"\\b");
+    }
+    
   }
   
   /**
@@ -78,10 +93,19 @@ public class ActorStringSearcher {
    * @return True, if textField contains Actor
    */
   public boolean actorInProgram(String textField) {
-    // First check: textField contains actor ?
+    // False if TextField is empty
+    if ((textField == null) || (textField.length() == 0)) {
+      return false;
+    }
     
-    // TODO Auto-generated method stub
-    return true;
+    // Check all Patterns, if one is true, return true
+    for (int i = mPattern.length-1;i>=0;i--) {
+      if ((mPattern[i] != null) && (mPattern[i].matcher(textField).find())) {
+        return true;
+      }
+    }
+      
+    return false;
   }
 
 }
