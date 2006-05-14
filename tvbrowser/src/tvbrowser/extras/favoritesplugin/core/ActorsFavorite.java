@@ -140,11 +140,11 @@ public class ActorsFavorite extends Favorite {
     // Second Step: Filter False-Positives
     ArrayList realPrograms = new ArrayList();
     
-    ActorStringSearcher actorSearcher = new ActorStringSearcher();
+    ActorStringSearcher actorSearcher = new ActorStringSearcher(mActors);
     
     int max = foundPrograms.length;
     for (int i=0;i<max;i++) {
-      if (actorSearcher.actorInProgram(foundPrograms[i], mActors)) {
+      if (actorSearcher.actorInProgram(foundPrograms[i])) {
         realPrograms.add(foundPrograms[i]);
       }
     }
