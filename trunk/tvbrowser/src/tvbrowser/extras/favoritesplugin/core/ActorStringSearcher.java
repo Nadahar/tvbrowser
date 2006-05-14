@@ -31,7 +31,7 @@ import devplugin.ProgramFieldType;
 /**
  * This Class Searches for Actors in Strings
  * 
- * The following Combinations are the same for this Searcher:
+ * The following combinations are the same for this searcher:
  * 
  * Max Maria Mustermann
  * Mustermann, Max
@@ -44,32 +44,42 @@ import devplugin.ProgramFieldType;
  * @author bodum
  */
 public class ActorStringSearcher {
+  private String mActor;
+  
+  /**
+   * Actor to seach for
+   * @param actor Actor
+   */
+  public ActorStringSearcher(String actor) {
+    mActor = actor;
+  }
+  
   /**
    * Find a Actor in a Program. It searches in the short description, long description
    * and in the actor-list.
    * 
    * @param program Program
-   * @param actor Actor to find
    * @return True, if Program contains Actor
    */
-  public boolean actorInProgram(Program program, String actor) {
-    if (actorInProgram(program.getShortInfo(), actor)) {
+  public boolean actorInProgram(Program program) {
+    if (actorInProgram(program.getShortInfo())) {
       return true;
     }
-    if (actorInProgram(program.getDescription(), actor)) {
+    if (actorInProgram(program.getDescription())) {
       return true;
     }
-    return actorInProgram(program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE), actor);
+    return actorInProgram(program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE));
   }
 
   /**
    * Find a Actor in a String.
    * 
    * @param textField Text that is checked
-   * @param actor Actor to find
    * @return True, if textField contains Actor
    */
-  public boolean actorInProgram(String textField, String actor) {
+  public boolean actorInProgram(String textField) {
+    // First check: textField contains actor ?
+    
     // TODO Auto-generated method stub
     return true;
   }

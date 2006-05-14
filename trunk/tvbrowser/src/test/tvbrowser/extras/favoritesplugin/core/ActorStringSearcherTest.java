@@ -9,20 +9,20 @@ public class ActorStringSearcherTest extends TestCase {
    * Test method for 'tvbrowser.extras.favoritesplugin.core.ActorStringSearcher.actorInProgram(String, String)'
    */
   public void testActorInProgramStringString() {
-    ActorStringSearcher searcher = new ActorStringSearcher();
-    
-    assertTrue(searcher.actorInProgram("The Actor Max Maria Mustermann is", "Max Mustermann"));
-    assertTrue(searcher.actorInProgram("The Actor Mustermann, Max is", "Max Mustermann"));
-    assertTrue(searcher.actorInProgram("The Actor Mustermann, Max Maria is", "Max Mustermann"));
-    assertTrue(searcher.actorInProgram("The Actor Max Mustermann is", "Max Mustermann"));
-    assertTrue(searcher.actorInProgram("The Actor Max M. Mustermann is", "Max Mustermann"));
-    assertTrue(searcher.actorInProgram("The Actor M. M. Mustermann is", "Max Mustermann"));
-    assertTrue(searcher.actorInProgram("The Actor M. Mustermann is", "Max Mustermann"));
-    assertTrue(searcher.actorInProgram("The Actor M. Mustermann is", "Max Maria Mustermann"));
-    assertFalse(searcher.actorInProgram("The Actor M. Mustermannchen is", "Max Maria Mustermann"));
-    assertFalse(searcher.actorInProgram("The Actor Maria Mustermannchen is", "Max Maria Mustermann"));
-    assertFalse(searcher.actorInProgram("The Actor Maxchen Mustermannchen is", "Max Maria Mustermann"));
-    assertFalse(searcher.actorInProgram("The Actor Testmax Mustermannchen is", "Max Maria Mustermann"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor Max Maria Mustermann"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor Max Maria Mustermann is"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor Mustermann, Max is"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor Mustermann, Max Maria is"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor Max Mustermann is"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor Max M. Mustermann is"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor M. M. Mustermann is"));
+    assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor M. Mustermann is"));
+    assertTrue(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor M. Mustermann is"));
+    assertTrue(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor Max Mustermann is"));
+    assertFalse(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor M. Mustermannchen is"));
+    assertFalse(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor Maria Mustermannchen is"));
+    assertFalse(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor Maxchen Mustermannchen is"));
+    assertFalse(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor Testmax Mustermannchen is"));
   }
 
 }
