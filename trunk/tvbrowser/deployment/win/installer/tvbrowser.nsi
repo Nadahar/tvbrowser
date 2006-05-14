@@ -467,13 +467,6 @@ Section "$(LINK_SECTION_NAME)"
     "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
 SectionEnd
 
-Section "$(START_WITH_WINDOWS)"
-  CreateShortCut \
-    "$SMPROGRAMS\Autostart\${PROG_NAME}.lnk" \
-    "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
-SectionEnd
-
-
 SubSection "$(DATA_SECTION_NAME)"
 
   Section "$(DATA_TVB_SUBSECTION_NAME)"
@@ -585,7 +578,6 @@ Section "Uninstall"
  # StrCmp $INI_VALUE "1" "" +2
  #   RMDir /r "$PROFILE\TV-Browser"
 
-  Delete "$SMPROGRAMS\Autostart\${PROG_NAME}.lnk"
   RMDir /r "$INSTDIR"
 
   ClearErrors
