@@ -20,6 +20,8 @@ public class ActorStringSearcherTest extends TestCase {
     assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor Max M. Mustermann is"));
     assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor M. M. Mustermann is"));
     assertTrue(new ActorStringSearcher("Max Mustermann").actorInProgram("The Actor M. Mustermann is"));
+    assertTrue(new ActorStringSearcher("Courtney Cox Thorne-Smith").actorInProgram("Jim Belushi (Jim), Courtney Thorne-Smith (Cheryl), Ki"));
+    assertTrue(new ActorStringSearcher("Max Mustermann-Hauser").actorInProgram("The Actor Max Mustermann-Hauser is"));
     assertTrue(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor M. Mustermann is"));
     assertTrue(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor Max Mustermann is"));
     assertFalse(new ActorStringSearcher("Max Maria Mustermann").actorInProgram("The Actor M. Mustermannchen is"));
