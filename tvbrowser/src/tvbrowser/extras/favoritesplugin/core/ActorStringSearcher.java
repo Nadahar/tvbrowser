@@ -46,6 +46,9 @@ import devplugin.ProgramFieldType;
  * @author bodum
  */
 public class ActorStringSearcher {
+  /** LowerCase Actor-String */
+  private String mActor;
+  /** Compiled Patterns */
   private Pattern[] mPattern;
   
   /**
@@ -54,7 +57,7 @@ public class ActorStringSearcher {
    */
   public ActorStringSearcher(String actor) {
     mPattern = new Pattern[4];
-    
+    mActor = actor;
     String[] actorStr = actor.split("\\s");
     
     mPattern[0] = Pattern.compile(actor);
@@ -96,6 +99,11 @@ public class ActorStringSearcher {
     // False if TextField is empty
     if ((textField == null) || (textField.length() == 0)) {
       return false;
+    }
+    
+    // Check if Text fits
+    if (textField.toLowerCase().indexOf(mActor) >= 0) {
+      return true;
     }
     
     // Check all Patterns, if one is true, return true
