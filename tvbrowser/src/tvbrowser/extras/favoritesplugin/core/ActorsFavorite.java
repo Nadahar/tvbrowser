@@ -30,7 +30,6 @@ import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -70,34 +69,9 @@ public class ActorsFavorite extends Favorite {
     mSearchFormSettings = createSearchFormSettings(actors);
   }
 
-  private void createSearchStringForActor(String actor, StringBuffer buf) {
-    String[] names = actor.split(" ");
-    for (int j = 0; j < names.length - 1; j++) {
-      buf.append(names[j]).append(" AND ");
-    }
-    if (names.length > 0) {
-      buf.append(names[names.length - 1]);
-    }
-  }
-
-  private String createSearchString(String actors) {
-    String[] actorsArr = createActorsArr(actors);
-    StringBuffer buf = new StringBuffer();
-    for (int i = 0; i < actorsArr.length - 1; i++) {
-      buf.append("(");
-      createSearchStringForActor(actorsArr[i], buf);
-      buf.append(") AND");
-    }
-    if (actorsArr.length > 0) {
-      createSearchStringForActor(actorsArr[actorsArr.length - 1], buf);
-    }
-
-    return buf.toString();
-  }
-
   private SearchFormSettings createSearchFormSettings(String actors) {
     mActors = actors;
-    SearchFormSettings formSettings = new SearchFormSettings(createSearchString(actors));
+    SearchFormSettings formSettings = new SearchFormSettings(""); // No Seach-String, the Searcher is created directly
     formSettings.setSearchIn(SearchFormSettings.SEARCH_IN_USER_DEFINED);
     formSettings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
     formSettings.setUserDefinedFieldTypes(new ProgramFieldType[] { ProgramFieldType.ACTOR_LIST_TYPE,
@@ -129,27 +103,11 @@ public class ActorsFavorite extends Favorite {
   }
 
   protected Program[] internalSearchForPrograms(Channel[] channelArr) throws TvBrowserException {
-    // Searches in 2 Steps
-    // First Step: Search using Boolean Search
     SearchFormSettings searchForm = mSearchFormSettings;
     ProgramFieldType[] fields = searchForm.getFieldTypes();
-    ProgramSearcher searcher = searchForm.createSearcher();
-
+    ProgramSearcher searcher = new ActorSearcher(mActors);
     Program[] foundPrograms = searcher.search(fields, new devplugin.Date(), 1000, channelArr, false);
-
-    // Second Step: Filter False-Positives
-    ArrayList realPrograms = new ArrayList();
-    
-    ActorStringSearcher actorSearcher = new ActorStringSearcher(mActors);
-    
-    int max = foundPrograms.length;
-    for (int i=0;i<max;i++) {
-      if (actorSearcher.actorInProgram(foundPrograms[i])) {
-        realPrograms.add(foundPrograms[i]);
-      }
-    }
-    
-    return (Program[]) realPrograms.toArray(new Program[realPrograms.size()]);
+    return foundPrograms;
   }
 
   public FavoriteConfigurator createConfigurator() {
