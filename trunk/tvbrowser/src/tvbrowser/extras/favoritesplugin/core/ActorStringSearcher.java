@@ -67,7 +67,7 @@ public class ActorStringSearcher {
     if (actorStr.length > 1) {
       mPattern[1] = Pattern.compile("\\b" + actorStr[0] + "\\s*\\w*.?\\s*"+ actorStr[actorMax]+"\\b");
       mPattern[2] = Pattern.compile("\\b" + actorStr[actorMax] + "\\s*,\\s*"+ actorStr[0]+"\\b");
-      mPattern[3] = Pattern.compile("\\b" + actorStr[0].substring(0,1) + ".\\w*.?"+ actorStr[actorMax]+"\\b");
+      mPattern[3] = Pattern.compile("\\b" + actorStr[0].substring(0,1) + ".\\s*\\w*.\\s*?"+ actorStr[actorMax]+"\\b");
     }
     
   }
@@ -100,6 +100,9 @@ public class ActorStringSearcher {
     if ((textField == null) || (textField.length() == 0)) {
       return false;
     }
+    
+    // Replace Newline
+    textField = textField.replace('\n', ' ');
     
     // Check if Text fits
     if (textField.toLowerCase().indexOf(mActor) >= 0) {
