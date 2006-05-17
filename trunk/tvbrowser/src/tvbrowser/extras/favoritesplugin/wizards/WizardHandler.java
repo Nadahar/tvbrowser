@@ -39,6 +39,8 @@ public class WizardHandler {
   private WizardStep mStep;
 
   private WizardDlg mWizardDialog;
+  
+  private static WizardHandler mInstance;
 
   public WizardHandler(Component parent, WizardStep initialStep) {
     mParent = parent;
@@ -46,6 +48,7 @@ public class WizardHandler {
   }
 
   public Object show() {
+    mInstance = this;
     WizardStep currentStep = mStep;
     int result;
     Object obj = null;
@@ -55,8 +58,12 @@ public class WizardHandler {
     } else {
       mWizardDialog = new WizardDlg((Dialog) mParent, this, currentStep);
     }
+    
+    changeDoneBtnText();
+    
     UiUtilities.centerAndShow(mWizardDialog);
     result = mWizardDialog.getResult();
+    mInstance = null;
     if (result == WizardDlg.FINISH) {
       obj = mWizardDialog.getDataObject();
     }
@@ -95,5 +102,9 @@ public class WizardHandler {
       mWizardDialog.close();
     }
   }
-
+  
+  public void changeDoneBtnText() {
+    if(mWizardDialog != null)
+      mWizardDialog.setDoneBtnText();
+  }
 }

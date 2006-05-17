@@ -51,6 +51,8 @@ public interface WizardStep {
   public WizardStep back();
 
   public boolean isValid();
+  
+  public String getDoneBtnText();
 
   /**
    * @return true, if this Step is a Single Step and no Back/Forward is needed

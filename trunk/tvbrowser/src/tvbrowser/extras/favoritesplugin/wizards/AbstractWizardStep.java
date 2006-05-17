@@ -48,5 +48,9 @@ public abstract class AbstractWizardStep implements WizardStep {
   public boolean isSingleStep() {
     return false;
   }
+  
+  public String getDoneBtnText() {
+    return WizardDlg.mLocalizer.msg("done","Done");
+  }
 
 }
