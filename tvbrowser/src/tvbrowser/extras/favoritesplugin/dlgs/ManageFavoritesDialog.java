@@ -304,7 +304,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     scrollPane.setBorder(null);
     mSplitPane.setRightComponent(scrollPane);
     
-    msg = mLocalizer.msg("showBlack", "Show Blacklist entries");
+    msg = mLocalizer.msg("showBlack", "Show single removed programs");
     mBlackListChb = new JCheckBox(msg);
     mBlackListChb.setSelected(FavoritesPlugin.getInstance().isShowingBlackListEntries());
     mBlackListChb.setOpaque(false);

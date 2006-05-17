@@ -120,7 +120,9 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     }
     
     ButtonBarBuilder builder = new ButtonBarBuilder();
-    builder.addGriddedButtons(new JButton[] { mDoneBtn, mCancelBtn });
+    builder.addGriddedGrowing(mDoneBtn);
+    builder.addRelatedGap();
+    builder.addFixed(mCancelBtn);
     panel.add(builder.getPanel(), cc.xy(4, 1));
     
     for (int i = 0; i < btns.length; i++) {
@@ -219,4 +221,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     mCancelBtn.setEnabled(allow);
   }
 
+  public void setDoneBtnText() {
+    mDoneBtn.setText(mStep.getDoneBtnText());
+  }
 }

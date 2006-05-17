@@ -103,6 +103,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
   private JPanel mContentPanel;
   
+  private String mDoneBtnText;
+  
   /**
    * Creates a new Wizard Step instance to create a new exclusion
    * 
@@ -138,6 +140,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mFavorite = favorite;
     mProgram = prog;
     mExclusion = exclusion;
+    mDoneBtnText = mLocalizer.msg("doneButton.exclusion","Create exclusion criteria now");
 
     if (mode == MODE_CREATE_EXCLUSION || mode == MODE_EDIT_EXCLUSION) {
       mMainQuestion = mLocalizer.msg("mainQuestion.edit", "Welche Sendungen wollen Sie ausschließen?");
@@ -202,7 +205,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     panelBuilder.add(mTimePeriodChooser = new TimePeriodChooser(TimePeriodChooser.ALIGN_LEFT), cc.xy(3, rowInx));
 
     if (mMode == MODE_CREATE_DERIVED_FROM_PROGRAM && mProgram != null) {
-      mTitleCb.setSelected(true);
+      mTitleCb.setSelected(false);
+      
+      mDoneBtnText = mLocalizer.msg("doneButton.toBlacklist","Remove this program now");
+      
       mTitleTf.setText(mProgram.getTitle());
       mChannelCB.setSelectedItem(mProgram.getChannel());
       int timeFrom = (mProgram.getHours() - 1) * 60;
@@ -278,7 +284,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
         updateButtons(handler);
       }
     });
-
+    
     mContentPanel = panelBuilder.getPanel();
     return mContentPanel;
   }
@@ -311,7 +317,17 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mTimePeriodChooser.setEnabled(mTimeCb.isSelected());
     mDayChooser.setEnabled(mDayCb.isSelected());
 
-    handler.allowFinish(allowNext);
+    if(mMode == MODE_CREATE_DERIVED_FROM_PROGRAM && mProgram != null) {
+      if(allowNext)
+        mDoneBtnText = mLocalizer.msg("doneButton.exclusion","Create exclusion criteria now");
+      else
+        mDoneBtnText = mLocalizer.msg("doneButton.toBlacklist","Only remove this program now");
+        
+      handler.changeDoneBtnText();
+      handler.allowFinish(true);
+    }
+    else
+      handler.allowFinish(allowNext);
   }
 
   public Object createDataObject(Object obj) {
@@ -343,7 +359,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       weekOfDay = ((Integer) mDayChooser.getSelectedItem()).intValue();
     }
 
-    return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay);
+    if (mDoneBtnText.compareTo(mLocalizer.msg("doneButton.toBlacklist","Remove this program now")) == 0)
+      return "blacklist";
+    else
+      return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay);
 
   }
 
@@ -383,5 +402,9 @@ public class ExcludeWizardStep extends AbstractWizardStep {
    */
   public boolean isSingleStep() {
     return true;
+  }
+  
+  public String getDoneBtnText() {
+    return mDoneBtnText;
   }
 }

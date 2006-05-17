@@ -566,15 +566,19 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   public void showExcludeProgramsDialog(Favorite fav, Program program) {
     WizardHandler handler = new WizardHandler(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), new ExcludeWizardStep(fav, program));
-    Exclusion exclusion = (Exclusion) handler.show();
+    Object exclusion = handler.show();    
     if (exclusion != null) {
-      fav.addExclusion(exclusion);
-      try {
-        fav.refreshPrograms();
-        updateRootNode();
-      } catch (TvBrowserException exc) {
-        ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
+      if(exclusion instanceof Exclusion) {
+        fav.addExclusion((Exclusion)exclusion);
+        try {
+          fav.refreshPrograms();
+          updateRootNode();
+        } catch (TvBrowserException exc) {
+          ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
+        }
       }
+      else if(exclusion instanceof String && exclusion.equals("blacklist"))
+        fav.addToBlackList(program);
     }
   }
 
