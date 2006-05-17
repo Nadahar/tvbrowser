@@ -40,7 +40,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
   private JLabel mIconSeparator, mSeparator1, mSeparator2, mDarkLabel, mLightLabel; 
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   
-  private JEditorPane mHelpLabel, mLookHelpLink, mInfo;
+  private JEditorPane mHelpLabel, mLookHelpLink, mInfo, mTimeHelp;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
   private ColorLabel mLightColorLb,mDarkColorLb;
@@ -53,7 +53,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     
     CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu",
-        "pref,5dlu,pref,pref,pref,10dlu,pref,5dlu,pref,pref,pref,3dlu," +
+        "pref,5dlu,pref,pref,pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,3dlu," +
         "pref,10dlu,pref,5dlu,pref,pref,pref,3dlu,pref,10dlu,pref,fill:pref:grow,pref"));
     builder.setDefaultDialogBorder();
     
@@ -87,6 +87,14 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mLightColorLb.setStandardColor(Settings.propTrayOnTimeProgramsLightBackground.getDefaultColor());
     mDarkColorLb = new ColorLabel(Settings.propTrayOnTimeProgramsDarkBackground.getColor());
     mDarkColorLb.setStandardColor(Settings.propTrayOnTimeProgramsDarkBackground.getDefaultColor());
+    
+    mTimeHelp =  UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("helpTime","If you want to change the times of this view, you simply have to change the times of the <a href=\"#link\">time buttons</a>."), new HyperlinkListener() {
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.TIMEBUTTONS);
+        }
+      }
+    }); 
     
     mLookHelpLink = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("goToLook","To disable/enable Channel Icons globally, please look <a href=\"#link\">here</a>."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -128,20 +136,21 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     builder.add(mIsEnabled, cc.xyw(2,3,2));
     builder.add(mShowInTray, cc.xy(3,4));
     builder.add(mShowInSubMenu, cc.xy(3,5));
+    builder.add(mTimeHelp, cc.xyw(2,7,2));
 
-    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,7,4));
-    builder.add(mShowIconAndName, cc.xyw(2,9,2));
-    builder.add(mShowIcon, cc.xyw(2,10,2));
-    builder.add(mShowName, cc.xyw(2,11,2));
-    builder.add(mLookHelpLink, cc.xyw(2,13,2));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,9,4));
+    builder.add(mShowIconAndName, cc.xyw(2,11,2));
+    builder.add(mShowIcon, cc.xyw(2,12,2));
+    builder.add(mShowName, cc.xyw(2,13,2));
+    builder.add(mLookHelpLink, cc.xyw(2,15,2));
     
-    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,15,4));
-    builder.add(mShowTime, cc.xyw(2,17,2));
-    builder.add(mShowToolTip, cc.xyw(2,18,2));
-    builder.add(mShowProgress, cc.xyw(2,19,2));
-    builder.add(colors.getPanel(), cc.xy(3,21));
-    builder.add(mInfo, cc.xyw(2,23,2));
-    builder.add(mHelpLabel, cc.xyw(1,25,4));
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,17,4));
+    builder.add(mShowTime, cc.xyw(2,19,2));
+    builder.add(mShowToolTip, cc.xyw(2,20,2));
+    builder.add(mShowProgress, cc.xyw(2,21,2));
+    builder.add(colors.getPanel(), cc.xy(3,23));
+    builder.add(mInfo, cc.xyw(2,25,2));
+    builder.add(mHelpLabel, cc.xyw(1,27,4));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -184,6 +193,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mIconSeparator.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mLookHelpLink.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mTimeHelp.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled && Settings.propEnableChannelIcons.getBoolean());
