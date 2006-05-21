@@ -3,6 +3,35 @@ Changelog TVBrowser
 2.2 Beta 2
 =========
 
+- Features
+
+ * 1482077 Choose channels with keyboard
+ * 1482276 Reminder windows should pop up when TVB start is finished
+ * 1484674 scroll to now after a data update if programtable is empty
+ * 1484033 Timestamp in logfile
+ * 1486768 Favorites-System - Remove single programs
+ * 1487538 automatically sort the time buttons on pressing OK/Apply
+ * 1487651 Stop Reminder temporary 
+
+- Bugs
+
+ * 1482150 Reminder window hides other messages
+ * 1482418 Tray let the TV-Browser freeze
+ * 1482918 "Show only channel icon" for Channel list does not work
+ * 1482421 SearchFiled - filter close button not shown complete
+ * 1483253 Tray Icon isn't removed on TVB closing
+ * 1483264 Extended Windows LookAndFeel has wrong classname
+ * 1482425 tvbrowser.sh has Windows file format
+ * 1483340 Webplugin: New Entries occur only after refresh
+ * 1482708 "Configure Menu" in Function-List of Programdetails
+ * 1482446 Some Dialogs too small
+ * 1485690 Toolbar - ToggleButtons not shown as pressed
+ * 1485692 Toolbar settings - Button size decrease
+ * 1487353 Selection of Favorites in the ManageDialog need much time
+ * 1487383 PluginTree isn't updated
+ * 1487761 CapturePlugin: Length calculation wrong 
+
+
 2.2 Beta 1
 =========
 
