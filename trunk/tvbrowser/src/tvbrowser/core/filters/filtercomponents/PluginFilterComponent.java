@@ -39,7 +39,7 @@ import javax.swing.JTextArea;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import devplugin.PluginAccess;
+import devplugin.Marker;
 import devplugin.Program;
 
 public class PluginFilterComponent implements FilterComponent {
@@ -86,9 +86,9 @@ public class PluginFilterComponent implements FilterComponent {
     
   public boolean accept(Program program) {
          
-    PluginAccess[] markedBy = program.getMarkedByPlugins();
+    Marker[] markedBy = program.getMarkerArr();
     for (int i=0;i<markedBy.length;i++) {
-      if (markedBy[i]==mPlugin) {
+      if (mPlugin != null && markedBy[i].getId().compareTo(mPlugin.getId()) == 0) {
         return true;
       }
     }        
