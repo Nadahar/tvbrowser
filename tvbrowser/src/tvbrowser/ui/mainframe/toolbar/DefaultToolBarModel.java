@@ -56,6 +56,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.ScrollableMenu;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -482,12 +483,13 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         
       }
     } else if (item == mGoToChannelAction) {
-      popup = new JPopupMenu();
+      ScrollableMenu menu = new ScrollableMenu();
+      popup = menu.getPopupMenu();
 
       Channel[] channels = Settings.propSubscribedChannels
           .getChannelArray(false);
       for (int i = 0; i < channels.length; i++)
-        popup.add(createChannelMenuItem(channels[i], btn));
+        menu.add(createChannelMenuItem(channels[i], btn));
     } else if (item == mGoToTimeAction) {
       popup = new JPopupMenu();
 
