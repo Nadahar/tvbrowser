@@ -25,16 +25,26 @@
  */
 package tvbrowser.ui.settings;
 
+import java.io.File;
+
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.io.UrlFile;
+import util.ui.UiUtilities;
+
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RootKey;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * TV-Browser
@@ -44,40 +54,118 @@ import com.jgoodies.forms.layout.FormLayout;
 public class StartupSettingsTab implements devplugin.SettingsTab {
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(StartupSettingsTab.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(StartupSettingsTab.class);
 
   private JPanel mSettingsPn;
 
-  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB;
+  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB,
+      mAutostartWithWindows;
+  
+  private UrlFile mLinkUrl;
+  private File mLinkFile;
 
   /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref"));
+    FormLayout layout = new FormLayout(
+        "5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
+        "pref, 5dlu, pref, 3dlu, pref");
+    mSettingsPn = new JPanel(layout);
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
-    
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Startup")), cc.xyw(1,1,5));
 
-    mMinimizeAfterStartUpChB = new JCheckBox(mLocalizer.msg("minimizeAfterStartup",
-        "Minimize main window after start up"), Settings.propMinimizeAfterStartup.getBoolean());
-    mSettingsPn.add(mMinimizeAfterStartUpChB, cc.xy(2,3));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("title", "Startup")), cc.xyw(1, 1, 5));
 
-    mShowSplashChB = new JCheckBox(mLocalizer.msg("showSplashScreen", "Show splash screen during start up"), Settings.propSplashShow.getBoolean());
-    mSettingsPn.add(mShowSplashChB, cc.xy(2,5));
-    
-    
+    mMinimizeAfterStartUpChB = new JCheckBox(mLocalizer.msg(
+        "minimizeAfterStartup", "Minimize main window after start up"),
+        Settings.propMinimizeAfterStartup.getBoolean());
+    mSettingsPn.add(mMinimizeAfterStartUpChB, cc.xy(2, 3));
+
+    mShowSplashChB = new JCheckBox(mLocalizer.msg("showSplashScreen",
+        "Show splash screen during start up"), Settings.propSplashShow
+        .getBoolean());
+    mSettingsPn.add(mShowSplashChB, cc.xy(2, 5));
+
+    if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+      layout.appendRow(new RowSpec("3dlu"));
+      layout.appendRow(new RowSpec("pref"));
+      
+      try {
+        RegistryKey shellFolders = new RegistryKey(RootKey.HKEY_CURRENT_USER, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders");
+        String path = shellFolders.getValue("Startup").getData().toString();
+        
+        if(path == null || path.length() < 1 || !(new File(path)).isDirectory())
+          throw new Exception();
+        
+        mLinkFile = new File(path,"TV-Browser.url");        
+        mLinkUrl = new UrlFile(mLinkFile);
+          
+        if(mLinkFile.exists())
+          try {
+            if (!mLinkUrl.getUrl().equals((new File("tvbrowser.exe")).getAbsoluteFile().toURL()))
+              createLink(mLinkUrl);
+          }catch(Exception linkException) {
+            mLinkFile.delete();
+          }
+
+        mAutostartWithWindows = new JCheckBox(mLocalizer.msg("autostart","Start TV-Browser with Windows"),
+            mLinkFile.isFile());
+        
+        mSettingsPn.add(mAutostartWithWindows, cc.xy(2, 7));
+      } catch (Exception e) {}
+    }
+
     return mSettingsPn;
   }
 
+  private void createLink(UrlFile link) throws Exception {
+    File tvb = new File("tvbrowser.exe");
+    
+    if(tvb.getAbsoluteFile().isFile()) {
+      link.setUrl(tvb.toURL());
+      link.setIconFile(tvb.getAbsoluteFile().getParent() + "\\imgs\\desktop.ico");
+      link.setIconIndex(0);
+      link.setWorkingDirectory(tvb.getAbsoluteFile().getParent());
+      link.setShowCommand(UrlFile.SHOWCOMMAND_MAXIMIZED);
+      link.save();
+    }
+  }
+  
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    Settings.propMinimizeAfterStartup.setBoolean(mMinimizeAfterStartUpChB.isSelected());
+    Settings.propMinimizeAfterStartup.setBoolean(mMinimizeAfterStartUpChB
+        .isSelected());
     Settings.propSplashShow.setBoolean(mShowSplashChB.isSelected());
+    
+    if(mAutostartWithWindows != null) {        
+        if (mAutostartWithWindows.isSelected()) {
+          if(!mLinkFile.isFile()) {
+            try {
+              createLink(mLinkUrl);
+            } catch (Exception createLink) {}
+
+            if (!mLinkFile.isFile()) {
+              mAutostartWithWindows.setSelected(false);
+              JOptionPane.showMessageDialog(
+                  UiUtilities.getLastModalChildOf(MainFrame.getInstance()),
+                  mLocalizer.msg("creationError","Couldn't create autostart shortcut.\nMaybe your have not the right to write in the autostart directory."),
+                  mLocalizer.msg("error","Error"), JOptionPane.ERROR_MESSAGE);
+            }
+          }
+        } else if (mLinkFile.isFile() && !mLinkFile.delete()) {
+            mAutostartWithWindows.setSelected(true);
+            JOptionPane.showMessageDialog(
+                UiUtilities.getLastModalChildOf(MainFrame.getInstance()),
+                mLocalizer.msg("deletionError","Couldn't delete autostart shortcut.\nMaybe your have not the right to write in the autostart directory."),
+                mLocalizer.msg("error","Error"), JOptionPane.ERROR_MESSAGE);
+        }
+    }
   }
 
   /**
