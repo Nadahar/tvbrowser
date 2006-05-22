@@ -43,8 +43,6 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicPopupMenuUI;
 
-import tvbrowser.ui.ProgramMenuItem;
-
 // This class implements a scrollable JMenu
 // This class was hacked out in a couple of hours,
 // You can change maxItemsToDisplay to whatever you want, I used 25 and reduced
@@ -490,6 +488,8 @@ public class ScrollableMenu extends JMenu {
     
     scrollableItems.insertElementAt(component, pos);
     
+    setPreferedSizeForMenuItems(component);
+    
     if (pos >= beginIndex && pos < beginIndex + maxItemsToDisplay) {
       super.add(component, pos - beginIndex + 2);
     }
@@ -498,7 +498,6 @@ public class ScrollableMenu extends JMenu {
       super.remove(super.getMenuComponentCount() - 3);
     }
     
-    setPreferedSizeForMenuItems(component);
     updateScrollingComponentsVisibility();
   }
 
