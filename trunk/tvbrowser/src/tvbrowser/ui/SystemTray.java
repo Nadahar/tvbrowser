@@ -543,7 +543,7 @@ public class SystemTray {
     JComponent time; 
     
     if(Settings.propTrayOnTimeProgramsInSubMenu.getBoolean()) {
-      time = new ScrollableMenu(mLocalizer.msg("menu.programsAtTime",
+      time = new JMenu(mLocalizer.msg("menu.programsAtTime",
         "Programs at time"));
       mTrayMenu.add(time);
     }

@@ -56,6 +56,7 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(ProgramMenuItem.class);
 
+  private Dimension mPreferredSize = null;
   private Program mProgram;
   private Color mBackground, mFill = null;
   private Insets mInsets;
@@ -204,7 +205,14 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
         .actionPerformed(e);
   }
   
+  public void setPreferredSize(Dimension dim) {
+    mPreferredSize = dim;
+  }
+  
   public Dimension getPreferredSize() {
+    if(mPreferredSize != null)
+      return mPreferredSize;
+    
     FontMetrics fmBold = getFontMetrics(mBoldFont);
     FontMetrics fmPlain = getFontMetrics(mPlainFont);
     

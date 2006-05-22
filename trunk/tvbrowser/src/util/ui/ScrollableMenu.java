@@ -18,7 +18,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
@@ -43,6 +42,8 @@ import javax.swing.UIManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicPopupMenuUI;
+
+import tvbrowser.ui.ProgramMenuItem;
 
 // This class implements a scrollable JMenu
 // This class was hacked out in a couple of hours,
@@ -76,19 +77,13 @@ import javax.swing.plaf.basic.BasicPopupMenuUI;
  */
 public class ScrollableMenu extends JMenu {
 
-  private static int maxItemsToDisplay = 35;
+  private int maxItemsToDisplay = 1;
 
   private static boolean DOWN = true;
 
   private static boolean UP = false;
 
   static {
-    // set max items count visible on screen
-    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-    JMenuItem dummyItem = new JMenuItem("test");
-    Dimension itemDim = dummyItem.getPreferredSize();
-    maxItemsToDisplay = Math.min(maxItemsToDisplay, (int) (((4.0 / 5.0) * dim.height) / itemDim.height));
-
     // put a wrapper action between up and down selection action to scroll up or
     // down
     JPopupMenu dummy = new JPopupMenu();
@@ -106,6 +101,12 @@ public class ScrollableMenu extends JMenu {
     }
   }
 
+  private void setMaxItemToDisplay() {
+    // set max items count visible on screen
+    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+    maxItemsToDisplay = (int)(dim.height / maxHeight) - 1;
+  }
+  
   private static class SelectNextItemAction extends AbstractAction {
     private boolean direction;
 
@@ -186,6 +187,8 @@ public class ScrollableMenu extends JMenu {
   private int beginIndex = 0;
 
   private int maxWidth = 10;
+  
+  private int maxHeight = 1;
 
   /**
    * Constructs a new <code>JMenu</code> with no text.
@@ -410,6 +413,7 @@ public class ScrollableMenu extends JMenu {
       remove(0);
     }
     maxWidth = 10;
+    maxHeight = 0;
   }
 
   /**
@@ -483,18 +487,17 @@ public class ScrollableMenu extends JMenu {
     if (pos < 0) {
       throw new IllegalArgumentException("index less than zero.");
     }
-
+    
     scrollableItems.insertElementAt(component, pos);
-
+    
     if (pos >= beginIndex && pos < beginIndex + maxItemsToDisplay) {
       super.add(component, pos - beginIndex + 2);
     }
-
-    if (super.getMenuComponentCount() > maxItemsToDisplay + 4) {
-      Component comp = getMenuComponent(beginIndex + maxItemsToDisplay);
-      super.remove(comp);
+        
+    while(super.getMenuComponentCount() > maxItemsToDisplay + 4) {
+      super.remove(super.getMenuComponentCount() - 3);
     }
-
+    
     setPreferedSizeForMenuItems(component);
     updateScrollingComponentsVisibility();
   }
@@ -588,41 +591,45 @@ public class ScrollableMenu extends JMenu {
     }
 
     getPopupMenu().validate();
-   // getPopupMenu().pack();
     getPopupMenu().repaint();
   }
 
-  private void setPreferedSizeForMenuItems(Component component) {
+  private void setPreferedSizeForMenuItems(Component component) {    
     FontRenderContext fontrendercontext = new FontRenderContext(null, false, false);
     if (component instanceof JComponent) {
       JComponent jcomp = (JComponent) component;
-
+      
       int width = jcomp.getPreferredSize().width;
+      int height = jcomp.getPreferredSize().height;
+            
       if (jcomp.getBorder() != null) {
         Insets insets = jcomp.getBorder().getBorderInsets(component);
         width += insets.left + insets.right;
       }
-      if (width > maxWidth) {
-        maxWidth = width;
+      if (width > maxWidth || height > maxHeight) {
+        if (width > maxWidth)
+          maxWidth = width;
+        if (height > maxHeight) {
+          maxHeight = height;
+          setMaxItemToDisplay();
+        }
+        
         Iterator iterator = scrollableItems.iterator();
         while (iterator.hasNext()) {
           Object object = iterator.next();
           if (object instanceof JComponent) {
             JComponent jComponent = (JComponent) object;
 
-            int height = jComponent.getPreferredSize().height;
-            jComponent.setPreferredSize(new Dimension(maxWidth, height));
+            jComponent.setPreferredSize(new Dimension(maxWidth, maxHeight));
           }
         }
-      } else {
-        int height = jcomp.getPreferredSize().height;
-        jcomp.setPreferredSize(new Dimension(maxWidth, height));
-      }
+      } else
+        jcomp.setPreferredSize(new Dimension(maxWidth, maxHeight));
     }
   }
 
   private void scrollUpClicked() {
-
+    
     if (scrollableItems.size() <= maxItemsToDisplay || beginIndex == 0) { // no
       // need
       // to
@@ -641,7 +648,7 @@ public class ScrollableMenu extends JMenu {
   }
 
   private void scrollDownClicked() {
-
+    
     if (scrollableItems.size() <= maxItemsToDisplay || beginIndex + maxItemsToDisplay == scrollableItems.size()) { // no
       // need
       // to
@@ -651,12 +658,12 @@ public class ScrollableMenu extends JMenu {
     }
 
     super.remove(2);
-
+    
     super.add((Component) scrollableItems.elementAt(beginIndex + maxItemsToDisplay), maxItemsToDisplay + 1);
     beginIndex++;
     
     updateScrollingComponentsVisibility();
-
+    
     if (getFirstVisibleComponent() instanceof JSeparator) {
       scrollDownClicked();
     }
