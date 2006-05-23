@@ -164,7 +164,7 @@ public class ProgramTableIcon implements Icon {
        ProgramItem lastItem = mProgramItems[col][numberOfPrograms-1];
 
        // step 4: go through programs from bottom and move them up if necessary
-       if (lastItem.getY() + lastItem.getHeight() > mColumnHeight) {
+       if (lastItem.getY() + lastItem.getHeight() > mColumnHeight/mZoom) {       
          lastItem.setPos(lastItem.getX(), mColumnHeight/mZoom - lastItem.getHeight());
          for (int i=numberOfPrograms-2;i>=0;i--) {
            ProgramItem curItem = mProgramItems[col][i];
@@ -202,7 +202,7 @@ public class ProgramTableIcon implements Icon {
          }while(!done);
          ProgramItem[] oldColumn = mProgramItems[col];
          mProgramItems[col]=new ProgramItem[oldColumn.length - cnt];
-         System.arraycopy(oldColumn, cnt, mProgramItems[col], 0, mProgramItems[col].length);
+         System.arraycopy(oldColumn, cnt-1, mProgramItems[col], 0, mProgramItems[col].length);
        }
 
 
