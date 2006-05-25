@@ -181,6 +181,7 @@ public class MarkedProgramsList {
           programInList.unmark(marker[j]);
           testProg.mark(marker[j]);
         }
+        mList.add(testProg);
         programInList.setProgramState(Program.WAS_UPDATED_STATE);
       }
       else

@@ -65,7 +65,7 @@ public class MutableProgram implements Program {
   
   /** A plugin array that can be shared by all the programs that are not marked
    * by any plugin. */
-  private static final PluginAccess[] EMPTY_PLUGIN_ARR = new PluginAccess[0];
+  private static final Marker[] EMPTY_MARKER_ARR = new Marker[0];
 
   /** Contains all listeners that listen for events from this program. */
   private Vector mListenerList;
@@ -137,7 +137,7 @@ public class MutableProgram implements Program {
     
     mFieldHash = new HashMap();
     mListenerList = new Vector();
-    mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
+    mMarkedByPluginArr = EMPTY_MARKER_ARR;
     mOnAir = false;
 
     // These attributes are not mutable, because they build the ID.
@@ -147,7 +147,7 @@ public class MutableProgram implements Program {
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
     
-    mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
+    mMarkedByPluginArr = EMPTY_MARKER_ARR;
     mState = IS_VALID_STATE;
   }
 
@@ -290,19 +290,20 @@ public class MutableProgram implements Program {
   public final void mark(Marker plugin) {
     
     boolean alreadyMarked = getMarkedByPluginIndex(plugin) != -1;
+    int oldCount = mMarkedByPluginArr.length;
+    
     if (! alreadyMarked) {
       // Append the new plugin
-      int oldCount = mMarkedByPluginArr.length;
       Marker[] newArr = new Marker[oldCount + 1];
       System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, oldCount);
       newArr[oldCount] = plugin;
       mMarkedByPluginArr = newArr;
       
       fireStateChanged();
-      
-      if(oldCount < 1)
-        MarkedProgramsList.getInstance().addProgram(this);
     }
+
+    if(oldCount < 1)
+      MarkedProgramsList.getInstance().addProgram(this);
   }
 
 
@@ -319,7 +320,7 @@ public class MutableProgram implements Program {
     if (idx != -1) {
       if (mMarkedByPluginArr.length == 1) {
         // This was the only plugin
-        mMarkedByPluginArr = EMPTY_PLUGIN_ARR;
+        mMarkedByPluginArr = EMPTY_MARKER_ARR;
       } else {
         int oldCount = mMarkedByPluginArr.length;
         Marker[] newArr = new Marker[oldCount - 1];
@@ -328,11 +329,11 @@ public class MutableProgram implements Program {
         mMarkedByPluginArr = newArr;
       }
       
-      fireStateChanged();
-      
-      if(mMarkedByPluginArr.length < 1)
-        MarkedProgramsList.getInstance().removeProgram(this);
+      fireStateChanged();      
     }
+    
+    if(mMarkedByPluginArr.length < 1)
+      MarkedProgramsList.getInstance().removeProgram(this);
   }
 
   
