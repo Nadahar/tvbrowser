@@ -255,7 +255,7 @@ public class ToolBar extends JToolBar {
     if (e.getSource() instanceof AbstractButton) {
       name = ((AbstractButton) e.getSource()).getName();
 
-      if (name.startsWith("#scrollTo") || name.startsWith("#goToTime")) {
+      if (name.startsWith("#scrollTo") && name.indexOf("Channel") == -1) {
         showall = true;
         label = mLocalizer.msg("configureTime", "Configure time buttons");
       }
@@ -271,7 +271,7 @@ public class ToolBar extends JToolBar {
         showall = true;
         label = FilterButtons.mLocalizer.msg("createFilter", "Create filter...");
       }
-      else if(name.startsWith("#goToChannel")) {
+      else if(name.startsWith("#scrollToChannel")) {
         showall = true;
         label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
       }
@@ -287,11 +287,11 @@ public class ToolBar extends JToolBar {
 
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (e.getActionCommand().startsWith("#scrollTo") || e.getActionCommand().startsWith("#goToTime"))
+          if (e.getActionCommand().startsWith("#scrollTo") && e.getActionCommand().indexOf("Channel") == -1)
             MainFrame.getInstance().showSettingsDialog("#timebuttons");
           else if (e.getActionCommand().startsWith("#filter"))
             MainFrame.getInstance().showFilterDialog();
-          else if (e.getActionCommand().startsWith("#goToChannel"))
+          else if (e.getActionCommand().startsWith("#scrollToChannel"))
             MainFrame.getInstance().showSettingsDialog();
           else
             MainFrame.getInstance().showSettingsDialog(e.getActionCommand());
