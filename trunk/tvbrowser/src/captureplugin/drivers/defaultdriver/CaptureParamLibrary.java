@@ -204,10 +204,10 @@ public class CaptureParamLibrary extends ParamLibrary {
       return getPassword();
     } else if (key.equals("length_minutes")) {
       int length = (int) (mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis()) / (60*1000);
-      return "" +length+1;
+      return "" +length;
     } else if (key.equals("length_sec")) {
       int length = (int) (mEndTime.getTimeInMillis() - mStartTime.getTimeInMillis()) / (60*1000);
-      return "" + ((length+1) * 60);
+      return "" + ((length) * 60);
     }
     
     return super.getStringForKey(prg, key);
