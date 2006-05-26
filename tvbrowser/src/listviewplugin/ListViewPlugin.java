@@ -33,10 +33,8 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
-import util.ui.ImageUtilities;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
