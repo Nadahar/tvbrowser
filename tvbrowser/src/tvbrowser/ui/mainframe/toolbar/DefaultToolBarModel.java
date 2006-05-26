@@ -143,8 +143,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
         ToolBar.TOOGLE_BUTTON_ACTION, this);
     mPluginViewAction = createAction(TVBrowser.mLocalizer.msg(
         "button.pluginView", "Plugin View"), "#pluginView",
-        MainFrame.mLocalizer.msg("menuinfo.pluginView", ""), new ImageIcon(
-            "imgs/Bookmarks16.gif"), new ImageIcon("imgs/Bookmarks22.gif"),
+        MainFrame.mLocalizer.msg("menuinfo.pluginView", ""), IconLoader
+        .getInstance().getIconFromTheme("actions", "view-plugins", 16),
+        IconLoader.getInstance().getIconFromTheme("actions",
+            "view-plugins", 22),
         ToolBar.TOOGLE_BUTTON_ACTION, this);
     String scrollTo = MainFrame.mLocalizer
         .msg("menuinfo.scrollTo", "Scroll to")
