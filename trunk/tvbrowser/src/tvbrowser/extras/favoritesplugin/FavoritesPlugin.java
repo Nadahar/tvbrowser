@@ -32,6 +32,8 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -444,32 +446,25 @@ public class FavoritesPlugin implements ContextMenuIf{
     int height = getIntegerSetting(mSettings, "height", 300);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew);
     dlg.setSize(new Dimension(width, height));
-
+        
     if(mShowInfoOnNewProgramsFound) {
-      final ManageFavoritesDialog dialog = dlg;
-
-      new Thread() {
-        public void run() {
-          while(!dialog.isVisible())
-            try {
-              Thread.sleep(100);
-            }catch(Exception e){
-              // ignore
-            }
+      dlg.addComponentListener(new ComponentAdapter() {
+        public void componentShown(ComponentEvent e) {
           if(showNew) {
             JCheckBox chb = new JCheckBox(mLocalizer.msg("dontShow","Don't show this description again."));
             Object[] o = {mLocalizer.msg("newPrograms-description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
                 chb
             };
 
-            JOptionPane.showMessageDialog(dialog,o);
+            JOptionPane.showMessageDialog(e.getComponent(),o);
 
             if(chb.isSelected())
               mShowInfoOnNewProgramsFound = false;
+          }    
         }
-      }
-    }.start();
+      });
     }
+
     UiUtilities.centerAndShow(dlg);
 
     if (!showNew) {
