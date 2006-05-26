@@ -1,5 +1,20 @@
 Changelog TVBrowser
 
+2.2 Final
+=========
+
+-  Features
+
+ * 1493046 dynamic ScrollableMenu 
+- Bugs
+
+ * 1493031 IconFilter can crash TVB if Plugin was removed
+ * 1460431 Print-Plugin - Some columns are Empty
+ * 1460429 Print-Plugin - The first Programm not printed
+ * 1494570 ReminderDialog don't reacts on key pressing
+ * 1494840 Some important programs are not shown in Tray
+ * 1495608 False detection of Icon-Theme 
+
 2.2 Beta 2
 =========
 
