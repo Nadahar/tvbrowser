@@ -42,6 +42,7 @@ import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -116,8 +117,8 @@ public class ListViewPlugin extends Plugin {
     /**
      * Icon to show for a marked program
      */
-    public String getMarkIconName() {
-        return "listviewplugin/listview16.gif";
+    public ThemeIcon getMarkIconFromTheme() {
+      return new ThemeIcon("actions", "view-list", 16);
     }
 
 
@@ -133,8 +134,8 @@ public class ListViewPlugin extends Plugin {
             }
         };
         action.putValue(Action.NAME, mLocalizer.msg("buttonName", "View Liste"));
-        action.putValue(Action.SMALL_ICON, new ImageIcon(ImageUtilities.createImageFromJar("listviewplugin/listview16.gif", ListViewPlugin.class)));
-        action.putValue(BIG_ICON, new ImageIcon(ImageUtilities.createImageFromJar("listviewplugin/listview24.gif", ListViewPlugin.class)));
+        action.putValue(Action.SMALL_ICON, createImageIcon("actions", "view-list", 16));
+        action.putValue(BIG_ICON, createImageIcon("actions", "view-list", 22));
         
         
         return new ActionMenu(action);
@@ -218,6 +219,6 @@ public class ListViewPlugin extends Plugin {
     }    
     
     public SettingsTab getSettingsTab() {
-      return new ListViewSettings(mSettings);
+      return new ListViewSettings(this, mSettings);
     }
 }

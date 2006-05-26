@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import sun.awt.motif.MPopupMenuPeer;
 import util.ui.ImageUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -52,12 +53,15 @@ public class ListViewSettings implements SettingsTab {
   private Properties mSettings;
   /** Checkbox for showing at startup*/
   private JCheckBox mShowAtStart;
+  /** Plugin Instance */
+  private ListViewPlugin mPlugin;
   
   /**
    * Create the SettingsTab
    * @param settings Settings
    */
-  public ListViewSettings(Properties settings) {
+  public ListViewSettings(ListViewPlugin plugin, Properties settings) {
+    mPlugin = plugin;
     mSettings = settings;
   }
   
@@ -93,7 +97,7 @@ public class ListViewSettings implements SettingsTab {
    * Icon for the SettingsTab
    */
   public Icon getIcon() {
-    return new ImageIcon(ImageUtilities.createImageFromJar("listviewplugin/listview16.gif", ListViewPlugin.class));
+    return mPlugin.createImageIcon("actions", "view-list", 16);
   }
 
   /**
