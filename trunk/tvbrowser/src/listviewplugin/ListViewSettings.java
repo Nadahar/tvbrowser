@@ -28,12 +28,8 @@ package listviewplugin;
 import java.util.Properties;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-
-import sun.awt.motif.MPopupMenuPeer;
-import util.ui.ImageUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
