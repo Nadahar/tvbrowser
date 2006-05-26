@@ -110,8 +110,8 @@ public class IconLoader {
   private void loadIconTheme(File iconset) {
     mIconCache = new WeakHashMap();
     mPluginIconCache = new HashMap();
-    
-    if (!iconset.exists() || !iconset.isFile()) {
+
+    if (!iconset.exists()) {
       iconset = mDefaultIconDir;
     }
     
