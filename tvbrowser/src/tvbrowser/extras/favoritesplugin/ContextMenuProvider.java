@@ -100,7 +100,7 @@ public class ContextMenuProvider {
 
   private ActionMenu createAddToFavoritesActionMenu(final Program program) {
     ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(getIconFromTheme("action", "bookmark-new", 16));
+      menu.setSmallIcon(getIconFromTheme("actions", "bookmark-new", 16));
       menu.setText(mLocalizer.msg("addToFavorites", "Add to favorite programs"));
       menu.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
@@ -148,7 +148,7 @@ public class ContextMenuProvider {
   private ActionMenu createEditFavoriteMenuAction(final Favorite[] favArr) {
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
-      action.setSmallIcon(getIconFromTheme("action", "document-edit", 16));
+      action.setSmallIcon(getIconFromTheme("actions", "document-edit", 16));
       action.setText(mLocalizer.msg("editFavorite","Edit favorite '{0}'...", favArr[0].getName()));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -159,7 +159,7 @@ public class ContextMenuProvider {
     }
     else {
       ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(getIconFromTheme("action", "document-edit", 16));
+      menu.setSmallIcon(getIconFromTheme("actions", "document-edit", 16));
       menu.setText(mLocalizer.msg("edit","Edit Favorite"));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
