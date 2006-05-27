@@ -112,15 +112,15 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
     mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
 
     if (arg) {
-      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon(
-          "imgs/FilterSet16.png"));
-      mFilterAction.putValue(Plugin.BIG_ICON, new ImageIcon(
-          "imgs/FilterSet22.png"));
+      mFilterAction.putValue(Action.SMALL_ICON,
+          IconLoader.getInstance().getIconFromTheme("status","view-filter-set",16));
+      mFilterAction.putValue(Plugin.BIG_ICON, 
+          IconLoader.getInstance().getIconFromTheme("status","view-filter-set",22));
     } else {
-      mFilterAction.putValue(Action.SMALL_ICON, new ImageIcon(
-          "imgs/Filter16.png"));
+      mFilterAction.putValue(Action.SMALL_ICON, 
+          IconLoader.getInstance().getIconFromTheme("actions","view-filter",16));
       mFilterAction.putValue(Plugin.BIG_ICON,
-          new ImageIcon("imgs/Filter22.png"));
+          IconLoader.getInstance().getIconFromTheme("actions","view-filter",22));
     }
   }
 
