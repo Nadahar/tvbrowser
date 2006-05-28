@@ -141,7 +141,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         for (int c=0; c<mChannel.length;c++){
           if (mChannel[c].equals(channelArr[a])){
             ArrayList modifiedDates = new ArrayList();
-
+            monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.10","{2}: Searching for updated/new programs on {0} for {1} days",startDate.toString(),""+dateCount,mChannel[c].getName()));
             for (int b=0; b<dateCount;b++){
               devplugin.Date testDay = testStart.addDays(b);
               String fileDate = createFileName(testDay);
@@ -160,7 +160,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
               }
             } //int b
             mLog.info("Number of modified days for channel "+ mInternalChannel[c].getName()+  ":" + modifiedDates.size());
-
+            monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.20","{0}: Retrieving updated/new programs.",mChannel[c].getName()));
 /*          *****************************************************************
             IF we found any modified/missing data, we have to download the
             files before and after each date, since the XMLTV-data files 
@@ -210,6 +210,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
               *******************************************************************/
               Hashtable dataHashtable = new Hashtable();
               Enumeration en = fileDates.elements();
+              monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.30","{0}: Reading datafiles",mChannel[c].getName()));
               while (en.hasMoreElements()){
                 try {
                   devplugin.Date date = (devplugin.Date)(en.nextElement());
@@ -237,6 +238,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                 devplugin.Date date = (devplugin.Date)modifiedDates.get(modDates);
                 if (dataHashtable.containsKey(date.toString())){
                   mLog.info("Updating database for day " + date.toString());
+                  monitor.setMessage(mLocalizer.msg("updateTvData.progressmessage.40","{0}: Updating database",mChannel[c].getName()));
                   updateManager.updateDayProgram((MutableChannelDayProgram)dataHashtable.get(date.toString()));
                 } else {
                   mLog.info("Strange.... Didn't find the data for " + date.toString());
@@ -415,7 +417,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         }
         mInternalChannel = SweDBChannelParser.parse(new GZIPInputStream(con.getInputStream()));
         if (monitor != null) {
-            monitor.setMessage(mLocalizer.msg("Progressmessage.40","Done, found {0} channels",new Integer(mInternalChannel.length)));
+            monitor.setMessage(mLocalizer.msg("Progressmessage.40","Found {0} channels, downloading channel icons...",new Integer(mInternalChannel.length)));
         }
         mLastChannelUpdate = con.getLastModified();
         con.disconnect();
