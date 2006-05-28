@@ -63,7 +63,6 @@ public class ProgramTableIcon implements Icon {
    
    private ProgramIconSettings mProgramIconSettings;
     
-   
     
    public ProgramTableIcon(ColumnModel[] cols, int width, int height, int maxColsPerPage, int startHour, int endHour, ProgramIconSettings programIconSettings) {
      
@@ -143,12 +142,13 @@ public class ProgramTableIcon implements Icon {
        // step 2: The last program in the column is positioned at the bottom
        //         of the page
        int numberOfPrograms = mProgramItems[col].length;
+/*
        if (numberOfPrograms>1) {
          ProgramItem item = mProgramItems[col][numberOfPrograms-1];
          y = (int)((mColumnHeight-item.getHeight())/mZoom);
          item.setPos(x,y);
        }
-
+*/
 
        // step 3: resolve overlaps; start from top
        for (int i=1;i<mProgramItems[col].length; i++) {
@@ -164,7 +164,7 @@ public class ProgramTableIcon implements Icon {
        ProgramItem lastItem = mProgramItems[col][numberOfPrograms-1];
 
        // step 4: go through programs from bottom and move them up if necessary
-       if (lastItem.getY() + lastItem.getHeight() > mColumnHeight/mZoom) {       
+       if (lastItem.getY() + lastItem.getHeight() > mColumnHeight/mZoom) {
          lastItem.setPos(lastItem.getX(), mColumnHeight/mZoom - lastItem.getHeight());
          for (int i=numberOfPrograms-2;i>=0;i--) {
            ProgramItem curItem = mProgramItems[col][i];
@@ -185,6 +185,8 @@ public class ProgramTableIcon implements Icon {
       
          curItem.setMaximumHeight((int)(nextItem.getY()-curItem.getY()));
        }
+       //Set the max height for the last program of the channel.
+       lastItem.setMaximumHeight((int)(mColumnHeight/mZoom-lastItem.getY()));
 
        // step 6: Check, if the first program of the column is within the column space.
        // If not, we remove all programs out of the column space.
@@ -200,9 +202,10 @@ public class ProgramTableIcon implements Icon {
            }
            cnt++;
          }while(!done);
+         cnt--;
          ProgramItem[] oldColumn = mProgramItems[col];
          mProgramItems[col]=new ProgramItem[oldColumn.length - cnt];
-         System.arraycopy(oldColumn, cnt-1, mProgramItems[col], 0, mProgramItems[col].length);
+         System.arraycopy(oldColumn, cnt, mProgramItems[col], 0, mProgramItems[col].length);
        }
 
 
