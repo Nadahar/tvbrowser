@@ -25,26 +25,26 @@
  */
 package tvbrowser.ui.settings;
 
-//import java.io.File;
+import java.io.File;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
-//import javax.swing.JOptionPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
-//import tvbrowser.ui.mainframe.MainFrame;
-//import util.io.UrlFile;
-//import util.ui.UiUtilities;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.io.UrlFile;
+import util.ui.UiUtilities;
 
-//import ca.beq.util.win32.registry.RegistryKey;
-//import ca.beq.util.win32.registry.RootKey;
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RootKey;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-//import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * TV-Browser
@@ -59,11 +59,11 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
   private JPanel mSettingsPn;
 
-  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB/*,
-      mAutostartWithWindows*/;
+  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB,
+      mAutostartWithWindows;
   
-/*  private UrlFile mLinkUrl;
-  private File mLinkFile;*/
+  private UrlFile mLinkUrl;
+  private File mLinkFile;
 
   /**
    * Creates the settings panel for this tab.
@@ -90,7 +90,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         .getBoolean());
     mSettingsPn.add(mShowSplashChB, cc.xy(2, 5));
 
- /*   if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+    if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
       layout.appendRow(new RowSpec("3dlu"));
       layout.appendRow(new RowSpec("pref"));
       
@@ -117,12 +117,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         
         mSettingsPn.add(mAutostartWithWindows, cc.xy(2, 7));
       } catch (Exception e) {}
-    }*/
+    }
 
     return mSettingsPn;
   }
 
- /* private void createLink(UrlFile link) throws Exception {
+  private void createLink(UrlFile link) throws Exception {
     File tvb = new File("tvbrowser.exe");
     
     if(tvb.getAbsoluteFile().isFile()) {
@@ -133,7 +133,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       link.setShowCommand(UrlFile.SHOWCOMMAND_MAXIMIZED);
       link.save();
     }
-  }*/
+  }
   
   /**
    * Called by the host-application, if the user wants to save the settings.
@@ -143,7 +143,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         .isSelected());
     Settings.propSplashShow.setBoolean(mShowSplashChB.isSelected());
     
-  /*  if(mAutostartWithWindows != null) {        
+    if(mAutostartWithWindows != null) {        
         if (mAutostartWithWindows.isSelected()) {
           if(!mLinkFile.isFile()) {
             try {
@@ -165,7 +165,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
                 mLocalizer.msg("deletionError","Couldn't delete autostart shortcut.\nMaybe your have not the right to write in the autostart directory."),
                 mLocalizer.msg("error","Error"), JOptionPane.ERROR_MESSAGE);
         }
-    }*/
+    }
   }
 
   /**
