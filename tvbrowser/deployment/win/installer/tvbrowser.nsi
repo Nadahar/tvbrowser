@@ -262,6 +262,7 @@ Section "$(STD_SECTION_NAME)"
   File "${RUNTIME_DIR}\tvbrowser.jar"
   File "${RUNTIME_DIR}\windows.properties"
   File "${RUNTIME_DIR}\DesktopIndicator.dll"
+  File "${RUNTIME_DIR}\jRegistryKey.dll"
 
 
 #  #set up the path to the user data in the windows.properties
