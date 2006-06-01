@@ -32,16 +32,19 @@ import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import tvbrowser.core.Settings;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -50,7 +53,7 @@ import devplugin.Program;
  * @author René Mach
  * 
  */
-public class ProgramMenuItem extends JMenuItem implements ActionListener {
+public class ProgramMenuItem extends JMenuItem {
 
   private static final long serialVersionUID = 1L;
   private static final Localizer mLocalizer = Localizer
@@ -151,7 +154,14 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
     
     mSelected = false;
 
-    addActionListener(this);
+    addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        if(SwingUtilities.isLeftMouseButton(e)) 
+          Plugin.getPluginManager().handleProgramDoubleClick(mProgram);
+        if(SwingUtilities.isMiddleMouseButton(e))
+          Plugin.getPluginManager().handleProgramMiddleClick(mProgram);
+      }
+    });
       
     mInsets = getMargin();
     setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,mShowStartTime,mShowDate,showIcon,mShowName,time));
@@ -198,11 +208,6 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
 
     });
     startTimer();
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    ProgramInfo.getInstance().getContextMenuActions(mProgram).getAction()
-        .actionPerformed(e);
   }
   
   public void setPreferredSize(Dimension dim) {
@@ -278,5 +283,5 @@ public class ProgramMenuItem extends JMenuItem implements ActionListener {
   
   protected Color getDefaultBackground() {
     return mBackground;
-  }
+  }  
 }
