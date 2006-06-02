@@ -141,10 +141,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     // program table layout
     String[] arrangementArr = { mLocalizer.msg("timeSynchronous", "Time synchronous"),
         mLocalizer.msg("realSynchronous", "Real time synchronous"), 
-        mLocalizer.msg("compact", "Compact")};
+        mLocalizer.msg("compact", "Compact"),mLocalizer.msg("realCompact", "Real compact")};
     mProgramArrangementCB = new JComboBox(arrangementArr);
     if (Settings.propTableLayout.getString().equals("compact"))
       mProgramArrangementCB.setSelectedIndex(2);
+    else if (Settings.propTableLayout.getString().equals("realCompact"))
+      mProgramArrangementCB.setSelectedIndex(3);
     else if (Settings.propTableLayout.getString().equals("timeSynchronous"))
       mProgramArrangementCB.setSelectedIndex(0);
     else
@@ -407,6 +409,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   public void saveSettings() {
     if (mProgramArrangementCB.getSelectedIndex() == 2)
       Settings.propTableLayout.setString("compact");
+    else if (mProgramArrangementCB.getSelectedIndex() == 3)
+      Settings.propTableLayout.setString("realCompact");    
     else if (mProgramArrangementCB.getSelectedIndex() == 0)
       Settings.propTableLayout.setString("timeSynchronous");
     else
