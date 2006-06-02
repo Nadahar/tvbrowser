@@ -431,7 +431,7 @@ public class Settings {
 
   public static final ChoiceProperty propTableLayout = new ChoiceProperty(
       mProp, "table.layout", "timeSynchronous", new String[] {
-          "timeSynchronous", "compact", "realSynchronous" });
+          "timeSynchronous", "compact", "realSynchronous" , "realCompact"});
 
   public static final ChoiceProperty propTableBackgroundStyle = new ChoiceProperty(
       mProp, "tablebackground.style", "timeOfDay", new String[] { "white",
