@@ -46,10 +46,10 @@ import devplugin.Program;
 public class MarkedProgramsList {
   
   private static MarkedProgramsList mInstance;
-  private ArrayList mList;
+  private ArrayList<Program> mList;
   
   private MarkedProgramsList() {
-    mList = new ArrayList();
+    mList = new ArrayList<Program>();
     mInstance = this;
     
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
@@ -97,7 +97,7 @@ public class MarkedProgramsList {
   public Program[] getTimeSortedProgramsForTray() {
     int n = mList.size() > Settings.propTrayImportantProgramsSize.getInt() ? Settings.propTrayImportantProgramsSize.getInt() : mList.size();
     
-    ArrayList programs = new ArrayList();
+    ArrayList<Program> programs = new ArrayList<Program>();
     
     int k = 0;
     int i = 0;
@@ -106,7 +106,7 @@ public class MarkedProgramsList {
       if(k >= mList.size())
         break;
 
-      Program p = (Program)mList.get(k);
+      Program p = mList.get(k);
       if(ProgramUtilities.isOnAir(p) || p.isExpired()) {
         k++;
         continue;
@@ -115,7 +115,7 @@ public class MarkedProgramsList {
       boolean found = false;
       
       for(int j = 0; j < programs.size(); j++) {
-        Program p1 = (Program)programs.get(j);
+        Program p1 = programs.get(j);
         long value2 = (p1.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p1.getStartTime();
 
         if(value2 > value1) {            
@@ -133,18 +133,18 @@ public class MarkedProgramsList {
     }
     
     for(i = k; i < mList.size(); i++) {
-      Program p = (Program)mList.get(i);
+      Program p = mList.get(i);
       
       if(ProgramUtilities.isOnAir(p) || p.isExpired())
         continue;
       
       long valueNew = (p.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p.getStartTime();
-      Program p1 = (Program)programs.get(programs.size() - 1);
+      Program p1 = programs.get(programs.size() - 1);
       
       long valueOld = (p1.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p1.getStartTime();
       if(valueOld > valueNew)
         for(int j = 0; j < programs.size(); j++) {
-          p1 = (Program)programs.get(j);
+          p1 = programs.get(j);
           valueOld = (p1.getDate().getValue() - Date.getCurrentDate().getValue()) * 24 * 60 + p1.getStartTime();
           
           if(valueOld > valueNew) {
@@ -167,19 +167,19 @@ public class MarkedProgramsList {
   private void revalidatePrograms() {
     for(int i = mList.size() - 1; i >= 0; i--) {
       MutableProgram programInList = (MutableProgram)mList.remove(i);
-      Marker[] marker = programInList.getMarkerArr();
+      Marker[] markers = programInList.getMarkerArr();
       
       Program testProg = PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
       
       if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
         programInList.setProgramState(Program.WAS_DELETED_STATE);
-        for(int j = 0; j < marker.length; j++)
-          programInList.unmark(marker[j]);
+        for(Marker marker : markers)
+          programInList.unmark(marker);
       }
       else if(testProg != programInList) {
-        for(int j = 0; j < marker.length; j++) {
-          programInList.unmark(marker[j]);
-          testProg.mark(marker[j]);
+        for(Marker marker : markers) {
+          programInList.unmark(marker);
+          testProg.mark(marker);
         }
         addProgram(testProg);
         programInList.setProgramState(Program.WAS_UPDATED_STATE);

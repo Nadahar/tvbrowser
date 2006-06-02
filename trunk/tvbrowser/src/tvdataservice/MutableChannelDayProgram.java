@@ -53,7 +53,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   private Channel mChannel;
 
   /** The program list itself. */
-  private ArrayList mProgramList;
+  private ArrayList<Program> mProgramList;
 
   private boolean mLastProgramHadEndOnUpdate;
 
@@ -70,7 +70,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     mChannel = channel;
     mLastProgramHadEndOnUpdate = false;
 
-    mProgramList = new ArrayList();
+    mProgramList = new ArrayList<Program>();
   }
 
 
@@ -104,9 +104,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    * @return  the program object having the specified ID.
    */
   public Program getProgram(String progID) {
-    Iterator iter = mProgramList.iterator();
-    while(iter.hasNext()) {
-      Program prog = (Program) iter.next();
+    for(Program prog : mProgramList) {
       if (progID.equals(prog.getID())) {
         return prog;
       }
@@ -136,7 +134,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    * @return The program at the specified index.
    */
   public Program getProgramAt(int index) {
-    return (Program) mProgramList.get(index);
+    return mProgramList.get(index);
   }
   
 
@@ -154,7 +152,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     int addIdx;
     int time = program.getHours() * 60 + program.getMinutes();
     for (addIdx = mProgramList.size(); addIdx > 0; addIdx--) {
-      Program cmp = (Program) mProgramList.get(addIdx - 1);
+      Program cmp = mProgramList.get(addIdx - 1);
       int cmpTime = cmp.getHours() * 60 + cmp.getMinutes();
 	  	  
 	  if (program.getDate().compareTo(cmp.getDate())>0) {
@@ -209,7 +207,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     if (size == 0) {
       return false;
     } else {
-      Program lastProgram = (Program) mProgramList.get(size - 1);
+      Program lastProgram = mProgramList.get(size - 1);
       int endTime = lastProgram.getHours() * 60 + lastProgram.getMinutes()
         + lastProgram.getLength();
 

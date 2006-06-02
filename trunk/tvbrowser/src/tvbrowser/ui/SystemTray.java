@@ -338,10 +338,10 @@ public class SystemTray {
       else
         subMenu = mTrayMenu;
 
-      ArrayList programs = new ArrayList();
-      ArrayList additional = new ArrayList();
-      ArrayList nextPrograms = new ArrayList();
-      ArrayList nextAdditionalPrograms = new ArrayList();
+      ArrayList<ProgramMenuItem> programs = new ArrayList<ProgramMenuItem>();
+      ArrayList<ProgramMenuItem> additional = new ArrayList<ProgramMenuItem>();
+      ArrayList<ProgramMenuItem> nextPrograms = new ArrayList<ProgramMenuItem>();
+      ArrayList<ProgramMenuItem> nextAdditionalPrograms = new ArrayList<ProgramMenuItem>();
 
       /*
        * Fill the ArrayList to support storing the programs on the correct
@@ -356,9 +356,9 @@ public class SystemTray {
       /*
        * Search through all channels.
        */
-      for (int i = 0; i < channels.length; i++) {
+      for (Channel channel : channels) {
         ChannelDayProgram today = TvDataBase.getInstance().getDayProgram(
-            Date.getCurrentDate(), channels[i]);
+            Date.getCurrentDate(), channel);
 
         if (today != null && today.getProgramCount() > 0)
           for (int j = 0; j < today.getProgramCount(); j++) {
@@ -367,7 +367,7 @@ public class SystemTray {
                     .getMinutesAfterMidnight()) {
               ChannelDayProgram yesterday = TvDataBase
                   .getInstance()
-                  .getDayProgram(Date.getCurrentDate().addDays(-1), channels[i]);
+                  .getDayProgram(Date.getCurrentDate().addDays(-1), channel);
 
               if (yesterday != null && yesterday.getProgramCount() > 0) {
                 Program p = yesterday
@@ -392,7 +392,7 @@ public class SystemTray {
               } else {
                 ChannelDayProgram tomorrow = TvDataBase.getInstance()
                     .getDayProgram(Date.getCurrentDate().addDays(1),
-                        channels[i]);
+                        channel);
 
                 if (tomorrow != null && tomorrow.getProgramCount() > 0) {
                   Program p1 = tomorrow.getProgramAt(0);
@@ -427,13 +427,12 @@ public class SystemTray {
       if (Settings.propTrayNowProgramsEnabled.getBoolean()
           && (programs.size() > 0 || additional.size() > 0)) {
 
-        for (int i = 0; i < programs.size(); i++) {
-          Object o = programs.get(i);
-          if (o != null)
-            subMenu.add((ProgramMenuItem) o);
+        for (ProgramMenuItem item : programs) {
+          if (item != null)
+            subMenu.add(item);
         }
-        for (int i = 0; i < additional.size(); i++)
-          subMenu.add((ProgramMenuItem) additional.get(i));
+        for (ProgramMenuItem item : additional)
+          subMenu.add(item);
         
         now = true;
         
@@ -456,18 +455,14 @@ public class SystemTray {
 
         int j = 0;
 
-        for (int i = 0; i < nextPrograms.size(); i++) {
-          Object o = nextPrograms.get(i);
-          if (o != null) {
-            ProgramMenuItem pItem = (ProgramMenuItem) o;
-            pItem.setBackground(j);
-            next.add(pItem);
+        for (ProgramMenuItem item : nextPrograms) {
+          if (item != null) {
+            item.setBackground(j);
+            next.add(item);
             j++;
           }
         }
-        for (int i = 0; i < nextAdditionalPrograms.size(); i++) {
-          ProgramMenuItem pItem = (ProgramMenuItem) nextAdditionalPrograms
-              .get(i);
+        for (ProgramMenuItem pItem : nextAdditionalPrograms) {
           pItem.setBackground(j);
           next.add(pItem);
           j++;
@@ -534,8 +529,8 @@ public class SystemTray {
     Channel[] channels = Settings.propTraySpecialChannels
         .getChannelArray(false);
 
-    for (int i = 0; i < channels.length; i++)
-      if (ch.getId().compareTo(channels[i].getId()) == 0)
+    for (Channel channel : channels)
+      if (ch.getId().compareTo(channel.getId()) == 0)
         return true;
     return false;
   }
@@ -572,8 +567,8 @@ public class SystemTray {
 
     int[] tempTimes = Settings.propTimeButtons.getIntArray();
     
-    ArrayList today = new ArrayList();
-    ArrayList tomorrow = new ArrayList();
+    ArrayList<Integer> today = new ArrayList<Integer>();
+    ArrayList<Integer> tomorrow = new ArrayList<Integer>();
     
     for(int i = 0; i < tempTimes.length; i++)
       if(tempTimes[i] < IOUtilities.getMinutesAfterMidnight())
@@ -591,7 +586,7 @@ public class SystemTray {
       int j = 0;
       
       for(int i = 0; i < today.size(); i++) {
-        times[j] = ((Integer)today.get(i)).intValue();
+        times[j] = today.get(i).intValue();
         j++;
       }
       
@@ -599,39 +594,39 @@ public class SystemTray {
       j++;
       
       for(int i = 0; i < tomorrow.size(); i++) {
-        times[j] = ((Integer)tomorrow.get(i)).intValue();
+        times[j] = tomorrow.get(i).intValue();
         j++;
       }        
     }
 
-    for (int i = 0; i < times.length; i++) {
-      if(times[i] == -1) {
+    for (int value : times) {
+      if(value == -1) {
         if(time instanceof JMenu)
           ((JMenu)time).addSeparator();
         else
           ((JPopupMenu)time).addSeparator();
       }
       else {
-      String minutes = String.valueOf(times[i] % 60);
-      String hour = String.valueOf(times[i] / 60);
+      String minutes = String.valueOf(value % 60);
+      String hour = String.valueOf(value / 60);
 
       if (minutes.length() == 1)
         minutes = "0" + minutes;
       if (hour.length() == 1)
         hour = "0" + hour;
 
-      final int value = times[i];
+      final int fvalue = value;
 
       final JMenu menu = new ScrollableMenu(hour + ":" + minutes + " "
           + mLocalizer.msg("menu.time", ""));
 
-      if (times[i] < IOUtilities.getMinutesAfterMidnight())
+      if (value < IOUtilities.getMinutesAfterMidnight())
         menu
             .setText(menu.getText() + " " + mLocalizer.msg("menu.tomorrow", ""));
 
       menu.addMenuListener(new MenuListener() {
         public void menuSelected(MenuEvent e) {
-          createTimeProgramMenu(menu, value);
+          createTimeProgramMenu(menu, fvalue);
         }
 
         public void menuCanceled(MenuEvent e) {}
@@ -656,14 +651,14 @@ public class SystemTray {
     if (menu.getMenuComponentCount() < 1) {
       Channel[] c = Settings.propSubscribedChannels.getChannelArray(false);
 
-      ArrayList programs = new ArrayList();
-      ArrayList additional = new ArrayList();
+      ArrayList<ProgramMenuItem> programs = new ArrayList<ProgramMenuItem>();
+      ArrayList<ProgramMenuItem> additional = new ArrayList<ProgramMenuItem>();
       
       for (int i = 0; i < Settings.propTraySpecialChannels
           .getChannelArray(false).length; i++)
         programs.add(i, null);
 
-      for (int i = 0; i < c.length; i++) {
+      for (Channel ch : c) {
         Iterator it = null;
         int day = 0;
         
@@ -672,7 +667,7 @@ public class SystemTray {
               .getDayProgram(
                   Date.getCurrentDate().addDays(
                       (time < IOUtilities.getMinutesAfterMidnight() ? ++day : day)),
-                  c[i]).getPrograms();
+                  ch).getPrograms();
         } catch (Exception ee) {}
         
         int count = 0;
@@ -685,8 +680,8 @@ public class SystemTray {
 
           if (start <= time && time < end 
               && MainFrame.getInstance().getProgramFilter().accept(p)) {
-            if (isOnChannelList(c[i]))
-              programs.add(getIndexOfChannel(c[i]), new ProgramMenuItem(p,
+            if (isOnChannelList(ch))
+              programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
                   ProgramMenuItem.ON_TIME_TYPE, time, -1));
             else if (p.getMarkerArr().length > 0)
               additional.add(new ProgramMenuItem(p,
@@ -698,7 +693,7 @@ public class SystemTray {
               ChannelDayProgram dayProg = TvDataBase.getInstance()
                   .getDayProgram(
                       Date.getCurrentDate(),
-                      c[i]);
+                      ch);
               p = dayProg.getProgramAt(dayProg.getProgramCount() - 1);
               
               start = p.getStartTime();
@@ -706,8 +701,8 @@ public class SystemTray {
 
               if (start <= temptime && temptime < end 
                   && MainFrame.getInstance().getProgramFilter().accept(p)) {
-                if (isOnChannelList(c[i]))
-                  programs.add(getIndexOfChannel(c[i]), new ProgramMenuItem(p,
+                if (isOnChannelList(ch))
+                  programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
                       ProgramMenuItem.ON_TIME_TYPE, time, -1));
                 else if (p.getMarkerArr().length > 0)
                   additional.add(new ProgramMenuItem(p,
@@ -723,17 +718,14 @@ public class SystemTray {
 
       int j = 0;
 
-      for (int i = 0; i < programs.size(); i++) {
-        Object o = programs.get(i);
-        if (o != null) {
-          ProgramMenuItem pItem = (ProgramMenuItem) o;
+      for (ProgramMenuItem pItem : programs) {
+        if (pItem != null) {
           pItem.setBackground(j);
           menu.add(pItem);
           j++;
         }
       }
-      for (int i = 0; i < additional.size(); i++) {
-        ProgramMenuItem pItem = (ProgramMenuItem) additional.get(i);
+      for (ProgramMenuItem pItem : additional) {
         pItem.setBackground(j);
         menu.add(pItem);
         j++;
@@ -760,8 +752,8 @@ public class SystemTray {
    *          The program to check and add.
    * @return False if the program was put on a list.
    */
-  private boolean addToNext(Program p, ArrayList nextPrograms,
-      ArrayList nextAdditionalPrograms) {
+  private boolean addToNext(Program p, ArrayList<ProgramMenuItem> nextPrograms,
+      ArrayList<ProgramMenuItem> nextAdditionalPrograms) {
     if (!p.isExpired() && !ProgramUtilities.isOnAir(p) 
         && MainFrame.getInstance().getProgramFilter().accept(p)) {
       if (this.isOnChannelList(p.getChannel())) {
@@ -790,8 +782,8 @@ public class SystemTray {
    *          are important.
    * @return True if the program was added to a list.
    */
-  private boolean addProgramToNowRunning(Program p, ArrayList defaultList,
-      ArrayList addList) {
+  private boolean addProgramToNowRunning(Program p, ArrayList<ProgramMenuItem> defaultList,
+      ArrayList<ProgramMenuItem> addList) {
     if (ProgramUtilities.isOnAir(p)
         && MainFrame.getInstance().getProgramFilter().accept(p)) {
       if (isOnChannelList(p.getChannel())) {
@@ -884,9 +876,9 @@ public class SystemTray {
   private static void updatePluginsMenu(JMenu pluginsMenu, PluginProxy[] plugins) {
     pluginsMenu.removeAll();
 
-    Arrays.sort(plugins, new Comparator() {
+    Arrays.sort(plugins, new Comparator<PluginProxy>() {
 
-      public int compare(Object o1, Object o2) {
+      public int compare(PluginProxy o1, PluginProxy o2) {
         return o1.toString().compareTo(o2.toString());
       }
 
@@ -898,11 +890,10 @@ public class SystemTray {
     pluginsMenu.add(new JMenuItem(action.getAction()));
     pluginsMenu.addSeparator();
     
-    for (int i = 0; i < plugins.length; i++) {
-      action = plugins[i].getButtonAction();
+    for (PluginProxy plugin : plugins) {
+      action = plugin.getButtonAction();
       if (action != null) {
         pluginsMenu.add(new JMenuItem(action.getAction()));
-
       }
     }
   }
