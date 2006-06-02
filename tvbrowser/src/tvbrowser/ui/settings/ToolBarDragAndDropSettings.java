@@ -455,12 +455,12 @@ public class ToolBarDragAndDropSettings extends JDialog implements
             else
               mCurrentActions.insertElementAt(a, n);
           } else
-            for (int i = 0; i < mAvailableActions.size(); i++) {
-              Action a = (Action) mAvailableActions.elementAt(i);
+            for (Action a : mAvailableActions) {
               if (a.getValue(Action.NAME).equals(name)) {
                 if (!s.getValue(Action.NAME).equals(name))
                   mAvailableActions.removeElement(a);
                 mCurrentActions.insertElementAt(a, n);
+                break;
               }
             }
         }
