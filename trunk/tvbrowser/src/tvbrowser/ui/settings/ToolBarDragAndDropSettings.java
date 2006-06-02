@@ -75,9 +75,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
   private static final long serialVersionUID = 1L;
   /** Actions that are visible in the ToolBar */
-  private Vector mCurrentActions = new Vector();
+  private Vector<Action> mCurrentActions = new Vector<Action>();
   /** Actions the user can add to the ToolBar */
-  private Vector mAvailableActions = new Vector();
+  private Vector<Action> mAvailableActions = new Vector<Action>();
   private JComboBox mShowCB, mLocationCB;
   private JCheckBox mShowToolbarCb, mUseBigIconsCb, mShowSearchFieldCb;
   private JPanel mButtonPanel;
@@ -106,21 +106,21 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     final DefaultToolBarModel toolbarModel = DefaultToolBarModel.getInstance();
     Action[] currentActions = toolbarModel.getActions();
 
-    ArrayList notSelectedActionsList = new ArrayList(Arrays.asList(toolbarModel
+    ArrayList<Action> notSelectedActionsList = new ArrayList<Action>(Arrays.asList(toolbarModel
         .getAvailableActions()));
 
-    for (int i = 0; i < currentActions.length; i++)
-      mCurrentActions.addElement(currentActions[i]);
+    for (Action a : currentActions)
+      mCurrentActions.addElement(a);
 
-    for (int i = 0; i < currentActions.length; i++)
-      if (notSelectedActionsList.contains(currentActions[i]))
-        notSelectedActionsList.remove(currentActions[i]);
+    for (Action a : currentActions)
+      if (notSelectedActionsList.contains(a))
+        notSelectedActionsList.remove(a);
 
     Action[] availableActions = new Action[notSelectedActionsList.size()];
     notSelectedActionsList.toArray(availableActions);
 
-    for (int i = 0; i < availableActions.length; i++)
-      mAvailableActions.addElement(availableActions[i]);
+    for (Action a : availableActions)
+      mAvailableActions.addElement(a);
 
     mAvailableActions.insertElementAt(toolbarModel.getSeparatorAction(), 0);
 
@@ -257,9 +257,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     mButtonPanel.setPreferredSize(new Dimension(570, n * 73));
 
     // Add all availableActions to the buttonPanel
-    for (int i = 0; i < this.mAvailableActions.size(); i++) {
-      Action a = (Action) this.mAvailableActions.elementAt(i);
-
+    for (Action a : mAvailableActions) {
       // <html> is needed to have a black color of the letters of a button,
       // because the Buttons have to be disabled for Drag'n'Drop
       JButton b = new JButton("<html>" + (String) a.getValue(Action.NAME)
@@ -398,11 +396,11 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
       if (target.equals(mButtonPanel)) {
         if (index == -1 && !s.getValue(Action.NAME).equals(name)) {
-          for (int i = 0; i < mCurrentActions.size(); i++) {
-            Action a = (Action) mCurrentActions.elementAt(i);
+          for (Action a : mCurrentActions) {
             if (a.getValue(Action.NAME).equals(name)) {
               mCurrentActions.removeElement(a);
               mAvailableActions.addElement(a);
+              break;
             }
           }
         } else if (index != -1) {

@@ -118,8 +118,7 @@ public class ToolBar extends JToolBar {
   public void update() {
     super.removeAll();
     Action[] actions = mModel.getActions();
-    for (int i = 0; i < actions.length; i++) {
-      Action action = actions[i];
+    for (Action action : actions) {
       Integer typeInteger = (Integer) action.getValue(ACTION_TYPE_KEY);
       int type = -1;
       if (typeInteger != null) {
@@ -178,6 +177,9 @@ public class ToolBar extends JToolBar {
         b.setBorder(BorderFactory.createEmptyBorder(b.getInsets().top,b.getInsets().left,b.getInsets().bottom,b.getInsets().right));
         b.setEnabled(false);
       }
+      if(this.getComponent(i) instanceof JToolBar.Separator)
+        ((JToolBar.Separator)this.getComponent(i)).setBorder(BorderFactory.createLineBorder(getBackground().darker().darker().darker()));
+      
       this.getComponent(i).addMouseListener(s);
     }
   }
