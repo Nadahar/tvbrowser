@@ -68,7 +68,7 @@ public class MutableProgram implements Program {
   private static final Marker[] EMPTY_MARKER_ARR = new Marker[0];
 
   /** Contains all listeners that listen for events from this program. */
-  private Vector mListenerList;
+  private Vector<ChangeListener> mListenerList;
 
   /** Containes all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
@@ -93,7 +93,7 @@ public class MutableProgram implements Program {
   private int mNormalizedStartTime;
   
   /** Contains for a {@link ProgramFieldType} (key) the field value. */
-  private HashMap mFieldHash;
+  private HashMap<ProgramFieldType,Object> mFieldHash;
 
   /** The state of this program */
   private int mState;
@@ -135,8 +135,8 @@ public class MutableProgram implements Program {
       throw new NullPointerException("localDate is null");
     }
     
-    mFieldHash = new HashMap();
-    mListenerList = new Vector();
+    mFieldHash = new HashMap<ProgramFieldType,Object>();
+    mListenerList = new Vector<ChangeListener>();
     mMarkedByPluginArr = EMPTY_MARKER_ARR;
     mOnAir = false;
 
@@ -207,13 +207,10 @@ public class MutableProgram implements Program {
    * @see EventListenerList
    */
   protected void fireStateChanged() {
-    Object[] listeners = mListenerList.toArray();
     ChangeEvent changeEvent = new ChangeEvent(this);
-    for (int i = listeners.length-1; i >= 0;i--) {
-      if (listeners[i] instanceof ChangeListener) {
-        ((ChangeListener)listeners[i]).stateChanged(changeEvent);
-      }
-    }
+    
+    for (ChangeListener listener : mListenerList)
+      listener.stateChanged(changeEvent);
   }
 
 
@@ -355,7 +352,7 @@ public class MutableProgram implements Program {
    */
   public PluginAccess[] getMarkedByPlugins() {
     PluginAccess plugin;
-    ArrayList list = new ArrayList();
+    ArrayList<PluginAccess> list = new ArrayList<PluginAccess>();
     for (int i=0; i<mMarkedByPluginArr.length; i++) {
       plugin = PluginProxyManager.getInstance().getPluginForId(mMarkedByPluginArr[i].getId());
       if (plugin != null) {
@@ -523,12 +520,22 @@ public class MutableProgram implements Program {
     return mFieldHash.keySet().iterator();
   }
   
-  
+  /**
+   * Set a binary field.
+   * 
+   * @param type The type of the field.
+   * @param value The binary value to set.
+   */
   public void setBinaryField(ProgramFieldType type, byte[] value) {
     setField(type, ProgramFieldType.BINARY_FORMAT, value);
   }
   
-  
+  /**
+   * Set a text field.
+   * 
+   * @param type The type of the field.
+   * @param value The text value to set.
+   */
   public void setTextField(ProgramFieldType type, String value) {
     // Special field treating
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
@@ -539,6 +546,12 @@ public class MutableProgram implements Program {
   }
   
   
+  /**
+   * Set an int field.
+   * 
+   * @param type The type of the field.
+   * @param value The int value to set.
+   */
   public void setIntField(ProgramFieldType type, int value) {
     Integer obj = null;
     if (value != -1) {
@@ -548,6 +561,12 @@ public class MutableProgram implements Program {
   }
   
   
+  /**
+   * Set a time field.
+   * 
+   * @param type The type of the field.
+   * @param value The time value to set.
+   */
   public void setTimeField(ProgramFieldType type, int value) {
     if ((value < 0) || (value >= (24 * 60))) {
       mLog.warning("The time value for field " + type.getName()
@@ -697,6 +716,9 @@ public class MutableProgram implements Program {
   }
 
   
+  /**
+   * @return The local start time.
+   */
   public int getLocalStartTime() {
     return getTimeField(ProgramFieldType.START_TIME_TYPE);
   }
@@ -778,6 +800,9 @@ public class MutableProgram implements Program {
     return mNormalizedDate;
   }
 
+  /**
+   * @return The local date
+   */
   public devplugin.Date getLocalDate() {
     return mLocalDate;
   }
