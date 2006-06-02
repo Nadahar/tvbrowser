@@ -38,7 +38,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -151,9 +150,12 @@ public class IOUtilities {
     throws IOException
   {
     URLConnection conn = page.openConnection();
+    conn.setReadTimeout(timeout);
+    
     if (followRedirects && (conn instanceof HttpURLConnection)) {
       HttpURLConnection hconn = (HttpURLConnection) conn;
       hconn.setInstanceFollowRedirects(false);
+      
       int response = hconn.getResponseCode();
       boolean redirect = (response >= 300 && response <= 399);
 
@@ -172,18 +174,6 @@ public class IOUtilities {
         }
         return getStream(page, followRedirects);
       }
-      else if (timeout > 0) {
-        try {
-          Method setReadTimeout = hconn.getClass().getMethod("setReadTimeout", new Class[] {int.class});
-          setReadTimeout.invoke(hconn, new Object[] {new Integer(timeout)});
-        }catch(Throwable e) {}
-      }
-    }
-    else if (timeout > 0) {
-      try {
-        Method setReadTimeout = conn.getClass().getMethod("setReadTimeout", new Class[] {int.class});
-        setReadTimeout.invoke(conn, new Object[] {new Integer(timeout)});
-      }catch(Throwable e) {}
     }
     
     InputStream in = conn.getInputStream();
