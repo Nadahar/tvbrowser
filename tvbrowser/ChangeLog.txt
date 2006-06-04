@@ -14,6 +14,7 @@ Changelog TVBrowser
  * 1494570 ReminderDialog don't reacts on key pressing
  * 1494840 Some important programs are not shown in Tray
  * 1495608 False detection of Icon-Theme 
+* 1353812 Printplugin:Last program of the day is always at the bottom
 
 2.2 Beta 2
 =========
