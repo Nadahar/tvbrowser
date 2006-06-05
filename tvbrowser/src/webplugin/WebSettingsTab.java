@@ -34,6 +34,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
@@ -70,7 +71,7 @@ public class WebSettingsTab implements SettingsTab {
     /** The original List */
     private ArrayList mOriginal;
     /** Work-List */
-    private ArrayList mCloned;
+    private DefaultListModel mListModel;
 
     /** JList */
     private JList mAddressList;
@@ -101,10 +102,10 @@ public class WebSettingsTab implements SettingsTab {
         mParent = frame;
         mOriginal = addresses;
 
-        mCloned = new ArrayList();
-        
+        mListModel = new DefaultListModel();
+
         for (int i = 0; i < mOriginal.size();i++) {
-            mCloned.add( ((WebAddress)mOriginal.get(i)).clone());
+          mListModel.addElement(((WebAddress)mOriginal.get(i)).clone());
         }
         
     }
@@ -117,9 +118,11 @@ public class WebSettingsTab implements SettingsTab {
       PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow","5dlu,pref,fill:default:grow"));
       CellConstraints cc = new CellConstraints();
       
-        JPanel panel = new JPanel(new GridBagLayout());
-        
-        mAddressList = new JList(mCloned.toArray());
+      JPanel panel = new JPanel(new GridBagLayout());
+
+      mAddressList = new JList(mListModel);
+
+
         mAddressList.setSelectedIndex(0);
         mAddressList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mAddressList.addListSelectionListener(new ListSelectionListener() {
@@ -284,7 +287,8 @@ public class WebSettingsTab implements SettingsTab {
         mDelete.setEnabled(adr.isUserEntry());
 
         mUp.setEnabled(mAddressList.getSelectedIndex() != 0);
-        mDown.setEnabled(mAddressList.getSelectedIndex() < mCloned.size()-1);
+      mDown.setEnabled(mAddressList.getSelectedIndex() < mListModel.size()-1);
+
     }
 
     /**
@@ -296,11 +300,11 @@ public class WebSettingsTab implements SettingsTab {
         int selected = mAddressList.getSelectedIndex();
         
         WebAddress adr = (WebAddress)mAddressList.getSelectedValue();
-        
-        mCloned.remove(adr);
-        
-        mCloned.add(selected + rows, adr);
-        
+
+        DefaultListModel model = (DefaultListModel)mAddressList.getModel();
+        model.removeElement(adr);
+        model.add(selected + rows, adr);
+
         mAddressList.setSelectedValue(adr, true);
     }    
     
@@ -319,18 +323,17 @@ public class WebSettingsTab implements SettingsTab {
         }
         
         int num = mAddressList.getSelectedIndex();
-        
-        mCloned.remove(num);
-        
+
+        mListModel.removeElementAt(num);
+
         num--;
-        
-        if (num >= mCloned.size()-1) {
-            num = mCloned.size()-1;
+
+      if (num >= mListModel.size()-1) {
+            num = mListModel.size()-1;
         }
 
-        mAddressList.setModel(createNewListModel());
         mAddressList.setSelectedIndex(num);      
-        mAddressList.updateUI();
+
     }
 
     /**
@@ -341,7 +344,7 @@ public class WebSettingsTab implements SettingsTab {
 
         WebAddressEditDialog editor;
         
-        Window win = (Window) UiUtilities.getLastModalChildOf(mParent); 
+        Window win = UiUtilities.getLastModalChildOf(mParent);
         
         if (win instanceof JDialog) {
             editor = new WebAddressEditDialog((JDialog)win, newadr);
@@ -352,29 +355,14 @@ public class WebSettingsTab implements SettingsTab {
         UiUtilities.centerAndShow(editor);
 
         if (editor.getReturnValue() == JOptionPane.OK_OPTION) {
-            mCloned.add(newadr);
-            mAddressList.setModel(createNewListModel());
-            mAddressList.setSelectedIndex(mCloned.size()-1);
-            mAddressList.updateUI();
+            mListModel.addElement(newadr);
+          mAddressList.setSelectedIndex(mListModel.size()-1);
+
         }
         
     }
     
     
-    /**
-     * Creates a new ListModel
-     * 
-     * @return ListModel to use
-     * @since 2.2
-     */
-    private ListModel createNewListModel() {
-      DefaultListModel model = new DefaultListModel();
-      int max = mCloned.size();
-      for (int i = 0;i<max;i++)
-        model.addElement(mCloned.get(i));
-      return model;
-    }
-
     /**
      * Edit was pressed
      */
@@ -387,7 +375,7 @@ public class WebSettingsTab implements SettingsTab {
         
         WebAddressEditDialog editor;
         
-        Window win = (Window) UiUtilities.getLastModalChildOf(mParent); 
+        Window win = UiUtilities.getLastModalChildOf(mParent);
         
         if (win instanceof JDialog) {
             editor = new WebAddressEditDialog((JDialog)win, seladr);
@@ -405,7 +393,8 @@ public class WebSettingsTab implements SettingsTab {
      */
     public void saveSettings() {
         mOriginal.clear();
-        mOriginal.addAll(mCloned);
+
+        mOriginal.addAll(Arrays.asList(mListModel.toArray()));
     }
 
     /* (non-Javadoc)

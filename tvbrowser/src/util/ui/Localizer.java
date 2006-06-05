@@ -94,6 +94,7 @@ public class Localizer {
    */  
   private String mKeyPrefix;
   
+  private ClassLoader mClassLoader;
   
 
   /**
@@ -121,16 +122,19 @@ public class Localizer {
       mBaseName = packageName + packageName.substring(lastDot);
     }
     
-    Locale locale = Locale.getDefault();
-   
+    mClassLoader = clazz.getClassLoader();
+    
+    loadResouceBundle();
+  }
+  
+  private void loadResouceBundle() {  
     try {
-      mBundle = ResourceBundle.getBundle(mBaseName, locale, clazz.getClassLoader());
+      mBundle = ResourceBundle.getBundle(mBaseName, Locale.getDefault(), mClassLoader);
     }
     catch (MissingResourceException exc) {
       mLog.warning("ResourceBundle not found: '" + mBaseName + "'");
     }
   }
-  
   
   
   /**
@@ -151,6 +155,9 @@ public class Localizer {
   }
 
 
+  /**
+   * Clears the localizer cache.
+   */
   public static void emptyLocalizerCache() {
     mLocalizerCache.clear();
   }
@@ -248,6 +255,9 @@ public class Localizer {
    * @return a localized message.
    */  
   public String msg(String key, String defaultMsg) {
+    if(mBundle != null && (mBundle.getLocale() != Locale.getDefault()))
+      loadResouceBundle();
+    
     key = mKeyPrefix + key;
     
     String msg = null;

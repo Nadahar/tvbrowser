@@ -59,6 +59,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.SystemTray;
 import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
@@ -310,6 +311,11 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.tvData", "Checking TV database...");
     splash.setMessage(msg);
 
+    /* Initialize the FavoritesPlugin to let it react on
+     * tvdata changes.
+     */
+    FavoritesPlugin.getInstance();
+    
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
 
@@ -329,6 +335,7 @@ public class TVBrowser {
             mainFrame.updateUI();
             PluginProxyManager.getInstance().fireTvBrowserStartFinished();
             ReminderPlugin.getInstance().handleTvBrowserStartFinished();
+            FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
           }
         });
       }
@@ -503,14 +510,18 @@ public class TVBrowser {
       mainFrame.runSetupAssistant();
     }
     else {
-      boolean automaticDownloadStarted = handleAutomaticDownload();
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          boolean automaticDownloadStarted = handleAutomaticDownload();
 
-      boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-      if (!automaticDownloadStarted && (! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
-        mainFrame.askForDataUpdate();
-      } else {
-        mainFrame.scrollToNow();
-      }
+          boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+          if (!automaticDownloadStarted && (! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
+            mainFrame.askForDataUpdate();
+          } else {
+            mainFrame.scrollToNow();
+          }
+        }
+      });
     }
   }
 

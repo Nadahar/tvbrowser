@@ -224,6 +224,10 @@ public class CaptureExecute {
         try {
             String path = mData.getProgramPath();            
             path = path.substring(0,path.lastIndexOf(File.separator) + 1);
+            
+            if(path == null || path.length() < 1 || !(new File(path).isDirectory()))
+              path = System.getProperty("user.dir");
+            
             p = Runtime.getRuntime().exec(mData.getProgramPath() + " " + params, null, new File(path));
         } catch (Exception e) {
             ErrorHandler.handle(mLocalizer.msg("ProblemAtStart", "Problems while starting Application."), e);

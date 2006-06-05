@@ -101,6 +101,12 @@ public class FavoritesPlugin implements ContextMenuIf{
   private PluginTreeNode mRootNode;
 
   private boolean mShowInfoOnNewProgramsFound = true;
+  
+  private boolean mIsAllowedToShowDialogs = false;
+  
+  private boolean showFavoriteInfoOnTVBStartFinished = false;
+  
+  private Favorite[] mUpdateFavorites;
 
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -131,10 +137,12 @@ public class FavoritesPlugin implements ContextMenuIf{
         }
 
         if(!showInfoFavorites.isEmpty()) {
-          Favorite[] fav = new Favorite[showInfoFavorites.size()];
-          showInfoFavorites.toArray(fav);
+          mUpdateFavorites = (Favorite[])showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
 
-          showManageFavoritesDialog(true, fav);
+          if(mIsAllowedToShowDialogs)
+            showManageFavoritesDialog(true, mUpdateFavorites);
+          else
+            showFavoriteInfoOnTVBStartFinished = true;
         }
       }
     });
@@ -145,7 +153,15 @@ public class FavoritesPlugin implements ContextMenuIf{
       new FavoritesPlugin();
     return mInstance;
   }
-
+  
+  public void handleTvBrowserStartFinished() {
+    mIsAllowedToShowDialogs = true;
+    
+    if(showFavoriteInfoOnTVBStartFinished) {
+      showFavoriteInfoOnTVBStartFinished = false;
+      showManageFavoritesDialog(true, mUpdateFavorites);
+    }
+  }
 
   private void load() {
     try {
@@ -455,7 +471,7 @@ public class FavoritesPlugin implements ContextMenuIf{
             Object[] o = {mLocalizer.msg("newPrograms-description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
                 chb
             };
-
+            
             JOptionPane.showMessageDialog(e.getComponent(),o);
 
             if(chb.isSelected())

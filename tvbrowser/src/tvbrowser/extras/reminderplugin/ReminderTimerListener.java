@@ -93,6 +93,8 @@ public class ReminderTimerListener {
         plugin.receivePrograms(prArray);
       }
     }
+    
+    ReminderPlugin.getInstance().updateRootNode();
   }
 
 

@@ -75,7 +75,7 @@ public class ChannelFilter {
     if (mCountry != null) {
       String country = channel.getCountry();
       if (country != null) {
-        if (!country.equals(mCountry)) {
+        if (!country.equalsIgnoreCase(mCountry)) {
           return false;
         }
       } else {
@@ -117,7 +117,7 @@ public class ChannelFilter {
   private String normalizeCharacters(String text) {
     text = text.toLowerCase().trim();
 
-    text = text.replaceAll("ö", "o").replaceAll("ä", "a").replaceAll("ü", "u").replaceAll("ß", "s").replaceAll("oe",
+    text = text.replaceAll("ï¿½", "o").replaceAll("ï¿½", "a").replaceAll("ï¿½", "u").replaceAll("ï¿½", "s").replaceAll("oe",
         "o").replaceAll("ae", "a").replaceAll("ue", "u").replaceAll("ss", "s");
 
     return text;

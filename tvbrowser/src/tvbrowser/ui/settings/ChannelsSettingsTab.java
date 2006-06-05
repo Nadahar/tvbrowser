@@ -259,7 +259,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     result.add(panel, BorderLayout.CENTER);
 
     LinkButton urlLabel = new LinkButton(mLocalizer.msg("addMoreChannels",
-        "Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier für eine Liste weiterer Sender."), mLocalizer.msg(
+        "Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier fï¿½r eine Liste weiterer Sender."), mLocalizer.msg(
         "addMoreChannelsUrl", "http://wiki.tvbrowser.org/index.php/Senderliste"));
 
     JPanel buttonsPanel = new JPanel(new BorderLayout());
@@ -411,7 +411,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     for (int i = 0; i < allChannels.length; i++) {
       String country = allChannels[i].getCountry();
       if (country != null) {
-        countries.add(country);
+        countries.add(country.toLowerCase());
       }
     }
 

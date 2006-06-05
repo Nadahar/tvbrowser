@@ -488,8 +488,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener {
       ScrollableMenu menu = new ScrollableMenu();
       popup = menu.getPopupMenu();
 
-      Channel[] channels = Settings.propSubscribedChannels
-          .getChannelArray(false);
+      Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
       for (int i = 0; i < channels.length; i++)
         menu.add(createChannelMenuItem(channels[i], btn));
     } else if (item == mScrollToTimeAction) {

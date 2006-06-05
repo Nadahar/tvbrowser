@@ -25,6 +25,8 @@
  */
 package util.settings;
 
+import java.util.ArrayList;
+
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
@@ -57,13 +59,14 @@ public class ChannelArrayProperty extends Property {
   }
 
 
-  public Channel[] getChannelArray(boolean allowNullValues) {
+  public Channel[] getChannelArray() {
     if (mCachedValue == null) {
       String asString = getProperty();
   
       if (asString != null) {
         String[] splits = asString.split(",");
-        mCachedValue = new Channel[splits.length];
+        
+        ArrayList channels = new ArrayList();
         
         for (int i = 0; i < splits.length; i++) {
           int pos = splits[i].indexOf(':');
@@ -74,15 +77,15 @@ public class ChannelArrayProperty extends Property {
             TvDataServiceProxy dataService
               = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
               
-            mCachedValue[i] = ChannelList.getChannel(dataService, id);
-          }
-          
-          if ((! allowNullValues) && (mCachedValue[i] == null)) {
-            // invalid entry -> cancel
-            mCachedValue = null;
-            break;
+            Channel ch = ChannelList.getChannel(dataService, id);
+            if (ch != null) {
+              channels.add(ch);
+            }
           }
         }
+
+        mCachedValue = new Channel[channels.size()];
+        mCachedValue = (Channel[]) channels.toArray(mCachedValue);
       }
   
       if (mCachedValue == null) {
