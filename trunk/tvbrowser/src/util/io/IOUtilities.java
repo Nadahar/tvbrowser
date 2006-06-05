@@ -451,8 +451,6 @@ public class IOUtilities {
   
   /**
    * Unzips a GZIP-file (.gz).
-   * <p>
-   * Currently not used.
    *
    * @param srcFile The GZIP-File to unzip
    * @param targetFile The file where to store the data.
