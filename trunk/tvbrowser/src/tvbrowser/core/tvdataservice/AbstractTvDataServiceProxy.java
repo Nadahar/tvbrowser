@@ -65,8 +65,10 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
     ArrayList list = new ArrayList();
     for (int i=0; i<groups.length; i++) {
       Channel[] ch = getAvailableChannels(groups[i]);
-      for (int k=0; k<ch.length; k++) {
-        list.add(ch[k]);
+      if (ch != null) {
+        for (int k=0; k<ch.length; k++) {
+          list.add(ch[k]);
+        }
       }
     }
     return (Channel[])list.toArray(new Channel[list.size()]);

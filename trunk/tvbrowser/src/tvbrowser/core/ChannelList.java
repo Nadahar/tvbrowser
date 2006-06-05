@@ -187,10 +187,14 @@ public class ChannelList {
    * given ID does not exist.
    */
   public static Channel getChannel(TvDataServiceProxy dataService, String id) {
+    if (dataService == null) {
+      return null;
+    }
+    
     Iterator iter = mAvailableChannels.iterator();
     while (iter.hasNext()) {
       Channel channel = (Channel) iter.next();
-
+      
       if (channel.getDataServiceProxy().getId().equals(dataService.getId()) && channel.getId().equals(id)) {
         return channel;
       }
