@@ -154,7 +154,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
     // Should we search in all channels?
     if (channels == null) {
-      channels = Settings.propSubscribedChannels.getChannelArray(false);
+      channels = Settings.propSubscribedChannels.getChannelArray();
     }
 
     if (nrDays < 0) {

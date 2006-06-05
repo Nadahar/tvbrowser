@@ -52,7 +52,7 @@ import devplugin.SettingsTab;
 /**
  * Channel settings for the program showing in tray.
  * 
- * @author René Mach
+ * @author Renï¿½ Mach
  *
  */
 public class TrayProgramsChannelsSettingsTab implements SettingsTab {
@@ -86,8 +86,8 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     mUseUserChannels.setToolTipText(mLocalizer.msg("userChannelsToolTip","<html>If you select this you can choose the channels that will be used for<br><b>Programs at...</b> and <b>Now/Soon running programs</b>.<br>If this isn't selected the first 10 channels in default order will be used.</html>"));
     
     mChannelOCh = new OrderChooser(
-        Settings.propTraySpecialChannels.getChannelArray(false),
-        Settings.propSubscribedChannels.getChannelArray(false), true);
+        Settings.propTraySpecialChannels.getChannelArray(),
+        Settings.propSubscribedChannels.getChannelArray(), true);
     
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."),new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -151,7 +151,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     Channel[] ch = new Channel[order.length];
 
     if(!mUseUserChannels.isSelected()) {
-      order = Settings.propSubscribedChannels.getChannelArray(false);
+      order = Settings.propSubscribedChannels.getChannelArray();
       ch = new Channel[order.length > 10 ? 10 : order.length];
     }
 

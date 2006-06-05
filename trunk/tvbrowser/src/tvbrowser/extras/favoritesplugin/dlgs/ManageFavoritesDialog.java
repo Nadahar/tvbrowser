@@ -503,7 +503,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     Favorite favorite;
     if (FavoritesPlugin.getInstance().isUsingExpertMode()) {
       favorite = new AdvancedFavorite("");
-      EditFavoriteDialog dlg = new EditFavoriteDialog((Dialog)this, favorite);
+      EditFavoriteDialog dlg = new EditFavoriteDialog(this, favorite);
       UiUtilities.centerAndShow(dlg);
 
       if (!dlg.getOkWasPressed()) {
@@ -511,7 +511,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       }
 
     } else {
-      WizardHandler handler = new WizardHandler(UiUtilities.getBestDialogParent(null), new TypeWizardStep());
+      WizardHandler handler = new WizardHandler(this, new TypeWizardStep());
       favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
     }
 

@@ -43,6 +43,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.*;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.LinkButton;
 import util.ui.UiUtilities;
 
@@ -152,7 +153,7 @@ public class TypeWizardStep extends AbstractWizardStep {
           title = "";
         }
         AdvancedFavorite favorite = new AdvancedFavorite(title);
-        Component parent = UiUtilities.getBestDialogParent(null);
+        Component parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         EditFavoriteDialog dlg;
         if (parent instanceof Dialog) {
           dlg = new EditFavoriteDialog((Dialog) parent, favorite);

@@ -52,110 +52,112 @@ public class ProgramFieldType {
 
   public static final ProgramFieldType START_TIME_TYPE
     = new ProgramFieldType(1, TIME_FORMAT, true, "start time",
-                           mLocalizer.msg("startTime", "Start time"));
+                           "startTime", "Start time");
                            
   public static final ProgramFieldType END_TIME_TYPE
     = new ProgramFieldType(2, TIME_FORMAT, true, "end time",
-                           mLocalizer.msg("endTime", "End time"));
+                           "endTime", "End time");
                            
   public static final ProgramFieldType TITLE_TYPE
     = new ProgramFieldType(3, TEXT_FORMAT, true, "title",
-                           mLocalizer.msg("title", "Title"));
+                           "title", "Title");
     
   public static final ProgramFieldType ORIGINAL_TITLE_TYPE
     = new ProgramFieldType(4, TEXT_FORMAT, true, "original title",
-                           mLocalizer.msg("originalTitle", "Original title"));
+                           "originalTitle", "Original title");
     
   public static final ProgramFieldType EPISODE_TYPE
     = new ProgramFieldType(5, TEXT_FORMAT, true, "episode",
-                           mLocalizer.msg("episode", "Episode"));
+                           "episode", "Episode");
     
   public static final ProgramFieldType ORIGINAL_EPISODE_TYPE
     = new ProgramFieldType(6, TEXT_FORMAT, true, "original episode",
-                           mLocalizer.msg("originalEpisode", "Original episode"));
+                           "originalEpisode", "Original episode");
     
   public static final ProgramFieldType SHORT_DESCRIPTION_TYPE
     = new ProgramFieldType(7, TEXT_FORMAT, true, "short description",
-                           mLocalizer.msg("shortDescriprion", "Short description"));
+                           "shortDescriprion", "Short description");
 
   public static final ProgramFieldType DESCRIPTION_TYPE
     = new ProgramFieldType(8, TEXT_FORMAT, true, "description",
-                           mLocalizer.msg("descriprion", "Description"));
+                           "descriprion", "Description");
 
   public static final ProgramFieldType IMAGE_TYPE
     = new ProgramFieldType(9, BINARY_FORMAT, true, "image",
-                           mLocalizer.msg("image", "Image"));
+                           "image", "Image");
 
   public static final ProgramFieldType ACTOR_LIST_TYPE
     = new ProgramFieldType(10, TEXT_FORMAT, true, "actor list",
-                           mLocalizer.msg("actors", "Actors"));
+                           "actors", "Actors");
 
   public static final ProgramFieldType DIRECTOR_TYPE
     = new ProgramFieldType(11, TEXT_FORMAT, true, "director",
-                           mLocalizer.msg("director", "Director"));
+                           "director", "Director");
 
   public static final ProgramFieldType SHOWVIEW_NR_TYPE
     = new ProgramFieldType(12, TEXT_FORMAT, true, "showview number",
-                           mLocalizer.msg("showview", "Showview"));
+                           "showview", "Showview");
 
   public static final ProgramFieldType INFO_TYPE
     = new ProgramFieldType(13, INT_FORMAT, true, "info bits",
-                           mLocalizer.msg("formatInfo", "Format information"));
+                           "formatInfo", "Format information");
 
   public static final ProgramFieldType AGE_LIMIT_TYPE
     = new ProgramFieldType(14, INT_FORMAT, true, "age limit",
-                           mLocalizer.msg("ageLimit", "Age limit"));
+                           "ageLimit", "Age limit");
 
   public static final ProgramFieldType URL_TYPE
     = new ProgramFieldType(15, TEXT_FORMAT, true, "film url",
-                           mLocalizer.msg("filmUrl", "Website"));
+                           "filmUrl", "Website");
                            
   public static final ProgramFieldType GENRE_TYPE
     = new ProgramFieldType(16, TEXT_FORMAT, true, "genre",
-                           mLocalizer.msg("genre", "Genre"));                         
+                           "genre", "Genre");                         
 
   public static final ProgramFieldType ORIGIN_TYPE
     = new ProgramFieldType(17, TEXT_FORMAT, true, "origin",
-                           mLocalizer.msg("origin", "Origin"));
+                           "origin", "Origin");
 
   public static final ProgramFieldType NET_PLAYING_TIME_TYPE
     = new ProgramFieldType(18, INT_FORMAT, true, "net playing time",
-                           mLocalizer.msg("netPlayingTime", "Net playing time"));
+                           "netPlayingTime", "Net playing time");
 
   public static final ProgramFieldType VPS_TYPE
     = new ProgramFieldType(19, TIME_FORMAT, true, "vps",
-                           mLocalizer.msg("vps", "VPS"));
+                           "vps", "VPS");
 
   public static final ProgramFieldType SCRIPT_TYPE
     = new ProgramFieldType(20, TEXT_FORMAT, true, "script",
-                           mLocalizer.msg("script", "Script"));
+                           "script", "Script");
 
   public static final ProgramFieldType REPETITION_OF_TYPE
     = new ProgramFieldType(21, TEXT_FORMAT, true, "repition of",
-                           mLocalizer.msg("repetitionOf", "Repetition of"));
+                           "repetitionOf", "Repetition of");
    
   public static final ProgramFieldType MUSIC_TYPE
     = new ProgramFieldType(22, TEXT_FORMAT, true, "music",
-                           mLocalizer.msg("music", "Music"));
+                           "music", "Music");
     
   public static final ProgramFieldType MODERATION_TYPE
     = new ProgramFieldType(23, TEXT_FORMAT, true, "moderation",
-                           mLocalizer.msg("moderation", "Moderation"));
+                           "moderation", "Moderation");
     
   public static final ProgramFieldType PRODUCTION_YEAR_TYPE
     = new ProgramFieldType(24, INT_FORMAT, true, "production year",
-                           mLocalizer.msg("productionYear", "Production year"));
+                           "productionYear", "Production year");
 
   public static final ProgramFieldType REPETITION_ON_TYPE
       = new ProgramFieldType(25, TEXT_FORMAT, true, "repition on",
-                           mLocalizer.msg("repetitionOn", "Repetition on"));
+                           "repetitionOn", "Repetition on");
 
   private int mTypeId;
 
   private String mName;
 
   private String mLocalizedName;
-
+  
+  private String mLocalizerKey, mLocalizerDefaultMsg;
+  
   private int mFormat;
 
 
@@ -165,12 +167,14 @@ public class ProgramFieldType {
    * @param name
    */
   private ProgramFieldType(int typeId, int format, boolean isKnownType,
-    String name, String localizedName)
+    String name, String localizerKey, String localizerDefaultMsg)
   {
     mTypeId = typeId;
     mFormat = format;
     mName = name;
-    mLocalizedName = localizedName;
+    mLocalizedName = null;
+    mLocalizerKey = localizerKey;
+    mLocalizerDefaultMsg = localizerDefaultMsg;
     
     if (isKnownType) {
       mKnownTypeList.add(this);
@@ -189,8 +193,7 @@ public class ProgramFieldType {
     }
     
     return new ProgramFieldType(typeId, UNKOWN_FORMAT, false,
-                                "unknown (" + typeId + ")",
-                                mLocalizer.msg("unknown", "Unknown"));
+                                "unknown (" + typeId + ")","unknown", "Unknown");
   }
   
   
@@ -223,7 +226,10 @@ public class ProgramFieldType {
   
 
   public String getLocalizedName() {
-    return mLocalizedName;
+    if(mLocalizedName == null)
+      mLocalizedName = mLocalizer.msg(mLocalizerKey, mLocalizerDefaultMsg);
+    
+    return mLocalizedName; 
   }
 
 

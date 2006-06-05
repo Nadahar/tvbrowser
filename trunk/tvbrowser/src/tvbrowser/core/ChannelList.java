@@ -65,7 +65,7 @@ public class ChannelList {
 
 
   public static void initSubscribedChannels() {
-    Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray(true);
+    Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
 
     for (int i = 0; i < channelArr.length; i++) {
       if (channelArr[i] != null) {
@@ -190,7 +190,7 @@ public class ChannelList {
     if (dataService == null) {
       return null;
     }
-    
+
     Iterator iter = mAvailableChannels.iterator();
     while (iter.hasNext()) {
       Channel channel = (Channel) iter.next();

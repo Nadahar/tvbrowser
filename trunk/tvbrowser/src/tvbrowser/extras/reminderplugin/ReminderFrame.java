@@ -252,6 +252,7 @@ public class ReminderFrame implements WindowClosingIf {
     if (minutes != -1) {
       mReminderList.add(mProgram, minutes);
       mReminderList.unblockProgram(mProgram);
+      ReminderPlugin.getInstance().updateRootNode();
     }
     
     if (mAutoCloseTimer != null) {

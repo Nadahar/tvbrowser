@@ -259,10 +259,8 @@ public class SystemTray {
       mSystemTray.setVisible(Settings.propTrayIsEnabled.getBoolean());
 
       if (!Settings.propTrayUseSpecialChannels.getBoolean()
-          && Settings.propTraySpecialChannels
-              .getChannelArray(false).length == 0) {
-        Channel[] channelArr = Settings.propSubscribedChannels
-            .getChannelArray(false);
+          && Settings.propTraySpecialChannels.getChannelArray().length == 0) {
+        Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
         Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
             : channelArr.length];
         for (int i = 0; i < tempArr.length; i++)
@@ -326,8 +324,7 @@ public class SystemTray {
   private void searchForToAddingPrograms() {
     // show the now/soon running programs
     try {
-      Channel[] channels = Settings.propSubscribedChannels
-          .getChannelArray(false);
+      Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
 
       JComponent subMenu;
 
@@ -347,8 +344,7 @@ public class SystemTray {
        * Fill the ArrayList to support storing the programs on the correct
        * position in the list.
        */
-      for (int i = 0; i < Settings.propTraySpecialChannels
-          .getChannelArray(false).length; i++) {
+      for (int i = 0; i < Settings.propTraySpecialChannels.getChannelArray().length; i++) {
         programs.add(i, null);
         nextPrograms.add(i, null);
       }
@@ -526,8 +522,7 @@ public class SystemTray {
    * @return True if the channel is on the tray channel list.
    */
   private boolean isOnChannelList(Channel ch) {
-    Channel[] channels = Settings.propTraySpecialChannels
-        .getChannelArray(false);
+    Channel[] channels = Settings.propTraySpecialChannels.getChannelArray();
 
     for (Channel channel : channels)
       if (ch.getId().compareTo(channel.getId()) == 0)
@@ -541,8 +536,7 @@ public class SystemTray {
    * @return The index of the channel in the tray channel list.
    */
   private int getIndexOfChannel(Channel ch) {
-    Channel[] channels = Settings.propTraySpecialChannels
-        .getChannelArray(false);
+    Channel[] channels = Settings.propTraySpecialChannels.getChannelArray();
 
     for (int i = 0; i < channels.length; i++)
       if (ch.getId().compareTo(channels[i].getId()) == 0)
@@ -649,13 +643,12 @@ public class SystemTray {
   private void createTimeProgramMenu(JMenu menu, int time) {
     // the menu is empty, so search for the programs at the time
     if (menu.getMenuComponentCount() < 1) {
-      Channel[] c = Settings.propSubscribedChannels.getChannelArray(false);
+      Channel[] c = Settings.propSubscribedChannels.getChannelArray();
 
       ArrayList<ProgramMenuItem> programs = new ArrayList<ProgramMenuItem>();
       ArrayList<ProgramMenuItem> additional = new ArrayList<ProgramMenuItem>();
       
-      for (int i = 0; i < Settings.propTraySpecialChannels
-          .getChannelArray(false).length; i++)
+      for (int i = 0; i < Settings.propTraySpecialChannels.getChannelArray().length; i++)
         programs.add(i, null);
 
       for (Channel ch : c) {
