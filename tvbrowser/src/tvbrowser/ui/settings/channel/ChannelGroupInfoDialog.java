@@ -165,14 +165,18 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
     TvDataServiceProxy proxy = ChannelGroupManager.getInstance().getTvDataService(mChannelGroup);
     if (proxy != null) {
       Channel[] ch = proxy.getAvailableChannels(mChannelGroup);
-      StringBuffer buf = new StringBuffer();
-      for (int i=0; i<ch.length-1; i++) {
-        buf.append(ch[i].getName()).append(", ");
+      
+      if (ch != null) {
+        StringBuffer buf = new StringBuffer();
+
+        for (int i=0; i<ch.length-1; i++) {
+          buf.append(ch[i].getName()).append(", ");
+        }
+        if (ch.length>0) {
+          buf.append(ch[ch.length-1].getName());
+        }
+        html.append(HTMLTextHelper.convertTextToHtml(buf.toString(), false));
       }
-      if (ch.length>0) {
-        buf.append(ch[ch.length-1].getName());
-      }
-      html.append(HTMLTextHelper.convertTextToHtml(buf.toString(), false));
     }
 
 
