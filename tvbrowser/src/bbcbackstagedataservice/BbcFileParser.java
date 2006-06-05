@@ -54,24 +54,50 @@ import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
+/**
+ * This class parses the BBC Files
+ * 
+ * @author bodum
+ */
 public class BbcFileParser {
+  /** Logger */
   private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(BbcFileParser.class
       .getName());
 
-  MutableChannelDayProgram mMutablechanneldayprogram;
-  Date mChannelDate;
-  int mHour = 0;
+  /** Stores the Data */
+  private MutableChannelDayProgram mMutablechanneldayprogram;
+  /** Current Date */
+  private Date mChannelDate;
+  /** Current Time */
+  private int mHour = 0;
   
+  /**
+   * 
+   * @param mutablechanneldayprogram
+   * @param channeldate
+   */
   public BbcFileParser(MutableChannelDayProgram mutablechanneldayprogram, Date channeldate) {
     mMutablechanneldayprogram = mutablechanneldayprogram;
     mChannelDate = channeldate;
   }
 
+  /**
+   * Checks if the Files exist and starts parsing
+   * @param file
+   * @throws IOException
+   * @throws TVAnytimeException
+   */
   public void parseFile(File file) throws IOException, TVAnytimeException {
     if (new File(file.getAbsoluteFile() + "_pi.xml").exists())
       analyseFile(file);
   }
   
+  /**
+   * Parses the BBC Files
+   * @param file
+   * @throws IOException
+   * @throws TVAnytimeException
+   */
   public void analyseFile(File file) throws IOException, TVAnytimeException {
     // Create parser
     SAXXMLParser parser = new SAXXMLParser();

@@ -44,6 +44,7 @@ import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import util.ui.Localizer;
 import bbc.rd.tvanytime.TVAnytimeException;
 import bbc.rd.tvanytime.serviceInformation.ServiceInformation;
 import bbc.rd.tvanytime.xml.NonFatalXMLException;
@@ -64,7 +65,9 @@ import devplugin.Version;
 public class BbcBackstageDataService extends AbstractTvDataService {
   /** Base-URL */
   private static final String BASEURL = "http://backstage.bbc.co.uk/feeds/tvradio/";
-
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer
+          .getLocalizerFor(BbcBackstageDataService.class);
   /**
    * Logger
    */
@@ -75,7 +78,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    * Channelgroup
    */
   private ChannelGroup mBbcChannelGroup = new BbcChannelGroup("BBC Backstage", "bbcbackstage",
-      "Data from BBC Backstage", "BBC Backstage");
+      mLocalizer.msg("desc", "Data from BBC Backstage"), "BBC Backstage");
 
   /**
    * List of Channels
@@ -103,11 +106,11 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     try {
       ArrayList<Channel> channels = new ArrayList<Channel>();
 
-      monitor.setMessage("Loading BBC Data");
+      monitor.setMessage(mLocalizer.msg("loading", "Loading BBC data"));
       
       loadBBCData();
       
-      monitor.setMessage("Parsing BBC Data");
+      monitor.setMessage(mLocalizer.msg("parsing", "Parsing BBC Data"));
       // Create parser
       SAXXMLParser parser = new SAXXMLParser();
       // Configure the parser to parse the standard profile (ie. everything).
@@ -124,7 +127,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
         nfxe.printStackTrace();
       }
 
-      monitor.setMessage("Storing BBC Data");
+      monitor.setMessage(mLocalizer.msg("store", "Storing BBC Data"));
       
       int max = parser.getServiceInformationTable().getNumServiceInformations();
       for (int i = 0; i < max; i++) {
@@ -138,7 +141,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
 
       mChannels = channels;
 
-      monitor.setMessage("Done BBC Data");
+      monitor.setMessage(mLocalizer.msg("done", "Done with BBC data"));
 
       return (Channel[]) channels.toArray(new Channel[channels.size()]);
     } catch (TVAnytimeException tvae) {
@@ -174,7 +177,8 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    * @see devplugin.TvDataService#getInfo()
    */
   public PluginInfo getInfo() {
-    return new PluginInfo("BBC Data", "BBC Data from BBC Backstage", "Bodo Tasche", new Version(0, 1));
+    return new PluginInfo(mLocalizer.msg("name","BBC Data"), 
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 10));
   }
 
   /*
@@ -268,6 +272,8 @@ public class BbcBackstageDataService extends AbstractTvDataService {
 
     int max = channelArr.length;
     
+    monitor.setMessage(mLocalizer.msg("loading", "Loading BBC data"));
+    
     monitor.setMessage("Loading BBC-Data");
     monitor.setMaximum(3+dateCount);
 
@@ -275,7 +281,8 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     
     loadBBCData();
     
-    monitor.setMessage("Parsing BBC Data");
+    monitor.setMessage(mLocalizer.msg("parsing", "Parsing BBC Data"));
+
     monitor.setValue(3);
     for (int i=0;i<dateCount;i++) {
       monitor.setValue(3+i);
