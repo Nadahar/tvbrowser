@@ -282,18 +282,18 @@ public class MutableProgram implements Program {
   /**
    * Marks the program for a plugin.
    * 
-   * @param plugin The plugin to mark the program for.
+   * @param marker The plugin to mark the program for.
    */
-  public final void mark(Marker plugin) {
+  public final void mark(Marker marker) {
     
-    boolean alreadyMarked = getMarkedByPluginIndex(plugin) != -1;
+    boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
     int oldCount = mMarkedByPluginArr.length;
     
     if (! alreadyMarked) {
       // Append the new plugin
       Marker[] newArr = new Marker[oldCount + 1];
       System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, oldCount);
-      newArr[oldCount] = plugin;
+      newArr[oldCount] = marker;
       mMarkedByPluginArr = newArr;
       
       fireStateChanged();
@@ -303,22 +303,22 @@ public class MutableProgram implements Program {
       MarkedProgramsList.getInstance().addProgram(this);
   }
 
-
   /**
    * Removes the marks from the program for a plugin.
    * <p>
    * If the program wasn't marked for the plugin, nothing happens.
    * 
-   * @param plugin The plugin to remove the mark for.
+   * @param marker The plugin to remove the mark for.
    */
-  public final void unmark(Marker plugin) {
+  public final void unmark(Marker marker) {
     
-    int idx = getMarkedByPluginIndex(plugin);
+    int idx = getMarkedByPluginIndex(marker);
     if (idx != -1) {
       if (mMarkedByPluginArr.length == 1) {
         // This was the only plugin
         mMarkedByPluginArr = EMPTY_MARKER_ARR;
-      } else {
+      }
+      else {
         int oldCount = mMarkedByPluginArr.length;
         Marker[] newArr = new Marker[oldCount - 1];
         System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, idx);
@@ -867,6 +867,16 @@ public class MutableProgram implements Program {
    */
   public int getProgramState() {
     return mState;
+  }
+
+  /**
+   * Informs the ChangeListeners for repainting if a Plugin
+   * uses more than one Icon for the Program. 
+   *
+   * @since 2.3
+   */
+  public final void validateMarking() {
+    fireStateChanged();
   }
  
 }

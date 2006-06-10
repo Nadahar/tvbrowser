@@ -36,5 +36,8 @@ public interface Marker {
   public String getId();
   
   public Icon getMarkIcon();
+  
+  /** @since 2.3 */
+  public Icon[] getMarkIcons(Program p);
 
 }

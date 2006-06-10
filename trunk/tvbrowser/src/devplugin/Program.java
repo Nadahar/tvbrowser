@@ -267,4 +267,13 @@ public interface Program {
    * @since 2.2
    */
   public int getProgramState();
+  
+  /**
+   * Informs the ChangeListeners for repainting if a Plugin
+   * uses more than one Icon for the Program. 
+   *
+   * @see Plugin.getMarkIconsForProgram(Program)
+   * @since 2.3
+   */
+  public void validateMarking();
 }
