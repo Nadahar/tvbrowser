@@ -82,7 +82,6 @@ public class RadioTimesFileParser {
 
         if (date.compareTo(endDate) >  0) {
           reader.close();
-          System.out.println("END-Zeitpunkt erreicht!");
           return;
         }
         
@@ -94,8 +93,6 @@ public class RadioTimesFileParser {
         
         prog.setTitle(items[0]);
 
-        System.out.println(time[0]+":"+ time[1]+"    " +items[0]);
-        
         StringBuilder desc = new StringBuilder(items[1].trim()).append("\n\n");
         desc.append(items[17]);
         prog.setTextField(ProgramFieldType.DESCRIPTION_TYPE, desc.toString().trim());
@@ -135,6 +132,8 @@ public class RadioTimesFileParser {
         if (items[13].trim().equalsIgnoreCase("true")) {
           bitset = bitset | Program.INFO_VISION_BLACK_AND_WHITE;
         }
+       
+        prog.setInfo(bitset);
         
         try {
           int age = Integer.parseInt(items[15]);
