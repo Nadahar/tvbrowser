@@ -28,6 +28,8 @@ package tvbrowser.extras.common;
 
 import javax.swing.Icon;
 
+import devplugin.Program;
+
 
 public class DefaultMarker implements devplugin.Marker {
 
@@ -45,6 +47,10 @@ public class DefaultMarker implements devplugin.Marker {
 
   public Icon getMarkIcon() {
     return mIcon;
+  }
+
+  public Icon[] getMarkIcons(Program p) {
+    return new Icon[] {mIcon};
   }
 
 }
