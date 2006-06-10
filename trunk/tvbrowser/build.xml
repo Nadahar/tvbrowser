@@ -368,6 +368,12 @@
 			<fileset dir="${unpacked.dir}/commons-compress-20050911.jar" includes="**" />
 		</jar>
 
+		<!-- Pack RadioTimes data service -->
+		<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false">
+			<fileset dir="${classes.dir}" includes="radiotimesdataservice/**" />
+		</jar>
+
+		
 		<!-- Copy the other stuff -->
 		<echo message="Copying the images and all the other stuff ..." />
 		<mkdir dir="${tvbrowser-default.runtime.dir}/imgs" />
