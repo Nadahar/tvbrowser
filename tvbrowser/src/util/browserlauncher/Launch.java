@@ -64,7 +64,7 @@ public class Launch {
   public static int OS_WINDOWS = 1;
   /** Other OS JVM */
   public static int OS_OTHER = 2;
-  
+
   /**
    * Opens an URL in a web-browser
    * @param url Url to open
@@ -149,7 +149,7 @@ public class Launch {
       }
     }
   }
-
+  
   /**
    * Returns the OS of the VM
    * @return VM OS_MAC, OS_WINDOWS or OS_OTHER
@@ -164,5 +164,13 @@ public class Launch {
     }
     
     return OS_OTHER;
+  }
+  
+  /**
+   * 
+   * @return If the OS is Windows NT branch.
+   */
+  public static boolean isOsWindowsNtBranch() {
+    return BrowserLauncher.getJvm() == 6;
   }
 }
