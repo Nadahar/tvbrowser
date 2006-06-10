@@ -472,11 +472,13 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     int x = width - 1;
     int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight() + 18;
     y = Math.min(y, height - 1);
-    for (int i = 0; i < markedByPluginArr.length; i++) {
-      Icon icon = markedByPluginArr[i].getMarkIcon();
-      if (icon != null) {
-        x -= icon.getIconWidth();
-        icon.paintIcon(this, grp, x, y - icon.getIconHeight());
+    for (Marker marker: markedByPluginArr) {
+      Icon[] icons = marker.getMarkIcons(mProgram);
+      if (icons != null) {
+        for(Icon icon : icons) {
+          x -= icon.getIconWidth();
+          icon.paintIcon(this, grp, x, y - icon.getIconHeight());
+        }
       }
     }
 
@@ -484,10 +486,10 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     if (mIconArr != null) {
       x = 2;
       y = mTimeFont.getSize() + 3;
-      for (int i = 0; i < mIconArr.length; i++) {
-        int iconHeight = mIconArr[i].getIconHeight();
+      for (Icon icon : mIconArr) {
+        int iconHeight = icon.getIconHeight();
         if ((y + iconHeight) < mHeight) {
-          mIconArr[i].paintIcon(this, grp, x, y);
+          icon.paintIcon(this, grp, x, y);
           y += iconHeight + 2;
         }
       }

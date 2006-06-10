@@ -312,12 +312,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   
   /**
-   * Really gets the icon to use for marking programs in the program table.
+   * Really gets the icons to use for marking programs in the program table.
    * 
-   * @return the icon to use for marking programs in the program table.
+   * @return the icons to use for marking programs in the program table.
    */
-  protected Icon doGetMarkIcon() {
-    return mPlugin.getMarkIcon();
+  protected Icon[] doGetMarkIcons(Program p) {
+    return mPlugin.getMarkIcons(p);
   }
 
   
@@ -410,9 +410,8 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   public boolean doCanUseProgramTree() {
     return mPlugin.canUseProgramTree();
   }
-
   
   public PluginTreeNode getRootNode() {
     return mPlugin.getRootNode();
-  }  
+  }
 }

@@ -102,7 +102,7 @@ abstract public class Plugin implements Marker,ContextMenuIf {
 
   /** The cached icon to use for marking programs. */
   private Icon mMarkIcon;
-
+  
   /**
    * The old member for the parent frame.
    * <p>
@@ -210,6 +210,18 @@ abstract public class Plugin implements Marker,ContextMenuIf {
     return ImageUtilities.createImageIconFromJar(fileName, getClass());
   }
 
+  /**
+   * Helper method that loads an ImageIcon from the file system and returns
+   * it.
+   * 
+   * @param fileName The name of the icon file.
+   * @return The icon.
+   * @since 2.3
+   */
+  final protected ImageIcon createImageIconForFileName(String fileName) {
+    return ImageUtilities.createImageIconFromJar(fileName, null);
+  }
+  
   /**
    * Helper method that Loads an ImageIcon from the IconTheme
    * 
@@ -521,9 +533,45 @@ abstract public class Plugin implements Marker,ContextMenuIf {
       }
       
     }
+    
     return mMarkIcon;
   }
+  
+  /**
+   * Gets the icons used for marking programs in the program table.
+   * 
+   * @return the icons to use for marking programs in the program table.
+   * 
+   * @since 2.3
+   */
+  public final Icon[] getMarkIcons(Program p) {
+    if(getMarkIcon() != null)  
+      return new Icon[] {getMarkIcon()};
+    
+    Icon[] icon = getMarkIconsForProgram(p);
+    
+    if(icon == null)
+      return new Icon[0];
+    else
+      return icon;
+  }
+  
 
+  /**
+   * This gets the mark icons for a Program.
+   * 
+   * Please cache the icons in the Plugin.
+   * 
+   * @see Program.validateMarking() for using this correctly.
+   * 
+   * @param p The Program to get the icons for.
+   * @return The icons for the Program.
+   * @since 2.3
+   */
+  public Icon[] getMarkIconsForProgram(Program p) {
+    return null;
+  }
+  
   /**
    * This gets the ThemeIcon containg your mark icon.
    * 

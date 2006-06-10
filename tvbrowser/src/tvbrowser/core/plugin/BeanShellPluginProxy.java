@@ -191,10 +191,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     /*
      * (non-Javadoc)
      * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetMarkIcon()
+     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetMarkIcons()
      */
-    protected Icon doGetMarkIcon() {
-        return BEANICON;
+    protected Icon[] doGetMarkIcons(Program p) {
+        return new Icon[] {BEANICON};
     }
 
     /*
@@ -290,5 +290,4 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     public PluginTreeNode getRootNode() {
       return null;
     }
-    
  }

@@ -315,19 +315,31 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @see #getButtonAction()
    */
   protected abstract ActionMenu doGetButtonAction();
-
+  
+  /**
+   * Gets the icons to use for marking programs in the program table.
+   */
+  public Icon[] getMarkIcons(Program p) {
+    try {
+      return doGetMarkIcons(p);
+    } catch (RuntimeException exc) {
+      handlePluginException(exc);
+      return null;
+    }
+  }
+  
   /**
    * Gets the icon to use for marking programs in the program table.
    * 
    * @return the icon to use for marking programs in the program table.
    */
-  public final Icon getMarkIcon() {
-    try {
-      return doGetMarkIcon();
-    } catch (RuntimeException exc) {
-      handlePluginException(exc);
+  public Icon getMarkIcon() {
+    Icon[] icon = getMarkIcons(null);
+    
+    if(icon != null && icon.length > 0)
+      return icon[0];
+    else
       return null;
-    }
   }
 
   /**
@@ -335,7 +347,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @return the icon to use for marking programs in the program table.
    */
-  protected abstract Icon doGetMarkIcon();
+  protected abstract Icon[] doGetMarkIcons(Program p);
 
   /**
    * Gets the description text for the program table icons provided by this
@@ -574,5 +586,4 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
               + "may only be called on activated plugins.", getInfo().getName());
     }
   }
-
 }

@@ -104,6 +104,7 @@ public interface PluginAccess extends Marker {
    */
   public Icon[] getProgramTableIcons(Program program);
 
+
   /**
    * Gets the icon to use for marking programs in the program table. Should be
    * 16x16.
@@ -111,9 +112,17 @@ public interface PluginAccess extends Marker {
    * @return the icon to use for marking programs in the program table.
    */
   public Icon getMarkIcon();
+
+  /**
+   * Gets the icons to use for marking programs in the program table. Should be
+   * 16x16.
+   * 
+   * @return the icons to use for marking programs in the program table.
+   * @since 2.3
+   */
+  public Icon[] getMarkIcons(Program p);
   
   public boolean canUseProgramTree();
 
   public PluginTreeNode getRootNode();
-
 }
