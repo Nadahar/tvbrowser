@@ -36,6 +36,7 @@ import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 /**
@@ -121,6 +122,27 @@ public class RadioTimesFileParser {
           prog.setTextField(ProgramFieldType.GENRE_TYPE, items[16].trim());
         }
 
+        int bitset = 0;
+        
+        if (items[9].trim().equalsIgnoreCase("true")) {
+          bitset = bitset | Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
+        }
+        
+        if (items[10].trim().equalsIgnoreCase("true")) {
+          bitset = bitset | Program.INFO_VISION_16_TO_9;
+        }
+        
+        if (items[13].trim().equalsIgnoreCase("true")) {
+          bitset = bitset | Program.INFO_VISION_BLACK_AND_WHITE;
+        }
+        
+        try {
+          int age = Integer.parseInt(items[15]);
+          prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, age);
+        } catch (Exception e) {
+        }
+        
+        
         int[] endtime = parseTime(items[20]);
         prog.setTimeField(ProgramFieldType.END_TIME_TYPE, endtime[0] * 60 + endtime[1]);
         
