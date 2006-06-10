@@ -312,12 +312,21 @@ public abstract class Favorite {
 
   }
 
+  
   /**
    * Performs a new search, and refreshes the program marks
    * @throws TvBrowserException
    */
   public void updatePrograms() throws TvBrowserException {
+    updatePrograms(false);
+  }
 
+  /**
+   * Performs a new search, and refreshes the program marks
+   * @param dataUpdate The update was started after a data update.
+   * @throws TvBrowserException
+   */
+  public void updatePrograms(boolean dataUpdate) throws TvBrowserException {
     Channel[] channelArr;
     if (getLimitationConfiguration().isLimitedByChannel()) {
       channelArr = getLimitationConfiguration().getChannels();
@@ -326,7 +335,7 @@ public abstract class Favorite {
       channelArr = Plugin.getPluginManager().getSubscribedChannels();
     }
 
-    updatePrograms(internalSearchForPrograms(channelArr));
+    updatePrograms(internalSearchForPrograms(channelArr), dataUpdate);
   }
   
   /**
@@ -335,10 +344,10 @@ public abstract class Favorite {
    * @throws TvBrowserException
    */
   public void refreshPrograms() throws TvBrowserException {
-    updatePrograms(mPrograms);
+    updatePrograms(mPrograms, false);
   }
   
-  private void updatePrograms(Program[] progs) throws TvBrowserException {
+  private void updatePrograms(Program[] progs, boolean dataUpdate) throws TvBrowserException {
     Program[] newProgList = filterByLimitations(progs);
 
 
@@ -402,8 +411,14 @@ public abstract class Favorite {
     // pass programs to plugins
     mNewProgramsArr = (Program[])newPrograms.toArray(new Program[newPrograms.size()]);
     PluginAccess[] pluginArr = getForwardPlugins();
-    for (int i=0; i<pluginArr.length; i++) {
-      pluginArr[i].receivePrograms(mNewProgramsArr);
+    
+    if(mNewProgramsArr.length > 0) {
+      if(!dataUpdate)
+        for (int i=0; i<pluginArr.length; i++) {
+          pluginArr[i].receivePrograms(mNewProgramsArr);
+        }
+      else
+        FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewProgramsArr);
     }
 
     mPrograms = (Program[])resultList.toArray(new Program[resultList.size()]);

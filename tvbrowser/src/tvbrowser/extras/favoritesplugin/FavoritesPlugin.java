@@ -38,7 +38,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -107,6 +109,8 @@ public class FavoritesPlugin implements ContextMenuIf{
   private boolean showFavoriteInfoOnTVBStartFinished = false;
   
   private Favorite[] mUpdateFavorites;
+  
+  private Hashtable<PluginAccess,ArrayList<Program>> mSendPluginsTable = new Hashtable<PluginAccess,ArrayList<Program>>();
 
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -292,7 +296,8 @@ public class FavoritesPlugin implements ContextMenuIf{
 
 
   private void updateAllFavorites() {
-
+    mSendPluginsTable.clear();
+    
     ProgressMonitor monitor;
     if (mFavoriteArr.length > 5) {    // if we have more then 5 favorites, we show a progress bar
       monitor = MainFrame.getInstance().createProgressMonitor();
@@ -308,13 +313,46 @@ public class FavoritesPlugin implements ContextMenuIf{
 
       try {
         mFavoriteArr[i].refreshBlackList();
-        mFavoriteArr[i].updatePrograms();
+        mFavoriteArr[i].updatePrograms(true);
       } catch (TvBrowserException e) {
         ErrorHandler.handle(e);
       }
     }
     monitor.setMessage("");
     monitor.setValue(0);
+    
+    if(!mSendPluginsTable.isEmpty())
+      sendToPlugins();
+  }
+  
+  private void sendToPlugins() {
+    Set<PluginAccess> plugins = mSendPluginsTable.keySet();
+    
+    for(PluginAccess plugin : plugins) {
+      ArrayList<Program> list = mSendPluginsTable.get(plugin);            
+      plugin.receivePrograms(list.toArray(new Program[list.size()]));
+    }
+  }
+  
+  /**
+   * Add the programs to send to other Plugins to a Hashtable.
+   * 
+   * @param plugins The Plugins to send the programs for.
+   * @param programs The Programs to send.
+   */
+  public void addProgramsForSending(PluginAccess[] plugins, Program[] programs) {
+    for(PluginAccess plugin : plugins) {
+      ArrayList<Program> list = mSendPluginsTable.get(plugin);
+      
+      if(list == null) {
+        list = new ArrayList<Program>();        
+        mSendPluginsTable.put(plugin, list);
+      }
+      
+      for(Program program : programs)
+        if(!list.contains(program))
+          list.add(program);
+    }
   }
 
   public void deleteFavorite(Favorite favorite) {
