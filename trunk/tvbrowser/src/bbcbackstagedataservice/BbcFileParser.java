@@ -135,14 +135,21 @@ public class BbcFileParser {
             ProgramInformation programInformation = (ProgramInformation)vector.elementAt(0);
             
             Calendar cal = Calendar.getInstance();
-            cal.setTime(event.getPublishedStartTime());
             cal.setTimeZone(TimeZone.getTimeZone("GMT"));
-            if (cal.get(Calendar.HOUR_OF_DAY) < mHour) {
+            cal.setTime(event.getPublishedStartTime());
+
+            // Workaround for Stupid Bug in TVAnytime API
+            cal.add(Calendar.MILLISECOND, TimeZone.getDefault().getRawOffset());
+            
+            int hour = cal.get(Calendar.HOUR_OF_DAY);
+            int minutes = cal.get(Calendar.MINUTE);
+            
+            if (hour < mHour) {
               mChannelDate = mChannelDate.addDays(1);
             }
             
-            mHour = cal.get(Calendar.HOUR_OF_DAY);
-            MutableProgram prog = new MutableProgram(mMutablechanneldayprogram.getChannel(),mChannelDate,cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+            mHour = hour;
+            MutableProgram prog = new MutableProgram(mMutablechanneldayprogram.getChannel(),mChannelDate,hour, minutes);
             
             prog.setTitle(programInformation.getBasicDescription().getTitle(0).getText());
             
