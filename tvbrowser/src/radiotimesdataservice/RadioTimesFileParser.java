@@ -81,6 +81,10 @@ public class RadioTimesFileParser {
         Date date = parseDate(items[19]);
 
         if (date.compareTo(endDate) >  0) {
+          for (MutableChannelDayProgram mutDayProg : getAllMutableDayPrograms()) {
+            updateManager.updateDayProgram(mutDayProg);
+          }
+
           reader.close();
           return;
         }
@@ -148,12 +152,12 @@ public class RadioTimesFileParser {
         mutDayProg.addProgram(prog);
       }
 
-      for (MutableChannelDayProgram mutDayProg : getAllMutableDayPrograms()) {
-        updateManager.updateDayProgram(mutDayProg);
-      }
-      
     }
 
+    for (MutableChannelDayProgram mutDayProg : getAllMutableDayPrograms()) {
+      updateManager.updateDayProgram(mutDayProg);
+    }
+    
     reader.close();
   }
 

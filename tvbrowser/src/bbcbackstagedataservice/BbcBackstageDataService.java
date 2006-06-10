@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -177,7 +178,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(mLocalizer.msg("name","BBC Data"), 
-        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 20));
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 30));
   }
 
   /*
@@ -281,6 +282,9 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     monitor.setMessage(mLocalizer.msg("parsing", "Parsing BBC Data"));
 
     monitor.setValue(3);
+
+    HashMap<Date, MutableChannelDayProgram> cache = new HashMap<Date, MutableChannelDayProgram>();
+
     for (int i=0;i<dateCount;i++) {
       monitor.setValue(3+i);
       StringBuilder date = new StringBuilder();
@@ -295,25 +299,23 @@ public class BbcBackstageDataService extends AbstractTvDataService {
         mLog.info(filename.toString());
         
         try {
-          MutableChannelDayProgram mutablechanneldayprogram = new MutableChannelDayProgram(channeldate, channelArr[v]);
 
-          BbcFileParser bbcparser = new BbcFileParser(mutablechanneldayprogram, channeldate);
+          BbcFileParser bbcparser = new BbcFileParser(cache, channelArr[v], channeldate);
           
           bbcparser.parseFile(new File(mWorkingDir, filename.toString()));
-          
-          if ((updateManager != null) && mutablechanneldayprogram.getProgramCount() > 0) {
-            updateManager.updateDayProgram(mutablechanneldayprogram);
-          }
-
         } catch (Exception e) {
           throw new TvBrowserException(getClass(), "error.1", "Error while parsing the Data.", e);
         }
         
       }
-      
+
       startDate = startDate.addDays(1);
     }
-    
+
+    for (MutableChannelDayProgram mutDayProg : cache.values()) {
+      updateManager.updateDayProgram(mutDayProg);
+    }
+
   }
 
   /**
