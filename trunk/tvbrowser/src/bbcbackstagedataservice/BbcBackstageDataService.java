@@ -147,13 +147,12 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     } catch (TVAnytimeException tvae) {
       // Handle any other TVAnytime-specific exceptions that may be generated.
       // E.g. if the XML parser cannot be initialised.
-      tvae.printStackTrace();
+      throw new TvBrowserException(getClass(), "error.1", "Problems while Parsing the Data.", tvae);
+
     } catch (IOException ioe) {
       // Handle IOExceptions: things like missing file
-      ioe.printStackTrace();
+      throw new TvBrowserException(getClass(), "error.2", "Problems while loading the Data.", ioe);
     }
-
-    return null;
   }
 
   /*
@@ -178,7 +177,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(mLocalizer.msg("name","BBC Data"), 
-        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 10));
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 20));
   }
 
   /*
@@ -273,8 +272,6 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     int max = channelArr.length;
     
     monitor.setMessage(mLocalizer.msg("loading", "Loading BBC data"));
-    
-    monitor.setMessage("Loading BBC-Data");
     monitor.setMaximum(3+dateCount);
 
     mLog.info(mWorkingDir.getAbsolutePath());
@@ -309,7 +306,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
           }
 
         } catch (Exception e) {
-          e.printStackTrace();
+          throw new TvBrowserException(getClass(), "error.1", "Error while parsing the Data.", e);
         }
         
       }
@@ -322,9 +319,11 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   /**
    * Download .tar.gz and extract it into the working directory
    */
-  private void loadBBCData() {
+  private void loadBBCData() throws TvBrowserException{
     cleanWorkingDir();
-
+    
+    File download = new File(".");
+    URL url = null;
     try {
       Date date = new Date();
       
@@ -333,7 +332,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       int count = 0;
       do {
         try {
-          URL url = new URL(BASEURL + date.getYear() + addZero(date.getMonth()) + addZero(date.getDayOfMonth()) + ".tar.gz");
+          url = new URL(BASEURL + date.getYear() + addZero(date.getMonth()) + addZero(date.getDayOfMonth()) + ".tar.gz");
           in = url.openStream();
           date.addDays(-1);
           count++;
@@ -344,7 +343,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       } while ((in == null) || count > 4);
       
       
-      File download = new File(mWorkingDir, "file.tar.gz");
+      download = new File(mWorkingDir, "file.tar.gz");
       OutputStream out = new FileOutputStream(download);
   
       // Transfer bytes from in to out
@@ -380,7 +379,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       tarfile.close();
       tar.delete();
     } catch (Exception e1) {
-      e1.printStackTrace();
+      throw new TvBrowserException(getClass(), "error.3", "Downloading file from '{0}' to '{1}' failed", url, download.getAbsolutePath(), e1);
     }
     
   }
