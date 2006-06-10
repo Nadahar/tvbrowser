@@ -268,12 +268,9 @@ public class RadioTimesDataService extends AbstractTvDataService {
     int max = channelArr.length;
     Date endDate = startDate.addDays(dateCount); 
 
-    System.out.println("MAXIMUM  : " + max);
-    
     monitor.setMaximum(max);
     monitor.setMessage(mLocalizer.msg("parsing", "Parsing Radio Times Data"));
 
-    System.out.println("************************");
     try {
       for (int i = 0; i < max; i++) {
         monitor.setValue(i);
@@ -283,7 +280,6 @@ public class RadioTimesDataService extends AbstractTvDataService {
     } catch (Exception e) {
       throw new TvBrowserException(getClass(), "error.2", "Downloading Data failed", e);
     }
-    System.out.println("************************");
   }
 
 }
