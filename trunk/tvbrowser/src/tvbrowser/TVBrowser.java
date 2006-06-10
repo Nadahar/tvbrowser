@@ -69,6 +69,7 @@ import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import tvdataservice.MarkedProgramsList;
+import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.misc.JavaVersion;
@@ -78,6 +79,10 @@ import util.ui.Localizer;
 import util.ui.NotBoldMetalTheme;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
+
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RegistryValue;
+import ca.beq.util.win32.registry.RootKey;
 
 import com.jgoodies.looks.LookUtils;
 import com.jgoodies.looks.Options;
@@ -105,13 +110,14 @@ public class TVBrowser {
      We need the old version strings to import the settings.
   */
   public static final String[] ALL_VERSIONS = new String[]{
+          "2.3 (SVN)",
           "2.2",
           "2.2beta2",
           "2.2beta1",
           "2.2 (SVN)"
   };
 
-  public static final devplugin.Version VERSION=new devplugin.Version(2,20,true,ALL_VERSIONS[0]);
+  public static final devplugin.Version VERSION=new devplugin.Version(2,30,false,ALL_VERSIONS[0]);
 
 
   public static final String MAINWINDOW_TITLE="TV-Browser "+VERSION.toString();
@@ -336,6 +342,36 @@ public class TVBrowser {
             PluginProxyManager.getInstance().fireTvBrowserStartFinished();
             ReminderPlugin.getInstance().handleTvBrowserStartFinished();
             FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
+            
+            if(Launch.isOsWindowsNtBranch()) {
+              try {
+                RegistryKey desktopSettings = new RegistryKey(RootKey.HKEY_CURRENT_USER, "Control Panel\\Desktop");
+                RegistryValue autoEnd = desktopSettings.getValue("AutoEndTasks");
+              
+                if(autoEnd.getData().equals("1")) {
+                  RegistryValue killWait = desktopSettings.getValue("WaitToKillAppTimeout");
+              
+                  int i = Integer.parseInt(killWait.getData().toString());
+              
+                  if(i < 2000) {
+                    JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),
+                    mLocalizer.msg("registryWarning","The Fast Shutdown of Windows is activated.\nThe timeout to wait for before Windows is closing an application is too shot,\nto let TV-Browser enough time to save all settings.\n\nThe setting hasn't the default value. It was changed by a tool or by you.\nTV-Browser will now try to change the timeout."),
+                    UIManager.getString("OptionPane.messageDialogTitle"),JOptionPane.WARNING_MESSAGE);
+                    
+                    try {
+                      killWait.setData("5000");
+                      desktopSettings.setValue(killWait);
+                      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),
+                      mLocalizer.msg("registryChanged","The timeout was changed successfully.\nPlease reboot Windows!"));
+                    }catch(Exception registySetting) {
+                      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),
+                          mLocalizer.msg("registryNotChanged","<html>The Registry value couldn't be changed. Maybe you havn't the right to do it.<br>If it is so contact you Administrator and let him do it for you.<br><br><b><Attention:/b> The following description is for Experts. If you change or delete the wrong value in the Registry you could destroy your Windows installation.<br><br>To get no warning on TV-Browser start you the Registry value <b>WaitToKillAppTimeout</b> in the Registry path<br><b>HKEY_CURRENT_USER\\Control Panel\\Desktop</b> have to be at least <b>2000</b> or the value for <b>AutoEndTasks</b> in the same path have to be <b>0</b>.</html>"),
+                          mLocalizer.msg("error","Error"),JOptionPane.ERROR_MESSAGE);
+                    }
+                  }
+                }
+              }catch(Exception registry) {}
+            }
           }
         });
       }
