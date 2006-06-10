@@ -28,6 +28,7 @@ package bbcbackstagedataservice;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -50,6 +51,7 @@ import bbc.rd.tvanytime.programLocation.Schedule;
 import bbc.rd.tvanytime.programLocation.ScheduleEvent;
 import bbc.rd.tvanytime.xml.NonFatalXMLException;
 import bbc.rd.tvanytime.xml.SAXXMLParser;
+import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -65,20 +67,24 @@ public class BbcFileParser {
       .getName());
 
   /** Stores the Data */
-  private MutableChannelDayProgram mMutablechanneldayprogram;
+  private HashMap<Date, MutableChannelDayProgram> mCache;
+  /** Channel */
+  private Channel mChannel;
   /** Current Date */
   private Date mChannelDate;
   /** Current Time */
   private int mHour = 0;
-  
+
   /**
    * 
-   * @param mutablechanneldayprogram
+   * @param updateManager
+   * @param channel 
    * @param channeldate
    */
-  public BbcFileParser(MutableChannelDayProgram mutablechanneldayprogram, Date channeldate) {
-    mMutablechanneldayprogram = mutablechanneldayprogram;
+  public BbcFileParser(HashMap<Date, MutableChannelDayProgram> cache, Channel channel, Date channeldate) {
+    mCache = cache;
     mChannelDate = channeldate;
+    mChannel = channel;
   }
 
   /**
@@ -119,11 +125,17 @@ public class BbcFileParser {
     
     ProgramLocationTable programLocationTable = parser.getProgramLocationTable();
     ProgramInformationTable programInformationTable = parser.getProgramInformationTable();
+
+    MutableChannelDayProgram mutablechanneldayprogram = mCache.get(mChannelDate);
+    if (mutablechanneldayprogram == null) {
+      mutablechanneldayprogram = new MutableChannelDayProgram(mChannelDate, mChannel);
+      mCache.put(mChannelDate, mutablechanneldayprogram);
+    }
     
     // Search through all schedules in program location table
     for (int schedulect=0; schedulect<programLocationTable.getNumSchedules(); schedulect++) {
       Schedule schedule = programLocationTable.getSchedule(schedulect);
-      if (schedule.getServiceID().equals(mMutablechanneldayprogram.getChannel().getId())) {
+      if (schedule.getServiceID().equals(mChannel.getId())) {
         // Found schedule for a particular service, e.g. BBC 1
         for (int eventct=0; eventct<schedule.getNumScheduleEvents(); eventct++) {
           
@@ -146,10 +158,16 @@ public class BbcFileParser {
             
             if (hour < mHour) {
               mChannelDate = mChannelDate.addDays(1);
+
+              mutablechanneldayprogram = mCache.get(mChannelDate);
+              if (mutablechanneldayprogram == null) {
+                mutablechanneldayprogram = new MutableChannelDayProgram(mChannelDate, mChannel);
+                mCache.put(mChannelDate, mutablechanneldayprogram);
+              }
             }
             
             mHour = hour;
-            MutableProgram prog = new MutableProgram(mMutablechanneldayprogram.getChannel(),mChannelDate,hour, minutes);
+            MutableProgram prog = new MutableProgram(mChannel,mChannelDate,hour, minutes);
             
             prog.setTitle(programInformation.getBasicDescription().getTitle(0).getText());
             
@@ -296,7 +314,7 @@ public class BbcFileParser {
               prog.setInfo(bitset);
             }
             
-            mMutablechanneldayprogram.addProgram(prog);
+            mutablechanneldayprogram.addProgram(prog);
           }
           
         }
