@@ -85,7 +85,6 @@ public class WebAddress implements Cloneable {
     mUrl = address.getUrl();
     mUserEntry = address.isUserEntry();
     mActive = address.isActive();
-    
   }
 
   /**
@@ -129,7 +128,7 @@ public class WebAddress implements Cloneable {
     if (mIconFile == null || mIconFile.length() == 0) { return DEFAULTICON; }
 
     try {
-      Icon icon = ImageUtilities.createImageIconFromJar(mIconFile, this.getClass());
+      Icon icon = new ImageIcon(ImageUtilities.createImage(mIconFile));
       if ((icon != null) && (icon.getIconWidth() > 0)){
         return icon;
       }
