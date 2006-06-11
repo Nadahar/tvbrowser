@@ -61,18 +61,18 @@ public class WebPlugin extends Plugin {
 
   /** Default-Addresses */
   final static WebAddress[] DEFAULT_ADRESSES = {
-      new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={urlencode(title, \"ISO-8859-1\")}", "webplugin/ofdb.gif", false, true),
-      new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", "webplugin/imdb.gif", false, true),
-      new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={urlencode(title, \"ISO-8859-1\")}", "webplugin/zelluloid.png", false, true),
-      new WebAddress("Google", "http://www.google.com/search?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/google.gif", false, true),
-      new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(title, \"UTF-8\")}%22", "webplugin/altavista.gif", false, true),
+      new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=DTitel&SText={urlencode(title, \"ISO-8859-1\")}", null, false, true),
+      new WebAddress("IMDb", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", null, false, true),
+      new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={urlencode(title, \"ISO-8859-1\")}", null, false, true),
+      new WebAddress("Google", "http://www.google.com/search?q=%22{urlencode(title, \"UTF-8\")}%22", null, false, true),
+      new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(title, \"UTF-8\")}%22", null, false, true),
       new WebAddress("Yahoo", "http://search.yahoo.com/search?p={urlencode(title, \"ISO-8859-1\")}", null, false, true),
       new WebAddress("Wikipedia (DE)", "http://de.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.GERMAN)),
       new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(title, \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH))
   };
 
   /** The WebAddresses */
-  private ArrayList mAddresses;
+  private ArrayList<WebAddress> mAddresses;
 
   private static WebPlugin INSTANCE;
   
@@ -104,13 +104,13 @@ public class WebPlugin extends Plugin {
    * Loads the Data
    */
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    mAddresses = new ArrayList();
+    mAddresses = new ArrayList<WebAddress>();
 
     int version = in.readInt();
 
     int size = in.readInt();
 
-    ArrayList defaults = new ArrayList(Arrays.asList(DEFAULT_ADRESSES));
+    ArrayList<WebAddress> defaults = new ArrayList<WebAddress>(Arrays.asList(DEFAULT_ADRESSES));
     
     for (int i = 0; i < size;i++) {
       WebAddress newone = new WebAddress(in);
@@ -118,9 +118,11 @@ public class WebPlugin extends Plugin {
       if (!newone.isUserEntry()) {
         for (int v = 0; v < defaults.size(); v++) {
           WebAddress def = (WebAddress) defaults.get(v);
-
+          // Replace Default Webaddresses with Default Settings
           if (def.getName().equals(newone.getName())) {
+            // Copy needed Data
             def.setActive(newone.isActive());
+            def.setIconFile(newone.getIconFile());
             newone = def;
             defaults.remove(v);
           }
@@ -171,7 +173,7 @@ public class WebPlugin extends Plugin {
    * Create the Default-Settings
    */
   private void createDefaultSettings() {
-    mAddresses = new ArrayList();
+    mAddresses = new ArrayList<WebAddress>();
     WebAddress test = new WebAddress("Test", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", null, true, false);
     mAddresses.addAll(Arrays.asList(DEFAULT_ADRESSES));
     mAddresses.add(test);
@@ -190,7 +192,7 @@ public class WebPlugin extends Plugin {
     mainAction.putValue(Action.NAME, "Online-Suche");
     mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
 
-    ArrayList actionList = new ArrayList();
+    ArrayList<Action> actionList = new ArrayList<Action>();
 
     for (int i = 0; i < mAddresses.size(); i++) {
 
@@ -238,6 +240,26 @@ public class WebPlugin extends Plugin {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+  
+  @Override
+  public void handleTvDataUpdateFinished() {
+    FavIconFetcher fetcher = new FavIconFetcher();
+    
+    for (WebAddress address : mAddresses) {
+      
+      if (address.getIconFile() == null) {
+        String file = fetcher.fetchFavIconForUrl(address.getUrl());
+        
+        if (file != null) {
+          address.setIconFile(file);
+        } else {
+          address.setIconFile("");
+        }
+      }
+      
+    }
+    
   }
 
 }
