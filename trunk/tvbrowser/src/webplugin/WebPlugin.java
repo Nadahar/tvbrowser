@@ -97,7 +97,7 @@ public class WebPlugin extends Plugin {
   public PluginInfo getInfo() {
     return new PluginInfo("WebPlugin",
         mLocalizer.msg("desc","Searches on the Web for a Program"),
-        "Bodo Tasche",new Version(1, 0));
+        "Bodo Tasche",new Version(1, 1));
   }
 
   /**

@@ -1,5 +1,0 @@
-Changelog TVRaterPlugin
-
-1.0:
-	- First Version
-
