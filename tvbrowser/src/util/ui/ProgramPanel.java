@@ -320,7 +320,7 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       return new Icon[0];
     else {
       PluginProxyManager mng = PluginProxyManager.getInstance();
-      ArrayList iconList = new ArrayList();
+      ArrayList<Icon> iconList = new ArrayList<Icon>();
       // Add the icons for each plugin
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
         if (iconPluginArr[pluginIdx].compareToIgnoreCase("info.id") == 0) {
@@ -358,18 +358,16 @@ public class ProgramPanel extends JComponent implements ChangeListener {
             Icon[] iconArr = plugin.getProgramTableIcons(program);
             if (iconArr != null) {
               // Add the icons
-              for (int i = 0; i < iconArr.length; i++) {
-                iconList.add(iconArr[i]);
+              for (Icon icon : iconArr) {
+                iconList.add(icon);
               }
             }
           }
         }
       }
 
-      // Convert the list to an array
-      Icon[] asArr = new Icon[iconList.size()];
-      iconList.toArray(asArr);
-      return asArr;
+      // Convert the list to an array and return it
+      return iconList.toArray(new Icon[iconList.size()]);
     }
   }
 
@@ -475,9 +473,9 @@ public class ProgramPanel extends JComponent implements ChangeListener {
     for (Marker marker: markedByPluginArr) {
       Icon[] icons = marker.getMarkIcons(mProgram);
       if (icons != null) {
-        for(Icon icon : icons) {
-          x -= icon.getIconWidth();
-          icon.paintIcon(this, grp, x, y - icon.getIconHeight());
+        for(int i = icons.length - 1; i >= 0 ; i--) {
+          x -= icons[i].getIconWidth();
+          icons[i].paintIcon(this, grp, x, y - icons[i].getIconHeight());
         }
       }
     }
