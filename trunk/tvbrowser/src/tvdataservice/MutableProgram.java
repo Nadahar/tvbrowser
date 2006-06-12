@@ -209,8 +209,8 @@ public class MutableProgram implements Program {
   protected void fireStateChanged() {
     ChangeEvent changeEvent = new ChangeEvent(this);
     
-    for (ChangeListener listener : mListenerList)
-      listener.stateChanged(changeEvent);
+    for (int i = 0; i < mListenerList.size(); i++)
+      mListenerList.get(i).stateChanged(changeEvent);
   }
 
 
