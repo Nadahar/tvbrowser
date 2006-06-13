@@ -71,11 +71,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.DragAndDropMouseListener;
@@ -90,6 +92,7 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.Program;
+import devplugin.ProgramReceiveIf;
 
 
 /**
@@ -492,7 +495,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     }
 
-    SendToPluginDialog send = new SendToPluginDialog(null, this, programs);
+    ProgramReceiveIf caller = null;
+    
+    Favorite fav = (Favorite) mFavoritesListModel.get(selection);
+    
+    if(fav.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT))
+      caller = ReminderPlugin.getInstance();
+    
+    SendToPluginDialog send = new SendToPluginDialog(caller, this, programs);
 
     send.setVisible(true);
 
@@ -586,17 +596,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     int result = JOptionPane.showConfirmDialog(this, msg, title, JOptionPane.YES_NO_OPTION);
     if (result == JOptionPane.YES_OPTION) {
       // Create a comparator for Favorites
-      Comparator comp = new Comparator() {
+      Comparator<Object> comp = new Comparator<Object>() {
         public int compare(Object o1, Object o2) {
-          String text1 = ((Favorite) o1).getName();
-          String text2 = ((Favorite) o2).getName();
-          text1 = text1.toLowerCase();
-          text2 = text2.toLowerCase();
-          return text1.compareTo(text2);
+          return ((Favorite)o1).getName().toLowerCase().compareTo(((Favorite)o2).getName().toLowerCase());
         }
       };
 
       // Sort the list
+      
       Object[] asArr = mFavoritesListModel.toArray();
       Arrays.sort(asArr, comp);
       mFavoritesListModel.removeAllElements();

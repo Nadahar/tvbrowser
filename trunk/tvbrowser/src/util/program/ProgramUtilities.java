@@ -36,18 +36,15 @@ public class ProgramUtilities {
     return false;
   }
 
-  public static Comparator getProgramComparator() {
+  public static Comparator<Program> getProgramComparator() {
     return sProgramComparator;
   }
 
   /**
    * Comparator to sort programs by date, time and channel 
    */
-  private static Comparator sProgramComparator = new Comparator(){
-    public int compare(Object o1, Object o2) {
-      Program p1 = (Program)o1;
-      Program p2 = (Program)o2;
-
+  private static Comparator<Program> sProgramComparator = new Comparator<Program>(){
+    public int compare(Program p1, Program p2) {
       int res=p1.getDate().compareTo(p2.getDate());
       if (res!=0) return res;
 

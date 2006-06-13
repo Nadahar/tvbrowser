@@ -354,4 +354,31 @@ public interface PluginManager {
    */
   public Program[] getMarkedPrograms();
   
+  /**
+   * Return all Plugins/Functions that are able to receive programs.
+   * 
+   * @return The ProgramReceiveIfs.
+   * @since 2.3
+   */
+  public ProgramReceiveIf[] getReceiveIfs();  
+  
+  /**
+   * Return all Plugins/Functions that are able to receive programs.
+   * 
+   * @param caller The caller ProgramReceiveIf.
+   * @return The ProgramReceiveIfs.
+   * @since 2.3
+   */
+  public ProgramReceiveIf[] getReceiveIfs(ProgramReceiveIf caller);
+  
+  /**
+   * Return the ReceiveIfFor given id or <code>null</code> if there is
+   * no ReceiveIf for the given id.
+   * 
+   * @param id The id of the ReceiveIf.
+   * 
+   * @return The ReceiveIf with the given id or <code>null</code>
+   * @since 2.3
+   */
+  public ProgramReceiveIf getReceiceIfForId(String id);
 }

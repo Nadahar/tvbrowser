@@ -35,7 +35,7 @@ import javax.swing.Icon;
  *
  * @author Til Schneider, www.murfman.de
  */
-public interface PluginAccess extends Marker {
+public interface PluginAccess extends Marker,ProgramReceiveIf {
   
   /**
    * Gets the ID of this plugin.
@@ -50,24 +50,6 @@ public interface PluginAccess extends Marker {
    * @return The meta information about the plugin.
    */
   public PluginInfo getInfo();
-
-  /**
-   * Gets whether the plugin supports receiving programs from other plugins.
-   * 
-   * @return Whether the plugin supports receiving programs from other plugins.
-   * 
-   * @see #receivePrograms(Program[])
-   */
-  public boolean canReceivePrograms();
-
-  /**
-   * Receives a list of programs from another plugin.
-   * 
-   * @param programArr The programs passed from the other plugin.
-   * 
-   * @see #canReceivePrograms()
-   */
-  public void receivePrograms(Program[] programArr);
 
   /**
    * Gets the actions for the context menu of a program.

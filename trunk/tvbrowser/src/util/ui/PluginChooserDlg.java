@@ -47,6 +47,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Plugin;
 import devplugin.PluginAccess;
+import devplugin.ProgramReceiveIf;
 
 /**
  * The PluginChooserDlg class provides a Dialog for choosing plugins. The user
@@ -55,8 +56,8 @@ import devplugin.PluginAccess;
 public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
   private static final long serialVersionUID = 1L;
-  private PluginAccess[] mResultPluginArr;
-  private PluginAccess[] mPluginArr;
+  private ProgramReceiveIf[] mResultPluginArr;
+  private ProgramReceiveIf[] mPluginArr;
   private SelectableItemList mPluginItemList;
   
   private static final util.ui.Localizer mLocalizer
@@ -65,36 +66,39 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   /**
    *
    * @param parent
-   * @param pluginArr The initially selected Plugins.
-   * @param description A description text below the Plugin list.
+   * @param pluginArr The initially selected ProgramReceiveIfs.
+   * @param description A description text below the ProgramReceiveIf list.
+   * @param caller The caller ProgramReceiveIf.
    */
-  public PluginChooserDlg(Dialog parent, PluginAccess[] pluginArr, String description) {
+  public PluginChooserDlg(Dialog parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
     super(parent,true);
-    init(pluginArr, description);
+    init(pluginArr, description, caller);
   }
 
   /**
    *
    * @param parent
-   * @param pluginArr The initially selected Plugins.
-   * @param description A description text below the Plugin list.
+   * @param pluginArr The initially selected ProgramReceiveIfs.
+   * @param description A description text below the ProgramReceiveIf list.
+   * @param caller The caller ProgramReceiveIf.
    */
-  public PluginChooserDlg(Frame parent, PluginAccess[] pluginArr, String description) {
+  public PluginChooserDlg(Frame parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
     super(parent,true);
-    init(pluginArr, description);
+    init(pluginArr, description, caller);
   }
   
-  private void init(PluginAccess[] channelArr, String description) {
+  
+  private void init(ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
     setTitle(mLocalizer.msg("title","Choose Plugins"));
     UiUtilities.registerForClosing(this);
     
-    if (channelArr == null) {
+    if (pluginArr == null) {
       mPluginArr = new PluginAccess[]{};
       mResultPluginArr = new PluginAccess[]{};
     }
     else {
-      mPluginArr = channelArr;
-      mResultPluginArr = channelArr;
+      mPluginArr = pluginArr;
+      mResultPluginArr = pluginArr;
     }
 
     JPanel contentPane = (JPanel)getContentPane();
@@ -103,16 +107,20 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     contentPane.setBorder(Borders.DLU4_BORDER);
     CellConstraints cc = new CellConstraints();
     
-    PluginAccess[] pluginAccess = Plugin.getPluginManager().getActivatedPlugins();
+    ProgramReceiveIf[] tempProgramReceiveIf = Plugin.getPluginManager().getReceiveIfs(caller);
     
-    ArrayList list = new ArrayList();
+    if(caller != null) {
+      ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
     
-    for(int i = 0; i < pluginAccess.length; i++)
-      if(pluginAccess[i].canReceivePrograms())
-        list.add(pluginAccess[i]);
+      for(ProgramReceiveIf tempIf : tempProgramReceiveIf) {
+        if(tempIf.getId().compareTo(caller.getId()) != 0)
+          list.add(tempIf);
+      }
 
-
-    mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
+      mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
+    }
+    else
+      mPluginItemList = new SelectableItemList(mResultPluginArr, tempProgramReceiveIf);
 
     int pos = 1;
     layout.appendRow(new RowSpec("fill:default:grow"));
@@ -165,7 +173,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    * @return an array of the selected plugins. If the user cancelled the dialog,
    * the array from the constructor call is returned.
    */
-  public PluginAccess[] getPlugins() {
+  public ProgramReceiveIf[] getPlugins() {
 
     if (mResultPluginArr==null) {
       return mPluginArr;

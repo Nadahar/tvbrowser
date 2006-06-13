@@ -104,13 +104,13 @@ public class FavoritesPlugin implements ContextMenuIf{
 
   private boolean mShowInfoOnNewProgramsFound = true;
   
-  private boolean mIsAllowedToShowDialogs = false;
+  private boolean mHasRightToUpdate = false;  
   
-  private boolean showFavoriteInfoOnTVBStartFinished = false;
+  private boolean mHasToUpdate = false;
   
   private Favorite[] mUpdateFavorites;
   
-  private Hashtable<PluginAccess,ArrayList<Program>> mSendPluginsTable = new Hashtable<PluginAccess,ArrayList<Program>>();
+  private Hashtable<ProgramReceiveIf,ArrayList<Program>> mSendPluginsTable = new Hashtable<ProgramReceiveIf,ArrayList<Program>>();
 
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -129,29 +129,36 @@ public class FavoritesPlugin implements ContextMenuIf{
       }
 
       public void tvDataUpdateFinished() {
-        updateAllFavorites();
-
-        updateRootNode();
-        
-        ArrayList showInfoFavorites = new ArrayList();
-
-        for (int i = 0; i < mFavoriteArr.length; i++) {
-          if (mFavoriteArr[i].isRemindAfterDownload() && mFavoriteArr[i].getNewPrograms().length > 0)
-            showInfoFavorites.add(mFavoriteArr[i]);
-        }
-
-        if(!showInfoFavorites.isEmpty()) {
-          mUpdateFavorites = (Favorite[])showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
-
-          if(mIsAllowedToShowDialogs)
-            showManageFavoritesDialog(true, mUpdateFavorites);
-          else
-            showFavoriteInfoOnTVBStartFinished = true;
-        }
+        handleTvDataUpdateFinsihed();
       }
     });
   }
+  
+  private void handleTvDataUpdateFinsihed() {
+    mHasToUpdate = true;
+    
+    if(mHasRightToUpdate) {
+      mHasToUpdate = false;
+      
+      updateAllFavorites();
 
+      updateRootNode();
+    
+      ArrayList showInfoFavorites = new ArrayList();
+
+      for (int i = 0; i < mFavoriteArr.length; i++) {
+        if (mFavoriteArr[i].isRemindAfterDownload() && mFavoriteArr[i].getNewPrograms().length > 0)
+          showInfoFavorites.add(mFavoriteArr[i]);
+      }
+
+      if(!showInfoFavorites.isEmpty()) {
+        mUpdateFavorites = (Favorite[])showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]);
+
+        showManageFavoritesDialog(true, mUpdateFavorites);
+      }
+    }
+  }
+  
   public static synchronized FavoritesPlugin getInstance() {
     if (mInstance == null)
       new FavoritesPlugin();
@@ -159,12 +166,10 @@ public class FavoritesPlugin implements ContextMenuIf{
   }
   
   public void handleTvBrowserStartFinished() {
-    mIsAllowedToShowDialogs = true;
+    mHasRightToUpdate = true;
     
-    if(showFavoriteInfoOnTVBStartFinished) {
-      showFavoriteInfoOnTVBStartFinished = false;
-      showManageFavoritesDialog(true, mUpdateFavorites);
-    }
+    if(mHasToUpdate)
+      handleTvDataUpdateFinsihed();
   }
 
   private void load() {
@@ -326,9 +331,9 @@ public class FavoritesPlugin implements ContextMenuIf{
   }
   
   private void sendToPlugins() {
-    Set<PluginAccess> plugins = mSendPluginsTable.keySet();
+    Set<ProgramReceiveIf> plugins = mSendPluginsTable.keySet();
     
-    for(PluginAccess plugin : plugins) {
+    for(ProgramReceiveIf plugin : plugins) {
       ArrayList<Program> list = mSendPluginsTable.get(plugin);            
       plugin.receivePrograms(list.toArray(new Program[list.size()]));
     }
@@ -340,8 +345,8 @@ public class FavoritesPlugin implements ContextMenuIf{
    * @param plugins The Plugins to send the programs for.
    * @param programs The Programs to send.
    */
-  public void addProgramsForSending(PluginAccess[] plugins, Program[] programs) {
-    for(PluginAccess plugin : plugins) {
+  public void addProgramsForSending(ProgramReceiveIf[] plugins, Program[] programs) {
+    for(ProgramReceiveIf plugin : plugins) {
       ArrayList<Program> list = mSendPluginsTable.get(plugin);
       
       if(list == null) {

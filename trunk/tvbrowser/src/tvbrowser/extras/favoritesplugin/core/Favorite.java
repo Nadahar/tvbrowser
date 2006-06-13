@@ -54,18 +54,18 @@ public abstract class Favorite {
   private ReminderConfiguration mReminderConfiguration;
   private LimitationConfiguration mLimitationConfiguration;
   private boolean mRemindAfterDownload;
-  private ArrayList mExclusionList;
-  private PluginAccess[] mForwardPluginArr;
+  private ArrayList<Exclusion> mExclusionList;
+  private ProgramReceiveIf[] mForwardPluginArr;
 
-  private ArrayList mBlackList;
+  private ArrayList<Program> mBlackList;
   
   public Favorite() {
     mReminderConfiguration = new ReminderConfiguration();
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new Program[]{};
     mNewProgramsArr = new Program[]{};
-    mExclusionList = new ArrayList();
-    mBlackList = new ArrayList();
+    mExclusionList = new ArrayList<Exclusion>();
+    mBlackList = new ArrayList<Program>();
 
     mForwardPluginArr = FavoritesPlugin.getInstance().getDefaultClientPlugins();
   }
@@ -77,42 +77,42 @@ public abstract class Favorite {
     mLimitationConfiguration = new LimitationConfiguration(in);
     mRemindAfterDownload = in.readBoolean();
 
-    mExclusionList = new ArrayList();
+    mExclusionList = new ArrayList<Exclusion>();
     int exclSize = in.readInt();
     for (int i=0; i<exclSize; i++) {
       mExclusionList.add(new Exclusion(in));
     }
 
-    ArrayList list = new ArrayList();
+    ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
     int cnt = in.readInt();
     for (int i=0; i<cnt; i++) {
       String id = (String)in.readObject();
-      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(id);
+      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(id);
       if (plugin != null) {
         list.add(plugin);
       }
     }
-    mForwardPluginArr = (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
+    mForwardPluginArr = list.toArray(new ProgramReceiveIf[list.size()]);
     
     // Don't save the programs but only their date and id
     int size = in.readInt();
-    ArrayList programList = new ArrayList(size);
+    ArrayList<Program> programList = new ArrayList<Program>(size);
     readProgramsToList(programList, size, in);
     
     if(version >= 2) {
       size = in.readInt();
-      mBlackList = new ArrayList(size);
+      mBlackList = new ArrayList<Program>(size);
       readProgramsToList(mBlackList, size, in);
     }
     else
-      mBlackList = new ArrayList();
+      mBlackList = new ArrayList<Program>();
     
-    mPrograms = new Program[programList.size()];
-    programList.toArray(mPrograms);
+    mPrograms = programList.toArray(new Program[programList.size()]);
+    
     mNewProgramsArr = new Program[]{};
   }
 
-  private void readProgramsToList(ArrayList list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readProgramsToList(ArrayList<Program> list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
     for (int i = 0; i < size; i++) {
       Date date = new Date(in);
       String progID = (String) in.readObject();
@@ -151,11 +151,11 @@ public abstract class Favorite {
   }
 
 
-  public void setForwardPlugins(PluginAccess[] pluginArr) {
+  public void setForwardPlugins(ProgramReceiveIf[] pluginArr) {
     mForwardPluginArr = pluginArr;
   }
 
-  public PluginAccess[] getForwardPlugins() {
+  public ProgramReceiveIf[] getForwardPlugins() {
     return mForwardPluginArr;
   }
 
@@ -255,7 +255,7 @@ public abstract class Favorite {
   private Program[] filterByLimitations(Program[] progArr) {
 
     Exclusion[] exclusions = getExclusions();
-    ArrayList list = new ArrayList();
+    ArrayList<Program> list = new ArrayList<Program>();
     boolean isLimitedByTime = getLimitationConfiguration().isLimitedByTime();
     int timeFrom = getLimitationConfiguration().getTimeFrom();
     int timeFromParsed = timeFrom;
@@ -308,7 +308,7 @@ public abstract class Favorite {
       }
     }
 
-    return (Program[])list.toArray(new Program[list.size()]);
+    return list.toArray(new Program[list.size()]);
 
   }
 
@@ -360,15 +360,15 @@ public abstract class Favorite {
        For all programs from newProgList, that don't exist in mPrograms, we ADD it to mPrograms
 
      */
-    Comparator comparator = ProgramUtilities.getProgramComparator();
+    Comparator<Program> comparator = ProgramUtilities.getProgramComparator();
     Arrays.sort(newProgList, comparator);
     Arrays.sort(mPrograms, comparator);
 
     Program[] p1 = mPrograms;
     Program[] p2 = newProgList;
 
-    ArrayList resultList = new ArrayList();
-    ArrayList newPrograms = new ArrayList();
+    ArrayList<Program> resultList = new ArrayList<Program>();
+    ArrayList<Program> newPrograms = new ArrayList<Program>();
 
     int inx1 = 0;
     int inx2 = 0;
@@ -409,8 +409,8 @@ public abstract class Favorite {
     }
 
     // pass programs to plugins
-    mNewProgramsArr = (Program[])newPrograms.toArray(new Program[newPrograms.size()]);
-    PluginAccess[] pluginArr = getForwardPlugins();
+    mNewProgramsArr = newPrograms.toArray(new Program[newPrograms.size()]);
+    ProgramReceiveIf[] pluginArr = getForwardPlugins();
     
     if(mNewProgramsArr.length > 0) {
       if(!dataUpdate)
@@ -421,7 +421,7 @@ public abstract class Favorite {
         FavoritesPlugin.getInstance().addProgramsForSending(pluginArr, mNewProgramsArr);
     }
 
-    mPrograms = (Program[])resultList.toArray(new Program[resultList.size()]);
+    mPrograms = resultList.toArray(new Program[resultList.size()]);
   }
 
 
@@ -510,17 +510,14 @@ public abstract class Favorite {
    * @return The programs that are not on the black list.
    */
   public Program[] getWhiteListPrograms() {
-    ArrayList tempProgramArr = new ArrayList();
+    ArrayList<Program> tempProgramArr = new ArrayList<Program>();
     
     for(int i = 0; i < mPrograms.length; i++) {
       if(!mBlackList.contains(mPrograms[i]))
         tempProgramArr.add(mPrograms[i]);
     }
-    
-    Program[] programs = new Program[tempProgramArr.size()];
-    tempProgramArr.toArray(programs);
-    
-    return programs;
+        
+    return tempProgramArr.toArray(new Program[tempProgramArr.size()]);
   }
   
   /**
