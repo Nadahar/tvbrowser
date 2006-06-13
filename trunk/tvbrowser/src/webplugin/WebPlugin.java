@@ -74,6 +74,8 @@ public class WebPlugin extends Plugin {
   /** The WebAddresses */
   private ArrayList<WebAddress> mAddresses;
 
+  private boolean mHasRightToDownload = false;
+  
   private static WebPlugin INSTANCE;
   
   /**
@@ -242,24 +244,28 @@ public class WebPlugin extends Plugin {
     }
   }
   
+  public void handleTvBrowserStartFinished() {
+    mHasRightToDownload = true;
+  }
+  
   @Override
   public void handleTvDataUpdateFinished() {
-    FavIconFetcher fetcher = new FavIconFetcher();
+    if(mHasRightToDownload) {
+      FavIconFetcher fetcher = new FavIconFetcher();
     
-    for (WebAddress address : mAddresses) {
+      for (WebAddress address : mAddresses) {
       
-      if (address.getIconFile() == null) {
-        String file = fetcher.fetchFavIconForUrl(address.getUrl());
+        if (address.getIconFile() == null) {
+          String file = fetcher.fetchFavIconForUrl(address.getUrl());
         
-        if (file != null) {
-          address.setIconFile(file);
-        } else {
-          address.setIconFile("");
+          if (file != null) {
+            address.setIconFile(file);
+          } else {
+            address.setIconFile("");
+          }
         }
       }
-      
     }
-    
   }
 
 }
