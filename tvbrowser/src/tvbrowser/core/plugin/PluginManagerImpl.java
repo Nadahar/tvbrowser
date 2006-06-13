@@ -47,6 +47,7 @@ import tvbrowser.core.search.booleansearch.ParserException;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
@@ -63,6 +64,7 @@ import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
+import devplugin.ProgramReceiveIf;
 import devplugin.ProgramSearcher;
 import devplugin.ThemeIcon;
 import devplugin.TvBrowserSettings;
@@ -675,5 +677,55 @@ public class PluginManagerImpl implements PluginManager {
     return MarkedProgramsList.getInstance().getMarkedPrograms();
   }
 
+  /**
+   * Return all Plugins/Functions that are able to receive programs.
+   * 
+   * @return The ProgramReceiveIfs.
+   * @since 2.3
+   */
+  public ProgramReceiveIf[] getReceiveIfs() {
+    return getReceiveIfs(null);
+  }
+  
+  /**
+   * Return all Plugins/Functions that are able to receive programs.
+   * 
+   * @param caller The caller ProgramReceiveIf.
+   * @return The ProgramReceiveIfs.
+   * @since 2.3
+   */
+  public ProgramReceiveIf[] getReceiveIfs(ProgramReceiveIf caller) {
+    PluginAccess[] plugins = getActivatedPlugins();
+    
+    ArrayList<ProgramReceiveIf> receiveIfs = new ArrayList<ProgramReceiveIf>();
+    
+    if(caller == null || caller.getId().compareTo(ReminderPlugin.getInstance().getId()) != 0)
+      receiveIfs.add(ReminderPlugin.getInstance());
+    
+    for(PluginAccess plugin : plugins)
+      if(plugin.canReceivePrograms() && (caller == null || plugin.getId().compareTo(caller.getId()) != 0))
+        receiveIfs.add(plugin);
+    
+    return receiveIfs.toArray(new ProgramReceiveIf[receiveIfs.size()]);
+  }
 
+
+  /**
+   * Return the ReceiveIfFor given id or <code>null</code> if there is
+   * no ReceiveIf for the given id.
+   * 
+   * @param id The id of the ReceiveIf.
+   * 
+   * @return The ReceiveIf with the given id or <code>null</code>
+   * @since 2.3
+   */
+  public ProgramReceiveIf getReceiceIfForId(String id) {
+    ProgramReceiveIf[] receiveIfs = getReceiveIfs();
+    
+    for(ProgramReceiveIf receiveIf : receiveIfs)
+      if(receiveIf.getId().compareTo(id) == 0)
+        return receiveIf;
+    
+    return null;
+  }
 }

@@ -530,14 +530,14 @@ public class PluginTree extends JTree implements DragGestureListener,
               } else {
                 if (target.equals(ReminderPlugin.getInstance().getRootNode()
                     .getMutableTreeNode())) {
-                  Vector vec;
+                  Vector<Program> vec;
                   if (source.isLeaf()) {
-                    vec = new Vector();
+                    vec = new Vector<Program>();
                     if (source.getUserObject() instanceof ProgramItem)
                       vec.addElement(((ProgramItem) source.getUserObject())
                           .getProgram());
                   } else
-                    vec = getLeafElements(source, new Vector());
+                    vec = getLeafElements(source, new Vector<Program>());
                   Program[] p = new Program[vec.size()];
                   if (p.length > 0) {
                     vec.toArray(p);
@@ -550,14 +550,14 @@ public class PluginTree extends JTree implements DragGestureListener,
                   for (int i = 0; i < pa.length; i++) {
                     if (pa[i].getRootNode().getMutableTreeNode().equals(target)) {
                       if (pa[i].canReceivePrograms()) {
-                        Vector vec;
+                        Vector<Program> vec;
                         if (source.isLeaf()) {
-                          vec = new Vector();
+                          vec = new Vector<Program>();
                           if (source.getUserObject() instanceof ProgramItem)
                             vec.addElement(((ProgramItem) source
                                 .getUserObject()).getProgram());
                         } else
-                          vec = getLeafElements(source, new Vector());
+                          vec = getLeafElements(source, new Vector<Program>());
                         Program[] p = new Program[vec.size()];
                         if (p.length > 0) {
                           vec.toArray(p);
@@ -654,7 +654,7 @@ public class PluginTree extends JTree implements DragGestureListener,
    *          A Vector to store the Programs in
    * @return A vector with the Programs
    */
-  private Vector getLeafElements(Node node, Vector entries) {
+  private Vector<Program> getLeafElements(Node node, Vector<Program> entries) {
     for (int i = 0; i < node.getChildCount(); i++) {
       if (node.getChildAt(i).isLeaf()) {
         Node childnode = (Node) node.getChildAt(i);

@@ -67,7 +67,7 @@ import devplugin.*;
  * 
  * @author Martin Oberhauser
  */
-public class ReminderPlugin implements ContextMenuIf {
+public class ReminderPlugin implements ContextMenuIf,ProgramReceiveIf {
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
@@ -647,6 +647,14 @@ public class ReminderPlugin implements ContextMenuIf {
 
   public String getId() {
     return DATAFILE_PREFIX;
+  }
+
+  public boolean canReceivePrograms() {
+    return true;
+  }
+
+  public void receivePrograms(Program[] programArr) {
+    addPrograms(programArr);
   }
 
 }

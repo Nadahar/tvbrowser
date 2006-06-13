@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,10 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import tvbrowser.core.plugin.PluginProxy;
 import devplugin.Plugin;
-import devplugin.PluginAccess;
 import devplugin.Program;
+import devplugin.ProgramReceiveIf;
 
 /**
  * Ein Dialog, der es erlaubt, Programme an andere Plugins weiter zu reichen
@@ -47,7 +45,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    */
   private JComboBox mPluginList;
 
-  private Plugin mCaller;
+  private ProgramReceiveIf mCaller;
 
   /**
    * Create the Dialog
@@ -56,7 +54,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    * @param owner Owner Frame
    * @param prg List of Programs to send
    */
-  public SendToPluginDialog(Plugin caller, Frame owner, Program[] prg) {
+  public SendToPluginDialog(ProgramReceiveIf caller, Frame owner, Program[] prg) {
     super(owner, true);
     mPrograms = prg;
     mCaller = caller;
@@ -71,7 +69,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    * @param owner Owner Frame
    * @param prg List of Programs to send
    */
-  public SendToPluginDialog(Plugin caller, Dialog owner, Program[] prg) {
+  public SendToPluginDialog(ProgramReceiveIf caller, Dialog owner, Program[] prg) {
     super(owner, true);
     mPrograms = prg;
     mCaller = caller;
@@ -89,34 +87,13 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     JPanel panel = (JPanel) this.getContentPane();
 
     panel.setLayout(new GridBagLayout());
-
+    
     // get the installed plugins
-    PluginAccess[] installedPluginArr = Plugin.getPluginManager().getActivatedPlugins();
+    ProgramReceiveIf[] installedPluginArr = Plugin.getPluginManager().getReceiveIfs(mCaller);
 
-    PluginAccess[] copy = new PluginProxy[installedPluginArr.length];
+    Arrays.sort(installedPluginArr, new ObjectComperator());
 
-    System.arraycopy(installedPluginArr, 0, copy, 0, installedPluginArr.length);
-
-    Arrays.sort(copy, new ObjectComperator());
-
-    // create a list of those who support multiple program execution
-    Vector selectablePluginList = new Vector();
-    for (int i = 0; i < copy.length; i++) {
-
-      boolean same = false;
-
-      if (mCaller != null) {
-        if (copy[i].getId().equals(mCaller.getId())) {
-          same = true;
-        }
-      }
-
-      if (!same && copy[i].canReceivePrograms()) {
-        selectablePluginList.add(copy[i]);
-      }
-    }
-
-    mPluginList = new JComboBox(selectablePluginList);
+    mPluginList = new JComboBox(installedPluginArr);
 
     GridBagConstraints c = new GridBagConstraints();
 
@@ -179,7 +156,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   protected void send() {
 
     int result = JOptionPane.YES_OPTION;
-    PluginAccess plug = (PluginAccess) mPluginList.getSelectedItem();
+    ProgramReceiveIf plug = (ProgramReceiveIf) mPluginList.getSelectedItem();
 
     if (mPrograms.length > 5) {
       result = JOptionPane.showConfirmDialog(this, mLocalizer.msg("AskBeforeSend",
@@ -195,9 +172,9 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   /**
    * Comperator needed to Sort List of Plugins
    */
-  private class ObjectComperator implements Comparator {
+  private class ObjectComperator implements Comparator<ProgramReceiveIf> {
 
-    public int compare(Object o1, Object o2) {
+    public int compare(ProgramReceiveIf o1, ProgramReceiveIf o2) {
       return o1.toString().compareTo(o2.toString());
     }
 

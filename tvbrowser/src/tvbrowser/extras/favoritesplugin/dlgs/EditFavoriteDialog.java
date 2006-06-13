@@ -69,6 +69,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
 import devplugin.PluginAccess;
+import devplugin.ProgramReceiveIf;
 
 public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
@@ -104,7 +105,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
   private JCheckBox mPassProgramsCheckBox;
 
-  private PluginAccess[] mPassProgramPlugins;
+  private ProgramReceiveIf[] mPassProgramPlugins;
 
   private JLabel mPassProgramsLb;
 
@@ -455,15 +456,15 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mDeleteExclusionBtn.setEnabled(selectedItem != null);
   }
 
-  private String getForwardPluginsLabelString(PluginAccess[] pluginArr) {
+  private String getForwardPluginsLabelString(ProgramReceiveIf[] pluginArr) {
     if (pluginArr != null && pluginArr.length > 0) {
       StringBuffer buf = new StringBuffer();
       if (pluginArr.length > 0) {
-        buf.append(pluginArr[0].getInfo().getName());
+        buf.append(pluginArr[0].toString());
       }
       if (pluginArr.length > 1) {
         buf.append(", ");
-        buf.append(pluginArr[1].getInfo().getName());
+        buf.append(pluginArr[1].toString());
       }
       if (pluginArr.length > 2) {
         buf.append(" (");
@@ -488,9 +489,10 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChangePassProgramsBtn = new JButton(mLocalizer.msg("change", "Change"));
     mChangePassProgramsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null);
+        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPlugin.getInstance());
+                
         UiUtilities.centerAndShow(dlg);
-        PluginAccess[] pluginArr = dlg.getPlugins();
+        ProgramReceiveIf[] pluginArr = dlg.getPlugins();
         if (pluginArr != null) {
           mPassProgramPlugins = pluginArr;
           mPassProgramsLb.setText(getForwardPluginsLabelString(mPassProgramPlugins));

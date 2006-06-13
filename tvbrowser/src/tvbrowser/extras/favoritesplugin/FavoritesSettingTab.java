@@ -43,11 +43,13 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
+import devplugin.ProgramReceiveIf;
 import devplugin.SettingsTab;
 
 /**
@@ -61,7 +63,7 @@ public class FavoritesSettingTab implements SettingsTab {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
 
-  private PluginAccess[] mClientPlugins;
+  private ProgramReceiveIf[] mClientPlugins;
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode;  
   
@@ -85,7 +87,7 @@ public class FavoritesSettingTab implements SettingsTab {
     ArrayList clientPlugins = new ArrayList();
     
     for(int i = 0; i < clientPluginIdArr.length; i++) {
-      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(clientPluginIdArr[i]);
+      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(clientPluginIdArr[i]);
       if(plugin != null)
         clientPlugins.add(plugin);
     }
@@ -100,9 +102,9 @@ public class FavoritesSettingTab implements SettingsTab {
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
         if(w instanceof JDialog)
-          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null);
+          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPlugin.getInstance());
         else
-          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null);
+          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPlugin.getInstance());
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);

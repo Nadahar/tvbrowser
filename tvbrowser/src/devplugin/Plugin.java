@@ -67,7 +67,7 @@ import util.ui.ImageUtilities;
  * @author Martin Oberhauser
  * @author Til Schneider, www.murfman.de
  */
-abstract public class Plugin implements Marker,ContextMenuIf {
+abstract public class Plugin implements Marker,ContextMenuIf,ProgramReceiveIf {
 
   /**
    * The name to use for the big icon (the 24x24 one for the toolbar) of the

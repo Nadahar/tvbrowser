@@ -63,7 +63,7 @@ import util.ui.FileCheckBox;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
-import devplugin.PluginAccess;
+import devplugin.ProgramReceiveIf;
 import devplugin.SettingsTab;
 
 
@@ -91,7 +91,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private Object mTestSound;
 
   private JLabel mPluginLabel;
-  private PluginAccess[] mClientPlugins;
+  private ProgramReceiveIf[] mClientPlugins;
   /**
    * Constructor.
    */
@@ -147,16 +147,16 @@ public class ReminderSettingsTab implements SettingsTab {
     String[] clientPluginIdArr
     = ReminderPlugin.getInstance().getClientPluginIds();    
     
-    ArrayList clientPlugins = new ArrayList();
+    ArrayList<ProgramReceiveIf> clientPlugins = new ArrayList<ProgramReceiveIf>();
     
-    for(int i = 0; i < clientPluginIdArr.length; i++) {
-      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(clientPluginIdArr[i]);
+    for(String id : clientPluginIdArr) {
+      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(id);
+      
       if(plugin != null)
         clientPlugins.add(plugin);
     }
     
-    mClientPlugins = new PluginAccess[clientPlugins.size()];
-    clientPlugins.toArray(mClientPlugins);
+    mClientPlugins = clientPlugins.toArray(new ProgramReceiveIf[clientPlugins.size()]);
     
     handlePluginSelection();
     
@@ -165,9 +165,9 @@ public class ReminderSettingsTab implements SettingsTab {
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
         if(w instanceof JDialog)
-          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null);
+          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPlugin.getInstance());
         else
-          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null);
+          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPlugin.getInstance());
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
