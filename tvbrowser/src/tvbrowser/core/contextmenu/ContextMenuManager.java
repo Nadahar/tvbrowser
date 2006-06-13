@@ -39,9 +39,9 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.programinfo.ProgramInfo;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.programinfo.ProgramInfoProxy;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -125,12 +125,12 @@ public class ContextMenuManager {
     if(plugin != null)
       return (ContextMenuIf)plugin;
     else if (id != null){
-      if(id.compareTo(ProgramInfo.getInstance().getId()) == 0)
-        return ProgramInfo.getInstance();
-      else if(id.compareTo(FavoritesPlugin.getInstance().getId()) == 0)
-        return FavoritesPlugin.getInstance();
-      else if(id.compareTo(ReminderPlugin.getInstance().getId()) == 0)
-        return ReminderPlugin.getInstance();      
+      if(id.compareTo(ProgramInfoProxy.getInstance().getId()) == 0)
+        return ProgramInfoProxy.getInstance();
+      else if(id.compareTo(FavoritesPluginProxy.getInstance().getId()) == 0)
+        return FavoritesPluginProxy.getInstance();
+      else if(id.compareTo(ReminderPluginProxy.getInstance().getId()) == 0)
+        return ReminderPluginProxy.getInstance();      
       else if(id.compareTo(ConfigMenuItem.CONFIG) == 0) 
         return ConfigMenuItem.getInstance();
     }
@@ -196,11 +196,11 @@ public class ContextMenuManager {
     String[] order = Settings.propContextMenuOrder.getStringArray();    
     List disabledList = getDisabledContextMenuIfs();
     
-    ArrayList ifList = new ArrayList();
+    ArrayList<ContextMenuIf> ifList = new ArrayList<ContextMenuIf>();
     
-    ProgramInfo info = ProgramInfo.getInstance();
-    FavoritesPlugin favorite = FavoritesPlugin.getInstance();
-    ReminderPlugin reminder = ReminderPlugin.getInstance();
+    ProgramInfoProxy info = ProgramInfoProxy.getInstance();
+    FavoritesPluginProxy favorite = FavoritesPluginProxy.getInstance();
+    ReminderPluginProxy reminder = ReminderPluginProxy.getInstance();
     
     boolean lastWasSeparator = false;
     
@@ -272,7 +272,7 @@ public class ContextMenuManager {
    * @return The menu items of the context menu.
    */
   public JMenu createContextMenuItems(ContextMenuIf callerIf, Program program, boolean markDefaultIf) {
-    ArrayList items = new ArrayList();
+    ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
     ContextMenuIf defaultIf = getInstance().getDefaultContextMenuIf();
     ContextMenuIf middleClickIf = getInstance().getMiddleClickIf();
     ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs(false, true);
@@ -340,7 +340,7 @@ public class ContextMenuManager {
   public List getDisabledContextMenuIfs() {
     String[] disabled = Settings.propContextMenuDisabledItems.getStringArray();
     
-    ArrayList list = new ArrayList();
+    ArrayList<ContextMenuIf> list = new ArrayList<ContextMenuIf>();
     if (disabled == null) {
       return list;
     }

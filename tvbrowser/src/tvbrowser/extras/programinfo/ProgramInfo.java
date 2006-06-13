@@ -59,7 +59,7 @@ import devplugin.ProgramFieldType;
  * 
  * @author Martin Oberhauser
  */
-public class ProgramInfo implements ContextMenuIf {
+public class ProgramInfo {
 
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfo.class);

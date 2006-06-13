@@ -35,8 +35,20 @@ package devplugin;
  */
 public interface ContextMenuIf {
   
+  /**
+   * Gets the actions for the context menu of a program.
+   * 
+   * @param program The program the context menu will be shown for.
+   * @return the actions this plugin provides for the given program or
+   *         <code>null</code> if the plugin does not provide this feature.
+   */
   public ActionMenu getContextMenuActions(Program program);
   
+  /**
+   * Gets the ID of this ContextMenuIf.
+   * 
+   * @return The ID of this ContextMenuIf.
+   */
   public String getId();
   
 }

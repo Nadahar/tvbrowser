@@ -78,6 +78,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.DragAndDropMouseListener;
@@ -500,7 +501,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     Favorite fav = (Favorite) mFavoritesListModel.get(selection);
     
     if(fav.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT))
-      caller = ReminderPlugin.getInstance();
+      caller = ReminderPluginProxy.getInstance();
     
     SendToPluginDialog send = new SendToPluginDialog(caller, this, programs);
 

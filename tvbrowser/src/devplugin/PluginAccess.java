@@ -35,7 +35,7 @@ import javax.swing.Icon;
  *
  * @author Til Schneider, www.murfman.de
  */
-public interface PluginAccess extends Marker,ProgramReceiveIf {
+public interface PluginAccess extends Marker,ProgramReceiveIf,ContextMenuIf {
   
   /**
    * Gets the ID of this plugin.
@@ -50,15 +50,6 @@ public interface PluginAccess extends Marker,ProgramReceiveIf {
    * @return The meta information about the plugin.
    */
   public PluginInfo getInfo();
-
-  /**
-   * Gets the actions for the context menu of a program.
-   * 
-   * @param program The program the context menu will be shown for.
-   * @return the actions this plugin provides for the given program or
-   *         <code>null</code> if the plugin does not provide this feature.
-   */
-  public ActionMenu getContextMenuActions(Program program);
 
   /**
    * Gets the description text for the program table icons provided by this

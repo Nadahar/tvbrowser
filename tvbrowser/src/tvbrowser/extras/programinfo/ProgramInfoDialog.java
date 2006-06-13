@@ -298,7 +298,7 @@ public class ProgramInfoDialog extends JDialog implements SwingConstants, Window
         public void mouseClicked(MouseEvent e) {
           if(e.getClickCount() == 1) {
             JPopupMenu popupMenu = PluginProxyManager.createPluginContextMenu(mProgram,
-                ProgramInfo.getInstance());            
+                ProgramInfoProxy.getInstance());            
             popupMenu.show(functions, e.getX(), e.getY() - popupMenu.getPreferredSize().height);
           }
         }

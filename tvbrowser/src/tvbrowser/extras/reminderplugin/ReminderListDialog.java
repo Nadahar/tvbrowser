@@ -139,14 +139,14 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           mTable.changeSelection(row, 0, false, false);
           Program p = (Program) mTable.getModel().getValueAt(row, 0);
 
-          PluginManagerImpl.getInstance().handleProgramDoubleClick(p, ReminderPlugin.getInstance());
+          PluginManagerImpl.getInstance().handleProgramDoubleClick(p, ReminderPluginProxy.getInstance());
         }
         if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
           int row = mTable.rowAtPoint(e.getPoint());
           mTable.changeSelection(row, 0, false, false);
           Program p = (Program) mTable.getModel().getValueAt(row, 0);
 
-          PluginManagerImpl.getInstance().handleProgramMiddleClick(p, ReminderPlugin.getInstance());
+          PluginManagerImpl.getInstance().handleProgramMiddleClick(p, ReminderPluginProxy.getInstance());
         }
         mTable.updateUI();
       }
@@ -299,7 +299,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     Program p = (Program) mTable.getModel().getValueAt(row, 0);
 
-    JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPlugin.getInstance());
+    JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
     menu.show(mTable, e.getX() - 15, e.getY() - 15);
   }
 

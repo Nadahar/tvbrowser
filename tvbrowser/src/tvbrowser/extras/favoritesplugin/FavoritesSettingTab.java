@@ -43,12 +43,11 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
-import devplugin.PluginAccess;
 import devplugin.ProgramReceiveIf;
 import devplugin.SettingsTab;
 
@@ -84,7 +83,7 @@ public class FavoritesSettingTab implements SettingsTab {
     String[] clientPluginIdArr
     = FavoritesPlugin.getInstance().getClientPluginIds();    
     
-    ArrayList clientPlugins = new ArrayList();
+    ArrayList<ProgramReceiveIf> clientPlugins = new ArrayList<ProgramReceiveIf>();
     
     for(int i = 0; i < clientPluginIdArr.length; i++) {
       ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(clientPluginIdArr[i]);
@@ -92,8 +91,7 @@ public class FavoritesSettingTab implements SettingsTab {
         clientPlugins.add(plugin);
     }
     
-    mClientPlugins = new PluginAccess[clientPlugins.size()];
-    clientPlugins.toArray(mClientPlugins);
+    mClientPlugins = clientPlugins.toArray(new ProgramReceiveIf[clientPlugins.size()]);
     
     handlePluginSelection();
     
@@ -102,9 +100,9 @@ public class FavoritesSettingTab implements SettingsTab {
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
         if(w instanceof JDialog)
-          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPlugin.getInstance());
+          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
         else
-          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPlugin.getInstance());
+          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
