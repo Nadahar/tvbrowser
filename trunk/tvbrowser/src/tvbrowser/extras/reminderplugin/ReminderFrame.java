@@ -174,7 +174,7 @@ public class ReminderFrame implements WindowClosingIf {
     progPanel.add(channelLabel,BorderLayout.EAST);
     
     ProgramPanel panel = new ProgramPanel(mProgram);
-    panel.addPluginContextMenuMouseListener(ReminderPlugin.getInstance());
+    panel.addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
     progPanel.add(panel, BorderLayout.CENTER);
     
     JPanel btnPanel = new JPanel(new BorderLayout(10,0));

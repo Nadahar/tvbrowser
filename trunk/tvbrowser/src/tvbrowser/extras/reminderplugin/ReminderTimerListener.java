@@ -38,7 +38,7 @@ import java.util.Properties;
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
 import devplugin.Plugin;
-import devplugin.PluginAccess;
+import devplugin.ProgramReceiveIf;
 import devplugin.Program;
 
 public class ReminderTimerListener {
@@ -87,7 +87,7 @@ public class ReminderTimerListener {
     
     
     for(int i = 0; i < pluginIds.length; i++) {
-      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(pluginIds[i]);
+      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(pluginIds[i]);
       if (plugin != null && plugin.canReceivePrograms()) {
         Program[] prArray = { item.getProgram()};
         plugin.receivePrograms(prArray);

@@ -51,6 +51,7 @@ import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelChooserDlg;
@@ -68,7 +69,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
-import devplugin.PluginAccess;
 import devplugin.ProgramReceiveIf;
 
 public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
@@ -489,7 +489,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChangePassProgramsBtn = new JButton(mLocalizer.msg("change", "Change"));
     mChangePassProgramsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPlugin.getInstance());
+        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance());
                 
         UiUtilities.centerAndShow(dlg);
         ProgramReceiveIf[] pluginArr = dlg.getPlugins();
@@ -530,7 +530,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mPassProgramsLb.setEnabled(mPassProgramsCheckBox.isSelected());
     mChangePassProgramsBtn.setEnabled(mPassProgramsCheckBox.isSelected());
     if (!mPassProgramsCheckBox.isSelected()) {
-      mPassProgramPlugins = new PluginAccess[] {};
+      mPassProgramPlugins = new ProgramReceiveIf[] {};
     }
 
   }

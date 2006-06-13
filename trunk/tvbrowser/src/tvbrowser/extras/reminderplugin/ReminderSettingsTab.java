@@ -165,9 +165,9 @@ public class ReminderSettingsTab implements SettingsTab {
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         PluginChooserDlg chooser = null;
         if(w instanceof JDialog)
-          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPlugin.getInstance());
+          chooser = new PluginChooserDlg((JDialog)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
         else
-          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPlugin.getInstance());
+          chooser = new PluginChooserDlg((JFrame)w,mClientPlugins, null, ReminderPluginProxy.getInstance());
         
         chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);

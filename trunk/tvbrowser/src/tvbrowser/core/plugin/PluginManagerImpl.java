@@ -47,7 +47,7 @@ import tvbrowser.core.search.booleansearch.ParserException;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
@@ -372,19 +372,19 @@ public class PluginManagerImpl implements PluginManager {
    */
   public ProgramFilter[] getAvailableFilters() {
 
-    ArrayList filters = new ArrayList();
+    ArrayList<ProgramFilter> filters = new ArrayList<ProgramFilter>();
 
     FilterList filterList = FilterList.getInstance();
 
     ProgramFilter[] filter = filterList.getFilterArr();
 
-    for (int i=0;i<filter.length;i++) {
-      if (!(filter[i] instanceof SeparatorFilter)) {
-        filters.add(filter[i]);
+    for (ProgramFilter filt : filter) {
+      if (!(filt instanceof SeparatorFilter)) {
+        filters.add(filt);
       }
     }
 
-    return (ProgramFilter[]) filters.toArray(new ProgramFilter[0]);
+    return filters.toArray(new ProgramFilter[filter.length]);
   }
 
 
@@ -699,8 +699,8 @@ public class PluginManagerImpl implements PluginManager {
     
     ArrayList<ProgramReceiveIf> receiveIfs = new ArrayList<ProgramReceiveIf>();
     
-    if(caller == null || caller.getId().compareTo(ReminderPlugin.getInstance().getId()) != 0)
-      receiveIfs.add(ReminderPlugin.getInstance());
+    if(caller == null || caller.getId().compareTo(ReminderPluginProxy.getInstance().getId()) != 0)
+      receiveIfs.add(ReminderPluginProxy.getInstance());
     
     for(PluginAccess plugin : plugins)
       if(plugin.canReceivePrograms() && (caller == null || plugin.getId().compareTo(caller.getId()) != 0))

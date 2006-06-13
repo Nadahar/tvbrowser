@@ -80,7 +80,7 @@ import devplugin.*;
  *
  * @author Til Schneider, www.murfman.de
  */
-public class FavoritesPlugin implements ContextMenuIf{
+public class FavoritesPlugin {
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -144,7 +144,7 @@ public class FavoritesPlugin implements ContextMenuIf{
 
       updateRootNode();
     
-      ArrayList showInfoFavorites = new ArrayList();
+      ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>();
 
       for (int i = 0; i < mFavoriteArr.length; i++) {
         if (mFavoriteArr[i].isRemindAfterDownload() && mFavoriteArr[i].getNewPrograms().length > 0)
@@ -278,7 +278,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     }
 
     if(version <= 2 && reminderFound) {
-      ArrayList clientPluginIdArr = new ArrayList();
+      ArrayList<String> clientPluginIdArr = new ArrayList<String>();
 
       for(int i = 0; i < mClientPluginIdArr.length; i++) {
         if(mClientPluginIdArr[i].compareTo("java.reminderplugin.ReminderPlugin") != 0) {
@@ -286,7 +286,7 @@ public class FavoritesPlugin implements ContextMenuIf{
         }
       }
 
-      mClientPluginIdArr = (String[])clientPluginIdArr.toArray(new String[clientPluginIdArr.size()]);
+      mClientPluginIdArr = clientPluginIdArr.toArray(new String[clientPluginIdArr.size()]);
 
       for(int i = 0; i < mFavoriteArr.length; i++) {
         mFavoriteArr[i].getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
@@ -367,7 +367,7 @@ public class FavoritesPlugin implements ContextMenuIf{
     }
 
 
-    ArrayList list = new ArrayList();
+    ArrayList<Favorite> list = new ArrayList<Favorite>();
 
     for (int i = 0; i < mFavoriteArr.length; i++) {
       if(!mFavoriteArr[i].equals(favorite)) {
@@ -376,8 +376,7 @@ public class FavoritesPlugin implements ContextMenuIf{
       }
     }
 
-    mFavoriteArr = new Favorite[list.size()];
-    list.toArray(mFavoriteArr);
+    mFavoriteArr = list.toArray(new Favorite[list.size()]);
 
     ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
     updateRootNode();
@@ -762,15 +761,15 @@ public class FavoritesPlugin implements ContextMenuIf{
     mClientPluginIdArr = clientPluginArr;
   }
 
-  public PluginAccess[] getDefaultClientPlugins() {
-    ArrayList list = new ArrayList();
+  public ProgramReceiveIf[] getDefaultClientPlugins() {
+    ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
     for (int i=0; i<mClientPluginIdArr.length; i++) {
-      PluginAccess plugin = Plugin.getPluginManager().getActivatedPluginForId(mClientPluginIdArr[i]);
+      ProgramReceiveIf plugin = Plugin.getPluginManager().getReceiceIfForId(mClientPluginIdArr[i]);
       if (plugin != null && plugin.canReceivePrograms()) {
         list.add(plugin);
       }
     }
-    return (PluginAccess[])list.toArray(new PluginAccess[list.size()]);
+    return list.toArray(new ProgramReceiveIf[list.size()]);
   }
 
   public String getId() {
