@@ -30,7 +30,6 @@ import java.awt.Point;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -44,10 +43,8 @@ import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
-import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -72,44 +69,8 @@ public class ClipboardPlugin extends Plugin {
   /** The Default-Parameters */
   public static final String DEFAULT_PARAM = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
 
-  public ActionMenu getButtonAction() {
-    AbstractAction action = new AbstractAction() {
-
-      public void actionPerformed(ActionEvent evt) {
-        showDialog();
-      }
-    };
-    action.putValue(Action.NAME, mLocalizer.msg("pluginName", "Clipboard"));
-    action.putValue(Action.SMALL_ICON, createImageIcon("actions", "edit-paste", 16));
-    action.putValue(BIG_ICON, createImageIcon("actions", "edit-paste", 22));
-    action.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("pluginName", "Clipboard"));
-
-    return new ActionMenu(action);
-  }
-
   public ActionMenu getContextMenuActions(final Program program) {
-    final PluginTreeNode node = getRootNode();
-    final boolean inList = node.contains(program);
-
     ImageIcon img = createImageIcon("actions", "edit-paste", 16);
-
-    AbstractAction addRemoveAction = new AbstractAction() {
-
-      public void actionPerformed(ActionEvent evt) {
-        if (inList) {
-          node.removeProgram(program);
-        } else {
-          node.addProgram(program);
-        }
-        node.update();
-      }
-    };
-
-    if (inList) {
-      addRemoveAction.putValue(Action.NAME, mLocalizer.msg("contextMenuRemoveText", "Remove from Clipboard"));
-    } else {
-      addRemoveAction.putValue(Action.NAME, mLocalizer.msg("contextMenuAddText", "Add to Clipboard"));
-    }
 
     AbstractAction copyToSystem = new AbstractAction(mLocalizer.msg("copyToSystem", "Copy to System-Clipboard")) {
       public void actionPerformed(ActionEvent evt) {
@@ -119,14 +80,7 @@ public class ClipboardPlugin extends Plugin {
     };
     copyToSystem.putValue(Action.SMALL_ICON, img);
 
-    addRemoveAction.putValue(Action.SMALL_ICON, img);
-
-    Action action = new devplugin.ContextMenuAction(mLocalizer.msg("contextMenu", "Clipboard"));
-    action.putValue(Action.SMALL_ICON, img);
-
-    Action[] actionList = { addRemoveAction, copyToSystem };
-
-    return new ActionMenu(action, actionList);
+    return new ActionMenu(copyToSystem);
   }
 
   /*
@@ -137,64 +91,18 @@ public class ClipboardPlugin extends Plugin {
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("pluginName", "Clipboard");
     String desc = mLocalizer.msg("description",
-        "A internal Clipboard for receiving and sending Programs from/to other Plugins.");
+        "Copy programs to the Clipboard");
     String author = "Bodo Tasche";
-    return new PluginInfo(name, desc, author, new Version(0, 20));
+    return new PluginInfo(name, desc, author, new Version(0, 30));
   }
 
-  /**
-   * Creates the Dialog
-   */
-  public void showDialog() {
-
-    PluginTreeNode node = getRootNode();
-    if (node.isEmpty()) {
-      JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("empty", "The Clipboard is empty."));
-      return;
-    }
-
-    ClipboardDialog dlg = new ClipboardDialog(getParentFrame(), this, mSettings, node);
-
-    dlg.pack();
-    dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-      public void componentResized(ComponentEvent e) {
-        mDimensionListDialog = e.getComponent().getSize();
-      }
-
-      public void componentMoved(ComponentEvent e) {
-        e.getComponent().getLocation(mLocationListDialog);
-      }
-    });
-
-    if ((mLocationListDialog != null) && (mDimensionListDialog != null)) {
-      dlg.setLocation(mLocationListDialog);
-      dlg.setSize(mDimensionListDialog);
-      dlg.setVisible(true);
-    } else {
-      dlg.setSize(400, 300);
-      UiUtilities.centerAndShow(dlg);
-      mLocationListDialog = dlg.getLocation();
-      mDimensionListDialog = dlg.getSize();
-    }
-
-  }
-
+ 
   public boolean canReceivePrograms() {
     return true;
   }
 
-  public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("actions", "edit-paste", 16);
-  }
-
   public void receivePrograms(Program[] programArr) {
-    PluginTreeNode node = getRootNode();
-    for (int i = 0; i < programArr.length; i++) {
-      if (!node.contains(programArr[i])) {
-        node.addProgram(programArr[i]);
-      }
-    }
-    node.update();
+    copyProgramsToSystem(programArr);
   }
 
   public void loadSettings(Properties settings) {
@@ -207,10 +115,6 @@ public class ClipboardPlugin extends Plugin {
 
   public SettingsTab getSettingsTab() {
     return new ClipboardSettingsTab(this, mSettings);
-  }
-
-  public boolean canUseProgramTree() {
-    return true;
   }
 
   /**
