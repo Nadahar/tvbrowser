@@ -54,6 +54,10 @@ public class ChannelJList extends JList {
     // Get item index
     int index = locationToIndex(evt.getPoint());
 
+    if (index < 0) {
+      return null;
+    }
+    
     // Get item
     Object item = getModel().getElementAt(index);
 

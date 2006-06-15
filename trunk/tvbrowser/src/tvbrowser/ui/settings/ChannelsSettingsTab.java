@@ -65,8 +65,7 @@ import javax.swing.event.ListSelectionListener;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import tvbrowser.ui.settings.channel.ChannelFilter;
@@ -75,8 +74,6 @@ import tvbrowser.ui.settings.channel.ChannelListModel;
 import tvbrowser.ui.settings.channel.FilterItem;
 import tvbrowser.ui.settings.channel.FilteredChannelListCellRenderer;
 import tvbrowser.ui.settings.channel.MultiChannelConfigDlg;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
 import util.ui.ChannelContextMenu;
 import util.ui.ChannelListCellRenderer;
 import util.ui.DragAndDropMouseListener;
@@ -383,22 +380,24 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     mCategoryCB.removeAllItems();
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
 
-    if (channelListContains(allChannels, Channel.CATEGORY_TV))
+    if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTVAll","TV"), new Integer(Channel.CATEGORY_TV)));
-    if (channelListContains(allChannels, Channel.CATEGORY_TV))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNotSpecial","TV"), new Integer(Channel.CATEGORY_TV * -1)));
-    if (channelListContains(allChannels, Channel.CATEGORY_DIGITAL))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
-    if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_MUSIC))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
-    if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_SPORT))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
-    if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_NEWS))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
-    if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers","Sonstige Sparten"), new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
-    if (channelListContains(allChannels, Channel.CATEGORY_RADIO))
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
+      
+      if (channelListContains(allChannels, Channel.CATEGORY_TV))
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNotSpecial","TV"), new Integer(Channel.CATEGORY_TV * -1)));
+      if (channelListContains(allChannels, Channel.CATEGORY_DIGITAL))
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital","Digitale"), new Integer(Channel.CATEGORY_DIGITAL)));
+      if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_MUSIC))
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic","Musik"), new Integer(Channel.CATEGORY_SPECIAL_MUSIC)));
+      if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_SPORT))
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport", "Sport"), new Integer(Channel.CATEGORY_SPECIAL_SPORT)));
+      if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_NEWS))
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews", "Nachrichten"), new Integer(Channel.CATEGORY_SPECIAL_NEWS)));
+      if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER))
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers","Sonstige Sparten"), new Integer(Channel.CATEGORY_SPECIAL_OTHER)));
+      if (channelListContains(allChannels, Channel.CATEGORY_RADIO))
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio","Radio"), new Integer(Channel.CATEGORY_RADIO)));
+    }
     if (channelListContains(allChannels, Channel.CATEGORY_CINEMA))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema","Kino"), new Integer(Channel.CATEGORY_CINEMA)));
     if (channelListContains(allChannels, Channel.CATEGORY_EVENTS))
@@ -406,6 +405,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     if (channelListContains(allChannels, Channel.CATEGORY_NONE))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone","Not categorized"), new Integer(Channel.CATEGORY_NONE)));
 
+    
     HashSet countries = new HashSet();
 
     for (int i = 0; i < allChannels.length; i++) {
@@ -624,16 +624,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     win.run(new Progress() {
       public void run() {
-        TvDataServiceProxy services[] = TvDataServiceProxyManager.getInstance().getDataServices();
-        for (int i = 0; i < services.length; i++) {
-          if (services[i].supportsDynamicChannelList()) {
-            try {
-              services[i].checkForAvailableChannels(win);
-            } catch (TvBrowserException exc) {
-              ErrorHandler.handle(exc);
-            }
-          }
-        }
+        ChannelGroupManager.getInstance().checkForAvailableGroups(win);
 
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {

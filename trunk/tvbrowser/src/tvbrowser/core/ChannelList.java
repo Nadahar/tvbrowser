@@ -38,11 +38,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import devplugin.Channel;
-import devplugin.ChannelGroup;
 
 
 /**
@@ -57,9 +55,9 @@ public class ChannelList {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(ChannelList.class.getName());
 
-  private static ArrayList mAvailableChannels = new ArrayList();
+  private static ArrayList<Channel> mAvailableChannels = new ArrayList<Channel>();
 
-  private static ArrayList mSubscribedChannels = new ArrayList();
+  private static ArrayList<Channel> mSubscribedChannels = new ArrayList<Channel>();
 
 
 
@@ -170,7 +168,7 @@ public class ChannelList {
    * 'unsubscribed'
    */
   public static void setSubscribeChannels(Channel[] channelArr) {
-    mSubscribedChannels = new ArrayList(channelArr.length);
+    mSubscribedChannels = new ArrayList<Channel>(channelArr.length);
     for (int i = 0; i < channelArr.length; i++) {
       if (channelArr[i] == null) {
         mLog.warning("cannot subscribe channel #" + i + " - is null");
@@ -197,27 +195,6 @@ public class ChannelList {
       
       if (channel.getDataServiceProxy().getId().equals(dataService.getId()) && channel.getId().equals(id)) {
         return channel;
-      }
-    }
-
-    /* If we haven't found the channel within the 'available channels', we try to find it
-       in an unsubscribed group.
-       If we find it there, we subscribe the affected group and add all channels of this group to
-       the 'available channels' list
-    */
-    ChannelGroup[] groupArr = dataService.getAvailableGroups();
-    for (int i=0; i<groupArr.length; i++) {
-      if (!ChannelGroupManager.getInstance().isSubscribedGroup(groupArr[i])) {
-        Channel[] channelArr = dataService.getAvailableChannels(groupArr[i]);
-        for (int j=0; j<channelArr.length; j++) {
-          if (id.equals(channelArr[j].getId())) {
-            ChannelGroupManager.getInstance().subscribeGroup(groupArr[i]);
-            for (int k=0; k<channelArr.length; k++) {
-              mAvailableChannels.add(channelArr[k]);
-            }
-            return channelArr[j];
-          }
-        }
       }
     }
 
@@ -428,7 +405,7 @@ public class ChannelList {
    * @return HashMap filled with Channel, Value
    */
   private static HashMap createMap(File f) {
-    HashMap map = new HashMap();
+    HashMap<Channel, String> map = new HashMap<Channel, String>();
 
     if (!f.exists()) {
       return map;

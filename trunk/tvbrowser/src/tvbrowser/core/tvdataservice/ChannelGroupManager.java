@@ -27,12 +27,9 @@
 package tvbrowser.core.tvdataservice;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ChannelGroup;
@@ -41,38 +38,24 @@ import devplugin.ProgressMonitor;
 
 public class ChannelGroupManager {
 
-  private static String[] DEFAULT_SUBSCRIBED_GROUPS = new String[]{
-          "tvbrowserdataservice.TvBrowserDataService.main",
-          "tvbrowserdataservice.TvBrowserDataService.local",
-          "tvbrowserdataservice.TvBrowserDataService.others",
-          "tvbrowserdataservice.TvBrowserDataService.austria",
-          "tvbrowserdataservice.TvBrowserDataService.bodostv",
-          "tvbrowserdataservice.TvBrowserDataService.digital",
-          "tvbrowserdataservice.TvBrowserDataService.radio",
-  };
-
   private static java.util.logging.Logger mLog
            = java.util.logging.Logger.getLogger(ChannelGroupManager.class.getName());
 
-
   private static ChannelGroupManager mInstance;
 
-  private HashMap mServiceToGroupsMap; // key: TvDataServiceProxy;
+  private HashMap<TvDataServiceProxy, ArrayList<ChannelGroup>> mServiceToGroupsMap; // key: TvDataServiceProxy;
                                        // value: Array of devplugin.ChannelGroup objects
 
-  private HashMap mGroups;  // key: groupId
+  private HashMap<String, ChannelGroup> mGroups;  // key: groupId
                             // value: devplugin.ChannelGroup
 
-  private HashMap mGroupToService;   // key: devplugin.ChannelGroup
+  private HashMap<ChannelGroup, TvDataServiceProxy> mGroupToService;   // key: devplugin.ChannelGroup
                                      // value: TvDataServiceProxy
 
-
-
-
   private ChannelGroupManager() {
-    mGroups = new HashMap();
-    mServiceToGroupsMap = new HashMap();
-    mGroupToService = new HashMap();
+    mGroups = new HashMap<String, ChannelGroup>();
+    mServiceToGroupsMap = new HashMap<TvDataServiceProxy, ArrayList<ChannelGroup>>();
+    mGroupToService = new HashMap<ChannelGroup, TvDataServiceProxy>();
     TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
 
     for (int i=0; i<proxies.length; i++) {
@@ -93,9 +76,9 @@ public class ChannelGroupManager {
   private void addGroup(TvDataServiceProxy service, ChannelGroup group) {
     mGroups.put(createId(service, group), group);
     mGroupToService.put(group, service);
-    ArrayList groups = (ArrayList)mServiceToGroupsMap.get(service);
+    ArrayList<ChannelGroup> groups = (ArrayList<ChannelGroup>)mServiceToGroupsMap.get(service);
     if (groups == null) {
-      groups = new ArrayList();
+      groups = new ArrayList<ChannelGroup>();
       mServiceToGroupsMap.put(service, groups);
     }
     groups.add(group);
@@ -114,82 +97,7 @@ public class ChannelGroupManager {
     return (TvDataServiceProxy)mGroupToService.get(group);
   }
 
-  public void subscribeGroup(ChannelGroup group) {
-    String[] groupIds = getSubscribedGroupIds();
-    TvDataServiceProxy service = getTvDataService(group);
-    if (service != null) {
-      String id = createId(service, group);
-      ArrayList list = new ArrayList(Arrays.asList(groupIds));
-      if (!list.contains(group.getId())) {
-        list.add(id);
-      }
-      groupIds = (String[])list.toArray(new String[list.size()]);
-      Settings.propSubscribedChannelGroups.setStringArray(groupIds);
-    }
-  }
-
-
-
-
-  public void unsubscribeGroup(ChannelGroup group) {
-    String[] groupIds = getSubscribedGroupIds();
-    TvDataServiceProxy service = getTvDataService(group);
-    if (service != null) {
-      String id = createId(service, group);
-      ArrayList list = new ArrayList(Arrays.asList(groupIds));
-      list.remove(id);
-      groupIds = (String[])list.toArray(new String[list.size()]);
-      Settings.propSubscribedChannelGroups.setStringArray(groupIds);
-    }
-  }
-
-  public ChannelGroup[] getSubscribedGroups() {
-    String[] groupIds = getSubscribedGroupIds();
-    ArrayList list = new ArrayList();
-    for (int i=0; i<groupIds.length; i++) {
-      ChannelGroup g = (ChannelGroup)mGroups.get(groupIds[i]);
-      if (g != null) {
-        list.add(g);
-      }
-    }
-
-    return (ChannelGroup[])list.toArray(new ChannelGroup[list.size()]);
-  }
-
-  public boolean isSubscribedGroup(ChannelGroup group) {
-    TvDataServiceProxy service = getTvDataService(group);
-    String id = createId(service, group);
-    return Settings.propSubscribedChannelGroups.containsItem(id);
-  }
-
-
-  public ChannelGroup[] getSubscribedGroups(TvDataServiceProxy proxy) {
-    String[] subscribedGroupIds = getSubscribedGroupIds();
-    ArrayList list = (ArrayList)mServiceToGroupsMap.get(proxy);
-    
-    if (list == null) {
-      return new ChannelGroup[]{};
-    }
-    
-    ArrayList list2 = new ArrayList();
-    Iterator it = list.iterator();
-    
-    while(it.hasNext()) {
-      ChannelGroup group = (ChannelGroup)it.next();
-      String id = createId(proxy, group);
-      for(int i = 0; i < subscribedGroupIds.length; i++) {
-        if(id.compareTo(subscribedGroupIds[i]) == 0) {
-          list2.add(group);
-          break;
-        }
-      }
-    }
-
-    return (ChannelGroup[])list2.toArray(new ChannelGroup[list2.size()]);
-  }
-
-
-  /**
+   /**
    * Refresh the list of available groups and refresh the lists of available channels
    */
   public void checkForAvailableGroups(ProgressMonitor monitor) {
@@ -219,9 +127,12 @@ public class ChannelGroupManager {
     for (int i=0; i<proxies.length; i++) {
       if (proxies[i].supportsDynamicChannelList()) {
         ChannelGroup[] groups = proxies[i].getAvailableGroups();
-        for (int j=0; j<groups.length; j++) {
+        int max = groups.length;
+        monitor.setMaximum(max);
+        for (int j=0; j<max; j++) {
           try {
             proxies[i].checkForAvailableChannels(groups[j], monitor);
+            monitor.setValue(j);
           }catch(TvBrowserException e) {
             ErrorHandler.handle(e);
           }
@@ -230,23 +141,22 @@ public class ChannelGroupManager {
     }
   }
 
-  public ChannelGroup[] getAvailableGroups() {
-    Collection col = mGroups.values();
-
-    return (ChannelGroup[])col.toArray(new ChannelGroup[col.size()]);
-
-  }
-
   private String createId(TvDataServiceProxy service, ChannelGroup group) {
     return new StringBuffer(service.getId()).append('.').append(group.getId()).toString();
   }
 
-  private String[] getSubscribedGroupIds() {
-    String[] groupIds = Settings.propSubscribedChannelGroups.getStringArray();
-    if (groupIds == null) {
-      groupIds = DEFAULT_SUBSCRIBED_GROUPS;
-    }
-    return groupIds;
+  public ChannelGroup[] getAvailableGroups() {
+    Collection<ChannelGroup> col = mGroups.values();
+    return col.toArray(new ChannelGroup[col.size()]);
   }
 
+  /**
+   * Returns all Groups for a TvDataServiceProxy
+   * @param proxy get Groups for this TvDataService
+   * @return ChannelGroups
+   */
+  public ChannelGroup[] getAvailableGroups(AbstractTvDataServiceProxy proxy) {
+    Collection<ChannelGroup> groups = mServiceToGroupsMap.get(proxy);
+    return groups.toArray(new ChannelGroup[groups.size()]);
+  }
 }
