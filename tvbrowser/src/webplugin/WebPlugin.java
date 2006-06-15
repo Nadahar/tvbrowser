@@ -253,18 +253,21 @@ public class WebPlugin extends Plugin {
     if(mHasRightToDownload) {
       FavIconFetcher fetcher = new FavIconFetcher();
     
-      for (WebAddress address : mAddresses) {
-      
-        if (address.getIconFile() == null) {
-          String file = fetcher.fetchFavIconForUrl(address.getUrl());
-        
-          if (file != null) {
-            address.setIconFile(file);
-          } else {
-            address.setIconFile("");
+      if (mAddresses != null) {
+        for (WebAddress address : mAddresses) {
+          
+          if (address.getIconFile() == null) {
+            String file = fetcher.fetchFavIconForUrl(address.getUrl());
+          
+            if (file != null) {
+              address.setIconFile(file);
+            } else {
+              address.setIconFile("");
+            }
           }
         }
       }
+      
     }
   }
 
