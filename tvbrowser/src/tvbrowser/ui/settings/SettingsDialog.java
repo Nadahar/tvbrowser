@@ -312,7 +312,6 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new StartupSettingsTab(), SettingsItem.STARTUP));
 
     programtableNode.add(new SettingNode(new ChannelsSettingsTab(), SettingsItem.CHANNELS));
-    programtableNode.add(new SettingNode(new ChannelGroupSettingsTab(this)));
     programtableNode.add(new SettingNode(new RefreshDataSettingsTab()));
     programtableNode.add(new SettingNode(new ButtonsSettingsTab(), SettingsItem.TIMEBUTTONS));
 
@@ -364,12 +363,10 @@ public class SettingsDialog implements WindowClosingIf {
 
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
 
-    Arrays.sort(pluginArr, new Comparator() {
-
-      public int compare(Object o1, Object o2) {
+    Arrays.sort(pluginArr, new Comparator<PluginProxy>() {
+      public int compare(PluginProxy o1, PluginProxy o2) {
         return o1.toString().compareTo(o2.toString());
       }
-
     });
 
     for (int i = 0; i < pluginArr.length; i++) {

@@ -902,9 +902,6 @@ public class Settings {
   public static final BooleanProperty propShowChannelNamesInChannellist = new BooleanProperty(
       mProp, "showChannelNamesInChannellist", true);
   
-  public static final StringArrayProperty propSubscribedChannelGroups = new StringArrayProperty(
-      mProp, "subscribedChannelGroups", null);
-
   public static final StringArrayProperty propDeleteFilesAtStart = new StringArrayProperty(
       mProp, "deleteFilesAtStart", new String[0]);
 
