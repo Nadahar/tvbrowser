@@ -645,7 +645,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     win.run(new Progress() {
       public void run() {
-        ChannelGroupManager.getInstance().checkForAvailableGroups(win);
+        ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(win);
 
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
