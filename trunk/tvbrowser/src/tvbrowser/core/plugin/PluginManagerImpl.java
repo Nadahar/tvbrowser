@@ -93,6 +93,12 @@ public class PluginManagerImpl implements PluginManager {
   }
 
 
+  /**
+   * Returns the instance of this class, if
+   * there is no instance it is created first.
+   * 
+   * @return The instance of this class.
+   */
   public static PluginManager getInstance() {
     if (mInstance == null) {
       mInstance = new PluginManagerImpl();
@@ -159,7 +165,7 @@ public class PluginManagerImpl implements PluginManager {
    * @return an Iterator for all programs of one day and channel or
    *         <code>null</code> if the requested data is not available.
    */
-  public Iterator getChannelDayProgram(Date date, Channel channel) {
+  public Iterator<Program> getChannelDayProgram(Date date, Channel channel) {
     ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
         .getDayProgram(date, channel);
     if (channelDayProgram == null) {
@@ -727,5 +733,47 @@ public class PluginManagerImpl implements PluginManager {
         return receiveIf;
     
     return null;
+  }
+
+  /**
+   * Let TVB scroll to the given program.
+   * 
+   * @param program The program to scroll to.
+   * @since 2.3
+   */  
+  public void scrollToProgram(Program program) {
+    if(program != null)
+      MainFrame.getInstance().scrollToProgram(program);
+  }
+  
+  /**
+   * Let TVB scroll to the given time.
+   * 
+   * @param time The time to scroll to in minutes.
+   * @since 2.3
+   */
+  public void scrollToTime(int time) {
+    MainFrame.getInstance().scrollToTime(time);
+  }
+  
+  /**
+   * Let TVB scroll to the given channel.
+   * 
+   * @param channel The channel to scroll to.
+   * @since 2.3
+   */
+  public void scrollToChannel(Channel channel) {
+    MainFrame.getInstance().getProgramTableScrollPane().scrollToChannel(channel);
+  }
+  
+  /**
+   * Let TVB change the date to the given date.
+   * 
+   * @param date The date to show the program for.
+   * @since 2.3
+   */
+  public void goToDate(Date date) {
+    if(TvDataBase.getInstance().dataAvailable(date))
+      MainFrame.getInstance().goTo(date);
   }
 }

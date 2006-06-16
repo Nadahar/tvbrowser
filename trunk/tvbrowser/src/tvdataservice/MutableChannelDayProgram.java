@@ -189,7 +189,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    *
    * @return An iterator through the program list.
    */
-  public java.util.Iterator getPrograms() {
+  public java.util.Iterator<Program> getPrograms() {
 
     return mProgramList.iterator();
   }

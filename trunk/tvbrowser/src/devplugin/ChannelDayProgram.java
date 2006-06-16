@@ -76,12 +76,12 @@ public interface ChannelDayProgram {
    *
    * @return An iterator through the program list.
    */
-  public java.util.Iterator getPrograms();
+  public java.util.Iterator<Program> getPrograms();
 
   /**
    * Returns whether this channel day program is complete.
    * <p>
-   * Return true if the last program ends afer midnight. Future implementations
+   * @return true if the last program ends afer midnight. Future implementations
    * may check for gaps too.
    */
   public boolean isComplete();
