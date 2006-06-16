@@ -330,7 +330,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     reset.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mChannelName.setText("");
-        mCategoryCB.setSelectedIndex(0);
+        mCategoryCB.setSelectedIndex(1);
         mCountryCB.setSelectedIndex(0);
       }
     });
@@ -380,6 +380,8 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     mCategoryCB.removeAllItems();
     mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allCategories","All Categories"), null));
 
+    mCategoryCB.addItem(new FilterItem(mLocalizer.msg("allExceptEventCinema","All except Event/Cinema"), new Integer[] {Channel.CATEGORY_TV, Channel.CATEGORY_NONE}));
+
     if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTVAll","TV"), new Integer(Channel.CATEGORY_TV)));
       
@@ -405,8 +407,9 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     if (channelListContains(allChannels, Channel.CATEGORY_NONE))
       mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone","Not categorized"), new Integer(Channel.CATEGORY_NONE)));
 
-    
-    HashSet countries = new HashSet();
+    mCategoryCB.setSelectedIndex(1);
+
+    HashSet<String> countries = new HashSet<String>();
 
     for (int i = 0; i < allChannels.length; i++) {
       String country = allChannels[i].getCountry();
@@ -414,7 +417,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
         countries.add(country.toLowerCase());
       }
     }
-
+    
     mCountryCB.removeAllItems();
     mCountryCB.addItem(new FilterItem(mLocalizer.msg("allCountries", "All Countries"), null));
     Iterator it = countries.iterator();
@@ -565,17 +568,35 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
 
     String country = (String) (selectedCountry).getValue();
 
-    Integer categoryInt = (Integer) (selectedCategory).getValue();
-    int categories = Integer.MAX_VALUE;
-    if (categoryInt != null) {
-      categories = categoryInt.intValue();
+    if ((selectedCategory).getValue() instanceof Integer[]) {
+      Integer[] categoryInt = (Integer[]) (selectedCategory).getValue();
+      
+      int[] categories = new int[categoryInt.length];
+      
+      int max = categoryInt.length;
+      
+      for (int i=0;i<max;i++) {
+        if (categoryInt[i] != null) {
+          categories[i] = categoryInt[i];
+        } else {
+          categories[i] = Integer.MAX_VALUE;
+        }
+      }
+      
+      mFilter.setFilter(country, categories, mChannelName.getText());
+    } else {
+      Integer categoryInt = (Integer) (selectedCategory).getValue();
+      int categories = Integer.MAX_VALUE;
+      if (categoryInt != null) {
+        categories = categoryInt.intValue();
+      }
+      mFilter.setFilter(country, categories, mChannelName.getText());
     }
-    mFilter.setFilter(country, categories, mChannelName.getText());
     ((DefaultListModel) mAllChannels.getModel()).removeAllElements();
 
     // Split the channels in subscribed and available
     Channel[] channels = mChannelListModel.getAvailableChannels();
-    ArrayList availableChannelList = new ArrayList();
+    ArrayList<Channel> availableChannelList = new ArrayList<Channel>();
 
     for (int i = 0; i < channels.length; i++) {
       Channel channel = channels[i];
@@ -608,10 +629,10 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
    * 
    * @return ChannelComparator
    */
-  private Comparator createChannelComparator() {
-    return new Comparator() {
-      public int compare(Object o1, Object o2) {
-        return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
+  private Comparator<Channel> createChannelComparator() {
+    return new Comparator<Channel>() {
+      public int compare(Channel o1, Channel o2) {
+        return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
       }
     };
   }

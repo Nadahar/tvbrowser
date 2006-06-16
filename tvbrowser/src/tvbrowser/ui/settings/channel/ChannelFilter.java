@@ -33,7 +33,7 @@ import devplugin.Channel;
 public class ChannelFilter {
   private String mCountry;
 
-  private int mCategories;
+  private int[] mCategories;
 
   private String[] mChannelName;
 
@@ -41,7 +41,7 @@ public class ChannelFilter {
    * Creates an empty Filter
    */
   public ChannelFilter() {
-    setFilter(null, Integer.MAX_VALUE, null);
+    setFilter(null, new int[]{Integer.MAX_VALUE}, null);
   }
   
   /**
@@ -51,10 +51,26 @@ public class ChannelFilter {
    * @param name Name to search for. This is an "and" Search. Search-Terms are separated by Whitespace
    */
   public ChannelFilter(String country, int categories, String name) {
-    setFilter(country, categories, name);
+    setFilter(country, new int[] {categories}, name);
   }
 
-  public void setFilter(String country, int categories, String name) {
+  /**
+   * Set the Values in the Filter
+   * @param country
+   * @param category
+   * @param name
+   */
+  public void setFilter(String country, int category, String name) {
+    setFilter(country, new int[] {category}, name);
+  }
+
+  /**
+   * Set the Values in the Filter
+   * @param country
+   * @param categories
+   * @param name
+   */
+  public void setFilter(String country, int[] categories, String name) {
     mCountry = country;
     mCategories = categories;
     if (mChannelName != null) {
@@ -83,19 +99,28 @@ public class ChannelFilter {
       }
     }
 
-    if (mCategories != Integer.MAX_VALUE) {
-      if ((mCategories < 0)) {
-        if (!(channel.getCategories() == (mCategories * -1))) {
-          return false;
+    boolean categoryTest = false;
+    for (int category : mCategories) {
+      if (category != Integer.MAX_VALUE) {
+        if ((category < 0)) {
+          category *= -1;
+          if (channel.getCategories() == category) {
+            categoryTest = true;
+          }
+        } else if (category == 0) {
+          if (channel.getCategories() == 0)
+            categoryTest = true;
+        } else if ((channel.getCategories() & category) != 0) {
+          categoryTest = true;
         }
-      } else if (mCategories == 0) {
-        if (channel.getCategories() != 0)
-          return false;
-      } else if ((channel.getCategories() & mCategories) == 0) {
-        return false;
+      } else {
+        categoryTest = true;
       }
     }
 
+    if (!categoryTest) 
+      return false;
+    
     if (mChannelName.length > 0) {
       String channelName = normalizeCharacters(channel.getName());
       for (int i = mChannelName.length - 1; i >= 0; i--) {
@@ -117,9 +142,10 @@ public class ChannelFilter {
   private String normalizeCharacters(String text) {
     text = text.toLowerCase().trim();
 
-    text = text.replaceAll("ï¿½", "o").replaceAll("ï¿½", "a").replaceAll("ï¿½", "u").replaceAll("ï¿½", "s").replaceAll("oe",
+    text = text.replaceAll("ö", "o").replaceAll("ä", "a").replaceAll("ü", "u").replaceAll("ß", "s").replaceAll("oe",
         "o").replaceAll("ae", "a").replaceAll("ue", "u").replaceAll("ss", "s");
 
     return text;
   }
+
 }
