@@ -51,7 +51,7 @@ public class ChannelUtil {
       return mLocalizer.msg("categoryRadio", "Radio");
     } else if ((category & Channel.CATEGORY_TV) > 0) {
 
-      ArrayList categories = new ArrayList();
+      ArrayList<String> categories = new ArrayList<String>();
 
       if ((category & Channel.CATEGORY_DIGITAL) > 0) {
         categories.add(mLocalizer.msg("categoryDigital", "Digitale"));

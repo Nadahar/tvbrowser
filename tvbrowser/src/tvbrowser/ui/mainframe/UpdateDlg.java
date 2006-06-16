@@ -42,11 +42,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import devplugin.Channel;
 
 /**
  * TV-Browser
@@ -104,9 +106,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     panel1.add(mComboBox, BorderLayout.EAST);
     northPanel.add(panel1);
 
-    TvDataServiceProxy[] serviceArr = TvDataServiceProxyManager.getInstance()
-        .getDataServices();
-
+    TvDataServiceProxy[] serviceArr = getActiveDataServices();
+    
     if (serviceArr.length > 1) {
       panel1.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
       JPanel dataServicePanel = new JPanel();
@@ -135,6 +136,21 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     mComboBox.setSelectedItem(pi);
 
     contentPane.add(northPanel, BorderLayout.NORTH);
+  }
+
+  /**
+   * @return all TvDataServices that have subscribed Channels
+   */
+  private TvDataServiceProxy[] getActiveDataServices() {
+    ArrayList<TvDataServiceProxy> services = new ArrayList<TvDataServiceProxy>();
+    
+    for (Channel channel : ChannelList.getSubscribedChannels()) {
+      if (!services.contains(channel.getDataServiceProxy())) {
+        services.add(channel.getDataServiceProxy());
+      }
+    }
+    
+    return services.toArray(new TvDataServiceProxy[services.size()]);
   }
 
   private boolean tvDataServiceIsChecked(TvDataServiceProxy service,
@@ -177,7 +193,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         mSelectedTvDataServiceArr = TvDataServiceProxyManager.getInstance()
             .getDataServices();
       } else {
-        ArrayList dataServiceList = new ArrayList();
+        ArrayList<TvDataServiceProxy> dataServiceList = new ArrayList<TvDataServiceProxy>();
         for (int i = 0; i < mDataServiceCbArr.length; i++) {
           if (mDataServiceCbArr[i].isSelected()) {
             dataServiceList.add(mDataServiceCbArr[i].getTvDataService());
