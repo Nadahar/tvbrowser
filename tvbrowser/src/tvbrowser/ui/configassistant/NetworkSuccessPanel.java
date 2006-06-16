@@ -30,11 +30,8 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -74,16 +71,7 @@ class NetworkSuccessPanel extends AbstractCardPanel {
 
     win.run(new Progress(){
       public void run() {
-        TvDataServiceProxy services[]=TvDataServiceProxyManager.getInstance().getDataServices();
-        for (int i=0;i<services.length;i++) {
-          if (services[i].supportsDynamicChannelList()) {
-            try {
-              services[i].checkForAvailableChannels(win);
-            }catch (TvBrowserException e) {
-              ErrorHandler.handle(e);
-            }
-          }
-        }
+        ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(win);
       }
     });
     

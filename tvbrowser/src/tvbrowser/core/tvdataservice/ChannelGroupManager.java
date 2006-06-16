@@ -32,6 +32,7 @@ import java.util.HashMap;
 
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.ui.progress.ProgressMonitorGroup;
 import devplugin.ChannelGroup;
 import devplugin.ProgressMonitor;
 
@@ -100,9 +101,15 @@ public class ChannelGroupManager {
    /**
    * Refresh the list of available groups and refresh the lists of available channels
    */
-  public void checkForAvailableGroups(ProgressMonitor monitor) {
+  public void checkForAvailableGroupsAndChannels(ProgressMonitor monitor) {
+    
     removeAllGroups();
     TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
+
+    ProgressMonitorGroup progressGroup = new ProgressMonitorGroup(monitor, 30);
+    
+    ProgressMonitor curMon = progressGroup.getNextProgressMonitor(10);
+    curMon.setMaximum(services.length);
     for (int i=0; i<services.length; i++) {
       ChannelGroup[] groupArr = null;
       if (services[i].supportsDynamicChannelGroups()) {
@@ -120,7 +127,11 @@ public class ChannelGroupManager {
           addGroup(services[i], groupArr[j]);
         }
       }
+      curMon.setValue(i+1);
     }
+
+    curMon = progressGroup.getNextProgressMonitor(20);
+    curMon.setMaximum(services.length);
 
     /* Call 'checkForAvailableChannels' for all groups to fetch the most recent channel lists */
     TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
@@ -128,11 +139,11 @@ public class ChannelGroupManager {
       if (proxies[i].supportsDynamicChannelList()) {
         ChannelGroup[] groups = proxies[i].getAvailableGroups();
         int max = groups.length;
-        monitor.setMaximum(max);
+        curMon.setMaximum(max);
         for (int j=0; j<max; j++) {
           try {
-            proxies[i].checkForAvailableChannels(groups[j], monitor);
-            monitor.setValue(j);
+            proxies[i].checkForAvailableChannels(groups[j], curMon);
+            curMon.setValue(j);
           }catch(TvBrowserException e) {
             ErrorHandler.handle(e);
           }
