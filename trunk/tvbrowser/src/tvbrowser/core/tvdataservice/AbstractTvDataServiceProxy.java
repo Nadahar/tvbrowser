@@ -72,4 +72,36 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
     return (Channel[])list.toArray(new Channel[list.size()]);
   }
 
+  /*
+   * (non-Javadoc)
+   * @see java.lang.Object#hashCode()
+   */
+  public int hashCode() {
+    final int PRIME = 31;
+    int result = 1;
+    result = PRIME * result + ((getId() == null) ? 0 : getId().hashCode());
+    return result;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final TvDataServiceProxy other = (TvDataServiceProxy) obj;
+    
+    if (!getId().equals(other.getId())) {
+      return false;
+    }
+    
+    return true;
+  }
+
+  
 }
