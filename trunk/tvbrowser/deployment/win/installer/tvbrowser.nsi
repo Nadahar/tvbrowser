@@ -186,7 +186,7 @@ FunctionEnd
  LangString MISC_DIR ${LANG_GERMAN} "Sonstiges"
  LangString MISC_DIR ${LANG_ENGLISH} "Misc"
 
- LangString WIKI ${LANG_GERMAN} "Handuch"
+ LangString WIKI ${LANG_GERMAN} "Handbuch"
  LangString WIKI ${LANG_ENGLISH} "Manual"
 
  LangString LICENSE_TXT ${LANG_GERMAN} "Lizenz"
@@ -228,6 +228,9 @@ FunctionEnd
  LangString CLIPBOARD ${LANG_GERMAN} "Zwischenablage"
  LangString CLIPBOARD ${LANG_ENGLISH} "Clipboard-Plugin"
 
+ LangString BLOGTHIS ${LANG_GERMAN} "Blog dies!"
+ LangString BLOGTHIS ${LANG_ENGLISH} "Blog this!"
+ 
  LangString CALENDAR ${LANG_GERMAN} "Kalender Export"
  LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
  
@@ -481,6 +484,12 @@ SubSectionEnd
 
 SubSection "Plugins"
  
+   Section "$(BLOGTHIS)"
+    SectionIn 1
+
+    SetOutPath "$INSTDIR\plugins"
+    File "${RUNTIME_DIR}\plugins\BlogThisPlugin.jar"
+  SectionEnd
  
   Section "$(SEARCH)"
     SectionIn 1

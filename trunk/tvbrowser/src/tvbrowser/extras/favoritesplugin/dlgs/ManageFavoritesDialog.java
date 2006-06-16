@@ -113,6 +113,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   private JSplitPane mSplitPane;
   private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortBt, mImportBt, mSendBt;
   private JButton mCloseBt;
+  private JScrollPane mProgramScrollPane;
 
   private boolean mShowNew = false;
   private static ManageFavoritesDialog mInstance = null;
@@ -304,9 +305,9 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel);
     mProgramList.addMouseListeners(null);
-    scrollPane = new JScrollPane(mProgramList);
-    scrollPane.setBorder(null);
-    mSplitPane.setRightComponent(scrollPane);
+    mProgramScrollPane = new JScrollPane(mProgramList);
+    mProgramScrollPane.setBorder(null);
+    mSplitPane.setRightComponent(mProgramScrollPane);
     
     msg = mLocalizer.msg("showBlack", "Show single removed programs");
     mBlackListChb = new JCheckBox(msg);
@@ -479,6 +480,13 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       if(!mShowNew && mBlackListChb.isSelected())
         for (int i = 0; i < blackListPrograms.length; i++)
           mProgramListModel.addElement(blackListPrograms[i]);
+      
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mProgramScrollPane.getVerticalScrollBar().setValue(0);
+          mProgramScrollPane.getHorizontalScrollBar().setValue(0);
+        }
+      });
     }
   }
 

@@ -75,15 +75,15 @@ public class SoftwareUpdater {
       matcher=pluginTypePattern.matcher(line);
       if (matcher.find()) { // new plugin 
         String type=matcher.group(1);
-        String name=matcher.group(2);
+        String className=matcher.group(2);
         if ("plugin".equals(type)) {
-          curItem=new PluginSoftwareUpdateItem(name); 
+          curItem=new PluginSoftwareUpdateItem(className); 
         }
         else if ("dataservice".equals(type)) {
-          curItem=new DataserviceSoftwareUpdateItem(name);
+          curItem=new PluginSoftwareUpdateItem(className);
         }
         else if ("tvbrowser".equals(type)) {
-          curItem=new TvbrowserSoftwareUpdateItem(name);
+          curItem=new TvbrowserSoftwareUpdateItem(className);
         }
         if (curItem==null) {
           throw new IOException("invalid software update file");    
@@ -105,7 +105,7 @@ public class SoftwareUpdater {
     Iterator it = updateItems.iterator();
     while (it.hasNext()) {
       SoftwareUpdateItem item = (SoftwareUpdateItem) it.next();
-      String name = item.getName();
+      String className = item.getClassName();
       
       // remove incompatible items
       Version required=item.getRequiredVersion();
@@ -115,15 +115,15 @@ public class SoftwareUpdater {
       }
       
       // remove already installed plugins
-      String pluginId = "java." + name.toLowerCase() + "." + name;      
+      String pluginId = "java." + className.toLowerCase() + "." + className;      
       PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);      
       if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>=0) {
         it.remove();
         continue;
-      }   
+      }
       
       // remove already installed dataservices
-      TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(name.toLowerCase()+"."+name);
+      TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
       if (service!=null && service.getInfo().getVersion().compareTo(item.getVersion())>=0) {
         it.remove();
         continue;

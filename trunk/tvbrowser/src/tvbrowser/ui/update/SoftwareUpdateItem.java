@@ -27,6 +27,7 @@
 package tvbrowser.ui.update;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import util.exc.TvBrowserException;
 import devplugin.Version;
@@ -34,10 +35,10 @@ import devplugin.Version;
 public abstract class SoftwareUpdateItem {
 	
   private HashMap mPropertyMap;
-  protected String mName;
+  private String mClassName;
   
-  public SoftwareUpdateItem(String name) {
-    mName = name;
+  public SoftwareUpdateItem(String className) {
+    mClassName = className;
     mPropertyMap = new HashMap();
   }
   
@@ -87,20 +88,43 @@ public abstract class SoftwareUpdateItem {
     }
     return new Version(major, minor);      
   }
+  
+  public String getName() {
+    String n = getProperty("name_de");
     
-   
-	public String getName() {
-    return mName;   
+    if(!Locale.getDefault().equals(Locale.GERMAN))
+      n = getProperty("name_en");
+    
+    if(n != null)
+      return n;
+    else
+      return getClassName();
   }
-	/*
-	public Version getVersion();
-	
-	public Version getRequiredVerion();
-	
-	public String getUrl();
-	
-	public String getDescription();
-    */
+  
+  public String getDescription() {
+    String d = getProperty("description");
+    
+    if(!Locale.getDefault().equals(Locale.GERMAN))
+      d = getProperty("description_en");
+    
+    if(d != null)
+      return d;
+    else
+      return "";
+  }
+  
+  public String getWebsite() {
+    String w = getProperty("website");
+    
+    if(!Locale.getDefault().equals(Locale.GERMAN))
+      w = getProperty("website_en");
+    
+    return w;
+  }
+   
+	public String getClassName() {
+    return mClassName;   
+  }
 	
 	public void download() throws TvBrowserException {
     String url = getProperty("download");

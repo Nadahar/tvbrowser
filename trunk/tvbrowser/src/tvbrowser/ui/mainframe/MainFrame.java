@@ -677,7 +677,7 @@ public class MainFrame extends JFrame implements DateListener {
     mToolBar.update();
     mMenuBar.showUpdateMenuItem();
 
-    mFinderPanel.updateUI();
+    mFinderPanel.updateItems();
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
 
   }
@@ -878,7 +878,8 @@ public class MainFrame extends JFrame implements DateListener {
       } else {
         SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(this);
         dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-        UiUtilities.centerAndShow(dlg);
+        dlg.setLocationRelativeTo(UiUtilities.getLastModalChildOf(this));
+        dlg.setVisible(true);
       }
     }
 

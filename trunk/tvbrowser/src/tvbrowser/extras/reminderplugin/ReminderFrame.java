@@ -223,6 +223,7 @@ public class ReminderFrame implements WindowClosingIf {
 
       public void windowLostFocus(WindowEvent e) {
         mDialog.setAlwaysOnTop(false);
+        UiUtilities.getLastModalChildOf(MainFrame.getInstance()).toFront();
       }
     });
   }
