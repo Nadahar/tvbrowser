@@ -32,6 +32,8 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -50,11 +52,13 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.core.Settings;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
+import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLEditorKit;
 
-public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener {
+public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener, WindowClosingIf {
 	
 	/** The localizer for this class. */
 	private static final util.ui.Localizer mLocalizer
@@ -123,8 +127,20 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     contentPane.add(splitPn, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
     
-		this.setSize(450,400);
+    if(Settings.propUpdateDialogWidth.getInt() == -1 
+        || Settings.propUpdateDialogHeight.getInt() == -1)
+		  this.setSize(450,400);
+    else
+      this.setSize(Settings.propUpdateDialogWidth.getInt(),
+          Settings.propUpdateDialogHeight.getInt());
     
+    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        close();
+      }
+    });    
 	}
 	
 	
@@ -135,7 +151,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     else {
       StringBuffer content = new StringBuffer();
       String author = item.getProperty("author");
-      String website = item.getProperty("website");
+      String website = item.getWebsite();
       devplugin.Version version = item.getVersion();
       
       content.append("<html><head>"
@@ -150,7 +166,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         .append(item.getName())
         .append("</h1>")
         .append("<p>")
-        .append(item.getProperty("description"))
+        .append(item.getDescription())
         .append("</p><br><table>");
       
       if (author != null) {
@@ -184,7 +200,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     
 	public void actionPerformed(ActionEvent event) {
     if (event.getSource() == mCloseBtn) {
-		  hide();
+		  close();
     }
     else if (event.getSource() == mDownloadBtn) {
       Object[] o = mList.getSelectedValues();
@@ -200,7 +216,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
       if (successfullyDownloadedItems>0) {
         JOptionPane.showMessageDialog(null,mLocalizer.msg("restartprogram","please restart tvbrowser before..."));
-        hide();
+        close();
       }
     }
 	}
@@ -248,6 +264,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         
     }
       
+  }
+
+  public void close() {
+    Settings.propUpdateDialogWidth.setInt(getWidth());
+    Settings.propUpdateDialogHeight.setInt(getHeight());
+    
+    setVisible(false);
   }
 
 }

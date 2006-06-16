@@ -192,6 +192,21 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   public void markNextDate() {
     markDate(mCurChoosenDate.addDays(1));
   }
+  
+  /**
+   * Updates the items after a data update.
+   */
+  public void updateItems() {
+    Object[] o = mModel.toArray();
+    
+    for (int i = 1; i < o.length; i++) {
+      FinderItem item = (FinderItem) o[i];
+      
+      if(!item.isEnabled())
+        if(TvDataBase.getInstance().dataAvailable(item.getDate()))
+          item.setEnabled(true);
+    }
+  }
 
   /**
    * This is a non blocking method

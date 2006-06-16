@@ -55,7 +55,7 @@ public class PluginSoftwareUpdateItem extends SoftwareUpdateItem {
   protected void download(final String url) throws TvBrowserException {
 
 
-    final File toFile=new File(Settings.propPluginsDirectory.getString(),mName+".jar.inst");
+    final File toFile=new File(Settings.propPluginsDirectory.getString(),getClassName() + ".jar.inst");
     try {
         IOUtilities.download(new URL(url),toFile);
     }catch (Exception exc) {

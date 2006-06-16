@@ -789,6 +789,13 @@ public class Settings {
   /** Settings-Window Y-Position */
   public static final IntProperty propSettingsWindowY = new IntProperty(mProp,
       "settingsWindow.y", -1);
+  
+  /** Update-Dialog Width */
+  public static final IntProperty propUpdateDialogWidth = new IntProperty(
+      mProp, "updateDialog.width", -1);
+  /** Update-Dialog Height */
+  public static final IntProperty propUpdateDialogHeight = new IntProperty(
+      mProp, "updateDialog.height", -1);
 
   public static final IntProperty propProgramTableStartOfDay = new IntProperty(
       mProp, "programtable.startofday", 0);

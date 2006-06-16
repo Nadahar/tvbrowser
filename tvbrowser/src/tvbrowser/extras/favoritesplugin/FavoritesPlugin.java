@@ -104,12 +104,12 @@ public class FavoritesPlugin {
 
   private boolean mShowInfoOnNewProgramsFound = true;
   
-  private boolean mHasRightToUpdate = false;  
-  
+  private boolean mHasRightToUpdate = false;
+
   private boolean mHasToUpdate = false;
-  
+
   private Favorite[] mUpdateFavorites;
-  
+
   private Hashtable<ProgramReceiveIf,ArrayList<Program>> mSendPluginsTable = new Hashtable<ProgramReceiveIf,ArrayList<Program>>();
 
   /**
@@ -133,17 +133,17 @@ public class FavoritesPlugin {
       }
     });
   }
-  
+
   private void handleTvDataUpdateFinsihed() {
     mHasToUpdate = true;
-    
+
     if(mHasRightToUpdate) {
       mHasToUpdate = false;
-      
+
       updateAllFavorites();
 
       updateRootNode();
-    
+
       ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>();
 
       for (int i = 0; i < mFavoriteArr.length; i++) {
