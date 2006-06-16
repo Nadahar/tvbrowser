@@ -287,7 +287,10 @@
     <unjar src="${lib.dir}/forms-1.0.6.jar" dest="${unpacked.dir}/forms-1.0.6.jar"/>
     <unjar src="${lib.dir}/looks-2.0.jar" dest="${unpacked.dir}/looks-2.0.jar"/>
     <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
-
+    <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" /> 	 
+    <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" /> 	 
+    <unjar src="${lib.dir}/commons-compress-20050911.jar" dest="${unpacked.dir}/commons-compress-20050911.jar" />
+  	
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
          compress="false"
@@ -305,6 +308,7 @@
       <fileset dir="${unpacked.dir}/forms-1.0.6.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/looks-2.0.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/jRegistryKey.jar" includes="ca/**" />
     </jar>
 
     <!-- Pack the plugin jars -->
@@ -358,6 +362,10 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="blogthisplugin/**"/>
     </jar>
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar" compress="false"> 	 
+            <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" /> 	 
+    </jar>
+  	
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>
@@ -370,6 +378,23 @@
       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
     </jar>
 
+    <!-- Pack Swedb data service --> 	 
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SweDBTvDataService.jar" compress="false"> 	 
+            <fileset dir="${classes.dir}" includes="swedbtvdataservice/**" /> 	 
+    </jar> 	 
+
+    <!-- Pack BBC data service --> 	 
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="false"> 	 
+            <fileset dir="${classes.dir}" includes="bbcbackstagedataservice/**" /> 	 
+            <fileset dir="${unpacked.dir}/TVAnytimeAPI.jar" includes="bbc/**" /> 	 
+            <fileset dir="${unpacked.dir}/commons-compress-20050911.jar" includes="**" /> 	 
+    </jar> 	 
+
+    <!-- Pack RadioTimes data service --> 	 
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false"> 	 
+            <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" /> 	 
+    </jar>  	
+  	
     <!-- Copy the other stuff -->
     <echo message="Copying the images and all the other stuff ..."/>
     <mkdir dir="${tvbrowser-default.runtime.dir}/imgs"/>
@@ -426,6 +451,7 @@
     <copy todir="${tvbrowser-win.runtime.dir}">
       <fileset dir="${tvbrowser-default.runtime.dir}"/>
       <fileset dir="${win.dir}/desktopindicator" includes="DesktopIndicator.dll"/>
+      <fileset dir="${win.dir}/jRegistryKey" includes="jRegistryKey.dll" />
       <fileset dir="${deployment.dir}" includes="windows.properties"/>
       <fileset dir="${win.dir}" includes="tvbrowser_noDD.txt"/>
     </copy>
