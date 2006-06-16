@@ -58,7 +58,22 @@ public class ChannelArrayProperty extends Property {
     return mDefaultValue;
   }
 
+  /**
+   * Get a List of all Channels
+   * 
+   * @param allownullvalues
+   * @return List of all Channel
+   * @deprecated please use getChannelArray()
+   */
+  public Channel[] getChannelArray(boolean allownullvalues) {
+    return getChannelArray();
+  }
 
+  /**
+   * Get a List of all Channels
+   * @return List of Channels
+   * @since 2.2.1
+   */
   public Channel[] getChannelArray() {
     if (mCachedValue == null) {
       String asString = getProperty();
