@@ -178,7 +178,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new PluginInfo(mLocalizer.msg("name","BBC Data"), 
-        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 30));
+        mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche", new Version(0, 35));
   }
 
   /*
@@ -322,6 +322,9 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    * Download .tar.gz and extract it into the working directory
    */
   private void loadBBCData() throws TvBrowserException{
+    
+    mLog.fine("Cleaning Directory");
+    
     cleanWorkingDir();
     
     File download = new File(".");
@@ -329,22 +332,32 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     try {
       Date date = new Date();
       
+      mLog.fine("Start Downloading BBC Data");
+      
       InputStream in = null;
       
       int count = 0;
       do {
         try {
           url = new URL(BASEURL + date.getYear() + addZero(date.getMonth()) + addZero(date.getDayOfMonth()) + ".tar.gz");
+          
+          mLog.fine("URL : " + url.toString());
+          
           in = url.openStream();
-          date.addDays(-1);
-          count++;
         } catch (Exception e) {
           in = null;
         }
+        count++;
+        date = date.addDays(-1);
         
-      } while ((in == null) || count > 4);
+      } while ((in == null) && count < 4);
       
+      if (in == null) {
+        throw new TvBrowserException(getClass(), "error.3", "Downloading file from '{0}' to '{1}' failed", url, download.getAbsolutePath());
+      }
       
+      mLog.fine("Extracting BBC Data");
+
       download = new File(mWorkingDir, "file.tar.gz");
       OutputStream out = new FileOutputStream(download);
   
