@@ -78,7 +78,7 @@ public interface PluginManager {
    * @return an Iterator for all programs of one day and channel or
    *         <code>null</code> if the requested data is not available.
    */
-  public Iterator getChannelDayProgram(Date date, Channel channel);
+  public Iterator<Program> getChannelDayProgram(Date date, Channel channel);
 
   /**
    * Searches the TV data for programs which match a regular expression.
@@ -381,4 +381,36 @@ public interface PluginManager {
    * @since 2.3
    */
   public ProgramReceiveIf getReceiceIfForId(String id);
+  
+  /**
+   * Let TVB scroll to the given program.
+   * 
+   * @param program The program to scroll to.
+   * @since 2.3
+   */
+  public void scrollToProgram(Program program);
+  
+  /**
+   * Let TVB scroll to the given time.
+   * 
+   * @param time The time to scroll to in minutes.
+   * @since 2.3
+   */
+  public void scrollToTime(int time);
+  
+  /**
+   * Let TVB scroll to the given channel.
+   * 
+   * @param channel The channel to scroll to.
+   * @since 2.3
+   */
+  public void scrollToChannel(Channel channel);
+  
+  /**
+   * Let TVB change the date to the given date.
+   * 
+   * @param date The date to show the program for.
+   * @since 2.3
+   */
+  public void goToDate(Date date);
 }
