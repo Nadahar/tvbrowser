@@ -319,12 +319,10 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
 
     mListModel.removeAllElements();
     
-    Arrays.sort(pluginList, new Comparator() {
-
-      public int compare(Object o1, Object o2) {
-        return o1.toString().compareTo(o2.toString());
+    Arrays.sort(pluginList, new Comparator<PluginProxy>() {
+      public int compare(PluginProxy o1, PluginProxy o2) {
+        return o1.getInfo().getName().compareTo(o2.getInfo().getName());
       }
-
     });
 
     for (int i = 0; i < pluginList.length; i++) {
