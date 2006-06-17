@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
+import tvbrowser.core.Settings;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -35,15 +37,13 @@ public class TimePeriodChooser extends JPanel {
   public TimePeriodChooser(int from, int to, int alignment) {
     FlowLayout layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
     
-    String timePattern = mLocalizer.msg("timePattern", "HH:mm");
-
     JPanel content = new JPanel(new FormLayout("pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", "pref"));
 
     mTimeFromSp = new JSpinner(new SpinnerDateModel());
-    mTimeFromSp.setEditor(new JSpinner.DateEditor(mTimeFromSp, timePattern));
+    mTimeFromSp.setEditor(new JSpinner.DateEditor(mTimeFromSp, Settings.getTimePattern()));
 
     mTimeToSp = new JSpinner(new SpinnerDateModel());
-    mTimeToSp.setEditor(new JSpinner.DateEditor(mTimeToSp, timePattern));
+    mTimeToSp.setEditor(new JSpinner.DateEditor(mTimeToSp, Settings.getTimePattern()));
 
     CellConstraints cc = new CellConstraints();
 

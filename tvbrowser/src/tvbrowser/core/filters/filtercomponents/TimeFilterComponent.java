@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import util.ui.UiUtilities;
 import devplugin.Program;
@@ -93,14 +94,12 @@ public class TimeFilterComponent implements FilterComponent {
     public JPanel getPanel() {
         JPanel content = new JPanel(new BorderLayout());
 
-        String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
-        
         mFromTimeSp = new JSpinner(new SpinnerDateModel());
-        mFromTimeSp.setEditor(new JSpinner.DateEditor(mFromTimeSp, timePattern));
+        mFromTimeSp.setEditor(new JSpinner.DateEditor(mFromTimeSp, Settings.getTimePattern()));
         mFromTimeSp.setValue(setTimeToDate(mFromTime));
         
         mToTimeSp = new JSpinner(new SpinnerDateModel());
-        mToTimeSp.setEditor(new JSpinner.DateEditor(mToTimeSp, timePattern));
+        mToTimeSp.setEditor(new JSpinner.DateEditor(mToTimeSp, Settings.getTimePattern()));
         mToTimeSp.setValue(setTimeToDate(mToTime));
         
         JPanel timePn = new JPanel(new GridLayout(2, 2));

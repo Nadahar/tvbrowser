@@ -58,6 +58,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.core.Settings;
+import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -297,20 +299,25 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     content.setLayout(new BorderLayout());
     content.setBorder(UiUtilities.DIALOG_BORDER);
 
-    Vector data = new Vector();
+    Vector<String> data = new Vector<String>();
 
     data.add(TIMETEXT[0]);
     data.add(TIMETEXT[1]);
     data.add(TIMETEXT[2]);
 
+    TimeFormatter formatter = new TimeFormatter();
+    
     for (int i = 0; i < mTimes.length; i++) {
       int h = mTimes[i] / 60;
       int m = mTimes[i] % 60;
-      String title = mLocalizer.msg("at", "at") + " " + h + ":" + (m < 10 ? "0" : "") + m;
-      data.add(title);
+      StringBuilder builder = new StringBuilder();
+      builder.append(mLocalizer.msg("at", "at"));
+      builder.append(' ');
+      builder.append(formatter.formatTime(h, m));
+      data.add(builder.toString());
     }
 
-  data.add(mLocalizer.msg("configureTimes","Configure Times"));
+    data.add(mLocalizer.msg("configureTimes","Configure Times"));
 
     mBox = new JComboBox(data);
 
@@ -336,7 +343,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     JPanel datetimeselect = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-    Vector dates = new Vector();
+    Vector<Date> dates = new Vector<Date>();
 
     for (int i = 0; i < 14; i++) {
       dates.add(Date.getCurrentDate().addDays(i));
@@ -348,9 +355,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     datetimeselect.add(new JLabel(" " + mLocalizer.msg("at", "at") + " "));
 
-    String timePattern = mLocalizer.msg("timePattern", "HH:mm");
-
-    mTimeSpinner.setEditor(new JSpinner.DateEditor(mTimeSpinner, timePattern));
+    mTimeSpinner.setEditor(new JSpinner.DateEditor(mTimeSpinner, Settings.getTimePattern()));
 
     datetimeselect.add(mTimeSpinner);
     

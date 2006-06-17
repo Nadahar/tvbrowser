@@ -46,6 +46,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import util.ui.TimeFormatter;
+
 /**
  * A utilities class for I/O stuff. It constists of serveral static
  * methods that perform some usefull things.
@@ -61,7 +63,8 @@ public class IOUtilities {
   /** A Calendar for time stuff */
   private static final Calendar CALENDAR = Calendar.getInstance();
 
-  
+  /** Formatting the Time */
+  private static final TimeFormatter TIME_FORMATTER = new TimeFormatter();
   
   /**
    * Downloads a file from a HTTP server.
@@ -571,9 +574,8 @@ public class IOUtilities {
   public static String timeToString(int minutesAfterMidnight) {
     int hours = minutesAfterMidnight / 60;
     int minutes = minutesAfterMidnight % 60;
-    return new StringBuffer().append(hours).append(':').append((minutes < 10) ? "0" : "").append(minutes).toString();
+    return TIME_FORMATTER.formatTime(hours, minutes);
   }
-  
   
   /**
    * Gets the number of days since 1st Jan 1970.
