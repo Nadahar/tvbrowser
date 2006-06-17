@@ -142,7 +142,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   
   
   private IconPlugin[] getAvailableIconPlugins() {
-    ArrayList list = new ArrayList();
+    ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
     list.add(new IconPlugin("Infos"));
     
@@ -162,7 +162,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
   private IconPlugin[] getSelectedIconPlugins(IconPlugin[] allArr) {
     String[] selPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
-    ArrayList list = new ArrayList();
+    ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
     for (int i = 0; i < selPluginArr.length; i++) {
       // Find the corresponing IconPlugin and put it into the list
@@ -182,7 +182,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
   
   private ProgramFieldType[] getAvailableTypes() {
-    ArrayList typeList = new ArrayList();
+    ArrayList<ProgramFieldType> typeList = new ArrayList<ProgramFieldType>();
     
     Iterator typeIter = ProgramFieldType.getTypeIterator();
     while (typeIter.hasNext()) {
