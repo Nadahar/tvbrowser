@@ -186,9 +186,6 @@ FunctionEnd
  LangString MISC_DIR ${LANG_GERMAN} "Sonstiges"
  LangString MISC_DIR ${LANG_ENGLISH} "Misc"
 
- LangString WIKI ${LANG_GERMAN} "Handbuch"
- LangString WIKI ${LANG_ENGLISH} "Manual"
-
  LangString LICENSE_TXT ${LANG_GERMAN} "Lizenz"
  LangString LICENSE_TXT ${LANG_ENGLISH} "License"
  
@@ -262,6 +259,7 @@ Section "$(STD_SECTION_NAME)"
   File "${RUNTIME_DIR}\website.url"
   File "${RUNTIME_DIR}\forum.url"
   File "${RUNTIME_DIR}\wiki.url"
+  File "${RUNTIME_DIR}\enwiki.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
   File "${RUNTIME_DIR}\windows.properties"
   File "${RUNTIME_DIR}\DesktopIndicator.dll"
@@ -438,8 +436,12 @@ Section "$(STD_SECTION_NAME)"
       "$INSTDIR\forum.url"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(WIKI).lnk" \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Deutsches Handuch.lnk" \
       "$INSTDIR\wiki.url"
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\English Manual.lnk" \
+      "$INSTDIR\enwiki.url"
 
     CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(UNINSTALL_TXT).lnk" \
