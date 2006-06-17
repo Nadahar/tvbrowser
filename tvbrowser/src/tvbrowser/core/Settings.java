@@ -893,6 +893,9 @@ public class Settings {
   public static final StringProperty propLanguage = new StringProperty(mProp,
       "language", System.getProperty("user.language"));
 
+  public static final StringProperty propCountry = new StringProperty(mProp,
+      "country", System.getProperty("user.country"));  
+  
   public static final StringProperty propTimezone = new StringProperty(mProp,
       "timeZone", null);
 
