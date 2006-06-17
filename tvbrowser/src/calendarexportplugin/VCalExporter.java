@@ -128,6 +128,16 @@ public class VCalExporter {
 
         out.println("DTEND:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
 
+        if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true")) {
+          try {
+            int num = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0"));
+            c.add(Calendar.MINUTE, num * -1);
+          } catch (Exception e) {
+          }
+          
+          out.println("DALARM:"+ mDate.format(c.getTime()) + "T" + mTime.format(c.getTime())+"Z;;1;beep!");
+        }
+       
         out.println("END:VEVENT\n");
       }
 

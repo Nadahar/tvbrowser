@@ -129,6 +129,14 @@ public class ICalExporter {
 
         out.println("DTEND:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
 
+        if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true")) {
+          out.println("BEGIN:VALARM");
+          out.println("DESCRIPTION:");
+          out.println("ACTION:DISPLAY");
+          out.println("TRIGGER;VALUE=DURATION:-PT" + settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0") + "M");
+          out.println("END:VALARM");
+        }
+        
         out.println("END:VEVENT\n");
       }
 
