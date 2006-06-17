@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -103,7 +104,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     mDescription = description;
     mProviderName = provider;
     mDataService = dataservice;
-    mMirrorUrlArr = mirrorUrls;
+    mMirrorUrlArr = mirrorUrls;  
     mChannels = new HashSet();
     mDataDir = dataservice.getDataDir();
     mSettings = settings;
@@ -238,7 +239,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
       mSummary = loadSummaryFile(mCurMirror);
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Getting summary file from mirror " + mCurMirror.getUrl() + " failed.", exc);
-
       mSummary = null;
     }
   }
@@ -272,7 +272,16 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private Mirror[] loadMirrorList() {
     File file = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
     try {
-      return Mirror.readMirrorListFromFile(file);
+      ArrayList<Mirror> mirrorList = new ArrayList<Mirror>(Arrays.asList(Mirror.readMirrorListFromFile(file)));
+      
+      for (String mirrorUrl : mMirrorUrlArr) {
+        Mirror basemirror = new Mirror(mirrorUrl);
+        if (!mirrorList.contains(basemirror)) {
+          mirrorList.add(basemirror);
+        }
+      }
+      
+      return mirrorList.toArray(new Mirror[mirrorList.size()]);
     } catch (Exception exc) {
 
       Mirror[] mirrorList = new Mirror[mMirrorUrlArr.length];
@@ -288,7 +297,8 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   }
 
   private Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror) throws TvBrowserException {
-
+    Mirror[] oldMirrorArr = mirrorArr;
+    
     /* remove the old mirror from the mirrorlist */
     if (oldMirror != null) {
       ArrayList mirrors = new ArrayList();
@@ -328,14 +338,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     // We didn't find a mirror? This should not happen -> throw exception
     StringBuffer buf = new StringBuffer();
-    for (int i = 0; i < mMirrorUrlArr.length; i++) {
-      buf.append(mMirrorUrlArr[i]).append("\n");
+    for (int i = 0; i < oldMirrorArr.length; i++) {
+      buf.append(oldMirrorArr[i].getUrl()).append("\n");
     }
 
     throw new TvBrowserException(getClass(), "error.2", "No mirror found\ntried following mirrors: ", getName(), buf.toString());
-
-
-
   }
 
   private boolean mirrorIsUpToDate(Mirror mirror) throws TvBrowserException {
@@ -453,10 +460,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   private void updateMetaFile(String serverUrl, String metaFileName) throws TvBrowserException {
     File file = new File(mDataDir, metaFileName);
-
+    
     // Download the new file if needed
     if (needsUpdate(file)) {
       String url = serverUrl + "/" + metaFileName;
+      mLog.fine("Updateing Metafile " + url);
       try {
         IOUtilities.download(new URL(url), file);
 
@@ -496,7 +504,6 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   }
 
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
-
     // load the mirror list
     Mirror[] mirrorArr = loadMirrorList();
 
