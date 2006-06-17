@@ -44,6 +44,10 @@ public class CalendarExportPlugin extends Plugin {
     public static final String PROP_CLASSIFICATION = "Classification";
     /** Parameters for Text-Creation */
     public static final String PROP_PARAM = "paramToUse";
+    /** Use Alarm ? */
+    public static final String PROP_ALARM = "usealarm";
+    /** Minutes before ? */
+    public static final String PROP_ALARMBEFORE = "alarmbefore";
     
     /** The Exporter to use */
     private CalendarExporter mExport = new CalendarExporter();
