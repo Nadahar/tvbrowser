@@ -34,6 +34,17 @@ public class CalendarExportPlugin extends Plugin {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(CalendarExportPlugin.class);
 
+    /** If true, set length to 0 min */
+    public static final String PROP_NULLTIME = "nulltime";
+    /** Category of Item */
+    public static final String PROP_CATEGORIE = "Categorie";
+    /** Show Time as Busy or Free - 0 = Busy, 1 = Free */
+    public static final String PROP_SHOWTIME = "ShowTime";
+    /** Classification - 0 = Public, 1 = Private */
+    public static final String PROP_CLASSIFICATION = "Classification";
+    /** Parameters for Text-Creation */
+    public static final String PROP_PARAM = "paramToUse";
+    
     /** The Exporter to use */
     private CalendarExporter mExport = new CalendarExporter();
 
@@ -177,9 +188,9 @@ public class CalendarExportPlugin extends Plugin {
             mSavePath = file.getAbsolutePath();
     
             if (file.getAbsolutePath().toLowerCase().endsWith(".vcs")) {
-                mExport.exportVCal(file, programArr, mSettings);
+              new VCalExporter().exportVCal(file, programArr, mSettings);
             } else if (file.getAbsolutePath().toLowerCase().endsWith(".ics")) {
-                mExport.exportICal(file, programArr, mSettings);
+              new ICalExporter().exportICal(file, programArr, mSettings);
             }
         }
     }
