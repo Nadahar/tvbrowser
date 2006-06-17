@@ -82,17 +82,25 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     CellConstraints cc = new CellConstraints();
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleLanguage", "Locale")), cc.xyw(1,1,5));
-    
-    Language[] languages = new Language[] { new Language("en"), new Language("de"), new Language("sv") };
+    Language[] languages = new Language[] { new Language("en","us"), new Language("en"), new Language("de"), new Language("sv") };
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2,3));
     mSettingsPn.add(mLanguageCB = new JComboBox(languages), cc.xy(4,3));
     
     String lan = Settings.propLanguage.getString();
+    String country = Settings.propCountry.getString();
+    
+    boolean fitWithCountry = false;
+    
     for (int i = 0; i < languages.length; i++) {
       if (languages[i].getId().equalsIgnoreCase(lan)) {
-        mLanguageCB.setSelectedIndex(i);
-        break;
+        
+        if ((languages[i].getCountry() != null) && (languages[i].getCountry().equalsIgnoreCase(country))) {
+          mLanguageCB.setSelectedIndex(i);
+          fitWithCountry = true;
+        } else if (!fitWithCountry) {
+          mLanguageCB.setSelectedIndex(i);
+        }
       }
     }
 
@@ -150,7 +158,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   public void saveSettings() {
     Language lan = (Language) mLanguageCB.getSelectedItem();
     Settings.propLanguage.setString(lan.getId());
-
+    Settings.propCountry.setString(lan.getCountry());
+    
     if (mTimezoneCB.getSelectedItem().equals(TimeZone.getDefault().getID())) {
       Settings.propTimezone.setString(null);
     } else {
@@ -177,17 +186,34 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
 
   class Language {
     private String mId;
-
+    private String mCountry = "";
+    
     public Language(String id) {
       mId = id;
     }
 
+    public Language(String id, String country) {
+      mId = id;
+      mCountry = country;
+    }
+
     public String toString() {
-      return new Locale(mId).getDisplayLanguage();
+      if (mCountry.length() == 0)
+        return new Locale(mId).getDisplayLanguage();
+      else {
+        Locale locale = new Locale(mId, mCountry); 
+        StringBuilder builder = new StringBuilder(locale.getDisplayLanguage());
+        builder.append(" (").append(locale.getDisplayCountry()).append(")");
+        return builder.toString();
+      }
     }
 
     public String getId() {
       return mId;
+    }
+    
+    public String getCountry() {
+      return mCountry;
     }
   }  
 }
