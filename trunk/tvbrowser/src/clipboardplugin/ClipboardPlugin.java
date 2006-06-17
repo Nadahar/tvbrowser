@@ -45,6 +45,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -145,4 +146,12 @@ public class ClipboardPlugin extends Plugin {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * @see devplugin.Plugin#getMarkIconFromTheme()
+   */
+  @Override
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("actions", "edit-paste", 16);
+  }
 }
