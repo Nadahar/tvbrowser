@@ -34,8 +34,10 @@ import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -63,6 +65,8 @@ import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ActionMenu;
 
 /**
  * This Tab shows the Plugin-Manager.
@@ -283,7 +287,27 @@ public class PluginSettingsTab implements devplugin.SettingsTab {
    *
    */
   private void showInfoDialog(PluginProxy plugin) {
-    PluginInfoDialog dialog = new PluginInfoDialog(mSettingsDialog.getDialog(), plugin.getMarkIcon(), plugin.getInfo());
+    ActionMenu actionMenu = plugin.getButtonAction();
+    Action action = null;
+    if (actionMenu !=null) {
+      action = actionMenu.getAction();
+    }
+    Icon ico = null;
+    if (action != null) {
+      ico = (Icon) action.getValue(Action.SMALL_ICON);
+    }
+    
+    if (ico == null) {
+      // The plugin has no button icon -> Try the mark icon
+      ico = plugin.getMarkIcon();
+    }
+    
+    if (ico == null) {
+      ico = new ImageIcon("imgs/Jar16.gif");
+    }
+    
+    
+    PluginInfoDialog dialog = new PluginInfoDialog(mSettingsDialog.getDialog(), ico, plugin.getInfo());
     UiUtilities.centerAndShow(dialog);
   }
   
