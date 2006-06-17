@@ -42,6 +42,7 @@ import tvbrowser.ui.programtable.ProgramTableLayout;
 import tvbrowser.ui.programtable.ProgramTableModel;
 import util.ui.ImageUtilities;
 import util.ui.ProgramPanel;
+import util.ui.TimeFormatter;
 import devplugin.Date;
 import devplugin.Program;
 
@@ -60,9 +61,14 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
   private int mBlockSize;
   private TimeBlock[] mBlockArr;
   private JComponent mTableWest;
-  
+  private TimeFormatter mFormatter;
   
   public TimeBlockBackPainter() {
+    if (Settings.propTwelveHourFormat.getBoolean()) {
+      mFormatter = new TimeFormatter("hh a");
+    } else {
+      mFormatter = new TimeFormatter("HH");
+    }
   }
 
 
@@ -166,7 +172,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
   private TimeBlock[] createBlockArray(ProgramTableLayout layout,
     ProgramTableModel model)
   {
-    ArrayList list = new ArrayList();
+    ArrayList<TimeBlock> list = new ArrayList<TimeBlock>();
     int blockCount = 2 * 24 / mBlockSize;
     for (int i = 0; i < blockCount; i++) {
       list.add(new TimeBlock(i * mBlockSize * 60));
@@ -252,7 +258,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
     }
     
     public Dimension getPreferredSize() {
-      int width = mFontMetrics.stringWidth("23") + 4;
+      int width = mFontMetrics.stringWidth(mFormatter.formatTime(23, 0)) + 4;
       int height = 1000000; // We don't know the size
       return new Dimension(width, height);
     }
@@ -290,7 +296,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       
           // Paint the block
           fillImage(grp, 0, minY, width, (maxY - minY), backImg, clipBounds);
-          String msg = Integer.toString(blockArr[i].mStartTime / 60 % 24);
+          String msg = mFormatter.formatTime(blockArr[i].mStartTime / 60 % 24, 0);
           int msgWidth = mFontMetrics.stringWidth(msg);
           int x = width - msgWidth - 2;
           grp.drawString(msg, x, minY + TABLE_WEST_FONT.getSize());

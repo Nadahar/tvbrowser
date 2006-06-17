@@ -45,6 +45,7 @@ import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
 import util.ui.GridFlowLayout;
+import util.ui.TimeFormatter;
 import devplugin.SettingsItem;
 
 
@@ -98,14 +99,15 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, Ancestor
     private void createContent() {
       mGridPn.removeAll();
       
+      TimeFormatter formatter = new TimeFormatter();
+      
       int[] times = Settings.propTimeButtons.getIntArray();
       
       for (int i=0; i<times.length; i++) {
         final int time = times[i];
         int h = time/60;
         int m = time%60;
-        String title = h+":"+(m<10?"0":"")+m;
-        JButton btn = new JButton(title);
+        JButton btn = new JButton(formatter.formatTime(h, m));
         mGridPn.add(btn);
         btn.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent arg0) {

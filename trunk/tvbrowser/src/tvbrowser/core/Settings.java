@@ -373,6 +373,17 @@ public class Settings {
     mProp.clearChanges();
   }
 
+  /**
+   * @return The Time-Pattern for SimpleFormatter's
+   */
+  public static String getTimePattern() {
+    if (propTwelveHourFormat.getBoolean()) {
+      return "hh:mm a";
+    } else {
+      return "HH:mm";
+    }
+  }
+  
   public static final VersionProperty propTVBrowserVersion = new VersionProperty(
       mProp, "version", null);
 
@@ -929,4 +940,11 @@ public class Settings {
    */
   public static final BooleanProperty propIsSearchFieldVisible = new BooleanProperty(
       mProp, "isSearchFieldVisible", true);
+
+  /**
+   * Use 12-Hour Format?
+   */
+  public static final BooleanProperty propTwelveHourFormat = new BooleanProperty(
+      mProp, "uswTwelveHourFormat", false);
+
 }

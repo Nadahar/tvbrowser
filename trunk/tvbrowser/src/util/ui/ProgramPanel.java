@@ -85,13 +85,15 @@ public class ProgramPanel extends JComponent implements ChangeListener {
   private static Font mNormalFont;
 
   /** The width of the left part (the time). */
-  private static final int WIDTH_LEFT = 40;
+  private static int WIDTH_LEFT = -1;
   /** The width of the left part (the title and short info). */
-  private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt()
-      - WIDTH_LEFT;
+  private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
   /** The total width. */
   private static int WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
 
+  /** Formatter for the Time-String */
+  private static final TimeFormatter TIME_FORMATTER = new TimeFormatter(); 
+  
   /** The height. */
   private int mHeight = 0;
   /**
@@ -134,6 +136,12 @@ public class ProgramPanel extends JComponent implements ChangeListener {
       updateFonts();
     }
 
+    if (WIDTH_LEFT == -1) {
+      WIDTH_LEFT = getFontMetrics(mTimeFont).stringWidth(TIME_FORMATTER.formatTime(24, 59))+3;
+      WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
+      WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+    }
+    
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
