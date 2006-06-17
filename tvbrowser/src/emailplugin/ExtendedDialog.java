@@ -120,10 +120,10 @@ public class ExtendedDialog extends JDialog implements WindowClosingIf {
     
     panel.add(new JLabel(mLocalizer.msg("encoding", "Encoding") + ":"), cc.xy(1,5));
 
-    Vector encodings = new Vector();
-    Map availcs = Charset.availableCharsets();
-    Set keys = availcs.keySet();
-    for (Iterator iter = keys.iterator();iter.hasNext();) {
+    Vector<String> encodings = new Vector<String>();
+    Map<String, Charset> availcs = Charset.availableCharsets();
+    Set<String> keys = availcs.keySet();
+    for (Iterator<String> iter = keys.iterator();iter.hasNext();) {
        encodings.add(iter.next());
     }
     
