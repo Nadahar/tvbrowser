@@ -64,14 +64,14 @@ public class CalendarSettingsTab implements SettingsTab {
         "5dlu,pref,2dlu,pref,2dlu,pref,2dlu,pref,15dlu,pref,fill:default:grow,5dlu"));
     CellConstraints cc = new CellConstraints();
     
-    mCategorie = new JTextField(mSettings.getProperty("Categorie", ""));
+    mCategorie = new JTextField(mSettings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, ""));
     
     String[] values = { mLocalizer.msg("Busy", "Busy"), mLocalizer.msg("Free", "Free") };
 
     mShowTime = new JComboBox(values);
 
     try {
-      mShowTime.setSelectedIndex(Integer.parseInt(mSettings.getProperty("ShowTime", "0")));
+      mShowTime.setSelectedIndex(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0")));
     } catch (Exception e) {
     }
     
@@ -81,17 +81,17 @@ public class CalendarSettingsTab implements SettingsTab {
     mClassification = new JComboBox(val2);
 
     try {
-      mClassification.setSelectedIndex(Integer.parseInt(mSettings.getProperty("Classification", "0")));
+      mClassification.setSelectedIndex(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0")));
     } catch (Exception e) {
     }
     
     mNulltime = new JCheckBox(mLocalizer.msg("nullTime", "Set length to 0 Minutes"));
 
-    if (mSettings.getProperty("nulltime", "false").equals("true")) {
+    if (mSettings.getProperty(CalendarExportPlugin.PROP_NULLTIME, "false").equals("true")) {
       mNulltime.setSelected(true);
     }
     
-    mParamText = new ParamInputField(mSettings.getProperty("paramToUse", CalendarExportPlugin.DEFAULT_PARAMETER));
+    mParamText = new ParamInputField(mSettings.getProperty(CalendarExportPlugin.PROP_PARAM, CalendarExportPlugin.DEFAULT_PARAMETER));
     
     pb.add(mNulltime, cc.xyw(2,2,3));
     pb.addLabel(mLocalizer.msg("Categorie", "Categorie") + ":", cc.xy(2,4));
@@ -115,15 +115,15 @@ public class CalendarSettingsTab implements SettingsTab {
   public void saveSettings() {
 
     if (mNulltime.isSelected()) {
-      mSettings.setProperty("nulltime", "true");
+      mSettings.setProperty(CalendarExportPlugin.PROP_NULLTIME, "true");
     } else {
-      mSettings.setProperty("nulltime", "false");
+      mSettings.setProperty(CalendarExportPlugin.PROP_NULLTIME, "false");
     }
 
-    mSettings.setProperty("Categorie", mCategorie.getText());
-    mSettings.setProperty("ShowTime", Integer.toString(mShowTime.getSelectedIndex()));
-    mSettings.setProperty("Classification", Integer.toString(mClassification.getSelectedIndex()));
-    mSettings.setProperty("paramToUse", mParamText.getText());
+    mSettings.setProperty(CalendarExportPlugin.PROP_CATEGORIE, mCategorie.getText());
+    mSettings.setProperty(CalendarExportPlugin.PROP_SHOWTIME, Integer.toString(mShowTime.getSelectedIndex()));
+    mSettings.setProperty(CalendarExportPlugin.PROP_CLASSIFICATION, Integer.toString(mClassification.getSelectedIndex()));
+    mSettings.setProperty(CalendarExportPlugin.PROP_PARAM, mParamText.getText());
   }
 
   /*
