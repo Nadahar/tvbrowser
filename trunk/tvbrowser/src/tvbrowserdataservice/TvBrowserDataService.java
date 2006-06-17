@@ -196,7 +196,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
         try {
           curGroup.chooseMirrors();
-        }catch(TvBrowserException e) {
+        } catch(TvBrowserException e) {
           ErrorHandler.handle(e);
         }
       }
@@ -565,7 +565,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   private void downloadChannelGroupFile() throws TvBrowserException {
-
     try {
       IOUtilities.download(new URL(CHANNEL_GROUPS_URL), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
     } catch (MalformedURLException e) {
@@ -573,11 +572,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     } catch (IOException e) {
       throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", CHANNEL_GROUPS_URL, e);
     }
-
-
-
-
-
   }
 
 

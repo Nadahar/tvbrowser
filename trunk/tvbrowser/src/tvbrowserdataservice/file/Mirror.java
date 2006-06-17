@@ -48,15 +48,14 @@ import util.io.IOUtilities;
  * @author Til Schneider, www.murfman.de
  */
 public class Mirror {
-  
+
   public static final String MIRROR_LIST_FILE_NAME = "mirrorlist.gz";
-  
+
   public static final int DEFAULT_WEIGHT = 100;
 
   private String mUrl;
+
   private int mWeight;
-
-
 
   /**
    * @param url
@@ -68,35 +67,26 @@ public class Mirror {
     mWeight = weight;
   }
 
-
   public Mirror(String url) {
     this(url, DEFAULT_WEIGHT);
   }
-  
 
- 
   public String getUrl() {
     return mUrl;
   }
 
-
- 
   public int getWeight() {
     return mWeight;
   }
 
-
   public void setWeight(int weight) {
     mWeight = weight;
   }
-  
-  
-  public static Mirror[] readMirrorListFromStream(InputStream stream)
-    throws IOException, FileFormatException
-  {
+
+  public static Mirror[] readMirrorListFromStream(InputStream stream) throws IOException, FileFormatException {
     GZIPInputStream gIn = new GZIPInputStream(stream);
     BufferedReader reader = new BufferedReader(new InputStreamReader(gIn));
-    
+
     ArrayList list = new ArrayList();
     String line;
     int lineCount = 1;
@@ -104,99 +94,113 @@ public class Mirror {
       line = line.trim();
       if (line.length() > 0) {
         // This is not an empty line -> read it
-        
+
         StringTokenizer tokenizer = new StringTokenizer(line, ";");
         if (tokenizer.countTokens() < 2) {
-          throw new FileFormatException("Syntax error in mirror file line "
-            + lineCount + ": '" + line + "'");
+          throw new FileFormatException("Syntax error in mirror file line " + lineCount + ": '" + line + "'");
         }
-  
+
         String url = tokenizer.nextToken();
         String weightAsString = tokenizer.nextToken();
         int weight;
         try {
           weight = Integer.parseInt(weightAsString);
+        } catch (Exception exc) {
+          throw new FileFormatException("Syntax error in mirror file line " + lineCount + ": wieght is not a number: '"
+              + weightAsString + "'");
         }
-        catch (Exception exc) {
-          throw new FileFormatException("Syntax error in mirror file line "
-            + lineCount + ": wieght is not a number: '" + weightAsString + "'");
-        }
-        
+
         list.add(new Mirror(url, weight));
       }
       lineCount++;
     }
-    
+
     gIn.close();
-    
+
     Mirror[] mirrorArr = new Mirror[list.size()];
     list.toArray(mirrorArr);
-    
+
     return mirrorArr;
   }
 
-
-
-  public static Mirror[] readMirrorListFromFile(File file)
-    throws IOException, FileFormatException
-  {
+  public static Mirror[] readMirrorListFromFile(File file) throws IOException, FileFormatException {
     BufferedInputStream stream = null;
     try {
       stream = new BufferedInputStream(new FileInputStream(file), 0x2000);
-      
+
       return readMirrorListFromStream(stream);
-    }
-    finally {
+    } finally {
       if (stream != null) {
-        try { stream.close(); } catch (IOException exc) {}
+        try {
+          stream.close();
+        } catch (IOException exc) {
+        }
       }
     }
   }
 
-
-
-  public static void writeMirrorListToStream(OutputStream stream,
-    Mirror[] mirrorArr)
-    throws IOException
-  {
+  public static void writeMirrorListToStream(OutputStream stream, Mirror[] mirrorArr) throws IOException {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
 
     PrintWriter writer = new PrintWriter(gOut);
     for (int i = 0; i < mirrorArr.length; i++) {
-    	  writer.print(mirrorArr[i].getUrl());
+      writer.print(mirrorArr[i].getUrl());
       writer.print(";");
       writer.println(String.valueOf(mirrorArr[i].getWeight()));
     }
     writer.close();
-    
+
     gOut.close();
   }
 
-
-
-  public static void writeMirrorListToFile(File file, Mirror[] mirrorArr)
-    throws IOException {
+  public static void writeMirrorListToFile(File file, Mirror[] mirrorArr) throws IOException {
     // NOTE: We need two try blocks to ensure that the file is closed in the
-    //       outer block.
-    
+    // outer block.
+
     try {
       FileOutputStream stream = null;
       try {
         stream = new FileOutputStream(file);
-        
+
         writeMirrorListToStream(stream, mirrorArr);
-      }
-      finally {
+      } finally {
         // Close the file in every case
         if (stream != null) {
-          try { stream.close(); } catch (IOException exc) {}
+          try {
+            stream.close();
+          } catch (IOException exc) {
+          }
         }
       }
-    }
-    catch (IOException exc) {
+    } catch (IOException exc) {
       file.delete();
       throw exc;
     }
   }
-  
+
+  @Override
+  public int hashCode() {
+    final int PRIME = 31;
+    int result = 1;
+    result = PRIME * result + ((mUrl == null) ? 0 : mUrl.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final Mirror other = (Mirror) obj;
+    if (mUrl == null) {
+      if (other.mUrl != null)
+        return false;
+    } else if (!mUrl.equals(other.mUrl))
+      return false;
+    return true;
+  }
+
 }
