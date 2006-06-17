@@ -91,6 +91,7 @@ public class SystemTray {
   /** State of the Window (max/normal) */
   private static int mState;
   private boolean mMenuCreated;
+  private boolean mTime24 = !Settings.propTwelveHourFormat.getBoolean();
 
   private SystemTrayIf mSystemTray;
 
@@ -601,18 +602,10 @@ public class SystemTray {
           ((JPopupMenu)time).addSeparator();
       }
       else {
-      String minutes = String.valueOf(value % 60);
-      String hour = String.valueOf(value / 60);
-
-      if (minutes.length() == 1)
-        minutes = "0" + minutes;
-      if (hour.length() == 1)
-        hour = "0" + hour;
-
       final int fvalue = value;
-
-      final JMenu menu = new ScrollableMenu(hour + ":" + minutes + " "
-          + mLocalizer.msg("menu.time", ""));
+      
+      final JMenu menu = new ScrollableMenu(IOUtilities.timeToString(value) + " "
+          + (mTime24 ? mLocalizer.msg("menu.time", "") : ""));
 
       if (value < IOUtilities.getMinutesAfterMidnight())
         menu
