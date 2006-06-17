@@ -266,7 +266,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
       ProgressMonitor monitor) throws TvBrowserException {
 
     int max = channelArr.length;
-    Date endDate = startDate.addDays(dateCount); 
+    Date endDate = startDate.addDays(dateCount-1); 
 
     monitor.setMaximum(max);
     monitor.setMessage(mLocalizer.msg("parsing", "Parsing Radio Times Data"));
