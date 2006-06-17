@@ -72,7 +72,7 @@ public class ProgramMenuItem extends JMenuItem {
   private TextAreaIcon mChannelName;
   
   protected static final int CHANNEL_WIDTH = 72;
-  protected static final int TIME_WIDTH = 42;
+  protected static final int TIME_WIDTH = Settings.propTwelveHourFormat.getBoolean() ? 60 : 42;
   protected static final int DATE_WIDTH = 70;
   
   protected static final int NOW_TYPE = 0;
