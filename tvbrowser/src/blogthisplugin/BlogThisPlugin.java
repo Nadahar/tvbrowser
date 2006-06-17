@@ -204,4 +204,13 @@ public class BlogThisPlugin extends Plugin {
         return mSettings;
     }
 
+
+    /*
+     * (non-Javadoc)
+     * @see devplugin.Plugin#getMarkIconFromTheme()
+     */
+    @Override
+    public ThemeIcon getMarkIconFromTheme() {
+      return new ThemeIcon("apps", "internet-web-browser", 16);
+    }
 }
