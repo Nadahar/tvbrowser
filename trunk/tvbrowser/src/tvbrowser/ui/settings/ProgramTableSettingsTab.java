@@ -201,16 +201,15 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("startOfDay", "Start of day")), cc.xy(2, 11));
 
-    String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
     mStartOfDayTimeSp = new JSpinner(new SpinnerDateModel());
-    mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, timePattern));
+    mStartOfDayTimeSp.setEditor(new JSpinner.DateEditor(mStartOfDayTimeSp, Settings.getTimePattern()));
     mSettingsPn.add(mStartOfDayTimeSp, cc.xy(4, 11));
     mSettingsPn.add(new JLabel("(" + mLocalizer.msg("today", "today") + ")"), cc.xy(6, 11));
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("endOfDay", "End of day")), cc.xy(2, 13));
     
     mEndOfDayTimeSp = new JSpinner(new SpinnerDateModel());
-    mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, timePattern));
+    mEndOfDayTimeSp.setEditor(new JSpinner.DateEditor(mEndOfDayTimeSp, Settings.getTimePattern()));
     mSettingsPn.add(mEndOfDayTimeSp, cc.xy(4, 13));
     mSettingsPn.add(new JLabel("(" + mLocalizer.msg("nextDay", "next day") + ")"), cc.xy(6, 13));
     

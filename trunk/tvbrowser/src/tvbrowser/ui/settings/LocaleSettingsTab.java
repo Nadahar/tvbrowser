@@ -31,10 +31,12 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
 import tvbrowser.core.Settings;
@@ -58,6 +60,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   private JComboBox mLanguageCB, mTimezoneCB;
 
   private JLabel mTimezoneLB;
+
+  private JRadioButton mTwelveHourFormat;
+
+  private JRadioButton mTwentyfourHourFormat;
   
   /**
    * Creates a new instance of ProxySettingsTab.
@@ -69,7 +75,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, fill:3dlu:grow, pref"));
+    mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", 
+        "pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
@@ -109,11 +116,30 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     
     mSettingsPn.add(mTimezoneLB, cc.xy(2,7));
     mSettingsPn.add(mTimezoneCB, cc.xy(4,7));
+
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleTimeFormat", "Time format")), cc.xyw(1,9,5));
+    
+    mSettingsPn.add(new JLabel(mLocalizer.msg("timeFormat", "Time format:")), cc.xy(2,11));
+    
+    mTwentyfourHourFormat = new JRadioButton(mLocalizer.msg("twentyFour", "24 hour format"));
+    mTwelveHourFormat = new JRadioButton(mLocalizer.msg("twelve", "12 hour format"));
+    ButtonGroup group = new ButtonGroup();
+    group.add(mTwentyfourHourFormat);
+    group.add(mTwelveHourFormat);
+    
+    mSettingsPn.add(mTwentyfourHourFormat, cc.xy(4, 11));
+    mSettingsPn.add(mTwelveHourFormat, cc.xy(4, 13));
+    
+    if (Settings.propTwelveHourFormat.getBoolean()) {
+      mTwelveHourFormat.setSelected(true);
+    } else {
+      mTwentyfourHourFormat.setSelected(true);
+    }
     
     JTextArea area = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
     area.setForeground(Color.RED);
     
-    mSettingsPn.add(area, cc.xyw(1, 9, 5));
+    mSettingsPn.add(area, cc.xyw(1, 15, 5));
     
     return mSettingsPn;
   }
@@ -130,6 +156,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     } else {
       Settings.propTimezone.setString((String) mTimezoneCB.getSelectedItem());
     }
+    
+    Settings.propTwelveHourFormat.setBoolean(mTwelveHourFormat.isSelected());
   }
 
   /**

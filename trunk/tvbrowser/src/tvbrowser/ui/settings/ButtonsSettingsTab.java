@@ -125,10 +125,8 @@ public class ButtonsSettingsTab implements SettingsTab {
     public TimePanel(int minutes) {
       setLayout(new BorderLayout());
 
-      String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
-
       mTimeSp = new JSpinner(new SpinnerDateModel());
-      mTimeSp.setEditor(new JSpinner.DateEditor(mTimeSp, timePattern));
+      mTimeSp.setEditor(new JSpinner.DateEditor(mTimeSp, Settings.getTimePattern()));
 
       add(mTimeSp, BorderLayout.EAST);
       setTime(minutes);
@@ -155,13 +153,13 @@ public class ButtonsSettingsTab implements SettingsTab {
   }
 
   class TimesListPanel extends JPanel {
-    private ArrayList mRows;
+    private ArrayList<Row> mRows;
 
     private JPanel mListPn;
 
     public TimesListPanel(int[] times) {
 
-      mRows = new ArrayList();
+      mRows = new ArrayList<Row>();
       setLayout(new FormLayout("right:pref, fill:pref:grow", "pref, 3dlu, pref"));
 
       CellConstraints cc = new CellConstraints();
@@ -216,7 +214,7 @@ public class ButtonsSettingsTab implements SettingsTab {
     }
 
     public int[] getTimes() {
-      ArrayList list = new ArrayList();
+      ArrayList<Integer> list = new ArrayList<Integer>();
 
       for (int i = 0; i < mRows.size(); i++) {
         int value = ((Row) mRows.get(i)).getTime();
