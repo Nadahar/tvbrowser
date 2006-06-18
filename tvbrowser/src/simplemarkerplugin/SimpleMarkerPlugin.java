@@ -19,8 +19,8 @@
  *  $RCSfile$
  *   $Source$
  *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: darras $
- * $Revision: 2466 $
+ *   $Author: ds10 $
+ * $Revision: 2537 $
  */
 package simplemarkerplugin;
 
@@ -98,7 +98,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   /** @return The Plugin Info. */
   public PluginInfo getInfo() {
-    return (new PluginInfo("SimpleMarkerPlugin", mLocalizer.msg("description",
+    return (new PluginInfo(mLocalizer.msg("name","Marker plugin"), mLocalizer.msg("description",
         "A simple marker plugin (formerly Just_Mark)"), "René Mach", new Version(
         1, 4, true, "1.4"), "GPL"));
   }
@@ -226,7 +226,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private void showProgramsList() {
     final JDialog dialog = UiUtilities.createDialog(UiUtilities
         .getBestDialogParent(getParentFrame()), true);
-    dialog.setTitle("SimpleMarkerPlugin");
+    dialog.setTitle(mLocalizer.msg("name","Marker plugin"));
     dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     
     mManagePanel = new ManagePanel(dialog, mMarkListVector);
