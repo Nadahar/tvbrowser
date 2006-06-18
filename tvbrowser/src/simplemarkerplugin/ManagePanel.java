@@ -215,13 +215,7 @@ public class ManagePanel {
     
     if(mProgramsList.getSelectedValue() != null &&  mProgramsList instanceof Program) {
       programs = mProgramsList.getSelectedPrograms();
-
-    if (programs == null || programs.length == 0) {
-      String value = (String) mMarkListsList.getSelectedValue();
-      MarkList list = mMarkListVector.getListForName(value);
-      programs = list.toArray(new Program[list.size()]);
     }
-  }
     else if(mProgramsList.getSelectedValue() != null) {
       String value = (String) mMarkListsList.getSelectedValue();
       MarkList list = mMarkListVector.getListForName(value);
@@ -238,6 +232,11 @@ public class ManagePanel {
       
       programs = progList.toArray(new Program[progList.size()]);
     }
+    else if(mProgramsList.getSelectedValue() == null) {
+      String value = (String) mMarkListsList.getSelectedValue();
+      MarkList list = mMarkListVector.getListForName(value);
+      programs = list.toArray(new Program[list.size()]);
+    }
 
     if(programs != null) {
       SendToPluginDialog send = new SendToPluginDialog(SimpleMarkerPlugin
@@ -245,6 +244,7 @@ public class ManagePanel {
 
       send.setVisible(true);
     }
+    
   }
 
   protected void selectPrograms(boolean scroll) {
