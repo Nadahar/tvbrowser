@@ -336,8 +336,21 @@ public class MarkList extends Vector<Program> {
   public Hashtable<String, LinkedList<Program>> getSortedPrograms() {
     return mProgram;
   }
+  
+  /**
+   * Return the programs with the given title.
+   * 
+   * @param title The title of the programs to get.
+   * @return The program with the given title.
+   */
+  public Program[] getProgramsWithTitle(String title) {
+    LinkedList<Program> list = mProgram.get(title);
+    return(list.toArray(new Program[list.size()]));
+  }
 
   /**
+   * Removes the programs with the given title.
+   * 
    * @param title
    *          The title of the Programs to remove
    */
