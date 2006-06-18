@@ -1,4 +1,4 @@
-package calendarexportplugin;
+package calendarexportplugin.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,14 +10,16 @@ import java.util.TimeZone;
 
 import javax.swing.JOptionPane;
 
+import calendarexportplugin.CalendarExportPlugin;
+
 import util.exc.ErrorHandler;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import devplugin.Program;
 
-public class VCalExporter {
+public class ICalFile {
   /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(VCalExporter.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ICalFile.class);
   /** DateFormat */
   private SimpleDateFormat mDate = new SimpleDateFormat("yyyyMMdd");
 
@@ -29,27 +31,28 @@ public class VCalExporter {
 
 
   /**
-   * Exports a list of Programs into a vCal-File
+   * Exports a list of Programs into a iCal-File
    * 
    * @param intothis into this File
    * @param list List to export
    * @param nulltime Lenght of Programs = 0?
    */
-  public void exportVCal(File intothis, Program[] list, Properties settings) {
+  public void exportICal(File intothis, Program[] list, Properties settings) {
     try {
       ParamParser parser = new ParamParser();
-      
       boolean nulltime = settings.getProperty(CalendarExportPlugin.PROP_NULLTIME, "false").equals("true");
 
       mTime.setTimeZone(TimeZone.getTimeZone("GMT"));
       mDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+
       PrintStream out = new PrintStream(new FileOutputStream(intothis));
 
       out.println("BEGIN:VCALENDAR");
       out.println("PRODID:-//TV Browser//Calendar Exporter");
-      out.println("VERSION:1.0");
+      out.println("VERSION:2.0");
 
       for (int i = 0; i < list.length; i++) {
+
         Program p = list[i];
 
         out.println();
@@ -57,7 +60,7 @@ public class VCalExporter {
 
         Calendar c = Calendar.getInstance();
 
-        out.println("DCREATED:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()));
+        out.println("CREATED:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()));
         out.println("SEQUENZ:" + i);
 
         int classification = 0;
@@ -89,10 +92,10 @@ public class VCalExporter {
           out.println("CATEGORIES:" + settings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, ""));
         }
 
-        c = CalendarExporter.getStartAsCalendar(p);
+        c = CalendarToolbox.getStartAsCalendar(p);
 
         out.println("UID:" + mDate.format(c.getTime()) + "-" + p.getID());
-        out.println("SUMMARY:" + p.getChannel().getName() + " - " + CalendarExporter.noBreaks(p.getTitle()));
+        out.println("SUMMARY:" + p.getChannel().getName() + " - " + CalendarToolbox.noBreaks(p.getTitle()));
 
         out.println("DTSTART:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
 
@@ -101,10 +104,10 @@ public class VCalExporter {
           JOptionPane.showMessageDialog(null, parser.getErrorString(), "Error", JOptionPane.ERROR_MESSAGE);
           return;
         }        
-        out.println("DESCRIPTION:" + CalendarExporter.noBreaks(desc));
-
+        out.println("DESCRIPTION:" + CalendarToolbox.noBreaks(desc));
+        
         if (!nulltime) {
-          c = CalendarExporter.getEndAsCalendar(p);
+          c = CalendarToolbox.getEndAsCalendar(p);
         }
 
         int showtime = 0;
@@ -117,10 +120,10 @@ public class VCalExporter {
 
         switch (showtime) {
         case 0:
-          out.println("TRANSP:0");
+          out.println("TRANSP:OPAQUE");
           break;
         case 1:
-          out.println("TRANSP:1");
+          out.println("TRANSP:TRANSPARENT");
           break;
         default:
           break;
@@ -129,15 +132,13 @@ public class VCalExporter {
         out.println("DTEND:" + mDate.format(c.getTime()) + "T" + mTime.format(c.getTime()) + "Z");
 
         if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true")) {
-          try {
-            int num = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0"));
-            c.add(Calendar.MINUTE, num * -1);
-          } catch (Exception e) {
-          }
-          
-          out.println("DALARM:"+ mDate.format(c.getTime()) + "T" + mTime.format(c.getTime())+"Z;;1;beep!");
+          out.println("BEGIN:VALARM");
+          out.println("DESCRIPTION:");
+          out.println("ACTION:DISPLAY");
+          out.println("TRIGGER;VALUE=DURATION:-PT" + settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0") + "M");
+          out.println("END:VALARM");
         }
-       
+        
         out.println("END:VEVENT\n");
       }
 
@@ -148,8 +149,8 @@ public class VCalExporter {
       ErrorHandler.handle(mLocalizer.msg("saveError", "An error occured while saving the Calendar-File"), e);
       e.printStackTrace();
     }
+
   }
 
-  
-  
+
 }

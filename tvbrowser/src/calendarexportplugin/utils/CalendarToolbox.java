@@ -1,7 +1,7 @@
 /*
  * Created on 18.06.2004
  */
-package calendarexportplugin;
+package calendarexportplugin.utils;
 
 import java.util.Calendar;
 
@@ -12,7 +12,7 @@ import devplugin.Program;
  * 
  * @author bodo
  */
-public class CalendarExporter {
+public class CalendarToolbox {
   /**
    * Replaces Newline-Characters with ' '
    * 
