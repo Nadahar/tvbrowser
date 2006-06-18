@@ -24,12 +24,9 @@
  */
 package simplemarkerplugin;
 
-import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,17 +34,11 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JRootPane;
-import javax.swing.JTabbedPane;
 
 import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 
 import devplugin.ActionMenu;
 
@@ -87,7 +78,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
 
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
   
-  private ManagePanel mProgramsPanel, mProgramsTitlePanel;
+  private ManagePanel mManagePanel = null;
 
   /**
    * Standard contructor for this class.
@@ -231,12 +222,6 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     if (mHasToUpdate)
       handleTvDataUpdateFinished();
   }
-
-  private void closeDialog(JDialog dialog) {
-    dialog.dispose();
-    mProgramsPanel = null;
-    mProgramsTitlePanel = null;
-  }
   
   private void showProgramsList() {
     final JDialog dialog = UiUtilities.createDialog(UiUtilities
@@ -244,59 +229,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     dialog.setTitle("SimpleMarkerPlugin");
     dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     
-    JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 2, 5));
-
-    mProgramsPanel = new ManagePanel(dialog, mMarkListVector, ManagePanel.MANAGE_PROGRAMS);
-    mProgramsTitlePanel = new ManagePanel(dialog, mMarkListVector, ManagePanel.MANAGE_PROGRAM_TITLES);
-    
-    tabbedPane.addTab(mLocalizer.msg("programList","Program list"), mProgramsPanel);
-    tabbedPane.addTab(mLocalizer
-        .msg("programListUnmarker", "Programs Unmarker"), mProgramsTitlePanel);
-
-    dialog.getContentPane().setLayout(new BorderLayout(0, 0));
-    dialog.getContentPane().add(tabbedPane, BorderLayout.CENTER);
-
-    dialog.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        closeDialog(dialog);
-      }
-    });
-    
-    JButton close = new JButton(mLocalizer.msg("close","Close"));
-    close.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        closeDialog(dialog);
-      }
-    });
-
-    dialog.getRootPane().setDefaultButton(close);
-
-    UiUtilities.registerForClosing(new WindowClosingIf() {
-      public void close() {
-        closeDialog(dialog);
-      }
-
-      public JRootPane getRootPane() {
-        return dialog.getRootPane();
-      }
-    });
-
-    JButton settings = new JButton(createImageIcon("categories",
-        "preferences-desktop", 16));
-    settings.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        dialog.dispose();
-        Plugin.getPluginManager()
-            .showSettings(SimpleMarkerPlugin.getInstance());
-      }
-    });
-
-    JPanel buttonPanel = new JPanel(new BorderLayout());
-    buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    buttonPanel.add(settings, BorderLayout.WEST);
-    buttonPanel.add(close, BorderLayout.EAST);
-    dialog.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+    mManagePanel = new ManagePanel(dialog, mMarkListVector);
 
     try {
       int x = Integer.parseInt(mProperties.getProperty("x"));
@@ -329,7 +262,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       mProg.unmark(this);
       mMarkListVector.getListAt(0).updateNode();
     }
-    refreshPanels();
+    
+    refreshManagePanel();
   }
 
   public void readData(ObjectInputStream in) throws IOException,
@@ -467,11 +401,13 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   protected Frame getSuperFrame() {
     return getParentFrame();
   }
+ 
+  protected void refreshManagePanel() {
+    if(mManagePanel != null)
+      mManagePanel.selectPrograms(false);
+  }
   
-  protected void refreshPanels() {
-    if(mProgramsTitlePanel != null && mProgramsPanel != null) {
-      mProgramsTitlePanel.selectPrograms(false);
-      mProgramsPanel.selectPrograms(false);
-    }
+  protected void resetManagePanel() {
+    mManagePanel = null;
   }
 }
