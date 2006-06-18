@@ -1,10 +1,29 @@
 /*
- * Created on 18.06.2004
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package calendarexportplugin;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,11 +31,13 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import calendarexportplugin.exporter.ExporterFactory;
+import calendarexportplugin.exporter.ExporterIf;
+import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -26,226 +47,234 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
- * This Plugin exports vCal and iCal Files
+ * This Plugin exports the Calendar to a external Application or File
  * 
  * @author bodo
  */
 public class CalendarExportPlugin extends Plugin {
-    /** Translator */
-    private static final Localizer mLocalizer = Localizer.getLocalizerFor(CalendarExportPlugin.class);
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CalendarExportPlugin.class);
 
-    /** If true, set length to 0 min */
-    public static final String PROP_NULLTIME = "nulltime";
-    /** Category of Item */
-    public static final String PROP_CATEGORIE = "Categorie";
-    /** Show Time as Busy or Free - 0 = Busy, 1 = Free */
-    public static final String PROP_SHOWTIME = "ShowTime";
-    /** Classification - 0 = Public, 1 = Private */
-    public static final String PROP_CLASSIFICATION = "Classification";
-    /** Parameters for Text-Creation */
-    public static final String PROP_PARAM = "paramToUse";
-    /** Use Alarm ? */
-    public static final String PROP_ALARM = "usealarm";
-    /** Minutes before ? */
-    public static final String PROP_ALARMBEFORE = "alarmbefore";
-    
-    /** The Exporter to use */
-    private CalendarExporter mExport = new CalendarExporter();
+  /** If true, set length to 0 min */
+  public static final String PROP_NULLTIME = "nulltime";
 
-    /** Path for saving the File */
-    private String mSavePath;
-    
-    /** Settings */
-    private Properties mSettings;
-    
-    /** The Default-Parameters */
-    public static final String DEFAULT_PARAMETER = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getInfo()
-     */
-    public PluginInfo getInfo() {
-        String name = mLocalizer.msg("pluginName", "Calendar export");
-        String desc = mLocalizer.msg("description",
-                "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
-        String author = "Bodo Tasche";
-        return new PluginInfo(name, desc, author, new Version(0, 3));
+  /** Category of Item */
+  public static final String PROP_CATEGORIE = "Categorie";
+
+  /** Show Time as Busy or Free - 0 = Busy, 1 = Free */
+  public static final String PROP_SHOWTIME = "ShowTime";
+
+  /** Classification - 0 = Public, 1 = Private */
+  public static final String PROP_CLASSIFICATION = "Classification";
+
+  /** Parameters for Text-Creation */
+  public static final String PROP_PARAM = "paramToUse";
+
+  /** Use Alarm ? */
+  public static final String PROP_ALARM = "usealarm";
+
+  /** Minutes before ? */
+  public static final String PROP_ALARMBEFORE = "alarmbefore";
+
+  /** List of active Exporters */
+  public static final String PROP_ACTIVE_EXPORTER = "activeexporter";
+
+  /** The Default-Parameters */
+  public static final String DEFAULT_PARAMETER = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
+
+  /** Instance of this Plugin */
+  private static CalendarExportPlugin mInstance;
+
+  /** The Exporter to use */
+  private CalendarToolbox mExport = new CalendarToolbox();
+
+  /** Settings */
+  private Properties mSettings;
+
+  /** Factory for Export-Types */
+  private ExporterFactory mExporterFactory;
+
+  /**
+   * Create Plugin
+   */
+  public CalendarExportPlugin() {
+    mExporterFactory = new ExporterFactory();
+    mInstance = this;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see devplugin.Plugin#getInfo()
+   */
+  public PluginInfo getInfo() {
+    String name = mLocalizer.msg("pluginName", "Calendar export");
+    String desc = mLocalizer.msg("description",
+        "Exports a Program as a vCal/iCal File. This File can easily imported in other Calendar Applications.");
+    String author = "Bodo Tasche";
+    return new PluginInfo(name, desc, author, new Version(0, 3));
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see devplugin.Plugin#getMarkIconFromTheme()
+   */
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("apps", "office-calendar", 16);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
+   */
+  public ActionMenu getContextMenuActions(final Program program) {
+    ExporterIf[] activeExporter = mExporterFactory.getActiveExporters();
+
+    if (activeExporter.length == 0) {
+      return null;
     }
 
-    public ThemeIcon getMarkIconFromTheme() {
-      return new ThemeIcon("apps", "office-calendar", 16);
-    }
-    
-    /*
-     *  (non-Javadoc)
-     * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
-     */
-    public ActionMenu getContextMenuActions(final Program program) {
-        AbstractAction action = new AbstractAction() {
+    Action mainaction = new devplugin.ContextMenuAction();
+    mainaction.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Export to Calendar-File"));
+    mainaction.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
 
-            public void actionPerformed(ActionEvent evt) {
-                Program[] programArr = { program };
-                doExport(programArr);
-            }
-        };
-        action.putValue(Action.NAME, mLocalizer.msg("contextMenuText","Export to Calendar-File"));
-        action.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
-        
-        return new ActionMenu(action);
-    }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#canReceivePrograms()
-     */
-    public boolean canReceivePrograms() {
-        return true;
-    }    
-    
-    /**
-     * This method is invoked for multiple program execution.
-     * 
-     * @see #canReceivePrograms()
-     */
-    public void receivePrograms(Program[] programArr) {
-        doExport(programArr);
-    }
+    Action[] actions = new Action[activeExporter.length];
 
-    /**
-     * Get Settings-Tab
-     * @return SettingsTab
-     */
-    public SettingsTab getSettingsTab() {
-        return new CalendarSettingsTab(this, mSettings);
-    }    
-    
-    /**
-     * Stores the Settings
-     * @return Settings
-     */
-    public Properties storeSettings() {
-        return mSettings;
-    }
+    int max = activeExporter.length;
 
-    /**
-     * Loads the Settings
-     * @param settings Settings for this Plugin
-     */
-    public void loadSettings(Properties settings) {
-        if (settings == null) {
-            settings = new Properties();
+    for (int i = 0; i < max; i++) {
+      final ExporterIf export = activeExporter[i];
+      AbstractAction action = new AbstractAction() {
+        public void actionPerformed(ActionEvent evt) {
+          Program[] programArr = { program };
+          export.exportPrograms(programArr, mSettings);
         }
+      };
 
-        this.mSettings = settings;
-    }    
-    
-    /**
-     * Called by the host-application during start-up.
-     * 
-     * @see #writeData(ObjectOutputStream)
-     */
-    public void readData(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+      StringBuilder name = new StringBuilder();
 
-        try {
-            int version = in.readInt();
-            mSavePath = (String) in.readObject();
-        } catch (Exception e) {
-           // e.printStackTrace();
-            mSavePath = "";
-        }
+      if (max == 1) {
+        name.append(mLocalizer.msg("contextMenuText", "Export to")).append(' ');
+      }
+
+      name.append(activeExporter[i].getName());
+
+      action.putValue(Action.NAME, name.toString());
+      action.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+
+      actions[i] = action;
     }
 
-    /**
-     * Counterpart to loadData. Called when the application shuts down.
-     * 
-     * @see #readData(ObjectInputStream)
-     */
-    public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(1);
-        out.writeObject(mSavePath);
-    }
-    
-    
-    /**
-     * Starts the Export
-     * @param programArr Array of Programs to export
-     */
-    private void doExport(Program[] programArr) {
-        File file = chooseFile();
-        if (file != null) {
-            
-            if (file.exists()) {
-                int result = JOptionPane.showConfirmDialog(getParentFrame(), 
-                        mLocalizer.msg("overwriteMessage", "The File \n{0}\nalready exists. Overwrite it?", file.getAbsolutePath()),
-                        mLocalizer.msg("overwriteTitle", "Overwrite?"),
-                        JOptionPane.YES_NO_OPTION
-                        );
-                if (result != JOptionPane.YES_OPTION) {
-                    return;
-                }
-            }
-
-            mSavePath = file.getAbsolutePath();
-    
-            if (file.getAbsolutePath().toLowerCase().endsWith(".vcs")) {
-              new VCalExporter().exportVCal(file, programArr, mSettings);
-            } else if (file.getAbsolutePath().toLowerCase().endsWith(".ics")) {
-              new ICalExporter().exportICal(file, programArr, mSettings);
-            }
-        }
+    if (actions.length == 1) {
+      return new ActionMenu(actions[0]);
     }
 
-    /**
-     * Shows a Filechooser for vCal and iCal Files.
-     * 
-     * @return selected File
-     */
-    private File chooseFile() {
-        JFileChooser select = new JFileChooser();
+    return new ActionMenu(mainaction, actions);
+  }
 
-        ExtensionFileFilter vCal = new ExtensionFileFilter("vcs", "vCal (*.vcs)");
-        ExtensionFileFilter iCal = new ExtensionFileFilter("ics", "iCal (*.ics)");
-        select.addChoosableFileFilter(vCal);
-        select.addChoosableFileFilter(iCal);
-        
-        if (mSavePath != null) {
-            select.setSelectedFile(new File (mSavePath));
+  /*
+   * (non-Javadoc)
+   * 
+   * @see devplugin.Plugin#canReceivePrograms()
+   */
+  public boolean canReceivePrograms() {
+    return mExporterFactory.getActiveExporters().length > 0;
+  }
 
-            if (mSavePath.toLowerCase().endsWith(".vcs")) {
-                select.setFileFilter(vCal);
-            } else {
-                select.setFileFilter(iCal);
-            }
-        }
-        
-        if (select.showSaveDialog(getParentFrame()) == JFileChooser.APPROVE_OPTION) {
-
-            String filename = select.getSelectedFile().getAbsolutePath();
-
-            String ext;
-
-            if (select.getFileFilter() == vCal) {
-                ext = ".vcs";
-            } else {
-                ext = ".ics";
-            }
-
-            if (!filename.toLowerCase().endsWith(ext)) {
-
-                if (filename.endsWith(".")) {
-                    filename = filename.substring(0, filename.length() - 1);
-                }
-
-                filename = filename + ext;
-            }
-
-            return new File(filename);
-        }
-
-        return null;
+  /**
+   * This method is invoked for multiple program execution.
+   * 
+   * @see #canReceivePrograms()
+   */
+  public void receivePrograms(Program[] programArr) {
+    ExporterIf[] export = mExporterFactory.getActiveExporters();
+    if (export.length == 1) {
+      export[0].exportPrograms(programArr, mSettings);
+    } else if (export.length > 1) {
+      ExporterIf ex = (ExporterIf) JOptionPane.showInputDialog(getParentFrame(), 
+          mLocalizer.msg("exportSelect", "Export to calendar:"), 
+          mLocalizer.msg("exportSelectTitle", "Choose calendar"), 
+          JOptionPane.PLAIN_MESSAGE, 
+          null, export, null);
+      if (ex != null)
+        ex.exportPrograms(programArr, mSettings);
     }
+
+  }
+
+  /**
+   * Get Settings-Tab
+   * 
+   * @return SettingsTab
+   */
+  public SettingsTab getSettingsTab() {
+    return new CalendarSettingsTab(this, mSettings);
+  }
+
+  /**
+   * Stores the Settings
+   * 
+   * @return Settings
+   */
+  public Properties storeSettings() {
+    return mSettings;
+  }
+
+  /**
+   * Loads the Settings
+   * 
+   * @param settings Settings for this Plugin
+   */
+  public void loadSettings(Properties settings) {
+    if (settings == null) {
+      settings = new Properties();
+    }
+    mSettings = settings;
+
+    mExporterFactory.setListOfActiveExporters(mSettings.getProperty(PROP_ACTIVE_EXPORTER));
+  }
+
+  /**
+   * Called by the host-application during start-up.
+   * 
+   * @see #writeData(ObjectOutputStream)
+   */
+  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+    try {
+      int version = in.readInt();
+    } catch (Exception e) {
+    }
+  }
+
+  /**
+   * Counterpart to loadData. Called when the application shuts down.
+   * 
+   * @see #readData(ObjectInputStream)
+   */
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(2);
+  }
+
+  /**
+   * @return ExporterFactory
+   */
+  public ExporterFactory getExporterFactory() {
+    return mExporterFactory;
+  }
+
+  /**
+   * @return Instance of this Plugin
+   */
+  public static CalendarExportPlugin getInstance() {
+    return mInstance;
+  }
+  
+  /**
+   * @return get best Parent-Frame for Dialogs
+   */
+  public Window getBestParentFrame() {
+    return UiUtilities.getBestDialogParent(getParentFrame());
+  }
 }

@@ -1,5 +1,24 @@
 /*
- * Created on 25.06.2004
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * CVS information:
+ *  $RCSfile$
+ *   $Source$
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package calendarexportplugin;
 
@@ -24,9 +43,13 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.customizableitems.SelectableItemList;
+import calendarexportplugin.exporter.ExporterIf;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -61,6 +84,8 @@ public class CalendarSettingsTab implements SettingsTab {
   private JCheckBox mUseAlarm;
 
   private JSpinner mAlarmMinutes;
+
+  private SelectableItemList mExporterList;
   
   /**
    * Creates the Tab
@@ -79,7 +104,7 @@ public class CalendarSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     final PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref:grow, pref,5dlu",
-        "5dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref, 3dlu, pref, 5dlu, pref"));
+        "5dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref, 3dlu, pref, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
     
     mCategorie = new JTextField(mSettings.getProperty(CalendarExportPlugin.PROP_CATEGORIE, ""));
@@ -163,7 +188,37 @@ public class CalendarSettingsTab implements SettingsTab {
     
     pb.add(extended, cc.xy(5,12));
 
-//    pb.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("interface", "Interface:")), cc.xyw(1,14,6));
+    pb.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("interface", "Interface:")), cc.xyw(1,14,6));
+   
+    mExporterList = new SelectableItemList(mPlugin.getExporterFactory().getActiveExporters(), mPlugin.getExporterFactory().getAllExporters());
+    pb.add(mExporterList, cc.xyw(2,16,4));
+
+    final JButton settings = new JButton(mLocalizer.msg("settings", "Settings for this Interface"));
+    settings.setEnabled(false);
+    
+    mExporterList.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        Object[] ob = mExporterList.getListSelection();
+        if ((ob.length == 1) && (((ExporterIf)ob[0]).hasSettingsDialog())) {
+          settings.setEnabled(true);
+        } else
+          settings.setEnabled(false);
+      }
+    });
+    
+    settings.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Object[] ob = mExporterList.getListSelection();
+        if (ob.length == 1) {
+          ((ExporterIf)ob[0]).showSettingsDialog(mSettings);
+        }
+      }
+    });
+
+    JPanel btnpanel = new JPanel(new BorderLayout());
+    btnpanel.add(settings, BorderLayout.EAST);
+    
+    pb.add(btnpanel, cc.xyw(2,18,4));
     
     return pb.getPanel();
   }
@@ -204,6 +259,18 @@ public class CalendarSettingsTab implements SettingsTab {
     
     mSettings.setProperty(CalendarExportPlugin.PROP_ALARM, mUseAlarm.isSelected()? "true": "false");
     mSettings.setProperty(CalendarExportPlugin.PROP_ALARMBEFORE, mAlarmMinutes.getValue().toString());
+    
+    Object[] selection = mExporterList.getSelection();
+    
+    ExporterIf[] exporter = new ExporterIf[selection.length];
+    
+    for (int i=0;i<selection.length;i++) {
+      exporter[i] = (ExporterIf) selection[i];
+    }
+    
+    mPlugin.getExporterFactory().setActiveExporters(exporter);
+    
+    mSettings.setProperty(CalendarExportPlugin.PROP_ACTIVE_EXPORTER, mPlugin.getExporterFactory().getListOfActiveExporters());
   }
 
   /*
