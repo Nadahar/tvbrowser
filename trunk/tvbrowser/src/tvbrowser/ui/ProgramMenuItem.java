@@ -64,16 +64,17 @@ public class ProgramMenuItem extends JMenuItem {
   private Color mBackground, mFill = null;
   private Insets mInsets;
   boolean mSelected;
-  private Timer mTimer;
-  private Font mPlainFont, mBoldFont;
+  private Timer mTimer; 
+  private static Font mPlainFont = (new JMenuItem()).getFont();
+  private static Font mBoldFont = mPlainFont.deriveFont(Font.BOLD);
   private int mIconHeight = 0;
   private boolean mShowStartTime, mShowDate, mShowName;
   private Icon mIcon = null;
   private TextAreaIcon mChannelName;
   
   protected static final int CHANNEL_WIDTH = 72;
-  protected static final int TIME_WIDTH = Settings.propTwelveHourFormat.getBoolean() ? 60 : 42;
-  protected static final int DATE_WIDTH = 70;
+  protected static final int TIME_WIDTH = (new JMenuItem()).getFontMetrics(mBoldFont).stringWidth(Plugin.getPluginManager().getExampleProgram().getTimeString()) + 8;
+  protected static final int DATE_WIDTH = (new JMenuItem()).getFontMetrics(mBoldFont).stringWidth(Plugin.getPluginManager().getExampleProgram().getDateString()) + 5;
   
   protected static final int NOW_TYPE = 0;
   protected static final int SOON_TYPE = 1;
@@ -133,8 +134,6 @@ public class ProgramMenuItem extends JMenuItem {
     
     showIcon = showIcon && Settings.propEnableChannelIcons.getBoolean();
     
-    mPlainFont = getFont();
-    mBoldFont = mPlainFont.deriveFont(Font.BOLD);
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont,CHANNEL_WIDTH);
 
     if(n % 2 == 1 && n != -1) {
