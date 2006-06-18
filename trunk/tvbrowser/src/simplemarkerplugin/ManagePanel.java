@@ -1,6 +1,4 @@
 /*
- * TV-Browser
- * 
  * SimpleMarkerPlugin by René Mach
  * 
  * This program is free software; you can redistribute it and/or
@@ -21,8 +19,8 @@
  *  $RCSfile$
  *   $Source$
  *     $Date: 2006-06-05 21:02:43 +0200 (Mo, 05 Jun 2006) $
- *   $Author: darras $
- * $Revision: 2466 $
+ *   $Author: ds10 $
+ * $Revision: 2537 $
  */
 package simplemarkerplugin;
 
