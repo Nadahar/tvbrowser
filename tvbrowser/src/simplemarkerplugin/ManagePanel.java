@@ -24,16 +24,22 @@
  */
 package simplemarkerplugin;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -44,10 +50,13 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Plugin;
 import devplugin.Program;
 
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -59,18 +68,12 @@ import util.ui.SendToPluginDialog;
  * 
  * @author René Mach
  */
-public class ManagePanel extends JPanel {
+public class ManagePanel {
   private static final long serialVersionUID = 1L;
 
-  /** Type to use for managing programs in the list */
-  public final static int MANAGE_PROGRAMS = 0;
-
-  /** Type to use for managing program titles in the list */
-  public final static int MANAGE_PROGRAM_TITLES = 1;
-
-  private int mType;
-
-  private JList mMarkListsList, mProgramsList;
+  private JList mMarkListsList;
+  
+  private ProgramList mProgramsList;
 
   private DefaultListModel mProgramListModel;
 
@@ -78,8 +81,10 @@ public class ManagePanel extends JPanel {
 
   private MarkListsVector mMarkListVector;
 
-  private JButton mSend, mDelete;
-
+  private JButton mSend, mDelete, mSettings, mClose;
+  
+  private JRadioButton mShowPrograms, mShowTitles;
+  
   private JDialog mParent;
 
   /**
@@ -87,40 +92,81 @@ public class ManagePanel extends JPanel {
    * 
    * @param parent The parent dialog.
    * @param markListVector The MarkListsVector.
-   * @param type The type of this panel.
    */
-  public ManagePanel(JDialog parent, MarkListsVector markListVector, int type) {
+  public ManagePanel(JDialog parent, MarkListsVector markListVector) {
     mParent = parent;
     mMarkListVector = markListVector;
-    mType = type;
 
+    mShowPrograms = new JRadioButton(SimpleMarkerPlugin.mLocalizer.msg("list.programs","List programs"),true);
+    mShowTitles = new JRadioButton(SimpleMarkerPlugin.mLocalizer.msg("list.titles","List for program titles"));
+    
+    ButtonGroup bg = new ButtonGroup();
+    bg.add(mShowPrograms);
+    bg.add(mShowTitles);
+    
+    mProgramListModel = new DefaultListModel();
+    
     mMarkListsList = new JList(mMarkListVector.getMarkListNames());
     mMarkListsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    mProgramsList = createProgramList();
+    mProgramsList = new ProgramList(mProgramListModel);
+    mProgramsList.addMouseListeners(null);    
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
     mProgramsScrollPane = new JScrollPane(mProgramsList);
 
-    setLayout(new FormLayout("max(90dlu;default),4dlu,fill:default:grow",
-        "fill:default:grow,4dlu,pref"));
-    setBorder(Borders.DLU4_BORDER);
+    JPanel panel = (JPanel)mParent.getContentPane();    
+    panel.setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
+    
+    panel.setLayout(new FormLayout("max(90dlu;default),4dlu,fill:default:grow",
+        "pref,pref,4dlu,fill:default:grow,4dlu,pref"));    
 
     CellConstraints cc = new CellConstraints();
+    
+    panel.add(mShowPrograms, cc.xy(1,1));
+    panel.add(mShowTitles, cc.xy(1,2));
+    panel.add(mMarkListsScrolPane, cc.xy(1,4));
+    panel.add(mProgramsScrollPane, cc.xy(3,4));
+    panel.add(getButtonPanel(cc), cc.xyw(1,6,3));
 
-    add(mMarkListsScrolPane, cc.xywh(1, 1, 1, 3));
-    add(mProgramsScrollPane, cc.xy(3, 1));
-    add(getButtonPanel(cc), cc.xy(3, 3));
-
-    if (mSend != null)
-      mSend.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          send();
-        }
-      });
+    mShowPrograms.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        selectPrograms(true);
+        mSend.setEnabled(false);
+        mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deletePrograms","Delete selected progams"));
+      }
+    });
+    
+    mShowTitles.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        selectPrograms(true);
+        mSend.setEnabled(false);
+        mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deleteTitles","Delete programs with selected titles"));
+      }
+    });
+    
+    mSend.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        send();
+      }
+    });
 
     mDelete.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         delete();
+      }
+    });
+    
+    mClose.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        close();
+      }
+    });
+    
+    mSettings.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        close();
+        Plugin.getPluginManager()
+            .showSettings(SimpleMarkerPlugin.getInstance());
       }
     });
 
@@ -136,15 +182,38 @@ public class ManagePanel extends JPanel {
       public void valueChanged(ListSelectionEvent arg0) {
         mDelete.setEnabled(true);
         
-        if(mSend != null)
+        if(mShowPrograms.isSelected())
           mSend.setEnabled(true);
       }
     });
     
     mMarkListsList.setSelectedIndex(0);
     selectPrograms(true);
-  }
+    
+    mParent.getRootPane().setDefaultButton(mClose);
+    
+    UiUtilities.registerForClosing(new WindowClosingIf() {
+      public void close() {
+        close();
+      }
 
+      public JRootPane getRootPane() {
+        return mParent.getRootPane();
+      }
+    });
+    
+    mParent.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        close();
+      }
+    });
+  }
+  
+  private void close() {
+    mParent.dispose();
+    SimpleMarkerPlugin.getInstance().resetManagePanel();
+  }
+  
   private void send() {
     if (mProgramsList.getSelectedIndex() == -1)
       return;
@@ -170,7 +239,7 @@ public class ManagePanel extends JPanel {
 
     MarkList list = mMarkListVector.getListForName(value);
 
-    if (mType == MANAGE_PROGRAMS) {
+    if (mShowPrograms.isSelected()) {
       for (Program p : list)
         mProgramListModel.addElement(p);
     } else {
@@ -191,7 +260,7 @@ public class ManagePanel extends JPanel {
     
     mDelete.setEnabled(false);
     
-    if(mSend != null)
+    if(!mShowPrograms.isSelected())
       mSend.setEnabled(false);
   }
 
@@ -202,7 +271,7 @@ public class ManagePanel extends JPanel {
     MarkList list = mMarkListVector.getListForName((String) mMarkListsList
         .getSelectedValue());
 
-    if (mType == MANAGE_PROGRAMS) {
+    if (mShowPrograms.isSelected()) {
       Program[] programs = ((ProgramList) mProgramsList).getSelectedPrograms();
 
       for (Program p : programs)
@@ -217,41 +286,36 @@ public class ManagePanel extends JPanel {
     }
 
     list.updateNode();
-    SimpleMarkerPlugin.getInstance().refreshPanels();
-  }
-
-  private JList createProgramList() {
-    mProgramListModel = new DefaultListModel();
-
-    if (mType == MANAGE_PROGRAMS) {
-      ProgramList list = new ProgramList(mProgramListModel);
-      list.addMouseListeners(null);
-      return list;
-    } else
-      return new JList(mProgramListModel);
+    SimpleMarkerPlugin.getInstance().refreshManagePanel();
   }
 
   private JPanel getButtonPanel(CellConstraints cc) {
-    JPanel p = new JPanel(new FormLayout("pref:grow,pref,5dlu,pref", "pref"));;
+    JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref", "pref"));;
 
-    if (mType == MANAGE_PROGRAMS) {
-      mSend = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
-          "actions", "edit-copy", 16));
-      mDelete = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
-          "actions", "edit-delete", 16));
-      
-      p.add(mSend, cc.xy(2, 1));
-      p.add(mDelete, cc.xy(4, 1));
-    } else {
-      mDelete = new JButton(SimpleMarkerPlugin.mLocalizer.msg("unmark",
-          "Just unmark"));
-      mDelete.setIcon(SimpleMarkerPlugin.getInstance().createImageIcon(
-          "actions", "edit-delete", 16));
-
-      p.add(mDelete, cc.xyw(1, 1, 4));
-    }
+    mSettings = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon("categories",
+        "preferences-desktop", 16));    
+    mSend = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
+        "actions", "edit-copy", 16));
+    mDelete = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
+        "actions", "edit-delete", 16));
     
-    return p;
+    mSettings.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.settings","Open settings"));
+    mSend.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.send","Send selected programs to other Plugins"));
+    mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deletePrograms","Delete selected progams"));
+    
+    p.add(mSettings, cc.xy(1, 1));
+    p.add(mSend, cc.xy(3, 1));
+    p.add(mDelete, cc.xy(5, 1));
+    
+    mSend.setEnabled(false);
+    
+    mClose = new JButton(SimpleMarkerPlugin.mLocalizer.msg("close","Close"));    
+      
+    JPanel buttons = new JPanel(new BorderLayout());
+    
+    buttons.add(p, BorderLayout.WEST);
+    buttons.add(mClose, BorderLayout.EAST);
+    
+    return buttons;
   }
-
 }
