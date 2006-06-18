@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -179,9 +180,6 @@ public class ManagePanel {
     mProgramsList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent arg0) {
         mDelete.setEnabled(true);
-        
-        if(mShowPrograms.isSelected())
-          mSend.setEnabled(true);
       }
     });
     
@@ -213,18 +211,40 @@ public class ManagePanel {
   }
   
   private void send() {
-    Program[] programs = ((ProgramList) mProgramsList).getSelectedPrograms();
+    Program[] programs = null;
+    
+    if(mProgramsList.getSelectedValue() != null &&  mProgramsList instanceof Program) {
+      programs = mProgramsList.getSelectedPrograms();
 
     if (programs == null || programs.length == 0) {
       String value = (String) mMarkListsList.getSelectedValue();
       MarkList list = mMarkListVector.getListForName(value);
       programs = list.toArray(new Program[list.size()]);
     }
+  }
+    else if(mProgramsList.getSelectedValue() != null) {
+      String value = (String) mMarkListsList.getSelectedValue();
+      MarkList list = mMarkListVector.getListForName(value);
 
-    SendToPluginDialog send = new SendToPluginDialog(SimpleMarkerPlugin
-        .getInstance(), mParent, programs);
+      Object[] values = mProgramsList.getSelectedValues();
+      ArrayList<Program> progList = new ArrayList<Program>();
+      
+      for(Object o : values) {
+        Program[] progs = list.getProgramsWithTitle((String)o);
+        
+        for(Program p : progs)
+          progList.add(p);
+      }
+      
+      programs = progList.toArray(new Program[progList.size()]);
+    }
 
-    send.setVisible(true);
+    if(programs != null) {
+      SendToPluginDialog send = new SendToPluginDialog(SimpleMarkerPlugin
+          .getInstance(), mParent, programs);
+
+      send.setVisible(true);
+    }
   }
 
   protected void selectPrograms(boolean scroll) {
@@ -255,7 +275,7 @@ public class ManagePanel {
     
     mDelete.setEnabled(false);
     
-    if(!mShowPrograms.isSelected() || mProgramListModel.size() < 1)
+    if(mProgramListModel.size() < 1)
       mSend.setEnabled(false);
     else
       mSend.setEnabled(true);
