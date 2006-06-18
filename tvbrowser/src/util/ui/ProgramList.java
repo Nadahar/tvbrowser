@@ -169,11 +169,13 @@ public class ProgramList extends JList implements ChangeListener, ListDataListen
 
       int inx = locationToIndex(e.getPoint());
       setSelectedIndex(inx);
-      Program prog = (Program) getModel().getElementAt(inx);
-      JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
+      
+      if(getModel().getElementAt(inx) instanceof Program) {
+        Program prog = (Program) getModel().getElementAt(inx);
+        JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
 
-      menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
-
+        menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
+      }
     }
 
     /* (non-Javadoc)
