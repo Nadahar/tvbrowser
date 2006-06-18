@@ -130,8 +130,7 @@ public class ManagePanel {
 
     mShowPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        selectPrograms(true);
-        mSend.setEnabled(false);
+        selectPrograms(true);        
         mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deletePrograms","Delete selected progams"));
       }
     });
@@ -139,7 +138,6 @@ public class ManagePanel {
     mShowTitles.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         selectPrograms(true);
-        mSend.setEnabled(false);
         mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deleteTitles","Delete programs with selected titles"));
       }
     });
@@ -158,13 +156,13 @@ public class ManagePanel {
     
     mClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        close();
+        closeDialog();
       }
     });
     
     mSettings.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        close();
+        closeDialog();
         Plugin.getPluginManager()
             .showSettings(SimpleMarkerPlugin.getInstance());
       }
@@ -194,7 +192,7 @@ public class ManagePanel {
     
     UiUtilities.registerForClosing(new WindowClosingIf() {
       public void close() {
-        close();
+        closeDialog();
       }
 
       public JRootPane getRootPane() {
@@ -204,20 +202,17 @@ public class ManagePanel {
     
     mParent.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-        close();
+        closeDialog();
       }
     });
   }
   
-  private void close() {
+  private void closeDialog() {
     mParent.dispose();
     SimpleMarkerPlugin.getInstance().resetManagePanel();
   }
   
   private void send() {
-    if (mProgramsList.getSelectedIndex() == -1)
-      return;
-
     Program[] programs = ((ProgramList) mProgramsList).getSelectedPrograms();
 
     if (programs == null || programs.length == 0) {
@@ -260,8 +255,10 @@ public class ManagePanel {
     
     mDelete.setEnabled(false);
     
-    if(!mShowPrograms.isSelected())
+    if(!mShowPrograms.isSelected() || mProgramListModel.size() < 1)
       mSend.setEnabled(false);
+    else
+      mSend.setEnabled(true);
   }
 
   private void delete() {
@@ -300,15 +297,13 @@ public class ManagePanel {
         "actions", "edit-delete", 16));
     
     mSettings.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.settings","Open settings"));
-    mSend.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.send","Send selected programs to other Plugins"));
+    mSend.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.send","Send  programs to other plugins"));
     mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deletePrograms","Delete selected progams"));
     
     p.add(mSettings, cc.xy(1, 1));
     p.add(mSend, cc.xy(3, 1));
     p.add(mDelete, cc.xy(5, 1));
-    
-    mSend.setEnabled(false);
-    
+        
     mClose = new JButton(SimpleMarkerPlugin.mLocalizer.msg("close","Close"));    
       
     JPanel buttons = new JPanel(new BorderLayout());

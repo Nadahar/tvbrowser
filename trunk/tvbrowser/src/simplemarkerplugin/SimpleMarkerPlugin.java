@@ -146,7 +146,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       return new ActionMenu(getDefaultAction(p));
     } else {
       ContextMenuAction menu = new ContextMenuAction();
-      menu.setText(mLocalizer.msg("list.name", "Simple Marker"));
+      menu.setText(mLocalizer.msg("name", "Marker plugin"));
       menu.setSmallIcon(createImageIcon("actions", "just-mark", 16));
 
       Action[] submenu = new Action[mMarkListVector.size()];
@@ -206,7 +206,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       }
     };
     // Name of the buttons in the menu and the icon bar
-    action.putValue(Action.NAME, "Simple Marker");
+    action.putValue(Action.NAME, mLocalizer.msg("name","Marker plugin"));
     // small icon
     action.putValue(Action.SMALL_ICON, createImageIcon("actions", "just-mark",
         16));
