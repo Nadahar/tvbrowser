@@ -65,14 +65,14 @@ public class MutableProgram implements Program {
   
   /** A plugin array that can be shared by all the programs that are not marked
    * by any plugin. */
-  private static final Marker[] EMPTY_MARKER_ARR = new Marker[0];
+  protected static final Marker[] EMPTY_MARKER_ARR = new Marker[0];
 
   /** Contains all listeners that listen for events from this program. */
   private Vector<ChangeListener> mListenerList;
 
   /** Containes all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
-  private Marker[] mMarkedByPluginArr;
+  private Marker[] mMarkerArr;
 
   /** Contains whether this program is currently on air. */
   private boolean mOnAir;
@@ -137,7 +137,7 @@ public class MutableProgram implements Program {
     
     mFieldHash = new HashMap<ProgramFieldType,Object>();
     mListenerList = new Vector<ChangeListener>();
-    mMarkedByPluginArr = EMPTY_MARKER_ARR;
+    mMarkerArr = EMPTY_MARKER_ARR;
     mOnAir = false;
 
     // These attributes are not mutable, because they build the ID.
@@ -147,7 +147,7 @@ public class MutableProgram implements Program {
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
     
-    mMarkedByPluginArr = EMPTY_MARKER_ARR;
+    mMarkerArr = EMPTY_MARKER_ARR;
     mState = IS_VALID_STATE;
   }
 
@@ -287,14 +287,14 @@ public class MutableProgram implements Program {
   public final void mark(Marker marker) {
     
     boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
-    int oldCount = mMarkedByPluginArr.length;
+    int oldCount = mMarkerArr.length;
     
     if (! alreadyMarked) {
       // Append the new plugin
       Marker[] newArr = new Marker[oldCount + 1];
-      System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, oldCount);
+      System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
       newArr[oldCount] = marker;
-      mMarkedByPluginArr = newArr;
+      mMarkerArr = newArr;
       
       fireStateChanged();
     }
@@ -314,30 +314,30 @@ public class MutableProgram implements Program {
     
     int idx = getMarkedByPluginIndex(marker);
     if (idx != -1) {
-      if (mMarkedByPluginArr.length == 1) {
+      if (mMarkerArr.length == 1) {
         // This was the only plugin
-        mMarkedByPluginArr = EMPTY_MARKER_ARR;
+        mMarkerArr = EMPTY_MARKER_ARR;
       }
       else {
-        int oldCount = mMarkedByPluginArr.length;
+        int oldCount = mMarkerArr.length;
         Marker[] newArr = new Marker[oldCount - 1];
-        System.arraycopy(mMarkedByPluginArr, 0, newArr, 0, idx);
-        System.arraycopy(mMarkedByPluginArr, idx + 1, newArr, idx, oldCount - idx - 1);
-        mMarkedByPluginArr = newArr;
+        System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
+        System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
+        mMarkerArr = newArr;
       }
       
       fireStateChanged();      
     }
     
-    if(mMarkedByPluginArr.length < 1)
+    if(mMarkerArr.length < 1)
       MarkedProgramsList.getInstance().removeProgram(this);
   }
 
   
   
   private int getMarkedByPluginIndex(Marker plugin) {
-    for (int i = 0; i < mMarkedByPluginArr.length; i++) {
-      if (mMarkedByPluginArr[i].getId().compareTo(plugin.getId()) == 0) {
+    for (int i = 0; i < mMarkerArr.length; i++) {
+      if (mMarkerArr[i].getId().compareTo(plugin.getId()) == 0) {
         return i;
       }
     }
@@ -353,8 +353,8 @@ public class MutableProgram implements Program {
   public PluginAccess[] getMarkedByPlugins() {
     PluginAccess plugin;
     ArrayList<PluginAccess> list = new ArrayList<PluginAccess>();
-    for (int i=0; i<mMarkedByPluginArr.length; i++) {
-      plugin = PluginProxyManager.getInstance().getPluginForId(mMarkedByPluginArr[i].getId());
+    for (int i=0; i<mMarkerArr.length; i++) {
+      plugin = PluginProxyManager.getInstance().getPluginForId(mMarkerArr[i].getId());
       if (plugin != null) {
         list.add(plugin);
       }
@@ -363,7 +363,7 @@ public class MutableProgram implements Program {
   }
 
   public Marker[] getMarkerArr() {
-    return mMarkedByPluginArr;
+    return mMarkerArr;
   }
 
 
@@ -876,6 +876,18 @@ public class MutableProgram implements Program {
    * @since 2.3
    */
   public final void validateMarking() {
+    fireStateChanged();
+  }
+  
+  /**
+   * Sets the marker array of this program.
+   * 
+   * @param marker The marker array.
+   * @since 2.3
+   */
+  protected void setMarkerArr(Marker[] marker) {
+    mMarkerArr = marker;
+    
     fireStateChanged();
   }
  
