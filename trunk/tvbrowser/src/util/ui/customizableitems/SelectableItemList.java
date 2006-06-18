@@ -40,6 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionListener;
 
 import util.ui.Localizer;
 
@@ -149,6 +150,44 @@ public class SelectableItemList extends JPanel {
     
     if(showSelectionButtons)
       add(p3, BorderLayout.SOUTH);
+    
+  }
+  
+  /**
+   * @since 2.3
+   * @param listener Add this Listener
+   */
+  public void addListSelectionListener(ListSelectionListener listener) {
+    mList.addListSelectionListener(listener);
+  }
+  
+  /**
+   * @since 2.3
+   * @param listener Remove this Listener
+   */
+  public void removeListSelectionListener(ListSelectionListener listener) {
+    mList.removeListSelectionListener(listener);
+  }
+
+  /**
+   * Current selected Items in the List.
+   * 
+   * Attention: This is not a List with all activated Items.
+   * 
+   * @since 2.3
+   * @return Current selected Items in the List
+   */
+  public Object[] getListSelection() {
+    Object[] values = mList.getSelectedValues();
+    
+    Object[] items = new Object[values.length];
+    
+    int max = values.length;
+    for (int i=0;i< max;i++) {
+      items[i] = ((SelectableItem)values[0]).getItem();
+    }
+    
+    return items;
   }
   
   private void setEntries(Object[] currSelection, Object[] allItems) {
@@ -166,6 +205,9 @@ public class SelectableItemList extends JPanel {
   }
   
   /**
+   * Attention: This is not a List with all selected Items in the List. This List 
+   * is a List with all checked Items
+   * 
    * @return The selected Objects
    */
   public Object[] getSelection() {
@@ -231,4 +273,5 @@ public class SelectableItemList extends JPanel {
     mScrollPane.getVerticalScrollBar().setEnabled(value);
     mScrollPane.setWheelScrollingEnabled(value);
   }
+
 }
