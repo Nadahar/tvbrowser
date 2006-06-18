@@ -165,24 +165,24 @@ public class MarkedProgramsList {
   }
   
   private void revalidatePrograms() {
-    for(int i = mList.size() - 1; i >= 0; i--) {
-      MutableProgram programInList = (MutableProgram)mList.remove(i);
-      Marker[] markers = programInList.getMarkerArr();
+    Program[] programs = mList.toArray(new Program[mList.size()]);
+    mList.clear();
+    
+    for(Program p : programs) {
+      MutableProgram programInList = (MutableProgram)p;
+      Marker[] markerArr = programInList.getMarkerArr();
       
-      Program testProg = PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
+      MutableProgram testProg = (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
       
       if(testProg == null || programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
+        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
         programInList.setProgramState(Program.WAS_DELETED_STATE);
-        for(Marker marker : markers)
-          programInList.unmark(marker);
       }
       else if(testProg != programInList) {
-        for(Marker marker : markers) {
-          programInList.unmark(marker);
-          testProg.mark(marker);
-        }
-        addProgram(testProg);
+        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
         programInList.setProgramState(Program.WAS_UPDATED_STATE);
+        testProg.setMarkerArr(markerArr);
+        mList.add(testProg);
       }
       else
         mList.add(programInList);
