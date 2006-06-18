@@ -147,8 +147,12 @@ public class CalendarExportPlugin extends Plugin {
       final ExporterIf export = activeExporter[i];
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent evt) {
-          Program[] programArr = { program };
-          export.exportPrograms(programArr, mSettings);
+          new Thread(new Runnable(){
+            public void run() {
+              Program[] programArr = { program };
+              export.exportPrograms(programArr, mSettings);
+            }
+          }).start();
         }
       };
 
@@ -187,18 +191,27 @@ public class CalendarExportPlugin extends Plugin {
    * 
    * @see #canReceivePrograms()
    */
-  public void receivePrograms(Program[] programArr) {
-    ExporterIf[] export = mExporterFactory.getActiveExporters();
+  public void receivePrograms(final Program[] programArr) {
+    final ExporterIf[] export = mExporterFactory.getActiveExporters();
     if (export.length == 1) {
-      export[0].exportPrograms(programArr, mSettings);
+      new Thread(new Runnable(){
+        public void run() {
+          export[0].exportPrograms(programArr, mSettings);
+        }
+      }).start();
     } else if (export.length > 1) {
-      ExporterIf ex = (ExporterIf) JOptionPane.showInputDialog(getParentFrame(), 
+      final ExporterIf ex = (ExporterIf) JOptionPane.showInputDialog(getParentFrame(), 
           mLocalizer.msg("exportSelect", "Export to calendar:"), 
           mLocalizer.msg("exportSelectTitle", "Choose calendar"), 
           JOptionPane.PLAIN_MESSAGE, 
           null, export, null);
-      if (ex != null)
-        ex.exportPrograms(programArr, mSettings);
+      if (ex != null) {
+        new Thread(new Runnable(){
+          public void run() {
+            ex.exportPrograms(programArr, mSettings);
+          }
+        }).start();        
+      }
     }
 
   }
@@ -241,7 +254,6 @@ public class CalendarExportPlugin extends Plugin {
    * @see #writeData(ObjectOutputStream)
    */
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-
     try {
       int version = in.readInt();
     } catch (Exception e) {

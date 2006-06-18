@@ -54,7 +54,7 @@ public class VCalExporter extends AbstractExporter {
    * @see calendarexportplugin.exporter.ExporterIf#getName()
    */
   public String getName() {
-    return "vCal File";
+    return mLocalizer.msg("name","vCal File");
   }
 
   /*
