@@ -52,7 +52,7 @@ public class ICalExporter extends AbstractExporter {
    * @see calendarexportplugin.exporter.ExporterIf#getName()
    */
   public String getName() {
-    return "iCal File";
+    return mLocalizer.msg("name","iCal File");
   }
 
   /*
