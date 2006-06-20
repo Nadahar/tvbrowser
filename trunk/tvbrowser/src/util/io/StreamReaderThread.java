@@ -1,6 +1,4 @@
 /*
- * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -23,7 +21,7 @@
  * $Revision$
  */
 
-package captureplugin.drivers.utils;
+package util.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,8 +31,8 @@ import java.io.InputStreamReader;
 /**
  * A class that reads from InputStreams in a Thread.
  * 
+ * @since 2.3
  * @author René Mach
- * 
  */
 public class StreamReaderThread extends Thread {
 
