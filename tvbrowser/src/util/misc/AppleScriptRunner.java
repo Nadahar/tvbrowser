@@ -1,6 +1,4 @@
 /*
- * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -22,16 +20,18 @@
  *   $Author: troggan $
  * $Revision: 1944 $
  */
-package captureplugin.drivers.elgatodriver;
+package util.misc;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
-import captureplugin.drivers.utils.StreamReaderThread;
+import util.io.StreamReaderThread;
 
 /**
  * This class is the Interface to the AppleScript-System. It runs the Scripts
  * 
+ * @since 2.3
  * @author bodum
  */
 public class AppleScriptRunner {
@@ -57,9 +57,9 @@ public class AppleScriptRunner {
      * 
      * @param script Script to execute
      * @return Output if exec was successfull, null if Error occured
+     * @throws IOException 
      */
-    public String executeScript(String script) {
-        try {
+    public String executeScript(String script) throws IOException {
             File file = File.createTempFile("osascript", "temp");
             
             FileWriter writer = new FileWriter(file);
@@ -80,7 +80,10 @@ public class AppleScriptRunner {
             
             if (mTimeOut > 0 ){
                 while (time < mTimeOut * 1000) {
-                    Thread.sleep(100);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e1) {
+                    }
                     time += 100;
                     try {
                         p.exitValue();
@@ -90,7 +93,10 @@ public class AppleScriptRunner {
                 }
             } else {
                 while (true) {
-                    Thread.sleep(100);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e1) {
+                    }
                     try {
                         p.exitValue();
                         break;
@@ -100,7 +106,10 @@ public class AppleScriptRunner {
             }
             
             while (time < mTimeOut * 1000) {
-                Thread.sleep(100);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                }
                 time += 100;
                 try {
                     p.exitValue();
@@ -117,11 +126,6 @@ public class AppleScriptRunner {
             if (p.exitValue() >= 0)
                 return output;
             
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
         return null;
     }
 

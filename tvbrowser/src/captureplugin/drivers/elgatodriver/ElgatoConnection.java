@@ -24,11 +24,12 @@
  */
 package captureplugin.drivers.elgatodriver;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import com.l2fprod.util.StringUtils;
+import util.misc.AppleScriptRunner;
 
 import captureplugin.CapturePlugin;
 import devplugin.Channel;
@@ -118,7 +119,12 @@ public class ElgatoConnection {
   public ElgatoChannel[] getAvailableChannels() {
     ArrayList list = new ArrayList();
 
-    String res = mAppleScript.executeScript(CHANNELLIST);
+    String res = null;
+    try {
+        res = mAppleScript.executeScript(CHANNELLIST);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     
     if (res == null) {
       return new ElgatoChannel[0];
@@ -142,7 +148,12 @@ public class ElgatoConnection {
 
     mProgramMapping = new HashMap();
 
-    String res = mAppleScript.executeScript(LISTRECORDINGS);
+    String res = null;
+    try {
+        res = mAppleScript.executeScript(LISTRECORDINGS);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
     
     if (res == null) {
       return new Program[0];
@@ -205,7 +216,12 @@ public class ElgatoConnection {
     call = call.replaceAll("\\{4\\}", Integer.toString(conf.getElgatoChannel(prg.getChannel()).getNumber()));
     call = call.replaceAll("\\{5\\}", prg.getShortInfo().replaceAll("\"", "\\\\\\\\\"").replace('\n', ' '));
     
-    String res = mAppleScript.executeScript(call);
+    String res = null;
+    try {
+        res = mAppleScript.executeScript(call);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
 
     if (res == null)
       return false;
@@ -223,7 +239,11 @@ public class ElgatoConnection {
    */
   public void removeRecording(Program prg) {
     String id = (String) mProgramMapping.get(prg);
-    mAppleScript.executeScript(REMOVERECORDING.replaceAll("\\{0\\}", id));
+    try {
+        mAppleScript.executeScript(REMOVERECORDING.replaceAll("\\{0\\}", id));
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
   }
 
   /**
@@ -233,7 +253,11 @@ public class ElgatoConnection {
    * @param prg Switch to Channel of Program
    */
   public void switchToChannel(ElgatoConfig conf, Program prg) {
-    mAppleScript.executeScript(SWITCHCHANNEL.replaceAll("\\{0\\}", Integer.toString(conf.getElgatoChannel(
-        prg.getChannel()).getNumber())));
+    try {
+        mAppleScript.executeScript(SWITCHCHANNEL.replaceAll("\\{0\\}", Integer.toString(conf.getElgatoChannel(
+            prg.getChannel()).getNumber())));
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
   }
 }
