@@ -99,8 +99,22 @@ public class ChannelFilter {
       }
     }
 
+    if (mChannelName.length > 0) {
+      String channelName = normalizeCharacters(channel.getName());
+      for (int i = mChannelName.length - 1; i >= 0; i--) {
+        if (!(channelName.indexOf(mChannelName[i]) >= 0)) {
+          return false;
+        }
+      }
+    }
+
     boolean categoryTest = false;
-    for (int category : mCategories) {
+    int i = 0;
+    int max = mCategories.length;
+    
+    while (i < max && !categoryTest) {
+      int category = mCategories[i];
+
       if (category != Integer.MAX_VALUE) {
         if ((category < 0)) {
           category *= -1;
@@ -116,20 +130,13 @@ public class ChannelFilter {
       } else {
         categoryTest = true;
       }
-    }
 
+      i++;
+    }
+    
     if (!categoryTest) 
       return false;
     
-    if (mChannelName.length > 0) {
-      String channelName = normalizeCharacters(channel.getName());
-      for (int i = mChannelName.length - 1; i >= 0; i--) {
-        if (!(channelName.indexOf(mChannelName[i]) >= 0)) {
-          return false;
-        }
-      }
-    }
-
     return true;
   }
 
