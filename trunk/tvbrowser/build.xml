@@ -369,7 +369,10 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar" compress="false"> 	 
             <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" /> 	 
     </jar>
-  	
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/I18NPlugin.jar"
+         compress="false">
+      <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
+    </jar>
   	<!--   <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/MediaCenterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="mediacenterplugin/**"/>

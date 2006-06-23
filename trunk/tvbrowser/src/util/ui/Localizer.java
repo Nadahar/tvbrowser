@@ -79,7 +79,7 @@ public class Localizer {
   private static final Object[] THREE_ARGS_ARR = new Object[3];
   
   /** Contains for a Class (key) a Localizer (value). */
-  private static HashMap mLocalizerCache = new HashMap();
+  private static HashMap<Class, Localizer> mLocalizerCache = new HashMap<Class, Localizer>();
     
   /** The base name of the ResourceBundle used by this Localizer. */  
   private String mBaseName;
@@ -122,7 +122,7 @@ public class Localizer {
       mBaseName = packageName + packageName.substring(lastDot);
     }
     
-    mClassLoader = clazz.getClassLoader();
+    mClassLoader = new LocalizerClassloader(clazz.getClassLoader());
     
     loadResouceBundle();
   }
