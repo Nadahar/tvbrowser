@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
@@ -136,7 +137,25 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
         public void run() {
           int leftTopX = e.getPoint().x - mPopupMenu.getWidth();
           int leftTopY = e.getPoint().y - mPopupMenu.getHeight();
-          Point location = mManager.getSystemTray().getLocationOnScreen();
+          
+          Point location = null;
+          
+          if (JavaVersion.getVersion() >= JavaVersion.VERSION_1_6) {
+            try {
+              Method m = e.getClass().getMethod("getLocationOnScreen", new Class[]{});
+              location = (Point) m.invoke(null, new Object[]{});
+            } catch (Exception e1) {
+              e1.printStackTrace();
+            }
+            location = e.getLocationOnScreen();
+          } else {
+            location = mManager.getSystemTray().getLocationOnScreen();
+          }
+          
+          System.out.println(location);
+          System.out.println(e.getPoint().x + "-" + mPopupMenu.getWidth());
+          System.out.println(e.getPoint().y + "-" + mPopupMenu.getHeight());
+          
           mPopupMenu.show(mTrayParent, location.x+leftTopX, location.y+leftTopY);
         };
       });
