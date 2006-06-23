@@ -152,10 +152,6 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
             location = mManager.getSystemTray().getLocationOnScreen();
           }
           
-          System.out.println(location);
-          System.out.println(e.getPoint().x + "-" + mPopupMenu.getWidth());
-          System.out.println(e.getPoint().y + "-" + mPopupMenu.getHeight());
-          
           mPopupMenu.show(mTrayParent, location.x+leftTopX, location.y+leftTopY);
         };
       });
