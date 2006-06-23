@@ -147,7 +147,6 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
             } catch (Exception e1) {
               e1.printStackTrace();
             }
-            location = e.getLocationOnScreen();
           } else {
             location = mManager.getSystemTray().getLocationOnScreen();
           }
