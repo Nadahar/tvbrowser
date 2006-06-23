@@ -274,11 +274,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     }
 
     public String toString() {
-      if (mName != null) {
-        return mName;
+      if (mName == null) {
+        mName = new Locale(mId, mCountry, mVariant).getDisplayName();
       }
       
-      mName = new Locale(mId, mCountry, mVariant).getDisplayName();
       return mName;
     }
 
