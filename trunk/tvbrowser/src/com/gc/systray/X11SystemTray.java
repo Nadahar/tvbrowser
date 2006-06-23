@@ -143,7 +143,7 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
           if (JavaVersion.getVersion() >= JavaVersion.VERSION_1_6) {
             try {
               Method m = e.getClass().getMethod("getLocationOnScreen", new Class[]{});
-              location = (Point) m.invoke(null, new Object[]{});
+              location = (Point) m.invoke(e, new Object[]{});
             } catch (Exception e1) {
               e1.printStackTrace();
             }
