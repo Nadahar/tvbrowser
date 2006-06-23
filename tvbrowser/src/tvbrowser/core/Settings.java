@@ -894,7 +894,10 @@ public class Settings {
       "language", System.getProperty("user.language"));
 
   public static final StringProperty propCountry = new StringProperty(mProp,
-      "country", System.getProperty("user.country"));  
+      "country", System.getProperty("user.country", ""));  
+  
+  public static final StringProperty propVariant = new StringProperty(mProp,
+      "variant", System.getProperty("user.variant",""));  
   
   public static final StringProperty propTimezone = new StringProperty(mProp,
       "timeZone", null);

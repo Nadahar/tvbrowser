@@ -226,8 +226,7 @@ public class TVBrowser {
 
     // Capture unhandled exceptions
     //System.setErr(new PrintStream(new MonitoringErrorStream()));
-
-    Locale.setDefault(new Locale(Settings.propLanguage.getString(), Settings.propCountry.getString()));
+    Locale.setDefault(new Locale(Settings.propLanguage.getString(), Settings.propCountry.getString(), Settings.propVariant.getString()));
 
     String timezone = Settings.propTimezone.getString();
     if (timezone != null) {

@@ -27,9 +27,17 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -82,7 +90,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     CellConstraints cc = new CellConstraints();
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleLanguage", "Locale")), cc.xyw(1,1,5));
-    Language[] languages = new Language[] { new Language("en","us"), new Language("en"), new Language("de"), new Language("sv") };
+    
+    Language[] languages = createAllLangagues();
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2,3));
     mSettingsPn.add(mLanguageCB = new JComboBox(languages), cc.xy(4,3));
@@ -153,6 +162,65 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   }
 
   /**
+   * Create a list of available Languages from the Jar-File.
+   * 
+   * It tries to find all tvbrowser/tvbrowser_*.properties and creates a List
+   * of available Languages
+   * 
+   * If the function fails, it returns "EN", "EN-US", "DE", "SV" as Fallback
+   * 
+   * @return List of Languages
+   */
+  private Language[] createAllLangagues() {
+    Language[] languages = new Language[] { new Language("en","us"), new Language("en"), new Language("de"), new Language("sv") };
+    
+    try {
+      ArrayList<Language> langArray = new ArrayList<Language>();
+
+      langArray.add(new Language("en"));
+      
+      JarFile file = new JarFile(new File("tvbrowser.jar"));
+      
+      Enumeration<JarEntry> entries = file.entries();
+      
+      while (entries.hasMoreElements()) {
+        JarEntry entry = entries.nextElement();
+        String name = entry.getName();
+        if (name.startsWith("tvbrowser/tvbrowser_") && (name.lastIndexOf(".properties") > 0)) {
+          name = name.substring(20, name.lastIndexOf(".properties"));
+          
+          String[] split = name.split("_");
+
+          if (split.length >= 3) {
+            Language lang = new Language(split[0], split[1], split[2]);
+            langArray.add(lang);
+          } else if (split.length == 2) {
+            Language lang = new Language(split[0], split[1]);
+            langArray.add(lang);
+          } else {
+            Language lang = new Language(split[0]);
+            langArray.add(lang);
+          }
+        }
+      }
+      
+      languages = langArray.toArray(new Language[langArray.size()]);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    Arrays.sort(languages, new Comparator<Language>() {
+      public int compare(Language o1, Language o2) {
+        return o1.toString().compareTo(o2.toString());
+      }
+    });
+    
+    return languages;
+  }
+
+  /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
@@ -185,8 +253,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
 
 
   class Language {
-    private String mId;
+    private String mId = "";
     private String mCountry = "";
+    private String mVariant = "";
+    private String mName = null;
     
     public Language(String id) {
       mId = id;
@@ -197,15 +267,19 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       mCountry = country;
     }
 
+    public Language(String id, String country, String variant) {
+      mId = id;
+      mCountry = country;
+      mVariant = variant;
+    }
+
     public String toString() {
-      if (mCountry.length() == 0)
-        return new Locale(mId).getDisplayLanguage();
-      else {
-        Locale locale = new Locale(mId, mCountry); 
-        StringBuilder builder = new StringBuilder(locale.getDisplayLanguage());
-        builder.append(" (").append(locale.getDisplayCountry()).append(")");
-        return builder.toString();
+      if (mName != null) {
+        return mName;
       }
+      
+      mName = new Locale(mId, mCountry, mVariant).getDisplayName();
+      return mName;
     }
 
     public String getId() {
