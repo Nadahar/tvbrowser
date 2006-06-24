@@ -57,6 +57,9 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * The Dialog for the Translation-Tool
  * 
+ * Attention:   This Plugin uses some Core-Stuff, but "normal" Plugins are not allowed
+ *              to do this !
+ * 
  * @author bodum
  */
 public class TranslationDialog extends JDialog {
