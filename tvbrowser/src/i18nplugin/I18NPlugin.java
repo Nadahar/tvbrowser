@@ -23,7 +23,6 @@
  *   $Author: darras $
  * $Revision: 2466 $
  */
-
 package i18nplugin;
 
 import java.awt.Window;
