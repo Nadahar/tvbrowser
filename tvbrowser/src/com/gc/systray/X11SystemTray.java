@@ -38,7 +38,9 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
   private JPopupMenu mPopupMenu;
   /** Tray-Parent */
   private JDialog mTrayParent;
-
+  /** Is the Tray visible */
+  private boolean mTrayVisible = false;
+  
   /**
    * Init the SystemTray
    */
@@ -74,9 +76,9 @@ public class X11SystemTray extends MouseAdapter implements SystemTrayIf {
    */
   public void setVisible(boolean b) {
     if (mManager.isLoaded()) {
-      if (b) {
+      if (b && !mTrayVisible) {
         mManager.systrayShow();
-      } else {
+      } else if (mTrayVisible){
         mManager.systrayHide();
       }
     }
