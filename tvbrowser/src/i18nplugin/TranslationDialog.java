@@ -25,21 +25,29 @@
  */
 package i18nplugin;
 
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Locale;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -47,12 +55,15 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.ui.LinkButton;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * The Dialog for the Translation-Tool
@@ -62,10 +73,19 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author bodum
  */
-public class TranslationDialog extends JDialog {
+public class TranslationDialog extends JDialog implements WindowClosingIf{
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TranslationDialog.class);
 
+  private static final String EDITOR = "EDITOR"; 
+  private static final String HELP = "HELP";
+
+  private JTree mTree;
+
+  private PropertiesTreeCellRenderer mTreeRenderer;
+
+  private TranslatorEditor mEditor; 
+  
   public TranslationDialog(JDialog owner) {
     super(owner, true);
     createGui();
@@ -89,8 +109,25 @@ public class TranslationDialog extends JDialog {
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("chooseLanguage", "Choose Language")), cc.xyw(1,1,8));
     
     panel.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2,3));
+
+    final JComboBox languageSelection = new JComboBox(new Locale[] {Locale.GERMAN, new Locale("sv")}); 
+
+    languageSelection.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mTreeRenderer.setCurrentLocale((Locale) languageSelection.getSelectedItem());
+        mEditor.save();
+        mEditor.setCurrentLocale((Locale) languageSelection.getSelectedItem());
+        mTree.updateUI();
+      }
+    });
     
-    panel.add(new JComboBox(new String[] {"Deutsch", "Blubberlutsch"}), cc.xy(4,3));
+    languageSelection.setRenderer(new DefaultListCellRenderer() {
+      public java.awt.Component getListCellRendererComponent(javax.swing.JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        return super.getListCellRendererComponent(list, ((Locale)value).getDisplayName(), index, isSelected, cellHasFocus);
+      };
+    });
+    
+    panel.add(languageSelection, cc.xy(4,3));
     
     JButton newButton = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16));
     
@@ -102,15 +139,55 @@ public class TranslationDialog extends JDialog {
 
     DefaultMutableTreeNode root = createRooNode();
     
-    JTree tree = new JTree(root);
+    mTree = new JTree(root);
+    mTreeRenderer = new PropertiesTreeCellRenderer(Locale.GERMAN);
+    mTree.setCellRenderer(mTreeRenderer);
     
-    JTable table = new JTable();
-    
-    JSplitPane split = new JSplitPane();
-    split.setLeftComponent(new JScrollPane(tree));
-    split.setRightComponent(new JScrollPane(table));
+    final JSplitPane split = new JSplitPane();
+    split.setLeftComponent(new JScrollPane(mTree));
     
     panel.add(split, cc.xyw(2,7,6));
+    
+    mEditor = new TranslatorEditor(Locale.GERMAN);
+    final JPanel cardPanel = new JPanel(new CardLayout());
+    
+    cardPanel.add(mEditor, EDITOR);
+    
+    JEditorPane help = new JEditorPane("text/html", "<h1>Help</h1><p>This is the Help!</p>");
+    help.setEditable(false);
+    
+    cardPanel.add(new JScrollPane(help), HELP);
+    
+    mTree.addTreeSelectionListener(new TreeSelectionListener() {
+      public void valueChanged(TreeSelectionEvent e) {
+        CardLayout cl = (CardLayout)(cardPanel.getLayout());
+
+        if (mTree.getSelectionPath() != null) {
+          Object node = mTree.getSelectionPath().getLastPathComponent();
+          
+          if (node instanceof PropertiesEntryNode) {
+            mEditor.save();
+            mEditor.setSelectedProperties((PropertiesEntryNode) node);
+            cl.show(cardPanel, EDITOR);
+          } else {
+            cl.show(cardPanel, HELP);
+          }
+        } else {
+          cl.show(cardPanel, HELP);
+        }
+        
+      }
+    });
+    
+    mTree.setSelectionPath(new TreePath(root));
+    
+    split.setRightComponent(new JScrollPane(cardPanel));
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        split.setDividerLocation(0.3);
+      }
+    });
     
     ButtonBarBuilder buttonbar = new ButtonBarBuilder();
     
@@ -118,7 +195,7 @@ public class TranslationDialog extends JDialog {
     JButton cancel = new JButton(mLocalizer.msg("cancel", "Cancel"));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        setVisible(false);
+        close();
       };
     });
     
@@ -134,8 +211,11 @@ public class TranslationDialog extends JDialog {
     buttonbar.addGriddedButtons(new JButton[] {save, cancel});
     
     panel.add(buttonbar.getPanel(), cc.xyw(2,9,6));
+
+    getRootPane().setDefaultButton(cancel);
+    UiUtilities.registerForClosing(this);
     
-    pack();
+    setSize(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(350, this));
   }
 
   /**
@@ -149,12 +229,11 @@ public class TranslationDialog extends JDialog {
    * @return
    */
   private DefaultMutableTreeNode createRooNode() {
-    
-    DefaultMutableTreeNode root = new DefaultMutableTreeNode("Translations");
+    PathNode root = new PathNode(mLocalizer.msg("translations", "Translations"));
     
     root.add(new TranslationNode("TV-Browser", new File("tvbrowser.jar")));
     
-    DefaultMutableTreeNode plugins = new DefaultMutableTreeNode("Plugins");
+    PathNode plugins = new PathNode("Plugins");
 
     addJarFiles(plugins, new File(Settings.propPluginsDirectory.getString()));
     addJarFiles(plugins, new File(PluginProxyManager.PLUGIN_DIRECTORY));
@@ -190,6 +269,14 @@ public class TranslationDialog extends JDialog {
       }
     }
     
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see util.ui.WindowClosingIf#close()
+   */
+  public void close() {
+    setVisible(false);
   }
 
 }

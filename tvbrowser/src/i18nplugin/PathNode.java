@@ -27,6 +27,7 @@ package i18nplugin;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -37,7 +38,7 @@ import javax.swing.tree.TreeNode;
  * 
  * @author bodum
  */
-public class PathNode extends DefaultMutableTreeNode {
+public class PathNode extends DefaultMutableTreeNode implements LanguageNodeIf {
 
   /**
    * Create Path-Entry
@@ -68,4 +69,20 @@ public class PathNode extends DefaultMutableTreeNode {
     });
   }
 
+  /*
+   * (non-Javadoc)
+   * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
+   */
+  public boolean allTranslationsAvailableFor(Locale locale) {
+    int max = getChildCount();
+    
+    for (int i=0;i<max;i++) {
+      if (!((LanguageNodeIf)getChildAt(i)).allTranslationsAvailableFor(locale)) {
+        return false;
+      }
+    }
+    
+    return true;
+  }  
+  
 }

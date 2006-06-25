@@ -27,39 +27,22 @@ package i18nplugin;
 
 import java.util.Locale;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 /**
- * Entry for a Property
+ * This interface is important for the treecellrenderer. All TreeNodes that implement
+ * this will be colored acording the result of the method allTranslationsAvailableFor 
  * 
  * @author bodum
  */
-public class PropertiesEntryNode extends DefaultMutableTreeNode implements LanguageNodeIf {
+public interface LanguageNodeIf {
 
   /**
-   * @param name Name of this Entry
+   * This method returns true if all translations are available for a certain locale.
+   * 
+   * The implementation has to go thru all child-nodes.
+   * 
+   * @param locale Locale
+   * @return true, if translations are available
    */
-  public PropertiesEntryNode(String name) {
-    super(name);
-  }
-
-  /**
-   * @return Name of this Entry
-   */
-  public String getPropertyName() {
-    return toString();
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
-   */
-  public boolean allTranslationsAvailableFor(Locale locale) {
-    if (getParent() == null)
-      return false;
-    if (!(getParent() instanceof PropertiesNode))
-      return false;
-    return ((PropertiesNode) getParent()).containsKey(locale, getPropertyName());
-  }
-
+  public boolean allTranslationsAvailableFor(Locale locale);
+  
 }
