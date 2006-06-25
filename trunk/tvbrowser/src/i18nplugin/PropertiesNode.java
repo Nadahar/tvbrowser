@@ -26,9 +26,12 @@
 package i18nplugin;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -42,8 +45,12 @@ import javax.swing.tree.TreeNode;
  * 
  * @author bodum
  */
-public class PropertiesNode extends DefaultMutableTreeNode {
-
+public class PropertiesNode extends DefaultMutableTreeNode implements LanguageNodeIf {
+  private Properties mProp;
+  private JarFile mJarFile;
+  private String mPropertiesFile;
+  private HashMap<Locale, Properties> mPropertyMap;
+  
   /**
    * Create the Properties-File
    * 
@@ -52,6 +59,10 @@ public class PropertiesNode extends DefaultMutableTreeNode {
    */
   public PropertiesNode(JarFile jarfile, JarEntry entry) {
     super(entry.getName().substring(entry.getName().lastIndexOf('/')+1));
+    mJarFile = jarfile;
+    mPropertiesFile = entry.getName();
+    
+    mPropertyMap = new HashMap<Locale, Properties>();
     
     createPropertyEntries(jarfile, entry);
   }
@@ -63,11 +74,11 @@ public class PropertiesNode extends DefaultMutableTreeNode {
    * @param entry
    */
   private void createPropertyEntries(JarFile jarfile, JarEntry entry) {
-    Properties prop = new Properties();
+    mProp = new Properties();
     try {
-      prop.load(jarfile.getInputStream(entry));
+      mProp.load(jarfile.getInputStream(entry));
       
-      Enumeration keys = prop.keys();
+      Enumeration keys = mProp.keys();
       
       while (keys.hasMoreElements()) {
         add(new PropertiesEntryNode((String) keys.nextElement()));
@@ -77,7 +88,6 @@ public class PropertiesNode extends DefaultMutableTreeNode {
       e.printStackTrace();
     }
   }
-
 
   @SuppressWarnings("unchecked")
   @Override
@@ -89,5 +99,107 @@ public class PropertiesNode extends DefaultMutableTreeNode {
         return o1.toString().compareTo(o2.toString());
       }
     });
+  }
+
+  /**
+   * This method returns the default value for a key.
+   * 
+   * @param key key to get property for
+   * @return the default value of a key
+   */
+  public String getPropertyValue(String key) {
+    return mProp.getProperty(key, "");
+  }
+
+  /**
+   * This method returns a specific value for a key
+   * 
+   * @param locale get value for this locale
+   * @param key get value for this key
+   * @return value for specific locale and key
+   */
+  public String getPropertyValue(Locale locale, String key) {
+    return getProperty(locale).getProperty(key, "");
+  }
+
+  /**
+   * 
+   * @param locale Locale to get Properties for
+   * @return Properties for a certain Locale
+   */
+  private Properties getProperty(Locale locale) {
+    Properties prop = mPropertyMap.get(locale);
+    
+    if (prop == null) {
+      StringBuffer propName = new StringBuffer();
+      
+      propName.append(mPropertiesFile.substring(0, mPropertiesFile.lastIndexOf(".properties")));
+     
+      propName.append('_').append(locale.getLanguage());
+      
+      if (locale.getCountry().length() > 0)
+        propName.append('_').append(locale.getCountry());
+
+      if (locale.getVariant().length() > 0)
+        propName.append('_').append(locale.getVariant());
+      
+      propName.append(".properties");
+      
+      prop = new Properties();
+      
+      try {
+        InputStream in = mJarFile.getInputStream(new JarEntry(propName.toString())); 
+        if (in != null)
+          prop.load(in);
+      } catch (IOException e) {
+        e.printStackTrace();
+        prop = new Properties();
+      }
+      
+      mPropertyMap.put(locale, prop);
+    }
+    
+    return prop;
+  }
+
+  /**
+   * Set the Property-Value. If the value is null, the key will be removed.
+   * 
+   * @param locale
+   * @param key
+   * @param value
+   */
+  public void setPropertyValue(Locale locale, String key, String value) {
+    if (value == null)
+      getProperty(locale).remove(key);
+    else
+      getProperty(locale).setProperty(key, value);
+  }
+
+  /**
+   * Checks if a key is available in a locale 
+   * 
+   * @param locale
+   * @param key
+   * @return true if key is available
+   */
+  public boolean containsKey(Locale locale, String key) {
+    return getProperty(locale).getProperty(key) != null;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
+   */
+  public boolean allTranslationsAvailableFor(Locale locale) {
+    int max = getChildCount();
+    
+    for (int i=0;i<max;i++) {
+      if (!((LanguageNodeIf)getChildAt(i)).allTranslationsAvailableFor(locale)) {
+        return false;
+      }
+    }
+    
+    return true;
   }  
 }

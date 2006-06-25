@@ -25,41 +25,43 @@
  */
 package i18nplugin;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.util.Locale;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.JLabel;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
- * Entry for a Property
+ * This is a CellRenderer that highlights TreeNodes that have a incomplete translation
  * 
  * @author bodum
  */
-public class PropertiesEntryNode extends DefaultMutableTreeNode implements LanguageNodeIf {
+public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
 
-  /**
-   * @param name Name of this Entry
-   */
-  public PropertiesEntryNode(String name) {
-    super(name);
+  private Locale mLocale;
+  
+  public PropertiesTreeCellRenderer(Locale locale) {
+    mLocale = locale;
   }
-
-  /**
-   * @return Name of this Entry
-   */
-  public String getPropertyName() {
-    return toString();
+  
+  public void setCurrentLocale(Locale locale) {
+    mLocale = locale;
   }
+  
+  @Override
+  public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+    JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus); 
 
-  /*
-   * (non-Javadoc)
-   * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
-   */
-  public boolean allTranslationsAvailableFor(Locale locale) {
-    if (getParent() == null)
-      return false;
-    if (!(getParent() instanceof PropertiesNode))
-      return false;
-    return ((PropertiesNode) getParent()).containsKey(locale, getPropertyName());
+    if (value instanceof LanguageNodeIf) {
+      LanguageNodeIf entry = (LanguageNodeIf) value;
+      if (!entry.allTranslationsAvailableFor(mLocale)) {
+        label.setForeground(Color.RED);
+      }
+    }
+    
+    return label;
   }
-
+  
 }

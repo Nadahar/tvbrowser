@@ -43,6 +43,10 @@ import devplugin.Version;
 
 /**
  * This Plugin should help a User to create Translations for the TV-Browser 
+ * 
+ * Attention:   This Plugin uses some Core-Stuff, but "normal" Plugins are not allowed
+ *              to do this !
+ *              
  * @author bodum
  */
 public class I18NPlugin extends Plugin {
