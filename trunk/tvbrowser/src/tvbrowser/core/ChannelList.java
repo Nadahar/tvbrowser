@@ -207,11 +207,6 @@ public class ChannelList {
   }
   
   private static void clearChannelMaps() {
-    mChannelIconMap.clear();
-    mChannelNameMap.clear();
-    mChannelWebpagesMap.clear();
-    mChannelDayLightCorrectionMap.clear();
-    
     mChannelIconMap = null;
     mChannelNameMap = null;
     mChannelWebpagesMap = null;
