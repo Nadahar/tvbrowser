@@ -500,14 +500,20 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     Object[] list = ((DefaultListModel) mSubscribedChannels.getModel()).toArray();
 
     // Convert the list into a Channel[] and fill channels
+    ArrayList<String> groups = new ArrayList<String>();
+    
     Channel[] channelArr = new Channel[list.length];
     for (int i = 0; i < list.length; i++) {
       channelArr[i] = (Channel) list[i];
+      
+      if(!groups.contains(channelArr[i].getGroup().getId()))
+        groups.add(new StringBuffer(channelArr[i].getDataServiceProxy().getId()).append('.').append(channelArr[i].getGroup().getId()).toString());
     }
-
+    
     ChannelList.setSubscribeChannels(channelArr);
     ChannelList.storeAllSettings();
     Settings.propSubscribedChannels.setChannelArray(channelArr);
+    Settings.propUsedChannelGroups.setStringArray(groups.toArray(new String[groups.size()]));
 
     if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
       Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];

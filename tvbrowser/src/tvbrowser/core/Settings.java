@@ -339,7 +339,7 @@ public class Settings {
     }
 
     if (mProp.hasChanged(propSubscribedChannels)) {
-      ChannelList.create();
+      ChannelList.reload();
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
       model.setChannels(ChannelList.getSubscribedChannels());
       mainFrame.updateChannellist();
@@ -925,6 +925,9 @@ public class Settings {
 
   public static final BooleanProperty propShowChannelNamesInChannellist = new BooleanProperty(
       mProp, "showChannelNamesInChannellist", true);
+  
+  public static final StringArrayProperty propUsedChannelGroups = new StringArrayProperty(
+      mProp, "usedChannelGroups", null);
   
   public static final StringArrayProperty propDeleteFilesAtStart = new StringArrayProperty(
       mProp, "deleteFilesAtStart", new String[0]);

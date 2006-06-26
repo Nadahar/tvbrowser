@@ -57,9 +57,7 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
     return (Channel[])list.toArray(new Channel[list.size()]);
   }
 
-
-  public Channel[] getAvailableChannels() {
-    ChannelGroup[] groups = ChannelGroupManager.getInstance().getAvailableGroups(this);
+  private Channel[] loadChannelsForGroups(ChannelGroup[] groups) {
     ArrayList<Channel> list = new ArrayList<Channel>();
     for (int i=0; i<groups.length; i++) {
       Channel[] ch = getAvailableChannels(groups[i]);
@@ -69,7 +67,15 @@ public abstract class AbstractTvDataServiceProxy implements TvDataServiceProxy {
         }
       }
     }
-    return (Channel[])list.toArray(new Channel[list.size()]);
+    return list.toArray(new Channel[list.size()]);    
+  }
+  
+  public Channel[] getChannelsForTvBrowserStart() {
+    return loadChannelsForGroups(ChannelGroupManager.getInstance().getUsedGroups(this));
+  }  
+  
+  public Channel[] getAvailableChannels() {
+    return loadChannelsForGroups(ChannelGroupManager.getInstance().getAvailableGroups(this));
   }
 
   /*

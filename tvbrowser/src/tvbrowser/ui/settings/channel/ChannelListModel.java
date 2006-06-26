@@ -51,7 +51,7 @@ public class ChannelListModel {
   }
 
   public void refresh() {
-    ChannelList.create();
+    ChannelList.reload();
     Channel[] channels = ChannelList.getSubscribedChannels();
     mAvailableChannels = ChannelList.getAvailableChannels();
     mSubscribedChannels.clear();

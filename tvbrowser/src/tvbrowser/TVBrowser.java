@@ -284,7 +284,7 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.dataService", "Loading TV listings service...");
     splash.setMessage(msg);
     TvDataServiceProxyManager.getInstance().init();
-    ChannelList.create();
+    ChannelList.createForTvBrowserStart();
 
     ChannelList.initSubscribedChannels();
 
@@ -341,6 +341,7 @@ public class TVBrowser {
             PluginProxyManager.getInstance().fireTvBrowserStartFinished();
             ReminderPlugin.getInstance().handleTvBrowserStartFinished();
             FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
+            ChannelList.completeChannelLoading();
             
             if(Launch.isOsWindowsNtBranch()) {
               try {

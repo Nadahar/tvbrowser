@@ -111,6 +111,12 @@ public interface TvDataServiceProxy {
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
 
   public Channel[] getAvailableChannels(ChannelGroup group);
+  
+  /**
+   * @return The channels that have to be loaded on TVB start.
+   * @since 2.3
+   */
+  public Channel[] getChannelsForTvBrowserStart();
 
   /**
    *

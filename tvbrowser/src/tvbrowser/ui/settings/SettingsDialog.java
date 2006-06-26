@@ -26,10 +26,15 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -58,6 +63,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -70,6 +76,7 @@ import tvbrowser.extras.programinfo.ProgramInfoFontSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoFunctionsSettingsTab;
 import tvbrowser.extras.programinfo.ProgramInfoOrderSettingsTab;
 import tvbrowser.extras.reminderplugin.ReminderSettingsTab;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -110,6 +117,8 @@ public class SettingsDialog implements WindowClosingIf {
   /** Instance of the SettingsDialog */
   private static SettingsDialog mInstance;
   
+  private JDialog mWaitingDialog;
+  
   /**
    * Creates a new instance of SettingsDialog.
    */
@@ -117,10 +126,59 @@ public class SettingsDialog implements WindowClosingIf {
     this(parent, null);
   }
   
+  
+  private void showDialog() {
+    if (mWaitingDialog == null) {
+      Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+      if (comp instanceof Dialog) {
+        mWaitingDialog = new JDialog((Dialog) comp, false);
+      } else {
+        mWaitingDialog = new JDialog((Frame) comp, false);
+      }
+      mWaitingDialog.setUndecorated(true);
+      mWaitingDialog.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+      JPanel panel = (JPanel) mWaitingDialog.getContentPane();
+      panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+      panel.setLayout(new FormLayout("3dlu, pref, 3dlu", "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu"));
+      CellConstraints cc = new CellConstraints();
+
+      JLabel header = new JLabel(mLocalizer.msg("waitingHeader", "Listing the not subscribed channels"));
+      header.setFont(header.getFont().deriveFont(Font.BOLD));
+
+      panel.add(header, cc.xy(2, 2));
+
+      panel.add(
+          new JLabel(mLocalizer.msg("pleaseWait", "Please wait for the completing of the list.")), cc
+              .xy(2, 4));
+
+      mWaitingDialog.pack();
+      if(ChannelList.getChannelLoadThread().isAlive())
+        UiUtilities.centerAndShow(mWaitingDialog);
+      
+      mWaitingDialog.setVisible(ChannelList.getChannelLoadThread().isAlive());
+    }
+  }
+  
   /**
    * Creates a new instance of SettingsDialog.
    */
   public SettingsDialog(Component parent, String selectedTabId) {
+    final Thread t = ChannelList.getChannelLoadThread();
+    
+    if(t != null && t.isAlive()) {
+      new Thread() {
+        public void run() {
+          showDialog();          
+          try {
+            t.join();
+          }catch(Exception e) {}
+          mWaitingDialog.setVisible(false);
+        }
+      }.start();
+    }
+    
     mInstance = this;
     mDialog = UiUtilities.createDialog(parent, true);
     mDialog.setTitle(mLocalizer.msg("settings", "Settings"));
