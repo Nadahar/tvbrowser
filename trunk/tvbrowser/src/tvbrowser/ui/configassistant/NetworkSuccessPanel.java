@@ -75,7 +75,7 @@ class NetworkSuccessPanel extends AbstractCardPanel {
       }
     });
     
-    ChannelList.create();
+    ChannelList.reload();
     return true;
   }
   

@@ -59,9 +59,44 @@ public class ChannelList {
 
   private static ArrayList<Channel> mSubscribedChannels = new ArrayList<Channel>();
 
+  private static Thread mCompleteChannelThread;
 
 
+  public static void completeChannelLoading() {
+    mCompleteChannelThread = new Thread() {
+      public void run() {
+        mLog.info("Loading the not subscribed channels");
+        create();
+        mLog.info("Loading off all channels complete");
+      }
+    };
+    mCompleteChannelThread.start();
+  }
+  
+  public static void reload() {
+    mAvailableChannels.clear();
+    create();
+  }
+  
+  private static void create() {
+    TvDataServiceProxy[] dataServiceArr
+    = TvDataServiceProxyManager.getInstance().getDataServices();
 
+    for (int i=0;i<dataServiceArr.length;i++) {
+      addDataServiceChannels(dataServiceArr[i]);
+    }
+
+    /* remove all subscribed channels which are not available any more */
+    Object[] currentSubscribedChannels = mSubscribedChannels.toArray();
+    for (int i=0; i<currentSubscribedChannels.length; i++) {
+      Channel ch = (Channel)currentSubscribedChannels[i];
+      if (!mAvailableChannels.contains(ch)) {
+        mLog.warning(ch+" is not available any more");
+        mSubscribedChannels.remove(ch);
+      }
+    }
+  }
+  
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
 
@@ -122,21 +157,30 @@ public class ChannelList {
     }
 
   }
-
+  
   private static void addDataServiceChannels(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
     for (int i = 0; i < channelArr.length; i++) {
-      mAvailableChannels.add(channelArr[i]);
+      if(!mAvailableChannels.contains(channelArr[i]))
+        mAvailableChannels.add(channelArr[i]);
     }
   }
 
-  public static void create() {
+  private static void addDataServiceChannelsForTvBrowserStart(TvDataServiceProxy dataService) {
+    Channel[] channelArr = dataService.getChannelsForTvBrowserStart();
+    for (int i = 0; i < channelArr.length; i++) {
+      if(!mAvailableChannels.contains(channelArr[i]))
+        mAvailableChannels.add(channelArr[i]);
+    }
+  }  
+  
+  public static void createForTvBrowserStart() {
     mAvailableChannels.clear();
     TvDataServiceProxy[] dataServiceArr
             = TvDataServiceProxyManager.getInstance().getDataServices();
 
     for (int i=0;i<dataServiceArr.length;i++) {
-      addDataServiceChannels(dataServiceArr[i]);
+      addDataServiceChannelsForTvBrowserStart(dataServiceArr[i]);
     }
 
     /* remove all subscribed channels which are not available any more */
@@ -457,6 +501,10 @@ public class ChannelList {
     return map;
   }
 
-
-
+  /**
+   * @return The Thread of loading the not used channels.
+   */
+  public static Thread getChannelLoadThread() {
+    return mCompleteChannelThread;
+  }
 }

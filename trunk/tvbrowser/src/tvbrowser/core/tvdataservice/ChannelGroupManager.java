@@ -29,7 +29,9 @@ package tvbrowser.core.tvdataservice;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.progress.ProgressMonitorGroup;
@@ -169,5 +171,43 @@ public class ChannelGroupManager {
   public ChannelGroup[] getAvailableGroups(AbstractTvDataServiceProxy proxy) {
     Collection<ChannelGroup> groups = mServiceToGroupsMap.get(proxy);
     return groups.toArray(new ChannelGroup[groups.size()]);
+  }
+  
+  /**
+   * Return the groups wich are needed for TV-Browser start.
+   * @param proxy The TvDataService to get the groups from.
+   * @return The needed ChannelGroups.
+   * @since 2.3
+   */
+  public ChannelGroup[] getUsedGroups(AbstractTvDataServiceProxy proxy) {
+    String[] subscribedGroupIds = getUsedGroupIds();
+    ArrayList<ChannelGroup> list = mServiceToGroupsMap.get(proxy);
+    
+    if(subscribedGroupIds == null)
+      return list.toArray(new ChannelGroup[list.size()]);
+    
+    ArrayList<ChannelGroup> list2 = new ArrayList<ChannelGroup>();
+    
+    for(ChannelGroup group : list) {      
+      String id = createId(proxy, group);
+      for(int i = 0; i < subscribedGroupIds.length; i++) {
+        if(id.compareTo(subscribedGroupIds[i]) == 0) {
+          list2.add(group);
+          break;
+        }
+      }
+    }
+    
+    return list2.toArray(new ChannelGroup[list2.size()]);
+  }
+  
+  /**
+   *  @return The array with the used groups.
+   *  @since 2.3
+   */
+  private String[] getUsedGroupIds() {
+    String[] groupIds = Settings.propUsedChannelGroups.getStringArray();
+    
+    return groupIds;
   }
 }
