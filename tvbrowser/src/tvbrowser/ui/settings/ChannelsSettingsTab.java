@@ -168,7 +168,7 @@ public class ChannelsSettingsTab implements devplugin.SettingsTab/* ,DragGesture
     // left list box
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
     mAllChannels = new ChannelJList(new DefaultListModel());
-    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true));
+    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true));
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
 

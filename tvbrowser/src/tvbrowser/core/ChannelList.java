@@ -61,7 +61,12 @@ public class ChannelList {
 
   private static Thread mCompleteChannelThread;
 
+  private static Map<String,String> mChannelIconMap, mChannelNameMap, mChannelWebpagesMap, mChannelDayLightCorrectionMap;
 
+  /**
+   * Load the not subscribed channels after
+   * TV-Browser start was finished.
+   */
   public static void completeChannelLoading() {
     mCompleteChannelThread = new Thread() {
       public void run() {
@@ -73,8 +78,12 @@ public class ChannelList {
     mCompleteChannelThread.start();
   }
   
+  /**
+   * Reload the channel list.
+   */
   public static void reload() {
     mAvailableChannels.clear();
+    loadChannelMaps();
     create();
   }
   
@@ -95,33 +104,33 @@ public class ChannelList {
         mSubscribedChannels.remove(ch);
       }
     }
+    
+    clearChannelMaps();
   }
   
+  /**
+   * Init the subscribed channels
+   */
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
 
-    for (int i = 0; i < channelArr.length; i++) {
-      if (channelArr[i] != null) {
-        subscribeChannel(channelArr[i]);
-      }
-    }
-    loadDayLightSavingTimeCorrections();
-    loadChannelIcons();
-    loadChannelNames();
-    loadChannelWebPages();
+    for (Channel channel : channelArr)
+      if (channel != null)
+        subscribeChannel(channel);
   }
 
-
-  public static void loadDayLightSavingTimeCorrections() {
-    Map map = createMap(new File(Settings.getUserSettingsDirName(),"daylight_correction.txt"));
-
-    Iterator keyIt = map.keySet().iterator();
-
-    while (keyIt.hasNext()) {
-      Channel ch = (Channel)keyIt.next();
-      int corr=Integer.parseInt((String)map.get(ch));
-      ch.setDayLightSavingTimeCorrection(corr);
-    }
+  /**
+   * Set the day light time correction for a channel.
+   * 
+   * @param channel The channel to set the value.
+   */
+  public static void setDayLightSavingTimeCorrectionsForChannel(Channel channel) {
+    String value = mChannelDayLightCorrectionMap.get(getIdForChannel(channel));
+    
+    if(value != null && value.length() > 0) {
+      int corr=Integer.parseInt(value);
+      channel.setDayLightSavingTimeCorrection(corr);
+    }    
   }
 
   /**
@@ -134,21 +143,27 @@ public class ChannelList {
       storeChannelWebPages();
   }
 
+  /**
+   * Save the day light saving time correction for all channels
+   */
   public static void storeDayLightSavingTimeCorrections() {
     File f=new File(Settings.getUserSettingsDirName(),"daylight_correction.txt");
 
     FileWriter fw;
-    PrintWriter out=null;
+    PrintWriter out = null;
+    
     try {
-      fw=new FileWriter(f);
-      out=new PrintWriter(fw);
-      Channel[] channels=getSubscribedChannels();
-        for (int i=0;i<channels.length;i++) {
-          int corr=channels[i].getDayLightSavingTimeCorrection();
-          if (corr!=0) {
-            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"="+corr);
-          }
-        }
+      fw = new FileWriter(f);
+      out = new PrintWriter(fw);
+      
+      Channel[] channelArr = getAvailableChannels();
+      
+      for (Channel channel : channelArr) {
+        int corr=channel.getDayLightSavingTimeCorrection();
+        
+        if (corr!=0)
+          out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"="+corr);
+      }
     }catch(IOException e) {
       // ignore
     }
@@ -160,25 +175,59 @@ public class ChannelList {
   
   private static void addDataServiceChannels(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getAvailableChannels();
-    for (int i = 0; i < channelArr.length; i++) {
-      if(!mAvailableChannels.contains(channelArr[i]))
-        mAvailableChannels.add(channelArr[i]);
+    for (Channel channel : channelArr) {
+      if(!mAvailableChannels.contains(channel)) {
+        mAvailableChannels.add(channel);
+        setDayLightSavingTimeCorrectionsForChannel(channel);
+        setChannelIconForChannel(channel);
+        setChannelNameForChannel(channel);
+        setWebPageForChannel(channel);
+      }
     }
   }
 
   private static void addDataServiceChannelsForTvBrowserStart(TvDataServiceProxy dataService) {
     Channel[] channelArr = dataService.getChannelsForTvBrowserStart();
-    for (int i = 0; i < channelArr.length; i++) {
-      if(!mAvailableChannels.contains(channelArr[i]))
-        mAvailableChannels.add(channelArr[i]);
+    for (Channel channel : channelArr) {
+      if(!mAvailableChannels.contains(channel)) {
+        mAvailableChannels.add(channel);
+        setDayLightSavingTimeCorrectionsForChannel(channel);
+        setChannelIconForChannel(channel);
+        setChannelNameForChannel(channel);
+        setWebPageForChannel(channel);
+      }
     }
   }  
   
+  private static void loadChannelMaps() {
+    mChannelIconMap = createMap(new File(Settings.getUserSettingsDirName(),"channel_icons.txt"));
+    mChannelNameMap = createMap(new File(Settings.getUserSettingsDirName(),"channel_names.txt"));
+    mChannelWebpagesMap = createMap(new File(Settings.getUserSettingsDirName(),"channel_webpages.txt"));
+    mChannelDayLightCorrectionMap = createMap(new File(Settings.getUserSettingsDirName(),"daylight_correction.txt"));
+  }
+  
+  private static void clearChannelMaps() {
+    mChannelIconMap.clear();
+    mChannelNameMap.clear();
+    mChannelWebpagesMap.clear();
+    mChannelDayLightCorrectionMap.clear();
+    
+    mChannelIconMap = null;
+    mChannelNameMap = null;
+    mChannelWebpagesMap = null;
+    mChannelDayLightCorrectionMap = null;
+  }
+  
+  /**
+   * Creates the needed channels for TV-Browser start
+   */
   public static void createForTvBrowserStart() {
     mAvailableChannels.clear();
     TvDataServiceProxy[] dataServiceArr
             = TvDataServiceProxyManager.getInstance().getDataServices();
-
+    
+    loadChannelMaps();
+    
     for (int i=0;i<dataServiceArr.length;i++) {
       addDataServiceChannelsForTvBrowserStart(dataServiceArr[i]);
     }
@@ -192,8 +241,6 @@ public class ChannelList {
         mSubscribedChannels.remove(ch);
       }
     }
-
-    loadChannelIcons();
   }
 
   /**
@@ -204,22 +251,18 @@ public class ChannelList {
     mSubscribedChannels.add(channel);
   }
 
-
-
-
   /**
    * Marks the specified mAvailableChannels as 'subscribed'. All other mAvailableChannels become
    * 'unsubscribed'
+   * @param channelArr The channels to set as subscribed channels,
    */
   public static void setSubscribeChannels(Channel[] channelArr) {
     mSubscribedChannels = new ArrayList<Channel>(channelArr.length);
     for (int i = 0; i < channelArr.length; i++) {
-      if (channelArr[i] == null) {
+      if (channelArr[i] == null)
         mLog.warning("cannot subscribe channel #" + i + " - is null");
-      }
-      else {
+      else
         mSubscribedChannels.add(channelArr[i]);
-      }
     }
   }
 
@@ -227,6 +270,9 @@ public class ChannelList {
   /**
    * Returns a new Channel object with the specified ID or null, if the
    * given ID does not exist.
+   * @param dataService The data service of the channel.
+   * @param id ID of the channel.
+   * @return The channel or <code>null</code> if there is no channel with the id.
    */
   public static Channel getChannel(TvDataServiceProxy dataService, String id) {
     if (dataService == null) {
@@ -246,24 +292,32 @@ public class ChannelList {
   }
 
 
+  /**
+   * Returns the channel for the given ID.
+   * 
+   * @param id The ID of the channel to get.
+   * @return The channel with the id or <code>null</code> if there is no channel with the id.
+   */
   public static Channel getChannel(String id) {
-    Iterator iter = mAvailableChannels.iterator();
-    while (iter.hasNext()) {
-      Channel channel = (Channel) iter.next();
-      if (channel.getId().equals(id)) {
+    for (Channel channel : mAvailableChannels)      
+      if (channel.getId().equals(id))
         return channel;
-      }
-    }
+    
     return null;
   }
 
 
+  /**
+   * Returns the position of the channel.
+   * 
+   * @param channel The channel to get the position for.
+   * @return The position of the channel or -1 if it is not in the subscribed channel list.
+   */
   public static int getPos(Channel channel) {
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = (Channel) mSubscribedChannels.get(i);
-      if (ch.equals(channel)) {
+      if (ch.equals(channel))
         return i;
-      }
     }
     return -1;
   }
@@ -276,10 +330,13 @@ public class ChannelList {
    * @deprecated Use getAvailableChannels
    */
   public static Iterator getChannels() {
-  return mAvailableChannels.iterator();
+    return mAvailableChannels.iterator();
   }
 
 
+  /**
+   * @return The available channels in an array.
+   */
   public static Channel[] getAvailableChannels() {
     Channel[] result = new Channel[mAvailableChannels.size()];
     mAvailableChannels.toArray(result);
@@ -289,12 +346,15 @@ public class ChannelList {
 
   /**
    * Returns true, if the specified channel is currently subscribed.
+   * 
+   * @param channel The channel to check if it is subscribed, 
+   * @return True if the channel is subscribed, false otherwise.
    */
   public static boolean isSubscribedChannel(Channel channel) {
     if (channel==null) return false;
     for (int i=0;i<mSubscribedChannels.size();i++) {
       Channel ch=(Channel)mSubscribedChannels.get(i);
-      if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataService().equals(channel.getDataService())) {
+      if (ch!=null && ch.getId().equals(channel.getId()) && ch.getDataServiceProxy().equals(channel.getDataServiceProxy())) {
         return true;
       }
     }
@@ -305,6 +365,7 @@ public class ChannelList {
 
   /**
    * Returns the number of subscribed mAvailableChannels.
+   * @return The number of the subscribed channels.
    */
   public static int getNumberOfSubscribedChannels() {
   return mSubscribedChannels.size();
@@ -314,6 +375,7 @@ public class ChannelList {
 
   /**
    * Returns all subscribed mAvailableChannels.
+   * @return All subscribed channels in an array.
    */
   public static Channel[] getSubscribedChannels() {
   Channel[] result=new Channel[mSubscribedChannels.size()];
@@ -326,26 +388,21 @@ public class ChannelList {
   /**
    * Loads the Icon-Filenames
    */
-  private static void loadChannelIcons() {
-    Map map = createMap(new File(Settings.getUserSettingsDirName(),"channel_icons.txt"));
-
-    Iterator keyIt = map.keySet().iterator();
-
-    while (keyIt.hasNext()) {
-      Channel ch = (Channel)keyIt.next();
-      String val = (String)map.get(ch);
-
-      String[] settings = val.split(";");
-
+  private static void setChannelIconForChannel(Channel channel) {
+    String value = mChannelIconMap.get(getIdForChannel(channel));
+    
+    if(value != null && value.length() > 0) {
+      String[] settings = value.split(";");
+      
       if (settings.length == 2) {
-        ch.setUserIconFileName(settings[1]);
+        channel.setUserIconFileName(settings[1]);
         if (settings[0].equals("true")) {
-          ch.useUserIcon(true);
+          channel.useUserIcon(true);
         } else {
-          ch.useUserIcon(false);
+          channel.useUserIcon(false);
         }
       }
-    }
+    }    
   }
 
 
@@ -356,17 +413,20 @@ public class ChannelList {
       File f=new File(Settings.getUserSettingsDirName(),"channel_icons.txt");
 
       FileWriter fw;
-      PrintWriter out=null;
+      PrintWriter out = null;
+      
       try {
-        fw=new FileWriter(f);
-        out=new PrintWriter(fw);
-        Channel[] channels=getSubscribedChannels();
-          for (int i=0;i<channels.length;i++) {
-            String filename = channels[i].getUserIconFileName();
-            if ((filename != null) && (filename.trim().length() > 0)){
-              out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + channels[i].isUsingUserIcon() +";"+filename.trim());
-            }
-          }
+        fw = new FileWriter(f);
+        out = new PrintWriter(fw);
+        
+        Channel[] channelArr = getAvailableChannels();
+        
+        for (Channel channel : channelArr) {
+          String filename = channel.getUserIconFileName();
+          
+          if ((filename != null) && (filename.trim().length() > 0))
+            out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"=" + channel.isUsingUserIcon() +";"+filename.trim());
+        }
       }catch(IOException e) {
         // ignore
       }
@@ -375,66 +435,39 @@ public class ChannelList {
       }
   }
 
-  public static void loadChannelNames() {
-    Map map = createMap(new File(Settings.getUserSettingsDirName(),"channel_names.txt"));
-
-    Iterator keyIt = map.keySet().iterator();
-
-    while (keyIt.hasNext()) {
-      Channel ch = (Channel)keyIt.next();
-      ch.setUserChannelName((String)map.get(ch));
-    }
+  /**
+   * Sets the name for the given channel.
+   * 
+   * @param channel The channel to set the name for.
+   */
+  public static void setChannelNameForChannel(Channel channel) {
+    String value = mChannelNameMap.get(getIdForChannel(channel));
+    
+    if(value != null && value.length() > 0)      
+      channel.setUserChannelName(value);
   }
 
+  /**
+   * Saves the channel names for all channels.
+   */
   public static void storeChannelNames() {
     File f=new File(Settings.getUserSettingsDirName(),"channel_names.txt");
 
     FileWriter fw;
-    PrintWriter out=null;
+    PrintWriter out = null;
+    
     try {
-      fw=new FileWriter(f);
-      out=new PrintWriter(fw);
-      Channel[] channels=getSubscribedChannels();
-        for (int i=0;i<channels.length;i++) {
-          String userChannelName = channels[i].getUserChannelName();
-          if ((userChannelName != null) && (userChannelName.trim().length() > 0)){
-            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + userChannelName.trim());
-          }
-        }
-    }catch(IOException e) {
-      // ignore
-    }
-    if (out!=null) {
-      out.close();
-    }
-  }
-
-  public static void loadChannelWebPages() {
-    Map map = createMap(new File(Settings.getUserSettingsDirName(),"channel_webpages.txt"));
-
-    Iterator keyIt = map.keySet().iterator();
-
-    while (keyIt.hasNext()) {
-      Channel ch = (Channel)keyIt.next();
-      ch.setUserWebPage((String)map.get(ch));
-    }
-  }
-
-  public static void storeChannelWebPages() {
-    File f=new File(Settings.getUserSettingsDirName(),"channel_webpages.txt");
-
-    FileWriter fw;
-    PrintWriter out=null;
-    try {
-      fw=new FileWriter(f);
-      out=new PrintWriter(fw);
-      Channel[] channels=getSubscribedChannels();
-        for (int i=0;i<channels.length;i++) {
-          String userWebPage = channels[i].getUserWebPage();
-          if ((userWebPage != null) && (userWebPage.trim().length() > 0)){
-            out.println(channels[i].getDataService().getClass().getName()+":"+channels[i].getId()+"=" + userWebPage.trim());
-          }
-        }
+      fw = new FileWriter(f);
+      out = new PrintWriter(fw);
+      
+      Channel[] channelArr = getAvailableChannels();
+      
+      for (Channel channel : channelArr) {
+        String userChannelName = channel.getUserChannelName();
+        
+        if ((userChannelName != null) && (userChannelName.trim().length() > 0))
+          out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"=" + userChannelName.trim());
+      }
     }catch(IOException e) {
       // ignore
     }
@@ -444,46 +477,80 @@ public class ChannelList {
   }
 
   /**
+   * Sets the web page for a channel.
+   * 
+   * @param channel The channel to set the web page for.
+   */
+  public static void setWebPageForChannel(Channel channel) {
+    String value = mChannelWebpagesMap.get(getIdForChannel(channel));
+    
+    if(value != null && value.length() > 0)      
+      channel.setUserWebPage(value);
+  }
+
+  /**
+   * Saves the web pages of all channels.
+   *
+   */
+  public static void storeChannelWebPages() {
+    File f=new File(Settings.getUserSettingsDirName(),"channel_webpages.txt");
+
+    FileWriter fw;
+    PrintWriter out = null;
+    
+    try {
+      fw = new FileWriter(f);
+      out = new PrintWriter(fw);
+      
+      Channel[] channelArr = getAvailableChannels();
+      
+      for (Channel channel : channelArr) {
+        String userWebPage = channel.getUserWebPage();
+        
+        if ((userWebPage != null) && (userWebPage.trim().length() > 0))
+          out.println(channel.getDataServiceProxy().getId()+":"+channel.getId()+"=" + userWebPage.trim());
+      }
+    }catch(IOException e) {
+      // ignore
+    }
+    if (out!=null) {
+      out.close();
+    }
+  }
+  
+  private static String getIdForChannel(Channel channel) {
+    return new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getId()).toString();
+  }
+
+  /**
    * Create a HashMap from a Settings-File
    * @param f File to Load
    * @return HashMap filled with Channel, Value
    */
-  private static HashMap createMap(File f) {
-    HashMap<Channel, String> map = new HashMap<Channel, String>();
+  private static HashMap<String, String> createMap(File f) {
+    HashMap<String, String> map = new HashMap<String, String>();
 
     if (!f.exists()) {
       return map;
     }
 
     FileReader fr;
-    BufferedReader reader=null;
+    BufferedReader reader = null;
+    
     try {
-      fr=new FileReader(f);
-      reader=new BufferedReader(fr);
+      fr = new FileReader(f);
+      reader = new BufferedReader(fr);
       String line;
-      for (;;){
-        line=reader.readLine();
-        if (line==null) {
-          break;
-        }
-        int pos=line.indexOf('=');
+      
+      while ((line = reader.readLine()) != null){
+        int pos = line.indexOf('=');
+        
         try {
           String key=line.substring(0,pos);
           String val=line.substring(pos+1);
-          if (val!=null) {
-            pos = key.indexOf(':');
-            String dataServiceClassName = key.substring(0,pos);
-            String id = key.substring(pos + 1);
-
-            TvDataServiceProxy dataService
-              = TvDataServiceProxyManager.getInstance().findDataServiceById(dataServiceClassName);
-
-            Channel ch=ChannelList.getChannel(dataService,id);
-            if (ch!=null) {
-              map.put(ch, val);
-            }
-
-          }
+          
+          if (val!=null) 
+            map.put(key,val);
 
         }catch(IndexOutOfBoundsException e) {
           // ignore
